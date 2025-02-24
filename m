@@ -1,35 +1,35 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D6023BD0E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Feb 2025 13:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39823BD1C;
+	Mon, 24 Feb 2025 13:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402794; cv=none; b=TU8i338qncw4Lvo5Lg62S+mOIeOKKk0gQ/01ytp2BKsY318eA6ykTSrXbzJPYqTbkdI5i+Mkx1Tuo4XXsCZzJdqC0IUdIozN+PJ3lV5WU+MDIgub131cretJBZzXw1bLTKVveoKGU0kTnjYIBQD9RKS3zL/qdLFr85czO7tfkmU=
+	t=1740402795; cv=none; b=L66QzssOLs/BoNKLsAKXKv0YR3lWCfkwXVQow5Br7X4/84Ug7E9H3EsOFnYBivhZg7ybtxuav/tuK82Jri9FHUjEnmMK2Y+DmI/WAnhsF4xlkhRO0y+Eze5SvSiWQiw67I1yLRYhY3UF4+AXBmchFwX1qRV+/V/gklIIl6vnde8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402794; c=relaxed/simple;
-	bh=Q1WElZrVGj0IE/o0tquklVSALJgGT52+Oj7qV2+XB2I=;
+	s=arc-20240116; t=1740402795; c=relaxed/simple;
+	bh=WAJR8x2EpfE32DKv2HxvwThe9/mAvgaXgzCVvYr6vto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VdDNmTlawmub/AZaPcxrUopLdvZxBq5iAwQ8DutNnnocHZJ9ITUZAynxjnoRPljxjqbw79QIe34feBsr5iYOx5PrD/pa9G+CdsBmbiX0BSfPvrBUhBKnJaT9HjXEU0IsJzCVtDFxWdLbydgQdx6piFCI0ECm2jCOZsauvH35mm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	 MIME-Version; b=MN32q1w/L4xrGIcoPEKKVWfWYLm633QU9ssZ69sW2X6CjU1EIwrAZGeapUaFYUSel37Y7HgRhsDUiM/2/cDL2i/05C9Qfvn3GjIq+2DByfzzar3SuGbaJZlhgxomahRHJDIZPPjwjZqJmyFnJjKhJzwclPdCtarVcz7Rbu96nu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: U1PPxO4OSuaqBjlfkJd1og==
-X-CSE-MsgGUID: iVA1wt/GQAKDewpH3YpMqw==
+X-CSE-ConnectionGUID: QdzH9puzQ+aATfoWOGibFw==
+X-CSE-MsgGUID: p+cn56RLRLaKZd6LSyEcow==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Feb 2025 22:13:11 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 Feb 2025 22:13:06 +0900
 Received: from localhost.localdomain (unknown [10.226.92.231])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E1526402EC50;
-	Mon, 24 Feb 2025 22:13:09 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62592400F319;
+	Mon, 24 Feb 2025 22:13:04 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 04/12] irqchip/renesas-rzv2h: Simplify rzv2h_icu_init()
-Date: Mon, 24 Feb 2025 13:11:20 +0000
-Message-ID: <20250224131253.134199-5-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v6 02/12] irqchip/renesas-rzv2h: Fix wrong variable usage in rzv2h_tint_set_type()
+Date: Mon, 24 Feb 2025 13:11:18 +0000
+Message-ID: <20250224131253.134199-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250224131253.134199-1-biju.das.jz@bp.renesas.com>
 References: <20250224131253.134199-1-biju.das.jz@bp.renesas.com>
@@ -41,107 +41,43 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use devm_add_action_or_reset() for calling put_device in error path
-of rzv2h_icu_init() to simplify the code by using recently added devm_*
-helpers.
+The variable tssel_n is used for selecting TINT source and titsel_n for
+setting the interrupt type. The variable titsel_n is wrongly used for
+enabling the TINT interrupt in rzv2h_tint_set_type(). Fix this issue by
+using the correct variable tssel_n.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+While at it, move the tien variable assignment near to tssr.
+
+Fixes: 0d7605e75ac2 ("irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver")
+Cc: stable@vger.kernel.org
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/CAMuHMdU3xJpz-jh=j7t4JreBat2of2ksP_OR3+nKAoZBr4pSxg@mail.gmail.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v5->v6:
- * No change.
-v4->v5:
- * No change.
-v3->v4:
- * Collected the tags.
-v3:
- * New patch 
+ * Added Reported-by tag and Cced stable@vger.kernel.org.
+v5:
+ * New patch
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 37 +++++++++++++++--------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 0573062c89c4..d724f32dde8f 100644
+index fe2d29e91026..f6363246a71a 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -419,6 +419,11 @@ static int rzv2h_icu_parse_interrupts(struct rzv2h_icu_priv *priv, struct device
- 	return 0;
- }
+@@ -301,10 +301,10 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
  
-+static void rzv2h_icu_put_device(void *data)
-+{
-+	put_device(data);
-+}
-+
- static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
-@@ -431,41 +436,39 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
- 	if (!pdev)
- 		return -ENODEV;
+ 	tssr_k = ICU_TSSR_K(tint_nr);
+ 	tssel_n = ICU_TSSR_TSSEL_N(tint_nr);
++	tien = ICU_TSSR_TIEN(tssel_n);
  
-+	ret = devm_add_action_or_reset(&pdev->dev, rzv2h_icu_put_device,
-+				       &pdev->dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain) {
- 		dev_err(&pdev->dev, "cannot find parent domain\n");
--		ret = -ENODEV;
--		goto put_dev;
-+		return -ENODEV;
- 	}
+ 	titsr_k = ICU_TITSR_K(tint_nr);
+ 	titsel_n = ICU_TITSR_TITSEL_N(tint_nr);
+-	tien = ICU_TSSR_TIEN(titsel_n);
  
- 	rzv2h_icu_data = devm_kzalloc(&pdev->dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
--	if (!rzv2h_icu_data) {
--		ret = -ENOMEM;
--		goto put_dev;
--	}
-+	if (!rzv2h_icu_data)
-+		return -ENOMEM;
+ 	guard(raw_spinlock)(&priv->lock);
  
- 	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
--	if (IS_ERR(rzv2h_icu_data->base)) {
--		ret = PTR_ERR(rzv2h_icu_data->base);
--		goto put_dev;
--	}
-+	if (IS_ERR(rzv2h_icu_data->base))
-+		return PTR_ERR(rzv2h_icu_data->base);
- 
- 	ret = rzv2h_icu_parse_interrupts(rzv2h_icu_data, node);
- 	if (ret) {
- 		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
--		goto put_dev;
-+		return ret;
- 	}
- 
- 	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
--	if (IS_ERR(resetn)) {
--		ret = PTR_ERR(resetn);
--		goto put_dev;
--	}
-+	if (IS_ERR(resetn))
-+		return PTR_ERR(resetn);
- 
- 	ret = reset_control_deassert(resetn);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n", ret);
--		goto put_dev;
-+		return ret;
- 	}
- 
- 	pm_runtime_enable(&pdev->dev);
-@@ -496,8 +499,6 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
- pm_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	reset_control_assert(resetn);
--put_dev:
--	put_device(&pdev->dev);
- 
- 	return ret;
- }
 -- 
 2.43.0
 
