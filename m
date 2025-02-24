@@ -1,35 +1,36 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39823BD1C;
-	Mon, 24 Feb 2025 13:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D2923BD1D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Feb 2025 13:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402795; cv=none; b=L66QzssOLs/BoNKLsAKXKv0YR3lWCfkwXVQow5Br7X4/84Ug7E9H3EsOFnYBivhZg7ybtxuav/tuK82Jri9FHUjEnmMK2Y+DmI/WAnhsF4xlkhRO0y+Eze5SvSiWQiw67I1yLRYhY3UF4+AXBmchFwX1qRV+/V/gklIIl6vnde8=
+	t=1740402796; cv=none; b=f38ZdK9M3KeB1y5aoODzzYcnez1bVRTkfQ77GeaanPpNVyrjX5qUbeue/l15EMpthKVpUhMf3CVaErJhHQYc2XRef35GACy8Zb7+9lGdstrLmMAreMejM1AWNg6dXL9bIwxNAmN4lnGKgvHkzpnLSZkfJtaJ6W2vsN+0arbcE5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402795; c=relaxed/simple;
-	bh=WAJR8x2EpfE32DKv2HxvwThe9/mAvgaXgzCVvYr6vto=;
+	s=arc-20240116; t=1740402796; c=relaxed/simple;
+	bh=U/p6Hf1aPo/jyh9aJkYUUNjbqRaQDYUpS1xiPqiXrWw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MN32q1w/L4xrGIcoPEKKVWfWYLm633QU9ssZ69sW2X6CjU1EIwrAZGeapUaFYUSel37Y7HgRhsDUiM/2/cDL2i/05C9Qfvn3GjIq+2DByfzzar3SuGbaJZlhgxomahRHJDIZPPjwjZqJmyFnJjKhJzwclPdCtarVcz7Rbu96nu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=c+nN5ctVd1poL23EwZ3G9tghF9KR6aEvUe0Hjyk5YcgTvYbcXDhp1U8SQeSzeAUwcbSmJ13WQqa7rkIrcKCvxthjWvXkrIQpE9KD2HvV+oLsQj2/dqr5DaI9CNhKfl6ZPHQAJRl+tPPDTi1Z2PtTBbjnmoaPM2iEMUL+NOlyxDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: QdzH9puzQ+aATfoWOGibFw==
-X-CSE-MsgGUID: p+cn56RLRLaKZd6LSyEcow==
+X-CSE-ConnectionGUID: BlbQH/1RSbS/npZc3QhclA==
+X-CSE-MsgGUID: oG8i6lFGR1yNHiXPyM6EPw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Feb 2025 22:13:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Feb 2025 22:13:14 +0900
 Received: from localhost.localdomain (unknown [10.226.92.231])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62592400F319;
-	Mon, 24 Feb 2025 22:13:04 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8944F402EC50;
+	Mon, 24 Feb 2025 22:13:12 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v6 02/12] irqchip/renesas-rzv2h: Fix wrong variable usage in rzv2h_tint_set_type()
-Date: Mon, 24 Feb 2025 13:11:18 +0000
-Message-ID: <20250224131253.134199-3-biju.das.jz@bp.renesas.com>
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH v6 05/12] irqchip/renesas-rzv2h: Use devm_reset_control_get_exclusive_deasserted()
+Date: Mon, 24 Feb 2025 13:11:21 +0000
+Message-ID: <20250224131253.134199-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250224131253.134199-1-biju.das.jz@bp.renesas.com>
 References: <20250224131253.134199-1-biju.das.jz@bp.renesas.com>
@@ -41,43 +42,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The variable tssel_n is used for selecting TINT source and titsel_n for
-setting the interrupt type. The variable titsel_n is wrongly used for
-enabling the TINT interrupt in rzv2h_tint_set_type(). Fix this issue by
-using the correct variable tssel_n.
+Use devm_reset_control_get_exclusive_deasserted() to simplify
+rzv2h_icu_init().
 
-While at it, move the tien variable assignment near to tssr.
-
-Fixes: 0d7605e75ac2 ("irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver")
-Cc: stable@vger.kernel.org
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/CAMuHMdU3xJpz-jh=j7t4JreBat2of2ksP_OR3+nKAoZBr4pSxg@mail.gmail.com
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v5->v6:
- * Added Reported-by tag and Cced stable@vger.kernel.org.
-v5:
- * New patch
+ * No change.
+v4->v5:
+ * No change.
+v3->v4:
+ * Collected tags.
+v2->v3:
+ * Replaced 'goto put_dev' by 'return xxx' as put_device() called by
+   devm_add_action_or_reset().
+v1->v2:
+ * Split the simplification patch into two.
+ * Updated commit header and description.
+ * Replaced devm_reset_control_get_optional_exclusive_deasserted()->
+   devm_reset_control_get_exclusive_deasserted().
+ * Moved simplification using devm_pm_runtime_enable() to next patch.
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index fe2d29e91026..f6363246a71a 100644
+index d724f32dde8f..edae54f9f5da 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -301,10 +301,10 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+@@ -461,13 +461,10 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 		return ret;
+ 	}
  
- 	tssr_k = ICU_TSSR_K(tint_nr);
- 	tssel_n = ICU_TSSR_TSSEL_N(tint_nr);
-+	tien = ICU_TSSR_TIEN(tssel_n);
+-	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-	if (IS_ERR(resetn))
+-		return PTR_ERR(resetn);
+-
+-	ret = reset_control_deassert(resetn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n", ret);
++	resetn = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
++	if (IS_ERR(resetn)) {
++		ret = PTR_ERR(resetn);
++		dev_err(&pdev->dev, "failed to acquire deasserted reset: %d\n", ret);
+ 		return ret;
+ 	}
  
- 	titsr_k = ICU_TITSR_K(tint_nr);
- 	titsel_n = ICU_TITSR_TITSEL_N(tint_nr);
--	tien = ICU_TSSR_TIEN(titsel_n);
+@@ -498,7 +495,6 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 	pm_runtime_put(&pdev->dev);
+ pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+-	reset_control_assert(resetn);
  
- 	guard(raw_spinlock)(&priv->lock);
- 
+ 	return ret;
+ }
 -- 
 2.43.0
 
