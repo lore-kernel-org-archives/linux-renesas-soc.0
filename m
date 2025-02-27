@@ -1,157 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839D12206AC;
-	Thu, 27 Feb 2025 13:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E405723314B
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2025 13:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663278; cv=none; b=qlguaSAuORTC3YjmbkO5A9ZMmkBJea3OjbpZVR0DS6rKzQHosvrT/7GcY9wi9u3PPA7LN/8DIE7BBioHu8GHzOxh/6ngIOJq58GyG50OGCGN4aNLljvwfsp50sEZ26FGPKGB4RFAT5u1F7au1FH5PezUA2Z04DLg4TUVXcG8Srk=
+	t=1740663820; cv=none; b=Eo+EFYMD4PLkWTf/UHBDSlgwuHVeonIwFBslLGIMEykAXbfx8GXfK8MJgrBf4uzkuuzuUjg7W9JXguEuoVEZGWPT+stMNkqVtmW6LK8O0BizlyHLHTVN9tEPPvCBIRGByM589SgXPUQeJjUHT0S7Ya010bkrxecXznzqLfsgHmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663278; c=relaxed/simple;
-	bh=fRqkrVKLLclncjgROXsCyebTYbELBsd1B1Fx3c2oqRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQ06prZHSJWr8IW9IYQcSI2alCq75Y6/zvoq6xA/N0znodur3uGkHw5oDVNoaUWMyWccJCbOv0QHKkn2VIszCGBXqTBGLzJEqfgy2D2ONgzI5VGFSGDCzuYazXqDUBg+ztSMZDlKl1uOkm1jUyaNsnH28TzuYCbKEBIogtwDlR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dumiIXwz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740663820; c=relaxed/simple;
+	bh=P8Yw1yGrxqa7Bvw9rSGPLm2yaGmL/AMged1PXweAGik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JzFgNKCjcwpRfKlKDpZvqCCbIke+PDscLMJBGCDmYIR5elgY734EO+Sqm9P5Ga+U0fw+egoaKSEXXKF4F4bPuJEoKzTKfEJJ9Mdgm1baNNncQrCvlj8pCUJSsyLoHB+bKrwLm2mAwq2uGvfxQ5tFuTHmWVRehk4Kxz+UDWwe/Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ifUpU8HT; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dumiIXwz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D34C4CEDD;
-	Thu, 27 Feb 2025 13:34:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740663278;
-	bh=fRqkrVKLLclncjgROXsCyebTYbELBsd1B1Fx3c2oqRc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dumiIXwzmhW90HPrg5j9C5KiIX4hnOu8fp/boErhgRjOfON7Ac3jXNf+Ayktxwyx9
-	 t/SDjZS+i7/gk0jPXffYmOqNEEoSRNqsAf0ZgcCQtAq3Tmgu88IKUFvzE8MEqlhWIz
-	 O04E5Ix2IlXe+FlVcejhXEqQAIrE1FD+0nFvh39ScJC1ZhnL0nJEphn12B+9QzcFYE
-	 GAY0z5jdvcotMtYlqGGQSxPOJU4nLXM0QZKhmosM6isbTRhwfVtBZs/n/kbszh7LoW
-	 teNPfzS2CL0fF8wB4w3cC0vQgWSyPztLmxBgaYnZGntZK336iU2vAhMGjyQUUGeDmX
-	 MkWBRJr8+bZIw==
-Message-ID: <6323eb7a-03e9-4678-ac4f-f90052d0aace@kernel.org>
-Date: Thu, 27 Feb 2025 14:34:32 +0100
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ifUpU8HT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=sVSwqlrd6Jxe4jgfxwSWOcmRIZzQdYsZIwceMu9SgUk=; b=ifUpU8
+	HTxhUjx/11J3OttHT5xIyLD0RIYY7rnlqfCIlgyatRJeC4l1T2UsxFNtDNAAFySz
+	Ohom+KcpR8ByasrJ1lMprdFPmAqU5jv5R6ca8CYdiEgQON7Wei7mpabGthNCmUIo
+	+OoUpdc22FCnhgDxUDKewSwPWa1eUAsgNBusDjUaRAnrgApn9IYZegeUpXlDrDOX
+	NiVEKmTSeYjKHdGfLrS4DzfKJ/RA6eoGgpCRvZc3wJjK0yZF6Gtb4usqqXd1iY7T
+	AzO4xDzUvgAPgmOXOyqf4BCsymiU5VXT3S14W8Z/7gI1ijCxI1IBTTy3N8PQkoHn
+	GDLVrlFR9vnvCsIA==
+Received: (qmail 962328 invoked from network); 27 Feb 2025 14:43:30 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Feb 2025 14:43:30 +0100
+X-UD-Smtp-Session: l3s3148p1@nOYQ4B8v3Q5tKPD9
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH 2/8] rtc: sh: remove update interrupt handling
+Date: Thu, 27 Feb 2025 14:42:57 +0100
+Message-ID: <20250227134256.9167-12-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
+References: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC
- option
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- Paul Barker <paul.barker.ct@bp.renesas.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-14-thierry.bultel.yh@bp.renesas.com>
- <fe4ccf6d-bdf0-41eb-bffe-83d459319689@kernel.org>
- <TYCPR01MB1149252F0825C9BCF6A1B832F8AC22@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <f134c607-2a03-4ee2-9f7a-befa1e4feb74@kernel.org>
- <CAMuHMdW1k71gL_OYug+aF=SEkMDuXLy_oLpikahYVcqPMsMbHg@mail.gmail.com>
- <4f737623-6083-4ef9-b7a3-d09ebafa92de@kernel.org>
- <TYCPR01MB11492DBCAD461B83B3CBE75E68ACD2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <c4a44c39-5448-47d5-aeb1-32bab6e57047@kernel.org>
- <CAMuHMdXwMoY0mhG6-u0iVg79zYxAvv0Snrt019kDP+TJoXA5FQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMuHMdXwMoY0mhG6-u0iVg79zYxAvv0Snrt019kDP+TJoXA5FQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/02/2025 14:25, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Thu, 27 Feb 2025 at 12:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 27/02/2025 11:48, Thierry Bultel wrote:
->>>> This is fine, I am not against fine-grained SoC-enable options. However
->>>> all your SoCs should be enabled by default (default y if ARCH_RENESAS or
->>>> any other option which works for you) thus you won't be growing user-
->>>> selectable choices.
->>>>
->>>> Strictly speaking this still will be choice, because you need to trim
->>>> config, but all people and all distros will just ignore it  and don't see
->>>> it in defconfig.
->>>>
->>>
->>> I understand.
->>>
->>> All the ARCH_XXX SoC options are already under a menuconfig section, which
->>> is defaulted to 'y' if ARCH_RENESAS.
->>
->> Indeed and it actually cannot have "if ARCH_RENESAS" due to how compile
->> test is enabled there.
-> 
-> Sorry, I don't get what you mean here...
+Since commit e428c6a2772b ("RTC: Clean out UIE icotl implementations"),
+the flag for UIE cannot be set anymore. Because UIE is now handled via
+regular alarms and a timerqueue by the RTC core, the UIE handling code
+can simply go away now.
 
-Probably I got top-level COMPILE_TEST opposite and it actually should be
-"if ARCH_RENESAS" as I suggested. Otherwise it would be enabled by
-default for compile tests.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/rtc/rtc-sh.c | 48 +-------------------------------------------
+ 1 file changed, 1 insertion(+), 47 deletions(-)
 
+diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
+index 3409f5764224..f8227a71084a 100644
+--- a/drivers/rtc/rtc-sh.c
++++ b/drivers/rtc/rtc-sh.c
+@@ -75,7 +75,6 @@
+ /* Period Bits */
+ #define PF_HP		0x100	/* Enable Half Period to support 8,32,128Hz */
+ #define PF_COUNT	0x200	/* Half periodic counter */
+-#define PF_OXS		0x400	/* Periodic One x Second */
+ #define PF_KOU		0x800	/* Kernel or User periodic request 1=kernel */
+ #define PF_MASK		0xf00
+ 
+@@ -107,22 +106,6 @@ struct sh_rtc {
+ 	unsigned short		periodic_freq;
+ };
+ 
+-static int __sh_rtc_interrupt(struct sh_rtc *rtc)
+-{
+-	unsigned int tmp, pending;
+-
+-	tmp = readb(rtc->regbase + RCR1);
+-	pending = tmp & RCR1_CF;
+-	tmp &= ~RCR1_CF;
+-	writeb(tmp, rtc->regbase + RCR1);
+-
+-	/* Users have requested One x Second IRQ */
+-	if (pending && rtc->periodic_freq & PF_OXS)
+-		rtc_update_irq(rtc->rtc_dev, 1, RTC_UF | RTC_IRQF);
+-
+-	return pending;
+-}
+-
+ static int __sh_rtc_alarm(struct sh_rtc *rtc)
+ {
+ 	unsigned int tmp, pending;
+@@ -162,18 +145,6 @@ static int __sh_rtc_periodic(struct sh_rtc *rtc)
+ 	return pending;
+ }
+ 
+-static irqreturn_t sh_rtc_interrupt(int irq, void *dev_id)
+-{
+-	struct sh_rtc *rtc = dev_id;
+-	int ret;
+-
+-	spin_lock(&rtc->lock);
+-	ret = __sh_rtc_interrupt(rtc);
+-	spin_unlock(&rtc->lock);
+-
+-	return IRQ_RETVAL(ret);
+-}
+-
+ static irqreturn_t sh_rtc_alarm(int irq, void *dev_id)
+ {
+ 	struct sh_rtc *rtc = dev_id;
+@@ -204,8 +175,7 @@ static irqreturn_t sh_rtc_shared(int irq, void *dev_id)
+ 	int ret;
+ 
+ 	spin_lock(&rtc->lock);
+-	ret = __sh_rtc_interrupt(rtc);
+-	ret |= __sh_rtc_alarm(rtc);
++	ret = __sh_rtc_alarm(rtc);
+ 	ret |= __sh_rtc_periodic(rtc);
+ 	spin_unlock(&rtc->lock);
+ 
+@@ -236,9 +206,6 @@ static int sh_rtc_proc(struct device *dev, struct seq_file *seq)
+ 	struct sh_rtc *rtc = dev_get_drvdata(dev);
+ 	unsigned int tmp;
+ 
+-	tmp = readb(rtc->regbase + RCR1);
+-	seq_printf(seq, "carry_IRQ\t: %s\n", (tmp & RCR1_CIE) ? "yes" : "no");
+-
+ 	tmp = readb(rtc->regbase + RCR2);
+ 	seq_printf(seq, "periodic_IRQ\t: %s\n",
+ 		   (tmp & RCR2_PESMASK) ? "yes" : "no");
+@@ -320,10 +287,6 @@ static int sh_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 		tm->tm_sec--;
+ #endif
+ 
+-	/* only keep the carry interrupt enabled if UIE is on */
+-	if (!(rtc->periodic_freq & PF_OXS))
+-		sh_rtc_setcie(dev, 0);
+-
+ 	dev_dbg(dev, "%s: tm is secs=%d, mins=%d, hours=%d, "
+ 		"mday=%d, mon=%d, year=%d, wday=%d\n",
+ 		__func__,
+@@ -577,15 +540,6 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
+ 			goto err_unmap;
+ 		}
+ 
+-		ret = devm_request_irq(&pdev->dev, rtc->carry_irq,
+-				sh_rtc_interrupt, 0, "sh-rtc carry", rtc);
+-		if (unlikely(ret)) {
+-			dev_err(&pdev->dev,
+-				"request carry IRQ failed with %d, IRQ %d\n",
+-				ret, rtc->carry_irq);
+-			goto err_unmap;
+-		}
+-
+ 		ret = devm_request_irq(&pdev->dev, rtc->alarm_irq,
+ 				sh_rtc_alarm, 0, "sh-rtc alarm", rtc);
+ 		if (unlikely(ret)) {
+-- 
+2.45.2
 
-> 
->>> So I guess that this simple additional change would make it:
->>>
->>> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
->>> index 91a815e0a522..231880c21aa7 100644
->>> --- a/drivers/soc/renesas/Kconfig
->>> +++ b/drivers/soc/renesas/Kconfig
->>> @@ -358,6 +358,7 @@ config ARCH_R9A09G057
->>>
->>>  config ARCH_R9A09G077
->>>         bool "ARM64 Platform support for RZ/T2H"
->>> +       default y
-> 
-> Please add "if ARCH_RENESAS" iff we decide to go this route...
-
-Yeah, like I suggested earlier.
-
-
-
-Best regards,
-Krzysztof
