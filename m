@@ -1,42 +1,42 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5808F22F397
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2025 13:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A67023313E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2025 13:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663821; cv=none; b=DYt1CRRZ2tqSQSO1dGXZkw3y3h0r0AHPWcOrSRSDFRA3nmOpau1ZQqZAk04tr/s+PIapiiw7910u+qyIhTRedFPpEiU5x0NA6TLaKaBVtYcT+haj4nN1gUthH3pFtYQ9jSf7M3LvU381GcKrLEQJ4eFQefy/MKxXragoB8KioUc=
+	t=1740663821; cv=none; b=Msv+/BpUw5uhJhFrs5MTiuvzXL+h6Ow4B+uBcaxRhP46PT91tibcNcYIZ0i5VXV93j0kgHcIg2YnOL+KQJrx9od9E+R9H3pWp8O96CEe+/uOrp6JBZK4o1G9XW5cf9cLoktrPPB3kfdnkC71kfBXD4jxcVxeNnkllNtoo7Jqzmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740663821; c=relaxed/simple;
-	bh=ebuycd53Uuy9ErE8bBFYSIEQ+sv4g0fNhgwDIe8DZt8=;
+	bh=U01MmYcykOio02hH5Iam3dBQe4D52OjWeMXxSQipVgo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XjesGipbxrGNofnplwbgkqUbvx/4UY+U6dYZXXeFxLeYwvqrlex3jzfvjhBQI3G4fOYQpqglHmSU3qzUBz2U+LXhtHq66YLt+Ia6ebkkPfsnZtaQY9fk1HUwIeus2wre5x/yUXpuVShR8w5lv1gfn/blYOjm3LHSR+nl0ACBmzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WRpLOFVr; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=i+lMvMwczWdXqe+kHbO5lwa5aG9WgR9gqQjMdX5thNXWX09L+cy4AxfusR7utE22xYUHWRtWjdRWsVlAzONFQm/d/V3SPH1dcDdnrP2Og/rUeiuIoi0Ury9HQvGBtl4EMPMbydc4KehdWNjKUT7MmoB+9kZFVmiLXg5PuvKCBRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gX8Dsmg7; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WRpLOFVr"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gX8Dsmg7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=par3vHelOry1lwwazqkFXO3/p86mskpoGl7kGns0BBw=; b=WRpLOF
-	VruUNZz5ZiwT1lFEgdjlusD4x8/M6dk/btoPgewBqj/FUXQ9y1XsFlSSoYdS2ZaZ
-	Ds6wAsRf0TP1NGYS/AEzbJpCxxdaGToO1E3mOWYQ1nVCKgXCLtXhqaGtFLhqQlaN
-	F0J2qTZ966yETC2MfsywcL0hKBZ1iMwcvMroBlwKdYiBMTYD6YpDZgt74HDT+1DJ
-	Oh7C+G7UVbrWNVs/CFiXb62V201KHNWlDiF0a50gkLgPdd+oJv0YdLbGf0w5f4JD
-	1afSa+em+Z99pQE2kcM8lyOieaaI0BMuebQcwu7zRHSgmhN6fLZu6bmRS5tTvM3B
-	24rG2qjpV/+l6/6A==
-Received: (qmail 962402 invoked from network); 27 Feb 2025 14:43:33 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Feb 2025 14:43:33 +0100
-X-UD-Smtp-Session: l3s3148p1@7EVE4B8vqHFtKPD9
+	 s=k1; bh=bEUxNHlKC6W56Uy15CrG0xWxKg+OIhIXHlA/sYPS2xg=; b=gX8Dsm
+	g7ff2qBjAFU6KtfC1vwxELAR6mPvG0kqlWe93qDPtsjYioa0lcaSS5VXuChukvoC
+	KuQAkoLLE395tUJ3pl+2vLgHRMmB00Jq6fl4m0Soc0GYVQBZQgNfPLLfTIQqNugO
+	7m/MOBrivr9COST35uauBFVkFqxE0yet3HpFczsb8HAN6N+GXYSJeJbZhh12/V+H
+	DyqZnAw0Qp+gsEbXdP2AdmjH8dihaeIux/ZJzRyfsnavtppZrqgA+2/qvs9cVADh
+	TKN1gDIFdTp/77iLV9OhS2mxDv+L1BztYZdR0tXj2JoE4K57Fhp039EazDK6Rsev
+	yx1iUfSXHzqwQmrw==
+Received: (qmail 962485 invoked from network); 27 Feb 2025 14:43:37 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Feb 2025 14:43:37 +0100
+X-UD-Smtp-Session: l3s3148p1@mil44B8vbDVtKPD9
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	linux-rtc@vger.kernel.org
-Subject: [PATCH 5/8] rtc: sh: simplify irq setup after refactoring
-Date: Thu, 27 Feb 2025 14:43:00 +0100
-Message-ID: <20250227134256.9167-15-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 8/8] rtc: sh: minor fixes to adhere to coding style
+Date: Thu, 27 Feb 2025 14:43:03 +0100
+Message-ID: <20250227134256.9167-18-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
 References: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
@@ -48,167 +48,108 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We only need the alarm_irq handler. That means we can remove everything
-related to periodic_irq and carry_irq. Also, the shared handler can go
-since we only we need the alarm interrupt in any case.
+Use the BIT macro, use curly braces for else-blocks, don't split strings
+over multiple lines, annotate the lock, update copyright.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/rtc/rtc-sh.c | 83 +++++++++-----------------------------------
- 1 file changed, 17 insertions(+), 66 deletions(-)
+ drivers/rtc/rtc-sh.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index e80d4ae979c9..bf49dbd09cab 100644
+index 3bafb2a0659d..f15ef3aa82a0 100644
 --- a/drivers/rtc/rtc-sh.c
 +++ b/drivers/rtc/rtc-sh.c
-@@ -89,18 +89,19 @@ struct sh_rtc {
- 	unsigned long		regsize;
- 	struct resource		*res;
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2006 - 2009  Paul Mundt
+  * Copyright (C) 2006  Jamie Lenehan
+  * Copyright (C) 2008  Angelo Castello
++ * Copyright (C) 2025  Wolfram Sang, Renesas Electronics Corporation
+  *
+  * Based on the old arch/sh/kernel/cpu/rtc.c by:
+  *
+@@ -31,7 +32,7 @@
+ /* Default values for RZ/A RTC */
+ #define rtc_reg_size		sizeof(u16)
+ #define RTC_BIT_INVERTED        0	/* no chip bugs */
+-#define RTC_CAP_4_DIGIT_YEAR    (1 << 0)
++#define RTC_CAP_4_DIGIT_YEAR    BIT(0)
+ #define RTC_DEF_CAPABILITIES    RTC_CAP_4_DIGIT_YEAR
+ #endif
+ 
+@@ -70,26 +71,26 @@
+  */
+ 
+ /* ALARM Bits - or with BCD encoded value */
+-#define AR_ENB		0x80	/* Enable for alarm cmp   */
++#define AR_ENB		BIT(7)	/* Enable for alarm cmp   */
+ 
+ /* RCR1 Bits */
+-#define RCR1_CF		0x80	/* Carry Flag             */
+-#define RCR1_CIE	0x10	/* Carry Interrupt Enable */
+-#define RCR1_AIE	0x08	/* Alarm Interrupt Enable */
+-#define RCR1_AF		0x01	/* Alarm Flag             */
++#define RCR1_CF		BIT(7)	/* Carry Flag             */
++#define RCR1_CIE	BIT(4)	/* Carry Interrupt Enable */
++#define RCR1_AIE	BIT(3)	/* Alarm Interrupt Enable */
++#define RCR1_AF		BIT(0)	/* Alarm Flag             */
+ 
+ /* RCR2 Bits */
+-#define RCR2_RTCEN	0x08	/* ENable RTC              */
+-#define RCR2_ADJ	0x04	/* ADJustment (30-second)  */
+-#define RCR2_RESET	0x02	/* Reset bit               */
+-#define RCR2_START	0x01	/* Start bit               */
++#define RCR2_RTCEN	BIT(3)	/* ENable RTC              */
++#define RCR2_ADJ	BIT(2)	/* ADJustment (30-second)  */
++#define RCR2_RESET	BIT(1)	/* Reset bit               */
++#define RCR2_START	BIT(0)	/* Start bit               */
+ 
+ struct sh_rtc {
+ 	void __iomem		*regbase;
  	int			alarm_irq;
--	int			periodic_irq;
--	int			carry_irq;
  	struct clk		*clk;
  	struct rtc_device	*rtc_dev;
- 	spinlock_t		lock;
+-	spinlock_t		lock;
++	spinlock_t		lock;		/* protecting register access */
  	unsigned long		capabilities;	/* See asm/rtc.h for cap bits */
  };
  
--static int __sh_rtc_alarm(struct sh_rtc *rtc)
-+static irqreturn_t sh_rtc_alarm(int irq, void *dev_id)
- {
-+	struct sh_rtc *rtc = dev_id;
- 	unsigned int tmp, pending;
- 
-+	spin_lock(&rtc->lock);
-+
- 	tmp = readb(rtc->regbase + RCR1);
- 	pending = tmp & RCR1_AF;
- 	tmp &= ~(RCR1_AF | RCR1_AIE);
-@@ -109,31 +110,9 @@ static int __sh_rtc_alarm(struct sh_rtc *rtc)
- 	if (pending)
- 		rtc_update_irq(rtc->rtc_dev, 1, RTC_AF | RTC_IRQF);
- 
--	return pending;
--}
--
--static irqreturn_t sh_rtc_alarm(int irq, void *dev_id)
--{
--	struct sh_rtc *rtc = dev_id;
--	int ret;
--
--	spin_lock(&rtc->lock);
--	ret = __sh_rtc_alarm(rtc);
--	spin_unlock(&rtc->lock);
--
--	return IRQ_RETVAL(ret);
--}
--
--static irqreturn_t sh_rtc_shared(int irq, void *dev_id)
--{
--	struct sh_rtc *rtc = dev_id;
--	int ret;
--
--	spin_lock(&rtc->lock);
--	ret = __sh_rtc_alarm(rtc);
- 	spin_unlock(&rtc->lock);
- 
--	return IRQ_RETVAL(ret);
-+	return IRQ_RETVAL(pending);
- }
- 
- static inline void sh_rtc_setaie(struct device *dev, unsigned int enable)
-@@ -364,22 +343,16 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&rtc->lock);
- 
--	/* get periodic/carry/alarm irqs */
- 	ret = platform_get_irq(pdev, 0);
- 	if (unlikely(ret <= 0)) {
- 		dev_err(&pdev->dev, "No IRQ resource\n");
- 		return -ENOENT;
- 	}
- 
--	if (!pdev->dev.of_node) {
--		rtc->periodic_irq = ret;
--		rtc->carry_irq = platform_get_irq(pdev, 1);
-+	if (!pdev->dev.of_node)
- 		rtc->alarm_irq = platform_get_irq(pdev, 2);
--	} else {
-+	else
- 		rtc->alarm_irq = ret;
--		rtc->periodic_irq = platform_get_irq(pdev, 1);
--		rtc->carry_irq = platform_get_irq(pdev, 2);
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	if (!res)
-@@ -442,25 +415,11 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 	}
+@@ -183,10 +184,8 @@ static int sh_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 		tm->tm_sec--;
  #endif
  
--	if (rtc->carry_irq <= 0) {
--		/* register shared periodic/carry/alarm irq */
--		ret = devm_request_irq(&pdev->dev, rtc->periodic_irq,
--				sh_rtc_shared, 0, "sh-rtc", rtc);
--		if (unlikely(ret)) {
--			dev_err(&pdev->dev,
--				"request IRQ failed with %d, IRQ %d\n", ret,
--				rtc->periodic_irq);
--			goto err_unmap;
--		}
--	} else {
--		ret = devm_request_irq(&pdev->dev, rtc->alarm_irq,
--				sh_rtc_alarm, 0, "sh-rtc alarm", rtc);
--		if (unlikely(ret)) {
--			dev_err(&pdev->dev,
--				"request alarm IRQ failed with %d, IRQ %d\n",
--				ret, rtc->alarm_irq);
--			goto err_unmap;
--		}
-+	ret = devm_request_irq(&pdev->dev, rtc->alarm_irq, sh_rtc_alarm, 0, "sh-rtc", rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "request alarm IRQ failed with %d, IRQ %d\n",
-+			ret, rtc->alarm_irq);
-+		goto err_unmap;
- 	}
- 
- 	platform_set_drvdata(pdev, rtc);
-@@ -503,30 +462,22 @@ static void __exit sh_rtc_remove(struct platform_device *pdev)
- 	clk_disable(rtc->clk);
- }
- 
--static void sh_rtc_set_irq_wake(struct device *dev, int enabled)
-+static int __maybe_unused sh_rtc_suspend(struct device *dev)
- {
- 	struct sh_rtc *rtc = dev_get_drvdata(dev);
- 
--	irq_set_irq_wake(rtc->periodic_irq, enabled);
--
--	if (rtc->carry_irq > 0) {
--		irq_set_irq_wake(rtc->carry_irq, enabled);
--		irq_set_irq_wake(rtc->alarm_irq, enabled);
--	}
--}
--
--static int __maybe_unused sh_rtc_suspend(struct device *dev)
--{
- 	if (device_may_wakeup(dev))
--		sh_rtc_set_irq_wake(dev, 1);
-+		irq_set_irq_wake(rtc->alarm_irq, 1);
+-	dev_dbg(dev, "%s: tm is secs=%d, mins=%d, hours=%d, "
+-		"mday=%d, mon=%d, year=%d, wday=%d\n",
+-		__func__,
+-		tm->tm_sec, tm->tm_min, tm->tm_hour,
++	dev_dbg(dev, "%s: tm is secs=%d, mins=%d, hours=%d, mday=%d, mon=%d, year=%d, wday=%d\n",
++		__func__, tm->tm_sec, tm->tm_min, tm->tm_hour,
+ 		tm->tm_mday, tm->tm_mon + 1, tm->tm_year, tm->tm_wday);
  
  	return 0;
- }
+@@ -373,8 +372,9 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
+ 			clk_id = 0;
  
- static int __maybe_unused sh_rtc_resume(struct device *dev)
- {
-+	struct sh_rtc *rtc = dev_get_drvdata(dev);
-+
- 	if (device_may_wakeup(dev))
--		sh_rtc_set_irq_wake(dev, 0);
-+		irq_set_irq_wake(rtc->alarm_irq, 0);
+ 		snprintf(clk_name, sizeof(clk_name), "rtc%d", clk_id);
+-	} else
++	} else {
+ 		snprintf(clk_name, sizeof(clk_name), "fck");
++	}
  
- 	return 0;
- }
+ 	rtc->clk = devm_clk_get(&pdev->dev, clk_name);
+ 	if (IS_ERR(rtc->clk)) {
+@@ -501,8 +501,8 @@ static struct platform_driver sh_rtc_platform_driver __refdata = {
+ module_platform_driver_probe(sh_rtc_platform_driver, sh_rtc_probe);
+ 
+ MODULE_DESCRIPTION("SuperH on-chip RTC driver");
+-MODULE_AUTHOR("Paul Mundt <lethal@linux-sh.org>, "
+-	      "Jamie Lenehan <lenehan@twibble.org>, "
+-	      "Angelo Castello <angelo.castello@st.com>");
++MODULE_AUTHOR("Paul Mundt <lethal@linux-sh.org>");
++MODULE_AUTHOR("Jamie Lenehan <lenehan@twibble.org>");
++MODULE_AUTHOR("Angelo Castello <angelo.castello@st.com>");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:" DRV_NAME);
 -- 
 2.45.2
 
