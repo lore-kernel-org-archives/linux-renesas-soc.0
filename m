@@ -1,44 +1,42 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E94722FE05
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E73233144
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2025 13:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663821; cv=none; b=PlKEvG57Oh7AHuFefaT5U/YmtAkvUAbSXicNVTSbSUT6qdWgkVyduF4Y+FieJ7NUUubhSct4k16GwMBrjv+n1+IguDvrGzYz/PSAwz/ejGw4xI634uRucr1r/SEKWOWZ1WhpoAsuP7vSmfkfvGo2NjcY54Im5743SY3Ljk8zj9Q=
+	t=1740663821; cv=none; b=JnyV5Q53mUIY1EX95HRoGCpbV2ptzwwJ7KRJssY/r9586oWU1ZPLgy7CTJwz1yEDFXMx/5RYwKVYxJpJIRHsfwSm3a/AsL8Z4/GoWqJJH29j0NIUikuIgL1hGReHNQngHDMhwDqHt9rUn1trElcHTGzvJek8sPEpcOfYJ4ypDwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740663821; c=relaxed/simple;
-	bh=opsIEewIztJ1IZyoYzEP+SwNMi+LKIs5nXcMDwD8Uro=;
+	bh=mlEOI5HRHdA0r+khPOFstglI4Q0KaINDuTiOi53x7fQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tYdMVf+beWmSWNsuk42xovVNwge/fKoo7L1TZpOxH9TEqB6hiNV8DzG9mZ2y8qiLOhJy03Esjeo/+eirkO+mEL43VKighTBGY18pl1MNV6l8EXLjM0dYXXIvKB0mvcoan3cld7rFWJGyMAZKZ9tLMepa6W4DU4RWTt7hIKD+76E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hjWu5KVe; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=XQcB0MLqLDRFCSU9++dJWpBXUugld2Vg7C1JyLUTsimnArDwvHkt84cUgVPMEfuKDfI1nJkpRkpQcW8x+sJd+tcIL0sb1LIpIv26iwYN15gLyMqCjGd4Nvhj5jXM4iW51xo8ZjZ/bQY4aZkoo6FdxdwyJ/DsCOiQ6ROQ81fVU+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jxij3+A6; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hjWu5KVe"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jxij3+A6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=Nt37Sk0W0XmXtsZPL85MIICCq9BwucCIJ7J3iZrg4Fg=; b=hjWu5K
-	Veln0Eobur44VjNVEKdg02Y5pAOr7fl4nHZrjZFw0QKkkFBCWS0JwVmVJb4LamUd
-	5b5wBzFLt2spHelrj0O9hXElA1ietAUKH9jGD8Am7ZJUcDYgDO43cmkcsSvpRDnR
-	kVzWjnO52oJNMd4Lxm/akpfQ3qovMvK2nB/Qsnl1/pxfbmVolwqh31wSMgmQpcgQ
-	zj/8Mlhv7b7j83msA0jBmAXxPwS09Y60iHfJqBMQDI1q0uocpsripuGR02fQzsf5
-	7HPYd5vLSfgnPUcIzVFlJ2BRZUxouSLxXZmaKdDcYzgIbMwNFiEoqfRBuVg+ybHj
-	LdDgtvKe+ziFg0pg==
-Received: (qmail 962291 invoked from network); 27 Feb 2025 14:43:29 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Feb 2025 14:43:29 +0100
-X-UD-Smtp-Session: l3s3148p1@vin+3x8vqyJtKPD9
+	 s=k1; bh=fEqcBkTeEAbMdoXRszSD0T9cx6kWOcSndq0YAOBoylM=; b=jxij3+
+	A6lNj42B54P5b19/sPw5604x+0VeWf+ql7iMw7/KqR7xqhbOnAceyYCh3qke4OT6
+	r9ywDNqgF5uSL7SSrJZe6psKrYZAaShFbUk8u77QjDW700auftS1HMy6PdYWKatQ
+	PAFXgYA2zV7f9jLRrMoT1GJryItfbY22OIMDPmsS+iFw9RYIgUB7V11Upo3hP14v
+	xwPBAzmVYnOv96dMpCaLlW36AQ6WH0fD1WKP96tP7LyslGTtyfKaKExdz1pHzgFn
+	I3Sm95js8lbZ/EuIVaiwF0Lv9vitVivlSnkwumN7gYIVedKYWz8S0GGm3rphrnpq
+	NWuFNdlhdcy/lfDg==
+Received: (qmail 962427 invoked from network); 27 Feb 2025 14:43:34 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Feb 2025 14:43:34 +0100
+X-UD-Smtp-Session: l3s3148p1@/AxV4B8vjGFtKPD9
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Brandt <chris.brandt@renesas.com>,
 	linux-rtc@vger.kernel.org
-Subject: [PATCH 1/8] rtc: sh: assign correct interrupts with DT
-Date: Thu, 27 Feb 2025 14:42:56 +0100
-Message-ID: <20250227134256.9167-11-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 6/8] rtc: sh: remove useless wrapper function
+Date: Thu, 27 Feb 2025 14:43:01 +0100
+Message-ID: <20250227134256.9167-16-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
 References: <20250227134256.9167-10-wsa+renesas@sang-engineering.com>
@@ -50,42 +48,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The DT bindings for this driver define the interrupts in the order as
-they are numbered in the interrupt controller. The old platform_data,
-however, listed them in a different order. So, for DT based platforms,
-they are mixed up. Assign them specifically for DT, so we can keep the
-bindings stable. After the fix, 'rtctest' passes again on the Renesas
-Genmai board (RZ-A1 / R7S72100).
+The wrapper to enable interrupts is so thin that we can use it directly.
+Also gets rid of an 'inline' which doesn't make sense here.
 
-Fixes: dab5aec64bf5 ("rtc: sh: add support for rza series")
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/rtc/rtc-sh.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/rtc/rtc-sh.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index 9ea40f40188f..3409f5764224 100644
+index bf49dbd09cab..033bdfc83e42 100644
 --- a/drivers/rtc/rtc-sh.c
 +++ b/drivers/rtc/rtc-sh.c
-@@ -485,9 +485,15 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
+@@ -115,7 +115,7 @@ static irqreturn_t sh_rtc_alarm(int irq, void *dev_id)
+ 	return IRQ_RETVAL(pending);
+ }
  
--	rtc->periodic_irq = ret;
--	rtc->carry_irq = platform_get_irq(pdev, 1);
--	rtc->alarm_irq = platform_get_irq(pdev, 2);
-+	if (!pdev->dev.of_node) {
-+		rtc->periodic_irq = ret;
-+		rtc->carry_irq = platform_get_irq(pdev, 1);
-+		rtc->alarm_irq = platform_get_irq(pdev, 2);
-+	} else {
-+		rtc->alarm_irq = ret;
-+		rtc->periodic_irq = platform_get_irq(pdev, 1);
-+		rtc->carry_irq = platform_get_irq(pdev, 2);
-+	}
+-static inline void sh_rtc_setaie(struct device *dev, unsigned int enable)
++static int sh_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+ {
+ 	struct sh_rtc *rtc = dev_get_drvdata(dev);
+ 	unsigned int tmp;
+@@ -132,11 +132,7 @@ static inline void sh_rtc_setaie(struct device *dev, unsigned int enable)
+ 	writeb(tmp, rtc->regbase + RCR1);
  
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	if (!res)
+ 	spin_unlock_irq(&rtc->lock);
+-}
+ 
+-static int sh_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
+-{
+-	sh_rtc_setaie(dev, enabled);
+ 	return 0;
+ }
+ 
+@@ -457,7 +453,7 @@ static void __exit sh_rtc_remove(struct platform_device *pdev)
+ {
+ 	struct sh_rtc *rtc = platform_get_drvdata(pdev);
+ 
+-	sh_rtc_setaie(&pdev->dev, 0);
++	sh_rtc_alarm_irq_enable(&pdev->dev, 0);
+ 
+ 	clk_disable(rtc->clk);
+ }
 -- 
 2.45.2
 
