@@ -1,80 +1,134 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6951AAE2E;
-	Wed,  5 Mar 2025 16:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1F719C542;
+	Wed,  5 Mar 2025 16:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192687; cv=none; b=VGQBwevjiSIqPxkBOFjyxQZgKznlkvCpzyscGxDYp5V7GYxFm5EYP1n+UrgRDDWIR+O3aWUGbalBGcMBXPJS8q4BBLB/1LvfW2X0EGUmNN55daVEvMFxNvK1fHOGfaPTkyUDTC0iRzKRtlYLfoqaIpSOrnG+qyYPk6lCAfxLqVQ=
+	t=1741192689; cv=none; b=J8HMZB32aFr3MunKFkSOKyful/Dt/MzgrEXYbsnodN7yXLKQJuXt6yEuCOq0E9mExWxvVEL/kZxU7vIfCG+Vw6rGnm6kQRT/0wIoaQx8WY11tf9oo9JEGGIf0BBUNM13xfCem7vaPXaWM+IIpxpQbv4HfdINF/4Ni4lcXDZ5RM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192687; c=relaxed/simple;
-	bh=k2M3/q/adRFyhot2mgf/CMtxVEr7FsGvmTY6Z+hgrGk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=udL2jY7tr1v0DiZjsZU0XogNePoWLkdwgfxYGNzJSb8+YXwvSGs6P51mTD8KUhGC9HfCt5fjbloXb3QrpazN0T6dctYnCUpJ7tJY+ZrTLh4fLGBrpJY6qL/yF7JTftI4reC7lTNtgB6OkLumnFT4vXy4gki7cIURqXzgBSX4ers=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: ny+nymeWSVWinr3KFTNOpw==
-X-CSE-MsgGUID: ktDably4RyCY4HY6FxBxvA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2025 01:38:03 +0900
-Received: from mulinux.home (unknown [10.226.92.17])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B365D4017975;
-	Thu,  6 Mar 2025 01:38:00 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4] gpio: rcar: Fix missing of_node_put() call
-Date: Wed,  5 Mar 2025 16:37:50 +0000
-Message-Id: <20250305163753.34913-2-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305163753.34913-1-fabrizio.castro.jz@renesas.com>
-References: <20250305163753.34913-1-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1741192689; c=relaxed/simple;
+	bh=OwvDDv+rB+cBd+3VHKU2o92ijTiJPiX8okF4jWElzEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gODYSQ3JcV0kpleOoeVJTGqliKPcJMzVMcHTwW75VEn5+QvUiTJLyyG1uCPsGcJVXazUvLrfJs+3pvWYuLNntCf3+1F/ql+K1+QGxhgLvJCP2C3KJKP8cwZVpD7orJhwQnVNQikKmYRr/NsW5IHT0DcxGl2E/uw1DVSMlBb9mZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajS6v5Yu; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajS6v5Yu"
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5235db99207so2664708e0c.2;
+        Wed, 05 Mar 2025 08:38:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741192686; x=1741797486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQlxiO/tzlizWCcvMOMLmTMjvNekxRADNnpIKuwzvg8=;
+        b=ajS6v5YuU6m6gjGJJb9IryCAodLzr0pg0AUj8rGPYvY2WrOKNhQc3LCM9QhnTKVpy5
+         FkYNIrm2OcPttE5fNQaoQ9DssnLfXgRrvTrEmuo4fOEIZO7MuLcy31wxzADXHS9Epb9f
+         +Ps/GONqoF4ugFshIOjX1lZdTrVPrcQYkUuo6vRnrzR551ivNd7isVyE1cmq+rjqJtF8
+         MfHZquHElV7SUxvWLHRrKR+aVN/la/xq/kzRxsgTazCAMgolu5OmZfRfcFzq5p5kToTF
+         IeGORVqJVch2XUZLglTbHfYDg2aMnTIFk7ahFZrlfryOWceWlB/dLh+ZsFu/ugqtCkhv
+         P0bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741192686; x=1741797486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IQlxiO/tzlizWCcvMOMLmTMjvNekxRADNnpIKuwzvg8=;
+        b=tOJSyh2r2yQ7A/qpix1hPis8shiRxmy3+eiaNYlGpDTOl5mtw6nZJxUBQKhUDhwPnX
+         NPuoKfoFFFFdfdo0Fb3PLcZ+riueEzRkVGZ21uIdkHbpOP0TW8JNbrJ3KC41TY+bUkrd
+         cyROWlWpSPpJ1a6xLafg9GtoxPxtJvIVFT2hhBU54l70UxttxDvkVxrz/3QIO6ul6syy
+         Joh4lT1f/ax3JDwbiOxwRBYXndKONDCcvFY8GXhznzZsh5Zgaeg99x//ObAtSe4FRfIc
+         pHHphBEk9IrircGzT3rcJq+Pc54eEJuxKc24lxhb6Lp55uogQ9RzVHMhjZ2QWS5L447E
+         8ZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1auik6tsK4coreIltJpqwZ7Fm1XKLUN7UDYUhBUvnJ/c5BjQVsnYh+B8piV9Z1KFpkTyacl5XNKirU9j91Jtk8Vk=@vger.kernel.org, AJvYcCVhp7GKS92oCDO1Q3NSR4FstQJIiDxmMMpvuQsqfOpiIxqKWD+TttEpGtjk64Kpv7utnGndKwi884A=@vger.kernel.org, AJvYcCXayg1tzZFZpME2QqDL0Qa7OfGbgmp7zDQWrRrwb1eASB7bzXpPpUNafgjGOIwHtZdV2fC/I4nPNSWdQafZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww3jreR1xk0VhEw/3iCrdPew/IWk9au1TTZDsWpLJnqWW8zqJe
+	QPWzPkKMzi+q6GNHwNLFNxPAwJhHcHGXmPqkGbo7rtbuK+7KGjKXrHGtYAMgbvAgkb/janZh+dl
+	n8v+TYQL//PqLCwgzY3Urb2HfCAdau+bw
+X-Gm-Gg: ASbGnctVHvKLntfr/oOi5mT8MnQQVSMY1bdPo8BARGXwnVKUcWjQOrLjcO8eBV6CUAu
+	MhQAT71Rz1pHtqcrMo+PJS3yxVnSDdZlNH1HyZTC00VX2by6Y3Hr+66U7b7N/OalGSYedzmQjyB
+	Gx35TNWNgybVMz3SQBYHkM+40O6g==
+X-Google-Smtp-Source: AGHT+IGgP6P7tbPAFmk1OoR674ND19doqpjBCUa83A+ACGXwxElzV5jy1FoNKcrR2VQhDnBQk89neEvY/Mh21OU2Byg=
+X-Received: by 2002:a05:6122:3186:b0:50b:e9a5:cd7b with SMTP id
+ 71dfb90a1353d-523c628826bmr2411542e0c.9.1741192686457; Wed, 05 Mar 2025
+ 08:38:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250218114353.406684-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVwVemQfrDFH48n9Csp6=KtFs5MpZ6e+wLWSnEuh2gdvg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVwVemQfrDFH48n9Csp6=KtFs5MpZ6e+wLWSnEuh2gdvg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 5 Mar 2025 16:37:40 +0000
+X-Gm-Features: AQ5f1Jq9xGloZE_BIWzi9jwUpv744jv1tl6VmpAdYxsk-Ac88E_TEIGJLuTaN6c
+Message-ID: <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: rzv2h-cpg: Move PLL access macros to
+ source file
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-of_parse_phandle_with_fixed_args() requires its caller to
-call into of_node_put() on the node pointer from the output
-structure, but such a call is currently missing.
+Hi Geert,
 
-Call into of_node_put() to rectify that.
+Thank you for the review.
 
-Fixes: 159f8a0209af ("gpio-rcar: Add DT support")
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
- drivers/gpio/gpio-rcar.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+On Wed, Mar 5, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Move the `PLL_CLK_ACCESS()`, `PLL_CLK1_OFFSET()`, and `PLL_CLK2_OFFSET(=
+)`
+> > macros from `rzv2h-cpg.h` to `rzv2h-cpg.c`, as they are not intended fo=
+r
+> > use by SoC-specific CPG drivers.
+> >
+> > Additionally, update `PLL_CLK1_OFFSET()` and `PLL_CLK2_OFFSET()` to use
+> > the `FIELD_GET()` macro for better readability and simplify the
+> > `PLL_CLK_ACCESS()` macro.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> The changes look correct to me, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> but I still have some comments...
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -56,6 +56,10 @@
+> >
+> >  #define CPG_CLKSTATUS0         (0x700)
+> >
+> > +#define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
+>
+> OK
+>
+> > +#define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
+> > +#define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
+>
+> IMO, the original versions are more readable, as they clearly show
+> the symmetry between encoding and decoding.
+>
+> Perhaps a good alternative would be a structure with bitfields and
+> a PACK() macro, like is used for DDIV and SMUX?
+>
+Sure, I'll do that. Is it OK if I make that change on top of this
+series or do you want me to rework and send a v2?
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 2ecee3269a0c..7208739cd2d4 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -468,7 +468,12 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	p->info = *info;
- 
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
--	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
-+	if (ret) {
-+		*npins = RCAR_MAX_GPIO_PER_BANK;
-+	} else {
-+		*npins = args.args[2];
-+		of_node_put(args.np);
-+	}
- 
- 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
- 		dev_warn(p->dev, "Invalid number of gpio lines %u, using %u\n",
--- 
-2.34.1
-
+Cheers,
+Prabhakar
