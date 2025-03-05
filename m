@@ -1,164 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F337518CBEC;
-	Wed,  5 Mar 2025 16:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF28761FFE;
+	Wed,  5 Mar 2025 16:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192016; cv=none; b=X8KAHrKhZCCu8QmbL5XEHj7giGmIW64MO6CjBjQD+uFKKwRq/YqnH1MiYNxx/EAoOlxRCuH8Z2UnQObcMMbDWw1baICB14sdvmdtdYKTssJC2cfJri9QpyosTV2vAoKcfm0xdARsRdN5pxTzBTWzvxyZP+R9uEfRuFlLYpATZPE=
+	t=1741192684; cv=none; b=LaUpORajKcLxLqwra8gjvEofVqNy1ty+qZJdVb7Zof907wZBvcZl7FYCi05gZmSVO/8No7ZIjXBIS9plTjgN2th7m2eGrZOfsY53+seGBrU6gP1FCKKWFUjV+qL10gczRMPpMTlEM4HNFLQWJYMlEWoZRD40oyPw3SQWCjpbB90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192016; c=relaxed/simple;
-	bh=P7WBpNfMWlkeZYLPtMXBm6r4j5jCxaC3zCPq/3d6pBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vg0eQIxPOQwdnAmEY3rS4bv6RyeQ5QJ81MpqHCydD0Vr4vPMnV2mFNz0Fa9MwOVcG0w9kcej5q/bxEtHeFzXW72FsgiUFHXeguRXsU0YVeOxLxqDo0pJc1HhWEtbjqjcbRoZoM9uDuh/InJk1fkrkkqwGJM4H59rJvWDTklegIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8cpBsyK; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8cpBsyK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8094C4CED1;
-	Wed,  5 Mar 2025 16:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741192015;
-	bh=P7WBpNfMWlkeZYLPtMXBm6r4j5jCxaC3zCPq/3d6pBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o8cpBsyKq0KWzty8WIz0ZECACHDD0hJZNy6ivB3XuBrSfrbv7XRJX5DnqvxpF/QVM
-	 9c9KRqhoO9nnx307sdv+2o4gXrBtSGi2ccKSt2P10446LpEyCEvX9Ag2DWNYO9+Bke
-	 +ZkriwCOfQ9Iboj8hd1ppr4i1KyZ71CtE4Ry4Nypg2TTPe/wsILjTj3wu1LpTUtNz9
-	 d/MZiFmzSbO1Ybq9Q/ScRcx4G4s0bcsGL4w49b0qAjgxFkDo3XILbC/4PNrG0knFUJ
-	 XOSEb3zMX8M3JrMphwJK6kVJEBKq+9n/2z59Z/Wve4e1YaKuSlHB884AWDCZ1I9a6k
-	 0y/EzFzqvXgvA==
-Date: Wed, 5 Mar 2025 16:26:50 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1741192684; c=relaxed/simple;
+	bh=giLIi6y7FvFYbBs9vIN3Xqh8DeWtMAnSCL0PVoXkYkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S1Dsk3WiCSkAQpHk587J1XuWmVbGKFM7fsBnQXsTTHcWy75/b5u/FbNUSgGpSqT8FC4rsd3tkFOwnl13uRaAKYvMDiK6mYqfmwatStTkKiQ6JgRXA8gxU1dEarea9OqojpIn2mzyoJiwsYMDUTaqFQJqUI0djTQ8xEkXgg/Wdjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: b9yQW58+RVaD2eeU0F/wwg==
+X-CSE-MsgGUID: zYIpf+EdRmKxTc4e0XLElA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2025 01:38:00 +0900
+Received: from mulinux.home (unknown [10.226.92.17])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 748C4400F792;
+	Thu,  6 Mar 2025 01:37:56 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Document RZ/V2H(P) USB2PHY
- Control
-Message-ID: <20250305-cesspool-headlock-4d28a2a1333e@spud>
-References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250305123915.341589-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/4] Fix missing of_node_put() calls
+Date: Wed,  5 Mar 2025 16:37:49 +0000
+Message-Id: <20250305163753.34913-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NLNEO0YrE4Ah9DUx"
-Content-Disposition: inline
-In-Reply-To: <20250305123915.341589-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
+Dear All,
 
---NLNEO0YrE4Ah9DUx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series is to fix a missing call to of_node_put() from
+some of Renesas pinctrl/gpio drivers.
 
-On Wed, Mar 05, 2025 at 12:39:13PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Add device tree binding document for the Renesas RZ/V2H(P) USB2PHY Control
-> Device. It mainly controls reset and power down of the USB2.0 PHY (for
-> both host and function).
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../reset/renesas,rzv2h-usb2phy-ctrl.yaml     | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzv2h=
--usb2phy-ctrl.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2ph=
-y-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy=
--ctrl.yaml
-> new file mode 100644
-> index 000000000000..ed156a1d3eb3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-ctrl.=
-yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/renesas,rzv2h-usb2phy-ctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/V2H(P) USB2PHY Control
-> +
-> +maintainers:
-> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +
-> +description:
-> +  The RZ/V2H(P) USB2PHY Control mainly controls reset and power down of =
-the
-> +  USB2.0 PHY.
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,r9a09g057-usb2phy-ctrl  # RZ/V2H(P)
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  '#reset-cells':
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - power-domains
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
-> +
-> +    usbphy-ctrl@15830000 {
+Cheers,
+Fab
 
-How come your nodename isn't "reset-controller"?
-Otherwise,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Fabrizio Castro (4):
+  gpio: rcar: Fix missing of_node_put() call
+  pinctrl: renesas: rzg2l: Fix missing of_node_put() call
+  pinctrl: renesas: rzv2m: Fix missing of_node_put() call
+  pinctrl: renesas: rza2: Fix missing of_node_put() call
 
-> +        compatible =3D "renesas,r9a09g057-usb2phy-ctrl";
-> +        reg =3D <0x15830000 0x10000>;
-> +        clocks =3D <&cpg CPG_MOD 0xb6>;
-> +        resets =3D <&cpg 0xaf>;
-> +        power-domains =3D <&cpg>;
-> +        #reset-cells =3D <0>;
-> +    };
-> --=20
-> 2.43.0
->=20
+ drivers/gpio/gpio-rcar.c                | 7 ++++++-
+ drivers/pinctrl/renesas/pinctrl-rza2.c  | 2 ++
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c | 2 ++
+ 4 files changed, 12 insertions(+), 1 deletion(-)
 
---NLNEO0YrE4Ah9DUx
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8h7SgAKCRB4tDGHoIJi
-0pjxAQCCM+leBdMKpufCfk6z+36Rw9aGaaFu6WHxaQTUt/L7pgEA7gE3pIUyynXQ
-pzmBA0RbkLKXinQRSP/AMvk6kDFlRQg=
-=bDXW
------END PGP SIGNATURE-----
-
---NLNEO0YrE4Ah9DUx--
