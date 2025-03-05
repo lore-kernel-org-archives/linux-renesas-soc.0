@@ -1,239 +1,157 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56659219310;
-	Wed,  5 Mar 2025 10:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33E01EA7D8
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Mar 2025 12:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172082; cv=none; b=HWdtyFh4a5zNwk/36c1wR7qQhkgwHf4VnAM6Y6NHCkCHDycjBmK1VNqki8I+aVjzb6vvlVKqtSzXUl86b7oAVTzvOnDPKAuzU0kSMAHNFyaoPvFpYPON8TaRND+NdBeDXzG9JpAr6uDyQSTJ2+prjahqUTYGuMjBV/tsr9x2b94=
+	t=1741176952; cv=none; b=u8+Q2SD4yM5zYbwwcuCV1UMyU/R0KY2HKUdX/mC4oR2rH3TgdvsL1roUNDhnPq9t4Y7Xf6Wp0MOT7gkLhoYOWVN4DHyMxy/rpdwG98eMr5SKbqLErBUXvlLZfBeUaLT44KctSvfXSzgDj9iBg1yjrulFwlnpFixodoqINCSagmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172082; c=relaxed/simple;
-	bh=QoUC6Qhyxqtfrpp/Ewhq5WKUwH5QMPUb0vC0OYmQgHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfhwepmGIm8cJ9+mkU0ypcaXABDSynLx7R9tno5WFO49sB3fK65g3J6XPbfwas4AG7c3DWfboHaAur8QNaUoWb6LjWJjs29o24ZE7rtCRX5cdvOgvd4Oc57s/oFzdmSlh7JtwYpn2L3WfgECm4eT+DTuNxzCFaAEzvuavvlF3yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJNFgGSg; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741176952; c=relaxed/simple;
+	bh=v5VN0g2CJE82VhBGa6AxOCe3g3zhdg2n0niq+it5f6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WZZj9vzV9zGz0Y1xtpXBF+vBp7CDKeVnxarpWf5MDQtCwOmCzycJgJf3qEM8Jzcskq2vYbbMaQbsKYT4Pk9j5Eowa6zZH9fY+GKazUhr9MLGQYHUk0Y1OFzenaMGZkxwofxfrXARMVy6myb3Uf3LDPL2yo2C08H1v3kVsr7W8iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=u0X1SoDr; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJNFgGSg"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5495c63bdc0so4384750e87.1;
-        Wed, 05 Mar 2025 02:54:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="u0X1SoDr"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43995b907cfso43329495e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Mar 2025 04:15:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741172078; x=1741776878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Myb8iOfwo/K4CWy++bb3w2FblFyh4mmShUmyEU2xmU=;
-        b=mJNFgGSgWQt3++aNA/7vnhD9m7F/4oQulNHGVBO2WjhRnR0tGV49t7PXR94m5c0O4U
-         l2AiOB95YMJT09KNZyauQ05tSAAuSbKlLsA9LWZQN7as5BiJ0gjziC9eudWw6XIWjsIu
-         1SyBIA2YCMkm30NHGOX+sWLAdqzATlWsaZu7FC8bhVNpeG/V1+8axi93RUO8cSRdJcbg
-         OoOG9lufXDIf3y1ai8kmg58KbPWKyopYAzCmDiwzLWosGj0JXnFr4Vk44+lHU9kidXF6
-         t9LjIRi6fyquWXic95qaxZW75ssF3VAgGAY2f7na4QM6LGjOu8N5tDfjv1ojxSB+8nQF
-         tyxw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741176949; x=1741781749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BM6itYwhagxx2QRfXmJQSynU85dj8uyDPoe0oqhy1Yk=;
+        b=u0X1SoDr1LXRdxrtAoelxooQYtRgnmQ0gVxeE5B3Sh/V5u1y1Q3Ayos6QIhRgkRk4P
+         pugM+PU+1HEKKJLJCsZeK2WOdxRDHo9BILVDgySnv87VpnaUKJRQRjX27w1n080KMy4m
+         rqht/UcFLKW6yRIO1FKmv3tJQ1oxpyGwDSRKp34sm+jX4uSr1wzxju+3/HT61clM6PXu
+         yeG7bgPN5gqUtqXq5ACuRjyIutsdmMcmSO33VL/ucRmBGymXD57+wJ+g35PPaa8rfc7a
+         7JzQUCNC30fm9fB+kPAqqTCEQpWyGHtODp7E0dUZObhW5M47uEHBlKb6cWLv9VRFn6Xv
+         mOBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741172078; x=1741776878;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Myb8iOfwo/K4CWy++bb3w2FblFyh4mmShUmyEU2xmU=;
-        b=tJd90vOXqxMFdVNG5PxK84wkyUj0tlee8JbgxCXiFSxffs7MJwEaB0ufwZsl1Sk59u
-         OYmIWTl73rjH89VvxO/lSdpiY8r/qZJdm7PlqfdR9XCUCmvPH/TKjYcz7EPwA3YmTAVF
-         C+eRJHzOCjxudfG5N+72dkcvvqt8Lm8o4kJmgKKSuLLCAw5rrrBjU7J3XKOdgV4jzUEo
-         c9R5EfwqhxmL06xeFAWVG8cCBVqqBoYBK+m1CZlmEI7LkQW+Tm0IQrxoNnbaEYazMMw8
-         ige9ecQ8fuaNkiDHCKr0ULWzT5FvC83iPvttKaM5i9ex15UHlqhXeAiKHVt5YDf5IHfr
-         o50g==
-X-Forwarded-Encrypted: i=1; AJvYcCUz1tzYld3sx9YZPavL0CNeHUN4N86lR8Ms9xA4BZDhHRJFEbp6oFlklTiR7UC+ooghj0q38pWhLfBbghBy@vger.kernel.org, AJvYcCVo8iXR0Je7164o1953bVC1QppG3flFG0iXWdmO57Crgh9kNZPzTq6HtdFyY6VfaQvgpiMGd/UxfN9YYg==@vger.kernel.org, AJvYcCW9crrH7X4LRCMiRT3YTRyX/YlNCRPAqDqgSJl761GC/HM1n30bSMEQB7XODyUrEUNRs37KLkC7GtIP@vger.kernel.org, AJvYcCWhnVMOa+vlzgZk4sf1H5zm5Nz3R1pNZt3T4Op5Su+FqPxpaYOft9Ln2YVhZOY5O+Zk2c5ovmqw0xcW0it75dcrhBE=@vger.kernel.org, AJvYcCX2byrfum9cVQhaqLYHpMmqjLGvT+QhO6ODQoZMBrLSVaf8Ucvb455HPdQwsAmMhrbbhMW70Ot9K1Rf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGRtaRLb1+Vj7lPUxnSlbRgiJBU4+QW+P/WYa+zBq/jC5/lsYA
-	WonVIXWQAZiawuAB1qNyjWYNT0m7i6vuzn4DxIXrC1QcIReJBedg
-X-Gm-Gg: ASbGncsJDd0zsbKZx/r0p+O83DQQRKnkXJfS1MfszU4cQ75gA3k2brD8qsKkMlkLER5
-	gAFXfmMPUNipc8bG0qf86F8/V6FYIaPv+MRvHWwQtAa2hxA23hufXFSVaKym5obShFs0YnL/CsC
-	9LytseQr2kMuJgt0rqeb/EQg+0eQ/vDnvGtmO11b0mJ+6J4Wbo0F9luwPZOLlGXcT2KjVQo2mq+
-	cFRD/B15VycJfkYhjD+c+XgW+3gTPvDkVCnaUgierhgVtiSUmgVCoEH//fOIbYeFkdIxx5762Pd
-	pdrMDPWdpNP4J7He3JOP5hjr/xdIt0q/09FxPrKX+xDWV05aQE+XAXEAWef5gtJecXjLAZtNt4l
-	5CN5x02JTa+FhhGszN1Mw9B7tZA==
-X-Google-Smtp-Source: AGHT+IG7+dALkj4mnhqEtYuKNaMtYCVDDovKQLGo6i+y4ha0bmLUd9DW+/Gn+j0UXQCjVleXTiXGSQ==
-X-Received: by 2002:a05:6512:2214:b0:545:746:f36a with SMTP id 2adb3069b0e04-5497d376350mr1006837e87.34.1741172077938;
-        Wed, 05 Mar 2025 02:54:37 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494ca38eaesm1601129e87.124.2025.03.05.02.54.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 02:54:35 -0800 (PST)
-Message-ID: <54a031d0-df47-4baa-a23a-1a79c0922542@gmail.com>
-Date: Wed, 5 Mar 2025 12:54:33 +0200
+        d=1e100.net; s=20230601; t=1741176949; x=1741781749;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BM6itYwhagxx2QRfXmJQSynU85dj8uyDPoe0oqhy1Yk=;
+        b=oDAM1DksL6hpXbsJ9KUcdm1koFTY1T10YdBZ91bcGO7351iARilH+tJReyjvBPZsCZ
+         87rqFFchrfZUWTBVumkF4VBD55E/reKtgqx0GWVjdjZKsaekRgXqenfDeKZszr/OoonQ
+         y622gxVKl11Wu7tGXQCny57L7hHZLP9Y+q26u32LGevMT85ljCHqHJqDLfsIjf8m6bPF
+         1jBrpFc4MQYa6pkwdvvvxbuvj2moXidS2hhD2XVa1AKiBYUyHcQheEwZxFp1zNjZLEaC
+         nmVSfwcRVEAIawpoyeR/3ntA/9AHHqklFqITbugzp2DaRxLevsrqX3UsgOnYd5WFZFlv
+         tvdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOCdrb6NbLCoRvu/Pkjk8g+ZVSdrNNqyegajFLPgtGaT9eUPH59k9J1JWDNoL2mKiASIt0eGah3M2VUXOuugi14A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFfmxfzSBJwhKCLreTttnLY0pwMbMj2h0MvB8j1bqGN7EgJ9Vw
+	0FB9Iu+IfHqVp+HQR/j0yVPb7QKv0a2mKHukr3WtIkQqs1Mzte8Mbw1ZplwX27k=
+X-Gm-Gg: ASbGncvq85DDZxJWSQjUofeO3JCmOSkN6WXsoqEHe5xFFycbiXe6SjHKYQRfdWFPKF0
+	RunHZAAYxABYk9FnNDuHCoPBfBfNUp+hXXemz8XLIzNsK0LcGDYNmU9Hvjn5Eq1SBUF7KbWD+gh
+	EUl1c+IcHOTIh/rM6pht0+gSIENP+k5Mh/lY8jlYyIYTVcIJBOYgbZ7jiNFuuM7/IyAe08OB0El
+	4zby+HqdQ7VGQwAA0M/DDdTyhI7N3zvmYkPZSr9IvXkdjisA4e935mGehbs+Ud9KOe3NnO0tNRU
+	eInrus0rZvLsqnkSH+ohjYg965VAUPzoMZyflI57t9cm
+X-Google-Smtp-Source: AGHT+IH5RfWTgST5qLkCs6Rz4XGjY9rY+LfHAoLcQzdtQiMJZKyVtDKB32hsLtqW4IEXyOcIA0d54A==
+X-Received: by 2002:a05:600c:1d01:b0:43b:c9a8:8fab with SMTP id 5b1f17b1804b1-43bd2ae025fmr19781605e9.19.1741176948927;
+        Wed, 05 Mar 2025 04:15:48 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e514:53b3:5af8:e408])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426c01bsm16061945e9.2.2025.03.05.04.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 04:15:48 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpio: rcar: Use raw_spinlock to protect register access
+Date: Wed,  5 Mar 2025 13:15:43 +0100
+Message-ID: <174117687651.61264.2181182249374483578.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250121135833.3769310-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20250121135833.3769310-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/10] iio: adc: add helpers for parsing ADC nodes
-To: David Lechner <dlechner@baylibre.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <e71c63c2f61135f9a8c7884525aab2c48f1e84c2.1740993491.git.mazziesaccount@gmail.com>
- <CAMknhBGQaqFZJsPAoauZL4S5MYtN05EOQ-BO2vw5gH+Z2RLOhw@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAMknhBGQaqFZJsPAoauZL4S5MYtN05EOQ-BO2vw5gH+Z2RLOhw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Thanks for the review David.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On 04/03/2025 11:25, David Lechner wrote:
-> On Mon, Mar 3, 2025 at 12:32 PM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
->>
->> There are ADC ICs which may have some of the AIN pins usable for other
->> functions. These ICs may have some of the AIN pins wired so that they
->> should not be used for ADC.
->>
->> (Preferred?) way for marking pins which can be used as ADC inputs is to
->> add corresponding channels@N nodes in the device tree as described in
->> the ADC binding yaml.
->>
->> Add couple of helper functions which can be used to retrieve the channel
->> information from the device node.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
 
->> + *
->> + * Return:     Number of found channels on succes. Negative value to indicate
+On Tue, 21 Jan 2025 14:58:33 +0100, Niklas Söderlund wrote:
+> Use raw_spinlock in order to fix spurious messages about invalid context
+> when spinlock debugging is enabled. The lock is only used to serialize
+> register access.
 > 
-> s/succes/success/
-
-Thanks!
-
->> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
->> +                                         const struct iio_chan_spec *template,
->> +                                         int max_chan_id,
->> +                                         struct iio_chan_spec **cs)
->> +{
->> +       struct iio_chan_spec *chan_array, *chan;
->> +       int num_chan = 0, ret;
->> +
->> +       num_chan = iio_adc_device_num_channels(dev);
->> +       if (num_chan < 1)
->> +               return num_chan;
->> +
->> +       chan_array = devm_kcalloc(dev, num_chan, sizeof(*chan_array),
->> +                                 GFP_KERNEL);
->> +       if (!chan_array)
->> +               return -ENOMEM;
->> +
->> +       chan = &chan_array[0];
->> +
->> +       device_for_each_child_node_scoped(dev, child) {
->> +               u32 ch;
->> +
->> +               if (!fwnode_name_eq(child, "channel"))
->> +                       continue;
->> +
->> +               ret = fwnode_property_read_u32(child, "reg", &ch);
->> +               if (ret)
->> +                       return ret;
->> +
->> +               if (max_chan_id != -1 && ch > max_chan_id)
->> +                       return -ERANGE;
->> +
+>     [    4.239592] =============================
+>     [    4.239595] [ BUG: Invalid wait context ]
+>     [    4.239599] 6.13.0-rc7-arm64-renesas-05496-gd088502a519f #35 Not tainted
+>     [    4.239603] -----------------------------
+>     [    4.239606] kworker/u8:5/76 is trying to lock:
+>     [    4.239609] ffff0000091898a0 (&p->lock){....}-{3:3}, at: gpio_rcar_config_interrupt_input_mode+0x34/0x164
+>     [    4.239641] other info that might help us debug this:
+>     [    4.239643] context-{5:5}
+>     [    4.239646] 5 locks held by kworker/u8:5/76:
+>     [    4.239651]  #0: ffff0000080fb148 ((wq_completion)async){+.+.}-{0:0}, at: process_one_work+0x190/0x62c
+>     [    4.250180] OF: /soc/sound@ec500000/ports/port@0/endpoint: Read of boolean property 'frame-master' with a value.
+>     [    4.254094]  #1: ffff80008299bd80 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_one_work+0x1b8/0x62c
+>     [    4.254109]  #2: ffff00000920c8f8
+>     [    4.258345] OF: /soc/sound@ec500000/ports/port@1/endpoint: Read of boolean property 'bitclock-master' with a value.
+>     [    4.264803]  (&dev->mutex){....}-{4:4}, at: __device_attach_async_helper+0x3c/0xdc
+>     [    4.264820]  #3: ffff00000a50ca40 (request_class#2){+.+.}-{4:4}, at: __setup_irq+0xa0/0x690
+>     [    4.264840]  #4:
+>     [    4.268872] OF: /soc/sound@ec500000/ports/port@1/endpoint: Read of boolean property 'frame-master' with a value.
+>     [    4.273275] ffff00000a50c8c8 (lock_class){....}-{2:2}, at: __setup_irq+0xc4/0x690
+>     [    4.296130] renesas_sdhi_internal_dmac ee100000.mmc: mmc1 base at 0x00000000ee100000, max clock rate 200 MHz
+>     [    4.304082] stack backtrace:
+>     [    4.304086] CPU: 1 UID: 0 PID: 76 Comm: kworker/u8:5 Not tainted 6.13.0-rc7-arm64-renesas-05496-gd088502a519f #35
+>     [    4.304092] Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+>     [    4.304097] Workqueue: async async_run_entry_fn
+>     [    4.304106] Call trace:
+>     [    4.304110]  show_stack+0x14/0x20 (C)
+>     [    4.304122]  dump_stack_lvl+0x6c/0x90
+>     [    4.304131]  dump_stack+0x14/0x1c
+>     [    4.304138]  __lock_acquire+0xdfc/0x1584
+>     [    4.426274]  lock_acquire+0x1c4/0x33c
+>     [    4.429942]  _raw_spin_lock_irqsave+0x5c/0x80
+>     [    4.434307]  gpio_rcar_config_interrupt_input_mode+0x34/0x164
+>     [    4.440061]  gpio_rcar_irq_set_type+0xd4/0xd8
+>     [    4.444422]  __irq_set_trigger+0x5c/0x178
+>     [    4.448435]  __setup_irq+0x2e4/0x690
+>     [    4.452012]  request_threaded_irq+0xc4/0x190
+>     [    4.456285]  devm_request_threaded_irq+0x7c/0xf4
+>     [    4.459398] ata1: link resume succeeded after 1 retries
+>     [    4.460902]  mmc_gpiod_request_cd_irq+0x68/0xe0
+>     [    4.470660]  mmc_start_host+0x50/0xac
+>     [    4.474327]  mmc_add_host+0x80/0xe4
+>     [    4.477817]  tmio_mmc_host_probe+0x2b0/0x440
+>     [    4.482094]  renesas_sdhi_probe+0x488/0x6f4
+>     [    4.486281]  renesas_sdhi_internal_dmac_probe+0x60/0x78
+>     [    4.491509]  platform_probe+0x64/0xd8
+>     [    4.495178]  really_probe+0xb8/0x2a8
+>     [    4.498756]  __driver_probe_device+0x74/0x118
+>     [    4.503116]  driver_probe_device+0x3c/0x154
+>     [    4.507303]  __device_attach_driver+0xd4/0x160
+>     [    4.511750]  bus_for_each_drv+0x84/0xe0
+>     [    4.515588]  __device_attach_async_helper+0xb0/0xdc
+>     [    4.520470]  async_run_entry_fn+0x30/0xd8
+>     [    4.524481]  process_one_work+0x210/0x62c
+>     [    4.528494]  worker_thread+0x1ac/0x340
+>     [    4.532245]  kthread+0x10c/0x110
+>     [    4.535476]  ret_from_fork+0x10/0x20
 > 
-> Should we use return dev_err_probe() on these to help with debugging a bad dtb?
-> 
+> [...]
 
-I am not fan of using dev_err_probe() in a 'library code'. This is 
-because we never know if there'll be some odd use-case where this is not 
-called from the probe.
+Applied, thanks!
 
-All in all, I'd leave adding most of the debugs to the callers - 
-especially because we do not expect to have bad device-trees after the 
-initial 'development stage' of a board. The board 'development stage' 
-should really reveal bugs which prevent the channels from being 
-registered - and after the DT is correct, these debug prints become 
-unnecessary (albeit minor) binary bloat.
+[1/1] gpio: rcar: Use raw_spinlock to protect register access
+      commit: f02c41f87cfe61440c18bf77d1ef0a884b9ee2b5
 
->> +               *chan = *template;
->> +               chan->channel = ch;
->> +               chan++;
->> +       }
->> +
->> +       *cs = chan_array;
->> +
->> +       return num_chan;
->> +}
->> +EXPORT_SYMBOL_NS_GPL(devm_iio_adc_device_alloc_chaninfo_se, "IIO_DRIVER");
-> 
-> We can make this less verbose by setting #define
-> DEFAULT_SYMBOL_NAMESPACE at the start of the file. Then we can just do
-> EXPORT_SYMBOL_GPL() throughout the rest of the file.
-
-I am not sure what to think of this. I use the good old 'ctrl + ]' in my 
-editor when I need to check how a function was supposed to be used. That 
-jumps to the spot of code where the function is. I'd like to see the 
-namespace mentioned there in order to not accidentally miss the fact the 
-function belongs to one.
-
-OTOH, I do like simplifications. Yet, the added simplification might not 
-warrant the namespace not being visible in the function definition.
-
-> Also, I would prefer if the namespace matched config name (IIO_ADC_HELPER).
-
-I had some lengthy discussion about this with Andy and Jonathan during 
-earlier review versions. In short, I don't like the idea of very 
-fragmented namespaces in IIO, which will just complicate the drivers 
-without providing any obvious benefit.
-
-https://lore.kernel.org/all/20250222174842.57c091c5@jic23-huawei/
-
->> +
->> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
->> +                                         const struct iio_chan_spec *template,
->> +                                         int max_chan_id,
->> +                                         struct iio_chan_spec **cs);
->> +
-> 
-> There are some different opinions on this, but on the last patch I did
-> introducing a new namespace, the consensus seems to be that putting
-> the MODULE_IMPORT_NS() in the header file was convenient so that users
-> of the API don't have to remember to both include the header and add
-> the import macro.
-> 
-
-I do like this suggestion, and I believe this would be the balance 
-between getting the benefit of hiding part of the symbols - while not 
-unnecessarily complicating the callers. I know some people are opposing 
-it though. My personal opinion is that having the MODULE_IMPORT_NS() in 
-a header would be neatly simplifying the calling code with very little 
-harm, especially here where including the header hardly has use-cases 
-outside the IIO ADC.
-
-Unfortunately, the "safety" seems to often be a synonym for just "making 
-it intentionally hard". As Finnish people say: "Kärsi, kärsi, 
-kirkkaamman kruunun saat". :)
-(Roughly translated as "Suffer, suffer, you will get a brighter crown").
-
-Let's hear what Jonathan thinks of your suggestion.
-
-Thanks!
-	-- Matti
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
