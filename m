@@ -1,368 +1,178 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6622459E0;
-	Wed,  5 Mar 2025 12:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AD424502D
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Mar 2025 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178373; cv=none; b=tU71jywOOC0m88QCwe84sY/pRlNKQUeC5zYEweW9sGTGYd1xq+7NLxJM1ZI9Xb1kEnTrKlFsVNqrnJBT8lOVc6SR41eFfhqlS1UP+obYGcIe8neXZHRbaR/kZllHZiuB6yznGj/14bBSlAGCQP8C0Nze8jLyQZSOAzpuvkSUz78=
+	t=1741179441; cv=none; b=BrpUHVZhIftyiOR11duJEGBiVO6OtlVGTyQi8MaNGMDFsDUhyyIDsuMAbYe7R7Kk4zQX8wlTFYXKwobR8EC8Ij+KV1S0vtCzg1cQhBObT2Mn4m0cdxCK4PacgIdnPFvs34nv83DkXJw9I9kH43ncdix/iZ4/Mi7ZOBWNC3MMBB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178373; c=relaxed/simple;
-	bh=6Hpthnt97xW3thf8b4moKs7+DxziCoPXbfbmllxFrTY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VSB0E7U2u2RVPdt61YV1skmu2EYO1YFxaOJaD1hpGxLbiHINjw5IQunT+su3Y9HofoZkJfPejN94x+lbGSVU0+rNKZwtDRUKmK010+F53GTapw5ZX12L2ucjLE8mfQHRM8RiE74vDhRinNr905MTtjWTHSk5Pdr2vyq4R96GUyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3JSQ+Lp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741179441; c=relaxed/simple;
+	bh=gd5LQxYSNobGONqsfWu3J4CvsQJn9S8T/g4qqw/qSsQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=RxY4iwa48K0cs+EUEVx+9arLEW8DqGGfzXXWNpm+iTNgEkA/8MB8+qNhKWXleCYGFlzHf3UtByoaiDFQz8SD9ooQ7+Gb0GU9r1hsKhoC+hnOlPFCx3ims1W3HOn+YJt+vUDvLjVFNgoYdTi26bbus+iNyJSyiuuHYojzxHAP0wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=o+kurU52; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3JSQ+Lp"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so25282015e9.2;
-        Wed, 05 Mar 2025 04:39:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178369; x=1741783169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H8vlw32DvAtNWgxBRWlDbcwc6lmjNIf3Cq/JQY18DRc=;
-        b=m3JSQ+Lp9Lf7cVsXBW8KneqQybe7RmUl1On8i/nh/VGN94Vs2ejEpIwK4VdtMexA3e
-         FMKkjI9v1DWIOOX2l5U33eEzqqTv1ZQVtOHyWco7CvX3FGFhGXAGkhJkPsDOPXfphhtw
-         XXNSgCOX+EJ8+PlaGwbasgtE4U04tdDpUv4/dx48jPbRHkSC3tY8e6Gg/Uh2OJG9Py5e
-         uBSeRsknlh1IsA0tDcim2dhZghAbLRcmLfk58nMD3IxTRQkbngVWt7ChdiD57x8Kfuo6
-         XqNG9tLl/ZNkd3m3hc2B63hR36RBDqnuuOoewK6Om9oAjIwKlzg8t2iB2+bSdynai1+P
-         uFow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178369; x=1741783169;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H8vlw32DvAtNWgxBRWlDbcwc6lmjNIf3Cq/JQY18DRc=;
-        b=JVlRN1s4LbmCF0kRbBgduoG0jh78tJypDVMZBUL86nBt+2Z/b/ecxEC0AwtaDbEynC
-         iar3YIARHK4NZOnwQ3P0N3GuU2EXHflyzt6J/qpe1BfIwm9iUFWD6BpPQFJEPRH/jUYe
-         GdZ7RT2wnHqvrVh50rfO5OqZCN806CscnU4NoH1wVg98DG12PKtnko6sWyibV7L958Sy
-         rXb6ZXZOFpbvfHZZXW8JyYI/BjcaqMEp/rUX3tlnXMtjMX0Pm2JEZdGHNc/GCzpBB9Uo
-         2FkDbADmAZfCUYnMvauZ2acm6riJuitjW7Gbnljf9pH568q+aHvrBepINAKj+1XCAyhp
-         IdhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9KNc/QWtNw1fQL0SY5u6DgFSIRsdOuHTq14Bh59u2r8VMvhp2viLTHE2CEtfz0oc5F0QY6WlZZ78UnFk=@vger.kernel.org, AJvYcCWjxApT0tZgHtjlEjp1n7LcGXkbkU2AYnWQj7ReAhHnR89C7LM2AIr9oG9qhbiFhXggLzhahD+gVjdQV8IjQcpBSuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzxXHcL/cs5k/lvemu9CK97oRvaBsNqPmL2NZGNGwYqbGh14zu
-	RBW0wvtsGWDoaPBgKCQfr4HtEjsHi0V2fsv5mrk3vHENKuxMF4ds
-X-Gm-Gg: ASbGnctQJFdiADZXA2LkY8BTvKCDY3OZqwhlhJhXZaT0uZcJByeKmjmuiiKiS5l4zb9
-	HcfRpsaC906OnuyciI8Pe6Lzo9TNbGxKJa+JaRz77ThzSTOycnnkHPmAYPZLDpljRQld1aJJ+Im
-	/IWahOHqJEK/s29wPN7SGXt84Z69N0VgY8JBbqWHGYoJC2gD5CVe4tl/RCrRHuNF5Zjj1UHQwH7
-	EZ7JhYnFi5QVZ0hoL5QY8jKFMKrb4PzPpneT7aFbhutYh2szWqLDn8DJPa2cUlbFMgnc05CS06f
-	qkJqId2KXqwP3BzfktBm9oDHGaXIZ2NX6hmLEbZOA5gtNn3Quhn+7U8mTTzukWJlKZWhfOw=
-X-Google-Smtp-Source: AGHT+IHZR7ob/jujrmswE0cAQJxf7IbgGSFq65obOJ+avq/wEO0vXFB9U/oe4/s6WYfLXyLxKo4eLQ==
-X-Received: by 2002:a05:600c:1d0b:b0:43b:c0fa:f9eb with SMTP id 5b1f17b1804b1-43bd29a12e7mr21232735e9.17.1741178368906;
-        Wed, 05 Mar 2025 04:39:28 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:8fc2:ef5:605a:34d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426d32dsm16851495e9.7.2025.03.05.04.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 04:39:28 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] reset: Add USB2PHY control driver for Renesas RZ/V2H(P)
-Date: Wed,  5 Mar 2025 12:39:14 +0000
-Message-ID: <20250305123915.341589-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o+kurU52"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250305125717epoutp02878fd5ce20ee2a3c0246b1289497c9cf~p6XkWpskn2119321193epoutp022
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Mar 2025 12:57:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250305125717epoutp02878fd5ce20ee2a3c0246b1289497c9cf~p6XkWpskn2119321193epoutp022
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741179437;
+	bh=gd5LQxYSNobGONqsfWu3J4CvsQJn9S8T/g4qqw/qSsQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=o+kurU52q76p8064cA/1np7LRzyqDOvytsjGSNEDr0eAzDZtCgr0kyQJc58YJ4liv
+	 ClOOHf9oBdHbEAjf6+XDjOVdPczNytOQBXJafOXSE9hyYTSCW2Lw8Buc02nuNwq8V5
+	 pkDnpUHIJ7w9Fefjxy5j1AlCRLwBDooBLLDrXx0A=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250305125716epcas5p322c88e6ed91a5222a4693b12e9234e1b~p6XjsaVpt1709517095epcas5p3K;
+	Wed,  5 Mar 2025 12:57:16 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z7CHt4xThz4x9Pp; Wed,  5 Mar
+	2025 12:57:14 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.F8.19933.A2A48C76; Wed,  5 Mar 2025 21:57:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250305090444epcas5p4acfc664ce6db58fb94e563626d6dba98~p3MhwhOu-1500615006epcas5p4c;
+	Wed,  5 Mar 2025 09:04:44 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250305090444epsmtrp18b28e75d93a81114b71ebefec3d4f9cf~p3MhviHD91135411354epsmtrp1b;
+	Wed,  5 Mar 2025 09:04:44 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-30-67c84a2aac7e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	13.5D.23488.CA318C76; Wed,  5 Mar 2025 18:04:44 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250305090440epsmtip2174139d7bcd7df32de34daa127ba8ad4~p3MemAZKR0782607826epsmtip2M;
+	Wed,  5 Mar 2025 09:04:40 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: =?iso-8859-2?Q?'Krzysztof_Wilczy=F1ski'?= <kw@linux.com>
+Cc: "'Geert Uytterhoeven'" <geert@linux-m68k.org>, "'Fan Ni'"
+	<nifan.cxl@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <manivannan.sadhasivam@linaro.org>,
+	<lpieralisi@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+	<jingoohan1@gmail.com>, <Jonathan.Cameron@huawei.com>,
+	<a.manzanares@samsung.com>, <pankaj.dubey@samsung.com>, <cassel@kernel.org>,
+	<18255117159@163.com>, <xueshuai@linux.alibaba.com>,
+	<renyu.zj@linux.alibaba.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	"'Yoshihiro Shimoda'" <yoshihiro.shimoda.uh@renesas.com>, "'Linux-Renesas'"
+	<linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <20250305074447.GC847772@rocinante>
+Subject: RE: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Date: Wed, 5 Mar 2025 14:34:39 +0530
+Message-ID: <065b01db8dad$a2f0a4a0$e8d1ede0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJfby7SiE0e/TbLvAHLJIl0P7SXpgHiQm8TAh/83CQB4BrFQwHvpDbsAQ7NFRkCkbJgbAIxNbulA4ETfrmx01XmsA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxiHOb39glhyBVwPbNp6ZVsGK7ZYusOK25IpuWE6URaXuBjWwV2L
+	lLbrh+IyNpQGsKKgwwkNNoLAgDkSyoeglBFAunVDIzY1E0ioAhEdHxsdGQHGWloW/nvOOc+b
+	9/zOycvGwr5lRbGzVHpKq5IpCWYIvaP/jdcFMSk/y4WuoteQs2iZha7270S1ZxVosKwBQ1OP
+	bTTU4KlkoaZqFxPllywzkPWpi4Ee3q5ioiGLnYmc7c101D49S0PGFSMdjRnPMVDdowc0tNph
+	A6im3cNC1QXTAK11d7KQcTQBzS21MtHftgXme1zyRkM5g7xpuQnILvMYi7xuNZDGgRkGaW06
+	xyRHXd1Msq+/2HvoTiQnnFdpZGvtN+Tib5fo5MW2JkAuWHekhh7LTlJQskxKy6dUGerMLJV8
+	L/FBWvr76QkSoUggSkRvEXyVLIfaS+w7kCpIzlJ60xP8kzKlwbuVKtPpiN3vJGnVBj3FV6h1
+	+r0EpclUasSaOJ0sR2dQyeNUlP5tkVAYn+AVP81WXHw+ztBYYe6v5jlWPhjhmkAwG+JieLb8
+	PjCBEHYYfgfAApsD8y/+AtA084DhXywCuGI9z9woGfdYGT4Ow20A3q7a45eeAVhfeQH4Dpj4
+	m3DCuYL5OAJPgitdM3SfhOEOBuwpLFyXgnEhdE8NrHM4ngIb3W6vxGbT8Wh4uYTrQw6eCIsn
+	tvkMDr4V/lI5QfcxhsfBKYc5wLGwvvoF5r8bHy5N1jP8bU/Apf5x4He48O5SyXoyiP8UDP+Y
+	rwsU7INFNXXAz+Hwub2N5ecoOF1aGGA5bGytCPhKuNhaS/Pzu7DXWUX383Z4xdFM8zcLhReW
+	JwIOB3ZaNngX9Kx2B/xIaBl8yCgDhHlTNvOmbOZN2cybMlwH9CYQSWl0OXJKl6CJV1Gn/v/x
+	DHWOFaxPR0xKJ3CPz8f1ARob9AHIxogIzguHXR7GyZSd/pLSqtO1BiWl6wMJ3ve+hEVty1B7
+	x0ulTxeJE4ViiUQiTtwjERFcTkGXUR6Gy2V6KpuiNJR2o47GDo7Kp30dc1R0Q/K4I1d0emyE
+	3pOnszfM2v7UTEVNb3nloDxi4aBJ6ryXWsH7pCWvjVdhOHyNEdKPVd1yHjXYYew/945/XH7i
+	CzJ0J5dq31GHBnql3+1XaGmT/z7ZP1Q0MCmeH453T5q2CghDifRkReT3Z5KeMLu3xEoOTwfx
+	5lZzR4SDp4rTqphDZVcEGZ6ID+/ao1NeMpSO8i1Pa1vKTdIGtSU7aI2TfRz7Xb57yFrfHmO+
+	Nev66syBzl6hIe3lI8ON0txgR4k1JdfzkeQ8N/pIUNrny8nS5LWg+yj8s0zeoV3Ds4cqtz9r
+	ruH1zN+p+FHwKoF3Z0XHU6WuR9fyjgl/4LUQdJ1CJorBtDrZf2vNyhamBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCSvO4a4RPpBhdeClhcaf/NbjH9sKLF
+	kqYMi2MTVjBbPLu1l8lixZeZ7BarFl5js2jo+c1qsenxNVaLy7vmsFmcnXeczeLK1nUsFltf
+	vmOyaPnTwmJxt6WT1WLp9YtMFn+37WW0WLT1C7vFwuaXjBb/9+xgt2i5Y2rx/udmNouvez+z
+	OYh7LF4xhdVjzbw1jB47Z91l91iwqdSj5chbVo9NqzrZPO5c28PmcehwB1DyoaXHkyvTmTw2
+	L6n3+HZmIotH35ZVjB6fN8kF8EVx2aSk5mSWpRbp2yVwZdz9+Iyl4IVgxd+OGcwNjM/4uhg5
+	OSQETCQefNnE2sXIxSEksJtRYsWNNmaIhKTE54vrmCBsYYmV/56zg9hCAs8YJd59kwex2QR0
+	JJ5c+QNWLyJgI/Fn51sWEJtZ4AGrxNtb1RD125glNu0RBbE5BQwkHj47wghiCwt4Sax8+BCo
+	noODRUBFYlKPOIjJK2Ap0fEErJpXQFDi5MwnUBMNJJYs/MUEYWtLLFv4GupKBYmfT5exQlyQ
+	JfHz8ANGiBpxiaM/e5gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GTDAsO81HK94sTc
+	4tK8dL3k/NxNjOC0oaWxg/Hdtyb9Q4xMHIyHGCU4mJVEeF+fOp4uxJuSWFmVWpQfX1Sak1p8
+	iFGag0VJnHelYUS6kEB6YklqdmpqQWoRTJaJg1OqgYllU+/ZbS7nDVSiWZOsX3psLnPw4Z7B
+	6/n7Wkxx+Z5eToPSL1a523UbltTM9Ahc9E9GM/Cgot3Ta9K1saIVC5+0i1YE+Pk9uiT648AM
+	zS6tnE7lPv4eH9kkjo1KU/52y+94qy8WYXdp14UzXC9N+OIiQg9vLp+k8+Xgik/db1oe5wr+
+	8O04wpuo99dI7drthVvnmTMpKi7w/idjk6GaeHH/09X/pxbctOMO9NsaErRpUr2B0EHlusyN
+	O3S3PQm4x81Q6nVM5FjtMpX2w2wb1JeVrz5r09KVylLzV81cZm+ED1Pvm6m/7rRFWHd2Mx1g
+	mbul7ELg4vPrShIP+Wb8+M695LKs6OInC3flnD3pqsRSnJFoqMVcVJwIAE1XIcOKAwAA
+X-CMS-MailID: 20250305090444epcas5p4acfc664ce6db58fb94e563626d6dba98
+X-Msg-Generator: CA
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250221132035epcas5p47221a5198df9bf86020abcefdfded789
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+	<CGME20250221132035epcas5p47221a5198df9bf86020abcefdfded789@epcas5p4.samsung.com>
+	<20250221131548.59616-4-shradha.t@samsung.com> <Z8XrYxP_pZr6tFU8@debian>
+	<20250303194647.GC1552306@rocinante>
+	<CAMuHMdWens9ZZrjNH1Bd2AN3PJEP1KSUGdiJcBCt0uPGH_GiiA@mail.gmail.com>
+	<20250304154638.GB2310180@rocinante>
+	<061201db8d25$dd1e2bd0$975a8370$@samsung.com>
+	<20250305074447.GC847772@rocinante>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add support for the USB2PHY control driver on the Renesas RZ/V2H(P) SoC.
-Make the driver handle reset and power-down operations for the USB2PHY.
 
-Pass OF data to support future SoCs with similar USB2PHY hardware but
-different register configurations. Define device-specific initialization
-values and control register settings in OF data to ensure flexibility
-for upcoming SoCs.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/reset/Kconfig                    |   7 +
- drivers/reset/Makefile                   |   1 +
- drivers/reset/reset-rzv2h-usb2phy-ctrl.c | 223 +++++++++++++++++++++++
- 3 files changed, 231 insertions(+)
- create mode 100644 drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 5b3abb6db248..bac08dae8905 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -218,6 +218,13 @@ config RESET_RZG2L_USBPHY_CTRL
- 	  Support for USBPHY Control found on RZ/G2L family. It mainly
- 	  controls reset and power down of the USB/PHY.
- 
-+config RESET_RZV2H_USB2PHY_CTRL
-+	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY control driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  Support for USB2PHY Control found on the RZ/V2H(P) SoC (and similar SoCs).
-+	  It mainly controls reset and power down of the USB2 PHY.
-+
- config RESET_SCMI
- 	tristate "Reset driver controlled via ARM SCMI interface"
- 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 677c4d1e2632..3cb3df018cf8 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
- obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
-+obj-$(CONFIG_RESET_RZV2H_USB2PHY_CTRL) += reset-rzv2h-usb2phy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
-diff --git a/drivers/reset/reset-rzv2h-usb2phy-ctrl.c b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-new file mode 100644
-index 000000000000..a6daeaf37e1c
---- /dev/null
-+++ b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) USB2PHY control driver
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/reset-controller.h>
-+
-+struct rzv2h_usb2phy_regval {
-+	u16 reg;
-+	u16 val;
-+};
-+
-+struct rzv2h_usb2phy_data {
-+	const struct rzv2h_usb2phy_regval *init_vals;
-+	unsigned int init_val_count;
-+
-+	u16 ctrl_reg;
-+	u16 ctrl_assert_val;
-+	u16 ctrl_deassert_val;
-+	u16 ctrl_status_bits;
-+	u16 ctrl_release_val;
-+
-+	u16 ctrl2_reg;
-+	u16 ctrl2_acquire_val;
-+	u16 ctrl2_release_val;
-+};
-+
-+struct rzv2h_usb2phy_ctrl_priv {
-+	const struct rzv2h_usb2phy_data *data;
-+	void __iomem *base;
-+	struct device *dev;
-+	struct reset_controller_dev rcdev;
-+	spinlock_t lock;
-+};
-+
-+#define rcdev_to_priv(x) container_of(x, struct rzv2h_usb2phy_ctrl_priv, rcdev)
-+
-+static int rzv2h_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->ctrl2_acquire_val, priv->base + data->ctrl2_reg);
-+		writel(data->ctrl_assert_val, priv->base + data->ctrl_reg);
-+	}
-+
-+	/* The reset line needs to be asserted for more than 10 microseconds. */
-+	udelay(11);
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_ctrl_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->ctrl_deassert_val, priv->base + data->ctrl_reg);
-+		writel(data->ctrl2_release_val, priv->base + data->ctrl2_reg);
-+		writel(data->ctrl_release_val, priv->base + data->ctrl_reg);
-+	}
-+
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	struct device *dev = priv->dev;
-+	int ret;
-+	u32 reg;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock)
-+		reg = readl(priv->base + priv->data->ctrl_reg);
-+
-+	pm_runtime_put(dev);
-+
-+	return (reg & priv->data->ctrl_status_bits) == priv->data->ctrl_status_bits;
-+}
-+
-+static const struct reset_control_ops rzv2h_usbphy_ctrl_reset_ops = {
-+	.assert = rzv2h_usbphy_ctrl_assert,
-+	.deassert = rzv2h_usbphy_ctrl_deassert,
-+	.status = rzv2h_usbphy_ctrl_status,
-+};
-+
-+static int rzv2h_reset_of_xlate(struct reset_controller_dev *rcdev,
-+				const struct of_phandle_args *reset_spec)
-+{
-+	/* No special handling needed, we have only one reset line per device */
-+	return 0;
-+}
-+
-+static int rzv2h_usb2phy_ctrl_probe(struct platform_device *pdev)
-+{
-+	const struct rzv2h_usb2phy_data *data;
-+	struct rzv2h_usb2phy_ctrl_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *rstc;
-+	int error;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "failed to match device\n");
-+
-+	priv->data = data;
-+	priv->dev = dev;
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
-+	if (IS_ERR(rstc))
-+		return dev_err_probe(dev, PTR_ERR(rstc),
-+				     "failed to get deasserted reset\n");
-+
-+	spin_lock_init(&priv->lock);
-+	dev_set_drvdata(dev, priv);
-+
-+	error = devm_pm_runtime_enable(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "Failed to enable pm_runtime\n");
-+
-+	error = pm_runtime_resume_and_get(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "pm_runtime_resume_and_get failed\n");
-+
-+	for (unsigned int i = 0; i < data->init_val_count; i++)
-+		writel(data->init_vals[i].val, priv->base + data->init_vals[i].reg);
-+
-+	pm_runtime_put(dev);
-+
-+	priv->rcdev.ops = &rzv2h_usbphy_ctrl_reset_ops;
-+	priv->rcdev.of_reset_n_cells = 0;
-+	priv->rcdev.nr_resets = 1;
-+	priv->rcdev.of_xlate = rzv2h_reset_of_xlate;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct rzv2h_usb2phy_regval rzv2h_init_vals[] = {
-+	{ .reg = 0xc10, .val = 0x67c },
-+	{ .reg = 0xc14, .val = 0x1f },
-+	{ .reg = 0x600, .val = 0x909 },
-+};
-+
-+static const struct rzv2h_usb2phy_data rzv2h_of_data = {
-+	.init_vals = rzv2h_init_vals,
-+	.init_val_count = ARRAY_SIZE(rzv2h_init_vals),
-+	.ctrl_reg = 0,
-+	.ctrl_assert_val = 0x206,
-+	.ctrl_status_bits = BIT(2),
-+	.ctrl_deassert_val = 0x200,
-+	.ctrl_release_val = 0x0,
-+	.ctrl2_reg = 0xb04,
-+	.ctrl2_acquire_val = 0x303,
-+	.ctrl2_release_val = 0x3,
-+};
-+
-+static const struct of_device_id rzv2h_usb2phy_ctrl_match_table[] = {
-+	{ .compatible = "renesas,r9a09g057-usb2phy-ctrl", .data = &rzv2h_of_data },
-+	{ /* Sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_ctrl_match_table);
-+
-+static struct platform_driver rzv2h_usb2phy_ctrl_driver = {
-+	.driver = {
-+		.name		= "rzv2h_usb2phy_ctrl",
-+		.of_match_table	= rzv2h_usb2phy_ctrl_match_table,
-+	},
-+	.probe = rzv2h_usb2phy_ctrl_probe,
-+};
-+module_platform_driver(rzv2h_usb2phy_ctrl_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/V2H(P) USB2PHY Control");
--- 
-2.43.0
-
+> -----Original Message-----
+> From: 'Krzysztof Wilczy=F1ski'=20<kw=40linux.com>=0D=0A>=20Sent:=2005=20M=
+arch=202025=2013:15=0D=0A>=20To:=20Shradha=20Todi=20<shradha.t=40samsung.co=
+m>=0D=0A>=20Cc:=20'Geert=20Uytterhoeven'=20<geert=40linux-m68k.org>;=20'Fan=
+=20Ni'=20<nifan.cxl=40gmail.com>;=20linux-kernel=40vger.kernel.org;=20linux=
+-=0D=0A>=20pci=40vger.kernel.org;=20linux-arm-kernel=40lists.infradead.org;=
+=20linux-perf-users=40vger.kernel.org;=20manivannan.sadhasivam=40linaro.org=
+;=0D=0A>=20lpieralisi=40kernel.org;=20robh=40kernel.org;=20bhelgaas=40googl=
+e.com;=20jingoohan1=40gmail.com;=20Jonathan.Cameron=40huawei.com;=0D=0A>=20=
+a.manzanares=40samsung.com;=20pankaj.dubey=40samsung.com;=20cassel=40kernel=
+.org;=2018255117159=40163.com;=0D=0A>=20xueshuai=40linux.alibaba.com;=20ren=
+yu.zj=40linux.alibaba.com;=20will=40kernel.org;=20mark.rutland=40arm.com;=
+=20'Yoshihiro=20Shimoda'=0D=0A>=20<yoshihiro.shimoda.uh=40renesas.com>;=20'=
+Linux-Renesas'=20<linux-renesas-soc=40vger.kernel.org>=0D=0A>=20Subject:=20=
+Re:=20=5BPATCH=20v7=203/5=5D=20Add=20debugfs=20based=20silicon=20debug=20su=
+pport=20in=20DWC=0D=0A>=20=0D=0A>=20Hello,=0D=0A>=20=0D=0A>=20>=20I=20think=
+=20we=20shouldn't=20move=20the=20log=20level=20to=20be=20a=20WARN.=20I=20be=
+lieve=20many=0D=0A>=20>=20controllers=20might=20not=20support=20RAS=20DES=
+=20feature=20in=20their=20design=20and=0D=0A>=20>=20giving=20a=20warn=20dum=
+p=20would=20draw=20unnecessary=20attention.=0D=0A>=20=0D=0A>=20There=20will=
+=20be=20no=20backtrack=20printed=20with=20neither=20dev_err()=20nor=20dev_w=
+arn(),=20which=20is=20what=20we=20were=20using=20here.=20=20Using=20dev_WAR=
+N()=20or=0D=0A>=20the=20WARN()=20macro=20directly=20would=20be=20an=20overk=
+ill=20in=20this=20case,=20indeed.=0D=0A>=20=0D=0A=0D=0AOh=20sorry,=20I=20th=
+ought=20we=20were=20talking=20about=20WARN()=20here.=0D=0A=0D=0A>=20>=20My=
+=20opinion=20is=20to=20silently=20let=20it=20fail=20unless=20the=20user=20i=
+s=20actually=0D=0A>=20>=20interested=20in=20getting=20the=20RAS=20DES=20fea=
+ture=20up.=0D=0A>=20=0D=0A>=20I=20think,=20what=20we=20have=20there=20now=
+=20is=20fine.=20=20We=20don't=20error=20on=20the=20lack=20of=20RAS=20DES=20=
+capability=20when=20the=20platform=20does=20not=20support=20it,=0D=0Aand=0D=
+=0A>=20only=20return=20an=20error=20following=20a=20memory=20allocation=20f=
+ailure,=20which=20should=20ideally=20never=20happen.=0D=0A>=20=0D=0A>=20Tha=
+t=20said,=20have=20a=20look=20at=20the=20following:=0D=0A>=20=0D=0A>=20=20=
+=20https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=
+=3Dcontroller/dwc=0D=0A>=20=0D=0A>=20This=20is=20how=20the=20code=20looks=
+=20like=20at=20the=20moment.=0D=0A>=20=0D=0A>=20We=20can=20still=20move=20i=
+t=20to=20dev_dbg(),=20so=20basically=20suppress=20any=20errors=20or=20warni=
+ngs=20from=20being=20printed=20outside=20of=20the=20debug=20log=20level,=0D=
+=0Aif=20you=0D=0A>=20think=20it=20would=20be=20better.=0D=0A>=20=0D=0A=0D=
+=0ANo,=20the=20current=20version=20looks=20perfect.=20Thanks=21=0D=0A=0D=0A=
+>=20Thank=20you=21=0D=0A>=20=0D=0A>=20=09Krzysztof=0D=0A=0D=0A
