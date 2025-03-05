@@ -1,32 +1,33 @@
 Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175A024A057
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1753B24888C
 	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Mar 2025 13:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741181677; cv=none; b=cwpyD1KnG5Ke3PjiZ2KyPQK1oPupYUCLo7jYNixAn94rbGbyi9uUhkV3pJSdAU4zaSBWXUiMP6YcAIZimzLFhpT6sKZDQGQAcmrIqj5/c5Mtt/yjMO/1AlPMhTcerhl5RIA6cIW1qMvaMZmdQxLWKreklNyHyiSpI+EtFPhKFgg=
+	t=1741181677; cv=none; b=CUNyvlnHncW+lFLa3XaI1XYwuhwtK1+af8oNz75KZtFpnM9UjWQziJkZo3PWpkgR1hvIAFS8SMDMGlLcIZBLV2ZmmXN2RDC1cvHRbMigVC1j/R0nX0S5J4wwlseT5wXJH1M/OSjsW3XO1+9ZQ3RuxxARERsaa/MJqPczHdkKgOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741181677; c=relaxed/simple;
-	bh=hLoRlqyS+e+uGVZDKx7s0osOIjH8n6sXEfL9c8+Q+ck=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uCAQRqTQHCcph58Qp5Cf3gpgTW5+grDWEqBS3zizOXj3MKOX4RAXOY2JDTqz8IKT0/cKUEX630EmotEleax0DB7coI7rWDdVx/HgoOmZjAj5Ve7UO3fEIb77Dew+YQEHnoO988W82IJ5bXnB7ly6W83RwChQsSO8peaV9RcybI0=
+	bh=EFn8x84y+ssiUEmY8pmGqS6SBB2MjzD1MWR5Rd4bSQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P0vUKvKDhJ9ApucapwYGzGfdYfqfcjQq+jStpTgc7+W1xymWz7Hb4LVNAv9EHWtcWKwZEEMsp//DybBo+F+5t9sm58ultXPB9RA+sotnF546SjFs15A8bXwp8ki45JDGevbuyAX7wFC7Y5ZoAmuUxLXq1nRKXwKwn2aMdfNJiZ0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Z7D6v36XNz4x3G1
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Mar 2025 14:34:31 +0100 (CET)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Z7D6t4NsXz4x2sn
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Mar 2025 14:34:30 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fba:8cad:3d23:9db3])
-	by albert.telenet-ops.be with cmsmtp
-	id M1aL2E00D0exi8p061aLDL; Wed, 05 Mar 2025 14:34:23 +0100
+	by xavier.telenet-ops.be with cmsmtp
+	id M1aJ2E00J0exi8p011aJln; Wed, 05 Mar 2025 14:34:22 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tposn-0000000Cv3p-0vwh;
+	id 1tposn-0000000Cv42-1LkA;
 	Wed, 05 Mar 2025 14:34:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tpot8-00000008woK-16wH;
+	id 1tpot8-00000008woZ-1nvb;
 	Wed, 05 Mar 2025 14:34:18 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -42,10 +43,12 @@ Cc: linux-scsi@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/7] scsi: ufs: renesas: Add support for R-Car S4-8 ES1.2
-Date: Wed,  5 Mar 2025 14:34:08 +0100
-Message-ID: <cover.1741179611.git.geert+renesas@glider.be>
+Subject: [PATCH v3 4/7] scsi: ufs: renesas: Remove register control helper function
+Date: Wed,  5 Mar 2025 14:34:12 +0100
+Message-ID: <69500e4c18be1ca1de360f9e797e282ffef04004.1741179611.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1741179611.git.geert+renesas@glider.be>
+References: <cover.1741179611.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -54,78 +57,164 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Initialization of the UFS controller on R-Car S4-8 ES1.0 requires only
-static values.  However, other UFS controller variants (R-Car S4-8 ES 1.2)
-require dynamic values, like those obtained from E-FUSE, and downloading
-firmware.
+After refactoring the code, ufs_renesas_reg_control() is no longer
+needed, because all operations are simple and can be called directly.
+Remove the ufs_renesas_reg_control() helper function, and call udelay()
+directly.
 
-Hence this patch series refactors the initialization code to prepare for
-this, and adds support for the UFS controller on R-Car S4-8 ES1.2.
-The accompanying DTS change is available at [1].
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - No changes,
 
-Changes compared to v2[2]:
-  - Take over from Shimoda-san,
-  - New patches 1/7 (DT bindings update) and 7/7 (actual R-Car S4-8
-    ES1.2 support),
-  - Keep MAX_INDEX check, as it is still useful,
-  - Prefix data parameters of ufs_renesas_write_d0_d4() by "data_", for
-    consistency,
-  - Document kernel size impact of switching to init code,
-  - Rename ufs_renesas_init_ufshc() to ufs_renesas_init_step1_to_3(),
-  - Extract ufs_renesas_init_step4_to_6(),
-  - Move ufs_renesas_write_phy_10ad_10af() just before its sole user,
-
-Changes compared to v1[3]:
-  - Postpone removing the *_INDEX* enums until all users are gone,
-  - Combine declaration and initialization of ufs_renesas_init_param,
-  - Drop "_param" from ufs_renesas_*() helper function names.
-  - Move MODE_READ handling after MODE_POLL handling,
-  - Move ufs_renesas_read() after ufs_renesas_poll(),
+v2:
   - Remove not just MODE_WAIT, but all of the struct-based control.
+---
+ drivers/ufs/host/ufs-renesas.c | 102 +++++----------------------------
+ 1 file changed, 14 insertions(+), 88 deletions(-)
 
-This has been tested on:
-  - Renesas Spider with R-Car S4-8 ES1.0 (broken before/after),
-  - Renesas S4 Starter Kit with R-Car S4-8 ES1.2 (works after).
-
-Thanks for your comments!
-
-[1] "[PATCH] arm64: dts: renesas: r8a779f4: Add UFS tuning parameters in
-     E-FUSE"
-    https://lore.kernel.org/3e4fca228eb049d54a1ae520104558505dbdf803.1741179629.git.geert+renesas@glider.be
-[2] "[PATCH v2 0/5] scsi: ufs: renesas: Refactor code for other UFS
-     controller"
-    https://lore.kernel.org/20240709023550.1750333-1-yoshihiro.shimoda.uh@renesas.com
-[3] "[PATCH 0/5] scsi: ufs: renesas: Refactor code for other UFS
-     controller"
-    https://lore.kernel.org/20240708120931.1703956-1-yoshihiro.shimoda.uh@renesas.com
-
-Geert Uytterhoeven (1):
-  dt-bindings: ufs: renesas,ufs: Add calibration data
-
-Yoshihiro Shimoda (6):
-  scsi: ufs: renesas: Replace init data by init code
-  scsi: ufs: renesas: Add register read to remove save/set/restore
-  scsi: ufs: renesas: Remove register control helper function
-  scsi: ufs: renesas: Refactor 0x10ad/0x10af PHY settings
-  scsi: ufs: renesas: Add reusable functions
-  scsi: ufs: renesas: Add initialization code for R-Car S4-8 ES1.2
-
- .../devicetree/bindings/ufs/renesas,ufs.yaml  |  12 +
- drivers/ufs/host/ufs-renesas.c                | 723 +++++++++++-------
- 2 files changed, 445 insertions(+), 290 deletions(-)
-
+diff --git a/drivers/ufs/host/ufs-renesas.c b/drivers/ufs/host/ufs-renesas.c
+index 100186a2e1807445..59e35ec4955f19af 100644
+--- a/drivers/ufs/host/ufs-renesas.c
++++ b/drivers/ufs/host/ufs-renesas.c
+@@ -23,106 +23,32 @@ struct ufs_renesas_priv {
+ 	bool initialized;	/* The hardware needs initialization once */
+ };
+ 
+-enum ufs_renesas_init_param_mode {
+-	MODE_POLL,
+-	MODE_READ,
+-	MODE_WAIT,
+-	MODE_WRITE,
+-};
+-
+-struct ufs_renesas_init_param {
+-	enum ufs_renesas_init_param_mode mode;
+-	u32 reg;
+-	union {
+-		u32 expected;
+-		u32 delay_us;
+-		u32 val;
+-	} u;
+-	u32 mask;
+-	u32 index;
+-};
+-
+ static void ufs_renesas_dbg_register_dump(struct ufs_hba *hba)
+ {
+ 	ufshcd_dump_regs(hba, 0xc0, 0x40, "regs: 0xc0 + ");
+ }
+ 
+-static u32 ufs_renesas_reg_control(struct ufs_hba *hba,
+-				   const struct ufs_renesas_init_param *p)
+-{
+-	u32 val = 0;
+-	int ret;
+-
+-	switch (p->mode) {
+-	case MODE_POLL:
+-		ret = readl_poll_timeout_atomic(hba->mmio_base + p->reg,
+-						val,
+-						(val & p->mask) == p->u.expected,
+-						10, 1000);
+-		if (ret)
+-			dev_err(hba->dev, "%s: poll failed %d (%08x, %08x, %08x)\n",
+-				__func__, ret, val, p->mask, p->u.expected);
+-		break;
+-	case MODE_READ:
+-		val = ufshcd_readl(hba, p->reg);
+-		break;
+-	case MODE_WAIT:
+-		if (p->u.delay_us > 1000)
+-			mdelay(DIV_ROUND_UP(p->u.delay_us, 1000));
+-		else
+-			udelay(p->u.delay_us);
+-		break;
+-	case MODE_WRITE:
+-		ufshcd_writel(hba, p->u.val, p->reg);
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	return val;
+-}
+-
+ static void ufs_renesas_poll(struct ufs_hba *hba, u32 reg, u32 expected, u32 mask)
+ {
+-	struct ufs_renesas_init_param param = {
+-		.mode = MODE_POLL,
+-		.reg = reg,
+-		.u.expected = expected,
+-		.mask = mask,
+-	};
+-
+-	ufs_renesas_reg_control(hba, &param);
++	int ret;
++	u32 val;
++
++	ret = readl_poll_timeout_atomic(hba->mmio_base + reg,
++					val, (val & mask) == expected,
++					10, 1000);
++	if (ret)
++		dev_err(hba->dev, "%s: poll failed %d (%08x, %08x, %08x)\n",
++			__func__, ret, val, mask, expected);
+ }
+ 
+ static u32 ufs_renesas_read(struct ufs_hba *hba, u32 reg)
+ {
+-	struct ufs_renesas_init_param param = {
+-		.mode = MODE_READ,
+-		.reg = reg,
+-	};
+-
+-	return ufs_renesas_reg_control(hba, &param);
+-}
+-
+-static void ufs_renesas_wait(struct ufs_hba *hba, u32 delay_us)
+-{
+-	struct ufs_renesas_init_param param = {
+-		.mode = MODE_WAIT,
+-		.u.delay_us = delay_us,
+-	};
+-
+-	ufs_renesas_reg_control(hba, &param);
++	return ufshcd_readl(hba, reg);
+ }
+ 
+ static void ufs_renesas_write(struct ufs_hba *hba, u32 reg, u32 value)
+ {
+-	struct ufs_renesas_init_param param = {
+-		.mode = MODE_WRITE,
+-		.reg = reg,
+-		.u.val = value,
+-	};
+-
+-	ufs_renesas_reg_control(hba, &param);
++	ufshcd_writel(hba, value, reg);
+ }
+ 
+ static void ufs_renesas_write_d0_d4(struct ufs_hba *hba, u32 data_d0, u32 data_d4)
+@@ -216,13 +142,13 @@ static void ufs_renesas_pre_init(struct ufs_hba *hba)
+ 	/* This setting is for SERIES B */
+ 	ufs_renesas_write(hba, 0xc0, 0x49425308);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000104, 0x00000002);
+-	ufs_renesas_wait(hba, 1);
++	udelay(1);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000828, 0x00000200);
+-	ufs_renesas_wait(hba, 1);
++	udelay(1);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000828, 0x00000000);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000104, 0x00000001);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000940, 0x00000001);
+-	ufs_renesas_wait(hba, 1);
++	udelay(1);
+ 	ufs_renesas_write_d0_d4(hba, 0x00000940, 0x00000000);
+ 
+ 	ufs_renesas_write(hba, 0xc0, 0x49425308);
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
