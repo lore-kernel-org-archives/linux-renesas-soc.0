@@ -1,35 +1,36 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5B72505AC
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Mar 2025 11:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3942343C1
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Mar 2025 11:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693003; cv=none; b=JkVzRmF5zBMY6WK9Cu7ctfM7+I1Vx7GoBDwg+phDNkt9W9Y5uMw7v+W3iNIihQMTo0rMeeW04UqM+UOS4HwShEZ8YYhWu0S5bm4Ppi8hH+GWFDmg3FzV+jQm8d0i3XGEkIul1QP80xSzfwRp4O3sm25XIuHkBEdiuhRWiqXAri8=
+	t=1741693003; cv=none; b=T4trOE0/AHKULF9WlhKgAo5GrAYiLy+LU1D7C1UNchAt+IuQ1J/KDPVFkQCdnJpP9MtwGNJXE5gMm2oXwAvL2ceVO7NbNgeBte69YLNPUfFHWwHjlorKa/dWZOfSdB7zReqv4wQYCUn2/PEln/A380Nq6jeAgU+dHS6j4du5fJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741693003; c=relaxed/simple;
-	bh=C/hiu6wFIXhUd5Z9aiAEs6oK3DpFurDR5oV4MyjcXbo=;
+	bh=nNG7Zw4zeZ7XbZHAN3Ba/+CLzh+kp6A2LIKoHYEReoQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KEsZZQmuAeeIMT8+IBiSJ14v701uZBZy3W+pWumMJU2YxWtJ8heNWwLNc42Ko5Ac7FhafltVRZUYEPduv48v9ayBOb8gOOmwxoOlwGt/fPcClmf9sxDzkhCZkoi2aVI24510yvYXzHE4TKvZ3EO3cHGbXUYpjJZPRrjSC9Evf7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=VQWF+wAwhtnFE4+5TdD8Tt2DmW48PCNo1ns8S3sUapqoDE6rkJtvC5unIanlklYxN3K2/TdxierTJrr3eFt1cB/f0ukunWHxaRMLcPLgLsaaibP+cR65rYB0/oe1itS+k1e6W3h1oi6YKNBQp//hODEYJHC4RmxWt07kvWnbxrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: kQCoF+etQya91O/MaQcuYw==
-X-CSE-MsgGUID: HrE8VYqNTxepnJo5F0RKjg==
+X-CSE-ConnectionGUID: 9/3/6sZOQAeIvSCgbshLkQ==
+X-CSE-MsgGUID: Jg7NfX8vTgeoCqNWrlpWCw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Mar 2025 20:36:34 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2025 20:36:40 +0900
 Received: from localhost.localdomain (unknown [10.226.92.227])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 89D2142AA21E;
-	Tue, 11 Mar 2025 20:36:32 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 18BED42AA21B;
+	Tue, 11 Mar 2025 20:36:37 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Mark Brown <broonie@kernel.org>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/9] memory: renesas-rpc-if: Fix RPCIF_DRENR_CDB macro error
-Date: Tue, 11 Mar 2025 11:36:08 +0000
-Message-ID: <20250311113620.4312-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 4/9] memory: renesas-rpc-if: Use devm_reset_control_array_get_exclusive()
+Date: Tue, 11 Mar 2025 11:36:10 +0000
+Message-ID: <20250311113620.4312-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250311113620.4312-1-biju.das.jz@bp.renesas.com>
 References: <20250311113620.4312-1-biju.das.jz@bp.renesas.com>
@@ -41,33 +42,32 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix the below macro error found while moving the reg definitions
-to renesas-rpc-if-regs.h in the later patch.
-
-ERROR: Macros with complex values should be enclosed in parentheses
-#define RPCIF_DRENR_CDB(o)	(u32)((((o) & 0x3) << 30))
+Replace devm_*_get_exclusive()->devm_*_array_get_exclusive() to support
+existing SoCs along with RZ/G3E as RZ/G3E has 2 resets.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v3:
- * New patch.
+v2->v3:
+ * No change.
+v1->v2:
+ * No change.
 ---
  drivers/memory/renesas-rpc-if.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 15b4706aafee..f17a958b097e 100644
+index 20d1a6e4a500..ce03fbd82c7a 100644
 --- a/drivers/memory/renesas-rpc-if.c
 +++ b/drivers/memory/renesas-rpc-if.c
-@@ -56,7 +56,7 @@
- #define RPCIF_DROPR		0x0018	/* R/W */
+@@ -623,7 +623,7 @@ static int rpcif_probe(struct platform_device *pdev)
  
- #define RPCIF_DRENR		0x001C	/* R/W */
--#define RPCIF_DRENR_CDB(o)	(u32)((((o) & 0x3) << 30))
-+#define RPCIF_DRENR_CDB(o)	(((u32)((o) & 0x3) << 30))
- #define RPCIF_DRENR_OCDB(o)	(((o) & 0x3) << 28)
- #define RPCIF_DRENR_ADB(o)	(((o) & 0x3) << 24)
- #define RPCIF_DRENR_OPDB(o)	(((o) & 0x3) << 20)
+ 	rpc->size = resource_size(res);
+ 	rpc->info = of_device_get_match_data(dev);
+-	rpc->rstc = devm_reset_control_get_exclusive(dev, NULL);
++	rpc->rstc = devm_reset_control_array_get_exclusive(dev);
+ 	if (IS_ERR(rpc->rstc))
+ 		return PTR_ERR(rpc->rstc);
+ 
 -- 
 2.43.0
 
