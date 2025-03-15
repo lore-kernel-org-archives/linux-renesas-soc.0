@@ -1,161 +1,131 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F431F4621;
-	Sat, 15 Mar 2025 08:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A54A41
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Mar 2025 09:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742026679; cv=none; b=Qy6pOWvk1OK4qxT2c8900j5vq0hMvp8bf3l5A3lQCHLXYbTELVQX/LkEry8x/hE/Oo0/xyCogc/4jRtXuRfFsWVqjkEkKDnC2ZOWi2qlG1BJuYSzsN4XLM3oDJ1Ekky+SUSSinBUXOCupAKGNa7E5jQC8+tWhS/99xeK/CrdOpc=
+	t=1742029253; cv=none; b=BEQ+rGf2UhWHK9h34Amakyu8ZqaS0rRrlDz5HjMRY5YqU5P5XF2PxEUsC7hN9khn+e/rvCnVDtQR7HuydQ2+TrK5WI+P7rmv6dTiSb1gv6uLJmTWYm6RJovPjciFmk3f0cI8uS6BMSeaL0LDXv/oOeJ140FEi4DUMjRTikBrnx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742026679; c=relaxed/simple;
-	bh=8QBgTkKz3cFJL3hfoL1IzwRU4LKOJHZTLCz8cQgx5DU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SGh3qxTci6eUdIduOfL8yuVZCD6/jKO9w5fAFwx0mK+KUiC273JBMsyr3gHeebEpKTiJPH+r7YQLZhNy5h8Y07WXKnof+m+U+Zr2xzM7ox1ljmy6N/zyRNF8K+JsQKMsLe59Gnm/nqCzxYxt1D7tRUu5MwjFrmzav4xvSYVyLZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: uDpomQj8Q8ulFVlm2oW+UQ==
-X-CSE-MsgGUID: DpuT2HaARgm2SpHw2aRewQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Mar 2025 17:12:54 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.58])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 35A9C41BFA47;
-	Sat, 15 Mar 2025 17:12:49 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	conor+dt@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: magnus.damm@gmail.com,
-	devicetree@vger.kernel.org,
-	john.madieu@gmail.com,
-	rui.zhang@intel.com,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1742029253; c=relaxed/simple;
+	bh=mlpE0AG1lyL0zxlfyH82SbA0+rBvYIjktuoXn2my7U4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uD+3dI2byG4pn6mqbdQk1+LoTUsLp1tmZCYwxSg5n7iFIbnPPmsTIq4Gu8WDQ7gklcbSPHpEv/2hUjgdstg9ojLP0nV4hL7gb2pPzuaE5Tw4KuwgkYATN8emgYA96kX5Hbg6lCSHwYUaeL2iHRAIx6cep7D/i93x6aIvQYN05kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SSP9D8vc; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SSP9D8vc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=MGev
+	xMFs+AEeVD/g7S+xfiPUbsNw/tIHCnRkwS+P0V4=; b=SSP9D8vc5MsumtPvxp/d
+	CVUk8n5Wde3V8zMT88IWNmIwVlaH7DQCxkDXU4uNeoTi/PNa5hjH4lUIAWxgZM33
+	Q4w7+EPRwO+CSxj80Znxm0sk5tYB/rWOWFxfmarqpxm0iG+7oIvRRcjA1QTMYFX5
+	YrGz5y9PXi8rg9PYKQ7b05qTm8tbBTVqIEh9YdGAwoBIfFM/Cryj3Ez6hbtfCtsM
+	qju6xL3NONpDDmPaj79L1QoapOGiN7sUDs5Jli9ec+Pb2u1mllu8kSfTVGz3y6hP
+	ehiV7pGqhWwNTBSWO44c7oiXaiPUY0dTS9s7r+SdCREB2nlcTnxlf5hcC+KHijqz
+	WQ==
+Received: (qmail 2329603 invoked from network); 15 Mar 2025 10:00:37 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Mar 2025 10:00:37 +0100
+X-UD-Smtp-Session: l3s3148p1@NA/iyV0wwKkujnuL
+Date: Sat, 15 Mar 2025 10:00:37 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Phong Hoang <phong.hoang.wz@renesas.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Check bridge connection
+ failure
+Message-ID: <Z9VBtTzNgDh_QsxX@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Doug Anderson <dianders@chromium.org>,
 	linux-renesas-soc@vger.kernel.org,
-	sboyd@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v3 4/6] thermal: renesas: rzg3e: Add safety check when reading temperature
-Date: Sat, 15 Mar 2025 09:12:14 +0100
-Message-ID: <20250315081225.92118-5-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
-References: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
+	Phong Hoang <phong.hoang.wz@renesas.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+References: <20250314224202.13128-2-wsa+renesas@sang-engineering.com>
+ <CAD=FV=VBHfg+Fgp27ieYVhd0U8kDp2E0ATW+=ueM8EBNOYMoSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+4ueQPdkORSXQcLW"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=VBHfg+Fgp27ieYVhd0U8kDp2E0ATW+=ueM8EBNOYMoSg@mail.gmail.com>
 
-Becaure reading temperature may fail, add mechanism to panic in case
-reading the temperature fails after a given number of trials. This is due
-to the thermal core disabling the thermal zone device after a couple of
-consecutive attempt failures.
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
-v1 -> v2: no changes
-v2 -> v3: no changes
+--+4ueQPdkORSXQcLW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/thermal/renesas/rzg3e_thermal.c | 38 +++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+Hi Doug,
 
-diff --git a/drivers/thermal/renesas/rzg3e_thermal.c b/drivers/thermal/renesas/rzg3e_thermal.c
-index be9e1d118a67..ff80d1b517c8 100644
---- a/drivers/thermal/renesas/rzg3e_thermal.c
-+++ b/drivers/thermal/renesas/rzg3e_thermal.c
-@@ -83,6 +83,19 @@
- #define TSU_TIMEOUT_US		10000
- #define TSU_MIN_CLOCK_RATE	24000000
- 
-+/*
-+ * Number of consecutive errors before shutdown
-+ *
-+ * While simulating thermal sensor failure, we have noticed that the thermal
-+ * core tries to fetch the temperature a couple times and then disable the
-+ * thermal zone device. In case of extreme heat, this might lead to SoC
-+ * destruction.
-+ *
-+ * Let's prevent this by limitating the number of failure and panic in
-+ * case it happens.
-+ */
-+#define MAX_TEMP_READ_ERRORS       10
-+
- /**
-  * struct rzg3e_thermal_priv - RZ/G3E thermal private data structure
-  * @base: TSU base address
-@@ -93,6 +106,7 @@
-  * @conv_complete: ADC conversion completion
-  * @reg_lock: protect shared register access
-  * @cached_temp: last computed temperature (milliCelsius)
-+ * @error_count: Track consecutive errors
-  * @trmval: trim (calibration) values
-  */
- struct rzg3e_thermal_priv {
-@@ -104,6 +118,7 @@ struct rzg3e_thermal_priv {
- 	struct completion conv_complete;
- 	spinlock_t reg_lock;
- 	int cached_temp;
-+	atomic_t error_count;
- 	u32 trmval[2];
- };
- 
-@@ -200,6 +215,7 @@ static irqreturn_t rzg3e_thermal_adc_irq(int irq, void *dev_id)
- static int rzg3e_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
- {
- 	struct rzg3e_thermal_priv *priv = thermal_zone_device_priv(zone);
-+	int error_count;
- 	u32 val;
- 	int ret;
- 
-@@ -217,7 +233,7 @@ static int rzg3e_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
- 					TSU_POLL_DELAY_US, TSU_TIMEOUT_US);
- 	if (ret) {
- 		dev_err(priv->dev, "ADC conversion timed out\n");
--		return ret;
-+		goto handle_error;
- 	}
- 
- 	/* Start conversion */
-@@ -225,15 +241,33 @@ static int rzg3e_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
- 
- 	if (!wait_for_completion_timeout(&priv->conv_complete,
- 					 msecs_to_jiffies(100))) {
-+		ret = -ETIMEDOUT;
- 		dev_err(priv->dev, "ADC conversion completion timeout\n");
--		return -ETIMEDOUT;
-+		goto handle_error;
- 	}
- 
- 	scoped_guard(spinlock_irqsave, &priv->reg_lock) {
- 		*temp = priv->cached_temp;
- 	}
- 
-+	/* Reset error count on successful read */
-+	atomic_set(&priv->error_count, 0);
- 	return 0;
-+
-+handle_error:
-+	error_count = atomic_inc_return(&priv->error_count);
-+	if (error_count >= MAX_TEMP_READ_ERRORS) {
-+		dev_emerg(priv->dev,
-+			"Failed to read temperature %d times, initiating emergency shutdown\n",
-+			error_count);
-+		mdelay(100);
-+		panic("Temperature sensor failure - emergency shutdown");
-+	}
-+
-+	dev_err(priv->dev, "Failed to read temperature (error %d), attempt %d/%d\n",
-+		ret, error_count, MAX_TEMP_READ_ERRORS);
-+
-+	return ret;
- }
- 
- /* Convert temperature in milliCelsius to raw sensor code */
--- 
-2.25.1
+> Seems reasonable to me. I would probably put an error message in this
+> case, though? I don't think regmap_read() necessarily prints an error
+> so it would just be a mysterious failure for why things didn't probe,
+> right?
 
+OK, can do that.
+
+> This also only solves the problems for one of the 4 devices in this
+> file. I think the GPIO device, PWM device, and DP-AUX device will
+> still confusingly stick around. It's probably better to add a bogus
+> regmap read in ti_sn65dsi86_probe().
+
+Could be argued. I just wonder about all the other error cases in
+ti_sn_attach_host() plus ti_sn_bridge_probe(). They have the same
+problem with the other devices dangling?
+
+Happy hacking,
+
+   Wolfram
+
+
+--+4ueQPdkORSXQcLW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfVQbEACgkQFA3kzBSg
+KbZiqg/8D10WbcbFyncxpYgi27s6gdp/L1rYAeXUQUXCWh54FbAiYMgfpTUCkdyJ
+0c/f6cWzX5d1f3hLQtZUTQ1U0cWqwzWkwi299jZbl08hUvm71nP4OCXAD6CMtjX8
+FsfApv5NuFJ22TOq7H+vXuvY9HyZNPaMneq97mVXD/WxkKg2qgHjIebM4xuziI2g
+RPsOVd9RAQtbvZgHwl9HAXYm6Np1x3mizZs3OXf+ZpoqLBDFholgCMiUIUQ0S89s
+MBIgrTDWftEHuwaGmevvYpV/hyGLiN6bMi6xPIu4mtjkRFuMeTePmWkWfZ+wh3M+
+I0sfy4x3l823KDqq0sNtdjJ6Q8fXsjVzh1hvzJWSfpX76jJ+cpnsirF4FyEimRNu
+NLG0UdP0QZhLZ1bfRwX6VyblUTyKes9QOSWLu36bzAWs7mTtYmV7G93p1t2XFAF9
+4SSxtmzn7jMFyfJXlktZb/FC307FW7mp8IS78+PXZKbYNHDY8wEx5v4nwhGE3RU2
+gtV9bimE17QE3F6gN2/1+vc2aFSipkq+DptfTnEx9kGLhZJ/37SJyZPZszMnIBKh
+CgrmSBfyAtKXSc4PSV2JF2k833wxd//VPGYfaFau+T3pPhiWSjQjjx+MI0TP7Q8l
+Sn/eoIWi/gGib1xY7pMMHHCQp7cMAzQ8iXNZgUVrCQEtupCiPNE=
+=bZOD
+-----END PGP SIGNATURE-----
+
+--+4ueQPdkORSXQcLW--
