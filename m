@@ -1,97 +1,167 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out.smtpout.orange.fr (out-73.smtpout.orange.fr [193.252.22.73])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5DF214200
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Mar 2025 10:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169021ACECB;
+	Fri, 28 Mar 2025 10:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157341; cv=none; b=tLkFkkOfFoniKLjfDvWYKp0aA7mY4TXubCGCXKcyoo1qMEU0xkkiAjcreZRoD7kenV7ZWVWPow4gNT4Tlbxr59LWw/kCtkSsd+8E3oGiwhXcMABSscJnUJhKMM/OEnf/wM2oD82GZmLqJsvQKMvbPmUHWzrotUYRVi8dIS1beIw=
+	t=1743158218; cv=none; b=FXcYC+3BarJ3hXJ2fWkQ8MvcW3qfLgZ79Xp7vP16BGm1IzBZheCXL11l2QdYTySwLCk7Fcz4ZxDEUXoiqpvif+7xUV0vyJDCeF5g/sWI1SaORx9PTBgBJqt0UzcPLcQuBcwZHUB4aB7DF6XaY82nSAiwuZNkwfVcCN7Z4ejQUHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157341; c=relaxed/simple;
-	bh=1EvdB14G9dZ9V0d+gy+JSmSb+iAYQGCNgOKmRsIyMfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QA1pVsBBkYC9I2hahvgKc1fQJbR1YYlei5cHD62ALlYFFc9IjbPYumkr6iSePAE10eCSf7DZWK1xOrWUMIX0vEhhEPnGl0klJl64Wr5F4GakMzMcmEZC7B5zFy/dcLq4bCvZHCs1QRpNb9V465BGumqC3ybAlZ/qOOdiQYyEk9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VIXIVEL3; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1743158218; c=relaxed/simple;
+	bh=RKwGm0t3NLBLtILhOZHTaiiMzbzLEFX8lNXYb61WNiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bQn4GIksEyf7Abi/oUSsgWLIKbUhKX6aLeB+f1xSPn98p58WQgQxQfuGgFFBUPwM8lkaMZjMY29/m5ffXXzuARKURIYCPmvLWEGOkIN9gjHDLgwT3FSakkLPAcJGHlKIt2ezM8DrEXunpK243Zu1WDf3rgOvZDRX9dY4IPx8Iw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HPoVGni6; arc=none smtp.client-ip=193.252.22.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VIXIVEL3"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-700b17551cdso19673467b3.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Mar 2025 03:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743157339; x=1743762139; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWcdknvSCYeb4zRihPe/MxApMaJfE7/coMmdm58k8mE=;
-        b=VIXIVEL3iR1pses4SVICAvRQoYKm3GrKW/gGsNf7jjGVM7GkO2q1XQb53KBo/m4Obz
-         r8n5PEm5q9hJ83FrOpNfKyY+W1hwzleT79Dpdl+03WqmAQOrNoUzECTDjRTWhNafhPZ8
-         N30bZ1g04ofeeTnP2keMVD6gndXLWONS1PUE1mYvzOzHDQ5QZhx0kCeJxOfYrv+5Rl3g
-         2q+lXnf+6VsEvLUd1enBmPba+C0VZrxYcxWKm459zsjJeVnmAwko8a1oMPV/dK7aiMWn
-         pazuDogB6I0SkpeuVmXImAI8SNzvjBm8QtiyOEnOnDQ4LxsX1hjYkQKURJi7IeYH4ECr
-         hY3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743157339; x=1743762139;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QWcdknvSCYeb4zRihPe/MxApMaJfE7/coMmdm58k8mE=;
-        b=utQVbJDl+oJB0GrHXfWkJMxOVWXf8DHwowztBL9Ufh3dvCZs3QQ1QzG4mXefjtGR7H
-         ORwC4hRFY/rHT3k475vI7xi9J7ckT6M51NuUzjBI1LdQntx913yDJfqmSNikK9Ny4FAB
-         ywuWTNDbsSIJIv0Yi7d6P8nvLnZ348LfbnRgRgksasii84sW/XHLtm8F9NDoPNYdiLNQ
-         4cLFVICpLxQJNhNgjyX9ETt1VmDkZqOdlPPkFqtil5H+w00L0o7QXoyUsIexyVxzKnET
-         FjFYUPdL37htqbBvWv6yl5Vrp1VjupcGLLanBR5WJzo75hL2kux+W7Dhm+CXq8f8eiRu
-         UO/A==
-X-Forwarded-Encrypted: i=1; AJvYcCX+S0YgBaarO/xulKy7ch1wn2s5GlDQiGyRHhMg99yd9GiuEzVTLjbmSuLYWvriF9NiBCEiE2rA2BGwdlkiFV+OLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyDt5rxuoGdb5fLrO6yv2VmiMQoJYdJ2mw7OPp3gSs2vo/35Bn
-	p2kMdk9hQOVjc2vQUGAijMX40oZLbefzu4tGAGDOuAxN3/reuLEyzkK5Lcm+NKv0dPyKi4NuY+B
-	p8jFXaWGQOc/xg9SvFgO5HAKhg/utbSYN9DW+eYUDv2j+GlHH9iY=
-X-Gm-Gg: ASbGncuUJvpfRIUGnsXYvjP/+QCTYtGETaNkelKecFWZMqcyXtExRMAhWTDs/hd/ug/
-	6e4MstUXdTSBYjFG2k9oCgQaLmfzIz/NqFfXOU+YA1RpA9v9BAEFgfeHqYSrO0oUBhiyCr1i2OO
-	5ftNQzD9dW7VtCk5kPCVoU8KO55NU=
-X-Google-Smtp-Source: AGHT+IF+THyscD1I70Q1OyNT7wZ9pN5Y8ZMr40r0UC0Ra/TZGyedSTAVl7xxm7Ivr+fxGPflDlGfnf1oayC1W3EzhlY=
-X-Received: by 2002:a05:690c:9b08:b0:6fe:bf9d:8cca with SMTP id
- 00721157ae682-70224c5ae42mr93037477b3.0.1743157338910; Fri, 28 Mar 2025
- 03:22:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HPoVGni6"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id y74ttxUWgDCLUy74ytqsoU; Fri, 28 Mar 2025 11:36:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1743158212;
+	bh=TSWyVYmDyHgXemt9QL1W8qoxyHsQnAOHADO1xlW62O0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=HPoVGni6j9d89W5HEee/I7d/jF3w1TuicoLHiDtb7j0kSPWmMEK28nairm9kYYaOT
+	 u+mVrtvI0vUylVjeL7995NcWI7HEubs714UAopGZjv11bkHyM+zVXHmQvqa4M7mptV
+	 BrMeAd2NHd2aMZE7dEB2DA0dXq+rcyZ4gwAtYqRSYGPPkexxTrbprYqcK7ga0sWRiy
+	 LEdfNNJbyOw++C52iGC5C9CH+f0Cirk+a6v4GP2G/9v/8V6MGPrcT2T/8TcWo60GmA
+	 fzx4UvU2cIEe3gyo+NHTs4AdCn+0mHFrxhnrgWCsG0SgxTJmIkiUAqKrFrPNzdFdXb
+	 CDsvkcZZdi9eQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 28 Mar 2025 11:36:52 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <3bf3ec05-d900-494a-954e-633828b4c984@wanadoo.fr>
+Date: Fri, 28 Mar 2025 19:36:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320140040.162416-1-ulf.hansson@linaro.org>
- <20250320140040.162416-5-ulf.hansson@linaro.org> <PH7PR16MB61960D396B3E5B61571F7F82E5A02@PH7PR16MB6196.namprd16.prod.outlook.com>
-In-Reply-To: <PH7PR16MB61960D396B3E5B61571F7F82E5A02@PH7PR16MB6196.namprd16.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 28 Mar 2025 11:21:42 +0100
-X-Gm-Features: AQ5f1Job6rz184fUICiPRY1Ma-qfbAVYw2uwJkaEoJZeRzZpT85dOgBmc4R44BA
-Message-ID: <CAPDyKFreJu8jZXoBJ2J1Mgj+OOAJX5rjzX0D4ZfbTj_uVrPKPw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] mmc: core: Add support for graceful host removal for eMMC
-To: Avri Altman <Avri.Altman@sandisk.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/18] can: rcar_canfd: Add rnc_stride variable to
+ struct rcar_canfd_hw_info
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ linux-can@vger.kernel.org,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+References: <20250326122003.122976-1-biju.das.jz@bp.renesas.com>
+ <20250326122003.122976-8-biju.das.jz@bp.renesas.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250326122003.122976-8-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Mar 2025 at 09:13, Avri Altman <Avri.Altman@sandisk.com> wrote:
->
-> > +/*
-> > + * Host is being removed. Free up the current card and do a graceful power-
-> > off.
-> > + */
-> > +static void mmc_remove(struct mmc_host *host) {
-> > +     get_device(&host->card->dev);
-> > +     mmc_remove_card(host->card);
-> > +
-> > +     _mmc_suspend(host, MMC_POWEROFF_UNBIND);
-> Couldn't find how _mmc_suspend handles this new power off flag?
+On 26/03/2025 at 21:19, Biju Das wrote:
+> R-Car Gen4 packs 2 RNC values in a 32-bit word, whereas R-Car Gen3 packs
+> up to 4 values in a 32-bit word. Handle this difference by adding
+> rnc_stride variable to struct rcar_canfd_hw_info and update the macro
+> RCANFD_GAFLCFG.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v6->v7:
+>  * Collected tag.
+> v5->v6:
+>  * Replaced RCANFD_RNC_PER_REG macro with rnc_stride variable.
+>  * Updated commit description
+>  * Dropped Rb tag.
+> v5:
+>  * New patch.
+> ---
+>  drivers/net/can/rcar/rcar_canfd.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+> index 32d700962d69..0001c8043c25 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -291,7 +291,7 @@
+>  /* RSCFDnCFDGAFLECTR / RSCFDnGAFLECTR */
+>  #define RCANFD_GAFLECTR			(0x0098)
+>  /* RSCFDnCFDGAFLCFG / RSCFDnGAFLCFG */
+> -#define RCANFD_GAFLCFG(ch)		(0x009c + (0x04 * ((ch) / 2)))
+> +#define RCANFD_GAFLCFG(gpriv, ch)	(0x009c + (0x04 * ((ch) / (gpriv)->info->rnc_stride)))
 
-Right. You need to look closer at mmc_may_poweroff_notify() as it
-should return false if MMC_POWEROFF_UNBIND, unless
-MMC_CAP2_FULL_PWR_CYCLE.
+I find it rather hard to follow the logic here. Your are multiplying by
+four and then dividing again to get the good results. Here, I guess that
+0x04 represents sizeof(u32), but this needs some thinking to figure that
+out.
 
-[...]
+Wouldn't it be more intuitive to instead store the size in bytes of the
+RNC value?
 
-Kind regards
-Uffe
+#define RCANFD_GAFLCFG(gpriv, ch) \
+	(0x009c + (gpriv)->info->sizeof_rnc * (ch))
+
+This way, no more 0x04 magic number and it is easier to process a
+multiplication than a division in your head when reading the code.
+
+>  /* RSCFDnCFDRMNB / RSCFDnRMNB */
+>  #define RCANFD_RMNB			(0x00a4)
+>  /* RSCFDnCFDRMND / RSCFDnRMND */
+> @@ -505,6 +505,7 @@ struct rcar_canfd_global;
+>  
+>  struct rcar_canfd_hw_info {
+>  	u16 num_supported_rules;
+> +	u8 rnc_stride;
+>  	u8 max_channels;
+>  	u8 postdiv;
+>  	/* hardware features */
+> @@ -582,6 +583,7 @@ static const struct can_bittiming_const rcar_canfd_bittiming_const = {
+>  
+>  static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
+>  	.num_supported_rules = 256,
+> +	.rnc_stride = 4,
+>  	.max_channels = 2,
+>  	.postdiv = 2,
+>  	.shared_global_irqs = 1,
+> @@ -589,6 +591,7 @@ static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
+>  
+>  static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
+>  	.num_supported_rules = 512,
+> +	.rnc_stride = 2,
+>  	.max_channels = 8,
+>  	.postdiv = 2,
+>  	.shared_global_irqs = 1,
+> @@ -596,6 +599,7 @@ static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
+>  
+>  static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+>  	.num_supported_rules = 256,
+> +	.rnc_stride = 4,
+>  	.max_channels = 2,
+>  	.postdiv = 1,
+>  	.multi_channel_irqs = 1,
+> @@ -797,7 +801,7 @@ static void rcar_canfd_configure_afl_rules(struct rcar_canfd_global *gpriv,
+>  			    RCANFD_GAFLECTR_AFLDAE));
+>  
+>  	/* Write number of rules for channel */
+> -	rcar_canfd_set_bit(gpriv->base, RCANFD_GAFLCFG(ch),
+> +	rcar_canfd_set_bit(gpriv->base, RCANFD_GAFLCFG(gpriv, ch),
+>  			   RCANFD_GAFLCFG_SETRNC(gpriv, ch, num_rules));
+>  	if (is_gen4(gpriv))
+>  		offset = RCANFD_GEN4_GAFL_OFFSET;
+
+
+Yours sincerely,
+Vincent Mailhol
+
