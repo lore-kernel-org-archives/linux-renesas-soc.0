@@ -1,45 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062F61474B8
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Mar 2025 15:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A39A1A0BF1
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Mar 2025 15:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743175992; cv=none; b=GrZtRM/+9hYBy8D5CxGEw8of+gdxiJo+QjJ6UJXEcOyFVxUohwAs/Erh06xsNKo2V/SSljJVDFFeEI7+ZiJWr1K4JzkgRD03YphjRDHcjtgG7q+8FuREx4/PREuEZcK02gNQhgzvt+oNMcHxEuy8mGEH/M1v7XADMuWW8Nh+7c0=
+	t=1743175992; cv=none; b=R6Tu1Vx88PRZTqlBcNl273rSxxVsXIMEyWqHtBR4rusUHhjgP93DMfxdWUOSzSFcQjuwisHHxXA9TWMsCMrnYabjnunGk9ySTLmggqoaVa3dHSXPipZOsZ7q+ucx9BaLv1sWzWPq29N505GssaNvKNNzJIYCT1mkRqDZtDkt2Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743175992; c=relaxed/simple;
-	bh=5iBN5LA7c00TSzKcBYHsywDwrRewkVCjkrdHyHkveBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iO4iWVdq1VXyB2ow5F2+eiOsfxd+oU20k5ujk//aVAB7sL86xSBhVxgXTuCC/BLwIeDyo7947n5JqERWi48WeTZBjslS+N1ClbiiPYxppHxxDN+0+4pDm48//sno74veiKwtRq6SuFaabNyKWrB5UkFB6C8b+kr0+wrStZNcSCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CYzvt98U; arc=none smtp.client-ip=194.117.254.33
+	bh=D3LsNOB0pXcrNPWazU5BAzrFvHL7lD46hnhAuY5uZX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q3i7UMH/Ze3Yc5DopJK2iLbnefLNtaU/fhE7AJ0IZ78/8EQuws/pziO6avrH5OuV8GmOte49XODHHTe309JEqFTx0ZpFa3FLHaz/sgyavu9FOn0YEGopVESXnfMBYdtnkQbPYDG7JKc8kssbM3KLC7RXBxEjlJcjmKs5iWk0wqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FyyjuU44; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CYzvt98U"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FyyjuU44"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=j9Ti0/L1FlqvjT
-	e8Hf7N5Z9YEwfcz/YUE0tU1XApB+8=; b=CYzvt98UIjxiiKOYuWT+TTwgO5v6aY
-	oCj0ruNho6e2iJ75ACkvQ9m6BfYLKSQjzF1H19/lxzlKq7Mdi5dnL4MPDfRutdHv
-	3lHGmCSAvr2IcsxlJg/HV5iUNU8XbvjRZUidmkZvOklya3OeDEbKukNzvxx0jbPn
-	wYxeLbaouAPLtBOAPdG07dF3CP5KuauK/vrQKSAgkdkdBQ0VfhvpZyyhUIFVlZT8
-	EZwaSsKSyWpQrpdYuhKxhwbNWPNJILmxpRT5mbRuwSTIHliB1kDTH1c9kSiNO5sa
-	GusRdpaWxk43yufHaPjpO/yhIn+Z486B3V7reIpriCz6oJArAMdvNYYA==
-Received: (qmail 298861 invoked from network); 28 Mar 2025 16:33:05 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Mar 2025 16:33:05 +0100
-X-UD-Smtp-Session: l3s3148p1@9G9dyWgxmlJtKjE8
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=oChmzxKxLjZEK/kZPcsn/jDIGGWyUlkc6XPmpbYrMOc=; b=FyyjuU
+	44TKS1ty5J7r8q+uyKm9zWY/CCGu5ZmbIKBbosHj8t4vB4v9zob7//MdSVU+aQ21
+	Bdq1tFtGiLDh0/h9WZhvDKPK+V9U11K1jor9WMmyyktyhpbszLt7nfize4NdVSx7
+	9fJq3r5ipgSI5skcTjMhWhzVZuJHYpV3cyN/XK2VRqpaFZ/Z+PRPohV/XH4hn9Wf
+	ZHHqlRcAvgmmco1fcXpx+j9ENQQtBmxBWIhJJ2vZl5ysRwcLgKoOfTpyG4ov42Xn
+	+qU4ThsTOwxE0RuPipA4k2XlwoepsIyfWYopztewUK3gD+fBGbZ2p7cNFdztTvdh
+	bT8OJIc7zQZYAAUQ==
+Received: (qmail 298947 invoked from network); 28 Mar 2025 16:33:07 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Mar 2025 16:33:07 +0100
+X-UD-Smtp-Session: l3s3148p1@eX+DyWgx8GxtKjE8
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 0/5] ARM: dts: renesas: r9a06g032-rzn1d400-db: enable I2C infrastructure
-Date: Fri, 28 Mar 2025 16:31:33 +0100
-Message-ID: <20250328153134.2881-7-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/5] ARM: dts: renesas: r9a06g032-rzn1d400-db: describe I2C bus
+Date: Fri, 28 Mar 2025 16:31:35 +0100
+Message-ID: <20250328153134.2881-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250328153134.2881-7-wsa+renesas@sang-engineering.com>
+References: <20250328153134.2881-7-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,26 +52,76 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With the binding on its way to next, we can finally enable the
-controller and targets on the base and the extension board.
+Schematics mention a 24cs64 on the bus, but I definitely have only a
+24c64. So, it is only mentioned as a comment.
 
-Part of this comes from the BSP. This has been double checked with
-datasheets and schematics. Part of this is new.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../dts/renesas/r9a06g032-rzn1d400-db.dts     | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-'make dtbs_check' is happy.
-
-Wolfram Sang (5):
-  ARM: dts: renesas: r9a06g032: Describe I2C controllers
-  ARM: dts: renesas: r9a06g032-rzn1d400-db: describe I2C bus
-  ARM: dts: renesas: r9a06g032-rzn1d400-eb: describe I2C bus
-  ARM: dts: renesas: r9a06g032-rzn1d400-db: describe LEDs
-  ARM: dts: renesas: r9a06g032-rzn1d400-db: describe keys
-
- .../dts/renesas/r9a06g032-rzn1d400-db.dts     | 144 ++++++++++++++++++
- .../dts/renesas/r9a06g032-rzn1d400-eb.dts     |   8 +
- arch/arm/boot/dts/renesas/r9a06g032.dtsi      |  22 +++
- 3 files changed, 174 insertions(+)
-
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
+index 31cdca3e623c..d50a1d91e968 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
++++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
+@@ -57,6 +57,44 @@ fixed-link {
+ 	};
+ };
+ 
++&i2c2 {
++	pinctrl-0 = <&pins_i2c2>;
++	pinctrl-names = "default";
++	status = "okay";
++	clock-frequency = <400000>;
++
++	pca9698: gpio@20 {
++		compatible = "nxp,pca9698";
++		reg = <0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		/* configure the analog switch to let i2c2 access the eeprom */
++		max4662-in1-hog {
++			gpio-hog;
++			gpios = <16 0>;
++			output-high;
++		};
++		max4662-in2-hog {
++			gpio-hog;
++			gpios = <17 0>;
++			output-low;
++		};
++		max4662-in3-hog {
++			gpio-hog;
++			gpios = <18 0>;
++			output-low;
++		};
++	};
++
++	/* Some revisions may have a 24cs64 at address 0x58 */
++	eeprom@50 {
++		compatible = "atmel,24c64";
++		pagesize = <32>;
++		reg = <0x50>;
++	};
++};
++
+ &mii_conv4 {
+ 	renesas,miic-input = <MIIC_SWITCH_PORTB>;
+ 	status = "okay";
+@@ -114,6 +152,12 @@ pins_eth4: pins_eth4 {
+ 		bias-disable;
+ 	};
+ 
++	pins_i2c2: pins_i2c2 {
++		pinmux = <RZN1_PINMUX(115, RZN1_FUNC_I2C)>,
++			 <RZN1_PINMUX(116, RZN1_FUNC_I2C)>;
++		drive-strength = <12>;
++	};
++
+ 	pins_mdio1: pins_mdio1 {
+ 		pinmux = <RZN1_PINMUX(152, RZN1_FUNC_MDIO1_SWITCH)>,
+ 			 <RZN1_PINMUX(153, RZN1_FUNC_MDIO1_SWITCH)>;
 -- 
 2.47.2
 
