@@ -1,143 +1,151 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D488B4207F;
-	Sun, 30 Mar 2025 19:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9D12AE8E;
+	Sun, 30 Mar 2025 20:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743364727; cv=none; b=Xdyn5XgiQdaVy8MTXIrRmU2CHfje5xTeyWMtuxN/GiX8BSMAtm9HFUezSsUql3qY1WdvyZy8TlQjhwozfCuDTsH2TYmtSJQAjTvZBezqk7Fc7bv3olVuifNyclPts/KHsWGwVTQlvd0l682N0xT2M0uane+C13oTK3MKC03Y4TA=
+	t=1743365884; cv=none; b=nb8oxkNzNbdgjGSG4dRNo4rtd6CksdtTlawdutllk7FV0sh+Rozipdnjb7tnCG7c4wjKIDekriZVWcWw4yP9nZLbOFqhLiGAp8ZOFL2zTeElPhc+QsvJ1pcgrAQZ1CZM2ACi0ICgDRVFm2dj4jDYyQt2SyiyDPYtfm40qeLhh6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743364727; c=relaxed/simple;
-	bh=uAoUeZLeVXJiil6IY0KeyV6g6HaQbDLBxfzdVHiPyHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bOMCefewZJxnbH7UAY8W/g2jmVdgePrpihWggSK7yXkl0B5mtOla350dawi2O0BX3fmz1ummzgc9ToR+mGUJKzevpg6OqMcBIT1hTcUkZKQklcwOBeekk/ySm5ZvdWd8uvaQCuwp413DaNqKIJIFgenV6HiiIViGqQC/DFhuim4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XEZG9aie; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PrY04B2H; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1743365884; c=relaxed/simple;
+	bh=i/zZuquizU3rNnjsaeo6z64PLYbXEl+OVKP9uiO7kOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lw9GLiid4UP9ciu7/snS2gljGqRN5ywgDZnfuqGrmIPb226GnX+ycl5tTGjLnm+0GVSZFp3Rwct0UbMqfUKPxTldbXwUJxo9uFJpAe/mLYIAAS9ZB00CqDA87d6WMnLjMcok3iGhkY4PQeHhSWAeCy5uDMDdyn6zkKjsTyIJ5Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAstD51j; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XEZG9aie";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PrY04B2H"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZQlSZ38N4z9tMw;
-	Sun, 30 Mar 2025 21:58:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1743364718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dB0HkyaDcO/o8Yz5vpAZ0YdaxioxQKZgF7Z+3OSsvfE=;
-	b=XEZG9aieYDMulM1d0eECzh92jKfunl9M/nCq9t54QKTBbYpkTl/wbKSs3DKpFTBoL7pCJt
-	EoMjGc8xvRcxsqCePDADgeRdMwA5TOKF47jME5kQoZbJfm172PYDi7spu1SSdGQE5j5/9G
-	8xXPtzNLx4+AxV2yXLhRRrqk5AX5HSlVNDIhWSi9sTJzscK8VH8iXxrQMuADAkft3d4XXg
-	7OUuvoTN/gG7X5XtnTcEWk2SejfQuX1+ZMG6hwBKfrfiKhFZfG7sNTEOv3Zk5NlKwr/Oou
-	gRNaJ7JGJhCzQ51KJgiYM/6W39MivvmnaRyae2ItJxqxyFISAowfaPaL1jGRmw==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1743364716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dB0HkyaDcO/o8Yz5vpAZ0YdaxioxQKZgF7Z+3OSsvfE=;
-	b=PrY04B2HFXUWEKy1FSAAttSIUz1AM2uayAOuP1lis7w1GHrzgXcPOUGeD9unJVdsV1n9/3
-	8oPZ1LVy8aenSpy1J7bbr+/VaQQTQXsAexxaTo5riTRtGzU3mPM/KfPg5kUkcBsVETpx7I
-	tuFRZoKGvv/QtH+wswiiEKADYhHYSTVsVcQndxfAUs9AaGCGzM0GMUFYZoqE4ZMBVSAaxK
-	lsxUwazmUv9EEWFHst6U2cC02Wrmv5iSH2rET6UWdDHgpZJ0vhokPYwMSsYpITMWXZfgFe
-	Rymrj68O2O19qq47ZXdjWZPbVBfvjdHh6X1lrEtGMM7Cpw6fVUoHkShp/u5NBQ==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/4] dt-bindings: soc: renesas: Document Renesas R-Car V4H Sparrow Hawk board support
-Date: Sun, 30 Mar 2025 21:56:11 +0200
-Message-ID: <20250330195715.332106-4-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250330195715.332106-1-marek.vasut+renesas@mailbox.org>
-References: <20250330195715.332106-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAstD51j"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2255003f4c6so70755275ad.0;
+        Sun, 30 Mar 2025 13:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743365882; x=1743970682; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d5coYYRPMmYyk90hyfQos6Hfk3JtJvsesMjWEHhnPPg=;
+        b=ZAstD51jAMgdtjHUjKHWIFNE3TvCRhxeTwfkGLGMRWcjgVqIIQ+wnPT/F+lZKYRmX1
+         PRLI1iiHmrs5g3AAo9ztulw8kPdn2DmiNR9FfLE/VrmbVwhrjCYlJi4lbER2oaFbHmeP
+         LpyUlhqegAE4Ku8cbk/vNm4yOVrJovetdnZTJFYaFYEbmRNF1XwfdumcNm9RhnMvMn+x
+         MXyJxsHA6UPJqv37g5DF+U7vVGVX/r5bSl99KPeqnRwPBl1ixYhq4r13FNBsxGbtlXP8
+         EEpnvAiOweFRLF8ztwLaAwVxHbBzvsSi5Xj2Hyfzz5nNNpvQUoSYZhBgzTS5jl/ZDn8N
+         YxAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743365882; x=1743970682;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d5coYYRPMmYyk90hyfQos6Hfk3JtJvsesMjWEHhnPPg=;
+        b=j2df6jkqZohoZxWx/RW5MUjN81XMuzNqCVXeAUmZjU3nJUoxfWaPMFpWcIH+AIiDa1
+         NXcUHzY9vxKgV3c5UMyHmsUJJwnrF7vwODy9Deoq6zEcs7KEZQKbdpIqFWkKcGa9fwmV
+         B8vynotON6f2cRupHirabVdiCU5Q3cSIxeg8gZvC5v5uN1IPf+wMzyVjbCqKh9fzZOlY
+         1awwNmD2HiAfZtU6I4kX43hIBskhjUxiezntIf7nWaT9fU8Hr+sZXOz6gqzseeOrBbdc
+         hYFWVWlm5TTU80nTk+tSR/uOiylw9ujqa7Eup/AXz6+NrEi4d/BfmeEO8fpAGBEPo6RZ
+         z72A==
+X-Forwarded-Encrypted: i=1; AJvYcCUM+EyU+IPCxsouef8DPlVcv6zngh7RjrMRWRfRReYTFXKUitctPnBace6N6MtprjF4zsVzBzMO22AV@vger.kernel.org, AJvYcCUrcZil60q6ylltCv8MdzmfU8gyOBWCLUTMFQSCA3CexTTL/diUrCuk0CnSzl3JDG8iLdXLpoi5vaqf7sICoHdwacM=@vger.kernel.org, AJvYcCUt1yYC2VVWylN4GAtPuAngViSyFRDFJCJopCSJGkzI9pXRTQoMVUevNTu6uRNI5KgaB9aS3H6RtzZ1FGuW@vger.kernel.org, AJvYcCW4ctXMlWPCM6I88hQkuQDP/CALpsHvfGT3cKVoGepW/HdG6D+VkFKbTJjBzVAL3VSN2c6TvnfM3tId@vger.kernel.org, AJvYcCXNxP+pmwcHvM2v06wcpJEmnMeIRu4LkvF9lfP/bNEXlf+mqxYlx2qZ8Ud10qTfVFa229Xikd+SPK2SXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEJ4GDoHyIulx2iOIeiWg0NvVsPShqVw2qGtFzq88rprzFyJQk
+	JXgYs6XqEStHvRtrV/TmdwFOMsGxPLzijQKq10Ddb7CvjcoOfpQtjoZc59Su8pk=
+X-Gm-Gg: ASbGncv7o7uObYjHycYvn93NMqQjMegv71THfKGFvfB6w7Qa1R3WSCGTCmlemu3tf8Q
+	v8YpgPPX2I075G3hvI1c4Z2w45URJKAwCdw2RMHAawuLldVHYLay5u/+DhEmhJrj4LEiB54caTU
+	DH/HVj6B+VqWVmQ2MGBYXZITPQSJMdiEzR95CR81LhDwwTIShOmG12PhE+vqmNvDaZVEv0Gma7L
+	8nJea7LdUAjCQFuGd6YxnoT7EQOsdkImSGKOHLM79kkJqm68cFdehzOxlwrgtLxUhiAAii75h8D
+	yG+Ea0KaYn53XyhaXP5jK9xri/ZktsEdCTuRxjVxUEdKBlsXxR3vdg==
+X-Google-Smtp-Source: AGHT+IGdRb8RSEY/uMCLsBXs2PCUKzrfAlPuylZyCRqePE4ThlWVOzd97jd96fvdyjccpN5hsZkrrA==
+X-Received: by 2002:a17:902:f644:b0:224:1af1:87f4 with SMTP id d9443c01a7336-2292f974b63mr133802185ad.22.1743365882249;
+        Sun, 30 Mar 2025 13:18:02 -0700 (PDT)
+Received: from localhost ([2804:30c:b03:ee00:e0b8:a8b8:44aa:8d0b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3039e1139fasm9042555a91.25.2025.03.30.13.18.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Mar 2025 13:18:01 -0700 (PDT)
+Date: Sun, 30 Mar 2025 17:19:02 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v10 3/8] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <Z-mnNtYLkwsTYjMh@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1742560649.git.mazziesaccount@gmail.com>
+ <f1d8b3e15237947738912c0d297b3e1e21d8b03e.1742560649.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 8zc833myjtjdzmroe7k71r6sxheyckay
-X-MBO-RS-ID: 0256a3e279c46fb2a0a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1d8b3e15237947738912c0d297b3e1e21d8b03e.1742560649.git.mazziesaccount@gmail.com>
 
-Document Renesas R-Car V4H Sparrow Hawk board based on R-Car V4H ES3.0
-(R8A779G3) SoC. This is a single-board computer with single gigabit ethernet,
-DSI-to-eDP bridge, DSI and two CSI2 interfaces, audio codec, two CANFD ports,
-micro SD card slot, USB PD supply, USB 3.0 ports, M.2 Key-M slot for NVMe SSD,
-debug UART and JTAG.
+Hi Matti,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kw@linux.com>
-Cc: "Rafał Miłecki" <rafal@milecki.pl>
-Cc: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Junhao Xie <bigfoot@classfun.cn>
-Cc: Kever Yang <kever.yang@rock-chips.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+The new helpers for ADC drivers look good to me.
+I am now very late to complain about anything but am leaving some minor comments
+below that can be completely ignored.
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-index 51a4c48eea6d7..201088277514d 100644
---- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-@@ -375,6 +375,13 @@ properties:
-               - renesas,r8a779g3 # ES3.x
-           - const: renesas,r8a779g0
- 
-+      - description: R-Car V4H (R8A779G3)
-+        items:
-+          - enum:
-+              - retronix,sparrow-hawk # Sparrow Hawk board
-+          - const: renesas,r8a779g3 # ES3.x
-+          - const: renesas,r8a779g0
-+
-       - description: R-Car V4M (R8A779H0)
-         items:
-           - enum:
--- 
-2.47.2
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
 
+Thanks,
+Marcelo
+
+On 03/24, Matti Vaittinen wrote:
+> There are ADC ICs which may have some of the AIN pins usable for other
+> functions. These ICs may have some of the AIN pins wired so that they
+> should not be used for ADC.
+> 
+> (Preferred?) way for marking pins which can be used as ADC inputs is to
+> add corresponding channels@N nodes in the device tree as described in
+> the ADC binding yaml.
+Not sure it's preferred to have ADC channels always declared in dt. That
+question was somewhat also raised during ADC doc review [1]. In short, ADC
+channel may and may not be declared under ADC dt node. ADC bindings often don't
+enforce channels to be declared. On IIO side of things, many ADC drivers just
+populate channels even if they are not declared in dt.
+The ADCs you are supporting in the other patches of this series seem to require 
+dt declared channels though.
+
+[1]: https://lore.kernel.org/linux-iio/20250118155153.2574dbe5@jic23-huawei/
+
+Would something like
+
+A common way of marking pins that can be used as ADC inputs is to add
+corresponding channel@N nodes in the device tree as described in the ADC
+binding yaml.
+
+be a good rephrasing of the above paragraph?
+
+> 
+> Add couple of helper functions which can be used to retrieve the channel
+> information from the device node.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+...
+> +static inline int iio_adc_device_num_channels(struct device *dev)
+> +{
+> +	return device_get_named_child_node_count(dev, "channel");
+> +}
+I wonder if this function name can eventually become misleading.
+
+In Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml we have
+temperature sensor with channel nodes named after external hardware connected to
+the sensor, leading to channels having different node names. Can anything like
+that ever be accepted for ADC bindings?
