@@ -1,49 +1,42 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C374F1DF269;
-	Sun, 30 Mar 2025 22:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A34920E6
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 30 Mar 2025 22:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743372760; cv=none; b=ZAeQbdFswMk0mjH6cwenVx4LUaEI7IP9h2JO/t8Rjyj8UX4Luw1Nx1WgAOyfoq5FxGpaAQNHCvj+qFeXDCz8TRv1ZW2Waa9OVn50i1QYj5KcPRcsrtTG995EfUUDk1d8n+bVYks+b5Saqe6Takix6it+fjOhUgh95yarBbaf64A=
+	t=1743373120; cv=none; b=CdPMC7UxVL1dDRN9ADnKOntFa3OJyaChdAyUYu4+flC0IF/Bk9SLSBq9la2prgw9pHYXnKX4VlS/3vMzwgsmJp6kZqIIb0OJIbH2WJu5fniTtiahwTmotfR4DgF6sKwJuPVtnTcFEoexfqyk6HqRSi6B/lEyD0DrOZdgJsYOeIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743372760; c=relaxed/simple;
-	bh=LwjpNe0Cz1yHQxFlkpGUMdZVIVG3nNeYhta1jyE2P/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WMEQpgLttMz4SRIvicI7Da3W3hRdwB82hA9Nf4KI1tsYze99/Xb3Hf1tavl9XLapXnsRMPO+Bwrl4Mtw1eNeYFDK/3ut4ZtVhRKoa+xOdMaOrAmx3zEsubVoWkyLOPLMEe+KtReEK6FGL31wbJfhKmFHFjK/XPuscQo9KQgdfOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: oN/BA4odSDWjoadBYgxCIg==
-X-CSE-MsgGUID: mUUYfYIuR5iPX/zdgItIAQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2025 07:12:38 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.1])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7D9964005479;
-	Mon, 31 Mar 2025 07:12:33 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	conor+dt@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: magnus.damm@gmail.com,
-	devicetree@vger.kernel.org,
-	john.madieu@gmail.com,
-	rui.zhang@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	sboyd@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 5/5] arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
-Date: Sun, 30 Mar 2025 23:49:41 +0200
-Message-ID: <20250330214945.185725-6-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250330214945.185725-1-john.madieu.xa@bp.renesas.com>
-References: <20250330214945.185725-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1743373120; c=relaxed/simple;
+	bh=NFQR+avR1YxBoZVq7kiCZHn7yorwqli622vdzhUsYpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rAs1dJMriu8uFszyJeffQCR7ZXZcE1/YaDpFFF85uVA9AL03BmGbOwXDuNnGHsYR37JRNLyEgvn8BgQWXv+gtljxDayPzq8WNiqJ8AFb/AzOXtEwbbUH+QCOLHI3K69EH2u6gCa/yMbXHSSbc/DcEa0t5Jg6V+BkXjc9OczQkv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hE4ElmBI; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hE4ElmBI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Q+G28VqEwdatj2
+	LFpUpYFICI9fp8iff5ZBxtMOvu0RQ=; b=hE4ElmBIDZXFMIO2dMjoM+ltwAFA+j
+	t7GNxqKKs+OWhrtXhEMDUsYub9+IhmeFIoSUR37Q29Dzb7dG5Z6H9DaTW9OJil8F
+	vk08vXSXiwW0bFUyr2oBFcB4TLwhGyZ/HIDrmSNaQp1ax69icdi6T64CZTLtOpJ2
+	aLi4AICzZvT26dS0zIJdVSfn5VYGUMsw+2YiPSnhWDxOzahWnwBjAGIHl5ztwGkl
+	lB27+gYphb4z6kiTf+t1x5W4RgwBmNoLSPGKFnA5f9tPpoydELsDVt2Km7SeVsnL
+	+EKu0FoVN0PHxo9zakYYSL5zwPC0QEbtKAQD0t6lA8u58PCPeKHga3+Q==
+Received: (qmail 1006991 invoked from network); 31 Mar 2025 00:18:36 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 00:18:36 +0200
+X-UD-Smtp-Session: l3s3148p1@9BFGr5Yx6IlQ8qei
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-mmc@vger.kernel.org
+Subject: [PATCH] mmc: renesas_sdhi: disable clocks if registering regulator failed
+Date: Mon, 31 Mar 2025 00:17:32 +0200
+Message-ID: <20250330221732.56072-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,32 +45,28 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the Renesas RZ/G3E thermal driver, as used on the Renesas
-RZ/G3E SMARC EVK board.
+Because the clocks were just enabled, bail out to the proper target if
+there are problems with the regulator.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Fixes: fae80a99dc03 ("mmc: renesas_sdhi: Add support for RZ/G3E SoC")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v1 -> v2: no changes
-v2 -> v3: no changes
-v3 -> v4: update commit message
-v5: no changes
+ drivers/mmc/host/renesas_sdhi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a1cc3814b09b..91136c0196b5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -714,6 +714,7 @@ CONFIG_ROCKCHIP_THERMAL=m
- CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
- CONFIG_RZG2L_THERMAL=y
-+CONFIG_RZG3E_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
- CONFIG_MTK_THERMAL=m
- CONFIG_MTK_LVTS_THERMAL=m
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index cea6af5daf99..8c83e203c516 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1179,7 +1179,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		if (IS_ERR(rdev)) {
+ 			dev_err(dev, "regulator register failed err=%ld", PTR_ERR(rdev));
+ 			ret = PTR_ERR(rdev);
+-			goto efree;
++			goto edisclk;
+ 		}
+ 		priv->rdev = rdev;
+ 	}
 -- 
-2.25.1
+2.47.2
 
