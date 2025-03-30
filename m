@@ -1,37 +1,44 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB8E360;
-	Sun, 30 Mar 2025 09:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D6E19D074
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 30 Mar 2025 10:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743326269; cv=none; b=uFfjxmsbnCuKS6d1J+i5sot78OvMv84ZxfIUj1Ra03ToKeviQecCvPiZ/QQmNbFGVIa3kzfe4OxRDKWoCBXxlS3HxJmti+an9VY71x8h392PpJSNijMARk4ODnaONzNBlHn1QWVbIrlyXzXG8Ix1krM8q+xQuBLISwPbiCqEtgA=
+	t=1743330251; cv=none; b=nx5V63s48S5cHI7lJfS9OFiVfwi9D/DklHAPMj6jIEXuAT24n2EdC5UFMiGmBwBQI1cvw/ERMJ6coAWGutGqJ+gCMgO4En6etQDsivwaGLx/UvGB/DjTEAuYUhskhnGIHvLVKim+/XkAcaO73+BBL3kMi5OID1fTDOASI4IGXmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743326269; c=relaxed/simple;
-	bh=u8hLdGe9mwn/p/thIeq0zUvxDZOAhkFYMiztxgZy+h0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GAjAIOtlXTk0fp0rjftgMo46PwwjUDre18Qo3aEGssAfAqajnKbZrM5OPuR3VM9bayadQ3LhZoT6uphwDWt0Kpeshjm4Kvo1v3Zix87K1ZbmeCFsQ0LCsTPENWg2QUl2hEocM88PUUExv2d8dyiBtaE5BzFXYZp4sx9fkmtyGZY=
+	s=arc-20240116; t=1743330251; c=relaxed/simple;
+	bh=n1YzpsCYepBVostIyxWCizOlxF/kj07ELu6/S5ZEtP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EH14iBCq5lCWbruivoJywSVKnj01wJcUlKdukbWHiuT+zBL0wxVQSGhv83V7URpsdCofljKAhtCSDpxHwyclUYHHkTJy4syS/iAR2I75YDQ0tFAeF57iR0ZqqkaBjyAd2Kb0TSfseppIV+eICBs21vQQaDubOP1rmWybQPBn/ZU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: tHhtgsqSSFeaM1C1peT80g==
-X-CSE-MsgGUID: W7iNN95ZTCqzREwv9dLm9w==
+X-CSE-ConnectionGUID: X5IqqMAFSNi3CvRRKevGwQ==
+X-CSE-MsgGUID: NGroiOWSQzun0ZRcDcTxjg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 30 Mar 2025 18:17:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Mar 2025 19:24:07 +0900
 Received: from localhost.localdomain (unknown [10.226.92.49])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C45A14001B4C;
-	Sun, 30 Mar 2025 18:17:41 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 23FC040078A5;
+	Sun, 30 Mar 2025 19:24:03 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-media@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] media: renesas: vsp1: Use %p4cc printk modifier to print FourCC codes
-Date: Sun, 30 Mar 2025 10:17:35 +0100
-Message-ID: <20250330091738.27052-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/2] drm: renesas: rz-du: Drop bpp variable from struct rzg2l_du_format_info
+Date: Sun, 30 Mar 2025 11:23:52 +0100
+Message-ID: <20250330102357.56010-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250330102357.56010-1-biju.das.jz@bp.renesas.com>
+References: <20250330102357.56010-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -40,43 +47,53 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace '%08x->%p4cc' printk modifier to print FourCC codes for pixel
-formats.
+Drop the unused variable bpp from struct rzg2l_du_format_info.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/media/platform/renesas/vsp1/vsp1_drm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+v2:
+ * New patch.
+---
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c | 3 ---
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h | 1 -
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-index b5d1f238f7be..f8a575f6188a 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-@@ -593,8 +593,8 @@ static int vsp1_du_pipeline_set_rwpf_format(struct vsp1_device *vsp1,
- 
- 	fmtinfo = vsp1_get_format_info(vsp1, pixelformat);
- 	if (!fmtinfo) {
--		dev_dbg(vsp1->dev, "Unsupported pixel format %08x\n",
--			pixelformat);
-+		dev_dbg(vsp1->dev, "Unsupported pixel format %p4cc\n",
-+			&pixelformat);
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+index 90c6269ccd29..1a428ab3c424 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+@@ -38,19 +38,16 @@ static const struct rzg2l_du_format_info rzg2l_du_format_infos[] = {
+ 	{
+ 		.fourcc = DRM_FORMAT_XRGB8888,
+ 		.v4l2 = V4L2_PIX_FMT_XBGR32,
+-		.bpp = 32,
+ 		.planes = 1,
+ 		.hsub = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB8888,
+ 		.v4l2 = V4L2_PIX_FMT_ABGR32,
+-		.bpp = 32,
+ 		.planes = 1,
+ 		.hsub = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_RGB888,
+ 		.v4l2 = V4L2_PIX_FMT_BGR24,
+-		.bpp = 24,
+ 		.planes = 1,
+ 		.hsub = 1,
  	}
- 
-@@ -849,11 +849,11 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
- 	}
- 
- 	dev_dbg(vsp1->dev,
--		"%s: RPF%u: (%u,%u)/%ux%u -> (%u,%u)/%ux%u (%08x), pitch %u dma { %pad, %pad, %pad } zpos %u\n",
-+		"%s: RPF%u: (%u,%u)/%ux%u -> (%u,%u)/%ux%u (%p4cc), pitch %u dma { %pad, %pad, %pad } zpos %u\n",
- 		__func__, rpf_index,
- 		cfg->src.left, cfg->src.top, cfg->src.width, cfg->src.height,
- 		cfg->dst.left, cfg->dst.top, cfg->dst.width, cfg->dst.height,
--		cfg->pixelformat, cfg->pitch, &cfg->mem[0], &cfg->mem[1],
-+		&cfg->pixelformat, cfg->pitch, &cfg->mem[0], &cfg->mem[1],
- 		&cfg->mem[2], cfg->zpos);
- 
- 	/*
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h
+index 876e97cfbf45..e2c599f115c6 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h
+@@ -23,7 +23,6 @@ struct sg_table;
+ struct rzg2l_du_format_info {
+ 	u32 fourcc;
+ 	u32 v4l2;
+-	unsigned int bpp;
+ 	unsigned int planes;
+ 	unsigned int hsub;
+ };
 -- 
 2.43.0
 
