@@ -1,41 +1,40 @@
 Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639B525F991
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674DE26156D
 	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Apr 2025 13:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744204077; cv=none; b=CemMOq/yceYBl4rsIYLVes0k1InjXbqRgs+k5cbWc4zOfnnSaMVBRQUX27s68H7lb01Cl4/mtZfKmlLYAUZIjnJsrvj8gmdPCYu/2eFvshWmJGqswU7dRxmhqW2X3FRB1EenwkLZjsEtUmSst3X1p4o33j1TWLFHdzgo7KoaMoI=
+	t=1744204078; cv=none; b=pFrcdiih/t5y/tOp/+wo4US2aO1s4VT/66j4bMmZKRnJdmuvUoT799gghUajrS3HikE4IW/uGWMp2ulr7XIkX5eUV4k7GSDWApkIsE1cSQe48wT3a4z4699+m3nwH2CLyUry6WIk9mHgQwFhNLa4ipD25I8EH1cf7UbKPDJTZM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744204077; c=relaxed/simple;
-	bh=njzMjrL9v6oOjZCkson+d/1biGX8TVkb0gJ1MMouJJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZI9aQGmzyVEDDFZcvs2xXs/aNODWYbDUq9ILhGw2E+8SoOqRke/kqFUvdKyc5gTpKtblGgCphYuj2kQ4uY/UhA3k6H15bbpYWB2aYAUflP8tEEVh1djPPwb1PvJRGlWtjUNT+QOFEl97LWeu1TTS83STeicQbECjJ0oSTpSdwco=
+	s=arc-20240116; t=1744204078; c=relaxed/simple;
+	bh=UCzv3+YjXr1kJ13XPAbipkBdCjKymuGjg6jo1WTQy68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j+8XA1jNiHEGvPS2IqGJ/UaCf+lts1aloYh+ulvGdO/ARyAX7Tr89adi/wtnnr0bfGkxWkPo/jbCutar7KqlRec997OIa/OKiChp6dMtQW+FWsM9wP+kgqWuXOArNIDb5VesYFyAiDjZvdzs866LzhuF13L5WP6rqDll1i2DqkQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4ZXjsw47B7z4x1mS
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4ZXjsw3Xrrz4wxqM
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Apr 2025 15:07:48 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d6c1:79b5:9acd:4fad])
-	by laurent.telenet-ops.be with cmsmtp
-	id b17g2E00B1LzlAN0117gWx; Wed, 09 Apr 2025 15:07:41 +0200
+	by xavier.telenet-ops.be with cmsmtp
+	id b17g2E00K1LzlAN0117gvM; Wed, 09 Apr 2025 15:07:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u2V9X-00000000DQJ-1FFm;
+	id 1u2V9X-00000000DQT-1pQF;
 	Wed, 09 Apr 2025 15:07:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u2V6o-00000003Kae-1eOu;
-	Wed, 09 Apr 2025 15:04:50 +0200
+	id 1u2UuB-00000003JDE-0RVX;
+	Wed, 09 Apr 2025 14:51:47 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Remove individual Renesas SoC entries
-Date: Wed,  9 Apr 2025 15:04:49 +0200
-Message-ID: <b76439632baf86289dea00ff6b2e3ac69251cebc.1744203849.git.geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v6.15-rc1
+Date: Wed,  9 Apr 2025 14:51:41 +0200
+Message-ID: <7c1e94ef1d150a4ea1c08492d33e608acb5402ec.1744203030.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -45,53 +44,54 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove explicit entries for individual Renesas SoCs from the defconfig
-file.  Since all Renesas SoCs are enabled by default when ARCH_RENESAS
-is selected, and ARCH_RENESAS is already enabled in the defconfig,
-listing them separately is redundant.
+Refresh the defconfig for Renesas ARM64 systems:
+  - Disable Rockchip 3568002 erratum support (not applicable),
+  - Move CONFIG_DRM_I2C_NXP_TDA998X=y (moved in commit 325ba852d148434c
+    ("drm/i2c: move TDA998x driver under drivers/gpu/drm/bridge")),
+  - Drop CONFIG_SCHED_DEBUG=n (removed in commit b52173065e0aad82
+    ("sched/debug: Remove CONFIG_SCHED_DEBUG")).
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Not intended for upstream merge.
 To be applied to the topic/renesas-defconfig branch.
 ---
- arch/arm64/configs/renesas_defconfig | 23 -----------------------
- 1 file changed, 23 deletions(-)
+ arch/arm64/configs/renesas_defconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 54face65d831129a..c6e1fa75134a482b 100644
+index 81d063ca7cfbef04..54face65d831129a 100644
 --- a/arch/arm64/configs/renesas_defconfig
 +++ b/arch/arm64/configs/renesas_defconfig
-@@ -382,29 +382,6 @@ CONFIG_HWSPINLOCK=y
- # CONFIG_ARM64_ERRATUM_858921 is not set
- CONFIG_RENESAS_OSTM=y
- CONFIG_MAILBOX=y
--CONFIG_ARCH_R8A77995=y
--CONFIG_ARCH_R8A77990=y
--CONFIG_ARCH_R8A77951=y
--CONFIG_ARCH_R8A77965=y
--CONFIG_ARCH_R8A77960=y
--CONFIG_ARCH_R8A77961=y
--CONFIG_ARCH_R8A779F0=y
--CONFIG_ARCH_R8A77980=y
--CONFIG_ARCH_R8A77970=y
--CONFIG_ARCH_R8A779A0=y
--CONFIG_ARCH_R8A779G0=y
--CONFIG_ARCH_R8A779H0=y
--CONFIG_ARCH_R8A774C0=y
--CONFIG_ARCH_R8A774E1=y
--CONFIG_ARCH_R8A774A1=y
--CONFIG_ARCH_R8A774B1=y
--CONFIG_ARCH_R9A07G043=y
--CONFIG_ARCH_R9A07G044=y
--CONFIG_ARCH_R9A07G054=y
--CONFIG_ARCH_R9A08G045=y
--CONFIG_ARCH_R9A09G011=y
--CONFIG_ARCH_R9A09G047=y
--CONFIG_ARCH_R9A09G057=y
- CONFIG_EXTCON_USB_GPIO=y
- CONFIG_MEMORY=y
- CONFIG_RENESAS_RPCIF=y
+@@ -51,6 +51,7 @@ CONFIG_ARCH_RENESAS=y
+ # CONFIG_QCOM_QDF2400_ERRATUM_0065 is not set
+ # CONFIG_QCOM_FALKOR_ERRATUM_E1041 is not set
+ # CONFIG_NVIDIA_CARMEL_CNP_ERRATUM is not set
++# CONFIG_ROCKCHIP_ERRATUM_3568002 is not set
+ # CONFIG_ROCKCHIP_ERRATUM_3588001 is not set
+ # CONFIG_SOCIONEXT_SYNQUACER_PREITS is not set
+ CONFIG_ARM64_VA_BITS_48=y
+@@ -277,13 +278,13 @@ CONFIG_VIDEO_ADV7604_CEC=y
+ # CONFIG_MEDIA_TUNER_XC5000 is not set
+ CONFIG_DRM=y
+ CONFIG_DRM_FBDEV_EMULATION=y
+-CONFIG_DRM_I2C_NXP_TDA998X=y
+ CONFIG_DRM_RCAR_DU=y
+ CONFIG_DRM_RCAR_DW_HDMI=y
+ CONFIG_DRM_RZG2L_DU=y
+ CONFIG_DRM_RZG2L_MIPI_DSI=y
+ CONFIG_DRM_PANEL_LVDS=y
+ CONFIG_DRM_DISPLAY_CONNECTOR=y
++CONFIG_DRM_I2C_NXP_TDA998X=y
+ CONFIG_DRM_SIMPLE_BRIDGE=y
+ CONFIG_DRM_THINE_THC63LVD1024=y
+ CONFIG_DRM_TI_SN65DSI86=y
+@@ -454,5 +455,4 @@ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
+-# CONFIG_SCHED_DEBUG is not set
+ # CONFIG_FTRACE is not set
 -- 
 2.43.0
 
