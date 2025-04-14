@@ -1,221 +1,104 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D8B259CA4;
-	Mon, 14 Apr 2025 09:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4A31A08A4;
+	Mon, 14 Apr 2025 09:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744621492; cv=none; b=ia8etcHAgBYCNZLjkhl349RJwUd0n86JzM7QXcZFUXLHukDjdL7aGF2t+VGy6moNrhpB0dyGwVqeqWvPh/zgDM+5L2yUSBEImJOl9+Y6G/VLIYRTLg3pDvaQxa4JNkuJ+Y/4Xdj5ZUmgDEVUkfRqLjdfz4x+TVPtkpRL5B4+m6o=
+	t=1744623145; cv=none; b=htjBTRylZzwKyQ3JosTvgjD1rMtW7Nmd7AvKD+AAg/4Rbbc3LxbFQpY5QQYBJQL/eo0i0GVP5N9EIvTZmAvWEgFmNPzC1i5Q2JU7PHn6WuxqL+CYTnsxmcIdWOxGI1x5LZAp08Z02FrlMd0EUyzMK32mG/coybY/n6qyi/FDbBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744621492; c=relaxed/simple;
-	bh=VkgWh8fHdxfZghfLXtADSZaxTp3bEfee++iyxI23+PQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UXU759yVWz8Yz6OOqtyyMvW6eoosUcCdMKH/gPmlH2QIKqJt5DAddQAaTpJ9DgqLBz9XqBKtvVipdRE65bX0u+uSh8iA89gmW0BlnFVZakXPwXBaa8f7q4U+AyiZ4zHziNRbCmvM0Pit8LnPcdJDTT0rMXRZXnapjutkVn3CI8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UMQffY0Y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1744623145; c=relaxed/simple;
+	bh=T1ricBvu6gD0hNKZi1AiodtjauiUrZN5jT9n8gpVu6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rnsi9qcXs55FH2XLqA5kW7qOvRw0Zo0CSpbrgoZQpPulxkqhxgY2F7/17rOqkOdjCKwVEh2qNLUFPCvAMmokYFlI9x0GKJ6feTbGBRhk+pDamYZS64gsw1a4AVZKmDNXnYCeA1wPZtmR4fd8NgHF0TcV2Sq6RlDaSu7fpIvTHnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mg2hKdEf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UMQffY0Y"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53DK7apW007124;
-	Mon, 14 Apr 2025 09:04:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qWeIftUqA7jWcE1yp2JuYYMKDxEXUWoRSywTQ1SU8z0=; b=UMQffY0Y495wm1cV
-	O6j+A7ngvkTFoOj9js7MqW2XVQUax7t0G681Q08k+6OFyUdrGYN76rwSgAVw7u4K
-	trCCM2UuLVBYAmXmPze+N8ZZXYsGpzK4S9SbBYn1VmDIjhvZAOSqkwyKgNo3jhfH
-	zUaneI74hciFUELURdq8RFnUgCXKwRktDmw9FCmbAtHzRiYQOj64SwxlpUpn157a
-	zTGduw3WAqopZjImkpXGt/1Yz6FkxrldkL9taPiKM/sY+Vas/LtDo3zM8/MwCiIn
-	qtt7QMx4MIHm2nTrXsu1vxRnFunnwvGcKrcXfC2raTk5hkwHKni/JYB0TWdN8vOo
-	Phwmiw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydvj44d0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Apr 2025 09:04:34 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53E94XhG013725
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Apr 2025 09:04:33 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
- 2025 02:04:29 -0700
-Message-ID: <20c8df59-6e36-48a4-ba98-e1006de9e09b@quicinc.com>
-Date: Mon, 14 Apr 2025 14:34:26 +0530
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mg2hKdEf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A64EC4CEE2;
+	Mon, 14 Apr 2025 09:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744623144;
+	bh=T1ricBvu6gD0hNKZi1AiodtjauiUrZN5jT9n8gpVu6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mg2hKdEfswh1uEbfFKcVkea0o7nleWjJCaWWjuta7AqdhErdkcgIOJatDhCzL9/sg
+	 kWBsfxz/cTmtxcgooYxPLuPjzRwAb8jYK360e+nFE1ThCQF541WV9witjuaswcuooi
+	 VaHXa0xUAX/WAJTvjwECZIWbjDbzL1FOi4k8Zuf4=
+Date: Mon, 14 Apr 2025 11:32:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thierry Bultel <thierry.bultel@linatsea.fr>
+Cc: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"geert@linux-m68k.org" <geert@linux-m68k.org>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+Message-ID: <2025041458-squint-dean-9999@gregkh>
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
+ <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
+ <2025041152-puzzling-clinking-e573@gregkh>
+ <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+ <2025041456-legacy-craftwork-2d8b@gregkh>
+ <eba16d9a-9e07-498f-a7ab-0bb36076de40@linatsea.fr>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/9] ASoC: renesas: rsnd: allow to use ADG only
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jaroslav
- Kysela <perex@perex.cz>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-spi@vger.kernel.org>
-References: <87h62vh5mj.wl-kuninori.morimoto.gx@renesas.com>
- <87bjt3h5lc.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <87bjt3h5lc.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZIrXmW7b c=1 sm=1 tr=0 ts=67fccfa2 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=yC-0_ovQAAAA:8 a=_P2YCQLOWNFUlFncCNoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: bTcI2Mr-JVBXktXIw4RGWQwqpitO5Khr
-X-Proofpoint-ORIG-GUID: bTcI2Mr-JVBXktXIw4RGWQwqpitO5Khr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_02,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- clxscore=1011 priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=833
- spamscore=0 impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140065
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eba16d9a-9e07-498f-a7ab-0bb36076de40@linatsea.fr>
 
-
-
-On 4/11/2025 6:33 AM, Kuninori Morimoto wrote:
-> Audio clock generator (= ADG) can be used standalone, but current driver
-> will be error in such use case. Makes it as not error.
-will be error ?
-Makes it as not error ?
-
-I could not get exact problem here. seems you need to write properly.
-> And, current driver registers it as fixed rate clock, but actual clkout
-> was handled when SSI start works. Setup clkout setting when it was probed.
-> Otherwise it can't be used ADG only.
+On Mon, Apr 14, 2025 at 11:23:34AM +0200, Thierry Bultel wrote:
 > 
-Same here, its not clearly explaining.
-> Because of this fixup, current rsnd_adg_get_clkout() function name will be
-> strange. Rename get -> init.
 > 
-same here too. Please write in some verbose which says something.
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->   sound/soc/renesas/rcar/adg.c  | 28 ++++++++++++++++------------
->   sound/soc/renesas/rcar/core.c |  7 ++++++-
->   2 files changed, 22 insertions(+), 13 deletions(-)
+> Le 14/04/2025 à 10:58, Greg KH a écrit :
+> > On Mon, Apr 14, 2025 at 07:54:12AM +0000, Thierry Bultel wrote:
+> > > Hi Greg,
+> > > 
+> > > > -----Original Message-----
+> > > > From: Greg KH <gregkh@linuxfoundation.org>
+> > > > Sent: vendredi 11 avril 2025 16:57
+> > > > To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> > > > Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
+> > > > geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Wolfram
+> > > > Sang <wsa+renesas@sang-engineering.com>; linux-kernel@vger.kernel.org;
+> > > > linux-serial@vger.kernel.org
+> > > > Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+> > > > 
+> > > > On Thu, Apr 03, 2025 at 11:29:12PM +0200, Thierry Bultel wrote:
+> > > > > --- a/include/uapi/linux/serial_core.h
+> > > > > +++ b/include/uapi/linux/serial_core.h
+> > > > > @@ -231,6 +231,9 @@
+> > > > >   /* Sunplus UART */
+> > > > >   #define PORT_SUNPLUS	123
+> > > > > 
+> > > > > +/* SH-SCI */
+> > > > > +#define PORT_RSCI	124
+> > > > Why do you need to tell userspace about this specific port?  Is that a
+> > > > hard requirement that your userspace tools require?  If not, please don't
+> > > > export this here.
+> > > This point has been discussed with Geert and Wolfram.
+> > > We cannot use PORT_GENERIC for this IP, and adding the new type
+> > > is just keeping consistent with the sh-sci driver.
+> > But, why does userspace need to know this number?  And why doesn't
+> > PORT_GENERIC work?
 > 
-> diff --git a/sound/soc/renesas/rcar/adg.c b/sound/soc/renesas/rcar/adg.c
-> index 191f212d338c..db980e4642b8 100644
-> --- a/sound/soc/renesas/rcar/adg.c
-> +++ b/sound/soc/renesas/rcar/adg.c
-> @@ -377,16 +377,9 @@ int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *ssi_mod, unsigned int rate)
->   int rsnd_adg_clk_control(struct rsnd_priv *priv, int enable)
->   {
->   	struct rsnd_adg *adg = rsnd_priv_to_adg(priv);
-> -	struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
->   	struct clk *clk;
->   	int ret = 0, i;
->   
-> -	if (enable) {
-> -		rsnd_mod_bset(adg_mod, BRGCKR, 0x80770000, adg->ckr);
-> -		rsnd_mod_write(adg_mod, BRRA,  adg->brga);
-> -		rsnd_mod_write(adg_mod, BRRB,  adg->brgb);
-> -	}
-> -
->   	for_each_rsnd_clkin(clk, adg, i) {
->   		if (enable) {
->   			ret = clk_prepare_enable(clk);
-> @@ -504,13 +497,14 @@ static void rsnd_adg_unregister_clkout(struct rsnd_priv *priv)
->   		clk_unregister_fixed_rate(clk);
->   }
->   
-> -static int rsnd_adg_get_clkout(struct rsnd_priv *priv)
-> +static int rsnd_adg_init_clkout(struct rsnd_priv *priv)
->   {
->   	struct rsnd_adg *adg = priv->adg;
->   	struct clk *clk;
->   	struct device *dev = rsnd_priv_to_dev(priv);
->   	struct device_node *np = dev->of_node;
->   	struct property *prop;
-> +	struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
->   	u32 ckr, brgx, brga, brgb;
->   	u32 req_rate[ADG_HZ_SIZE] = {};
->   	uint32_t count = 0;
-> @@ -537,7 +531,7 @@ static int rsnd_adg_get_clkout(struct rsnd_priv *priv)
->   	 */
->   	prop = of_find_property(np, "clock-frequency", NULL);
->   	if (!prop)
-> -		goto rsnd_adg_get_clkout_end;
-> +		goto rsnd_adg_init_clkout_end;
->   
->   	req_size = prop->length / sizeof(u32);
->   	if (req_size > ADG_HZ_SIZE) {
-> @@ -633,7 +627,7 @@ static int rsnd_adg_get_clkout(struct rsnd_priv *priv)
->   
->   	if (!(adg->brg_rate[ADG_HZ_48]  && req_Hz[ADG_HZ_48]) &&
->   	    !(adg->brg_rate[ADG_HZ_441] && req_Hz[ADG_HZ_441]))
-> -		goto rsnd_adg_get_clkout_end;
-> +		goto rsnd_adg_init_clkout_end;
->   
->   	if (approximate)
->   		dev_info(dev, "It uses CLK_I as approximate rate");
-> @@ -682,11 +676,21 @@ static int rsnd_adg_get_clkout(struct rsnd_priv *priv)
->   				    &adg->onecell);
->   	}
->   
-> -rsnd_adg_get_clkout_end:
-> +rsnd_adg_init_clkout_end:
->   	adg->ckr = ckr;
->   	adg->brga = brga;
->   	adg->brgb = brgb;
->   
-> +	/*
-> +	 * setup default clkout
-> +	 */
-> +	if (0 == (req_rate[0] % 8000))
-> +		ckr = 0x80000000; /* use BRGB output */
-> +
-> +	rsnd_mod_bset(adg_mod, BRGCKR, 0x80770000, adg->ckr | ckr);
-> +	rsnd_mod_write(adg_mod, BRRA,  adg->brga);
-> +	rsnd_mod_write(adg_mod, BRRB,  adg->brgb);
-> +
->   	return 0;
->   
->   err:
-> @@ -764,7 +768,7 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
->   	if (ret)
->   		return ret;
->   
-> -	ret = rsnd_adg_get_clkout(priv);
-> +	ret = rsnd_adg_init_clkout(priv);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/sound/soc/renesas/rcar/core.c b/sound/soc/renesas/rcar/core.c
-> index 30afc942d381..4f4ed24cb361 100644
-> --- a/sound/soc/renesas/rcar/core.c
-> +++ b/sound/soc/renesas/rcar/core.c
-> @@ -1482,8 +1482,13 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
->   	int dai_i;
->   
->   	nr = rsnd_dai_of_node(priv, &is_graph);
-> +
-> +	/*
-> +	 * There is a case that it is used only for ADG (Sound Clock).
-> +	 * No DAI is not error
-> +	 */
->   	if (!nr)
-> -		return -EINVAL;
-> +		return 0;
->   
->   	rdrv = devm_kcalloc(dev, nr, sizeof(*rdrv), GFP_KERNEL);
->   	rdai = devm_kcalloc(dev, nr, sizeof(*rdai), GFP_KERNEL);
+> The reason is that the sh-sci driver discriminates internally between port
+> types.
+> There are number of locations when it checks for PORT_SCI, PORT_SCIF,
+> PORT_SCIFA...
 
+That is internal to the kernel, not external, right?
+
+> T2H SCI needs special handling, too, that is the reason why PORT_GENERIC
+> cannot work. I just therefore added this new type.
+
+Again, why does userspace need to know this?
+
+thanks,
+
+greg k-h
