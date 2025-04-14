@@ -1,45 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215A02989AC
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Apr 2025 11:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5053A28D827
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Apr 2025 11:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744629165; cv=none; b=Bvt4EwGaGEUA54PQ4ptcauy0AILqi6uAtDrxtHmKVHor3ViKiG6Pk0od8UbCq3o3M1YssRWNCneqIpJ0zjy0yxBAjBv77aGUpQ5luv3x9ybU6b/3DF1R5WGG8vm6r/VgbegLNDy8aOHSg+8KjRByiUrYctOw2ChDH2HjlUu7cjs=
+	t=1744629165; cv=none; b=DL2IMq/GAxE75nGqchCbesQW0Juvj5tThdXUSNLFXoDrTl9XkIW2B7A5YVgP/gyD7zQlNHi4BIc/W2LHFrx44ZRBvc22HyOQo+rNoP2Ta8h/j/b0yjipcchupWGzYSSdDzKHcWGBED6SS+DfHMDLNyTuE2bX/ZNU7sRYlpT4fFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744629165; c=relaxed/simple;
-	bh=dortTU+yJBLsP5gkHyoSI9rkyc/vP2fYW0eCLR+36mw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrmCeJZ20blQqNGzVW6ehQHiyMxRRwc15zpZxr5DmgVbW42/oPyrwjdcL6lHIYNLFSRj+MZlWtO+uisc9B+k6xG4/eemQX+7ckkcHziqhhWYCa+WLhQakguSB7joCCPg36Xp5GzDqyXBVHlYZtfZNIzRhLe33ze52h8BxfVIYuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Jy7KsT7T; arc=none smtp.client-ip=194.117.254.33
+	bh=ydWQx4emZ+BDbgopH/tUWILqV0Isr8UbzVbZ5KudTAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HFpeiaRRogCwEmWOgtmOjJm4EOJp+la5ueJPSvcA7/321h3f/IjBpqkI1Yt9RFX6st0s6FSLQmbewGk8zUgi2r356X69coYHL1jcAVwhY1WZAsRfcNovTZnN+mIMHau81AH19jXtz1BaH6uhr0BtGvRrwTZ2uJrtxGHI3BmipkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lUHis0yx; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Jy7KsT7T"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lUHis0yx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=jeuyOoKfBW6dzL
-	2II+vz4GMreRmAuX8fAw4x9taGFcI=; b=Jy7KsT7Try/illiyoGw/XEd8rICle5
-	MJeSPSjFVOP/EEpACpDnq9Jyjdi1LrQSsi8hvC1wCtajCO6K2X51ZHImVc82zYbZ
-	a0Jg6Qf2lrPRvg8b/f7qRxvcsvA9BE8jXGw24I8FKazrgGl07EkTCXBbzf7eW0mD
-	zFWUlSY4ZeUCVqoUO0cA5X1NgURkfuMj0zgE9tPcy+Xek7NDTW8MQGKZJvFUwp4x
-	FGtvWhkTP0qkKjc1d1AhWNc/VnjYLTsmg2wx9fWjUNMcsw/jXfRZJBRsrZ6MS1ZE
-	cG9xIw7XO2HQMomujjMcsDW11nOg3lEGOMf59tFuJl9Y21xYF4osLu1g==
-Received: (qmail 2268485 invoked from network); 14 Apr 2025 13:12:37 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Apr 2025 13:12:37 +0200
-X-UD-Smtp-Session: l3s3148p1@hvA0IbsyaJoujnth
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=71YB8nio22l0KBvfcad+JWa/ZASnVxFnE6jKJ1Bz4PQ=; b=lUHis0
+	yxIaSr9OBNTlauYeXW8GctBuY5XqsVFR98FPxcAWQBBK5D2AuE/8ygmdAYmlSz6B
+	G5cd4Gudyb+yte+9exb5NobCXOzIZ50Oy1b1nm5AZKHiNeN3nA/kNbHXNZreddBc
+	tMR+p8DPJdMdhEUoikkGR8RacSaRX1Xgo/SPKLiR563vWNGc/ymgeQcrYsb9bChU
+	Sm+Ej1V+/CyfoKrXOo+ISv3ZY66qrc3yo9Sz8oTSpivqgnYLbh5+Wa1qP4kJ92qU
+	vT/XoKIR4/ZzS3Ob+E0AgWkPW8rPjrjSWnT+REEqcplfQk5/OvzlevWZrGwIM/Kh
+	a6LDwJU0GlyaPKxg==
+Received: (qmail 2268576 invoked from network); 14 Apr 2025 13:12:40 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Apr 2025 13:12:40 +0200
+X-UD-Smtp-Session: l3s3148p1@u6pWIbsyfJoujnth
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [RFC PATCH 0/2] ARM: dts: renesas: r9a06g032: rework UARTs
-Date: Mon, 14 Apr 2025 13:12:18 +0200
-Message-ID: <20250414111218.7641-4-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 2/2] ARM: dts: renesas: r9a06g032-rzn1d400-eb: describe 9-pin SubD-serial port
+Date: Mon, 14 Apr 2025 13:12:20 +0200
+Message-ID: <20250414111218.7641-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250414111218.7641-4-wsa+renesas@sang-engineering.com>
+References: <20250414111218.7641-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,30 +52,43 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The intention of this series is to enable the UART attached to the
-9-pin-SubD connector on the extentsion board (patch 2). I got confused
-while doing this, because currently the uarts are counted from 0 in the
-SoC DTSI while they start from 1 in the documentation and the
-schematics. Thus, patch 1 renames the labels accordingly. However, the
-series is still RFC because I am calling for opinions if we maybe also
-want to fix the pinmux defines like this one 'RZN1_FUNC_UART2? to the
-official numbering?
+A simple CTS/RTS capable UART on a good old SubD connector.
 
-Looking forward to comments...
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../boot/dts/renesas/r9a06g032-rzn1d400-eb.dts    | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Based on renesas-dts-for-v6.16 as of today + my GMAC1 patch sent a few
-minutes ago.
-
-Wolfram Sang (2):
-  ARM: dts: renesas: r9a06g032: rename uart port labels
-  ARM: dts: renesas: r9a06g032-rzn1d400-eb: describe 9-pin SubD-serial
-    port
-
- .../boot/dts/renesas/r9a06g032-rzn1d400-db.dts   |  4 ++--
- .../boot/dts/renesas/r9a06g032-rzn1d400-eb.dts   | 15 +++++++++++++++
- arch/arm/boot/dts/renesas/r9a06g032.dtsi         | 16 ++++++++--------
- 3 files changed, 25 insertions(+), 10 deletions(-)
-
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+index 975446b2ac97..e103a18ccc24 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
++++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+@@ -145,6 +145,14 @@ pins_sdio1_clk: pins-sdio1-clk {
+ 		pinmux = <RZN1_PINMUX(96, RZN1_FUNC_SDIO)>;
+ 		drive-strength = <12>;
+ 	};
++
++	pins_uart3: pins_uart3 {
++		pinmux = <RZN1_PINMUX(105, RZN1_FUNC_UART2)>,
++			 <RZN1_PINMUX(106, RZN1_FUNC_UART2)>,
++			 <RZN1_PINMUX(107, RZN1_FUNC_UART2)>,
++			 <RZN1_PINMUX(108, RZN1_FUNC_UART2)>;
++		bias-disable;
++	};
+ };
+ 
+ &sdio1 {
+@@ -221,3 +229,10 @@ &switch_port3 {
+ 	phy-handle = <&switch0phy1>;
+ 	status = "okay";
+ };
++
++&uart3 {
++	pinctrl-0 = <&pins_uart3>;
++	pinctrl-names = "default";
++	status = "okay";
++	uart-has-rtscts;
++};
 -- 
 2.47.2
 
