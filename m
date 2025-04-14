@@ -1,163 +1,115 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7FC1A9B58
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Apr 2025 10:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6F25E471;
+	Mon, 14 Apr 2025 10:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624946; cv=none; b=bUbX8h0dnJCbOmbUetwrCqAWDpXw4SVRvjAQQPBqhUMUtrEPKvvsUJ7UFebuiQfo9F1qdB18s+WGr0kebT6WV6zN6jRsJgfcvr2BQTPJxZl45E/CU8yxay+hl6xMqcS8bJSUa5fdpxsGKbMbWQety4gIIVfdKfKuPV7zJwlm57o=
+	t=1744625333; cv=none; b=RwohT2ZuZdsk++l8s6JGm40Io8rFuX1MXJ+cR44LW7NQ7YhnAhoqKeL7CK6k6ofNa/ZNrTM187g5lYsdA3yYCLqU1JzbhJ8BkGFBLL975ukVRorJ6NXw547jfMK4hImm9++0ygW6qLGb3lcg3M39oH/gVFxMHnsh7ijOcGn6IWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624946; c=relaxed/simple;
-	bh=FfLFviB1dgFGoRFmstXijEl6bx0DXQ/QuRWLNagTGrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fzijjcp1dQ/TsoeTf06CYsbwGDqxIHmRJ/efhoXQdQcneznA3miMCRxG7e8rIxaWQXI5oJ5gGm1qtsB3qn1nsRjaejXlcMIVYdtVHyq5YWh4nCXNU080Hza7pjbIO5c4WeoFd/RvQRv0bnuPoAMT6EUtKVufyfy/GabluO3Ngvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OwQcbk2s; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1744625333; c=relaxed/simple;
+	bh=ikcFIKiUa4XCXRzxwCujAZL//L2GImleFBpghLCAdbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a1QNizTsv5vgjUpI+dFeIWC3Y79yzhROXs1bfTL19IDi2a3oDbY/JZXG5RQG7PIK5SIRDfpg1Vpyy9gh8CPWwWdEADOKZN5GPU0wgwwCE6CXqHnmKzNQmqQ7tIkvisfgrnpFrgWPfI75OK7qVjYqoyO0Hdp3Wn9IFkiP08n82Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr; spf=pass smtp.mailfrom=linatsea.fr; dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b=RO5VAnnx; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linatsea.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OwQcbk2s"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-type:content-transfer-encoding; s=k1; bh=g
-	C+3HXcqHlrIg8k1i6gZ+tETFXVfKFnaUdkkcsMJ0/k=; b=OwQcbk2sWQSHPtRUQ
-	GDkuybFKPqT3ZkeMMvlEkSm5butJPjmxLN8a3ZHC/pbhLj5kJeXWfWGweSCdkwrn
-	w0hurVnPyFgLHV7nT3j3M+KuuCCnTIx/BZDdxMaCSxzw5Au7K5r77qH2Q0y9OMuK
-	iDcJ17So7wcGQqUIsb8000gvRviTu1LUWbOlQrO1i6iykDP634HHX+WQAWRaIJM8
-	WG7sL5l/snGGLBmGms/XPSkxScu8rqGceB/FfAxY+H142k7ee2mSmdDcCygZaAkD
-	YkmUDHkHZLUnIfeOftA+aQPbAULfqtMx0iBWGx1v07xLuay+MTJNsKCDLUbsCGg5
-	4T5PA==
-Received: (qmail 2241609 invoked from network); 14 Apr 2025 12:02:20 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Apr 2025 12:02:20 +0200
-X-UD-Smtp-Session: l3s3148p1@DgvOJboybJcujnth
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH] ARM: dts: renesas: r9a06g032-rzn1d400-eb: Add GMAC1 port
-Date: Mon, 14 Apr 2025 12:01:13 +0200
-Message-ID: <20250414100206.7185-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b="RO5VAnnx"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 38015584AE7;
+	Mon, 14 Apr 2025 09:23:45 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 108D4433F6;
+	Mon, 14 Apr 2025 09:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linatsea.fr; s=gm1;
+	t=1744622617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2xX1JnrLD/Xmneb1rgW8av3OLo09hQ4pZGDbeGR+qj8=;
+	b=RO5VAnnxDB8lpFxKu641LS0B9QLtjt9TUl9rTMYFBCSXgRg5jmtbsItblG8jlNiXcDHr9P
+	ZTiHksLdTyzu2/OAqJ+hurpuJitXUf4TB5aAHq7zEwh+V96wXLpyweU7W05QpDXdV9wZqz
+	iQfDu2WvOGFyNTQWdW3mf5nTGeH2sCyw59gw4S0jzlLsTRg7itiTvSNu0fcQQYBHV0Tryc
+	7v6hp5vT5D50D2T9UkuXgi8JjeojuaSRJdk6aabHHnEby2e7ieLDeqKSOvdXmcVcCNkT7g
+	uKgkyl/7vl/dZnqrL1UTjo09G7NOVaTP/lgmzAVVxHPfs8S4fqg4CYoDNA1uMg==
+Message-ID: <eba16d9a-9e07-498f-a7ab-0bb36076de40@linatsea.fr>
+Date: Mon, 14 Apr 2025 11:23:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "geert@linux-m68k.org" <geert@linux-m68k.org>,
+ Paul Barker <paul.barker.ct@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
+ <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
+ <2025041152-puzzling-clinking-e573@gregkh>
+ <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+ <2025041456-legacy-craftwork-2d8b@gregkh>
+Content-Language: fr
+From: Thierry Bultel <thierry.bultel@linatsea.fr>
+In-Reply-To: <2025041456-legacy-craftwork-2d8b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhihgvrhhrhicuuehulhhtvghluceothhhihgvrhhrhidrsghulhhtvghlsehlihhnrghtshgvrgdrfhhrqeenucggtffrrghtthgvrhhnpeffleefheeutdeuhfehteehkeduieeltdejffetkeekuedtveeivedvudelkefgteenucfkphepkeelrddvgeekrdejiedrjedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeelrddvgeekrdejiedrjedtpdhhvghloheplgduledvrdduieekrdehjedrleejngdpmhgrihhlfhhrohhmpehthhhivghrrhihrdgsuhhlthgvlheslhhinhgrthhsvggrrdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehthhhivghrrhihrdgsuhhlthgvlhdrhihhsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgp
+ dhrtghpthhtohepphgruhhlrdgsrghrkhgvrhdrtghtsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thierry.bultel@linatsea.fr
 
-This port bypasses the switch and is directly connected to the GMAC.
 
-Co-developed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
 
-Based on renesas-dts-for-v6.16 as of today.
+Le 14/04/2025 à 10:58, Greg KH a écrit :
+> On Mon, Apr 14, 2025 at 07:54:12AM +0000, Thierry Bultel wrote:
+>> Hi Greg,
+>>
+>>> -----Original Message-----
+>>> From: Greg KH <gregkh@linuxfoundation.org>
+>>> Sent: vendredi 11 avril 2025 16:57
+>>> To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+>>> Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
+>>> geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Wolfram
+>>> Sang <wsa+renesas@sang-engineering.com>; linux-kernel@vger.kernel.org;
+>>> linux-serial@vger.kernel.org
+>>> Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+>>>
+>>> On Thu, Apr 03, 2025 at 11:29:12PM +0200, Thierry Bultel wrote:
+>>>> --- a/include/uapi/linux/serial_core.h
+>>>> +++ b/include/uapi/linux/serial_core.h
+>>>> @@ -231,6 +231,9 @@
+>>>>   /* Sunplus UART */
+>>>>   #define PORT_SUNPLUS	123
+>>>>
+>>>> +/* SH-SCI */
+>>>> +#define PORT_RSCI	124
+>>> Why do you need to tell userspace about this specific port?  Is that a
+>>> hard requirement that your userspace tools require?  If not, please don't
+>>> export this here.
+>> This point has been discussed with Geert and Wolfram.
+>> We cannot use PORT_GENERIC for this IP, and adding the new type
+>> is just keeping consistent with the sh-sci driver.
+> But, why does userspace need to know this number?  And why doesn't
+> PORT_GENERIC work?
 
- .../dts/renesas/r9a06g032-rzn1d400-eb.dts     | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
+The reason is that the sh-sci driver discriminates internally between 
+port types.
+There are number of locations when it checks for PORT_SCI, PORT_SCIF, 
+PORT_SCIFA...
+T2H SCI needs special handling, too, that is the reason why PORT_GENERIC 
+cannot work. I just therefore added this new type.
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
-index e539df514d1e..975446b2ac97 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
-+++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
-@@ -15,6 +15,42 @@ / {
- 		     "renesas,r9a06g032";
- };
- 
-+&gmac1 {
-+	pinctrl-0 = <&pins_eth0>, <&pins_mdio0>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy_mii0>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "snps,dwmac-mdio";
-+
-+		phy_mii0: ethernet-phy@8 {
-+			reg = <8>;
-+			leds {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				led@0 {
-+					reg = <0>;
-+					color = <LED_COLOR_ID_GREEN>;
-+					function = LED_FUNCTION_LAN;
-+					default-state = "keep";
-+				};
-+
-+				led@1 {
-+					reg = <1>;
-+					color = <LED_COLOR_ID_ORANGE>;
-+					function = LED_FUNCTION_ACTIVITY;
-+					default-state = "keep";
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c2 {
- 	/* Sensors are different across revisions. All are LM75B compatible */
- 	sensor@49 {
-@@ -23,6 +59,11 @@ sensor@49 {
- 	};
- };
- 
-+&mii_conv1 {
-+	renesas,miic-input = <MIIC_GMAC1_PORT>;
-+	status = "okay";
-+};
-+
- &mii_conv2 {
- 	renesas,miic-input = <MIIC_SWITCH_PORTD>;
- 	status = "okay";
-@@ -34,6 +75,23 @@ &mii_conv3 {
- };
- 
- &pinctrl {
-+	pins_eth0: pins-eth0 {
-+		pinmux = <RZN1_PINMUX(0, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(1, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(2, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(3, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(4, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(5, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(6, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(7, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(8, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(9, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(10, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-+			 <RZN1_PINMUX(11, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>;
-+		drive-strength = <6>;
-+		bias-disable;
-+	};
-+
- 	pins_eth1: pins-eth1 {
- 		pinmux = <RZN1_PINMUX(12, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
- 			 <RZN1_PINMUX(13, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
-@@ -68,6 +126,11 @@ pins_eth2: pins-eth2 {
- 		bias-disable;
- 	};
- 
-+	pins_mdio0: pins-mdio0 {
-+		pinmux = <RZN1_PINMUX(150, RZN1_FUNC_MDIO0_GMAC0)>,
-+			 <RZN1_PINMUX(151, RZN1_FUNC_MDIO0_GMAC0)>;
-+	};
-+
- 	pins_sdio1: pins-sdio1 {
- 		pinmux = <RZN1_PINMUX(95, RZN1_FUNC_SDIO)>,
- 			 <RZN1_PINMUX(97, RZN1_FUNC_SDIO)>,
--- 
-2.47.2
+>
+> thanks,
+>
+> greg k-h
 
