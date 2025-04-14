@@ -1,160 +1,154 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43E42798E6;
-	Mon, 14 Apr 2025 15:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A077252295;
+	Mon, 14 Apr 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744645396; cv=none; b=ZGlWqhtG04qwGZzsYmfIxdsEs+jcQThlTImxWwv2hdmEfzu9pTDLXC6LmFqYmt2v0rPSSmYKCcHWqyTrre7q5kkS8tHDXRh3iZ3IHcIBabcb5wiEV39RQugsv5nVU+JUGBm5khnhmxO213CxHEDo6vX9Pr9bviFyy1et3WPnTH4=
+	t=1744645416; cv=none; b=mM9jcUC1pjFOE2XnZBvjKmaxRn6M54swB25N9sWz1DecGdOahP/LdbPcCWrYxGN6c4qM3UrddGPye0+9OM+TCyiLvn4bTU+oNtHDnh5KRiC3y9mpOMnxFTyh46ql12Rl23BMtT1uT+XU6Br/8bjAJGM/qR6wSSN7hbbDPsw1eGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744645396; c=relaxed/simple;
-	bh=Bk9sdieVhJvYhNjXyqNHNzdwxanItAh4PQFWYC/DC0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TkOl6H8AE2C3qSNDq+nWdl2SH41MxuDB9ClrTc58/3zVRA0cqp/s1fS2cWDLoEY+Qs/9EAHv8u7UZssWiOKExY2vWS/Qt/c3sSUJjv2ia2bA+oK1vHs1UOiDYGL8kSg46pnKXf0xbjxY6gge2Cz4NSzW8aMKeV2j0LwmpSfV+xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso4927569e0c.1;
-        Mon, 14 Apr 2025 08:43:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744645392; x=1745250192;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jo/5xBg1cgrDSggMEx8ra+sZxxAkZzUw3KFNZtSeNhE=;
-        b=b1Zo0D4HfmP9HhAl1v+oIPszx3KeTTjz8BjpezzS7oiHefXxshO0lg4bnqj/je+kWB
-         8zqJjsypJX+j0vGZQ8W/1pzAAgyESyxDDeBn2WbzpsaPU5AGrddwcegdaR2/23av9FzA
-         9ZU9hednt/eDQy94ywNO5GryXXjV8tCoa5W7CCVb2EdV6Oo5VUWf+b6ZmgqoswtqZihf
-         I1z9aw+uyb2qLcVSv0/mtDuC/geJlYKJe3HxbeGPsJsrDOlZWYGLSHquUVkffIQF4plm
-         DTJhyS1GVCDCJMHjroVUAgBz8RdcyHwCXWo+chIjJQdeDYuZMv36fdQ0HMsx4RbHBgUk
-         Mdtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh9oFHoC3Z6Fcmdvt26oVUQYGWRaq67PDRgwHWodknu4JED5yTpyYYAPBluTMVueT++sPZY4/8EnQKhVYksK2sBPA=@vger.kernel.org, AJvYcCVmrqZ/BmMSCdlA7MIGq63qNaUyidK4hYcykyLQ1OYf1b8n2ZmAJ7DmatKq0iX5Zod7uPJzfB4CTM3c@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAi16CNSE5I0HTLWC4Ry7LQ0oMRHIFZjrZm2IPLrKXyr6IHIzo
-	rVGNevI16WjxzxBX5cN47ogfCdiEZReBWfndwykaPMfUf0ve4x97Me/Es3Yl
-X-Gm-Gg: ASbGnct0Ro/0rZCtoTL7WfCIICVDbs/TbG/b81n/9KMKZJFk/37/Tdm/Xpwvsj9fxqB
-	iTYNo7zJfZisCVHRtpxDDFpFtP3i8iZ2c15bfO5J9I9hdgTAEjN7u2AZeiM8lFOAnSSuxY7dAuM
-	djYMfWQxvbYUbiC5tIxyGMfu6rRTgqEbWGgeBJiGunVSy/SvqJbxhTZUAqfxjyEI8KC7AiCqsSv
-	jsM45fKnzcTeTfu4CU73MX6hvVzAGeAyJ1F8UvyZroa2Lm821Fh9JEQkWFXUywm4BnEwd7U/3sm
-	7GK8RnoyMFtLf06fjuFkV06dJ+cZr5CtmRM5Kc/D67Qc9MfjmWWDXam7sJuOSJJeDNuJ2uXJQU3
-	hk/fuqT4=
-X-Google-Smtp-Source: AGHT+IEWgR2LdmCs084AXJxRJYWF0jxkV8bdYr9/MVy4yTfn0HneeGl3qNK4M0BYnOMGedrOlkRuZg==
-X-Received: by 2002:a05:6122:3d0b:b0:526:2356:f3fb with SMTP id 71dfb90a1353d-527c35fa25bmr8593466e0c.11.1744645392331;
-        Mon, 14 Apr 2025 08:43:12 -0700 (PDT)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd74722sm2250948e0c.13.2025.04.14.08.43.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 08:43:11 -0700 (PDT)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso4927517e0c.1;
-        Mon, 14 Apr 2025 08:43:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgthza44a0Mdh9VUWkOX48VqJ99nWo7ICc8S26FV4DR1O3SihJD0KDk9mydFH3pVjjaU7xPA+zHvvC@vger.kernel.org, AJvYcCXpxoJ/YcVNLYJ4OQi/obi15e4kwX+5+/FOQGKGiELLCqSrpvxXQ6XAvAqqL9O3GXHWdXXQyTZStqv50azqo9DkV2U=@vger.kernel.org
-X-Received: by 2002:a05:6122:250c:b0:520:6773:e5ba with SMTP id
- 71dfb90a1353d-527c348024fmr8745717e0c.2.1744645391547; Mon, 14 Apr 2025
- 08:43:11 -0700 (PDT)
+	s=arc-20240116; t=1744645416; c=relaxed/simple;
+	bh=Tkk57IwElxqXIkI2v9lTSkM3kXzBNPN57prvrUMVkiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qExVtZx886sWwBM55GU5er2I2kMWXtTdKHSA5EctPDLPYrthfKAj/ugnbWenjHNTJ3Z6xrRtsRuzyrsp2C55Yh6b037P/yMhUppLb4d7eUt8wQoTcV7cMKVSmE5KM3u+8S18wRtMV3fjst6cqXNzWdvDnz8HBvMvuNVm0GeH7TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: cGrC+luCTY+SUvSx9SfAQw==
+X-CSE-MsgGUID: B8r3E4ThQ06ZFEp0r10dcw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Apr 2025 00:38:23 +0900
+Received: from localhost.localdomain (unknown [10.226.92.176])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9F41A4003ED7;
+	Tue, 15 Apr 2025 00:38:20 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] arm64: dts: renesas: r9a09g047e57-smarc: Add gpio keys
+Date: Mon, 14 Apr 2025 16:38:07 +0100
+Message-ID: <20250414153818.214811-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320164121.193857-1-biju.das.jz@bp.renesas.com> <20250320164121.193857-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250320164121.193857-4-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Apr 2025 17:42:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWSTbVwOzTtTV8DRayvgor52=KwErzhOv2iPJkMy4BXbQ@mail.gmail.com>
-X-Gm-Features: ATxdqUElZK_kVrcHg1wLs1acoCCfZ0aqgjdzt8ZQAfeFvk-7Ha_Knq-bR9FuKNo
-Message-ID: <CAMuHMdWSTbVwOzTtTV8DRayvgor52=KwErzhOv2iPJkMy4BXbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: r9a09g047e57-smarc: Enable
- CAN Transceiver
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
+RZ/G3E SMARC EVK  has 3 user buttons called USER_SW1, USER_SW2 and
+USER_SW3. Add a DT node in device tree to instantiate the gpio-keys driver
+for these buttons.
 
-On Thu, 20 Mar 2025 at 17:41, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Enable TCAN1046V-Q1 CAN Transceiver populated on RZ/G3E SMARC EVK by
-> modelling it as two instances of tcan1042.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Replaced GPIO hog with CAN Transceiver.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 27 +++++++++++++++++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      | 30 +++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-Thanks for the update!
-
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> @@ -8,6 +8,8 @@
->  /dts-v1/;
->
->  /* Switch selection settings */
-> +#define SW_GPIO8_CAN0_STB      0
-> +#define SW_GPIO9_CAN1_STB      0
->  #define SW_LCD_EN              0
->  #define SW_PDM_EN              0
->  #define SW_SD0_DEV_SEL         0
-> @@ -42,16 +44,36 @@ &canfd {
->  #if (!SW_PDM_EN)
->         channel1 {
->                 status = "okay";
-> +#if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
-> +               phys = <&can_transceiver1>;
-> +#endif
->         };
->  #endif
-
-Do you need these two levels of #ifdefs?  If CAN-FD doesn't work
-without the transceivers, wouldn't you just need a single #ifdef with
-the logical AND of all conditions above around the channel1 subnode?
-
-Am I missing something?
-
->
->  #if (!SW_LCD_EN)
->         channel4 {
->                 status = "okay";
-> +#if (SW_GPIO8_CAN0_STB)
-> +               phys = <&can_transceiver0>;
-> +#endif
-
-Same for the second channel.
-
-
->         };
->  #endif
->  };
->
-> +#if (!SW_LCD_EN) && (SW_GPIO8_CAN0_STB)
-
-Related, doesn't this need !SW_PDM_EN, too?
-
-> +&can_transceiver0 {
-> +       standby-gpios = <&pinctrl RZG3E_GPIO(5, 4) GPIO_ACTIVE_HIGH>;
-> +       status = "okay";
-> +};
-> +#endif
-> +
-> +#if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
-> +&can_transceiver1 {
-> +       standby-gpios = <&pinctrl RZG3E_GPIO(5, 5) GPIO_ACTIVE_HIGH>;
-> +       status = "okay";
-> +};
-> +#endif
-> +
->  &pinctrl {
->         canfd_pins: canfd {
->                 can1_pins: can1 {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+index 5d7983812c70..246327a19527 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+@@ -8,9 +8,18 @@
+ /dts-v1/;
+ 
+ /* Switch selection settings */
++#define SW_LCD_EN		0
+ #define SW_SD0_DEV_SEL		0
+ #define SW_SDIO_M2E		0
+ 
++#define PMOD_GPIO4		0
++#define PMOD_GPIO6		0
++#define PMOD_GPIO7		0
++
++#define  KEY_1_GPIO		RZG3E_GPIO(3, 1)
++#define  KEY_2_GPIO		RZG3E_GPIO(8, 4)
++#define  KEY_3_GPIO		RZG3E_GPIO(8, 5)
++
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/renesas,r9a09g047-pinctrl.h>
+ #include "r9a09g047e57.dtsi"
+@@ -33,6 +42,24 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
+ 	};
+ };
+ 
++&keys{
++#if PMOD_GPIO4
++	/delete-node/ key-1;
++#endif
++
++#if SW_LCD_EN || PMOD_GPIO6
++	/delete-node/ key-2;
++#endif
++
++#if SW_LCD_EN || PMOD_GPIO7
++	/delete-node/ key-3;
++#endif
++};
++
++#if SW_LCD_EN && PMOD_GPIO4 && PMOD_GPIO6 && PMOD_GPIO7
++	/delete-node/ keys;
++#endif
++
+ &pinctrl {
+ 	scif_pins: scif {
+ 		pins = "SCIF_TXD", "SCIF_RXD";
+diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+index fd82df8adc1e..84fb955ad77b 100644
+--- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
++++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+@@ -12,8 +12,13 @@
+  * SW_SDIO_M2E:
+  *     0 - SMARC SDIO signal is connected to uSD1
+  *     1 - SMARC SDIO signal is connected to M.2 Key E connector
++ *
++ * GPIO keys are enabled by default. Use PMOD_GPIO macros to disable them
++ * if needed.
+  */
+ 
++#include <dt-bindings/input/input.h>
++
+ / {
+ 	model = "Renesas RZ SMARC Carrier-II Board";
+ 	compatible = "renesas,smarc2-evk";
+@@ -27,6 +32,31 @@ aliases {
+ 		serial3 = &scif0;
+ 		mmc1 = &sdhi1;
+ 	};
++
++	keys: keys {
++		compatible = "gpio-keys";
++
++		key-1 {
++			interrupts-extended = <&pinctrl KEY_1_GPIO IRQ_TYPE_EDGE_FALLING>;
++			linux,code = <KEY_1>;
++			label = "USER_SW1";
++			debounce-interval = <20>;
++		};
++
++		key-2 {
++			interrupts-extended = <&pinctrl KEY_2_GPIO IRQ_TYPE_EDGE_FALLING>;
++			linux,code = <KEY_2>;
++			label = "USER_SW2";
++			debounce-interval = <20>;
++		};
++
++		key-3 {
++			interrupts-extended = <&pinctrl KEY_3_GPIO IRQ_TYPE_EDGE_FALLING>;
++			linux,code = <KEY_3>;
++			label = "USER_SW3";
++			debounce-interval = <20>;
++		};
++	};
+ };
+ 
+ &scif0 {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
