@@ -1,181 +1,235 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EA827B4ED
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Apr 2025 10:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4055C28DF08;
+	Tue, 15 Apr 2025 12:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713285; cv=none; b=NeufyZOxIGZREOMq80Hr6ZIyEQ9P8PtROVSDbynmc8tn0+XFBbYH/EhS+NNrPStpm5UuZq/SQUHB2lOL6K5qV7J3Yt99q5e2ixuPkM11dJGxVbASSVfJHb2XW4j/MbG+G+pTyG4wFLs3lzAnJuZGzQBBXs0quc2w3iiRa3Gtyjc=
+	t=1744718645; cv=none; b=HUBqgtNtTVwzRK354B4lql1CRgPihLz7dDXRrwFyhOqBxwkcn+9Pdvg/p5QT6yRYPnJrJO28MPtBt7EOXPKn7jv7+yFdLazJNz7AeW0eiV/WfAvn5H57VSc8V37z5IuQEpv6pFv2yNjkXZa8LOV3e3+HRv867eUAcAAG5uwEmkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713285; c=relaxed/simple;
-	bh=cWE2/Bkyi72eHP2a/Cwmif5ZrddAJ5UTTZeGmvuCA/0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=saXC/OZvQf0mp745QHilPcetU/xI85NGxA5DhACgeGOJDI/0A4a98NOTu/tE5270FuKrH7VWUyFb7uC7tEO2/tmW3dFLNBsqd2RRlGGnQUT9+GrhyxkYJrsyt54P2Uja0olGit26LeyoMJkryzzOC3H/Uyo5J2uUrnBqszI1SrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XzQH5c1E; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XzQH5c1E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744713284; x=1776249284;
-  h=date:from:to:cc:subject:message-id;
-  bh=cWE2/Bkyi72eHP2a/Cwmif5ZrddAJ5UTTZeGmvuCA/0=;
-  b=XzQH5c1E1zxl6ZstNyQhOrRIuAFaQBgUHFu7zVRhBoIo99pZ/VQUdHJV
-   pv3o83kS/WoTOUyYlns84XIc6KRL+YTq71pLpgIIpyMNCk8bHsbZh/bVh
-   H8mxvUElB5eB3S+ukZSuciMiCNR4s+zfnIEGqpi2piJ0/eSQAdobHlWGJ
-   q/lLZ4UAjQq6c0Rx4iismU4TNXoJtxhf1+qfaKMHMNHJApy7LLIjEay8a
-   gRN18xSP4jBJM59x0/2qn+rLUAfim3Sx3heoQ7xN490kl03Cf+HWpUO6l
-   qSBko2bJT72Ogvby2fj3CVfxLD6k5sPpvkkbFDN2tSmzvF26MwwBTrmcN
-   Q==;
-X-CSE-ConnectionGUID: kiP/MiBZR6S5BUkAz+8wqg==
-X-CSE-MsgGUID: QXejs3G9Rj6nrKkgVeNNrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="57207016"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="57207016"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:33:33 -0700
-X-CSE-ConnectionGUID: w9m2a+oPSiydozKVzJNJjQ==
-X-CSE-MsgGUID: lganfN3aRmuKPxVRB6ekCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130610950"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 15 Apr 2025 03:33:32 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4dbd-000FeP-2X;
-	Tue, 15 Apr 2025 10:33:29 +0000
-Date: Tue, 15 Apr 2025 18:33:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-defconfig-for-v6.16] BUILD
- SUCCESS 33d5bf70fff43fbc612450164bd0bab6b9ada261
-Message-ID: <202504151821.A5LG4lgY-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744718645; c=relaxed/simple;
+	bh=loUPvVMNGiwJlE21jeP0tvM4KuSweofRWQ237qVAJkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dxCjV5mIz0kDXNfgKiG9roKYtRfg0PQbgtFZKpZZdogybSxlj+3gUKxURZuKzg1Wh8pm5x2H9Nco9xavMy7+rpUuBzJLJfV3DkKnZrSlJfHtzJC2C/YeEajzMHenmLcaAdncAyxat3ECo8kFrVBxOV+BNppTpmLnQqAF3tDUK8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4768f90bf36so49362731cf.0;
+        Tue, 15 Apr 2025 05:04:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744718641; x=1745323441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=44jbS69cKT35Gp4Aiz2OWrUPbtiSlX2R3KlB9msotSY=;
+        b=UmgrR8KowXoDl3bM/NysVfSPenzAL0XCEdhiszKSYMMD4gVQkhoV9iAHjCATf+t3c+
+         zaWa1MX6BJl6XZWkXY1Oe7hfQnj0Yy4P1V5sWHLkjiVKGA0E5KBHx1AYYM4FeAdkjytV
+         4xTEqibcgtcCECA7b524A7/eybVC/ankmZwSdd8rxUNtyLlq6QYQvhoUtlT95LUrJUuS
+         IZtQdWD/XcimRmZ73iks3gjvkxhcjtLYPqkrWoXEYa9a86iQuLnsZm1Usow007vvhROl
+         JEBaHvY2b1CHw73LZ1jQZozGU98Wf43FLFE9J+68PEV+T9JnmHR5soCgU3TaqtCd5/Lq
+         C4Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUYHy9XtE68IQjy50+ijE1epAy9vCRmx6E8fq6K4jJaYZJeEbTVR5ins7Y13BAzWGY9YSaXiAtaltvfUQ==@vger.kernel.org, AJvYcCVGlOGWQ199GwviH/Aw0OJQYOGm1rT4fCstLC8zXt48WVhw0NnWiyP/eGxxOjnAMYT9p6QlwCdyotdzLDeDygf3VxM=@vger.kernel.org, AJvYcCVQChwfLwrN8kJWaWuU7UbDS2jlMOc3yYP9AwyX0ATf/gRBH11XXRGp1RxBKZWVi2nqiFqVVTbaP9Mq@vger.kernel.org, AJvYcCW9GY+xYp1/D9zsRg8P08OQGTpaes0nspbM7cCd/WiXj00SUm1qJY/77gqntCRSOhO8ARfFKtp2PF3n@vger.kernel.org, AJvYcCX3F3Q5MyDNmUz+OZ8Cv4ojeaXd9EoeDyAAYf5S752NBGrw5CBxYp5Iqj/CflK1yBlDIpoiJKsdCqmRmpzo@vger.kernel.org, AJvYcCXGrm0BK5xB/cc/jO7laL2Jc+oFSuWfdK6BT/9GyvpQkQSOYvYcdHk1eMEaOpd2klmnibn4KLI2M+hMys8d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkvWd0BP6FFDGqgc4ud0xoM/Et6dliRCUCbC7UgzBmmDBtxLlG
+	5vGxNCaFn82kjvDHLcv7WCDw7YrbLJOn1RRKMZPImBma2pDVB3X2Yf+pw037
+X-Gm-Gg: ASbGncvBUQCEdzk2I2ZXHNq1stwWJBxJbjpIqfNmgbM0CP3oeipCML1N1hKzp8GzzFo
+	8zMY0Bmewptao7WmmAR8FxFrlEN0eT20RMRgR26z47trPgBrs9lLV9utChS2oqYXvqpX1f/+8OY
+	0iOyZxo8i+XcFoA+QcL4ykqBmzp8lo2dlhj+whSo+ZTelDuicx3qvH2D5zxUcqfYKnuiWTwSkhi
+	PREUTbsaljyzSoVbY7iz6Nr8F+tlZTVVqsyhrUwVGRs/l5MFOvgaTP2Z8tpIvAjD96owTOUEOTr
+	2++XeaxAEdkl7NGhCrt/uNGHi5ntqJ8cQ0ulXzUgDDOBV3BftewuzU8Gexxxf9t8TH+njxKsWUh
+	AXCF+Tb8=
+X-Google-Smtp-Source: AGHT+IGaWlcXVHtddiVmvhbwkdxS/y1KAEPPoBrfx8AnRt5614HjJGYRDpBMfS0w8c3LE2TvY1vdcg==
+X-Received: by 2002:a05:622a:50d:b0:476:7ff5:cc27 with SMTP id d75a77b69052e-479775d637fmr201579011cf.51.1744718640802;
+        Tue, 15 Apr 2025 05:04:00 -0700 (PDT)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4796ed9cce7sm92073521cf.59.2025.04.15.05.03.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 05:04:00 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c5e39d1e0eso529805685a.1;
+        Tue, 15 Apr 2025 05:03:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrUNgzJ3ZDmPbm+oCTmywK07fiIRP4ZjY8p9MAf/5FIoMpYsOqFBnxuf492qJKZLFgojijOybe6Nfoqy++@vger.kernel.org, AJvYcCVuZAsQTR0bZD5/4Qfv4NjEiEsVN8pRrcPGUiCRAT/o08VVOIVb2otGukl67bQfJ3CIxBKUbPIa9H6IAk/Uc4br8CM=@vger.kernel.org, AJvYcCWJiFrx0MSdIpPQSxyWQwixwUbhUIz2EZakrKzDbQQsiwIT4dEMT3QOJjnqkftpMv2Ak1Bq+lIvLDtbuqqs@vger.kernel.org, AJvYcCWuUmEdCnlpDyBU/2HbsjMQeYFweqQZT5ikT7GTctv+RXXYG2rAvaiHeIfA3dOZ7JGbVSKpsQQ396hqnQ==@vger.kernel.org, AJvYcCWzvUGXCVhLZR4J+YShUt0hakqSfFZkcbL7JwTVkyLcdJtrkhGvBAJXNMX9K2zU7WZZJPKd0EnZlZv+@vger.kernel.org, AJvYcCXzETkJOEdAYqj36Lg3ESSB6OXhGOR4kTf0kRl5rTe4TTCDf5QQZO0BDVQyk8JK0q+SmL+pFiXD8IC1@vger.kernel.org
+X-Received: by 2002:a05:620a:3944:b0:7c0:b523:e1b6 with SMTP id
+ af79cd13be357-7c7af118d54mr2235481685a.11.1744718637820; Tue, 15 Apr 2025
+ 05:03:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+ <CAMuHMdU+U8D8iQdks72=Kki2HL+bo8tw9gA1S4D3c4hOphLTuA@mail.gmail.com> <CA+V-a8tH9BLjy5aG1qkRJnUFO_4VARu6rW4fQzHoSxvaMgo1Xg@mail.gmail.com>
+In-Reply-To: <CA+V-a8tH9BLjy5aG1qkRJnUFO_4VARu6rW4fQzHoSxvaMgo1Xg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 14:03:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVT0R_ypz7sLxLzYU+v-Cj94Pd4FaFJsdQq-c_Evx5neA@mail.gmail.com>
+X-Gm-Features: ATxdqUHZOQ_kXb78-Adsku78g9ckdafL4-bL26h3gggOf0fLadQBp1hSbjMhNWk
+Message-ID: <CAMuHMdVT0R_ypz7sLxLzYU+v-Cj94Pd4FaFJsdQq-c_Evx5neA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v6.16
-branch HEAD: 33d5bf70fff43fbc612450164bd0bab6b9ada261  arm: multi_v7_defconfig: Drop individual Renesas SoC entries
+Hi Prabhakar,
 
-elapsed time: 1464m
+On Tue, 15 Apr 2025 at 11:28, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Apr 14, 2025 at 2:40=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Mon, 14 Apr 2025 at 13:19, Lad, Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> > > On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gm=
+ail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > This patch series adds initial support for the Renesas RZ/V2N (R9A0=
+9G056)
+> > > > SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision =
+AI
+> > > > microprocessor (MPU) designed for power-efficient AI inference and
+> > > > real-time vision processing. It features Renesas' proprietary AI
+> > > > accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, mak=
+ing
+> > > > it ideal for applications such as Driver Monitoring Systems (DMS),
+> > > > industrial monitoring cameras, and mobile robots.
+> > > >
+> > > > Key features of the RZ/V2N SoC:
+> > > >   Processing Power:
+> > > >     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance comp=
+uting
+> > > >     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+> > > >     - 1.5MB on-chip SRAM for fast data access
+> > > >     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+> > > >
+> > > >   AI and Vision Processing:
+> > > >     - DRP-AI3 accelerator for low-power, high-efficiency AI inferen=
+ce
+> > > >     - Arm Mali-C55 ISP (optional) for image signal processing
+> > > >     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+> > > >
+> > > >   High-Speed Interfaces:
+> > > >     - PCIe Gen3 (2-lane) 1ch for external device expansion
+> > > >     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+> > > >     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+> > > >     - Gigabit Ethernet (2 channels) for network communication
+> > > >
+> > > >   Industrial and Automotive Features:
+> > > >     - 6x CAN FD channels for automotive and industrial networking
+> > > >     - 24-channel ADC for sensor data acquisition
+> > > >
+> > > > LINK: https://tinyurl.com/renesas-rz-v2n-soc
+> > > >
+> > > > The series introduces:
+> > > > - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG=
+, pinctrl).
+> > > > - RZ/V2N SoC identification support.
+> > > > - Clock and pinctrl driver updates for RZ/V2N.
+> > > > - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+> > > >
+> > > > These patches have been tested on the RZ/V2N EVK with v6.15-rc1 ker=
+nel,
+> > > > logs can be found here:
+> > > > https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565=
+d3
+> > > >
+> > > > @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-f=
+or-v6.16
+> > > > + renesas-clk-for-v6.16 branches. Also these patches apply on top o=
+f the below
+> > > > series [1] and [2]. I had to sort the order in Makefile for patch [=
+3] to
+> > > > avoid conflicts.
+> > > > [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.ma=
+hadev-lad.rj@bp.renesas.com/
+> > > > [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bu=
+ltel.yh@bp.renesas.com/#t
+> > > > [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.b=
+ultel.yh@bp.renesas.com/
+> > > >
+> > > > Note, dtbs_check will generate the below warnings this is due to mi=
+ssing
+> > > > ICU support as part of initial series. I will be sending a follow-u=
+p patch
+> > > > series to add ICU support which will fix these warnings.
+> > > > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@104=
+10000 (renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required pro=
+perty
+> > > >         from schema $id: http://devicetree.org/schemas/pinctrl/rene=
+sas,rzg2l-pinctrl.yaml#
+> > > > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@104=
+10000 (renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required propert=
+y
+> > > >         from schema $id: http://devicetree.org/schemas/pinctrl/rene=
+sas,rzg2l-pinctrl.yaml#
+> > > >
+> > > > v1->v2:
+> > > > - Added acks from Rob.
+> > > > - Squashed the RZ/V2N EVK and SoC variant documentation into a sing=
+le
+> > > >   commit.
+> > > > - Updated the commit messages.
+> > > > - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+> > > >   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+> > > >   in pictrl driver hence to keep the consistency with the
+> > > >   RZ/V2H(P) SoC these macros are added.
+> > > > - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> > > > - Followed DTS coding style guidelines
+> > > > - Dropped defconfig changes from the series.
+> > > > - Dropped SDHI dt-binding patch as its already applied to mmc -next=
+ tree.
+> > > >
+> > > > Cheers,
+> > > > Prabhakar
+> > > >
+> > > > Lad Prabhakar (12):
+> > > >   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants a=
+nd
+> > > >     EVK
+> > > >   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+> > > >   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+> > > >   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+> > > >   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+> > > >   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+> > > >   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part n=
+umber
+> > > >   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+> > > >   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+> > > >   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+> > > >   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+> > > >   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+> > > >
+> > > Would it be OK if I send version 3 containing only patches 4/12 and 1=
+0/12?
+> >
+> > For patch 4/12: yes, that is fine. Thx!
+> > For patch 10/12: I have already applied it.
+> >
+> For patch 10/12 ("pinctrl: renesas: rzg2l: Add support for RZ/V2N
+> SoC") will that be part of renesas-pinctrl-for-v6.16 branch (which is
+> yet to be pushed)?
 
-configs tested: 104
-configs skipped: 4
+Sorry, my bad; I misread the patch number. I have not applied 10/12 yet.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Gr{oetje,eeting}s,
 
-tested configs:
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250414    gcc-14.2.0
-arc                   randconfig-002-20250414    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                              allyesconfig    gcc-14.2.0
-arm                      jornada720_defconfig    clang-21
-arm                   randconfig-001-20250414    clang-18
-arm                   randconfig-002-20250414    gcc-7.5.0
-arm                   randconfig-003-20250414    gcc-7.5.0
-arm                   randconfig-004-20250414    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                 randconfig-001-20250414    clang-21
-arm64                 randconfig-002-20250414    clang-19
-arm64                 randconfig-003-20250414    gcc-8.5.0
-arm64                 randconfig-004-20250414    gcc-6.5.0
-csky                  randconfig-001-20250414    gcc-14.2.0
-csky                  randconfig-002-20250414    gcc-10.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250414    clang-18
-hexagon               randconfig-002-20250414    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250414    gcc-12
-i386        buildonly-randconfig-002-20250414    clang-20
-i386        buildonly-randconfig-003-20250414    clang-20
-i386        buildonly-randconfig-004-20250414    gcc-12
-i386        buildonly-randconfig-005-20250414    gcc-12
-i386        buildonly-randconfig-006-20250414    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20250414    gcc-12.4.0
-loongarch             randconfig-002-20250414    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                        bcm63xx_defconfig    clang-21
-mips                           mtx1_defconfig    clang-21
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250414    gcc-12.4.0
-nios2                 randconfig-002-20250414    gcc-12.4.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250414    gcc-5.5.0
-parisc                randconfig-002-20250414    gcc-7.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc               randconfig-001-20250414    gcc-8.5.0
-powerpc               randconfig-002-20250414    clang-21
-powerpc               randconfig-003-20250414    gcc-6.5.0
-powerpc64             randconfig-001-20250414    clang-17
-powerpc64             randconfig-002-20250414    clang-21
-powerpc64             randconfig-003-20250414    gcc-6.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250414    gcc-8.5.0
-riscv                 randconfig-002-20250414    clang-21
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250414    clang-20
-s390                  randconfig-002-20250414    gcc-9.3.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                ecovec24-romimage_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250414    gcc-6.5.0
-sh                    randconfig-002-20250414    gcc-10.5.0
-sh                          rsk7269_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250414    gcc-11.5.0
-sparc                 randconfig-002-20250414    gcc-13.3.0
-sparc                       sparc32_defconfig    gcc-14.2.0
-sparc64               randconfig-001-20250414    gcc-5.5.0
-sparc64               randconfig-002-20250414    gcc-9.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250414    clang-21
-um                    randconfig-002-20250414    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250414    clang-20
-x86_64      buildonly-randconfig-002-20250414    clang-20
-x86_64      buildonly-randconfig-003-20250414    clang-20
-x86_64      buildonly-randconfig-004-20250414    clang-20
-x86_64      buildonly-randconfig-005-20250414    clang-20
-x86_64      buildonly-randconfig-006-20250414    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250414    gcc-7.5.0
-xtensa                randconfig-002-20250414    gcc-14.2.0
+                        Geert
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
