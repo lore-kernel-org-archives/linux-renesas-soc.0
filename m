@@ -1,34 +1,34 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90EC248891
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Apr 2025 12:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411ED24BD04
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Apr 2025 12:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745584522; cv=none; b=OY95OpIiejwCSETOfNRixvvtpYynQ/K3ns2/xoD7NmjZk8PqP2NTO+uCNhKxa7mgX+Vg6I4cSiu/8mjlI8lvj84s++SqKR2udiO3NccfIGA//P7XbUpFQivySkwBRmFqANMSNqvseLDOGXtphgeW75kL4CtNUiMJReC994oAkNo=
+	t=1745584939; cv=none; b=MnldiLf7rpwhMOeWfhmXGlch6286Q1488JLN0UV/sfKvnrhUymYqR6jr0yFsj8O11yY+VFDhr2cUBkAGKt8JjoPbO7Xcb7LvcTJG4QoZFhipYwtSvttAKUyhwJeR1QjoXjMVcemQpeoNES58gYU0UwMYgSD6AJRzZB1JxAl53C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745584522; c=relaxed/simple;
-	bh=WtIsa6WhPYa6Ba5DnGp4PGskpMPqybSzyWjBwGKwfHw=;
+	s=arc-20240116; t=1745584939; c=relaxed/simple;
+	bh=d+a1cGYOqft3/rd8lnIjN+xR007wruZx3X1yJdJ2nWc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Le2KBBgjrN6w6bZYvpxi3i/f1ckrmX8naGV9OOKs3GxEtPYV0TGOXhjvuvRTlH4uXqtxev7F17EHLDKxfApMjDhO+a0h8eobdPmL4sCTOfAFp36viU/j1o71c/NNnpox1OfhSNxL4n8EISTbqOYgYWF/xcR+SpjV605/FYzvi4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	 MIME-Version; b=Tx6vpgNhamLxhaNsByrMa+bNYFsusO2CDMZDTV3iiuO8xa9Qoo4UtRifw5qMRR0/VAOwgp+QZQ31rZejDm9Zh1FYHrT/+0+DR8dwGGUlSLvEHKOsvk+cdBU4qR0BLh4LoIO4SH861rDXnxGDiouITj+00ulkX8zzz38yJZDO4kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4ZkXNw62LVz4xbw7
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Apr 2025 14:35:12 +0200 (CEST)
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4ZkXNy49DHz4xX3x
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Apr 2025 14:35:14 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:3329:b4bc:d565:c72])
-	by albert.telenet-ops.be with cmsmtp
-	id hQb42E00C16PE0206Qb4sN; Fri, 25 Apr 2025 14:35:04 +0200
+	by laurent.telenet-ops.be with cmsmtp
+	id hQb42E00816PE0201Qb4lN; Fri, 25 Apr 2025 14:35:07 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u8IGc-00000001gJj-3IuM;
+	id 1u8IGc-00000001gJc-31jS;
 	Fri, 25 Apr 2025 14:35:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u8IGm-0000000CKj7-06pD;
-	Fri, 25 Apr 2025 14:35:04 +0200
+	id 1u8IGl-0000000CKj0-3zoX;
+	Fri, 25 Apr 2025 14:35:03 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev,
 	soc <soc@kernel.org>
@@ -36,9 +36,9 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 3/4] Renesas DT binding updates for v6.16
-Date: Fri, 25 Apr 2025 14:34:58 +0200
-Message-ID: <cover.1745582594.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/4] Renesas ARM defconfig updates for v6.16
+Date: Fri, 25 Apr 2025 14:34:56 +0200
+Message-ID: <cover.1745582589.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1745582587.git.geert+renesas@glider.be>
 References: <cover.1745582587.git.geert+renesas@glider.be>
@@ -56,28 +56,27 @@ The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.16-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v6.16-tag1
 
-for you to fetch changes up to 9e3b7138c3745a91d91e7e525e4b800ea276a761:
+for you to fetch changes up to 33d5bf70fff43fbc612450164bd0bab6b9ada261:
 
-  dt-bindings: soc: renesas: Document Retronix R-Car V4H Sparrow Hawk board support (2025-04-24 11:13:53 +0200)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v6.16
-
-  - Document support for the Renesas RZ/T2H (R9A09G077) SoC and the
-    RZT2H-EVK evaluation board,
-  - Document support for the Retronix Sparrow Hawk board, which is based
-    on R-Car V4H ES3.0.
+  arm: multi_v7_defconfig: Drop individual Renesas SoC entries (2025-04-09 14:56:03 +0200)
 
 ----------------------------------------------------------------
-Marek Vasut (2):
-      dt-bindings: vendor-prefixes: Add Retronix Technology Inc.
-      dt-bindings: soc: renesas: Document Retronix R-Car V4H Sparrow Hawk board support
+Renesas ARM defconfig updates for v6.16
 
-Thierry Bultel (1):
-      dt-bindings: soc: renesas: Add Renesas RZ/T2H (R9A09G077) SoC
+  - Enable all Renesas SoCs by default when ARCH_RENESAS is set, and
+    remove individual SoC entries from the various defconfigs.
 
- .../devicetree/bindings/soc/renesas/renesas.yaml        | 17 +++++++++++++++++
- Documentation/devicetree/bindings/vendor-prefixes.yaml  |  2 ++
- 2 files changed, 19 insertions(+)
+----------------------------------------------------------------
+Lad Prabhakar (4):
+      soc: renesas: Kconfig: Enable SoCs by default when ARCH_RENESAS is set
+      arm64: defconfig: Remove individual Renesas SoC entries
+      arm: shmobile_defconfig: Drop individual Renesas SoC entries
+      arm: multi_v7_defconfig: Drop individual Renesas SoC entries
+
+ arch/arm/configs/multi_v7_defconfig | 19 -----------------
+ arch/arm/configs/shmobile_defconfig | 19 -----------------
+ arch/arm64/configs/defconfig        | 23 --------------------
+ drivers/soc/renesas/Kconfig         | 42 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 42 insertions(+), 61 deletions(-)
