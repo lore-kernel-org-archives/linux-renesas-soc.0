@@ -1,37 +1,38 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8E0EEAA
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Apr 2025 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2686323
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Apr 2025 12:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745842584; cv=none; b=o2f0udPgC4NW02/pMtu5ZNRmalWVFvqWsEcE/Bo3DmXiLYxZJCT+OGkQeni5MxbTCFx+6xwbfnZNlF+A4qCJMtwOL5/1dTbsFpTCJGZ2N6Ty0WraW9MuwvIkhePhG5D//Kp+xq7qgb2EMo8Gx5MFd7ayNxGykX8fF9AbhxCEmqM=
+	t=1745842613; cv=none; b=h+tHP3R0u1kP8IXKH52ZEOMZkvchkiqaMiVNzVPvs7yiogYo0OjvN4Ww/nSstm90kK/RoM3ieRKtu83Jeig+laPxm7DbGZwv7I7gm3dBuo8TQrO0Zh9PhuTdhRZA7f+IqkBvPkIbwCwdkZtw7GbGwDQWfwGaF3dmH0lSXTzcGxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745842584; c=relaxed/simple;
+	s=arc-20240116; t=1745842613; c=relaxed/simple;
 	bh=5Eh26aXCbUaZqoJiyLfceWQEONZ+2LkWW0xyL30k25E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rN9bsf0QZXkXU0DJ2nIOvZ8GYGLWt4oIbku1xkxEmc1C0/dq/L8Cg/l/Ub/wGmVjzsfxx75dRem+9isEcF9CfSpo615RDO1Pqjgv+mPuka9fnvuyebyDb5hjCnRwcGUoqnVtiO43LxEvHCa1s3xtaKsGCCJ9+2aGDhjOuWdv+/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MNkwmfUDO3h7Sy8L1ftpXWP1BaT+ItrSKZZx6Ykhe6Y9aoYL2zugx+LyKOInKWGNVxIqlYaT5Iz6ruZyrhIHrYhNCpZrtKWRTcaHqrspMpuKUuN+8wMLgs6RouLHTdRKEg98jM7QRRdfjjeONrk+A9ycQP1ivMUEBGmeTRvKpFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b9c4:1670:abc0:a1fc])
-	by baptiste.telenet-ops.be with cmsmtp
-	id icGG2E0054Aed8c01cGGhx; Mon, 28 Apr 2025 14:16:19 +0200
+	by laurent.telenet-ops.be with cmsmtp
+	id icGj2E0094Aed8c01cGjlj; Mon, 28 Apr 2025 14:16:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u9NPD-00000000F9q-08Oo;
-	Mon, 28 Apr 2025 14:16:16 +0200
+	id 1u9NPd-00000000F9x-3qnF;
+	Mon, 28 Apr 2025 14:16:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1u9NPE-00000006xrW-0WPb;
-	Mon, 28 Apr 2025 14:16:16 +0200
+	id 1u9NPf-00000006xsY-08Lq;
+	Mon, 28 Apr 2025 14:16:43 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] ARM: shmobile: defconfig: Enable more support for RZN1D-DB/EB
-Date: Mon, 28 Apr 2025 14:16:13 +0200
+Date: Mon, 28 Apr 2025 14:16:42 +0200
 Message-ID: <a40aa69832ef292497b9170e2ad607bd9dfd7e21.1745842538.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
@@ -41,6 +42,7 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Message-ID: <20250428121642.FKzxKxID9IpsoXv2z1kptjDorJC-npDidSw81CeCl6g@z>
 
 Enable more support for the Renesas RZN1D-DB and RZN1D-EB development
 and expansion boards:
