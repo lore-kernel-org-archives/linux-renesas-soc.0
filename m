@@ -1,189 +1,130 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDF42D81B4;
-	Tue, 29 Apr 2025 23:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB2E1E9B3D
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Apr 2025 07:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745970831; cv=none; b=fM0wp9cCcEcr3SGOFT7hFcK2k7sebTtKbFFCz/TthfjFmDf2enaaB/M88gnYU8feeq39eWtWePoxSrSRE6Y8mcxslKTIiuzAvLXZSi+ZSmuN2+TGzAlTkjFcwHXBieccnDzxUbqjMkAE69mxkQxD24tKSF78T0XAx1ongKWgdmw=
+	t=1745996690; cv=none; b=Y5viaDKWRo1OmRfe+1YrlIjWJVGWygpxHRqECbYz9Vo0VjmxjFOqT2hgc3VqzER4njp8mXHcbhw0nIVZAKESPhHRLmxiPpRA71CTUzjYGuxYohxbvr30b8cxTXN9zEGmbWTqBRcDOy7KxKaodFzXGyXqMVW9j0cpKY9SCv3pLy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745970831; c=relaxed/simple;
-	bh=sLqtEne9eurWr8oSinTn0V2+KBfKYwojlJKu9hT6sFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uuP7jD2xZztbeO3r9kfJW3GpR8gmVv6Yl7LzQGI3M4kJjmHCrrruKLMl0wPbT0HAlhqgPvWp4sNzT26z9zES1PP8SjhfU4XCxSsWDbPtuFe5HfC6MfHBM53mLBnnz2Rzu1gneH7h74xM67bk+JqE3ljKwHslw5m3BpRkJN/ZNS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A/0fzA4/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1745996690; c=relaxed/simple;
+	bh=DliDBaPwfXozR9TCYVsi8CN51+E1M7iE6MLi1rF3GZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QunZo6CzTyksHbRISPHIPdlLRtNGFQmp5Hz3mt6TL4WwAeF2fZoMtZ09+mzhkKO14b7SYavCbpcLBeDuVOs+GjooveGhyuw3R0YMZ4SZbrPCOPyPuJ6ffxtwIskmSwNVShtPprWGOr8fvBfNFp1iVUFnqDMQkicObNwEmC9Zxuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0WKkgxv1; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A/0fzA4/"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 698361961;
-	Wed, 30 Apr 2025 01:53:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745970813;
-	bh=sLqtEne9eurWr8oSinTn0V2+KBfKYwojlJKu9hT6sFE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A/0fzA4/y3+UQlVb7KFOekopTZYFJJcfuwyM0kKSzYK5jgLuh9bkItScITcb7NZiF
-	 d7WBSaPT317QqwXzTiduGfpNyFtZs18MmsoCmgTJxCKbBsZ3y4FXqIkqhMDnOfCQF+
-	 XjROy8ve4QKN25O3R/jSYTx+5wEbe586OEY6y2O4=
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH 7/7] media: renesas: vsp1: Implement control events
-Date: Wed, 30 Apr 2025 02:53:22 +0300
-Message-ID: <20250429235322.29826-8-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429235322.29826-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20250429235322.29826-1-laurent.pinchart+renesas@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0WKkgxv1"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2aeada833so126839866b.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Apr 2025 00:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745996685; x=1746601485; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DliDBaPwfXozR9TCYVsi8CN51+E1M7iE6MLi1rF3GZA=;
+        b=0WKkgxv14Zcl8y37utgeLeiT0Xvo0SV5PePR/CHTXPeNl+ccDnH8iUFdLjrHApJs6w
+         K1E4KDwunE4Oa1YLu1Lzdb9Y6dOClmsXhk2Ih2fWek06BgL6fvb0z2r5ICVX9Z0jehD1
+         4Z0kvDZAVojGLEeIk9XXmZ3OS42a7tf+7Ok/45YLlCaY5KBzftGXfE77bTbVb3hG1jK4
+         MMztDa2Iy4/+M3vSGOWvJqKpzK0LwcxmAqGqj4DJ76Qzfo1JjhLtwEp7exX8psM+JN2V
+         lUZZohnFhqUnsW2Afjez4M1OnX+CW/WyFVTU8rh2cGebRhVWwXnASoG4lnib9qb2TABi
+         omUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745996685; x=1746601485;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DliDBaPwfXozR9TCYVsi8CN51+E1M7iE6MLi1rF3GZA=;
+        b=W0NUkYifokhNU0kTCdZXtwO4n2mIDMH6CBt8Zr3v+fkTxJAf+7oE3XLh/KH8I2u5Ob
+         mIs7gzWitZMecJzDABiLeVzcvrl+xljObDBR0NtU/XCBzqDXDHniZCt66zSeSruqaTp/
+         BfPlo2pqLEtFxPPju0oMBM7n5Ozz5SCzeWR5SbuGtpNloMWq7crkHu8GqvhV7zBubjq+
+         sjoPP2ffbVtDXhdnfXzdHplMDwaAyoOl3hgXWVG8s8TDxct93jcF8B9H7IK/ulR2UUTh
+         ddPzl/HrggLavUslBtCr7TK4eqDPN7WUUjEV/7Wd3rsRTbH86E11IiEMujLjU+8ZRvpU
+         NNSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWq3bg+46fCR8jesYWRkd8aLoeO6PfePyRZckovazdqjkiuF+bUxZ4O1ekTHn6XGzi2pP+RrPKs2VUDMVXpCoCnQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgoEuGFFjS5JR1/M3N8URuYw1JyrDeuediXd4jUP5xh/fdqNcJ
+	KW8/vf+M5crDYwafHjTTlWwvYrJG48yFsZRKcUjlkMsRs4vdk/jUbL35wvTCSsk=
+X-Gm-Gg: ASbGncs9fCP/pFV92GDd0OgGqKp7p2aSe+Tv6SWU02U9VZILbqk2CGVPg98GnBRTTCk
+	FIvWBQyPiwlumcjZJtVX1iFh4x+2JZSGPYTJkjhG2P6iaKjjAMZpsSftDCCfS1nv1DxV196iHH2
+	FouGFYCJRjUgG+A86Tuo4cvF9ezNAglmgnPfxz2Muek6yER/J7XfBqteMdlHup8PClfbyrPzZZw
+	nIR1vlEd9HL56NSlGI4WBC3G8R0tsza+4LyoPvJKp34HXDC0tls/6hDLQiDzhcnbElGdCAmxv+P
+	AwOS0b/B+0y6ygnhw1K691z6FJCbxuHfCcoN91oyCELMKQ==
+X-Google-Smtp-Source: AGHT+IF5UaKQoZiFL7ypbKizIsAV1ViA8f4uPncCqiHK6CsFx8TsrrGdOLE9wJ3L9yBLAnTQKJpNLw==
+X-Received: by 2002:a17:907:7ba8:b0:aca:d276:fa5 with SMTP id a640c23a62f3a-acedf349707mr166476066b.0.1745996684937;
+        Wed, 30 Apr 2025 00:04:44 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ace6ed72826sm879848966b.154.2025.04.30.00.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 00:04:44 -0700 (PDT)
+Date: Wed, 30 Apr 2025 09:04:42 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] pwm: rzg2l-gpt: Accept requests for too high period
+ length
+Message-ID: <3rew4duwpd3wnmnkbbhcebe6jat44gpqfv4vnsrvunksujq4b4@k3hgsr5douiw>
+References: <20250423095715.2952692-2-u.kleine-koenig@baylibre.com>
+ <TY3PR01MB11346A3CC284B74692130149686852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oy5vvrpaw4d56eyr"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346A3CC284B74692130149686852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-The V4L2 API requires drivers that expose controls to implement control
-notification events. This is enforced by v4l2-compliance. Add event
-handling to the VSP1 entities that create controls to fix the compliance
-failures.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/vsp1/vsp1_brx.c    | 1 +
- drivers/media/platform/renesas/vsp1/vsp1_clu.c    | 1 +
- drivers/media/platform/renesas/vsp1/vsp1_entity.c | 9 +++++++++
- drivers/media/platform/renesas/vsp1/vsp1_entity.h | 2 ++
- drivers/media/platform/renesas/vsp1/vsp1_histo.c  | 1 +
- drivers/media/platform/renesas/vsp1/vsp1_lut.c    | 1 +
- drivers/media/platform/renesas/vsp1/vsp1_rwpf.c   | 1 +
- drivers/media/platform/renesas/vsp1/vsp1_sru.c    | 1 +
- 8 files changed, 17 insertions(+)
+--oy5vvrpaw4d56eyr
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: rzg2l-gpt: Accept requests for too high period
+ length
+MIME-Version: 1.0
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_brx.c b/drivers/media/platform/renesas/vsp1/vsp1_brx.c
-index 911359faa600..b1a2c68e9944 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_brx.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_brx.c
-@@ -269,6 +269,7 @@ static const struct v4l2_subdev_pad_ops brx_pad_ops = {
- };
- 
- static const struct v4l2_subdev_ops brx_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &brx_pad_ops,
- };
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_clu.c b/drivers/media/platform/renesas/vsp1/vsp1_clu.c
-index a56c038a2c71..04c466c4da81 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_clu.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_clu.c
-@@ -130,6 +130,7 @@ static const struct v4l2_subdev_pad_ops clu_pad_ops = {
- };
- 
- static const struct v4l2_subdev_ops clu_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &clu_pad_ops,
- };
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_entity.c b/drivers/media/platform/renesas/vsp1/vsp1_entity.c
-index a3d4bf2887ec..27c172788621 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_entity.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_entity.c
-@@ -12,6 +12,7 @@
- 
- #include <media/media-entity.h>
- #include <media/v4l2-ctrls.h>
-+#include <media/v4l2-event.h>
- #include <media/v4l2-subdev.h>
- 
- #include "vsp1.h"
-@@ -389,6 +390,11 @@ static const struct v4l2_subdev_internal_ops vsp1_entity_internal_ops = {
- 	.init_state = vsp1_entity_init_state,
- };
- 
-+const struct v4l2_subdev_core_ops vsp1_entity_core_ops = {
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-+};
-+
- /* -----------------------------------------------------------------------------
-  * Media Operations
-  */
-@@ -629,6 +635,9 @@ int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
- 	subdev->entity.ops = &vsp1->media_ops;
- 	subdev->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 
-+	if (ops->core == &vsp1_entity_core_ops)
-+		subdev->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-+
- 	snprintf(subdev->name, sizeof(subdev->name), "%s %s",
- 		 dev_name(vsp1->dev), name);
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_entity.h b/drivers/media/platform/renesas/vsp1/vsp1_entity.h
-index 5542f6446b16..626fb1d5d470 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_entity.h
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_entity.h
-@@ -142,6 +142,8 @@ static inline struct vsp1_entity *to_vsp1_entity(struct v4l2_subdev *subdev)
- 	return container_of(subdev, struct vsp1_entity, subdev);
- }
- 
-+extern const struct v4l2_subdev_core_ops vsp1_entity_core_ops;
-+
- int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
- 		     const char *name, unsigned int num_pads,
- 		     const struct v4l2_subdev_ops *ops, u32 function);
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_histo.c b/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-index a1b3671a0873..158d01aa5e81 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-@@ -370,6 +370,7 @@ static const struct v4l2_subdev_pad_ops histo_pad_ops = {
- };
- 
- static const struct v4l2_subdev_ops histo_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &histo_pad_ops,
- };
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_lut.c b/drivers/media/platform/renesas/vsp1/vsp1_lut.c
-index 2ec4d596465d..94bdedcc5c92 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_lut.c
-@@ -106,6 +106,7 @@ static const struct v4l2_subdev_pad_ops lut_pad_ops = {
- };
- 
- static const struct v4l2_subdev_ops lut_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &lut_pad_ops,
- };
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
-index bd97fc75eb5b..32b018e21f57 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
-@@ -351,6 +351,7 @@ static const struct v4l2_subdev_pad_ops vsp1_rwpf_pad_ops = {
- };
- 
- const struct v4l2_subdev_ops vsp1_rwpf_subdev_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &vsp1_rwpf_pad_ops,
- };
- 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_sru.c b/drivers/media/platform/renesas/vsp1/vsp1_sru.c
-index e821eac1cbc2..30b482a160c2 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_sru.c
-@@ -250,6 +250,7 @@ static const struct v4l2_subdev_pad_ops sru_pad_ops = {
- };
- 
- static const struct v4l2_subdev_ops sru_ops = {
-+	.core	= &vsp1_entity_core_ops,
- 	.pad    = &sru_pad_ops,
- };
- 
--- 
-Regards,
+Hello Biju,
 
-Laurent Pinchart
+On Thu, Apr 24, 2025 at 05:45:32AM +0000, Biju Das wrote:
+> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> > ---
+> > Hello Biju,
+> >=20
+> > here comes the patch that I promised when I applied your driver patch.
+> >=20
+> > This aligns the period setting to the usual procedure. Obviously only c=
+ompile tested.
+>=20
+> It is tested with [1]
+>=20
+> [1] https://lore.kernel.org/all/20250424054050.28310-1-biju.das.jz@bp.ren=
+esas.com/
 
+Applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+with your Tested-by: tag.
+
+Thanks
+Uwe
+
+--oy5vvrpaw4d56eyr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgRy4gACgkQj4D7WH0S
+/k792Qf/VV3Xal+1tsQNf0Fn01SeeWBS9bht0ZsCnLj2VcKubf/CUBiES+jF0Hw8
+dK/azyRrgYGf2PvzwvCWf/yGjngIuFExHxn6r70cX0U3WoOQk85I0CL1l73U2exP
+uZIDd8ngJhxes3yeirVXU+Pk6wXhBqx1d4iaRCxy5cEVpb9JXM4VnWX3ph2Mb0Uv
+r3pcQ0of5S5DZyxy4EpjFA3KDXtz34J18zjYMGFZuV3TV1AnNUE/8zvJs+8DaLsB
+P1FHVyQV9cf0J4kI+f3l2yH+zDOIR/hDwQfPUiMt2UHz/YOfqE1rLQsR0T8Pzyy6
+LcXi2oAqObavOi9yd/8XX1GnDLhSIA==
+=MNCz
+-----END PGP SIGNATURE-----
+
+--oy5vvrpaw4d56eyr--
