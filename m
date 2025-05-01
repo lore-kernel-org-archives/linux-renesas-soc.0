@@ -1,147 +1,115 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B3A268FF1
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 May 2025 06:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4AD26F463
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 May 2025 07:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746081226; cv=none; b=mEjW8Gzfu4A9OB8E2qvmjJXBLAu2eNLOYJfvzNRBdVv2aNDhf0gb4i5hEAxrhSSvJg6cxx6AGXsZH+txTbNf45EInCVj9e3NJNMmi81is2KtjrsU/j5pDaFPy9SowHvKtCifJUdbhhv8rm0cSAtJEeThNtA4uHvJnjq0lTSU0k0=
+	t=1746085926; cv=none; b=IHgaSJirs44I4kZEdSzcyXhaSeI8+RTHO2+5I/bBSg6+Rp35KYuRvAOjVLTWbaYgEHgiUbbh6t+MxFIL2T+WRpXkX80677xuFP2xsuA6MxKAPvT9PbtHhU4AiG2UZFXrXS2HsGbZEhJZfxbSBnaAp5fT77fbSJ12EIVLNQvR1gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746081226; c=relaxed/simple;
-	bh=Kux+D10H2xVO7KgjxHpD1/TLY3kK6HIETOTjYkCSiXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IRftUUDNYTGjrTKx3jjNi0sjQViEwFat2kPxoVRutrzOfgOSZpkHwkJ+A7S4Z6DQZI8jgmEGPFGlLM6+soplmFiqLEF4gBkEcprIMYKBLnZglGb6m8w1CpbgHR8rMrfh8x8yUBc3b+vrv8NO7eaMT06+Xn6j4uRXJEnGCh5ylSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Bj3W5sqs; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1746085926; c=relaxed/simple;
+	bh=RYrfcBn6bwSuscQ7eGMhE71CnAk+Cjw4sPM/hJA1Lvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J26vhjwtbhFRqQHVNS/ptmhlzsjAVMktgU+LHX8kGxVM2t/nWBJfksxbKP7uffZjJPBUvswvdZfehS4pfK14chXSW9yWZENokpogbGsOWWGlYriD3oA7vUdmuxM0GuBhDX0Nu1cwjtTb533l/qCnIFT7FjPgX/AFy48UgTk3fAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VIiPvImm; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Bj3W5sqs"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VIiPvImm"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=EyZiMS5Buw/s+8rzr2+sLRbPIJwuHcJ9z9Hfq+4pFlU=; b=Bj3W5s
-	qsI5KsL89q/vziUBg48H1MFKf1M5GrYPAsvMklKn+bofb48adNZzLgcgEC4KAvYK
-	duVK7oOwGbxLOStM83lPKEEjTW9U6nEDDLtWc+frLRtgDeJ7nUNCAt6sDpxA77Sg
-	LbEirDCQv9ysBNqc2LP3z3Ats0cJSb751Z2JgnjBnHqdUVzUA0dnY4gMSVab2YNq
-	iNHaahcSQmw4DcXJk5w9IMFzlnoIeYn1oG0BXBm9h/Jvjg6LzkMd96l9aKPGEMee
-	NgxfLOzX/RkmoGvpXzL0+gUe9jIGFgbqPjq3NSxqj7cBhRSExx5HXMHzXwv8A3qx
-	gV0n2P4XmapFCT2w==
-Received: (qmail 958480 invoked from network); 1 May 2025 08:33:41 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 May 2025 08:33:41 +0200
-X-UD-Smtp-Session: l3s3148p1@fLn3Ng00UuAujnsd
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=RYrf
+	cBn6bwSuscQ7eGMhE71CnAk+Cjw4sPM/hJA1Lvk=; b=VIiPvImmFVdj3w1urimV
+	yHX6XjFruwMx1XN3yj8ee93CPwmKObJwf1AX4GDcb5sCG5NyF1fptIJAntgipZNp
+	piGdQOXugNZ0d7oKURlUVGXfGqcKXrDRmF07wlDWGdfUifCRxxhAkirRcHAanAmP
+	81g//1i+v2XTyba7+TF4rgebOKScQfQC+br8Mp7KL16whPsVxJFYOJ4n7ofUzhl+
+	JyyKHOIVnkWExkHLCn/HEHdCPtZXYCgrp8C7eshmZgjbHjfV5luuY6kYcBISq4Vp
+	dDgEhBd51cax/CFA+Nd2pyRcYAm3sLNNE2sJgGzUXPSpHr1kIeLni3ZOxY6tmBoJ
+	Xg==
+Received: (qmail 978370 invoked from network); 1 May 2025 09:51:58 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 May 2025 09:51:58 +0200
+X-UD-Smtp-Session: l3s3148p1@cXfmTg40FL0gAwDPXxyAAIlRla1HkD11
+Date: Thu, 1 May 2025 09:51:57 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH 3/4] mmc: rename mmc_host_uhs() to mmc_host_can_uhs()
-Date: Thu,  1 May 2025 08:33:28 +0200
-Message-ID: <20250501063325.7262-9-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250501063325.7262-6-wsa+renesas@sang-engineering.com>
-References: <20250501063325.7262-6-wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v9 1/2] i2c: riic: Implement bus recovery
+Message-ID: <aBMoHST5o-H4BvkO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250430194647.332553-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250430194647.332553-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xKjuJX1DCffYbtLH"
+Content-Disposition: inline
+In-Reply-To: <20250430194647.332553-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-It is not obvious that this functions checks capabilities. Rename it to
-include '_can' like other capability helpers.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/core/host.h | 2 +-
- drivers/mmc/core/sd.c   | 8 ++++----
- drivers/mmc/core/sdio.c | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+--xKjuJX1DCffYbtLH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mmc/core/host.h b/drivers/mmc/core/host.h
-index 00ca88389ef9..c112191cad6a 100644
---- a/drivers/mmc/core/host.h
-+++ b/drivers/mmc/core/host.h
-@@ -54,7 +54,7 @@ static inline int mmc_boot_partition_access(struct mmc_host *host)
- 	return !(host->caps2 & MMC_CAP2_BOOTPART_NOACC);
- }
- 
--static inline int mmc_host_uhs(struct mmc_host *host)
-+static inline int mmc_host_can_uhs(struct mmc_host *host)
- {
- 	return host->caps &
- 		(MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 |
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 08ab076fe2f9..ec02067f03c5 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -455,7 +455,7 @@ static void sd_update_bus_speed_mode(struct mmc_card *card)
- 	 * If the host doesn't support any of the UHS-I modes, fallback on
- 	 * default speed.
- 	 */
--	if (!mmc_host_uhs(card->host)) {
-+	if (!mmc_host_can_uhs(card->host)) {
- 		card->sd_bus_speed = 0;
- 		return;
- 	}
-@@ -867,7 +867,7 @@ int mmc_sd_get_cid(struct mmc_host *host, u32 ocr, u32 *cid, u32 *rocr)
- 	 * to switch to 1.8V signaling level. If the card has failed
- 	 * repeatedly to switch however, skip this.
- 	 */
--	if (retries && mmc_host_uhs(host))
-+	if (retries && mmc_host_can_uhs(host))
- 		ocr |= SD_OCR_S18R;
- 
- 	/*
-@@ -1509,7 +1509,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 	 * signaling. Detect that situation and try to initialize a UHS-I (1.8V)
- 	 * transfer mode.
- 	 */
--	if (!v18_fixup_failed && !mmc_host_is_spi(host) && mmc_host_uhs(host) &&
-+	if (!v18_fixup_failed && !mmc_host_is_spi(host) && mmc_host_can_uhs(host) &&
- 	    mmc_sd_card_using_v18(card) &&
- 	    host->ios.signal_voltage != MMC_SIGNAL_VOLTAGE_180) {
- 		if (mmc_host_set_uhs_voltage(host) ||
-@@ -1524,7 +1524,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 	}
- 
- 	/* Initialization sequence for UHS-I cards */
--	if (rocr & SD_ROCR_S18A && mmc_host_uhs(host)) {
-+	if (rocr & SD_ROCR_S18A && mmc_host_can_uhs(host)) {
- 		err = mmc_sd_init_uhs_card(card);
- 		if (err)
- 			goto free_card;
-diff --git a/drivers/mmc/core/sdio.c b/drivers/mmc/core/sdio.c
-index 4b19b8a16b09..0f753367aec1 100644
---- a/drivers/mmc/core/sdio.c
-+++ b/drivers/mmc/core/sdio.c
-@@ -198,7 +198,7 @@ static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
- 			if (ret)
- 				goto out;
- 
--			if (mmc_host_uhs(card->host)) {
-+			if (mmc_host_can_uhs(card->host)) {
- 				if (data & SDIO_UHS_DDR50)
- 					card->sw_caps.sd3_bus_mode
- 						|= SD_MODE_UHS_DDR50 | SD_MODE_UHS_SDR50
-@@ -527,7 +527,7 @@ static int sdio_set_bus_speed_mode(struct mmc_card *card)
- 	 * If the host doesn't support any of the UHS-I modes, fallback on
- 	 * default speed.
- 	 */
--	if (!mmc_host_uhs(card->host))
-+	if (!mmc_host_can_uhs(card->host))
- 		return 0;
- 
- 	bus_speed = SDIO_SPEED_SDR12;
-@@ -669,7 +669,7 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
- 	WARN_ON(!host->claimed);
- 
- 	/* to query card if 1.8V signalling is supported */
--	if (mmc_host_uhs(host))
-+	if (mmc_host_can_uhs(host))
- 		ocr |= R4_18V_PRESENT;
- 
- try_again:
--- 
-2.47.2
+On Wed, Apr 30, 2025 at 08:46:46PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Implement I2C bus recovery support for the RIIC controller by making use
+> of software-controlled SCL and SDA line manipulation. The controller allo=
+ws
+> forcing SCL and SDA levels through control bits, which enables generation
+> of manual clock pulses and a stop condition to free a stuck bus.
+>=20
+> This implementation wires up the bus recovery mechanism using
+> i2c_generic_scl_recovery and provides get/set operations for SCL and SDA.
+>=20
+> This allows the RIIC driver to recover from bus hang scenarios where SDA
+> is held low by a slave.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--xKjuJX1DCffYbtLH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgTKBoACgkQFA3kzBSg
+KbbfwQ/+N6mNRwrLqA5m7Eo4cF+AGhkMcrrHE032M7A1zkCwXt6YKhO/M14uIPjS
+i5x799kmSjYWPhGCerVlLmjjGB+94NzK73nHQUPT9nI3+V37MKPRTWPq16wEX3Tp
+qrq8tkjfF4J0zfYZzuuQg2ukxtTyc0iUnEdJlJhPEs8aWJALU8AAnNXRQuN9d+MF
+YrZMnk1uLlKfbEOtJpDvABSFYZfJcHKYdXyh8hYxzCi6sSU8p0kWpPC6AZhX4Oa6
+b5YlEQqDKUeEI89UAgJhx5VFCZNmFQUhkyd2y9hA2UtRPXH2qqnufDXWHySYRsDe
+fgqKQrYa1+KyBMb0pYpRabdrrpPNLkd4VLnWF0C8/dhPnX15HDdHpvRINC4iHcdw
+0ymbL8aO3xil8EEO4sIih8YS8AoRTfqrk+tp28e57Ba42aprnNiVsNFWDYXdtOrf
+8JhoDzYBYG1G6jiqx/Xd7jN3sj5gJzBhzoSenz3bTPe9S1zLRqW3lCFnaiGms/PJ
+U0KL4boX+qKrQXHep+DmfJMXd1nZi1nUrpKycqQc9DtekEg7YYEobrl5SHuatuGS
+56FxUEl9xrifgC3I9dlvwyoV7YCruJkgyuYBesv5oZpVzXr5mb0eMT+817TwyJY8
+LfgMhCwCjWePBWl8kfweal7YrE1yil1ewxJPraLCuJkTiAw6tnU=
+=nDl4
+-----END PGP SIGNATURE-----
+
+--xKjuJX1DCffYbtLH--
