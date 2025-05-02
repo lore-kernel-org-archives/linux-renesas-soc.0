@@ -1,33 +1,32 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB0F235044
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F6023D28A
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 May 2025 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180858; cv=none; b=KjfSbjJSzQQLmXN6tfRhhI9IS7Pn9WwK9P/EzR3TvYka4v0uTo6/cQrCC7J2TL+yJAS63UW1fRiqPqHmJwe3Xg5m9BUNYhKJDXbQnWqC23ZFhIdUk4M6Vq94zoyaV75Xlb8O+hm+524zs+UFif+gexto9IWILueLw++TIuUJEZ0=
+	t=1746180858; cv=none; b=L0GhGX2DeXCDz5oIrBXjfI0eqS0wIJCNc+ZBa3EjJc6E9rgol347MKKBTlWifFnfS+flAWkxR1T8z1RfxdXMJli7YAdftgNC5SQK0SUiqai78+WB8DcsdcZnvKFgTTDYcA3VMUl9v4Ui1smGkuCK7yIEPdLcQFFjiYl+QpyAPfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746180858; c=relaxed/simple;
-	bh=9b2cOjEgTnfNPoJfA5ijW1PyfAnFfzJfyNpHSsdkpMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DtcgpMlszlhZEWwEk22fO8VhQCr37Go4VYmRQNMriVyCnzCkXyDIBMgIRRwMDCBf+xbUsAF7hbXSXHwB2+6weRF0smRd8UYAhd6iaPu7FBGP7K0SyJeJFTRGnLzLOyYIWQKnRt/mkON/JHvki0D1TxjX20SvlLEYUTRa9h2ns1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
+	bh=rtpMKSBdw7G6oomPP3AMvIJqgODpki9kuFP581HfOLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daqu3d8pu6b/2+YQZ7cPxx+JUL7V+yqvyLroiyPnjoWr7YF/+L8A29EZV3aE/CmXGsBa+i5jawaXdwlQUYOm/JR4t/lF0kQv6bGRN/5vsYnnX5/lkIy5tKGFd6pPChtIA/TTWY5AFirnBhb5CUxgp7akZNOUMmj3gDUxoJ4GKRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwn16pcz4wxpV
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 May 2025 12:14:01 +0200 (CEST)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwx0ddHz4x5w8
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 May 2025 12:14:09 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:df64:35e8:502:4ac0])
-	by baptiste.telenet-ops.be with cmsmtp
-	id kAE02E00l4sst1101AE0qM; Fri, 02 May 2025 12:14:01 +0200
+	by xavier.telenet-ops.be with cmsmtp
+	id kAE02E00C4sst1101AE0iZ; Fri, 02 May 2025 12:14:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP2-00000000WAU-10uk;
+	id 1uAnP1-00000000W9G-2l3t;
 	Fri, 02 May 2025 12:14:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP6-00000008oXe-2sdb;
+	id 1uAnP6-00000008oWA-0IU2;
 	Fri, 02 May 2025 12:14:00 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -40,12 +39,10 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 19/22] spi: sh-msiof: Double maximum DMA transfer size using two groups
-Date: Fri,  2 May 2025 12:13:51 +0200
-Message-ID: <0158448958b5b40aff29969188684eb77ccf8116.1746180072.git.geert+renesas@glider.be>
+Subject: [PATCH 00/22] spi: sh-msiof: Transfer size improvements and I2S reuse
+Date: Fri,  2 May 2025 12:13:32 +0200
+Message-ID: <cover.1746180072.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1746180072.git.geert+renesas@glider.be>
-References: <cover.1746180072.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -54,68 +51,67 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The maximum DMA transfer size is limited by the maximum values that can
-be written to the word count fields (WDLENx) in the Transmit and Control
-Data Registers (SITDR2/SIRDR2).  As all MSIOF variants support
-transferring data of multiple (two or four) groups, the maximum size can
-be doubled by using two groups instead of one, thus reducing setup
-overhead for very large SPI transfers.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on R-Car M2-W, E3, V4H, and V4M with spi-loopback-test and a
-logic analyzer.
----
- drivers/spi/spi-sh-msiof.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+This patch series (A) improves single transfer sizes in the MSIOF
+driver, using two methods:
+  - By increasing the assumed FIFO sizes, impacting both PIO and DMA
+    transfers,
+  - By using two groups, impacting DMA transfers,
+and (B) lets the recently-introduced MSIOF I2S drive reuse the SPI
+driver's register definitions.  All of this is covered with a thick
+sauce of fixes for (harmless) bugs, cleanups, and refactorings.
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 2b8c143b21219521..4d9a44118e1c9d6c 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -767,10 +767,12 @@ static void sh_msiof_dma_complete(void *arg)
- }
- 
- static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
--			     void *rx, unsigned int len)
-+			     void *rx, unsigned int len,
-+			     unsigned int max_wdlen)
- {
- 	u32 ier_bits = 0;
- 	struct dma_async_tx_descriptor *desc_tx = NULL, *desc_rx = NULL;
-+	unsigned int words1, words2;
- 	dma_cookie_t cookie;
- 	int ret;
- 
-@@ -817,7 +819,9 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		       FIELD_PREP(SIFCTR_RFWM, SIFCTR_RFWM_1));
- 
- 	/* setup msiof transfer mode registers (32-bit words) */
--	sh_msiof_spi_set_mode_regs(p, tx, rx, 32, len / 4, 0);
-+	words1 = min(len / 4, max_wdlen);
-+	words2 = len / 4 - words1;
-+	sh_msiof_spi_set_mode_regs(p, tx, rx, 32, words1, words2);
- 
- 	sh_msiof_write(p, SIIER, ier_bits);
- 
-@@ -969,7 +973,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 		 *  DMA supports 32-bit words only, hence pack 8-bit and 16-bit
- 		 *  words, with byte resp. word swapping.
- 		 */
--		unsigned int l = min(round_down(len, 4), max_wdlen * 4);
-+		unsigned int l = min(round_down(len, 4), 2 * max_wdlen * 4);
- 
- 		if (bits <= 8) {
- 			copy32 = copy_bswap32;
-@@ -982,7 +986,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 		if (tx_buf)
- 			copy32(p->tx_dma_page, tx_buf, l / 4);
- 
--		ret = sh_msiof_dma_once(p, tx_buf, rx_buf, l);
-+		ret = sh_msiof_dma_once(p, tx_buf, rx_buf, l, max_wdlen);
- 		if (ret == -EAGAIN) {
- 			dev_warn_once(&p->pdev->dev,
- 				"DMA not available, falling back to PIO\n");
+Note that the driver uses the limitations as specified in the hardware
+documentation.  For discovering the actual FIFO sizes, I wrote some
+crude test code that can be found at [1].
+
+This is based on spi/for-next and sound-asoc/for-next, and has been
+tested on a variery of R-Car SoCs.
+
+Thanks for your comments!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/msiof-fifo
+
+Geert Uytterhoeven (22):
+  spi: sh-msiof: Drop comma after OF match table sentinel
+  spi: sh-msiof: Remove unneeded compatible values
+  spi: sh-msiof: Fix maximum DMA transfer size
+  spi: sh-msiof: Complete using dev in sh_msiof_spi_probe()
+  spi: sh-msiof: Use bool for boolean flags
+  spi: sh-msiof: Make words/bits unsigned in sh_msiof_spi_txrx_once()
+  spi: sh-msiof: Make words/fs unsigned in FIFO helpers
+  spi: sh-msiof: SITMDR1/SIRMDR1 bitfield conversion
+  spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
+  spi: sh-msiof: SITSCR/SIRSCR bitfield conversion
+  spi: sh-msiof: SICTR bitfield conversion
+  spi: sh-msiof: SIFCTR bitfield conversion
+  spi: sh-msiof: Correct SIMDR2_GRPMASK
+  spi: sh-msiof: Add core support for dual-group transfers
+  spi: sh-msiof: Correct RX FIFO size for R-Car Gen2
+  spi: sh-msiof: Correct RX FIFO size for R-Car Gen3
+  spi: sh-msiof: Increase TX FIFO size for R-Car V4H/V4M
+  spi: sh-msiof: Simplify BRG's Division Ratio
+  spi: sh-msiof: Double maximum DMA transfer size using two groups
+  spi: sh-msiof: Document frame start sync pulse mode
+  spi: sh-msiof: Move register definitions to <linux/spi/sh_msiof.h>
+  ASoC: renesas: msiof: Convert to <linux/spi/sh_msiof.h>
+
+ drivers/spi/spi-sh-msiof.c     | 358 +++++++++++++--------------------
+ include/linux/spi/sh_msiof.h   | 122 +++++++++++
+ sound/soc/renesas/rcar/msiof.c |  94 +++------
+ 3 files changed, 285 insertions(+), 289 deletions(-)
+
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
