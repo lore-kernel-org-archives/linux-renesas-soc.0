@@ -1,30 +1,30 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9729323C4E4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD9B23C4EA
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 May 2025 10:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180854; cv=none; b=kgtSSwRrUjjTuVB9FYs9ct6WL/aSu88oKiYIjyK9Skfkn8Cw78+Yh6SkS7OE44YJYJ8vwb+zHyWogXJ2/KZs30jyz4oA4PC4uriJignrxKBv4E3LHOnCy6ErvzkutxIrZQsygMFLKuDMuG2pN2kn0zQ5rAHBzwUviAgz5xtLHNU=
+	t=1746180855; cv=none; b=jDHoPm9eScrfOfs6mL/uomcqKaDm6dXS3m59IMxj/EZSaUnSpGFZNzvsUSRvB4NAhBMxVHm7G5iEuJWLtZaEnMwxi+osixDxT3L8xkApkP0AR4hYTKFPZ1jTTMQG7Xp8kAWsXXbRqWxyXJeGOr4N/hVjIKoWMVFd/JTS02fM4vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746180854; c=relaxed/simple;
-	bh=ttVVLouJtAheS+D2jwhw8ROsDwf3R9qtA828pzkOU4U=;
+	s=arc-20240116; t=1746180855; c=relaxed/simple;
+	bh=DGcEHSclD+kJNWPZG5X1Wxde27/hPuNd75cyQ4Wqsag=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y1dtDjVf3qxJbOe2cMipXCe7/VMImdBZbjx0QgAzaGLWkPEVf44x9wSqQvLaFqqiEyb3O3vqGJwykmE6O/Ck5qzoXczhZb4ZgAuH2qOgZQwKMZr8LxH7FEFruriFh8pQJG4MgFCTIMsB3PCiG1ekR0HEZ8Wr1QE7m6lq+Z/46Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	 MIME-Version; b=ZC2pVVInY8YqRqleqN/lKpRbdi87mZ4Ftx50A0tjxdIano4sEV/kUij7Ams0KZU+4CZsKY5ucYAnLSAGmucOYkgNavV0JR3U/KTJ2B+v8Z2RbjSmIioVyJ0sHwbiWYIhgx6O5TuCBiD8PJ77+YVlEmwrA0H0dK2XQ8BDBBqjnXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:df64:35e8:502:4ac0])
-	by andre.telenet-ops.be with cmsmtp
-	id kAE02E00g4sst1101AE0RK; Fri, 02 May 2025 12:14:00 +0200
+	by laurent.telenet-ops.be with cmsmtp
+	id kAE02E00N4sst1101AE0qF; Fri, 02 May 2025 12:14:01 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP2-00000000WA6-0Cld;
+	id 1uAnP1-00000000W9d-3Mts;
 	Fri, 02 May 2025 12:14:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP6-00000008oXA-20C4;
+	id 1uAnP6-00000008oWa-11ij;
 	Fri, 02 May 2025 12:14:00 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -37,9 +37,9 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/22] spi: sh-msiof: Correct SIMDR2_GRPMASK
-Date: Fri,  2 May 2025 12:13:45 +0200
-Message-ID: <d304d6ea5d6e9250f2741a50d651d312b048de0a.1746180072.git.geert+renesas@glider.be>
+Subject: [PATCH 06/22] spi: sh-msiof: Make words/bits unsigned in sh_msiof_spi_txrx_once()
+Date: Fri,  2 May 2025 12:13:38 +0200
+Message-ID: <e6ad50d9318f04a3bd5a5d4be55be8eef0c6a5b3.1746180072.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1746180072.git.geert+renesas@glider.be>
 References: <cover.1746180072.git.geert+renesas@glider.be>
@@ -51,39 +51,40 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Group Output Mask is not a single bit, but a bit field, containing
-one bit for each of the four possible groups.  Correct the definition.
+Make the words and bits parameters of sh_msiof_spi_txrx_once() unsigned,
+as that matches what is passed by the caller.
 
-Note that this change has no direct impact, as the driver only uses
-the first group.
+This allows us to replace min_t() by the safer min().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 812e64ea5f79ce5e..57f27040b0fc78d7 100644
+index 11ef5c0a498d7c1f..fdb13dbc175249c4 100644
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -102,7 +102,7 @@ struct sh_msiof_spi_priv {
- /* SITMDR2 and SIRMDR2 */
- #define SIMDR2_BITLEN1		GENMASK(28, 24)	/* Data Size (8-32 bits) */
- #define SIMDR2_WDLEN1		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
--#define SIMDR2_GRPMASK1		BIT(0)		/* Group Output Mask 1 (SH, A1) */
-+#define SIMDR2_GRPMASK		GENMASK(3, 0)	/* Group Output Mask 1-4 (SH, A1) */
+@@ -677,16 +677,16 @@ static int sh_msiof_spi_txrx_once(struct sh_msiof_spi_priv *p,
+ 				  void (*rx_fifo)(struct sh_msiof_spi_priv *,
+ 						  void *, int, int),
+ 				  const void *tx_buf, void *rx_buf,
+-				  int words, int bits)
++				  unsigned int words, unsigned int bits)
+ {
+ 	int fifo_shift;
+ 	int ret;
  
- /* SITSCR and SIRSCR */
- #define SISCR_BRPS		GENMASK(12, 8)	/* Prescaler Setting (1-32) */
-@@ -400,7 +400,7 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
- 	if (tx_buf || (p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
- 		sh_msiof_write(p, SITMDR2, dr2);
- 	else
--		sh_msiof_write(p, SITMDR2, dr2 | SIMDR2_GRPMASK1);
-+		sh_msiof_write(p, SITMDR2, dr2 | SIMDR2_GRPMASK);
- 
+ 	/* limit maximum word transfer to rx/tx fifo size */
+ 	if (tx_buf)
+-		words = min_t(int, words, p->tx_fifo_size);
++		words = min(words, p->tx_fifo_size);
  	if (rx_buf)
- 		sh_msiof_write(p, SIRMDR2, dr2);
+-		words = min_t(int, words, p->rx_fifo_size);
++		words = min(words, p->rx_fifo_size);
+ 
+ 	/* the fifo contents need shifting */
+ 	fifo_shift = 32 - bits;
 -- 
 2.43.0
 
