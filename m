@@ -1,32 +1,33 @@
 Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F6023D28A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E9723E25A
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 May 2025 10:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180858; cv=none; b=L0GhGX2DeXCDz5oIrBXjfI0eqS0wIJCNc+ZBa3EjJc6E9rgol347MKKBTlWifFnfS+flAWkxR1T8z1RfxdXMJli7YAdftgNC5SQK0SUiqai78+WB8DcsdcZnvKFgTTDYcA3VMUl9v4Ui1smGkuCK7yIEPdLcQFFjiYl+QpyAPfI=
+	t=1746180858; cv=none; b=bXggTMGSo30PRD6tUh6I6q5vAwr2afshfJd01dLOCey13Z0uSjSrMH8QQl/h0s+KT9yxt5aXuO+iF5xceij1rdzG+FGLB6THNlEPXEVZfqGP9iphN232d9rCUZSnK8/bSuxqpHo+psVAHtN0QTUdMqtdINRJMnmn+rctEGW0Gt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746180858; c=relaxed/simple;
-	bh=rtpMKSBdw7G6oomPP3AMvIJqgODpki9kuFP581HfOLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daqu3d8pu6b/2+YQZ7cPxx+JUL7V+yqvyLroiyPnjoWr7YF/+L8A29EZV3aE/CmXGsBa+i5jawaXdwlQUYOm/JR4t/lF0kQv6bGRN/5vsYnnX5/lkIy5tKGFd6pPChtIA/TTWY5AFirnBhb5CUxgp7akZNOUMmj3gDUxoJ4GKRk=
+	bh=FjFdNUSx16sRQrkeVQ0c2raIOoN2qEIzJULZvtRuGFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QMh8a+mNdbF7kcby4Iel5fNLnO+0Iz52yC/nLhTvstiQDqL2ZpHYgwlYFbZIqx6yRJ+wWd3N4fXBXDSOyhitHCDD1z2cPaAdGJqnI9SRYZ2I9Rwes7LYCRZGLWDiLrQy3ePojpseRsFmpjWEgOrc68UDTnMEbI0CmTWn9jXpVE4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwx0ddHz4x5w8
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwx0zXbz4x5wJ
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 May 2025 12:14:09 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:df64:35e8:502:4ac0])
 	by xavier.telenet-ops.be with cmsmtp
-	id kAE02E00C4sst1101AE0iZ; Fri, 02 May 2025 12:14:00 +0200
+	id kAE02E00B4sst1101AE0iY; Fri, 02 May 2025 12:14:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP1-00000000W9G-2l3t;
+	id 1uAnP1-00000000W9I-2pZ6;
 	Fri, 02 May 2025 12:14:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP6-00000008oWA-0IU2;
+	id 1uAnP6-00000008oWG-0eBD;
 	Fri, 02 May 2025 12:14:00 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -39,10 +40,12 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/22] spi: sh-msiof: Transfer size improvements and I2S reuse
-Date: Fri,  2 May 2025 12:13:32 +0200
-Message-ID: <cover.1746180072.git.geert+renesas@glider.be>
+Subject: [PATCH 02/22] spi: sh-msiof: Remove unneeded compatible values
+Date: Fri,  2 May 2025 12:13:34 +0200
+Message-ID: <233d93bf8445e34d46c4aaf449b1c743e7aa02b2.1746180072.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1746180072.git.geert+renesas@glider.be>
+References: <cover.1746180072.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,67 +54,64 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+The Clock-Synchronized Serial Interfaces with FIFO (MSIOF) driver
+matches against both SoC-specific and family-specific compatible values
+to maintain backwards-compatibility with old DTBs predating the
+introduction of the family-specific compatible values.
 
-This patch series (A) improves single transfer sizes in the MSIOF
-driver, using two methods:
-  - By increasing the assumed FIFO sizes, impacting both PIO and DMA
-    transfers,
-  - By using two groups, impacting DMA transfers,
-and (B) lets the recently-introduced MSIOF I2S drive reuse the SPI
-driver's register definitions.  All of this is covered with a thick
-sauce of fixes for (harmless) bugs, cleanups, and refactorings.
+For RZ/G1, the SoC-specific compatible match entry can be removed from
+the driver: their DT always had the family-specific compatible values,
+and thus there was never a need to add the SoC-specific compatible
+values to the driver.
 
-Note that the driver uses the limitations as specified in the hardware
-documentation.  For discovering the actual FIFO sizes, I wrote some
-crude test code that can be found at [1].
+For R-Car Gen2 and M3-W, the SoC-specific compatible match entries can
+be removed, too, as there are a few points in time where DT
+backwards-compatibility was broken for other reasons:
+  - Legacy DT clock support is no longer supported since commit
+    58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
+    support") in v5.5, and the addition of "renesas,rcar-gen2-msiof" to
+    DTS in v4.11 predates the completion of the clock conversion in
+    v4.15,
+  - Legacy DT LVDS support is no longer supported since commit
+    841281fe52a769fe ("drm: rcar-du: Drop LVDS device tree backward
+    compatibility") in v5.18, and the addition of
+    "renesas,rcar-gen3-msiof" in commit 8b51f97138ca22b6 ("arm64: dts:
+    r8a7796: Use R-Car Gen 3 fallback binding for msiof nodes") in v4.11
+    predates the LVDS conversion in commit 58e8ed2ee9abe718 ("arm64:
+    dts: renesas: Convert to new LVDS DT bindings") in v4.20.
 
-This is based on spi/for-next and sound-asoc/for-next, and has been
-tested on a variery of R-Car SoCs.
+For R-Car H3, the SoC-specific compatible match entry cannot be removed,
+as its purpose is to handle an SoC-specific quirk.
 
-Thanks for your comments!
+Suggested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is a resend of a patch that never received any comments.
+---
+ drivers/spi/spi-sh-msiof.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/msiof-fifo
-
-Geert Uytterhoeven (22):
-  spi: sh-msiof: Drop comma after OF match table sentinel
-  spi: sh-msiof: Remove unneeded compatible values
-  spi: sh-msiof: Fix maximum DMA transfer size
-  spi: sh-msiof: Complete using dev in sh_msiof_spi_probe()
-  spi: sh-msiof: Use bool for boolean flags
-  spi: sh-msiof: Make words/bits unsigned in sh_msiof_spi_txrx_once()
-  spi: sh-msiof: Make words/fs unsigned in FIFO helpers
-  spi: sh-msiof: SITMDR1/SIRMDR1 bitfield conversion
-  spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
-  spi: sh-msiof: SITSCR/SIRSCR bitfield conversion
-  spi: sh-msiof: SICTR bitfield conversion
-  spi: sh-msiof: SIFCTR bitfield conversion
-  spi: sh-msiof: Correct SIMDR2_GRPMASK
-  spi: sh-msiof: Add core support for dual-group transfers
-  spi: sh-msiof: Correct RX FIFO size for R-Car Gen2
-  spi: sh-msiof: Correct RX FIFO size for R-Car Gen3
-  spi: sh-msiof: Increase TX FIFO size for R-Car V4H/V4M
-  spi: sh-msiof: Simplify BRG's Division Ratio
-  spi: sh-msiof: Double maximum DMA transfer size using two groups
-  spi: sh-msiof: Document frame start sync pulse mode
-  spi: sh-msiof: Move register definitions to <linux/spi/sh_msiof.h>
-  ASoC: renesas: msiof: Convert to <linux/spi/sh_msiof.h>
-
- drivers/spi/spi-sh-msiof.c     | 358 +++++++++++++--------------------
- include/linux/spi/sh_msiof.h   | 122 +++++++++++
- sound/soc/renesas/rcar/msiof.c |  94 +++------
- 3 files changed, 285 insertions(+), 289 deletions(-)
-
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 325bd5890b78884d..15e42af35f7e4230 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1088,16 +1088,8 @@ static const struct sh_msiof_chipdata rcar_r8a7795_data = {
+ 
+ static const struct of_device_id sh_msiof_match[] __maybe_unused = {
+ 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
+-	{ .compatible = "renesas,msiof-r8a7743",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7745",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7793",   .data = &rcar_gen2_data },
+-	{ .compatible = "renesas,msiof-r8a7794",   .data = &rcar_gen2_data },
+ 	{ .compatible = "renesas,rcar-gen2-msiof", .data = &rcar_gen2_data },
+ 	{ .compatible = "renesas,msiof-r8a7795",   .data = &rcar_r8a7795_data },
+-	{ .compatible = "renesas,msiof-r8a7796",   .data = &rcar_gen3_data },
+ 	{ .compatible = "renesas,rcar-gen3-msiof", .data = &rcar_gen3_data },
+ 	{ .compatible = "renesas,rcar-gen4-msiof", .data = &rcar_gen3_data },
+ 	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, /* Deprecated */
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
