@@ -1,33 +1,33 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145EE23959D
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 May 2025 10:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3AD23C4FA
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 May 2025 10:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180859; cv=none; b=J3f78AT+76neEMav+/+hHVVj3N++EGBI2xbDkWGRvhJdHGoHEwcLiOSGZM2eqEHscHBrgJ0eJVaBKjLXtULazI1OSWhXdQxNHYA46gHvh2u1gCITJkpUEwOiNYXmdHr7pVWBYH9+hThqdsyZ2AucWUaP6DQSp6XR4yX50SroXSc=
+	t=1746180859; cv=none; b=ZmW8/6JPAcpT1dRHRY8t5RfAliejQnQlLWJWC6pGWWvtHAnuNPSAkTH/hXv1ShFVraiSDYJ/G+T1PHeKgFIlzoAXhKZXA4NcJaIbJ9Z88yD1O7N40Sb7wWb2cAmdwO7C/aRNcZCDgU2InLVn/maE4eLZWXHU4kbJHksAsN5O+w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746180859; c=relaxed/simple;
-	bh=jdXT+5tCsEIXti4mAdWB/DUtoSCc0/dH688hFuz34O8=;
+	bh=SiW5g9xu/u4gHWuwLFs80XYUPkVK1vGnZ9W/+bY5Vvs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eEzJ5RaOmjD8TIFDGwFGogrXLAQucTbuFDm056cvTKxukyvmUEKLYaEZSD+Ri1t0rQuCUczkgZQ/k+ILtz82Z/2DcbEw8uuszvmA+7wFaJtNiIggCD10HyJLm+fuRYv+Ekh6W3FsF38rXn0esncpRPbmG7iRsQBM6cZ9f6B/tmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	 MIME-Version; b=uoz4Eion3LH2ajdLfJtEJtTckPLMx3wJcIaYGQ+8E2gF9+lQUCNiTphX3t1Fn1SX78t6QqqWKFBeUMBjKSuemAgjUjXZqoUdrxjBy/RmUtykTzPVgFXVnumpP/5F+a4SHGLCf4zRHp/e3F882Ixd3ysFTXq/DcwhhKRWXLPO/lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwx0gdTz4x5wC
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 May 2025 12:14:09 +0200 (CEST)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4Zpmwn2Pzrz4x67c
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 May 2025 12:14:01 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:df64:35e8:502:4ac0])
-	by xavier.telenet-ops.be with cmsmtp
-	id kAE02E00H4sst1101AE0ia; Fri, 02 May 2025 12:14:00 +0200
+	by albert.telenet-ops.be with cmsmtp
+	id kAE02E02f4sst1106AE1Ja; Fri, 02 May 2025 12:14:01 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP1-00000000W9o-3hoX;
+	id 1uAnP2-00000000WAc-1Hya;
 	Fri, 02 May 2025 12:14:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uAnP6-00000008oWp-1Tgf;
+	id 1uAnP6-00000008oXo-3AkR;
 	Fri, 02 May 2025 12:14:00 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -40,9 +40,9 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/22] spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
-Date: Fri,  2 May 2025 12:13:41 +0200
-Message-ID: <14e32fa30e98ae465c7eca99cec205f9c1fcbff5.1746180072.git.geert+renesas@glider.be>
+Subject: [PATCH 21/22] spi: sh-msiof: Move register definitions to <linux/spi/sh_msiof.h>
+Date: Fri,  2 May 2025 12:13:53 +0200
+Message-ID: <1cbd08f6e5a5ee6e53d22139b8e14be60e7be892.1746180072.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1746180072.git.geert+renesas@glider.be>
 References: <cover.1746180072.git.geert+renesas@glider.be>
@@ -54,57 +54,283 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert MSIOF Transmit and Receive Mode Register 2 field accesses to use
-the FIELD_PREP() bitfield access macro.
-
-This gets rid of explicit shifts and custom field preparation macros.
+Move the MSIOF register and register bit definitions from the MSIOF SPI
+driver to the existing header file <linux/spi/sh_msiof.h>, so they can
+be shared with the MSIOF I2S driver.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/spi/spi-sh-msiof.c   | 123 -----------------------------------
+ include/linux/spi/sh_msiof.h | 122 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 122 insertions(+), 123 deletions(-)
 
 diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index fb83b049690e0207..51a9e89364756af0 100644
+index 5d9d551dbd220389..38c2d0170430b2ce 100644
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -100,8 +100,8 @@ struct sh_msiof_spi_priv {
- 						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
+@@ -64,129 +64,6 @@ struct sh_msiof_spi_priv {
  
- /* SITMDR2 and SIRMDR2 */
--#define SIMDR2_BITLEN1(i)	(((i) - 1) << 24) /* Data Size (8-32 bits) */
--#define SIMDR2_WDLEN1(i)	(((i) - 1) << 16) /* Word Count (1-64/256 (SH, A1))) */
+ #define MAX_SS	3	/* Maximum number of native chip selects */
+ 
+-#define SITMDR1	0x00	/* Transmit Mode Register 1 */
+-#define SITMDR2	0x04	/* Transmit Mode Register 2 */
+-#define SITMDR3	0x08	/* Transmit Mode Register 3 */
+-#define SIRMDR1	0x10	/* Receive Mode Register 1 */
+-#define SIRMDR2	0x14	/* Receive Mode Register 2 */
+-#define SIRMDR3	0x18	/* Receive Mode Register 3 */
+-#define SITSCR	0x20	/* Transmit Clock Select Register */
+-#define SIRSCR	0x22	/* Receive Clock Select Register (SH, A1, APE6) */
+-#define SICTR	0x28	/* Control Register */
+-#define SIFCTR	0x30	/* FIFO Control Register */
+-#define SISTR	0x40	/* Status Register */
+-#define SIIER	0x44	/* Interrupt Enable Register */
+-#define SITDR1	0x48	/* Transmit Control Data Register 1 (SH, A1) */
+-#define SITDR2	0x4c	/* Transmit Control Data Register 2 (SH, A1) */
+-#define SITFDR	0x50	/* Transmit FIFO Data Register */
+-#define SIRDR1	0x58	/* Receive Control Data Register 1 (SH, A1) */
+-#define SIRDR2	0x5c	/* Receive Control Data Register 2 (SH, A1) */
+-#define SIRFDR	0x60	/* Receive FIFO Data Register */
+-
+-/* SITMDR1 and SIRMDR1 */
+-#define SIMDR1_TRMD		BIT(31)		/* Transfer Mode (1 = Master mode) */
+-#define SIMDR1_SYNCMD		GENMASK(29, 28)	/* SYNC Mode */
+-#define SIMDR1_SYNCMD_PULSE	0U		/*   Frame start sync pulse */
+-#define SIMDR1_SYNCMD_SPI	2U		/*   Level mode/SPI */
+-#define SIMDR1_SYNCMD_LR	3U		/*   L/R mode */
+-#define SIMDR1_SYNCAC		BIT(25)		/* Sync Polarity (1 = Active-low) */
+-#define SIMDR1_BITLSB		BIT(24)		/* MSB/LSB First (1 = LSB first) */
+-#define SIMDR1_DTDL		GENMASK(22, 20)	/* Data Pin Bit Delay for MSIOF_SYNC */
+-#define SIMDR1_SYNCDL		GENMASK(18, 16)	/* Frame Sync Signal Timing Delay */
+-#define SIMDR1_FLD		GENMASK(3, 2)	/* Frame Sync Signal Interval (0-3) */
+-#define SIMDR1_XXSTP		BIT(0)		/* Transmission/Reception Stop on FIFO */
+-/* SITMDR1 */
+-#define SITMDR1_PCON		BIT(30)		/* Transfer Signal Connection */
+-#define SITMDR1_SYNCCH		GENMASK(27, 26)	/* Sync Signal Channel Select */
+-						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
+-
+-/* SITMDR2 and SIRMDR2 */
+-#define SIMDR2_GRP		GENMASK(31, 30)	/* Group Count */
+-#define SIMDR2_BITLEN1		GENMASK(28, 24)	/* Data Size (8-32 bits) */
+-#define SIMDR2_WDLEN1		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
+-#define SIMDR2_GRPMASK		GENMASK(3, 0)	/* Group Output Mask 1-4 (SH, A1) */
+-
+-/* SITMDR3 and SIRMDR3 */
+-#define SIMDR3_BITLEN2		GENMASK(28, 24)	/* Data Size (8-32 bits) */
+-#define SIMDR3_WDLEN2		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
+-
+-/* SITSCR and SIRSCR */
+-#define SISCR_BRPS		GENMASK(12, 8)	/* Prescaler Setting (1-32) */
+-#define SISCR_BRDV		GENMASK(2, 0)	/* Baud Rate Generator's Division Ratio */
+-
+-/* SICTR */
+-#define SICTR_TSCKIZ		GENMASK(31, 30)	/* Transmit Clock I/O Polarity Select */
+-#define SICTR_TSCKIZ_SCK	BIT(31)		/*   Disable SCK when TX disabled */
+-#define SICTR_TSCKIZ_POL	BIT(30)		/*   Transmit Clock Polarity */
+-#define SICTR_RSCKIZ		GENMASK(29, 28) /* Receive Clock Polarity Select */
+-#define SICTR_RSCKIZ_SCK	BIT(29)		/*   Must match CTR_TSCKIZ_SCK */
+-#define SICTR_RSCKIZ_POL	BIT(28)		/*   Receive Clock Polarity */
+-#define SICTR_TEDG		BIT(27)		/* Transmit Timing (1 = falling edge) */
+-#define SICTR_REDG		BIT(26)		/* Receive Timing (1 = falling edge) */
+-#define SICTR_TXDIZ		GENMASK(23, 22)	/* Pin Output When TX is Disabled */
+-#define SICTR_TXDIZ_LOW		0U		/*   0 */
+-#define SICTR_TXDIZ_HIGH	1U		/*   1 */
+-#define SICTR_TXDIZ_HIZ		2U		/*   High-impedance */
+-#define SICTR_TSCKE		BIT(15)		/* Transmit Serial Clock Output Enable */
+-#define SICTR_TFSE		BIT(14)		/* Transmit Frame Sync Signal Output Enable */
+-#define SICTR_TXE		BIT(9)		/* Transmit Enable */
+-#define SICTR_RXE		BIT(8)		/* Receive Enable */
+-#define SICTR_TXRST		BIT(1)		/* Transmit Reset */
+-#define SICTR_RXRST		BIT(0)		/* Receive Reset */
+-
+-/* SIFCTR */
+-#define SIFCTR_TFWM		GENMASK(31, 29)	/* Transmit FIFO Watermark */
+-#define SIFCTR_TFWM_64		0U		/*  Transfer Request when 64 empty stages */
+-#define SIFCTR_TFWM_32		1U		/*  Transfer Request when 32 empty stages */
+-#define SIFCTR_TFWM_24		2U		/*  Transfer Request when 24 empty stages */
+-#define SIFCTR_TFWM_16		3U		/*  Transfer Request when 16 empty stages */
+-#define SIFCTR_TFWM_12		4U		/*  Transfer Request when 12 empty stages */
+-#define SIFCTR_TFWM_8		5U		/*  Transfer Request when 8 empty stages */
+-#define SIFCTR_TFWM_4		6U		/*  Transfer Request when 4 empty stages */
+-#define SIFCTR_TFWM_1		7U		/*  Transfer Request when 1 empty stage */
+-#define SIFCTR_TFUA		GENMASK(28, 20) /* Transmit FIFO Usable Area */
+-#define SIFCTR_RFWM		GENMASK(15, 13)	/* Receive FIFO Watermark */
+-#define SIFCTR_RFWM_1		0U		/*  Transfer Request when 1 valid stages */
+-#define SIFCTR_RFWM_4		1U		/*  Transfer Request when 4 valid stages */
+-#define SIFCTR_RFWM_8		2U		/*  Transfer Request when 8 valid stages */
+-#define SIFCTR_RFWM_16		3U		/*  Transfer Request when 16 valid stages */
+-#define SIFCTR_RFWM_32		4U		/*  Transfer Request when 32 valid stages */
+-#define SIFCTR_RFWM_64		5U		/*  Transfer Request when 64 valid stages */
+-#define SIFCTR_RFWM_128		6U		/*  Transfer Request when 128 valid stages */
+-#define SIFCTR_RFWM_256		7U		/*  Transfer Request when 256 valid stages */
+-#define SIFCTR_RFUA		GENMASK(12, 4)	/* Receive FIFO Usable Area (0x40 = full) */
+-
+-/* SISTR */
+-#define SISTR_TFEMP		BIT(29) /* Transmit FIFO Empty */
+-#define SISTR_TDREQ		BIT(28) /* Transmit Data Transfer Request */
+-#define SISTR_TEOF		BIT(23) /* Frame Transmission End */
+-#define SISTR_TFSERR		BIT(21) /* Transmit Frame Synchronization Error */
+-#define SISTR_TFOVF		BIT(20) /* Transmit FIFO Overflow */
+-#define SISTR_TFUDF		BIT(19) /* Transmit FIFO Underflow */
+-#define SISTR_RFFUL		BIT(13) /* Receive FIFO Full */
+-#define SISTR_RDREQ		BIT(12) /* Receive Data Transfer Request */
+-#define SISTR_REOF		BIT(7)  /* Frame Reception End */
+-#define SISTR_RFSERR		BIT(5)  /* Receive Frame Synchronization Error */
+-#define SISTR_RFUDF		BIT(4)  /* Receive FIFO Underflow */
+-#define SISTR_RFOVF		BIT(3)  /* Receive FIFO Overflow */
+-
+-/* SIIER */
+-#define SIIER_TDMAE		BIT(31) /* Transmit Data DMA Transfer Req. Enable */
+-#define SIIER_TFEMPE		BIT(29) /* Transmit FIFO Empty Enable */
+-#define SIIER_TDREQE		BIT(28) /* Transmit Data Transfer Request Enable */
+-#define SIIER_TEOFE		BIT(23) /* Frame Transmission End Enable */
+-#define SIIER_TFSERRE		BIT(21) /* Transmit Frame Sync Error Enable */
+-#define SIIER_TFOVFE		BIT(20) /* Transmit FIFO Overflow Enable */
+-#define SIIER_TFUDFE		BIT(19) /* Transmit FIFO Underflow Enable */
+-#define SIIER_RDMAE		BIT(15) /* Receive Data DMA Transfer Req. Enable */
+-#define SIIER_RFFULE		BIT(13) /* Receive FIFO Full Enable */
+-#define SIIER_RDREQE		BIT(12) /* Receive Data Transfer Request Enable */
+-#define SIIER_REOFE		BIT(7)  /* Frame Reception End Enable */
+-#define SIIER_RFSERRE		BIT(5)  /* Receive Frame Sync Error Enable */
+-#define SIIER_RFUDFE		BIT(4)  /* Receive FIFO Underflow Enable */
+-#define SIIER_RFOVFE		BIT(3)  /* Receive FIFO Overflow Enable */
+-
+-
+ static u32 sh_msiof_read(struct sh_msiof_spi_priv *p, int reg_offs)
+ {
+ 	switch (reg_offs) {
+diff --git a/include/linux/spi/sh_msiof.h b/include/linux/spi/sh_msiof.h
+index f950d280461b917d..6f326d6a27d55b0d 100644
+--- a/include/linux/spi/sh_msiof.h
++++ b/include/linux/spi/sh_msiof.h
+@@ -2,6 +2,128 @@
+ #ifndef __SPI_SH_MSIOF_H__
+ #define __SPI_SH_MSIOF_H__
+ 
++#define SITMDR1	0x00	/* Transmit Mode Register 1 */
++#define SITMDR2	0x04	/* Transmit Mode Register 2 */
++#define SITMDR3	0x08	/* Transmit Mode Register 3 */
++#define SIRMDR1	0x10	/* Receive Mode Register 1 */
++#define SIRMDR2	0x14	/* Receive Mode Register 2 */
++#define SIRMDR3	0x18	/* Receive Mode Register 3 */
++#define SITSCR	0x20	/* Transmit Clock Select Register */
++#define SIRSCR	0x22	/* Receive Clock Select Register (SH, A1, APE6) */
++#define SICTR	0x28	/* Control Register */
++#define SIFCTR	0x30	/* FIFO Control Register */
++#define SISTR	0x40	/* Status Register */
++#define SIIER	0x44	/* Interrupt Enable Register */
++#define SITDR1	0x48	/* Transmit Control Data Register 1 (SH, A1) */
++#define SITDR2	0x4c	/* Transmit Control Data Register 2 (SH, A1) */
++#define SITFDR	0x50	/* Transmit FIFO Data Register */
++#define SIRDR1	0x58	/* Receive Control Data Register 1 (SH, A1) */
++#define SIRDR2	0x5c	/* Receive Control Data Register 2 (SH, A1) */
++#define SIRFDR	0x60	/* Receive FIFO Data Register */
++
++/* SITMDR1 and SIRMDR1 */
++#define SIMDR1_TRMD		BIT(31)		/* Transfer Mode (1 = Master mode) */
++#define SIMDR1_SYNCMD		GENMASK(29, 28)	/* SYNC Mode */
++#define SIMDR1_SYNCMD_PULSE	0U		/*   Frame start sync pulse */
++#define SIMDR1_SYNCMD_SPI	2U		/*   Level mode/SPI */
++#define SIMDR1_SYNCMD_LR	3U		/*   L/R mode */
++#define SIMDR1_SYNCAC		BIT(25)		/* Sync Polarity (1 = Active-low) */
++#define SIMDR1_BITLSB		BIT(24)		/* MSB/LSB First (1 = LSB first) */
++#define SIMDR1_DTDL		GENMASK(22, 20)	/* Data Pin Bit Delay for MSIOF_SYNC */
++#define SIMDR1_SYNCDL		GENMASK(18, 16)	/* Frame Sync Signal Timing Delay */
++#define SIMDR1_FLD		GENMASK(3, 2)	/* Frame Sync Signal Interval (0-3) */
++#define SIMDR1_XXSTP		BIT(0)		/* Transmission/Reception Stop on FIFO */
++/* SITMDR1 */
++#define SITMDR1_PCON		BIT(30)		/* Transfer Signal Connection */
++#define SITMDR1_SYNCCH		GENMASK(27, 26)	/* Sync Signal Channel Select */
++						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
++
++/* SITMDR2 and SIRMDR2 */
++#define SIMDR2_GRP		GENMASK(31, 30)	/* Group Count */
 +#define SIMDR2_BITLEN1		GENMASK(28, 24)	/* Data Size (8-32 bits) */
 +#define SIMDR2_WDLEN1		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
- #define SIMDR2_GRPMASK1		BIT(0)		/* Group Output Mask 1 (SH, A1) */
- 
- /* SITSCR and SIRSCR */
-@@ -397,7 +397,8 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
- 				       const void *tx_buf, void *rx_buf,
- 				       u32 bits, u32 words)
- {
--	u32 dr2 = SIMDR2_BITLEN1(bits) | SIMDR2_WDLEN1(words);
-+	u32 dr2 = FIELD_PREP(SIMDR2_BITLEN1, bits - 1) |
-+		  FIELD_PREP(SIMDR2_WDLEN1, words - 1);
- 
- 	if (tx_buf || (p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
- 		sh_msiof_write(p, SITMDR2, dr2);
-@@ -931,6 +932,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 				 struct spi_transfer *t)
- {
- 	struct sh_msiof_spi_priv *p = spi_controller_get_devdata(ctlr);
-+	unsigned int max_wdlen = FIELD_MAX(SIMDR2_WDLEN1) + 1;
- 	void (*copy32)(u32 *, const u32 *, unsigned int);
- 	void (*tx_fifo)(struct sh_msiof_spi_priv *, const void *, unsigned int,
- 			unsigned int);
-@@ -940,7 +942,6 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 	void *rx_buf = t->rx_buf;
- 	unsigned int len = t->len;
- 	unsigned int bits = t->bits_per_word;
--	unsigned int max_wdlen = 256;
- 	unsigned int bytes_per_word;
- 	unsigned int words;
- 	int n;
++#define SIMDR2_GRPMASK		GENMASK(3, 0)	/* Group Output Mask 1-4 (SH, A1) */
++
++/* SITMDR3 and SIRMDR3 */
++#define SIMDR3_BITLEN2		GENMASK(28, 24)	/* Data Size (8-32 bits) */
++#define SIMDR3_WDLEN2		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
++
++/* SITSCR and SIRSCR */
++#define SISCR_BRPS		GENMASK(12, 8)	/* Prescaler Setting (1-32) */
++#define SISCR_BRDV		GENMASK(2, 0)	/* Baud Rate Generator's Division Ratio */
++
++/* SICTR */
++#define SICTR_TSCKIZ		GENMASK(31, 30)	/* Transmit Clock I/O Polarity Select */
++#define SICTR_TSCKIZ_SCK	BIT(31)		/*   Disable SCK when TX disabled */
++#define SICTR_TSCKIZ_POL	BIT(30)		/*   Transmit Clock Polarity */
++#define SICTR_RSCKIZ		GENMASK(29, 28) /* Receive Clock Polarity Select */
++#define SICTR_RSCKIZ_SCK	BIT(29)		/*   Must match CTR_TSCKIZ_SCK */
++#define SICTR_RSCKIZ_POL	BIT(28)		/*   Receive Clock Polarity */
++#define SICTR_TEDG		BIT(27)		/* Transmit Timing (1 = falling edge) */
++#define SICTR_REDG		BIT(26)		/* Receive Timing (1 = falling edge) */
++#define SICTR_TXDIZ		GENMASK(23, 22)	/* Pin Output When TX is Disabled */
++#define SICTR_TXDIZ_LOW		0U		/*   0 */
++#define SICTR_TXDIZ_HIGH	1U		/*   1 */
++#define SICTR_TXDIZ_HIZ		2U		/*   High-impedance */
++#define SICTR_TSCKE		BIT(15)		/* Transmit Serial Clock Output Enable */
++#define SICTR_TFSE		BIT(14)		/* Transmit Frame Sync Signal Output Enable */
++#define SICTR_TXE		BIT(9)		/* Transmit Enable */
++#define SICTR_RXE		BIT(8)		/* Receive Enable */
++#define SICTR_TXRST		BIT(1)		/* Transmit Reset */
++#define SICTR_RXRST		BIT(0)		/* Receive Reset */
++
++/* SIFCTR */
++#define SIFCTR_TFWM		GENMASK(31, 29)	/* Transmit FIFO Watermark */
++#define SIFCTR_TFWM_64		0U		/*  Transfer Request when 64 empty stages */
++#define SIFCTR_TFWM_32		1U		/*  Transfer Request when 32 empty stages */
++#define SIFCTR_TFWM_24		2U		/*  Transfer Request when 24 empty stages */
++#define SIFCTR_TFWM_16		3U		/*  Transfer Request when 16 empty stages */
++#define SIFCTR_TFWM_12		4U		/*  Transfer Request when 12 empty stages */
++#define SIFCTR_TFWM_8		5U		/*  Transfer Request when 8 empty stages */
++#define SIFCTR_TFWM_4		6U		/*  Transfer Request when 4 empty stages */
++#define SIFCTR_TFWM_1		7U		/*  Transfer Request when 1 empty stage */
++#define SIFCTR_TFUA		GENMASK(28, 20) /* Transmit FIFO Usable Area */
++#define SIFCTR_RFWM		GENMASK(15, 13)	/* Receive FIFO Watermark */
++#define SIFCTR_RFWM_1		0U		/*  Transfer Request when 1 valid stages */
++#define SIFCTR_RFWM_4		1U		/*  Transfer Request when 4 valid stages */
++#define SIFCTR_RFWM_8		2U		/*  Transfer Request when 8 valid stages */
++#define SIFCTR_RFWM_16		3U		/*  Transfer Request when 16 valid stages */
++#define SIFCTR_RFWM_32		4U		/*  Transfer Request when 32 valid stages */
++#define SIFCTR_RFWM_64		5U		/*  Transfer Request when 64 valid stages */
++#define SIFCTR_RFWM_128		6U		/*  Transfer Request when 128 valid stages */
++#define SIFCTR_RFWM_256		7U		/*  Transfer Request when 256 valid stages */
++#define SIFCTR_RFUA		GENMASK(12, 4)	/* Receive FIFO Usable Area (0x40 = full) */
++
++/* SISTR */
++#define SISTR_TFEMP		BIT(29) /* Transmit FIFO Empty */
++#define SISTR_TDREQ		BIT(28) /* Transmit Data Transfer Request */
++#define SISTR_TEOF		BIT(23) /* Frame Transmission End */
++#define SISTR_TFSERR		BIT(21) /* Transmit Frame Synchronization Error */
++#define SISTR_TFOVF		BIT(20) /* Transmit FIFO Overflow */
++#define SISTR_TFUDF		BIT(19) /* Transmit FIFO Underflow */
++#define SISTR_RFFUL		BIT(13) /* Receive FIFO Full */
++#define SISTR_RDREQ		BIT(12) /* Receive Data Transfer Request */
++#define SISTR_REOF		BIT(7)  /* Frame Reception End */
++#define SISTR_RFSERR		BIT(5)  /* Receive Frame Synchronization Error */
++#define SISTR_RFUDF		BIT(4)  /* Receive FIFO Underflow */
++#define SISTR_RFOVF		BIT(3)  /* Receive FIFO Overflow */
++
++/* SIIER */
++#define SIIER_TDMAE		BIT(31) /* Transmit Data DMA Transfer Req. Enable */
++#define SIIER_TFEMPE		BIT(29) /* Transmit FIFO Empty Enable */
++#define SIIER_TDREQE		BIT(28) /* Transmit Data Transfer Request Enable */
++#define SIIER_TEOFE		BIT(23) /* Frame Transmission End Enable */
++#define SIIER_TFSERRE		BIT(21) /* Transmit Frame Sync Error Enable */
++#define SIIER_TFOVFE		BIT(20) /* Transmit FIFO Overflow Enable */
++#define SIIER_TFUDFE		BIT(19) /* Transmit FIFO Underflow Enable */
++#define SIIER_RDMAE		BIT(15) /* Receive Data DMA Transfer Req. Enable */
++#define SIIER_RFFULE		BIT(13) /* Receive FIFO Full Enable */
++#define SIIER_RDREQE		BIT(12) /* Receive Data Transfer Request Enable */
++#define SIIER_REOFE		BIT(7)  /* Frame Reception End Enable */
++#define SIIER_RFSERRE		BIT(5)  /* Receive Frame Sync Error Enable */
++#define SIIER_RFUDFE		BIT(4)  /* Receive FIFO Underflow Enable */
++#define SIIER_RFOVFE		BIT(3)  /* Receive FIFO Overflow Enable */
++
+ enum {
+ 	MSIOF_SPI_HOST,
+ 	MSIOF_SPI_TARGET,
 -- 
 2.43.0
 
