@@ -1,24 +1,24 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB808C1E;
-	Thu,  8 May 2025 18:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A66320458A;
+	Thu,  8 May 2025 18:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746729084; cv=none; b=bRV5sRUSrscrsrdE9ZHNATxRT+2hIvVgs5mJ150GJI/awvGdQlVFZc1rIcV5RFvnCNWQ4QcDDvICmAEt9uqivexCeX+5DPUNyQ6WgoadpcA61fVPehb8S9rrf0zuXadv+bJ5i5mi3FvAnMJWozlH2952XrGiQZBoNCmRcNZ3vJo=
+	t=1746729086; cv=none; b=QIzQxeoTR4wvcvh6sxY9WmAeALVLFm8JZGeR6fNO+lRzQQ22s0q8cIgCUDT/3h+AWHh6UaBl4bHpuP+UUjiyQrR24s8+zCblhp6fMSm6SmZe+8Y6ZSCYzQema4gXt5cUSQcDvpb1SIwjBiR8XdGZp82vPHWJPGdRV1KNKYrT6xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746729084; c=relaxed/simple;
-	bh=uIZjuucy1TnRlJJTTFqtBDRgLK7GmWufKqQ3a6nfs+E=;
+	s=arc-20240116; t=1746729086; c=relaxed/simple;
+	bh=1Muu8ezW0Spl/Uwaw3LwoMpmyf43nfHybzezDqrekmQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V2ytY6o/O/cw8U2vqMFyMuj7RB7/MqjkCnPUUBBfGy/SI+e+1X/aavEyYutx9A7FZuxdKPLYild7B1fFOhSTD91x0biPKknHRpxvQsgl3NxGIusoxnF9LRHzkc331gSWYgVgYApfA5VPWWb/X1JLQQxQ9Vkfe72d+wl0Qy+o9nQ=
+	 MIME-Version; b=qE4Y+FM6r/O545HA80lkx+tRU937fI1uYXRYoBywYbwG+Vm7aXDdKkYKX6pz/KA9m0/vMSHVSwgkyrj9CtcmTjGDLVZveAcc1ZS/mZYGpBntl4X0VgONYRT4OizjAu6vd9Us2bSn7z+koKUx5EvdjKUKUnBFv6lLBxwoyuGVOgY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: GCiBtavhQWmZMRC24Hl4NQ==
-X-CSE-MsgGUID: URqwrbAJRayw/UfURhq27w==
+X-CSE-ConnectionGUID: o/P8UTZmS52jo82/0imOJA==
+X-CSE-MsgGUID: 8cKFdbzDQv+nJ+EJk9O9EQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 May 2025 03:31:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 May 2025 03:31:21 +0900
 Received: from localhost.localdomain (unknown [10.226.92.89])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 00F33405D108;
-	Fri,  9 May 2025 03:31:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 62501405C6DD;
+	Fri,  9 May 2025 03:31:18 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
@@ -30,9 +30,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: r9a09g047: Add XSPI node
-Date: Thu,  8 May 2025 19:31:03 +0100
-Message-ID: <20250508183109.137721-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: rzg3e-smarc-som: Enable serial nor flash
+Date: Thu,  8 May 2025 19:31:04 +0100
+Message-ID: <20250508183109.137721-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250508183109.137721-1-biju.das.jz@bp.renesas.com>
 References: <20250508183109.137721-1-biju.das.jz@bp.renesas.com>
@@ -44,45 +44,74 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add xspi node to RZ/G3E ("R9A09G047") SoC DTSI.
+Enable Renesas at25ql128a flash connected to XSPI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 876f70fed433..3d3aa371dad8 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -280,6 +280,27 @@ sys: system-controller@10430000 {
- 			resets = <&cpg 0x30>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index 43d79158d81a..db128388dcb6 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -182,6 +182,15 @@ sd2-pwen {
+ 			pinmux = <RZG3E_PORT_PINMUX(K, 2, 1)>; /* SD2PWEN */
  		};
- 
-+		xspi: spi@11030000 {
-+			compatible = "renesas,r9a09g047-xspi";
-+			reg = <0 0x11030000 0 0x10000>,
-+			      <0 0x20000000 0 0x10000000>;
-+			reg-names = "regs", "dirmap";
-+			interrupts = <GIC_SPI 228 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 229 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "pulse", "err_pulse";
-+			clocks = <&cpg CPG_MOD 0x9f>,
-+				 <&cpg CPG_MOD 0xa0>,
-+				 <&cpg CPG_CORE R9A09G047_SPI_CLK_SPI>,
-+				 <&cpg CPG_MOD 0xa1>;
-+			clock-names = "ahb", "axi", "spi", "spix2";
-+			resets = <&cpg 0xa3>, <&cpg 0xa4>;
-+			reset-names = "hresetn", "aresetn";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ 	};
 +
- 		scif0: serial@11c01400 {
- 			compatible = "renesas,scif-r9a09g047", "renesas,scif-r9a09g057";
- 			reg = <0 0x11c01400 0 0x400>;
++	xspi_pins: xspi0 {
++		pinmux = <RZG3E_PORT_PINMUX(M, 0, 0)>, /* XSPI0_IO0 */
++			 <RZG3E_PORT_PINMUX(M, 1, 0)>, /* XSPI0_IO1 */
++			 <RZG3E_PORT_PINMUX(M, 2, 0)>, /* XSPI0_IO2 */
++			 <RZG3E_PORT_PINMUX(M, 3, 0)>, /* XSPI0_IO3 */
++			 <RZG3E_PORT_PINMUX(L, 0, 0)>, /* XSPI0_CKP */
++			 <RZG3E_PORT_PINMUX(L, 1, 0)>; /* XSPI0_CS0 */
++	};
+ };
+ 
+ &qextal_clk {
+@@ -245,3 +254,40 @@ &sdhi2_vqmmc {
+ &wdt1 {
+ 	status = "okay";
+ };
++
++&xspi {
++	pinctrl-0 = <&xspi_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		vcc-supply = <&reg_1p8v>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "bl2";
++				reg = <0x00000000 0x00060000>;
++			};
++
++			partition@60000 {
++				label = "fip";
++				reg = <0x00060000 0x007a0000>;
++			};
++
++			partition@800000 {
++				label = "user";
++				reg = <0x800000 0x800000>;
++			};
++		};
++	};
++};
 -- 
 2.43.0
 
