@@ -1,45 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799F8221D92
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 May 2025 07:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1682222B4
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 May 2025 07:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746690204; cv=none; b=ZcN+K557RgUF5C6XihYf7wu1FyQruR3cQbcYLyihKyjaC/uycbKdEsDZfH+kTvQ5mf9ob9jlm4HHaAa0akLNAR2kxFf+FHgU18nX6dphro0Tj3/DBthIlwmQY2HitUvwbL6QHjt3tCDNfodmS6KUYgxNkA9VdzyCYkv/SNelLTQ=
+	t=1746690205; cv=none; b=kNNWGon6Sg43T16z8opJ+XqN64dHtX0oehDcWEByuvUDHSoI7yYQ19bwFEXXVBwC2b9rNWJM6xJa5pFUxJSPg5n4B0BnuZbSYyidrIWm/PwQG0tyZ1E3NojKoDyzPPH+mhBzWOqNnRBEFvH1Hv7umVDnXUQW+7d7q8MqzqD9ntk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746690204; c=relaxed/simple;
-	bh=r4He/SbE13CQK7Ytn3b712lfUL6ZH2CQO6FJpHoww7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FAnFe16IWbS9mY3zWoQxQJ8LFUnoQ+oBWTdR/kHuxotkhVfQ/mhezpwz65AwzLdw7UDOwRHrDQNeoXXgDMclFxdxqMLirgx2PfnEliizSv6ejEtdRB7XNBbUqOM8dx6MEVGJJ3/XlD9Vr0Zs4osBLnpKSP0K8Y2wiz9ka+FCT/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KoP1tg8E; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1746690205; c=relaxed/simple;
+	bh=RbivIt+RNJiE/Z6dsoLo0RKAvo1VweEt7+we8rg11bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MciXBe/+jFYOad1cLqDugoT3KhZ7wB9hp8q7b0N1s9Z+YRFJYM1+nnV9OEzcVjlSDHeI+qXvn4+SOOm30dMpdBQDYoei1IK5fMd68/I0wxkE7VL36/Hf4/nAeMTNab7ZcBAlKKzdgwB3NgqbvfhjfwswXLEe6SoIi6me9yurh74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KCQUC4Qe; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KoP1tg8E"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KCQUC4Qe"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=4pG7NQpNXvxmYH
-	mRjI/0iVghcPUcTCsgebEDay8eIiA=; b=KoP1tg8EYXwt5pXcCCedbSBhPaDCoP
-	dKju1Cf+Bkvm6/mmunMjbXyy1MXL5O885KPx4mJoBVipAJmh9uSEIQ8Cq4C64C8t
-	AX7s/SXnroWCaTCSbAaZfjWbCB1ZeuFOC3z6jiipgY7mQplv8li+3tmYjOLkHXjE
-	fvO8/sb+b47mD60CSFMiYNKThFllqAxJoOkxjrKn/aSQ5oNeWAa5dNBybS3b6Qwg
-	LqCPHXofX23Ho0I5O1WEze4JY45R4a9hk9fcrZH9SEA0wThP43bvzwZVtonTdPkd
-	DXZp/+3HUL8JluOWSswU4eHs2fCnLVo0+URcwWl0AGU0ZIYZuF8xcaQw==
-Received: (qmail 3712177 invoked from network); 8 May 2025 09:43:18 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 May 2025 09:43:18 +0200
-X-UD-Smtp-Session: l3s3148p1@cxHLAJs0fsMgAwDPXxyAAIlRla1HkD11
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=zYH7l1qDluR4uZNcsoOblZcJLGUhttBGflEDpW4pTXQ=; b=KCQUC4
+	QeayDCkkyYmKAz8qZa/5OJCTlhzLlkJffgcuf9NSpXCDVFo8c5axDBR+tLdvj5dG
+	A7ygADcNXeM6z1apBihUFX14Qz1Swo8gib7ewWiwctojRMB6kBADxFXF6d6RYeHi
+	fKUj+4q5815DE2y4Lrr7RjpyTj3xWuSRmi9LuDE0JUlE2pDwxkjMKNwPjSOKuRLs
+	sy9BVZWdPQkiSUgxVJO3cbruV3xM1LeHU+4CBH8OvXkugh5BaqN2aTSb9Bffg9hk
+	JiBxvlsIHDVchAZ+xNBFKvBw/UiRRJXzzoeeo3MSf9gR2quJcyLPWE08Wa5awI95
+	iwd/2+S3IFb88C6g==
+Received: (qmail 3712261 invoked from network); 8 May 2025 09:43:20 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 May 2025 09:43:20 +0200
+X-UD-Smtp-Session: l3s3148p1@NYjkAJs0hMMgAwDPXxyAAIlRla1HkD11
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 0/2] ARM: dts: renesas: r9a06g032-rzn1d400: enable USB host
-Date: Thu,  8 May 2025 09:43:12 +0200
-Message-ID: <20250508074311.20343-4-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable USB host port
+Date: Thu,  8 May 2025 09:43:14 +0200
+Message-ID: <20250508074311.20343-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250508074311.20343-4-wsa+renesas@sang-engineering.com>
+References: <20250508074311.20343-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,23 +52,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After the previous discussion, here is my second take how to enable the
-USB host port on the above board. Please let me know what you think.
+Can be used via the USB connector J20.
 
-Still works with the Rockbox player.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes since v1:
- * rebased to linux-next (USB device patch already accepted)
- * moved pinmux to a separate node for CPLD on the demo board
-
-Wolfram Sang (2):
-  ARM: dts: renesas: r9a06g032-rzn1d400-db: add pinmux for the CPLD
-  ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable USB host port
-
- arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts | 10 ++++++++++
- arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts |  4 ++++
- 2 files changed, 14 insertions(+)
-
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+index b3de325fb47f..fb74dc45bd25 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
++++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+@@ -238,3 +238,7 @@ &uart2 {
+ 	status = "okay";
+ 	uart-has-rtscts;
+ };
++
++&pci_usb {
++	status = "okay";
++};
 -- 
 2.47.2
 
