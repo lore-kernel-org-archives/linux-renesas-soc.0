@@ -1,71 +1,88 @@
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469621324D;
-	Fri,  9 May 2025 14:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4008E2135DD
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 May 2025 14:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800252; cv=none; b=PNJlzrdafNeL65+Vj7TE69+6w89tRaOB+0KpBgkQNBxuXqyGoXYjcQeN/t/SKWLmI8HMZAcxQIDz0ElVCz1AaxUVT/NiqfFMwpNnfu9Gh5LEGwprvAR1Rpa38Fu5I/JxdkLtqqd3gBhUGdgBzuK54keKb1BqxOfu3ISKHH/qnK4=
+	t=1746800579; cv=none; b=kW8YSKWX01utXZ2CtbkQgwOJAT4b/d3KQgQw1N03aUBYIFxVFBHkzDRfPIXOhmsQqXe2k6oSQczkg+cGyNzHj4Ght1/6JMLyc0k8xY113MEox2xDzIdrYPWGOyAXIUYEJin6QCJ9Z7dqS2DtoN43KLXimaMFGYtnqG8yEJo1nAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800252; c=relaxed/simple;
-	bh=8YpPIiJRES6y9U9nDUVsp0fNxxDECRqz8HdY8Iy5l9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lH7mhSh1eNUZ3F8EGG+6bp0PX/QQdUj9bYLlQrRx7qaxcilFhw2uxyO7vPLlQ2P1uYTUnXBO8SZlHjKSexfpoKSLydbFKrMMnXgCp0I0DnAvhaeBEuwy1uMsiPLtfJ6/egcjAfL4UXgMnuSiFa2Dv2bTVJtPtP90oP3+GIGvufk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SSkA9rzG; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SSkA9rzG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Kg1lOsicIGwMurHHg1lsBFSLBs1lOtH7DCGaQFmSoc4=;
-	b=SSkA9rzGzQPYLCmZq3aIZxQoDYOHXIIkCeFrJsIqAmFW1LByq3EGP4MrFBeYD/
-	xNj44kpFFaqkqBEvtsiUciWqUrgnVuTLwb+qqUUAkNWpUY9S6/X3SbQCVdyf49eJ
-	FOXSMjluCBPH6r+Ma45DCZmyLC4QNvMX16DqwHTgH/4iU=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCnB_pEDh5oyTOqAA--.49231S3;
-	Fri, 09 May 2025 22:16:38 +0800 (CST)
-Date: Fri, 9 May 2025 22:16:35 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Markus Niebel <Markus.Niebel@tq-group.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux@ew.tq-group.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: add TQMa8XxS boards
-Message-ID: <aB4OQ+sVXz1Qima0@dragon>
-References: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1746800579; c=relaxed/simple;
+	bh=Z59UhVkh8HpVo25aLUl3L3YHpjAvvbvfcmFIMoWyezE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WU7GSzZPRPIhijFbvznP/WR/ywh6AAczKVoh8dkBcsdJN49MIl8VkLa1lPx+0F8irTRUEESrrCP6cFuIw+MjX7bhs910YyFYf9o769pAFS9xYcPOyPvmlZ/3qIVW4c5F1VIYQJPBCXkYDYH8mcYlMyJi3LFxxDLnW9XQNygObOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:805c:3876:152c:485c])
+	by albert.telenet-ops.be with cmsmtp
+	id n2No2E00T3X0DE5062NoaL; Fri, 09 May 2025 16:22:48 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1uDOca-000000012Nh-3HGe;
+	Fri, 09 May 2025 16:22:48 +0200
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1uDOci-00000003ADD-1V9W;
+	Fri, 09 May 2025 16:22:48 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: soc@lists.linux.dev,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 0/3] Renesas ARM defconfig updates for v6.16 (take two)
+Date: Fri,  9 May 2025 16:22:27 +0200
+Message-ID: <cover.1746798748.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424075533.1266435-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Mc8vCgCnB_pEDh5oyTOqAA--.49231S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYD73DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBFIZWgd-c1QIAAAsN
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 24, 2025 at 09:55:29AM +0200, Alexander Stein wrote:
-> From: Markus Niebel <Markus.Niebel@tq-group.com>
-> 
-> TQMa8XxS is a SOM series featuring NXP i.MX8X SoC.
-> They are called TQMa8XQPS and TQMa8XDPS respectively.
-> MB-SMARC-2 is a carrier reference design.
-> 
-> Signed-off-by: Markus Niebel <Markus.Niebel@tq-group.com>
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+	Hi SoC folks,
 
-Applied both, thanks!
+This is my second pull request for the inclusion of Renesas SoC updates
+for v6.16.
 
+It consists of 3 parts:
+
+  [GIT PULL 1/3] Renesas ARM defconfig updates for v6.16 (take two)
+
+    - Enable modular support for the Renesas RZ/G2L GPT and MSIOF sound in
+      the ARM64 defconfig,
+    - Enable more support for RZN1D-DB/EB in shmobile_defconfig.
+
+  [GIT PULL 2/3] Renesas driver updates for v6.16 (take two)
+
+    - Cover all R-Car drivers in the ARM/RISC-V/RENESAS ARCHITECTURE
+      maintainer entry,
+    - Identify the Renesas RZ/V2N (R9A09G056) SoC.
+
+  [GIT PULL 3/3] Renesas DTS updates for v6.16 (take two)
+
+    - Add CANFD support for the RZ/G3E SoC and the RZ/G3E SMARC Carrier-II
+      EVK development board,
+    - Add support for Ethernet port A, 9-pin D-sub serial, and USB on the
+      RZN1D-DB and RZN1D-EB development and expansion boards,
+    - Add sound support for the Retronix Sparrow Hawk board,
+    - Add General PWM Timer (GPT) support for the RZ/G2L and RZ/V2L SoCs
+      and SMARC EVK boards,
+    - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
