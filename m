@@ -1,30 +1,30 @@
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AE82147E4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A8E2144DE
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 May 2025 14:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746800580; cv=none; b=M5H2ZJKONI2cjGiaUdMk5hLO7GkTjD7MqHjyrJXzBZBmBdI6CvBaFJOK6czFUWz7XD7R26cz1SyQ19vbvLQcjpdT2OBakaWIvBWNcZ/tJ3Fw9tug5l1VG7Ujg0m9cRNeEmxPwgjNaxRuwsHyTsUhMeMGqQ2ItuzU0j1XCgDbkY4=
+	t=1746800581; cv=none; b=Bt6lZTInfCgkY116j/Ki3RZM1boqbytKHULCGg2ut/24XHZuGcmeErc22/R1VZJ1gVHqzK9h4gUWZ9rxfvPraOxHpRiNM0uXhLHHXuZOl6oq/1S6hXfWNv0k18A543+54iBJ3Z7mZA/gTKMiZ0LqGp8kj2XyDW1fLERPAmNbOrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746800580; c=relaxed/simple;
-	bh=r34xzEzEJtSPIhXHzk7C12YCBtwha2KQnq+PUqB998Y=;
+	s=arc-20240116; t=1746800581; c=relaxed/simple;
+	bh=k1dN9wcNvLXks+RQKAdBk055UYUiDUHfoy1BOBw/reg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gZ3mqEJRdtkaQUbF0pgb9UUvFqn435+lzns5AFfkpqd2GuL169B5do1YZE+YM+bzEir2/VGJxGKa2mchLeSSizy2u3fDhTCZFZJzB/A/XTU2lA60Jx0VooPuLWYu7DKcpY7WD4C8PXIrJsk0zuoxI327e9WhvGEBY4otS8qhXLo=
+	 MIME-Version; b=eJman9U7riXEJkHNdm+JZV5bNm/ol14U6GgQdgyil+V/nDDdeoyBDEdAvz/hrGclSbUW6Z2MT+ZR7gyjAC83+dZp4Q48QrG/DppkeiRt20GrmABWw5dR9wc9yg+Z4Bm9YhmmLT42wdy9BmY29bJtY3EBnwZusyBhIDQzTGVwrUA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:805c:3876:152c:485c])
 	by michel.telenet-ops.be with cmsmtp
-	id n2No2E00J3X0DE5062NomE; Fri, 09 May 2025 16:22:50 +0200
+	id n2No2E00F3X0DE5062NomD; Fri, 09 May 2025 16:22:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uDOca-000000012Ns-3YHG;
+	id 1uDOca-000000012Ni-3KEr;
 	Fri, 09 May 2025 16:22:48 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uDOci-00000003ADO-22u0;
+	id 1uDOci-00000003ADG-1i5Q;
 	Fri, 09 May 2025 16:22:48 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev
@@ -32,9 +32,9 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 3/3] Renesas DTS updates for v6.16 (take two)
-Date: Fri,  9 May 2025 16:22:30 +0200
-Message-ID: <cover.1746798755.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/3] Renesas ARM defconfig updates for v6.16 (take two)
+Date: Fri,  9 May 2025 16:22:28 +0200
+Message-ID: <cover.1746798750.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1746798748.git.geert+renesas@glider.be>
 References: <cover.1746798748.git.geert+renesas@glider.be>
@@ -46,68 +46,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 9f78a29caacef6df5d6a43e85d1112e39cfa3b34:
+The following changes since commit 33d5bf70fff43fbc612450164bd0bab6b9ada261:
 
-  arm64: dts: renesas: r8a779h0: Add ISP core function block (2025-04-24 11:29:11 +0200)
+  arm: multi_v7_defconfig: Drop individual Renesas SoC entries (2025-04-09 14:56:03 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dts-for-v6.16-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v6.16-tag2
 
-for you to fetch changes up to b280613d480aa170e51029d5582bb4b666982b7c:
+for you to fetch changes up to 976c4626c5f57d9a0eea0f4618ce58e68102bee3:
 
-  ARM: dts: renesas: r9a06g032-rzn1d400-eb: Enable USB host port (2025-05-08 20:23:33 +0200)
-
-----------------------------------------------------------------
-Renesas DTS updates for v6.16 (take two)
-
-  - Add CANFD support for the RZ/G3E SoC and the RZ/G3E SMARC Carrier-II
-    EVK development board,
-  - Add support for Ethernet port A, 9-pin D-sub serial, and USB on the
-    RZN1D-DB and RZN1D-EB development and expansion boards,
-  - Add sound support for the Retronix Sparrow Hawk board,
-  - Add General PWM Timer (GPT) support for the RZ/G2L and RZ/V2L SoCs
-    and SMARC EVK boards,
-  - Miscellaneous fixes and improvements.
+  ARM: shmobile: defconfig: Enable more support for RZN1D-DB/EB (2025-05-06 14:51:56 +0200)
 
 ----------------------------------------------------------------
-Biju Das (6):
-      arm64: dts: renesas: r9a09g047: Add CANFD node
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable CANFD
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable CAN Transceiver
-      arm64: dts: renesas: r9a07g044: Add GPT support
-      arm64: dts: renesas: r9a07g054: Add GPT support
-      arm64: dts: renesas: rzg2l-smarc: Enable GPT on carrier board
+Renesas ARM defconfig updates for v6.16 (take two)
+
+  - Enable modular support for the Renesas RZ/G2L GPT and MSIOF sound in
+    the ARM64 defconfig,
+  - Enable more support for RZN1D-DB/EB in shmobile_defconfig.
+
+----------------------------------------------------------------
+Biju Das (1):
+      arm64: defconfig: Enable Renesas RZ/G2L GPT config
 
 Geert Uytterhoeven (1):
-      arm64: dts: renesas: white-hawk-single: Improve Ethernet TSN description
-
-Krzysztof Kozlowski (1):
-      arm64: dts: renesas: beacon-renesom: Align wifi node name with bindings
+      ARM: shmobile: defconfig: Enable more support for RZN1D-DB/EB
 
 Kuninori Morimoto (1):
-      arm64: dts: renesas: sparrow-hawk: Add MSIOF Sound support
+      arm64: defconfig: Add Renesas MSIOF sound support
 
-Wolfram Sang (5):
-      ARM: dts: renesas: r9a06g032-rzn1d400-eb: Add GMAC1 port
-      ARM: dts: renesas: r9a06g032-rzn1d400-eb: Describe 9-pin D-sub serial port
-      ARM: dts: renesas: r9a06g032-rzn1d400-db: Enable USB device port
-      ARM: dts: renesas: r9a06g032-rzn1d400-db: Add pinmux for the CPLD
-      ARM: dts: renesas: r9a06g032-rzn1d400-eb: Enable USB host port
-
- .../arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts |  14 +++
- .../arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts |  84 +++++++++++++++
- .../arm64/boot/dts/renesas/beacon-renesom-som.dtsi |   2 +-
- .../boot/dts/renesas/r8a779g3-sparrow-hawk.dts     | 106 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi         | 115 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts  |   7 ++
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi         | 115 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts  |   7 ++
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi         |  60 +++++++++++
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts |  53 ++++++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi    |  29 ++++++
- .../boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi  |   5 +
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi       |   8 ++
- arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi   |  14 ++-
- arch/arm64/boot/dts/renesas/white-hawk-single.dtsi |   8 +-
- 15 files changed, 621 insertions(+), 6 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 7 ++++++-
+ arch/arm64/configs/defconfig        | 2 ++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
