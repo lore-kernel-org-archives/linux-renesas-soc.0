@@ -1,109 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC55C27454;
-	Wed, 14 May 2025 08:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C4521B9E4
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 May 2025 09:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747211672; cv=none; b=TmrAVB+JtPL36JQXBVJZtA7tX7+1X4LNbUD6e/kTmVVfIseH8YvTqg5OL28vGz7svJcHjw3xW/s8AROPXQZpNZtbcCGJCwmBxcolQK538jEdKIGXdKtWXyhPQMMYtOdokhAvhqqFJtzhT6jKrPItM76WAM2ig33BPDLUrvIh/1M=
+	t=1747213466; cv=none; b=XujAEyCrKQ/UhoyjTUUbR4+CVcpcXn3tkTpfGUfvxIAEbDIAYsGHoOxqfKKUFIa59QIk1dmoERILSt4z0uithUBeTtipsMZgI4AswraYxqKZHN0MAqTA2/Cemxcq2VL7OlpjfAd4ra+YHxrl4h+elgvfS0iosqhQVvyHw/I+g/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747211672; c=relaxed/simple;
-	bh=c3xpjCIOkf2tBkLkY9p/RGP7oLM1K/AjF448pwRTLlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9KegvF0kwGPFHyHBkdnA8CLl1xYGn2Cw5aX8ZtqeWPc8D+H6mVXGcjuuxAECYrYXO6d1ploQBiRMuaIl/2IL+CuFggWdWpxP00qI3pqs82BgJPzZy0hznmteQEuWm0HFDnmS0PwMsTSW6v1nkCaYc5km6irRifFC2VmSOb2h/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9py4S/y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747213466; c=relaxed/simple;
+	bh=JnHdWEIPeM0wK2Ula9jh9MnaUM824531+Pq5OYIHFp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t2Bzl5G3UlkhbLfYYtE1/FmUH+0TtNA8GdBLb3ZMfZf1k4p8ED0GcYMUtd56ooI6AGg/AGq2QU47zZhw3J0rbAXD4CERDeoKGfJbHdRR3XpX6gWGKqRpsTqM86uRn30EaKgZ1vzX/BMjEA3DIAyaGjuxfEqhOuQIwnpFK/lXBck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jtUDPFa/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9py4S/y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07F9C4CEEB;
-	Wed, 14 May 2025 08:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747211671;
-	bh=c3xpjCIOkf2tBkLkY9p/RGP7oLM1K/AjF448pwRTLlE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d9py4S/ynySIQhb9heuxxcfUFqv8XKXVS3PYNbSw18T/bdwRrZBCmlXpNftUD716U
-	 AFVCJjnf+/4BKV9TkCkqI6Ds9D0YbwT2fVRi5fDoei1bXJ/lHjij9ycQYyLQtd2CdI
-	 55q1U2uLU31NNqS3AG2qLKR30En8Wix/s9PFghhsRfCgLVS6VjSlWyzwHwG7jFGI/w
-	 BpYqz+rsz1OR/u6BicH9l2bY6fk/7SHlcM8FCZgIbxM0GcvdiwtfECOHKSpnRCpGet
-	 Y9u6lp0b71S7TivgYd6JsdJS6xbDdxTezxUX50qsF8X0tzvoFHFfwW09wNtrIDpjR5
-	 hMOC3/ag8AvwA==
-Date: Wed, 14 May 2025 10:34:28 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Russell King <linux@armlinux.org.uk>, 
-	Will Deacon <will@kernel.org>, linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v4] pwm: tidyup PWM menu for Renesas
-Message-ID: <wytdfpewvcesc6racyrpa4cya7wku6dc65edz7oma7penqrqqq@2g54gyprttxt>
-References: <877c2mxrrr.wl-kuninori.morimoto.gx@renesas.com>
- <62gkja5ysv47yos2hcurluudxwvl54uv4ih7pjnmnjrzuik6cs@a5oxhyyy6vsm>
- <CAMuHMdUvR8rp2PaFLsyQ6ZWLqw7OskP-ZwVjRC=AARhK8g-iYQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jtUDPFa/"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso65109485e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 May 2025 02:04:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1747213463; x=1747818263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7K4j572MT7sI790Ze+eK+i3Uz5b16gmlTqgWUGftrXM=;
+        b=jtUDPFa/9Ql69jiYYVOviU7HYphSdOgrCUe+jrgzlzBI3DsL5reLSyvmAYj02UuQWl
+         dTSujW6NhFwoLVU1S+/sqvYAKAFHx8jYRlpl+21r2meNs3a/52PvCqWkysXdLtUS9cea
+         E/Xfv0sd9348LKvdcnHBTTALf2xU/P2eNPfq7mx6IvWp8l043q2P+C3wOGsKaC5szH9Z
+         RdyL1HnUAUM5lHPux6WCw1yW2qJsPogGWhBCn1K5WY7IjRtxjOBpC6t/sdyjIzUoDrdA
+         L1qvusUJkBobl/S8V9mVeFi3ZDeGv2SGyDdLAByntSQVSEcmn1ee51jhfSGszs1vM2AC
+         wosw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747213463; x=1747818263;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7K4j572MT7sI790Ze+eK+i3Uz5b16gmlTqgWUGftrXM=;
+        b=MRFpmzPh3Zj07Ml0ZecxplhXos0C29UlzJA3yD2ac2BJjCeNlNe1vCThrXKzg0zpmi
+         Q4OXr1hKPcAHegga6qjrlsPS6sEueCtAUpSIv044rrDU9nTU016zqVRnZonT8uohihz3
+         zjbxSbMmNO1E9GyKcOYUnijWVuE9dH0U3Gu2gS0ZWomao/6HpBObNMbHdmDOlV5idh8P
+         9DZOZ1hGMV4Z4bpw0QEBzb8BehYX2eOwKZ+4vS4VdI0qLg76FzVsylErXL0KSevVQPnb
+         4B+yrdikvZPmVpZ6r7Fke7dhN6HSBnoo7CdOR3Dc014IXY2YPLAuiyHVY9C2U4YraGDj
+         MC8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXO4eSYjvrpUWs8oGeC7FeYGCtZILjtIIi+oJBRatsV024WWCNrwNLxumOVtHBKqWb9gnsr36Laottpvc2yqqunw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUOa8/qdwy9ROU6vyickz//F0OIauy3aY4EkAzIbXsYn6/iBAT
+	bq4UdOm2B7U/B+1dbUzUpi5d5LSWsp9cOyVrxCxmwxCZ7LsB8aMcmkndqqc9/IQ=
+X-Gm-Gg: ASbGncvXR4Yp8H3rQPimJ/nCE50Kf8Mq5oIBsf4yUnllaijFp4Fz2dNJ/G2akRD40M1
+	3huDtXlGbAM9eJLZ383gpw1X+0y7h5DJeuoyfRhheBuq0NyXNjq4URU+juuTq3qbeq0i2IpA1N1
+	bmaGmh9YLCEHEJKgp/hH3cRkO4FSDLYw3L0iF/k21/WtsXIAyEvofhhcmLmYrp30eIm+Cp3kP5A
+	Mc0o8IrxbSP4Lpmy20eiW35FQttUhsFgupl94WOxgC+i2f43/1FUzY1SbKHqcDP+sLgOZP9dhNg
+	6nfLTYVkLTqTofGFWt/8MBET0y8+moPUv015/eEwsiLDdKZ7BnLAHgMemSezvFyCsdZHWH//F+h
+	chMYD
+X-Google-Smtp-Source: AGHT+IGdaeJMKgGTg/Sc7hL1ltOR8m+B42VrjYSEhJIqNaP+mgKdctUxgZHq2QuUEOmWT9ML+hI28A==
+X-Received: by 2002:a05:6000:2503:b0:391:3049:d58d with SMTP id ffacd0b85a97d-3a3493d7b80mr2348215f8f.0.1747213463319;
+        Wed, 14 May 2025 02:04:23 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddfbesm19286561f8f.10.2025.05.14.02.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 02:04:22 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 1/8] clk: renesas: rzg2l-cpg: Postone updating priv->clks[]
+Date: Wed, 14 May 2025 12:04:08 +0300
+Message-ID: <20250514090415.4098534-2-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250514090415.4098534-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250514090415.4098534-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5ztqzgxq5aru3j5q"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUvR8rp2PaFLsyQ6ZWLqw7OskP-ZwVjRC=AARhK8g-iYQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---5ztqzgxq5aru3j5q
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4] pwm: tidyup PWM menu for Renesas
-MIME-Version: 1.0
+Since the sibling data is filled after the priv->clks[] array entry is
+populated, the first clock that is probed and has a sibling will
+temporarily behave as its own sibling until its actual sibling is
+populated. To avoid any issues, postpone updating priv->clks[] until after
+the sibling is populated.
 
-Hello,
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
-On Wed, May 14, 2025 at 08:56:01AM +0200, Geert Uytterhoeven wrote:
-> On Tue, 13 May 2025 at 22:19, "Uwe Kleine-K=F6nig" <ukleinek@kernel.org> =
-wrote:
-> > The obvious options are (in order of my preference):
-> >
-> >  - Geert declares his renesas-arm-defconfig-for-v6.16 to be stable and I
-> >    merge it into my tree and then apply the patch
-> >  - I cherry pick 5ad7de623853 in my pwm tree and Geert drops it
-> >  - I delay applying the patch until after v6.16-rc1
-> >
-> > Geert: What is your preference? Let's discuss on irc?
->=20
-> My tag renesas-arm-defconfig-for-v6.16-tag2 is stable, as that is
-> already merged in the soc tree.
->=20
-> However, renaming config symbols always comes with its own set of
-> pains: users must notice and adapt when updating their own configs,
-> and I do have to manage the non-upstream renesas_defconfig, too.
-> What about dropping the rename part? The symbols that currently lack
-> a RENESAS-prefix do have fairly unique family prefixes.
->=20
-> Morimoto-san: Would that still be OK for you?
+Changes in v2:
+- postpone the update of priv->clks[id] as suggested in review process
+- updated the patch title and description to reflect the new approach
 
-I agreed with Geert off-list that merging
-renesas-arm-defconfig-for-v6.16-tag2 into the pwm tree and apply the
-patch is fine for him.
+ drivers/clk/renesas/rzg2l-cpg.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-That's what I did now.
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index a8628f64a03b..c87ad5a972b7 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1389,10 +1389,6 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 		goto fail;
+ 	}
+ 
+-	clk = clock->hw.clk;
+-	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+-	priv->clks[id] = clk;
+-
+ 	if (mod->is_coupled) {
+ 		struct mstp_clock *sibling;
+ 
+@@ -1404,6 +1400,10 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 		}
+ 	}
+ 
++	clk = clock->hw.clk;
++	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
++	priv->clks[id] = clk;
++
+ 	return;
+ 
+ fail:
+-- 
+2.43.0
 
-Thanks
-Uwe
-
---5ztqzgxq5aru3j5q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgkVZEACgkQj4D7WH0S
-/k7GpAgAurjzLOUMWO01RfR1EW2lJxEoK8uqt9BAj1w2atKbdVGaedvNZGA/6lT3
-yLiaOwPYYqM1Yif1xt9hfLaksUX67lDUNFfqMAC4y+OZsq22p+MxunPr/IjQvA5w
-pUX0KNdQlgPQ7ffrq9iCqRbmVYw1Kux+m+IAj6a4HeVQ25diW2BQbx6M97eBZZ1h
-gHc+VVMYBoheJ8W3fAswUN/z4/6Gw3ij9+aA8zoWuDyX5A8CEfGFEHJLnPms/IWy
-pOKhD6TAEo1SV4XHr6gqxkKUtvP2/x8VdtcK9NwUoHF7FAFM7JkZPl1YQXQlPF+d
-E6T+UgqxbkYYJ8OjLhvF+Z1nIYuuIA==
-=tAzU
------END PGP SIGNATURE-----
-
---5ztqzgxq5aru3j5q--
