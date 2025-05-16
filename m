@@ -1,123 +1,147 @@
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3AB72619
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2C6176AC5;
+	Fri, 16 May 2025 14:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747402695; cv=none; b=kfqV112nK710xt6ztNKUxgpF1OaW2niDLx2b7it++UT40Po63veeS0ASUTk0xHtAkQW71Zr7DkX6Z0Ss9LUapSLXFNI2pPNPIQsJEPshnwmC5kHtIKtD/ozzDDvC+AeIai0So+6SIxxEGZdkd/3KEIWnldC1nFiqE9kitJenIHI=
+	t=1747405255; cv=none; b=WXJVh+HTipelQxXhX8YXrYqFnk4P1dvxs8OgrKuTvjEMaVJ1A6QLqqLoeCkvLUKPe8lvEmQH3EoTmrC2kcADfoWdzTSSIe3J3dOLVFBA/eDJBUuyHlWDQy8qREW1eQ4qSU5h91HMfOW4lXGB5KcobZ68Uf63M3L0LGcD6SfK9V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747402695; c=relaxed/simple;
-	bh=HtteoMpXwZumxvkhLX0UpbrbT4fRDbTpJ3wPmMXkYtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=av4hML4HOlsL1Vbg2QvM0zHGIoLB2OR1mJ6+KzTHphVekCiYXyMO4fR+2g45vemNhpo+s6l1zvbcLP+ZBlsU9F/38/pA9jfxJOltWEgOCtkhIn6oNr9Jn50ynNG9hsIL+rRVuKBi0bhrHyE8bnZE4ry07yLrukk4LZOZkfQiHwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP3tLsz4x7nW
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 15:32:33 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
-	by albert.telenet-ops.be with cmsmtp
-	id ppYX2E0083S8nz406pYXwv; Fri, 16 May 2025 15:32:33 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAi-000000020iJ-0dAn;
-	Fri, 16 May 2025 15:32:31 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAt-00000001522-23dN;
-	Fri, 16 May 2025 15:32:31 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-spi@vger.kernel.org,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1747405255; c=relaxed/simple;
+	bh=R7IzZ+E4n4fy5bHk20LY8LFQxi9liKPZf9W5SmiiXgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prCUYCVYupyTMoN54Uo0OlsWw+yBi7aWW1P1wvNKoEDXQIwiF0ek8p2X5i3eWTFd2d1P2V+KktOpi7tXE8et2J7Jbp+/ywez7pbyyIqrB5eC77Tidj1tfVF/8ifTNK0ik++1750UG4s1tClablrATP6VDCsHRX1Ecap18K76mhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1d2aH/Z; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1d2aH/Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D105C4CEE4;
+	Fri, 16 May 2025 14:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747405254;
+	bh=R7IzZ+E4n4fy5bHk20LY8LFQxi9liKPZf9W5SmiiXgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N1d2aH/ZymXUKtVmEKSo0wq/ORTu4b3Z+Dhp1bhYh+zsh1gNxbCqUBz9vnksrDNSn
+	 zD5Q/KVGDOZYelp1UYVIMEgWEU1t4uWjLP7H8nat1u/1BGELXdI7e736GPSoxs3ZXC
+	 0uvGxNPm+rvEUn0vyWZZGECywZZGM7SwMMphzzAwsr3G/6rKgD45IdUL/OF5hWKyHW
+	 6tfhHt6/M4vGnZ2mAEZFT7a1+tTUy3gIBpNk2BO39VqaBnNeekm+DUIGR3xlPtQo+w
+	 mstQydv5a9GdB1QRZy4zC+DyIXJ4ZX8NVQf0a0FXkmNZ0NjQont4rBPFERjX0oxxAe
+	 Ta6IkMlTRbaSw==
+Date: Fri, 16 May 2025 15:20:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/22] spi: sh-msiof: Transfer size improvements and I2S reuse
-Date: Fri, 16 May 2025 15:32:03 +0200
-Message-ID: <cover.1747401908.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: timer: renesas,ostm: Document RZ/V2N
+ (R9A09G056) support
+Message-ID: <20250516-unpaid-reexamine-922bbecd4cbb@spud>
+References: <20250515182207.329176-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250515182207.329176-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="88xPX6GY1mTCQwI+"
+Content-Disposition: inline
+In-Reply-To: <20250515182207.329176-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-	Hi all,
 
-This patch series (A) improves single transfer sizes in the MSIOF
-driver, using two methods:
-  - By increasing the assumed FIFO sizes, impacting both PIO and DMA
-    transfers,
-  - By using two groups, impacting DMA transfers,
-and (B) lets the recently-introduced MSIOF I2S drive reuse the SPI
-driver's register definitions.  All of this is covered with a thick
-sauce of fixes for (harmless) bugs, cleanups, and refactorings.
+--88xPX6GY1mTCQwI+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes compared to v1[1]:
-  - Make include/linux/spi/sh_msiof.h self-contained,
-  - Add Tested-by for the sound part.
+On Thu, May 15, 2025 at 07:22:06PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Document support for the Renesas OS Timer (OSTM) found on the Renesas
+> RZ/V2N (R9A09G056) SoC. The OSTM IP on RZ/V2N is identical to that on
+> other RZ families, so no driver changes are required as `renesas,ostm`
+> will be used as fallback compatible.
+>=20
+> Also update the bindings to require the "resets" property for RZ/V2N
+> by inverting the logic: all SoCs except RZ/A1 and RZ/A2 now require
+> the "resets" property.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3->v4:
+> - No changes in this version.
+>=20
+> v2->v3:
+> - Added Acked-by tag from Conor.
 
-Note that the driver uses the limitations as specified in the hardware
-documentation.  For discovering the actual FIFO sizes, I wrote some
-crude test code that can be found at [2].
+But v3 -> v4 doesn't mention why it was dropped?
 
-This is based on spi/for-next and sound-asoc/for-next, and has been
-tested on a variery of R-Car SoCs.
+>=20
+> v1->v2:
+> - Inveted the logic in the dt-bindings to require the "resets" property
+> - Updated commit message
+> - Added a Reviewed-by tag from Geert.
+> ---
+>  .../devicetree/bindings/timer/renesas,ostm.yaml      | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml b/=
+Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+> index 9ba858f094ab..0983c1efec80 100644
+> --- a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+> +++ b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+> @@ -26,6 +26,7 @@ properties:
+>            - renesas,r9a07g043-ostm # RZ/G2UL and RZ/Five
+>            - renesas,r9a07g044-ostm # RZ/G2{L,LC}
+>            - renesas,r9a07g054-ostm # RZ/V2L
+> +          - renesas,r9a09g056-ostm # RZ/V2N
+>            - renesas,r9a09g057-ostm # RZ/V2H(P)
+>        - const: renesas,ostm        # Generic
+> =20
+> @@ -54,12 +55,11 @@ required:
+>  if:
+>    properties:
+>      compatible:
+> -      contains:
+> -        enum:
+> -          - renesas,r9a07g043-ostm
+> -          - renesas,r9a07g044-ostm
+> -          - renesas,r9a07g054-ostm
+> -          - renesas,r9a09g057-ostm
+> +      not:
+> +        contains:
+> +          enum:
+> +            - renesas,r7s72100-ostm
+> +            - renesas,r7s9210-ostm
+>  then:
+>    required:
+>      - resets
+> --=20
+> 2.49.0
+>=20
 
-Thanks for your comments!
+--88xPX6GY1mTCQwI+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] https://lore.kernel.org/cover.1746180072.git.geert+renesas@glider.be
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/msiof-fifo
+-----BEGIN PGP SIGNATURE-----
 
-Geert Uytterhoeven (22):
-  spi: sh-msiof: Drop comma after OF match table sentinel
-  spi: sh-msiof: Remove unneeded compatible values
-  spi: sh-msiof: Fix maximum DMA transfer size
-  spi: sh-msiof: Complete using dev in sh_msiof_spi_probe()
-  spi: sh-msiof: Use bool for boolean flags
-  spi: sh-msiof: Make words/bits unsigned in sh_msiof_spi_txrx_once()
-  spi: sh-msiof: Make words/fs unsigned in FIFO helpers
-  spi: sh-msiof: SITMDR1/SIRMDR1 bitfield conversion
-  spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
-  spi: sh-msiof: SITSCR/SIRSCR bitfield conversion
-  spi: sh-msiof: SICTR bitfield conversion
-  spi: sh-msiof: SIFCTR bitfield conversion
-  spi: sh-msiof: Correct SIMDR2_GRPMASK
-  spi: sh-msiof: Add core support for dual-group transfers
-  spi: sh-msiof: Correct RX FIFO size for R-Car Gen2
-  spi: sh-msiof: Correct RX FIFO size for R-Car Gen3
-  spi: sh-msiof: Increase TX FIFO size for R-Car V4H/V4M
-  spi: sh-msiof: Simplify BRG's Division Ratio
-  spi: sh-msiof: Double maximum DMA transfer size using two groups
-  spi: sh-msiof: Document frame start sync pulse mode
-  spi: sh-msiof: Move register definitions to <linux/spi/sh_msiof.h>
-  ASoC: renesas: msiof: Convert to <linux/spi/sh_msiof.h>
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCdJwQAKCRB4tDGHoIJi
+0mvIAQDauy3Hd/nBGPUcMQK3MebaA9RozB2H7bmL2zx8VKNLSAEAgRw7hsp/2Rjh
+5C8Wbm9MLFseOKB6HArt1synqePz2wA=
+=uGiL
+-----END PGP SIGNATURE-----
 
- drivers/spi/spi-sh-msiof.c     | 357 +++++++++++++--------------------
- include/linux/spi/sh_msiof.h   | 125 ++++++++++++
- sound/soc/renesas/rcar/msiof.c |  94 +++------
- 3 files changed, 287 insertions(+), 289 deletions(-)
-
--- 
-2.43.0
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--88xPX6GY1mTCQwI+--
