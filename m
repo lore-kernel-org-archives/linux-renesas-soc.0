@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491873451
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3FD12BF24
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747402366; cv=none; b=eTDwPp2krtCMlHy1lfXFF+F+OQCSknYuxoIVz0SKkoFoc6zIbVjOrpmiqzRHAKPXWjTTfXR5T9NqcOxnwVUnCCd7SE2wrthc3rmLI7zZ6uRhw4HgU+Am9pJiVly8bFPcODyQARvILtpVyjUc6uhXFSL8Y2qgQPAJxi1Btg5ondI=
+	t=1747402366; cv=none; b=IEOB54EVuIV83WOWTp6NMaVKf5gxUkJEVZVHTYLduJPJWcqcPOclgzSWzNP6uAHqpdzVR7DJt9l4igJcUX3ev/3YTISWhXcpE5N53yBWQmtEF4KWtBtWe8PBq5U+Ju8HojoZVcXDSITmbocOzX89N52pso8kZhuMioeE8g5WpYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747402366; c=relaxed/simple;
-	bh=apOAnFclzOiiHNN5XXz3m+ENeYMfSU8T8EP61/g+24I=;
+	bh=MSvhpfzfxRAatgz6Ijb2BdMLJ7N3lj9jgMikPf86PqQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IjV/nwMQ34+Yt+fd25a5mbOplrbgBdHM7sY48rm1th4gEXKPsN+0JRAclcAhZ8qVycH3xWaENwSgLHl9CHNUki7ziC3fofZtk4gAMZPy/i5pUKg6DbnKf1PdibVPyYz/EW8eSi+6ZMXOpyq+wY8ncxnxHXOVN99Xe7gQl2h4RhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=GWiehGu44EqB7Fnh8fUWW1cdz0rqaozKdrWysWSNCFKVU/OVGTsXFwlSboRv0u36O5NQfOMpsk+vPIz0yUB9cSKW7ypDpz/AMU+EBH+bzYv4jDemjm7Sh2bl11HcYjrwt2MuwLz3WDcyErOECkzlW5tTovOQ+nJ9h0zw6BM7mjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
-	by albert.telenet-ops.be with cmsmtp
-	id ppYX2E00K3S8nz406pYXx1; Fri, 16 May 2025 15:32:33 +0200
+	by xavier.telenet-ops.be with cmsmtp
+	id ppYY2E0023S8nz401pYYau; Fri, 16 May 2025 15:32:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAi-000000020io-1Nok;
+	id 1uFvAi-000000020j9-27CA;
 	Fri, 16 May 2025 15:32:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAt-0000000152a-2zfh;
+	id 1uFvAt-00000001536-3fWb;
 	Fri, 16 May 2025 15:32:31 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -38,9 +38,9 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 08/22] spi: sh-msiof: SITMDR1/SIRMDR1 bitfield conversion
-Date: Fri, 16 May 2025 15:32:11 +0200
-Message-ID: <9685c54e752b8ef4256c9b281e9d8292e71d222e.1747401908.git.geert+renesas@glider.be>
+Subject: [PATCH v2 14/22] spi: sh-msiof: Add core support for dual-group transfers
+Date: Fri, 16 May 2025 15:32:17 +0200
+Message-ID: <be75e20cfcd2a6c0d73ab09e0126f902911adc69.1747401908.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1747401908.git.geert+renesas@glider.be>
 References: <cover.1747401908.git.geert+renesas@glider.be>
@@ -52,114 +52,90 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert MSIOF Transmit and Receive Mode Register 1 field accesses to use
-the FIELD_PREP() bitfield access macro.
+All MSIOF variants support transferring data of multiple (2 or 4)
+groups.  Add definitions for the register bits related to multiple
+groups, and enhance sh_msiof_spi_set_mode_regs() to accept a second
+group size.
 
-This gets rid of explicit shifts.
+For now the second group is unused.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - No changes.
 ---
- drivers/spi/spi-sh-msiof.c | 45 ++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 7c15de08f4d8f131..fb83b049690e0207 100644
+index 57f27040b0fc78d7..ea9277ab87f66cd5 100644
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -7,6 +7,7 @@
-  * Copyright (C) 2014-2017 Glider bvba
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/clk.h>
- #include <linux/completion.h>
-@@ -84,20 +85,19 @@ struct sh_msiof_spi_priv {
- 
- /* SITMDR1 and SIRMDR1 */
- #define SIMDR1_TRMD		BIT(31)		/* Transfer Mode (1 = Master mode) */
--#define SIMDR1_SYNCMD_MASK	GENMASK(29, 28)	/* SYNC Mode */
--#define SIMDR1_SYNCMD_SPI	(2 << 28)	/*   Level mode/SPI */
--#define SIMDR1_SYNCMD_LR	(3 << 28)	/*   L/R mode */
--#define SIMDR1_SYNCAC_SHIFT	25		/* Sync Polarity (1 = Active-low) */
--#define SIMDR1_BITLSB_SHIFT	24		/* MSB/LSB First (1 = LSB first) */
--#define SIMDR1_DTDL_SHIFT	20		/* Data Pin Bit Delay for MSIOF_SYNC */
--#define SIMDR1_SYNCDL_SHIFT	16		/* Frame Sync Signal Timing Delay */
--#define SIMDR1_FLD_MASK		GENMASK(3, 2)	/* Frame Sync Signal Interval (0-3) */
--#define SIMDR1_FLD_SHIFT	2
-+#define SIMDR1_SYNCMD		GENMASK(29, 28)	/* SYNC Mode */
-+#define SIMDR1_SYNCMD_SPI	2U		/*   Level mode/SPI */
-+#define SIMDR1_SYNCMD_LR	3U		/*   L/R mode */
-+#define SIMDR1_SYNCAC		BIT(25)		/* Sync Polarity (1 = Active-low) */
-+#define SIMDR1_BITLSB		BIT(24)		/* MSB/LSB First (1 = LSB first) */
-+#define SIMDR1_DTDL		GENMASK(22, 20)	/* Data Pin Bit Delay for MSIOF_SYNC */
-+#define SIMDR1_SYNCDL		GENMASK(18, 16)	/* Frame Sync Signal Timing Delay */
-+#define SIMDR1_FLD		GENMASK(3, 2)	/* Frame Sync Signal Interval (0-3) */
- #define SIMDR1_XXSTP		BIT(0)		/* Transmission/Reception Stop on FIFO */
- /* SITMDR1 */
- #define SITMDR1_PCON		BIT(30)		/* Transfer Signal Connection */
--#define SITMDR1_SYNCCH_MASK	GENMASK(27, 26)	/* Sync Signal Channel Select */
--#define SITMDR1_SYNCCH_SHIFT	26		/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
-+#define SITMDR1_SYNCCH		GENMASK(27, 26)	/* Sync Signal Channel Select */
-+						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
+@@ -100,10 +100,15 @@ struct sh_msiof_spi_priv {
+ 						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
  
  /* SITMDR2 and SIRMDR2 */
- #define SIMDR2_BITLEN1(i)	(((i) - 1) << 24) /* Data Size (8-32 bits) */
-@@ -341,8 +341,9 @@ static u32 sh_msiof_spi_get_dtdl_and_syncdl(struct sh_msiof_spi_priv *p)
- 		return 0;
- 	}
++#define SIMDR2_GRP		GENMASK(31, 30)	/* Group Count */
+ #define SIMDR2_BITLEN1		GENMASK(28, 24)	/* Data Size (8-32 bits) */
+ #define SIMDR2_WDLEN1		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
+ #define SIMDR2_GRPMASK		GENMASK(3, 0)	/* Group Output Mask 1-4 (SH, A1) */
  
--	val = sh_msiof_get_delay_bit(p->info->dtdl) << SIMDR1_DTDL_SHIFT;
--	val |= sh_msiof_get_delay_bit(p->info->syncdl) << SIMDR1_SYNCDL_SHIFT;
-+	val = FIELD_PREP(SIMDR1_DTDL, sh_msiof_get_delay_bit(p->info->dtdl)) |
-+	      FIELD_PREP(SIMDR1_SYNCDL,
-+			 sh_msiof_get_delay_bit(p->info->syncdl));
++/* SITMDR3 and SIRMDR3 */
++#define SIMDR3_BITLEN2		GENMASK(28, 24)	/* Data Size (8-32 bits) */
++#define SIMDR3_WDLEN2		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
++
+ /* SITSCR and SIRSCR */
+ #define SISCR_BRPS		GENMASK(12, 8)	/* Prescaler Setting (1-32) */
+ #define SISCR_BRDV		GENMASK(2, 0)	/* Baud Rate Generator's Division Ratio */
+@@ -392,10 +397,11 @@ static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p, u32 ss,
  
- 	return val;
+ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
+ 				       const void *tx_buf, void *rx_buf,
+-				       u32 bits, u32 words)
++				       u32 bits, u32 words1, u32 words2)
+ {
+-	u32 dr2 = FIELD_PREP(SIMDR2_BITLEN1, bits - 1) |
+-		  FIELD_PREP(SIMDR2_WDLEN1, words - 1);
++	u32 dr2 = FIELD_PREP(SIMDR2_GRP, words2 ? 1 : 0) |
++		  FIELD_PREP(SIMDR2_BITLEN1, bits - 1) |
++		  FIELD_PREP(SIMDR2_WDLEN1, words1 - 1);
+ 
+ 	if (tx_buf || (p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
+ 		sh_msiof_write(p, SITMDR2, dr2);
+@@ -404,6 +410,15 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
+ 
+ 	if (rx_buf)
+ 		sh_msiof_write(p, SIRMDR2, dr2);
++
++	if (words2) {
++		u32 dr3 = FIELD_PREP(SIMDR3_BITLEN2, bits - 1) |
++			  FIELD_PREP(SIMDR3_WDLEN2, words2 - 1);
++
++		sh_msiof_write(p, SITMDR3, dr3);
++		if (rx_buf)
++			sh_msiof_write(p, SIRMDR3, dr3);
++	}
  }
-@@ -361,16 +362,18 @@ static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p, u32 ss,
- 	 *    1    0         11     11    0    0
- 	 *    1    1         11     11    1    1
- 	 */
--	tmp = SIMDR1_SYNCMD_SPI | 1 << SIMDR1_FLD_SHIFT | SIMDR1_XXSTP;
--	tmp |= !cs_high << SIMDR1_SYNCAC_SHIFT;
--	tmp |= lsb_first << SIMDR1_BITLSB_SHIFT;
-+	tmp = FIELD_PREP(SIMDR1_SYNCMD, SIMDR1_SYNCMD_SPI) |
-+	      FIELD_PREP(SIMDR1_FLD, 1) | SIMDR1_XXSTP |
-+	      FIELD_PREP(SIMDR1_SYNCAC, !cs_high) |
-+	      FIELD_PREP(SIMDR1_BITLSB, lsb_first);
- 	tmp |= sh_msiof_spi_get_dtdl_and_syncdl(p);
- 	if (spi_controller_is_target(p->ctlr)) {
- 		sh_msiof_write(p, SITMDR1, tmp | SITMDR1_PCON);
- 	} else {
- 		sh_msiof_write(p, SITMDR1,
- 			       tmp | SIMDR1_TRMD | SITMDR1_PCON |
--			       (ss < MAX_SS ? ss : 0) << SITMDR1_SYNCCH_SHIFT);
-+			       FIELD_PREP(SITMDR1_SYNCCH,
-+					  ss < MAX_SS ? ss : 0));
- 	}
- 	if (p->ctlr->flags & SPI_CONTROLLER_MUST_TX) {
- 		/* These bits are reserved if RX needs TX */
-@@ -579,12 +582,12 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 		return 0;
  
- 	/* Configure native chip select mode/polarity early */
--	clr = SIMDR1_SYNCMD_MASK;
--	set = SIMDR1_SYNCMD_SPI;
-+	clr = SIMDR1_SYNCMD;
-+	set = FIELD_PREP(SIMDR1_SYNCMD, SIMDR1_SYNCMD_SPI);
- 	if (spi->mode & SPI_CS_HIGH)
--		clr |= BIT(SIMDR1_SYNCAC_SHIFT);
-+		clr |= SIMDR1_SYNCAC;
- 	else
--		set |= BIT(SIMDR1_SYNCAC_SHIFT);
-+		set |= SIMDR1_SYNCAC;
- 	pm_runtime_get_sync(&p->pdev->dev);
- 	tmp = sh_msiof_read(p, SITMDR1) & ~clr;
- 	sh_msiof_write(p, SITMDR1, tmp | set | SIMDR1_TRMD | SITMDR1_PCON);
+ static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
+@@ -712,7 +727,7 @@ static int sh_msiof_spi_txrx_once(struct sh_msiof_spi_priv *p,
+ 	sh_msiof_write(p, SIFCTR, 0);
+ 
+ 	/* setup msiof transfer mode registers */
+-	sh_msiof_spi_set_mode_regs(p, tx_buf, rx_buf, bits, words);
++	sh_msiof_spi_set_mode_regs(p, tx_buf, rx_buf, bits, words, 0);
+ 	sh_msiof_write(p, SIIER, SIIER_TEOFE | SIIER_REOFE);
+ 
+ 	/* write tx fifo */
+@@ -812,7 +827,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 		       FIELD_PREP(SIFCTR_RFWM, SIFCTR_RFWM_1));
+ 
+ 	/* setup msiof transfer mode registers (32-bit words) */
+-	sh_msiof_spi_set_mode_regs(p, tx, rx, 32, len / 4);
++	sh_msiof_spi_set_mode_regs(p, tx, rx, 32, len / 4, 0);
+ 
+ 	sh_msiof_write(p, SIIER, ier_bits);
+ 
 -- 
 2.43.0
 
