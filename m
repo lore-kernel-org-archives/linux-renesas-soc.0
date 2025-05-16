@@ -1,34 +1,33 @@
 Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A4912B73
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3AB72619
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747402694; cv=none; b=EvyMUl/0bZwTpHse2lv0WUD16+e7ST5d6H7L0ZLgv2qN6S59Hjon/PJ4WpwL7gEXCasBCQeJ588DmZCOmsKAsVfG0pYrpwb73O92doapL2vYiZsw71CcQSgPphsa++pJYK6DZSMSjuJyEMlJCXgz/GFUu8PugSLZq/SX6MWKwic=
+	t=1747402695; cv=none; b=kfqV112nK710xt6ztNKUxgpF1OaW2niDLx2b7it++UT40Po63veeS0ASUTk0xHtAkQW71Zr7DkX6Z0Ss9LUapSLXFNI2pPNPIQsJEPshnwmC5kHtIKtD/ozzDDvC+AeIai0So+6SIxxEGZdkd/3KEIWnldC1nFiqE9kitJenIHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747402694; c=relaxed/simple;
-	bh=6u9qP4p/k120mz1GOGuRUINaz60Y8hyt8cE4KpTLTuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ks/ouuVeyMI8gOOquMaC/D/JD/Sqs2qhYPIquSND4Dc/ZpHi6RCbJ1RH8/27stL0PMX+WScvvL8gv57GPiR8RplFB+4CPLpPUHuGzDcXUHl5X0D6Ywo56cmlkJl+h6Hpm9GKosSWi0BOJaMjPlQcgaITcaUql6HeqtR2mbPkBX8=
+	s=arc-20240116; t=1747402695; c=relaxed/simple;
+	bh=HtteoMpXwZumxvkhLX0UpbrbT4fRDbTpJ3wPmMXkYtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=av4hML4HOlsL1Vbg2QvM0zHGIoLB2OR1mJ6+KzTHphVekCiYXyMO4fR+2g45vemNhpo+s6l1zvbcLP+ZBlsU9F/38/pA9jfxJOltWEgOCtkhIn6oNr9Jn50ynNG9hsIL+rRVuKBi0bhrHyE8bnZE4ry07yLrukk4LZOZkfQiHwI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP34y4z4x72P
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP3tLsz4x7nW
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 15:32:33 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
-	by andre.telenet-ops.be with cmsmtp
-	id ppYY2E0063S8nz401pYYf5; Fri, 16 May 2025 15:32:33 +0200
+	by albert.telenet-ops.be with cmsmtp
+	id ppYX2E0083S8nz406pYXwv; Fri, 16 May 2025 15:32:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAi-000000020jY-2jCs;
-	Fri, 16 May 2025 15:32:32 +0200
+	id 1uFvAi-000000020iJ-0dAn;
+	Fri, 16 May 2025 15:32:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAu-0000000153a-0BbA;
-	Fri, 16 May 2025 15:32:32 +0200
+	id 1uFvAt-00000001522-23dN;
+	Fri, 16 May 2025 15:32:31 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -41,12 +40,10 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 20/22] spi: sh-msiof: Document frame start sync pulse mode
-Date: Fri, 16 May 2025 15:32:23 +0200
-Message-ID: <3d3acaab4a4125106a0655d28c09c050341c5eeb.1747401908.git.geert+renesas@glider.be>
+Subject: [PATCH v2 00/22] spi: sh-msiof: Transfer size improvements and I2S reuse
+Date: Fri, 16 May 2025 15:32:03 +0200
+Message-ID: <cover.1747401908.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1747401908.git.geert+renesas@glider.be>
-References: <cover.1747401908.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -55,28 +52,72 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Unused, but nice to have it documented.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/spi/spi-sh-msiof.c | 1 +
- 1 file changed, 1 insertion(+)
+This patch series (A) improves single transfer sizes in the MSIOF
+driver, using two methods:
+  - By increasing the assumed FIFO sizes, impacting both PIO and DMA
+    transfers,
+  - By using two groups, impacting DMA transfers,
+and (B) lets the recently-introduced MSIOF I2S drive reuse the SPI
+driver's register definitions.  All of this is covered with a thick
+sauce of fixes for (harmless) bugs, cleanups, and refactorings.
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 4d9a44118e1c9d6c..5d9d551dbd220389 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -86,6 +86,7 @@ struct sh_msiof_spi_priv {
- /* SITMDR1 and SIRMDR1 */
- #define SIMDR1_TRMD		BIT(31)		/* Transfer Mode (1 = Master mode) */
- #define SIMDR1_SYNCMD		GENMASK(29, 28)	/* SYNC Mode */
-+#define SIMDR1_SYNCMD_PULSE	0U		/*   Frame start sync pulse */
- #define SIMDR1_SYNCMD_SPI	2U		/*   Level mode/SPI */
- #define SIMDR1_SYNCMD_LR	3U		/*   L/R mode */
- #define SIMDR1_SYNCAC		BIT(25)		/* Sync Polarity (1 = Active-low) */
+Changes compared to v1[1]:
+  - Make include/linux/spi/sh_msiof.h self-contained,
+  - Add Tested-by for the sound part.
+
+Note that the driver uses the limitations as specified in the hardware
+documentation.  For discovering the actual FIFO sizes, I wrote some
+crude test code that can be found at [2].
+
+This is based on spi/for-next and sound-asoc/for-next, and has been
+tested on a variery of R-Car SoCs.
+
+Thanks for your comments!
+
+[1] https://lore.kernel.org/cover.1746180072.git.geert+renesas@glider.be
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/msiof-fifo
+
+Geert Uytterhoeven (22):
+  spi: sh-msiof: Drop comma after OF match table sentinel
+  spi: sh-msiof: Remove unneeded compatible values
+  spi: sh-msiof: Fix maximum DMA transfer size
+  spi: sh-msiof: Complete using dev in sh_msiof_spi_probe()
+  spi: sh-msiof: Use bool for boolean flags
+  spi: sh-msiof: Make words/bits unsigned in sh_msiof_spi_txrx_once()
+  spi: sh-msiof: Make words/fs unsigned in FIFO helpers
+  spi: sh-msiof: SITMDR1/SIRMDR1 bitfield conversion
+  spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
+  spi: sh-msiof: SITSCR/SIRSCR bitfield conversion
+  spi: sh-msiof: SICTR bitfield conversion
+  spi: sh-msiof: SIFCTR bitfield conversion
+  spi: sh-msiof: Correct SIMDR2_GRPMASK
+  spi: sh-msiof: Add core support for dual-group transfers
+  spi: sh-msiof: Correct RX FIFO size for R-Car Gen2
+  spi: sh-msiof: Correct RX FIFO size for R-Car Gen3
+  spi: sh-msiof: Increase TX FIFO size for R-Car V4H/V4M
+  spi: sh-msiof: Simplify BRG's Division Ratio
+  spi: sh-msiof: Double maximum DMA transfer size using two groups
+  spi: sh-msiof: Document frame start sync pulse mode
+  spi: sh-msiof: Move register definitions to <linux/spi/sh_msiof.h>
+  ASoC: renesas: msiof: Convert to <linux/spi/sh_msiof.h>
+
+ drivers/spi/spi-sh-msiof.c     | 357 +++++++++++++--------------------
+ include/linux/spi/sh_msiof.h   | 125 ++++++++++++
+ sound/soc/renesas/rcar/msiof.c |  94 +++------
+ 3 files changed, 287 insertions(+), 289 deletions(-)
+
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
