@@ -1,41 +1,49 @@
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B201DFDE
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 12:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AB1288B1
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747400120; cv=none; b=jC2lNXcUY1f8OZkYBI4PrIDC+Ovy+ZsjBBVu9EklULx8f+dpwCAYrsRuyi/UNJETYsbSCWS+9ftcYSxhkrFrhorvh3owQUtGd/INTgjSB2TVEiWCA+j0G/ShuvOE/adz90j8OlWge92h4q5+uqSmBjlasnVUgXV79QaEW8qk7/Y=
+	t=1747402357; cv=none; b=JY23xuTVXnA1wkJgXld++QMkSjMi0NAjABC5WRUsEiZredfrKRlnF2OlOZLkGd0Yd//BoCsppNf9xOamJtAJ53kYVeypAE4Ev6dholQmAmmQuRqTP7YeGkMWTZ89zGqTUVgXL+o6eOT0G0sHDfkysVgq0A6bYjGwdRt2DV3Et3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747400120; c=relaxed/simple;
-	bh=U5oH/qMNOUHhFZyDoJQVqdmcnhE1SOh1XkoNyNxpvqU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFv/BJteJt5J5YQoRMRmAMHhAgdn1v45Mw65mi51DQDwVZDXfYZElVyLJ0eMPjUnGKVjnCv0dIUjxXq5et4wda6vDWiH3zCMsuxJmQ0SgSfZ4qZjdQ8TytGN194CN/wuNs3EUXgcrG1AEyIWGsGLlvYvQXb1GWHATbo/CKdBiwc=
+	s=arc-20240116; t=1747402357; c=relaxed/simple;
+	bh=x1puk1ZFl1FwUZ/v7ztHeHybvqbpZ68TydGFBgHL1hg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M6QoOM2a2D33gPhRrjj6S4IC1F8btP0FXIDTXBsI9Df8saGiGDAPFpGgnb4Btt+MTZSuYzCnrSO2KMToFBLaUW12EqEFSZo5ujqbGGiapVdkNT4kEzMEb8zezuZLljKaMSMTjp9p/A6zJ35myEiIFXzWTnDFL++l8kyEekJ0BVE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
 	by baptiste.telenet-ops.be with cmsmtp
-	id pov82E00M3S8nz401ov8UX; Fri, 16 May 2025 14:55:09 +0200
+	id ppYY2E0063S8nz401pYYVT; Fri, 16 May 2025 15:32:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFuaX-000000020ZE-1lBj;
-	Fri, 16 May 2025 14:55:08 +0200
+	id 1uFvAi-000000020jJ-2KKJ;
+	Fri, 16 May 2025 15:32:32 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFuai-000000013QW-3I6B;
-	Fri, 16 May 2025 14:55:08 +0200
+	id 1uFvAt-0000000153G-3ykH;
+	Fri, 16 May 2025 15:32:31 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: soc@lists.linux.dev,
-	soc <soc@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+To: Mark Brown <broonie@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-spi@vger.kernel.org,
+	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] Renesas DTS updates for v6.16 (take three)
-Date: Fri, 16 May 2025 14:55:07 +0200
-Message-ID: <cover.1747399860.git.geert+renesas@glider.be>
+Subject: [PATCH v2 16/22] spi: sh-msiof: Correct RX FIFO size for R-Car Gen3
+Date: Fri, 16 May 2025 15:32:19 +0200
+Message-ID: <6f74508ea4681aa0b7c6bf6810eab026725e75a3.1747401908.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1747401908.git.geert+renesas@glider.be>
+References: <cover.1747401908.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,49 +52,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi SoC folks,
+According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
+September 28, 2017, the MSIOF receive FIFOs on R-Car Gen3 SoCs have room
+for 256 words of 32 bits.
 
-This is my third pull request for the inclusion of Renesas SoC updates
-for v6.16, containing only fixes.
+Note that this change has no actual impact on the behavior of the
+driver, as SPI_CONTROLLER_MUST_TX is set, and transfer size is currenty
+limited to the minimum of the transmit and receive FIFO sizes.
 
-The following changes since commit b280613d480aa170e51029d5582bb4b666982b7c:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/spi/spi-sh-msiof.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  ARM: dts: renesas: r9a06g032-rzn1d400-eb: Enable USB host port (2025-05-08 20:23:33 +0200)
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 8d18a26128d600f6..8afb7c1f64cd4486 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1108,7 +1108,7 @@ static const struct sh_msiof_chipdata rcar_gen3_data = {
+ 	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
+ 			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
+ 	.tx_fifo_size = 64,
+-	.rx_fifo_size = 64,
++	.rx_fifo_size = 256,
+ 	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
+ 	.min_div_pow = 1,
+ };
+@@ -1117,7 +1117,7 @@ static const struct sh_msiof_chipdata rcar_r8a7795_data = {
+ 	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
+ 			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
+ 	.tx_fifo_size = 64,
+-	.rx_fifo_size = 64,
++	.rx_fifo_size = 256,
+ 	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
+ 	.min_div_pow = 1,
+ 	.flags = SH_MSIOF_FLAG_FIXED_DTDL_200,
+-- 
+2.43.0
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dts-for-v6.16-tag3
-
-for you to fetch changes up to 1064013303c6dd59f1586656f853765c6e870f8b:
-
-  riscv: dts: renesas: Add specific RZ/Five cache compatible (2025-05-14 13:30:06 +0200)
-
-----------------------------------------------------------------
-Renesas DTS updates for v6.16 (take three)
-
-  - Silence a DTC warning,
-  - Add an extra compatible value to avoid future issues.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Conor Dooley (1):
-      riscv: dts: renesas: Add specific RZ/Five cache compatible
-
-Geert Uytterhoeven (1):
-      arm64: dts: renesas: sparrow-hawk: Disable dtc spi_bus_bridge check
-
- arch/arm64/boot/dts/renesas/Makefile        | 1 +
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
