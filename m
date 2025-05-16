@@ -1,33 +1,33 @@
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04598200A3
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05FA7260A
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747402369; cv=none; b=sWedmVnka3uqvR/8I3jftHIUpLvDqup3Ymi3kmrv50kkn4eUr0AbA1TWpXbSSlrabXZFOom62bX268NZpK1q4r6CfpI8AofaQHOsUR8wn/bW5DKCi/AQiEkcnhLYAx3VlmNBFOMT8yIQVyz1/1IYkQsr8OjSzynxQRd6k/lm7u8=
+	t=1747402369; cv=none; b=S+8jPSmHBDw1pIlH7PZZGGcerOZSHyxokn8L61tiSRfTORfobf6gAAAPCTHxpbQc2Ardag7gK+qUBAs2tVJHeTA/rxbaufpBdWfJ+Vppx0RLUqfGlOkBaKVBj2hrgJsYqCVBmZr6thicQy8WqEhjqH7bRLkCr6gN3eFuZtCj1+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747402369; c=relaxed/simple;
-	bh=NR9rZ3I3bj8QVK3gQZOn4ao8ltgkGFtn5GDgRLDfGx4=;
+	bh=mvpjcX/5a0oFb846ghe+MQ7JRUNpQqkMZ0y8uI1l3Rc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=knkFkQ63FHmpX2Ahmi4i+uIre8YV1+0MO8qCP11L2BW6e4PBJhRJ0jEkInM9PTcM9sj6iOgo2qeoeQJekPcw6UdQZEWTo0RYso5fg0IhfoeS0Ke6IvnmArYGOeIyKvkFvm0PoM6GTXbCQghrfraTP4ylJJSRpHlewTljxNI8UWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
+	 MIME-Version; b=uixmDsM9BUQorwOgVSDGI+Eo3iHD+vuc0AyrPT6UCa+IMyrHq9RMsBy1WFfZu5AXPo2SeJN9ohyIbwEQBZACdVXk2KqclA8G60ogJSo0HxWvCSgbxCtN57uqMOXCsgrjS4HBC+LBMszn4/BdDaFG1kbGfg/fmYCNkcJI69I74Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgX4ltQz4xB1B
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 15:32:40 +0200 (CEST)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP4Ll4z4xBbV
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 15:32:33 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
-	by andre.telenet-ops.be with cmsmtp
-	id ppYX2E00E3S8nz401pYXf1; Fri, 16 May 2025 15:32:33 +0200
+	by albert.telenet-ops.be with cmsmtp
+	id ppYX2E00B3S8nz406pYXww; Fri, 16 May 2025 15:32:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAi-000000020ip-1TdN;
+	id 1uFvAi-000000020iV-11f3;
 	Fri, 16 May 2025 15:32:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAt-0000000152g-37fM;
+	id 1uFvAt-0000000152L-2erg;
 	Fri, 16 May 2025 15:32:31 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
@@ -41,9 +41,9 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 09/22] spi: sh-msiof: SITMDR2 and SIRMDR2 bitfield conversion
-Date: Fri, 16 May 2025 15:32:12 +0200
-Message-ID: <135b92d010a71e2c224feab3a5792724b4e60ff1.1747401908.git.geert+renesas@glider.be>
+Subject: [PATCH v2 05/22] spi: sh-msiof: Use bool for boolean flags
+Date: Fri, 16 May 2025 15:32:08 +0200
+Message-ID: <35cd51bdfb3c810911a5be757e0ce5bb29dcc755.1747401908.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1747401908.git.geert+renesas@glider.be>
 References: <cover.1747401908.git.geert+renesas@glider.be>
@@ -55,60 +55,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert MSIOF Transmit and Receive Mode Register 2 field accesses to use
-the FIELD_PREP() bitfield access macro.
-
-This gets rid of explicit shifts and custom field preparation macros.
+Use bools instead of integers for boolean flags, which allows us to
+remove the "!!" idiom from several expressions.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - No changes.
 ---
- drivers/spi/spi-sh-msiof.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index fb83b049690e0207..51a9e89364756af0 100644
+index 367622985fea2a04..11ef5c0a498d7c1f 100644
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -100,8 +100,8 @@ struct sh_msiof_spi_priv {
- 						/* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
+@@ -348,11 +348,11 @@ static u32 sh_msiof_spi_get_dtdl_and_syncdl(struct sh_msiof_spi_priv *p)
+ }
  
- /* SITMDR2 and SIRMDR2 */
--#define SIMDR2_BITLEN1(i)	(((i) - 1) << 24) /* Data Size (8-32 bits) */
--#define SIMDR2_WDLEN1(i)	(((i) - 1) << 16) /* Word Count (1-64/256 (SH, A1))) */
-+#define SIMDR2_BITLEN1		GENMASK(28, 24)	/* Data Size (8-32 bits) */
-+#define SIMDR2_WDLEN1		GENMASK(23, 16)	/* Word Count (1-64/256 (SH, A1))) */
- #define SIMDR2_GRPMASK1		BIT(0)		/* Group Output Mask 1 (SH, A1) */
- 
- /* SITSCR and SIRSCR */
-@@ -397,7 +397,8 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
- 				       const void *tx_buf, void *rx_buf,
- 				       u32 bits, u32 words)
+ static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p, u32 ss,
+-				      u32 cpol, u32 cpha,
+-				      u32 tx_hi_z, u32 lsb_first, u32 cs_high)
++				      bool cpol, bool cpha, bool tx_hi_z,
++				      bool lsb_first, bool cs_high)
  {
--	u32 dr2 = SIMDR2_BITLEN1(bits) | SIMDR2_WDLEN1(words);
-+	u32 dr2 = FIELD_PREP(SIMDR2_BITLEN1, bits - 1) |
-+		  FIELD_PREP(SIMDR2_WDLEN1, words - 1);
++	bool edge;
+ 	u32 tmp;
+-	int edge;
  
- 	if (tx_buf || (p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
- 		sh_msiof_write(p, SITMDR2, dr2);
-@@ -931,6 +932,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 				 struct spi_transfer *t)
+ 	/*
+ 	 * CPOL CPHA     TSCKIZ RSCKIZ TEDG REDG
+@@ -587,7 +587,8 @@ static int sh_msiof_prepare_message(struct spi_controller *ctlr,
  {
  	struct sh_msiof_spi_priv *p = spi_controller_get_devdata(ctlr);
-+	unsigned int max_wdlen = FIELD_MAX(SIMDR2_WDLEN1) + 1;
- 	void (*copy32)(u32 *, const u32 *, unsigned int);
- 	void (*tx_fifo)(struct sh_msiof_spi_priv *, const void *, unsigned int,
- 			unsigned int);
-@@ -940,7 +942,6 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 	void *rx_buf = t->rx_buf;
- 	unsigned int len = t->len;
- 	unsigned int bits = t->bits_per_word;
--	unsigned int max_wdlen = 256;
- 	unsigned int bytes_per_word;
- 	unsigned int words;
- 	int n;
+ 	const struct spi_device *spi = msg->spi;
+-	u32 ss, cs_high;
++	bool cs_high;
++	u32 ss;
+ 
+ 	/* Configure pins before asserting CS */
+ 	if (spi_get_csgpiod(spi, 0)) {
+@@ -595,12 +596,11 @@ static int sh_msiof_prepare_message(struct spi_controller *ctlr,
+ 		cs_high = p->native_cs_high;
+ 	} else {
+ 		ss = spi_get_chipselect(spi, 0);
+-		cs_high = !!(spi->mode & SPI_CS_HIGH);
++		cs_high = spi->mode & SPI_CS_HIGH;
+ 	}
+-	sh_msiof_spi_set_pin_regs(p, ss, !!(spi->mode & SPI_CPOL),
+-				  !!(spi->mode & SPI_CPHA),
+-				  !!(spi->mode & SPI_3WIRE),
+-				  !!(spi->mode & SPI_LSB_FIRST), cs_high);
++	sh_msiof_spi_set_pin_regs(p, ss, spi->mode & SPI_CPOL,
++				  spi->mode & SPI_CPHA, spi->mode & SPI_3WIRE,
++				  spi->mode & SPI_LSB_FIRST, cs_high);
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
