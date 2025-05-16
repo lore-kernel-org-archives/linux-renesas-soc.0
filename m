@@ -1,34 +1,34 @@
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE677260A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFECB78F5D
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 13:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747402364; cv=none; b=nz5t6LUhkntIjMlVnW4xf+VNeYzSC/952MWpAV+Y+Bwj7XqpzNUs7SvHhcTaOlXS1Mc2ltV6vm/scltMcrcuPIA+DWwh3C6R5X4SBBU+ddIbHfSyuOLtM6Q4BPH2GKnQA66+QS2RkJQ+Ro8vAMvLhAopoBEGMbWuT35lUM8bRDU=
+	t=1747402365; cv=none; b=iDUw3UKXDiv9gGDOPBGBUYSDAh2Qr56NZWiUSU+b2t1d4HQctpBeB0iGviCVtW76UBMM/j2GcHMJvJGlxgDUhIs7BxPyXFVn39QDmaALFCQvIiajrHekgbow4LMV3bhJj5C8w+pQoo+WnLoQsRj5L+RrrZrm+IRtZH5zfKT+zUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747402364; c=relaxed/simple;
-	bh=LuODtqMqNqE67UFe8dKvyWUrqUEvf/b+rEpkFnOSe+g=;
+	s=arc-20240116; t=1747402365; c=relaxed/simple;
+	bh=Abw15zzJtQxJtQmksAX5S4pVBE/v9LqvizbIKz9pUGQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LqcMd93RuUqKtcez/CzNTQ8AsUfc9nVTZx1JBZIU5GcQk3IsxY1YZ2fY3rO9srbAk4cFYuoH46nwbCtFQBEuHDZbm0jBNMQQNLN3i8k8ed0jrk4E7J+gGTFWztS/pZ1vbovQK/tCr98IwROcaKHGtcC/MTPlHsaS51ynKWU8w9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+	 MIME-Version; b=kzcfd8nxvVSgAmEOBEgNOqs3yFKk/YX9fg9tJXmPrNPby41aCaGDMXPt8hw2zIueKqypazdWFFBimb1w+TvecQ8a5y113h1J8GL2RMHrOkuHwzeMB0AXXrc3wXSwh7xId52EsH+zGNlnv8jlYzCe3SShB1ZVHLrmeB+HqhTCcLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP380Yz4wxh5
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4ZzSgP4ZjGz4xBlm
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 May 2025 15:32:33 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b0d6:ccd4:58dc:70fd])
-	by andre.telenet-ops.be with cmsmtp
-	id ppYY2E0053S8nz401pYYf4; Fri, 16 May 2025 15:32:33 +0200
+Received: from ramsan.of.borg ([84.195.187.55])
+	by albert.telenet-ops.be with cmsmtp
+	id ppYY2E0061C8whw06pYYx7; Fri, 16 May 2025 15:32:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAi-000000020jL-2Q4O;
+	id 1uFvAi-000000020jf-2xVV;
 	Fri, 16 May 2025 15:32:32 +0200
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1uFvAt-0000000153L-44sw;
-	Fri, 16 May 2025 15:32:31 +0200
+	id 1uFvAu-0000000153k-0Pb0;
+	Fri, 16 May 2025 15:32:32 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Mark Brown <broonie@kernel.org>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -41,9 +41,9 @@ Cc: linux-spi@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 17/22] spi: sh-msiof: Increase TX FIFO size for R-Car V4H/V4M
-Date: Fri, 16 May 2025 15:32:20 +0200
-Message-ID: <69cb5fc48f034d37484fa127b9864a1971a83417.1747401908.git.geert+renesas@glider.be>
+Subject: [PATCH v2 22/22] ASoC: renesas: msiof: Convert to <linux/spi/sh_msiof.h>
+Date: Fri, 16 May 2025 15:32:25 +0200
+Message-ID: <754ed54057e54effd06143e71d6cd305c3334eca.1747401908.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1747401908.git.geert+renesas@glider.be>
 References: <cover.1747401908.git.geert+renesas@glider.be>
@@ -55,68 +55,196 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MSIOF transmit FIFOs on R-Car V4H and V4M have 256 stages.
-Add a new family-specific match entry to handle this.
-Add quirk match entries for older R-Car Gen4 Socs (R-Car V3U and S4-8)
-that have transmit FIFOs with only 64 stages, just like on R-Car Gen3.
-
-Update the (unused) definition of SIFCTR_TFUA for consistency.
+Convert the MSIOF I2S driver to reuse the MSIOF register and register
+bit definitions in the header file shared by the MSIOF SPI driver.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
-Alternatively, the family-specific match entry could keep referring to
-rcar_gen3_data, and R-Car V4H and V4M could refer to the new entry.
-
-Tested on White Hawk (R-Car V4H) and Gray Hawk Single (R-Car V4M) with
-spi-loopback-test and external loopback, DMA and PIO, and a logic
-analyzer.
+Compile-tested and asm-inspected only due to lack of local sound
+hardware.
 
 v2:
-  - No changes.
+  - Add Tested-by.
 ---
- drivers/spi/spi-sh-msiof.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ sound/soc/renesas/rcar/msiof.c | 94 ++++++++++------------------------
+ 1 file changed, 28 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 8afb7c1f64cd4486..26e71fc8890fda6d 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -149,7 +149,7 @@ struct sh_msiof_spi_priv {
- #define SIFCTR_TFWM_8		5U		/*  Transfer Request when 8 empty stages */
- #define SIFCTR_TFWM_4		6U		/*  Transfer Request when 4 empty stages */
- #define SIFCTR_TFWM_1		7U		/*  Transfer Request when 1 empty stage */
--#define SIFCTR_TFUA		GENMASK(26, 20) /* Transmit FIFO Usable Area */
-+#define SIFCTR_TFUA		GENMASK(28, 20) /* Transmit FIFO Usable Area */
- #define SIFCTR_RFWM		GENMASK(15, 13)	/* Receive FIFO Watermark */
- #define SIFCTR_RFWM_1		0U		/*  Transfer Request when 1 valid stages */
- #define SIFCTR_RFWM_4		1U		/*  Transfer Request when 4 valid stages */
-@@ -1113,6 +1113,15 @@ static const struct sh_msiof_chipdata rcar_gen3_data = {
- 	.min_div_pow = 1,
- };
+diff --git a/sound/soc/renesas/rcar/msiof.c b/sound/soc/renesas/rcar/msiof.c
+index 75c9e91bada10289..36d31ab8ac6a5f18 100644
+--- a/sound/soc/renesas/rcar/msiof.c
++++ b/sound/soc/renesas/rcar/msiof.c
+@@ -30,56 +30,15 @@
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/spi/sh_msiof.h>
+ #include <sound/dmaengine_pcm.h>
+ #include <sound/soc.h>
  
-+static const struct sh_msiof_chipdata rcar_gen4_data = {
-+	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
-+			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
-+	.tx_fifo_size = 256,
-+	.rx_fifo_size = 256,
-+	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
-+	.min_div_pow = 1,
-+};
-+
- static const struct sh_msiof_chipdata rcar_r8a7795_data = {
- 	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
- 			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
-@@ -1128,7 +1137,9 @@ static const struct of_device_id sh_msiof_match[] __maybe_unused = {
- 	{ .compatible = "renesas,rcar-gen2-msiof", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,msiof-r8a7795",   .data = &rcar_r8a7795_data },
- 	{ .compatible = "renesas,rcar-gen3-msiof", .data = &rcar_gen3_data },
--	{ .compatible = "renesas,rcar-gen4-msiof", .data = &rcar_gen3_data },
-+	{ .compatible = "renesas,msiof-r8a779a0",  .data = &rcar_gen3_data },
-+	{ .compatible = "renesas,msiof-r8a779f0",  .data = &rcar_gen3_data },
-+	{ .compatible = "renesas,rcar-gen4-msiof", .data = &rcar_gen4_data },
- 	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, /* Deprecated */
- 	{ /* sentinel */ }
- };
+-/* register */
+-#define SITMDR1		0x00
+-#define SITMDR2		0x04
+-#define SITMDR3		0x08
+-#define SIRMDR1		0x10
+-#define SIRMDR2		0x14
+-#define SIRMDR3		0x18
+-#define SICTR		0x28
+-#define SISTR		0x40
+-#define SIIER		0x44
+-#define SITFDR		0x50
+-#define SIRFDR		0x60
+-
+-/* SITMDR1/ SIRMDR1 */
+-#define PCON		(1 << 30)		/* Transfer Signal Connection */
+-#define SYNCMD_LR	(3 << 28)		/* L/R mode */
+-#define SYNCAC		(1 << 25)		/* Sync Polarity (Active-low) */
+-#define DTDL_1		(1 << 20)		/* 1-clock-cycle delay */
+-#define TXSTP		(1 <<  0)		/* Transmission/Reception Stop on FIFO */
+-
+-/* SITMDR2 and SIRMDR2 */
+-#define BITLEN1(x)	(((x) - 1) << 24)	/* Data Size (8-32 bits) */
+-#define GRP		(1 << 30)		/* Group count */
+-
+-/* SICTR */
+-#define TEDG		(1 << 27)		/* Transmit Timing (1 = falling edge) */
+-#define REDG		(1 << 26)		/* Receive  Timing (1 = rising  edge) */
+-#define TXE		(1 <<  9)		/* Transmit Enable */
+-#define RXE		(1 <<  8)		/* Receive Enable */
+-
+ /* SISTR */
+-#define TFSERR		(1 << 21)		/* Transmit Frame Synchronization Error */
+-#define TFOVF		(1 << 20)		/* Transmit FIFO Overflow */
+-#define TFUDF		(1 << 19)		/* Transmit FIFO Underflow */
+-#define RFSERR		(1 <<  5)		/* Receive Frame Synchronization Error */
+-#define RFUDF		(1 <<  4)		/* Receive FIFO Underflow */
+-#define RFOVF		(1 <<  3)		/* Receive FIFO Overflow */
+-#define SISTR_ERR_TX	(TFSERR | TFOVF | TFUDF)
+-#define SISTR_ERR_RX	(RFSERR | RFOVF | RFUDF)
++#define SISTR_ERR_TX	(SISTR_TFSERR | SISTR_TFOVF | SISTR_TFUDF)
++#define SISTR_ERR_RX	(SISTR_RFSERR | SISTR_RFOVF | SISTR_RFUDF)
+ #define SISTR_ERR	(SISTR_ERR_TX | SISTR_ERR_RX)
+ 
+-/* SIIER */
+-#define TDMAE		(1 << 31)		/* Transmit Data DMA Transfer Req. Enable */
+-#define TDREQE		(1 << 28)		/* Transmit Data Transfer Request Enable */
+-#define RDMAE		(1 << 15)		/* Receive Data DMA Transfer Req. Enable */
+-#define RDREQE		(1 << 12)		/* Receive Data Transfer Request Enable */
+-
+ /*
+  * The data on memory in 24bit case is located at <right> side
+  *	[  xxxxxx]
+@@ -174,42 +133,45 @@ static int msiof_hw_start(struct snd_soc_component *component,
+ 
+ 	/* SITMDRx */
+ 	if (is_play) {
+-		val = PCON | SYNCMD_LR | SYNCAC | TXSTP;
++		val = SITMDR1_PCON |
++		      FIELD_PREP(SIMDR1_SYNCMD, SIMDR1_SYNCMD_LR) |
++		      SIMDR1_SYNCAC | SIMDR1_XXSTP;
+ 		if (msiof_flag_has(priv, MSIOF_FLAGS_NEED_DELAY))
+-			val |= DTDL_1;
++			val |= FIELD_PREP(SIMDR1_DTDL, 1);
+ 
+ 		msiof_write(priv, SITMDR1, val);
+ 
+-		val = BITLEN1(width);
+-		msiof_write(priv, SITMDR2, val | GRP);
++		val = FIELD_PREP(SIMDR2_BITLEN1, width - 1);
++		msiof_write(priv, SITMDR2, val | FIELD_PREP(SIMDR2_GRP, 1));
+ 		msiof_write(priv, SITMDR3, val);
+ 
+ 	}
+ 	/* SIRMDRx */
+ 	else {
+-		val = SYNCMD_LR | SYNCAC;
++		val = FIELD_PREP(SIMDR1_SYNCMD, SIMDR1_SYNCMD_LR) |
++		      SIMDR1_SYNCAC;
+ 		if (msiof_flag_has(priv, MSIOF_FLAGS_NEED_DELAY))
+-			val |= DTDL_1;
++			val |= FIELD_PREP(SIMDR1_DTDL, 1);
+ 
+ 		msiof_write(priv, SIRMDR1, val);
+ 
+-		val = BITLEN1(width);
+-		msiof_write(priv, SIRMDR2, val | GRP);
++		val = FIELD_PREP(SIMDR2_BITLEN1, width - 1);
++		msiof_write(priv, SIRMDR2, val | FIELD_PREP(SIMDR2_GRP, 1));
+ 		msiof_write(priv, SIRMDR3, val);
+ 	}
+ 
+ 	/* SIIER */
+ 	if (is_play)
+-		val = TDREQE | TDMAE | SISTR_ERR_TX;
++		val = SIIER_TDREQE | SIIER_TDMAE | SISTR_ERR_TX;
+ 	else
+-		val = RDREQE | RDMAE | SISTR_ERR_RX;
++		val = SIIER_RDREQE | SIIER_RDMAE | SISTR_ERR_RX;
+ 	msiof_update(priv, SIIER, val, val);
+ 
+ 	/* SICTR */
+ 	if (is_play)
+-		val = TXE | TEDG;
++		val = SICTR_TXE | SICTR_TEDG;
+ 	else
+-		val = RXE | REDG;
++		val = SICTR_RXE | SICTR_REDG;
+ 	msiof_update_and_wait(priv, SICTR, val, val, val);
+ 
+ 	msiof_status_clear(priv);
+@@ -230,9 +192,9 @@ static int msiof_hw_stop(struct snd_soc_component *component,
+ 
+ 	/* SIIER */
+ 	if (is_play)
+-		val = TDREQE | TDMAE | SISTR_ERR_TX;
++		val = SIIER_TDREQE | SIIER_TDMAE | SISTR_ERR_TX;
+ 	else
+-		val = RDREQE | RDMAE | SISTR_ERR_RX;
++		val = SIIER_RDREQE | SIIER_RDMAE | SISTR_ERR_RX;
+ 	msiof_update(priv, SIIER, val, 0);
+ 
+ 	/* Stop DMAC */
+@@ -240,9 +202,9 @@ static int msiof_hw_stop(struct snd_soc_component *component,
+ 
+ 	/* SICTR */
+ 	if (is_play)
+-		val = TXE;
++		val = SICTR_TXE;
+ 	else
+-		val = RXE;
++		val = SICTR_RXE;
+ 	msiof_update_and_wait(priv, SICTR, val, 0, 0);
+ 
+ 	/* indicate error status if exist */
+@@ -478,22 +440,22 @@ static irqreturn_t msiof_interrupt(int irq, void *data)
+ 	substream = priv->substream[SNDRV_PCM_STREAM_PLAYBACK];
+ 	if (substream && (sistr & SISTR_ERR_TX)) {
+ 		// snd_pcm_stop_xrun(substream);
+-		if (sistr & TFSERR)
++		if (sistr & SISTR_TFSERR)
+ 			priv->err_syc[SNDRV_PCM_STREAM_PLAYBACK]++;
+-		if (sistr & TFOVF)
++		if (sistr & SISTR_TFOVF)
+ 			priv->err_ovf[SNDRV_PCM_STREAM_PLAYBACK]++;
+-		if (sistr & TFUDF)
++		if (sistr & SISTR_TFUDF)
+ 			priv->err_udf[SNDRV_PCM_STREAM_PLAYBACK]++;
+ 	}
+ 
+ 	substream = priv->substream[SNDRV_PCM_STREAM_CAPTURE];
+ 	if (substream && (sistr & SISTR_ERR_RX)) {
+ 		// snd_pcm_stop_xrun(substream);
+-		if (sistr & RFSERR)
++		if (sistr & SISTR_RFSERR)
+ 			priv->err_syc[SNDRV_PCM_STREAM_CAPTURE]++;
+-		if (sistr & RFOVF)
++		if (sistr & SISTR_RFOVF)
+ 			priv->err_ovf[SNDRV_PCM_STREAM_CAPTURE]++;
+-		if (sistr & RFUDF)
++		if (sistr & SISTR_RFUDF)
+ 			priv->err_udf[SNDRV_PCM_STREAM_CAPTURE]++;
+ 	}
+ 
 -- 
 2.43.0
 
