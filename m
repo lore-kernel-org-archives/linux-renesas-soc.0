@@ -1,110 +1,78 @@
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34502194098;
-	Mon, 19 May 2025 10:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011DC1DFFD
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 May 2025 12:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747648875; cv=none; b=RUYtAuGqxsmz9abOEz2INx5dtMQcrwlpoUM32lyvvq/TtpYrEfb2ak+rYVmEnMbCtH2U88qdWymnckkKze0HUJBoU4jsQeMtOsEngW7/xjq1NH4AEqHQCaZ8+O0bnu496TIzEtQitTsfnOoAkrY88vIavCSGJxPLV5Gh88/Fe/Q=
+	t=1747656928; cv=none; b=RBxWK5UR8a0Uhpqof9X14mhJRaM+GUt55n/K+1BWJ8//TiHKYTzb6Q9nEEvJkuF9YoL20OPbc6SnPmr6FsCpueehJpfbG4ZX4MSvG8bmgqC5QRjq7+G+l8iAh8JT21z7fnbH0EuSyNLfivo8XMukTXNkFbheYCecGZymSExRZpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747648875; c=relaxed/simple;
-	bh=ZvfBxEgd6JZqk9Dm9LcPs6q4VTaVeWfGfXAWPSD54U8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZJ/Xre/QnKq9OuTOP5HePnbZLx6SCNKqh8DRY5bcSJlMeJyuUsGfISJkRClH5C088/eAvDQKgqGIQbQ0ulcep7WCrfvgufO0aFD6/l3hhW1wdGk+fQa3uHGaFSJDx+Sbsgmkc0rw3iLpnMANfdiH8w5Gi0w1nbySlROAVKSGJCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47663aeff1bso40585801cf.0;
-        Mon, 19 May 2025 03:01:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747648871; x=1748253671;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C6DUhvQdKhvWHJNQGOoDkdViWCqeLt50MGRDUCapEVw=;
-        b=O6oxkro7iYH+AUeoZ2ZIPwAaNjmRptUNpWstdqQiMIIvOQoOFhR7opzV6RN5u6KugK
-         ABqceorhp/W6YcSvxZmUf58TP7eqcOUyvd232jxV6oMqK//uXOnBexET8YHUOt7JP41+
-         s+aggwppqamKi8tFMqnlk6yx5Z1LcedhBrrTuaEIV9iMFuaQg+q7sGVosVKFXofVjvgV
-         nfg1Ho1xQ/yF6+TUKLFD39PPEEe4u1Sf1bAbJU5ix8pzFCjUoIsp4a5ZBL0TZREf+7lj
-         5vIo1kpd3JXXUvKVkCib5VZDwnalFF9epcicvWVhfxew+ecDMvfmONlCZQCqUWweoENU
-         xqzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCy/zhyyrlD1elYgw0w+QW/DCKz2EknYPf7G3Y3Pss0YzWxrM6XSMFxTIjI60mBC2jaEcXaJwG5VvMJ1SqPTxteao=@vger.kernel.org, AJvYcCVVD8YXyGgpISmoy8FvYjYeCzJcdTBQG5Aimf3PIBzDaeGK1yl26qASB5DPq5kwlSFYMxvjv1rVFNii@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx237nPd+HCSguZiOy3qV4BHOUyZVD82SO/AAv/L/Qqp+8S202c
-	VJ7GRluc939t6tfFFP5CYJec3si0qKkrL8850ER6I8ls1UiCS8JwNCOUeYAoqSUO
-X-Gm-Gg: ASbGncsfMm7S1Z+p0XFJECRj09/Exe+gPw6g+IB7PlKNInt3scfI6TY7jL5wfTEwcjY
-	dY9lgY/UqRcocxLo4raEi7O05z5SHbFSfkL/77TaG/ePzcf8xIL8oplA8pU8gb1u18hGmLlZ7DW
-	HPJt80fugKoJ33zu7fLrgts2R35+WhmwR7QV76X86kXrtQijijCx0Aupyjw39bVU/UyDvERoDcU
-	73dYZpL98XGdSXXjK7/gEO0DvVZ1oZcPvjrgkGq+11iGthCRIt9Tg6XxEAAMHCSnAvk17jb32mb
-	ECMrImy/6GUFZzAnPIqKsx0cgk66ffdv6/Fpkq93hBkY0ue9NOpi+NUlws6glBZeyFqdtBj9DFs
-	RXXvHxVuSyvndHu/pcA==
-X-Google-Smtp-Source: AGHT+IGcul2/dqZKQ6VNAuuT1N7fMJrHUFiO3+AZEeYrmBi+w0noECaikynlXBorkeyKPckKcl0nxA==
-X-Received: by 2002:a05:622a:1f9b:b0:48e:1f6c:227b with SMTP id d75a77b69052e-494ae3885d5mr238950861cf.26.1747648871361;
-        Mon, 19 May 2025 03:01:11 -0700 (PDT)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae427fe5sm54864421cf.44.2025.05.19.03.01.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 03:01:11 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c55500d08cso467614985a.0;
-        Mon, 19 May 2025 03:01:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuLs2I7GDePfhRoE8uch5zi6kgJYNAKNKirAJabc4WOwzGRPbXgCOiF5H+K5SIheyYiisZ8I57HnpTGe0CaZpgPW0=@vger.kernel.org, AJvYcCX1MD+5YtDs4YGaNUrTCpVuTo8KKwZlhVOwn4KJjwOST2K6UegaOrwnMypcXY110YGhe8tQlOroyIU4@vger.kernel.org
-X-Received: by 2002:a05:6102:1622:b0:4c5:8b12:cd74 with SMTP id
- ada2fe7eead31-4dfa6ac490emr12320687137.2.1747648860811; Mon, 19 May 2025
- 03:01:00 -0700 (PDT)
+	s=arc-20240116; t=1747656928; c=relaxed/simple;
+	bh=64jeP0Gi1PI0BAdjU0SxMLQSz6AyN8tWg2xGk+X2TyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NaxVzYnvSYHy+V0JHOCar1+fMM4IoVPScLpQRfMz8XRf5RV/s0YDMXjNes8Kqk3ZItQb1uhbI5YlzbyzLVEVibwvSIc6w26ZBOb+xuD4h3ip6SkiBvdeXGwa2Q8hbDcKLsXx0Vn3WdVKRDtHDgYVeJxS+v6LPbTYHwtLRROQHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CO4I0v3S; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CO4I0v3S"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=jHiB1M85VGtsR/nshHD2x3rEN5vUZAWnBNyMS8ssk/k=; b=CO4I0v
+	3Sr1NVhsYy+ZtuERwgeF4Uph04r7ihtSHRLsVuSv+HXHx2bwRuaaAQF03otTtChe
+	4U3/0orXT7LsGE22NfVvuqyarmeMUFpFzH6+jpjhsgi34b71cocn7Z6UnNWh97Uu
+	omEvoIq5nS3Kmd0jwMEuL810b1WcVOWQCCPtOKH93KdWCXMaBuBr77kie5Ud+dnb
+	OgyiU5ij+leX+pLnMt9JAm9b+1hstq5n+ZtxZ1r9PbFyLhMZk11uYgE1JVS5/VD6
+	oEK5wTTxJT+FsO+dgr8/stE/pu5I9Y14fWurTH5sOKbOaFl57VYzG5GWX9SPUnlx
+	trybxFdbkZgNN60A==
+Received: (qmail 2475066 invoked from network); 19 May 2025 14:15:22 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 May 2025 14:15:22 +0200
+X-UD-Smtp-Session: l3s3148p1@qBMJFnw1DppZz6+V
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/7] arm64: dts: exynos: use proper node names for GPIO based I2C busses
+Date: Mon, 19 May 2025 14:15:01 +0200
+Message-ID: <20250519121512.5657-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250519121512.5657-1-wsa+renesas@sang-engineering.com>
+References: <20250519121512.5657-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYCPR01MB8740608B675365215ADB0374B49CA@TYCPR01MB8740.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB8740608B675365215ADB0374B49CA@TYCPR01MB8740.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 May 2025 12:00:48 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXnPG9QcLu1ZVB3Jx9bhe3+EVKrOaAeSXdnsvHV5tZJ1w@mail.gmail.com>
-X-Gm-Features: AX0GCFvI5MioUTEbSahP9Ed_bBYMRlc6haHPTmt-skbAOlK1N7FTE7MyHJLyukU
-Message-ID: <CAMuHMdXnPG9QcLu1ZVB3Jx9bhe3+EVKrOaAeSXdnsvHV5tZJ1w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: white-hawk-ard-audio: Fix TPU0 groups
-To: Duy Nguyen <duy.nguyen.rh@renesas.com>
-Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Nguyen Hong Thuan <thuan.nguyen-hong@banvien.com.vn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Duy-san,
+There shall not be a '-' before the number.
 
-On Mon, 19 May 2025 at 08:43, Duy Nguyen <duy.nguyen.rh@renesas.com> wrote:
-> From: Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>
->
-> The White Hawk's sound uses a clock from the TPU, but
-> commit 3d144ef10a44 ("pinctrl: renesas: r8a779g0: Fix TPU suffixes")
-> has renamed tpu_to0_a to tpu_to0_b. We must change accordingly
-> otherwise the sound driver will not receive a clock signal.
->
-> Signed-off-by: Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>
-> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your patch!
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 8f02de8480b6..197de398dd9b 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -85,7 +85,7 @@ homepage-key {
+ 		};
+ 	};
+ 
+-	i2c_max98504: i2c-gpio-0 {
++	i2c_max98504: i2c-gpio0 {
+ 		compatible = "i2c-gpio";
+ 		sda-gpios = <&gpd0 1 GPIO_ACTIVE_HIGH>;
+ 		scl-gpios = <&gpd0 0 GPIO_ACTIVE_HIGH>;
+-- 
+2.47.2
 
-Fixes: 3d144ef10a448f89 ("pinctrl: renesas: r8a779g0: Fix TPU suffixes")
-
-My apologies for missing there was actually one upstream user.
-I have double-checked, and didn't find any other old users of pin
-groups in that series.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue as a fix in renesas-devel for v6.16.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
