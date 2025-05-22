@@ -1,253 +1,109 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB24286D65
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 May 2025 09:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF715E96;
+	Thu, 22 May 2025 10:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747907339; cv=none; b=PXnnTDQdcoAnHgY1YeVSH+TpZkCd8XluGnwAi9UHh02vtiWmZ6NYCiStZFplD/JeQmi8nL70xkSvMpY63NtD/7VV42spU26gRvqfMb5RC8mVGgEpbgnTq4ffZn+VRl1umga3KbSq7Cf80LeUFeQ4LJrRmEdZt93Ay/xdf0zkGYY=
+	t=1747908046; cv=none; b=UtqRQd/7Qr6dNVHLJ4Ur+dfaUbZdGcCc6saSkA274sSJPFVYjm1ZzbTQsuQiOiWIdxWjqiICLFHdd5tLptQBlUK5EJo2x8QW7gbs298d9gRcxIWtMfGjxIL39zJ35xz2LgH8D1DSe64kjMDxWv4b13wNBz+mSbP/IlYXflauYJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747907339; c=relaxed/simple;
-	bh=qdGgntxIIjfcvQxUD7MkNPywpqkarEzTXwYkWCvLQjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RizuwVwhPO8wHQqUxsZGXo5Nt2eMPy8+Tu/LRLCmfcRcFr7rNfERQ5V+2ba7zzemmwz9tSQ4W39YMzEUc7NarnUKW0JPIE2EBRbWjmPSRiMZVexrFlwmFj4U/keYpzlF1GLmNZsuERJw+VEmaGxpMEfEzW7wc7FJFScJF1PRhb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dgm6F4R3; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1747908046; c=relaxed/simple;
+	bh=MqopuUpYpRBwINTm0XZy4Btrri9/43yCJfmha+uoSws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNvtjAdfDgDPuSdGyaM6QSW0TfLcCkPE6U858Entvc4bGeJXibwIhNyU90iXZkg5tM10WKC+HEZ+f5kqs0qfrWm3xHTC5QUDtzBzkXHcCyaRVJZpK9847BN5Wz/38kqSb6IsZDkRzlZmVtNBgI/Ykypy9asWmnEsUQdcfBHHxNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cj2WJCiW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dgm6F4R3"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so1325681166b.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 May 2025 02:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1747907336; x=1748512136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=klE7E1sXnfwhBGRUczKqI9pMXJRo0twyYdkymVqjNqM=;
-        b=dgm6F4R3vfZWOv//68H/pqtnnjo3/wP4hmTqw8WMXYHhgRkPedDTEtsmq2LHi0b6iy
-         wEWmsCIOcTsRPH/2Jv7XLk+HCmFSj9rIiyvzndkrEni9fZWevgzlgW9U/W6HfDqMgh6F
-         PesVYmrcufFJ7Dtvp0mRcavRZmvFufYsDFej8kiVbd91IOPiTgjyLDIJdOT7YVqoIyYD
-         wW5j8RRo/v7ck6/dV24VLYuxLm44U2GWqOUrIjAJDLY99SjbmXfX70CXwNdoY6KUJBQf
-         OxRQ15e3KNG8caw/UZsaELvEqnRpnjeY2Ip1pxUQWPXWrI5C1xSb4cptUOn0FYTLXdhZ
-         Y8tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747907336; x=1748512136;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=klE7E1sXnfwhBGRUczKqI9pMXJRo0twyYdkymVqjNqM=;
-        b=L/jJGJBtNI9RiDEcpDxFoE9gm2EGBQKd/dgeC8S1M8fsCHgDOXthHYq1BCfGoU12cD
-         ihMrHCsSy2ouS6CUCMKsFaR/FvwnY+hPnTRR++4hm051xJMrD02WatpHRYnuPuVeSfXf
-         Mpp9zgGtxAnBIhq6JTraLCCpDkhH2BiDyd3AMfW3FKiofQORmkrsebhdXP0bDZGR2bVt
-         HvuWXvzLjQAXOqkRhAIUOBi9sg7WRoIcw0Z1CmrEVmgcL8EsMjSCcDfqlkWZ/hqtKuSl
-         UujdQGWjjdPR8MEI2UCg2srxPsqa0vBwQ9n2fk/ItZ2FQ2S7875TVUOpO3oXeO6K/PDn
-         aelg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs/2TCJSdKflSiETY5dBNpvlb6IHr/It06KB7gq+XSJKPZYJHrWuWGuUqEPwj59k9H7MZjyOXb/xAq1AYRjkgBSg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBb8RNXpNvd7/S8uLNLClztQTFNIFFDFtgz6O5qbuuOKY/nkMT
-	4VUBaLr61hmJWWTHJbIeEzfgECN/mrG82XwSv8MxxF3z05tVF50LFOBcgORn88BjVQc=
-X-Gm-Gg: ASbGncuYODMYujzVUpQ9qXUE1AJCoop4xxWCTC4w3E90ln3+KThDbV+ajWtuFtNIbji
-	kunVvUYcdLwoCf22RXMXkBgpORVoDRu8Y9y5w7i0DFQ8Q9nMF9Bhqvwui1CBG7V65vw3/EzTuZx
-	NWkuic2LouB6FzTJQvhPjs7+4hhCgfDXTtqNU9BDG97rRMknURYS5f6gHWnobFV8n0o3BY1kXys
-	kMLVDVERe92FNeAKSn82VYJjDB0QZmjOemjpEJKqN30A5DHYwDj9CX4s+vIGvZaJlZ4nTQl7yCb
-	Ebl6GQy2vYLgG5E5uXrBWpGvYOyeXQdWvrSShFakQHtaA0r6x+eXgKgff/4=
-X-Google-Smtp-Source: AGHT+IGR5u6qykqEC57e3nACLD+fywuUN8Jcwlf4E/4zcXLVu7BeLHKEwlYarei9wxiFcWeh77KjeA==
-X-Received: by 2002:a17:906:230a:b0:ad4:f6d2:431b with SMTP id a640c23a62f3a-ad536dce6cfmr1624516166b.44.1747907335489;
-        Thu, 22 May 2025 02:48:55 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.58])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d438403sm1040645066b.123.2025.05.22.02.48.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 02:48:55 -0700 (PDT)
-Message-ID: <3b1963ba-f93f-48f2-8fb0-a485dd80ffcb@tuxon.dev>
-Date: Thu, 22 May 2025 12:48:53 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cj2WJCiW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D4BC4CEE4;
+	Thu, 22 May 2025 10:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747908045;
+	bh=MqopuUpYpRBwINTm0XZy4Btrri9/43yCJfmha+uoSws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cj2WJCiWjYkooKVwSF7qK5qxGnxD7tXSUsN1yjJeFEgcgg/J6VU0+CKvUu4K82JWn
+	 2J3EhgNsiuNcS9LFh7XQt48XPGkVjcypJmoCjd3JredBT6Tf1zRaByi+y03ZiPIrny
+	 h0ubB6YEsb0W3LPuq8M2xkXuqT4SDiCyiG5i+Xpqm3RTgyoKJsQL4BP6TAj40R2iYa
+	 Axe4uLW7riQND3IRZcX+WkMpXqU7DdzjKS3xKXaCU4OPIPZOI4EYUQLZwXrhuES5Wa
+	 rt4laTbjxh8v+1ny12wFiI7j5z3IAWAURoXdZxe/wBBitobPOfsXpEn5SczrUcBfHq
+	 xn3VT8iG9nKwA==
+Date: Thu, 22 May 2025 11:00:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ai Chao <aichao@kylinos.cn>
+Cc: perex@perex.cz, tiwai@suse.com, johannes@sipsolutions.net,
+	kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com,
+	jbrunet@baylibre.com, neil.armstrong@linaro.org,
+	khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+	shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com,
+	nicoleotsuka@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	srinivas.kandagatla@linaro.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] ASoC: ppc: Use helper function
+ for_each_child_of_node_scoped()
+Message-ID: <6625e6b1-53a7-4357-99ab-bdf5810e6699@sirena.org.uk>
+Mail-Followup-To: Ai Chao <aichao@kylinos.cn>, perex@perex.cz,
+	tiwai@suse.com, johannes@sipsolutions.net,
+	kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com,
+	jbrunet@baylibre.com, neil.armstrong@linaro.org,
+	khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+	shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com,
+	nicoleotsuka@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	srinivas.kandagatla@linaro.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-arm-msm@vger.kernel.org
+References: <20250522050300.519244-1-aichao@kylinos.cn>
+ <20250522050300.519244-2-aichao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- dakr@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- bhelgaas@google.com
-References: <20250330163129.02f24afb@jic23-huawei>
- <5bca6dfd-fe03-4c44-acf4-a51673124338@tuxon.dev>
- <95f5923f-7a8f-4947-b588-419525930bcb@tuxon.dev>
- <CAPDyKFoMqmCFBoO8FwQe2wHh2kqQi4jUZNFyiNckK7QhGVgmvg@mail.gmail.com>
- <c3a2950a-17ff-444a-bee7-af5e7e10e2bf@tuxon.dev>
- <CAPDyKFozR4qDq4mzcZBK-LcoPf=fGyuJTXwdt=Ey+_DcQOAp0g@mail.gmail.com>
- <4o3wo76st7w6qwyye3rrayuo2qx773i6jfzcnbkhdj76ouh7ds@3e2mblehkgwf>
- <CAPDyKFqMB7XutXba73YHx1X4rm6uc3Fz6yMZ8yM=wgduEmgUDg@mail.gmail.com>
- <a20fc6ee-c6c3-4013-b175-4918b9a44380@tuxon.dev>
- <CAPDyKFpbeLJUiB_xQbqDib+-8Q3AcJNVg+DuEcqmVGMbFdNxwA@mail.gmail.com>
- <fgl4w5uhxci7rrbdigtni72vveb2gqemh6iccz4qruqkek5rja@rzwkcjg6hkid>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <fgl4w5uhxci7rrbdigtni72vveb2gqemh6iccz4qruqkek5rja@rzwkcjg6hkid>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dYBUrfbV055H0pXU"
+Content-Disposition: inline
+In-Reply-To: <20250522050300.519244-2-aichao@kylinos.cn>
+X-Cookie: Beware of dog.
 
-Hi, Ulf,
 
-On 21.05.2025 17:57, Dmitry Torokhov wrote:
-> On Wed, May 21, 2025 at 02:37:08PM +0200, Ulf Hansson wrote:
->> On Wed, 21 May 2025 at 07:41, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>>
->>> Hi, Ulf,
->>>
->>> On 20.05.2025 15:09, Ulf Hansson wrote:
->>>> For example, even if the order is made correctly, suppose a driver's
->>>> ->remove() callback completes by turning off the resources for its
->>>> device and leaves runtime PM enabled, as it relies on devres to do it
->>>> some point later. Beyond this point, nothing would prevent userspace
->>>> for runtime resuming/suspending the device via sysfs.
->>>
->>> If I'm not wrong, that can't happen? The driver_sysfs_remove() is called
->>> before device_remove() (which calls the driver remove) is called, this
->>> being the call path:
->>>
->>> device_driver_detach() ->
->>>   device_release_driver_internal() ->
->>>     __device_release_driver() ->
->>>       driver_sysfs_remove()
->>>       // ...
->>>       device_remove()
->>>
->>> And the driver_sysfs_remove() calls in the end __kernfs_remove() which
->>> looks to me like the place that actually drops the entries from sysfs, this
->>> being a call path for it:
->>>
->>> driver_sysfs_remove() ->
->>>   sysfs_remove_link() ->
->>>     kernfs_remove_by_name() ->
->>>       kernfs_remove_by_name_ns() ->
->>>         __kernfs_remove() ->
->>>
->>> activating the following line in __kernfs_remove():
->>>
->>> pr_debug("kernfs %s: removing\n", kernfs_rcu_name(kn));
->>>
->>> leads to the following prints when unbinding the watchdog device from its
->>> watchdog driver (attached to platform bus) on my board:
->>> https://p.fr33tux.org/935252
->>
->> Indeed this is a very good point you make! I completely overlooked
->> this fact, thanks a lot for clarifying this!
->>
->> However, my main point still stands.
->>
->> In the end, there is nothing preventing rpm_suspend|resume|idle() in
->> drivers/base/power/runtime.c from running (don't forget runtime PM is
->> asynchronous too) for the device in question. This could lead to that
->> a ->runtime_suspend|resume|idle() callback becomes executed at any
->> point in time, as long as we haven't called pm_runtime_disable() for
->> the device.
-> 
-> So exactly the same may happen if you enter driver->remove() and
-> something calls runtime API before pm_runtime_disable() is called.
-> The driver has (as they should be doing currently) be prepared for this.
+--dYBUrfbV055H0pXU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I took the time and tried to do a comparison of the current solutions
-(describing the bad and good things I see), trying to understand your
-concerns with regards to RPM suspend|resume|idle while unbinding a device
-from its driver.
+On Thu, May 22, 2025 at 01:02:54PM +0800, Ai Chao wrote:
+> The for_each_child_of_node_scoped() helper provides a scope-based
+> clean-up functionality to put the device_node automatically, and
+> as such, there is no need to call of_node_put() directly.
+>=20
+> Thus, use this helper to simplify the code.
+>=20
+> Signed-off-by: Ai Chao <aichao@kylinos.cn>
+> ---
+>  sound/ppc/tumbler.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-I see the following cases:
+This is for ALSA, not ASoC (same for patch 2).
 
-Case 1/ the current approach when devm_pm_runtime_enable() is used in
-driver's ->probe() with the current code base:
+--dYBUrfbV055H0pXU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- right after driver ->remove() finish its execution clocks are detached
-  from the PM domain, through dev_pm_domain_detach() call in
-  platform_remove()
+-----BEGIN PGP SIGNATURE-----
 
-- any subsequent RPM resume|suspend|idle will lead to failure if the driver
-  specific RPM APIs access directly registers and counts on PM domain to
-  enable/disable the clocks
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgu9cQACgkQJNaLcl1U
+h9CN3wf+PegrYTPlsVJy+enj/g4eJLMHrb+6cwhGIJ+rpuWUhYGaAAV3EeSH51g9
+RpUaPpzmbI1W9rHSufs3UHUUX+xeLAOCmoGQY3zHQDiXcB6kH7ZnVbFLcGCEQjbE
+63rKXX3DuoMTCyrERQSyyVztgwF4gtwM7/SpkrP6EF/IwRBHuR7PSbfudShqajl3
+JmjzCk+11NNoW4pgUBcsCdTuxGyEd5eGZWAT/b68XKAq8AbndHwwsY2X0OC28Ibu
+dCW1cX1s+NK6W/MErAM0B72wYF0HVOmzOT45F6UlMZVJqPDezTE8IB+oUmzSf+hv
+3t/hI5FgEmIU4rj4jwuBpqaSXrPi2Q==
+=1khQ
+-----END PGP SIGNATURE-----
 
-- at this point, if the IRQs are shared (but not only) and devm requested
-  the driver's IRQ handler can still be called asynchronously; driver
-  should be prepared for such events and should be written to work for such
-  scenarios; but as the clocks are not in the PM domain anymore and RPM is
-  still enabled at this point, if the driver don't run runtime suspend on
-  probe (and runtime resume/suspend on runtime), I think (because I haven't
-  investigated this yet) it can't rely on pm_runtime_active()/
-  pm_runtime_suspended() checks in interrupt handlers
-  and can't decide if it can interrogate registers or not; interrogating
-  should lead to failure at this stage as the clocks are disabled; drivers
-  should work in such scenario and the CONFIG_DEBUG_SHIRQ is a way to check
-  they can; I previously debugged a similar issue on drivers/net/ethernet/
-  renesas/ravb driver where using devm_pm_runtime_enable() in probe and
-  pm_runtime_suspended() checks in IRQ handlers was the way to make this
-  scenario happy; at that time I wasn't able to find that
-  dev_pm_domain_detach() have the impact discussed in this thread
-
-Case 2/ What is proposed in this patch: devm_pm_runtime_enable() used +
-open devres group after dev_pm_domain_attach() (in probe) and close the
-devres group before dev_pm_domain_attach() (in remove):
-
-- right after the driver ->remove() is executed only the driver allocated
-  devres resources are freed; this happens before dev_pm_domain_deattach()
-  is called, though the proposed devres_release_group() call in this patch
-
-- while doing this, driver can still get async RPM suspend|resume|idle
-  requests; is like the execution is in the driver ->remove()
-  but the pm_runtime_disable() hasn't been called yet
-
-- as the runtime PM is enabled in driver's ->probe() mostly after the HW is
-  prepared to take requests and all the other devm resources are allocated,
-  the RPM disable is going to be among the first things to be called by the
-  devres_release_group()
-
-- then, after RPM disable, all the devres resources allocated only in the
-  driver's ->probe() are cleaned up in reverse order, just like
-  device_unbind_cleanup() -> devres_release_all() call in
-  __device_release_driver() is doing, but limited only to the resources
-  allocated by the driver itself; I personally see this like manually
-  allocating and freeing resources in the driver itself w/o relying on
-  devres
-
-- then it comes the turn of dev_pm_domain_detach() call in
-  platform_remove(): at the time dev_pm_domain_detach() is executed the
-  runtime PM is disabled and all the devres resources allocated by driver
-  are freed as well
-
-- after the dev_pm_domain_detach() is executed all the driver resources
-  are cleaned up, the driver can't get IRQs as it's handler was already
-  unregistered, no other user can execute rpm suspend|resume|idle
-  as the RPM is disabled at this time
-
-Case 3/ devm_pm_runtime_enabled() dropped and replaced by manual cleanup:
-- the driver code is going be complicated, difficult to maintain and error
-  prone
-
-I may have missed considering things when describing the case 2 (which is
-what is proposed by this patch) as I don't have the full picture behind the
-dev_pm_domain_detach() call in platform bus remove. If so, please correct me.
-
-Thank you,
-Claudiu
-
-> 
->>
->> That's why the devm_pm_runtime_enable() should be avoided as it simply
->> introduces a race-condition. Drivers need to be more careful and use
->> pm_runtime_enable|disable() explicitly to control the behaviour.
-> 
-> You make it sound like we are dealing with some non-deterministic
-> process, like garbage collector, where runtime disable done by devm
-> happens at some unspecified point in the future. However we are dealing
-> with very well defined order of operations, all happening within
-> __device_release_driver() call. It is the same scope as when using
-> manual pm_runtime_disable(). Just the order is wrong, that is it.
-> 
-> Thanks.
-> 
-
+--dYBUrfbV055H0pXU--
