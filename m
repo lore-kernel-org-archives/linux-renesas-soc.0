@@ -1,148 +1,100 @@
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F152145B27;
-	Fri, 23 May 2025 15:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F4E295526
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 May 2025 15:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748012715; cv=none; b=qMWKMOt8iGMvJizbrkiOLvvcmMulUGTEs+Wsj4DnvSl4RJpETqmNFmW1+GXCTn7qQ27fas4YOpqu8UaRzrSbFoUJ91EReJG19VbPUrZVJovPWtq1eIWiGzflO+ko8E92ON5LOBtxcb9xhufhbEo1Y05kQEaIWAbf+m1DibFX9kQ=
+	t=1748012763; cv=none; b=X47MdSrRNntE9K82sahsjtmuWkI5IqVMJjDQA434dRyl6MIUZo+RlDYz08ur9Enn97acDdRhu4dddDwQQBY7zE4Cw4A5ESI3STxFUX9iAuIYnEepXl5YS09LqEUT6LBRdQuTuSTrNVht9oyOJeHAW4W+MkV/IMs0IhwuGUBerDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748012715; c=relaxed/simple;
-	bh=IvZjz67TtM02MU3/MnsuVyjFE8j+g6IyR+ugdwoN3KM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t1JuygueEfM7DOAIIBVuLF2bHNgiDPEe98kr9JgE9jY2uMjlhtw0VtKm0PPIXxUCE5asZG96YBb2vq+11qyjEsb4M4eHVYmr7Z2iGJiNHOGqWKk5qf/1hqHujmF6wgUupZfXl4EldFE6/jSTtoF9FZCcwt3ItSumKnDJGu7Xtbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87bf1348838so1754403241.2;
-        Fri, 23 May 2025 08:05:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748012713; x=1748617513;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z7q5VOWPHTLyk2rAGQ6nFq+sdmA8F0+9sYOybYBqTFg=;
-        b=OUzAWH2uYwf+9ikl9k+q8DuPD8aXNCIqJTajWTYXjBRmduQf/j+XjAx9DzewKAHFMm
-         Kg1AoHCx4kng0kLRMn1mgU6vpIUI8csF7Pd5gZrusIJuByH/YQcgt76Igq1fPAwA1MY8
-         ipo/ErX5oXNnmTK27rDzmLO0b2aEg5N0k+IDVKyjelA8Vygyzlq/mWnmjDDe0AU6Vrh1
-         oROmcxyYTKEw2xfKtz159Mlmj8+LsFlAgA2wit2BT7FosZ8oyQKH6SjmOf+4IpGZThTg
-         4HjaMN3qspdL/S4DzftESX971uhI4fEXvl8RaYsQXZhNq3on50jTi7degFFYw0tIfo+3
-         QH+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOV1j6dmx4txs5fXAOJVhC1+F9voa+YKW03VjNnFMt3PZ/Y5FjC1M+cVJ7VfodjRg5N4A5G44gxqUtTpHrWXnBrC4=@vger.kernel.org, AJvYcCV1UFkWpne6CyUkWeRL8P2iz6IDQZzB7ujqkMwnhlPtg0MK0FIm+txL0+osUT2GdHg+aHt3qbmXUs6FC5GX@vger.kernel.org, AJvYcCVSdFTRROZYdWOYgddoNOBOTWDzuqIHmaHtwveGzKxBbN4gB/RrK0F9pGDmCAThEmttY8yT+x17fStg@vger.kernel.org, AJvYcCW7sg1j46ZJR+CjTp96LklyCi/c0e4NmNJiyjC3n522aYT1I8QlM4XQI6yuhr3w/jLLBq/mBk2jSWGl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw39HvHd1Onjav0cJyKUK77H+D8n3j5Mm2lS1GXAPZfy+zbRJZQ
-	5gJLJz7cLup4vo6b/HaM5qlfGo38UWTWPPmqot/0YXpfbtfkUzYES8EHFnVeujWqViA=
-X-Gm-Gg: ASbGnctjp3OdOIxWe2eyx3Pu/9SNmoRd9L7G0F2Tm703dzbRjlFAsbJZvNAT4BHuDCZ
-	t8tYf+43vFt4BN+1V76kTbaIpUwmIEPm8RItKqfti+kfGPGI5R2uuNLM7ukN18KRerx63Dqd5PG
-	LVdCmpBWrkJyZf2CWZa78SEhoo1JJyv01CDpxpEOsPUuP6r5MIGAoiDJZppsx+lTTdlVv66H4iI
-	FXR1RBWC1Q8wDM8FZk+uKrz9kkzj+OrOM/PtC/z2pDaf34c+6f0dQYWuLjS5smPlp0ccckNyZgD
-	c5k1vyc7VyChMIl9ZhWObGoRXEhAG7AEgM1SSiKDmO3jfeF4hp6SmpQasJd+HgDcJ/1KazB2sOe
-	o6HGrlRCQ+t0P5g==
-X-Google-Smtp-Source: AGHT+IGpTcQltr5JdidOWCx+aFZVnqU8+pIwt1rOvJNJGlxSQy2LIw9bd8arC40WmuYJzNqVVlUPHQ==
-X-Received: by 2002:a05:6122:d19:b0:529:2644:8c with SMTP id 71dfb90a1353d-52dbcdfccb7mr23054062e0c.8.1748012712580;
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52f19bb4c76sm2221857e0c.43.2025.05.23.08.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e2900db5f1so3319137.3;
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4PQzaHN6hS+JeLbPQ7cC6h/b2VgZ6s2TxOF6++4767zj1AfPPffxEo+G4qYXKa1k9N7s+X/XNqqjZgnb2q1qibpM=@vger.kernel.org, AJvYcCWNVPjWL0Tnh1DYz7MFNo6LquFfw/aIwSveJInfM2Eew11Zpkm/sfMrfvrD9U+rmKhRvE7rMJBNMZknAJGP@vger.kernel.org, AJvYcCWS7cOPAbD0ojC38XjeY73zIuov0vjnoXhexj0Qs962+tW3R2rWBxDzyxwjad92enSrqTV0cf6zH0gr@vger.kernel.org, AJvYcCXRSRedHFSG4yMGgZtYRIrV1oQJOjDMiImGNaefp3ri6wHB1/O88pUeE2THM+k/ZhqOJXWhbjhA6aQR@vger.kernel.org
-X-Received: by 2002:a05:6102:3f06:b0:4e2:bacd:9f02 with SMTP id
- ada2fe7eead31-4e2bacda0c0mr10649290137.16.1748012320563; Fri, 23 May 2025
- 07:58:40 -0700 (PDT)
+	s=arc-20240116; t=1748012763; c=relaxed/simple;
+	bh=01wlVeg860WtfNzlGREip3fyPeFq0pn9r0Dx2NrPhyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M7fFRs9gncEZiABpJ7qS3HpS9ocgV8m7bTHpgPmCtjrDpF48uT2ozSKgJidpBLVDcwr86/hM7WS8zBjMNIjQDPEMYOmv00nm2Gw3dvuN0bTuwwf2bvA1moSigW6485MUsEpOwnNVgw0wAI5r2SC2GvbTEKbD6JjqozFHfBtVBDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KOBuEZ/s; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KOBuEZ/s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=aIdBVBebOZJBXXFgmL84aOdpDyKY/q2wSHA7igundHY=; b=KOBuEZ
+	/sXRgcgdGinB8FOPPbN3RoMl21uY6of80JBteRXnJoV//eRHz62Ent5FdwrboVsL
+	kIV/zqLAD/VSLbOOUPi3SJvpAyG1fKTlU6A2gjGkCQd9g64YlmoJiyKZC/SaKJdl
+	FdBr1QG0XseqeYJ0nICE7TmW1ofhBKN4LutCJYJTIxVfuHNJ953bEsIGixZyHL8h
+	4s/vLk1wRfIgPcKrqg85E22Y2I0xPaYGMxsZpsMfth8EULJX+0JFRXc4VdoBZFQK
+	lMRTaBRMyj1J8hFsB9ArNXEpYXQ4GUbY2onYRSersIW8wFs6Q6ueLkH7LTTnInNE
+	93wGhmZAbVB9NB/A==
+Received: (qmail 4083013 invoked from network); 23 May 2025 17:05:58 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2025 17:05:58 +0200
+X-UD-Smtp-Session: l3s3148p1@jFGB7841G31tKPAL
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH v2 2/3] rtc: rzn1: Disable controller before initialization
+Date: Fri, 23 May 2025 17:05:39 +0200
+Message-ID: <20250523150541.8390-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250523150541.8390-1-wsa+renesas@sang-engineering.com>
+References: <20250523150541.8390-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 May 2025 16:58:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
-X-Gm-Features: AX0GCFt82q4LbUN8wOO1SOIRH6DyQiAH55lXfwgWzPo4hKmY_3p-dAhsTJpdcck
-Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] dt-bindings: display: bridge: renesas,dsi: Add
- support for RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+Datasheet says that the controller must be disabled before setting up
+either SUBU or SCMP. This did not matter so far because the driver only
+supported SUBU which was the default, too. It is good practice to follow
+datasheet recommendations, though. It will also be needed because SCMP
+mode will be added in a later patch.
 
-On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical to that of
-> the RZ/G2L SoC. While the LINK registers are the same for both SoCs, the
-> D-PHY registers differ. Additionally, the number of resets for DSI on
-> RZ/V2H(P) is two compared to three on the RZ/G2L.
->
-> To accommodate these differences, a SoC-specific
-> `renesas,r9a09g057-mipi-dsi` compatible string has been added for the
-> RZ/V2H(P) SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/rtc/rtc-rzn1.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> @@ -14,16 +14,17 @@ description: |
->    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
->    up to four data lanes.
->
-> -allOf:
-> -  - $ref: /schemas/display/dsi-controller.yaml#
-> -
->  properties:
->    compatible:
-> -    items:
-> +    oneOf:
->        - enum:
-> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> -      - const: renesas,rzg2l-mipi-dsi
-> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
-
-Nit: I would add the new entry after all the old entries, to preserve
-sort order (by part number).
-
-> +
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> +          - const: renesas,rzg2l-mipi-dsi
->
->    reg:
->      maxItems: 1
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index 3c2861983ff1..7777df1e3426 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -25,6 +25,7 @@
+ #define   RZN1_RTC_CTL0_SLSB_SUBU 0
+ #define   RZN1_RTC_CTL0_SLSB_SCMP BIT(4)
+ #define   RZN1_RTC_CTL0_AMPM BIT(5)
++#define   RZN1_RTC_CTL0_CEST BIT(6)
+ #define   RZN1_RTC_CTL0_CE BIT(7)
+ 
+ #define RZN1_RTC_CTL1 0x04
+@@ -369,6 +370,7 @@ static const struct rtc_class_ops rzn1_rtc_ops = {
+ static int rzn1_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct rzn1_rtc *rtc;
++	u32 val;
+ 	int irq;
+ 	int ret;
+ 
+@@ -406,6 +408,14 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 	 * Ensure the clock counter is enabled.
+ 	 * Set 24-hour mode and possible oscillator offset compensation in SUBU mode.
+ 	 */
++	val = readl(rtc->base + RZN1_RTC_CTL0) & ~RZN1_RTC_CTL0_CE;
++	writel(val, rtc->base + RZN1_RTC_CTL0);
++	/* Wait 2-4 32k clock cycles for the disabled controller */
++	ret = readl_poll_timeout(rtc->base + RZN1_RTC_CTL0, val,
++				 !(val & RZN1_RTC_CTL0_CEST), 62, 123);
++	if (ret)
++		goto dis_runtime_pm;
++
+ 	writel(RZN1_RTC_CTL0_CE | RZN1_RTC_CTL0_AMPM | RZN1_RTC_CTL0_SLSB_SUBU,
+ 	       rtc->base + RZN1_RTC_CTL0);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
