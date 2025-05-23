@@ -1,121 +1,98 @@
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475422A4F0;
-	Fri, 23 May 2025 11:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F0221D87;
+	Fri, 23 May 2025 11:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747999250; cv=none; b=rpfyIWXfHVWiQrF8JxF5Sxk5PAwgacj6Ld7KeWlc2QhD6ceNQp7Qn1P6nPdwFov628V/m7m42l6kUqDr2h2aIEZ33dTuNDD0DwSAY9rhqySvd4C89AaO4k0sKyCZfaVpNX5hNBWedwYKIEbNfxn5KDYzFd2KVDbSHD5JZC8O8Fw=
+	t=1748000255; cv=none; b=gqvQ9ywY4UB/PlA9EaDr4hgxUGDK94YzdDIdDkeEc42Z3cwX7KaEurPcCQDKE7Qn9UeKOq7H75r0R6njWljPG6Xfcjdt3XgyfhGVcsSXiY5JxZylqyZNBlhSLQdx80T9yccNfLvNVL7H1HW3mBZHCs1x3ulsYlTBZsAwBq8wbWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747999250; c=relaxed/simple;
-	bh=D5m9mjlqCvHyLg3xU/I4oNYkRM182PIux4X7sbU/rBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aafev/shQp0wH8ConsGAU7vD8objnhqOsNkY7miM4rHRS0hAAmMAFf1GYfotQKIefFoceK/EcbMQLop/PmC836pdIuIPpHd129VdCkxWJznU3VuoOMY3VRSjPDu04uQWQlmO4H3iBxJmmQfRGdWIrio7jtciFFaZy5NfzoJZLwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4b3hmd3T2Mz9vXt;
-	Fri, 23 May 2025 12:51:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id x6OGEq_bauYM; Fri, 23 May 2025 12:51:45 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4b3hmd2TkFz9vXs;
-	Fri, 23 May 2025 12:51:45 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4884C8B769;
-	Fri, 23 May 2025 12:51:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id p6vSVHiM0Uvz; Fri, 23 May 2025 12:51:45 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 08E138B763;
-	Fri, 23 May 2025 12:51:43 +0200 (CEST)
-Message-ID: <8ad901c3-3fcb-4643-ac5a-c1f30f93d07f@csgroup.eu>
-Date: Fri, 23 May 2025 12:51:43 +0200
+	s=arc-20240116; t=1748000255; c=relaxed/simple;
+	bh=RPNi1QDrDr0oLkHY3jiUnnyxRMbcBwEqM+TlcWJLhmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BuuLdVjkHp5HfwuF5kyzvINkAXFz7jdJcRGYX5X15+f0fXTPnw1g/EJVzTbi3cLAVbttLjaad0a89scd5d014aTIG22a8lckr4gB0u/ckY0AikPclrXlx9lMjZMCNYGuKrHY+iEgzp8p/vuElbYB2fleKpVtUZNcw16uBbDiMtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85dac9729c3so866195139f.2;
+        Fri, 23 May 2025 04:37:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748000250; x=1748605050;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7wlzvB2Q8r8iVI++Q756y7sEw+0J/OE0zl08HpFQmKI=;
+        b=IFZwEXCBSidXRRD9LqASXnje2ptY/TbQOkgvAe/cUKR9wjcBO7R//JCYxLQjs6m2mI
+         orLVcu+DLa5qWRdxMrWW0xJj4Odgw7AuHVGtdBEXpWfRK1p2krzm71ozd9pfm8/Y0GaD
+         0rkKf4CEXxZ1J9yK/uFlPCXbldK4YrSOfVYSV7xN853zjmLdR4/eH4sNlsnZtU7gFr4y
+         df4InMuR23AhkxvPuDBnD8Ly9VowdvgyPwXixebb8T0eFNwM0DNWxZj81yuw8833lIWO
+         y/y9+CkC12ncZYpgWbwfxxYK0dGj+pvAHUjgjDWhWfVHG+txWoUB2Ob5xnSAhM5l482X
+         1tVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzRNUn6oJgsMYUR5PBBkbeDR9Ro3iJQ+LbehagzEzyuVWbKXYliGgS8nLnQXx+g8anitvYwER1SeZ0mng=@vger.kernel.org, AJvYcCXu8E7zVBpTz6nHQGa3MrmTbxMswPgzp7Mqq/MTJ3FwzaV7JZHDwgzxwEDhFVrqA2bZppaYo1XxALu4bwQxH/5rFRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1xSX+/2GNRZOTw4V0sLZ/tpIxkfbGZ7CkANp/7S2xZsgD1iOu
+	K/MNsGJr8R1mYE5BWuVAEJHcnxhYdTu0mJF8Qn5AVxK0rvi5odI3YBrcpWNE1O9f
+X-Gm-Gg: ASbGncu+oLVmUeR+L59Zcnvz5BPYyBOs63qsPpmkaatix+93wdpboX3QmuXGjQHBwSB
+	zztLBfX5ose2MhkFALvMEFs5im59YBV46yyiOnJOsg8TXI0ZYP5ejM2jP+9gRsNWFO0vQC57GI3
+	uApmFqGMz/TnA5qCBNgrnuto4jyDiNkvInS9o23KkP8vJUWEQuagxJ2xD1ECyDmNLXiyCbKv5oj
+	1AdcmQgT0K4G0gjG6kmBLQr6u7+irczPgQEu3DxnAYcySkNlKBXT2YzehFQWhkEa7ex1z/t6ZUN
+	QIHLX1cXX1/sVe8a2thg+ZeNEf4RzeLrhlkCumcTmA3Pz700gHUG09ZO1fwZezx4FFI+k9U0S12
+	m3ttRQqrcur7m1SmAbQ==
+X-Google-Smtp-Source: AGHT+IH2uEsHE/YAObvEt/LSD6+nx4WMqZ1snpyvAr5Jwsf7Iwj2NQBWE5VLPgWfDFloVuIKNExfuQ==
+X-Received: by 2002:a05:6602:4186:b0:85c:c7f9:9a1c with SMTP id ca18e2360f4ac-86a23283c78mr3814209339f.13.1748000250611;
+        Fri, 23 May 2025 04:37:30 -0700 (PDT)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com. [209.85.166.175])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc48c5cdsm3585753173.84.2025.05.23.04.37.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 04:37:30 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3dc6dbb3d58so45312415ab.3;
+        Fri, 23 May 2025 04:37:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5bT7uPu2u449LTaor+TXGV+xQnMEd4p/hQxeo9erZgTmx3mlC4k1g5Y9mNly4tW0WL6qZFhgGgSuI0kAs377D6y0=@vger.kernel.org, AJvYcCVfwBaPgjZQrKPv6q66Bv9eaS5wHYqGDvl0ueD/rR0oyzk16Sow40A7sugEq9nlohIP141m31UV7RBnU58=@vger.kernel.org
+X-Received: by 2002:a05:6102:370a:b0:4c1:9b88:5c30 with SMTP id
+ ada2fe7eead31-4dfa6c62d03mr28083060137.19.1748000239515; Fri, 23 May 2025
+ 04:37:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] ASoC: aoa: Use helper function
- for_each_child_of_node_scoped()
-To: Ai Chao <aichao@kylinos.cn>, perex@perex.cz, tiwai@suse.com,
- johannes@sipsolutions.net, kuninori.morimoto.gx@renesas.com,
- lgirdwood@gmail.com, broonie@kernel.org, jbrunet@baylibre.com,
- neil.armstrong@linaro.org, khilman@baylibre.com,
- martin.blumenstingl@googlemail.com, shengjiu.wang@gmail.com,
- Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
- shawnguo@kernel.org, s.hauer@pengutronix.de, srinivas.kandagatla@linaro.org
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- imx@lists.linux.dev, kernel@pengutronix.de, linux-arm-msm@vger.kernel.org
-References: <20250522050300.519244-1-aichao@kylinos.cn>
- <20250522050300.519244-3-aichao@kylinos.cn>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250522050300.519244-3-aichao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250513125858.251064-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250513125858.251064-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 May 2025 13:37:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWLYuwVU=9FnXoYYXzA+XYoSc89MBsTzAyZQAGF2cVvFA@mail.gmail.com>
+X-Gm-Features: AX0GCFsYAsYC7rTS4r0G9iHcLPTnjlp95PDD1ysnF-SrRgCKFmwYpC3XJI0oK_c
+Message-ID: <CAMuHMdWLYuwVU=9FnXoYYXzA+XYoSc89MBsTzAyZQAGF2cVvFA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable RZ/V2H(P) USB2 PHY controller
+ reset driver
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 13 May 2025 at 14:59, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable the `CONFIG_RESET_RZV2H_USB2PHY` option in the arm64 defconfig to
+> support the USB2 PHY controller reset driver on the Renesas RZ/V2H(P) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17.
 
-Le 22/05/2025 à 07:02, Ai Chao a écrit :
-> The for_each_child_of_node_scoped() helper provides a scope-based
-> clean-up functionality to put the device_node automatically, and
-> as such, there is no need to call of_node_put() directly.
+Gr{oetje,eeting}s,
 
-I don't understand this explanation.
+                        Geert
 
-You say "no need to call of_node_put()" and the only thing you do in 
-addition to changing from for_each_child_of_node() to 
-for_each_child_of_node_scoped() is to _add_ a new call to of_node_put().
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I would expect to see a _removal_ of some of_node_put() when I read your 
-description.
-
-Christophe
-
-> 
-> Thus, use this helper to simplify the code.
-> 
-> Signed-off-by: Ai Chao <aichao@kylinos.cn>
-> ---
->   sound/aoa/soundbus/i2sbus/core.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/aoa/soundbus/i2sbus/core.c b/sound/aoa/soundbus/i2sbus/core.c
-> index ce84288168e4..20a4c5891afc 100644
-> --- a/sound/aoa/soundbus/i2sbus/core.c
-> +++ b/sound/aoa/soundbus/i2sbus/core.c
-> @@ -207,6 +207,8 @@ static int i2sbus_add_dev(struct macio_dev *macio,
->   			}
->   		}
->   	}
-> +	of_node_put(sound);
-> +
->   	/* for the time being, until we can handle non-layout-id
->   	 * things in some fabric, refuse to attach if there is no
->   	 * layout-id property or we haven't been forced to attach.
-> @@ -335,7 +337,6 @@ static int i2sbus_add_dev(struct macio_dev *macio,
->   
->   static int i2sbus_probe(struct macio_dev* dev, const struct of_device_id *match)
->   {
-> -	struct device_node *np;
->   	int got = 0, err;
->   	struct i2sbus_control *control = NULL;
->   
-> @@ -347,7 +348,7 @@ static int i2sbus_probe(struct macio_dev* dev, const struct of_device_id *match)
->   		return -ENODEV;
->   	}
->   
-> -	for_each_child_of_node(dev->ofdev.dev.of_node, np) {
-> +	for_each_child_of_node_scoped(dev->ofdev.dev.of_node, np) {
->   		if (of_device_is_compatible(np, "i2sbus") ||
->   		    of_device_is_compatible(np, "i2s-modem")) {
->   			got += i2sbus_add_dev(dev, control, np);
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
