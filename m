@@ -1,50 +1,53 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9381FE455
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C576B24EA9D
 	for <linux-renesas-soc@vger.kernel.org>; Sun,  8 Jun 2025 14:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749392881; cv=none; b=PWQHqL9F6YKjyhpJSv+qfHCE+n7tzbwnivjF19TtPmn/HGSd5ImMi6IQ4srB2EEDaKaHqFbfe1Z7oCxIuMXj8fzYbYDmGt4fDw/wiIk95K3iPXTV6wzLlZqwuHKxwrBxD1fhv+6TlGJfxbcWA5d/5c+LFBDPzqu6WaQ3oFL2I6M=
+	t=1749392883; cv=none; b=HgRtGahe5/mxgnddQW7ZdMoeCCibWN3qo6u0bO9xAEDiKAgo3ow1Fz76pTjBTvjFGVteZUmW4GWEEmc6P2NSI65qeJ++ZEky2nssy8mgWe3si/ug5VpRav5NvsfjtA4jMHOm4E+20ylK82yq83Dx0UL50to2MsMRXVxMYzQvE24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749392881; c=relaxed/simple;
-	bh=yVvFOpTDmFouAPIa9i3Fo1eJwAkwkzte+UAvNFLbZfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zq7F/G+qYHzwDkHG5SzGbIgioQ92r9ZRtPTv29iqeupxOMj+QZ8i8j+WuSbAmVFUNmupPjo/IKXk5ERByOg8Fv5ISA7Ufole98Ahx7GOeKh/zzzJLbHHCa+sstbz4Wukp6s3UJjnCvw/KJQsFeqkGln1d6+Hl995wNLdEf3sh/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xWLDDrUT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=QDPkFHwJ; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1749392883; c=relaxed/simple;
+	bh=0VyCSfXIxYI/+3ACHlZCnpJhdAWYMesWf63X4F7Hv5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ghUx7loCJ91csOO696JrUMD27sjloSPH+KcQcXM9RjozyNcJzTqRiyP3rwlMDTdCHa9RyLmud5i85cmfi+Bh/gqgYENPBGVeuNVTwE1HfU5FuwhV2RQwikTGicXeZO06N/yqubodKZwp7nLJosBuZxkjgcJ2mntRKmHQdwhKzyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fhj8xEOy; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ZdguGhY1; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xWLDDrUT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="QDPkFHwJ"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fhj8xEOy";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ZdguGhY1"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bFcpb4CMbz9t9D;
-	Sun,  8 Jun 2025 16:27:51 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bFcpj5Cr5z9sR8;
+	Sun,  8 Jun 2025 16:27:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1749392871;
+	t=1749392877;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C91pvQGM1LFYFT1KCnnsiWD2lSWJALbWv64QBPBGwLc=;
-	b=xWLDDrUTv7T1hptpO0lN/RXDcoNLZgJfuuhwI2gwjkt53Hmsfs06UfXE2775uhEvINaHIi
-	fW2PDqUx8MEyZqW02pKIOL5tcmRZQWQ+zDitaFxwwq0Bd93DfOpROEx+HZu1jKNDrhAaIY
-	7XMzNpgmi8V9hL+VANlTYeAfnsIFr5yAX27WDB89f4lDlez0I5rNYz65/O89Cb0e9imd/T
-	SvUkHTcvX/GQ0OKHBovKjujsqy6VAbEDXTNK+0izDyXFXP0NPdN3ETRADhchWQFwQI7vpI
-	AGobJP3SHh/No4IWRF66kmWO0FC5h2WskA+66HTlb+399mbSN3Ip1U2yueX5Dg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I9WGMKmeZ7uwuiZQUk9mOsxyTgNCnRjemppawLl5SYQ=;
+	b=fhj8xEOyOLjdNmTbRVW6FI3KEFSIYGmeNP8sNiWlaFZbN/mRt41kWNWii29Ez+GLEJM3Up
+	zqnVyXiW66oJb8rD9evk1LDOg6+pY6yWDbYSbNZ/hZeBrR/2C60cXxOcKDHUWWKdkMrsx9
+	Q4X2BSYfUdP0Ts8mwXm0YlFuWYhm6MgfITO62gL6V8T0IFl6HJh9wMs7CGnYeaTVBExJ8k
+	aMzsfMZlBh2mxu3v/iqfYhDKmO6ftUyPATDLXGR2fykg8JcaQxp5Ae09AXzE5bQHAX1MUC
+	bY2TFwAWgkkR7IBBmVUxZFflna0Wnv1ziamnGGXol8G4I39xUE+zNmkCramOww==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1749392869;
+	t=1749392875;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C91pvQGM1LFYFT1KCnnsiWD2lSWJALbWv64QBPBGwLc=;
-	b=QDPkFHwJFfrCaXTPDxTxjI6p7m//pV9IsfFOrwROVgkQ+T+VyZKBM03sRn3TrL8vwAKrRR
-	qu2ivwhUzcUeqI02GAnAkJk0AxOH0uLTn1QLEkq+SAkNrCSYNxcE7UuGtLfKIA6Zz5H3Ky
-	+p+XeiHHeAnhFofSOD7m9G1R34FiYRRF+FtZrBPgTaxrn60PAC8K5//JXSDvR5S7J/ChoW
-	62l2kjonOEeHiKRTwQEhOO6KSHvnrx0WDSKI9D9ReX1GVCEkaVnyS+1x4CexIUYyY+qPkN
-	m4s7vpO6PdwWhZALPUO48y4MIIMLebCmRDexWXE43qAfEICXKPTpEAen7v8PAA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I9WGMKmeZ7uwuiZQUk9mOsxyTgNCnRjemppawLl5SYQ=;
+	b=ZdguGhY1ywlltEhlgtmRiASC+XBe2TbA6BCrzGmLoSNOBe6/mGJqZoORq1Qw+ZKnulUQkc
+	QVpkxNjC0gmhcbDqFhgW1XGvUnxXCTU0P1tjJjgwrVenQUFjZyNYWvL6v8lvrSsvx23MK/
+	G8YxM6XrkqUugvtxOwNHSrlg9eVK62aYQsxRLGQ+NgvzgAKl1+k+ksFvFFeBgJSEIxvEQo
+	jsdlmzvuOoBLdPpIKk5WS/k8ioNY/at+MHCpxHdsiWUTFCAoVp+vigHyz3nxXwGO+gnoy5
+	Cn2oIg/woN+q2YRMKPsAWPVBQvbOGVLeH2mcuVsCbULrIfV7aEb2/JCwMlWTgg==
 To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	David Airlie <airlied@gmail.com>,
@@ -58,9 +61,11 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/4] drm/rcar-du: dsi: Implement DSI command support
-Date: Sun,  8 Jun 2025 16:24:46 +0200
-Message-ID: <20250608142636.54033-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 2/4] drm/rcar-du: dsi: Remove fixed PPI lane count setup
+Date: Sun,  8 Jun 2025 16:24:48 +0200
+Message-ID: <20250608142636.54033-3-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250608142636.54033-1-marek.vasut+renesas@mailbox.org>
+References: <20250608142636.54033-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -68,24 +73,15 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 9ty4hbb87o46hi5c1uuqdk3tf9kjkb5g
-X-MBO-RS-ID: 13237b3cd0eea42b1e1
-X-Rspamd-Queue-Id: 4bFcpb4CMbz9t9D
+X-MBO-RS-META: fw4w18fk8k79jxohxer6sc6ayydxazd3
+X-MBO-RS-ID: 9697cff4300d79e2cd1
 
-Use BIT() macro. Clean up lane count handling for non-4-lane panels.
+The R-Car DSI host is capable of operating in 1..4 DSI lane mode.
+Remove hard-coded 4-lane configuration from PPI register settings
+and instead configure the PPI lane count according to lane count
+information already obtained by this driver instance.
 
-Implement support for DSI command transfer mode using register based
-access, with maximum payload length of 16 Bytes in Long Packet.
-
-Marek Vasut (4):
-  drm/rcar-du: dsi: Convert register bits to BIT() macro
-  drm/rcar-du: dsi: Remove fixed PPI lane count setup
-  drm/rcar-du: dsi: Configure TXSETR register to match PPI lane count
-  drm/rcar-du: dsi: Implement DSI command support
-
- .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   | 220 ++++++++++++++++-
- .../drm/renesas/rcar-du/rcar_mipi_dsi_regs.h  | 226 ++++++++++++++----
- 2 files changed, 395 insertions(+), 51 deletions(-)
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
 Cc: David Airlie <airlied@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -99,7 +95,40 @@ Cc: Thomas Zimmermann <tzimmermann@suse.de>
 Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+index 7ab8be46c7f6..373bd0040a46 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+@@ -576,7 +576,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
+ 	udelay(10);
+ 	rcar_mipi_dsi_clr(dsi, CLOCKSET1, CLOCKSET1_UPDATEPLL);
+ 
+-	ppisetr = PPISETR_DLEN_3 | PPISETR_CLEN;
++	ppisetr = ((BIT(dsi->lanes) - 1) & PPISETR_DLEN_MASK) | PPISETR_CLEN;
+ 	rcar_mipi_dsi_write(dsi, PPISETR, ppisetr);
+ 
+ 	rcar_mipi_dsi_set(dsi, PHYSETUP, PHYSETUP_SHUTDOWNZ);
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+index b3e57217ae63..cefa7e92b5b8 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+@@ -80,10 +80,7 @@
+  * PHY-Protocol Interface (PPI) Registers
+  */
+ #define PPISETR				0x700
+-#define PPISETR_DLEN_0			(0x1 << 0)
+-#define PPISETR_DLEN_1			(0x3 << 0)
+-#define PPISETR_DLEN_2			(0x7 << 0)
+-#define PPISETR_DLEN_3			(0xf << 0)
++#define PPISETR_DLEN_MASK		(0xf << 0)
+ #define PPISETR_CLEN			BIT(8)
+ 
+ #define PPICLCR				0x710
 -- 
 2.47.2
 
