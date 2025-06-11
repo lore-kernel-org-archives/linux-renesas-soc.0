@@ -1,106 +1,98 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844C028853F;
-	Tue, 10 Jun 2025 22:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAC3188A0E;
+	Wed, 11 Jun 2025 02:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749593339; cv=none; b=M6ERF+bGRK8zSonLr9BAVc7dlBDfrgIJSovcdGU5wDXBFPOcbFO/wE90fpBkh4t/0tg1OsO1UPExMNnZNIM9spWqTbaZXjNi6q0X+9ljJIXRcQfchk+XLfTdjeAGeALZu1WxenUIvRO6+0QnVgoruVSIkRlYPJizWYhGv1OMevY=
+	t=1749607870; cv=none; b=ua8m4UvGEky5QdLVSmGPsNTrDD32Wi0kcrF7RRN6NTv7xuzqK5OyW34e6PoYUyqNoOO75My2N1SVKDnK+boMPUslIiMDCDm9q8y9bigI1EdbScOfNZDo2kKMk6zB+9qlQADZNTtaUW7HMDrVVbsqom01/Xnq9OkMhvjKJMty8qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749593339; c=relaxed/simple;
-	bh=TYP/rzBt1tKjqVNXOYGBiVtW5OhMZEirATwhlgpCj6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aRS9orzAGLi9jCDeq5lzRflo2lvAhoQUGbbJAki1Gv+ba7IvPQsmDLZkAAwh4OOkMUeurGGKO9kQs3+7jqd1GiHlS5pU3RXPZc7TaUWXqGI+UhZ1I9KKXc391s7k7hoSB9I6xNWucFDFaOVDhHz7mJyhslxiwF5GRnD2zP7JpCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vPBzWXYu; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hZ8rMAWA; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vPBzWXYu";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hZ8rMAWA"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1749607870; c=relaxed/simple;
+	bh=V5UN5NhiNun71JzA8xAksH+w0p9JSGOBeaRrap2XsUI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=BDNfhOQqNiZRNa+oUkqqT6EZUj5oCTRJq8q2IrC6lOHgceWoxBhpazvRFaO/Vldhyp9spyouvKj/pD8R0vGUCw64I0HGF6BrC1/lQHzVQg+sTs2AeHq++DUXH0Sqj2lgadXtnYbvtHKR1muXNE16HOz11gaDibfBg4sUoGoBnTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bH2xY5WDYz9t06;
-	Wed, 11 Jun 2025 00:08:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1749593329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZhSW18usXf/fa8+m7F4bYpKDM3eRzhBfY1RQeGT2YM=;
-	b=vPBzWXYueUM3go92CHzECqG5z9OQNQXgp75fS7gstgn74c3TuiylhcbiYaGR1j6J5idrl/
-	DzeI2tQzWfn74wsGUDzW1E2XdTAqHxAbfiOTKeDMCX2wmOVECxI6W7MJTvbSOv8cL5CW5e
-	lrj25D1FrJYki2Ee9DswqU8NIR88ofh6u/+4C56T9PWCDwoHxyqPYWfYKzWunBggogbXNw
-	YmgPEQhOZAx3TOQX1qZIMJJ90ut785MSdf8mEu42rHXBkrnVRaRm3mXnuOU8zzKgxmgTuj
-	Elcb3IjJrvYYVFAXy1O4RxIddrMIfrRKqh0UXIPjsBnBxEW3124x+5g7Ld6W1w==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1749593327;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZhSW18usXf/fa8+m7F4bYpKDM3eRzhBfY1RQeGT2YM=;
-	b=hZ8rMAWAx3Tm6YlJ0LF2xAvbZfb55anrEQ0Ozc8nAylZHrcYuboRIfJ8q0JyG5oZg5mOrT
-	hFRuK57Uu2Kyas6uThOs3Slz2VhmmsrTbZbxYmFlc7iVN5gQ2K22rJtSl7MUUUXKHtEd44
-	3TY8ZmKSSu1JhhBDPsS07iPrkRS39pWPpxAOxnN2+JAvFFSGsFijJRnzwpEMM02167MSVx
-	x3MGR8eUQxRK/gKNps25SK5P9ohR5IKZx0oekFb+Ykc57qTQCWtzLfTDhK2f1Jm/BrWLkV
-	1/7evcGPpNU8KAHhKD8Kq37yG95cs7+bok9lYCLRNHBTxuh2kYjd6vuwnIaztQ==
-To: linux-pwm@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] dt-bindings: trivial-devices: Document Argon40 Fan HAT
-Date: Wed, 11 Jun 2025 00:07:26 +0200
-Message-ID: <20250610220814.167318-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250610220814.167318-1-marek.vasut+renesas@mailbox.org>
-References: <20250610220814.167318-1-marek.vasut+renesas@mailbox.org>
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bH8K31lSsz5B1Gv;
+	Wed, 11 Jun 2025 10:11:03 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 55B2AotE031617;
+	Wed, 11 Jun 2025 10:10:50 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 11 Jun 2025 10:10:52 +0800 (CST)
+Date: Wed, 11 Jun 2025 10:10:52 +0800 (CST)
+X-Zmail-TransId: 2af96848e5ac313-fd045
+X-Mailer: Zmail v1.0
+Message-ID: <202506111010521118VJaiO_pb0rD7b3daxqox@zte.com.cn>
+In-Reply-To: <6b9d5edf-7186-4d7b-814c-5c3f306c68db@kernel.org>
+References: 20250610193403161UQCV5cVGXCRVDheTb7jvi@zte.com.cn,6b9d5edf-7186-4d7b-814c-5c3f306c68db@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: h6w61hrk3cof8ntwg3jdwr4u5zth83rc
-X-MBO-RS-ID: e1304fc48dd708c65e5
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <krzk@kernel.org>
+Cc: <ulf.hansson@linaro.org>, <changhuang.liang@starfivetech.com>,
+        <geert+renesas@glider.be>, <magnus.damm@gmail.com>, <heiko@sntech.de>,
+        <alim.akhtar@samsung.com>, <walker.chen@starfivetech.com>,
+        <sebastian.reichel@collabora.com>, <detlev.casanova@collabora.com>,
+        <finley.xiao@rock-chips.com>, <shawn.lin@rock-chips.com>,
+        <pgwipeout@gmail.com>, <qiu.yutan@zte.com.cn>,
+        <linux-pm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gcG1kb21haW46IFVzZSBzdHJfZW5hYmxlX2Rpc2FibGUtbGlrZSBoZWxwZXJz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 55B2AotE031617
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6848E5B7.000/4bH8K31lSsz5B1Gv
 
-Document trivial PWM on Argon40 Fan HAT, which is a RaspberryPi
-blower fan hat which can be controlled over I2C.
+>> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>> 
+>> Replace ternary (condition ? "enable" : "disable") syntax and ternary
+>> (condition ? "on" : "off") syntax with helpers from
+>> string_choices.h because:
+>> 1. Simple function call with one argument is easier to read.  Ternary
+>>    operator has three arguments and with wrapping might lead to quite
+>>    long code.
+>> 2. Is slightly shorter thus also easier to read.
+>> 3. It brings uniformity in the text - same string.
+>> 4. Allows deduping by the linker, which results in a smaller binary
+>>    file.
+>
+>So you just taken everything from the same my patch - even entire commit
+>subject and commit description - and sent it as yours?
+>
+>https://lore.kernel.org/all/20250114203547.1013010-1-krzysztof.kozlowski@linaro.org/
+>
+>oh my, if doing EXACTLY the same keep original authorship - the From and
+>Sob fields.
+>
+>Best regards,
+>Krzysztof
+Dear Krzysztof,
+Thank you for your suggestions. I have carefully read your advice and
+made adjustments to the patches accordingly. I used your patch as a
+reference standard, not just taking everything from the same your patch.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Uwe Kleine-König" <ukleinek@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Based on your suggestion, I have consolidated the series of patches for
+the pmdomain driver into a single patch. Additionally, following
+@changhuang's suggestion, I have supplemented the patch for
+drivers/pmdomain/starfive/jh71xx-pmu.c.
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 27930708ccd5..b8f1ee6e63dd 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -45,6 +45,8 @@ properties:
-           - adi,lt7182s
-             # AMS iAQ-Core VOC Sensor
-           - ams,iaq-core
-+            # Argon40 Fan HAT PWM controller
-+          - argon40,fan-hat
-             # Temperature monitoring of Astera Labs PT5161L PCIe retimer
-           - asteralabs,pt5161l
-             # i2c h/w elliptic curve crypto module
--- 
-2.47.2
+If there's anything inappropriate in this patch, I sincerely apologize.
 
+Best regards,
+Mingyin
