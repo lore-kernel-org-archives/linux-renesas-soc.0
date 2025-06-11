@@ -1,56 +1,53 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC02235044
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC60235062
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Jun 2025 09:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749634801; cv=none; b=m0lYeuz3T22Zp3cZTLtDAR+6pOxr9zw8cB/IU52T4mOiC1GrzM36Am+QK9kRBpo8IBphcKxMjD79lKmbTNavewQx7lAm1foV3sV5mzXVbmQhxYP3xgWHbIg6QzyV0tmEPtHDoZceANvreIkpUBZN88wy1Gc4VWljBvby0mDHkPQ=
+	t=1749634802; cv=none; b=oUxjm+x5qXKyNLHSk4JLPzi+9pSFfWa6y21xZBlcRs5D0Z2cacicRRK/29tCg8uIB9oMun3BUDwEPktX4L+3Cjp6U6ZTERxWwuZKygGWStrrKwzmCXNnTLpRr4ruEpqiRHrusaGisevHDPvaDeEzyQEyt6sqx2qS0+3M6lU1dRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749634801; c=relaxed/simple;
-	bh=djmGttJvgdrAuT76sTzzM7mwhva2mmL/CWA7Yznfn9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TYuGErBNm/7DwsIoOTelHBVGOlWoL7Vbx9VuKBzoGiWKRSNZjvqGeRY4OP3QPnbFuG2imonIkWrqygJYn8+8HTl5Eqt+31CayukWa0RZKDBx5XVhluhS4tE8UtEit+D7lhJ1Jz8CQASqxWrzFFM7JA+vbJWX9ejgaSWdAOcyemQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VFNVNpSb; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1749634802; c=relaxed/simple;
+	bh=pylqExaVbzuPRBOMc0m95Zov5zzpQxFn1nbBao6wpDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AcI0X2oRXHS/mh6q7fIjrAp3NNF5QXZY2v6grPWKLC3W02TmlOleB+ibKsLPs5entZsESKsuNkcO2+r8PvftLT7QfcazI2JbcnYjcnt59rwUwWFS6G2m155EUgA3ZU+05h4X5M1+EiBD3eKBCLKg2swzMRx91w9HVwN12ak4L5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YdzzHKyv; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VFNVNpSb"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YdzzHKyv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=zH0VzyGLR/mOki
-	AFq6apyRlsnaQD4TKPWwgqIVI/8Ew=; b=VFNVNpSbvQWU5HJ5S3bJmFMYPyssop
-	9Kdmvnr0gWqtRkWE0lq0z8lz4U+TJr8pKSwhd1DpHFsWj9/g+NDUEBLscwAOILa/
-	eOxecLtRZS+aThdI32f0HEJsqfBjJyY1YrGtHZURtQNkDl5zlT4PGsISf6a8MMAr
-	0PolMggQk72ZK3oopSOZ+WiQ4Ovgl1jVXITUU/4rJQN3nZOcwXvYfwKTjXuIASNz
-	a/GmQyd0+WTSagKcidSAAs7fsFEnEvxKJzQ9U7xWEwXCuZ5ac8ZVLzcq4hjFfLzW
-	2+m1XlN5fs8ITMH/W8yMyfZlNZKufKfcExK9abUMZ1/G9DvM1hyEDGYQ==
-Received: (qmail 3186264 invoked from network); 11 Jun 2025 11:39:48 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jun 2025 11:39:48 +0200
-X-UD-Smtp-Session: l3s3148p1@EIQHmEg33rAgAwDPXy2/ACpZfVCNKldR
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=bysa6RPUhrdcas6jzH05PzOQ18+rCet3llSc5uNlw5c=; b=YdzzHK
+	yvGEZPxshpyLlf4ORRphrakdyVFV1rvaFTf/svhSzE9ySXol9d6AsrZ0WkGPINuo
+	uCsXrjEzjpnmjmIvu/36gLDNZ/uBuJ6QehvSSzlanfeaUaeRITydJLy4rJXXFyG1
+	uNbs/6W3bRsUa0RxG0ZlvK4nus9G+P2Vuu+LK+5LgtHvmsJfrp8v/rBtbmWQTYJs
+	ItOeFpSJfl9It4HTdBOP1Fns8EVZN4go5HBNm41bAwHxQ+kPDPpj80jBhBnysHd9
+	/AtcPGDyNbOzwy7fno1JqzXNLnPUdlX6lmD+ZxvJcRacYOWLnoTLlUHKzMJP34In
+	D6wkVLmGPAY4H+Gg==
+Received: (qmail 3186425 invoked from network); 11 Jun 2025 11:39:51 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jun 2025 11:39:51 +0200
+X-UD-Smtp-Session: l3s3148p1@diU5mEg39LAgAwDPXy2/ACpZfVCNKldR
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-i3c@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH RFC 0/7] i3c: add driver for the Renesas IP and support RZ/G3S+G3E
-Date: Wed, 11 Jun 2025 11:39:24 +0200
-Message-ID: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH RFC 3/7] dt-bindings: i3c: renesas,i3c: Add binding for Renesas I3C controller
+Date: Wed, 11 Jun 2025 11:39:27 +0200
+Message-ID: <20250611093934.4208-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
+References: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -59,82 +56,216 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Here is finally the first RFC of a driver for the Renesas I3C IP. It was
-created by merging two versions of it from two different BSPs. Then,
-improved according to code analyzers, cleaned up with regard to coding
-style, and then refactored to hopefully match I3C subsystem standards.
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-It is a basic driver for the I3C IP found in various SoCs like RZ/G3S
-and G3E. Missing features to be added incrementally are IBI, HotJoin and
-maybe target support. Other than that, this driver has been tested with
-I3C pure busses (2 targets) and mixed busses (2 I3C + various I2C
-targets). DAA and reading/writing to the temperature sensors worked
-reliably at different speeds. Scoping the bus, the output from the
-protocol analyzer seems reasonable, too. But hey, I am still new to all
-this, so I might have overlooked something.
+Available in RZ/G3S and G3E SoCs. The G3S has 17 interrupts, the G3E 16
+with the "HDR exit" interrupt missing. This interrupt is put to the end
+of the list, so we can handle the difference using "minItems" instead of
+defining a separate interrupt list per SoC.
 
-The first patches are needed to enable I3C on the RZ/G3S and G3E boards.
-Once this series loses RFC status, they will be sent out individually,
-of course. All is on top of 6.16-rc1. A branch can be found here:
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/g3s/i3c
+Tommaso also did a version with two interrupt lists and using 'oneOf'. I
+prefer this version but maybe the other one is preferred upstream?
 
-Why is this still RFC?
-
-- On G3E (but not G3S), we get a spurious irq during boot. We are
-  working on it. This is just platform dependent, though, kind of
-  independent of the high level design of the driver. For this, we
-  would love to get comments already. So, we can fix things in parallel
-
-- G3S has 17 irqs, G3E only 16. The way we handle this might need
-  discussion (see patch 3)
-
-- On G3S, clocks are named 'i3c' while on G3E they are named 'i3c0'
-  I don't have all the needed docs for this, but Tommaso can surely
-  figure this out meanwhile
-
-- There are some open questions regarding the driver itself
-  (see patch 4)
-
-Really looking forward to comments! This has been quite a ride. Getting
-a suitable test setup was a surprisingly big task. If someone knows an
-off-the-shelf device supporting HotJoin, I am all ears. I couldn't find
-one.
-
-So much for now here, some patches have more details.
-
-All the best,
-
-   Wolfram
-
-
-Quynh Nguyen (1):
-  arm64: dts: renesas: r9a08g045: Add I3C node
-
-Tommaso Merciai (3):
-  clk: renesas: r9a09g047: Add I3C0 clocks and resets
-  dt-bindings: i3c: renesas,i3c: Add binding for Renesas I3C controller
-  arm64: dts: renesas: r9a09g047: Add I3C node
-
-Wolfram Sang (3):
-  clk: renesas: r9a08g045: Add I3C clocks, resets and power domain
-  i3c: add driver for Renesas I3C IP
-  WIP: arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-
- .../devicetree/bindings/i3c/renesas,i3c.yaml  |  186 +++
- MAINTAINERS                                   |    7 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   35 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   35 +
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   33 +
- drivers/clk/renesas/r9a08g045-cpg.c           |    7 +
- drivers/clk/renesas/r9a09g047-cpg.c           |    8 +
- drivers/i3c/master/Kconfig                    |   10 +
- drivers/i3c/master/Makefile                   |    1 +
- drivers/i3c/master/renesas-i3c.c              | 1441 +++++++++++++++++
- 10 files changed, 1763 insertions(+)
+ .../devicetree/bindings/i3c/renesas,i3c.yaml  | 186 ++++++++++++++++++
+ 1 file changed, 186 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
- create mode 100644 drivers/i3c/master/renesas-i3c.c
 
+diff --git a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+new file mode 100644
+index 000000000000..e6e6c57bb56c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+@@ -0,0 +1,186 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas I3C Bus Interface
++
++maintainers:
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
++  - Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a08g045-i3c # RZ/G3S
++          - renesas,r9a09g047-i3c # RZ/G3E
++      - const: renesas,i3c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Non-recoverable internal error interrupt
++      - description: Normal transfer error interrupt
++      - description: Normal transfer abort interrupt
++      - description: Normal response status buffer full interrupt
++      - description: Normal command buffer empty interrupt
++      - description: Normal IBI status buffer full interrupt
++      - description: Normal Rx data buffer full interrupt
++      - description: Normal Tx data buffer empty interrupt
++      - description: Normal receive status buffer full interrupt
++      - description: START condition detection interrupt
++      - description: STOP condition detection interrupt
++      - description: Transmit end interrupt
++      - description: NACK detection interrupt
++      - description: Arbitration lost interrupt
++      - description: Timeout detection interrupt
++      - description: Wake-up condition detection interrupt
++      - description: HDR Exit Pattern detection interrupt
++    minItems: 16
++
++  interrupt-names:
++    items:
++      - const: ierr
++      - const: terr
++      - const: abort
++      - const: resp
++      - const: cmd
++      - const: ibi
++      - const: rx
++      - const: tx
++      - const: rcv
++      - const: st
++      - const: sp
++      - const: tend
++      - const: nack
++      - const: al
++      - const: tmo
++      - const: wu
++      - const: exit
++    minItems: 16
++
++  clocks:
++    oneOf:
++      - items:
++          - description: APB bus clock
++          - description: transfer clock
++      - items:
++          - description: APB bus clock
++          - description: SFRs clock
++          - description: transfer clock
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: pclk
++          - const: tclk
++      - items:
++          - const: pclk
++          - const: pclkrw
++          - const: tclk
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: Reset signal
++      - description: APB interface reset signal/SCAN reset signal
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: tresetn
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clock-names
++  - clocks
++  - power-domains
++  - resets
++  - reset-names
++
++allOf:
++  - $ref: i3c.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a08g045-i3c
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          maxItems: 2
++        interrupts:
++          minItems: 17
++        interrupt-names:
++          minItems: 17
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g047-i3c
++    then:
++      properties:
++        clocks:
++          minItems: 3
++        clock-names:
++          minItems: 3
++        interrupts:
++          maxItems: 16
++        interrupt-names:
++          maxItems: 16
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a08g045-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    i3c@1005b000 {
++        compatible = "renesas,r9a08g045-i3c", "renesas,i3c";
++        reg = <0x1005b000 0x1000>;
++        clocks = <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
++                 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
++        clock-names = "pclk", "tclk";
++        interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names = "ierr", "terr", "abort", "resp",
++                          "cmd", "ibi", "rx", "tx", "rcv",
++                          "st", "sp", "tend", "nack",
++                          "al", "tmo", "wu", "exit";
++        resets = <&cpg R9A08G045_I3C_PRESETN>,
++                 <&cpg R9A08G045_I3C_TRESETN>;
++        reset-names = "presetn", "tresetn";
++        power-domains = <&cpg>;
++        #address-cells = <3>;
++        #size-cells = <0>;
++    };
++...
 -- 
 2.47.2
 
