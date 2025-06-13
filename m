@@ -1,171 +1,333 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E932C376B;
-	Fri, 13 Jun 2025 10:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6012749DB;
+	Fri, 13 Jun 2025 10:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749809458; cv=none; b=fYyDZE7vOoLhf4rYUiCtRBzZaTnCVYEBn8uFxIRpQXPQghLVvkPFN/IDb0xRp92m22wTnkEDBN0PAmWDwBTVEmahweRDO/ANdWg06/dT3R0W+SCH88ovK7qdYld0D+49D7Gazw8Nj7VJu3aYzboAm256B/bcwPx0i3AsngvHVOo=
+	t=1749809824; cv=none; b=ImZi74O/obmKMXn9gGf4fAAFYu384xVVfPuVgk6rbHuZiyktt4LXGsIVS8Zkyrff0qMVrX3K36Tr3GVPxFltLG4ttCScDZsipdc4qZCSFP3v6U4eamyoX3U/2Z9Caqn8kuFSsJ9TFiDEO1TbSV8d3L9KaoHsDhbOStrmcZQ9YmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749809458; c=relaxed/simple;
-	bh=ghZ1LG1KHdiUBK1zj+udIgi2zei5jleAEyjVIVwbSK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ru0cU9jbVNlkS6Iu93aXp9qsvaI4qJDt0Zb5GfF6n6HV5rsEOaqk9AhcvLwgjqfHre7MwkvX6xUZ0Fyat7wG9alakVKk22myp0zMa3llm4Hg+y/B9j1Tsex/ufZ/K8oOGLnZSRAPFqahlHqO08xHzn7FMZjrEaUPG699gKqDyRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQeWMcQ1; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1749809824; c=relaxed/simple;
+	bh=Xi2cbe1hpUQ7Dcv6wnVOPWdoRaxHUwzw1212ISrr1DY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qgOagHIq2PPH91h4rQhK/CAL5YsGpOt3A9DwLqeU7sP4ZXSCLPy5Fyg9VZ2FOAhPSPStIIQyQw3SD6PCBPqYwg3HkGLDtbwHZ300vzZoqcvJch02MtpHokZH00u4jNFTmLErnfeJak2S8E9RZ2F2cucCsYyAheMm+ICQLhUvClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=FNPTQ20M; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yco3Zf8k; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQeWMcQ1"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451ebd3d149so13048125e9.2;
-        Fri, 13 Jun 2025 03:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749809454; x=1750414254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=REfwVy48LjvgCSinXle+QxaU3FrH2CN4u42d5xmEyy8=;
-        b=cQeWMcQ1qpHx2TrrfSDMvA/TrPe1qsJUm6zTDmygnt0X3wNO+EA+6lufmG/Kw313Jz
-         RLQgohYw7A33/fDSJ8QHTS5oPddNmivE31ZXKkKbL0ZLxMj3ULT4ose6ACKLRUFwZnzE
-         oNi15cVyy3vDYGQzbvgNhR3AqYjZOR0uMgDst0jRUnBJXb9TwuoCW6+OYG5UQ6adSaku
-         Vfdx6eGMCg7z0+2zMAxb5zmJ0Z1YBoBTlRZkkFfNfpGlkTq950LcolH81s2DoI91/T/5
-         ljbgLPTf1JiJLzsLIHoWl3OGnyDkdlSIedSuar56saSC9CUi67vilWVRPZ7tvKfyGUHx
-         qtsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809454; x=1750414254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=REfwVy48LjvgCSinXle+QxaU3FrH2CN4u42d5xmEyy8=;
-        b=c+9wOvHRoQ0izBK0TRN611MvUAQO0RkorLArMPsUoiueXoS1r4GcUUw7CWP2J5xQto
-         qG7o8V7PDy4+i2oyb+O34t3f3YJhEbpTkTVSzG3mS5TgNjuYZE37plVuUFuHtmqpaXbD
-         iFNrLK2pkMkb+KH7lR8jgI3g9iuYw8NpgBm9ALHrC/QhjefsKrf7FAugP86D9i93R7Hf
-         gnIACmdBtR8L0PT+2scSgplMOJl03ra+vjPKOIGRIJjkxUtUryP92qpk4QgkxjcdNIDU
-         CfXvFUNsvbQ/k0SH73jm5tqB3udKu/61XLPmfAhcZVPBR/FAttkDLQocsz0ky+n9rF1b
-         gS7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oXaLGXNijYtKr3m1G0rCz3DMwQ5gxTCrpV491oa6MMYabsZZODtNI3/P/wGvDq3xqekcSW+yMNbR@vger.kernel.org, AJvYcCVtP51CXSFTN6bdfLDLiaSeHqR1MQYKhJCSti3SWOikjj7lsohNX4JcZ7TFxczdd2kVs14lvTGd3SgN3M8sssxhI+M=@vger.kernel.org, AJvYcCWyudvbZyd37xH3H3l+uwBag1ONSj2n4g1bhhFVF9vxejQJafCl9bKJBWy7nsHwdvUZx7gnY18sW5MgFK7t@vger.kernel.org, AJvYcCXM2som8jblq3O4aymFOo5ck1F+AiIFaKZsGkjzHpn/pV96ad5jXOJZlBrUvmAFhe7z6ROWtkiuHMkH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw78l8EY391/zPwYtK6CC85l82liweClSv0AFu3o0qKgOfQnz2Y
-	ANgnU7NrfadHznZIGe6VETZ2gqwp2f7OpBO68foLrDih16e5KaiYxYi/Iv35fft+ABqokUvMyrx
-	+Lg1DqQrOop4075burJsCn185TIt6G+4=
-X-Gm-Gg: ASbGncuB+n1Iffd44ndCeSwUu76GxtME7ZSwSW4g2BWT70j7WcJl4pA+ixX0vxNhiN4
-	YBHQml2TI2pH3RxbVIfAkMwfBK2NWUegj7f0cefo4WNc/f/YdxRTvYFEi6bydjekRdc7YdlGWqq
-	6vfDymJuFvCUj1whw5VSK1akNzuZplFHADCXFtBCmOsdHoOA==
-X-Google-Smtp-Source: AGHT+IEWDvuz4zH4iWOydIQMgbrpQR3J1s4lhCZk8JE7vwP5jdDaVx6ppbnNqm2UA4NOKPnuTe1bjM/QFqa3jPbgQ4I=
-X-Received: by 2002:a05:6000:1acf:b0:3a4:d0ed:257b with SMTP id
- ffacd0b85a97d-3a56870469emr2315734f8f.22.1749809454252; Fri, 13 Jun 2025
- 03:10:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="FNPTQ20M";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yco3Zf8k"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 5CD981140152;
+	Fri, 13 Jun 2025 06:17:01 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Fri, 13 Jun 2025 06:17:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749809821;
+	 x=1749896221; bh=0nv3cUiRRHeJVT8/zd+YX5iKytHTOVd5R+KmXVbiMaU=; b=
+	FNPTQ20M4D67CgaJimm7D86qsE0iS5CziKYtmmAbEpsuRIkfRTCoE+YqsSnUnRm8
+	gWE0YkALKvpxVF9CgOeGZ6it/Y3IidkNyqzGK7IOvpIuWFnsmFBcBdVcu0AveG3U
+	+8ghqWE8WHF7hO0cwGIEPTSvQLNSkSkDPUadWK39+SkZqZlJnfuGW8M12Gn133Et
+	hKi9Kgfi9MUxSb/uSlkHDvksrxds6wieM+IU2DDVrEizpCv7JwRIapJvT2YZA4Yn
+	/Ura0djLneD485FRc5qvbXJ+L3A04zKgIWQglG0O4kn61fG11JEEKiTi3ZUK3Osp
+	guJhfMrhDEzPpHtUV3T7+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749809821; x=
+	1749896221; bh=0nv3cUiRRHeJVT8/zd+YX5iKytHTOVd5R+KmXVbiMaU=; b=Y
+	co3Zf8kif40EWo2yjR4uLDuMBjUySknpL6dkQH9gOw17EZn77PN1o2BRvIbmqNbG
+	kBvVzmua3EKSYV9bL7t7t1ig1gL/CiandaUIUi293Dgbs3SpbKKLMVD5+4MDtuBF
+	RjVJIf/c8NuRI1EeDJQsOJxXfR3dVtvh4vKj7H3dyvz8OOr0N/P/knKGFSRSO7Wv
+	iUug4Jnhh8Qetg5zRBu03hGy4pHfSlvtWnIuwDRri6+D6sECMpsu5HTgx5NLw0LF
+	Q/q7X3QBh+qJjyN+6e29f0ZjaxUGm+secm4gyTB7cjzCZVM5Wt4+i1oSgCYsCr04
+	hp/dcUjrwbz4EwtcdSK2w==
+X-ME-Sender: <xms:nfpLaJpb1Dz2mZu4jrzLHNp-P5OAglTD-FcFaxZQ-5PFecuhTBlVlA>
+    <xme:nfpLaLp4pfbke_gykFX8pkAWE6rGeTY4ois_JWjJiaFxXcy6n1D3hSmriIf4Svf8Z
+    GCQlkC2SjsseLYRHqw>
+X-ME-Received: <xmr:nfpLaGPbwz3M4u2krYUOMzS9ZIgV65ZlWRefaSIrsp054wvav5ZP3aQRaNtiy6qIAbb-vS_AhR2dDcDMop_n-k_QF_5tlLIajw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddujeeikecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
+    guvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgr
+    thhtvghrnhepfefhleelhfffjefgfedugfegjeelhfevheeikefhueelgfdtfeeuhefftd
+    dvleeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
+    nhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrd
+    hsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    lhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprh
+    gtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomhdp
+    rhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtoh
+    hmihdrvhgrlhhkvghinhgvnhdorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:nfpLaE7HpqExs3SJg9rPI9mHAyujcWK84b6zg1bR7HOcTc8n49UYuA>
+    <xmx:nfpLaI60PkdSX705K5TIfIeHnIp2WsLOheBJ_KyqUfhqNSztlZkGCQ>
+    <xmx:nfpLaMgQucOxmOvDdM5erA88e7Zu15Wk28E0mJhDXBYR3s6h5jbAzQ>
+    <xmx:nfpLaK5m3fXIAlcfhIepjQhB9hRbbEaMnaA9KFp8r0pDQSejwzTiHQ>
+    <xmx:nfpLaNWe32yjqo-GZ_ACsiqK5leDGhsjnTZQPBtCK5CgilzwROr0StyW>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Jun 2025 06:17:00 -0400 (EDT)
+Date: Fri, 13 Jun 2025 12:16:59 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 10/12] media: rcar-vin: Only expose VIN controls
+Message-ID: <20250613101659.GC1002387@ragnatech.se>
+References: <20250606182606.3984508-1-niklas.soderlund+renesas@ragnatech.se>
+ <20250606182606.3984508-11-niklas.soderlund+renesas@ragnatech.se>
+ <20250612232820.GG10542@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609184114.282732-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250609184114.282732-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUCYjPP326g9MsnH8p6gM-vy33L4OsFFMGzsZbLbucTUA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUCYjPP326g9MsnH8p6gM-vy33L4OsFFMGzsZbLbucTUA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 13 Jun 2025 11:10:28 +0100
-X-Gm-Features: AX0GCFsNZ6GYODXXSo_A5GWSFs0V8tUCqmJPQVQONI8m8dqOA67nkeFpQLYGvN8
-Message-ID: <CA+V-a8sWMFEA5Ub8nGh6jygcQKKVm568nD2zo5HSE2jN1qp4pg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] dt-bindings: i2c: renesas,riic: Document RZ/T2H support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250612232820.GG10542@pendragon.ideasonboard.com>
 
-Hi Geert,
+Hi Laurent,
 
-Thank you for the review.
+Thanks for your feedback.
 
-On Thu, Jun 12, 2025 at 1:17=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 9 Jun 2025 at 20:41, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Document support for the I2C Bus Interface (RIIC) found on the Renesas
-> > RZ/T2H (R9A09G077) SoC. The RIIC IP on this SoC is similar to that on
-> > the RZ/V2H(P) SoC but supports fewer interrupts, lacks FM+ support and
-> > does not require resets. Due to these differences, add a new compatible
-> > string `renesas,riic-r9a09g077` for the RZ/T2H SoC.
-> >
-> > Unlike earlier SoCs that use eight distinct interrupts, the RZ/T2H uses
-> > only four, including a combined error/event interrupt. Update the bindi=
-ng
-> > schema to reflect this interrupt layout and skip the `resets` property
-> > check, as it is not required on these SoCs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 2025-06-13 02:28:20 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Fri, Jun 06, 2025 at 08:26:04PM +0200, Niklas Söderlund wrote:
+> > Before moving Gen2 to media controller simplify the creation of controls
+> > by not exposing the sub-device controls on the video device. This could
+> > be done while enabling media controller but doing it separately reduces
+> > the changes needed to do so.
+> > 
+> > The rework also allows the cleanup and remove paths to be simplified by
+> > folding all special cases into the only remaining call site.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > > ---
-> > v1-> v2:
-> > - Listed the interrupts in the order as mentioned in the
-> >   HW manual.
-> > - Renamed the interrupt names to match the HW manual.
-> > - Added Acked-by and Reviewed-by tags.
->
-> Thanks for the update!
->
-> > --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> > +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> > @@ -29,32 +29,46 @@ properties:
-> >                - renesas,riic-r9a09g056   # RZ/V2N
-> >            - const: renesas,riic-r9a09g057   # RZ/V2H(P)
-> >
-> > -      - const: renesas,riic-r9a09g057   # RZ/V2H(P)
-> > +      - enum:
-> > +          - renesas,riic-r9a09g057   # RZ/V2H(P)
-> > +          - renesas,riic-r9a09g077   # RZ/T2H
-> >
-> >    reg:
-> >      maxItems: 1
-> >
-> >    interrupts:
-> > -    items:
-> > -      - description: Transmit End Interrupt
-> > -      - description: Receive Data Full Interrupt
-> > -      - description: Transmit Data Empty Interrupt
-> > -      - description: Stop Condition Detection Interrupt
-> > -      - description: Start Condition Detection Interrupt
-> > -      - description: NACK Reception Interrupt
-> > -      - description: Arbitration-Lost Interrupt
-> > -      - description: Timeout Interrupt
-> > +    oneOf:
-> > +      - items:
-> > +          - description: Transmit End Interrupt
-> > +          - description: Receive Data Full Interrupt
-> > +          - description: Transmit Data Empty Interrupt
-> > +          - description: Stop Condition Detection Interrupt
-> > +          - description: Start Condition Detection Interrupt
-> > +          - description: NACK Reception Interrupt
-> > +          - description: Arbitration-Lost Interrupt
-> > +          - description: Timeout Interrupt
-> > +      - items:
-> > +          - description: Transmit Error Or Event Generation
->
-> s/Transmit/Transfer/
->
+> > * Changes since v4
+> > - Broken out from a larger patch.
+> > ---
+> >  .../platform/renesas/rcar-vin/rcar-core.c     | 84 ++++---------------
+> >  1 file changed, 18 insertions(+), 66 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-core.c b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+> > index 8cb3d0a3520f..597e868a6bc5 100644
+> > --- a/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+> > +++ b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+> > @@ -365,14 +365,6 @@ static int rvin_group_parse_of(struct rvin_dev *vin, unsigned int port,
+> >  	return ret;
+> >  }
+> >  
+> > -static void rvin_group_notifier_cleanup(struct rvin_dev *vin)
+> > -{
+> > -	if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
+> > -		v4l2_async_nf_unregister(&vin->group->notifier);
+> > -		v4l2_async_nf_cleanup(&vin->group->notifier);
+> > -	}
+> > -}
+> > -
+> >  static int rvin_parallel_parse_of(struct rvin_dev *vin)
+> >  {
+> >  	struct fwnode_handle *fwnode __free(fwnode_handle) = NULL;
+> > @@ -510,7 +502,7 @@ static void rvin_free_controls(struct rvin_dev *vin)
+> >  	vin->vdev.ctrl_handler = NULL;
+> >  }
+> >  
+> > -static int rvin_create_controls(struct rvin_dev *vin, struct v4l2_subdev *subdev)
+> > +static int rvin_create_controls(struct rvin_dev *vin)
+> >  {
+> >  	int ret;
+> >  
+> > @@ -528,16 +520,6 @@ static int rvin_create_controls(struct rvin_dev *vin, struct v4l2_subdev *subdev
+> >  		return ret;
+> >  	}
+> >  
+> 
+> Now that the control handler for the video device only has a single
+> control, you can reduce the number of buckets:
+> 
+> -	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+> +	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 1);
+
 Agreed.
 
-> > +          - description: Receive Data Full Interrupt
-> > +          - description: Transmit End Interrupt
-> > +          - description: Transmit Data Empty Interrupt
->
-> The last two don't match the order in the documentation, and the
-> order in interrupt-names below.
->
-Ouch, I'll fix that and send a new version.
+> 
+> > -	/* For the non-MC mode add controls from the subdevice. */
+> > -	if (subdev) {
+> > -		ret = v4l2_ctrl_add_handler(&vin->ctrl_handler,
+> > -					    subdev->ctrl_handler, NULL, true);
+> > -		if (ret < 0) {
+> > -			rvin_free_controls(vin);
+> > -			return ret;
+> > -		}
+> > -	}
+> > -
+> >  	vin->vdev.ctrl_handler = &vin->ctrl_handler;
+> >  
+> >  	return 0;
+> > @@ -627,11 +609,6 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+> >  	if (ret < 0 && ret != -ENOIOCTLCMD)
+> >  		return ret;
+> >  
+> > -	/* Add the controls */
+> > -	ret = rvin_create_controls(vin, subdev);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> >  	vin->parallel.subdev = subdev;
+> >  
+> >  	return 0;
+> > @@ -885,34 +862,17 @@ static int rvin_csi2_setup_links(struct rvin_group *group)
+> >  	return ret;
+> >  }
+> >  
+> > -static void rvin_csi2_cleanup(struct rvin_dev *vin)
+> > -{
+> > -	rvin_group_notifier_cleanup(vin);
+> > -	rvin_free_controls(vin);
+> > -}
+> > -
+> >  static int rvin_csi2_init(struct rvin_dev *vin)
+> >  {
+> >  	int ret;
+> >  
+> > -
+> > -	ret = rvin_create_controls(vin, NULL);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> >  	ret = rvin_group_get(vin, rvin_csi2_setup_links, &rvin_csi2_media_ops);
+> >  	if (ret)
+> > -		goto err_controls;
+> > +		return ret;
+> >  
+> >  	ret = rvin_group_notifier_init(vin, 1, RVIN_CSI_MAX);
+> >  	if (ret)
+> > -		goto err_group;
+> > -
+> > -	return 0;
+> > -err_group:
+> > -	rvin_group_put(vin);
+> > -err_controls:
+> > -	rvin_free_controls(vin);
+> > +		rvin_group_put(vin);
+> >  
+> >  	return ret;
+> >  }
+> > @@ -966,34 +926,17 @@ static int rvin_isp_setup_links(struct rvin_group *group)
+> >  	return ret;
+> >  }
+> >  
+> > -static void rvin_isp_cleanup(struct rvin_dev *vin)
+> > -{
+> > -	rvin_group_notifier_cleanup(vin);
+> > -	rvin_free_controls(vin);
+> > -}
+> > -
+> >  static int rvin_isp_init(struct rvin_dev *vin)
+> >  {
+> >  	int ret;
+> >  
+> > -
+> > -	ret = rvin_create_controls(vin, NULL);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> >  	ret = rvin_group_get(vin, rvin_isp_setup_links, NULL);
+> >  	if (ret)
+> > -		goto err_controls;
+> > +		return ret;
+> >  
+> >  	ret = rvin_group_notifier_init(vin, 2, RVIN_ISP_MAX);
+> >  	if (ret)
+> > -		goto err_group;
+> > -
+> > -	return 0;
+> > -err_group:
+> > -	rvin_group_put(vin);
+> > -err_controls:
+> > -	rvin_free_controls(vin);
+> > +		rvin_group_put(vin);
+> >  
+> >  	return ret;
+> >  }
+> > @@ -1372,6 +1315,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > +	ret = rvin_create_controls(vin);
+> > +	if (ret < 0)
+> > +		return ret;
+> 
+> Don't you need to call rvin_dma_unregister() here ?
 
-Cheers,
-Prabhakar
+Indeed, there is a similar issue where rvin_id_put() is not called where 
+it should introduced by this series.
+
+> 
+> > +
+> >  	if (vin->info->use_isp) {
+> >  		ret = rvin_isp_init(vin);
+> >  	} else if (vin->info->use_mc) {
+> > @@ -1390,6 +1337,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+> >  	}
+> >  
+> >  	if (ret) {
+> > +		rvin_free_controls(vin);
+> >  		rvin_dma_unregister(vin);
+> >  		rvin_id_put(vin);
+> >  		return ret;
+> 
+> Error labels at the end of the function will make this more manageable.
+
+I agree, I have added a small patch early in this series that converts 
+this error path to use labels and fixed the missing call to 
+rvin_id_put() and rvin_dma_unregister() in the error paths using labels 
+as you suggest it turns out nicer.
+
+> 
+> > @@ -1409,13 +1357,17 @@ static void rcar_vin_remove(struct platform_device *pdev)
+> >  
+> >  	rvin_v4l2_unregister(vin);
+> >  
+> > -	if (vin->info->use_isp)
+> > -		rvin_isp_cleanup(vin);
+> > -	else if (vin->info->use_mc)
+> > -		rvin_csi2_cleanup(vin);
+> > +	if (vin->info->use_isp || vin->info->use_mc) {
+> > +		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
+> > +			v4l2_async_nf_unregister(&vin->group->notifier);
+> > +			v4l2_async_nf_cleanup(&vin->group->notifier);
+> > +		}
+> > +	}
+> >  
+> >  	rvin_group_put(vin);
+> >  
+> > +	rvin_free_controls(vin);
+> > +
+> >  	rvin_id_put(vin);
+> >  
+> >  	rvin_dma_unregister(vin);
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Kind Regards,
+Niklas Söderlund
