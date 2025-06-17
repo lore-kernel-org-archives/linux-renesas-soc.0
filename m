@@ -1,128 +1,129 @@
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D213C2CCC5;
-	Tue, 17 Jun 2025 15:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B1B2ECE99;
+	Tue, 17 Jun 2025 15:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175467; cv=none; b=TzXsZmRzqJCAjL8afTnZAQMOrv3BIn5pQnobibY6tt08D5bIpoFisJBzP5lKwIqEWScoHYMNJUUD5Zuaod+kcniUPUVR0NQw1+c2VYgJgrM3rhL/vS4F4GZsQnwhTfsUwU2HR8M5ZxNqs0CEBRyOmYCqI3mhlBCoKjUTULqi7uA=
+	t=1750175882; cv=none; b=Rq6wQS/nu1MRQFUnjWWU0CIBOUr2eer8azHGgjvwkoDSHcQ66e+1dUJMSU3QVFP+gb0XqXXIZkyiGWydsyyeNa83VmsOiFKrLJnp389ZocekV3Hi6vmJ5a7VuaK6Em/h/zFTjo5d/F9LnQJdjvyV9uv3BkQfsdqsaEBMuOzCjk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175467; c=relaxed/simple;
-	bh=5RqjtlgUUeuy/fAmRiej3LgLEt2jOXDeeg6BVuZlz38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W3UNBpiMWqNJDRxTHvO9s8lvV4/Wfl8ksPOJpUnAt9v/x06KofgwzVQLPMP3+WGCKbe7IOS3XdA4GDSbzKJnyHVwptUu21p6fOIsfYXvbNBEdS4CyBJRf5+NdtQyR6snpMdwqLB9R1Q509/4EvaxjANfM9eH9R0oheuyY2U6+ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1750175882; c=relaxed/simple;
+	bh=SffMIIFbr7xI/iF/n2eCRR6ijDsf2+ugvTClsReolMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KGPg7hbBld5m0ykSA0csWQk3obMzqUzAk6r7TkNUbweVmkIcXpZp8sFUmgq445wQclDPy7Rh1+crccoxm0sh53xR+aixKNrWihkc3jfBAPoFITWUsxQzXG/Sr/4rNGZ4NGstCSiKg60W1hY+nzqrYNFiZMTB/ATTxLZsqOiecQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Io3w9Uv6; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e7fb730078so992295137.1;
-        Tue, 17 Jun 2025 08:51:05 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Io3w9Uv6"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450ce671a08so37400365e9.3;
+        Tue, 17 Jun 2025 08:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750175879; x=1750780679; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJJNLvFYXH8jXiom8tinXa8ZRDeIOxc/CjQYop7JDbc=;
+        b=Io3w9Uv65yn2DGfSGuJxHRiIaz0bkAxWp7WGRyRgFsYJnRJklcgrwdfd89FfoxQ2og
+         zsE6+mU09PIZAw7pTKd976EoIb7A6/1LtM7hwzNf5u5e4QaX3Bs5epfWZ/cABVSA+y7R
+         BZeO4TncU2BWVDdwl8yU741kxTNiiezqTQllXl4oOWwJEnZsEqZMyo7vtGY7DETGkS7e
+         Xvy6kSUgPXWSUTGHX3HSFto3ROs8Pfb2R3PN1cQYka1vsVmBv/ti8x7zufm/tOmh+ycd
+         Y0eZPzUz4BhYcHHtViU/eXSwnFZqVVFBTs8bkK0klPeFyC0eiZD5Ueen1wACmywWytqX
+         miNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750175464; x=1750780264;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1750175879; x=1750780679;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OWqem8pDRB+jdxImbAtTRPgwW7lDiNsUzIpmKoUsHz4=;
-        b=Px+MLzP5um6MdMYgFr4ki2uvKKHACV5fxFQj6z3je4MEwrCNxDcHyuaAjVmRbIQxEw
-         PnJmqE4UQ4e9YPD5fSkFT3X04ozAj0vYkzX4UEUggRB3tXb4s1rjG6PGwgUW+udiSwVf
-         zj9/aVZvQ5Dq/dx0bMgJIZrQfo2mpoPSb5kzJfeVKgz6VVsOOdRKkq2bJV40kHztnKHx
-         AwTP6iUWp6ScKliboTjRC+biLQbdedM4cvfSJ0xNUdcFy+v6OLJMQTT2EhXld/TRXaHT
-         GyFOoVrWqkYBZ6tWmGF+8Rmit8XNcD9XzGkRyt6Fbxz+msEEFyZl+f4MLwfrM/qlWPq8
-         HxqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTG1CTCZnidGAOuHmC7eecJMQVykufZQ5O7yaU56NByzwUFeMp1fBIQNydy36cjt6U4HCcOcaF8mS1@vger.kernel.org, AJvYcCWanNbcH+Pq4P4F+dfxVdlz6lmLPdbNGJ0fa7mik8YV1w7XRju5OlW0l/IlK3bUiFJoGZN7sD76GW4RL1RrA660H54=@vger.kernel.org, AJvYcCXfNHX/HpgmgK2wFvAd6ZIZwJnI/e3N4C37h/l2QU/7XZbFTAtMuBlSOvHm/UD5e6rXsyaajOCBh7UoPu86@vger.kernel.org, AJvYcCXlOSj2FS2ZPqe2UEcXY71LmIZ8ndzvklWoxjdLnYo4OvYCIvQOfdgH03CL71NDkFaqn6kXXlFt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTwuY3JHfc4ONEoV7m5cxuwwDU/oUgWDJsduGJiazddNkxo91A
-	mDPqRHMgXeWu7QKaKumvfRmongzTMmkcnxUaOtBTPmxTz0SoZ+Jr9e3FNzKW28Qb
-X-Gm-Gg: ASbGncuhAsj0T8IwdFc1Cye2nj9iGBG6YSdX71n+r7C53pWfkc8XPKkBqeddlsV7Zv4
-	5Lqf2vXXKi8Xwj1HvagzxbpAVYGJEgSml/FtQRFthsLEwgSEwodQVuZzObeZxx8hsfasHHztz7j
-	0bNP9f9NqegR1G9AYXYzsAeSbdY6a8+6X2xpddU9LQwks66ll1NqvcWmJziE3SwmlcmJVPTFrZp
-	k6L9eY/mFyGd8TtasG9gcDo0tFHhZfmJYw9/cfB2RSNszaAhZ9tcn4uOAFaMOyXhl/k1h5xvLgE
-	T2PWPsLE3FPHyB/xuNpLugl2LhV9Pows4rCop+KQ/j56jNwspysMvQ56EdnN3LZ3RfyHuoJAwjS
-	FQVdr9t0j32TpHU+Su4gGKysw5A0a2/lgwSM=
-X-Google-Smtp-Source: AGHT+IEYnm3bsCHqtvQsTtYnEmS222ydUHeJsXfCGfB3ygwEnvT/dNNuIa75K2agZgGorXX1wavBgQ==
-X-Received: by 2002:a05:6102:2927:b0:4e6:245b:cf5e with SMTP id ada2fe7eead31-4e7f62a5240mr9649994137.17.1750175463588;
-        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f0fb54157sm1590908241.27.2025.06.17.08.51.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87f234ba1abso642533241.1;
-        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4U6/pXgl6a/mYaRWTLR6HdZJmqXd792SUhqQRoaLS6+MHfA2PTTwObHRtpt/jwnitpC0/K+Skhg4w@vger.kernel.org, AJvYcCVqvROObTfYX3Mme6oKGX5eJXs6KYHk6tQaLzhHFJjk+pgTV2ChY6XZb7y2VOaUxnsRU5ICWWs54yECJlek@vger.kernel.org, AJvYcCW+fMuEPqamnIHccAoogjdEjZD8IlrQsuiHFMFn4EsShJHN+ZyZ+YiFA+KRYQl1yZhePYKL0DFJ@vger.kernel.org, AJvYcCW6Vk8esDhWSmEUgBG6zopDrDLdBDFQ0m5SmZMhiUUTREhRaBruhMVdz1ECtpvuF0nWQjxjI5resd2bl6RaXKdS02s=@vger.kernel.org
-X-Received: by 2002:a05:6102:26c2:b0:4e2:ecd8:a1f with SMTP id
- ada2fe7eead31-4e7f6186014mr8280933137.1.1750175462827; Tue, 17 Jun 2025
- 08:51:02 -0700 (PDT)
+        bh=KJJNLvFYXH8jXiom8tinXa8ZRDeIOxc/CjQYop7JDbc=;
+        b=er9M17ftnWdT2Mxq0hLO5VFyp6Bf7ApbB0YnENuZTmTcHMgBKZLEj1Tiw7l6ygMipG
+         y0TTDAmJh+tNKBCG6ihUlR1hzaHNmQfVPFD8xcO83+E/gC0hKtLqu88NVJO+yQNKT0gb
+         AgvE91f2XsytRUxt+r8QmIiG1iHQA+u37eKmce/MojOlCONLxL9dyYaWfxpNy9cDw3Io
+         Q1fe2RahyQwYE/yZNBnrueV5SsAEWbxH+NfZ6TO7IAEvGEpMfaN3DxxiwgqcuQxENDSN
+         vM+s25mmTdNHY2pDvaG5JIhnMvafWvUnQw05rcKdxrjZng+jl8WM8+srKlDQpC/S6ip+
+         pEAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlmw4gqOZhCfdXcARKMZXUnOXUw02n1c7uj9qAKmzcyADGWBgsWeeQ67hNs51bSA27bG5G7fKy6Wr2A1tJ@vger.kernel.org, AJvYcCVzyL8SAQnQH7F2zOphEOSTOm7C3VYg/TIGT2nNwBReEji8kGxgh861yiuY3bhwGLp5zFx8hb1F6nt1@vger.kernel.org, AJvYcCWDYBTbZnTHQbv4FzbMFjtpTptR2YdOBmrcD0fe0SzWi23meB6arZZsA0RHQCl+ufySaMtVcQTNYqqc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD5tyDUXU9F157bqxdB5cLAhmjdQAPsSA5pxBSIGNCcqxJ+9/6
+	OwRl6N7NWMjeGJke7LnK+Fpvil9z+mDoUqiQ6477qpAUlWVLkg/kiXiz
+X-Gm-Gg: ASbGncsOLTbLGM9Rx2sW8aayR7zNeWxjWbrH45u6AoFWBd0KGPrRv3Rv6SbkjisHWP2
+	2dSTeHmvRIQxlQNuYEt59BaXj6KHKBUJ+/skFFNNnvbA+E5fmxV9yt4QsXmwT8Tri0LCTU+OHuM
+	kMuzgZjaC7qTE+8AukKOChERhsE/cz9QfZkhl76R6srzmskjZcn91zl6hZtMjHtIzefoXaFFa3n
+	YkaHqvaMzy36KIRnZFmwychvgGPOXsB+uCUgh088Npna78sp8o17WsKR1UT4TrhcCSIP1z6N6Xz
+	c6ItJ5niJe5vDD4xyTXJThYcGVi8ea3Ms7da5ZDO7e6m11Sxp441Lr5WPV/HBWn3ApqNXydCL0J
+	1yHXO57MApTY=
+X-Google-Smtp-Source: AGHT+IEHG+qH1Kc0aRWhRe2pFMGOtmXhNLQop3+1vD7jRkXX9/xcUoyibN9G6CU0imRTOunbvijpqw==
+X-Received: by 2002:a05:600c:529b:b0:43d:97ea:2f4 with SMTP id 5b1f17b1804b1-4533caf5b1amr132980785e9.12.1750175879106;
+        Tue, 17 Jun 2025 08:57:59 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:a081:30f1:e1c7:6f28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a53f79sm14189115f8f.4.2025.06.17.08.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 08:57:58 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/4] Add CPG/MSSR support for RZ/N2H SoC
+Date: Tue, 17 Jun 2025 16:57:53 +0100
+Message-ID: <20250617155757.149597-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611061609.15527-1-john.madieu.xa@bp.renesas.com> <20250611061609.15527-4-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250611061609.15527-4-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Jun 2025 17:50:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWJNCSUj6mUweKtXycHNNok4L=TFQipVO8n9g7DiU=b9A@mail.gmail.com>
-X-Gm-Features: Ac12FXwk4GGI8MpQTiHifAVx3-K2qs_irp8n-7ldxy3kuIQEgMz6LOdOM9uXcm0
-Message-ID: <CAMuHMdWJNCSUj6mUweKtXycHNNok4L=TFQipVO8n9g7DiU=b9A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: rzg3e-smarc-som: Enable
- eth{0-1} (GBETH) interfaces
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: andrew+netdev@lunn.ch, conor+dt@kernel.org, davem@davemloft.net, 
-	edumazet@google.com, krzk+dt@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, robh@kernel.org, 
-	biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, john.madieu@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	magnus.damm@gmail.com, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi John,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, 11 Jun 2025 at 11:00, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Enable the Gigabit Ethernet Interfaces (GBETH) populated on the RZ/G3E SMARC EVK
->
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Hi All,
 
-Thanks for your patch!
+This series adds support for the Clock Generator, Module Standby, and
+Software Reset (CPG/MSSR) found on the Renesas RZ/N2H (R9A09G087) SoC.
+The implementation reuses the existing RZ/T2H (R9A09G077) CPG/MSSR
+driver, as both SoCs share the same clock and reset architecture.
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+Note, Ive split the CPG/MMSR support into separate series previously
+the patches were part of series [1].
 
-> @@ -77,6 +79,74 @@ &audio_extal_clk {
->         clock-frequency = <48000000>;
->  };
->
-> +&eth0 {
-> +       phy-handle = <&phy0>;
-> +       phy-mode = "rgmii-id";
-> +
-> +       pinctrl-0 = <&eth0_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +
-> +       mdio {
+[1] https://lore.kernel.org/all/20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-&mdio0 {
+v1->v2:
+- Rebased on latest linux-next.
+- Update commit messages for patches 1/4 and 4/4
+- Patches 2/4 and 3/4 are new patches to add PCLKL core clock
+- Added reviewed-by tags.
 
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               compatible = "snps,dwmac-mdio";
+Cheers,
+Prabhakar
 
-No need for these three properties, as they are already present in the
-SoC-specific DTS with the exact same values.
+Lad Prabhakar (4):
+  dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
+  dt-bindings: clock: renesas,r9a09g077: Add PCLKL core clock ID
+  clk: renesas: r9a09g077-cpg: Add PCLKL core clock
+  clk: renesas: Add CPG/MSSR support to RZ/N2H SoC
 
-Same for the second interface.
-
-The rest LGTM, so with the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/clock/renesas,cpg-mssr.yaml      |  5 +++-
+ drivers/clk/renesas/Kconfig                   |  5 ++++
+ drivers/clk/renesas/Makefile                  |  1 +
+ drivers/clk/renesas/r9a09g077-cpg.c           |  4 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  6 ++++
+ .../clock/renesas,r9a09g077-cpg-mssr.h        |  1 +
+ .../clock/renesas,r9a09g087-cpg-mssr.h        | 28 +++++++++++++++++++
+ 7 files changed, 48 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.49.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
