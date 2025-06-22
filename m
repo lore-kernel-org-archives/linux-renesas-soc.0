@@ -1,153 +1,105 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919B5230BD0;
-	Sat, 21 Jun 2025 17:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F9E1E8353;
+	Sun, 22 Jun 2025 17:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750526495; cv=none; b=t+pzOkNWahJpyJrpr+HglH8sPjZMy0SivgRhkL+Zii3+AzA/Jgd6HEdLY7Hj/PpJFkbmvL/BNDcVMJPLpecAnrpSQUi06NMLPp4xikzOAFhRjrcVS9x+oxDHqfw1LgyEymwHmZX5lyB881zLlBK7jJ4kl7Jzv80+qQvO8l4i8TI=
+	t=1750613404; cv=none; b=J4GpmlkkiuCvvrnGcy527AleLtzSD/6Y6o7oq+ESOc6h/3Y7Z2M4xBWRF7TXZWxEKxS0vYP6b4fGJrxsIkTBGfmfBTYsdFl6ilr5QJ9I8cyORH7mD0HQDJkbcIF1B1XxrGpAPmJN4tCDxt4044h1mdLVVbJt1HsXw86CAB9zo48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750526495; c=relaxed/simple;
-	bh=z3jk5cgOJrrfERdNtJgPjyi/kDzSGuReHKlJyTwiFBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HMQRscDUdrJlUYmIgiOTD643GfRw/I1wZJJasRBAab3zs9mj63Be5faAkycUSSieEM2aGJtom4F24EIWzVz9v6EMA4zSPLhoXHMV82F3Tyzv4TLOqXsgAq8kBE6fyXzxHJkIQLIA0e9knpJ9BaUJclKhvq7vVfNqa6sHpqvoHGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=f+rzv4kK; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TdnOdTuE; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1750613404; c=relaxed/simple;
+	bh=OS0E8KOX7/E4yLPOZ70Yoa+cE9UMOByLcBzQmN8JgO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4GkCPkErk04YqCIKPxo3uCiB2P15gccBscm+bBri6nHrGlLGJT8ugKrvAW7AFKZlvXfd/5uibOB7DF7hX0ZcH2vvpGWLKrdS1CNz+pdCdmlBSKsr8QINrfnrtgAuQLxWr/fdu5tnOuaHQWnxIUGfPN/pkG3EaNwGm9JbsItDxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKTwMUCO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="f+rzv4kK";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TdnOdTuE"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bPh2s509yz9sdS;
-	Sat, 21 Jun 2025 19:21:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750526485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V7qck9y7mYjLxwnPq+4JOmurFxi8yE/QamrmDP0kVuE=;
-	b=f+rzv4kKgwAP6tHHx/+lLgdyStsacGJ61yyrFmV3n8fW8iJpkyx9NW74Tol8bdcUnW76MZ
-	lUX+FxqVliy4rw/sxGr7L4znCvt+Eyo4f9daBTAN0uG0WxL+x1nGWYx7UjMFJMZw2aig9G
-	VJ8UjwFtanTOxLy8VcGEIUszmg+dsIBZC1OcMnS4YpY339oWSYu/X5zm4doI3EQdJdekBE
-	/5BY1vCIcl0GT6ky7k2AWmlvrsaIkC0fMQ58XNTnZDrlvTCSMz2x0YnwMGAbB9b5BaCD6q
-	cw+kxINUzE+GiGs9CXprCsdpdF4adFnViqqZTOS4K9UxkIzlSPQwaM6YqiBbgw==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750526483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V7qck9y7mYjLxwnPq+4JOmurFxi8yE/QamrmDP0kVuE=;
-	b=TdnOdTuEYlAIATfxEAKCnTsNtnKdyPfYLpaFcVGZ6J+52jCedDA22ZLT8HKEKHKvd8WKPk
-	V4cykQpSBi32nKV9Y7glUNEXoikmXIuLSyQf00BLyztFKe45MoJz8Nlxll2glU9JowbZPW
-	/qDauSWaZUFlil7SDDe6CnLc8ZjNOdCkra07wFpfQSM4dRnzuc+p1N3pWrMpDa/oz5n+bk
-	g9zw+AiE2W/AxPZ0jsqaisXasQCRJGLFa1NRAPEall8CAwooCXa0oivIcOF6f7L8wSu4pl
-	bLruFd2/oYm5qxaOjdgJWiJldvSZzZS4iJzJNy2q2xQ6BIZxjwaSMsF8EDi2Uw==
-To: linux-pwm@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKTwMUCO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12CFC4CEE3;
+	Sun, 22 Jun 2025 17:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750613403;
+	bh=OS0E8KOX7/E4yLPOZ70Yoa+cE9UMOByLcBzQmN8JgO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TKTwMUCO5s6rkVIsGp6RhFJmFH8l2j7ITrt1yqV6WioZ0pN5XOdfp1XD5U4nZ/tcv
+	 UJ4d2++KpH/BGupliKjnssUyG3MG1SP7OjJ4xKrgIEHXzDAxOUCaI1exOHCejTEeeM
+	 FQF/WNJ6XcLwRfMOK0/K+qj/PHSJB0WIDmkxwA+SlVX4aHdPHSDdqysWzMMMtEc23p
+	 SbNxtZMqLTXOvdYxGg0IXbj2FzYFwMf/zv3tq86h1TREaxvAFr7AsPVqIu2kpe+I3M
+	 Up0/eaNuuWe+EMfYBqm5zagrmRUEXssGiC1hmgZi1y3yO4lQQP8K89fi2FlIG0q/Vd
+	 yB/Uv89mN6DXQ==
+Date: Sun, 22 Jun 2025 19:30:00 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	linux-pwm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/3] dt-bindings: pwm: argon40,fan-hat: Document Argon40 Fan HAT
-Date: Sat, 21 Jun 2025 19:19:55 +0200
-Message-ID: <20250621172056.160855-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250621172056.160855-1-marek.vasut+renesas@mailbox.org>
-References: <20250621172056.160855-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH v3 3/3] pwm: argon-fan-hat: Add Argon40 Fan HAT support
+Message-ID: <tdb43v4er7v3dtbnfj2qadpf7n7rso3b2tzjb24efvhxsuadoe@tsqm4atws6aj>
+References: <20250617092037.37229-1-marek.vasut+renesas@mailbox.org>
+ <20250617092037.37229-3-marek.vasut+renesas@mailbox.org>
+ <fhns5fnckokwsb572kge6tmqaaoholzvgncdctj7vskigytvmu@3uirsrszul36>
+ <7ed914a7-8a40-4e13-8783-0fc2c01546e5@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: yxepinm3qcgo7qsu9zqjhnyoy6jd3scf
-X-MBO-RS-ID: 25d5be38f4f20944991
-X-Rspamd-Queue-Id: 4bPh2s509yz9sdS
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gucpbjrcw5mdqkjb"
+Content-Disposition: inline
+In-Reply-To: <7ed914a7-8a40-4e13-8783-0fc2c01546e5@mailbox.org>
 
-Document trivial PWM on Argon40 Fan HAT, which is a RaspberryPi
-blower fan hat which can be controlled over I2C.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Uwe Kleine-König" <ukleinek@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Implement dedicated binding document
-V3: Update the description and pwm-cells
-V4: Drop | from description and fix up pwm-cells = <2> in example
----
- .../bindings/pwm/argon40,fan-hat.yaml         | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/argon40,fan-hat.yaml
+--gucpbjrcw5mdqkjb
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 3/3] pwm: argon-fan-hat: Add Argon40 Fan HAT support
+MIME-Version: 1.0
 
-diff --git a/Documentation/devicetree/bindings/pwm/argon40,fan-hat.yaml b/Documentation/devicetree/bindings/pwm/argon40,fan-hat.yaml
-new file mode 100644
-index 000000000000..7dbc7c2cd802
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/argon40,fan-hat.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/argon40,fan-hat.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Argon40 Fan HAT PWM controller
-+
-+maintainers:
-+  - Marek Vasut <marek.vasut+renesas@mailbox.org>
-+
-+description:
-+  The trivial PWM on Argon40 Fan HAT, which is a RaspberryPi blower fan
-+  hat which can be controlled over I2C, generates a fixed 30 kHz period
-+  PWM signal with configurable 0..100% duty cycle to control the fan
-+  speed.
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    const: argon40,fan-hat
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#pwm-cells":
-+    const: 3
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      pwm@1a {
-+        compatible = "argon40,fan-hat";
-+        reg = <0x1a>;
-+        #pwm-cells = <3>;
-+      };
-+    };
--- 
-2.47.2
+Hello Marek,
 
+On Sat, Jun 21, 2025 at 07:19:51PM +0200, Marek Vasut wrote:
+> On 6/17/25 4:02 PM, Uwe Kleine-K=F6nig wrote:
+> > > +static void argon_fan_hat_i2c_shutdown(struct i2c_client *i2c)
+> > > +{
+> > > +	argon_fan_hat_write(i2c, 100);
+> > > +}
+> >=20
+> > Isn't that something that the fan driver should cope for? PWM drivers
+> > usually do nothing on shutdown.
+>=20
+> It's probably best to force the blower fan to maximum before
+> reboot/shutdown. The firmware might not handle the fan and the SoC might =
+get
+> very hot before Linux boots again.
+
+This is a IMHO a layer violation though. Yes, this PWM only comes in
+combination with a fan. But still, the reason to want to emit a 100%
+relative duty is because there is a fan, not because this is a PWM. So
+this belongs into the fan part. And "funny" enough pwm-fan also has a
+=2Eshutdown callback that disables the fan.
+
+So I'd ask you to address this part in the pwm-fan driver and drop the
+shutdown callback here.
+
+Best regards
+Uwe
+
+--gucpbjrcw5mdqkjb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhYPZUACgkQj4D7WH0S
+/k5t4ggAngFrSGtYH6zdnsiT83EPSHXDoZDuS12DQVfcpktk7iIgJtibNZ+eDFlI
+z9hUcgzPd5KZjgiVLXIDREV8AnP3/+yWh70aqOSEnbQRs7Ilcvl60flLC1K1XPc8
+g3/Cw2sBp1jr4mOFH+cLCEKt8f8Q9bSF+17hVjdhPDmh48mJtacA2qiGsReJO059
+SezDJDlAkxFek1CPrgapIdTtWILYHkfbpmI67h1edJ/24a7TzOTPOT3fNAsN2blg
+b2vWa4mkpzemCYqOLYTcTkWF8sL6CHhNmk39ukzOFu9v6WLlC2Lt5cJ2KCGb1ZNN
+xqDgpDZezZKt//VUFzlaS18CR2bf3Q==
+=ngrq
+-----END PGP SIGNATURE-----
+
+--gucpbjrcw5mdqkjb--
