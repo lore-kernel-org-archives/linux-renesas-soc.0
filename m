@@ -1,85 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB2F1AF0BB;
-	Wed, 25 Jun 2025 17:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83832D8DBA;
+	Wed, 25 Jun 2025 18:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750874083; cv=none; b=tWIqZ7NjhUV8XclPsCW9FWoiotc4dJtobBNM7f6KJz9j56S6r6txDW0sMDMdWfcsvbnOkerAfPnr9TS3yU6XC9BG579CU1MdH+8hXvoyk0J46ostyWbjg5co6vk+vz9Nm7wrMg2g7cmPE2qC/DPRGib0ja8Vh8viqcGC+/nvywU=
+	t=1750875486; cv=none; b=cmnE1Futm3Xrui1shSKGOoEyMymCrrPfbp8luTA9b/yySvFEWqv8nN9NuJFHXbKFW/LyGG/heWmTzAFO5dX2/XDXJKlE10IWqw+pjUbRJaVMgMvyZPb2U6laFqmwjXhezH1PHpqRlQk81mYjkpLlptbPkuTlXbT4VUeFBaQgL4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750874083; c=relaxed/simple;
-	bh=V/776moD0WP3JA8kmJKpRFhViMjXtiD1Hu+QZ1gN3ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JSZhppCoVGpYxsx2g1mYhb04M6ccBVqUqDMlP8i4fSXJ2KQcOhgglgtmM8rWYR6oBmB6qGZoHLulzl5Qc84Xy9vlu2iYUpOCi4cDiSHr2znaFKy9+DIJ9wApeffQR4dKqEbG5WfRgN5wuCIHxP3f2CCgSKnHM+HsVcgZv8gsYBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4ZHKFfM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750875486; c=relaxed/simple;
+	bh=cZLL4NiFsrsSSBnb4+NpGnJuePtwb+1C2iKbj7qe5b0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W7Y8gXfHpiAiH+Q1vYN5KnyGFZzOOR4QQNtcpRgko2zfAEweKgAbecqX6ghN1CXklrhztPLG2hVKxWzZp8aPX6bdEaWVujq7xpw6VdTuj52kJVhqRaGb0dOK07cK6nccRLpjEyQtITeGrmDXjJqNLJvsBtFHJaWLJJ6V54sDMcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WnSBn8xs; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cciF9kMc; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4ZHKFfM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC41C4CEEA;
-	Wed, 25 Jun 2025 17:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750874082;
-	bh=V/776moD0WP3JA8kmJKpRFhViMjXtiD1Hu+QZ1gN3ik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=a4ZHKFfM/MUH7wdncYY6XrWlP2fPRfVmsLpbFF+gwUxm9ucIgZFB5A819+w4EfYM+
-	 IdC82XoKAqDp92w5NLOvTPSjp6gE9SGH/sFTWE19zj/0YrsqrXGwFNq3E42xElDtgr
-	 +Vp1dOHyeR1G+XEKcajNklagWy1jzEF3m/d2xpD/qV5vAnGJu67u/CBOTARe5trz2U
-	 Y4jwsjCjh6vxmW0H39DZ3XIgA7wPcKPkqQ+UWs86uUAYiQUYHDf2wzl/Ifvq1QjIht
-	 VessRp4F48UN8weEyp0gvCFYX+TbdV7N1EP/Q8Z5efJP+q7PCS4JRYefgayvBidAIG
-	 kuBHiMzqzBMPA==
-Date: Wed, 25 Jun 2025 12:54:41 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, john.madieu.xa@bp.renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-Message-ID: <20250625175441.GA1579685@bhelgaas>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WnSBn8xs";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cciF9kMc"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bS96K4PS5z9tDb;
+	Wed, 25 Jun 2025 20:18:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1750875481;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i8FvA74DbAnH2SDacVZmUn+0xQLGYnmdcTF9cZgBY2I=;
+	b=WnSBn8xs9FdZduqxmuQL5OYHcrNr5aVPrPRzQsZjotSTOrUwcQs6fGYR+b27Vf5vjOVtak
+	sSztGye5C+f9N7ABVX2b9L7PyeGr7vHjEwtTJUryduXdV9sivTsznqAfVEGxfTWpYu2bkA
+	Nhm4+ZOrWOKqbunkpt3tj/sErA7WXpc8U4AWQVS9CftzXvnX+OgVKjjIlV4VzhntbiZg41
+	lJ28ff5vMfk79bbaGrUz8yy0CLj8xBUCcyH70z2Qgc2B1ig3b9yGhzuglHIKLoalmGZHxg
+	EBzFFRsBFbBrwMRnIFJxfqBn55jhR55tHf3oQR6CRxsgCI0vgQANdMgcbGeYrA==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1750875479;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i8FvA74DbAnH2SDacVZmUn+0xQLGYnmdcTF9cZgBY2I=;
+	b=cciF9kMc14aJXEDqH5n1o8++KdVySVaEJazzrovjRrTCFyyRCa2Oke0+3skz1Id3dBMUIB
+	mQ/lmPutQ/qB+xAmvWQBeVigeEIb3gVmDSLJhjvnW5KfwAkS0iqDWvoI9TqAm6j5QMO2uz
+	0KdnV6XEKcR4N5x7BNyIMlv/FXdfK2kDMSVUmJb6yFYO1TTpghC/IetYgStagDhMUVOX6N
+	9Y91MlIjvH5vByn/M6Ti1IkLrD10o78ahVQd1LFBpDlUfFsq0IRPynqmaQYR1HHeSoHoId
+	MbWfhe1eru1HmIPxSVTrRULthPY/QMK/dDyoHNG3muxIaPKJgysB9Yrg8R+fBg==
+To: linux-pm@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] thermal: rcar_gen3: Add support for R-Car V4H default trim values
+Date: Wed, 25 Jun 2025 20:16:58 +0200
+Message-ID: <20250625181739.28391-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250625181739.28391-1-marek.vasut+renesas@mailbox.org>
+References: <20250625181739.28391-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ed851fd-6cdc-48f6-ae39-67c95e6ad6d0@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 4n1foh97qgozcgqyyh3uuhghqq4ounaa
+X-MBO-RS-ID: b9bb5bb80efd9419a50
 
-On Wed, Jun 25, 2025 at 04:07:58PM +0300, Claudiu Beznea wrote:
-> On 18.06.2025 20:42, Manivannan Sadhasivam wrote:
-> > On Fri, May 30, 2025 at 02:19:13PM +0300, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> >> only as a root complex, with a single-lane (x1) configuration. The
-> >> controller includes Type 1 configuration registers, as well as IP
-> >> specific registers (called AXI registers) required for various adjustments.
+Add default trimming values for the four temperature sensors located
+in Renesas R-Car V4H Working Sample SoC. The trimming values are
+identical for all four THS temperature sensors.
 
-> This is how HW manual suggest to do it. The manual is open, it can be
-> downloaded from [1]. Chapter that describes the steps implemented here is
-> 34.4.2.4 Issuing Special Requests.
-> 
-> Steps to reach the HW manual:
-> 1/ click "RZ/G3S Group User's Manual: Hardware" button
-> 2/ click confirm
-> 3/ open the archive
-> 4/ go to r01uh1014ej0110-rzg3s-users-manual-hardware -> Deliverables
-> 5/ open r01uh1014ej0110-rzg3s.pdf
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: - :%s@\<rcar_gen3_thermal_fuse_default_info\>@rcar_gen3_thermal_fuse_default@g
+    - Put rcar_gen3_thermal_fuse_default_info_v4h on single line
+    - Add RB from Niklas
+---
+ drivers/thermal/renesas/rcar_gen3_thermal.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-Nice that the manual is public!  URLs are a great invention; it's too
-bad when we need directions for where to click, etc, in addition to
-the URL.  Maybe one or both of these URLs could be included in the
-commit log.
+diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
+index 413b373523e4..01858e72f4e0 100644
+--- a/drivers/thermal/renesas/rcar_gen3_thermal.c
++++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
+@@ -371,6 +371,16 @@ static const struct rcar_gen3_thermal_fuse_default rcar_gen3_thermal_fuse_defaul
+ 	},
+ };
+ 
++static const struct rcar_gen3_thermal_fuse_default rcar_gen3_thermal_fuse_default_info_v4h = {
++	.ptat = { 3274, 2164, 985 },
++	.thcodes = { /* All four THS units share the same trimming */
++		{ 3218, 2617, 1980 },
++		{ 3218, 2617, 1980 },
++		{ 3218, 2617, 1980 },
++		{ 3218, 2617, 1980 },
++	}
++};
++
+ static const struct rcar_thermal_info rcar_m3w_thermal_info = {
+ 	.scale = 157,
+ 	.adj_below = -41,
+@@ -395,6 +405,14 @@ static const struct rcar_thermal_info rcar_gen4_thermal_info = {
+ 	.fuse_defaults = &rcar_gen3_thermal_fuse_default_info_gen3,
+ };
+ 
++static const struct rcar_thermal_info rcar_v4h_thermal_info = {
++	.scale = 167,
++	.adj_below = -41,
++	.adj_above = 126,
++	.fuses = &rcar_gen3_thermal_fuse_info_gen4,
++	.fuse_defaults = &rcar_gen3_thermal_fuse_default_info_v4h,
++};
++
+ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
+ 	{
+ 		.compatible = "renesas,r8a774a1-thermal",
+@@ -438,7 +456,7 @@ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
+ 	},
+ 	{
+ 		.compatible = "renesas,r8a779g0-thermal",
+-		.data = &rcar_gen4_thermal_info,
++		.data = &rcar_v4h_thermal_info,
+ 	},
+ 	{
+ 		.compatible = "renesas,r8a779h0-thermal",
+-- 
+2.47.2
 
-> [1]
-> https://www.renesas.com/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11ghz-cpu-and-dual-core-cortex-m33-250mhz?queryID=695cc067c2d89e3f271d43656ede4d12
-
-https://www.renesas.com/en/document/mah/rzg3s-group-users-manual-hardware?r=25458591
