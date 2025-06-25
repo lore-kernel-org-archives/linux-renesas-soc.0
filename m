@@ -1,68 +1,63 @@
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA2729DB79;
-	Wed, 25 Jun 2025 10:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638ED2877DC;
+	Wed, 25 Jun 2025 10:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845708; cv=none; b=gl4RkKORM+bkTn4R18LCaonwuu2EItG18B3FwHV2KMRWtXowjM+9ZpoXCOXEPhaqBsrqIxFlw6+R1KHfLHaUdAplyDrKuyiUEaWqfce8YOXhlr6phrLbKj0l5ziNmasw1jMe5HWLvezPdjoFFL63kjJIbj+M4k3TJPJPoPQOlRw=
+	t=1750845830; cv=none; b=leQPX7OiNB4NQh2Nd4zq95wOQyXJF/GQiQyTo7zcXB01aAz11DvNGEPLtlz5dQgVJLyTl/jqrwwZ41ruHgLpcEWed48pGEzYCDMKbP53Hy1cO6gcdAWTYbPavD1tsanmmfsk3WUMqTn3FQikJszwsZrZtT844bWVyTAb2VeTXa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845708; c=relaxed/simple;
-	bh=fjLTcchgfb41mfycQttKP0dhNmym6kx+G2b65FCdzRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YciHcAtcIl/00CqdOk8AVPIH7ag4S3uF+Dh6IQX/D3hEC9jGdvAl8+cPQuqUvpQXCWrixlDdAXaoR+YaRvHGr5xlFuzobOIh4SOUcyom0dmoEfPTgVbkiLY+ScIVUKbb6m+McW+NBLKF1mv3KeCwnWBfH7TsI09ydT7f3mHKnBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yEiOiXkJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qQngjBks; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1750845830; c=relaxed/simple;
+	bh=oGZwys8VwkfUhxpvgMB36WNxsJp9emjmr4ZO7rlSyvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M0l+nRIkbOU/g3wHnA9fIkmDgVv6QmEVnFtb5FDQqkP9BXQGC6drhhgmWncmbykfm3A6C14T9TNfhHFUAfK/kLD7Y+oiLM0Cvpvr6S2kz/xBfK3ZzaQiNRpDe+bl4yctBVR46gyt/eWGA1W05BU07lK8gqYieaOhMJtyJXCwtcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qRQjitru; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PXy54VMh; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yEiOiXkJ";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qQngjBks"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qRQjitru";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PXy54VMh"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bRy5Z6M32z9v0J;
-	Wed, 25 Jun 2025 12:01:38 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bRy822BY2z9sqV;
+	Wed, 25 Jun 2025 12:03:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750845699;
+	t=1750845826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MP4qRiHWvycY3gZlggHSbNf31EkDcBHeSDJPJmKLz6Y=;
-	b=yEiOiXkJj20WMUXdc0y71KSCOGkmwkvIYgHWWJoZjtBj+aSoSXtJ72WqHRYFyzC6++C9Xt
-	ixfdY9JN+YHejaRwxQQsi9+d6VFtrPvhtBvNd2ARPK20mxCQOkk9SnZrwzRXUX8QrBz8vK
-	xa8XRG1RHotJLqdbtkioa3WsZEVO88BUUsvW3DaWcZkEFBgE1A0m6qfnm9bChVu4F5CYYA
-	XjROK8wFpZwBGoL4ZQtNDfq1r/cz1wNiHUQaerBkoylu0NkEq2zEErOfSUB156AfLopDBY
-	GiXA+SpgvY+5X4Ss/fJ+1mp0hc2M8/waGl6EzOvNrvXA2iMJJidfurPkhy5Knw==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1e1sFMuanxAa+Td3a/eLs4/hH5oD3lPWfNrjvb5a1XU=;
+	b=qRQjitru9tygF5Kc4su8oQAPaqkkWcc1QfYg9S6DSdAFlb/7oUiZrFusBfTLLNilECt9d+
+	TcJy2QnofIu6D0jHD38sMKFUxaFmCS0uhVAT+d+lDvOZo+Uw29cuU7gFg4qi05H8kH3p9O
+	YwXib4cFFonMH/VoL2IJUhl5Iw4CpY5qkd7YEPhLBX/U8y3J1TMpNR8oZCWFUVDEc1PjJg
+	guabVnUOseBjrpQm0es92fcaxhXCjpCArwqXKmMwYD70H57VUl36z6qlUXNkVsgW+bfDR8
+	Pehm+FBLQjfaogFCpNuAricyNZVssyOWwQwVGE+Nd2Fzg5Thz3AISMw+605dQg==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750845696;
+	t=1750845824;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MP4qRiHWvycY3gZlggHSbNf31EkDcBHeSDJPJmKLz6Y=;
-	b=qQngjBksnRqJx64c2mZyEFn5P4zT6QJJ1aYIjjEkDVc0Iax2Tv/ImVe4wWUpQd0l9wM1gl
-	i8nIp7ekXasvDVPJB5Yi/idmryTx3aYaqB0T+qMbH+glanflHH9JGT1IflUygT+32TeKAg
-	5PU3H/On8gnphdS60BhBhuRge7VTE/NrQUWVWRxsdFP5FBoA+GFiTnkz9HbDxuGbn7CVVF
-	ei4ZIsvZGzl8adZd8tWZpM0DMU0GpuMB0NsqwH5ZgMIh4/Qvc50Vd/pCpLzTPIIfmEqoW7
-	mymyzfBEvaqw9YDlOUhXS5w1XO4KcuUxZY8lNErIlvr2xOpwGH8FftO1aL/WxA==
-To: linux-pm@vger.kernel.org
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1e1sFMuanxAa+Td3a/eLs4/hH5oD3lPWfNrjvb5a1XU=;
+	b=PXy54VMh9zn6rwJfPg2wgjgX7Q7Lvugm4zpiUB80jiP2USoO1334J/0EMNHgJeP3osKtDG
+	6ZMzhnMqZMA/AjDg5+a8ybbux5gw3a6A2+GO7yaVtcMxl/Er8q9B+ahgVvqfMYDELmSRQv
+	qxN+NQB/Ox/rzSYka8ke5lJEonw3304EEdmOM5pD/apzP6h9rSdBQJcemhCQPfUbxANoHm
+	eQnzLrTvsntE1i77Gv4XTKT1iu9ZgDx8T1RLO4Rw3DUh65uUExycxMDNLG58PLena3nbql
+	rJj7KdxohJKBYnm7bdPSl9ave3hcFPz2oPy2MuwknVc2Nc1j8jfN3DEEq5vnug==
+To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Zhang Rui <rui.zhang@intel.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] thermal: rcar_gen3: Add support for R-Car V4H default trim values
-Date: Wed, 25 Jun 2025 11:59:59 +0200
-Message-ID: <20250625100116.7538-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250625100116.7538-1-marek.vasut+renesas@mailbox.org>
-References: <20250625100116.7538-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH] arm64: dts: renesas: r8a779g3: Update thermal trip points on V4H Sparrow Hawk
+Date: Wed, 25 Jun 2025 12:01:56 +0200
+Message-ID: <20250625100330.7629-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -71,74 +66,193 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: imk131dy3wjd6q69tomizyaqdrxwpxw3
-X-MBO-RS-ID: 5e6af6833454875df54
+X-MBO-RS-META: jtijeqpxx7kp7ye5z1jktp1k9juo93aq
+X-MBO-RS-ID: 3bfd9289a412a0a700e
+X-Rspamd-Queue-Id: 4bRy822BY2z9sqV
 
-Add default trimming values for the four temperature sensors located
-in Renesas R-Car V4H Working Sample SoC. The trimming values are
-identical for all four THS temperature sensors.
+Since the Sparrow Hawk has a smaller PCB than the White Hawk, it tends
+to generate more heat. To prevent potential damage to the board, adjust
+the temperature trip points.
+
+Add four "passive" trip points which increasingly throttle the CPU to
+prevent overheating. The first trip point at 68°C disables the 1.8 GHz
+and 1.7 GHz modes and limits the CPU to 1.5 GHz frequency. The second
+trip point at 72°C disables the 1.5 GHz mode and limits the CPU to 1.0
+GHz frequency. The third trip point at 76°C uses thermal-idle to start
+inserting idle cycles into the CPU instruction stream to cool the CPU
+cores down. The fourth and last trip point at 80°C disables the 1.0 GHz
+mode and limits the CPU to 500 MHz frequency.
+
+In case the SoC heats up further, in case either of the thermal sensors
+readings passes the 100°C, a thermal shutdown is triggered to prevent
+any damage to the hardware.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
-Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org
+Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/thermal/renesas/rcar_gen3_thermal.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ .../dts/renesas/r8a779g3-sparrow-hawk.dts     | 137 ++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
-diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
-index a388bd3135e4..f361991e9651 100644
---- a/drivers/thermal/renesas/rcar_gen3_thermal.c
-+++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
-@@ -372,6 +372,17 @@ static const struct rcar_gen3_thermal_fuse_default_info
- 	},
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+index 9ba23129e65e..ba81df3c779d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+@@ -38,6 +38,7 @@
  
-+static const struct rcar_gen3_thermal_fuse_default_info
-+	rcar_gen3_thermal_fuse_default_info_v4h = {
-+	.ptat = { 3274, 2164, 985 },
-+	.thcodes = { /* All four THS units share the same trimming */
-+		{ 3218, 2617, 1980 },
-+		{ 3218, 2617, 1980 },
-+		{ 3218, 2617, 1980 },
-+		{ 3218, 2617, 1980 },
-+	}
+ /dts-v1/;
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ #include "r8a779g3.dtsi"
+ 
+@@ -797,3 +798,139 @@ &rwdt {
+ &scif_clk {	/* X12 */
+ 	clock-frequency = <24000000>;
+ };
++
++/* thermal-idle cooling for all SoC cores */
++&a76_0 {
++	#cooling-cells = <2>;
++
++	a76_0_thermal_idle: thermal-idle {
++		#cooling-cells = <2>;
++		duration-us = <10000>;
++		exit-latency-us = <500>;
++	};
 +};
 +
- static const struct rcar_thermal_info rcar_m3w_thermal_info = {
- 	.scale = 157,
- 	.adj_below = -41,
-@@ -396,6 +407,14 @@ static const struct rcar_thermal_info rcar_gen4_thermal_info = {
- 	.fuse_defaults = &rcar_gen3_thermal_fuse_default_info_gen3,
- };
- 
-+static const struct rcar_thermal_info rcar_v4h_thermal_info = {
-+	.scale = 167,
-+	.adj_below = -41,
-+	.adj_above = 126,
-+	.fuses = &rcar_gen3_thermal_fuse_info_gen4,
-+	.fuse_defaults = &rcar_gen3_thermal_fuse_default_info_v4h,
++&a76_1 {
++	a76_1_thermal_idle: thermal-idle {
++		#cooling-cells = <2>;
++		duration-us = <10000>;
++		exit-latency-us = <500>;
++	};
 +};
 +
- static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
- 	{
- 		.compatible = "renesas,r8a774a1-thermal",
-@@ -439,7 +458,7 @@ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
- 	},
- 	{
- 		.compatible = "renesas,r8a779g0-thermal",
--		.data = &rcar_gen4_thermal_info,
-+		.data = &rcar_v4h_thermal_info,
- 	},
- 	{
- 		.compatible = "renesas,r8a779h0-thermal",
++&a76_2 {
++	a76_2_thermal_idle: thermal-idle {
++		#cooling-cells = <2>;
++		duration-us = <10000>;
++		exit-latency-us = <500>;
++	};
++};
++
++&a76_3 {
++	a76_3_thermal_idle: thermal-idle {
++		#cooling-cells = <2>;
++		duration-us = <10000>;
++		exit-latency-us = <500>;
++	};
++};
++
++/* THS sensors in SoC, critical temperature trip point is 100C */
++&sensor1_crit {
++	temperature = <100000>;
++};
++
++&sensor2_crit {
++	temperature = <100000>;
++};
++
++&sensor3_crit {
++	temperature = <100000>;
++};
++
++&sensor4_crit {
++	temperature = <100000>;
++};
++
++&sensor_thermal_cr52 {
++	critical-action = "shutdown";
++};
++
++&sensor_thermal_cnn {
++	critical-action = "shutdown";
++};
++
++/* THS sensor in SoC near CA76 cores does more progressive cooling. */
++&sensor_thermal_ca76 {
++	critical-action = "shutdown";
++
++	cooling-maps {
++		/*
++		 * The cooling-device minimum and maximum parameters inversely
++		 * match opp-table-0 {} node entries in r8a779g0.dtsi, in other
++		 * words, 0 refers to 1.8 GHz OPP and 4 refers to 500 MHz OPP.
++		 * This is because they refer to cooling levels, where maximum
++		 * cooling level happens at 500 MHz OPP, when the CPU core is
++		 * running slowly and therefore generates least heat.
++		 */
++		map0 {
++			/* At 68C, inhibit 1.7 GHz and 1.8 GHz modes */
++			trip = <&sensor3_passive_low>;
++			cooling-device = <&a76_0 2 4>;
++			contribution = <128>;
++		};
++
++		map1 {
++			/* At 72C, inhibit 1.5 GHz mode */
++			trip = <&sensor3_passive_mid>;
++			cooling-device = <&a76_0 3 4>;
++			contribution = <256>;
++		};
++
++		map2 {
++			/* At 76C, start injecting idle states */
++			trip = <&sensor3_passive_hi>;
++			cooling-device = <&a76_0_thermal_idle 0 80>,
++					 <&a76_1_thermal_idle 0 80>,
++					 <&a76_2_thermal_idle 0 80>,
++					 <&a76_3_thermal_idle 0 80>;
++			contribution = <512>;
++		};
++
++		map3 {
++			/* At 80C, inhibit 1.0 GHz mode */
++			trip = <&sensor3_passive_crit>;
++			cooling-device = <&a76_0 4 4>;
++			contribution = <1024>;
++		};
++	};
++
++	trips {
++		sensor3_passive_low: sensor3-passive-low {
++			temperature = <68000>;
++			hysteresis = <2000>;
++			type = "passive";
++		};
++
++		sensor3_passive_mid: sensor3-passive-mid {
++			temperature = <72000>;
++			hysteresis = <2000>;
++			type = "passive";
++		};
++
++		sensor3_passive_hi: sensor3-passive-hi {
++			temperature = <76000>;
++			hysteresis = <2000>;
++			type = "passive";
++		};
++
++		sensor3_passive_crit: sensor3-passive-crit {
++			temperature = <80000>;
++			hysteresis = <2000>;
++			type = "passive";
++		};
++	};
++};
++
++&sensor_thermal_ddr1 {
++	critical-action = "shutdown";
++};
 -- 
 2.47.2
 
