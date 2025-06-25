@@ -1,43 +1,46 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85328633A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jun 2025 13:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00FC25FA07
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jun 2025 13:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856984; cv=none; b=qIf0xqwHREtIRNA+HkOZbsHBsc7qBi6PQBxkvtwIufy6UymXtppSFsWsvu49D7q0HI0U12RHPsjzPxulBFoHVwrSTh3Zd1Zc6MmKbkf42dQpnX8/EE9HEqmGpR4X5dLNYfCxY3KPl6HTNS1la4ok2EhMJS+AiRs/9LExzfvinhA=
+	t=1750856984; cv=none; b=EVURv9oO2u/Mdu67Vl8m7t4rj/7OT/yiMFxI/gxJO9X8BIuYyvTRp21HnQ84GcQYMUhGFgfNbWCdNDmIBk/f5lXx9Z7KDQdk0nZVG9WYX5fIYJfzEr0uAHGX3I4IxyXcJ+uCKBciaxdzLDLhiov59BdtdII6spl7iuV2hwRdqxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750856984; c=relaxed/simple;
-	bh=ogogJaNFJ5Ko83pXERqm24qqsYFAPRbM7OscAGCOE9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RhcCmjHIs4iomtNNjmynHkAxiNN0Exf7cQdOSYkLCFBq21rPqejrlGbdCRqI+Gsqq98gIaxl5G6iAy1fX1l0Nv1ouXPsyzYqW60xjxbxvP+S9fd32SNzJCRBhwlBgUHLu77emUa3HwugmpoMnyRX7/WtYWABBB1W7LRcUBQU+oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FGTXhiw2; arc=none smtp.client-ip=194.117.254.33
+	bh=u6EAy/f97zTbbybJGHiMswY3V8XdpbEV2MPN8t1AFnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T4Aas6xpCiA98iZEiVQmXRu2X1CYVPwL2/8hZDHAGzWDleTrGVUjIqx0/nSeYnILQ93BR3fTCchpwm8yLh+xKuLyOLJmlDwDWkexKQqtL/ulUIEemX3xQhW8+gZBz+e1PWTV7uILzYpSvcz9piEZT1Syvl4sbSjLn/GStKPK7mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SP2w9LcK; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FGTXhiw2"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SP2w9LcK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=k8oYde8jBg12yq
-	AerZtMMzm6u6iRIFfAW8REbLGj/ME=; b=FGTXhiw2xytR0cHSDr+BHcVFJ9nheQ
-	FvT55GqsqAVOjqh4MOWlYyxkrA7CihMZK3ZbX2s1DiWjKzSZHrgqx9ULapg/gHqL
-	+7c4bM1S79jP7NiFsrSsr9RK6wglaUjDvNJgMGXsXvqUazT4XOSedhmZvAQBtFAo
-	294T9ibR02fyW5b5WCywkooeteorc4sbtAw5Edh199PL/oceGodmaTsGNQEiTcDr
-	RJa5V759hAqTJ6wGM/gamlV1vd/6PYQwvL+tMp6O1fBfdDD3Vgupnt+1U27D9mw9
-	trFEYZWMb5e4oPHPfFTuKD4cZsEXa5c7J+2gQ/aipNkLdNHmwcHpIvzA==
-Received: (qmail 658971 invoked from network); 25 Jun 2025 15:09:34 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jun 2025 15:09:34 +0200
-X-UD-Smtp-Session: l3s3148p1@kTbvJ2U44pttKDAs
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=kzdEHdkkNjMHsIT0DAmMvWAjYn7mpE9WhEzzYUPowOc=; b=SP2w9L
+	cKa3ns4OF8SSIrylYfI4CQOCLS2NuiUsyWMa4FgPekbStn/h9zGbTxi1n/D+dSxa
+	m/eoE0dJHoEstgHPUFdr3VW/YtvJthJzisqQv6ybyNkMWD/jA8rPo1jPkmWKpZWG
+	QEoBfJr8VNFojNmbt+Yq/OcvkGyGflqfQ1cmAwU/O+TgLW4eK+DO6RbWeNmvktkh
+	b7ieynr6TQcA4gr6bWk2ddJJCuwfWg5xWt9v3pbUe1QSXdPSrUey+Gx+ShEiWq2p
+	xu3OVjJws73qx1PjlxAe9WqE8+XoZctG9cTL/R73UIXVBz28IMhjn3Co0SXTi61C
+	NCa50j5+dVr5tf4g==
+Received: (qmail 659045 invoked from network); 25 Jun 2025 15:09:37 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jun 2025 15:09:37 +0200
+X-UD-Smtp-Session: l3s3148p1@NE0sKGU4WtdtKDAs
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Frank Li <Frank.Li@nxp.com>,
-	linux-i3c@lists.infradead.org,
-	=?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>
-Subject: [PATCH 0/3] i3c: switch to use SUSV4 error codes
-Date: Wed, 25 Jun 2025 15:09:18 +0200
-Message-ID: <20250625130918.14507-5-wsa+renesas@sang-engineering.com>
+	linux-i3c@lists.infradead.org
+Subject: [PATCH 2/3] i3c: dw: switch to use SUSV4 error codes
+Date: Wed, 25 Jun 2025 15:09:20 +0200
+Message-ID: <20250625130918.14507-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250625130918.14507-5-wsa+renesas@sang-engineering.com>
+References: <20250625130918.14507-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,22 +55,51 @@ probably will get one. So, let's convert these error codes now, before
 it will be forgotten in the future, and they could slip through to
 applications.
 
-This is based on 6.16-rc3 plus "[PATCH] i3c: don't fail if GETHDRCAP is
-unsupported" which I sent earlier. During its development, the issue
-became apparent. Automatically generated and build tested only.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i3c/master/dw-i3c-master.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Looking forward to comments.
-
-Wolfram Sang (3):
-  i3c: core: switch to use SUSV4 error codes
-  i3c: dw: switch to use SUSV4 error codes
-  i3c: cdns: switch to use SUSV4 error codes
-
- drivers/i3c/master.c                 | 20 ++++++++++----------
- drivers/i3c/master/dw-i3c-master.c   |  8 ++++----
- drivers/i3c/master/i3c-master-cdns.c | 12 ++++++------
- 3 files changed, 20 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 611c22b72c15..91429d94a866 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -932,7 +932,7 @@ static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+ 		return 0;
+ 
+ 	if (i3c_nxfers > master->caps.cmdfifodepth)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	for (i = 0; i < i3c_nxfers; i++) {
+ 		if (i3c_xfers[i].rnw)
+@@ -943,7 +943,7 @@ static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+ 
+ 	if (ntxwords > master->caps.datafifodepth ||
+ 	    nrxwords > master->caps.datafifodepth)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	xfer = dw_i3c_master_alloc_xfer(master, i3c_nxfers);
+ 	if (!xfer)
+@@ -1093,7 +1093,7 @@ static int dw_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
+ 		return 0;
+ 
+ 	if (i2c_nxfers > master->caps.cmdfifodepth)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	for (i = 0; i < i2c_nxfers; i++) {
+ 		if (i2c_xfers[i].flags & I2C_M_RD)
+@@ -1104,7 +1104,7 @@ static int dw_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
+ 
+ 	if (ntxwords > master->caps.datafifodepth ||
+ 	    nrxwords > master->caps.datafifodepth)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	xfer = dw_i3c_master_alloc_xfer(master, i2c_nxfers);
+ 	if (!xfer)
 -- 
 2.47.2
 
