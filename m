@@ -1,46 +1,29 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC4126B77D
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jun 2025 11:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E132D3207;
+	Fri, 27 Jun 2025 12:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751023099; cv=none; b=llo7fgtaBRuH5L3rDqEnu+lEawCG4nwgS3JHIWZlIrXTvtOOTnDdjYi0vyXrpus/YkHDsbhbewKVdiKsA7VHqGufhR2g44+HkR8h5PKoymMfgMfQ+enWHQKVx3WEM/mNeqJg6T/xEoXik2b8VGswcldepIZaCc1JhYXWTBp1gJc=
+	t=1751028024; cv=none; b=IF+e2LHiH6NwyUEAQvpWPjGDOAf89sfGcAuajS2uCoK5OBiypLxgv+3fReS/oFbYzcUoBcjOLpAHl5IwrQuhOVTPJ9BoLt6i1Ssm7qxlZE2Vu78iKynuIQGbiTYefRMcOJK/FPcmJL6uZ0gdhWjm0c0PyZjlr5a+0KU2PVfLRZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751023099; c=relaxed/simple;
-	bh=l1lUlUrWC5oCsLKMOHxHYmurA+O6S4hjNOHdj3q3o74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gA4KRW5QRmstH3ft/227djy9CABes8i1hJFNCvp8i0kBj088byLoiUrFqHhAD6RaZzPK+NUgRjiPZ362lBM4yiMDF9bOChapELn7fYGMr8VWBoOr4mHTXANhCsKzUw1dGtz/Ta1Vd1jgFSoZVjW0AVVUjF/GRpujriO5NCF/7aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=emaVXsZz; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="emaVXsZz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=FXoy94CZdy9k0JBwseNRvk0IuIqcq4HsS7A08y7ovVQ=; b=emaVXs
-	ZzPnV9L8lgFzIsgK1OJdnDg5ITlPOG9gHK3MNAMVN7KZeswYBxaLXy8TMb5pP0rK
-	zALgrhZj44JrtPB00bouHVNJqQKeA6GsV1rmvhOQv79bDDArcCrOxxKH0z+q87E4
-	RPUhDDspAz5kF8es07cWLktwQMBXdSMgNWR7Wa7rCOFDR1J8JL5BnVYKKLnE90o0
-	YbkXElmj9Y39+OUVYRIGOuCj6WntBJTrtM8UOCQvJ2E85C05dcBCl3obZWeyc1W2
-	2+70+jHpAcbNlSW2Dx90F/AnHSJ/aGem5fpA07Yu/wC/dNDbk/Z/R2MtpWrGW89L
-	b+bjX6OAQzPFSenw==
-Received: (qmail 1443555 invoked from network); 27 Jun 2025 13:18:11 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2025 13:18:11 +0200
-X-UD-Smtp-Session: l3s3148p1@Sr1X1Ys4iIMgAwDPXzuUAOCQSK0rM+sw
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	linux-i3c@lists.infradead.org
-Subject: [PATCH v2 1/3] i3c: master: replace ENOTSUPP with SUSV4-compliant EOPNOTSUPP
-Date: Fri, 27 Jun 2025 13:17:56 +0200
-Message-ID: <20250627111755.16535-6-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250627111755.16535-5-wsa+renesas@sang-engineering.com>
-References: <20250627111755.16535-5-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1751028024; c=relaxed/simple;
+	bh=v2lCpA0F4K4NMIyhzSKRRpKfWzSIpA5TU69L4qXZElE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HbXp3Kcz0v8kkiQS/0a02l+Q/biEuO/nZqQDqMQCUCe/eb74ZFerZbr4usZM24R/270Tyijsn5Z2Ika4cRjwFRDgah/zC4oEqo/Wo2vu9KhVaOs7snE4ixEm224PfFwnBfggzB+WulAHY+1KAF+7iYvjPoRMmmumB0KvvX8C09E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE71C4CEED;
+	Fri, 27 Jun 2025 12:40:22 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: soc@lists.linux.dev,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 0/4] Renesas SoC updates for v6.17
+Date: Fri, 27 Jun 2025 14:40:15 +0200
+Message-ID: <cover.1751026657.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -49,105 +32,56 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The checkpatch warning '"ENOTSUPP is not a SUSV4 error code, prefer
-EOPNOTSUPP"' is correct. We never want this to slip to userspace.
+	Hi SoC folks,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i3c/master.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+This is my first pull request for the inclusion of Renesas SoC updates
+for v6.17.
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index e53c69d24873..354fef4a033c 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -837,14 +837,14 @@ static int i3c_master_send_ccc_cmd_locked(struct i3c_master_controller *master,
- 		return -EINVAL;
- 
- 	if (!master->ops->send_ccc_cmd)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if ((cmd->id & I3C_CCC_DIRECT) && (!cmd->dests || !cmd->ndests))
- 		return -EINVAL;
- 
- 	if (master->ops->supports_ccc_cmd &&
- 	    !master->ops->supports_ccc_cmd(master, cmd))
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	ret = master->ops->send_ccc_cmd(master, cmd);
- 	if (ret) {
-@@ -1439,7 +1439,7 @@ static int i3c_master_retrieve_dev_info(struct i3c_dev_desc *dev)
- 
- 	if (dev->info.bcr & I3C_BCR_HDR_CAP) {
- 		ret = i3c_master_gethdrcap_locked(master, &dev->info);
--		if (ret && ret != -ENOTSUPP)
-+		if (ret && ret != -EOPNOTSUPP)
- 			return ret;
- 	}
- 
-@@ -2210,7 +2210,7 @@ of_i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
- 	 */
- 	if (boardinfo->base.flags & I2C_CLIENT_TEN) {
- 		dev_err(dev, "I2C device with 10 bit address not supported.");
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 	}
- 
- 	/* LVR is encoded in reg[2]. */
-@@ -2340,13 +2340,13 @@ static int i3c_master_i2c_adapter_xfer(struct i2c_adapter *adap,
- 		return -EINVAL;
- 
- 	if (!master->ops->i2c_xfers)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	/* Doing transfers to different devices is not supported. */
- 	addr = xfers[0].addr;
- 	for (i = 1; i < nxfers; i++) {
- 		if (addr != xfers[i].addr)
--			return -ENOTSUPP;
-+			return -EOPNOTSUPP;
- 	}
- 
- 	i3c_bus_normaluse_lock(&master->bus);
-@@ -2766,7 +2766,7 @@ static int i3c_master_check_ops(const struct i3c_master_controller_ops *ops)
-  *	    controller)
-  * @ops: the master controller operations
-  * @secondary: true if you are registering a secondary master. Will return
-- *	       -ENOTSUPP if set to true since secondary masters are not yet
-+ *	       -EOPNOTSUPP if set to true since secondary masters are not yet
-  *	       supported
-  *
-  * This function takes care of everything for you:
-@@ -2793,7 +2793,7 @@ int i3c_master_register(struct i3c_master_controller *master,
- 
- 	/* We do not support secondary masters yet. */
- 	if (secondary)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	ret = i3c_master_check_ops(ops);
- 	if (ret)
-@@ -2954,7 +2954,7 @@ int i3c_dev_do_priv_xfers_locked(struct i3c_dev_desc *dev,
- 		return -EINVAL;
- 
- 	if (!master->ops->priv_xfers)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	return master->ops->priv_xfers(dev, xfers, nxfers);
- }
-@@ -3004,7 +3004,7 @@ int i3c_dev_request_ibi_locked(struct i3c_dev_desc *dev,
- 	int ret;
- 
- 	if (!master->ops->request_ibi)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (dev->ibi)
- 		return -EBUSY;
--- 
-2.47.2
+It consists of 4 parts:
 
+  [GIT PULL 1/4] Renesas ARM defconfig updates for v6.17
+
+    - Enable modular support for Renesas RZ/V2H USB2PHY Port Reset Control
+      in the ARM64 defconfig,
+    - Refresh shmobile_defconfig for v6.16-rc2.
+
+  [GIT PULL 2/4] Renesas driver updates for v6.17
+
+    - Initial support for the Renesas RZ/T2H (R9A09G077) and RZ/N2H
+      (R9A09G087) SoCs,
+    - Convert the RZ/V2M External Power Sequence Controller (PWC) driver
+      to the new GPIO line value setter callbacks.
+
+  [GIT PULL 3/4] Renesas DT binding updates for v6.17
+
+    - Document more board part numbers.
+
+  [GIT PULL 4/4] Renesas DTS updates for v6.17
+
+    - Add SPI FLASH, camera, and Ethernet support on the RZ/G3E SoC and/or
+      the RZ/G3E SoM and SMARC Carrier-II EVK development board,
+    - Add Ethernet, USB2, and PMIC support on the RZ/V2H and RZ/V2N SoCs
+      and EVK boards,
+    - Add timer, I2C, watchdog, and GPU support on the RZ/V2N SoC and the
+      RZ/V2N EVK board,
+    - Add debug LED support for the RZN1D-DB development board,
+    - Improve PCIe clock description on the Retronix Sparrow Hawk board,
+    - Miscellaneous fixes and improvements.
+
+Notes:
+  - PR 4/4 includes an immutable branch in the PCI subsystem, as a
+    dependency for reworking the PCIe clock topology on the Retronix
+    Sparrow Hawk board.
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
