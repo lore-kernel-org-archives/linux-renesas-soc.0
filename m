@@ -1,44 +1,43 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADCA2951CE
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jun 2025 11:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC4126B77D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jun 2025 11:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751023099; cv=none; b=O0WY6SnMl27Xj1wvs0CWeuJ1HKdD5LMOIQSZE64alWQAq83uimfbnio2UBPax90ZZU1Axi89XY/B0GfZlXzuaQz5a4YPQo8FLyQtjGNOGOWWfqgxYvQFN7cwGDXKG5HXAsHHbeCdRdnD5g6jmAsWJ0Ui/Cuxtnlgd83pfpxWfaI=
+	t=1751023099; cv=none; b=llo7fgtaBRuH5L3rDqEnu+lEawCG4nwgS3JHIWZlIrXTvtOOTnDdjYi0vyXrpus/YkHDsbhbewKVdiKsA7VHqGufhR2g44+HkR8h5PKoymMfgMfQ+enWHQKVx3WEM/mNeqJg6T/xEoXik2b8VGswcldepIZaCc1JhYXWTBp1gJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751023099; c=relaxed/simple;
-	bh=MLxygP//40lJscuJlILRJgEvH51Yrjn1US64RBlHAWA=;
+	bh=l1lUlUrWC5oCsLKMOHxHYmurA+O6S4hjNOHdj3q3o74=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MBpwR9XsjGjwvacBYuHYcoFrasDdteOYbzDyBD7IWcQrkRysoeI2Q7P6OZ66hTjv+4EThGhut/i5JHZF0PsfRkcFzXGEVNOUSRShHVcoUh+fdFa8dJ5eX1IhuUDwBDuzA6XpjJwlqf35If4V/1/IsWvkx8kr8DQQ3xfvcvaIypY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ev6+LF2/; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=gA4KRW5QRmstH3ft/227djy9CABes8i1hJFNCvp8i0kBj088byLoiUrFqHhAD6RaZzPK+NUgRjiPZ362lBM4yiMDF9bOChapELn7fYGMr8VWBoOr4mHTXANhCsKzUw1dGtz/Ta1Vd1jgFSoZVjW0AVVUjF/GRpujriO5NCF/7aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=emaVXsZz; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ev6+LF2/"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="emaVXsZz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=bhnf6fFGAjxJCoEk83hVWoUzXjQyQa0GE8GMYuYIx9s=; b=ev6+LF
-	2/N2nw1uRAckoj9QplaeEIhZyHMuPDm+kHZjdGRNTBqvqGc6vy6q7gAyzhFKvS+n
-	IkKPpahIprT2SPd0dUEZ4kgHhAjX2dLsilbqPkjqEWPhQ40FufBYlbQOGniwpPvl
-	i0oQCFL9JR456FV67sJ/2Qn4Qea1tbtV6rP3pccki28EWHpoWfF/odexsDJr0CiJ
-	7J7jHB50RpnHJM1yrW2uYMu8dt7LVrOw7eh0iSgXhbf2KA8O9LIMvtTSKfSHjhsB
-	9yE/KWOl94QE3CSVMTNhmOgsAWtneoxUCOBxbyQmvSmaxuit0eMfbvARCwqH+w40
-	mWKkdG1SPUxqhwiQ==
-Received: (qmail 1443615 invoked from network); 27 Jun 2025 13:18:12 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2025 13:18:12 +0200
-X-UD-Smtp-Session: l3s3148p1@MWFu1Ys4oIMgAwDPXzuUAOCQSK0rM+sw
+	 s=k1; bh=FXoy94CZdy9k0JBwseNRvk0IuIqcq4HsS7A08y7ovVQ=; b=emaVXs
+	ZzPnV9L8lgFzIsgK1OJdnDg5ITlPOG9gHK3MNAMVN7KZeswYBxaLXy8TMb5pP0rK
+	zALgrhZj44JrtPB00bouHVNJqQKeA6GsV1rmvhOQv79bDDArcCrOxxKH0z+q87E4
+	RPUhDDspAz5kF8es07cWLktwQMBXdSMgNWR7Wa7rCOFDR1J8JL5BnVYKKLnE90o0
+	YbkXElmj9Y39+OUVYRIGOuCj6WntBJTrtM8UOCQvJ2E85C05dcBCl3obZWeyc1W2
+	2+70+jHpAcbNlSW2Dx90F/AnHSJ/aGem5fpA07Yu/wC/dNDbk/Z/R2MtpWrGW89L
+	b+bjX6OAQzPFSenw==
+Received: (qmail 1443555 invoked from network); 27 Jun 2025 13:18:11 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2025 13:18:11 +0200
+X-UD-Smtp-Session: l3s3148p1@Sr1X1Ys4iIMgAwDPXzuUAOCQSK0rM+sw
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Frank Li <Frank.Li@nxp.com>,
 	linux-i3c@lists.infradead.org
-Subject: [PATCH v2 3/3] i3c: master: cdns: replace ENOTSUPP with SUSV4-compliant EOPNOTSUPP
-Date: Fri, 27 Jun 2025 13:17:58 +0200
-Message-ID: <20250627111755.16535-8-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 1/3] i3c: master: replace ENOTSUPP with SUSV4-compliant EOPNOTSUPP
+Date: Fri, 27 Jun 2025 13:17:56 +0200
+Message-ID: <20250627111755.16535-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250627111755.16535-5-wsa+renesas@sang-engineering.com>
 References: <20250627111755.16535-5-wsa+renesas@sang-engineering.com>
@@ -55,63 +54,100 @@ EOPNOTSUPP"' is correct. We never want this to slip to userspace.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i3c/master/i3c-master-cdns.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i3c/master.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
-index fd3752cea654..e24d93a82e1c 100644
---- a/drivers/i3c/master/i3c-master-cdns.c
-+++ b/drivers/i3c/master/i3c-master-cdns.c
-@@ -742,7 +742,7 @@ static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index e53c69d24873..354fef4a033c 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -837,14 +837,14 @@ static int i3c_master_send_ccc_cmd_locked(struct i3c_master_controller *master,
+ 		return -EINVAL;
  
- 	for (i = 0; i < nxfers; i++) {
- 		if (xfers[i].len > CMD0_FIFO_PL_LEN_MAX)
+ 	if (!master->ops->send_ccc_cmd)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if ((cmd->id & I3C_CCC_DIRECT) && (!cmd->dests || !cmd->ndests))
+ 		return -EINVAL;
+ 
+ 	if (master->ops->supports_ccc_cmd &&
+ 	    !master->ops->supports_ccc_cmd(master, cmd))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	ret = master->ops->send_ccc_cmd(master, cmd);
+ 	if (ret) {
+@@ -1439,7 +1439,7 @@ static int i3c_master_retrieve_dev_info(struct i3c_dev_desc *dev)
+ 
+ 	if (dev->info.bcr & I3C_BCR_HDR_CAP) {
+ 		ret = i3c_master_gethdrcap_locked(master, &dev->info);
+-		if (ret && ret != -ENOTSUPP)
++		if (ret && ret != -EOPNOTSUPP)
+ 			return ret;
+ 	}
+ 
+@@ -2210,7 +2210,7 @@ of_i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
+ 	 */
+ 	if (boardinfo->base.flags & I2C_CLIENT_TEN) {
+ 		dev_err(dev, "I2C device with 10 bit address not supported.");
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	/* LVR is encoded in reg[2]. */
+@@ -2340,13 +2340,13 @@ static int i3c_master_i2c_adapter_xfer(struct i2c_adapter *adap,
+ 		return -EINVAL;
+ 
+ 	if (!master->ops->i2c_xfers)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	/* Doing transfers to different devices is not supported. */
+ 	addr = xfers[0].addr;
+ 	for (i = 1; i < nxfers; i++) {
+ 		if (addr != xfers[i].addr)
 -			return -ENOTSUPP;
 +			return -EOPNOTSUPP;
  	}
  
- 	if (!nxfers)
-@@ -750,7 +750,7 @@ static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+ 	i3c_bus_normaluse_lock(&master->bus);
+@@ -2766,7 +2766,7 @@ static int i3c_master_check_ops(const struct i3c_master_controller_ops *ops)
+  *	    controller)
+  * @ops: the master controller operations
+  * @secondary: true if you are registering a secondary master. Will return
+- *	       -ENOTSUPP if set to true since secondary masters are not yet
++ *	       -EOPNOTSUPP if set to true since secondary masters are not yet
+  *	       supported
+  *
+  * This function takes care of everything for you:
+@@ -2793,7 +2793,7 @@ int i3c_master_register(struct i3c_master_controller *master,
  
- 	if (nxfers > master->caps.cmdfifodepth ||
- 	    nxfers > master->caps.cmdrfifodepth)
+ 	/* We do not support secondary masters yet. */
+ 	if (secondary)
 -		return -ENOTSUPP;
 +		return -EOPNOTSUPP;
  
- 	/*
- 	 * First make sure that all transactions (block of transfers separated
-@@ -765,7 +765,7 @@ static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+ 	ret = i3c_master_check_ops(ops);
+ 	if (ret)
+@@ -2954,7 +2954,7 @@ int i3c_dev_do_priv_xfers_locked(struct i3c_dev_desc *dev,
+ 		return -EINVAL;
  
- 	if (rxslots > master->caps.rxfifodepth ||
- 	    txslots > master->caps.txfifodepth)
+ 	if (!master->ops->priv_xfers)
 -		return -ENOTSUPP;
 +		return -EOPNOTSUPP;
  
- 	cdns_xfer = cdns_i3c_master_alloc_xfer(master, nxfers);
- 	if (!cdns_xfer)
-@@ -822,11 +822,11 @@ static int cdns_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
- 	int i, ret = 0;
+ 	return master->ops->priv_xfers(dev, xfers, nxfers);
+ }
+@@ -3004,7 +3004,7 @@ int i3c_dev_request_ibi_locked(struct i3c_dev_desc *dev,
+ 	int ret;
  
- 	if (nxfers > master->caps.cmdfifodepth)
+ 	if (!master->ops->request_ibi)
 -		return -ENOTSUPP;
 +		return -EOPNOTSUPP;
  
- 	for (i = 0; i < nxfers; i++) {
- 		if (xfers[i].len > CMD0_FIFO_PL_LEN_MAX)
--			return -ENOTSUPP;
-+			return -EOPNOTSUPP;
- 
- 		if (xfers[i].flags & I2C_M_RD)
- 			nrxwords += DIV_ROUND_UP(xfers[i].len, 4);
-@@ -836,7 +836,7 @@ static int cdns_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
- 
- 	if (ntxwords > master->caps.txfifodepth ||
- 	    nrxwords > master->caps.rxfifodepth)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	xfer = cdns_i3c_master_alloc_xfer(master, nxfers);
- 	if (!xfer)
+ 	if (dev->ibi)
+ 		return -EBUSY;
 -- 
 2.47.2
 
