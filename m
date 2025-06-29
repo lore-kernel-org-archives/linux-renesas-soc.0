@@ -1,201 +1,108 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DF71DC988;
-	Sun, 29 Jun 2025 22:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654A11DD0EF;
+	Sun, 29 Jun 2025 22:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751234717; cv=none; b=H1AiahEbcPXClpqjQzuj489ecfVrQcuazOuBXEbuE2uJdF9b6hn9CpERUaZHjPKZup+ywmnlJ/e0UT07B11vBhlFcw2ShIm87k3wnP3WPWvJ1v6iYo1wK9EpvueexQgGPsAXtwcgAwTMwjawg2Hx5GMaHlcZ8MWGjAJxBBRh1EQ=
+	t=1751234897; cv=none; b=ZfgjXbp2G3goL+GARjWRhLurBnMmaz61gBdZXAOBU9Rbgwh/OlqwQeun1dJRssuXSOEu7lkIvHXmFO6Zt4Se+Wp7jQHc/m6DK8RpHtY0K4k4VgUIPgU7a6sPCqF8umZapshxIB8HnAC/oFUg1sxfVgw4bO4w9MN2WSf2D8BuAjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751234717; c=relaxed/simple;
-	bh=FI3QegmqdgygByP3S8dUbw/0GVJZXkqD0oaE0+hUZ9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KO9G+PIm7vGitVfNmNHdq3F+YzFzKL3eJ3WagjTPYiLpMPy0mjvjaakhlWbXl99h7z1CxBoPRK5aBApiQE19eCfPthzTnTd+wegbhSXPRdwNAmzcP3Rpbzo2NLk0xdJkxSPTNDVMpgzuSHjspYfl0HjrXICA74clcuBPk9erzww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=dZLcAFrT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Snk5NeqI; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1751234897; c=relaxed/simple;
+	bh=IqmtNMiSUP8mH+rdUojloyJ4DbIFexlyLlfKKr7qEdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YXb++TIypJflX+dBdCrVlk6OucSmrvC1JjQNhK+zna99O46rpnF1iKrwsZ+HgWZEolxxHqcTyp4pVZAqd9SPpx9KHOSAqWdziGuOWtmM0xI47KUvrGPdcx/eloIseqeJZnGADlAKKhev8TQm0xgS8FuvQyDRlzBiPVDo5j0Nzi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fSqGtMmr; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RZbj5Pq5; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="dZLcAFrT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Snk5NeqI"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fSqGtMmr";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RZbj5Pq5"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bVjyd3WvZz9stg;
-	Mon, 30 Jun 2025 00:05:13 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bVk262Xd5z9t72;
+	Mon, 30 Jun 2025 00:08:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751234713;
+	t=1751234894;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=wonIqwqE+gZtcXn2WE6N/pAhGaGx6R/BhYVp+2etRMk=;
-	b=dZLcAFrTgcxfCPDqmmzeXnwWZKnWuxBRJphwxQJzOi5js7oJMhshlVu6cFT0bTbdemDgZy
-	klyRdP9Ogh1lcQ3A9y9LZ9U/t18I98zipzGoW3GC4hUhd+soTt49Arrq6uHZWersaqE4MD
-	nQSPuMu0ElXB9VpWzQ087MQjtBsK7OjilE1uXBT8fNbK8yXGEk06rGiqWmQiCuxEgVtjTu
-	/NSrXxT6LzqYod4aEH+Eo82WejKX28Ij0CMyLfBeAXdQSRGvO1UWfWYkc/ewwnr2/drojz
-	ltk6VhPF0RUA2w3VPT8TITwvmGgAQJTa5QNAXV82yuKvEvl2AsjotkLgme8PDg==
+	bh=goP7CNuKRv4eXGEdm8Fir/TiSwkU8B896oNpAWx4js4=;
+	b=fSqGtMmrdXXxwU9U8xsA7vOZey0eeQk1HTbEJ7w5imkpWxKvwJk0Q4kdXfSpi8zPpOTkTs
+	2qc7v2bQQqFtJXoIQkhbB4ftqh83t0tfMto3Taz2sMoXu3iI2LXqXICpa/NjeWJNbggp4k
+	ehIlxxQK0cbJhl5oNXW0d56tdHKH9tsoChGnEn/CenUCiLIzlad9/AbI1/grdizEBGYBjX
+	qu+hEm2DEaj2woDX8jplWenSc/ZC+d0DFt8dKEEGV35+sKB13ISjmLgOt1doy1cF77qnU6
+	aIMzZf3GVTHpKKF10h8IzNBdGpQh/qfZyNpTQ8TFc/7HpKRTmp2jmtsOuYOzhA==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751234711;
+	t=1751234892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=wonIqwqE+gZtcXn2WE6N/pAhGaGx6R/BhYVp+2etRMk=;
-	b=Snk5NeqIxlYLkGoTYhqpTkOw+9tVflrQkjGl/vH4BnTRhwH+lxc0lzrqQN/YaT2+PAlmzq
-	15b7ei26HInKT4UZcQY1FPC2w5UpGsNjlFz4R4HJRoYO6RxwGpnFyKYiBkfN6AfUASnZsQ
-	f8eABpFDpgcPIy/THhwQ6fsCpqms6tV/min6CmxLEa8YY7s/26yBYtowQl/RnFsrK961wh
-	R1Ka4nQGzIWxOBMAHw+ZcwRcb2QFxS+rOBj4bPOMsbvLbwzFvOExxvfUnF8DeKa3RHEzeI
-	HGKEGUnDDikNEdFsg16vOZd26UEqq4Hf/FTT8+eIjpNaQ8c7wu+1I/Q5bNcnug==
-To: linux-arm-kernel@lists.infradead.org
+	bh=goP7CNuKRv4eXGEdm8Fir/TiSwkU8B896oNpAWx4js4=;
+	b=RZbj5Pq5zGaA0Kltgv0NyZrMzEXYrJ4sIMvKTW3tSm5IiyIx5jIvDTG4UmcLMKNYpWSaJ1
+	RCfoE49EMtqsrwyYIgLiM2RrQaI6jCyaXzLmB2kEvpvvEQeb5aGGnEH8fGgD0VNcAGmWJC
+	KSCwBzz/0Pp6735q0bMu9Whv7fxgrikFm9yKmf6qJss990r62ZQjdukfBqURuqDqY8bdXO
+	EfRDUjQQiig64DzP2juXppYCRkNUbkXgXQTZ6OlxELSot6G82c5zVbdfOfZCtdkqOuf+yh
+	j3AFUmaAFXODehgaCtZ9/1KGcnY+uMBIuUq7Nma+4BcpcgMzzRysFvGTYarBlA==
+To: linux-pwm@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dts: renesas: Add boot phase tags marking to Renesas RZ/A1
-Date: Mon, 30 Jun 2025 00:04:24 +0200
-Message-ID: <20250629220502.935717-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v5 1/3] dt-bindings: vendor-prefixes: Document Argon40
+Date: Mon, 30 Jun 2025 00:07:18 +0200
+Message-ID: <20250629220757.936212-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: cd501b2cf243314dd24
-X-MBO-RS-META: q69wwtg3rufy5stjqdw1npekmohmqoaf
-X-Rspamd-Queue-Id: 4bVjyd3WvZz9stg
+X-MBO-RS-ID: d9f8c6c5207c9b59db9
+X-MBO-RS-META: y43iepzpn8cd4nd4co7yepnzpuaxykxa
 
-bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
-to describe various node usage during boot phases with DT. Add bootph-all for
-all nodes that are used in the bootloader on Renesas RZ/A1 SoC.
+Argon 40 Technologies Limited is a SBC expansion board vendor.
+Document the prefix. For details see https://argon40.com .
 
-All SoC require BSC bus, PFC pin control and OSTM0 timer access during all
-stages of the boot process, those are marked using bootph-all property, and
-so is the SoC bus node which contains the PFC and OSTM IPs.
-
-Each board console UART is also marked as bootph-all to make it available in
-all stages of the boot process.
-
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
+Cc: "Uwe Kleine-König" <ukleinek@kernel.org>
 Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
 Cc: Rob Herring <robh@kernel.org>
 Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Cc: linux-pwm@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts   | 3 ++-
- arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 3 ++-
- arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts  | 2 ++
- arch/arm/boot/dts/renesas/r7s72100.dtsi         | 5 +++++
- 4 files changed, 11 insertions(+), 2 deletions(-)
+V2: Add AB from Conor
+V3: No change
+V4: No change
+V5: No change
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index c81840dfb7da..13c0324b8def 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -258,6 +258,7 @@ mmcif_pins: mmcif {
- 	};
- 
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
- 	};
-@@ -286,7 +287,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-index 9d29861f23f1..e4f489522b2b 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-@@ -59,6 +59,7 @@ led1 {
- 
- &pinctrl {
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P6_2 as RxD2; P6_3 as TxD2 */
- 		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
- 	};
-@@ -109,7 +110,7 @@ &ostm1 {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-index 25c6d0c78828..0bf106e9827e 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-@@ -199,6 +199,7 @@ keyboard_pins: keyboard {
- 
- 	/* Serial Console */
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
- 			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
- 	};
-@@ -278,6 +279,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100.dtsi b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-index 1a866dbaf5e9..c78131e3cd24 100644
---- a/arch/arm/boot/dts/renesas/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-@@ -41,6 +41,7 @@ bsc: bus {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0 0x18000000>;
-+		bootph-all;
- 	};
- 
- 	cpus {
-@@ -108,6 +109,8 @@ soc {
- 		#size-cells = <1>;
- 		ranges;
- 
-+		bootph-all;
-+
- 		L2: cache-controller@3ffff000 {
- 			compatible = "arm,pl310-cache";
- 			reg = <0x3ffff000 0x1000>;
-@@ -557,6 +560,7 @@ R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
- 
- 		pinctrl: pinctrl@fcfe3000 {
- 			compatible = "renesas,r7s72100-ports";
-+			bootph-all;
- 
- 			reg = <0xfcfe3000 0x4230>;
- 
-@@ -639,6 +643,7 @@ ostm0: timer@fcfec000 {
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
- 			clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
- 			power-domains = <&cpg_clocks>;
-+			bootph-all;
- 			status = "disabled";
- 		};
- 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 3f23f6f93b62..27e2ad136931 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -149,6 +149,8 @@ patternProperties:
+     description: Arctic Sand
+   "^arcx,.*":
+     description: arcx Inc. / Archronix Inc.
++  "^argon40,.*":
++    description: Argon 40 Technologies Limited
+   "^ariaboard,.*":
+     description: Shanghai Novotech Co., Ltd. (Ariaboard)
+   "^aries,.*":
 -- 
 2.47.2
 
