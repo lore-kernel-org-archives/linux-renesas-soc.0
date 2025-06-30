@@ -1,84 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE942A80;
-	Mon, 30 Jun 2025 08:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078CA238C1F;
+	Mon, 30 Jun 2025 08:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751271148; cv=none; b=k+BDAYXurutYo0J1i4jch1qwCD8g0Vcrvj9J0nFDBqx3dovoZRapLd0e82qCRoR0JJqdGbKMOy+rsVSYAnD/+CGNuHsvGFONtdr9+Rl27C0VW5msBlcfEHzsNAR/o1rbNJnCZb3ieRaPPrheCGsjqtZmgnL6Ke7jRkCLTnKpLf8=
+	t=1751271208; cv=none; b=hkQsz8OVCpRarDvLH/JHC87M48StLcUM/I3/fRPCvh7fnHIXdo1ohPAewVCv0ejxei0Ex+MRQk2XAh39ddCkl/g1P5YCl21PEnm4QC9Sy/cRPU6b5VMPkKm1EAf5TUtZE3VRF/pQ8b3rIGfJHiz2+IWR6qPkIlO8sET3/CNbNPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751271148; c=relaxed/simple;
-	bh=wQPXfgfZqxpVElgIFx359NMt3iAlCztlIijWS0d+KBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tY1jB5cK3rlZRb7DdlTJi8lm7tG5Qhs0bWuJkxjnL8eQH5FCqYmp5vToYc+4CCChpGYBG5O7Gzu1jFg94I4S5zuoX4hNNKhbo7uXcCepABVrv5N8UDoBtUpBefvLTfOisL/zYJDdiZ0ReDJeDa3OMrx6DeKgnJqHIN3oR8e5QR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFNfTpwK; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFNfTpwK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D60C4CEE3;
-	Mon, 30 Jun 2025 08:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751271147;
-	bh=wQPXfgfZqxpVElgIFx359NMt3iAlCztlIijWS0d+KBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PFNfTpwK8swC1POSXIPUIoEMJ28k7wrGD3PdM0EkGZkB2rOOjW5SloeD4+UPH8WJ6
-	 UtCD0g1IH1UwMGjIgl4wYI+HO24LPvhnIBGCfCfFH7mMfo1H9VSvu2BFD3aGuf/4se
-	 LdgWLd0A6K/fqZAthk4+MsTLt6u4RAPTR9DdoAEZ1rGsH7BMzaz1IRosP/X1hqCwHr
-	 LG44wu2OFIFu5spl0oUsvBIuryY8OQVYOmzoh6MZNrlqhwWt81oqq4tm8h4Jd6ewXi
-	 UJgVFvhN0ZccVgzhWNK0U/X35uxM4Zw1n1m+CYKg3BnjvnB2q1x9C30sC7l3mLjMpY
-	 bw89uUZy0RY9g==
-Date: Mon, 30 Jun 2025 10:12:24 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pwm@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: vendor-prefixes: Document Argon40
-Message-ID: <75z77kduzyfn6b5r4iw6pflnwh3g6d5t2ciozk5jwvgbnq27cj@4sgrx3adhpnk>
-References: <20250629220757.936212-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1751271208; c=relaxed/simple;
+	bh=Q+zhN1f3+GjWSGnaZs9Okdj/Q3hJQ5reewbR0SxRuo4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RIzl2NO+JyhtdGw3D8o1o0RctwuAtakq8AqC7NCmtWH46EmNJzTNDOASRTjETh3BXBY4XwRuMrVryYK6YokhgbmhN2HXLwC3mGX5t64CVfzPK5l085Vnh8mXI//oJYdib4PYxr3LCX1UDvmizt0X7i04IrRR4/wuE/bbTUfyiyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: wJxop9GOR/+T+6mH19MSjA==
+X-CSE-MsgGUID: MxXX6H6aTY+hIlKSNocC/w==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jun 2025 17:13:23 +0900
+Received: from localhost.localdomain (unknown [10.226.92.44])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3B28941BF1FF;
+	Mon, 30 Jun 2025 17:13:20 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH RFC/RFT 1/2] mmc: tmio: Add 64-bit read/write support for SD_BUF0 in polling mode
+Date: Mon, 30 Jun 2025 09:13:10 +0100
+Message-ID: <20250630081315.33288-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250630081315.33288-1-biju.das.jz@bp.renesas.com>
+References: <20250630081315.33288-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ian3v7df3oyd4ig"
-Content-Disposition: inline
-In-Reply-To: <20250629220757.936212-1-marek.vasut+renesas@mailbox.org>
+Content-Transfer-Encoding: 8bit
 
+As per the RZ/{G2L,G3E} HW manual SD_BUF0 can be accessed by 16/32/64
+bits. Most of the data transfer in SD/SDIO/eMMC mode is more than 8 bytes.
+During testing it is found that, if the DMA buffer is not aligned to 128
+bit it fallback to PIO mode. In such cases, 64-bit access is much more
+efficient than the current 16-bit.
 
---2ian3v7df3oyd4ig
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v5 1/3] dt-bindings: vendor-prefixes: Document Argon40
-MIME-Version: 1.0
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/mmc/host/tmio_mmc.h        | 12 +++++++++++
+ drivers/mmc/host/tmio_mmc_core.c   | 32 ++++++++++++++++++++++++++++++
+ include/linux/platform_data/tmio.h |  3 +++
+ 3 files changed, 47 insertions(+)
 
-Hello Marek,
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index d730b7633ae1..823143a98941 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -242,6 +242,18 @@ static inline void sd_ctrl_read32_rep(struct tmio_mmc_host *host, int addr,
+ 	ioread32_rep(host->ctl + (addr << host->bus_shift), buf, count);
+ }
+ 
++static inline void sd_ctrl_read64_rep(struct tmio_mmc_host *host, int addr,
++				      u64 *buf, int count)
++{
++	ioread64_rep(host->ctl + (addr << host->bus_shift), buf, count);
++}
++
++static inline void sd_ctrl_write64_rep(struct tmio_mmc_host *host, int addr,
++				       const u64 *buf, int count)
++{
++	iowrite64_rep(host->ctl + (addr << host->bus_shift), buf, count);
++}
++
+ static inline void sd_ctrl_write16(struct tmio_mmc_host *host, int addr,
+ 				   u16 val)
+ {
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 2cec463b5e00..c4eacf9545ba 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -350,6 +350,38 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
+ 	/*
+ 	 * Transfer the data
+ 	 */
++
++	if (host->pdata->flags & TMIO_MMC_64BIT_DATA_PORT) {
++		u64 *buf64 = (u64 *)buf;
++		u64 data = 0;
++
++		if (count >= 8) {
++			if (is_read)
++				sd_ctrl_read64_rep(host, CTL_SD_DATA_PORT,
++						   buf64, count >> 3);
++			else
++				sd_ctrl_write64_rep(host, CTL_SD_DATA_PORT,
++						    buf64, count >> 3);
++		}
++
++		/* if count was multiple of 8 */
++		if (!(count & 0x7))
++			return;
++
++		buf64 += count >> 3;
++		count %= 8;
++
++		if (is_read) {
++			sd_ctrl_read64_rep(host, CTL_SD_DATA_PORT, &data, 1);
++			memcpy(buf64, &data, count);
++		} else {
++			memcpy(&data, buf64, count);
++			sd_ctrl_write64_rep(host, CTL_SD_DATA_PORT, &data, 1);
++		}
++
++		return;
++	}
++
+ 	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
+ 		u32 data = 0;
+ 		u32 *buf32 = (u32 *)buf;
+diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
+index b060124ba1ae..426291713b83 100644
+--- a/include/linux/platform_data/tmio.h
++++ b/include/linux/platform_data/tmio.h
+@@ -47,6 +47,9 @@
+ /* Some controllers have a CBSY bit */
+ #define TMIO_MMC_HAVE_CBSY		BIT(11)
+ 
++/* Some controllers have a 64-bit wide data port register */
++#define TMIO_MMC_64BIT_DATA_PORT	BIT(12)
++
+ struct tmio_mmc_data {
+ 	void				*chan_priv_tx;
+ 	void				*chan_priv_rx;
+-- 
+2.43.0
 
-On Mon, Jun 30, 2025 at 12:07:18AM +0200, Marek Vasut wrote:
-> Argon 40 Technologies Limited is a SBC expansion board vendor.
-> Document the prefix. For details see https://argon40.com .
-
-Applied all 3 patches to
-
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
-
-Best regards
-Uwe
-
---2ian3v7df3oyd4ig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhiRuUACgkQj4D7WH0S
-/k5+0wf+NnlVfcXkRJbWJC5nd1t9wN1SZinRQTYsvCIHU42bWvdcotacqReFuOgc
-tufi7oRUpnYnqQhA5SprNe1bFCnGzFT28bceHfGUI6KoQXAAl/VOJjZ0D0qs2REr
-jt++5Krt7gqeGxD1lmWhLVuYJzTlr4jM2IUyjeOogDqvXhEJ+WEY9jEv3vJQQWVF
-bedfGK1ak2By+LY3fPiGhLCDC26R0yPsXt5FNRR5aTRmjgBbRaleRXhFP9oE2ikO
-t2dnxYFIE75dTpjcIocDqc//AtpwAsRBqXkJA8CcB0D1xlOBzFyLqdQ+0CcbTnGy
-IRDxM2UHFnxY5FwgEIc9fy6ewlRArA==
-=Ou83
------END PGP SIGNATURE-----
-
---2ian3v7df3oyd4ig--
