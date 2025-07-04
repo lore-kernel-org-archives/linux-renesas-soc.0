@@ -1,300 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFF92EBBB5;
-	Fri,  4 Jul 2025 07:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE1B28982C;
+	Fri,  4 Jul 2025 08:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615691; cv=none; b=iwy/wLubGT9HtLCvB1YtffjuiKUBZL2LKbtHHrVwApQFAWmr963sxTxO4iAZ9dxm2WSsnA2M+IIEAGN4Qqd357TVGJ2CT0cSiTirtCVhYsg2C/YYxOtgSAvu403cQZ8+oPeJWW+hbUzMgUC2Q5yhbA11ACCYultBamkXalpxGm8=
+	t=1751618051; cv=none; b=WTiaM05pMnLP0+D1x+uFZa+5MD/JzkGzJ7w5TbaklXmsl6/mpSlEVbcyRHs/1CjX36moAySorAh9tBiGrTcRVZMYivqSKteywiANl5T2DX7oAVHvuYphWa0gQoVRIckBKrW7E+OPAAngONhZfjGO5uk85x55hT7Rg9qpfzTo4LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615691; c=relaxed/simple;
-	bh=bnuZewOjDRj5uj/Q1wY38bM+p730Axef1k5VeKg2H+A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tx4lJ71lmBm/bEWsFXNdl3WsTTtn/gNyJXmhaUesIgLo+/KjGWejkbPRlNU8zmTmAHTpVLN+QQToiIe2BHA+Rieqf2EXWrKQdZQUk7Tm9PSaCk43ARZapEzcH1OiI625eOgkiZSQpfya78sKzEY9mlTdYWMZYXM07nnS5wf4KaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cVgZjWwr; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1751618051; c=relaxed/simple;
+	bh=YQUj8cYV3IXVm6+I4pRxyP86i6gcIjFheOeNfzHOmJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJIGLW7IyRnt3CTtXoGlKOx+kwOB0sNL3e0TLkWd03e8/pehU6FXfbw2EoWkR8v51HIcAEPmb9dhjO7kVOCUIHPYWlr6VHAcnjFkJv4kF976dMcYqMn/RGK/2fRTZHVcVIDHo2ZBBA2TP1+ywvz8xn6fmLWaSugbn5CdGjD5Hvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1o7ErPiY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cVgZjWwr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615689; x=1783151689;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bnuZewOjDRj5uj/Q1wY38bM+p730Axef1k5VeKg2H+A=;
-  b=cVgZjWwrKrWtokBiZ299eIVyY7+xUZouZKxcLre2rUq1GxdXu8regUmZ
-   6cXKe9/28ZKi67tGXNxKcVgvokG+frkNQ3gW2SyOw+lWOwju8AuOXce3O
-   ohSzl8ZKzYnt+De/akrXPN5vRRZhZD8JvbpEZ/7aA+zGWcdTb+jYr7wKY
-   Edcx/UYtBvMnx6co8gHr1MxXXLXRvMSqR9fOfPWWrIn8WJ3MzTPC8IcLM
-   +sSXIkTXLI+mOhwrURdTMWG0pxb/2eLsiP6Gsh2THxoxfVQpT59Bzc/w/
-   lpyoTzmu+k9F9TP2uMDztcsXnStTnExzCyUnHYb/FlN9vpDoJSoh9Am8D
-   w==;
-X-CSE-ConnectionGUID: vLyisTqVQFOn/o8r0UuJCA==
-X-CSE-MsgGUID: b8DxJt/HT5Cobgd7qR+C0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194151"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194151"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:45 -0700
-X-CSE-ConnectionGUID: vHcFFC2QSWGmYwlOvBh9Cw==
-X-CSE-MsgGUID: zaZUVbpaQBiQnQCYrl+S7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616609"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:36 -0700
-Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 66F5344419;
-	Fri,  4 Jul 2025 10:54:34 +0300 (EEST)
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Russell King <linux@armlinux.org.uk>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Avri Altman <avri.altman@sandisk.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-mmc@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1o7ErPiY"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ii+04oA884vMBHGqgm2iM/7pdCvGxYzxkHgc7OFD5wo=; b=1o7ErPiYwFG0I1AJC8FGdPMkQe
+	+qmFD1YvD3prV7TWYVN14UjVNjFJRYAT7YMMjtSSxPU32cW4Digf2oxF4OJrvXn4qBfXCp242BMow
+	hGBTUWmfsnGmaw0J4FtGwRXbhmC3KS5f0kXqsNCYaMmIoFLdhNsNCa7eQPKfhNa4gOVc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uXbrr-000BYx-Ek; Fri, 04 Jul 2025 10:33:59 +0200
+Date: Fri, 4 Jul 2025 10:33:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michael Dege <michael.dege@renesas.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	imx@lists.linux.dev,
-	s32@nxp.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 44/80] mmc: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:34 +0300
-Message-Id: <20250704075434.3220506-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: Re: [PATCH 0/3] net: renesas: rswitch: R-Car S4 add HW offloading
+ for layer 2 switching
+Message-ID: <9c8cb213-7daf-43bb-8d20-aaefa13127af@lunn.ch>
+References: <20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com>
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+On Fri, Jul 04, 2025 at 07:51:14AM +0200, Michael Dege wrote:
+> Hello!
+> 
+> The current R-Car S4 rswitch driver only supports port based fowarding.
+> This patch set adds HW offloading for L2 switching/bridgeing. The driver
+> hooks into switchdev.
+> 
+> 1. Rename the base driver file to keep the driver name (rswitch.ko)
+> 
+> 2. Add the L2 driver extension in a separate file. The HW offloading
+> is automatically configured when a port is added to the bridge device.
+> 
+> Ussage example:
+> ip link add name br type bridge
+> ip link set dev tsn0 master br
+> ip link set dev tsn1 master br
+> ip link set dev br up
+> ip link set dev tsn0 up
+> ip link set dev tsn1 up
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-The cover letter of the set can be found here
-<URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
+It is not wrong, but it is normal for an interface to have a number of
+some sort. So br0.
 
-In brief, this patch depends on PM runtime patches adding marking the last
-busy timestamp in autosuspend related functions. The patches are here, on
-rc2:
+> 
+> Layer 2 traffic is now fowarded by HW from port TSN0 to port TSN1.
+> 
+> 3. Provides the functionality to set the MAC table ageing time in the
+> Rswitch.
+> 
+> Usage example:
+> brctl setageing br 300
 
-        git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-                pm-runtime-6.17-rc1
+brctl is deprecated. iproute2 has a method to do this, which would be
+a better reference to give.
 
- drivers/mmc/core/core.c            | 1 -
- drivers/mmc/host/atmel-mci.c       | 2 --
- drivers/mmc/host/mmci.c            | 1 -
- drivers/mmc/host/omap_hsmmc.c      | 3 ---
- drivers/mmc/host/sdhci-esdhc-imx.c | 1 -
- drivers/mmc/host/sdhci-msm.c       | 1 -
- drivers/mmc/host/sdhci-omap.c      | 2 --
- drivers/mmc/host/sdhci-pxav3.c     | 2 --
- drivers/mmc/host/sdhci-sprd.c      | 1 -
- drivers/mmc/host/sdhci_am654.c     | 1 -
- drivers/mmc/host/tmio_mmc_core.c   | 1 -
- 11 files changed, 16 deletions(-)
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index a0e2dce70434..874c6fe92855 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -882,7 +882,6 @@ void mmc_put_card(struct mmc_card *card, struct mmc_ctx *ctx)
- 	WARN_ON(ctx && host->claimer != ctx);
- 
- 	mmc_release_host(host);
--	pm_runtime_mark_last_busy(&card->dev);
- 	pm_runtime_put_autosuspend(&card->dev);
- }
- EXPORT_SYMBOL(mmc_put_card);
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index c885c04e938a..43f92f48590f 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -541,7 +541,6 @@ static int atmci_regs_show(struct seq_file *s, void *v)
- 	memcpy_fromio(buf, host->regs, ATMCI_REGS_SIZE);
- 	spin_unlock_bh(&host->lock);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	seq_printf(s, "MR:\t0x%08x%s%s ",
-@@ -2567,7 +2566,6 @@ static int atmci_probe(struct platform_device *pdev)
- 	dev_info(dev, "Atmel MCI controller at 0x%08lx irq %d, %u slots\n",
- 		 host->mapbase, irq, nr_slots);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index c70c64f8adc4..8367283647a9 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -2082,7 +2082,6 @@ static void mmci_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	if (!enable) {
--		pm_runtime_mark_last_busy(mmc_dev(mmc));
- 		pm_runtime_put_autosuspend(mmc_dev(mmc));
- 	}
- }
-diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-index bf3b9f5b067c..adc0d0b6ae37 100644
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -1663,7 +1663,6 @@ static int mmc_regs_show(struct seq_file *s, void *data)
- 	seq_printf(s, "CAPA:\t\t0x%08x\n",
- 			OMAP_HSMMC_READ(host->base, CAPA));
- 
--	pm_runtime_mark_last_busy(host->dev);
- 	pm_runtime_put_autosuspend(host->dev);
- 
- 	return 0;
-@@ -1954,7 +1953,6 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
- 	}
- 
- 	omap_hsmmc_debugfs(mmc);
--	pm_runtime_mark_last_busy(host->dev);
- 	pm_runtime_put_autosuspend(host->dev);
- 
- 	return 0;
-@@ -2031,7 +2029,6 @@ static int omap_hsmmc_resume(struct device *dev)
- 	if (!(host->mmc->pm_flags & MMC_PM_KEEP_POWER))
- 		omap_hsmmc_conf_bus_power(host);
- 
--	pm_runtime_mark_last_busy(host->dev);
- 	pm_runtime_put_autosuspend(host->dev);
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 64c27349d79f..a040c0896a7b 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -2108,7 +2108,6 @@ static int sdhci_esdhc_resume(struct device *dev)
- 	    esdhc_is_usdhc(imx_data))
- 		sdhc_esdhc_tuning_restore(host);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 732b65d4b61a..68e56251d5e8 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -2750,7 +2750,6 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto pm_runtime_disable;
- 
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	return 0;
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 429d8a517fb6..cdb09605e009 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -1370,7 +1370,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 		host->mmc->pm_caps |= MMC_PM_KEEP_POWER | MMC_PM_WAKE_SDIO_IRQ;
- 	}
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
-@@ -1379,7 +1378,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	sdhci_cleanup_host(host);
- 
- err_rpm_put:
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- err_rpm_disable:
- 	pm_runtime_dont_use_autosuspend(dev);
-diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-index 34abf986573f..1371960e34eb 100644
---- a/drivers/mmc/host/sdhci-pxav3.c
-+++ b/drivers/mmc/host/sdhci-pxav3.c
-@@ -494,7 +494,6 @@ static int sdhci_pxav3_suspend(struct device *dev)
- 	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
- 		mmc_retune_needed(host->mmc);
- 	ret = sdhci_suspend_host(host);
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
-@@ -507,7 +506,6 @@ static int sdhci_pxav3_resume(struct device *dev)
- 
- 	pm_runtime_get_sync(dev);
- 	ret = sdhci_resume_host(host);
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index a5dec1a0e934..fe2fe52b23b2 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -863,7 +863,6 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_cleanup_host;
- 
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	return 0;
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index ea14d56558c4..e2c4a0049d61 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -986,7 +986,6 @@ static int sdhci_am654_probe(struct platform_device *pdev)
- 	/* Setting up autosuspend */
- 	pm_runtime_set_autosuspend_delay(dev, SDHCI_AM654_AUTOSUSPEND_DELAY);
- 	pm_runtime_use_autosuspend(dev);
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 	return 0;
- 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 2cec463b5e00..21c2f9095bac 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -160,7 +160,6 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
- 
- 		host->sdio_irq_enabled = false;
--		pm_runtime_mark_last_busy(mmc_dev(mmc));
- 		pm_runtime_put_autosuspend(mmc_dev(mmc));
- 	}
- }
--- 
-2.39.5
-
+  Andrew
