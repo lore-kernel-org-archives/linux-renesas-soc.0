@@ -1,148 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA3F1D54E2;
-	Tue,  8 Jul 2025 20:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CEE225A5B
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Jul 2025 20:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752005888; cv=none; b=MUZEzUbo4ibu47hqdrG1Mfd8x4Sp2PiE4ILafxNO67+m/VsJoJOKB7LzSZ2owizjigtLxoggn2RHdI0aT+BqoRiCNhZ91dYGLVKD6CFYLYkgvWfl8DsxzvarVa3r4HxdDiZnltDUosjaZUjJSKFPPJErWb3sqglaa1R60+bDRC0=
+	t=1752006551; cv=none; b=CWK2m79CR0t8fgCf9bIoyuBIja8OZrevw3+gpnRW4RYAOUl/FDP/FhXBEbV5V3oAGcQpX317WZ842NNYLZy+0Ov84yLWvRfNdIacE6sucAkHQn+ciQo3js1Dhw6OeJ7830zcWVG6B2cjSj0ZDQo9CBb6kEILqvsTPZWwm3Po908=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752005888; c=relaxed/simple;
-	bh=zfkbjPg4tfTz4BD5E+6M+vCmZHxU3gsUQB6PvWPchNM=;
+	s=arc-20240116; t=1752006551; c=relaxed/simple;
+	bh=HXNekzdlAIvujwir1FcqKXHPqkduAfFMIsqZ5qAjRQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPiAnwL2T2sbOIAmtfd2jIJlx0AMdPWpV6sz9QIUUj8cpJAmIGyqwhtDDmbOGh0pTxgoCZsvf6qu2b6/5Jx8EdOscd/rni1+dfYXK8tCWUSt83Hrb7Ydqul/WrCwyO02dIsAOOJQuV3zV3jiJMX1ihXpbp97JFf+1GbYHynPlfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZq2ZSm5; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDbfxbV69v5vAtbde9hUsujtMb19pIK8lkWKXRLGjev5ggJzVseQNB4EbtMKqtBv47s2iXfGeUzf4dvf0LnBwkEpAbb4VOQYLGFIIjYYSZ74i1shahlPVPQTC3ElBOEV2dfb/EkAQCXC7DWxMrOj9U3qv+S9rh/QhPkGe563y2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aZWeELjo; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZq2ZSm5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6534C4CEF1;
-	Tue,  8 Jul 2025 20:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752005888;
-	bh=zfkbjPg4tfTz4BD5E+6M+vCmZHxU3gsUQB6PvWPchNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZq2ZSm55e4ofOg+hNlkFpOxIV5V7eRne+d2kXkN110cHHYVQ8dYjm2LIrlDnQxCJ
-	 PhKK0uGqlbgRLeTJihMhwiMOS9emQvGv42QvUGg52nOyin7M4jlPraFnYPgaWp/UKg
-	 OvaPRBE5A2LQd5feBze+97YbboqOVJ5DaNQybooiYdcmwD0soFL4EPO60Qi34l6HVn
-	 7oCaMp0yxWDwxsJrJehhDmxEiIb7bBkQmYkRXXyxzokxkLsa1ojG4gw2Aq0VBosMFs
-	 +ajvyu23qepGhhAJtMJtLbJIGAVh2Tgrhdjpvi6eH09OJkc+fnwEJkxS0w1IoP8EDV
-	 z2YaCt8KTOgIQ==
-Date: Tue, 8 Jul 2025 15:18:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aZWeELjo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=HXNe
+	kzdlAIvujwir1FcqKXHPqkduAfFMIsqZ5qAjRQg=; b=aZWeELjov69K+XzSHTeP
+	7PcNZqiMCwB3+WKHDdXUPgoWpH1DvopjS1aJP3cFuzLTtGlh0Zhm3PN6OhCxG45M
+	rqACPeVJ+myINMEZuonDowyoxvT9aSHmi1kUxAtjH0Jvi9E7zkF6alysdifbizMc
+	q/cmXrqzqOttjK6PQx7sytG7eYw7tqBQ0HUNrp3ctixe39laLG/Q9CibvtfVCwTE
+	4APp6BFdfeB5C0tLwk0pavXghhuK5uk/rZzyvMNsKV2/HmJK339EH5005HjJO7zo
+	vd7VAauDQHCtmpjpjucKFRQ0aE5UtKP7UiWoEx7Wkq3zzeS6GDA4TQb1IfqO3pjw
+	7w==
+Received: (qmail 410506 invoked from network); 8 Jul 2025 22:29:05 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Jul 2025 22:29:05 +0200
+X-UD-Smtp-Session: l3s3148p1@Kt/Bz3A5iJcujnuW
+Date: Tue, 8 Jul 2025 22:29:04 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/9] dt-bindings: watchdog: renesas,wdt: Add support for
- RZ/T2H and RZ/N2H
-Message-ID: <20250708201806.GA897559-robh@kernel.org>
-References: <20250707200111.329663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250707200111.329663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH RFC/RFT 0/2] Enable 64-bit polling mode for R-Car Gen3 and
+Message-ID: <aG1_kEZZwVPIj99q@shikoro>
+References: <20250630081315.33288-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7RtQj/Gv9onJ7SZr"
+Content-Disposition: inline
+In-Reply-To: <20250630081315.33288-1-biju.das.jz@bp.renesas.com>
+
+
+--7RtQj/Gv9onJ7SZr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707200111.329663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, Jul 07, 2025 at 09:01:03PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Extend the Renesas WDT device tree bindings to support the watchdog timer
-> found on the RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
-> 
-> The RZ/T2H WDT is mostly compatible with the one found on the RZ/V2H(P),
-> but includes an additional register and differs in the clock division
-> ratio settings for the WDTCR[CKS] field. To reflect these differences,
-> introduce a new compatible string, "renesas,r9a09g077-wdt".
-> 
-> The binding schema is updated accordingly. On RZ/T2H, the WDT does not
-> require the "resets" property. It also requires two register regions and
-> the presence of a "power-domains" property. The "clock-names" property is
-> limited to a single entry, "pclk", for this SoC.
-> 
-> The RZ/N2H SoC uses the same WDT IP as the RZ/T2H. It is supported by
-> using "renesas,r9a09g087-wdt" as the primary compatible string, with
-> "renesas,r9a09g077-wdt" listed as a fallback to describe the shared
-> hardware features.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../bindings/watchdog/renesas,wdt.yaml        | 37 +++++++++++++++++--
->  1 file changed, 34 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> index 78874b90c88c..ce439a401c12 100644
-> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> @@ -81,10 +81,17 @@ properties:
->                - renesas,r9a09g056-wdt # RZ/V2N
->            - const: renesas,r9a09g057-wdt # RZ/V2H(P)
->  
-> -      - const: renesas,r9a09g057-wdt       # RZ/V2H(P)
-> +      - enum:
-> +          - renesas,r9a09g057-wdt    # RZ/V2H(P)
-> +          - renesas,r9a09g077-wdt    # RZ/T2H
-> +
-> +      - items:
-> +          - const: renesas,r9a09g087-wdt # RZ/N2H
-> +          - const: renesas,r9a09g077-wdt # RZ/T2H
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
->  
->    interrupts:
->      minItems: 1
-> @@ -132,6 +139,7 @@ allOf:
->            compatible:
->              contains:
->                enum:
-> +                - renesas,r9a09g077-wdt
->                  - renesas,rza-wdt
->                  - renesas,rzn1-wdt
->      then:
-> @@ -183,7 +191,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: renesas,r9a09g057-wdt
-> +            enum:
-> +              - renesas,r9a09g057-wdt
-> +              - renesas,r9a09g077-wdt
->      then:
->        properties:
->          interrupts: false
-> @@ -192,6 +202,27 @@ allOf:
->        required:
->          - interrupts
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g077-wdt
-> +    then:
-> +      properties:
-> +        resets: false
-> +        clock-names:
-> +          items:
-> +            - const: pclk
+On Mon, Jun 30, 2025 at 09:13:09AM +0100, Biju Das wrote:
+> As per the RZ/{G2L,G3E} HW manual SD_BUF0 can be accessed by 16/32/64
+> bits. Most of the data transfer in SD/SDIO/eMMC mode is more than 8 bytes.
+> During testing it is found that, if the DMA buffer is not aligned to 128
+> bit it fallback to PIO mode. In such cases, 64-bit access is much more
+> efficient than the current 16-bit.
 
-Just 'maxItems: 1' as pclk is already the defined name.
+Cool, I had this somewhere on my todo-list as well. I want to test but
+it will probably be only on Friday. But looking forward to it!
 
-With that,
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+--7RtQj/Gv9onJ7SZr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhtf5AACgkQFA3kzBSg
+KbbEvQ//fPDa51V7lt4G1yzObkw/lrxI5VAONfqXRquHogFdULj9ICJMRe0H6IBL
+Efm4KsX3sc2yWGIzMfNGz8L49jW0mEZeZFDUeBpYg8Pgc64vsGUe5sPaN8lbcgDG
+QVjUw7tmdwQwSt1uiXXpngcEHXDaCJXw4e04MPqCqOqLLm+5YtQCrFWj0zFmWlAl
+KaRba3T7bezGj2U9kbXycD98EG6o5WU55xssvZ5f3ubdL7K+8QJyc3EFrxQ54JF7
++p1ukVD5awIBT309ZkYPYWv0SpcpmSZJ8xxxZJ2tCJ4EbKJDMzxTrPF4luh9T/p4
+HiTX7kDJvq40xNTnzXHUZMI/IE2+FyS2PuNxKpz4N67Dohc4m4pQv6WhEuW/PCJh
+MxQYUSz0XapVfwZVygZ1eGgvLC2aBPJskO0TyVkVOiaiysC0dPkaXNZzeHGCCETk
+gmOPqgm1oX9wavU+W0cZ7ZQdOPK3IzbTchSH52GZeR4Qe0E5uVWx4Jv4xq/NK3fA
+JZ6PH5DiLeEZeoeG4mRePBuC1ik+WGtiRdCYIr6gc+PJ61zbGGHLwi7+9IBesJ+0
+O4g7pNpurl/BTNduuMme2VPHffsRioVeZh6A9Wru4zIFlBJnzb3M822oub4pE04L
+/jvA8FDxFqLbT3l9+dTaeeJZc61TceoW5ovcW2v53gAE35X1VsQ=
+=qe92
+-----END PGP SIGNATURE-----
+
+--7RtQj/Gv9onJ7SZr--
