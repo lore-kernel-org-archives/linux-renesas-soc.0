@@ -1,228 +1,235 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8625D2EA469;
-	Wed,  9 Jul 2025 16:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506BC2E54A7
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Jul 2025 16:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752077322; cv=none; b=dVOliYOy6HfjgvOYgI0H0tmtsYMLK2lHm+tl8j5BLWLA1Do8KxoreevvdIdQuqmRMJPTsTXErrt4WqHNl3HuWFdeZnDScIf6OOSPTEL1FdLjmDJ3mNp01L+Ha/I3WpGLWOWIYyQpQZ7qQCyMagxInVN5WKhYohPhxdcNWI2Ft7A=
+	t=1752077331; cv=none; b=jh5/5MhEiVvj8VNsrGIpDGx9lfLRbAUcttqgeC1TFq8oDps/1dWoMDI7+if3HHX275vwVFCQl1Qz06Z4GysXqMu64JHNdaUROBdcA/n4rnFhU1cEITPVkpO7HiLOGEHjE0QJ52sJqoM6LjSXNLfTkjQ+NH/gHK3Vp/J0XJIrS9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752077322; c=relaxed/simple;
-	bh=3KtpilEy3/o3/1qg2G5TextcJcows1HYN0ngbhiNMHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P+Gum9ecHhM+N3evjHsLFPpCtTR4C6e+md1pdzsuvdMVdu4BWzkhzm8gmF0yZfBy6zUS7wDTd3tF/eUfKh0x0CkILpadRRXrT6WT5xUo/ZtDdb3i6Bui0qXPsUk/j09QffFMG/uddW7XgOiLFB2gaFvHzqtZsunJbLGW7zGmo6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EI/epiSF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752077331; c=relaxed/simple;
+	bh=xxBDt1G0OIJHtYZ9p3lnhL9Z7BcnVm1K/HC9sDZRY3A=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=WpZFSG3QPlAqhKt6TNjHPvZFqbb2uqlEO+PxeJqWbtMv4QlOccXKsGso5/f8krjht+/i1WeqeeR7eTWX0Ig0nsZq95knavPY3Rthi8wGlyxaJBJc+sAlUwLCo3ZbSJ3jYH+Fs71wvs67yTMyFldIBq8RFBMPuEa/yBMtmmGG7kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A8RX+5dQ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EI/epiSF"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so121015e9.2;
-        Wed, 09 Jul 2025 09:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752077319; x=1752682119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JyfdpRD0W+iXSmWBFAIa4vA9j53BOrWnzXp955ltOb0=;
-        b=EI/epiSFtcAS2inH3pSyyyZN7u4oJ0WxUs7cY5O/v38BuC43qZhTwanOFCS/7yh5vZ
-         zBSA5bT2GnfQ/BP6q34f0zwgOaPjBsJMVknD486rnu7pi3V2a1lllcmEIgc8ID05i5jn
-         xirH/tFOxxCyv+QEiqpNnH5WIk5RA2SM2Vmxad/ZVvj/drUdiIAt2B3S9Kdt4VDVxndC
-         5d+ThXGPNBQTHMUBY5C/EVNOTjgx6a7i2JOFT71VtC/KVY9AR5sm4YQNbhq4MW9TYRnj
-         3OiQ6nqUUlEKuxbUN0tzmqtdqdJPp8xm9yGd9Jzq2LV0rHnYubguIk864iYDkyJNqEPK
-         ubyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752077319; x=1752682119;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JyfdpRD0W+iXSmWBFAIa4vA9j53BOrWnzXp955ltOb0=;
-        b=UuD/oYh0aQgEvfBO9kj0M8wDTotmP4UD9P3EiOodzIetmWhCwdaGKnoKonYPcDRHKn
-         UnZ8veFVXbf+IIlzjuYbo295O89wMx/hVvn9/TQ2KX8rMzlRXHx4qrs4FhrFBwE1EXe1
-         qvYAAIKtQjOfCmgNDf6GyU6bMxhpKbLuq+lWIh41+ccThrfd6tXj6DUAN4ohuBzAC6HA
-         zzwlc2rHlVecAIVci2usOF8dI4Qsp6ya3AnghZaobsyu4PvogkKGbOCBgbEzL61ELl2u
-         SzzpgTUnv9HvIwhKEjeTBabZ58prx7CE0ZTwSUdzmCrFGLTJinTBK+VAzWRHs6ZETV8S
-         yn0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Z4CuBzMAbP2oxoXCVHfJRf8DX+xwsOqB2gXmHgJ1rqe6OGOxWwaYb4SPE+NnJNv/2e+xpixjEi90@vger.kernel.org, AJvYcCV5R9ivjJkXYLTkcu2ZYWZvc5fD+vDY3GTSOB72pAMgzICmtBQd1MnGoSYYehUzuhdLjLwZ4wRyd9ejyLdn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUQyh9IeyAEnEa41BxKTI7/A4BLdC8R0yx9LCECm9dq7UOEuo0
-	uco0V51s7A/o8mgIlNH7Nr/n7DnmZXf9W8ZndEvUy8ba1Hw87g34aLjQ
-X-Gm-Gg: ASbGncs4AQHel8QlggfET5utaS3CskpBvLZO9YlbAjc3HQvnoLm6eDY1k1g0PgeWb9J
-	krJFnRO0IPZTAcLUGm9fEC9n/NXTgEGOoRR5id8Xqj8TPoSCA+FFRpWBqsiYTeb6fbwEXjtgNuO
-	adOgBEFgGvEb2DQj45qeSwjtL/DE/xpjRwxBCyp7mTMmps92z6gc2POuZ+iMSjRA5JNIf5mQxyv
-	z/zEsa3EU20WfAoumM9kObj1DdAOkYICtDdOdovEB3PO6Fb1SkIieyiV6Med3uznyzf9ZDYx2oV
-	jym3DnUitqhnJZamt7YgvJvS8AK9iCJHQVefFothjWD5Q+12dyvRhj/1lLg3gEQkK4Gj+aDBCgK
-	eMFsZfcXlOBY=
-X-Google-Smtp-Source: AGHT+IGEjHlJDStNIwkP8Oi9/D+SsbtVZvx4kJ2veVBMXoB0Q5ZWeA/es6NJMmXbS3ixTLrrN6MvNQ==
-X-Received: by 2002:a05:6000:2891:b0:3a3:6e62:d8e8 with SMTP id ffacd0b85a97d-3b5e454564emr3083059f8f.55.1752077318496;
-        Wed, 09 Jul 2025 09:08:38 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:c930:b02d:bf60:750b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b9671asm16639686f8f.53.2025.07.09.09.08.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 09:08:37 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 7/7] pinctrl: renesas: rzg2l: Drop oen_read and oen_write callbacks
-Date: Wed,  9 Jul 2025 17:08:19 +0100
-Message-ID: <20250709160819.306875-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A8RX+5dQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752077329; x=1783613329;
+  h=date:from:to:cc:subject:message-id;
+  bh=xxBDt1G0OIJHtYZ9p3lnhL9Z7BcnVm1K/HC9sDZRY3A=;
+  b=A8RX+5dQHN3f0uxBQnpHiN/OVHA6t0h5CfG/VJjisz+s8bOrDoeb/5rz
+   zUaKKZ/jnoCzzeHCpnmWkLwTcVJtzL6Dpk5WUhjmK6lW4Iqc8ZdUqe/RR
+   o40s3RCAMxC8DSHniDMvGKjd2tAriEQZXOZkU8mQMcso6L0wTAe7HNRze
+   FLdErqhyEBQXEVeERVNxd8+vrD9UbNOMqZgVosXWKot6QhLI+u79L47bi
+   ePigofpXilAg1s2Zm7/qz/TlLFr/V1QIXRX7bhGxGsd6NlWQm5wW35bI2
+   IwVn/fwwIqrOIUQ40U/TJimYcQqXyf1NBZ2l5D8tMwKi0rfYOlMvtim+a
+   Q==;
+X-CSE-ConnectionGUID: iFDuuewjSlqqgAuR4qeAWg==
+X-CSE-MsgGUID: 2y2OvoDVQnO4+vIIbQbNwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54474010"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54474010"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 09:08:49 -0700
+X-CSE-ConnectionGUID: tfFSIXWsTA2sI2U2+3wquw==
+X-CSE-MsgGUID: GsyLULQJS7a7J5wIFIMgqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="160350358"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 09 Jul 2025 09:08:48 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZXLh-0003jL-1I;
+	Wed, 09 Jul 2025 16:08:45 +0000
+Date: Thu, 10 Jul 2025 00:08:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ a762dd13768a5f6c0fb81a07b9ab0fec112aaf72
+Message-ID: <202507100049.wX8MXWMf-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: a762dd13768a5f6c0fb81a07b9ab0fec112aaf72  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
-Remove oen_read and oen_write callbacks from rzg2l_pinctrl_data as
-all SoCs now use the same rzg2l_read_oen() and rzg2l_write_oen()
-functions directly.
+Unverified Warning (likely false positive, kindly check if interested):
 
-Change rzg2l_read_oen() return type to int for proper error reporting
-and update callers to handle errors consistently.
+    drivers/gpu/drm/xe/xe_lrc.c:916:15: warning: 'wa_bb_offset' defined but not used [-Wunused-function]
 
-This simplifies the code by removing redundant callbacks and ensures
-uniform OEN handling across all supported SoCs.
+Warning ids grouped by kconfigs:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 35 +++++++------------------
- 1 file changed, 9 insertions(+), 26 deletions(-)
+recent_errors
+|-- alpha-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- arc-allmodconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- arc-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- arm-allmodconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- arm-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- i386-allmodconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- i386-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- loongarch-randconfig-001-20250709
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- microblaze-allmodconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- microblaze-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- mips-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- s390-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- sparc-allmodconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+|-- um-allyesconfig
+|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
+`-- xtensa-allyesconfig
+    `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index a6580d06db13..1e4fc4be6713 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -298,8 +298,6 @@ struct rzg2l_pinctrl_data {
- 	void (*pwpr_pfc_lock_unlock)(struct rzg2l_pinctrl *pctrl, bool lock);
- 	void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, u16 offset);
- 	int (*pin_to_oen_bit)(struct rzg2l_pinctrl *pctrl, unsigned int _pin);
--	u32 (*oen_read)(struct rzg2l_pinctrl *pctrl, unsigned int _pin);
--	int (*oen_write)(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oen);
- 	int (*hw_to_bias_param)(unsigned int val);
- 	int (*bias_param_to_hw)(enum pin_config_param param);
- };
-@@ -1092,15 +1090,15 @@ static int rzg2l_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
- 	return -EINVAL;
- }
- 
--static u32 rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
-+static int rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
- {
- 	int bit;
- 
- 	if (!pctrl->data->pin_to_oen_bit)
--		return 0;
-+		return -EOPNOTSUPP;
- 	bit = pctrl->data->pin_to_oen_bit(pctrl, _pin);
- 	if (bit < 0)
--		return 0;
-+		return -EINVAL;
- 
- 	return !(readb(pctrl->base + pctrl->data->hwcfg->regs.oen) & BIT(bit));
- }
-@@ -1114,7 +1112,7 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oe
- 	int bit;
- 
- 	if (!pctrl->data->pin_to_oen_bit)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
- 	bit = pctrl->data->pin_to_oen_bit(pctrl, _pin);
- 	if (bit < 0)
- 		return -EINVAL;
-@@ -1296,11 +1294,10 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 	case PIN_CONFIG_OUTPUT_ENABLE:
- 		if (!(cfg & PIN_CFG_OEN))
- 			return -EINVAL;
--		if (!pctrl->data->oen_read)
--			return -EOPNOTSUPP;
--		arg = pctrl->data->oen_read(pctrl, _pin);
--		if (!arg)
--			return -EINVAL;
-+		ret = rzg2l_read_oen(pctrl, _pin);
-+		if (ret < 0)
-+			return ret;
-+		arg = ret;
- 		break;
- 
- 	case PIN_CONFIG_POWER_SOURCE:
-@@ -1459,9 +1456,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 		case PIN_CONFIG_OUTPUT_ENABLE:
- 			if (!(cfg & PIN_CFG_OEN))
- 				return -EINVAL;
--			if (!pctrl->data->oen_write)
--				return -EOPNOTSUPP;
--			ret = pctrl->data->oen_write(pctrl, _pin, !!arg);
-+			ret = rzg2l_write_oen(pctrl, _pin, !!arg);
- 			if (ret)
- 				return ret;
- 			break;
-@@ -3298,8 +3293,6 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
- 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzg2l_pmc_writeb,
- 	.pin_to_oen_bit = &rzg2l_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
- 	.bias_param_to_hw = &rzg2l_bias_param_to_hw,
- };
-@@ -3316,8 +3309,6 @@ static struct rzg2l_pinctrl_data r9a07g044_data = {
- 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzg2l_pmc_writeb,
- 	.pin_to_oen_bit = &rzg2l_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
- 	.bias_param_to_hw = &rzg2l_bias_param_to_hw,
- };
-@@ -3333,8 +3324,6 @@ static struct rzg2l_pinctrl_data r9a08g045_data = {
- 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzg2l_pmc_writeb,
- 	.pin_to_oen_bit = &rzg3s_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
- 	.bias_param_to_hw = &rzg2l_bias_param_to_hw,
- };
-@@ -3357,8 +3346,6 @@ static struct rzg2l_pinctrl_data r9a09g047_data = {
- 	.pwpr_pfc_lock_unlock = &rzv2h_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzv2h_pmc_writeb,
- 	.pin_to_oen_bit = &rzg3e_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzv2h_hw_to_bias_param,
- 	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
- };
-@@ -3381,8 +3368,6 @@ static struct rzg2l_pinctrl_data r9a09g056_data = {
- 	.pwpr_pfc_lock_unlock = &rzv2h_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzv2h_pmc_writeb,
- 	.pin_to_oen_bit = &rzv2h_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzv2h_hw_to_bias_param,
- 	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
- };
-@@ -3406,8 +3391,6 @@ static struct rzg2l_pinctrl_data r9a09g057_data = {
- 	.pwpr_pfc_lock_unlock = &rzv2h_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzv2h_pmc_writeb,
- 	.pin_to_oen_bit = &rzv2h_pin_to_oen_bit,
--	.oen_read = &rzg2l_read_oen,
--	.oen_write = &rzg2l_write_oen,
- 	.hw_to_bias_param = &rzv2h_hw_to_bias_param,
- 	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
- };
--- 
-2.49.0
+elapsed time: 1451m
 
+configs tested: 120
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20250709    gcc-8.5.0
+arc                   randconfig-002-20250709    gcc-11.5.0
+arc                        vdk_hs38_defconfig    gcc-15.1.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-15.1.0
+arm                           imxrt_defconfig    clang-21
+arm                          ixp4xx_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250709    gcc-12.4.0
+arm                   randconfig-002-20250709    gcc-10.5.0
+arm                   randconfig-003-20250709    clang-21
+arm                   randconfig-004-20250709    clang-21
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250709    clang-21
+arm64                 randconfig-002-20250709    gcc-15.1.0
+arm64                 randconfig-003-20250709    clang-21
+arm64                 randconfig-004-20250709    gcc-10.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250709    gcc-15.1.0
+csky                  randconfig-002-20250709    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250709    clang-19
+hexagon               randconfig-002-20250709    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250709    gcc-12
+i386        buildonly-randconfig-002-20250709    clang-20
+i386        buildonly-randconfig-003-20250709    clang-20
+i386        buildonly-randconfig-004-20250709    clang-20
+i386        buildonly-randconfig-005-20250709    gcc-12
+i386        buildonly-randconfig-006-20250709    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-21
+loongarch             randconfig-001-20250709    gcc-15.1.0
+loongarch             randconfig-002-20250709    gcc-12.4.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                         10m50_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20250709    gcc-14.2.0
+nios2                 randconfig-002-20250709    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250709    gcc-15.1.0
+parisc                randconfig-002-20250709    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250709    gcc-8.5.0
+powerpc               randconfig-002-20250709    clang-21
+powerpc               randconfig-003-20250709    clang-21
+powerpc64             randconfig-001-20250709    gcc-10.5.0
+powerpc64             randconfig-002-20250709    gcc-10.5.0
+powerpc64             randconfig-003-20250709    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                               defconfig    clang-21
+riscv                 randconfig-001-20250709    gcc-10.5.0
+riscv                 randconfig-002-20250709    clang-21
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-21
+s390                  randconfig-001-20250709    clang-17
+s390                  randconfig-002-20250709    clang-21
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                         ecovec24_defconfig    gcc-15.1.0
+sh                 kfr2r09-romimage_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250709    gcc-10.5.0
+sh                    randconfig-002-20250709    gcc-14.3.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250709    gcc-15.1.0
+sparc                 randconfig-002-20250709    gcc-10.3.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250709    clang-21
+sparc64               randconfig-002-20250709    clang-21
+um                               alldefconfig    clang-21
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250709    clang-17
+um                    randconfig-002-20250709    gcc-12
+um                           x86_64_defconfig    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250709    gcc-12
+x86_64      buildonly-randconfig-002-20250709    clang-20
+x86_64      buildonly-randconfig-003-20250709    gcc-12
+x86_64      buildonly-randconfig-004-20250709    gcc-12
+x86_64      buildonly-randconfig-005-20250709    clang-20
+x86_64      buildonly-randconfig-006-20250709    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250709    gcc-8.5.0
+xtensa                randconfig-002-20250709    gcc-11.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
