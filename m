@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506BC2E54A7
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Jul 2025 16:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728374059
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Jul 2025 16:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752077331; cv=none; b=jh5/5MhEiVvj8VNsrGIpDGx9lfLRbAUcttqgeC1TFq8oDps/1dWoMDI7+if3HHX275vwVFCQl1Qz06Z4GysXqMu64JHNdaUROBdcA/n4rnFhU1cEITPVkpO7HiLOGEHjE0QJ52sJqoM6LjSXNLfTkjQ+NH/gHK3Vp/J0XJIrS9k=
+	t=1752077390; cv=none; b=cPFTmc6GLKw2APtorlMgQ4j6rgXolqCxpcMpkpXj9lEKXGuo/sFR6FV22CCqEjDEPYu0BTPg/505cHEjs/p/y/JDd32Ug8WvkxXOj1YhoiGbJvEMh19/5pyt3u9MRjSXQWR+EriqKnV2vEMjbLoyVdf/WN1lWa9/+k88baIzyxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752077331; c=relaxed/simple;
-	bh=xxBDt1G0OIJHtYZ9p3lnhL9Z7BcnVm1K/HC9sDZRY3A=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=WpZFSG3QPlAqhKt6TNjHPvZFqbb2uqlEO+PxeJqWbtMv4QlOccXKsGso5/f8krjht+/i1WeqeeR7eTWX0Ig0nsZq95knavPY3Rthi8wGlyxaJBJc+sAlUwLCo3ZbSJ3jYH+Fs71wvs67yTMyFldIBq8RFBMPuEa/yBMtmmGG7kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A8RX+5dQ; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1752077390; c=relaxed/simple;
+	bh=9th/OO0z0I8ns6jYy66LkEshietbBAWBOXVaHuUtWqc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cDD8Xm/2LtKB71wlzbrsO9Uza3L/H0EGgsrWtnfvGp7E9uvpPUvfOvYnLTX93XxsuRWxFrPSTsyFcMz9arr5c4FSumhhPgpIGrSYVEcjDUolWYDXIwKNS2ApUI2SMPo2h6lIMMaBezltWbLhpenUlM0FB/ZWEp1enqMZOsEcSUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=duMUIGSd; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A8RX+5dQ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="duMUIGSd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752077329; x=1783613329;
+  t=1752077389; x=1783613389;
   h=date:from:to:cc:subject:message-id;
-  bh=xxBDt1G0OIJHtYZ9p3lnhL9Z7BcnVm1K/HC9sDZRY3A=;
-  b=A8RX+5dQHN3f0uxBQnpHiN/OVHA6t0h5CfG/VJjisz+s8bOrDoeb/5rz
-   zUaKKZ/jnoCzzeHCpnmWkLwTcVJtzL6Dpk5WUhjmK6lW4Iqc8ZdUqe/RR
-   o40s3RCAMxC8DSHniDMvGKjd2tAriEQZXOZkU8mQMcso6L0wTAe7HNRze
-   FLdErqhyEBQXEVeERVNxd8+vrD9UbNOMqZgVosXWKot6QhLI+u79L47bi
-   ePigofpXilAg1s2Zm7/qz/TlLFr/V1QIXRX7bhGxGsd6NlWQm5wW35bI2
-   IwVn/fwwIqrOIUQ40U/TJimYcQqXyf1NBZ2l5D8tMwKi0rfYOlMvtim+a
-   Q==;
-X-CSE-ConnectionGUID: iFDuuewjSlqqgAuR4qeAWg==
-X-CSE-MsgGUID: 2y2OvoDVQnO4+vIIbQbNwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54474010"
+  bh=9th/OO0z0I8ns6jYy66LkEshietbBAWBOXVaHuUtWqc=;
+  b=duMUIGSd8nG6SeC7rumB7S1C8vWmtqU+RF4DwuT/3NORMTNqi2V6eg0p
+   tBSZOwVsggktT1NGOCS5YnBWOSSG29wSyspWpy6PpQryHcvwSoMsP2Mk8
+   RkS84StvTA/mSnXEZNL1g4UUZTe0WJKYeXn913QAso3TMhBpbwoJ+PY2e
+   CCh2gdsxVnYNun444QdzlrK/OSxgZr6Yw5bEf+h1NwvF8X4ApkNkfGy9L
+   yFActsBjp7Kw4gqiUYoF1e2AMKxAwWlBsv+je5f0kQfdnff9wTBSXx8TM
+   JmPPCtBClzXXpKkmnR/rk+b1c0LhAS1vt70/5mpPNLJ5d4pzWrqxkbMUX
+   A==;
+X-CSE-ConnectionGUID: N2VYYmaGQEKuMk8JoY/jgA==
+X-CSE-MsgGUID: +jcA41P1QtmMWSdlsue54g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54437743"
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54474010"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 09:08:49 -0700
-X-CSE-ConnectionGUID: tfFSIXWsTA2sI2U2+3wquw==
-X-CSE-MsgGUID: GsyLULQJS7a7J5wIFIMgqQ==
+   d="scan'208";a="54437743"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 09:09:48 -0700
+X-CSE-ConnectionGUID: JBLxo6/gQkeprYsxXUShfw==
+X-CSE-MsgGUID: TiaB5uZARzW6dVgRFVSMTQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="160350358"
+   d="scan'208";a="161371148"
 Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 09 Jul 2025 09:08:48 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 09 Jul 2025 09:09:47 -0700
 Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1uZXLh-0003jL-1I;
-	Wed, 09 Jul 2025 16:08:45 +0000
-Date: Thu, 10 Jul 2025 00:08:08 +0800
+	id 1uZXMf-0003jP-1c;
+	Wed, 09 Jul 2025 16:09:45 +0000
+Date: Thu, 10 Jul 2025 00:09:11 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:master] BUILD SUCCESS
- a762dd13768a5f6c0fb81a07b9ab0fec112aaf72
-Message-ID: <202507100049.wX8MXWMf-lkp@intel.com>
+Subject: [geert-renesas-drivers:renesas-clk-for-v6.17] BUILD SUCCESS
+ 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a
+Message-ID: <202507100059.MVqaa7xW-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,69 +59,31 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
-branch HEAD: a762dd13768a5f6c0fb81a07b9ab0fec112aaf72  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v6.17
+branch HEAD: 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a  clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
 
-Unverified Warning (likely false positive, kindly check if interested):
+elapsed time: 1452m
 
-    drivers/gpu/drm/xe/xe_lrc.c:916:15: warning: 'wa_bb_offset' defined but not used [-Wunused-function]
-
-Warning ids grouped by kconfigs:
-
-recent_errors
-|-- alpha-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- arc-allmodconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- arc-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- arm-allmodconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- arm-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- i386-allmodconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- i386-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- loongarch-randconfig-001-20250709
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- microblaze-allmodconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- microblaze-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- mips-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- s390-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- sparc-allmodconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-|-- um-allyesconfig
-|   `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-`-- xtensa-allyesconfig
-    `-- drivers-gpu-drm-xe-xe_lrc.c:warning:wa_bb_offset-defined-but-not-used
-
-elapsed time: 1451m
-
-configs tested: 120
+configs tested: 128
 configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 tested configs:
+alpha                            alldefconfig    gcc-15.1.0
 alpha                             allnoconfig    gcc-15.1.0
 alpha                            allyesconfig    gcc-15.1.0
 arc                              allmodconfig    gcc-15.1.0
 arc                               allnoconfig    gcc-15.1.0
 arc                              allyesconfig    gcc-15.1.0
+arc                 nsimosci_hs_smp_defconfig    gcc-15.1.0
 arc                   randconfig-001-20250709    gcc-8.5.0
 arc                   randconfig-002-20250709    gcc-11.5.0
-arc                        vdk_hs38_defconfig    gcc-15.1.0
+arc                    vdk_hs38_smp_defconfig    gcc-15.1.0
 arm                              allmodconfig    gcc-15.1.0
 arm                               allnoconfig    clang-21
 arm                              allyesconfig    gcc-15.1.0
-arm                           imxrt_defconfig    clang-21
-arm                          ixp4xx_defconfig    gcc-15.1.0
 arm                   randconfig-001-20250709    gcc-12.4.0
 arm                   randconfig-002-20250709    gcc-10.5.0
 arm                   randconfig-003-20250709    clang-21
@@ -157,6 +119,7 @@ loongarch             randconfig-002-20250709    gcc-12.4.0
 m68k                             allmodconfig    gcc-15.1.0
 m68k                              allnoconfig    gcc-15.1.0
 m68k                             allyesconfig    gcc-15.1.0
+m68k                          atari_defconfig    gcc-15.1.0
 microblaze                       allmodconfig    gcc-15.1.0
 microblaze                        allnoconfig    gcc-15.1.0
 microblaze                       allyesconfig    gcc-15.1.0
@@ -168,20 +131,29 @@ nios2                               defconfig    gcc-14.2.0
 nios2                 randconfig-001-20250709    gcc-14.2.0
 nios2                 randconfig-002-20250709    gcc-14.2.0
 openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
 openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
 parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
 parisc                              defconfig    gcc-15.1.0
 parisc                randconfig-001-20250709    gcc-15.1.0
 parisc                randconfig-002-20250709    gcc-14.3.0
 parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
 powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-21
 powerpc               randconfig-001-20250709    gcc-8.5.0
 powerpc               randconfig-002-20250709    clang-21
 powerpc               randconfig-003-20250709    clang-21
+powerpc                     tqm5200_defconfig    gcc-15.1.0
+powerpc                     tqm8540_defconfig    gcc-15.1.0
 powerpc64             randconfig-001-20250709    gcc-10.5.0
 powerpc64             randconfig-002-20250709    gcc-10.5.0
 powerpc64             randconfig-003-20250709    clang-21
+riscv                            allmodconfig    clang-21
 riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
 riscv                               defconfig    clang-21
 riscv                 randconfig-001-20250709    gcc-10.5.0
 riscv                 randconfig-002-20250709    clang-21
@@ -195,8 +167,7 @@ sh                               allmodconfig    gcc-15.1.0
 sh                                allnoconfig    gcc-15.1.0
 sh                               allyesconfig    gcc-15.1.0
 sh                                  defconfig    gcc-15.1.0
-sh                         ecovec24_defconfig    gcc-15.1.0
-sh                 kfr2r09-romimage_defconfig    gcc-15.1.0
+sh                          polaris_defconfig    gcc-15.1.0
 sh                    randconfig-001-20250709    gcc-10.5.0
 sh                    randconfig-002-20250709    gcc-14.3.0
 sparc                            allmodconfig    gcc-15.1.0
@@ -207,7 +178,6 @@ sparc                 randconfig-002-20250709    gcc-10.3.0
 sparc64                             defconfig    clang-20
 sparc64               randconfig-001-20250709    clang-21
 sparc64               randconfig-002-20250709    clang-21
-um                               alldefconfig    clang-21
 um                               allmodconfig    clang-19
 um                                allnoconfig    clang-21
 um                               allyesconfig    gcc-12
