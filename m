@@ -1,90 +1,180 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225D217996
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jul 2025 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F92F25A2B4
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jul 2025 09:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753348203; cv=none; b=oV+visvY0FbuYC1uFxeKc7rSCG4usRTXaaSB0oCZREkubwwT44lU3FPJE341SISbudlkzP1trcqPp14mmPX3mGGdXgf3uwTKx4jrJgTJOIjVEKOAjGs8IXpEFxztB2okhxwbvRSPTopGGNdVo/MSr6RE7rzYlncEbE+F8JKmCGw=
+	t=1753349084; cv=none; b=JdO4CFg1PuH72Vr92GHnDL14lSjxry695d827Qm70Z6hyogNepdYkoigqGy3KJe6sIiZo+OtX9v+pqaf7lFFSrG8xMdibeL3oeFy2MfxYbvDf9xGbJOBEGVwfe/CwgcHQ451kWkgoYdXsZsQOP5Um4UhUv26D9bhIuDawuk/boA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753348203; c=relaxed/simple;
-	bh=G3YlWTRs2ZjXChxoKT8sSieebc1PwZfmrkToTM0RJJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJJx88cKRwNrmi/nnPbCIJSWa3K8iZY3eCh/4ADrxav7T+eIpUU8OPnQR20yW7sp1yWW47GBmeHjljl8GRQkqqyjgUTgfSUlQfS0hdFytVRFI37ysMBqRxW8/XPFdktTWJekOnV2i3JCQdk4/yT5Zyew13DV0QxnWuJNnJm5L4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=mJuPNYhL; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1753349084; c=relaxed/simple;
+	bh=UVS9SpzWVwmGyJE+4Dquy2g9DqJn4S6AIXELDh0rj9c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ku0h3UoyD/Cjgg+7/V0FJOQgukxew9tJv5VMssym+121ruM0eaLCOuGcRtau+ciyb2Jx8jYjx2I+/+KA2KwITl2c4NZaHYfUWVUzM4p10D8GmJZQsylg7WvMaqshULj0ZMjzo2IAnvt/47j98sz2wK/+vUz4Nf9e+8hkW5DRxkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=s+9q3+Lk; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="mJuPNYhL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=6Lub
-	CPP7Wbmj7qoJKI6x3Jj43GjD7R6ZKtT47pr9Epc=; b=mJuPNYhLvU4rsyz1aRpr
-	HiLSLRSOEsz6cayOnUuic7P/XBFpj5nK74BCvh4EtxxzEu36EkAgat1PRFAwWInY
-	zH0ZhjUSjD4dv6vfl8RW4lPqmnD/g2sQFdnpvK3BJw3ZcV5kLGupRrAvfiuw9CBh
-	RvZgxP0cAPR7ZHAfXwAZ8udIptTXHe6O19AZqqHqzzlo4P0uE6a6nfNbJ3+d5U2P
-	JsozP8Rswosv51Fzmdv02Mb4KD6Dn6HS77QT5BZlGiX4Qq6PiFYp4hyTLne0zflg
-	1ehCP2OumkmIU01G88fgk4q2r1keIuH7YiygEqnuvXO5k+H/YPHhzcYBTjp/ShxY
-	lw==
-Received: (qmail 2006403 invoked from network); 24 Jul 2025 11:09:59 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Jul 2025 11:09:59 +0200
-X-UD-Smtp-Session: l3s3148p1@Dw+PMKk6YoEgAwDPXyBWAATEinPyanBm
-Date: Thu, 24 Jul 2025 11:09:58 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org
-Subject: Re: [PATCH v4 2/4] i3c: Add more parameters for controllers to the
- header
-Message-ID: <aIH4ZmqVcYhOT8xT@shikoro>
-References: <20250722190749.6264-1-wsa+renesas@sang-engineering.com>
- <20250722190749.6264-3-wsa+renesas@sang-engineering.com>
- <aIEAk3DF7Ez7NFwK@lizhi-Precision-Tower-5810>
- <aIEg-qyGhb8B2Rep@shikoro>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="s+9q3+Lk"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4f379662cso523227f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jul 2025 02:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753349080; x=1753953880; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enHFJE6UQ4MedDyqBD+KXxRCiT2/woFdp52jlXH8+kI=;
+        b=s+9q3+LkM7QuOOS1Nx1AaBlrCD8GovVE2EO/y2OXzX31isB/iDM1BHjYy0sHHKx0G+
+         bpDFL/GvhV8NGK2nP/2EUBMv6obBufD44iT/xge/RnVUEHBDz+ZOIYhzMv9RgdVb1jiN
+         tBv6zrKNyx3h2raQN1lpdTkGySSsQJSf8lABDRzxwcVQcxjV4ljh2RYWNBlkwm0W5p4V
+         SNXiVz7QUJ8cPsPn/+lBGJO/TWebe9xX+npVm0m9/cBxkiMivn9rbJhq0JEija9x8EZT
+         kzIYXdzJr8kLbNzdfslulL8VsgpKBqgLwFhVN39y7+Ep4h/Tr+P471WyrOGqwuPJB9l0
+         SfyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753349080; x=1753953880;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=enHFJE6UQ4MedDyqBD+KXxRCiT2/woFdp52jlXH8+kI=;
+        b=gy4yfMcGpo9mHzX82lpbidKjO9DsZbMpHDUGyZpPmBsnfPo67B6zRM8TbEbMqoU96b
+         Bl2PNZowwkPXiO/jE7vZz1iIfhc+M3n1gxSmc4t0diqAtzSPyfsxKtiYulqOUx2erpp+
+         Im84KKAtdvZ80vIGhmwEku0Yj5P7OH4wIvKgX0wLQK3qXV0rzH0oVvAXPD91IelhV9ya
+         U8JowjKpRCGiywLGUy4EWGiIiVhM3Z/LkXMifOE9BS17gHea/uYJMD5QJmlNhMfbkQZL
+         BZWmCVjVTJ5kUmhtd6kySuSUYD5da/nxIrJ0kzQa486DmfPCUuyqLWaZLNJWhYHiwkAL
+         iwPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRH6LnMlA1OReXvOHa50a0feRi49/Vp09cyJeH+3JITBLCzU+TFhiZLnwCQlfdkpHvPRoMTgQc1VEOPtbC9BmLhg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydj//NJXKfb+jJB4rrlnu7Z1QKuxz7Y6MQqLtdOLhZIXEKysIC
+	DTGkJREoFSQ3qcXJdEV/vjupx9eIicFYJ/wyQleVD5fQkezImTG2J0mrNhXiBElK4QY=
+X-Gm-Gg: ASbGnct3d0xyxFpOR7+Q/AD7DHWZ3YW9p7z8fGUGKLsEm2ZzCmsoeMVjpagbEexgi1C
+	/gIDFOoph1TBFRMeAYJ623BM5FbbeSy+SqGK+6q2QeJLjKb7CSQE/JJuSvl5ZG1lyXSaxo3YV3o
+	4aU+UanAGg2QxgPEwOqNBBXYvly5byMmlwEp5DxvUr/Lk3jAFpJ8oiyUJjDVCs+J92607C+EqEo
+	LVQZ3upI9lM2QfU7cfee87rYUGrVbkbyrS9DD3+Mne5hbV8Ixi5GN0DSeHmXMdAfyTkiOFQeaH7
+	8Tr1RezyZoisRt1VYG8UNzolGk+XsHEl9c+W8fDszpvvgWwpxV4mfjITb1JTXmRQcgNTNvCWw5L
+	bywZYh9xFGfxDkUp9
+X-Google-Smtp-Source: AGHT+IFLTaYRX3oZKktSwmTl5BxHaXO7YP006jDq4+wHGsPABKDqUOqQk5SOHVzh8IhrpobqFVAPGA==
+X-Received: by 2002:a05:6000:248a:b0:3a3:5f36:33ee with SMTP id ffacd0b85a97d-3b768ef3913mr4552377f8f.32.1753349080240;
+        Thu, 24 Jul 2025 02:24:40 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:f44c:20db:7ada:b556])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc72548sm1600833f8f.30.2025.07.24.02.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 02:24:39 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 24 Jul 2025 11:24:29 +0200
+Subject: [PATCH v3 01/15] lib: provide kmemdup_const()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIEg-qyGhb8B2Rep@shikoro>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250724-pinctrl-gpio-pinfuncs-v3-1-af4db9302de4@linaro.org>
+References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
+In-Reply-To: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Alexey Klimov <alexey.klimov@linaro.org>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+ Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ NXP S32 Linux Team <s32@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Tony Lindgren <tony@atomide.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
+ linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2062;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=4C1RHZTMKgGSo3gXRAvPeC6y45wc3aHImSFGh2Fz1QE=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBogfvRcDL9XPXeHv8dyMY2ypjsvbwhNFFTJNmoy
+ 2AX+ZslnGaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaIH70QAKCRARpy6gFHHX
+ ch0XD/9I+1OijkQL+cye+ZruBlaR1Ib2UfMF0QEOwEw0hfteX9fTl34LlB1334pIq4xxhDMyq4m
+ FZH5qMf22U1fVmLVGDs7Py/y1aFeIly97+9z4U2zlOSQ6KH68lmB8I8pmA79F94Ls0nxwl9MXi9
+ A2WDTXvSoAA2nloXBT8D/2nv/HDVzSpY55mNCZn0QeI+lQwBhC02oOwDN3xg+aXfkSCzERHNLUX
+ 6ccd3tZpTYjYcyaEzdS3Pr8xvrq/CKlcGx/7UWQO0XPKWcYr7NDzBhcuZ/Xnciwnmf+4bHDTfsj
+ N+QXyPhCYpNecz+o9HYMzcZ49hkbaDDcHRzqJ1QAqMopPXRH2Y+uuN5IlTCvLCP0CxYJrSNK1Ir
+ +t/tUQDIsNKH0oe60hktWfTdSPocCQ+A/e6joTSg7q7rwlh3PeajuYoz9tdr1v4bN3ZCgNI5NSy
+ vb6WLdiiC8zV317SlA2fotQFgGqmCmNXHZ1MxIG8WdADW1csMF44skaq6TtMIu6B0JzqQVnJSCL
+ 4ZhGqhYsud6CNJbYGa9BIZ+m3Kq6EysSbLmBPCEpH0cgs5Pui2X2PUIf6BHelaLNyHV0ckYn+Vx
+ XUDG95SjgAiMT6Kq5zHT8VPY91QJwnLtOaPEAM/z3cF8qGMdmWR5fJT0BUlU6e7t3nqhfPtV96G
+ w8wHIy7JPNlWP+w==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Wed, Jul 23, 2025 at 07:50:50PM +0200, Wolfram Sang wrote:
-> 
-> > > +/* TODO: Document a reason for this value */
-> > 
-> > Todo? Can you finish it?
-> 
-> Yes, but in a seperate patch series where the value is to be changed.
-> 
-> This needs additional testing because I want to update the other I3C
-> controller drivers as well.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-So, I started the research [1] with the conclusion:
+Provide a function similar to strdup_const() but for copying blocks of
+memory that are likely to be placed in .rodata.
 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-The above completion is for the *whole transfer*, though, including the
-target response time. Like I2C, it is not specified for I3C. At least, I
-couldn't find it and I recall no one at the I3C plugfest could point me
-to one as well.
+ include/linux/string.h |  1 +
+ mm/util.c              | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-So, this completion timeout is more than just 5.1.2.5. It might make
-sense to investigate a more reasonable value. But I don't think this
-should be imposed on someone submitting a new driver. It is a dedicated
-task. And I am not even sure the result will be a subsystem-wide static
-value. It might be a calculated value. Maybe even a driver-specific
-calculated value.
+diff --git a/include/linux/string.h b/include/linux/string.h
+index fdd3442c6bcbd786e177b6e87358e1065a0ffafc..1a86d61de91204563e4179938c4dfc77108e03aa 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -304,6 +304,7 @@ extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
+ extern void *kmemdup_noprof(const void *src, size_t len, gfp_t gfp) __realloc_size(2);
+ #define kmemdup(...)	alloc_hooks(kmemdup_noprof(__VA_ARGS__))
+ 
++extern const void *kmemdup_const(const void *src, size_t len, gfp_t gfp);
+ extern void *kvmemdup(const void *src, size_t len, gfp_t gfp) __realloc_size(2);
+ extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+ extern void *kmemdup_array(const void *src, size_t count, size_t element_size, gfp_t gfp)
+diff --git a/mm/util.c b/mm/util.c
+index f814e6a59ab1d354b8cd04ebf3903626f6b23a6c..f4df9194b0c69c27ff06e6ba1d1137c559035470 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -142,6 +142,27 @@ void *kmemdup_noprof(const void *src, size_t len, gfp_t gfp)
+ }
+ EXPORT_SYMBOL(kmemdup_noprof);
+ 
++/**
++ * kmemdup_const - conditionally duplicate a region of memory
++ *
++ * @src: memory region to duplicate
++ * @len: memory region length,
++ * @gfp: GFP mask to use
++ *
++ * Return: source address if it is in .rodata or the return value of kmemdup()
++ * to which the function falls back otherwise.
++ *
++ * Note: the returned address must not be passed to kfree(), the caller must
++ * use kfree_const() instead.
++ */
++const void *kmemdup_const(const void *src, size_t len, gfp_t gfp)
++{
++	if (is_kernel_rodata((unsigned long)src))
++		return src;
++
++	return kmemdup(src, len, gfp);
++}
++
+ /**
+  * kmemdup_array - duplicate a given array.
+  *
 
-So, I think the best we can do until we have this investigation is to
-keep drivers consistent with the historically grown value.
----
-
-Based on this, I will send V5 and move XFER_TIMEOUT back into the
-driver. We don't know yet if a subsystem-wide static default value is
-actually the right way.
-
-[1] https://lore.kernel.org/r/aIH1zUb8tyIlyC3S@shikoro
+-- 
+2.48.1
 
