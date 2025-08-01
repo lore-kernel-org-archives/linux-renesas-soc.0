@@ -1,37 +1,37 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E338DDB;
-	Fri,  1 Aug 2025 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7A9267B94;
+	Fri,  1 Aug 2025 14:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754057302; cv=none; b=lH1k0xQ9qX1HDvTscDdpishA98AwcM2zKfk5U1Eu2wQOb4DzbTh2O4kR3/IdhNfV59fkV+KXr7LcdHXzHxkqgFeXT8lcvYuGsey8zgvDHo9CQhCA9UubfJ7mLpT9PCSFef3y5Z/h1BuN/hoi9/Uk9pVBYfZIEqTpy+2LbhDA6c4=
+	t=1754057325; cv=none; b=X6Z53l2ARQM8vMUeUWqWmz0a0ryiHNu86s6tyWVGu5OLCD/MjyZiNE7ycV0uVQ573+YMNrOZpDfTogfRY+rCwkiOruSF1ZJaimZgVWho4MQX5aAxOvTbdiDrEkME0THbTWtQULQRZDxQXqZwbAOBNk12lEkVX0HPd77yiaLoDjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754057302; c=relaxed/simple;
-	bh=G3HMOcTIL4d5zAXvONZ+7AlTTiOgrSqBZLKMXTE5R48=;
+	s=arc-20240116; t=1754057325; c=relaxed/simple;
+	bh=iiacVxE3pzOZ+IAdIdvGgFRuCMZykj9mmuKowKtLG/4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNG0xIhEGEJrCdgYMrtSI+0v7i5MeNOvfYOXYvyQa7RgBi+axGq/npdtlm4n6an8lE88QvqxSp7kDOWWPcctsARVStuyI2Me8sgmF4JVPmrViuYh1+Xq5wkbNJDZNkXpdDFF6D24xlBhcHjTx88ySy6KuhJgkDaBp1G06kXorF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lwESAIfc; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:Content-Type; b=Cy6n3IygOuKkODk/iXenQ+22s9HBtyqc0Xv6IYqCFWI4YOCBiZYWI2iPbvVO60TEsRrmbXmeCGsKmneTcEZN+RwIcPsVhjnJ0gaz5yNB/1eseoju+ebidM0t11okXP+ldER6XnAQYMldjl9gZqoE+O/oM47r/G3hhkr5ow9l5KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ReLIBB/U; arc=none smtp.client-ip=217.70.178.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lwESAIfc"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 86918444D0;
-	Fri,  1 Aug 2025 14:08:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ReLIBB/U"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 53FAC44231;
+	Fri,  1 Aug 2025 14:08:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754057289;
+	t=1754057314;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bMs8CmXxlCL5em1U2cNHyW434Syw+11/Rs9F/pxqQnc=;
-	b=lwESAIfc4K1NTo02wUMiSzM0b1E3YQ7Avsfpe4bTcJKwQUJKOxQTmZIewJ5l41efE/gxbj
-	4PabRfjEvWpl8m8/2pMPsbf2DHn5coVpFkRtBLWsDtBRahqJDUPdHiK3RQBYRVP+n+zlPa
-	KzjE7GZkUjvBpMjO+0ndIDkdH8/t7394EEyDIyH6FU2nQfaxJCw5jRhu2prKAX89HvxDkN
-	gQwqY7uj2/WCqRoHS/Yll9Cl/WduXWD7A6Vqx8ll6l7J0DBl+zQSUOOJsFqZ3ziNcR8H+c
-	YC5xvTdc91YjS5ji28HzIFYvIqj3NBbpCqbID8812z39tLu+/mfIim+pG8STVw==
-Message-ID: <bfb8a882-1179-4ba8-98eb-5da12b2edfc2@bootlin.com>
-Date: Fri, 1 Aug 2025 16:08:06 +0200
+	bh=rqvkpsa3u8eBjFb86OL5k8iG+0mAxnFGtbjvxDDOxYA=;
+	b=ReLIBB/UgjeRdseK8WhHpYoaZbSHYTkSdAoRD/RkOtNQE5Vuay4aZa8UIHraif66DJBr/2
+	p+1ZSEcEx3RhLOoQgCTIlvnAulVB83W1XY92G4BsYbUHpDFGQYZdZ82ZLaDWAbHTw2M7bR
+	Q0Mn7tUsP3xdra8jngxiUDa8D+nV0IzNljnr9skymPDjy8Zyz27B+xlPhb6ZbKnT4zih+1
+	TeC/W1mvW6Eshs3XmVGf8U9OrsxkqsKBgyTJROjCCAYdqYAOFdep8si3+eG/Fgc9EwTPmr
+	2eBZpStToqsDHkNIW/j5tjoSTsF0LIduGvVd3bz3g/1T4uLdz82S6D3zRqVkLA==
+Message-ID: <ecad509b-7abe-47b9-b0ee-d4db5c38d841@bootlin.com>
+Date: Fri, 1 Aug 2025 16:08:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -39,7 +39,7 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] drm/amd/display: use drmm_writeback_connector_init()
+Subject: Re: [PATCH 6/8] drm/vc4: use drmm_writeback_connector_init()
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
  Jani Nikula <jani.nikula@linux.intel.com>,
  "Kandpal, Suraj" <suraj.kandpal@intel.com>,
@@ -67,7 +67,7 @@ Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
 References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
- <20250801-wb-drop-encoder-v1-1-824646042f7d@oss.qualcomm.com>
+ <20250801-wb-drop-encoder-v1-6-824646042f7d@oss.qualcomm.com>
 Content-Language: en-US
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
@@ -124,14 +124,13 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
  gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
  kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
-In-Reply-To: <20250801-wb-drop-encoder-v1-1-824646042f7d@oss.qualcomm.com>
+In-Reply-To: <20250801-wb-drop-encoder-v1-6-824646042f7d@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeegpdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepshhurhgrjhdrkhgrnhguphgrlhesihhnthgvlhdrtghomhdprhgtphhtthhopehhrghrrhihrdifvghnt
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeegpdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepshhurhgrjhdrkhgrnhguphgrlhesihhnthgvlhdrtghomhdprhgtphhtthhopehhrghrrhihrdifvghnt
  hhlrghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdrtghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpthhtoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthhopegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
@@ -145,66 +144,36 @@ Le 01/08/2025 à 15:51, Dmitry Baryshkov a écrit :
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    |  2 +-
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 18 +++++++++++++-----
->   2 files changed, 14 insertions(+), 6 deletions(-)
+>   drivers/gpu/drm/vc4/vc4_txp.c | 9 ++++-----
+>   1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 096b23ad4845d365dad707deed4e3e84b1f9945d..a9948e8d67a6e9556d21090b5cdd101258d62480 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -10003,7 +10003,7 @@ static void dm_set_writeback(struct amdgpu_display_manager *dm,
->   		return;
->   	}
->   
-> -	acrtc = to_amdgpu_crtc(wb_conn->encoder.crtc);
-> +	acrtc = to_amdgpu_crtc(crtc_state->base.crtc);
->   	if (!acrtc) {
->   		drm_err(adev_to_drm(adev), "no amdgpu_crtc found\n");
->   		kfree(wb_info);
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> index d9527c05fc878ef6916782ff9fde847813938461..80c37487ca77c0494eaf769c5b9a3c53486aa52d 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> @@ -171,7 +171,6 @@ static const struct drm_encoder_helper_funcs amdgpu_dm_wb_encoder_helper_funcs =
->   
->   static const struct drm_connector_funcs amdgpu_dm_wb_connector_funcs = {
+> diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
+> index 42acac05fe47861ced226a4f64661f545e21ddb5..fef4e4ee47cf41d40de47c5201f0349dc36c56bd 100644
+> --- a/drivers/gpu/drm/vc4/vc4_txp.c
+> +++ b/drivers/gpu/drm/vc4/vc4_txp.c
+> @@ -377,7 +377,6 @@ vc4_txp_connector_detect(struct drm_connector *connector, bool force)
+>   static const struct drm_connector_funcs vc4_txp_connector_funcs = {
+>   	.detect = vc4_txp_connector_detect,
 >   	.fill_modes = drm_helper_probe_single_connector_modes,
 > -	.destroy = drm_connector_cleanup,
->   	.reset = amdgpu_dm_connector_funcs_reset,
->   	.atomic_duplicate_state = amdgpu_dm_connector_atomic_duplicate_state,
+>   	.reset = drm_atomic_helper_connector_reset,
+>   	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
 >   	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> @@ -190,17 +189,26 @@ int amdgpu_dm_wb_connector_init(struct amdgpu_display_manager *dm,
->   	struct dc *dc = dm->dc;
->   	struct dc_link *link = dc_get_link_at_index(dc, link_index);
->   	int res = 0;
-> +	struct drm_encoder *encoder;
-> +
-> +	encoder = drmm_plain_encoder_alloc(&dm->adev->ddev, NULL,
-> +					   DRM_MODE_ENCODER_VIRTUAL, NULL);
-> +	if (IS_ERR(encoder))
-> +		return PTR_ERR(encoder);
-> +
-> +	drm_encoder_helper_add(encoder, &amdgpu_dm_wb_encoder_helper_funcs);
-> +
-> +	encoder->possible_crtcs = amdgpu_dm_get_encoder_crtc_mask(dm->adev);
+> @@ -601,10 +600,10 @@ static int vc4_txp_bind(struct device *dev, struct device *master, void *data)
 >   
->   	wbcon->link = link;
->   
->   	drm_connector_helper_add(&wbcon->base.base, &amdgpu_dm_wb_conn_helper_funcs);
->   
-> -	res = drm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
-> +	res = drmm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
->   					    &amdgpu_dm_wb_connector_funcs,
-> -					    &amdgpu_dm_wb_encoder_helper_funcs,
+>   	drm_connector_helper_add(&txp->connector.base,
+>   				 &vc4_txp_connector_helper_funcs);
+> -	ret = drm_writeback_connector_init_with_encoder(drm, &txp->connector,
+> -							encoder,
+> -							&vc4_txp_connector_funcs,
+> -							drm_fmts, ARRAY_SIZE(drm_fmts));
+> +	ret = drmm_writeback_connector_init(drm, &txp->connector,
+> +					    &vc4_txp_connector_funcs,
 > +					    encoder,
->   					    amdgpu_dm_wb_formats,
-> -					    ARRAY_SIZE(amdgpu_dm_wb_formats),
-> -					    amdgpu_dm_get_encoder_crtc_mask(dm->adev));
-> +					    ARRAY_SIZE(amdgpu_dm_wb_formats));
+> +					    drm_fmts, ARRAY_SIZE(drm_fmts));
+>   	if (ret)
+>   		return ret;
 >   
->   	if (res)
->   		return res;
 > 
 
 -- 
