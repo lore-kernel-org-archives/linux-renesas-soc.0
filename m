@@ -1,149 +1,92 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B5C15624D
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Aug 2025 04:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21015624D
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Aug 2025 04:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754541300; cv=none; b=rUNDwjK6tIZLxlbPAe/QW7GbfZU+FgBHkOxOoPJnq/RmiAETj/ZRUW2qIn0cd1Ig3zG0HWcbVp4JGqWVcf96VlBQChH8xFv3cFl3KCQD/tZHb/PSU9lEW4j/uAdLTMbFVAc2+IESY7nzyQ3liDymCzGs63ic077Qq2hlrTzXC9M=
+	t=1754541314; cv=none; b=oCPsPLzS9w0aclH21Sj+59wvzozUmQbqvzZbD+3zvb8+BC7n/bXMV5H9FLetdhOCY2k48UskmL6r//WBwpk+6OYFH52Fbn0YvH4HJ5wcc8cBHZqGKNju4qW3OD2cMdbbzHzv3cuN3AaAJ6DXFcnQi9/B/kxumMeGqu13UQVxk5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754541300; c=relaxed/simple;
-	bh=7IKKdD5+9vq1ID+HKEap+w2lhVEuBAO2w0jtHa7BreU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rEL+Y1uBrIdAPOsY8mSmF9HyYh7qhBZhpMkk5SFYmkhOR1A2NPInUi5v3eER7ddEfk4bmxRIS3c/w/R/drAWnTuh70BZNrKbJuoQz3JyUBitqdH5NKt2P54swbIfFEDMOTY90KqzA5fQTZ34bA5banlk6dMl6+UWbDY6FUj9S88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VdCQLAio; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1754541314; c=relaxed/simple;
+	bh=ofLdd4A07ASt1b7FuyxwhwZp3KQ/vxDlYI+djJ25nt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btJfNvXXcfCUd+oB63ziYLNAKCECwZ4tTCiLp05NCAFGCPzwuMrGgsPYUeaInpQFrn01IgNPdzx1KLaLDTp9pocNcnRSnpLVBPEVgMBRixCSWN/Hajb0kRBBxtenr0QRDNqmMfTUO/5XpEyR/QaPLtHoRyypEHfib0lY+SyyEtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XuYMH1/L; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VdCQLAio"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754541298; x=1786077298;
-  h=date:from:to:cc:subject:message-id;
-  bh=7IKKdD5+9vq1ID+HKEap+w2lhVEuBAO2w0jtHa7BreU=;
-  b=VdCQLAioZd4hREvTqWhUtWtbfTzkW24m0Y5ZiBmdj85aG4Zto5bHw+lZ
-   hFzaz8uEDtb7c5uX9JJXJ5Iv82YsT8V7NUe97ivIN9A2a1JDCvR2FOREi
-   jwZj8MxD4B86V/i1rOKCscTLZEsWddcaotAttbRA+ZK8MEkpZOQK3NFFm
-   qCfOhz8VVtugRvwSR2OAF9TwgEDtTHHO8BMTincHiuKPRDI49IZSGrTcH
-   uJaZmHnbbtMd3bFnvP+LUpAcvZdolAGXRzjmVWI5eXu2b4iPgpecPnn/f
-   haKsFdhaN0AHnYcMBFkqZ2njoINdArVl0i3sBmf8YUY25PwvwiC2trPmJ
-   A==;
-X-CSE-ConnectionGUID: 7ZFx7J29SzyEKfifOF0O+g==
-X-CSE-MsgGUID: I4mj3tlnShW9Y35K/NB5fA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60677347"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="60677347"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 21:34:58 -0700
-X-CSE-ConnectionGUID: 31C3BlWnSaibFbz5DW3mNg==
-X-CSE-MsgGUID: gg7vCLhuS3eKUu4e1D5rew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164477665"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Aug 2025 21:34:57 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujsL8-0002N4-2i;
-	Thu, 07 Aug 2025 04:34:54 +0000
-Date: Thu, 07 Aug 2025 12:34:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-defconfig-for-v6.18] BUILD
- SUCCESS 24b1a5e815942c39dd6cd864b1bc814ac5f97a98
-Message-ID: <202508071218.7IZ4pYrg-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XuYMH1/L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=0yf9/75yWMvaF+
+	FT4siLA18REESy0OotmaTC98XCF2M=; b=XuYMH1/L1ctO1lRYQE7KsHhBBHv24E
+	wqZ/WksfNboaqqM8FofSbNSFp4ijoUfiDQLdpIGFIf6lnbrK/bwRT9GoHms4M1e8
+	DrzCDIm9nwFMOByxjJKqJ4nTkulORllCr/T59SvFegJv57JiYZ28Ws/lhPPiUzC/
+	LAkTA5HYl13ySRf7OlxibcEf9T6lYMMAhJgp6OdBJlIYSU/F2RmwVi1H05PyV2ka
+	uWe+JDbtbRbHrUQQKPbPB3uQ0Wa0s+Ird86RakBlNtoDIW6W2pgxg0qR3OKw1lma
+	R1aT0bEF6ghp/XcDefidtURYq8bLjRNgxpJNUi72OrRtsWUJzglMdykA==
+Received: (qmail 1017297 invoked from network); 7 Aug 2025 06:35:07 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Aug 2025 06:35:07 +0200
+X-UD-Smtp-Session: l3s3148p1@YGdW+747RKQujnuY
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	kernel test robot <lkp@intel.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jorge Marques <jorge.marques@analog.com>,
+	linux-i3c@lists.infradead.org
+Subject: [PATCH] i3c: remove 'const' from FIFO helpers
+Date: Thu,  7 Aug 2025 06:31:24 +0200
+Message-ID: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v6.18
-branch HEAD: 24b1a5e815942c39dd6cd864b1bc814ac5f97a98  arm64: defconfig: Enable the RZ/V2H(P) RSPI driver
+As buildbot reports, some architectures do not want const pointers.
 
-elapsed time: 732m
+Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508070438.TZZA3f2S-lkp@intel.com/
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-configs tested: 72
-configs skipped: 117
+I still wonder why SPARC discards the const but since nobody seems to be
+commenting on that, I guess the fastest way to get the build error out
+of Linus' tree is to adapt the usage in I3C.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+ drivers/i3c/internals.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-tested configs:
-alpha                             allnoconfig    clang-22
-arc                               allnoconfig    clang-22
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                         axm55xx_defconfig    clang-22
-arm                      jornada720_defconfig    clang-22
-arm                   randconfig-001-20250807    clang-22
-arm                   randconfig-002-20250807    gcc-10.5.0
-arm                   randconfig-003-20250807    clang-22
-arm                   randconfig-004-20250807    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    clang-22
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250807    gcc-8.5.0
-arm64                 randconfig-002-20250807    gcc-8.5.0
-arm64                 randconfig-003-20250807    clang-22
-arm64                 randconfig-004-20250807    gcc-14.3.0
-csky                              allnoconfig    clang-22
-csky                                defconfig    clang-22
-hexagon                           allnoconfig    clang-22
-i386        buildonly-randconfig-001-20250807    gcc-12
-i386        buildonly-randconfig-002-20250807    gcc-12
-i386        buildonly-randconfig-003-20250807    gcc-12
-i386        buildonly-randconfig-004-20250807    gcc-12
-i386        buildonly-randconfig-005-20250807    gcc-12
-i386        buildonly-randconfig-006-20250807    gcc-12
-i386                  randconfig-001-20250807    gcc-12
-i386                  randconfig-002-20250807    gcc-12
-i386                  randconfig-003-20250807    gcc-12
-i386                  randconfig-004-20250807    gcc-12
-i386                  randconfig-005-20250807    gcc-12
-i386                  randconfig-006-20250807    gcc-12
-i386                  randconfig-007-20250807    gcc-12
-loongarch                         allnoconfig    clang-22
-m68k                              allnoconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                            alldefconfig    clang-22
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-15.1.0
-openrisc                          allnoconfig    clang-22
-parisc                            allnoconfig    clang-22
-parisc                              defconfig    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-22
-powerpc                    amigaone_defconfig    clang-22
-powerpc                       ppc64_defconfig    clang-22
-riscv                             allnoconfig    clang-22
-riscv                    nommu_virt_defconfig    clang-22
-s390                              allnoconfig    clang-22
-sh                                allnoconfig    gcc-15.1.0
-sh                           se7721_defconfig    clang-22
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-um                                allnoconfig    clang-22
-x86_64      buildonly-randconfig-001-20250807    gcc-11
-x86_64      buildonly-randconfig-002-20250807    gcc-11
-x86_64      buildonly-randconfig-003-20250807    gcc-11
-x86_64      buildonly-randconfig-004-20250807    gcc-11
-x86_64      buildonly-randconfig-005-20250807    gcc-11
-x86_64      buildonly-randconfig-006-20250807    gcc-11
-x86_64                randconfig-001-20250807    gcc-12
-x86_64                randconfig-002-20250807    gcc-12
-x86_64                randconfig-003-20250807    gcc-12
-x86_64                randconfig-004-20250807    gcc-12
-x86_64                randconfig-005-20250807    gcc-12
-x86_64                randconfig-006-20250807    gcc-12
-x86_64                randconfig-007-20250807    gcc-12
-x86_64                randconfig-008-20250807    gcc-12
-xtensa                            allnoconfig    gcc-15.1.0
+diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+index 0d857cc68cc5..2b0b9c3a9131 100644
+--- a/drivers/i3c/internals.h
++++ b/drivers/i3c/internals.h
+@@ -30,8 +30,7 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
+  * @buf: Pointer to the data bytes to write
+  * @nbytes: Number of bytes to write
+  */
+-static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+-				   int nbytes)
++static inline void i3c_writel_fifo(void __iomem *addr, void *buf, int nbytes)
+ {
+ 	writesl(addr, buf, nbytes / 4);
+ 	if (nbytes & 3) {
+@@ -48,8 +47,7 @@ static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+  * @buf: Pointer to the buffer to store read bytes
+  * @nbytes: Number of bytes to read
+  */
+-static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
+-				  int nbytes)
++static inline void i3c_readl_fifo(void __iomem *addr, void *buf, int nbytes)
+ {
+ 	readsl(addr, buf, nbytes / 4);
+ 	if (nbytes & 3) {
+-- 
+2.47.2
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
