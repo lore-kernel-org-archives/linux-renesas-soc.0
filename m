@@ -1,45 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06F6262FE6
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Aug 2025 15:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC83D265606
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Aug 2025 15:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754579697; cv=none; b=O3Hce253ajYVAZvPOIUQRn7jBWmZNVQO9p1XibWxAHP6M2M7d3vzgksSDikvWDMQcHp+1V5Sa0jo/RudprXG4Au2Iu4IuDZvplxm3eL5+wn/la5gFubQPnNUrv2eRCZVhbEcc8TWeA06kPu9jMLpDDcZLeD7/RWzRu2Kdlsd/34=
+	t=1754579698; cv=none; b=qUILVJr43t/pPgeZSXNzDW48b8GjhtmtTYBref14lcqjugqL2z6vNA21E4ozZeCyHw4I20ZCSYitS7I3C/iKHCLMljs+L9XCa6bgRt1vXsxiaHCx7If86cdPSgHMn5QDXGV5YGPlc2b43jCLsjHrHL177fmo9OIZBpFvEiC7ZKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754579697; c=relaxed/simple;
-	bh=IhRULOqFjskcLveYYWwDIbMas6XUAyN59SmfLdEfoYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qak0JfWMcZ9M7E/U21ATeHYd+j9y0lCCYauXNf0ptfIlE6ow2PC0tEHC4YszyOKNsOlzRby/+/FzJeaItYkBsUKXXjcTIx7clMTMVl7evMFXwkBqEG8tIxzg7T5gABDmSWkukz9wYo/cDGDDQhONsY0lj+hw+y9FbAcC3jqAnSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QHp659HE; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1754579698; c=relaxed/simple;
+	bh=2NsfVT5hdCt5ihJKPbs1TxKliYfEHIYKdNofIeEivm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qg6C/y735CEPEkkBEZRMxZRNCObz6XFbA0B60ykmkpJXP91mKQmy7+Wbxecww8XkmuyBUKsLRVJolFdiRh6nwjPztNwGQW32ea70hPmekaG+ZBqLplWcua/sb8webMbPGOU1ZGvBZWs78hP+heG8uZLNFQ4E89ircC2NB+Uo4zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WNK5wTyt; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QHp659HE"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WNK5wTyt"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=CcN6xAYw0qQZtA
-	A6ms3sO17aXcIdq7Im9o+jiOi1pjI=; b=QHp659HEjLXjaXDJK2jCNdu+A2lAuw
-	NIlFrzikUoaoIs8cxmkxZKvxYn71JKd5zwFLitDTTle8VHntpYk3G9fCkuhRC/1I
-	SM9w5GHj7ZMO1RatKds7kVKn7nSsEvsAC8rgaVEn1lvsuXMKx9RKq1TQtYOCUTwf
-	HKuA8U0wVhXT4NDx6+lWUbCICwmf4q2RzfirgfTIev3T5y++TM3c+JZXCtr8GxZA
-	F6Tdq1/Mxq8yXGFkJ1OV/2prGCpe3eOydQFGC71iR8Vyd6h3Tmk+yVZWJiAPTOgO
-	muVroG+02mDD936wyqJsNqnK3mo9sY+9JXhIr9YLyqgEPrhS1kjutzxw==
-Received: (qmail 1277494 invoked from network); 7 Aug 2025 17:14:50 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Aug 2025 17:14:50 +0200
-X-UD-Smtp-Session: l3s3148p1@jAEs68c7OLXCtheG
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=0E76CG8MTU8mpvwEgzpi9svekC9i0tGmgN1+BotBQxc=; b=WNK5wT
+	yt3VSE79FAMR/ViPXAjPdXoitdkxCHyFHIWzh31meDTuKWkRfTkxhEV15aNljlLK
+	OidEkDTXLifwqeDQI40YURf6CQ5mjQ1uNXzU/5hdtM1ZLTTIv8wr+ujBsrcxCM0A
+	JlZRh+qIXMtmGIGAetDzeS7u+6dxGpqOhD30iaqojKpebAp0D9ntZF8KwbormVKL
+	VPOlPxo3PGfbaZgseLQ8Yq0KENyz9XgSGDNG+5oQ17+amAhwynvna+ZuV2DVQ/vn
+	SoqxLy6YlWwiADFNSyPVB4kS5fUEah6BJQlPtXWhO9ZBlWFqWQlaT3LdG+K4TpRt
+	pmge8lVNmltYzpDQ==
+Received: (qmail 1277633 invoked from network); 7 Aug 2025 17:14:53 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Aug 2025 17:14:53 +0200
+X-UD-Smtp-Session: l3s3148p1@1cdc68c74AjCtheG
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 0/4] arm64: dts: renesas: Enable I3C on RZ G3S/E
-Date: Thu,  7 Aug 2025 17:14:34 +0200
-Message-ID: <20250807151434.5241-6-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 3/4] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Date: Thu,  7 Aug 2025 17:14:37 +0200
+Message-ID: <20250807151434.5241-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250807151434.5241-6-wsa+renesas@sang-engineering.com>
+References: <20250807151434.5241-6-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,34 +52,39 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As the dependencies are now upstream (controller driver) or in -next
-(clock enablement), the DTS additions to enable the I3C controller on
-G3S/E can now be considered for upstream as well.
+Enable I3C on the dedicated connector of the RZ/G3S module. Provide
+safe defaults allowing to connect even to slow I2C devices.
 
-Patches are on top of renesas-drivers from today. Please let me know
-what you think.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Happy hacking,
-
-   Wolfram
-
-
-Quynh Nguyen (1):
-  arm64: dts: renesas: r9a08g045: Add I3C node
-
-Tommaso Merciai (1):
-  arm64: dts: renesas: r9a09g047: Add I3C node
-
-Wolfram Sang (2):
-  arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-  arm64: dts: renesas: rzg3e-smarc-som: Enable I3C
-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 35 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 35 +++++++++++++++++++
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  8 +++++
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  7 ++++
- 4 files changed, 85 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 39845faec894..17fd30df3432 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/i3c/i3c.h>
+ #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+ 
+ #include "rzg3s-smarc-switches.h"
+@@ -172,6 +173,12 @@ a0 80 30 30 9c
+ 	};
+ };
+ 
++&i3c {
++	i2c-scl-hz = <100000>;
++	i3c-scl-hz = <12500000>;
++	status = "okay";
++};
++
+ #if SW_CONFIG2 == SW_ON
+ /* SD0 slot */
+ &sdhi0 {
 -- 
 2.47.2
 
