@@ -1,127 +1,117 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED23627FD49
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Aug 2025 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8861E27A918
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Aug 2025 13:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005450; cv=none; b=HutEN7sslAO3/rMqhwq3qKMpHNbM5UJJ1gEGxSsLbQCPnWAoTiZHpDT305sQnDjs6eqjty1Tj79sXpJPkk9Z7zoPc/aFzv/NE0iLXtECtoe+6Xd7MhGOPdL+xwxlBGwZlzYEgRlIr16On+2WK1CXE2BmdWZR8RHFGLTEVNRbVmg=
+	t=1755006146; cv=none; b=q+bQtCpi7fWJ+W5cLSBeMBqCrrCirf6lu5JuVAi6sFC/YF3+/mVLR/uSWpAFnpTq7rjm1d1iM9B6Ao52KQioL1d9AtFjfqRpCUo09LR0dRBOkdMtJPA1IGyVjXMGANDKWu3uGjLmNKM1lNf7NJjVZVQTpJ0G6eNprvhj4u3qjHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005450; c=relaxed/simple;
-	bh=pxwoVk/OivdQvSju0vl3PSqNn2XM16MYOQDZs9qQ87o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nL1kjdpfEJsv8atDR3UY19vo7STS3ANupLmAfU/2Pi3cz1l48tRAMy2AOTm5Q+NC/LJdhPpySUJg6G8QXPU6pl4LexT3ip6Qo26ztNrlANp3eMaqxlv6htpyn7bgZqA5iDlezkN/AVTZ+HNBxoZW0ChyXPdxL6FECggOg30oSec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FjxyJ7xO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FjxyJ7xO"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 830383DC;
-	Tue, 12 Aug 2025 15:29:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755005394;
-	bh=pxwoVk/OivdQvSju0vl3PSqNn2XM16MYOQDZs9qQ87o=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FjxyJ7xOIiBWKwsmANFN4LZiW/v2Lr1GA/BrN1/qDJRq4IqVtMjYyr4waJxIEtM2U
-	 IJLKwogD8LqTVZoRIMcRYciXeslc3irsQv7J153guW57ZowTqEl2bznIviMNhDQ3Vq
-	 mTAhgW974TK9CVoKcJV/XOxM7sxe/bAHNclwidzc=
-Message-ID: <87cc32a7-fe1d-4d8d-b793-e3bb7e12fb7d@ideasonboard.com>
-Date: Tue, 12 Aug 2025 16:30:42 +0300
+	s=arc-20240116; t=1755006146; c=relaxed/simple;
+	bh=IM6uP1lkyPT2N9rQsZRI5OxgdfEYxx2lEl9gqF4IuAk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NXRN6kRQpwjsUavHtgKHbkvGMvnyQ7wpXBHy4HyGhBYBejAdMlr/qkwRWCGtZYm3B1QG85T4GUDw6y86wmuCTmOmYyyZ6L7bMBipdeagCcHM6n+KcpETbofR0HOXBoMJYu5hHt19oSTHvYNofizO8tpzGDd7LWR9CicJvvyEZ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7389C4CEF0
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Aug 2025 13:42:25 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2025-08-12-v6.17-rc1
+Date: Tue, 12 Aug 2025 15:42:23 +0200
+Message-ID: <20250812134223.1252792-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] drm/rcar-du: dsi: Remove fixed PPI lane count setup
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>,
- dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-renesas-soc@vger.kernel.org
-References: <20250608142636.54033-1-marek.vasut+renesas@mailbox.org>
- <20250608142636.54033-3-marek.vasut+renesas@mailbox.org>
- <64b49da6-15ae-45e1-a4af-c1f08f80cf3a@ideasonboard.com>
-Content-Language: en-US
-In-Reply-To: <64b49da6-15ae-45e1-a4af-c1f08f80cf3a@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+I have pushed renesas-drivers-2025-08-12-v6.17-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-On 12/08/2025 16:18, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 08/06/2025 17:24, Marek Vasut wrote:
->> The R-Car DSI host is capable of operating in 1..4 DSI lane mode.
->> Remove hard-coded 4-lane configuration from PPI register settings
->> and instead configure the PPI lane count according to lane count
->> information already obtained by this driver instance.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
->> ---
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> Cc: Magnus Damm <magnus.damm@gmail.com>
->> Cc: Maxime Ripard <mripard@kernel.org>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> Cc: dri-devel@lists.freedesktop.org
->> Cc: linux-renesas-soc@vger.kernel.org
->> ---
->>  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 2 +-
->>  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 5 +----
->>  2 files changed, 2 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
->> index 7ab8be46c7f6..373bd0040a46 100644
->> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
->> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
->> @@ -576,7 +576,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
->>  	udelay(10);
->>  	rcar_mipi_dsi_clr(dsi, CLOCKSET1, CLOCKSET1_UPDATEPLL);
->>  
->> -	ppisetr = PPISETR_DLEN_3 | PPISETR_CLEN;
->> +	ppisetr = ((BIT(dsi->lanes) - 1) & PPISETR_DLEN_MASK) | PPISETR_CLEN;
->>  	rcar_mipi_dsi_write(dsi, PPISETR, ppisetr);
->>  
->>  	rcar_mipi_dsi_set(dsi, PHYSETUP, PHYSETUP_SHUTDOWNZ);
->> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
->> index b3e57217ae63..cefa7e92b5b8 100644
->> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
->> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
->> @@ -80,10 +80,7 @@
->>   * PHY-Protocol Interface (PPI) Registers
->>   */
->>  #define PPISETR				0x700
->> -#define PPISETR_DLEN_0			(0x1 << 0)
->> -#define PPISETR_DLEN_1			(0x3 << 0)
->> -#define PPISETR_DLEN_2			(0x7 << 0)
->> -#define PPISETR_DLEN_3			(0xf << 0)
->> +#define PPISETR_DLEN_MASK		(0xf << 0)
->>  #define PPISETR_CLEN			BIT(8)
-> 
-> Looks fine, but do you know what the TXSETR register does? It also has
-> LANECNT, but I don't see the driver touching that register at all.
-> TXSETR:LANECNT default value is 3 (4 lanes), which matches with the old
-> hardcoded behavior for PPISETR... So I wonder if that register should
-> also be set?
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-Ah, never mind, I now saw the patch 3 =). But should it be before patch
-2? Hmm, I guess that ordering is no better. Should they be combined into
-"support 1,2,3 datalanes" patch?
+Today's version is based on renesas-devel-2025-08-12-v6.17-rc1.
 
- Tomi
+Included branches with driver code:
+  - renesas-clk-for-v6.18
+  - renesas-pinctrl-for-v6.18
 
+Included fixes:
+  - pwm: Rename GPIO set_rv callback back to its original name
+  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
+  - ARM: shmobile: defconfig: Update for renesas-drivers
+  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
+  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host-fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
+  - https://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
