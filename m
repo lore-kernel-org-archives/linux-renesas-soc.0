@@ -1,262 +1,149 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7572B240611
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Aug 2025 15:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAC4220F55
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Aug 2025 16:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186628; cv=none; b=lGhmDXFWOcjR/JfRatgvPBEkNAM45mgTBlnQjmAu8r2BgFP39gIrXy4dun0Wr6qsxjaZW6NuBmqDPeuALe95eRqyYg+mhcRAhQIeQNB7jknS3W8FDy0gq+Mb+1Dtph5LclDAOzBGUwt3p1rabmL+1aAv6baIB5KqW78LnE+EE+8=
+	t=1755188045; cv=none; b=Whs/peAlHkLEKaV9GTSZELE8FbYU+h1J78MSGZY83Zfn+qhG8MLBVFxvigDw2pb7Xr4rLXgX/kXrAWqmtsYa95vppu4pouPQFA6oO+olj9GS3do1mXOYvWdjvgh5QgMbAEPOXoy9T7XKGkr5xELEmYXRivEH7lMOho2SCxwmmp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186628; c=relaxed/simple;
-	bh=exEQSQ1zMctL93eMWFVlMD38hFz3MbFmZh5iUn+s2aQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fH+FJRhhbO9avZxUEGF8UjAPCNg9WgA2USnRpm9pAkPNuxICqOQMas0gjlIf3j0gYiCPqksRgG7zFqWVGOPnPXXpp32KsK9OLo6BDWALP7uKCPTBpOjA7AhRqQ+HM1kGK/YZH02L3Nb+vMrFEunq3cRtillFNzqtdSiofAlTD4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cskMR78W; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cskMR78W"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e932c98433dso25358276.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Aug 2025 08:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755186625; x=1755791425; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcolRZoQB4ws+cuLwpFSDmMfaoDBVHgV4no7KK057D4=;
-        b=cskMR78WHwIWMLSgu1P2KVGAIxw9XanMgARdKqib8/S/AcZAhz8eCUyUoTof6bTdym
-         qUo5PwQJ2rdXC1ky88WvMd34NrWzWwZY8Fxya0c83QD1BNztXaP4IQjnA3cda9IGETY/
-         0Xc6W2bdqILZYm1/6JHfuyCBsL/R5pnF4pPDzNdjujcxm9kZqUqfRsYpTaFSXVXxx7Ud
-         lPlWwwzK5Tx5t6x7PrBz4qk8s1m0Y6g0LCzIozdILjqX+Me1kdfupZR1KjfYN1ZYLdrC
-         25zhcj63CashofZL4gylMnpTLd0lXFZb3BskY2jdkTN9W6MD80VK0qT3kBU64A4FReDW
-         fmPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186625; x=1755791425;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TcolRZoQB4ws+cuLwpFSDmMfaoDBVHgV4no7KK057D4=;
-        b=Wy2a4wu99tEUtIZOYHwQXtKq9ldmy0tqSz2DZwjBU+O4saNEiUlrhPA7LqxsomjWBT
-         w5k07LlugUzgRO8SLDyBSVEnP3S45HYaP2CM+cFszB9Oj3SAhKSVw4HYz9eau5nv+8qh
-         8bfwTAuODBygsCaoWEjIHdZBfPhYZYh7wW/k1B4JuJ9LhFt6k8Lli0RhMBPvCzVTNtQn
-         UycX2SpfTjBDYSxWb54Ew5FJkRk1Nx2h3pg+Lk3jNJNiyLBcctcQum4J32floFvzhi6v
-         rrhXyzQCFvvh4Ap3Er19+PUQ+14H7m0svV6Fft2qIW964niOZcM4pF4Wd2tw9m0wLQtY
-         OAjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQabK+IM5MkSmN6X3CxHSF4QUDabxOeNqjT1nhwhJhELv+cssmXW+8ODjMpdTPT3F2sUt531ZuOm2bXiaRwCT7MQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7yxFRO7T8o3LtmXhmURblneiOGW/GNfkB9zjwzvr6buynk2Pz
-	e/1hUfnDSDnhw9qZeOkB+ydC5GlPNAtaiSfNy8tWCuXL98dg23U3gfsIYEGIJrchjoqv3Q1BiBM
-	vbJEBE2FnRIsanw8KWe6JmbiR1FBAj+kcDq7+PhAp0Q==
-X-Gm-Gg: ASbGncsPRShdln1oFJXaWlImVEv7uVH12Ycymjpu4m84uIb4LeOkAYrzWmdy1hkpaAa
-	f3+UB4VccN/RJFjoCMdnnV5ZkvVF5/rKhZOOxPm2pucB1yWkdzSWTQetWD0qNgsdLH0OlFKwvQ0
-	wWauJYDHy4XDeYm7FQluCcN53MuvnmWFIkvEJiB0n5JTMcai7+PCWYdRnmAChkenkR4tBqcA/Od
-	dRcKGkJ
-X-Google-Smtp-Source: AGHT+IEZdf3u9KWA9hpdME1MSo058HtmW98XBIg+BRTyD6KMN6/eMmlikus/YCW2MUTCFxGAEqaAwS1dA88OESJcat4=
-X-Received: by 2002:a05:690c:7309:b0:71b:f500:70c2 with SMTP id
- 00721157ae682-71d633f0da3mr47170887b3.6.1755186625067; Thu, 14 Aug 2025
- 08:50:25 -0700 (PDT)
+	s=arc-20240116; t=1755188045; c=relaxed/simple;
+	bh=Fr6xTqn+YFAKntbls3pZMJ3VQKpDZwrzY1H8n1hFwDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsaTTXXdJXbqYVi8BF2fnl+phieHEbsCq8GlwletJrDK0MvIpwKRvCVmfT4PqEFzfcdQ4cex+e9kEV4jja+UsakfbFVj/s0ZVuQgN6TGfx2gGsNA0EuSTbY1bUf8mpevYR8PSA5L4VDsagHkHww3aqgD80v9yGc5EBh9ihmeLrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE799169C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Aug 2025 09:13:54 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B23003F738
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Aug 2025 09:14:02 -0700 (PDT)
+Date: Thu, 14 Aug 2025 17:13:54 +0100
+From: "liviu.dudau@arm.com" <liviu.dudau@arm.com>
+To: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
+	"Murthy, Arun R" <arun.r.murthy@intel.com>,
+	"Shankar, Uma" <uma.shankar@intel.com>,
+	"Nikula, Jani" <jani.nikula@intel.com>,
+	"harry.wentland@amd.com" <harry.wentland@amd.com>,
+	"siqueira@igalia.com" <siqueira@igalia.com>,
+	"alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
+	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>,
+	"sean@poorly.run" <sean@poorly.run>,
+	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>,
+	"mcanal@igalia.com" <mcanal@igalia.com>,
+	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>,
+	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>,
+	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>,
+	"louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
+References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
+ <20250811092707.3986802-2-suraj.kandpal@intel.com>
+ <20250811094429.GE21313@pendragon.ideasonboard.com>
+ <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
+ <20250811111546.GA30760@pendragon.ideasonboard.com>
+ <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
+ <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
- <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
- <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
- <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
- <CAPDyKFq7z9e9hEC9QWiYcaU=t+Gs_GgRurmK-+cNYp4xkhr5Ow@mail.gmail.com> <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 14 Aug 2025 17:49:48 +0200
-X-Gm-Features: Ac12FXw0d_08LwE0Kxq885y0aixo5HX1zNMPaf7I2LzMEd8jDbPPe6xvMDHaAUY
-Message-ID: <CAPDyKFr-mVbGo62Wp+othcs+cWR6Wn9bz==ZB5hSpyKgkGtqHg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 
-On Wed, 13 Aug 2025 at 13:58, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Ulf,
->
-> On Tue, 12 Aug 2025 at 12:01, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > On Thu, 7 Aug 2025 at 11:38, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > > On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > > > Changes in v3:
-> > > > > > >         - Added a couple of patches to adress problems on some Renesas
-> > > > > > >         platforms. Thanks Geert and Tomi for helping out!
-> > > > > > >         - Adressed a few comments from Saravanna and Konrad.
-> > > > > > >         - Added some tested-by tags.
-> > > > > >
-> > > > > > I decided it was time to give this a try, so I have queued this up for
-> > > > > > v6.17 via the next branch at my pmdomain tree.
-> > > > > >
-> > > > > > If you encounter any issues, please let me know so I can help to fix them.
-> > > > >
-> > > > > Thanks for your series!  Due to holidays, I only managed to test
-> > > > > this very recently.
-> > > > >
-> > > > > Unfortunately I have an issue with unused PM Domains no longer being
-> > > > > disabled on R-Car:
-> > > > >   - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
-> > > > >     disabled.
-> > > > >   - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
-> > > > >     sometimes not disabled.
-> > > > >     At first, I noticed the IOMMU driver was not enabled in my config,
-> > > > >     and enabling it did fix the issue.  However, after that I still
-> > > > >     encountered the issue in a different config that does have the
-> > > > >     IOMMU driver enabled...
-> > > > >
-> > > > > FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
-> > > > > (using rmobile-sysc.c) and on BeagleBone Black. Note that these use
-> > > > > of_genpd_add_provider_simple(), while all R-Car drivers use
-> > > > > of_genpd_add_provider_onecell().  Perhaps there is an issue with
-> > > > > the latter?  If you don't have a clue, I plan to do some more
-> > > > > investigation later...
+Hi,
+
+On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
+> > > > };
 > > >
-> > > of_genpd_add_provider_onecell() has:
+> > > I still don't like that. This really doesn't belong here. If anything,
+> > > the drm_connector for writeback belongs to drm_crtc.
+> > 
+> > Why? We already have generic HDMI field inside drm_connector. I am really
+> > hoping to be able to land DP parts next to it. In theory we can have a DVI-
+> > specific entry there (e.g. with the subconnector type).
+> > The idea is not to limit how the drivers subclass those structures.
+> > 
+> > I don't see a good case why WB should deviate from that design.
+> > 
+> > > If the issue is that some drivers need a custom drm_connector
+> > > subclass, then I'd rather turn the connector field of
+> > > drm_writeback_connector into a pointer.
+> > 
+> > Having a pointer requires additional ops in order to get drm_connector from
+> > WB code and vice versa. Having drm_connector_wb inside drm_connector
+> > saves us from those ops (which don't manifest for any other kind of structure).
+> > Nor will it take any more space since union will reuse space already taken up by
+> > HDMI part.
+> > 
 > > >
-> > >     if (!dev)
-> > >             sync_state = true;
-> > >     else
-> > >             dev_set_drv_sync_state(dev, genpd_sync_state);
-> > >
-> > >     for (i = 0; i < data->num_domains; i++) {
-> > >             ...
-> > >             if (sync_state && !genpd_is_no_sync_state(genpd)) {
-> > >                     genpd->sync_state = GENPD_SYNC_STATE_ONECELL;
-> > >                     device_set_node(&genpd->dev, fwnode);
-> > >                     sync_state = false;
-> > >                     ^^^^^^^^^^^^^^^^^^^
-> > >             }
-> > >             ...
-> > >     }
-> > >
-> > > As the R-Car SYSC drivers are not platform drivers, dev is NULL, and
-> > > genpd->sync_state is set to GENPD_SYNC_STATE_ONECELL for the first PM
-> > > Domain only.  All other domains have the default value of sync_state
-> > > (0 = GENPD_SYNC_STATE_OFF).  Hence when genpd_provider_sync_state()
-> > > is called later, it ignores all but the first domain.
-> > > Apparently this is intentional, as of_genpd_sync_state() tries to
-> > > power off all domains handled by the same controller anyway (see below)?
-> >
-> > Right, this is intentional and mainly because of how fw_devlink works.
-> >
-> > fw_devlink is limited to use only the first device - if multiple
-> > devices share the same fwnode. In principle, we could have picked any
-> > of the devices in the array of genpds here - and reached the same
-> > result.
->
-> OK, just like I already assumed...
->
-> > > > > BTW, the "pending due to"-messages look weird to me.
-> > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
-> > > > >
-> > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
-> > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
-> > > > > due to e6020000.watchdog
-> > > > >
-> > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
-> > > > > the watchdog resides in the always-on Clock Domain, and uses the
-> > > > > clock-controller for PM_CLK handling.
-> > >
-> > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
-> > > these bogus pending states, and no PM Domain is powered off.
-> >
-> > I see, thanks for the details. I am looking closer at this.
-> >
-> > In any case, this is the main issue, as it prevents the ->sync_state()
-> > callback to be called. Hence the "genpd->stay_on" will also *not* be
-> > cleared for any of the genpd's for the genpd-provider.
->
-> I was under the impression there is a time-out, after which the
-> .sync_state() callback would be called anyway, just like for probe
-> deferral due to missing optional providers like DMACs and IOMMUs.
-> Apparently that is not the case?
+> 
+> Seems like this thread has died. We need to get a conclusion on the design.
+> Laurent do you have any issue with the design given Dmitry's explanation as to why this
+> Design is good for drm_writeback_connector.
 
-The behaviour is configurable, so it depends. The current default
-behaviour does *not* enforce the ->sync_state() callbacks to be
-called, even after a time-out.
+I'm with Laurent here. The idea for drm_connector (and a lot of drm structures) are to
+be used as base "classes" for extended structures. I don't know why HDMI connector ended
+up inside drm_connector as not all connectors have HDMI functionality, but that's a cleanup
+for another day.
 
-You may set CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT to achieve the above
-behavior or use the fw_devlink command line parameters to change it.
-Like setting "fw_devlink.sync_state=timeout".
+drm_writeback_connector uses the 'base' drm_connector only for a few things, mostly in
+__drm_writeback_connector_init() and prepare_job()/cleanup_job(). In _init() we just setup
+the properties and the encoder after we disable interlacing. prepare_job()/cleanup_job()
+is another workaround to be to some custom ops some drivers might want for signalling. So
+we should be able to convert the 'base' drm_connector to a pointer relatively easy. We shouldn't
+need to get to the drm_connector from a drm_writeback_connector() outside drm_writeback.c.
 
-I guess it can be debated what the default behaviour should be.
-Perhaps we should even allow the default behaviour to be dynamically
-tweaked on a per provider device/driver basis?
+Then it looks like what we need is a __drm_writeback_connector_init_with_connector() where we
+can pass a base pointer and remember it. Maybe an extra parameter to existing init functions,
+or a new one that skips the encoder initialisation entirely.
 
->
-> > > If I remove the "sync_state = false" above, genpd_provider_sync_state()
-> > > considers all domains, and does power down all unused domains (even
-> > > multiple times, as expected).
-> >
-> > I think those are getting called because with the change above, there
-> > is no device_link being tracked. As stated above, fw_devlink is
-> > limited to use only one device - if multiple devices share the same
-> > fwnode.
->
-> Indeed.
->
-> > In other words, the ->sync_state() callbacks are called even if the
-> > corresponding consumer devices have not been probed yet.
->
-> Hence shouldn't there be a timeout, as the kernel may not even have
-> a driver for one or more consumer devices?
+Best regards,
+Liviu
 
-See above.
 
->
-> > > Upon closer look, all "pending due to" messages I see claim that the
-> > > first (index 0) PM Domain is pending on some devices, while all of
-> > > these devices are part of a different domain (usually the always-on
-> > > domain, which is always the last (32 or 64) on R-Car).
-> > >
-> > > So I think there are two issues:
-> > >   1. Devices are not attributed to the correct PM Domain using
-> > >      fw_devlink sync_state,
-> > >   2. One PM Domain of a multi-domain controller being blocked should
-> > >      not block all other domains handled by the same controller.
-> >
-> > Right, that's a current limitation with fw_devlink. To cope with this,
-> > it's possible to enforce the ->sync_state() callback to be invoked
-> > from user-space (timeout or explicitly) for a device.
-> >
-> > Another option would be to allow an opt-out behavior for some genpd's
-> > that are powered-on at initialization. Something along the lines of
-> > the below.
-> >
-> > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > Date: Tue, 29 Jul 2025 14:27:22 +0200
-> > Subject: [PATCH] pmdomain: core: Allow powered-on PM domains to be powered-off
-> >  during boot
->
-> [...]
->
-> I gave this a try (i.e. "| GENPD_FLAG_NO_STAY_ON" in rcar-sysc.c), but
-> this doesn't make any difference.  I assume this would only work when
-> actively calling genpd_power_off() (i.e. not from of_genpd_sync_state()
-> or genpd_provider_sync_state())?
+> 
+> Regards,
+> Suraj Kandpal
+> 
+> > > > I plan to add drm_connector_dp in a similar way, covering DP needs
+> > > > (currently WIP).
+> > 
+> > --
+> > With best wishes
+> > Dmitry
 
-Right. Thanks for testing!
-
-So, we may need to restore some part of the genpd_power_off_unused()
-when CONFIG_PM_GENERIC_DOMAINS_OF is set. Without clearing
-"genpd->stay_on".
-
-I can extend the patch, if you think it would make sense for you?
-
-Kind regards
-Uffe
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
