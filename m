@@ -1,120 +1,120 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC97332142D;
-	Thu, 14 Aug 2025 15:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B8832142C;
+	Thu, 14 Aug 2025 15:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186106; cv=none; b=YEtLtcXCqiiESgayM1QvXovEcpvKc+4rYDxEkpW0s/EG35lLL2x7yk2XqjFGaesop07mJ4wYzmZlwaWyQQLqE6hbdxDsFeGnRVhTcpIwgQ6rmjFmiPHIzFbdgGhIVPtOTCjkvRmP9N35vs0q/NzWsYsWkMIVfzafwLI3aXfVUF0=
+	t=1755186625; cv=none; b=lY7uoC/MTJV5SKtYUqHZnIgjPcIIDnOpOf1hYh5rEI4Ud0ZMOMTxmaSlSlBfoyPMAMoEJt2MSD/guECcnQw919GZZd1QDiOArAFdQH9bwGwVYEpsm5XGNmh9iPnE/wG+YbO4LNYBPcEvjHUj9HUuH6G6on27X/yUfg5TJ+Hdzuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186106; c=relaxed/simple;
-	bh=zl4nprwzlKIUy3Q1chqqvC05f1gTCgwe+zmNz+8kyuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAL+Y1KaLZYF2dleE9zDDB6n0xHjJLK2N7FP5k0HVkBPBLIGXRYAKRCnkaTlL3kNYJUxJLktlY7YgQhg9hLKacjMx2GstCE2VLYU7GpQPjVpdBzQj5mAgXbugVHwlf/Bg3zxGO6N/rVZFfSX1j8SjjXy94j8VwtyzJ/E4VrhfvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4nWMfdS; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755186625; c=relaxed/simple;
+	bh=o/MgtG1g9Rt5y/lAK6YBxZs06Pfqhy/MN+PlW0TT6zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JBsse9H/YuUqXvzRgTiTaMIVU0qxMQg0P8/Jtt8FJ+peV0bDhY+mZAt93BoO18NiMIa1f+ibeUwiRdS+tuoNgEGZguj2ZZCR4pXER8CDQ+ttxAASfHXBAAgxWm1gssQRTJhEivWsWy1ChinOLZO7j8Q4am0vdkp+HPqSj3was8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hABxWo7/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4nWMfdS"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9e4148134so571991f8f.2;
-        Thu, 14 Aug 2025 08:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755186103; x=1755790903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktELRpls4QKsQ+KH2BZha8Abn8cFNHSmcdeY0FLg2aM=;
-        b=Q4nWMfdScEAhNVZG1U9ZCYHV+JBFgkduiuwgBsIEaeZVF+Zg8ateA/v/f1ue8UaOu7
-         v0KoSPcx7hMsA5kV51kV0+04IIUI5bSWKUv3k5ki0591k+5zkO+GDRt0Zn1a1UxZH4wy
-         jYwK8tTsVgPhz6vpGhYsO5anq23qSX+ULeyeNPzOfksg+xPjzo3Ss4a8wsh37cLfE0ez
-         4Cte1DJe/HdD+Twnz3WEZexpzl9MfUc4H6OFobAd1RUXY2spGqKO9kUmLP9q3cO2dsfw
-         /jdVQi/hslhPnQ73xSubJb4h0f7YN6iT1SdpwJEXHD1sFYHOdA8YWvGpc/T2L5x9j1wZ
-         CpEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186103; x=1755790903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktELRpls4QKsQ+KH2BZha8Abn8cFNHSmcdeY0FLg2aM=;
-        b=f3yr+Mn7qCysNYfH04jARnz3eszq4lw02AN1NtPuhZH2REUdYmSCn/xepaRAB2HKRA
-         wfcnTLrhet4GiyE5dVB2LbZfoI7shK8BR8oaewryqVDfZU2gO4kuAv3khFLhjYqu6h8t
-         idFpVh3d7L4tNA4gKiI+GPrm3yqdlDcKIci4mwEWzqXS4Pucv8l5rrlmIJS8QaznjMgT
-         gyNPkLJBrcnI2CEDv26a4LMMfUOUEBykcdTNk7+XixWdqzTV8Y4yYAmr63Azg1iwPoHC
-         ofGizgXtgYgh4/HmuWTdE0QxoaERjw4cmP6WFIhOJYNCGygcnnAfnqlDVzDSTOeSy1Kg
-         tLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcitugla5kTRncrgDRM3qQ8IqVtzUokuaMohSBdJ02Xos42EQLRAjSTlG2dfEuGI0eI6DsfSq42pfTDNUo1VIGMOg=@vger.kernel.org, AJvYcCUj4Le+y8AeeHiMQ1DqMx7wEpZ0Cre9q3RBbm6l70gEkNSsi4CJRO7JwQdSJu8Y9SqfnVsWrzcmiA8=@vger.kernel.org, AJvYcCUz3ZKXpHT+AKWRGl1DQLsbMH/4WLzkixiydQvteUlJ4P52DXQtupUxdGRxre5ukfFuSwtrns94t2rjob8w@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVqGOyHQ70NFoLiLkxgaR6x+Fq4I/Gx8rzq7y2bZDaaXEDPVaa
-	df3BG4R7SnFM7mw1SntsmZZbG0+LTIY8VWxJWIeXKLFMRJGZR8bCGiqPNglN215eUdhugO5r1Jj
-	oE2fpbHHq/HPfcozmK3i8DzHXgEfy/iw=
-X-Gm-Gg: ASbGncszVZco4AZFI7Jc0Ns+2XxZ6BJvt1CF9W/m3dNxiNUV6wkg4bRz8syfS/iffAI
-	ytfjYU+XGYRxIzRDa+MQlPeowctiakT8gkJz5P+f9axVvD8ZkPyRWUDSDhlbOELBFyY9zj23uPG
-	YNbkUCzaJJig7tbfBW2pzQQ3ZCNkNbhBau20TF1sx4Oq0vJnYIYj+LcnWTPDExHDCerxLWw/IUG
-	IBNb13KqekLIBnLOh6pnJ4AGphgog==
-X-Google-Smtp-Source: AGHT+IGQgleFbs3fqH8e7omz0i7Nmtu61u6PAbtgtfqbSxLsswwUcW494BMucvo3CZ8wNBXE9dUepyV6QozxJXwGwGk=
-X-Received: by 2002:a05:6000:2911:b0:3b8:eb7d:f82a with SMTP id
- ffacd0b85a97d-3b9edf8ffd8mr2692507f8f.3.1755186102745; Thu, 14 Aug 2025
- 08:41:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hABxWo7/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2B0C4CEED;
+	Thu, 14 Aug 2025 15:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755186624;
+	bh=o/MgtG1g9Rt5y/lAK6YBxZs06Pfqhy/MN+PlW0TT6zY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hABxWo7/m8RV9cAcTZtZaUIEUqgl9tHzY7MAGXzXDi1h0HabiSaR90DAXzp67TWmF
+	 U3o8bL2bFI98VWHbFSMyxlAy5TQYdtR2G++O6l0KliRJs2EbeJld/7OKWkDfcUrOIl
+	 0xfAtz3yLkvtpi30XW37DeWsUbSGKgPUVUF1P58XR0gVgs+MNLqpsZkmYgs1ejou9W
+	 tY4ezf6uWOrDwNRmSPTAgviF31BJxxVYx8W6JUSiBTOxeiGycaYA1eFU5Svy0kBjRr
+	 wz6cEmKiiWTFycFptGV5EwGACSMjHnViMm8H+4C69Ai0v2gBl7/LC2WW2nqaMiqePg
+	 NuaZILW4rT3jg==
+Date: Thu, 14 Aug 2025 10:50:23 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>, linux-pci@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-arm-kernel@axis.com,
+	linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 00/13] PCI: Drop superfluous pci_epc_features
+ initialization
+Message-ID: <20250814155023.GA330705@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 14 Aug 2025 16:41:16 +0100
-X-Gm-Features: Ac12FXwpnVSDGCBCyDNMKTSpRaNyFLKuvEwIe3vB0vFeD7XDuR4X6tcs-Yc227M
-Message-ID: <CA+V-a8smWQaYvt+kbRb_tmhH+-2Zt+eag=unJECH=xSUzjRrRQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814152119.1562063-15-cassel@kernel.org>
 
-Hi Geert,
+On Thu, Aug 14, 2025 at 05:21:19PM +0200, Niklas Cassel wrote:
+> Hello all,
+> 
+> struct pci_epc_features has static storage duration, so all struct members
+> are zero initialized implicitly. Thus, remove explicit zero initialization
+> of struct members.
+> 
+> Series is based on pci/next.
+> 
+> Feel free to squash to a single commit if that is preferable.
+> 
+> Kind regards,
+> Niklas
+> 
+> 
+> Niklas Cassel (13):
+>   PCI: cadence-ep: Drop superfluous pci_epc_features initialization
+>   PCI: rcar-ep: Drop superfluous pci_epc_features initialization
+>   PCI: rockchip-ep: Drop superfluous pci_epc_features initialization
+>   PCI: dra7xx: Drop superfluous pci_epc_features initialization
+>   PCI: imx6: Drop superfluous pci_epc_features initialization
+>   PCI: keystone: Drop superfluous pci_epc_features initialization
+>   PCI: artpec6: Drop superfluous pci_epc_features initialization
+>   PCI: designware-plat: Drop superfluous pci_epc_features initialization
+>   PCI: dw-rockchip: Drop superfluous pci_epc_features initialization
+>   PCI: keembay: Drop superfluous pci_epc_features initialization
+>   PCI: qcom-ep: Drop superfluous pci_epc_features initialization
+>   PCI: rcar-gen4: Drop superfluous pci_epc_features initialization
+>   PCI: tegra194: Drop superfluous pci_epc_features initialization
+> 
+>  drivers/pci/controller/cadence/pcie-cadence-ep.c  | 2 --
+>  drivers/pci/controller/dwc/pci-dra7xx.c           | 1 -
+>  drivers/pci/controller/dwc/pci-imx6.c             | 4 ----
+>  drivers/pci/controller/dwc/pci-keystone.c         | 1 -
+>  drivers/pci/controller/dwc/pcie-artpec6.c         | 2 --
+>  drivers/pci/controller/dwc/pcie-designware-plat.c | 1 -
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c     | 2 --
+>  drivers/pci/controller/dwc/pcie-keembay.c         | 1 -
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c         | 1 -
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c       | 2 --
+>  drivers/pci/controller/dwc/pcie-tegra194.c        | 2 --
+>  drivers/pci/controller/pcie-rcar-ep.c             | 2 --
+>  drivers/pci/controller/pcie-rockchip-ep.c         | 1 -
+>  13 files changed, 22 deletions(-)
 
-Thank you for the review.
+Squashed into one, added "remove explicit zero initialization for
+features that are *not* supported so we don't have to touch existing
+drivers as new features are added" to commit log, and applied to
+pci/endpoint for v6.18, thanks, Niklas!
 
-On Thu, Aug 14, 2025 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 12 Aug 2025 at 19:17, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add asynchronous core clocks and module clocks for SCI channels 1
-> > through 5 on the RZ/T2H SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-> > @@ -48,6 +48,11 @@
-> >  #define DIVCA55S       CONF_PACK(SCKCR2, 12, 1)
-> >
-> >  #define DIVSCI0ASYNC   CONF_PACK(SCKCR3, 6, 2)
-> > +#define DIVSCI1ASYNC   CONF_PACK(SCKCR3, 8, 2)
-> > +#define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
-> > +#define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
-> > +#define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
-> > +#define DIVSCI5ASYNC   CONF_PACK(SCKCR2, 18, 2)
->
-> Please move the last one to the previous block, next to the other
-> SCKCR2 definitions.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk for v6.18, with the above fixed.
->
-Thanks for taking care of it.
-
-Cheers,
-Prabhakar
