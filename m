@@ -1,62 +1,64 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B494E14B086;
-	Sun, 17 Aug 2025 14:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB30188735;
+	Sun, 17 Aug 2025 14:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755442301; cv=none; b=dK7YQfzkUyI/zBCKRALYpJLLGfTJk1MG6r1/rGrHTup8h8srTGq/EJdusZuKViDj8nWkymbXQs6XYVCMkgXgbqAp1ZMnjrUrj97wiBVOK13YRl9zKa4/k6+La8AfXSOEdlsgO027ckeBTmyqZSxqXkpSUHt2vAMWuNcmeZ6ZGu0=
+	t=1755442301; cv=none; b=BG7omorQuSV9Iwc8fh4k2DclK0O+jX0AJgkrinNL/KaqK30V6GveVZ94fJYTLwSrZwJ3iEukiJYQcuqUE3dpYFkWpnhxIAYE7wpM1rXOKRWvK8xKU+Zs7tAQ89Kn5IGpDD1kJODHpWj1bGyJwQW0VValifZFO3jwhN57wHcbLWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755442301; c=relaxed/simple;
-	bh=5TTkF6oHixSGI7qMQ0SJNVote1T2AWnDW9/4iyFRL6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h42hLbmRcgLn6eupdpe5lncONrjACvYFRTZCrhd0BEqbYcdnxVb8hJKxhKTD3OS8iby1go5x4mx/OgYQ7Gpk4qRA+ylauDoOw7v5EjX0nxX0nxUDrXhi2SO/OcE6B0tjYYzreMmKeecWU9lSCvKHFMC+QoWNUlC7zzQr4ltUlME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfqD3EEg; arc=none smtp.client-ip=209.85.128.53
+	bh=yDuk4CGbVKpnv/ODkqhiMbEA1YB5hHNU9g+K0Z6xw7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P+cuGHGf0P8jIZYqkCdtyq9rxSlrFjwbI7N8WFGIb86yrDILZVFz5LaprngqqBdp99fwwt7Q8DhMKESBnAK70z2N1QOGeIGthRj9WsZf/P02LZLP8IERSXSJkZSpfqJ/gKsDX/jzMbC75nXN19JymW63YDca5J5t/IExTTb2IJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a82f15FE; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfqD3EEg"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso24107905e9.1;
-        Sun, 17 Aug 2025 07:51:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a82f15FE"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b9d41bea3cso3724472f8f.0;
+        Sun, 17 Aug 2025 07:51:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755442297; x=1756047097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KcoeDB9zQ9MJNXPgD7LIAzqfPCH8wYV+5xheA0rYfOo=;
-        b=FfqD3EEgIcScyWVCbzolDSJPMWQ3UIQOhwA7Kd2c3SVmwbPHP8d9xGl0gkxixqCn7f
-         H03kI2+I3Sz4VBRICCykcVGx308opO/ZBEP+q4MNDrHgOzUKy5gGCH4+CQZqekJX7jOJ
-         NdBgcr1fEvVTUZK4BPzGg1Dh9fDpa8dG6sybpr8D9iBYjGpjAYAYcGPn9DpC5g3ujAM8
-         Vz91/kikIm9rORih0VAgDQIotPeC5PBPG2qOtveON6QNwir8SEEzFVQIN+aKUPJsjeir
-         VbZ6ijIUORWQeujXdY2TwvQFqKfWAR5ZMnhh9mjxhoB6GNZZz5uEXHwSMFBFZNYZq4op
-         yzCw==
+        d=gmail.com; s=20230601; t=1755442298; x=1756047098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6hn1AO1fgkdn/9i2vCFP7KnGsKz7pgQUhDqNHZkyhm4=;
+        b=a82f15FErQeY5IYUMrYaajWEeBaqeBWticwkWy2wIDWOd3sFewDnVKfSix9aLPOOb2
+         ad9vUSZA2AVpNrPyeSvWRRjEnA9bsgCSdCetVrZ0nVvi/53FkPqnMr+WsvlHf8j+KQc2
+         xgqSs5grW/cKuiCXWHNcnajGSrx8EP/L6hKkeRnqoZG7vKfgLTnWkC6ers/t7Tz5GVOp
+         OsN5a8OLoqYM7hlKcho3XDWeBxARty1M+3M2nZm+eQr9go/Wd1W+ltg+p8QmFUujZ3Il
+         lx3EUmjzL7vOBrWdgCk/QD3QwFbYf3VuD7UcB8055k0Xn0dY//ar32Bo4Zm+QE+Ug2OZ
+         2VAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755442297; x=1756047097;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KcoeDB9zQ9MJNXPgD7LIAzqfPCH8wYV+5xheA0rYfOo=;
-        b=nX786KmohT792Wx79TIhk4gCrQq/6XlCsz1AAZb2/PNO0KNbxIbJ5hNonBUrK3MPZ6
-         duu8na85lk2kh4VroMssGM6CFppqNyJISS5uF8yYnqqee+eq6l4Ld5xOEn2bcQP/c6Wj
-         Trw6ALwbEoFzB3frEHMgiJ7JKCVFf09eAzo6SdHI/Ll8FCiV+IKSw17NET3CnX1iZ4Pv
-         WeDUDB5F5wCrtDrWtAqvqSoi9GztR29SECtO51rGw9TGEJ1ND+jc1Fo2fibik8BpE0+3
-         s/v0gmg1WO9RSh8928lO4teBl++rTJyadqf8FwcqMlp6tmPFaeVxoZQmEv4NcNBrx9+8
-         iDsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHHOs0/bPrlCo2hx/kSqGzBxEDXb6f2SvGaThoQgU4MBrSuH16na26TufoX+KxAE8n2avBgPk8+fAv@vger.kernel.org, AJvYcCWp0ZIACqNXWABOwRNzhFaQY2GVBRPg4e2YnmnSCmv446BgMYUAHzqHn4BxQLwa5kQgKrHpAD3wZKHKb+waI8J81qU=@vger.kernel.org, AJvYcCX3uTYBKcTUnZ7eWV6irCwrJ0sWAxXDBh4kf+vUusUbQvuLhtZKoH4qkSYytuJGKrL+IqI6HW0p8ADpjHbX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwabXiXuyq9L8gqY041GKVjLVbO3sAiWBttb5Oe4j/uYy9ilrQ0
-	JZ/lE5JX8IeuTNgiQzQauIq1yBIm1ECvYZsqGoVaDPeqmETBbEmBvYuO
-X-Gm-Gg: ASbGnctkXyIiwWLRj0cuuEpHlB0ow4IzhiYGBOMzKc0thTk8nkIcMMUlBtDiOEg0CBP
-	dGn6G7ZBQf4OsB0XkK+QdEokgx0kVKhrLOuGAwQd9wKs04l2/PIf7Y3m4EDZI0sn89hni2J7xvz
-	3KoPYLa4tYQoEb0Yk3dIWR2GDYv6e7IkHTfIA6dgpSU/C5KZE+eq0Y0zrqOpI7MV2hJj28ojfbJ
-	u10nqz+5SLrOi87CYDahotx3HDgLEgxZH54sK3l0Cq+Q/OutkkzeF21Fju9oc69GOuk16LhukSc
-	g+Lvhg9i7iHLwjE/RCLCDljTUi/avE7IpHx/2mROeLeOgiB8v/V3IAN15xZ3zsYB0odR4GRPhCb
-	k76VA8ZerKbir7JLr1BP2l8cMXSwpGi0UapJAwX1jhH8VX1eDB+C2dM02sC5SHvKvVy3/r9Dbrw
+        d=1e100.net; s=20230601; t=1755442298; x=1756047098;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6hn1AO1fgkdn/9i2vCFP7KnGsKz7pgQUhDqNHZkyhm4=;
+        b=cMTGlE6zTGIytGLZFKo0XRo5fZPHCjqPDnD8ohDAAs1NYiN29z3IY/7B0t17wVbGFu
+         jSGTcUDcINULgnPQyAytvSxDqw5avrMkkbb79i1O72t/jsDzXok4vD/r2VQsZ8qYFZJe
+         kIG7lkiojaMbkuTlQB33/m0PMdBq6rxpEz7P/RHbsDY45KYOOhcQz+UJ6hRbin1YDLqv
+         MPZiNPsWAO4Sf3X8j2Xl3I1eOsWaOIX8BxGlATa7Z44nCqEfpvyXa6O7TZWuZ2GqsKvu
+         onx4gagluXf+8ZSs1bfoQxv0d7hgCsW9aZ771cuq3+wfi9wmXF6rZKNuQU9mZsan/7GP
+         S0fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtjquMlsXWAflhpSKvoe2/+XXnQuaLoXS2AwhacCPDY8AygYQLYAQI0Yl07QbcGV2B2WNUzpkpmbaoJMYZ@vger.kernel.org, AJvYcCWQdzYysrbwSvNog3dzCnB1vcemqTxe7XeQDXrWJPZEKsjJdqITbgp9inxZuru2jmsKLCeTaClSiVauwGxYQESvA8M=@vger.kernel.org, AJvYcCXeBTcxiaFdfJ5H7xZ8xOm51RZYtsFqHe4YS0uLsAEMTvxx5u1zVcf8euvNn1Pdz9qhzaNe0a4UifLL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP+WKrpFq2spsOzJGay2skl8PHOcGo9nYg3eGh2YS9VW4rmuWx
+	WZB1SqE0E8dj8kBf81dYx0hG+Zk1E9YGQA00k2GAHjZcCAjvWHx/JJRC
+X-Gm-Gg: ASbGnct8SSvKmsNHoEEV/90JmCUm6GuSytpImaRQd7oZR6mAhkMmGkBve/eSgE0FQnS
+	/OiMybYS5WjAe6CwoFIO4VUzqsAx5YSF9x3RGm9rNwULzQ/6FDbKaa9qkEhTcnkwPYdZYbGQOK4
+	QdHeGj6PWCjn3SGHZAhwQEJCYlNHWkUAtJRPruOkFeBv/fKcFVM3r4vhZKOBLWUO3Rru4GVXhah
+	mwcs4xhBEW30TBiA2FfSoy8NW/PzeKo10QLYXp4Blwwkg25vqLaeLiz4QXiEkQ/9ND65XAzCis5
+	IG4jJa/A3g0gX04RYYtihmI9QF0n1sxGm3zjbHk6LydWiHB+WgTSwkeKuf5DbIto04rtrxzTSqG
+	Rm+2e8jMHzsVX9dJmWeKVrGH4YxzoQ+t5Om4dyAeEl0y84OMSYzv+XEWeWFmsiyfsauJSyyxbfA
 	==
-X-Google-Smtp-Source: AGHT+IH4tCVgAFYEstGC5tL6bEfuWkCdmoT9cOSHEImj9VXypR0kMzJkaRRhhVwq1B3+HZ+9Wq3wiw==
-X-Received: by 2002:a05:600c:4755:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-45a2674e40amr51352865e9.15.1755442297289;
-        Sun, 17 Aug 2025 07:51:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFp8g5VhH3XFbgUtEhQY4C7V/JNecYxXMAifaV10ETRvOQ3ZN7ifxIBGT2X41wuWrXVZ6vCpw==
+X-Received: by 2002:a05:6000:2c11:b0:3b7:9d83:5104 with SMTP id ffacd0b85a97d-3bb69c717eemr7419653f8f.51.1755442298447;
+        Sun, 17 Aug 2025 07:51:38 -0700 (PDT)
 Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb676c99dbsm9917352f8f.36.2025.08.17.07.51.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb676c99dbsm9917352f8f.36.2025.08.17.07.51.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 07:51:37 -0700 (PDT)
+        Sun, 17 Aug 2025 07:51:38 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -70,10 +72,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/2] Add Schmitt input for NMI function
-Date: Sun, 17 Aug 2025 15:51:29 +0100
-Message-ID: <20250817145135.166591-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g047e57-smarc: Use schmitt input for NMI function
+Date: Sun, 17 Aug 2025 15:51:31 +0100
+Message-ID: <20250817145135.166591-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250817145135.166591-1-biju.das.jz@bp.renesas.com>
+References: <20250817145135.166591-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,17 +91,23 @@ From: Biju Das <biju.das.jz@bp.renesas.com>
 The latest RZ/G3E pin control document (rev 1.2) recommends using Schmitt
 input when PS0 pin used as NMI function. Enable Schmitt input for PS0 pin.
 
-Also fix the gpio key's pin control node.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Biju Das (2):
-  arm64: dts: renesas: r9a09g047e57-smarc: Fix gpio key's pin control
-    node
-  arm64: dts: renesas: r9a09g047e57-smarc: Use schmitt input for NMI
-    function
-
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+index 9f6716fa1086..08e814c03fa8 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+@@ -132,6 +132,7 @@ i2c0_pins: i2c0 {
+ 
+ 	nmi_pins: nmi {
+ 		pinmux = <RZG3E_PORT_PINMUX(S, 0, 0)>; /* NMI */
++		input-schmitt-enable;
+ 	};
+ 
+ 	scif_pins: scif {
 -- 
 2.43.0
 
