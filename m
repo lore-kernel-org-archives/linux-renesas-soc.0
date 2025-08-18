@@ -1,69 +1,69 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326AA21ADCB;
-	Mon, 18 Aug 2025 16:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CE6255F28;
+	Mon, 18 Aug 2025 16:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532932; cv=none; b=WnXKy593oSVh+wN9ugeQeG30A868zpoq+m7jQmx0GWCuIzpN1HxrunNexlOF2eocoxCn4+gGQCwmh021JD+URLFQSpyhS2qswlc26l7OpV1N9IuEuEOnqWK9T+JA+trcO+AsHS73GM9XEfZxdhAe6k37bx1HxW0A2J8pMeVbIpk=
+	t=1755533020; cv=none; b=ludwmgvVsDKXVMRCerxoTJKaU1FgqTgpF8ZTboAW7NwrvrRIClblvVc4JzDRBthuKpbZiyV7R1mK6viXy/iKtKOuGjLK3pn7nt9+NHUY9steMlc/Id8o71R+q1fiad6rcgzUooFwwE8qnjvVU12uh1OpLVjqMUXHtd13UxCKjnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532932; c=relaxed/simple;
-	bh=u+o7uywzBhtQ4B1+3GYT78+dirZDqdbPPu+GfAS+eKA=;
+	s=arc-20240116; t=1755533020; c=relaxed/simple;
+	bh=xyfdRNQ9wOGdGfyWnM7p+9yHlJfRgUR40bWdHshNDl0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T27IAg0QmeNG4RGyuEiw4M1eg3rNvpqtx7GibCHxWAJ2uUfIJLU7bBdihBMDsAlIdp4kdJK/buBqLHYEP+rMGqPOvUpVhgP3RHl7b+d+zWNjz8zLI5LckjlgvuTJC6Pqisi26F9LYdR4P6l1w2mF+pyPYC9wWxqPrUq9HGAPqRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+	 To:Cc:Content-Type; b=Gy4gsxyjOraRZDhBGQ4P/ZPL7U2k+d/veC9wCaKPK/nj9igTLOxwVifRf9QiVmdLibTqhIxHd1i66vuX7YqVW9RV8YC9nXm480ithVHMiAKyBEuHUsnYFbbfxyObDuuRyMeN7gKBGSFjsLgIbf3DpIcTe8wroBO2g/hrVcvU9pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-53b174c9c79so2000755e0c.2;
-        Mon, 18 Aug 2025 09:02:10 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-53b174f7cf0so3030270e0c.2;
+        Mon, 18 Aug 2025 09:03:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755532930; x=1756137730;
+        d=1e100.net; s=20230601; t=1755533015; x=1756137815;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CIJzAXZqBHKyNXtLQvChbRZgdimP8X1A4O/KyuzgpZk=;
-        b=FFmvaSmkz4mgneWWvtUEW4HRta+41Tj4smIBfysICnpLAs39EVudTE4ZEryUy1c4zR
-         488kfwJV5sMPX7piS+vC37HDT7xlBqSx4IGh1NHYyRhFFvWSzJ42mPsEzAxy4MqO7eIm
-         LwtSctvwjlfWiGZWW808oNp1iEcKOgdZGHwPlXEsw9MeigSpWfqxUNlLHl7y99xUiymW
-         oNJBtcfShG0ulwxtdPjb4kJF5XJemE9ZK339S+2dIb97HBNdczlnupkNSO8TrTeheo6A
-         StwCqP73ez0Mi9lV91dXCkX6GnTAu0sisBQo925vjJR3MlqtiOdx+TUIutsbjcvpD83w
-         arew==
-X-Forwarded-Encrypted: i=1; AJvYcCU6lr7UHKQdpRlijXdIg8aHQUju6JgJWRa2p/IJeC1lgFEqjTvrazGjbZXyYFRGvWKziSL/sknxnKpi+mZ5@vger.kernel.org, AJvYcCWRjSBPdiwv9XepnT3mdP1NrM6GT5jGODjHIYgGvE9n3xwomSjK/63o8WSk/phRM66XhifiyEo5eYM80EGwTaRcxXU=@vger.kernel.org, AJvYcCX0cqtP0HxT/G82FHjSzDP/YawpDnARBh9Lu3fDnSS9tveQf/Vto10pFBUUnGoDieAAslcH0A5JawyT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1AMaA2lXMNPlDa6IdmI+66Y9uboS6A7v9Dbhs2OxqmP6Wfqi5
-	hB5O4lX8S+sCXdo1FiIU7hTQ3u3k0tUsZ9+J5agxfH7TC0oxftdL3S0v19DCr7vQ
-X-Gm-Gg: ASbGncsIjv987fK9P4sve7TmAEMS4meljKOUv+U7s0i/y5FUWzlpqGY7RaX1hL/MYrA
-	4cmP04EtKd+2JZXujBRdWlKJVvr+4sPtTJF+Ni1o+KZJKdvKtHGUAlnIEGF12nV2xM0b7va9H3N
-	+TfNy65WzkIRNLvjwyY+Abf9Vw+/IrOY2KU8i+IcTh2mZWqRF8z29lRyPYmCcZdTBNHmdBMfeF+
-	SvhGC1UGTEGUlVlAqQ0cauLP0jp2iI/Y8wyR6yk0Ln6UWbWyvw1XjM9kUhdusy+V0TQptBZMWxp
-	Nu1Q7a2DNCmZ4KFGqIB2D2Kk3idfM2c16uT13ijhS4VfisXpb0leS7HGNGDJOP8gjgKLZJH7pm9
-	O3VDMWitTl/W3Ac7wnio+YGSnuenRuFvmQTdOt6ACTpWSzbJr3DTF9IbaaF4U
-X-Google-Smtp-Source: AGHT+IGimF6TUu1cMoDQrONU1Ab7Rs5QAQJLrtl/KtQ89lsurPMKXNHVtQXgZ2kB2X4ZnuV+d+uJGg==
-X-Received: by 2002:a05:6122:1d0c:b0:538:d227:a364 with SMTP id 71dfb90a1353d-53b2b749e13mr4182568e0c.3.1755532917529;
-        Mon, 18 Aug 2025 09:01:57 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bdeb9d3sm1968293e0c.15.2025.08.18.09.01.56
+        bh=dz6yNhmiJ0lVb3itTQpXkImGCQB1PaG43nCPS3Jgfts=;
+        b=kPu08DEtku/yGKklItZtFCvZvX6WL/3uX4Lkz/MExxiweWkFL9Ocl/HvZRddDZi0UT
+         WlmiAiPVo0eD1g65ymebH9ZVl2fZ2k52o5J4whrpYCIKA10/GwqngvLBLJlwKK7fzmEQ
+         j+yIXdMiAuVAvjyr+EnGmC/9Hmd1yujlCjcVk4atjyvIrHNJBC9APZ5e/BGSJIZ/QY3A
+         6RAb2qXXEG3iQV+1qslRGDbPsW4BkIY+eBW6qKxQEn2fQ4IIQ7i2IWY9rUwJ0KvOxn4p
+         G3vcKhjZ3REx3sQ65xc5YSwyl8w7+XT/0oYjgr6ixep60yD00BFwM/CyJHiplCf3HHKi
+         Vs8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUouimGbToOmg0EyiyLrOISk1S6SHIOihmInEDHILFjdVZvb0b2r2DoyVmQUq905ngZDZtNWTpCjqAh@vger.kernel.org, AJvYcCVmA2SRfaN0F4Rw9YwGeAtea8v7TDPS0Y0aWhS33DfRIYRcG+UZ7EhlO6gdsttX2ZF/ZrdEKP6mYllFOxlKs7GiQCM=@vger.kernel.org, AJvYcCWlyLuws5CfN7YR2/WYWaJMICGgMZn13/aEHeBhMK5HFY22yzsHe7i9zHm74RNZ2VTP5ZowE7ruoKotTbBK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3x/IwFXdEl14As6j3YhBnYAPnM7g1ygXmIIC+axkQB1j5DQDa
+	lvt9JiO53QKxfHqq8p8KdzIYxiXn2Ak7fzHJL0ECmbkcbmdb9qzVE0DbJhv+dPHz
+X-Gm-Gg: ASbGncso3/Ry2C7nvPzeBs0WU6FaysgaD94gEwuEjocBUVK08/AWKmSuTIJyVDUvBxg
+	pknxzbTrxm6eWWxzjEZJS5WS4BmxnCbh+YMVA5jQBHKARnzJdr4UyjzipZHqPzcw3mAwvgk8o6y
+	muXSMbAnAxL+gvSfHdszBMxpnPSDOUEHyrArutNVnJ/Tyt/LEhPwA5JbR66wcWMThaZrOAN+AsZ
+	GxHaLSzoGAmXVT76LI3UiCUTMEn6CCfIP1Jy8bmqv0Di41FD4DL2W9iRkhBIJbdkHXCKWd18M1h
+	A2kq0cG7oVCmRhuT17cifK/5s5FEW32nTyIGy3C8TlyJmvO0JVCNBeyJs5FO5KrXSFOTx/jB+iD
+	Y1UtANKGfETqYrvUEW+b947trB4auQ1XHSP5VxcbwlhDiqRUlAik2R4cRxAAg
+X-Google-Smtp-Source: AGHT+IFLs+6/xq3CfEpeMZWLac0ZWV87WUFUiE4yZPoGVqkC9rcNY2lGxbVXgqrQw1OirqO9Y59jNA==
+X-Received: by 2002:a05:6122:8c6:b0:534:765a:8c3c with SMTP id 71dfb90a1353d-53b2b76a0afmr5033812e0c.5.1755533014987;
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd5514csm1938225e0c.6.2025.08.18.09.03.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 09:01:57 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-50f8b94c6adso1017581137.3;
-        Mon, 18 Aug 2025 09:01:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmzIU5yfxz3UaysPYjFl4v5kYNR6nqJwzqZ8rTfXuJ+pOrHT2HbcKlcU+RLeknKB9pUgfZYV59sim/yqEDni7hFD4=@vger.kernel.org, AJvYcCVxMF5+3xP1uZl8+QE/naUno6DHE2AxXKZwzl5QJ+rqXwLHqTF6pPs55PIEiM0nlQW1pM0Ds5FqJOO5@vger.kernel.org, AJvYcCXzDd/64AfvzzOo9SRb1vuS6uoqTw8D+0GELvvcr1IP5p0YX4mvaI2QTW9QPvUFBD7br0RsRiMbjgkuesCa@vger.kernel.org
-X-Received: by 2002:a05:6102:292b:b0:4fd:53e0:b519 with SMTP id
- ada2fe7eead31-5126d30e725mr4194493137.19.1755532914495; Mon, 18 Aug 2025
- 09:01:54 -0700 (PDT)
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-89018fdf5a0so3080029241.1;
+        Mon, 18 Aug 2025 09:03:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDU0xS1+ttDu2tl+wT3rQXkcF9DsNNvbvT3PA02nFnHtjsHyW33glQaa8uEjyyazXO3FgYu1/iRR4ZMRFEpcc3f7I=@vger.kernel.org, AJvYcCVz6pj7TlG084rqMXNr5fwzrPdaWGDYFKZT+lgKoe9vkDWwrbkuwZRJqQEwvtXhmg1y20gEKaFuirzk@vger.kernel.org, AJvYcCXkQ/046f1mr7IhpRGSb4O2mBuapGGpybBCUZZkzMTTskmwczVxZnWitNhy6HQEQ8WGS8RL0uUfwfCmzNo4@vger.kernel.org
+X-Received: by 2002:a05:6102:a53:b0:4e6:f7e9:c481 with SMTP id
+ ada2fe7eead31-5126b10e52bmr4914294137.7.1755533014567; Mon, 18 Aug 2025
+ 09:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812200344.3253781-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 18:01:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
-X-Gm-Features: Ac12FXx3qMFgaF2nF2T4iYSOKFZFo5L9Q1hwQ-O9k-imvY-zp3thjThQzN5WK1w
-Message-ID: <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm64: dts: renesas: rzt2h/rzn2h: Enable eMMC
+Date: Mon, 18 Aug 2025 18:03:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVx2_D=B=UHWjwL3dk+jO-85HrYyoiA4SV15xiRQYRt6Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzp5dE-fnt9Gs99h43L_XyP0JhWgde5mQ1-qcSrAXuvIIToag4FSJZsG20
+Message-ID: <CAMuHMdVx2_D=B=UHWjwL3dk+jO-85HrYyoiA4SV15xiRQYRt6Q@mail.gmail.com>
+Subject: Re: [PATCH 13/13] arm64: dts: renesas: rzt2h/rzn2h: Enable SD card slot
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -75,60 +75,36 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Prabhakar,
 
-On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+On Tue, 12 Aug 2025 at 22:04, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Enable eMMC on RZ/T2H and RZ/N2H EVKs. As SDHI0 can be connected to
-> either eMMC0/SD0 `SD0_EMMC` macro is added.
+> Enable SD card slot which is connected to SDHI0 on the RZ/T2H and
+> RZ/N2H EVKs.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Thanks for your patch!
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> @@ -10,6 +10,15 @@
->  #include <dt-bindings/gpio/gpio.h>
->
->  #include "r9a09g087m44.dtsi"
-> +
-> +/*
-> + * SD0 can be connected to either eMMC (U33) or SD card slot CN21
-> + * Lets by default enable the eMMC, note we need the below SW settings
-> + * for eMMC.
-> + * DSW5[1] = ON; DSW5[2] = ON
-> + */
-
-Both SD0 and eMMC also need DSW17[5] = OFF; DSW17[6] = ON.
-
-> +#define SD0_EMMC       1
-> +
->  #include "rzt2h-n2h-evk-common.dtsi"
->
->  /*
-
 > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
 > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
 
-> @@ -44,6 +63,34 @@ sci0_pins: sci0-pins {
->                 pinmux = <RZT2H_PORT_PINMUX(27, 4, 0x14)>,
->                          <RZT2H_PORT_PINMUX(27, 5, 0x14)>;
+> @@ -104,6 +116,35 @@ sd0-emmc-ctrl-pins {
+>                 };
 >         };
-> +
-> +#if SD0_EMMC
-> +       sdhi0-emmc-iovs-hog {
+>
+> +#if SD0_SD
+> +       sdhi0-pwen-hog {
 > +               gpio-hog;
-> +               gpios = <RZT2H_GPIO(2, 6) GPIO_ACTIVE_HIGH>;
+> +               gpios = <RZT2H_GPIO(2, 5) GPIO_ACTIVE_HIGH>;
 > +               output-high;
-> +               line-name = "SD0_IOVS";
+> +               line-name = "SD0_PWEN";
 > +       };
 > +#endif
 > +
-> +       sdhi0_emmc_pins: sd0-emmc-group {
-> +               sd0-emmc-data-pins {
+> +       sdhi0_sd_pins: sd0-sd-group {
+> +               sd0-sd-data-pins {
 
-No need for repeated sd0-emmc-prefixes in the subnodes.
-
+No need for repeated sd0-sd-prefixes in the subnodes.
 
 > +                       pinmux = <RZT2H_PORT_PINMUX(12, 2, 0x29)>, /* SD0_DATA0 */
 > +                                <RZT2H_PORT_PINMUX(12, 3, 0x29)>, /* SD0_DATA1 */
@@ -139,14 +115,21 @@ No need for repeated sd0-emmc-prefixes in the subnodes.
 > +                                <RZT2H_PORT_PINMUX(13, 0, 0x29)>, /* SD0_DATA6 */
 > +                                <RZT2H_PORT_PINMUX(13, 1, 0x29)>; /* SD0_DATA7 */
 > +               };
+
+SDcard uses only DATA0-3?
+
 > +
-> +               sd0-emmc-ctrl-pins {
+> +               sd0-sd-ctrl-pins {
 > +                       pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
 > +                                <RZT2H_PORT_PINMUX(12, 1, 0x29)>, /* SD0_CMD */
-> +                                <RZT2H_PORT_PINMUX(13, 2, 0x29)>; /* SD0_RST# */
+> +                                <RZT2H_PORT_PINMUX(22, 5, 0x29)>, /* SD0_CD */
+> +                                <RZT2H_PORT_PINMUX(22, 6, 0x29)>; /* SD0_WP */
 > +               };
 > +       };
->  };
+> +
+>  #if SD1_MICRO_SD
+>         sdhi1-pwen-hog {
+>                 gpio-hog;
 
 The rest LGTM.
 
