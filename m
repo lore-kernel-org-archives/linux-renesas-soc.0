@@ -1,123 +1,144 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AD2202C2B;
-	Tue, 19 Aug 2025 13:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5FA3043DB
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Aug 2025 13:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611617; cv=none; b=USKqWto9GAt+CwO3Oih4clircDjQrwQzc7oVa3bPW5P7UZMGoDi2n6gszOdhBzzXXgn3qooXOHeJYroEI+crJJ/S87O4rfWC6zhjNjTQTTeboyDfoodbZoxaqJemgJRiwCaPsztbFqypy8jiCaBeaq3+e4EnqY6Vk5iqp09HCvY=
+	t=1755611694; cv=none; b=uwa0QojwiW8zNkzMEw2Rsrxkp82vs1rS6a16asAfBq43tnaxmY7hIcEoQryERomhcKncisHdGsyeHkxOk9Gt9D4m4uAIacFCknrUyeaRknVwviXiKNYHfoGXZk9gTUqqN0IVnXnmVfEd/22xSo3sEHMEDGF1YpLCdtj13sqgw6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611617; c=relaxed/simple;
-	bh=sjCbpxSUHEfPb1ZxJ6/kPd85FQCs4RnOuqvLQFHp9YU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Acbr2PcoJF00xOYAIsHFc2n6jwyDrkDHaxZaUH8imi+yA2rcr94vnO7zNGe8aUfMmH2jdd+2FLWB2PhYlJf9BT6aDeZAXwdX5sxLYuFoHUure7dhR8Ep29yyIB5IKQgiMUu3qnAAg1kXjRcCbli7+qHv366bTTbIvWd9JQv7PmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8902ee514deso1727883241.1;
-        Tue, 19 Aug 2025 06:53:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755611614; x=1756216414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EeuW/6flpc2I+1hROrA6g3LcPwOigpLFE6GBluj/xEc=;
-        b=hI4IEdUUD8FPIbJ/FszB5WjAcOv5VtuaazEBOXnKmDq7jQYD0CdkyO8HJLrkKDYWcK
-         VfXUGEeWZdF5IB4/bmk/qmUG7DsioszfNKfG0cto5wVuiyQsvO0Hczd0AajAda6mYcWV
-         vdL0yENxR2HVIgWZPHlie4WmFpLAOD27j0YILh1iQFfEGlUGYsmTypora/NC8oZt9luH
-         0MQsErFKS6lXFl6g0LJUFXR9Ov19hXpXFM/jyFZNh0LhaxAssG6P4nYpiIhQ4wRkGcCl
-         04UawDWap9JPr10byc4nzIvtTRai7dqhhVGaC0fR6IUSaPANslO51uqe7qh2h/ZR+lsZ
-         MMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFyEh30O73oPvQrsvUbMCzaAJ3DZdPcZqTeyRC6r1X/IJCGaJWkhu9SRD2FNUKfLFxMIctqrHxVrNq@vger.kernel.org, AJvYcCUjIipOe06PnNH1ZwSLwDR5hdESI8UHMRmT+OVg2+f8fWH2+jcvvL7PfWBs5KoiAxdq7zwTDgPvip1i/5laYj6Ei40=@vger.kernel.org, AJvYcCWVP43cCmH34dzPwAaYETjfWipeEFVZfZ0xunSPWdpFhV0PrIxBNKhC+R/YtQadPIqygSrC+DCVW3rV8bF0@vger.kernel.org, AJvYcCWbURJ9mFdEiZH8wkDRpcMp1L0NjZZOT/Gjop1kXb3rUNhFRouic/P14ffCgOuXj+Hk3nKM5eMBSfjP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM0+f8g2vjyxEJsu++eiKkZzN/KZFmm1SdhrXt0ogtPjgDJO/F
-	cpsaxdnvKpn5Rp4S7SoF0je3H5nUQO2hIVQ2q0gR7cWXeo1cSohKItgtDEd/4xYJ
-X-Gm-Gg: ASbGncv/2yW1VlyTFuqBI5sTT2C1AsCXO9dDeyteizFhqTBAS/b0lzxuqwMQ3uC3uFn
-	PZDuymYF+xKm7NX9NrfQKifAkDWqTKa/51ES5GbQWWJYxapCVNSaloGF916oeO1AfQRNZe7QG/Z
-	5y6lF7sPWSDwpGhlxAS86/Y+TB6+gF4xlYpSUMfJobvLf7+RD10T8S1BkjSQFZS0V/OJBuApaOT
-	zszxOVqdj8+yEo/li+chapF+OqBu3SRNVCGiKP1Xb3RuPXDdQluG4mlVCwLqTWItKjcX5j9jZtq
-	ZWr+EdFh/UHpLPvcQ56Ns7EFQwr/g5ybnm6UZyPmyumllOPI1Uvgu0fhPD8zg6IybvYQnzzwpZi
-	PT5pJRd4ot8W7FU5sciu174eTrwLtzB0AdEirq/bqEtOEC2wF6751FTqWUbrq
-X-Google-Smtp-Source: AGHT+IHHpjioCPjgXccsZlThj8bgKsr8YTjqiogVlvjduqtaYs53U7Mh6wj/hMpMUDdI6kcJu2x31g==
-X-Received: by 2002:a05:6102:4497:b0:4df:9281:5ec3 with SMTP id ada2fe7eead31-51929a189a0mr708934137.2.1755611613754;
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-51713f939edsm1450417137.15.2025.08.19.06.53.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-50f7e78cc12so3702833137.0;
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUokFAvD5mCzPsA/W2KX/Oh4IVaO5VUwzGoj3pxEuYfJbODg+gddxRJiQLZZre5qNIPm3Du+EoXqh3L@vger.kernel.org, AJvYcCV9pJEeEsVk4gLRuhJa2C2btL2MGS1u3FXwOgaqdDqKiv+5WjNtxWLm9MfJFb+XnVStbKEvNd9UsgTjibrZ@vger.kernel.org, AJvYcCX+pyq+KfN7gpgD+checYwYOLouycuS11P73DdrOJClEGFqDv00vYKzfpPdhQN3B2APOKiqppJ1kIQU@vger.kernel.org, AJvYcCXf+670aOZv8QBxbtMCM1xqW/yqYAbziIMnAnAKintSezBUL/EV4+dT7WzJr0TNxi8mGFkkJuz60WiQBtYqeiAHrA4=@vger.kernel.org
-X-Received: by 2002:a05:6102:8343:20b0:4fb:fbdb:283c with SMTP id
- ada2fe7eead31-5192628620bmr577370137.13.1755611300964; Tue, 19 Aug 2025
- 06:48:20 -0700 (PDT)
+	s=arc-20240116; t=1755611694; c=relaxed/simple;
+	bh=tCiVzuNUp7gEqOILuBT58YBNiADbUw3hLgyfuari8R8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qpqSTx5QoKbJerOwBtmE0WHNQWw3s9scx1oErqAIKJRgkLwbG24ikyMxhVRTAZxgidiYyjpNkzxsW6wwACn5m0hO7BIiNAJxDRQ60STYvwFDJVLd+Zr1YzuQkdPebr/gWzfAwIOh3PAN7cd43mxlm5uBxEvtYiYvihgFFtMM1e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AHvuztMk; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AHvuztMk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755611692; x=1787147692;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=tCiVzuNUp7gEqOILuBT58YBNiADbUw3hLgyfuari8R8=;
+  b=AHvuztMkBVy7d849sgVXzbhdkNcnw6HTWzRk3QL4T4V02wGiGPXWbH5/
+   HexFveOGYnvV/ruC4ER3dWbFj5zjDTGvtzAdccEFNV3lZOHQUMgGqkq4t
+   ZZF2OE2bHyMWpgoqTssmuxRyfrjOn7OYLBXQ89l3pr0rB/kxsOpOhC1Qw
+   9FetegE/aXBFqGksVWfWW6H+qtTqblAVKku1f1tXA88CiarGYbh8cFHwL
+   89N3z+SMs+8H7JsakEhiSS6q/g6cqomfVjsGNw84epN38sUAFn7ZdgWY4
+   Jp+v1b6JQTVtpkdjs2Hr24qAebKOvaKwqzyZCrZIgnHl39u7m9oinKs+u
+   Q==;
+X-CSE-ConnectionGUID: YZhuOzwBSyqbpz5E9enjsA==
+X-CSE-MsgGUID: FczlHGlWSyOXnc0Y3JKTlw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69308115"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="69308115"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 06:54:40 -0700
+X-CSE-ConnectionGUID: F+IgZ8jzT4G0F2uGvYIwjw==
+X-CSE-MsgGUID: DMKoe9ugTv6RaXb8npMOvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="173090245"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 19 Aug 2025 06:54:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoMnL-000Gy7-31;
+	Tue, 19 Aug 2025 13:54:35 +0000
+Date: Tue, 19 Aug 2025 21:54:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [geert-renesas-devel:renesas-drivers-for-v6.18 1/1]
+ drivers/soc/renesas/rz-sysc.c:113:16: error: cleanup argument not a function
+Message-ID: <202508192154.jtZINmab-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 15:48:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwqlAmfXivz66Sd55gS12RpO00X1Drkt6QaRo03rpO2tR6AE4qWRsOFRew
-Message-ID: <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi all,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v6.18
+head:   75601ffaea537c3180f23912ce1d0ed5f716469d
+commit: 75601ffaea537c3180f23912ce1d0ed5f716469d [1/1] soc: renesas: rz-sysc: Add syscon/regmap support
+config: arm-randconfig-001-20250819 (https://download.01.org/0day-ci/archive/20250819/202508192154.jtZINmab-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508192154.jtZINmab-lkp@intel.com/reproduce)
 
-On Mon, 28 Jul 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> This patch series adds DU/DSI clocks and provides support for the
-> MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
-> series [0], but has now been split into 6 patches due to dependencies
-> on the clock driver, making it easier to review and merge.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508192154.jtZINmab-lkp@intel.com/
 
-Thanks for your series!
+All error/warnings (new ones prefixed by >>):
 
-> Lad Prabhakar (6):
->   clk: renesas: rzv2h-cpg: Add instance field to struct pll
->   clk: renesas: rzv2h-cpg: Add support for DSI clocks
->   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
->   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
->     RZ/V2N
->   drm: renesas: rz-du: mipi_dsi: Add support for LPCLK clock handling
->   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+   drivers/soc/renesas/rz-sysc.c: In function 'rz_sysc_probe':
+>> drivers/soc/renesas/rz-sysc.c:113:16: error: cleanup argument not a function
+     113 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc(sizeof(*regmap_cfg), GFP_KERNEL);
+         |                ^~~~~~~~~~~~~
+>> drivers/soc/renesas/rz-sysc.c:113:58: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+     113 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc(sizeof(*regmap_cfg), GFP_KERNEL);
+         |                                                          ^~~~~~~
+>> drivers/soc/renesas/rz-sysc.c:113:58: warning: initialization of 'struct regmap_config *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   cc1: some warnings being treated as errors
 
-On the renesas-clk side, I am (almost) totally happy with this.
-Any feedback from the renesas-drm side?
-The last patch depends on a header file introduced by the second patch,
-so I will need to provide an immutable branch containing the first
-two patches (probably/hopefully based on v8).
 
-Thanks!
+vim +113 drivers/soc/renesas/rz-sysc.c
 
-Gr{oetje,eeting}s,
-
-                        Geert
+   103	
+   104	static int rz_sysc_probe(struct platform_device *pdev)
+   105	{
+   106		const struct rz_sysc_init_data *data;
+   107		const struct of_device_id *match;
+   108		struct device *dev = &pdev->dev;
+   109		struct regmap *regmap;
+   110		struct rz_sysc *sysc;
+   111		int ret;
+   112	
+ > 113		struct regmap_config *regmap_cfg __free(kfree) = kzalloc(sizeof(*regmap_cfg), GFP_KERNEL);
+   114		if (!regmap_cfg)
+   115			return -ENOMEM;
+   116	
+   117		match = of_match_node(rz_sysc_match, dev->of_node);
+   118		if (!match)
+   119			return -ENODEV;
+   120	
+   121		data = match->data;
+   122	
+   123		sysc = devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
+   124		if (!sysc)
+   125			return -ENOMEM;
+   126	
+   127		sysc->base = devm_platform_ioremap_resource(pdev, 0);
+   128		if (IS_ERR(sysc->base))
+   129			return PTR_ERR(sysc->base);
+   130	
+   131		sysc->dev = dev;
+   132		ret = rz_sysc_soc_init(sysc, match);
+   133		if (ret)
+   134			return ret;
+   135	
+   136		regmap_cfg->name = "rz_sysc_regs";
+   137		regmap_cfg->reg_bits = 32;
+   138		regmap_cfg->reg_stride = 4;
+   139		regmap_cfg->val_bits = 32;
+   140		regmap_cfg->fast_io = true;
+   141		regmap_cfg->max_register = data->max_register;
+   142	
+   143		regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
+   144		if (IS_ERR(regmap))
+   145			return PTR_ERR(regmap);
+   146	
+   147		return of_syscon_register_regmap(dev->of_node, regmap);
+   148	}
+   149	
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
