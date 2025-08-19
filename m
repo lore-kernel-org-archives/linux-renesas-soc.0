@@ -1,46 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B653827877F;
-	Tue, 19 Aug 2025 13:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E3A2EB84D;
+	Tue, 19 Aug 2025 13:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610667; cv=none; b=RzjiWtEaMYr7xoxRiBLOCXv5my40V7xKzb34rNGecK270Mbel8r7LT8u4PetmibWxz0lUu2sa+c8izX+wPFIxirelF8QmCgTC3ebFBpStHVoy3q7U73RLoBXlOpx/BoIXJcj7LZFJZ3v/kI6fZjiOGpSzBKwNo9+cy5EbFGGO3Y=
+	t=1755611363; cv=none; b=VUIk95Lqm6OP0ppzSfyjibX1Lbz9sUc1KYPIY75eS0N/X5ONatE7eg24UP+iGHFvLwZoHSqAh/+Ud9aEy0Pa0swJ0EXID6vMpiI6mGTDHYEsXsgm0mu2rlGFKU+mpavQ0+pwo34rlxINMMxjxEE3I9dLdkhmKMAE24VOveRfhnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610667; c=relaxed/simple;
-	bh=IjvO8MRPzpUeuM8/2D//N63PWS1LI+f/m9iVVe4v5Oc=;
+	s=arc-20240116; t=1755611363; c=relaxed/simple;
+	bh=pAa6+fogJNC9Vf/6kvb+kw13f83SMQh7YyuSr8yp6CU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rg3i/AgotmaCLzOnkoOyOshssYmKEuC+GW16j5K+5nk2DAyVCxsKpkuBWBcIZbC5VrpTGSeawpD09hl1QX5GESsGUxOl8auZMG62TIJ+3hMoM0Vnaa37D6SEioolhoD7Ae/2TMIj1w9S4uXdQ8jrC1ihO04YjIqX4FBkVEc48iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lcrfizb6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiE2BGlkIE8b5dgvTwH9e0hYQVmb5fN9f6oFN+EoH0jUBSpNkw/9SOdCtDWbMDGq9aPViYhyG6nxEZlc5IemcP2Catsl72BPOsaY4UK/iMV9Q2vRXjL79HV/76p2Cz9mIeu5jNdCyRSOgx9WF8IK8p06Ab8Vm8w/s0O+tZm5A9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htFVzjby; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lcrfizb6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A07C4CEF1;
-	Tue, 19 Aug 2025 13:37:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htFVzjby"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4789C4CEF1;
+	Tue, 19 Aug 2025 13:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755610667;
-	bh=IjvO8MRPzpUeuM8/2D//N63PWS1LI+f/m9iVVe4v5Oc=;
+	s=k20201202; t=1755611363;
+	bh=pAa6+fogJNC9Vf/6kvb+kw13f83SMQh7YyuSr8yp6CU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lcrfizb6x3EAFuHF/ZyIxcnEpwCVW2+Rf5wsQtYm8b5qELGl3DTKAPZUQmTHb9eA1
-	 IRM1AKifssli+ROh4Rkdypj2HKqBhVR1nFolAk8/StheFcjJFFLEQwgxEM4hhCB7/5
-	 bN9q3bzp9jlL+/YQakpWH99L5ze9eSMgKl94hgXpW8ftw2HgwkEK1I7G7wCzqSDRRD
-	 MbtBmV9L1chTn7YYTguvKYSs1cIFjcy5V8ZYz9tpyYmUKY5PTHzhISfAosW5NoOX1V
-	 nbO14HhZ22a2FioOZg8SUq6Ps+Suq01CQmdCSbVSfxvI11sjZgFunVmJsSmviDXS58
-	 0GeSUR2RY8cbw==
-Date: Tue, 19 Aug 2025 08:37:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: devicetree@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	krzk+dt@kernel.org, geert+renesas@glider.be, kishon@kernel.org,
-	linux-phy@lists.infradead.org, yoshihiro.shimoda.uh@renesas.com,
-	conor+dt@kernel.org, magnus.damm@gmail.com,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	p.zabel@pengutronix.de, vkoul@kernel.org
-Subject: Re: [PATCH v5 1/7] dt-bindings: phy: renesas,usb2-phy: Mark resets
- as required for RZ/G3S
-Message-ID: <20250819133744.GA87211-robh@kernel.org>
-References: <20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com>
- <20250819054212.486426-2-claudiu.beznea.uj@bp.renesas.com>
- <175558495459.3265640.2032619822487575179.robh@kernel.org>
+	b=htFVzjby+ptCXERI+Lu1EFm7PWmsWbCkgpy++eEM1lWil6JxmJvktmfFobmbGUkCR
+	 lvmL8AmBHBygSX4digY7VVW0PdpYnH9EIhl9QmDzJMICeo5FqLlT55QYvo/ZwpCa0j
+	 bcx5BBNzjKkAO48VpLwHfDiOF+6bu3eKH8/0/C3N2fLP0OWs8eS94YkktT5vvFTa2j
+	 UCLLJGE4F8LS86x/yKwwILSe5OqsHzYWdOpNbZvpHyvpD2rSC8x9+SeHOImb4ZglTN
+	 /Hktw0BFZEQFMXYOz/J+cRrBD3an3LEek+zYYm/le7Whc3BW3PVYbMfRfKekbXyW0s
+	 Pk6TXH+rqLW5g==
+Date: Tue, 19 Aug 2025 08:49:21 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2] media: dt-bindings: renesas,rzg2l-cru: Improve
+ documentation
+Message-ID: <175561136132.114786.9601783480091957851.robh@kernel.org>
+References: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -49,53 +49,24 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <175558495459.3265640.2032619822487575179.robh@kernel.org>
+In-Reply-To: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
 
-On Tue, Aug 19, 2025 at 01:29:17AM -0500, Rob Herring (Arm) wrote:
-> 
-> On Tue, 19 Aug 2025 08:42:06 +0300, Claudiu wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > 
-> > The reset lines are mandatory for the Renesas RZ/G3S platform and must be
-> > explicitly defined in device tree.
-> > 
-> > Fixes: f3c849855114 ("dt-bindings: phy: renesas,usb2-phy: Document RZ/G3S phy bindings")
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
-> > 
-> > Changes in v5:
-> > - none
-> > 
-> > Changes in v4:
-> > - none
-> > 
-> > Changes in v3:
-> > - collected tags
-> > - rebased on top of latest version of renesas,usb2-phy.yaml;
-> >   Conor, Geert: I kept your tags; please let me know if you consider it
-> >   otherwise
-> > 
-> > Changes in v2:
-> > - none; this patch is new
-> > 
-> >  Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> 
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819054212.486426-2-claudiu.beznea.uj@bp.renesas.com
 
-No issue here. The QCom folks have broken "make dt_binding_check" in 
-linux-next...
+On Tue, 19 Aug 2025 08:48:42 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Drop CRU prefix from clocks and interrupts description.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> Ref: https://lore.kernel.org/all/20240909143358.GA2013-robh@kernel.org/
+> v1->v2:
+>  * Updated commit description
+>  * Dropped CRU prefixes from clocks and interrupts description.
+> ---
+>  .../bindings/media/renesas,rzg2l-cru.yaml     | 22 +++++++++----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
 
-Rob
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
