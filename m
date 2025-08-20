@@ -1,80 +1,78 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A334AB11;
-	Wed, 20 Aug 2025 17:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11FF225413;
+	Wed, 20 Aug 2025 17:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710302; cv=none; b=D1NdzWeeEiWnCpAJuOcY3aaLmuSGMfn6DgxxpMF2zl3WSFqI2gZvO/LkwzQg9VrYv4IbisLsqrBttszKaIE648Y0KwzQ89tRPeKbdWMJD21nt/bHKPV3LlTdYfmVhCXc0BKTKpsFF9tXKV1vLm9XBFcvy5fA8j5C/LcaOWlddVY=
+	t=1755710302; cv=none; b=MwB3V6kWYOAIXWoSNXb7jyeM1fiab1mIwm8EGnxSdy3NGulE07eDekkjU2C2HOQi1UffWqcc+pwzjK6+riO3psdyAYbTk2hIidZYXyDelYZI3vJw8UphPnL64pg9Zpvm09o1HHd8xf/x5CXBVUqCmYjVNzW0U3uomY0uWrlDoYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755710302; c=relaxed/simple;
-	bh=vR39eNZNyOQ6tN2Mj36KHsKbbUV8cQcN9BgoMHKGujk=;
+	bh=hm/95sgIMQAu67G9Bfl9rcMGl31poyUITbZxq98oZd4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BUzSLX0q/4RTm1jOYLeMu0jHyOdZ0hwboGlPVfdK/q1mfe70u34/SoJzgO0l4yYfmcVspptrsraPKAVnLQB5mGptQsxehRChUhKIR+BzTHmBhmxl4TPHxhByEWa1lyYmuAvMOkE6B1XU2vTCdDjFwkC4jErMZ2APjKM5AW8QZ08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5b3VY9u; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=eRSnjMvsACaZukNWIMCkkvFufadDd27WCMxVLmysA/fBW3sdE3m60n79Db7bk/4Tzrc7XTGnIf8hWrGBwbI20+ADNJBIJ6mtr4f+emOIRcPix+bbZOgKs6ge5cBnUAL0a15ulRyPEQFwchqvnwp5k2iKPef4/5Gq6qU4IoChwiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WNIKBHOL; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5b3VY9u"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a286135c8so6407325e9.0;
-        Wed, 20 Aug 2025 10:18:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNIKBHOL"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so47744f8f.3;
+        Wed, 20 Aug 2025 10:18:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755710297; x=1756315097; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755710299; x=1756315099; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eXt3qo9eRvQBc1zEQ4mrJDsYs0z6WgygEJaRo70LK1A=;
-        b=a5b3VY9uCUAdDpWau/9x7QTjquX5NDVew0Sd6uPH6pxv+g7V6aY29Vyg9k3WmF0QSF
-         DXmFUdhi40yJMVljTIFM2KTvp4HoJAYy1FAsucSEr/u60waa8QoW8IQXb3Z2+4O8Mlmw
-         fsFV84oQAG3z35q8yYGBz6HS/KAUjRPKSdxp//KOphFKjKfTE5jwpNAIg0WuhuqD7Jlw
-         8WeupWT2fzmadLEtCS6Ko9D6Rrn1pEPwS/PzUzsHNKF3EK8WTYMospOyOjpzRDdH3ZNO
-         muYiXLBo4GJRcUJulLeX+qqpAirmkjYdLfLclLexAXvJIK/VqrQYGeL2ttE042PpJI47
-         Ntaw==
+        bh=EhNTnAISlb922fVFTYDB8lOALQY3uJnPTtqRlRuZWp4=;
+        b=WNIKBHOLLxHAYr4/tgrpf1pIik0yKQ2zYS3FwkkDrouXRd5FdU/CS1oYqI2KGsITHx
+         jjj/6/5zuPGEsa9RtR7snC/nAMxhZXnmYBAKmu7dj3P7iGOVyMxG06806tXFoFVvfROC
+         WTRtk2TcGto/mjTpQxmq4XOdRuzEEFuOJnzeALsnOOVIplI1XzPng6jE9ZT9kWOXtohx
+         m0Xtsqyi3BZ3WfNuNl2jg0+KmXqP7M7yCiNeQM/NaZybFkow0zGqAWaLzxiDI331uZmv
+         KRKYKgY3UQc3pArjlELfP91xdRJZxG7O+tiLLq3TjYDwhrBkV2TriGqYd2G0otzpwxi3
+         dRuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755710297; x=1756315097;
+        d=1e100.net; s=20230601; t=1755710299; x=1756315099;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eXt3qo9eRvQBc1zEQ4mrJDsYs0z6WgygEJaRo70LK1A=;
-        b=qav5uY3M1sWJoQHwbIwf1Il2fcpr/3gfJHxvuxNvQTmmbbhhMPqNdFO9I9x6tM8Vqv
-         JQKZD8OHmVMysC2501E64sHK7eugsq0SdfrJLfwKmRzEP0G1l6TrjrVZu5nAsq8y7ZmN
-         ZXPXRgNY+hhHyxIdMbUjUHYBZ9RjSSRNJg4bm8gvZ0F4HFdwBVb9cBCMpCP+x6GHjT4O
-         7J3+98gJXVjmWsy+gZJnTsWVLu/KyyQyqytXoJtbjvEPbeJdQaTv6w8IUPaI3tWuE6OV
-         JyD8m6NQ42WF04NCaTAJd4JIF5SQXsn4KCW9MZDxcfK1rE+QZQMjE9cIO9yPZeBrPiyo
-         aIdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQxZLKKFg768OBHumAS5Bi65EG2E7o2nRLPtjnniFUmA6BiiXWLuaDomLh5tf+pUo66TyGin0WiKmd7rI=@vger.kernel.org, AJvYcCXNW5ToDyDvmqYvo8toNOFGpsNdwXm+MqYyh+Vvwe/BYhwPnsgRgy0eoKgNAiiKOHRa1dzGiqnGKD7brgfKkShYGX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1FdNBKhzQACRGtqreq8PlluA28lAEpbQe8dRYo9e8gDf5oqzZ
-	Bz+0SyVJqpU5NYJ2/VKtxF4LLzv5u4x+5XDw52dVR4bC9hYWavWMelwq
-X-Gm-Gg: ASbGncsm/oFu38sInYGXhSbxSRCrSY9AMhniOcrLoQj36ogpvBsGc84DHMmkrysiSdW
-	wAaqGPUQu56RYgXChJ15MmofNIv/ZSXCy+mY64KPKKj05qRsG2HC6WQvl1bkn9zgqbtlZUiRLpu
-	R3Uadqn0gVAfdPTfU/O8w9Klr7QLh+yje23mkbRXMjs1Ad452D0peMplsbCTOGDwgrBiGqoLD9C
-	ON7tRm5JdhlB+p622+jp/uzud3P0yUryYDLYMMHeqduqQMEQl5NcdjWTul8vgHbOdMCZrg2/wbH
-	mT9JUNd8OxeCkV/CYfYsjaNn8d+kdU9+oFt7+KWTdBylJkCRWI/S0IDwCIF9CVIVpFiHGAGKGlo
-	4uWmy+wdIzztfkOPrUQDLIM5hJ+VDelbxK1RwTHyG/xGxTW/RVAfS8Q9nsoIXvPjW/9OyKs/NWw
+        bh=EhNTnAISlb922fVFTYDB8lOALQY3uJnPTtqRlRuZWp4=;
+        b=VucYxLLZODCDtrZd9ySJF/IrQdyWsC//ZaptRF1bKzM9gJw1A/f5mRek4N2RIUqmWa
+         jqip4XLTjEwtWXBoVgYlcDM40vasaQvl0/AwDNmNbDfFGkbv0Y2e2xAropfR3v6ZIsob
+         4N4itKA3yXukQuhZFZO9eiHyF4wRcyPUuoChjzQjJ9BzaK/7iEXKYrFqsXyrmGz07asx
+         dY7eEkbj78Q9y77BK3VvwaF7uP1xL1AOLDhzzl/FXjj14cipypl0R2RD8m3vPjkSkVGD
+         9unsF3vQvYKFxdul9YWWEQq8L7mgPMzNlPAoKLes5KYMsmttEAwOvnoE2z4rXirrpZZD
+         DMGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYau4JgxVwy6FWmp16Rvb/s4ESHSNZx8lAOj3GlM/SVMdDiT4krTgjO7jENix0JCtf+0d8ub3F5sUd@vger.kernel.org, AJvYcCWgxqV5AOqYFsz/uJSEti5rOMxzpW8fbCt14KzhIab4Ge46iZhTkj2Hefl8xYcyEck5qwbn57qAj1SrYvA=@vger.kernel.org, AJvYcCXr70A0RYOHVgxJrWEZfKlJjlxkZoovaLllpHYfgHC8y0H+uaZrYgV7Vt1XBrIsApgYZz9KrbBsOqJOFsVicND7rqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq3PhmK698xbmRLrBXTc+VcE+ZeW7WGFBCbXYdEacJG0Rhr3uU
+	ZfXim5XOJemJ3hU29Xe3v3YyibWak/hSVGjXKDcpBSQMU2MVrCinTv2R
+X-Gm-Gg: ASbGncvo0X1XeBVaZzX7kOw12jOyhPZkY7B+XXDnEWOqdj3BDID44Nm3d0MTzgU2jLJ
+	uvo/Uhx1woVz1Xfjs7mlBmX3TLT2a/1NLTNRkAFu7D9Q3mZJRAjE9HxH09eDR3V/3fxQlr9Hpwu
+	r52H2B+4a4bbsvURMrUgrOxisuWzGS24O+Z4JhHtBFGmqhJ+UhvQuuhddz6z9dTFYN6zdvXsQTh
+	mK2xkS0b84q2JenpAxdBWUJFmcKJOPbwzTEtjpgBpSbPL5ND2xG31LkSriK6vkUIsn2ObZrSgyN
+	kGH2oaVYgTYWLGmkIxtw4b3KUnw1iXLmUIoDBdLhxds96eAic7hxv3GNjfwR2dnTQIdLQ9YKTLJ
+	/VuBSVdg9arM+gKW3rsVLWOrOVxI1SL2W5LebXGVFfPkN/dncoNC0iO8HSJZYFDJiJzie2ugbOw
 	==
-X-Google-Smtp-Source: AGHT+IGMLXFaiyXvD5c1VpyhE+BkslSuTBzqjFkzFf4IACxYlYbRfwqAsWEXflzsRZGZa0jlfAKvxg==
-X-Received: by 2002:a05:600c:4f48:b0:45b:47e1:ef7b with SMTP id 5b1f17b1804b1-45b4c602e32mr3405545e9.17.1755710297305;
-        Wed, 20 Aug 2025 10:18:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcItk2Xm/oFGfxL2F1n1Q+y3DB8VpCwdEWdMl1fY1aCoM4+3ZFaDjK+Cgum1bFC7h+Hj+osg==
+X-Received: by 2002:a05:6000:1449:b0:3b7:8362:fed8 with SMTP id ffacd0b85a97d-3c32bf5d582mr2707715f8f.2.1755710298989;
+        Wed, 20 Aug 2025 10:18:18 -0700 (PDT)
 Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c2865dsm40319815e9.2.2025.08.20.10.18.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c2865dsm40319815e9.2.2025.08.20.10.18.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 10:18:17 -0700 (PDT)
+        Wed, 20 Aug 2025 10:18:18 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 04/11] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
-Date: Wed, 20 Aug 2025 18:17:51 +0100
-Message-ID: <20250820171812.402519-5-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 07/11] usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
+Date: Wed, 20 Aug 2025 18:17:54 +0100
+Message-ID: <20250820171812.402519-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
 References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
@@ -88,300 +86,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add Renesas RZ/G3E USB3.0 PHY driver. This module is connected
-between USB3 Host and PHY module. The main functions of this
-module are:
- 1) Reset control
- 2) Control of PHY input pins
- 3) Monitoring of PHY output pins
+Some SoCs (eg Renesas RZ/G3E SoC) have special sequence after
+xhci_resume, add .post_resume_quick for it.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/phy/renesas/Kconfig          |   7 +
- drivers/phy/renesas/Makefile         |   1 +
- drivers/phy/renesas/phy-rzg3e-usb3.c | 249 +++++++++++++++++++++++++++
- 3 files changed, 257 insertions(+)
- create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
+ drivers/usb/host/xhci-plat.c | 14 ++++++++++++++
+ drivers/usb/host/xhci-plat.h |  1 +
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
-index e342eef0640b..16211072098e 100644
---- a/drivers/phy/renesas/Kconfig
-+++ b/drivers/phy/renesas/Kconfig
-@@ -40,3 +40,10 @@ config PHY_RCAR_GEN3_USB3
- 	select GENERIC_PHY
- 	help
- 	  Support for USB 3.0 PHY found on Renesas R-Car generation 3 SoCs.
-+
-+config PHY_RZ_G3E_USB3
-+	tristate "Renesas RZ/G3E USB 3.0 PHY driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select GENERIC_PHY
-+	help
-+	  Support for USB 3.0 PHY found on Renesas RZ/G3E SoCs.
-diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
-index 8896d1919faa..0e98083f2f0c 100644
---- a/drivers/phy/renesas/Makefile
-+++ b/drivers/phy/renesas/Makefile
-@@ -4,3 +4,4 @@ obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
- obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+= phy-rcar-gen3-pcie.o
- obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
- obj-$(CONFIG_PHY_RCAR_GEN3_USB3)	+= phy-rcar-gen3-usb3.o
-+obj-$(CONFIG_PHY_RZ_G3E_USB3)		+= phy-rzg3e-usb3.o
-diff --git a/drivers/phy/renesas/phy-rzg3e-usb3.c b/drivers/phy/renesas/phy-rzg3e-usb3.c
-new file mode 100644
-index 000000000000..3ea521ed8f48
---- /dev/null
-+++ b/drivers/phy/renesas/phy-rzg3e-usb3.c
-@@ -0,0 +1,249 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G3E USB3.0 PHY driver
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+
-+#define USB3_TEST_RESET				0x0000
-+#define USB3_TEST_UTMICTRL2			0x0b04
-+#define USB3_TEST_PRMCTRL5_R			0x0c10
-+#define USB3_TEST_PRMCTRL6_R			0x0c14
-+
-+#define USB3_TEST_RSTCTRL			0x1000
-+#define USB3_TEST_CLKCTRL			0x1004
-+#define USB3_TEST_RAMCTRL			0x100c
-+#define USB3_TEST_CREGCTRL			0x1010
-+#define USB3_TEST_LANECONFIG0			0x1030
-+
-+#define USB3_TEST_RESET_PORTRESET0_CTRL		BIT(9)
-+#define USB3_TEST_RESET_SIDDQ			BIT(3)
-+#define USB3_TEST_RESET_PHY_RESET		BIT(2)
-+#define USB3_TEST_RESET_PORTRESET0		BIT(1)
-+
-+#define USB3_TEST_UTMICTRL2_CTRL_MASK		GENMASK(9, 8)
-+#define USB3_TEST_UTMICTRL2_MODE_MASK		GENMASK(1, 0)
-+
-+#define USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK	GENMASK(2, 1)
-+
-+#define USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK	GENMASK(2, 0)
-+
-+#define USB3_TEST_RAMCTRL_SRAM_INIT_DONE	BIT(2)
-+
-+struct rz_usb3 {
-+	void __iomem *base;
-+	struct reset_control *rstc;
-+	bool skip_reinit;
-+};
-+
-+static void rzg3e_phy_usb2test_phy_init(void __iomem *base)
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 5eb51797de32..7191a63dec2a 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -74,6 +74,16 @@ static int xhci_priv_resume_quirk(struct usb_hcd *hcd)
+ 	return priv->resume_quirk(hcd);
+ }
+ 
++static int xhci_priv_post_resume_quirk(struct usb_hcd *hcd)
 +{
-+	u32 val;
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
 +
-+	val = readl(base + USB3_TEST_UTMICTRL2);
-+	val |= USB3_TEST_UTMICTRL2_CTRL_MASK | USB3_TEST_UTMICTRL2_MODE_MASK;
-+	writel(val, base + USB3_TEST_UTMICTRL2);
++	if (!priv->post_resume_quirk)
++		return 0;
 +
-+	val = readl(base + USB3_TEST_PRMCTRL5_R);
-+	val &= ~USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK;
-+	val |= FIELD_PREP(USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK, 2);
-+	writel(val, base + USB3_TEST_PRMCTRL5_R);
-+
-+	val = readl(base + USB3_TEST_PRMCTRL6_R);
-+	val &= ~USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK;
-+	val |= FIELD_PREP(USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK, 7);
-+	writel(val, base + USB3_TEST_PRMCTRL6_R);
-+
-+	val = readl(base + USB3_TEST_RESET);
-+	val &= ~USB3_TEST_RESET_SIDDQ;
-+	val |= USB3_TEST_RESET_PORTRESET0_CTRL | USB3_TEST_RESET_PHY_RESET |
-+	       USB3_TEST_RESET_PORTRESET0;
-+	writel(val, base + USB3_TEST_RESET);
-+	fsleep(10);
-+
-+	val &= ~(USB3_TEST_RESET_PHY_RESET | USB3_TEST_RESET_PORTRESET0);
-+	writel(val, base + USB3_TEST_RESET);
-+	fsleep(10);
-+
-+	val = readl(base + USB3_TEST_UTMICTRL2);
-+	val &= ~USB3_TEST_UTMICTRL2_CTRL_MASK;
-+	writel(val, base + USB3_TEST_UTMICTRL2);
-+
-+	writel(0, base + USB3_TEST_RESET);
++	return priv->post_resume_quirk(hcd);
 +}
 +
-+static int rzg3e_phy_usb3test_phy_init(void __iomem *base)
-+{
-+	int ret;
-+	u32 val;
-+
-+	writel(0x00000100, base + USB3_TEST_CREGCTRL);
-+	writel(0x00000303, base + USB3_TEST_RSTCTRL);
-+	fsleep(20);
-+
-+	writel(0x00000004, base + USB3_TEST_CLKCTRL);
-+	writel(0x0000000d, base + USB3_TEST_LANECONFIG0);
-+	writel(0x00000301, base + USB3_TEST_RSTCTRL);
-+
-+	ret = readl_poll_timeout_atomic(base + USB3_TEST_RAMCTRL, val,
-+					val & USB3_TEST_RAMCTRL_SRAM_INIT_DONE, 1, 10000);
+ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
+ {
+ 	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
+@@ -509,6 +519,10 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
+ 	if (ret)
+ 		goto disable_clks;
+ 
++	ret = xhci_priv_post_resume_quirk(hcd);
 +	if (ret)
-+		return ret;
++		goto disable_clks;
 +
-+	writel(0x00000300, base + USB3_TEST_RSTCTRL);
-+	writel(0x00000001, base + USB3_TEST_RAMCTRL);
-+	writel(0x00000000, base + USB3_TEST_RSTCTRL);
-+
-+	return 0;
-+}
-+
-+static int rzg3e_phy_usb3_init_helper(void __iomem *base)
-+{
-+	rzg3e_phy_usb2test_phy_init(base);
-+
-+	return rzg3e_phy_usb3test_phy_init(base);
-+}
-+
-+static int rzg3e_phy_usb3_init(struct phy *p)
-+{
-+	struct rz_usb3 *r = phy_get_drvdata(p);
-+	int ret = 0;
-+
-+	if (!r->skip_reinit)
-+		ret = rzg3e_phy_usb3_init_helper(r->base);
-+
-+	return ret;
-+}
-+
-+static const struct phy_ops rzg3e_phy_usb3_ops = {
-+	.init = rzg3e_phy_usb3_init,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int rzg3e_phy_usb3_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct phy_provider *provider;
-+	struct rz_usb3 *r;
-+	struct phy *phy;
-+	int ret;
-+
-+	r = devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
-+	if (!r)
-+		return -ENOMEM;
-+
-+	r->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(r->base))
-+		return PTR_ERR(r->base);
-+
-+	r->rstc = devm_reset_control_get_shared(dev, NULL);
-+	if (IS_ERR(r->rstc))
-+		return dev_err_probe(dev, PTR_ERR(r->rstc), "failed to get reset\n");
-+
-+	ret = reset_control_deassert(r->rstc);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
-+	 * And then, phy-core will manage runtime pm for this device.
-+	 */
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	phy = devm_phy_create(dev, NULL, &rzg3e_phy_usb3_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy), "failed to create USB3 PHY\n");
-+
-+	platform_set_drvdata(pdev, r);
-+	phy_set_drvdata(phy, r);
-+
-+	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(provider))
-+		return dev_err_probe(dev, PTR_ERR(provider), "failed to register PHY provider\n");
-+
-+	return 0;
-+}
-+
-+static void rzg3e_phy_usb3_remove(struct platform_device *pdev)
-+{
-+	struct rz_usb3 *r = dev_get_drvdata(&pdev->dev);
-+
-+	reset_control_assert(r->rstc);
-+};
-+
-+static int rzg3e_phy_usb3_suspend(struct device *dev)
-+{
-+	struct rz_usb3 *r = dev_get_drvdata(dev);
-+
-+	pm_runtime_put(dev);
-+	reset_control_assert(r->rstc);
-+	r->skip_reinit = false;
-+
-+	return 0;
-+}
-+
-+static int rzg3e_phy_usb3_resume(struct device *dev)
-+{
-+	struct rz_usb3 *r = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = reset_control_deassert(r->rstc);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		goto reset_assert;
-+
-+	ret = rzg3e_phy_usb3_init_helper(r->base);
-+	if (ret)
-+		goto pm_put;
-+
-+	r->skip_reinit = true;
-+
-+	return 0;
-+
-+pm_put:
-+	pm_runtime_put(dev);
-+reset_assert:
-+	reset_control_assert(r->rstc);
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops rzg3e_phy_usb3_pm = {
-+	NOIRQ_SYSTEM_SLEEP_PM_OPS(rzg3e_phy_usb3_suspend, rzg3e_phy_usb3_resume)
-+};
-+
-+static const struct of_device_id rzg3e_phy_usb3_match_table[] = {
-+	{ .compatible = "renesas,r9a09g047-usb3-phy" },
-+	{ /* Sentinel */ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, rzg3e_phy_usb3_match_table);
-+static struct platform_driver rzg3e_phy_usb3_driver = {
-+	.driver = {
-+		.name = "phy_rzg3e_usb3",
-+		.of_match_table = rzg3e_phy_usb3_match_table,
-+		.pm = pm_sleep_ptr(&rzg3e_phy_usb3_pm),
-+	},
-+	.probe	= rzg3e_phy_usb3_probe,
-+	.remove	= rzg3e_phy_usb3_remove,
-+};
-+module_platform_driver(rzg3e_phy_usb3_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Renesas RZ/G3E USB3.0 PHY Driver");
-+MODULE_AUTHOR("biju.das.jz@bp.renesas.com>");
+ 	pm_runtime_disable(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index fe4f95e690fa..4c2a89bd83a1 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -20,6 +20,7 @@ struct xhci_plat_priv {
+ 	int (*init_quirk)(struct usb_hcd *);
+ 	int (*suspend_quirk)(struct usb_hcd *);
+ 	int (*resume_quirk)(struct usb_hcd *);
++	int (*post_resume_quirk)(struct usb_hcd *);
+ };
+ 
+ #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
 -- 
 2.43.0
 
