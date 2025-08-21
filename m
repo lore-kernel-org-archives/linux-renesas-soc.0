@@ -1,204 +1,280 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15842FF159
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Aug 2025 08:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A35242D76;
+	Thu, 21 Aug 2025 08:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764615; cv=none; b=SecA5K6OrVE/6fo3tZ/Yd9VGEqA6buw3CFTGqhvahiB9lwugsowNJj//a3ggKikfyW1KdEq3xd+7KWb0YQb177GKmic7y5ocXPgOGnjEScWdoNvl5HIQYCY2SNypEfMMUWc/j8isc0mW9JFEhrnpZOuWZUecMs2wz6uwbcMnH+4=
+	t=1755766067; cv=none; b=k8nSf/ISIM/CvtXb74orPjwhCU9GwMKzh7Zs/Tng1Qd5WR3qsKfzAfT1JTbhC6pKQ7WzrcRTmBbjr9CGG622JPuiNVIAmaM9CYcd3dV0AOROk4F/bxwA4TF7IM/3mB2Gk/Um0FB5aZfVVEIUcwUCXkKkJ8EHdXWqvHaWXpKwH1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755764615; c=relaxed/simple;
-	bh=e887uRDoxEpQCW1322GNYfBnc9kCE7+A3lBsrQIJdt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o/mYDbtQJzNjwdPF7HhXFuXLE4J7qjdx1F3KiSg2Y9hbxmkRID/+/D51j2OZEIZRKALJ/sPNYNDrNFous1Txm0q4ycoN4WNu0aVLMAzxeNWFN09nZW2daI5ODUNB6pz0of7yAQjXfT0rOViBHPmk52l/9zOcevZrGmOeX7yLz5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ybImOkpc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pD0tD8nN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WuVYjXJ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fIo7TsGz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1755766067; c=relaxed/simple;
+	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tgz1IWmi0k26tFQqMvOIgWf9z8GOr5U8ZzxNeUuMAVDFogLK3sl8+IgNCpSWs515CMn/sJJrlcKwHoKVy6roUlMjvvxwn2f8pwbgPd0of+DzQzcxkf/bTOKkrE301t13MY6kVq0w5NU3LCdVeqHMB+MipOf4hDeO3efgN7CnvUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JR/XurJW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ybImOkpc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pD0tD8nN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WuVYjXJ7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fIo7TsGz"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E92901F836;
-	Thu, 21 Aug 2025 08:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755764546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hHo3GRIYvA9xU1xmUh5J3OGK8ZZKXekovTY6CDupMA0=;
-	b=ybImOkpcCpGMVxoLCfs7DwHB3NQdAM6I5GB2dIe6ycgAYybGRiSTDUQGrLPrf1H97wSjVA
-	jhAbOmccATonq4vNgnOBuUO59Ci4oJ5pRTUwaeRaB4io3FsQx+NHOad1Zcjr8yUUN8RYOZ
-	pg582KlEehqbsVla3Y2t9WJzQ3fZoPc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755764546;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hHo3GRIYvA9xU1xmUh5J3OGK8ZZKXekovTY6CDupMA0=;
-	b=pD0tD8nN42FoPTaMyUjCINwzI0MpsU3LtNHox/MXc+Z0lucytTbAGyUPhlQvkL7ZXWFI+J
-	KtlEgL0+SWpNUxBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WuVYjXJ7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fIo7TsGz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755764545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hHo3GRIYvA9xU1xmUh5J3OGK8ZZKXekovTY6CDupMA0=;
-	b=WuVYjXJ71ED17c9hj+XQLHQqWo7JmkkpelMz+gFtRa2o6XsakpdrrpVoAcGNRxrW5NRkJl
-	E4ffL/nvf+Gr6ZqhnglArODgYcAQFgTH6DQUSKF81qzdvXsnXNIxOvxDcebwm+emQGVPgn
-	G0hjA2/yDtCBP+UN5eHogvMRDLMx+14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755764545;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hHo3GRIYvA9xU1xmUh5J3OGK8ZZKXekovTY6CDupMA0=;
-	b=fIo7TsGzjwqszL/iU4SWJUBO0+5gStXtbBBikqOldRND3ePvehIOlQtLSoVuimz0Kwy3yW
-	0tQm9znLDnDLgwAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D34B13AB7;
-	Thu, 21 Aug 2025 08:22:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MG6qEUHXpmhzEwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 21 Aug 2025 08:22:25 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: simona@ffwll.ch,
-	airlied@gmail.com,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	geert@linux-m68k.org,
-	tomi.valkeinen@ideasonboard.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	xen-devel@lists.xenproject.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH v6 23/25] drm/xe: Compute dumb-buffer sizes with drm_mode_size_dumb()
-Date: Thu, 21 Aug 2025 10:17:30 +0200
-Message-ID: <20250821081918.79786-24-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821081918.79786-1-tzimmermann@suse.de>
-References: <20250821081918.79786-1-tzimmermann@suse.de>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JR/XurJW"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1BDEFC78;
+	Thu, 21 Aug 2025 10:46:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755765995;
+	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JR/XurJW8sk9ngBFyhtN41bOYZKc3k6MO96wg5S1s/yToSxVonfxw9oBZCQeluZc4
+	 hC5yUxoMZeMOJDoy+oNNr2zhw/ZUz2MejPSMRyXxSdBRev9IAwx146iUVyEZncJuFf
+	 ukWll4p/fGM3RUiMJdlG0yqwWG8S0wD4TJl2KYj0=
+Message-ID: <913b5a87-19f1-44f5-8782-8711980644a1@ideasonboard.com>
+Date: Thu, 21 Aug 2025 11:47:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas, dsi:
+ Document RZ/V2H(P) and RZ/V2N
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Magnus Damm <magnus.damm@gmail.com>
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E92901F836
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[ffwll.ch,gmail.com,kernel.org,linux.intel.com,linux-m68k.org,ideasonboard.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	R_RATELIMIT(0.00)[to(RLbwen1niosrcqbxsafh1),to_ip_from(RLqtkr6cif1ebgurukgmwdm7xc)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,intel.com:email]
-X-Spam-Score: -2.01
+Content-Transfer-Encoding: 7bit
 
-Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
-and buffer size. Align the pitch to a multiple of 8. Align the
-buffer size according to hardware requirements.
+Hi,
 
-Xe's internal calculation allowed for 64-bit wide buffer sizes, but
-the ioctl's internal checks always verified against 32-bit wide limits.
-Hance, it is safe to limit the driver code to 32-bit calculations as
-well.
+On 28/07/2025 23:14, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
+> RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
+> with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
+> RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
+> five clocks instead of six.
+> 
+> To reflect these hardware differences, update the binding schema to
+> support the reduced clock and reset requirements for RZ/V2H(P).
+> 
+> Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
+> RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
+> reused for RZ/V2N.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v6->v7:
+> - Renamed pllclk to pllrefclk
+> - Preserved the reviewed by tag from Geert and Krzysztof
+> 
+> v5->v6:
+> - Preserved the sort order (by part number).
+> - Added reviewed tag from Geert.
+> 
+> v4->v5:
+> - No changes
+> 
+> v3->v4:
+> - No changes
+> 
+> v2->v3:
+> - Collected reviewed tag from Krzysztof
+> 
+> v1->v2:
+> - Kept the sort order for schema validation
+> - Added  `port@1: false` for RZ/V2H(P) SoC
+> ---
+>  .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++++++++++++-----
+>  1 file changed, 91 insertions(+), 29 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> index 5a99d9b9635e..c20625b8425e 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> @@ -14,16 +14,21 @@ description: |
+>    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
+>    up to four data lanes.
+>  
+> -allOf:
+> -  - $ref: /schemas/display/dsi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    items:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> +          - const: renesas,rzg2l-mipi-dsi
+> +
+> +      - items:
+> +          - const: renesas,r9a09g056-mipi-dsi # RZ/V2N
+> +          - const: renesas,r9a09g057-mipi-dsi
+> +
+>        - enum:
+> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> -      - const: renesas,rzg2l-mipi-dsi
+> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+>  
+>    reg:
+>      maxItems: 1
+> @@ -49,34 +54,56 @@ properties:
+>        - const: debug
+>  
+>    clocks:
+> -    items:
+> -      - description: DSI D-PHY PLL multiplied clock
+> -      - description: DSI D-PHY system clock
+> -      - description: DSI AXI bus clock
+> -      - description: DSI Register access clock
+> -      - description: DSI Video clock
+> -      - description: DSI D-PHY Escape mode transmit clock
+> +    oneOf:
+> +      - items:
+> +          - description: DSI D-PHY PLL multiplied clock
+> +          - description: DSI D-PHY system clock
+> +          - description: DSI AXI bus clock
+> +          - description: DSI Register access clock
+> +          - description: DSI Video clock
+> +          - description: DSI D-PHY Escape mode transmit clock
+> +      - items:
+> +          - description: DSI D-PHY PLL reference clock
+> +          - description: DSI AXI bus clock
+> +          - description: DSI Register access clock
+> +          - description: DSI Video clock
+> +          - description: DSI D-PHY Escape mode transmit clock
 
-v3:
-- mention 32-bit calculation in commit description (Matthew)
+Is this style ok in the bindings? I thought it's necessary to "if" these
+kind of blocks based on the compatible.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Matthew Auld <matthew.auld@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: "Thomas Hellström" <thomas.hellstrom@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
----
- drivers/gpu/drm/xe/xe_bo.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>    clock-names:
+> -    items:
+> -      - const: pllclk
+> -      - const: sysclk
+> -      - const: aclk
+> -      - const: pclk
+> -      - const: vclk
+> -      - const: lpclk
+> +    oneOf:
+> +      - items:
+> +          - const: pllclk
+> +          - const: sysclk
+> +          - const: aclk
+> +          - const: pclk
+> +          - const: vclk
+> +          - const: lpclk
+> +      - items:
+> +          - const: pllrefclk
+> +          - const: aclk
+> +          - const: pclk
+> +          - const: vclk
+> +          - const: lpclk
+>  
+>    resets:
+> -    items:
+> -      - description: MIPI_DSI_CMN_RSTB
+> -      - description: MIPI_DSI_ARESET_N
+> -      - description: MIPI_DSI_PRESET_N
+> +    oneOf:
+> +      - items:
+> +          - description: MIPI_DSI_CMN_RSTB
+> +          - description: MIPI_DSI_ARESET_N
+> +          - description: MIPI_DSI_PRESET_N
+> +      - items:
+> +          - description: MIPI_DSI_ARESET_N
+> +          - description: MIPI_DSI_PRESET_N
+>  
+>    reset-names:
+> -    items:
+> -      - const: rst
+> -      - const: arst
+> -      - const: prst
+> +    oneOf:
+> +      - items:
+> +          - const: rst
+> +          - const: arst
+> +          - const: prst
+> +      - items:
+> +          - const: arst
+> +          - const: prst
+>  
+>    power-domains:
+>      maxItems: 1
+> @@ -130,6 +157,41 @@ required:
+>  
+>  unevaluatedProperties: false
+>  
+> +allOf:
+> +  - $ref: ../dsi-controller.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g057-mipi-dsi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 5
+> +
+> +        clock-names:
+> +          maxItems: 5
+> +
+> +        resets:
+> +          maxItems: 2
+> +
+> +        reset-names:
+> +          maxItems: 2
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 6
+> +
+> +        clock-names:
+> +          minItems: 6
+> +
+> +        resets:
+> +          minItems: 3
+> +
+> +        reset-names:
+> +          minItems: 3
+> +
 
-diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
-index 6fea39842e1e..2be7a618165a 100644
---- a/drivers/gpu/drm/xe/xe_bo.c
-+++ b/drivers/gpu/drm/xe/xe_bo.c
-@@ -9,6 +9,7 @@
- #include <linux/nospec.h>
- 
- #include <drm/drm_drv.h>
-+#include <drm/drm_dumb_buffers.h>
- #include <drm/drm_gem_ttm_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/ttm/ttm_backup.h>
-@@ -3130,14 +3131,13 @@ int xe_bo_dumb_create(struct drm_file *file_priv,
- 	struct xe_device *xe = to_xe_device(dev);
- 	struct xe_bo *bo;
- 	uint32_t handle;
--	int cpp = DIV_ROUND_UP(args->bpp, 8);
- 	int err;
- 	u32 page_size = max_t(u32, PAGE_SIZE,
- 		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : SZ_4K);
- 
--	args->pitch = ALIGN(args->width * cpp, 64);
--	args->size = ALIGN(mul_u32_u32(args->pitch, args->height),
--			   page_size);
-+	err = drm_mode_size_dumb(dev, args, SZ_64, page_size);
-+	if (err)
-+		return err;
- 
- 	bo = xe_bo_create_user(xe, NULL, NULL, args->size,
- 			       DRM_XE_GEM_CPU_CACHING_WC,
--- 
-2.50.1
+Oh... So this one does the selection based on the compatible. And if we
+get a new SoC which doesn't fit into the above classification model,
+we'll have to restructure the binding (or add a new one)?
+
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+
+ Tomi
+
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/r9a07g044-cpg.h>
 
