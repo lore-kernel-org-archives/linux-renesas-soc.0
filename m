@@ -1,182 +1,161 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A72F616E;
-	Mon, 25 Aug 2025 13:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01CF230BD9;
+	Mon, 25 Aug 2025 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130081; cv=none; b=ZzDz82Iwep4fFfZ3IddGmMuuF+F6aA1TRpwsPLOYUtS42UTG5NFIQfaLo5vECLQJyIJzZ4rfJj7vGUojJlSpXFMkMNqoAIO8xW4xcVPzibsN8M5fWJbmwZt58RQrK7bVFzjTywPvMrhLQzjy3I/ljZ5C5o1Ztz7kYofpcMYIiRY=
+	t=1756134052; cv=none; b=YnlIgPKHRBYctOyx0BaIWwoToGE6i+mCSAzz4o4T6vikKIHxILADdA0mOA4cSDlVWbrP6Z04YL+++Lfe6WSnjzFOxCYhurVzxllA1WStvx9MDRTTm+QVTDXCjnE6dUqAp7Hq/5yuLkJX9bFA9OZh/SkIziky1qKuJGnD2zaKwaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130081; c=relaxed/simple;
-	bh=wKj/IhlPnM+gHvIFcJbZi5IDmy88qJ8AS8fWUotOmVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jhwOeRohjijz2mwActi8eGvgHzsM5pAj2+hjimQxBcrysoYh9BZ0JI4G2WOtuieaKdEAHCn+e7NKSe71fC+SC1Uee1SCzuDd5fdgKJ53MMtr+DiqhwgA6K2GFGs0p0mRFFWL1DOY5fU+5nDv+XS2HWEuOfWLzooosNROEDkbKO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqHN069h; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1756134052; c=relaxed/simple;
+	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W4CaKtaxAmB8eYr0mSGFXL8+waCsBtcM/OnscYCGNIMfwlbgLaf9WbsXwNSyzlzNr3QkuEsZVhK1Yq5e2WilE2NBd7zt1KAtsgZ9A+n1ibr4c/5KS1T+hwqCbXnVKZsjbQRMreOb5yFh+ZqudMlzuy03AgshmhS8U3iLCRVeaVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOaKmoG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqHN069h"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756130076; x=1787666076;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wKj/IhlPnM+gHvIFcJbZi5IDmy88qJ8AS8fWUotOmVY=;
-  b=IqHN069hGmlJD04tVg/rR0sA2Ug5IPdGQGMMVbc0jrcM0aB30kJTn6qk
-   h13dBxR62sCX/1lynTSeKt7JATntbiXpk7JGd+7LIvDcAAC1aRMVEP7q/
-   Ku2+LGO1n75JNO9GxkONXsVXEx/u3OC5XjN57BGYPD8Gs+uZkIcbSxsNW
-   JdR7gXb7w52jMe9vsZCxIyQWDaDkxQ9QflrdH03738mv9n4B0Q+mJsRV5
-   twSdtcuGPmboeVzSSbGdtJIMw5C2m3v0o4JPb6gxzA5/JeZF4vr9cKOJl
-   ZvsX63zUeRa/8GhvxRssD8ldIAHq485bt9LTFsD32Cz0s0mymM9oa9okN
-   g==;
-X-CSE-ConnectionGUID: LhppurdyQBaEWzCVZnFkKw==
-X-CSE-MsgGUID: QD26n0OBQcuQemN0bLz1qw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="68936905"
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="68936905"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 06:54:29 -0700
-X-CSE-ConnectionGUID: z1PklkAiTp6fPPgNC36t7Q==
-X-CSE-MsgGUID: uHlSmdVIQwqnM10bs2Uyzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="168547698"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.7])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 06:54:25 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id E097F121F82;
-	Mon, 25 Aug 2025 16:54:01 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1uqXe5-00000007POn-3gUu;
-	Mon, 25 Aug 2025 16:54:01 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Cai Huoqing <cai.huoqing@linux.dev>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Andreas Klinger <ak@it-klinger.de>,
-	Crt Mori <cmo@melexis.com>,
-	Waqar Hameed <waqar.hameed@axis.com>,
-	Julien Stephan <jstephan@baylibre.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Bo Liu <liubo03@inspur.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Sean Nyekjaer <sean@geanix.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Han Xu <han.xu@nxp.com>,
-	Rayyan Ansari <rayyan@ansari.sh>,
-	Gustavo Vaz <gustavo.vaz@usp.br>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Abhash Jha <abhashkumarjha123@gmail.com>,
-	chuguangqing <chuguangqing@inspur.com>,
-	Shreeya Patel <shreeya.patel@collabora.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	David Laight <david.laight@aculab.com>,
-	Jakob Hauser <jahau@rocketmail.com>
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH v3 11/12] iio: proximity: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Mon, 25 Aug 2025 16:54:00 +0300
-Message-ID: <20250825135401.1765847-12-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOaKmoG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DDCC116C6;
+	Mon, 25 Aug 2025 15:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756134051;
+	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WaOaKmoGlIlwlRdIoLyJtkubsH1CewYNTdrqKLHi8ddKVKCkemSeXe47xaQgg004d
+	 T3lmlEzwuKUifFLJ5PVs2+7TuPpeAnJQHzDfAbqNGwwaDneln+zYZ+84Adbp6iop94
+	 qAbjLfQYS3y2jaaSjgni6VgI4AlthAMuOlOMQv4+lVWBgKHJS4cif7DVs8iI7IPyjB
+	 eW2gmu7XTAl1p7046BsX5lOFUR7KVS6GesFnuVLNhIzWcrNNGIWkdas4VxAUPqXuUK
+	 6oyvuTPorCS5xBCrjb15JSBPvntgI78pfkGXUgLZ5NiXwoaFgIl3BBzKViqlJjM8fC
+	 287YGOTl/mxEg==
+Date: Mon, 25 Aug 2025 16:00:23 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Eugen Hristev <eugen.hristev@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, Rui Miguel
+ Silva <rmfrfs@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Gerald Loacker
+ <gerald.loacker@wolfvision.net>, Andreas Klinger <ak@it-klinger.de>, Crt
+ Mori <cmo@melexis.com>, Waqar Hameed <waqar.hameed@axis.com>, Julien
+ Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Bo Liu <liubo03@inspur.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Frank Li
+ <Frank.Li@nxp.com>, Han Xu <han.xu@nxp.com>, Rayyan Ansari
+ <rayyan@ansari.sh>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hans de Goede
+ <hansg@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Abhash Jha <abhashkumarjha123@gmail.com>, chuguangqing
+ <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>,
+ Per-Daniel Olsson <perdaniel.olsson@axis.com>, =?UTF-8?B?QmFybmFiw6FzIEN6?=
+ =?UTF-8?B?w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, David Laight <david.laight@aculab.com>, Jakob
+ Hauser <jahau@rocketmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 05/12] iio: dac: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250825160023.4070bbc1@jic23-huawei>
+In-Reply-To: <20250825135401.1765847-6-sakari.ailus@linux.intel.com>
 References: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
+	<20250825135401.1765847-6-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+On Mon, 25 Aug 2025 16:53:54 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/iio/proximity/pulsedlight-lidar-lite-v2.c | 1 -
- drivers/iio/proximity/srf04.c                     | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+> 
+> Also clean up error handling in stm32_dac_set_enable_state().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hi Sakari,
 
-diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-index 01c013acfda2..21336b8f122a 100644
---- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-+++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-@@ -185,7 +185,6 @@ static int lidar_get_measurement(struct lidar_data *data, u16 *reg)
- 		}
- 		ret = -EIO;
- 	}
--	pm_runtime_mark_last_busy(&client->dev);
- 	pm_runtime_put_autosuspend(&client->dev);
- 
- 	return ret;
-diff --git a/drivers/iio/proximity/srf04.c b/drivers/iio/proximity/srf04.c
-index b059bac1078b..310467ce39e2 100644
---- a/drivers/iio/proximity/srf04.c
-+++ b/drivers/iio/proximity/srf04.c
-@@ -117,10 +117,8 @@ static int srf04_read(struct srf04_data *data)
- 	udelay(data->cfg->trigger_pulse_us);
- 	gpiod_set_value(data->gpiod_trig, 0);
- 
--	if (data->gpiod_power) {
--		pm_runtime_mark_last_busy(data->dev);
-+	if (data->gpiod_power)
- 		pm_runtime_put_autosuspend(data->dev);
--	}
- 
- 	/* it should not take more than 20 ms until echo is rising */
- 	ret = wait_for_completion_killable_timeout(&data->rising, HZ/50);
--- 
-2.47.2
+I don't follow this...
+
+> ---
+>  drivers/iio/dac/stm32-dac.c | 19 ++++---------------
+>  1 file changed, 4 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
+> index 344388338d9b..e8688f9d6df7 100644
+> --- a/drivers/iio/dac/stm32-dac.c
+> +++ b/drivers/iio/dac/stm32-dac.c
+> @@ -82,9 +82,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+>  
+>  	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
+>  	mutex_unlock(&dac->lock);
+> -	if (ret < 0) {
+> +	if (ret) {
+>  		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
+> -		goto err_put_pm;
+> +		goto err_pm_put;
+>  	}
+>  
+>  	/*
+> @@ -95,18 +95,8 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+>  	if (en && dac->common->hfsel)
+>  		udelay(1);
+>  
+> -	if (!enable) {
+> -		pm_runtime_mark_last_busy(dev);
+> -		pm_runtime_put_autosuspend(dev);
+> -	}
+> -
+> -	return 0;
+> -
+> -err_put_pm:
+> -	if (enable) {
+> -		pm_runtime_mark_last_busy(dev);
+> -		pm_runtime_put_autosuspend(dev);
+> -	}
+> +err_pm_put:
+> +	pm_runtime_put_autosuspend(dev);
+
+now the put is here, whether or not there was ever a get as the get is gated on enable()
+
+
+>  
+>  	return ret;
+>  }
+> @@ -349,7 +339,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_pm_put;
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	pm_runtime_put_autosuspend(dev);
+>  
+>  	return 0;
 
