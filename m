@@ -1,125 +1,159 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1F130C618
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Aug 2025 10:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C67B30AD1B;
+	Thu, 28 Aug 2025 10:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376736; cv=none; b=Zojcyubs2g+26PWAOMYoe3AlS5jWGEUB35051FIOGykrcrJ+BO2FILZV82XYIsF7zKIDdcf4Unj/0hhJfXz0xJPD5sBCLVCvcSicxXi1FHLdpYTHWh/R5eDqGTAxJe0bbD0QN4fiqyLNvp2n1Dc6F3c8bJl2X7vSHSCj7TWAyaQ=
+	t=1756376916; cv=none; b=ev+W2ifJ+fxI87mNUOM95JPbDRRhxTREIF7lpp3Tsb2dllbJzM+gBWBFMzZ2/5ou+fDQwL2ms76shBjLeF88Q67kYza2WOmolL0oZnmNemwKrhGWDzk9JfaTNaHKccbO7C2sJY8ZMpxirQXw3GyEUyJGePAG9fMmT3NO3mhRIg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376736; c=relaxed/simple;
-	bh=Z+T380rxXBVzQd01qiKQ7kq8cxrxiFKqihbJyFxts8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7yqM5ffcNdoW2/AhNoJ2OmQVseQ+bPsow4tn+dTY08MPxYfzXy2lNIXxpkOB0FgSA5/hBuNIIhD4rsOuFBvdo4YE2Lzz3nQfP/FfusRi1qQ5A9CII61r6ZCsBbv8XyZzBrUYZUhtvwwRQMbJWqv7czMGxsFhBuSCVsXcj1AICA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hpK9J0nY; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hpK9J0nY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Z+T3
-	80rxXBVzQd01qiKQ7kq8cxrxiFKqihbJyFxts8A=; b=hpK9J0nYiOBbqgtzTA1N
-	DERelRiBiS0MGZ4R5L54kr9n33S9HEn3fTZ22b0dtR8phK0YIByM+AwajWu5ojQW
-	iSp3Lzh60YXJN6sDZ0zuOl3cELHj3uHdfskE4HMJCOytIGsu84IpjoiCPWAVHOlx
-	2TuIzMseBDXmY8iwTS7ZHYqOn4WW6Go3u6JhDQb0402FE4Pk9lzC4ixIrdSMdGiL
-	vz4QjXJtw2xCrPedX8Dw+UaVvzG6qdgBfTtk1iGGonHadyGWOzIQwrRHtxQkuhTL
-	CxbZnAtLFX5YjSgTdjf2nOshZGXv2QVdz4WePAupd/jfAni12jYjdLWWD3eZYqfj
-	RQ==
-Received: (qmail 970981 invoked from network); 28 Aug 2025 12:25:29 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Aug 2025 12:25:29 +0200
-X-UD-Smtp-Session: l3s3148p1@IDwIU2o9voMujns8
-Date: Thu, 28 Aug 2025 12:25:29 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@kernel.org
-Subject: Re: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL
- register offset
-Message-ID: <aLAumWuFtJrSi7Mv@ninjato>
-References: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1756376916; c=relaxed/simple;
+	bh=q1Klpjwv/WnXJATJN/W7Z/cWbQNEimJhGYE1d/lZ/Qk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d/uOUBgkPU6/Y2tQKfrN5cR5hc5kHk3Jtpk92FRpPKUgHokGU4Gl/+i7eEHlqsBcSo8kfsbX6qnxgfg1Zvd3Z7Xl77jlnUtvT9LUp63mQrSrhIiPSLvxR6y54A4Lfm2CuaSc+j3M2xOtN6ecvg8gfx4Yc46BJ0KCUF/ucoeFljo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: WPSssH9bSzu9vfYLfgaPPg==
+X-CSE-MsgGUID: emr7/kHSTwGdJnRrpRCXoQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Aug 2025 19:23:24 +0900
+Received: from [127.0.1.1] (unknown [10.226.78.19])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3C7ED417D5AC;
+	Thu, 28 Aug 2025 19:23:20 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+Subject: [net-next PATCH v4 0/4] net: renesas: rswitch: R-Car S4 add HW
+ offloading for layer 2 switching
+Date: Thu, 28 Aug 2025 12:23:11 +0200
+Message-Id: <20250828-add_l2_switching-v4-0-89d7108c8592@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VlFHLacRClkP6okF"
-Content-Disposition: inline
-In-Reply-To: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA8usGgC/23NQQ6CMBCF4auQrq3pTClUV97DGFLaAk0UTEtQQ
+ 7i7BTcYWP4vmW9GEqx3NpBzMhJvBxdc18ZIDwnRjWprS52JTZChYBlkVBlT3LEIL9frxrU15ak
+ AyIEJwwyJZ09vK/deyOstduNC3/nP8mGAef1hOUu32ACU0aqSEpXSJQp58ba1QYWj7h5k5gZcE
+ 3KHwJk4QSWEyDLI1ZbgKwLYDsEjoZniKDnmZcr/iWmavlpGxGo4AQAA
+X-Change-ID: 20250616-add_l2_switching-345117105d0d
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>, 
+ Nikita Yushchenko <nikita.yoush@cogentembedded.com>, 
+ Andrew Lunn <andrew@lunn.ch>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756376599; l=3855;
+ i=michael.dege@renesas.com; s=20250523; h=from:subject:message-id;
+ bh=q1Klpjwv/WnXJATJN/W7Z/cWbQNEimJhGYE1d/lZ/Qk=;
+ b=Ukyt9Am6bv1y1r6saelj5rEnny8d+QkgPg3Jdx3B04brn3XkeU5xyAnjA/xvQ3V7mKigofY9J
+ h3IIRAPN4IrAY33Kq+VRafswAQNJY1gBveHF7wUHMEWrWrwvjEG28bm
+X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
+ pk=+gYTlVQ3/MlOju88OuKnXA7MlapP4lYqJn1F81HZGSo=
 
+Hello!
 
---VlFHLacRClkP6okF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The current R-Car S4 rswitch driver only supports port based fowarding.
+This patch set adds HW offloading for L2 switching/bridgeing. The driver
+hooks into switchdev.
 
-On Wed, Aug 20, 2025 at 06:09:13PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
-> According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
-> [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
-> 0x8, not 0x20 as previously defined.
->=20
-> Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL),
-> which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
-> definition prevented the driver from configuring the SW_MODE[4:0] bits
-> in MODCTRL, which control the internal connection of Ethernet ports. As
-> a result, the MIIC could not be switched into the correct mode, leading
-> to link setup failures and non-functional Ethernet ports on affected
-> systems.
->=20
-> [0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l=
--group-users-manual-r-engine-and-ethernet-peripherals?r=3D1054571
->=20
-> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-> Cc: stable@kernel.org
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+1. Rename the base driver file to keep the driver name (rswitch.ko)
 
-I had a look now. Because the bootloader of my N1D board already set up
-MODCTRL correctly, this write to the wrong register went unnoticed. I
-verified that the now correctly written value (depending on DT config)
-matches the value previously set by the bootloader. As a result,
-everything keeps working. We were lucky. Or unlucky. Depending how you
-look at it.
+2. Add setting of default MAC ageing time in hardware.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+3. Add the L2 driver extension in a separate file. The HW offloading
+is automatically configured when a port is added to the bridge device.
 
-Thanks for this fix!
+Usage example:
+ip link add name br0 type bridge
+ip link set dev tsn0 master br0
+ip link set dev tsn1 master br0
+ip link set dev br0 up
+ip link set dev tsn0 up
+ip link set dev tsn1 up
 
+Layer 2 traffic is now fowarded by HW from port TSN0 to port TSN1.
 
---VlFHLacRClkP6okF
-Content-Type: application/pgp-signature; name="signature.asc"
+4. Provides the functionality to set the MAC table ageing time in the
+Rswitch.
 
------BEGIN PGP SIGNATURE-----
+Usage example:
+ip link change dev br0 type bridge ageing 100
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiwLpUACgkQFA3kzBSg
-Kbbo6g//eX5cQ/RzjatctnRELKLp+edYr/MQt1U7rF/Qf/kXCf55ONMOZdSk3NaP
-6lYWUZrh+N3Uyv6PEQVv7jZu4GntdPjyUB1assB+AD1vAhHGdQcJp88/eaNhK4WA
-t1sp9lQncN7EQpBRyrWuhefv6f5ZAacmai3lW15CWzYYl2d1ao329/IatI7JMTEU
-NbgWlZbxfjwLi3qZyb0A7IBq6NzViaXpKxQz/3oV8dGVwGfTfQZFNBvXKHF04lZD
-xXLLqjtf6qOcUV0KF+YoNwsxEQAxx7xrDGjdfebN6JvuNmBxgeuzlxN7a9gDWPE+
-29j9y3BRbAqTwIb39QjEF3eIup39CakkhUkqZ3qXRQs6IkzYB7JwurRuV8jiP9vH
-QeysqzSrxMOiHHkJRnWtDJNKWQTfwIHpGK3orJlau1UTJ9t5hEJp5p9zwMSx7UlT
-o1YTufHtFmY4pQL6zLgv/9AegX9ITSM3jZqk/iEUBDshLvmzR10Z/blAZ7bIsM3f
-sw5/rfMl3YLX7bq7wrVo61nArtHxhtvBjSBUws3KU6E8VW5QCkJe+Lx7kvODNAnH
-xyXthB5C522X8XnFcX6NzjfaqyU6jGmzVVaQapWM4uVUorR1qvPd29SzUStWctqK
-QFNcbJ9uLy0jy1ySY4Jnieu/WGclSkgR4xbK/CJJ9BKyi13VW5c=
-=Gg1B
------END PGP SIGNATURE-----
+Changes in v4:
+- Added target tree to subject prefix.
+- refactored rswitch_update_l2_hw_learning() and
+  rswitch_update_l2_hw_forwarding() to remove duplicate code. 
+- In function rswitch_update_offload_brdev() removed unused
+  force_update_l2_offload parameter.
+- Link to v3: https://lore.kernel.org/r/20250710-add_l2_switching-v3-0-c0a328327b43@renesas.com
 
---VlFHLacRClkP6okF--
+Changes in v3:
+- Split void rswitch_update_l2_offload(struct rswitch_private *priv) 
+  into two functions to reduce the complexity.
+- In rswitch_switchdev_blocking_event() returning -EOPNOTSUPP directly
+  for unsupported events intead of calling function which returned
+  -EOPNOTSUPP.
+- Retuning result from rswitch_reg_wait() directly instead of using
+  local variable at end of function.
+- Restructured rswitch_update_offload_brdev() to fix smatch
+  false-positive report.  
+- Fixed reviewed-by tags in [1/4]
+- Fixed oder of signed-off-by tags in [2/4]
+- Removed magic number in [2/4]
+- Link to v2: https://lore.kernel.org/r/20250708-add_l2_switching-v2-0-f91f5556617a@renesas.com
+
+Changes in v2:
+- Pulled default ageing setting into separate patch.
+- Changed logging priority from info to dbg.
+- Updated usage examples.
+- Fixed passing of ageing parameter. Parameter is already in seconds
+  no need to convert. Parameter checking improved.
+- Updated commit message of [3/4] to point out that the switch hardware
+  only supports the offloading of one bridge device. 
+- Link to v1: https://lore.kernel.org/r/20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com
+
+Thanks,
+
+Michael
+
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+To: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+To: Paul Barker <paul@pbarker.dev>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Michael Dege (4):
+      net: renesas: rswitch: rename rswitch.c to rswitch_main.c
+      net: renesas: rswitch: configure default ageing time
+      net: renesas: rswitch: add offloading for L2 switching
+      net: renesas: rswitch: add modifiable ageing time
+
+ drivers/net/ethernet/renesas/Makefile              |   1 +
+ drivers/net/ethernet/renesas/rswitch.h             |  43 ++-
+ drivers/net/ethernet/renesas/rswitch_l2.c          | 317 +++++++++++++++++++++
+ drivers/net/ethernet/renesas/rswitch_l2.h          |  15 +
+ .../ethernet/renesas/{rswitch.c => rswitch_main.c} |  86 +++++-
+ 5 files changed, 456 insertions(+), 6 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250616-add_l2_switching-345117105d0d
+
+Best regards,
+-- 
+Michael Dege <michael.dege@renesas.com>
+
