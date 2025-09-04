@@ -1,96 +1,76 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726B323BD00;
-	Thu,  4 Sep 2025 15:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B798C21CC44;
+	Thu,  4 Sep 2025 15:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756999518; cv=none; b=LHmTzGiHl1ai2fKvIHGW2Bodr2C9nHTUhRL5FN8cAIHklXSFid9CFSIxq0fbQy+AjnqToRmpfH7316EoWLIeJSH3JF/qlymRLBrQq8EzMCxhRGO9giEo2U5M5ykpidYE0KNFNPbAjkn0Zdpd3Om8eROUE2mGiWDBrCYpthAPIaA=
+	t=1756999518; cv=none; b=kc0dZAIV1OCJi8nxLom2eTdEgiot2fIJCiPFdr6IGeFOpuVGe6MCD8TPeyiAllXJjHGfrw1XOryq6DeI/AkfG5bReZdIWsaf09J0U2IxViqu9nY4HxP7iBUu2hleEH6H+OmY1tS4VL8xmD6PXCKgtJcnWHjTJZf/+Wj8VMdH2xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756999518; c=relaxed/simple;
-	bh=/1s3A0/1oBRPiM9eEOONTjAK8lc6tIfcMEkuSsvZEvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWWHHSYJIp+PEC7p+QnRvmiOdpQPMJxRywEfymbUEQB31YbL7Uos1tttq7yNfYI2bnG1LdltQzyY3g/uXcEoNKanoJTsbJ90PjmVE7gyQd/rXH5sFwCsPvtYCQoA7K/zgaWZdvqJBdngbv7zceBH1eIDJ3gMoDJ+vpvxbeEqI9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hswTf+9y; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hswTf+9y"
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 313DDF09;
-	Thu,  4 Sep 2025 17:24:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756999445;
-	bh=/1s3A0/1oBRPiM9eEOONTjAK8lc6tIfcMEkuSsvZEvY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hswTf+9y9UmB4SW/1NT0RfARopIG6TZ/RjY+p43TkroKJop2mUKxtDRSSLL+PBzHe
-	 EPbW+6puxdLcsoLXSc0s6vyM8AOnLrUoQOe0b7f2X40zKWGQJXDBmtyeuJMAl/Asvw
-	 rouNayHuUAH+ssOyy5YXVHxEIhrkB/Nq3WBC/TZo=
-Date: Thu, 4 Sep 2025 17:24:52 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] arm64: dts: renesas: sparrow-hawk: Add overlay
- for IMX219 on J1
-Message-ID: <20250904152452.GD6174@pendragon.ideasonboard.com>
-References: <20250827221424.640770-1-niklas.soderlund+renesas@ragnatech.se>
- <20250827221424.640770-2-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdUOKJXjk78Bgmazd4prGX21SDk_h=37ewEOwgdf9iAfcA@mail.gmail.com>
- <20250901140657.GA481255@ragnatech.se>
+	bh=nEvhJjd5ikgtuZLSUS9PKum7072QqkOZ6pK2z0iWAEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mJOOrQrXvVUw20KkqLW7MnmW8YwPygWDQ9McBEosUevp9xqj5kU9RGecrFQ9pIJQ0PmcuEWTzljUhX3LzQ78KGzAvNn1hdW7obFdgiPgJJtMQiDJCXjGDwahjUGgnQUNHYk/uoK5bjiTaa9keU+HjRT902mNu4sVjGU18JswZKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59CCFC4CEF6;
+	Thu,  4 Sep 2025 15:25:17 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Vinod Koul <vkoul@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dmaengine@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] dmaengine: rcar-dmac: Remove dummy Runtime PM callback
+Date: Thu,  4 Sep 2025 17:25:09 +0200
+Message-ID: <5f98cc1c3994bb0329c3eeaf5d37284817a2b9a5.1756999325.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1756999325.git.geert+renesas@glider.be>
+References: <cover.1756999325.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901140657.GA481255@ragnatech.se>
 
-On Mon, Sep 01, 2025 at 04:06:57PM +0200, Niklas Söderlund wrote:
-> On 2025-09-01 16:03:49 +0200, Geert Uytterhoeven wrote:
-> > On Thu, 28 Aug 2025 at 00:15, Niklas Söderlund wrote:
-> > > Add an overlay to connect an IMX219 camera sensor to the J1 connector.
-> > > The IMX219 utilizes 2 CSI-2 D-PHY lanes. This enables the video capture
-> > > pipeline behind the CSI40 Rx to be enabled to process images from the
-> > > sensor.
-> > >
-> > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > > ---
-> > > * Changes since v3
-> > > - Use correct port@0 instead of port.
-> > 
-> > Thanks for the update!
-> > 
-> > > --- a/arch/arm64/boot/dts/renesas/Makefile
-> > > +++ b/arch/arm64/boot/dts/renesas/Makefile
-> > > @@ -96,7 +96,10 @@ dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g2-white-hawk-single-ard-audio-da7212.dtb
-> > >
-> > >  DTC_FLAGS_r8a779g3-sparrow-hawk += -Wno-spi_bus_bridge
-> > >  dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-sparrow-hawk.dtb
-> > > +dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-sparrow-hawk-camera-j1-imx219.dtbo
-> > >  dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-sparrow-hawk-fan-pwm.dtbo
-> > > +r8a779g3-sparrow-hawk-camera-j1-imx219-dtbs := r8a779g3-sparrow-hawk.dtb r8a779g3-sparrow-hawk-camera-j1-imx219.dtbo
-> > > +dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-sparrow-hawk-camera-j1-imx219.dtb
-> > >  r8a779g3-sparrow-hawk-fan-pwm-dtbs := r8a779g3-sparrow-hawk.dtb r8a779g3-sparrow-hawk-fan-pwm.dtbo
-> > >  dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-sparrow-hawk-fan-pwm.dtb
-> > 
-> > Usually we keep the related parts together, but we indeed already have
-> > one case of interleaving.  I am not sure which style is best...
-> 
-> I have no real preference. The style here is only me trying to mimic 
-> what I seen elsewhere in the file. Want me to switch to the other style?
+Since commit 63d00be69348fda4 ("PM: runtime: Allow unassigned
+->runtime_suspend|resume callbacks"), unassigned
+.runtime_{suspend,resume}() callbacks are treated the same as dummy
+callbacks that just return zero.
 
-I don't mind much either way either. The patch series looks good to me,
-I think it can be merged once we decide on a style.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/dma/sh/rcar-dmac.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index be7c239f5b721b2b..6a6c3234702c648e 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1729,11 +1729,6 @@ static struct dma_chan *rcar_dmac_of_xlate(struct of_phandle_args *dma_spec,
+  */
+ 
+ #ifdef CONFIG_PM
+-static int rcar_dmac_runtime_suspend(struct device *dev)
+-{
+-	return 0;
+-}
+-
+ static int rcar_dmac_runtime_resume(struct device *dev)
+ {
+ 	struct rcar_dmac *dmac = dev_get_drvdata(dev);
+@@ -1750,8 +1745,7 @@ static const struct dev_pm_ops rcar_dmac_pm = {
+ 	 */
+ 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+ 				      pm_runtime_force_resume)
+-	SET_RUNTIME_PM_OPS(rcar_dmac_runtime_suspend, rcar_dmac_runtime_resume,
+-			   NULL)
++	SET_RUNTIME_PM_OPS(NULL, rcar_dmac_runtime_resume, NULL)
+ };
+ 
+ /* -----------------------------------------------------------------------------
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
