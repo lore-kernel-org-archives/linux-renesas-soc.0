@@ -1,172 +1,92 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4302FB99C;
-	Wed, 17 Sep 2025 17:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A5534BA3D
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Sep 2025 17:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758128585; cv=none; b=HSOLJV1nknEloCIAsyZzDBcvHWgVCI0qD5xMVyHPVjntOJfXDMhZZmeZ+OQsikC7QPIMYrw2iH+Jz1n2uFBrl3g2R+MXRw53HxL257XvtZlJqg6LxLqfczRf3LDlKTbq7VFngs8QXaw8ygo3enj/bA8/QiQjDp7FZoJwkCCnzRM=
+	t=1758131542; cv=none; b=l0D25yqze+PvdaNdsDlbWQsYz2r15G/iTvYWobkWnvOuDc5Np+pNE2KMo9OVS7mO7IFY3l58hSvTSM6iKL4HLblxXxKZb/Z8OuRUHOp6JAKQLRIi4Y4eAkYAAt5lHP+nCh9Qfz/o8nDCIzId0Oy/0R1N+8/SEHRklcOB2DIPaRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758128585; c=relaxed/simple;
-	bh=8XRjVS4mOwfJobKc2p/erH9Z3LHmT7QGcbIwEcwpo2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VYv9iB+1YifEw6GdcO/u4qBKdMkO5CBDtVeCB7FZD5I2NZeNsuSbOOXJBFgeS0iH4fbnAssPzm7m/bAixWXV4SAbYDl7FhVVKS4OLHHreDIXME9RKHlkvfnGPcAf99J+SDq1LDdQBnGIhQZWeofHo2/TI21pBgOuK2oZ98WvIAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: dptQSnbjRZeQivXdVVLqfw==
-X-CSE-MsgGUID: MFmYd6CvTSqA42En2W0hzA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2025 02:02:55 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.24.0.45])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 34C094009A35;
-	Thu, 18 Sep 2025 02:02:48 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	geert+renesas@glider.be,
-	krzk+dt@kernel.org,
-	lukasz.luba@arm.com,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	robh@kernel.org,
-	rui.zhang@intel.com,
-	sboyd@kernel.org,
-	will@kernel.org
-Cc: biju.das.jz@bp.renesas.com,
-	catalin.marinas@arm.com,
-	devicetree@vger.kernel.org,
-	john.madieu@gmail.com,
+	s=arc-20240116; t=1758131542; c=relaxed/simple;
+	bh=g2/Cse7salc1tIUE/OJp9FayjCskQFXXIpcOQv0wqcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1gUUFExxIAU0pc9/ohFdXz8Bo2GK156k6w1DKx2SMlrW3EAWjkmqAG5bY1qytI5MAR4wYLxAxzjJ2q56riWYUs1MYTvgZimnF4JkhlO/+q4E5uDx1dv8y4nMaVBR/TyAa/DZcqcnlJvtBkEPQu+0mzwWktdUvh3PVpz+WYVmMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FWgOARlf; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FWgOARlf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Rx5V
+	0/lZD/IdbtCuUfwjiSEO0Grpo0JaThAgFi8Wh8s=; b=FWgOARlfcC5bBkEhH7jG
+	ITFPFlwr1VAfDuV0hIVqbDeNRxa2v7Ycn5BBKxibO0KMk2WxPeWb494SJo3SZ4QE
+	RFClSWn1PObw0nS9NEb3t1IMYTqChz5GwKXqsFSu9j0TT3VWAwE6MN3au5m6mGpS
+	JD/p/ucC6a7lTlJguzmIG+T8RyBoUsUmd+Cy2Cg3AZdC4PTagMr5mrvyPECtqOUh
+	rSgilWdz3j4OR/4LUArMds+Rffk4gY60pYA2iLgddKm6DKEjeKNKUM0HjLkxrPzc
+	/OPXKoqjG0tih5tcmDLmR3lqI7P4yCJGfxt6ZBz/cgerHqnfaKm8oige/Ejgtbyi
+	sQ==
+Received: (qmail 3221545 invoked from network); 17 Sep 2025 19:52:03 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2025 19:52:03 +0200
+X-UD-Smtp-Session: l3s3148p1@Zdbn5AI/itEujnvK
+Date: Wed, 17 Sep 2025 19:52:02 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	"Liang,  Kan" <kan.liang@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rob Herring <robh@kernel.org>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	rafael@kernel.org,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v9 3/4] arm64: dts: renesas: r9a09g047: Add TSU node
-Date: Wed, 17 Sep 2025 19:01:57 +0200
-Message-ID: <20250917170202.197929-4-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250917170202.197929-1-john.madieu.xa@bp.renesas.com>
-References: <20250917170202.197929-1-john.madieu.xa@bp.renesas.com>
+	linux-perf-users@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] arm64: dts: renesas: Add R8A78000 X5H DTs
+Message-ID: <aMr1QjI8vfrP_fwD@shikoro>
+References: <87tt13i0lh.wl-kuninori.morimoto.gx@renesas.com>
+ <87ms6vi0js.wl-kuninori.morimoto.gx@renesas.com>
+ <86v7li1xs4.wl-maz@kernel.org>
+ <87h5x1afgr.wl-kuninori.morimoto.gx@renesas.com>
+ <86qzw51pmw.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86qzw51pmw.wl-maz@kernel.org>
 
-Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
+> > And, the datasheet is very complex, I don't think people can find it by
+> > himself without any hint.
+> 
+> I guess we're just a bunch of inexperienced idiots unable to read a
+> TRM.
 
-v1 -> v2: Fix IRQ names
-v2 -> v3: remove useless 'renesas,tsu-operating-mode' property'
-v3 -> v4: no changes
-v5: no changes
-v6: no changes
-v7: updated both property name and specifier (<phandle offset>) for trim property.
-v8: removed #address-cells property
-v9: no changes
+Please don't feel offended. Morimoto-san really has a point here. The
+datasheet available for us is currently in a very rough format with
+*lots* of attached documents with hard to grasp naming. I am dealing
+with R-Car datasheets for 10+ years now, and I do have a hard time
+finding the information I want with this one.
 
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index e4fac7e0d764..7bf0b4a6c67a 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -64,6 +64,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -74,6 +75,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -84,6 +86,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -94,6 +97,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -412,6 +416,19 @@ wdt3: watchdog@13000400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@14002000 {
-+			compatible = "renesas,r9a09g047-tsu";
-+			reg = <0 0x14002000 0 0x1000>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x10a>;
-+			resets = <&cpg 0xf8>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x330>;
-+		};
-+
- 		i2c0: i2c@14400400 {
- 			compatible = "renesas,riic-r9a09g047", "renesas,riic-r9a09g057";
- 			reg = <0 0x14400400 0 0x400>;
-@@ -970,6 +987,37 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
-+							 <&cpu2 0 3>, <&cpu3 0 3>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
--- 
-2.25.1
+That being said, I agree to the point that it is not very helpful to
+reference such documentation upstream.
 
