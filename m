@@ -1,251 +1,246 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE22F5A2E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Sep 2025 07:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34001F4E4F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Sep 2025 09:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758526870; cv=none; b=chxUUdlm4CaRuLLOfoG69ugMOmbwDCq3jyTzBCdAMTQilko0UlIIIUuzgDhCONnn0IHIimWiQnFi+3+cqVr/siMHSVTLpqVnktu058UqQc0XRUQaBgLkYrhzqkWpg0MOteT51GzR+sDge3eCZvPbqJD23JMSX48al1LtzZsnl1I=
+	t=1758532892; cv=none; b=QG33ztn9qti6bFCsTaWVgdmCuSa7X6O0jytk1ou6PCTJqCvMnZVyQXNGeu+Cli63Ppy8UPXdzPYtVueoh3GhFYTL0+fwEqjx5dQ8f1M9x+0aEZe2szkn9xQwVCEzx3cPGO7aj7fZqeWBXZWBPyaUptC4tCX/qfGY7sfV4V/LVzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758526870; c=relaxed/simple;
-	bh=350kseYCPzlSUnQJtXKRlacC6FHv4j4/QxcsHxOHemo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nt9cN86ylkfiuO2YQqFlWsSYd6LsNHIfHipF5cs2n/wCe+H9Tnbx5figw+AvHlTmce88qBzNUk62mr3j24v83GpkFOFxN0msligJwNhSkNF4XrsHFE1MAwI1NdGfocaYb+tDM9aPI3hUeuK96a7i+5nI/YCYq2/I5W9mGJBqmtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=e31n2Qm+; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="e31n2Qm+"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso36314375e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Sep 2025 00:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1758526865; x=1759131665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVdS5ZxaRZwCVsFgnk0PyX9gMRVloyzuq0Gi0VkzBYQ=;
-        b=e31n2Qm+weHBJX3MS98zR3+KfKNveteX1Kzc/IJcZwiogQlL+FEqyB5bpqdW0QW67K
-         pCbq/dOTogf932B6Ib6Em9bY305gU2kT2GzXbVY/6eV5vvm7LNKscl/ZOgpAk/jdQuP9
-         4L17wJrkeTbqaoFfjAo0WFIdsaEKED7sSuc7d30X1Vi3mk8MllDkWvVQO1iyiV2BCqWp
-         JIor4Z+9VJrKIoKsq3B8b86Xi+f+f7WiyFpHTaIHRNudP9XP+2EeDs2t1052jrMMstlj
-         G3T/i5h65Nz3Esv1qf+4rLr677hbYjaS+l9c+KLYE7PsXOKW4CPZFxKJ5Tfu7SHodzDx
-         IaZQ==
+	s=arc-20240116; t=1758532892; c=relaxed/simple;
+	bh=9JrWEg4nRUPQ0c4UssG+3KfveXvJyaWiL/913pVnU8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5pRh+wFjmEa+Lv01lY2AHVTLS/brbXrx0RVJsUzeg/iFmGkZAYRlL0JhUshUCudQEdcCHYV/DB8SI3V5mOPLf/mz9Z3ffkUPNzcY03F3qRNphRoffJ7AVcS0jgh0DuKNKw+TRDwUB+voOhW0zAh+MlbkMWnn+ItZgg25vzk+3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8943501ba3dso1895338241.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Sep 2025 02:21:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758526865; x=1759131665;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758532890; x=1759137690;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sVdS5ZxaRZwCVsFgnk0PyX9gMRVloyzuq0Gi0VkzBYQ=;
-        b=WiuZxnNhgEofFkSMI4WcTkKVYg7aY1917/yeUSjJ1oFymf99+6PKjMBFmieuJyuU2X
-         vG24GxNmkzHZuGHamrcCyfFD7BMPs7Gsh3MDQucF1gay/dkilc5CQt3pNzekXTbAl8eu
-         DtWieWunSArENIDX0IOHGNprGX0HbdLX/64K4Z92COs7QUdoQFbrqPiKIQ9QjVN+vfqN
-         7WjcBBsS9P3KigbKoNsLRC8UhODvjz0RYIIg1+T/UqyYXsUn2FYVldskww7r0UQM5ewA
-         QscWoJ4jT7A4WRfqUB8jUvaHkqhpaTTsG+m1KCb/9LyOiFagu3muZkeuHLEI32Y+3C4p
-         BfXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGqnVsQcXXzws/SUwlsPHqiNRIc/U3FDDBO8HBUrGcyi5bFI1zdeLt6iYEBLTG+eHgdWBozDd+T6mxy1aVgJFJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJH7TJtVjuuJPDpUB4ck8xmyBN9pfHG+UyJ/70bcPbWQvYsdP5
-	IAf9kRMnahLLxJwjshFlDFUqlVfQYHr2CSDqX0tlSPKsk7HI+Ohh+WraZ0MPbq1nbxc=
-X-Gm-Gg: ASbGncvU3wsNhduMjQBNXJ61ctA77VObZuJzEa/Qu2H2usJHkoi0Bvg8NlLOx75swzN
-	gb8lDA3nFfQWpKnodEoEyJkLatzfJcVLSlUX8fwJLLt2lyzW4UXk/ODLI+i4j9tmI1MnkLstl95
-	bQY7Ur9Hg1b6gaqiAsPUyUfMyR5+odZBJ33eX9KqZS9ut2lvng4yAtRtJqay4i2RtD8m9CptEzh
-	iE4nSzpixHHyFuyNc9WnJvsGuUan/fo7Y3I8NMXeEz1A8kkZwuShG39UUkWzs38ZvI7jc0X0CWD
-	3AbBJJfutoyt/CreAVcefROEN77MWUUw4beNDmNZ62hO1EynTwSeyuqTPCgRwIdzSWk1BJmtRUk
-	dJbvHRBwFFG+k++rFBWcl/EftfEkYKhzTxCnMH+aIbVhOiQOLo2bZ
-X-Google-Smtp-Source: AGHT+IFStw5BkLBlppRCWhPlEKp4slrfPlWyGFOfXUQzpSUd1uiuH8H4wbcwGJ8qKTuXs4J7S40EPg==
-X-Received: by 2002:a05:600c:3553:b0:45d:d2d2:f081 with SMTP id 5b1f17b1804b1-467ea00456emr100493965e9.20.1758526864644;
-        Mon, 22 Sep 2025 00:41:04 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07412111sm18518616f8f.28.2025.09.22.00.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 00:41:04 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	john.madieu.xa@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH] soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap config
-Date: Mon, 22 Sep 2025 10:41:01 +0300
-Message-ID: <20250922074101.2067014-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        bh=rVYuCYK9Kvj3QHdD1tvpgcDHhvVlI3yo7fnDbEKQFYo=;
+        b=gF6L6Fid09Sphdb1V28ncPfB1vmguM76udXDYyXIEfWdf7VyxJfr1sNMxMsQB0krIz
+         oTzEMVVxCmGcN2kz2rX9rDs+h5uQ8uQaoy69dQfw08y8mYFQi3Y8Ulx01DN15q7Tvf6B
+         tx3Z1lehWy+4d9Vgi8ydAqXlg/pZT8n8YviJj8ydYnqHIt21GyV5BGVjJAY4ii9MRyGk
+         ROpbg62LOjxzBiX/I9NJ+N3tryK/0pviG0td4eBWT8sgbOGEKmQjku7hkTmAkJBE/6ud
+         /nr4qr0edI5s7il0LL+9+rYP2BP3aQi4yP8Ymw0QYM1pCX+JoCBr8S7L9gPhdFL9d/Kt
+         0tvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWojff0JEJgGGKz+gCoqdgQDQd7bP73RGCUn0rSBRHWHdFhkw8/TnKE11NcqxXySlY32BQGwBQcmvwNOqkGjDxqVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLPKLVJmBkZl6nJX/srG/BsbwNoardHOxqPJeCsQrEJgIGmmt1
+	rnJRTSiw5jVQQ8u71ECPPMvZ6H240EFWLqOPrR6nZF+io3pSYPcrmCPqPFDklknN
+X-Gm-Gg: ASbGnctadM+BE959cT445LwIA6IKl8xqA19wxqSbgFAMCcuyJiH6nYVGCSUef5Qy7Ik
+	9nlM6pDyrrZSJRDB2f5Zzr1UA7YvJsFNqIx7rqXOuWowz54xP97iEgyz+ZariPX6xUqzYov99so
+	D1apUBacvka3r6WbhjnY8yiblqAIprjAYPutp1ejkHJwW1/A1YykQqzaYd+gyilya1hZDwU2qJR
+	2uEppta4fyBEgyTptoZeliCtduKIdMfvm9C+KJgba69LuqgSODIkWPSKexdYu9q5nS3z+Q/zy7n
+	g8c86zhAjjJKFGAb7lO4kyYmLCSnFl427umYQA4eTZuOUmbDqa/QcsEIEj5HBZxuyuKtHl/STGB
+	fIyfOPshhptM5MbIDL/erQtO7bXrUzXNN0834Tn9Br2yDubmxfJWtDMWpIRWn
+X-Google-Smtp-Source: AGHT+IFwcpusbymaZJDcQSLoFEtzobiUCdj0piUUM4HgkQ5EdhYsdV2O9KHI6RyRUCbw7iSZCX2vgg==
+X-Received: by 2002:a05:6102:d8c:b0:529:4cf5:8aee with SMTP id ada2fe7eead31-588de449cd3mr3771722137.12.1758532889660;
+        Mon, 22 Sep 2025 02:21:29 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-59c0c715bdbsm1422272137.8.2025.09.22.02.21.28
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 02:21:28 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8e3239afdf2so2770109241.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Sep 2025 02:21:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXE1xKuqZ+Ky0StYFyBFwsM9az9hfEMF4UW94VdsFSZsQMesx0T5SDWhtJN/A8We9cfkAatfSi8qOEFOpfAxbn3A==@vger.kernel.org
+X-Received: by 2002:a05:6102:15ac:b0:529:96b9:1fce with SMTP id
+ ada2fe7eead31-588f3728e13mr4100170137.27.1758532888150; Mon, 22 Sep 2025
+ 02:21:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250909162707.13927-1-marek.vasut+renesas@mailbox.org> <20250909162707.13927-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250909162707.13927-2-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Sep 2025 11:21:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU_xVfhay9r5pmj=E6k6EFts3YS8xmQFCUgTdm=eh8OZA@mail.gmail.com>
+X-Gm-Features: AS18NWB7sUqLUtredbr9YhKbzrCa7HLSwrRuHzfalv-EHnhLzadagftJ0EPTHk0
+Message-ID: <CAMuHMdU_xVfhay9r5pmj=E6k6EFts3YS8xmQFCUgTdm=eh8OZA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: rcar-host: Convert struct rcar_msi mask_lock
+ into raw spinlock
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>, stable@vger.kernel.org, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Marek,
 
-Not all system controller registers are accessible from Linux. Accessing
-such registers generates synchronous external abort. Populate the
-readable_reg and writeable_reg members of the regmap config to inform the
-regmap core which registers can be accessed. The list will need to be
-updated whenever new system controller functionality is exported through
-regmap.
+CC tegra
 
-Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/soc/renesas/r9a08g045-sysc.c | 17 +++++++++++++++++
- drivers/soc/renesas/r9a09g047-sys.c  | 21 +++++++++++++++++++++
- drivers/soc/renesas/r9a09g056-sys.c  |  7 +++++++
- drivers/soc/renesas/r9a09g057-sys.c  |  7 +++++++
- drivers/soc/renesas/rz-sysc.c        |  2 ++
- drivers/soc/renesas/rz-sysc.h        |  4 ++++
- 6 files changed, 58 insertions(+)
+On Tue, 9 Sept 2025 at 18:27, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> The rcar_msi_irq_unmask() function may be called from a PCI driver
+> request_threaded_irq() function. This triggers kernel/irq/manage.c
+> __setup_irq() which locks raw spinlock &desc->lock descriptor lock
+> and with that descriptor lock held, calls rcar_msi_irq_unmask().
+>
+> Since the &desc->lock descriptor lock is a raw spinlock , and the
+> rcar_msi .mask_lock is not a raw spinlock, this setup triggers
+> 'BUG: Invalid wait context' with CONFIG_PROVE_RAW_LOCK_NESTING=y .
+>
+> Use scoped_guard() to simplify the locking.
+>
+> Fixes: 83ed8d4fa656 ("PCI: rcar: Convert to MSI domains")
+> Reported-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> Reported-by: Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
-index 0504d4e68761..e4455ac37511 100644
---- a/drivers/soc/renesas/r9a08g045-sysc.c
-+++ b/drivers/soc/renesas/r9a08g045-sysc.c
-@@ -6,10 +6,14 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/device.h>
- #include <linux/init.h>
- 
- #include "rz-sysc.h"
- 
-+#define SYS_USB_PWRRDY		0xd70
-+#define SYS_PCIE_RST_RSM_B	0xd74
-+
- static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initconst = {
- 	.family = "RZ/G3S",
- 	.id = 0x85e0447,
-@@ -18,7 +22,20 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
- 	.specific_id_mask = GENMASK(27, 0),
- };
- 
-+static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
- 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
-+	.readable_reg = rzg3s_regmap_readable_reg,
-+	.writeable_reg = rzg3s_regmap_readable_reg,
- 	.max_register = 0xe20,
- };
-diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
-index 2e8426c03050..4200253638f8 100644
---- a/drivers/soc/renesas/r9a09g047-sys.c
-+++ b/drivers/soc/renesas/r9a09g047-sys.c
-@@ -29,6 +29,9 @@
- #define SYS_LSI_PRR_CA55_DIS		BIT(8)
- #define SYS_LSI_PRR_NPU_DIS		BIT(1)
- 
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+
- static void rzg3e_sys_print_id(struct device *dev,
- 				void __iomem *sysc_base,
- 				struct soc_device_attribute *soc_dev_attr)
-@@ -62,7 +65,25 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
- 	.print_id = rzg3e_sys_print_id,
- };
- 
-+static bool rzg3e_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3e_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	return false;
-+}
-+
- const struct rz_sysc_init_data rzg3e_sys_init_data = {
- 	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
-+	.readable_reg = rzg3e_regmap_readable_reg,
-+	.writeable_reg = rzg3e_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/r9a09g056-sys.c b/drivers/soc/renesas/r9a09g056-sys.c
-index 3ad1422eba36..5ebe53042524 100644
---- a/drivers/soc/renesas/r9a09g056-sys.c
-+++ b/drivers/soc/renesas/r9a09g056-sys.c
-@@ -70,6 +70,13 @@ static const struct rz_sysc_soc_id_init_data rzv2n_sys_soc_id_init_data __initco
- 	.print_id = rzv2n_sys_print_id,
- };
- 
-+static bool rzv2n_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	return false;
-+}
-+
- const struct rz_sysc_init_data rzv2n_sys_init_data = {
- 	.soc_id_init_data = &rzv2n_sys_soc_id_init_data,
-+	.readable_reg = rzv2n_regmap_readable_reg,
-+	.writeable_reg = rzv2n_regmap_readable_reg,
- };
-diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
-index e3390e7c7fe5..8336b8466bbf 100644
---- a/drivers/soc/renesas/r9a09g057-sys.c
-+++ b/drivers/soc/renesas/r9a09g057-sys.c
-@@ -62,7 +62,14 @@ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initco
- 	.print_id = rzv2h_sys_print_id,
- };
- 
-+static bool rzv2h_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	return false;
-+}
-+
- const struct rz_sysc_init_data rzv2h_sys_init_data = {
- 	.soc_id_init_data = &rzv2h_sys_soc_id_init_data,
-+	.readable_reg = rzv2h_regmap_readable_reg,
-+	.writeable_reg = rzv2h_regmap_readable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-index 9f79e299e6f4..19c1e666279b 100644
---- a/drivers/soc/renesas/rz-sysc.c
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -140,6 +140,8 @@ static int rz_sysc_probe(struct platform_device *pdev)
- 	regmap_cfg->val_bits = 32;
- 	regmap_cfg->fast_io = true;
- 	regmap_cfg->max_register = data->max_register;
-+	regmap_cfg->readable_reg = data->readable_reg;
-+	regmap_cfg->writeable_reg = data->writeable_reg;
- 
- 	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
- 	if (IS_ERR(regmap))
-diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-index 8eec355d5d56..88929bf21cb1 100644
---- a/drivers/soc/renesas/rz-sysc.h
-+++ b/drivers/soc/renesas/rz-sysc.h
-@@ -34,10 +34,14 @@ struct rz_sysc_soc_id_init_data {
- /**
-  * struct rz_sysc_init_data - RZ SYSC initialization data
-  * @soc_id_init_data: RZ SYSC SoC ID initialization data
-+ * @writeable_reg: Regmap writeable register check function
-+ * @readable_reg: Regmap readable register check function
-  * @max_register: Maximum SYSC register offset to be used by the regmap config
-  */
- struct rz_sysc_init_data {
- 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
-+	bool (*writeable_reg)(struct device *dev, unsigned int reg);
-+	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	u32 max_register;
- };
- 
--- 
-2.43.0
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+drivers/pci/controller/pci-tegra.c seems to have the same issue.
+
+> ---
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.17.0-rc4-next-20250905-00049-g13b74d3367a3-dirty #1117 Not tainted
+> -----------------------------
+> swapper/0/1 is trying to lock:
+> ffffff84c1974e58 (&msi->mask_lock){....}-{3:3}, at: rcar_msi_irq_unmask+0x28/0x70
+> other info that might help us debug this:
+> context-{5:5}
+> 6 locks held by swapper/0/1:
+>  #0: ffffff84c0e0d0f8 (&dev->mutex){....}-{4:4}, at: device_lock+0x14/0x1c
+>  #1: ffffffc0817675b0 (pci_rescan_remove_lock){+.+.}-{4:4}, at: pci_lock_rescan_remove+0x18/0x20
+>  #2: ffffff84c2a691b0 (&dev->mutex){....}-{4:4}, at: device_lock+0x14/0x1c
+>  #3: ffffff84c1976108 (&dev->mutex){....}-{4:4}, at: device_lock+0x14/0x1c
+>  #4: ffffff84c2a71640 (&desc->request_mutex){+.+.}-{4:4}, at: __setup_irq+0xa4/0x5bc
+>  #5: ffffff84c2a714c8 (&irq_desc_lock_class){....}-{2:2}, at: __setup_irq+0x230/0x5bc
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc4-next-20250905-00049-g13b74d3367a3-dirty #1117 PREEMPT
+> Hardware name: Renesas Salvator-X 2nd version board based on r8a77951 (DT)
+> Call trace:
+>  dump_backtrace+0x6c/0x7c (C)
+>  show_stack+0x14/0x1c
+>  dump_stack_lvl+0x68/0x8c
+>  dump_stack+0x14/0x1c
+>  __lock_acquire+0x3e8/0x1064
+>  lock_acquire+0x17c/0x2ac
+>  _raw_spin_lock_irqsave+0x54/0x70
+>  rcar_msi_irq_unmask+0x28/0x70
+>  irq_chip_unmask_parent+0x18/0x20
+>  cond_startup_parent+0x40/0x44
+>  pci_irq_startup_msi+0x20/0x58
+>  __irq_startup+0x34/0x84
+>  irq_startup+0x64/0x114
+>  __setup_irq+0x3f8/0x5bc
+>  request_threaded_irq+0x11c/0x148
+>  pcie_pme_probe+0xec/0x190
+>  pcie_port_probe_service+0x34/0x5c
+>  really_probe+0x190/0x350
+>  __driver_probe_device+0x120/0x138
+>  driver_probe_device+0x38/0xec
+>  __device_attach_driver+0x100/0x114
+>  bus_for_each_drv+0xa8/0xd0
+>  __device_attach+0xdc/0x15c
+>  device_initial_probe+0x10/0x18
+>  bus_probe_device+0x38/0xa0
+>  device_add+0x554/0x68c
+>  device_register+0x1c/0x28
+>  pcie_portdrv_probe+0x480/0x518
+>  pci_device_probe+0xcc/0x13c
+>  really_probe+0x190/0x350
+>  __driver_probe_device+0x120/0x138
+>  driver_probe_device+0x38/0xec
+>  __device_attach_driver+0x100/0x114
+>  bus_for_each_drv+0xa8/0xd0
+>  __device_attach+0xdc/0x15c
+>  device_initial_probe+0x10/0x18
+>  pci_bus_add_device+0xb8/0x130
+>  pci_bus_add_devices+0x50/0x74
+>  pci_host_probe+0x90/0xc4
+>  rcar_pcie_probe+0x5e8/0x650
+
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -12,6 +12,7 @@
+>   */
+>
+>  #include <linux/bitops.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+> @@ -38,7 +39,7 @@ struct rcar_msi {
+>         DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+>         struct irq_domain *domain;
+>         struct mutex map_lock;
+> -       spinlock_t mask_lock;
+> +       raw_spinlock_t mask_lock;
+>         int irq1;
+>         int irq2;
+>  };
+> @@ -602,28 +603,26 @@ static void rcar_msi_irq_mask(struct irq_data *d)
+>  {
+>         struct rcar_msi *msi = irq_data_get_irq_chip_data(d);
+>         struct rcar_pcie *pcie = &msi_to_host(msi)->pcie;
+> -       unsigned long flags;
+>         u32 value;
+>
+> -       spin_lock_irqsave(&msi->mask_lock, flags);
+> -       value = rcar_pci_read_reg(pcie, PCIEMSIIER);
+> -       value &= ~BIT(d->hwirq);
+> -       rcar_pci_write_reg(pcie, value, PCIEMSIIER);
+> -       spin_unlock_irqrestore(&msi->mask_lock, flags);
+> +       scoped_guard(raw_spinlock_irqsave, &msi->mask_lock) {
+> +               value = rcar_pci_read_reg(pcie, PCIEMSIIER);
+> +               value &= ~BIT(d->hwirq);
+> +               rcar_pci_write_reg(pcie, value, PCIEMSIIER);
+> +       }
+>  }
+>
+>  static void rcar_msi_irq_unmask(struct irq_data *d)
+>  {
+>         struct rcar_msi *msi = irq_data_get_irq_chip_data(d);
+>         struct rcar_pcie *pcie = &msi_to_host(msi)->pcie;
+> -       unsigned long flags;
+>         u32 value;
+>
+> -       spin_lock_irqsave(&msi->mask_lock, flags);
+> -       value = rcar_pci_read_reg(pcie, PCIEMSIIER);
+> -       value |= BIT(d->hwirq);
+> -       rcar_pci_write_reg(pcie, value, PCIEMSIIER);
+> -       spin_unlock_irqrestore(&msi->mask_lock, flags);
+> +       scoped_guard(raw_spinlock_irqsave, &msi->mask_lock) {
+> +               value = rcar_pci_read_reg(pcie, PCIEMSIIER);
+> +               value |= BIT(d->hwirq);
+> +               rcar_pci_write_reg(pcie, value, PCIEMSIIER);
+> +       }
+>  }
+>
+>  static void rcar_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+> @@ -736,7 +735,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+>         int err;
+>
+>         mutex_init(&msi->map_lock);
+> -       spin_lock_init(&msi->mask_lock);
+> +       raw_spin_lock_init(&msi->mask_lock);
+>
+>         err = of_address_to_resource(dev->of_node, 0, &res);
+>         if (err)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
