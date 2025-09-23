@@ -1,301 +1,274 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011030.outbound.protection.outlook.com [40.107.74.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00D9258EF3
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Sep 2025 14:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638737; cv=none; b=Y3vHsV4p8x2hx7NjDX1v+LeSEQG3dSgI5NbDCW7y2s+HmiGTyoFEk/C8MXdpUpBU6Et7l9HkTOPfd/edb9/uPZ+WuvCg9/Q8YCTzg1/yH2tONaL3TWhMSD8XSS6pXuDZwZanCEmeNLRJgSsDd8FJaY681VbSdCZDt9DMW12yLe8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638737; c=relaxed/simple;
-	bh=PC08gB/w+egRp5QGS5q1tZdtfmPuAMJz7z2nsCmwUpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IdboaPE89JJC5L9JHE5QizSROIfBSbAdmaF2GFU1HjzBqHasb8ciWxJ1KxqAVoOzl4G7qgbQTSpDhNeG1/swI5Rpxcd3C+wcrMX7wFbqezuGfaSZNPBulsI3hvLDRwCydevRDv2dBiKtmqwgLfxx6erOAROd7r1/V3/ozMdGo6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3oiPW/a; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF802045B5;
+	Tue, 23 Sep 2025 14:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758639081; cv=fail; b=Uo4oeIKc5Azn8LSfCEaPQLhh9iuRMPXiJAzDPZ2X7oChYOvRFkIyeXRDMVS7efwM1DhfNwZSBPSBO9AauE6+oZpfINeNZC6C/hpub08H7Mv6FY2XcgVXGN3SKKTvM00MYGfcYf0bgzwLCQEosVcyfu/TWyCWjVzbYFe1uD5mBG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758639081; c=relaxed/simple;
+	bh=ibxUQZg47hEm6RWwxFWnVtEBeXgq/40PC+TEHJDEv1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fymD+j0hMABW1dQoXfRRHipp2MDqgHpVVTgeKu/2SHnyvz9JELj/vH5KkXZ0xAlzwi+Z405iOoTnGfv7uIVM+a1kyj0/rvceJDAP3g+EAeD9bepfoMZFxH3nmf/ndEvw5UEf75V8Iew3b76GbV6hPjJi6S9aCsY68OOj1U01KBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=hX/7mnvd; arc=fail smtp.client-ip=40.107.74.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3oiPW/a"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee130237a8so3206783f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Sep 2025 07:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758638732; x=1759243532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G80ItpmxJpnUoRL/kfIZ5sW+AOj0ITPN400GcF79LCE=;
-        b=W3oiPW/aNZXRC58A1Awz7/eORgFUQuDw0pu0ykMOp6TK0ItOs0+bB3wBIFLbxw2kTv
-         YovNxUXvltX1ca7PEC7D2P+cYWrLv/QALAWbTCw4wL4av4yQdPnV6qSKf2X4CrzPNr9l
-         8Ez7kF3IYIneb3JL/hUiyITr5j7Q7oLxCplZVPVFtTIs6xiYJw79PJY4XvoVz0m6+iZp
-         cTwl6bjcNL4YIzxN5GJXcjqoVw/DY+R+fzAXblBb8eM1GZLS+i0ZNwyiDDo7yKJ0RVOX
-         suDDDcD2LDG/gyK73Fzg3K84a9CQV8x4HtYK/Aqz3pBzbHYCkqQk7uYMdKZJ9oVGXHK9
-         IVhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758638732; x=1759243532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G80ItpmxJpnUoRL/kfIZ5sW+AOj0ITPN400GcF79LCE=;
-        b=X7w2xEn1rDHNf+le1GXQfrkzcL+DIeaSFWbOtPBl7Nz1ShbPq1c4GGN+AJOr36I/EL
-         9KjzPaSlw142Hu89Sxw5iJcw6kK7Vg3Hn1VAou7+PBVopVMzGbfO6Vg5PpzJFtHgQYSG
-         2CWYvpSryFWuFbSA5Wk7YSlZ13cL9/Ypx3NTQmuXCrUdyJuoLqxbeSldaFlTqb85wU0y
-         wGZx1XOVIWmY9Fh5cRFHLAMEnl4pP3GsbgYF3YvbVjiDOtMKTSbgmcWPYeIO+MEODTan
-         kD3WMSzp8BrXi1gkI+pU2nvqWcS6tvCnu3LEmwH/ZX3ilWpqWTEvyeMIioBNbNRdQOcV
-         SIjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU41rzakkV+lZvvNpJ94zVC8QR1T2nfl5z1W3udkVJZUYd21rbzBpt5d7Hp4Kzo+3EI41KTk2P9tVr3my5mkmoOGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz+RehV2lo+4G+mNdUUxFHo2c57tBSt7/RD4sTc6xOidIlr8Gt
-	wv8/gNIRiB1bB8eTNeMW3PrJuaWlaKgKhH882+zug38oc5kQUh3ddokY
-X-Gm-Gg: ASbGncvMbH/Xakgltgc4NAT+ovLCVFDoqMV82zJ+3i8Knz5WVFcmgsI6eG0JRr/czeJ
-	pBQxhUKOS8lZV9XvPc06mQYJhW5+5gHA1bLp1Ipx1lmHXUCEEsMcwDgOKUf6tJUmPq1+L0+FGVW
-	dzmM+fB+qVPowm/l+rl+UdxthMhWoInAMKWibTxKwcUNBzSHyX4D0Hftis+15H3Vzt6Xhsdw2lR
-	7U7mOIm6K5PsIWa6KvHBrdPOudUDK3anLFz6nnLsNnzjsL0No2Uu//sMhxPlOR7XaLAXIVWFmEK
-	DaeFgv0NF6iSWX3s+Hb0am5OfS3KYilxtNdrtcqYut1vcdDPJqiDDdd0P26f0xn2+28DjajDK5y
-	1/gD4WEnFSkz9jF1nat/ppavR9+GH252XuioU8OoBnypzmo13U9+nWbYklFLdvCFLzHhvZCFMZ+
-	NBWw==
-X-Google-Smtp-Source: AGHT+IGYJqg3g59q+kGLJJp06XQ1vqNuniExnf+RSDw2EEI792G/PGnzGmPNDfsYQ83ycJ6V10rFpA==
-X-Received: by 2002:a05:6000:2907:b0:3f4:a9f5:c10e with SMTP id ffacd0b85a97d-405c9352242mr2984554f8f.36.1758638731818;
-        Tue, 23 Sep 2025 07:45:31 -0700 (PDT)
-Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm238940435e9.1.2025.09.23.07.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:45:31 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 7/8] arm64: dts: renesas: r9a09g047: Add GPT nodes
-Date: Tue, 23 Sep 2025 15:45:11 +0100
-Message-ID: <20250923144524.191892-8-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250923144524.191892-1-biju.das.jz@bp.renesas.com>
-References: <20250923144524.191892-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="hX/7mnvd"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fZQ+03FsXgZEX7Y/5z045nyW90+V1P0vSFtyP6RzmEku7k+fyQWjOD1jMn8gZi8uiNMirrCp+yQdgDjlVp0texlS/1FLoRSCaG0XyutY7LwHL/K/yLaxqbV1BhW8kD9n3/91E1NwOHcT53o2+2rzS+3CRhr9PBDWqA55omlbM5/jrQfbC/Jz3Cfz9UYPHFr7yYoFoMkM9RcMfZXBaEAupDpGiqLwnA0XdH4y0w8/NjgRUCLWCT7T4bPIl65rcdQcb3HPCCpvaR7eDGwnvKVTEaYwaiLJheSEsF4AHGud47uL9NgORq5xbotfFTeaD3iOFByavhBlqVUCULFj+pzwtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rvi0qpthMJwnZqisLGA13vaKBhHgefm8COXn49mSwZ4=;
+ b=OhG/EyNSgSPOibY2aelZc3x+IPCr6A5sMKDobQvGCLo0gyZScpXctuw6NaynAC5fFmfqwSKi+xFiKWAhGPw0TeTFXypyxfVgbB8uTzuP0PUM/DagwTPQ7mL0yENB2JxD84TAVZHWrg/BOFFSpdkAklreGJTgBDIrGgOAfoltG9et/HNii6UGRjyrDfR3tDIzjTZso1hOYOCqDucAK7NDju6jqBbAiP10cXRPwHfTsqa0DZvNZ3jenFtAlYkKM/WrcG44XXbZohFA3OCP480xtBI9GdpCqDTQWrHZtS5GrCNtMfKkk1p9W4roSeb1gSA1Mj674kGIh7MO5jQIcAESJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rvi0qpthMJwnZqisLGA13vaKBhHgefm8COXn49mSwZ4=;
+ b=hX/7mnvdAIfsonHjdDn7WkCQyM2qJM3h3y5ycalqSCgHd3fSUtGiyJpdWrC9tAXi3OzEAE9mzefEHavuPPTaLDp3v5iSJD+NiCDHnq1jNvDaqxhPgpLB7kqp/vrY1S2O66/e6JUsqf81l96VAtUldPcH7Q9QxJMR8h7nSm1pvQ8=
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
+ by OSZPR01MB6584.jpnprd01.prod.outlook.com (2603:1096:604:fc::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
+ 2025 14:51:13 +0000
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479%7]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 14:51:10 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
+	<biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] memory: renesas-rpc-if: Add suspend/resume support
+Thread-Topic: [PATCH] memory: renesas-rpc-if: Add suspend/resume support
+Thread-Index: AQHcKumJ2m7CvGwmyES77CEN8sgCqrSg3MmA
+Date: Tue, 23 Sep 2025 14:51:10 +0000
+Message-ID:
+ <TYCPR01MB1133276CCA2D8EC9D5238B2A0861DA@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20250921111855.103566-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250921111855.103566-1-biju.das.jz@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|OSZPR01MB6584:EE_
+x-ms-office365-filtering-correlation-id: fa0e3f9f-7a84-4317-cd1a-08ddfab0a277
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ENx92JLEtDREeiZXpsBFIxjneHnkyz1DQIraXj/QlmI9K7An88dweKk32grm?=
+ =?us-ascii?Q?k75aCvY6ic6oF2vi/k/jp06AgZoZGoCvEAHySffM6y55iANH3YYi4jOxzlPZ?=
+ =?us-ascii?Q?hKA677aW2Gb6nod7Y80TRr/6BKX+k+u9uwGySmxaWD3hzVTzPop0iU5MV+ef?=
+ =?us-ascii?Q?icAKQxjJKK8WAHvd5JI5jqXNPSv0gtZZUoErRWsfEYRBzAaNmGp0Es0+nDiS?=
+ =?us-ascii?Q?YfpGE+l22hPmIkRgYZxtIcLoqV0TR58g2LgmgpSYAauBFM2tcqUO5CEWwaQx?=
+ =?us-ascii?Q?DrngjPfWAz3ULNKgjx1syF/1XHYDL4GFdGeCqX2ypHWNgdJMPXt+UDmk/2Uu?=
+ =?us-ascii?Q?cYQfuUlX5hEYhD08KquNyA3UpP+Uj5mDq5E6c4SJpk2oMM4/70k3QEPmcP20?=
+ =?us-ascii?Q?vlrnmvdX/uXFU9KjjUjw1nWLN2kAtx/OMEBnsDncseQZrTuAWDrooS7O4EVi?=
+ =?us-ascii?Q?tG/IOpRPmubaz2uvM0G2Nsnj64kNtFMi0JSIIBrziIblmbYk4S8gUh3iuVwF?=
+ =?us-ascii?Q?B6KNR8yEhWuai6gWS/y4MyY6aF2vY+EamX53q8+uKefBNMga2B+/uTDo5O9T?=
+ =?us-ascii?Q?DK6dVJAomkuLNmgJh9tEZ+GauarVBbRFiIrFnMO1ljBFZ2R7m14NHyuU04Wm?=
+ =?us-ascii?Q?IcEU/fturdtbJhGJIB7d9Y7IOZD//f/1KlB8jlgWkBJpw/uSOlXQjyHYc2CX?=
+ =?us-ascii?Q?M6BCzGPFl36h/Xz2MuI0hQULDYUlE6wmzUSQaVstOVGCD58gt7o68rDByJk3?=
+ =?us-ascii?Q?/Zz4kTuB7JNvGlqMGlbaYkn5SVe4PZHWTZjGBLsA2bWO61fCfyHbJEJ8dipe?=
+ =?us-ascii?Q?YDwKx0t0xdKZjr2ud1fA1Ocz6V+ivJbDw7O3+Pc8JLgjA+Ayuycto0zuliuN?=
+ =?us-ascii?Q?haPxI6/LRJqojN4M9w73NdlMVxLnrOxbRyR5v1uC+XqFJ73Ok4QfAFwaH4/N?=
+ =?us-ascii?Q?fTU93b1Wd7XItdCwN2KLfdvOo5nR9qepMbiva8nV938gSOS6lEFoy/4S02Fo?=
+ =?us-ascii?Q?HRylZ5jqlv0Dz55dzH3XMgbM+J8kRqZpfGWG/reQnaXAK4pAe3JJyrhAS1rc?=
+ =?us-ascii?Q?AxiPxp/dngEoz5tWYy/NHIfp8RQ5RrHrdVCDX46w0qWtOqmpjbTtptiUshlm?=
+ =?us-ascii?Q?VNLGaIr5q02KVqkbtnyrtmSyHmnTcZ3bUVv06eBEn9S+9H1fdoItGk1kjJKk?=
+ =?us-ascii?Q?fz4c3ZvAqjKRkRZ3x2qfDoCy8Tl5Z/LAnNvQQTwrr6SCSMULReppwRckQZbQ?=
+ =?us-ascii?Q?08fc5axD0BsIFGraeWGmlFn34r+TtK9tsHV81LUhI/d1pmpVa02vYhX1iUn/?=
+ =?us-ascii?Q?Qm+vJVgEDiwiQh10bmkvnBSMfIXDRK2gUF+3itpCENHIiCqAWiuEqq4v6o51?=
+ =?us-ascii?Q?ozqBCHpUGrSSN1gTwuEv4fhBRYR0lbyzvCNrAlpVfPuGtK+o+E7bzo+fkm5u?=
+ =?us-ascii?Q?AP9UdoRRinqNlHzMr8yJLj6zWsZpCOAXKfi6gKVjvx+QeMbEnojqSScS7Zll?=
+ =?us-ascii?Q?HcPOwktis57+5Fg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?FVYJbCEzrBGTsI+VYiDR4cCwkNPRkf1jFqZK+nFtJp6aUNe0LQsQWkH8m382?=
+ =?us-ascii?Q?STuvNQdgDX77nkXtAJ09BxULawEYwEPBNo+3LgTkUVVTeSAHaUbNmCQ94BLr?=
+ =?us-ascii?Q?asWtoYN3QgWMlGpeNvPjRL4eoUJVeR0YJAjC8DlwGCuixnY6m2yqrBNDq3Gr?=
+ =?us-ascii?Q?o6F2ZV2L7kMLu9hskyBEDJsOKBxOkvCjXYqiSi4TQ7n4VEOShKP3DgCWVuiK?=
+ =?us-ascii?Q?fAGqLhbKHl6zvVdbjiJ5o6X15nAb51EtmrH4w0RCH0vu1flwau3gieLNfXcB?=
+ =?us-ascii?Q?5sMFZ4qV6pLYaekTrP3KyrXNlasNRZz4syLhlcTNC0jYZM3sYGHR+qtJ2O9B?=
+ =?us-ascii?Q?nB1MUSehJfnFXv8x/xuiKX8ufRDLaiRhSAG/sKqyIeVHvtbv/X1IqrnhgzIM?=
+ =?us-ascii?Q?LBFDFUXrfd1JuyfJaKi/bbmYwmMRhWGIlCR4Nil/Lrq/bSIfkNekiLGZinHW?=
+ =?us-ascii?Q?m4zl9vxHccerCuqXM0iB+9UHVz8aFxJt6w+kId82rr+RMRekrEqocLBzdHgm?=
+ =?us-ascii?Q?1f0CpBPE1TkdyKBBfXldXxrvLGHhzHSt3KswWk4ugHwwAXVb/GRh+0qO633e?=
+ =?us-ascii?Q?kQ+R6UdTR2TUSb+Lk9Ny2/UOALqLI52xAGJkva4S4QY/7va8uE2gKUAI8NDJ?=
+ =?us-ascii?Q?ofN7rDw37UaHjJ4jnA/kRgppS7DGo54CiQBjOolg2xlAJvFd5pMV6FiJsmSs?=
+ =?us-ascii?Q?oWtomFT8vnxxAqjq13pI4Wh0ZxncStTduxc/Glm8sueabVWQzshLb2HagyAr?=
+ =?us-ascii?Q?/pDm+ckQ/z6rlnSbwXuQsiYItq1n5WePPZ9WvXP/t/WYkNQgcxGmAI3H167U?=
+ =?us-ascii?Q?2oReafcMZ5YWuyMV8jkzCqPnGa0t01VNFCbGlEiNvU85zO5GMpzklWaoMJNY?=
+ =?us-ascii?Q?o0aw+HD4GUH2U0UXBU4MEzAb5bM4KXcmMJeB5hETyd67pePAgwlvAPFOapCL?=
+ =?us-ascii?Q?0jDqdG56XLbnnr6MY4GRYYhcDhhc08qvjq6SszsnKv8blvlWxTz6H6U6njCw?=
+ =?us-ascii?Q?zWIEkc81dKWb7HpdVEvY7b08aFASw613GT/8W6qwJv+ik+sIL4SFvxyTLYLy?=
+ =?us-ascii?Q?N1VIBkbdDOJ19fhEP3tI6bUvvL1bKHmkyYB3KrIec50digbl88XumCfSzCqY?=
+ =?us-ascii?Q?tjOwgvjMGGlWc0EHANJR3M9BQ4motBhnn2T1nvA75USXGzAHg0mbuEM54tj/?=
+ =?us-ascii?Q?w/RhQb+VAh/X1DWY57lt143153mBICQpC90jileATFYr5pw6uctaPE3GxjEp?=
+ =?us-ascii?Q?mR4Krm7mbdD0QexdjWdfN+H/XQMh+nDAlrFXAFXjdrUo8GetmEanrzw8+B1o?=
+ =?us-ascii?Q?tOEqzIsbq6YRtOFh4X00jY4+3bJwpykZLWdsgl9HxqcH+AL/KvQqlTnG8o05?=
+ =?us-ascii?Q?9SL2n+xEu/BT1PGDQ7X+MTvLlSiGRvIYnElwXRW2DT+GyJ141cbV90ajcQnU?=
+ =?us-ascii?Q?C+id+G736Ns0KQThFvIyQSSuBicEKWS1ShEgbZOSsoZrONH4C+q4uARkX+Ir?=
+ =?us-ascii?Q?xu85wYs4c0/54FImGLF2tXcWOS6PZr8pRy6usLc8sHDI7LJ+6l/RtfOLNlR9?=
+ =?us-ascii?Q?KOwXOtSBq5VZNL40FY7IdcXRLOpCZ2p7Q1imYtaRIgD/xr6JTdgbbYzjqCTk?=
+ =?us-ascii?Q?JQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa0e3f9f-7a84-4317-cd1a-08ddfab0a277
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2025 14:51:10.3382
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Hg7z5GJ5IY0DLRN5I5UFXHm3LpIEMH911CiBkT7PyH0Ps5UMe64o06cwSacUp42Gr/+4bAv5LWm/jExcahlMM93IBH5qbnyGk9MINNZieAs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB6584
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi All,
 
-The RZ/G3E SoC has 2 GPT's.  Add GPT nodes to RZ/G3E ("R9A09G047") SoC
-DTSI.
+> -----Original Message-----
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> Sent: 21 September 2025 12:19
+> Subject: [PATCH] memory: renesas-rpc-if: Add suspend/resume support
+>=20
+> On RZ/G3E using PSCI, s2ram powers down the SoC. Add suspend/resume callb=
+acks to control spi/spix2
+> clocks.
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  drivers/memory/renesas-rpc-if.c | 56 ++++++++++++++++++++++++++++-----
+>  1 file changed, 48 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc=
+-if.c index
+> 4a417b693080..e1fba157982f 100644
+> --- a/drivers/memory/renesas-rpc-if.c
+> +++ b/drivers/memory/renesas-rpc-if.c
+> @@ -67,6 +67,8 @@ struct rpcif_priv {
+>  	void __iomem *dirmap;
+>  	struct regmap *regmap;
+>  	struct reset_control *rstc;
+> +	struct clk *spi_clk;
+> +	struct clk *spix2_clk;
+>  	struct platform_device *vdev;
+>  	size_t size;
+>  	const struct rpcif_info *info;
+> @@ -1025,16 +1027,14 @@ static int rpcif_probe(struct platform_device *pd=
+ev)
+>  	 * disable it in remove().
+>  	 */
+>  	if (rpc->info->type =3D=3D XSPI_RZ_G3E) {
+> -		struct clk *spi_clk;
+> -
+> -		spi_clk =3D devm_clk_get_enabled(dev, "spix2");
+> -		if (IS_ERR(spi_clk))
+> -			return dev_err_probe(dev, PTR_ERR(spi_clk),
+> +		rpc->spix2_clk =3D devm_clk_get_enabled(dev, "spix2");
+> +		if (IS_ERR(rpc->spix2_clk))
+> +			return dev_err_probe(dev, PTR_ERR(rpc->spix2_clk),
+>  					     "cannot get enabled spix2 clk\n");
+>=20
+> -		spi_clk =3D devm_clk_get_enabled(dev, "spi");
+> -		if (IS_ERR(spi_clk))
+> -			return dev_err_probe(dev, PTR_ERR(spi_clk),
+> +		rpc->spi_clk =3D devm_clk_get_enabled(dev, "spi");
+> +		if (IS_ERR(rpc->spi_clk))
+> +			return dev_err_probe(dev, PTR_ERR(rpc->spi_clk),
+>  					     "cannot get enabled spi clk\n");
+>  	}
+>=20
+> @@ -1063,6 +1063,43 @@ static void rpcif_remove(struct platform_device *p=
+dev)
+>  	platform_device_unregister(rpc->vdev);
+>  }
+>=20
+> +static int rpcif_suspend(struct device *dev) {
+> +	struct rpcif_priv *rpc =3D dev_get_drvdata(dev);
+> +
+> +	if (rpc->info->type =3D=3D XSPI_RZ_G3E) {
+> +		clk_disable_unprepare(rpc->spi_clk);
+> +		clk_disable_unprepare(rpc->spix2_clk);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpcif_resume(struct device *dev) {
+> +	struct rpcif_priv *rpc =3D dev_get_drvdata(dev);
+> +
+> +	if (rpc->info->type =3D=3D XSPI_RZ_G3E) {
+> +		int ret =3D clk_prepare_enable(rpc->spix2_clk);
+> +
+> +		if (ret) {
+> +			dev_err(dev, "failed to enable spi x2 clock: %pe\n",
+> +				ERR_PTR(ret));
+> +			return ret;
+> +		}
+> +
+> +		ret =3D clk_prepare_enable(rpc->spi_clk);
+> +		if (ret) {
+> +			clk_disable_unprepare(rpc->spix2_clk);
+> +			dev_err(dev, "failed to enable spi x2 clock: %pe\n",
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * No change.
-v1->v2:
- * No change.
----
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 184 +++++++++++++++++++++
- 1 file changed, 184 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 47d843c79021..73331874b57c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -587,6 +587,190 @@ channel5 {
- 			};
- 		};
- 
-+		gpt0: pwm@13010000 {
-+			compatible = "renesas,r9a09g047-gpt";
-+			reg = <0 0x13010000 0 0x10000>;
-+			#pwm-cells = <3>;
-+			interrupts = <GIC_SPI 538 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 554 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 562 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 570 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 586 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 594 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 539 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 555 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 563 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 571 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 579 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 587 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 595 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 540 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 548 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 556 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 572 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 580 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 588 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 596 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 541 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 549 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 557 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 573 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 581 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 589 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 597 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 542 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 550 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 558 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 566 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 574 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 582 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 590 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 598 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 543 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 551 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 559 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 567 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 575 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 583 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 591 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 599 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 544 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 552 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 560 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 568 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 584 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 592 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 600 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 553 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 561 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 569 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 577 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 585 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 593 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 601 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "gtcia0", "gtcib0", "gtcic0", "gtcid0",
-+					  "gtcie0", "gtcif0", "gtcih0", "gtcil0",
-+					  "gtcia1", "gtcib1", "gtcic1", "gtcid1",
-+					  "gtcie1", "gtcif1", "gtcih1", "gtcil1",
-+					  "gtcia2", "gtcib2", "gtcic2", "gtcid2",
-+					  "gtcie2", "gtcif2", "gtcih2", "gtcil2",
-+					  "gtcia3", "gtcib3", "gtcic3", "gtcid3",
-+					  "gtcie3", "gtcif3", "gtcih3", "gtcil3",
-+					  "gtcia4", "gtcib4", "gtcic4", "gtcid4",
-+					  "gtcie4", "gtcif4", "gtcih4", "gtcil4",
-+					  "gtcia5", "gtcib5", "gtcic5", "gtcid5",
-+					  "gtcie5", "gtcif5", "gtcih5", "gtcil5",
-+					  "gtcia6", "gtcib6", "gtcic6", "gtcid6",
-+					  "gtcie6", "gtcif6", "gtcih6", "gtcil6",
-+					  "gtcia7", "gtcib7", "gtcic7", "gtcid7",
-+					  "gtcie7", "gtcif7", "gtcih7", "gtcil7";
-+			clocks = <&cpg CPG_MOD 0x31>, <&cpg CPG_MOD 0x31>;
-+			clock-names = "core", "bus";
-+			resets = <&cpg 0x59>, <&cpg 0x5a>;
-+			reset-names = "rst_p", "rst_s";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		gpt1: pwm@13020000 {
-+			compatible = "renesas,r9a09g047-gpt";
-+			reg = <0 0x13020000 0 0x10000>;
-+			#pwm-cells = <3>;
-+			interrupts = <GIC_SPI 602 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 610 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 618 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 626 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 634 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 642 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 650 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 658 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 603 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 611 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 619 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 627 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 635 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 643 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 651 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 659 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 612 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 620 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 628 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 636 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 644 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 652 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 660 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 613 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 621 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 629 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 637 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 645 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 653 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 661 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 606 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 614 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 622 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 630 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 638 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 646 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 654 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 662 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 607 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 615 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 623 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 631 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 639 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 647 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 655 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 663 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 608 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 616 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 632 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 648 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 656 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 664 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 609 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 617 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 625 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 633 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 649 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 657 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 665 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "gtcia0", "gtcib0", "gtcic0", "gtcid0",
-+					  "gtcie0", "gtcif0", "gtcih0", "gtcil0",
-+					  "gtcia1", "gtcib1", "gtcic1", "gtcid1",
-+					  "gtcie1", "gtcif1", "gtcih1", "gtcil1",
-+					  "gtcia2", "gtcib2", "gtcic2", "gtcid2",
-+					  "gtcie2", "gtcif2", "gtcih2", "gtcil2",
-+					  "gtcia3", "gtcib3", "gtcic3", "gtcid3",
-+					  "gtcie3", "gtcif3", "gtcih3", "gtcil3",
-+					  "gtcia4", "gtcib4", "gtcic4", "gtcid4",
-+					  "gtcie4", "gtcif4", "gtcih4", "gtcil4",
-+					  "gtcia5", "gtcib5", "gtcic5", "gtcid5",
-+					  "gtcie5", "gtcif5", "gtcih5", "gtcil5",
-+					  "gtcia6", "gtcib6", "gtcic6", "gtcid6",
-+					  "gtcie6", "gtcif6", "gtcih6", "gtcil6",
-+					  "gtcia7", "gtcib7", "gtcic7", "gtcid7",
-+					  "gtcie7", "gtcif7", "gtcih7", "gtcil7";
-+			clocks = <&cpg CPG_MOD 0x32>, <&cpg CPG_MOD 0x32>;
-+			clock-names = "core", "bus";
-+			resets = <&cpg 0x5b>, <&cpg 0x5c>;
-+			reset-names = "rst_p", "rst_s";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		wdt1: watchdog@14400000 {
- 			compatible = "renesas,r9a09g047-wdt", "renesas,r9a09g057-wdt";
- 			reg = <0 0x14400000 0 0x400>;
--- 
-2.43.0
+Typo 'spi x2'->'spi'. Will fix it in next version.
+
+Cheers,
+Biju
+
+> +				ERR_PTR(ret));
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rpcif_impl rpcif_impl =3D {
+>  	.hw_init =3D rpcif_hw_init_impl,
+>  	.prepare =3D rpcif_prepare_impl,
+> @@ -1125,12 +1162,15 @@ static const struct of_device_id rpcif_of_match[]=
+ =3D {  };
+> MODULE_DEVICE_TABLE(of, rpcif_of_match);
+>=20
+> +static DEFINE_SIMPLE_DEV_PM_OPS(rpcif_pm_ops, rpcif_suspend,
+> +rpcif_resume);
+> +
+>  static struct platform_driver rpcif_driver =3D {
+>  	.probe	=3D rpcif_probe,
+>  	.remove =3D rpcif_remove,
+>  	.driver =3D {
+>  		.name =3D	"rpc-if",
+>  		.of_match_table =3D rpcif_of_match,
+> +		.pm =3D pm_sleep_ptr(&rpcif_pm_ops),
+>  	},
+>  };
+>  module_platform_driver(rpcif_driver);
+> --
+> 2.43.0
 
