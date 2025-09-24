@@ -1,25 +1,27 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561F0139579;
-	Wed, 24 Sep 2025 13:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123C139579;
+	Wed, 24 Sep 2025 13:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718951; cv=none; b=pOJkJ/N5qSMPyqKcdTAVJ4QMB1dP/1eZam8XYTRjbHzCOBxvP91b2BerZJ0hvcHhQL+RB8RXYasDC5s4G/us5SLTRra8IOKs3qsbBCz82LEo1kSwHiuGMFakr5PRh8RR039HksIq3iI2tjzlYDecQo1LWbWt9zA1L5Md3N9IrKE=
+	t=1758718994; cv=none; b=mXSyRQAQW4D2aonx67GOhpwkEEQKqcSSmXvkcPy6Foj8ImD8T95koobgUreZtXypG0sYbj5S+PCCPC3yQ6+b9BFkNnG1Bls/1hcDM3B6/tE6IeZXNcXk4p7GC7BDVf77SwUyxPWdNCTvb8the1c3d0Hv/Sb27r0qV1PMcncPt30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718951; c=relaxed/simple;
+	s=arc-20240116; t=1758718994; c=relaxed/simple;
 	bh=xMq3AUxobbF3UqePYHoPl4poiHEHjtjH3amZN3psfes=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QtU6DpiKc9+mS/FoxM2GsrlPbgqcuoyD+s1hwM3ztk7W0fus6hUX/J/LhO/g7LYk4ML/FmwgRe+yl8iWgYNPnRSXxIZ0BrB3rDe6j6WU7QsyxxZTQuGYa7BkyRtWXzW0JitZ9tgvxV1UAcW/Dfa92qGSC19yFighAWlgQ0NwtCM=
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9aBHFYlD4A7KsjETwppNsFCN0g05RmcvgbEolJQLS2tlQ1OIfqpq2oyYtzRZg1e7ThLtyrfss4You8xOTP46KMzm577PcQf83G0YW+A+FpXWBvtq3fd6E3d7e4OpVg/fa1uOeDe3GiZMbqB8KBnTqg+RsHzQ16qTcP+ub1m3Jo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CD4C4CEE7;
-	Wed, 24 Sep 2025 13:02:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB887C4CEE7;
+	Wed, 24 Sep 2025 13:03:12 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] clk: renesas: cpg-lib: Remove unneeded semicolon
-Date: Wed, 24 Sep 2025 15:02:25 +0200
+Date: Wed, 24 Sep 2025 15:03:09 +0200
 Message-ID: <deb1537b5f96d991332db5c8088bae705f7e17e3.1758718886.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
@@ -29,6 +31,7 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Message-ID: <20250924130309.I3l0RuqjxatrIp1hrrEurVD9L3vLAgNAmsa-glHuW1o@z>
 
 Semicolons after end of function braces are not needed, remove them.
 
