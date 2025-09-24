@@ -1,73 +1,130 @@
-Received: from sender4-g3-154.zohomail360.com (sender4-g3-154.zohomail360.com [136.143.188.154])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8A519066B
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Sep 2025 00:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.154
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758674103; cv=pass; b=McLu6eLRKVyfMoPtH6erOyMIVysCqL8fDcz8mVk30EP+UajOoYcIBDwJx2hk2MQtDPg/XcomIwrWsM+8HN56D15EJBaWediHsajiFaprLj88+X3LuSAAVcEvbthI52SBv8ppZBHkdyuR62jTQirBwZfAWCPWfohyAdKRIF0TBOs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758674103; c=relaxed/simple;
-	bh=99C9f39eMCyxOrO7dD5XkIn4U8NvJyOQ0G7Ujt4BkhM=;
-	h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type; b=Ocria5DjHetol7O9hfI9S4wfoE/iq30Mf5TJdkHWbTK7+Dxcb5QEOPyVY9FDn3y+27SV/1Nao6ZsUnJFmwNE6X48MTtWnCKz76qYwRHb/hYzgiLZrHcNPdxv0rz69j9o8HXpAuN0xPjH4fOLU/SouWgzYsXv2VI+7BrZO7YEW7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maguitec.com.mx; spf=pass smtp.mailfrom=bounce-zem.maguitec.com.mx; dkim=pass (1024-bit key) header.d=maguitec.com.mx header.i=@maguitec.com.mx header.b=MH2JpObI; arc=pass smtp.client-ip=136.143.188.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maguitec.com.mx
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce-zem.maguitec.com.mx
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F88B4317D;
+	Wed, 24 Sep 2025 00:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758675400; cv=none; b=lGT1f38fMHNapNggOeJjBf2FUGGZit31kPwrCWsXlUyNAgZ3c/L/QLowVFio7MDmt80EsNXz3sxBwR58QPk3BzHbVobldgjnBlrUl8cI6ppzLD3hZ8Iwnm/7UPXZkDpy48VShcr82Tcfie/y4rK+zHffeW98wxO3aYXhVpNuxfA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758675400; c=relaxed/simple;
+	bh=h5B4nVDBKkIOt/SYkUqB08hyKfyqHezEC6iHC/y7nIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n18ZecgWT8mUvGmJklAF4qq69jhrtW65L1v1CosJ2+3iTvq0PapJpazmhK2GhwsNYc7tJis5uBse4w5F+GpZ0dpu4zBEost0Cbw92Qefg4ivtOXiUup1mvq54//5TzX3mTHCZOAguU4CgVS6rAghmINCT/HFk4tggZ4mOPlZpJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fD5eA8y8; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=POK553pa; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maguitec.com.mx header.i=@maguitec.com.mx header.b="MH2JpObI"
-ARC-Seal: i=1; a=rsa-sha256; t=1758674101; cv=none; 
-	d=us.zohomail360.com; s=zohoarc; 
-	b=PJZF0JwZjMDOYSAjJ5RPp5SXwuCYjLzZWxLSqZwGU/+m/bW8pNTj2fQAvWbtFKuwr/gScD8yONQDEkG/gPyXkEXWc1UoKm5oBD+XhDI4KlJIWxhXTiyxy20O58fn24Br89wqIsW3FNNYAZigEYoXY6pfrf5+6tmv5ZltcDY3Hd8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=us.zohomail360.com; s=zohoarc; 
-	t=1758674101; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Reply-To:Reply-To:Subject:Subject:To:To:Message-Id:Cc; 
-	bh=99C9f39eMCyxOrO7dD5XkIn4U8NvJyOQ0G7Ujt4BkhM=; 
-	b=XyBEf+fwPDkT8ZJETQ/WcwCnqMxoZwX1mrSi8PkxYdIjdyLkyn2deQDNbreJ6ad9EZuCxZlU92fQaZYdMh1ZtoCqvA9gsmr7zyVxcdgeShGQ7g5tYtIbc3UDsmijVz+TpKiWbH6Kh22rC8behSR+iTFVGjdn53pmWn3QAArHqeE=
-ARC-Authentication-Results: i=1; mx.us.zohomail360.com;
-	dkim=pass  header.i=maguitec.com.mx;
-	spf=pass  smtp.mailfrom=investorrelations+9aaca910-98d8-11f0-8217-5254007ea3ec_vt1@bounce-zem.maguitec.com.mx;
-	dmarc=pass header.from=<investorrelations@maguitec.com.mx>
-Received: by mx.zohomail.com with SMTPS id 1758671653600517.0554598288136;
-	Tue, 23 Sep 2025 16:54:13 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256; b=MH2JpObIF66edSPjO+EiMdCOxd6c7SCJjI+vn1k8UzP4nKB2Hz4LPmbpDF1l00boelj56mIiF4CFIYnFsKm1TSh8JoVuW95arS2LjBiohkrHxoCbSGHOFzOW1aekF3jLWrPKQp9PpU3lmU42vp7sPD2zICPa20UR34ZGYH0VjxY=; c=relaxed/relaxed; s=15205840; d=maguitec.com.mx; v=1; bh=99C9f39eMCyxOrO7dD5XkIn4U8NvJyOQ0G7Ujt4BkhM=; h=date:from:reply-to:to:message-id:subject:mime-version:content-type:content-transfer-encoding:date:from:reply-to:to:message-id:subject;
-Date: Tue, 23 Sep 2025 16:54:13 -0700 (PDT)
-From: Al Sayyid Sultan <investorrelations@maguitec.com.mx>
-Reply-To: investorrelations@alhaitham-investment.ae
-To: linux-renesas-soc@vger.kernel.org
-Message-ID: <2d6f.1aedd99b146bc1ac.m1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621@bounce-zem.maguitec.com.mx>
-Subject: Thematic Funds Letter Of Intent
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fD5eA8y8";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="POK553pa"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cWdhh3BBPz9srM;
+	Wed, 24 Sep 2025 02:56:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758675396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rn/0FMRPcDVRztYJQXYHmmt13ZYGQUVJTDZXjxtKcSU=;
+	b=fD5eA8y8m5zU99AmYz86mPzWr9Kg4viqwePDKh8GT4o9UcVTssZsnceqr2b0UPTszZMbZk
+	6bYlVdlx3S27Qoe6bJtFuSWfWh3v9J3wwTsVf70Q5NwLX+rBBPxLL447cFh+h1PFnYkDtM
+	ka62FczFl33uo7bLgR6IVdfnEyvMwhSZa21nU9GpmccxxkXdbCmu/gI4tL5ivcVe248U/p
+	NXC+c+1/eEZOY8Meg2Wgn/Qy3efkmydLq0U9Tbnk5EwYB1C4jjHYYFsVRPaBTLXH0X5rgU
+	pCmgOrmeb640W2iFfcfelNVzbMiLs3VAZKNX7Q1FupsWFoeOXk5oAX8vJVZwFg==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758675394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rn/0FMRPcDVRztYJQXYHmmt13ZYGQUVJTDZXjxtKcSU=;
+	b=POK553paPx6ow2DEhNXDeXKL2wUvmbR3RR1ffr8JGNHPwk2+K8UzxHpPNhhdah1tFW5I5t
+	NSe2UhD4D1v7Ebvtf1k3RKtQnbQAgG3uuV6L11AC1xTyQHVdk1Gk+0QXshfJlZ1oTBcJqY
+	ufK62zF94p6HZzMHYuDET6ocb9WPdMnGk6C1451QN3THAFvrDxp+WftPFBROQklRI/mtAk
+	Eyh5324OoWQUFv/Unw1MrTg2fJzNVhT3FsfErYLOUsqfhAy4DyFH3NVsE7BbcIsjvUAW8J
+	eOi7BZjuueuIe1LjXHH1p749/glfisZ1CvReFSGmfK+y3boME9Yr0RL/FB5F/w==
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] PCI: rcar-gen4: Assure reset occurs before DBI access
+Date: Wed, 24 Sep 2025 02:55:45 +0200
+Message-ID: <20250924005610.96484-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-content-transfer-encoding-Orig: quoted-printable
-content-type-Orig: text/plain;\r\n\tcharset="utf-8"
-Original-Envelope-Id: 2d6f.1aedd99b146bc1ac.m1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621
-X-JID: 2d6f.1aedd99b146bc1ac.s1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621
-TM-MAIL-JID: 2d6f.1aedd99b146bc1ac.m1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621
-X-App-Message-ID: 2d6f.1aedd99b146bc1ac.m1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621
-X-Report-Abuse: <abuse+2d6f.1aedd99b146bc1ac.m1.9aaca910-98d8-11f0-8217-5254007ea3ec.19978ffc621@zeptomail.com>
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: ruqytg5uht7js9ojxyoyqr3m5pg49pmg
+X-MBO-RS-ID: a0412bb6b45355fdb66
 
-To: linux-renesas-soc@vger.kernel.org
-Date: 24-09-2025
-Thematic Funds Letter Of Intent
+Assure the reset is latched and the core is ready for DBI access.
+On R-Car V4H, the PCIe reset is asynchronized and does not take
+effect immediately, but needs a short time to complete. In case
+DBI access happens in that short time, that access generates an
+SError. Make sure that condition can never happen, read back the
+state of the reset which should turn the asynchronized reset into
+synchronized one, and wait a little over 1ms to add additional
+safety margin.
 
-It's a pleasure to connect with you
+Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+NOTE: This fix could be removed once the matching fix lands in linux-clk
+      https://patchwork.kernel.org/project/linux-clk/patch/20250922162113.113223-1-marek.vasut+renesas@mailbox.org/
+      This fix is implemented to assure PCIe is not broken in case the
+      fix sent to linux-clk is applied asynchronized.
+---
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Having been referred to your investment by my team, we would be=20
-honored to review your available investment projects for onward=20
-referral to my principal investors who can allocate capital for=20
-the financing of it.
+diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+index 365dff6fe7f8f..dd74e46f13933 100644
+--- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
++++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+@@ -212,6 +212,19 @@ static int rcar_gen4_pcie_common_init(struct rcar_gen4_pcie *rcar)
+ 	if (ret)
+ 		goto err_unprepare;
+ 
++	/*
++	 * Assure the reset is latched and the core is ready for DBI access.
++	 * On R-Car V4H, the PCIe reset is asynchronized and does not take
++	 * effect immediately, but needs a short time to complete. In case
++	 * DBI access happens in that short time, that access generates an
++	 * SError. Make sure that condition can never happen, read back the
++	 * state of the reset which should turn the asynchronized reset into
++	 * synchronized one, and wait a little over 1ms to add additional
++	 * safety margin.
++	 */
++	reset_control_status(dw->core_rsts[DW_PCIE_PWR_RST].rstc);
++	fsleep(1000);
++
+ 	if (rcar->drvdata->additional_common_init)
+ 		rcar->drvdata->additional_common_init(rcar);
+ 
+-- 
+2.51.0
 
-kindly advise at your convenience
-
-Best Regards,
-
-Respectfully,
-Al Sayyid Sultan Yarub Al Busaidi
-Director
