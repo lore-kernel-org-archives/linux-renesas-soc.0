@@ -1,137 +1,83 @@
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B3F2749C9;
-	Thu, 25 Sep 2025 05:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB58928468C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Sep 2025 09:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758777146; cv=none; b=mhRBTE0amyvYMnP0Ti5QExJ5CGjBOXiQg0ne+m2zQnH0wV7AXJ3KldW2sNOiB98tCZ1cROyPAbbp+Le4psfWV7l/DVB1Rh0+X3mVZSxGnBuyzMdrMFr0/Z5UiCvqWwBEdLG621d37clPctBCDC1DjSSaSoB7ml9l4x5C06UXotw=
+	t=1758793220; cv=none; b=qfGXcqcArJRc4e+RxSfQ7F41+RiX2PcPagnsnf5LbM1GNzy5MAcwG3Gfsp2nbTJ5fkm94femT+zAzwsz1BoOuZOelH4prqs0jMoX79uBvNdbGAm2hdhA8kka8tECC8SMqPZb7oXUBNMMsmuviayVDoF/7TlDvjt5bkVA9eXAubU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758777146; c=relaxed/simple;
-	bh=AmKGP0SFQudpzE0wY/paaMqioPBUYag+fDjfFcMzHvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSSi2qt+RUXrPRfcNvV4QEEOkfVQZFgfh9Hb4ONPz+5N3Hc9/WAGt1S7UwteoXNCdsYilAEBEFBzyJGhJKiitqzRpD7TIqb4FqTA0CQxS8uiBU2lRdAKB9Ksy62Cwbt08B82xzBooc+1uPv3/3m4ijCGKft9FDzJ1LZn3h4Uopo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=on11+F5v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z/O717V1; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1758793220; c=relaxed/simple;
+	bh=adCNxgKFruXwiC9WhVVvWimxEkESUZD2mVICOOLgnMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CqorA+v/EnrAjpl0MT8ksfzzelwe11QzJriIFla9rslvELlLJA40HU2zdX22MRuPb5obAchOcQFIC61a88hxUkIR7OqXaGMWh0jmQ7mZGlZFaehFTtkZZ7mCyJc83nNIxZmpaurnMpOsPhPlEw1Y1r2QtlNKfCe/FgeoNjQ2NM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VDmmk6I4; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="on11+F5v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z/O717V1"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 604C77A00AC;
-	Thu, 25 Sep 2025 01:12:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 01:12:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1758777142;
-	 x=1758863542; bh=F18HV6w3Twni1U/Lm2MdRg8IOu1XRnlYZ8Z35cH+x6g=; b=
-	on11+F5vJR91oEA+e5tPJLQ+wd21/+BIYhMJ2S+AXHuA4GqSn8jLQKLl5nRyrKO5
-	sQqh1d4mjKTLBkthknIbA7kGlkEiQTkHSD7m0ehzrITYa2RvfeTkInIrVveQ4rXj
-	cSCGA98yxT76+TIcQ4BesEUsWkA/tN8nR/ReC1LOvpzOhARf6R/JTO2d5XaPH5y1
-	jR2YkjhLK9T0xJ6k2VfkVoZb4Fsfr98uD0+gkTypEPv6Rn/D8rHbMQK6lepQMc6m
-	6ifF42VCkOaRC9p/KQ+b/t9PerWKrPjKkGdLOak9lbZqvXCviKsSVy8/wqq6Hcnr
-	7XRaXXNlAZa25XSoXEnVBQ==
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VDmmk6I4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758777142; x=
-	1758863542; bh=F18HV6w3Twni1U/Lm2MdRg8IOu1XRnlYZ8Z35cH+x6g=; b=Z
-	/O717V1SprFLCUlsJKnr6VrQl3zK7J/L7Or7YC0tfGmF53ywo+r369ZnCDSGXFBT
-	36EDemZrWv2shokw4lhWUW1TMnj+ETZ8lrh40zw3i4qmWYguLm7/ozdj4tQDvtji
-	lFHlGi+y+l0XiSXLzdEDs/4qnDY5dD835rNYciR5NAir9gg6QQ/BDBgTQtj/YzAN
-	pld+IRddyTGA8I0klZ22DWbqN0ceLK4Fqjrj7Oc9IONoQ/MOtf4Hf2yb1KvZbgCw
-	tRKtvkjFxhRu8xwqPGOLenbwjKlxXoSBlofR2tOPubKOkJY5u3BfDAO45RnAONjD
-	GBKVopJ4P74pJgbyREVAw==
-X-ME-Sender: <xms:Nc_UaOuCyHdSWexMWmpFInypdv5YnFQAQaT1qaVDmLlgMGbv5qo2SA>
-    <xme:Nc_UaE8KRCaPLY2rNJvEbZtnT9NH59nkYFC64iOyEX8-sH9t7nOx83R-h1d22R8Wt
-    2zaDsrQ4M5igtiTHdRCN5iXaoyI9GS-60YcbSjEthzMHFwAwbBShgY>
-X-ME-Received: <xmr:Nc_UaJ0aJaQUUySfsL4IasQeguN-rYHcLEeNs7HZpIZQzSNaNixOmuyqdH6Z_hmvETEwAoYFCTmQYqI9ABLZVn4wVkb38K4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiheeivdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrg
-    hssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepfefhleelhfffjefg
-    fedugfegjeelhfevheeikefhueelgfdtfeeuhefftddvleeinecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhu
-    nhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohephe
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmhei
-    kehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghroh
-    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:Nc_UaJC8bewA29F6QaT79fT0cYO6jLhRwoIgVEZgN_SG_sTwZm15FA>
-    <xmx:Nc_UaFfxG02h4ge_8TiD_nC-LRhyTXnBYs-FmTzjnKtYqcqzSPh-ww>
-    <xmx:Nc_UaG4tX9Wll-JohR5tsg7j6Q7bZp_bYrySDdJvpvahAtBviPBqGQ>
-    <xmx:Nc_UaIWGgurNL6C6QsVXwnLIDvfi-Vh-4BitkLuVDCFI8Bp54Lpfwg>
-    <xmx:Ns_UaDUvli4gCAVyEJJp-yMj4GDEee6ii_B3f1A_iaJ5pHQbvnLpltOJ>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 01:12:21 -0400 (EDT)
-Date: Thu, 25 Sep 2025 07:12:19 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/sh_cmt: Do not power down
- channels used for events
-Message-ID: <20250925051219.GB1062104@ragnatech.se>
-References: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se>
- <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
- <8672a8c1-26b2-4b65-a30e-a4c3e0f1f32e@linaro.org>
- <20250924093132.GA1062104@ragnatech.se>
- <69f09f55-fd2f-47a9-887a-e9c2cf7c21df@linaro.org>
- <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=4s70JkcfftvaCF9XrXy2cBd/Dwx356YlZSYmzXN5DTQ=; b=VDmmk6
+	I4R/Dh6nNvjQNMdS8NHI9pmBvYGZl/M8jrmkJ7bVfOaLlaWLw96nJvmDuZA9Kjly
+	9sGEbTXimk5dk2ybbXUqy1kWV+QqrpfqBSWMsY2rTlNKHjF1u43gFZ7wg9Uo5znR
+	oGTIz4zYOn8yYhf1ZwCR64jG50BnJeCFKuqL6KPBaYp12WNcT/UuJtwBtQboYhLL
+	tXxOdaRgblNt+9u1u12k7OACExer9Q7uiH8/T204ktao0K5rPfoZeux1BFqTzj1U
+	q7zswz0hXW245tRehHo8zH3A+6HHEBLS0wzJBbJLaDT/fPn+EmSMhXzHM2yih7Lv
+	c1hwBxL2NZxRmi+A==
+Received: (qmail 1813184 invoked from network); 25 Sep 2025 11:40:15 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 11:40:15 +0200
+X-UD-Smtp-Session: l3s3148p1@KZHY9Jw/sMQgAwDPXwQHAL/S9V79e5yL
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 02/12] arm64: dts: renesas: r8a77960: add SWDT node
+Date: Thu, 25 Sep 2025 11:39:41 +0200
+Message-ID: <20250925093941.8800-16-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250925093941.8800-14-wsa+renesas@sang-engineering.com>
+References: <20250925093941.8800-14-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
 
-On 2025-09-24 15:46:45 +0200, Geert Uytterhoeven wrote:
-> Hi Daniel,
-> 
-> On Wed, 24 Sept 2025 at 15:43, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> > On 24/09/2025 11:31, Niklas Söderlund wrote:
-> > > If it's not too late I think we should drop it. The issue this work
-> > > tries to solve is a lockdep blurb which highlights a design issue in the
-> > > driver. But the driver have function properly in the past. So I think
-> > > it's better I work on solving the blurb without any regressions.
-> >
-> > Ok, dropping 2/2 but keeping 1/2 is fine, right ?
-> 
-> 1/2 is a refactoring without any functional impact.
-> Thanks!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks to the both of you! Geert for testing and finding the regression 
-and Daniel for his quick action removing it from the pull request. I 
-will work on a v3 which tries to solve the original issue without the 
-regression.
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+index 6d039019905d..2fd08c002a47 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+@@ -330,6 +330,16 @@ rwdt: watchdog@e6020000 {
+ 			status = "disabled";
+ 		};
+ 
++		swdt: watchdog@e6030000 {
++			compatible = "renesas,r8a7796-wdt", "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6030000 0 0x0c>;
++			interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_CORE R8A7796_CLK_OSC>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 401>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7796",
+ 				     "renesas,rcar-gen3-gpio";
 -- 
-Kind Regards,
-Niklas Söderlund
+2.47.2
+
