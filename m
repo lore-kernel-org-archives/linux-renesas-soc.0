@@ -1,49 +1,33 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18C525EF97
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Sep 2025 09:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7638FA6;
+	Thu, 25 Sep 2025 09:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758793231; cv=none; b=SPhNNGDEv4QiWPXPh28eMwbQVj7XfzMQlaLpF1F3HzEBzdysqOnytlEGFmK2yXIwM5f3oTwUuFeX1AZoZg1bCrUAXX85me0J7LUObTkK/ZgfWj5P3uQM8kaJxFKnD8tvesU5keWI/k5A+tj5gssVCWYm4dxaVQs4WBLxLoAciVo=
+	t=1758794013; cv=none; b=laRvnHM/70VQDPSB9pVn4FQAb+wHuzWYT9r+MDhBlgmvt5ulJuOnMOcNS7RQXvjQj5Pypd2sm/dGptlnUtkmtu1sylmeUhi659x6QfT+w+kxOLrnOMLNyt4yiIWr/Ht+6NtQdit/SbBKpUgUZveQTpACMAjDO8JsU3wtdBqUbXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758793231; c=relaxed/simple;
-	bh=J5SWTwBQj3vZ+uBbVI4a+cRgayYj0KygIoeyuTFXEZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N/cl/bLem7WaAoZDwByp4YWnbheoPPQE92e4Z6ckYW8DHlYYWSArlX8aJ7RlyOC2twKAjWpebbeZOb7GGqqSgItx5Xj5qdJFhlKVXcJ/YCWsixLjefPBn6FRsNNwuN6PsMGIwoxqFwCACiR2KvF1pckA43LDvEdx8JqgjhPdjhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eUpHjrzi; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eUpHjrzi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=iYLiglZoP7UdNQXASDqzp2JktW5slBs7HguEMHDrwfM=; b=eUpHjr
-	ziFTuRyQjrj+OdrsncyuGAyIarOWqUEWHfhKf74/8xgiCBm2bl9e6Ic+vN+PPVJJ
-	4DIEp8PMLKTbtIHs5FSxxjnY8ue5c4z4jTTJcmbb8fdP05EsxIKQeDe+XDidiXSm
-	hGTK6AmDo/VGdrX1GcCa1GEBpidkiN6hF+VIjOB6OcZUb5VYGX2MPR8LJXZcfz4h
-	CfwM8rynzQhHdGHb1dunw4G1wkPgqmsP5XQVTaUeAUDXYbwENekjNkgV3EV6+K2g
-	pf64F3iBAHWf/Ukg8jh0JQVds83zZkqvJRTV+l/rJ6VJYoTpqZ6duJU9dLqFG8Lb
-	JMGo3ctLDEDM/OpA==
-Received: (qmail 1813477 invoked from network); 25 Sep 2025 11:40:22 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 11:40:22 +0200
-X-UD-Smtp-Session: l3s3148p1@yo9F9Zw/XpcgAwDPXwQHAL/S9V79e5yL
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	s=arc-20240116; t=1758794013; c=relaxed/simple;
+	bh=ExBC2jwsDRqkqjG/cxYrmOLzoi1H+ZjZ/3tUYQ5ijSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hfL3jNQa0fM53lVWkoSo7yC1O24lcfVsBYbVwGPlk2W2iyNTBgPs+HC/YKG6Q+JWbRN7gbbr67nvi8XdVlLwo6f/32jzNh5H7SyTnw0RnKLMa7OwLu0WV8d2efLnMr77gu+oe79YI0ogS4gKpJS+piRQ5FMVcH7w8AxWGuxtS/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BDFC4CEF0;
+	Thu, 25 Sep 2025 09:53:30 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 11/12] arm64: dts: renesas: ebisu: mark SWDT as reserved
-Date: Thu, 25 Sep 2025 11:39:50 +0200
-Message-ID: <20250925093941.8800-25-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250925093941.8800-14-wsa+renesas@sang-engineering.com>
-References: <20250925093941.8800-14-wsa+renesas@sang-engineering.com>
+	kernel test robot <lkp@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] clk: renesas: Use IS_ERR() for pointers that cannot be NULL
+Date: Thu, 25 Sep 2025 11:53:24 +0200
+Message-ID: <81260328acb5c78e915ab04afad3901a31c16128.1758793709.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,31 +36,65 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This watchdog can't be used with Linux because the firmware needs it on
-Ebisu boards. Sadly, it doesn't mark the node as reserved, so this is
-added manually here.
+The use of IS_ERR_OR_NULL() suggests that "clk" can be a NULL pointer.
+Hence smatch assumes so, and issues a "passing zero to 'PTR_ERR'"
+warning.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+At these checkpoints, "clk" always contains either a valid pointer, or
+an error pointer (none of the functions called return NULL pointers).
+Hence replace IS_ERR_OR_NULL() by IS_ERR().
+
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202408032025.ve2JMaoV-lkp@intel.com/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/ebisu.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+To be queued in renesas-clk-for-v6.19.
 
-diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-index c4c86344fb90..adc4449b809a 100644
---- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-@@ -858,6 +858,11 @@ &ssi1 {
- 	shared-pin;
- };
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/rzg2l-cpg.c        | 2 +-
+ drivers/clk/renesas/rzv2h-cpg.c        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 7d661beb09a0810b..0289a35e4e6a0e59 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -451,7 +451,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 		break;
+ 	}
  
-+/* Firmware should reserve it but sadly doesn't */
-+&swdt {
-+	status = "reserved";
-+};
-+
- &usb2_phy0 {
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
+-	if (IS_ERR_OR_NULL(clk))
++	if (IS_ERR(clk))
+ 		goto fail;
+ 
+ 	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 15b0b96373b03d16..2923961ec001079a 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1177,7 +1177,7 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+ 		goto fail;
+ 	}
+ 
+-	if (IS_ERR_OR_NULL(clk))
++	if (IS_ERR(clk))
+ 		goto fail;
+ 
+ 	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 0965f3d11213ed22..0509d1e338058f4e 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -591,7 +591,7 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk *core,
+ 		goto fail;
+ 	}
+ 
+-	if (IS_ERR_OR_NULL(clk))
++	if (IS_ERR(clk))
+ 		goto fail;
+ 
+ 	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
 -- 
-2.47.2
+2.43.0
 
