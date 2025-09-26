@@ -1,50 +1,54 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8369F2367D7
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Sep 2025 11:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B26285C91
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Sep 2025 11:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758885746; cv=none; b=Gk+3kThHaVpCc6uxnaT9jOO33fpHF8mxwa5SrIbs7c2VRO+48H6qFU1VWWWQAMeWmAq0iXYKttfQE59HX3ET+XilXkLREa7rhg3KyExGCSBn0oCQwE67GAZkXJpMAa+bwjCik94l58DybyHWjTiilBR8Ia9n3PhwO1LR6T2g1yU=
+	t=1758885746; cv=none; b=FbHrmRmh+ObnnVq00h9XwkW3q7/kUfEw8+/aiTXogc3Fj3YCJgaN1OfglT4QWYnv8gB+V1YoXwa5KpPdRHAYDNt0DRhvb9iW3InJJZSI9cLCHjPuJoZZR/GTQfN3gGjy0HfLGdDVNZNbn/ux5+Jok09sIbVmZX2O1QbqS6Qas/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758885746; c=relaxed/simple;
-	bh=uczCV58L1gcvvoMjv9HOfVYJ9FLAcVJVI6xQzArt9fM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oGza55DC9O39izSDDGdEb7ix9UXUQHWK9i3HyP1EmSdkMUxPvc0hefh4F6ag9UD7+XqGAjwnO9m4WPzK9wv3YgZLMF7xbsM5jbzOaZjW6yyTuyIGSsy96vC3ox9tmXQypZ6MwhQBBkL0gJ0d9mevjYjGM4DL2JVfZbNtEXbkHRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=k0zrELMq; arc=none smtp.client-ip=194.117.254.33
+	bh=/fII+r2GIukj0AWzVwB/NW1U9lbGzXSOP7IJ+61KdUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NiYdcur10Tiv3VgwnlaGGN3xTzsYxufOGBSt47UBvYJLDctOKN7E6rFXZ2GHYStY9vERE0xmL2dIs2khw/iFkTXPY1LThis+pjHkIIUgvwhKigjh8/06eqdYbLui0ViV4S97LC0RaoC3MsiIXmKApoU2IzpmYl47hDJCP589szE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Qrx3vp3H; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="k0zrELMq"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Qrx3vp3H"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=50J6WtzWynpdtU
-	ZwKZIR/vgFfvSioChAy6DscfG8CJA=; b=k0zrELMqujELidyY8reLxD/w2wa3hK
-	tAXfMkql3LHeJ91qnq+rKFtssiNQLl5l2SPoKJPWiGDAY2XtCYvIvfT7CoJpKGZW
-	WaZ/42JJwIQ9VnR8D4gMVzTyIoB9IZorNZu4fHdgZeIVFrL2lOs+uK8ShIERloIi
-	mMFM4DR5ahFcRqPWCj0R2eodTzR8XLxOkepqj0FAfpiPnKzxRi/dab52AJ30EP1N
-	2YdUc+LOugHgFn8H4Pv12HLhpZGy6z0G/hpZosOowZlN708IPvCXAHIr1mUQfn5H
-	Fu0UHoN4Dm3EzXG1N8qVCKVpAqti5FWULjWw+2J/SIpje0gZV2FFFWSQ==
-Received: (qmail 2235202 invoked from network); 26 Sep 2025 13:22:19 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2025 13:22:19 +0200
-X-UD-Smtp-Session: l3s3148p1@oMa0f7I/kosgAwDPXwQHAL/S9V79e5yL
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=+iFA6/afO5JYMvHEQtSsOxvo665zlmWSAYQN7WMLiyI=; b=Qrx3vp
+	3HBKiCHKzstbfcKrs1rj6vFoFvkmXpYJohI7dTrZe85fU68gMIt8sd3omMGKhjdY
+	QhCjwYK7fXRBa08h2N01SyRhY012KONvVMYsw+ByJFtiJvysIp9qpGzWx7PNtVzp
+	xAe8oEx7D86LhmsJT8+oFdGZFsgIAQCuUBWQNtT/Ls8oXwXVXT4UNCduDhe04kqf
+	K91IyqU5Cmc/nLzVMxlD151BsCqazcks0nCFACM1vt185/34/J7AyzjWQ3YxV7g5
+	SY8K2lFlUY4eWyMjvqpg57PQyCtwjzktZiBCkZBdp+k9s3702L4nT009ie0vPeTJ
+	S++bz7fJRxHjzWpw==
+Received: (qmail 2235325 invoked from network); 26 Sep 2025 13:22:21 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2025 13:22:21 +0200
+X-UD-Smtp-Session: l3s3148p1@K6bVf7I/oIsgAwDPXwQHAL/S9V79e5yL
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
 	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-watchdog@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 0/4] dt-bindings: watchdog: factor out RZ watchdogs
-Date: Fri, 26 Sep 2025 13:22:12 +0200
-Message-ID: <20250926112218.28723-1-wsa+renesas@sang-engineering.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/4] dt-bindings: watchdog: factor out RZ/N1 watchdog
+Date: Fri, 26 Sep 2025 13:22:14 +0200
+Message-ID: <20250926112218.28723-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250926112218.28723-1-wsa+renesas@sang-engineering.com>
+References: <20250926112218.28723-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -53,36 +57,97 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-renesas,wdt.yaml describes lots of different hardware blocks which
-results in complex if-structs. Factor out the different IP blocks into
-their own files. I took over maintainership of the files for RZ/A and
-RZ/N1 but if someone else wants them, very fine with me. RZ/G2L and
-RZ/V2H have the original driver contributors as maintainers (Hi Biju, Hi
-Prabhakar :)). If these need changes, please let me know, too.
+Renesas created different watchdog IPs but they are all handled in the
+same binding documentation. This leads to a lot of conditional handling
+which makes it unnecessarily hard to add new items. Factor out the RZ/N1
+watchdog to make handling easier.
 
-Passes 'dt_binding_check' and 'dtbs_check' after each patch here.
-Looking forward to comments.
-
-Happy hacking!
-
-
-Wolfram Sang (4):
-  dt-bindings: watchdog: factor out RZ/A watchdog
-  dt-bindings: watchdog: factor out RZ/N1 watchdog
-  dt-bindings: watchdog: factor out RZ/G2L watchdog
-  dt-bindings: watchdog: factor out RZ/V2H(P) watchdog
-
- .../watchdog/renesas,r9a09g057-wdt.yaml       | 113 +++++++++++++
- .../bindings/watchdog/renesas,rza-wdt.yaml    |  51 ++++++
- .../bindings/watchdog/renesas,rzg2l-wdt.yaml  | 111 +++++++++++++
- .../bindings/watchdog/renesas,rzn1-wdt.yaml   |  49 ++++++
- .../bindings/watchdog/renesas,wdt.yaml        | 155 +-----------------
- 5 files changed, 330 insertions(+), 149 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,r9a09g057-wdt.yaml
- create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,rza-wdt.yaml
- create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../bindings/watchdog/renesas,rzn1-wdt.yaml   | 49 +++++++++++++++++++
+ .../bindings/watchdog/renesas,wdt.yaml        |  6 ---
+ 2 files changed, 49 insertions(+), 6 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
 
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+new file mode 100644
+index 000000000000..01eab6cc1110
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/renesas,rzn1-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 Watchdog Timer (WDT) Controller
++
++maintainers:
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a06g032-wdt    # RZ/N1D
++      - const: renesas,rzn1-wdt      # RZ/N1
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++allOf:
++  - $ref: watchdog.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    wdt0: watchdog@40008000 {
++            compatible = "renesas,r9a06g032-wdt", "renesas,rzn1-wdt";
++            reg = <0x40008000 0x1000>;
++            interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
++            clocks = <&sysctrl R9A06G032_CLK_WATCHDOG>;
++    };
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index 8a25e0c6271f..12ba07781763 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -13,11 +13,6 @@ maintainers:
+ properties:
+   compatible:
+     oneOf:
+-      - items:
+-          - enum:
+-              - renesas,r9a06g032-wdt    # RZ/N1D
+-          - const: renesas,rzn1-wdt      # RZ/N1
+-
+       - items:
+           - enum:
+               - renesas,r9a07g043-wdt    # RZ/G2UL and RZ/Five
+@@ -134,7 +129,6 @@ allOf:
+             contains:
+               enum:
+                 - renesas,r9a09g077-wdt
+-                - renesas,rzn1-wdt
+     then:
+       required:
+         - power-domains
 -- 
 2.47.2
 
