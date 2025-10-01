@@ -1,365 +1,185 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9552E2296
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Oct 2025 11:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445932BEC45
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Oct 2025 12:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319369; cv=none; b=Ixrg6j1Fv6U95zggtr3hfGiDqG69Syvw+bRiX5rZGbtJDlG/VKT+cDhlx1Pc0FKkDZ2aBXnaQDUrwRT/dLJjSgbj82JaHw1DNmj0zTkknCbEzmQqJM6qfMSK6/4kVt1tSUm9t7x2d4RIRsouLssujrx3k/apw2/8Pwekq2yiNDs=
+	t=1759321428; cv=none; b=hgXyxvYO5s0DecKA5Dw+N9Dyc72LeOjdl3CCi1NN9TQ0Ox/SJb5R+oiO+SNqh6TTNRTL/KZ0Pq8TV5psCiGCdVRA+IOhwbldaPQVmlrFAGM/T3HTLMVmMRbs+iAzBQ+36kMkie+J8J3FLDJCzC8YdM9+0KL1fDE7pSg0m/jslkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319369; c=relaxed/simple;
-	bh=H8+zS/sRVPe61ZpvXMAM9MYNlz8rpJapyLZg66DsQ70=;
+	s=arc-20240116; t=1759321428; c=relaxed/simple;
+	bh=gBGrabJtd45mAFEOoJqVzc2XuZnoyBrQ0XCWSCj9+dc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HCYtPTJUCXpeKd5kq7t6XdQVBKMiuRfOwuQWLWy1Pt1OWadWPjfcoQdPzgQBJWdEu5vr5OS/OqOrZhft+FZVXzre3Yw+TjYaK0QGZ8BLY5x28iV2FH7jnLPnI27boAYgMDcy9v6WD2xTX9qpIVG4fK4Ga2B/DwHYFlOWm16anqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=Zop1/cOiNu1Otbokzg6/Ai2nixa4pkD99ITIjb0j3Esd2w98X3NYLOczRAZryMrar5Z/STg6KHxAYvN6x3Ainck0TeZCXvarlLtNgEORVryogwsMxamViwE4D9RQu69jEJ31fPwusLH6OhQWUXFMo+F5gvj3sZS5jVEn+44fbOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jOehcEEU; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8e3239afdf2so4192083241.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Oct 2025 04:49:27 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOehcEEU"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e30ef74b0so49545095e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Oct 2025 05:23:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759321425; x=1759926225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBGrabJtd45mAFEOoJqVzc2XuZnoyBrQ0XCWSCj9+dc=;
+        b=jOehcEEU5TosO8iUkUmjVQmskcVwSuE5WbvHzJYKgA1Tm3waT4pJmh2CZm5rgCo9X3
+         c4xmGlF0pqD6SURSO5LoNoZPYjEAwhTprjRmOkqS8th2EmBBDzIAiQs1oVljSobgKddD
+         vQ61D947KC6eup62GgiDprsX9MnqMKJBwwkzpuWc4AQebeGVG6+zcDAPYw9r7O4yEJd0
+         75fJcT1g/IExU+LM4i/dG2S8fvHWBnV0Mu2EnIxeL26VYit1nZBzR6u6sHVKi5N6zUsz
+         AhxHGvQes3LBXTnVV8Uy2D2bqSKXakToY+GoPFxPc/AcHYkaagoTbFMxTLYb0iiZ2yq4
+         5+Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759319366; x=1759924166;
+        d=1e100.net; s=20230601; t=1759321425; x=1759926225;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/g40kIFvUrvIf0YJRnutJHF4Olw96C3WYwPcLV8XYQ0=;
-        b=J3nLgiJZVPPQiPju5z3y8PEijgZUXzmfazagbQAQWPz0yN520o6PoSNSBjH70rnhMF
-         ynaSRAr+K+MDhtFmrWuHakkQHq2vaYk7hdMIZHeWNN4lX0tsuB6Otdu4MVzm48v1mIcm
-         0z6Akuz82romletKam2yEQmCdh8OBTuJ+e6O1WHSGyg/XQJ0qe234/vyHGkPOhhyKjNY
-         CoRrVnQ+451zoVBP3BGr+tu/2s7UW0V4tFQlUjc/SvFhZtnCQvbu7tApOrDVnAQFvAoI
-         iqWX3rOyq1daTLgJLR29QdJNk3U5PRiCj9B3jXSt3Q+i5jqynlUFE1SA/LyQpjcatmRm
-         RGxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAnmZWpuyYVNIiKHbmP32310smOMaqbdGf6nxf7+yzVlP84OnnCqBXcr0p67bnqNuvuHhxWfrICElt0Q5f7M1Fow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI6R2FawORaTUSXb8f06Z+wVXhkKx9Ecneivt2wJCINh12zWPi
-	uE6lB9066y9Bm0UDvgK4Wg1OzBvsRTeRY7MZEC+mvIcQWxvFKRIGWpNQf5vppUEZ
-X-Gm-Gg: ASbGncsJqJ26vCG6CAU9yBomUKQjz2nqrdwH1o0lv2LPSltDZPrA7nQEylr1d2+lSvt
-	p7LePSthLQgA2/C6avGLF8l1Vw24eEmyaEmwZutnfuA5QQa1G/9y86NXPNICSfsoe+23utJ6Bts
-	rGdAupGPuFKoDmPC1gvXcklYst89fvcvEjeIartWGqPRpZ7if0QcVgZz+93cQQoe97wDnraYNKI
-	qlh2GnfscfNCpwnI1vdY2kXOnETFZZMlYmWafrZScR3yjMZha0sOHGo1JepCTfhaUg0k2d6LEPc
-	fGI2Jdk88A7BASZmyM5u7KTiNuXOyr+0gc0mF+AQorkrWDp9QLrh1ea5ir2KP0o46qSiwJnBr1p
-	AQJYRXLPud8Dm3GXEqxIh/xIxdGvVD53AzRemWx6gpPLmxKdIklTWHkNEMtblEjEV/Hp5rFE5V5
-	4SniwpCKDX
-X-Google-Smtp-Source: AGHT+IEF33lEkyIXjuuVulP6VGJkOc7q4ME4RD1mHK9oLU1R6cdorXxPbxM78+6f0k6UXm95TJTGrg==
-X-Received: by 2002:a05:6102:6c6:b0:529:96b9:1fce with SMTP id ada2fe7eead31-5d3fe6de43fmr1302152137.27.1759319365859;
-        Wed, 01 Oct 2025 04:49:25 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-916d8784984sm3374615241.10.2025.10.01.04.49.25
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 04:49:25 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-89018ec3597so4015927241.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Oct 2025 04:49:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3exbW6nIKmP09BteZqJro46ekeqfB7iizblBhStprgCVEt0MaiG/mKkOc9Co9c8lt22KzAno/RjcUB8yD7+wnFg==@vger.kernel.org
-X-Received: by 2002:a05:6102:4421:b0:530:f657:c25 with SMTP id
- ada2fe7eead31-5d3fe4f9f2dmr1325072137.5.1759319364716; Wed, 01 Oct 2025
- 04:49:24 -0700 (PDT)
+        bh=gBGrabJtd45mAFEOoJqVzc2XuZnoyBrQ0XCWSCj9+dc=;
+        b=On7q+FT85qtLc1YnLDS9JDh3yT3H1R9EFb4W3M0VcDMwYKYEtIOxV4F4/ILtlc4LnZ
+         X/GtZIeSt3IIbdczWoRHtvu+QAyMJB000nU6SvBXQFRf/L6w49L//Al87mitsY19e7OK
+         c1QlA4d8KPuFMuYmGNhvt1egqOpHbmq1i9U9ap9bAsYg/ahELWLXsfaUe3vuaAjcC6KT
+         3V+LUNPP3C2HC5MuFSPHQixAvB9CUgErHTEVP8uDo8QgMzY+HNQgIf0O4bttcb2o0fOG
+         UbNwTcy0sDlS2A2qFXe171d4IGi1tAOXca5J5mFjFXx6dKpGZQLC4slo03zhpS4clErf
+         iJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTViS+T5Cjv3WnbtHF7vpmJ7cI4LtuYqrdNx89zX7z0bl0MOPnZ6S+A2P1mSfodexTIZ4LwXrlVTkYh7i7QQI+JA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9bVQegvAsNtjsGPTeLnoM53sJzgcMVzWTums+D5CaeOkOSQ3w
+	Z9ZKpMAg2/GmrT26mh3ilxPifBs58ElKNnfvj1eGYklafNq27pyhbq7WEkBaSZ4EPiGjHCi9/sn
+	87OQDczB//tWkGB63+nhvbVIFxz5rKRM=
+X-Gm-Gg: ASbGncvF38pEWNTPZEtvpCMX652xZWFq0nPHnBKjxxXL8NBRI/Xx37mEhfwckzPc9lE
+	MgH+Xek01m4tmqmtzlDlD/PGinS1gpzg7Whtenjy1jPtfUHYP8qqyuqr/pKKWrRY57WD9kdadY+
+	Dbul1mR1axcCtencqaYfkRe+DaBLKPNunlnheB6+X7yM6E6SQ7VKxsaFP3EvdbXby0eZmDeW3BE
+	6nHYRiI73j+IjO6QNHOr3DPtF4LBoCW
+X-Google-Smtp-Source: AGHT+IG6w9L1LgThnpefnQm9I8OUIomLSyIMrWw3z8rhw6qFvyxmd8vXZTGsJ+SjoSiCjhbCQK0VPlSPMN9tMkkTwbU=
+X-Received: by 2002:a05:600c:820c:b0:45b:9afe:ad48 with SMTP id
+ 5b1f17b1804b1-46e6127a4bemr35253245e9.16.1759321424233; Wed, 01 Oct 2025
+ 05:23:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
- <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com> <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com>
- <4c28cd58-fd0d-1dff-ad31-df3c488c464f@linux.intel.com>
-In-Reply-To: <4c28cd58-fd0d-1dff-ad31-df3c488c464f@linux.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Oct 2025 13:49:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUbaQDXsowZETimLJ-=gLCofeP+LnJp_txetuBQ0hmcPQ@mail.gmail.com>
-X-Gm-Features: AS18NWBKGt9F5KUksrguQremVOx7wE8zhiLZILP_32pEjHukGAyY-11nzHTkZUs
-Message-ID: <CAMuHMdUbaQDXsowZETimLJ-=gLCofeP+LnJp_txetuBQ0hmcPQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNSET
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com> <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
+ <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
+In-Reply-To: <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 1 Oct 2025 13:23:17 +0100
+X-Gm-Features: AS18NWAI4MLtfZreV3_pLNGPAC-_jcQVSy6mD_NW1R1LCvbGTlMIsTFaxBIK_zI
+Message-ID: <CA+V-a8tosiUkhaWGoZ9yTBe1Kyy0DLUGreqReH2NOWmVeS5_pw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ilpo,
+Hi Tomi,
 
-On Tue, 30 Sept 2025 at 18:32, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
-> On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
-> > On Fri, 26 Sept 2025 at 04:40, Ilpo J=C3=A4rvinen
-> > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > PNP resources are checked for conflicts with the other resource in th=
+On Thu, Sep 11, 2025 at 3:26=E2=80=AFPM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+>
+> Hi,
+>
+> On 11/09/2025 11:14, Lad, Prabhakar wrote:
+> > Hi Tomi,
+> >
+> > On Wed, Sep 10, 2025 at 1:30=E2=80=AFPM Tomi Valkeinen
+> > <tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 03/09/2025 19:17, Prabhakar wrote:
+> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >>>
+> >>> Add support for PLLDSI and PLLDSI divider clocks.
+> >>>
+> >>> Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and shar=
 e
-> > > system by quirk_system_pci_resources() that walks through all PCI
-> > > resources. quirk_system_pci_resources() correctly filters out resourc=
-e
-> > > with IORESOURCE_UNSET.
-> > >
-> > > Resources that do not reside within their bridge window, however, are
-> > > not properly initialized with IORESOURCE_UNSET resulting in bogus
-> > > conflicts detected in quirk_system_pci_resources():
-> > >
-> > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0x1fffffff 64bit pref]
-> > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0xdfffffff 64bit pref]: co=
-ntains BAR 2 for 7 VFs
-> > > ...
-> > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x1ffffffff 64bit pref]
-> > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x3dffffffff 64bit pref]: =
-contains BAR 2 for 31 VFs
-> > > ...
-> > > pnp 00:04: disabling [mem 0xfc000000-0xfc00ffff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff] because it overlaps =
-0000:00:02.0 BAR 9 [mem 0x00000000-0xdfffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfedc0000-0xfedc7fff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfeda0000-0xfeda0fff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfeda1000-0xfeda1fff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff disabled] because it =
-overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfed20000-0xfed7ffff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfed90000-0xfed93fff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfed45000-0xfed8ffff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > pnp 00:05: disabling [mem 0xfee00000-0xfeefffff] because it overlaps =
-0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > >
-> > > Mark resources that are not contained within their bridge window with
-> > > IORESOURCE_UNSET in __pci_read_base() which resolves the false
-> > > positives for the overlap check in quirk_system_pci_resources().
-> > >
-> > > Fixes: f7834c092c42 ("PNP: Don't check for overlaps with unassigned P=
-CI BARs")
-> > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> >>> PLLDSI related data structures, limits, and algorithms between the
+> >>> RZ/V2H(P) CPG and DSI drivers.
+> >>>
+> >>> The DSI PLL is functionally similar to the CPG's PLLDSI, but has slig=
+htly
+> >>> different parameter limits and omits the programmable divider present=
+ in
+> >>> CPG. To ensure precise frequency calculations, especially for milliHz=
+-level
+> >>> accuracy needed by the DSI driver, the shared algorithm allows both d=
+rivers
+> >>> to compute PLL parameters consistently using the same logic and input
+> >>> clock.
+> >>
+> >> Can you elaborate a bit more why a new clock APIs are needed for the D=
+SI
+> >> PLL? This is the first time I have heard a DSI TX (well, any IP) requi=
+re
+> >> more precision than Hz. Is that really the case? Are there other reaso=
+ns?
+> >>
+> > Im pasting the same reply from Fab
+> > (https://lore.kernel.org/all/TYCPR01MB12093A7D99392BC3D6B5E5864C2BC2@TY=
+CPR01MB12093.jpnprd01.prod.outlook.com/#t)
+> > for the similar concern.
 > >
-> > Thanks for your patch, which is now commit 06b77d5647a4d6a7 ("PCI:
-> > Mark resources IORESOURCE_UNSET when outside bridge windows") in
-> > linux-next/master next-20250929 pci/next
-
-> > This replaces the actual resources by their sizes in the boot log on
-> > e.g. on R-Car M2-W:
-> >
-> >      pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
-> >      pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff ->=
- 0x00ee080000
-> >      pci-rcar-gen2 ee090000.pci: PCI: revision 11
-> >      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
-> >      pci_bus 0000:00: root bus resource [bus 00]
-> >      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
-> >      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional =
-PCI endpoint
-> >     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
-> >     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
+> > The PLL found inside the DSI IP is very similar to the PLLDSI found in
+> > the CPG IP block, although the limits for some of the parameters are
 >
-> What is going to be the parent of these resources? They don't seem to fal=
-l
-> under the root bus resource above in which case the output change is
-> intentional so they don't appear as if address range would be "okay".
-
-From /proc/iomem:
-
-    ee080000-ee08ffff : pci@ee090000
-      ee080000-ee080fff : 0000:00:01.0
-        ee080000-ee080fff : ohci_hcd
-      ee081000-ee0810ff : 0000:00:02.0
-        ee081000-ee0810ff : ehci_hcd
-    ee090000-ee090bff : ee090000.pci pci@ee090000
-    ee0c0000-ee0cffff : pci@ee0d0000
-      ee0c0000-ee0c0fff : 0001:01:01.0
-        ee0c0000-ee0c0fff : ohci_hcd
-      ee0c1000-ee0c10ff : 0001:01:02.0
-        ee0c1000-ee0c10ff : ehci_hcd
-
-> When IORESOURCE_UNSET is set in a resource, %pR does not print the start
-> and end addresses.
-
-Yeah, that's how I found this commit, without bisecting ;-)
-
-> >     +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
-> >     +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
-> >      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional =
-PCI endpoint
-> >     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-> >     +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+> Thanks. As discussed on chat, this confused me: There's a PLLDSI on CPG,
+> which doesn't provide a DSI clock, but a pixel clock. And then there's a
+> PLL in the DSI D-PHY which provides the DSI clock.
 >
-> For this resource, it's very much intentional. It's a zero-based BAR whic=
-h
-> was left without IORESOURCE_UNSET prior to my patch leading to others par=
-t
-> of the kernel to think that resource range valid and in use (in your
-> case it's so small it wouldn't collide with anything but it wasn't
-> properly set up resource, nonetheless).
+> A few comments overall some for this driver but also the dsi driver:
 >
-> >      pci 0000:00:01.0: supports D1 D2
-> >      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
-> >      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional =
-PCI endpoint
-> >     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-> >     +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
+> This hardcodes the refclk rate to 24 MHz with RZ_V2H_OSC_CLK_IN_MEGA in
+> the header file. That doesn't feel right, shouldn't the refclk rate come
+> from the clock framework with clk_get_rate()?
 >
-> And this as well is very much intentional.
+From the CPG perspective we could get the info with clk_get_rate() but
+from the DSI part we can't. So to keep it consistent I will keep this
+macro as is.
+
+> While not v2h related, I think it would be good to have a comment in the
+> dsi driver about how the g2l hs clock rate is derived directly from the
+> pixel clock.
 >
-> >      pci 0000:00:02.0: supports D1 D2
-> >      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
-> >      PCI: bus0: Fast back to back transfers disabled
-> >      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
-> >      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
-> >      pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
-> >
-> > Is that intentional?
+> I still don't see why all the code here has to be in a header file.
+> Usually headers contain only a few lines of inline code. Is there a
+> reason why it's not in a .c file?
 >
-> There's also that pci_dbg() in the patch which would show the original
-> addresses (print the resource before setting IORESOURCE_UNSET) but to see
-> it one would need to enable it with dyndbg=3D... Bjorn was thinking of
-> making that pci_info() though so it would appear always.
+Ok, I will move the functions to rzv2h-cpg.c and export the symbols
+and have the declarations in include/linux/clk/renesas.h.
+
+Geert are you OK with the above?
+
+> And last, we discussed the milliHz a bit on chat, you said you'll come
+> back to that. I don't think it's a blocker, but I'm very curious why
+> exactly it is needed in the DSI. +/- 12 Hz with, say 3.6GHz clock does
+> not sound very much to me, and there should be enough time every line
+> during blanking period to empty any fifos and "catch up".
 >
-> Was this the entire PCI related diff? I don't see those 0000:00:00.0 BARs
-> getting assigned anywhere.
+> In fact, if the DSI is so picky about the rate, I find the HW design
+> odd: in g2l the pixel clock and the DSI clock come from a single source,
+> which keeps them neatly in sync. If that is required, why change the
+> design here so that the DSI PLL is independent of the pixel clock, yet
+> still the DSI PLL must be programmed to be exactly matched to the pixel
+> clock.
+>
+As discussed on irc we have to live with mHz solution as the HW is picky.
 
-The above log is almost complete (lacked enabling the device afterwards).
-
-AFAIU, the BARs come from the reg and ranges properties in the
-PCI controller nodes;
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm/boot/dts/renesas/r8a=
-7791.dtsi#L1562
-
-The full related log for this device, for both instances, with the pci_dbg(=
-)
-changes to pci_info():
-
-     pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
-     pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
--> 0x00ee080000
-     pci-rcar-gen2 ee090000.pci: PCI: revision 11
-     pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
-     pci_bus 0000:00: root bus resource [bus 00]
-     pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
-     pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
-PCI endpoint
-    -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
-    -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
-    +pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]: no initial
-claim (no window)
-    +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
-    +pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-initial claim (no window)
-    +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
-     pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-PCI endpoint
-    -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-    +pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-claim (no window)
-    +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
-     pci 0000:00:01.0: supports D1 D2
-     pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
-     pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-PCI endpoint
-    -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-    +pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-claim (no window)
-    +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
-     pci 0000:00:02.0: supports D1 D2
-     pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
-     PCI: bus0: Fast back to back transfers disabled
-     pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
-     pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
-     pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
-     pci 0000:00:01.0: enabling device (0140 -> 0142)
-     pci 0000:00:02.0: enabling device (0140 -> 0142)
-     pci-rcar-gen2 ee0d0000.pci: host bridge /soc/pci@ee0d0000 ranges:
-     pci-rcar-gen2 ee0d0000.pci:      MEM 0x00ee0c0000..0x00ee0cffff
--> 0x00ee0c0000
-     pci-rcar-gen2 ee0d0000.pci: PCI: revision 11
-     pci-rcar-gen2 ee0d0000.pci: PCI host bridge to bus 0001:01
-     pci_bus 0001:01: root bus resource [bus 01]
-     pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0cffff]
-     pci 0001:01:00.0: [1033:0000] type 00 class 0x060000 conventional
-PCI endpoint
-    -pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]
-    -pci 0001:01:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
-    +pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]: no initial
-claim (no window)
-    +pci 0001:01:00.0: BAR 0 [mem size 0x00000400]
-    +pci 0001:01:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-initial claim (no window)
-    +pci 0001:01:00.0: BAR 1 [mem size 0x40000000 pref]
-     pci 0001:01:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-PCI endpoint
-    -pci 0001:01:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-    +pci 0001:01:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-claim (no window)
-    +pci 0001:01:01.0: BAR 0 [mem size 0x00001000]
-     pci 0001:01:01.0: supports D1 D2
-     pci 0001:01:01.0: PME# supported from D0 D1 D2 D3hot
-     pci 0001:01:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-PCI endpoint
-    -pci 0001:01:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-    +pci 0001:01:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-claim (no window)
-    +pci 0001:01:02.0: BAR 0 [mem size 0x00000100]
-     pci 0001:01:02.0: supports D1 D2
-     pci 0001:01:02.0: PME# supported from D0 D1 D2 D3hot
-     PCI: bus1: Fast back to back transfers disabled
-     pci 0001:01:01.0: BAR 0 [mem 0xee0c0000-0xee0c0fff]: assigned
-     pci 0001:01:02.0: BAR 0 [mem 0xee0c1000-0xee0c10ff]: assigned
-     pci_bus 0001:01: resource 4 [mem 0xee0c0000-0xee0cffff]
-     pci 0001:01:01.0: enabling device (0140 -> 0142)
-     pci 0001:01:02.0: enabling device (0140 -> 0142)
-
-> You didn't report any issues beyond textual changes in the log, I suppose
-> there were none beyond the log differences?
-
-Sorry, I should have done a little bit more testing.  This is the funny
-on-chip Renesas R-Car Gen2 PCI host controller with integrated OHCI/EHCI
-PCI devices.  I don't have any USB devices connected, but "lspci -v"
-output is the same before/after, and the OHCI/EHCI drivers probe fine.
-
-BTW, I am seeing similar changes on rts7751r2d (qemu SuperH target r2d):
-
-     PCI host bridge to bus 0000:00
-     pci_bus 0000:00: root bus resource [io  0x1000-0x3fffff]
-     pci_bus 0000:00: root bus resource [mem 0xfd000000-0xfdffffff]
-     pci_bus 0000:00: No busn resource found for root bus, will use [bus 00=
--ff]
-     pci 0000:00:00.0: [1054:350e] type 00 class 0x060000 conventional
-PCI endpoint
-     pci 0000:00:00.0: [Firmware Bug]: BAR 0: invalid; can't size
-     pci 0000:00:00.0: [Firmware Bug]: BAR 1: invalid; can't size
-     pci 0000:00:00.0: [Firmware Bug]: BAR 2: invalid; can't size
-     pci 0000:00:02.0: [10ec:8139] type 00 class 0x020000 conventional
-PCI endpoint
-    -pci 0000:00:02.0: BAR 0 [io  0x0000-0x00ff]
-    -pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x000000ff]
-    -pci 0000:00:02.0: ROM [mem 0x00000000-0x0007ffff pref]
-    +pci 0000:00:02.0: BAR 0 [io  0x0000-0x00ff]: no initial claim (no wind=
-ow)
-    +pci 0000:00:02.0: BAR 0 [io  size 0x0100]
-    +pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x000000ff]: no initial
-claim (no window)
-    +pci 0000:00:02.0: BAR 1 [mem size 0x00000100]
-    +pci 0000:00:02.0: ROM [mem 0x00000000-0x0007ffff pref]: no
-initial claim (no window)
-    +pci 0000:00:02.0: ROM [mem size 0x00080000 pref]
-     pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
-     pci 0000:00:02.0: ROM [mem 0xfd000000-0xfd07ffff pref]: assigned
-     pci 0000:00:02.0: BAR 0 [io  0x1000-0x10ff]: assigned
-     pci 0000:00:02.0: BAR 1 [mem 0xfd080000-0xfd0800ff]: assigned
-
-All of these look legitimate to me, as they all start at zero.
-
-Thanks!
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
