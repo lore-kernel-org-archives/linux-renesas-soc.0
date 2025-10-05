@@ -1,166 +1,159 @@
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DC5A935;
-	Sun,  5 Oct 2025 14:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4428B4F0
+	for <linux-renesas-soc@vger.kernel.org>; Sun,  5 Oct 2025 14:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759673973; cv=none; b=ns+WaQhI/vfFGmuA3qCV3m9B9E7AEqU6IbrjGOzJnjgABGjpFl1NJJbIBrVKXrb6LiRmTew+QACXhjULOL59VRRGowwLH/jDGkn5C8qtEmGcg3dEU2Zm73VxrKhPCrPk3chXIyAJgK80PEDhqliirkpBkoCh4oN9MTBYP0u3VaY=
+	t=1759675487; cv=none; b=b4z0XazjkvRerOH8uunuEVosLxrQLB4Lkm4/7e0HuEyxSDlmhvnk+IvPFSuZ6fXwclNOy4CRG+ijNPBVwbzXsgaIMaionnbl0WHcUoGiuEzBSSTsER9YwFWvidGZ5RwVnHXgGnH7JFkokQbdl/VRKFWpsEqVkr9+ZgQX34W0EYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759673973; c=relaxed/simple;
-	bh=mFSXTfQU3yOeCglPcP/To78XvVk1YPQn343Bx/mNRyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uetMOBIDEWgvU/N9kG0Q6t9Mlbtgy40pqz5hFW3IUNVZd7PCGel0RRe2K7Gkg+TkdrMsHF6J71RwpEE3NpeGPyxmL2Fl7hG0l6R8bTopM6XwCgy348emX9WkX2KwaY4yovdPO+HYaN6giJc3QR0LxRDswxUYK84jlWo9A2YwVII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=dFzZmemy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gbtx3Pnm; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1759675487; c=relaxed/simple;
+	bh=R3BsoU5vTur4gpERCs56DCpVw4WkYldf14s87O3YRP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nPm725hKj9zZJC4tqY8nRAJkGKcXgN5uG5qtSEo4JyU/lt6YIJ6CqTzHZwuW7E5xkQdVK7Yios/zdWUsagP99YLZvAfPbfBdZ53qEiBpcHD5mGV9iR0pY0P5+aoCsNNxtOG9015ZTSubhVYIVITgI5+AE9/rvKijMzOxM3jyF+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MtaFnIbz; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="dFzZmemy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gbtx3Pnm"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DD39014000B5;
-	Sun,  5 Oct 2025 10:19:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 05 Oct 2025 10:19:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759673970;
-	 x=1759760370; bh=jA59cn6swCrXo1Qb1s4scUzP1SMSDzyk7A4NjSUgh6c=; b=
-	dFzZmemyfkB2Uy90KYcYYQ27oClKDyBNMC4QFmxNJZF1cdBi0MiUcMjGw/+RVyXo
-	LJxSRfL9r13az4DBkwtVhm/gbug532EQo6wzagcDmn6v1zCZGh4X8Jqpo79vfXKR
-	F/efqHq6EbYnhfm6u0AmTGRYILJZUf67myODkrKqjQspBXivNN2Zu/Gw7zbVByR+
-	h4FSOaR/dbYN3B5GMo2NTBAADOHUJ9xZXOArg/wBd1CPC9XAPOLXeYzWmJMWy4SO
-	H9r/ED/p7xUr7rEzHQfEa8jYHddTvs+Y1JAy21kiSXbJek0DLUi44Djwcf6YuB3n
-	smKGWJ0Z9OfVdKrgQrex9Q==
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MtaFnIbz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759673970; x=
-	1759760370; bh=jA59cn6swCrXo1Qb1s4scUzP1SMSDzyk7A4NjSUgh6c=; b=G
-	btx3Pnmw4fcGZqcUHZJK4RORy9TinZcU2W0xTjNhuGta+z2mASrQ9bh0HbHucxGE
-	Oey6as5N4WxAhf8WbeQtuXlQNlvZRelIthlRn0mElYIqh3tf2IgMLusBcpwgXP+Y
-	4PPGgMIM7m/zkQx+dueLMeX+90LUhHUPCTZp1e0zPxEJxQn4OM9sUEXZFSIC+rQT
-	5R8m0w30XH2dbB0rda6MlNeZR/ugFVr3ucQtQEyJXGLr5NZ98J/vsSsdMrvQQpvj
-	7qo3Ll33U9IWQMb9pwsdAEnec3jRhEbpfiHVNNPiwQ5M/h4769iKO6a+xDhnruzw
-	D4kACTJb7reEjOhn+vtaA==
-X-ME-Sender: <xms:cn7iaMFiYbmDJJkB524SHrK5tawKursKNrb9LAJKlvVc9N97O-Sf9A>
-    <xme:cn7iaGFBkjum5v-TdAfEdaElIJgtG7_cBY-lExOq1Ghe9Mwk-tyapDZv6KHuYzeOh
-    7b2witWXcoziIU_grk9LWQbSd6On6qV8ulpUjqXeyA0Zlu8etlMLbU>
-X-ME-Received: <xmr:cn7iaCQbn7Zt9M7PB5MiblyHdtP2PqTOhgmKR3If-XH4sDQVZ2laRN0Pa4r_sN0UB2fjxftJRRmN2s1pdR3hFVmX9VAH0dk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelgeekkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
-    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
-    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
-    thgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepmhgrrhgvkhdrvhgrshhuthdorhgvnhgvshgrshesmhgrihhlsghogidrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphht
-    thhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepsh
-    gsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
-    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:cn7iaPJcWf8oojZ2zYeOQBDw_zaOxH_QVY-_LSlJpUPJ9X2uUgjtSw>
-    <xmx:cn7iaFYDdIwUsaeQikDzLMOBnXH6aPRm4cXoIDobtm1hKucBAB8lBA>
-    <xmx:cn7iaJ-L8Jodg0KTK7TID7UBIKvreGe5k9vGoVtf36MIpnFrueI6OQ>
-    <xmx:cn7iaOa6Hz30SE7v6q69eU8D2qwRZbrBNbX6wYi5rwDUHJa-AyN0dQ>
-    <xmx:cn7iaFLMbPX3_YZOF2Pur9hZrTHKasz3Ky7HRBmuyW7q0hVvG9_I9vpV>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 5 Oct 2025 10:19:30 -0400 (EDT)
-Date: Sun, 5 Oct 2025 16:19:28 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add missing 1ms delay into
- reset toggle callback
-Message-ID: <20251005141928.GB1015803@ragnatech.se>
-References: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=KKtWrj5+TwXxN5YgYsSbfMrTMYpXMKzFJlf871v63L0=; b=MtaFnI
+	bzglLe+aOMn/t0d1KV7Rz7PsWse8Iz6LK/ykvItsYQSkWlvc+rPU2wFIBQP5/qRp
+	+uKJT1zVbitkDkK6spmA4oRYuvt6VMQ+88B3ymoENc92Zj252i/oziK7IHmw+bed
+	tijrvRVm5WfjyO/Y0xKPM+bTehuyTSWoW7C80LreIbQbIiOBiOTIPL/l2UUcHVf5
+	b1WVCc7Xhxumxluyl02XQMQJFXoj66fMEPGVzBKOp93EG46rNJiWiTGFDc5qDjUn
+	KhI3X9VHCGP6njfeSyIWQ6xT4NfjBQPwX6ucIB/xG/UHpw42gc3AR10ZIObi8fEX
+	qVGAyglsgqeL8SLA==
+Received: (qmail 1418943 invoked from network); 5 Oct 2025 16:44:42 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Oct 2025 16:44:42 +0200
+X-UD-Smtp-Session: l3s3148p1@kJIMYGpA7NMujnsm
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 2/4] dt-bindings: watchdog: factor out RZ/N1 watchdog
+Date: Sun,  5 Oct 2025 16:44:17 +0200
+Message-ID: <20251005144416.3699-8-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251005144416.3699-6-wsa+renesas@sang-engineering.com>
+References: <20251005144416.3699-6-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
 
-Hi Marek,
+Renesas created different watchdog IPs but they are all handled in the
+same binding documentation. This leads to a lot of conditional handling
+which makes it unnecessarily hard to add new items. Factor out the RZ/N1
+watchdog to make handling easier.
 
-Thanks for your work.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On 2025-10-05 15:14:58 +0200, Marek Vasut wrote:
-> R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 page 583
-> Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) indicate
-> after reset has been asserted by writing a matching reset bit into register
-> SRCR, it is mandatory to wait 1ms.
-> 
-> This 1ms delay is documented on R-Car V4H and V4M, it is currently unclear
-> whether S4 is affected as well. This patch does apply the extra delay on
-> R-Car S4 as well.
-> 
-> Fix the reset driver to respect the additional delay when toggling resets.
-> Drivers which use separate reset_control_(de)assert() must assure matching
-> delay in their driver code.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Changes since v1:
+* turned N1D compatible into a const (Thanks, Prabhakar)
+* removed unneeded label from example (Thanks, Prabhakar)
+* added tags from Guenter and Prabhakar (Thanks!)
 
-With R-Car ISP that had issues with v1,
+ .../bindings/watchdog/renesas,rzn1-wdt.yaml   | 48 +++++++++++++++++++
+ .../bindings/watchdog/renesas,wdt.yaml        |  6 ---
+ 2 files changed, 48 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
 
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Add RB from Geert
->     - Use ca. as abbreviation for circa (cca.)
->     - Switch back to udelay(), risp triggers this code from atomic context
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index be9f59e6975d7..ddc234942a85a 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -689,8 +689,15 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->  	/* Reset module */
->  	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
->  
-> -	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-> -	udelay(35);
-> +	/*
-> +	 * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> +	 * On older SoCs, delay after SRCR has been written is 35us
-> +	 * (one cycle of the RCLK clock @ ca. 32 kHz).
-> +	 */
-> +	if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
-> +		udelay(1000);
-> +	else
-> +		udelay(35);
->  
->  	/* Release module from reset state */
->  	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-> -- 
-> 2.51.0
-> 
-> 
-
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+new file mode 100644
+index 000000000000..0efc9a92fa51
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/renesas,rzn1-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 Watchdog Timer (WDT) Controller
++
++maintainers:
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r9a06g032-wdt # RZ/N1D
++      - const: renesas,rzn1-wdt      # RZ/N1
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++allOf:
++  - $ref: watchdog.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    watchdog@40008000 {
++            compatible = "renesas,r9a06g032-wdt", "renesas,rzn1-wdt";
++            reg = <0x40008000 0x1000>;
++            interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
++            clocks = <&sysctrl R9A06G032_CLK_WATCHDOG>;
++    };
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index 8a25e0c6271f..12ba07781763 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -13,11 +13,6 @@ maintainers:
+ properties:
+   compatible:
+     oneOf:
+-      - items:
+-          - enum:
+-              - renesas,r9a06g032-wdt    # RZ/N1D
+-          - const: renesas,rzn1-wdt      # RZ/N1
+-
+       - items:
+           - enum:
+               - renesas,r9a07g043-wdt    # RZ/G2UL and RZ/Five
+@@ -134,7 +129,6 @@ allOf:
+             contains:
+               enum:
+                 - renesas,r9a09g077-wdt
+-                - renesas,rzn1-wdt
+     then:
+       required:
+         - power-domains
 -- 
-Kind Regards,
-Niklas Söderlund
+2.47.2
+
