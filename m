@@ -1,59 +1,59 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7851917F0
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  5 Oct 2025 03:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B178FCA4B
+	for <linux-renesas-soc@vger.kernel.org>; Sun,  5 Oct 2025 03:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759633481; cv=none; b=msGcBqrUw6NpuY+JTixxQgdMoD44R6PHFkLO+XnDcNpXHDJ7uXBRSKv9xvQVLHupeVoqaweZfrtuZMEEDAsSJ30orzXHRSmLmUlpuF39aKNHTgbMw1b7ja9o+Pce8F38x5i2bhXrCZfeoX2Kihv7lGI5SGo9/BMDHPW0yeXpeSk=
+	t=1759633486; cv=none; b=g7sCaaEkzp0yMK6J/l5I2gop+H/RtO0wBRugqoR+rPGpR9HcSbkADQBTfWyYdUkjhARszXvvHQgR5hSdaEOZNonYi8D2qgZOmIOgGZOVmlatc4V6Lb4UiRz33i2FVmq+z6IkZrxd4y1YX0a/KbzeVYkdPDuL8+33FBe7xO9iWuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759633481; c=relaxed/simple;
-	bh=bdIOdGVZ7mx1ohhXeRnjH2KW6/qxd7ityTYb6oLVbO0=;
+	s=arc-20240116; t=1759633486; c=relaxed/simple;
+	bh=nL06mipjr7pTMoNFEYjcyEhsmt/Zjv8c66+D0eoucwc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ttwJ1aSDCs6sdvLGLnBYMNOR4mRuoLQZ6Ja5WlUwa1rf3I+Ex1N8CAnb71bKqbf0atAftQUxrFROyY0/BxCsxA1CVa5LinHkS3QXjoU6iaMOBmyIz9d2VWLJ6PnABh17D0nOG4mN1yXn5dAqOJ5hl6r6RFJWxTColPqvNmQrkvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ekIZwRW3; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nE0O1RZ7; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=nhHBXDW62v6exr1gIDpLWHQ9UupSglTRA5898BJ6wrWLgNI2oI+MyPYM+PBhgwi7DKYFK2dGmshkiitKLmhaiT6dUm65l0zlScfaAYAQbp7Cpya6x3rRVZW/6F9D9jakmFrMfr4Csmc7t49py1XYosPoJipZkVqX1Wa+Z6r1qFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RVryqUf+; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OHAKXBTV; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ekIZwRW3";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nE0O1RZ7"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RVryqUf+";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OHAKXBTV"
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cfS1C5vbjz9vRF;
-	Sun,  5 Oct 2025 05:04:31 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cfS1R1LzRz9stG;
+	Sun,  5 Oct 2025 05:04:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1759633471;
+	t=1759633483;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iR6e/Gy9+5YXYLTCcLf4dQLvQYdCvAYqqU5EbxqJyaI=;
-	b=ekIZwRW3vcx1q1KIKH0La3SZS08n/rPt2jqDcUDrVUvYKMjGoCCI1shjpq+kbnxVzpD43n
-	+qXZZ3s7igBHi/kcWk6A9Xqh40FJXQupWCrndqQ2lzGzJYFt75jgGs27UdhXK4LgLWeLE3
-	kO6SaBGRZ8HARMVIiO//ZB87tf63QGA23l+lIzpk8B/IXfhJTkBkq/w+4NypJss6U7gg7J
-	GSmedL3RV2JoI7kiEMPZn24XJVMDAiJQeyx95qOGSkpsibP4nw/7ISJbBTNU7YyKkf3Sk8
-	++5KvzRIIS4+/4Lu6akTAH/oMOoaOnkYrHzAzWe2syfszWPrW+5tnRY5gJiTMQ==
+	bh=GeODRZFUaW/cKzs4OHKtN0TC4jHWgHsTyojQsO5lMpE=;
+	b=RVryqUf+0gkuV7/CmyvEZRtaGiJfebPb3YCoQC14tj2pEpKiXnYqIEbuo8AZx6fLHxYrpe
+	haEq6iZqL6gqKfqjkgV/11HTclPGkpyj+VOVGRB+/QFmMQtOs7VZwGpnvhFBJSU0yXvnNo
+	FgqLhtH5h3aszR+ASSb0RX+RexppSaFa0EnKBQVJd+UNPPmnLv8La7zabDk1svdJX1AkA3
+	+N2zmstx4b34OoeGRf5+XCE3kdsSC5YlqiKScXby23sgmPTMi9ELvmxXAlEF/IpHtwYpK8
+	KyubuvnuYc26O6XqjM0DbvZeycEYMvmqFe4sFrd6xy0h2/88Q/5xjP4/iwk26g==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1759633469;
+	t=1759633481;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iR6e/Gy9+5YXYLTCcLf4dQLvQYdCvAYqqU5EbxqJyaI=;
-	b=nE0O1RZ7mjfvU3icb+BTZqXlNusVOsAjPb3E1B7/MrS137pWTZFkO2Eo7uG2g+4Djp1m9x
-	ayI3RyG+rn1nM+rXhbCXCdzso7z/eNWw7ZeS0OjxFYJdIa2blWgKoPJ45p5paLecAKvA6o
-	i4NWoMsoqvnk42ZznkJbTh+h3Kh/Ak8XIOd7a+9d0K2ez1fbTlToYDWVuBwlYYoHRLLSAr
-	4hQmxYNquiJ4OFxWRNHJ2xTZHJjU1JkBv7E4DMzstl3JcwV7MO8ewCRE9etvygNxgVbdKr
-	4UuuKYHY0bFgwKctn6HmX2nKwJMgKQGExzSnM/pBub4SbUBYzmm9rN0SaGKYdw==
+	bh=GeODRZFUaW/cKzs4OHKtN0TC4jHWgHsTyojQsO5lMpE=;
+	b=OHAKXBTVgqR4RPc5W3sSDFgIu3g2ZRpH3L9i4qEOfTaN56Tn7aijAlwyp6P07MEZnlv40Z
+	DTiU4en03A1zFoyOZJ8Tn0mgrjYkPLJL9Y2/rw6smJU2jOKaXZa+ZZ9xbyuYIekdTJu+Ad
+	Ha5fC67Slkv88BfP+5ywJLCNpak9OTnLPdtwsNVLjWA/VJ8ihPuc2EQyjAqddCFniAPFu2
+	4+L+WocEq5tLeGm65q5E0NK/X5UcY6cDgPaKbxql276yDDLLRHq9o9H8qxTISMjnBGG4yH
+	SKiAPg0biRrGJVJg9HHCtgnO+xHKCLyyZq3m/qBiH7FYq+goCNcM7vaqYu2NcQ==
 To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	David Airlie <airlied@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -61,9 +61,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 03/11] drm/rcar-du: dsi: Document PHTR TESTDOUT as bitfield
-Date: Sun,  5 Oct 2025 05:02:50 +0200
-Message-ID: <20251005030355.202242-4-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v3 08/11] drm/rcar-du: dsi: Respect DSI mode flags
+Date: Sun,  5 Oct 2025 05:02:55 +0200
+Message-ID: <20251005030355.202242-9-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20251005030355.202242-1-marek.vasut+renesas@mailbox.org>
 References: <20251005030355.202242-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,13 +73,23 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 48ce8a9f4538b47f0d3
-X-MBO-RS-META: x5a961fxbf4yb6tqrhcagoaqxuruwjqt
+X-MBO-RS-ID: af9e3a690d222709f46
+X-MBO-RS-META: t4s6xqe9uoomycmdpdqdiy779ye1x8xh
 
-The register PHTR bitfield TESTDOUT is not a single bit, but a
-bitfield. Add a MASK macro and a _TEST bitfield value, which is
-used by the driver to poll for completion. No functional change.
+Cache DSI mode flags in new mode_flags member of struct rcar_mipi_dsi .
+Configure TXVMSETR register based on the content of DSI mode flags in
+case the controller operates in video mode.
 
+Rename TXVMSETR_H..BPEN_EN to TXVMSETR_H..BPEN and drop TXVMSETR_H..BPEN_DIS
+which resolves to 0. Update TXVMSETR_VSEN in the same manner. Replace
+TXVMSETR_SYNSEQ_PULSES with a code comment next to TXVMSETR_SYNSEQ_EVENTS
+because TXVMSETR_SYNSEQ_PULSES resolves to 0.
+
+Do not convert bits and bitfields to BIT() and GENMASK() yet, to be
+consisten with the current style. Conversion to BIT() and GENMASK()
+macros is done at the very end of this series in the last two patches.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
 Cc: David Airlie <airlied@gmail.com>
@@ -95,41 +105,85 @@ Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
-V3: New patch
+V2: Add RB from Laurent
+V3: No change
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 4 ++--
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    | 18 +++++++++++++++---
+ .../drm/renesas/rcar-du/rcar_mipi_dsi_regs.h   | 15 +++++----------
+ 2 files changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index 5c73a513f678e..c24721a1eddf2 100644
+index f6427476feb72..78e512de7cf96 100644
 --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -316,8 +316,8 @@ rcar_mipi_dsi_post_init_phtw_v4h(struct rcar_mipi_dsi *dsi,
- 		WRITE_PHTW(0x01020100, 0x00000180);
+@@ -72,6 +72,7 @@ struct rcar_mipi_dsi {
+ 	} clocks;
  
- 		ret = read_poll_timeout(rcar_mipi_dsi_read, status,
--					status & PHTR_TEST, 2000, 10000, false,
--					dsi, PHTR);
-+					status & PHTR_TESTDOUT_TEST,
-+					2000, 10000, false, dsi, PHTR);
- 		if (ret < 0) {
- 			dev_err(dsi->dev, "failed to test PHTR\n");
- 			return ret;
+ 	enum mipi_dsi_pixel_format format;
++	unsigned long mode_flags;
+ 	unsigned int num_data_lanes;
+ 	unsigned int lanes;
+ };
+@@ -474,9 +475,19 @@ static void rcar_mipi_dsi_set_display_timing(struct rcar_mipi_dsi *dsi,
+ 	}
+ 
+ 	/* Configuration for Blanking sequence and Input Pixel */
+-	setr = TXVMSETR_HSABPEN_EN | TXVMSETR_HBPBPEN_EN
+-	     | TXVMSETR_HFPBPEN_EN | TXVMSETR_SYNSEQ_PULSES
+-	     | TXVMSETR_PIXWDTH | TXVMSETR_VSTPM;
++	setr = TXVMSETR_PIXWDTH | TXVMSETR_VSTPM;
++
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE))
++			setr |= TXVMSETR_SYNSEQ_EVENTS;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP))
++			setr |= TXVMSETR_HFPBPEN;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP))
++			setr |= TXVMSETR_HBPBPEN;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA))
++			setr |= TXVMSETR_HSABPEN;
++	}
++
+ 	rcar_mipi_dsi_write(dsi, TXVMSETR, setr);
+ 
+ 	/* Configuration for Video Parameters */
+@@ -917,6 +928,7 @@ static int rcar_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 
+ 	dsi->lanes = device->lanes;
+ 	dsi->format = device->format;
++	dsi->mode_flags = device->mode_flags;
+ 
+ 	dsi->next_bridge = devm_drm_of_get_bridge(dsi->dev, dsi->dev->of_node,
+ 						  1, 0);
 diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-index b8a719a13c006..90e8e3de3e580 100644
+index f0f4c78bf47c0..8cc36df1ded5e 100644
 --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
 +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-@@ -293,7 +293,8 @@
- #define PHTW_TESTDIN_CODE(x)		(((x) & 0xff) << 0)
+@@ -140,19 +140,14 @@
+  * Video Mode Register
+  */
+ #define TXVMSETR			0x180
+-#define TXVMSETR_SYNSEQ_PULSES		(0 << 16)
+-#define TXVMSETR_SYNSEQ_EVENTS		(1 << 16)
++#define TXVMSETR_SYNSEQ_EVENTS		(1 << 16) /* 0:Pulses 1:Events */
+ #define TXVMSETR_VSTPM			(1 << 15)
+ #define TXVMSETR_PIXWDTH_MASK		(7 << 8)
+ #define TXVMSETR_PIXWDTH		(1 << 8) /* Only allowed value */
+-#define TXVMSETR_VSEN_EN		(1 << 4)
+-#define TXVMSETR_VSEN_DIS		(0 << 4)
+-#define TXVMSETR_HFPBPEN_EN		(1 << 2)
+-#define TXVMSETR_HFPBPEN_DIS		(0 << 2)
+-#define TXVMSETR_HBPBPEN_EN		(1 << 1)
+-#define TXVMSETR_HBPBPEN_DIS		(0 << 1)
+-#define TXVMSETR_HSABPEN_EN		(1 << 0)
+-#define TXVMSETR_HSABPEN_DIS		(0 << 0)
++#define TXVMSETR_VSEN			(1 << 4)
++#define TXVMSETR_HFPBPEN		(1 << 2)
++#define TXVMSETR_HBPBPEN		(1 << 1)
++#define TXVMSETR_HSABPEN		(1 << 0)
  
- #define PHTR				0x1038
--#define PHTR_TEST			(1 << 16)
-+#define PHTW_TESTDOUT			(0xff << 16)
-+#define PHTR_TESTDOUT_TEST		(1 << 16)
- 
- #define PHTC				0x103c
- #define PHTC_TESTCLR			(1 << 0)
+ #define TXVMCR				0x190
+ #define TXVMCR_VFCLR			(1 << 12)
 -- 
 2.51.0
 
