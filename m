@@ -1,45 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6AE25D533
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 08:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34825E469
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 08:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759739349; cv=none; b=V5HBmjtM7Qn+yF09M4zmidnQd39/KqkAQyq/QLtCMtooTIXaKcpKpDzbNJIsUE/GMZRN1dPwEcw4rCyL48zWxtKklNJ5z8v+sdqqAF1LMbBkDwxlKZRMHijwuyEo/fsAOdiPoaAIYAKKOr0OVNTsubr5u2Wml/GQFdoaoUL+ugI=
+	t=1759739351; cv=none; b=UV4zyeFNM4pDR/DG1G1XYkxyOmP1sVkO6txedkn6CU3ZcKMUCoDLJ8A8Y2+GHfSUlWI7fOAWT/roRk0K3dPg5+s61GcroasQ2QJmsdYw7Jzd4pomRafi3BaVlYumQRp3fhBq/EUzg371BKisMzK6KDbiTtExhKu/qKMJJwb4paw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759739349; c=relaxed/simple;
-	bh=hiqfOh+gup1VonmZM7I3cgEwhLU2LPQakfM4LAIU5JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JAfaQE7UfTRAE+7aueSL//Thgg0DBafqIKkPwAgT+qHc/S1zk7oLTxF/x3EIXSoJcrqGzw9zoZcyFHCP2AB0SqWf/E75AR3zAHRhiRvgpRBVgIxpfAiwWwRCb94oLc/5Ks14bEGsqBBfsMitmvX1uH6GEIlInu4+qKFEy4+S38w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Nou1ub7g; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1759739351; c=relaxed/simple;
+	bh=CmQEG0w+Y7BSaEqz7epHQx3WrBlsxa5xfboxFuvsNdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oRmLFQw1pgb/8LRcfk+RpK7CsbNolZ/W6DQQSvjWeLMM7626+kuQYpioYva2FKroAvKvv9bOycG4q/9Zv2KERWK8MLWD9V0uTlfEJcRZdHYxNCPoq9awYj68IyNRQuCxlCvdqp3R20X2WUnPrRK8G0xg5Kz+8u86lNk5IGqlfQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HlikfvW1; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Nou1ub7g"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HlikfvW1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=IiRpNme2oR0Q39
-	OFmKAZ9xvAi9y/YQyhdK79VfoxjdI=; b=Nou1ub7gpgQbvC7EyMzeEAaIi8U09D
-	Sw84GLTmW1yXuSjhdXQXY8XO14zcm3gXSBu4Ad05hghxV0XiuDaOSjaJvRqr+1G/
-	MhOrydUAs14Smkl0MRDu5G2ajNrNvGC6S65AmPmMCnJrKxFSMXyHrRfX0WpOc8tM
-	jINQ8Q6yvsAwVuuS8nQsGvRrwWa+xa7t4Y1Gat4I91OiHyOd+oy5dU44LVL+MCHB
-	DuCaF4c9VCbAVcHDTP/QcPlxo81xHIZ/UD43yQ4gU6Wp8lBEkqBzORC6/+FFD7AN
-	mvd1lEf0ZdAWLnjE29DGD18Jy5nl+8OQeO9aS3/xRpMBC6MdBMmZmZ8Q==
-Received: (qmail 1689719 invoked from network); 6 Oct 2025 10:29:02 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 10:29:02 +0200
-X-UD-Smtp-Session: l3s3148p1@PVFePnlAXOwgAwDPXwQHAL/S9V79e5yL
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=QShfneQK8jEa+dEPrt5EU1Okng/pHMVqRi4uML/yvR4=; b=Hlikfv
+	W1GEl0NpO1ZM8vBLyGwv1xEXyBF/pVxDbBE+iwaalSgHE5HczvSkToJGryTxwnWK
+	zFe0RG/xQ4K3+WhUkGys6Y+akTmnEHyqE6vRbPUUZOdPgNvELEW23iw5yX5hpwUz
+	iXCoX6XEapLneJHIZPo8I1Ry/ziPT3e01ABWjvBcEXG5g0LtJFtK3c2x7nGpmnfZ
+	9zvs35YcG5oq2a8W9hR4ksNxmDwjvl3nyUlAq5axA628cu4lXJyuHHrRw70KZmUK
+	9RRXDECxsxIVOuBD6q2vqfSKIjXEeIa9/IpuR13c1syqP0qZQOa7q5/n8QxJP0/A
+	KZGV36DyTrxakgHQ==
+Received: (qmail 1689884 invoked from network); 6 Oct 2025 10:29:05 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 10:29:05 +0200
+X-UD-Smtp-Session: l3s3148p1@p+uWPnlAgOwgAwDPXwQHAL/S9V79e5yL
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 0/9] arm64: dts: renesas: gen4: handle SWDT
-Date: Mon,  6 Oct 2025 10:25:18 +0200
-Message-ID: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 4/9] arm64: dts: renesas: s4: mark SWDT as reserved
+Date: Mon,  6 Oct 2025 10:25:22 +0200
+Message-ID: <20251006082520.10570-15-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
+References: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,44 +52,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Here is the SWDT handling series for R-Car Gen4: it adds the SWDT node to the
-SoC DTSI and then marks it as "reserved" in the board DTs.
+This watchdog can't be used with Linux because the firmware needs it on
+S4 boards. Sadly, it doesn't mark the node as reserved, so this is added
+manually here.
 
-No bindings update is needed here. My previous comment about some Gen4
-having no bit for reset was wrong. I found them in the docs meanwhile.
-This only leaves V3H as an exception. I will add it on top of my WDT
-binding doc refactoring series later.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts        | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-A minor irregularity is that the RWDT was not enabled for V4H White-Hawk
-yet. This is fixed here as well. Of course, this series passes
-'dtbs_check'.
-
-Thanks and happy hacking!
-
-
-Wolfram Sang (9):
-  arm64: dts: renesas: r8a779a0: add SWDT node
-  arm64: dts: renesas: falcon: mark SWDT as reserved
-  arm64: dts: renesas: r8a779f0: add SWDT node
-  arm64: dts: renesas: s4: mark SWDT as reserved
-  arm64: dts: renesas: r8a779g0: add SWDT node
-  arm64: dts: renesas: white-hawk: Enable RWDT watchdog timer
-  arm64: dts: renesas: v4h: mark SWDT as reserved
-  arm64: dts: renesas: r8a779h0: add SWDT node
-  arm64: dts: renesas: gray-hawk: mark SWDT as reserved
-
- arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi      |  5 +++++
- arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi   |  5 +++++
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi              | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi   |  5 +++++
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi              | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts          |  5 +++++
- .../boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi      | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi              | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts  |  5 +++++
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi              | 10 ++++++++++
- 10 files changed, 75 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+index 1781bb79a619..c8d78a0f6653 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+@@ -229,6 +229,11 @@ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
+ 
++/* Firmware should reserve it but sadly doesn't */
++&swdt {
++	status = "reserved";
++};
++
+ &ufs {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts b/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
+index 67b18f2bffbd..dcdcc22f91c5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
+@@ -230,6 +230,11 @@ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
+ 
++/* Firmware should reserve it but sadly doesn't */
++&swdt {
++	status = "reserved";
++};
++
+ &ufs {
+ 	status = "okay";
+ };
 -- 
 2.47.2
 
