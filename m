@@ -1,52 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDBA22F76F
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 17:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C5D2676DE
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 17:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759771288; cv=none; b=ezP+kEgSbs9ITYG/GhG16/C0OLidi1SMZJxhRtnXXxwFg/S9GIHdyWu2TtNobh+LeX8wWiEnRIY9QHVcdnQcmQPyX8su9XVpigr234SVo6Srr45o2Ma377HcTnJyR3tLSjgmeHiCZlNYffiE7v/HNJsB0CJZyfewgvWnwBISnaU=
+	t=1759771291; cv=none; b=XvmAY0riJ/w5/JJ1moyGnrPfl9/+rfKO5L1r+npKeHE752bH6cK8JVsPT9vvkF2SDNxyVIMRLP9HB9aVJydTj2u+J8V2QPT4YqeGK/ZgbmBEr1eMmH1HcCzF3NOxZeWzMiWwiwJ05KHUoK51bl9gzTCGFIJgqj4p2OifPvDQZ4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759771288; c=relaxed/simple;
-	bh=sQ0dTUDpQcsZ/weNz6kb6D3WpxLTyfqadGY595z2QaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9sPtnj3/sUzW1Acr4FTNzUrNzROsSWfI4GLNSp1NWii0py6/46/7jwmpSW9zMy5jhmWVNCCiQNIWL+5H4S3FKHFLn58+6y+7l05wGGF7yKwqFTTtAxhLd5/qf6DS9XljELjbUtDq48kVD9kS05T8XqExgxTLyRP1xXPMAdPisM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kmMrA3zb; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1759771291; c=relaxed/simple;
+	bh=OYYb2M2fECLb+jrNYm1kW1HVJOljI9bg/nvEDHfpPic=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gY2acRPBK52C3qcpGVkAsPa3zdqi8fB63oFzaThDKymo3xLOsR0OmrjBVXeJhOv7iSuaN6gNiGy18B1cFax+wXTivHwB3SMG2cwLAYbXVULr+yurIBoQQKAC9ZGZNsCTtllpIY+J8UJfiRUUQE0Ah3cuP2y6hpdNpVcZNViNDF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MRjNcVq1; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kmMrA3zb"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MRjNcVq1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=E4/V55hzcxf9TE
-	tfnexhB26CakGBJUNMUASQiHt/6f4=; b=kmMrA3zbF6+J4+ngcxzKIRXBXxqw/Z
-	tgVXN8/YGkoUareNfcDhQ82Xl9HYtd2M7r+wpXdY0R3eLw7kdOSz7rKFMKOJ7S93
-	K3Nzj5SuFFu5a+f0oaC4GMKD1zAWB4jg2FV+T/waqgEcr6nJy0k5ySQPEQ5iyQ7F
-	s05WsnfvkiS8ACCRIkuXEvkTEBBudzDKUlYvCI9qsPPFC4qSgZ9HleU/FmhBThnc
-	7B3ff30HLYdzmuV0o82KJqzCzwE3j59CQh1bQVM8mH4UgPOzP5dNNwMjJUYveKtr
-	AbkPrjd2DB3NFGF08Cs3EZKIlSYzDrQyqPveA9B6kUGa4wP8aHmsgnqw==
-Received: (qmail 1872438 invoked from network); 6 Oct 2025 19:21:20 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 19:21:20 +0200
-X-UD-Smtp-Session: l3s3148p1@B7YRroBAPsUujnsE
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=fBSs/il4N7pRMizhvkDKpaZKCds+bMrynpG8pj2s5Hw=; b=MRjNcV
+	q1paSfwwHAk+Gop4BmtE/gXA6Ou59ed5+UEdKkqyb7IGm3AE4NrLJ/wsZYxqBBv2
+	N3uFFT/DWUFVwH+QtlExf4gl4duhWRJ+JNatGHKCqexSaPpAo7TtTA1F5KKenG15
+	86mZ58dPhL0PB6xY9PpnitZZq9Cu4uk1lqkewXri7rSPjkeDZeUBESjf6KbwU2LI
+	3Q3qjcdJ813md9XWTWDo34rHEAryEX/AAYqqChhwXnwk32ZrHr+/GzjKzopJcQv9
+	YW9e8S9+xsLca2ycrm3BQHtP02Ad2GwruovURSC9+ouYVDN67qMRWETZFsJRHDGy
+	UyeCtSYFKXfDdz6w==
+Received: (qmail 1872562 invoked from network); 6 Oct 2025 19:21:22 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 19:21:22 +0200
+X-UD-Smtp-Session: l3s3148p1@JjEuroBAVsUujnsE
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh@kernel.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
-Subject: [RFC PATCH 0/2] another 'interrupts-extended' replacement needed?
-Date: Mon,  6 Oct 2025 19:21:16 +0200
-Message-ID: <20251006172119.2888-1-wsa+renesas@sang-engineering.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 2/2] ARM: dts: renesas: kzm9g: name interrupts for accelerometer
+Date: Mon,  6 Oct 2025 19:21:18 +0200
+Message-ID: <20251006172119.2888-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251006172119.2888-1-wsa+renesas@sang-engineering.com>
+References: <20251006172119.2888-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -55,36 +52,28 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Rob,
+Per the updated binding documentation, both interrupts must be named.
 
-I want to fix the following 'dtbs_check' issue:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-arch/arm/boot/dts/renesas/sh73a0-kzm9g.dtb: accelerometer@1d (adi,adxl345): interrupts-extended: [[18, 2, 4], [18, 3, 4]] is too long
-	from schema $id: http://devicetree.org/schemas/iio/accel/adi,adxl345.yaml#
+This uncovers another issue. See coverletter.
 
-However, this series uncovers another place where 'interrupts-extended'
-is not recognized as an alternative to 'interrupts'. Namely, when this
-is part of a 'dependencies:' like in this binding:
+ arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-arch/arm/boot/dts/renesas/sh73a0-kzm9g.dtb: accelerometer@1d (adi,adxl345): 'interrupts' is a dependency of 'interrupt-names'
-	from schema $id: http://devicetree.org/schemas/iio/accel/adi,adxl345.yaml#
-
-Now, I wonder if this also needs to be fixed in dtschema? Or do we need
-another way to express the dependency?
-
-Thanks for any pointers,
-
-   Wolfram
-
-
-Wolfram Sang (2):
-  dt-bindings: iio: accel: adxl345: document second interrupt
-  ARM: dts: renesas: kzm9g: name interrupts for accelerometer
-
- .../bindings/iio/accel/adi,adxl345.yaml          | 16 +++++++++++-----
- arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts       |  1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
+index 1ce07d0878dc..0a9cd61bcb5f 100644
+--- a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
+@@ -209,6 +209,7 @@ accelerometer@1d {
+ 		reg = <0x1d>;
+ 		interrupts-extended = <&irqpin3 2 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&irqpin3 3 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "INT1", "INT2";
+ 	};
+ 
+ 	rtc@32 {
 -- 
 2.47.2
 
