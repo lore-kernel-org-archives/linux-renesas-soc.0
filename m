@@ -1,82 +1,110 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A492DAFDB
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 16:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EE223F405
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 17:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759768319; cv=none; b=s6ehiJPMZ0YWYHEvFCz/uVz20KmO2k3i0fC3o10uz+8YEgzeTy+GIU1/uunfZiuow0ev57x0zznSa7YgRNb95k0NJuShBtGHNzYSjr5gacO+YtM8RSe4MCwehGUdlCB00mG8+IkJuUzSl+6gn+LIJUnSkO+orEUwF/6simmHXlc=
+	t=1759771288; cv=none; b=AvzzPw2+e0BhY0+FipQrDzkzwyjSAh69q6op2Yucd2Sd/CsxLPYS6DOfboV8akkQqqmljkPHtO+cCA3XNJzKKgkoDRyltWNpKCo2jSUR72gp0HTsVTABXK23VRxdeBEjTUaSl8C6h9RcxrE25/iUW1pULhT17bCSM3Ae8nWTc2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759768319; c=relaxed/simple;
-	bh=/DcP/cci+VbEvU6AGiEvR5mqlVGbVA9PCPVwr9My8bA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jO9B3wKBfkn/XXVJFzMp7Yn30eCt04KFbsKBvL8UW/h5ItpqHMgQF+PmBDMFZXj2/7Bij0/Ifn/d0dVB3oflUI6hdYhBXFdnhVjg/PGtzr9R9ewoB6t64699xSGzgwR0db8jpxgfWaAkXTBF3GfmzQfBCRCC3y7UM2YvYEfG0Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5o7h-0002Fu-8i; Mon, 06 Oct 2025 18:31:41 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5o7g-002GHH-0j;
-	Mon, 06 Oct 2025 18:31:40 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5o7g-00000000DSK-0bId;
-	Mon, 06 Oct 2025 18:31:40 +0200
-Message-ID: <593eb851ae6ce0ec03ddeacf436180b6538fdd1e.camel@pengutronix.de>
-Subject: Re: [PATCH 04/18] reset: rzv2h-usb2phy: Set VBENCTL register for
- OTG mode
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, Yoshihiro
- Shimoda <yoshihiro.shimoda.uh@renesas.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I	 <kishon@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm	 <magnus.damm@gmail.com>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>,  Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 06 Oct 2025 18:31:39 +0200
-In-Reply-To: <20251001212709.579080-5-tommaso.merciai.xr@bp.renesas.com>
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
-	 <20251001212709.579080-5-tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759771288; c=relaxed/simple;
+	bh=pFr8KcuQ2+sSxrziP4K3qLT4ooBWEBVNxU9gnYVjr1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WKEiadlLCk1DFgTdMKVREegvOBi5bDV/Nggj7NC0ZINouZptdLepMSidF3ZYhWw1EwUDCb8/mOTNYE/BICtJ/KFZ+sdOQpj3hnO+oySag4QdSQUry+tCiv2rPmslF5loRuAC0MFvtvT6l9rDJVoYlx5BVlVddF6h+OMGy5xCR8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jFIi81if; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jFIi81if"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=zIp53ZbIfcZdG/iY8vFuKbS6rQYn4mH5LTGhBYGF810=; b=jFIi81
+	ifovBhwA1BZlZ/fx4s3m3K9c8v7ts6ezc5CVq7PqUnp0WvcK/Smyv4IjYvSTel1E
+	krUFOD9+FluXHELclfLKAqKbKMV5Tl5eIuwUIA786pGDDF2XxQ8M00mO3RqyToLA
+	qmuRv64uDUpQ6xcFjY+W70Yqn5XV/UNmG9jAxRleGYrC8oPFoafVxOjuBk0WwMnc
+	zs0ad4f2nwz0ZdEcRcpyZKVivnED9kzLerX/INmssPEWwdOrPwN7lJQ0CZ04OE1j
+	b/Hk7kg0MoVimm2OFfjEcjA5QLg8K7/iNU+o7Km9910TIBjF/vJvmoEG26l93uW3
+	ATkUylPrfBIBTsyw==
+Received: (qmail 1872511 invoked from network); 6 Oct 2025 19:21:21 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 19:21:21 +0200
+X-UD-Smtp-Session: l3s3148p1@iw8hroBATsUujnsE
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 1/2] dt-bindings: iio: accel: adxl345: document second interrupt
+Date: Mon,  6 Oct 2025 19:21:17 +0200
+Message-ID: <20251006172119.2888-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251006172119.2888-1-wsa+renesas@sang-engineering.com>
+References: <20251006172119.2888-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Mi, 2025-10-01 at 23:26 +0200, Tommaso Merciai wrote:
-> Add logic to set the VBENCTL register when the USB controller operates in
-> OTG mode. This is required to ensure proper USB transceiver behavior when
-> the device is configured as OTG.
->=20
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+The pinout of all the supported chips in this binding have two interrupt
+pins. Document the second one, too, even though the Linux driver
+currently does not support the second interrupt. Boards may have it
+wired nonetheless.
 
-I had reservations about this driver before, because of the opaque
-register initialization sequence, and I was told that no, this is a
-reset driver alright [1].
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Can you please try to find a proper abstraction for this, because
-drivers/reset is not the correct place for USB OTG mode handling.
+Passes dt_binding_check. But uncovers another issue. See coverletter.
 
-[1] https://lore.kernel.org/all/TYCPR01MB12093DB963348A8FD58409E5AC2DE2@TYC=
-PR01MB12093.jpnprd01.prod.outlook.com/
+ .../bindings/iio/accel/adi,adxl345.yaml          | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+index a23a626bfab6..806b0250ec07 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+@@ -35,11 +35,16 @@ properties:
+   spi-3wire: true
+ 
+   interrupts:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
+ 
+   interrupt-names:
+-    items:
+-      - enum: [INT1, INT2]
++    oneOf:
++      - items:
++          - enum: [INT1, INT2]
++      - items:
++          - const: INT1
++          - const: INT2
+ 
+ dependencies:
+   interrupts: [ interrupt-names ]
+@@ -84,7 +89,8 @@ examples:
+             spi-cpol;
+             spi-cpha;
+             interrupt-parent = <&gpio0>;
+-            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+-            interrupt-names = "INT2";
++            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
++                         <1 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-names = "INT1", "INT2";
+         };
+     };
+-- 
+2.47.2
 
-regards
-Philipp
