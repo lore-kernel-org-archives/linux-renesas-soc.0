@@ -1,49 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC051A83F8
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 08:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6AE25D533
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Oct 2025 08:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759739349; cv=none; b=nnPZKZrRF5aaiqmCKZebgE3ZW1pAM/KzAvTccD0w6itne0N/ot+0SJXeHMX3Pn0HJ828qm8fLGVqI4nLKlqBq33KKh7miNhoqVqwiEANijh0B5FccWBOgeUFt5qhvANoixfRf0SPVff6+PsWUy1xRfYFEde044NpjUs5WBul1xk=
+	t=1759739349; cv=none; b=V5HBmjtM7Qn+yF09M4zmidnQd39/KqkAQyq/QLtCMtooTIXaKcpKpDzbNJIsUE/GMZRN1dPwEcw4rCyL48zWxtKklNJ5z8v+sdqqAF1LMbBkDwxlKZRMHijwuyEo/fsAOdiPoaAIYAKKOr0OVNTsubr5u2Wml/GQFdoaoUL+ugI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759739349; c=relaxed/simple;
-	bh=abJqOc9GfnzVuw+uqEmUXc6fHK1DFxhracJkI5dRL9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=If8HwTyqDHfovgb5Bgb5eQ/MiM56FSupbsZCiN1prkeZDcXRqg/2H5KMJuignjHFFwS181P+8jY56AYIYTk1y/ZCp5nJjFuMdWoEQh7KnIFv2Bd3GQiL8FpcyetgvjPy5I3WW7EzrSw5LQGaqm4NHS5LjHTIq3olXnBraR3J5n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J+4Phd6W; arc=none smtp.client-ip=194.117.254.33
+	bh=hiqfOh+gup1VonmZM7I3cgEwhLU2LPQakfM4LAIU5JM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JAfaQE7UfTRAE+7aueSL//Thgg0DBafqIKkPwAgT+qHc/S1zk7oLTxF/x3EIXSoJcrqGzw9zoZcyFHCP2AB0SqWf/E75AR3zAHRhiRvgpRBVgIxpfAiwWwRCb94oLc/5Ks14bEGsqBBfsMitmvX1uH6GEIlInu4+qKFEy4+S38w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Nou1ub7g; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J+4Phd6W"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Nou1ub7g"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=kj85Nsyv7GWGT3j77I3L3044JKkUb9fJSWu5YQprMX8=; b=J+4Phd
-	6WihyZjJ+dbNPtZZZIm6vv4byBOkx3cLHdrU4dnHYb3oLpfW9eFhWgxZXyj+SeC6
-	HLMyWDWU/ZDXKrcUbaGri8BccjnC92XrBFXLd6qhw4d4Pg+tAaf7c4bYoUNh0peK
-	3oV4vmpfqJ43jtnEJA7efnZ2Tw9yAG+vi8tNPTyIl4LSJfJj0+SS8J7DkFnMzW+I
-	ZTArkzYkSHI4uV2iltw+4vS8Ogiw8V8gfRwHI90zlh7FK4AwuRtjIqIOMZJz1y76
-	85neZxwDMbw/pJLI0o0U7tmHWLYThowevHYJV/bd/PfZyv4tnUPw4YLznZSiJ5dx
-	p/9JIemU1lRBhvEA==
-Received: (qmail 1689845 invoked from network); 6 Oct 2025 10:29:04 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 10:29:04 +0200
-X-UD-Smtp-Session: l3s3148p1@WJ+IPnlAduwgAwDPXwQHAL/S9V79e5yL
+	:mime-version:content-transfer-encoding; s=k1; bh=IiRpNme2oR0Q39
+	OFmKAZ9xvAi9y/YQyhdK79VfoxjdI=; b=Nou1ub7gpgQbvC7EyMzeEAaIi8U09D
+	Sw84GLTmW1yXuSjhdXQXY8XO14zcm3gXSBu4Ad05hghxV0XiuDaOSjaJvRqr+1G/
+	MhOrydUAs14Smkl0MRDu5G2ajNrNvGC6S65AmPmMCnJrKxFSMXyHrRfX0WpOc8tM
+	jINQ8Q6yvsAwVuuS8nQsGvRrwWa+xa7t4Y1Gat4I91OiHyOd+oy5dU44LVL+MCHB
+	DuCaF4c9VCbAVcHDTP/QcPlxo81xHIZ/UD43yQ4gU6Wp8lBEkqBzORC6/+FFD7AN
+	mvd1lEf0ZdAWLnjE29DGD18Jy5nl+8OQeO9aS3/xRpMBC6MdBMmZmZ8Q==
+Received: (qmail 1689719 invoked from network); 6 Oct 2025 10:29:02 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2025 10:29:02 +0200
+X-UD-Smtp-Session: l3s3148p1@PVFePnlAXOwgAwDPXwQHAL/S9V79e5yL
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/9] arm64: dts: renesas: r8a779f0: add SWDT node
-Date: Mon,  6 Oct 2025 10:25:21 +0200
-Message-ID: <20251006082520.10570-14-wsa+renesas@sang-engineering.com>
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/9] arm64: dts: renesas: gen4: handle SWDT
+Date: Mon,  6 Oct 2025 10:25:18 +0200
+Message-ID: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
-References: <20251006082520.10570-11-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,32 +48,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Here is the SWDT handling series for R-Car Gen4: it adds the SWDT node to the
+SoC DTSI and then marks it as "reserved" in the board DTs.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index b496495c59a6..f5913444a391 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -315,6 +315,16 @@ rwdt: watchdog@e6020000 {
- 			status = "disabled";
- 		};
- 
-+		swdt: watchdog@e6030000 {
-+			compatible = "renesas,r8a779f0-wdt", "renesas,rcar-gen4-wdt";
-+			reg = <0 0xe6030000 0 0x0c>;
-+			interrupts = <GIC_SPI 516 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_CORE R8A779F0_CLK_OSC>;
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1128>;
-+			status = "disabled";
-+		};
-+
- 		pfc: pinctrl@e6050000 {
- 			compatible = "renesas,pfc-r8a779f0";
- 			reg = <0 0xe6050000 0 0x16c>, <0 0xe6050800 0 0x16c>,
+No bindings update is needed here. My previous comment about some Gen4
+having no bit for reset was wrong. I found them in the docs meanwhile.
+This only leaves V3H as an exception. I will add it on top of my WDT
+binding doc refactoring series later.
+
+A minor irregularity is that the RWDT was not enabled for V4H White-Hawk
+yet. This is fixed here as well. Of course, this series passes
+'dtbs_check'.
+
+Thanks and happy hacking!
+
+
+Wolfram Sang (9):
+  arm64: dts: renesas: r8a779a0: add SWDT node
+  arm64: dts: renesas: falcon: mark SWDT as reserved
+  arm64: dts: renesas: r8a779f0: add SWDT node
+  arm64: dts: renesas: s4: mark SWDT as reserved
+  arm64: dts: renesas: r8a779g0: add SWDT node
+  arm64: dts: renesas: white-hawk: Enable RWDT watchdog timer
+  arm64: dts: renesas: v4h: mark SWDT as reserved
+  arm64: dts: renesas: r8a779h0: add SWDT node
+  arm64: dts: renesas: gray-hawk: mark SWDT as reserved
+
+ arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi      |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi   |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi              | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi   |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi              | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts          |  5 +++++
+ .../boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi      | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi              | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts  |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi              | 10 ++++++++++
+ 10 files changed, 75 insertions(+)
+
 -- 
 2.47.2
 
