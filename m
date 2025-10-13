@@ -1,32 +1,30 @@
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A552EBDF9;
-	Mon, 13 Oct 2025 16:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B462E6CB3
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 16:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373376; cv=none; b=Ds/pJPy+rgSMgoZuWe0YVBwGbnUSsY46MbIKAHYFsMS2JIw1/BpKZCkzLKH8GlUVGZR/8v+o5dadJBxmebL8bR2SAh3uiyn8WJLK9GonlQoP2WhGdC1UnW2PnjhrUWDn8X/7rYdWqFuZWXOEpC6F96ATIYXAx1crguMmmaRfr8o=
+	t=1760373377; cv=none; b=u4pe/CkFmsJsjOKPcVApQz3xBTaDULUlJO6YXO4KQh1AwNYYq9mnmnMAlD7SVY0DTLEfrnw44QLms+tYnHcaeT7JmT1Qty3Sx+TP1DWhVXk2S66Q+KLkwXjQUMqEuM+vNu8pBksrEkJJabcR4zDLi9oXhx9yJNjM+0e6inoS99M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373376; c=relaxed/simple;
-	bh=ieUaFo3sR5A1yKNDHBEbfEnvLPJikT+qMc8csEs1J4U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tp/BAb1LiS4YERrs4fVl8pAwfAmvsR9DVtLADyNp2FzrSS+c0M4nw+VwkWh+1cetQ3xCZARxSMzZtRf8qkqhHv6GybCrjjllXlFNd9dOvW8nvZPQohfRPMBPR/Q5+PTOjFj/ideAicVcg5qBWyZlkhtCWfYjiiuf3tnVqNo95SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T6bIYzxv; arc=none smtp.client-ip=95.215.58.181
+	s=arc-20240116; t=1760373377; c=relaxed/simple;
+	bh=kfFy/xwFbRX75KS4DeBBL40T3AGe2KOlcKsVvlby4SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/rE6Kl2e3lif5JnMjVrquJAwUrkz3qFVtb49BnI7IhHxIKpZ5FuAF66upCh3+i7nJiPe9J1KXWqBdwAd1+dE2A3WYWAJly+uez2r4f0Adn3FFMfeo7yqSNCzS3Nrnp4uW9vCXKX0//8CvfvmvsqUnQc69/zelLWf+fWUiGagTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s7zh0XDF; arc=none smtp.client-ip=95.215.58.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T6bIYzxv"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s7zh0XDF"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760373372;
+	t=1760373363;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TJWQpGgsz8/auK/a/IFSX2jmcy3k6NNLzx6dxZ/pae4=;
-	b=T6bIYzxvaWwqGC8+cgHfdSISi0RFuun6iThXvKe+YpIaTeFHJpGU1xbI8ALdsrisc6X/Dd
-	b7Gxl++5p2sFrlvpVTsB5J4FitvKxWmCj5qzOqpu+7KJj1Ggqv3p3dMAbFuT3QNqfkzE4h
-	wMS8/FEmYv0Q/wU7z4q1/pSMM23nqEU=
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xft6FnP3M7lgS82tMmSoqJUtpE/xTspDflOwthoAG68=;
+	b=s7zh0XDFuUTh6yk/7bjkHoivnVZPZhgoaF1ZdocTfO8TNqWlTlC9FiHT46+N3wrthl66PF
+	D5Hpr3aMxTJbr8hT/QYqZ8+jDiCw3cZEcE1ifhb+64Lv+vSOdBMY1VperSHQxwDkGtDeKM
+	NVsRcoDXMrrmVCJz8BcPJIuEQQeXIPM=
 From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
@@ -58,11 +56,9 @@ Cc: Richard Cochran <richardcochran@gmail.com>,
 	netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next 04/14] net: atlantic: convert to ndo_hwtstamp API
-Date: Mon, 13 Oct 2025 16:34:19 +0000
-Message-ID: <20251013163429.4984-5-vadim.fedorenko@linux.dev>
-In-Reply-To: <20251013163429.4984-1-vadim.fedorenko@linux.dev>
-References: <20251013163429.4984-1-vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next 00/14] convert net drivers to ndo_hwtstamp API
+Date: Mon, 13 Oct 2025 16:34:15 +0000
+Message-ID: <20251013163429.4984-1-vadim.fedorenko@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -72,179 +68,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Convert driver to .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks.
-.ndo_eth_ioctl() becomes empty so remove it. Also simplify code with no
-functional changes.
+Convert drivers which support HW timestamping to use
+.ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks. The new API uses
+netlink to communicate with user-space and have some test coverage.
+There are some drivers left with old ioctl interface after this series:
+- mlx5 driver be shortly converted by nVidia folks
+- TI netcp ethss driver which needs separate series which I'll post
+  after this one. 
 
-Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
----
- .../net/ethernet/aquantia/atlantic/aq_main.c  | 66 +++++--------------
- .../net/ethernet/aquantia/atlantic/aq_ptp.c   |  6 +-
- .../net/ethernet/aquantia/atlantic/aq_ptp.h   |  8 +--
- 3 files changed, 22 insertions(+), 58 deletions(-)
+Vadim Fedorenko (14):
+  net: ti: am65-cpsw: move hw timestamping to ndo callback
+  ti: icssg: convert to ndo_hwtstamp API
+  amd-xgbe: convert to ndo_hwtstamp callbacks
+  net: atlantic: convert to ndo_hwtstamp API
+  cxgb4: convert to ndo_hwtstamp API
+  tsnep: convert to ndo_hwtstatmp API
+  funeth: convert to ndo_hwtstamp API
+  octeontx2: convert to ndo_hwtstamp API
+  mlx4: convert to ndo_hwtstamp API
+  ionic: convert to ndo_hwtstamp API
+  net: ravb: convert to ndo_hwtstamp API
+  net: renesas: rswitch: convert to ndo_hwtstamp API
+  net: hns3: add hwtstamp_get/hwtstamp_set ops
+  net: hns3: move hns3pf to use hwtstamp callbacks
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_main.c b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-index b565189e5913..4ef4fe64b8ac 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-@@ -258,10 +258,15 @@ static void aq_ndev_set_multicast_settings(struct net_device *ndev)
- 	(void)aq_nic_set_multicast_list(aq_nic, ndev);
- }
- 
--#if IS_REACHABLE(CONFIG_PTP_1588_CLOCK)
--static int aq_ndev_config_hwtstamp(struct aq_nic_s *aq_nic,
--				   struct hwtstamp_config *config)
-+static int aq_ndev_hwtstamp_set(struct net_device *netdev,
-+				struct kernel_hwtstamp_config *config,
-+				struct netlink_ext_ack *extack)
- {
-+	struct aq_nic_s *aq_nic = netdev_priv(netdev);
-+
-+	if (!IS_REACHABLE(CONFIG_PTP_1588_CLOCK) || !aq_nic->aq_ptp)
-+		return -EOPNOTSUPP;
-+
- 	switch (config->tx_type) {
- 	case HWTSTAMP_TX_OFF:
- 	case HWTSTAMP_TX_ON:
-@@ -290,59 +295,17 @@ static int aq_ndev_config_hwtstamp(struct aq_nic_s *aq_nic,
- 
- 	return aq_ptp_hwtstamp_config_set(aq_nic->aq_ptp, config);
- }
--#endif
--
--static int aq_ndev_hwtstamp_set(struct aq_nic_s *aq_nic, struct ifreq *ifr)
--{
--	struct hwtstamp_config config;
--#if IS_REACHABLE(CONFIG_PTP_1588_CLOCK)
--	int ret_val;
--#endif
--
--	if (!aq_nic->aq_ptp)
--		return -EOPNOTSUPP;
--
--	if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
--		return -EFAULT;
--#if IS_REACHABLE(CONFIG_PTP_1588_CLOCK)
--	ret_val = aq_ndev_config_hwtstamp(aq_nic, &config);
--	if (ret_val)
--		return ret_val;
--#endif
--
--	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
--	       -EFAULT : 0;
--}
- 
--#if IS_REACHABLE(CONFIG_PTP_1588_CLOCK)
--static int aq_ndev_hwtstamp_get(struct aq_nic_s *aq_nic, struct ifreq *ifr)
-+static int aq_ndev_hwtstamp_get(struct net_device *netdev,
-+				struct kernel_hwtstamp_config *config)
- {
--	struct hwtstamp_config config;
-+	struct aq_nic_s *aq_nic = netdev_priv(netdev);
- 
- 	if (!aq_nic->aq_ptp)
- 		return -EOPNOTSUPP;
- 
--	aq_ptp_hwtstamp_config_get(aq_nic->aq_ptp, &config);
--	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
--	       -EFAULT : 0;
--}
--#endif
--
--static int aq_ndev_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd)
--{
--	struct aq_nic_s *aq_nic = netdev_priv(netdev);
--
--	switch (cmd) {
--	case SIOCSHWTSTAMP:
--		return aq_ndev_hwtstamp_set(aq_nic, ifr);
--
--#if IS_REACHABLE(CONFIG_PTP_1588_CLOCK)
--	case SIOCGHWTSTAMP:
--		return aq_ndev_hwtstamp_get(aq_nic, ifr);
--#endif
--	}
--
--	return -EOPNOTSUPP;
-+	aq_ptp_hwtstamp_config_get(aq_nic->aq_ptp, config);
-+	return 0;
- }
- 
- static int aq_ndo_vlan_rx_add_vid(struct net_device *ndev, __be16 proto,
-@@ -500,12 +463,13 @@ static const struct net_device_ops aq_ndev_ops = {
- 	.ndo_set_mac_address = aq_ndev_set_mac_address,
- 	.ndo_set_features = aq_ndev_set_features,
- 	.ndo_fix_features = aq_ndev_fix_features,
--	.ndo_eth_ioctl = aq_ndev_ioctl,
- 	.ndo_vlan_rx_add_vid = aq_ndo_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid = aq_ndo_vlan_rx_kill_vid,
- 	.ndo_setup_tc = aq_ndo_setup_tc,
- 	.ndo_bpf = aq_xdp,
- 	.ndo_xdp_xmit = aq_xdp_xmit,
-+	.ndo_hwtstamp_get = aq_ndev_hwtstamp_get,
-+	.ndo_hwtstamp_set = aq_ndev_hwtstamp_set,
- };
- 
- static int __init aq_ndev_init_module(void)
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-index 5acb3e16b567..0fa0f891c0e0 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-@@ -51,7 +51,7 @@ struct ptp_tx_timeout {
- 
- struct aq_ptp_s {
- 	struct aq_nic_s *aq_nic;
--	struct hwtstamp_config hwtstamp_config;
-+	struct kernel_hwtstamp_config hwtstamp_config;
- 	spinlock_t ptp_lock;
- 	spinlock_t ptp_ring_lock;
- 	struct ptp_clock *ptp_clock;
-@@ -567,7 +567,7 @@ static void aq_ptp_rx_hwtstamp(struct aq_ptp_s *aq_ptp, struct skb_shared_hwtsta
- }
- 
- void aq_ptp_hwtstamp_config_get(struct aq_ptp_s *aq_ptp,
--				struct hwtstamp_config *config)
-+				struct kernel_hwtstamp_config *config)
- {
- 	*config = aq_ptp->hwtstamp_config;
- }
-@@ -588,7 +588,7 @@ static void aq_ptp_prepare_filters(struct aq_ptp_s *aq_ptp)
- }
- 
- int aq_ptp_hwtstamp_config_set(struct aq_ptp_s *aq_ptp,
--			       struct hwtstamp_config *config)
-+			       struct kernel_hwtstamp_config *config)
- {
- 	struct aq_nic_s *aq_nic = aq_ptp->aq_nic;
- 	const struct aq_hw_ops *hw_ops;
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.h b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.h
-index 210b723f2207..5e643ec7cc06 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.h
-@@ -60,9 +60,9 @@ void aq_ptp_tx_hwtstamp(struct aq_nic_s *aq_nic, u64 timestamp);
- 
- /* Must be to check available of PTP before call */
- void aq_ptp_hwtstamp_config_get(struct aq_ptp_s *aq_ptp,
--				struct hwtstamp_config *config);
-+				struct kernel_hwtstamp_config *config);
- int aq_ptp_hwtstamp_config_set(struct aq_ptp_s *aq_ptp,
--			       struct hwtstamp_config *config);
-+			       struct kernel_hwtstamp_config *config);
- 
- /* Return either ring is belong to PTP or not*/
- bool aq_ptp_ring(struct aq_nic_s *aq_nic, struct aq_ring_s *ring);
-@@ -130,9 +130,9 @@ static inline int aq_ptp_xmit(struct aq_nic_s *aq_nic, struct sk_buff *skb)
- 
- static inline void aq_ptp_tx_hwtstamp(struct aq_nic_s *aq_nic, u64 timestamp) {}
- static inline void aq_ptp_hwtstamp_config_get(struct aq_ptp_s *aq_ptp,
--					      struct hwtstamp_config *config) {}
-+					      struct kernel_hwtstamp_config *config) {}
- static inline int aq_ptp_hwtstamp_config_set(struct aq_ptp_s *aq_ptp,
--					     struct hwtstamp_config *config)
-+					     struct kernel_hwtstamp_config *config)
- {
- 	return 0;
- }
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c      |  24 +--
+ drivers/net/ethernet/amd/xgbe/xgbe-hwtstamp.c |  28 ++--
+ drivers/net/ethernet/amd/xgbe/xgbe.h          |  11 +-
+ .../net/ethernet/aquantia/atlantic/aq_main.c  |  66 ++------
+ .../net/ethernet/aquantia/atlantic/aq_ptp.c   |   6 +-
+ .../net/ethernet/aquantia/atlantic/aq_ptp.h   |   8 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |   2 +-
+ .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   | 154 +++++++++---------
+ drivers/net/ethernet/engleder/tsnep.h         |   8 +-
+ drivers/net/ethernet/engleder/tsnep_main.c    |  14 +-
+ drivers/net/ethernet/engleder/tsnep_ptp.c     |  88 +++++-----
+ drivers/net/ethernet/fungible/funeth/funeth.h |   4 +-
+ .../ethernet/fungible/funeth/funeth_main.c    |  40 ++---
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h   |   5 +
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   |  29 ++++
+ .../hisilicon/hns3/hns3pf/hclge_main.c        |  13 +-
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         |  32 ++--
+ .../hisilicon/hns3/hns3pf/hclge_ptp.h         |   9 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |   9 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |  56 +++----
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |   3 +-
+ .../net/ethernet/mellanox/mlx4/en_netdev.c    |  61 +++----
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   6 +-
+ .../net/ethernet/pensando/ionic/ionic_lif.c   |  17 +-
+ .../net/ethernet/pensando/ionic/ionic_lif.h   |  11 +-
+ .../net/ethernet/pensando/ionic/ionic_phc.c   |  59 ++++---
+ drivers/net/ethernet/renesas/ravb_main.c      |  61 +++----
+ drivers/net/ethernet/renesas/rswitch_main.c   |  53 +++---
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c      |  44 +++--
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |  47 ++----
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  |   4 +-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   6 +-
+ .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |   4 +-
+ 33 files changed, 441 insertions(+), 541 deletions(-)
+
 -- 
 2.47.3
 
