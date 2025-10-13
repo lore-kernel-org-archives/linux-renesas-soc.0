@@ -1,147 +1,67 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940E62F9987
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFDC18D636
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364931; cv=none; b=uKRyDEpD14clndXuJ9ufl0hef6Uqvyg7XdgEWzFjj4IZgdN7BomXazm0aAgG3r97f8kLFnanZ5ARcn3T3EGX5jxGrNJjA41xsCIb1verHRCaRsdkzZ+0rkkZTnvMGkFPrxNg1e+EeMdEdPTF1hlli2VoxgGLHrGs4U0Xnmjl3yk=
+	t=1760365231; cv=none; b=e9Dx+dKH8Rh6SyBBq+dEvU7HkB3oHxojN/0AKIlWPIGecDAAbEfjIYXHGwXH3Vb4lHYT3bCfByyR0udGl5Bybao8IT1KLLAqdUfObly+1peztuvhaVIrm+oOytkSKzNips9H6X6fwjp2Kq05OBTTJgHwPi0pXsKK2HZQXqRlkcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364931; c=relaxed/simple;
-	bh=skVdsDy23N9awwt8a/RTEZ0Qc6vg10QpvApVK58YUJ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H/keBjAYI+VB77kPLG6J59dtnpKLukuryddxzlBJmT1FCZBfs0r7Cl2dBQIMeSQzbvJ5MV8CfNHdWEnt61Eo5LtrSRfyOVjq7h3qEvtRAH2n3bakub9Hj2irQvHTOP9mobOHhiamF4yvhcNZUCEoJJn4jOnRdglUyAhIpo+0W8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Pe/XMwe+; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1760365231; c=relaxed/simple;
+	bh=VO/owp76S0fxkIL7AhFSx88oIpYyUSc36/06NZyaB74=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=RawlCT5E0KqL1y+mq1ymn5PmCGXdDybrt/cqcQiRojVw1tXg46W76IkUwoyuKQMNQ6IdL0v4F16uNlIhCfZRSQ9gUhbzC97p49j/9J8lnQfvJfc99guo783daAazZkJs99QW5vbH1vNHz+CPclvxQhkpeS4ShWxgC0uFqab8GH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFmM9BBW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pe/XMwe+"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so4896213e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 07:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760364905; x=1760969705; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eZ1y71tufxgFEEk7Jm6x6zTef8El2vgKtA+3jSIjqY0=;
-        b=Pe/XMwe+0Bh+ffbcNId0go0Mr1o5TxXm4tOgqWxQItHWDgtLXdBogZkl7S/qHqliqT
-         gRAiGIqC68nZaPlzobe0RHjVjTOxxSHFMR/azRj/WOdePWzN8pGCXxK46adRVzzop+8e
-         Wgc2Nov+Xwmp0YPjZeNGHYKedPFbmRihJdFZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364905; x=1760969705;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eZ1y71tufxgFEEk7Jm6x6zTef8El2vgKtA+3jSIjqY0=;
-        b=k1V0U0Jm6s08B5efJ6PES+5vdBB+6LuEAwiN7cX5cUOax4MN/jST9KXQCuSn9iMQae
-         IoejIPvUBqMEFFh4JrzYVdrczgKKF59dIhoEvGzl0f27s0lyFuez2ghsraYU1luxX6Ar
-         jSP1C3ldv/yITYzBRXIj1b5bo9W3zfzpiWnwQSkJ0+vcnArC+/jcYUEDK80HOxZpnLpe
-         K+UA8zRXb/anjk1sfrizkBECG33AAKsLfWOMYijEThqaGZ3s4y54JrlO7ZYacSQqyErb
-         GhxQD1EeMhQAak1g2LgWYJo/dc0fYJIf9BEXjEhhnoFnoa2IB5maMkgKhGHF7Pz0pqgZ
-         lnMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHsEJUqgtXT977HEQmS3na4/danPXstb7GNOzVrq+3hJe4f2I3RXg34ZKySG71sNP9O2zSJwScE2Kxz/s1qvUJIA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlURvJs1Rxq8/0t9iT8hijdQyORuBlcXhWAJqUwhh/yydsRaWa
-	CWQr+VxSaGQz34qo7Z+vtmaLXsZerTnJNajZdjJdYWF39Ojer0k0PsVPcuRF6Cs23g==
-X-Gm-Gg: ASbGncuekdpY7bqN1bp0Jqj2UuEP7qf0ILDhhj0eU9xPCDcp89K6SEzAqFBJOhOvBSB
-	51/uLrTk0HpEE7DF3peNENeYOsxvufPcQW1jx7ynONmKSg3AXcUT6tx/dVq0GxgBk1mmDkZwj9N
-	TQtlh8SoceyP2V7XJ8kZxOgDbN+UhmfQPwHFVXdEyYx8oM0jbkcke8vi88oxCOcuTEiQUb4++P5
-	kPF8PVgptdqwKGKSNaaNcVDfPsApTmvMmLIlrA8L1lr+mWcytICia4VtXRnW8P9JbS4nPOHYfZ9
-	Fc5YYLsGEq+k7Cgd6vVW0sWyVEuZ+A+51gzkFTMrZIuzIw35hOda+TFzSRlV8BRwNOqnQGbBZs1
-	5TB1KmPE2lFnTmbZdDT7SmYTH/SoddYuHtq03zPUWLrzxiOl+TTFd/2fWdB+vqbIyi0/nPPdKwH
-	AvUN2ESIv+d+FhpD5Hhg==
-X-Google-Smtp-Source: AGHT+IFBH7uOHCgk463dX9utRYXWTvTjqks9NRSCe1XoUpKorvtzVnjNPhpyhsxKq9EgJCfyUEV3JQ==
-X-Received: by 2002:a05:6512:ad0:b0:57b:1ca2:ab60 with SMTP id 2adb3069b0e04-5906de89076mr6151331e87.52.1760364905455;
-        Mon, 13 Oct 2025 07:15:05 -0700 (PDT)
-Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.15.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:15:05 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 14:15:07 +0000
-Subject: [PATCH 27/32] media: renesas: vsp1: Use %pe format specifier
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFmM9BBW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0A7C4CEE7
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760365230;
+	bh=VO/owp76S0fxkIL7AhFSx88oIpYyUSc36/06NZyaB74=;
+	h=Subject:From:Date:To:From;
+	b=dFmM9BBWD5dQ6kx/Z7quHuC+ShWe5A5hxHlm1fJOV8lI/9d8quNSCFpf5iOm1gWju
+	 v9TiKaZY+Fi7PVksT3IHmr43HubQWXeSYx03YBMz1TZS9FP831E6N8buUXnnmmlmru
+	 UAOH7BEMh+1fKZsi6akQvLFWigL8NZNthimhVof5AepMR3u+SS8nUG6r8mOUGVIIXS
+	 vvqPh3DbK5Rry/jFL4ZwB15lHXBP7L16j0hmBrLSKc3/lMX8bpf46kbvOvdRBm8Cwv
+	 F6jM6Ij0X4nsmhIfZtbJwoQtKF2MMDwjN2b8822ql+eYX3sJV16SW9na1lZCLtsTzu
+	 PgcIY1NrfjuBA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id CA4D0380A94C
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Oct 2025 14:20:17 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-ptr_err-v1-27-2c5efbd82952@chromium.org>
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
-In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- =?utf-8?q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Leon Luo <leonl@leopardimaging.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Jacopo Mondi <jacopo+renesas@jmondi.org>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Julien Massot <julien.massot@collabora.com>, 
- Jacopo Mondi <jacopo@jmondi.org>, Daniel Scally <djrscally@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
- Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Tiffany Lin <tiffany.lin@mediatek.com>, 
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Yunfei Dong <yunfei.dong@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Rui Miguel Silva <rmfrfs@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From: patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: 
+ <176036521657.2988430.1959201268000820598.git-patchwork-summary@kernel.org>
+Date: Mon, 13 Oct 2025 14:20:16 +0000
+To: linux-renesas-soc@vger.kernel.org
 
-The %pe format specifier is designed to print error pointers. It prints
-a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-omitting PTR_ERR().
+Hello:
 
-This patch fixes this cocci report:
-./platform/renesas/vsp1/vsp1_drv.c:958:4-11: WARNING: Consider using %pe to print PTR_ERR()
+The following patches were marked "accepted", because they were applied to
+geert/renesas-devel.git (next):
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/renesas/vsp1/vsp1_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Series: Renesas SoC updates for v6.18 (take two)
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Arnd Bergmann <arnd@arndb.de>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1001728
+  Lore link: https://lore.kernel.org/r/cover.1757669912.git.geert+renesas@glider.be
+    Patches: [GIT,PULL,1/3] Renesas driver updates for v6.18 (take two)
+             [GIT,PULL,2/3] Renesas DT binding updates for v6.18
+             [GIT,PULL,3/3] Renesas DTS updates for v6.18 (take two)
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-index 6c64657fc4f3366f27bb63dea56f535519af20fd..2de515c497eb8557602ec946de527823f07ab11f 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-@@ -954,8 +954,7 @@ static int vsp1_probe(struct platform_device *pdev)
- 		vsp1->fcp = rcar_fcp_get(fcp_node);
- 		of_node_put(fcp_node);
- 		if (IS_ERR(vsp1->fcp)) {
--			dev_dbg(&pdev->dev, "FCP not found (%ld)\n",
--				PTR_ERR(vsp1->fcp));
-+			dev_dbg(&pdev->dev, "FCP not found (%pe)\n", vsp1->fcp);
- 			return PTR_ERR(vsp1->fcp);
- 		}
- 
+
+Total patches: 3
 
 -- 
-2.51.0.760.g7b8bcc2412-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
