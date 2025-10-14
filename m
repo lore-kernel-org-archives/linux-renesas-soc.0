@@ -1,202 +1,94 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEA02FE076
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 11:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4AD2E2EF2
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441430; cv=none; b=OXt05sHGE8brspz2LiffsnO7FNSFjv97/C9A3S9plUbMmyjIGSD0cIL5Gc12bgPXMsjZOAFntAZmMbH5B8rVMSj1WIw8sKpEQp42QT80ZQ7aoaay+IjvlpTQul6+7dYKuzYRuxw1zF6WDjQYA9HM3OCqTESvQpUSMeZnKVsU9QE=
+	t=1760441607; cv=none; b=YQqY9HJdSj4HxQjGE4+EVcVbSlMAXAWEM80JKAqLmCY5cOYldwKDfIWEtD5r12S2FbwLf48qDjZ7M/vF7ZTtxR3f2uqUU6uKHdcrt+Mqxgvq5E86Jbl3PmGF626rAJuYGdYXqoN0Ro4z4yMpWp3wLASdeJG56eEuCOYYEpQUbvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441430; c=relaxed/simple;
-	bh=xKTYsXPMGOMKMV/jt+4Z9kaeJjZ4nbFhnUfdLzk38tM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jabo4D8K+/aecxWfEddi4uaWI2UZVVwddZW9Jlv+79khTpLz9vwT1gJfWXyCqSnFxJYgRpd5McVXWTqu25e6M4HgZ9EJzdLiVwxpEI0s1GE7ub954Qrik6vuQluzMHzIe/PYTT26ANCGYPf0GBOIT937/md4fof19tuR5ucsET4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dZ9ek50b; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1760441607; c=relaxed/simple;
+	bh=EOiBoMq8sLGDd3lfmeBPzgdelZvp0tOnl2eG6FrkpzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OyJUJXjvtP6YRrEUd2i5vnR27US1Lbfy5p3ox8qgGX3rAIGYJO22JodF27lS+CSDy5ZzrajSQiUokdcFohkzGkrXcx+z0NHdehBuGi+t9LYUU1FUwQ4TcsgKXXEDsC+Zf5/WIkWu0uVah9hZPDG+UzeACJDlw15yW+Vf28cG9Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nr04E4ei; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dZ9ek50b"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=m2Ce9z697ssvL8uDRJI2+5HkTIC8S6bwRAdA0cAsyWg=; b=dZ9ek5
-	0brAbd80iuMBUeh0ftOxJgK2OsXYBeX7Mv+do0fVcvEcG7KaT+RTiyrGhMg4PgJW
-	o4Ga+M92oOSWkHGXsoNcUTwpXq1eYJu+ZTF1b+YXTv8joNuHXZ/NGQphLlupitLE
-	ivipDgVj15IgP1Oz/PlHmHFapR3tPBYwnFkXsuziOnFmo5dTnEeIfxonbioiZT0N
-	aQKyIOMUaPHm4WT9I4k97jXjI1YEqEh0LoWvhKVHqvJzY/ua0oiOy9211MXFW2eq
-	feBxC6zRRLJPLDAUwtEi9WFKO7+rjKkxOKWVdNzjhV7OXaZAkPLLfRdjzEbWu1YP
-	GELhXyAkA42NJW7Q==
-Received: (qmail 2943660 invoked from network); 14 Oct 2025 13:30:18 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Oct 2025 13:30:18 +0200
-X-UD-Smtp-Session: l3s3148p1@6CphtRxByN4gAwDPXwQHAL/S9V79e5yL
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: watchdog: Add Renesas WWDT
-Date: Tue, 14 Oct 2025 13:29:53 +0200
-Message-ID: <20251014112953.25712-5-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251014112953.25712-4-wsa+renesas@sang-engineering.com>
-References: <20251014112953.25712-4-wsa+renesas@sang-engineering.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nr04E4ei"
+Message-ID: <fb93e416-1a6c-4c3c-9621-03deb8bc34aa@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760441602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TCxzBWmpERGaNbcd7P2dfHjWYxDzYzg8wdZKfHQFXKQ=;
+	b=nr04E4eiX7LIJzoKhkxJrfJGLTm++4OCq7ELggnOG2SHf1meAouxCgrl1KwLUuQ3ypmAA6
+	aNWjBAcNdJZJTWp2QowDUrCpem+qdcVfQ9IN/yz/i3mtm3zZKVqHpWd6CbMHoEVjT42Tcb
+	mOI8X88kDZHGVQsLROdUsk62sp0+n0Q=
+Date: Tue, 14 Oct 2025 12:33:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 13/14] net: hns3: add hwtstamp_get/hwtstamp_set
+ ops
+To: Simon Horman <horms@kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Igor Russkikh <irusskikh@marvell.com>, Egor Pomozov <epomozov@marvell.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>,
+ Dimitris Michailidis <dmichail@fungible.com>,
+ Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
+ Tariq Toukan <tariqt@nvidia.com>, Brett Creeley <brett.creeley@amd.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Paul Barker <paul@pbarker.dev>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20251013163749.5047-1-vadim.fedorenko@linux.dev>
+ <20251013163749.5047-8-vadim.fedorenko@linux.dev>
+ <aO4zdkFjMlv5trhB@horms.kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <aO4zdkFjMlv5trhB@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Describe the Window Watchdog Timer found on Renesas R-Car SoCs from late
-Gen3 onwards.
+On 14/10/2025 12:26, Simon Horman wrote:
+> On Mon, Oct 13, 2025 at 04:37:48PM +0000, Vadim Fedorenko wrote:
+>> And .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks to HNS3 framework
+>> to support HW timestamp configuration via netlink.
+>>
+>> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> 
+> Hi Vadim,
+> 
+> This patch adds warnings about the functions it adds being unused.
+> 
+> I would suggest addressing this by simply squashing this and the following
+> patch, which uses these new functions, into one patch. I think the
+> resulting patch would still be small, internally consistent, and easy
+> enough to review.
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hi Simon!
 
-Note: Despite the name, V3U is considered to be a Gen4 SoC.
-
-Changes since v1:
-
-* support not only V4H but all Gen3/4 SoCs having this WWDT
-* handle the two-resets exception for V3U and S4
-* switch order of clocks, so it is the same as for the resets
-  (for resets, "cnt" is always present and "bus" is optional)
-* rename the file to match the base compatible
-* require interrupts and resets
-* drop unneeded label from the example
-
- .../watchdog/renesas,rcar-gen3-wwdt.yaml      | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/watchdog/renesas,rcar-gen3-wwdt.yaml
-
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas,rcar-gen3-wwdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,rcar-gen3-wwdt.yaml
-new file mode 100644
-index 000000000000..ffafe9a6d3f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/renesas,rcar-gen3-wwdt.yaml
-@@ -0,0 +1,114 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/renesas,rcar-gen3-wwdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas Window Watchdog Timer (WWDT) Controller
-+
-+maintainers:
-+  - Wolfram Sang <wsa+renesas@sang-engineering.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r8a77970-wwdt  # R-Car V3M
-+              - renesas,r8a77980-wwdt  # R-Car V3H
-+          - const: renesas,rcar-gen3-wwdt
-+
-+      - items:
-+          - enum:
-+              - renesas,r8a779a0-wwdt  # R-Car V3U
-+              - renesas,r8a779f0-wwdt  # R-Car S4
-+              - renesas,r8a779g0-wwdt  # R-Car V4H
-+              - renesas,r8a779h0-wwdt  # R-Car V4M
-+          - const: renesas,rcar-gen4-wwdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    items:
-+      - description: Pretimeout, 75% of overflow reached
-+      - description: Error occurred
-+
-+  interrupt-names:
-+    items:
-+      - const: pretimeout
-+      - const: error
-+
-+  clocks:
-+    items:
-+      - description: Counting clock
-+      - description: Bus clock
-+
-+  clock-names:
-+    items:
-+      - const: cnt
-+      - const: bus
-+
-+  resets:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reset-names:
-+    minItems: 1
-+    items:
-+      - const: cnt
-+      - const: bus
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r8a779a0-wwdt
-+              - renesas,r8a779f0-wwdt
-+    then:
-+      properties:
-+        resets:
-+          minItems: 2
-+        reset-names:
-+          minItems: 2
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a779g0-cpg-mssr.h>
-+    #include <dt-bindings/power/r8a779g0-sysc.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    watchdog@ffc90000 {
-+            compatible = "renesas,r8a779g0-wwdt",
-+                         "renesas,rcar-gen4-wwdt";
-+            reg = <0xffc90000 0x10>;
-+            interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "pretimeout", "error";
-+            clocks = <&cpg CPG_CORE R8A779G0_CLK_R>,
-+                     <&cpg CPG_CORE R8A779G0_CLK_SASYNCRT>;
-+            clock-names = "cnt", "bus";
-+            power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+            resets = <&cpg 1200>;
-+            reset-names = "cnt";
-+    };
--- 
-2.47.2
+Thanks for the review. I was thinking about it while writing the code,
+but thought it would be clearer to have it split. Apparently, I forgot
+about warnings in this case, which is definitely an issue here.
+Thanks for flagging, I'll merge these 2 patches in the next version.
 
