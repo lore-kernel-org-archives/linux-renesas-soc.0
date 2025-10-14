@@ -1,126 +1,117 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB7C2BD013
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 14:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD7485260
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 15:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452246; cv=none; b=JDKWb5SbN9sNoDpTADfUS1KOovbZvjrbNdDci2X2xbnCkT7T14eYh4hwUfl/DZ2z+RKwU5GCgRuvPqFRxNBtpR2K9PVXcYzqMhNe9auytMks9OmozkmrLjuuPsLiJe39IdkFTIUrtfxiksxHSc4mpUX1nA9+Bg9izOsKM9M4Fn8=
+	t=1760454250; cv=none; b=Er02f77rKO9evlQ76Zj6omOglGuRRMMc4jZ882lC8g+B6JKRnvnARX2YKIE+VkE786jJHV25myUVD8TRILAnBRN3UOUDyyy4ZD8umA39v8dGCRN6zzPxwWOYua6iPV0vcBUnjk3DUMVETm/1ob8Sg7utohIdUlDhoJCGFJlTQoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452246; c=relaxed/simple;
-	bh=lmyEFnb3rou3T29UZK/sbNnlwieTzVpKAj+DLZhNS/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N62yfPVFRajtefd/t/AxbvPh2+2Hl7/MG9We3KtftZVe5HLpezdwJGzojs3imbe18dXum8kZHKnGN3d32lAFYnnmOhP0EOAQ2QhJKvv39qhDHgtkE/M6C9k9YvhcNpNjpIMLjKotAqx8m3o61G3uUeRQpukVuWkbpNKJ/vI6lxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XnDmjJCJ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XnDmjJCJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=wVaO
-	xQ5fv5jrDfBBuBq5m0mQE4kjfRcP5F7ECYlPJL0=; b=XnDmjJCJf/e0+D7ZOOpm
-	vb3HFnucGnhx3G66gU/QBXJdHXIoRoJNCAKJeUu2b5uFSZS0gLYOPbO3JlxSCU6A
-	kd/rSnjgqd406F+B+q+1CpoSN2ELk46Wr6Qhm7Qcl+fx9NUsSSK+iXleR45SUPtb
-	Q/UVPHG6WZfWro0S7ckNIpo4bM3r6TDGWi+qS5Mw2K8DgQHhFQb8SaNCVw7fGNIm
-	M4dqdN32dCnarMtCiE6S2fyP7G4HFROxflK4nYpFBw+IS9yQ4RZgCsc0FIRbvkwB
-	4ueIfsWUlvSoWRsUp9ToEh05jdP1+MNntA8+8LvP2k/Cbnz7phExHksv1A7+17U4
-	Jg==
-Received: (qmail 3000523 invoked from network); 14 Oct 2025 16:30:42 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Oct 2025 16:30:42 +0200
-X-UD-Smtp-Session: l3s3148p1@nBSBOh9B/wRtKPEV
-Date: Tue, 14 Oct 2025 16:30:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aO5ekPxeg7tdFlHi@shikoro>
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
- <20250922152640.154092-8-herve.codina@bootlin.com>
- <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
- <20251001174205.71a08017@bootlin.com>
- <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
+	s=arc-20240116; t=1760454250; c=relaxed/simple;
+	bh=DfBoSOX2JWzFEFagDlgRYqiID6tOu1qPHKjuuWLehgk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=nfRwl275rBlVlm/r2/ah+cNmfT6WbhOApXY0PfeyO0Rb4cSQW9cS5Al+qLkNcB/d/h+KzV17zCrrLgZCuezjDlNdu4kbah+pfd4XVT6DpP2MUHzwbxPa57LNL/ptyq3bk6JJR/VCLU29H+PBtBILr06JWk/wYjBeJxIwrzGoWZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4948CC4CEE7
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 15:04:08 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2025-10-14-v6.18-rc1
+Date: Tue, 14 Oct 2025 17:04:06 +0200
+Message-ID: <20251014150406.2868801-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s0BX72F7mRu03JEh"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+I have pushed renesas-drivers-2025-10-14-v6.18-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
---s0BX72F7mRu03JEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-Hi Linus,
+Today's version is based on renesas-devel-2025-10-13-v6.18-rc1.
 
-giving some details about the HW until Herve can return to this topic.
+Included branches with driver code:
+  - renesas-clk-for-v6.19
+  - renesas-pinctrl-for-v6.19
+  - topic/r8a78000-v6
 
-> Are these IRQ lines ever muxed for anything else than
-> GPIO? In that case go ahead with this solution, I guess.
-> But the title of your patch seems to suggest it is
-> only used by GPIO.
+Included fixes:
+  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
+  - ARM: shmobile: defconfig: Update for renesas-drivers
+  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
+  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
-True, it only muxes 96 GPIOs to the 8 available irqs.
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host-fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
 
-> If it is only used for GPIO, why make it a separate
-> driver instead of just putting the muxing into the
-> GPIO driver?
+Gr{oetje,eeting}s,
 
-Because the HW design kind of suggests it, I'd think. The GPIO
-controller is a standard Synopsis one ("snps,dw-apb-gpio") without any
-extras. The GPIOMUX (which is extra) is according to the docs part of
-the system controller with a dedicated set of registers. Luckily,
-self-contained and not mangled with other functionality.
+						Geert
 
-I am just stating where this comes from. I haven't looked into the
-details of your suggestion. It may or may not make sense to add this to
-the Synopsis driver with a dedicated compatible for RZ/N1D. I'll leave
-this for Herve, though.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Happy hacking,
-
-   Wolfram
-
-
---s0BX72F7mRu03JEh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjuXpAACgkQFA3kzBSg
-KbZ50Q/+Nv6tC7a/spZ1gdx4lLrfThzj43fuAydmqVYZUCb+H2YhdYpYWZp2u9UK
-JqD7HJypFbMeFX2P/JgJBGNwPy0tBNgBWUz+yBd7JCuhQePY1OsaWYD3RyvC1AID
-UEeZ7QltxuHqoMIQfH2mk0Q5v8CmtsDY+Pk9g2cS7IYfg9S2Lsar2WU8UpvAuCyt
-TktyLQ4NyMAl5Iwr7T/ZkKLNAkSxJ1sH3YZ+pit+aQ5PNbHPYJzrDkD0/DhqohgB
-eyNnno1zPlrI2ujNj/rhtjsGr+d87qhMwwPHpL7fXKnjPe2imo2K9FYjmPORpTbZ
-Yt0+oVAT6OIwXl+TcRfhrS//61p9DJIZKAKvETymyOpPqnaFCCJm26IugSmuC1C6
-56EZ0Gsc4GOKm4YZ0qGBmUriGRPoYBGaU6UglyNrqGrmcj2P5B4rr/isOOjy3baE
-fiMYvzr6opP/h1xhcV0cWBld15YGfEn+1kKOt+JGixgpbJjq4CAKkMnDk/CxVuVm
-CoCMZD3HVscS+/vSb4OuQiJbzSNotc0nxNCZcM50Pl5MBhfeMt10/fxFqpgdL3Sf
-jFj10D4FvstEb+ASTd+hMwDiuuhHK3nh0RKXL8+N7XKRrKtYqR6Cbkh+tAIYe+HO
-0WK1Q0CJJ+ydmLLJw4XgGtTILkBATJixuJAF5uJVV1QJQE60GPs=
-=R48r
------END PGP SIGNATURE-----
-
---s0BX72F7mRu03JEh--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
