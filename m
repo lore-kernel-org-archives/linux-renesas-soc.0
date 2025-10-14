@@ -1,155 +1,214 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141A2D8DAF
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 07:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A059D30E0E0
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 07:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760426562; cv=none; b=DAPmMEXIdkQtX6ArlYMG0qwukY7Gh6TP9msaEno1+nNPHOzmo1+q7a4ULeQeq56+uIAILDFrwL1sNUfVtXVFfmXz8D+cpyOBstNJLuHnE+C5H4dStXVHKgH/9kRzuenwAbHG2Kp1VGIslzu64uua8yzjQ2/zZ4U2+MzwYuhOuDQ=
+	t=1760427022; cv=none; b=iyzuAKFNyA+bpCeBh+3jMFT6E8zf33JMFsDMKSZm8jujGGgvuvRiX0G+I1lYtEFknPm1kl2KfQSP4HMM2eTwLmPcDNkNy3az2vlmnhJTDH9EtAOTxxuUQ8wzR+qcjEelZ0nh2J8NSvmGSIN8zBUOZia9mF01J63UmnWzWIFGMMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760426562; c=relaxed/simple;
-	bh=qcHTUS0wo1f43VFStYszqJZcg60j4r28QkB5kGixAXg=;
+	s=arc-20240116; t=1760427022; c=relaxed/simple;
+	bh=81NIS2/I72XFASdail0a4m5/ef/jzz2CXXhiC8R4kbE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny9zw8Jy5mTnZ9p3WK+BL/MywPKNUcaMVrQMiNteU9/Qy79QGucQaeIDUgYBjWGz3Vx1WoKDNDGkRzt98uVxXCdG2BV7yWiuqtqmDfNjudEXYDxZJ/hPZnR5ph0Rv+EogAEZrPWB+7i3j8xzsdJfQsOCeg8hSveKzUwz3ipQ7u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=IEimjUvxetJeyDzyIxAoyJqEZQifFR4FlGz3/e+uFP1A67DCTuLZ7odXjhZ0jq8u8sy+FU7Tof6tJGLIVDbW4b6FipNJixa4yKWHpulTI5w0wU/tvdUxVT6f4/N4ra0srz19BHcrLRvGpOxllcTThPzxV9RLyxLJb3i/2nwWeM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e50EonGE; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-863fa984ef5so831486285a.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 00:22:41 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e50EonGE"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso4168793f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 00:30:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760427016; x=1761031816; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KjsmQsAWKR+AO8bY1bzFnlPN5sRWXcF5EVgjOHKuI0M=;
+        b=e50EonGEjNkh0UPEI0QCgtwaqZVjMhrZZUPlBTn3sionV+1bpFkhzsOhxQz6FHEQzB
+         4s0JsV6ZLO1+MPAbTHQoNETQRja0JCp2rDFvOkSZOsUo6c7aSeIyeH6bs6aW1iWzUkiG
+         unTypavVglBMmX0Yslyc8FbFUsk5fXl4DulWG3gK9sKL4GaKU6SwsOntx3Ozb1tF4Dzo
+         0Jsou2OI0utnnVSBxSXnO5kCBqCq6gu5aCXwm+dfjT6V42a4rEZ64cFDlO/cxCR06kAv
+         BW9xzHiSLc1+HwdTDVTVy/6Y/CMCkwPE3ZQ1+CmwNUytRFxPxmDCy/lJYDlhOcPCnI/s
+         jN2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760426560; x=1761031360;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1LJPJfcpv0pJD66G650kRDT3CGUnlnJtrjGpdse2lj8=;
-        b=W6Ug7o0/R//pzvT7nbBm2xelVF2jmAYwFK8JGHJTT4wSoz1+CibzYEEmMQYjzvP2rz
-         ONPZZTImQWU91OJhQhxN1XMOMCx1KGTvQ2ea1DX/z7EDMPB9KMbdwx7veIaoDsqj3qyA
-         xZfAJceAziMYrdVJISC2L+zuDOXwpATJNCWoOeFs1Lg7Uw64QECTmBRaQjReTkUSFM1R
-         G89HTybhYRthyuYk5cLd0hmMWKYA2RdKQB8sJK85QLjwpz+r3dxk/32VpfkW25awbxLq
-         fQ01Vg6l/LO2B/vfo+fsOIpeNEvOLBQ2CbbyV058bjEmSNkdnyqFD460I7JUXgTfTmRY
-         bc+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ16j0fDjMZ1HKsuqqgF24QQQCG8gfywgUuqyYtjBmOXKNL9Sbn7GGBAePmjf/KMGejeLqfodIW3gEG/ZBjOFbSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJQE7v+K+OqLdWpyJhzTQC07feTkHZQO9782FRs+MqzMuBOprE
-	VE4nVMFDkDfAsqzOvHjtlBLiMTlOc6NQD/6uCSmORr4RKJ5VWmLyhvViUiEvxTPT
-X-Gm-Gg: ASbGncuO0hX8CMYAKZRYLShc4qFzGLtyE/iJ4Bq/0m76UGUQHeC7qwD54BFuN+YI321
-	4yRVJPvofg+/dJaHRiM8BnkDZWtlqowVuF1OrPkc3l7rEqvCeU8ojCMN4hmy/kyJNKQjFrSV4Y6
-	7GjAQI/+PuMRlK80/l92uEGKGROMmDS7lJAsu/jZXtsVA7Bg5Snxi0w6EQpi09hu7JktfP62u89
-	Q7TJLLU2sfYHr2HsFjVuUjX1svZ7nodO5cWfzHf/DUYAZx3E4okTTFTYz3ec17Kk7E5Z/yzaYpP
-	onuxrVXjD2PXRJht9bYzW5HRAhOLiLytN/2CXsmeFR8yVL3pzbsw6WtUuKvU59KSeQP2sjU6iaX
-	Qvp/4sXGAzM2mgMuuI/v08T7bxC3EFqnDXm4e0qxED3A2Q1Dx1dmKJiO3iK90zN5wflkbPkBzsy
-	w+dqJgbEc=
-X-Google-Smtp-Source: AGHT+IFVjTIHoWhV/NSkLWVU3VVPShtcN++BCG1ul23zJHF/UKfZiXpbvv5dvvrSPCGdugt4xYfpOA==
-X-Received: by 2002:a05:620a:1a13:b0:85c:bb2:ad8e with SMTP id af79cd13be357-88353b341admr3264870885a.48.1760426559834;
-        Tue, 14 Oct 2025 00:22:39 -0700 (PDT)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a293a9a5sm1139864285a.61.2025.10.14.00.22.39
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 00:22:39 -0700 (PDT)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-856cbf74c4aso962902685a.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Oct 2025 00:22:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtx95EgaAfBAcDTknIc55LQ78veseHc1ovqRmNojEWtdlBEfGleYO8QyMfzIqx5JJBcVcRqJCR92ABwo/fjuJSuw==@vger.kernel.org
-X-Received: by 2002:a05:6102:3c8e:b0:4fa:25a2:5804 with SMTP id
- ada2fe7eead31-5d5e220420bmr8840762137.10.1760426229660; Tue, 14 Oct 2025
- 00:17:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760427016; x=1761031816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KjsmQsAWKR+AO8bY1bzFnlPN5sRWXcF5EVgjOHKuI0M=;
+        b=q0TJK7TY/sjCpxM5u3D3hfAfLF1o3nqCPlGtDxzoQaeq6q5sf0ZjeNP2S/opvwDBfH
+         MPuVuS/buY+2PZHHLe37pEDM74L01Ggnxztw+SeOF0rsOQp0C9CPGriv3BMOYDVaHCQ0
+         gcqxUVk0T3yup++sIET7fUtSz7Vq+P96xQXEgFEKqSnK/xaKU0ofekplEdvcuHN6yru8
+         WC0WG1cyX+awMmZXF951wCbREHGUh9wjlamYe3P2FlQoXHCP8XkaAz282jaygD8euBRO
+         i29dTsbk3YQWRFwi0vL7gk7N0SBxf/eUtSJhHzE/z4L7zo9UApqm+5MSypNEETBb3VGq
+         LNZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6TxWIdV7digEOD3r/J10pM7y8xhV2craOmrdJ9Kkng6YuWIUULEteJ+pbfViZm97s/6gijaCiXt1fEu6Jx3aOFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycswcDKgS1oqGm4kItJRNaZdVGMmbvct6u1Z20AU3l9f0N7nDf
+	6zsNfQ9s24EA/pxeBMVmTI2NyubDVHx3j+E2PII6hCFGG9+cZjx0vbfi3jGxh81GrCJDBK3s8oZ
+	2kxsDtxWtnQhZKtABdJuy/dziBslWga4=
+X-Gm-Gg: ASbGnctsXawgGVwEWKk9lgb4WYz+rjg9UaveV1CKhvH+A4B4hKF7tZZd4//ET+9Cir2
+	qXAbLFtZGzUyeSbamyUwatuHVAksUCsQ7MftgV+DDK8hPv8+Hq9C+leaNTFzzfExPiwcjW22Ngk
+	EI8XyWo0QeBZsvOjtNVceZgQZUUE7yUgIiDKYVyEKNol6C1EmPsJJEcQQj+3v+SMj+qeWtL46q1
+	ubWMEnbsw/u/ZjIw2HxaSUp/oS3X4H7IS5cIiexKxysF44FMce2Z7a7/nAsBBVF5CRb+EY=
+X-Google-Smtp-Source: AGHT+IGo7dR5zdkJW3D/xH2KEeFf0lt7zeOM+boGa6AgEN+BBljNynuJv9D8o0+h3AZSmE1WSPqAQ/2P1ihf02bfAdk=
+X-Received: by 2002:a05:6000:2504:b0:3ee:11d1:2a1e with SMTP id
+ ffacd0b85a97d-425829b0d45mr20308975f8f.10.1760427016268; Tue, 14 Oct 2025
+ 00:30:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
-In-Reply-To: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Oct 2025 09:16:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
-X-Gm-Features: AS18NWBECJtooFXj8wIhcLw2_n3BPi6xXTVAMYxpuf1MNXW6QPz_d-TTeadxeIw
-Message-ID: <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rcar-host: Avoid objtool no-cfi warning in rcar_pcie_probe()
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel test robot <lkp@intel.com>, Kees Cook <kees@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+References: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
+ <CA+V-a8urG_e4yZXg9VH-cOPeK62qPGR1L2Zbbc3O97WB22hcRw@mail.gmail.com> <CAMuHMdWNnmmXPxPiuO4r66Mc78gPQ7ticuKt3y5pJ_DqRu_aLQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWNnmmXPxPiuO4r66Mc78gPQ7ticuKt3y5pJ_DqRu_aLQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 14 Oct 2025 08:29:50 +0100
+X-Gm-Features: AS18NWCxsWOjy_XXbh2jQTyRM-GYEcEmaxy6wnT40dQ2eoo0RQ-PYJ_CEFPFTxU
+Message-ID: <CA+V-a8tvd1uWNWqLSt4TQ-rD4Odfy0SiFX-4tWA2wsqae1wTeA@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
+Hi Geert,
 
-On Mon, 13 Oct 2025 at 20:26, Nathan Chancellor <nathan@kernel.org> wrote:
-> After commit 894af4a1cde6 ("objtool: Validate kCFI calls"), compile
-> testing pcie-rcar-host.c with CONFIG_FINEIBT=y and CONFIG_OF=n results
-> in a no-cfi objtool warning in rcar_pcie_probe():
+On Tue, Oct 14, 2025 at 7:46=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
->   $ cat allno.config
->   CONFIG_CFI=y
->   CONFIG_COMPILE_TEST=y
->   CONFIG_CPU_MITIGATIONS=y
->   CONFIG_GENERIC_PHY=y
->   CONFIG_MITIGATION_RETPOLINE=y
->   CONFIG_MODULES=y
->   CONFIG_PCI=y
->   CONFIG_PCI_MSI=y
->   CONFIG_PCIE_RCAR_HOST=y
->   CONFIG_X86_KERNEL_IBT=y
+> Hi Prabhakar,
 >
->   $ make -skj"$(nproc)" ARCH=x86_64 KCONFIG_ALLCONFIG=1 LLVM=1 clean allnoconfig vmlinux
->   vmlinux.o: warning: objtool: rcar_pcie_probe+0x191: no-cfi indirect call!
+> On Mon, 13 Oct 2025 at 18:45, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > On Mon, Oct 13, 2025 at 4:46=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Mon, 29 Sept 2025 at 13:23, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add support for module reset handling on the RZ/T2H SoC. Unlike ear=
+lier
+> > > > CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Contro=
+l
+> > > > Registers (MRCR) where both reset and deassert actions are done via
+> > > > read-modify-write (RMW) to the same register.
+> > > >
+> > > > Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and a=
+ssign
+> > > > it to reset_regs. For this SoC, the number of resets is based on th=
+e
+> > > > number of MRCR registers rather than the number of module clocks. A=
+lso
+> > > > add cpg_mrcr_reset_ops to implement reset, assert, and deassert usi=
+ng RMW
+> > > > while holding the spinlock. This follows the RZ/T2H requirements, w=
+here
+> > > > processing after releasing a module reset must be secured by perfor=
+ming
+> > > > seven dummy reads of the same register, and where a module that is =
+reset
+> > > > and released again must ensure the target bit in the Module Reset C=
+ontrol
+> > > > Register is set to 1.
+> > > >
+> > > > Update the reset controller registration to select cpg_mrcr_reset_o=
+ps for
+> > > > RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoC=
+s.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v3->v4:
+> > > > - Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clar=
+ity.
+> > > > - Updated the parameters in cpg_mrcr_set_reset_state().
+> > >
+> > > Thanks for the update!
+> > >
+> > > > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > > > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > > > @@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_contro=
+ller_dev *rcdev,
+> > > >         return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & =
+bitmask);
+> > > >  }
+> > > >
+> > > > +static int cpg_mrcr_set_reset_state(struct reset_controller_dev *r=
+cdev,
+> > > > +                                   unsigned long id, bool set)
+> > > > +{
+> > > > +       struct cpg_mssr_priv *priv =3D rcdev_to_priv(rcdev);
+> > > > +       unsigned int reg =3D id / 32;
+> > > > +       unsigned int bit =3D id % 32;
+> > > > +       u32 bitmask =3D BIT(bit);
+> > > > +       void __iomem *reg_addr;
+> > > > +       unsigned long flags;
+> > > > +       unsigned int i;
+> > > > +       u32 val;
+> > > > +
+> > > > +       dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deasser=
+t", reg, bit);
+> > > > +
+> > > > +       spin_lock_irqsave(&priv->pub.rmw_lock, flags);
+> > > > +
+> > > > +       reg_addr =3D priv->pub.base0 + priv->reset_regs[reg];
+> > > > +       /* Read current value and modify */
+> > > > +       val =3D readl(reg_addr);
+> > > > +       if (set)
+> > > > +               val |=3D bitmask;
+> > > > +       else
+> > > > +               val &=3D ~bitmask;
+> > > > +       writel(val, reg_addr);
+> > > > +
+> > > > +       /*
+> > > > +        * For secure processing after release from a module reset,=
+ dummy read
+> > > > +        * the same register at least seven times.
+> > >
+> > > This comment is waiting to become out-of-sync with the actual value..=
+.
+> > >
+> > For the reset operation no, for this I would like to keep this as is.
+> > But for the MSTP registers I will be adding a delay. Or did I
+> > misunderstand something?
 >
-> When CONFIG_OF is unset, of_device_get_match_data() returns NULL, so
-> LLVM knows this indirect call has no valid destination and drops the
-> kCFI setup before the call, triggering the objtool check that makes sure
-> all indirect calls have kCFI setup.
+> How to make sure both "#define RZT2H_RESET_REG_READ_COUNT 7" and
+> "seven" are updated together?
 >
-> Check that host->phy_init_fn is not NULL before calling it to avoid the
-> warning.
+>     /*
+>      * For secure processing after release from a module reset, one must
+>      * perform multiple dummy reads of the same register.
+>      */
 >
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.O2IX0Jek-lkp@intel.com/
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Ahh got you now, thanks for the clarification.
 
-Thanks for your patch!
-
-> ---
-> Another alternative is to make this driver depend on CONFIG_OF since it
-> clearly requires it but that would restrict compile testing so I went
-> with this first.
-> ---
->  drivers/pci/controller/pcie-rcar-host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > > > +        */
+> > > > +       for (i =3D 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
+> > > > +               readl(reg_addr);
+> > > > +
+> > > > +       /* Verify the operation */
+> > > > +       val =3D readl(reg_addr);
+> > > > +       if ((set && !(bitmask & val)) || (!set && (bitmask & val)))=
+ {
+> > >
+> > > Perhaps just "set =3D=3D !(bitmask & val)"? Or is that too obscure?
+> > >
+> > Ok, I will update it to the above in v5.
 >
-> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> index 213028052aa5..15514c9c1927 100644
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->                 goto err_clk_disable;
+> No need to resend yet, I could make these changes while applying
+> (when Philipp is happy).
 >
->         host->phy_init_fn = of_device_get_match_data(dev);
-> -       err = host->phy_init_fn(host);
-> +       err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
->         if (err) {
->                 dev_err(dev, "failed to init PCIe PHY\n");
->                 goto err_clk_disable;
+Ok, thank you.
 
-I am afraid you're playing a big game of whack-a-mole, since we tend
-to remove these checks, as they can never happen in practice (driver
-is probed from DT only, and all entries in rcar_pcie_of_match[] have
-a non-NULL .data member)...
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
