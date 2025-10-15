@@ -1,139 +1,113 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01D228750C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Oct 2025 14:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63F281370;
+	Wed, 15 Oct 2025 14:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760538625; cv=none; b=J5jhVPo9sctzHyqAShtER3AHBzZ6ZrkwwQ52AtIusIdK8S7WwQRbikFfRB5N+G8d0Oy9+NxvYHX4FYZ4M/XUdrEpju8IrZX3UYkVirzUVZDFrAW1ElbNK6y9cKI+I93HJ8yc/v6pIkKYbWWYsCvQn5VQQ0pU8N+H7gK53Vd1iUc=
+	t=1760538807; cv=none; b=CTNbTeh6JbU8EvZxKxGmw6u4D6oRX2lgnDk3/M1GViFVGA88HhhCcT4MexyiRQ/bTRobO+5KMO0y/aZQI1XbqcneTYxpzbzLl/AJ148Bpb1EFg+XeUf190zoSmLbyWRbSlVzxxkoyADfutWTQrlxCmtH6BxQF3bffpaVKGUmrHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760538625; c=relaxed/simple;
-	bh=K1Tvo+DSqF9WNYYWJ+n9c3j2ga4uXkmmj4T88S0x2LA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gbwJFt2AZXIO9S+Xm7FtYrSjBwyYiyzRfYNUqlv2KVnKj2pg1t3sWWmaQw9c6vFwtrR9Xb3QBiCdEu4uG/bYcMuvu/EjmhM7hhurOyyFDlEPnjuJ+/MYWpwrgXjgNFCn7WxR3HQmqtGfGvDDCF8SQesSHltWiwofiLAZldkbtYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W2-0007UK-Qi; Wed, 15 Oct 2025 16:30:10 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W2-003jpM-04;
-	Wed, 15 Oct 2025 16:30:10 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W1-00000000BcA-3x2x;
-	Wed, 15 Oct 2025 16:30:09 +0200
-Message-ID: <c4996204c8b72f10324af87516b92a3a2819091c.camel@pengutronix.de>
-Subject: Re: [RFC PATCH] reset: always bail out on missing RESET_GPIO driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Krzysztof
- Kozlowski	 <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org
-Date: Wed, 15 Oct 2025 16:30:09 +0200
-In-Reply-To: <20251015112921.19535-2-wsa+renesas@sang-engineering.com>
-References: <20251015112921.19535-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760538807; c=relaxed/simple;
+	bh=+vp5sri10TGhuj656wA8xcvDQtkuNozRmcv9Xd1WRWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XKV2CAvG2fQc9gH1RDFb5Qk8fB3FNwQ9YTbabPLEYzxTvVguUt4XWUwASlRC9IOyzc4Xm5+wElfHQskdUK7luan1s167ooS/L3YihBfjYUOLaZoYesaEXzruPp6ga4xfZbj1OmF7aVt3tW5DXW+fVtH6SfWalSiUCAgRJPPCZp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=gSbTisff; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bkfUdpQb; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="gSbTisff";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bkfUdpQb"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cmtqR6vYPz9tg2;
+	Wed, 15 Oct 2025 16:33:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760538804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DqcM2fuSyGmihOUlIvHn6eDwEbaGALrPcHvMpNvePW0=;
+	b=gSbTisffBTBodmXUTEpBpnASa2bklfA01Ggp64mx73tdFWIhl+uQYcLo6T1RpZGsti3HlG
+	TNEVXZrKCIi6pzPTJixjp6LQn5XsdAUTUCcCTQbgmaNTLxeLc9DJton/QGbb2b4e5fiV/l
+	GQi/g930yV77dthWQ/QXJNGmVgzTB0Zw5AJIO1+YLox1g8i4uKCQMQsvMINm5DBx7hW6kU
+	3PwB8UP+biv8tIJpBPXO9EuLPpqPNlwBDlbH//R0suc5DLKrjIC31m9/MwYPDRC66qI8Fg
+	J4ZcQ9VJXiGKFYcO3I4qmNF/G9Apunuc5awpLFSnpLXc14Y8EbNgGQ2SsZ/2Bg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=bkfUdpQb;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <466d0863-be4c-4b07-ab25-bc7eae4dfc5d@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760538802;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DqcM2fuSyGmihOUlIvHn6eDwEbaGALrPcHvMpNvePW0=;
+	b=bkfUdpQb+Q+4rQ/guMgsF8VHhi187cBk+4/9A6hwbjCbhHFVuu9znMR7DM9HJ2+mI7BIX5
+	maEueacKc6z4+MK4R3mx6uQOM48VnwWFhDbLr7TZs7XoxVZ0elsiULZu6DrQa1jDdmm0gj
+	adMdHiEw8x4M+bPanBQMlKCPtznxWKxXQ/Rfd0GXOFjTwQjEbTqWeqt0Zna043TvswwudS
+	8Jwi9nQTlN0Pt+hoTwejgTK1pf8rq+c6vO2fqEjcCtyockUPRmUfNtW0kWXNnbs0rSzB9a
+	r9AZjTJrTaqAij/n4ZezO9FOpftp6YEYh8951bI7mHpwGHTWIeUDD8+dVhq8QA==
+Date: Wed, 15 Oct 2025 16:16:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: gpu: img,powervr-rogue: Document GX6250
+ GPU in Renesas R-Car M3-W/M3-W+
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Matt Coster <Matt.Coster@imgtec.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, Adam Ford
+ <aford173@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
+ David Airlie <airlied@gmail.com>, Frank Binns <Frank.Binns@imgtec.com>,
+ Alessio Belle <Alessio.Belle@imgtec.com>,
+ Alexandru Dadu <Alexandru.Dadu@imgtec.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+References: <20251013190210.142436-1-marek.vasut+renesas@mailbox.org>
+ <c65950f5-010a-4d5d-88d9-60697eeddb46@imgtec.com>
+ <f4e1897c-7073-4ab0-92b3-6f7d69382825@mailbox.org>
+ <CAMuHMdVpb-0TJ4AoqjAGbdErw65193+j1-HbXCyvvwf8MT6yLQ@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVpb-0TJ4AoqjAGbdErw65193+j1-HbXCyvvwf8MT6yLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: bc539553b35cbbb23c8
+X-MBO-RS-META: d439tudnh4prct6azxm19y1htthu4j9z
+X-Rspamd-Queue-Id: 4cmtqR6vYPz9tg2
 
-Hi Wolfram,
+On 10/15/25 11:10 AM, Geert Uytterhoeven wrote:
 
-On Mi, 2025-10-15 at 13:28 +0200, Wolfram Sang wrote:
-> Optional GPIOs mean they can be omitted. If they are described, a
-> failure in acquiring them still needs to be reported. When the
-> RESET_GPIO is not enabled so the reset core cannot provide its assumed
-> fallback, the user should be informed about it. So, not only bail out
-> but also give a hint how to fix the situation.
->=20
-> Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Closes: https://lore.kernel.org/r/87a51um1y1.wl-kuninori.morimoto.gx@rene=
-sas.com
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> This happened because of this (in general) nice cleanup patch for the
-> pca954x driver (690de2902dca ("i2c: muxes: pca954x: Use reset controller
-> only")). Our .config didn't have the RESET_GPIO enabled before, so sound
-> regressed on some boards.
+Hello Geert,
 
-Ouf, I should have noticed and asked if RESET_GPIO is enabled on all
-affected platforms when that patch was proposed.
+>> I can turn the first entry into renesas,r8a7796-gpu to be consistent
+>> with the legacy 7796 name for 77960.
+>>
+>> Geert ?
+> 
+> Please use "renesas,r8a7796-gpu" for R-Car M3-W, and
+> "renesas,r8a77961-gpu" for R-Car M3-W+.
 
-> Actually, my preferred solution would be to make the reset-gpio driver
-> 'obj-y' but I guess its dependency on GPIOLIB makes this a no-go?
+Will do.
 
-I think so, yes. Also it's only needed in (currently) a very small
-number of cases.
+[...]
 
-> On the other hand, the fallback is a really nice feature which could
-> remove duplicated code. But if the fallback is not present by default,
-> it makes it cumbersome to use IMO.
-
-And it's not easy to automatically determine whether RESET_GPIO is
-actually required, because that depends on both device tree and
-individual drivers.
-
-> Has this been discussed before? I couldn't find any pointers...
-
-I don't remember this being discussed before.
-
-> Happy hacking, everyone!
->=20
->=20
->  drivers/reset/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 22f67fc77ae5..8a0f41963f6b 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -1028,8 +1028,10 @@ __of_reset_control_get(struct device_node *node, c=
-onst char *id, int index,
->  	if (ret =3D=3D -EINVAL)
->  		return ERR_PTR(ret);
->  	if (ret) {
-> -		if (!IS_ENABLED(CONFIG_RESET_GPIO))
-> -			return optional ? NULL : ERR_PTR(ret);
-> +		if (!IS_ENABLED(CONFIG_RESET_GPIO)) {
-> +			pr_warn("%s(): RESET_GPIO driver not enabled, cannot fall back\n", __=
-func__);
-> +			return ERR_PTR(ret);
-> +		}
-> =20
->  		/*
->  		 * There can be only one reset-gpio for regular devices, so
-
-The reset-gpios phandle check should be done first, then. The warning
-only makes sense if that property exist, and returning -ENOENT for an
-optional reset is wrong if neither phandle property exists in the DT.
-
-I think putting the IS_ENABLED check first was intended to save an
-unnecessary "reset-gpios" phandle lookup on kernels with
-CONFIG_RESET_GPIO=3Dn.
-
-In short, if both of_parse_phandle_with_args() return -ENOENT, we
-should continue to silently return (optional ? NULL : -ENOENT), even if
-CONFIG_RESET_GPIO=3Dn.
-
-I think the message should be pr_err() level if we return an error that
-will cause the consumer driver probe to fail.
-
-regards
-Philipp
+-- 
+Best regards,
+Marek Vasut
