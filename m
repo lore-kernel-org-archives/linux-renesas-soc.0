@@ -1,88 +1,100 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B768305044;
-	Wed, 15 Oct 2025 20:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF052D46B2
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Oct 2025 20:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760559189; cv=none; b=roYWGWfyA1OzRqr43ZBfpR/87mwk8A+SB8mDkiXXnxRfkw+l7TmhfCsPG7B3JrdjV/KUtpikRz2G9l246/kKRsrvIaOL/3NfuFzPzLp9FWJjYZ57Hzzjm8LRGXZkxug/sxGJdenOFL9gt3lapBTnJYR6SDA8WbHSYADORRPFhY4=
+	t=1760561979; cv=none; b=IjLCgp9XFTxZ1zfjE8XKFIqTDln+8WLdXKufL329Q4LRodBDX89OdSg++o5bGd5l2B9FXyzhCNTdrnLDKbVTTySYTaBGMX/fjv2urokslio0gZTFKom3uebM2p0SEMHQmVBH7NvyBQOHuj4siMrCL9BbFQUbAdVPB5dUxYQCaXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760559189; c=relaxed/simple;
-	bh=8SKLt6xilXa4kagNtkejZieX7wSZCHIz6QC7oBHqhr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=khXT/D0YENwqXQoWEYEZSTKl8YJcAntjonXcdzdSoOhyxtUK4DQuPP40XJQi1jRMp9P5MQIzGb1ksCUpJfkbM/ZyXXpnr4MYXTiscFJMFHc6FKvw0o/71rhtHljAgjFL8En3ZFo3KUayHgAzEZXc3wDhEecL9KinP0YC3ags/Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FXy/Exts; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tvAA9Z+G; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760561979; c=relaxed/simple;
+	bh=FGc6lCmQPgIariDqqATWhZu/+cnd36zIPScbB2qlhXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QSdeKfvQxDCgYryPgRSiHQEXySwbMSKowvTqSx9LUFTrPy/D/rC9AE5hvDz9a7/iiTKF6pvqdeX+WjWn0BlH1NFceq8lpook4+c10VZuRFT3O9zoeZzTPyJxYfamGDfmVcTcQpKAdlfw3jANydHDGmCEbQB8szDmMZrya80WZTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lTg3shNO; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FXy/Exts";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tvAA9Z+G"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cn2ML4Zpxz9tM1;
-	Wed, 15 Oct 2025 22:13:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760559182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=On7KI6QGKFzJ37IXkt8daBR+7FSXWV0v1bLXrhH1v6g=;
-	b=FXy/ExtsnnVVQRy00YJCWzBPuQPAeZdgerugJO8yVLXDh/uPCb6amfBHA8Epz4l8kHS++p
-	T1WeC2+OAcj2wMtg1tx9QjXgcA/7AhgmV+RROCaTSjf6ydwiuhM0uclBSqF28OfhipWtIf
-	8KnUaXhnENL6hJrRpOH1eki//6hvbM8upkTWX12grq22hAoCmCDUoMpg1++R2936wT850u
-	3PeXqEt0ybi9ThPW3544zXrApR3j88vZUYvWvp+a5w6rbsdgtrnHF/N67cJk1RZC4gMl3n
-	QcRf61dIpOqIadlae7TqKongiND+BVOZW5goDVF9UYqfQj4NL2KTfU+E8PIGKw==
-Message-ID: <62670d89-56f2-419e-8f80-0536858415f3@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760559180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=On7KI6QGKFzJ37IXkt8daBR+7FSXWV0v1bLXrhH1v6g=;
-	b=tvAA9Z+GSL3jyYYr6Sb5/QYXyRW5mn1hB7rCwhO+zJltxTVCaCGvWBvav56SB50LHTgwtx
-	/sKFmOOaphU6iy66WRALnCS4HPDQXmOLGSDIK/B5vu05DrH51G1lFTkczlz2uKsMRdrYoN
-	E3IkAHirbRvy/Z3aTchSUSRAokIbLqGtJtV+IvNa/HLlQc9W9VDNnEP8nk9/imoLWT6QQ5
-	AaHxSXEtadlEMwNCWPMezWArXmPTRPq7Wz3AUEZP7s1UbzavRrRPaE7UyohmkgufijtejL
-	R3ZNkh351d/5F7NHi8GvdvUY3bLdwUmt+39iPv7+Mx/92/MmIP/ZHRF7zqJfag==
-Date: Wed, 15 Oct 2025 20:12:37 +0200
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lTg3shNO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=TmMo7UfKp9jPjoJxaD8G1+/QMcyWYOk4wYhcprXR6As=; b=lTg3sh
+	NOAg3DSPo30M6o803binPnO1vZrTiQDZfqbylmMJ3mn+zFth7ki3+O68xISuVIn9
+	GBhdQN75LTnGMOIu0q0YhWRF6UdxK1fU0SZRpUM7OxB0NWgOAAOQZ0IzNRnd+ejW
+	v1h+3A/CA++mBwWvyJQUy5OjAL0bVmxzo5p55l777exG/7GAv4MRNLV81asITjni
+	JUIXwD+jnZfD/U6qP2fShcm/yZs/E3/ObgExeVpDsJ2TepMjzm0btBOCeHiahd5j
+	0IQR7RBYEYTjVSeUUJhotJ3N/kZqxad93NWRWs/td2YuAkROy24rF+2hvg9FHJyP
+	JarJILQo95UFI5iA==
+Received: (qmail 3544968 invoked from network); 15 Oct 2025 22:59:33 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Oct 2025 22:59:33 +0200
+X-UD-Smtp-Session: l3s3148p1@zckBxzhBbLMujnsG
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v2 1/2] reset: always bail out on missing RESET_GPIO driver
+Date: Wed, 15 Oct 2025 22:59:21 +0200
+Message-ID: <20251015205919.12678-5-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] thermal/drivers/rcar_gen3: Document R-Car Gen4 and
- RZ/G2 support in driver comment
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pm@vger.kernel.org, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund@ragnatech.se>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lukasz Luba <lukasz.luba@arm.com>, Magnus Damm <magnus.damm@gmail.com>,
- Zhang Rui <rui.zhang@intel.com>, linux-renesas-soc@vger.kernel.org
-References: <20251015155905.186612-1-marek.vasut+renesas@mailbox.org>
- <aO_eLEFLAnjc8n4G@shikoro>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aO_eLEFLAnjc8n4G@shikoro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: ifwukssuqgahtgyngunxgbjcznfsmf3a
-X-MBO-RS-ID: 5177b494faae2c86738
+Content-Transfer-Encoding: 8bit
 
-On 10/15/25 7:47 PM, Wolfram Sang wrote:
-> 
->> - *  R-Car Gen3 THS thermal sensor driver
->> + *  R-Car Gen3/Gen4 and RZ/G2 THS thermal sensor driver
-> 
-> I am not opposed to the patch. Just want to mention that such
-> information gets stale all the time, so I would suggest:
-> 
-> + R-Car Gen3 THS and compatible thermal sensor driver
-This won't cover RZ/G2 which something else, and Gen5 seems like it will 
-be also a bit different, so maybe the list is now exhaustive?
+Optional GPIOs mean they can be omitted. If they are described, a
+failure in acquiring them still needs to be reported. When the
+RESET_GPIO is not enabled (so the reset core cannot provide its assumed
+fallback), the user should be informed about it. So, not only bail out
+but also give a hint how to fix the situation. This means the check has
+to be moved after ensuring the GPIO is really described.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Changes since RFC v1:
+* moved the code after second phandle check
+* switched to pr_err
+* updated commit message
+* moved Reported-by to patch 2
+
+ drivers/reset/core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 22f67fc77ae5..c1909074f715 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -1028,9 +1028,6 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
+ 	if (ret == -EINVAL)
+ 		return ERR_PTR(ret);
+ 	if (ret) {
+-		if (!IS_ENABLED(CONFIG_RESET_GPIO))
+-			return optional ? NULL : ERR_PTR(ret);
+-
+ 		/*
+ 		 * There can be only one reset-gpio for regular devices, so
+ 		 * don't bother with the "reset-gpios" phandle index.
+@@ -1040,6 +1037,11 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
+ 		if (ret)
+ 			return optional ? NULL : ERR_PTR(ret);
+ 
++		if (!IS_ENABLED(CONFIG_RESET_GPIO)) {
++			pr_err("%s(): RESET_GPIO driver not enabled, cannot fall back\n", __func__);
++			return ERR_PTR(-ENOEXEC);
++		}
++
+ 		gpio_fallback = true;
+ 
+ 		ret = __reset_add_reset_gpio_device(&args);
+-- 
+2.47.2
+
