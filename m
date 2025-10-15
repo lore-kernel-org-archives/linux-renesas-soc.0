@@ -1,104 +1,97 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469782566F7;
-	Wed, 15 Oct 2025 14:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A740726A08C;
+	Wed, 15 Oct 2025 14:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760537448; cv=none; b=YE86MMSHBlrRX6/SJAUi1ozlVZRk3+EjDSgyYj3EQJrs2v6yhrgx9jw7IG60oQSWuXwdoAI6wP3e9v2PTObTXXWTEpaGWIXYODgCcSxZABAwO8lnHxA4wHzVtqkjRz7ACWzqsNwpISVL1zsD5Lj252i1efoZGVH+Z7jQWL4MgI4=
+	t=1760538599; cv=none; b=s8TLe78OXcJfZWcSO2CHdQ+uxZmskPsIdGOTbx1yZK/wqXl5vvo5lfXEEIv1kMBSQSkjbrWSK4slfxV1vAU+xFk58W7XEZIjKou6GjBWyMxBihfo43TIam81om65ozdLVGaFKwbUsXJPzm6jEVJErCCvBKDA8tWZYqjsiwacff0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760537448; c=relaxed/simple;
-	bh=hVRuz+dYhhjqt7qTfCIuDOea7yuVm9ZeY94c8xKoBl4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bp4+Gu8qb5yr0p6kBdFXfG5ZaFeqEonXQj7yfAE7Aublf6fLsExIoiYU5ib0KC6SKQDwq7wxqWqCEtlIqzdfQk2pf0lY8v0LaN1q1lTZAZUU5/ZzisF4OY9af82DfSVqq7IUm6w24T0mmVaUN9o0V6LeXL8KSL+u9OTZPMWV/Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yeqZ4FuS; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=U2Yb/25Z; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760538599; c=relaxed/simple;
+	bh=6K4hGejioGprPo8ya0KxUvTCK94w5AQCZ8nqBGW2WiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DQ7nopkG/AWGGz4fxbvVX3XOdIvkEUJp/oLPLkxMNH0Qtg7isIizPxJhciD7GtiHToxCsbb1qy+oAxaxE/tNYPZZThLvX5D610YJ3awImOrUyhxdNEd3kfSftmn/f8b7FM8ue+1M2tI+mc8Zg8wNtuDTKKwWcBew+fvm7S45jLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fmlw7dH8; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yeqZ4FuS";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="U2Yb/25Z"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cmtKB1z9jz9thf;
-	Wed, 15 Oct 2025 16:10:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760537438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6yHkGFUgeQQv/Xu03jMdrrfgeEJ+J6H1xw7g/yGp/24=;
-	b=yeqZ4FuSun6CGxVP9E9OPvrrzAgIC25p/Nsh2z37FQdVkwlC7dA8CqW01s6Dq6t80NyJj3
-	tSUpAOuCDAJOhdU3l7ihc63bYzEN2E8kGzbi+1gg29rtYKU6KYEB3QDGN9JY1Hdd9HudFK
-	hvy67mF+qS59PDhFCjWYhn5v5tsy+4lJrrGsTbupfXD9V0k1RSBvIFbRpwlziGHgumfgLN
-	ij0wZqz3PQ0LtuyihXRxQ/n6ZqjBbRwwJkxX3lPkMaAUKb+tjS7TsqpdeBxqjLwU12CePA
-	UCmoBUC6Qr0cTsxScQv3sybnjXoay5BMJp9VEMvqmq5vRraNCYmLRwehqXUedQ==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760537436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6yHkGFUgeQQv/Xu03jMdrrfgeEJ+J6H1xw7g/yGp/24=;
-	b=U2Yb/25ZKAr0SAiIeUFEWscRQrk4ScPA7MlVJdhngD4YPv0N7Xp9AkFOMFvmrDMnXxg7Hd
-	FjgH+Ns8qorUbb6ETVQTr6Q+yMEvWOX4UQuEZ6NDKiIUoe9jjiC94gudlYRxQw5nrgE/+5
-	l0jhbxPOdyEjRhMYEDW9BzWI2zy0V5M1J+MVaAfH1X0NZt6Ll8QNrQEhVnAXE705oE1KkH
-	Z0Ky7tyNxasIdu1vHw24FFmmUzcGUQ9JiyeUM5igrVlvu8d0P4KdV9a/cxrnqbVzRUboxM
-	Y2rG2tqr1KzbVrlgQTYpJO17p/g1azqjSlVV/KpOgYTnUxxQpPVGfYi/gJm8Zw==
-To: linux-pm@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fmlw7dH8"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id E01A81A13D6;
+	Wed, 15 Oct 2025 14:29:54 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AC653606F9;
+	Wed, 15 Oct 2025 14:29:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 83CFD102F22BC;
+	Wed, 15 Oct 2025 16:29:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760538593; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=QDtzpQmFLoPX3YynFoA/DirpAotzpRiBOpzPBhtRqaA=;
+	b=Fmlw7dH8tDXSOEA/YQymNzdnpSQQ1tQtBbe43Z01ToaqZ+Mo58w67e/ZcrncGFx6S5JcJR
+	yPCbcQE5JMhgNe1kvXvkW25faFFEuMZsopGYp5MbnDnDZhu3yDMrWMb8puggIQBju97M/+
+	Zmh3dahQx9Zi6qCmRP9auIKJuOuZJvb3sKvWyoLjo2lTdnbY8hZsASfUFmyBxjb5B+gJNS
+	QKnS89qnsiaNyeSY4wvmh3JTMr0eYUSbCGieQVRwvt51w9lte/Ql7Aia3h9CR+cWuJkxhD
+	NqOe5O1lgO77rVWzRMBY9JHTIfV4ZiQtid6Fb/c9zDO1DXiWQSoF8cdklTxRtg==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lukasz Luba <lukasz.luba@arm.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] thermal/drivers/rcar_gen3: Document Gen4 support in driver comment
-Date: Wed, 15 Oct 2025 16:09:51 +0200
-Message-ID: <20251015141014.156437-1-marek.vasut+renesas@mailbox.org>
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 0/4] Add support for the Renesas RZ/N1 ADC
+Date: Wed, 15 Oct 2025 16:28:12 +0200
+Message-ID: <20251015142816.1274605-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: p8w49a5f6hrrnnnecitdicwun7f7z6g6
-X-MBO-RS-ID: e0609ddc3c648950fdb
+X-Last-TLS-Session-Version: TLSv1.3
 
-The R-Car Gen3 thermal driver supports both R-Car Gen3 and Gen4 SoCs.
-Update the driver comment. No functional change.
+Hi,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/thermal/renesas/rcar_gen3_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The Renesas RZ/N1 ADC controller is the ADC controller available in the
+Renesas RZ/N1 SoCs family.
 
-diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
-index 3223de238d014..a143b087a8ea7 100644
---- a/drivers/thermal/renesas/rcar_gen3_thermal.c
-+++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- *  R-Car Gen3 THS thermal sensor driver
-+ *  R-Car Gen3/Gen4 and RZ/G2 THS thermal sensor driver
-  *  Based on rcar_thermal.c and work from Hien Dang and Khiem Nguyen.
-  *
-  * Copyright (C) 2016 Renesas Electronics Corporation.
+It can use up to two internal ACD cores (ADC1 and ADC2) those internal
+cores are handled through ADC controller virtual channels.
+
+Best regards,
+Herve Codina
+
+Herve Codina (Schneider Electric) (4):
+  dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
+  iio: adc: Add support for the Renesas RZ/N1 ADC
+  ARM: dts: renesas: r9a06g032: Add the ADC device
+  MAINTAINERS: Add the Renesas RZ/N1 ADC driver entry
+
+ .../bindings/iio/adc/renesas,rzn1-adc.yaml    | 120 ++++
+ MAINTAINERS                                   |   8 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi      |  10 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rzn1-adc.c                    | 626 ++++++++++++++++++
+ 6 files changed, 775 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
+ create mode 100644 drivers/iio/adc/rzn1-adc.c
+
 -- 
 2.51.0
 
