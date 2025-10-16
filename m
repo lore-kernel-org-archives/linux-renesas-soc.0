@@ -1,196 +1,115 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6C32BF4E;
-	Thu, 16 Oct 2025 13:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939A6339B30
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Oct 2025 13:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760620736; cv=none; b=QX5dkTwmrKpQgxxgPPYHy9MVswH87bL/0ke6MiZFoQqwM+K78oo9NsawshxycPRcd0FH7hjQJXEghdZ88FR/iHD5rreltYVxSOmEVUKIVIGg/xlD7Toz1SmdoEg/Zapllj63Cy1R3PeoJwsdxnLWiQrqLN8EntUqzb4kqDV5Vvs=
+	t=1760622130; cv=none; b=rgwDKVO+6eo4Be+b2WE494kyPjMhBri8+w7C9WS7IjIYeNdx/PSyvoQv62c7swGYXckLck7emmCBNU8MFrQUQ12Kw8w5bTUoDK4YHlMgRCyxCSDI6T3vcHpGMGAk5SZAUI79dZj7QeeDpp/DNr5YOTd3bU7FYy4HtWtFrLiq2hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760620736; c=relaxed/simple;
-	bh=azS+cM6Lp8W1wqmvaDSOGvNQ1AiY4Nlu4oPCO3Z97RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c6hUGT3eC+QvkvIHGS7Csmn/h2k+zkmox6Fr4Z7mYV4M2DBLlLUvyBzZjgsmx1cyp+r+jfRakA17EhPiGWOSYKs+oh0HF+Qv1x4AFmE6hKpwRjNYfEG9JFElC1wlJNA8Zetz1XrUX+1xJx3RPGrY/squ2N4UbZV3yDhP9oEU7p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: KtNcrM/sRKicY28FFlpLWA==
-X-CSE-MsgGUID: C/XDfOunRoyvKHSAMEonLg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Oct 2025 22:13:51 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.8])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5BDE741CB11F;
-	Thu, 16 Oct 2025 22:13:46 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: john.madieu.xa@bp.renesas.com,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: renesas: r9a09g057: Add TSU nodes
-Date: Thu, 16 Oct 2025 13:13:27 +0000
-Message-ID: <20251016131327.19141-4-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016131327.19141-1-ovidiu.panait.rb@renesas.com>
-References: <20251016131327.19141-1-ovidiu.panait.rb@renesas.com>
+	s=arc-20240116; t=1760622130; c=relaxed/simple;
+	bh=fJlAd8F8EmfNdA9ffCw/7YWJBisZ2aZJ6bgML77jXw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hPlae0YpVKEeYROe9E385lIpcYG7nHkG7RnXZZbEnK5jIXih7JQY39mVsc9YZDAmeiTSi8/v9kmQoNyQkC8LDFkrgroiHOCWeFUL9RDcxPtZJosBd0YO1F5FqX0E6MAqxzT9uJrbMxrnhHcNkaOlcC1Qtc9/sSV8FHmsciL2v4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-54b21395093so474455e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Oct 2025 06:42:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760622127; x=1761226927;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tIs3qdLP3F/YAW7YsgnmPdGp6LZDuxUynC8+HjYB7O8=;
+        b=V2WvxjyGhyO7US5JHlNXbXZ7OvUJ0Bt+zXKZyHVap3EncOlGGmE08uGE2CzhQyRnw+
+         GlpEZ9a9mq3wox+0rkfQxZGVzCx8tCyhLDskPNayXRaJrMSzWo7OJzdL3fv0+xYo3aMj
+         c9EG3F9CamnIVpPI14+vYIUzUS9r6xQdM8disJzIf97RmDPLQLpHruREGS/RQixlTIlf
+         YjcuoQbrp0H9FSLwPl56aOL1bFmFxcEWZ4ZuY8w6YkOmCJcsy9SVGW6cLO5OqG7PAhwo
+         +ZDO3pYaTAkbxkOnMWOOLXsPci1MufLq83Q5qSvwmPs658G4AzA1WGwZEvnFp+NLE/At
+         y86g==
+X-Forwarded-Encrypted: i=1; AJvYcCUnpb0fhCt2L/J3PcfRPwBLBNLYv5MJ4dc4a4lmTw/Uf5cD+wTNFfoh2pW1NF2AG/dHYbR6J83YQQB8jHDasR1oUQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyFeT2gEKCT7IJNqex/IszMcxmGWxWeEkb1hC4vtuJhGBS2MI6
+	NFyeGZatc0sC0AmQ1P6QzbvoVgN1/EAWY/c/tYtKAo585u6e8c70abOHG2hsTesW
+X-Gm-Gg: ASbGncsrwJ2BXXpl9BWwoK8XH9SrahYmcS1S+vcIo7f+jI9rE7RiELLw+ICcGotj4xD
+	7pNIjiwbye1cngoB/1PWwjtBmh/b6fz9A3aA6g1FLnpo5tYnn/oLrXECbd9pRz3+egrzi5obTMg
+	3Xduyfqzakf2XXVvV7+ek2JLxAQv5fynJFplpvjyu3UakXfyIbxNbPTkcACcuYWruN1qYg+lCxx
+	LYaDBOsbjHfF8BTKaJp3TP4t+uq6po5UBYIJJBXd5ktsVdZqR6k5jLbiLTDQMdwsKKydPSBpjTU
+	NFnPs02Zzyanb5yvJi/e5gGfFolfu3ae5baPJ6+qYrIG8PsLcvctBssD3Z015hZtTLOEvwsiYb1
+	A3jdJOdUeUTTRldW9AaWNh3roSw+aLJmNQJt4kN23Bi4RIZ0Eb/inbdKpDdR+eeUtK0mW2IO6OA
+	4kTxKLRLxrCnscn4MnxcCUjx/YfJHWGwWB+ohAvFnD1/15U+4g
+X-Google-Smtp-Source: AGHT+IGJQ0iYasFOUpOTyovY4UByXHnpbFB1uKcjZ+JT5DazCmqOSqpRq5PTbRjpUNSD3HUjfwcDtA==
+X-Received: by 2002:a05:6122:6ab:b0:554:e069:d7b with SMTP id 71dfb90a1353d-5563feb71d6mr1185910e0c.0.1760622127250;
+        Thu, 16 Oct 2025 06:42:07 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d80fdbd5sm5971677e0c.22.2025.10.16.06.42.06
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 06:42:06 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-528a601a3cbso1459451137.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Oct 2025 06:42:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWF4tK4AUT5p1F36astf24AhDiaomgcKv9Hr16BJS17b2Lob/TtR7dLu7OneIdhA7/q4KS8W4pufQPGSuQEngmdIA==@vger.kernel.org
+X-Received: by 2002:a05:6102:5088:b0:5d5:f6ae:3905 with SMTP id
+ ada2fe7eead31-5d7ce7f9f8cmr1588639137.22.1760622126274; Thu, 16 Oct 2025
+ 06:42:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250912142056.2123725-1-chris.brandt@renesas.com> <20250912142056.2123725-2-chris.brandt@renesas.com>
+In-Reply-To: <20250912142056.2123725-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 16 Oct 2025 15:41:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWEjUzpu_-pukUxHBFDqw_+xjE9gy4MTKz-39bwDGCuTg@mail.gmail.com>
+X-Gm-Features: AS18NWDpgOC-c34fem89ycndlFrZkPR3jTMZt246SCjZMhsihbRFxV1WKYaC9YE
+Message-ID: <CAMuHMdWEjUzpu_-pukUxHBFDqw_+xjE9gy4MTKz-39bwDGCuTg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzg2l: Remove DSI clock rate restrictions
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hien Huynh <hien.huynh.px@renesas.com>, Nghia Vo <nghia.vo.zn@renesas.com>, 
+	Hugo Villeneuve <hugo@hugovil.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-to measure the junction temperature. The device provides real-time
-temperature measurements for thermal management, utilizing two dedicated
-channels for temperature sensing:
-- TSU0, which is located near the DRP-AI block
-- TSU1, which is located near the CPU and DRP-AI block
+Hi Chris,
 
-Since TSU1 is physically closer the CPU and the highest temperature
-spot, it is used for CPU throttling through a passive trip and cooling
-map. TSU0 is configured only with a critical trip.
+On Fri, 12 Sept 2025 at 16:22, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Convert the limited MIPI clock calculations to a full range of settings
+> based on math including H/W limitation validation.
+> Since the required DSI division setting must be specified from external
+> sources before calculations, expose a new API to set it.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Signed-off-by: hienhuynh <hien.huynh.px@renesas.com>
+> Signed-off-by: Nghia Vo <nghia.vo.zn@renesas.com>
 
-Add TSU nodes along with thermal zones and keep them enabled in the SoC
-DTSI.
+Thanks for your patch!
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+> --- a/include/linux/clk/renesas.h
+> +++ b/include/linux/clk/renesas.h
+> @@ -33,3 +33,7 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
+>  #define cpg_mssr_detach_dev    NULL
+>  #endif
+>  #endif
+> +
+> +#ifdef CONFIG_CLK_RZG2L
+> +void rzg2l_cpg_dsi_div_set_divider(int divider, int target);
+> +#endif
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index e426b9978e22..e88cfc965415 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -65,6 +65,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -75,6 +76,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -85,6 +87,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -95,6 +98,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -285,6 +289,32 @@ sys: system-controller@10430000 {
- 			resets = <&cpg 0x30>;
- 		};
- 
-+		tsu0: thermal@11000000 {
-+			compatible = "renesas,r9a09g057-tsu", "renesas,r9a09g047-tsu";
-+			reg = <0 0x11000000 0 0x1000>;
-+			interrupts = <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x109>;
-+			resets = <&cpg 0xf7>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x320>;
-+		};
-+
-+		tsu1: thermal@14002000 {
-+			compatible = "renesas,r9a09g057-tsu", "renesas,r9a09g047-tsu";
-+			reg = <0 0x14002000 0 0x1000>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x10a>;
-+			resets = <&cpg 0xf8>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x330>;
-+		};
-+
- 		xspi: spi@11030000 {
- 			compatible = "renesas,r9a09g057-xspi", "renesas,r9a09g047-xspi";
- 			reg = <0 0x11030000 0 0x10000>,
-@@ -1326,6 +1356,51 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		sensor1_thermal: sensor1-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor2_thermal: sensor2-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu1>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&sensor2_target>;
-+					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
-+							 <&cpu2 0 3>, <&cpu3 0 3>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				sensor2_target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+This needs a dummy for compile-testing the CONFIG_CLK_RZG2L=n case.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
