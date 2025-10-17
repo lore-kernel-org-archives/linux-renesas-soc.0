@@ -1,217 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537EB335093;
-	Fri, 17 Oct 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C68032F743
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Oct 2025 15:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714355; cv=none; b=SQVlofZQNeyhvW6KN4vA0futUeZKq/ISyNHTjYk06nyVQwdGyZCG7xCQqd9RXJuZcaTHajfPH+D5RatfL32OrPk/gpc5Ss92pkfODZIy9+TVwZjyyfC44a+Lj8k73gWmsFUcZYhezfIoEuJ3Oq36K6/qjBcIhcS0r52OnAQDnpI=
+	t=1760714367; cv=none; b=tb7t/ZnqZiW4wpy6ocXPDD+C3hDdd8K4RA5FXASw1UrvZiU0AMper4TnC/tpbFNPN0xPKkkPaikT0917tqjBZPsuMitOB2+Ask0vHlUjWTUUpbYrdxNERg92F+VaOVITMCbW0Ku78+vVotv4azx2ttim14g+4vc/JbHO+2nTz50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714355; c=relaxed/simple;
-	bh=Jkoxv5jBiXwh3/Xam1mL3Rb7nwPNp22HhVGe+o5k1sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lT+SAjbmhvUnXrEbcrnYhlbKwuzmp3aLg2hDmd54zgIipX3/Gso+63olqogeHhotWviM6iXqDqJSoZ/8/iNUVB9qoY2optZRxuFQOdxLlJ64Ij6XUpCvvcrLH1prSrxuM9GmR43kPdOce00cKbxeMCsrXzgpnWyFOioZdOnRvX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBJGnQw2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760714367; c=relaxed/simple;
+	bh=/osEKnWe3mbTF3iLxYWox4eoxzoJvmAFu4soCr3U8BU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q1VBWsFhSS23NCSzMY1tXSzxfO2g6p54bqYDLIa7EhY0pgNBhrXGqTf4SdggHLmbvs9UwxSLHyOjYRE6zErLBEKwyLNg1o0VsfZEWikqOEGC8gQ3b3RpqJgWu/+DvASlQZsNUtteK2RW17Pzx6WBLimcdnbTGDPpHTpqIv4fOC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GtE7O4cg; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBJGnQw2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98656C4CEE7;
-	Fri, 17 Oct 2025 15:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760714355;
-	bh=Jkoxv5jBiXwh3/Xam1mL3Rb7nwPNp22HhVGe+o5k1sY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DBJGnQw29zw6lCVTKtpBhIgSG7SMX4VZD9MlmLUEPUBMWipU3K8+xfy/xqlmxz8Qi
-	 mLxaq5V5Z7Et2fOTaRuUiiEspXQRrhIZZJ9xRqScULqTAgvTGjzSlFIQWaMNs3MR+A
-	 dKeaol6kFcz4lkdW7DFiMk5bbpEA1Dgh/SH6u6TIXDXdKDqoochxfVVvitpFaYDKlL
-	 bULb536qkalBIUpX9fU7Dk2QB8zCg/3nMjXL1nlc2Ddg/ayrRE+8/4gAavHoyhpk1Y
-	 0fREHXWYLfsbUhrNzXSgnVS+UpYAnpmQOfquXa1v8/EjnKyNDqrbCpraPpvMaG8lGT
-	 yY3YmE4+sr2qw==
-Date: Fri, 17 Oct 2025 08:19:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre
- Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Miller
- <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang
- <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Yury Norov
- <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Johannes
- Berg <johannes@sipsolutions.net>, Alex Elder <elder@ieee.org>, David Laight
- <david.laight.linux@gmail.com>, Vincent Mailhol
- <mailhol.vincent@wanadoo.fr>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, qat-linux@intel.com,
- linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH treewide v3 2/4] bitfield: Add non-constant
- field_{prep,get}() helpers
-Message-ID: <20251017081912.2ad26705@kernel.org>
-In-Reply-To: <2d30e5ffe70ce35f952b7d497d2959391fbf0580.1739540679.git.geert+renesas@glider.be>
-References: <cover.1739540679.git.geert+renesas@glider.be>
-	<2d30e5ffe70ce35f952b7d497d2959391fbf0580.1739540679.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtE7O4cg"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-78f3bfe3f69so1915006b3a.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Oct 2025 08:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760714365; x=1761319165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypV8vCzrTsVuGY3EOGhG77XH5/MdfxUEKyYPHv8FMv8=;
+        b=GtE7O4cgk1KAhOF09i2N5n8DnUFLJoRKD7T1kxKNi59WhwqByApft12o5zVwuuCLwp
+         3kUo6+APvf0pK963jxw/wfuyA/AJZ47c7DZGLCwLuiEtb5JQRp7hBOAz/7wvLExV+sv8
+         zeBXlDoj+tOQZzKpo3dzRMNim9mAgMaVFimswuOtSfrzJ7TK8sHITFgIBOHBWaYiS4aX
+         NQupAOpPBLKQazh4cTtNFK0L2qyo+zIoB35kMJn+ugsFWkwlr7SEXKKe+kTRln7snsBI
+         Keysawvk+Su+tiuvEt2ZplRwCJPl6XZ14nfniq6uHF6JHHoDIQXsO7e1OJXbTeO0/0oD
+         lNEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760714365; x=1761319165;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ypV8vCzrTsVuGY3EOGhG77XH5/MdfxUEKyYPHv8FMv8=;
+        b=IEsL3X3G7I4nasPywlb+kd4ccsC7haUiLboayYJe1RrjWqXZxs3ocmr9QFS11ovjnN
+         aODd96bZEcgYD2osgSMpin7fqhwdEClOmyzFhJ/HwtIRcLXXhB4xN3C/ayLdD0EooxiJ
+         0ch6TjvINhVskUUE8dr1CLCgm5iCR7CnmUaDmre7X6hqTq1HBVzdLehk87LZ3s7IL/oB
+         426Ht+LQHHjwuwbjHnY0a0Ot8ddUTz5kRwmBoA1ikApEm7/xuzTzPzg1Ksus6yYv/pfB
+         PZ7ZppjJ60QtqctHNSQiEtC4knwAepEqYksLnpYkMv0cUC/W599S6PrlOPkIrsEJNESy
+         0kEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8U9mp9XaLbnir9QJv6PPDHqZA+8b4hzh7vp+Mg/416aacHoNoAlS8pNf7qaFwMo0fLxz/MKj3Mb+73y1/2kroVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyKVjONYevCcO69UQlzQthHq6LhHO7zF6oBBuYlUA3jC9ablGL
+	VJR/tZnBDke0WVMPT0sNsn1rLtfNWnuv3Y/5xui0jdWnEqlhqrz9SDSu
+X-Gm-Gg: ASbGncu63RXKZqn1AHUljLnkkeaO/zhLW5NbUtRuHyV5jRcD7fljfn+uPcVsRKhq8iS
+	TBc0v1cNgTzdpOZXitJB+c1hhyH4CB0wv5BGVXtS0cgcVuts1mplwhkRsCxw3MdnUCH8TTihT62
+	lReBA141BZq2CCSTGC+DVUZnJ+223Xu2GLRh95YxB5qr8XYvmG5AOg7aFCOX5XC0lpfDQveF1V3
+	1DbGPzFQw4eN/4WF56LhEOnS5LNZFkn41Kxx0th8Q9wPsToefhCmI6WEO3k0rZqc8gf4h0GhtRq
+	tK8NymJj1xgLo6ZeCKiZ6oVl1JQoBiNrcCSVLG6bYoeSEqaHnBkS7WzMdl+7DzLAsKz8c6TqmNZ
+	j1l9XS+8iNBD9fy2Q9vfFRxGMvSgKvkLKJD9NkrpV/3qEzo0NU0E16U38oQXzJScI4LDh5ANrk7
+	LyXgePFVYFWAIAgdfNVX5NXw==
+X-Google-Smtp-Source: AGHT+IE1hfFHdVPrDeSlhIdBoaTiwvbReDsJmEBsFsJOoLMNH4uCgErVwW/AKE1pXjv0R63O/gY3eg==
+X-Received: by 2002:a17:903:b0e:b0:25c:d4b6:f111 with SMTP id d9443c01a7336-290cb65b633mr50748765ad.47.1760714364884;
+        Fri, 17 Oct 2025 08:19:24 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c07:c7d3:fdc9:5e8f:28db:7f80])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a756sm67193955ad.14.2025.10.17.08.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 08:19:24 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 2/4] net: ravb: Allocate correct number of queues based on SoC support
+Date: Fri, 17 Oct 2025 16:18:28 +0100
+Message-ID: <20251017151830.171062-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 14:55:51 +0100 Geert Uytterhoeven wrote:
-> The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> constants.  However, it is very common to prepare or extract bitfield
-> elements where the bitfield mask is not a compile-time constant.
-> 
-> To avoid this limitation, the AT91 clock driver and several other
-> drivers already have their own non-const field_{prep,get}() macros.
-> Make them available for general use by consolidating them in
-> <linux/bitfield.h>, and improve them slightly:
->   1. Avoid evaluating macro parameters more than once,
->   2. Replace "ffs() - 1" by "__ffs()",
->   3. Support 64-bit use on 32-bit architectures.
-> 
-> This is deliberately not merged into the existing FIELD_{GET,PREP}()
-> macros, as people expressed the desire to keep stricter variants for
-> increased safety, or for performance critical paths.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-We already have helpers for this, please just don't know they exist :/
+On SoCs that only support the best-effort queue and not the network
+control queue, calling alloc_etherdev_mqs() with fixed values for
+TX/RX queues is not appropriate. Use the nc_queues flag from the
+per-SoC match data to determine whether the network control queue
+is available, and fall back to a single TX/RX queue when it is not.
+This ensures correct queue allocation across all supported SoCs.
 
-The "const" version of the helpers are specifically defined to work
-on masks generated with BIT() and GENMASK(). If the mask is not
-constant we should expect it to have a well defined width.
-
-I strongly prefer that we do this instead and convert the users to
-the fixed-width version:
-
----->8----------------
-
-Subject: bitfield: open code the fixed-width non-const helpers so that people see them
-
-There is a number of useful helpers defined in bitfield.h but
-they are mostly invisible to the reader because they are all
-generated by macros. Open code the 32b versions (which are
-most commonly used) to give developers a chance to discover them.
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: a92f4f0662bf ("ravb: Add nc_queue to struct ravb_hw_info")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- include/linux/bitfield.h | 82 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 81 insertions(+), 1 deletion(-)
+v1->v2:
+- Added Reviewed-by tag from Niklas.
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 5355f8f806a9..0356e535f37d 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -173,6 +173,11 @@
- 		*(_reg_p) |= (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask));	\
- 	})
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 69d382e8757d..a200e205825a 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2926,13 +2926,14 @@ static int ravb_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
+ 				     "failed to get cpg reset\n");
  
-+/* Non-constant, fixed-width helpers follow
-+ * Open code u32 and le32 versions for documentation / visibility,
-+ * be32 and other widths exist but are generated using macroes.
-+ */
++	info = of_device_get_match_data(&pdev->dev);
 +
- extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
- extern void __compiletime_error("bad bitfield mask")
-@@ -188,6 +193,81 @@ static __always_inline u64 field_mask(u64 field)
- 	return field / field_multiplier(field);
- }
- #define field_max(field)	((typeof(field))field_mask(field))
-+
-+/**
-+ * u32_encode_bits() - prepare a u32 bitfield element (non-const)
-+ * @v: value to put in the field
-+ * @field: shifted mask defining the field's length and position
-+ *
-+ * Equivalent of FIELD_PREP() for u32, field does not have to be constant.
-+ *
-+ * Note that the helper is available for other field widths (generated below).
-+ */
-+static __always_inline __u32 u32_encode_bits(u32 v, u32 field)
-+{
-+	if (__builtin_constant_p(v) && (v & ~field_mask(field)))
-+		__field_overflow();
-+	return ((v & field_mask(field)) * field_multiplier(field));
-+}
-+
-+/**
-+ * u32_replace_bits() - change a u32 bitfield element (non-const)
-+ * @old: old u32 value to modify
-+ * @val: value to put in the field
-+ * @field: shifted mask defining the field's length and position
-+ *
-+ * Remove the current contents of the @field in @old and set it to @new.
-+ *
-+ * Note that the helper is available for other field widths (generated below).
-+ */
-+static __always_inline __u32 u32_replace_bits(__u32 old, u32 val, u32 field)
-+{
-+	return (old & ~(field)) | u32_encode_bits(val, field);
-+}
-+
-+/**
-+ * u32_get_bits() - get u32 bitfield element (non-const)
-+ * @v: value to extract the field from
-+ * @field: shifted mask defining the field's length and position
-+ *
-+ * Extract the value of the field and shift it down.
-+ *
-+ * Note that the helper is available for other field widths (generated below).
-+ */
-+static __always_inline u32 u32_get_bits(__u32 v, u32 field)
-+{
-+	return ((v) & field) / field_multiplier(field);
-+}
-+
-+static __always_inline void u32p_replace_bits(__u32 *p, u32 val, u32 field)
-+{
-+	*p = (*p & ~(field)) | u32_encode_bits(val, field);
-+}
-+
-+static __always_inline __le32 le32_encode_bits(u32 v, u32 field)
-+{
-+	if (__builtin_constant_p(v) && (v & ~field_mask(field)))
-+		__field_overflow();
-+	return cpu_to_le32((v & field_mask(field)) * field_multiplier(field));
-+}
-+
-+static __always_inline __le32 le32_replace_bits(__le32 old, u32 val, u32 field)
-+{
-+	return (old & ~cpu_to_le32(field)) | le32_encode_bits(val, field);
-+}
-+
-+static __always_inline void le32p_replace_bits(__le32 *p, u32 val, u32 field)
-+{
-+	*p = (*p & ~cpu_to_le32(field)) | le32_encode_bits(val, field);
-+}
-+
-+static __always_inline u32 le32_get_bits(__le32 v, u32 field)
-+{
-+	return (le32_to_cpu(v) & field) / field_multiplier(field);
-+}
-+
-+/* Auto-generate bit ops for other field width and endian combination */
-+
- #define ____MAKE_OP(type,base,to,from)					\
- static __always_inline __##type __must_check type##_encode_bits(base v, base field)	\
- {									\
-@@ -215,7 +295,7 @@ static __always_inline base __must_check type##_get_bits(__##type v, base field)
- 	____MAKE_OP(u##size,u##size,,)
- ____MAKE_OP(u8,u8,,)
- __MAKE_OP(16)
--__MAKE_OP(32)
-+____MAKE_OP(be32,u32,cpu_to_be32,be32_to_cpu) /* Other 32b types open coded */
- __MAKE_OP(64)
- #undef __MAKE_OP
- #undef ____MAKE_OP
+ 	ndev = alloc_etherdev_mqs(sizeof(struct ravb_private),
+-				  NUM_TX_QUEUE, NUM_RX_QUEUE);
++				  info->nc_queues ? NUM_TX_QUEUE : 1,
++				  info->nc_queues ? NUM_RX_QUEUE : 1);
+ 	if (!ndev)
+ 		return -ENOMEM;
+ 
+-	info = of_device_get_match_data(&pdev->dev);
+-
+ 	ndev->features = info->net_features;
+ 	ndev->hw_features = info->net_hw_features;
+ 	ndev->vlan_features = info->vlan_features;
 -- 
-2.51.0
+2.43.0
 
