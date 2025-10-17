@@ -1,119 +1,121 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF282E8882
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Oct 2025 16:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC242F83B0
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Oct 2025 17:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719886; cv=none; b=I3qdMV8neQQy4k5K2W2NhYdWg1xX7kUrB5ODqDjkSfiC+Mso+fH0MBmD8jj/SS8iCzfltBpgRcWvqp5h+tEagLMrn40F5wmVx4MEgNAzgxX/CV5TfxmdFdL46paugRIKLoQS9wdyQtNoXxGUMgb2+RDMaqEZqWtjpBmUCCvf5k8=
+	t=1760720574; cv=none; b=EbBoFjaDVYArQfKgesEmytYy2fUP9yujqfvp2hSx8gEgUdJvcjbWZhkiH+8QaVtEfiH75PHbTJqmsXsrE2gHX6V/OVrhYIWAn+40TwC1+pbmK8iHg8QTgOpFxWtDXPqV4HDcPoaP56SIVRZzOKrNFBAH3ZCIZ5bJW+xyDkot9rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719886; c=relaxed/simple;
-	bh=oqiFxGMnLqRrMkrdAsvjVjLt6XjtrdNFQ/bU24xMJPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+66zx47Qbll2dAcXZSfQpTT5Wom5k6kpC/TdOm9U4VrWNyVl4FUwMAcTrEKsWTJX/3p/eKcFqHR+E3o3P7S2Mq5X+BPdpmKnqRnFd5gUKK7YMoYUrHurBeswr7UWsFEfHirkhhCukBZqjG4yN8uEsKydqGfYVCfYt45/rQQ2eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=BWF3yg54; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760720574; c=relaxed/simple;
+	bh=s+DfsSyxoZjkavdlNnP0h25P6XFkog0IcVoyYYb6tYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LYLeU7dZemtBE93ayedgJGVxrEEIMNS0ukz9LdvSbvfGu6hIhQVC25F8nC6ILEMzypomHo4RwG7t89uxMZPLDjVpcBMsAOS2Xaz3CjEREsky+CO8xaykCcn8aNS1ply6qGruqXt28/O3Eu0ZDBE2Vx67tE7qfXb+SRgc0Kh9lkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HKt+D8t5; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="BWF3yg54"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cp9ng5HpGz9srJ;
-	Fri, 17 Oct 2025 18:51:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760719879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9jIKeB5CQhhRPKbeo1qJepeHkfAJbZnPhMPeHkZf6nQ=;
-	b=BWF3yg54b3Lnhf2AJh2Zr+YdNBLmsxPtolOLfuJYp9ya/vYL4edsOiiP9K5g7R8IwJQz+w
-	banMzejlrNxzfscA1LJQ05ybqG+oBwsO3u0/DMG7XBHXDunU89Bklym7OCizeBoHy8RrWK
-	5/I2sZTJ+7Rhzx0wLb2gT3WQ2tGst1jqtMOoF7hgRu2zO6tnkw0c+/e5UC06ARjGnpfvWl
-	ycSRgOV9gfGzVNUmH9ALoLZWEPL4MFyw26NVaC0t4pSeAKRqCbkRetHJe8TXkqYL/oP7YF
-	IU31I1EXb1dMvcINvSq4XfUb8TTmCESfsLrp/I5E3PjBFwMPWgm7aF4SBEspjA==
-Message-ID: <6426cb80-249b-4ebd-9826-91c87299f7b6@mailbox.org>
-Date: Fri, 17 Oct 2025 18:04:16 +0200
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HKt+D8t5"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso2471716e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Oct 2025 10:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760720571; x=1761325371; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+DfsSyxoZjkavdlNnP0h25P6XFkog0IcVoyYYb6tYs=;
+        b=HKt+D8t5u2aiP96/Fh4I7bz9mQRuzxhG5Xfsn01F4PDLQSeCUoN57xFUYcxBeuj1iG
+         UxEa+4AKf/Bh5k/CbrkcDK26gAcmD0ClFbNQ6KpFs1HQTbQtkR7IDql8WkIuogIw0cY4
+         yHViRTas983wnoiTPfA5IFWdDhDkyR8vLjvhq38OEJw2txXaBcMLTjpaRuRUgowrlfxM
+         BwGi9SpVe9nyDTUt93cAtPjoNuC+LTwtTW9Vn2Et6HCEOmiFxqPwXWVhRdWAvlQo5btr
+         naN0bW2kS6FIBYcIgvE0UehxBxRM0pKadkudMc2dLG/LsYquFoBlJIZu7hEc0u60UfvR
+         9EuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760720571; x=1761325371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s+DfsSyxoZjkavdlNnP0h25P6XFkog0IcVoyYYb6tYs=;
+        b=sbQNiREwfjolgkz2vba4s2JZMjwxl1/FtLVqb6p7z7DXMD4N77kqDHJ0OoSi0iHZQO
+         YP+41tzJ7F2vxY45fcZ7haHGz8yKt62Ejl2wBWiDJF/AeIH1KR3xgeFJ9kq/gFNAeXnm
+         1l7d2AjI9MGgVJ1JHc+4rqqVgDY7s8+EQybFd5GTlTiq9fvU6knvN8HOfp4QVJASREdA
+         svlgoxQMrWGRoKnv/tGGRh7ZRHx2rPR8ZK6RlqFG0GuIeuIuk0Gihtk9c5/pxEru9sJQ
+         V+OEla9JcZhVlLJ/cF1oUDuZW0tM3qiWDYejkI+ec4XdtRjsoj+nw6zEild8ToBi2j4H
+         cF4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6cQje+g0nYks6YycFUL+EWwC/fSJCugks9dN6Bu2m1vOXdMdMBI+FPZ9dqavUsRKtNJd3PLfjERi9tWpBLm1BmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNZQAViKHUmpBlHh4Z4/gKI+s+6szZweQeveundBNunwWlhUAj
+	eDhKjAfXnWhJAqQK/DiD/pLmfjfrV3+O8rXFJarJxLdTr1dcg2w4en4u9PXfEvQPeUiVXjuFseZ
+	XdWcgtQV2aQ8+CijPedyxR0bkQrauyDxTJVaZTxYnyQ==
+X-Gm-Gg: ASbGnctpwvoDusubRTXpDfb8YDsytDIcifnUF2AAYtiEAEfe6+uhpOLZ8pyYwxffCrb
+	P+GDz6iMtgj9pZlNWcw/ROR9i+UVcZwPm8Cq7BM/P89SO8Ah5rsMuliYmDn92cWG979Ln5PK0en
+	E41YGHzlwU01RtZcsD5z7Qb6K78Xe34nro9S0PRYWBm+XHLOqxuQGbxiqbeqw/BYfZR1xD30JXu
+	E72jM6lHABKT3LY6MqofHCRJwLqPL2MM6hAUqsPEO0DzXWi906EijyfQE6me6mE5OzNAVlLfxa0
+	x+CTvwZ3hV+zYCLtsaJ6lrPwtpY=
+X-Google-Smtp-Source: AGHT+IE/jXqKTloLZ/aopfjxfCXoZv13PiX76YKj0csvsveMFfoiQWw14YejNOM2QPMlqcPqBUNH95FgcM8u82UXJiU=
+X-Received: by 2002:a05:6512:1041:b0:560:9993:f154 with SMTP id
+ 2adb3069b0e04-591d854626dmr1423123e87.35.1760720570725; Fri, 17 Oct 2025
+ 10:02:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mtd: spi-nor: spansion: Add SMPT fixup for S25FS512S
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, linux-mtd@lists.infradead.org,
- Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
- Takahiro Kuwano <tkuw584924@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Pratyush Yadav <pratyush@kernel.org>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- linux-renesas-soc@vger.kernel.org
-References: <20240914220859.128540-1-marek.vasut+renesas@mailbox.org>
- <0e0f1195-fd08-4d8b-a247-3c94b5628081@linaro.org>
- <c0cd93b5-4e94-4e4b-9b84-c96e024bcc3e@mailbox.org>
- <ee1d4085-df65-4e77-844f-c49658cd0713@linaro.org>
- <54058c12-3932-4dc1-bc51-6627fb46094a@mailbox.org>
- <7732351b-bf21-423d-bb70-177001cd24b9@linaro.org>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <7732351b-bf21-423d-bb70-177001cd24b9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: fd004e20aedda8e2407
-X-MBO-RS-META: 6mzo15prrcdzk15kadqathdwyffz8kmb
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com> <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro> <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro> <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+ <aPInv9NELU7N9QDn@shikoro>
+In-Reply-To: <aPInv9NELU7N9QDn@shikoro>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 17 Oct 2025 19:02:38 +0200
+X-Gm-Features: AS18NWDzZOn6Pi6ARdErmuy19hYF3sE3l-jPlZ2FtA0A_r8ld1z1r728Uxqt9Xs
+Message-ID: <CAMRc=MdWS2OSeJAkTRnAFMtXcVukwQ=JAWwJ3OHxogmgZnan6g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-renesas-soc@vger.kernel.org, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, 
+	Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/13/25 5:41 PM, Tudor Ambarus wrote:
+On Fri, Oct 17, 2025 at 1:25=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+>
+> > > I think the fallback mechanism of the core should work without any
+> > > module loading infrastructure. It should be there whenever possible.
+> > >
+> >
+> > It's not really a fallback, is it? This is the path we'll always take
+> > if the driver requests a reset control on a firmware node which has a
+> > reset-gpios property. If the driver goes with the gpiod API, it will
+> > get a regular descriptor. It's deterministic enough to not warrant the
+> > term "fallback".
+>
+> I dunno for how many drivers this is really applicable, but I really
+> liked the cleanup of the pca954x driver. Don't handle GPIOs internally,
+> just get a reset, and it might be a GPIO. I think it is very useful and
+> I would like to see it wherever possible.
+>
+> We could now make these drivers depend on RESET_GPIO. This would make
+> sense in a way but is uncomfortable for the user who has not RESET_GPIO
+> enabled before. The driver would just disappear because of unmet
+> dependencies. Yes, this can happen all the time because we always find
+> new dependencies and describe them. I just hoped it could be avoided in
+> this case.
+>
+> > Then I believe the platform's config should make sure the driver is
+> > built-in. I don't think it makes sense to just cram it into the kernel
+> > image for the few users it currently has.
+>
+> For Morimoto-san, the PCA954x update resulted in a regression. It is
+> worth thinking how to avoid that. The driver is so small, I wouldn't
+> mind the extra space if it saves users from disappearing devices. But
+> mileages vary...
+>
 
-Hello Tudor,
+It's up to Philipp but I'd personally go with "default m if GPIOLIB".
 
->>> The "Index Value" shall be the map_id that you passed in the code:
->>> spi_nor_post_smpt_fixups(nor, &map_id);
->>>
->>> Can you please print the map_id value that you obtain without updating it?
->>
->> 0x4
-> 
-> This translates to CR3NV[3] = 1, CR1NV[2] = 0,  CR3NV[1] = 0.
->>
->>> Let's also print the values of CR3NV and CR1NV.
->>
->> Both 0x0 and 0x0 .
-> 
-> But here CR3NV is 0, it contradicts the result from above.
-
-Maybe I messed up and was reading it the wrong way ?
-
-> Maybe it's the same problem that Takahiro identified: the flash needs
-> 8 dummy cycles, but the code uses zero dummy cycles, resulting in
-> reading garbage data, depending on whether your IO lines are pulled up/down
-> or floating.
-> 
-> Can you redo the test with the following please?
-
-Sure, although I saw some further discussion between you and Kuwano-san 
-, is this still applicable ?
-
-> diff --git a/drivers/mtd/spi-nor/sfdp.c b/drivers/mtd/spi-nor/sfdp.c
-> index 21727f9a4ac6..85443c903e59 100644
-> --- a/drivers/mtd/spi-nor/sfdp.c
-> +++ b/drivers/mtd/spi-nor/sfdp.c
-> @@ -752,7 +752,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->   
->                  read_data_mask = SMPT_CMD_READ_DATA(smpt[i]);
->                  nor->addr_nbytes = spi_nor_smpt_addr_nbytes(nor, smpt[i]);
-> -               nor->read_dummy = spi_nor_smpt_read_dummy(nor, smpt[i]);
-> +               nor->read_dummy = 8;
->                  nor->read_opcode = SMPT_CMD_OPCODE(smpt[i]);
->                  addr = smpt[i + 1];
->   
-> @@ -767,6 +767,8 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->                   * Configuration that is currently in use.
->                   */
->                  map_id = map_id << 1 | !!(*buf & read_data_mask);
-> +               dev_err(nor->dev, "i = %d, buf = %02x, map_id = %02x\n",
-> +                       i, buf[0], map_id);
->          }
-Sorry for the late reply.
+Bartosz
