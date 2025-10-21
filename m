@@ -1,32 +1,30 @@
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9006532BF54
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Oct 2025 09:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03C2ECD05
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Oct 2025 09:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040115; cv=none; b=qYh1vGP5qwQBCFXelDm5Ts1dPCtXHNb8tmtsSj/J6L/QCxSr2IJrYzVq+UNTgyQUpAooUJjbjcKEtI5kiUu//nx3qrLraFcg40sDq0TQYI+E2HAqzj9eRoV6s/zkSukXUMRoIsdAod0QZzubnRlqRCcRT5EXlXIYxiOREL4QgBg=
+	t=1761040118; cv=none; b=PwtnfnnDvWbOrSQvI+OZ9LXTqohSvCmqRP3Eoxt1zAglqVEekWmO3PbAxj18dT22dAfagTCGfLN1/n26iDkEbPEsTv3JAgLKQuysnnjeDXAqVntZN+EgRciNKwZZpnjtninNz3DmiYEKERWQ7rjkLPsOU83jWKV3SQnVsYDrtqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040115; c=relaxed/simple;
-	bh=CzvhyqEgu4+Ttj8upJh9cdjGzee85ZIKlKf8aEWKFgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nFnVX+3LOLGD1IQBbzZ2KHNb7yBEAKpp0wUXGxquLdWahIyX5FNhIjUKTYo4NVV9dZ8QUxaboLP3A+2UyZgzJlvkqpSpjZnIEwke27XKwY4xSIbVJXvf+g3NTjOlXjM2ko18qWk8KI5S46YiMeUx7maS4Zl5L3SMpiRJOoPpcXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kS0Dzj/x; arc=none smtp.client-ip=95.215.58.173
+	s=arc-20240116; t=1761040118; c=relaxed/simple;
+	bh=BeRkcYdNuRP9VtAYS7+2+hIhdROOZ2RLTiuy7nQekzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TcGmOOdk7sXBtEMmLP8JJj9XzfbuBT6vSLVhvMlqB3CqiLJJiwW8EFsU301AWnFaFKUI9G8sUWOrYYNSru1bpid3RSA5VW30uvBEXQlwhTI4kh4YIYKlgny99Nv//EyiqxmprYai/arApJj8O5TGBkFl0xjdwBkM1V2vYuUH2VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tz35rc9l; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kS0Dzj/x"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tz35rc9l"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761040110;
+	t=1761040103;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sCMGfY+hGNsCc5xIiSZ8AnxmPkmOzDOfhWn0dCad568=;
-	b=kS0Dzj/xZopJXF6ODQunzcdn8TC+hs83sNMcCnL7uJjQik/XA1uYCI0MSAnOx38H0nDnQy
-	RyzhzBfSHMjtuv3u2diUvvvlPdUQ0/kPA1nRCs5qNpfxQHMXDoEHsZ0U+oPblgMSjfRj58
-	qRMAvkkYp9IVH80dRlDAz2WM5wzcjuA=
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0prnOTx0qdT5A7vnEONNMuy2PWCa/37sN43he+oZ48M=;
+	b=tz35rc9lYZ24KZZPYmVND7+5MNZC3J01XZCqJXbt7gO+szf+3361vGEF4q+i3FXOoOJ8yJ
+	V8868sQFnVnjyv+sqXtLiY8cHSri+vjlVeIuJ+fxGprnyly57mMGyM3+ggYhYEfjMP2/ZN
+	yUX5fspPMp/X1aS4gTLyLsBGHBQQfw0=
 From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To: Jian Shen <shenjian15@huawei.com>,
 	Salil Mehta <salil.mehta@huawei.com>,
@@ -53,267 +51,55 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Jacob Keller <jacob.e.keller@intel.com>,
 	netdev@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v3 3/6] ionic: convert to ndo_hwtstamp API
-Date: Tue, 21 Oct 2025 09:47:48 +0000
-Message-ID: <20251021094751.900558-4-vadim.fedorenko@linux.dev>
-In-Reply-To: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
-References: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v3 0/6] convert net drivers to ndo_hwtstamp API part 2
+Date: Tue, 21 Oct 2025 09:47:45 +0000
+Message-ID: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Convert driver to use .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks.
-ionic_eth_ioctl() becomes empty, remove it.
+This is part 2 of patchset to convert drivers which support HW 
+timestamping to use .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks.
+The new API uses netlink to communicate with user-space and have some
+test coverage.
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Brett Creeley <brett.creeley@amd.com>
-Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
----
- .../net/ethernet/pensando/ionic/ionic_lif.c   | 17 +-----
+v2 -> v3:
+ use NL_SET_ERR_MSG_MOD() variant to report errors back to user-space
+v1 -> v2: 
+ hns3: actually set up new ndo callbacks
+ ionic: remove _lif_ portion from name to align with other ndo callbacks
+
+
+Vadim Fedorenko (6):
+  octeontx2: convert to ndo_hwtstamp API
+  mlx4: convert to ndo_hwtstamp API
+  ionic: convert to ndo_hwtstamp API
+  net: ravb: convert to ndo_hwtstamp API
+  net: renesas: rswitch: convert to ndo_hwtstamp API
+  net: hns3: add hwtstamp_get/hwtstamp_set ops
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  5 ++
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 ++++++++++
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 13 ++--
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         | 32 +++++-----
+ .../hisilicon/hns3/hns3pf/hclge_ptp.h         |  9 ++-
+ .../marvell/octeontx2/nic/otx2_common.h       |  9 ++-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 56 ++++++++---------
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  3 +-
+ .../net/ethernet/mellanox/mlx4/en_netdev.c    | 62 ++++++++-----------
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |  6 +-
+ .../net/ethernet/pensando/ionic/ionic_lif.c   | 17 +----
  .../net/ethernet/pensando/ionic/ionic_lif.h   | 11 ++--
- .../net/ethernet/pensando/ionic/ionic_phc.c   | 61 ++++++++++++-------
- 3 files changed, 47 insertions(+), 42 deletions(-)
+ .../net/ethernet/pensando/ionic/ionic_phc.c   | 61 +++++++++++-------
+ drivers/net/ethernet/renesas/ravb_main.c      | 61 ++++++------------
+ drivers/net/ethernet/renesas/rswitch_main.c   | 53 ++++++----------
+ 15 files changed, 211 insertions(+), 218 deletions(-)
 
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-index b28966ae50c2..058eea86e141 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-@@ -2335,20 +2335,6 @@ static int ionic_stop(struct net_device *netdev)
- 	return 0;
- }
- 
--static int ionic_eth_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd)
--{
--	struct ionic_lif *lif = netdev_priv(netdev);
--
--	switch (cmd) {
--	case SIOCSHWTSTAMP:
--		return ionic_lif_hwstamp_set(lif, ifr);
--	case SIOCGHWTSTAMP:
--		return ionic_lif_hwstamp_get(lif, ifr);
--	default:
--		return -EOPNOTSUPP;
--	}
--}
--
- static int ionic_get_vf_config(struct net_device *netdev,
- 			       int vf, struct ifla_vf_info *ivf)
- {
-@@ -2812,7 +2798,6 @@ static int ionic_xdp(struct net_device *netdev, struct netdev_bpf *bpf)
- static const struct net_device_ops ionic_netdev_ops = {
- 	.ndo_open               = ionic_open,
- 	.ndo_stop               = ionic_stop,
--	.ndo_eth_ioctl		= ionic_eth_ioctl,
- 	.ndo_start_xmit		= ionic_start_xmit,
- 	.ndo_bpf		= ionic_xdp,
- 	.ndo_xdp_xmit		= ionic_xdp_xmit,
-@@ -2833,6 +2818,8 @@ static const struct net_device_ops ionic_netdev_ops = {
- 	.ndo_get_vf_config	= ionic_get_vf_config,
- 	.ndo_set_vf_link_state	= ionic_set_vf_link_state,
- 	.ndo_get_vf_stats       = ionic_get_vf_stats,
-+	.ndo_hwtstamp_get	= ionic_hwstamp_get,
-+	.ndo_hwtstamp_set	= ionic_hwstamp_set,
- };
- 
- static int ionic_cmb_reconfig(struct ionic_lif *lif,
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.h b/drivers/net/ethernet/pensando/ionic/ionic_lif.h
-index 43bdd0fb8733..7c5ebc81fdfb 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_lif.h
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.h
-@@ -6,7 +6,7 @@
- 
- #include <linux/ptp_clock_kernel.h>
- #include <linux/timecounter.h>
--#include <uapi/linux/net_tstamp.h>
-+#include <linux/net_tstamp.h>
- #include <linux/dim.h>
- #include <linux/pci.h>
- #include "ionic_rx_filter.h"
-@@ -254,7 +254,7 @@ struct ionic_phc {
- 	struct timecounter tc;
- 
- 	struct mutex config_lock; /* lock for ts_config */
--	struct hwtstamp_config ts_config;
-+	struct kernel_hwtstamp_config ts_config;
- 	u64 ts_config_rx_filt;
- 	u32 ts_config_tx_mode;
- 
-@@ -362,8 +362,11 @@ int ionic_lif_size(struct ionic *ionic);
- #if IS_ENABLED(CONFIG_PTP_1588_CLOCK)
- void ionic_lif_hwstamp_replay(struct ionic_lif *lif);
- void ionic_lif_hwstamp_recreate_queues(struct ionic_lif *lif);
--int ionic_lif_hwstamp_set(struct ionic_lif *lif, struct ifreq *ifr);
--int ionic_lif_hwstamp_get(struct ionic_lif *lif, struct ifreq *ifr);
-+int ionic_hwstamp_set(struct net_device *netdev,
-+		      struct kernel_hwtstamp_config *config,
-+		      struct netlink_ext_ack *extack);
-+int ionic_hwstamp_get(struct net_device *netdev,
-+		      struct kernel_hwtstamp_config *config);
- ktime_t ionic_lif_phc_ktime(struct ionic_lif *lif, u64 counter);
- void ionic_lif_register_phc(struct ionic_lif *lif);
- void ionic_lif_unregister_phc(struct ionic_lif *lif);
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_phc.c b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
-index 9f5c81d44f99..05b44fc482f8 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_phc.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
-@@ -65,11 +65,12 @@ static u64 ionic_hwstamp_rx_filt(int config_rx_filter)
- }
- 
- static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
--					   struct hwtstamp_config *new_ts)
-+					   struct kernel_hwtstamp_config *new_ts,
-+					   struct netlink_ext_ack *extack)
- {
-+	struct kernel_hwtstamp_config *config;
-+	struct kernel_hwtstamp_config ts = {};
- 	struct ionic *ionic = lif->ionic;
--	struct hwtstamp_config *config;
--	struct hwtstamp_config ts;
- 	int tx_mode = 0;
- 	u64 rx_filt = 0;
- 	int err, err2;
-@@ -99,12 +100,16 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
- 
- 	tx_mode = ionic_hwstamp_tx_mode(config->tx_type);
- 	if (tx_mode < 0) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "TX time stamping mode isn't supported");
- 		err = tx_mode;
- 		goto err_queues;
- 	}
- 
- 	mask = cpu_to_le64(BIT_ULL(tx_mode));
- 	if ((ionic->ident.lif.eth.hwstamp_tx_modes & mask) != mask) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "TX time stamping mode isn't supported");
- 		err = -ERANGE;
- 		goto err_queues;
- 	}
-@@ -124,32 +129,47 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
- 
- 	if (tx_mode) {
- 		err = ionic_lif_create_hwstamp_txq(lif);
--		if (err)
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Error creating TX timestamp queue");
- 			goto err_queues;
-+		}
- 	}
- 
- 	if (rx_filt) {
- 		err = ionic_lif_create_hwstamp_rxq(lif);
--		if (err)
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Error creating RX timestamp queue");
- 			goto err_queues;
-+		}
- 	}
- 
- 	if (tx_mode != lif->phc->ts_config_tx_mode) {
- 		err = ionic_lif_set_hwstamp_txmode(lif, tx_mode);
--		if (err)
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Error enabling TX timestamp mode");
- 			goto err_txmode;
-+		}
- 	}
- 
- 	if (rx_filt != lif->phc->ts_config_rx_filt) {
- 		err = ionic_lif_set_hwstamp_rxfilt(lif, rx_filt);
--		if (err)
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Error enabling RX timestamp mode");
- 			goto err_rxfilt;
-+		}
- 	}
- 
- 	if (rx_all != (lif->phc->ts_config.rx_filter == HWTSTAMP_FILTER_ALL)) {
- 		err = ionic_lif_config_hwstamp_rxq_all(lif, rx_all);
--		if (err)
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Error enabling RX timestamp mode");
- 			goto err_rxall;
-+		}
- 	}
- 
- 	memcpy(&lif->phc->ts_config, config, sizeof(*config));
-@@ -183,28 +203,24 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
- 	return err;
- }
- 
--int ionic_lif_hwstamp_set(struct ionic_lif *lif, struct ifreq *ifr)
-+int ionic_hwstamp_set(struct net_device *netdev,
-+		      struct kernel_hwtstamp_config *config,
-+		      struct netlink_ext_ack *extack)
- {
--	struct hwtstamp_config config;
-+	struct ionic_lif *lif = netdev_priv(netdev);
- 	int err;
- 
- 	if (!lif->phc || !lif->phc->ptp)
- 		return -EOPNOTSUPP;
- 
--	if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
--		return -EFAULT;
--
- 	mutex_lock(&lif->queue_lock);
--	err = ionic_lif_hwstamp_set_ts_config(lif, &config);
-+	err = ionic_lif_hwstamp_set_ts_config(lif, config, extack);
- 	mutex_unlock(&lif->queue_lock);
- 	if (err) {
- 		netdev_info(lif->netdev, "hwstamp set failed: %d\n", err);
- 		return err;
- 	}
- 
--	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
--		return -EFAULT;
--
- 	return 0;
- }
- 
-@@ -216,7 +232,7 @@ void ionic_lif_hwstamp_replay(struct ionic_lif *lif)
- 		return;
- 
- 	mutex_lock(&lif->queue_lock);
--	err = ionic_lif_hwstamp_set_ts_config(lif, NULL);
-+	err = ionic_lif_hwstamp_set_ts_config(lif, NULL, NULL);
- 	mutex_unlock(&lif->queue_lock);
- 	if (err)
- 		netdev_info(lif->netdev, "hwstamp replay failed: %d\n", err);
-@@ -246,19 +262,18 @@ void ionic_lif_hwstamp_recreate_queues(struct ionic_lif *lif)
- 	mutex_unlock(&lif->phc->config_lock);
- }
- 
--int ionic_lif_hwstamp_get(struct ionic_lif *lif, struct ifreq *ifr)
-+int ionic_hwstamp_get(struct net_device *netdev,
-+		      struct kernel_hwtstamp_config *config)
- {
--	struct hwtstamp_config config;
-+	struct ionic_lif *lif = netdev_priv(netdev);
- 
- 	if (!lif->phc || !lif->phc->ptp)
- 		return -EOPNOTSUPP;
- 
- 	mutex_lock(&lif->phc->config_lock);
--	memcpy(&config, &lif->phc->ts_config, sizeof(config));
-+	memcpy(config, &lif->phc->ts_config, sizeof(*config));
- 	mutex_unlock(&lif->phc->config_lock);
- 
--	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
--		return -EFAULT;
- 	return 0;
- }
- 
 -- 
 2.47.3
-
