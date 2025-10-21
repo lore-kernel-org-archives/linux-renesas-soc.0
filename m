@@ -1,30 +1,32 @@
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03C2ECD05
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Oct 2025 09:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925C632B9A5
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Oct 2025 09:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761040118; cv=none; b=PwtnfnnDvWbOrSQvI+OZ9LXTqohSvCmqRP3Eoxt1zAglqVEekWmO3PbAxj18dT22dAfagTCGfLN1/n26iDkEbPEsTv3JAgLKQuysnnjeDXAqVntZN+EgRciNKwZZpnjtninNz3DmiYEKERWQ7rjkLPsOU83jWKV3SQnVsYDrtqw=
+	t=1761040130; cv=none; b=JWzatsRq0aDYcttUYzgGJ29y2yxJVgSQei/4av6DglrVXCEw1vFupjR0yK4mILnR8RfhQkebVMWJeFyC1Ep5p4Xrp6H1TUq/B0VW7LqMnABTTEevbd86+nPj6Jv7mov62UCgbWUWLJYdWfGIJbrwi4EwIMXePJ+AGLm5R3mmdBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761040118; c=relaxed/simple;
-	bh=BeRkcYdNuRP9VtAYS7+2+hIhdROOZ2RLTiuy7nQekzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TcGmOOdk7sXBtEMmLP8JJj9XzfbuBT6vSLVhvMlqB3CqiLJJiwW8EFsU301AWnFaFKUI9G8sUWOrYYNSru1bpid3RSA5VW30uvBEXQlwhTI4kh4YIYKlgny99Nv//EyiqxmprYai/arApJj8O5TGBkFl0xjdwBkM1V2vYuUH2VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tz35rc9l; arc=none smtp.client-ip=95.215.58.180
+	s=arc-20240116; t=1761040130; c=relaxed/simple;
+	bh=FfbEl7kUdBVJUv2FOP8L0z663dfdh1GY03VMLv3dgKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CI8twKpABD0S0eLhZhbR1f3w1UcDsv+vNm9QKLpXMmsvR337hQXD5f8dWD7+XqKcaWytVpTvN2VDAbAgyIEEaIPF36QzVIs1ePZPD3RilgCukhBYGmCb3WUoAojqbUSlp6ucfrVOAXNESCDjPLItFcKOseLHuzoszbquIbQ2Bws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UfXcRL+z; arc=none smtp.client-ip=95.215.58.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tz35rc9l"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UfXcRL+z"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761040103;
+	t=1761040126;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0prnOTx0qdT5A7vnEONNMuy2PWCa/37sN43he+oZ48M=;
-	b=tz35rc9lYZ24KZZPYmVND7+5MNZC3J01XZCqJXbt7gO+szf+3361vGEF4q+i3FXOoOJ8yJ
-	V8868sQFnVnjyv+sqXtLiY8cHSri+vjlVeIuJ+fxGprnyly57mMGyM3+ggYhYEfjMP2/ZN
-	yUX5fspPMp/X1aS4gTLyLsBGHBQQfw0=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HSRDByoUa8ZYSCnAAhl5kaGsnYYmNQkKU9dYn7yp+OE=;
+	b=UfXcRL+zq9ACOiycZ7/7I3p+ABcXkmeEuqbKgJWxG9igkYtpiFaqamZab4q7ooVfSzcNm/
+	Wuo7zAtwfmmWWP9+zkIbT/Bd554p7OjsCl9oGxi4zR7g7Ti0yE7Hs590UL+Nf49mo/20/j
+	teNteNsUUF8amEeql4+GnNwH1fSuYjg=
 From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To: Jian Shen <shenjian15@huawei.com>,
 	Salil Mehta <salil.mehta@huawei.com>,
@@ -50,10 +52,13 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Simon Horman <horms@kernel.org>,
 	Jacob Keller <jacob.e.keller@intel.com>,
 	netdev@vger.kernel.org,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v3 0/6] convert net drivers to ndo_hwtstamp API part 2
-Date: Tue, 21 Oct 2025 09:47:45 +0000
-Message-ID: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH net-next v3 4/6] net: ravb: convert to ndo_hwtstamp API
+Date: Tue, 21 Oct 2025 09:47:49 +0000
+Message-ID: <20251021094751.900558-5-vadim.fedorenko@linux.dev>
+In-Reply-To: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
+References: <20251021094751.900558-1-vadim.fedorenko@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -64,42 +69,139 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This is part 2 of patchset to convert drivers which support HW 
-timestamping to use .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks.
-The new API uses netlink to communicate with user-space and have some
-test coverage.
+Convert driver to use .ndo_hwtstamp_set()/.ndo_hwtstamp_get callbacks.
+ravb_do_ioctl() becomes pure phy_do_ioctl_running(), remove it and
+replace in callbacks.
 
-v2 -> v3:
- use NL_SET_ERR_MSG_MOD() variant to report errors back to user-space
-v1 -> v2: 
- hns3: actually set up new ndo callbacks
- ionic: remove _lif_ portion from name to align with other ndo callbacks
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 61 ++++++++----------------
+ 1 file changed, 19 insertions(+), 42 deletions(-)
 
-
-Vadim Fedorenko (6):
-  octeontx2: convert to ndo_hwtstamp API
-  mlx4: convert to ndo_hwtstamp API
-  ionic: convert to ndo_hwtstamp API
-  net: ravb: convert to ndo_hwtstamp API
-  net: renesas: rswitch: convert to ndo_hwtstamp API
-  net: hns3: add hwtstamp_get/hwtstamp_set ops
-
- drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  5 ++
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 ++++++++++
- .../hisilicon/hns3/hns3pf/hclge_main.c        | 13 ++--
- .../hisilicon/hns3/hns3pf/hclge_ptp.c         | 32 +++++-----
- .../hisilicon/hns3/hns3pf/hclge_ptp.h         |  9 ++-
- .../marvell/octeontx2/nic/otx2_common.h       |  9 ++-
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 56 ++++++++---------
- .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  3 +-
- .../net/ethernet/mellanox/mlx4/en_netdev.c    | 62 ++++++++-----------
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |  6 +-
- .../net/ethernet/pensando/ionic/ionic_lif.c   | 17 +----
- .../net/ethernet/pensando/ionic/ionic_lif.h   | 11 ++--
- .../net/ethernet/pensando/ionic/ionic_phc.c   | 61 +++++++++++-------
- drivers/net/ethernet/renesas/ravb_main.c      | 61 ++++++------------
- drivers/net/ethernet/renesas/rswitch_main.c   | 53 ++++++----------
- 15 files changed, 211 insertions(+), 218 deletions(-)
-
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 9d3bd65b85ff..113d7c7bd921 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2390,41 +2390,38 @@ static int ravb_close(struct net_device *ndev)
+ 	return 0;
+ }
+ 
+-static int ravb_hwtstamp_get(struct net_device *ndev, struct ifreq *req)
++static int ravb_hwtstamp_get(struct net_device *ndev,
++			     struct kernel_hwtstamp_config *config)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+-	struct hwtstamp_config config;
+ 
+-	config.flags = 0;
+-	config.tx_type = priv->tstamp_tx_ctrl ? HWTSTAMP_TX_ON :
+-						HWTSTAMP_TX_OFF;
++	config->flags = 0;
++	config->tx_type = priv->tstamp_tx_ctrl ? HWTSTAMP_TX_ON :
++						 HWTSTAMP_TX_OFF;
+ 	switch (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE) {
+ 	case RAVB_RXTSTAMP_TYPE_V2_L2_EVENT:
+-		config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
++		config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
+ 		break;
+ 	case RAVB_RXTSTAMP_TYPE_ALL:
+-		config.rx_filter = HWTSTAMP_FILTER_ALL;
++		config->rx_filter = HWTSTAMP_FILTER_ALL;
+ 		break;
+ 	default:
+-		config.rx_filter = HWTSTAMP_FILTER_NONE;
++		config->rx_filter = HWTSTAMP_FILTER_NONE;
+ 	}
+ 
+-	return copy_to_user(req->ifr_data, &config, sizeof(config)) ?
+-		-EFAULT : 0;
++	return 0;
+ }
+ 
+ /* Control hardware time stamping */
+-static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
++static int ravb_hwtstamp_set(struct net_device *ndev,
++			     struct kernel_hwtstamp_config *config,
++			     struct netlink_ext_ack *extack)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+-	struct hwtstamp_config config;
+ 	u32 tstamp_rx_ctrl = RAVB_RXTSTAMP_ENABLED;
+ 	u32 tstamp_tx_ctrl;
+ 
+-	if (copy_from_user(&config, req->ifr_data, sizeof(config)))
+-		return -EFAULT;
+-
+-	switch (config.tx_type) {
++	switch (config->tx_type) {
+ 	case HWTSTAMP_TX_OFF:
+ 		tstamp_tx_ctrl = 0;
+ 		break;
+@@ -2435,7 +2432,7 @@ static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
+ 		return -ERANGE;
+ 	}
+ 
+-	switch (config.rx_filter) {
++	switch (config->rx_filter) {
+ 	case HWTSTAMP_FILTER_NONE:
+ 		tstamp_rx_ctrl = 0;
+ 		break;
+@@ -2443,36 +2440,14 @@ static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
+ 		tstamp_rx_ctrl |= RAVB_RXTSTAMP_TYPE_V2_L2_EVENT;
+ 		break;
+ 	default:
+-		config.rx_filter = HWTSTAMP_FILTER_ALL;
++		config->rx_filter = HWTSTAMP_FILTER_ALL;
+ 		tstamp_rx_ctrl |= RAVB_RXTSTAMP_TYPE_ALL;
+ 	}
+ 
+ 	priv->tstamp_tx_ctrl = tstamp_tx_ctrl;
+ 	priv->tstamp_rx_ctrl = tstamp_rx_ctrl;
+ 
+-	return copy_to_user(req->ifr_data, &config, sizeof(config)) ?
+-		-EFAULT : 0;
+-}
+-
+-/* ioctl to device function */
+-static int ravb_do_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+-{
+-	struct phy_device *phydev = ndev->phydev;
+-
+-	if (!netif_running(ndev))
+-		return -EINVAL;
+-
+-	if (!phydev)
+-		return -ENODEV;
+-
+-	switch (cmd) {
+-	case SIOCGHWTSTAMP:
+-		return ravb_hwtstamp_get(ndev, req);
+-	case SIOCSHWTSTAMP:
+-		return ravb_hwtstamp_set(ndev, req);
+-	}
+-
+-	return phy_mii_ioctl(phydev, req, cmd);
++	return 0;
+ }
+ 
+ static int ravb_change_mtu(struct net_device *ndev, int new_mtu)
+@@ -2608,11 +2583,13 @@ static const struct net_device_ops ravb_netdev_ops = {
+ 	.ndo_get_stats		= ravb_get_stats,
+ 	.ndo_set_rx_mode	= ravb_set_rx_mode,
+ 	.ndo_tx_timeout		= ravb_tx_timeout,
+-	.ndo_eth_ioctl		= ravb_do_ioctl,
++	.ndo_eth_ioctl		= phy_do_ioctl_running,
+ 	.ndo_change_mtu		= ravb_change_mtu,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_set_mac_address	= eth_mac_addr,
+ 	.ndo_set_features	= ravb_set_features,
++	.ndo_hwtstamp_get	= ravb_hwtstamp_get,
++	.ndo_hwtstamp_set	= ravb_hwtstamp_set,
+ };
+ 
+ /* MDIO bus init function */
 -- 
 2.47.3
+
