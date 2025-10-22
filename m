@@ -1,32 +1,32 @@
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A473F9EC
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Oct 2025 10:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B0320CC9
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Oct 2025 10:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761130166; cv=none; b=Zl3g+Hu1G786feaQz04l/Dn2YQB/C1BlwHw6CEmL7lhs0mvcNJTZBRw32Ilrvm5eD6I7Ie7x3GyZY+ttF6HnjXkUNoGftNfQzcWFo3oNpDRqkNRBhXA0isXi9lCXFFFpXIqwGVxqUzhUIIQRBPL6MsS9bF5sDRcREJQFVTrEDGI=
+	t=1761130168; cv=none; b=O82ID5YGliXmXZPatOUDbIKwW43vu62x/ay6EzLsarOBgpR6kGhwy98rNBRkGu0x8Zyo75/7VcK04QCbeJIfyVgnLraT1tvEw4mFI7x28+9uKqYFh1gGUyVf69zeS+aZloZYhv5k4g5O8W+Y7Py3acZfhrD0PFhX22xoxaPuqnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761130166; c=relaxed/simple;
-	bh=CAFqdWfSLjS8BZ1+ZHhVFkTS4+LFjYeamlw/9adsvk0=;
+	s=arc-20240116; t=1761130168; c=relaxed/simple;
+	bh=CzvhyqEgu4+Ttj8upJh9cdjGzee85ZIKlKf8aEWKFgA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=arAt6s+ZWoJbL1/plLXSZX+c0bw79Vcre5TrQLXThi2XBjU2WpfIrgpp4dUzCdHYVuBjQa0rCn5Lrk1qyRx4ODmkv9oVbT8q+sMoxRX2QnH3a7XpayMByUu/5xdgvSuOmAjlS66hafDYQj+cfqIge6aKISBNLsTWc6BD6QtJ00U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ad9fDPlZ; arc=none smtp.client-ip=91.218.175.186
+	 MIME-Version; b=C6CdUwAjXlD6SbsZkGn0I4GE+upYkNSwTLmuGiBH7Ywq6E8w1uxadl9hzbZrtO8NOnjPhlJ0MvrfUHsGd8VpymUPNZNUu1yqsHsAwNgLdaBTu9njg0mYC/WTIt3+YVUe3Wc8iGxz9YokDbPp5SIewKm6UT1/4rj7G+fMaNp50is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tyzvqPd6; arc=none smtp.client-ip=91.218.175.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ad9fDPlZ"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tyzvqPd6"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761130158;
+	t=1761130163;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VNu7LifUxSEnJav5ZiNmulMkCNYdAESN1aWG7TtYj48=;
-	b=Ad9fDPlZPqPS2UV6p1GjJ8XdGPG0qmtozJjIiYEi2pqIzcvMCLp3Img96qEvsJ58/z3Jcq
-	BAAqR4wX1HbgGFB3IGp5dsOgicIF4nmrgrkj2bMCMZHhu1b9L82OH/gPEPGq3PcYRxTeBb
-	Ggh9Xakhgf2b5AbRLNlxWjos3qz5jG4=
+	bh=sCMGfY+hGNsCc5xIiSZ8AnxmPkmOzDOfhWn0dCad568=;
+	b=tyzvqPd6RsjZO/f2B0JwAfDHLvpo3Q90zcWCtP+BY0nq4VE2e50NjiLjbt0bUyz8JuECVk
+	m1MiekcQHIvCb+ARCBKEmfqsFhz5FMgAgv8nHde1bFAVExIvJjNAYebkYg6pS3CDLI6xtB
+	6czR/FWadrFwuUEqEtZ9UbdFyNMdXBU=
 From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To: Jian Shen <shenjian15@huawei.com>,
 	Salil Mehta <salil.mehta@huawei.com>,
@@ -53,9 +53,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Jacob Keller <jacob.e.keller@intel.com>,
 	netdev@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v4 1/6] octeontx2: convert to ndo_hwtstamp API
-Date: Wed, 22 Oct 2025 10:48:55 +0000
-Message-ID: <20251022104900.901973-2-vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v4 3/6] ionic: convert to ndo_hwtstamp API
+Date: Wed, 22 Oct 2025 10:48:57 +0000
+Message-ID: <20251022104900.901973-4-vadim.fedorenko@linux.dev>
 In-Reply-To: <20251022104900.901973-1-vadim.fedorenko@linux.dev>
 References: <20251022104900.901973-1-vadim.fedorenko@linux.dev>
 Precedence: bulk
@@ -68,174 +68,252 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
 Convert driver to use .ndo_hwtstamp_get()/.ndo_hwtstamp_set() callbacks.
-otx2_ioctl() becomes empty, remove it.
+ionic_eth_ioctl() becomes empty, remove it.
 
 Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Brett Creeley <brett.creeley@amd.com>
 Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 ---
- .../marvell/octeontx2/nic/otx2_common.h       |  9 ++-
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 56 +++++++++----------
- .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  3 +-
- 3 files changed, 33 insertions(+), 35 deletions(-)
+ .../net/ethernet/pensando/ionic/ionic_lif.c   | 17 +-----
+ .../net/ethernet/pensando/ionic/ionic_lif.h   | 11 ++--
+ .../net/ethernet/pensando/ionic/ionic_phc.c   | 61 ++++++++++++-------
+ 3 files changed, 47 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-index 1c8a3c078a64..ec26d1b6c789 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-@@ -527,7 +527,7 @@ struct otx2_nic {
- 	u32			nix_lmt_size;
- 
- 	struct otx2_ptp		*ptp;
--	struct hwtstamp_config	tstamp;
-+	struct kernel_hwtstamp_config tstamp;
- 
- 	unsigned long		rq_bmap;
- 
-@@ -1098,8 +1098,11 @@ int otx2_open(struct net_device *netdev);
- int otx2_stop(struct net_device *netdev);
- int otx2_set_real_num_queues(struct net_device *netdev,
- 			     int tx_queues, int rx_queues);
--int otx2_ioctl(struct net_device *netdev, struct ifreq *req, int cmd);
--int otx2_config_hwtstamp(struct net_device *netdev, struct ifreq *ifr);
-+int otx2_config_hwtstamp_get(struct net_device *netdev,
-+			     struct kernel_hwtstamp_config *config);
-+int otx2_config_hwtstamp_set(struct net_device *netdev,
-+			     struct kernel_hwtstamp_config *config,
-+			     struct netlink_ext_ack *extack);
- 
- /* MCAM filter related APIs */
- int otx2_mcam_flow_init(struct otx2_nic *pf);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index e808995703cf..a7feb4c392b3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -2445,18 +2445,26 @@ static int otx2_config_hw_tx_tstamp(struct otx2_nic *pfvf, bool enable)
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+index b28966ae50c2..058eea86e141 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -2335,20 +2335,6 @@ static int ionic_stop(struct net_device *netdev)
  	return 0;
  }
  
--int otx2_config_hwtstamp(struct net_device *netdev, struct ifreq *ifr)
-+int otx2_config_hwtstamp_get(struct net_device *netdev,
-+			     struct kernel_hwtstamp_config *config)
-+{
-+	struct otx2_nic *pfvf = netdev_priv(netdev);
-+
-+	*config = pfvf->tstamp;
-+	return 0;
-+}
-+EXPORT_SYMBOL(otx2_config_hwtstamp_get);
-+
-+int otx2_config_hwtstamp_set(struct net_device *netdev,
-+			     struct kernel_hwtstamp_config *config,
-+			     struct netlink_ext_ack *extack)
+-static int ionic_eth_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd)
+-{
+-	struct ionic_lif *lif = netdev_priv(netdev);
+-
+-	switch (cmd) {
+-	case SIOCSHWTSTAMP:
+-		return ionic_lif_hwstamp_set(lif, ifr);
+-	case SIOCGHWTSTAMP:
+-		return ionic_lif_hwstamp_get(lif, ifr);
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-}
+-
+ static int ionic_get_vf_config(struct net_device *netdev,
+ 			       int vf, struct ifla_vf_info *ivf)
  {
- 	struct otx2_nic *pfvf = netdev_priv(netdev);
--	struct hwtstamp_config config;
+@@ -2812,7 +2798,6 @@ static int ionic_xdp(struct net_device *netdev, struct netdev_bpf *bpf)
+ static const struct net_device_ops ionic_netdev_ops = {
+ 	.ndo_open               = ionic_open,
+ 	.ndo_stop               = ionic_stop,
+-	.ndo_eth_ioctl		= ionic_eth_ioctl,
+ 	.ndo_start_xmit		= ionic_start_xmit,
+ 	.ndo_bpf		= ionic_xdp,
+ 	.ndo_xdp_xmit		= ionic_xdp_xmit,
+@@ -2833,6 +2818,8 @@ static const struct net_device_ops ionic_netdev_ops = {
+ 	.ndo_get_vf_config	= ionic_get_vf_config,
+ 	.ndo_set_vf_link_state	= ionic_set_vf_link_state,
+ 	.ndo_get_vf_stats       = ionic_get_vf_stats,
++	.ndo_hwtstamp_get	= ionic_hwstamp_get,
++	.ndo_hwtstamp_set	= ionic_hwstamp_set,
+ };
  
- 	if (!pfvf->ptp)
- 		return -ENODEV;
+ static int ionic_cmb_reconfig(struct ionic_lif *lif,
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.h b/drivers/net/ethernet/pensando/ionic/ionic_lif.h
+index 43bdd0fb8733..7c5ebc81fdfb 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_lif.h
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.h
+@@ -6,7 +6,7 @@
+ 
+ #include <linux/ptp_clock_kernel.h>
+ #include <linux/timecounter.h>
+-#include <uapi/linux/net_tstamp.h>
++#include <linux/net_tstamp.h>
+ #include <linux/dim.h>
+ #include <linux/pci.h>
+ #include "ionic_rx_filter.h"
+@@ -254,7 +254,7 @@ struct ionic_phc {
+ 	struct timecounter tc;
+ 
+ 	struct mutex config_lock; /* lock for ts_config */
+-	struct hwtstamp_config ts_config;
++	struct kernel_hwtstamp_config ts_config;
+ 	u64 ts_config_rx_filt;
+ 	u32 ts_config_tx_mode;
+ 
+@@ -362,8 +362,11 @@ int ionic_lif_size(struct ionic *ionic);
+ #if IS_ENABLED(CONFIG_PTP_1588_CLOCK)
+ void ionic_lif_hwstamp_replay(struct ionic_lif *lif);
+ void ionic_lif_hwstamp_recreate_queues(struct ionic_lif *lif);
+-int ionic_lif_hwstamp_set(struct ionic_lif *lif, struct ifreq *ifr);
+-int ionic_lif_hwstamp_get(struct ionic_lif *lif, struct ifreq *ifr);
++int ionic_hwstamp_set(struct net_device *netdev,
++		      struct kernel_hwtstamp_config *config,
++		      struct netlink_ext_ack *extack);
++int ionic_hwstamp_get(struct net_device *netdev,
++		      struct kernel_hwtstamp_config *config);
+ ktime_t ionic_lif_phc_ktime(struct ionic_lif *lif, u64 counter);
+ void ionic_lif_register_phc(struct ionic_lif *lif);
+ void ionic_lif_unregister_phc(struct ionic_lif *lif);
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_phc.c b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
+index 9f5c81d44f99..05b44fc482f8 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_phc.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
+@@ -65,11 +65,12 @@ static u64 ionic_hwstamp_rx_filt(int config_rx_filter)
+ }
+ 
+ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
+-					   struct hwtstamp_config *new_ts)
++					   struct kernel_hwtstamp_config *new_ts,
++					   struct netlink_ext_ack *extack)
+ {
++	struct kernel_hwtstamp_config *config;
++	struct kernel_hwtstamp_config ts = {};
+ 	struct ionic *ionic = lif->ionic;
+-	struct hwtstamp_config *config;
+-	struct hwtstamp_config ts;
+ 	int tx_mode = 0;
+ 	u64 rx_filt = 0;
+ 	int err, err2;
+@@ -99,12 +100,16 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
+ 
+ 	tx_mode = ionic_hwstamp_tx_mode(config->tx_type);
+ 	if (tx_mode < 0) {
++		NL_SET_ERR_MSG_MOD(extack,
++				   "TX time stamping mode isn't supported");
+ 		err = tx_mode;
+ 		goto err_queues;
+ 	}
+ 
+ 	mask = cpu_to_le64(BIT_ULL(tx_mode));
+ 	if ((ionic->ident.lif.eth.hwstamp_tx_modes & mask) != mask) {
++		NL_SET_ERR_MSG_MOD(extack,
++				   "TX time stamping mode isn't supported");
+ 		err = -ERANGE;
+ 		goto err_queues;
+ 	}
+@@ -124,32 +129,47 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
+ 
+ 	if (tx_mode) {
+ 		err = ionic_lif_create_hwstamp_txq(lif);
+-		if (err)
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "Error creating TX timestamp queue");
+ 			goto err_queues;
++		}
+ 	}
+ 
+ 	if (rx_filt) {
+ 		err = ionic_lif_create_hwstamp_rxq(lif);
+-		if (err)
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "Error creating RX timestamp queue");
+ 			goto err_queues;
++		}
+ 	}
+ 
+ 	if (tx_mode != lif->phc->ts_config_tx_mode) {
+ 		err = ionic_lif_set_hwstamp_txmode(lif, tx_mode);
+-		if (err)
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "Error enabling TX timestamp mode");
+ 			goto err_txmode;
++		}
+ 	}
+ 
+ 	if (rx_filt != lif->phc->ts_config_rx_filt) {
+ 		err = ionic_lif_set_hwstamp_rxfilt(lif, rx_filt);
+-		if (err)
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "Error enabling RX timestamp mode");
+ 			goto err_rxfilt;
++		}
+ 	}
+ 
+ 	if (rx_all != (lif->phc->ts_config.rx_filter == HWTSTAMP_FILTER_ALL)) {
+ 		err = ionic_lif_config_hwstamp_rxq_all(lif, rx_all);
+-		if (err)
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "Error enabling RX timestamp mode");
+ 			goto err_rxall;
++		}
+ 	}
+ 
+ 	memcpy(&lif->phc->ts_config, config, sizeof(*config));
+@@ -183,28 +203,24 @@ static int ionic_lif_hwstamp_set_ts_config(struct ionic_lif *lif,
+ 	return err;
+ }
+ 
+-int ionic_lif_hwstamp_set(struct ionic_lif *lif, struct ifreq *ifr)
++int ionic_hwstamp_set(struct net_device *netdev,
++		      struct kernel_hwtstamp_config *config,
++		      struct netlink_ext_ack *extack)
+ {
+-	struct hwtstamp_config config;
++	struct ionic_lif *lif = netdev_priv(netdev);
+ 	int err;
+ 
+ 	if (!lif->phc || !lif->phc->ptp)
+ 		return -EOPNOTSUPP;
  
 -	if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
 -		return -EFAULT;
 -
--	switch (config.tx_type) {
-+	switch (config->tx_type) {
- 	case HWTSTAMP_TX_OFF:
- 		if (pfvf->flags & OTX2_FLAG_PTP_ONESTEP_SYNC)
- 			pfvf->flags &= ~OTX2_FLAG_PTP_ONESTEP_SYNC;
-@@ -2465,8 +2473,11 @@ int otx2_config_hwtstamp(struct net_device *netdev, struct ifreq *ifr)
- 		otx2_config_hw_tx_tstamp(pfvf, false);
- 		break;
- 	case HWTSTAMP_TX_ONESTEP_SYNC:
--		if (!test_bit(CN10K_PTP_ONESTEP, &pfvf->hw.cap_flag))
-+		if (!test_bit(CN10K_PTP_ONESTEP, &pfvf->hw.cap_flag)) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "One-step time stamping is not supported");
- 			return -ERANGE;
-+		}
- 		pfvf->flags |= OTX2_FLAG_PTP_ONESTEP_SYNC;
- 		schedule_delayed_work(&pfvf->ptp->synctstamp_work,
- 				      msecs_to_jiffies(500));
-@@ -2478,7 +2489,7 @@ int otx2_config_hwtstamp(struct net_device *netdev, struct ifreq *ifr)
- 		return -ERANGE;
+ 	mutex_lock(&lif->queue_lock);
+-	err = ionic_lif_hwstamp_set_ts_config(lif, &config);
++	err = ionic_lif_hwstamp_set_ts_config(lif, config, extack);
+ 	mutex_unlock(&lif->queue_lock);
+ 	if (err) {
+ 		netdev_info(lif->netdev, "hwstamp set failed: %d\n", err);
+ 		return err;
  	}
  
--	switch (config.rx_filter) {
-+	switch (config->rx_filter) {
- 	case HWTSTAMP_FILTER_NONE:
- 		otx2_config_hw_rx_tstamp(pfvf, false);
- 		break;
-@@ -2497,35 +2508,17 @@ int otx2_config_hwtstamp(struct net_device *netdev, struct ifreq *ifr)
- 	case HWTSTAMP_FILTER_PTP_V2_SYNC:
- 	case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
- 		otx2_config_hw_rx_tstamp(pfvf, true);
--		config.rx_filter = HWTSTAMP_FILTER_ALL;
-+		config->rx_filter = HWTSTAMP_FILTER_ALL;
- 		break;
- 	default:
- 		return -ERANGE;
- 	}
- 
--	memcpy(&pfvf->tstamp, &config, sizeof(config));
-+	pfvf->tstamp = *config;
- 
--	return copy_to_user(ifr->ifr_data, &config,
--			    sizeof(config)) ? -EFAULT : 0;
--}
--EXPORT_SYMBOL(otx2_config_hwtstamp);
+-	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
+-		return -EFAULT;
 -
--int otx2_ioctl(struct net_device *netdev, struct ifreq *req, int cmd)
--{
--	struct otx2_nic *pfvf = netdev_priv(netdev);
--	struct hwtstamp_config *cfg = &pfvf->tstamp;
--
--	switch (cmd) {
--	case SIOCSHWTSTAMP:
--		return otx2_config_hwtstamp(netdev, req);
--	case SIOCGHWTSTAMP:
--		return copy_to_user(req->ifr_data, cfg,
--				    sizeof(*cfg)) ? -EFAULT : 0;
--	default:
--		return -EOPNOTSUPP;
--	}
-+	return 0;
+ 	return 0;
  }
--EXPORT_SYMBOL(otx2_ioctl);
-+EXPORT_SYMBOL(otx2_config_hwtstamp_set);
  
- static int otx2_do_set_vf_mac(struct otx2_nic *pf, int vf, const u8 *mac)
+@@ -216,7 +232,7 @@ void ionic_lif_hwstamp_replay(struct ionic_lif *lif)
+ 		return;
+ 
+ 	mutex_lock(&lif->queue_lock);
+-	err = ionic_lif_hwstamp_set_ts_config(lif, NULL);
++	err = ionic_lif_hwstamp_set_ts_config(lif, NULL, NULL);
+ 	mutex_unlock(&lif->queue_lock);
+ 	if (err)
+ 		netdev_info(lif->netdev, "hwstamp replay failed: %d\n", err);
+@@ -246,19 +262,18 @@ void ionic_lif_hwstamp_recreate_queues(struct ionic_lif *lif)
+ 	mutex_unlock(&lif->phc->config_lock);
+ }
+ 
+-int ionic_lif_hwstamp_get(struct ionic_lif *lif, struct ifreq *ifr)
++int ionic_hwstamp_get(struct net_device *netdev,
++		      struct kernel_hwtstamp_config *config)
  {
-@@ -2942,7 +2935,6 @@ static const struct net_device_ops otx2_netdev_ops = {
- 	.ndo_set_features	= otx2_set_features,
- 	.ndo_tx_timeout		= otx2_tx_timeout,
- 	.ndo_get_stats64	= otx2_get_stats64,
--	.ndo_eth_ioctl		= otx2_ioctl,
- 	.ndo_set_vf_mac		= otx2_set_vf_mac,
- 	.ndo_set_vf_vlan	= otx2_set_vf_vlan,
- 	.ndo_get_vf_config	= otx2_get_vf_config,
-@@ -2951,6 +2943,8 @@ static const struct net_device_ops otx2_netdev_ops = {
- 	.ndo_xdp_xmit           = otx2_xdp_xmit,
- 	.ndo_setup_tc		= otx2_setup_tc,
- 	.ndo_set_vf_trust	= otx2_ndo_set_vf_trust,
-+	.ndo_hwtstamp_get	= otx2_config_hwtstamp_get,
-+	.ndo_hwtstamp_set	= otx2_config_hwtstamp_set,
- };
+-	struct hwtstamp_config config;
++	struct ionic_lif *lif = netdev_priv(netdev);
  
- int otx2_wq_init(struct otx2_nic *pf)
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-index 25381f079b97..f4fdbfba8667 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-@@ -534,8 +534,9 @@ static const struct net_device_ops otx2vf_netdev_ops = {
- 	.ndo_set_features = otx2vf_set_features,
- 	.ndo_get_stats64 = otx2_get_stats64,
- 	.ndo_tx_timeout = otx2_tx_timeout,
--	.ndo_eth_ioctl	= otx2_ioctl,
- 	.ndo_setup_tc = otx2_setup_tc,
-+	.ndo_hwtstamp_get = otx2_config_hwtstamp_get,
-+	.ndo_hwtstamp_set = otx2_config_hwtstamp_set,
- };
+ 	if (!lif->phc || !lif->phc->ptp)
+ 		return -EOPNOTSUPP;
  
- static int otx2_vf_wq_init(struct otx2_nic *vf)
+ 	mutex_lock(&lif->phc->config_lock);
+-	memcpy(&config, &lif->phc->ts_config, sizeof(config));
++	memcpy(config, &lif->phc->ts_config, sizeof(*config));
+ 	mutex_unlock(&lif->phc->config_lock);
+ 
+-	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
+-		return -EFAULT;
+ 	return 0;
+ }
+ 
 -- 
 2.47.3
 
