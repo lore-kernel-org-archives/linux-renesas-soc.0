@@ -1,207 +1,127 @@
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE42325392C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 22:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DA823C4F3;
+	Thu, 23 Oct 2025 22:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761257133; cv=none; b=XIgw9ACiuhSnWcaeOhOVtJGVb+VpWlUUx2jYLnZ/IC9MAt/qxkZUSzRFuiinPmmH2IokF1T/5tGWTnV43yXi9HwXYUFxvtnJpPIvY+BPbPzGAlGplkv6hGIng3iphreWLtaQTAhvLLEdJKsvs9mrXH8ddBHmCVTrIv3MMqO4V1c=
+	t=1761259245; cv=none; b=tZZ9pEoAHJWu+3aDLFlqHoA3cEycDm3Z8KwSxYPO7hqRUj7OoU3QjFnb1S452VkOghyN+MlQbEOLAPbFEx2y9KYToQ0DspF5Wszo7eG2jvQASZSKk05C4OrqwZdL1evX63tn1ZhzXSmGYLAH8SrqQX5rs3DqbeO+tqzlAuiLb6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761257133; c=relaxed/simple;
-	bh=d8BQDnh0Ryiu7a1KwUdNaceGhIm64M2HooeicMzhtyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JDuc1IKM3D1JIf6o0p8nP/rJ+BP9cNtiWJKRQ954BKzS0ov/NoFzXRrZCCwjIux91Sqw2+gwcVD6ZPG1jDPwwsXHZcIsu6AYF7Hb58/BBuFeyI2gUHzITbOdKXL7Gfh1c5U+2X0wawrGkK5GxdiLuiDzqTw5F69V3nZ2cPFbID4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N34YjTTJ; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1761259245; c=relaxed/simple;
+	bh=Pk6kw8jl8gTalk+B9iAiGFcYs/f1+SPAtpxnMWOU8N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lV+BIAF9l6kBdJdTIi6Fa2Aiv8pIlckorctL5n5mBqKLvAn5utuL6KDljF0NrCqLEgqXSrLnwYbtDT8HNFLusP2UiuMQFF7sexBSUUHjXwu9/4qoBS5dhaEkjtwWqah/sTHXT+VUjo/Jy5GqY9+zftHfdw1YB4ovumftmrL/XV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=v0K9wHgR; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Edb9PGSj; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N34YjTTJ"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761257119;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="v0K9wHgR";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Edb9PGSj"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ct1G13qw3z9t8J;
+	Fri, 24 Oct 2025 00:40:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761259241;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBqJXb6byxA6duMzC7vR1GJY8AU0aT3gF0c28VTzDhM=;
-	b=N34YjTTJmkOSqFWZpYc3sTzeOrWbK0OquHl8CtiQVBFjzOKrJgx93JED26whlBUBhW2/Rq
-	BXNKMTKfk9JZEz6D8t27egrk0N9CsYy1Xcf9R8Y18C433oZVkQmhK2R83MTGsFU5CB1Gs1
-	HjvUciYE9aqpiYt/xfUWCxfW0/jhb1I=
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-To: Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HrSRitxA410IgZWjNy6T/E8TCtsXIYs0nf8Te4i2F+s=;
+	b=v0K9wHgRGvfxGsgU6+fvmfl9K5kWtVTtbdL0+vVmX5GjZxUScMLcqXU4EXohbAo7GMxAbn
+	pYH6v+GgJRALH5fg6/AHrZLND70MlHit/sOAi3Rd0hmben0eyQJXhEndOzx98wl322+tVj
+	QTKh69O7VS4mGqj4QpEjxVI0Xn3WNL7TVahb+gc7Hb6Kwao8WkDaj27WVXnzOjJZ2aaijs
+	a0hIlhmSwiCIaEtK+xemFD8RvVBivOp0lv115zVPcxi66c5I/KJFffZPZ5htQsQKCXH0gm
+	IHOLnoAIfJ51hr7YPVSqjDV640YZymBYZXHVCSp5LZQiM3yBGr8JuKqTQhQV2g==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Edb9PGSj;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761259239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HrSRitxA410IgZWjNy6T/E8TCtsXIYs0nf8Te4i2F+s=;
+	b=Edb9PGSjSE+tBs8HzLEZ6yv1kNv4l6grSa8WgbpfXofG3u/iLxvIffC5QOL1j9UCBaG7hh
+	ELmZIgC7NRFNC5jQJd13jgQaTdrVMNqvlOclMJ4EoNmckE4dZMScQif6zOoHCId4/SuI0L
+	ETDqIk7t/NHDllR53qycMJ9/jjXlUYGUYZnlvPOkViy+u/T/P+bSduiXEKgM6gPE3HCSWU
+	7Pdkl0YyZkMQD+0AifNrMLr6gJXtu+J+/VFuX9uasWLYlLc6v3C9hxk+tY8U81pJTuYQTR
+	XGTUQWNmPEJWtK1fEHrVWoETY02hdb4RsyduX0BlPrYNjZhhGcten8/ClahDkA==
+To: netdev@vger.kernel.org
+Cc: Thanh Quan <thanh.quan.xn@renesas.com>,
+	Hai Pham <hai.pham.ud@renesas.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Dan Murphy <dmurphy@ti.com>,
 	Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Sunil Goutham <sgoutham@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Richard Cochran <richardcochran@gmail.com>,
 	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	netdev@vger.kernel.org,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH net-next v5 4/6] net: ravb: convert to ndo_hwtstamp API
-Date: Thu, 23 Oct 2025 22:04:55 +0000
-Message-ID: <20251023220457.3201122-5-vadim.fedorenko@linux.dev>
-In-Reply-To: <20251023220457.3201122-1-vadim.fedorenko@linux.dev>
-References: <20251023220457.3201122-1-vadim.fedorenko@linux.dev>
+	linux-renesas-soc@vger.kernel.org
+Subject: [net,PATCH] net: phy: dp83869: fix STRAP_OPMODE bitmask
+Date: Fri, 24 Oct 2025 00:39:45 +0200
+Message-ID: <20251023224018.192899-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MBO-RS-ID: 6c771f7464063db6468
+X-MBO-RS-META: sfhow7epi4cpq6i5xuymx7f5nibx51oq
+X-Rspamd-Queue-Id: 4ct1G13qw3z9t8J
 
-Convert driver to use .ndo_hwtstamp_set()/.ndo_hwtstamp_get callbacks.
-ravb_do_ioctl() becomes pure phy_do_ioctl_running(), remove it and
-replace in callbacks.
+From: Thanh Quan <thanh.quan.xn@renesas.com>
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+According to the TI DP83869HM datasheet Revision D (June 2025), section
+7.6.1.41 STRAP_STS Register, the STRAP_OPMODE bitmask is bit [11:9].
+Fix this.
+
+Fixes: 0eaf8ccf2047 ("net: phy: dp83869: Set opmode from straps")
+Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # Port from U-Boot to Linux
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 61 ++++++++----------------
- 1 file changed, 19 insertions(+), 42 deletions(-)
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/net/phy/dp83869.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index e2d7ce1a85e8..014d5a51c65b 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2410,41 +2410,38 @@ static int ravb_close(struct net_device *ndev)
+diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+index a2cd1cc35cde1..1f381d7b13ff3 100644
+--- a/drivers/net/phy/dp83869.c
++++ b/drivers/net/phy/dp83869.c
+@@ -84,7 +84,7 @@
+ #define DP83869_CLK_DELAY_DEF			7
+ 
+ /* STRAP_STS1 bits */
+-#define DP83869_STRAP_OP_MODE_MASK		GENMASK(2, 0)
++#define DP83869_STRAP_OP_MODE_MASK		GENMASK(11, 9)
+ #define DP83869_STRAP_STS1_RESERVED		BIT(11)
+ #define DP83869_STRAP_MIRROR_ENABLED           BIT(12)
+ 
+@@ -528,7 +528,7 @@ static int dp83869_set_strapped_mode(struct phy_device *phydev)
+ 	if (val < 0)
+ 		return val;
+ 
+-	dp83869->mode = val & DP83869_STRAP_OP_MODE_MASK;
++	dp83869->mode = FIELD_GET(DP83869_STRAP_OP_MODE_MASK, val);
+ 
  	return 0;
  }
- 
--static int ravb_hwtstamp_get(struct net_device *ndev, struct ifreq *req)
-+static int ravb_hwtstamp_get(struct net_device *ndev,
-+			     struct kernel_hwtstamp_config *config)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
--	struct hwtstamp_config config;
- 
--	config.flags = 0;
--	config.tx_type = priv->tstamp_tx_ctrl ? HWTSTAMP_TX_ON :
--						HWTSTAMP_TX_OFF;
-+	config->flags = 0;
-+	config->tx_type = priv->tstamp_tx_ctrl ? HWTSTAMP_TX_ON :
-+						 HWTSTAMP_TX_OFF;
- 	switch (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE) {
- 	case RAVB_RXTSTAMP_TYPE_V2_L2_EVENT:
--		config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
-+		config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
- 		break;
- 	case RAVB_RXTSTAMP_TYPE_ALL:
--		config.rx_filter = HWTSTAMP_FILTER_ALL;
-+		config->rx_filter = HWTSTAMP_FILTER_ALL;
- 		break;
- 	default:
--		config.rx_filter = HWTSTAMP_FILTER_NONE;
-+		config->rx_filter = HWTSTAMP_FILTER_NONE;
- 	}
- 
--	return copy_to_user(req->ifr_data, &config, sizeof(config)) ?
--		-EFAULT : 0;
-+	return 0;
- }
- 
- /* Control hardware time stamping */
--static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
-+static int ravb_hwtstamp_set(struct net_device *ndev,
-+			     struct kernel_hwtstamp_config *config,
-+			     struct netlink_ext_ack *extack)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
--	struct hwtstamp_config config;
- 	u32 tstamp_rx_ctrl = RAVB_RXTSTAMP_ENABLED;
- 	u32 tstamp_tx_ctrl;
- 
--	if (copy_from_user(&config, req->ifr_data, sizeof(config)))
--		return -EFAULT;
--
--	switch (config.tx_type) {
-+	switch (config->tx_type) {
- 	case HWTSTAMP_TX_OFF:
- 		tstamp_tx_ctrl = 0;
- 		break;
-@@ -2455,7 +2452,7 @@ static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
- 		return -ERANGE;
- 	}
- 
--	switch (config.rx_filter) {
-+	switch (config->rx_filter) {
- 	case HWTSTAMP_FILTER_NONE:
- 		tstamp_rx_ctrl = 0;
- 		break;
-@@ -2463,36 +2460,14 @@ static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
- 		tstamp_rx_ctrl |= RAVB_RXTSTAMP_TYPE_V2_L2_EVENT;
- 		break;
- 	default:
--		config.rx_filter = HWTSTAMP_FILTER_ALL;
-+		config->rx_filter = HWTSTAMP_FILTER_ALL;
- 		tstamp_rx_ctrl |= RAVB_RXTSTAMP_TYPE_ALL;
- 	}
- 
- 	priv->tstamp_tx_ctrl = tstamp_tx_ctrl;
- 	priv->tstamp_rx_ctrl = tstamp_rx_ctrl;
- 
--	return copy_to_user(req->ifr_data, &config, sizeof(config)) ?
--		-EFAULT : 0;
--}
--
--/* ioctl to device function */
--static int ravb_do_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
--{
--	struct phy_device *phydev = ndev->phydev;
--
--	if (!netif_running(ndev))
--		return -EINVAL;
--
--	if (!phydev)
--		return -ENODEV;
--
--	switch (cmd) {
--	case SIOCGHWTSTAMP:
--		return ravb_hwtstamp_get(ndev, req);
--	case SIOCSHWTSTAMP:
--		return ravb_hwtstamp_set(ndev, req);
--	}
--
--	return phy_mii_ioctl(phydev, req, cmd);
-+	return 0;
- }
- 
- static int ravb_change_mtu(struct net_device *ndev, int new_mtu)
-@@ -2628,11 +2603,13 @@ static const struct net_device_ops ravb_netdev_ops = {
- 	.ndo_get_stats		= ravb_get_stats,
- 	.ndo_set_rx_mode	= ravb_set_rx_mode,
- 	.ndo_tx_timeout		= ravb_tx_timeout,
--	.ndo_eth_ioctl		= ravb_do_ioctl,
-+	.ndo_eth_ioctl		= phy_do_ioctl_running,
- 	.ndo_change_mtu		= ravb_change_mtu,
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_set_mac_address	= eth_mac_addr,
- 	.ndo_set_features	= ravb_set_features,
-+	.ndo_hwtstamp_get	= ravb_hwtstamp_get,
-+	.ndo_hwtstamp_set	= ravb_hwtstamp_set,
- };
- 
- /* MDIO bus init function */
 -- 
-2.47.3
+2.51.0
 
