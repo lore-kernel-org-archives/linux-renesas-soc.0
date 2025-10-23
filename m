@@ -1,42 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7432B983
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 14:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D665F2C08BA
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 14:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229171; cv=none; b=gN2iOGmx5bpEGIdydH3mZ6mxDZz1oYKgt408JfSh6ZJ1dd6/exoR0NSBgLnILqf261uDY/MEvjkdZRlzLhsNVAMF71epFieTUIoAgebQeBU6850aov8Pk6r+yDX3nlKuiVb2hn0Usw9LXpt2Sz0F5sl3MgNYzWr8vJPmHZrFyBk=
+	t=1761229318; cv=none; b=Jvz8L0DN7HY4QfhAezDi/UJeceeD1CrI4mZDiVphf+LaweoixiT4k7/QXm9sJ0pcaJGF0BL9DG+HJbbNXjmWl/oK2MMSkDEHZj1lAW39aGW+o9s+Dl9BRuxE6PSL5GQlimkciVSFkgS+h/KXNic/V1cMMbw/jChICEHXCgU1kYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229171; c=relaxed/simple;
-	bh=ohcVgQwUVBiVR8Z7bhBKhH0NsN3EdMIF8XRJoa13eW4=;
+	s=arc-20240116; t=1761229318; c=relaxed/simple;
+	bh=Cg8X9zCcHh0XZYuwWRJDuEQoaZUgfI3iONaxAqyi2xk=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UKFvqDUqUqDgHfM86TTPdKkhiFzNTVQ5v0zdjQSb5i2RbNBChGdgXCNsQlfgjAQlbXl8KyiBAcYq/+x8jpmz1BACfnZH6Z4HwVF/m+JAr1lSLFtrZP0WMXGdvCd4LE4q+kKRJ8o7cOnU6kI7QDACjwA/FILIHc5RNtjhZrWSMdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR9qfnto; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=c1dA5p33qthC3qMnTaXPV55ZY8IPyNdIEuMYWhi/dI9Lx20wrLZEZ7En5le/mqPJYyVkjW7w+ULI+PT7Nihj3O2//TZk16DuCLmizj5IX3dMluWa59dKAJhY95ERAEweFn/B/ryYXjaTxT5P+FnDqG81DjnY7XSwAaSrH0669Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S428L3Bk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR9qfnto"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38645C4CEE7;
-	Thu, 23 Oct 2025 14:19:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S428L3Bk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404DCC4CEE7;
+	Thu, 23 Oct 2025 14:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229171;
-	bh=ohcVgQwUVBiVR8Z7bhBKhH0NsN3EdMIF8XRJoa13eW4=;
+	s=k20201202; t=1761229318;
+	bh=Cg8X9zCcHh0XZYuwWRJDuEQoaZUgfI3iONaxAqyi2xk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JR9qfntoK3AV0wTJ86NGDv0xTgMfnsuda9kjOKTBQTPoBmWd9MHI/WymV9k3S0wGW
-	 Ip5FgPuHV8ioW2YVY7jIiD+D2KNgSt9PsbgTN01hAgydAXdFInOfJfG/Y+oYQ2RTBZ
-	 OMHB9uXB2Dly9mKcWYCK/ki/Om7TnxvBXWQ8a0o4pQIbf/pP38ase6sHsViRm4pLXU
-	 e5WSMgYfaipitFtti6gBvUaPtnLEaEs7WaIwJiCsulXli+0Qryo5SnmUKerqzPLQ6J
-	 UzzJoVQBauKhng0z96GwUGSDDtmtSYAcrZ0KVCLlA/giT2CrzmSgtcbFAgRREeyViX
-	 6sgvX1xotvR4Q==
+	b=S428L3Bk8p7+d0dpiXGJxlLFK2FjustCMjwWbOZNUHA2EC6tF4PVZKrQ2hoJOYYI4
+	 UqVS/AuFlK6GCdFnK1hTMIAWC0LnJ74usES2Y206HKYafzAiQFSHB4TJOKTV3sUBve
+	 O6vGcR1YGGHtEBz0Irw+VAp7g/FfFXmnQ/P5ScD8OA1pHfndffKxKj0MjiLm0jIafv
+	 hgCd3xJMqghAnXJFs86pb+B4gcQl1txnvEpkPsbwlbPdCdKnpDJBbwK+clK6nRlZHR
+	 /V1ahbx5T9XrhqDv2gpDhOD7JqL9NofvoHdYKuC079FGXhbC3eWd4d6HacAOSsSmfm
+	 kQwYSvSUjVoeA==
 Received: from 158.46.66.37.rev.sfr.net ([37.66.46.158] helo=lobster-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <maz@kernel.org>)
-	id 1vBwA4-0000000GYEE-3gqS;
-	Thu, 23 Oct 2025 14:19:29 +0000
-Date: Thu, 23 Oct 2025 15:19:22 +0100
-Message-ID: <87y0p13dlh.wl-maz@kernel.org>
+	id 1vBwCR-0000000GYKV-3yGj;
+	Thu, 23 Oct 2025 14:21:56 +0000
+Date: Thu, 23 Oct 2025 15:21:55 +0100
+Message-ID: <87wm4l3dh8.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org,
+To: Yicong Yang <yangyccccc@gmail.com>
+Cc: Marek Vasut <marek.vasut@mailbox.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	linux-arm-kernel@lists.infradead.org,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -45,12 +47,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Yicong Yang <yangyicong@hisilicon.com>,
 	linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] arm64: guard AMU register access with ARM64_HAS_AMU_EXTN
-In-Reply-To: <24c8da41-37db-4e69-b9aa-e33b2154acb0@mailbox.org>
+In-Reply-To: <632d6afe-40d3-4632-99c7-b098967bd649@gmail.com>
 References: <20251022133621.178546-1-marek.vasut+renesas@mailbox.org>
 	<86347bvx0f.wl-maz@kernel.org>
 	<07391913-aab6-4d92-b75f-278506f51397@mailbox.org>
-	<861pmvvv2g.wl-maz@kernel.org>
-	<24c8da41-37db-4e69-b9aa-e33b2154acb0@mailbox.org>
+	<632d6afe-40d3-4632-99c7-b098967bd649@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -60,104 +61,94 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-SA-Exim-Connect-IP: 37.66.46.158
-X-SA-Exim-Rcpt-To: marek.vasut@mailbox.org, linux-arm-kernel@lists.infradead.org, anshuman.khandual@arm.com, catalin.marinas@arm.com, geert+renesas@glider.be, ryan.roberts@arm.com, will@kernel.org, yangyicong@hisilicon.com, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Rcpt-To: yangyccccc@gmail.com, marek.vasut@mailbox.org, marek.vasut+renesas@mailbox.org, linux-arm-kernel@lists.infradead.org, anshuman.khandual@arm.com, catalin.marinas@arm.com, geert+renesas@glider.be, ryan.roberts@arm.com, will@kernel.org, yangyicong@hisilicon.com, linux-renesas-soc@vger.kernel.org
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 22 Oct 2025 16:29:55 +0100,
-Marek Vasut <marek.vasut@mailbox.org> wrote:
-> 
-> On 10/22/25 5:02 PM, Marc Zyngier wrote:
-> 
-> Hello Marc,
-> 
-> >>> We ensure that the AMU is available in the macro itself by checking
-> >>> for ID_AA64PFR0_EL1.AMU. If the AMu isn't present on this CPU, we skip
-> >>> the offending sysreg access. This is similar to what we do for the
-> >>> PMU.
-> >>> 
-> >>> Does your HW advertise an AMU, but doesn't actually have one?
-> >> 
-> >> The hardware does have AMU, but it is currently blocked in old TFA
-> >> version and access to this AMU register here causes a fault. That's
-> >> why I have to disable ARM64_HAS_AMU_EXTN until the TFA is updated and
-> >> the AMU access is made available on this hardware. But even if I do
-> >> disable ARM64_HAS_AMU_EXTN=n , I get a fault.
-> > 
-> > Well, I would tend to say that you are trying to update the wrong
-> > piece of SW here. Crashing kernels should be a good incentive for the
-> > board manufacturer to update their firmware pronto, specially when we
-> > are talking of code that has been in the tree for over 5 years...
-> 
-> I do agree with this, and the update already exists. The upstream TFA
-> MR for this platform also has this fixed.
-> 
-> >> This patch is mainly meant to prevent a surprise in case someone does
-> >> set ARM64_HAS_AMU_EXTN=n , and the system still faults on AMU register
-> >> access.
-> > 
-> > But that doesn't really fix anything if you have a buggy firmware,
-> > because you can't tell which CPUs have been correctly configured, and
-> > which have not.
-> 
-> I also agree.
-> 
-> > I also don't really get why this hack works for you,
-> > because the feature will be set as soon as one CPU advertises the
-> > feature.
-> 
-> For this old firmware, during development, ARM64_HAS_AMU_EXTN is
-> disabled in kernel config to avoid triggering the AMU faults.
-> 
-> Except right now, I still trigger the AMU faults even with
-> ARM64_HAS_AMU_EXTN=n , which I think should not happen ?
+On Thu, 23 Oct 2025 13:01:52 +0100,
+Yicong Yang <yangyccccc@gmail.com> wrote:
+>=20
+> On 2025/10/22 22:33, Marek Vasut wrote:
+> > On 10/22/25 4:20 PM, Marc Zyngier wrote:
+> >> On Wed, 22 Oct 2025 14:35:28 +0100,
+> >> Marek Vasut <marek.vasut+renesas@mailbox.org> wrote:
+> >>>
+> >>> The AMU configuration register access may fault and prevent successful
+> >>> kernel boot. This can occur for example in case the firmware does not
+> >>> allow AMU counter access from EL1. Guard the AMU configuration regist=
+er
+> >>> access with ARM64_HAS_AMU_EXTN to prevent this fault if ARM64_HAS_AMU=
+_EXTN
+> >>> Kconfig option is explicitly disabled. Other interaction with the AMU=
+ is
+> >>> already guarded by similar ifdeffery.
+> >>>
+> >>> Fixes: 87a1f063464a ("arm64: trap to EL1 accesses to AMU counters fro=
+m EL0")
+> >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> >>> ---
+> >>> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> >>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>> Cc: Marc Zyngier <maz@kernel.org>
+> >>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> >>> Cc: Will Deacon <will@kernel.org>
+> >>> Cc: Yicong Yang <yangyicong@hisilicon.com>
+> >>> Cc: linux-arm-kernel@lists.infradead.org
+> >>> Cc: linux-renesas-soc@vger.kernel.org
+> >>> ---
+> >>> =C2=A0 arch/arm64/mm/proc.S | 4 ++++
+> >>> =C2=A0 1 file changed, 4 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> >>> index 86818511962b6..123538ffeda6b 100644
+> >>> --- a/arch/arm64/mm/proc.S
+> >>> +++ b/arch/arm64/mm/proc.S
+> >>> @@ -145,7 +145,9 @@ SYM_FUNC_START(cpu_do_resume)
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ubfx=C2=A0=C2=A0=C2=A0 x11, x11, #1, #1
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msr=C2=A0=C2=A0=C2=A0 oslar_el1, x11
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reset_pmuserenr_el0 x0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // Disable PMU access f=
+rom EL0
+> >>> +alternative_if ARM64_HAS_AMU_EXTN
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reset_amuserenr_el0 x0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // Disable AMU access f=
+rom EL0
+> >>> +alternative_else_nop_endif
+> >>
+> >> Why?
+> >>
+> >> We ensure that the AMU is available in the macro itself by checking
+> >> for ID_AA64PFR0_EL1.AMU. If the AMu isn't present on this CPU, we skip
+> >> the offending sysreg access. This is similar to what we do for the
+> >> PMU.
+> >>
+> >> Does your HW advertise an AMU, but doesn't actually have one?
+> > The hardware does have AMU, but it is currently blocked in old TFA vers=
+ion and access to this AMU register here causes a fault. That's why I have =
+to disable ARM64_HAS_AMU_EXTN until the TFA is updated and the AMU access i=
+s made available on this hardware. But even if I do disable ARM64_HAS_AMU_E=
+XTN=3Dn , I get a fault.
+> >
+> > This patch is mainly meant to prevent a surprise in case someone does s=
+et ARM64_HAS_AMU_EXTN=3Dn , and the system still faults on AMU register acc=
+ess.
+> >
+>=20
+> then I think it's more proper to guard it with CONFIG_ARM64_AMU_EXTN
+> (I think you mean this above?)  rathter than the cpu cap. then with
+> the patch kernel won't touch the AMU registers here if the kconfig
+> is disabled on you AMU supported hardware and AMU unsupported
+> firmware.
 
-ARM64_HAS_AMU_EXTN is a *capability*, not a configuration.
-CONFIG_ARM64_AMU_EXTN is the configuration. I have the feeling you're
-mixing the two.
-
-Irrespective of the configuration, we access the AMU registers
-depending on the what is advertised, because we *must* make these
-registers inaccessible from EL0, no matter what.
-
-> > In any case, this sort of terminally broken stuff should be handled as
-> > an IDreg override, for which we have a whole infrastructure already.
-> > There are countless examples in the tree already for similar purposes.
-> 
-> I would much rather not support the old firmware for this new platform
-> in upstream and pollute the kernel with unnecessary workarounds.
->
-> I would much rather be able to disable ARM64_HAS_AMU_EXTN in kernel
-> config for the old devices with old firmware, without triggering the
-> faults ... and say that everything which is going to be upstream will
-> always use new firmware that has proper working AMU support.
-
-No, that's the wrong approach. If you leave the AMU accessible to EL0,
-you're leaking data to userspace, and that's pretty wrong, no matter
-how you look at it.
-
-I also think your hack works by pure luck, because at the point where
-your CPUs are booting, the alternatives are yet not in place (the
-kernel patching happens much later). In short, this breaks
-*everything*.
-
-As I indicated before, you have two options:
-
-- either you update your firmware and leave the kernel alone
-
-- or you implement the workaround as ID register override so that you
-  *must* pass something on the kernel command line to boot, and by
-  then accept that you will leak critical timing information to
-  userspace.
-
-Any other option, including guarding the macro with a config option is
-*not* acceptable.
-
-Thanks,
+No. Not preventing EL0 from accessing the register is a data leak to
+userspace. This must be acted upon irrespective of the kernel being
+AMU-enabled or not.
 
 	M.
 
--- 
+--=20
 Jazz isn't dead. It just smells funny.
