@@ -1,217 +1,115 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B678632B99C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 13:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AE63164B0;
+	Thu, 23 Oct 2025 14:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227922; cv=none; b=UpwIgJKiudZmVSiiy5RdSGw8iucl6ZB41dLSqG3JYe2pazlZZK8LMdh0tLg33X/iflsQuCdDQYjOBfE1612bewbjv5uJt1k6T4Wpjp8Ko2q1Mbwa38rOIKdQac4Y/qRNZhcETnqUk4VHne2tEtYYLRn1wJQB7ugH1Nv5vYBEnj8=
+	t=1761228033; cv=none; b=esdAG+bh83Dlpg1er6pMOm1bvjhTiTEtYalBtcp7eB4EXwcEe0JJ/g/NNOC6xUG+ZbfAAX3dtTgIFxLG748D/ZVFxJBjMiFDxVZO8Uhiy8qxU9UkB2g7BqXoaKIe70tWQRhqUX/XpKu9A9OQGmRjMFZqJLvCuV1cfj0Y30jBq9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227922; c=relaxed/simple;
-	bh=50hw/72TpRU+0O/DF7+aRtgAC5bIC3qKK0GLCIJ0bWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vl+KrfJeQ+pjts6eZ+104qBlTAN2Uhz8Vugf8I6zVE0g40RkBmik+rcgOkNEF41GnK9w34jeaH+3TwEvv2tRar7ZqJOTw3AO+36Jq0/78MLrPI43jrS/A3fHW1n3oNkqmQEj/FaKplMGkmp0ybbli6giNELHhf+kemZQKBSkx7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jPwUFSeg; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1761228033; c=relaxed/simple;
+	bh=g0rv/Wl54UIN84iFZird78P17+22MiP7FBTVamkdA6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixdL0ZXdW08n41yLn9pWunUdylD5NyGmyX6bx910jDKjOdtZVrq0w8edxy2yi66mI9nHw5aFPjZgNm/Lub0gdcqg7yrK8JHt1ddFZZN2/uEVLhwywm9pONLFcj5CQkAFObvHMjZumu8aYDncgMhhlN2Vqz5Gl/paiytBzeAVWcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=j4ynUv4c; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=g+S6XF76; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jPwUFSeg"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so182031166b.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 06:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761227919; x=1761832719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EDOk3wzJ/Csdlnb+sDEwzVll8zo5EaNbS49j4wNtazc=;
-        b=jPwUFSegNA5zL2D0GbNPVyGJVe5ioYTQn6Gb66hqPUcR24NIenJE3WyW+y0WmCbicr
-         GNMwqksrzBLZDyhC5Zp/XFiC3X5I1M+DOHjAehpuHTNqH3awHZEFTMKYKz9UCXNAiayI
-         nWJRMT5Ou4R9ICg20A/Gcrz4JVr5s4YKgXyT8Lk8kncrXkfmciT6InsvRvrWm3YckICB
-         5Ep8Im8wdDFr5oB1tyIWTBVkFexPo8rRSzZ/wqaXXsGjSY11Ggenu8OroN3waldp58wv
-         Rx0GmGLmSBVBM8JsUUijJOpEHPJb9eSDA8Ka5h7uzsXVo0sxUfoJQQiZ9xPHfaOUREZq
-         UeXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761227919; x=1761832719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EDOk3wzJ/Csdlnb+sDEwzVll8zo5EaNbS49j4wNtazc=;
-        b=LDC0lpixf89IesrhxRPz2pbWD/1QaapIboqGW9tWDAdMHr6Kr4C5PkAv+oK5QBC7V3
-         Di7PYi8Fbuv+/PgtiSuR+vDf8rcVz62Yp2bmPfpJVbtyEHTeoo30wUuzNPQU9sGnlHPi
-         z2I05to0Lp41peYVNNjkTv+cJbiACFqPcmgwj9T5JHdBWgsxR/3285mmTa5hOoNDISl9
-         DjmsHiHvtzcOIbZip0J5COkIh69Y20CJVUX6Zb/DsxmfHEtIfU1PE6ySigZGy7xViP68
-         KeqMfd2G4qEICvxTMPs6KVzGmuoyO9QKQ3FSujtQLoq9KltuwdZVNUH8jX4DcwOQjayc
-         QnkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdG66j+TH1o+BBSL8iIH7mzaqHIkDkoWLgw2Y7Zafa9vh4heMYsbggWEL0H+rm+kkvkO5z8aFTM4vVOKyAwj37jQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtWcn4Mq+nWgIRj0hqLnBorQMUo8BZh0op4UcS8EvPMMZugl7b
-	zFaXTMuEXOmb9JmLn/M1BcHNKjq6GFHkDBvcGd6dHajc1r5a/CowVzeydVNg/pQmd28=
-X-Gm-Gg: ASbGnctB56DYyquOZ0djk5gTAQ9eN9EATtYRQHK5XRJLaDvtB6Hyy3eosmTfAafSlEp
-	5/I8FYCyp3zlCojiBplbv5XnI2GOBNwoSlRquboLeXny5ZmKO5Xri/BrKjFixA5p50AbYpYoaHX
-	s4fXHxI4zNNybq+7p7l0zYoD6gCHWKcz8W+PVNdc2jJnp0Yps2J3H6kHb+ScM1pfamM1KYY80yS
-	fL0zLPVsU66uM6uasc6hSc6ryZex0tkab3ss/iuTc0Y12Bw1mQxNpmr4Xyu7kuOqEHA+InnP7f1
-	lq3k0u+ENOgMjMRz69F6w5rQpWQNs9x+mf0ToRluv1FewgHk4Y7aehGqDku2Gk3Erf35tH3Sslb
-	NBTb3vRomuoq5BlumCstO85w+FnFbOaRHQWHMkkxiWnLVac8qQPXPcUCAMxXkPg84mcYK11mtV0
-	Qy2CCAl998jg8GMXg+Z3/rU7JeDSe9pElIGz9C/jVq
-X-Google-Smtp-Source: AGHT+IFBx3dgJXH4lEpxnlJJFwOwoH+u/MOZe+M6OK+FLRB/x3UWGEvHv5qUZS/pYvr0WhrpOqUmSg==
-X-Received: by 2002:a17:907:3d9e:b0:b3e:3c1c:d301 with SMTP id a640c23a62f3a-b64769cb8cfmr2888032566b.61.1761227918932;
-        Thu, 23 Oct 2025 06:58:38 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511f8634sm226114066b.29.2025.10.23.06.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 06:58:38 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v8 7/7] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-Date: Thu, 23 Oct 2025 16:58:10 +0300
-Message-ID: <20251023135810.1688415-8-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="j4ynUv4c";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="g+S6XF76"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4csnjn6y8Lz9sWh;
+	Thu, 23 Oct 2025 16:00:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761228030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+ZZiNFpfo795JzyW1U+Amyk/9XvcQWSem6gcToDr+s=;
+	b=j4ynUv4c+hkeEzlSosmR194vZWb0Fdr0vD8ariJEQuViaQ2jbcsfyGrruvx2A9TijA6PYb
+	ZHDDAXA/ahvyEMf3UDaaHPQErvSvycVz3OV2oQ6D2TbnR9+7ANj6b1MPDHSBzbs8e4bpTg
+	4SYq/NQypjJLK385LZysbRcyTDQ6Uquu9i9c4AJxqrTRK6LF7FruskUxudUq8ZeAfUHGI+
+	6CW97s0HexEQMx1dWO4d3Ca2JN5pTh5JMSdmtq6H5/6BScpftK1GNRzPcfklW+8nRRQkHk
+	pJviiO9qcGpHxl34oJK5tUK6QI3ln8U/ljegOIv4Ag/w3OsKyTQX/0gX23HMHA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=g+S6XF76;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <70554674-7020-4582-a4e7-dbee34907096@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761228028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+ZZiNFpfo795JzyW1U+Amyk/9XvcQWSem6gcToDr+s=;
+	b=g+S6XF76RadfsTIRYoIuugAO45PbkGlYNXpuEd7ASeoTlGOBKBhay0nf37U/4TVEiOa8r+
+	rZOoibxEn7k26j2OfE8/3znmepCmeZojymvyyNVEXPrPM/4bHdInrDbY4eaWqUr6I6lKr2
+	DcJO1NeZv4qLsvPt4JisM7w+gmacYqySTdcp6vNkKyl2XoLguWTXiN5bHUleRpdmJ/Mlw0
+	gDw/V/LvZ3FbLRZ5q3iVpZ3E4L1A2k+CS3E45LTEv+HK6z0PloZoMsaEdqC6a506TfGUBn
+	4qnXfHrgCk/5RGoxdacf525cyI3iVFkZH4NeBbqOaeP8Y9ln4xnGrjKfLvPo7g==
+Date: Thu, 23 Oct 2025 16:00:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: Document
+ arm,poll-transport property
+To: Cristian Marussi <cristian.marussi@arm.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: arm-scmi@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+References: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
+ <aPoxfH_TLrsMxMVQ@pluto>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <aPoxfH_TLrsMxMVQ@pluto>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: jp916jjbwe3rtwcy3pk4agiykqi564ug
+X-MBO-RS-ID: eaba31ded376d5d287d
+X-Rspamd-Queue-Id: 4csnjn6y8Lz9sWh
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 10/23/25 3:45 PM, Cristian Marussi wrote:
 
-Enable USB support (host, device, USB PHYs).
+Hello Cristian,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+> On Thu, Oct 23, 2025 at 02:35:57PM +0200, Marek Vasut wrote:
+>> Document new property arm,poll-transport, which sets all SCMI operation into
+>> poll mode. This is meant to work around uncooperative SCP implementations,
+>> which do not generate completion interrupts. This applies primarily on mbox
+>> based implementations, but does also cover SMC and VirtIO ones.
+> 
+> Hi,
+> 
+> ..indeed I was thinking a while ago about exposing the existing force-polling
+> switch but in my case it was purely a testing-scenario configuration, so a
+> no-no for the DT, things are different if you have to describe an HW that has
+> no completion IRQ also on the a2p channel...
 
-Changes in v8:
-- none
+Correct, at least until the SCP on this hardware is updated.
 
-Changes in v7:
-- none
+> ...having said that, though, usually polling-mode is reserved to a few
+> selected commands in a few chosen scenarios (as you may have seen),
+> 'carpet-polling' non-for-testing for all the commands on A2P seems a lot
+> inefficient and heavy...is it really a viable solution ? or these
+> systems use such a low rate of SCMI messages that polling after each and
+> every message is negligible ?
+> 
+> ..just to understand the context...
 
-Changes in v6:
-- collected tags
+These systems are early in development and it is likely that the SCP 
+will be updated to generate interrupts properly. Currently, this is not 
+the case, hence the carpet-polling, until this is resolved.
 
-Changes in v5:
-- none
-
-Changes in v4:
-- none
-
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- this was patch 15/16 in v1:
-- dropped sysc enablement as it is now done in SoC dtsi file
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 5e044a4d0234..5586dd43c4d5 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -92,6 +92,20 @@ &audio_clk2 {
- 	clock-frequency = <12288000>;
- };
- 
-+&ehci0 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&hsusb {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -132,6 +146,15 @@ power-monitor@44 {
- 	};
- };
- 
-+&ohci0 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	audio_clock_pins: audio-clock {
- 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
-@@ -207,6 +230,27 @@ ssi3_pins: ssi3 {
- 			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
- 			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
- 	};
-+
-+	usb0_pins: usb0 {
-+		peri {
-+			pinmux = <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
-+				 <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
-+		};
-+
-+		otg {
-+			pinmux = <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	usb1_pins: usb1 {
-+		pinmux = <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
-+			 <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
-+	};
-+};
-+
-+&phyrst {
-+	status = "okay";
- };
- 
- &scif0 {
-@@ -242,3 +286,16 @@ &ssi3 {
- 	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+	vbus-supply = <&usb0_vbus_otg>;
-+	status = "okay";
-+};
-+
-+&usb2_phy1 {
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
 -- 
-2.43.0
-
+Best regards,
+Marek Vasut
