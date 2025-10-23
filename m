@@ -1,115 +1,163 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AE63164B0;
-	Thu, 23 Oct 2025 14:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7432B983
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 14:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228033; cv=none; b=esdAG+bh83Dlpg1er6pMOm1bvjhTiTEtYalBtcp7eB4EXwcEe0JJ/g/NNOC6xUG+ZbfAAX3dtTgIFxLG748D/ZVFxJBjMiFDxVZO8Uhiy8qxU9UkB2g7BqXoaKIe70tWQRhqUX/XpKu9A9OQGmRjMFZqJLvCuV1cfj0Y30jBq9E=
+	t=1761229171; cv=none; b=gN2iOGmx5bpEGIdydH3mZ6mxDZz1oYKgt408JfSh6ZJ1dd6/exoR0NSBgLnILqf261uDY/MEvjkdZRlzLhsNVAMF71epFieTUIoAgebQeBU6850aov8Pk6r+yDX3nlKuiVb2hn0Usw9LXpt2Sz0F5sl3MgNYzWr8vJPmHZrFyBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228033; c=relaxed/simple;
-	bh=g0rv/Wl54UIN84iFZird78P17+22MiP7FBTVamkdA6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixdL0ZXdW08n41yLn9pWunUdylD5NyGmyX6bx910jDKjOdtZVrq0w8edxy2yi66mI9nHw5aFPjZgNm/Lub0gdcqg7yrK8JHt1ddFZZN2/uEVLhwywm9pONLFcj5CQkAFObvHMjZumu8aYDncgMhhlN2Vqz5Gl/paiytBzeAVWcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=j4ynUv4c; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=g+S6XF76; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1761229171; c=relaxed/simple;
+	bh=ohcVgQwUVBiVR8Z7bhBKhH0NsN3EdMIF8XRJoa13eW4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UKFvqDUqUqDgHfM86TTPdKkhiFzNTVQ5v0zdjQSb5i2RbNBChGdgXCNsQlfgjAQlbXl8KyiBAcYq/+x8jpmz1BACfnZH6Z4HwVF/m+JAr1lSLFtrZP0WMXGdvCd4LE4q+kKRJ8o7cOnU6kI7QDACjwA/FILIHc5RNtjhZrWSMdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR9qfnto; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="j4ynUv4c";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="g+S6XF76"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4csnjn6y8Lz9sWh;
-	Thu, 23 Oct 2025 16:00:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761228030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+ZZiNFpfo795JzyW1U+Amyk/9XvcQWSem6gcToDr+s=;
-	b=j4ynUv4c+hkeEzlSosmR194vZWb0Fdr0vD8ariJEQuViaQ2jbcsfyGrruvx2A9TijA6PYb
-	ZHDDAXA/ahvyEMf3UDaaHPQErvSvycVz3OV2oQ6D2TbnR9+7ANj6b1MPDHSBzbs8e4bpTg
-	4SYq/NQypjJLK385LZysbRcyTDQ6Uquu9i9c4AJxqrTRK6LF7FruskUxudUq8ZeAfUHGI+
-	6CW97s0HexEQMx1dWO4d3Ca2JN5pTh5JMSdmtq6H5/6BScpftK1GNRzPcfklW+8nRRQkHk
-	pJviiO9qcGpHxl34oJK5tUK6QI3ln8U/ljegOIv4Ag/w3OsKyTQX/0gX23HMHA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=g+S6XF76;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <70554674-7020-4582-a4e7-dbee34907096@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761228028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+ZZiNFpfo795JzyW1U+Amyk/9XvcQWSem6gcToDr+s=;
-	b=g+S6XF76RadfsTIRYoIuugAO45PbkGlYNXpuEd7ASeoTlGOBKBhay0nf37U/4TVEiOa8r+
-	rZOoibxEn7k26j2OfE8/3znmepCmeZojymvyyNVEXPrPM/4bHdInrDbY4eaWqUr6I6lKr2
-	DcJO1NeZv4qLsvPt4JisM7w+gmacYqySTdcp6vNkKyl2XoLguWTXiN5bHUleRpdmJ/Mlw0
-	gDw/V/LvZ3FbLRZ5q3iVpZ3E4L1A2k+CS3E45LTEv+HK6z0PloZoMsaEdqC6a506TfGUBn
-	4qnXfHrgCk/5RGoxdacf525cyI3iVFkZH4NeBbqOaeP8Y9ln4xnGrjKfLvPo7g==
-Date: Thu, 23 Oct 2025 16:00:18 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR9qfnto"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38645C4CEE7;
+	Thu, 23 Oct 2025 14:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761229171;
+	bh=ohcVgQwUVBiVR8Z7bhBKhH0NsN3EdMIF8XRJoa13eW4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JR9qfntoK3AV0wTJ86NGDv0xTgMfnsuda9kjOKTBQTPoBmWd9MHI/WymV9k3S0wGW
+	 Ip5FgPuHV8ioW2YVY7jIiD+D2KNgSt9PsbgTN01hAgydAXdFInOfJfG/Y+oYQ2RTBZ
+	 OMHB9uXB2Dly9mKcWYCK/ki/Om7TnxvBXWQ8a0o4pQIbf/pP38ase6sHsViRm4pLXU
+	 e5WSMgYfaipitFtti6gBvUaPtnLEaEs7WaIwJiCsulXli+0Qryo5SnmUKerqzPLQ6J
+	 UzzJoVQBauKhng0z96GwUGSDDtmtSYAcrZ0KVCLlA/giT2CrzmSgtcbFAgRREeyViX
+	 6sgvX1xotvR4Q==
+Received: from 158.46.66.37.rev.sfr.net ([37.66.46.158] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vBwA4-0000000GYEE-3gqS;
+	Thu, 23 Oct 2025 14:19:29 +0000
+Date: Thu, 23 Oct 2025 15:19:22 +0100
+Message-ID: <87y0p13dlh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: guard AMU register access with ARM64_HAS_AMU_EXTN
+In-Reply-To: <24c8da41-37db-4e69-b9aa-e33b2154acb0@mailbox.org>
+References: <20251022133621.178546-1-marek.vasut+renesas@mailbox.org>
+	<86347bvx0f.wl-maz@kernel.org>
+	<07391913-aab6-4d92-b75f-278506f51397@mailbox.org>
+	<861pmvvv2g.wl-maz@kernel.org>
+	<24c8da41-37db-4e69-b9aa-e33b2154acb0@mailbox.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: Document
- arm,poll-transport property
-To: Cristian Marussi <cristian.marussi@arm.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: arm-scmi@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org
-References: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
- <aPoxfH_TLrsMxMVQ@pluto>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aPoxfH_TLrsMxMVQ@pluto>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: jp916jjbwe3rtwcy3pk4agiykqi564ug
-X-MBO-RS-ID: eaba31ded376d5d287d
-X-Rspamd-Queue-Id: 4csnjn6y8Lz9sWh
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 37.66.46.158
+X-SA-Exim-Rcpt-To: marek.vasut@mailbox.org, linux-arm-kernel@lists.infradead.org, anshuman.khandual@arm.com, catalin.marinas@arm.com, geert+renesas@glider.be, ryan.roberts@arm.com, will@kernel.org, yangyicong@hisilicon.com, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 10/23/25 3:45 PM, Cristian Marussi wrote:
-
-Hello Cristian,
-
-> On Thu, Oct 23, 2025 at 02:35:57PM +0200, Marek Vasut wrote:
->> Document new property arm,poll-transport, which sets all SCMI operation into
->> poll mode. This is meant to work around uncooperative SCP implementations,
->> which do not generate completion interrupts. This applies primarily on mbox
->> based implementations, but does also cover SMC and VirtIO ones.
+On Wed, 22 Oct 2025 16:29:55 +0100,
+Marek Vasut <marek.vasut@mailbox.org> wrote:
 > 
-> Hi,
+> On 10/22/25 5:02 PM, Marc Zyngier wrote:
 > 
-> ..indeed I was thinking a while ago about exposing the existing force-polling
-> switch but in my case it was purely a testing-scenario configuration, so a
-> no-no for the DT, things are different if you have to describe an HW that has
-> no completion IRQ also on the a2p channel...
-
-Correct, at least until the SCP on this hardware is updated.
-
-> ...having said that, though, usually polling-mode is reserved to a few
-> selected commands in a few chosen scenarios (as you may have seen),
-> 'carpet-polling' non-for-testing for all the commands on A2P seems a lot
-> inefficient and heavy...is it really a viable solution ? or these
-> systems use such a low rate of SCMI messages that polling after each and
-> every message is negligible ?
+> Hello Marc,
 > 
-> ..just to understand the context...
+> >>> We ensure that the AMU is available in the macro itself by checking
+> >>> for ID_AA64PFR0_EL1.AMU. If the AMu isn't present on this CPU, we skip
+> >>> the offending sysreg access. This is similar to what we do for the
+> >>> PMU.
+> >>> 
+> >>> Does your HW advertise an AMU, but doesn't actually have one?
+> >> 
+> >> The hardware does have AMU, but it is currently blocked in old TFA
+> >> version and access to this AMU register here causes a fault. That's
+> >> why I have to disable ARM64_HAS_AMU_EXTN until the TFA is updated and
+> >> the AMU access is made available on this hardware. But even if I do
+> >> disable ARM64_HAS_AMU_EXTN=n , I get a fault.
+> > 
+> > Well, I would tend to say that you are trying to update the wrong
+> > piece of SW here. Crashing kernels should be a good incentive for the
+> > board manufacturer to update their firmware pronto, specially when we
+> > are talking of code that has been in the tree for over 5 years...
+> 
+> I do agree with this, and the update already exists. The upstream TFA
+> MR for this platform also has this fixed.
+> 
+> >> This patch is mainly meant to prevent a surprise in case someone does
+> >> set ARM64_HAS_AMU_EXTN=n , and the system still faults on AMU register
+> >> access.
+> > 
+> > But that doesn't really fix anything if you have a buggy firmware,
+> > because you can't tell which CPUs have been correctly configured, and
+> > which have not.
+> 
+> I also agree.
+> 
+> > I also don't really get why this hack works for you,
+> > because the feature will be set as soon as one CPU advertises the
+> > feature.
+> 
+> For this old firmware, during development, ARM64_HAS_AMU_EXTN is
+> disabled in kernel config to avoid triggering the AMU faults.
+> 
+> Except right now, I still trigger the AMU faults even with
+> ARM64_HAS_AMU_EXTN=n , which I think should not happen ?
 
-These systems are early in development and it is likely that the SCP 
-will be updated to generate interrupts properly. Currently, this is not 
-the case, hence the carpet-polling, until this is resolved.
+ARM64_HAS_AMU_EXTN is a *capability*, not a configuration.
+CONFIG_ARM64_AMU_EXTN is the configuration. I have the feeling you're
+mixing the two.
+
+Irrespective of the configuration, we access the AMU registers
+depending on the what is advertised, because we *must* make these
+registers inaccessible from EL0, no matter what.
+
+> > In any case, this sort of terminally broken stuff should be handled as
+> > an IDreg override, for which we have a whole infrastructure already.
+> > There are countless examples in the tree already for similar purposes.
+> 
+> I would much rather not support the old firmware for this new platform
+> in upstream and pollute the kernel with unnecessary workarounds.
+>
+> I would much rather be able to disable ARM64_HAS_AMU_EXTN in kernel
+> config for the old devices with old firmware, without triggering the
+> faults ... and say that everything which is going to be upstream will
+> always use new firmware that has proper working AMU support.
+
+No, that's the wrong approach. If you leave the AMU accessible to EL0,
+you're leaking data to userspace, and that's pretty wrong, no matter
+how you look at it.
+
+I also think your hack works by pure luck, because at the point where
+your CPUs are booting, the alternatives are yet not in place (the
+kernel patching happens much later). In short, this breaks
+*everything*.
+
+As I indicated before, you have two options:
+
+- either you update your firmware and leave the kernel alone
+
+- or you implement the workaround as ID register override so that you
+  *must* pass something on the kernel command line to boot, and by
+  then accept that you will leak critical timing information to
+  userspace.
+
+Any other option, including guarding the macro with a config option is
+*not* acceptable.
+
+Thanks,
+
+	M.
 
 -- 
-Best regards,
-Marek Vasut
+Jazz isn't dead. It just smells funny.
