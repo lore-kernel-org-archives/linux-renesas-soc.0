@@ -1,206 +1,67 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F32ECD3F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17325A331;
+	Thu, 23 Oct 2025 11:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761219069; cv=none; b=FnoYHDPCtwZoOgLniFMTbjgZgbtUhCcykfVtkPrkpq2e8YPDqz7pTnCgS2W1I7QoI47vZHFz1yy7tnO2R66P7yOcEmKqeM+0VNJYj2ecXkc3kSySAr6F+ccFldUVfOkR5W9EtJRw6cqLFaOot6CgvqfSw8XLlk9X6xaM2j6SVAI=
+	t=1761219777; cv=none; b=lMbCcuvjV70b2EZFrdEDvyx8vG9HQFY9i5Zk4YcueTY5NWIEEyaw4FrZtmy6WAL8GjKZQLYZZ05ndsvsoXOfjHQlKxHe5BUNO5+fBRBdkVuILaxaO6IqjMvaBD+/B/masXAwACSHfzRH7CqFUReNyl7yYCb4pWN+dY4+oTa7Bm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761219069; c=relaxed/simple;
-	bh=6/N3YiTLQifAY9zz3xwpfpgdh+PsNHV80wg+8+9zp1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OY9uCHiitMj+arp5TzQWGLqzqazCWqaT6nEtEUiA3ZVTRCW5X8Bu4DGz9+4RNf5p3pWEXRy24AF33pRD4HNItGBjQaPHYrE3KhiNuPyyZnTtwtkMJTiQSJrLRGP1Rh6oJX7a+hhEO6cHUnDN5o6kBbQTIwBGQ8p77pKw4V8+LmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5d96756a292so2431243137.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 04:31:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761219066; x=1761823866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6zsBv2UTTNDe+bvN26dCEz5bfw+/JNH9ObmAd3JmbGM=;
-        b=GKH2hdRSsVFxQ99it7EXMldUBCNKkGOqN7yfP2wKb0CeJn/E109ND6VvAJSZfaK+1H
-         OqvtPbSPsYSpcviJAIUt0s83pdlBagsopeNlWu8a9QqA0bFtMoY++yqWdZtpkEUyl6Y2
-         80ttuvQINHUStRLj0cX6Tp++28Gs04PFm5YEw+XPHu56N/K+tL1E8Lcfdkdlw6wIvoCu
-         Gg3n+Ua1hF0r5hEa7Qe4p4N7w+IsbrvOMmrlcy1W0Gv0etAn+w1bEiZhPW0WGdRvJXF1
-         B+3i8odcUNajZZGzLWMtiKvVtSXBdcPCH/tNxchcwk32Yops1WOHtoDlxJ8a8Up8fJgd
-         j7dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOI4bgn6R5URnJoq2KR2P7YlDQjRVD9ZOQKCJjONFqELmzZvBu0mYaXIQIQ+daM7wG+BCWDVVQQqkXrigk+qtUWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiYMo2ju+/7I0lXkPnCpFoK5cGPxnsppFMK8o0ACHZROACBYm4
-	6R5+kCSihHrlj4jn4BapjxaySI3ZH+X/fbXuktmHXPYNPrO0Pr6cuZ51C4vnGEu/
-X-Gm-Gg: ASbGnctRTQGgywHcf+8VebH5xQOWQOXYJolCl3ENQQ+pbD4sR7qUQkIWTcYu4f14iJh
-	Ppo7yf03DyH15Vp+mcUVa9Sp4UvhU6Wf9SIKwXk2ah+/Hyu7XVguedx6lbZE5bPdQwH+BIn1uce
-	zuvgukZgZQNfgJTAI6N3cw+62huW80Dpid9NH6OwWGV2wYwAT8v476U6UQqcJxOad9LIBJUAF78
-	huogFiU453t7JU1xS8tdr6kudPlQ8iwRTsuZPD6zJAMJOtVC9yxQGueEAGqtt5gqCrZgvLK+QoM
-	9xCajI27Tskk54Mt0FxVNPhVFU6LLeiO47vmvGGqq7MsMQGZvDg82qVhw8MqxSsu36E6kUptrHU
-	7UAZvXL3bTV28eRNx4d2wSAk+H800OiB1Xa2l1lG8Dx1MZmMAVVAat2xmAp2xTkMqYLLQPgGRRX
-	JDIkmayDUyFNtsEyDvVFZQcCowdohkXSJe1KzzKTxtAYOXCOm4
-X-Google-Smtp-Source: AGHT+IHcQCUJIqdmZOKMjeaHoS5CzUKf5Fwe1oE286xEfukmPIqZuB2UzAcfwS+UbCplyVtrku4xeQ==
-X-Received: by 2002:a05:6102:c0a:b0:5ba:4f5c:8752 with SMTP id ada2fe7eead31-5db1b3a875fmr2813432137.3.1761219066022;
-        Thu, 23 Oct 2025 04:31:06 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2cca25a9sm712947137.14.2025.10.23.04.31.04
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:31:04 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5db24071011so1414661137.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 04:31:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2LQYRuFRWfoIgHaKNRiijbs4qsereP9+n/Uf3kA+ZDyyOVIaUMrMaB02Tcf4AYkFgfeh3RrzjfwYPs+9/czdBTw==@vger.kernel.org
-X-Received: by 2002:a67:fd0f:0:b0:5d4:1499:99a4 with SMTP id
- ada2fe7eead31-5db238491ffmr1515554137.13.1761219064357; Thu, 23 Oct 2025
- 04:31:04 -0700 (PDT)
+	s=arc-20240116; t=1761219777; c=relaxed/simple;
+	bh=VLTyMEgWZ26DVoXr5wDEctO7Ua1B5nMgdZuBZlcAuDg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nIjTw5LqsOHUoeM1tpJc9QMgWogpRvmONzBsN73Q5ZJ2/H1OCKTFidOaHoadrHDjMQv4v5zLQt9GT5ThTwxFvOzSiOpZlCKB9FJSwMPa02FoDzvPDX8mIhwWisl77uX9rYyab/JhhnCR4iUTGWNqG2N5EDWzHrZp2MfSHoBVwII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKNsRUHF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKNsRUHF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A65C4CEE7;
+	Thu, 23 Oct 2025 11:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761219777;
+	bh=VLTyMEgWZ26DVoXr5wDEctO7Ua1B5nMgdZuBZlcAuDg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UKNsRUHFLyT/slj/vWpIUoPyLc+Z5R0htSaXKUK2f2YIjWJof3GMmt1XpMPSh45Ic
+	 CeBV3lWxibb7/hz+3jXxVA97JoexuWckqwg2PqkhGXEvsRkKjuTJPTjbfCBUF2BRTG
+	 +ORbldyS5wBrTMAiC+EloerxDpX3JwyziL7DOUt4+89za9MLLIoNIDiZgP0FqI8NTI
+	 ccIf2Xw9anlvFZnA4H+qA5X4fQmSzVtvXGBatkzGw8+4OEfDgacVKMtqvk6uyHEwJ8
+	 RbuTNhCgngwwFWRZ1Y/hvdOIiRi5v2tFAsNem2lctFy0Kfr49lBB5XB83gM/MjystB
+	 mOGegRuW1g/Rw==
+From: Lee Jones <lee@kernel.org>
+To: linux-renesas-soc@vger.kernel.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Support Opensource <support.opensource@diasemi.com>, 
+ Lee Jones <lee@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20251023065610.2855-2-wsa+renesas@sang-engineering.com>
+References: <20251023065610.2855-2-wsa+renesas@sang-engineering.com>
+Subject: Re: (subset) [PATCH v3] mfd: da9063: occupy second I2C address,
+ too
+Message-Id: <176121977532.2102421.3342566348531968923.b4-ty@kernel.org>
+Date: Thu, 23 Oct 2025 12:42:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020080648.13452-1-herve.codina@bootlin.com>
- <20251020080648.13452-8-herve.codina@bootlin.com> <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
- <20251022150339.4c48649e@bootlin.com>
-In-Reply-To: <20251022150339.4c48649e@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Oct 2025 13:30:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
-X-Gm-Features: AWmQ_bml4kcY7IJK2WvckNb7k-cRq3k2ESGBRnimvIxLnwqyhf2dlX518mVHMZI
-Message-ID: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-52d38
 
-Hi Herv=C3=A9,
+On Thu, 23 Oct 2025 08:55:59 +0200, Wolfram Sang wrote:
+> The second address can be used as a shortcut to access register pages
+> 2+3. The driver does not use this feature yet. The second address should
+> still be marked as used, otherwise userspace could interfere with the
+> driver.
+> 
+> 
 
-On Wed, 22 Oct 2025 at 15:03, Herve Codina <herve.codina@bootlin.com> wrote=
-:
-> On Tue, 21 Oct 2025 15:05:35 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Mon, 20 Oct 2025 at 10:08, Herve Codina (Schneider Electric)
-> > <herve.codina@bootlin.com> wrote:
-> > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> > > interruption lines are multiplexed by the GPIO Interrupt Multiplexer =
-in
-> > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> > >
-> > > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> > > IRQ lines out of the 96 available to wire them to the GIC input lines=
-.
-> > >
-> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootli=
-n.com>
+Applied, thanks!
 
-> > > --- /dev/null
-> > > +++ b/drivers/soc/renesas/rzn1_irqmux.c
-> > > @@ -0,0 +1,150 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * RZ/N1 GPIO Interrupt Multiplexer
-> > > + *
-> > > + * Copyright 2025 Schneider Electric
-> > > + * Author: Herve Codina <herve.codina@bootlin.com>
-> > > + */
-> > > +
-> > > +#include <linux/bitops.h>
-> > > +#include <linux/build_bug.h>
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/of_irq.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > +
-> > > +/*
-> > > + * The array index is the output line index, the value at the index =
-is the
-> > > + * GIC SPI interrupt number the output line is connected to.
-> > > + */
-> > > +static const u32 rzn1_irqmux_output_lines[] =3D {
-> > > +       103, 104, 105, 106, 107, 108, 109, 110
-> > > +};
-> >
-> > I did read the discussion with Wolfram, but the flexibility (and
-> > overhead) provided by this array sounds a bit overkill to me.
-> >
-> > What about just defining:
-> >
-> >     #define RZN1_IRQMUX_SPI_BASE    103
-> >     #define RZN1_IRQMUX_NUM_IRQS    8
-> >
-> > ?
-> >
-> > If/when a new SoC with a similar setup ever arrives, you can probably
-> > just replace the constants above by variables inside SoC-specific
-> > match data.  And if the new mapping would be non-contiguous, you can
-> > still revive this array ;-)
->
-> I have in mind a use case that can lead to a non-contiguous mapping.
->
-> The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
-> some of them for interrupt purpose. In that case, those GPIOs have
-> to be routed to the interrupt line expected by the Cortex-M3.
->
-> And so, we have some interrupts reserved for CPUs running Linux and
-> some others for the Cortex-M3.
->
-> Among those reserved interrupts may some are not used.
->
-> for instance:
->   Interrupt 103, 102: Reserved and used by Linux
->   Interrupt 103: Reserved for Linux but not used -> Hole in the mapping
->   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by Lin=
-ux)
-
-102 does not seem to  be correct?
-
-> I don't know if this use case is relevant but I think we should be too re=
-strictive
-> on the mapping and so accept holes.
->
-> With that in mind, I let you confirm that you still prefer to have a mapp=
-ing
-> without any holes. A future patch to support that is always possible.
-
-While that would indeed be a non-discontiguous mapping, I do not see how
-it is related to rzn1_irqmux_output_lines[] in the driver.  That array
-would still contain the same contiguous values 103..110, right?
-
-Sorry, I haven't been following the development of this driver that
-closely (RZ/N1 is completely different from e.g. R-Car, and I never
-had access to an RZ/N1 platform), so perhaps I am missing something.
-Why does the user have to specify an interrupt-map in DT? Can't the
-driver create the mapping dynamically, based actual usage of the
-GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
-receive it, and are mapped to an available GIC interrupt?
-I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupts
-to 32 GIC (TINT) interrupts.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+[1/1] mfd: da9063: occupy second I2C address, too
+      commit: 3bf76786c95c52bd8cd065061126b3006a0177ed
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Lee Jones [李琼斯]
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
