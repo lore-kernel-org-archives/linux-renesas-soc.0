@@ -1,121 +1,103 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A737B2F1FE6;
-	Thu, 23 Oct 2025 12:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19752EB856
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 12:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223035; cv=none; b=ib6U5TaFNCScCNKYKh/z5KWIydnvJwh7cKOklF6VkvYIkYrDS+oNAUwBD8nBhxB0rouV8vL3qppmMHcmLTJeGysDg//3gmVlanrRSgIZgkxoRdFW9312oHnz0c+ss2zxGmOQxFmUBgSCvmHe8jqcDflrROYAe5yxR/6zHv5NhtU=
+	t=1761223887; cv=none; b=LfFMzr8c1wvHkdp9c37PIWmaJJ+Rq8K0uVGg9goLC8s9CpWbFzloxXsK2OWTcpMnl849+aHc6pn3iKKS1fdZTEW6ggWG0YYHkkkjC57tjBTue0a58Eb8BqAkmyFJzEw63YfBirfF+JLo++8vWluK06+pCvp8DTiQnwj4F31P/wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223035; c=relaxed/simple;
-	bh=0sUfSSI7p/RnLWbtiSW3BgdQi/kAat/k6I+2C86hC6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TNYvYuPNI0B9yp6zMmNYoZhW5XclMlkNi1YCE87wcE75BXI4mDVXBwp2UC7VvHZ0AwCOBCiYlnuBHYWnkUl+oGk34YeLeqYE8ijrkMduiPmaU929IvsGMTooLr2g7LAGbweORJTcBH2Zi720qmYHrLlNQtGjmsktxrhODWlgm7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=f7S/AOfU; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Wn5Nl7G6; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1761223887; c=relaxed/simple;
+	bh=cq0krbDlv3LzkZ/tQuEhUkclvy6jim6mG0RsMCTIbkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnOnrIA2qfbEodkUtcI75incQtdThbaxZvs2ZuSGnGdus57hV6j2dWkdYcrNPoM0jbOnmHRuCL50QdzV6RrNwYla+duF1/9qOmZuMzzeEYenucZa+wr69FgyYMpmovDNF+QmzWMl23VSFyCZemERZ+ofzhZ2b311NRYtb/M1bhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aT+B9CnA; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="f7S/AOfU";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Wn5Nl7G6"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cslsY3Nthz9sqg;
-	Thu, 23 Oct 2025 14:37:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761223025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6WkBUEsZXrdSrWtDBY0p0szZixzCZ3r/xfDV1TsjmXc=;
-	b=f7S/AOfUym2WSQJD+wd5aCNm4AcP9LB01v9Bhh58ON7xu620sLvUk5ROwnxbwmbLhN1Z2+
-	uBKqjPaqP6E/0fLu5zEEqrzO1NTJL9dQCffwu6oeCeKaT7B5aflKzAVxujWNjk/vLa3d6N
-	JvSp20fGFIlPFVwuj4qeenp8qfF7l8Xp4YfTI0DIQ1swq/yyQPf+wR54F/h7zrE7CLLvMH
-	GseK5unRSS1qw1gy1npHN7x9ojq1YT1pjYTJduGGBJ4VBhIdpdOVXqIhFyoUZ4t3inBk8M
-	WVTxFLE4zcZTaIaEcO4TcEZXZBPwHw2v1W0DgJDZpMB3IxqYPjTi1uLyACnrhA==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761223023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6WkBUEsZXrdSrWtDBY0p0szZixzCZ3r/xfDV1TsjmXc=;
-	b=Wn5Nl7G6hP6vmCoD+qRaXIEZCLFqbYiHMmh50h/DCfCsq0FFf77PcNErjp1nsPCPWtK0bD
-	60bl5kL+31jADa0JwZOhQJNr3xg/aw0oBdNPn8eUocT2IPmjsw+3XuzxJ2In4m9AqpIqsc
-	DxAITUnhaly7YVw9rEQELxPUWmtYChtKxEW7sHbtjWO7cO9mnYARLYsQEKFWtII/hHLab9
-	0L5bF7OrZ3XjrGmTbLVTyrlHVXvYx1C1FlzAQeMOZ020fOuhz2iZwyroE8FiA7cm6HhdAB
-	hnApM0vnLoHJulQXoP/lP3Z9mQgTPLqBQ/XFfBQIxx33WLjNAD1/Mn+qzbAz4g==
-To: arm-scmi@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: firmware: arm,scmi: Document arm,poll-transport property
-Date: Thu, 23 Oct 2025 14:35:57 +0200
-Message-ID: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aT+B9CnA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=cq0k
+	rbDlv3LzkZ/tQuEhUkclvy6jim6mG0RsMCTIbkE=; b=aT+B9CnAHWO/SkM1W4LR
+	n2+A5nezSkw2O6XcMWFZUP3sl+Suz0eJuR37DsCCWV2M2bYLd8nzWLndfgQZuHOv
+	+WSDgshxlwB/9rY2+avVRtRR0mix12HBujWCL7eLv4HyaQKNxVsXITwdDdSun3PU
+	puFljBfzj9x9biWPm5W/ZjYGFvvz892orZzwy2+1EYEvYasP41Z3vrhmvrBhdbOT
+	3OlEqFXQUpn2Q7GFI+ETGRInpxebi9cG5lvBNRxvsP0wTHE2hX6A1/ICVEeUJfq0
+	DDAsDnJdoNuF1wS052hUiy0qLqgQLv7AKZ6+m3MPiKNZ9aZnzoNR474q1kmM7qrE
+	Qg==
+Received: (qmail 2208820 invoked from network); 23 Oct 2025 14:51:20 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2025 14:51:20 +0200
+X-UD-Smtp-Session: l3s3148p1@XwTD49JBnVRtKPCw
+Date: Thu, 23 Oct 2025 14:51:19 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+Message-ID: <aPokx5l93OQNyuEy@shikoro>
+References: <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro>
+ <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+ <aPInv9NELU7N9QDn@shikoro>
+ <CAMRc=MdWS2OSeJAkTRnAFMtXcVukwQ=JAWwJ3OHxogmgZnan6g@mail.gmail.com>
+ <5c9761d5a6a14d4c250df6cc4201bca72d963133.camel@pengutronix.de>
+ <aPnz6U-fcodRoobU@shikoro>
+ <CAMRc=MejA6DsnOW3hS+aFtecXn38UypJU2TUrAWPoo9Ly341uw@mail.gmail.com>
+ <aPoPGauSQCoaonl8@shikoro>
+ <CAMRc=MeOsUOJTx1-UVdQQzxk=KWyOoO7NwfAhrNDJmUv7kOScw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: ur38htuptdf9d77rhncyiu8mnbh67gm1
-X-MBO-RS-ID: 946e3c1781cf93a3546
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TYeVbvLUVCvdSV6M"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeOsUOJTx1-UVdQQzxk=KWyOoO7NwfAhrNDJmUv7kOScw@mail.gmail.com>
 
-Document new property arm,poll-transport, which sets all SCMI operation into
-poll mode. This is meant to work around uncooperative SCP implementations,
-which do not generate completion interrupts. This applies primarily on mbox
-based implementations, but does also cover SMC and VirtIO ones.
 
-With this property set, such implementations which do not generate interrupts
-can be interacted with, until they are fixed to generate interrupts properly.
+--TYeVbvLUVCvdSV6M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that, because the original base protocol exchange also requires some
-sort of completion mechanism, it is not possible to query SCMI itself for
-this property and it must be described in DT. While this does look a bit
-like policy, the SCMI provider is part of the hardware, hence DT.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: arm-scmi@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+> > Cool! Then you bring back my argument, that it should be always compiled
+> > in because it is a core feature ;)
+> >
+>=20
+> No, I still think it should be a module by default with an option to
+> build it in if the platform demands it. Just like 95% of the drivers
+> out there.
 
-diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-index be817fd9cc34b..b53754a318ea1 100644
---- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-+++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-@@ -146,6 +146,13 @@ properties:
-       this platform. If set, the value should be non-zero.
-     minimum: 1
- 
-+  arm,poll-transport:
-+    type: boolean
-+    description:
-+      An optional property which unconditionally forces polling in all transports.
-+      This is mainly mean to work around uncooperative SCP, which does not generate
-+      completion interrupts.
-+
-   arm,smc-id:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
--- 
-2.51.0
+I know how you think, that's why I put the smiley there.
 
+
+--TYeVbvLUVCvdSV6M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj6JMQACgkQFA3kzBSg
+KbY5RRAAl/q3ePCuyfkDK/ePep9L8m/zkJp20L2AIXDSvGHCR6Y1VH5NGF91Rrgv
+TbGOx1siPdLsxHqHYgSFwl5WCb+UBYH3gHddsGds6HY9h+yonALBzDHhA3nBanZp
+z9C+tR1tDBPhQj0cB5OTdPn4Qx+EkXDpV3xTQIIjo8yMNp+3dizcGKOQDUETvtZf
+KkdnAMQrTqYRDQC0YXI7TeIWL9k0nLzQ3RCd/yoFKwVm4cA27UeoWQF3qCGtewlO
+xpqQVLqbac91KlVSFN9a2bOCxyl5oKQWd+0mjo30oJzKM03fYz08OqZcS1tUOFOz
+wrBplKQZ5dnJetUm13FkzdaGFlA+GDYvmUgEwWWGzMw1MRCiW70lTuU3FrbWQov5
+2B93mcfQw2kfoQJ9+cJuB4fV4n31zFfuCIbH8nGGKI+ci2o0ZQ2tmNlPjvQcLk3V
+YmSAC6P0o9nbq17pOA0T77kNv+yI85fGitDOvVfgaEgTmG0mfYq7Dzm8rjX8KtRM
+s9Zt0riKaIUlLGyYwqUVHX9AKrq/3U5cxKWZvLDbxaTZZVKnx/ayH+bBA2DhgD+x
+IFWl7Or48cane9O7iCDeQYxu+XZSycu+8QmutXSLrx1BSLb05rfxajZWh5WnXeGx
+Sw8dyrh/Ptr7SmXh1oquGQq07VJ/0EaY7BnvlZgq+DnL6abv5uc=
+=FnzD
+-----END PGP SIGNATURE-----
+
+--TYeVbvLUVCvdSV6M--
