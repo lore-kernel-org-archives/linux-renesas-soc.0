@@ -1,163 +1,117 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18622FF152;
-	Thu, 23 Oct 2025 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5182FB632;
+	Thu, 23 Oct 2025 08:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207678; cv=none; b=f8hG6l5eWUPb3njBISuR7bx/dQUPeyZNkbIfp2JR5vVtvvFGrSRpKoI+EwFWp3JMnlAuhAj7iq7x05GmXUuJfreLn/MlEXa7XxtWu/TgZrR/hKQVlnMizBQgRZZ/8uv+1nA4pDLJhiYJhgk+JWzL6igklSd2u3lTHM5AeFaISOA=
+	t=1761209713; cv=none; b=jQpCXn5BC4m3v41MRO7TWqyj7IIxkW/OuI5bJUAerZDZNRzqTPcApbKL4P3pVdoIJpSEQbtblVWEgP7grFRIaEh1Wdr4kE2DY1X2dS76oV2lB/w8zvoOYqz6iND6rWTs/ixZR6hsrmrgpdeO16yIP+wdq2XTEZX6h/wSl2q35tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207678; c=relaxed/simple;
-	bh=Pg7tjeq7r3AX9QT2iM2Pps0AvibFReG3mtK6Z/Newus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ab24PIh/GiAFt5d6BB/ROVzJzMM49cN8WzJEOHG4xNKxVO4qrQVzVhlGsQMJAU5u0AGZPFApzPqizdxXADi70iQKV+RdOiWCukkEeQYoV7EMF1WWkaT8M8/jMOpfn+/OqMlYXIDDbtDFWfLi5Y+N6jUVyVOeWh3DeZ1BZA4iuAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: Ir7V6Xz6RZG6rhRsZ9GM8g==
-X-CSE-MsgGUID: kc63CY+wQVOikdpb03IcJA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Oct 2025 17:21:11 +0900
-Received: from demon-pc.localdomain (unknown [10.226.93.77])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0A230417DE80;
-	Thu, 23 Oct 2025 17:21:05 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Subject: [PATCH 10/10] arm64: dts: renesas: r9a09g087: add TSU and thermal zones support
-Date: Thu, 23 Oct 2025 11:19:24 +0300
-Message-ID: <20251023081925.2412325-11-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	s=arc-20240116; t=1761209713; c=relaxed/simple;
+	bh=vnI0o5WV/8375Q9X3ezTYN6ydp49H3sIrzgEDjPS0M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SSlPzAybM0+t6qeSOeiSQ3e7A/xgqhGYRDEf7hHM/DKWtx34NlC7TbNZ7afw5Z4PiwAmOyBDTOrI3aDyw7/d5OWVU7ljeeX0aOmOe3yAxoGLZZtvjxvrha8rpUeaLxXOfXsRZBgWsD01akQmyDquiIoAbS5cbPXEMPiwzONOabs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dh+noOqF; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dh+noOqF"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2014E4E4129D;
+	Thu, 23 Oct 2025 08:55:09 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D88146062C;
+	Thu, 23 Oct 2025 08:55:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4431B102F2459;
+	Thu, 23 Oct 2025 10:55:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761209707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=JJYzWRervYd6xbaGyN0P+R856qBpgbVlxMHKNl9v3HA=;
+	b=Dh+noOqF8/+jpFrrF36/6zTmuFM+BcOLEgl7rR5koN0gDqES3Y9Vc4aTxVof+1szs0h4+Z
+	j8yzHp/1NOYNXyXi18QELWmyZvXr/sjZJeDoJHLlqkFh4CyWMx96xXiiBQJIX6iPQN0utc
+	y77gPkWk7nIjkfwB7ernZXMvUHH9W1o6cScnw3NcwUPb4QolxQF9DXE5ZFl4sWrwUOJ3k7
+	gRVAK6PVW8nl8XEh8mWdv4OXamJzB/DVAPzr1N5o0808HrN80pDz+KM9ZredUFsUvL3dgF
+	8j4X0axfYUa2MmZ/IS1QWxI8V1B3kZyIyXSfxgK3E00sLHJeIFnF3vJKQRGYfA==
+Date: Thu, 23 Oct 2025 10:55:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
+ Damm <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
+Message-ID: <20251023105445.1adb2e86@bootlin.com>
+In-Reply-To: <20251017090742.49f2d628@bootlin.com>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+	<20251015142816.1274605-2-herve.codina@bootlin.com>
+	<aPEoqkdatl4G82co@shikoro>
+	<20251017090742.49f2d628@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The Renesas RZ/N2H (R9A09G087) SoC includes a Temperature Sensor Unit
-(TSU). The device provides real-time temperature measurements for
-thermal management, utilizing a single dedicated channel for temperature
-sensing.
+Hi Wolfram, Geert,
 
-The TSU loads calibration data via SMC SIP.
+On Fri, 17 Oct 2025 09:07:42 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - renesas,r9a06g032-adc   # RZ/N1D
+> > > +      - const: renesas,rzn1-adc    
+> > 
+> > Do you know of other SoCs with this IP core? If it is only RZ/N for now,
+> > we could go with const for N1D. All other N1 variants cannot run Linux
+> > because of no SDRAM controller.
+> >   
+> 
+> I know only about RZ/N1 family.
+> 
+> I will keep only "renesas,r9a06g032-adc" in the next iteration.
+> 
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 5eef8c18037e..db117b6f75a1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -36,6 +36,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -46,6 +47,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -56,6 +58,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -66,6 +69,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -244,6 +248,17 @@ wdt5: watchdog@80083400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@80086000 {
-+			compatible = "renesas,r9a09g087-tsu", "renesas,r9a09g077-tsu";
-+			reg = <0 0x80086000 0 0x1000>;
-+			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 307>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		i2c0: i2c@80088000 {
- 			compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
- 			reg = <0 0x80088000 0 0x400>;
-@@ -844,6 +859,37 @@ sdhi1_vqmmc: vqmmc-regulator {
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 1>, <&cpu1 0 1>,
-+							 <&cpu2 0 1>, <&cpu3 0 1>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	stmmac_axi_setup: stmmac-axi-config {
- 		snps,lpi_en;
- 		snps,wr_osr_lmt = <0xf>;
--- 
-2.51.1.dirty
+May be I misunderstood.
 
+Most of other bindings related to rzn1d have the both r9a06g032 and
+rzn1 compatible string.
+
+
+Would you expect:
+
+  - a) renesas,r9a06g032-adc and renesas,rzn1-adc
+
+    compatible:
+      items:
+        - const: renesas,r9a06g032-adc   # RZ/N1D
+        - const: renesas,rzn1-adc
+
+or
+
+ - b) renesas,r9a06g032-adc only
+
+    compatible:
+      const: renesas,r9a06g032-adc
+
+Can you confirm your expectation?
+
+Best regards,
+Hervé
