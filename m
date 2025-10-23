@@ -1,104 +1,189 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3F02FD66F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 12:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE592D73B5;
+	Thu, 23 Oct 2025 12:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761221268; cv=none; b=ciC+UVTRSOrJh32/+qJMyQIAlXKhDOYzguXU7MLCAmSRScu2qqrRzsRaL3bRhVF/Sg5dm+DqY13dMoz5P94zg9JMkTEq1baoXaLEEmWAUCgs7A8NvZQljvIc2w/iuLAOeGU91jiTH/g2NbNCMugd7wwFsra5zuIWzubHoBGbizM=
+	t=1761223033; cv=none; b=N3RSAscUfaigjyFlpKsRDDBUSvZxzfsAj1+YL9f/cra/IAj0yDtNzzluvecS6L8gmeYISJL2C3x6jRvUW54UUlgD8k1Ad5OR6rBQo8HqaliwXemf8DvwGIdATP7ohBDNLhTYvgAgN2GTT7YqgPq1JUNq1QvknNlqaHRxpMSNNvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761221268; c=relaxed/simple;
-	bh=QhbN8r+FeVInBIo/fiJrSFPH7EhpLOxaAVWY0WLSBSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRJDXj3KX2OO8ouTC3rQ0aaZaJCXz0Gkk/gScKnUwejwKWXpLFZ10AjmNC+3ptdAsolRcb41p9I5btvCpsd++OL5CO+i+al97z+HhK/Tdf27FxF1ZjOoKkBu3197KnKzkU5U8kZqzIExRQeyeSugCSm1drXs0lWQSipWIyuIu+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-932bced8519so557898241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 05:07:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761221266; x=1761826066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oBc63QGd7BXhtM+lMELJZmBYVxWnaM+uPvhZT/wm8AQ=;
-        b=Vb7zWI/tgcPG6wdrwaivLyhUKuxE0fEitkgmzbwAi2XNWcNDAdUDBeIdaFNy/mh2uF
-         UmD159oWybV+v4WplCnD1ip5tlRGonPDTywqWnDjUMVQqNV6okQdNBVaFakeBbKf+sce
-         bzeldjGRpBcpAoyxhi//rpNxoBxNJ1kHyrL6cUxK2dU2jKvgFmZMTO4QgAOUWEFGs/JK
-         5HR8EPKgfDjYw4XonI+kzswZplJYsJafFSs/Pbc2qRzOEaXMYbAkj+89rMDA+ItVEhiM
-         qVCOmdwtd/fm3j++VUcOO+G5DHI0eyjbMoy5FCYr2Vy3ovDKmj7+lknkKJIl4G3ILSLD
-         mWWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDaNZ/6j6YzCiPbmB04klOGILemqTceI5aE9d1JNGibsmto6+b2hh15GcUFyXxY6gzMtRCWXzVyCx55R7R50xDuA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlasm6w9a9V2hK7NABQwrz1SldQ8Aebah1jAnMj8MePApj7do5
-	Y6JyiUaFDIQ07HE4rxnd85ze+uLiT4Owci0SNFvpLPD5ainrnAHmI6AxogtpGkzm
-X-Gm-Gg: ASbGncvH+svbeSTqsL931Momyhbd63e2dd8Cw1DQPq2Eu+ABfLEsBb+etq+bMlOZpeJ
-	rDvF4eiW5Fqsj3RMyfopCZI4UExSsrWkopQEi3l54+mbFoy6jmilRrmnxT6BBqfp/+QgJ9mFP6Z
-	ACE9l/sWFArryigb4wLqsEUCFVrAN05cv2bPtjFyILrHW/4SmskYQDfmREYZJOMcNbdAtMTW5o6
-	S+pm1c9r6fDnK3+T4wEp46HeL0Vdd8ulkGX/Zn7wp/nxBIVkAsLPBEdXYTGWaZztPTksYbJi8+U
-	tCj+lRyXjdn9BaTslbYzMQQQ7MMVfcX641TI7eNeX76yIZ6Sjb/UIJbUpmTU+Bb/vIgcsquws4c
-	KItQmJS3hCr9q+NEKqs3I5LpaTzyJOzXXXaMlf8Fw4zt6KhSa0lLIq5XORzHiJ2xLYuHFyTWufw
-	JPoxM7IAzG2MxMBST6WZGtdjSA7wBu7EQg0PaVGg==
-X-Google-Smtp-Source: AGHT+IEOb634vvv5anrP4Qamt5Nt7XNTdNy2uVPkt2EgZKDhupc1JDlT7RMlX+E2/eHdl4lzW1cOlg==
-X-Received: by 2002:a05:6102:3f52:b0:5be:d04d:d2c6 with SMTP id ada2fe7eead31-5d7dd423a07mr7808611137.9.1761221265657;
-        Thu, 23 Oct 2025 05:07:45 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2c7c93b7sm780767137.4.2025.10.23.05.07.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 05:07:45 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-932bced8519so557885241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Oct 2025 05:07:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSu+VUDGPcOuMuZCZo4QcWnnVEKEV79zoZV9sqlp1GMZEJU+vrRNmQ4lNZWR0iSzMyA9vs/opnef0lGuvil3CQeg==@vger.kernel.org
-X-Received: by 2002:a05:6102:292a:b0:5db:27e9:934a with SMTP id
- ada2fe7eead31-5db27e997aemr1516331137.42.1761221265052; Thu, 23 Oct 2025
- 05:07:45 -0700 (PDT)
+	s=arc-20240116; t=1761223033; c=relaxed/simple;
+	bh=Wr1oYdTzqRo6YQvotcE6dn0MHELFzWmzxAJ6vQ9urfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P42s6c16EIqoVzEyEg5mRjgVYBs3t8mz/o0IIpUYR+fWut9h9r0DGdjeDmEZ3M0sDSwUhcYA0hCzRSGvbNq6s2H3rBiqOStYEavSUtP2y275LBV/yTzHeRULDUApR7mkyHieEZvynrVdD83ddZ9DXUsf4E+lLKIAbxdm6GLkyF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=veccFRIk; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Gj/YYY8O; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="veccFRIk";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Gj/YYY8O"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cslsc23bsz9v7B;
+	Thu, 23 Oct 2025 14:37:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761223028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cUEq6RcBull/ifTwaW/9nwH/7Wp6ZcVLJhxbPx8UOdM=;
+	b=veccFRIkToJfX8y40KMHb5BiKmUwtqvyUz7rOZ04WEABQXng1Zonv7CZca9i9Ul7APNFIV
+	nIlGm76JGl0pW6FRy5EVDV8bZsYKSTVEDfYtR0MWZrswo7z7c8gS6KVp+eR6myaEQ+KA/h
+	O1x1g3Xaw3E2KUaag+S58N/zSiZ4KKJvegrvc9Ag5Y5ERVoAqu+QKDO68PMqN8VK5mzGMb
+	BrIbVbbJQ4mwAU0pIEzDXWh2GCk6m3Y7HyS+WBIS2B1hgffNJke0sZB9uCtbhICO3wu8by
+	xkCY2JlZkA8t2nduJoeXCFJ+/f4omtQSSxiyCsVXA1avjbzMIwQl0xfW4zqYkQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="Gj/YYY8O";
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761223026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cUEq6RcBull/ifTwaW/9nwH/7Wp6ZcVLJhxbPx8UOdM=;
+	b=Gj/YYY8O8vtWy8wwezsfQTYQuW9119m6jWJKZelGuxZ1OgbLqVx06DWDRTSrUrvg4BH3rm
+	qMXu+KepFL1cKaelxO/vRXaC/zoE1TQ/gE2j92u6AyAQUQR8lbTlUn7R5K0BKSIKM2fGhx
+	q+WT+/OvPlR556k0D3TWn18FLj/hzqpeE1SFixUS6wWn/NSiZ1ExJtXOdxZ3AIpHo8TkXA
+	Gbq6GItSOmuPyyrOGtL96UEIHIkZslJh0PIxqm5gvSLMs0ZP+kPEThfB1qla6zaWpTTu25
+	vY4658q6+pzyH8Fdyrgl6wEqhvgnR9r34k8mPUPZmL7DtgM1Lz2h3yGvOqv7zg==
+To: arm-scmi@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/2] firmware: arm_scmi: Implement arm,poll-transport property
+Date: Thu, 23 Oct 2025 14:35:58 +0200
+Message-ID: <20251023123644.8730-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
+References: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87h5wsa3h5.wl-kuninori.morimoto.gx@renesas.com> <87ecrwa3fj.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87ecrwa3fj.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Oct 2025 14:07:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVuyDSS+zhQV69MK_SXfDpJRrKYvxsdgB8Qvuz+Q8770Q@mail.gmail.com>
-X-Gm-Features: AS18NWCv1q8YpauasJP8nKtI5LMvjuBV_rVOoXFhH4VLXbtRUw8eyo-JmHWN1v8
-Message-ID: <CAMuHMdVuyDSS+zhQV69MK_SXfDpJRrKYvxsdgB8Qvuz+Q8770Q@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] arm64: dts: renesas: R8A78000: Add initial
- Ironhide support
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: dbe5eedace6910ad7e8
+X-MBO-RS-META: xycoz5xf7zpasbqw5mb4s1gwgb6s5hbw
+X-Rspamd-Queue-Id: 4cslsc23bsz9v7B
 
-On Wed, 24 Sept 2025 at 06:18, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Hai Pham <hai.pham.ud@renesas.com>
->
-> Add the initial support for Renesas X5H Ironhide board.
->
-> [Kuninori: tidyup for upstreaming]
->
-> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
-> Signed-off-by: Vinh Nguyen <vinh.nguyen.xz@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Khanh Le <khanh.le.xr@renesas.com>
-> Signed-off-by: Huy Bui <huy.bui.wm@renesas.com>
-> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Implement new property arm,poll-transport, which sets all SCMI operation into
+poll mode. This is meant to work around uncooperative SCP implementations,
+which do not generate completion interrupts. This applies primarily on mbox
+based implementations, but does also cover SMC and VirtIO ones.
 
-Thanks, will queue in renesas-devel for v6.19.
+With this property set, such implementations which do not generate interrupts
+can be interacted with, until they are fixed to generate interrupts properly.
 
-Gr{oetje,eeting}s,
+The SMC transport is modified such, that it ignores interrupts described in
+DT in case this property is set. This is an edge case, where the SMC transport
+may use this property to ignore broken interrupts too.
 
-                        Geert
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: arm-scmi@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/firmware/arm_scmi/common.h         |  4 ++++
+ drivers/firmware/arm_scmi/driver.c         |  4 ++++
+ drivers/firmware/arm_scmi/transports/smc.c | 20 +++++++++++---------
+ 3 files changed, 19 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+index 7c35c95fddbaf..7c9617d080a02 100644
+--- a/drivers/firmware/arm_scmi/common.h
++++ b/drivers/firmware/arm_scmi/common.h
+@@ -235,6 +235,9 @@ struct scmi_transport_ops {
+  *		      to have an execution latency lesser-equal to the threshold
+  *		      should be considered for atomic mode operation: such
+  *		      decision is finally left up to the SCMI drivers.
++ * @no_completion_irq: Flag to indicate that this transport has no completion
++ *		       interrupt and has to be polled. This is similar to the
++ *		       force_polling below, except this is set via DT property.
+  * @force_polling: Flag to force this whole transport to use SCMI core polling
+  *		   mechanism instead of completion interrupts even if available.
+  * @sync_cmds_completed_on_ret: Flag to indicate that the transport assures
+@@ -254,6 +257,7 @@ struct scmi_desc {
+ 	int max_msg;
+ 	int max_msg_size;
+ 	unsigned int atomic_threshold;
++	bool no_completion_irq;
+ 	const bool force_polling;
+ 	const bool sync_cmds_completed_on_ret;
+ 	const bool atomic_enabled;
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 5caa9191a8d1a..1079c84608a2c 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -2677,6 +2677,7 @@ static int scmi_chan_setup(struct scmi_info *info, struct device_node *of_node,
+ 	cinfo->is_p2a = !tx;
+ 	cinfo->rx_timeout_ms = info->desc->max_rx_timeout_ms;
+ 	cinfo->max_msg_size = info->desc->max_msg_size;
++	cinfo->no_completion_irq = info->desc->no_completion_irq;
+ 
+ 	/* Create a unique name for this transport device */
+ 	snprintf(name, 32, "__scmi_transport_device_%s_%02X",
+@@ -3092,6 +3093,9 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
+ 	if (ret && ret != -EINVAL)
+ 		dev_err(dev, "Malformed arm,max-msg DT property.\n");
+ 
++	trans->desc.no_completion_irq = of_property_read_bool(dev->of_node,
++							      "arm,poll-transport");
++
+ 	dev_info(dev,
+ 		 "SCMI max-rx-timeout: %dms / max-msg-size: %dbytes / max-msg: %d\n",
+ 		 trans->desc.max_rx_timeout_ms, trans->desc.max_msg_size,
+diff --git a/drivers/firmware/arm_scmi/transports/smc.c b/drivers/firmware/arm_scmi/transports/smc.c
+index 21abb571e4f2f..85bfab650f100 100644
+--- a/drivers/firmware/arm_scmi/transports/smc.c
++++ b/drivers/firmware/arm_scmi/transports/smc.c
+@@ -177,16 +177,18 @@ static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+ 	 * completion of a message is signaled by an interrupt rather than by
+ 	 * the return of the SMC call.
+ 	 */
+-	scmi_info->irq = of_irq_get_byname(cdev->of_node, "a2p");
+-	if (scmi_info->irq > 0) {
+-		ret = request_irq(scmi_info->irq, smc_msg_done_isr,
+-				  IRQF_NO_SUSPEND, dev_name(dev), scmi_info);
+-		if (ret) {
+-			dev_err(dev, "failed to setup SCMI smc irq\n");
+-			return ret;
++	if (!cinfo->no_completion_irq) {
++		scmi_info->irq = of_irq_get_byname(cdev->of_node, "a2p");
++		if (scmi_info->irq > 0) {
++			ret = request_irq(scmi_info->irq, smc_msg_done_isr,
++					  IRQF_NO_SUSPEND, dev_name(dev), scmi_info);
++			if (ret) {
++				dev_err(dev, "failed to setup SCMI smc irq\n");
++				return ret;
++			}
++		} else {
++			cinfo->no_completion_irq = true;
+ 		}
+-	} else {
+-		cinfo->no_completion_irq = true;
+ 	}
+ 
+ 	scmi_info->func_id = func_id;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
