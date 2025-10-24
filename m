@@ -1,183 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1F2FC00C;
-	Fri, 24 Oct 2025 08:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952AD2FC02C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 08:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761292875; cv=none; b=dEYrixpNiCtzEaOyedJ7sY5bpcZReymiri2514/V5zVWJKEyR3cDi5e4Lz2ZG6535UKI3qPDRNmwHyYYaJu1lTfDfVC0YbOJoT8GKHqqNmsYauDUYTn4hJJKpsl7bFXUlhZ4W6CHjdwP+4PQIDEkxXlQbwafa+FjBAQ9iAx4imY=
+	t=1761292907; cv=none; b=aE6xLRXekAPYKnIP6libXZGu2nXwmq5TFtx4xc2oXcvwmmUfNgNJ4q5wRLFOmv2NNKFXsJgtbtDPPBegkkpu/se2qqvHOFxSIxxSwyLE/39ouXedgxycBgvCDhz0vetuYHLwOn8WS4F0TXGNy6UPA43lt0VOe0mik5R21gygGT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761292875; c=relaxed/simple;
-	bh=imYWE30EwvooA7wZhBK5yJ/SI6g+oo31jrrGEHQc6uY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=G5reZBlEoZB/jzG9kJp9ZxQXQ9fn/l8BaFIn7xdJs87uht7cySbHiMaMWCFUqHbJpWrmQBEatXCpbZpo61dhvbap4qDkiAzPSvuaRXOEBGNPIXUz3OiU5WpJA7MlQILT43k4ARYLAJOBF1KqKzMiNgISa4scmIctRHeQOvybRng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7qP6rLC; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7qP6rLC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAD6C4CEF1;
-	Fri, 24 Oct 2025 08:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761292875;
-	bh=imYWE30EwvooA7wZhBK5yJ/SI6g+oo31jrrGEHQc6uY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=A7qP6rLC06+sM+pj9RtHJYfG79POQU9lqcMbG4FlD666C7AwvBF3VQueMQzHlCZDT
-	 sA5t+zRe9G5WsWIyCmDu3SPAhX1GCeSScYGko+AxFpdDGeNlCQC90T95k5dEhdEmb7
-	 SCQkCBq9hSt3DYAYWZf7PBiSJAWzMB7Pvq0ZqzOHoVgMBoEXgsfc48RhcxAUPvz3f5
-	 IIAIvZ0hb6sEBzSQIq3eXSVO7UkDXt84TjSDa9bmo+qrC616P9s20XZjL9tit6YFrb
-	 e+ovGwzAeN8MCuTmK+gOcZJYyu0oIFQ2fpKPoH7l9FkLbJ+grmXDCGNy0gbtANTciD
-	 lcwhxM35dFBbA==
-Message-ID: <110548d0-8c2c-48d6-bb28-c075bf0e8799@kernel.org>
-Date: Fri, 24 Oct 2025 10:01:11 +0200
+	s=arc-20240116; t=1761292907; c=relaxed/simple;
+	bh=haXerQcA3HaYtUIl4/PZ1i9/1Px3bakR91vnPlzpbZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtL8IzckO6VUF7Aud82ovXVhzGePY+FeHxZIMQUxaN86DqT1Dd9F4cUkc3EwjNELKhYIESWJXoTm99Nc924uDggHd6tLm8WpUxoXh/31gEPsVjU81lSYc+Jx9QVPa5Wi/kFq/dV7Aq1NQjtmNJAPq6zZAq6H0NtnNDLiOcbDwzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso1081954137.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 01:01:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761292904; x=1761897704;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mbuokl4czKvaoy+RAtT8vLd0ny6Fv6b+IGMo/jRBfrQ=;
+        b=qLRkF2pJwDV4yfwgcI/cD+DQRV2mqnLXqhRsbNL+eWPX4DaRZuwj4Ke92+KaAyY/1e
+         WnB2IwRsg53aP3+pl4fNkwAxOMeKGOkeouV0fFPnig90BdQC2WVb7HRIKn2+dXKvRqvq
+         i+Cxx85VKzkVp1sQkloBUc1wPwmryRp4V31zjDQqFyMCK/RehP8ynqWPiQs9iK8BDDhB
+         uoHQEkh/pPG6+SXuq7Ch8idM0GPZbaluNAgOjKwIztm8GdJHxhZLjWErRGm4DgCo0TbI
+         s4EqBr1y1U62qj4gLU9++OkwpCACkJOTgz9X31RJFk2E4LrWFwlF2YxEOVEJs03fP2Ir
+         zC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrDziCVvrtPTTylTGTb/uCQ9GhYsAiO8qpaS9ca2CxmPruMbUngxkITNaw3oqIa+/8zRFFx2jirKRCG+22NAGJSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZuB02xdE5z0Cfg0d+uIwU6Bgtj3eFhyrDIS/Y/IllBO4lNrTb
+	J+6LgC0gZypQ3JlpLJkqVE9UHGXsjMF4BD9PHK1O7/e3LywRvIGNfzH3OM0fiihi
+X-Gm-Gg: ASbGncvFXjz8cnxuCWaYGu47M3Si+eqCkvOs7w6h91BRcaWSXrfZP6mheUrAkKLEVpN
+	zgcJuI4OcH+VAB1NkhMk+IerB/bWlkbaaVDxuWx8XfyTKnMAlvG9AMcyo6mkPCfeejdr5KReRZi
+	wjPbVFh1Kgax/msfCJkY184Eea0OnSNsZgtBeCC685yObjxavON+F1mcCys9gfDlhVhCfRYxJcq
+	obylU6hi0zoX6mEDpw3BK2fjS4Xtb4DemOllH0WZaKspWAPmDmmdRY5rmiQIvDLcbGRHTAhveL9
+	1VUcyN4dHsc+QGAO7Pcf9XcUUNZOFaPS5ffxp6vcBm8chYdRuM1+f4hIUzOyeRksj3fIjSkx1rF
+	LboEZLjxtJwb9teZcOWDigbK0W33ttTFwKo3tpv3DXz8j7jmmZZX0Cq8yh4OIil+TNDEwABgLe8
+	OFw5koQG+THPl0TBDEPE8YgSdlSUe9xIiI3j7fwg==
+X-Google-Smtp-Source: AGHT+IHFTEnm/N6aImpOCfjcAvLMG0zkdR7UPN7kdV8lF6MSi+pPVuS9Des/h3EsjoBCPTA0N2Hl5A==
+X-Received: by 2002:a05:6102:d8e:b0:57d:9305:63db with SMTP id ada2fe7eead31-5db2e479240mr1561072137.15.1761292904225;
+        Fri, 24 Oct 2025 01:01:44 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2c77bdd6sm1827320137.1.2025.10.24.01.01.43
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 01:01:43 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso1081940137.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 01:01:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0AKwXMyf9LmPLocF3cPjOEv7YO7bnZdZqOI1gPfY9c3e5ZFj6eRXp9kvs/B7g+kENa+YQCV5eUNzTAw81TrBLcw==@vger.kernel.org
+X-Received: by 2002:a05:6102:c49:b0:5d6:5f0:3f88 with SMTP id
+ ada2fe7eead31-5db2e58e682mr1680224137.35.1761292903035; Fri, 24 Oct 2025
+ 01:01:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: mailbox: Add Renesas MFIS Mailbox
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <87frb8n7kl.wl-kuninori.morimoto.gx@renesas.com>
- <87bjlwn7j9.wl-kuninori.morimoto.gx@renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <87bjlwn7j9.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <87frb8n7kl.wl-kuninori.morimoto.gx@renesas.com> <87ecqsn7jo.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87ecqsn7jo.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Oct 2025 10:01:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUCz6OZYbKR8izDRe3=dz_yVTj9AhFmHG98WETaeknmZg@mail.gmail.com>
+X-Gm-Features: AWmQ_blRNb9opWlPAtdUuV4F0M67z94Nk8rxY_eqKk-OMWvzPSxvxuGJgirtXu8
+Message-ID: <CAMuHMdUCz6OZYbKR8izDRe3=dz_yVTj9AhFmHG98WETaeknmZg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mailbox: remove unneeded double quotation
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/10/2025 08:22, Kuninori Morimoto wrote:
-> Add device tree bindings for the Renesas Multifunctional Interface
-> (MFIS) a mailbox controller.
-> 
+On Fri, 24 Oct 2025 at 08:22, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> It makes Kconfig strange. fix it.
+>
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  .../mailbox/renesas,mfis-mailbox.yaml         | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.yaml
-> new file mode 100644
-> index 0000000000000..b9b6e6d440d79
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.yaml
 
-Filename must match compatible. See writing bindings.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/renesas,mfis-mailbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas MFIS (Multifunctional Interface) Mailbox Driver
+Gr{oetje,eeting}s,
 
-Driver as Linux driver? No, please describe hardware.
+                        Geert
 
-> +
-> +maintainers:
-> +  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> +
-> +description: |
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Drop |
-
-> +    The R-Car multifunctional interface (MFIS) provides an interface between
-> +    the different CPU Cores, such as AP System Core domain and the Realtime
-> +    Core domain, SCP Core domain and AP System Core domain or Realtime Core
-> +    domain and AP System Core domain or Realtime Core domain.
-> +    The MFIS supports the issuing of interrupts for each CPU core domain.
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,mfis-mbox
-
-You need SoC specific compatibles, unless this is not SoC...
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: the irq line
-
-Drop, redundant. Can it be not a irq line?
-
-> +    maxItems: 1
-> +
-> +  "#mbox-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    mailbox: mfis_mbox@18842000  {
-
-
-Please follow carefully DTS coding style. Also drop unnecessary label.
-
-> +        compatible = "renesas,mfis-mbox";
-> +        reg = <0x18842000 0x8>;
-> +        interrupts = <GIC_SPI 4362 IRQ_TYPE_LEVEL_HIGH>;
-> +        #mbox-cells = <1>;
-> +    };
-
-
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
