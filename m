@@ -1,163 +1,96 @@
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21A62586E8
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 10:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41C53081CA
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 10:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761300939; cv=none; b=dYo15aEEux/pORTWmiNUfKyk6pXYMJcKcCGkNz+eaSmNAtKCVQxK10JVUgjZ2VoVWvQvpRk4FGqxRKIOR5tLEafaJ7A0ChOdGNaVxPZXHGupFCaCrmpDprWQY/m4XzX6g5NNUztt/AyHVhXu8+2BdyHiYhdtPTIQJUZ8B8t7qe8=
+	t=1761301014; cv=none; b=afr4vQBy5abNhHL5Ohcpv3WL6cNLDO97LO7zR6IO9Zv21ayHlm2xjCKZyb1W5XJxoNhI+9Pxtb/bLVHwYNxdhfgOPm9X+Ru7mmLNvRIDdF+PC7v6JIjNviG2GuCuEivtFy7DGU9mbqd1bQGIc5p7ecYPjoxUnOdt4WA2PmB9M7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761300939; c=relaxed/simple;
-	bh=elTVsWdrRVyZXb9CeT0gn7vy7OzlSmdqPnuj0bdN97A=;
+	s=arc-20240116; t=1761301014; c=relaxed/simple;
+	bh=AqiWd9FcEXBjGqvYmjKezWFbcC8LX/8ccSI0CzYf7rc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QQNFZgFbBjfKSyunuzTyVOYhFLpP2yxARx1jtfjp+0dlZrDDz4mHYm1djWs2IRYcagCp86nYRmLoRsIVFanxcVLdlz8abg5JksaCowg/pSQKrcJanJExmeHJdPRWPMKu1qaD/23Kt6+ypPgjAthxwedM56YztvpnP6X3o2mTkgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.181
+	 To:Cc:Content-Type; b=Iv4CT+qJgr/jkQIH0/opmGFdHBsmbnxjxOTjEUho3AQR3bfx9OWRa+m1lhtQ/sf1FZLVM4vmA/wI42egWrkpX1JzIPWMnOnpzJDR5douQRl9k6XRK0J2i7ULdDlh2jqY3bKcNCe9xRqhCJVRDTYEayD9JeF10QHZj/2ebb+hxMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-430b621ec08so19393255ab.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 03:15:37 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-54a8f6a2d80so129145e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 03:16:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761300937; x=1761905737;
+        d=1e100.net; s=20230601; t=1761301011; x=1761905811;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sUKThFRYge9/VpHdBSfe3W40P3TpedrdMNHqtfWCInw=;
-        b=gPDHJOI7kdMxfW9B7LsAe/O3++6A7+Y88zSZs/r1p7fc/YnI/UGOr3zfHPYPWfm0Rh
-         1XPJPZCJZFj0G3zxKURskvWgbqL4AKaFUox2DI6+MjwZ0JDQtOr6Rvs4TfVTqVGNAnZU
-         vXvPZUnupidKt2/6ceDnkqhSIvjbl+5ozP95HMetBNVxJ9Zjbv//F3N3CFmop2CGCI31
-         p2h/OTfMiRvIzR0vFgn5KnKOCSR9XVpGqsleN/iklIpHNdD8PWeEf7xSRNpIDh4gkBb8
-         eA4t40lFX2Bti6Y8+oWgNQKw9mkuOyDS31xo5sqgLpabQW6w8EW3aCNYYCAqvn+kn1FM
-         vREw==
-X-Forwarded-Encrypted: i=1; AJvYcCUStpcXLwpgKXA/ZZgMQarfDH+0XvgaYHb84bavYS6y0JO9M4UObOVBQPbkIbi/9s6z202/vMdBJ3TaR7fNpwUcsQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNehPEAJDaXThzKzQwSvZYu7wLuNxm2EmIrXkO+zUmRbKX8j63
-	APfOgP8yV2I9nc+grt2C9AtkwlYyITjCZc3TZmSEut9meIoIKbtRIPR8Kw5p6to9
-X-Gm-Gg: ASbGnctAEVH/SPMRkiJNlvFJCpFJpDFr6ppHJ3rC5sYjmnHo2Mr2q+dJ/15pY2fufGE
-	Zk0yayvgtRE1/6GSgj6vuKQixCm6i4Y8lh9wNHdbZCt9AgwTgxPo6wmN2jAoYzc5Mvc6wubH+4/
-	i+kIoJ3cmOo6OS6iz0scSi+aFAV42IfC1k5QWE5qBRyfm34BUnWWeH1vDxkLlbLvvheqYXw/nY7
-	xwGUEKp2MsFLx7SCZ6vExlwNBW/wTc9zdfZV2LZhqdqPkBTYfYGcSFJJtXydHRwqKheSnspZSow
-	fn3y1pu8J9OnJw1+zSjQ9aTNL9lfFHymDmtFo2h3NLFeRF3+9bFWoQST1JaAzVIrG/JG+Oo3DWv
-	l4VqHTuxsK3Hm8kJXmHGZKgDfPeW+w+QS0YJLL5g4/ziVI1lj9I+DPvf6Yl7GxwqdtH4QrhPf5G
-	p3FO6UGor7CvQ4S33jkQm4LkZs0j+9Ay8CrzGuEw==
-X-Google-Smtp-Source: AGHT+IESuc869GlN1MEzfqZ/4EJlQwxVeWtx/91mkEKAccXoWiiO7I4xInYq6a1eGdu1DtnfKqTrQw==
-X-Received: by 2002:a05:6e02:156c:b0:430:acb1:e785 with SMTP id e9e14a558f8ab-430c5208dacmr394191575ab.6.1761300936644;
-        Fri, 24 Oct 2025 03:15:36 -0700 (PDT)
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com. [209.85.166.45])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb4e4bbefsm2014655173.5.2025.10.24.03.15.36
+        bh=bSTLk7b49rZYTSOotXXLR+fnDfbehF6NQgF/VSyM9XA=;
+        b=JTke/SOIK2WDzOcefYxTbZw9PSHZW/Mp6VrrU9sTxGKhmW3E7PV310uYK0foFkVUK0
+         wxML/88k/yu69uxsuTiQv5wuiczEjyGUuVqxzySNcsplTa+qqZXYPprBRadckhvMTXVt
+         3TBUahDQRxIvEt4A7BQHROMwxSnzYSz3o/fkZputwdz4Ns5neHAeDQvT3frP/yHJSIi3
+         65cA1Wtmi8BBZFBz4/9nLviACQbDe37XI5Enpo3yoL7FjJKvRnoLe7O7QjW7jgpxjUhF
+         Ek0SyDLZn+z+MAtynzZ8n7gp7MfQlBWNPX2xFwEAAIFBfi4DQNV/rnbzhrmCbWfcWtcF
+         zAEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBjaX+9BVtmQ3qCAU9IN+d7wZ1+z7QJSEiFmJs+D1AiWV4VPMzgVLzx1MzZiVJOeli+Y3L/gDqJNA/cdGdBkjapw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx20XG2EavYil7blfysOnVTopMLZFhyN5Bt8AcvUavnKAZK7xse
+	KQ4AmeZDkap//xddnBLtkTDvmT5XBhe6UP6rVDTgrXrD5SSTZBpQaERxyuu6zqaX
+X-Gm-Gg: ASbGncuDxMPFj+zrphd+VlqZ4OZYYqyaXQAbD/u2D19eN8ZgTlVggQcUrhVDpVxUcjf
+	n5AKcUvfLTk27ZL/mNG8nYjcBIxKTPibMtgkLxv+iLG4H2heYv+/J2mmNz7HmbgHHoKhi5ZWJ+w
+	6WejyTj7lipqJl/GdhQ4f2wBoHjthWz8q0RgGEhkkMvklLjxPgRscERezYOipWYuB4Oigk3XS36
+	iBFamkidFzXKSDBa/WhJItpYgH9OKo5XoWQch4tIT4gMNVoeEq7yErCOOXQYanASp2EnBsGs49t
+	q9KJtpOCZaAf47B6qPy+TlnKK2NShL0UAKwFe4G1xDGNKrBMdVN3XIZNVexsENcr4+Szf+mRwRc
+	QGpppaL8WEOokrc2Fasl/wbsSHNPoDMo29B0AHQZUa+E99InxpafY2yjBd2ekgjivWIcUfIh7gM
+	jw6kCFeDUYly6uPPfuAb2UnY3qJ689tWOi3vNSkw==
+X-Google-Smtp-Source: AGHT+IHBqqSw7rKIT5EkNodmtrh2lLcTR+0uBUySQ6TU3Skqm7HF4tkKtS3yeL4VhVWiNunO/HL8Jw==
+X-Received: by 2002:a05:6122:e0d9:b0:557:82be:1a4f with SMTP id 71dfb90a1353d-55782be1d48mr1252365e0c.1.1761301011321;
+        Fri, 24 Oct 2025 03:16:51 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bef1ae0asm1830194e0c.23.2025.10.24.03.16.50
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 03:15:36 -0700 (PDT)
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-940d2b701a3so180210139f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 03:15:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWrakHOq82zyiCTuF3lgcoY2z6L56gjbMu11Ksd5mzJC3GuEVG2kM2sHOvN5/UhFoJyaIgqm/uOdibex+6/eTPMtA==@vger.kernel.org
-X-Received: by 2002:a05:6102:4496:b0:5db:2715:d01c with SMTP id
- ada2fe7eead31-5db2715d982mr2364430137.10.1761300521275; Fri, 24 Oct 2025
- 03:08:41 -0700 (PDT)
+        Fri, 24 Oct 2025 03:16:51 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-932cf276843so802788241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 03:16:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWxO/5ZM/QvF5fhWsaB96/bejdCftjpVdmBrjvOAoEKJQU5JP2EGhsXPD8x/sG/i/UKjqKuzYRH7bktt8SiacPCxA==@vger.kernel.org
+X-Received: by 2002:a05:6102:5111:b0:4f7:d553:3cfa with SMTP id
+ ada2fe7eead31-5d7dd53dda7mr7539658137.12.1761301010775; Fri, 24 Oct 2025
+ 03:16:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014151325.160062-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251014151325.160062-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251014151325.160062-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Oct 2025 12:08:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXU_aOg+bfRBJ7UOQW59QUxqa4a7WXTj27RyCyiNHV8qA@mail.gmail.com>
-X-Gm-Features: AS18NWDbAhl5j_H8OBpJGyjSPEBVaeQiqbN7vBJIAehOjNFs55YsioHkWFr2qYM
-Message-ID: <CAMuHMdXU_aOg+bfRBJ7UOQW59QUxqa4a7WXTj27RyCyiNHV8qA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a09g077: Add xSPI core and module clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Fri, 24 Oct 2025 12:16:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU9jkZ16rw90qY-y1JwReVuh9GcoU9590Qj+fnAOBKcEA@mail.gmail.com>
+X-Gm-Features: AS18NWAl-mnooV2yE2ZHT2YePMkrfHPFCcWPI_7IIu3f_WOQ-qTqZQdZwGQjyhs
+Message-ID: <CAMuHMdU9jkZ16rw90qY-y1JwReVuh9GcoU9590Qj+fnAOBKcEA@mail.gmail.com>
+Subject: Re: [PATCH 01/10] clk: renesas: r9a09g077: add TSU module clock
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
-
-On Tue, 14 Oct 2025 at 17:13, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 23 Oct 2025 at 10:20, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a TSU
+> peripheral with controlled by a module clock.
 >
-> Add module and core clocks used by xSPI (Expanded SPI) IP on the
-> R9A09G077 SoC.
+> The TSU module clock is enabled in register MSTPCRG (0x30c), at bit 7,
+> resulting in a (0x30c - 0x300) / 4 * 100 + 7 = 307 index.
 >
-> The xSPI block uses PCLKH as its bus clock, while the operation clock
-> (XSPI_CLKn) is derived from PLL4. To support this, define new selectors
-> and dividers (FSELXSPI0/1 and DIVSEL_XSPI0/1) in SCKCR.
+> Add it to the list of module clocks.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-
-> @@ -105,6 +113,15 @@ static const struct clk_div_table dtable_1_2[] = {
->         {0, 0},
->  };
->
-> +static const struct clk_div_table dtable_6_8_16_32_64[] = {
-> +       {6, 64},
-> +       {5, 32},
-> +       {4, 16},
-> +       {3, 8},
-> +       {2, 6},
-> +       {0, 0},
-> +};
-> +
->  static const struct clk_div_table dtable_24_25_30_32[] = {
->         {0, 32},
->         {1, 30},
-> @@ -119,6 +136,7 @@ static const char * const sel_clk_pll0[] = { ".loco", ".pll0" };
->  static const char * const sel_clk_pll1[] = { ".loco", ".pll1" };
->  static const char * const sel_clk_pll2[] = { ".loco", ".pll2" };
->  static const char * const sel_clk_pll4[] = { ".loco", ".pll4" };
-> +static const char * const sel_clk_pll4d1_div3_div4[] = { ".pll4d1_div3", ".pll4d1_div4" };
->
->  static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
->         /* External Clock Inputs */
-> @@ -154,6 +172,15 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
->         DEF_DIV(".sci5async", CLK_SCI5ASYNC, CLK_PLL4D1, DIVSCI5ASYNC,
->                 dtable_24_25_30_32),
->
-> +       DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
-> +       DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
-> +       DEF_MUX(".divselxspi0", CLK_DIVSELXSPI0_SCKCR, DIVSEL_XSPI0,
-> +               sel_clk_pll4d1_div3_div4,
-> +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), CLK_MUX_HIWORD_MASK),
-> +       DEF_MUX(".divselxspi1", CLK_DIVSELXSPI1_SCKCR, DIVSEL_XSPI1,
-> +               sel_clk_pll4d1_div3_div4,
-> +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), CLK_MUX_HIWORD_MASK),
-> +
->         /* Core output clk */
->         DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA55C0,
->                 dtable_1_2),
-> @@ -178,9 +205,15 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
->         DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
->         DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
->         DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
-> +       DEF_DIV("XSPI_CLK0", R9A09G077_XSPI_CLK0, CLK_DIVSELXSPI0_SCKCR,
-> +               FSELXSPI0, dtable_6_8_16_32_64),
-> +       DEF_DIV("XSPI_CLK1", R9A09G077_XSPI_CLK1, CLK_DIVSELXSPI1_SCKCR,
-> +               FSELXSPI1, dtable_6_8_16_32_64),
->  };
-
-Perhaps we need a custom clock for this?
-According to Section 7.3.1 "SCKCR : System Clock Control Register",
-some divider combinations are prohibited:
-  - 4 x 6,
-  - 4 x 32,
-  - 4 x 64.
-The last two are probably not an issue iff the xSPI driver never tries
-to set the corresponding clock rates.
-However, the first one may be an issue, as both 3 x 8 (valid) and 4 x 6
-(prohibited) yield the same resulting divider, and I believe we cannot
-be sure the clock core will never pick the prohibited combination.
-
-The rest LGTM.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
 Gr{oetje,eeting}s,
 
