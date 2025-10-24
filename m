@@ -1,204 +1,206 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DAD2C3251
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 07:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31721F03C5;
+	Fri, 24 Oct 2025 07:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291112; cv=none; b=t6QmWk9rQAfJO8l4rrMw10GurjrvDYh9WCgJvphsPGH1bE8rg7I718n44fxuidC4WJZkCw5Ld2RaTJ03zWbxDissEAI8duNKVew4qaemSSWdoizmv1yJ7hL2H8/hrKPq6kUShGL0xJ3AfVwspjfgHTtxrLMbWjM1yfqRhh9GMHQ=
+	t=1761292730; cv=none; b=fkcmfFOuFb09PEVIInamdFlSgMpZ7eyWEPkhWlbNSfDX3T95S6ncJAvF6O3f77tvoLJ9qOTp7KYBEgop4rWGl1PsabFF23UFzMYXKN8cHjEgcD952U7d27Azw+4bb7fY+h0+G+yRhctpZyIUSCcYPTP163hM73q6T111e7OdV9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291112; c=relaxed/simple;
-	bh=TYYDo+7DxkUKjmm+P+3sxJh+gjqzjUwg71o/dX7xBWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8VQW1xpcS8GiDh2wXS6/hLXN6sqnHI5+flZ2+CkeqEpcT9x3KGZW8Hcd44NSUC/WdnO5vm+4blmTNnP2tGQ3wT3EG1D76j2cAlmPT3+6aq4PJ4ERjaxkxBkn9vJmbdhnczqr0xNdTIGmCK1xWlefWAnFj5PMGkYWceDb9xhEjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e89d4f0e8bso16263601cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 00:31:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761291109; x=1761895909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O3WV+VoszRFKObS+2w1jR5z8x4F6hvRxXouyKsJGXVw=;
-        b=A808AeVL8uBtmaqV65LyJJo/NbFnzd6tve3pROREp4IoIvvnTiYpgYZIhGTIh5OhsW
-         SSLhSaYtJIJiUgSOZZwG+RKbIhiTj85Eyx6Gbaf3qJ9y4ULVqMCfcFMpk5/bZj3pKP7f
-         08Mqcpu9WkRTcEBWHIZX9YMk/wV2RkCgbPjMPyBerqXSC5TuQdChVFD0r0H3vaOF/KbJ
-         XidOzSxgMaZzGAyIOr/MiKAyGI4SmEm5f2SBWs5NNsYutosMQaA5OWabXKGxxx29QTJi
-         291D3xouPzy3KajfjTFghHNiQP7cD8c/KqFKApYo6upZWKPNYRcgef04no6bjBE8YIuo
-         Z0Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWSy5Y9f6Y2grWN12X0lfNZrgjFslabus/iXq0Gcas1xoI9augON4Q9DlVAclKRshO/UAy9+8f589e3uEABZomM2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIrgtMtBiDI9miIqO3XKxBUxvllJVTWlPIrYgpfVLIAu3ZkPMR
-	lhVMY9y330pUBQkHdnyoOnhmhXxrNa3q92gUHTmZvJczF7KueiMqej1/gXAzvxyl
-X-Gm-Gg: ASbGnctZNU8XlopWlP2d0kUCZPnJbwKEExaS8XHHrt+2vbndN1xFv6oBUjRUVU8XakY
-	lCeSDXbnZSv5GhL0JWdRezoNtHs8MFYXPwylxuAUbLgc3cicizwwfkyV8BnSDisf0QGmu5YCMO3
-	7arGYSbkMrcuwBBH+EoSDGKepU4ecG0knVNiyjsNWrj8XarWyXbRFjwiEJrgvL7oW5+GSQqyCaj
-	ycJ0C37/W+lEOGb9YnkYzob5hahzjbTwYeQLPk4PttloIqpbVe6CZR4vYP5ib7IkFFp7Whx23yw
-	9wp+Fvw4XrNMmiJMcgfp74KlWcQ5NXxoEoXRfQn/vO4JGOUDIp4pCUN92va7nVXagIpcx6BTwds
-	59rr9mHu19/UKNMdxMqzR8s8fXEk9t3KqUXpV8S1ARnTuTuiOaUK7YUnAhq8H4OVgF2QnfzAaHe
-	BQ/vE4xmHe/nqiJjTynl+mEXYCs0FravcsCiBOoC1C6A==
-X-Google-Smtp-Source: AGHT+IGkXnNHKZ+Tk0f607Rbul/drTlrIGZ+qs3ENZpRQ1gxGfzegducY/ydWO92D3jyfOwq22WHwA==
-X-Received: by 2002:a05:622a:392:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4eb9436029bmr14691301cf.52.1761291109147;
-        Fri, 24 Oct 2025 00:31:49 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c0e688d64sm331605885a.21.2025.10.24.00.31.48
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 00:31:48 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4e89d4f0e8bso16263481cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 00:31:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXSK7FclyGpUFa91iUtCIhhqyK6Kt9/kZ4EQTyYTPKOZGuONmvGAbyuQyWbKqyX3meGhZocH5Moe62f+nXhrvcb9A==@vger.kernel.org
-X-Received: by 2002:a05:6102:3581:b0:5d7:dec5:a464 with SMTP id
- ada2fe7eead31-5db3f8bbd6dmr232329137.10.1761290676888; Fri, 24 Oct 2025
- 00:24:36 -0700 (PDT)
+	s=arc-20240116; t=1761292730; c=relaxed/simple;
+	bh=ujRgliuJ9opWyA1dA8HvH6KZTXat+2uy7+UPCFas1j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Xl762dTzDHsaJJkVb6zDfnYESbZN7UYwE5Zlp2G5UHbztRquPvu+CEETBdqF9PUjH1QL6tX6NMY1C1WW/sQHJo6GZEOwjdz/kJsaOL0W0k/MixmBaFtp+gmUbHe0Uuvez2sdisij6oMcHBuzhKrXk03xc6a/olP5+CvVIJmPS1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKCBUcnz; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKCBUcnz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26EF2C4CEF1;
+	Fri, 24 Oct 2025 07:58:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761292730;
+	bh=ujRgliuJ9opWyA1dA8HvH6KZTXat+2uy7+UPCFas1j0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=UKCBUcnzJQr76xTGhoIzETFC5ITuiydigeyH8N/rw4KB4W6JdbSQnUERuSlthla5Z
+	 f8QW/EYHzNyY2+by/N2dXpA/TyML6BT95DdHTwTjER+6WV+NeEjvdTT/u7IOIrpDWt
+	 RnDcvWNZ7H7A5ov4EG1rjXH6+AUqeGVMQGwCBwsfoze/E53KunnICvGtjC27tY4uKk
+	 qTCjv9Spb7y+DNGhpa/bMZ+f98K9ICt3i1L3dNwtdsvz/5wuYPJvJmqaiN/MZKRRA5
+	 aKlmZirHKa5leHEzSb/oaw5GMrEMUGcx/nUFLyXSbOQIhj9zS/4lYWEzmhTcMNlHeH
+	 4inoakiXP0KyA==
+Message-ID: <17ebfe0f-ec3b-4f93-9146-f191d9c6a7fc@kernel.org>
+Date: Fri, 24 Oct 2025 09:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020080648.13452-1-herve.codina@bootlin.com>
- <20251020080648.13452-8-herve.codina@bootlin.com> <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
- <20251022150339.4c48649e@bootlin.com> <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
- <20251023152048.0e70a362@bootlin.com>
-In-Reply-To: <20251023152048.0e70a362@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Oct 2025 09:24:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX=_6MGgti2NEL6FaChBhefFLBdjeam5Zts3+Yf-Ps3Gg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkc6C0U89yGzgj449WFrjiYqIBguZky57fXbpHAfhiWelGeFgRG-a9YogQ
-Message-ID: <CAMuHMdX=_6MGgti2NEL6FaChBhefFLBdjeam5Zts3+Yf-Ps3Gg@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mailbox: renesas: Support MFIS mailbox driver
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <87frb8n7kl.wl-kuninori.morimoto.gx@renesas.com>
+ <87cy6cn7jg.wl-kuninori.morimoto.gx@renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <87cy6cn7jg.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Herv=C3=A9,
+On 24/10/2025 08:22, Kuninori Morimoto wrote:
+> From: Masashi Ozaki <masashi.ozaki.te@renesas.com>
+> 
+> Add Renesas MFIS mailbox driver for R8A78000 (X5H)
+> 
+> Signed-off-by: Masashi Ozaki <masashi.ozaki.te@renesas.com>
+> Signed-off-by: Vinh Nguyen <vinh.nguyen.xz@renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/mailbox/Kconfig             |  10 +-
+>  drivers/mailbox/Makefile            |   2 +
+>  drivers/mailbox/rcar-mfis-mailbox.c | 137 ++++++++++++++++++++++++++++
+>  3 files changed, 148 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mailbox/rcar-mfis-mailbox.c
+> 
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index e47cb68989267..07e6bf06effe3 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -379,6 +379,15 @@ config BCM74110_MAILBOX
+>  	  processor and coprocessor that handles various power management task
+>  	  and more.
+>  
+> +config RCAR_MFIS_MBOX
+> +	bool "Renesas R-Car Multifunctional Interface Mailbox Support"
+> +	depends on ARM_SCMI_PROTOCOL && ARCH_RENESAS
 
-On Thu, 23 Oct 2025 at 15:21, Herve Codina <herve.codina@bootlin.com> wrote=
-:
-> On Thu, 23 Oct 2025 13:30:53 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > I have in mind a use case that can lead to a non-contiguous mapping.
-> > >
-> > > The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
-> > > some of them for interrupt purpose. In that case, those GPIOs have
-> > > to be routed to the interrupt line expected by the Cortex-M3.
-> > >
-> > > And so, we have some interrupts reserved for CPUs running Linux and
-> > > some others for the Cortex-M3.
-> > >
-> > > Among those reserved interrupts may some are not used.
-> > >
-> > > for instance:
-> > >   Interrupt 103, 102: Reserved and used by Linux
-> > >   Interrupt 103: Reserved for Linux but not used -> Hole in the mappi=
-ng
-> > >   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by=
- Linux)
-> >
-> > 102 does not seem to  be correct?
->
-> My bad, my example was wrong.
->    Interrupt 103, 104: Reserved and used by Linux
->    Interrupt 105: Reserved for Linux but not used -> Hole in the mapping
->    Interrupt 106: Reserved and used my Cortex-M3 (need to be routed by Li=
-nux)
+I don't see any build restrictions, why no compile test?
 
-OK, much better!
+> +	help
+> +	  This driver provides support for SCMI interface transport with
+> +	  MFIS(Multifunctional Interface).
+> +	  It is used to send short message between CPU cores and
+> +	  SCP(System Control Processor).
+> +
+>  config RISCV_SBI_MPXY_MBOX
+>  	tristate "RISC-V SBI Message Proxy (MPXY) Mailbox"
+>  	depends on RISCV_SBI
+> @@ -389,5 +398,4 @@ config RISCV_SBI_MPXY_MBOX
+>  	  remote processor through the SBI implementation (M-mode firmware
+>  	  or HS-mode hypervisor). Say Y here if you want to have this support.
+>  	  If unsure say N.
+> -
 
-> > > I don't know if this use case is relevant but I think we should be to=
-o restrictive
-> > > on the mapping and so accept holes.
-> > >
-> > > With that in mind, I let you confirm that you still prefer to have a =
-mapping
-> > > without any holes. A future patch to support that is always possible.
-> >
-> > While that would indeed be a non-discontiguous mapping, I do not see ho=
-w
-> > it is related to rzn1_irqmux_output_lines[] in the driver.  That array
-> > would still contain the same contiguous values 103..110, right?
->
-> The array rzn1_irqmux_output_lines is still contiguous yes but the mappin=
-g
-> defined in irq-map property no.
->
-> Looking back again at your proposal, indeed I can remove the following lo=
-op:
->         for (i =3D 0; i < output_lines_count; i++) {
->                if (parent_args->args[1] =3D=3D output_lines[i])
->                        return i;
->         }
->
-> With just
->         if (parent_args->args[1] >=3D RZN1_IRQMUX_SPI_BASE &&
->             parent_args->args[1] < RZN1_IRQMUX_SPI_BASE + RZN1_IRQMUX_NUM=
-_IRQS) {
->                 return parent_args->args[1] - RZN1_IRQMUX_SPI_BASE;
->
->         dev_err(dev, "Invalid GIC interrupt %u\n", parent_args->args[1]);
->         return -EINVAL;
 
-Good. I like simpler code ;-)
+Does not look as intended change.
 
-BTW, please invert the logic, i.e. bail out early in case of error.
+...
 
-> > Sorry, I haven't been following the development of this driver that
-> > closely (RZ/N1 is completely different from e.g. R-Car, and I never
-> > had access to an RZ/N1 platform), so perhaps I am missing something.
-> > Why does the user have to specify an interrupt-map in DT? Can't the
-> > driver create the mapping dynamically, based actual usage of the
-> > GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
-> > receive it, and are mapped to an available GIC interrupt?
-> > I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupt=
-s
-> > to 32 GIC (TINT) interrupts.
->
-> I think the main difference with rzg2l-irqc is that the RZ/N1 irq mux is
-> clearly not an interrupt controller.
->
-> It is just a mux with 96 inputs (GPIO lines coming from several GPIO
-> controller) and 8 outputs (connected to the GIC).
->
-> It is represented as an interrupt nexus node and has an interrupt-map pro=
-perty.
-> to describe the routing.
->
-> The interrupt-map property cannot be dynamically created.
->
-> Also, the routing is necessary even if the related GPIO is not used by Li=
-nux.
-> This GPIO can be used as a GPIO input interrupt line by the Cortex M3.
->
-> If the irq mux driver performs the routing only on Linux GPIO usage, it w=
-ill
-> not route GPIOs depending on Cortex M3 internal usage.
+> +
+> +static int mfis_startup(struct mbox_chan *link)
+> +{
+> +	struct mbox_controller *mbox = link->mbox;
+> +	struct device *dev = mbox->dev;
+> +	int irq;
+> +	int ret;
+> +
+> +	irq = of_irq_get(dev->of_node, 0);
+> +
+> +	ret = request_irq(irq, mfis_rx_interrupt,
+> +			  IRQF_SHARED, "mfis-mbox", link);
+> +	if (ret) {
+> +		dev_err(dev,
+> +			"Unable to acquire IRQ %d\n", irq);
 
-Thanks, makes sense!
+Please don't wrap lines when not necessary. This only hurts readability.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> +		return ret;
+> +	}
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+> +
+> +	ret = mbox_controller_register(mbox);
+> +	if (ret)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, mbox);
+> +	dev_info(dev, "MFIS mailbox is probed\n");
+
+
+This does not look like useful printk message. Drivers should be silent
+on success:
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/coding-style.rst#L913
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/debugging/driver_development_debugging_guide.rst#L79
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mfis_mbox_of_match[] = {
+> +	{ .compatible = "renesas,mfis-mbox", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mfis_mbox_of_match);
+> +
+> +static struct platform_driver mfis_mbox_driver = {
+> +	.driver = {
+> +		.name = "renesas-mfis-mbox",
+> +		.of_match_table = mfis_mbox_of_match,
+> +	},
+> +	.probe	= mfis_mbox_probe,
+> +};
+> +module_platform_driver(mfis_mbox_driver);
+> +MODULE_DESCRIPTION("Renesas MFIS mailbox driver");
+> +MODULE_LICENSE("GPL v2");
+
+
+Best regards,
+Krzysztof
