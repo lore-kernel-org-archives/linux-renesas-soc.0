@@ -1,98 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BFA2C17B2;
-	Fri, 24 Oct 2025 07:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991782DECA0
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 07:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290666; cv=none; b=e8ANyOWLnnzoB+oxLcv6ggDu+GKAJADiSFijxDopxgR8Sua1UBmJtGoIzmt+xW5xVAcw1lZ3iY16eZfz0BRZKxXxeo8PE3fXYfqeMlJA6Sz6mdPCwU0AoMSrenbfkxcy3SXAzMU6RyFW92IgiEQRVv13h7M3glNFGRVLG2Gckv8=
+	t=1761291079; cv=none; b=RpuhHtlsvV3BXUMovrOnf1oBJJVqJ0hTzWYuLmB6kJLGF1e1aQr6ir9qxxgwf4Nl0py9p+YMPBGDYfRDgltOtgXYt1GP8YIegwzX6WwG5ecxE5eqyV0qSeoRkD2K4sOAx8DA0IKa0saKvKWjAmXkaF12ljRNa8qttWp4rUb2xsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290666; c=relaxed/simple;
-	bh=/+iVZvQGKLCjJzivsf6ZdBYrYGaAvtC11M0ZNDgvHXQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=B992H3DxI7wtraG/3HwHOX4BWLQENpHrjKIHX86HLmTLNKur/vk3XkuP9p3TEWLlvd3TpYDrxPlTuqX1BKhPc46UxIXiAC//SMG6Za28i0NPdJeXB0Sg6IB5k8tyj9Gc4gM/L1WdeX3iZJyuHPsll3lmK8bPVknKPBaRzy5A5b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ht+RB1WQ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ht+RB1WQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04638C4CEF1;
-	Fri, 24 Oct 2025 07:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761290666;
-	bh=/+iVZvQGKLCjJzivsf6ZdBYrYGaAvtC11M0ZNDgvHXQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ht+RB1WQjzl3r2LGJtTfZbUi5x6phiIAVfhL8vc2JaHuPCt2BaoW1RAZjXR7PFUdB
-	 KCPhiYJTfO3UJTAYoDP05ubFeJMEIhQvHrd34Qcsgd0T2MpHT/WDk+RwGPPTepv4Nv
-	 V7JIExd6xyvizCKN8hVBzEvLkTVjdJ3yttkutceJLm8EX6GSHd3jAr7Cv/vhYx+odI
-	 hZCMHqAkbMbeIVtBTctA15YBSkhfutZi6wT23A1pW9qAF/oKt8JXT+clohmMJPE5Q8
-	 HQy85DlX7cM+IdRhx0rGmdz0gbnfOEzRNm4gMnskkpNJkEYTQd/uenzX8OSUQCnTVs
-	 4eZEHJWhft3Wg==
-Date: Fri, 24 Oct 2025 02:24:24 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1761291079; c=relaxed/simple;
+	bh=gUGiB1llxABWmePU3+TscZZyVisC3oSIs+3uF6fFgTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ocfii9poFxCmNbYpzwTmPm3Cl0y8stDSEhjKMrupwl64TCwni4M5xKrRqcN/4a07rMpkhzWTSu+sUZgxCzYLWqqU672HVqgIse0BRLbZ3Fubdbs1BzQ5fq+U0cpJDlULrUwH20ZcnL97Ainlnzck/QPBLvekyHk8Wt29vTfp7pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-932bc48197bso780605241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 00:31:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761291076; x=1761895876;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gbjF3fYBru7mg7PwcFMgCH2adsCiWE8jEZcxNXnQxiE=;
+        b=QNmrLEFRrI0QCFsM43GYAgKRpJKFCrjEc/ncJV0o80fumJ5Nd5zq+NjbAIEeMGKjXY
+         G+4lcPjtKxW+KABVzYizaRJWl3zEz1wyP/lIE8JGMNjfNDrf9u+4G42mQoYr6BC4S4Uu
+         LO+Ok/PMWNnS3M38jndym2U2hun0lqkLLdxdJnpv64LRwd/blVaNjHaOWmuwGmQ1CnGh
+         AJ9RwMMHjSArgnBt4hULGpWiLCyMHZO+NFkYEInj9wfNdSmZcsA4iO4VzcFMc8n5ruP4
+         79buAsCMO7P8Nwc3caAa6IsY07FWfKACG9VXoPBnyIj6xpKQpR8ybfJP9cjLUjs430Lh
+         5k9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsuELpFn3hhJYQAgaOBWTHGCnPKtiH/8AcCDA+9UXZUkoGPqzw2c6O0eTTHzzDKi9xh0y7yHq8LJxUTQHkotMCXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzys/VM55h87qDI1TDagwqSRzb0o0J5zPRnezItlRcnvTW/x2Ia
+	O00kR9p1pH6fbyu1EExPUo0a++JDsjBG6o9dJqPTgxKR+DcVIJohgsAv4NvSYxco
+X-Gm-Gg: ASbGncueA+URZnKPRn57SOrWoQWzQNnWyBndlL/HokFzqPTnWPsV+HONx81OyvlAXt4
+	CieThwnJcXZD7t5i58CxmWWn7P44dqa/UvBYIOsuJXD6fFLHHFNsSK+UmZFEZSGhm82Eqr99rEJ
+	RKd19zLD1jxIab/vKk9cAl6yD2QMQhGAVUzEVmpAfcleUCK/+z4viIVc+rK4sh9M5xcxRiE1aEW
+	zkK3I31QT5RRVXtL58xhbdCUWMQhzuzycYVWlYIcfVYPlLvog4s1y0ZqNi00QuTS79JwHw/j7yA
+	KoV0PkwlJ7a3Ioj8zJErK+VmZYenGAnVflQhzU9ficVRG7NnuG6TW2ezHOEduxkyWaEMzbWTwVN
+	tJ2RcbAvuhlWX+fuUrT1Vwf5GRsoqXwS3p+QScuPHsXhrBmFiJo14Ydl/eYsJ+RknpFc6g2mQPb
+	zibuBVIr/xg15eh1fP/OE150XNabrtib58g77LNw==
+X-Google-Smtp-Source: AGHT+IHtVA+0DuWwFZ68RqXrYSB6bl40FRTeC6LV6zDsgL/lI2UtgGXRZXdUWVUNahm0AK8uuGBoKg==
+X-Received: by 2002:a05:6102:374b:b0:5db:3552:6de9 with SMTP id ada2fe7eead31-5db35527593mr1381314137.43.1761291076162;
+        Fri, 24 Oct 2025 00:31:16 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934abaae96asm1768914241.8.2025.10.24.00.31.15
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 00:31:15 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5db2d2030bbso753229137.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Oct 2025 00:31:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+ub5XK9RZkSky82f1r66Zyrf0lBg05kHUpkR59MRlpZftUK8AMEuGAFfjvjjsIIDF6pZ3XraHwk6sISeMTRv4ug==@vger.kernel.org
+X-Received: by 2002:a05:6102:c08:b0:5db:2b3c:eb9e with SMTP id
+ ada2fe7eead31-5db2b3cf1b1mr2162722137.37.1761291075525; Fri, 24 Oct 2025
+ 00:31:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, devicetree@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87bjlwn7j9.wl-kuninori.morimoto.gx@renesas.com>
-References: <87frb8n7kl.wl-kuninori.morimoto.gx@renesas.com>
- <87bjlwn7j9.wl-kuninori.morimoto.gx@renesas.com>
-Message-Id: <176129066419.661728.14767654389778601283.robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: mailbox: Add Renesas MFIS Mailbox
+References: <20251022235903.1091453-1-chris.brandt@renesas.com> <20251022235903.1091453-2-chris.brandt@renesas.com>
+In-Reply-To: <20251022235903.1091453-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Oct 2025 09:31:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWONtGp=jdaDYzU1D4WO7KO-zU8zLX--5fQOAiKDpNw=g@mail.gmail.com>
+X-Gm-Features: AWmQ_bl2d7bwxn3o_AI0y5I2A2WSBvgxEYlOh2d7MohygC2Sb449e6tQyb1BgRI
+Message-ID: <CAMuHMdWONtGp=jdaDYzU1D4WO7KO-zU8zLX--5fQOAiKDpNw=g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: renesas: rzg2l: Remove DSI clock rate restrictions
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hien Huynh <hien.huynh.px@renesas.com>, Nghia Vo <nghia.vo.zn@renesas.com>, 
+	Hugo Villeneuve <hugo@hugovil.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Chris,
 
-On Fri, 24 Oct 2025 06:22:18 +0000, Kuninori Morimoto wrote:
-> Add device tree bindings for the Renesas Multifunctional Interface
-> (MFIS) a mailbox controller.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  .../mailbox/renesas,mfis-mailbox.yaml         | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.yaml
-> 
+On Thu, 23 Oct 2025 at 01:59, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Convert the limited MIPI clock calculations to a full range of settings
+> based on math including H/W limitation validation.
+> Since the required DSI division setting must be specified from external
+> sources before calculations, expose a new API to set it.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Signed-off-by: hienhuynh <hien.huynh.px@renesas.com>
+> Signed-off-by: Nghia Vo <nghia.vo.zn@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> v2->v3:
+> - Removed Empty lines (Hugo)
+> - Add dummy for compile-testing CONFIG_CLK_RZG2L=n case (Geert)
+> - Renamed label found_dsi_div to calc_pll_clk (Hugo)
+> - Renamed label found_clk to clk_valid (Hugo)
+> - Removed 'found' var because not needed
+> - Move 'foutpostdiv_rate =' after if(foutvco_rate > 1500000000) (Hugo)
+> - Move PLL5_TARGET_* for new API to renesas.h (Hugo,Geert)
+> - Convert #define macros PLL5_TARGET_* to enum (Geert)
+> - static {unsigned} int dsi_div_ab; (Geert)
+> - {unsigned} int a, b;  (Geert)
+> - Change "((1 << a) * (b + 1))" to "(b + 1) << a"  (Geert)
+> - Change "foutvco_rate = rate * (1 << xxx ) * ..." to " = rate * ... * << xxx (Geert)
+> - Move (u64) outside of modulo operation to avoid helper on 32-bit compiles (Geert)
+> - Change DIV_ROUND_CLOSEST_ULL() to DIV_ROUND_CLOSEST() (Geert)
+> - void rzg2l_cpg_dsi_div_set_divider({unsinged} int divider, int target)
+> - Change "dsi_div_ab = (1 << AAA) * (BBB + 1)" to " = (BBB + 1) << AAA (Geert)
+> - Added Reviewed-by and Tested-by (Biju)'
 
-yamllint warnings/errors:
+Thanks for the update!
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/renesas,mfis-mailbox.example.dtb: mfis_mbox@18842000 (renesas,mfis-mbox): compatible:0: 'anyOf' conditional failed, one must be fixed:
-	'renesas,mfis-mbox' does not match '^renesas,(emev2|r(7s|8a|9a)[a-z0-9]+|rcar|rmobile|rz[a-z0-9]*|sh(7[a-z0-9]+)?|mobile)-[a-z0-9-]+$'
-	'renesas,mfis-mbox' does not match '^renesas,(condor|falcon|gr-peach|gray-hawk|salvator|sk-rz|smar(c(2)?)?|spider|white-hawk)(.*)?$'
-	'renesas,mfis-mbox' does not match '^renesas,(can|cpg|dmac|du|(g)?ether(avb)?|gpio|hscif|(r)?i[i2]c|imr|intc|ipmmu|irqc|jpu|mmcif|msiof|mtu2|pci(e)?|pfc|pwm|[rq]spi|rcar_sound|sata|scif[ab]*|sdhi|thermal|tmu|tpu|usb(2|hs)?|vin|xhci)-[a-z0-9-]+$'
-	'renesas,mfis-mbox' does not match '^renesas,(d|s)?bsc(3)?-(r8a73a4|r8a7740|sh73a0)$'
-	'renesas,mfis-mbox' does not match '^renesas,em-(gio|sti|uart)$'
-	'renesas,mfis-mbox' does not match '^renesas,fsi2-(r8a7740|sh73a0)$'
-	'renesas,mfis-mbox' does not match '^renesas,hspi-r8a777[89]$'
-	'renesas,mfis-mbox' does not match '^renesas,sysc-(r8a73a4|r8a7740|rmobile|sh73a0)$'
-	'renesas,mfis-mbox' is not one of ['renesas,imr-lx4', 'renesas,mtu2-r7s72100']
-	'renesas,mfis-mbox' is not one of ['renesas,smp-sram']
-	'renesas,mfis-mbox' does not match '^(?!renesas,.+-.+).+$'
-	from schema $id: http://devicetree.org/schemas/soc/renesas/renesas-soc.yaml
+> --- a/include/linux/clk/renesas.h
+> +++ b/include/linux/clk/renesas.h
+> @@ -16,6 +16,11 @@ struct device;
+>  struct device_node;
+>  struct generic_pm_domain;
+>
+> +enum {
+> +       PLL5_TARGET_DPI,
+> +       PLL5_TARGET_DSI
+> +};
+> +
+>  void cpg_mstp_add_clk_domain(struct device_node *np);
+>  #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
+>  int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
+> @@ -32,4 +37,10 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
+>  #define cpg_mssr_attach_dev    NULL
+>  #define cpg_mssr_detach_dev    NULL
+>  #endif
+> +
+> +#ifdef CONFIG_CLK_RZG2L
+> +void rzg2l_cpg_dsi_div_set_divider(unsigned int divider, int target);
+> +#else
+> +#define rzg2l_cpg_dsi_div_set_divider  NULL
 
-doc reference errors (make refcheckdocs):
+static inline void rzg2l_cpg_dsi_div_set_divider(int divider, int target) { }
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/87bjlwn7j9.wl-kuninori.morimoto.gx@renesas.com
+For cpg_mssr_attach_dev and friends, NULL is suitable because these
+are only used to populate function pointers.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+> +#endif
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Blank line please.
 
-pip3 install dtschema --upgrade
+>  #endif
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
