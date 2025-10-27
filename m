@@ -1,191 +1,216 @@
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56323ABA9
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Oct 2025 11:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6D2FC026;
+	Mon, 27 Oct 2025 11:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761564197; cv=none; b=Dh6lIwSvvPMyh5/DonvBHF54O5pwtHhYCxv5DpMWxXBJaXp628lDmcoVd3/8R70/KacEK0t1/mzD3CNKf+CLLTRm75ebD9yRkB6welhcwGSwS4Y/1fiBvQ9gPMUSRefKezAER9a1ySfSbefXSDN7ZYoXU3f3RB1ojglAZnZS5Jk=
+	t=1761565136; cv=none; b=h58Dl+li1NrWt6u9ZHbu39ry4WqJLbU+b5BCy+daW3lj4X8Gsga7E3Nbw8nUTY1lgBho5674GH5wvZuaPRhCAHtR+bJyLiAdF3F/l/4pV5YyqAtNMo0wBAxxwphp1wUxhel4FxKiWe5Pu3e+qgFrHTaq2Kqi7lxebxUEVZv1rCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761564197; c=relaxed/simple;
-	bh=LCFinbYaaa5T1vbOy/YjHc9/jV/eLUmsdTmf3uq5Qlk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jO4ukzNkFujAMjywNpFGqb4uxx0dJdSuGXYRg6QOkkIM4NnH7ZxSxEiczLPB16jJTQ+H7Uiu0ELTYuzgr8UgutSfJsyM/zxGsW3uL3hUqeqoI0Qc2mnkBuxvcApCFNatM1Cj9gE2Wf+XD+xJmul13VB62BbrfCdodU1PGOIHO3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-932cf836259so1853921241.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Oct 2025 04:23:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761564194; x=1762168994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgNtIcnn6eENaUFz3K0ARDS/soEXQSArUyONWZnfjlQ=;
-        b=tkF5g0pgQfqvORGiDeGGtZdspsOb5YwKSsHAEreos5otpuDE70n2IJQUB2c8IqPZUB
-         0D/FWjh1MDZnTjD4N4eBuaVG9DsMVUp1J73/fnzWJs+OOkRHWYkmYKiJDONuhi1f6lzL
-         +/Jpoj+Jje39YQduM0/crcfmDMGOZBtuivn4CCzWNldcE253CkuE7BXL0E0zwmWMKaqH
-         8Hxq0LHz2cCDLC5tJUCg+Oh7XycpYRzGFww5M8mnMuocQF3isrmcoxAbzrJXpKeRfjek
-         sDbLCSRxp/3+ypZZpPEfrIEfGXX9g/2YUEPRNJnHdOGdhP3d9e5b5aFFDDVwxRmcWEAO
-         SC7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMZXYALBgreqgwsSw/cRuSsXyP+KfGL5Ac16rmOsZTz4jIxSK8GjKFNFqpJQmxHCB7kIwwlKwvjs6fI6nBIga+VA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD0dG9znq9JXObQ9XURAE0leTgTJOT8yGTvchaZ5BXuNSJd7sB
-	UALIgHITIQ4ibZgKSIfkFu2RUhJhiBi+amJIIHNVEnmZeGuocKj5C7rH0WR1c5bH
-X-Gm-Gg: ASbGncs6FFOXto3LJQqigd+bx5LzS4eG5udKlcEyQr5mBhV3cKVt30sjarekHHWgDzA
-	ozeJu4A7n4eI0TFqn4drA9qYDQwqeRjXVechkG9lKpXcVjXFQzr4BZZP5BoDy5yY/pahGtqi9jz
-	57JZpmM6Dyi9rskhlDv1mkVK18gs2JzFw+o6PG8q8FvsLPNZfrTsUwAFI+Xwf+5RzH/8RMsYev0
-	wFXKRdpS/TryI3G2tYzN7X8MPSZU5BWA7+llUWw7FPiww8yls/tdxSGdfh5iySc5d8xi+DF8+Ub
-	G5GzUzZGgJviFKlJIrcFnftlD+SwQRQT3jBCBsokiSaa7ApYyb1GZxG++maRunmm+jQaJdtFXj6
-	qhT9XOZ9B0yVuaa6Uq08OqZOGVDgX62Nhow3XgNpsGspQzMr51ku1lGAnJOggXUBNkw0F0sq/6M
-	6VRWjqQh7VPlVDEoPsrgqGkYPBejV9T6MWS02r0L32ZfBaDS66oEqbX08feBU=
-X-Google-Smtp-Source: AGHT+IEQATpKeH7x+T99R7PyZxn3lgDhU6FzJY7Q/6n+/x7uCqcwVys+17IA4WOa+a/POtCr5SvjLQ==
-X-Received: by 2002:a05:6122:1793:b0:54a:a178:3c9f with SMTP id 71dfb90a1353d-557bf23fd06mr4249817e0c.15.1761564193968;
-        Mon, 27 Oct 2025 04:23:13 -0700 (PDT)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddb2f98asm2732366e0c.10.2025.10.27.04.23.13
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 04:23:13 -0700 (PDT)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-9231a251c01so2392176241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Oct 2025 04:23:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKRJ+gGS35zrjk1osJBoQWRaiZXJ9a21Lj3c7oADIhzLdej6bVjYt5/ovH/CdctGdZg5Ty/1O7HQvdtyGRt8QVhg==@vger.kernel.org
-X-Received: by 2002:a05:6102:2921:b0:59d:458d:b629 with SMTP id
- ada2fe7eead31-5db2e58fe50mr3946640137.30.1761564193435; Mon, 27 Oct 2025
- 04:23:13 -0700 (PDT)
+	s=arc-20240116; t=1761565136; c=relaxed/simple;
+	bh=j468xXoR9cr3OXREFcfRw79OYR6IigAtpibsNTQMHX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j5dB+5MB/rK9ghNlTUCT4mjxbPrLRq60dpoNfec6HQbHlHapY2NJFrzc5acOfYf2bHtcLkKMoPDQF+7Nw2tMYzQjRjZ9z5UsYabEFVJn++AAiQuAUmM/5ocC8xlN5LTyZ0zX6yQ5GZPqyh+Yieta+YQLK6Mplq+ZHeYbGwasTy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jpz2Ovb+; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jpz2Ovb+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761565134; x=1793101134;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=j468xXoR9cr3OXREFcfRw79OYR6IigAtpibsNTQMHX8=;
+  b=jpz2Ovb+r9FT4gIByDQdqxvNBAiEUi60KcfiBE4BdGFEOz7AdAILusxn
+   XwEbSXy4+uWe3kOpFkSxdKgFBGSitsZSbzGdl94QZmHcW6G3VGT7kspN7
+   +Ord9RZfvMr3i6B+HRHH4+4wBMmpl/V48ueVYnYikMwcLejuMNxpOZN2Z
+   BukBRTODRd5uAdKenY4QUOUbZoXSvDOOploZ4mesI6H9i0xFRN9RuPB7E
+   uz66e1bZ04zyRfUmvsRtKi2Q2kYShSBY/0tHiYNoNo4le6lQcVovWwVt+
+   og/mMnCtr+lsS4PhAoFfHTOJJR5RE5YL/x+Piob1IOF7x92oa0qYMqNXo
+   w==;
+X-CSE-ConnectionGUID: OpTBoCYPRcuaB9+kAF9PEw==
+X-CSE-MsgGUID: ZSDYFZMLSQm+HXcdXPHFjw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81065537"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="81065537"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 04:38:53 -0700
+X-CSE-ConnectionGUID: et9/0J7fTyaBSFj4o0jrAw==
+X-CSE-MsgGUID: 5HD9QNMGQS6xqkxUaE5dVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="190235487"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.31])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 04:38:48 -0700
+Received: from punajuuri.localdomain (unknown [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 98413121EFA;
+	Mon, 27 Oct 2025 13:38:45 +0200 (EET)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1vDLYY-00000001ddm-2H6P;
+	Mon, 27 Oct 2025 13:38:34 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: netdev@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Wei Fang <wei.fang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
+	Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
+	Liu Haijun <haijun.liu@mediatek.com>,
+	Ricardo Martinez <ricardo.martinez@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Nemanov <michael.nemanov@ti.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Roopni Devanathan <quic_rdevanat@quicinc.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	imx@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH 4/4] net: wwan: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Mon, 27 Oct 2025 13:38:34 +0200
+Message-ID: <20251027113834.390681-4-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251027113834.390681-1-sakari.ailus@linux.intel.com>
+References: <20251027113834.390681-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
- <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com> <20251021184502.GD19043@pendragon.ideasonboard.com>
-In-Reply-To: <20251021184502.GD19043@pendragon.ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 Oct 2025 12:23:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVrfVP1XZbQVNwEEP8L69mVzNN2yLSjNyHO7o2zqBuY0w@mail.gmail.com>
-X-Gm-Features: AWmQ_blPQXHDdcv3HEZmR70Xe3WDxqjStucPirJolGtaGc9WMslN79O8Z1NYVMM
-Message-ID: <CAMuHMdVrfVP1XZbQVNwEEP8L69mVzNN2yLSjNyHO7o2zqBuY0w@mail.gmail.com>
-Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 21 Oct 2025 at 20:45, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tue, Oct 21, 2025 at 07:26:49PM +0100, Lad, Prabhakar wrote:
-> > On Tue, Oct 21, 2025 at 11:26=E2=80=AFAM Geert Uytterhoeven wrote:
-> > > On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > > > This patch series adds DU/DSI clocks and provides support for the
-> > > > MIPI DSI interface on the RZ/V2H(P) SoC.
-> > > >
-> > > > v10->v11:
-> > > > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
-> > > > - Updated rzv2h_cpg_plldsi_div_determine_rate()
-> > > >   while iterating over the divider table
-> > > > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
-> > > > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
-> > >
-> > > I think this series is ready for merging.
-> >
-> > \o/
-> >
-> > > > Lad Prabhakar (7):
-> > > >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
-> > > >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
-> > > >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
-> > > >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and =
-LCDC
-> > > >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
-> > > >     RZ/V2N
-> > > >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
-> > > >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
-> > >
-> > > As this touches both clk and drm, let's discuss the merge strategy.
-> > > My proposal:
-> > >   1. I queue patches 1-3 in an immutable branch with a signed tag,
-> > >      to be used as a base for the remaining patches,
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
 
-Done:
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/net/wwan/qcom_bam_dmux.c           | 2 --
+ drivers/net/wwan/t7xx/t7xx_hif_cldma.c     | 3 ---
+ drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c | 2 --
+ drivers/net/wwan/t7xx/t7xx_hif_dpmaif_tx.c | 2 --
+ 4 files changed, 9 deletions(-)
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787=
-:
+diff --git a/drivers/net/wwan/qcom_bam_dmux.c b/drivers/net/wwan/qcom_bam_dmux.c
+index 64dab8b57611..6a5b22589af4 100644
+--- a/drivers/net/wwan/qcom_bam_dmux.c
++++ b/drivers/net/wwan/qcom_bam_dmux.c
+@@ -162,7 +162,6 @@ static void bam_dmux_tx_done(struct bam_dmux_skb_dma *skb_dma)
+ 	struct bam_dmux *dmux = skb_dma->dmux;
+ 	unsigned long flags;
+ 
+-	pm_runtime_mark_last_busy(dmux->dev);
+ 	pm_runtime_put_autosuspend(dmux->dev);
+ 
+ 	if (skb_dma->addr)
+@@ -397,7 +396,6 @@ static void bam_dmux_tx_wakeup_work(struct work_struct *work)
+ 	dma_async_issue_pending(dmux->tx);
+ 
+ out:
+-	pm_runtime_mark_last_busy(dmux->dev);
+ 	pm_runtime_put_autosuspend(dmux->dev);
+ }
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_hif_cldma.c b/drivers/net/wwan/t7xx/t7xx_hif_cldma.c
+index 97163e1e5783..689c920ca898 100644
+--- a/drivers/net/wwan/t7xx/t7xx_hif_cldma.c
++++ b/drivers/net/wwan/t7xx/t7xx_hif_cldma.c
+@@ -250,7 +250,6 @@ static void t7xx_cldma_rx_done(struct work_struct *work)
+ 	t7xx_cldma_clear_ip_busy(&md_ctrl->hw_info);
+ 	t7xx_cldma_hw_irq_en_txrx(&md_ctrl->hw_info, queue->index, MTK_RX);
+ 	t7xx_cldma_hw_irq_en_eq(&md_ctrl->hw_info, queue->index, MTK_RX);
+-	pm_runtime_mark_last_busy(md_ctrl->dev);
+ 	pm_runtime_put_autosuspend(md_ctrl->dev);
+ }
+ 
+@@ -362,7 +361,6 @@ static void t7xx_cldma_tx_done(struct work_struct *work)
+ 	}
+ 	spin_unlock_irqrestore(&md_ctrl->cldma_lock, flags);
+ 
+-	pm_runtime_mark_last_busy(md_ctrl->dev);
+ 	pm_runtime_put_autosuspend(md_ctrl->dev);
+ }
+ 
+@@ -987,7 +985,6 @@ int t7xx_cldma_send_skb(struct cldma_ctrl *md_ctrl, int qno, struct sk_buff *skb
+ 
+ allow_sleep:
+ 	t7xx_pci_enable_sleep(md_ctrl->t7xx_dev);
+-	pm_runtime_mark_last_busy(md_ctrl->dev);
+ 	pm_runtime_put_autosuspend(md_ctrl->dev);
+ 	return ret;
+ }
+diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
+index 2310493203d3..b76bea6ab2d7 100644
+--- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
++++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
+@@ -877,7 +877,6 @@ int t7xx_dpmaif_napi_rx_poll(struct napi_struct *napi, const int budget)
+ 		t7xx_dpmaif_clr_ip_busy_sts(&rxq->dpmaif_ctrl->hw_info);
+ 		t7xx_dpmaif_dlq_unmask_rx_done(&rxq->dpmaif_ctrl->hw_info, rxq->index);
+ 		t7xx_pci_enable_sleep(rxq->dpmaif_ctrl->t7xx_dev);
+-		pm_runtime_mark_last_busy(rxq->dpmaif_ctrl->dev);
+ 		pm_runtime_put_autosuspend(rxq->dpmaif_ctrl->dev);
+ 		atomic_set(&rxq->rx_processing, 0);
+ 	} else {
+@@ -1078,7 +1077,6 @@ static void t7xx_dpmaif_bat_release_work(struct work_struct *work)
+ 	}
+ 
+ 	t7xx_pci_enable_sleep(dpmaif_ctrl->t7xx_dev);
+-	pm_runtime_mark_last_busy(dpmaif_ctrl->dev);
+ 	pm_runtime_put_autosuspend(dpmaif_ctrl->dev);
+ }
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_tx.c b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_tx.c
+index 8dab025a088a..236d632cf591 100644
+--- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_tx.c
++++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_tx.c
+@@ -185,7 +185,6 @@ static void t7xx_dpmaif_tx_done(struct work_struct *work)
+ 	}
+ 
+ 	t7xx_pci_enable_sleep(dpmaif_ctrl->t7xx_dev);
+-	pm_runtime_mark_last_busy(dpmaif_ctrl->dev);
+ 	pm_runtime_put_autosuspend(dpmaif_ctrl->dev);
+ }
+ 
+@@ -468,7 +467,6 @@ static int t7xx_dpmaif_tx_hw_push_thread(void *arg)
+ 		t7xx_pci_disable_sleep(dpmaif_ctrl->t7xx_dev);
+ 		t7xx_do_tx_hw_push(dpmaif_ctrl);
+ 		t7xx_pci_enable_sleep(dpmaif_ctrl->t7xx_dev);
+-		pm_runtime_mark_last_busy(dpmaif_ctrl->dev);
+ 		pm_runtime_put_autosuspend(dpmaif_ctrl->dev);
+ 	}
+ 
+-- 
+2.47.3
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-tags/clk-renesas-rzv2h-plldsi-tag
-
-for you to fetch changes up to f864e4b721e386be132cc973eadefe5d52cdfd94:
-
-  clk: renesas: rzv2h: Add support for DSI clocks (2025-10-27 11:58:03 +010=
-0)
-
-----------------------------------------------------------------
-clk: renesas: rzv2h: Add support for DSI clocks
-
-RZ/V2H Clock Pulse Generator PLLDSI API, shared by clock and MIPI DSI
-driver source files.
-
-----------------------------------------------------------------
-Lad Prabhakar (3):
-      clk: renesas: rzv2h: Add instance field to struct pll
-      clk: renesas: rzv2h: Use GENMASK for PLL fields
-      clk: renesas: rzv2h: Add support for DSI clocks
-
- drivers/clk/renesas/rzv2h-cpg.c | 512 ++++++++++++++++++++++++++++++++++++=
-+++-
- drivers/clk/renesas/rzv2h-cpg.h |  26 +-
- include/linux/clk/renesas.h     | 145 ++++++++++++
- 3 files changed, 672 insertions(+), 11 deletions(-)
-
-> > >   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
-
-Done.
-
-> > >   3. The DRM people queue patches 5-7 on top of 1.
-> > >
-> > > Does that sound fine for you?
-> > Sounds good to me.
-> >
-> > Biju/Tomi, are you OK with the above?
->
-> The plan seems good to me. Note that you won't be able to push this
-> yourself to drm-misc as committers are limited to pushing linear
-> branches. We need an ack from the drm-misc maintainers, and one of them
-> will need to merge the branch (either branch 1. as prepared by Geert, on
-> top of which you can them push patches 5-7 yourself, or a branch you'll
-> prepare on top of 1. with patches 5-7).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
