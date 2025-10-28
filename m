@@ -1,53 +1,53 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCDE2DE70C
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Oct 2025 23:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E367C2D5C74
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Oct 2025 23:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761694228; cv=none; b=bPlRBOs0WNIZNZMQvnbCmEWWju1OVyhX7ar33aIThFLTIzMinfs6DgSel0iQYw1y7J79b+liMJF2OPkHFizCo+SFo+0ocrcEVi+7nifFpkA+Y8Nx0Ua1U7NpinNxp7Bx8K7ckbGxfLqANOWM0U1wOtJffsKboAnml7JC5ztDp+A=
+	t=1761694230; cv=none; b=dz5IsLR6xhG3mBXKONuFp7ZVP5YTiX3lRQlQrHEC1SAQUWexBdN2em4uLHPOVnjZCLcm4LIRrzapgmpLSa52baVnuFf8ddshxYaxQeSOZVX2GafQbc5oVzuBzrdYMuWnu2X5W/fzU3fmxmchP7kTL/k/BEaOi6E4GkbyR/6yHl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761694228; c=relaxed/simple;
-	bh=lRokCVaVMneewvt8FWWXXMuoeGTgjzZ1usdO9Vv/hcw=;
+	s=arc-20240116; t=1761694230; c=relaxed/simple;
+	bh=JFRmpvqhec9H6th2Dac3jl787iyWLmAn1V/NyENeww8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r0qSQOawrUEO8rccE8jt4FJEovYuFVFV496wpYJsIBavSS5RWhDQtmSOkIUgIYh2JsAAHrCN7kmHvrACzKWKe5Bmqo9jSp7NIqXF1AQg1PCfg9VcsaieIDk5l5Ma+KJYP85rG7HTTUIqwIW9reHV4K2S5wejYk3E2nEqKLeVsnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IzLGcl2M; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hKnahk9O; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=Xr7imm8APISJTOdVypA66SWFaPemZWQf6HVFQT3tVfeE1RU/59vidTCSxhbtA3BzT3C2dxiBUfX2SFbsaBauBkbcIyeUAylbyOBiAaQhgiNksFV4tP8PyeRs/8F9OSj92y475aQt2EeYiWWI5kCwqV2G6rSt92PGChxIMb4l/ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Xl1qIVJ1; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qytnizTl; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IzLGcl2M";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hKnahk9O"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Xl1qIVJ1";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qytnizTl"
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cx67524Ydz9tfy;
-	Wed, 29 Oct 2025 00:30:25 +0100 (CET)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cx6701X3jz9sc0;
+	Wed, 29 Oct 2025 00:30:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761694225;
+	t=1761694220;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uvmhS12yV0tYbka+oyxO7DVm7E88kXnreRFXISkd+F4=;
-	b=IzLGcl2Mk58ws6D3Btsx55udpoKFjPwlKDrld927cn5i1aT8YmyDZ0/Y3+nqxXS2xtT11D
-	AFwcOC2jLXrUNgl0wHaWyhmlIwxaCGKpfWsc6ZBsdzjWfTpQykc39F+UWDUzBny6kN6BHP
-	Ia6Vy+c/LMK19xbQt0JkSZJWpsgzkJKh8c88x6Feh+ka7OzzA0QtmfC1cFfi0NfPwx2glc
-	MmVf9Ul1edxq1W9PL/atzHODskyrhbJdbfFhcpf5Q4hEOdmK+ZlOL+cF0Qkt8OtzVZK0T4
-	CQgr7T4aFXaHAxAbTro44aZozsCmNDTSJNlTFk+i7sNMoDG/oKBdWXpZPvZLvg==
+	bh=HfVmQ90gNhRemdaHSje6xJRsgjJJP/0BOjtGq0HPL+8=;
+	b=Xl1qIVJ16WKu57K4bVR3bJFBmqCzjdXpVwp2YatXX8aYxPL2Tr3vUS398z9YD+ucZEJvb8
+	/zSfl1x+e8joVGwFn+54Qo+eLPvzpjTsUNbKyS+lkzMTLJIalazfYKmzoW5cVitdjidx0W
+	bHR35NsWg2Qgnuod+T93a9TPd6zNTNy8sla9l3WuXDERMeakM/Wf7ucKG6uZUNnny5J3+V
+	E54qpIk3LFzVoJRxS0UHtavYuBtjiMW+B4c51mWGuNVxIdYWvu/1R5W7HrpkP2FsVxbUUg
+	12LRowM3HyauaTLCWp7IXucYG6cfQtxMKOEKNXTas0iv9p7UM06ml3WpU7P4Ug==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761694223;
+	t=1761694218;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uvmhS12yV0tYbka+oyxO7DVm7E88kXnreRFXISkd+F4=;
-	b=hKnahk9OCWZ3oNAIoyaoRQNGhBsFf/8fzAFMkKxYkAXioFlskXUwzgeMrfYj6+ztEKt9oK
-	hlVLv7c2UU1mIdk06fZLCTEak12FNWg3mQvTcEGbbD1TLDMF0h5CMft4zW/PRAf6Z5vzyH
-	jaRxZ9QHB3nfsc4W2nKdIK9voRdkTRF+xTtyCtqk/ZT76nP/7+xwHXaR949GVVu39Va/53
-	Dkb1z2yMdy4AHy/CyMcGUvJATNAfyKChl2HgTfehYPQOtMoPf1ATDBWl3Cin71xh6GByke
-	irJ7EWr6lNF+8rHh1zBmj6CXvjwbtPDocSJ5PekXwxLdsvCrQdLt1IAzffedWQ==
+	bh=HfVmQ90gNhRemdaHSje6xJRsgjJJP/0BOjtGq0HPL+8=;
+	b=qytnizTlJKo01oJj1w86GwS6WTuJQqZ+snXKXjCAZ+RY0TQuxHEZkzUs2HmHzGxH/OJjEV
+	6rPmOtAW7eEkHdS405l5tbG5bcdWsfMnYMIHRuB/CGTxC8Y6N6RUSVvjuoFxeKuIc919zJ
+	rGSRQWrBTwm6PFejkLzTEuUVpre3SzXW8RSPEpW8T6kEAOuBA+9Ft2w5wktSQ5C/eOy7+u
+	+z9Ka+PYGY16TRi6aYk66Z+HIPgZ+obgVl2bikjcyJ5t1Wh7lIM/iJgd+aas4gCrxHOxf3
+	q9NX0AVNwLM6u1hbVTNmErj+h2A6CuuwKSqFJqJxq7ffNQ+PK5TPsuthG5z9Xw==
 To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
@@ -61,9 +61,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Simona Vetter <simona@ffwll.ch>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 05/11] drm/rcar-du: dsi: Clean up VCLKSET register macros
-Date: Wed, 29 Oct 2025 00:28:15 +0100
-Message-ID: <20251028232959.109936-6-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v4 03/11] drm/rcar-du: dsi: Document PHTR TESTDOUT as bitfield
+Date: Wed, 29 Oct 2025 00:28:13 +0100
+Message-ID: <20251028232959.109936-4-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20251028232959.109936-1-marek.vasut+renesas@mailbox.org>
 References: <20251028232959.109936-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,16 +73,12 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 43dx7urdeokneh9zdbogban7hm59ueuz
-X-MBO-RS-ID: bb25bd0de68b17c2c6e
+X-MBO-RS-ID: bc8c91ec6f5fd814907
+X-MBO-RS-META: xfzf4zrro6thwn57xabzejm4wrkjw4jq
 
-Introduce VCLKSET_BPP_MASK macro and use FIELD_PREP() to generate
-appropriate bitfield from mask and value without bitshift. Remove
-VCLKSET_COLOR_RGB which is never used, replace it with code comment.
-
-Do not convert bits and bitfields to BIT() and GENMASK() yet, to be
-consisten with the current style. Conversion to BIT() and GENMASK()
-macros is done at the very end of this series in the last two patches.
+The register PHTR bitfield TESTDOUT is not a single bit, but a
+bitfield. Add a MASK macro and a _TEST bitfield value, which is
+used by the driver to poll for completion. No functional change.
 
 Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
@@ -100,73 +96,43 @@ Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
-NOTE: No functional change expected, this is a preparatory patch which
-partly removes macros which evaluate to zeroes from rcar_mipi_dsi_regs.h .
-The other patches in this series proceed with that job, piece by piece,
-to make it all reviewable.
+V3: New patch
+V4: Fix PHTW_TESTDOUT -> PHTR_TESTDOUT
+    Add RB from Tomi
 ---
-V2: Move FIELD_PREP() back into rcar_mipi_dsi_regs.h
-V3: Include linux/bitfield.h which contains the FIELD_PREP() macro
-V4: Add RB from Tomi
----
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      |  4 +++-
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 12 ++++++------
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 4 ++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index e13249e0134b4..f6427476feb72 100644
+index 5c73a513f678e..c24721a1eddf2 100644
 --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2020 Renesas Electronics Corporation
-  */
+@@ -316,8 +316,8 @@ rcar_mipi_dsi_post_init_phtw_v4h(struct rcar_mipi_dsi *dsi,
+ 		WRITE_PHTW(0x01020100, 0x00000180);
  
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-@@ -624,6 +625,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
- 	vclkset = VCLKSET_CKEN;
- 	rcar_mipi_dsi_write(dsi, VCLKSET, vclkset);
- 
-+	/* Output is always RGB, never YCbCr */
- 	if (dsi_format == 24)
- 		vclkset |= VCLKSET_BPP_24;
- 	else if (dsi_format == 18)
-@@ -635,7 +637,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
- 		return -EINVAL;
- 	}
- 
--	vclkset |= VCLKSET_COLOR_RGB | VCLKSET_LANE(dsi->lanes - 1);
-+	vclkset |= VCLKSET_LANE(dsi->lanes - 1);
- 
- 	switch (dsi->info->model) {
- 	case RCAR_DSI_V3U:
+ 		ret = read_poll_timeout(rcar_mipi_dsi_read, status,
+-					status & PHTR_TEST, 2000, 10000, false,
+-					dsi, PHTR);
++					status & PHTR_TESTDOUT_TEST,
++					2000, 10000, false, dsi, PHTR);
+ 		if (ret < 0) {
+ 			dev_err(dsi->dev, "failed to test PHTR\n");
+ 			return ret;
 diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-index 62341416ac6e9..2db3dda030dbe 100644
+index b8a719a13c006..62341416ac6e9 100644
 --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
 +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-@@ -246,14 +246,14 @@
+@@ -293,7 +293,8 @@
+ #define PHTW_TESTDIN_CODE(x)		(((x) & 0xff) << 0)
  
- #define VCLKSET				0x100c
- #define VCLKSET_CKEN			(1 << 16)
--#define VCLKSET_COLOR_RGB		(0 << 8)
--#define VCLKSET_COLOR_YCC		(1 << 8)
-+#define VCLKSET_COLOR_YCC		(1 << 8) /* 0:RGB 1:YCbCr */
- #define VCLKSET_DIV_V3U(x)		(((x) & 0x3) << 4)
- #define VCLKSET_DIV_V4H(x)		(((x) & 0x7) << 4)
--#define VCLKSET_BPP_16			(0 << 2)
--#define VCLKSET_BPP_18			(1 << 2)
--#define VCLKSET_BPP_18L			(2 << 2)
--#define VCLKSET_BPP_24			(3 << 2)
-+#define VCLKSET_BPP_MASK		(3 << 2)
-+#define VCLKSET_BPP_16			FIELD_PREP(VCLKSET_BPP_MASK, 0)
-+#define VCLKSET_BPP_18			FIELD_PREP(VCLKSET_BPP_MASK, 1)
-+#define VCLKSET_BPP_18L			FIELD_PREP(VCLKSET_BPP_MASK, 2)
-+#define VCLKSET_BPP_24			FIELD_PREP(VCLKSET_BPP_MASK, 3)
- #define VCLKSET_LANE(x)			(((x) & 0x3) << 0)
+ #define PHTR				0x1038
+-#define PHTR_TEST			(1 << 16)
++#define PHTR_TESTDOUT			(0xff << 16)
++#define PHTR_TESTDOUT_TEST		(1 << 16)
  
- #define VCLKEN				0x1010
+ #define PHTC				0x103c
+ #define PHTC_TESTCLR			(1 << 0)
 -- 
 2.51.0
 
