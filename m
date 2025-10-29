@@ -1,127 +1,146 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E237B2E091B
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663EA2FF661
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 15:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749909; cv=none; b=tIR9SxVJIXLsiZj4X+fuTLcPme463/lWhfPqvLoC+R7xwx7ux/adQ7Sqz3ZCgHBiVzoeQCTzPCysZ7avDYYXBOBDaMS43OxQZZeutiQ383ljtsntXFUOqWyGWriut8rhu9zPgDutVb5KZM0OWp2eGguX3dsulXqzdiF+7yLUcRI=
+	t=1761751353; cv=none; b=kNDoSKaevH7f6wgG0YkoEShFAIBozdAi+0UXXJhteyye6nk2L66ZJmGCqblhA5HkhkakHwHfuUJ6qxrgTIC5nk7+eJSkSmJKbGHcpQDPhkbK4xOgPKwe2KEuHN8Rae3rBK1ve0i0iHMBH8rghmwHwPYhOEPQ+8OZYM0a5NdG/Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749909; c=relaxed/simple;
-	bh=hSYrwqd1mkixtFP54xQA+PcDnrci1mz4DAuMcvpZcs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1J8+gfJ6kgbdcXRBBg57OPISSxNONMjJnbdGqEiG/IPD5HSfanwjmOjoNEVM5wG4t8cP5SXuKR4CdyEDhXtpxhO+N8Uzw/7YDIaOJPax1PrroF3BFHCbaa1f5wyUe7Kr7coMbc78BY9GU/VpH3CXppghqCnqYw8LwqBM5D0tF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d6266f1a33so4638956137.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:58:26 -0700 (PDT)
+	s=arc-20240116; t=1761751353; c=relaxed/simple;
+	bh=11FNa9hRxY9q6VNcHFKBCxHVTPbRkIjJRhlYDfn68F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TXV0a6G6QkuHKoS37HYiEKhoMjpm/MVFYPXg/JFKsXPc8ZNlQRo34/RoL4IFKbpOAhw4pQLasxvlNS4Z1/Apc8j7R/v3CNEBRaY86SZuE4fU2uQZ/qwJ7w6UIM5s5hrnwL/O0a89Wlj+aA+FrEDdOEgpAQwSGxlo764zdk2dZew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YnQ4QDm4; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YnQ4QDm4"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-475dbc3c9efso34882865e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 08:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761751349; x=1762356149; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RgvI9i23i4mdlSoAheXdfqs7QJnRizC8cln8vFVeJNE=;
+        b=YnQ4QDm49rHsjjRWPXitIFJ3YOsCHlEhNlG6bXU02+Y2aVIpzdTSZDGivd2XTauY71
+         QpIcg5kJ5P6hNlMFANbaoyiKXrT/dZUFQKOrQttIMyu/zTPcjeMOeSvugqru6L2JQ5Qv
+         A6cdFJ0j/IESLYTrCFnd+6wfasbKBe4WmLoeJmLYpwn9nUYZE1yHVou6+kqpwL7HWKqb
+         5y2+eWPR3OptYRm6tsrff78/NKX0IttrSgi9A8iOxwtULeXF6Mse6w9mssFKzxBieEdk
+         nB5gff160JD3DZASSoubzT/QEvsr5Uw2OECYtrI0ATQ8NcyYV3QXg7+eJzMBqoaloVHW
+         ndAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749905; x=1762354705;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fd/ArEYxAAEUYhnoA0Oh/vNlB/6p6wwqYSN+YEbBwcA=;
-        b=dqSZ/au/NDciyAKXqbLCl50rCqALK6lAL464Sc8PAxYSASrAq5ZGkY55ZcMMIrpCQJ
-         T59VLqvEtXaFLUHVM/MgCLv1bLDS6xFLZR1lmsLznR8bPnHi75H5JHTdwqNrBlm2L/L0
-         5UWhOj2WqkWuybWBTTINlYFatV+4N8MHyYaiU+efC6W/I9Ke6xD4V3OHaKFJk+R1BKYt
-         QcF/WQXr4whMDD9R3Mj/z/cv2coVAuAlPF9bCpp005GwFX9HdzaxpPyOhj9pXCudHZYc
-         oQzi+n1VbdXrnu1XKjI1fJJObfjePQ92uGJZcww5SQQFWUfuEBB+ew33R/oKHoQ0kjmB
-         5ulA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtonli4/qJl5eBe/RNU8T5ldObPiwFZAeUxHdylMD74jneX/8hWV5I65Kt1ecT4yYCpgI+qhLR7J22xkKY7G6QQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVvr2+FcP1YoQyY60idtGUx42z5pbAiUqHsn87jmfX+hoJbd92
-	vQidjYHYWIXMU9Ngl3h0OQt2MJvPIQx1ZLxyAngAGn6mgdKc8YX0s4/MLC7rItfX
-X-Gm-Gg: ASbGncvUu6oPBfpAbY97lGasL5LzRcCbZwFm68cM8m0tHbXPpVRRTrUGVJ73la7oaeC
-	71mUmzswqTunhiRaF7/8m66cT7aplJnV8sdP+oMUJtJAnnNKytXirmM9NFRsJy2TwNg7r9LRmGU
-	JezB27i6cDKsWEG1XJBw93zdZ6GZYU54tHlqdQMFA9jzymb/kpKAZ5RwRRM0YZGMtgPWyvuxHt0
-	2DAU36Dr4NQ/0hVayO+ZXR1BSm6AjO/2m49BbVnc7niz3VMxuYNOfURQ/VrayFj8/FK9hItxRAq
-	XsKpYTSxMeobXvs9Ydd0bwndli2+lNBqgc/WMFgjl9nHhXrMB8PnEPR4UkxdG4sxJ3j2bB+eQjg
-	SPcb2w/bBaTyB8nBSQYPTOXSvMN9/kA2n/mIj6JIWfsIbTRnE4MtLzrRfK2qihyoG7jVKyJMaxR
-	SZrErVGKEyLPMU8ktuW4qFvY/nUmATssWX0sKBisKSH57xEDjxVm+u
-X-Google-Smtp-Source: AGHT+IHyuVdnZrsoVZ0/+vEnS4v47QI1cByXlKwV0RKdFhxNUYnC3mn+TPKTOVZMzUQND2ATXXgKaA==
-X-Received: by 2002:a05:6102:3f05:b0:5db:38a1:1f1d with SMTP id ada2fe7eead31-5db906becf0mr823031137.35.1761749905273;
-        Wed, 29 Oct 2025 07:58:25 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934c3ecfbb3sm5235817241.1.2025.10.29.07.58.24
-        for <linux-renesas-soc@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1761751349; x=1762356149;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RgvI9i23i4mdlSoAheXdfqs7QJnRizC8cln8vFVeJNE=;
+        b=VnassV1qOjTvIvMwPWKKQc39P9FEm1EZy923Z6opOkerG+Hq6JoNbJs2NhI5whvnT6
+         vkCqbUa+0farSqfBE8cci02vpsViNRg2h/ryru4UMq+JVRzZCjYTlqS6L9D7zHRHK+jv
+         sx6oqo9Kbj8lY30URopG+3mtLIyFURKLBmSSjUiSRdhGzNO7cCSM8gBMA4wWlbhqzSeG
+         0s9jXk2S5kKdTG4gSsOXTdTB2/6LPHtaK9b6oR+3aSlekNhlwfAVNTvMqx4asIntAUoK
+         6VpdQ0bnRHxTo/rpbB2O5bUheY7/ZiuHMlBo5QZ3IDM1ZzBk2PT5tQujy9OptjgG+G+o
+         WXHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWl/1tMxUVRFZMJYjSwv77UJbIudWh73aSFJzkRG8ZXbDXCylJSQjDIv6INv/EW02hW7FhbnwvnnsbwKjDJNFdwmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy46n22hibtpZhZtLgdQQN9SazSkMtE6gdv4vshyhCJVZ2C1ANV
+	KlhLn7LzQ2maJAxsZvoJ191N+u/MzM4yhWCOL0lqKaqeyy6KwoujpqJ8Xfrn4t1b+3E=
+X-Gm-Gg: ASbGncsaGV6Pij+fVa+VgV93YL+t3zvWs/7OhbXOZD+4Mc5l+YruCfiFtBL8fFZT0pX
+	Q2EQ+q1AlzvVGif2fhLghXabqv/w9ae6curpFpsULbzZBUicO7a9tE/WZylBORTKu5+hUip3dZ3
+	uGC2lKlpLgTJcNq1Gw3Lf/SY+fNwvXgq1wHrO2+AN9Xa4FiubqIf5nXjLwuq/W7Gc4RHgYDGqgs
+	9D98wNzukwk8qM4Xxsz7r1q4AS/EEGbLgDDE5tThOQEu8ZX3lwhFhmsTRUIv3J2y49AWNeCWAPy
+	ZBeLc7Wr9FwsniUYPqHawIDbbITOYxCQF7AzOA64xWReyxu2TOoBQcotOAxVh/80KjTAq8/eZic
+	NxKH/VYtZl9KyyJQig7oVVaqiB6uA4PPB14PVJ7W4UfJ89sOTfcRm//OHGnRu/dkKf0t7ULlzVb
+	TE+Qt1nLMcq2HsfoVAWPA9v+Z324eQ4sraNGdyPlKLZoovbkCP5e8vr4qH7BVgdPUqNg==
+X-Google-Smtp-Source: AGHT+IFKP5qIRi1ZWE8elUAKIHMoGp81B6aQV7TyWuqhzeC/2P2PWE6cOGnUmt16+9z1GXYauzy+WA==
+X-Received: by 2002:a05:600c:871b:b0:477:fcb:226b with SMTP id 5b1f17b1804b1-477256e79e4mr6749795e9.2.1761751348481;
+        Wed, 29 Oct 2025 08:22:28 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6302:7900:aafe:5712:6974:4a42? ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3aae1fsm52099385e9.12.2025.10.29.08.22.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:58:24 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5d758dba570so5532003137.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:58:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVt04iKdtyQqPg4nPmLJj58R9oLiiOgvw0HCNrAbwJZ59SXg+rbeWS0hHuerBntWWjw8hIwrUzdzLy9eqOFYrwZmw==@vger.kernel.org
-X-Received: by 2002:a05:6102:290d:b0:4f7:d553:3cfa with SMTP id
- ada2fe7eead31-5db90606601mr813077137.12.1761749904411; Wed, 29 Oct 2025
- 07:58:24 -0700 (PDT)
+        Wed, 29 Oct 2025 08:22:27 -0700 (PDT)
+Message-ID: <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
+Date: Wed, 29 Oct 2025 17:22:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org>
- <20251027211249.95826-2-marek.vasut+renesas@mailbox.org> <CAMuHMdV2Kr4WcYRERHCYR1zGAh0n2N3D=LYbRSYLJnRTYDB4+w@mail.gmail.com>
-In-Reply-To: <CAMuHMdV2Kr4WcYRERHCYR1zGAh0n2N3D=LYbRSYLJnRTYDB4+w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:58:13 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWyKeQq31GEK+-y4BoaZFcCxJNac63S7NoocMj1cYKniw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkK_riw2DJ8GdGhH8UFTwbp-0GBHO60gLWdbse1YNVgueoQrpv6rrq65Pk
-Message-ID: <CAMuHMdWyKeQq31GEK+-y4BoaZFcCxJNac63S7NoocMj1cYKniw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] arm64: dts: renesas: r8a77960-salvator-x: Enable GPU support
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
+To: Mark Brown <broonie@kernel.org>
+Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
+ tiwai@suse.com, biju.das.jz@bp.renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
+ <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marek,
+Hi, Mark,
 
-On Wed, 29 Oct 2025 at 15:52, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 27 Oct 2025 at 22:13, Marek Vasut
-> <marek.vasut+renesas@mailbox.org> wrote:
-> > Enable GPU on Salvator-X with R-Car M3-W.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 10/29/25 16:37, Mark Brown wrote:
+> On Wed, Oct 29, 2025 at 04:11:33PM +0200, Claudiu wrote:
+> 
+>> Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+>> and snd_soc_pm_ops is associated with the soc_driver (defined in
+>> sound/soc/soc-core.c), and there is no parent-child relationship between
+>> the soc_driver and the DA7213 codec driver, the power management subsystem
+>> does not enforce a specific suspend/resume order between the DA7213 driver
+>> and the soc_driver.
+> 
+> The theory here is that the power management core uses the device
+> instantiation order for both suspend and resume (reversed on suspend) so
+> the fact that we use probe deferral to make sure that the card
+> components are ready should ensure that the card suspends before
+> anything in the card.  If that is no longer the case then we need to
+> ensure that all drivers have system PM ops which trigger the card, this
+> won't be a driver specific issue.
 
-(no cover letter, so just replying here)
+I also saw the behavior described in this commit with the rz-ssi.c driver as 
+well. The fix there was commit c1b0f5183a44 ("ASoC: renesas: rz-ssi: Use 
+NOIRQ_SYSTEM_SLEEP_PM_OPS()").
 
-I am a bit reluctant to queue this, as apparently there is a bug/race
-condition in the PowerVR driver: if the firmware is not available,
-the kernel may crash during boot due to a NULL pointer dereference.
-I could trigger this on Salvator-X with R-Car M3-W after applying your
-series to renesas-drivers-2025-10-28, and adding two debug prints:
+In case of this this codec, I saw the code in da7213_runtime_resume() and 
+soc_resume_deferred() racing each other on system resume.
 
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -256,12 +256,14 @@ struct device *dev_to_genpd_dev(struct device *dev)
- static int genpd_stop_dev(const struct generic_pm_domain *genpd,
-                          struct device *dev)
- {
-+pr_info("==== %s/%s: stop\n", genpd->name, dev_name(dev));
-        return GENPD_DEV_CALLBACK(genpd, int, stop, dev);
- }
+> 
+>>   static int da7213_runtime_resume(struct device *dev)
+>>   {
+>>   	struct da7213_priv *da7213 = dev_get_drvdata(dev);
+>> -	int ret;
+>>   
+>> -	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
+>> -	if (ret < 0)
+>> -		return ret;
+>> -	regcache_cache_only(da7213->regmap, false);
+>> -	return regcache_sync(da7213->regmap);
+>> +	return regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
+>>   }
+> 
+> This seems obviously buggy, we just power on the device and don't sync
+> the register state.  
 
- static int genpd_start_dev(const struct generic_pm_domain *genpd,
-                           struct device *dev)
- {
-+pr_info("==== %s/%s: start\n", genpd->name, dev_name(dev));
-        return GENPD_DEV_CALLBACK(genpd, int, start, dev);
- }
+You're right! I'll revisit this.
 
-See also my original report "drm/imagination: genpd_runtime_suspend()
-crash"[1] on Gray Hawk Single.
+> If the device actually lost power during a runtime
+> suspend then we'll end up having a bad time.  There was also no mention
+> of runtime PM in the patch description...
 
-[1] https://lore.kernel.org/all/CAMuHMdWapT40hV3c+CSBqFOW05aWcV1a6v_NiJYgoYi0i9_PDQ@mail.gmail.com
+I had no issues with runtime PM, but only with suspend to RAM, when this 
+function was called though
+struct dev_pm_ops::resume = pm_runtime_force_resume().
 
-Gr{oetje,eeting}s,
+Would keeping the regcache_cache_only() + regcache_sync() here along with 
+populating the struct snd_soc_component_driver::{suspend, resume} be an 
+acceptable solution for you? I think that will work as well.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thank you for your review,
+Claudiu
