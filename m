@@ -1,121 +1,111 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDCF311C06
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 15:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190723D2A1
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751542; cv=none; b=dUJFhzepbliq5Xly1wkF/gaHGbiDfpNUpXl7wY5mVgf9DJ8j6J+st6StskyAbVs5L23SzNoK365wYjCEqjjDt0cFB7GxZ5w7ysgPUiWdkhW2jn23bss8hwJXeOIt+LkFcH5oh97d4QzNa+INHCVaBBMfhwIuYQ6iP/nihKgGDSU=
+	t=1761751761; cv=none; b=RoYLPpLQqzeTUljFREtAzIPZr0v0RtdDbaXcA5zyLbRSlWTgbD46ps8BJCViyAoLShrlswzJ5HUXQsbCPlMnXDdixchR4UK4HDL1XWauUQhoz72mJTYag5RBlNkczchSp3RX17mVq8Zr2pSJZikvx49gq+5jVoDytilxw8JjzSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751542; c=relaxed/simple;
-	bh=r1fzBvCJYglkcA14ri1jqLim8Cr/hRY4P1gvELMESt8=;
+	s=arc-20240116; t=1761751761; c=relaxed/simple;
+	bh=TmGjDwl2biFKFoDG5SxYDx3zPkhg2VZY+lBriMDwGx0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YlZiBD+7oOmR6Ewjw0WkPeM0ETF6RHU0trnJEUOtAIRNUCwTI51bvgTPp8m+1mmBVfSk9dWYoYsxNYNAz1DO7FNgW9LOuW+e8JdxuX3AnUx+zcuG8l7/BHt8yXKinwovGMO/2IE1WrXEK3ZBjttim/1o3BMUkSTqEO1XjZisRTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xdMGHRXF; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HX5Xism4; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	 In-Reply-To:Content-Type; b=rTerltXzj7ghn3OCEDhnfupsX6tsKMwBR9gXWNcGuq4bVeKyStVC9VTrKVdU/Eg0VljBT/ZBe3eYPgvGxIveR6xUYK8hm1vkI1HAa9aMHVyZDZcpki3Ch4KzFYMrRfEVou48ss9MeqG7XaIbyDmkTngoFnPg6tsButnSmnZdLtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Qgvfddvi; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xdMGHRXF";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HX5Xism4"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cxWKG5zztz9tCG;
-	Wed, 29 Oct 2025 16:25:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761751538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RhUcv1IL0upcpQTK944Koz2Faz/o5idxFnloyVhGwxs=;
-	b=xdMGHRXFuQZ4tPB/JkOuSmnPC1BHNi8/kXGpzw0qXhuzihdhNzq4rQo4Etfb0tw0tYboUT
-	yPDECIM5iA7/qnBTcc1PTcz7EANJ50YnzXHCa7Db+QkcdZdiErWrQaKGaadV+wTOeeXEMm
-	MX/oD0b8I4zbBl7b5wlRbqX+PMtmgLEzcFomj5AnPeWBAoQWuavjW+6RouIWOfdOvcUb6o
-	EjNQy4pSQadd0dJvQU2eLGVrwkSsOz+uH9c6jiJkQZRdtT3KRyoxPBOgG2AxwE3wPDBaP/
-	0jaym0nkr0vRFURnsQmjme1tOzq8IGjhRB09eCMfMZ3J6QQlhKV/qzNLnXzjOg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=HX5Xism4;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <795893ce-c7b1-4128-a28c-1b5b5633f400@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761751537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RhUcv1IL0upcpQTK944Koz2Faz/o5idxFnloyVhGwxs=;
-	b=HX5Xism4Va6eRcYVj7xQJMUjIFIB+n+XxbjoVF6s7S4cREdpmrlNnOXz9FT4T1zFjagXbm
-	It18d29BVDl1FhUaUJAximO+r8e1B8iqGMeqwKLgH2RG3Uw1eiSlR+JfVmuROKWxMJ4SlE
-	BXIuta68O+DAJsv55pPiZ4aFG5Rb7BJtSuKWKr+VcylTBbqVmVEHMhsaUYjks7j+KjT9md
-	c4Lp3IU4Y9T0BwwwKWl7rUHtCpiQqVlWFPyJm1k1efB5HNmlgg18M7qkdaTLu3hDWpMT7N
-	OZlaWoha3TmfzZY+ZiWbqwOJyo8gkqmanJrN6kqrTzf8Pv+yl1AQHmVFvDaRuA==
-Date: Wed, 29 Oct 2025 16:18:43 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Qgvfddvi"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4298b865f84so4015489f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 08:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761751758; x=1762356558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ctrvyyDmJlg0kkSAOlpyChaeCX1qtmxwTU/oEiWOUXQ=;
+        b=QgvfddviuL4U1MV5cXmGqID6ZQRTMgk/pKJAyTedB4yKgt/5I7fYI3uX2K28xRIB1f
+         niJcAZwrL8bGENW0ANzIaHDk6lt7dEYnHlidgcroyHA5fvQPekk7AUVysieHtMK29Mfy
+         nbwyR790XFJp3ZQK1xKKIY1IpWQq2TsTgtJUNbtY9+JdEoUwPUz2IDOFLVP/Kvu1rNOh
+         /Xr/XrD3Q3QHDgHwF0MVAFuVK9oiiZWAcI9t/oM9LAOfGhiBNE4ock+UeXE4t0Sr/ZHL
+         MQsOzXr3W/C7B9HqiV1HKo6+ItlZlJSkLZzgClPUyqfGkUpXBBMeOeaUsvEfzzS57SIG
+         9/7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761751758; x=1762356558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ctrvyyDmJlg0kkSAOlpyChaeCX1qtmxwTU/oEiWOUXQ=;
+        b=O13B3gtwoMTXN7hwMsY50hloqG0VhV71yY5jvQN1+oNraqfbBpDN4srY8qBSD4KKSz
+         4phjV5JgvM+7nKSUgm1n6Hq4U3drAV3j2pHUlo67nV5JleQai7+Qfeo1T/e/A2ATwheV
+         z+tgcXuuJjhB6cR3KiCwPxVpHFVvBYTsFmNkXpiOL8dBK82s1D3WBW+8qc0IpLqGs47m
+         eWdQYly3WbtSv99jSFdQCLst4tslxOebvB4plxVYraZkqQUuDzu8adhGjHZP9cqICtE6
+         JFvVBofl+tL83yP1nfH/q7H7vtktj2XLeOeYp2YWK6UScYtvhOuEcDoJ1kf91BH6wzp+
+         cMsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJp2UjNRCsVcW+K+39Bogr2KLEO+kJAvq6voMXo/reuqH0GoKLOodwyfxJPnAsMu7xjcFqTPsyDCJ3qD+Til0U2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB3oTmJwTLNKlO8Y5wLr+I6/m4pxuMH81Gk79qg89zwOlAiO10
+	3a3LIBmKAZBWqUkaf/g8zmkN7JzDwKUWe4ULANSLOOwUPO1HvK3yhxhKLMonEKHYSFk=
+X-Gm-Gg: ASbGncuHQCtZMqiPCG3rBzSg+G5EaxImQ2nMNH2wkdARPqBVpLoSyJEKH60CoWl0brG
+	9KUeFwzNagwirGaZzf2XAbMPIGTCLOpFt8mSsNJZDR51VzELhIKuVV6+eXzTrnsaSJR6xPsU9XE
+	xMYV7bbN0xPRRRpNnJdaW3nKIZ7RBdDY/MhcTzN5Sa4frSXSza4QFMXitMpgfUFXXlnwtLg2HSY
+	LtMXm+HJ91XNtbMJx5Ji32YaJh32pbsOKws0CE9yoTyB5rlH43o16gtVLchU/xbsGdjYNAOudyx
+	UJt0hr5VHaCuzZvo4kX6WWeP/vrb48UYf8vi0RAZL9NnP0im4yemMNH43Jyim6B2TA8PGjkUuV9
+	o4nWSg399vwh94GLGE4ZKfEZN7Y0IEmO9R89OFBccR2wiTPi6BQBd+SrHfX1y1Oaxnmk0uzJWFH
+	2xpzomGZQLDVZJ9FHf8QpLytTb21g+GAfzmGJderWXkxQw3cQFFX9v86gal3i61rGzYA==
+X-Google-Smtp-Source: AGHT+IGzKqIEUwGf7yC1EsnKLvYTprAHG5oxW1NDlfiVKv2vlfeP0rhWW9WukDhz1d/BkHuM2+I88A==
+X-Received: by 2002:a05:6000:1787:b0:40f:5eb7:f24a with SMTP id ffacd0b85a97d-429aef77707mr2833160f8f.12.1761751757674;
+        Wed, 29 Oct 2025 08:29:17 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6302:7900:aafe:5712:6974:4a42? ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb55asm26959094f8f.17.2025.10.29.08.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 08:29:17 -0700 (PDT)
+Message-ID: <9d254e18-2e2f-49ce-b785-ef0f16117550@tuxon.dev>
+Date: Wed, 29 Oct 2025 17:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 00/11] drm/rcar-du: dsi: Convert register bits to
- BIT()/GENMASK() macros
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-renesas-soc@vger.kernel.org
-References: <20251028232959.109936-1-marek.vasut+renesas@mailbox.org>
- <b44112ed-2c41-4e33-953b-8031fd29a97d@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
+To: Mark Brown <broonie@kernel.org>
+Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
+ tiwai@suse.com, biju.das.jz@bp.renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
+ <84aabf5e-c782-4e40-8e34-c8e7101188fb@sirena.org.uk>
 Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <b44112ed-2c41-4e33-953b-8031fd29a97d@ideasonboard.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <84aabf5e-c782-4e40-8e34-c8e7101188fb@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: db20519cf3726ca7137
-X-MBO-RS-META: 7b1gu4eoscuir7wtezqeeiqmuq9in5ke
-X-Rspamd-Queue-Id: 4cxWKG5zztz9tCG
 
-On 10/29/25 10:38 AM, Tomi Valkeinen wrote:
 
-Hello Tomi,
 
-> On 29/10/2025 01:28, Marek Vasut wrote:
->> Convert register bits to BIT() macro and bitfields to GENMASK()/FIELD_PREP() macros.
->> Most of this patchset is boring mechanical conversion.
+On 10/29/25 16:37, Mark Brown wrote:
+> On Wed, Oct 29, 2025 at 04:11:33PM +0200, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Noteworthy patches are 8 and 9 , those introduce handling of DSI mode flags
->> and convert use of DRM_MODE_FLAG_P.SYNC into DRM_MODE_FLAG_N.SYNC, but that
->> should not have any adverse effect on existing hardware.
->>
->> Marek Vasut (11):
->>    drm/rcar-du: dsi: Fix missing parameter in RXSETR_...EN macros
->>    drm/rcar-du: dsi: Document TXVMSETR PIXWDTH as bitfield
->>    drm/rcar-du: dsi: Document PHTR TESTDOUT as bitfield
->>    drm/rcar-du: dsi: Deduplicate mipi_dsi_pixel_format_to_bpp() usage
->>    drm/rcar-du: dsi: Clean up VCLKSET register macros
->>    drm/rcar-du: dsi: Clean up CLOCKSET1 CLKINSEL macros
->>    drm/rcar-du: dsi: Clean up TXVMPSPHSETR DT macros
->>    drm/rcar-du: dsi: Respect DSI mode flags
->>    drm/rcar-du: dsi: Clean up handling of DRM mode flags
->>    drm/rcar-du: dsi: Convert register bits to BIT() macro
->>    drm/rcar-du: dsi: Convert register bitfields to GENMASK() macro
->>
->>   .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   |  50 ++-
->>   .../drm/renesas/rcar-du/rcar_mipi_dsi_regs.h  | 387 +++++++++---------
->>   2 files changed, 237 insertions(+), 200 deletions(-)
->>
+>> Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+>> and snd_soc_pm_ops is associated with the soc_driver (defined in
+>> sound/soc/soc-core.c), and there is no parent-child relationship between
+>> the soc_driver and the DA7213 codec driver, the power management subsystem
+>> does not enforce a specific suspend/resume order between the DA7213 driver
+>> and the soc_driver.
 > 
-> Thanks, pushed to drm-misc-next.
+> Oh, also:
+> 
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
 
-Thank you
+I messed this up. I'll be more careful next time.
 
--- 
-Best regards,
-Marek Vasut
+Thank you,
+Claudiu
