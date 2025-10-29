@@ -1,131 +1,93 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999FD33DEFF
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 14:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DFA302CA2
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 14:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749602; cv=none; b=nLSTI6NW3RbXRWxif8wY3GV2nntO/vmH+S0oSXiLaPJj3fH1SgDVFhkJpZrNPvRcKNcy6yDM/89bOiwhBom1dbskBcUcJYsW0o0Sj0ccJYzxSlkS6V79jc0st0kw8XFy+tyNdA0YORpBaKC10NkzL8PW916TyykiWBpCOYaMJVE=
+	t=1761749620; cv=none; b=BZ/4UT7iI83VEdbrcDq0JZnKyN1yroRZ26pq7sr/y3DvHNjXWiGdyy5qvj6Ah9SwPAFlSt7VeOtVRw0teHRTn+WUOX6gJ6x0SqgBT77jb9954iJheiwSCEYhvgB/5wG2aJOkwRgv5mWqC9hsqcHH3OWNZtWJRbxykUMn0PoqkKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749602; c=relaxed/simple;
-	bh=RiCdWEkCDNsJiKATmU0RbHd3Kb5B/0yb//UgjVnVdPE=;
+	s=arc-20240116; t=1761749620; c=relaxed/simple;
+	bh=lRTzqMm3C1CC3agOInFaKAmL647Ck5UdtxGzBQeuq/w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1oY3+F1nttbbt7HXiylQsc0P7i1Bh6NC1qwxq1uoPXDtP8f8x+BGuhGkfJMC0gLT2FDE5t7ss9GiqaUC0Oh7l6Lt9I3l7/gGigePI1crKfxVSBneEh73s87ps7Fy7taIc7P9ndjACeZblP6sTwhVQFhkOECOFcH4lvfdjNaXrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
+	 To:Cc:Content-Type; b=mMNWLkT0XGgXLaSbM9zvq43vrT3WJbzzQ91Mz6zeUunh7bsHpntI+Lh9aFSWrHNqoV5eyxs+H7keB57BdGMNnzXDDeSdzIu5yK/TsYbkJHZYr3SZOjgBesWeyNKFTBlOHfFOwVetLfL3kKfk1nZ4mGYhc6dfaB4fFiJ8j6yR34Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-89f4779fe03so502656585a.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:53:20 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-557c05daed1so349545e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:53:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749599; x=1762354399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UmTxX9Lp/E6iQMSfd9sSFodFiE1yd68ZDUJdx86zE5s=;
-        b=YzW8KZWPjYr+/c4SVmD3CD1XKO7Ad6YqoL9guAeUFYPMCBR33cF7b/8cVkHVNnf09u
-         Grl5R8z5QKuyZ+8uixz/oqoVGIWEe6aMDemgDQsP7FsR+i51BqplEfaezvx2WzYu4aDl
-         rPpIkomOFSjCxwYfUOsbEPNIC673YlInU8atu6UpzvFiQcyMP4GUh4XPZ+PuOr69QO9U
-         qJxq5OM59gN4wxO7KLRzK6p/uqjaGiR61ouZQ9lZDuIZVa4f5HBjHcOTNnAoiKp7ZFXS
-         M0sGjes3xmFsK2Nda9rud7aetLfqNmKoRO4wsOY6JJ/WcJ6JOoFVCkBrmBWtygZJHbid
-         VRzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9GElj7c/jaQEm02hymXow2JepnzFIyW/S/JtkmS/BLbW8NJUfipgA3vtBrJbFjKCx+ELO7sWHQMfOsI8QMiTiuQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMVIYNQF88ID4PdUOGluv/EgN0G+f4C+7ipxU3ijeIr++Ee6/c
-	zTbQWnvvZECvG+mHOuw3OIxNijp0PsNLjQo+vMlP3XeZP5uyu87hCY/mAomVD32P
-X-Gm-Gg: ASbGncvRETl/F58/fAaRqN6QFp5T5q1ER39Hzrr4GYv+FI1YZP8zwBX7slHG6A2rCp1
-	OCgBdB9JRXUbmCi2Y51h37xOiiFLI8W2Qk359x+8Kga2w5DlWTc6ryH7vyr1HXd0JY7lDQLAiOj
-	6GG42E9klZwoVLqLfjN2Sif8MQKbamSr0e4PwP1xMKR1H2iz5F2sfDptCK1N5NUqDd+8EHxifIk
-	xPPdUw9Qaw9HFwjhu3wTGqsCiyR3It7ReHVA8mP8Hu6dCpyeP39Xa0aTTcb5FhZT3qrrt8tQ4MS
-	2aK0EACcRYZOJFjciQ8KbHsl1/Gu9MBft8rNEDCAKtR6BHyoOcu1FvSfAZE62DergRglG+GIO8f
-	bzDfXkGNngAjoRkmfelf2apRsLkTYDOOoOU781OHA8duX+iikYlfVf2F/auaFe8Q+Da0y4Mbzvo
-	4SMRgyHdsS9Myo+dE1uUcTQ7h1ZX47baAiSZdlDuQ5VqF6EDOKNMjVhnj4
-X-Google-Smtp-Source: AGHT+IFI1QkOWBU124cW5biKS6R6q1LBvEaDx5iYXOGJ2gmDSwPwfQDka5u9w9lBBuqWc+CaJNTJhQ==
-X-Received: by 2002:a05:620a:4009:b0:89f:5057:9761 with SMTP id af79cd13be357-8a8e15616cdmr408115685a.0.1761749598821;
-        Wed, 29 Oct 2025 07:53:18 -0700 (PDT)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f243142b5sm1080542985a.8.2025.10.29.07.53.18
+        d=1e100.net; s=20230601; t=1761749618; x=1762354418;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PQw8srW8sZp+NW7sFJ0wHastT8WjOnxgYbS0cHBnNRA=;
+        b=p5oBzBqkk7xCDX0YmRKq8ypEkzpaLeBamerfYY31OMoF9+tyYaq01vycWfCJeIg5FY
+         0GF6TcZrZRHkBAlFJtesUKSp7B1/u1mw08JkKunp6i5IiDMwj8zVfUvenm9dhADiBYwL
+         cS0BNZ0ccszEbz4tt+d/2ryYOXkWZamRygXEX/84esELunxcUsX3x7Aeab8Ptiq2OjYh
+         L9OLu+H04fj47MsVVHp3VDLb/EecRkkRT4iNMtKpliU6CXQEVs+V7ZFv4+rqdSCJ5iwa
+         uyELUZM6zb1tISQe1yMSaxMzLuHc7cOT7X0TQafpdREoUI+hZbubwWGawXd92SOKKgJy
+         Vi/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8XDFhwOPcw3W9G6NPE5pnnEWXf3k2v+HlXr/P0VNhRwQg1JvS0/geW4RDPbzlx9ldImr8Sk4kYeZQfAaU0mIrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGMHfP7zwF6MXoAzJgAmQsf1Jlko63zy/4HL6xwezxae2Vzxkq
+	RRn0KBv7miC8Axnzymiag7Sefdbl+v2bJRaL9QSUODX4/1SKMtgvhj51njrcbYLY
+X-Gm-Gg: ASbGncvdePTi2sdf6YM6Eq3spD4bz2sNMYGtnHhEtJjEGKn/FKNjRQZoN+E3kHr0Ock
+	Pzpm6kEoIJVnfB1r/XdcNTH3yLo0DLx9h0X4L2UllkF5TilQ0zszjSCQ1rcuv5JbsZXFdNsR0jK
+	DYq0zcB7zTbtuVHp4iN/D9Q9mtbzhq5GPHf4+UEFtMSp/+GPk6ninRyCPEfKHrKhdMzWH89l4Ar
+	RLU96nPQEi8TqZm7boBCQlQ1dHNiuqBHU9gdv2Gj3LV3wK2wrTFO9r3Q/VSHJJ5qzVX7+V7pApj
+	EP6vwZ9zgOFY4tWVI2wP1DGHs+gIBRWklWA+6V7frQD+MTfPzdGQy+6+EcX51PtjHWlGkTq8Gug
+	dX5114BmdJRHwgfVQcWpQvZZujPQgmh1n3P2YD8v+I9+p4NEusuHeqxWYT+uxwKpw7F7VDPo8Fc
+	b0ofiXHSFCvEBavmbFYIgibvUDbeK6j/e21x0vsDqQGaEeb1o8kKZK
+X-Google-Smtp-Source: AGHT+IHcqUV8DXyZUfYNDY9tpammx7I/sPRX8u97O4VHnMnRKJa8Avo41dbhQVJJD+EwgPzTM2MA/Q==
+X-Received: by 2002:a05:6122:201a:b0:54a:71f6:900f with SMTP id 71dfb90a1353d-55813fa762bmr927010e0c.0.1761749617747;
+        Wed, 29 Oct 2025 07:53:37 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddb5b68bsm5450369e0c.15.2025.10.29.07.53.36
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:53:18 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-88f8f346c2cso717297985a.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:53:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXbLI/CtI8l2Zkk+1xVw3ZSkO0frEIALgfcMIUB5LFwIP3kzGlO+J2aYhAwSlyfB++DURfnEVLn8LI1M5zpJpwiBA==@vger.kernel.org
-X-Received: by 2002:a05:6102:3e95:b0:5db:38a1:213b with SMTP id
- ada2fe7eead31-5db90656011mr932905137.27.1761748238614; Wed, 29 Oct 2025
- 07:30:38 -0700 (PDT)
+        Wed, 29 Oct 2025 07:53:36 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5d758dba570so5528272137.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Oct 2025 07:53:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5exyaX4RhahY11JlSX47OkiF/2ehkWooKw7n4Nku9hA3H/LN3lNAO4yTDTS5RbGYc3jj6FuXx0Xf3XtlC/tsn2Q==@vger.kernel.org
+X-Received: by 2002:a05:6102:1491:b0:5d6:6ce:9675 with SMTP id
+ ada2fe7eead31-5db906e35a5mr890070137.40.1761749616368; Wed, 29 Oct 2025
+ 07:53:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761588465.git.geert+renesas@glider.be> <03a492c8af84a41e47b33c9a974559805d070d8d.1761588465.git.geert+renesas@glider.be>
- <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com>
-In-Reply-To: <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com>
+References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org> <20251027211249.95826-5-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20251027211249.95826-5-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:30:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
-X-Gm-Features: AWmQ_blleyKJMjc4oETFxToQhJJ0bdzSdD1fdMmRWAHt71coVgn8wIHcAFgDdM8
-Message-ID: <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/23] pinctrl: ma35: #undef field_{get,prep}() before
- local definition
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Wed, 29 Oct 2025 15:53:25 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWpkbFGFuYA5qxohU_P5trfdrR8=OE4bOFZusuax_4M5w@mail.gmail.com>
+X-Gm-Features: AWmQ_bnTzLRSdC_rJSCH1WOHi3pChMPMBglo5qebVwVc_9tsiGfE_PRGste6mmI
+Message-ID: <CAMuHMdWpkbFGFuYA5qxohU_P5trfdrR8=OE4bOFZusuax_4M5w@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: renesas: r8a77961-salvator-xs: Enable GPU support
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
-
-On Wed, 29 Oct 2025 at 15:20, Linus Walleij <linus.walleij@linaro.org> wrot=
-e:
-> On Mon, Oct 27, 2025 at 7:43=E2=80=AFPM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+On Mon, 27 Oct 2025 at 22:13, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Enable GPU on Salvator-X 2nd version with R-Car M3-W+.
 >
-> > Prepare for the advent of globally available common field_get() and
-> > field_prep() macros by undefining the symbols before defining local
-> > variants.  This prevents redefinition warnings from the C preprocessor
-> > when introducing the common macros later.
-> >
-> > Suggested-by: Yury Norov <yury.norov@gmail.com>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Do you want me to just merge this patch to the pinctrl tree or do
-> you have other plans?
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-My plan (cfr. cover letter) was to take it myself, as this is a hard
-dependency for 11/23.
-Thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
