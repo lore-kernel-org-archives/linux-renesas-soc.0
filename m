@@ -1,64 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC161548C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Oct 2025 17:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A82C36C256
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Oct 2025 17:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846935; cv=none; b=GZYe2yGRhSPmM2FLJcYbz077vOur78GnohE+wao4l+gqjcNHQiI4xyiM/4UJ4qfpSPrKTHW4xw4M5VOfh9K0KzqvW/iBk6cBVvFDp8ZZqIqDC0psLC6oVNib4piJxnPugiFMBQy/cu6hU4G5WqP+/1DecxeV7t6002VCf+s1ZD0=
+	t=1761846935; cv=none; b=cNZlFkocJ2QrhdlV+4pDvKym5CEe+ugYGC2dBhGGb53UuvfIKvgvkb3lDZ3xWJ0IpNrNLVhzJZKxXXS9sJgRUr3hzj6ZYha9zNQqyBFenzfOIf1X8MZ4hgFV+cFj9WkLsLph8Vin2SevcF7fFYg6pXLQ154S3Y18nl/mtaWfnoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761846935; c=relaxed/simple;
-	bh=6rJaHYLudOTTm3QmqB48Nxc1YcoHdZeo58CPf1gncKQ=;
+	bh=9jcJ345rfMMIxdlmZfAg0y+exXpCpE0R+jvegxv2zm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fWaFTfVnzKPhFm8C/7Ly0m1heS4KTP6+XOhuIs9XamyRD5eeu10pQsXz/4BN0l8dnKZfKRt+L7a/qtH4MSWjwHMPwebt8IZVevAT68eppr+y/WPf5Q3MlWcviO6/AvrpTizI/Q75jnYZjkBvRH50L7GJ1pGWLH28eu5lABVdnaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PrMMf0Xg; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=h1rX45w5lyzs2CNOSZeRd0lEX+BjEE7dV1LyLF8/uFIY479SvCLtzbzvhBbxl5bA1ii4qS28ByibwAzziBhk9m+xJfbzTB/K2tPB1hhOAxOs0CrCUNDxShhnweW43AL6TtsqKaZYMhGdwDZ2YbCkJRTUOxkOHvX+tmz12qFB3ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J82MttpW; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PrMMf0Xg"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475dc0ed8aeso9479625e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Oct 2025 10:55:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J82MttpW"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso1408952f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Oct 2025 10:55:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761846930; x=1762451730; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761846931; x=1762451731; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E5RyjODeDGquD2fp8h4Ys0a9AjmkuXgJEKfRWxOkPhw=;
-        b=PrMMf0XgSq1B0JXI4C70oCTj2Maqfp1aTPQyE4PfRxWdqt4RZSlYefFUdv8axPHcp1
-         STUeFTfHz9GPVUjrC/5SHapO9lE02LoIsSbcamqAERyWb6Jta/HSzxqwpFbIqkspa301
-         Qs4NdYB/PALTNM4Fylw/ORaandhlO9QN+9KGjy2+7mqGPwulG5FfCBpBBvKlYA8YQY+O
-         tj8yisso6DiZySXDG82ICckzbG2Ne/lFWHThEG6ebrTQxIS9TpfKil/+Zt0UI1g4bU86
-         VHO81rtR3k6k5Qd0LPeEmYjFktQwxT9EgtM+6Vsbm30b4TOlWyUdbL61BbaqB7aNNEiN
-         0qXQ==
+        bh=GbIsB+JA33Gj1io+1AAFvPQwYHrrul7tUKhFdp8JQ+s=;
+        b=J82MttpWIRLzbNEEfH+3Ncrsg/jYUIIN1lQ9nT3qpprSyfwFZTx+k292qSqPOp0GRc
+         BNmSaBB/F5m3Cb4K83iM2sAVIfjfN5+ofA+IPFv2CuSQlTzy2IV7sLV4W2Zm9Hwsai0x
+         XmHQhD4zkjKv7FLeStCGweTQp4ynd6ZJvJHVJTIqRrC5jN5YOiQTWHJmakoBFJX9iQyG
+         5b8GCp1sm4Wz5+A31X5yZqFW4v9nJvILLctnkZBTeR1ibpFO4DCiLnNB0nmTA+3Qbs74
+         llsdnhZoFd0CYI30Wi08BmbQL7bzSPJxAeBTSmJCmM3kcMNkV4vKwxU/9Sj0n+4wiYpY
+         qQ2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761846930; x=1762451730;
+        d=1e100.net; s=20230601; t=1761846931; x=1762451731;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E5RyjODeDGquD2fp8h4Ys0a9AjmkuXgJEKfRWxOkPhw=;
-        b=SwGAavL0VIfDGO4RRDrl6okxja33zhO9ONsfvotoJVhjkv0N3s2Pr/MH5JLM8XadUx
-         JHFfMrLWZuw8t1alxBUBUl5Da2nm8kdJo2ifaPer4qDpk0RFJujai9q5IUZB0RX0Xjax
-         r7W8+GZH7bDm7Tt8R17BxK/w9YrqLLDHlWkBh7i3VCGFBzKp1Ng5supWKpmaxVLxbENM
-         kzyYy47wSLVz+AgKu/lEOGuU/NxTM/x5qZsQCyET44//TRTkGuU3p2/I2jGPp0UN/ZRr
-         8tcr/6u9m3IDMnfThToucr77G/6Io1MDcmN78+TiF8ZgeR/Ln79sUxIKzIZiSYVxVx40
-         fuDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXS6gfG3PbQSKVybZ17PsF42lvFeU8JP9Dl6Ldc6cursXseM/cWB3priADiVbxDR4d3O1EcmxB/2hXJzDrzCw91CA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAKg2M95JbcXA6zccscP01PtaOE/tALMxSf5PywwYkniag5KhM
-	XuYu2IQgYcg5Hjsa9z7pZ7Jlw3fTdHGF2i3Miqw5JFbSetT/qolyt9TD
-X-Gm-Gg: ASbGncvv1jph2rq3LPajNFzfUZQYoBGNSI0fMU38zidvVOLgVV4t9HS5cOslR2xGEb9
-	nxGtwv/jdOsP7M6sxQB9CZQe2X6fZxp3oD/4axNX54vcEupg8YN/7hfwm5vXJ+Mxq25wgRIceek
-	vIE6Pe259yHHQ0QrL1Ny0QjDP/4gvJ1Jzw9GUpUSx7Ffww4pViPQU5Qx5RcJRYphPOW45icPuW8
-	5Xuz6ydvY8QATWU4QzdBLTZPhhsS9Iaz7zGbhNSJo3UdeR/uefXLiRvxcabE7l1Y6xd3LsLuZ+5
-	DcNxBKRk7gsKZPsrzqwVEViqgHdYUfhZs7a+cyPLL1hK5hbPpnsHni+ouydYAtGx/O27J2bD8mz
-	nJ/l7rD+ZWmlaUWp+/G0KMV+7PXj67PkiCkeqjqs+Le8JE/UnitytNSa7SHi7Qgv5WsvFNp6222
-	c0D5+zkLB/Kay8ZyJuKjRTYWhF6EBfC20BEH84c9oofI/aoaY9BRRIFwGGNdugptqd/s9HECo=
-X-Google-Smtp-Source: AGHT+IFBi0hqrqgDBukpX7UuHHLxHjT0GA2iPHi9vZvzYJkR6850zvm4U+rMbHpm3ZqwPaCKtK5CeA==
-X-Received: by 2002:a05:600c:64c5:b0:46d:996b:828c with SMTP id 5b1f17b1804b1-477307c1fd3mr5174305e9.10.1761846930304;
-        Thu, 30 Oct 2025 10:55:30 -0700 (PDT)
+        bh=GbIsB+JA33Gj1io+1AAFvPQwYHrrul7tUKhFdp8JQ+s=;
+        b=NGDQdXOGpUtyEygiv2OC5OfQwiDoEJvqWKY7pDvrC3yHFa0eC6Xoca81joDMBs6WeW
+         ng2MBwe48sj2LDxw0pVonf4JyhVYVnalgSt/PPQt/pLeygf4oy/SzVk1tz/Bp6l9Dv29
+         XCBPtwlCRxdKxRyHVexuGKVQ765VyxVqMMP1UCJE+0DfM+COiELiRy+J67rlWFM3tVZx
+         N7bdzrGiK17Sx6q+1fyO+SSewzNfe5FsXkRnrOI1tyEA8cXXGW4/X4WNJh4i6uoCBgFz
+         dMiRYaEQUj3SlvfsAKO0hdWLNI4R5zKjvxb0noMyNZ8k38oZ+NeZhi+pybA7rBUoFxwf
+         rjAA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5TwiUb12vcYdBG/d5XFUw5EPxqnjStafhMKqVJLjhIYaFQuGG8yjm/oDTJMYaoSN1+OE+3yvQWDqFaEoXzRZyGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy022Wkqxv2IvKbGOYuTrbkEaJiFW6nV1m1rulkGUkjbwrkkXL+
+	LDMGCLgAHiJgefSohRSxnpktZW6P8pRy1dbXdfhgc3vRqof2iyf9x27t
+X-Gm-Gg: ASbGncs9CjpjLfflaYzuTfTZ+lC0Q3Jasd6L4+qP8XxvmOsfsja96fHr4S52fzlnHyJ
+	Keo359CE8DEPAd/h1j5cJ89/f49tsR+SY11L8TJi5mmBxojs9BeKw+ymj4EM+cfv7zUqYAzWFXF
+	6ma+pnslKXsZPduPGAJHPgMu7tfWm6myAZVGg6lg9UlXtvM46qzAlSSI4tmoBAJHavATImGiUR0
+	tslvRYmDjUAocNYFHZguRkK0L01PMb+JnufgG/SyJ+WhICPrYFnJ490dXeqULlaJt7hJQRwLkXE
+	4MMtIpJRU1WpV894WZRD03H9xTmq57GNKzPNWeNLjSMeJpLb1Mv/aQ65niCGlNmC8X9uNaHWgds
+	OryhJJaSC+09dYp4ZzmLSrSdh6kLmbjpjsXyzF3N2RV+99soLMQnupYfrNvPgqsWmu2ZWXT+c2n
+	N5y4J1Enp6f58usX7VNVqgVDwePXEL1WeWCc94K6B4/NHlY2Llvg2Wfge7gTle1EBQHqC4khw=
+X-Google-Smtp-Source: AGHT+IEF2L0p91EN9iLwnGMihS3zlarLJMg1F5IRe+iNrL7LAp7ExKgFdBKaDNHl4ZjJyQD8OKHXaQ==
+X-Received: by 2002:a05:6000:25c2:b0:429:b718:167c with SMTP id ffacd0b85a97d-429bd68847fmr429373f8f.28.1761846931270;
+        Thu, 30 Oct 2025 10:55:31 -0700 (PDT)
 Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm33384041f8f.38.2025.10.30.10.55.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm33384041f8f.38.2025.10.30.10.55.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 10:55:30 -0700 (PDT)
+        Thu, 30 Oct 2025 10:55:31 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -71,9 +71,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-serial@vger.kernel.org,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
-Date: Thu, 30 Oct 2025 17:55:07 +0000
-Message-ID: <20251030175526.607006-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 05/13] serial: rsci: Drop unused TDR register
+Date: Thu, 30 Oct 2025 17:55:09 +0000
+Message-ID: <20251030175526.607006-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251030175526.607006-1-biju.das.jz@bp.renesas.com>
 References: <20251030175526.607006-1-biju.das.jz@bp.renesas.com>
@@ -87,55 +87,33 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Shorten the number lines in sci_init_clocks() by fitting the error
-messages within an 100-character length limit.
+Drop the unused TDR register-related macros.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Updated commit message 80-character->100-character.
- * Increased line limit for error messages to 100-column limit.
+ * No change.
 ---
- drivers/tty/serial/sh-sci.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/tty/serial/rsci.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index b33894d0273b..e9345f898224 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3008,11 +3008,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 			return PTR_ERR(clk);
+diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
+index 470b5701cd67..ade5ee479e99 100644
+--- a/drivers/tty/serial/rsci.c
++++ b/drivers/tty/serial/rsci.c
+@@ -35,12 +35,6 @@ MODULE_IMPORT_NS("SH_SCI");
+ #define RDR_FPER		BIT(11) /* FIFO Parity Error */
+ #define RDR_RDAT_MSK		GENMASK(8, 0)
  
- 		if (!clk && sci_port->type == SCI_PORT_RSCI &&
--		    (i == SCI_FCK || i == SCI_BRG_INT)) {
--			return dev_err_probe(dev, -ENODEV,
--					     "failed to get %s\n",
--					     name);
--		}
-+		    (i == SCI_FCK || i == SCI_BRG_INT))
-+			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
- 
- 		if (!clk && i == SCI_FCK) {
- 			/*
-@@ -3022,16 +3019,14 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 			 */
- 			clk = devm_clk_get(dev, "peripheral_clk");
- 			if (IS_ERR(clk))
--				return dev_err_probe(dev, PTR_ERR(clk),
--						     "failed to get %s\n",
-+				return dev_err_probe(dev, PTR_ERR(clk), "failed to get %s\n",
- 						     name);
- 		}
- 
- 		if (!clk)
- 			dev_dbg(dev, "failed to get %s\n", name);
- 		else
--			dev_dbg(dev, "clk %s is %pC rate %lu\n", name,
--				clk, clk_get_rate(clk));
-+			dev_dbg(dev, "clk %s is %pC rate %lu\n", name, clk, clk_get_rate(clk));
- 		sci_port->clks[i] = clk;
- 	}
- 	return 0;
+-/* TDR (Transmit Data Register) */
+-#define TDR_MPBT		BIT(9)	/* Multiprocessor Transfer */
+-#define TDR_TDAT_9BIT_LSHIFT	0
+-#define TDR_TDAT_9BIT_VAL	0x1FF
+-#define TDR_TDAT_9BIT_MSK	(TDR_TDAT_9BIT_VAL << TDR_TDAT_9BIT_LSHIFT)
+-
+ /* CCR0 (Common Control Register 0) */
+ #define CCR0_SSE		BIT(24)	/* SSn# Pin Function Enable */
+ #define CCR0_TEIE		BIT(21)	/* Transmit End Interrupt Enable */
 -- 
 2.43.0
 
