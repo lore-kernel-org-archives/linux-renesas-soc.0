@@ -1,94 +1,88 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D87221FB2;
-	Tue,  4 Nov 2025 20:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4523081A1;
+	Tue,  4 Nov 2025 21:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762287660; cv=none; b=kMwZg+cQHWvAwiEsvrvkP2uvmZh5wT1zpsN8w9aU7ltTp0ABwlnns5zenNfzQ1pdDwcR+qSphudXLkBNXLGMyRx57lRFE0hC9Ia8Te8vbeT/4TTRoK1iM7PdnKftswY2Y56J0KrQjIdx2gndrOJ5qNfOWtFIH2mCIHUgw3EcMns=
+	t=1762292479; cv=none; b=D5QU32BdMx0oea19W2/IzqCUMksSt2K0eCIo6x/rhjqZxolAe3GRLsSSD3QdiYrvH0cmQDx3EvQI4DTp2KY9lhZUgPf/V3m7AoKuX4HSmZHKKLoluCUfq8zTnCF5hbesIWjjCZ25/IfPeF/wuvIwnyRGrFen1py8RQZcK9jeH0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762287660; c=relaxed/simple;
-	bh=qPGkxIjDXW5zpPissyVoIhvHyG6+0/+i76vtrzIzZa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBrax3BiuY7KwEiwAndJP+rAxjHDR5HLarbXtzfeWonRRHJnoALtaXEGVZEInVofwbj6MszZWv2uPSJm8lXF9nHORnN0lMkU+sWqrrODs3qE/RIa/1anvHC6I45tG/DPzDigsvMHwC+wX1siEJBjKoOFURBk2PueO5FrwcDJkLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vbIrFJbF; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1762292479; c=relaxed/simple;
+	bh=lNfEVma/lURC8xJppfxrtD8Mfx//5qyeP21r4uf6iXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2S7SR7ntCXqRlTMQOFfACpv/FSgbLvGobYDjy6QPagoH54pv5kGj1THThrnnIMunGtGFHx6eaHnlFKkpftHsjnoPo1yKJ3JmMpvHIdRxBvMUQH6iZ8PQFmMXoJWwa9TA08IpSc99lZXrCjsjMMmKkbxuAByRCssFpaOENC+1Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=lyGCJduA; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=a+7QEveT; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vbIrFJbF"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id DC4DF4E41503;
-	Tue,  4 Nov 2025 20:20:53 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B029D606EF;
-	Tue,  4 Nov 2025 20:20:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6008410B510B0;
-	Tue,  4 Nov 2025 21:20:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762287653; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=5f5xDTfPirdrX9sDwHxGK4skY8bI+7AmuogtBOTygLY=;
-	b=vbIrFJbFD/q/Hf+yINbSGoNb3XQ1+wLAY2HK47tI/CLpijQ7zs/mUHCYy1BHjMQlcU0OXd
-	6fAtSIdVvgSadyceeSTEr5VGgOHIQq6y3xYcROkVTi9FzVIdA8zwookDU37CN3oDItDHv/
-	8vyymSjp8zg0+y+3Mv/G8nvXw22nxeSimesJgJk4Gm5kgmhBZYziTkV33m9qzKLftxgYDx
-	aEf1v/TFkRHQ9AJDTVj4XAFM9tnP3XL/zLwijqVT5zcX5t7O4KHZicvHA+Q/sdklDyvTev
-	l2uLwlPlF72qXJaEONN0yJr1SFMlzYML7VXdPqA6FfFeQHsD3noib1mtCBzo1w==
-Date: Tue, 4 Nov 2025 21:20:49 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
-	claudiu.beznea.uj@bp.renesas.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-Message-ID: <2025110420204948103c2f@mail.local>
-References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
- <20251103121848.6539-2-ovidiu.panait.rb@renesas.com>
- <20251104-magnitude-deodorant-be607e3ff4be@spud>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="lyGCJduA";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="a+7QEveT"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d1MMt1zvSz9v6t;
+	Tue,  4 Nov 2025 22:41:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762292474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQHQpchzb9fGGc97Sz/QlrXrNhxFD8EnhEgkqx0WZgU=;
+	b=lyGCJduAsCMCHOaPEUaUqhmC5t0P2AjKZO/6f6kvgOEB0aAfgmNZdjLcPBjTtfJz8y+431
+	ocnxuV08e1BdVB0J7/I4j7VcUU7gJElPrkyRNtbVwJsMWx+GAZ1eQcBdrLXaiupcGEqBgr
+	AEA/VRYJKl+i5aiYxOdx3MbDABgn79id2Th1p3NGCvlyEQhUqyKhQtgPft8t+rixwfS7O3
+	tcA1Gu3U7F5YJq5upTWQF0EKoiNcymbust4G2pvrbaVu502ptfuTdUD30VX6qixYAcjmiA
+	mF6Rrxyd9UjMqSbwJMkqhiEptHTdqZt1DKHYurpWBjbczPoCTLdw0+Q3NMqmfw==
+Message-ID: <428a59e8-2c18-4bf1-841d-3ead2c2c1cb0@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762292472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQHQpchzb9fGGc97Sz/QlrXrNhxFD8EnhEgkqx0WZgU=;
+	b=a+7QEveT4abK0Ei5jrcVBMxn3agRcRlnDplkk4EtH0shTyaSu8N8wA0lXokJq8Aa1lQeDO
+	L0D1PIrYKkHKGkNwWbJ4l21Ay1s8txmBZWDUUx/Wi2vCM2Mb6fBHlJu7NvlIGP4PYFzPSP
+	MK+UG/3qY0/vKxkGYktTagU5JGHp+atJe0zR9C1unpOO7OKmQXTzf1bh2Qhy28cw1W0Avn
+	GjDtgsDl6VjVmMNn+c+RE3SujOxgWHccNhr3porLazNto0FFZY5T3b+nhpze3enSbHP6Q+
+	o49QThWvBM4D1HErQ+x/L4WVDglxC4+8Rb/E5EM/MNgc0HZZqwgqbh3D5MAKWw==
+Date: Tue, 4 Nov 2025 22:28:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-magnitude-deodorant-be607e3ff4be@spud>
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH 3/5] pinctrl: renesas: r8a779g0: Remove STPWT_EXTFXR
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ huybui2 <huy.bui.wm@renesas.com>
+References: <cover.1762274384.git.geert+renesas@glider.be>
+ <f6cfdbbc024d85e87583a1d57ea01582632f1216.1762274384.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <f6cfdbbc024d85e87583a1d57ea01582632f1216.1762274384.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: ubk88sj69h9gudypgs7a49faiiikhr4b
+X-MBO-RS-ID: 11699eb1432590068e6
 
-On 04/11/2025 17:28:27+0000, Conor Dooley wrote:
-> On Mon, Nov 03, 2025 at 12:18:45PM +0000, Ovidiu Panait wrote:
-> > The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-> > (r9a08g045), with the following differences:
-> > - It lacks the time capture functionality
-> > - The maximum supported periodic interrupt frequency is 128Hz instead
-> >   of 256Hz
-> > - It requires two reset lines instead of one
-> > 
-> > Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and update
-> > the binding accordingly:
-> > - Allow "resets" to contain one or two entries depending on the SoC.
-> > - Add "reset-names" property, but make it required only for RZ/V2H.
-> > 
-> > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> > +        reset-names:
-> > +          items:
-> > +            - const: rtc
-> > +            - const: rtc_rtest
+On 11/4/25 5:59 PM, Geert Uytterhoeven wrote:
+> From: huybui2 <huy.bui.wm@renesas.com>
 > 
-> If you respin, just make this second one rtest.
-
-I already applied it as it had your ack but I can still change it
-
+> Rev.1.30 of the R-Car V4H Series Hardware User’s Manual removed the
+> "STPWT_EXTFXR" signal from the pin control register tables.  As this is
+> further unused in the pin control driver, it can be removed safely.
 > 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> pw-bot: not-applicable
+> Signed-off-by: huybui2 <huy.bui.wm@renesas.com>
 
+The real name is 'Huy Bui' instead of huybui2 login name.
 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Also, matches U-Boot patch, thanks !
