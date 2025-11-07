@@ -1,135 +1,71 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D927306B35
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Nov 2025 23:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714E03D6F;
+	Fri,  7 Nov 2025 01:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762471478; cv=none; b=FysEh197hVZjHVkC6wJ93bPHi/h3sR8zDDLPOKubSM5pb0MprN1SkBt1PvhL3E8Henio0NtqScgsFqVT1eQthVcmmT1PQuiZZIu730Lx/F0cCk6wOj5kdhQFDuIMt8GiA4Vy2h2lCWszhDsTOLMHafmZSOXOCbP1m1CPSdAtbR8=
+	t=1762478194; cv=none; b=pLXeUMMsA6jZuP7CYMfKxGN1+n0DpePWbgcGjOo2/XzBtKh2gqVL0GmObbRYZ2x3953KOQMbf0LKTUqTkdugkTkCVp6nR4NBmhle1kiBohu3ylTBglNbbrhNpoOmfxzuUaz87BNRRebIf9iFp7AaEggJvwFFApBBnNJX3fVsVa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762471478; c=relaxed/simple;
-	bh=G6OwdFjIhXZA8LAbVSp+Bte8NSL9Q2beev0KE65r4Qo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jWXIxacroinCLRWgD1xnoQRcaeilP8+0Plzs90pgv8nsSLDkbRgcN7Zl+KVtcT8OqBN2SjieI2sjKpRKVtMWiWFWYculkYRgteGiPkuQm3BMmPUTRMbGsO93uHvPxInqqP1zEUHCKYqK3eyQ657HOIOCvpH87C7vC6QzfdIjbHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cfPsFuj1; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Wjc1uQ3x; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1762478194; c=relaxed/simple;
+	bh=oRGd3RtIX3gjEjwMa7vHSaMXXF8+AcujGJswpuabMIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImDOHrHYTn+4rIC/ku1WkyatDpbh+rr0SZ5gxB6Dka36gBxYbV1kLDykkiaGXiadApYZSgDmrS6HmZlPF5db1m3j9H5FiQevyzIRkskEgfh193Co+yHladi7YsvdFWpGkgKXym1D6CijjdLw1KOODk/MWRrGKPwWW80S6s1U2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HVTN6yAR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cfPsFuj1";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Wjc1uQ3x"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4d2dZ53GBMz9tPr;
-	Fri,  7 Nov 2025 00:24:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762471469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2RVNypdI0ZL+nFsFit0WdhuxHLthDwL94DW+f0yYzT8=;
-	b=cfPsFuj1qz/2bL3Bbvnn3Vux6lixTi1sKSptwHwcJXq+hYCWGQ7JqSBGg3D2tsgM1IRSUn
-	HQLFHn/7kglaMpceZoGTRkLidDjMJMKCVGE7nGZNs2w8fUZAJRFb2NXrYPjdkbLTwgdbRu
-	6FfmT8kb/SeWYn19t+9qrmSeR9P0DJT5q9M1bUGBZIN0A2wJpMltxl5BA1dHclz4DraYuD
-	HR7VK1WIwjFjbHYy7mvWk1m4X6xgip7pVLIV7m8KLJERvqQ6fNgshjBOgbf88txkRtV0KO
-	/IPFMvA+wm0/n4UASjqfmEFrwzlh/kRCrlsB1w8IIB4IPbw8KFGWlN4+kQuZzg==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762471467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2RVNypdI0ZL+nFsFit0WdhuxHLthDwL94DW+f0yYzT8=;
-	b=Wjc1uQ3xUu0qKKzL/d6MdEJLgXMT1Ve2EU2g7MGQLZ04fYzSepHhxr3kjgQrTssYJDJZIk
-	L58sE/2xP1j1cKTmPWbYowz0AsLwZfugroBiwAcbgpRQeKGOATOX1seySZMdYd89v46gMJ
-	Ic23tezdWYnMZjmhim8Im4fc316pKnejYnZS6rtHt/YquOKEacVn/3Rp+kSrxnY1mwebmB
-	w6Kd2xQCRn5WNvgP88Z9dH2PkSGC3NlE7A1YFv8eSPiSgH++bdIDvKjhZ7jeSmFPuDWVbJ
-	LJivme8pCX0OaSdAFFka7Klfguf526vpNg1PD7FadS3/BzPviJEtHWaIio3RHg==
-To: dri-devel@lists.freedesktop.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	David Airlie <airlied@gmail.com>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm/imagination: Fix build on 32bit systems
-Date: Fri,  7 Nov 2025 00:24:07 +0100
-Message-ID: <20251106232413.465995-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HVTN6yAR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xSn6sQyEp8F+TSgDXArYJ+Bzx7HU8Abi3PsklIJKrZU=; b=HVTN6yARUqOvNDNIamnQo9XtuJ
+	CZ7YBhqW5xGq1vLjJIhwNwmXifyvkmM2f+LfalgjL2tSp8TPOxs0FXWTAy1Ik9RI1qrgmEfjFavle
+	uVfp+RVy8BJ1P5pzbZlLcevpo6Molc0REMC2yCP6KuW9O8ZFMwG5pYxitdkatmTaeH0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHB5N-00DAie-4v; Fri, 07 Nov 2025 02:16:17 +0100
+Date: Fri, 7 Nov 2025 02:16:17 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michael Dege <michael.dege@renesas.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next 02/10] net: renesas: rswitch: enable Phy link
+ status pin
+Message-ID: <eda96e9b-2a35-42e8-b1dd-ffde39644fbf@lunn.ch>
+References: <20251106-add_l3_routing-v1-0-dcbb8368ca54@renesas.com>
+ <20251106-add_l3_routing-v1-2-dcbb8368ca54@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 05b42a57da46a4b2821
-X-MBO-RS-META: 4x5ig8zttjwc3y8dmymrjcb889rurnmx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106-add_l3_routing-v1-2-dcbb8368ca54@renesas.com>
 
-Fix support for build on 32bit systems. Include linux/io-64-nonatomic-hi-lo.h
-to provide non-atomic readq()/writeq()/ioread64()/iowrite64() accessors, and
-use __ffs64() instead of plain ffs() on 64bit number SZ_1T.
+On Thu, Nov 06, 2025 at 01:55:26PM +0100, Michael Dege wrote:
+> Enable Phy link status pin for boards which support this feature.
 
-This allows this driver to bind on Renesas R-Car H2 which contains
-Rogue G6400 BVNC 1.39.4.1 .
+Probably repeating what others have said. Please zoom out and give us
+an idea what a link-status pin is? I don't remember seeing this term
+used before.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: David Airlie <airlied@gmail.com>
-Cc: Frank Binns <frank.binns@imgtec.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Matt Coster <matt.coster@imgtec.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/imagination/Kconfig      | 2 +-
- drivers/gpu/drm/imagination/pvr_device.h | 1 +
- drivers/gpu/drm/imagination/pvr_mmu.h    | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-index 0482bfcefdde..6d177f0568cd 100644
---- a/drivers/gpu/drm/imagination/Kconfig
-+++ b/drivers/gpu/drm/imagination/Kconfig
-@@ -3,7 +3,7 @@
- 
- config DRM_POWERVR
- 	tristate "Imagination Technologies PowerVR (Series 6 and later) & IMG Graphics"
--	depends on (ARM64 || RISCV && 64BIT)
-+	depends on ARM || ARM64 || RISCV
- 	depends on DRM
- 	depends on MMU
- 	depends on PM
-diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
-index ab8f56ae15df..efdd355005c0 100644
---- a/drivers/gpu/drm/imagination/pvr_device.h
-+++ b/drivers/gpu/drm/imagination/pvr_device.h
-@@ -20,6 +20,7 @@
- #include <linux/compiler_types.h>
- #include <linux/device.h>
- #include <linux/io.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/math.h>
-diff --git a/drivers/gpu/drm/imagination/pvr_mmu.h b/drivers/gpu/drm/imagination/pvr_mmu.h
-index a8ecd460168d..6431e4314735 100644
---- a/drivers/gpu/drm/imagination/pvr_mmu.h
-+++ b/drivers/gpu/drm/imagination/pvr_mmu.h
-@@ -85,7 +85,7 @@ struct sg_table;
-  *    notes on that constant apply here.
-  */
- #define PVR_PAGE_TABLE_ADDR_SPACE_SIZE SZ_1T
--#define PVR_PAGE_TABLE_ADDR_BITS __ffs(PVR_PAGE_TABLE_ADDR_SPACE_SIZE)
-+#define PVR_PAGE_TABLE_ADDR_BITS __ffs64(PVR_PAGE_TABLE_ADDR_SPACE_SIZE)
- #define PVR_PAGE_TABLE_ADDR_MASK (PVR_PAGE_TABLE_ADDR_SPACE_SIZE - 1)
- 
- void pvr_mmu_flush_request_all(struct pvr_device *pvr_dev);
--- 
-2.51.0
-
+	Andrew
