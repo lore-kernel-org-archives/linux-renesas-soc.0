@@ -1,71 +1,65 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B292DECC2;
-	Fri,  7 Nov 2025 02:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21DD26F29F;
+	Fri,  7 Nov 2025 08:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762482790; cv=none; b=c3xtcQ17NiXx6gBkbEyzOtu8Dsu70MbWUy9Zb/72MN7+SMCCtThE62x1Z+W5kehgey3GOE6mg2vpBeySojyf11r0WSS8M2UMi7r2VClK5Lfn6eDmFK7/BzjBfrLDMArpopnz0jdNHvwDjFzoqhMSHNtWpMqtqZwWD5ILkypa0wI=
+	t=1762502417; cv=none; b=Er5iPLMOtBo1Z7hC7tMTB12m4Utxb0YnIzItZCTx0BJsbO+axoXJDoVY+8rqJe8Wd0RfR6mQFlOaJCdSTdMUYDNZtMacYAjMT7zjbkIePHL94ebwbgTcSOiwGWkFQeHG2J1yI9vK8jP1RR/BLGAiEdHrgX4bf7hhM66uGMTHA1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762482790; c=relaxed/simple;
-	bh=U64EFPOpamQaJacRJPb7d/XQfvNHoQeeHPePZntGGAk=;
+	s=arc-20240116; t=1762502417; c=relaxed/simple;
+	bh=woTbj8MC4cB2KVfqxJsPDXydNbKs/tT1pE3GnVh3z4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZET++fI2uo9btFdJGWj5oSJ4kv451RK3Zw0H6Z2MQDX2PZF4gIK47nzN4OORntw+t54jSKxLX2hu+fVszKvPqLb1iBdNZxO+7woPpUqAryeHIUVorHg/exBnee06H6SeVMSjmiY/Rwi7/NyUctuKhzfI7EqrRIl0JucrkkFmeDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HIq3gVse; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwPmo3pKDqkD9YeYdbNIguK88iks+yG8oP0O5ABA1PHFkRhllIZCkcQ4m0gTrQAMBeuZ2TuSmOCHWtvvyQ8/uWBrHw82uVXQHB1wCSw/hPwR4Zkq8ZWnrRqb/4aIK0sfaBZR2sDJ8aq6RZdnQBSb2lB17lTknFjzMh4A6lKCZSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWi+qyBd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HIq3gVse"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=phFtGS0Afldhcoum+tQSenmeT2+6JBZq5dncCaR739c=; b=HIq3gVseM931Oyo3EHELPHlH9h
-	zF1Z0Iqvp/uMt5jiIqJ9EYpn3Y/DBr22dcYK0qfQgXcXDmGpisfOFAtlFbTFgCji1U/ZA43JXEKfG
-	OHRAbm5M8Ek1xVnl6Me4UFxELT8iCVTsxTvzc7RnkjbHfmKadAtjKk4/bHZNAlI8QZ6s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHCHZ-00DB68-Cw; Fri, 07 Nov 2025 03:32:57 +0100
-Date: Fri, 7 Nov 2025 03:32:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Dege <michael.dege@renesas.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next 10/10] net: renesas: rswitch: update error
- handling of probe
-Message-ID: <adfd8b4a-c89e-4368-b4ee-7d65f95e7128@lunn.ch>
-References: <20251106-add_l3_routing-v1-0-dcbb8368ca54@renesas.com>
- <20251106-add_l3_routing-v1-10-dcbb8368ca54@renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWi+qyBd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B87C116C6;
+	Fri,  7 Nov 2025 08:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762502417;
+	bh=woTbj8MC4cB2KVfqxJsPDXydNbKs/tT1pE3GnVh3z4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWi+qyBdt/ViOk43Xt8kcxzdGjo7tr8VhLjX20ivUJCv2V9rHvf68ONmrfuqxBs7l
+	 Cq4vbAkvUTdgJMb18EXZChiBjH5RlvJrD10f6EdHc0RdM/n/Brocdlo7xBrhbj97FR
+	 asOJzpbd5wftbqnBbYda+zVlxCletNQt8z2um0VehgCgJ0Fzx7Z5pLOdsvBf7azg0B
+	 WScy+fB38UjiYZMvJ8F1aDyaBRlyDzKJd3b6T/TYo/+gVZK2/+EANMvj8DJNlYOvGF
+	 Lyo+zPZLYoilNYQpKnkO1DaUmKHalcFEpKQRFIAYN80ONyZ1trXqmORENrKY//36rE
+	 llPhQTvXgxCkw==
+Date: Fri, 7 Nov 2025 09:00:15 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: r8a779a0: Add ZG core clock
+Message-ID: <20251107-dangerous-porpoise-of-expression-6a9d68@kuoka>
+References: <20251106211604.2766465-1-niklas.soderlund+renesas@ragnatech.se>
+ <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251106-add_l3_routing-v1-10-dcbb8368ca54@renesas.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
 
-On Thu, Nov 06, 2025 at 01:55:34PM +0100, Michael Dege wrote:
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Update error handling of probe function.
+On Thu, Nov 06, 2025 at 10:16:01PM +0100, Niklas S=C3=B6derlund wrote:
+> Add the core clock used by the GPU on the Renesas R-Car V3U
+> (R8A779A0) SoC.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  include/dt-bindings/clock/r8a779a0-cpg-mssr.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-What is wrong with it?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-     Andrew
+Best regards,
+Krzysztof
+
