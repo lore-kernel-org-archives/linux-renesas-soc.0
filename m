@@ -1,195 +1,214 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC69036C58E
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Nov 2025 16:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFBC328272;
+	Tue, 11 Nov 2025 16:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762878297; cv=none; b=tl9JJD4V4AyD7gnxn0PFwJ7q5BPfCiO56N77pfVsPRsChN2AZg5iCFuumR+o5j08sRPzIFuumOP5hA7WgTYKWpsz6YkBqxjcGVDmoAnm0/c4tvR74ygnZqerjz8/DrdgHLwgswiwYNt5aEkgMQ4npkhvbG5Wghn85DRuK+LwEOQ=
+	t=1762878897; cv=none; b=AvhLzhyxxEIWwod/Z/x45IsuLxUiRCnlZxEum8C5KTxISJuV+0pvabttprc8ZQZ+Q8GuU43t1qYfYALIO0g+F5ivfITFmQNCR3pDXlDB4ADOvvKo8qbppLQeMCG0KrPRpO1soKxuaA/u+aw7ysGJPxFWu58Jhtn6ogsYCraLkiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762878297; c=relaxed/simple;
-	bh=D6r061tkwctTmLha1quZkKuh9UNyTVD9blrVtdPxe5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k05BnL8zSyrmPJ323rfpnAcHLIwh8Bx2AbH4sy0NZLZ2eHEJveGO5UWsQrd7hsdCJx7vAnxQuc71vGERVWJPqIjtfos6SXLfkarfNN91+rl+YHsXp/KAZLLers15tSWuJJ8lNeZUgTxSqBMloyfCWGGELGSL22C8o3PH6pLoy6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELaVCBH0; arc=none smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762878897; c=relaxed/simple;
+	bh=f09iJv0JNGSRgjJMHH3xABuPHKV+oRJzXaowFWVlF+o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gcKRSDlQRc/wtCMGjQG4kkdWSkpvOJ8cC78PLURc4Ogb7v3Q0wVyBtuN7un0qFMvRk1FGxdmP1QYXuchB50sUr1C141jBAzf07nLb0LY21NvyyTMvViCYb02CxoLoBiKOkkcQu9Zt2uCAXkxoeCtJCd2bP8zxcbMID33SdaL2bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lOrBQU23; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELaVCBH0"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-640d0895d7cso1490356d50.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Nov 2025 08:24:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762878294; x=1763483094; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OObdX9pib6NpwlrND45MftVr5ZcTJI6juiOxyVxxj4s=;
-        b=ELaVCBH0QXiSDc5egHC+hfc69NACMMIgLQ864xF/YF6g/k1RuKWMh/I5l4o4bS1Nth
-         8E2FPD+FrrEYqZ/pY8AE3HVlTwtjVDU0Jto4uuolQ5xoYog1J+nJVmiZ0aAmaN/W/WzP
-         6MlKTLEYGAYnbUgHAkrbWXpDJ8+fovOM+2XGZhQc+sQQ2UPAQ85bsPlRu2tNaMYKiyKP
-         10ruqC1FuvzJt5wiFcNDAJCmWDua0WkcixK3wJIsICUOVwpsjgs+ZXupEli6JdGTJrJA
-         p94lx/rnhS4lgVv1SKZcVqpN+moGz/TdXGta1P421hSkcABHMKUrpNPOfSql7x8R3+sy
-         n6ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762878294; x=1763483094;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OObdX9pib6NpwlrND45MftVr5ZcTJI6juiOxyVxxj4s=;
-        b=POSpcDsPBosGI8b/uFc6DUThJiBQI2hizk3olYwoF8XeHGHVnHSTJK4JnXfGBiWjoA
-         ThNfMAMf+iwtlUhDB4zIwXpUvDEKtYqEtYx6FES+VIiJACrmdbg+xynYSF+OOQz4zyQ1
-         mukvxu3jI1AIPUU5OyeqxqIK/m3z4AP1R6DBNfM5nym992SeoLKHbxFDb/lDJrImJz9V
-         6n8dqYuKgluHTCvTPYsfIVRUJI4ioR6oKUt3Icm5cBH0Ee+wwG14JC0O78FEDxJA54Kp
-         ECh80AcMHJy3CbDK0f6o4YrpXVKh5Cabn9WjTSaxJ8UtBLj388LAOHYuuJmuWa/YINBY
-         mhvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG7g4ORMiG526gj9dVvReZCB3bX4NI7mlJ+ZlkWVPKAEYbj7jsr33Erqw/IRcf/SEjQh6rLrfp/9rUYiZBA3xkdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzblU9wyIBslK+cI8vJxalkJZM4RD4eRqCmJbspBHCgipAbSO5d
-	ajfG0JLVJjGB2RXMIYUAIT9IFyO+w8hZa8Mc489ucZkTqXysiVcuzOl2SreQsDFiOXDYMapU5a0
-	g+lVIBx7KFx0EQbJKSkXP8WKDLw8bxrsNwEMaGtfuQw==
-X-Gm-Gg: ASbGncukK+LgoZmghQlR697mHXG/uOLrOOEK6HNJq3OLSdCn0CfG9yrxA84NzedL0dI
-	4LysvmAta4tPfSHDR1FMZpHgy7PM9P8KOp3J0JkqeWxhq/kuRK9ngVPxRR9OiTp+cYQmVLZEO1I
-	k/IEUEDweBfbAOwqzo/GKxnOqNCWn0T1B81DdgRmpluvZJ7eIwT0EAgkSYRyS4titsSddJK3Sne
-	sV3GsT5uFfXHxX73mFYyARCtdyyqOWOgUdT2BXBzd/IZy5u9/EtQ4pXmWdqYg==
-X-Google-Smtp-Source: AGHT+IHJmpd62CCALMSU8bf7zusT4BdJ9p+vVG2/WVor+YHRNNBx1h9njaTb9nUoDXRzsAjTTTODvx4t5ElIgqBFg5w=
-X-Received: by 2002:a05:690e:1189:b0:63f:aa88:5f6b with SMTP id
- 956f58d0204a3-640f733832fmr2668238d50.6.1762878293596; Tue, 11 Nov 2025
- 08:24:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lOrBQU23"
+Received: from [127.0.1.1] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BEEA41DD3;
+	Tue, 11 Nov 2025 17:32:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762878772;
+	bh=f09iJv0JNGSRgjJMHH3xABuPHKV+oRJzXaowFWVlF+o=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=lOrBQU23f+AwyaCNNAOPABqgvSVW2+R6BteEFCfultweEkwi+83n6hirZX0kEokAS
+	 2E0caRtQ8V/naXX4e84omyogzebB9o3WQc6XvveDsxoYai1SJlb8Dd08GSPuM7G6BN
+	 31AOtHbyw5hqUWE4LK+J8Pb6GQAGiLJOKqisakiM=
+From: Daniel Scally <dan.scally@ideasonboard.com>
+Date: Tue, 11 Nov 2025 16:34:24 +0000
+Subject: [PATCH v6 1/3] dt-bindings: media: Add bindings for the RZ/V2H(P)
+ IVC block
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008042526.3312597-1-claudiu.beznea.uj@bp.renesas.com> <20251008042526.3312597-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20251008042526.3312597-4-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Nov 2025 17:24:17 +0100
-X-Gm-Features: AWmQ_bmTf-MnTFtNtf3XeAoBv6oLP-Y3wG9fKzMxT4w-pivAEB1XqW0hQQcxyJo
-Message-ID: <CAPDyKFpTyY+OhiGsMX35fnLT5Am5-rJnnvOfArXAhXCuSQDiLg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mmc: renesas_sdhi: Add suspend/resume hooks
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: wsa+renesas@sang-engineering.com, p.zabel@pengutronix.de, 
-	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251111-ivc-v6-1-2a0ad3894478@ideasonboard.com>
+References: <20251111-ivc-v6-0-2a0ad3894478@ideasonboard.com>
+In-Reply-To: <20251111-ivc-v6-0-2a0ad3894478@ideasonboard.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ jacopo.mondi@ideasonboard.com, biju.das.jz@bp.renesas.com, 
+ laurent.pinchart@ideasonboard.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Daniel Scally <dan.scally@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3598;
+ i=dan.scally@ideasonboard.com; h=from:subject:message-id;
+ bh=f09iJv0JNGSRgjJMHH3xABuPHKV+oRJzXaowFWVlF+o=;
+ b=owEBbQKS/ZANAwAKAchJV3psRXUyAcsmYgBpE2Wos3XAXv5vFBbw+vLeyphb/Rs7JNmhTcjuy
+ VJZjNS/moGJAjMEAAEKAB0WIQQqyuwyDnZdb+mxmm/ISVd6bEV1MgUCaRNlqAAKCRDISVd6bEV1
+ MjKaD/sHmIb+eeRpNfQRYxuSpwHF4j40VEct9LlZ77OBfMASbS6hEdAsyMmkSNFLD/lAedfh1tf
+ 7J0DBPJuuXeFPnQHdx2In0xRFS77cz11xdIAPqhCWTJmF64YOHWcXHiJssgIFK4MbzjCGfVY95R
+ LkxeZ3+67mXkNgxHfzX0OYwSZV0BygsRC+7yrtLqMIAI0N4PFO24Vb+YWfbVnCZYDE3pTPI663O
+ WsSY063xMcW5jQr0OYmrkr1G8PoRYFNWVwKHXoWPujH6gdYLDUS2OoH/7t3NXQegT+WrFopKaqO
+ Lcvonl7eFdqZLnGqQM0Nc7NLlH/Ts08vJXDN4RHHAqJeASVeIh0/KbNYD7lqNISqdFY/p/ngfWT
+ Zmi5lPwVs6MGEmlxE/hlc/H44568qTPqk+sWKgCzRb1KvNhtTCp/wQEVfB+9TiLddaC6G9ekUWD
+ tNoyoMDLy0gHt7oytMjTkbmiu/PULzP+1NnttzCd4WOiK772j3YGKdTiYqerI0xZd6nvJbobQLg
+ x9azCFbvWzuzNX+IM1HT+OI8bN3HXg9Wyx5r/pKZwGEjmirHGoMvLjnhYXXZekUy2MrvfA3A7gx
+ 5GCv3HtLcdWTM7cMArcm85TNewamlTxUZA/1qNI0PQpxLqNKsWExr7irCKpjt/7r+ckeFkj1iw8
+ uZqvYu/Mt1KYTsA==
+X-Developer-Key: i=dan.scally@ideasonboard.com; a=openpgp;
+ fpr=EEC699ACA1B7CB5D31330C0BBD501C2A3546CCF6
 
-On Wed, 8 Oct 2025 at 06:25, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add suspend/resume hooks which assert/deassert the reset signals, along
-> with forcing runtime suspend/resume. This allows using the driver in
-> scenarios where the resume is done with the help of bootloader and the
-> bootloader disables the SDHI clocks, resets, IRQs before passing execution
-> to Linux.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The RZ/V2H(P) SoC has a block called the Input Video Control block which
+feeds image data into the Image Signal Processor. Add dt bindings to
+describe the IVC.
 
-FYI, this looks good to me.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+---
+Chagnes in v6:
+	- Add # RZ/V2H(P) after compatible string enum
 
-Kind regards
-Uffe
+Changes in v5:
 
-> ---
->  drivers/mmc/host/renesas_sdhi.h               |  3 ++
->  drivers/mmc/host/renesas_sdhi_core.c          | 37 +++++++++++++++++++
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
->  3 files changed, 41 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-> index 084964cecf9d..afc36a407c2c 100644
-> --- a/drivers/mmc/host/renesas_sdhi.h
-> +++ b/drivers/mmc/host/renesas_sdhi.h
-> @@ -9,6 +9,7 @@
->  #ifndef RENESAS_SDHI_H
->  #define RENESAS_SDHI_H
->
-> +#include <linux/device.h>
->  #include <linux/dmaengine.h>
->  #include <linux/platform_device.h>
->  #include <linux/workqueue.h>
-> @@ -107,4 +108,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->                        const struct renesas_sdhi_of_data *of_data,
->                        const struct renesas_sdhi_quirks *quirks);
->  void renesas_sdhi_remove(struct platform_device *pdev);
-> +int renesas_sdhi_suspend(struct device *dev);
-> +int renesas_sdhi_resume(struct device *dev);
->  #endif
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index c4aaf534868c..2a310a145785 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -31,6 +31,7 @@
->  #include <linux/platform_data/tmio.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/of_regulator.h>
-> @@ -1317,5 +1318,41 @@ void renesas_sdhi_remove(struct platform_device *pdev)
->  }
->  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
->
-> +int renesas_sdhi_suspend(struct device *dev)
-> +{
-> +       struct tmio_mmc_host *host = dev_get_drvdata(dev);
-> +       struct renesas_sdhi *priv = host_to_priv(host);
-> +       int ret;
-> +
-> +       ret = pm_runtime_force_suspend(dev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = reset_control_assert(priv->rstc);
-> +       if (ret)
-> +               pm_runtime_force_resume(dev);
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(renesas_sdhi_suspend);
-> +
-> +int renesas_sdhi_resume(struct device *dev)
-> +{
-> +       struct tmio_mmc_host *host = dev_get_drvdata(dev);
-> +       struct renesas_sdhi *priv = host_to_priv(host);
-> +       int ret;
-> +
-> +       ret = reset_control_deassert(priv->rstc);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = pm_runtime_force_resume(dev);
-> +       if (ret)
-> +               reset_control_assert(priv->rstc);
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(renesas_sdhi_resume);
-> +
->  MODULE_DESCRIPTION("Renesas SDHI core driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> index 7ceb7b977a0b..9347017d47c4 100644
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -18,7 +18,6 @@
->  #include <linux/pagemap.h>
->  #include <linux/platform_data/tmio.h>
->  #include <linux/platform_device.h>
-> -#include <linux/pm_runtime.h>
->  #include <linux/scatterlist.h>
->  #include <linux/sys_soc.h>
->
-> @@ -599,7 +598,7 @@ static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
->  }
->
->  static const struct dev_pm_ops renesas_sdhi_internal_dmac_dev_pm_ops = {
-> -       SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
-> +       SYSTEM_SLEEP_PM_OPS(renesas_sdhi_suspend, renesas_sdhi_resume)
->         RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
->                        tmio_mmc_host_runtime_resume,
->                        NULL)
-> --
-> 2.43.0
->
+	- Rename RZ/V2H to RZ/V2H(P)
+
+Changes in v3:
+
+	- Rename from rzv2h-ivc.yaml to r9a09g057-ivc.yaml
+	- Update clock and reset names
+
+Changes in v2:
+
+	- compatible matches filename
+	- Added power-domains
+	- Aligned clock and reset entries on opening "<"
+	- Removed status = "okay"; from example
+---
+ .../bindings/media/renesas,r9a09g057-ivc.yaml      | 103 +++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c09cbd8c9e3597e1d3d1f83cbd9abd5d17cc0262
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
+@@ -0,0 +1,103 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/renesas,r9a09g057-ivc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/V2H(P) Input Video Control Block
++
++maintainers:
++  - Daniel Scally <dan.scally@ideasonboard.com>
++
++description:
++  The IVC block is a module that takes video frames from memory and feeds them
++  to the Image Signal Processor for processing.
++
++properties:
++  compatible:
++    const: renesas,r9a09g057-ivc # RZ/V2H(P)
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Input Video Control block register access clock
++      - description: Video input data AXI bus clock
++      - description: ISP system clock
++
++  clock-names:
++    items:
++      - const: reg
++      - const: axi
++      - const: isp
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: Input Video Control block register access reset
++      - description: Video input data AXI bus reset
++      - description: ISP core reset
++
++  reset-names:
++    items:
++      - const: reg
++      - const: axi
++      - const: isp
++
++  port:
++    $ref: /schemas/graph.yaml#/properties/port
++    description: Output parallel video bus
++
++    properties:
++      endpoint:
++        $ref: /schemas/graph.yaml#/properties/endpoint
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - reset-names
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    isp-input@16040000 {
++      compatible = "renesas,r9a09g057-ivc";
++      reg = <0x16040000 0x230>;
++
++      clocks = <&cpg CPG_MOD 0xe3>,
++               <&cpg CPG_MOD 0xe4>,
++               <&cpg CPG_MOD 0xe5>;
++      clock-names = "reg", "axi", "isp";
++
++      power-domains = <&cpg>;
++
++      resets = <&cpg 0xd4>,
++               <&cpg 0xd1>,
++               <&cpg 0xd3>;
++      reset-names = "reg", "axi", "isp";
++
++      interrupts = <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>;
++
++      port {
++        ivc_out: endpoint {
++          remote-endpoint = <&isp_in>;
++        };
++      };
++    };
++...
+
+-- 
+2.43.0
+
