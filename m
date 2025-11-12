@@ -1,91 +1,80 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8921133F8BD
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 13:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C84C337B80
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 15:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762955883; cv=none; b=GIs39JBFpqEC0g9R9gQhV049l4SJyejNKqgzgPnCfRqZiZz1v6JH1xOu1aFwmDUyJafhO4DwJmB9PuNZh4CiKZ0d/s0cBLDFdIrg7QmJdsFXwPGT0a8AoSEY+SfHgNYm2B1BSUg0MG+tobfLXBhZKtLoYimxWlzEPk8K1GBHHDc=
+	t=1762962089; cv=none; b=FAFyrFPJ2g1eBkvtqcirsjmFnfKBmmcsDPs/VXuxrKglnktd5yYYNh1fY/UPPnxrtuXycbx/Rtw0Pud1L+Xs4UQ5IkH2GXuxHMuN/DyoTVo03rWSZvxo7/t9F21nD+rs80/rpemRfpGNyO7c5o0HcsdY/6pmQb+aTBJMmEz/Qto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762955883; c=relaxed/simple;
-	bh=TVib8KoMScZCb+KPT85+QmKKvlCH8lixAtnRmNJ3Neg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IaHxFYlrs/z/MqqnN2ukYTdEU+qARC7ovDYuEZPp3excZ+Z670tJKgpDWLnVapv6ZIK6mG2OQfZNdtr2hvjyeE7jajz0mdF4AMMrRZ0TwS4+yusYTq+ByC0IJrIzF3n46XO38Xeqs/yHHQiF5XH1aADdTaj2wgSF72f/3P/27YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKuYFh16; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1762962089; c=relaxed/simple;
+	bh=P70ux5XoL4sP7XKBF8mt9nEhNWg2Y0bKzzy2WXyp+MA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mfI/me/T/rD89nWE++tCxjx+EiQ/t7vShPkdkTcax4K2TlEP/LXk1Oc/xJDgzuUHONf96ET031B4Pq4W+ECLGyk9KMulm3W2TOXfFYfFCndDFPBUHV4nmS51cGlWjQz27DVqCAOehymxku9Zh9UtnXEDeanpmZW2766o6Yl9pqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V804Wny5; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKuYFh16"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7a9cdf62d31so1074676b3a.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 05:58:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V804Wny5"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1446633a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 07:41:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762955880; x=1763560680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j1/MI7fuOzyKPjB007+f1We8KvicofZrvdYQ3ilyzeo=;
-        b=lKuYFh16/6rkyavH4eqTg6FQaEhDKqJQ9T7YdWTLOsH2HVZAG4cmn6wTPORrzSaa76
-         YZv6hKrXeQrk64ik8lj1cD1PduE4FtX/J2EjCEOTboCTi0XqeA3/yJ80z98r58pNfCup
-         8bLYppRSnhhG4vLiT+SlznkSaqncHb7c/r9j8GQUwBCn3AFtai4U1CmbLVw8C+7HcqMf
-         E0TGmlGCAlvSpnJrk5+YtYmEaYjhLblAGsTkRdjtnuBPS0Nq05cpKSYJ2YMee+hEvovE
-         kqqdDLSbQttumlkIt4DWZLGexew1tmzChcqLiNfKf/7sIbkOINlRQBsjU8R2VTt+Ky0t
-         Rf6Q==
+        d=gmail.com; s=20230601; t=1762962085; x=1763566885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
+        b=V804Wny53F8rsoC0D2aHjH3g007OZpczWy9EsPNIadKYAww8Y8cJy0gMWtiyigO7EF
+         ufLqCRVh/dAU0gvUeIsZq+Oz0TNRumgNEDnzdjcvd+9IsJr4O8q9nrKazJh8CS4HCvLF
+         kcdlLpsV3fXSgH9z9e74m+FOBbfSECchh87NXSim7QqqQiWuc0z2sjq2nYjVFUf3MWqx
+         qCm4kg6kSCwL7Q+HYonTH5oTUKRBOk1HBGVougmD56vv2FJqKTG7QI14eYD2dlxsnqxu
+         LICNUx7WzbvFwBuQ/YWBSrXenMSRKrERAZw/l6bo4oFuSZHEoqc8Z1JJDqN66SKMZGKD
+         hJ9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762955880; x=1763560680;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=j1/MI7fuOzyKPjB007+f1We8KvicofZrvdYQ3ilyzeo=;
-        b=MKLXtWwnGX0kyZNeFFG4aIWpUFU6BPGodoPwcC8B5N+w1sH7s+kIbMiXpZ9hhiG4MY
-         NNSMYBnXUMOJco8WC2mY+eJyWUG5A9OWn5RoOs7VwVrkKxBOiPpUDsUcvyvdA5L/BAXN
-         /RXwy9ZjjBQfZTt5H9PLHwrcssqHXxFLSUvqg2gYliRTb9EpaekanPxRBEKmNij08U9Q
-         VNLyPIPyVfIWmyjkRsRO9KuvdYAqr1mU3J8+oQwiK9NzzTieQWoRxCiW8BxKN4Rj7DO5
-         NG9PFM7vYxwDshErcW5KeY29iZjXFQ8xaNaEbzlRI1dtaHmnyA0fEW+fElaB+l6PA3ME
-         0zZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCBRtrR7UJo5594+rBy/xltMo5Dw+6BejOIVYrbOXlzswTJTFjrb68UtBii9YAzC00BXYMa7U00Yd1tFdXjlb1SA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy3KZXXAw+uvk7HrvgHc3dJb6n+OSaMP1BrGP8wZb1utGJAtoR
-	r/H1wplx8Tuku6zpMXuVZD4dN6c8BHnW85sBQ0aDrAZOvf3gDC/se7bD
-X-Gm-Gg: ASbGncu8mLtC9ZNr/Yjxb72BZyDgVA2CPwk/ftCnp8RZmUSlnibxbimHw79NdNe0Jxq
-	w9s0hI8qpbCDeyICbLJjNv9lNZ09XMuEOxhdsCgbxVJ8VOzZwpeTT4Up7qtkdhluF32zS2P5Ob/
-	O3P9rRLVz6d7CBN0eMagHJuRY5WMl57l60wm76hBIBHufrbOAPlUok8M+Ewse0pvGYdm85NYSrL
-	L6IlfpZrB8dg+5wS68syzuPOVv3rzNwY7nGcXFy4a1U5uq3DPLRmwR0jhGhckOkv7nU0r74c8Iq
-	Bx4bVZMG9qAPf8w+L0qSqlvtd/+lP1dBdx3GXeKLiim4QlzgLr4JME/Xnvnq7JaZp/BFpzgJfS7
-	PHuxTXMfOPXY/plVIhGIp2fq+r6KRNxQNy8cJ+hh+xdfjc98+m/nsU6WbM63JsDus2rp9J/1ZU3
-	BkxJyK2QkKKeV7/ZB812Pq
-X-Google-Smtp-Source: AGHT+IHyp9NWySH+cDzcnVvq8I6ZIzBl9JYoz2ufTq/3+N/RimV2Z+kLAg6PlRzSKztugHPQfUdG5g==
-X-Received: by 2002:a05:6a00:88f:b0:7aa:d1d4:bb68 with SMTP id d2e1a72fcca58-7b7a46ff44bmr3401593b3a.20.1762955879820;
-        Wed, 12 Nov 2025 05:57:59 -0800 (PST)
-Received: from iku.. ([2401:4900:1c07:5748:1c6:5ce6:4f04:5b55])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0f9aabfc0sm18361299b3a.13.2025.11.12.05.57.53
+        d=1e100.net; s=20230601; t=1762962085; x=1763566885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
+        b=Gh5m+OJ3HeAZu02uPmevSqvl5M+3Rm5YojpgWViqB6BfFxV17Wo+evRpUly0hBQ2g/
+         N2EG9AuoolzvmWfzuq7CXRnXhH30CVoRNF7kAa+/pcyqFeWmkiP1r6GXfT6kZ7dOAGwP
+         KnODZuul0lw5V8Q2k6rNu6NnGC8xSsn+WeMbMJi+gs+BtDsFTM3l+kAOhScRzHn8ECFg
+         sLHVtTsN6hUouaMzAUBWymWHsYDOmZLR6ujJGNDcbxabKk43o3gbs05wHATJDWRE2L0d
+         JAba6+JSQoarDbc6BSBdchp1oKCrPVmefEzS34oC1/lGFCbP5BdiOVEIiHcGwTtC8oaJ
+         ofYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8e6DkNKhylpTok4lzlSmf2nU4olcP6EXKWA+aKjSDNnMfcnNXOQZsAzaueBlA/FfWItXawjfHa2C4Akde6dllNg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB8xRa0QOg68QVRvXmEzNrTu5HKBCfTaf5pt/kOiGsL31k65ss
+	gYJ9JEgIK2IpzOnJdkTDHIRzMWsBelOpkrrms/Ah6hrCHU4QdGfnuLW7
+X-Gm-Gg: ASbGncs8B+G645odVC2eD6qSH4XN3zI8OxZti4uj/AJzdtL8kmdRmW6zp/cqIri5LFN
+	kzi7u3MBCnt1k4HsJzDfsQIz4sfAHLRwJvuvBIhGEYwma177ILW2AAs9qXVCL3i6DqOLLxJHQ0n
+	g1ycvQJZsyVaJc/W83/DXyEENdmgChVLPuLlU/JUh9eYkovPdx9tcSZylOX3ErvQnm1iDVgnR2W
+	gH4CCeXA6JoE83n9MQZgjlNWXq7qxpiFw0QlgcrtT8x+7iPkdKcnTmi2G+QCfWxY6NN6zrjq0Ib
+	1HEHBtsJ3Oy/5ndR0IoEjLEfJFViEdNNFuMHg+UUpOyPJY735Q0xis/q7xaoS62HVTe38Sh+16+
+	sEolXC/lupPxLikY7oWnUo80sU7adDdPS//bTDhu+3LTuTVtojMZJztxMBp4/f+0YcedUgpmhY+
+	AWJ4MJP7h4XMugfteFPqjEm9NiVICX0w/XIDWPGyIw901VGOsZsq+IYTnzfWMKhvfsYvZ8WsaXx
+	MCqqg==
+X-Google-Smtp-Source: AGHT+IHX3eOJnJ6b2ckYQuN9nF0Y5Rkb79t/DFxTrsKsHI+zlzbswhY4DwsGngMKF9S9FWP+40tSmg==
+X-Received: by 2002:a17:907:6092:b0:b70:bc2e:a6f0 with SMTP id a640c23a62f3a-b7331a054camr337287566b.5.1762962085303;
+        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 05:57:59 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Parthiban.Veerasooran@microchip.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v4 4/4] net: phy: mscc: Handle devm_phy_package_join() failure in vsc85xx_probe_common()
-Date: Wed, 12 Nov 2025 13:57:15 +0000
-Message-ID: <20251112135715.1017117-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/7] RZ/G2L SSI Improvements
+Date: Wed, 12 Nov 2025 15:41:01 +0000
+Message-ID: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251112135715.1017117-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251112135715.1017117-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -94,38 +83,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-devm_phy_package_join() may fail and return a negative error code.
-Update vsc85xx_probe_common() to properly handle this failure by
-checking the return value and propagating the error to the caller.
+The first patch in this series fixes audio channel swap issue because of
+half duplex to full duplex switching during the streaming that involves
+FIFO reset which drops the word leading to audio channel swap issue. The
+second patch fixes sample width value in the hw_params_cache::sample_width
+Apart from this, support 24 and 32 bit sample format width.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4:
-- New patch
----
- drivers/net/phy/mscc/mscc_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Biju Das (7):
+  ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
+  ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
+  ASoC: renesas: rz-ssi: Use dev variable in probe()
+  ASoC: renesas: rz-ssi: Remove trailing comma in the terminator entry
+  ASoC: renesas: rz-ssi: Move DMA configuration
+  ASoC: renesas: rz-ssi: Add support for 24 bits sample width
+  ASoC: renesas: rz-ssi: Add support for 32 bits sample width
 
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index 21fcaf07bc6d..2b9fb8a675a6 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2264,8 +2264,11 @@ static int vsc85xx_probe_common(struct phy_device *phydev,
- 	/* Set up package if needed */
- 	if (cfg->use_package) {
- 		vsc8584_get_base_addr(phydev);
--		devm_phy_package_join(&phydev->mdio.dev, phydev,
--				      vsc8531->base_addr, cfg->shared_size);
-+		ret = devm_phy_package_join(&phydev->mdio.dev, phydev,
-+					    vsc8531->base_addr,
-+					    cfg->shared_size);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	/* Configure LED settings */
+ sound/soc/renesas/rz-ssi.c | 193 +++++++++++++++++++++++++------------
+ 1 file changed, 132 insertions(+), 61 deletions(-)
+
 -- 
 2.43.0
 
