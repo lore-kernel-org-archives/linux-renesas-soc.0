@@ -1,63 +1,65 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C84C337B80
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 15:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7464933A036
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962089; cv=none; b=FAFyrFPJ2g1eBkvtqcirsjmFnfKBmmcsDPs/VXuxrKglnktd5yYYNh1fY/UPPnxrtuXycbx/Rtw0Pud1L+Xs4UQ5IkH2GXuxHMuN/DyoTVo03rWSZvxo7/t9F21nD+rs80/rpemRfpGNyO7c5o0HcsdY/6pmQb+aTBJMmEz/Qto=
+	t=1762962090; cv=none; b=QGT76hQb+sfaJvTb880UQsDSCm/3cbJhP+TrExLgHKoUvDws4rFaPi+c3yDb+uk4Y68OKuC9FwoOg7WTMrtF4UqrWKcXL9aa/dCYiw0ZPWoSiRMD41saNfBUNYfvxme3ALQ6Bfc/ltJKc7C8gnfQqY2aLSCbi95dGhC6csEiuuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962089; c=relaxed/simple;
-	bh=P70ux5XoL4sP7XKBF8mt9nEhNWg2Y0bKzzy2WXyp+MA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mfI/me/T/rD89nWE++tCxjx+EiQ/t7vShPkdkTcax4K2TlEP/LXk1Oc/xJDgzuUHONf96ET031B4Pq4W+ECLGyk9KMulm3W2TOXfFYfFCndDFPBUHV4nmS51cGlWjQz27DVqCAOehymxku9Zh9UtnXEDeanpmZW2766o6Yl9pqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V804Wny5; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1762962090; c=relaxed/simple;
+	bh=In7dKHJWjfOxEtrVeI6kTSfrjwoLbH8IOv8sdxgIDL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=plodgCXe1zkoxBiV4OSuAgayDdgsDSf9AQZoC/fNqbh4+vJsfGG/F039RJpa2usU6gLTElf4yEbzDGiFWfgkVaoUHqwSXziHljgtfx4D0tz3icLvLoSJVLy30nT/nhXB3vqyqA0ZaJYnEVZi29vmaembjPfVHrip/lHw3aMwVv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJXpY/Sz; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V804Wny5"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1446633a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 07:41:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJXpY/Sz"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso1536778a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Nov 2025 07:41:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762962085; x=1763566885; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
-        b=V804Wny53F8rsoC0D2aHjH3g007OZpczWy9EsPNIadKYAww8Y8cJy0gMWtiyigO7EF
-         ufLqCRVh/dAU0gvUeIsZq+Oz0TNRumgNEDnzdjcvd+9IsJr4O8q9nrKazJh8CS4HCvLF
-         kcdlLpsV3fXSgH9z9e74m+FOBbfSECchh87NXSim7QqqQiWuc0z2sjq2nYjVFUf3MWqx
-         qCm4kg6kSCwL7Q+HYonTH5oTUKRBOk1HBGVougmD56vv2FJqKTG7QI14eYD2dlxsnqxu
-         LICNUx7WzbvFwBuQ/YWBSrXenMSRKrERAZw/l6bo4oFuSZHEoqc8Z1JJDqN66SKMZGKD
-         hJ9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762962085; x=1763566885;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762962087; x=1763566887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
-        b=Gh5m+OJ3HeAZu02uPmevSqvl5M+3Rm5YojpgWViqB6BfFxV17Wo+evRpUly0hBQ2g/
-         N2EG9AuoolzvmWfzuq7CXRnXhH30CVoRNF7kAa+/pcyqFeWmkiP1r6GXfT6kZ7dOAGwP
-         KnODZuul0lw5V8Q2k6rNu6NnGC8xSsn+WeMbMJi+gs+BtDsFTM3l+kAOhScRzHn8ECFg
-         sLHVtTsN6hUouaMzAUBWymWHsYDOmZLR6ujJGNDcbxabKk43o3gbs05wHATJDWRE2L0d
-         JAba6+JSQoarDbc6BSBdchp1oKCrPVmefEzS34oC1/lGFCbP5BdiOVEIiHcGwTtC8oaJ
-         ofYw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8e6DkNKhylpTok4lzlSmf2nU4olcP6EXKWA+aKjSDNnMfcnNXOQZsAzaueBlA/FfWItXawjfHa2C4Akde6dllNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB8xRa0QOg68QVRvXmEzNrTu5HKBCfTaf5pt/kOiGsL31k65ss
-	gYJ9JEgIK2IpzOnJdkTDHIRzMWsBelOpkrrms/Ah6hrCHU4QdGfnuLW7
-X-Gm-Gg: ASbGncs8B+G645odVC2eD6qSH4XN3zI8OxZti4uj/AJzdtL8kmdRmW6zp/cqIri5LFN
-	kzi7u3MBCnt1k4HsJzDfsQIz4sfAHLRwJvuvBIhGEYwma177ILW2AAs9qXVCL3i6DqOLLxJHQ0n
-	g1ycvQJZsyVaJc/W83/DXyEENdmgChVLPuLlU/JUh9eYkovPdx9tcSZylOX3ErvQnm1iDVgnR2W
-	gH4CCeXA6JoE83n9MQZgjlNWXq7qxpiFw0QlgcrtT8x+7iPkdKcnTmi2G+QCfWxY6NN6zrjq0Ib
-	1HEHBtsJ3Oy/5ndR0IoEjLEfJFViEdNNFuMHg+UUpOyPJY735Q0xis/q7xaoS62HVTe38Sh+16+
-	sEolXC/lupPxLikY7oWnUo80sU7adDdPS//bTDhu+3LTuTVtojMZJztxMBp4/f+0YcedUgpmhY+
-	AWJ4MJP7h4XMugfteFPqjEm9NiVICX0w/XIDWPGyIw901VGOsZsq+IYTnzfWMKhvfsYvZ8WsaXx
-	MCqqg==
-X-Google-Smtp-Source: AGHT+IHX3eOJnJ6b2ckYQuN9nF0Y5Rkb79t/DFxTrsKsHI+zlzbswhY4DwsGngMKF9S9FWP+40tSmg==
-X-Received: by 2002:a17:907:6092:b0:b70:bc2e:a6f0 with SMTP id a640c23a62f3a-b7331a054camr337287566b.5.1762962085303;
-        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+        bh=vqAC+UNeM+Yv6vfhs9gI86/DadbeV+G5Du2hkzLEz3I=;
+        b=bJXpY/SzO/yjQwhlVEQ+6s+5Zu0tiAcxx68C8nt0Z/E97ksjQQFIGndZaVevtI6q+3
+         W5IM0/xM99/IOzwq/DWfK+359Ny8m5krsq6Hl1pDT0iuT44Fv7G5Gcoti6sMv6X8qeu5
+         A8iQTdpgVUmIQahAPcvad7JYGdTDCSCXVG4R3R8vfUidblfEnLVwOVfAlDOqo4aiCyhc
+         NLCXtLdf0a1jjo8tz6qeNbPzyeZqTdCWT0fXj8uV+By4YnOhgVKMaeepQwMuOFVf7cv8
+         5JRNHjs5PE1FZwXToIEnU3ZxJ2Y5doV5oLzaUQgkPcf0AjV3cza0bqOke9Ys7rgbDgbV
+         5keQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962087; x=1763566887;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vqAC+UNeM+Yv6vfhs9gI86/DadbeV+G5Du2hkzLEz3I=;
+        b=iZXNQskR0NylYehsFHh0Lz3moySh3gzEarhh48NcCtSfkKsAGzsyCJBm9C/lukCr4Z
+         QpYu8Yex0uAL89LaPRmq08iMJnQoMfIo96ru41JozvQfZ0WTP7y2xP1vcgcyQhhSG48r
+         pwR/lhrl7tBIr8Ssuo95IiPHWrp5anVFCydOI5pE9no7YjxGRuROThn+mRmFfTP0rzG8
+         n3+ARmmkDA+UP9UPSMgxXD7S29D7idZoSIgH1JJGOYwYWAq7TJJqmW4yNIVQQSsGvvqd
+         4DwpRMlW8OjyKY0hwg0k6+lGdsWg904r7NYs2wci/y1VZnYVzI0X/zR6fnCcAI48b8WQ
+         326w==
+X-Forwarded-Encrypted: i=1; AJvYcCXLriE1uFjQhoQXGGgIhYRonUsoc3YplBMj1sE36nVOizw4NpeFt5VW+SldsyI4QMSpbktytg2WEiEW6hodEhfVSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4vLROUkanDLgGBtPWQMiaB0W7R+oyIAAHRuSYxnuonufLUM7E
+	exzaeaHVXyYC+mhHP3K5MStDn8E7g0nRk7GUfLYnlNANkkJRp9A8sLEK
+X-Gm-Gg: ASbGncur/yYQvJ3fZyxingdty+YKbz04jONZn30OtlIHI6Cl5Q5jDp73PELJPlcvh4e
+	NEh0UAulM5beaCLM9cIBfiSUPWc4CWilxZehll7TQF5VdFw07ePD6jRymghHVzcrR460gmgQw4m
+	1eSHX7UOte6J4kDzILrln9kbFB8BL6WvnF8QHWTT2d78AsnWqWT65E8aOeWhkx3YNYxEfL5MjsB
+	en6Guy8/2Hr5ikaY8uLr9Rcos3bRFgOBmncDsU3pWJH4kDc/RqnEYWRWYQFJlDsDGtGaiLcN8Ac
+	rJWeHr92FB4WgqlWg/SI0eBmHnAfwyPGUog+G44al+Y+NuDgqjcXOgNIoXe0NIjP2oqV7/4LkOU
+	KbwZbPNIGn8D7ncaIm2/VdW9cZKtnlHMM6QfvbjVTTUf88y6nS+4kp8Cu/E0dIu6nA/8In3W2Ww
+	3g1OYKymKsSbE/Xi8JTHMnKsG7qciGm6HftY+1e89cqGG1D8n+7dx2dFjnO1AOB0vUL7QjXpCl5
+	rjILIjWNUT9VKH+
+X-Google-Smtp-Source: AGHT+IGQIG5IrOJDrZArdz6BGwNr4MHfKQAdEicjI7rp98rPdh1zbdlEJ7bGm3OfdRkb+f6C5SQ3tw==
+X-Received: by 2002:a17:906:d554:b0:b4f:e12e:aa24 with SMTP id a640c23a62f3a-b7331993fc8mr373774466b.22.1762962086629;
+        Wed, 12 Nov 2025 07:41:26 -0800 (PST)
 Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+        Wed, 12 Nov 2025 07:41:26 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -70,11 +72,14 @@ Cc: linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/7] RZ/G2L SSI Improvements
-Date: Wed, 12 Nov 2025 15:41:01 +0000
-Message-ID: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	stable@kernel.org
+Subject: [PATCH 2/7] ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
+Date: Wed, 12 Nov 2025 15:41:03 +0000
+Message-ID: <20251112154115.1048298-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+References: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -85,24 +90,80 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The first patch in this series fixes audio channel swap issue because of
-half duplex to full duplex switching during the streaming that involves
-FIFO reset which drops the word leading to audio channel swap issue. The
-second patch fixes sample width value in the hw_params_cache::sample_width
-Apart from this, support 24 and 32 bit sample format width.
+The strm->sample_width is not filled during rz_ssi_dai_hw_params(). This
+wrong value is used for caching sample_width in struct hw_params_cache.
+Fix this issue by replacing 'strm->sample_width'->'params_width(params)'
+in rz_ssi_dai_hw_params(). After this drop the variable sample_width
+from struct rz_ssi_stream as it is unused.
 
-Biju Das (7):
-  ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
-  ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
-  ASoC: renesas: rz-ssi: Use dev variable in probe()
-  ASoC: renesas: rz-ssi: Remove trailing comma in the terminator entry
-  ASoC: renesas: rz-ssi: Move DMA configuration
-  ASoC: renesas: rz-ssi: Add support for 24 bits sample width
-  ASoC: renesas: rz-ssi: Add support for 32 bits sample width
+Cc: stable@kernel.org
+Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ sound/soc/renesas/rz-ssi.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
- sound/soc/renesas/rz-ssi.c | 193 +++++++++++++++++++++++++------------
- 1 file changed, 132 insertions(+), 61 deletions(-)
-
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index f21b332b3656..039bec32cb5e 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
++#include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ 
+ /* REGISTER OFFSET */
+@@ -87,7 +88,6 @@ struct rz_ssi_stream {
+ 	int dma_buffer_pos;	/* The address for the next DMA descriptor */
+ 	int completed_dma_buf_pos; /* The address of the last completed DMA descriptor. */
+ 	int period_counter;	/* for keeping track of periods transferred */
+-	int sample_width;
+ 	int buffer_pos;		/* current frame position in the buffer */
+ 	int running;		/* 0=stopped, 1=running */
+ 
+@@ -217,10 +217,7 @@ static inline bool rz_ssi_is_stream_running(struct rz_ssi_stream *strm)
+ static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
+ 			       struct snd_pcm_substream *substream)
+ {
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-
+ 	rz_ssi_set_substream(strm, substream);
+-	strm->sample_width = samples_to_bytes(runtime, 1);
+ 	strm->dma_buffer_pos = 0;
+ 	strm->completed_dma_buf_pos = 0;
+ 	strm->period_counter = 0;
+@@ -982,9 +979,9 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
+ 				struct snd_soc_dai *dai)
+ {
+ 	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
+-	struct rz_ssi_stream *strm = rz_ssi_stream_get(ssi, substream);
+ 	unsigned int sample_bits = hw_param_interval(params,
+ 					SNDRV_PCM_HW_PARAM_SAMPLE_BITS)->min;
++	unsigned int sample_width = params_width(params);
+ 	unsigned int channels = params_channels(params);
+ 	unsigned int rate = params_rate(params);
+ 	int ret;
+@@ -1003,16 +1000,14 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	if (rz_ssi_is_stream_running(&ssi->playback) ||
+ 	    rz_ssi_is_stream_running(&ssi->capture)) {
+-		if (rz_ssi_is_valid_hw_params(ssi, rate, channels,
+-					      strm->sample_width, sample_bits))
++		if (rz_ssi_is_valid_hw_params(ssi, rate, channels, sample_width, sample_bits))
+ 			return 0;
+ 
+ 		dev_err(ssi->dev, "Full duplex needs same HW params\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	rz_ssi_cache_hw_params(ssi, rate, channels, strm->sample_width,
+-			       sample_bits);
++	rz_ssi_cache_hw_params(ssi, rate, channels, sample_width, sample_bits);
+ 
+ 	ret = rz_ssi_swreset(ssi);
+ 	if (ret)
 -- 
 2.43.0
 
