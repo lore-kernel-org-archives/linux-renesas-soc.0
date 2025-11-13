@@ -1,113 +1,109 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70ED2F4A19;
-	Thu, 13 Nov 2025 15:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4737342C9E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Nov 2025 16:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049506; cv=none; b=edzVvkaZwJBuvPXCYQVqAjZxgQkEptT6OsDRo/rASu9GYb1khVX08lhXmin7mw0xIdOsBXsxvCldkWqj7ssViAJPv11mUHX1jQSue6HUcNRUMt736WwUaOzppWcSdzBgMYHfyYnKEXt3FGaK+rrYAV/sMeuOkKd6tkDZR4avl88=
+	t=1763050996; cv=none; b=sCVjFNUlazvDJjV6ypzvf3TgfvGPD7ztPDsleAFc5z2rOldTLHdM9hbbcst/SCLoXzNdQcd1xmqvXO3yhst1O/WKoM7dxc6z52uogx32BhJh/NIU94ve0HzNVG3v/NT2Fh87FftnQTlZ0jFd2b0A85DKexvlt9HvDaFB7e+pIj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049506; c=relaxed/simple;
-	bh=NYeJSyKg8aRuFEhyCnL0JQc7N+mw1OvuhAKAZHnRiGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbHrLDccZluabgLgpX2v0IzSwza876Bo3pFpluz6uR2bP6b4p6jieSE7e7L9x9+D3n1cuqsDR/8Gcsq+b1X+J91fL83YU3umgIq6ODD0hH8i/gQChAIQsuGAQQP8CpItl05EapygzvreV8s7BebqVJ5EJuXaDVOoyat9shDKXio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J7URCsAY; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J7URCsAY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aWqMO5dgKynFXVsf0PHGotO7feJhY392/1Tkcj5y4X4=; b=J7URCsAY11Fgeyi5sgnO0X8T0v
-	DLtkvJJl3PyIkZ3+pQdqa5PD08pffN0ZsYf84O5wPEbDPpiWRbX+vKOEbp87LAFPiB/mZ3rOhRUev
-	wl/E73KkEUEJOW0cczLixDs89IGZapg8+t4mzKPDkp7aY+fu0dlQCpHoXtiBE7C0V33WqRqWR7Ina
-	pGBEbTpoHbR8kIAbT9jLtTXZHlosI5thcir0tsA3EceaS1T7Iz5jB9+WtF3oM79LWHPkzQX873kD2
-	U6e/ONoRJWyV2KMfNwpRVagYpVP1QRU/T0TRZyKfyznhdLSkKcCxnC3ab9fjEVPKPNTuo4mJ0PCIM
-	jRyeeBKw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59990)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vJZi5-000000005f9-20ny;
-	Thu, 13 Nov 2025 15:58:09 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vJZi1-000000004yz-1Tfu;
-	Thu, 13 Nov 2025 15:58:05 +0000
-Date: Thu, 13 Nov 2025 15:58:05 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: pcs: renesas,rzn1-miic:
- Add renesas,miic-phylink-active-low property
-Message-ID: <aRYADfD8QkIw9Fnd@shell.armlinux.org.uk>
-References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251112201937.1336854-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aRTwz5QHq9U5QbQ-@ninjato>
- <CA+V-a8s5fg02ZQT4tubJ46iBFtNXJRvTPp2DLJgeFnb3eMQPfg@mail.gmail.com>
+	s=arc-20240116; t=1763050996; c=relaxed/simple;
+	bh=tLAT9m5zzv27vIHramdo70fQ6JjFWjWlaXUWQOyCtIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bzkBudoVqupPYIyVQHobht53qbB3vj0xS68iaiNvaD1fMFTxfQrJ1VH7O+ZS8NjWfFre1nk5xcKD8SSzH2PCSqttp470pmB9NgpowVKW9druoVYvchqXavRTcv0eH03cLlWsTeka5Q1fdAkNvvEBszFNXPJmDQIrSGIOxj4Ti54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-559836d04f6so677613e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Nov 2025 08:23:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763050993; x=1763655793;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5xOhgj3KLUbudZf/OSfykos9RtGD8I/iauuwMcQjwE=;
+        b=tbV85Y9Z8+Ha6eMLNzo0DnRYZChYQY/9AjZM21xm1ktNlwisMemLgnxPCq8anAUYxq
+         M9QnFeOPuvKpmfFAw0D75WgiyVie/d2udma7+iKT84wWb4BM/uVzYxLvQfvAgcx0ERuK
+         SRxJX9EaDACrjR8PyvSlpnEpNU4EcStuaueKspoCDKRybeG7xRfiuQEyVh3oJrCKwjb+
+         9hcNmNe8ftwWeHtYH2j8Ne5TWy8+c7GdmhJILsAm1ud5gA6zPM64DL4bQAXv4MPEcRkT
+         cjQBT/6KIrvjgxkFTlyYbpEyzgGA3igIEgWm176ER6vBtJj+7+usmqKjbwsM4yI1g3Bp
+         Cc1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVBMLZdTXd5YLDZxzm7AhEjurqt1ez3lJIWjXGbPV8Wyp90kAXE8Ml7w+73pwqOb63JYRkPhLCGMBOrZ60Pxyzg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx69YWym0fMIUnIyiXCjPdrGTgnKr/AyUoN0AEJrwNWeULJIuY5
+	cfW/wzb7XbaSvsX5hVCVP1/WvPfQbeqqSgqfkR4Eo+/Mjfx2SjZRUmNolgE2ZeLNrrw=
+X-Gm-Gg: ASbGnctemttga187iE0KmXQ/8SXhfBMTnKi84hm0L0qBHASkwodTzbe8OxaS+KshMvL
+	M2+dd21XYL0dcOM1DTwEYucS/+o+lboMXB24kYN7rIpIlzX4ncGW62F0W3zw20IGTEKMKiPpCos
+	JRzB4o+FmCq+8gVsn0x7GL/5TmuRiBkhztVQF/dlM0LKfGECRidO8Rkf00c95LkjTuqYv21PjHB
+	3OT+6lrSJKlkouJAYhi/y3xQ77OAfGpZFH5R/dPN2G2QLpar6akT1oKQDe1VC3E5NicbURYG7As
+	qOECncNkRM/MJ20Vy3FYK70xssCLy+MmN7AjlrWXppwvo/LBnAhVftss2gXO7gq9407TShKvXSF
+	J2lOrzRWmh0AuAlBSjeBfbpRwd+h+tsVPkXzmMJ3BHPiXg3Hf53r3KRWU2wefbUgnKxZDiI4q64
+	Or9YCou9HQIBdrGKFS+eK71kDdxQvIqWxx317kdw==
+X-Google-Smtp-Source: AGHT+IE5OIt1V0k+Z+H/8RlHf4OOaIrXw3oxuVSLp7wLC+BDVWIi7nQUnSyRiOIiVBQjwqAVYmkcuA==
+X-Received: by 2002:a05:6122:370d:b0:559:6092:936c with SMTP id 71dfb90a1353d-55b1be0404fmr141884e0c.12.1763050993470;
+        Thu, 13 Nov 2025 08:23:13 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f44268fsm813122e0c.15.2025.11.13.08.23.12
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 08:23:12 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-93518a78d0aso532536241.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Nov 2025 08:23:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV2xv2ZN/OBKshiw8J1eO+24FzQhPj+UHLRIqA5AerWD70Qcc4ypUWv3gNQ8Q2kGXSuzjbiTwR1NDKXB/FnrAQVhg==@vger.kernel.org
+X-Received: by 2002:a05:6102:a49:b0:5df:b31d:d5ce with SMTP id
+ ada2fe7eead31-5dfc567727bmr157516137.28.1763050991936; Thu, 13 Nov 2025
+ 08:23:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8s5fg02ZQT4tubJ46iBFtNXJRvTPp2DLJgeFnb3eMQPfg@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20251106125256.122133-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20251106125256.122133-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 17:23:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVP3xOGa4gj6LRBU1fdGPbihAayGF8xUCCZjJctyR-DOQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnISpr8jjnwV1qnu3HpPH36xFUGAy4ZFaDHn-fPMgUSA8TJ75exCa3iTno
+Message-ID: <CAMuHMdVP3xOGa4gj6LRBU1fdGPbihAayGF8xUCCZjJctyR-DOQ@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: sh: rz-dmac: Fix rz_dmac_terminate_all()
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.au@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 13, 2025 at 02:45:18PM +0000, Lad, Prabhakar wrote:
-> Hi Wolfram,
-> 
-> On Wed, Nov 12, 2025 at 8:40 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> >
-> > Hi Prabhakar,
-> >
-> > > Add the boolean DT property `renesas,miic-phylink-active-low` to the RZN1
-> >
-> > Hmm, we already have "renesas,ether-link-active-low" in
-> > renesas,ether.yaml and renesas,etheravb.yaml. Can't we reuse that?
-> >
-> On the RZ/N1x we have the below architecture
-> 
->                                                       +----> Ethernet Switch
->                                                       |           |
->                                                       |           v
->     MII Converter ----------------------+      GMAC (Synopsys IP)
->                                                       |
->                                                       +----> EtherCAT
-> Slave Controller
->                                                       |
->                                                       +----> SERCOS
-> Controller
+Hi Biju,
 
-I'm not sure that diagram has come out correctly. If you're going to
-draw diagrams, make sure you do it using a fixed-width font. To me,
-it looks like the MII Converter is bolted to GMAC and only has one
-connection, and the GMAC has what seems to be maybe five connections.
+Thanks for your patch!
+
+On Thu, 6 Nov 2025 at 13:53, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> After audio full duplex testing, playing the recorded file contains a few
+> playback frames for the first time. The rz_dmac_terminate_all() does not
+
+... frames from the previous time?
+
+> reset all the hardware descriptors queued previously, leading to the wrong
+> descriptor being picked up during the next DMA transfer. Fix this issue by
+> resetting all descriptor headers for a channel in rz_dmac_terminate_all()
+> as rz_dmac_lmdesc_recycle() points to the proper descriptor header filled
+> by the rz_dmac_prepare_descs_for_slave_sg().
+>
+> Cc: stable@kernel.org
+> Fixes: 5000d37042a6 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+The code change LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
