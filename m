@@ -1,65 +1,63 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3631328A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Nov 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE91313539
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Nov 2025 10:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763117528; cv=none; b=rRfT+RjeeHIWYlHkfEvR36y1jHt2gA1Y4GbcfAEOt3TwnCUN4FskUnjpOljmnM38t+lVGJIXSlT5vPQPHIk7Fv1960RiiATOOJvQa+SzA1fhLL0SrjchmX7FC2lmIBy8/Y2qHFFtk98O9EWH4QArJCfp9eDAwC5P+DRXZ/T6tzc=
+	t=1763117529; cv=none; b=a+W3bR+7rOiOUvJdFNo5shvWJIV1LLg3g/K6CcWbG9IBT6Obu9ZLrM9N25VT/PnzFV0NjOvLRSypFHSSaM5JHOGX7Kg8tucx0TUAdJ4lRwtUO5RpOwcKi/VZH4eaa4Q+v5CJVMwCfIIf+pYqtFkvz3BxH1WhbiP3ZUIfK6rJECA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763117528; c=relaxed/simple;
-	bh=iDr+sjQfrHDp3DxxIo6LAV+CM7T5ZIZH8WpOIp7Dj7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k+wVA3gK3Nmeu3aEIlKhY/6FoPWhXJc7irPIuiyBUaGRM5HeP9/w5Y5mAI7vkU4zFejK0L8//VcdTqdnMtMVjkc/sQChTRzD1gKwWpCIkoOa6JmiFqAv28Gn0TDzcZZmR7jC5GTbCgglj4soJZkshDmpu3EudiWMkPOTUqWT4mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQrYut4c; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1763117529; c=relaxed/simple;
+	bh=Zc48rn3Gh3wyXoGNOzH25ymkeF9Nxkl22AZ2QQZQW40=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qWPUmkm8MnI8cS4Q1i13rn9Su2gEY4M+nHEB3vG1gnKPegQtE084jjidOEE6A7+LO3LFcy1G+afd3Vgtf4VV2H25EkwxvLlKm4RrMe3OxZYdV68TaNAEdBvzLbQDr7W+FVtTzO4COJWUGN1C1qufy+RH4l0I5eSe4CxmFFtYsr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrogVsBa; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQrYut4c"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b32a3e78bso1468224f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Nov 2025 02:52:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrogVsBa"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-429c48e05aeso1110300f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Nov 2025 02:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763117525; x=1763722325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sE9iX1ursNOQzfwEha6Mc4rDjGJl4IqWi+8gkqilwc0=;
-        b=MQrYut4chTP6Ud3I4s6YI2vVmEAGucr7ICqauo98zFsEDe+mpr8DLt04JRyE8uyixx
-         kxSaogSkXd99wmuv8U6LoKmocHh/QTuGutEcQTHWqU/5GSw+ybQp1tnHSlUG/cu27v+A
-         5dfzUHbwZ4C0106KjaOYUk2vHxUW9fVAlfxoy2Yn77NBrjXNWXHSjtsQiDr7wQb2c+Ii
-         nLmctwGVhPTabZN4ncM3k3nGMEPY9ufWs2qZa31CR/Qmy9uA4FJBFOtQNukR7fzQQDZM
-         +DuZEZ3G88QLJc6DBbDWGglm9ORqX9vrOG4TmU/B+jYmiedxmISWQFHFfkwNty9KG4bn
-         LLZQ==
+        d=gmail.com; s=20230601; t=1763117524; x=1763722324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjwR6/kXVzZn7yjf+PWc3qHx8PvUc69d8LlxS1kTA+I=;
+        b=WrogVsBayNd/jlC+2JkDdNeUYEIQotbpUNQQ5e/vSYKjSI0zuUj29wJyyH/K/VTV2B
+         hmoF9AD1/LgXmbJgic1ntCsMbsC8TH8RUyUGg/iXRqpdoSirQaA+PNhbzihsD0AQ4IBF
+         oiSDQWNQLXUphkupqS1mWorLuPr5y/vHq9KPw75CbHMLEK6OFJk45YkmyD1ng9b/wY3S
+         RiF2XREq4G2jBmyOs2t4UcOfwkSUQ+JOHgv3esPTlvlb89ZqEsB+YzFlzC1jiSE7E9/0
+         1jbECzGwjazdrmEYNHgi3isI/hnNhHCzgHQ0eaWLXEptdQkqXBG2qvdLvFbHXrxvdme9
+         TsKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763117525; x=1763722325;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sE9iX1ursNOQzfwEha6Mc4rDjGJl4IqWi+8gkqilwc0=;
-        b=BOhnYpHop365o4yB/lf0rIsEGXxZzrMsjjTkly+fh2QPm/GJ31JzhDfeCii7uEPy7c
-         Sk7xIYN9w1hFiNFqRkfm/bw3VOByY0+rbzmSUfeQJ792Uh2FXnEm9jWJ4CuzKoezFdF6
-         XKve98pSnpOGi9peOPRZcsYBmA35Y8qGkOnMGe7FEmc5WaNceCL7n7W2MLR37yofqsnO
-         4xSTGDMzaizw3V/LvGaeiYf4FKDLNzBjX1bTWKg48kNxFozVrUmrEA08MQWwQnauTqYN
-         flXhoKsWgM47pMusUCBiYuaDM01GSXj2zSf+nXPlyZpB+jXzmB1Te8aEVeVSkk8bkdDr
-         uUcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjRYko21A0pbaKPZVr4Dit8j7YA9xCextFuCm6blPz548F1R99OD6OGi4leJ71nfAP64ouM/zsEcMFJTsbjsYo+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsyPPk5dg1gzh7ajGRCL1J3XAI3m5l0RRUxM5LX7zTtUmUnDWX
-	6X2s/aLTq+UfFcgyFVmNaXm6CTziL6BFDvyCRLmc/sZ/XDqlqbfb81O7
-X-Gm-Gg: ASbGncvLHZN7hl6eUeQQaNtRrEIKQn9A4LRhEfVzVzFb2mB5Y9/z+WsQz9DD78LH1XM
-	Ig3jn5DVLSXRIKkRd63be5jZO27jKR4AcHiUXdvA1o2tlsEjr5DJMiVd9DDfj7H4nRooS46AGFM
-	4VpuRxay6Se2ZY2j5Aa04iSXa5pX3nqwt65/oA7lWf28lDJCoUE/7ZHXPNOclPjp1jaY0zDX8Q3
-	mxPj6MOZ2KzgLPw2WTH/UVxAf4lpA9NcGY4WcsB1Dii4I85CSS4kPw5JnWT0Rh8u6p5FwE5GIuX
-	WpizDADV5MTyfw/RwFUvWZfKDkOaO4NHwiwnsd2Ut88u0ESDjtp7uaniIP83+uyu0eOapOjZ3qD
-	C3xAICIRbRHu7CGEyFp/kWHgTD12kSZO0DtbmPuVdRNxMMYcuJ2HDKpFqwLIk55iT9bDHg4VJh0
-	L5LbeacR76qEFiiEmB3ifyA/WDDGnNCiOeiLLeoJOHwOAt70w2tXjP2kJ6YR2Txs6vmszD6ew+9
-	ELNyt/BQv/K/F1UY+emM1ThFH8=
-X-Google-Smtp-Source: AGHT+IHh5EhVhpsPi+K/X6iNqc6qBAFlJJgODP+ZykzrObwqlrD1Pj83VU22VCd8tYUDjSmwsdu2Nw==
-X-Received: by 2002:a5d:5f47:0:b0:42b:3825:2ac8 with SMTP id ffacd0b85a97d-42b5939ce2emr2119323f8f.59.1763117525277;
-        Fri, 14 Nov 2025 02:52:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763117524; x=1763722324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjwR6/kXVzZn7yjf+PWc3qHx8PvUc69d8LlxS1kTA+I=;
+        b=GJCq8qdlQ5X/uU1n2TOG3jlx9vDd4xxEXecFK6wSEwaYewtPo5kiYQ6ZiFa0LLG4rM
+         cQJcxJGCQlRIqw65uCIfiA14KBHneJhJyHr8hG26nhkTMtjkVW1LvDRfVn7cAAXXBf47
+         u29r7K+B3KBLEyfmCB0lXhnwoFxbdOGGwJ/VpVThyJJ2QJl1CPZvnw2L45lkGEo1apzk
+         zDC7KtbJHnNFQzrXohBnesUKrwkK4gtIKsUReWtlIUKQE8RFuP0+CC8Brn/dezYFx/Sd
+         2Sivecin45Z2+7cXKgU04IUXWS2xIxrcthdfj8slxtADgh+mZIifuYzTpGp+IBwQHSrg
+         M78A==
+X-Forwarded-Encrypted: i=1; AJvYcCXjPDQCT1nX3VVu8/4Lc/UoRE10ryObCOypn4Ga+L+TClPq2DEHGnjVQ67Sxub6lj8yM/kJJJmFKpXwfZver3i3rQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8bHpUDHA+Y2gsh1MtWNyYjTl+EttCXf+dZe1p/06HZ6yq+h+0
+	Ly9w//HqymYz7uKVCpmXvjF80bVfbWOqKNSPBPtZzG2CRKpc2hJALCSD
+X-Gm-Gg: ASbGncseQzlonSzW/JnEGLjJ0cDCJXFsU8sA2pVETyZZsVHkkqYJ8hi7LmYQm37VEw3
+	Am/CrLQT2uztTcOfZ48Uie4UfqgQouX/nXEk39KEF6fQI7GQes4wSTErcwRMdN1DuItXU9ycOIN
+	HALmKyAF70nyXi+CRiJoIeDnzAJSaJ4mYe8Pa6yuTooEqEc8+L+CROEwQJmY0HCJrMFPCez/WI0
+	si1ir2UFrd0vqyeoQO2JIUJ3Fd89jsP1GpFhurWs8oIg2pUW+0x7jiW27+Bgp3FtiVtbmnrL0+t
+	Q5r3bHc1sFnUCCGmjnoM1gqfWGwhZ67/oombtQ6W8dIEaU77OiHRDgV8e2O7b49UlTz/irX14GO
+	OoRcosyc4eES+7IzP75iAvjpcBbimA0iCApFTAyV3lHS9EIM25KlmDA8RH/T0/HMMx4cGCNbPqZ
+	5lcoQ4ba7QuhxCMJ1RN5VnFPe1No+ToJ++N07Hp0wiwFBqXCxOrLYLBUkFErS0mcskk8bUXIe4O
+	tF2/IEDEUDmnPx7Yl3fmOVkfZM=
+X-Google-Smtp-Source: AGHT+IFGMe+dE5yo8EXauIb30wbc6Mj9yI1wBet8gXWiAgeJIUmxWa5RddlufYT6TUnAfj2nfMN9Ug==
+X-Received: by 2002:a05:6000:2911:b0:42b:32d1:28ae with SMTP id ffacd0b85a97d-42b5282262bmr6112243f8f.22.1763117524062;
+        Fri, 14 Nov 2025 02:52:04 -0800 (PST)
 Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f17cbfsm9031255f8f.35.2025.11.14.02.52.04
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f17cbfsm9031255f8f.35.2025.11.14.02.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 02:52:05 -0800 (PST)
+        Fri, 14 Nov 2025 02:52:03 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -77,12 +75,10 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 02/13] serial: rsci: Drop rsci_clear_CFC()
-Date: Fri, 14 Nov 2025 10:51:11 +0000
-Message-ID: <20251114105201.107406-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 00/13] Add RZ/G3E RSCI support
+Date: Fri, 14 Nov 2025 10:51:09 +0000
+Message-ID: <20251114105201.107406-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251114105201.107406-1-biju.das.jz@bp.renesas.com>
-References: <20251114105201.107406-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -93,44 +89,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Drop rsci_clear_CFC() by reusing rsci_clear_SCxSR() as the contents of
-both functions are the same.
+Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
+RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E has
+6 clocks (5 module clocks + 1 external clock) compared to 3 clocks
+(2 module clocks + 1 external clock) on RZ/T2H, and it has multiple
+resets. Add support for the hardware flow control.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
+This patch series depend upon [1]
+[1] https://lore.kernel.org/all/20251114101350.106699-1-biju.das.jz@bp.renesas.com/
+
 v2->v3:
- * No change.
+ * Dropped 1st and 3rd items from clk-names and added minItems for the
+   range for the binding patch.
+ * Added minItems for clk and clk-names for RZ/T2H as the range is 2-3
+ * Added maxItems for clk and clk-names for RZ/G3E as the range is 5-6
+ * Retained the tag as it is trivial change.
+ * Updated dev_err_probe() in sci_init_clocks() as it fits in 100-column
+   limit.
+ * Dropped cpu_relax() from rsci_finish_console_write() and added a
+   comment.
+ * Added sci_is_rsci_fifo_type() helper for reuse in probe() and remove().
 v1->v2:
- * No change.
----
- drivers/tty/serial/rsci.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ * Updated commit message for patch#1,#3,#9
+ * Added resets:false for non RZ/G3E SoCs in bindings.
+ * Increased line limit for error messages to 100-column limit for patch#3
+ * Updated multiline comment to fit into single line.
+ * Updated set_termios() for getting baud_rate()
 
-diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
-index b3c48dc1e07d..9681e8ef4bfb 100644
---- a/drivers/tty/serial/rsci.c
-+++ b/drivers/tty/serial/rsci.c
-@@ -199,11 +199,6 @@ static unsigned int rsci_get_mctrl(struct uart_port *port)
- 	return 0;
- }
- 
--static void rsci_clear_CFC(struct uart_port *port, unsigned int mask)
--{
--	rsci_serial_out(port, CFCLR, mask);
--}
--
- static void rsci_start_tx(struct uart_port *port)
- {
- 	struct sci_port *sp = to_sci_port(port);
-@@ -275,7 +270,7 @@ static void rsci_transmit_chars(struct uart_port *port)
- 			break;
- 		}
- 
--		rsci_clear_CFC(port, CFCLR_TDREC);
-+		rsci_clear_SCxSR(port, CFCLR_TDREC);
- 		rsci_serial_out(port, TDR, c);
- 
- 		port->icount.tx++;
+Biju Das (13):
+  dt-bindings: serial: renesas,rsci: Document RZ/G3E support
+  serial: rsci: Drop rsci_clear_CFC()
+  serial: sh-sci: Drop extra lines
+  serial: rsci: Drop unused macro DCR
+  serial: rsci: Drop unused TDR register
+  serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+  serial: sh-sci: Add RSCI_PORT_{SCI,SCIF} port IDs
+  serial: sh-sci: Add sci_is_rsci_type()
+  serial: sh-sci: Add support for RZ/G3E RSCI clks
+  serial: sh-sci: Make sci_scbrr_calc() public
+  serial: sh-sci: Add finish_console_write() callback
+  serial: sh-sci: Add support for RZ/G3E RSCI SCIF
+  serial: sh-sci: Add support for RZ/G3E RSCI SCI
+
+ .../bindings/serial/renesas,rsci.yaml         |  85 +++-
+ drivers/tty/serial/rsci.c                     | 412 +++++++++++++++---
+ drivers/tty/serial/rsci.h                     |   2 +
+ drivers/tty/serial/sh-sci-common.h            |   9 +
+ drivers/tty/serial/sh-sci.c                   |  72 ++-
+ 5 files changed, 496 insertions(+), 84 deletions(-)
+
 -- 
 2.43.0
 
