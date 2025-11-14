@@ -1,58 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020CC24A06A;
-	Fri, 14 Nov 2025 03:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B74F2F60AC
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Nov 2025 07:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763091378; cv=none; b=Egd14qJqddkmHtMZl5aB5PiHT92VwWR4apFEIOVRdXJ0xKQhAIoBE+E+6ufO9ASepn1H7UxCQMrg/5UoSI8Dr80yzO3oSVNSyYLpeUgrxqtnXAwvvXyhtjYevPbtjjTvjdE029U0ic2AT9EEbFRF6Chr7Yj8IB5cdVhwcJ4IcWw=
+	t=1763104919; cv=none; b=qsIiO9Tv5uYRfVpCmPqt3Bt+taYV3RQqmMWo+zSLEnEP0xWEJZumE4e4DtB+EwXfyq5EGFzgQ1e1JH4oPs4N4+ppMkHE1X714FArrdoDNwiyrCHSzr0VgcF8PuhydpQJJ/X/BAY0PAodXl2MDTbels/f8w1CCeSZHxL2LOCeKNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763091378; c=relaxed/simple;
-	bh=e8ElaGLVs0ZXIidppeit0GTFsXLIst72ZPvNyqlcBeo=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZktPDBrtUs6u9MxTE1kbS+KKI9LGqxhNjtokGxCgA/2xMmmVg423vF9bvHNorT36moMmX2xQSYdNP0G1z0BGJW7akP0FF5j6j0a5vrQ/Nybp/Lm3+D9SiI5vkKdO+QOi6a5LN/3X7bOdVIzxEXgkq93lIh36ocndWg5nktfWUq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbhDdqwF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763104919; c=relaxed/simple;
+	bh=y7gpYesgnqca2EwFHAf+F7ifXdMczgjmBt78RExWvME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alFHIBe47YAPtUhTVGizV/B9dwQtEM/qMvNkO6qeY7qrg+yQvjjopphuhHo8+DvR2KBclyB47EBC7+rVU9DOqYNOEDCk31A4i2W077UFKyFAKJzA//Ig8icr17FJb/BHRU/MiXtCuVlLWHIDnsOhza0lZG1UsrvNsH/C1jDxiS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XO5VmrZQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbhDdqwF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7F8C4CEFB;
-	Fri, 14 Nov 2025 03:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763091377;
-	bh=e8ElaGLVs0ZXIidppeit0GTFsXLIst72ZPvNyqlcBeo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tbhDdqwF9XpCDi3pVqiqNgIch0HShB/yYd1ka0AwVdC+bOXpqi8QpHOF36kKIQDVJ
-	 W9Fqb9uCdu3OzhrvB6nxrkDvC5y+mwFz5hdwHJ+WHBwQYQ77fW08pkg0ZJN+u7Laci
-	 4Gs0r7r7So3tmi+amca6/mtiiFqrqhzy18oCDsCnbcjWskVr1Eo25ospa9SvQpLxHh
-	 eT6coU/VMg6E5hyQXinw7d/wUAJzwIiDh4PWpNPSlhfSr8SIfgaXMNCRAoCfAwYt6j
-	 qWdzz0GBWHwq/kVFf5ibNFK1orM3M5OqEQCm+1rihFETO7eiKiH7GCz7yy3c5SrOCk
-	 V8hA+zCsxIMSQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XO5VmrZQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:content-transfer-encoding
+	:in-reply-to; s=k1; bh=QrZu68cQFEoaA1tEm+6w22JTgrzxCMVscivrPw9AC
+	nU=; b=XO5VmrZQgvsNF2j5p04YVDCNh2RvciAmO6f1YJS5IqilRw55uyiP1OAh8
+	aek8Si+4pfrznioXvLbvmq1lUm6VbhZVZMfRtNL+R2nuFR/fPvvCRiStVfNYqtmy
+	6hpO5DTIZ0JhQ3EkeGi2DW+C0ZSdUc1v3H9/wwLIhvDOj6Wvtnx2ZE9OoNGk6zWF
+	OucX1gMT7WCYU2gcX/jRHCfDTjPVVs6C7jqTldKLejB+GbVbMfvU1wL33kXZU00p
+	DEIL/c8DYS1K/ToAM1eUAJs7gzACSR5fNFPYDPEWAT/hE3i0ic1z6rxhvoFXOxWt
+	qQtNztQrJKa3w85u8rQCtvjHCoMbQ==
+Received: (qmail 2203272 invoked from network); 14 Nov 2025 08:21:53 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2025 08:21:53 +0100
+X-UD-Smtp-Session: l3s3148p1@6ssM2ohDSLIujnuZ
+Date: Fri, 14 Nov 2025 08:21:53 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Marek Vasut <marek.vasut@mailbox.org>, arm-scmi@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: Document
+ arm,poll-transport property
+Message-ID: <aRbYkXDuHZCCgFe5@ninjato>
+References: <20251023123644.8730-1-marek.vasut+renesas@mailbox.org>
+ <aPoxfH_TLrsMxMVQ@pluto>
+ <70554674-7020-4582-a4e7-dbee34907096@mailbox.org>
+ <5ae0a793-d3e7-45d1-bf5c-3c46593d1824@mailbox.org>
+ <aRW7BZimWdpq4TyX@pluto>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-References: <cover.1762435376.git.geert+renesas@glider.be> <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-Subject: Re: [PATCH v6 01/26] clk: at91: pmc: #undef field_{get,prep}() before definition
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Alex Elder <elder@ieee.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Cosmin Tanislav <demonsingur@gmail.com>, Crt Mori <cmo@melexis.com>, David Laight <david.laight.linux@gmail.com>, David Lechner <dlechner@baylibre.com>, David Miller <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, Jacky Huang <ychuang3@nuvoton.com>, Jakub Kicinski <kuba@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Jason Baron <jbaron@akamai.com>, Jianping Shen <Jianping.Shen@de.bosch.com>, Joel Stanley <joel@jms.id.au>, Johannes Berg <johannes@sipsolutions.net>, Jonathan Cameron <jic23@kernel.org>, Kim Seer Paller <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Michael Hennerich <Michael.Hennerich@analog.com>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Nuno =?utf-8?q?S=C3=A1?= <nuno.sa@analog.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Richard Genoud <richard.genoud@bootlin.com>, Richard Weinberger <richard@nod.at>, Shan-Chun Hung <schung@nuvoton.com>, Takashi Iwai <tiwai@suse.com>, Tony Luck <tony.luck@intel.com>, Vignesh Raghavendra <vigneshr@ti.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Yury Norov <yury.norov@gmail.com>
-Date: Thu, 13 Nov 2025 18:29:10 -0800
-Message-ID: <176308735088.11952.13929313934390378381@localhost.localdomain>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aRW7BZimWdpq4TyX@pluto>
 
-Quoting Geert Uytterhoeven (2025-11-06 05:33:49)
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
->=20
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
+Hi Cristian, Marek, all,
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I am working with Marek on the same project.
+
+> > While I was going through the SCMI spec, DEN0056F , page 209 , section "4.1
+> > Shared memory based transport" , bullet • Completion interrupts, I found it
+> > explicitly states:
+> > 
+> > "
+> > This transport supports polling or interrupt driven modes of communication.
+> > In interrupt mode, when the callee completes processing a message, it raises
+> > an interrupt to the caller. Hardware support for completion interrupts is
+> > optional.
+> > "
+> 
+> Oh, yes...I knew that...it is just that till now, no systems were really
+> ever developed that lacked the completion IRQ as a whole, it was, till now,
+> more of a case of having the capability NOT to use it selectively at runtime
+> and instead use polling when wanted (like for clock ops in ISR context)
+
+So, I also read in the spec that completion irq is optional and wondered
+why it was not possible to describe that in DT. And while we do strive
+to get the SCP fixed alone for technical reasons (it is just better),
+the spec doesn't actually require this, right? So, my suggestion for v2
+is to reword the commit messages a little. More in the direction of
+"support irqless implementations" rather than "support broken FW until
+fixed". Or?
+
+> I am not sure what is the reason why this only-polling scenario was never
+> supported in the HW description, this indeed pre-dates my work on SCMI....
+> ...I would/will check with Sudeep, when he's back, what are the reasons for
+> this (if any)...
+
+Cool, thank you. Looking forward to hear about it!
+
+Happy hacking,
+
+   Wolfram
+
