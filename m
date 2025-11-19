@@ -1,40 +1,68 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AC511CA9;
-	Wed, 19 Nov 2025 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10EE2571DE
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 14:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763562982; cv=none; b=qQytSyGNRIz/RuYvtFkYND4xOgkkWEx4LOjhVsHFI0X4xLC2H4QeBHAHZ+5Oktb6nFVWApNV5aFLe+136/WS8MktJUbWRwaYXZlHIEKmQTAh4qKAIhP4qbQhaRMJ8m5kHCptKFQ13StGn/n/2UvAZIhDLYGysmk/0gWwTNvP6pk=
+	t=1763563778; cv=none; b=HGMIaoLheiyt3ILLz8Og9Obz1U79xm4jn7atfumbbIQ2PBAULYWuSYmQ4TOBDVi4wtUGHwPMfGQrdIQNDaNpE3NM0glObIwwtzv9FGqLtwjqPmeE6JRtawwTnw2Gmsjs54BeVMTMpdVLV6z6WPXTy4xVst2+JyFjlqtibucVcBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763562982; c=relaxed/simple;
-	bh=yh9RkoKzaTwXiWB5pU0EiX/rGZGz+eyrQZcZ7K/aRTw=;
+	s=arc-20240116; t=1763563778; c=relaxed/simple;
+	bh=JRyZCdgunre47fOEJ3dnQtncks6xVvgMZR8IbbBf9Xs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qPCRW6qOSTqQ9pcmyCdvP3F5TgH4XiMat0K1I5Rt2g4lYlJXqeoH7JwNm58RLVrqCmdSKy+M+Su5xFR9n2LgPXpugfCIlmdAnCmkeR90bxtwQFdoX+T+XbApD+f7FaBNo6VBTvaXhpKnbJW8qUdzq2CxQ8DFno+bdfS5O0L+L7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cyOEp89n; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 In-Reply-To:Content-Type; b=ZtiJxDGt3/7l6r5uq9Gy5KTz6YXXC9Q0dZbVwocNnt/QfeYPWO6msKNlCbBD1EkqLlW6GZHOV7xGaB5YlckGvAHoFCkmp8GEoI1x1NMF8lobiLjeSNQG+WxxTb/gQPyLn1AlVmH9LuED1LvXERPdesaBZ6lNZurJHTORAPEZUQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DfoBQR1i; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cyOEp89n"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 4F194C11189;
-	Wed, 19 Nov 2025 14:35:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7E7AC60699;
-	Wed, 19 Nov 2025 14:36:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3D1810371A0D;
-	Wed, 19 Nov 2025 15:36:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763562975; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=i80dj0GflYpB1hZNEEPgVvWiw8lZXjOo2MgG9uRoiXg=;
-	b=cyOEp89nJrCZoYG3avsOq17lwj2MmFPr9JJNV8uJoRbiUf4i0FpASC7DYih3+kt22Z4JLK
-	hSfQAKmElJaMv6eTW96h32EOAkaD/+EFkR9eQ9wj6eOaNWPXmFuek8CAOxBduzaCp3MKqE
-	SRSwfh/p42u24j0seruGdGX03vsbe1FXL1+wnIiKztiT4pTasuKQA7XQ5fMZEt1qxhkfkX
-	Lkm5OLbXHB4C5ilnR5VnsNMMw4PF073vGSCHsvLUZo2v92DoVPJWTUfnDbHwDmg8DEvTRD
-	G2tqiz9kie5yiw/RfMiYlKZFRz6f0jK5xnKofaGhGeYtBD9xgQSkRsDygt5W+A==
-Message-ID: <3c257fa4-764c-486a-b4b0-74b137df59fc@bootlin.com>
-Date: Wed, 19 Nov 2025 14:36:08 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DfoBQR1i"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b2e9ac45aso4421593f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 06:49:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763563775; x=1764168575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PvzXT1PDok/yQbdLDJPIegEZrHBcAnX7M9j9AL4admk=;
+        b=DfoBQR1ic1vxOlejOkbwAXIR1N2jKZGh1SRmMidrcDM1xYkP0BMjxrMal6KAdmMcfB
+         7MkFXdFO9Bt+F3kSRqEgSrggbp22RQhgAOxNN7U1J6tvGPBTBaEcjAhgd5lNbdA7knEE
+         iZeJQoiCxJIRl2N2R/g+wnCd4GbR6HbZEtCVsaD5nIf7/W+XBCTBTihJbhg+5cyyVWIq
+         gJ+uOZGNlxhRLjZLQwY7/sjAHPLTY8YU/w9cpIbMU8jPgrp3Cx/6HpND4Yr4mL9Qcty3
+         CTeYVRkRF/BpMZNwzb1G+y5J90cc2ZClajmFdAsT8WbO5BqC2vzmT1/XMUHwN+9Lekzt
+         5nIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763563775; x=1764168575;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PvzXT1PDok/yQbdLDJPIegEZrHBcAnX7M9j9AL4admk=;
+        b=gwa4yJRT0EoxXupX4j6SASSP0+CvyvOGT03Q2E6lweKnsES2fyL+MsCFfM8gbGPBoK
+         BBa9UWigFjPYFCWkUCDvzSlQvbEqE1oz4Nk0koOj9A6i0ckfblR32WGilpooP1XL7EUd
+         nJzZidB5q7B0/Q8nA3xjbv5fFXixYzqnMd9IwKX4y6HTzcFl6xRJI18Cc9vX4nGWd7Ai
+         snmMyQdyBWihKy4vU3LzFnS0fS1FnekgS/FPRp1FQ4qQowJyONMb+y0PAA2HAdmqpQte
+         xFIovQRzEkCH6pCathh2E9wNjc8SyGIh5ZlUvm6YPnKV3EyqkcbsJK+DTvl0Gk8IWr1b
+         jgRg==
+X-Gm-Message-State: AOJu0YzpJTlm1n3hI8b7OgFMKe+uq78Zh6BagfSdlm8BeLwF9v/gKHHO
+	zHtyR19RhHfakUbp/LAUHVEXukYaJA38Vaz9yTU+aORVDgPxuyZIUM0pvOgLO9wrjTc=
+X-Gm-Gg: ASbGncswYMCNrNEHemx4cyDGK/+5QtK71o6TPvUh6IfxdGVNalfSa+5lNuQUibpYjVr
+	9dxyquN2uDwwn5KKSwdENOjrqeKjcit2YmIotnWcdzFDeOEu2gJ1cmlOpsuqoEuwEU5PLJkbhkT
+	G5n9s5qSa9NVWTVBcdP76GZSWKgC6PteFKfZnVs1LVe0z0KeXsTvn4vWdjXSqTzG4EOF2Vz4cBA
+	Ni8I0lN8lvi1A+qbqDFs1VP73dP9uDfA+93qgbVBHagOwUc9iCaz4Wt5Bpgi+fzp2uNbFdJYS9m
+	c0bHiwAuDrOr5OBQ9Y/aXJU5gtzN2YsHKATRMtAP3H1yI5emYet4Kq8HV6fqI4XHO0cP0e/rpKK
+	Jp1mJR82BcI7l0jB4olSnbg5SqSYVCavKdp4m3EKoEgEnEBEWg8W4L1gb9ojN/vYaBKIVsK3e51
+	XNz70D4bKOApuE74gMmnK9y4B+Sa4XIfczupxQpOsg53FBKBBWsq9iPClOWcs/opOv4BypW1OTa
+	w==
+X-Google-Smtp-Source: AGHT+IF/SJMMbWEgRFwYg9CHGo9ekhafPDlPY7JxyauGM1SXhVQ1hoTLFavIWNHOvylWguN3KYxCQQ==
+X-Received: by 2002:a5d:584c:0:b0:42b:4194:48cf with SMTP id ffacd0b85a97d-42b593991f4mr19216195f8f.52.1763563774737;
+        Wed, 19 Nov 2025 06:49:34 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:3d9:2080:263d:925b:a11f:ae36? ([2a01:e0a:3d9:2080:263d:925b:a11f:ae36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b62dsm38408563f8f.24.2025.11.19.06.49.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Nov 2025 06:49:34 -0800 (PST)
+Message-ID: <165c7488-897b-4500-a7dc-a212cd64923e@linaro.org>
+Date: Wed, 19 Nov 2025 15:49:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,90 +70,92 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/26] drm/bridge: ite-it66121: use
- devm_drm_of_find_bridge() to put the next bridge
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Corbet <corbet@lwn.net>, Alexey Brodkin <abrodkin@synopsys.com>,
- Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Adrien Grassein <adrien.grassein@gmail.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
- <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-7-0db98a7fe474@bootlin.com>
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-7-0db98a7fe474@bootlin.com>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 1/2] phy: renesas: rcar-gen3-usb2: Move
+ phy_data->init_bus check
+To: Claudiu <claudiu.beznea@tuxon.dev>, yoshihiro.shimoda.uh@renesas.com,
+ vkoul@kernel.org, kishon@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, p.zabel@pengutronix.de
+Cc: linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20251119120418.686224-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251119120418.686224-2-claudiu.beznea.uj@bp.renesas.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20251119120418.686224-2-claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-
-
-On 11/19/25 13:05, Luca Ceresoli wrote:
-> This driver obtains a bridge pointer from of_drm_find_bridge() in the probe
-> function and stores it until driver removal. of_drm_find_bridge() is
-> deprecated. Move to devm_drm_of_find_bridge() which puts the bridge
-> reference on remove or on probe failure.
+On 11/19/25 13:04, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Move the check of phy_data->init_bus from rcar_gen3_phy_usb2_init_bus()
+> to rcar_gen3_phy_usb2_probe() to avoid having it duplicated in both the
+> probe path and the upcoming resume code. This is a preparatory patch.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->   drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-> index aa7b1dcc5d70..5bc4e5afb823 100644
-> --- a/drivers/gpu/drm/bridge/ite-it66121.c
-> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
-> @@ -1542,7 +1542,7 @@ static int it66121_probe(struct i2c_client *client)
->   		return -EINVAL;
->   	}
+> Changes in v2:
+> - none; this patch is new
+> 
+>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 11 ++++++-----
+>   1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> index a38ead7c8055..b9d5bb52e02c 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -782,6 +782,9 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+>   	int ret;
+>   	u32 val;
 >   
-> -	ctx->next_bridge = of_drm_find_bridge(ep);
-> +	ctx->next_bridge = devm_drm_of_find_bridge(dev, ep);
->   	of_node_put(ep);
->   	if (!ctx->next_bridge) {
+> +	if (!channel->phy_data->init_bus)
+> +		return 0;
+> +
+>   	rstc = devm_reset_control_array_get_shared(dev);
+>   	if (IS_ERR(rstc))
+>   		return PTR_ERR(rstc);
+> @@ -861,11 +864,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>   	platform_set_drvdata(pdev, channel);
+>   	channel->dev = dev;
+>   
+> -	if (channel->phy_data->init_bus) {
+> -		ret = rcar_gen3_phy_usb2_init_bus(channel);
+> -		if (ret)
+> -			goto error;
+> -	}
+> +	ret = rcar_gen3_phy_usb2_init_bus(channel);
+> +	if (ret)
+> +		goto error;
+>   
+>   	spin_lock_init(&channel->lock);
+>   	for (i = 0; i < NUM_OF_PHYS; i++) {
 
-And for all the patches converting of_drm_find_bridge to 
-devm_drm_of_find_bridge, I think the pattern:
-
-	bridge = devm_drm_of_find_bridge(dev, ep);
-	if(!bridge)
-		return -E...;
-
-is wrong, because devm_drm_of_find_bridge can return a non-null error code.
-
-
->   		dev_dbg(ctx->dev, "Next bridge not found, deferring probe\n");
-> 
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
