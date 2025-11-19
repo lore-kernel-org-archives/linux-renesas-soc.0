@@ -1,170 +1,117 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F154F273D6F
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 14:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC6F36402A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 14:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763563835; cv=none; b=dBjTHPiT89AVBiAYt2xDLwnKp6BV1oX2zEW9rF38f9Kos4aUzCpYraEiKAj9uA3J0RdSzhQNkIwOXjzdRf1jtCHhg/D7ZFzrVOFNu4QPkEenCK1q27wn6+hQWii91q/j7S8qP2cQL8HL97ESeU0q4p4n6ezeyN2Wwy8dBcRLYJs=
+	t=1763563843; cv=none; b=P/49gx0EVOvzRCNbE9d4RXvXMfKdn3EB82Q8QGs5KQuwiKiYHqYxa7Ts92MncGVYJNZ5C7wdlJ3aCWi5zcaly1OJsJ1leRIinjeuUfoZthrnQ6uwrl34B63wN4ZHwJ+umhcPp+kcCoHcuAN2Ww3c40RkA9mEzt2ClDuTWppO++I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763563835; c=relaxed/simple;
-	bh=1Wruu9gggvjosYoKum2V+cZ9fCd6dFFd/5SKcpbFf7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3KHJqCLqdgXKVav/Ysuve1i5fAOq0SZyfDGwy6BBUvbdXe26XXPwJ5iWPo33aFQQoCKa5EOiPzDJrSzGB6rbN1Q0T29HuU/g4H2MiNIGDHBAR/PGDvyRp3COvM7eZJeSZfFF1+pFHWMczF/BBh2GREz0kgQFJel2wYkAUGMUEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsmAN0H0; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1763563843; c=relaxed/simple;
+	bh=tN4N7vuK4JJ0rterP05amy6D7j/6Qj9sv/6YKc8hKYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iQUwm4G1m23TQrt7PlnZhbGLU1+n3ULKulGshb1FNXK35W+Hv/+tIJ0yCFLtvhoHSLqe26K5eMZ4qY668CtKh3Xe5iwwY6HhRsLlkPEgLRcKuwchiL/HKwYCnQpInGAW9gqVTZ8qMzn8Ew2N8BIX2RcL6bN1pONZ/2Xm5tZ5Ifk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsmAN0H0"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88051279e87so72247956d6.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 06:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763563832; x=1764168632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
-        b=SsmAN0H0dW4pniwEPfi7ntnomTvrnK0bOh98GRqlM66jfMIRrCCmEP2AvXC3HRRCmV
-         7g/qWz/7yxs1plOWoLSgEZFqXqMOfVAES46UCC3gAbXavKi2qNkqks9VPXfNYmkzGuFd
-         Q5I9V127jwdVG17TFwwx5snj3oIsqDAQ4U3ZDMIjFeJBPC1kDbDek9H08MwcYqowfH2y
-         OG+QJJFzNqeD0YdjzmGTC9LhWa1frGuIlT1/8whm+I2RPHXYOfLqG7/tExznEqIkOaLF
-         MVab0MlufwIXjF/3XH8b7kl/bcvgJoS2Kb6Zaia++StlKQIiiuC3nKR94iY+PKgXA6a8
-         5wbQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5957753e0efso7116164e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 06:50:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763563832; x=1764168632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
-        b=Ddz5cIxXSw4bJUzIDdKRLNNgzYlNqYZpDXyPpA9sTMf4B9fN0PTNLV61CuEOPuoJqS
-         wQooDsvbpK6gU0DCpRaWbFpDBMWGdDrUG0EG1n0ffNrWUES1UGK3W1wy5dsn5IzVwiTS
-         ekQcaK3eXD3yznd+7LVd138pjuKGHZB0XVtrY32zq9pZmhjss4g2ZAKn0blRSQwx0lmG
-         kx26U0ZmQjcFSSLObWB9B9Qe0pCrCIlyUjt7fyexv55Cryu9KdASQyKJ7SQAbkhIySvl
-         E7I5NcF2tkqriajmE6Mt3pmssx51GQChvBBDSMk2cAgrBBkANmOvoAHCVosSYTk1zWCh
-         Ablg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH2KGsjqUIEQX6djVa1iBoiy9l5x0l/kNkr3Kza5MhC/G3R9h27Xrt/V1uE+oNY9iLPWOPej7aIJ0yT/glcGe+hw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaIQW25Sc3JVEb5p/BHXERJx1RuYsEo+kzcxMmvnDwEMwov6Wh
-	yfBHWY5J6tyx/zMgDX4JeCfBp+VHVRuIcJdi3j7SpiiNOmlkLt9YVwU1
-X-Gm-Gg: ASbGnctftdYlTGyAvkK2LaSv1ax4LYCYWHoo4XJbmyGCl1HJ3JHEJKc6RdihfcjKscy
-	+/KZAf7v3ge3YJfhzzxWSarJWS0GTwAVzilm7tkhqDfmZH8Ubu9CzWTMvUsIfW00S816xOErotc
-	1LWStuIz+MGnK1jKyiYCBoCjqyAocYZC94aCi4YjYSJ/ET3wJ8CPLGMJTtZsuIN43vu16PjWPMu
-	tuiJNt/ANLdSgNpOpZe1gHTW2qQaVn0xsF3Jt1bDwDUhqvkMESedvhRZ89uOLDudmn3yX75JNzI
-	QQ8L1CYrsKYUJ6fy6uLcwdp/SigJQpLsLJpYwkqBaaegUc/U+i0zM//L2vYQ0APInZXVlYXiddP
-	dh3oHllK0uGQsoXCjh2vGUPtxA3AtHBax+BCy/Zz+xDE3GxDeSVL3Nlk4p5dSLDe/V+Dxl8d+La
-	Bon/yR1za7qK/CNgdydQ==
-X-Google-Smtp-Source: AGHT+IEl27VY0Fzg06WvTYKsPnTaG3CI8XR1O4Jx2OOSNMzexShqbizbMp95FvmlDbVG54xJ6MBR9A==
-X-Received: by 2002:a05:6214:529d:b0:882:49f4:da25 with SMTP id 6a1803df08f44-8829269e07bmr301776726d6.39.1763563831679;
-        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882862d04e1sm135929226d6.7.2025.11.19.06.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
-Date: Wed, 19 Nov 2025 09:50:30 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/26] Non-const bitfield helpers
-Message-ID: <aR3ZNmSMmtSsUR23@yury>
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <aQzQjSMOSrUIgMCL@yury>
+        d=1e100.net; s=20230601; t=1763563840; x=1764168640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4rPsaXkkkPPqP8F89aStRjGcZr5tE7ulQ3b9FN2Uak=;
+        b=aB/1A0f0q+xdbKlXtVjIhkTefMkdXY/XH3OzjJ3pHw3yTlHFI5wQdZV2QFuJyB/dl3
+         3vGIQL6+Nx7OqUOz9qUULWLMKKX2G4AqDAimxcPn72UpD0n0qSrPOI3le6g8hBCM/wcy
+         zfp97bp1qGPnwTTmf7ROZjUF0+NRLYtyX97jk5zPscWxgEw4QQvH9NHV7QHngQXSl3b4
+         9vxur6LOMMEdPoseVEBeZlgos326Q+d8VLxdI2Nxxjp3gEfM6i4TSaD6a+KRiKFHr5SV
+         GvYcpn+wRfV/Mx656JIGdbY3nfNbvy6Pg5gg/21dWjeXJABh/gSG9hkuorPUOcqqjfOh
+         jNTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG0uh42ZGATMdqAdl3xORd96PoiWb4Qm+kVUJ7aaTkKz3sCijYJp34xV/L+Tl3MMDUa1MT1V4/HtlcEN/D8GqZCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWLl0vCnPI3o1s9yKJKEIFc7nznbRBb8ouiIA9jksgSWLySdIv
+	Fv5j1B0HuQz6MeI6YRNLWgfcBVhuHETJzjN4NyPD3sTzvkJCZ1/tR1jhBQrRBBmc
+X-Gm-Gg: ASbGncskI/A9oUnBX/KCTo2BE6F1w5iC6E3MQeizc6IMrWEABhQcNLdjR2dYLAPL+VX
+	GG/NHvAHL34uG7XcN7pIIR6cEpXZ7RsCSxT5AjCNCRMkXL06s3Que/hk9Mmx1Cgn0inn27Z5e2p
+	yDKl9BvYQpqwuCmt0vGkckK6ZWhX44Bem4i3DV+/yDfRYWUoaO8jADLbp2oZR8VHER5t7ufAi/N
+	r9/qNe0rZ2VfH/XfIAdHaKeGnmU5JpDcMcL8ke5rjV3E2Ji7nRrBlZ0iiz/zIqYQTww1U5A3uYJ
+	+notE/Yf8GOlEYKoEhDkbGcm9PbuzzC6aeTGhfaU4OLNTgSjvehbjfRb794Ue0Ze6IW0M6CCiWL
+	/P92/0ZcwjTG3Mb+emt69dMPjGj1M77R9dCWXMo/rjyUGP73v+Qo0EW2mfre7yV0LKzRq/dKAZt
+	hAZ9x9fR9IAhxorx+TM8bpHndWIghMnlwwTVdVU32xeUyxQW5sRQ==
+X-Google-Smtp-Source: AGHT+IEyrLj86Gx738Tf0OEEgJxsmQszneEEiFDIxdsDtABhY31Q0QRMMbvvbMjGrb6o19FmtrsOHA==
+X-Received: by 2002:a05:6512:114f:b0:595:81e5:7570 with SMTP id 2adb3069b0e04-595841b73d2mr7562796e87.23.1763563839323;
+        Wed, 19 Nov 2025 06:50:39 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59580400519sm4741740e87.62.2025.11.19.06.50.39
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Nov 2025 06:50:39 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5957f617ff0so7468320e87.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Nov 2025 06:50:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXE86WqHN0O8TycHQjXj6TstpVGFPu+eDC8Y4IfPKsBzQbc149zdFDxejsLXTayPmC+0wwmLWqkLscwdDLR1wJP7Q==@vger.kernel.org
+X-Received: by 2002:a2e:9ace:0:b0:372:904d:add4 with SMTP id
+ 38308e7fff4ca-37babd35f8amr45635351fa.28.1763563413779; Wed, 19 Nov 2025
+ 06:43:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQzQjSMOSrUIgMCL@yury>
+References: <aR2V0Kib7j0L4FNN@shell.armlinux.org.uk> <E1vLf2U-0000000FMN2-0SLg@rmk-PC.armlinux.org.uk>
+In-Reply-To: <E1vLf2U-0000000FMN2-0SLg@rmk-PC.armlinux.org.uk>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 19 Nov 2025 22:43:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65syu47YAy8-24LDXt1MC2K7r+weOyCWn5fZzRgSFhnDA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnEwqpydG-ZRtqWc8I4l30DitJuwNrACYzTdhyRCjLGsAnpeFb-cKD8BLA
+Message-ID: <CAGb2v65syu47YAy8-24LDXt1MC2K7r+weOyCWn5fZzRgSFhnDA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: stmmac: pass struct device to
+ init()/exit() methods
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Drew Fustini <fustini@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Jakub Kicinski <kuba@kernel.org>, Jan Petrous <jan.petrous@oss.nxp.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, s32@nxp.com, 
+	Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 11:45:02AM -0500, Yury Norov wrote:
-> On Thu, Nov 06, 2025 at 02:33:48PM +0100, Geert Uytterhoeven wrote:
-> > 	Hi all,
-> > 
-> > <linux/bitfield.h> contains various helpers for accessing bitfields, as
-> > typically used in hardware registers for memory-mapped I/O blocks.
-> > These helpers ensure type safety, and deduce automatically shift values
-> > from mask values, avoiding mistakes due to inconsistent shifts and
-> > masks, and leading to a reduction in source code size.
-> > 
-> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> > constants.  However, it is very common to prepare or extract bitfield
-> > elements where the bitfield mask is not a compile-time constant (e.g. it
-> > comes from a table, or is created by shifting a compile-time constant).
-> > To avoid this limitation, the AT91 clock driver introduced its own
-> > field_{prep,get}() macros.  During the past four years, these have been
-> > copied to multiple drivers, and more copies are on their way[1], leading
-> > to the obvious review comment "please move this to <linux/bitfield.h>".
-> > 
-> > Hence this series
-> >   1. Takes preparatory steps in drivers definining local
-> >      field_{get,prep}() macros (patches 1-11),
-> >   2. Introduces __FIELD_{PREP,GET}() helpers to avoid clang W=1 warnings
-> >      (patch 12),
-> >   3. Makes field_{prep,get}() available for general use (patch 13),
-> >   4. Converts drivers with local variants to the common helpers (patches
-> >      14-24),
-> >   5. Converts a few Renesas drivers to the existing FIELD_{GET,PREP}()
-> >      and the new field_{get,prep}() helpers (patches 25-26).
-> > 
-> > Alternatives would be to use the typed {u*,be*,le*,...}_{get,encode}_bits()
-> > macros instead (which currently do not work with non-constant masks
-> > either, and the first attempt to change that generates much worse code),
-> > or to store the low bit and width of the mask instead (which would
-> > require changing all code that passes masks directly, and also generates
-> > worse code).
-> 
-> Everyone please send your tags. I'm going to merge it in
-> bitmap-for-next before Monday.
+On Wed, Nov 19, 2025 at 6:04=E2=80=AFPM Russell King (Oracle)
+<rmk+kernel@armlinux.org.uk> wrote:
+>
+> As struct plat_stmmacenet_data is not platform_device specific, pass
+> a struct device into the init() and exit() methods to allow them to
+> become independent of the underlying device.
+>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> ---
+>  .../ethernet/stmicro/stmmac/dwmac-anarion.c   |  4 +--
+>  .../ethernet/stmicro/stmmac/dwmac-eic7700.c   |  4 +--
+>  .../ethernet/stmicro/stmmac/dwmac-loongson1.c | 12 ++++----
+>  .../stmicro/stmmac/dwmac-renesas-gbeth.c      |  4 +--
+>  .../net/ethernet/stmicro/stmmac/dwmac-s32.c   | 14 +++++-----
+>  .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |  2 +-
+>  .../net/ethernet/stmicro/stmmac/dwmac-sti.c   |  4 +--
 
-Fortunately I didn't specify the exact Monday. :)
 
-Now it's in my tree for local testing:
+>  .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 10 +++----
+>  .../net/ethernet/stmicro/stmmac/dwmac-sunxi.c |  4 +--
 
-https://github.com/norov/linux/tree/field-prep-for-6.19
+For sun8i / sunxi,
 
-Will move in bitmap-for-next shortly.
+Acked-by: Chen-Yu Tsai <wens@kernel.org>
 
-Thanks,
-Yury
+>  .../net/ethernet/stmicro/stmmac/dwmac-thead.c |  2 +-
+>  .../ethernet/stmicro/stmmac/stmmac_platform.c | 28 ++++++++++---------
+>  include/linux/stmmac.h                        |  4 +--
+>  12 files changed, 47 insertions(+), 45 deletions(-)
