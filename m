@@ -1,64 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A3A34F245
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Nov 2025 16:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EE34F487
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Nov 2025 16:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763741339; cv=none; b=LLgfoM4aiCdOqwSIcnGOy+rx5tEDAe5tyvZ4z8kdWd90gXn+llYnyoxCY+YhgO5u2uiH3KOXGrHPzILFxXJ/LTlAWjDSEgcJYSFuw1wNxDy61YrUyRMrKueiNiKoQUli9gUbgCla4/dt+Qo/IofrA0xxgRkyUqMt+7tY14Uaojg=
+	t=1763741340; cv=none; b=FiKmpnQUu6TFFtrfXzEw1cnfcFMjGB684VBPUP+yvmKD9ioNUISKFLAc6+dLOwAuQ1SJ1YIKGlX0CRreqY03wRnCE5UvSxqx4QRYhSwji0c2P6ae7C/F3iOzpM2fOjJW5ExRgBnfNYHdI+vHhp9fkzK+M9KZDiTSFgpocqkBBjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763741339; c=relaxed/simple;
-	bh=6d3UawdJbIGNpQ1r+t0ClfBpoFcfP4pXx/49sOBT1uA=;
+	s=arc-20240116; t=1763741340; c=relaxed/simple;
+	bh=Iw6l252MZl0FeFc+DclTkJ87JJ+JB7I8jUGzUzGqMrY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p++Ajfa0YCK42lhiYkyWOeWSzD+zhDBxCPnaQDFxDjTziWRpyaK6kwI5uXDAiidUHKBFe+8T4lwbrwDNkoTzREQM5prG5WE14rFW/b/h6HwAb8rAlARkN+zOwPRa1hUw47T7BQCT2I+fJbZTVoztoQLMUSLplCZCL6IVS9IrGCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlkNNUK9; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=KQalY3Eo07CUvIA7jkOFg1yHCbjjkMG8VzZqNGgCpvo+hI2SDWVnEkX9lAwAdy/bM7FHkGKSRH4hyCtpQ0FxUrGDFi3+YXvQ17GIwbYNpJg7/aJwMa3Y0GIuHjzm84Un9V+i5iPfpFJMiqgggv5WlsAWXtaRAcx50obqasgrZpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dwte5jL5; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlkNNUK9"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4777771ed1aso14989945e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:08:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dwte5jL5"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775e891b5eso10204775e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Nov 2025 08:08:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763741333; x=1764346133; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763741334; x=1764346134; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hrSuBxCexGS87tmWsDBU0gBjhQ4SwSQ7srqw0RC4gYg=;
-        b=LlkNNUK9VhuyQ8JHMYcDKCXpPybTzHs5PyofT7YOvnPGUH4WeT2UOawGElNjY+x9rW
-         VWZdi6LIOixX10VFyJwkZAPDd+boNxavCi4aOEKQUAP1cZM0nVI56B+oKJr+xI75ft+y
-         dGP5phaX2lF+43TzI9LE1V2U0/xPxXI11dOKpJA7YLPC4HIEhGjK5PAAdDXn6AEOVyoD
-         B1JVg1h67obq9Icz0MU1KOQkzjHAkNj1817N6InA80pFnRNl28achBePtUD4kISnQmjv
-         1gsbEOuvGOwozm+cy78pExm7ZF1PB7rB3gfQSQvGXIgZZCt9q2houzcIEvTXQ+Qyq0hq
-         5H8A==
+        bh=6/ScgVps3JYSEsrwjx9vO4q3JpMQ/hA7wm9emPNcXcw=;
+        b=Dwte5jL5WgsbA6mJwHBF0j41UHbBL09KBnlTcoD3pL8LcI+092Jye4KUya7fQKE6t5
+         1gpeSHMcY84fmvYYEi57Tupktfg0I4BUPvCvXJcdrXMhx6LR93o1DZovXaBemB3e43KP
+         awKYDx5bS8iPTYNaBnmHeZwwZ5qZ1le/7QlwfFA0U/1nMVS7BWBTBPYIL2rhYjX0D3h6
+         zvpSXZR1OeI85/+AcEvfrZNj0hVMowkd6iy1J+lmHHBlXD6MUXkLzi7F/WxH5hehbSsn
+         9o7KZyyEhg+stJ5s6nT4KjEjT/1+3tNNc8xurLZnm4vtFWndGI50djBVXjaSoS+2ALG5
+         0IMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763741333; x=1764346133;
+        d=1e100.net; s=20230601; t=1763741334; x=1764346134;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hrSuBxCexGS87tmWsDBU0gBjhQ4SwSQ7srqw0RC4gYg=;
-        b=gogK1YPvJcAvC6FL385stN/r8uMKwxPWHugfhWSkIkqo+xWsaV1lYAsxtmWvRef8iM
-         XA0ub7hHhI2NqDs8wEC8c3YGbYQshLmLiQ1JSsufcQvKFj03qlOF+BkD/PPVrp60zW/r
-         d1TcBhKHA1sWMGOr2TrHFA+nXAafkgKzW0XDOVIk112o+qfiGKQ5bT0mFRPCyFkUacGO
-         IdgJ2TpnkwyJIKwU4gY/GqmqdNOm3tGpk0ChBc9RYV68uGrM2hUClSzaSshBHIa3UZHg
-         39Zcd8LY+MgtLEEqVNUWQkS9l1+6KJFo+2BkOBD2dFSLNsUgjg61wAeequ3bIh0SBUZY
-         2Pdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj8FTURVzCz0ZBGfz4787d0DA73Og0/rhy6zOXJ7mn2VmSbFoiw76jQVR1mzYRfteaq/UyZKNFYFkydWNHoaMKwg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqrPFN2rK0Tx9Cyg+LU98uLXLIuFQM7MlcenoS7v5Y8ExBYWVX
-	d4TtaBR6VJiTZK5WO9Cn4eeolbZxVcxJ+E1C3rWKingyi1k+znFooRYI
-X-Gm-Gg: ASbGncux1zF7+6jEVyL8uUbkTNgBzQJnX3u8nt2JjVxDZRa80ooHg+UoqZ88JWoOm1V
-	Bf4evNwUHfaJIvup/zOnF1V04W5QgPNA5IOQxm2zqidG9t4SkX9af48RD/8mnXHjJX002T1dRZz
-	ujvMyhWyryuUwiN+4MvIBe7nslXxLPyaY5l0qT63mfMPb58mgpEGI+ec7YRVpyYI96rki2OKMU2
-	2QRcANQEP6IvpBggqoGBkT9ToNu8DvdPrC+BNaoCI4ZUkNKFoEZN+Pncp/STQ5RU2tZ+IviChi3
-	+1E066kVNsboDwUeo7zAe54q9VNfvX7htrRSD84wd5FoakuLnOcZBRseLQcDyjvt6EdO0rl/Po/
-	E7AhqSZomBAmwI8BOYc6Ca7RKyB9itUoLmSHu1C6458Jj5I1hhHPvjv28HZH0yZf2m4ZjnYhIvk
-	SVoaVa1MnMVOuRFsZT/6sboYrJeFvn3FaL1bU3+bd9dIWJ+BhCPXUhHXyiGoH6vu5wUKJcW6I=
-X-Google-Smtp-Source: AGHT+IEsDBPrjJf1KURwoq8uXlilefcsQLW4264GczEDAFI2hLFsKc/qZ1a0TXfu+QIo/tHMJdFj3w==
-X-Received: by 2002:a05:600c:4f88:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-477c01c0c9cmr28504395e9.26.1763741332734;
-        Fri, 21 Nov 2025 08:08:52 -0800 (PST)
+        bh=6/ScgVps3JYSEsrwjx9vO4q3JpMQ/hA7wm9emPNcXcw=;
+        b=Bcq5OPFozm9uPqCP1fJ1rh52icOI72nLQ80LQzVTYrpl4TVNtWOHNt6pKP8aZMUYBe
+         jqnhlaH0uCt58h89eKF8IzvPCDRilPovZQBkDpW+qipi2P+7qw0G+W9bjUaCZGfIlyKc
+         0t6Tfzc7UfBa5ZCjSvkvD7JfX29AaLQSZiHUL8Q4gctnWpNcErMp+SAIrUhlC/qvD4mr
+         Ga4YUosbIielwaTRM8IprxcCdJs+YzVxxNRvLQ1SLQ5wNwDIZbUKgyuY0zD3nGm8c4jd
+         NnOFa32HsAW+C8xMBHfnIUHEAMvzPWfzSdW3geXaTUbKIp/DUD5R/Y4R9LwJmFlhzsM1
+         Kduw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMIJlL2xcixI6HagR0IC2awk2A7rw7SjzCBZB2621waAOHAXA+72euSvtlxH2vo9CM3OgWoPYgSiiamwGTAtovEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjC0vzcVn/8JVR2aDb6Nzz9wD/YNZaMk1q1X1a3HwgBJL/ib3f
+	zYusXwp8/YkP8rU3nS4usDrH1ewq2XvMs/LTeXBEaY93+2hyiOL1/07o
+X-Gm-Gg: ASbGncs1OOsY34kCJ7SVQ1w7BwwcU3VaIxjoGOIjN8v6aOagLNIX13SxGiA5tjtVSxf
+	JqwDzPJytgdQOLX3o0xCAzCdLIG/n6k24SWDboYitv5z+ILKoDkbTRLX+Wc6jLiOMdk0bGFajSr
+	NvIxOM9PTEbjS1yr295ZO3GS8UEMdw0cVAY8UNvWkP/2xJ9rfNZLsf0sZvE/CAs/xHZnnojOrAT
+	DRcUhoXQwWzqT6Ls92PDJck2sma+H5SuTKtDQW4DyvEWBf7mL1nKoSwlmjpEmx5boYcfA3/K03a
+	KyklImDZudI+RV9tNd1RG3D4cJX+OCOrFrfcjKWO8CtD8ZigODA/MahlyUuy1pBOUpmp46Z8kp5
+	8nPC63fy4jEugxWJalINopiePfXpJswLA6hcQ4kgGW44zBNKpQLxibUFwiU+mGrlcXBpnh6e/Te
+	5zQpeuZasvJKxwm524OSC/rEbLRdgfNhpdA54sTkH0LP5ftRi4OcchO1KfF+Q1Iup/NMN3elw=
+X-Google-Smtp-Source: AGHT+IFkkMDNDqVwLmiqVKk/voVeyLEFueEAgcn0XcYCXcVY+pFazy+U4WRItnCC6JMVveasHarPjA==
+X-Received: by 2002:a05:600c:1ca0:b0:477:75eb:a643 with SMTP id 5b1f17b1804b1-477c0165b4emr37258095e9.4.1763741333994;
+        Fri, 21 Nov 2025 08:08:53 -0800 (PST)
 Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a9dea7fcsm89496195e9.8.2025.11.21.08.08.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a9dea7fcsm89496195e9.8.2025.11.21.08.08.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 08:08:52 -0800 (PST)
+        Fri, 21 Nov 2025 08:08:53 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
@@ -71,9 +71,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: [DO NOT APPLY PATCH v8 11/15] pwm: rzg2l-gpt: Add support for output disable on dead time error
-Date: Fri, 21 Nov 2025 16:08:18 +0000
-Message-ID: <20251121160842.371922-12-biju.das.jz@bp.renesas.com>
+Subject: [DO NOT APPLY PATCH v8 13/15] pinctrl: renesas: rzg2l-poeg: output-disable request from GPT when both outputs are low
+Date: Fri, 21 Nov 2025 16:08:20 +0000
+Message-ID: <20251121160842.371922-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251121160842.371922-1-biju.das.jz@bp.renesas.com>
 References: <20251121160842.371922-1-biju.das.jz@bp.renesas.com>
@@ -87,65 +87,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This patch adds support for output disable request from gpt,
-when dead time error occurred.
+This patch adds support for output-disable requests from GPT, when both
+outputs are low.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pwm/pwm-rzg2l-gpt.c   | 9 +++++++++
- include/linux/pwm/rzg2l-gpt.h | 5 +++++
- 2 files changed, 14 insertions(+)
+ drivers/pinctrl/renesas/poeg/rzg2l-poeg.c | 10 ++++++++++
+ include/linux/pinctrl/rzg2l-poeg.h        |  1 +
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-index a0100e1b948d..0e158f677f01 100644
---- a/drivers/pwm/pwm-rzg2l-gpt.c
-+++ b/drivers/pwm/pwm-rzg2l-gpt.c
-@@ -84,6 +84,7 @@
- 	 RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH)
- 
- #define RZG2L_GTINTAD_GRP_MASK	GENMASK(25, 24)
-+#define RZG2L_GTINTAD_OUTPUT_DISABLE_DEADTIME_ERROR	BIT(28)
- #define RZG2L_GTINTAD_OUTPUT_DISABLE_SAME_LEVEL_HIGH	BIT(29)
- #define RZG2L_GTINTAD_OUTPUT_DISABLE_SAME_LEVEL_LOW	BIT(30)
- 
-@@ -502,6 +503,14 @@ int rzg2l_gpt_poeg_disable_req_both_low(void *dev, u8 grp, bool on)
- }
- EXPORT_SYMBOL_GPL(rzg2l_gpt_poeg_disable_req_both_low);
- 
-+int rzg2l_gpt_poeg_disable_req_deadtime_error(void *dev, u8 grp, bool on)
-+{
-+	int id = RZG2L_GTINTAD_OUTPUT_DISABLE_DEADTIME_ERROR;
-+
-+	return rzg2l_gpt_poeg_disable_req_endisable(dev, grp, id, on);
-+}
-+EXPORT_SYMBOL_GPL(rzg2l_gpt_poeg_disable_req_deadtime_error);
-+
- /*
-  * This function links a poeg group{A,B,C,D} with a gpt channel{0..7} and
-  * configure the pin for output disable.
-diff --git a/include/linux/pwm/rzg2l-gpt.h b/include/linux/pwm/rzg2l-gpt.h
-index adb5b9cfc8b3..f9365bbca57c 100644
---- a/include/linux/pwm/rzg2l-gpt.h
-+++ b/include/linux/pwm/rzg2l-gpt.h
-@@ -8,6 +8,7 @@ int rzg2l_gpt_poeg_disable_req_clr(void *gpt_device, u8 grp);
- int rzg2l_gpt_pin_reenable(void *gpt_device, u8 grp);
- int rzg2l_gpt_poeg_disable_req_both_high(void *gpt_device, u8 grp, bool on);
- int rzg2l_gpt_poeg_disable_req_both_low(void *gpt_device, u8 grp, bool on);
-+int rzg2l_gpt_poeg_disable_req_deadtime_error(void *gpt_device, u8 grp, bool on);
- #else
- static inline u32 rzg2l_gpt_poeg_disable_req_irq_status(void *dev, u8 grp)
+diff --git a/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c b/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
+index 3dd8bc3465b1..f66f69c5b1f7 100644
+--- a/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
++++ b/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
+@@ -89,6 +89,9 @@ static void rzg2l_poeg_config_irq(struct rzg2l_poeg_chip *chip)
  {
-@@ -34,6 +35,10 @@ static inline int rzg2l_gpt_poeg_disable_req_both_low(void *gpt_device, u8 grp,
- 	return -ENODEV;
+ 	if (test_bit(RZG2L_GPT_OABHF, chip->gpt_irq))
+ 		rzg2l_gpt_poeg_disable_req_both_high(chip->gpt_dev, chip->index, true);
++
++	if (test_bit(RZG2L_GPT_OABLF, chip->gpt_irq))
++		rzg2l_gpt_poeg_disable_req_both_low(chip->gpt_dev, chip->index, true);
  }
  
-+static inline int rzg2l_gpt_poeg_disable_req_deadtime_err(void *gpt_device, u8 grp, bool on)
-+{
-+	return -ENODEV;
-+}
- #endif
+ static irqreturn_t rzg2l_poeg_irq(int irq, void *ptr)
+@@ -347,9 +350,16 @@ static int rzg2l_poeg_probe(struct platform_device *pdev)
+ 	case POEG_GPT_BOTH_HIGH:
+ 		assign_bit(RZG2L_GPT_OABHF, chip->gpt_irq, true);
+ 		break;
++	case POEG_GPT_BOTH_LOW:
++		assign_bit(RZG2L_GPT_OABLF, chip->gpt_irq, true);
++		break;
+ 	case POEG_EXT_PIN_CTRL:
+ 		rzg2l_poeg_write(chip, POEGG_PIDE);
+ 		break;
++	case POEG_GPT_BOTH_HIGH_LOW:
++		assign_bit(RZG2L_GPT_OABHF, chip->gpt_irq, true);
++		assign_bit(RZG2L_GPT_OABLF, chip->gpt_irq, true);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		goto err_pm;
+diff --git a/include/linux/pinctrl/rzg2l-poeg.h b/include/linux/pinctrl/rzg2l-poeg.h
+index 311405b0137e..ed3e08f10834 100644
+--- a/include/linux/pinctrl/rzg2l-poeg.h
++++ b/include/linux/pinctrl/rzg2l-poeg.h
+@@ -10,6 +10,7 @@
+ #define RZG2L_POEG_GPT_FAULT_CLR_CMD			3
  
- #endif /* __LINUX_PWM_RENESAS_RZG2L_GPT_H__ */
+ #define RZG2L_GPT_OABHF	1
++#define RZG2L_GPT_OABLF	2
+ 
+ struct poeg_event {
+ 	__u32 gpt_disable_irq_status;
 -- 
 2.43.0
 
