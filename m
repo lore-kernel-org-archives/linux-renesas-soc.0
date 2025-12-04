@@ -1,150 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B7E2E1EE0
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Dec 2025 23:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767A9846F
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 02:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764804854; cv=none; b=pNMlmtajywzRMmFJj/jXEW+G/d/Xqck0H2qrnO78u2WSB6RGvGJDDCC7W/Bc2Z71ybQtN6IFjbzf6IuBiEOM1S9ov0BJ7RJ92sCUPHdRSdG82wQNZWJF1ISR/mcupM4Pu/8983GD5aktCTRQ/yoDROYkj9G6QJG1J8Tr0ztXIfU=
+	t=1764814775; cv=none; b=QsicLt5Kk7jrR3al1e9+h6s9N5J4ESMgvy/WH6pXgp9WjHDi+5TDVd7RkOpNfH9RWFXJ6soqcPNMQ0AsKYovQHGLLz3y/aIg+iSpK9GJHwyNgKuKGnJnn55InD2svnmWTmzKUbtJSE58cJf9/ddgP8A7mGk1Bvqt8wz40WIh2gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764804854; c=relaxed/simple;
-	bh=u+LWk+ysyom9mJaM2PkwZ2eIKREM/Y9c6qmJUKpC5Bk=;
+	s=arc-20240116; t=1764814775; c=relaxed/simple;
+	bh=gCeE1v5pCwA2FCR7GmE46SltFLYJHoN8J5dUprMsAnc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e8K9a0eVmZR4a/PDCUHhADSS5UqVHvNiKd4E60UoZ/MGHhExlHz5eRKEtM5MV2xkx1VsUmrqQSr7sMlhVvcjwu43D80TM4og7s85l4LZmQ3UxjuUSTe9qrbockHn+FajwaJVcs/w7aLkuCgyNYyZjGEELfgGl8VyvGtBfjJFCXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTGqR2Rc; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=WpuWHcGA/j8wtlLLF77KvdfiodK+1WNP0O4YwUyTQsI+pqTjH/XALDnvGYbisNf9Scx/+FBkzvY4gjiOOifwjip7rCs04vUWrQXHob7a9m1A32A4PcKFliE8mDPStl2VFGCjVINVpxUZrsjUnqsxXwKei96DQxgZJ7Czn1j264k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1vHYVKy; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTGqR2Rc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F84C116C6
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Dec 2025 23:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764804854;
-	bh=u+LWk+ysyom9mJaM2PkwZ2eIKREM/Y9c6qmJUKpC5Bk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hTGqR2RccQDGAEcZkHeKq72FKFgtrO96PzRkz4csy2AxATGlW34Ne/cOre5CYpsx6
-	 mNPN5wRXtvWfjQkViUFANQ6m828joZ1GnjxAQBL6oiE77DRjvfPKTQ+lFwmsoJCCGq
-	 Bp3Ky205iti0V6CW0YAoRTxkQ9I14ABjmeC7dxcJRbmeQXKEs12TQwKIU4yLhSuWfv
-	 zyLjraEcsG32IzuihTonYl9i2LHHbT/3aza+W4KV8uZS8Qz9Jgj6NgoHRPp4Q2gihk
-	 hB+WLJZJyLrgEiulDNn5GcEkN7cGMixNNktkwbAZt8k+OktjMyVg4Mw9jHeGdnEBVu
-	 Zi4Cq4m86EvcA==
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-641e9422473so220475d50.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Dec 2025 15:34:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVrL1LDs8Z1rDBxbJ+y8FC1NEg+30kjUChq17J/ZUG4i55/GaNjzCmzdapkte41mJnWQ3I35bhKtoF+RA64evHmJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygjLymIxRlIDCraKzoIjbipBiMOso5xEoAT/R1z8JMBWWfCrn+
-	MabSCVr1p77gA8MFUPVZA9QISvBPav3C5wupFkXbg6DvSi8pkVbOdpihtfrQErEuLsTk0fhuZZI
-	ICZ3jp8pEPBLmVsGerOm8EOi7W4QBA2g=
-X-Google-Smtp-Source: AGHT+IEcHfvaOb5S969V+TGgkAT9i54KHFx1CR/gCX/hEJeFvl1jabhvHplkUWRwEt3mIqu2dyLHnOM9O1u8pDT2cgo=
-X-Received: by 2002:a05:690c:308a:b0:788:e1b:5ee6 with SMTP id
- 00721157ae682-78c1894c129mr14570627b3.70.1764804853630; Wed, 03 Dec 2025
- 15:34:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1vHYVKy"
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-450063be247so183502b6e.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Dec 2025 18:19:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764814773; x=1765419573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uG7PaGlKRMu5bDo4p3yFYL9GqIngsADyTUqMK4j8Mb4=;
+        b=W1vHYVKyn06LOGKzI8dXJE7IscDNNTo/mDYFiTgsam2UCHzb3kQ2S4ls/tkc2LDYzt
+         GiWzPMbD7G2HgT6crDvHPNjKehqQvxmcD9tCAWNw0wTvmWdNgezYQczXYXYuPJ0F3Vl1
+         pxpg8bv36caY4Y9MVXvjZsIEoGlT6NtkIf8JU3qNucUU+FyQnM1YLLL5i/3iKJ8TizTv
+         bigelT8qLhBkZt5mGuHDt6pcWt7UUfHb+zyO/OYSHAqkFRypt6DGPSvxhCnKsy5WDdGz
+         TLglh0uR7JIegKw9/EphVauUidCeUJ+FDQPcwQapQGfVFhzYahXGFdXQLxkSgf61J+Bh
+         faFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764814773; x=1765419573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uG7PaGlKRMu5bDo4p3yFYL9GqIngsADyTUqMK4j8Mb4=;
+        b=v6fIjKBwaGLA5RFT+ni0tQnCSKJajJpMrym1j9zXuSNedbOdfJh2LtBVfR60gvzgr/
+         LxbusZU3VvyH8fP/PwhWN2FRJoJyD/PSrkQynpc7PZu31qb+M2KBv5hKYoTq3XaOXjZK
+         hwbuW95TIJ3VqrEkdxuJd7xkZNXswRB/PNhIMFsjg4j48pPQ8LsJA0ZubF7WWFRgU79F
+         /BdIOnMfqKp9Id3hbhkVHXRLErsYIL11hiAOLr/WykVoqfw5qhhMGLRqEwbYwwZs8q2L
+         adWxRhepHWEsc7jiOd+CO+iwBU8xN0XWHU9Uz2lGTAV4J4V2KAwDpC24LMLeLSn6vKzA
+         8yVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3xygLkOeV+JiaF+Ss4tYKUWUK/7bt9CoBNXPwQYpZ0K900DON373pmuintOOvBxw6Xvb2h1fzqptL1QrDaaRAOg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4uhNZP5AI3rKGNqUr/XRhEFnwoqY/EyzYbVZ/MebDETiNklJl
+	qWSYWOQX+nFuzc5fxwEWH/iT4SMaRpXmOBCbaSVgZlP0p3fd4py8DzxL6HDuP3bGaFbfr3WbcGA
+	KATz3+SNMQU6HcTHS1dobLZASGwJwOG8=
+X-Gm-Gg: ASbGncsXCJVebILMKWU2F7EVaV9LorkNsYRJar7pZaBJGacyZtXtM6LeXrhAnEn/gMD
+	57BYwFXACM+7aEYojB0zGMfqpf8f/MGxwe1aF0ZIyVH0tgTgud9veUDQj1Rfb/z5HapeB5S/4JN
+	JH8kfCogIX0QpTVU32zffJtB8NrZnhdHW+7lmlBts40IPcZsFaFnTOjqiO4kE5MHUshQhfby2SY
+	bNnJfXWUKPScQCKhNAaBD88B5dXI/HIpVpJn5L8AQY63s2Zw9l+AwOpe4Tis5lXOnM8lQws
+X-Google-Smtp-Source: AGHT+IEqB061cfOqCwBgL5GmPx2RSj4lzThZw1cWLyYykeKeoUInbmIZmdnj3e40MG0mT+uUQiKQyBPTmgsYn3oAUT4=
+X-Received: by 2002:a05:6808:1b8c:b0:450:89ee:923d with SMTP id
+ 5614622812f47-45379dac9b1mr796186b6e.31.1764814773581; Wed, 03 Dec 2025
+ 18:19:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251121112626.1395565-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251121112626.1395565-5-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251121112626.1395565-5-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 4 Dec 2025 00:34:02 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk9Ft3oRGUTyqgbs55Vii0HVVnO7mnaHfCJivwT1Yv=4g@mail.gmail.com>
-X-Gm-Features: AWmQ_bleOJb8iDoFuFxkogfUlyPOtvU4DcbHlwWafHSyLBZKTuzXCFI7OtWruEI
-Message-ID: <CAD++jLk9Ft3oRGUTyqgbs55Vii0HVVnO7mnaHfCJivwT1Yv=4g@mail.gmail.com>
-Subject: Re: [PATCH 4/8] pinctrl: renesas: rzt2h: add GPIO IRQ chip to handle interrupts
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <87o6prsl2z.wl-kuninori.morimoto.gx@renesas.com>
+ <87ldkvsl1k.wl-kuninori.morimoto.gx@renesas.com> <CABb+yY2C32cTwh=8pFGGZijwd1KbpAA5=FfFzp_u1OOo8XPn1w@mail.gmail.com>
+ <87h5v0xdfr.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87h5v0xdfr.wl-kuninori.morimoto.gx@renesas.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 3 Dec 2025 20:19:22 -0600
+X-Gm-Features: AWmQ_blIhviETDC4lCQSXKa9EPrNMcjcSEfDZbmIhU2CpNMAnpufetADKUmSWyM
+Message-ID: <CABb+yY15RqOtCav_ug-7z8n59TPnm2axVCUeiw3RsAvgroLqbg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mailbox: renesas: Support MFIS mailbox driver
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Cosmin,
-
-thanks for your patch!
-
-On Fri, Nov 21, 2025 at 12:27=E2=80=AFPM Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-
-> The Renesas RZ/T2H (R9A09G077) and Renesas RZ/N2H (R9A09G087) SoCs have
-> IRQ-capable pins handled by the ICU, which forwards them to the GIC.
+On Tue, Nov 11, 2025 at 7:11=E2=80=AFPM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 >
-> The ICU supports 16 IRQ lines, the pins map to these lines arbitrarily,
-> and the mapping is not configurable.
 >
-> Add a GPIO IRQ chip that can be used to configure these pins as IRQ
-> lines.
+> Hi Jassi
 >
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> Thank you for your review.
+>
+> > > +       mbox->chans                     =3D priv->chan;
+> > > +       mbox->chans[TX].mbox            =3D
+> > > +       mbox->chans[RX].mbox            =3D mbox;
+> > > +       mbox->chans[TX].con_priv        =3D
+> > > +       mbox->chans[RX].con_priv        =3D priv;
+> > > +       mbox->txdone_poll               =3D true;
+> > > +       mbox->txdone_irq                =3D false;
+> > > +       mbox->txpoll_period             =3D 1;
+> > > +       mbox->num_chans                 =3D NUM_DIRECTION;
+> > > +       mbox->ops                       =3D &mfis_chan_ops;
+> > > +       mbox->dev                       =3D dev;
+> > > +
+> > Please fix whitespaces, here and elsewhere.
+>
+> This is for cosmetic, but not for technical.
+> I know many opinions exist to this kind of topics, but I like aligned cod=
+e
+> because it is easy to read, and is also easy to notice some issue if exis=
+t
+> in such code.
+>
+Cosmetics are usually for enhancing the beauty :)  If you want that
+please use spaces instead of tabs before '=3D'
 
-Mention in the commit that this is achieved with a
-hierarchical IRQ domain please. (I really like how this
-was done!) Also mention that wakeup capability is
-also implemented as part of the patch.
-
-You probably need a:
-
-select IRQ_DOMAIN_HIERARCHY
-
-In the rzt2h Kconfig entry?
-
-> +static int rzt2h_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +       struct rzt2h_pinctrl *pctrl =3D container_of(gc, struct rzt2h_pin=
-ctrl, gpio_chip);
-> +       int ret;
-> +
-> +       ret =3D irq_chip_set_wake_parent(d, on);
-> +       if (ret)
-> +               return ret;
-> +
-
-Add a comment here:
-
-/*
- * If any of the IRQs are in use, then put the entire pin controller
- * on the device wakeup path.
- */
-
-> +       if (on)
-> +               atomic_inc(&pctrl->wakeup_path);
-> +       else
-> +               atomic_dec(&pctrl->wakeup_path);
-
-BTW this is an elegant piece of code I think a lot of other drivers
-need...
-
-> +static int rzt2h_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-> +                                           unsigned int child,
-> +                                           unsigned int child_type,
-> +                                           unsigned int *parent,
-> +                                           unsigned int *parent_type)
-> +{
-> +       struct rzt2h_pinctrl *pctrl =3D gpiochip_get_data(gc);
-> +       u8 port =3D RZT2H_PIN_ID_TO_PORT(child);
-> +       u8 pin =3D RZT2H_PIN_ID_TO_PIN(child);
-> +       u8 parent_irq;
-> +
-> +       parent_irq =3D rzt2h_gpio_irq_map[child];
-> +       if (parent_irq < RZT2H_INTERRUPTS_START)
-> +               return -EINVAL;
-> +
-> +       if (test_and_set_bit(parent_irq - RZT2H_INTERRUPTS_START,
-> +                            pctrl->used_irqs))
-> +               return -EBUSY;
-> +
-> +       rzt2h_pinctrl_set_pfc_mode(pctrl, port, pin, PFC_FUNC_INTERRUPT);
-> +
-> +       *parent =3D parent_irq;
-> +       *parent_type =3D child_type;
-> +
-> +       return 0;
-> +}
-
-Complex, but easy to follow, understand and debug.
-Good job here!
-
-Yours,
-Linus Walleij
+thanks
