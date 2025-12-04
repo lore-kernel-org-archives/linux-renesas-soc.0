@@ -1,24 +1,32 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447DE2F1FE3;
-	Thu,  4 Dec 2025 16:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from 2.mo561.mail-out.ovh.net (2.mo561.mail-out.ovh.net [46.105.75.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6264B2FBDFD
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.75.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764866521; cv=none; b=A1tMMxuSxWxcitm7tZyY6LvHF9b7IAAZQtT1w6s4jgn9fMaLMDt0cC9NnLgE2at/YMXd65ygOdwQgrFDDR/t5+EH+i3w28NiNaY4Ojtp+6kumMNeatoxGE7IFee2FLoavzWh+7MqrzAOWjfjpvtv4Ge4m2olWRFZgX+skvOtMSQ=
+	t=1764866679; cv=none; b=GbUfVnxSAdM7wuInI93y8cGIzO1X4+j1e2jGmFvZSSj1GOVp14xxgnmbiubAB8W7DxBOXk1seAfYmwnBO2tNeRjF886Jrd2EbSOM/lkE6k0wt7eC3YqB5xkcN40nrbuOngZzO1AxCSnIaNiRIq3RVG2xeJ1Fx9i5mcLrvyqpp1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764866521; c=relaxed/simple;
+	s=arc-20240116; t=1764866679; c=relaxed/simple;
 	bh=pPNTClRoW9JRdOtd8rJh2TJKkXQUOFrmBQwQDVGQKyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E/Sz6TtklA2yQ3CULmkx8T3vgklNmV4pjnXgN/mtU5XIZu4G4OMRpp9SLQurcisaO9t4/ijl/9Yj1qn9fyvclZ4xgQ2lxJW6RYKMjDQbdCCh0yiRUJ0KOoVwxwg28ihKKi+oP9aKiO8ZcxhwC5Z6ZwNHBUbstZlUAyLcZP6795U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: w7mOxRxZQ1K5gx/rCEdm9Q==
-X-CSE-MsgGUID: y0DztFi6Qqy/DrtRDdT0Nw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Dec 2025 01:41:58 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.26])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ED2784023991;
-	Fri,  5 Dec 2025 01:41:49 +0900 (JST)
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iVm10NexL7ECRkV5WIETh88STSKe07xyVtCOl+nKTKF/7AcU8RENVdTWMOHXDb8EAJnyNbIoCkLU1gQ7DJhtk+IK88f4lMrmKr4iSkOy1GvsstvR4MAh11dd576gFnxjFxzjs89kOnyLw8lMSIHdVWeWVlTxYVJd0SGJ6JC9xDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=bp.renesas.com; spf=fail smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=46.105.75.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bp.renesas.com
+Received: from director10.ghost.mail-out.ovh.net (unknown [10.109.231.66])
+	by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4dMgDY3tPDz6V7S
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:38:21 +0000 (UTC)
+Received: from ghost-submission-7d8d68f679-m4nfg (unknown [10.111.174.111])
+	by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 454B3C47F7;
+	Thu,  4 Dec 2025 16:38:20 +0000 (UTC)
+Received: from labcsmart.com ([37.59.142.114])
+	by ghost-submission-7d8d68f679-m4nfg with ESMTPSA
+	id naCeNve4MWmh+AYArq+dVg:T4
+	(envelope-from <john.madieu.xa@bp.renesas.com>); Thu, 04 Dec 2025 16:38:20 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-114S008883cf125-3535-4afa-be96-a4b843963a19,
+                    E90FA267686E4F2ED65044873A5FD8D85CF2A6B0) smtp.auth=john.madieu@labcsmart.com
+X-OVh-ClientIp:141.94.163.193
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: prabhakar.mahadev-lad.rj@bp.renesas.com,
 	andrew+netdev@lunn.ch,
@@ -41,11 +49,11 @@ Cc: biju.das.jz@bp.renesas.com,
 	devicetree@vger.kernel.org,
 	John Madieu <john.madieu.xa@bp.renesas.com>
 Subject: [PATCH net-next 3/3] net: stmmac: dwmac-renesas-gbeth: add physical port identification
-Date: Thu,  4 Dec 2025 17:40:28 +0100
-Message-ID: <20251204164028.7321-4-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251204164028.7321-1-john.madieu.xa@bp.renesas.com>
-References: <20251204164028.7321-1-john.madieu.xa@bp.renesas.com>
+Date: Thu,  4 Dec 2025 16:37:29 +0000
+Message-Id: <20251204163729.3036329-4-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251204163729.3036329-1-john.madieu.xa@bp.renesas.com>
+References: <20251204163729.3036329-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -53,6 +61,10 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 13329810476081317253
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: dmFkZTEf8MbYdR5Y2je/5fYZ71X9j5vAmYx4T9gOx+UaroPSfFmCPtyfo6y4JgKctQLxVQcntkQ0E+Yka17oLLlV4jtbf4s3AKxfgkQUAP5j2tPphj1OJDtH2iRTiql7TJmkXvJwF7DgaHrrjcyhMZglHVMJmnd0EaIdvEbM5ebDsPvfKKan+hNpqRYRDHmNru7g8SW2ZzhuZSyYUj/UQphAozIGILCDxfqqil3rhaCDizqmBFxMUIqtBYQRube/LD/v4iN4a4ZIeZ02xcuIVP8pHeyofdDqpbkPpck7oez4jiAAqfzV50/xj07LZsE55yOIpf2bZO6uec4HL2rg1bLLStyPe+/DZMWTTVkZzxgLUzScK5SFQueD/tjkYekMqxCweQo9N7cb0/f1wlqr6BQ3b4XtgDf6WHiWUeOjARzInlspqzYOh8Mb5TD7B/UpexnwvsEb8v/Av4H9YTStvXj9KFPFpY9JipKW7tx8CNmPRVUJD1UdQmUwmFOMs5jsoLmPRT6LRrBwTjM4XTP5v25HEI6Bcebdx1kWOXslRfR2R93XyoQNOFM91azmz+690tSO9y4mQNfj3nWCQzkRLxW1JnpNegBVEu/aYzcd0gdTxvjvNHpO3ZhEa+0rAPnaboZIydkLMM01TctZehBieVPYieBY1eEubmsc7SAn7diwC/MS1Q
 
 Implement ndo_get_phys_port_id() and ndo_get_phys_port_name() callbacks
 for the Renesas RZ/G3E GBETH driver.
