@@ -1,29 +1,30 @@
-Received: from 4.mo560.mail-out.ovh.net (4.mo560.mail-out.ovh.net [87.98.172.75])
+Received: from 7.mo581.mail-out.ovh.net (7.mo581.mail-out.ovh.net [46.105.43.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859BB2FD1D6
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.98.172.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AA9346E50
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.43.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764866427; cv=none; b=t6xtLuhe2zqfBfSE+dMz6fC+pc1i4jhF7ralj8eI5Uxydl78d7CG69tGSmpnjykO3gJ0CT+DAU12k6EDst1bg3SbfZZSIFt7Ldnx3fA0QDqha+GMx5Ux0/YRDJfvi38g17aM07v6QHSuLzFWouv2zd9jmNcxXg/3Z2ADvDERmhw=
+	t=1764866440; cv=none; b=TWH6nvEa2DggrQ9ijbQ9q/JAlDHn1uxPPKDQdpQ/k6dhoKoYF6Gt+QCxP4dmxbSW+PmFq+/62tSnDJ0Lz44P2LGrTo2RVFd1T5wOfe8pXb61B3i/80ZgHe4VwpSke+FxzFkSn7d3ez2dar/4YZzkbNbPXX1iyij97sdyDn5uHPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764866427; c=relaxed/simple;
-	bh=WpIiSH4GxU7onEE+2ezX9gvDAfdCzI+wz8TInd5GTu0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EL3PeVihuxbjkUXLUyXmsH+FujwDfx/zlZWnoRXXiyvomdGYO2g3TE8N5nXALSYYgvb7qlnwiEI6joahRlzjvEKO4c6uvMATB+Ru/hKOj5ZOCODLLCV4kXzOE6lf220wWcr8UzUU5iWjxfwsuy77ofyoUAk0g3NQCbI6m/g3Yzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=bp.renesas.com; spf=fail smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=87.98.172.75
+	s=arc-20240116; t=1764866440; c=relaxed/simple;
+	bh=YgsFnZuDSq0GL2hrNLtRnqJd46AcXwGsEsQYq7gDQkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Dx+OXZVe0TwUuYSi3e+dLxNqZ0tZ4fln/UtCSz2eyhFH6PVZJ2k7ukgYeDvCv6OF/AG71kLeVJIlMlLGZoGo+cOKGISF79Gl0EBYOwpUPsP9+awhg0oz9CYHQihArpM5KQc3db1dbhNEu+AelWa9x+yixcVVonL/51/iAshhle4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=bp.renesas.com; spf=fail smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=46.105.43.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bp.renesas.com
-Received: from director6.ghost.mail-out.ovh.net (unknown [10.110.58.154])
-	by mo560.mail-out.ovh.net (Postfix) with ESMTP id 4dMg4j65XvzBSdr
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:31:33 +0000 (UTC)
+Received: from director6.ghost.mail-out.ovh.net (unknown [10.109.254.91])
+	by mo581.mail-out.ovh.net (Postfix) with ESMTP id 4dMg4l5hJNz6T2T
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Dec 2025 16:31:35 +0000 (UTC)
 Received: from ghost-submission-7d8d68f679-mkpf7 (unknown [10.111.182.250])
-	by director6.ghost.mail-out.ovh.net (Postfix) with ESMTPS id B198E802DF;
-	Thu,  4 Dec 2025 16:31:31 +0000 (UTC)
+	by director6.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 965B3802FB;
+	Thu,  4 Dec 2025 16:31:34 +0000 (UTC)
 Received: from labcsmart.com ([37.59.142.99])
 	by ghost-submission-7d8d68f679-mkpf7 with ESMTPSA
-	id GduLDmO3MWnQjQQATXHgnQ
-	(envelope-from <john.madieu.xa@bp.renesas.com>); Thu, 04 Dec 2025 16:31:31 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-99G003ce1f1467-d897-4cfe-b3a4-acac0f5cccc0,
+	id GduLDmO3MWnQjQQATXHgnQ:T3
+	(envelope-from <john.madieu.xa@bp.renesas.com>); Thu, 04 Dec 2025 16:31:34 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-99G003460cefc4-7799-47b2-966c-ddc2d12940b4,
                     E90FA267686E4F2ED65044873A5FD8D85CF2A6B0) smtp.auth=john.madieu@labcsmart.com
 X-OVh-ClientIp:141.94.163.193
 From: John Madieu <john.madieu.xa@bp.renesas.com>
@@ -47,10 +48,12 @@ Cc: biju.das.jz@bp.renesas.com,
 	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH net-next 0/3]  net: stmmac: add physical port identification support
-Date: Thu,  4 Dec 2025 16:31:19 +0000
-Message-Id: <20251204163122.3032995-1-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH net-next 2/3] dt-bindings: net: renesas-gbeth: Add port-id property
+Date: Thu,  4 Dec 2025 16:31:21 +0000
+Message-Id: <20251204163122.3032995-3-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251204163122.3032995-1-john.madieu.xa@bp.renesas.com>
+References: <20251204163122.3032995-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -58,48 +61,58 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 13214968683322836357
+X-Ovh-Tracer-Id: 13215531634329355653
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: dmFkZTFOYzd0u1tNIc5d1riAAD2SoA/rdbCRt2LqIsB4pVCHc9rrIYG6guZEVgyAXXl5qDEbDm5DIpC0OrCuxFdfXi0y49xplqCwDslxZfmG8AsZNeX+aPUxcaNxfHrUme5Ifwd7HskEkA5JpoPc3SYZyku6YrH4qiWo0bhMuvhkFiMsKV/q0vWmA7rgdl6EEEm+16ZrRiPZN0AwgkeBQlkc7/obc+uSAZg5JJolwLZSrXcfBUW6gc5R+pVGtyHvalKubb3uEDI10AY1883y3oDkXlAQLG3vlc3e/xhtkSHPKHNAsHH90Su1rXzwwdYA4vpLWfceOUXdT96WXrg9Ekt+rK1edPpsp7RTK/3Pa/bAFtEcimje8g1MoWSQ3IC0DaFUQzdjPXikzUzaJBUHK9HCgqOQsZJXOstzdhqC4COEDq+p/LK+spUJoZB7xgWxYTpyvPkfegxGTsZLx93+w6EIJq02rNNJGcudLPOQGpe6BKcZkkIU/5hzW8JmnOB3ZuSCYUoKs7hfiVW42bDlkJvSwcyYcBouPPQOdlfRtBZalmsFQJa/xT7Ju7AVJ5rOts1M3ISUrcox6fHBI8qD68aeZ74Ez7L9w+uKHEwuyvzG822a5lLB3ocfiiVMe9BRSJ5wwfZVjTGZ1wMnZbdBdauVhOEnDvOaheBNDJKHYwb7QMxrlA
+X-VR-SPAMCAUSE: dmFkZTFEGK2N2myt6To4lF0zpgRRy/gXzl74WEUzGt3DXEB6g7BZnOj3eP0eDHaST7e5QJeICzCbEkb3gGfs6YZYfIJcwArB7EU3IrdyXmfO8Qxzzag3oJFdIMWm0JQZ1CqmpOHdayN9WWtNQysxP4obz4OBqkfUqMtKmm6n5jiN7Tk+mPIeKKAlg42TskEh+Cds6GrmAWWJ7L7rRywyHE1orOTKM0zayHlTPGElK7/kdD9UbFmcfJcEko8JQ2yT1qhxKUZzVNo2xTgaRem/sY3/7WDDakQIjJWet8IffjZbEmfGqSQxfZZkEcGGS7XHF93ud+9hU6Ebfzh0zCguIq2O8SA/g4KWoDQDG8Y18QbSy3QYNCaTxPXe7lfUc++1qGyyP3A0Ngh2J2W1apNCBmiuKSBcXPwsoGg7EiKnCVByUuhU/MWeeLgtdTJgsDfq3fy5+TCa4ERuH5NxBJGbsKq0KgF/KOjPW4fan1LGn6x1qqUuIHKBv4qBNxb9RSsoKtr+MxEdaUhPQFGThEna5QtIZzQUS6njEO71ssRwxNATG/sH98J2odMlnb8tg9tHrMZuqtEdLpLiX5+QW94zc9fBXJFrf0jAedIm7v60gCmH+Ek0UlBCCyTIfOBjoC8N2rDnMn8qrFI7z7x2KOcpUOw5Ydz83sD3J5Yo+Li90+H8wP/kzQ
 
-This series adds physical port identification support to the stmmac driver,
-enabling userspace to query hardware-stable identifiers for network interfaces
-via ndo_get_phys_port_id() and ndo_get_phys_port_name().
+Add optional port-id property to identify ethernet ports on RZ/V2H
+SoCs. The hardware doesn't provide unique identification registers
+for multiple ethernet instances, so this property allows explicit
+port identification from the device tree.
 
-On systems with multiple ethernet controllers sharing the same driver,
-physical port identification provides stable identifiers that persist
-across reboots and are independent of interface enumeration order.
-This is particularly useful for predictable network interface naming
-and for correlating interfaces with physical connectors.
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+---
+ .../bindings/net/renesas,rzv2h-gbeth.yaml     | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-The implementation follows a two-tier approach:
-
-1. Generic stmmac support: Default implementations use the permanent MAC
-   address as port ID and bus_id for port naming. This provides immediate
-   benefit for all stmmac-based platforms.
-
-2. Glue driver override: Platform drivers can provide custom callbacks
-   for hardware-specific identification schemes. The Renesas GBETH driver
-   implements this to support device tree-based port identification,
-   addressing cases where hardware lacks unique identification registers.
-
-The Renesas implementation constructs an 8-byte port identifier from:
-- Permanent MAC address (if available) or Renesas OUI (74:90:50) as fallback
-- Port index from device tree property or ethernet alias
-
-
-John Madieu (3):
-  net: stmmac: add physical port identification support
-  dt-bindings: net: renesas-gbeth: Add port-id property
-  net: stmmac: dwmac-renesas-gbeth: add physical port identification
-
- .../bindings/net/renesas,rzv2h-gbeth.yaml     | 19 +++++++
- .../stmicro/stmmac/dwmac-renesas-gbeth.c      | 56 +++++++++++++++++++
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 54 ++++++++++++++++++
- include/linux/stmmac.h                        |  5 ++
- 4 files changed, 134 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+index bd53ab300f500..bb59c6a925d3f 100644
+--- a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+@@ -117,6 +117,23 @@ properties:
+           - description: AXI power-on system reset
+           - description: AHB reset
+ 
++  renesas,port-id:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Optional unique port identifier for this ethernet interface.
++      Used for physical port identification (phys_port_id, phys_port_name).
++      If not specified, the ethernet alias index is used as fallback.
++    minimum: 0
++    maximum: 255
++
++  renesas,port-name:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      Optional custom name for the physical port. Used by
++      ndo_get_phys_port_name() for interface naming.
++      If not specified, "p<N>" format is used where N is the port-id
++      or ethernet alias index.
++
+   pcs-handle:
+     description:
+       phandle pointing to a PCS sub-node compatible with
+@@ -230,6 +247,8 @@ examples:
+         snps,txpbl = <32>;
+         snps,rxpbl = <32>;
+         phy-handle = <&phy0>;
++        renesas,port-id = <0>;
++        renesas,port-name = "mgmt";
+ 
+         stmmac_axi_setup: stmmac-axi-config {
+             snps,lpi_en;
 -- 
 2.25.1
 
