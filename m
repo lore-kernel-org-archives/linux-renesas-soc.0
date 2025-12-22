@@ -1,332 +1,126 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E143321DC
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 16:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3D33F375
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 17:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766421773; cv=none; b=m0AGFMIpHZPLBxnIIxBU6+yZEMsCMRb3crjwiGyg8W9A3jJ/3zYaSE9alBdoH7dXmSJAOg8OJ6L/MURizHFa2l3azhNC6vRTgm5yS3YKto1R5Mk8r5HI/WxLS2Eha7rzstcjflDMre62jZlXcWL5LoDf9oi6vGvJJMvB/HhMSQE=
+	t=1766424477; cv=none; b=LuHJHOf2wF8MiJS8hyy1S4vpuK1p19Rm27dX3eUUTov7iYoCtnBc1NWRSLU/fx7u3NadPL4p82loFiGeoUQVeQ2dj7nn6fpBjCiOdMcwOWmC70I5GbTg/AOHt5qcqIiYnKx93AW3yX02OTVh8ow02pQM4bqrjM6KOVn+tFz21y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766421773; c=relaxed/simple;
-	bh=NAjUB/C3OUr4PxeiYgXoqhdWOpzIYfrxxb6hbE0EQO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iyK2my095IH0k70fDbmom+vs53WlsouD96rcco0xVRMsnWPO8+2kxA0jghOHZTOszk3+xMUSqR+GvfbLR04yMv9TzOnZVRZ3+z1/5iRnASe7HkMomwWMX5M/e5xTmKmBV5iCdlLMSW3y5b4q011SP+J/O/iKL/s6z6yj7fusghE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPs1OpMC; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1766424477; c=relaxed/simple;
+	bh=ARCeP+FjHLyRQ/TFOxypXSIG5GzrN1OmBElkgW/ggfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jVDTWdaj/wYe7l2/+zDPl2VkyydSW+iiaXb4ttGwdYqLyImSAwJGUJ/DHzlRd9lNj3WoHMryUJoH6nEAc3BET2SBmYCLy27QBQSAq2NKYUSrfqlYPCqbST1tPJT+bc+0jReHbDQGzZyvB6UnABrmVRP1gKrAOUrNhqvfQYfkAO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPs1OpMC"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477b91680f8so35186515e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 08:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766421769; x=1767026569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5rmP0GjE7trXn8ElgL+MNSAmFgZRUQZF4nxVn+pMLro=;
-        b=OPs1OpMCBxOZzCykESHgCitctvXXZQo6WYnZOKy/gyGFAZT6+2SoqawVzngbkZjEHf
-         2H5CrtouyCQ+xXheHZETxqRe2x+O2GMn9BAAsWGDqqdJNGL315vX7lghot5nT1fVvlS9
-         VCZRttaTDc0Zq9A0PSvCuJttkR025LHxs/MmrdXhKBisNhVYLRkT0AB+N5LpQjkR4K0E
-         YM+1KcCCVu04RPKxa3CTlvoWuVtNkxvRHu+ZBaHunOLgaKj9d+B8rXeHrtbWBcdRrZhZ
-         XYbi7+qlAabfiDsHLkRHyB2Ev/RorZo3udj5qoBYlCGrqYf/gqm/MsTOWMRUX8UPNPgJ
-         9xkQ==
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c0224fd2a92so3988826a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 09:27:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766421769; x=1767026569;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5rmP0GjE7trXn8ElgL+MNSAmFgZRUQZF4nxVn+pMLro=;
-        b=vE6HxQjBgP69B8EGbzP1N+2O0c9tzeszhnVE24O12mPRIJ120tOLqTtERdzJQCqLl0
-         32SJHbTBDTjMpxNpeAPjTk2ZVqAg5sRDJTnNM+dbrtL07NFbT+jk/OMIREm01ZOTyuZl
-         uVKJUyZknr00SxNQDZH2TdD4B5nYJ0zf02YibBK1a6NMsYPrtynbnBVXc6HOFfDhoRq8
-         iIQQLbshqDtHUA36HMJmYV+mOLuFeycQ/6ChLBKFru86EglgPAxgNnAL/vArjL3vJR/d
-         NJbC31U+CjkfhrH0DvepyOIy2mBXCVViEDMWvz/WCwix4564Rmhp0LkGW/IhqpNfOOge
-         LU/g==
-X-Gm-Message-State: AOJu0Yx3C1aXUiiFb4OdrbdXQD/du+SI6xfbe9oszw1rW8uq5FUKDKB8
-	jdjNfBXS8vwP2hmpz0jgJgU2+d4bO4RQnQHh1ZmvkMPXyfp+xJ/CdKFU2rWgHL5+4qk=
-X-Gm-Gg: AY/fxX7u30X1WK1CXSbn2HUcmMtG6sn9xtPnhCP3YW+j4Xc+V+HWOt5NRJp0+MWRVoY
-	WoeCvkphnSsso0u+i5yYzYkL8TXx+diqLyOn5JQp49voTy6jugEjJw1V71juj6cCJHNhTh68WNr
-	P8hWwdmLSvKUBfi+8oHhfH5n0FK1wkN4V6eDk3gx6KPWJVGqCKfTePF73hQeQogjxrLWyIJXtTF
-	2HNrTu21RcIiXSpIZlBnqPxzEYS/EBkboegifZ8MFkaNzqgE3DCk82+Qfcx0lMyVeTO2ARwtmDI
-	3IgPM/zVj5crQbpCZcTHWWQ0UZllRMZhx6x1wH+8UdPiI6mp18a+14Cdv69yEgLw3D8U7/toZYp
-	19LiG74ISMTaastfr1D6zmbmfgA6CNgu09GllPt746Vkzn9Mi4db2eeeezT84djT/tEd+FV2v9X
-	X7zLDC+m+wwBH2cb1FjvWijeKRuXipcGToUKJ4BRFbCjLKA97M1S1bPO//Ubc+71Q3VCHFsoeuY
-	BP5QxEcgfx3KkYcJb2Ku10I9Vm4yPhzuQ==
-X-Google-Smtp-Source: AGHT+IGVI/5VbHwMj1aHDV1E9cdXWSa077ceUrM5T9XA29CBFfaHx9LYNl4J+hOuSYlw4PH2FIM9IQ==
-X-Received: by 2002:a05:600c:45c8:b0:477:7c45:87b2 with SMTP id 5b1f17b1804b1-47d195843e7mr116578825e9.16.1766421768796;
-        Mon, 22 Dec 2025 08:42:48 -0800 (PST)
-Received: from iku.Home ([2a06:5906:61b:2d00:4dd:df38:7864:a996])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d193621c8sm196896685e9.7.2025.12.22.08.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Dec 2025 08:42:48 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g057: Add RSCI nodes
-Date: Mon, 22 Dec 2025 16:42:38 +0000
-Message-ID: <20251222164238.156985-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251222164238.156985-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251222164238.156985-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1766424475; x=1767029275;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sE9KE2Jyhtg/iXF/CUsw7RlDbWGUrFQq1WT3oqM9mXY=;
+        b=dIul+60Je7sa9Klme2KosQGCxHbzFB/pJxRaXrrAkCnKmbEabsurWyzm7sJTebrbTa
+         UMyER9zcy/mqiR0PE6g2Ne+m6sOrOac9HGxh6SX6Vm63JtntUbbosU9x32N8O5d9fnsg
+         92RIL71eFVTGcALa18olWw8kQYbQyV84S6yoacrsiYz4wRB7NDUfG2xIuf7LK7Df+6L4
+         4V8W6HTz9dqB/4E5nTjzj82L4dLOVnSCfFqfskOkT+D90QtArGBOuYvsKXDy6ft+Jmh2
+         BYZxXJnyvo7P4Vc4V85pX8WJbbCI8XQnFs+im0SOmON1S0DsinoFBG0oYn/pZ+dEMM2o
+         7VPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVP99xZRVyz2qZPUhzRtCTJSdrQGncgeXTV+kD2NMt4TZPp4DUrsjiOFk3KRt6Ve4k32y7abZk/OovdBYRch5UfrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoJFSGKSK+MzettRjgEgg/ekBGoPWE3U0CKidMV7DraZ4kKd0O
+	HvFAdc9qX4SZonwAW7IjLJ0lNhyi/WEmMGB7Z1tn+rDjn7x7dpnM1hNIlXNnLtq+
+X-Gm-Gg: AY/fxX4Qvy9/0sl5JtTSMUabY6MIBYuZPB2aCgL2i3G4yIeD01RKuqlwUdvar/GEfpv
+	mMINhcY0nDsaGE5RzsVXJ9UyWTYumQX5WIj5GxgTwnJ5W5Q0TKw3lyLnUwcNzIHwn3VgYLX0tY3
+	fWXGvustAj/4+f2BUHZDmQ6IcuYDmAK48/SDHIEL5/AQ3riIzlxx0jzzXn08E8Rersrjxbwqlkd
+	Vo5DEDCxmTO2ohA0CKIh4NbKOLwS6sJA/Pi/HRWPJ8V2tGJ03dBID5e551Et3AYDlxqmx81DbfB
+	EoJ0Px4qp6JM7ySUVe6EZL6494XzCgXUG0XBdiVxX+GtuUz5kTznUDJ2DPF5x2I3EGJPseDx78m
+	Wb/ZtUm2uh5Z5ElMyIF++r9vrlTwQtjWZRD62KYZDxZWylQnVofdYZcbjl1fI3p2DmGhAO34+qG
+	+YOn6UOTiuBF7SEJ63cwk4RMt5oTkF119Fyh9kUa05EjVoG7nAqcJf
+X-Google-Smtp-Source: AGHT+IHEBtMRYU00J/d6SUanQU6n5XhzApBAZASSyY6I8P/9hQihHFWPw2nMcQUQhe2jHAxI+cTysA==
+X-Received: by 2002:a05:6102:cd0:b0:5db:f5d1:5799 with SMTP id ada2fe7eead31-5eb1a816ef0mr4372689137.33.1766417748808;
+        Mon, 22 Dec 2025 07:35:48 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5eb1aa4f55dsm3498176137.2.2025.12.22.07.35.48
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Dec 2025 07:35:48 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-55982d04792so3250295e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 07:35:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWHQASJvD1Y/V77EAHoWn/T3G54c34OsrM05zp2Ni5llruSAvjhUnkUsJEkkyolwLXS+23Y2toKdMom9x0c+sLIkQ==@vger.kernel.org
+X-Received: by 2002:a05:6122:4f97:b0:557:c697:a30c with SMTP id
+ 71dfb90a1353d-5615be24746mr3595228e0c.15.1766417747921; Mon, 22 Dec 2025
+ 07:35:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251215142836.167101-1-herve.codina@bootlin.com> <aUZEHSNqiMuHrCWb@shikoro>
+In-Reply-To: <aUZEHSNqiMuHrCWb@shikoro>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Dec 2025 16:35:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXTZ2LDs-nFQRh+Q5YAW_LD+j6j=Mzv0RxyB-1wnJgbuQ@mail.gmail.com>
+X-Gm-Features: AQt7F2qPotDDz05zRLM4l-WdqTP8Y-ChrCcklHPqoMfDZgCa2sIooFyMFfI1kSs
+Message-ID: <CAMuHMdXTZ2LDs-nFQRh+Q5YAW_LD+j6j=Mzv0RxyB-1wnJgbuQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring <robh@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Wolfram, Rob, Thomas,
 
-Add RSCI nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
+On Sat, 20 Dec 2025 at 07:37, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > This series adds support for GPIO and GPIO IRQ mux available in the
+> > RZ/N1 SoCs.
+> >
+> > The first patches in this series are related to a new helper introduced
+> > to parse an interrupt-map property.
+> >   - patch 1: Introduce the helper (for_each_of_imap_item)
+> >   - patch 2: Add a unittest for the new helper
+> >   - patch 3 and 4: convert existing drivers to use this new helper
+> >
+> > Patch 5 adds support for GPIO (device-tree description)
+> >
+> > The last patches (6, 7 and 8) of the series are related to GPIO
+> > interrupts and GPIO IRQ multiplexer.
+>
+> I think this series is ready and I would really like to see it upstream
+> soon. I wonder, however, if the path to upstream has already been
+> discussed? It touches various subsystems, so I don't see immediately who
+> should pick the whole series? Or if parts should go to different
+> subsystems offering immutable branches? I bring this up because I want
+> to avoid losing a cycle just because this is unclear...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 220 +++++++++++++++++++++
- 1 file changed, 220 insertions(+)
+We actually did[1]. Unfortunately that plan was never executed.
+The DTS patches I can easily take through renesas-devel, as they have
+no hard dependencies.
+For the remaining patches, I see two options:
+  A. Rob takes the first two patches, and provides an immutable branch.
+     Then Thomas takes the irqchip patches, and I take the rest.
+  B. Rob and Thomas provide acks, and I take the whole series.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 9587733ce04a..4a0f34ee8560 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -948,6 +948,226 @@ i2c8: i2c@11c01000 {
- 			status = "disabled";
- 		};
- 
-+		rsci0: serial@12800c00 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12800c00 0 0x400>;
-+			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 115 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 116 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x5d>, <&cpg CPG_MOD 0x5e>,
-+				 <&cpg CPG_MOD 0x61>, <&cpg CPG_MOD 0x60>,
-+				 <&cpg CPG_MOD 0x5f>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x81>, <&cpg 0x82>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci1: serial@12801000 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801000 0 0x400>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x62>, <&cpg CPG_MOD 0x63>,
-+				 <&cpg CPG_MOD 0x66>, <&cpg CPG_MOD 0x65>,
-+				 <&cpg CPG_MOD 0x64>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x83>, <&cpg 0x84>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci2: serial@12801400 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801400 0 0x400>;
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x67>, <&cpg CPG_MOD 0x68>,
-+				 <&cpg CPG_MOD 0x6b>, <&cpg CPG_MOD 0x6a>,
-+				 <&cpg CPG_MOD 0x69>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x85>, <&cpg 0x86>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci3: serial@12801800 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801800 0 0x400>;
-+			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 134 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 136 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x6c>, <&cpg CPG_MOD 0x6d>,
-+				 <&cpg CPG_MOD 0x70>, <&cpg CPG_MOD 0x6f>,
-+				 <&cpg CPG_MOD 0x6e>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x87>, <&cpg 0x88>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci4: serial@12801c00 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801c00 0 0x400>;
-+			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 139 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 140 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x71>, <&cpg CPG_MOD 0x72>,
-+				 <&cpg CPG_MOD 0x75>, <&cpg CPG_MOD 0x74>,
-+				 <&cpg CPG_MOD 0x73>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x89>, <&cpg 0x8a>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci5: serial@12802000 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802000 0 0x400>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 146 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 148 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x76>, <&cpg CPG_MOD 0x77>,
-+				 <&cpg CPG_MOD 0x7a>, <&cpg CPG_MOD 0x79>,
-+				 <&cpg CPG_MOD 0x78>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8b>, <&cpg 0x8c>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci6: serial@12802400 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802400 0 0x400>;
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 152 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 154 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x7b>, <&cpg CPG_MOD 0x7c>,
-+				 <&cpg CPG_MOD 0x7f>, <&cpg CPG_MOD 0x7e>,
-+				 <&cpg CPG_MOD 0x7d>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8d>, <&cpg 0x8e>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci7: serial@12802800 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802800 0 0x400>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 160 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x80>, <&cpg CPG_MOD 0x81>,
-+				 <&cpg CPG_MOD 0x84>, <&cpg CPG_MOD 0x83>,
-+				 <&cpg CPG_MOD 0x82>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8f>, <&cpg 0x90>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci8: serial@12802c00 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802c00 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 163 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 164 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x85>, <&cpg CPG_MOD 0x86>,
-+				 <&cpg CPG_MOD 0x89>, <&cpg CPG_MOD 0x88>,
-+				 <&cpg CPG_MOD 0x87>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x91>, <&cpg 0x92>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
-+		rsci9: serial@12803000 {
-+			compatible = "renesas,r9a09g057-rsci", "renesas,r9a09g047-rsci";
-+			reg = <0 0x12803000 0 0x400>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x8a>, <&cpg CPG_MOD 0x8b>,
-+				 <&cpg CPG_MOD 0x8e>, <&cpg CPG_MOD 0x8d>,
-+				 <&cpg CPG_MOD 0x8c>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x93>, <&cpg 0x94>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
-+
- 		gpu: gpu@14850000 {
- 			compatible = "renesas,r9a09g057-mali",
- 				     "arm,mali-bifrost";
+Thanks!
+
+[1] https://lore.kernel.org/20251114124045.16204839@bootlin.com
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.52.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
