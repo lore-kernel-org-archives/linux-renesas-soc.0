@@ -1,126 +1,125 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3D33F375
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 17:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D01B33AD87
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 19:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766424477; cv=none; b=LuHJHOf2wF8MiJS8hyy1S4vpuK1p19Rm27dX3eUUTov7iYoCtnBc1NWRSLU/fx7u3NadPL4p82loFiGeoUQVeQ2dj7nn6fpBjCiOdMcwOWmC70I5GbTg/AOHt5qcqIiYnKx93AW3yX02OTVh8ow02pQM4bqrjM6KOVn+tFz21y0=
+	t=1766430764; cv=none; b=YZxUOUH+Dqtz0z/UgJicwYD3qDN8CSP7P9MO8AQZslIcYuBm7K5mrlEmaSQivTtrtx1/iiWt+huz6oyxO3C1Pr4SXT54wypAQz7crv3h4qOLsUQGssYgWQAzz3Ci8sBzP83z2VUT9TMP/asEy5m0+79f7rnLPmkpn05aCuLzJ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766424477; c=relaxed/simple;
-	bh=ARCeP+FjHLyRQ/TFOxypXSIG5GzrN1OmBElkgW/ggfU=;
+	s=arc-20240116; t=1766430764; c=relaxed/simple;
+	bh=pUXHUbgVUJKFwHKs6lPeVQzXVyXUb1crFHCCZhiv9Pc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jVDTWdaj/wYe7l2/+zDPl2VkyydSW+iiaXb4ttGwdYqLyImSAwJGUJ/DHzlRd9lNj3WoHMryUJoH6nEAc3BET2SBmYCLy27QBQSAq2NKYUSrfqlYPCqbST1tPJT+bc+0jReHbDQGzZyvB6UnABrmVRP1gKrAOUrNhqvfQYfkAO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=S7+2UHM3OzJmyWjNm9jK6O9TZhJybAjfgGRohUIs35pwbR+xTAdGARhdAVbmlN7pSDwTcJ1anH6AacLCGDSXgE+7e5oCTrNKPeW5bDiLrE+e/Bl+Q/XQ32iMVtT/5UV5AsTce/emuDwntgxi7/grcKIv1DnBtsdtKydmz+cOUqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpC070Pv; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c0224fd2a92so3988826a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 09:27:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766424475; x=1767029275;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpC070Pv"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42f9ece6387so1625679f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 11:12:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766430760; x=1767035560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sE9KE2Jyhtg/iXF/CUsw7RlDbWGUrFQq1WT3oqM9mXY=;
-        b=dIul+60Je7sa9Klme2KosQGCxHbzFB/pJxRaXrrAkCnKmbEabsurWyzm7sJTebrbTa
-         UMyER9zcy/mqiR0PE6g2Ne+m6sOrOac9HGxh6SX6Vm63JtntUbbosU9x32N8O5d9fnsg
-         92RIL71eFVTGcALa18olWw8kQYbQyV84S6yoacrsiYz4wRB7NDUfG2xIuf7LK7Df+6L4
-         4V8W6HTz9dqB/4E5nTjzj82L4dLOVnSCfFqfskOkT+D90QtArGBOuYvsKXDy6ft+Jmh2
-         BYZxXJnyvo7P4Vc4V85pX8WJbbCI8XQnFs+im0SOmON1S0DsinoFBG0oYn/pZ+dEMM2o
-         7VPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP99xZRVyz2qZPUhzRtCTJSdrQGncgeXTV+kD2NMt4TZPp4DUrsjiOFk3KRt6Ve4k32y7abZk/OovdBYRch5UfrA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoJFSGKSK+MzettRjgEgg/ekBGoPWE3U0CKidMV7DraZ4kKd0O
-	HvFAdc9qX4SZonwAW7IjLJ0lNhyi/WEmMGB7Z1tn+rDjn7x7dpnM1hNIlXNnLtq+
-X-Gm-Gg: AY/fxX4Qvy9/0sl5JtTSMUabY6MIBYuZPB2aCgL2i3G4yIeD01RKuqlwUdvar/GEfpv
-	mMINhcY0nDsaGE5RzsVXJ9UyWTYumQX5WIj5GxgTwnJ5W5Q0TKw3lyLnUwcNzIHwn3VgYLX0tY3
-	fWXGvustAj/4+f2BUHZDmQ6IcuYDmAK48/SDHIEL5/AQ3riIzlxx0jzzXn08E8Rersrjxbwqlkd
-	Vo5DEDCxmTO2ohA0CKIh4NbKOLwS6sJA/Pi/HRWPJ8V2tGJ03dBID5e551Et3AYDlxqmx81DbfB
-	EoJ0Px4qp6JM7ySUVe6EZL6494XzCgXUG0XBdiVxX+GtuUz5kTznUDJ2DPF5x2I3EGJPseDx78m
-	Wb/ZtUm2uh5Z5ElMyIF++r9vrlTwQtjWZRD62KYZDxZWylQnVofdYZcbjl1fI3p2DmGhAO34+qG
-	+YOn6UOTiuBF7SEJ63cwk4RMt5oTkF119Fyh9kUa05EjVoG7nAqcJf
-X-Google-Smtp-Source: AGHT+IHEBtMRYU00J/d6SUanQU6n5XhzApBAZASSyY6I8P/9hQihHFWPw2nMcQUQhe2jHAxI+cTysA==
-X-Received: by 2002:a05:6102:cd0:b0:5db:f5d1:5799 with SMTP id ada2fe7eead31-5eb1a816ef0mr4372689137.33.1766417748808;
-        Mon, 22 Dec 2025 07:35:48 -0800 (PST)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5eb1aa4f55dsm3498176137.2.2025.12.22.07.35.48
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Dec 2025 07:35:48 -0800 (PST)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-55982d04792so3250295e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Dec 2025 07:35:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWHQASJvD1Y/V77EAHoWn/T3G54c34OsrM05zp2Ni5llruSAvjhUnkUsJEkkyolwLXS+23Y2toKdMom9x0c+sLIkQ==@vger.kernel.org
-X-Received: by 2002:a05:6122:4f97:b0:557:c697:a30c with SMTP id
- 71dfb90a1353d-5615be24746mr3595228e0c.15.1766417747921; Mon, 22 Dec 2025
- 07:35:47 -0800 (PST)
+        bh=DaljzuKRJi75G8i1tLMySnubjrnaRrAVIY8kdBl5ZSA=;
+        b=FpC070Pvgs1vd/V1jwPNL/vebK3vLaooBxJLf6kRzE6N06KPhRdEGoXTtKwVjctf4k
+         FQkusEFmu4kjrQmGL7VSFz5GVsiJkXCiMXeD2gCx7sCpzX88htMDtFqa3ZNJQpKlg2Xw
+         WPKYODwtPvgy9Y+WakRE1daidbvhC1d1zTXVi59J7Km4oin/Q1GmDCuFnTpJK82f6esy
+         hz5n3mb5kaBySG14AN5D5WQ2NhgnAmZAnnD3ATK9hcR+MIjwpOupf8ez4JNQD03iLajf
+         aDu8pOCSriGmqs35SNPwbu5BI5cOp744iNMMPs/seR1ksZs8k6A+BZB5F1Lxn2xS2/XJ
+         1eYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766430760; x=1767035560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DaljzuKRJi75G8i1tLMySnubjrnaRrAVIY8kdBl5ZSA=;
+        b=UfRw8KAjKeiJjKvjFtWDF8rdRo+D8k6wTxmAF3jVGnyZ5lMXrB+0F0Ph0XMeFnxXE9
+         9U4qqWda6SOF2ZI1hlJnSnKivLCAQ3QIgbfN2AJum8escX0oYak5C8JuSjiIYbUCDlYQ
+         ymxr1QJ1GVMEAel12piO3xg1zGXPzlEoPWzA4wU5GOXkpiS9P2E57wD/yOS2mE+Ju3NN
+         hcGgPyD6qAclluQgWbOvWyBGIW9XNHwCyt2i20kSFsmJatAeLPr/K0fcpv2M1qD7W6h7
+         lMVntU7nZ6/3mPlGN9qHdRdZM4jIBaKFVXwfOwVdsvGtJIu09V6LxGhylcYgtzvro6o8
+         vQ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ8/t7FB0CAQM3lBWFJXM4oPZ3L42juqhg2sTBMxNLcpbaqAXqIRsh+xs8ZiODAhcuCC0DAm+zlTkd6KuUEyHBWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YywENQACxLqWnTjKr7ZG16XPUpbt9OUAIuw1ivaHQgqjEJTI+gc
+	KOQaYk3U9DNBPwKBVrDQreOhejmlAKLeSg0ndcbDxTLIEUtbl/l6nIzulSdZuno0464sEWnhwAW
+	H27Kt5d7qj7Cfeiwgvs4+EUiBE/5Sj25lrsJ/cUIE3A==
+X-Gm-Gg: AY/fxX4yDq1f8AvoeSlwCvA0dUXIW0DwzVSvPtXVmvWR1Rtvo/R86leXGKO/OZsU75w
+	YC5h1QKr4AXAOCItIYQMxVdLMAH+5/S1xQQ8/WPnDygbWO+64qgroXC2BGCEfm7emu/Kge8IWfO
+	/QZHaM0va0QYxs0bj5r+8/VNUYpSjN/WigdOQKVCPACNY0dA2fa50d423Tg5/dV+qLCBACquSJi
+	wJb3JMDZ2Jg03f/FpheRcfp5XkTMRWlL70xaPUkwqMPmHHOEbN0prYiFGlMCyGKKQrgUvnL0S7S
+	p5NN3hFQO7/CpJMvNZNN/NxLyCMW55Z0MLFV6ROFkD5lFtgOO6xrF826EovhvkMWYCnsD066VAZ
+	Oqo8yBjxvGCNX
+X-Google-Smtp-Source: AGHT+IFFdGPwBN1E1S5LAyC6UohBwqvpkMjczXYch4xqHGrMotjncWJIaimblw5QxQV/81wNGDi65C26P10OupkAuwo=
+X-Received: by 2002:a05:6000:2089:b0:431:217:19dd with SMTP id
+ ffacd0b85a97d-4324e4c93b7mr14727448f8f.14.1766430760325; Mon, 22 Dec 2025
+ 11:12:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215142836.167101-1-herve.codina@bootlin.com> <aUZEHSNqiMuHrCWb@shikoro>
-In-Reply-To: <aUZEHSNqiMuHrCWb@shikoro>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Dec 2025 16:35:35 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXTZ2LDs-nFQRh+Q5YAW_LD+j6j=Mzv0RxyB-1wnJgbuQ@mail.gmail.com>
-X-Gm-Features: AQt7F2qPotDDz05zRLM4l-WdqTP8Y-ChrCcklHPqoMfDZgCa2sIooFyMFfI1kSs
-Message-ID: <CAMuHMdXTZ2LDs-nFQRh+Q5YAW_LD+j6j=Mzv0RxyB-1wnJgbuQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring <robh@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <7b6154130b973d85a224ee0026eef88979fbb1cf.1766394936.git.geert+renesas@glider.be>
+In-Reply-To: <7b6154130b973d85a224ee0026eef88979fbb1cf.1766394936.git.geert+renesas@glider.be>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 22 Dec 2025 19:12:14 +0000
+X-Gm-Features: AQt7F2qDaq3D17O0Dwsmam4IRlr9xYoGTBR6vH31C1O-7B3WRW2Jg8oRcpnafNs
+Message-ID: <CA+V-a8u1Ge6xrM8nn-j8+pSMoW2-ORd2Ej9F0RwHc16XS2pDWQ@mail.gmail.com>
+Subject: Re: [PATCH local] riscv: rzfive: defconfig: Refresh for v6.19-rc1
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram, Rob, Thomas,
-
-On Sat, 20 Dec 2025 at 07:37, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > This series adds support for GPIO and GPIO IRQ mux available in the
-> > RZ/N1 SoCs.
-> >
-> > The first patches in this series are related to a new helper introduced
-> > to parse an interrupt-map property.
-> >   - patch 1: Introduce the helper (for_each_of_imap_item)
-> >   - patch 2: Add a unittest for the new helper
-> >   - patch 3 and 4: convert existing drivers to use this new helper
-> >
-> > Patch 5 adds support for GPIO (device-tree description)
-> >
-> > The last patches (6, 7 and 8) of the series are related to GPIO
-> > interrupts and GPIO IRQ multiplexer.
+On Mon, Dec 22, 2025 at 9:16=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 >
-> I think this series is ready and I would really like to see it upstream
-> soon. I wonder, however, if the path to upstream has already been
-> discussed? It touches various subsystems, so I don't see immediately who
-> should pick the whole series? Or if parts should go to different
-> subsystems offering immutable branches? I bring this up because I want
-> to avoid losing a cycle just because this is unclear...
+> Refresh the defconfig for Renesas RZ/Five systems:
+>   - Disable support for the Svrsw60t59b ISA extension for using PTE bits
+>     60 and 59, as it is not supported by RZ/Five,
+>   - Drop CONFIG_SND_SUPPORT_OLD_API=3Dn (disabled by default since commit
+>     74ac7558ea763011 ("ALSA: Do not build obsolete API")).
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Not intended for upstream merge.
+> To be applied to the topic/renesas-defconfig branch.
+> ---
+>  arch/riscv/configs/rzfive_defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-We actually did[1]. Unfortunately that plan was never executed.
-The DTS patches I can easily take through renesas-devel, as they have
-no hard dependencies.
-For the remaining patches, I see two options:
-  A. Rob takes the first two patches, and provides an immutable branch.
-     Then Thomas takes the irqchip patches, and I take the rest.
-  B. Rob and Thomas provide acks, and I take the whole series.
+Cheers,
+Prabhakar
 
-Thanks!
-
-[1] https://lore.kernel.org/20251114124045.16204839@bootlin.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> diff --git a/arch/riscv/configs/rzfive_defconfig b/arch/riscv/configs/rzf=
+ive_defconfig
+> index 622ee0136fc7a51c..35a672805fb0eb74 100644
+> --- a/arch/riscv/configs/rzfive_defconfig
+> +++ b/arch/riscv/configs/rzfive_defconfig
+> @@ -41,6 +41,7 @@ CONFIG_NONPORTABLE=3Dy
+>  # CONFIG_RISCV_ISA_ZICBOM is not set
+>  # CONFIG_RISCV_ISA_ZICBOZ is not set
+>  # CONFIG_RISCV_ISA_ZICBOP is not set
+> +# CONFIG_RISCV_ISA_SVRSW60T59B is not set
+>  # CONFIG_RISCV_ISA_VENDOR_EXT_MIPS is not set
+>  # CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE is not set
+>  # CONFIG_RISCV_ISA_VENDOR_EXT_THEAD is not set
+> @@ -136,7 +137,6 @@ CONFIG_BACKLIGHT_CLASS_DEVICE=3Dy
+>  CONFIG_SOUND=3Dy
+>  CONFIG_SND=3Dy
+>  # CONFIG_SND_PCM_TIMER is not set
+> -# CONFIG_SND_SUPPORT_OLD_API is not set
+>  # CONFIG_SND_PROC_FS is not set
+>  # CONFIG_SND_CTL_FAST_LOOKUP is not set
+>  # CONFIG_SND_DRIVERS is not set
+> --
+> 2.43.0
+>
+>
