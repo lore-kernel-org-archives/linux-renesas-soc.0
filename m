@@ -1,71 +1,71 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EB32522BA
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 13:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05973285CB4
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 13:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766497876; cv=none; b=E9QyFolDt+3RDsEviVrwOmpcjcJ36y8nha7m7Kd0YbWjWEu8tbzsRUGYifsEldrZa4ILblNlU9qon/IJ6Bts88/nir1eZPwYRJLudpIOZOsq4d1Zhzi8n5w2FsuyUEFkK5Cxx0pzj9VeuaE2KlPreSa5BP052UefLHdbKVG5VBo=
+	t=1766497955; cv=none; b=Tgyw8UHvl8fWNC2UFnUaNI1aCFIl1SsL27zhfwEWnMyyGIsWwDpsHcMIdMqo1iXI9cdXAT07/OXJerLHtJci48pTiaW8kDLTP/oWWM2n5DwXjJESMETMFpWOvnIy5jFt2hnlSpo12yU5ye5SSTTH+sFljv3W32I4ngzsfOb3KSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766497876; c=relaxed/simple;
-	bh=+vgDq4lQzhcJ/PmjToagAIXB+7UjAyqauVh2qc4S2YQ=;
+	s=arc-20240116; t=1766497955; c=relaxed/simple;
+	bh=HEgGdhmdotY8pA3QPNPd/lQh91weDglMrwRgI5eq5nQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MkmYUEznFMvqSNQ0Plkm+aE7mQr0RuMqWM5JwpJl8a6J/bvLWBVFFSMYYxgIMcoLoLGffJja7j97xh3y+w6pYEqdFQ3WBiC4QIhcaKfFVf1xNDRfIVHhxbhowHM5OtFbi1mbS52bwqlya6CszQPYtaNt+3T5xlY92WyGJffsmIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
+	 To:Cc:Content-Type; b=p5vmCwRXyIP/PfOrLsPNJ1anytcgOKo56OShyQNZeKZrYosNPq+55CP2qQamzknKY1zTB6dQXB4VgI1zAGehfJFbbVy7JD6krHH5RUp6dZbcwsiXMRo0RgfwExnFswcIk67WhaLk1mYyQVZmnPTZtasj+ycYu2fRCIYy7KKncgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-59431f57bf6so5056501e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:51:13 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b804646c718so424345566b.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:52:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766497872; x=1767102672;
+        d=1e100.net; s=20230601; t=1766497952; x=1767102752;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U258/dz1ml2wi6XM7goSRHkqu3ww0wtWLKndOq5PViQ=;
-        b=iR4UkBy4ixyxF6vsFilqVbiVtQxZa8TP4aYB9lwqZ/cmEJGa9V7guOSqjxbJVs6zit
-         BHraOe0aqdh9VRmI/fH+OIo83PrjQ2aKTbHNEzH3+n5EZgmbhJWdP9yGAhplsUZDvHEL
-         hur3apfBdNsT11dW+Ke/gJ6FrNcU+S6mkRo43dq+nKbk63MSCvFoo65pKa5x0OBN1QGw
-         gGXXeKIpPF/TiwX6Gi2Cc9oEsA8QDRrQqarM4S3yTKfP1aCx3UjSuhF8uQUaDp9aRHgU
-         8ZIpjoXZ7WwNhvtrk7nKYi40ppYuJo1+nd9LWjB5UFLLP5htQyHN3QG/xOGzbsNBDhyp
-         tueA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzaZKtbXHgvdTA8Kanpk0r3urhmiUQeOr2hARFOXWn/dLOSBYtJKo0IK3bpnW8Q5bVnrxID2pzy8p0YOXRzLgJ0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw57FcozarlK7k/K0nBB8HhEcNrDT7oMaOBkcmKro7WVxoboI5C
-	zDJ4BH3eD6jWcDGXqGC3emoIaWLiIWm3x4W/Qok0eN5jO3Pzp31YHM5fr+O3I+1vy/U=
-X-Gm-Gg: AY/fxX6/+SLk1/S8G60U05uzUB1BUXQdDkArK9vRH36/9BG2CA9Y51kYP0VGzV1XX0R
-	IorOqPoha2fRCD0dHJj1wrJfQWMxJTBCgXh69gAfXEDvXkGtdjwhGZ4t18oyyDx5hsLgMBTGgUE
-	GYj4X1V4ZQCsbMrxUNNFKWy4qj0WqG6u64pG7jvHiy01PDscWzf73U9MqK6bBeFzBxNIbM9lVvp
-	eJh3D+JqJzNZe7tuIFAXs3SP8ISADjw6OzAuXd5liqNmRkXH+cJvbC+nKNs+YJyOSyPyYqzUe9E
-	V9vvfzr9PgcEmwX9QkYfGYm2r9DtT4JDe9bnBdVnS/EXLSy8baXuaPhV7EuM2nCXEAKiXh1PJLB
-	cdhmNzQkcrUnIc2K7ZitTuU56ZVR7z37UHLDFG/qftJ6PtAxfmMjvo1mJR8a9ReNLZ+8mONwbsI
-	1G/tls9y5kACyVL2HeiZ73fAqjCbNQcu2F3sfI3JPJVIzenp+6
-X-Google-Smtp-Source: AGHT+IGjyHIPTWTNFE/LOwsEnpNB6gLKy/AcrAY7g/kbzO4bUGMHoREgH6lsE0Mvn5PqcaTAKkbeSw==
-X-Received: by 2002:a05:6512:238c:b0:598:f361:68f8 with SMTP id 2adb3069b0e04-59a17d058e9mr4703833e87.9.1766497872101;
-        Tue, 23 Dec 2025 05:51:12 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59a18628284sm4123892e87.93.2025.12.23.05.51.11
+        bh=qC2xhS+OSrcNsNoLm9/J2+cVx6ikhb0ktmaIYIIBhdU=;
+        b=NTMu5KEkEA8ZUSPyaGEOMuS4MFraBM4IBYgfcyZqnNDAgmfIUZ0KSEKr3+Lf81dbk/
+         jobDjzmPXXdx4FFhR/vfA4rHyZxin9L1QhjX29eRCLq5X843jhGfGAYax2sIDQ3VAGYo
+         KYaLUESkFxSRolGn1JpPzekIw7oBXEP8Y/psuEcNwACfiTgXPgoakKOl3Kwv4H+3BOOd
+         9V2ha5Vo9oafdxgJheVx9oEqGRV4htkboE1vyNes0dOWCi7fX7MawRNxSoTTS9fjgIsG
+         jleBtnie4j9hOzc2QvHXbWBVInI82TNmEoxJT8KPtDNfF0BzwBvO8snrMtMCr/vCk3Bg
+         yxyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA66Zgl03RQIwpp+Xt1k8lpZ2sHTxDAU5PJ4DNz9SeckHtKBIBpAO/HRzgzfDUd6WreVH7NyHtptUIRNKXY2RBpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWCM4ju/vv4GeqZkYEq7r7MIlnBqITCsaUxMXB73GVx9KGDbt4
+	FaqZu13dLustC4ROW24XlFj7aaf/WByyDtfrKHu8Immdq7laq/BjMdZsXBwHjo+lbY4=
+X-Gm-Gg: AY/fxX79djnWvvtfIJ/VjAbXGcKDtXITkrQ7xtUtLJyRA9M7IU3mm0QCnz2MW6DWBhO
+	llDw/+OeZp/YYjQ1A6875eTlhKLGzvpX+SigEsYn9huLrYXF/WmrMQWuZPeXK67Yed/egwQC4RV
+	solHVIrXdC95WOJZuIFcPhlMAlQ4vRkyB15lCqoV+NxnJ5eRZ0ci+ZHwbMGnT4goKq7A5yghTcl
+	LT+N7s9MfR63BggBJIZUHXE1xhzsoRBfkMqeFL/HfbgHBBaqrywUeL3LiLNAwvSLGRWyHjKQosh
+	PjKGakV8cfb6jFAhZxSdVh68Ly0apX6r6aOT+QmuqV/6Hcv6wW++AiVvtkYFIs9/Hvmqu1J0Ctd
+	DwgWqwhOOghurWao+3g7fngcDBXzb7I3Wp/b6mK0w4acfB1MjxSofqfZ2KbTXmB1gWb78NGlVXI
+	A9bOBMezqq9aQTV4JDjOxs3Y3HAshMLhif+POkEoxR6S698e92
+X-Google-Smtp-Source: AGHT+IGu4KjZ6MzehonYlj1D6vF1S7rprWhSupO57ZygmCEfLbeCyzXx+ePpHNjzRVq9Y+txs3aNOw==
+X-Received: by 2002:a17:907:2da8:b0:b76:f090:7779 with SMTP id a640c23a62f3a-b8037155210mr1458338066b.33.1766497952104;
+        Tue, 23 Dec 2025 05:52:32 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f0b7bcsm1462171166b.49.2025.12.23.05.52.29
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Dec 2025 05:51:11 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59431f57bf6so5056482e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:51:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVEYiftjQ6EWk4YhPUvbEWFt/umN7xhPspC9TiFVQmA5XYEhv4lCRnHiLSvganpqYJedFTqfwYk+GHXwR23uAeuqw==@vger.kernel.org
-X-Received: by 2002:a05:6402:1e90:b0:64d:4894:776b with SMTP id
- 4fb4d7f45d1cf-64d48947948mr7064838a12.27.1766497528286; Tue, 23 Dec 2025
- 05:45:28 -0800 (PST)
+        Tue, 23 Dec 2025 05:52:29 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64b7b737eddso5859320a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:52:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX5chp3ecx4h4iqBUYtAarbDT9OQ1vUcjp2sE5W570esxVlz2GwTGBQ4rExwUDM6Sibgn/8I8wu/+BRkhZoPSSAMw==@vger.kernel.org
+X-Received: by 2002:a05:6402:1474:b0:64b:588b:4375 with SMTP id
+ 4fb4d7f45d1cf-64b8eb62574mr14209973a12.2.1766497949108; Tue, 23 Dec 2025
+ 05:52:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251201124911.572395-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251201124911.572395-3-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251201124911.572395-3-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20251201124911.572395-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251201124911.572395-6-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251201124911.572395-6-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Dec 2025 14:45:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV=EW4YbEBiXH2p0SeC5Kw-YmYWuQwsudpGgM63pgqcfw@mail.gmail.com>
-X-Gm-Features: AQt7F2oX7CMa_8FU9LCOCZqrziankMeMXgDYxBV-ZhAtoMZJ9gqMth9qd4a31zo
-Message-ID: <CAMuHMdV=EW4YbEBiXH2p0SeC5Kw-YmYWuQwsudpGgM63pgqcfw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] dmaengine: sh: rz_dmac: make register_dma_req() chip-specific
+Date: Tue, 23 Dec 2025 14:52:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWOC1Zzvd_sbSfBVUMTVwA9NWy3-4ziP=ePxppsbMwRZQ@mail.gmail.com>
+X-Gm-Features: AQt7F2qacHBfJ6E_bDNJY66lCMzd1HRJB8iFpiFIGp6HnGDNM9Z8L7u2p_OLyUI
+Message-ID: <CAMuHMdWOC1Zzvd_sbSfBVUMTVwA9NWy3-4ziP=ePxppsbMwRZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] arm64: dts: renesas: r9a09g077: add DMAC support
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -76,82 +76,16 @@ Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Cosmin,
-
-On Mon, 1 Dec 2025 at 13:52, Cosmin Tanislav
+On Mon, 1 Dec 2025 at 13:53, Cosmin Tanislav
 <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs use a
-> completely different ICU unit compared to RZ/V2H, which requires a
-> separate implementation.
+> The Renesas RZ/T2H (R9A09G077) SoC has three instances of the DMAC IP.
 >
-> To prepare for adding support for these SoCs, add a chip-specific
-> structure and put a pointer to the rzv2h_icu_register_dma_req() function
-> in the .register_dma_req field of the chip-specific structure to allow
-> for other implementations. Do the same for the default request value,
-> RZV2H_ICU_DMAC_REQ_NO_DEFAULT.
->
-> While at it, factor out the logic that calls .register_dma_req() or
-> rz_dmac_set_dmars_register() into a separate function to remove some
-> code duplication. Since the default values are different between the
-> two, use -1 for designating that the default value should be used.
+> Add support for them.
 >
 > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Thanks for your patch!
-
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-You can find a few non-functional nits below...
-
-> --- a/drivers/dma/sh/rz-dmac.c
-> +++ b/drivers/dma/sh/rz-dmac.c
-> @@ -95,9 +95,16 @@ struct rz_dmac_icu {
->         u8 dmac_index;
->  };
->
-> +struct rz_dmac_info {
-> +       void (*register_dma_req)(struct platform_device *icu_dev, u8 dmac_index,
-> +                                u8 dmac_channel, u16 req_no);
-
-icu_register_dma_req, to make clear this is ICU-specific?
-
-> +       u16 dma_req_no_default;
-
-default_dma_req_no, to avoid confusion between literal "no" and an
-abbreviation of "number"?
-
-> +};
-> +
-
-> @@ -1067,9 +1068,18 @@ static void rz_dmac_remove(struct platform_device *pdev)
->         pm_runtime_disable(&pdev->dev);
->  }
->
-> +static const struct rz_dmac_info rz_dmac_v2h_info = {
-> +       .register_dma_req = rzv2h_icu_register_dma_req,
-> +       .dma_req_no_default = RZV2H_ICU_DMAC_REQ_NO_DEFAULT,
-
-Since this is the only remaining user of RZV2H_ICU_DMAC_REQ_NO_DEFAULT,
-and this structure does specify hardware, perhaps just hardcode 0x3ff?
-
-> +};
-> +
-> +static const struct rz_dmac_info rz_dmac_common_info = {
-
-rz_dmac_classic_info, as this is not really common to all variants?
-I am open for a different name ;-)
-
-> +       .dma_req_no_default = 0,
-> +};
-> +
->  static const struct of_device_id of_rz_dmac_match[] = {
-> -       { .compatible = "renesas,r9a09g057-dmac", },
-> -       { .compatible = "renesas,rz-dmac", },
-> +       { .compatible = "renesas,r9a09g057-dmac", .data = &rz_dmac_v2h_info },
-> +       { .compatible = "renesas,rz-dmac", .data = &rz_dmac_common_info },
->         { /* Sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, of_rz_dmac_match);
+i.e. will queue in renesas-devel for v6.20.
 
 Gr{oetje,eeting}s,
 
