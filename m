@@ -1,71 +1,71 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE2B33123B
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 13:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E932D7DD3
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 13:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766496830; cv=none; b=TgyBU2vQFO/9jp7riY3usJh7ckT0Zvs7z1N3FTxjYRGk0mZNczo5Haw/7UKLmpfM1nYlOx6hfPHDVWSgJdqw1uUM/coKhd+QsBrw76FGrma87G6AAreB42ExGEaLv0YWd/4Fg7jorT8EY8ZzJfAP+3xJOKYpjb+4NYlR8tSK3jw=
+	t=1766497857; cv=none; b=q/2A256k3UUuR10PqlTokwkkkTmBFhOhYrNWDyJRqtfCYp+CemhxTkJOJ614Pll3DVeYVnVaW019u1fVm+AH6SQdFV0vQXc8CVDwMutsX0WzZ6TQ+VctTPjG6lXiv7TjobLR5B0sDizm6mc2YQ4SN9l3ul3mPXe78K0jblf9AEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766496830; c=relaxed/simple;
-	bh=d+EZghonelPXBgUA78BQ/tWJ6ckYSNKpR9OnMalTYvw=;
+	s=arc-20240116; t=1766497857; c=relaxed/simple;
+	bh=5muInitChGsMSj6kPp99AfFHw72VmyRJFeeekTtjmcU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cFfC5uDrY5QMl0+s63acJtEj9FpwZefPp0EfqIEyxJF+a/Y1rQ1vNwtr5LSGYOvMPFvmreHTyPYzwpez5Oe/vBbwf1W76z/Qb7vep9y/tgopHmbs0TSCC8PAjT97QAOzwSzPUUbRSYSzQXt2+RMBerGSHrLNomfU66A7YXCEoW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+	 To:Cc:Content-Type; b=AHzSJMs1LgBn4jqWzhF9hvSw+DRMUK7zUpHCEFhIhgGQAQjdopcCdCINUgdqGXftD9ianPkrn9j8YO5zWWEXLy7hL5zvpqBsIRggHX/aSzviMN7aKgqnb6/kF+k2aK6mkEbJh9kq4lLumvJ73RcCSAPvayq9hYY0VN4gO8fEiAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56021f047d6so1473315e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:33:47 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b7a02592efaso723597966b.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:50:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766496826; x=1767101626;
+        d=1e100.net; s=20230601; t=1766497854; x=1767102654;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2q1TCGysZZkk+GHmS8vt4l47rdLT3znEaGV/tAdcUUc=;
-        b=izC/w8/I6PCdO95xknfXnLj38lMjmX5WKcZssfUZ184P9vHstAfs1FGmHcjjPt6r1d
-         oA83tvZts9KEixx2QTS5HFS1p08/LE11+L1D98tJRh4EQiZtsEJ3aFs7uPia7QdV8i6+
-         y9lzl7PA90QYXdtIcOb52sHE+CpQC8XXgQqC93RfO6gZbWJPOXAOGi+xvzUQqBbuE1iy
-         K6kmmwzbwSxPLdeJf+xq+30k0mmgb1wcLwd+tCjbti2wzKSK2qvLEnwz8cZuEfYAudue
-         05d1SAgBXq9f6u7In7L40FBVwoGDKcQvcN8qCsVSch4Wr4Nf8w0vrE53y6pWRoYfX+Zi
-         gjpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwGkYmc+O1u6VxscGhTONs45F8MmDb09dxOvROTTYsZUeenbYdWkytzfviD/tk+dNk6OYpBnb163tq+7j9iFU+sw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL/gdztlgo25qCyQhJxXFpOzWYF2x+C97+h5OeWWlJyPbQvl6B
-	tSzK6RFSSffS2/pGAMPhhaj8j3E2mVC0NKJ8Nx/vCClAY4JEurGQbVBbqwKSl4Y/
-X-Gm-Gg: AY/fxX7oEBBXNVAS9K5xlbYumA/qf+yB8vHAkglsvlClsTUAvpTy1WNijLJZWxQk/6j
-	VT3/Sf/VW/HwXBrLmqYHKiWQOuzgALcNxISdRb/0WM+aP9KWjgH0lqB2JEZxT3iiTWi7MibVWjH
-	l7Q32xPwvnmSCMiO1NVuqso8dMKtb9jqdIfzzoFqJ6iXLaZlk47eh4A4VDMfG5NzJfDv3Rl7+8N
-	SCJo3wy9DMKfu/HzOm+wQx4ACDuPEmpIYes/X15f0+2kL3PBd9US1JWkkCzU0ZveJjrTF+ama81
-	/4hchh8S9u91EurSe5plgzZSK+8hzdjbIEyJRSHvVH8JZk8rXvD7Kl6/C2P+U9E+eAZC1FsEwKU
-	bnlNUH2VwmHKeuZ8Ce7f2JNOhEcY8Yjn79hlwHJxhvL3I/3/AJLBqu6zwK6V+PcoEQdhrv3vaNB
-	y8M8yXnjYn5MN9/bObzim+2DrEXUbOyxRQuRT8EWJ99JgJTDasFn7YpAh/xRg=
-X-Google-Smtp-Source: AGHT+IFHfZc5tUQ3Cu7oZBGyzF0+7X9erComXzvwu0BC9IhMCp4mZkP2svuev0IkAJupe3R/jJSa3g==
-X-Received: by 2002:a05:6122:468a:b0:55e:64d7:ae76 with SMTP id 71dfb90a1353d-5615bf4c131mr4265619e0c.20.1766496826230;
-        Tue, 23 Dec 2025 05:33:46 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5615d1329f2sm4579965e0c.14.2025.12.23.05.33.45
+        bh=AxgwuYv1GqkX/JgxOxMK1IynEvwBQ0HN2CK1BOB0UKY=;
+        b=SFKpWoVLgF5Tgu3AQavH1bi0j/hmT5EulzEd2yUmRmusk3U6nwEYB7Ck66H4ZP9Sn/
+         9VnP1FtsWCDSFF5B+eiVkT8CZ10+LZRKxHnENHgGrc1+63ZoceazK/eZUSaFAd9no4mh
+         2uWcb/LzyGko8BYUroLUpZNFcZZSNYncSG3Lw/ggZ7jh0wSkV+uqaVVg4mTgevacljHi
+         tTJjrYXy0eExdpRwr81MDAjf+6SIUPgl8qUSME5IihWjcQ9y3f/HGF0fCjQRcbhUlCyI
+         50K6dSwpPRwHggs4XV2+hILRI74ZU1rf0vkZ7c3sG0fv4M5xpBl4BL/8kaAX70Q+UJIr
+         r/iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj9ZWFBW/KwnQ/pzICHXq8e6Bs0GVXNIU6m9pXDFOCgv1dVBv0AL79DxEeeylmEBpsTOmABHP084a+56h5s20DBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9/lVWKpUkJLU4pw7s4TTWVFazV38VQagM9R46VJxOHOr7FztO
+	/rDP7GAu1D251BBhx1bJZt25bICFkQ+qxsdCMhZ9Zh0aoX+whtAEPEVsCLTeNS/vrjQ=
+X-Gm-Gg: AY/fxX6+qyMKlNVbEZ0JtO9qf3aHDvK6dp+Nhrib5/ygxPTP2vDj8Dmr8g1CwrIlP7u
+	JfbJzCnsSj595Ei4IgweKm/2plQ7+wH29ncE4vGV1jnH0DP3dUqwbENjeMNXqx4ADgNX2zEBdWn
+	E/zXfmU20PVfGUX0jNUZLh7jA+zv90Far/FxoCSxp0lffy6d4QuII3hfpqs8Vgimr6xQ9vi0kwQ
+	EYTtnQbUXT9keOJf07gy6AUlHzR+N0UlmOD0Rrh8tTVt3A/XSlweJCKcDF6IXlsDrXglaA6oCvC
+	4FBqfgVJu1sf7WrWLwxRlH94FYP/4wsMSEI+t9soQCPQfooXb6ldO9vk9V01sGh1CA3BU/ZAerD
+	OfuPpol327mxoSlVOJmFRhIW//yeTLH6ojhxK7wzuTHyqjlcw5EMDY8CXjXxQnAT2KJz1q9dvoX
+	pKx3xksGZ7RgXtZet/ZfMQQ74r2meA37k05oOsKqrpWkD7TkjhvKkd8PvRJD4=
+X-Google-Smtp-Source: AGHT+IEjSZLI7mBklIAKGMPwHLTWsATiL34WioNm+5lE6Y+DoV9S+TFzq2WSEzqpMmCHwjtNuZp54Q==
+X-Received: by 2002:a17:906:c14b:b0:b73:826a:9102 with SMTP id a640c23a62f3a-b8037197467mr1705231866b.49.1766497853800;
+        Tue, 23 Dec 2025 05:50:53 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037a61595sm1433324466b.8.2025.12.23.05.50.51
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Dec 2025 05:33:45 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5e186858102so1722577137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:33:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV6qWGq1G0rkgMbMKg6SDXkUXKkZR3fVvuuffJ2N57MU5ybe7hItySL7+BYm/28CYxG7RRzne383jaOJ7as9aHMAw==@vger.kernel.org
-X-Received: by 2002:a05:6102:c07:b0:5db:f573:a2c with SMTP id
- ada2fe7eead31-5eb1a67d804mr4132076137.13.1766496825417; Tue, 23 Dec 2025
- 05:33:45 -0800 (PST)
+        Tue, 23 Dec 2025 05:50:51 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64b83949fdaso5987210a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Dec 2025 05:50:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWhwMfZsY63KNMpdYCf0BEl8Zipg7u1lfeH/ok/+z2gN7lKC070fkXuW/Mqraxqnv401N9UuqknX+QDmRnF281xOw==@vger.kernel.org
+X-Received: by 2002:a05:6402:13ca:b0:64d:e1c:4c0a with SMTP id
+ 4fb4d7f45d1cf-64d0e1c4d98mr11290130a12.0.1766497850916; Tue, 23 Dec 2025
+ 05:50:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251201124911.572395-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251201124911.572395-2-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251201124911.572395-2-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20251201124911.572395-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251201124911.572395-5-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251201124911.572395-5-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Dec 2025 14:33:33 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW8WK9EXjJ8bkUV_f3OgG2wv+QWgPQi-rPLFh7qcxjptw@mail.gmail.com>
-X-Gm-Features: AQt7F2oA8sVMWIIIOjyLh788W_awCND3GcqvNsIMfjLaN-ARF4rTf9K4TdiA6zg
-Message-ID: <CAMuHMdW8WK9EXjJ8bkUV_f3OgG2wv+QWgPQi-rPLFh7qcxjptw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] dmaengine: sh: rz_dmac: make error interrupt optional
+Date: Tue, 23 Dec 2025 14:50:37 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXDhi9KqE5hS=z_UqWQ8Hzhy82NaqBMOm7c2q15=M=SBA@mail.gmail.com>
+X-Gm-Features: AQt7F2pBYW6Az37iaIR_8IHqN4poQvGi9qJio54afeSNgWx41VFy7kVT0EKlhFU
+Message-ID: <CAMuHMdXDhi9KqE5hS=z_UqWQ8Hzhy82NaqBMOm7c2q15=M=SBA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] dmaengine: sh: rz_dmac: add RZ/{T2H,N2H} support
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -73,19 +73,62 @@ Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Johan Hovold <johan@kernel.org>, 
 	Biju Das <biju.das.jz@bp.renesas.com>, dmaengine@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
+	linux-renesas-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+
+Hi Cosmin,
+
+CC tglx
 
 On Mon, 1 Dec 2025 at 13:50, Cosmin Tanislav
 <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs do not have
-> an error interrupt for the DMACs, and the current driver implementation
-> does not make much use of it.
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs use a
+> completely different ICU unit compared to RZ/V2H, which requires a
+> separate implementation.
 >
-> To prepare for adding support for these SoCs, do not error out if the
-> error interrupt is missing.
+> Add support for them.
+>
+> RZ/N2H will use RZ/T2H as a fallback.
 >
 > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/dma/sh/rz-dmac.c
+> +++ b/drivers/dma/sh/rz-dmac.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/irqchip/irq-renesas-rzv2h.h>
+> +#include <linux/irqchip/irq-renesas-rzt2h.h>
+
+As this has a hard dependency on commit 13e7b3305b647cf5 ("irqchip: Add
+RZ/{T2H,N2H} Interrupt Controller (ICU) driver") in irqchip/irq/drivers
+(next-20251217 and later), Vinod cannot apply this patch without
+merging that dependency first.
+
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -1073,12 +1074,18 @@ static const struct rz_dmac_info rz_dmac_v2h_info = {
+>         .dma_req_no_default = RZV2H_ICU_DMAC_REQ_NO_DEFAULT,
+>  };
+>
+> +static const struct rz_dmac_info rz_dmac_t2h_info = {
+> +       .register_dma_req = rzt2h_icu_register_dma_req,
+> +       .dma_req_no_default = RZT2H_ICU_DMAC_REQ_NO_DEFAULT,
+> +};
+> +
+>  static const struct rz_dmac_info rz_dmac_common_info = {
+>         .dma_req_no_default = 0,
+>  };
+>
+>  static const struct of_device_id of_rz_dmac_match[] = {
+>         { .compatible = "renesas,r9a09g057-dmac", .data = &rz_dmac_v2h_info },
+> +       { .compatible = "renesas,r9a09g077-dmac", .data = &rz_dmac_t2h_info },
+>         { .compatible = "renesas,rz-dmac", .data = &rz_dmac_common_info },
+>         { /* Sentinel */ }
+>  };
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
