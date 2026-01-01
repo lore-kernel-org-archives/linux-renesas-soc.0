@@ -1,53 +1,53 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAEA1427A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBB3146D5A;
 	Thu,  1 Jan 2026 20:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767300005; cv=none; b=jzWZhTKQOdk9PJzkcqraR5Dm+YqkM3Luq31ZsZU/DL0nkS//3BoXjfKRbtTdI63zvdeD1/a0cbKGymDtMXBT0KO6S3yFpHK66/vw06LXQtyRWbxdVgJ24dG946IP16NFnkKfJCIw59wVW2GuoaEcGog1fm8tQ+e8OfTuSrMhzpQ=
+	t=1767300006; cv=none; b=GWxmIjkJEBFOCY31BWCUw8GMdIfT2r62MQ2XK3+ckfXC7zWc91IPk6sPjFx+gm+vwxUWXIEB1BR7drN9X4IehiyPz3gdfVzZQzPnrxxjE2dt1zn5Xc5dzBJ9tAgfhh4J6gzZNUEN+DpzmtN2ymImAtEWYqquw68l6aUgNat6WyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767300005; c=relaxed/simple;
-	bh=GDgAd4Afc3aR37uVHWDzMjAfFeLJ6wp6nvDmGtXu9YY=;
+	s=arc-20240116; t=1767300006; c=relaxed/simple;
+	bh=1XwLAUWO1wTvS471UH4+2pORAZgHI5ADEpP0wX0VDU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fqgBG/N8I9cWAOzc5fDp58KBfxOPbdB4kqM9iXmCmZYJEnA3zH1DfwHGNOctKQ6msfDRoJZzezoWSbBwuPF4MdtiewwEbi3LJKyzhK+ULQq0zRSe4NW2ir6UYyUH8F493QW7FPTlPXuEyNp6yM7UiYv2r4uBkaRO3lNifhuKluU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PcDnNQIL; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FgqD7rBF; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=HkokW+VbDIC1xSr+ruHaP4PFvlGsssBAiW1FNQ6P+n2yiMXMgGNke2v7ptBTySYjAd9Pm7q2bKuG3x4xJLUUKfAmzIg5XYinZAsPSXL35HCClJNfHWrTULmBkq9gbzr0TC2pp1TTKxpZ25kt2cZd+DMwL9+1omkEf3xAyX8FdjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GtsHFhkF; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MBkZXBFh; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PcDnNQIL";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FgqD7rBF"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GtsHFhkF";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MBkZXBFh"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4dhzGM60DVz9tGX;
-	Thu,  1 Jan 2026 21:39:55 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dhzGV0g79z9t8y;
+	Thu,  1 Jan 2026 21:40:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767299995;
+	t=1767300002;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IagLaPLeBzt460P4exNwADqzXUuvMCHLnSttbj4CQn8=;
-	b=PcDnNQILSwCyE3ywemdSAbLOmVN/154gK68mTlkjZt1cUH3SaG47nXXk/BsLgsbP68kYSY
-	pZ5owx3L4rDmMVXez8bdl2tSxDydXD7llczIJr2q1ykzSivaDLwyU2VoIog+t85/SKKbpR
-	6JVyNAvszQTRmCTWOzwSZW3D3I6XD35G2JU5JFiDIO2k5WD3BIYzxKxvJCddIegqvclVBh
-	ZcZY1utu4WoL8z4oI8ILvbmD8jEOOTqyWLustj8j5tY2kx525FQ+xmnSP2gl2cEX+UYnik
-	6F/qj7HzmNX7Zldu8hunAYRy1Q9w39n0Nmnawa8HrD2c5WCv+NjWayAiY9QT2g==
+	bh=pNjB8JHF9vUG3sfxi9yuJYE1G0JgkXxQf7v1dbh0Nb0=;
+	b=GtsHFhkFwyTyed3HUwdkdkCFdOJp067NjqohznutES7KQqNjXIjQCAGKP7wQshioJFierX
+	fzfoYzPlUDRb7fKPBCBdVhNoTi9N2zGmPFfw3NvCmLVMy+5LFg4q3X1RTQMvGfp5s+o4Us
+	jK5buuaB1B70PP6IFBavBAHs96Eo3hRjnb+ep5hiCkcn0VcKrYE6j0ltU8tTmUDDRTi3tF
+	/hn7V8EFz2oUx/K77F5AuwM1j667d4bjR3icyJI4xPzFc8KtqO7aR48T8q7um2sxPQyNuQ
+	iDYwjbdpnEC5yXTz3umxYgza4HhUvV1UnrTsVU0g3okmdY/GaYMfxe8dq6nVyQ==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767299993;
+	t=1767299999;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IagLaPLeBzt460P4exNwADqzXUuvMCHLnSttbj4CQn8=;
-	b=FgqD7rBFA+ggX0a/BwbtNZXYyFTfI2PakBQa2s5IXjiazNx/IGNBulIsSMx0B7LWyzgw6I
-	iDXWoJ5PYxtE73xBL7AOtaOMsld6WVTlyACpawU701HHVs03PVR7EBijUBvASBmqEv5Q7S
-	LL5W4Ig7IHbq41Y+b4I94okK8qdtXsCuS7kNoPC228XN67vc/vOt/rDhndQ6xKeIwfDZvM
-	+i7tvgHzG8JwY5dRWpDhPZaC9TiN1hfCJ4Vs/6Uka4KtadoPxjRcBpm+cMHpvEyz+2jPXa
-	ZhZM5laFshhLzJguYw1rkMP9Qdz/bR3kZavY0nvC9hXpwnP84cWcNcpBUiNbuQ==
+	bh=pNjB8JHF9vUG3sfxi9yuJYE1G0JgkXxQf7v1dbh0Nb0=;
+	b=MBkZXBFhCw3KQJEtY0rqZGFaTgB2TlC2tphxVcxJsijmOU0EidyVZku9mOva/0YNX8gJ5t
+	VuYg2tzANMgX2kS4srzb1KxUd5ZRWBmMBmgMpy4lG5YQ68IxRnXPN/xG+COYPVBFQ9wHrG
+	QidP075l8UYn6YEBPBjp2RLUv5JtO2oFqh2x5Kps/+Sq+GVlRUm6j5VaXGaY75quGZ5j1z
+	KMuGlIiaA5socPlqUeyBrEahKAR+PJzDZ+THjotl3YE1Ehh8LLdx8rZvbqBgZghe/28FZv
+	mHy5dZVxLFvH06MZHROQRjcwdUsYas2jb0HyjrfrKecGIOBZfuvnnEouDGuX0A==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -61,9 +61,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 01/11] dt-bindings: phy: renesas: usb3-phy: add r8a77990 support
-Date: Thu,  1 Jan 2026 21:35:48 +0100
-Message-ID: <20260101203938.159161-2-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 03/11] arm64: dts: renesas: ebisu: Enable USB 3.0 PHY
+Date: Thu,  1 Jan 2026 21:35:50 +0100
+Message-ID: <20260101203938.159161-4-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260101203938.159161-1-marek.vasut+renesas@mailbox.org>
 References: <20260101203938.159161-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,10 +73,11 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: hue1acap4etf344631etqcxx9ajb47hd
-X-MBO-RS-ID: 46479d7265cfd5fed62
+X-MBO-RS-ID: de85bebfd5ffb719207
+X-MBO-RS-META: jad7utns9ohqf5ywq53oyczc3hbfc6e5
 
-This patch adds support for r8a77990 (R-Car E3).
+Enable and configure the USB 3.0 PHY and its matching USB3S0 input
+clock on R8A77990 E3 Ebisu board.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -92,21 +93,31 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-phy@lists.infradead.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/ebisu.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-index fe57c5373d18a..d0dd2d19b1ddb 100644
---- a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-@@ -20,6 +20,7 @@ properties:
-           - renesas,r8a7796-usb3-phy  # R-Car M3-W
-           - renesas,r8a77961-usb3-phy # R-Car M3-W+
-           - renesas,r8a77965-usb3-phy # R-Car M3-N
-+          - renesas,r8a77990-usb3-phy # R-Car E3
-       - const: renesas,rcar-gen3-usb3-phy
+diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+index adc4449b809ad..0b1ada18a4f74 100644
+--- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
++++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+@@ -871,7 +871,17 @@ &usb2_phy0 {
+ 	status = "okay";
+ };
  
-   reg:
++&usb3_phy0 {
++	status = "okay";
++};
++
++&usb3s0_clk {
++	clock-frequency = <100000000>;
++};
++
+ &usb3_peri0 {
++	phys = <&usb3_phy0>;
++	phy-names = "usb";
+ 	companion = <&xhci0>;
+ 	status = "okay";
+ };
 -- 
 2.51.0
 
