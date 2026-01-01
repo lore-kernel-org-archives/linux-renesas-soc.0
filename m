@@ -1,56 +1,53 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9407C224FA;
-	Thu,  1 Jan 2026 20:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F6A224FA;
+	Thu,  1 Jan 2026 20:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767300027; cv=none; b=Vi+eeVDK0UMwfmMVVgG2B1hHqP2cslCXYbIFtYsEIO58VldNOP2jU+ggd/IReDQOgtyHicQ6br4BBwG8dxj3XNwC+tHHcFVRdby45ZPjrw+gyysMa2RA4Af06RJrSnaKT3lSe9BhUHkj/Mm5PnSyEohvNyRQL8rw0zYUm6aZuNI=
+	t=1767300032; cv=none; b=mkS7s2WLnm7zHY48gXKLhpkMFEdwj8rH6+3sF7ctAEHye8Un4GWKxlafwc4trI5yq/+5DfdcbSmfnk5CCqAycJJI8/ZpZwK+AuZPxxer1jOHz/rYDmVZvmh4CLzRrmOQ7NfPf2V4aCU4y3UGaUS66Wx51Eh5EIxPg8rbLGP+4WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767300027; c=relaxed/simple;
-	bh=99p7BgQnNCDA1PALPBtg647jxmzBWv0LbK7lh738DUc=;
+	s=arc-20240116; t=1767300032; c=relaxed/simple;
+	bh=WohHC5kuM7hWj2iC01TbrDAP18U/fjMjcsTsBT7WcKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZxlDvkGKVclZ6Qzilgc7P2Fmh/JTndROXI7kIvpRbsIkCwpF46Kj/dItunv2FBZtn4zalDiSNJtGQI7utylO+qS+5HRQYhvOncMl/dESJlAFZ2E4rRAe3ScYqLmu/Py5VP+wO31IjrlXStPzI5SmiTxXBGGY6LugfkVnpO4iOeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TAARxPQY; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qNHU0+Y2; arc=none smtp.client-ip=80.241.56.161
+	 MIME-Version; b=lcLs5fRStvTCGb68L1UBs+cTDDQ1Vd9Zr4ISLG4UsG+6sNnwDhu0HjAYvpffXJ9PfjHKOtAS3mMy1SjKv8tEPCtMVgwqIWmTdIxgsp8iKfjSQm+GlSkzBsFp5230nAf8r+0eJzRlzgqYxi6/YPqFhf5QbeQqW8O/rhTUW2GP2jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ELMMdxLd; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fmkC7kck; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TAARxPQY";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qNHU0+Y2"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ELMMdxLd";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fmkC7kck"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4dhzGv5GwQz9sl4;
-	Thu,  1 Jan 2026 21:40:23 +0100 (CET)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4dhzH13L0Vz9slB;
+	Thu,  1 Jan 2026 21:40:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767300023;
+	t=1767300029;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xkQQBcY0vCVit3MxRiSlGpKSZBu+yOk6JMQzU+ULlN4=;
-	b=TAARxPQYu2utKSRivz5yhsEJ8xpq7gAnMvF2+1eHA+gXuVEcbhVzwCyVoVUWo9MVfnYtPA
-	FPjGNsvlAq17vdMNU5tByLNM6PzKq5NQg54tmKUDrS9g1jUjEgqKu7242DxkGZvqjh2I1U
-	/nz8iTH8kyyqLnjbo6w/ecRdhznhmlLHQg/xR8eqkWJjZor1Dq3ll+WVvlQg3aSa78qvux
-	Y7I0EjokO2kLWn082qgm1A8v8K0Ha2pkLLFssFpoK/c3hsYNRdoxEBcdFjnPJ8qQ6gKO+A
-	1WCZ/jgY1K3XbEE27gWy9m3lmFq5X7jY0Z5qwtYI4PbkMEMcZblR/jA/WW/8TA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=qNHU0+Y2;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+	bh=YlKZeo0XgHiA07/N2G8KpiyowaP0TZxF7sE3OuoOMSo=;
+	b=ELMMdxLd22a9PfBUDenJf8szJo/rnj+njYVFkMO3MqTBYmJEuwJ6mnBAyYuehampEApy/U
+	A5ZGnH/k31BUVsKaO7JHEa+vokaYLlTyT05kBjP5juGAZMCeUrxJOumPS7XBH1wi/Zyys7
+	FeFOlZeWeXK7FHWlTKnt1r2X4j3YRSOh5/RuIlLLDwDRFepV7IUVxMSZBOya0G6qSNfu33
+	463mewtoN9YOTwFLZpNOPLYxrm2E8WZE2/QAfKDkIiX06ZbTUPJsN6pBJttjCzrJ195Ene
+	gpsbqogZ/EHVr4ENffiagTBm6Mz42AQzhIDY1UNLzPaXOqjDGx05qweNgRF1GQ==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767300021;
+	t=1767300027;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xkQQBcY0vCVit3MxRiSlGpKSZBu+yOk6JMQzU+ULlN4=;
-	b=qNHU0+Y2Wh/3/rE6SCwVVjdT1EceT4gCsSDBqkgBcKxgT6bkndzF0SKtwouSeEaBZSllLN
-	Oq9AMT88kGXz0TFidIB7CR3ijoJJ7VK7LCjzQikdCgG0bOqPM17+umIGo7i0P1f9TEF0ff
-	d6SRdlVRKWGM2m8o26lgNNnVAI6ov7Y1kGTh6cqFfSDIGH6aIP9CqjOy4X7T+C98HA/HzA
-	zX0/w+efS1PSp4ZpK+u5skyPaM9ObqfrdeeP/7/qU6lgUV4Ctq/2UH/ad5i/BQszGF0Tbl
-	7XtgUhz1QB+92PUTKyOqULfdbHCQmXNqIuppZR+ZQKSPQ6I+ZGG2f4YU3gOIPg==
+	bh=YlKZeo0XgHiA07/N2G8KpiyowaP0TZxF7sE3OuoOMSo=;
+	b=fmkC7kckUHH1ucvSZ6+HSyZj/9HbCQbYVrkJYYYoGLhgCoaHyQM3ATXuWMWWhMNBWAp3Cb
+	yMgcFvG5MbBmvaVcpGoF2/qMSWaRzy32oWXU2Ch0STxenGNzr2VMcjNwZFLodiCBx28pvf
+	F1ig0DyfpwtTc0zB9PHcCOM459VHkGEXt+eA3dsxtPHcdvhpjGlKFZW1XH5NQesm+Gvcvk
+	sz/1tliZ62hP7kNp31BYdBOBqzIwHFnIhUuy2gaPU5A9ykDrvJdK7V4ZJ0gOiHeMsAOXXC
+	l00x++inNQWgeezCWWZlRSeC4OqMgG4XrhptjjR0jcfTjimUSNHDQjxt4eJQYQ==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -64,9 +61,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/11] arm64: dts: renesas: r8a77965: Describe PCIe root ports
-Date: Thu,  1 Jan 2026 21:35:54 +0100
-Message-ID: <20260101203938.159161-8-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 09/11] arm64: dts: renesas: salvator-common: Describe PCIe/USB3.0 clock generator
+Date: Thu,  1 Jan 2026 21:35:56 +0100
+Message-ID: <20260101203938.159161-10-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260101203938.159161-1-marek.vasut+renesas@mailbox.org>
 References: <20260101203938.159161-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -76,13 +73,12 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 6a076d3078e5c15469f
-X-MBO-RS-META: 69kjem8iw9g33xmtnr14188kh68azj6q
-X-Rspamd-Queue-Id: 4dhzGv5GwQz9sl4
+X-MBO-RS-ID: 95943db91b541fb9950
+X-MBO-RS-META: wmuca9chgsqj9g5n1ep581ptrjn8egy9
 
-Add nodes which describe the root ports in the PCIe controller DT nodes.
-This can be used together with the pwrctrl driver to control clock and
-power supply to a PCIe slot.
+Describe the 9FGV0841 PCIe and USB3.0 clock generator present on both
+Salvator-X and Salvator-XS boards. The clock generator supplies 100 MHz
+differential clock for both PCIe ports, as well as for the USB 3.0 PHY.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -98,47 +94,82 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-phy@lists.infradead.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ .../boot/dts/renesas/salvator-common.dtsi     | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4e730144e5fd8..c25772429e12f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -2494,6 +2494,16 @@ pciec0: pcie@fe000000 {
- 			iommu-map = <0 &ipmmu_hc 0 1>;
- 			iommu-map-mask = <0>;
- 			status = "disabled";
-+
-+			/* PCIe bridge, Root Port */
-+			pciec0_rp: pci@0,0 {
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				reg = <0x0 0x0 0x0 0x0 0x0>;
-+				compatible = "pciclass,0604";
-+				device_type = "pci";
-+				ranges;
-+			};
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index fa8bfee07b3c8..4e2322d2a90be 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -75,6 +75,12 @@ backlight: backlight {
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
  
- 		pciec1: pcie@ee800000 {
-@@ -2523,6 +2533,16 @@ pciec1: pcie@ee800000 {
- 			iommu-map = <0 &ipmmu_hc 1 1>;
- 			iommu-map-mask = <0>;
- 			status = "disabled";
++	pcie_usb_refclk: clk-x7 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
 +
-+			/* PCIe bridge, Root Port */
-+			pciec1_rp: pci@0,0 {
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				reg = <0x0 0x0 0x0 0x0 0x0>;
-+				compatible = "pciclass,0604";
-+				device_type = "pci";
-+				ranges;
-+			};
- 		};
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
+@@ -523,6 +529,13 @@ pca9654: gpio@20 {
+ 		#gpio-cells = <2>;
+ 	};
  
- 		fdp1@fe940000 {
++	pcie_usb_clk: clk@68 {
++		compatible = "renesas,9fgv0841";
++		reg = <0x68>;
++		clocks = <&pcie_usb_refclk>;
++		#clock-cells = <1>;
++	};
++
+ 	video-receiver@70 {
+ 		compatible = "adi,adv7482";
+ 		reg = <0x70 0x71 0x72 0x73 0x74 0x75
+@@ -641,16 +654,27 @@ &ohci1 {
+ 
+ &pcie_bus_clk {
+ 	clock-frequency = <100000000>;
++	status = "disabled";
+ };
+ 
+ &pciec0 {
++	clocks = <&cpg CPG_MOD 319>, <&pcie_usb_clk 1>;
+ 	status = "okay";
+ };
+ 
++&pciec0_rp {
++	clocks = <&pcie_usb_clk 3>;
++};
++
+ &pciec1 {
++	clocks = <&cpg CPG_MOD 318>, <&pcie_usb_clk 2>;
+ 	status = "okay";
+ };
+ 
++&pciec1_rp {
++	clocks = <&pcie_usb_clk 4>;
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+@@ -1038,11 +1062,13 @@ &usb3_peri0 {
+ };
+ 
+ &usb3_phy0 {
++	clocks = <&cpg CPG_MOD 328>, <&pcie_usb_clk 6>, <&usb_extal_clk>;
+ 	status = "okay";
+ };
+ 
+ &usb3s0_clk {
+ 	clock-frequency = <100000000>;
++	status = "disabled";
+ };
+ 
+ &vin0 {
 -- 
 2.51.0
 
