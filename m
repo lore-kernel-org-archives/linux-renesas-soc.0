@@ -1,71 +1,71 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663643612D7
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Jan 2026 15:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EABF3321A6
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Jan 2026 15:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767798583; cv=none; b=kwMwOPvFP/lT7NAh0ZI65lafPBNRdy8qBTXnJiZOMfwZMmlKkkO7Fvi0bSCfux+e6i/EGtlipsctgbDW3FRoKQu6GN6qjruvKFvHzhk+igsepy4cp96nPGjIIXnP34IR5cFEzXhoLOJK1rPadBhx03sNnS/x1+g8eSywBgdKvZg=
+	t=1767798759; cv=none; b=Ugdc5EPCOu1YTtBPcVH5WqFsz4MGaycyNSCQNyDhId5AQjdwTEDuLxhhTRbQuRhHs7B7AZHGq46Py6VMAShVn7SV56/3Lij7oOLyRLuL4Uixl7+FcxjzLft3jauaq6vCdOxaRniB1PcZm3gqFsOZkNsMdNR1VFjp2yV94U/YUfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767798583; c=relaxed/simple;
-	bh=7e5qMhBj9x3w9tILzgbqJvwRYvlcmzRy5BTflJWO5/o=;
+	s=arc-20240116; t=1767798759; c=relaxed/simple;
+	bh=lQH1FRm/rJzskVoeclFFS2ftwdSJglbw9Ah8hTk5DQk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=swJke5jVEQZNW/8BnY4ecX5tfWiRcqlbSXIKoSe6TV6M9Usdp8zxk4jrDiZKgh7v0GAPd+d/8NUF+3QsIuZ61GsJZy6/DzpZN2XAKgZjN2CTYjrENv4Ub4n4NitAVmn5ZN2eD4jFGlfH8yojGOSNeAX6PNbddPR8llsgqfbFMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+	 To:Cc:Content-Type; b=mOyLJnpDgeHgR2wC88IciZi6IlgQRn/bSLUwx2fYNaujyOK0S13Lo/RXYRO0R9XwtFjAMwcW/2xcakfJy+/OrLgNxvfOqu+u8mAFT+Sz5I1y45GPVZshgsUeHlC4xYlnLUe5J2kKsoVu1MBAFDS6+TF4IzkFtejSQZF/B/tfNrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5597330a34fso1466298e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Jan 2026 07:09:41 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5dd6fbe5091so860785137.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Jan 2026 07:12:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767798580; x=1768403380;
+        d=1e100.net; s=20230601; t=1767798757; x=1768403557;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N9dOzhpI14IYVqSU7+juMd2iV4APAFjyTw7MRTrqVLc=;
-        b=R1PuvdHnOROCZiIncsNH2xuXzXQzUSTLVgd9N21IvAkCU4xpN70RrNhA8GDWDvBSfS
-         gwnMrkaGXu7tryFkEYI9tfFK9Pl9R1kzM1uvwD6A4RVMwdGbRaLkXkgDGrGbWC9lLj8N
-         kmhFbCIvRv4+Vf99uGH9YAOdQc/I2BiSlpkMsY32fr8Yof4RmGnSeABumDd0p+9+py6E
-         TnSjhi0vU51KeAjVg9ZT9tBF/xzew/yB+bt+rle4EONUgyBOSnxRH3/EF+MePoI3Req2
-         xcqJyca2K4WfJ0iH4FchTTqhOdMA0qMmpkm9I8TxeweD0c6S7qLNKjQST7wPRu9nrEnb
-         N1bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz8bH0VBXlx27aIWTbnRQyTYvXZoEIlHbg4m3VFNcaIL+v9erd195TFUGLUoJwMwhcZPUfoT/9IVJ48WuGBo8zNQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMMOJXU8oOXGRSzwOKK4mCG7NoV/z6qcTrM7qsbimSth30D2sb
-	KLHAYYAKp6vp9LbaQYba43Z32xBMSYSopkgC1NmXiLyG4GEzcAiW9oUd5FyUlrgy
-X-Gm-Gg: AY/fxX4z/+GlbHEiBK4uMVPY8fLeEfvwlJn+HKbyMXcCNwoWynsGN8kSyUSwScdveiv
-	TR0DXsMeQ8m9uFrDqt6J+bXQBEBdN1y/nW7ZQZ7qf2IQa+k/+bZYxK6Z6Yc0mDuVDNjFbKmlY/M
-	T/w51kBOt+OtFnLdm9Jyc3ozv4PBIX20EfI8dSe/aMNHV4MuM320vrde2TrKPYfv+mkwe41UmYh
-	oT3sGkTL0kfFt8Ur31ifzP08EY+cBPQ60ysU4cRnZb89Z7BMTc/TUuLa8nGixxCV0xzvMK7OBsE
-	Ai6iVuS8R5dFUZbr3bJM423+B+BvuuaiygdwaMFX2tNI4jiO4O2mX0dKmYeDm5nB8VGvSLrFcKJ
-	St/lQco4z2uewURnt85w3LXoQd8p5QNQAn9Q4jSnHJjdRaCe5/ncPZpa08ny52lCMt85bSuHPxO
-	33yE/mWzn81sJFrdXJuDqnyg58SMtpqv2EBI35EGR774ov/Q1l1/MMzWXWxgI=
-X-Google-Smtp-Source: AGHT+IHAb0nqpCWPmQoZfBCxNCl5tv8h7XN3B8u3Z7Vqf5i3sfa9u/h8L4t9vW3Li12JG6+QSgJiiQ==
-X-Received: by 2002:a05:6122:659d:b0:55e:452f:7aee with SMTP id 71dfb90a1353d-56347d76f83mr1110151e0c.6.1767798579977;
-        Wed, 07 Jan 2026 07:09:39 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5633a209b30sm3175946e0c.8.2026.01.07.07.09.39
+        bh=hTnh7CkZFGGtUC43ryOTlC9N4pV7qcvjxYMPMpt68WY=;
+        b=lrVijrYDhWQa2tka5yPQJbtzWCGCgulgMnb/FUdxXsPoJ73n26zREwbOV92CGF/+V7
+         19Y40SHHHVm7gUOSDfKYxNeCtWgZPm4f5i5E3wb+5PY5HZ4k/2Uf2ySlp8XZGjwpOMan
+         xP47xBaGiN63Uy2DmdJgdriBu7TzDqUrE90w/g1ZmLeHJcOCvpINPiG74CFM/31qKICD
+         qhLho1+xkiBKd78+Wpo/DyRe9O0n/TwF107hizcaD8Vo7MGGKrVnwwM2zBF9f5m3nDzm
+         jAfKDVSebrw1syg1B1Ua+Z2i9mb9goFi1mwGdgsx6Gx3w52XCbR/n6O8gsY+93BaFPo1
+         pEpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuN1KN7FQ5wdjHJua1AEff+XBrtISCMcaLvoBBeVwjv8L5ne5zf3s2Vlwzc7A1v1lcql4JxVlPouzJ7Lu4nNTMxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+2TbFekcmC1CqpxGzbKnB6BXL8JZa6ccz45sdxFTHZ0p5fYzO
+	CVMU73l6Y4WhwgLnT3Sm79quy0jWkWGwjnIlVIeeeslsQZYHRtB7hcvWwOy78g7i
+X-Gm-Gg: AY/fxX7kzQew96kULT98zQBJnkEc+2eMWrImruQa7A3vLLqcyEqJtPULb6/VBFsHOrI
+	XXce/kKSaFvAiRTi5TxXyLxCa8OSZrJMcs021m2WL2/XUIyQO15iupUD1iJKA+0kWqrQJvjxR3Q
+	RaCHdmObkEmfkcGa5ChTcVR+dMuVYb6hyX1gpFBkFArCK9KlsYKlFLtvWscT5F3SS4qQ5jjb1yT
+	95jfR8AVMlic5B8JQ+XS4y/9zhfG64Xzd74V/0Ore5JxeEGnLCWsbzI0LDzb9IxadrFLsGszV7w
+	0GeRB7khDsA0MJTzjWZ7fYIRp6X+3o/sz5UH7WAOmzyL1sTEN+Y+rkHOGiUyhpY7pC9lAs5zBgG
+	jXrw2hPkW5xeBbuUhrSXM3kCbKH3KSwp6MclaS7O0DME3Mam1oSSTXRcH8yQZ4UBv+Evaez+hrI
+	UGpcQ01jkKuGme5FbSw8ykoIj+Gk61kttYMub9ozWXtTOuLFUN
+X-Google-Smtp-Source: AGHT+IGqjVukrznEG3FghaJjjoUkuhMV9nB9a5iCz4vC+CRSff96OAiKEGwvpDs4KFbm/Ktx2vXgZA==
+X-Received: by 2002:a05:6102:334f:b0:5db:cc69:739c with SMTP id ada2fe7eead31-5ecb688c1a6mr873262137.17.1767798757094;
+        Wed, 07 Jan 2026 07:12:37 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec772afecasm3162067137.11.2026.01.07.07.12.36
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jan 2026 07:09:39 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5ed0a9cbb3fso304685137.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Jan 2026 07:09:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXEyoHqEjQiUrJ5Xam1fcYpdpjymUzR84Ad+akX5sKG+C8YI5J0qBP9SMohrlUm1TjbLJ5NcpOc7ZVS+7GuXwG6nA==@vger.kernel.org
-X-Received: by 2002:a05:6102:3e82:b0:5eb:fc32:935c with SMTP id
- ada2fe7eead31-5ecb647f1b2mr1034227137.3.1767798578356; Wed, 07 Jan 2026
- 07:09:38 -0800 (PST)
+        Wed, 07 Jan 2026 07:12:36 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5dd6fbe5091so860764137.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Jan 2026 07:12:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWt37p2WTCmEM0ZhUYB93Kg1eG0slatEKljOKuAbYmhxLNycPrFTj2uBVmeTlEo521cxt1wwg2nunxYJT9c7Pq43g==@vger.kernel.org
+X-Received: by 2002:a05:6102:560b:b0:5db:3b75:a2aa with SMTP id
+ ada2fe7eead31-5ecb688e212mr1021167137.18.1767798755697; Wed, 07 Jan 2026
+ 07:12:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251224165049.3384870-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251224165049.3384870-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251224165049.3384870-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251224165049.3384870-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251224165049.3384870-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251224165049.3384870-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Jan 2026 16:09:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWC_863Fzpo7SstLiFHZYxmomVkbiPWTrhRz6=kzaTPFA@mail.gmail.com>
-X-Gm-Features: AQt7F2oYUDXscAVf8azPEwYoK3VQ5BFBsRCCHz5MK4KxGd9dpeXZLz8ZiwfozR0
-Message-ID: <CAMuHMdWC_863Fzpo7SstLiFHZYxmomVkbiPWTrhRz6=kzaTPFA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: renesas,r9a09g077/87: Add PCLKCAN ID
+Date: Wed, 7 Jan 2026 16:12:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV9CnVBybm5ipadp5MeUZTfG0GrBXLNmV2A3sOq7s87VA@mail.gmail.com>
+X-Gm-Features: AQt7F2oy55RsF88MDpvy-XJ8ZxqntDCnKvwZjjY1H7FzCraTsk4lAgUrlROdqFc
+Message-ID: <CAMuHMdV9CnVBybm5ipadp5MeUZTfG0GrBXLNmV2A3sOq7s87VA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: r9a09g077: Add CANFD clocks
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -76,16 +76,38 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
+Hi Prabhakar,
+
 On Wed, 24 Dec 2025 at 17:51, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Add PCLKCAN ID for CANFD to both R9A09G077 and R9A09G087 SoCs. This
-> definition is required for describing CANFD device in DT.
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a CANFD
+> peripheral which has three input clocks PCLKM (peripheral clock),
+> PCLKH (RAM clock) and PCLKCAN (CANFD clock).
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+
+> @@ -251,6 +261,7 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+>         DEF_MOD("adc1", 207, R9A09G077_CLK_PCLKH),
+>         DEF_MOD("adc2", 225, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("tsu", 307, R9A09G077_CLK_PCLKL),
+> +       DEF_MOD("canfd", 310, R9A09G077_CLK_PCLKM),
+
+The documentation is a bit confusing (it states that PCLKCAN is the
+peripheral module clock for CANFD), but after some more digging,
+PCLKM seems to be correct here.
+
+>         DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in a branch shared by renesas-clk and renesas-devel for v6.20.
+i.e. will queue in renesas-clk for v6.20.
 
 Gr{oetje,eeting}s,
 
