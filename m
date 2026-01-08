@@ -1,86 +1,98 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101D4387580
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 08:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FBD38E5EF
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 09:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767862773; cv=none; b=Nzp3IDzeR6qIHEgvENVwOCEub3RiG1h8v7ioRDJTjyxHxPNReC6YCRPYOwXx+XtZOogq92qkxQCT2ZcAd5zvgy8xV8n/39ZrA0x78FJMMSeSVuslbQ6SOZx0I/NAe41NZtCkXp92x8FW2W3+sqaJ41JwAR3w4pmDBdsTrb7dDlI=
+	t=1767863584; cv=none; b=LrbeKAkVDeLv2Znjj4wUCBwj+0+RbRdUFWDhg+NeePmijbM2h9hRQx8QEKUVKooqaLXELcf7zXLUt/dS6Kx+H61A4LL2y80JbJf8UmcK868E+ZoiUv5bI/YvrP3OF9xM6IhM3QYtlPnlIXVcDSDJ+nbLBp36EyHPt0wllDFCBWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767862773; c=relaxed/simple;
-	bh=aMdAwqjAIuA5BNC1s2ojBgskSNly1VQWwxOIfoMD0cw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hOXx/j7BonYyEF8sta/V+l3cjdF9GNlQfyjAhfIljX2NkkbCio+Gqni51uAwqAljO9x1eFyEjHRTS0+Unf6jdHQbU/dMdYmopbQcojBpDc+EOjgAlphj9rbVij+m8IYvhRLAgr4nHorA9O1VSI2raZvLKr+3lkJsACGu7P0CpYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-450b2715b6cso1796869b6e.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 00:59:27 -0800 (PST)
+	s=arc-20240116; t=1767863584; c=relaxed/simple;
+	bh=/B5yiqA+ekMUmtc6Bq+Hgdkj26PJlhDLIdx4NpvlZcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4Ayo9kNBa8gl42h/lxxx43iFDrj7dJ+iw41fssN6e9kajN33YYgrZu+nXFcCxo1NEQXNrsN7nty/38TvHpyh22wIQxnbgesZcvPL9FZACtwDBfFOrdq2oEW26lMg5LNbpn/5OcPg0sDoqW9p4/u0/lSJhGHPo6fiQRbTtiBNEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mhVbFqOo; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mhVbFqOo"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47d1d8a49f5so19584335e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 01:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1767863576; x=1768468376; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
+        b=mhVbFqOopEU9ULbv80Yr8Yt9hyJx8n0T2RG49I6JZZy7GUCZ3asmt1tx6l5OLgqPlJ
+         /sjBXJfN4O1sXP5kMeCcbUfhnX7Ugr4EBKadfYOLk0EF3vQF3aLZU8Ck2ujzmDbudZ78
+         yKCfhY1fAqTyNwOcp3IYKf6n0Z5y9Tym2FtqYL07EzhYJDSElHeEnCNFr7DbS8CJk2hP
+         qQZZVoTbiTXcWEbbFcDur5Klo0tFFakhjpHud29Ckk6t9bViyiOCsoX7lvtKpQ1DrcYC
+         iEZ69iAddlWPN+yrHBoLzbA/KioFHWnW8c3+1xhRqtiHl4wjcnzJuvuydgNdGePCIjkZ
+         RktA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767862764; x=1768467564;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZMmmgiMrP7PykuOoZT5Ct8AU80Hz1S68kZySKKagG2w=;
-        b=eeJD1lMaBn9X01M04U5f6S7U9zOw/hNqzi00a9ylqmMVHD/nugxyb0R5MqvDlEfNYY
-         MQd2xztNAIbArP/W7DTN56jEm2GhIgjWUmld2VPqX8Ug42MforYdCRuDT5pZjHt5ZJSD
-         motbTSiP5ygrbLHbDh6NtIImnpC4PpCyH+xJZ7UXBdkiCHVov50W8XSEw5mwAEX2b/5O
-         0HlqjrAYPBnZxNKVxu/Ebs/JPBsoCDCH1thAkrXaDpAP042ZSUtXfSN4lcBYLvPPJOfi
-         Zkj1deQ8qXIhdDwsRQGkWgbDFGg2CoeLH7nDHP4YJcCvo6PO73/S6ssVBDVhApJik75/
-         aN+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCdaRgNw6+RuzoU0wQNAn5vRZzv1i8IfIFrid+3z06LHWsDrGdhaoKOBZKi9g4eBRJVCJtA3CiJ9CMtg8CfGCLdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVvoSqsv35Tu/470Gu5tmXAu4MTXYIVttRqHR/nL0zB+4yCTaT
-	8HDcVb/sdZTCXnjstPYvcIMGiIXE8d/MuhV2t0jfP4hwy7p4IPAp2ww0ChBpQGsy
-X-Gm-Gg: AY/fxX68rRfZMksGbj16TYgL8Xmo7Z0a9XXLKCIRFb9GBHJ1osFRQwlpBsv7WQC69zh
-	/JMdvhWhkUalK48aU8kRKsbyVBQ2fuXwVlVxH0DDWl01zcVQat7SxOycvbCl3oN8WKOtUXvqoHa
-	7GDq0YmPT6/YGF3AvNc6/K2MF/YcxYNhxJjgRkp1yjg7iW8NiGj2yaxMa1VWnIDLmCNOXT/99M7
-	/j8OoryZ2dy2TzXJPrPP2Ney6xWB1Eu3CLGbJMjfmtyI52KdGpeMUav06uVY3Lo3QLQ5FDwHwzn
-	oH9Ts9cL83Djw8ZOaDIPJBOGQ2sbm5d7ul89T0DVim42qwx7Zx2Jhi0m3rKFDaeMJ3ph6C64Qgy
-	BonBAEEfJvIqHnDWVxLYZeu5JnW/1e8jNArVKvkYE5bATBIpzVkvXPOm7Empkl8l3mkRLaZsyOf
-	gCfIwc2DwsfdVNKTxPJXa4/3SuXJ09AYf62V+6m3SWlpBBweD1Cf0J
-X-Google-Smtp-Source: AGHT+IERKLLi/LuIpdukXPAjX5WsyoNheIiG8OUwDTHbQa+SKgPxOHrupX73K6+xb1FPy4KhML4IUQ==
-X-Received: by 2002:a05:6808:c3ea:b0:459:b48b:d51e with SMTP id 5614622812f47-45a6bdba530mr2282295b6e.24.1767862764521;
-        Thu, 08 Jan 2026 00:59:24 -0800 (PST)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e288bc7sm3466448b6e.12.2026.01.08.00.59.24
-        for <linux-renesas-soc@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1767863576; x=1768468376;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
+        b=vvNWp2VPuLOiev606ObJzDdG7QboD08q0oaZkKIh10P9mYuzmTW7i6+3Bpkwga8405
+         T6dGoIxAieRwZdnJB1Jfvm2zywinI7J2vYCX1QEz0oNhEsR776nv/4DkbPhNumZyp5HI
+         JMln073mb5pssG0k8qXe6VgvSb7PQfnJSACI8PReaPuqCLCwer5UK5Cl6t6tyOj55NgN
+         9Fu67M2e5zXlP7qRyydUmWOnS71RBVfq9r3CrZ6r8YJigjBC6xHfhKZSOkkAtEagyNHm
+         qKyx2MyLGkxbiqTHyDhDPRqvTJ2gNsC2lsXh16h2aNPRxJwqguJcD61vUYGob244Nrzu
+         xHXQ==
+X-Gm-Message-State: AOJu0Yx1P5JVaLR53igZHacNS2bGdRvyk52oBjhM3ouQFeMkxMQy7Gr+
+	U0HkvHGzPX98E6WrZPNv8pc6L7z7oORb8dCTFGNLuHaH1p9EDnaPlhoLXMC74KZwzo0=
+X-Gm-Gg: AY/fxX5Acqh2LFiFKEJMJ17YZfQwANiNVqTT6Hc9FleRq+pZS+qCJk/OvvWZu1ExO4r
+	WugrI0yz5d2xTc8qqqSeKWzyHBAOb0TZmYpZcsWwcdmS5F1I0ZDg0NlymmZ2vyTBKBF5giifv2y
+	REUJ01bhLw5turuxjgjzB6rBadodE2xdir7TZjFOnNz3F+0u0ui5sTtKIYaz7BmsQ5RK3vFI6Lc
+	yj7m8SiI93mCzQzlIH9d8dwZKBqfhVJ+BpKPPfq0qsyFlnihlXuNR1qKlMSuQQ3WsYavCNscCph
+	Lc3k2yMaKOWrmSk5v8HGU6QhhR4z4S6Ixvk38UkbkF76qMzF6YlTiwUZmazxJs6vF2utjna17Gp
+	+XFtqx/cvXvh3q7niq+/q19QkOM1GWew6Xx4CWwAf/gCnA8kmhPV2jaV9DJaAhb2L07VklGp/bE
+	SrG2EM6Z3OCn0oi/3TTQ==
+X-Google-Smtp-Source: AGHT+IEP9/Gf0jNEPP/nIaOJ3PVVTz+nOM75oWhn7OGPLdOsoh+kDwG2RY2j3+SjdUgMnPGB8cg9XA==
+X-Received: by 2002:a05:600c:470c:b0:46e:53cb:9e7f with SMTP id 5b1f17b1804b1-47d84b3b4ccmr57983425e9.18.1767863576326;
+        Thu, 08 Jan 2026 01:12:56 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f4184cbsm151578795e9.6.2026.01.08.01.12.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 00:59:24 -0800 (PST)
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-450b2715b6cso1796861b6e.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 00:59:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWNp8/9J2vI02N0TMNP9JwGX+NwgRNI5nF/4gAfrDuVJauADn1fEr4AEjy6VEcXpLgZcqkS9Ipb5XxeXywzhrWULg==@vger.kernel.org
-X-Received: by 2002:a05:6102:c0b:b0:5db:fce3:af72 with SMTP id
- ada2fe7eead31-5ecb1eadbd9mr2251987137.11.1767862317065; Thu, 08 Jan 2026
- 00:51:57 -0800 (PST)
+        Thu, 08 Jan 2026 01:12:55 -0800 (PST)
+Message-ID: <f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
+Date: Thu, 8 Jan 2026 11:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-In-Reply-To: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Jan 2026 09:51:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXbiZUbBJp5CBNfsgcX6u1sRGpXKhutg2VP_HLspc7Sqg@mail.gmail.com>
-X-Gm-Features: AQt7F2r8moIHrOkMlf_6a8GIEX9x_afn5WPax_SKTXguBO_eSWO-zKA_pd40Nf8
-Message-ID: <CAMuHMdXbiZUbBJp5CBNfsgcX6u1sRGpXKhutg2VP_HLspc7Sqg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Biju Das Biju Das <biju.das.jz@bp.renesas.com>, Chris Brandt <Chris.Brandt@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Hugo Villeneuve <hugo@hugovil.com>, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Biju Das Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>
+References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Hugo,
+Hi, Hugo,
 
-On Wed, 7 Jan 2026 at 23:06, Hugo Villeneuve <hugo@hugovil.com> wrote:
+On 1/7/26 23:48, Hugo Villeneuve wrote:
+> Hi,
 > when issuing a reboot command, I encounter the following kernel panic:
->
+> 
 > [   36.183478] SError Interrupt on CPU1, code 0x00000000be000011 -- SError
 > [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
 > [   36.183504] Tainted: [M]=MACHINE_CHECK
@@ -144,36 +156,59 @@ On Wed, 7 Jan 2026 at 23:06, Hugo Villeneuve <hugo@hugovil.com> wrote:
 > [   36.184022] CPU features: 0x200000,00020001,4000c501,0400720b
 > [   36.184028] Memory Limit: none
 > [   36.495305] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
->
+> 
 > The problem is present since linux-6.18-rc1, but not in linux-6.17. I also confirm the bug is present in linux-6.19-rc4.
->
+> 
 > The bug seems to be happening in rzg2l_mipi_dsi_host_transfer().
->
+> 
 > After bisecting, here is the first bad commit:
->
->     commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
->
+> 
+>      commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
+> 
 > Reverting this change makes the bug disappear.
->
+> 
 > My limited understanding seems to indicate that the MIPI/DSI host may
 > no longer be available/on when the panel tries to send MIPI/DSI
 > commands in ili9881c_unprepare(), maybe because the MIPI/DSI clock has been stopped...
-
-Looks like the RZ/G2L driver is missing a pm_runtime_resume_and_get()
-call in the shutdown path, or calls pm_runtime_put() too early.
-
+> 
 > The exact same board with two other panels (jd9365da and st7703) doesn't have the bug.
 
-The drivers for these panel indeed do not make any mipi_dsi_*() calls
-from their .unprepare() callbacks.
+Could you please provide the output of command:
 
-Gr{oetje,eeting}s,
+cat /sys/kernel/debug/mstop
 
-                        Geert
+for both cases?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Also, could you please check if the following diff solves your problem:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c 
+b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+index 5edd45424562..62957632a96f 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+@@ -1282,6 +1282,10 @@ static ssize_t 
+rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
+                 value |= SQCH0DSC0AR_FMT_SHORT;
+         }
+
++       ret = pm_runtime_resume_and_get(dsi->dev);
++       if (ret)
++               return ret;
++
+         rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
+
+         /*
+@@ -1322,6 +1326,8 @@ static ssize_t rzg2l_mipi_dsi_host_transfer(struct 
+mipi_dsi_host *host,
+                         ret = packet.payload_length;
+         }
+
++       pm_runtime_put(dsi->dev);
++
+         return ret;
+  }
+
+Thank you,
+Claudiu
+
+
