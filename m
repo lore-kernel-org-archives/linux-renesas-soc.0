@@ -1,72 +1,71 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E78F231832
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 15:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB2B22424E
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 15:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767886828; cv=none; b=Bt0mp/5jOP1PsBZhL5UXMD3cnHm6hj2AKNeCfQzcZK7UjfrUTgio9tdxHR9KKjT9I+isDF5DddzCpR9F0rC22J5zigWRiZIe/fw96CdFffrky7yt8gP97gWjBKaF6twmrmfXX+VVluzQ3thjuOW/snN6+ysQK4sIj1kJ3UR05Ls=
+	t=1767886926; cv=none; b=qMbrOWKvKkXjpOUvikBqGQIqdwjwjhZihADawWfWfRvXFvxO5+YO14zmYDPIxvG84Aop6C1bWzRBqntoFeKSe4bl8R4oAs6RU7lQvrT2BZB8aJo0AzL7X7d2brFs/5JasRZYdYXXx2RkMtnOSaXP5eC8jjJW/H2/06wJivBdivM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767886828; c=relaxed/simple;
-	bh=G7JSDJeyfhq10WIyx1yxqUoIHN0VScyPB72n/Phi9m0=;
+	s=arc-20240116; t=1767886926; c=relaxed/simple;
+	bh=T9TwGPbtb/Jk65sCRD6p+Z4CpjSXQctqiN+jSbkE11s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EXWJOgnPS+viSpWuBuaogwjBME2QwWKKxor0vo9lT3IBkaMJhtKG+10DRox+dpXpCpeb/XPZMaOMC+meIhDnnB9c+qlZ5bLo0UPOQfi+UV8g6t3DjbE2BApmIoIL8SRNM2g50koZZZPg7olPUlXw4bH/yLnUN7k2UN9TMV1qfHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+	 To:Cc:Content-Type; b=RjPFdIrgzQeCshc4takUKeHPm7XTjvBxIWxlU0V7LENkx2tntixK7m5lAIzS3/Ajc3gpehlmVN49Ol+i1utWaLJyuHvcEqIiBqLILHZUHWb6b0kGnOWJ7YtIgrk2yAijXhwqMTO/Y4V90tgnmOuWhz1ShnQ+tENdrdcn9vxvcWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-560227999d2so1205510e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 07:40:25 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5eea3fe88bdso144930137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 07:42:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767886825; x=1768491625;
+        d=1e100.net; s=20230601; t=1767886924; x=1768491724;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LPCEMds3NUNJIzMjaHhQoyBDppqgLalAn8n+Qce6geo=;
-        b=S5bnzB9RoGOAWDKNVR59LPO7ap0GY3GEDb2b6+MX+H/goFN9URlMvQmEVcdXbk26Ye
-         pWv8Tf+cnlVaEM7pisH0qBomZsjZ73bjzhTddzUqGG9bGgQCx4cRPr7KWD/KTBaTrS1A
-         Jb/yC9TcAS5/Yl66mFozFl7hG1hOiV/GVNHU8CoOQgJnt9Vxzji8ne5zADLXv84xw9e3
-         IyXWeTXmQYKx4qzfNm12S+qqpNtMu219i7LilxpPZ615RwwE5SdNxEcIgpjnVWtSeuxC
-         pXYL0jh/JUPDEk2DXiih+eiu8CDt84XtqyiC9MClHm1I9pMSaBMirhac2tuRFgUq1tjF
-         F8Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXuTA0LhCxeFqMmLDXf0leuoNG4vyT7Cf+Ey1KB8jCOtx1Fdl7ou543KPKX9X9l+N0Z0PJ+it6kAW/yofR3368MXQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMfqNOAWMBlOmPHB+1Ax+o73iXPulqiWb4Asm1d5ubHVP3s4Ci
-	6xeuDU3+oROwDzOTMFVQoVY61Go8RpmG0coqywsMBczQRjU5MZGVyzgG1055HNqs
-X-Gm-Gg: AY/fxX4/6X8O0lSnQYV0UXVyT0dN7V1+I5UAp/5PinwGHXL1e5ls7YvQtVRJ+h8Q5nc
-	YUxqbwtKCtSOxDxdyyw1/1ZqRn41k42+3SbC7J6ZybnmQFTIUHbI+O8AHXy3yT6C6LI6H73jFh0
-	zG9PA2uYqQ8uCgfP8g0mLHo+6NrzG7cLlSP7FtrT78snMGpZmWDwP9LbDvVSgMF3pBSDL7vPorP
-	lZ4+MRuVYhc3GB5ymGvePlDiRCYeHaRCefKmQXigDcPDB6y2KKWA3t7D3XMq1FdG3BIiX9PSsWi
-	tIqTzf/TRlZEwZs+YbcQGqvjnmp45EHzOnSztzOgzhtiaH0KM+wJ7e5EKN9a0gNZ+X0Oq3qBi3K
-	tZTMfuA1chHFXKzXAj89YZtlEiJcjU4kOGqjTVViVeNySrc8rFnoCcBCACdizEqXmMyfJ3WG8D9
-	i/iD+3sh9yjcyS/x+lvasHvpLWF73iijVtSkqRMR+z7H6cbZQ/Kyase1gfAZHP4W8=
-X-Google-Smtp-Source: AGHT+IE6+uEpzgvq/KkvFZPjEi7wMC1PHEfmP4Ui49K/zD2vdkV3eCkKnUX6+iJ58GG6JtOHLwjIRw==
-X-Received: by 2002:a05:6122:3c95:b0:55e:6668:2e22 with SMTP id 71dfb90a1353d-5634801a5bfmr2109802e0c.21.1767886823579;
-        Thu, 08 Jan 2026 07:40:23 -0800 (PST)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5633a443e32sm6525071e0c.22.2026.01.08.07.40.22
+        bh=jdIqtM+rBkxv36T/mfvwWrTjJhzVX0CXMe7ykzjRBh4=;
+        b=XVRLFwQWIF9vV8ZypYlnIiLvDGLpmCL28fozGpmFYKVA5iwxihRlJbEBNNWWn7ZFN7
+         rnEqH+EE2GXPv9oKTmFfWemgHEfxu5KgbiufMZVLSVodOVJGR4fMXoiopLZq0JNI4i6i
+         VCkcWAFabAZuWdv9o2VY8wq/nA/DvdykdcjWX+iDDPX/Sq2ponyZ/4hvNrbEHbacBSDT
+         JgY6qrUs4ln1G+IQTCrafNI7q3QoZRVlbzAPDrQ9hEXrD7LJrA0FpLlxZTn9dS4G/APL
+         HcBAPelik0qIuT1WQpnLa1AselfxJm4dSXWVnMhJ32VcVE+FrePgPVre5Ljje7SgOQoQ
+         mazQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx0WJEK+ZW/iIyguyGPZ3I5XjidIb1tDTe5Ogitw8DC6p9v7rDfTdv6N32CiSrLQ55ojiRLJd9jCv1lhw7/VhFLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwibSZulej9wM2ZijgvZA3rTGkzdba+I1Up8mOR6QWWxAphGj4I
+	mhb65SxHqCWoYtjHlnUlg6VDlu9skNZ6cp3SZFTSUzKYwfBf9obeTNFoXy/ZKNbm
+X-Gm-Gg: AY/fxX69e829YyG6OFWIaC/oYwbbu52eQaLGLGn0rNibbtGn0/gCjwq5H4IyHTj2SHJ
+	L3ax0NPIwHX0SkeLSkO+Y1AgOZxTtqD3NmDCXZwBcfb7Nor4aoFVQ2j/EArdsY25e8YscL1cwod
+	Sc8b4d2e6YHnOTQGil1ACEIfxfAH4SLBrxUSwzWcnzDbQzdrBGeZUDcs1cY44dZPU8K+adDHx1o
+	2mBp0ToIG26VWOKow04DpAPfev5WE0lO13KTDHcQgzrrIl2Xzs70PzK3Z03pi7yC2pgKkRd+xZU
+	9/YWNlEw/NTYkWevHcazXPHbaT+P+4k8oLakH6iuWsJUHykUVrrB3xkqm+TrBNVBdLOtbmujvas
+	3cSHO0hc3BFRvVh9eh4BXPzKP2M76FkWSOzrT90XrB1myw7gLXKjXOw/Y4cCxdPcq12e202VsjZ
+	uduKP4uU6uxdthDH4fNDCfeFdAWCQsNY0jLkxKVjT4KcBF/ggQ4hbqL4IM3yM=
+X-Google-Smtp-Source: AGHT+IFNMSX6oVshbhbzhQfSSaf3NL+2jo4wWXE/RoCDB4IOEAS85GegSfA1jbMM2vTltlPrKasPzQ==
+X-Received: by 2002:a05:6102:604f:b0:5ed:f26:55f4 with SMTP id ada2fe7eead31-5ed0f26580cmr1860851137.34.1767886923711;
+        Thu, 08 Jan 2026 07:42:03 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec7702eb72sm6560016137.4.2026.01.08.07.42.03
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 07:40:22 -0800 (PST)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-560227999d2so1205484e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 07:40:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWSmZnwefwhOFfGVeelupG3DnkLt8c1Fw0zFzlIjgjq+3NePEMsFvmEFtqH8038dtHUnR9pT60gDBKVjj4zhHXx6A==@vger.kernel.org
-X-Received: by 2002:a05:6122:8c8a:b0:539:2a2c:6efe with SMTP id
- 71dfb90a1353d-56347d53d51mr1984301e0c.4.1767886821868; Thu, 08 Jan 2026
- 07:40:21 -0800 (PST)
+        Thu, 08 Jan 2026 07:42:03 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-94388cfa259so1056428241.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 07:42:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVqjFTgcavKriHGt+bzzoGGzqNpQJCahKRmx6fBMtlfHiVsTDBxkCeTq67jrCcTYWwe9dA1Crx/xXUUvJz4HeVMUg==@vger.kernel.org
+X-Received: by 2002:a67:e112:0:b0:5ee:9e4b:a81c with SMTP id
+ ada2fe7eead31-5ee9e4baa91mr722934137.22.1767886923130; Thu, 08 Jan 2026
+ 07:42:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251126130356.2768625-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251126130356.2768625-6-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251126130356.2768625-6-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20251126130356.2768625-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251126130356.2768625-8-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251126130356.2768625-8-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Jan 2026 16:40:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWY1+xo0sLs_OxLNf0ES0pZy+Q-u309gRXuTsZ3cf2ACQ@mail.gmail.com>
-X-Gm-Features: AQt7F2q4mnTwj4mP8-vYCbbynRSDudO3B41aJiCWB2w7nQNsSq50R88G--5ck-E
-Message-ID: <CAMuHMdWY1+xo0sLs_OxLNf0ES0pZy+Q-u309gRXuTsZ3cf2ACQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] thermal: renesas: rzg3e: add support for RZ/T2H
- and RZ/N2H
+Date: Thu, 8 Jan 2026 16:41:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUVhHZgd7MugxMk85gvzTXPj7GsgmWRef6KjH2j8WUkEw@mail.gmail.com>
+X-Gm-Features: AQt7F2oqUJcYTOpHjX-h4M0p98Sgtm1uZRHOlAe1Y5tgQeYww1060qUHgkV9uew
+Message-ID: <CAMuHMdUVhHZgd7MugxMk85gvzTXPj7GsgmWRef6KjH2j8WUkEw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: r9a09g087: add OPP table
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
 	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
@@ -77,63 +76,14 @@ Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J . Wysocki" <rafael@ke
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Cosmin,
-
 On Wed, 26 Nov 2025 at 14:05, Cosmin Tanislav
 <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs expose the
-> temperature calibration via SMC SIP and do not have a reset for the
-> TSU peripheral, and use different minimum and maximum temperature values
-> compared to the already supported RZ/G3E.
->
-> Although the calibration data is stored in an OTP memory, the OTP itself
-> is not memory-mapped, access to it is done through an OTP controller.
->
-> The OTP controller is only accessible from the secure world,
-> but the temperature calibration data stored in the OTP is exposed via
-> SMC.
->
-> Add support for retrieving the calibration data using arm_smcc_smc().
->
-> Add a compatible for RZ/T2H, RZ/N2H can use it as a fallback.
+> Add OPP table for RZ/N2H SoC.
 >
 > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/thermal/renesas/rzg3e_thermal.c
-> +++ b/drivers/thermal/renesas/rzg3e_thermal.c
-
-> @@ -381,6 +385,21 @@ static int rzg3e_thermal_get_syscon_trim(struct rzg3e_thermal_priv *priv)
->         return 0;
->  }
->
-> +static int rzg3e_thermal_get_smc_trim(struct rzg3e_thermal_priv *priv)
-> +{
-> +       struct arm_smccc_res local_res;
-
-Missing #include <linux/arm-smccc.h>.
-
-> +
-> +       arm_smccc_smc(RZ_SIP_SVC_GET_SYSTSU, OTP_TSU_REG_ADR_TEMPLO,
-> +                     0, 0, 0, 0, 0, 0, &local_res);
-
-Can this crash? E.g. if this SMC call is not supported by the firmware?
-
-> +       priv->trmval0 = local_res.a0 & TSU_TEMP_MASK;
-> +
-> +       arm_smccc_smc(RZ_SIP_SVC_GET_SYSTSU, OTP_TSU_REG_ADR_TEMPHI,
-> +                     0, 0, 0, 0, 0, 0, &local_res);
-> +       priv->trmval1 = local_res.a0 & TSU_TEMP_MASK;
-> +
-> +       return 0;
-> +}
-> +
->  static int rzg3e_thermal_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-
-The rest LGTM.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.20.
 
 Gr{oetje,eeting}s,
 
