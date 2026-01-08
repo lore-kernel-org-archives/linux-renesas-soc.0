@@ -1,189 +1,109 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5958D3D1CD1
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 11:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BA54F29A6
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 12:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767872684; cv=none; b=ljd3H4m5br2+M3njYcf8yidQOnDZOrTkNLp3fJ/wuucQcXRWphbfPPGv0fwbhiOLGnEhfL6aXeRQmijybyh9qXpYUKM94O0p/ayb2QB2R7ISEjeHUWe4FKOjVtoCfd9Umlomx1vT/YmeSv1Rfo79ChvdU/EaAAVywVdC5c8NdAk=
+	t=1767875679; cv=none; b=Q7H0ZT7/M/BHQ0854mxtv2OXqIfsT8GKTYACtqeQNdOlo3qk6XS9ZaACsOjCGwzvQ2N9oKEKf3pT/+nEKz4Je/wXTaFcuH2EklOmHaf0vfOzthjs8Y3jncIzZpzHEo6kTEcXQGgjZ//NE4wDC44hIJTVdYEra4irZLoc2ZXl1A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767872684; c=relaxed/simple;
-	bh=c5b43E0GnOfhYe35FNpzxBQXxJaNPMy848bxda5ueRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ed3swVgo7UhspDGRnkZpPwpWghS6m7V3RiJ0sJEZadmzsaLXbt/vQvN6pZWdF4dkW+5zYk2uzCYPuv3U6hynZ+01F5MLQmHpLiz0LWsn21bg/O3ULDD5XwskHb9aN1vekNy5ON/qrPCzsUY2Oe0oosmgjpwQJId9dt7WD3v88fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HfOt6Hpq; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1767875679; c=relaxed/simple;
+	bh=F1x0vYfegBL7n3iJichIb1PGAil9viNpxvOdcjfDOjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=liUn3u3eaOrtbqew4zzp+XsWCizmHm1M9HBTmnuE1Jb5Zqf4c4rSpO115hJPWyUIMJlZ82nAmK/vm08pcs/vX7jb522I7prJ2yVwhgAYub1/peeKDwnMBKzuK37MOR5mo46y0BiHrEM/J0NRJNWmzGobZwJSeZZlE77Q5GBNNIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBm0FK7n; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HfOt6Hpq"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47796a837c7so22995895e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 03:44:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBm0FK7n"
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b7ffbf4284dso457450866b.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 04:34:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1767872678; x=1768477478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PXVp7c2KZyPxfovsWjA2iVt8yUE2heAGChkNokDPQjw=;
-        b=HfOt6HpqSVcamO5ZckK1EPdxpfJM+gW12wwBnbJqtQfzkyNDpA9qTNqrc71CqrLIPd
-         pWnFpsct9wZpoMUNWDHOkDtVJsvLGTdZM13R/dp6vCe1n64cKACpwWaTbwhK6jXYJKEn
-         Pwx9bImCtKeUQq3ZRfnUEaCYQrgLNyeiQZ9IFvHgEn5L24i5WjqplnMPH2ilFB0bQqyp
-         q3ymtDeZ3UqrjGIALUJXHCO/Ig91xLbt9YAzzMeKRiguy1hvNOZWzM2YtI4+QBp3aAoc
-         tdpC0AIx1lKd+qemDw54r+8/t4XpbFxWU+kXxDuYLrOdimPoCW4x6eHKEHbXhj9tqFvI
-         K+3A==
+        d=gmail.com; s=20230601; t=1767875676; x=1768480476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QxA3rCi4n4Zd11T4YjtWJ+fLfFPU0EDYmXEJgipwb9E=;
+        b=YBm0FK7nhFpRjm14qR7F9a3mNpJpnA8FH8kueIg4n6zYlybC3DCkLmjJCl5xR1o4U/
+         lqW/kNaWnsjTuSd04FGdK0RHZMNdnQUj45ixrJXrN7Wp8C+pzoWBwYMc1BLp41YBDziQ
+         AZkU1jQPMZYIqAbsauPWENFFBQl6sPKR68cIza7LtNc+sNMFLJvNGnVIEFIF+BMweJm/
+         vbyL2a/0mT+MR+e2aShGCzzjovXoWDD4LyvDmG7bWipJ2ewvH4cnzxPsdyu7otkjMij1
+         moZSDnXPY0sjILrSQZIHKlN+KQWBjmHaMz9ok9KdgvFP57C3N60PsZH4yAPnnORhI9Le
+         D6uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767872678; x=1768477478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PXVp7c2KZyPxfovsWjA2iVt8yUE2heAGChkNokDPQjw=;
-        b=PsF1kHVYGp7akfcUaw6cO4eObpWV6DsPhkvFSzKK/6A3lfJvO7hsifWYj8fyvE8k1/
-         HTriycu8UOFikDAv1NXagsBPWNTCYU4u7MPVWeVR1E1k7BEzOpdFP5SSbddcQuI4K5yx
-         INbGgTu4J4vcMdCABgQzCkw2Gz8e/MRxTM2g1wI0T4TmOMsuhHyKVBz4OvizE9VhqO6S
-         sd1QS0RCIL/QUEEW9UUlssjVzVB2o9xyWsmc0rEd679SDdX4U+6pCOqAdDAyu+lkgh/J
-         Fj15o9QizO7BR1xxsDG85P+BWkUocNqcGw7No9w+HkiAn8QXKKFZ3TfbjinB6zsD7CL0
-         WbEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD13ckrh2gl7nn7aBhVv6nqpWjx6qk1RgHbK0SAgPAlqoimRvgyJRMzC5uP5sSHsfHtACHaxBTpW7K4mAYZ/YWDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBe/+kyYQOcCwmnVyp3X6/bEhgxG7Lr6PUuc+/wDa2B59RqaoT
-	wXGa+1HWL7xacWJ1j2WcxeMoLBINez1grJtDC33XHRb7jIjtt/ESsQ23L/PoTthqT9M=
-X-Gm-Gg: AY/fxX5s/AUj62dcmYsIb/VGb/iEoo3UcjIcpna/185sTFjk6La6UtoHgnB3daZ7eHE
-	EeuizW1FWF5ou7IcgFN6ng8sN8zK1op3SRnKdmGgIHFFqSvK8Nz7xwgrlLy83zcP5GHyVr8eVC7
-	Oh5wAO0vdtmNC/lPq4NyxHTfLfHBfblj7h9NfLf3+i5aiM5FSlhwz9byRveKZ0fRaOeKcPJxu4z
-	Hyj0v3wsJoZCN6meb0MT6YG98PqeZp+XUM3ZYgHj+vIjAohpRImkleKhV5fLwjS04h1OV0CZCQ/
-	RDB6n3wW2s2Dz1g0ntlNZXXfWYMXkAHgfvaCMqSMYMDdliLIVrbLYnbuMK8WaSdAQ9b43P18Znm
-	rFIaYr4Gjxe+xj6PBhQ+o5Yf8uEsy18Daj1nGIU2ijWh5D68iU3JNIwbjuXPv/4SCNsk0v/uM8L
-	Wtt0kJlx+aMMRwOpwEFw==
-X-Google-Smtp-Source: AGHT+IGAmHmwWFpxTlQrxXJ0dmlBdwdNLlou9mYsvkBH6tgG51GMjsJCWMV2eI8HMBpAFse4o/apJQ==
-X-Received: by 2002:a05:600c:3542:b0:46e:32dd:1b1a with SMTP id 5b1f17b1804b1-47d84b26bf0mr63907685e9.7.1767872677950;
-        Thu, 08 Jan 2026 03:44:37 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f65d9f0sm155006245e9.12.2026.01.08.03.44.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 03:44:37 -0800 (PST)
-Message-ID: <83ead495-04c9-4dad-b971-29dca4c45898@tuxon.dev>
-Date: Thu, 8 Jan 2026 13:44:36 +0200
+        d=1e100.net; s=20230601; t=1767875676; x=1768480476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxA3rCi4n4Zd11T4YjtWJ+fLfFPU0EDYmXEJgipwb9E=;
+        b=nMybvCVPJufNmy957fcBeO5lb8LTarfXyIsTp8Pa3w21qOSwchrkmor2nXFKlFgkq9
+         dL5CLfAwwLTGX1m5UsGKbQxyu0XaJFvDLSnchMeaqIELyvGTDmO5q/eUQPYX8uZH3mNI
+         678yNMBuLWbtY5x9ajr4FjXxdiLTTzOnrNk3gBDcH8DdPgeUTBBJ5BVw9sCtomfYVQCt
+         FoFbF3+b84NujarZOe40tYsD9xRFojer16pAyRVo3whZyOvldOI6MTe+o2L/04KgPDLS
+         W6i+uT+ve2p7Bp5OSU8lTkbcrlBVxv0x/JaZwt3oF/iNrMgyEc2PqjuUNOkEy50TjdpT
+         vjRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGnUT75SyyBJPm+b9RICq2RcB5GUUK05AFvT8K1Qk6pLPHjlC+soVZCwoOFdPOqEVnxE4v1qrZOkThJ97W7uQAkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8v0UsYcDFdbB7lKzh1rnHOKPf7mpY+HFfqP7gr2v4311sT7Cd
+	HIRccE59hggnamAOAQ4bS78slIXkotbN+FE3C+XNjJly8Pkym1Wmp/e+
+X-Gm-Gg: AY/fxX7Dgi2jognUy9dynoZKXg89EO7WR8+CE5WubW6wp2HK+Ubkt4wSQWUtPZ30wVi
+	3OZrkdvpM2h0SCiaTvv/nFc2YzgRcIQXxVq/6lihXB7jC+wZXMwPzSnwRk7+nkuIeS6qUKpjfpH
+	oFeEld2dFJzQY2oK4sdUuTgG0r1RM2Z8JeJuSpiZWzI7HWNjwGlfa9wm2I9Y7otehtoSSAh/ZlS
+	rV6xZjNhF8UvtcPIj9jX9df7syP8d2if9V+Clni0fGXKb9OFAc33HAF1+7FFs0qD75GOi823SJd
+	Su9YnH3Dr3jXDtAk9muWPc8KDEkNx8wNaa/ryGnlnHVt4EFUQ5sTla2BGKiyRe8DQkY80jCAX8B
+	Jj8oF4xcRYRi1IXicrtYpyV9EZ5alww1x5LX68NE/Ny+/9h2i3G3c1MISeDHCjRdv/+P6T9iVkp
+	cAQIMyW4kDBczBnMybqRRZc6SZZmF9HLIqVTs=
+X-Google-Smtp-Source: AGHT+IGDYWBzdLP3GPBfT4boWtLi0Nz7sIczo+oyRUwJh3nn+ZhSgyvvzjobNVrE7I2+mIZQNWdOhg==
+X-Received: by 2002:a17:906:6a1b:b0:b83:3294:af63 with SMTP id a640c23a62f3a-b8445031bd4mr517614466b.1.1767875675518;
+        Thu, 08 Jan 2026 04:34:35 -0800 (PST)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:a172:15fe:21c8:edf5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a56db21sm780412166b.71.2026.01.08.04.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 04:34:35 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 0/2] clk: renesas: rz{g2l,v2h}: Deassert reset on assert timeout
+Date: Thu,  8 Jan 2026 12:34:26 +0000
+Message-ID: <20260108123433.104464-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] reset: rzg2l-usbphy-ctrl: Add suspend/resume
- support
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260108102600.3477012-1-claudiu.beznea.uj@bp.renesas.com>
- <20260108102600.3477012-3-claudiu.beznea.uj@bp.renesas.com>
- <7b4aa36772039d6607bf0aee38bd897b773e3f7f.camel@pengutronix.de>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <7b4aa36772039d6607bf0aee38bd897b773e3f7f.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Philipp,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On 1/8/26 13:19, Philipp Zabel wrote:
-> On Do, 2026-01-08 at 12:26 +0200, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The RZ/G2L USBPHY control driver is also used on the RZ/G3S SoC.
->> The RZ/G3S SoC supports a power-saving mode in which power to most USB
->> components (including the USBPHY control block) is turned off. Because of
->> this, the USBPHY control block needs to be reconfigured when returning
->> from power-saving mode.
->>
->> Add suspend/resume support to handle runtime suspend/resume of the device,
->> assert/deassert the reset signal, and reinitialize the USBPHY control
->> block.
->>
->> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - collected tags
->>
->> Changes in v2:
->> - used pm_runtime_put_sync() in rzg2l_usbphy_ctrl_suspend()
->>
->>   drivers/reset/reset-rzg2l-usbphy-ctrl.c | 94 +++++++++++++++++++++----
->>   1 file changed, 79 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
->> index 9ce0c1f5d465..1a1581643bf3 100644
->> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
->> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> [...]
->> @@ -266,10 +273,67 @@ static void rzg2l_usbphy_ctrl_remove(struct platform_device *pdev)
-> [...]
->> +static int rzg2l_usbphy_ctrl_resume(struct device *dev)
->> +{
->> +	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
->> +	int ret;
->> +
->> +	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = reset_control_deassert(priv->rstc);
->> +	if (ret)
->> +		goto pwrrdy_off;
-> 
-> Do I understand correctly that this reset clears PHY_RESET_PORT[12]
-> bits in the RESET register such that rzg2l_usbphy_ctrl_init() must be
-> called below?
+If the assert() fails due to timeout error, set the reset register bit
+back to deasserted state. This change is needed especially for handling
+assert error in suspend() callback that expect the device to be in
+operational state in case of failure.
 
-No, this reset is the reset of this HW block, controlled by another HW 
-block (the clock controller).
+Ref:
+[1] https://lore.kernel.org/all/b417865397822176e83bca6b9d8094fe92ff2451.camel@pengutronix.de/
 
-Bits in PHY_RESET_PORT and other registers specific to this driver could 
-be cleared due to the fact the power to this USB PHY CTRL HW block is 
-turned off in suspend.
+v1->v2:
+ * Added the variable "mon" and used in readl_poll_timeout_atomic()
+   instead of reusing "value".
+ * Dropped the assert check in error path and simplified value using xor.
+ * Added Rb tag from Geert.
 
-The Renesas RZ/G3S SoC, that uses this HW block, has a power saving mode 
-where power to most of the SoC components, including USB PHY CTRL, is 
-turned off.
+Biju Das (2):
+  clk: renesas: rzg2l: Deassert reset on assert timeout
+  clk: renesas: rzv2h: Deassert reset on assert timeout
 
-Due to this, we need to restore the previous settings. priv->rstc need 
-to also be restored as power to the clock controller is also lost.
+ drivers/clk/renesas/rzg2l-cpg.c | 9 +++++----
+ drivers/clk/renesas/rzv2h-cpg.c | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-> 
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		goto reset_assert;
->> +
->> +	rzg2l_usbphy_ctrl_init(priv);
-> 
-> This assumes that consumers requested PHY_RESET_PORT[12] resets to be
-> asserted in their suspend function.
+-- 
+2.43.0
 
-That's right!
-
-> I think you should warn if that is
-> not the case during suspend.
-
-AFAICT, that could be done by adding extra logic in this driver to store 
-the state of the de-asserted bits. We can't interrogate directly the 
-registers as there might be the case where these resets are used by 
-previous bootloaders (that might let them in the de-assert state) but 
-not by Linux. In that case, w/o extra software cache, we can generate 
-false positives by directly interrogating the registers.
-
-My point here was that the users of these resets will have to properly 
-configure their own requested resets, otherwise, they are not doing the 
-things in the proper way.
-
-I can add those extra software cache for the hw registers but this is 
-what I've tried to avoid.
-
-Please let me know how do you want me to proceed and I'll update.
-
-> Saving the relevant RESET bits during
-> suspend and restoring them here is probably not useful.
-
-That's what I've tried to avoid.
-
-Thank you,
-Claudiu
