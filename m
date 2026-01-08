@@ -1,135 +1,104 @@
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+Received: from mail-vk1-f194.google.com (mail-vk1-f194.google.com [209.85.221.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1C14F29BE
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 12:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D8A350286
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 12:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767875681; cv=none; b=Wnhq+GXuV8UM34aaj+2JLwcASjrPnEq8v0i9moiaUcrDU7M818T2eFCaiT5x6WFa7pav78p7Hg246Nou6tnPJ8ZARFsBdnjrOoFs+juDgAOzoUIY+EQMdwZJ/T0T2QrrQIMlJSYFl2Yq8XwBgA4sHZ3aPb1f116U4TtsvpuOT38=
+	t=1767875937; cv=none; b=TU3vRqh0Bp5M+Kzf4TCE9Lxwj3XDpkf+dOzQpQUGypRbEluTIu4pEF9dayDM3MOIIHdx9NGdk9X5mLdoGHV9IrMLFHaCKi0tx8PbpfECuO2jQPBoBo89eYMd6035CBMF/qsjmFFrZAqGiRbz5eOjSOcBNObnRMweyXNbEhygMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767875681; c=relaxed/simple;
-	bh=VFIU6oRaDH9Q5I6u83icDPhX1E3PIl7DXyKWm0LGw7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MRA8YQRXSq0cJ/zYa8cWV4DNzWZ+ILllEoXJJ6p3ysVItu2PCKD8Oe3rQ8OZ1LC/XuUv9huCtuiYEkI0bHsY9PD9ImJMp2MlUPtFcroUy2p+A92tAdfHxWBVPy/7j3FpukYkuuQgp8UhSAhUpxkCnzMlbnCVx/ohnhUI3s0Sffw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXrAUs97; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1767875937; c=relaxed/simple;
+	bh=55ZFRUPeDA/RxlGqo7HHBvj6ZABYAeyXZVfIb0RNEoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sMc50XoHnYbjjWU4LWbaVkjW5RdK16aQnjt4HPA22AUwQlFLtIox97C/4CH6vlPOfX01Vi51H+vyWSHeBxhPjrjt5F8NZyhr/ABG4C6EBy+3k7ATuf1mDukZ/cCH0ymfyqvmcfj59mrL32JHjHAEo8v/1/uC7/oXfBrUKvNjUIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXrAUs97"
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b843d418e37so315280566b.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 04:34:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767875676; x=1768480476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWpdF/L1lGPO4cNpY+tbEjaN0of/AygjMtoXE8dzuSc=;
-        b=JXrAUs97wMSdFRyYng+BqDMx8QmizXXQY1Iv8PI6lFAM317xdY/vWE0Ve85ILLasCd
-         04doTZxbw5CxEsfh5AOHj7YwMZbpf5QPXVU23YxEbTkPWQOHYKQ9jl8ulewJRz4ve0/z
-         PAAda5OPSBIFd9vmgIsV4AZouIKUc+HEr+qVgrnkp5hq+MsbPzShrsInSVc281BSrdUZ
-         oQkPSvuH2poaEg5UoFAisQouAcikcsa/qNlyX3UKxBaLBDBixXSQDza8YuyLvXb1TQqi
-         L4wGq0ITOYF0MWbVCpd3/I4VpubwU3JjR2+gssy17+usIUCp1/Nikgz8Zc84beUshQJn
-         rHuQ==
+Received: by mail-vk1-f194.google.com with SMTP id 71dfb90a1353d-5597330a34fso2232552e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 04:38:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767875676; x=1768480476;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fWpdF/L1lGPO4cNpY+tbEjaN0of/AygjMtoXE8dzuSc=;
-        b=lfHkEpCey372lCHXIl9SLWnQPQWzGaVQqTQj5/OiHVwYcTYdhu3eh9UO36Em6SFSyS
-         xm/LOQYrTMcJ1HgbliuCiGZ+67p7tJxYFmTbhHlKqCREmZlrBZWR6qiHdwxdOBlsXH6g
-         NbuVtxsGIYxrnn5XfpxgAxliJTsD2fF8nhO64jPgWx53pf50Jy21jwUv0HB44nIxjOQj
-         PwPiO6wI1gmbmUS7M0sih1ap+Guxi+CS/OxRsCNZeu4BWCEVOdOaipZwBMSl0JD1YW0O
-         sow0oLnGhn0Dr9hPmkEfjXTxxZfc20iJv6MLSNSFpBIS+UJKiM5JL3aj+OWmJq32p9CI
-         Kopg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfGpUZzinkjm4s+o9R9WqmH51fq0CqGNyD9raxiZ7o5MNNhwA+0TZJeSp1eJuyrSfs+Yd1M+4o84z/coPtANSNNw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO+nRZQRxlvO+z7PpFUr6gqvtoqRcf6fECtnT+to1wdPT7p/Tk
-	pKeGh43+pMmRMpgzxxiAlrm+YoZZnzPqGCov2CVdMqLncC04K2vrfi06
-X-Gm-Gg: AY/fxX7ToQLJCjj4tTZXyNqO+Q4oTq5PCC8QOBo0y64OCaI3nqq9Cn+uEds7hU2sysb
-	Dwzd8+/u64UTakv2lv8dkN6yeqhZ6JbrnTrbwpI6DfnbOdj67vHsuS2YOZyMzA/Ug1JbDQrWD1G
-	2BD9gC8ty9kChNhdB5d3KAFLMcX2X5JFykM9h2VsluYifTD6qNehmdboCSzGa9yEG4fnm5FYE63
-	gvIwM8KFj4e+iC+3ftuFsZxmsFmlRel0ilu7lvM+7Gt4j0QQ8bKoo2fMRcUhOMelfo/e/5iVY8A
-	r1GxH8rk77yaohtGKQII6UlgmKKgTuiEz4ZlPco5LD0pRFW8y8SyX1dfPFfDp3fnnd6g9F/xeOx
-	uvXQpRFEvYgmcCVvyLxjeprSs09at182xXQXVaecWraQ8by02Thdp3BHgjKw7/rF/B4xI/anfFH
-	oc6E+CLfPb+x83LDqSomPCZn0wP+JRdyZR/ks=
-X-Google-Smtp-Source: AGHT+IGig9B7upsLQy2U4wXWc33e3+oUXUybZoUQZ8HJCrrwThoX1DnTNrMbMy5YFQG+q8WoWyq+OQ==
-X-Received: by 2002:a17:906:ef0c:b0:b71:ea7c:e501 with SMTP id a640c23a62f3a-b8444c593c2mr701325766b.4.1767875676040;
-        Thu, 08 Jan 2026 04:34:36 -0800 (PST)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:a172:15fe:21c8:edf5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a56db21sm780412166b.71.2026.01.08.04.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 04:34:35 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 1/2] clk: renesas: rzg2l: Deassert reset on assert timeout
-Date: Thu,  8 Jan 2026 12:34:27 +0000
-Message-ID: <20260108123433.104464-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260108123433.104464-1-biju.das.jz@bp.renesas.com>
-References: <20260108123433.104464-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1767875935; x=1768480735;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELrfmmP1+i+bzWrmPxdKmIn2tj5LiL1x6bd19VsxQ+o=;
+        b=FamRd7ozYNq0QMEeNR1EAfuTWeHbBH62C4Pwt2VG51ir/0aONVftJ2vDOo6fEbdaVB
+         UN+7e2+nwbCJ6All5A9Tl3KxNttZdtOOzOAF/LBP7N5UYLIkyMv0O6t3cJVxNPeQUx8c
+         k7+uxAyQRlGYpqnkkvOMSkedwKRjzw3AS1/HTz9y9UffmUQWAZPI3flUo5s3KU9NCX5i
+         5lI8sqJBIqb071v7wo295QnlXGGgLvgcU17zIF3MbEsyLO0a1XD15tuj/EfcJ1qMj62q
+         n9v30ig2FJnPaBILvEkPmGOW2rvQgvqcpjgYOcMIbdOVsKknFnOfL1pTXSg5lXXvdnKO
+         pT6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVo3G9EeFy6MQg0KaRH5Qro2K1dZp7B4Iim1KQ5ZuSGwLNq7eEZqMUSvAimvsU/STEjnB+olV8MZ9AkU45cxHGcZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5fVo4gC8+DCsXVQrKdCy5B2d2uWIZvtjmO0oDAnPK5kkWfbGG
+	tMgEEZc1iSeYFQ3V8XjzQltsFR2fA0+910Bid0RRHzZsLKCjOujYGZVBJiDE3QAhTAg=
+X-Gm-Gg: AY/fxX4r8j0otKKByom6mOt6gAdJcDF5ugmKXKDsjNoGXTS7XW8o8BmBTLazhL8iDQn
+	BUBXMIGAYVB9rsNc7fMnUviCNrld1xEn+eV9YGG5HEZxjtwxSeZ+K6Pm2Qxrp/5dbCgOsL6qb+l
+	SbCz0FqlPbRaZmeN6xtImXK0ZYi9tvjQIcNbNHNgLobWUd3BGoRolO4kii5f4bjTvaur6/o8yQI
+	vehpdbDpJqUSsaxQV5EZKMPgR4OtNLv9spGkxfKt0/PnOXPz59cpPq3hAtTvlkKxIaBXDg8Nwbt
+	BX6PoGTmS3UHPUvVmdDD7U3e0yze8CYOrSrstybJODPQkQBtN5ftBSvQbWr4ZMV+9klel6r69TS
+	xi4ZbHh8gByfoODmXX118l0LILNFeYfDBlVNK8fEPJmMMc+c7efWxi2hOj/Oi6w9kCGX3+Et+Xv
+	6fuCam98H+EfFXt4E8OAImuj8UJj8BlAOsXxoVlos/aDFPGx+fJjLo
+X-Google-Smtp-Source: AGHT+IHkYxggroX78z8w4ahmn0H6EbnvxneSTLj+WBM47NjeFbFZcYMJNizqHnPbwEPcDHmkaAdL4g==
+X-Received: by 2002:a05:6102:e0b:b0:5ea:64bb:7787 with SMTP id ada2fe7eead31-5ecb6962700mr2364154137.32.1767875934960;
+        Thu, 08 Jan 2026 04:38:54 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec772afecasm6002812137.11.2026.01.08.04.38.54
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jan 2026 04:38:54 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-559f4801609so1191529e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 04:38:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU91nva2d8vD7ry3sPNjI2Quv6NKFMfIrpi5yMtDpStDhfnS6TvDicuyBcsBDB9bfrJ/30xM2fbA5KPIRIcjLpDJA==@vger.kernel.org
+X-Received: by 2002:a05:6122:f86:b0:557:b52a:d553 with SMTP id
+ 71dfb90a1353d-56347d7d51cmr2141718e0c.7.1767875934600; Thu, 08 Jan 2026
+ 04:38:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260108123433.104464-1-biju.das.jz@bp.renesas.com> <20260108123433.104464-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260108123433.104464-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Jan 2026 13:38:43 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVWsADGoGxeYEUrau+gHia7rbf3YB9sUGvSjX3B889z8Q@mail.gmail.com>
+X-Gm-Features: AQt7F2ovlCowXVH2gu1zZ8GCYydnOydvjpickO5FxcppjUlNiy-E5fpX4dadr6M
+Message-ID: <CAMuHMdVWsADGoGxeYEUrau+gHia7rbf3YB9sUGvSjX3B889z8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzg2l: Deassert reset on assert timeout
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, 8 Jan 2026 at 13:34, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> If the assert() fails due to timeout error, set the reset register bit
+> back to deasserted state. This change is needed especially for handling
+> assert error in suspend() callback that expect the device to be in
+> operational state in case of failure.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+>  * Added the variable "mon" in __rzg2l_cpg_assert() and used in
+>    readl_poll_timeout_atomic() instead of reusing "value".
+>  * Dropped the assert check in error path and simplified value using xor.
+>  * Added Rb tag from Geert.
 
-If the assert() fails due to timeout error, set the reset register bit
-back to deasserted state. This change is needed especially for handling
-assert error in suspend() callback that expect the device to be in
-operational state in case of failure.
+Thanks, will queue in renesas-clk for v6.20.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
- * Added the variable "mon" in __rzg2l_cpg_assert() and used in
-   readl_poll_timeout_atomic() instead of reusing "value".
- * Dropped the assert check in error path and simplified value using xor.
- * Added Rb tag from Geert.
----
- drivers/clk/renesas/rzg2l-cpg.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 0bcf64b152e0..f670c6408ea1 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1647,6 +1647,7 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 	u32 mask = BIT(info->resets[id].bit);
- 	s8 monbit = info->resets[id].monbit;
- 	u32 value = mask << 16;
-+	u32 mon;
- 	int ret;
- 
- 	dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
-@@ -1667,10 +1668,10 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 		return 0;
- 	}
- 
--	ret = readl_poll_timeout_atomic(priv->base + reg, value,
--					assert == !!(value & mask), 10, 200);
--	if (ret && !assert) {
--		value = mask << 16;
-+	ret = readl_poll_timeout_atomic(priv->base + reg, mon,
-+					assert == !!(mon & mask), 10, 200);
-+	if (ret) {
-+		value ^= mask;
- 		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
- 	}
- 
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
