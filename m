@@ -1,162 +1,144 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0833481657
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 13:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745A64A8F6D
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jan 2026 13:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767878966; cv=none; b=a0LdUukBhWKUiidKSNuv2TamvnwXd0W/05S4Q0QM8HNUshAEttQ3aOTaazJaBLjo5U0hfqKzvCJecDX4O/NpcvYo+7URSwdj0xj/PmGi/LADQ+r1fID8k8dR3R5qgERodROJO2AzxILF1rIgl49V4uAmpEDhh/7C/C8QSVFkDA4=
+	t=1767879869; cv=none; b=NdTflpjXmKQQ+A2vPOx48wi51K1fwurSusyQPjDobpxgBeIp8jjbZdIEfSfOslxgMjm1Kb+tNunOk+T0cgb/sqUqTLSWM85vS09H3onZBfFTuZIpsyRgU0V2KhLnJJNIf7iCPnkcmoeBCldkR7BwKRlB4PY/UR2qyK4JxDh6DP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767878966; c=relaxed/simple;
-	bh=nSUWJOqIrx3AnVAwEAjEUh9mqJaV50gidQhYDUvAv4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpEaOkMgRhFDa9iQgnibgv/gnZ4vWqUZghaoYjo/+2L/B0kwIXhzwQ0sZwVQ5u0KDcqOV207+cpwpMhNLvSjCPRrDstCgLi0pqGk7xZpQxuP4UwC5LtNmyIcRvCz661JDGNa/3eUFyn245GykVH2N6MDyBVvmFuRvVufJ1GioEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EWd7VXWU; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EWd7VXWU"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-430fbb6012bso2361832f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 05:29:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1767878963; x=1768483763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d8dqHYwAya3LKA65BhpCBZyjUj3g0KXz1rtrvIqWkE8=;
-        b=EWd7VXWUf7YVtu4Jhabd4/+IcwdrdSu895NSgMpCEDYHZA/QYH0MuG26MaehQZ1n3f
-         FvoP9Y0KeihWdZyrSgkkookIgEFG7BTChdFQF+lQf3iL8vgM0Zf/IvAvboX55gyODfP6
-         orweAvnMrMjg/ccv9bisymwW8H4K3OVcW36Ff9pU9sN7GkrLqhWA5wdhla6DQHB0uuh1
-         L6KqO1sAFK3ZPnN6jyzQnQR5sVtHamRCFHnjz95rp7kkBVItAPdJZHrVtuIrUW5KO/CK
-         eL3WpBzTwf01Q+cvZJSpH5w+8Z181q2306nAMs6zea3Ucb7qpkVY908XzLqn5O1mh0AO
-         j1IA==
+	s=arc-20240116; t=1767879869; c=relaxed/simple;
+	bh=I51tV3b8usB+tvcn2R45/6DZ2BX3FnDNDxrB4OhgMWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UvbH8wLUQ+lTlemISY+6mDZ8ujGq7sgK/DHd33QHC41mOtQELFwbrQgy3aLSNMWBa4klLOi5q+3OmCSWmCGwhzuMQ3GF7gLo2WKlCc7sVy4W2cklBCas/ZmyzKAxmNFa9EVu/zjHAa1n17/34Gxo/skB+UGLCqm2GNLSyBuS2Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-55b24eedd37so2370076e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 05:44:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767878963; x=1768483763;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d8dqHYwAya3LKA65BhpCBZyjUj3g0KXz1rtrvIqWkE8=;
-        b=q64g965tkyc2Z+1/v+RArqsIpNpiJahwmXibbLu7fXhYd33Hrzmv7+8e2j70Jx6+fO
-         NiYSbFqV4hPArhYF2PgIAWxzUDsIDKCIU7hX9uPFp7nw7QwL/qAwodnAh2Tis7KaeIDK
-         /RINjpKCyeQOL4vQWdv5U00sEN+XkYEMe01qgyPbJRlTb1jWI2UkFt+vrp4pRNvxB9xG
-         pZgu5/wGs9B04sXvcCH0ySqb2p/gcAUxsA2V/rg4axElBuRIsWqCYfk5+g1F6ek44B+h
-         ad8KxyaZJWLthJ2+MfAzxl9QMTVtN/hY39H6hcQ1j4Tye1DHZeJcLbb1N9cNMBcyzOMF
-         3IMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfYzmc3VCNUh77Hbcv7HyFez9QPquaqijiW2hkFilu+8j/OdYy8lCEcCpDa30etrTZZ4ZAPvmf0EYMcFUqb7Dsbg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo+TzIPgfM2BqY2xinCl10iXlw/uQGwmUI956tABdpUUGi1w7/
-	R7i8Dihd4ERGbp3io4x7ur9oye/+AJwUo797nMUJ3BGFSAK81RCVktAxrTbNCNuTY3/pBic9zyw
-	LifyR
-X-Gm-Gg: AY/fxX4wxh8d/GPjiQ9ujHrh/uH/cideSPXm/KyHX0aPX4gFm6ECgvf4H4PNIbAnczR
-	KAxdVMUq8UEAHhqW4uFUEnuhZkQlpNL9dPSh7znbnP2IlFYD0h6j1fHFvct3kauWqEwSG9YWFQD
-	qE1joKMnOLGqhIx/I3kL+e8eZ/Z7jydAqP7A0afPpIvuG/VFODWWOiQVALUpEYnm7uuh6mSzh02
-	k6xiRBYfJ6nqGOrcPS/K6TnjabXOYmSuAUaQ5MnmEwNdkroeCae4R+/1sO4hY7rJdn6aFcLTAx0
-	KHW7YVg9HDf6J7q/JMHgOdcf3zvxTfzOyTT5zm05IqrUG4wXpbUx1L1DsF6SWIznoq2NuN0LD6n
-	s/gkz0Fiitg9mFzNP14ynsTnG1odf2dQdh3xFQVhSKEIUcy9udv1MChq4jRxAqf6uoSAJFrRhjw
-	XYrurHNv4RiOt2PG1CjQ==
-X-Google-Smtp-Source: AGHT+IFDeCWuEAwHy4HsrZG9QngqUx2L+p4CiWRqYuRBxALgP8aHr0pyNH2mWrM4jJDddyZxi6vvNg==
-X-Received: by 2002:a05:6000:2304:b0:430:fdb8:8516 with SMTP id ffacd0b85a97d-432c37983camr8113597f8f.35.1767878962771;
-        Thu, 08 Jan 2026 05:29:22 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0e17aasm16701396f8f.15.2026.01.08.05.29.21
+        d=1e100.net; s=20230601; t=1767879863; x=1768484663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GSpZZZQ/XSFXYi9X6nl9Vzin2Kd7NuEMTA33b+P0F5w=;
+        b=qwM+m3v53PCpLXK7g+XiU/i2qV7+WKnVG34MEHlsumVrhDf6LNSVuR4WrvQRSTjh1T
+         5HWeZvKyQds8hY9EMGTcHIjcyyp67OoWZSwlxYJvF+hd0Izf9ua3r/XZP5bQXJa+mSWv
+         iSCdCnDNPBUxPT7d2QGr6Lgr8nULWu7rr+HomyLAiHGjE2NglZsrRzXmptZarwYzKPnZ
+         MXDBlFEnHvkO6Z6EATtUldwCZ7oG3OuUVTnJmZQs6p+d+4AL8pktR4Fm1d0dPskB3j9M
+         oOEutMDnCI2StJxuSaEE3HjELaC1y0uSEhSk/7w66MNArpUSKbUSnn+uQkhcCxhpHqty
+         qohw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/8XzdcgAkUKixGZ8g6tgLipu2AuGgckpO26Q3OpnjJsqdr0Jcf5IvGPYBaMIvMpBD1114bkGA/xDgsCLKdw67xA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVoi0WexCaSgdQdpRNGR9gSiArv084Bl8OC5YL9YfP5//+owyt
+	7T2fQX2M2mqfceiI4FjzbYjmpp/WWTI+XjfTaLE0kZ2Yo5GpcGFn7D85Mo0IJMr8
+X-Gm-Gg: AY/fxX7xTLfB7yJuyl4/ms4rixaGA+V/eJdlIRLZDp5NjXsjLdUDHN65HzXOBwivXbC
+	fT7I68yAhlcanz0wQyZnDfAZ/PYDkkeler+fiLt202AIsF9HVzQuFHY+XIqgrW8c2ifjiJWb9lG
+	xLLZK5x1aLSuykZvLwy6+c5NJE5BSJ9o4CklARz4xaMLSuOn6YZkYq7KmtxYZMjsooTfSWMFZLb
+	oroVlyFMAD4zNX+LcHT/MIJm0zlvpfzVKrzZXNZC+i+qvgUhKXlPReqjCZPCT7kBs1rb15sS02b
+	i4+sMsJUvemrr9gT0WpEYGNk//yu0Br9O5yG9mtKRxqNB64lmAJ9/WH5TRhQ78PU4JPRVcR3MxO
+	i9cIvMxC4ykOr+LrBS6UI897QapKM+HIJusTFTKapLsfCPU5UDEHbjp4HSL1mx+HmsPh2mBmuOJ
+	12n61lI5aTp6gyppVLEHRBHX70AnvQvA5t2Tmwe90ekledh8Zbrai8
+X-Google-Smtp-Source: AGHT+IFkLC5xIyArDzoUos6kZXAymGtWY2Txawo40GDC2AVoD+t5AYOg8VqUD0RJcpLK811hU5mFsg==
+X-Received: by 2002:a05:6122:8292:b0:560:2442:74bb with SMTP id 71dfb90a1353d-563480023ddmr2293263e0c.19.1767879861755;
+        Thu, 08 Jan 2026 05:44:21 -0800 (PST)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5633a074d30sm6191720e0c.0.2026.01.08.05.44.20
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 05:29:22 -0800 (PST)
-Message-ID: <846091a4-3353-438f-99fe-bfbb61c2b3be@tuxon.dev>
-Date: Thu, 8 Jan 2026 15:29:21 +0200
+        Thu, 08 Jan 2026 05:44:21 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-55b24eedd37so2370036e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jan 2026 05:44:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXcamKjcmCkVKfVacEOTlGZT0UREqQkJhd+2gsg8RwZocEy9SfgfdkfngLqMUEBs69Du/BiyebQzt57fd70gr0RVg==@vger.kernel.org
+X-Received: by 2002:a05:6122:616e:b0:55b:305b:4e35 with SMTP id
+ 71dfb90a1353d-56348014f57mr1928870e0c.21.1767879860484; Thu, 08 Jan 2026
+ 05:44:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] reset: rzg2l-usbphy-ctrl: Add suspend/resume
- support
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260108102600.3477012-1-claudiu.beznea.uj@bp.renesas.com>
- <20260108102600.3477012-3-claudiu.beznea.uj@bp.renesas.com>
- <7b4aa36772039d6607bf0aee38bd897b773e3f7f.camel@pengutronix.de>
- <83ead495-04c9-4dad-b971-29dca4c45898@tuxon.dev>
- <f2c7583d863feb767b59f6b82b47a621aae8fb86.camel@pengutronix.de>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <f2c7583d863feb767b59f6b82b47a621aae8fb86.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251215163230.227849-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251215163230.227849-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVeB0xYbnHx-RYf3F4aw4TQOzC39A_MWc8PoROo8-p1mA@mail.gmail.com> <CA+V-a8vqVm9-kO_hMhN5WcsEXamUU8=hafGFzmsbKXFwv0UL_g@mail.gmail.com>
+In-Reply-To: <CA+V-a8vqVm9-kO_hMhN5WcsEXamUU8=hafGFzmsbKXFwv0UL_g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Jan 2026 14:44:09 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXuMm9_ornGBtvN+1hpH7=Nsowsx=mOi3s7siADhze5GQ@mail.gmail.com>
+X-Gm-Features: AQt7F2qkeR2zPzHqAg24UJEFLvC8CjbFw0bqtz6nnjBX8HFdHYx_1i-WTWSt0HE
+Message-ID: <CAMuHMdXuMm9_ornGBtvN+1hpH7=Nsowsx=mOi3s7siADhze5GQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r9a09g056: Add DMA support for
+ RSPI channels
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Philipp,
+Hi Prabhakar,
 
-On 1/8/26 15:09, Philipp Zabel wrote:
-> Hi Claudiu,
-> 
-> On Do, 2026-01-08 at 13:44 +0200, Claudiu Beznea wrote:
-> [...]
->>>> +	ret = reset_control_deassert(priv->rstc);
->>>> +	if (ret)
->>>> +		goto pwrrdy_off;
->>>
->>> Do I understand correctly that this reset clears PHY_RESET_PORT[12]
->>> bits in the RESET register such that rzg2l_usbphy_ctrl_init() must be
->>> called below?
->>
->> No, this reset is the reset of this HW block, controlled by another HW
->> block (the clock controller).
->>
->> Bits in PHY_RESET_PORT and other registers specific to this driver could
->> be cleared due to the fact the power to this USB PHY CTRL HW block is
->> turned off in suspend.
->>
->> The Renesas RZ/G3S SoC, that uses this HW block, has a power saving mode
->> where power to most of the SoC components, including USB PHY CTRL, is
->> turned off.
->>
->> Due to this, we need to restore the previous settings. priv->rstc need
->> to also be restored as power to the clock controller is also lost.
-> 
-> Ok, thank you for the explanation.
-> 
->>>
->>>> +	ret = pm_runtime_resume_and_get(dev);
->>>> +	if (ret)
->>>> +		goto reset_assert;
->>>> +
->>>> +	rzg2l_usbphy_ctrl_init(priv);
->>>
->>> This assumes that consumers requested PHY_RESET_PORT[12] resets to be
->>> asserted in their suspend function.
->>
->> That's right!
->>
->>> I think you should warn if that is
->>> not the case during suspend.
->>
->> AFAICT, that could be done by adding extra logic in this driver to store
->> the state of the de-asserted bits. We can't interrogate directly the
->> registers as there might be the case where these resets are used by
->> previous bootloaders (that might let them in the de-assert state) but
->> not by Linux.
-> 
-> Isn't the RESET register initialized during rzg2l_usbphy_ctrl_probe()
-> before rzg2l_usbphy_ctrl_suspend() can ever be called? It seems to me
-> that read-back in suspend should never return a value left behind by a
-> previous bootloader.
+On Thu, 8 Jan 2026 at 14:26, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Thu, Jan 8, 2026 at 1:18=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Mon, 15 Dec 2025 at 17:34, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Enable DMA support for RSPI channels.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+> > > @@ -679,6 +679,8 @@ rspi0: spi@12800000 {
+> > >                         clock-names =3D "pclk", "pclk_sfr", "tclk";
+> > >                         resets =3D <&cpg 0x7b>, <&cpg 0x7c>;
+> > >                         reset-names =3D "presetn", "tresetn";
+> > > +                       dmas =3D <&dmac0 0x448c>, <&dmac0 0x448d>;
+> > > +                       dma-names =3D "rx", "tx";
+> >
+> > RZ/V2N does not seem to have restrictions about which DMA controllers
+> > can be used by which SPI instance.  Hence shouldn't these point to
+> > all five DMA controllers?
+> >
+> >     dmas =3D <&dmac0 0x448c>, <&dmac0 0x448d>,
+> >            <&dmac1 0x448c>, <&dmac1 0x448d>,
+> >            <&dmac2 0x448c>, <&dmac2 0x448d>,
+> >            <&dmac3 0x448c>, <&dmac3 0x448d>,
+> >            <&dmac4 0x448c>, <&dmac4 0x448d>;
+> >     dma-names =3D "rx", "tx", "rx", "tx", "rx", "tx",
+> >                 "rx", "tx", "rx", "tx";
+> >
+> So the driver would choose the DMA channel based on the available one?
+> For example if all the 16 channels are consumed for dmac0 the driver
+> would switch to the next available one dmacX? and this would be the
+> job of a consumer driver? Or do we want to let the board user
+> choose/override in board DTS based on the available DMAC channels?
 
-Ah, you're right, I overlooked that.
+When there are multiple dmas entries with the same dma, the DMA
+subsystem picks a (random?) available channel.  This is clearly
+visible on e.g. Salvator-XS, where the mapping from I2C channels
+to DMA controllers changes on almost every boot
+(see /sys/kernel/debug/dmaengine/summary).
 
-> 
-> [...]
->> I can add those extra software cache for the hw registers but this is
->> what I've tried to avoid.
->>
->> Please let me know how do you want me to proceed and I'll update.
-> 
-> If reading back the RESET register during suspend can be used, please
-> add a warning.
+Gr{oetje,eeting}s,
 
-OK, I'll update it like this.
+                        Geert
 
-Thank you,
-Claudiu
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
