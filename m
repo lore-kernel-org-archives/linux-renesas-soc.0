@@ -1,168 +1,129 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AE131D364
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Jan 2026 21:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34C43019A4
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Jan 2026 22:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767992760; cv=none; b=fBUNO0NLeIVX0UG54saYRviL2s0NfVqDleViutjiM9niggApY+gJVt0hDYy8JCtY4s0qpTcEGo1gvzghICjxUa4UA34g5pjD5lUGH2ts9AQYXDT/ZnBL+ngGSwn47sCRjiCF3jhzY6rvM5nxvr58ZTbZZx4MBoUGu53JSYqFuJE=
+	t=1767996640; cv=none; b=l+rJeMXq2tEb9aXNFx7f87cac1LBwN/3c7YUq5xN9Qx2Y01NPWmx+A9wIyNrDWIfV6C0Kwe7hr551lVF0zbB3VE2ChVaQgstOls+WaKui1DV9cn3n4FMt6dWMX+yfyVzUAA8X9FlyV0CMTwn4DpLOSfZr4ma6boR/nvRT+/ppW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767992760; c=relaxed/simple;
-	bh=hFkoYS6mSblvGR8UZ5SC4jjV6cZBaoNUpvigDTKOQCw=;
+	s=arc-20240116; t=1767996640; c=relaxed/simple;
+	bh=3QJ52a/bgPzuUKTzUBTOpjnpR6DZhhOjRgWi3SR/6pk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFqpbzrUjsmbL2+QzOL5fpecFpxV1K/Z5gnGQ5Y5/pTRHk9Q19jMzazgKpP5Tj7abDYJxhXkpHuAYRrvca9XmDZ7tzrHQoDi/xiWeHtd2Wh0jMWjkFiZYb1ARG9afsOh7W+KkQSRMso7P1NmgGxf/AHsO0pS596ym78M9k/36g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=URIHGgFl; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	 To:Cc:Content-Type; b=ePtRw2mcR7H6N1Y4GBIqcT/DtsRe5K9Sadrvm71uIHqZBwsP3myG76nAROQyZOPbyVbxF3/LJ+kavcr03F9GuK3Sa/5+lNwprcAMWxBgxcs1B2VflprTgOv/DRdLdEH9Zhn3/LslGV9XAPF60UA64X+F4h//+Jlt4/CoZM/mj+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RD87ctP4; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="URIHGgFl"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a0d06ffa2aso34648525ad.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Jan 2026 13:05:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RD87ctP4"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-430fbb6012bso3527706f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Jan 2026 14:10:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1767992757; x=1768597557; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767996636; x=1768601436; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f+kn0nlzGkQ0BViOYfFFGO8lkUm/rT4hSAopw8yn9RE=;
-        b=URIHGgFlpzAx3y+8RduQQACSJ0VhfsF17LPSSoz/M4Ww3a7B3gDfqkAIVdPaRQnOgS
-         wqI+2ZA05+JYuVYEnmQp1ciwjIs4kOdbZxI+dtuHwGxHaO4oIqKPZwVV2C6RSkP2zhDN
-         Fef8UkjrVh6eUeK6vOTx6A7Z3q2b/KlqOvViIzxLeJanr+UXPmlYMlwdu29Y/uaQAM2i
-         EXcnpeQs8YJuOuBJDdxzM2aQpqxTzxpSHOX+vep+BQMe+E1SZmttKTt35KS2KVL2A27T
-         6FeJqFtF68U/Z5smIZSmtHwoSpGqSXRDOkPDz6GCc70/29PPSq2136HiaJNiUzZd4yDY
-         KJoQ==
+        bh=DfQX3D2SQZ81h5MUWXgygzdao1nDh7Pskp4FXNApMag=;
+        b=RD87ctP401Xb21HlFGLTLDPbhgmAqn4QYzEA+us3ggcTMNZml1qRymN1eqN7+aP/xS
+         ihYCgGnt6vIo4U3lGZXWifUfcXk5we6r7B/bPWIDesg2DNM18ZyO+82dhDvSYJJKt2Jc
+         NDyltjLkltKqdUvfR7jdj21xbbpq6RXE8cgcTwsr5VYDoKe9BCshZVHrm3VF/U4e3ouY
+         RbRM+ZoUYZI6+LOFQyDu3LICXGS6gEHrV2obGSTnRLPt52VWNIXK+dMXlzraikOKUg3a
+         V842ZNHo3WTV4uzGMxNnxL3tm/rPM3XrYesqwFfcYJEv+0pufdArjUyvNP+YW7/wwZ4d
+         uWkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767992757; x=1768597557;
+        d=1e100.net; s=20230601; t=1767996636; x=1768601436;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=f+kn0nlzGkQ0BViOYfFFGO8lkUm/rT4hSAopw8yn9RE=;
-        b=q+I6b3jlLZ9doQ4Oi72sg6TMIEmyaXPYD/wKRh8HerTtY3P0jSB5SPbXkE0BjfG//h
-         HjlDIIn1yimwprl74/Lg3+hio/UDdRYsjOU9WC0jjGmyZSvhjAifiYPwxrmkJO2S2ssf
-         yqvQ0UC8qZNyLxKTrDAOf2VhvAeXIU2Vt5ct5VKN1kGDoSX4cTtN46ZdIdMtB9V/Bjb/
-         4AT21SuOihpbmlecMjkuckWkUe0vkXc1yoR5EDLGGGRdDfaBl9H6I0apKpie8r5W7vug
-         T4Y9ZhajGsy6spzLBg9HSmeaqNlNgTvXkgbmf5j3PtyYQr1Ug9OUhyZndUoy9nxr5cbM
-         U0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdAsKfECIOgZMAPqnGAUeqFbpZakkw4b8vhvUnWYzTDMmUVD59qPjSxuLOv9sZxGfUzRQrEJg0i9kSfUc7kTICcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQR/BKfaE05jrODhkTWPtC3KvlHwb05IjOUrduXFdzDdw14lMG
-	B3IgYQOiEbhpl1pRtvHWsEkbOrs0aUXVEkd5g2dzoQwmCW2CMB7FTrEN6jiibM9tH7gl+EwvfF2
-	HNfLOfFWhj/DK4boOiuCuC4Tb9I+s+VQ=
-X-Gm-Gg: AY/fxX7Wt7QxmVwjtaNOuvNdsjENa+bnEylm0CE6LRNk0LAYXWWi2kJx2fGchf5cvaT
-	K1V50ydcU2SiW+nbHBZpqD68F0XV/x06RBKZniK+Nepz7qZOQZGeGW5h6VMSRtj7J7jqeULrRrc
-	n+Omf4Kjno+v6rWgpcTSMGsjQMIQlHYkYd0DkRiyVVjSiPmqPdMK5TpgcGpDS/1ttl0iulbFMR1
-	xbgaHiicFPNYTKCysHo77eQ0oh5R0+0RDX8ad+HPsViGKKLuFWuWJy7OzNcia5bwJ9lWwWU4hGa
-	HHu9+DxPIPyVYFuJ+jGrasH7KECv38clbl8qMuo=
-X-Google-Smtp-Source: AGHT+IGzEqZSKhDh+mfZnkqq/TwV9IRDJvdndDZXOgFLWIDXGIN31XCilSikaluLQUb1REl5xfFtQyCdyy3ZvPXVWkE=
-X-Received: by 2002:a17:903:1acc:b0:295:592f:94a3 with SMTP id
- d9443c01a7336-2a3ee49b5camr115632895ad.48.1767992757127; Fri, 09 Jan 2026
- 13:05:57 -0800 (PST)
+        bh=DfQX3D2SQZ81h5MUWXgygzdao1nDh7Pskp4FXNApMag=;
+        b=QBrH49dD+JdpA71qilmK8ToBs8TRMkBPKQ8VJkomLLvsSBWV2opta7IkXfPmajrjBQ
+         Fm32E9KsQNrxwNvIf0YjIiY1T4aE6zczm/TdCK4558qISANYuWfXVC+y5u85TnqJ+Srn
+         FQKV02lyRMvgQr1R7Ec20PUuOyISaRtKYOx0HiUWa1by5uJqcmEmS5sOGa/6gW1R9OyQ
+         wLesgK/N4wcin8uT4kpZWOQ30MvwaRH36Z+4TyJigTVoV2YGrNVncPFvr/pDKTrpvDR9
+         OpzSbfeqWYirO6mhHCMHXI4aiybuP5/HF3hi7on393dnZmig8Omw8f+vPd1LRGsnRLrH
+         mg7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVE15H24Z2dKm1M76DF2BtTBmuajmooKrLo1eQQRb8FX/U6vg9cPTpz2yxdK8aHTDBKuF9iMJ4kSXdfQWJYvUvlQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOYv5FcgwOtFGq8noj1jxsBQFeiL1BUWWQ7vtzDx0JWLrXk8oO
+	vVzcgdfls74/Ms00o7Hvxc7SDf/0IB5Q4CGBrR45dHt5WLbQdux3feVpBlockBqo4D9DWoNZCoT
+	ryBxSHqUOAJhQslVGn92iV/GL0eFto8A=
+X-Gm-Gg: AY/fxX4sx7fcnQGoEGUm9sqriQ/aO/OBeBRn9a0ws5AlH42YkDC++Ou/ZucaMJJ+sH4
+	6Z0xSwd1l33DiggyQB2naRed3s2Wp7/M1zkyds2sTRw8zcEPunjMmfUAl9swf9fZYiV0nVMlGnj
+	Y0Tn7dgEs/k0arh93s87Vodvy8LEBiLnKZSUvXZjEcXjnmUmItzZuQ2Kf3IndpEwIsPvshZ180L
+	aXELmlhOr5t7F7NbGKhY0Jx/Df0D3I39qc5uYWNdnUHyHKVTFemmR873i9Fy49HiiiPYHYv7I1h
+	T065kStV7Cs6TgOTpv6G1TuqaarFF+0LF85JK9DylNobHuRSdljMNLBULQ==
+X-Google-Smtp-Source: AGHT+IHal3Q6HFx6YVC8+0mAQiKOoH3MXiFcxAmSjJQKYvO2x41v3zKHjCGVp4VEpxzUGTgRZFvHvhW4UYQw8D8sctM=
+X-Received: by 2002:a05:6000:4387:b0:42c:b8fd:21b3 with SMTP id
+ ffacd0b85a97d-432c37a756bmr14376383f8f.57.1767996636042; Fri, 09 Jan 2026
+ 14:10:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com> <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 9 Jan 2026 22:05:46 +0100
-X-Gm-Features: AZwV_QgnJP_ucVFfV4UzfxU71gNnGoxRPDRc5QYDA0rdtBqGfiMffeomtdZlKmw
-Message-ID: <CAFBinCDzAOC9Sc_LZEbLhtajvPC4zjRiaoq6k9at2iJQnJxwjw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] spi: Drop duplicate of_node assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Varshini Rajendran <varshini.rajendran@microchip.com>, 
-	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sunny Luo <sunny.luo@amlogic.com>, 
-	Janne Grunau <j@jannau.net>, Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, 
-	CL Wang <cl634@andestech.com>, Manikandan Muralidharan <manikandan.m@microchip.com>, 
-	David Lechner <dlechner@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>, Jun Guo <jun.guo@cixtech.com>, 
-	Philipp Stanner <phasta@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
-	Shiji Yang <yangshiji66@outlook.com>, James Clark <james.clark@linaro.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Carlos Song <carlos.song@nxp.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Xianwei Zhao <xianwei.zhao@amlogic.com>, 
-	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
-	Sergio Perez Gonzalez <sperezglz@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>, 
-	Rosen Penev <rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Longbin Li <looong.bin@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Alessandro Grassi <alessandro.grassi@mailbox.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Darshan R <rathod.darshan.0896@gmail.com>, Aaron Kling <webgeek1234@gmail.com>, 
-	Vishwaroop A <va@nvidia.com>, Haixu Cui <quic_haixcui@quicinc.com>, 
-	Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, Sven Peter <sven@kernel.org>, 
-	Neal Gompa <neal@gompa.dev>, =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Ryan Wanner <ryan.wanner@microchip.com>, 
-	Michael Hennerich <michael.hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Kamal Dasu <kamal.dasu@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, William Zhang <william.zhang@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, Jean-Marie Verdun <verdun@hpe.com>, 
-	Nick Hawkins <nick.hawkins@hpe.com>, Yang Shen <shenyang39@huawei.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Lixu Zhang <lixu.zhang@intel.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Han Xu <han.xu@nxp.com>, 
-	Yogesh Gaur <yogeshgaur.83@gmail.com>, Linus Walleij <linusw@kernel.org>, 
-	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Chris Packham <chris.packham@alliedtelesis.co.nz>, 
-	Heiko Stuebner <heiko@sntech.de>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>, 
-	Masahisa Kojima <masahisa.kojima@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
+References: <cover.1767114395.git.tommaso.merciai.xr@bp.renesas.com> <b9aeabb34829b8e97559610a3d00ef67399a300c.1767114395.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <b9aeabb34829b8e97559610a3d00ef67399a300c.1767114395.git.tommaso.merciai.xr@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 9 Jan 2026 22:10:08 +0000
+X-Gm-Features: AZwV_QjTEWHsOF-enm5ILtjYfjq3ZPjFoDTCBeAIzDNXHIv7z0QOsdW1H2Ls98E
+Message-ID: <CA+V-a8vqyO0w5qp-Zu1SuYOTjZiZaiRVL2VGwQSPcUGF0vuuHw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] media: rzg2l-cru: Skip ICnMC configuration when
+ ICnSVC is used
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Hans Verkuil <hverkuil@kernel.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 8, 2026 at 9:30=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Dec 30, 2025 at 5:16=E2=80=AFPM Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
 >
-> The SPI core provides the default of_node for the controller,
-> inherited from the actual (parent) device. No need to repeat it
-> in the driver.
+> When the CRU is configured to use ICnSVC for virtual channel mapping,
+> as on the RZ/{G3E, V2H/P} SoC, the ICnMC register must not be
+> programmed.
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-[...]
->  drivers/spi/spi-amlogic-spifc-a1.c   | 1 -
->  drivers/spi/spi-amlogic-spisg.c      | 1 -
-[...]
->  drivers/spi/spi-meson-spicc.c        | 1 -
->  drivers/spi/spi-meson-spifc.c        | 1 -
-For the Amlogic and Amlogic Meson drivers:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Return early after setting up ICnSVC to avoid overriding the ICnMC
+> register, which is not applicable in this mode.
+>
+> This prevents unintended register programming when ICnSVC is enabled.
+>
+> Fixes: 3c5ca0a48bb0 ("media: rzg2l-cru: Drop function pointer to configur=
+e CSI")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Cheers,
+Prabhakar
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/dri=
+vers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 162e2ace6931..480e9b5dbcfe 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -268,6 +268,8 @@ static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev=
+ *cru,
+>                 rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
+>                 rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1=
+(1) |
+>                                 ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
+> +
+> +               return;
+>         }
+>
+>         icnmc |=3D rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MAS=
+K;
+> --
+> 2.43.0
+>
+>
