@@ -1,157 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC041E98E6;
-	Wed, 14 Jan 2026 10:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431238E11C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768387157; cv=none; b=ZfrAqyoTKAl4qMr2klRkiEvtX1g9Z9sHwu0/6O7mWrygM+CKLTYQGpl+x1aSEySEISD9/azt4tdxS9rLq0XUTKKLIB8iB7IuTKGtxTjMMxUUZmqe58rlbQFByJkYa2PvzXZi/YcsW9ZraY9Dqx1ZVvImxY7fAV62unCvB4x4gXY=
+	t=1768387352; cv=none; b=XPmJvMYHn0F9DupdrYOPpmWKdcd568f3O58LzEaJRqTsyQ3+6xo0WtCLUqwb3tFU3d9Gc1zyVEY4gzWbF53L3sEHP1IgsWLaJcZ4VxJ8WbdVYoHnie/koELPr6Go0Y2yNIfwZB+F8k977RPiC/jpZsAZ/RJPbzmonAJTa4GpkQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768387157; c=relaxed/simple;
-	bh=GXOUS5IVA/W+B1bIiXQJ9wm/cqS9Cfmo4/ZzvR1iFTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvSRYZNGFYqYGC2wZO/++RWfwJHURaJtApLjqiZ+3brltGZO9LhaqrHleAMnZaZ/jqYgh27ZNVMKPjvfJMY8nwPK2UzU3KCjtacymGytdPSO2eTnPu6vRXRjmfYHn8O1Zwx3dSx29zQ4pI4OW/gbyULNYq1Ctv0JkKC7TnRn1gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1cx4AN6; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1cx4AN6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CFAC4CEF7;
-	Wed, 14 Jan 2026 10:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768387157;
-	bh=GXOUS5IVA/W+B1bIiXQJ9wm/cqS9Cfmo4/ZzvR1iFTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c1cx4AN6qnW//qfPtg+YU+kBK0Fwi1qx7TD4KI7OcyvNk84LcaOGokwsZbcc85njb
-	 qNE/fDPQvFv/hrK3hmEx5+u9dS2ysExw/sZMu59+B6tkrQgcsiR0HoyBLL0SqDaJNl
-	 lZiiHfClvv5U5qlwltVlii620fXgPEmppvSDIBUFS8QaAvEzvcf7lbCi351zOc3W8f
-	 OSyJms1RzaBtduqCcc4R6U9FLBKh2qAsW/1bGu/5Vq+EF+x+/uK/2ZYuVFmug/pbtL
-	 IQE5Pt8WGKFCXfH5aCcnYzBH4PHJ3+KmYKvQ4C17LfDVYZ564TGrXzWP3iZN+7Q5zE
-	 l1TuhhZkNiuDQ==
-Date: Wed, 14 Jan 2026 11:39:03 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	vigneshr@ti.com, s-vadapalli@ti.com, hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, minghuan.Lian@nxp.com,
-	mingkai.hu@nxp.com, roy.zang@nxp.com, jesper.nilsson@axis.com,
-	heiko@sntech.de, srikanth.thokala@intel.com,
-	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	christian.bruel@foss.st.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
-	mhiramat@kernel.org, kishon@kernel.org, jirislaby@kernel.org,
-	rongqianfeng@vivo.com, 18255117159@163.com,
-	shawn.lin@rock-chips.com, nicolas.frattaroli@collabora.com,
-	linux.amoon@gmail.com, vidyas@nvidia.com, Frank.Li@nxp.com,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 5/6] PCI: dwc: ep: Support BAR subrange inbound
- mapping via Address Match Mode iATU
-Message-ID: <aWdyR4Xkh2_ZgOf8@fedora>
-References: <20260113162719.3710268-1-den@valinux.co.jp>
- <20260113162719.3710268-6-den@valinux.co.jp>
- <5kexuvze2a4m6bd3yhv2cd7yrzo4r6ubbbouktdsurv7n22v7o@7s3pgf6ftgur>
+	s=arc-20240116; t=1768387352; c=relaxed/simple;
+	bh=E0LywgZ6Y5OBOHF1U8Vz1IKUxUwFm8uKutML5xWZ8GI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jPASauu9UE/Hsr2xAf4viGfZw3Zom9F/czQvYwtSaryxYnLVLQffjQ6ZfXTTxxHKBhRLJah98HR6USYldKIiW8GLJ1u+WvtSvfkJYlfffxsXdVK1E9t+8erIF9InCT96f3GUbzBWdbR8DkOFC5to+EeSg2QMgs/M3b1iThpnP/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5eef115c781so2516655137.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:42:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768387350; x=1768992150;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H1Uaum6XUOb9s+vI8xOa+5r0BhzYwNGBohqUTsxTR+M=;
+        b=A5GE5Z068ZAemkrA+Mw695TMun5UBZhnufZIWFFUGamFAqEKhXapEAhXnoPk0cw/k7
+         bgBMLv+N0t5juj7wPzBl73Mx4v5JGZoJhGtbd4PxYblAvrbjSdIW026lyhsPiJgnFATP
+         dGgZ95drfDg7BL99h3fax2AAenz9eZfGPFtBtOjYwt+4XkwuEy4EUO1sMCxJyligPRfR
+         fse2mUT0jQD9nTSJ+qRCOGKPHITFY5NBEYPx37BjfkkBVLPXmWVozuIjI6v0EIFHGCi3
+         H5iGCv0EXIlFX/zGRgQe53Xskop8IYrt0HrhAVZYggRJVtubIBF6lNZDXJVWZUjvxdSA
+         WPIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWa4Yt/bohP/f9srsfxHOyhYlxp7JlbMV/Trn38clHnZ2X6ff9UvhXJ2g67UuXmnf6IGFSzYjgNGQ9fRB6leehHng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXO8lb+kxFmmYNwEAEte8XDobtRxWl8JfXc1B4zU+V+Wkm6urZ
+	yFeJS65S7A8AYWk/C7dRge1dPSWietvAXCpnDyopJ2w1l4uupwEEwiQ+B1VnmFFi
+X-Gm-Gg: AY/fxX7GJ4mzVPfnyjfAkf/irg1gWznryIIqg04W1mHe5kklaFulq2QJXC8YP6rCp5l
+	4q2ufxr/fVzQRSuEsMi7wvflscw2SjALc+mV/Q9Nf7fcsdlLHqch1oGjTv2bHJ9cy/6y8p31jeH
+	PhdGSO2wLwzOelU++z0Dj/85MsQQuFn3P7SjrBkWWHwldrBX1NMManUXJWdYjj6eJrf++vKUIv3
+	sa9rLmnXCxLgOmEqIog9aU1yj36EcbHh4VtC6J5KrpAp52rSGzdfDyD5L6sL8qKLG8G1NSnUSMq
+	54BPFNpYDptX0u+ScIj5xSLS4KVDms0Rr9lUcsm50g7StZ9Nl5Z6KGrGiH2Yt7LHMRZii2at45u
+	2QxHT07dQ0TgquqSOHvnpoa8fNYM30ryBlDR8YgG7kYwaqK1zOUKpXJa/6ZXX+NkxpyZtz43IHF
+	EXeZ5+B5+KG2XiOh5uDhCRwF47oycjposGgDHJ++pNbLOjdeTezS1C2RCFfyI1sEk=
+X-Received: by 2002:a05:6102:2ad5:b0:5dd:89c1:eb77 with SMTP id ada2fe7eead31-5f17f61dc64mr743795137.29.1768387349964;
+        Wed, 14 Jan 2026 02:42:29 -0800 (PST)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ed082abc75sm22061872137.1.2026.01.14.02.42.29
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jan 2026 02:42:29 -0800 (PST)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5636274b362so1673105e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:42:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMVbHnfn4xK1tdiF7xuvQ0e5rVn59M3lupqQrMnKJG7P4HkYIzZQHlFNzo8RlitSuL4VmEowEqQoLG7KKkldcB7A==@vger.kernel.org
+X-Received: by 2002:a05:6122:628b:b0:559:58a5:f6cc with SMTP id
+ 71dfb90a1353d-563a093a463mr686310e0c.4.1768387348943; Wed, 14 Jan 2026
+ 02:42:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5kexuvze2a4m6bd3yhv2cd7yrzo4r6ubbbouktdsurv7n22v7o@7s3pgf6ftgur>
+References: <20260114093938.1089936-1-herve.codina@bootlin.com> <20260114093938.1089936-9-herve.codina@bootlin.com>
+In-Reply-To: <20260114093938.1089936-9-herve.codina@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Jan 2026 11:42:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUPJrqem_pKkQKU7qjkA6-6OEYW0Av3EvDr5hAO1U5ZQw@mail.gmail.com>
+X-Gm-Features: AZwV_QhQn91-1OqqAw-EDfsNXlhnKQ09Nmhqb35fWgFytnsII83O23rtSSh3XAo
+Message-ID: <CAMuHMdUPJrqem_pKkQKU7qjkA6-6OEYW0Av3EvDr5hAO1U5ZQw@mail.gmail.com>
+Subject: Re: [PATCH v8 8/8] ARM: dts: r9a06g032: Add support for GPIO interrupts
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 14, 2026 at 12:54:37PM +0900, Koichiro Den wrote:
-> I realized that I missed one case in v7.
-> 
-> I think dw_pcie_ep_clear_ib_maps() should also be called from
-> dw_pcie_ep_ib_atu_bar() to tear down any existing inbound mappings for the
-> same BAR before re-programming it in BAR Match Mode.
-> 
-> This matters when updating inbound mappings for a BAR without resetting the
-> BAR in between. There are four possible transition patterns, and pattern #4
-> below was overlooked:
-> 
->   1. BAR Match Mode -> BAR Match Mode
->      As the current implementation does, the mapping is simply updated
->      (with the same atu index)
-> 
->   2. BAR Match Mode -> Address Match Mode
->      This patch series already ensures the old BAR Match mapping is
->      torn down before reprogramming.
-> 
->   3. Address Match Mode -> Address Match Mode
->      Likewise, existing Address Match mappings are cleared first.
-> 
->   4. Address Match Mode  -> BAR Match Mode
->      This case was not handled. The change below adds the missing
->      teardown so that stale Address Match mappings do not remain active.
-> 
->      --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->      +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->      @@ -148,9 +148,12 @@ static int dw_pcie_ep_ib_atu_bar(struct dw_pcie_ep *ep, u8 func_no, int type,
->              u32 free_win;
->              struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->      
->      -       if (!ep->bar_to_atu[bar])
->      +       if (!ep->bar_to_atu[bar]) {
->      +               /* Tear down existing mappings before (re)programming. */
->      +               dw_pcie_ep_clear_ib_maps(ep, bar);
->      +
->                      free_win = find_first_zero_bit(ep->ib_window_map,
->                                                    pci->num_ib_windows);
->      -       else
->      +       } else
->                      free_win = ep->bar_to_atu[bar] - 1;
+On Wed, 14 Jan 2026 at 10:41, Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
+> In the RZ/N1 SoC, the GPIO interrupts are multiplexed using the GPIO
+> Interrupt Multiplexer.
+>
+> Add the multiplexer node and connect GPIO interrupt lines to the
+> multiplexer.
+>
+> The interrupt-map available in the multiplexer node has to be updated in
+> dts files depending on the GPIO usage. Indeed, the usage of an interrupt
+> for a GPIO is board dependent.
+>
+> Up to 8 GPIOs can be used as an interrupt line (one per multiplexer
+> output interrupt).
+>
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-If one of the branches has braces, both branches should have braces:
-https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.20.
 
+Gr{oetje,eeting}s,
 
-> 
-> Unless there are objections, I'll include this fix in v8.
+                        Geert
 
-Isn't it easier/cleaner if we call dw_pcie_ep_clear_ib_maps() in
-dw_pcie_ep_set_bar(), rather than calling it in both dw_pcie_ep_ib_atu_addr()
-and dw_pcie_ep_ib_atu_bar() ?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-dw_pcie_ep_set_bar() knows the condition if we are dynamically reprogramming
-a BAR or not, and all the four cases are when dynamically reprogramming a BAR.
-
-I.e. instead of adding additional code to dw_pcie_ep_ib_atu_bar(), we do
-something like:
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index b2ea2c2c986f..63ae5471fe13 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -318,9 +318,6 @@ static int dw_pcie_ep_ib_atu_addr(struct dw_pcie_ep *ep, u8 func_no, int type,
-                return -EINVAL;
-        }
- 
--       /* Tear down any existing mappings before (re)programming. */
--       dw_pcie_ep_clear_ib_maps(ep, bar);
--
-        for (i = 0; i < epf_bar->num_submap; i++) {
-                off = submap[i].offset;
-                size = submap[i].size;
-@@ -571,6 +568,9 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
-                    ep->epf_bar[bar]->flags != flags)
-                        return -EINVAL;
- 
-+               if (ep->epf_bar[bar]->num_submap || epf_bar->num_submap)
-+                       dw_pcie_ep_clear_ib_maps(ep, bar);
-+
-                /*
-                 * When dynamically changing a BAR, skip writing the BAR reg, as
-                 * that would clear the BAR's PCI address assigned by the host.
-
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
