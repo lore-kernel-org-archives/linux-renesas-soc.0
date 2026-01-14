@@ -1,125 +1,98 @@
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DC239449A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 11:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EFA396B6D
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 11:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768390290; cv=none; b=dL6ArkuVjJ0uLUkCPWfyYH7m0M1JbyE8yVj1vkNaJxO70QyWurwQY1WoXDGmJG+9PGDreN3H1Nhpzq/EgoB6Y61+xdXmIl9nLKXq2eKtxvm3Eo9GsN8nSSDXx5BVWBnkBp4ok79KVfjocyHZJJ9RDfAAzSmSSKmYGzPSMvB2eL0=
+	t=1768391405; cv=none; b=SzAotfXca7uA8dK4CjoRiUmkbF4YROdv9ca0b9CfWMv9ms5z5LyAn/iKD4NDg8Dmer3wEyHwITkoCOYIrpxTJ2J1aau4VZxZ7RRPYID/kf8D76QGEOh78BQFCUuYGJPSMcBoiGXFwfDLx5FXL9X7rOIjn5DCfLJUBZIYBbudqic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768390290; c=relaxed/simple;
-	bh=CiDHpss1hVeyB4RZ3H82ibrygcnDTVOy55OV2SWKALE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJ1XiieOWqYSE5/SJeSjio/Zjf3t8xJBc0Wu+3nNJ/Y75d2lcDuYuZ+QDcbdDco8KJvmu4qiJ8a3nng2tS2vW0JMg78zIRh7wZAg1wVzUkcEbJfpQr5q0sn6t2ciaSpp8MmrMqHiyAi28IhNLGeT3I6ngH8F936KYSu1UF8s5jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-3fe3cc80bc3so4815034fac.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 03:31:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768390288; x=1768995088;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RlUeVi88PIKWMzTWAKceP+tOAwQMJqEvuH7YKzydUAQ=;
-        b=Uba7Uw/N4uSV7c2O2HO5Acmi1coqh+0zbvpePG8JF0QV+pNPnHzZBejTbrakhs/ME6
-         lT9wvCpri1znySeFG2B7Ndzty5n58K6C+Y2+cM+OKaRhtO+pGI/8ZDFLVy3StMhlg80J
-         49lpuVWwcX5rkeiH4X9HM+HMuzYPLTVg1DYOzkBYC+OrVmzf2sLvBN4uspT1+3J/3IsO
-         Vjl3Af/5N6We1qphcY4TSLvV3hkaAsmRRsy71F85aamJoW163ycFD6g3SI/Bv+GwnGKs
-         ZARdg150GPKVoWizgQHnWF8lexHCIgBqUvOAjaERf7IxqmN7ReNMbWwXUrPbkiSXgd7W
-         XUXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPNqGouT0EdQBTmxE26x9udCGbLk73MIbCTGoXiIbLhq7GNeGa8pZ9CPlIugQesITFq8zrptVRxYuZ4uNjmsofDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHcz1wkuSiHj+BUzSKH3p6ztPcj8wF9BAUl22SdwDCw0OuLjV4
-	1QMyGzs5vMly0yB2cjF9Y2/0zQlD8+cSzhdcAaDGG5tewAhfSImqt5lNUrRop8Ou
-X-Gm-Gg: AY/fxX6iYYRTHa+YmrMziiI54Xb7K98B9mfBApTK8ZbS4DRWGH/whN6g3ZH+NxyudS/
-	MIz+5s4wG7UpPL5EBUOVvszAr9l6rTsOtC4laCIYZfk9g38xwtdDYulUGauw1ubLajZpxcVoROg
-	BFUJbVjXkO3evruVNvSbNCaPQi4RY+LMVaiM8XdjSWahVXTJikgUsn0a9xIdXxQ+fQzgfCu8+ru
-	NKEsFwkPyJgyEftm71LZnbPdnkvuxgpWVmfXaVr5jmB33dfAok2og9MPn2XTQaEFw6a+jvOZ6JI
-	VuKs7WvOjqMPm0AVx8WbwnOF9Rk+3fN+m//3Z4mITwc0vQNqpTbuYVqwJZnLU4W9bPaCW74kbuV
-	zxVacspHclCKTr5KmUVYDXilAZp25AtMQI14rGXA0SMlVqnfd+AeweDTsVl6/COk+EgFXTr3UXc
-	Sr7i3Mm5JSxgz4Hv7Ros5AHD/87roc4igtjblzsJfmMdEfDo/ZZNYfctcrDpc=
-X-Received: by 2002:a05:6122:3d07:b0:563:4a88:6ecb with SMTP id 71dfb90a1353d-563a0a66600mr675325e0c.18.1768383447446;
-        Wed, 14 Jan 2026 01:37:27 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5634e959afbsm20036883e0c.1.2026.01.14.01.37.26
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 01:37:26 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-943d0cafe77so2769000241.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 01:37:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW1HL+lxF0wVH+rVxbMAWoEoGcBOBeWmpP7uheYqhne8p2JCbtymMdNT2gmibIRU8Wlq7FTJelLJDXOeW33rll6+A==@vger.kernel.org
-X-Received: by 2002:a05:6102:41a7:b0:5ed:bc1:823a with SMTP id
- ada2fe7eead31-5f17f6592aemr793700137.33.1768383446392; Wed, 14 Jan 2026
- 01:37:26 -0800 (PST)
+	s=arc-20240116; t=1768391405; c=relaxed/simple;
+	bh=5G3bZDFv1qBG7SvPosgBK8cERnxjv6HIzxzWgJHcMAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acCm/C3igXtBMUAVbWB3bBWt8xDXBhSJB1I0WanETKYTusIwn3hAzcO65Haet5nxUNLRoj3lqfDFglKZn6AzXXLIgN6rIClG6apzX1JfLZJmKGBCqmANioM+MEDoaBcAGqsB/0c/BNjdvkDTXJ1Yokd5WNlmOryXYigD1nzeURk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Z+N4yast; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Z+N4yast"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=gNMi
+	hpzhf2NxKZIcbZg7O2NEUbdwfbHtTszJtzgTj5I=; b=Z+N4yastOsG1hmW6/MpE
+	qJn3S1j5gjDiWLbMXPIr5OKNab4rVxTQ1ISuU/PcwKJNFCP4kxxx0cMd9ocJEYwl
+	rBtM208IDnsTl8YCpApJaEv88+NT0Em1NPc6Tbvj3/9uHqA8vQBIxg0QH3KVhUAz
+	SwzHYADFiSMrJvV/ycsNqExqc0zRxVlOU39NKRHInFy+QXnjDjIz30avvFuZ8F5g
+	Gri7hALcq59mlzxXhbANhpN56BlQ/DVpj6Snpm6iAjr2YruLmkQC+vnuhFN6BWmF
+	JGzVQI/FhDVQVlpXXlNU8Dcyl5bl8RnycG1yAVJyIZ51ICoNtHhpMUKvwBQ20Fi/
+	7Q==
+Received: (qmail 2113255 invoked from network); 14 Jan 2026 12:49:58 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Jan 2026 12:49:58 +0100
+X-UD-Smtp-Session: l3s3148p1@tokXtVdIoNkujnsM
+Date: Wed, 14 Jan 2026 12:49:57 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Peter Rosin <peda@axentia.se>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Vignesh R <vigneshr@ti.com>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mikhail Anikin <mikhail.anikin@solid-run.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	Jon Nettleton <jon@solid-run.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 7/7] mmc: host: renesas_sdhi_core: support selecting
+ an optional mux
+Message-ID: <aWeC5brP_KdrCmHz@ninjato>
+References: <20251229-rz-sdio-mux-v4-0-a023e55758fe@solid-run.com>
+ <20251229-rz-sdio-mux-v4-7-a023e55758fe@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260112234534.225954-1-marek.vasut+renesas@mailbox.org>
- <20260112234534.225954-2-marek.vasut+renesas@mailbox.org> <aWZ1pG5RRWlDSCwC@lizhi-Precision-Tower-5810>
-In-Reply-To: <aWZ1pG5RRWlDSCwC@lizhi-Precision-Tower-5810>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Jan 2026 10:37:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXb3-EFy8WA9FTAqvyYHaF4nGch60bUQ6bbKu6Dzbh6YQ@mail.gmail.com>
-X-Gm-Features: AZwV_QixtfIM8YCIiXj7v0fzbdqd9QL-Kw8ynN88vc69gt7t-8CBMGxLdXH8t2o
-Message-ID: <CAMuHMdXb3-EFy8WA9FTAqvyYHaF4nGch60bUQ6bbKu6Dzbh6YQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Input: ili210x - add support for polling mode
-To: Frank Li <Frank.li@nxp.com>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-input@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Job Noorman <job@noorman.info>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251229-rz-sdio-mux-v4-7-a023e55758fe@solid-run.com>
 
-Hi Frank,
+Hi Josua,
 
-On Tue, 13 Jan 2026 at 17:41, Frank Li <Frank.li@nxp.com> wrote:
-> On Tue, Jan 13, 2026 at 12:44:57AM +0100, Marek Vasut wrote:
-> > There are designs incorporating Ilitek ILI2xxx touch controller that
-> > do not connect interrupt pin, for example Waveshare 13.3" DSI display.
-> > To support such systems use polling mode for the input device when I2C
-> > client does not have interrupt assigned to it.
-> >
-> > Factor out ili210x_firmware_update_noirq() to allow conditional scoped
-> > guard around this code. The scoped guard has to be applied only in case
-> > the IRQ line is connected, and not applied otherwise.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > --- a/drivers/input/touchscreen/ili210x.c
-> > +++ b/drivers/input/touchscreen/ili210x.c
+thanks for your work and kudos for striving for a generic solution. It
+seems worthwhile to me to add the helpers. I have questions, though:
 
-> > @@ -1003,12 +1027,24 @@ static int ili210x_i2c_probe(struct i2c_client *client)
-> >               return error;
-> >       }
-> >
-> > -     error = devm_request_threaded_irq(dev, client->irq, NULL, ili210x_irq,
-> > -                                       IRQF_ONESHOT, client->name, priv);
-> > -     if (error) {
-> > -             dev_err(dev, "Unable to request touchscreen IRQ, err: %d\n",
-> > -                     error);
-> > -             return error;
-> > +     input_set_drvdata(input, priv);
-> > +
-> > +     if (client->irq) {
->
-> 0 is validated irq number
->
-> https://elixir.bootlin.com/linux/v6.19-rc4/source/drivers/base/platform.c#L284
+> +	priv->mux_state = devm_mux_state_get_optional_selected(&pdev->dev, NULL);
 
-Not anymore ;-)
+The minor nit (which may be bike-shedding): Maybe the function name
+could be '*_select' instead of '*_selected'. To make more explicit that
+this function is actively changing the selection and not passively
+retrieving the current state?
 
-https://elixir.bootlin.com/linux/v6.19-rc4/source/drivers/base/platform.c#L299
+The bigger thing is that with devm_* I had the expectation that
+deselection is also handled automatically...
 
-Gr{oetje,eeting}s,
+> +edselmux:
+> +	if (priv->mux_state)
+> +		mux_state_deselect(priv->mux_state);
 
-                        Geert
+... so I was a bit surprised to see this manual cleanup. Has it been
+discussed if that deselection can also be in the helpers?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Happy hacking,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+   Wolfram
+
