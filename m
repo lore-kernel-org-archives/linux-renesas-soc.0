@@ -1,134 +1,110 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440CF396D13
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE05B38E11C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 11:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768388323; cv=none; b=TVy2c4Oz3yuSQA5Kh8xPDzSDROb598+e1Lr0uHnUgT0Jtbt622w6VB5GCBeuVQlITcx0qhlS7bGx8bY6GX3Egq08doxdo5vzS6xYkYvca0Ndl7TThmHbRgUpYCM7i3K/qTPPpxrlkrrCOtPqOgUPq1QX1Pp6ZI0E9qpntyu12JY=
+	t=1768388821; cv=none; b=QvA0NKa5n9+OUyH299ztpr76v0zr1yl6O9UHXBAn3x14hsgdOJWTrFF8M4NAxqIgpSJwI0vzyGSoTVR3Sg2+6s/l6qFd9P/JFPzvGGIQu6rN1vH6okt1bBDMUKcBmzbEjjkNCp5KdhzbEd2SYeWoEcZHXiDHfgSj+CDuwf3DABA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768388323; c=relaxed/simple;
-	bh=qd0533iR+vH2yJrigMDVDGXUaNwIKBKelU7zTFCg0J4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgiyO8iADl2SOwkcRuhRwFjhys6PjwLfj6vBlE4J83AwuuN8lT5QNK/DhbVRVhJOfGfIMbhBujxvaRihxgYpJ42VMi90rZ+3QFLgaqD+HpeVj7YXC7dSXFW5uYz6v008aEtjlGGOiTaGBfpyf11Sb7ab5JuVzbbTWcVzyA8W6qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5636274b338so658596e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:56:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768388218; x=1768993018;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jUj0QZHjKgRIKXHXvtdXuKCfmZJrYVq/PNABBtIJEcs=;
-        b=AWPPiAkFYhhxJ7rWMw+ZhdSPhp+HDjKNebzEwqALTbu5+703JK7K3685V7wH5xtwlZ
-         iMJlzGdPYZrw7mcUvlHYdqSxAP0ByOxu+xrLWKGKWx2yjUFkVohVW/QaREiShFTiAl+j
-         Z3tTG2oor1Iq3VlpRZMeeiTX+hhbWHuv9V/lZKZVzQIWJ3fjnzSbG6YY+gsNbIPtLSGA
-         8+FEO4AlstV9D8ZFKRdyrtYOS0m+722pgG7kn2Rtlc/Wjowgqw7fhahlUYH4GBAJeXPG
-         H7Cr+mbkY3uKeZhiYu8ZPwiN8Uv76EhgW3KUYVKv8t1srHv8+8XTOxAjr7NYOchGz0GB
-         H11g==
-X-Forwarded-Encrypted: i=1; AJvYcCW3XI9NJmU0/d7jqx8/Qfy/C6tM8gyPaf/WK8pfqNJmGdTlFyPRAN9eU/pWqyUS5szzUbc49YfGLrhTceY0raIK1A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNkkjpXeWb/qyeKfFwF21HxlkEzlLqROMYAWbWVlPDbQFzIr1M
-	5ujOUNd37FGXPK2ddE5Es8lVJOmigl87TCm5UsktJzXEaQF5ls0Yy1rmEZQO9mdy
-X-Gm-Gg: AY/fxX7O90FbMIZi4WxDWMgzNTkItBIDXr6oYcBw3iGGjc3kmF/Ic5dzHxVQCEw61ld
-	Y6R5aPUuK5N1YgvyUf/ZoO1z8ZK/wu+AjFt7LyvTJLl8mN8bH+4+v6iy5pMt9hVwOi9GVME6iH4
-	MytPxm1gyUbD5/8DMjnzPkf3cVs+hnDz1YX9ClbbW5U742g+Gna75eJFd95OR7twBkSsFeVvrid
-	6ER+2uZJYxFA7pEW6E9Yci8X311pDLiCvlJTfruWdBs3G5cmjFVIxWBBVgMS2Bmz27mbZmQvXkw
-	HPJtgZjXHvDwTRXDawwDI0AzjOJkws3O+kb+hpsswWMCD/ry2gDLLEDIlHxPUNuaI6E8gYChYLX
-	HPr7JmdBsmbX+0aw5zP8d+VAs24VQ8sQAWDX2iNj8nXEQBZpRIHPeXjRAwxFCa3MmrmFtBKVuZ7
-	e1nJUa7p8FILmDIRikK1W90zmas/9DdvlCmjKlSBWxJdkXOy06
-X-Received: by 2002:a05:6122:1698:b0:563:50ff:69b4 with SMTP id 71dfb90a1353d-56395c623f5mr2394350e0c.7.1768388218140;
-        Wed, 14 Jan 2026 02:56:58 -0800 (PST)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5634d9162a4sm20668515e0c.15.2026.01.14.02.56.57
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 02:56:57 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-93f5910b06cso529702241.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:56:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWhSUzPRT56Xsb0J6YgscsAhfVLKFHfWgDocQUBcyoJi9uY0q+zHSH8/+P1IZBOiNuDU4m/VeEiZuHISaz8QF+Yw==@vger.kernel.org
-X-Received: by 2002:a67:e7ca:0:b0:5ef:a3c1:86e1 with SMTP id
- ada2fe7eead31-5f16caf02dcmr2636191137.11.1768388217149; Wed, 14 Jan 2026
- 02:56:57 -0800 (PST)
+	s=arc-20240116; t=1768388821; c=relaxed/simple;
+	bh=lZNQT/lVvB3aRMXapPy5xduNiS/QYtu/j2dRCMggPtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va7hwTlyy4YNxRFPtEZXYtSi21IgGCgo3xwFgcvRlTcEeXg8uY3/oBHuxRoJKNBxz30nVNPdK3yvNWHGRjlQWXdDG73ZYU6KPCwtckRDwgHK044DCJaX80ItwjhU5mEZT9zRztyKQ2WnJqvMnEwod2xd8OYBBdDWcBe6LzwZJC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J18n4ggm; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J18n4ggm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=lZNQ
+	T/lVvB3aRMXapPy5xduNiS/QYtu/j2dRCMggPtk=; b=J18n4ggmxqEwAd771RRC
+	jDpl64Haa2Yut/ObJwU0FDpvi2X9JinBEKOGEXkBKNRJcCBL/CZMcocx0hMbrnhk
+	Z7uHLFpXjZN9GjkFrHRGsjPmhMAJiGSBPX8iIJhbWu6eCfENkAg3DNiI1yCKui4d
+	yTaoQ5XvnnpJmtcSGrvk2IHrEOpVyLQLfI2zMNeFDQN3ve2YMmhOZ432uT/tq7m7
+	zA33zcUaj+TIHghjOiN9GkuMOspLnl5wqJeH/KHKf2be96A+pMGxAsXPT4lebNKh
+	ebReGpnq+6PUcbYRKWjSknFpxJXui2jUrbfFl+Bt1LT4+nft1c6sEoimTtqccLRi
+	1w==
+Received: (qmail 2092519 invoked from network); 14 Jan 2026 12:06:50 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Jan 2026 12:06:50 +0100
+X-UD-Smtp-Session: l3s3148p1@51PZGldIDNkujnsM
+Date: Wed, 14 Jan 2026 12:06:49 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <aWd4yZA6GXey8Q_S@ninjato>
+References: <20260114093938.1089936-1-herve.codina@bootlin.com>
+ <aWdp_jMVUBN04is3@ninjato>
+ <CAMuHMdWkGevDsBuUs1k=r5yeKJZHvs93b2SDfPwKoF4fFr-3Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260104222653.1659382-1-niklas.soderlund+renesas@ragnatech.se> <20260104222653.1659382-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20260104222653.1659382-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Jan 2026 11:56:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW-yM0=1nVqWvCMD0a-5izxFE1LLsuNuFCtfz=Od=QB1Q@mail.gmail.com>
-X-Gm-Features: AZwV_QghUYTO_u0eAcOvYe5E9g88VVEx4bvinDAi6XyZ4obaigG9hTvrBIdoK34
-Message-ID: <CAMuHMdW-yM0=1nVqWvCMD0a-5izxFE1LLsuNuFCtfz=Od=QB1Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77995: Add GE8300 GPU node
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Conor Dooley <conor+dt@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Frank Binns <frank.binns@imgtec.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZxrGIdy71iEIqHwl"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWkGevDsBuUs1k=r5yeKJZHvs93b2SDfPwKoF4fFr-3Ow@mail.gmail.com>
 
-Hi Niklas,
 
-On Sun, 4 Jan 2026 at 23:28, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Describe Imagination Technologies PowerVR Rogue GE8300 BNVC 22.67.54.30
-> present in Renesas R-Car R8A77995 D3 SoC.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+--ZxrGIdy71iEIqHwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your patch!
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -1295,6 +1295,21 @@ gic: interrupt-controller@f1010000 {
->                         resets =3D <&cpg 408>;
->                 };
->
-> +               gpu: gpu@fd000000 {
-> +                       compatible =3D "renesas,r8a77995-gpu",
-> +                                    "img,img-ge8300",
-> +                                    "img,img-rogue";
-> +                       reg =3D <0 0xfd000000 0 0x40000>;
-> +                       interrupts =3D <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+> The irq and SoC stuff depend on the of stuff, so doing so would
+> delay the former by one cycle.
 
-119
+I know, but it is still better than nothing happening ;)
 
-> +                       clocks =3D <&cpg CPG_CORE R8A77995_CLK_ZG>,
-> +                                <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-> +                                <&cpg CPG_MOD 112>;
-> +                       clock-names =3D "core", "mem", "sys";
-> +                       power-domains =3D <&sysc R8A77995_PD_ALWAYS_ON>;
-> +                       resets =3D <&cpg 112>;
-> +                       status =3D "disabled";
-> +               };
-> +
->                 vspbs: vsp@fe960000 {
->                         compatible =3D "renesas,vsp2";
->                         reg =3D <0 0xfe960000 0 0x8000>;
+> On IRC, Rob sort of agreed to option A from my proposal (see v7 cover
+> letter):
 
-The rest LGTM.
+Cool, didn't know this.
 
-Gr{oetje,eeting}s,
+> Unfortunately that part hasn't happened yet...
 
-                        Geert
+IRC to the rescue again? I'd think it will be easier for Thomas if he
+gets a PR from Rob. Maybe Rob should take the first 4 patches even, then
+Thomas only needs to review the PR.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Thanks!
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+--ZxrGIdy71iEIqHwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmlneMUACgkQFA3kzBSg
+Kba3Qg//ZNBhfcFimNZVrYxvCimeSv+NJdUPbyUFaGZIIg/EPKrqrqfLgk1grdhN
+fUOL9CdUCGn0jd8UsLfq4PhpZb85MhbFnuiC/WmIxWdiJyYmTLaoYX/d3MKQRaDj
+aK19RiPoP24C7UfkuXb+BHTF3FkNdC9fCN0ldcWwiiBO8596sUiDS2TCSG0zJgha
+qYnMnCem0suW7orbWHIkUtMqlBJnsWePZkm2WKNqvLDjbpdeu+lMoIwQRWVvHCw5
+UM6ODFxR2W5MgvF/JOmpiaIs74GhFPSz44F7ZCrURCkjwpmqKlZoSgcZcVxdfl7z
+307ZGTyEw35vX6Y3YQ6atAD+lmr3oyw83VwJvoHc+1q8a5P7Nuc5d7JFeu2PQILs
+oolEE/k9px0maFsDFDaG3aCj5kaztlsG6d/CRT1XfnllI2yX0VATv5Ayb/9FkGJX
+Ncz9hQq5HtGYXVsE2af5dzsLy784s3ftYcV2OOZdc9a85Mf7166ei4nP5FrodlgJ
+FrBEql3NUjyivf51hxk81EgRumlu9lx+B0armCoWadjraRiTm5RVmYNioFFUqNc6
+Xy8w3rVFim0J/1U1RevTDFM0dO7r5QWolqDypr5sH2eZn09eWCb/Z65L9Gl0u81I
+mCBAzr/P7k4Njb3u0JzMKZqQmsaqI63K3cQqDQWWRipuQ7vxKIw=
+=46i1
+-----END PGP SIGNATURE-----
+
+--ZxrGIdy71iEIqHwl--
