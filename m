@@ -1,196 +1,108 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6D0361DBC;
-	Thu, 15 Jan 2026 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5B335C18C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jan 2026 10:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768471735; cv=none; b=h23Zb++9ZpXqOnaGJ1sbOBoKbz9Bpf+jlWQY9zIOCGfYEOd0BbuTJu7PU/gZoIGwCM4+ut+7ou/7ZRm08kqys6AC4rIGHenyptMnEtnyv/QXZMspJlPW0Yj2QmWNhBA5YMjL6FELM+MGcskjsKFthsE1WAKaH71NYTp8BR0DlIY=
+	t=1768471807; cv=none; b=HZZEVD53G6oiHxUu/lLMDAV2ePuGWy/udceZz57J4i6r8CMI6CamnHjb3RuiIfDJFhif65v5/keLLsaohPG04x8154JhwyFnnu9UqAlvWhCKt/Kgkz4MsxndRPQW8Y57VJyLI/PCxEPeqamZiDB9UhJZpECaIWxKuniggYaUy40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768471735; c=relaxed/simple;
-	bh=eTBBPNaGXVujuMVaMDyD5WAUtGtB3Iz2GSBQlnIJYdY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m9ZeP1eCmNWLJDMeKkW8bBfiaI2jhwr/nJpeymGFugxsFpNwFQoYyspdf6RfJhXebwxO5XTZxjQnSv43de5UwTy1hoFCGltDmAeCSktZk/kEoqYaJ0KdABKv5O+KZZTcI/D1xWi3cWSYQfoYxGM/rOvsCNKdvt0mNWvLdXgaXx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f4r6Cjw1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f4r6Cjw1"
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9C98728F7;
-	Thu, 15 Jan 2026 11:08:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1768471700;
-	bh=eTBBPNaGXVujuMVaMDyD5WAUtGtB3Iz2GSBQlnIJYdY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=f4r6Cjw1mJufvqEo3emOY4hg55zKEE/QGk6kJZ+F9GMVuX1aU+WXnBW6LJZz4TIZR
-	 WKNR/aMrM0oDH+YyycEOdqZ+sC3hq+O/vUyWNINPmiJqbdTtPgboIvvIG93aw2bYn9
-	 YR3sfK6/LU7pbJm3e70cpIblVJc1B/+Mi5sQXQX0=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Thu, 15 Jan 2026 12:07:00 +0200
-Subject: [PATCH 4/5] media: rcar-csi2: Simplify rcsi2_calc_mbps()
+	s=arc-20240116; t=1768471807; c=relaxed/simple;
+	bh=RE+BJgoRw2g5IS+v92/qs5tkLXWM/g8t4jE9iLZlX58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sOPfjDtclK91URsgdV+U2zGU8hEIn3O15S4XO1C0tJJeTxD879WlrNXQZeGQAsplKNDtwXxq+H3brC4wk6zIHf5tVgs6QIwS00EoqFDFRDBTdy1etMIPKKEaWG9Cf8+eFbhRCwJ2VtNmsRVKvkRjKmZNe0rOjVwbt6arQTDrzTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2a0d67f1877so4901925ad.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jan 2026 02:10:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768471805; x=1769076605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CgC0QjrYtZFKzuf+BESjeNcO1FE23KHL3L5ezRaJhpA=;
+        b=kkX8f9ITvgVL8s7JHALj6mWtJzis0UxqtfskLp1DT9b6EbfRftiAFOitrMNhJN/VFA
+         7cxEFMWwRZWx9cVlkYzKflASONBjAkbKvlIXfyf7QQRD+REvtlYykWdkY3s475xVSEOy
+         AxKzheURDwDtvCJ4DLNrDDQug/7l4WfshX4JX7oOh8jEYaJuosvu77/Mgi072q+i0M+U
+         nRmlvR9qZFCwhmz/RIMNukWduQj3J9amIJx8d31DqcsaFn5z0T1XnUlndeto3oXNPPOx
+         /kePjsbiIkq76sW6YzAMVorKcgofIGwiiC+lTkXku2QWxNvvcnPCWAP4tURgvnlBhXdB
+         sFjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7TDdSG1e/INJNzeLjZQx0nzLj2IaKa6/tSSkykTRWtiSYrS8u4HSLjCm4wNyAKnPKFxaNC7OK8okvPwcjMb32zw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFDzBcD3zrif5ySGUcrtE7thYn9d3j7IqrUCiXLUTdZdavvkze
+	5V6dHbcHQtTKWEiFDNi1x31rTeSgC0L1zi/vBe/prUpQcUtcb4fEFOyG7RLkXrax
+X-Gm-Gg: AY/fxX7H+hm5K7ofvBw7rpF3RsfK+K5HzpJ5jIMCn/egiaIug8vcR3PYOYw7apPTJdq
+	hsXyB4J/RwAaG/o6t7rZGKCYOBlTnG2EypiDu5b/gjtO8eZdyVR2GAN4i8/CLnljWxM6SOhWUFH
+	oYSfMZC2Tp6ieim0IOm0OJ0FKhlBK8TsUqy5aWXN7tAVz9OXVxUuwZfs6kmsq7gZKXQDrbZtLzP
+	Iu/jYnhov5pV3V18XAaf87Lfe44/BhH6jrJqqOlry4cSO20n9W7y1mavr+IoAVh3k5ZFSrSPKRL
+	orfZHLSIF8M+FLlWOYuwdqebMhGWOWYB6zeTez/X5kxrp6VMDn8F2VKlPgZOHeS30NRJ+z683pz
+	3KT+jqPzvhKHrsy3h12vmSx3y0coGvx6IxuYqI8taxhgO40jtRIG5ralOFN98Vb9pqKL1LLU2ZW
+	01dkYlVmwzIZcPOxyVblZf31rRDxIqpUB79A9yBa+tNTwtAgr8OYM=
+X-Received: by 2002:a17:903:2f05:b0:2a0:f469:1f56 with SMTP id d9443c01a7336-2a599e241bemr56320275ad.31.1768471805049;
+        Thu, 15 Jan 2026 02:10:05 -0800 (PST)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com. [74.125.82.175])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3cd4be5sm251866495ad.99.2026.01.15.02.10.04
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jan 2026 02:10:04 -0800 (PST)
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2b0ea1edf11so1967485eec.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jan 2026 02:10:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV/PugfLqjmnnClVmfSSin/2TiQY+J3y8nNpNyfhvgwWyXMCuMyavl7MKeGxpvgvCoMTvY+kj5Mvol8okT8HzhX4w==@vger.kernel.org
+X-Received: by 2002:a05:6102:3913:b0:5db:e6bf:c4d7 with SMTP id
+ ada2fe7eead31-5f17f5c0ffbmr2421625137.21.1768471418298; Thu, 15 Jan 2026
+ 02:03:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260115-rcar-streams-prep-1-v1-4-f87700926c11@ideasonboard.com>
-References: <20260115-rcar-streams-prep-1-v1-0-f87700926c11@ideasonboard.com>
-In-Reply-To: <20260115-rcar-streams-prep-1-v1-0-f87700926c11@ideasonboard.com>
-To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3857;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=eTBBPNaGXVujuMVaMDyD5WAUtGtB3Iz2GSBQlnIJYdY=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBpaLyqF7167wHo+drMRZPBcTHaGefdYQXdoFo/u
- lNorOn+lKeJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaWi8qgAKCRD6PaqMvJYe
- 9et+D/44X5rSjOx6UXwEdFP2FxCApdN39BIbhF3BHrJ8D6SqmmoK82l5s5N7ZIISW5JIHh/HGIu
- AX5Wga2FHvINlxdxs+sgvvIbwmdPwsUCTtLFRCwdwKOcjnalJr6MI25COuxGEdBK46ww23gnhwm
- htW79VL597DNMgy0yM9YVuHyZukLP9kYVmABrUIRiGMCSu0uMh/VcsiABKReOleLM1c4gfApgUq
- IbxbpCyN5EmBEbUWYXDDD9w971geFMJTM6/Iqaeqj6cGEZWFma/QuzApQFHSOPMlGymbt0PhpJK
- cOk1wYNt/Rm1/NOKBZ9S8nUnSDJAnMvXLtknO91asb3ZppdCtvoTnRETR9axVBlM3uq9Er0A1/I
- EbHLzxd75FMvmx6MHV3aMHfDdDRbGJucl4a7fo5BxyCgGoXbdwjcDNU7/fcoyUy4TYyupI6oFwj
- T6pnHiNvI4lQmGa3JuTUPPxSkNZg3flDkCrXJYCT5s0eg3jicYCUritTOpo2vkOT1bNz6dD8HyD
- LTGhhHprry8FOsLWLWQybF8lJL4MTCs0s670+HdOQHOpOKWolMDH3Fnd29hEeokMIXZ6Pf0nGRD
- xkCh2YBUWvCkpO1UNmoms+28cNIhazQ1FWQ6FtukAJ5FICye+vvnK57K4YHD1kQICFXQ6GJ+ZId
- ep2l7aI1AaHgmvw==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+References: <20260114154525.3169992-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260114154525.3169992-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260114154525.3169992-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Jan 2026 11:03:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVjYLQJDdqi_hShbOzeCQ6vcC0KCox4GqYTuGpDpF_FWw@mail.gmail.com>
+X-Gm-Features: AZwV_QitLLKMPfpHq9dKw_djeiwJFqwAAQTIpORIKL7aOAuxz5cFYxB71KZhGwc
+Message-ID: <CAMuHMdVjYLQJDdqi_hShbOzeCQ6vcC0KCox4GqYTuGpDpF_FWw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: can: renesas,rcar-canfd: Specify reset-names
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Instead of taking the bpp and the number of lanes as parameters to
-rcsi2_calc_mbps(), change the function to get those parameters inside
-the function. This centralizes the code a bit and makes it easier to add
-streams support.
+On Wed, 14 Jan 2026 at 16:45, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Specify the expected reset-names for the Renesas CAN-FD controller on
+> RZ/G2L and RZ/G3E SoCs.
+>
+> The reset names rstp_n and rstc_n are defined in the SoC hardware manual
+> and are already used by the driver since commit 76e9353a80e9 ("can:
+> rcar_canfd: Add support for RZ/G2L family"). The reset-names property
+> existed previously but was dropped by commit 466c8ef7b66b ("dt-bindings:
+> can: renesas,rcar-canfd: Simplify the conditional schema").
+>
+> Restore and constrain reset-names in the binding so DT schema checks
+> match the actual hardware requirements and driver expectations.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Also, in the future when the legacy (non-link-freq) code is removed,
-there will be no need to change rcsi2_calc_mbps() parameters.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/renesas/rcar-csi2.c | 45 ++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-index 8032fa4f7a8a..a2a87c5bfd7c 100644
---- a/drivers/media/platform/renesas/rcar-csi2.c
-+++ b/drivers/media/platform/renesas/rcar-csi2.c
-@@ -1003,13 +1003,18 @@ static int rcsi2_get_active_lanes(struct rcar_csi2 *priv,
- 	return 0;
- }
- 
--static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp,
--			   unsigned int lanes)
-+static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
-+			   struct v4l2_subdev_state *state)
- {
-+	const struct rcar_csi2_format *format;
-+	struct v4l2_mbus_framefmt *fmt;
- 	struct media_pad *remote_pad;
- 	struct v4l2_subdev *source;
-+	unsigned int lanes;
-+	unsigned int bpp;
- 	s64 freq;
- 	u64 mbps;
-+	int ret;
- 
- 	if (!priv->remote)
- 		return -ENODEV;
-@@ -1017,6 +1022,20 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp,
- 	source = priv->remote;
- 	remote_pad = &source->entity.pads[priv->remote_pad];
- 
-+	ret = rcsi2_get_active_lanes(priv, &lanes);
-+	if (ret)
-+		return ret;
-+
-+	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
-+	if (!fmt)
-+		return -EINVAL;
-+
-+	format = rcsi2_code_to_fmt(fmt->code);
-+	if (!format)
-+		return -EINVAL;
-+
-+	bpp = format->bpp;
-+
- 	freq = v4l2_get_link_freq(remote_pad, bpp, 2 * lanes);
- 	if (freq < 0) {
- 		int ret = (int)freq;
-@@ -1093,7 +1112,7 @@ static int rcsi2_start_receiver_gen3(struct rcar_csi2 *priv,
- 	phycnt = PHYCNT_ENABLECLK;
- 	phycnt |= (1 << lanes) - 1;
- 
--	mbps = rcsi2_calc_mbps(priv, format->bpp, lanes);
-+	mbps = rcsi2_calc_mbps(priv, state);
- 	if (mbps < 0)
- 		return mbps;
- 
-@@ -1475,23 +1494,15 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
- 				    struct v4l2_subdev_state *state)
- {
- 	const struct rcsi2_cphy_setting *cphy = NULL;
--	const struct rcar_csi2_format *format;
--	const struct v4l2_mbus_framefmt *fmt;
- 	unsigned int lanes;
- 	int mbps;
- 	int ret;
- 
--	/* Use the format on the sink pad to compute the receiver config. */
--	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
--	format = rcsi2_code_to_fmt(fmt->code);
--	if (!format)
--		return -EINVAL;
--
- 	ret = rcsi2_get_active_lanes(priv, &lanes);
- 	if (ret)
- 		return ret;
- 
--	mbps = rcsi2_calc_mbps(priv, format->bpp, lanes);
-+	mbps = rcsi2_calc_mbps(priv, state);
- 	if (mbps < 0)
- 		return mbps;
- 
-@@ -1732,23 +1743,15 @@ static int rcsi2_init_common_v4m(struct rcar_csi2 *priv, unsigned int mbps)
- static int rcsi2_start_receiver_v4m(struct rcar_csi2 *priv,
- 				    struct v4l2_subdev_state *state)
- {
--	const struct rcar_csi2_format *format;
--	const struct v4l2_mbus_framefmt *fmt;
- 	unsigned int lanes;
- 	int mbps;
- 	int ret;
- 
--	/* Calculate parameters */
--	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
--	format = rcsi2_code_to_fmt(fmt->code);
--	if (!format)
--		return -EINVAL;
--
- 	ret = rcsi2_get_active_lanes(priv, &lanes);
- 	if (ret)
- 		return ret;
- 
--	mbps = rcsi2_calc_mbps(priv, format->bpp, lanes);
-+	mbps = rcsi2_calc_mbps(priv, state);
- 	if (mbps < 0)
- 		return mbps;
- 
+                        Geert
 
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
