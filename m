@@ -1,171 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C5A2DA77F;
-	Thu, 15 Jan 2026 09:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415C430E828;
+	Thu, 15 Jan 2026 10:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768470760; cv=none; b=blpjZZNAWj8VMmbrEoFTyvJUrhSuo27rYfaMnj4cfgtt4yN/CVnfJ4efSQIgOl0IeE4NoNIMRQuX7dQBSYIs1nuNcv9G5zqLs1o3W69pceFTZeCm42AX0rBVcnAZ4xPs91GalvifyhabpyQrAAt95QsoLeQ58trBJiDgwcyuy20=
+	t=1768471729; cv=none; b=Qes6YiNDzCZfe4PVLzhaF/G/oByYREuSMCNpcuNcmQfmagKJWm+vtHhIBOnUknwV8MmrM70U0rKM5NhH41jziYKvpVnjztAV91LZs/mzllk7nhzeWc0I3uR6axvtr9vGrA/S9ao3us0F9dDj0gX4MXBbcrg2FqMz8AqCBU3Yyik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768470760; c=relaxed/simple;
-	bh=ie3TmYI5cr3rUG7dAH0RXadAUzvgEe3WDQN3llnpLt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4BJkwa/lJEvVw936VqKeuL3KiN8ZYdFfMTYbLyKc4UZv7+0Uti8aaZp5rZm5bf+H6D3UqionIg46859uZe71dIObu8kzSfxYBgqVG//8TW+1mbrOZwY3AIqnthpUrGn/GV2Bvpe9eoWEWJSXGrsOXD+W9fwqBZCwpqStJ3IoAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wv0/ls4Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768471729; c=relaxed/simple;
+	bh=pCIzyL3oA76wFJbJcD009d7AVGVAJy+49lpfc/4WxBs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DKsioVyn97kRfmu2ouY98Q7GjFMc4HA+z2jrhR5SiuJBkxUbHSf8WrHm7325hKt5nNIV4JwsMkdcSdkoL051b/cLUgxJgpnebppQmCZ0OuYpwV/b2dQgIO43KRNoYVwbEDpQP4U+xeYoa9HzXFaFi/PAJ/ClD6F092gcnZDOuqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kcunv/DP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wv0/ls4Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21F5C116D0;
-	Thu, 15 Jan 2026 09:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768470760;
-	bh=ie3TmYI5cr3rUG7dAH0RXadAUzvgEe3WDQN3llnpLt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wv0/ls4QVoGKTVjl9268gU38Fsq3tsRrW5GWkUjGCnYiQEA6OOSlCDnor4N/1VZEn
-	 TOVOvR2UEvVOVTMfIkJr5P7gnDHwIRlyMupn+fwLDzB84tt9UHqvHnkV3rw/3dmSwD
-	 g+XSboVVh3kQdvS3fpkH++ASC7+f00PZZ7rXkrAQgt2ubr4Fsep1nDGhiz8YVkgp/o
-	 7ke7bJu+9IIPRBfauFviJDV0QZ3nHX84SAUtb145+/zizpJh5OFylc176G/LveiZqA
-	 bj/WsD57BqxTCGX76yNkW/cJnScyv28Q75bwZ6A5SGe6JbRQO1skknqev2S46mkPjA
-	 gydloRM32hoiQ==
-Date: Thu, 15 Jan 2026 10:52:37 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4] pwm: rzg2l-gpt: Implementation of the waveform
- callbacks
-Message-ID: <elf2i3oefpflkcxup3howpikgwko6uvm5rkimqwyzhq35nwowk@vtdbe6ad4rkw>
-References: <20251128103431.161591-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kcunv/DP"
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B34634E1;
+	Thu, 15 Jan 2026 11:08:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1768471697;
+	bh=pCIzyL3oA76wFJbJcD009d7AVGVAJy+49lpfc/4WxBs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kcunv/DPPbAf1HXIybNFopBfEzLTj2C+t1LlaDkn+LNNJQQMEtAQrnGQI6fXigwfe
+	 ZyoMItjXOm9aVhWUAaAROaZQxs1dTeRJY5k3cfNS3jqAZxWaG+DnSEtb3/Ly8u1Q7/
+	 A4BEsJeWCntmX23wWNFbLB1RKEbFed9iRQxSrCIw=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH 0/5] media: rcar: Streams support preparation
+Date: Thu, 15 Jan 2026 12:06:56 +0200
+Message-Id: <20260115-rcar-streams-prep-1-v1-0-f87700926c11@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="limlu64r62pyvpna"
-Content-Disposition: inline
-In-Reply-To: <20251128103431.161591-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEG8aGkC/x2MSQqAMAwAvyI5GzDVSvEr4qHUqDm4kIgI4t8tH
+ mdg5gFjFTboigeULzHZtwxUFpCWuM2MMmYGV7m2IvKoKSraqRxXw0P5QEJKyQXv6xCaALnMepL
+ 7v/bD+35NRVR9ZQAAAA==
+X-Change-ID: 20260115-rcar-streams-prep-1-1cc285538848
+To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1095;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=pCIzyL3oA76wFJbJcD009d7AVGVAJy+49lpfc/4WxBs=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBpaLyk/PLy3Y3gIxQIy0Y51Jerj8r071+fdiRe7
+ qen+7VsUO6JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaWi8pAAKCRD6PaqMvJYe
+ 9WWzD/0fz7CVRbdWIl8xB4aIoI8T2bmfZ72yqsWCqH/pNoqUnj9Ts3TY1vQUVefVXvqfD45ns6P
+ H8zSqsMjr9hMYmeLzKGosKCQ6MiZXLYVSkKMfaz+ZqMr3G0SRnVAaomRQkt/6VTggmdVsTpJq06
+ Wx8SWOQp3A+o4XZdMlNOvpFq+PfWSzZV2hyT91JJIcn3Iv8eOrBqWmsm/id95yYLqBF01+nrySw
+ VxmdRbZ5UY4nyw8UWjgLfQVtXn/kXQqV+SZLmY5qpMyNKZPgxGazwsj3LoPXHk2h0ZQ94/s7mEw
+ X7S5YQw02U61mwuRvKBTS8j6RDUqwJ8wSaDl9F3RD1AFtN1rDPwFYhaHAki04SbMUmPrwm+R5vb
+ pkwSsMRxvSkGZHCQjc96CHtfVa7cPPMSRbLh9v75RWY5agY6Gyrs7EyZCiPYviBxNtIOmzympGa
+ k4/q+rSGAVpCaI2Ay75plg0l7iQTw/0GTqmYq4MfLpKJbTgEdhrt9t1BJgUYlhXOd22C3agpwuJ
+ d2Yy9E9pXqN5eOsJeSBxsO+3/RKsCvHUre791n7761MSPfzdV/qzGmHvdxwYA1/JS4/tiIChtE/
+ s7BNyhBxJtANXwAfpeqmY//csxDD4KzLrniEqx4wF0AhtpQ/R8WBRZYx3WOvDGHlLqOjgM3w497
+ /ZOv+u7CbzybZqA==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
+This series is a subset of the Renesas streams series, sent as a
+separate series per Niklas' request:
 
---limlu64r62pyvpna
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4] pwm: rzg2l-gpt: Implementation of the waveform
- callbacks
-MIME-Version: 1.0
+https://lore.kernel.org/all/20251216-rcar-streams-v4-0-f28b4831cc67%40ideasonboard.com/
 
-Hello Biju,
+This subset contains the (hopefully) easy ones that can be merged
+already.
 
-On Fri, Nov 28, 2025 at 10:34:29AM +0000, Biju wrote:
-> -/* Caller holds the lock while calling rzg2l_gpt_config() */
-> -static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pw=
-m,
-> -			    const struct pwm_state *state)
-> +static int rzg2l_gpt_round_waveform_tohw(struct pwm_chip *chip,
-> +					 struct pwm_device *pwm,
-> +					 const struct pwm_waveform *wf,
-> +					 void *_wfhw)
-> +
->  {
->  	struct rzg2l_gpt_chip *rzg2l_gpt =3D to_rzg2l_gpt_chip(chip);
-> -	u8 sub_ch =3D rzg2l_gpt_subchannel(pwm->hwpwm);
-> +	struct rzg2l_gpt_waveform *wfhw =3D _wfhw;
-> +	bool is_small_second_period =3D false;
->  	u8 ch =3D RZG2L_GET_CH(pwm->hwpwm);
->  	u64 period_ticks, duty_ticks;
->  	unsigned long pv, dc;
-> -	u8 prescale;
-> +
-> +	guard(mutex)(&rzg2l_gpt->lock);
-> +	if (wf->period_length_ns =3D=3D 0) {
-> +		*wfhw =3D (struct rzg2l_gpt_waveform){
-> +			.gtpr =3D 0,
-> +			.gtccr =3D 0,
-> +			.prescale =3D 0,
-> +		};
-> +
-> +		return 0;
-> +	}
-> =20
->  	/* Limit period/duty cycle to max value supported by the HW */
-> -	period_ticks =3D mul_u64_u64_div_u64(state->period, rzg2l_gpt->rate_khz=
-, USEC_PER_SEC);
-> +	period_ticks =3D mul_u64_u64_div_u64(wf->period_length_ns, rzg2l_gpt->r=
-ate_khz, USEC_PER_SEC);
->  	if (period_ticks > RZG2L_MAX_TICKS)
->  		period_ticks =3D RZG2L_MAX_TICKS;
->  	/*
-> @@ -278,21 +273,25 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, =
-struct pwm_device *pwm,
->  	if (rzg2l_gpt->channel_request_count[ch] > 1) {
->  		u8 sibling_ch =3D rzg2l_gpt_sibling(pwm->hwpwm);
-> =20
-> -		if (rzg2l_gpt_is_ch_enabled(rzg2l_gpt, sibling_ch)) {
-> +		if (rzg2l_gpt_is_ch_enabled(rzg2l_gpt, sibling_ch, NULL)) {
->  			if (period_ticks < rzg2l_gpt->period_ticks[ch])
-> -				return -EBUSY;
-> +				is_small_second_period =3D true;
-> =20
->  			period_ticks =3D rzg2l_gpt->period_ticks[ch];
->  		}
->  	}
-> =20
-> -	prescale =3D rzg2l_gpt_calculate_prescale(rzg2l_gpt, period_ticks);
-> -	pv =3D rzg2l_gpt_calculate_pv_or_dc(period_ticks, prescale);
-> +	wfhw->prescale =3D rzg2l_gpt_calculate_prescale(rzg2l_gpt, period_ticks=
-);
-> +	pv =3D rzg2l_gpt_calculate_pv_or_dc(period_ticks, wfhw->prescale);
-> +	wfhw->gtpr =3D pv;
-> +	if (is_small_second_period)
-> +		return 1;
+These patches should not change the driver's behavior.
 
-Why don't you need to set .gtccr in this case? I think it's wrong, but
-even if 0 is ok, please initialize the value explicitly.
+ Tomi
 
-> -	duty_ticks =3D mul_u64_u64_div_u64(state->duty_cycle, rzg2l_gpt->rate_k=
-hz, USEC_PER_SEC);
-> +	duty_ticks =3D mul_u64_u64_div_u64(wf->duty_length_ns, rzg2l_gpt->rate_=
-khz, USEC_PER_SEC);
->  	if (duty_ticks > period_ticks)
->  		duty_ticks =3D period_ticks;
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Tomi Valkeinen (5):
+      media: rcar-isp: Improve ISPPROCMODE_DT_PROC_MODE_VC
+      media: rcar-csi2: Improve FLD_FLD_EN macros
+      media: rcar-csi2: Move rcsi2_calc_mbps()
+      media: rcar-csi2: Simplify rcsi2_calc_mbps()
+      media: rcar-csi2: Optimize rcsi2_calc_mbps()
 
-Orthogonal to this patch: The if condition can only become true if
+ drivers/media/platform/renesas/rcar-csi2.c      | 116 +++++++++++++-----------
+ drivers/media/platform/renesas/rcar-isp/csisp.c |  13 +--
+ 2 files changed, 67 insertions(+), 62 deletions(-)
+---
+base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
+change-id: 20260115-rcar-streams-prep-1-1cc285538848
 
-	if (period_ticks > RZG2L_MAX_TICKS)
-		period_ticks =3D RZG2L_MAX_TICKS;
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-triggered above, right? So maybe it's more natural to do
-
-	if (duty_ticks > RZG2L_MAX_TICKS)
-		duty_ticks =3D RZG2L_MAX_TICKS;
-
-here, too?
-
-> -	dc =3D rzg2l_gpt_calculate_pv_or_dc(duty_ticks, prescale);
-> +	dc =3D rzg2l_gpt_calculate_pv_or_dc(duty_ticks, wfhw->prescale);
-> +	wfhw->gtccr =3D dc;
-> =20
->  	/*
->  	 * GPT counter is shared by multiple channels, we cache the period ticks
-
-Best regards
-Uwe
-
---limlu64r62pyvpna
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmlouOMACgkQj4D7WH0S
-/k6WJggArcDzWQgtRNk1bcgE5jTydUMbFwfJL+pJQpP23c5j5AV1LBE51i50ZWG1
-e88gTlaBUf/KxpKbskpwtuJfmQ5IIxPLLQFLoekVEanWGK4mCv5LnZM40ZWHwbYC
-x7giKZkMqDsfEzz2wGQyI6hWCyXvDAWbLyXXP3rLZgqsODCsOMk7f0nnspPNbRfT
-VxBY9dOgNV4c6tGN0yAu7KEaVmfMk/gMAcwaB3YqPgqhOu45Ros7oBslKF2Mulia
-d/yHyqLaqPm8pU5AmvIKJDawBiQoKoLI+UHaEuE4aKa0cCTmPPEDTAjBLWg3HFJL
-OoovaotpQqJr8sUoSUpy8hrV8oO5Dg==
-=6r58
------END PGP SIGNATURE-----
-
---limlu64r62pyvpna--
