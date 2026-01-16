@@ -1,118 +1,64 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AB9239594;
-	Fri, 16 Jan 2026 09:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25FD35C1B9
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 10:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768556991; cv=none; b=qk4v0DLVn4lCUgad4pPkJbhbAhAmp4tQxXBr44p/Uv+sWmshfobmAEIm6pkWeONQQyCPFOw/BgP9F0qT/0p+/SV46ykIzdhRWwqZoA8lXXIOvSqiQbNeqCv3eQAo8rA6FjyC30nS4/Lxv2GRqVTAZ6hr7ILQKMAPjNPhe8gKtGI=
+	t=1768558414; cv=none; b=Rkk9aQn5pZNw7GCRxYFzR46A8kvs9uGBmF4PIVGnQjUpH9BsWpx/L6Xy51zA6ekS+xiwuLO46o9Mya+kyWZkvBv6Bg1ZAQwrHCHTL9mNS+f5I60NxmCHeQDHcnu48rt4DZBpNa9iWUPn3X0G7/YIIdob7QgvxxFN/RoVRPQh0vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768556991; c=relaxed/simple;
-	bh=Ts7W0YJf0XqYefChNjn+Q24/xkbzT6BD4J6xcR9fSgo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IIb+QJzJ5x/TRA9Ae1yDTTlEYQgUkI8OIydcjMvb2pLM00zzx78NZoITpHv+d1EnixIHTcFeot13yM05kARbAFWThKHozqglM155g9gnQ/6JhWxh7uWMdo6ZqcOQS9CYvq71nFJvOmrQLJfSEuC9bSLh+R9w2d2GFA6qmwtPMos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PFRJQxxd; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1768558414; c=relaxed/simple;
+	bh=5aroaHt+wNWzDzJu9YfGtGikKHj+ddega9yJXcWeJGA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=redbHDVz23kXU6+saZceupn3LA9ztRvThI91oi9A5yx7dQA+Kx3x7RaRxgZ9W6lXmOOc5wbF9/Qfmzagcns5w6rwkVpoHy92RpriLPJ50xVANWN/2/qRM7/+G0F6x+/XsBy8YPR0ZjtyUjSj8uWhDYyPZnoI2wGT5K71qCrxnd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JClIuVsP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PFRJQxxd"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 199101A28A6;
-	Fri, 16 Jan 2026 09:49:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DD4E460732;
-	Fri, 16 Jan 2026 09:49:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B100A10B689ED;
-	Fri, 16 Jan 2026 10:49:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768556985; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=jd6h5hFzmieFCQYs0f8OCOxP1CkipXv8Tf3z51jJqIU=;
-	b=PFRJQxxdbcVL14k7lt8R02CN4j3nIePIljzXa6QtzCq0uqQi3RssnOcPVtK2SvWo00IFUU
-	Mae3+ZAH9g+TKGpCAxa7UIbRT9gssNS/F3821Jqef9vHna5gpEWuDbPwPYOB9XH8us1Axo
-	E5Vxb99EUJDsqOgtALWH7beI4MHnx9uFKC+8BxrFcB+6e4HwlC995mmP5RTcRvuuUd/Xbj
-	42GmMzUZ7Qu1gU6+/sNz4aHWoqI1ktF/+wKYhTHsC1JxANzJWSpB6DwHYMYIkI/RYluGqq
-	BXgLJZeRNzQSzCO/mbq2kUbibtWHoSbwQw9YGGH50Q6CYtEWa9cx33Fhdb5cXg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mark Brown <broonie@kernel.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Geert Uytterhoeven <geert+renesas@glider.be>,
-  Magnus Damm <magnus.damm@gmail.com>,  Vaishnav Achath
- <vaishnav.a@ti.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-  =?utf-8?Q?Herv=C3=A9?= Codina <herve.codina@bootlin.com>,  Wolfram Sang
- <wsa+renesas@sang-engineering.com>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Santhosh Kumar K <s-k6@ti.com>,  Pratyush Yadav
- <pratyush@kernel.org>,  Pascal Eberhard <pascal.eberhard@se.com>,
-  linux-spi@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 13/13] ARM: dts: r9a06g032: Describe the QSPI controller
-In-Reply-To: <CAMuHMdUHwqBrNMQTO-g7yUA_owWXxT6bPi34Oxjt-J7N0Q2CXQ@mail.gmail.com>
-	(Geert Uytterhoeven's message of "Thu, 15 Jan 2026 14:00:49 +0100")
-References: <20260115-schneider-6-19-rc1-qspi-v2-0-7e6a06e1e17b@bootlin.com>
-	<20260115-schneider-6-19-rc1-qspi-v2-13-7e6a06e1e17b@bootlin.com>
-	<CAMuHMdUHwqBrNMQTO-g7yUA_owWXxT6bPi34Oxjt-J7N0Q2CXQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 16 Jan 2026 10:49:42 +0100
-Message-ID: <87ldhxubt5.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JClIuVsP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03D4C116C6
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 10:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768558413;
+	bh=5aroaHt+wNWzDzJu9YfGtGikKHj+ddega9yJXcWeJGA=;
+	h=Subject:From:Date:To:From;
+	b=JClIuVsPK7ndKXd1QqU1b3gPqeKMhPjbV4smieFog+DT1sa79Nxuc43QHHCnYqBTU
+	 bgfcenGK34hQcSX4SG7kAazSVZ3CET43qC2/srVRDZ+MzmBznwMOqwpCELbrc5/s1O
+	 RH7autVJOw9EiQkBFDdaVtvlkSO2+E4doPR5JJ0V/6Vbb8PjVWPBWwYJ7v8kTvKTTW
+	 pjiVlmSJg/sTYzeiLMd8xFT94MzPOeLHkuqEGfN/Lqk8Z2UYDMuFZQrpMhGrKfBTD2
+	 5x1VzrjMfykGS68HQglhK+nhmbn+8m9mgeoh0jWKe7ScEk3ArXdh+mRUON2NIltAj3
+	 SEqXAwH1kjldA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7ED5C380AA6A
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 10:10:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From: patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: 
+ <176855820500.173766.5529265118653877702.git-patchwork-summary@kernel.org>
+Date: Fri, 16 Jan 2026 10:10:05 +0000
+To: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hello:
 
->> +               qspi0: spi@40005000 {
->> +                       compatible =3D "renesas,r9a06g032-qspi", "renesa=
-s,rzn1-qspi", "cdns,qspi-nor";
->> +                       reg =3D <0x40005000 0x1000>, <0x10000000 0x10000=
-000>;
->> +                       interrupts =3D <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks =3D <&sysctrl R9A06G032_CLK_QSPI0>, <&sys=
-ctrl R9A06G032_HCLK_QSPI0>,
->> +                                <&sysctrl R9A06G032_HCLK_QSPI0>;
->> +                       clock-names =3D "ref", "ahb", "apb";
->> +                       #address-cells =3D <1>;
->> +                       #size-cells =3D <0>;
->> +                       cdns,fifo-width =3D <4>;
->
-> <4> is the default, right?
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-It is the default in the bindings indeed, however the driver does not
-imply that default and errors out if the property is missing. The
-property is also marked required in the bindings, which is kind of
-incorrect I guess. Also, all DTS explicitly set this value to 4.
+Patch: arm64: dts: renesas: rzt2h/rzn2h-evk: Reorder ADC nodes
+  Submitter: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1042790
+  Lore link: https://lore.kernel.org/r/20260115122210.3971063-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 
-However looking into the RM I found "Transmit and receive FIFOs are 16
-bytes". I haven't tested that, I will.
 
->> +                       cdns,trigger-address =3D <0>;
->
-> Where in the RZ/N1 docs can I find if these two properties are
-> correct?
+Total patches: 1
 
-This property is mandatory. Maybe I could just discard it for my
-compatible, because it is only relevant for indirect modes, which are
-unsupported.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
->> +                       status =3D "disabled";
->> +               };
->> +
->>                 rtc0: rtc@40006000 {
->>                         compatible =3D "renesas,r9a06g032-rtc", "renesas=
-,rzn1-rtc";
->>                         reg =3D <0x40006000 0x1000>;
->
-> The rest LGTM, ignoring my comments on the bindings:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for the review, but I guess if I end up changing the DTS snippet
-I might drop it. Or would you like me to keep it anyway?
-
-Thanks,
-Miqu=C3=A8l
