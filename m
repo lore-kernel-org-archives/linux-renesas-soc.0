@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1162F692C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 01:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8C2328B7C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 01:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768528233; cv=none; b=rYUvSVTHwBO7cOuP/AS1bEEQXYu1FbDOqItWrESnJoeaGMBUZ3cdqne++l4TDbh/4JvqBG+VRXDFs438UXq+LJq0Gjw0whLbPtbFV7I+G13bPqZ1uwwUxwyyy3y4NybkKwT5o2+xiY+LoUmBTv1c6Jd9aiLyyYsW+eXdEyY2xcw=
+	t=1768528244; cv=none; b=qvJvD2lZFwFrTOOdq0Yw1O947jjfiMyjtCjJNXX1S0BOxn+FpnH/2tgHj1qm0VfOdQ2Fiki8TETaXaNbziWzDLDYqah6tGLB2HUZNt9QxXaZ41Lz54swM+GXQ6aBaVH7TolSCnD2LFKpA1mhm9K6Xz+IrZttozSqjSivskgaELg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768528233; c=relaxed/simple;
-	bh=wTJkF1ObFmb6vTCmdOsPYMsKK6ryfl9IIoIdiRKDHew=;
+	s=arc-20240116; t=1768528244; c=relaxed/simple;
+	bh=dDnw5mOhk7/iI/4fF28OGLUQnKTw2aqseKu2VwtAmf4=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ibw6+vlXe5HP7bxR4zfnrX1kZOEdO9weXt2zQ3c1Rak1K9V8KIUBZ6Dq6wCDUXoz0f7gbA5eTVmJ1l1eJsDtOIWSaD/8GKmTKgToCEXvG/qHdJdNWeeKxA744yNLvPPmwwxvUPOLVZVjwPaMjEkpxn95FLYcYqrGp+oTtO1LwSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aof5HGd7; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=uCRbI9qGmMSzy48jmIWbtYTgdqE1bcoI/I8ZAiSo1qFnq/XDgK+hpphKMsqGz5Bub+Gfma5jdOINpqGs0DKo7Y4FtXh2775mBeD07VEhd9p9EbGWwZ5DIlhwHN3R7fqLw4xZJQiI4XFm2Erq+mohX4+nLJRf74w2zWkA8LXKreE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tejgTdCh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aof5HGd7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E6BC116D0;
-	Fri, 16 Jan 2026 01:50:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tejgTdCh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D6D1C116D0;
+	Fri, 16 Jan 2026 01:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768528232;
-	bh=wTJkF1ObFmb6vTCmdOsPYMsKK6ryfl9IIoIdiRKDHew=;
+	s=k20201202; t=1768528244;
+	bh=dDnw5mOhk7/iI/4fF28OGLUQnKTw2aqseKu2VwtAmf4=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=Aof5HGd7eeeGhg0d9X58wUsnwOofyQFyqnZdvr/0ivyMJMdnv3LHyIFsrtfleUmtz
-	 P8WwY0qLKaSHYY3tzqWiWiwSB3FiJdhcN8BrJ9LEVp6UgAmxU1gRShrQotEoPOfVZP
-	 uc3aH2/wlzmkAHksHMtNs1OIdoczMvfxs4EQVBUwMu/xzHAXGfXTjSCMDBmxI7tkQB
-	 fG+hPd5ULmNSo9eLQJ0QRkRh/2wF0faW53xbTNUMUMqfTrx6REgCpPcIHWM172Te6B
-	 uuuVHvuSxIF51r9HfI3yPEsursM7aL53XSo0FC/Ob+KequEJCZ6smxzJ0CkPc/xcD9
-	 N8cuum6Ls+fjQ==
-Date: Thu, 15 Jan 2026 18:50:30 -0700 (MST)
+	b=tejgTdChU+gn6ddXoU+/haWRLI/yeA4IEJyMrjXzqE16xCSrOr1bzYpn8gd1AJQ9z
+	 0wEUKU9WpzRHzj36LRI5Wvmo9q1pw882B9iNwa5/rSjTefZheDivVBFDiFzhsCdcUX
+	 dfwVDJwJI0cnwY2/i2gySVgr0kLlS6ITNPGNbH+6H/E+x1DOjJVTBsQrkyiX6ei7GM
+	 fGSyciDd/Qbj++eXS4paEjA2NxrXDTcLkND4MPIuhwup1+CIVyl+cxOf2jVAVAy/xg
+	 jnuB1epdRDcpSgQSnn/6KhG1iXtV9bq1nCDqOjajvJNE5pEzjuHpP+m5T12GSk40zD
+	 JG8WRAnkXMU6Q==
+Date: Thu, 15 Jan 2026 18:50:42 -0700 (MST)
 From: Paul Walmsley <pjw@kernel.org>
 To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 cc: Conor Dooley <conor.dooley@microchip.com>, 
@@ -37,11 +37,11 @@ cc: Conor Dooley <conor.dooley@microchip.com>,
     Necip Fazil Yildiran <fazilyildiran@gmail.com>, 
     linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
     linuxarm@huawei.com, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] riscv: ERRATA_STARFIVE_JH7100: Fix missing dependency
- on new CONFIG_CACHEMAINT_FOR_DMA
-In-Reply-To: <20251210160047.201379-2-Jonathan.Cameron@huawei.com>
-Message-ID: <7b2ce9e7-7261-690c-c5db-f4c70389bd22@kernel.org>
-References: <20251210160047.201379-1-Jonathan.Cameron@huawei.com> <20251210160047.201379-2-Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 2/2] soc: renesas: Fix missing dependency on new
+ CONFIG_CACHEMAINT_FOR_DMA
+In-Reply-To: <20251210160047.201379-3-Jonathan.Cameron@huawei.com>
+Message-ID: <a5df4517-40af-2406-8a18-cd8da18aafdd@kernel.org>
+References: <20251210160047.201379-1-Jonathan.Cameron@huawei.com> <20251210160047.201379-3-Jonathan.Cameron@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -59,8 +59,8 @@ On Wed, 10 Dec 2025, Jonathan Cameron wrote:
 > 
 > Fixes: 4d1608d0ab33 ("cache: Make top level Kconfig menu a boolean dependent on RISCV")
 > Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202512100509.g6llkMMr-lkp@intel.com/
-> Signed-off-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512100411.WxJU2No9-lkp@intel.com/
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 Thanks, queued for v6.19-rc.
 
