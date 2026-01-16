@@ -1,57 +1,57 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0013090C7
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 22:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8746930FF3B
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Jan 2026 22:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768602209; cv=none; b=MRCimdpTUP/KwcwGrkhqsrIWIKDCwgwP3P/+85+zOfIJfm/in57TuCJmr0TDEuZmG69BauM03ud8/y9DEh70rAdnMtVtH5rtKoLBsyc7yvz+77ltekX/o3p9/hF3J4SdnTZ5HNsNfXL9/YdEj2jPbCfoAn0bPoEWacD8ER4jOKU=
+	t=1768602268; cv=none; b=b6rkZu4bamS2k5j/31fpmzgDbdC4CoTF+prDNGM081DHjSL+JgIO3mBuxhoQ9xPuAFs9Hy2i2ZYeaXwabE3/PHAWk+UVTe2ePGAUx8DfVbVu4BimTtXhYbym+zHhSJfdnGyM+T86WcTePn1n2fOZiKinbXqvDV+74Ew2rhUAOVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768602209; c=relaxed/simple;
-	bh=DwZ1bkfv+j4dwl06VkAr3XawSueSXbmDbHUmcrTrxrA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=NXWFfUHtAOhrpvWrKBmIJ75JpOBLstyhQFHy9HlGxutEkvUyl+KleVSQFUcHDQtsbKWOCJg8Uh4w2fvVzO5L8+Eptk80hBGWJY9bHRtnPw7Yvzd+rsHidxcOWqth8ATuF0FCMcyZ+G4Nxy0Fncr8kyfzzcUWfbmAuxvNC/Z8xtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A+h1pouF; arc=none smtp.client-ip=192.198.163.8
+	s=arc-20240116; t=1768602268; c=relaxed/simple;
+	bh=7XslJQBp0z7L9Yvxi9ZI00hFUJvyCA05nld6X54xfzM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=peUBG5fgwhUeXOqchE6M/1wRy3mi5azQsIkuITGFYmGhLU52QJ5bHGGpt7dYqJvJeV3/OAHHK4KcDp16eB43z9cXQ1GaNjgGcMCwsof9JDnTN5+l/+GyYtIIYcILcrYG4yH1veNL7u2ELstcJLjPAr3jnmnWyO7hKGnvPOL70mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CAG44u9f; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A+h1pouF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CAG44u9f"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768602207; x=1800138207;
+  t=1768602266; x=1800138266;
   h=date:from:to:cc:subject:message-id;
-  bh=DwZ1bkfv+j4dwl06VkAr3XawSueSXbmDbHUmcrTrxrA=;
-  b=A+h1pouFikjjDub+5fyV8V5P1hG6oyb3hrFwgHKErmcqc2UhWgTcpVni
-   CTNPu/iEy0abKJ/KNV/7CMX0IBsHvxc+UYSEkLq+WGBse77/kXE5Rds2d
-   YqCbHPKd6B79i0ZN0ZnfVNkdKvfbyHAbJ3kfTCZcAI7mStT5/GSKjr4jQ
-   ckAxdF+GVbfIphMJ74gtLzmgWbpHc7gbTuSTfHF/3xthDzlZKA0yrjUm0
-   ofgwEru5//mjUihdwTxGklEVtMUxZA0iFqFofHmCYeziOOCe64Dn3h8K7
-   zxib/EAxqOwKUKrnKefqOTR+FY6vyKsHSnvWnfmN4sJAYNMrk542qLycx
-   A==;
-X-CSE-ConnectionGUID: CjDqU6loRNCyECZZvLXc0Q==
-X-CSE-MsgGUID: 8m7T6L8hRUWq7TycR9AuUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="87495037"
+  bh=7XslJQBp0z7L9Yvxi9ZI00hFUJvyCA05nld6X54xfzM=;
+  b=CAG44u9f6fZHru5AQ93+dPLEUoVRBz0CXyI/q4NjQOGMzdyopn2Iz/64
+   g0vgwJwJpQJNC3aV9YtmMyGQx7SSnbERKHfOcNnK8G2ttSZlv5bn6fQWt
+   5gvfXm1TWG0+7vvd6vJ0whozbin5xITeDXDkVNzQkvZHzAkbdIFOgwKiE
+   d56j4+JGOKOCLoDXx8nAMcfGrGOYMF0DfBSDZ1C4aqWge07kwVuAGgvKc
+   bJR62aEEgJJriKxH1udK2cB5lCWYSNeEzTyYsfE0Hr+/bpbHrfnatzNeM
+   ExmMlgnvlQsipsbahD1FGFJYshr9KlW9l9ANal20A1n5CfQyPv6HnJJW3
+   Q==;
+X-CSE-ConnectionGUID: ZfkHwDYFStuDTVD4Vc/tzA==
+X-CSE-MsgGUID: Z+tNMA47Ri6IMxFKkg///g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="87495091"
 X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
-   d="scan'208";a="87495037"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 14:23:25 -0800
-X-CSE-ConnectionGUID: 3mawwrb1SQS/S64w3O2P9w==
-X-CSE-MsgGUID: /3qGg9HwTeCEM8cGaNJ+aw==
+   d="scan'208";a="87495091"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 14:24:26 -0800
+X-CSE-ConnectionGUID: BdQmbXerRUuuN8nas//8hw==
+X-CSE-MsgGUID: 9SkRsPQeRqGQdYqmTg0hOw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
-   d="scan'208";a="236622350"
+   d="scan'208";a="204583215"
 Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 16 Jan 2026 14:23:24 -0800
+  by orviesa010.jf.intel.com with ESMTP; 16 Jan 2026 14:24:24 -0800
 Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1vgsDx-00000000LJC-2OHS;
-	Fri, 16 Jan 2026 22:23:21 +0000
-Date: Sat, 17 Jan 2026 06:22:31 +0800
+	id 1vgsEv-00000000LJK-2isl;
+	Fri, 16 Jan 2026 22:24:21 +0000
+Date: Sat, 17 Jan 2026 06:23:35 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v6.20] BUILD SUCCESS
- 4fef3fd633be4a1a18c490a63f4131284f6ee0f4
-Message-ID: <202601170626.98ERxKaP-lkp@intel.com>
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 39f861fc84d7fc7230da73c36000bcde538e58de
+Message-ID: <202601170630.wrg1tmhH-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,12 +59,12 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v6.20
-branch HEAD: 4fef3fd633be4a1a18c490a63f4131284f6ee0f4  clk: renesas: Add missing log message terminators
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 39f861fc84d7fc7230da73c36000bcde538e58de  Merge branch 'renesas-next' into renesas-devel
 
-elapsed time: 722m
+elapsed time: 723m
 
-configs tested: 237
+configs tested: 232
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -210,21 +210,17 @@ riscv                            allmodconfig    clang-22
 riscv                             allnoconfig    clang-22
 riscv                            allyesconfig    clang-16
 riscv                               defconfig    gcc-15.2.0
-riscv                 randconfig-001-20260116    clang-22
 riscv                 randconfig-001-20260116    gcc-15.2.0
 riscv                 randconfig-001-20260117    gcc-10.5.0
-riscv                 randconfig-002-20260116    clang-22
 riscv                 randconfig-002-20260116    gcc-15.2.0
 riscv                 randconfig-002-20260117    gcc-10.5.0
 s390                             allmodconfig    clang-19
 s390                              allnoconfig    clang-22
 s390                             allyesconfig    gcc-15.2.0
 s390                                defconfig    gcc-15.2.0
-s390                  randconfig-001-20260116    clang-22
 s390                  randconfig-001-20260116    gcc-15.2.0
 s390                  randconfig-001-20260117    gcc-10.5.0
 s390                  randconfig-002-20260116    gcc-15.2.0
-s390                  randconfig-002-20260116    gcc-8.5.0
 s390                  randconfig-002-20260117    gcc-10.5.0
 sh                               allmodconfig    gcc-15.2.0
 sh                                allnoconfig    clang-22
@@ -232,7 +228,6 @@ sh                               allyesconfig    clang-19
 sh                                  defconfig    gcc-14
 sh                    randconfig-001-20260116    gcc-15.2.0
 sh                    randconfig-001-20260117    gcc-10.5.0
-sh                    randconfig-002-20260116    gcc-14.3.0
 sh                    randconfig-002-20260116    gcc-15.2.0
 sh                    randconfig-002-20260117    gcc-10.5.0
 sh                           se7750_defconfig    gcc-15.2.0
