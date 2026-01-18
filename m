@@ -1,53 +1,56 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D73E331A76;
-	Sun, 18 Jan 2026 13:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA4F17A2F6;
+	Sun, 18 Jan 2026 13:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768744300; cv=none; b=jf6mnyeRLIMHmwt4spMvCm45B3RA2mALQ7puF7+Zd6X3FzXwYXtiiq80XufoXorRaXVxfzGKHdqwnD3xXo5cKnlzIxscSQDR6So0WzfKJ0XziiuJ8X6kHT+Q2l2AgQskVIJ7StIeEVB/1APSow0W9pWzzkD1nthQf2GQSq4bkOc=
+	t=1768744301; cv=none; b=gvMUBVuvgk26osj8ibFCA3eMXwLcocuP+7+TB7nK3aPcbe8NUKnSjXjK2At4g1uZqTciAk5LOww8OeSOj5jodNE6at7voC4vf6d9xuRk0r+PgEoKz0eiEQIbXbVz/lJp8ROk1zSeiCmfOavy8FS5N7HyitKHQhyyNcoVlUNXvs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768744300; c=relaxed/simple;
-	bh=eOIUUp/JzC4aWuqsK+ttfirFlz6axpoqayM+b5oL7RQ=;
+	s=arc-20240116; t=1768744301; c=relaxed/simple;
+	bh=xLu/C2HhqdXHw9Eq2lJOm46es/J0JrkrrSkRP+Tdlo8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e7PMGvx7WZq7cRr04V/fkLHyzqinccdQ+ixQGDd2A0hZ4XA1gTLZFxjlNxCpVoDXxNoo9y/AcjXvu+ZRSK/CSSzxXcvGrAzpLDCUh8gi/Rs0JMKvaaGt+ASwv4FOwat3SftJly0Y9cTKHwUJjz2xxtrwm/EEvCQp/TTROhnSgL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=K6B5LGm/; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NxgyC/EW; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=Gan8znUdvqWQ5pZJddqgveUAbldIbtecAlJkOpC70yMb0XVpiSvfdGJk+My2bUAcdq5oJLJtVyC2tLJhy0tWle0xM7iPtVnjqG+ErGmPcG4zyXsURHj4/PD0uhvas+sZtZIaG+TUfrh3GXm8rf62AqI8PIklEaN3q3PlYCWlol0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ieXjbrSQ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=a/RDxqmV; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="K6B5LGm/";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NxgyC/EW"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ieXjbrSQ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="a/RDxqmV"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dvFPN3vDHz9tlQ;
-	Sun, 18 Jan 2026 14:51:36 +0100 (CET)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4dvFPD4K8Yz9tdy;
+	Sun, 18 Jan 2026 14:51:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768744296;
+	t=1768744289;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1rFp++szFwKhe/aS+BdF0LwvGh5g0rpUwtgmKQmOfa8=;
-	b=K6B5LGm/eDKBoqubI4IxRBg3qGZxmw6oHq1R8wlyd/xYoSmj/TwcnGucckte1bFbAYjo03
-	vktuwe38vZcfO4YVtvpVfAPg2IQ6cL9GsxwzU6ImdGJvZZsKmGYP4iacdaCsjFufpJ9xpf
-	XIHMYMIE9xk010cx3SugXvWTqa9G63GtPBPvZnXJGeMnsj6eoTqCQlitJ4LVBFHYx+T3/2
-	FQqOdzQsZr8cf8qCXF22Jw0tTHtJYKG8FIg5NIozFwFOjE3pl9WH9jyW7cUYvqTbo5M6fG
-	pIsbsDR1cbRslftvEWEUSH64AT7iUQ6QC3XyhoQ3ygBqcbBHA9afS5Unb9AgEA==
+	bh=4XYuex0QeLqf/2qVUA70rdQFdW1DfuO89ydiRHewS/4=;
+	b=ieXjbrSQr5JtSN2nG0yzvf2K7c3rfRghnTSeQlymfTRhqSE0Zh0ICbjuog+qXlPGAvqBNf
+	x9qky71uzvFrNIIilo3OR6nqwcZaEHj81VmViV5baJDxZWp+hAmgR8ODJyGcQwCAJp0HD3
+	Iux3OSGh7UyQT08zgZvG4rGApOxkZm3pqEHZSmHwBbg/4JrQa/6YM3z2tJKp0YIS+XM3na
+	bEzV2e5wn+h4ishFqaNg1H+NJT5HWvMMWg7sOu+2+sH6VtSWWwpNBcVpKn8261u4vBWcdq
+	SR1K5E79NPWxfo/U3bURHPkFrlz4xEBAUgzFCmSR+XTT+lEHZU0I23g9arVfbA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="a/RDxqmV";
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768744294;
+	t=1768744287;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1rFp++szFwKhe/aS+BdF0LwvGh5g0rpUwtgmKQmOfa8=;
-	b=NxgyC/EWSbG/scOOVminTK/OSZfYol4fbAO8ShO05ghLYeBhUiah1t4kcrfploCHXUBkpO
-	8M2KfrehFASyGwNcSYh2g84YobYkJo+yQ52+AAmS+ei+YoWy+BBbpNT7KW5N2LvWUT98sg
-	pGrOtWCP1awSyd1G9hsV5wiS0eCpetG3KAzBWKDSjoUNyiNSbUxWVNnUAsRspcSKl82mBt
-	9RvvT2s9WHR+fIrq6qANissRZtQEuoaRUiKnNCPGMCRXCFbU6lnYaDojjeb3+TRo3c2OGw
-	6TY8tHbMKwUCtGvLTqMrGqKKSXNpHlHlBFjyUKXI1XMtbUk9bptknDeHrCsZxQ==
+	bh=4XYuex0QeLqf/2qVUA70rdQFdW1DfuO89ydiRHewS/4=;
+	b=a/RDxqmVmmQLJaRk5siKEbPTEBTouccUBqVQfno4xFycU9xrvtAybs39AXYSNZcQGWC4FE
+	QOqf5wlUA3rTqTpuI7K5rcQ1+1WX02MoYGSxPg7nFiFAz+JlcR6DXBa+Sk7w+SC89rOd1O
+	wzfHtByKfVVMtvgn/8jpcOvtgQs4lQz5O9cRDsiRuXJc4gRpHmVGrW9kVOSLBjdIjwQKdT
+	2KfUCHD7RF8OcbhMagdOtzdZY874HuVg9TTOBYZ8j3/FoYwWYYOP9VE1P3RNgj5aHWyOu9
+	G8HIPbqeEjoB4lt6CIAaYy0Q9UHX6420Ya9I7QcL+R13eZc/+Vj4ThQ1oxf4rw==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -61,9 +64,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: renesas: ebisu: Describe PCIe/USB3.0 clock generator
-Date: Sun, 18 Jan 2026 14:49:57 +0100
-Message-ID: <20260118135038.8033-10-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v2 6/9] arm64: dts: renesas: r8a77990: Add USB 3.0 PHY and USB3S0 clock nodes
+Date: Sun, 18 Jan 2026 14:49:54 +0100
+Message-ID: <20260118135038.8033-7-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260118135038.8033-1-marek.vasut+renesas@mailbox.org>
 References: <20260118135038.8033-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,23 +76,15 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: uemityo16qautgos11k8sys8sits49b7
-X-MBO-RS-ID: 0c1bd4268929741fa1a
+X-MBO-RS-META: xdp448xsbzao4m1d1tqce3p75czkmebd
+X-MBO-RS-ID: 89f67c90aec460c75b0
+X-Rspamd-Queue-Id: 4dvFPD4K8Yz9tdy
 
-Describe the 9FGV0841 PCIe and USB3.0 clock generator present on Ebisu
-board. The clock generator supplies 100 MHz differential clock for both
-PCIe slot and BT/WLAN expansion port, as well as for the USB 3.0 PHY.
-
-This configuration is valid for SW49 in OFF position, which means the
-PCIe signals are routed to the PCIe slot and U11 9FGV0841 PCIe clock
-generator output 3 supplies clock to the PCIe slot.
-
-In case the SW49 is set to ON position, which means the PCIe signals
-are routed to the EX BT/WLAN expansion port, and U11 9FGV0841 PCIe
-clock generator output 4 supplies clock to the port and &pciec0_rp
-clocks should be changed to "clocks = <&pcie_usb_clk 4>;". Once the
-BT/WLAN port is tested, this can be implemented using a DTO. Until
-then, assume SW49 is set to OFF position.
+Add USB 3.0 PHY and PHY clock node for R8877990 E3 . The PHY node is
+different in that it does not have control registers and extal clock,
+which are not routed to the SoC pads on E3, therefore describe the
+PHY as usb-nop-xceiv simple PHY. Add USB3S0 clock pad fixed-clock
+node, the frequency has to be overridden at board level.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -105,92 +100,36 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-phy@lists.infradead.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
-V2: Combine with USB 3.0 simple PHY enablement and update commit message
+V2: Describe PHY as usb-nop-xceiv and update commit message
 ---
- arch/arm64/boot/dts/renesas/ebisu.dtsi | 43 ++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-index 692a2b12aa035..d8de9568d0605 100644
---- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-@@ -53,6 +53,12 @@ backlight: backlight {
- 		power-supply = <&reg_12p0v>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 82e9ab458b05b..f2641ce567e8e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -2207,4 +2207,21 @@ timer {
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-names = "sec-phys", "phys", "virt", "hyp-phys";
  	};
- 
-+	pcie_usb_refclk: clk-x7 {
++
++	/* External USB clocks - can be overridden by the board */
++	usb3s0_clk: usb3s0 {
 +		compatible = "fixed-clock";
 +		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
++		clock-frequency = <0>;
 +	};
 +
- 	cvbs-in {
- 		compatible = "composite-video-connector";
- 		label = "CVBS IN";
-@@ -439,6 +445,13 @@ adv7511_out: endpoint {
- 		};
- 	};
- 
-+	pcie_usb_clk: clk@68 {
-+		compatible = "renesas,9fgv0841";
-+		reg = <0x68>;
-+		clocks = <&pcie_usb_refclk>;
-+		#clock-cells = <1>;
++	usb3_phy0: usb-phy {
++		compatible = "usb-nop-xceiv";
++		clocks = <&usb3s0_clk>;
++		clock-names = "main_clk";
++		clock-frequency = <100000000>;
++		power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++		#phy-cells = <0>;
++		status = "disabled";
 +	};
-+
- 	video-receiver@70 {
- 		compatible = "adi,adv7482";
- 		reg = <0x70>;
-@@ -578,12 +591,30 @@ &ohci0 {
- 
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
-+	status = "disabled";
- };
- 
- &pciec0 {
-+	clocks = <&cpg CPG_MOD 319>, <&pcie_usb_clk 1>;
- 	status = "okay";
- };
- 
-+&pciec0_rp {
-+	/*
-+	 * This configuration is valid for SW49 in OFF position,
-+	 * which means the PCIe signals are routed to the PCIe slot
-+	 * and U11 9FGV0841 PCIe clock generator output 3 supplies
-+	 * clock to the PCIe slot.
-+	 *
-+	 * In case the SW49 is set to ON position, which means the
-+	 * PCIe signals are routed to the EX BT/WLAN expansion port,
-+	 * and U11 9FGV0841 PCIe clock generator output 4 supplies
-+	 * clock to the port, change clocks below to:
-+	 * clocks = <&pcie_usb_clk 4>;
-+	 */
-+	clocks = <&pcie_usb_clk 3>;
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		groups = "avb_link", "avb_mii";
-@@ -871,7 +902,19 @@ &usb2_phy0 {
- 	status = "okay";
- };
- 
-+&usb3_phy0 {
-+	clocks = <&pcie_usb_clk 6>;
-+	status = "okay";
-+};
-+
-+&usb3s0_clk {
-+	clock-frequency = <100000000>;
-+	status = "disabled";
-+};
-+
- &usb3_peri0 {
-+	phys = <&usb3_phy0>;
-+	phy-names = "usb";
- 	companion = <&xhci0>;
- 	status = "okay";
  };
 -- 
 2.51.0
