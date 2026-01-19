@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9E6389462;
-	Mon, 19 Jan 2026 14:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DFA37BE7E
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jan 2026 14:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768832580; cv=none; b=jvGCSFH+tp7wCN4sshZDRG/OjEojU699WQ+txrt/cDVSHzjhsz5OU2hBDFxniGKxONN75nAIT+oJkxGaepe/t6EKT5YtMdUachZMWlnvkUlj+URLutXoGCc+ao2sKL7ImInGXyjR80DKG+E1V4J48Ak+L7layQPSph2uQiv6YG4=
+	t=1768832696; cv=none; b=oKeRp4E86XfWD6DoJL1ggYnYt62KMFKaMJSNHpHlcuh92BbAXhtNQo6s0UAX7VKzfMfHTObAJyT4z+J3POI6ZoC1SkUX+BN3KD8tBihb0dhRf1er+vs7SC2ciFR+5WeREFnyIW+Nd+ngFIt9RbD9ucSWYGdV4cumpHoAIoNulEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768832580; c=relaxed/simple;
-	bh=bc+SMSo/BEsJV6kKQTjJ2iqWRMvIFdUr7/HiGEtsBWA=;
+	s=arc-20240116; t=1768832696; c=relaxed/simple;
+	bh=9kLnJHBpne2891DdEPoyhbjvuay1mdtqo+YzKVstwlQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Rv56rksG99ByurfeXAV6tnHqJXQI2sGVJX8hCq0beLoaHzkeFHea/yNZULdycpVQrRgd/Xm74L8JrVZEym25i0FK9KxovB5RoFSiC/tgH3dM3gM4jSEeC+KSQvTfVXJWtoETiFniUHEXuguFmScHK/V3P7OBMuBkUb7l6+wuP9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE/H7Dlf; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Y7Aeh677aNZUKkIoJ5mIDrpfnkXPDqv3RiOizTTO4TCAwXBAo/cFJJJYWt/gyeochVJclKUhq6MAl+FjD+dtZfk1ZWTXSZoygMJNTYFSlsTFKgNKJqnTyA4PUmgWJNCX6rybmXmVHRLcsDtSRMvcZU456RsTcCJ/B4958EmUG9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6jamMd4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE/H7Dlf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E27C116C6;
-	Mon, 19 Jan 2026 14:23:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6jamMd4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF7B6C116C6;
+	Mon, 19 Jan 2026 14:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768832580;
-	bh=bc+SMSo/BEsJV6kKQTjJ2iqWRMvIFdUr7/HiGEtsBWA=;
+	s=k20201202; t=1768832695;
+	bh=9kLnJHBpne2891DdEPoyhbjvuay1mdtqo+YzKVstwlQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IE/H7DlfJUzKatGr0A6P/cCX7S5Wrp5fMfrW+nnZ8pbrE8a9QY5945FI8T6A1O6Nn
-	 9cVNqaY16Wo/W2mqRIP7qtErikO0PhDvLnXFcSkHmLn9B6EBgNDnNtk7ZRjZ66xwZQ
-	 MToXnPZWalDSyqTOSq91+HCHvpR8EETdfavr1ko6lOXScMSPLGfnf2soZ+SfuCxL1Q
-	 rEXM3eSgrz1GKZtGfvrSqoRIP2UYvgzwXBYwkYZ5hUO40Wr80wTF/PdYuYcgfTPVNH
-	 qMO2lbtlSW+0eaUwPpBgJd0UWV8u0dbjI4gppp4gq778vzHYLYHc5+q6k26ktXhDVf
-	 h3xbNKkfizJlQ==
+	b=R6jamMd4+CQe5SUkc6mNBELdpffvqL0sViD3g9nwHKhLUhnomtTCyLeaFrExBDymB
+	 NlpEBkhCUQi8jfG73YXwgtGHjDIYNP6sXfAK5GCYDMU6P+kKt+yVDZ7gT209TJ+yD0
+	 z7epdeXjsG6q17nfMYdeyFedDmeC6zWqBu46W/WT03H7v+C2gdqrtk5RQofdTSo7lF
+	 JkC7lRiX8sY/8PnmfADKVF8qwH+GyKf9wMKka5q7R+fpD893Igbv7XaTXuPJK29Yij
+	 Z/lC8u9JTM/SYsPIJvA9ej9E9II41DIdsMisE6M9yOFVPDScfHuJp9zddL64udtTwP
+	 jXMXSBtYcqLEg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 78B503A55FAF;
-	Mon, 19 Jan 2026 14:19:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B5B373A55FAF;
+	Mon, 19 Jan 2026 14:21:26 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -37,46 +37,44 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] net: pcs: rzn1-miic: Support configurable
- PHY_LINK polarity
-From: patchwork-bot+netdevbpf@kernel.org
+Subject: Re: [PATCH 0/2] riscv: Fix missing select CACHEMAINT_FOR_DMA
+From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <176883237003.1426077.11987009309110128646.git-patchwork-notify@kernel.org>
-Date: Mon, 19 Jan 2026 14:19:30 +0000
-References: <20260112173555.1166714-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: 
- <20260112173555.1166714-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Lad@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
-	Prabhakar <prabhakar.csengg@gmail.com>
-Cc: clement.leger@bootlin.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, hkallweit1@gmail.com,
- linux@armlinux.org.uk, geert+renesas@glider.be, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com
+ <176883248553.1426077.13963011396978260082.git-patchwork-notify@kernel.org>
+Date: Mon, 19 Jan 2026 14:21:25 +0000
+References: <20251210160047.201379-1-Jonathan.Cameron@huawei.com>
+In-Reply-To: <20251210160047.201379-1-Jonathan.Cameron@huawei.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-riscv@lists.infradead.org, conor.dooley@microchip.com,
+ geert+renesas@glider.be, magnus.damm@gmail.com, pjw@kernel.org,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, paul@pgazz.com,
+ fazilyildiran@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linuxarm@huawei.com, arnd@arndb.de
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This series was applied to riscv/linux.git (fixes)
+by Paul Walmsley <pjw@kernel.org>:
 
-On Mon, 12 Jan 2026 17:35:53 +0000 you wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, 10 Dec 2025 16:00:45 +0000 you wrote:
+> The drivers/cache/Kconfig menu was changed to a menuconfig so as to be able
+> to hide the menu for non RISCV. The select of drivers under the original
+> menu were broken as the menuconfig itself could be disabled.  Fix this by
+> adding SELECT CACHEMAINT_FOR_DMA alongside the driver specific symbol
+> selects.
 > 
-> Hi all,
-> 
-> This series adds support for configuring the active level of MIIC
-> PHY_LINK status signals on Renesas RZ/N1 and RZ/T2H/N2H platforms.
+> Jonathan Cameron (2):
+>   riscv: ERRATA_STARFIVE_JH7100: Fix missing dependency on new
+>     CONFIG_CACHEMAINT_FOR_DMA
+>   soc: renesas: Fix missing dependency on new CONFIG_CACHEMAINT_FOR_DMA
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3,1/2] dt-bindings: net: pcs: renesas,rzn1-miic: Add phy_link property
-    https://git.kernel.org/netdev/net-next/c/98e8039a3b14
-  - [net-next,v3,2/2] net: pcs: rzn1-miic: Add PHY_LINK active-level configuration support
-    https://git.kernel.org/netdev/net-next/c/61f1139a4765
+  - [1/2] riscv: ERRATA_STARFIVE_JH7100: Fix missing dependency on new CONFIG_CACHEMAINT_FOR_DMA
+    https://git.kernel.org/riscv/c/521cadb4b69e
+  - [2/2] soc: renesas: Fix missing dependency on new CONFIG_CACHEMAINT_FOR_DMA
+    https://git.kernel.org/riscv/c/8fdc61faa730
 
 You are awesome, thank you!
 -- 
