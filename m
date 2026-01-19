@@ -1,33 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFBF35BDB9
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jan 2026 14:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9E6389462;
+	Mon, 19 Jan 2026 14:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768831762; cv=none; b=mYt1tR+OVOCksASZXo37x5CExkW0IgxRHtdkWjXXNHvST4GoAVuiHAikytlwKfitKiRe6FVGZijZjZXY5JJaBb2EN40gthbiqnDBiRw4MYS0/6PrhNNgryOEnrL/ns/0CAA3uoryO4TOhJwjHnSvOU7hFxC/fG/4u4TuWGwF+K8=
+	t=1768832580; cv=none; b=jvGCSFH+tp7wCN4sshZDRG/OjEojU699WQ+txrt/cDVSHzjhsz5OU2hBDFxniGKxONN75nAIT+oJkxGaepe/t6EKT5YtMdUachZMWlnvkUlj+URLutXoGCc+ao2sKL7ImInGXyjR80DKG+E1V4J48Ak+L7layQPSph2uQiv6YG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768831762; c=relaxed/simple;
-	bh=TTtQOeWErwFOrOMgLhS4h9t1YPuRN/11AFA5jMM1yKU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=aFfLthI4Yw4u1nYDSWtDQxjKoLuE2NvISTXEthLGD71En1vqiZJq28r2woQhGfDFLyzNOFByKIeuzbyZpr/IRUfFlV/JAwz6a7jjNRp3+PL4Azxi/FadnCZ2rEC++hPdGq5CMcIwZzQ0E7dgJML5B/g2HTLNi0Cz+FUwf/9aBJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4J0tP8P; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768832580; c=relaxed/simple;
+	bh=bc+SMSo/BEsJV6kKQTjJ2iqWRMvIFdUr7/HiGEtsBWA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Rv56rksG99ByurfeXAV6tnHqJXQI2sGVJX8hCq0beLoaHzkeFHea/yNZULdycpVQrRgd/Xm74L8JrVZEym25i0FK9KxovB5RoFSiC/tgH3dM3gM4jSEeC+KSQvTfVXJWtoETiFniUHEXuguFmScHK/V3P7OBMuBkUb7l6+wuP9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE/H7Dlf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4J0tP8P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E74C116C6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jan 2026 14:09:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE/H7Dlf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E27C116C6;
+	Mon, 19 Jan 2026 14:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768831762;
-	bh=TTtQOeWErwFOrOMgLhS4h9t1YPuRN/11AFA5jMM1yKU=;
-	h=Subject:From:Date:To:From;
-	b=D4J0tP8Po5sC1AD4BAXjUVLdJd1PUTSIL33SkX3VjTEv59OXdYyW5p5E5Za5anyK3
-	 zyLVEd6uSOdZ3y6de+aZGGEp1pYwMfpRGZpDxtLCjZkpEwyXxx2A3Cg3buv6/jE+/C
-	 +UlXk2gBKW4pWPW39seQntsGWWTiFSPDpCgKMsfRnJriQiY8vTJ5r9ULpw0u81th90
-	 DDLWkpc3L0NxhEs0eAKNKLe/LYOm6r7kzXgiNijWrMGA6SGsGQsc/loeb10pxwPgqX
-	 uotRj7X5jSrvTO9Wylmm0rSyJnm56Cbf6aVszqmisnLdjpHDOU5Dd8DMnswf6ZnQSA
-	 gmEeBA3igSoFQ==
+	s=k20201202; t=1768832580;
+	bh=bc+SMSo/BEsJV6kKQTjJ2iqWRMvIFdUr7/HiGEtsBWA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=IE/H7DlfJUzKatGr0A6P/cCX7S5Wrp5fMfrW+nnZ8pbrE8a9QY5945FI8T6A1O6Nn
+	 9cVNqaY16Wo/W2mqRIP7qtErikO0PhDvLnXFcSkHmLn9B6EBgNDnNtk7ZRjZ66xwZQ
+	 MToXnPZWalDSyqTOSq91+HCHvpR8EETdfavr1ko6lOXScMSPLGfnf2soZ+SfuCxL1Q
+	 rEXM3eSgrz1GKZtGfvrSqoRIP2UYvgzwXBYwkYZ5hUO40Wr80wTF/PdYuYcgfTPVNH
+	 qMO2lbtlSW+0eaUwPpBgJd0UWV8u0dbjI4gppp4gq778vzHYLYHc5+q6k26ktXhDVf
+	 h3xbNKkfizJlQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3182039EDE31
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jan 2026 14:05:53 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 78B503A55FAF;
+	Mon, 19 Jan 2026 14:19:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -36,27 +37,48 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
+Subject: Re: [PATCH net-next v3 0/2] net: pcs: rzn1-miic: Support configurable
+ PHY_LINK polarity
+From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176883155165.1426077.17031771750266397616.git-patchwork-summary@kernel.org>
-Date: Mon, 19 Jan 2026 14:05:51 +0000
-To: linux-renesas-soc@vger.kernel.org
+ <176883237003.1426077.11987009309110128646.git-patchwork-notify@kernel.org>
+Date: Mon, 19 Jan 2026 14:19:30 +0000
+References: <20260112173555.1166714-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: 
+ <20260112173555.1166714-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Lad@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
+	Prabhakar <prabhakar.csengg@gmail.com>
+Cc: clement.leger@bootlin.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, geert+renesas@glider.be, magnus.damm@gmail.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com
 
 Hello:
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Patch: [v2] dmaengine: sh: rz-dmac: Fix rz_dmac_terminate_all()
-  Submitter: Biju <biju.das.au@gmail.com>
-  Committer: Vinod Koul <vkoul@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1023155
-  Lore link: https://lore.kernel.org/r/20251113195052.564338-1-biju.das.jz@bp.renesas.com
+On Mon, 12 Jan 2026 17:35:53 +0000 you wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Hi all,
+> 
+> This series adds support for configuring the active level of MIIC
+> PHY_LINK status signals on Renesas RZ/N1 and RZ/T2H/N2H platforms.
+> 
+> [...]
 
+Here is the summary with links:
+  - [net-next,v3,1/2] dt-bindings: net: pcs: renesas,rzn1-miic: Add phy_link property
+    https://git.kernel.org/netdev/net-next/c/98e8039a3b14
+  - [net-next,v3,2/2] net: pcs: rzn1-miic: Add PHY_LINK active-level configuration support
+    https://git.kernel.org/netdev/net-next/c/61f1139a4765
 
-Total patches: 1
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
