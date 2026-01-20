@@ -1,105 +1,100 @@
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F43ECBEB
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 10:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D0B3D1CCA
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 10:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768904598; cv=none; b=q2CrjAvFRReZ0AXlSAXkriFFUaqLm4ihhSKHxaYpQX9gyLanlEAsFqKHc+vDT7Gw/Aq/gPIJYYiE1zeiLM82uQzpFSKoXM8fOnNrZb5l2TqjHh2JbEYsH5ZMoIhXgk4o6YxfdJ00KAEIWzutV1znOWuJHsd7bH7jP/dKxjjV4bM=
+	t=1768906190; cv=none; b=BBvx5tfVttRbSngCQhN2y+hZ+YVwPKSSEU+Gj05SpH1d+Jy3+DrV34tc99wqNgDkzcN0hAH09iYxj9iqjSYdTpMu5Gvo5l2lDDUIDKTzNkxveBm92HyEy52zVBUxtROHEdw6e4h3CO7pat7qLuYFai14SBFRPJFvFGyr/25asTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768904598; c=relaxed/simple;
-	bh=ly0/vW5IDlDw+5wI+QKQKa0L1EivDoecPfiopYcWyII=;
+	s=arc-20240116; t=1768906190; c=relaxed/simple;
+	bh=Jo14SNVvgAvpmCa6sHx3d7iO2VYD3GagcaTjUOnITWw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbJxe75sLAoNcC1RRP+SY1N5vjxOf/yoZlZnqdYLVKvyOzm+IfpnvP1ua4gl1Flag109KUeY0xmjzn1/zFzyGP4VUMcCiXp7G3YMoV7NpGztCZiGHQp7h95CWCffoSSGpjV9V2FDhVIdNgOp+hDm9OhmeVAIXnZ5y5kFLCLLWiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+	 To:Cc:Content-Type; b=s5wZKoZGVmH1XYGWese8waG7/7o9hUiLLXPWC9Ghfh4Ikcc092BHhuFNfy3VQyfcGNxMYHQBj9jCV+VtcxZG3OHsilqzFKnF18m2aIt7D3HNvJrAUPO90pdPotGsJ2DODISwgE7eERmS7ys+8ZdtVr/jCk76ZpyqPpE5rq2QIs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5ebb6392f58so1620138137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 02:23:16 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5efa4229bd2so3413793137.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 02:49:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768904595; x=1769509395;
+        d=1e100.net; s=20230601; t=1768906185; x=1769510985;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N0ac9c/OTxQ/f6N2lklbqJQ1hEcN+Ckhb/mx79x7PYg=;
-        b=SyBmpZ1/brBMcVEf+jp9CYGviejuuukv4tjA6NZFJ3F9J7SMyHQkVuwYfySNmcY668
-         u9E1o41o3Brpe7P+T6psgdhh9uiK9SmBvwiMrD5k6Dv3wMTr889oss5MxM1x+DtQhbSf
-         O/xggg/OR2QFrqyxSYIKwArzk66beLLbOjiIRFwhklht7+YgTvfELQJHNDPuZCU59f6g
-         hBiSxU1Tfnhv4/YM/l4SysAJdY3K1QQUUocfNdWsiX/+gc7B+mE9PCtgAV3e8jAqflK1
-         x4rLU1rzMlI5FKrYOSIRpBayx5A+xHVbLUmCf7SSrI8MYijG4GL5R1k5pOqLYCCXzXNj
-         cVgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCHj6Y9JDohgx4WqpSMWS0oomnjW1bn2c0wQRoFbM7hdXlxpSOtlZQfS/xX2Pu23yVCRPJoaRtVss83x3hwIzeDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQSKoSOqEU9SeyVwcVPQduODSdUUA4rbE+XDHBL2iT1QssphVs
-	unsh0ghMeSSi3S2q5S5cXn3n6klOdxqxEjnge8VRDPUNiY3af6g89lNk2w1+H+4S
-X-Gm-Gg: AZuq6aIJlxx9A9AieP8gpnfsN5zkqzxxemvyInZl8Ue2fGw3776F3JWdNWqnSNp/91h
-	MVpxkpeQ4xWAYuRBbemUOVnjCUv6XnIszgxN21DoxOVn77Zy4G2iRlf8FCWxZT7k+fs/rOQ98dE
-	+Q9sRuqnRnJfwVOv6ADbpWmkSrbb40uatT3kjCjaP+4QxTH8pXAkhPzJ98F1mf4CRwiigpLwUSG
-	pVVRRWzRQ2abLGSN0LU4msvw9a0onwiLyuieD7q4TmM87CT170NbiOyZHR2BAyfiMk+fX2C5JF3
-	yUpIyc2LNMGSc4UWyM1rqLHm/PpLxWOGhtVjLBAd7FbjvnS06kIPwPrJAwMcFTMZEMR6Q2yxoLV
-	2dfD4rRyIk5qkr5xKASLU143B5lRup9UyWjfY2/QIGvPLy2jaTVAJfh853iw9bevA3p2wwyekB1
-	b5oW9FU3kpBBDV5xuRrL/iP5ZPYKvDeul0hFTccQ1wGNZBCJLNRPdm
-X-Received: by 2002:a05:6102:e10:b0:5dd:b288:e780 with SMTP id ada2fe7eead31-5f1a6d21b7amr3527860137.0.1768904595156;
-        Tue, 20 Jan 2026 02:23:15 -0800 (PST)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5f1a6925726sm4438033137.5.2026.01.20.02.23.14
+        bh=EZ0wVYmrXY0w9NWoQKTsT/lFDBKGzH8gk5CbiyOvxNo=;
+        b=XAFWol/P8Hth1qhWVGwpbzQSO8C+GaVH1hxlic4A/r7VtdzALO48zb6d9fxK4qHp+l
+         e2+4ViDHCp3xdX5oxGgd3STNmW6EjedlzWPhmX0djYG/LFuHZazVx+jxNvlVXRfKmSsy
+         KXmpIQ2JS/61jcu6g7pEIsS2Nn4sc6uaDcBOW4D90s2KdF+6Z6P4Eo47sLc4X9EgYP63
+         FHvLJ1ckN0cIFVnRzMEDm0IRxWn2Ue/6DjY72ZdBj3c5K7BqVURF0yDh2UN5S3XZyygP
+         aOm45k+tjnSrRgS8hLoU9p7jHb3d6nxdLXbuneDZSkvgVSRk4RUxYkZC5nIuAYYeurHv
+         7Hpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkqkBQARE7B49d1MDIdSxN/eDVihvz2Uwopt1WgfNFgwvJPl5A3sR1S9QZMJx8A0RTGftmw4XlDFFJiYnsitO2QA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrAFMefIrGv4lG7RRAsn5uSFypu4JTTP4rLAt6JXoPR44RFqTV
+	QhbbIFl13HUxEgqsbWITU+gPr5kraPWE8z6vuiylVbKo/ApZ7S0XGnFBEYmwGoZ5
+X-Gm-Gg: AZuq6aIC+bNwIphwIcNu0hP3l/7PPytiBp2PSvCVBENSKPqv8jYJx7PTvAOIOesSiCr
+	kCTi5hUVDZwI+LzsfSZINwRKFb8CHkb1BbpjOMf/SFBEQNqujKaz/HZFMt9R2sAfKPhHHKPmZoP
+	mQNUOVYBfT9iXURz937BhROiyXLQyCWabnTUhgmZ37F3pOZDxOYgtT98LEU25ymtzLLbWqJI5Ej
+	7hR466V/QIUzBN3FvXavdhNTvTe+7wSTn3m0vtKDbfcmDM2qYc1GzPRPDlZaz5X2lfKNJjdQsrj
+	rtod5vKDSf4rNbBhLDrXxnlgBPTm301onTPenNgGcQQt5AJjHiXnzS3dOyL9zPiyug1Rv0iKsL3
+	LcNYmL/Dex83gLysJTK6aSX3wRXqNcOxjWssx4RGyTTfFWqyv/0hDwdF8K5B8+/MGqH4KP8UKWI
+	yymurrBt2y5SVxMwOuGaBNNj+J1uusybskq8fXkkWlKSdubvAb
+X-Received: by 2002:a05:6102:3a10:b0:5ef:23a3:205d with SMTP id ada2fe7eead31-5f50aa0ed54mr334562137.31.1768906184621;
+        Tue, 20 Jan 2026 02:49:44 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5f1a6925223sm4179306137.4.2026.01.20.02.49.44
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Jan 2026 02:23:14 -0800 (PST)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-55999cc2a87so1149023e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 02:23:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW0Gq+XV+JKrGfT9ibbHwYIaHujmYI01KzDYFbwgR3DHCfyJqBEp4Mc3cuYuFODFKP91YtEVdgQS+176dsOvy/P5w==@vger.kernel.org
-X-Received: by 2002:a05:6102:dcb:b0:5dd:84f1:b51a with SMTP id
- ada2fe7eead31-5f1a720e344mr3802674137.43.1768904593920; Tue, 20 Jan 2026
- 02:23:13 -0800 (PST)
+        Tue, 20 Jan 2026 02:49:44 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-93f5761e09aso3134065241.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jan 2026 02:49:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXx3ZiyM676/FE+ZmBieFT6hBjS+EpR1orM/MeZ0jF70l84+xcSbImopWxUFjBQ7prqGLsh7XXwk/p3oCdY/wudjA==@vger.kernel.org
+X-Received: by 2002:a05:6102:3f56:b0:5f1:4fb8:6b92 with SMTP id
+ ada2fe7eead31-5f50a9d3b46mr342934137.22.1768906183803; Tue, 20 Jan 2026
+ 02:49:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260117001215.59272-1-marek.vasut+renesas@mailbox.org>
- <20260117-grinning-heavy-crab-11f245@quoll> <38a146cf-8eee-4fbb-8783-231108a01b54@mailbox.org>
- <578745f0-0865-4195-9237-6d41c7fd55f2@kernel.org>
-In-Reply-To: <578745f0-0865-4195-9237-6d41c7fd55f2@kernel.org>
+References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com> <20260114153337.46765-4-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260114153337.46765-4-john.madieu.xa@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Jan 2026 11:23:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUuYJ6pSFXy9KBsgkbJ003HEEKhMPgUHkQbdJPFchR39w@mail.gmail.com>
-X-Gm-Features: AZwV_Qg0GRK3xtZRzMXlXd6nCURzar6s0zix0S_d3ClYfwO2CsgqrBgFFjQMPVY
-Message-ID: <CAMuHMdUuYJ6pSFXy9KBsgkbJ003HEEKhMPgUHkQbdJPFchR39w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: touchscreen: trivial-touch: Drop
- 'interrupts' requirement for old Ilitek
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, linux-input@vger.kernel.org, 
-	Frank Li <Frank.Li@nxp.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Job Noorman <job@noorman.info>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Tue, 20 Jan 2026 11:49:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXAAUe_0kboQ9C0AMPn5re-1kCagecp1fMCGramDpXGRA@mail.gmail.com>
+X-Gm-Features: AZwV_QiaybW_I-1gR5s_n3JOLx29V6BZF-xoPK94FskYw67mu-RW2omq6aWspo4
+Message-ID: <CAMuHMdXAAUe_0kboQ9C0AMPn5re-1kCagecp1fMCGramDpXGRA@mail.gmail.com>
+Subject: Re: [PATCH 03/16] clk: renesas: rzv2h-cpg: Add support for init_off clocks
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, john.madieu@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 17 Jan 2026 at 19:34, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 17/01/2026 16:33, Marek Vasut wrote:
-> > On 1/17/26 12:22 PM, Krzysztof Kozlowski wrote:
-> >> On Sat, Jan 17, 2026 at 01:12:02AM +0100, Marek Vasut wrote:
-> >>> The old Ilitek touch controllers V3 and V6 can operate without
-> >>> interrupt line, in polling mode. Drop the 'interrupts' property
-> >>> requirement for those four controllers. To avoid overloading the
-> >>> trivial-touch, fork the old Ilitek V3/V6 touch controller binding
-> >>> into separate document.
-> >>
-> >> One if: block is fine, so IMO, this should stay in original binding
-> >> especially that more devices like some azoteq or semtech might have same
-> >> rule of not requiring interrupt line. Anyway, no big deal.
-> > I am not sure about the other non-ilitek devices, but the fruitboards do
-> > use at least goodix and etm/edt touch controllers without interrupt line
-> > too, those I have on my desk (those two have separate, more extensive,
-> > binding document). I also suspect we will see more of those touch
-> > controllers with optional interrupt line, so if we do, I think we can
-> > re-combine the binding documents again ?
->
-> Yes.
+Hi John,
 
-IMHO more churn, and more git blame mismatches...
-Why not keep them in a single document in the first place, like in v1?
+On Wed, 14 Jan 2026 at 16:36, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Some peripherals may be left enabled by the bootloader but should be
+> explicitly disabled by the kernel to ensure a known initial state.
+> This is particularly important for PCIe which requires proper
+> initialization sequencing.
+>
+> Add new macros DEF_MOD_INIT_OFF() to declare module clocks that should be
+> turned off during CPG probe if found in the opposite state.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+
+Thanks for your patch!
+
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+However, I am still wondering if there are any possible bad side effects
+of disabling the PCIe clocks, e.g. when PCIe is in use (network card,
+SATA card, ...)?
 
 Gr{oetje,eeting}s,
 
