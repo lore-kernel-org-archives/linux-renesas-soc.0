@@ -1,103 +1,99 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4C633D6EC;
-	Wed, 21 Jan 2026 02:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FA5329385;
+	Wed, 21 Jan 2026 02:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768962849; cv=none; b=UFeS7xHOvuAgh2fQoJS5M2unbp5w4fvcc7ETGV+ShyEL2S5OrOcu2BYqZSOPRjJ5RylPUwhTFw8a3RpgCukbSHNFEla2HHy0aFpdRzDq+bOekyhzjfjjv3E/G23sX2KnUKf3xaJcT8JoBtOvMKf7V4lOkkGS6tfbNamxKhosHko=
+	t=1768963204; cv=none; b=NGVbz/85+BP3fbsjD2j58vdtmJgwsNCgzm3cxYFg1Obr72qXF4D3Iuf8MJArLQbx5kLGLzgEgzf1dtCs3MtkmGnwJaV8NzLAxR+KDRBUBy8N34TaK8r1M8bX1Cefk+7CzxBvDn05czC122WwKAIFE5YXtOYvsf1x4qLWv5CTGE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768962849; c=relaxed/simple;
-	bh=QBNQ/I1r8NovuausWue8wwoPJ7os3wHapXP8evct0vs=;
+	s=arc-20240116; t=1768963204; c=relaxed/simple;
+	bh=+kYehEeL0rHC2CLtfdhajEXhmnfOr//n+Q/64DRdOXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iwJfTGSTcfH4hpWfhwNq9Wkftb4wqpk3LFFSavTRd9Psv6cC630NA7HV4LOA88ieGM6bCkGvxgxNw4JT7bo88zyIU/18He1BwguIXhmo4aFqBC17PBNX9MnDIatflXjcoTAk8Kn0VWdJj6VQBPNrPjuIXHWJ9zfJhVbM39Cb5Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EIyCBy58; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=kS+t6zHI6LFReS6QVOCNr1YMuLD59aqS6te+mrAx0OHt63Px3viWpxo5yoid5qhF38F4m1o1TFQkI+lkMxW8NGDf0jBxLp0p76VFGNLvujtQvrOVtMEEgDMqCIEqj6hm0/AklYa+FXCsBlMKMNA2MQCI4eCJCfdvK4pCRlGLy+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3yHlX6G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EIyCBy58"
-Received: from pendragon.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 50D492D7;
-	Wed, 21 Jan 2026 03:33:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1768962812;
-	bh=QBNQ/I1r8NovuausWue8wwoPJ7os3wHapXP8evct0vs=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3yHlX6G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDA1C16AAE;
+	Wed, 21 Jan 2026 02:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768963203;
+	bh=+kYehEeL0rHC2CLtfdhajEXhmnfOr//n+Q/64DRdOXI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EIyCBy582wdwDT/LJgOB1qeQZ8wZqWbjw0jPIerrtHoeF8wOSiQK8c+0WhJRqzlLG
-	 GSlzonrPYZiIitU7uTop3HBzIG5gp9UiY1kYE9E/lGnk7vtrnXKXvSP4c2SezWRVad
-	 kkI07Skm3d7uLdw03lAnWhsIXGhmid6ouBRHnHHw=
-Date: Wed, 21 Jan 2026 04:34:02 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	b=W3yHlX6GldOjZe0vr0DQP/Bo9VeeugQY0W2qB2WKa3FZ2juQ8Eh34BHHFwLa/LzVf
+	 wJzVWOSbIlBq7cJwzj2sMygGhCSFWXJFi6Dc1nF1c5h1O0iOfmOc/vWTj5oiMzO6Ub
+	 DCmO1QaiM4CNyPnrHXWv4kDBsBzWAEONBjoXjmEiaaW8oJnQZbXI//HLCPbycQQT5H
+	 Wmh4MgTCVCOeeJUTxOol89pTYoI48I6AgZVkSEFWxWTlDHMBPmaGdd5GW0y96bqM7v
+	 VwTxvxzXc/e5dMmfuOB4cDJp55oiqP61dXc0OXINn0tmGqTXVHhEOCxQu8gM9doSwY
+	 bCadwb1P/jKmA==
+Date: Tue, 20 Jan 2026 20:40:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Mark Brown <broonie@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] media: dt-bindings: media: renesas,fcp: Allow three
- clocks for RZ/V2N SoC
-Message-ID: <20260121023402.GA409142@killaraus>
-References: <20251103194554.54313-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251104120141.GC27255@pendragon.ideasonboard.com>
- <CA+V-a8sP6o2GUju2ub0q1exiV87zHrkTddvkv8GKR_7wBF+vSA@mail.gmail.com>
+	Vaishnav Achath <vaishnav.a@ti.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Santhosh Kumar K <s-k6@ti.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Pascal Eberhard <pascal.eberhard@se.com>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 01/13] spi: dt-bindings: cdns,qspi-nor: Add Renesas
+ RZ/N1D400 to the list
+Message-ID: <20260121024002.GA1845406-robh@kernel.org>
+References: <20260115-schneider-6-19-rc1-qspi-v2-0-7e6a06e1e17b@bootlin.com>
+ <20260115-schneider-6-19-rc1-qspi-v2-1-7e6a06e1e17b@bootlin.com>
+ <CAMuHMdW5hwNu-07-7xvyWdcGKUZy+pCX0=W=JNgd4h7m72wQFg@mail.gmail.com>
+ <87qzrpucae.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8sP6o2GUju2ub0q1exiV87zHrkTddvkv8GKR_7wBF+vSA@mail.gmail.com>
+In-Reply-To: <87qzrpucae.fsf@bootlin.com>
 
-On Mon, Jan 12, 2026 at 04:44:07PM +0000, Lad, Prabhakar wrote:
-> On Tue, Nov 4, 2025 at 12:01 PM Laurent Pinchart wrote:
-> > On Mon, Nov 03, 2025 at 07:45:54PM +0000, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Update the FCP DT schema to permit three clock inputs for the RZ/V2N SoC.
-> > > The FCP block on this SoC requires three separate clocks, unlike other
-> > > variants which use only one.
-> > >
-> > > Fixes: f42eddf44fbf ("media: dt-bindings: media: renesas,fcp: Document RZ/V2N SoC")
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Jan 16, 2026 at 10:39:21AM +0100, Miquel Raynal wrote:
+> Hello Geert,
+> 
+> >> --- a/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+> >> +++ b/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+> >> @@ -80,6 +80,10 @@ properties:
+> >>            # controllers are meant to be used with flashes of all kinds,
+> >>            # ie. also NAND flashes, not only NOR flashes.
+> >>            - const: cdns,qspi-nor
+> >> +      - items:
+> >> +          - const: renesas,r9a06g032-qspi
+> >> +          - const: renesas,rzn1-qspi
+> >> +          - const: cdns,qspi-nor
 > >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >
-> > > ---
-> > > Note, there are no current users of the RZ/V2N FCP compatible string in
-> > > the kernel tree.
-> > > ---
-> > >  Documentation/devicetree/bindings/media/renesas,fcp.yaml | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
->
-> Can you please pick this patch.
+> > Doesn't the need for (at least) the CQSPI_NO_INDIRECT_MODE flag mean
+> > that this device is not compatible with cdns,qspi-nor, and thus the
+> > cdns,qspi-nor fallback must not be used?
+> 
+> I understand the question. It is true that I use driver data to limit
+> the number of features the IP can use and this data is associated to the
+> Renesas compatible, but I believe all other flavours of this IP would
+> also not work without driver data attached to their front
+> compatible. None of the SoCs with the Cadence QSPI IP actually would run
+> without their own driver data. For me the fallback compatible is
+> relevant because it describes the hardware as "this is a derivative of
+> the Cadence controller" (and it is clearly the case, and this is also
+> mentioned in the reference manual), even though I agree using
+> cdns,qspi-nor would definitely not work alone. But again, none of the
+> other flavours would anyway.
 
-Done. I'll send a pull request as soon as CI finishes.
+Fallbacks should be usable on their own. We've generally moved away from 
+having these generic licensed IP compatibles because they always have 
+per platform changes.
 
-> > > diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.yaml b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> > > index cf92dfe69637..b5eff6fec8a9 100644
-> > > --- a/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> > > +++ b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> > > @@ -77,6 +77,7 @@ allOf:
-> > >                - renesas,r9a07g043u-fcpvd
-> > >                - renesas,r9a07g044-fcpvd
-> > >                - renesas,r9a07g054-fcpvd
-> > > +              - renesas,r9a09g056-fcpvd
-> > >                - renesas,r9a09g057-fcpvd
-> > >      then:
-> > >        properties:
-
--- 
-Regards,
-
-Laurent Pinchart
+Rob
