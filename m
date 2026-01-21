@@ -1,62 +1,64 @@
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56384A1387
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 15:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCA4A5AFF
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769007714; cv=none; b=RU7SfiS8zXhr0t8rWVMm0L/jBht/jXatshCfJ8kFyn9DsYebOHnbdEnjH6DGAjw9DFWuGuF+C/zgy1FlF3cKnmlqbrLi3qIqo33EHKeLV86j2haCBtNWZeRwQ1dH3nJ0kwG+Lm0qYMzCpJcBzcrms5TZp+3TUmBp56zbszbuy0s=
+	t=1769007717; cv=none; b=Eod7D0ap2frlZjOUPKtr4S6bQXHOar4mqVHXxVomTnMBk4VxBcohO1BVj1ASQ27rwB1cyMqC8WRW8hz1+SKyHk5hZUUzTRd0n4W4aE1BwCooHFokqH/HFY2AIiKBlU+gTt2DyRW5cWYYPVWMLqhj7waB3g+Z3Ez0M/velSakxZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769007714; c=relaxed/simple;
-	bh=qNBLxy/sMor/XGxPuPIp1HWCrl2gW1VavURVeYhTYFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d6ibvlgldBa4LWxnmQtaxm85l1U5luteE3oeQD093F0cBBi1PaHeloXW6AkWWLhSCWVoaM8R3WbSOCwq+dAC7nRinRsihqIoryi5LG6En5mlyeAsKMdBaC9JeJ8+kfHccnjuAwZmw9yJxodWgkVtSqIh/njohnVUzgOKEKIweFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwuTGK5h; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1769007717; c=relaxed/simple;
+	bh=nu5eb5oRynroGMCnNukqj+nJoO3Q/QblFeLpl2shU4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e0P0XTVMzLHmIIKmQSle7YElXEP2H4uTRJFPClmVR45n+6xriyDWjubkcfLufL/d4a/lgDbb9V6Di2zdxJqZ8dkHuWjerEQU26IbVC4FIskALrc5aXpGkpt3XQNMaKfgKVfkMxn9Hm3/Q0Wksx4X0QuzAbQ1zf+zQDpQG1AfKZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzSlOTFM; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwuTGK5h"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47ee0291921so48165395e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 07:01:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzSlOTFM"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4801d21c411so25316905e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 07:01:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769007711; x=1769612511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GIFdhbTYMw1U+dvdLp6pmK62JBc5NKF7Jw/IKHC/NCU=;
-        b=UwuTGK5hFvo91GHvr2883Nlkkv1ZgiJgr0Vx+I/5/zsNSA5tAa9R9pLbgaZDsN2eIs
-         gr1Utt3ZahVH2IwnKIwCJvScE9CMM/iZkYOVrJsuBLDB58/M1X9wdspsCubI0SQDHE5I
-         +G+Cq8Jz6CJE8m6a12WgVRXtSmS093X4HQWqqyYyBj3SEQ+/u6NBejO75NlZO5WBpPBL
-         z9P+sSA3Q+BDhSF3hdy1TUJf90bIWaME2ll2HRYFwDW25haJ9lsT1M8LILf0bGIhn0dJ
-         ByBDfTY+U+reesCBkZIRMr/VioOl+R4wVYFjs8XeY4pXjh2wl87UYYaPD4ofDn0s6KdK
-         PLCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769007711; x=1769612511;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769007714; x=1769612514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GIFdhbTYMw1U+dvdLp6pmK62JBc5NKF7Jw/IKHC/NCU=;
-        b=gbbm3oUyfb8LZc1YBKhHMDDAylyNORMnrkOJY6J9btCd8P9JPgwY796Wxm9z/V6Jxz
-         JgZO/O5Zye2aC4aROyFsfKJUbf/jiSIxBwu2pWu5WQ2zmTby/u0puk82IdOrEQYkc45K
-         TU436x/RGJ7cBlDRFbeEuMEDE+v6vNZt5y8TD7esaMf5zTwJUK9hiy4P/1z0lSEV3FcS
-         M22h8ZfPBCMt3svinYB3h7dFCdouJmeBn4DJtATgsMLOPXVep34LJ/T+zf5qWeOFkgzh
-         luWCfQ+uZV+ACoT3D/emkPOlcyjZC/sUPxXUf5reoRtKQfJQeHZC+/PYiIqqMkQj3cLo
-         a7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJFBN6n8O1juJ+dHNE2g0yC9rej9u2qS2+hIegREmj0xFdRNftR/vGdyGxBY7qpPl+kftZSVDY2zUoeaca7Cpx4A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhf7rG2SxL7B6XkB4bc+cQo9J1i/S73zVxkQR16zDB9ZMURC+E
-	THyVClEKuhiGmVcQw1GGftowg5CNg6yR4/+EnhehS8PnczNFxXzK2jVq
-X-Gm-Gg: AZuq6aLLlpWjZ0Ov3bcOZYD370b1/+J63fil7xVEcvr3N3zshLxdjIzMRvVxmlDjEQ4
-	BtSGuTVbgOCoi/FnzWxG5YFIwBXohAHPrwlS8eCRFkQHphUGcrLoPo41xmpssSEuMPJeg0Y+VnC
-	6Yuwax0VSGe9shDdpAKl/tScJEmv68DzH3zTd71Non3i+CupGu/kqbwjQ2cRMDeWkGz+OeWbrnl
-	ZV9smhkMlPUfwy3E+8W9H9K4ZRe4XE38JuGi1rutLwviL8XNZADMisZGXBuZHiVMS8DLdyB68PK
-	ohiVL7z568WvRlekfgq/GSgJyGJhDWS+sUCGjOp2gpsHS6TbEJOiXp4PHEF5EnsUZLmRY4GgagO
-	MO70vZQRV2mW3ZdjSnZ0I7FyJZ3s3scUHhkgQ84MIG49lVeZjt/D01Kh2YWq/283XNuvTZtTGyB
-	ULHVcVmJu+pCthDcyZW+nquTlz0aZHXeI3EFqTfR7Luh37M2ypJnyWhEdkI7/3SlSzyWveo78Xw
-	Pki70DBUlTJSroMoNGQ3rpuZc/ZFzT3
-X-Received: by 2002:a05:600c:138c:b0:47e:e949:37e8 with SMTP id 5b1f17b1804b1-48039d19076mr124301215e9.30.1769007709950;
-        Wed, 21 Jan 2026 07:01:49 -0800 (PST)
+        bh=IKfiqRkh5XtZUA4S099iclsE8WGfK6hAsLNATgk0+LQ=;
+        b=YzSlOTFMUnxYn9hlBcGEqMpiBPNJAHWf2wPpmPF5W76cNULktAF6sn3lI9iL5hLVU9
+         jnezAH2hOcu+l6PW7+Fk/Y9TJM/ctzayR82UAOouS5MgiFafm+yXJdLuszk4jBhqBwZJ
+         p/Y2Zp9RxmnrKPoArS8oPBaQ0FrR/ZidbYGXKjs01NmqbPS+6VUERJyxwG6n6MV3hO41
+         TJ+DWN4YqLwxgat3kSYLbZvxV51WloDtk0NoitDoyy1oqU24EEh3jxnCl8+mB0aKGP5w
+         WjvfGB1li9AhSv8TovxZnA343kWq+Of2NWKVQyfiGqZ07LksxXTnTTuUwG9v8YEguXdN
+         DWwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769007714; x=1769612514;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IKfiqRkh5XtZUA4S099iclsE8WGfK6hAsLNATgk0+LQ=;
+        b=MIlYA1sOpvUi1oA+dJTw6G4NYSl0kU3YdlULmvuvVUtcAEyw/GPecVWUeMTtkuDM8c
+         5l1aE86NJ3zdC7Bj3ZoTAlCJvVRXVeZX8G9ZkVTI1kDQVcXNtNNaIMmvzJ9C/HAWx7wX
+         yq3sgU9t/9UBjJ66Yl0YEvv10yKhPcuufKqJelc6HWVaf70e58kffNENGf0WMmBLaWW2
+         VueqI5s8oKWr3CHKD6+erMDx4e98KEGN33+rfxJyn0RCOJAf6jn0F7PLQmGJ9+LUB1mL
+         U7VSyLxR8i71+3Xmg9riDUbLzrhJ3u4dJL+fNlu1HYHJIPLoq/uIoCBQdAJOyQXcRd9Q
+         sYug==
+X-Forwarded-Encrypted: i=1; AJvYcCV9EzdO4iCVj2VxVI13Cirtq+IkpOre9qQyCTxEhZjg3quG6Q09uISPXUGcZkQxQ780W8nfB/+vP8/Lsbdq1C31nQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYdfSlssJR4MArs8XqYiKvMP07XLkPKiOdkur69epfgFyHRLPd
+	3HTrsCwrvbJTl0ZaKrPS7Q+zEuLVcAzHI4dlIvM6x+4uKfLO15SfhFY7
+X-Gm-Gg: AZuq6aJmtD4W7lDGTT3kfNiZ/q1qPrZ8zfe4PKnx+YI1KpZzZG41vPF+/LuHqN7rEEy
+	W4csZm/zxB0IfRWaQtPhGkHmFJZdIY5s0IyF9ZhrDZxS6zFfqj9/4BYztnj4yeSKa0YzdAh5U1c
+	LB6LR2PNWQK5BglViqU6WR+8jkA/DVlej52R1D0rGVOjdzZoY6tLZ3KMkbJeYdrKwk8uN8GlHlR
+	8hUCZWQKhgoA3/0gQktrbtFQ6RJuJjbq31Gu/u8FH5bbMcNwT3xgzS3xoobe6WPnBEo4uR/psab
+	qZgghCl8PLSPNDiPX/2PKh8B8NhS2gciIq7X2ct0lSK+zwsyQ9NwNThlkMFx/aSMKKHutUGzFq/
+	zZcB18AaPUhIYzeDhiTLjGeTR1ccQ4R+7ZlBOxZFDO+WSPuYu/ZFC2QspzorhGS5o8rHHLQQSgO
+	iZsUkN/+2WWjVS4y+l87Mk4WvdlU1qA74jTFXjqoGCa7c0fjoZj1ZI2xdy38RoGwwOvxr8EPDMY
+	MKnnDCSp12W++dFyAhjS2pSYThS1Ck6KlJHZWbRruk=
+X-Received: by 2002:a05:600c:8b27:b0:480:3bba:1cac with SMTP id 5b1f17b1804b1-4803bba1da2mr99684705e9.6.1769007712723;
+        Wed, 21 Jan 2026 07:01:52 -0800 (PST)
 Received: from iku.example.org ([2a06:5906:61b:2d00:3190:c653:bb13:4ca])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48042b6a3e2sm24787585e9.1.2026.01.21.07.01.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48042b6a3e2sm24787585e9.1.2026.01.21.07.01.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 07:01:49 -0800 (PST)
+        Wed, 21 Jan 2026 07:01:51 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Thomas Gleixner <tglx@kernel.org>,
@@ -69,10 +71,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/6] irqchip/renesas-rzv2h: Add support to handle ICU error IRQ and add SWPE trigger
-Date: Wed, 21 Jan 2026 15:01:31 +0000
-Message-ID: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/6] irqchip/renesas-rzv2h: Use local device pointer in ICU probe
+Date: Wed, 21 Jan 2026 15:01:33 +0000
+Message-ID: <20260121150137.3364865-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,34 +87,104 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Use a local struct device pointer in rzv2h_icu_probe_common() to avoid
+repeated dereferencing of pdev->dev.
 
-This patch series aims to enhance the Renesas RZ/V2H ICU irqchip driver by
-adding support to handle ICU error IRQs and introducing a
-software-generated interrupt (SWPE) trigger. The series includes the
-following changes:
-- Use local pointers for device tree nodes and devices
-- Switch to using dev_err_probe()
-- Add software-triggered interrupt support
-- Add handling for ICU error IRQs and SWPE trigger
-- Document the new debugfs triggers
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/irqchip/irq-renesas-rzv2h.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-Cheers,
-Prabhakar
-
-Lad Prabhakar (6):
-  irqchip/renesas-rzv2h: Use local node pointer
-  irqchip/renesas-rzv2h: Use local device pointer in ICU probe
-  irqchip/renesas-rzv2h: Switch to using dev_err_probe()
-  irqchip/renesas-rzv2h: Add CA55 software interrupt support
-  irqchip/renesas-rzv2h: Handle ICU error IRQ and add SWPE trigger
-  Documentation: ABI: Document rzv2h_icu debugfs triggers
-
- .../ABI/testing/debugfs-renesas-rzv2h-icu     |  24 ++
- drivers/irqchip/irq-renesas-rzv2h.c           | 303 ++++++++++++++++--
- 2 files changed, 296 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/ABI/testing/debugfs-renesas-rzv2h-icu
-
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index 20c0cd11ef25..766b981cf3d8 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -555,57 +555,58 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+ {
+ 	struct irq_domain *irq_domain, *parent_domain;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
+ 	struct reset_control *resetn;
+ 	int ret;
+ 
+ 	parent_domain = irq_find_host(parent);
+ 	if (!parent_domain) {
+-		dev_err(&pdev->dev, "cannot find parent domain\n");
++		dev_err(dev, "cannot find parent domain\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	rzv2h_icu_data = devm_kzalloc(&pdev->dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
++	rzv2h_icu_data = devm_kzalloc(dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
+ 	if (!rzv2h_icu_data)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, rzv2h_icu_data);
+ 
+-	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, node, 0, NULL);
++	rzv2h_icu_data->base = devm_of_iomap(dev, node, 0, NULL);
+ 	if (IS_ERR(rzv2h_icu_data->base))
+ 		return PTR_ERR(rzv2h_icu_data->base);
+ 
+ 	ret = rzv2h_icu_parse_interrupts(rzv2h_icu_data, node);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
++		dev_err(dev, "cannot parse interrupts: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	resetn = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
++	resetn = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+ 	if (IS_ERR(resetn)) {
+ 		ret = PTR_ERR(resetn);
+-		dev_err(&pdev->dev, "failed to acquire deasserted reset: %d\n", ret);
++		dev_err(dev, "failed to acquire deasserted reset: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = devm_pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(dev);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "devm_pm_runtime_enable failed, %d\n", ret);
++		dev_err(dev, "devm_pm_runtime_enable failed, %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = pm_runtime_resume_and_get(&pdev->dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d\n", ret);
++		dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	raw_spin_lock_init(&rzv2h_icu_data->lock);
+ 
+ 	irq_domain = irq_domain_create_hierarchy(parent_domain, 0, ICU_NUM_IRQ,
+-						 dev_fwnode(&pdev->dev), &rzv2h_icu_domain_ops,
++						 dev_fwnode(dev), &rzv2h_icu_domain_ops,
+ 						 rzv2h_icu_data);
+ 	if (!irq_domain) {
+-		dev_err(&pdev->dev, "failed to add irq domain\n");
++		dev_err(dev, "failed to add irq domain\n");
+ 		ret = -ENOMEM;
+ 		goto pm_put;
+ 	}
+@@ -616,12 +617,12 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+ 
+ 	/*
+ 	 * coccicheck complains about a missing put_device call before returning, but it's a false
+-	 * positive. We still need &pdev->dev after successfully returning from this function.
++	 * positive. We still need dev after successfully returning from this function.
+ 	 */
+ 	return 0;
+ 
+ pm_put:
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put(dev);
+ 
+ 	return ret;
+ }
 -- 
 2.52.0
 
