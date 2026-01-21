@@ -1,147 +1,218 @@
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010015.outbound.protection.outlook.com [52.101.228.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7B8396B8C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 11:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768993662; cv=none; b=YZpZF+DHF72l7HKToIxdo9Ho05Pp/TTuBk6PtGrLW3UTnzq+yOaxpIyi8tkcTosmfE3O/dKh9ich5R3eLoqVlnV8A01AV8ra/PYImXPvvdHFkDqOw6z7mgha8dIe7dxV+90NImMCy5XpbB36a8N6Y1CMxnTJ7e5IjDBmKPWyYRE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768993662; c=relaxed/simple;
-	bh=cysOwS5g5dZRSxtVrJ3zv/VB5w+D2iLkyCuaPMhXFP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2FiCDjBZasPKLNj2QIBrqjwukdM3hi713Pm2RoQXuHNR1hFBjZecTpWt3Oegar4bq4fnIxWqctT4U+Jg6YzG3GgoA5VXOodxMwfcB4tmM8gN63nG2o8Id1szAsfL7JrklL59Gui6L1OXug+hXsN8KXtRj/dHSqZm6Ged6X74yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-88a35a00506so97836326d6.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 03:07:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768993660; x=1769598460;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VSYJm8i9wWqRvGvRTZz6VIsl7/oMewZT8tw/+hAgWzw=;
-        b=vOskUe0z5jnk5qZK7GiHliXnYFVWXqz4ITvE1wRTBZG95csOkmzK4QcJTTgWHqWPWs
-         u+5wtrftsWo5eZJ6BiPmksFVwj+qlecSUyAzDju4dSDQ5kX7zD3f6enQiEQVQ5OanJ81
-         AbiKZ3XRwHafXRVG0K8RGOz+QKPTuZNvXwbwCyHuawmfW0ofBGOQS3fuPYD78u57raq/
-         dVFbn4UyDOkbrYBvi/9fE1NcbzkwhgdH8sgPKBr3VGWtDM9ipPiAwmj8rJk+YJJ9/DLk
-         oNi36neJSTT72MK0wlpSyaNRnAidXBLEQmi4oDrV2c3G+hbXaVr1URGco9+ifM3ehDMf
-         b1ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUgcDxiVfArJFUg6DpNsVTtvgzw3FBtcjWVV2VIKUR88WRm/wI+ugEp/j+oFjSZhn4ghEnEACX0bMiC5GGxGs4JyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHCPxt4vI7dIoAIuupNqn4/P3PSQcQ6G24xdl3H0Adfi2MC9O/
-	divfjr5ucdff5fsJv8C3bu+3tKF4pElQaSH13C5nA07E/2nYQvhtmVfbQGoKLN1A
-X-Gm-Gg: AZuq6aLahrta1b+ARbThFWjXQu0kzsAUiTQAuYCLrZa6Jz6/TD9JOWMw5mUQmkaijvR
-	vAERA9pFTthwd3TdMS1BzCxEt7GTvcBjbv/aA3zp7v9nsXmkdhyYgMMcYdb5JfSUFJbUDnG099l
-	g9pK1jCA1Xd/9OHDtseN7pDOZdY8xkXgBH7Wk3uTodA5b8AXD37/nnBIxKo9/54zYJvTjD6mb9u
-	vfZSWG2TFgg1TX9wIWpUc1OIeRgJ+0MLioUcg2RFXrTyAliy+0jfD4paeXuGq1q5jpryGQdxDLI
-	vpoZHTMGt0EaXsjUKFeRgSlgy4ifeqg87bxgVrI+SpfdV47rWI2IJjQAS1+DPXYgQK6nGlpH7c5
-	y73gKTwQoyoEVNnsB8M9DKWFUl3Ixc0Dvl1fWA1zsyKGwHEIo4QA6vTKsNSGLBtmUOLmhUicVwx
-	wZ8xvKI5UapU0Z6TnXbo6yX20cnou9n8kSbadtnQ/CqJgzPM4s+kldOCGsyiOnE6s=
-X-Received: by 2002:ad4:5c62:0:b0:894:6c8e:ed1c with SMTP id 6a1803df08f44-8946c8efa0fmr54491866d6.5.1768993659714;
-        Wed, 21 Jan 2026 03:07:39 -0800 (PST)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8946c6d2691sm23748856d6.42.2026.01.21.03.07.39
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jan 2026 03:07:39 -0800 (PST)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-501c6665144so64873631cf.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 03:07:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUDBjRozOqjLzR1RsXpEInBQ13BIj0Vd0eM/rJuS4qzUh/vo1/ep3mcEdyaT8w3nWR/Q2b1E5d+KENT/wxK6X1iGQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:2ad6:b0:5ef:248b:d533 with SMTP id
- ada2fe7eead31-5f1a716fcbcmr6150752137.31.1768993204250; Wed, 21 Jan 2026
- 03:00:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAAE33F364;
+	Wed, 21 Jan 2026 12:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768998367; cv=fail; b=MaSXDawLs0auR8p0gIxp3NRyQuIKqZoY0C72Zbt4c7D/tm2i+srV/6f9LmwkCafPzyE0GCuSTEWoij8DAH0782OXOi9Cn9F2nlIGhzW4tKUuzY5DbKnXSQsiEioNzur3Ujy+Vp3UoqV5t2t0KV9jBV90AQvG0boetQdbiYTGKhA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768998367; c=relaxed/simple;
+	bh=tB6xrBO9YQ90+2rzoOOJaqnODcZaW0QODhZaEqj+IbM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cPHBmmCZ4nI6w3iqT+DPoqOoRFPnBahcV4C6CoohdQzmWftvPIYAsUyaP+V/vr0tGGt4EMJbZW/ZVxe15K9d8Wzj04asj7bzqZftVzBDMpEdUoyu6eZuEIyHniUsiQBSMwJrGTq1W67aIycx1NLxJuhUp8Lr3kc2C8uzq8l6igQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=eL49sNSl; arc=fail smtp.client-ip=52.101.228.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="eL49sNSl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N7spXl5gs7kY3KBiErVILxcpM+8Na9uDEkKgG0lqC+z3+FHe2iayJQqjUMD+EyiHAvFbfLPHNq2PEpt5C/xJOp3KGDnjePjePX9fL5FX0hluLut6fvE7nXR+l3Bsec+jKpp3923qxsOHEtfRQpTilycfU9RKhGDR2hzCrlcKc3PpIh6FqgW73AGNhQNKm9FAAS6JIBStgz7N90hRj+i4dirZCqfpcyfsop6cV95lysmg4BqxI6rKQu3jaxzurlZ5rPVWr61Fv5bzhNQnpnamez4iVI8KdTVaTxWEu4EiR2ApwkPwQbdqaiMVx/u279ZGFcGPsrx+7lWyI2U7wv6I+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sc8W865EL9u0h+dO3mmAy8pugZ+wsN8B0J2aw0c6zeA=;
+ b=sxrOFPsFJTBSB+CkX3qyrHdn2YO4b4lMFyLGr0XNUwwR8UK2MaKtHZODPPgoGFu7WnMGR+s12Jtbmgs+TW0M/8pI3pGFm4AsBkRPNnplN3kX6dXepeitZnOI+24H9kXvzHZkDCj+FScg8w3J8iPKT+YTBR89q5BxHocZedlmB1vPSzKo3csMulvAB/Wu8dIZs8mK1moHCI281rD5YlR4hQipPRkLhUpAfgPVkZOvjZax15ZC/M8fsNJH/SaBBX3/U0ki9A6WETqTe7vXu8dxybjUqF8dDAwOYsBqZaKNLFwh7Z2rqAA2oUSWCUnAgMCt1BhuI1P3IDiFvPzosjWlbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sc8W865EL9u0h+dO3mmAy8pugZ+wsN8B0J2aw0c6zeA=;
+ b=eL49sNSl5P5q5gaIE2YBplMoK7Ire3yZ6f6FsfB22Y/5/vV9PB2HTpnLOQ1QgCVyW7AHud0u+0742AYbBz6+/jcabSoNTwUWHyvcbRGOjBWJIt844v4vLD/czb7azCZhzQlMQBTHP/GgmYykPNPnpdQMJejWC/pFrLdKj+78sV0=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYYPR01MB6633.jpnprd01.prod.outlook.com (2603:1096:400:e2::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Wed, 21 Jan
+ 2026 12:25:59 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9542.008; Wed, 21 Jan 2026
+ 12:25:59 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: biju.das.au <biju.das.au@gmail.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Prabhakar
+ Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
+	<biju.das.au@gmail.com>
+Subject: RE: [PATCH 10/12] arm64: dts: renesas: Add initial support for RZ/G3L
+ SMARC SoM
+Thread-Topic: [PATCH 10/12] arm64: dts: renesas: Add initial support for
+ RZ/G3L SMARC SoM
+Thread-Index: AQHcigusq8Wh9SHEkUaw3KE8mfQ+6bVcjdyg
+Date: Wed, 21 Jan 2026 12:25:59 +0000
+Message-ID:
+ <TY3PR01MB11346A3CF9B713432E7345D468696A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260120125232.349708-1-biju.das.jz@bp.renesas.com>
+ <20260120125232.349708-11-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260120125232.349708-11-biju.das.jz@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB6633:EE_
+x-ms-office365-filtering-correlation-id: 16ab35d7-ae61-41ea-32bc-08de58e83c14
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?LCId0TnIHJdZNMD+ToO/28+ldoI01wO4TuiVu5HcOJ8xLazrIJ6qZRYwp13b?=
+ =?us-ascii?Q?3WLKwhgxIP46HNmZ1Bfq338w4BEBe7IV5EM7IZY8OtvzdqwpzmO3gpnExZPO?=
+ =?us-ascii?Q?RqTsbXwH0rTEtfNRUp4QVAMTXu20atTlIil0ITQiUAaxV4H/NZeuJXuyPRcz?=
+ =?us-ascii?Q?11dPn/q7vKkEM1ZH1zeV1gMovGYiSDBeCO5/NiV8A7d1VK2G5qS2aAQtjgjd?=
+ =?us-ascii?Q?uLXAOBqUkAwKtofUbM2ZE7Yj5ZeI1ppmMFrtsABT8Xn7pEI3eYvVkAk6oM+i?=
+ =?us-ascii?Q?OjENqJzmd2czICETzEek0ITDX5aah9KYBXk+yIPo1yWmWU2al4R1C/P4hwxB?=
+ =?us-ascii?Q?OrDF5t3z9jv1Z9HzLe8AcCpReuvFXR87cEl/j1Oy7qGSHRi4LUNxpvB+Jo7t?=
+ =?us-ascii?Q?zewqDj826m9erJDB+KN5JSfv6Ee805d+m9Y4n8voNuz04syIihdL9YmGqqqW?=
+ =?us-ascii?Q?JktD1kzEePP6p43cL3x/4W2svovJ+4YHGG5ueOE+WZL7/M6fRnLh7EzwiWyu?=
+ =?us-ascii?Q?pR/3HZV7WjB+nPmh1rhZgKBKizk3amWOUoe7Vv1cYvbNnWg2eSq78CVFnrK4?=
+ =?us-ascii?Q?30e/d9NG93D3Tx/+S1iiLgMqjOzQfkS/Rk6W0SEvEq+83Tg2mSo0NWPXpHxR?=
+ =?us-ascii?Q?Iy+EsS2XjvCS/pBfNvXh9Gb+N7JIjEv9FGY29zzwIPv0JBAyYWRs88a0hhEZ?=
+ =?us-ascii?Q?t013ILbuylYnBEwNsLw5LmjDhdzfMq96XnlLm4ZCz+5lUHvcF8G73H4a69gr?=
+ =?us-ascii?Q?bORGv4hTesUzGdPKpmI+wBGOUUCFlQ788EyW1wzEdAAXggwIBW+8Jp6fYELg?=
+ =?us-ascii?Q?AQWTLT1DJ75xlqOM7cEJZys/g8pL+VgbqJdcmVHkS5Kd6YSTClJBAoPB4G+u?=
+ =?us-ascii?Q?aQ9yUzbe660wPfN5OE/xXQPfT3ffXzY2uQhRIYn88w4XYl9/XxiL5SaNwEPw?=
+ =?us-ascii?Q?95yvknFxAZd3y0PMm3fbOFf1caurZFtm+aTY/zWApIiZQGsweF4CPEccjqNc?=
+ =?us-ascii?Q?tGVKyCWhqE/EmxsZvaV34Lm53rcc/xO3sh76De6IphjJbe/hiUl/aH2sm04C?=
+ =?us-ascii?Q?USt9EHaVZzETBoc2oLEog6z8423Vsomvm0IuvH06bY8yuvkbtW5uvNMi+7jp?=
+ =?us-ascii?Q?iVXokD5rM10jZyoVbq5OUe6x8+tXLcOoJfd9dD7nhp0mfnyjN/vxqXzPHHXC?=
+ =?us-ascii?Q?Ni/Z4aCNZhVueB3GGHSG4jIgykOqBTurBcD1GAPWh54pcEZwTJ2D61Jnsnfh?=
+ =?us-ascii?Q?Idty5OjM0ypfpO9A+GeLhQet+v51T4GGhEjEBCQMKgtqkAze5T/TqFupibEO?=
+ =?us-ascii?Q?4Ayr6/3GvOUscA9IsWN4mJBzilC0RfvT8vuTSjaei60HTkSCsaFzyhYztZAx?=
+ =?us-ascii?Q?rmwWErsp8dZJz0jXCW4GVZ3sIyxoJD57TWbAriUrJ0rq3q1nP1LUKk1hyTae?=
+ =?us-ascii?Q?8N3kf7uQTHpgnpgPhEjl03DaK8yBnWj5Y7lkM6Ap3e3d/1sy1arAXcfcJUBy?=
+ =?us-ascii?Q?fYh3vMkIpmL/6SnAMFrrZ/vRMv5qyXHKelWudqjL6UVQ9f2ueSgDggupk4SM?=
+ =?us-ascii?Q?D5e1dlyYLYf3V//hjbimj94KLCTT1N81oyORfQrlMdPP03HkiwfRYW+ZAGmd?=
+ =?us-ascii?Q?OD9AbURWtn7a3fupBe8tmbU=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3XnVJVA6dHG5OjNxjBTTr8ZS9QsW8NC2LGJNqKPoFe97hX/TzRKdVurTUlZm?=
+ =?us-ascii?Q?CyDxvUyqqR7bjDpsluQ8tR7274rfbSefS8bxn5CIOy5YmUJsf6G0NNzr45TA?=
+ =?us-ascii?Q?GftmhSOKDNkuaYyDHSgCzLGSnmR7T/o2dCbcGeB/bK9ef9e2jQH1JNVmNZb0?=
+ =?us-ascii?Q?tL4TJZ21Vrt6jQdfdJiLL/Kk0coiuUmBO113AKwPjfQGwhDP9TiJdts1Qqwr?=
+ =?us-ascii?Q?44Vk0rs7ZHhPdwFsn/SUBEVMyI0XMV9uOu7eM+wYPj0QA314zlL0/DZsEXf0?=
+ =?us-ascii?Q?VPfe7cA+eb7/QnSh0igKtw76ahyjPDgUVZSS/Eu4ejmdEhdmkVKULjJro8Ic?=
+ =?us-ascii?Q?YlA062QRWBTw1YyZOHXc+mEgIzaY5gfKWyZWfq55iWBY65IlBG17g/f/paUq?=
+ =?us-ascii?Q?VTbGuF2I/l7l9z+tQKimGgjoDwngwgsucHdAoDVrr1btja/XedIXr7DsF2as?=
+ =?us-ascii?Q?Do7BJ5XUXRHiOrVveJHGTaftyxJmLYS+ZUSL47pzZuu2ug5yoTfYesKMWN7f?=
+ =?us-ascii?Q?sWcOj1kAxjHs4gzjJ7ny9bqHGoZ0e7PQlwbUhfXuWcPwVLx4CR0xoGcyLi1u?=
+ =?us-ascii?Q?Wn3kHGxu+9enwn6hYFHJGfM6VmFtnzTuHjyhC1QD6px2MbS7utpqsRmO2E7H?=
+ =?us-ascii?Q?VndQZcJKOfuPd0LyRoECz7dYcx08fiLMcq15oIPfavnbsJBhUQSoK+vhnil/?=
+ =?us-ascii?Q?KVbUyrDuEnoG6kWZCDuhEwf6CIa4qmgHGtyQuqTQ1ANx4Ifx6NDRJb1ywaFC?=
+ =?us-ascii?Q?u2pe1cyJ+3l2yr+Er9a6c6esgu4C9Bxh/a9/ukqki6WIbdpqYvLz6x/PblCI?=
+ =?us-ascii?Q?FJ13wAm0I1W9ZiUKzZQ4GjpwEaoF+jidrmkFeycF4L7EIb7o8YH3BDoE78qe?=
+ =?us-ascii?Q?E0166fOFPLHAC+/ApyS9NZzjFeo7RRigY/ma2T9HzDLWapHE0xv/aHR9qrAK?=
+ =?us-ascii?Q?J/mKZ588eWLEqPUj44TLCrCb1kn1WB2N5u+b8b4X4R9DMqsLOxCezaMHl/Pl?=
+ =?us-ascii?Q?lFmMeNpfeBbHCwFw7gmEK4WF0JrW/UISE+G7J9ilDAw2riDCFI9z7O8R4ahU?=
+ =?us-ascii?Q?g2CNG8Cqsup7k0EHYYY0kBkte+Q5Ph7q11OZw07+kZzA8Ty4D/JRNj0+9wZj?=
+ =?us-ascii?Q?yBwqOaigkL6IAFoCimZKSknO+HNvLj42mA+2MsLC9GbusQpGc7RoPGd9kw6B?=
+ =?us-ascii?Q?t6tfwQFhYpYSkRsYpXH/dIsqrH8STqchURhjZo3XJ/ZetnnjMb1cSaXOtwRi?=
+ =?us-ascii?Q?ETicZxY140FrJZJZVwAaFY4l8NobZrtq/uTbx8JYLhtva3gvDy8xxbgbiQ3j?=
+ =?us-ascii?Q?FzAENeq6bQSm7kNqvTBYh//C65Te5TDwxQjFV+IBxcViKYbA0t2lYb132ks7?=
+ =?us-ascii?Q?UghCYx55UZ50F98kKWLWnNDTB0PGmKB/TItIweWkn7ib8MesYFDdAT+thufx?=
+ =?us-ascii?Q?K1XiD4wXCN+UuqUfqkHcQXDmaJVV7z2Ygu17HEaPFdVDJWIKmt+1BqXlpGQN?=
+ =?us-ascii?Q?lhGhX/AnWGJsVS4CcHuFsN2aKroI5oGtz7yrUnHhTTFRF5iAGD0vXSIGZEjc?=
+ =?us-ascii?Q?kQ25FcwIf+VUBzC5OoaT8GFj1te7AILxwVtzH8ei15QsNnbpPL/BoFqM+Gfe?=
+ =?us-ascii?Q?LWmgdX9Isw9wmgrE+q730tExV8lqikegSqcw1Dd7DntaE5iANWB9RyF0XcYJ?=
+ =?us-ascii?Q?de0pG6G6ZQ0u3d421BgiZjajWPaJy3OJ9opGcHZqjbZ9oKVVwYAOKUila1Mx?=
+ =?us-ascii?Q?+oYMANHo2w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260121-rz-sdio-mux-v6-0-38aa39527928@solid-run.com> <20260121-rz-sdio-mux-v6-3-38aa39527928@solid-run.com>
-In-Reply-To: <20260121-rz-sdio-mux-v6-3-38aa39527928@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Jan 2026 11:59:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX_rKgfusHP5qVny8OZufU6VAiA6sqg1LP3T2jikSz7yQ@mail.gmail.com>
-X-Gm-Features: AZwV_QifTISU05sQ0lYySqx5XyPjAzUqa1H8fmOUOfLhWhGN7rzCzfM2UGq26-s
-Message-ID: <CAMuHMdX_rKgfusHP5qVny8OZufU6VAiA6sqg1LP3T2jikSz7yQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] mux: add help text for MULTIPLEXER config option
-To: Josua Mayer <josua@solid-run.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Peter Rosin <peda@axentia.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, Jon Nettleton <jon@solid-run.com>, 
-	Mikhail Anikin <mikhail.anikin@solid-run.com>, linux-can@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16ab35d7-ae61-41ea-32bc-08de58e83c14
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2026 12:25:59.6287
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Dr2Ph/MlMPxmfjpD8ev28sQ7E8wtM4/CACl3cmUG/XXF8uuHct7XdYmllFZE3fPYGLyNhjGVfRPuwtwwXN+u0CtzBXnlaqKXHWyRXBdRRCg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6633
 
-Hi Josua,
+Hi All,
 
-On Wed, 21 Jan 2026 at 11:02, Josua Mayer <josua@solid-run.com> wrote:
-> Add help text for CONFIG_MULTIPLEXER to allow enabling this option
-> through the kernel configuration without explicit "select" driver
-> dependencies.
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-
-Thanks for your patch!
-
-> --- a/drivers/mux/Kconfig
-> +++ b/drivers/mux/Kconfig
-> @@ -5,6 +5,14 @@
->
->  config MULTIPLEXER
->         tristate
-> +       help
-> +         Generic Multiplexer Support.
+> -----Original Message-----
+> From: Biju <biju.das.au@gmail.com>
+> Sent: 20 January 2026 12:52
+> Subject: [PATCH 10/12] arm64: dts: renesas: Add initial support for RZ/G3=
+L SMARC SoM
+>=20
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> Add initial support for the RZ/G3L SMARC SoM with 2GB memory and extal cl=
+k.
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+>=20
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm6=
+4/boot/dts/renesas/rzg3l-
+> smarc-som.dtsi
+> new file mode 100644
+> index 000000000000..7a3a2d4ab037
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for R9A08G046L48 SMARC SoM board.
+> + *
+> + * Copyright (C) 2026 Renesas Electronics Corp.
+> + */
 > +
-> +         This framework is designed to abstract multiplexer handling for
-> +         devices via various GPIO-, MMIO/Regmap or specific multiplexer
-> +         controller chips.
+> +#include <dt-bindings/gpio/gpio.h>
+
+Will drop this header file in v2.
+
+Cheers,
+Biju
+
 > +
-> +         If unsure, say no.
->
->  menu "Multiplexer drivers"
->         depends on MULTIPLEXER
->
+> +/ {
+> +	compatible =3D "renesas,rzg3l-smarcm", "renesas,r9a08g046l48",
+> +"renesas,r9a08g046";
+> +
+> +	memory@48000000 {
+> +		device_type =3D "memory";
+> +		/* First 128MB is reserved for secure area. */
+> +		reg =3D <0x0 0x48000000 0x0 0x78000000>;
+> +	};
+> +};
+> +
+> +&extal_clk {
+> +	clock-frequency =3D <24000000>;
+> +};
+> --
+> 2.43.0
 
-Unfortunately it doesn't work like that. As the tristate has no prompt
-specified, the user will never be asked about this.
-You should use something like below:
-
---- a/drivers/mux/Kconfig
-+++ b/drivers/mux/Kconfig
-@@ -4,10 +4,8 @@
- #
-
- config MULTIPLEXER
--       tristate
-+       tristate "Generic Multiplexer Support" if COMPILE_TEST
-        help
--         Generic Multiplexer Support.
--
-          This framework is designed to abstract multiplexer handling for
-          devices via various GPIO-, MMIO/Regmap or specific multiplexer
-          controller chips.
-
-Sorry for not noticing before.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
