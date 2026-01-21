@@ -1,143 +1,132 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F503A9607;
-	Wed, 21 Jan 2026 22:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4D1449ECF;
+	Wed, 21 Jan 2026 22:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769035384; cv=none; b=dIDCrsXQiD+nuvvvUAE7Jccs9dfJodc0j1I4cYu0peZ2QffhZuiGHTSQguXHT2OaP1cQHp8w0REYJaT1ILmfHPk+daEcsOvxGhmaKoH5O9zhFz4tzZ1lbXbzMxV8jCtMU4/uHTnqosZ85iN1y7qWM69frdrq/0+5nApJfX9m6N8=
+	t=1769035498; cv=none; b=np9BVOOwWfjy4TVxHEeoITuOkvy2JYqsVL8TCyp92JDw6AURJpqkMxsHzHZnhbUzQzR6YNmmOkPE1Ou9TX3klN5zI+LpWgJFnTeFUfx1PWmVXcGeS7xywsKlcfUyVNLZbfNYgILE6HUG3In9Ja5tBbXjuuciRbPN5ojAb41Wn+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769035384; c=relaxed/simple;
-	bh=fg8Xk9PX7JILvXU8e++2P0P2K8c7zescrN7pFCtqjB0=;
+	s=arc-20240116; t=1769035498; c=relaxed/simple;
+	bh=NfNLgGaNG8tEtO+T+PCm2QyL9in0BOFgaju7GrOY8Kw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a7H3Dahj6A+KL7jY4G6W0BpRXM3KA8WnzniGho8+y9AwHxuCLIUtWIt+xnzdQ8GjUtstqQdPn5nZFsLn//ZInNFRMOc5X4MEmbYK0VaeDwKIxtA05zBVluxLJOLf/vYynsKpUAMq36oORUxL/aEPN4qMDXyLFe/b5gsC8M4lfr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MF4BYXuD; arc=none smtp.client-ip=80.241.56.172
+	 In-Reply-To:Content-Type; b=DJ0KRReoF8hDL9/JhbymVnv8TZIwMDmkQt6YPrzUYuT3jdUwHwuJwcGIQXVhM6wb3rB3VwajWNbLcB61GaukAbq6qEPhD+YyGV5iV/tl7kGaQsn5lJbdFQbLsvaehPRidleH1yFmZwyT1sM2xioV8MrR3YhPIfKq2m2lHf6djRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DuI7x1B8; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MF4BYXuD"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DuI7x1B8"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dxK363Jmjz9tSn;
-	Wed, 21 Jan 2026 23:42:58 +0100 (CET)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4dxK5K05kfz9tCQ;
+	Wed, 21 Jan 2026 23:44:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769035378;
+	t=1769035493;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UY17E3F+Snom4B2+4ldWn4VuYehY/YFwS5WM3KAejnk=;
-	b=MF4BYXuDH1uTLN6WU0zw1cVzx4xzSQxrfCG9wUgGaoFr8r8IUicFDYUBEaxUT4vRC5qc4X
-	vQna4Xb4hBI0QPGj9phekxn/krGmQzH7ze9+RKd0pj0Cw5R9/D/XcOhicwcN3+eQ84+PSu
-	9ytqMZ9PJWpPuunF0VcAUbMlB9WcHjphIEbqTWLe69xIDl9JPbe07zgkiqJ53ta0zeYkoa
-	gStgtuduuKttaSykpXwox8CcfphDvCwWYJxhpdHveONadqgiMXLtPg1VkIJeLksWxN4seK
-	j8LVUCXzuvMD4mKEwZ1K5XSeg654abUTEVmhy3ruzALLlcbbPsoNA6V/OpO3mg==
-Message-ID: <cd8f71db-c2d1-4c85-8148-83822762a916@mailbox.org>
-Date: Wed, 21 Jan 2026 23:42:55 +0100
+	bh=h4erEKk/kx2Qi8GHsQ10UVtCdb2WmHG32BZt6WMNptI=;
+	b=DuI7x1B8S110FS9yoF8xVuV6H+z5vkYnTZ3oIMRcCqQSFBaSfM4onXalKS/sfmzRhRzbQE
+	9B2rBwudxnufsjs9p3y1hp+LQDdlwUoUogr4aE6M16iuydbiYFJGWZBCEFdiCXVwJ7DShD
+	w9EdDavzF/C8j30v50nFwCLHl5i7dxBZkE09tOCTt9JIAu3IpXedZVVgOUFgBHe5tZO4Yi
+	PVEo4IpSRnJL9YOYDNIM0g7tH1l8Q/sfgRe0GQp53rF+jQscNS+rFyllZl+kKfi6tgmD8U
+	wjlppTs44RxzATpA8yW/jIQQ8Q/+qovkAhBGHi1/WpgCC9Lo4+DhRUo9cfd6Jg==
+Message-ID: <6f817993-1b4a-4600-a771-d6c25efc668b@mailbox.org>
+Date: Wed, 21 Jan 2026 18:38:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 3/3] Input: ili210x - add support for polling mode
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Frank Li <Frank.Li@nxp.com>, Job Noorman <job@noorman.info>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH v2 9/9] arm64: dts: renesas: ebisu: Describe PCIe/USB3.0
+ clock generator
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
  linux-renesas-soc@vger.kernel.org
-References: <20260117001215.59272-1-marek.vasut+renesas@mailbox.org>
- <20260117001215.59272-3-marek.vasut+renesas@mailbox.org>
- <wv3vil4b4lgfrqt4qnzxiffnniw422xjfdiz4svkklnfrslz3g@yzqc265pj5t5>
- <bbb7fb54-5b04-4c38-840b-8cab58eeec7b@mailbox.org>
- <nk5qn7ye44lbtppp2opa273ut7lxkcz7jsw6giagwngiwhg7rr@puexvdzd2ymq>
+References: <20260118135038.8033-1-marek.vasut+renesas@mailbox.org>
+ <20260118135038.8033-10-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdWfkHMQFvUzaHpso-fMFAS5u8ABHpEA9ZXq1fxcR-oN6Q@mail.gmail.com>
 Content-Language: en-US
 From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <nk5qn7ye44lbtppp2opa273ut7lxkcz7jsw6giagwngiwhg7rr@puexvdzd2ymq>
+In-Reply-To: <CAMuHMdWfkHMQFvUzaHpso-fMFAS5u8ABHpEA9ZXq1fxcR-oN6Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: xyueama6a8jsbrxfa3gfqf1wsw768fui
-X-MBO-RS-ID: 7ab20b14f0adaa54e52
+X-MBO-RS-META: b4aobdw146wnxrmuf1fpjp7jzwxghan6
+X-MBO-RS-ID: 8813b9a2c165de6f9d5
 
-On 1/21/26 6:23 AM, Dmitry Torokhov wrote:
-> On Tue, Jan 20, 2026 at 11:50:53PM +0100, Marek Vasut wrote:
->> On 1/20/26 7:31 PM, Dmitry Torokhov wrote:
->>> Hi Marek,
->>>
->>> On Sat, Jan 17, 2026 at 01:12:04AM +0100, Marek Vasut wrote:
->>>> @@ -860,16 +893,12 @@ static ssize_t ili210x_firmware_update_store(struct device *dev,
->>>>    	 * the touch controller to disable the IRQs during update, so we have
->>>>    	 * to do it this way here.
->>>>    	 */
->>>> -	scoped_guard(disable_irq, &client->irq) {
->>>> -		dev_dbg(dev, "Firmware update started, firmware=%s\n", fwname);
->>>> -
->>>> -		ili210x_hardware_reset(priv->reset_gpio);
->>>> -
->>>> -		error = ili210x_do_firmware_update(priv, fwbuf, ac_end, df_end);
->>>> -
->>>> -		ili210x_hardware_reset(priv->reset_gpio);
->>>> -
->>>> -		dev_dbg(dev, "Firmware update ended, error=%i\n", error);
->>>> +	if (client->irq > 0) {
->>>> +		scoped_guard(disable_irq, &client->irq) {
->>>> +			error = ili210x_firmware_update_noirq(dev, fwbuf, ac_end, df_end);
->>>> +		}
->>>
->>> You already have a scope here, no need to establish a new one:
->>>
->>> 		guard(disable_irq)(&client->irq);
->>> 		error = ili210x_firmware_update_noirq(dev, fwbuf, ac_end, df_end);
->>
->> This part ^ I do not understand. If there is no IRQ defined in DT, I need to
->> call ili210x_firmware_update_noirq() without the guard because I cannot
->> disable_irq() with client->irq < 0, else I need to call
->> ili210x_firmware_update_noirq() within the scoped_guard() to disable IRQs to
->> avoid spurious IRQs that would interfere with the firmware update ?
-> 
-> You do not need to use scoped_guard() because you already define a scope
-> in your if statement:
-> 
-> if (client->irq > 0) {
-> 	guard(disable_irq)(&client->irq);
-> 	error = ili210x_firmware_update_noirq(dev, fwbuf, ac_end, df_end);
-> } else {
-> 	error = ili210x_firmware_update_noirq(dev, fwbuf, ac_end, df_end);
-> }
-> 
-> This is sill a bit awkward. Maybe we could add to interrupt.h
+On 1/21/26 2:48 PM, Geert Uytterhoeven wrote:
 
-Let me do the part above in V5 , and then the part below as a separate 
-follow up patch/series. I already added the later in tree so it won't be 
-lost. Does that work for you ?
+Hello Geert,
 
-> void __disable_valid_irq(unsigned int irq)
-> {
-> 	if (irq > 0)
-> 		disable_irq(irq);
-> }
-> 
-> void __enable_valid_irq(unsigned int irq)
-> {
-> 	if (irq > 0)
-> 		enable_irq(irq);
-> }
-> 
-> DEFINE_LOCK_GUARD_1(disable_valid_irq, int,
-> 		    disable_valid_irq(*_T->lock), enable_valid_irq(*_T->lock))
-> 
-> and then we'd be able to keep the driver as is (just adjust the type of
-> the original scoped_guard).
-> 
+>> @@ -439,6 +445,13 @@ adv7511_out: endpoint {
+>>                  };
+>>          };
 >>
->>> BTW, not a fan of the "_noirq" suffix... Maybe drop it and add
->>> lockdep_is_held() there?
->>
->> This part I understand even less, how does lockdep play into this ? The
->> scoped_guard() disables and enables IRQs if they are available.
+>> +       pcie_usb_clk: clk@68 {
+>> +               compatible = "renesas,9fgv0841";
+>> +               reg = <0x68>;
+>> +               clocks = <&pcie_usb_refclk>;
+>> +               #clock-cells = <1>;
+>> +       };
 > 
-> Ah, sorry, brainfart on my part. I got confused by _noirq suffix.
-OK
+> During boot, the rs9 prints a warning:
+> 
+>      clk-renesas-pcie-9series 0-0068: No cache defaults, reading back from HW
+> 
+> which probably shouldn't be printed at the warning level?
+
++CC Mark . Reading the (default) register values from hardware on first 
+boot is the valid/right thing to do, so this could be demoted to 
+dev_dbg() . Or is there some specific usecase where this should be a 
+warning ?
+
+>> +
+>>          video-receiver@70 {
+>>                  compatible = "adi,adv7482";
+>>                  reg = <0x70>;
+> 
+>> @@ -871,7 +902,19 @@ &usb2_phy0 {
+>>          status = "okay";
+>>   };
+>>
+>> +&usb3_phy0 {
+>> +       clocks = <&pcie_usb_clk 6>;
+>> +       status = "okay";
+>> +};
+> 
+> This does not work, probing fails with:
+> 
+>      usb_phy_generic usb-phy: dummy supplies not allowed for exclusive
+> requests (id=vbus)
+> 
+> Adding a fixed regulator that serves as vbus-supply like in commit
+> fec2d8fcdedaeeb0 ("arm64: dts: freescale: imx93-phyboard-nash: Add USB
+> vbus regulators") fixes that issue (and my USB3.0 FLASH driver is
+> detected, yeah!), but a more accurate description would be better.
+This piece of code in drivers/usb/phy/phy-generic.c [1] shouldn't fail 
+the probe if "vbus-supply" property is not present in DT. If 
+"vbus-supply" property is not present in DT, then 
+PTR_ERR(nop->vbus_draw) == -ENODEV is true, nop->vbus_draw will be set 
+to NULL, but won't encode error, so the dev_err_probe() won't trigger.
+
+"
+259         nop->vbus_draw = devm_regulator_get_exclusive(dev, "vbus");
+260         if (PTR_ERR(nop->vbus_draw) == -ENODEV)
+261                 nop->vbus_draw = NULL;
+262         if (IS_ERR(nop->vbus_draw))
+263                 return dev_err_probe(dev, PTR_ERR(nop->vbus_draw),
+264                                      "could not get vbus regulator\n");
+"
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/phy/phy-generic.c#n259
