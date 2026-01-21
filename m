@@ -1,78 +1,131 @@
-Received: from 5744040.hostgiantservers.com (5744040.hostgiantservers.com [162.240.33.85])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC05332EDE
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 23:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.33.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7079200110;
+	Wed, 21 Jan 2026 23:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769037572; cv=none; b=rTo/2FtISmmIpNM1f+As0JShbSVlOrWrJqzmAss4kBv3GHQ7EBu7mvwgwB0elvLryZJg0le5/IDeSiidAWY+1kbMr6cSnIt1SumsjU/e5/4E+XtURMp84Ob5vppE9SdXvSbpfX4Si4LOi88Ks3tWvGVPfcAPZdcWXjHLta106Z8=
+	t=1769037941; cv=none; b=Ty7Q3Yzr6eTDtLXUcDYlncmwK3SlzUG7WV6uQUs9+4IORJvxTVT8SMz4xbc2KuaEEOFXl46EB6rWet6j4kUXS2aQ1SfSG1OPkujtc/a0dH4CSbIFaYk2VlDcfnq4PnP34PglcbfkqPFw5v/qJTVQdLtGLL8/9KfdyJ+bdRJbYU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769037572; c=relaxed/simple;
-	bh=ESJWdz8DKTQGSwflqsP+z0tZ/A5F5I6spSSbTqHEOrQ=;
-	h=Message-ID:From:To:Subject:Date:MIME-Version:Content-Type; b=ZTqvelz3o+f4DOZOEJjpCjWZTx3zcxOK1xnmX8sEbfFUyZ6iFErhBJqsyltvq6kqg5sUYIzPGTqeBY0VOGa71SMZlIR1R6Ptu+r84CEcIjjJQlac7HyboxhK6cpjXEzW2q8qfyUEWqM+byupA4T+B/i3EFATg+QNCQCMgsUYNQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=silkevents.co.ug; spf=pass smtp.mailfrom=silkevents.co.ug; dkim=pass (2048-bit key) header.d=silkevents.co.ug header.i=@silkevents.co.ug header.b=DtLI5yWk; arc=none smtp.client-ip=162.240.33.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=silkevents.co.ug
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=silkevents.co.ug
+	s=arc-20240116; t=1769037941; c=relaxed/simple;
+	bh=O0PS+BL4QHBiCrRhDmjpZt6wDloOgKZAIhbG8Mpc0jY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eiI+MyIj527NnR4H/apQKKefjnb5pwbnyrYsDBfb+8ObipI5qhgoUnu9mCI5dM0+2o+I+r+077hLkr7aw7l368pt6OF4atuPj9mJh4F2RPLZ2QvdK2DyDwLDNN/ilHZYVxicOd/OPypEgSBUvxm99fzpI36ShdtkyEMT5izOqeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Pm64mUVl; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TUqzYtNY; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=silkevents.co.ug header.i=@silkevents.co.ug header.b="DtLI5yWk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=silkevents.co.ug; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Date:Subject:To:From:Reply-To:Message-ID:Sender:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7GLARtIBVsfRqcNHXBTU/QjCV0Tb5tHwRDweRH0ujQo=; b=DtLI5yWk0saWRrJSOBYJwCwTe8
-	2EUvBCnliLCcw+KHWs6FFONkkQ/7OwOK/4zAYtiDkKu5O/qJqoymXbKsoIJmr9yAabbr0bdDMq+ha
-	TS+oRqw7DcUdYZlwOe3gMBLAblVuvVYcFY6c8PJ29FRtTKCXrvsu/pAZvJrtI3stxQcLQUGaGf1/B
-	37o6Kpg6py8OzSHZZ6/vGgksalOk5IfpyRSM3hlZbvQAiXnH/lkUbH99WoY1CiplZhwHMuZftIVAP
-	d1IIrd6NKaT3nGA9G6iNqoc/Df+jehbl2tTusR5NGebr7GuCgmaV4aNoIbgpAzyuVcFv8HE+iNzfg
-	luoDbBow==;
-Received: from [185.93.89.84] (port=52105 helo=185.93.89.84)
-	by 5744040.hostgiantservers.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.99.1)
-	(envelope-from <elviswavah@silkevents.co.ug>)
-	id 1vigdD-000000008OS-2GRd
-	for linux-renesas-soc@vger.kernel.org;
-	Wed, 21 Jan 2026 16:24:55 -0600
-Message-ID: <6B91D87B13C7E94A9693DA67E3137004@185.93.89.84>
-Reply-To: "M.Amos" <malcolmamos@malcolmamos.com>
-From: "M.Amos" <elviswavah@silkevents.co.ug>
-To: <linux-renesas-soc@vger.kernel.org>
-Subject: Exploring Potential Investment:Let's Connect
-Date: Wed, 21 Jan 2026 14:24:34 -0800
-Organization: Amos
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Pm64mUVl";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TUqzYtNY"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4dxL0D0Cg1z9vDL;
+	Thu, 22 Jan 2026 00:25:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1769037932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9arw67GH+f/5kGjRhfNrg+tq6/rnHL3W8z9hdZKbl8c=;
+	b=Pm64mUVl2ERUFGFTxnXxSdbH1Uy+1mepUlgptPzWFBJSHe1ZdDAYtqLEBh/rMWdmSvin+v
+	i4hKm9a+PWt1xk6ED17GSgIMjBN56KNnBMJCb2hkHdeyk/kzGXFItv7eApd3uE9X52vPXy
+	4h9ZTNK6WDZS84JUM5+EcbzivWfyfCAAsuR/qn7j2Inci3rmx/ttXZGvAM+N3wSvN4dced
+	hYumJcTWjC2C1roXaLyc/MB8lz8s1naU790U4Ynxlj7s6OUjXMpP1Z+ggHAMVuLviiqIoE
+	fYApcbrjtFJDk/M2hL4Wq2jcWGZqugVbRga1HiFoGoIKeszczHDuCHLwnRXE1Q==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1769037930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9arw67GH+f/5kGjRhfNrg+tq6/rnHL3W8z9hdZKbl8c=;
+	b=TUqzYtNYj+ul8NZ3XQfl24Eh4XMlPFmQ+KZZ2PET7ZwdQTxDBHmzCwP3KCakoaDK05TXO3
+	KHc/79cS/Ea4vJ8UQTpQ9IlfYiDnDwgQFSRNWFPN4AXCPsIwY/peHTcpEOUk2T5pDjBa9C
+	hLxy2Tbo8J24gja+YQgYd/TA+C8Jsfyk3WfGNGDYyM5bfANSvjICosSESDmLL2M10RGWkR
+	snIxQYo7HctgBqLbSnRBOSYJ565Ha6+cDGnVW3JNrdo7RmneLCqoBD/j28cGH4aBgdmELP
+	QrSJ7DvqMW62bdy9yReoNcQYC4O3Dq+k42wksUtV2Eet3x77KpsX/JlQf9lb1g==
+To: linux-input@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cheng-Yang Chou <yphbchou0911@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Thomas Gleixner <tglx@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] linux/interrupt.h: allow "guard" notation to disable and reenable IRQ with valid IRQ check
+Date: Thu, 22 Jan 2026 00:23:47 +0100
+Message-ID: <20260121232522.154771-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	format=flowed;
-	charset="windows-1251";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Windows Live Mail 16.4.3528.331
-X-MimeOLE: Produced By Microsoft MimeOLE V16.4.3528.331
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - 5744040.hostgiantservers.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - silkevents.co.ug
-X-Get-Message-Sender-Via: 5744040.hostgiantservers.com: authenticated_id: elviswavah@silkevents.co.ug
-X-Authenticated-Sender: 5744040.hostgiantservers.com: elviswavah@silkevents.co.ug
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 1hqgficb3dpq9zbmuxunfejqiy67heup
+X-MBO-RS-ID: 298dcfcc0b48c75f1e3
 
-Warm greetings.
-I am reaching out to express my keen interest in identifying new investment opportunities, especially those involving silent and private placements, joint ventures, and strategic partnerships.
+Introduce disable_valid_irq scoped guard. This is an extension
+of disable_irq scoped guard, which disables and enables IRQs
+around a scope. The disable_valid_irq scoped guard does almost
+the same, except it handles the case where IRQ is not valid,
+in which case it does not do anything. This is meant to be used
+by for example touch controller drivers, which can do both IRQ
+driven and polling mode of operation, and this makes their code
+slighly simpler.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Cheng-Yang Chou <yphbchou0911@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@kernel.org>
+Cc: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ include/linux/interrupt.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 00c01b0a43be1..becbeab4a7473 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -242,6 +242,21 @@ extern void irq_wake_thread(unsigned int irq, void *dev_id);
+ DEFINE_LOCK_GUARD_1(disable_irq, int,
+ 		    disable_irq(*_T->lock), enable_irq(*_T->lock))
  
-My priority is to partner with projects that demonstrate significant potential for growth and return on investment. With capital available, I am ready to consider innovative and well-structured ventures. I invite you to share details of your project so we may explore possibilities for cooperation.
- 
-Looking forward to your response.
- 
-Best regards,
-M. Amoss
++static inline void disable_valid_irq(unsigned int irq)
++{
++	if (irq > 0)
++		disable_irq(irq);
++}
++
++static inline void enable_valid_irq(unsigned int irq)
++{
++	if (irq > 0)
++		enable_irq(irq);
++}
++
++DEFINE_LOCK_GUARD_1(disable_valid_irq, int,
++		    disable_valid_irq(*_T->lock), enable_valid_irq(*_T->lock))
++
+ extern void disable_nmi_nosync(unsigned int irq);
+ extern void disable_percpu_nmi(unsigned int irq);
+ extern void enable_nmi(unsigned int irq);
+-- 
+2.51.0
+
