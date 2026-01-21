@@ -1,86 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E27B396B8C;
-	Wed, 21 Jan 2026 11:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7B8396B8C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 11:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768993398; cv=none; b=qMbzlPT5Lh5EI7YfWE1oUeJVK7pOGvHgt/Tkx9peuNiw5rajqn7GqBmSOoA46NakiJquD8DUyphNwDumck+sGwpvZHNLviygRpwqw1otNGLHBbhDaHotoYEYD5Tp611MtTwN2SZtIR2JOpNz+Ql0UN5ZtMx0dz5Zcceb4+xLcmQ=
+	t=1768993662; cv=none; b=YZpZF+DHF72l7HKToIxdo9Ho05Pp/TTuBk6PtGrLW3UTnzq+yOaxpIyi8tkcTosmfE3O/dKh9ich5R3eLoqVlnV8A01AV8ra/PYImXPvvdHFkDqOw6z7mgha8dIe7dxV+90NImMCy5XpbB36a8N6Y1CMxnTJ7e5IjDBmKPWyYRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768993398; c=relaxed/simple;
-	bh=99V2KEzM5M/6j9u/iDcwCKzEKyoaom7t9aOwjdEiDzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiXcHLmL/Q0cmcNvYVtL83oVp4seQeojVm86bD9JuKip6KdN/b+rjx3etep2DefmPIirzgo6YJpUZEliIkkq0WHzQjJCY/cRBA+OsyaB3+8EYD+jSG6FttuiAy2br2tNSykgUevhWitYkzC19cgCw2rEiZ7gTiMPhgTyJ9sIQyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFCCC116D0;
-	Wed, 21 Jan 2026 11:03:16 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH resend] clk: rs9: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-Date: Wed, 21 Jan 2026 12:03:11 +0100
-Message-ID: <15f24d006fc782d501922d6c88e836976d69c7cb.1768993373.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1768993662; c=relaxed/simple;
+	bh=cysOwS5g5dZRSxtVrJ3zv/VB5w+D2iLkyCuaPMhXFP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K2FiCDjBZasPKLNj2QIBrqjwukdM3hi713Pm2RoQXuHNR1hFBjZecTpWt3Oegar4bq4fnIxWqctT4U+Jg6YzG3GgoA5VXOodxMwfcB4tmM8gN63nG2o8Id1szAsfL7JrklL59Gui6L1OXug+hXsN8KXtRj/dHSqZm6Ged6X74yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-88a35a00506so97836326d6.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 03:07:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768993660; x=1769598460;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VSYJm8i9wWqRvGvRTZz6VIsl7/oMewZT8tw/+hAgWzw=;
+        b=vOskUe0z5jnk5qZK7GiHliXnYFVWXqz4ITvE1wRTBZG95csOkmzK4QcJTTgWHqWPWs
+         u+5wtrftsWo5eZJ6BiPmksFVwj+qlecSUyAzDju4dSDQ5kX7zD3f6enQiEQVQ5OanJ81
+         AbiKZ3XRwHafXRVG0K8RGOz+QKPTuZNvXwbwCyHuawmfW0ofBGOQS3fuPYD78u57raq/
+         dVFbn4UyDOkbrYBvi/9fE1NcbzkwhgdH8sgPKBr3VGWtDM9ipPiAwmj8rJk+YJJ9/DLk
+         oNi36neJSTT72MK0wlpSyaNRnAidXBLEQmi4oDrV2c3G+hbXaVr1URGco9+ifM3ehDMf
+         b1ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUgcDxiVfArJFUg6DpNsVTtvgzw3FBtcjWVV2VIKUR88WRm/wI+ugEp/j+oFjSZhn4ghEnEACX0bMiC5GGxGs4JyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHCPxt4vI7dIoAIuupNqn4/P3PSQcQ6G24xdl3H0Adfi2MC9O/
+	divfjr5ucdff5fsJv8C3bu+3tKF4pElQaSH13C5nA07E/2nYQvhtmVfbQGoKLN1A
+X-Gm-Gg: AZuq6aLahrta1b+ARbThFWjXQu0kzsAUiTQAuYCLrZa6Jz6/TD9JOWMw5mUQmkaijvR
+	vAERA9pFTthwd3TdMS1BzCxEt7GTvcBjbv/aA3zp7v9nsXmkdhyYgMMcYdb5JfSUFJbUDnG099l
+	g9pK1jCA1Xd/9OHDtseN7pDOZdY8xkXgBH7Wk3uTodA5b8AXD37/nnBIxKo9/54zYJvTjD6mb9u
+	vfZSWG2TFgg1TX9wIWpUc1OIeRgJ+0MLioUcg2RFXrTyAliy+0jfD4paeXuGq1q5jpryGQdxDLI
+	vpoZHTMGt0EaXsjUKFeRgSlgy4ifeqg87bxgVrI+SpfdV47rWI2IJjQAS1+DPXYgQK6nGlpH7c5
+	y73gKTwQoyoEVNnsB8M9DKWFUl3Ixc0Dvl1fWA1zsyKGwHEIo4QA6vTKsNSGLBtmUOLmhUicVwx
+	wZ8xvKI5UapU0Z6TnXbo6yX20cnou9n8kSbadtnQ/CqJgzPM4s+kldOCGsyiOnE6s=
+X-Received: by 2002:ad4:5c62:0:b0:894:6c8e:ed1c with SMTP id 6a1803df08f44-8946c8efa0fmr54491866d6.5.1768993659714;
+        Wed, 21 Jan 2026 03:07:39 -0800 (PST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8946c6d2691sm23748856d6.42.2026.01.21.03.07.39
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Jan 2026 03:07:39 -0800 (PST)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-501c6665144so64873631cf.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jan 2026 03:07:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUDBjRozOqjLzR1RsXpEInBQ13BIj0Vd0eM/rJuS4qzUh/vo1/ep3mcEdyaT8w3nWR/Q2b1E5d+KENT/wxK6X1iGQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:2ad6:b0:5ef:248b:d533 with SMTP id
+ ada2fe7eead31-5f1a716fcbcmr6150752137.31.1768993204250; Wed, 21 Jan 2026
+ 03:00:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260121-rz-sdio-mux-v6-0-38aa39527928@solid-run.com> <20260121-rz-sdio-mux-v6-3-38aa39527928@solid-run.com>
+In-Reply-To: <20260121-rz-sdio-mux-v6-3-38aa39527928@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Jan 2026 11:59:52 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX_rKgfusHP5qVny8OZufU6VAiA6sqg1LP3T2jikSz7yQ@mail.gmail.com>
+X-Gm-Features: AZwV_QifTISU05sQ0lYySqx5XyPjAzUqa1H8fmOUOfLhWhGN7rzCzfM2UGq26-s
+Message-ID: <CAMuHMdX_rKgfusHP5qVny8OZufU6VAiA6sqg1LP3T2jikSz7yQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] mux: add help text for MULTIPLEXER config option
+To: Josua Mayer <josua@solid-run.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Peter Rosin <peda@axentia.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, Jon Nettleton <jon@solid-run.com>, 
+	Mikhail Anikin <mikhail.anikin@solid-run.com>, linux-can@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Convert the Renesas 9-series PCIe clock generator driver from
-SIMPLE_DEV_PM_OPS() to DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr().
-This lets us drop the __maybe_unused annotations from its suspend and
-resume callbacks, and reduces kernel size in case CONFIG_PM or
-CONFIG_PM_SLEEP is disabled.
+Hi Josua,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/clk-renesas-pcie.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Wed, 21 Jan 2026 at 11:02, Josua Mayer <josua@solid-run.com> wrote:
+> Add help text for CONFIG_MULTIPLEXER to allow enabling this option
+> through the kernel configuration without explicit "select" driver
+> dependencies.
+>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 6650e3440c7492cf..b9bee616afe8d4ef 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -359,7 +359,7 @@ static int rs9_probe(struct i2c_client *client)
- 	return ret;
- }
- 
--static int __maybe_unused rs9_suspend(struct device *dev)
-+static int rs9_suspend(struct device *dev)
- {
- 	struct rs9_driver_data *rs9 = dev_get_drvdata(dev);
- 
-@@ -369,7 +369,7 @@ static int __maybe_unused rs9_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused rs9_resume(struct device *dev)
-+static int rs9_resume(struct device *dev)
- {
- 	struct rs9_driver_data *rs9 = dev_get_drvdata(dev);
- 	int ret;
-@@ -415,12 +415,12 @@ static const struct of_device_id clk_rs9_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, clk_rs9_of_match);
- 
--static SIMPLE_DEV_PM_OPS(rs9_pm_ops, rs9_suspend, rs9_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(rs9_pm_ops, rs9_suspend, rs9_resume);
- 
- static struct i2c_driver rs9_driver = {
- 	.driver = {
- 		.name = "clk-renesas-pcie-9series",
--		.pm	= &rs9_pm_ops,
-+		.pm	= pm_sleep_ptr(&rs9_pm_ops),
- 		.of_match_table = clk_rs9_of_match,
- 	},
- 	.probe		= rs9_probe,
+Thanks for your patch!
+
+> --- a/drivers/mux/Kconfig
+> +++ b/drivers/mux/Kconfig
+> @@ -5,6 +5,14 @@
+>
+>  config MULTIPLEXER
+>         tristate
+> +       help
+> +         Generic Multiplexer Support.
+> +
+> +         This framework is designed to abstract multiplexer handling for
+> +         devices via various GPIO-, MMIO/Regmap or specific multiplexer
+> +         controller chips.
+> +
+> +         If unsure, say no.
+>
+>  menu "Multiplexer drivers"
+>         depends on MULTIPLEXER
+>
+
+Unfortunately it doesn't work like that. As the tristate has no prompt
+specified, the user will never be asked about this.
+You should use something like below:
+
+--- a/drivers/mux/Kconfig
++++ b/drivers/mux/Kconfig
+@@ -4,10 +4,8 @@
+ #
+
+ config MULTIPLEXER
+-       tristate
++       tristate "Generic Multiplexer Support" if COMPILE_TEST
+        help
+-         Generic Multiplexer Support.
+-
+          This framework is designed to abstract multiplexer handling for
+          devices via various GPIO-, MMIO/Regmap or specific multiplexer
+          controller chips.
+
+Sorry for not noticing before.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
