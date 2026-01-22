@@ -1,119 +1,92 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27223164C8
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 12:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594D330B515;
+	Thu, 22 Jan 2026 13:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769085162; cv=none; b=p/Z+xkIpIrCsdT6GGduo/e9ilJSL+BV1jtcfmauzOIDe2eAgoXsdRUgpp8KeFpgD7V43rbhmw5pNYWhjclN7ulI+yx+bceBmReIPRXG0trwsXTsDNk9zh0f/IhqYjF9U4v0/1sLr+fFWggks5yR+EJc5xM1LeINQaaCTVv0HGSE=
+	t=1769087546; cv=none; b=hMMzE3o46Wu7g0KWH/iDfHA1/l0wDrPZbz5WHh57BgjKl+WpZJ8/7UDpRf6Dk8iqspmBNrxdH2GUFJTgLoCjG51klI+nSH1TLnh+jxFsO104D/72EsnrgQ6LF+R7rh7iGoLcvIJcvIJ2RjjcWVx7isLjZ1KskP9a8n3dxKkzhpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769085162; c=relaxed/simple;
-	bh=BZu/5Fim3WbSmBgZucW+Oc0ZzQIc/F/G6KlUlmjvOc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cp9PNC9hK14/EZkh7OidpOEat4wVAg8ebmaUIvuLY2niSdfCA1UDErkbGlMkXP6kj+BoD19S4jVZ9azBjrwqeT8HdBPaDXbr26+jZXNl5UwuKx0HOEkNm6viSvv2+yRWv3kMVtHfNWlTveHqr58vMkt6DhZisrKRM1RJ1qn6fpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-81f5381d168so941859b3a.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 04:32:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769085159; x=1769689959;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NshjYFUffTPn7Y/VWXqwFCdDoXaersEomkK4SDzB2hg=;
-        b=UVOweVev6gl3HU7MSh2yWKXHxNNOX3umt5/CiN4R0XxSnYf6+8ZYpnBbHCZ898uBlJ
-         fqpI3N8jLb+7Rh0FQ2cnpqPpQZ/ajfB//uU4a9q/UPBmhOuXGsz9C9hSWHpWQ+6xjX09
-         oOrsEE+PzH/iv2iYMIqE1nAjuRl7anXKM8YNAqnw+4kT+0hFEM4tqrhKo5F3QtdrJ4fJ
-         WR7446B5SFebewNVa4Y+eBflGsrdy3wqbQPxKC+c45yWdRqAJ6y4OzGekcpCkM2aXddD
-         Y1RJcoxBMEQEiNtozl++YgK0+sWvQLi6pkKqFxRiQKQsL8QHokFVSn3gjOFBftjfP5Ke
-         DhDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWS2xrLi+IKfcMGwPz5oRExQ5KKYfBcSszViUj4VYh9KLayPjAN3VgCb3IOqzb5hyzJ4yNR1GUapfZtHNv4BKI5TA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygUhJzrll860dTSqvzYmfmcybySZ81md8MpVzEI2WBiz0aFv7X
-	EjuBr5lUeEej/2NpLHPW4f98suGQZTzpVRQ4kgEGGIKcPcskY1V+V9f9XEHW8Wce
-X-Gm-Gg: AZuq6aJCrtgpNSc7AW7rIF+xaVphoujuUQl58lPoHoXQmhqUbQb/LrtJf4gc3q279G0
-	FlgXpFr1kvDQ6BwWb1ih5lSMOsgJ290ZUj0EfHd9pAzLH4GJFwB75V9jNsYuQ/QOMchuFY+uQRV
-	X2FbujKzGQolVuP5tcnORadCZX+/VvwgdINKZuVm5o1X9XVn1JneNrnkv5a310Qly/69Obf2gQC
-	t+9BUdgZaC/n6cbNCVYwl6G7BlJGijZ0VjdOVI6VabMsc/INL1Fio2OryRKsqadz75X44xKnls+
-	oMisV36GEPuEwi/G0oULwSrDOlC7wN2k7qbtZBcW6ojxq2+C6fkmmRc6w4dQo+gPqg+bs7XTF+P
-	eoYhc7mLxPCD7JULLutpFt31ZNCBIuZw+tpCWVJapZyMbMOoVyUJdifiReJXituxgBZDSBU9PPE
-	XidXQZcHxUeJjWLOqDj4OpPg8gsnPLYypwbdkw+rJLVRzyx8mt6MLQ
-X-Received: by 2002:a05:6102:41a0:b0:5f5:3abd:9301 with SMTP id ada2fe7eead31-5f53abdb352mr317847137.35.1769078727079;
-        Thu, 22 Jan 2026 02:45:27 -0800 (PST)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5f1a6d3ca93sm5529337137.11.2026.01.22.02.45.26
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Jan 2026 02:45:26 -0800 (PST)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5636784884eso243091e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 02:45:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVpmNVPikCsaP0vFw46f2N+kshzkAvLUlz2wEl5YHTFRtKuvopJc8I5NlGvf6CJDiczhhhwugzQzj6pghCm9TtDzQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:304f:b0:5f5:3719:19d8 with SMTP id
- ada2fe7eead31-5f537191b24mr421545137.31.1769078726495; Thu, 22 Jan 2026
- 02:45:26 -0800 (PST)
+	s=arc-20240116; t=1769087546; c=relaxed/simple;
+	bh=EdpkpvHVkaLeg84VxprWWsRo+EhUK8ucYp2TIZriiyg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QcbbRfPblj6Lte+KWkuGSwIiVkCsiW/TmDJIQB41U97PVBq3KR26UwDWIqOw0OrNOwcGbrAPqHoQD/hNl+74qJuotP4Gdl+UoiKhuF0HCv0N4+rlKAO3wYKNX01M5kslNwt4LWB2m/9y3EsUSV65CZ/zSB0VS9U7UWOGddMrDcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jzu3WJ/P; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jzu3WJ/P"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7BFF71A2A34;
+	Thu, 22 Jan 2026 13:12:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 47C9F606B6;
+	Thu, 22 Jan 2026 13:12:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3E83119B81D0;
+	Thu, 22 Jan 2026 14:12:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769087540; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=nTfR2sk64gsYNzdklWZH7EIFWs/cDqLkfvUS4wt59Uw=;
+	b=jzu3WJ/P60Hn9aGf7N5TOqqR39tvowFDrWaH7BmeWPCQrEQb/YNWNVAwQR8kK5eltAvTOL
+	MDoGcNJ73LDTVVpHsKBIp77RjRLS2cfMlNZoZVmgXla6IWt+Mo3bbuo1gQSZRwshW6Pu16
+	egO4mU3upMsnc/fsumI8QLzmi8m8j0TKi2Qiou16JEKOQFf37PtVo1ae9AUZ9KBJySziuZ
+	O5IzPeh/PvwMJNN55++NATBbApS4v59Y/EsIFbrDoEunptGep7sMsP9xumtW1NyeNLTkd1
+	gevGv+r3yE+4Lp+PQcXDIZZDETTYV7NLeXb+yUolDUJXzcMaJPvchSJRB0/wmQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mark Brown <broonie@kernel.org>,  Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>,  Geert Uytterhoeven <geert+renesas@glider.be>,
+  Magnus Damm <magnus.damm@gmail.com>,  Vaishnav Achath
+ <vaishnav.a@ti.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  =?utf-8?Q?Herv=C3=A9?= Codina <herve.codina@bootlin.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Santhosh Kumar K <s-k6@ti.com>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Pascal Eberhard <pascal.eberhard@se.com>,
+  linux-spi@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 17/17] ARM: dts: r9a06g032: Describe the QSPI controller
+In-Reply-To: <CAMuHMdW=Ynyf=7r0GBv8g+-xi_3=fojnsmOC5AGWxrhcuTM2rg@mail.gmail.com>
+	(Geert Uytterhoeven's message of "Thu, 22 Jan 2026 11:59:17 +0100")
+References: <20260121-schneider-6-19-rc1-qspi-v3-0-43e70fab4444@bootlin.com>
+	<20260121-schneider-6-19-rc1-qspi-v3-17-43e70fab4444@bootlin.com>
+	<CAMuHMdW=Ynyf=7r0GBv8g+-xi_3=fojnsmOC5AGWxrhcuTM2rg@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Thu, 22 Jan 2026 14:12:16 +0100
+Message-ID: <87o6mlpz9r.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1768559762.git.geert+renesas@glider.be> <cover.1768559767.git.geert+renesas@glider.be>
- <20260122-fragrant-auburn-oxpecker-33aa7b@quoll>
-In-Reply-To: <20260122-fragrant-auburn-oxpecker-33aa7b@quoll>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Jan 2026 11:45:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWHJY1774N5m_S99u6ETJdyuj7GdrXv75DRoDty9j8tcg@mail.gmail.com>
-X-Gm-Features: AZwV_Qh9OPSpjre26zYtA49UvfUvRCXHMaoKfRQXbtFLez-kbSzjI0P07of02JY
-Message-ID: <CAMuHMdWHJY1774N5m_S99u6ETJdyuj7GdrXv75DRoDty9j8tcg@mail.gmail.com>
-Subject: Re: [GIT PULL 2/3] Renesas DT binding updates for v6.20
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: soc@lists.linux.dev, soc <soc@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Krzysztof,
+Hi Geert,
 
-On Thu, 22 Jan 2026 at 11:02, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Fri, Jan 16, 2026 at 11:50:17AM +0100, Geert Uytterhoeven wrote:
-> > The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
-> >
-> >   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.20-tag1
-> >
-> > for you to fetch changes up to f3b795d298a280687ed70211d51043ed5fc7a96a:
-> >
-> >   dt-bindings: soc: renesas: Document RZ/N1 GPIO Interrupt Multiplexer (2026-01-15 11:56:09 +0100)
-> >
-> > ----------------------------------------------------------------
-> > Renesas DT binding updates for v6.20
-> >
-> >   - Document the RZ/N1 GPIO Interrupt Multiplexer.
+>>
+>> +               qspi0: spi@40005000 {
+>> +                       compatible =3D "renesas,r9a06g032-qspi", "renesa=
+s,rzn1-qspi";
+>> +                       reg =3D <0x40005000 0x1000>, <0x10000000 0x10000=
+000>;
+>> +                       interrupts =3D <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       clocks =3D <&sysctrl R9A06G032_CLK_QSPI0>, <&sys=
+ctrl R9A06G032_HCLK_QSPI0>,
+>> +                                <&sysctrl R9A06G032_HCLK_QSPI0>;
+>> +                       clock-names =3D "ref", "ahb", "apb";
+>> +                       #address-cells =3D <1>;
+>> +                       #size-cells =3D <0>;
+>> +                       cdns,fifo-width =3D <4>;
+>> +                       cdns,fifo-depth =3D <4>;
 >
-> This belongs to the driver patch (see submitting patches in DT) and is
-> not supposed to be separate pull. If you wanted to share with your DTS
-> branch then maybe just pull it as dependency, but the problem is that
-> Arnd just merged all driver pulls and this one was skipped.
+> These two should be dropped, as per the updates to v3 of 04/17.
 
-Right, in this particular case including it with my drivers PR would
-have been more appropriate. Sorry for missing that.
+Gniiiiiii -_-
 
-> I'll leave this one to Arnd to decide where to pull this.
+I did it in the yaml example and forgot to replicate it here.
 
-As soc no longer has a dt-bindings branch, he usually pulls my
-dt-bindings PR just before my dts PR (which he also hasn't pulled yet)
-into the soc dt branch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Miqu=C3=A8l
