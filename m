@@ -1,98 +1,131 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D861D385ED4;
-	Thu, 22 Jan 2026 19:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467C6394466
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 20:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769109088; cv=none; b=B8BWOQanKBy0tWVuP9u5BU5foO72mp6SC+8UEbHmOH8hFOJNvAIOr5CI5DVE9SJyGZQLWpAG7Ai/08pC1FMyGDC24ePD13cnqmy5kCjroIVhUL8wDMnEcEPAwJ9PehEUAarQyGlL3I9TeDnuxU8EktB1ogPSNTkuBUWuV/Nu+GY=
+	t=1769113655; cv=none; b=uXpsiQ1yRkFS1WOgeS2331ffG54bv1+if7rUOUAU1TFo1w0csQkZKxrSQDprl4IXEME3AGua5u0GiXHMdejdSrlCKQauDbnCN/toBYydL67sfC/fj1I3+of3+l7kbyx+4/vTUaKPYUFkarjwuqrUdztzZYbeh60BD6Y9Rh/bT4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769109088; c=relaxed/simple;
-	bh=V4MqKdcmNUDueQiIyKWd529B5AQkiUI8raNRH/4ysRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IgnSVq3o14Je4q+OWgh0btYqPnR5gxP1YxBTjk7MNJPqRvaYb3u67Aqz48moRk+ZKtZoJL9ZAjzwdQufAM46jXBwtwh6nsforBPIX9UEVXMcq5gBpEKbcMQP7o+Mt+D8NMGg06edHr4CGh95gOnBpbbE92l+OJ8GH8Ar+ARKgE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=q8vFWeq7; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hxsCnpwp; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1769113655; c=relaxed/simple;
+	bh=NKKxp8XslWhqHgE40+VZpWgrnehA4xyD/dkaXnrk8dE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdosBPZ/Cx/VXwQ57OxgS2BSKKZ4N9CML3P6vnsDhY6sH2XSfC0YIMsH+Iz52RU39DIUkkTfmt04epp+ufc1rAvCF2XDOwQPp27TKuO2jQy2ZugEukt9D0P4bnM5Yb+eaEcoafakHr0r61XFcRwIrs7ZFGyojJx4J8CjyNI1hBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ca8IFNa6; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="q8vFWeq7";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hxsCnpwp"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4dxrJF2GKtz9tmc;
-	Thu, 22 Jan 2026 20:11:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769109069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89hnRfGT6K5DVFBx65KY1V2Qu8HMKDj7OT53Y0FKeI8=;
-	b=q8vFWeq7mYuSSaLZlr4UO+0xrR9hfyUHisMRDRBoJTB67J+6eN6R7ZDVQ89/aVvGFSeYp3
-	ka9qlSvAFmEZ02kcOj6qhM5lzRfP9cBELgI9vsfBDJhiCXokvfphvSU2lI5aj53Jy/t4W/
-	coziVMi7lTSsf5zhnpnsgDFPzS29TJ1Vb4BjF8Y1ODlrY7ygsCiwpABsbPrbki2Xxcy4IZ
-	CeGBV/sWK5ZfQTi90hj1+1ubnpmEK/TTboA9lsBwraWpqgcRZP2ibV9n5OF+EWRKrLsiXF
-	NeSTX1OSR31KxKf/y2ce1EsWEh7rZ6L96Lja3uYbiMhM53QXhS6LRJsnW/VslQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=hxsCnpwp;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <66ff3c90-8c14-462d-9a86-0a3ff1df2c25@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769109067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89hnRfGT6K5DVFBx65KY1V2Qu8HMKDj7OT53Y0FKeI8=;
-	b=hxsCnpwpIdCQRmfbpaGVRALcd7g2yqfONlt1vbR4k4lV1+cLFMysOWZ0kVs3jNaXmDUNLP
-	wxqEAyINCdQgjA2SQ+JqdGJPbyYCLAk36RreEzNsZO8LZDTre2kRmt1GvJJV1TZMNzCVQp
-	CnX9wsrE/TTdU5GbsZXriDiq6c6tUw6whrGywIC2hsbi5OfO3UODeHkmRua4zLuHyC/Q0u
-	D8sFlgbABD6wJimcSmDqXOft0IIQoGSXvSiIpEdz/3/A47yFtsgmHHgzCzuZqhl62W/pRA
-	CKl7tUosutbiEw4/URqImQSuQwZxzBW4RP6zmbf/UUwv2pLRVtzf7MVvmR4mdA==
-Date: Thu, 22 Jan 2026 20:11:02 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ca8IFNa6"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8c69ffb226eso188194585a.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 12:27:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769113648; x=1769718448; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xTNx2TZxkL4VnUPzuBRv8diBN0csSmN/zfw5ymS8riM=;
+        b=ca8IFNa6V1den1JYVCwzvzBaRZ9sA6y3oHGXjZXRmpgBuSJZH8uhtQJ/8WNEzd1lHJ
+         eisU+WhhwyJ3UD9iuKupPY4xI2Yhi1P9dlB1f6qSlFXE0BHb+ulYqLldWoP1Bwai6Dyu
+         z1E9RZcDgAhA0gq1lLM2cz0231JlEWKmw9zzTeK7fT7q/vZ9cQwJiiSHuFOW+4KeKYpY
+         UIc7gL0oAJTMQteIruXYm4cZeupiRo7lbe5cupsrV/cD7LhfOBVscwKwniRHx25O7qf7
+         +XL8K0nngRC/HNwQEtq4OWWkMvfjon786wnD1aJ70q25vF6iOqjnqyXywCdyOHQIIdgU
+         FKrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769113648; x=1769718448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xTNx2TZxkL4VnUPzuBRv8diBN0csSmN/zfw5ymS8riM=;
+        b=P/P6SRGLE294TMQKtcTfeqoy04TcfZX8YoqrdoA1GlpO6kA26zHszM86YScKC41Q5m
+         qKdnFsA7FlfACFVLXg4Wj6Af8SNuJz61Xs+9VYd8Audb/FGb5LxAzDUzbN9fUQ28rL/Q
+         ZYY2aW4KyDpLU1iOojLAhbjK3lwSq2fYsFrERuoa3UgJilCCSpkdk6H0fOE1em+/2lqG
+         JKnturpVLVJffLfF9hj2Mg1U1jxTFqgqN0p8DgLMKYeCC4V1D74caTmYRWLbrdXgbXov
+         WueffDfImrAl7HfWutAv3xGnQiyMlLo6OvBvQQlbcHRfMzKp4+osfLrjrIf1Z29Lrwh6
+         Y3Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV+LfEJvUafiSa3R7YELD5GSJgoEzLJB2fPVRjceo5ERq/NWeFyUIivlEa0U3bAOAAbnlBaDIsFjf+9n7Jkr4nRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx26QN/vccXltlLkJb/0fXDZruK9kHG/SxiBodX0Yf2SnSVJ/GM
+	CbA0dEnsbaumDhbaMoRoPXgzg80vZ8iesZ3BvNOaJvl8QmYeIQ1fHtJZIl6XwA==
+X-Gm-Gg: AZuq6aK7UUECB6VaU4TILu55vSWb46+XMxfm1Q7iggjHio8H1FvaoLU8gNaxGMTan/8
+	QMk6odqoKEexlodv58cwhYjAoXXGFmMHIjsgVGqWVa8ZWyhFfjiseYLSkBqsSlfAEnqL/XRWLhO
+	ky+a/u7PJ6jMdvx6q9s18eaNuao3iS82jNFvlU6ooaG5hW8316eC3pifNWBrOpFjyPpsUrhrUhW
+	fp+NR//A6waAen2mS7CVHKk69lV2Qf6BgZCAVMUM8CusGv4/f4n9P+WArjdA9NpOJBgb59lLi/7
+	zC8b+pqBI06tkl6935RUzavTl7k1MxgzfuwfFdxkVXBIG4T7F5Ee+I50Qp9HaBD6ttg4F/AwNVK
+	BxX27kzSzpW01sSWlV0KPggVJUAdPUwaGUIMFRw8DYpP8J48ppM46EY793RjflSSPGydv63jbFC
+	+x7DZuTZfJGxLI1X8Xu2yoGH+ZeSoO4zaU26CkqlIhpvFY2U2uz7c=
+X-Received: by 2002:a05:693c:3116:b0:2b7:134b:fd47 with SMTP id 5a478bee46e88-2b739994e28mr134644eec.16.1769107103324;
+        Thu, 22 Jan 2026 10:38:23 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:777f:716:9c18:5588])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b73aa2a3c0sm136300eec.31.2026.01.22.10.38.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 10:38:22 -0800 (PST)
+Date: Thu, 22 Jan 2026 10:38:19 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-input@vger.kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Cheng-Yang Chou <yphbchou0911@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Jinjie Ruan <ruanjinjie@huawei.com>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] linux/interrupt.h: allow "guard" notation to disable
+ and reenable IRQ with valid IRQ check
+Message-ID: <x5h55qxfl4yrkhgwmijf37zfwqt52pmsts6whewniukbhcatbn@6mo3dytswd5f>
+References: <20260121232522.154771-1-marek.vasut+renesas@mailbox.org>
+ <20260122162206.9wrHkrTZ@linutronix.de>
+ <CAMuHMdVs_ODx3eByHkU03vopUuLuY7=uRnfTKuai65jNr+xMhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] linux/interrupt.h: allow "guard" notation to disable
- and reenable IRQ with valid IRQ check
-To: Frank Li <Frank.li@nxp.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-input@vger.kernel.org, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, Cheng-Yang Chou <yphbchou0911@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jinjie Ruan <ruanjinjie@huawei.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Marc Zyngier <maz@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@kernel.org>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260121232522.154771-1-marek.vasut+renesas@mailbox.org>
- <aXJEaTPIhDGFb11C@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aXJEaTPIhDGFb11C@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: rz4noihj8t11tb5kefn3bk6fdkiufpoc
-X-MBO-RS-ID: d278257d69abddd5482
-X-Rspamd-Queue-Id: 4dxrJF2GKtz9tmc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVs_ODx3eByHkU03vopUuLuY7=uRnfTKuai65jNr+xMhA@mail.gmail.com>
 
-On 1/22/26 4:38 PM, Frank Li wrote:
-> On Thu, Jan 22, 2026 at 12:23:47AM +0100, Marek Vasut wrote:
->> Introduce disable_valid_irq scoped guard. This is an extension
->> of disable_irq scoped guard, which disables and enables IRQs
->> around a scope. The disable_valid_irq scoped guard does almost
->> the same, except it handles the case where IRQ is not valid,
->> in which case it does not do anything. This is meant to be used
->> by for example touch controller drivers, which can do both IRQ
->> driven and polling mode of operation, and this makes their code
->> slighly simpler.
+On Thu, Jan 22, 2026 at 05:31:42PM +0100, Geert Uytterhoeven wrote:
+> Hi Sebastian,
 > 
-> I think it'd better to give simple example here.
-Patch 2/2 is that example , but I can also include it in the commit 
-message if this 1/2 is even acceptable.
+> On Thu, 22 Jan 2026 at 17:22, Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> > On 2026-01-22 00:23:47 [+0100], Marek Vasut wrote:
+> > > @@ -242,6 +242,21 @@ extern void irq_wake_thread(unsigned int irq, void *dev_id);
+> > >  DEFINE_LOCK_GUARD_1(disable_irq, int,
+> > >                   disable_irq(*_T->lock), enable_irq(*_T->lock))
+> > >
+> > > +static inline void disable_valid_irq(unsigned int irq)
+> > > +{
+> > > +     if (irq > 0)
+> > > +             disable_irq(irq);
+> > > +}
+> >
+> > | $ grep " 0:" /proc/interrupts
+> > |    0:         43          0          IO-APIC  2-edge      timer
+> >
+> > in other words, interrupt 0 is valid.
+> 
+> AFAIK, the x86 legacy timer interrupt is the sole remaining valid user
+> of interrupt number zero.
+> Nowadays lots of code assumes valid interrupt numbers are non-zero
+> positive numbers.
+
+Quoting an oldie but goodie:
+
+"This has come up before. For example: for an IRQ, 0 means "does not
+exist", it does _not_ mean "physical irq 0", and we test for whether a
+device has a valid irq by doing "if (dev->irq)" rather than having some
+insane architecture-specific "IRQ_NONE". And if you validly really have an
+irq at the hardware level that is zero, then that just means that the irq
+numbers you should tell the kernel should be translated some way.
+
+(On a PC, hardware irq 0 is a real irq too, but it's a _special_ irq, and
+it is set up by architecture-specific code. So as far as the generic
+kernel and all devices are concerned, "!dev->irq" means that the irq
+doesn't exist or hasn't been mapped for that device yet)."
+
+https://lore.kernel.org/all/Pine.LNX.4.64.0701250940220.25027@woody.linux-foundation.org/
+
+Thanks.
+
+-- 
+Dmitry
