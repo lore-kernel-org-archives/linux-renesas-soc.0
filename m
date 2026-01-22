@@ -1,78 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577EB3A1A45;
-	Thu, 22 Jan 2026 17:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8232438758B
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 18:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769101200; cv=none; b=XfwioONR9VofqwaYKMwWMUK+ob02Hh2bWWwHuacivFJLbwts3TQpXNbYRZqv3jhSEXQWoWaTKZET5ByKL6WsiCY0BqBe8678GNf0LPfoLb7uTC1GIqz+vQjaFAnAINyE2I8XCS9pQC/qqqDsZyWLhvGPRGXye7a0IVkJ6+Fi/0M=
+	t=1769108253; cv=none; b=T6rdf4g8Zkg1hNeNUnue28vHTIS+tb/+9UfoIvSr2lkyVDoUsz64zcFfO7xt8EBkgQIGA2lYUdT+aGc70lv7CwXdEPO8JGhFZYshuahjoC4pdQGNbHt/cVYwLas3zOUD07u6Qyf/INPtaYzk6E6XyYBkJYiPLgHoa0ID7CD+eu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769101200; c=relaxed/simple;
-	bh=XP3btCdfZ18H84BPvTQijTYLXkXA2fMO98F8VgchIOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MNgqplam+1Kz+Jzt/jdnPI8zYVgzOylh7UOJJ3jVdA1zKTYydosVsGo2d5sKe965MscEnVxjZgu29ICq/DQ4oBGzrdvRBXs2JCYGtjGSRIKxKh2sQZ1k/JqOTKUq/5nkSPV46aKfolPDceq62bute2RcvkojpEBXfdfnY+FH9Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzfjNByW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769108253; c=relaxed/simple;
+	bh=QUeVYo+ICZjJILbIW9iYwEWfD5eoanHqZ9Els6Bjq3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYblKb3jrKeTbwTHBviG0XLa2wuBahhLP04+VioToebaKa/20YQtkvmFZvJgRX/scVLSWfAWTMtjjhl9rrW7VZt6pdBdqpnDVQf5K6Rc7OwqF5ZSGT3hmllqS339B8ARdk05dNjUUst/nZaD0KPaIjZgddfDVe+jEWN+UlIBoGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejbrWJDo; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzfjNByW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8E4C19423;
-	Thu, 22 Jan 2026 16:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769101199;
-	bh=XP3btCdfZ18H84BPvTQijTYLXkXA2fMO98F8VgchIOQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CzfjNByWkqZNWarc97P1of6ulVVMxbVA/TgAr1EUL/UA3sAWJZXfm5ATHgrcGhh4C
-	 o3RD7/pgYiOact5D3MlLRiRG+EwE4AObbmeEz85hsP6ChoIwzIsAiNdaHJCS6wmWAh
-	 E4Q7hePj2AEHx6XkHkp5ZqxbUCbIhBXgiPSHiOgAmdhkMRan4A20Y8J1MT5ov81XZF
-	 rpzwHOL4sckepaVDxw08M1PCWrs6jdhWdo6UbcvVDztaGl0KmYwEHEHeWocqXpzUPI
-	 KPr776MBBB+QfF2nHn/vZc/gKekFtUz4PlFtJ5TvaACtw9Xjm72wQqH0qcYqJ5moYa
-	 6P8FN8iETPbiw==
-From: Will Deacon <will@kernel.org>
-To: Lifeng Zheng <zhenglifeng1@huawei.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: topology: Do not warn on missing AMU in cpuhp_topology_online()
-Date: Thu, 22 Jan 2026 16:59:41 +0000
-Message-ID: <176908072212.2053791.7954554866629671060.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <a8dbf49bfa44a6809fa4f34b918516847dc14460.1768466986.git.geert+renesas@glider.be>
-References: <a8dbf49bfa44a6809fa4f34b918516847dc14460.1768466986.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejbrWJDo"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-385c6c727fcso9966941fa.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jan 2026 10:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769108240; x=1769713040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+mScsg53i6ZoIWtfuaNxg8jLICt1p8GYZ/GGQUU3Wx0=;
+        b=ejbrWJDojn6Mrn/TmzFdKWBuWBLOpD43KC7ip8P/nr2hrt/lid2atWFQJYKa2qsGMZ
+         /rBkp4mtIJWy/5eaZwSHb7n8rre9QlSpcrwA98mfPpZGfTkbnM67RAaOsfsnh3oBW66R
+         MrQYjUY1N2LMGc81/DBVuekKFqRzXVI9jENiCVn9jMfSRRmuaz0ZhfFVbmHmP4X7siiK
+         RwoYdwghXgDZFh3/Sk4GJ/Xt0YCaayu8i71C6uigjYykFxnMr/SERJB5puQmpgsTpUko
+         9b2zGxvd+2w9HRttRjq9vywvXn2ybp60xrxiBwi8WO5nDAbhPrmu4RCHR2o1968TjlVv
+         +eTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769108240; x=1769713040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+mScsg53i6ZoIWtfuaNxg8jLICt1p8GYZ/GGQUU3Wx0=;
+        b=JGza71haW00wSOreksTkz95K3BdK1OPAGNNnd24qSexX6G2jMgscuRr2hAyVjsojj3
+         Ps1J1q3eUYv5RtaKttlIo8n4UJk4t7cWzEVO3E930/WW+0XTLJaD8BNH/nz8RY6kS5gK
+         zj+tKAEX4eTghed+ZiS3ZiLOn9KaG2jJVojXoFKO9F7aWPixs3elNQFtXEIS92XuLbTJ
+         /InjtXX9kdtXQYquhtDG6cBPb1de0YSazZ7K4gUM5irOKvn+scGiKijtmlUSZF3cMpKX
+         Q+tiDNNTJmliFdDIDVX1VBSebZ4RPRAZ5yio17NcW8bmnKUFYuYFLEygoOEDyYd3MT+2
+         hU9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXnXO8jGEX91wn2hvK/CD8T4Mj7hOU/NAPR3O6lrvuzobdZgifE8JW+YeBk8nPqTnf+Phpc5pLbqlrGZiJNAQG8rw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD5stsWf+8qd3NDioLHr56joT0YOA4Vy4HK9Z3aRYY0L7CgwPu
+	8TNgii8lYe8aDymltM9DS4NkP2Gfb+paUzIcPcGQ+H6B7tE21W5M9DTE
+X-Gm-Gg: AZuq6aKbZohbhrUsr2/Jxp+excQXydsJOjH1Rj07PM6r8+xdU5m3mbVCYSREzuZsk7/
+	SWeos10nWknb05X6Vg07fnS64SwptUHh+8fFZ/+nPl3tDg7Y1bdEB5/f3m9f9p+bVdokwixwVfJ
+	Ncvxus72Hcy/Q+2ipcNYu+SoQgblDEz43qffElwnF1EAsUPAFalWc+OQqKHIM4N5RNd33wXw3Tr
+	6EWSLVV6K+2hpxSP0Kqx92fXiKtH+CbdFuhM+x/kbXfltPky8HH1NfCg0+2VfTg19WMdtcCa0lo
+	MBIFnww5EeW4AHlNr5rnrUJmdsA4k591tGB8yXKXBB/KOlXvvKLD2F9IhuaBwwtxHzMybea3IgC
+	mSnin2Rx0L8we7ZD9hHjAPtUPfDfUCUtiJ+9HMqXBE7krlQ7YPqyaECaSdcgLTTwiUvN+NoOLr0
+	3jxwf/xuRkMBNrMSYa9rN9qB+Kxu0PZgrBR5u5jc3kU5xkWaOlJMoWBaDq87aFHerFq0LPKQ==
+X-Received: by 2002:a2e:a483:0:b0:37b:b8c0:b5e1 with SMTP id 38308e7fff4ca-385da007b4bmr684401fa.27.1769108239476;
+        Thu, 22 Jan 2026 10:57:19 -0800 (PST)
+Received: from ?IPV6:2a00:1fa0:4677:d84c:4a53:d9f9:de83:6237? ([2a00:1fa0:4677:d84c:4a53:d9f9:de83:6237])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-385d9fec3c9sm645761fa.15.2026.01.22.10.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jan 2026 10:57:19 -0800 (PST)
+Message-ID: <d9096670-cd01-41c4-9186-847641c4368a@gmail.com>
+Date: Thu, 22 Jan 2026 21:57:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] linux/interrupt.h: allow "guard" notation to disable
+ and reenable IRQ with valid IRQ check
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ linux-input@vger.kernel.org, "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>, Cheng-Yang Chou <yphbchou0911@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Jinjie Ruan <ruanjinjie@huawei.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260121232522.154771-1-marek.vasut+renesas@mailbox.org>
+ <20260122162206.9wrHkrTZ@linutronix.de>
+ <CAMuHMdVs_ODx3eByHkU03vopUuLuY7=uRnfTKuai65jNr+xMhA@mail.gmail.com>
+Content-Language: en-US
+From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
+In-Reply-To: <CAMuHMdVs_ODx3eByHkU03vopUuLuY7=uRnfTKuai65jNr+xMhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 15 Jan 2026 09:51:45 +0100, Geert Uytterhoeven wrote:
-> When CONFIG_CPUMASK_OFFSTACK is not enabled, and resuming from s2ram on
-> Renesas R-Car H3 (big.LITTLE 4x Cortex-A57 + 4x Cortex-A53), during
-> enabling of the first little core, a warning message is printed:
+On 1/22/26 7:31 PM, Geert Uytterhoeven wrote:
+[...]
+
+>>> @@ -242,6 +242,21 @@ extern void irq_wake_thread(unsigned int irq, void *dev_id);
+>>>  DEFINE_LOCK_GUARD_1(disable_irq, int,
+>>>                   disable_irq(*_T->lock), enable_irq(*_T->lock))
+>>>
+>>> +static inline void disable_valid_irq(unsigned int irq)
+>>> +{
+>>> +     if (irq > 0)
+>>> +             disable_irq(irq);
+>>> +}
+>>
+>> | $ grep " 0:" /proc/interrupts
+>> |    0:         43          0          IO-APIC  2-edge      timer
+>>
+>> in other words, interrupt 0 is valid.
 > 
->     AMU: CPU[4] doesn't support AMU counters
+> AFAIK, the x86 legacy timer interrupt is the sole remaining valid user
+> of interrupt number zero.
+> Nowadays lots of code assumes valid interrupt numbers are non-zero
+> positive numbers.
+
+   Makes me remember this commit:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ce753ad1549cbe9ccaea4c06a1f5fa47432c8289
+
+> Gr{oetje,eeting}s,
 > 
-> This confuses users, as during boot amu_fie_setup() does not print such
-> a message, unless debugging is enabled (freq_counters_valid() prints
-> "CPU%d: counters are not supported.\n" at debug level in that case).
-> 
-> [...]
+>                         Geert
+MBR, Sergey
 
-Applied to arm64 (for-next/cpufreq), thanks!
-
-[1/1] arm64: topology: Do not warn on missing AMU in cpuhp_topology_online()
-      https://git.kernel.org/arm64/c/747d5b6735ca
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
