@@ -1,96 +1,103 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C273203A5;
-	Thu, 22 Jan 2026 13:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DA9344024;
+	Thu, 22 Jan 2026 14:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769088566; cv=none; b=tV8jcKYHc5VmKGW5Z7HQqmDhMNOBC9UWF8G0IZTUcjrnD9K/umcdkxQJetijY2eWsLk3wWjoARVn9qBkGfWahZdQuaqCtM3o2MuIzXgcQ2as6NEnrNrWcB5xlYRjOdx3evLyq3sGlqzJL1Ku/2qavLY+3IUU/nbOl+7aBTRAn4c=
+	t=1769091673; cv=none; b=q7MsGVghZkoLtgFQ+3YQMs2SQ69l3vhEfuZcHmTKEpoSO954uSxfeXswFdGCjiTQCLAUk6UXbzVNebTZmqp5A0yrlWDWyqDij3P2OBS2P9oKI4XC35B8F6aJeX21P2px/AYqVCbjLxgSx+UA9Cgjvs8TpvyMEHBH2YWlEupb0iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769088566; c=relaxed/simple;
-	bh=325ba4o46Cow6MnJkg8huND7CIliehO3FV6tV8n+gTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I++f2zkBD5Gg2Lx4Nw2KA9lzpc75LNwPIYtXXD+KflXfyZ+B+NOZR9vnJ7Zim3nDn7EFIYXPeyl5/auRF2OCo3BykK2kTd4WWUqlmePrWESpkOeOQgZ8MLE2DVclSSzYmVXZu6uqnSOnK/C6YWS1UgIB8fefwfLhpHkbEDGX1XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=q9Wk0t1u; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1769091673; c=relaxed/simple;
+	bh=F+5aNniE9B3U4nh1z1zfWzIiTm1JAwc6qCs+DV9yMEo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tmFDEOgFoJFNI7t55QehFQlmRBunhNb4j+4DaU8fxYhn4U5zFC9/zrwXbTubQTEqtUf5kJKj6CZEFIAsNIMnOT3oCD/p5iSJfHgFV5HOJaIFsa5mkDF2KYLRXZgtDq+AQVX8WER1SccTsWAQ+6keMlEspMBTIJpRmG7Ige/jBsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N4+eDW3E; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="q9Wk0t1u"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dxhjk6tRnz9tSr;
-	Thu, 22 Jan 2026 14:29:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769088555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qkXDurj6QKj5E3C55M4uNbxmil0lbV8rtP0fhoCy6LQ=;
-	b=q9Wk0t1u1XPJNBO9SXrYKdYBt5X6c8SFwWGYF5O0qc8XUF8iTNz1rByWOSQxlmYUiVvB5w
-	21+RfUKCHViICtY6bZd4FjsNmRqXXxKJh8/cDrqjUj35wcpYYgtRO24IrTfZdZCPNkCGOx
-	VC+DYIMpH0d/xd/sQgQvTmkCw7akVymaEL0UFx0gIS4a94ZYJCDHfdw5EAvRjh8cGICBuN
-	BH3eMNwjFwSiGiJMifCroRrGRhhkvB05FrCpYxZZ3feiaAjpu2EqxjqWwm2ZB0Cx8fYVBE
-	fPDls95XPk1pEW42syvEupExkh8qxCxpTQ5wx+GscR9ozRdoR0Zcooaabrmg1g==
-Message-ID: <f577f6a3-0239-4f73-9d4a-60d4dea64955@mailbox.org>
-Date: Thu, 22 Jan 2026 11:56:48 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N4+eDW3E"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 34B811A2A91;
+	Thu, 22 Jan 2026 14:21:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 00A86606B6;
+	Thu, 22 Jan 2026 14:21:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95040119B81B3;
+	Thu, 22 Jan 2026 15:21:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769091669; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TsNML+3xOwrc4+PpSLQW2hjh0yxYNzlX5rpJRRrE/NU=;
+	b=N4+eDW3E48c+twnL6eSo5849Eho0y6eB9EAEbXs2hSaEYg7OHh+jtUki6YGSBYpHNsLvmy
+	U39Dl7CQFBPebANR5xLQhMZcjgK/S1tC8zY8/3IiruKeklqcrbyYu8JwaXWQXxzz9x65Rs
+	t+dbwbeNPhhHIX8qqcGVnfwfIIg93kRqnoivzBboja/HrqvBmn/Kw5CWXETzDafOhVsp2s
+	Jx9ml11sewsgF9jpsjOj/gOgrfez5ydlg3O9z45TnTfQLT8ey4YYCBOgalPT9feDcLc0uK
+	24Qlv9GwbqKOFU0wgZ+MYtdirkoO2aVidsvqB8JOKWMCrTm1MTmXiSZa5jp7SA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Geert
+ Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Vaishnav Achath <vaishnav.a@ti.com>,  Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,  =?utf-8?Q?Herv=C3=A9?= Codina
+ <herve.codina@bootlin.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Santhosh Kumar K <s-k6@ti.com>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Pascal Eberhard <pascal.eberhard@se.com>,
+  linux-spi@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 01/17] spi: dt-bindings: cdns,qspi-nor: Remove
+ duplicated constraints
+In-Reply-To: <20260121221400.GA218496-robh@kernel.org> (Rob Herring's message
+	of "Wed, 21 Jan 2026 16:14:00 -0600")
+References: <20260121-schneider-6-19-rc1-qspi-v3-0-43e70fab4444@bootlin.com>
+	<20260121-schneider-6-19-rc1-qspi-v3-1-43e70fab4444@bootlin.com>
+	<20260121221400.GA218496-robh@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Thu, 22 Jan 2026 15:21:04 +0100
+Message-ID: <87a4y5pw33.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 9/9] arm64: dts: renesas: ebisu: Describe PCIe/USB3.0
- clock generator
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260118135038.8033-1-marek.vasut+renesas@mailbox.org>
- <20260118135038.8033-10-marek.vasut+renesas@mailbox.org>
- <CAMuHMdWfkHMQFvUzaHpso-fMFAS5u8ABHpEA9ZXq1fxcR-oN6Q@mail.gmail.com>
- <6f817993-1b4a-4600-a771-d6c25efc668b@mailbox.org>
- <CAMuHMdX0iuyUhGRPFf4x==e_ZEMjaB_dP6mrM81F+yxqwam0FA@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdX0iuyUhGRPFf4x==e_ZEMjaB_dP6mrM81F+yxqwam0FA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: dg9gzba7xrdauthxgmgzntyeydxxorzn
-X-MBO-RS-ID: 29de373016d6a85001a
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 1/22/26 11:24 AM, Geert Uytterhoeven wrote:
+On 21/01/2026 at 16:14:00 -06, Rob Herring <robh@kernel.org> wrote:
 
-Hello Geert,
+> On Wed, Jan 21, 2026 at 06:04:57PM +0100, Miquel Raynal (Schneider Electr=
+ic) wrote:
+>> The if/then/else block sets the restrictions in all cases for
+>> resets/reset-names, very much like it does for other properties as well
+>> such as cdns,fifo-depth. Drop the constraints from the place where these
+>> constraints are simply ignored.
+>
+> But they aren't.
 
->> This piece of code in drivers/usb/phy/phy-generic.c [1] shouldn't fail
->> the probe if "vbus-supply" property is not present in DT. If
->> "vbus-supply" property is not present in DT, then
->> PTR_ERR(nop->vbus_draw) == -ENODEV is true, nop->vbus_draw will be set
->> to NULL, but won't encode error, so the dev_err_probe() won't trigger.
->>
->> "
->> 259         nop->vbus_draw = devm_regulator_get_exclusive(dev, "vbus");
->> 260         if (PTR_ERR(nop->vbus_draw) == -ENODEV)
->> 261                 nop->vbus_draw = NULL;
->> 262         if (IS_ERR(nop->vbus_draw))
->> 263                 return dev_err_probe(dev, PTR_ERR(nop->vbus_draw),
->> 264                                      "could not get vbus regulator\n");
->> "
->>
->> [1]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/phy/phy-generic.c#n259
-> 
-> Sorry, you are right. I missed the PHY driver ignores the error and
-> probes successfully, and thus didn't bother doing "echo ee000000.usb >
-> /sys/bus/platform/drivers/xhci-renesas-hcd/bind" after /lib/firmware
-> became available.
+I looked deeper. Indeed the two constraints are applied, and it works
+because the constraints in "if" blocks must be subsets of what is
+already a constraint in the main body.
 
-Is any change needed to this series then ?
+...
+
+>> -  resets:
+>> -    minItems: 2
+>> -    maxItems: 3
+>> -
+>> -  reset-names:
+>> -    minItems: 2
+>> -    maxItems: 3
+>> -    items:
+>> -      enum: [ qspi, qspi-ocp, rstc_ref ]
+>
+> The primary reason to keep this is to prevent making up other names. If=20
+> the names are only in if/then schemas then anything is allowed and it's=20
+> not visible in reviews.
+
+Makes sense. I will drop this patch.
+
+Thanks,
+Miqu=C3=A8l
