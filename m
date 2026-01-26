@@ -1,95 +1,73 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9369340D82
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jan 2026 15:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08FE283FC8;
+	Mon, 26 Jan 2026 16:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769443049; cv=none; b=E+o0Kj8R2YQgz3vSXnYums5sC071o6pd0dF9z3Y1/W3ESB/xb3kIRIlFz37xWmA/Gy0onotJvEQXOjWZSfuPmwl93UTxiTtiFT/5V3ixu7jLn4sVXUAPlquW1P4ec1UmOS2n+OPFukO935QZOoNAjTgwpQfxNoLDZywVVDygknw=
+	t=1769443434; cv=none; b=hNi30N8OSoAg7/+URw69ZDz6s7gbgGCQXVmknjv8rC+iCZXcpcRBer3RbbUl9khBbodx9GPV87p6Icwpw2qV0fJjUf8lX5AxvRuSdPuhazkA3GdPmDVPnW3D/R5nk5VUh8U1l3q3HgxYDOihLvJeH5o0NHsCI0mowDVGXIu0I38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769443049; c=relaxed/simple;
-	bh=bXHAel1NwLDuPGwtU7+OMOyzgPqVLj6MKMo+sEVl6lY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q+IGeo6C4DaX9lzZR46cP9SHSKjEnrtfR5AcrOpFXvX0z29m0cMzhEm69imLs5Fr6PN/+2KvP2DBs6vgIQm0OccWFLxtzhH083d+N/MpzXy7sBDUhqOr5FRlxtv7nG4xHb2hWjfrc936JFn79stsqeiRMJ39Wt1TSIE5IN4j2z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5665171836cso1544888e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jan 2026 07:57:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769443047; x=1770047847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QWlsYApapvL5A9IWANUoDMRFQZN+NsL2oKDWoPXwI+E=;
-        b=eOOlTMKYHjpbelBzQO+XjtielYm+jiWPEOu9u6kPGuIsVOQqKLcDOfjjJftnFD1+sC
-         0RFGYLkzz6ip10+w1FhpMJ4L2PF1dLn8PMdFZCdfJa3htjFAdysSKV44uXvui5jJIMkh
-         q60zP66p27xynSo2xzrNdceX9a34VIg+VxOJhm036eDnPBkR/i+kc99A9u8pUuP3j6pn
-         6A6hmc6olHtLiit/BcMTaQOTd+VNeGUDI8S4ijvIK3hhgqFVDKTJfudBcNjdpTA/XZIU
-         iNH8M9qXgpq7HJ0NRwvIC3VUV+LlIuoqrfKSUuKduqfjsFMRZbNisYLBW2nKaQ2JVRib
-         3i4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWDEEJy5MfQ4X3ECBmmZh1sTHr8e6QWSr+Ut7iJKw+ybZ1A9T4w00rfyAmvCT55hCu8KrJXtRkoG+KQXBo0EjJosg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSlc+a9fVKq0ho7v7S0T5tkhSWJuuSClGcmStx1OO3PJQUAb1O
-	Ej0rFo6tG7f24+5ooPBrV6S2MwtzjtFHT4eOgolizC9AByqxJ1KgaZiMR+ejclff
-X-Gm-Gg: AZuq6aIP5ug47RMXGjJinEa9j0RSMOCPgk8E19p5mCuYNIwGX0wFpgTpd4aXwUR1aDI
-	y5nrPpSII8WZ7NnnIZrXuWBa7uCdH3PJ47VHBHgI6Zp+XkSS++gfXeEyOOO/ksHYL1F71ZVoVOO
-	9ZQv9tNAIxG0lc1MWYP33fkDPSNYCd13/T7JEnz+ZYO51JYvjkO624rlpUiu55BDv/SXO/CwguX
-	m5Ah4L3CIg1poEoCxroCt1TMkHGD3fIw5gyF0HPH0j0d59zb3mXMLCw9QNzk3vezyVRgzoxiAxc
-	HncgbeF8YR5UpxFE6dtdYhrsLGPxNEgzIKTL74ruMu9kP+HLVuyWAqpHu3mvXWnHLgEel9vwALX
-	r9/SFb/uuurHpJ+uLpvkdHBU0DP5GrHDNZMAIk2TQplP5PiRNVCVWViKuQhv3pEmmCLVffJDP9e
-	1tQSt15qfBP8sg5Wcwqk4aPh6IFSHz9ut3HZ4FfCmVVrv+mSOB
-X-Received: by 2002:a05:6122:3b16:b0:563:7390:b17d with SMTP id 71dfb90a1353d-5665c6dec30mr1202178e0c.0.1769443046740;
-        Mon, 26 Jan 2026 07:57:26 -0800 (PST)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5663fb7f18asm1806169e0c.19.2026.01.26.07.57.26
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 07:57:26 -0800 (PST)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-93f5761e09aso3238094241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jan 2026 07:57:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVvgJRIrOrjGwGoAQXVcXqQe2cd1SJBIrGWffKEa/oLXbhVCdIsnkyULpwDKHAcTJ+KyUUXoR6KFYPXSPSvdYqsUg==@vger.kernel.org
-X-Received: by 2002:a05:6102:2920:b0:5f5:2ab7:cefc with SMTP id
- ada2fe7eead31-5f576514c47mr1614515137.41.1769443045773; Mon, 26 Jan 2026
- 07:57:25 -0800 (PST)
+	s=arc-20240116; t=1769443434; c=relaxed/simple;
+	bh=FpkYSUlhwypA+1UQimPBHuxwZJXwE1bM1io97K0VklU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FFkH9efmD2AvQpTdO72rBK6Lsinbz0l18JKkjCM5V/awSlFsST7StcSZS67BlKroT7xYOYhh67ugEYxES9nsxSVAaHY63mFjQktMHWei9rUY3F1cczB+hGsE3IjHLR1a3B3sxGFcGJ5BVNcJF1fL8GQUiMEpitmB+Wg0irvmHNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWBD1KSI; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWBD1KSI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E8EC116C6;
+	Mon, 26 Jan 2026 16:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769443433;
+	bh=FpkYSUlhwypA+1UQimPBHuxwZJXwE1bM1io97K0VklU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tWBD1KSIFhrD9ELKNPZPt5poIYIEL9CBNObQiGya81XhQf3ea9LDLEIOk2VnPx45M
+	 vLgdRFEDbC/ZMA3cU5l/o9xuSN2CgYv8aShcZZhkaQL/MwdJtamuw8S1cdxoiV9rTh
+	 JzADJ2UN3DCt06N34bLLKPwCEkJatoaYYjyVaTvwgh6vAYVEtfqa5UXdpZSc5xe2jc
+	 LelokymI0Yp3LpR2j7wLBYhMT8axZeynO3UL1ZiwbQ0EFGb7ApjaEW926V4AYPIKT5
+	 //5nzVXJgp0NV02X8sIPrcGxUdSN3iSgkszjH0VppFpS/hiAOieph8BiPQ2JyUy25y
+	 WPCy6QWVtt+BQ==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Prabhakar <prabhakar.csengg@gmail.com>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 4/6] irqchip/renesas-rzv2h: Add CA55 software interrupt
+ support
+In-Reply-To: <20260121150137.3364865-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260121150137.3364865-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Mon, 26 Jan 2026 17:03:49 +0100
+Message-ID: <87cy2wcqe2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125192706.27099-1-ovidiu.panait.rb@renesas.com> <20260125192706.27099-6-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260125192706.27099-6-ovidiu.panait.rb@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Jan 2026 16:57:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVgn_hViAO13HE_AY7KG-guAwSMTMOdHwzzK+K=kUstkQ@mail.gmail.com>
-X-Gm-Features: AZwV_QgRCwoHhziZOmAhSnKes9efiAhzVMELZ9SF4N6lYcHkaUa7uPK8VSG_D2s
-Message-ID: <CAMuHMdVgn_hViAO13HE_AY7KG-guAwSMTMOdHwzzK+K=kUstkQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable RTC
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-rtc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Sun, 25 Jan 2026 at 20:27, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> Enable RTC.
+On Wed, Jan 21 2026 at 15:01, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> The Renesas RZ/V2H ICU provides a software interrupt register (ICU_SWINT)
+> that allows software to explicitly assert interrupts toward individual
+> CA55 cores. Writing BIT(n) to ICU_SWINT triggers the corresponding
+> interrupt.
+>
+> Introduce a debug mechanism to trigger software interrupts on individual
+> Cortex-A55 cores via the RZ/V2H ICU. The interface is gated behind
+> CONFIG_DEBUG_FS and a module parameter to ensure it only exists when
+> explicitly enabled.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.21.
+Can't you reuse/extend the existing mechanism provided by
+CONFIG_GENERIC_IRQ_INJECTION (irq_inject_interrupt(), irq_debug_write())
+instead of implementing yet another ad hoc debugfs magic?
 
-Gr{oetje,eeting}s,
+Thanks,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        tglx
+       
