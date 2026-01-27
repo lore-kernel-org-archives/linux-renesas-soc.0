@@ -1,160 +1,132 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7262330329;
-	Tue, 27 Jan 2026 08:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133FD32BF47;
+	Tue, 27 Jan 2026 08:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769504201; cv=none; b=F3TrjXQQgz5amyPV7IKUL8/HmbYZ9HkZPmhOpH2BdtIQPaQgtjMTxgGN7VbMBpClriOYv9/thzLn+/GuAcHkLHT/YCqPYuAXIOTaSpcHvheT5nxVHQ5opLZ6+VKro8rfX4gGY4IMvRzAD8E14XI0J6Ta3BU4wZqM0RzVoRWKrg8=
+	t=1769504368; cv=none; b=G8EB4vY7INVaI+l4e8uJX/eOFo/ZVQFTUVQx4bsRLWHYPZUcD+jEQQNIp+BYE6jUU22ARLIt3kJgiDcyNieEKlx6OYCDN1yzvJKA9a61qkRoCxayU25jXcdevIyaRl2JCoTvacrOSPbNPVLGT9TLuZAUrzWFugHrKGHV5VJfJOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769504201; c=relaxed/simple;
-	bh=YSC8kL8Rjr8EC8MeFfA+OjR6ATnoKTBFb320XpZmk00=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eGM+RLjs8yVLRv4kUimmg4pxsDv7QVT6waP15KyIJyFOVEL8JfCoiGOfIDGDdHpOIE8yA9jPl96nwTLUQ/WqvnVdMg5rlNUO8NVTRXb1+zUxIMHqLgmtd7gEE7b6Vi/CrLosvx5szghJG55ww4E8R7hlv/CD84JBckBUg1EI2RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jXZyAEVH; arc=none smtp.client-ip=213.167.242.64
+	s=arc-20240116; t=1769504368; c=relaxed/simple;
+	bh=NKkZ3zm8NODoT/x6DlsGB1ENcssuKfeQJk25tEeiOv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YXnrmaDimQxyIXxvNSm+G8CFh8KPbBdA5UEYqNes/ElQMhrXI+S7Z6xqmUmstsZeSmtwD/7uxiI4dpZmGFGQNCnyZf4ioTtlgrvFxFfXn1t7O5IltFa5FT+DkIKtvZoTgNp/C3PGRDc5nNXfP18OL/gkt0t3zqpAhFQa5DWS4a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qWjB13lq; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jXZyAEVH"
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 66C1D186F;
-	Tue, 27 Jan 2026 09:55:56 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qWjB13lq"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56DED186F;
+	Tue, 27 Jan 2026 09:58:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1769504156;
-	bh=YSC8kL8Rjr8EC8MeFfA+OjR6ATnoKTBFb320XpZmk00=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jXZyAEVHpDYsdDlv0oceFn9gcj8AJTibtpCPYyBjrIJ1br9U3oTcrDzNRzKxYvozx
-	 8t9F6DRDaKMQje0VVX7cWO4pGbnQ4gkfbu5mVKiaJFaGhGT3zVl9oadtmTLspjTnGq
-	 6JEBpJV4/iYuF9xGYOeDOxTaSVRxytVUnC9wb1wY=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Tue, 27 Jan 2026 10:56:12 +0200
-Subject: [PATCH] media: renesas: vin: Fix RAW8 (again)
+	s=mail; t=1769504328;
+	bh=NKkZ3zm8NODoT/x6DlsGB1ENcssuKfeQJk25tEeiOv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qWjB13lqSG17+n4OVX9/jZPQkdJnP5jdPzRkujSyPm64PyE7Fq6Incdv+zJWOo3tb
+	 AOKxwfhyFk6g/Nm6F8nSki9KvQ6ABheZTA85E9kDJa7ZJP8cFUvGNRQ3D3ZQ9ibwao
+	 SULeGXr3+StomlE4vxolvgEqiCEKichU7ir4vmIk=
+Message-ID: <4d1556bc-7a57-407a-a124-a83accc7afc8@ideasonboard.com>
+Date: Tue, 27 Jan 2026 10:59:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260127-rcar-fix-raw8-again-v1-1-642283bc0fa4@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIAKt9eGkC/x2MQQqAMAzAviI9W3AbOPUr4qFuVXuZ0oEK4t8dH
- gNJHsiswhmG6gHlU7LsqYCpKwgbpZVRYmGwjW0bYz1qIMVFblS6OqSVJGEfKdDceYrOQSkP5WL
- 813F63w/kdWM1ZQAAAA==
-X-Change-ID: 20260127-rcar-fix-raw8-again-9dacab87ad33
-To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Hans Verkuil <hverkuil@kernel.org>
-Cc: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3149;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=YSC8kL8Rjr8EC8MeFfA+OjR6ATnoKTBFb320XpZmk00=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBpeH296bDP6mbvLctvWmEdn0UOCvPTmrJ6f1Ajx
- RltEpMp2ESJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaXh9vQAKCRD6PaqMvJYe
- 9ZKDD/94kt/m4UeGr/1EG80Ky390bkC0Pq8wYgOSduOcHACXNUXeveYYskuz8dpfzBDlXquja3A
- 3IlrVItVD9kA2nhdhU2hRUBAzy2pFPgniYun2XiY8VNtNBg90mnBCzIpUKZdbjqq3ezfEKcDj2p
- j+uzHY5MT5hyuHWqDQosu+6Y+WIsC2q7yc7l7s9UiOTHq0ZR2ifB6ElYBLzeoyk+b+8KbOYyRYy
- jNXKJdBRX564NUVyvRwH4rE0LvHDC9S2zeMfx+68m1A2bk7mwKDOH/9ZU2B1qwAVCNGETZNJdjB
- SfU5ZbWFKLOcgnooK2nEhgo5Znks/NJTh3Hq9Zq/3VuWoj+TmD3Fp2YKL7W2oNORtSO2KQOw4/N
- HCB75KMEr4BDEnXmtL/DBQuAKYfKFTcm6PA9UQFcO5+gBYxNOrQMU884xvQM03yg3ie1fAKQr5F
- 4QK4DtOY42EqLM9RyC/Nvu3pvlNKFx3XglV7f9EY5s6nagl15z2Yu/fw2KQTWLofKx0vtdxBZPv
- vs/42DiRu5D4T5VSW1bXBK2ggeME+1DOnw87M2RlMXZer39sfHW0c8+lztMtttetxkcyM70Glqg
- kegEz3C/uafpB3XAlUfISA87WNg/kyHFB7XWkI8Z/QURqSwzYqAN22aPjRns2Z9lPBwT3aP6KNq
- UJVZ/0gxyfVrAwg==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/15] media: rcar: Streams support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20251216-rcar-streams-v4-0-f28b4831cc67@ideasonboard.com>
+ <20251231095739.GA3091492@ragnatech.se>
+ <9878845f-c403-492c-a673-90c91472ecc2@ideasonboard.com>
+ <20260126193929.GB3751370@ragnatech.se>
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <20260126193929.GB3751370@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Commit e7376745ad5c ("media: rcar-vin: Fix stride setting for RAW8
-formats") removed dividing the stride by two for RAW8 formats. It is
-unclear how this was tested, but in any of the recent tests this does
-not seem to work and produces quite distorted images.
+Hi,
 
-However, reverting the patch fixes the issues only partially. VNIS_REG
-requires alignment to 16 bytes, and when dividing the stride by 2, in
-some cases we end up with a non-aligned stride, producing a tilted
-image. This issue has to be fixed in rvin_format_bytesperline() where we
-do the alignment for bytesperline.
+On 26/01/2026 21:39, Niklas Söderlund wrote:
+> Hi Tomi,
+> 
+> Thanks for digging in this.
+> 
+> On 2026-01-26 16:01:36 +0200, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> On 31/12/2025 11:57, Niklas Söderlund wrote:
+>>> Hi Tomi,
+>>>
+>>> Thanks for your persistent work on this series!
+>>>
+>>> On 2025-12-16 17:18:17 +0200, Tomi Valkeinen wrote:
+>>>> Add streams support to Renesas rcar platform driver.
+>>>>
+>>>> The series keaps compatibility with the current upstream for a single
+>>>> stream use case. However, in upstream there's a limited custom
+>>>> multi-stream support implemented to the rcar driver, which will be
+>>>> replaced with the upstream's Streams API.
+>>>>
+>>>> I have tested this series on Sparrow-Hawk board, with a few different
+>>>> setups:
+>>>>
+>>>> IMX219 connected to the CSI0 connector
+>>>> - The following patches applied to my test branch in addition to this
+>>>>   series:
+>>>>   1) The v4l2_subdev_get_frame_desc_passthrough dependency
+>>>>   2) Revert of commit e7376745ad5c8548e31d9ea58adfb5a847e017a4 ("media:
+>>>>      rcar-vin: Fix stride setting for RAW8 formats"), as that commit
+>>>>      breaks RAW8
+>>>
+>>> That is so odd, I do grab RAW8 on V4H with a IMX219. In what way is do 
+>>> you see RAW8 breaking?
+>> I think I found it. It's broken for all formats and resolutions, based
+>> on luck:
+>>
+>> VNIS_REG has the lowest 4 bits always 0. From the doc: "These bits
+>> specify the width of the transfer destination memory in 16-pixel
+>> unit."
+>>
+>> We do nothing to comply with that.
+> 
+> Yes we do, but maybe not enough?
+> 
+> In rvin_format_bytesperline() we align for this, we even consider the 
+> special cases for NV12 and NV16.
+> 
+> The value written to VNIS_REG is vin->format.bytesperline / fmt->bpp, 
+> and the value writen to vin->format.bytesperline is ALIGN(pix->width, 
+> align) * fmt->bpp. And for all formats (not NV12 or NV16) is 0x10, so we 
+> do align it to the 16-pixel unit no?
+> 
+> Maybe their is a corner case I have missed or maybe I'm missing some 
+> other angle? And I agree adding and removing the fmt->bpp multiplier is 
+> not the best here. As we have finally moved this driver to media graph 
+> only there are lots of areas things can be cleaned up and improved as we 
+> no longer need to consider all that Gen2 special cases. I bet this can 
+> likely be cleaned up.
+Right, but if we have the stride / 2 code in, we will get strides not
+aligned to 16 bytes unless the bytesperline happened to be aligned to 32
+bytes.
 
-Adding back the stride division and increasing the alignment for RAW8
-formats to 0x20 fixes the problems related to RAW8.
+I sent "[PATCH] media: renesas: vin: Fix RAW8 (again)". I still don't
+understand exactly how the RAW8 processing goes in the hardware, but
+afaics the stride / 2 is required, I cannot get any proper images
+without that. The documentation doesn't really describe it so I'm not
+totally content with all this.
 
-Fixes: e7376745ad5c ("media: rcar-vin: Fix stride setting for RAW8 formats")
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 22 ++++++++++++++++++++++
- .../media/platform/renesas/rcar-vin/rcar-v4l2.c    | 12 ++++++++++++
- 2 files changed, 34 insertions(+)
+Anyway, please test the new patch on your end, perhaps we'll finally
+have a conclusion on the RAW8 =).
 
-diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-index b619d1436a41..f9af9177e02f 100644
---- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-@@ -676,8 +676,30 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 	if (vin->scaler)
- 		vin->scaler(vin);
- 
-+	/*
-+	 * VNIS_REG has four lowest bits always 0, i.e. the stride has to be
-+	 * aligned to 16 bytes. This is done in rvin_format_bytesperline().
-+	 */
-+
- 	fmt = rvin_format_from_pixel(vin, vin->format.pixelformat);
- 	stride = vin->format.bytesperline / fmt->bpp;
-+
-+	/*
-+	 * RAW8 format bpp is 1, but the hardware process RAW8 format in 2 pixel
-+	 * units, so we need to divide the stride by 2.
-+	 */
-+	switch (vin->format.pixelformat) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+	case V4L2_PIX_FMT_SGBRG8:
-+	case V4L2_PIX_FMT_SGRBG8:
-+	case V4L2_PIX_FMT_SRGGB8:
-+	case V4L2_PIX_FMT_GREY:
-+		stride /= 2;
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	rvin_write(vin, stride, VNIS_REG);
- }
- 
-diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-index 079dbaf016c2..9d45e11898c1 100644
---- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-@@ -155,6 +155,18 @@ static u32 rvin_format_bytesperline(struct rvin_dev *vin,
- 	case V4L2_PIX_FMT_NV16:
- 		align = 0x20;
- 		break;
-+	case V4L2_PIX_FMT_SBGGR8:
-+	case V4L2_PIX_FMT_SGBRG8:
-+	case V4L2_PIX_FMT_SGRBG8:
-+	case V4L2_PIX_FMT_SRGGB8:
-+	case V4L2_PIX_FMT_GREY:
-+		/*
-+		 * RAW8 format bpp is 1, but the hardware process RAW8 format in
-+		 * 2 pixel units, and we need to align to 32 bytes. See
-+		 * rvin_crop_scale_comp().
-+		 */
-+		align = 0x20;
-+		break;
- 	default:
- 		align = 0x10;
- 		break;
-
----
-base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
-change-id: 20260127-rcar-fix-raw8-again-9dacab87ad33
-
-Best regards,
--- 
-Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+ Tomi
 
