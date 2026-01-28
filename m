@@ -1,82 +1,91 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FBF34575A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Jan 2026 11:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A04350A29
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Jan 2026 12:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769599848; cv=none; b=id0uIK3kRlyiSubIvD5GHP9VdvlPAxn8VT8zz45X6wgNMW1efNu0Nbbt83anw3lMv0OkosN+8rShJWwPOtkUZIAU20oasS8OcK5lKLoa8oBBT2mdPXNHVMl7mRod9Mwkda6KgDuy0ForVJMaVEJhXb/sxp5IAPeLKjSvcAFTM7o=
+	t=1769605138; cv=none; b=ALKjMfikRUiUQJXrk02k6le358n63VYTWpQb2u67D0u+ZLNS29UXOavvnNFaOKXb5cxgcKi1huYpcThc5iKjZyW+4ifEnoLhX5urp+IabsRyrpAOWypy09fOPK3GdYnB9QDQU3t3j6+K3wrhxH6kFDgeERg0lmDA6MSNghXR8rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769599848; c=relaxed/simple;
-	bh=wYGYHHecgZ3f8TInHssT/2zr5i37lvwq1yFMVyVZT9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NfHLNS0WmBH7/0JVaQY1zauEgwNTGs1XUTk1UTqUzIiw3legRdpv447idcg2RlY50ti9XdSsNrHAbzccTdAIJF+xpluQCp5qcrw5S86c7QsNLnfrZfXNtDMuGKHyMVvBgadDw1uczNn6rrXXl9wp3wn3q9l9UBft6FNtFnB4SIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xj/RJneN; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1769605138; c=relaxed/simple;
+	bh=cH0fBpdk2tUr/24Xbejg9Yyq7ERsxGwxfiswzi+cHUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lrZIHw5sd09+r3CiZaDbpGTcswnX6WvqkzlE3IbOVRomlXad3OIEjjwm4p1DHYpiCNJfb7fupG6AWmlUOE6S6gdBO4BUjILX+F1drXjk+ny0i3LBXJzf7DpsS9pW55YPlXe91bD7Tdi2yTgQwIPfISP1vslAhwrOTGYpvdZZdFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQN/xOnF; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xj/RJneN"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-65815ec51d3so12231690a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Jan 2026 03:30:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQN/xOnF"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b885e8c6727so176307366b.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Jan 2026 04:58:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769599843; x=1770204643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T6lNXhVo6rabsx9uuwYfPMUxIX+5+vIBC2iOr84Rj6M=;
-        b=Xj/RJneNvJV5wFyIcB5S6VLA84W3857QVlI/bJCTwfWlS62iMBXKk2XEkaEC3V+RKt
-         sveZmJGQErIbcO2rqK07ZSYGNusfQtLHAsv4cbHjDYBgegRvXtqyn2LObJcQt69wW6kr
-         /Q/kDnCExwbRfrvzAW3WYOr4x0V2UQnOrgl1UGts/sTye4ynk1SGFST/GCfpBuUjFXiF
-         FPc+6IZsN6TSoI4Z0PnikV9QtbszyvJ2AOS0QCiZK0402J/BuXo59HrgeRc7urB/GTbc
-         R809TBZAu3UkSzO5jL2HXicr6duYgZLxbo8F50Tgrvp7qulbLHhVbBOuJ57wSPLZlmaj
-         N1eA==
+        d=gmail.com; s=20230601; t=1769605135; x=1770209935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=klJSobxqRNPxXq5lBBZpXaYGDx/qIxNfyIEWdrVXkm4=;
+        b=QQN/xOnFETe/zNBcniAYPySQqY/f4A2NZvX+uHOUnOq9HzxHpLFkKVGUr0pb9bUrgs
+         01gi6FpCWLpRfDYcyrz+n3M9PnGT9JXT6dqQwd+EJd0P3UUUrtftuUe60+wDk4GfQPtI
+         7xxEDCa1l4WgVpzN8JILIGG5HAB5SSP2E4DxMx5xxDnYHyn+CUB8pqcP4MsKHZD+a0+o
+         GS9Fz2ilrlFNTYc4JdWBTdyAYmGmwQV+08ogT/xgpj2FmF9y2BEaVLQvIjSGS0IopE0F
+         lNOZOdt8V4ad6ROI5OMipZGHOc/qASn5tzQIZCk8sen7iqJTlXBOfFJavKMRGvwIfXrJ
+         eikg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769599843; x=1770204643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=T6lNXhVo6rabsx9uuwYfPMUxIX+5+vIBC2iOr84Rj6M=;
-        b=dHQXFpTRhnWJoP+s/cjxhh2PRvkqb7JYI/Gr6mUwOFKEUVojc++IfWa8IrBaRiB4Sy
-         7uO/TR8ypAFU/fkeu/ZQj1oIBvNA+bLWHjTKviSOYC179etSjICrqZe10dnvoMxeiSQ7
-         +659M+rgWi/PVaaamp89B9jZ5wIesKux1tn/1PMT0+c4lgZnQoF4Waa8YFLzdPvsc54K
-         GebVLjGkvda86L34IC8ekQ6/p8nrJHz687yc7EezCwH6LF8giH8htEbx+LanzzQsRtsE
-         O7aqyXodiLPBR/N6dM7ndK8kkUh9EtSBpJ4AReXAzskBPNM+sqsteT7xQ/6zipj8tw1C
-         jqVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrS4vIQDcp7RSSETUX7K+CJMMXPgv8yCITYWhxzPblcWCdaKl46UqZtY6YL/7Y1M2KL3DFhDoBX4W82FD2VFtd+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3SqXlYqotyHq4Kp0+lwl+mzXth2hsVhIh7/2HsEayoKA8cH8
-	2Mxcf9tyeQ6DJlkZ8i8Gn55QzY3XM4LLMoBS/t2F4lUFIxLs262N8i+w
-X-Gm-Gg: AZuq6aK0HuE/rVAu7wV4p5v3xuV2fQoujHQbXpDBucIi8RaHFW7UBpFsfXwE8edw7F+
-	Ibt10q3iluvIz+9FaFSOd1KTr5KnUmlzKlc2z/tX04tjJ9nvtfC+fXcso7itxWsBymSQ1zgBo4T
-	8cxY9GoZJEaci2gNqE2qAbM5RbwHQhXMBja8WjE2KjsPF63PRRPVRQJmA2ykhvv7bpUG+yWa56E
-	afTuM5Jy+1qLxpKS8cfI2+z5Z8TDGUPXOrpLkE/+UzXdnfpOv5UDG56ezlT/2URfr2WMWSNWDvQ
-	ZwLhPcRL/NEvni/SmDATiWxzhG9WronJl9lwSvFSZAPqxXYko1T5Z3gP0UuoiZ1DltIVooxAUI2
-	h1XPxeuxiIe7qnSURivD0mljsTIPjm4RLVYdW24HBrsZbRJ2Ln2JQqfq69n3pL7gQUYm+rVszJw
-	mFYT2efYhvd0xMliplfmDxnE723g79Mi0MJYA=
-X-Received: by 2002:a17:907:8689:b0:b79:f984:1557 with SMTP id a640c23a62f3a-b8dab37d05cmr365383666b.46.1769599843232;
-        Wed, 28 Jan 2026 03:30:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769605135; x=1770209935;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=klJSobxqRNPxXq5lBBZpXaYGDx/qIxNfyIEWdrVXkm4=;
+        b=D+QUzdEPprm1F0QYGGLS+JieAVi3dIN3y3LCrpEvplhy0D0la4+u6EPIPhe53axCj5
+         h2087S9OI7zlBBEqlcShCXpK3B4pgYeXI7hKFLTXaDJz/fCiTwyuLlPbfemk7CjH68P2
+         a9pYDJhGsLvdEBHeyHUrDQI1qEDtU/zU06a98HvwoKRygWNdppcMBSojeKGbJXY5n+An
+         Khtmu6elaL0vXFuSkDFmL9dglxxR86DbQpA3CnwvOz9q4gdaUambSe+76Shl1tGOMHfG
+         cnGStZsJmxeZqrnnwp3jhKJHLSaAK8vKdqSjkbCgQY2S33ZoMoNpv7ISF6Y1Ya/lflUh
+         +EDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9dVoemjpsD2AN/nrPdTnvuCtY4XRB87O9s69oFGzzW1IHHU83L9tOAjqsAyPTmMBedBVK6SYbD2BG68cPZegzMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF4090IuphGsa3VAdPOcOPKmQutNZU5iSxFCwYuV3d2NAiCH27
+	JNnOcbvvbcZWtA7cyNDtwGOoHUSKoK+yds1hI056Rusdl9xbZidqryWr
+X-Gm-Gg: AZuq6aL1E/hRWNLp2F1cwkTwesoCC+Dpc1qZSynQvrO//1XNPSkf8vlragUJyGd8s5A
+	RR+06YzCftKW9IeCbE9Alo/eM7tlxJ5+XT7oCoKLy3U18bg665rBKgB5bUxvp6boyMiWU/eUIrt
+	KF8flbBMC3XY/9Qk63qJJsN3EBxhWpsC0zF97G29/+cJ9ASlojZsMkihmTH/dHwBdgP2CdaUz8X
+	G/rJgyakUKnsJ+KHu9U23l0vg0FbyRcWd03h2w/8UmDKs/agEITz3o2krqQKT5i9tfWy7NJlSLt
+	tuzHtPZqtsVnSFhf6UgNGLKmRFu3XJlkbauCT7zUR8E73QWVAZju05eSw4xH1fz7FP0g+HdWEEB
+	HdlaIMIZFe6XoFacoJb8XW/aZoxO5GvqTYZWhEvCmc0p1Vi59Gv0wO/oTn/N/gYq3NfbYDPWUMK
+	0i1bhHV6xDGS75aOUy4tV4V3ItlnEM/Cx4Ek4uLqiP9n6ayw==
+X-Received: by 2002:a17:907:7f8c:b0:b88:3d20:3f44 with SMTP id a640c23a62f3a-b8dacdc3040mr351146966b.26.1769605135007;
+        Wed, 28 Jan 2026 04:58:55 -0800 (PST)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e29d:6e0e:72c1:d15d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbf1baa42sm114400366b.46.2026.01.28.03.30.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbf2f3e26sm123344966b.67.2026.01.28.04.58.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 03:30:43 -0800 (PST)
+        Wed, 28 Jan 2026 04:58:54 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 10/10] arm64: dts: renesas: Add initial device tree for RZ/G3L SMARC EVK board
-Date: Wed, 28 Jan 2026 11:30:29 +0000
-Message-ID: <20260128113032.337231-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next 0/8] Add support for Renesas RZ/G3L GBETH
+Date: Wed, 28 Jan 2026 12:58:37 +0000
+Message-ID: <20260128125850.425264-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260128113032.337231-1-biju.das.jz@bp.renesas.com>
-References: <20260128113032.337231-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,78 +96,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add the initial device tree for the Renesas RZ/G3L SMARC EVK board.
+The Renesas RZ/G3L GBETH IP uses Synopsys DesignWare MAC version 5.30
+compared to other Renesas SoC such as RZ/V2H that use MAC version 5.20.
 
-Added placeholders to avoid compilation error with the common code in
-renesas-smarc2.dtsi.
+The RZ/G3L GBETH requires an extra clock compared to RZ/G3E and has pps
+interrupts. Document the Renesas RZ/G3L GBETH IP in bindings and enable
+the Gigabit Ethernet Interface (GBETH0) populated on the RZ/G3L SMARC
+EVK. The eth1, pincontrol definitions and hotplug support will be added
+later.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Dropped scif node as it is already included in common platform
-   file.
----
- arch/arm64/boot/dts/renesas/Makefile          |  2 +
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   | 37 +++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+Biju Das (8):
+  dt-bindings: net: renesas,rzv2h-gbeth: Document Renesas RZ/G3L SoC
+  net: stmmac: dwmac-renesas-gbeth: Add support for RZ/G3L SoC
+  clk: renesas: rzg2l: Drop a check in rzg3s_cpg_pll_clk_recalc_rate()
+  clk: renesas: rzg2l: Add support for enabling PLLs
+  clk: renesas: r8a08g046: Add support for PLL6 clk
+  clk: renesas: r9a08g046: Add clock and reset signals for the GBETH IPs
+  arm64: dts: renesas: r9a08g046: Add GBETH nodes
+  arm64: dts: renesas: rzg3l-smarc-som: Enable eth0 (GBETH) interface
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 1fab1b50f20e..0153e772c231 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -179,6 +179,8 @@ dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc-pmod1-type-3a.dtbo
- r9a08g045s33-smarc-pmod1-type-3a-dtbs := r9a08g045s33-smarc.dtb r9a08g045s33-smarc-pmod1-type-3a.dtbo
- dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc-pmod1-type-3a.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-new file mode 100644
-index 000000000000..86db86335d5e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G3L SMARC EVK board
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+
-+/* Add place holder to avoid compilation error with renesas-smarc2.dtsi */
-+#define KEY_1_GPIO		1
-+#define KEY_2_GPIO		2
-+#define KEY_3_GPIO		3
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "r9a08g046l48.dtsi"
-+#include "rzg3l-smarc-som.dtsi"
-+#include "renesas-smarc2.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK version 2 based on r9a08g046l48";
-+	compatible = "renesas,smarc2-evk", "renesas,rzg3l-smarcm",
-+		     "renesas,r9a08g046l48", "renesas,r9a08g046";
-+
-+	aliases {
-+		serial3 = &scif0;
-+	};
-+};
-+
-+&keys {
-+	status = "disabled";
-+
-+	/delete-node/ key-1;
-+	/delete-node/ key-2;
-+	/delete-node/ key-3;
-+};
+ .../bindings/net/renesas,rzv2h-gbeth.yaml     |  77 +++++-
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   3 +
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 237 ++++++++++++++++++
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  35 +++
+ drivers/clk/renesas/r9a08g046-cpg.c           | 120 +++++++++
+ drivers/clk/renesas/rzg2l-cpg.c               |  70 +++++-
+ drivers/clk/renesas/rzg2l-cpg.h               |  10 +
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      |   1 +
+ 8 files changed, 539 insertions(+), 14 deletions(-)
+
 -- 
 2.43.0
 
