@@ -1,124 +1,128 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769BA2F60BC;
-	Wed, 28 Jan 2026 13:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE5D353EE1;
+	Wed, 28 Jan 2026 13:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769606326; cv=none; b=GReHujEIrYpMPcNZnZ3FMW4F7PxV5am9rx63BEmOk5+qIf4Lw9UnZrz2khpZNjiVZpEk4aJsoGFIO0xAJ7rNSXrma1/+uaVRAlw5Q2bOgR2V3JQ4leLYX5HhnJsKo+fstvQ+Ie+JHmhUBxChOeFLUrgFKD2bLrFbCLLiKRpLSu4=
+	t=1769606942; cv=none; b=OJd2kRehJ0W64/3vab1WuwDynl+mGp6J6UCwTNEmmwnfiljlph+jt2BqTF5v5HTpTtHcm3bknuw5meL4KznC3wnQ172x8utRnNUdqJNpqDmIcSUASbG43biWnTMIA54aKxFVnN7l5IWhSdJPXPY09JFQgDHhGhq33LA6cq8XUHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769606326; c=relaxed/simple;
-	bh=wgS9g1VT5laNoBjiBzOX69iZSyRdrUZ45VDCC7w5uQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dETj50j3UXJQkB2rBwuXkj7X9LgNO6g+4xREdXrQ5eiQhP199vxzVEI68sXmUv2OfgTVrshiUeyLCxQ133Bpf2Su/I7W/unjSipBp1zUDZgCdodyIZd2FEovH85vSk8OyVjcwxpg/vj77hs0PELcKN2BNa61XU6akTHBz1sdp1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: q61TS7TuQhK4iBEUR4PSNA==
-X-CSE-MsgGUID: 590Kwn4FStyZqlhY7vGdZA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 22:18:43 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.11])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 765EA41665EF;
-	Wed, 28 Jan 2026 22:18:38 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	geert+renesas@glider.be,
-	krzk+dt@kernel.org
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	biju.das.jz@bp.renesas.com,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v3 15/15] arm64: dts: renesas: r9a09g047e57-smarc: Enable PCIe
-Date: Wed, 28 Jan 2026 14:16:46 +0100
-Message-ID: <20260128131647.120511-16-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260128131647.120511-1-john.madieu.xa@bp.renesas.com>
-References: <20260128131647.120511-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1769606942; c=relaxed/simple;
+	bh=y5vYOLgx3cVJ4xsFoUREyI2wOh+cp6RjX/o+7apYM1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rUqVeEZ9dJT55IXKVfOzQGatE5K6aD5bDVA+0t1b386iiXPYG3SGAzOG0rmZ/ZVkPp8G7UGz0H/6L16Ho/kpNncPDdN7Q3+vdk1wAlNrZ2S3JKbZhGJdTXmRzBNboxv7Ir2oKAlcFVwXSfZNEsO0Wvlphiuse8AgVtyz1Xlbuf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xybBbXel; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xybBbXel"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4f1NQV15DGz9thG;
+	Wed, 28 Jan 2026 14:28:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1769606930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KM8GzemEIH/Q71xxgkibRWwKmhIZTb6iheRXTA+oDaY=;
+	b=xybBbXelV8xkd9SD4DOiSdqkruqY7uC3a0y9oddbIMCY7KtrcGa6t49uubVg5k6LOHtjk/
+	DLGndw9T4BXsgBQCl4+MH/mZRDCQcVzQUZrkiWtGgc/NekIxufqhaJWD8faSTa+UPhYLHm
+	fCu+4U8rYeNFiWb6ZWX7xyAV+7CNyqiC6MoaAkReDuiNGV9ZQ9QIwZ2Tt8mE+928T/zjjk
+	SPn7yHrTxiibTpZDjF0sPLCmCwrpuKMYORzaf41aYPobjeYcbQYAbcRsgDRoA/4SlvRq7Q
+	UshN4ybDYCOAQEkrGblIvwSjBrSTaEBnPhNr/7DnqZBkkSJkzjJwBipY25keng==
+Message-ID: <701e739d-2e82-40e7-87b5-b4ec92903af6@mailbox.org>
+Date: Wed, 28 Jan 2026 13:23:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] linux/interrupt.h: allow "guard" notation to disable
+ and reenable IRQ with valid IRQ check
+To: Thomas Gleixner <tglx@kernel.org>, linux-input@vger.kernel.org
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Cheng-Yang Chou <yphbchou0911@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Jinjie Ruan <ruanjinjie@huawei.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Marc Zyngier <maz@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260121232522.154771-1-marek.vasut+renesas@mailbox.org>
+ <87sebrbenj.ffs@tglx>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <87sebrbenj.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: ff3e1687a4111fcf642
+X-MBO-RS-META: y3u56ynwk98nrqzd85s75cucxghctzn9
 
-The RZ Smarc Crarrier-II board has PCIe slots mounted on it.
-Enable PCIe support.
+On 1/27/26 10:14 AM, Thomas Gleixner wrote:
+> On Thu, Jan 22 2026 at 00:23, Marek Vasut wrote:
+> 
+> $Subject: linux/interrupt.h is not a proper prefix. Just use 'genirq:'
+> 
+> Also what means 'allow ....'? Subject lines should provide a concise
+> summary of the change, i.e. something like:
+> 
+>          Provide conditional disable_irq guard variant
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
+I did admittedly replicate the subject and tags from prior commit
 
-Changes:
+c76494768761 ("linux/interrupt.h: allow "guard" notation to disable and 
+reenable IRQ")
 
-v3:
- - Splitted enablement into common carrier dtsi and board dts
+Fixed, thanks.
 
-v2:
- - Removed board-specific dma-ranges.
- - Merged enablement and pinmux assignment in same file
+>> Introduce disable_valid_irq scoped guard. This is an extension
+>> of disable_irq scoped guard, which disables and enables IRQs
+>> around a scope. The disable_valid_irq scoped guard does almost
+>> the same, except it handles the case where IRQ is not valid,
+>> in which case it does not do anything. This is meant to be used
+>> by for example touch controller drivers, which can do both IRQ
+>> driven and polling mode of operation, and this makes their code
+>> slighly simpler.
+> 
+> How many of those have this pattern? From a cursory look I found not
+> even one as your example is neither applicable to upstream nor to next.
 
- .../boot/dts/renesas/r9a09g047e57-smarc.dts      | 16 ++++++++++++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi  |  4 ++++
- 2 files changed, 20 insertions(+)
+One. I think I have two-ish more candidates for conversion.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 696903dc7a63..1ba50512f4ef 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -122,6 +122,11 @@ key-sleep {
- #endif
- };
- 
-+&pcie {
-+	pinctrl-0 = <&pcie_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pinctrl {
- 	canfd_pins: canfd {
- 		can1_pins: can1 {
-@@ -167,6 +172,17 @@ rsci9_pins: rsci9 {
- 		bias-pull-up;
- 	};
- 
-+	pcie-clkreq-n {
-+		gpio-hog;
-+		gpios = <RZG3E_GPIO(4, 5) GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "pcie_clkreq_n";
-+	};
-+
-+	pcie_pins: pcie {
-+		pinmux = <RZG3E_PORT_PINMUX(G, 7, 1)>; /* PCIE_RST_OUT# */
-+	};
-+
- 	scif_pins: scif {
- 		pins = "SCIF_TXD", "SCIF_RXD";
- 		renesas,output-impedance = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index b607b5d6c259..e2a34577a1a1 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -96,6 +96,10 @@ &i2c0 {
- 	clock-frequency = <400000>;
- };
- 
-+&pcie {
-+	status = "okay";
-+};
-+
- &scif0 {
- 	status = "okay";
- };
--- 
-2.25.1
-
+>> +static inline void disable_valid_irq(unsigned int irq)
+>> +{
+>> +	if (irq > 0)
+>> +		disable_irq(irq);
+>> +}
+>> +
+>> +static inline void enable_valid_irq(unsigned int irq)
+>> +{
+>> +	if (irq > 0)
+>> +		enable_irq(irq);
+>> +}
+>> +
+>> +DEFINE_LOCK_GUARD_1(disable_valid_irq, int,
+> 
+> 'int' because it matches the function argument type of the inlines,
+> right?
+> 
+>> +		    disable_valid_irq(*_T->lock), enable_valid_irq(*_T->lock))
+> 
+> disable_valid_irq is a pretty non-intuitive name if you look at it just
+> by reading a usage site. It's not really improving the readability of
+> the code, it's in fact obscuring it as the reader has to actually look
+> up what the hell this means and then stumble upon a completely
+> undocumented lock guard define.
+> 
+> I'm all for using guards, but using guards just for the sake of using
+> guards is not a really good approach.
+I wouldn't even be opposed to converting the ili2xxx driver (the piece 
+of code in patch 2/2 of this series) back to simple enable/disable_irq() 
+. I am not particularly on board even with the disable_irq lock guard, 
+or more specifically, lock guard used for non-lock things like this.
