@@ -1,126 +1,95 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C4364EA2;
-	Thu, 29 Jan 2026 21:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D313367F42;
+	Thu, 29 Jan 2026 21:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769723011; cv=none; b=ad57aTrfVBXG0Nw6kBn+y2NkMwBz02+0Rc96C5qSOEOYkkEcNCYR3Dlqz39Zwkrxi3OAH5LYHDHWNvBDObDGhW3qb/cPg3DzlTzv8MDXKMvkn0AG6RX+c8yutQfaClmIwo3bqKzInFekcHvqil2XGPbIEC2QFg255Gb/Fj8SL5w=
+	t=1769723949; cv=none; b=OcRnDSMu+9t9GAJuZlhhlEgzlkLKfxc+vZwhriHEVRjFGDv+6Qs/NZkvrqdytz0lljD+Iy2KmSHngV5bKd7T77u0rxguu9x0E7NV/5nbCwupK/27cImjeUD9OxHZSASRI6/Q/2CDEWc4jXKzouR3FtzDoVdziFkLasAkJeoyDww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769723011; c=relaxed/simple;
-	bh=CaoVe4DoenYysaU/+0Z5eyf9BKiKiOFsVOTKW2hNf0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=heBtBy7Of3Sk2u5V0KCQ7O+6X250MklM6TZW4fzaYfo4L6KC4qoaT15YJYFD+TQgoYc2UVGIuXIZKw+Z/+Zz/0/bvMXTTUcaye9k8s5r+qhjqG8z76LA4+DtRa7rVBR1jjB5UfYGAo/yxG+nwVIh10V84KYpaj3p04j2aKULq+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 6tj8rkpyQp6ninNaNYQLTQ==
-X-CSE-MsgGUID: wK/9Om6tTwy3h5KMswiEtg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jan 2026 06:43:27 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.73])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D0747408FDE1;
-	Fri, 30 Jan 2026 06:43:22 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	geert+renesas@glider.be,
-	krzk+dt@kernel.org
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	biju.das.jz@bp.renesas.com,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v4 15/15] arm64: dts: renesas: r9a09g047e57-smarc: Enable PCIe
-Date: Thu, 29 Jan 2026 22:41:29 +0100
-Message-ID: <20260129214130.16067-16-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260129214130.16067-1-john.madieu.xa@bp.renesas.com>
-References: <20260129214130.16067-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1769723949; c=relaxed/simple;
+	bh=jUu/LakvUR0IMN5LgzfTpfIwqjTmYJzfl88EeQDwqOE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CKysRw5LphPSMHteCp72NqTsMZVldLUuZsIOVfO6A6Ilha7TKTPUTqxa4dbw/lT2fQZgztPw5/9L8ZgkKbWOhOWY0PswQ2VVeIGapWvWNJgfT0T6o48lNs9IV+s7DML70n63wYs7OKRHnaQUlrLSlriMzjTf/IqJpvfMgTmWZE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9Mz/lyw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9Mz/lyw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2621BC4CEF7;
+	Thu, 29 Jan 2026 21:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769723948;
+	bh=jUu/LakvUR0IMN5LgzfTpfIwqjTmYJzfl88EeQDwqOE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=i9Mz/lyw9wJV+vqSTMGdUDzGEFjpiCRf2W1mVEs/F68unrHWSO2f70OCF4RT3RLUv
+	 X1F0bHO+GJciW5TLHKSufv3VbbS6zyP3HIktDcSqnPNBuv3vo4bVvl1HoT64Y5reqk
+	 w7TfZkwnQJfUqTI2zEedvwR6TNVsHLasQlOrhERd4hAXv6ymfYBKKcVsqt8kF8SDCz
+	 VmHiL+QT3UVpClWem0JwQtjrRAOn5F03gYIBlvJCJrZU38GfaXChhLdcolXp8kCrY/
+	 aYGzisALymWQ6R5a6siVQw+aIBXF+/mMRYgokV7KnmTLpqM3is3fdHfgRDtN9t8BUK
+	 Jd0jMPugG154Q==
+From: Thomas Gleixner <tglx@kernel.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Biju Das
+ <biju.das.jz@bp.renesas.com>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 4/6] irqchip/renesas-rzv2h: Add CA55 software interrupt
+ support
+In-Reply-To: <CA+V-a8trA53J5xt-p1odHkqeHgk_qXKQeXsf-QOfz2=JmTOSYA@mail.gmail.com>
+References: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260121150137.3364865-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <87cy2wcqe2.ffs@tglx>
+ <CA+V-a8trA53J5xt-p1odHkqeHgk_qXKQeXsf-QOfz2=JmTOSYA@mail.gmail.com>
+Date: Thu, 29 Jan 2026 22:59:05 +0100
+Message-ID: <87bjicm66u.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The RZ Smarc Crarrier-II board has PCIe slots mounted on it.
-Enable PCIe support.
+On Thu, Jan 29 2026 at 21:24, Prabhakar Lad wrote:
+> On Mon, Jan 26, 2026 at 4:03=E2=80=AFPM Thomas Gleixner <tglx@kernel.org>=
+ wrote:
+>>
+>> On Wed, Jan 21 2026 at 15:01, Prabhakar wrote:
+>> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>> >
+>> > The Renesas RZ/V2H ICU provides a software interrupt register (ICU_SWI=
+NT)
+>> > that allows software to explicitly assert interrupts toward individual
+>> > CA55 cores. Writing BIT(n) to ICU_SWINT triggers the corresponding
+>> > interrupt.
+>> >
+>> > Introduce a debug mechanism to trigger software interrupts on individu=
+al
+>> > Cortex-A55 cores via the RZ/V2H ICU. The interface is gated behind
+>> > CONFIG_DEBUG_FS and a module parameter to ensure it only exists when
+>> > explicitly enabled.
+>>
+>> Can't you reuse/extend the existing mechanism provided by
+>> CONFIG_GENERIC_IRQ_INJECTION (irq_inject_interrupt(), irq_debug_write())
+>> instead of implementing yet another ad hoc debugfs magic?
+>>
+> Can you please point me to a driver which makes use of it? In my case
+> the interrupt needs to be triggered when BIT(n) (n=3D0-3) is written to
+> ICU_SWINT.
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
+Care to look what irq_inject_interrupt() does?
 
-Changes:
+It tries first to inject the interrupt via irq_set_irqchip_state(),
+which only works when a chip in the hierarchy implements the
+chip::irq_set_irqchip_state() callback.
 
-v4: No changes
+If that fails, it uses the resend mechanism, which utilizes the
+chip::irq_retrigger() callback.
 
-v3:
- - Splitted enablement into common carrier dtsi and board dts
+I'm sure you know how to grep for drivers which implement one of them :)
 
-v2:
- - Removed board-specific dma-ranges.
- - Merged enablement and pinmux assignment in same file
+Thanks,
 
- .../boot/dts/renesas/r9a09g047e57-smarc.dts      | 16 ++++++++++++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi  |  4 ++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 696903dc7a63..1ba50512f4ef 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -122,6 +122,11 @@ key-sleep {
- #endif
- };
- 
-+&pcie {
-+	pinctrl-0 = <&pcie_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pinctrl {
- 	canfd_pins: canfd {
- 		can1_pins: can1 {
-@@ -167,6 +172,17 @@ rsci9_pins: rsci9 {
- 		bias-pull-up;
- 	};
- 
-+	pcie-clkreq-n {
-+		gpio-hog;
-+		gpios = <RZG3E_GPIO(4, 5) GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "pcie_clkreq_n";
-+	};
-+
-+	pcie_pins: pcie {
-+		pinmux = <RZG3E_PORT_PINMUX(G, 7, 1)>; /* PCIE_RST_OUT# */
-+	};
-+
- 	scif_pins: scif {
- 		pins = "SCIF_TXD", "SCIF_RXD";
- 		renesas,output-impedance = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index b607b5d6c259..e2a34577a1a1 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -96,6 +96,10 @@ &i2c0 {
- 	clock-frequency = <400000>;
- };
- 
-+&pcie {
-+	status = "okay";
-+};
-+
- &scif0 {
- 	status = "okay";
- };
--- 
-2.25.1
-
+        tglx
