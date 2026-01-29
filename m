@@ -1,230 +1,266 @@
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010045.outbound.protection.outlook.com [52.101.228.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897DD3563C2
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Jan 2026 17:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769709233; cv=none; b=MN0UJtKG0Kbqc+DziALIHJhiP3VAWQFogbvrD5GuymLNi/nNsRyqv0LJ/OYdS7JNYMm5bSAtwk5fqwDRSWX7/VMV5MFzyZqnE7/u+Lx2L99vlbIqwdohPVH/QrnA/m8ixt5CV5lbnnJrmULjoDgSrm5+thbXF2RcXIDpundZyOA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769709233; c=relaxed/simple;
-	bh=BmaXlCZ6264fsqvXXrjSoDhWiC9g1X99D6Z7+wsR+aY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MdV60MOLJcN9pi4fWHaOp9sduGlymOOF7kUupNK9jMZAtf5TM+hqmIUWngzEoNAs/3IqOf7pMlBEscOuvEx3hk3G4IWYeMBBKfYcFKVwJfjRRl37EiLtUt+QK7k+1VGAy4SV3Fdhs/jZu4tIrWmdqwelyPgMP07ZvbMLhNkh034=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-662fc35291eso685153eaf.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Jan 2026 09:53:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769709229; x=1770314029;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/B1720oxlP4NMLZCxNr6vg90MXZvyAsBr77z/rjaXw=;
-        b=tJkrSIlUJBsug+X+BfkDiMNrryl0hNXDZWUCxOgUCgS/GSprNn37FRAfAHfmgAZqEh
-         dbV++yNjC31nKpwYbevHQa4oh36GlpxCnNuKq8GAAS/PY9+Wwoc8bTfL1SKWvdnvTdoS
-         itUucl5vqntcXiVv+QDi+rEevKlyTStMCcVhftW3A6+X0WsgYGva/8hWUQPbfNzwpTKU
-         XcP732+hI1DjK6elgdrg6dL7IFERhUXPYCKcqMXpQBlNQA3hCSfSKVZAx78wn9CiTvLs
-         uDHqJJgXj2MzjedhgdSaoa7NYGqqX0Ft3RroaINorAbeW+iJoV+67cEhXBEO6jlFJ555
-         y3Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9qcJ+2xUs81UPCFtRehk8gsJTBljNtf3LhLjOVXc5bTUiW5+Pj66or0idF1YEd10X6PvCsnalZjR6gdW1U4q0+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6YaiFRJk7Ogvfwpn3Tpyy/FrGI66v/eDF6zSGskC5EuY6SyMn
-	fY7wrxcYmGDdPmkf/cc5IabvCGNz4E/LsPr7XWwolqPgk8jhS+jB2qQaAF+HVWn0
-X-Gm-Gg: AZuq6aL3gQcGLwiLMPFFk4ZLvHAyqlRT1T6XvUvzrXBOOP4HcduorpWCFHjEPvXWbLO
-	w1s39r/6wqFyb18beWkrBg2NDE3FcaAq7kvRKMCzUPF9hOZyfFFvb3R/Ju3vXIVkAMcPc/4VCfR
-	mP97jsxASBtUzkRQ/C4wPPLJBieoDbjUUF/lMk5PAONAxz34KuWhIHu3G3O/N5MbRxT+/3nvKNg
-	G9g7UGG0y77QoPK9GoXBwHGdcq2BaeFsAI9hP/WOaDxmn3xBqc9cQ1QeS2PMS55bXUhjVe6OtPm
-	vOLn2tn1728vCj7F4RarsPm/HDoUTxOSnJ9Pt5xZq2eVSbupbeUvtkT5NKZSv6vOw/TnGVZ4GK1
-	hYvkGpFAjgrwlDMwh/ZQCO/t+rBRsvjv/VmGjcDON2r2EMlTJ+/Mik/L+yXvoqr+uz0Miq7xagV
-	i0A9wpoHh6LvBSY5dzDBTMEIJn96DTPwI58iFZskco/QERdZInNQOtmV9Jz0XAsXg=
-X-Received: by 2002:a05:6122:3103:b0:566:24fc:94f2 with SMTP id 71dfb90a1353d-566a003739emr15999e0c.9.1769703583475;
-        Thu, 29 Jan 2026 08:19:43 -0800 (PST)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56685d07b42sm1282905e0c.18.2026.01.29.08.19.43
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jan 2026 08:19:43 -0800 (PST)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-566360cab02so739389e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Jan 2026 08:19:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUkYHj+5K+oKYoBkxq/tSQ+YJGlNnmjHsZ95QDLMY+GDd+ssboAqIdBeJFEJB+IvsDujdXyi4K98QJefwXyjd1Rrw==@vger.kernel.org
-X-Received: by 2002:a05:6102:32d2:b0:5f1:50d0:3797 with SMTP id
- ada2fe7eead31-5f723937ba5mr3352368137.43.1769703201568; Thu, 29 Jan 2026
- 08:13:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6E63559E3;
+	Thu, 29 Jan 2026 17:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769709328; cv=fail; b=US5p3cFcrnrX0WSLTG6fFFy61fbxajdKUNAtCQ4TMMEa50j6Gfj981r0tUD7Gy3hih+nhK/5Q6fs3YRwrSCTfrkla+r9KJmOB/PvWzspy7XZy3qywbxj1k7xFHVq2ui2V1h09UvIK+QE8tsxmVUdzsJw7GzWPpeLcXEE60p7NVU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769709328; c=relaxed/simple;
+	bh=trxXBqWTvITzqtzsY5sU1R4h7P7JpXbYIucb0x7x3Rs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pknJw/NNcTJpAyvBYZENOebRTj5WG3pYIPMtvujG/pwtKQOHkTXe7lZsGZ65AlakJ/9G3a6k/3R6qmi80ZcquJlc1jGB6T/uZdx3uq7XJVR0agCZKYI3CMavNg9zYfnS/rhSGrVAzToJ2hakqn3/Eq4eyW6Djs94jiUYLgDr/3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=IIgIGiG8; arc=fail smtp.client-ip=52.101.228.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="IIgIGiG8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BwGsjzQWKnITI9vaFvSN52rm074TlrtMCSvhFvkZM+1QzmLWfsxroO3hPNugrtKP7FYCcAy1uQ9dv5LhuuerQGuqeIPikOf+mwtE9rn3nTZyVoMNVFYXE1s3TNWLsyiODnaNEgyCn30r5gfgtDOOddbxjmdHR/W7GmP9StRnByDYea9MRsQacf28kcuZudi1RQrICRGpfG/oap9htbwZKw+PHupWROs5ZPBsUz26UyyEJvzhY67dYo9ot7r+/G9fg5IMBMJR4t6FPl/P+tKnqyy+XtfvJqeGUH9Ad1xoLKcZWHfOf5mSlhhxLxpVsIKclv8yrsD2VuqkXVwhzA0Wnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=td+GOn/bDlDGmLeGHpvmoIpyPSmd7C+GzWV8Y0kx1aM=;
+ b=E7A9QFU+/xUK37rmqNKpbw/YW1ZjVlXzIQRI94hyqdTyTao+Rbh/z++wETKquPUStrlRu8L1kU3hS9Ba2O7iU0lj2BfLwhnsbRt9KUBySfyvn5Jj4kEw98CBOZOM8zSeFvOjy0K7RP4hlL0wNWzHhbTm5/6z2m8lumaB6IJd3LbaHSV0LBk/YSVYNa+Pi9/2mXzx0Sgc/Z3m6kUra0Opb3erW5JZRQwc9AVYfjxYgH7X9nSEYzyKDcSM7mjAwiLrQdd0KM6RhKLA19GVQKCzvvTzv4Iy9ztKWqGwXYgB/OmJxz2i4HbQ7ALPoK3SJoEp8d3wuBXkHHHsDcWjzn7FhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=td+GOn/bDlDGmLeGHpvmoIpyPSmd7C+GzWV8Y0kx1aM=;
+ b=IIgIGiG8yoVl2cKKDvZWNlokxPGmpzHKfnh2GkpanA4NR+Tl9RBPX2lbZ6FneV/WqJtAR0SSbhiWpLaeDVNji0xaZkl0LVs8HGQvDsgjGLLtBGJVUpopsofq3i8zbIwLEckVQ/2ttyV0HhoikfdbclZ/C3BhFBrBEd8fJo3h9W8=
+Received: from TYRPR01MB15619.jpnprd01.prod.outlook.com
+ (2603:1096:405:29b::10) by OSZPR01MB7099.jpnprd01.prod.outlook.com
+ (2603:1096:604:119::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.7; Thu, 29 Jan
+ 2026 17:55:21 +0000
+Received: from TYRPR01MB15619.jpnprd01.prod.outlook.com
+ ([fe80::606d:1c5a:2899:5ea6]) by TYRPR01MB15619.jpnprd01.prod.outlook.com
+ ([fe80::606d:1c5a:2899:5ea6%4]) with mapi id 15.20.9564.008; Thu, 29 Jan 2026
+ 17:55:21 +0000
+From: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown
+	<broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 1/3] dt-bindings: spi: renesas,rzv2h-rspi: allow
+ multiple DMAs
+Thread-Topic: [PATCH v3 1/3] dt-bindings: spi: renesas,rzv2h-rspi: allow
+ multiple DMAs
+Thread-Index: AQHckKBoiIlnO1RsKkWa2BfvQw7G5rVpbLiAgAAAOLA=
+Date: Thu, 29 Jan 2026 17:55:21 +0000
+Message-ID:
+ <TYRPR01MB156199346D508EFE1F0F94349859EA@TYRPR01MB15619.jpnprd01.prod.outlook.com>
+References: <20260128215132.1353381-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20260128215132.1353381-2-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20260129-thigh-yoyo-b1e6cf9d455d@spud>
+In-Reply-To: <20260129-thigh-yoyo-b1e6cf9d455d@spud>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYRPR01MB15619:EE_|OSZPR01MB7099:EE_
+x-ms-office365-filtering-correlation-id: aad7c0a7-243d-41fa-bba7-08de5f5f922a
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?35og3wmZG0BfM3EN1nCCQ1FWsrxCuelNrYaHc4/2XE48PVTZGyZhd2tQwX7t?=
+ =?us-ascii?Q?ZsAHhpT1IJpdXP/P73aKdGOk0kosV9k4vVtovzv7tsUg8XLZEkfUMqB1ZSkK?=
+ =?us-ascii?Q?qQRLIErCkDHnaju/lOA+VSfBWuzevfHGy9fI1l+cu+ZBL/zdg47xWVfxz42A?=
+ =?us-ascii?Q?ra5dNUUsJVttXMvXGWFrJax7bDGs2x8e1ipYF1AzKLQbHx6TDIv/3GaAxMqo?=
+ =?us-ascii?Q?VdrMiIZAh7GPEST54B8hkMvC3XuzauiG1AtuzBWWqyo2553LTNl5/hPVkx47?=
+ =?us-ascii?Q?O2vhdK6oJmZBaApI0+td4sSHjvc2ZDdeHjB2RKyyu6JJa2p4/SoUE442vsYE?=
+ =?us-ascii?Q?ho6MRAXwvZ8/WGS9Bgugej+ZDR3cRFCps8tB8b8JGK/LImfD2YtrdSAlFLG1?=
+ =?us-ascii?Q?of29ELuElkW3joNzROUX1OyISAfGHMiyx/w4+o3njqLCPRtQoZQ4w9Zrgox0?=
+ =?us-ascii?Q?LjdMy+qAHOmz3Dcy2FtStV+AsqwJkHRpVGpRTWsVRisUEaBdJ6EAmLMXrozy?=
+ =?us-ascii?Q?9m9op4Ok4FhEovHqX1KHDNGMFO5Bvhs/doggyy+XoY9NPxLrRBE7ocPkryjz?=
+ =?us-ascii?Q?VYFAJkpDwKlkky1Pz6IrAwzfW9aCQDenn5wvRhX9ywYxmrZ1I5BT3NgYn+Gs?=
+ =?us-ascii?Q?YooUtBCSjddfoj/mKOEbTLa0dMDXMb/gAXY//s09/LNb9o+Jokcigyrpdpvn?=
+ =?us-ascii?Q?Qt3t0b9NvC8J99ifmd2P9q5608iIzsxKHM8j2S3SR6vZj2IfU/JGAYo7Yloq?=
+ =?us-ascii?Q?YhUW9e5Cw4+E9wb5eKtTG3XOu2nIjxtkvAiHkAHpB5LpDd4T/UtPNIuLpaYw?=
+ =?us-ascii?Q?OhFw/yorJy8+mCEK1lvd4pftUGl6jm/UaX0zvhETrZS20NeBKA0hIRXgbX1t?=
+ =?us-ascii?Q?9w22Uc7PshXQ6HUn+WbJpuHEiWz7E/z+zQ8mKRMZZNeaS5SO6kUkANdnC7BO?=
+ =?us-ascii?Q?yd5CWUqAY0ixQhjj7A4L2FSlhb/xhnnTQc6BDeppWJzv7hzAiSZGUdluFryh?=
+ =?us-ascii?Q?2tK/FkuvrrYpHaws+Lbtij8huNLQsKvpBn6bB5QDK015Co6t/WAyA7sAAbDA?=
+ =?us-ascii?Q?KiId2aujRZwAMDLnRSDZi5YjMcnfreHiHNxRGoWdwTcxKtuXFbIIAbohI0kT?=
+ =?us-ascii?Q?Fg6GUvtXdqqRO5HrFI4A6vzUCDFTOyQS+lxWTzDMZW7oDXQAKa1SkX2X/Ech?=
+ =?us-ascii?Q?zEwE+HJdjkBTih905F7nowpCoCr1y8lOMrJg6o9KjNJyGlbJPwlrbvvXEptu?=
+ =?us-ascii?Q?ARESKIbjLfH270/3NUzxrCx6ZLkhVGBEflj/iQmp279JbAOzjPRpSzl49FQo?=
+ =?us-ascii?Q?J9VK3WaYikanc1QLZB7dVbCT/Zf37wzmf/WTZWdTfbB/1hqrwL2Zjk/rc5nb?=
+ =?us-ascii?Q?l0bPso52D+jfnbyr/fW6C3tWSm+9k/6fKtC2kaUFQtfSerbFP9n+LPSo7iV9?=
+ =?us-ascii?Q?pzbutJ5PuOPsF3KxrCxqaxH/JNfX5OetVSkPeGhHK2hbFf4rdbgzvn2zZuyC?=
+ =?us-ascii?Q?tQO0rx5EW0hlT/ykjRh1+dHGPgzUAHfLP6q3EDSt+axEeM0FxVHuYC1Erwny?=
+ =?us-ascii?Q?0YZyLEln4izC/sZqOc6Hh5a1+HOYnUWyULnk5rxiN5NHi5MBDgyVk1Tm8qaf?=
+ =?us-ascii?Q?E5Sxis5s+G3TEZVKNmUALzw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB15619.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?OwKT8lk6bCZiIyhsKVaeasJA3paiH5J/KRbqtZ/zgz1njwiTZMIPhEMAOOE7?=
+ =?us-ascii?Q?5uiXIvNFZM7CoSUptHykc4r/pseg2FP+vAAhhdJ8RSHi1Bv5UiNRqa74GhTv?=
+ =?us-ascii?Q?0g9J/4ZrfKKdIATuPd12RITLeSrScRCvRyCMDQiQ+Qk9wE5OxlU43RfxQk8t?=
+ =?us-ascii?Q?YqbsoVkMvOBUiLPDgv0IyFavjcEHimtGZgSq5fnXmIha4YcOF4H7DEXqR4wx?=
+ =?us-ascii?Q?naQx1GLgtXvRcTQJh8ChiwHkRD5+AWpVeU5ZwmvGG1w2KX7HYi2+G0MHEqYB?=
+ =?us-ascii?Q?g7gJEcsgjSalf86qZI3pUzw5wgHWW5A3R/PL0f1ILfNQZsDkevzf7XrMLo9U?=
+ =?us-ascii?Q?MGEUFFgO4XfIJtBG8t7qmriKZBxTNKsb9JjcNk2fAcnX7EeY1i5ZeWD7C/lR?=
+ =?us-ascii?Q?jcj/Y8zndgc7RQ9wk3IzfKNtwm8xGvx+6a47g+olsXh5dWn9Rpny3UsECPPq?=
+ =?us-ascii?Q?tfoykuCvrGRb5Gx4iwLs1lEZc63T/ykG4CIX3sF2unlv6LhkiDekUbPwKLpe?=
+ =?us-ascii?Q?u1gs7C6E/RXfSez0iLtndcrHivZSZnADSjoMjMrXDEtXFHgcHRR1Z29j8y3t?=
+ =?us-ascii?Q?Et5SwRC8zPqfMRBRS+TGYSGbkeVsirqe0YQJO7eaPvhGRmuc7XhU6ByP+HO2?=
+ =?us-ascii?Q?9BVnQe+EqvIunpz+9KX4yaaiB4cgL9Ihbia+gUQUqo9pbTbnc3rMDEzQvU/x?=
+ =?us-ascii?Q?9qlkw09Vw0s0FfN0Q71EJBJ9QQ86gBILW/xySzsbpdj2yOlDXU9G9z8InueZ?=
+ =?us-ascii?Q?zpaa9pVn7a6a7xe/F2jp/mOkxoDk1ACeOd3S7KRU9/df4/j8y33K7Fj5On9P?=
+ =?us-ascii?Q?UJVehVK67wJIrUdYBlsBh3ace0C0kMQz3h0sILGN6mMYZFNgL9aorkdaszIb?=
+ =?us-ascii?Q?vznbLLeNzY4x6oB8+pFOmbFarudqUHR+fVlyi2Pxk/0kr7TnyjNW9fK8jwd1?=
+ =?us-ascii?Q?EZEEd7mLwhmeu86AxI2mLfA65Tickc2DC0Cl7GDzFhBDY70tMtmg1y8/91nV?=
+ =?us-ascii?Q?dzkHONP5BqPVAHKllyRh+bqpWIYlSTcjlHpBtMQdLpLSIfVmxyr/maQWSw1h?=
+ =?us-ascii?Q?nFoZLKiKY+EH9/eLBNZNdF9/+jX713KMcQdBw6J4vrJj2CZCJD9oxmRqLFaC?=
+ =?us-ascii?Q?R8myWRe8OVzOj8ZmzR0P/YPydPFQtTPzD9J6mhTgkPqaqJ6DjaudTrkqNJ2s?=
+ =?us-ascii?Q?YAu6PU1XDILW9YJfJ8b1o6HSNn/BGIyLn3paoO9uosIm0Xuw2WX/6IIBYP+y?=
+ =?us-ascii?Q?VlaY9Qix06RbOOKL4BYaZQVox4m+3rzrybOKxC9Hpee9ysTiq+dnvVjSQeHr?=
+ =?us-ascii?Q?py2q+CLYNxLjqskJIHE3uola8V5yd2whXlN5FdNaLWpgJAbBurWUW2rn/eIy?=
+ =?us-ascii?Q?LVvfKwO5V7eYVoNV1kbWbZ0GVhO8rr5f1N+7zB3yWyzVBgWInLPHHxz1FAz0?=
+ =?us-ascii?Q?EKY1N9sEcv7hYCP+rg12XiPXa3Rbc23jtT9o80zvubR7wnPGLuCggw/6KPoa?=
+ =?us-ascii?Q?4KcoLYT/5DqQmxpaVNqIPG+aM6ZPInf6U0ALtD9eGpymWMrDUCTNmLnJ9e2U?=
+ =?us-ascii?Q?2P6GVqFSoFjvAGqZeHCgs81Bk1UM7TS2r6yvx4gwb5UkCl/i6fbWYi/eP3w4?=
+ =?us-ascii?Q?bkwfgxfEn28FAnk3zGmZ26AxpXossQPFkQdrxcsTikVRkGuhnNAzLgiPgqKV?=
+ =?us-ascii?Q?zjyQ4gE3uIChSSS7aF27pJh4BITZX/8WAY6VnOs6cnL+dNXXCZ2a5IzNmBO+?=
+ =?us-ascii?Q?D32CZKlGvxiLg+PsuHRp5PPVRkxP0ks61gPGRQG62mQMKsFjR4ud?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260128-rz-sdio-mux-v7-0-92ebb6da0df8@solid-run.com>
- <20260128-rz-sdio-mux-v7-2-92ebb6da0df8@solid-run.com> <CAPDyKFrBuL+747QUJJUejtcvjm0V7Lt=vHwjvcMdCt_h4=sFwg@mail.gmail.com>
-In-Reply-To: <CAPDyKFrBuL+747QUJJUejtcvjm0V7Lt=vHwjvcMdCt_h4=sFwg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jan 2026 17:13:10 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXgLR9yeLa5JKNdAOtNEirJ8263bmn1zRNAnKnmf8F-Sg@mail.gmail.com>
-X-Gm-Features: AZwV_Qhgryuc7jjty9iqHy9zUzs2cyLGoonPOo05F0vrabMAU0UMySZvEVLbN1w
-Message-ID: <CAMuHMdXgLR9yeLa5JKNdAOtNEirJ8263bmn1zRNAnKnmf8F-Sg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/7] mux: Add helper functions for getting optional and
- selected mux-state
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Josua Mayer <josua@solid-run.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Peter Rosin <peda@axentia.se>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, Jon Nettleton <jon@solid-run.com>, 
-	Mikhail Anikin <mikhail.anikin@solid-run.com>, linux-can@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB15619.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aad7c0a7-243d-41fa-bba7-08de5f5f922a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2026 17:55:21.1599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8GtBLaTJ1pBf83irDkqTeCglC8khY26bDlRCWX6odr0b1lyONlzjC4IJ7bHg8Y1Ixxgdn3QN1O1u/zCigvkme7BkJTQHYf+VIHVHRiig5DHfxQ/RAW49JZFrJeGWMAq2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7099
 
-On Thu, 29 Jan 2026 at 17:06, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Wed, 28 Jan 2026 at 15:46, Josua Mayer <josua@solid-run.com> wrote:
+> From: Conor Dooley <conor@kernel.org>
+> Sent: Thursday, January 29, 2026 7:45 PM
+>=20
+> On Wed, Jan 28, 2026 at 11:51:30PM +0200, Cosmin Tanislav wrote:
+> > All supported SoCs have multiple DMA controllers that can be used with
+> > the RSPI peripheral. The current bindings only allow a single pair of R=
+X
+> > and TX DMAs.
 > >
-> > In-tree phy-can-transceiver driver has already implemented a local
-> > version of devm_mux_state_get_optional.
+> > The DMA core allows specifying multiple DMAs with the same name, and it
+> > will pick the first available one.
 > >
-> > The omap-i2c driver gets and selects an optional mux in its probe
-> > function without using any helper.
+> > There is an exception in the base dt-schema rules specifically for
+> > allowing this behavior (dtschema/schemas/dma/dma.yaml).
 > >
-> > Add new helper functions covering both aforementioned use-cases:
+> > dma-names:
+> >   anyOf:
+> >     - uniqueItems: true
+> >     - items:
+> >         # Hack around Renesas bindings which repeat entries to support
+> >         # multiple possible DMA providers
+> >         enum: [rx, tx]
 > >
-> > - mux_control_get_optional:
-> >   Get a mux-control if specified in dt, return NULL otherwise.
-> > - devm_mux_state_get_optional:
-> >   Get a mux-state if specified in dt, return NULL otherwise.
-> > - devm_mux_state_get_selected:
-> >   Get and select a mux-state specified in dt, return error otherwise.
-> > - devm_mux_state_get_optional_selected:
-> >   Get and select a mux-state if specified in dt, return error or NULL.
+> > Allow multiple DMAs to have the same name and only restrict the possibl=
+e
+> > names of the DMA channels, not their count.
 > >
-> > Existing mux_get helper function is changed to take an extra argument
-> > indicating whether the mux is optional.
-> > In this case no error is printed, and NULL returned in case of ENOENT.
+> > For RZ/T2H and RZ/N2H SoCs, limit the number of DMA channels to 6, as
+> > they have 3 DMA controllers.
+>=20
+> What's the rationale behind not setting minItems to 6 here
+>=20
 > >
-> > Calling code is adapted to handle NULL return case, and to pass optional
-> > argument as required.
+> > For RZ/V2H and RZ/V2N SoCs, limit the number of DMA channels to 10, as
+> > they have 5 DMA controllers.
+>=20
+> and to 10 here? Do any of the spi controllers on these SoCs not have the
+> ability to use all of the available dma controllers?
+>=20
+
+I left minItems to 2 in case it is necessary to wire up SPI to only a
+subset of the DMA controllers, maybe for performance reasons in a
+board-specific dts?
+
+I know that dts is only supposed to describe the hardware itself, but for
+now this would be the only way to pre-select which DMA controller is used
+for a specific IP.
+
+Let me know your thoughts.
+
 > >
-> > To support automatic deselect for _selected helper, a new structure is
-> > created storing an exit pointer similar to clock core which is called on
-> > release.
-> >
-> > To facilitate code sharing between optional/mandatory/selected helpers,
-> > a new internal helper function is added to handle quiet (optional) and
-> > verbose (mandatory) errors, as well as storing the correct callback for
-> > devm release: __devm_mux_state_get
-> >
-> > Due to this structure devm_mux_state_get_*_selected can no longer print
-> > a useful error message when select fails. Instead callers should print
-> > errors where needed.
-> >
-> > Commit e153fdea9db04 ("phy: can-transceiver: Re-instate "mux-states"
-> > property presence check") noted that "mux_get() always prints an error
-> > message in case of an error, including when the property is not present,
-> > confusing the user."
-> >
-> > The first error message covers the case that a mux name is not matched
-> > in dt. The second error message is based on of_parse_phandle_with_args
-> > return value.
-> >
-> > In optional case no error is printed and NULL is returned.
-> > This ensures that the new helper functions will not confuse the user
-> > either.
-> >
-> > With the addition of optional helper functions it became clear that
-> > drivers should compile and link even if CONFIG_MULTIPLEXER was not enabled.
-> > Add stubs for all symbols exported by mux core.
-> >
-> > Signed-off-by: Josua Mayer <josua@solid-run.com>
+> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 > > ---
-> >  drivers/mux/core.c           | 178 ++++++++++++++++++++++++++++++++++++-------
-> >  include/linux/mux/consumer.h | 108 +++++++++++++++++++++++++-
-> >  2 files changed, 253 insertions(+), 33 deletions(-)
 > >
-> > diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-> > index a3840fe0995f..b01ec126caaf 100644
-> > --- a/drivers/mux/core.c
-> > +++ b/drivers/mux/core.c
->
-> [...]
->
-> >  static void devm_mux_state_release(struct device *dev, void *res)
-> >  {
-> > -       struct mux_state *mstate = *(struct mux_state **)res;
-> > +       struct devm_mux_state_state *devm_state = res;
+> > V3:
+> >  * impose proper maxItems for each device
+> >  * impose maxItems for dmas property
 > >
-> > -       mux_state_put(mstate);
-> > +       if (devm_state->exit)
-> > +               devm_state->exit(devm_state->mstate);
+> > V2:
+> >  * new patch
+> >
+> >  .../bindings/spi/renesas,rzv2h-rspi.yaml         | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.y=
+aml
+> b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> > index a588b112e11e..cf8b733b766d 100644
+> > --- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> > +++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> > @@ -58,12 +58,16 @@ properties:
+> >        - const: tresetn
+> >
+> >    dmas:
+> > -    maxItems: 2
+> > +    minItems: 2
+> > +    maxItems: 10
+> >
+> >    dma-names:
+> > +    minItems: 2
+> > +    maxItems: 10
+> >      items:
+> > -      - const: rx
+> > -      - const: tx
+> > +      enum:
+> > +        - rx
+> > +        - tx
+> >
+> >    power-domains:
+> >      maxItems: 1
+> > @@ -121,6 +125,12 @@ allOf:
+> >          resets: false
+> >          reset-names: false
+> >
+> > +        dmas:
+> > +          maxItems: 6
 > > +
-> > +       mux_state_put(devm_state->mstate);
-> >  }
+> > +        dma-names:
+> > +          maxItems: 6
+> > +
+> >  unevaluatedProperties: false
 > >
-> >  /**
-> > - * devm_mux_state_get() - Get the mux-state for a device, with resource
-> > - *                       management.
-> > - * @dev: The device that needs a mux-control.
-> > - * @mux_name: The name identifying the mux-control.
-> > + * __devm_mux_state_get() - Get the optional mux-state for a device,
-> > + *                         with resource management.
-> > + * @dev: The device that needs a mux-state.
-> > + * @mux_name: The name identifying the mux-state.
-> > + * @optional: Whether to return NULL and silence errors when mux doesn't exist.
-> > + * @init: Optional function pointer for mux-state object initialisation.
-> > + * @exit: Optional function pointer for mux-state object cleanup on release.
-> >   *
-> >   * Return: Pointer to the mux-state, or an ERR_PTR with a negative errno.
-> >   */
-> > -struct mux_state *devm_mux_state_get(struct device *dev,
-> > -                                    const char *mux_name)
-> > +static struct mux_state *__devm_mux_state_get(struct device *dev, const char *mux_name,
-> > +                                             bool optional,
-> > +                                             int (*init)(struct mux_state *mstate),
-> > +                                             int (*exit)(struct mux_state *mstate))
-> >  {
-> > -       struct mux_state **ptr, *mstate;
-> > +       struct devm_mux_state_state *devm_state;
-> > +       struct mux_state *mstate;
-> > +       int ret;
-> >
-> > -       ptr = devres_alloc(devm_mux_state_release, sizeof(*ptr), GFP_KERNEL);
-> > -       if (!ptr)
-> > +       devm_state = devres_alloc(devm_mux_state_release, sizeof(*devm_state), GFP_KERNEL);
-> > +       if (!devm_state)
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> > -       mstate = mux_state_get(dev, mux_name);
-> > -       if (IS_ERR(mstate)) {
-> > -               devres_free(ptr);
-> > -               return mstate;
-> > +       mstate = mux_state_get(dev, mux_name, optional);
-> > +       if (IS_ERR_OR_NULL(mstate)) {
-> > +               ret = PTR_ERR(mstate);
->
-> Should this be PTR_ERR_OR_ZERO?
-
-"mux_state_get() never returns NULL"
-https://lore.kernel.org/202601221036.J0kR78Uw-lkp@intel.com
-
->
-> > +               goto err_mux_state_get;
-> >         }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> >  examples:
+> > --
+> > 2.52.0
