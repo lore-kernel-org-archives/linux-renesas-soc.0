@@ -1,195 +1,284 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C835421ABB9
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jan 2026 11:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769771858; cv=pass; b=FRmlXJiNe0hQ70rmrBoesnzxvzrDxyhkWazXXWGVnC4vt/WW8IBOtiAV15oa8gRh+mLCXBNA5M2Zji6TpHy5o5vOPtYY4jJnxeAR6AIyNu5h9Hk0SuG1NVp7p3K2Kg12Q/IbPfNiHPitBPUdia3CtMDUsKfry+6mE9LbIsnxr2A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769771858; c=relaxed/simple;
-	bh=ieMzSSdmrsaSxdwMH87qOa9PeH77tWwoNBVCM3sLEoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaJE7XDgmlrK4q2c5Jj/kDrcMpFca9E2slxqYsxT1scMQ/MTkpL6d7hum9XjBM/yCmK5XCumNITAwxNV19FZWePNBl98CVCs2Ue/rXZsL0G6BRSHzpOq287BruiT5ETWQ1LN0ZplQmdjXe2N8VCSFNEFpksg8Uu79uP0sLBVQzs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdqmmDEy; arc=pass smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4B8286416
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jan 2026 11:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769773671; cv=none; b=rfFP6tZxWkr/gPPbqMy5apyA0El73JqYBmrmpA/BlJgNzm6rNGyFJ3cmGl3Kf/zrwArtwoqZdYGyj1biQA+b/veBpdHJ9KnMyWH2/U5uZhTqmeX4kUzHqDRHwmmBIWo+pvvTSo+3CQSlcycMV5BjisTS/b0lz5a7PaplOoOirTM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769773671; c=relaxed/simple;
+	bh=MGhvFRxe1NNo7xLt+3aHdT5eJAUyDKTnSre/6IBXckU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mPKLspiVi3dwFQPpOq6W9A16aC+Vi0RineJu/d6vOVu9CXyWI7iMqMe+nsJ8XRZgt1sLYvbgJKCT/x+Lzzq0fhqr9IS9gfFVdKydtEylt+Clj7xokMGUi44IjwU4tVYLvDXU9fKkmBPDj1D9nUg9ZH2WGFWr+7mLBuiuskeEXEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWJO9uoD; arc=none smtp.client-ip=209.85.208.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdqmmDEy"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4359108fd24so1202711f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jan 2026 03:17:36 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769771855; cv=none;
-        d=google.com; s=arc-20240605;
-        b=edqN915BX3r7kP6YBD0QKZG+doEc6JSgdE4ARKGR+8wIyNyDZYhnerBc+lCCYv22UY
-         yxc3nFSzhgWWdgWr51ig0+WUYrxRZHqJ0wBcOcBFrwc1DZPwSlIWM/r7bDSmtslynY6c
-         R2CTL2oU1pVU7+5M0KIUiBOMPje7Y7HLgXIQqYvS+J8q/O1KY1alEs9YnAPHgIxslWDP
-         q3e6Ly0sYDD5qPc/r433V20lzW4vzhMhf9Edh9mtbuaGVzk3b85ZtliMEP1BCyQNb4TV
-         TPRzGT+Ip0PGtRPFHBeJj3fe1X03MfKYLAief5aIFdmLRJ2TAH0p5rYRa/Xq6ez9dLUn
-         TXeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ybE6TLXkR2uOs1A0XOgGgUR8zOB5QCwOEC9SXGGyumA=;
-        fh=KPR0pIGPucjeu/qGWcXVAzz3woFNOS5bhVorxSO4aOQ=;
-        b=XySDGI+7pkdXyOWeeC8Apaha7qwYutiWdkeNjS6OB1wlAQna5x62P0cbY32/qanNBV
-         wJwaikWUfX2sp1BI/P7LQdaCt9L5aymC0MYqboe3UNCPDrB2PiQIz9821gTrTEIfqLRn
-         pybcnmitMMjg/YK2BwadFV4PIa8Uwyc7a/WIKSKdDhdwQnoDOVElg2yY3BMRlG3KHPEr
-         rIil4bbtEez26Jwd4QD8JdRiPrtj/rBmwgukmTgqiPkONNMUrDutYYNtII6IO5ky6Z38
-         rxWPHy22NSQPZXAbCxJtRuNYDgQOFHgQOXL0r0odNVe7Yu4fJbN2lyH8oKt1/Ff35qQx
-         OYSg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWJO9uoD"
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64b7318f1b0so2740888a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jan 2026 03:47:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769771855; x=1770376655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769773668; x=1770378468; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ybE6TLXkR2uOs1A0XOgGgUR8zOB5QCwOEC9SXGGyumA=;
-        b=YdqmmDEy8CYd+M7GsfKRb0hGhmrs1+OAUKSiajd+P4p18cVyZ/mRkNK9F3g2NBs00j
-         stkeX6YWs7Pbnkp4XHtr8pBSWNUb/UyBNq0QSuaPB7uqczCkQlbKzrH9mNIX8CSeCx8C
-         bwR3VStbV5pFlAkm3/6C6yRAJgQMJ/P9NKNSwAJOU/9A4QVWw8eDnfcg+flBgAZHbUd4
-         aawF+sQFZvdpGuI27Gj1Vqg0b12gOvEiWL0TgBTm0OLmixaEiA0jCxsM0oBZxOLbdhMX
-         c20Sq754XGrl7SfzuBBQXRiSwkCji+wvLVgCxGJeTtTgxftjVPTnafuX1IDhxukDCeU4
-         i4Eg==
+        bh=v5uLnmPZ377+nkXuOYWLduQd55UQQkrY+wqK7qtadoE=;
+        b=lWJO9uoDN5DnLnslzD4+2HEpSY1JUJkxfdZbehNBP2z55GUobnbgr8ZjvC/x4DmIpP
+         xEiUjxxpkAQ6FSMtA2Dl/f+ZiT2UjO1502SGQwQpsNa5lmmALbuL1JbAEcLjugFdtaXC
+         puNINTu4gF+srodacvY0K20iMLUJmXx3KuyZYu7QrbkE7IiFW9wLDzu2Bt0zV3TVwF+x
+         0+0/QnkVqSOJVGphCoKARo2YNfm560T7IS1TxhsZodi1zCACm7KPIYQRQi8ibBtk+WUn
+         ljVJ6bzHnetR2rhaFIsSemaOMx4/XBSOxY5r2hiIjnU85X97jGA3xdTJIdfuW76mqaDG
+         3/pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769771855; x=1770376655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1769773668; x=1770378468;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ybE6TLXkR2uOs1A0XOgGgUR8zOB5QCwOEC9SXGGyumA=;
-        b=pydbv3yaH+CP0myfdY7EJ7kzF1NUEk9LjLmnwus/4Je5MIpyEaodz2ogpDkEwhjxV1
-         AuIxUcRQ8N6+Gq20hmi2IPh7SLDEAJTa8GEusd2nVwQLMpG3Iick+9B50nPuQ9uCqrOt
-         zjFV+rRwC4QJnq18g+WKz0srp1ObIBcWzc7WlKUCV5byP1CGoplLSdEWlVYe2eJKPkxo
-         nvxrZKgCW/cmai9KLY2lLuwAq9erNcHrqCm1vIm5T2miCpi65eimCSB6kC31e/Z2cuyH
-         HB2Sk0hTQ1o2fDW5UMClWiKt8zpAJP2445mmDujxSuNEXEaCIDBfcWaK+XQYNpgj7Dp8
-         gDng==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJjo7d2IcoOAJpaGER6hX/bN9Uu/OchLJh7/nAHXHEZWrja0LZ3YcuUItuDmgl74JnX7KbUdkO2PmY+acXeT2+Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Q4OeTSSnjFtYjGhuMmAzsbjssUDld4tM1O/ff9UYVMsrr8ME
-	uvNRBAJvuhfgJvdvINfm2tcKqP2Zum9TUafl/Q/xppyoTplcR95MmywFYGLHWi6Xvi3Oq9tOWvV
-	OzZkZHSeQT2EwGlz6mpl+Mbj4DiCCV2DDnzagOvw=
-X-Gm-Gg: AZuq6aLvdnk3jnHm3kwa5AmCV6+vTYpwXhROr3rsMWN6YupB/K3ZC83Mn5UF3fBnVk2
-	G3KyCV8pQoWowZ83xNt8IA/c1jmgotc61v2zWxnR2Mww/nrQl4aMcfK+d43hPPwYPQwnpuuG60x
-	2XPu+nRqxeHMUEEmtZEhVxOlRa+9AAAZ3Eu5d4h1BkdGb6VasyrihmDLRomT2SzGQeuh1+kXB4W
-	ThAX7qIZoTNYXF9SfD+yufe5pUv78WufkK0680SvHJ5HNK0HQLHWzlfPHAEHM2bv9DrC7mow1RM
-	LgXU+jQcXS8y2NvfMRu+f/PB58AwtdlHdgya7wHredmVtpW4DQdj2GjPYv6OysysCyCB1gg79Wl
-	GIWf2115RMfHCKvaniVnYWYk2
-X-Received: by 2002:a5d:64e6:0:b0:435:9241:37c2 with SMTP id
- ffacd0b85a97d-435f3a7c031mr3752578f8f.9.1769771854874; Fri, 30 Jan 2026
- 03:17:34 -0800 (PST)
+        bh=v5uLnmPZ377+nkXuOYWLduQd55UQQkrY+wqK7qtadoE=;
+        b=sktDll4J9+evLzeve31Hj3CcrruC+xjVD2W6zQ37bKzVi0MrMhRQRXTdiiMMGtOF/U
+         ywKQjxGhGNVIrDwbzSxz2TYSd2LgGcJDJ499yE7ZjbpIVeOG2YHjAx7W8uwHaokWxTC0
+         RNcd/sb9Qu9e2K0I5OaAb1G6BbCA+hjnTsbF1UlU2h7N4oF3LSpXl2B9wY7M1w+6kWRJ
+         RBRBYmxq8q2XH8jbqgpZr4g1JAHFEd+5HxBQUooRjE5LhJTFSiWbekDkt9qMSgD2qZv1
+         NsPT7riVYnvDfg6uN1vL/l/1rQlAjO6vHvXnwWpn8CmQ4qm3GVZrQNpYR12UYMlTs/5l
+         ssKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUCL7zn3nhaf6ZxdMFE6kRzn6397a1moD01JIlY0YWCXnmePKS1/r54+cK5cBiWGtiNb1JPjT16hH1iVcV5IIw2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg3oF/hm3hhyJMtX6N4knbR6RbBlr7VpUW039nzZijliyljqF6
+	RXL6Z4Nnp0eABz0XBs1qalARKwOd/TgZXMTeXTQZeDvn2mEqADpPZzGz
+X-Gm-Gg: AZuq6aJSXHhl2JcI6I9un2j6wACwEYZyCM4+CwHv8Xpqbdv8Ghi3ASBaiQupGTUEC1v
+	aHhuxdtvLKG6rcrHxRwn+Nzw1OWaADlAro0fg5qSZOGImNRllHuQZsA95XfYNmHCOVhfOgyLeij
+	AWx3l76yF8zgFWKnrUDc4eaSa9/aMNt9ukDOPKnGxEryng1aEAG13hEpPsu9q+E8s9/ZaSzSZNJ
+	Nw0FqQEa/kjhHR6thrn8CghU8o1AzrRoLem7PHV9ZRCuIvb86lhYdaOrmFan2+hwbpE5s7JlbWd
+	ydgngUrn9A86JLXC3ZzIbD7n8D4Jr8HMGSK2VvJKMA5QyhgZ5NfgsFIDUyLJmEHo7cEXOWFl3dc
+	S4NsNZtIlckyhXEkoa2uv7XiJSKGZLKoRKvAymMH+x3SmSXGe7KkgQVLxV43j6xsjiy6kIFrxCf
+	K80fYNoXpjMzvf8ksA2/GI522RX2KZDzLqMyM=
+X-Received: by 2002:a17:907:1c96:b0:b88:5a44:fe23 with SMTP id a640c23a62f3a-b8dff7a3461mr144840066b.39.1769773668012;
+        Fri, 30 Jan 2026 03:47:48 -0800 (PST)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:bd64:2984:fe71:7633])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8de3046abasm243751266b.2.2026.01.30.03.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jan 2026 03:47:47 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH net-next v2 1/2] dt-bindings: net: renesas,rzv2h-gbeth: Document Renesas RZ/G3L SoC
+Date: Fri, 30 Jan 2026 11:47:39 +0000
+Message-ID: <20260130114744.252533-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260130114744.252533-1-biju.das.jz@bp.renesas.com>
+References: <20260130114744.252533-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260121150137.3364865-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260121150137.3364865-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <87cy2wcqe2.ffs@tglx> <CA+V-a8trA53J5xt-p1odHkqeHgk_qXKQeXsf-QOfz2=JmTOSYA@mail.gmail.com>
- <87bjicm66u.ffs@tglx>
-In-Reply-To: <87bjicm66u.ffs@tglx>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 30 Jan 2026 11:17:08 +0000
-X-Gm-Features: AZwV_QhTbiF_Oo5dnEL0l0eoTSNtQr0S69GE8V4RWrNjV_NU86PPR4SKtXB-S3k
-Message-ID: <CA+V-a8sjADs_=81h=5R1nEFt3LWVNuHS1y-kH6Z5ANNp0Sci0w@mail.gmail.com>
-Subject: Re: [PATCH 4/6] irqchip/renesas-rzv2h: Add CA55 software interrupt support
-To: Thomas Gleixner <tglx@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Thu, Jan 29, 2026 at 9:59=E2=80=AFPM Thomas Gleixner <tglx@kernel.org> w=
-rote:
->
-> On Thu, Jan 29 2026 at 21:24, Prabhakar Lad wrote:
-> > On Mon, Jan 26, 2026 at 4:03=E2=80=AFPM Thomas Gleixner <tglx@kernel.or=
-g> wrote:
-> >>
-> >> On Wed, Jan 21 2026 at 15:01, Prabhakar wrote:
-> >> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >> >
-> >> > The Renesas RZ/V2H ICU provides a software interrupt register (ICU_S=
-WINT)
-> >> > that allows software to explicitly assert interrupts toward individu=
-al
-> >> > CA55 cores. Writing BIT(n) to ICU_SWINT triggers the corresponding
-> >> > interrupt.
-> >> >
-> >> > Introduce a debug mechanism to trigger software interrupts on indivi=
-dual
-> >> > Cortex-A55 cores via the RZ/V2H ICU. The interface is gated behind
-> >> > CONFIG_DEBUG_FS and a module parameter to ensure it only exists when
-> >> > explicitly enabled.
-> >>
-> >> Can't you reuse/extend the existing mechanism provided by
-> >> CONFIG_GENERIC_IRQ_INJECTION (irq_inject_interrupt(), irq_debug_write(=
-))
-> >> instead of implementing yet another ad hoc debugfs magic?
-> >>
-> > Can you please point me to a driver which makes use of it? In my case
-> > the interrupt needs to be triggered when BIT(n) (n=3D0-3) is written to
-> > ICU_SWINT.
->
-> Care to look what irq_inject_interrupt() does?
->
-> It tries first to inject the interrupt via irq_set_irqchip_state(),
-> which only works when a chip in the hierarchy implements the
-> chip::irq_set_irqchip_state() callback.
->
-I did implement irq_set_irqchip_state but it doesn't land in the
-rzv2h_icu_irq_set_irqchip_state(). So I was wondering if I missed
-something.
+Add device tree binding support for the Gigabit Ethernet (GBETH) IP on
+Renesas RZ/G3L SoC. This SoC uses different Synopsys DesignWare MAC
+version 5.30 compared to RZ/G3E.
 
-#Trigger int-ca55-0
-root@rzv2h-evk:/sys/kernel/debug/irq/irqs# echo trigger > 14
+RZ/G3L requires an extra clock compared to RZ/G3E and has pps interrupts.
 
-#The trace looks like below:
-irq_debug_write()
-  -> irq_inject_interrupt()
-     -> irq_set_irqchip_state()
+Add a new compatible string "renesas,r9a08g046-gbeth" for RZ/G3L SoC and
+update the schema to handle hardware differences between SoC variants.
 
-This lands in GICV3. For the RZ/V2H ICU only interrupts port_irqx and
-tintx interrupts are registered  in irq_domain_create_hierarchy() for
-the rest of the interrupts these are supposed to be directly handled
-by GICv3.
+Extend the base snps,dwmac.yaml schema to accommodate the PPS interrupts.
 
-root@rzv2h-evk:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep
-interr | grep 294
- 14:          1          0          0          0    GICv3 294 Edge
- 10400000.interrupt-controller
-root@rzv2h-evk:/sys/kernel/debug/irq/irqs# cat 14
-handler:  handle_fasteoi_irq
-device:   (null)
-status:   0x00000001
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x0b400201
-            IRQ_TYPE_EDGE_RISING
-            IRQD_ACTIVATED
-            IRQD_IRQ_STARTED
-            IRQD_SINGLE_TARGET
-            IRQD_DEFAULT_TRIGGER_SET
-            IRQD_HANDLE_ENFORCE_IRQCTX
-node:     -1
-affinity: 0-3
-effectiv: 0
-domain:  :soc:interrupt-controller@14900000-1
- hwirq:   0x126
- chip:    GICv3
-  flags:   0x15
-             IRQCHIP_SET_TYPE_MASKED
-             IRQCHIP_MASK_ON_SUSPEND
-             IRQCHIP_SKIP_SET_WAKE
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Collected tag
+---
+ .../bindings/net/renesas,rzv2h-gbeth.yaml     | 77 ++++++++++++++++---
+ .../devicetree/bindings/net/snps,dwmac.yaml   |  3 +
+ 2 files changed, 69 insertions(+), 11 deletions(-)
 
-How do you propose to handle this? irq_inject_interrupt() would work
-if I move int-ca55-x and icu-error-ca55 under
-irq_domain_create_hierarchy().
+diff --git a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+index bd53ab300f50..21ac3c20bb61 100644
+--- a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+@@ -26,6 +26,9 @@ select:
+ properties:
+   compatible:
+     oneOf:
++      - items:
++          - const: renesas,r9a08g046-gbeth # RZ/G3L
++          - const: snps,dwmac-5.30a
+       - items:
+           - enum:
+               - renesas,r9a09g047-gbeth # RZ/G3E
+@@ -47,13 +50,17 @@ properties:
+   clocks:
+     oneOf:
+       - items:
+-          - description: CSR clock
+-          - description: AXI system clock
++          - description: CSR/Register access clock
++          - description: AXI system/Main clock
+           - description: PTP clock
+           - description: TX clock
+           - description: RX clock
+           - description: TX clock phase-shifted by 180 degrees
+           - description: RX clock phase-shifted by 180 degrees
++          - description: RMII clock
++
++        minItems: 7
++
+       - items:
+           - description: CSR clock
+           - description: AXI system clock
+@@ -69,6 +76,10 @@ properties:
+           - const: rx
+           - const: tx-180
+           - const: rx-180
++          - const: rmii
++
++        minItems: 7
++
+       - items:
+           - const: stmmaceth
+           - const: pclk
+@@ -88,6 +99,22 @@ properties:
+           - const: tx-queue-1
+           - const: tx-queue-2
+           - const: tx-queue-3
++      - items:
++          - const: macirq
++          - const: eth_wake_irq
++          - const: eth_lpi
++          - const: rx-queue-0
++          - const: rx-queue-1
++          - const: rx-queue-2
++          - const: rx-queue-3
++          - const: tx-queue-0
++          - const: tx-queue-1
++          - const: tx-queue-2
++          - const: tx-queue-3
++          - const: ppt-pps-0
++          - const: ppt-pps-1
++          - const: ppt-pps-2
++          - const: ppt-pps-3
+       - items:
+           - const: macirq
+           - const: eth_wake_irq
+@@ -135,6 +162,27 @@ required:
+ allOf:
+   - $ref: snps,dwmac.yaml#
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a08g046-gbeth
++    then:
++      properties:
++        clocks:
++          minItems: 8
++
++        clock-names:
++          minItems: 8
++
++        interrupts:
++          minItems: 15
++          maxItems: 15
++
++        interrupt-names:
++          minItems: 15
++          maxItems: 15
++
+   - if:
+       properties:
+         compatible:
+@@ -163,12 +211,26 @@ allOf:
+       required:
+         - reset-names
+     else:
++      properties:
++        resets:
++          maxItems: 1
++
++        pcs-handle: false
++
++        reset-names: false
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,rzv2h-gbeth
++    then:
+       properties:
+         clocks:
+-          minItems: 7
++          maxItems: 7
+ 
+         clock-names:
+-          minItems: 7
++          maxItems: 7
+ 
+         interrupts:
+           minItems: 11
+@@ -178,13 +240,6 @@ allOf:
+           minItems: 11
+           maxItems: 11
+ 
+-        resets:
+-          maxItems: 1
+-
+-        pcs-handle: false
+-
+-        reset-names: false
+-
+ unevaluatedProperties: false
+ 
+ examples:
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index dd3c72e8363e..38bc34dc4f09 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -75,6 +75,7 @@ properties:
+         - qcom,sc8280xp-ethqos
+         - qcom,sm8150-ethqos
+         - renesas,r9a06g032-gmac
++        - renesas,r9a08g046-gbeth
+         - renesas,r9a09g077-gbeth
+         - renesas,rzn1-gmac
+         - renesas,rzv2h-gbeth
+@@ -142,6 +143,8 @@ properties:
+           pattern: '^rx-queue-[0-7]$'
+         - description: Per channel transmit completion interrupt
+           pattern: '^tx-queue-[0-7]$'
++        - description: PPS interrupt
++          pattern: '^ptp-pps-[0-3]$'
+ 
+   clocks:
+     minItems: 1
+-- 
+2.43.0
 
-Cheers,
-Prabhakar
