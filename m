@@ -1,165 +1,191 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A83EEC3
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 14:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3ED2E92C3;
+	Tue,  3 Feb 2026 14:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770129579; cv=none; b=WSdR4436HLdIYu5T1SPVCqSw4KTwdjzEqcfud40TonVzPrgFvk0qQdHZVTvSPk+ouo8iMTaV9DJSOfz3WG5lD8JKckTTI1dwqE+CxMM7TFU7klAl15s26r6+Ig8kQ2tMkDfrJjeSY89i8DNBg9v0wNXo9Y2sORHgUCnik4xjfg8=
+	t=1770130003; cv=none; b=d/65f30ZuxYmlk7KtYVJw22TWaNvDjj5s6s6ulvafsvMAp23D6gU3kqX91Kd0Uc0k2HQZWedQCuVRSMyNhpTX3/dLg1r+qyDHMGnZ2yRyJAIWNJFPYJauZct8BKrVy1GtVRiZ3MngD3fpuyolhiKomH/XAXeJFqFXCNXDs3y/7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770129579; c=relaxed/simple;
-	bh=dVx/NTBKTBYer1sAELG6RU2I0c4yRgXuu2CweMfhYDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ShhkKDcA1w6dsK5yUKRQXi5nni1uqdNiRqZ6bR/rRkOuQsIGPM7Zeeeeq3KnIOTJwcRrqy5rib90jgWK73ryDXu51QbWwbcppldaLb9HZo1ywNUNNB2ra/zvzqiuXt9Kvv157Ud0vezjlYwMEVPJa/pclyYJBumimGqtgHF0vNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRym06Bw; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770130003; c=relaxed/simple;
+	bh=+I4EbU5H2CwfCr+HfX4PmdXBArW7/Kor7ez70HR28NM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uXEC4nvzRMJ43ZAjRItR86nVbgY4FjnTB6dbP42rQ0TUp7qCKn6d7w4GpIBB+Cg2SoWxvOtmClxhK1B1wX5OOR1R8nLUK05J81+BTCjD+nHBXknvNYGvjJbAriwVyCj4tRtmw7pEx9hvzW0DVi7E7oNZCRV2ZueKH60LG+hCL0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTK4R+js; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRym06Bw"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-435a11957f6so4473468f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 06:39:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770129577; x=1770734377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=jRym06BwzroZGQUG8Fxs/IPBN0y5m+bnPbZGsQJBnLpVJXK0xG8snEdb+ez5aFpeno
-         ZduymtZzN9OxAhzhEQxu5XFZYCRI2qIeKW2uQuIhgdcHIOpV19PyYyzw9tlVTcGvUNkD
-         rcE2fuE/TLhOZftrASBtEb8WGqXDsOYhjdz9elmoMTGfvO8qvKYMYXd2IU8pz0FD+lvt
-         sCvh6YrjbyKPP/pcue3OTAXJpi3a0sCzPgJhc7e1RceudaSzVdZrJRkwc9iOj0KWEKsU
-         Ywpn/KUOEnps4uwNiyJc2WogXaUE8vWw4FvuMWc9iUDI4QuzbhivjBd2j1tR24Ey357h
-         ovYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770129577; x=1770734377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=CMjN0wWrFyEGN/ff6UxWMRQKvar0lDUDM909tMUJGVcMqoQShtPT1f8+28nK+LkjX6
-         EMm2quS/3XIaMxVk7AKCpzWq38Mf6vmYWvsZO6GNOL1gKKQmaMguslhIojgOkgjhYxzx
-         GG7k5N0ifbpdMUT0nSwQ0iDd6fYqOp/o+qxp7p854z8NYji0XdNHSmlBkDPAaxsvA5XC
-         WBu48aYALdl60NaBf1jNXpv7tqYG9nYUsrFCYpmniEVmmnbR+lecO+Ki6H+q2a3YmP7U
-         KsNMelDPYzCeVZ7PGvHrcxROHlopdJ6J/tIx9kdCwD4eWpKXWqrJIYQZdFoEN0rUNwBZ
-         RQNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp1i9wNTxNFXwT1nOyB7flJiYXBh13+NKMRoo7aPwUJHH6fEHilYh1WS+4E1KdU9dYCDWxDHBscmn56BdyyiR8Tw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnGLzc3ScT3/A69WzRl9lPrgspRfyI3Ra6aRx/sFn2TgxuGcn9
-	9hRHs9RHIClfbLN1sgWk/cQA+wdrceGCYRm5v7XKIy+IY4FF7Q+ppViYfruUSSnH
-X-Gm-Gg: AZuq6aK+XeCQb/RQq0TgBRg5XING36mSm9C2tTy/tgl754JOj4oq9c+6izON7cHLt/y
-	Oa7mqAs3EulNGmq3rMugLoxvdU/1q+R8z4sRDccU+62JjlNNOnHLFuU2n75S2fktwbOsftShw9V
-	B2ZDMIUhmsz/3Q7qeY+Ehzn5rUMliEwb2P9S4pqmJbFVeSVahLy9GdICO7i7wic5dPNeKUcN+Fs
-	Cbt1L4mPzpco92urO9fWj65z2tRv3DwItqqpmekHaXe6Uc35bCGCqwcgtmtSiG8DKC5rhEzhBIh
-	Rpbs/94GDgt7s6qrVlmD7tDU84dpuLnZU3Ur9nxde3YgM2dSAq0d1bDFMHizuWRNN5wZX7mhz+0
-	egDbSDFPA48bqOLvvtzDA/W6MnnadLmeKL6r6qj89MqN3d8SFuS/tPhhXcG85L7Woo6tU1K5GmM
-	J4AZ4kO5GGdIvAIUFxnA==
-X-Received: by 2002:a05:600c:4e12:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-482db481b62mr184164265e9.19.1770124252099;
-        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
-Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 05:10:51 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 00/10] Add Renesas RZ/G3L PINCONTROL support
-Date: Tue,  3 Feb 2026 13:10:23 +0000
-Message-ID: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTK4R+js"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27441C116D0;
+	Tue,  3 Feb 2026 14:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770130003;
+	bh=+I4EbU5H2CwfCr+HfX4PmdXBArW7/Kor7ez70HR28NM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=mTK4R+jseB79bDOwofKnoc4O4HqwYbCEuyE7zvExIlNoOxkBe6KGHJcE8OEfxACqw
+	 v6Yhrbz9oSp/1/25hZ5GNEOaIIP3QhzIAr8AA4qBk8B8yGs260eSsbvL3jvSIUlCqt
+	 vaVXG6uKKe4kG/vs4cQ5K4R0RLcjvVP6vdnofQ3q+l0o49ntm9hxUBJRtnCI9F/kq/
+	 A6Y3TrPQP9EN4G3nUMIKouuU6D2Yh+Z3o1Ii5P5v+PArDM5JaMn4drGRbkdLnEOLZ+
+	 o38xynNt7FyAx7b9+HqPV9xWkptL34X/EQl9bbOIZUSqba5m9GSO5k85WLj23vfjAA
+	 b4XFgC9F38d7A==
+Date: Tue, 03 Feb 2026 08:46:42 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, 
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Stefan Eichenberger <eichest@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+In-Reply-To: <20260203121723.312336-1-biju.das.jz@bp.renesas.com>
+References: <20260203121723.312336-1-biju.das.jz@bp.renesas.com>
+Message-Id: <177013000212.2528321.6355698211808393488.robh@kernel.org>
+Subject: Re: [PATCH net-next] dt-bindings: net: micrel: Fix dtbs compatible
+ too long warnings
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi All,
+On Tue, 03 Feb 2026 12:17:21 +0000, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> The KSZ9131 PHY is suitable for IEEE 802.3 applications.
+> 
+> Fix the below dtbs warning "compatible: ['ethernet-phy-id0022.1640',
+> 'ethernet-phy-ieee802.3-c22'] is too long" on the below dts:
+> 
+> r8a774b1-beacon-rzg2n-kit.dtb
+> r8a774a1-beacon-rzg2m-kit.dtb
+> r8a774e1-beacon-rzg2h-kit.dtb
+> r9a08g046l48-smarc.dtb
+> r9a07g043u11-smarc.dtb
+> r9a07g044c2-smarc.dtb
+> r9a07g044l2-smarc.dtb
+> r9a07g044l2-smarc.dtb
+> r9a07g054l2-smarc.dtb
+> r9a07g054l2-smarc.dtb
+> r9a09g047e57-smarc.dtb
+> r9a09g047e57-smarc.dtb
+> r9a09g056n48-rzv2n-evk.dtb
+> r9a09g056n48-rzv2n-evk.dtb
+> r9a09g057h44-rzv2h-evk.dtb
+> r9a09g057h44-rzv2h-evk.dtb
+> r9a07g043u11-smarc-cru-csi-ov5645.dtb
+> r9a07g043u11-smarc-pmod.dtb
+> r9a07g043u11-smarc-du-adv7513.dtb
+> r9a09g047e57-smarc-cru-csi-ov5645.dtb
+> r9a07g044c2-smarc-cru-csi-ov5645.dtb
+> r9a09g047e57-smarc-cru-csi-ov5645.dtb
+> r9a07g044l2-smarc-cru-csi-ov5645.dtb
+> r9a07g044l2-smarc-cru-csi-ov5645.dtb
+> r9a07g054l2-smarc-cru-csi-ov5645.dtb
+> r9a07g054l2-smarc-cru-csi-ov5645.dtb
+> r9a09g056n48-rzv2n-evk-cn15-emmc.dtb
+> r9a09g056n48-rzv2n-evk-cn15-emmc.dtb
+> r9a09g056n48-rzv2n-evk-cn15-sd.dtb
+> r9a09g057h44-rzv2h-evk-cn15-sd.dtb
+> r9a09g056n48-rzv2n-evk-cn15-sd.dtb
+> r9a09g057h44-rzv2h-evk-cn15-emmc.dtb
+> r9a09g057h44-rzv2h-evk-cn15-sd.dtb
+> r9a09g057h44-rzv2h-evk-cn15-emmc.dtb
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../bindings/net/micrel,gigabit.yaml          | 23 +++++++++++--------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+> 
 
-This patch series aims to add basic pincontrol support for RZ/G3L SoC. The
-RZ/G3L pinctrl has OTHER_POC register compared to other SoCs for setting
-IO domain volage for AWO, ISO and WDT.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Document the reset-names as all SOCs has multiple resets.
+yamllint warnings/errors:
 
-Document the bindings for RZ/G3L SOC and add pinctrl definitions in
-driver.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-id0007.0772', 'ethernet-phy-ieee802.3-c22'] is too long
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-id0007.0772' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): Unevaluated properties are not allowed ('load-save-gpios', 'vsc8531,edge-slowdown', 'vsc8531,led-0-mode', 'vsc8531,led-1-mode', 'vsc8531,vddmac' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.example.dtb: ethernet-phy@1 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/qcom,ethqos.example.dtb: phy@4 (ethernet-phy-ieee802.3-c22): $nodename:0: 'phy@4' does not match '^ethernet-phy(@[a-f0-9]+)?$'
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/qcom,ethqos.example.dtb: phy@4 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/qcom,ethqos.example.dtb: phy@4 (ethernet-phy-ieee802.3-c22): Unevaluated properties are not allowed ('#phy-cells', 'device_type', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/brcm,unimac-mdio.example.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/renesas,etheravb.example.dtb: ethernet-phy@0 (ethernet-phy-id0022.1622): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-id0022.1622', 'ethernet-phy-ieee802.3-c22'] is too long
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-id0022.1622' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/renesas,etheravb.example.dtb: ethernet-phy@0 (ethernet-phy-id0022.1622): Unevaluated properties are not allowed ('rxc-skew-ps' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/socionext,synquacer-netsec.example.dtb: ethernet-phy@1 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/amlogic,g12a-mdio-mux.example.dtb: ethernet-phy@8 (ethernet-phy-id0180.3301): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-id0180.3301', 'ethernet-phy-ieee802.3-c22'] is too long
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-id0180.3301' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.example.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,fec.example.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/brcm,bcmgenet.example.dtb: ethernet-phy@1 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/brcm,bcmgenet.example.dtb: ethernet-phy@0 (ethernet-phy-ieee802.3-c22): compatible: 'oneOf' conditional failed, one must be fixed:
+	['ethernet-phy-ieee802.3-c22'] is too short
+	'ethernet-phy-id0022.1640' was expected
+	'ethernet-phy-ieee802.3-c22' is not one of ['ethernet-phy-id0022.1610', 'ethernet-phy-id0022.1611', 'ethernet-phy-id0022.1620', 'ethernet-phy-id0022.1631', 'ethernet-phy-id0022.1640', 'ethernet-phy-id0022.1650', 'ethernet-phy-id0022.1660', 'ethernet-phy-id0022.1670']
+	from schema $id: http://devicetree.org/schemas/net/micrel,gigabit.yaml
 
-Add pincontrol device node and add pincontrol support for SCIF0 and GBETH
-nodes.
+doc reference errors (make refcheckdocs):
 
-Note:
-Some IPs needs to set the register IPCONT_SEL_CLONECH in SYSC to control
-the clone channel of the IP. Plan to add clone channel control support
-later. The IP's involing clone channel needs to do the setup as per the
-below flow
+See https://patchwork.kernel.org/project/devicetree/patch/20260203121723.312336-1-biju.das.jz@bp.renesas.com
 
-(1) Set SYS_IPCONT_SEL_CLONECH register as necessary
-(2) Set the PWPR register to allow writing to the PFC_m register.
-    After setting the PWPR.B0WI bit to “0” (initial value = 1), 
-    set the PWPR.PFCWE bit to “1” (initial value = 0).
-    Select the required function from Functions 0-15.
-    (Hereafter, Function1 setting example)
-(3) Set PFC_m = 0001b and switch to Function1.
-(4) Set the PMC_m register to “1” (initial value = 0).
-(5) Set the PFC_m register to write-protected. After setting
-    the PWPR.PFCWE bit to “0”, set the PWPR.B0WI bit to “1”.
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-The clock patches depend upon [1]
-The dtsi/dts patches depend upon [2]
-[1] https://lore.kernel.org/all/20260203110220.265748-1-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260203123503.314755-1-biju.das.jz@bp.renesas.com/
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-v1->v2:
- * Split DTSI patches from bindings
- * Fix typo maxItems->minItems in bindings
- * Collected the tag
+pip3 install dtschema --upgrade
 
-Biju Das (10):
-  dt-bindings: pinctrl: renesas: Document reset-names
-  dt-bindings: pinctrl: renesas: Document RZ/G3L SoC
-  clk: renesas: r9a08g046: Add GPIO clocks/resets
-  pinctrl: renesas: rzg2l: Add support for selecting power source for
-    {WDT,AWO,ISO}
-  pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
-  pinctrl: renesas: rzg2l: Add support for RZ/G3L SoC
-  arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
-  arm64: dts: renesas: r9a08g046: Add pincontrol node
-  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
-  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
-
- .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  16 +
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  10 +
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   1 +
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  92 ++++++
- drivers/clk/renesas/r9a08g046-cpg.c           |   6 +
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 285 +++++++++++++++++-
- .../pinctrl/renesas,r9a08g046-pinctrl.h       |  39 +++
- 14 files changed, 465 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h
-
--- 
-2.43.0
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
