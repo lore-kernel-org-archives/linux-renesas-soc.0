@@ -1,63 +1,63 @@
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDFC33A031
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED6A31ED91
 	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 10:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770114643; cv=none; b=m4wbybQsdXV6bwgnGG6bCGeKjx4pLO15YG6hXzZgdle9UH7gXzurJk0QseILu+f9APIzjWf6pS6OhkzzIONcgAySOUHL51YYFJysCxvtOh6SDvnRVTZ7l2IcZACjS7AyEivLop0jtg2t98ABn5388WATylOfpzI2+V9RrMLK0Rs=
+	t=1770114643; cv=none; b=hSt8Lmath/yPXa0D2PP+nOEQEOhuzJOGRmje21re1V1xvQ5ydWy8ElsMHiOo7ApRG/UlYfiSR0tS5jxkX5RKDyX2AshSnGpsrddvtkfQptqjS9x6tSj7odTUKYG2RwimowLwLYxiOTNohzTMB6B0CA7V2XXhdugE5ZP6sp6t3fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1770114643; c=relaxed/simple;
-	bh=ex1mvqe2mbVjkMNCdMAY4qBzAeJ5mwBkW6yCSYOlsQI=;
+	bh=/pP38JI9Ka6M9LphVR3Gd1N5146wfnzBg/29MNSMJpQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NwBz6YUTOQ1TyJTCEWNl+ZHGN4IB4lahXLgvrvLyD5IgLw4bSfLxRzgH81y8s+mIlkhz47pGar5qJRICX2cHiwknNcNExclnJUz/qmeeyP+/gsplultXb3wn3OI7HtWbKCI01+ojYijhuGH600ds1DVGhN61K2aDYgCsShd9zmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAyeeDMe; arc=none smtp.client-ip=209.85.128.67
+	 MIME-Version; b=UZc9ehLNqXuR1iJ1bggC2wSJxUPqdN4ApawoxBcOTbMGdVOYFerRog1oAIoeLSm34Lgeu8eklPlT2xadxlY99szJ0r1Ncvjxjp7KOIuJaeLxxIylWE57+5jLkSCLtYroLYCy5hzmEg5fhNX/GXgq5iJ/qJtfu27LlesRCCiGkhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExFrzyU9; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAyeeDMe"
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-4806ce0f97bso46229495e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 02:30:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExFrzyU9"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4359a16a400so4690384f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 02:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770114639; x=1770719439; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770114638; x=1770719438; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SfqVTSyxwRg8Ma/ogFcamAET2PFGRVKefL6mWxk01zY=;
-        b=MAyeeDMe5/DKO3oT97qPMkdcBjNat+Pl188xvbojOez1SXuHUmBcS7jQRyGB52iBC4
-         lUP+rEbXFDuvLER+dWbckGH+WVY75JYi3oRDEkflje0VtDChnoKSVz9iUJa44U/SCyoe
-         ozIEq5oabo6xsnGqP2RXWuRrT9sHjaG/zV9txxG235f5/73b/XkAerSdLbBHFCoTYjIS
-         ZGh6El0/hr+xy08vJdPIkEYEPlOB+ixOQM8VK7/iea+8OfPNY3ttpY7lcuZn48DhoGjv
-         xsTgnuEaaEuQ8G+iyni0sky3xilSAz+EOVTyACxFo+xpR+TmSuJyJa6+KHACam2RoLBN
-         PIfA==
+        bh=jQ0XSMKuo97n0b2dbhMLVl9uwL3tkarcvuLRqzwsqzA=;
+        b=ExFrzyU92/KXG8sQacsIGmyrYPkA4ym0g5fCcNzzFmZi1ZUeCzvJVnH1V+M32Z1w9S
+         NfKu0pXYg2f+ot6b0bP6L7/6TcrrQzwO0/6qhlzPMEUSulvhzj6Q0WGacWiz5dMJV8AW
+         ekBzEQWV2cXEleZv3NURplsOKUMrzpaR9rWzpZwvU5AqG4kfoR70Qef6TCAev2T/K+x7
+         yYyneCgQ2MlLiJb1YcDd/1z2YqcFSyMTVpfOsttpYtel6HP1FWrBllfDZifMRezDyVK3
+         DYVyy7e1+5x2hR6nm9lU9+4yiJXVhkCcurZGotyED7XSiXQtZryJLgpQ4R8+cVw7T6j2
+         8NGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770114639; x=1770719439;
+        d=1e100.net; s=20230601; t=1770114638; x=1770719438;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=SfqVTSyxwRg8Ma/ogFcamAET2PFGRVKefL6mWxk01zY=;
-        b=gzoxBcpqlc8oXwk9ODoeiYOjbKbcz8BK+G/7JU1AmkE3Kn/0JpevfqoZ+l+QuQ1DC+
-         YKWL6o6ajEnQhgFpfhQEyG7JKFUvKkwSBGtb60IpBzjZ0VGKGXiBdO6dBbdsJMC1sQWe
-         W3Rr3q1EUz3YxqqIK3keyG0wWQf8yIqNjnwDcYMFj2P66Huq8yZ4fhGIfU0QjZtiuNCX
-         UH5tge9R784OfrwNsSV4XmjhcmshNRkvv2kT4pT6duK8aRnRbD8I5rQ8ac5SQHw6O0v5
-         UYNzz+MxOZVlUR7/M3MHYp8PemUD6JJsP3fe7cEt/DP0FH1dbsLfJbG9878hp0b4H0zv
-         /beQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7o5+x5Anv+qo50kcXuIYsy2WhG02gn/cZCUSyOYveZEmPNJsVr3pjW8iijpqaHO7G9l+cpzPFY5A+jNzHwPDZlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeAcinlLv4fqyzTZeu6GUFT5PF6zho6DtPMgdA8OqftENn4+Of
-	1saPnRQLYofhoBIDinAYROLHDS30p36Drgziv9lAlPnJbvfygeoANwcn
-X-Gm-Gg: AZuq6aJ7G35d/zcCwOldTKg/N9aU3/PoySVKTAQgf8h3fF3IjtpdGrojo1sxUy2z77/
-	kGfpNb0mRNXOn6XPFBAjOQfa6+WcurgkAH1bi6X9PzQyjMoDbIIZHJg13FiT0SMLELlZ70YWNYE
-	Y1cecqQyO14huizslD442Rbc3QJIk3EStrjKHFURvIrlEb7Csi166hK4cpsYouSZ/c2NM2axhIj
-	Yp6kVYpmeq6o25XnfRycwYJYjdcmuwJEafTtqQW2s+jvJ8lMF1J7GJanTS/DLJe1Wygnj7I9AAE
-	LTqT4HsgVOFQzdR3BWdal66vjtIAYYatAh8Ki9sWrZFfObetEA5eS5EGtTpV/pBsZm9Gzckkwa3
-	V31Qa8YPsut4IYw019K1H4MhVSJYqwAeq1YocTxVMuH5Zth5OyPbLo39vBJhP6fZ4ZCa3HYeGK8
-	KSkKLaA13w6E4+Hu86tA==
-X-Received: by 2002:a05:600c:474f:b0:480:6ab1:ed0d with SMTP id 5b1f17b1804b1-482db452587mr187008255e9.9.1770114638974;
-        Tue, 03 Feb 2026 02:30:38 -0800 (PST)
+        bh=jQ0XSMKuo97n0b2dbhMLVl9uwL3tkarcvuLRqzwsqzA=;
+        b=ghmX8+ma2F846Q82XQezpNwHCM+64FNU/o/Bq3xOveAyw081rKOu8Cf/gpQ3nD3xgx
+         Ao5TVIcsk/qxQ0jqH/H7pId97ybIPI8za9Ky3Nay/0kzGIdQqxCg0TM5C0VmxOzakCoX
+         SnSI9dcfiUWdAyEg1X/OjMmab/+iEXwesnjXa8LwpSniMc6BPPw0dkKPe2DK6NQ8Qw1J
+         Ap98yHgaHbv1RbS0p9YFTx/NyNpIgHRHblhQXwX3RDHUycNrpcDMqPq9SAbV0OdWI7+8
+         xFjGgcb8+pbjddhut54llPmv85wLcuibOu8DQANSGp1u1VivGX8huBbc4ot73rTYUscg
+         UQ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXzy0u1PbL67jtuQE3h2H5YSwFOumICK9c7RDx41RPJYyIcLJfjBKY5JsgBorFOJRC2mP78nkJ8T5G8c/Fx6z6ztQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvVVVy98ueidbN63JVcP0ZWwG4vLi8LrsoBaQCosNhc/tjHINg
+	8giwEaaVx6jTyFZoFYMDsCzO7eCetRSvM3Sf8qqADSLCB/4oy5sZiTct
+X-Gm-Gg: AZuq6aILh1Bx6CkeQv4nTFiiq8qJT2WUdyGXk0602xSI06evnJ0Jlv65bRnm5SAH57d
+	aIRL0ycB4NRejdpTZP9roib7DVit/wpafaK1o25Cbz8svCUB406FmkY3p3LyqhG2GAjZyx1ILQz
+	KSRWE5WjMt3D7cBGiSYVmImHPDxzRVPu2cufo9ur85bS5ly9n1x23v9HzlUG27QZNS69PZ0xiJo
+	/S6LLV628rCoF9jhIoJhXdLnlD6QOHR6hSDUhUGuk8uHO1bOalBdwyUV/PRaGqse7eNE2+hzjn2
+	FRQEVVL+bgxdU3kWCFRjnExPmTRbjgJdZ/j848dVaI6lTYJEM1Lr+MSvuVoA2pmWoz1gvsMqfjI
+	OYpTX8jDRAc/HHcnTYIDw/GGM9Yd9P6Su2KZbsQ1ICmgwdGyk53R+6M1jYGNWLce4v1zZTFeN/b
+	p77ZBbed2EscilwEqGKA==
+X-Received: by 2002:a05:6000:2881:b0:430:fc0f:8fb3 with SMTP id ffacd0b85a97d-435f3ab26d5mr22486139f8f.38.1770114637874;
+        Tue, 03 Feb 2026 02:30:37 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1323034sm53160961f8f.35.2026.02.03.02.30.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1323034sm53160961f8f.35.2026.02.03.02.30.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 02:30:38 -0800 (PST)
+        Tue, 03 Feb 2026 02:30:37 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -71,9 +71,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 09/10] arm64: dts: renesas: renesas-smarc2: Move usb3 nodes to board DTS
-Date: Tue,  3 Feb 2026 10:30:17 +0000
-Message-ID: <20260203103031.247435-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 07/10] arm64: dts: renesas: Add initial DTSI for RZ/G3L SoC
+Date: Tue,  3 Feb 2026 10:30:15 +0000
+Message-ID: <20260203103031.247435-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
 References: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
@@ -87,54 +87,305 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-SMARC2 board dtsi is common for multiple SoCs. So move usb3 nodes
-to board DTS as some SOCs (eg: RZ/G3{S,L}) does not support USB3.
+Add the initial DTSI for the RZ/G3L SoC.
+The files in this commit have the following meaning:
+  - r9a08g046.dtsi:    RZ/G3L family SoC common parts
+  - r9a08g046l48.dtsi: RZ/G3L R0A08G046L{46,48} SoC specific parts
+
+Added place holders to reuse the code for Renesas SMARC II carrier
+board.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v2->v3:
- * No change
+ * No change.
 v1->v2:
- * No change
+ * Added external clocks eth{0,1}_txc_tx_clk and eth{0,1}_rxc_rx_clk
+   as it needed for cpg as it is a clock source for mux.
+ * Updated cpg node
 ---
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 6 ++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi    | 8 --------
- 2 files changed, 6 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 251 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi |  13 +
+ 2 files changed, 264 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 696903dc7a63..cc75f6fdf7f5 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -248,7 +248,13 @@ &sdhi1 {
- 	vqmmc-supply = <&vqmmc_sd1_pvdd>;
- };
- 
-+&usb3_phy {
-+	status = "okay";
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+new file mode 100644
+index 000000000000..0922ad642c67
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -0,0 +1,251 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3L SoC
++ *
++ * Copyright (C) 2026 Renesas Electronics Corp.
++ */
++
++#include <dt-bindings/clock/r9a08g046-cpg.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r9a08g046";
++	#address-cells = <2>;
++	#size-cells = <2>;
++	interrupt-parent = <&gic>;
++
++	audio_clk1: audio-clk1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by boards that provide it. */
++		clock-frequency = <0>;
++	};
++
++	audio_clk2: audio-clk2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by boards that provide it. */
++		clock-frequency = <0>;
++	};
++
++	can_clk: can-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by boards that provide it. */
++		clock-frequency = <0>;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			compatible = "arm,cortex-a55";
++			reg = <0>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++		};
++
++		cpu1: cpu@100 {
++			compatible = "arm,cortex-a55";
++			reg = <0x100>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++		};
++
++		cpu2: cpu@200 {
++			compatible = "arm,cortex-a55";
++			reg = <0x200>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++		};
++
++		cpu3: cpu@300 {
++			compatible = "arm,cortex-a55";
++			reg = <0x300>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++		};
++
++		L3_CA55: cache-controller-0 {
++			compatible = "cache";
++			cache-unified;
++			cache-size = <0x80000>;
++			cache-level = <3>;
++		};
++	};
++
++	eth0_txc_tx_clk: eth0-txc-tx-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	eth0_rxc_rx_clk: eth0-rxc-rx-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	eth1_txc_tx_clk: eth1-txc-tx-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	eth1_rxc_rx_clk: eth1-rxc-rx-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extal_clk: extal-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
++	};
++
++	soc: soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		scif0: serial@100ac000 {
++			compatible = "renesas,scif-r9a08g046", "renesas,scif-r9a07g044";
++			reg = <0 0x100ac000 0 0x400>;
++			interrupts = <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G046_SCIF0_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_SCIF0_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
++		i2c0: i2c@100ae000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0 0x100AE000 0 0x400>;
++			/* placeholder */
++		};
++
++		canfd: can@100c0000 {
++			reg = <0 0x100c0000 0 0x20000>;
++			/* placeholder */
++		};
++
++		cpg: clock-controller@11010000 {
++			compatible = "renesas,r9a08g046-cpg";
++			reg = <0 0x11010000 0 0x10000>;
++			clocks = <&extal_clk>,
++				 <&eth0_txc_tx_clk>, <&eth0_rxc_rx_clk>,
++				 <&eth1_txc_tx_clk>, <&eth1_rxc_rx_clk>;
++			clock-names = "extal",
++				      "eth0_txc_tx_clk", "eth0_rxc_rx_clk",
++				      "eth1_txc_tx_clk", "eth1_rxc_rx_clk";
++			#clock-cells = <2>;
++			#reset-cells = <1>;
++			#power-domain-cells = <0>;
++		};
++
++		sysc: system-controller@11020000 {
++			compatible = "renesas,r9a08g046-sysc";
++			reg = <0 0x11020000 0 0x10000>;
++			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "lpm_int", "ca55stbydone_int",
++					  "cm33stbyr_int", "ca55_deny";
++		};
++
++		pinctrl: pinctrl@11030000 {
++			reg = <0 0x11030000 0 0x10000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++		};
++
++		dmac: dma-controller@11820000 {
++			compatible = "renesas,r9a08g046-dmac", "renesas,rz-dmac";
++			reg = <0 0x11820000 0 0x10000>,
++			      <0 0x11830000 0 0x10000>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 154 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 155 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 159 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 160 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 161 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 163 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 164 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 169 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD R9A08G046_DMAC_ACLK>,
++				 <&cpg CPG_MOD R9A08G046_DMAC_PCLK>;
++			clock-names = "main", "register";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_DMAC_ARESETN>,
++				 <&cpg R9A08G046_DMAC_RST_ASYNC>;
++			reset-names = "arst", "rst_async";
++			#dma-cells = <1>;
++			dma-channels = <16>;
++		};
++
++		sdhi1: mmc@11c10000 {
++			reg = <0x0 0x11c10000 0 0x10000>;
++			/* placeholder */
++		};
++
++		gic: interrupt-controller@12400000 {
++			compatible = "arm,gic-v3";
++			reg = <0x0 0x12400000 0 0x20000>,
++			      <0x0 0x12440000 0 0x80000>;
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
++	};
 +};
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi
+new file mode 100644
+index 000000000000..f6f673abc01b
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3E R9A08G046L48 SoC specific parts
++ *
++ * Copyright (C) 2026 Renesas Electronics Corp.
++ */
 +
- &xhci {
- 	pinctrl-0 = <&usb3_pins>;
- 	pinctrl-names = "default";
++/dts-v1/;
++#include "r9a08g046.dtsi"
 +
-+	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index b607b5d6c259..69c0101ff7f5 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -107,11 +107,3 @@ &sdhi1 {
- 
- 	status = "okay";
- };
--
--&usb3_phy {
--	status = "okay";
--};
--
--&xhci {
--	status = "okay";
--};
++/ {
++	compatible = "renesas,r9a08g046l48", "renesas,r9a08g046";
++};
 -- 
 2.43.0
 
