@@ -1,106 +1,165 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7C63A0B14;
-	Tue,  3 Feb 2026 13:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A83EEC3
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 14:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770126745; cv=none; b=JIB6KDIKPMdNVEwqGYpm6A2CpSq+mWdT0aLbPg+PQ1mcdQPld/5vd0Qfvgi1VX9uPvPOHxTf9Jf7ToywrM6wzhyXJP3ApLhYrFc8Ut4Gw6iU4iJcf//g2VJpRCFGQbOJrJ89+o04O/ElcM+iXPWEgN85NfutEMCnR8Y1wuqwZRg=
+	t=1770129579; cv=none; b=WSdR4436HLdIYu5T1SPVCqSw4KTwdjzEqcfud40TonVzPrgFvk0qQdHZVTvSPk+ouo8iMTaV9DJSOfz3WG5lD8JKckTTI1dwqE+CxMM7TFU7klAl15s26r6+Ig8kQ2tMkDfrJjeSY89i8DNBg9v0wNXo9Y2sORHgUCnik4xjfg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770126745; c=relaxed/simple;
-	bh=TWTKR19mIEbIMPmte3Ec51dV7Dn32+uGL+9SU6Cm9/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dfqL3TFI4nnydBzR0HgaeSmW6BK82G1Ec3AQKfxnFlVp6MIqjE2+HArbCiUFGZjCuv/RgsBdTvLbOAr+vQj6X0/WNa60WUMd5v86ldBv4lCpLE36aZdkbbGojHNsPpzYqpJ70cAa8aotz600VL2YHBESfkmYpZFodlSoSlEka/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: MVbFrivoTb2ZpKe661vZ3Q==
-X-CSE-MsgGUID: cFGzmsm9QfyGagRl8sM4Gg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Feb 2026 22:52:22 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.93.5])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 65D72421BAE7;
-	Tue,  3 Feb 2026 22:52:18 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	fabrizio.castro.jz@renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1770129579; c=relaxed/simple;
+	bh=dVx/NTBKTBYer1sAELG6RU2I0c4yRgXuu2CweMfhYDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ShhkKDcA1w6dsK5yUKRQXi5nni1uqdNiRqZ6bR/rRkOuQsIGPM7Zeeeeq3KnIOTJwcRrqy5rib90jgWK73ryDXu51QbWwbcppldaLb9HZo1ywNUNNB2ra/zvzqiuXt9Kvv157Ud0vezjlYwMEVPJa/pclyYJBumimGqtgHF0vNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRym06Bw; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRym06Bw"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-435a11957f6so4473468f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 06:39:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770129577; x=1770734377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
+        b=jRym06BwzroZGQUG8Fxs/IPBN0y5m+bnPbZGsQJBnLpVJXK0xG8snEdb+ez5aFpeno
+         ZduymtZzN9OxAhzhEQxu5XFZYCRI2qIeKW2uQuIhgdcHIOpV19PyYyzw9tlVTcGvUNkD
+         rcE2fuE/TLhOZftrASBtEb8WGqXDsOYhjdz9elmoMTGfvO8qvKYMYXd2IU8pz0FD+lvt
+         sCvh6YrjbyKPP/pcue3OTAXJpi3a0sCzPgJhc7e1RceudaSzVdZrJRkwc9iOj0KWEKsU
+         Ywpn/KUOEnps4uwNiyJc2WogXaUE8vWw4FvuMWc9iUDI4QuzbhivjBd2j1tR24Ey357h
+         ovYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770129577; x=1770734377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
+        b=CMjN0wWrFyEGN/ff6UxWMRQKvar0lDUDM909tMUJGVcMqoQShtPT1f8+28nK+LkjX6
+         EMm2quS/3XIaMxVk7AKCpzWq38Mf6vmYWvsZO6GNOL1gKKQmaMguslhIojgOkgjhYxzx
+         GG7k5N0ifbpdMUT0nSwQ0iDd6fYqOp/o+qxp7p854z8NYji0XdNHSmlBkDPAaxsvA5XC
+         WBu48aYALdl60NaBf1jNXpv7tqYG9nYUsrFCYpmniEVmmnbR+lecO+Ki6H+q2a3YmP7U
+         KsNMelDPYzCeVZ7PGvHrcxROHlopdJ6J/tIx9kdCwD4eWpKXWqrJIYQZdFoEN0rUNwBZ
+         RQNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWp1i9wNTxNFXwT1nOyB7flJiYXBh13+NKMRoo7aPwUJHH6fEHilYh1WS+4E1KdU9dYCDWxDHBscmn56BdyyiR8Tw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnGLzc3ScT3/A69WzRl9lPrgspRfyI3Ra6aRx/sFn2TgxuGcn9
+	9hRHs9RHIClfbLN1sgWk/cQA+wdrceGCYRm5v7XKIy+IY4FF7Q+ppViYfruUSSnH
+X-Gm-Gg: AZuq6aK+XeCQb/RQq0TgBRg5XING36mSm9C2tTy/tgl754JOj4oq9c+6izON7cHLt/y
+	Oa7mqAs3EulNGmq3rMugLoxvdU/1q+R8z4sRDccU+62JjlNNOnHLFuU2n75S2fktwbOsftShw9V
+	B2ZDMIUhmsz/3Q7qeY+Ehzn5rUMliEwb2P9S4pqmJbFVeSVahLy9GdICO7i7wic5dPNeKUcN+Fs
+	Cbt1L4mPzpco92urO9fWj65z2tRv3DwItqqpmekHaXe6Uc35bCGCqwcgtmtSiG8DKC5rhEzhBIh
+	Rpbs/94GDgt7s6qrVlmD7tDU84dpuLnZU3Ur9nxde3YgM2dSAq0d1bDFMHizuWRNN5wZX7mhz+0
+	egDbSDFPA48bqOLvvtzDA/W6MnnadLmeKL6r6qj89MqN3d8SFuS/tPhhXcG85L7Woo6tU1K5GmM
+	J4AZ4kO5GGdIvAIUFxnA==
+X-Received: by 2002:a05:600c:4e12:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-482db481b62mr184164265e9.19.1770124252099;
+        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 05:10:51 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 8/8] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Add versa3 clock generator node
-Date: Tue,  3 Feb 2026 13:51:39 +0000
-Message-ID: <20260203135139.28151-9-ovidiu.panait.rb@renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 00/10] Add Renesas RZ/G3L PINCONTROL support
+Date: Tue,  3 Feb 2026 13:10:23 +0000
+Message-ID: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260203135139.28151-1-ovidiu.panait.rb@renesas.com>
-References: <20260203135139.28151-1-ovidiu.panait.rb@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add versa3 clock generator node. It provides clocks for the RTC, PCIe
-and audio devices.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
-v3 changes:
-- Added comments to document rtxin_clk and qextal_clk routing.
+Hi All,
 
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+This patch series aims to add basic pincontrol support for RZ/G3L SoC. The
+RZ/G3L pinctrl has OTHER_POC register compared to other SoCs for setting
+IO domain volage for AWO, ISO and WDT.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index c191ecb39713..4bb47fd646a4 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -100,6 +100,12 @@ vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
- 		states = <3300000 0>, <1800000 1>;
- 	};
- 
-+	x1: x1-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+	};
-+
- 	/* 32.768kHz crystal */
- 	x6: x6-clock {
- 		compatible = "fixed-clock";
-@@ -256,6 +262,25 @@ raa215300: pmic@12 {
- 		clocks = <&x6>;
- 		clock-names = "xin";
- 	};
-+
-+	versa3: clock-generator@69 {
-+		compatible = "renesas,5l35023";
-+		reg = <0x69>;
-+		clocks = <&x1>;
-+		#clock-cells = <1>;
-+		assigned-clocks = <&versa3 0>,  /* qextal_clk */
-+				  <&versa3 1>,
-+				  <&versa3 2>,  /* rtxin_clk */
-+				  <&versa3 3>,
-+				  <&versa3 4>,
-+				  <&versa3 5>;
-+		assigned-clock-rates = <24000000>,
-+				       <24576000>,
-+				       <32768>,
-+				       <22579200>,
-+				       <100000000>,
-+				       <100000000>;
-+	};
- };
- 
- &mdio0 {
+Document the reset-names as all SOCs has multiple resets.
+
+Document the bindings for RZ/G3L SOC and add pinctrl definitions in
+driver.
+
+Add pincontrol device node and add pincontrol support for SCIF0 and GBETH
+nodes.
+
+Note:
+Some IPs needs to set the register IPCONT_SEL_CLONECH in SYSC to control
+the clone channel of the IP. Plan to add clone channel control support
+later. The IP's involing clone channel needs to do the setup as per the
+below flow
+
+(1) Set SYS_IPCONT_SEL_CLONECH register as necessary
+(2) Set the PWPR register to allow writing to the PFC_m register.
+    After setting the PWPR.B0WI bit to “0” (initial value = 1), 
+    set the PWPR.PFCWE bit to “1” (initial value = 0).
+    Select the required function from Functions 0-15.
+    (Hereafter, Function1 setting example)
+(3) Set PFC_m = 0001b and switch to Function1.
+(4) Set the PMC_m register to “1” (initial value = 0).
+(5) Set the PFC_m register to write-protected. After setting
+    the PWPR.PFCWE bit to “0”, set the PWPR.B0WI bit to “1”.
+
+The clock patches depend upon [1]
+The dtsi/dts patches depend upon [2]
+[1] https://lore.kernel.org/all/20260203110220.265748-1-biju.das.jz@bp.renesas.com/
+[2] https://lore.kernel.org/all/20260203123503.314755-1-biju.das.jz@bp.renesas.com/
+
+v1->v2:
+ * Split DTSI patches from bindings
+ * Fix typo maxItems->minItems in bindings
+ * Collected the tag
+
+Biju Das (10):
+  dt-bindings: pinctrl: renesas: Document reset-names
+  dt-bindings: pinctrl: renesas: Document RZ/G3L SoC
+  clk: renesas: r9a08g046: Add GPIO clocks/resets
+  pinctrl: renesas: rzg2l: Add support for selecting power source for
+    {WDT,AWO,ISO}
+  pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
+  pinctrl: renesas: rzg2l: Add support for RZ/G3L SoC
+  arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
+  arm64: dts: renesas: r9a08g046: Add pincontrol node
+  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
+  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
+
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  16 +
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  10 +
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   1 +
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  92 ++++++
+ drivers/clk/renesas/r9a08g046-cpg.c           |   6 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 285 +++++++++++++++++-
+ .../pinctrl/renesas,r9a08g046-pinctrl.h       |  39 +++
+ 14 files changed, 465 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h
+
 -- 
-2.51.0
+2.43.0
 
