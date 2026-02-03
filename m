@@ -1,76 +1,79 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456DA34FF59
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 13:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64037350A00
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 13:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770124259; cv=none; b=NVc+aQu21RqrtKSV2isJMYRsYY7gYK9Ntf6Ao3+r2M8pLEVRnMD5dhrCG3D1QLwS5xw6l4uDdbtgtaHAnCuE1lfQ6MkGORNlxT+v3PdgL1ibsygdK+RmpWf5Ixdwy2aZAPib1xLSyYIL4zMvc9U6A0VM2u/NIy9QunEhfh1FheE=
+	t=1770124260; cv=none; b=kItL4AWjSxaBtWKMqBfRzGCjKgCWqCaY6gkzP0WGhwYq0/4NxeYEi5Z7Innp3Gd+Nn4YZnpCy7jZAQQE/DTkBSQxYGYVuI7ybA+9641crykVXT8g6Lq9CJtfIAvqREfJCVRp2d0ewGX6P40AthL/RzXH8dFOI8pDaBYh5ch/rk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770124259; c=relaxed/simple;
-	bh=99VaRUhjBji78QpBZJN8gyHYeeAyE6aZfZgC4Oj3SJI=;
+	s=arc-20240116; t=1770124260; c=relaxed/simple;
+	bh=GQmTDThZa4iSSfKaxXIaDLtyIzQ/Kao23SE83+WQ5Ak=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L0O7M2q/u7664tGRD6Gi7Vga5U4T/zV/RJFH/fPib9KTsonzE9wg14SpcHE1B5mmSmwYhPlmGn16tQAOBvDxLn8ne/t39lI0rYKgA4wRZ+6WCAQZxcibFTvhZ7awMrz8gW9sl2JQN9X/lJlkBBQB7A+mKezzLQwaRF4S8rBPr68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtbjP6mG; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=W1BtuwqpYcAgTMv7nGBNJT0EZVYmPSLefsalwBJi3h7a902Xj+DiX1ZbX7dKOfn6J25+Q6AAaipYzCEwxpRYonKjMrtXlz0jjuex6fQX+GiA3Uszbelb62PgUK4cABITs9FI5ShgnFhuxXKZzhqrfIhRVPS/QozZIqc/RqW3Gn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rr7j1TAo; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtbjP6mG"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-482f2599980so28544975e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 05:10:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rr7j1TAo"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47edd9024b1so45384155e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 05:10:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770124255; x=1770729055; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770124256; x=1770729056; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7+GSu2op5zO51+FghCepzZEYi0uzxi62ahcPZPbNDP4=;
-        b=YtbjP6mGhSmBXHiJE/U2lUihviawoDQb3N4bLrNOu6d9siW5vSrN/m18332w0jI9WH
-         6FecrQqJ1HlXGXHFOTMdzE1nkZVtWSWcf3PFFx1bZD7RLn7Sv3siWY2CNi9eShXHRXh3
-         zsFjIfQkZy6JyHDR+ZO0uGUG2mo/JhKIU7YNCXtUDIQGgm3BPi9qb+O/yd+iVUIdOYaP
-         UvwE7jcTlWv5QdkzSQWQLUepBlr9qdaH2j9L4xIQDPRMEfTkt5eoE6+h2Hv6u7A8Kt4T
-         oWGCbssURcDJEpqRgV7Fwh36D29YV2oTS3+c3yr2g6SOylLbGNKf8LjCoiO1kWSknOYO
-         n8tg==
+        bh=+o0Y2sj0PGuTFcgFfnRs0Gebm7uNR7M2Xw2g99QuCNc=;
+        b=Rr7j1TAoJkz2DMmJisJBF7Ki3OxzVpllVocboNnDTtErmMzTY1YLZquAomb5+Fqwbq
+         /r5cnh03AGb/baE0B8iT+yPgQttAZPeX5CFqm2NRMIMqJskvY4UOjgkCkzu2SD4i+Fcp
+         I5XZ6EHQ9cNWSG1zQ+L/ntlTw4wWuyhnJ2c9hk1JQkS87rKXW8zT90ZuhlolJ2wx0P2r
+         QJXxhyeH7/1u+q52PQnYWaCY9dgwddBAQjtWOTtlQfyhwsjzAHQ0IGCtVy5t2bMdDo3L
+         DG5qHM9I1Q+jmjtCTcYgXr71q7DBpR8/gznW56o5jCrfDtkWb2mssDJVffZnwMJt6xdg
+         tvNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770124255; x=1770729055;
+        d=1e100.net; s=20230601; t=1770124256; x=1770729056;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7+GSu2op5zO51+FghCepzZEYi0uzxi62ahcPZPbNDP4=;
-        b=Y3Nt1QNrQ6uE0jSVJbG83eHIel7HgYDW7VEX3Igo+rfccsJh86DsPJb0hJu5bPovJ/
-         krZ/A1IfyKWMGVZ1iDDYMAbFUeyqcXqnDgnN6Kku00ZNM19ncIT5wrSuo644Ky0dWB0z
-         dYc52rJ7JMmg49tUMv9P8QnnR+EcVCDZ8eiIvctV6pnnZx4Kn5jsGiO1PYO3f0dNlMpA
-         Y3MRbaCUiEzF9LG2wo/3abS9a/cQRW9ntwHNHgE+ys3HONoWzU3UvniFl8bOUm5PffnV
-         uoMmmNjjoUKQD9I14QUtWepHCc7RCGLhhd6C8+oQv1J9LF9jGvK1FpL0KrCx7xYOnWY5
-         x+iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKX42/G1fZ2i2nsU/gqOo1kgeRKROqgw0ylfrXTtOHCm/aRw5dQqRHAqZ0tejD5/UF2ByfAh7FKNbD0Yyp0cJFsg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO87oao4oz1FoES/FbXJrE5wGXQj4ysT7hwpml3TkosykTscK4
-	/AAH5Gl3u5g15LlOQY70LvSBOCNOqv1DF+D3KdenUmAh9kal3iyXujPZ
-X-Gm-Gg: AZuq6aLyJSy8QABsOpwLabZVCXbtpKimfuKtvWuPkXJYArtluh+rlmPiX7e14AAVVbV
-	W8pW6MSAbOYFkZ5+j37sXgXNIG+FjBDbCyMuzKUVkRpgzFH4aR2h51EK22G2HWqKl3sWwZZ+KDj
-	bQvZf0tOfj26yCSuwDCACKsrMLDq31JRyWTBeH4Bbw0UubVWd9PdpZJmpSgTYFQHBTe7xQJGShY
-	5l8AxhIoUHSN0cF30pb4xnkcUtxzLPodsSaf0Dqz5IrGaQx+l2vmAA3y9TA2lgF3Zs0JT+RXM/4
-	DKrsYpVFzT5cZr/6R55/5yyGxAQQC/aVUG6C3KsRf9zcV2TFBtUp/+X4ptxU4x4ODmH+TCGGG/9
-	2uLjFKqL0xBSPWJwELPQLKKy3MADd8cawErnnsb2+rh+TEm2ar/ZTCmiTCH6oXt2nZHHVGSBXCd
-	EbbL5AccRfc1JpUibW9g==
-X-Received: by 2002:a05:600c:8b31:b0:480:1dc6:269c with SMTP id 5b1f17b1804b1-482db49e6demr180468915e9.37.1770124255041;
-        Tue, 03 Feb 2026 05:10:55 -0800 (PST)
+        bh=+o0Y2sj0PGuTFcgFfnRs0Gebm7uNR7M2Xw2g99QuCNc=;
+        b=HjTpAhHLDvTHJQOQLLbMnmTqtcPTXaSExguMMRcsr2fF84gfp/gtWChJPYYM+cz5aD
+         LqlnJe+EQyuLJMo9jAb+Zk7X1jzDKXC6q0PJnfJ+YEck8UISrSIq50GYHOsBBwSdzR9T
+         daULQYCuuHyiZgqvyM+X4KA9qTJh++itHBgeaVHgs7cmHLiSE4BZ2ichshuc72qfcRhn
+         OlVoqOE/MnTzZ6xIsa0lXeWwaT8c4dZMgwqc0zcRC+lzM5ygIUMVsnb88j703JtKIcvb
+         9XS4NIojGyiJA7flBq0ofcuVkhhpSW6hUidXnAk/dQ+jqNfTrrdEHKJftQm3Vt9hTK75
+         O+VA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlXAQWZ+O4oCjwu7Ln3fIx0k/iuOlTD9Dghu3MA1cq2Pwwasnp3gZlbgJvguuph0Gedw9FaQcmcVRaxOf7QiB98w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS4qfqerBqmVkag7b1wKXwBg57qm9t93utdwWSpEjwHun0KigN
+	NNjOPA4naGZ/nE2Zogw4kqrPmQF8AFmo4+xFPR0FJgvPcO/+baw6Mepy
+X-Gm-Gg: AZuq6aLY5SHvWjJXWSYzo7/Ae9ATuoUaaVbjSvb8RpspI7eDcKGYf4ncx7L7FWAKEtd
+	axnNovxtr9ep0u6J2QPnaOVLQLupEOXEhlyev2sEWZsi+wuOGxPC8pZ846+UvZ3dgg+feWpbWxn
+	12UqcqjXZ9Jtk67rLhNNsVSuIuMOTI/x7bgFWvQGtyck2GpF8l8P4bZX5Pqv67kO56auxQxuqFZ
+	xo5iVxbRik3EhV7NgXUfEZD0i5mj+qF6BuhhDH4W8ksjIlt1Y0eBrK23oqV+0DpYXCKDzNPzYrK
+	YjDE5z6nDvYyjkiaWJC3tepYhRi3uy49k4QuTn86lFn4VeoVx2dSSNeNBxpRcR5UsPLI2Nj3Iav
+	LHi5Nt386YplEUm9Rw/RTBd8QXkEzISLrsHx5q8+7+1+I8whZN6jWZeMOB9l4PWhuopd72v0up+
+	mlAQ+rEIJ6NpBzn1IZL0sJwqTgawaC
+X-Received: by 2002:a05:600c:4e87:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-482db4655c1mr192761085e9.13.1770124256377;
+        Tue, 03 Feb 2026 05:10:56 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 05:10:54 -0800 (PST)
+        Tue, 03 Feb 2026 05:10:56 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 05/10] pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
-Date: Tue,  3 Feb 2026 13:10:28 +0000
-Message-ID: <20260203131048.421708-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 07/10] arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
+Date: Tue,  3 Feb 2026 13:10:30 +0000
+Message-ID: <20260203131048.421708-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
 References: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
@@ -84,49 +87,106 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add support for configuring the ETH_MODE register on the RZ/G3L SoC to
-enable output-enable control for specific pins. On this SoC, certain
-pins such as P{B,E}1_ISO need to support switching between input and
-output modes depending on the PHY interface mode (e.g., RMII vs RGMII).
-This functionality maps to the 'output-enable' property in the device
-tree and requires explicit control via the ETH_MODE register.
+Add reset-names for RZ/{G2L,G2UL,G3S} and RZ/{V2L,V2H,V2N} SoCs.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1->v2:
- * No change
+v2:
+ * New patch
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 1 +
+ 7 files changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index cf7f9c2e37f8..5e3e56e32cea 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1198,6 +1198,23 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oe
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 593c66b27ad1..ded4f1f11d60 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -604,6 +604,7 @@ pinctrl: pinctrl@11030000 {
+ 			resets = <&cpg R9A07G043_GPIO_RSTN>,
+ 				 <&cpg R9A07G043_GPIO_PORT_RESETN>,
+ 				 <&cpg R9A07G043_GPIO_SPARE_RESETN>;
++			reset-names = "rstn", "port", "spare";
+ 		};
  
-+static int rzg3l_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
-+{
-+	u64 *pin_data = pctrl->desc.pins[_pin].drv_data;
-+	u8 port, pin;
-+
-+	if (*pin_data & RZG2L_SINGLE_PIN)
-+		return -EINVAL;
-+
-+	pin = RZG2L_PIN_ID_TO_PIN(_pin);
-+	if (pin != pctrl->data->hwcfg->oen_max_pin)
-+		return -EINVAL;
-+
-+	port = RZG2L_PIN_ID_TO_PORT(_pin);
-+
-+	return (port == pctrl->data->hwcfg->oen_max_port) ? 1 : 0;
-+}
-+
- static int rzg3s_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
- {
- 	u64 *pin_data = pctrl->desc.pins[_pin].drv_data;
+ 		dmac: dma-controller@11820000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 29273da81995..cb0c9550aa03 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -1017,6 +1017,7 @@ pinctrl: pinctrl@11030000 {
+ 			resets = <&cpg R9A07G044_GPIO_RSTN>,
+ 				 <&cpg R9A07G044_GPIO_PORT_RESETN>,
+ 				 <&cpg R9A07G044_GPIO_SPARE_RESETN>;
++			reset-names = "rstn", "port", "spare";
+ 		};
+ 
+ 		irqc: interrupt-controller@110a0000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index 0dee48c4f1e4..7a3e5b6a685f 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -1025,6 +1025,7 @@ pinctrl: pinctrl@11030000 {
+ 			resets = <&cpg R9A07G054_GPIO_RSTN>,
+ 				 <&cpg R9A07G054_GPIO_PORT_RESETN>,
+ 				 <&cpg R9A07G054_GPIO_SPARE_RESETN>;
++			reset-names = "rstn", "port", "spare";
+ 		};
+ 
+ 		irqc: interrupt-controller@110a0000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index 997e6cf0bb82..3a69bb246bab 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -533,6 +533,7 @@ pinctrl: pinctrl@11030000 {
+ 			resets = <&cpg R9A08G045_GPIO_RSTN>,
+ 				 <&cpg R9A08G045_GPIO_PORT_RESETN>,
+ 				 <&cpg R9A08G045_GPIO_SPARE_RESETN>;
++			reset-names = "rstn", "port", "spare";
+ 		};
+ 
+ 		irqc: interrupt-controller@11050000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+index cbb48ff5028f..66f40cb1464d 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+@@ -265,6 +265,7 @@ pinctrl: pinctrl@10410000 {
+ 			interrupt-parent = <&icu>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
++			reset-names = "main", "error";
+ 		};
+ 
+ 		cpg: clock-controller@10420000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+index 9fb15ca24984..e85daef4e42d 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+@@ -288,6 +288,7 @@ pinctrl: pinctrl@10410000 {
+ 			gpio-ranges = <&pinctrl 0 0 96>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
++			reset-names = "main", "error";
+ 		};
+ 
+ 		cpg: clock-controller@10420000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index 80cba9fcfe7b..38793b948c02 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -270,6 +270,7 @@ pinctrl: pinctrl@10410000 {
+ 			interrupt-parent = <&icu>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
++			reset-names = "main", "error";
+ 		};
+ 
+ 		cpg: clock-controller@10420000 {
 -- 
 2.43.0
 
