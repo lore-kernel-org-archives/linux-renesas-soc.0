@@ -1,80 +1,83 @@
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2983F320A00
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 10:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD3131A7ED
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Feb 2026 10:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770114639; cv=none; b=e9Wvw9j78migszg4ONJcHhIHg+3WKQkDFIGrtfOKdRH66Jc6ydkij90j0IKLALteuIIZ3aiGBSnUltnJQmH4P1BBC+GFXD4FUIQHDcJ5+5vvSFjUBqG2uc/WhCi0NF9coT1WaK48RYV4LGw8Qyp+Pz5JA3x9SadYE4w2Nb5ocO0=
+	t=1770114639; cv=none; b=cW0kyLmXik595zbtL53Ypr5rhb+/nFEhqvA3Y3YTEztyQZa7ocZoj3PIuJT6Atse0qn4lmRn1qu85OpZKdEcMUVtaxKz+AcYAh9edxxpvPOOFzhw6EZnrGEL2p+RJlOCqiUxbPBMVWI6ENOBGz+NRV78TOIIjHFHrbVliy5llWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1770114639; c=relaxed/simple;
-	bh=XJbM2JVyYSC0kaOcPcpiALeFPG9NrUkUJ/r0FAr8tA8=;
+	bh=PjFk164I71mZxjVv/pn85dLTnDDTC9xoAQHGjiSsSzM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VvIUYgj7u2EarAfIZMo3wwIEs9IMXJ+C28OJDxpElOaspuXGy+i4cxTG6Y9pxajb11a4/YTImxWxhP+IEucnAuikhd0asD2y+dV1fxU9j4LxST5jKBB15qHfVQYhTq0DpVtQtKX7uM7T3E9RshH5cXPEkKe64U7UGTUf/B2G4/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfM2GuCj; arc=none smtp.client-ip=209.85.221.67
+	 MIME-Version; b=Ymb8ooDUdZ5MG9oDi/2Pe6kxYX7n9phm0c3JwYBKUXOb0hW4soWA1kF98iQAj6yeY3N0xtcWiAs36upaoiKSWlNkJFzNWg5mVSQkS9kk8UWR2rbUIfvUwxVN7tiEF9+AHLvo6mDX4gzvorbD9sBfpFP311D850EgE8AGqEyppY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDOp+1Qq; arc=none smtp.client-ip=209.85.221.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfM2GuCj"
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-43615d9c5d0so138246f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 02:30:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDOp+1Qq"
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-42fbc305552so5048546f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Feb 2026 02:30:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770114636; x=1770719436; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770114634; x=1770719434; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2mOYlroPk2klo4BgZGL09Amb1J7btfQ2TwCzNWxQs4I=;
-        b=XfM2GuCjrz3R4ewgspn15h/6a7zWtwMOsUBEmA5qpJlGNQPZOy7NMwQqpQ9jaahhBy
-         Tw39ISZzBzPY5VPtEoiB5PohXQE6kjotirGKf92S8w5nJ4hohkHByRPKNXAXxHGWqgNz
-         r5KEaE0LBSkJAmg/E2x4oqPaoxm3CkLoyb88AbIrbhN9MEtGqEt9rS5fdEK8m7Yym6Cf
-         ruCN24qNooPeAyPYpK266kxhx13ntM/jRacD2NMXJQn6Er4hf2MwE+1/qS5/+87qJB0i
-         jAK3QB7OhXqgra67EuboRxSkPcyjf3K4KbhWiC0pvUv9EG1bW2WzRb46/Vrq0IGqxk1f
-         cX3g==
+        bh=1U+dkg/+uoRE1uMSj0xkZIAtaZIHuboawXSgHR45QSU=;
+        b=VDOp+1Qqhmta6P9zx3krp0YNF9MNafOkWV5JgHTha1WegG8L7HsN2ArHCah+QtoTa8
+         /7eLs2u6AgkEukxXBL9qzmdBWT0oQunF4g4ckqdCSSKtJg/WWszmXxlp4MmxnuIKyixh
+         e3DjwPDCHok89TsyBZMaUpNmwut64PGxLfGV5cYQTdN7gKGSvsEOv/haoUS3/rY6K89C
+         kugC4l5m3+MY8VKypR2vRq4OKuDqaw0R/WGHU8tpqlGBCggLHc4IHJgCObMNiwymQokO
+         UQ5ewHbLAOAKh8rVmGIcGpEeiGrdXibRMHKJBe9+UlORfFfblkJ/iw6HeaIhdvLALTpQ
+         8HuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770114636; x=1770719436;
+        d=1e100.net; s=20230601; t=1770114634; x=1770719434;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2mOYlroPk2klo4BgZGL09Amb1J7btfQ2TwCzNWxQs4I=;
-        b=vz7zzf73YRkVdTrPWbHq0X0pMQnN2xFDPXxEWj23HyF3PH5gjxuoHVsdOJoUUi70/l
-         4QSk/lHU85Cezuwo1dj9tFYy/o3L10kcrl1FtjulXCmE/qnkAL731FN6L4jn2yrBQmvT
-         601roy/xJ6SdiwkyBQkKg3gb5rnssbOvg+XAmz77W3fG6lLtw3TwBqc7YccfzcI+M0EG
-         y5f5+RQnmJEWDdeCifQQKcr8h4jsEB66ErKDJvyOiV/mac4/GfzW/cavF/heX4vC6Vnu
-         9YXJsStjlnF5UmHecyX5OTOebU3UMGUszaUFBK0Ub5LYIwbYUcKKPchpNarB3y/xtz/h
-         Yh8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWZP6fTxvu1/NG5+Cb3C0bXjnwHc/I4G1DLyaESWirrYa90OPUkplDMh6sxYhz97mtKq6lLihgv254bHuXlMsk4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw39liI+ftpoBFqkkcGhWsO2crXFJr7IHVeqMbL2b3PAQu6AACy
-	eLSfrTrOzTi1v0Xt+nk+MXC9DigCiKslnlLjzsp85kENobSq+iB7AExN
-X-Gm-Gg: AZuq6aJmNS19w8iaH1a+MpO2l9gk9tml9Rd++dDwqUfWkXVAUXtJJmG95xDVWl0ifpV
-	i23btSPMp//1USaFgiDK87Rd6f1VO6UFLHOva8o7bq70ZWg5UPs5hZEdAW3ozAG0XKjLDUyBu2z
-	Zcmfpuo1raFWhOdP28DOGOpiT6M/urx6Vbr7hVg+pgygl7e0pbx/LhX5USQweXo7ODLMn/wgJ2z
-	h1lBIHP0pXET7Y7iw+7oK2CrKNZI37p1CU1EvIl7719BboCZOpo0L3IP8X/St7XJwjqr93FtyGC
-	FOnLuwPNidd7nl87Fkzbsz/Apr/2kh28RXcdU0Um4zMgqGZIFurzVzeD8YMuYptdJNmXCRhaSQO
-	eoFoEIzVAzm7AM2GzDJTMPoXt5uISH04ZTd4sJGuc4Y4quwHB1jBufgCgOqn8Shqo+6GBXDeHUW
-	cCimKGlkU0gfDDLPODFFEOcQ4SwN3e
-X-Received: by 2002:a05:6000:4285:b0:435:9f41:d54 with SMTP id ffacd0b85a97d-435f3aba8dfmr21027069f8f.60.1770114635561;
-        Tue, 03 Feb 2026 02:30:35 -0800 (PST)
+        bh=1U+dkg/+uoRE1uMSj0xkZIAtaZIHuboawXSgHR45QSU=;
+        b=mgxo2BnXmDG82PZ+S4+uKt+o4EuR2HCY8i+QzJlk70dgXmLSsD/Vmvtlej5mcNo6JQ
+         IzFkuZ/gGnXpJ1dchWzZunj5bLeOi6YOhMP5lbB3ZCWiuXDJFAQKW+c+DGxb0JWJquad
+         v5LalsKMntxlLpyhGnsaJwt4rqxMmAQCydZpMcQJGI6EiRN+1iOlSTTgsHqXi8a9QQRA
+         78jNbnLdRDUktH7njIxJgshZtHk+wEZuBgjWbqq89FWqglF85UFz1czj2cFSwIWIITnX
+         NKnB0ojnG+jdKUgVqbZJE3B/JDizbSeabwZhoPHLcoAy7BAxfGUxceZE1UqisJYuYYKu
+         LW1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLrMkg8qFZ4kY39kHD35t8CzGptzVKaKbzO2W1TCO5rZ5UePGtX5+oBTNSMkZGGBVhAKcs1yA6ZqmNc4yWuukmOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6MLWKdVhyyeING0wUQaViduG23kCCj6slgN2nystgQo8aHihV
+	3hxhahIPeswjSJt5ngL4piCsG3jLhDJEaBZwqDsnwmOLiqBRujIFbegh
+X-Gm-Gg: AZuq6aIF0fxDZnAyCglbn0MI6uYm9mMTJh2iXWViOCiFtYQft9B6k3S5iXiZ+QKx/h3
+	bt/XMedLQHzuuQtF7jc8ivu6Y3III2gfya7vJkCA+zzcU3e7fZxWzga34OBQYGvKAwAqpFg1eg6
+	jLzwG1mYzgTE8pVUUa5AW/Uw82r1lI8mvLHPj1t8ZF42XRpQunPqSfLW0bCamYG1NlVt29p/Yrt
+	dDIIyGRi+hBOzCLn6KpJDiWf8MpajrrXD6bAMksAl27eXSoAZGUFNsnfIK2KhwzK+5+1oguvgt5
+	Oh1qpT+qFqijzgmJam2eh/VEpPLULHEgkIb7MN7SS69thiB4GyKY5XapA6wUb3wBEfuQQkh7l6z
+	f+8t2M82M/qxeoHeJiXuFbsOOi9wGRX58jRJky9UwZy4tmS0sGBQVv6Gov3wk4uV93W1gwF/XQg
+	ZB6Nr+N/weCYy6zT3egPG8Hm0UHQ6C
+X-Received: by 2002:a05:6000:1863:b0:435:a136:b891 with SMTP id ffacd0b85a97d-435f3a6a7e0mr20936885f8f.13.1770114634374;
+        Tue, 03 Feb 2026 02:30:34 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1323034sm53160961f8f.35.2026.02.03.02.30.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1323034sm53160961f8f.35.2026.02.03.02.30.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 02:30:35 -0800 (PST)
+        Tue, 03 Feb 2026 02:30:34 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+To: Vinod Koul <vkoul@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
+	dmaengine@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3 03/10] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/G3L SoC
-Date: Tue,  3 Feb 2026 10:30:11 +0000
-Message-ID: <20260203103031.247435-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 01/10] dt-bindings: dma: rz-dmac: Document RZ/G3L SoC
+Date: Tue,  3 Feb 2026 10:30:09 +0000
+Message-ID: <20260203103031.247435-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
 References: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
@@ -88,32 +91,33 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Document RZ/G3L (R9A08G046) SYSC bindings. The SYSC block found on the
-RZ/G3L SoC is similar to the one found on the RZ/G3S.
+Document the Renesas RZ/G3L DMAC block. This is identical to the one found
+on the RZ/G3S SoC.
 
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v2->v3:
  * No change.
 v1->v2:
- * Collected tag.
+ * Collected tags.
 ---
- .../devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml      | 1 +
+ Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-index 4386b2c3fa4d..94ae72eb8fb6 100644
---- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-@@ -24,6 +24,7 @@ properties:
-       - renesas,r9a07g044-sysc # RZ/G2{L,LC}
-       - renesas,r9a07g054-sysc # RZ/V2L
-       - renesas,r9a08g045-sysc # RZ/G3S
-+      - renesas,r9a08g046-sysc # RZ/G3L
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+index d137b9cbaee9..e3311029eb2f 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
++++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+@@ -19,6 +19,7 @@ properties:
+               - renesas,r9a07g044-dmac # RZ/G2{L,LC}
+               - renesas,r9a07g054-dmac # RZ/V2L
+               - renesas,r9a08g045-dmac # RZ/G3S
++              - renesas,r9a08g046-dmac # RZ/G3L
+           - const: renesas,rz-dmac
  
-   reg:
-     maxItems: 1
+       - items:
 -- 
 2.43.0
 
