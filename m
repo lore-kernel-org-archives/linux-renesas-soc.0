@@ -1,97 +1,116 @@
-Received: from mail.dev.rtsoft.ru (mail.dev.rtsoft.ru [213.79.90.226])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7B91F2380;
-	Fri,  6 Feb 2026 10:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.79.90.226
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474032ED57
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  6 Feb 2026 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770374399; cv=none; b=Zoz9DWiy7QRewJnhMH793FzxKenpNAoWfExXslgtKI6tnoUpH/3LVdDGJWtaFD4H41mJAzxvZI7Si5wtRM/tKS862+JxTRJ9C4KepqkT1LAh6Bzu4C9YgcJwSA5xoAhZh5OmbKP7hVmyuRiZA5gGTbJCSawSubpwzgOypGG1MHI=
+	t=1770375196; cv=none; b=Ir40QA/lg3KJBC5g5Moqb77oI4byD5rGqYvau17yffsrq1eK0UlFyXaUphoJM3e9WlEfAy1FyRACjY/6RaYRbruICSkhyfoaPTt61rfEFza8jizuhXYSZrI7ylVuLvMBI/jdzaq6DlY9GUB7Ko7Q/2nLhGELVPsA6RccR9r+pQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770374399; c=relaxed/simple;
-	bh=6OnxLe8EyUUzTBtYYOFz/C0thedtH48VjMALAeoKO+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7Wsg/FXd4l37o7y1YgRkVKqCmpwzylG7w2U71dbnpwXLBVSjADQTauQIT/Bcrl79zJTIYT+z/syq0a9T1bWq6OGV7p9b0SXwph3JZJvhot8vchISWszmmBDVzGfZhwzyNmq3U/uq5DDPZ2Ad/9g4oa3eE8tnvZeUgY9UBgCb/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dev.rtsoft.ru; spf=pass smtp.mailfrom=dev.rtsoft.ru; dkim=pass (1024-bit key) header.d=dev.rtsoft.ru header.i=@dev.rtsoft.ru header.b=GN5GYebX; arc=none smtp.client-ip=213.79.90.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dev.rtsoft.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.rtsoft.ru
+	s=arc-20240116; t=1770375196; c=relaxed/simple;
+	bh=0SECqUzwFuDOkuMRS/YSRrygzvaLp2b4fw2eaVqcQ2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eo9ZXh+XWTpIAMlzbbf/iQRB3wNR4kI6+4yD887zKRKDC4BztFwfjSgG9LHXq8vYDnoHhOF0rYSskTjsZZNVzAvR9n4rHsxykH5Ye7iN7M+0gkdRBFofjx8nWoaYomFo/4nPLtqVHhhRbtTM1TZ4DKiEVuIusi7YnG/Vlkov8uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfyTNOjP; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dev.rtsoft.ru header.i=@dev.rtsoft.ru header.b="GN5GYebX"
-Received: from mail.dev.rtsoft.ru (localhost [127.0.0.1])
-	by mail.dev.rtsoft.ru (Postfix) with ESMTP id 6193583FE6;
-	Fri,  6 Feb 2026 13:31:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.dev.rtsoft.ru 6193583FE6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.rtsoft.ru;
-	s=mail; t=1770373918;
-	bh=LHMkTXnKnNt0ryQWtQStRCNfgK5XQzWzGDoLk6H5Ljo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GN5GYebXZ5yR4T7zQ1cn8lpIWBDvU0P2YxOg+XMi/2YO/pKvXyjtz7LWzVjgQ3zPu
-	 gLzuSQPCMpJvi2UxEFQJ77gLEne1Y5UqmTUXkcDg1Ku7Kraro1roBbaUryp0E+sbih
-	 8N3EzjaYFN68n3uhi7pc7bOW8jN0HaS/LXaKRRw8=
-Received: from [192.168.1.2] (ip2504fb9f.dynamic.kabel-deutschland.de [37.4.251.159])
-	by mail.dev.rtsoft.ru (Postfix) with ESMTPSA id 668B783FC0;
-	Fri,  6 Feb 2026 13:31:57 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.dev.rtsoft.ru 668B783FC0
-Message-ID: <0299e7dd-e3e1-4514-b335-6b6712d31713@dev.rtsoft.ru>
-Date: Fri, 6 Feb 2026 11:31:47 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfyTNOjP"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43628a01c32so410814f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Feb 2026 02:53:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770375194; x=1770979994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sJU+Y/OHyOyzpNv7LFCtS3L2+xMqX8KTcSp2BWkvYKc=;
+        b=AfyTNOjPOXn8v+6uy5kKM2TlH0qEmUabtQ5Xc1D9zJ7aQt2P3a0eX668ojwyisOjDn
+         ZYJUnyXmkYqqPaqsxDiMAa+4eymundH3b7uXrN4t6k2NzyXdj12aqY8NsysgduUbAM7P
+         j1GI9/sJfwEFarOaHKh29NSdxvzzM0C08YmtRCXxEQxpgeobNdrLuXSPOuh3TykZkDlG
+         2Puh6952HM769/74otBS0OrWSU9qepc9EwQ6uKdsOC4fCEVZkdhYRtUE9HNln5zLRlHa
+         29owyT7bKsef9HgVhXuwEBR0ine+gJmjoU6QmKWaXi0h+rs+YFMfYI3Km6u/UExnEnuO
+         fkDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770375194; x=1770979994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sJU+Y/OHyOyzpNv7LFCtS3L2+xMqX8KTcSp2BWkvYKc=;
+        b=u666K7ov3lHd3XYtctcG3Y9IhQw6WsYTm4CldIxglGe3tYfsfKZQo+iH4V33/klecg
+         p2Tts8iPRcRRkT8kxGtiwsfGmU+BvhrRQmfHXX3NiN28aS30l/vgeEtzhdDiykfsk4ph
+         Ysr1EwUvNYkxba/kxODd3ckzND4wv1WiIEWcIim/s6bGWSj3NL8NhdoT7KDCIk2yRqGG
+         jmF42q1JLtmc8/orYz+4J+hL0j+kzJpz72uW8YDxNHf2XczKVzMNpUgaluub8euYDh/Q
+         puKjKrOf+F3ZK8tlqMTBNAO9cLxXDtmv7RECC/J0C1VweKnENB6+JDoc4CR93yDmo2hn
+         hTdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3759Opj/rxHECDPXrDOFj/al4ITSEb7uNHjKB9quTLCUDPtyL5f2iZ60HPmVpUFthapLy8P6Chr8WhU5axCeSCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/MxIxnvVcrVRSAKWwjqdS0ugHbcm2tII27CGaB9AxEiLQEAEy
+	xR7EFxkciukZwhJsP2Oaps5dPQfLmLJUx/k3odJ+4OUb9gfWvV9FA6uu
+X-Gm-Gg: AZuq6aLHmXODsTgpTC3w2bL5va4zvQLvqXUCbCLeqSBh67W9oQnuy7HEnJftnSNvT+5
+	phDnQfI6g8/5ECC/QjPu2VmHTm1Txcu8RvPeuJNcSno8rCf3WHX38Mh/oW+GYiGhMKyFrVLk2kr
+	eMsGTV45ziFH1Hgeu2e/J5/mrwg1PiePQ30MxVHJSijaTx8PtXJWn40SDiOuB3L94ZEok1GEAVw
+	0W1mCPnHoksmMC1xKXTk2BpHzi8+Zn8qrzvQuDqAYPEbVtFSel9zZl4ZqOTAiDigKBdkhWVLSP5
+	s/NX2Q7uo96ESFLqd/Yj3kJd/N8sdbVk403d7jWnr0nmb6FUiR0OVfM2poDcE0SSp0l8SZNax5Z
+	Itud6D5QNjeMK9+gl1qRER/f2qkPt33lYbJJbnLC7KUzGIGwzp6yHJwCRK4ZbH8pspdl6Q3e9m6
+	T+bpw44NV8WjtPtN6TKDhMQelnyb2u
+X-Received: by 2002:a05:6000:2585:b0:436:1a2e:9f1c with SMTP id ffacd0b85a97d-4362937847emr3452623f8f.19.1770375193993;
+        Fri, 06 Feb 2026 02:53:13 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a758:8a01:1e64:f8d5:9d7a:19d4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43629730992sm4519611f8f.21.2026.02.06.02.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Feb 2026 02:53:13 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v4 0/4] Add support for Renesas RZ/G3L GBETH clocks
+Date: Fri,  6 Feb 2026 10:53:00 +0000
+Message-ID: <20260206105312.231015-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: renesas: rswitch: fix forwarding offload
- statemachine
-To: Michael Dege <michael.dege@renesas.com>,
- Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Christian Mardmoeller <christian.mardmoeller@renesas.com>,
- Dennis Ostermann <dennis.ostermann@renesas.com>
-References: <20260205-fix-offloading-statemachine-v1-1-640224a531d0@renesas.com>
- <3b1405cd-6c7f-4883-95fb-151cab223a68@cogentembedded.com>
- <d6a9356d-6fd4-459b-9c5a-2f3e20368bbd@cogentembedded.com>
- <TY4PR01MB142829D9748A483ECAF19FD3D8299A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
- <25ff0841-545b-433a-8e88-6e463ea718e7@cogentembedded.com>
- <TYRPR01MB14284CB75C7DCD35381BD17EE8299A@TYRPR01MB14284.jpnprd01.prod.outlook.com>
- <237bee8b-a7cf-4c14-9946-8bf72dbddde5@cogentembedded.com>
- <TY4PR01MB142829EB0EDDE13B588F949298299A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
- <a4cfeba2-23da-4fdd-870b-6533b5ce267c@cogentembedded.com>
- <5b8bcf37-5cd0-4c32-b0ba-3386142b7795@cogentembedded.com>
- <TY4PR01MB142820FC29E751D8C7F0B7C348266A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
-Content-Language: en-US, ru-RU
-From: Nikita Yushchenko <nyushchenko@dev.rtsoft.ru>
-Organization: RTSoft Software Development Center
-In-Reply-To: <TY4PR01MB142820FC29E751D8C7F0B7C348266A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
 
-> Unfortunately, your argumentation is very _academic_. There is _no_practical_reason_, not to
-> forward the traffic to the SW bridge via the HW bridge, even if only one link is currently up.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The very practical reason not to forward packet to SW when it can be handled in HW is - reduce SW load. 
-SW cores have no chance to handle the load if you forward everything to SW at the channel speed.
+Add support for Renesas RZ/G3L GBETH clocks and  reset signals.
 
-The very thing I was trying to achieve when working on this offload support was - detect the case when a 
-frame can be processed correctly in HW, and let it process it in HW, without notifying SW. And send 
-frame to SW if and only if it is not possible to provide correct processing without that.
+v3->v4:
+ * Updated commit description
+ * Fixed mstop bit for eth1_clk_chi and eth0_{tx,rx}_i_rmii clocks
+ * Added r9a08g046_no_pm_mod_clks to avoid PM framework enabling both
+   rgmii and rmii clocks together as they are mutually exclusive.
+ * Fixed checkpatch warning for more than 100 columns
+v2->v3:
+ * Added eth{0,1}_{tx,rx}_i_rmii clocks.
+ * Collected tag for patch#1
+v1->v2:
+ * Separated ethernet patches from series [1]
 
-But this does not directly affect the case being discussed.
+This patch series is depend upon [2]
 
-When there is only one port with enabled HW forwarding, there is no effect of keeping HW forwarding 
-enabled, because the allowed destination mask computed nearby does not contain any destinations. 
-Forwarding to CPU port was never handled via L2 forwarding (*), because L2 forwarding on rswitch 
-requires explicit adding any possible destination MAC to the L2 table - which is problematic for CPU 
-port, in generic case your software bridge device can be a part of a higher level construct, and you 
-will have hard times to dynamically catch and process any changes in the list of possible destination 
-MACs for the CPU port. For exact this reason, I implemented forwarding to SW port using "port based" 
-thing, that is actually a fallback that rswitch uses when L3/L2 forwarding fails due to no table match.
+[1] https://lore.kernel.org/all/20260128125850.425264-1-biju.das.jz@bp.renesas.com/
+[2] https://lore.kernel.org/all/20260203103031.247435-1-biju.das.jz@bp.renesas.com/
 
-(*) when virtual ports come into scope, a case for L2 forwarding to CPU port appears.  But still, 
-"default" forwarding to SW is never handled as L2 forwarding.
+Biju Das (4):
+  clk: renesas: rzg2l: Drop a check in rzg3s_cpg_pll_clk_recalc_rate()
+  clk: renesas: rzg2l: Add support for enabling PLLs
+  clk: renesas: r8a08g046: Add support for PLL6 clk
+  clk: renesas: r9a08g046: Add clock and reset signals for the GBETH IPs
 
-Nikita
+ drivers/clk/renesas/r9a08g046-cpg.c | 153 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c     |  70 ++++++++++++-
+ drivers/clk/renesas/rzg2l-cpg.h     |  10 ++
+ 3 files changed, 230 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0
+
