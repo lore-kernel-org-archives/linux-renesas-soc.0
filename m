@@ -1,44 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227FE2C2374;
-	Fri,  6 Feb 2026 22:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C635CA6B;
+	Fri,  6 Feb 2026 23:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770415581; cv=none; b=KgEPc6bPBCjPmraPzSzfYD7bHELI6DBNsxSEqYq2w2IHSTJKYGX91r+0d4Jdo/FDhHljN3+MSnnm621XHKSUrldqP7KNbeWHe2yL4zbohLM2oottRrgXzs/GcHNm9+rlD1NLHmj9Opzw3reSSA47+z44Dymnj5rDAr6yU2tTTss=
+	t=1770419816; cv=none; b=sexu6K+7xqv71hDNU3JsKwc7kdIy6YbpYcxAN8tJ4qbaKI72NYS4K0uHRveRtNgfbjRLeDEt/tEBkzJBkYmkGTKKVQ2ILmutZ4WYFxGObqCCRrtaaSTcLWfRNdAvxeQemAIO/Bm28wYFAIboO4fIXshZo4O1yCA5JNTXPB18JMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770415581; c=relaxed/simple;
-	bh=TEEyO3FVrhEbYPRYz0t1DuX45dQIXNgbEtrGOp2dds8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lrnnBGcmBA+pQKVJS84kUhTDdnIcfleUSrRGaMNt1FJQ8gXahO+/YuAzSj6z4R/ZHGZY/WUbY4GzfXLAmhgWfO8Q9csV5gTcfGHzqap8ZItMuQeiLloaqZ7YtvBEr/j9givB/HgUSdaMxvDRtCC0DuUONCX4BPawTy4yErhIZu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSlyaPDk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770419816; c=relaxed/simple;
+	bh=oMK6mBtj4d/TlnVzBK54s7nUgIle1er383dnqSjiKqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTJ44MSUWR3h/7lUbpiDGymaxDZoBdmLT76V2n26g1R4+BONdh/teonS/v6vgQmV1QsBEqcwVLWFwBTeHLRWIxoI+NymhLC+FRwuHz+EsH2nb//y8joKYpFhRMl38x6RNfwXZIbDBqWweEmRe/SzDhhVEcewa6QViEAezDu97Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiZUFbOX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSlyaPDk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE8A0C16AAE;
-	Fri,  6 Feb 2026 22:06:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiZUFbOX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B7AC116C6;
+	Fri,  6 Feb 2026 23:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770415581;
-	bh=TEEyO3FVrhEbYPRYz0t1DuX45dQIXNgbEtrGOp2dds8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GSlyaPDkTGaRoCC7hOYmOxswRQSPSf4hXXrBnZEzhNJVRnuvylj1+tc5LkxhSQAMa
-	 DzqJ2mByEB+DHfmUs9XDOdf9ZLtqbQ+iWCzW+chhR4Af2XcrLt7r9t7X1XrEK1dj5E
-	 IT0tvGjEAqSuVNR9CQM8iEww/7pry2h0m82N1d+T7k9+vVWexHoeBfasN0+EvN+I21
-	 j7e9vkyY8bWXc6nV5PTkUqPXwtlVjgOHcWbgy0Vvl1vIz7XOIA0RFqmxR/qWyae2oK
-	 w8L58ubbM1N0+ztY+WDGg84vUbPmP69fRwa5+l/0K39MyGKeRBqQpixwQueBDi9/VI
-	 P+mhFO8nt6IGg==
-Date: Fri, 6 Feb 2026 16:06:19 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Felix Gu <ustc.gu@gmail.com>
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	s=k20201202; t=1770419816;
+	bh=oMK6mBtj4d/TlnVzBK54s7nUgIle1er383dnqSjiKqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KiZUFbOXfmx0h1XhS6eIJu5h7o5QNxhq2K0WRLJCJ9d8NFyFgv7sOHFvaH1s+ppAg
+	 w1J9MfALy/S/h+UHiPbnU4MQ6umLqbSOGOZaSUCcsjpRS5w3KDAyl2S9g8zdyNVLO0
+	 2d0FlUOu2Qm/43/nZP+YdYHnoXH404XZpw/1p2GhevZKgfXPP3xP7Y4OanpyFx3VAV
+	 7fT6PWJKGsEPADnith13vjr4BJaC0xjuUz7pq5XFgTJ5uGXXKGFa8YN8h6y59mVo1m
+	 w3NDqTCIyrkrNUa4MYAQrpp2h4FZR/OZly4HQsIki/3ivjHQWudaStK/WrV/C6HDze
+	 KnCkbKcOrmMBQ==
+Date: Fri, 6 Feb 2026 17:16:52 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: rzg3s-host: Fix device node reference leak in
- rzg3s_pcie_host_parse_port()
-Message-ID: <20260206220619.GA96887@bhelgaas>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v3 7/9] dt-bindings: arm: qcom: document the Ayaneo
+ Pocket S2
+Message-ID: <177041981220.409852.7101224387579712219.robh@kernel.org>
+References: <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-0-5b79c5d61a03@linaro.org>
+ <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-7-5b79c5d61a03@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,49 +54,17 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260204-rzg3s-v1-1-142bc81c3312@gmail.com>
+In-Reply-To: <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-7-5b79c5d61a03@linaro.org>
 
-On Wed, Feb 04, 2026 at 12:46:24AM +0800, Felix Gu wrote:
-> In rzg3s_pcie_host_parse_port(), of_get_next_child() returns a device
-> node with an incremented reference count that must be released with
-> of_node_put(). The current code fails to call of_node_put() which
-> causes a reference leak.
+
+On Fri, 06 Feb 2026 15:50:35 +0100, Neil Armstrong wrote:
+> Document the Qualcomm SM8650 based Ayaneo Pocket S2 gaming console.
 > 
-> Use the __free(device_node) attribute to ensure automatic cleanup when
-> the variable goes out of scope.
-> 
-> Fixes: 7ef502fb35b2 ("PCI: Add Renesas RZ/G3S host controller driver")
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
-
-Applied to pci/controller/rzg3s-host for v6.20, thanks!
-
-It's close to the merge window, but only affects a single driver
-that's pretty new, so if anything breaks it won't affect many people.
-
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/pci/controller/pcie-rzg3s-host.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-> index 5aa58638903f..2809112e6317 100644
-> --- a/drivers/pci/controller/pcie-rzg3s-host.c
-> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-> @@ -1142,7 +1142,8 @@ static int rzg3s_pcie_resets_prepare_and_get(struct rzg3s_pcie_host *host)
->  
->  static int rzg3s_pcie_host_parse_port(struct rzg3s_pcie_host *host)
->  {
-> -	struct device_node *of_port = of_get_next_child(host->dev->of_node, NULL);
-> +	struct device_node *of_port __free(device_node) =
-> +		of_get_next_child(host->dev->of_node, NULL);
->  	struct rzg3s_pcie_port *port = &host->port;
->  	int ret;
->  
-> 
-> ---
-> base-commit: 193579fe01389bc21aff0051d13f24e8ea95b47d
-> change-id: 20260204-rzg3s-bc7c27c80a89
-> 
-> Best regards,
-> -- 
-> Felix Gu <ustc.gu@gmail.com>
-> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
