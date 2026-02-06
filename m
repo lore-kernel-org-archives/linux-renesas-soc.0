@@ -1,65 +1,36 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAE636F439
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  6 Feb 2026 10:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+Received: from mail.dev.rtsoft.ru (mail.dev.rtsoft.ru [213.79.90.226])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7B91F2380;
+	Fri,  6 Feb 2026 10:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.79.90.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770374067; cv=none; b=QPCaC2TLS126CGMD3qzqWsB5mWZEF2ogbbx+du9c29uvJseOS0ymecdH1FIgBPGA0xCqib+1GH9CN0Iok1boPPQH+y4KZZSxNSJABQpz58jzT1k1KJKgbWg4Rz95FzMbIGrghp9VbLDqc3eFAgmPv+R3698NqQdO4jOsDlbP/OI=
+	t=1770374399; cv=none; b=Zoz9DWiy7QRewJnhMH793FzxKenpNAoWfExXslgtKI6tnoUpH/3LVdDGJWtaFD4H41mJAzxvZI7Si5wtRM/tKS862+JxTRJ9C4KepqkT1LAh6Bzu4C9YgcJwSA5xoAhZh5OmbKP7hVmyuRiZA5gGTbJCSawSubpwzgOypGG1MHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770374067; c=relaxed/simple;
+	s=arc-20240116; t=1770374399; c=relaxed/simple;
 	bh=6OnxLe8EyUUzTBtYYOFz/C0thedtH48VjMALAeoKO+Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sNcJATWy68thlDFwuRe1SYMlZTmhXFiSEDs09dGtgLpnf0/OL6ypxw2irXM1yFGohbBy9av1lvVi+IEKzaSdhmtkJaA4Jm7+T372juDdyrG06fvKUMAnSExIAfgPnov3q9ooiR8PTaoWyPt39tlmwi9mKSh+n+RnTPd0Tl0tJG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=ZxYieJ6t; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L7Wsg/FXd4l37o7y1YgRkVKqCmpwzylG7w2U71dbnpwXLBVSjADQTauQIT/Bcrl79zJTIYT+z/syq0a9T1bWq6OGV7p9b0SXwph3JZJvhot8vchISWszmmBDVzGfZhwzyNmq3U/uq5DDPZ2Ad/9g4oa3eE8tnvZeUgY9UBgCb/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dev.rtsoft.ru; spf=pass smtp.mailfrom=dev.rtsoft.ru; dkim=pass (1024-bit key) header.d=dev.rtsoft.ru header.i=@dev.rtsoft.ru header.b=GN5GYebX; arc=none smtp.client-ip=213.79.90.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dev.rtsoft.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.rtsoft.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="ZxYieJ6t"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-4362aadaf09so463506f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Feb 2026 02:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1770374066; x=1770978866; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LHMkTXnKnNt0ryQWtQStRCNfgK5XQzWzGDoLk6H5Ljo=;
-        b=ZxYieJ6t9/kKFV9cSCpsBnpD/AjNohF2pqdWq8gNE+6SAftrNeRe1wgkU57a6caobi
-         7ei0MucCaK6rGA4SBne2eAwJAB6/hUcO1nYrCtEzusI3YUsOE17kE7cLG2HhyEIx/bcU
-         AUjyKwp0Ja1+he387ixfQHzLZwUnKLXAPsL7o8fnRL3ejORObukWtQtI2CFyhm46G+RO
-         /qrZxlTifatGzg2Q5C2hLRVHIQK/EZ+jdYAIcMLRJuREovcPu+/c6cBo8dls7S3T1TsG
-         n06hpngRDy8FAvSbYEt/fUHAWg851d6fCFqursDW1e/E7GpRN2KxPVlHaGdiOw1I/KrG
-         VO6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770374066; x=1770978866;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHMkTXnKnNt0ryQWtQStRCNfgK5XQzWzGDoLk6H5Ljo=;
-        b=Ol2ttdr/QD+T+ufFUIn3XL3o3ms+9lLMDfhRtOxczWfzusWq7Ima4xfSjjZ6Gdc42H
-         lalDAF5EMxH6TXwloiZmB7dBMzIVoC4NsF3HkVlqwbWI3puZkhlsUFAnNJfWdxAyI5JJ
-         5i981lTonG8e87qNEEZdzdUXanzfKdQTyvGQe1aWIDOFjQtuDhYHOWSYNyK8JyQOOh72
-         /eYQyI5thZ982YKXZ5RDfKRm3Vg8hN55icF5DJtXs7QYUlyQgd8s/norA5ltsoe4m9jp
-         4OBfueQ4fsmyJoYupqwrG6MU76XG+wbS1Aq3vRsGbWRORRb6TNqv1fMh6aVGVHMBPYA+
-         JpKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt8SEt2ySgkKGmzB3g1ssCAh3HiYnNFxH4Pnjp/GQO+1Kg2zFno/gpnlZoHBVrLwdsEIe0saQC04zpU9b2sDbJJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwu6vJQS1VSqvy8jG94FnpeKYjh591nyOy9Pd5lNxWKAGxXlFW
-	wNDpMBSgtYtObf3xT9wtdKCqSF/ko9l2TqIuexEcPhET5xtn5IjJBA1x+OzPshaCJxg=
-X-Gm-Gg: AZuq6aJ8Qj8Z87BRS9iCRTN8mGzwa7T1QGVznizVvTlh1mgw+npM/MMeiao67IkWPOz
-	E48mJ/30XNop5YbsOvXJL+cDYKHvE7Bb9e0hmohQn+fglz4H8O78fa670/f/+7f2bszqseMkE35
-	7usfk5X6Xk6X3yYBSqT9AsN+v79l7dVCdr3xrv5fgQt9vfbY4bmFD+GN4i9l/489Ti8phjR2chN
-	fUDfGmWpT8as7OyHDD08hrghYwXsO5LBvELQIlvAaW+G4RfnUa019RpsnvN6+sYbxnoLBRg6cwH
-	0JL0Pf4WTOHZ3WUHcXqMzzbfb+4QAfpDECWBLNSB4YmXLi11tBXHVLFLp6c3YGtSCd5aTzPYn/m
-	/dD+CnwAKrGSxB/1MJRX7gT+pXGHaJQnxlQQfvrNPE9V9182B67PvOw2RCRJtiexIXu4O5cXkKb
-	ZRGBfNqNukgUcuR0mSCekumK3BdCvJoZ72F4UU
-X-Received: by 2002:a05:600c:348c:b0:480:462e:d640 with SMTP id 5b1f17b1804b1-4832022f781mr35081625e9.36.1770374065755;
-        Fri, 06 Feb 2026 02:34:25 -0800 (PST)
-Received: from ?IPV6:2a02:810a:b98:a000::159a? ([2a02:810a:b98:a000::159a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436296bd1c9sm4602013f8f.15.2026.02.06.02.34.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Feb 2026 02:34:25 -0800 (PST)
-Message-ID: <1aa615e2-1297-40a9-b7c4-beb943996721@cogentembedded.com>
-Date: Fri, 6 Feb 2026 11:34:24 +0100
+	dkim=pass (1024-bit key) header.d=dev.rtsoft.ru header.i=@dev.rtsoft.ru header.b="GN5GYebX"
+Received: from mail.dev.rtsoft.ru (localhost [127.0.0.1])
+	by mail.dev.rtsoft.ru (Postfix) with ESMTP id 6193583FE6;
+	Fri,  6 Feb 2026 13:31:58 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.dev.rtsoft.ru 6193583FE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.rtsoft.ru;
+	s=mail; t=1770373918;
+	bh=LHMkTXnKnNt0ryQWtQStRCNfgK5XQzWzGDoLk6H5Ljo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GN5GYebXZ5yR4T7zQ1cn8lpIWBDvU0P2YxOg+XMi/2YO/pKvXyjtz7LWzVjgQ3zPu
+	 gLzuSQPCMpJvi2UxEFQJ77gLEne1Y5UqmTUXkcDg1Ku7Kraro1roBbaUryp0E+sbih
+	 8N3EzjaYFN68n3uhi7pc7bOW8jN0HaS/LXaKRRw8=
+Received: from [192.168.1.2] (ip2504fb9f.dynamic.kabel-deutschland.de [37.4.251.159])
+	by mail.dev.rtsoft.ru (Postfix) with ESMTPSA id 668B783FC0;
+	Fri,  6 Feb 2026 13:31:57 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.dev.rtsoft.ru 668B783FC0
+Message-ID: <0299e7dd-e3e1-4514-b335-6b6712d31713@dev.rtsoft.ru>
+Date: Fri, 6 Feb 2026 11:31:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -67,10 +38,10 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Subject: Re: [PATCH net] net: renesas: rswitch: fix forwarding offload
  statemachine
 To: Michael Dege <michael.dege@renesas.com>,
+ Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
  Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
  Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -92,9 +63,12 @@ References: <20260205-fix-offloading-statemachine-v1-1-640224a531d0@renesas.com>
  <5b8bcf37-5cd0-4c32-b0ba-3386142b7795@cogentembedded.com>
  <TY4PR01MB142820FC29E751D8C7F0B7C348266A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
 Content-Language: en-US, ru-RU
+From: Nikita Yushchenko <nyushchenko@dev.rtsoft.ru>
+Organization: RTSoft Software Development Center
 In-Reply-To: <TY4PR01MB142820FC29E751D8C7F0B7C348266A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
 > Unfortunately, your argumentation is very _academic_. There is _no_practical_reason_, not to
 > forward the traffic to the SW bridge via the HW bridge, even if only one link is currently up.
