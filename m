@@ -1,192 +1,123 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA93283FC5;
-	Mon,  9 Feb 2026 16:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EFC3815CE;
+	Mon,  9 Feb 2026 16:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770653107; cv=none; b=d7MWEMuA+l06yXCgOYJqKqrVo1XeZcXt74sQJBAKKkdD/NCYC81bxgWhETYJlJ5bK9mRdmYNFKPiU0k1gxAvDWZ783DVdzuA4ZWl6K28zvq4OPoIqxoxzl7+y1Dw1YwiH8xZQ8Ze3VNxVRIgVUwU/qk9pOE+idKTZWkkcsXoUf4=
+	t=1770653640; cv=none; b=VCtLf1iXro1nHrQbYcs8pJiz7qKN9duvcnoP0eMtF58sCasfYwDDZTvgVSUAXseOxdZjyQboYAfE+cfhDMfeZRsYZEBaEVfyQuOPpHOPJLym8dzvS5CXKQ2Pw1eSeUpIJNVRW/kFEjnRnkFSgL1XuxHFZ4OQPAnCZbMqCzRh+5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770653107; c=relaxed/simple;
-	bh=p6Fq4ro6/P5c9Yo+h2Np7ytxI8QOl2SyMtcIEaZJteI=;
+	s=arc-20240116; t=1770653640; c=relaxed/simple;
+	bh=LOJcn+SmxysmVh2uPMIzBp5pbzxzu9seMnrYNsHRBSg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmLLQzC31KQbBTzysxyT0l8b94XoM85bqaPZOJCJTIuSJLUSU0bbctriELmaQAIXpHpeae4ctX7XNq/z3TpWBFESu7SPzEhhk022leP5k8hmIWMOVTfvpAwdupM2ejz1ST1HbnJ95j4yX2JvO9HPs2SG0WOx1GvCkq/XCvq5IL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GzXOc1Ln; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyEdr1shpiAKsjhQeOAJ+lSkRQ+N9YWlzC0urKftPwpN095HYyT1X2bkIDTgWbgPWHwPBqnu11JPWDWFl5nL01qxOzhr3/nvp1/9RaSnDB6Ns0vToDQMaCQXaeK1GPUKEp/mqy8KjkOgvyUjLjKfvRFOCh9lxgQVSe5eybm7YWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUZjPza7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GzXOc1Ln"
-Received: from ideasonboard.com (net-93-65-100-155.cust.vodafonedsl.it [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 61D5C63F;
-	Mon,  9 Feb 2026 17:04:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1770653059;
-	bh=p6Fq4ro6/P5c9Yo+h2Np7ytxI8QOl2SyMtcIEaZJteI=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUZjPza7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 632F9C16AAE;
+	Mon,  9 Feb 2026 16:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770653640;
+	bh=LOJcn+SmxysmVh2uPMIzBp5pbzxzu9seMnrYNsHRBSg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GzXOc1Lnouv8NugQNXcEsujGg83ktaMNTEC50fwfazHphFI5AFmUtHYm6pONSGAX4
-	 MxLel4H5Bz4oyDyBnmQ4yVh9bXYsOYmVjhdeAciEm4I2FuX2uqOyvTrmpUYmqtmPRQ
-	 izahPUOEKGLaY2tU9T2xpcGfFyGYPy89IHfM4lxs=
-Date: Mon, 9 Feb 2026 17:05:01 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, tomm.merciai@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Hans Verkuil <hverkuil@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: rzg2l-cru: Skip ICnMC configuration when
- ICnSVC is used
-Message-ID: <aYoFBMBBT88qH756@zed>
-References: <cover.1767114395.git.tommaso.merciai.xr@bp.renesas.com>
- <b9aeabb34829b8e97559610a3d00ef67399a300c.1767114395.git.tommaso.merciai.xr@bp.renesas.com>
- <aYnnRWR-5xOPSHOh@zed>
- <aYn_Vf1H1m1z44p2@tom-desktop>
+	b=eUZjPza7FPFYtADnlPyrvUQeLkRIftNqUBdxCxWsmcAxTSEC7h1y3EogopI2EN5yo
+	 OHmOM4kRW0mWYsaSBWeGG94SFkrQlwoy9ERbFTMTpJ0Io+NbOKNgJNMpqw5vPFTiY6
+	 qwp352Vg3bCuD/ikfLM+KvmjcmjKBagsBMSXIrGiWJHNZaw4RYV4gPr0yrtQYiRF+s
+	 XbzUgmmGAWxnPB125eA5XmC+pOpdmCHQCX7Td/XoBgVqmJ4gjH0csPg+S7wNLwyOwO
+	 QrRRMXCGGZHPIJ2qZsnFaSW8sWMnKrw3L0+d4bXLpB3/vn47IMQEV+DuyQG5OfBMsM
+	 AqPkD6R2UBZ+g==
+Date: Mon, 9 Feb 2026 10:13:54 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-renesas-soc@vger.kernel.org, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andy Shevchenko <andy@kernel.org>, 
+	Antonio Borneo <antonio.borneo@foss.st.com>, Arnd Bergmann <arnd@arndb.de>, Boqun Feng <boqun.feng@gmail.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, Mark Brown <broonie@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>, Will Deacon <will@kernel.org>
+Subject: Re: [RFC PATCH 0/4] hwspinlock: refactor headers into public
+ provider/consumer pair
+Message-ID: <yl4bbbev7lgrmnqys2izkolo5egzg24faukvqar5eh26q5ra7p@42rcegfpqqt6>
+References: <20260125184654.17843-6-wsa+renesas@sang-engineering.com>
+ <aXc7DxsqiCGdfzxi@smile.fi.intel.com>
+ <aXc-Zxw05XQLb1Dy@ninjato>
+ <aXdAB2bLTy6u8G8c@smile.fi.intel.com>
+ <aXdCBu6kzdw1NWay@ninjato>
+ <aXikZ5wc6bvgRqF6@ninjato>
+ <aYnBrN0JRCf9-UjB@ninjato>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aYn_Vf1H1m1z44p2@tom-desktop>
+In-Reply-To: <aYnBrN0JRCf9-UjB@ninjato>
 
-Hi Tommaso
+On Mon, Feb 09, 2026 at 12:14:52PM +0100, Wolfram Sang wrote:
+> Hi Bjorn, Baolin Wang,
+> 
+> > > > > Providers need it, especially the 'priv' member. Consumers won't see it.
+> > > > 
+> > > > But can't we make it opaque?
+> > > > 
+> > > > We may have getters and setters for the priv member...
+> > > 
+> > > I think we could do that.
+> > > 
+> > > Two drivers use the bank member, but only for the device
+> > > (lock->bank->dev). That can probably be refactored away, I'd guess.
+> > 
+> > I am willing to develop this series in the above direction. Before
+> > though, I'd like to know from hwspinlock maintainers if they agree to
+> > this refactoring in general.
+> 
+> Moving maintainers from CC to To ;) Do you, in general, approve this
+> change to the headers?
 
-On Mon, Feb 09, 2026 at 04:37:57PM +0100, Tommaso Merciai wrote:
-> Hi Jacopo,
-> Thanks for your review!
->
-> On Mon, Feb 09, 2026 at 03:21:59PM +0100, Jacopo Mondi wrote:
-> > Hi Tommaso
-> >
-> > On Tue, Dec 30, 2025 at 06:09:15PM +0100, Tommaso Merciai wrote:
-> > > When the CRU is configured to use ICnSVC for virtual channel mapping,
-> > > as on the RZ/{G3E, V2H/P} SoC, the ICnMC register must not be
-> > > programmed.
-> >
-> > I see a difference indeed between the [G3E, V2H/P] and the G2L version
-> > of the IP in the presence of the VCSEL[1:0] field in register ICnMC.
-> >
-> > On [G3E, V2H/P] the selection of which virtual channel to accept
-> > doesn't go through VCSEL[1:0] in ICnMC but a dedicated register ICnSVC
-> > is provided for that purpose. So far so good.
-> >
-> > >
-> > > Return early after setting up ICnSVC to avoid overriding the ICnMC
-> > > register, which is not applicable in this mode.
-> > >
-> > > This prevents unintended register programming when ICnSVC is enabled.
-> > >
-> > > Fixes: 3c5ca0a48bb0 ("media: rzg2l-cru: Drop function pointer to configure CSI")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > ---
-> > >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > index 162e2ace6931..480e9b5dbcfe 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > @@ -268,6 +268,8 @@ static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-> > >  		rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
-> > >  		rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
-> > >  				ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
-> > > +
-> > > +		return;
-> > >  	}
-> > >
-> > >  	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
-> >
-> > However, the rest of the rzg2l_cru_csi2_setup() doesn't only program
-> > the virtual channel filtering through ICnMC (which should be skept for
-> > G3E, V2H/P) but also programs DT filtering in INF[5:0] of register
-> > ICnIPMC_C0 which seems to be available on G3E and V2H/P as well.
-> >
-> > Section "9.2.4.3.6 VC/Data Type Selector (for Image Processing)" of
-> > the chip manual (V2H/P) prescribes:
-> >
-> > Only one data type can be handled by each SVC and the data types are
-> > selected in the ICnIPMC_C0 to 3.INF[5:0] registers.
->
-> You are correct, thanks.
-> I miss that part.
->
-> Maybe we can go for:
->
-> static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-> 				 const struct rzg2l_cru_ip_format *ip_fmt,
-> 				 u8 csi_vc)
-> {
-> 	const struct rzg2l_cru_info *info = cru->info;
-> 	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
->
-> 	if (cru->info->regs[ICnSVC]) {
-> 		rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
-> 		rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
-> 				ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
-> 	} else {
-> 		/* Set virtual channel CSI2 */
-> 		icnmc |= ICnMC_VCSEL(csi_vc);
-> 	}
->
-> 	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
-> 	rzg2l_cru_write(cru, info->image_conv, icnmc);
-> }
->
-> ?
+Certainly, I don't think we should force unnatural slicing of drivers
+across the source tree.
 
-yes, I ended up with something similar locally to be able to move
-forward and test more patches from this series.
+> I think it is more modern and e.g. the mailbox subsystem has a similar
+> structure, a header for the client and a header for the controller.
 
-static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-				 const struct rzg2l_cru_ip_format *ip_fmt,
-				 u8 csi_vc)
-{
-	const struct rzg2l_cru_info *info = cru->info;
-	u32 icnmc = rzg2l_cru_read(cru, info->image_conv) & ~(ICnMC_INF_MASK |
-						              ICnMC_VCSEL_MASK);
-	icnmc |= ICnMC_INF(ip_fmt->datatype);
+gpio, regulators, resets to name a few more.
 
-	/*
-	 * VC filtering goes through SVC register on G3E/V2H and through ICnMC
-	 * on G2L.
-	 */
-	if (cru->info->regs[ICnSVC]) {
-	 	/* FIXME: This only works if 'csi_vc' is 0. */
-		rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
-		rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
-				ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
-	} else {
-		icnmc |= ICnMC_VCSEL(csi_vc);
-	}
+> And do you also prefer an opaque 'priv' member?
+> 
 
-	rzg2l_cru_write(cru, info->image_conv, icnmc);
-}
+'priv' is already opaque, so I presume you're asking if we can make
+struct hwspinlock internal to hwspinlock_core.c?
 
->
-> >
-> > And this patch makes the driver skips that part.
-> > Has this patch been tested ? It breaks my V2H/P setup:
-> >
-> >  rzg2l-cru 16010000.cru1: Invalid MB address 0x0 (out of range)
->
-> I've not seeing that on RZ/G3E.
-> Thanks for sharing.
+I can see the allure of making hwspinlock::lock internal to the core,
+but (luckily) I don't see it to be a matter of just slapping some OOP it
+and call it solved. It would have to come with a new model for how we
+create the hwspinlock in the first place - as this is currently
+allocated as a whole by the provider driver.
 
-Without programming which DT to filter I don't see how this could
-work to be honest..
+I've always found the current model unergonomic, resolving this part
+might very well have the side effect that Andy is looking for (and I'd
+welcome that).
 
->
->
-> Kind Regards,
-> Tommaso
->
-> >
-> >
-> > > --
-> > > 2.43.0
-> > >
-> > >
+Regards,
+Bjorn
+
+> Happy hacking,
+> 
+>    Wolfram
+> 
