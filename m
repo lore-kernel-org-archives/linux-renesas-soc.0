@@ -1,47 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CBB238D42;
-	Tue, 10 Feb 2026 01:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DAB2765C4;
+	Tue, 10 Feb 2026 02:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770686059; cv=none; b=K8X8Y16UyXGCEdWrtXyZIQq+sc8mAdrIzeL9Gqd1xKpTAI6efRb5FYCHuC78MmhEwF+/820INiop24AvtjqYYXr4Q+++knqc4Nm3EZPNKC1r9xanidS1GZZTi6NXb5R4WMUJ3ZOJayp8P1OoIEaAgCRzbkXB+c3kuFp/mVOmThg=
+	t=1770691062; cv=none; b=aOMuuRHhSgfpJaENsokhj1QIUktZ8NRJHPc2LwIUpJTdF/LPaac7j7vNuiPgwXMD3JtL0q+yrSinqckJHWYoKIqUgD4r9zjql3UJ75TE60L+8CCTjX7s5PpUG/jBXQfENZTXWyJ9bGcUYrWL0LE5pVPB8rmBBQhHZ9Lv4ITQ/vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770686059; c=relaxed/simple;
-	bh=yMSnap1H9Cu9+6D8Oq3J4mpUg6BC7MFbdOxTodbzqu4=;
+	s=arc-20240116; t=1770691062; c=relaxed/simple;
+	bh=1REeQ9bmhabHDdl80zGNRmd69dN2i8Beu8762qMZG78=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lK+/Ipq78yfoiWGqEFRI+ivS4R0sn/LCArJCo/i63YzhF+tfgvvEg4Yutca4ZUNgVMf+aufLcC3ivBMgB8Ic9lyL5G13wxzQ23ent3nNu4KHWfWccXJ4CuwST96+kNKdMrx1W+RH7d67N0gQdcevBF+GT2QPlcRDfW9A6ucF7sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp6MOftG; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNV5qC3W+GDFYpc27HlopQRubOFOMH6o7+0T3YvvdA/WpLHgqGficrdzfM+wVZzImoXgJhRjZZUBkwKa9JAy6INKs8wZlXEyAJoguuc4mrKvwcuGhfXbZJiPaJPHJV/VyBPSgnI7sXJntwip1X/RSeJc9QpALPlIC4g+fw1Xydg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzRMz19k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp6MOftG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44091C116C6;
-	Tue, 10 Feb 2026 01:14:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzRMz19k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C41C116C6;
+	Tue, 10 Feb 2026 02:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770686059;
-	bh=yMSnap1H9Cu9+6D8Oq3J4mpUg6BC7MFbdOxTodbzqu4=;
+	s=k20201202; t=1770691061;
+	bh=1REeQ9bmhabHDdl80zGNRmd69dN2i8Beu8762qMZG78=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xp6MOftGDVcdLaI0o2bj0Sd8EimEigqWQXlkQc7FiQ5zewU7MsbYmms3QZddtPyol
-	 w4usqbZU3vEz5csslDOMN3w1n0wOC/rhESf51+GTCYLgAqaPYdFbBp5L4Z0759b/LG
-	 RLfRA55JNbXRSTjJa0penHvIe9uCqy7i1Z8y67zgjPVxE5N33sbI7NzQr5KKaEbUKo
-	 8J+uCMw+/jv2iEAxKqJF2kDSQefj/s6bFyinvInBTR+VpRPxxN5sv72eb3UHL+flAI
-	 LaWeJVQ2W5hoNKeZwGI3XPMhPZN6rKyMbPjy7YyPw2fj+bU+cXl8lBiFkoUrl+TEbO
-	 y2phLy4vYqJAw==
-Date: Mon, 9 Feb 2026 19:14:18 -0600
+	b=UzRMz19kLrMZbrV3DBTXVa/+qGr13rHrDkrO0kOrH+rQRx3xVGCAfUx8eg5kDB7t5
+	 NUMpk86kcujYCLnAMCJAVFxOyd7ivT0mIfpwCi7QpgmcwCGOz27apgBk5bkczTFowB
+	 7tXAf9ZUDLAns6d5TPvcY4ddT5xrl883nqI1yZV4XfEMeDgEKk1A5y4aHP/EkRjePN
+	 caJ3Zl2YJyjJtisG5K686si4SE0yGjoigQLxdYp1F0LcMqAA3JwCc0TTJ39ci2cFIu
+	 ut8uYsbljMZ1rXuIzvhDpxSi0TZJoPCpfZC6benZTLx233CBJF+fRVWVfeC7bvm2ZK
+	 wAeLfbB9McawA==
+Date: Mon, 9 Feb 2026 20:37:41 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org,
-	Thomas Gleixner <tglx@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-pci@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2 1/9] dt-bindings: interrupt-controller:
- renesas,rzg2l-irqc: Use pattern for interrupt-names
-Message-ID: <177068605793.2257614.4296319093364723189.robh@kernel.org>
-References: <20260204180632.249139-1-biju.das.jz@bp.renesas.com>
- <20260204180632.249139-2-biju.das.jz@bp.renesas.com>
+	devicetree@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 1/9] dt-bindings: usb: document the Renesas
+ UPD720201/UPD720202 USB 3.0 xHCI Host Controller
+Message-ID: <177069106017.2372479.10101805621676479866.robh@kernel.org>
+References: <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-0-5b79c5d61a03@linaro.org>
+ <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-1-5b79c5d61a03@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,21 +54,18 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260204180632.249139-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-1-5b79c5d61a03@linaro.org>
 
 
-On Wed, 04 Feb 2026 18:06:17 +0000, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+On Fri, 06 Feb 2026 15:50:29 +0100, Neil Armstrong wrote:
+> Document the Renesas UPD720201/UPD720202 USB 3.0 xHCI Host Controller,
+> which connects over PCIe and requires specific power supplies to
+> start up.
 > 
-> Simplify the bindings by using pattern property for interrupt-names.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
-> v1->v2:
->  * New patch.
-> ---
->  .../renesas,rzg2l-irqc.yaml                   | 120 ++++--------------
->  1 file changed, 23 insertions(+), 97 deletions(-)
+>  .../bindings/usb/renesas,upd720201-pci.yaml        | 61 ++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
