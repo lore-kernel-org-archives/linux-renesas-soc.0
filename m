@@ -1,110 +1,136 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mx-relay50-hz3.antispameurope.com (mx-relay50-hz3.antispameurope.com [94.100.134.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E181C84BD
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Feb 2026 12:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770813153; cv=none; b=J3QNg4NKpE/JN3crK9Bc3wxdKhqHep4IU9boSlStp0JQQSUxmRdPh9lHh5BbLJDVWOvWeW5cKbxVmqAxutDxuDQL/wsUDF2EHrmHfa/EPUhAa1WD4G4/yCtpJc6ivv4ySdweaQqH52PdcOmVVteRISmK670iEaWfLgWv3uEWZO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770813153; c=relaxed/simple;
-	bh=gKqsUY8QiFOiqbi69Ne3X2+9oK3B3tyFLBelCaADXTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=EAXFwZA5IBv8ZNKiRwL45vyC8wbU3t8ADhPnw9tYmd9fFU/p7qIpDYDMjdI8wW2MsUEd6IkbzFQYA/4lZTiJxtigeAtOFf8CKIgwvMSAcaRKtfPcgeSELHDUI1GkZaz91/HccQGoSlyc3B0bHFbWBF+cCkEIZrNscBoM/rIofDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRzzLydh; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033E0281525
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Feb 2026 12:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.239
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770813338; cv=pass; b=adHjRPEu1g+5FZGObvWvtWpv+UpkZCnVoPcFaSAAEg3mGIN6QY9uu/9YBdNLoz8n4+3JLyN62h/bPV80ITJYk5q+GtwASUOnVa9u5zfoTEzxd72bUiWATIuOj/F+PuQznxzNaXpSubWQB2+fx+D+zvbbAICod+TfZ9pt4Y+ITVg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770813338; c=relaxed/simple;
+	bh=DDxMMwSEPx4y7ICS/1B6rQvV6CMJXqzIvms5szSqGy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nwil6Bh/T0LqTOQF+DEt16Nr3HD1Wgo9aLQvvwjDwVDoLxTzsBaTiYr4aQICXKKxDgkywm6eqnA65vU8g2XEMn5QRYnc/RjbjpWTmqZYP2fbS4SEi7+JFKMDOFmswCiRAIZXyyLEwH5nwIT6ECJtt4ShuyymD2drMcp2zCEvlYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=HWA87fcq; arc=pass smtp.client-ip=94.100.134.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRzzLydh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770813150; x=1802349150;
-  h=date:from:to:cc:subject:message-id;
-  bh=gKqsUY8QiFOiqbi69Ne3X2+9oK3B3tyFLBelCaADXTQ=;
-  b=JRzzLydhMuHD76FqSPd67sMo5Dg52raa6k9xgIAMC7sYKobioOZthLYO
-   9S+S0GTOTmK6vzp66JzCNDgFwUha1XFm3fS6Lb01uQkr8IQyY2utbsMuC
-   9OyxP0LG4y5ndh7ua0zGfMRSRoqNnEytmr3zbQLNWbTBULXk2MZzhHi/i
-   y2C5CL0akgQTvTn+0xS5TTrQ11pl+2YCqRrLjZp7DkwfP6/o7GNkACHU1
-   chFDvvNqhmsZ0Z+wR16usa6nJztqylplJkjyiZOscChN5sa/XQa9NQ9/r
-   k14M5Klue5V+AVGqRauMhASqO3wWfwUFwCBV+ikSEC9T4Rqo5utLe9ntL
-   A==;
-X-CSE-ConnectionGUID: kL5/kZjHSm2LZaCTjnISWA==
-X-CSE-MsgGUID: HBo/x1z5Tji8TR0f6bK5IQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="82596825"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
-   d="scan'208";a="82596825"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2026 04:32:30 -0800
-X-CSE-ConnectionGUID: MXSdDXjsQHijgetgHVpAoQ==
-X-CSE-MsgGUID: Afu+bkvdQJ2flQWJHaccJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
-   d="scan'208";a="217198190"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Feb 2026 04:32:28 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vq9OL-00000000pyA-3wbT;
-	Wed, 11 Feb 2026 12:32:25 +0000
-Date: Wed, 11 Feb 2026 20:31:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Airlie <airlied@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [geert-renesas-drivers:master 13/53]
- drivers/gpu/drm/xe/xe_survivability_mode.c:241:17: error: implicit
- declaration of function 'xe_nvm_fini'; did you mean 'xe_nvm_init'?
-Message-ID: <202602112026.Di2Vv6FF-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="HWA87fcq"
+ARC-Authentication-Results: i=1; mx-gate50-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=p7pDwaK17CdUZh/u5Iy4Xmvwxf0XguEjLtkZgT9LWWU=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1770813312;
+ b=fsqyV6PayKYyrmlVRuUh9ZH13oKx202zfXbV+6byYMCy3P/31omfORfd2rE36IHyHxF/f7U7
+ bx//SjSqOniJbiSCSQBoIBo5o7E7Rm+78fnCU4Sgi82xV5bRShghaDg/446tE7eK/PdOVCwuq7s
+ BT2CQDDlwfFSH+IJ2p4WHPpQ9cRs0LLUDG07UnEQd4j3JPuE49ULSL97I8SsETwXIYThFjNFAKM
+ USjCAzXyD5Z1CCh6Z3aE16F1InsEIcZOveVuA0BaXOVrHrVsJXPNOpU1s9PuALtcMmE7JalAWxU
+ bwgxSpkdUdIYV76X7sB4u3cA7SSY0CMJmbniE4D+IiEgg==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1770813312;
+ b=BkXA4pTUG7OFH/UHP1LOQBSa9JqB10sneReOnKEIjS9ve1KpczZLTkASXRE0YjHSS1LoQV2d
+ xuCMqtf6MfZlZ3ADG3GgAFoUIRAzWwp9/0/JuL60Fkect+COgKjFxPIulgM5opqJt1Xv/y8q8JY
+ 1nY6gJVUXTqP6pD8biw7Mntq2SHtQMPh7JLrGK7tDjVoL+iZSGnncQBmvGQSDlAwC72z1nebtFa
+ ej6TWpYtycGkBD4550/xAlf+OZ6ArNYgvsZ2CcsFp+Tk0MbPe1VCgYy8aoFSFkAznaAnVEaI4bX
+ CDFr1I4c+D3/pZw2hYNoQY+Xu2FinW+sqU5Pdqbl4NvtA==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay50-hz3.antispameurope.com;
+ Wed, 11 Feb 2026 13:35:12 +0100
+Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 01C7E5A1345;
+	Wed, 11 Feb 2026 13:34:44 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marex@denx.de>,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com
+Subject: [PATCH v2 2/5] arm64: dts: imx8qm-ss-hsio: Wire up DMA IRQ for PCIe
+Date: Wed, 11 Feb 2026 13:34:29 +0100
+Message-ID: <20260211123436.1077513-3-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260211123436.1077513-1-alexander.stein@ew.tq-group.com>
+References: <20260211123436.1077513-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-renesas-soc@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay50-hz3.antispameurope.com with 4f9yYf1s13z2nJDK
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:445cfd46aa584c7bfd22defe62d9001c
+X-cloud-security:scantime:1.964
+DKIM-Signature: a=rsa-sha256;
+ bh=p7pDwaK17CdUZh/u5Iy4Xmvwxf0XguEjLtkZgT9LWWU=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1770813311; v=1;
+ b=HWA87fcq3UF2aEiamx2oxaAlbaeqHKcOBjjzkgei4Y8qKItDCnOqRtfrU1HgKM3qb+vN1xco
+ o9SCW2PToNK48Vtq9xx25ck3PLefj8QecwSglqhvxcdAPwwqHaClpsohNbYSnMwACryUIer0nNJ
+ Y+kYk2QAajSgjjTD9sp0Ic5SblPrCqRuDG2PHLxd9uxI5rkYFpIWnk1OpRtRQGlzy48R+wRmNJ+
+ I8roi4uG8rpNF/uqEY49V3VYrnGKyevHUMn0kWW+WlYOunByv3wQfovtwohU6t8JRFl91bKzDqk
+ Ei9kLhnUiSiC3WnoOrj/mBa7yiPA4Xi6ygjc0qq4PD26Q==
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
-head:   7f66ef0ac030a3da0d0a0e8c0dfee1aa9c266dfa
-commit: 2f8a7331e1404f4364092565c145c7cf3cd377d4 [13/53] Merge remote-tracking branch 'drm/drm-next' into renesas-drivers
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20260211/202602112026.Di2Vv6FF-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260211/202602112026.Di2Vv6FF-lkp@intel.com/reproduce)
+IRQ mapping is already present. Add the missing DMA interrupt. This is
+similar to commit 0b4c46f9ad79c ("arm64: dts: imx8qm-ss-hsio: Wire up
+DMA IRQ for PCIe")
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602112026.Di2Vv6FF-lkp@intel.com/
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* None
 
-All errors (new ones prefixed by >>):
+ arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-   drivers/gpu/drm/xe/xe_survivability_mode.c: In function 'xe_survivability_mode_fini':
->> drivers/gpu/drm/xe/xe_survivability_mode.c:241:17: error: implicit declaration of function 'xe_nvm_fini'; did you mean 'xe_nvm_init'? [-Wimplicit-function-declaration]
-     241 |                 xe_nvm_fini(xe);
-         |                 ^~~~~~~~~~~
-         |                 xe_nvm_init
-
-
-vim +241 drivers/gpu/drm/xe/xe_survivability_mode.c
-
-5e940312a2ac64 Riana Tauro     2025-01-28  232  
-d40f275d96e890 Lucas De Marchi 2025-02-21  233  static void xe_survivability_mode_fini(void *arg)
-d40f275d96e890 Lucas De Marchi 2025-02-21  234  {
-d40f275d96e890 Lucas De Marchi 2025-02-21  235  	struct xe_device *xe = arg;
-1987ea95ac37ea Riana Tauro     2025-12-08  236  	struct xe_survivability *survivability = &xe->survivability;
-d40f275d96e890 Lucas De Marchi 2025-02-21  237  	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
-d40f275d96e890 Lucas De Marchi 2025-02-21  238  	struct device *dev = &pdev->dev;
-d40f275d96e890 Lucas De Marchi 2025-02-21  239  
-1987ea95ac37ea Riana Tauro     2025-12-08  240  	if (survivability->fdo_mode)
-1987ea95ac37ea Riana Tauro     2025-12-08 @241  		xe_nvm_fini(xe);
-1987ea95ac37ea Riana Tauro     2025-12-08  242  
-f4e9fc967afdb5 Riana Tauro     2025-12-08  243  	device_remove_file(dev, &dev_attr_survivability_mode);
-d40f275d96e890 Lucas De Marchi 2025-02-21  244  }
-d40f275d96e890 Lucas De Marchi 2025-02-21  245  
-
-:::::: The code at line 241 was first introduced by commit
-:::::: 1987ea95ac37ea3f9299d220974676207d5262f6 drm/xe/xe_survivability: Add support for survivability mode v2
-
-:::::: TO: Riana Tauro <riana.tauro@intel.com>
-:::::: CC: Rodrigo Vivi <rodrigo.vivi@intel.com>
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
+index bd6e0aa27efe9..f2c94cdb682b9 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
+@@ -20,8 +20,9 @@ pcie0: pciea: pcie@5f000000 {
+ 		ranges = <0x81000000 0 0x00000000 0x4ff80000 0 0x00010000>,
+ 			 <0x82000000 0 0x40000000 0x40000000 0 0x0ff00000>;
+ 		#interrupt-cells = <1>;
+-		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-names = "msi";
++		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "msi", "dma";
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		clocks = <&pciea_lpcg IMX_LPCG_CLK_6>,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
