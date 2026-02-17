@@ -1,105 +1,228 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCBF265623
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Feb 2026 14:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7BD224B0E;
+	Tue, 17 Feb 2026 15:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771337197; cv=none; b=YxkXQdwRjg9zOnHftbfJ4O6DXMO54tpPMX/978tTRIOYwXH3qzVpORJ4PkyB7C2AZkFKfkVFFdVwRXXrnwFHrKBeptR/3IpeKaPrSagogd7eeAz1M8PniQX1tqf1JRuTYkv2uBVvtji28GsIY+zNrg9iG0wT+2g3zq2cv91MZu8=
+	t=1771340703; cv=none; b=MDTSk4i2CuDISjkYE/B6EeP+jQko5nDfDubmj+zahaXv1BVGwA1OqpNKJvj32MZb5JNo95QcQBr2zqkVJV1G2hEGkUu+oRER2yAdDWhkzYNzxZPlMkGxoRU8Hyu4Av57sFoFB0lJTd+SKJu0jCZH728Ut6CIkGNgIxxKhwUJSdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771337197; c=relaxed/simple;
-	bh=3s5DyvewXDbpREBqpbE6rlsvXU2+S9wRmJK1Hx0xgrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RyW1786+aU659DnjILsF3Ogl0PNHpVWAMIRznTVlbAxfH22g/1npQ92KW7qihDZD4auk5Finvg6jJtHSyQwXqqVlI9yryZHB7IG25lFDXTTZkvEALsvUXRQg5HhaK80egSB2TtD1x6te6OgFjmZruiRZEvworl8MBXEYZJVDBq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=I077l4cn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1771340703; c=relaxed/simple;
+	bh=/5KxhbtTbf71uyzbr9ORsD/LfXkBS7Hrrl9FU6k0jRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fL3vPkfeUzYzsZ14F34A5d10iHOEai0M4I1VaMy2F587/BYys0BQw2tFdoTeoyzJ59jIZYTzV/x5YgZjnqboyQYDv3E2o5HLp4IoUgzowzw+rs8gFkvWizkdtXZPgNdOrs6AUUGt/hvLE4IaPUjeIiZZS2dTtx2c/xrbsWT9xz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=AxHYE+2D; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="I077l4cn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=cz82VQHNlQ/oWV
-	y6svS+KD6Kf1j1m1dEIvQuW9r3vXw=; b=I077l4cnar7aT6betj79iQ4EuiRUwN
-	xFZgpsLKlqNmuoxjXO25WdGVVpAJiT0f2J6WBblE/+Q5Il8u1jECphO+LT0vZV4h
-	20qkKFOqopNKun9c59MP0z3Gn1zGMXA4dJ5X+9yYOjkJkK9HiM4eC0k/HIqjfPDR
-	9L1gCE32js/sFpszykx+HrD2Moqw9UqqnEaH4g9nwqWndVA11SFs9hEj04pKRKDw
-	+WK4Mu+vPemqIJmTd63JxGdv4EoN6XfDglOBQ59j0UVT3dFUTRyyDWu88J1BOaSa
-	o2OGa1xkZk3MCK4j/Ne95vBVLBalGaPBJzVed4CDimee5MQBe0XW8JIQ==
-Received: (qmail 3707744 invoked from network); 17 Feb 2026 15:06:24 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Feb 2026 15:06:24 +0100
-X-UD-Smtp-Session: l3s3148p1@5tadkwVL5pgujnuy
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Subject: [PATCH] mailbox: test: really ignore optional memory resources
-Date: Tue, 17 Feb 2026 15:06:15 +0100
-Message-ID: <20260217140614.64581-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AxHYE+2D"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fFjcB1vcMz9thx;
+	Tue, 17 Feb 2026 16:04:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1771340698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j+HfRGqTenwP1WEUYCI3cx5JseSezcTkyhSN5LAXhFw=;
+	b=AxHYE+2DErvJPJwcroO11MQNOzCk0rAxOz3YG1X3yFQcpF23VwGZgzsZBdN5DbzVgoI+z6
+	3Y6wIrts4hn8FjaiCwuktDP5nTHUx8ebFme0d2TiRKTQXU6XZoExbhDKTI9++F8oElYWkE
+	xAILyAmHpqAWoNuXK/k69XW7NWREF8w40ZO4i+TpNAlnIPy8BlP4iBlW3G1rEi3GmEvo1z
+	WcH/vaVCaRVNI9DEB5vKLC1OF20ntQ0x8sItgfkXyg5B3PhexseW2R3xC2W3Z6WmHjXJDu
+	bf2LcKPeWym6ZMoY2qhJPOHpAwSoz6NRiWB22ah9HpBPLE5CnOwF4gwM1hXOIA==
+Message-ID: <80fb62ee-0598-48c1-a490-6eefcd1d3b66@mailbox.org>
+Date: Tue, 17 Feb 2026 15:33:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] drm/imagination: Convert to
+ dev_pm_domain_{at,de}tach_list()
+To: Matt Coster <Matt.Coster@imgtec.com>,
+ Thorsten Leemhuis <regressions@leemhuis.info>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Frank Binns <Frank.Binns@imgtec.com>,
+ Brajesh Gupta <Brajesh.Gupta@imgtec.com>,
+ Alessio Belle <Alessio.Belle@imgtec.com>,
+ Alexandru Dadu <Alexandru.Dadu@imgtec.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+References: <194465eda54d1f852a9226cf691ddc5aa208e0a3.1769097977.git.geert+renesas@glider.be>
+ <ffdf3982-e22c-4d01-afa6-5449ed381000@imgtec.com>
+ <CAMuHMdWMh_oJFg-KtapcTDGvYWZ-hg_ZEJ2=E5Tp1apOEc8tnQ@mail.gmail.com>
+ <b3b4f10e-1222-44f7-b308-db7199c67147@mailbox.org>
+ <3e0def93-2f6c-4bcf-8ee5-bf607f2ca382@imgtec.com>
+ <f5d3dde6-edec-42f4-93cb-459c8677245a@mailbox.org>
+ <f82b7734-6ddc-4029-b38d-147e9a1de021@leemhuis.info>
+ <fcf5ab75-029e-469e-8b2a-51fa5c2a2374@mailbox.org>
+ <95fd3f52-c3ed-40c5-920f-11e8767f701d@leemhuis.info>
+ <CAMuHMdV-g+3kTaG6Ost4iHo1Tdi_H=qscLBkBRWuR+6DG5c=SA@mail.gmail.com>
+ <1e8e416e-e474-4288-9686-1ba2b88e4946@leemhuis.info>
+ <21b1fd77-252e-4fb3-aa65-1c26043c5412@imgtec.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <21b1fd77-252e-4fb3-aa65-1c26043c5412@imgtec.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 0ddf39fc09e316a2b4e
+X-MBO-RS-META: up57bdnnrzo8fenaqz6kyojobd4b1d9k
 
-Memory resources are optional but if the resource is empty
-devm_platform_get_and_ioremap_resource() prints an error nonetheless.
-Refactor the code to check the resources locally first and process them
-only if they are present.
+On 2/16/26 11:58 AM, Matt Coster wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mailbox/mailbox-test.c | 32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+[...]
 
-diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 3a28ab5c42e5..98c2a2ed6dfc 100644
---- a/drivers/mailbox/mailbox-test.c
-+++ b/drivers/mailbox/mailbox-test.c
-@@ -367,22 +367,28 @@ static int mbox_test_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	/* It's okay for MMIO to be NULL */
--	tdev->tx_mmio = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
--	if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
--		/* if reserved area in SRAM, try just ioremap */
--		size = resource_size(res);
--		tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	} else if (IS_ERR(tdev->tx_mmio)) {
--		tdev->tx_mmio = NULL;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (res) {
-+		tdev->tx_mmio = devm_ioremap_resource(&pdev->dev, res);
-+		if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
-+			/* if reserved area in SRAM, try just ioremap */
-+			size = resource_size(res);
-+			tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
-+		} else if (IS_ERR(tdev->tx_mmio)) {
-+			tdev->tx_mmio = NULL;
-+		}
- 	}
- 
- 	/* If specified, second reg entry is Rx MMIO */
--	tdev->rx_mmio = devm_platform_get_and_ioremap_resource(pdev, 1, &res);
--	if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
--		size = resource_size(res);
--		tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	} else if (IS_ERR(tdev->rx_mmio)) {
--		tdev->rx_mmio = tdev->tx_mmio;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (res) {
-+		tdev->rx_mmio = devm_ioremap_resource(&pdev->dev, res);
-+		if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
-+			size = resource_size(res);
-+			tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
-+		} else if (IS_ERR(tdev->rx_mmio)) {
-+			tdev->rx_mmio = tdev->tx_mmio;
-+		}
- 	}
- 
- 	tdev->tx_channel = mbox_test_request_channel(pdev, "tx");
--- 
-2.47.3
+>>>>>>> I added the regressions list onto CC, because this seems like a problem
+>>>>>>> worth tracking.
+>>>>>>
+>>>>>> Noticed that and wondered what change caused the regression.
+> 
+>  From our side at least, I don't believe this is a regression at all. We
+> haven't been able to reproduce this issue on any of the platforms we
+> have available (although we did stumble on a somewhat related bugfix
+> while trying).
 
+There are already two proposed fixes available, and both Geert and me 
+are available for testing any other fixes too.
+
+And yes, this is a regression, because this causes a kernel crash which 
+did not happen before.
+
+>>>>>
+>>>>> I think this one:
+>>>>>
+>>>>> 330e76d31697 ("drm/imagination: Add power domain control")
+> 
+> This commit added support for multiple power domains on Imagination GPUs
+> in essentially the same manner as other drivers (as mentioned by Geert
+> below). Nothing in there is specific to the Renesas platforms where this
+> bug can be produces and it is required to support other fully-functional
+> platforms such as TI AM68.
+
+That does not imply, that the code is not buggy.
+
+[...]
+
+>>>> Well, it's a judgement call. 330e76d31697 was merged less then a year
+>>>> ago, so I'd not be surprised at all if Linus would revert it in a case
+>>>> like this. But it seems it doesn't revert clearly anymore, which
+>>>> complicates things.
+> 
+> Reverting this change feels backwards, we're saying that Imagination's
+> support for multiple power domains is broken because one platform has
+> issues when we attempt to control its power domains. I fully agree that
+> we should be working towards resolving this issue, but I don't agree
+> that ripping out this handling (that, again, is essentially the same as
+> handling in other GPU drivers) is a reasonable solution (even in the
+> short term).
+> 
+> As it currently stands, we're only declaring two GPUs as "fully
+> supported": AXE-1-16M and BXS-4-64 as made explicit in commit
+> 1c21f240fbc1e ("drm/imagination: Warn or error on unsupported
+> hardware").
+
+Actually, this change landed only very recently and completely broke the 
+GX6250 on R-Car M3W, which used to probe and work before. Now the driver 
+does not even probe with "Unsupported GPU" output, which is clearly bogus.
+
+I would say the aforementioned commit introduced another new regression 
+-- something that used to work before no longer works, functionality was 
+lost because of the change.
+
+> In order to reach the stage where that check occurs, the GPU
+> must be powered on so registers containing the GPU ID can be read.
+> However, the original error report happens long after this and would now
+> require the exp_hw_support module parameter to be set for this point to
+> be reached (as the driver would not attempt to initialise an
+> "unsupported" device without this explicit opt-in).
+
+I don't think it is a good solution to selectively block specific 
+hardware, only to avoid triggering the power domain issue. The power 
+domain issue should be fixed, not hidden.
+
+> It's not currently clear to me whether the crash can be reproduced on
+> the affected Renesas platform without this opt-in; it's feasable that
+> this is the case but we know it occurs during an error unwind after
+> device firmware fails to initialise and the exp_hw_support check happens
+> much earlier than this.
+> 
+> Either way, we should consider adding additional "supported" checks
+> based on compatibile strings earlier during initialization to prevent
+> fundamental issues like this one from even being possible on unsupported
+> and/or unvalidated hardware.
+
+Actually no, the hardware support should be as broad as possible, 
+without imposing any artificial limitations like that. This allows users 
+to test the driver and find errors, which if they are fixed, ultimately 
+improve quality of the driver.
+
+> All that being said, ripping out power domain handling will completely
+> break one of the only two platforms we currently fully support: BXS-4-64
+> which also has two power domains and is present in several TI SoCs (and
+> their DTs).
+
+I am not saying the code should be removed, I am saying the regression 
+should be fixed. There are already two proposed fixes available, so it 
+would be good to move them forward.
+
+1c21f240fbc1e ("drm/imagination: Warn or error on unsupported hardware") 
+should be reverted, this is not helping anything. Warning message would 
+be fine though.
+
+>>>>> But SoCs which have hierarchical
+>>>>> power domains and which manage to probe this driver without having a
+>>>>> firmware available for the GPU will simply end with crashed kernel,
+>>>>> which is really not good.
+>>>>
+>>>> Does the patch Matt mentioned fix the crash? His "this does not fix the
+>>>> underlying issue [...]" (see quote earlier) makes it sound like the
+>>>> crash or some other problem (theoretical or practical? regression or
+>>>> not?) remains. If that's the case and no quick fix in sight I guess it
+>>>> would be best if someone affected could post a revert and then we can
+>>>> ask Linus if he wants to pick it up.
+> 
+> The patch I posted (and applied) is somewhat orthogonal to the issue at
+> hand. Geert originally suggested using the _attach_list() helper as a
+> way to mitigate the issue, and we agree that it's a reasonable cleanup
+> effort to make use of it, but I believe the "fix" in the originally
+> proposed patch came from removing the device links that are required on
+> our platform to ensure the GPU power domains come up (and down) in the
+> correct sequence.
+> 
+>>>
+>>> I don't think that patch would fix the crash.  The Adreno and Panfrost
+>>> GPU drivers do similar things (explicit multi-PM Domain handling),
+>>> so I am wondering if the issue can be triggered with them too (e.g. on
+>>> unbind).
+> 
+> My current understanding of the situation is that the fix proposed by
+> Marek in the Reneasas driver[2] works, but is not suitable since
+> pm_runtime_barrier() should be inserted by the caller, not the power
+> driver. But it seems that's not always possible (particularly when using
+> devm), so I don't really understand where we go from here. I still don't
+> see anything we're doing substantially differently (before or after the
+> commit I mentioned above) from anybody else.
+
+As far as I understand that, Geert was waiting for input from PM people?
+
+At the beginning of this thread, almost a month ago, there was the 
+following exchange, hence I was under the impression that a fix is coming:
+
+"
+ >> Can you add the links back in for a V2 or I can properly send the
+ >> attached patch instead, I don't mind either way.
+ >
+ > Please move forward with your patch, you are the expert.
+ > I prefer not to be blamed for any breakage ;-)
+"
