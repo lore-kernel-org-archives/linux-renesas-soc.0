@@ -1,64 +1,64 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D042BDC1B
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 18:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD07F2C027F
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 18:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771956020; cv=none; b=iJ9H2LvlMc87BF7JNxRdjdnyhlus07cmChL6v/3rHoR4RdyGooiYhQTeFpUYtVKTxoEh84nXtmKP8YcBa+734AYm1762hZrZ/umvKETD2dVNO/5mRoIfwNEJBiMjwnPQhP3LuZNoWC3entsV939Ai/j7GmJvjZgXZQkFbHnTzns=
+	t=1771956021; cv=none; b=Yi33hni1Wwu6SfYd+p/pMkZZCM/2KcRrFB7gTQwIlKotSbVOIEddnEdUXQ6UgkcsbJBPcWGRuntxcGoba4Asi+eQ0QFu27ySCtUM2N7rkpqNRGP9pUORr1DbruAQjRmiuwhk97SRWTsnACi4IO7LWFs5TVNCfoiALoB+luk6Gbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771956020; c=relaxed/simple;
-	bh=X8hkRaeVzP67rTNbQ9JivrPs8yIc9gUhUejj4fUO9VM=;
+	s=arc-20240116; t=1771956021; c=relaxed/simple;
+	bh=KjNIxZDfk29h3mR+MAD58T5ut2z+8tDAomJXGU4ZnZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ReCbw4zTiHHkq2TFJYQ7nZQrxL+wU271Tzw1nA+9b6lvYTE32n9kAExzZIGyqsafcZfIOpKBwkgSmHw84tSE3jeCSgRMnuW5tJE6mvXdeIzrjXbnXQGnwmkr+cgEh7T4ECD3pPRGc/1WTkLo3AadDynd3LsqESavZyKQusZsmns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTC5yVQP; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=MB9/66E4893GNEuA6X+58sUlhaLDqp4x3N+Tu507gjIS1yAnWs+7cQPkpoasnR5IYy29hhW2CMjwoGetrINXHnF2CsiXq4AvpgecCLBStvBM9z/9R1LvKWb5m1EvB2VKbHaryeH9Nsz9BreLWgCcexPBwM8Mvs7ubbvppZrVkf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvYwf+kx; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTC5yVQP"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4806ce0f97bso47268075e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 10:00:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvYwf+kx"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so55934935e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 10:00:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771956016; x=1772560816; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771956018; x=1772560818; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kBRMewBpkSMo+0SexkQMILcLg2uMAhumMyjYMYu2NZg=;
-        b=CTC5yVQPK+nPBN3pXTeZSfqYHAqho+MwDNBgQhtl0la+BisXMzkuQOvkzHzpr4mLvp
-         r08oViX5oW+zKKq2jl04V/oByl3QZUpTvLsZwde37eAfMMvw6jsfq6H3vk673TNOhAqd
-         sh+tWAmIGiAlwLOzTd1LJovr5Ty3afZC1UWTj2vv+kX9j2b7iVGSS7ARtc3ROkDEUJY5
-         vHod98+1Y5+a+qXZbQSYYHVDlx0Q/mM6GHIrzkHvxyCTUbo6Co2EIisn1GEMRkW+cDqv
-         TBOz1rI5lrbt4CzUGUnK9nqJM+ia54P/Kz2/ctnEjJ78D+WMG5vTogjoW+RJCA3cGCyp
-         /sLA==
+        bh=L3LGfWf9S1gCHsjzZpQUDOMcNhfS87CIOBQtN1E+3ZA=;
+        b=JvYwf+kxZHX65gPDk5p16O1vjIZlKezFADSREK4291uREHfKVwOa+ODX3tSfslUbSZ
+         FBxw2CBiSBK8Nh9EX5zGMx/ohK1j58uM065zlY72lyDjEwwUJfA1LkoeH1eexG/Agexp
+         8gC1VsNpfBxvYdNN+FnHFHal3iK6QTGvoj+M9t1jVDCo+5hYzjEm+PF7dKH43ThHb35Y
+         OtHl83YrGalmL4H9H5D4gFcc8ppueeG3Q2f3I1jij0OLkSJXJUjWMDLAa47c1HkDnrDJ
+         4hpa2bP3TGdyyBvF1JEKZTUL1hGXt13kcjB+izSyD1hDRhq8n4Pw6pPqgxJsQiJy1uFK
+         tFMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771956016; x=1772560816;
+        d=1e100.net; s=20230601; t=1771956018; x=1772560818;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kBRMewBpkSMo+0SexkQMILcLg2uMAhumMyjYMYu2NZg=;
-        b=j3aV+d8RGbIzWCdqLa+8buX492rSISLj/4gBRONvmx9xgjb2inwORNi5+M2tMKaiJR
-         JqFKUTgDI90G2viTfpRrcSkZvCmS61T91r9mnwrUmGz1W+xO5o+tzFtdxIzSSdzOBxl4
-         lTDRZijmkcXXBrVNy7CJ1/XsFNfwBhloX99a8xp1rxDz9roQiVDFtixEdqms7MPqQuME
-         noaTu/CVBadyqcne9CT9xlHt/gvK1dX+GqLJeaxwX7z6OpUIGpKkj4coSqMwMPdqz/lP
-         U6W7dW0vm4wv3XHjCPR4UqL1mD2Vocl5kIQTmkADU+FQtCq36vcMBYBlTJJEZn6vhomJ
-         4sjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSoReAiCZ5IDAnRIbtkLSqHjkMqpURiaEpalsCiCsokCK+R8U/PMjAadw3Uu9N7KK4Ph4BU37e4q20xDVCXbU5yQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUIIxUcimqfdyvgpxj+4Q4QRaLOjOxK7Yb6FHhsoP0D4owXjJ4
-	Wx4iXqTtNbYpTFfDgUwSzgLa/jQMR0f6YDvLtWfY9AMoUjc+Ovbvftnq
-X-Gm-Gg: AZuq6aIwNmxoX57jVmpWVeX3FAdJZCc4QXQB8AeP3HRJo66SX8luWWl7SeRPXVyHnBC
-	cyYI8x1vx26+trFewF3s6SED8SjHpjDD6ojUy+GO+hNRU+PqJN0n1jluWm8cGdW7eEGTa7sqkg0
-	bt9YbhF6wkWL9TYaiTBwOnPxdsTz7Sbargx4ZsnJ31oga+jb0Itv1DY12l0vQ5SyJosJ2BtuBfM
-	cLXOGR07h8rdBRoS0HmGsHB0upcv3klhi0EBzGn2Ui1p0uZ7Hnd4he/McW3su956VEjaDTeGci1
-	awAbI+pS2CxfAR+zlRecq9Naojyn+VWn9zhl6bn5/GtKZ31H46rOcHCXffwAtqFVzw4FUSPGw/u
-	4w1K9Pc+fSTwSyCtprzilQpQAsZKjDQSJ564vz/6QU3h8f58p66D11nCt4Hxu2mGESyjqwfqELe
-	zAoDS6SL7bRY1mQ/D7TVq74GVPEJiMiKT+3+pBnj8qmaOJGTgDGHjeIvp6BmL+ygGzjJYXqcKSM
-	52ZJjVzlNLcA3Oz58rU3SPWhG9OTEHZtaFdFCg08Xu8Fl4=
-X-Received: by 2002:a05:600c:4589:b0:480:1e9e:f9b with SMTP id 5b1f17b1804b1-483a95dea3emr276584975e9.16.1771956015675;
-        Tue, 24 Feb 2026 10:00:15 -0800 (PST)
+        bh=L3LGfWf9S1gCHsjzZpQUDOMcNhfS87CIOBQtN1E+3ZA=;
+        b=e+gpxTqEyiq2AKhvVTg+ns58Bn2crVKLlsBvP6W+uCIPxOyHKLk6JNX54Zz62tlPKK
+         T/ChRSe0p6IYrLEqgIWTM5RQXI59UmmwZhB0/XOyk/vRe81EOVaNL1aVOI+CbmloScjx
+         moDBj7kY/6DDKyg1iVD0NzUd23IH6azE4JrbKBvibzSfJbNwCjDxC2Ao8NWx6+lBG9j8
+         +Mu01G1VlbKyE1GZMcw3IDjy7SuSM/4mJv/mcxlyB+GRion4SclNNXvnAKj2nkOPZfC5
+         1NY3wyo9SyOLp728Y1+Mlh7mdBjM1xuBSimGBpkkGFJIl/FwMhbGaU2kY+3lUhq2glcl
+         KDWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG80z7Yrj+hGOoNUZqOPPcM+Ng4Wa2EmxjRnBbqXyb1AsU2L7TBk1MQB6/fNQ1yVt/TQXnUrvuD5MDADn05Z1lzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIvo/XOfmCquOrr7/5HPkpC1JkeE+chwSMoq3udN2f7mQgtLn
+	i4ttR/R7S+Jv8nTFQtaL2nueI3Jv6vmpkZL8jdgmtkgMIrscBdizcl+N
+X-Gm-Gg: AZuq6aLxLAi3fFcP/KGro6dkaDHMi5prKxuTcLOoPu52opWrpA8i42otUw6OdpBR0tK
+	ODTA4/xZ4Fje+CgWskeRA66AhXefFSBOZYvk1OB8rfPtBECiqA07Pdq7G8qTys/lNmTkmMkfh5+
+	8Gd0qkdIKWaaOs/hVOZvZYFUr3Eu0I6/R1zDtzSVWSN5Zfia4S+Azbj6R+sHroXza51akVc/d3q
+	tMdNmdjYtwkXOxiiauVCjFlbKlO099Qig7unz1azWu+rIWuV1EHo7aiKzgeZzbzYeSvsXf3wQzI
+	0GCWuhq9g0mspW8sJSuyPUEySV1s9Dfvds/jGtKPYvxPZalAqFC6xX4qnEOLdyEDfAtaEcr9UO8
+	23AEFI/fsD7e+tLdElb2l3wZz+XeKaus3kgcR8ewMkv2U+AubOm35cCzBfHrbqj67WiKfY/kNTI
+	9eQ1AIiXbTWP7OGMMElGNKrPwXcvTjmGCvOV5cZ9ayrzMy0TZD9l/Wjn/WtDLMDmKmZRjw1sPe7
+	wUkmCmbCinNeqkB+FholeNJdOcmz8Rjd5UPge75JhbglEyvhMHDkHtB3A==
+X-Received: by 2002:a05:600c:c167:b0:480:3a72:524a with SMTP id 5b1f17b1804b1-483a95e9643mr184763575e9.19.1771956018252;
+        Tue, 24 Feb 2026 10:00:18 -0800 (PST)
 Received: from iku.example.org ([2a06:5906:61b:2d00:87da:e3e9:a9bf:6f1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd72bd66sm13064095e9.11.2026.02.24.10.00.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd72bd66sm13064095e9.11.2026.02.24.10.00.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 10:00:15 -0800 (PST)
+        Tue, 24 Feb 2026 10:00:17 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Thomas Gleixner <tglx@kernel.org>,
@@ -71,9 +71,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 1/7] irqchip/renesas-rzv2h: Use local node pointer
-Date: Tue, 24 Feb 2026 17:56:12 +0000
-Message-ID: <20260224175618.3160270-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 4/7] irqchip/renesas-rzv2h: Clarify IRQ range definitions and tighten TINT validation
+Date: Tue, 24 Feb 2026 17:56:15 +0000
+Message-ID: <20260224175618.3160270-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260224175618.3160270-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260224175618.3160270-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -87,36 +87,53 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Avoid dereferencing pdev->dev.of_node again in rzv2h_icu_probe_common().
-Reuse the already available local node pointer when mapping the ICU
-register space.
+Introduce ICU_IRQ_LAST and ICU_TINT_LAST macros to make range boundaries
+explicit and reduce the chance of off-by-one errors.
+
+Extract the TINT information up front in rzv2h_icu_alloc() and validate
+the resulting hardware IRQ against the full TINT range
+[ICU_TINT_START, ICU_TINT_LAST].
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v3->v4:
-- No change.
-
-v2->v3:
-- No change.
-
-v1->v2:
-- No change.
+- New patch.
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index da2bc43a0e12..20c0cd11ef25 100644
+index 444da7804f15..ce7d61b14ab6 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -570,7 +570,7 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+@@ -25,9 +25,11 @@
+ /* DT "interrupts" indexes */
+ #define ICU_IRQ_START				1
+ #define ICU_IRQ_COUNT				16
+-#define ICU_TINT_START				(ICU_IRQ_START + ICU_IRQ_COUNT)
++#define ICU_IRQ_LAST				(ICU_IRQ_START + ICU_IRQ_COUNT - 1)
++#define ICU_TINT_START				(ICU_IRQ_LAST + 1)
+ #define ICU_TINT_COUNT				32
+-#define ICU_NUM_IRQ				(ICU_TINT_START + ICU_TINT_COUNT)
++#define ICU_TINT_LAST				(ICU_TINT_START + ICU_TINT_COUNT - 1)
++#define ICU_NUM_IRQ				(ICU_TINT_LAST + 1)
  
- 	platform_set_drvdata(pdev, rzv2h_icu_data);
+ /* Registers */
+ #define ICU_NSCNT				0x00
+@@ -508,11 +510,11 @@ static int rzv2h_icu_alloc(struct irq_domain *domain, unsigned int virq, unsigne
+ 	 * hwirq is embedded in bits 0-15.
+ 	 * TINT is embedded in bits 16-31.
+ 	 */
+-	if (hwirq >= ICU_TINT_START) {
+-		tint = ICU_TINT_EXTRACT_GPIOINT(hwirq);
++	tint = ICU_TINT_EXTRACT_GPIOINT(hwirq);
++	if (tint || (hwirq >= ICU_TINT_START && hwirq <= ICU_TINT_LAST)) {
+ 		hwirq = ICU_TINT_EXTRACT_HWIRQ(hwirq);
  
--	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
-+	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, node, 0, NULL);
- 	if (IS_ERR(rzv2h_icu_data->base))
- 		return PTR_ERR(rzv2h_icu_data->base);
+-		if (hwirq < ICU_TINT_START)
++		if (hwirq < ICU_TINT_START || hwirq > ICU_TINT_LAST)
+ 			return -EINVAL;
+ 	}
  
 -- 
 2.53.0
