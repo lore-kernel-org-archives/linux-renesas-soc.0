@@ -1,64 +1,64 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBF32BE7C6
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 18:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D049F2C15A2
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 18:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771956022; cv=none; b=GfcjPVKDzIhd/uchc34xuwI/aiENiY1dO4c6ICNp1h97meEYGRq7crYlkHKiBZdUtrAf2oX4F5PxkKwjlOtf/9E1CFaW455W4kUgJsujH8rI85562cXTNPwO9estTVFHZObAAn1GZ0hIsd8hQISfSIaJLZHK3NdXaYNHIbic+oM=
+	t=1771956022; cv=none; b=BXrzdlDBT3NbkH48s0MgZW35ba4k9E1NlY4LpIn1s+dqBTmD2QeiVHLHy3dF8pJF1nlvgPzB9wo9/BA4v7DKIqHCf+wR2UQ5zijWrBJyfY4XnlgzO2bJ0B8Xh1qT2NZaJozO5roLduxotBwIKdvNJ5JK1GLd9d4wqecSqIW+y1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1771956022; c=relaxed/simple;
-	bh=gzJbMWt2aZUOKuOZXLsCDZ4eaAvkAgOvQMED0lBhUhk=;
+	bh=Ycj4Bv75R404C5Ebq6OitXTo/ox0p3S65haUncTPY2Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L3m9yD0OLpuBwHY6B8oaqhOLigUJeLN8dYFnpyyK0RR11L/8W/drNiGAMAfJHNZQxo62xcdQ/+5xSRjqEzCoivEChnz3zhna1nzb0oElrR9ZDanReGrNEcpEeJ/02Hoi8TGYYlBkeleyjt7yT6vlNeHEUmD083oe8ykEbD6VDx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yko5vxFU; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=TRUtk7AbymAOrwnxFcsgNh0ZXlCJy5bu/kF7yVsDsDipwMWM03QkDeciMUwCM90NvxKMZQrmOCBiPbSj+vCY2Gh8Nd3WKq4G94Hsohp7plK4oHMjG7XUYnUTq94B4HeSPRe87pYRUf6xLCWbiuPKKEY5ENv992qJx1fxsGnHPq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uugp33sG; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yko5vxFU"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4837584120eso40749025e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 10:00:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uugp33sG"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483bd7354efso3247465e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Feb 2026 10:00:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771956018; x=1772560818; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771956019; x=1772560819; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6IVcOex3QhSRm1Q2lJzK4niVjsXwmc26ElUqg8fVxd4=;
-        b=Yko5vxFUt4nA1CyVctnTnEu9ohhMOiPezt6Tj60wornY6g4C2G2lEgX38DZO5ine76
-         bIkdEtGT7XaBfJQAMKy6bpvVpo5RISToelBQeHKFeunEfiODG8LpTU1rTuduFKdsHxzl
-         gH7/47Pq4+PNKS3uqDR9dQcS6Tyu/c4z0mvR4BJYOqPculKpsXnF7XWNCXPEZIVhn1fq
-         DRRrtAJyPkTszTOnn9GrANwd/EKAzS9RN60oB9psXiyd0LuSiAPq8jMkZtVxw4wDmZtk
-         VJOls+riUHSXDLOohYDCoOpWvkR1Qjp1yUtD4CSurvHDHcNEUDm0siRxTrkTNWoF9adq
-         vMlw==
+        bh=0cSCy8kAAxQYaP9uk2AAb1MuyYSkdFQ+iYuql26f6dE=;
+        b=Uugp33sG46f/kOxiBO5Koyiu3vdGlvzfW6WNJzpBvUNFv6mhamOF6MoSnVZnvKMLeI
+         BJ0jp8bGu08vPKZdKqeq23xJUTSg1B4+NyiPeCvMo/F1REeIFXxNdYFMMlKX+RoZ1LNi
+         ly25evZdsy8fjeYapgMfONaPGFIUjIdAr+HMx80K1SPXD7MJqZET4DOoREv5La8z/GXy
+         GYqNM5D6D9HpEvN6w0+Xb1/hTAoIHDW/V4mXKUzNndH0d7iU62vug836Y1iRo+u+VdYd
+         U/nX7iNtC0lV5hWm65VGm0QpBf46503Xx6lkvPHkSKtm1GWp0N7oeGIBuwZXiFZx7AKQ
+         vXsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771956018; x=1772560818;
+        d=1e100.net; s=20230601; t=1771956019; x=1772560819;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6IVcOex3QhSRm1Q2lJzK4niVjsXwmc26ElUqg8fVxd4=;
-        b=jtNLK0ijBwraaCTxFpr51mimAabnwCSjztZ137QUSGtqzT32TEGUzI/gdS52Ej+cjV
-         kAj0bmIcTNUOcHFQ2Vaf/M186cGdSeEvJG2jufQSg++Go4PdxyRdbuIWSFOD6tOWd1uI
-         W2qF/UKOP7Fj24Oevn47FRCQFFqNLbHfkmwjIfiyutEqycFuD+gc5vJJAWdE3gZ8cRxa
-         bjooEbXEIJXB38+ehunVEcjZubc2RMPJQKlTsQswcfqRDg0RZ6h83SCXYR2wOTiNkBAk
-         f+qa7irgk26hPl2fE4hCUmuyl3iccTgyy3Vga5nMKvoYsyaLJ9F+oEFDE2eF+RwJHH+N
-         wMiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpaBjJxvDV+4n9wQPuTy5OY2T5/fEoD7Z5/Qs1jz6Fy6jZ4ecVnUqEt6SoSHPLRijKxj8VgDm0o/Pa/Wn4dq57tA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOtokMW3wyRxnqpipzW75PMTT1WC9klp8j1Zyp/0snn7GoFwe3
-	quYSGpwYhYzulKqV0ax2GJhofahZReHjqjLLOxrLAnByHK+iMw12OFJG
-X-Gm-Gg: AZuq6aLVVXe+Vlnyny1gyoagc1Afhf3yVcFsC78rGbM5UqjxRjMEpsU7dhVDfMmC9x8
-	YAfFD/tSmhLTbrmMtyUGUP1O7YwYX4tTXI4p+s0xljbk8LTLPLrpxYQltMYlaw2HKXdzqpF6JCK
-	bVU7pgsA+W/pEJGOn3R3FCSOlAMDf0iQwFgKntullj5sz8wUHK5LouVe4+1yjyPcS8entt1UVVz
-	vfudE41lRPNmF5SD23V+XTEnwNmT4V13J6EENBglgZn3UcUsj33m/mTfgEjFiK9zGCF/9UP++kF
-	ELw4EyQTukXmWohDVsiakSh44n5ub6uR6WFujLy3yougWLy4CvgzfNtTldGtBOtT754R1mehpY/
-	11tm0qyKfdQlYFtvKx8ccjejJS7nZ2cl0Lq9IRW6JXXvR9qIPld2aLhbORq72O4+pCYDVApSbI2
-	XwN+jURBf5FXJj0g/pPvyzSqVGlXwbgV+6LaAmpq3lOQOaBhQAsDr4igileSs10SNaQyWgcb/n6
-	fmi/UhgueWVlp9ad7CMY4fllSA/vzr/yGzy5fsRx0JV93A=
-X-Received: by 2002:a05:600c:8b27:b0:480:69ae:f0e9 with SMTP id 5b1f17b1804b1-483a95eb3bamr263521525e9.16.1771956017521;
-        Tue, 24 Feb 2026 10:00:17 -0800 (PST)
+        bh=0cSCy8kAAxQYaP9uk2AAb1MuyYSkdFQ+iYuql26f6dE=;
+        b=keP+y6uDsl5/Wn8VYHBuHqhJeYRgc+agQ7HhMEICf8EIk9/UjtAJ5tWEtSNvcIkvy7
+         SMpX6HtllkdJhSrj4fNjI0xBRZee80zCsNYsfEEBkG/5wo1oX8Fy3PaYMlHRhOi3eTIm
+         mL3WaDftP1mBxWl3IufmuBOaAITgWq+zx7zH/Bx4MmCUKzmPX7KP6A20INyt77z7AQ83
+         ZxnJuIFrH6MQCdn2qcW865neC520/3OP+Z45mFEyhqvLLS2m41O1JGjh9g4vpRtZxG/U
+         iV6dtu0TRV4G0XJFPxnQpAx9w4Ya5eLT0Ydmn9tEHuO0A1DOwo/10Woq+dRGkU/UCFIX
+         8y2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLrcn92557TT1lsAkFwQXFeaZYu9Cqdm4Zek9qPh2KhzCYOtEbhPk1hu7ZrEccThDNSTrk1rzkJtm16cdor2xcpg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkBrnD/B+SqrzgTmjim6f6/ByATO7YUm6J8a97OdS9z80OMz33
+	2j9qBP0qH+YUgco5H/IDZh/CIFnmFymXqTIBFW5iZZoMQ9k1VZFEKXVkGHLWg9W7TTg=
+X-Gm-Gg: AZuq6aI/iPrDT+QH33LpocNttTRqC/vuhEpc+IlJmnO1P+uDykrTmJ80h1OAyxDDayI
+	0MGWENaOjaylvyXdbkR8ClJ98+3zPVJQ06WchMG+y2mHk1tYoU0BQfzmdbmc5rGDyRU5i6WFUXf
+	Z48m/PJm2XJDvaDpA/fBhBhrBBx9f5UZQhHk91QsZc9nefw+9ScBHiRJvQJfPLjVwilWnCr/uDi
+	wxxTbBt7+5qlywIoYmJ+fLVDzbt0R1o6bFd4IQCXspsrjncGZ1dCG704TcyjkogJXi2lvPoR2j+
+	XjZQ6DdUBsYsNeaWt7X1pIGHz+QT2nuzacVd114SayiPszpB41e9s5xPno+Pvmuqcxrv5VNJ7NI
+	/RBC1f/s0BPEXhY+1MW1VtmjvEdOOe02K21IfrZe+LlRMK7SZLtcnDWZbysOpTFsWMjxwLEqu/Q
+	uLkWM3hKc3f47GOfardlOVwPvxD+FmIc1LvGCpgCYcj9K9Om4Jp+A9f/TaeQ6u0j5sSey38LLKo
+	Nsrl1MDMVW5xXnB9vZW9eVGbN17KgUM4jFa5X0RF5gujdE=
+X-Received: by 2002:a05:600c:530f:b0:483:bcff:7948 with SMTP id 5b1f17b1804b1-483bcff7bd8mr26242735e9.10.1771956018945;
+        Tue, 24 Feb 2026 10:00:18 -0800 (PST)
 Received: from iku.example.org ([2a06:5906:61b:2d00:87da:e3e9:a9bf:6f1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd72bd66sm13064095e9.11.2026.02.24.10.00.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd72bd66sm13064095e9.11.2026.02.24.10.00.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 10:00:16 -0800 (PST)
+        Tue, 24 Feb 2026 10:00:18 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Thomas Gleixner <tglx@kernel.org>,
@@ -71,9 +71,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 3/7] irqchip/renesas-rzv2h: Switch to using dev_err_probe()
-Date: Tue, 24 Feb 2026 17:56:14 +0000
-Message-ID: <20260224175618.3160270-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 5/7] irqchip/renesas-rzv2h: Replace single irq_chip with per-region irq_chip instances
+Date: Tue, 24 Feb 2026 17:56:16 +0000
+Message-ID: <20260224175618.3160270-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260224175618.3160270-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260224175618.3160270-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -87,79 +87,258 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Make use of dev_err_probe() to simplify rzv2h_icu_probe_common().
+Replace the single rzv2h_icu_chip and its dispatcher callbacks with
+dedicated irq_chip instances for each interrupt region: NMI, IRQ, and
+TINT.
 
-Keep dev_err() for -ENOMEM paths, as dev_err_probe() does not print for
-allocation failures, ensuring they remain visible in logs.
+Move the irqd_is_level_type() check ahead of the scoped_guard in
+rzv2h_icu_tint_eoi() and rzv2h_icu_irq_eoi() to avoid acquiring the
+spinlock unnecessarily for level-type interrupts.
+
+Drop the ICU_TINT_START guard from rzv2h_tint_irq_endisable() since it
+is now only reachable via the TINT chip path.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v3->v4:
-- No change.
-
-v2->v3:
-- No change.
-
-v1->v2:
-- No change.
+- New patch.
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 31 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 133 ++++++++++++++++++----------
+ 1 file changed, 85 insertions(+), 48 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 766b981cf3d8..444da7804f15 100644
+index ce7d61b14ab6..d72400bb62b1 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -560,10 +560,8 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
- 	int ret;
+@@ -169,32 +169,50 @@ static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
+ 	return data->domain->host_data;
+ }
  
- 	parent_domain = irq_find_host(parent);
--	if (!parent_domain) {
--		dev_err(dev, "cannot find parent domain\n");
--		return -ENODEV;
--	}
-+	if (!parent_domain)
-+		return dev_err_probe(dev, -ENODEV, "cannot find parent domain\n");
+-static void rzv2h_icu_eoi(struct irq_data *d)
++static void rzv2h_icu_tint_eoi(struct irq_data *d)
+ {
+ 	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+ 	unsigned int hw_irq = irqd_to_hwirq(d);
+ 	unsigned int tintirq_nr;
+ 	u32 bit;
  
- 	rzv2h_icu_data = devm_kzalloc(dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
- 	if (!rzv2h_icu_data)
-@@ -576,29 +574,20 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
- 		return PTR_ERR(rzv2h_icu_data->base);
+-	scoped_guard(raw_spinlock, &priv->lock) {
+-		if (hw_irq >= ICU_TINT_START) {
+-			tintirq_nr = hw_irq - ICU_TINT_START;
+-			bit = BIT(tintirq_nr);
+-			if (!irqd_is_level_type(d))
+-				writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
+-		} else if (hw_irq >= ICU_IRQ_START) {
+-			tintirq_nr = hw_irq - ICU_IRQ_START;
+-			bit = BIT(tintirq_nr);
+-			if (!irqd_is_level_type(d))
+-				writel_relaxed(bit, priv->base + ICU_ISCLR);
+-		} else {
+-			writel_relaxed(ICU_NSCLR_NCLR, priv->base + ICU_NSCLR);
+-		}
++	if (!irqd_is_level_type(d)) {
++		tintirq_nr = hw_irq - ICU_TINT_START;
++		bit = BIT(tintirq_nr);
++		scoped_guard(raw_spinlock, &priv->lock)
++			writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
+ 	}
  
- 	ret = rzv2h_icu_parse_interrupts(rzv2h_icu_data, node);
--	if (ret) {
--		dev_err(dev, "cannot parse interrupts: %d\n", ret);
+ 	irq_chip_eoi_parent(d);
+ }
+ 
++static void rzv2h_icu_irq_eoi(struct irq_data *d)
++{
++	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
++	unsigned int hw_irq = irqd_to_hwirq(d);
++	unsigned int tintirq_nr;
++	u32 bit;
++
++	if (!irqd_is_level_type(d)) {
++		tintirq_nr = hw_irq - ICU_IRQ_START;
++		bit = BIT(tintirq_nr);
++		scoped_guard(raw_spinlock, &priv->lock)
++			writel_relaxed(bit, priv->base + ICU_ISCLR);
++	}
++
++	irq_chip_eoi_parent(d);
++}
++
++static void rzv2h_icu_nmi_eoi(struct irq_data *d)
++{
++	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
++
++	scoped_guard(raw_spinlock, &priv->lock)
++		writel_relaxed(ICU_NSCLR_NCLR, priv->base + ICU_NSCLR);
++
++	irq_chip_eoi_parent(d);
++}
++
+ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
+ {
+ 	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+@@ -202,9 +220,6 @@ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
+ 	u32 tint_nr, tssel_n, k, tssr;
+ 	u8 nr_tint;
+ 
+-	if (hw_irq < ICU_TINT_START)
+-		return;
+-
+ 	tint_nr = hw_irq - ICU_TINT_START;
+ 	nr_tint = 32 / priv->info->field_width;
+ 	k = tint_nr / nr_tint;
+@@ -227,13 +242,13 @@ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
+ 	writel_relaxed(BIT(tint_nr), priv->base + priv->info->t_offs + ICU_TSCLR);
+ }
+ 
+-static void rzv2h_icu_irq_disable(struct irq_data *d)
++static void rzv2h_icu_tint_disable(struct irq_data *d)
+ {
+ 	irq_chip_disable_parent(d);
+ 	rzv2h_tint_irq_endisable(d, false);
+ }
+ 
+-static void rzv2h_icu_irq_enable(struct irq_data *d)
++static void rzv2h_icu_tint_enable(struct irq_data *d)
+ {
+ 	rzv2h_tint_irq_endisable(d, true);
+ 	irq_chip_enable_parent(d);
+@@ -259,7 +274,7 @@ static int rzv2h_nmi_set_type(struct irq_data *d, unsigned int type)
+ 
+ 	writel_relaxed(sense, priv->base + ICU_NITSR);
+ 
+-	return 0;
++	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+ }
+ 
+ static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned int hwirq)
+@@ -316,7 +331,7 @@ static int rzv2h_irq_set_type(struct irq_data *d, unsigned int type)
+ 	rzv2h_clear_irq_int(priv, hwirq);
+ 	writel_relaxed(iitsr, priv->base + ICU_IITSR);
+ 
+-	return 0;
++	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+ }
+ 
+ static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned int hwirq)
+@@ -399,7 +414,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 	tssr_cur = field_get(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width), tssr);
+ 	titsr_cur = field_get(ICU_TITSR_TITSEL_MASK(titsel_n), titsr);
+ 	if (tssr_cur == tint && titsr_cur == sense)
+-		return 0;
++		goto set_parent_type;
+ 
+ 	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width) | tien);
+ 	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n, priv->info->field_width);
+@@ -415,24 +430,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 
+ 	writel_relaxed(tssr | tien, priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
+ 
+-	return 0;
+-}
+-
+-static int rzv2h_icu_set_type(struct irq_data *d, unsigned int type)
+-{
+-	unsigned int hw_irq = irqd_to_hwirq(d);
+-	int ret;
+-
+-	if (hw_irq >= ICU_TINT_START)
+-		ret = rzv2h_tint_set_type(d, type);
+-	else if (hw_irq >= ICU_IRQ_START)
+-		ret = rzv2h_irq_set_type(d, type);
+-	else
+-		ret = rzv2h_nmi_set_type(d, type);
+-
+-	if (ret)
 -		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "cannot parse interrupts\n");
+-
++set_parent_type:
+ 	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+ }
  
- 	resetn = devm_reset_control_get_exclusive_deasserted(dev, NULL);
--	if (IS_ERR(resetn)) {
--		ret = PTR_ERR(resetn);
--		dev_err(dev, "failed to acquire deasserted reset: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(resetn))
-+		return dev_err_probe(dev, PTR_ERR(resetn), "failed to acquire deasserted reset\n");
+@@ -474,17 +472,51 @@ static struct syscore rzv2h_irqc_syscore = {
+ 	.ops = &rzv2h_irqc_syscore_ops,
+ };
  
- 	ret = devm_pm_runtime_enable(dev);
--	if (ret < 0) {
--		dev_err(dev, "devm_pm_runtime_enable failed, %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "devm_pm_runtime_enable failed\n");
+-static const struct irq_chip rzv2h_icu_chip = {
++static const struct irq_chip rzv2h_icu_tint_chip = {
++	.name			= "rzv2h-icu",
++	.irq_eoi		= rzv2h_icu_tint_eoi,
++	.irq_mask		= irq_chip_mask_parent,
++	.irq_unmask		= irq_chip_unmask_parent,
++	.irq_disable		= rzv2h_icu_tint_disable,
++	.irq_enable		= rzv2h_icu_tint_enable,
++	.irq_get_irqchip_state	= irq_chip_get_parent_state,
++	.irq_set_irqchip_state	= irq_chip_set_parent_state,
++	.irq_retrigger		= irq_chip_retrigger_hierarchy,
++	.irq_set_type		= rzv2h_tint_set_type,
++	.irq_set_affinity	= irq_chip_set_affinity_parent,
++	.flags			= IRQCHIP_MASK_ON_SUSPEND |
++				  IRQCHIP_SET_TYPE_MASKED |
++				  IRQCHIP_SKIP_SET_WAKE,
++};
++
++static const struct irq_chip rzv2h_icu_irq_chip = {
++	.name			= "rzv2h-icu",
++	.irq_eoi		= rzv2h_icu_irq_eoi,
++	.irq_mask		= irq_chip_mask_parent,
++	.irq_unmask		= irq_chip_unmask_parent,
++	.irq_disable		= irq_chip_disable_parent,
++	.irq_enable		= irq_chip_enable_parent,
++	.irq_get_irqchip_state	= irq_chip_get_parent_state,
++	.irq_set_irqchip_state	= irq_chip_set_parent_state,
++	.irq_retrigger		= irq_chip_retrigger_hierarchy,
++	.irq_set_type		= rzv2h_irq_set_type,
++	.irq_set_affinity	= irq_chip_set_affinity_parent,
++	.flags			= IRQCHIP_MASK_ON_SUSPEND |
++				  IRQCHIP_SET_TYPE_MASKED |
++				  IRQCHIP_SKIP_SET_WAKE,
++};
++
++static const struct irq_chip rzv2h_icu_nmi_chip = {
+ 	.name			= "rzv2h-icu",
+-	.irq_eoi		= rzv2h_icu_eoi,
++	.irq_eoi		= rzv2h_icu_nmi_eoi,
+ 	.irq_mask		= irq_chip_mask_parent,
+ 	.irq_unmask		= irq_chip_unmask_parent,
+-	.irq_disable		= rzv2h_icu_irq_disable,
+-	.irq_enable		= rzv2h_icu_irq_enable,
++	.irq_disable		= irq_chip_disable_parent,
++	.irq_enable		= irq_chip_enable_parent,
+ 	.irq_get_irqchip_state	= irq_chip_get_parent_state,
+ 	.irq_set_irqchip_state	= irq_chip_set_parent_state,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+-	.irq_set_type		= rzv2h_icu_set_type,
++	.irq_set_type		= rzv2h_nmi_set_type,
+ 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
+ 				  IRQCHIP_SET_TYPE_MASKED |
+@@ -495,6 +527,7 @@ static int rzv2h_icu_alloc(struct irq_domain *domain, unsigned int virq, unsigne
+ 			   void *arg)
+ {
+ 	struct rzv2h_icu_priv *priv = domain->host_data;
++	const struct irq_chip *chip;
+ 	unsigned long tint = 0;
+ 	irq_hw_number_t hwirq;
+ 	unsigned int type;
+@@ -516,13 +549,17 @@ static int rzv2h_icu_alloc(struct irq_domain *domain, unsigned int virq, unsigne
  
- 	ret = pm_runtime_resume_and_get(dev);
--	if (ret < 0) {
--		dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "pm_runtime_resume_and_get failed\n");
+ 		if (hwirq < ICU_TINT_START || hwirq > ICU_TINT_LAST)
+ 			return -EINVAL;
++		chip = &rzv2h_icu_tint_chip;
++	} else if (hwirq >= ICU_IRQ_START && hwirq <= ICU_IRQ_LAST) {
++		chip = &rzv2h_icu_irq_chip;
++	} else {
++		chip = &rzv2h_icu_nmi_chip;
+ 	}
  
- 	raw_spin_lock_init(&rzv2h_icu_data->lock);
+ 	if (hwirq > (ICU_NUM_IRQ - 1))
+ 		return -EINVAL;
+ 
+-	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &rzv2h_icu_chip,
+-					    (void *)(uintptr_t)tint);
++	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, chip, (void *)(uintptr_t)tint);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.53.0
