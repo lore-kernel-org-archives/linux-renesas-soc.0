@@ -1,308 +1,184 @@
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46913624A3;
-	Fri, 27 Feb 2026 10:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772188937; cv=fail; b=VJKTPr35D7PacOckSKjkudwKfMpgCLmHPkr62+b96gA15Xz2SXrDStJuLNA4lOhwaq7xRC5r9AfqoffGUZu/XJXpPg6LBHyF3ZH5sH4KGQBFlhD00wq6ZWrIm7x521KB19LGcZljzM3BcGAshJ4M18hxPsqT9mmBUTOb+TVHPTw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772188937; c=relaxed/simple;
-	bh=5hMC3PKaaCtLrjm78GTmrWaKvFcfB2b74sUQibq996A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=M6nmDLlu6P3kz0HVAlbxylHp41FnblkrklZE4Qr/J+KR5HGt1cp1dxrBMGUMLDkXeBJmiadvFz3waxGOU6S/ubiUJ56sbuVsLefivOlEuGqZ3Jfw/tz1T3CAsKVQen0/73igmLJXzib0IJn/ENrPE0zXzA/gii6UlBUs+owHLDM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=YJbxIZZF; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=mca3jIrh; arc=fail smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="YJbxIZZF";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="mca3jIrh"
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61R6rVab3628823;
-	Fri, 27 Feb 2026 10:23:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=Ltl/ExPlSS6zMHXL97idmKZdQ
-	ZQeI5qCMZziX1ljLCA=; b=YJbxIZZF8v0YkzLQRNYmMouBUmrP0rp+vC1CxSoos
-	TYl0YM1wQLF0QZRcMBhchOCnzMeNWbAfZh6ocGtOu0FqIVCX/1roBJ0eN1FwCjNf
-	bSXo6zgujugKl/py7GKKK4W8i1aGUFaHuHtZoGdnn+lDWNxntCqhyDjxmOC73sc2
-	EhrSJHrPyxBnf4ZKLhOohA9deejouqyB4xFf/Xw0GPh4uHzGMB3KPWVtU2mCQm5z
-	2LZzxK9ZRMzamk+vKggs/UGo5KIilf/HsFrH9jLQwimIcctmnRJ+QUU8xk3+JQ0U
-	eepjbrmWeLLa+UTWVYCV7pS/t15qHJRi/raAb1B0je9sA==
-Received: from cwxp265cu010.outbound.protection.outlook.com (mail-ukwestazon11022137.outbound.protection.outlook.com [52.101.101.137])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 4cjdvv977r-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 27 Feb 2026 10:23:56 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NQ0PlXSNSFjp8gna4A6BSa1KqO1+H8BRsPYNiUVWM9knTrX/yAGcEa5ZNGSy0z/J21ytX5sL8dhuOWHKgRcC4BPfrmWqxCm9gzFT/g5UEHLDmji3I47uMMsyqMczkguVtjZVTG4y42/J9djBhMYV2SVMldlk3VdoKxPZwwxQ3prcK57/BAN6Jj1i+5gHm2n3C9ZNfrBgCrZBgdEQYo99vwdJ21h1vXXie2jEiF1pADF6yjqiEDgdsYzaD4MrL942M5yjkwXKl1CkXbTFzmmi2xrpPlKXdz4v538UCM53SckHBqa0F787Famc+SHYwOKAKq0FLIp4RKq+ETYYUj64+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ltl/ExPlSS6zMHXL97idmKZdQZQeI5qCMZziX1ljLCA=;
- b=mLz4tCNCCQh7LPCxH6h4nPrSFQF/w8XiCukmLnOBrTZcZE+9Wn70rtM3JEvKQI91JUrz1GrISx65rswREqI4qUg7ZRSpz0cUaV3F7RtMSEbmXNF+PYI1tXfpKIzZ1QZapql1dEukfWm/IT2k7GGavbzhVkxjqmhYJhFAaqy6a4QnJk8ertuSFZeag4evc8p186EnSwpmKj0AjGqnurFYW+WvrM6WYrAGAKFrBcylAVpjpFVc+yphT3vYPQ/W+ugat1E7g9vmXCtmPZM29BYe1yxPCVd06xUrc1pX9JLMlIFXcGkT0JksTldmIgNLcnbR+1OyCJk/JPH+TJqAlyDQoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ltl/ExPlSS6zMHXL97idmKZdQZQeI5qCMZziX1ljLCA=;
- b=mca3jIrh1xUtktl+RFgrfU9Et2iAav7ztbrdY9Y7EtqN0L5Y3xglP/7VH8PaBzycaI7mMIT9emo4Gc6GDgTkHorozbO77cqLQWKAYKt11IR5MYmno2a9CMtT452+fFSz//pciK5uBLe2uvzX3T7dp01uJ6GNjLrnX/4J96r7c6E=
-Received: from CWLP265MB3393.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e2::14)
- by LO4P265MB6042.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:29c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.15; Fri, 27 Feb
- 2026 10:23:54 +0000
-Received: from CWLP265MB3393.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f32f:ed34:4f98:6cd6]) by CWLP265MB3393.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f32f:ed34:4f98:6cd6%6]) with mapi id 15.20.9654.015; Fri, 27 Feb 2026
- 10:23:53 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Mark Brown <broonie@kernel.org>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Frank Binns
-	<Frank.Binns@imgtec.com>,
-        Brajesh Gupta <Brajesh.Gupta@imgtec.com>,
-        Alessio
- Belle <Alessio.Belle@imgtec.com>,
-        Alexandru Dadu <Alexandru.Dadu@imgtec.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] drm/imagination: Use dev_pm_domain_attach_list()
-Thread-Topic: [PATCH] drm/imagination: Use dev_pm_domain_attach_list()
-Thread-Index: AQHcp9MsRG5jqtFTgUu8/QJCcxHP5w==
-Date: Fri, 27 Feb 2026 10:23:53 +0000
-Message-ID: <6854b1ff-d22d-44c2-a4a1-e0718ff4f199@imgtec.com>
-References: <20260123-pm-domain-attach-list-v1-1-d51dd7e43253@imgtec.com>
- <c353fdef-9ccd-4a11-a527-ab4a792d8e70@sirena.org.uk>
- <CAMuHMdU5aNzuK2a05y+hPsQubc5EEL4-HWuogwPk4PKJZUm9kQ@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdU5aNzuK2a05y+hPsQubc5EEL4-HWuogwPk4PKJZUm9kQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWLP265MB3393:EE_|LO4P265MB6042:EE_
-x-ms-office365-filtering-correlation-id: 4ca93574-6d07-4dec-a198-08de75ea4ec6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|6049299003|1800799024|38070700021|4053099003;
-x-microsoft-antispam-message-info:
- uFmaJ6Qtp7WJw/ESORC3T/MECStRJ3dGKV/rSqn+Jz9LzoGf8ZTXSFgQ6/Up8XFG/4miUGIScnG6eIr/sBp0L3a2ubg1mSSH2IK7qGgc5E4bG7k21oVJosILkqGZsuCvUtbrs3UOWB5D6VGUoKDy9fTqSHhmXFuV1cH7S8VfhKUJGtwXIzKd1wEJivcwf6W6vmzn7rMyGCwPMgLgD/QABOAH2kNviuLGJ3I8DkadgyBoFwtAGQPXPFgmYCeh/7ER5duURT+o3hQeF84l1a/oOjuvGKif5fYlhz/7IhM0b8QOhEP1XnPiR9H+H964fWPRqcNFDKnuNkW6fFLOTyD3hIbcTukUsJiloXK38m3PD3UH01Qv7p1CuKG8H9lTW+69CCSGro4+0Ytgh1owfNr1F/9kBJcGUnZzTo1RmjeuQoDl829rA5q8ANboo7Oz06IEaVUSaw/Jn9Zj+9WfzbWtfZ6ionStg4Q0ZGribIIBOSn9B9wPeT1FqW9Lr19gtL/69tO70fugrSiT/QzOSUSnxwP+E7aiF8ledTsi4SgvJFBPOiT1Idhhkbdoi+/IGsV5MFmqdZHR+l294wguUeeGzULuQ/KBHLHgx1R/F+J7y1rtlnF2HZOwcpfK+2Xgh8XKRh92T/B1XHeoVVRGQupHMZMnAQLtQn1U/xolQUWzAqlBmEGl0pEeOGT9eADCpvHnILcjBJ4m2eGsV2W6fAzAKhS8/QgeUQsX1r58a5ZX3DI/cjXOPMR2lPxVjEAqZWVj
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP265MB3393.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(6049299003)(1800799024)(38070700021)(4053099003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZFBnUzQwdU1JNUVyZUpOTmQ4bWk1NFlvaEZ2T3JxWXZad243a1JmVGZ0WDFo?=
- =?utf-8?B?eTlMWmRjTGJxMk1iT3l0bDRUL1MxeERmQW1jUFFqcERPTDA5WThTN3Q1NDcw?=
- =?utf-8?B?cHIyOGJRSHV2c2xCckh2aDdwc0k5Rk9qd1ArUmI1QzNJOVgyRFZqT243djNP?=
- =?utf-8?B?WnNlNnJzS3dkRzJvTEVGYStQSFBHaHpReHFqMVA3b2VTUXJyQmN2MEFqU0F5?=
- =?utf-8?B?Mzd6ZWM4MWlCRlFoamNUa0MrZEdrNHl5b0FlZmRTM1g2Y3RkN2NWdjIrTlpB?=
- =?utf-8?B?SkhOc2MxMk9kTXRYQkR4NmVid3Noc2R4OU9aelVxdVFDeWFiNGUvck85U0FE?=
- =?utf-8?B?SGpPazZVbEhsZU9PT285WTg0aVBodzVTL3Q2TnRyZ0hrS3FyL2lTWjBFTCtR?=
- =?utf-8?B?TVpTQ3hSYXFtWmVDNEM1MGtPZ0xKY01CL1ExY0tmakJYYVlaZ0pSeXVUUXlP?=
- =?utf-8?B?QVpvRFFQaUJvWG9pTTkvc0d2NGQyQU1hMklKS0tTa1ZOOVpJdVFPOTVBY21u?=
- =?utf-8?B?RjkrMjdOdHFUM2Y4VjBlVlRkeHhlZlQ5Z01Ta1M4ZENvRzRSNGVYSnFLOURQ?=
- =?utf-8?B?YThUeTlKdG1xRFhVNkgvdHltNlJJbFlidW1iME9HT2Ivc2QxTk1iNVJNN3pE?=
- =?utf-8?B?bXZlZWRpOXRqdlowYUh2bjVsNDF0R1RkWUVrZXhiOEFjQW9HeFZyK2UrcUhD?=
- =?utf-8?B?bktBODQ1YUFkRTZnN3AzR1BHQ1F4VmdMWUc2cWNJS1YrVU15dm1jMWFFS2lG?=
- =?utf-8?B?K2dQaS9yeGV2TjJmdWRDMkFiVkNBMCtVeTFHMk1Od0g5NmRVU1Z3US9mT3NV?=
- =?utf-8?B?dHVJSHUySzYzMUR0MXNhNjBPd1hZY1hyL0s0bVhIbmpGNXVUc3VaQ0kzRFlG?=
- =?utf-8?B?QnBxN0h3ajkxdVdoY2tMM3pTS2FGUlhMcy9LZ0pDWFFTWU1MWVVPZnJWQWI3?=
- =?utf-8?B?UG9mTGVxby9TbWQxYSt5UWMrMjljS284cm1jb2dRL1lPelVRS3hrZzFLZENH?=
- =?utf-8?B?NTJvaCtaQkJIZmx1dm90NlBsZHJXdk42OGxMTG5RSE1pNDdPTWd3NmxWUytO?=
- =?utf-8?B?U1FaZVkxNitWeVd2bXA5K1FsQ2p4S2Iyc1dzVmMvN1duditTOUJEMmk3WkhO?=
- =?utf-8?B?bCtMLysvNWtCNis5b0ZoSTlxVVVkaXRYR0FsU1B4R2JJSTUyaHhtbUpqYnY2?=
- =?utf-8?B?NDV1eVdncnhDc3FXZEtvZHdFbGZoRzErYk1oWG4xc0NWeUVKTjZXSEkrUkhS?=
- =?utf-8?B?bzBKemFhN1k2RjZpdUFGVjE1eGxWdUt1QUg3ZU9QY1RodTl0LzhMTitWWTYr?=
- =?utf-8?B?QTdSeUpNYzZsQmlsWDE5b0tzODJRMlR2YnpXY0h6MzQxSnRjSTdYeHdGNm1m?=
- =?utf-8?B?MjZsSVpGVnZlek4zTGhjQlFCb0R6RUlKY1ZKNEVubkpZd0FMRlZUaG5ZekZz?=
- =?utf-8?B?QWNjeHVQZS9tclhudzRwTE5ySVNFK2ZnbXVYNVJUcnQySStWWE1MZEFudXR4?=
- =?utf-8?B?RHZzcFFsN0FxcWJTUmV5S1J6ZXFHQTFxN2UrSmlpbHIyUmpNMTZWMjJIcDh0?=
- =?utf-8?B?Y1hnS0xkS3E2RDZ5UmtSQ2syRXZZVjBsbU5rTlk0eE5mM3VFUXlZVGZhT2d4?=
- =?utf-8?B?LzFiNTNDdEtnMElGOFdMMm8vN0RTTk1hTldYWTBRUUIrUTkwWDl5Y2R4NWJJ?=
- =?utf-8?B?M01aeFFvQXlBRHRGdUhvZGhscGVkVHlVRlVnbVBvWEIycTVNZ0EzcGJFWGFk?=
- =?utf-8?B?RWtRTjczTVZ2Z2RyRGtxR2xZUzh5cmNTamZiK0RRblhyejQxY2I5UGltN0ZX?=
- =?utf-8?B?NFJmcWtJYjFwTDBSNkNWNVp2aVdHK1VpeThsNWd0REpoeVVlUDZDMHM4RXZl?=
- =?utf-8?B?aDI4YUl4WGdmS3ROSnpwZHR2TDZ3YmIxaytlUStDQnhlTFNJbUpQT3NRNjZU?=
- =?utf-8?B?ZFFkTklPOXlZbWdHWitHeEVxOU9BazZwSU5JZHRTYUpkVUIwRWJKZnRBaFFw?=
- =?utf-8?B?TGRralY1QjV4NFRsUW1oZUViKy9TeC9LbXdJblRySGxXbkVWU3VpVWdyZ1Jm?=
- =?utf-8?B?RG05L0k3cFh0VTEva2tld05SaFI4b3MzR3NDL2w3anhMVDNjclUvQUR4RTk5?=
- =?utf-8?B?dURDeW9kekRLSnFINm50ZHZLWVNXdk0xaXBNVC92OWtBVHZ2Ukx6QVhheWlC?=
- =?utf-8?B?dlFNVjl1UkttMElmZjJ5ODRFeGNWOXcvK2tkNTN5U0E4ZmxJZmh2ejcwemFD?=
- =?utf-8?B?d200bkJxZEg5Um9jRUZnOTNDc29pSVRubm5weS80SEk2UCt1K3cvTTdZQTIx?=
- =?utf-8?B?NHBUU2tOMlNpRE5YQkNDR0dIcXIxNW5ESlBzdGI0VGNWbnVjNEQxKzdiOHhE?=
- =?utf-8?Q?OdD+ZwYVDLJeHkaM=3D?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------8KdVXx6mNI15ooIEu60bZdGV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E40394465
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 10:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772189292; cv=none; b=HqwEM8ntwNHoltKyiTJOBM5L/y5bitdKEuz2L7cpsDNdtElzAUA90uwJLTZKlV8M6bGqCZ94aQM/Sf1hZyWLkkb4hAxIwLo2G9agXr6ZA8I7Q0WaZW4mIA7vSV/s4VHg0bCwJoxUBRDCYx0kRG/wWS22Abp1v3yVM6emRlwmdCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772189292; c=relaxed/simple;
+	bh=2dyKtNyh+VYQgv3RdAGTDcERo7pDX5CfMVIb/NziIdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAG3gY1UklrBpG4uxKper0UTPWsHL8h5Z6EelolqTYPO+xHsGKMToEpK1axBFEA6M/5MkkQdRvMMiHTlMwAfgR+QMeHXRs9XVBMjSrufUMqfNSV5YwU1wTwuBY701lDOfIPRnYTLEuhr3gn+z6quAsYtHgJa4qRd+Ya6xRSHas0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56a9076813bso755830e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 02:48:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772189290; x=1772794090;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3FlwDAQHs4Ab188Hz8URDAmWORYubm2PaVsA0iFMwu0=;
+        b=u4SkIQ4zEoHpXMDLXRZt3Y5in4QCC9A7UCfpjmwH/3e68nO3OlcWvt9+y/6GxFoq2g
+         aDFKNdxkvMK/l9DbW9S1SwQlvjOqSe7J4c4nfmkmsHsp8mXCv3S/ctBrgvB7NYiNiFrZ
+         wqfHcDdAWqYfZkduxQBlyUKnfzh8euMQiOsfPTQo0skrf3/VV6LMAdjHPIDmXfjuxXud
+         VxFMh/Dm+4gpYMBGICC7MkqfOtWz0P1dX/Bu+zW6zFz26wkFPwsKVk6SN48BmqHDq0kj
+         l2nfzrMIYjecKThApX1qya7QDQxfFyXjTbRJH2CLfN5zIMst/W/CpC8mDbQK+eCeMDY3
+         1foQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTVbXjpNFXBM8sWm1Hi8Vyn38xQUMKi5CTXwhmnKJJS1nqPVro/EbcQwN5kgWBdUk7BO4LRW/8rL/WJX8BVeUKSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV5i9pL7pxfblDy5zmiaje+ERy7T43LgzfUTZVd5faoJyx66Up
+	hrF/Ki8xm+RLjQAVZiC/j17gD97UPlC/FTQ0/Lvan+dBqgmwpMeQzHVTNqKVPc7TRkY=
+X-Gm-Gg: ATEYQzzEYKYoNtLp9IF+KYWhgAZgKPD2h7gx3pA+hYrr6kzmyuz+Pr/bnpoq7QcRtSj
+	zOP9+CGjpBYNMPPzPVB8uvic+rm9z04d78K4J7wi1nS2m5iGTH3XsGpCEL/q1raXq47/eyc9a0Z
+	js9NhFLTpylvlDW9IsreHXzOUccT0gkO2Lyqu4R5FYXi5iGRpy3PHFFWathM1v2z6CaoQ0xa+MK
+	WACEJaF5Res/xH9geNkZev7srdiiUAJI4JRSYFe+s7U2QVnhXOpT623go5o72xkS+5I7OsdODW9
+	dh+s3KknJHTEuG+wKzuc4S8NN4/LASGL2YP7S4G1yGYb+lex0+33bcWHbG5iDaXCMbrLtYs7b+B
+	Y7uhbXbbHi0gTJ+Kx/eKsHR759dv7Tu0a46NbiYt7bOpOfeTNsN7HBwcA+QMT/UjBcD5MMopf3f
+	kJGjc0halDDO/DfjQYMl0DhCfDphaFDLbPYDhcuXNyqVaMr77pnpUuZXSpj4wM
+X-Received: by 2002:a05:6122:a0f:b0:566:963a:165e with SMTP id 71dfb90a1353d-56aa08cc5bfmr1223860e0c.0.1772189289924;
+        Fri, 27 Feb 2026 02:48:09 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a9228d776sm5634500e0c.18.2026.02.27.02.48.09
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Feb 2026 02:48:09 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5fdb47d6131so478923137.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 02:48:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVmajEqR/MF1ITMOJNtC0R5oFBRbSm8HQNaWYbJPZnKj6Itt/EdR/NYb6g9ZQZhJcfaRDCOXb4wOxkA8/jcRu+LRg==@vger.kernel.org
+X-Received: by 2002:a05:6102:3583:b0:5f9:3a74:e17b with SMTP id
+ ada2fe7eead31-5ff3232afd6mr1008069137.13.1772189289126; Fri, 27 Feb 2026
+ 02:48:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWLP265MB3393.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ca93574-6d07-4dec-a198-08de75ea4ec6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2026 10:23:53.7144
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7GJii3x1mK0r+Mp1HXUGNwYPYWFisGQAXQpocV4jmYpe0Eqn5EHkBzAaTS+uo0nKWR2H3Z1o3U81nUXNdMsDXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB6042
-X-Authority-Analysis: v=2.4 cv=CL0nnBrD c=1 sm=1 tr=0 ts=69a170bc cx=c_pps
- a=CjTcOEdfvbRZRYZIcjvNWA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=HzLeVaNsDn8A:10
- a=NgoYpvdbvlAA:10 a=VkNPw1HP01LnGYTKEx00:22 a=kQ-hrUj2-E3RCbRHssb7:22
- a=7RYWX5rxfSByPNLylY2M:22 a=qNABUOcEAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
- a=e_DIcZzCEQYWNHLnFT4A:9 a=QEXdDO2ut3YA:10 a=VOB5tmRHFxP-raRre6IA:9
- a=FfaGCDsud1wA:10 a=Ytm653ucTKQjCvbzLygB:22 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: fCHhmyhZRCrE3AYgOt6D5rt5pCEuEjoG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI3MDA4OSBTYWx0ZWRfX8S4snAt6f5v4
- sqWlVswSJAYNfJNY+eGzrXqHpnZZtv4HdAcv8Lu0wqeqFLMo1UZNSPa76vUnx0bHtlOHGm7u3w2
- mhToWseD+vj+CxZ8Osq2GbsZebz9CHBpY5sHbyzmUI53dJjzeun7zr+EHyWGDURxTUKmTrNx942
- 3jc1nrveuXrzcWcsbrn7tUw49tBzcXe0hGFDCPiR2SRVQvISfIRlX5HeBnMui4CJe/gRcyA8T1p
- 2/lwyfmAOlvuTh1y6L9RgYRvozjnUSyxBN9euv1Gpx/YuHC3PdJlQPtGixXMghpdi3bc0dTCBab
- 9c5PkgBgdM9ifAMpAu8usuZ3FGeJKPM2V+bkCGo41jPYPMgHytnwv8wNsZQy2Xo5tZf5nrAuLHt
- 3zaVXq4kA6A2guMnziO7+//JSCqSFfArWl9UbbHTQZPDi+FAo2VTJq8pD48XiEZE0w/IeKXu2na
- qAly3H06vxDI9rqyoMw==
-X-Proofpoint-ORIG-GUID: fCHhmyhZRCrE3AYgOt6D5rt5pCEuEjoG
+References: <cover.1770996493.git.tommaso.merciai.xr@bp.renesas.com> <53c8d9e7fde7b176e05503a72af81e74c7a8a1c1.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <53c8d9e7fde7b176e05503a72af81e74c7a8a1c1.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Feb 2026 11:47:58 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVAf=GyDR95BFD0Q3Wbjo5n5vnqSsfue=7fRWxs6=Hdgg@mail.gmail.com>
+X-Gm-Features: AaiRm51h4Q-XTgbNeUvH0Ox5Heqc-6O0OJ_Dv-XNFtKtSDZR5vc0E3M-GeWzDIs
+Message-ID: <CAMuHMdVAf=GyDR95BFD0Q3Wbjo5n5vnqSsfue=7fRWxs6=Hdgg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/20] clk: renesas: rzv2h: Add PLLDSI clk mux support
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, laurent.pinchart@ideasonboard.com, 
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---------------8KdVXx6mNI15ooIEu60bZdGV
-Content-Type: multipart/mixed; boundary="------------uym5rM9BnzYibFOydG0TbcCV";
- protected-headers="v1"
-Message-ID: <6854b1ff-d22d-44c2-a4a1-e0718ff4f199@imgtec.com>
-Date: Fri, 27 Feb 2026 10:23:53 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/imagination: Use dev_pm_domain_attach_list()
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Mark Brown <broonie@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>,
- Brajesh Gupta <brajesh.gupta@imgtec.com>,
- Alessio Belle <alessio.belle@imgtec.com>,
- Alexandru Dadu <alexandru.dadu@imgtec.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260123-pm-domain-attach-list-v1-1-d51dd7e43253@imgtec.com>
- <c353fdef-9ccd-4a11-a527-ab4a792d8e70@sirena.org.uk>
- <CAMuHMdU5aNzuK2a05y+hPsQubc5EEL4-HWuogwPk4PKJZUm9kQ@mail.gmail.com>
-Content-Language: en-GB
-From: Matt Coster <matt.coster@imgtec.com>
-Autocrypt: addr=matt.coster@imgtec.com; keydata=
- xjMEYl2lchYJKwYBBAHaRw8BAQdAOYlooFfHTXzAQ9aGoSnT9JS9wq8xprG+KVLbkxJDF5DN
- JE1hdHQgQ29zdGVyIDxtYXR0LmNvc3RlckBpbWd0ZWMuY29tPsKWBBMWCAA+AhsDBQsJCAcC
- BhUKCQgLAgQWAgMBAh4BAheAFiEEBaQM/OcmnWHZcQChdH8KkDb5DfoFAmgHpowFCQlsaBoA
- CgkQdH8KkDb5DfqxDgEA81pbVLJDmpFyFZLRhAGig9rgoDY6l774yhTzRVm/SvkBAJLzpSlm
- wyQaQuB668TKOX9XvRLKFGjSq5kkdQcxqjkCzjgEYl2lchIKKwYBBAGXVQEFAQEHQCaVC8X5
- 7NOv2jNbeXqjP9ekY7rzy7auiEZ5PxaDWUQVAwEIB8J+BBgWCAAmAhsMFiEEBaQM/OcmnWHZ
- cQChdH8KkDb5DfoFAmgHpowFCQlsaBoACgkQdH8KkDb5DfoK+AD/Q4aN/zUvP72RRE4cNWpM
- MXeRXg+LTN+OJ24U10LltxIA/2w3kDqMC/0t1oqO8TM+c2LMWO/x2IBkG7oRZ/hVw1QI
-In-Reply-To: <CAMuHMdU5aNzuK2a05y+hPsQubc5EEL4-HWuogwPk4PKJZUm9kQ@mail.gmail.com>
+Hi Tommaso,
 
---------------uym5rM9BnzYibFOydG0TbcCV
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, 13 Feb 2026 at 17:28, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Add PLLDSI clk mux support to select PLLDSI clock from different clock
+> sources.
+>
+> Introduce the DEF_PLLDSI_SMUX() macro to define these muxes and register
+> them in the clock driver.
+>
+> Extend the determine_rate callback to calculate and propagate PLL
+> parameters via rzv2h_get_pll_dtable_pars() when LVDS output is selected,
+> using a new helper function rzv2h_cpg_plldsi_smux_lvds_determine_rate().
+>
+> The CLK_SMUX2_DSI{0,1}_CLK clock multiplexers select between two paths
+> with different duty cycles:
+>
+> - CDIV7_DSIx_CLK (LVDS path, parent index 0): asymmetric H/L=4/3 duty (4/7)
+> - CSDIV_DSIx (DSI/RGB path, parent index 1): symmetric 50% duty (1/2)
+>
+> Implement rzv2h_cpg_plldsi_smux_{get,set}_duty_cycle clock operations to
+> allow the DRM driver to query and configure the appropriate clock path
+> based on the required output duty cycle.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-On 27/02/2026 08:10, Geert Uytterhoeven wrote:
-> Hi Mark,
->=20
-> On Thu, 26 Feb 2026 at 18:24, Mark Brown <broonie@kernel.org> wrote:
->> On Fri, Jan 23, 2026 at 02:44:50PM +0000, Matt Coster wrote:
->>> This helper handles the attaching and linking of the entire list of p=
-ower
->>> domains. Besides making pvr_power_domains_init() simpler, this also l=
-ays
->>> the groundwork to simplify supporting the varied power domain names u=
-sed in
->>> Volcanic GPU cores.
->>
->> I'm seeing oopses in -next on at least k3-am625-verdin-wifi-mallow whi=
-ch
->> bisect to this patch.  We get:
->>
->> [   10.820056] powervr fd00000.gpu: Direct firmware load for powervr/r=
-ogue_33.15.11.3_v1.fw failed with error -2
->> [   10.831903] powervr fd00000.gpu: [drm] *ERROR* failed to load firmw=
-are powervr/rogue_33.15.11.3_v1.fw (err=3D-2)
->> ...
->> [   10.844023] Unable to handle kernel NULL pointer dereference at vir=
-tual address 0000000000000018
->> ...
->> [   11.090162] Call trace:
->> [   11.092600]  pvr_power_domains_fini+0x18/0xa0 [powervr] (P)
->> [   11.098218]  pvr_probe+0x100/0x14c [powervr]
->> [   11.102505]  platform_probe+0x5c/0xa4
->>
->> which does seem relevant to the changed code.
->>
->> Full log:
->>
->>    https://lava.sirena.org.uk/scheduler/job/2499326*L865
->>
->> bisect log (with links to additional runtime logs):
->=20
->> # first bad commit: [e19cc5ab347e3cdcc21c97ea5d11af8da7f1358d] drm/ima=
-gination: Use dev_pm_domain_attach_list()
->=20
-> Thanks for your report!
+Thanks for your patch!
 
-+1 from us :)
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
 
->=20
-> I can confirm this crash on e.g. R-Car H3 ES2.0 (after adding a
-> GPU node).  Actually I had seen it earlier this week, but didn't pay
-> enough attention.  Hence  I just assumed it was the known race conditio=
-n
-> when removing multiple PM Domains, and thus missed it is a new bug.
->=20
-> The issue is that pvr_power->domains is a NULL pointer, thus causing
-> a crash when dereferencing that pointer:
->=20
->     int i =3D (int)pvr_power->domains->num_pds - 1;
+> +static struct clk * __init
+> +rzv2h_cpg_plldsi_smux_clk_register(const struct cpg_core_clk *core,
+> +                                  struct rzv2h_cpg_priv *priv)
+> +{
+> +       struct rzv2h_plldsi_mux_clk *clk_hw_data;
+> +       struct clk_init_data init;
+> +       struct clk_hw *clk_hw;
+> +       struct smuxed smux;
+> +       u8 width, mask;
+> +       int ret;
+> +
+> +       smux = core->cfg.smux;
+> +       mask = smux.width;
+> +       width = fls(mask) - ffs(mask) + 1;
+> +
+> +       if (width + smux.width > 16) {
+> +               dev_err(priv->dev, "mux value exceeds LOWORD field\n");
+> +               return ERR_PTR(-EINVAL);
+> +       }
 
-We've confirmed the same on AM625; there's patches coming today for this
-fix and another possible foot-gun we spotted in the process.
+I am totally confused by this: smux.width is not a mask, but the size
+of a register bitifield.
+Perhaps:
 
-Cheers,
-Matt
+    if (smux.shift + smux.width > 16) { ... }
 
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
+?
 
+> +
+> +       clk_hw_data = devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL);
+> +       if (!clk_hw_data)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       clk_hw_data->priv = priv;
+> +
+> +       init.name = core->name;
+> +       init.ops = &rzv2h_cpg_plldsi_smux_ops;
+> +       init.flags = core->flag;
+> +       init.parent_names = core->parent_names;
+> +       init.num_parents = core->num_parents;
+> +
+> +       clk_hw_data->mux.reg = priv->base + smux.offset;
+> +
+> +       clk_hw_data->mux.shift = smux.shift;
+> +       clk_hw_data->mux.mask = smux.width;
 
---=20
-Matt Coster
-E: matt.coster@imgtec.com
+Again, smux.width is not a mask.
+Perhaps GENMASK_U16(smux.shift - 1, 0)?
 
---------------uym5rM9BnzYibFOydG0TbcCV--
+> +       clk_hw_data->mux.flags = core->mux_flags;
+> +       clk_hw_data->mux.lock = &priv->rmw_lock;
+> +
+> +       clk_hw = &clk_hw_data->mux.hw;
+> +       clk_hw->init = &init;
+> +
+> +       ret = devm_clk_hw_register(priv->dev, clk_hw);
+> +       if (ret)
+> +               return ERR_PTR(ret);
+> +
+> +       return clk_hw->clk;
+> +}
 
---------------8KdVXx6mNI15ooIEu60bZdGV
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCaaFwuQUDAAAAAAAKCRB5vBnz2d5qsLba
-AP9svfpFK2MthOMRZAx1XPGepij6qv0vaSJJ/H3oqLpYRgD+KTaOOa9S07tBF8SRD4IQhVcYY6CH
-/Vqza765WqwBqwE=
-=Hzy3
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---------------8KdVXx6mNI15ooIEu60bZdGV--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
