@@ -1,156 +1,186 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4034E36EAAD
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 09:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A2936C0CE
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 10:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772186270; cv=none; b=t4mPoHQcYqZ4nmT42nT7JV629lZKID8ZAQ94ZvDZX1vVri1AWM7jC5aXCf3pSJGfMhfSC7y+6M377Ig6+JB2cOapTjwpTG9OgiUBxbLy3ew7cJIxwuy8/eLCKrBHCN3cpIaU7IxvHiiAppJIxa2kmelWEIxXqGn+/HQ/+VC5JUA=
+	t=1772188127; cv=none; b=A9DhCELYn+2z87liS8muvT2bMak6dBFJ96VfueIfc5N6qcpvXRTjTwQ1LiA/uXKManfKvL+0c90TYcQuRqgRsPLEKcw0WOVtnX61ArEgH+ezBb2m70DX89n17q8Aq/p8WBRe+I4dm54T/Gv5uexk/OM2e/3Aje1h626/KwOJD0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772186270; c=relaxed/simple;
-	bh=R+MD4L7KiKI5zqVeN2wD8gMho6QHFy0bgHj7RAZxGSw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SdU0rLsLWmna9+X2qW0a6lk9bIQG7HDqojq4SJUOjrdsCclFedYsxrscLYbELGGAxoLBVGsTCDe4D9IeyQS0wg59NTxMxib3KQzfPqrhBlWyL0jw+08QZDKPhNBoLHWqB/5xn6zv2msRcG6GxFMt2xFh/wHWb1+AxX6yP8MjvGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YSk2VH27; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1772188127; c=relaxed/simple;
+	bh=/VtSt+MWX9wbKnqeRpjnPfu1cZfxAGSGozIUuU7S3HY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o7+qhLgRwfrWwK12YzrD78D3p6HTirQo1dYHryCKaZ/AkvUSY03N2Pp9L0F/54aLOo4Ed7/SMlOfbdz/55BScs2X0H+/U7s/3VfXKhYcUUOrMXrGtD3a2L8fvOk8yTbXoIRZR3rbK/+18V/aQv3Fu4+9XR9nJ+CQmXFRC8UBOp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSk2VH27"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c70bc5b4e86so746224a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 01:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772186268; x=1772791068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7k7Krg43fqr0O/qL5plo5lVAc8TPlY5swC/VeSBhiq4=;
-        b=YSk2VH27rLclaxuEKbPPfjM7aK+H/LyxVgPeIGQ0qwizqwXbPj+xJ9yJkNXk7klCM6
-         ULBl3DlLUTmEdpF7NyDG+ayvrXJD1Q/1xiGKI9/L32fBjbInHldN554fepaJUUlZuy/y
-         3GEw8n4vDBghoxbnbVhYHF8ohZwhZ8WjjjRtm6WbFgIJcy9Nm1FIgKqTnDxk6opa3404
-         GJ8ROrSGWT2MTe6NLF6GUgnn7jLifW81luHrUnlOqtzTFCf1MsmQiL6THQxFpNFMxIKS
-         Rl0+Mqh2DyjW06dvBunbbl/eT8eKFM4HcCqvRvgyIZOhGNI8XjOGcbEaxZlTrm37ClI2
-         PPEA==
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56a8395a68bso889931e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 02:28:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772186268; x=1772791068;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7k7Krg43fqr0O/qL5plo5lVAc8TPlY5swC/VeSBhiq4=;
-        b=mk4OBWIrz4bSTaf5VnMfZazO0VuwKy6D/zIRBqmX9+08WDIKpeKRHF+KWKHaUYtVsE
-         y1z8p7G0DSa29zxsBahlA8QIzL9gmQxxA4Mbbc8TWPTMr4XkqyCFJ6RnXxX36zlrGnWD
-         UDk/96DUd8hFuBFhfr01aXlyDy8blKZbZOVin4dyUQv534EG6wNLlF2gLLdl8f3RIxGc
-         Kn9iLBhIENEpOJtrYHPvBaf2H90O0KxpjapzEvNBK42beQMtHAn54Lf1pWLeq1i/5C1p
-         DAgn1yzVzSYmUXDaIdqwJYzlGyfRBTaAzmEyqyvmmWmgDoAPrR/iZLELKIAqT+W63MNa
-         V49A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvTAroWXNGricTkTeW2s9Lk8oKKIAqEw5bKEg7xCns2LxJjCI2Yfk1XOO+g+NS4czH+OmTidqPzuDW5+NWk0+ktA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfRZBP05ucs3BIkJsgLAhaT3kTCEkD2IhtykhiR9iI9C3+e3D3
-	3CFN6WzBz0Ef40GpFjFZq69y3eyCNfnyk5lJKX4g9fLU2x5ElCjZk15imz3h6w==
-X-Gm-Gg: ATEYQzxHwyThVCJw9tL8ooG/e1dIdbGLEkV3my525ha0WR9nwFXvDjk6OyVScGh61pK
-	gcdD5wMZz7FQk4HWYkrwxXdfnKil2kZtJjzS/SxjcO5OCqWdU/eBrFiG7TPkzUEZ2xIjqCyeFpw
-	pV2KCD7gZzg4IphZITENTQzL2edPggyL0dYVGaHW7zwDb2/5dLJ0H3eKCu4XvyQ4vDUwlH1BMRG
-	P6csry1NmSrjTj1oSRfTr3LsqWNksgcs9F1o4I8GfggIEo9m1rTDwIXxIQGBnhjxzsy0REITxNY
-	DDuNOM0ky4d/HHyVjCrqmuX7GFXH+unkqT8Jc2k6WFHxjQXCXqKXoJ2KOpEtLwS2Twrjvvdv7sK
-	5V+wCaM4F6zASTnhtBWpUtMeiFobARGRYZ1Wkc2gtm7llgglzczx8riQ+n2oBLc/CUsVzWEvlWY
-	U4B0ai99dTt+BLI7iT5y6B2eablhKi4Q5ugGZ2pMLWBHV/JYyF4s6dTT0BTulDNMA1PL6Ie4nOh
-	2hgnw==
-X-Received: by 2002:a17:903:1a28:b0:2ad:bd4c:b0 with SMTP id d9443c01a7336-2ae2e3cd0b5mr21806505ad.7.1772186268441;
-        Fri, 27 Feb 2026 01:57:48 -0800 (PST)
-Received: from localhost.localdomain ([14.160.25.72])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82739d4d826sm4640439b3a.10.2026.02.27.01.57.45
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 27 Feb 2026 01:57:47 -0800 (PST)
-From: phucduc.bui@gmail.com
-To: geert@linux-m68k.org
-Cc: airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	phucduc.bui@gmail.com,
-	simona@ffwll.ch,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v2] drm: shmobile: Fix blank screen after resume when LCDC is stopped
-Date: Fri, 27 Feb 2026 16:57:42 +0700
-Message-Id: <20260227095742.4449-1-phucduc.bui@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
-In-Reply-To: <CAMuHMdXrYTGQkjC1Sr4NjOcsRyOw3_eEj9m5MVVo1GWUuCxo3Q@mail.gmail.com>
-References: <CAMuHMdXrYTGQkjC1Sr4NjOcsRyOw3_eEj9m5MVVo1GWUuCxo3Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1772188125; x=1772792925;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sBYpjvacDqnBBB334ORhbaa0ojdywybiSfgdzKCudj0=;
+        b=H15po1vN6ZfZ6g0hhKveWhv/V2aMHK5e8zDNCiK8ysipTW2k3tLRNb7AkQGkzHSZMW
+         X7SHb7kx1i498uxGj69RNlbLOrlT2X1B/UYvNA9Xhx9WLqf48lQPbSbJwro0qV2DFEeT
+         6xjqMrkfpV1mh/Q1CkP5SQMQR3Y8mp9aIJtM24ar78B2lMh5vLzSvEiGBCfXxjVhL9yt
+         KQ1c/DBmGidQ+Grdy1os362jLZ8lr/llJxfNrSoiPrbyodT0ZcJ+biEY6lNM7Co2M66E
+         m27P7f0uEjn0tgOsHmKSh33IhEmnUzhm9SXu6CLE/m4E9j9G6oEuwTYm4zvYCST4gV8a
+         oV9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVi4rMqTQmy6ORu1KC4kOFI4Qw/hqwZsnjRZSrJ0Sc3pJug8JOYxTBJ/pLkjbmCt9snBM9gmTBrKPsrt4aE+YUSHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOYh6VHtK0lzGAF/Ta+c8RLRRxYjah1elvc7rz7ICTaQ/r1kk8
+	yog8TvoT5EiRYsIkL0+wayDKMAv9nqvRXlGkONAmJ+pAGAcOTbcGndSplSkE9XI4FFY=
+X-Gm-Gg: ATEYQzxw30jcftNIduSq8hTWVf/fjtXS97HpJeU6J8+kDI/3qpEdIpdZgEj1rk2qBnY
+	HviU9HD2XO0V20TgQddTt5+bqUbfgJrJlBgcDRZw0WyNtENoIO5FalwW6yJ7QPC+02LN7RWQgNN
+	SEHKWYxZVQNmOBPHFiBCEKcrzsgp00FCfNvqzSg/Z5KiO9GBjL7nLPiO+wxZKPyvfjXFSOtExpO
+	lDIdNKU6GNUGKdxKGMUI4HTArf3lKLzOYie0pdjZ9qM4WXBiOLjuHD7fWV2E9aJzoEpgkk0nzlT
+	7LTm0vuMqoLe7ZvXgBSp/sWdmXiYwhp0tkR4Kxep6MGATApbydL2VjHvZULMntn5rhUTl4xoA7q
+	cL+w607ZrrUfBZIAXTgjWBCW7Sh6LH4hZk1XHgw6MS5cqbniKp0J0x9o1uHPW2i+OvBZ4fC1pMy
+	OtEzx5aZIduxCYAQQ3pCiEJQFRBzOkC9dbEMR2sDfk2kXd3Qv+1VmHtV28xQUJvd/J
+X-Received: by 2002:a05:6122:829f:b0:566:fe6c:e1ba with SMTP id 71dfb90a1353d-56aa0a1826emr1285644e0c.4.1772188124639;
+        Fri, 27 Feb 2026 02:28:44 -0800 (PST)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a9228d776sm5594242e0c.18.2026.02.27.02.28.44
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Feb 2026 02:28:44 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-56a8dce7235so640824e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Feb 2026 02:28:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWAddV2BcRD2+dc1JD/+NDsk55Re9LAVFCCup8bDScYe/gdFYRbC8nP9FeCcdrNCrk54AQe/3ngClUJiIoXnij+Lw==@vger.kernel.org
+X-Received: by 2002:a05:6102:1629:b0:5fe:b030:ebcb with SMTP id
+ ada2fe7eead31-5ff324b4b9dmr1032184137.26.1772188123983; Fri, 27 Feb 2026
+ 02:28:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260224175618.3160270-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260224175618.3160270-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260224175618.3160270-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Feb 2026 11:28:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUD-YoEV9qk7Ghr4AwpnOUyL+kTd0TRXphuzty5HdwHOg@mail.gmail.com>
+X-Gm-Features: AaiRm51amG54i7xvYieU7vF8UKT5STnJp6bNkyiiPxLp9i33uM_zJh6JbVjVDZs
+Message-ID: <CAMuHMdUD-YoEV9qk7Ghr4AwpnOUyL+kTd0TRXphuzty5HdwHOg@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] irqchip/renesas-rzv2h: Replace single irq_chip
+ with per-region irq_chip instances
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Geert,
+Hi Prabhakar,
 
-> Thanks for your patch!
+On Tue, 24 Feb 2026 at 19:00, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Replace the single rzv2h_icu_chip and its dispatcher callbacks with
+> dedicated irq_chip instances for each interrupt region: NMI, IRQ, and
+> TINT.
+>
+> Move the irqd_is_level_type() check ahead of the scoped_guard in
+> rzv2h_icu_tint_eoi() and rzv2h_icu_irq_eoi() to avoid acquiring the
+> spinlock unnecessarily for level-type interrupts.
+>
+> Drop the ICU_TINT_START guard from rzv2h_tint_irq_endisable() since it
+> is now only reachable via the TINT chip path.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> What do you mean by "deep sleep"? s2ram? In upstream, s2ram behaves
-> the same as s2idle, and the LCD works fine after resume from s2ram on
-> my Amadillo, with and without your patch,
+Thanks for your patch!
 
-> What am I missing?
-> Thanks!
+> --- a/drivers/irqchip/irq-renesas-rzv2h.c
+> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
+> @@ -169,32 +169,50 @@ static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
+>         return data->domain->host_data;
+>  }
+>
+> -static void rzv2h_icu_eoi(struct irq_data *d)
+> +static void rzv2h_icu_tint_eoi(struct irq_data *d)
+>  {
+>         struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+>         unsigned int hw_irq = irqd_to_hwirq(d);
+>         unsigned int tintirq_nr;
+>         u32 bit;
+>
+> -       scoped_guard(raw_spinlock, &priv->lock) {
+> -               if (hw_irq >= ICU_TINT_START) {
+> -                       tintirq_nr = hw_irq - ICU_TINT_START;
+> -                       bit = BIT(tintirq_nr);
+> -                       if (!irqd_is_level_type(d))
+> -                               writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
+> -               } else if (hw_irq >= ICU_IRQ_START) {
+> -                       tintirq_nr = hw_irq - ICU_IRQ_START;
+> -                       bit = BIT(tintirq_nr);
+> -                       if (!irqd_is_level_type(d))
+> -                               writel_relaxed(bit, priv->base + ICU_ISCLR);
+> -               } else {
+> -                       writel_relaxed(ICU_NSCLR_NCLR, priv->base + ICU_NSCLR);
+> -               }
+> +       if (!irqd_is_level_type(d)) {
+> +               tintirq_nr = hw_irq - ICU_TINT_START;
+> +               bit = BIT(tintirq_nr);
+> +               scoped_guard(raw_spinlock, &priv->lock)
+> +                       writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
 
-Thank you for your feedback.
+With the big switch() decoupled from the scoped_guard(), the code
+becomes easier to read. Do you actually need the scoped_guard()?
+The write is not RMW, but just setting a single bit.
 
-To clarify the "deep sleep" context, I have tested both s2idle and deep 
-states using:
-- echo freeze > /sys/power/state
-- echo mem > /sys/power/state
+>         }
+>
+>         irq_chip_eoi_parent(d);
+>  }
+>
+> +static void rzv2h_icu_irq_eoi(struct irq_data *d)
+> +{
+> +       struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+> +       unsigned int hw_irq = irqd_to_hwirq(d);
+> +       unsigned int tintirq_nr;
+> +       u32 bit;
+> +
+> +       if (!irqd_is_level_type(d)) {
+> +               tintirq_nr = hw_irq - ICU_IRQ_START;
+> +               bit = BIT(tintirq_nr);
+> +               scoped_guard(raw_spinlock, &priv->lock)
+> +                       writel_relaxed(bit, priv->base + ICU_ISCLR);
 
-On my hardware, the issue is consistently reproducible in both cases, 
-resulting in a completely white screen after resume.
+Likewise.
 
-Testing on Stable and Upstream:
-I have verified this behavior on both the stable and latest upstream 
-kernels. While the patch was originally developed on a stable branch, I 
-have confirmed that it applies cleanly to the current upstream tree and 
-successfully resolves the issue there as well.
+> +       }
+> +
+> +       irq_chip_eoi_parent(d);
+> +}
+> +
+> +static void rzv2h_icu_nmi_eoi(struct irq_data *d)
+> +{
+> +       struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+> +
+> +       scoped_guard(raw_spinlock, &priv->lock)
+> +               writel_relaxed(ICU_NSCLR_NCLR, priv->base + ICU_NSCLR);
 
-Context and Environment Difference:
-I first tested several Armadillo-800 EVA boards more than 10 years ago, 
-and this specific resume failure was already a known, persistent 
-issue back then. After 10 years, I am returning to this platform and 
-testing with my current hardware, and I can confirm the behavior 
-remains exactly the same.
+Likewise.
 
-Regarding why it works on your side: I cannot be certain about the 
-specific differences in our hardware configurations. However, on my 
-setup, the debug traces clearly confirm that the LDSA1R register is 
-reset to 0 after resume.
+> +
+> +       irq_chip_eoi_parent(d);
+> +}
+> +
+>  static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
+>  {
+>         struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
 
-Video demonstration:
-I have recorded a short video demonstrating the bug (white screen after 
-pressing "Switch 3" to resume):
+Gr{oetje,eeting}s,
 
-https://youtu.be/0n9NHeZ7MWU
+                        Geert
 
-Detailed Logs and Configuration:
-I have uploaded the kernel config and dmesg logs (including debug 
-traces for LDSA1R) to this Gist:
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-https://gist.github.com/BuiDucPhuc/b31fc7ee784e65d192b2f49a406c3326
-
-Technical Analysis:
-I focused my debug traces on the LDSA1R register. The logs confirm that 
-during resume, LDSA1R is reset to 0. When the driver updates the 
-registers:
-1. It writes the correct address to Side B (Mirror).
-2. However, according to Figure 38.13 ("Two-set register switching 
-timing") in the R8A7740 Group Hardware Manual, the transfer from Side B 
-to Side A requires a Frame End interrupt.
-3. Since the controller is currently stopped (DO=0), no frame is 
-processed and no Frame End pulse is generated. Consequently, Side A 
-remains 0x00000000, leading to the DMA fetch error and white screen.
-
-This priming patch ensures Side A is explicitly initialized while the 
-switching logic is idle, making the driver robust against register 
-context loss.
-
-Best regards,
-Bui Duc Phuc
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
