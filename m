@@ -1,143 +1,114 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86C9373C05
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Mar 2026 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63110423A64
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Mar 2026 16:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772469146; cv=none; b=P2k3uo4p6DF6+AWMEVUoNFd9zfV44ZNZVULMOSFNOfjUtdAylicJAFLb8yzsgmSDd6GWokcd72CwzRf9QYrxCXuZ0EDwq8xkwde400gM1HNa5sEYaKFD9R+/L1a6iGVJn1fHvSDm+Ny6nvIy4tCRfLwP3p59JZes9sirbhxICT8=
+	t=1772469957; cv=none; b=apmPkuPGynUqfqVcCzjYHN6rT9uLadabief0uUfyi3HLDnzCCCS6SpQF8O8D8plWW/kPwiFrxcAxmBVSaA1y25CAauh0jpEcFvX0F6fPQzrbXKoCE6KrGl8g5vqwVhiBkTtYoLVKtlb4TLQx6H1YfC+iUqgQOGL6H8zLQ+fvMlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772469146; c=relaxed/simple;
-	bh=ZN7ZYA3vRUNHHbGnPhwCvGjNZJR0JyldjOBVcI9neHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eLGsZTy6js6mhJO0kiRGdPFxjqP4j4VjMw6BRgLvccvfqk31wRJFE8EFm9Ckpd7RbaCQghzq+CDM13KsITbmLq/9DH29nqrxi0w/1+6D+L9JF3gAxk+4/trLs29b2MeZakMR4dJlX6NfX7/YKmVaMtRbGQTFN5DTUyemQ4TfZc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-56a981f44c9so2006379e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Mar 2026 08:32:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772469144; x=1773073944;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=32KLibA2LnxuiBPJQhexbcq4h5vz7CZtFSoqgdy1YZE=;
-        b=f8RVLNVcQ0FdQXaAUuhuOJy2VcVBkALyvhTukMaraNlEdrXTIlm9ReWYnC3jxatPFw
-         T00HiR/7O4C5WMPaQJDuPYkV+Pbwz32BC40ZUyqmqydwq6zu7fOH1FqwRbwmtag7AzrC
-         rlc5LZpE8G8msLwA+ynt+VPGmHS6DUTbhd+Fo9TUHQZn6bSWPW0esx+eEpL+I9GT7JO1
-         +UMNx6o5khQntczWhbV4jez62d57Lsn90D3fiBjy6hnF2ujMdcHemlpCtuRKpkjIj9E3
-         C2Ltp4jFQ26d5BGS6vvTO+yB8Vx6haN9SYl49roW2O6qIeJ4Uhf4YE6MFuwrDuURBxwk
-         qouA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwL3FB0fp4hKML2zxeTO3hTfACOAno0w2l4D4zT+DqtO5GmHibNEaoDCgEAQf9yMre/cYMbb8Ki8W0GGzHysm8gg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlEak1JQdzbt2BT2ex+C60fdLfuTaVcOEH4uR03XzmJ2gVxlS6
-	Nz3aFPdWe1s7cRaoGe6EOTSwrGXED+fvehXbu+o9gOa1VIIKXzNIUq3gSa385D0q
-X-Gm-Gg: ATEYQzwu1L7Bh3VIt9GTFYYIxIY1BxvP+Tlrxi2gpQTB/TTPY+OyTF6Bri6akU1kGl4
-	5q2B6pmLL4dEF77uK/m+kk5zutmTaLisEJ4pDu7C2N3YjmGdw/PDnHaYxk9yRQjq5dkAHxecuME
-	PweIX/akQMxHoZxHGyVPuT5k1K3LH76FglQ1HiznhKiK+tkOwMUUpBJjO1rd9zUlyFktYul7kVC
-	qzFjYPV24d+J4UnS7jCrPtfzS0+4V0slCZsZhSHaYqP31kVRbYzuTxAGAkzWVK8n4CVU08oPwKg
-	Xy+hWMBlY8l18WirD3ONhQAgJ6FobtBQstSKQKeTsudliX7a/o6xXUU/8CXUynD0+nnq2NTz5Ip
-	tkN2RdnmcsWf4u2fFh0eVGmzzuJSS0Jg1CcW6MpcwSmeN5q5ZOiZSWh5Pt0ZVLPoMlfEplHNYU2
-	G9XENa63z4ggS4dEDT4BH6XnDLgf5OEiBLPgXUoCxBVh9tB60jMiPLuFVN7aSP
-X-Received: by 2002:a05:6122:8c1c:b0:566:21af:5d78 with SMTP id 71dfb90a1353d-56aa0aadf97mr4960363e0c.10.1772469143653;
-        Mon, 02 Mar 2026 08:32:23 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a91bd2291sm16128936e0c.9.2026.03.02.08.32.21
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 08:32:22 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-94ace5d0e39so1365055241.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Mar 2026 08:32:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUymrL976fGSudrcVyvK9cfjQljPCHNM23ioRAf6svBe+FtUNpdoayG//0OcG0PQT+51cAjHyuplIEndUNjEctbnA==@vger.kernel.org
-X-Received: by 2002:a05:6102:a4c:b0:5ee:a1e5:6504 with SMTP id
- ada2fe7eead31-5ff3257ef76mr5247593137.36.1772469141709; Mon, 02 Mar 2026
- 08:32:21 -0800 (PST)
+	s=arc-20240116; t=1772469957; c=relaxed/simple;
+	bh=IY+pADVyOt4IdaEW2ITv8LOxR11XszCFtF7QuOEJw2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKifYGLoR4oIXw2bZYOMoGMMxngGBOcRoShLEb58UK9LXVKJPf8N2az7hXimWDOUrE3WOgbSw0U0JtTdK3oh0KAxLIolhWR50XSIW7adiFGh1FiX66Xsm+Hn9QWXX7jFv9RV6t6+lt9Mba7tDWb+/BpSaTv7P5RWrsbtCCUWH08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=f0SLSt9W; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="f0SLSt9W"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=c4v1
+	pZVcK3gfnjvX6rdgcZ/Gtv2nmLUn3pkGZ+d3xac=; b=f0SLSt9WWEJrwyK7E+3d
+	vRthqUhVGtZ+I8dHZKJxLCaXsMoYHMGFRVFQCuySY2HL2oPcMaM+EMd8zkbfFI//
+	utxYoG9ScUAtdHxvz0rH2deoYmaX0XD1FRC9rS7FaLjnmvO2Qyp/TBhdnYr7Lb9W
+	FH7IqaqOEbp+M5J7d1kCPnJKHpt4HIax/TjG5JBb0Inu2BNifVPkYAxkpDClEDP5
+	Xnvjiiw0j4Ki7Yw+dHJPaFz6PoHMB2Og5NS8IYbjwSW7h9QV/tZZZXukTzKBRmJ0
+	oPF9BDIwxkMjhIiqFlKDiJybcTpliFh+Vr15mRJc2RAz9gePGjfD23+yy50cJKHy
+	ew==
+Received: (qmail 2759963 invoked from network); 2 Mar 2026 17:45:42 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Mar 2026 17:45:42 +0100
+X-UD-Smtp-Session: l3s3148p1@ELdIUQ1MPCVtKXG8
+Date: Mon, 2 Mar 2026 17:45:41 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: phucduc.bui@gmail.com
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v2] arm: dts: renesas: r8a7740-armadillo800eva: Enable
+ SDHI1
+Message-ID: <aaW-tf_lagkvPnq4@shikoro>
+References: <20260212073819.41304-1-phucduc.bui@gmail.com>
+ <20260224074532.60046-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223-soc-of-root-v2-0-b45da45903c8@oss.qualcomm.com> <20260223-soc-of-root-v2-8-b45da45903c8@oss.qualcomm.com>
-In-Reply-To: <20260223-soc-of-root-v2-8-b45da45903c8@oss.qualcomm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Mar 2026 17:32:10 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX-rdzLhOFEJYBXzCYX5jH2E1=ydGWKgNkD0Nqx-tGr4Q@mail.gmail.com>
-X-Gm-Features: AaiRm53oB2X0Qg0vbG2fw10FsfcqVt_uYNXkS-NKRd6s-Lft2nvlJyc42VLB5T0
-Message-ID: <CAMuHMdX-rdzLhOFEJYBXzCYX5jH2E1=ydGWKgNkD0Nqx-tGr4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 8/9] soc: renesas: don't access of_root directly
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Frank Li <Frank.Li@nxp.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, driver-core@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Bartosz,
-
-On Mon, 23 Feb 2026 at 14:38, Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
-> Don't access of_root directly as it reduces the build test coverage for
-> this driver with COMPILE_TEST=y and OF=n. Use existing helper functions
-> to retrieve the relevant information.
->
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-
-> --- a/drivers/soc/renesas/renesas-soc.c
-> +++ b/drivers/soc/renesas/renesas-soc.c
-
-> @@ -468,7 +469,11 @@ static int __init renesas_soc_init(void)
->         const char *soc_id;
->         int ret;
->
-> -       match = of_match_node(renesas_socs, of_root);
-> +       struct device_node *root __free(device_node) = of_find_node_by_path("/");
-> +       if (!root)
-> +               return -ENOENT;
-> +
-> +       match = of_match_node(renesas_socs, root);
->         if (!match)
->                 return -ENODEV;
->
-
-I still find it silly to add a call to of_find_node_by_path().
-In your reply to my comment on v1, you said you don't want to add
-another helper.
-
-Currently we have two helpers in this area:
-  1. of_machine_device_match(), which returns bool, and tells if a
-     match is available,
-  2. of_machine_get_match_data(), which returns the match data, if a
-     match is available.
-But there is no helper to return the actual match?
-of_machine_device_match() would be fine, if it wouldn't cast the result
-to bool...
-
-As there is no cost (binary size-wise) in having the helper that returns
-the match, too, I have sent a series[1] to do that. The last patch[2]
-is an alternative to this patch, avoiding the need to add a call to
-of_find_node_by_path().
-
-[1] "[PATCH 0/7] of: Add and use of_machine_get_match() helper"
-    https://lore.kernel.org/cover.1772468323.git.geert+renesas@glider.be
-[2] "[PATCH 7/7] soc: renesas: Convert to of_machine_get_match()"
-    https://lore.kernel.org/10876b30a8bdb7d1cfcc2f23fb859f2ffea335fe.1772468323.git.geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q7wHeybMwUCoAZn8"
+Content-Disposition: inline
+In-Reply-To: <20260224074532.60046-1-phucduc.bui@gmail.com>
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--Q7wHeybMwUCoAZn8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On Tue, Feb 24, 2026 at 02:45:32PM +0700, phucduc.bui@gmail.com wrote:
+> From: bui duc phuc <phucduc.bui@gmail.com>
+>=20
+> The Armadillo-800EVA board provides an SD card slot and an AWL13 SDIO
+> interface connected to the SDHI1 controller. Routing between these two
+> interfaces is controlled by a mechanical DIP switch and a set of
+> multiplexers.
+>=20
+> This patch adds:
+>=20
+>   - A fixed 3.3V regulator for SDHI1 power, controlled by PORT16 (G2).
+>   - SDHI1 pinmux groups for data, control, and card detection.
+>   - A gpio-hog for PORT6 (J5) to control the SDHI1/AWLAN multiplexer.
+>=20
+> PORT176 (N21) is already configured as output-high in this DTS (via
+> lcd0-mux-hog), routing the SDSLOT2_ENABLE signal to PORT6. Since the
+> hardware includes an external 10k pull-up resistor (R94) on this line,
+> PORT6 is configured as an input to allow the physical DIP switch to
+> determine the routing without SoC interference.
+>=20
+> Both configurations have been verified:
+>=20
+>   - SD card (CON8): detected as mmcblk1, high-speed SDHC.
+>   - SDIO (CON14): detected as mmc1, high-speed SDIO.
+>=20
+> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+
+I don't have any schematics for the Armadillo, but the SDHI parts here
+look good to me.
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--Q7wHeybMwUCoAZn8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmmlvrEACgkQFA3kzBSg
+KbZOVw//Q988XkJxW2Ccg/43h+HGuAzMancHAAX+v7PzK81HwYDWWHOaAoFno17h
+UwHY5AtByRlkWgXpv5KMgIDmfNYWuT+rhHZJTtlm9m3DNl1NCB77kI13QX2JNQzX
+UPN5JjjedVAsuvLwyRur5GAkLJuC7Sd+rnPC2q8rizRMkV+DMcn8UgBpKUHWfPiZ
+izZSl6MidBfz1KxWCMvYk4HjGdLM11HtVXcr7MZA9EN3Juf4YjYl3eV0MEkSEjri
+dGhN8Etks1wfiwvKcN691R9ciZjRQSEmnX9QLtLMBl2oi8Kqp78hv0KpbdGzEarS
+WLwiOks444mpXDTXyyFWSJo3H+fBNcYWwYieSfkowKcuI/4BsR1aJbc7Ik+OVgfJ
+356la+xEWGIg78hB0XmQ96FT6UZguseetCVbjU1tAalqcy22pUExAbvzwkTKDlNv
+Bonbv1ybva5BAhvj66+u2e+CWZRmORKOx0rC0+HVfB4nO9Q2HJlnG/6dTMCdWxta
+cek8GLMA+pmBzhFiUSyMISUhWMGpt3oJ7vTVefysg/I4wJQgovs1MiHG69wfrHiv
+T4al8EvRzW7dfQP42z4sW9QKaXqZkHdWqJWX1/QFsrYs/wPyztK1jQn/LOP0ax2M
+56tgd9hy6JnFAzK65op6wVaAWM0+r0RVLVljBTQwrNLAUfL3/GM=
+=QphJ
+-----END PGP SIGNATURE-----
+
+--Q7wHeybMwUCoAZn8--
