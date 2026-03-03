@@ -1,120 +1,88 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6963248166
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 13:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0FD2C11C6
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 13:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772544960; cv=none; b=Cn4x2ytjfSxv7jb0Bi1OTHJi1w+kAQORQkF5vFiSSql/qejs3D7fLQ+IhCu3WFNLPCO0mvO/y0TnPzaLTGQBd6mX4MXDOx8y2usoKiYDfariFC6MJHdi+PIHdLXN11g05ll+9TZ2bwOGGtgSllDuVbMnHUNjBfVxzSsYr5X5Vj4=
+	t=1772545337; cv=none; b=ASdShfWLikeSQV6aJyBxr2z0DDCvN5DA9gv4guGBBT2DQEaaU121cmXxC0SRLIdQ3M1R65Y9vsGw/nFQ7QH2LBd1XwM5WOrRQgD8SG5n0rZwh3USk2s1SRpqxJwmDOvhaszA8teC62Z8b6pSN+rXuRFPakmMTqVIcdWkp6LghQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772544960; c=relaxed/simple;
-	bh=237yIWVIGSqP8Nr5OxXm6vlm1rkrjBql5SlE9/8gnlg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jaN1PxPV9zkhOaTAlVUzHOKemLo3afLYQLcLsEOyAsUTdHfIbF7rnAZaR03hqyE45VyOY539gsE8Gxz22jOqRn3q/u2GwVEXFZIvssmzkYfm9n/ZSgrGMxDhA3o3Pkh0fRRkAvPzqnQRFQIk4UFbBQULI693iyxKa76yoZLxiJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-5069df1de6fso48518081cf.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 05:35:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772544958; x=1773149758;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAwQLMiHJNmA+WgXHi1U8N28xuUzy6H6o/lizldAOqQ=;
-        b=lS4nZe0Gall7in/g1lvhbv9gwOxpXQMGHEE/NEa7M2GbEAN+OF2AvrIe3SEHmtyT8I
-         eg6WUdHARcddjhIAT2A3Z7to4zM2q3qIcKQVOSGDrAOv5RxW4mCbAt8cJ4qVJkkvMMtU
-         DBYtByoYrPsykUoZT4B4NFhDcdQ8YZYCtmMENcFi0xcfK7yBJPCbExLDxvd/ynPPlEAG
-         To0Zwbv9d7GdjY+70lck2q5IJza61r8Qp9R2YBwsf8JQKQoZeOmgaMkNjIqjtspJf0H5
-         Gi7ArrSNMSLb5eUCkR7LBS2+kvPNRoA8bnJi5Jsi4NHUeMFgyyZpPIELTVYseiEXRFku
-         mPmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgAJDXqSDKfsXqzPmYt1MkXo/jeuvPyDJd7C9Tv0teMDpEjWiVjcwblpd0l/pWuCLDetR4zHG5jR6PC321cWsSbw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCyf8UreI+zMxefbgsxms0vY30G6JuJhnBQjyjxrbK0yIygMhM
-	8wI524Eu+ZFHeWMN8d2d2XWpZYU9zp9q49SRxywZxDymak5AElaFZymUZ1rZGlRL
-X-Gm-Gg: ATEYQzxJTk8b/D0W/Tz/JVmW/L53pFKcWVIaLNU14N7SM9YeKqDH2tRLeXOUARqiCp0
-	v2PaZyz4ZXDJdB2yeRqWJHZYq9zAfGyhQZfkbDsHNUlNRbOyKKkJMU1hwZuCDnoWqTn43uDb8em
-	VfRqO7o3WHCKvL+ZIirsxVbeArTQXFveU01RHKxM7A9Ot0eYBi+sc0l29SivU4uUOVx4wvl/c4Q
-	QlG67vqw9zUvojAnGXtcVUbOXxpGDBh3xA7GvERP+iVLH9phWV8N1ZATwqMekzH3GGlQl5YWhWL
-	nlNIUeGrO3qWk4EXFySt2I4vzwuvhI4TdEdZhHuVAN8H6Ky+AWi/KTPfh1jcE7WihCNPsVJ0d/L
-	gQltpEpNCwF4ugX3Xe0g492YCRSCDJ65yqcU03+DIgAJL/5zsKS5rjfwWk7lb20ayho1lBNJCX5
-	Smz3kAWlG0M04BrXmApVRgVXPL+yTHnvmhxs6WV+c700F8WPSMivcz2qk9JWuXYpRl
-X-Received: by 2002:a05:622a:138a:b0:4eb:9eaf:ab4d with SMTP id d75a77b69052e-507528a8351mr194598331cf.62.1772544957785;
-        Tue, 03 Mar 2026 05:35:57 -0800 (PST)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-507449630absm134183191cf.5.2026.03.03.05.35.57
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2026 05:35:57 -0800 (PST)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8cb39647a70so534862085a.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 05:35:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUJzvCFbEIqYGwtfti6Y8Nep+Zd2zv2kAYSwFIzlM0dQl7kn1c7+Gonw82mMsohaK8KtWA+KQpHnhN3mdymMwtftg==@vger.kernel.org
-X-Received: by 2002:a05:6102:c47:b0:5ec:daec:580e with SMTP id
- ada2fe7eead31-5ff325a1577mr6210023137.36.1772544609268; Tue, 03 Mar 2026
- 05:30:09 -0800 (PST)
+	s=arc-20240116; t=1772545337; c=relaxed/simple;
+	bh=DZkF5PcCbMI8m09JxEhDCClI3xUSZAsE0/umwgopBLM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XwSeuZH/g4IZsWPQ6GcrcVp3qZyWIv6/VSK6r9V7aUf/Gpmw4Z5nNHJVFZtS4Gpi6OFgLj4aXJsg61N41G8crA3X+aTaWg1dzsi0dxgJbcLEaqQrFV5i+XXaCUjaW8XsAZX3902//G8aisG5z/60g5UYK8wWF82bJLXR9+Xs9NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K4vsT1tK; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K4vsT1tK"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 788FBC40FAA;
+	Tue,  3 Mar 2026 13:42:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BD0D95FF29;
+	Tue,  3 Mar 2026 13:42:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC32A103685C9;
+	Tue,  3 Mar 2026 14:42:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1772545332; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=t6FnL1nGnOp3nQgTM5xZBDRFoD8EHpB/OxobjHHyrxA=;
+	b=K4vsT1tK7wybbNAPe8tmCAogUGJOJbR+cUwZuB329VCiTkq0OJw40wUKgds69zvDmCo/hg
+	as9j/05T4ZJFfMCjXfS9B+YjG9H6s0KF57maGUPNIf2i6SqHzR4P8Qo2xkg6avTtrscNJM
+	nCIldUB1haMOCmyA4ZwjF0YsOXoppXtoCmsj6dhU9E3no6Myay1WxZ+iKW9De4/4YLILZc
+	G7elJE+td/pcfDwOErWr6Nu8Pk0eG7Nxyp5sqyZvs+3mV7S/TRUfu4oHJrumIB2Q6jADxP
+	0UPte8rL2CauGhdLcYpxsd9oFATYweHAqmw03Of+x25+nV7Z2p5omU1YhBmlkA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: dri-devel@lists.freedesktop.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+ Joseph Guo <qijian.guo@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20260115024004.660986-1-marek.vasut+renesas@mailbox.org>
+References: <20260115024004.660986-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: display: bridge:
+ waveshare,dsi2dpi: Document 1..4 DSI lane support
+Message-Id: <177254532764.177236.18347134827363909064.b4-ty@bootlin.com>
+Date: Tue, 03 Mar 2026 14:42:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260203124247.7320-1-fabrizio.castro.jz@renesas.com> <20260203124247.7320-4-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20260203124247.7320-4-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Mar 2026 14:29:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX+X77ydYhvGJUmXqBWE+mOsJA3n+drz-9DOYopUFAW-g@mail.gmail.com>
-X-Gm-Features: AaiRm5008H6GA2iSW5UrwIeeY5Wgcg_c3Mk5GG-msQ01mr1Ry27aQjZHaY7c6iY
-Message-ID: <CAMuHMdX+X77ydYhvGJUmXqBWE+mOsJA3n+drz-9DOYopUFAW-g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: renesas: r9a09g057: Remove entries for WDT{0,2,3}
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Rob Herring <robh@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-watchdog@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Fabrizio,
 
-On Tue, 3 Feb 2026 at 13:43, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> The HW user manual for the Renesas RZ/V2H(P) SoC specifies
-> that only the WDT1 IP is supposed to be used by Linux,
-> while the WDT{0,2,3} IPs are supposed to be used by the CM33
-> and CR8 cores.
->
-> Remove the clock and reset entries for WDT{0,2,3} to prevent
-> interfering with the CM33 and CR8 cores.
->
-> This change is harmless as only WDT1 is used by Linux, there
-> are no users for the WDT{0,2,3} cores.
->
-> Fixes: 3aeccbe08171 ("clk: renesas: r9a09g057: Add clock and reset entries for GTM/RIIC/SDHI/WDT")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On Thu, 15 Jan 2026 03:39:42 +0100, Marek Vasut wrote:
+> Describe 1..4 DSI lanes as supported. Internally, this bridge is
+> an ChipOne ICN6211 which loads its register configuration from a
+> dedicated storage and its I2C does not seem to be accessible. The
+> ICN6211 supports up to 4 DSI lanes, so this is a hard limit for
+> this bridge. The lane configuration is preconfigured in the bridge
+> for each of the WaveShare panels.
+> 
+> [...]
 
-Thanks for your patch!
+Applied, thanks!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-fixes for v7.0.
+[1/2] dt-bindings: display: bridge: waveshare,dsi2dpi: Document 1..4 DSI lane support
+      commit: 2befa6407d5c8b543be32c2276d396db395d9d02
+[2/2] drm/bridge: waveshare-dsi: Add support for 1..4 DSI data lanes
+      commit: fca11428425e92bf21d4a7f5865708c5e64430e4
 
-Apparently the same applies to RZ/V2N.  Shall I just apply this patch
-to drivers/clk/renesas/r9a09g056-cpg.c, too, with the SoC name
-and part number updated, and
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-    Fixes: e018f9f8973760fa ("clk: renesas: r9a09g056: Add clock and
-reset entries for WDT controllers")
-
-?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
