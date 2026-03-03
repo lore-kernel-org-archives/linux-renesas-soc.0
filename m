@@ -1,91 +1,140 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1539B94E;
-	Tue,  3 Mar 2026 10:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FFA3E5EF8
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 11:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772533240; cv=none; b=IpYBTO2SU2K+BHRpce0wR9ry+hbqd7zhnmxqcCgCU+RrFRRlB3MwYki2YdVTU9qdOL4eCydpjzbMrMbpY/tPNwFH3AcsQtt/Vlmj0f2wL0IcobEBME7PkqFYJUD0N9xEEcS9DZ1pmn1df5wm2R4+QPCB/e8sNjCIJXXQjko4PgE=
+	t=1772536271; cv=none; b=fz7uJmZghMl+zQQUmLQHbLqf0Yx9Cjh2Tmo2zaXTbpS9TQoE1cO0+uTbM3zM58NHdojYI24J8T5aK6MK6QlLZPxDXRyyQ4j7zghAzRomwXiPrbaFJTZBTszT4TdMqVlD2OIYBAgCCSa5se/p9ax2R3cB0OvxP6Hej9wHLYMkPgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772533240; c=relaxed/simple;
-	bh=26dxNzDjY7CRlBAsERtAcTM0EaQVX2iVppkGlcMDxj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLoJd8MNXhWHyE3o30Ti+5yUUodkjLALX7ecZBAAsVFiTsWke/D9Z5UDTjHNJxq9QG7CUjBP9EMW+wdpxoLGaW+WcMYF1bdNOGiZFXT+cVDn5KZBJzJrkyFppv9zI7/tqnzOd6U89Bvc26wJ5NzenDd7PVMDtFFrogTOcRo3KIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sxfjVxt1; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sxfjVxt1"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E52151A2381;
-	Tue,  3 Mar 2026 10:20:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B24845FF29;
-	Tue,  3 Mar 2026 10:20:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 20A5A103682C7;
-	Tue,  3 Mar 2026 11:20:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772533234; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=b4i03LZAFmyOpibvX8KpgR/jnv1vu75TEt84f6RQncw=;
-	b=sxfjVxt1BXcUaLnzR5grqFZvZa1eT/9kKytOTyJPGHP/UIfwY/FAgopG6vuEa1FEKQDub+
-	owVaaEEe7lnlE+8o/HmZYkhybPwUJt7KufEZAqnGsZMmSMMdsCyHvmkDaBjLFPvhQoHfAf
-	95RAX+ky9eF0WCnNjCmO/HZrRvuUrPR/Rkf2LhYtZBmsgwjGoHvf8Wj3AQESLg1qg3k8v5
-	udrgNHvlGBlGyyhymBOI22xQ/rE/bPfZIXzFpuJ1668VpE1HZWeBgdRD7QzgW1dC+TPiuA
-	M3gvVmUK0ttLT+qbtHGm0fFi3RGAANy2cgP+0ULDo5Hc1JlHEi1RAy1gky1c6w==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	"Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Subject: [PATCH] ARM: dts: r9a06g032: Add #address-cells in the GIC node
-Date: Tue,  3 Mar 2026 11:20:29 +0100
-Message-ID: <20260303102029.147359-1-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1772536271; c=relaxed/simple;
+	bh=wcIwDHWaI/QAd3tnHqg2UkUxqMc3lp5PaozKFMFq02M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TXH7iTO1ns7Rz7rgszq7WFgSxnSAAut1lf3yG26jdGFWQj5ek2l3/nxBbhNqhHvvKCcbSTzjsKeGEK1LTq89j9Vi658GwQtAYSRdWWSrVBV19ZoBTDrAr5UK5COJvkcLWCzT0EgWBtqAyNBC8pYCWaUn8pL3pucKDFQ8uoe9mQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5674cd243d9so4970351e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 03:11:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772536269; x=1773141069;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BV/KO3KpjUzxgj2Jw7RNV4iDlyh/EVM7jddY7omy6H8=;
+        b=bobsmny2/McKRqmPwWgpXYGpb0nO+firqXYGVazrcWrn6gYbYOSYOx0ZN5S/4ysza7
+         agznarg4vTTnJBI9iUdaw2DJrfhHnTF48ufdTMyqjkumP2A08YzYuN4Dnzxm+qhykfXP
+         0NrXkWdtQBWyJQ3tgvFndX7Qb0PCEQFh/4S0ch4xBCWmk99fYGIUvQ+/C0Gcp+TWPLU7
+         0dm6ttdc5o7kYfsfLCW1tyP6HdFWProjhUeqP47P5BXNOAFUgjdryV39xqcpP7S+Rh0/
+         zMJYv8e369TqlE9MrFzsqWahwSFTcHH8BQyy9fgtyd9wrLG/IF47SQoWDEojCS0suFQM
+         tUFQ==
+X-Gm-Message-State: AOJu0YyW4XOspndklDRRMX57fsQOkoqxFlog8vpaN0DrHAfMgUkOXMHN
+	vx5nEEOjx9XctcGhN/5CPM7a9NbmfHAFgm4D9h5jP4IqayqGmMb4atX+jddPhr0I
+X-Gm-Gg: ATEYQzxyBVmaUsJ7fqnpB59avjx/65FGZp35+72ASStaxO/wfK0Bym7e2zfaoY5FVmW
+	jtLOutkfOlo1n0e72Q7Wl0vNIy52d+PVxv3dRwV/3xpyezcE7y8pChZvux/w4z554IOscMnu569
+	nRi8B4hSxoWgoXSbBdovt4QFkISUg/0f+TPHSUtqNtaVIOsOOQD8VlXXDaG9eVKMGyF/QBqEEUs
+	5gMAdUOG2MVMZQ3IJIXG+GV8OSt7u+0g28ATtfnJaeyDC8lO+vVJuE5YO5T2MHcciQIAnauUcuc
+	uJj+P8680FMqOvfAPNoLNs1alESTb25AsQm5jxDujzmu3MJIstdXnkFsQUYCXZv7ezVgt3HkByE
+	FcDYO54VEMXsmCWQsLNcr6PFgcOqmYRTils2sKJSBYUm407iFWbtC+BsJ5lYrASzdsmTFcbHwdl
+	R/KBGVar4ayWf9a9vjYkNUqvXorySzkTrArXzubn6gg3F4jpWGWNEnJLVysaW2
+X-Received: by 2002:a05:6102:3e8a:b0:5ef:233e:6b25 with SMTP id ada2fe7eead31-5ff8fb2da4amr749681137.13.1772536268789;
+        Tue, 03 Mar 2026 03:11:08 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-94df65a2a0esm14079789241.12.2026.03.03.03.11.08
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2026 03:11:08 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5ff9d047981so36829137.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 03:11:08 -0800 (PST)
+X-Received: by 2002:a05:6102:441b:b0:5f1:b59d:a824 with SMTP id
+ ada2fe7eead31-5ff8fb28a67mr721092137.10.1772536268215; Tue, 03 Mar 2026
+ 03:11:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260223123022.7657-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260223123022.7657-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Mar 2026 12:10:57 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUuh3-cryVknRhN+WGQQ_YaqNK=EvBzbo_XZDik6Vkv_Q@mail.gmail.com>
+X-Gm-Features: AaiRm519Tb_3v-U1NSOED4-kiHyGYlS0GG2eQNfKWtIpqbYI0vJli8CI6ilj2JE
+Message-ID: <CAMuHMdUuh3-cryVknRhN+WGQQ_YaqNK=EvBzbo_XZDik6Vkv_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] mailbox: test: really ignore optional memory resources
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jassi Brar <jassisinghbrar@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-When checking dts involving the r9a06g032.dtsi file, the following kind
-of warnings are reported:
-   Missing property '#address-cells' in node xxx, using 0 as fallback
+Hi Wolfram,
 
-Indeed, #address-cells is not present in the GIC interrupt controller
-node.
+On Mon, 23 Feb 2026 at 13:30, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Memory resources are optional but if the resource is empty
+> devm_platform_get_and_ioremap_resource() prints an error nonetheless.
+> Refactor the code to check the resources locally first and process them
+> only if they are present. The -EBUSY error message of ioremap_resource()
+> is still kept because it is correct. The comment which explains that a
+> plain ioremap() is tried as a workaround is turned into a info message.
+> So, a user will be informed about it, too.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fix it adding the missing property.
+Thanks for your patch!
 
-No functional change.
+> --- a/drivers/mailbox/mailbox-test.c
+> +++ b/drivers/mailbox/mailbox-test.c
+> @@ -355,11 +355,30 @@ mbox_test_request_channel(struct platform_device *pdev, const char *name)
+>         return channel;
+>  }
+>
+> -static int mbox_test_probe(struct platform_device *pdev)
+> +static void *mbox_test_ioremap(struct platform_device *pdev, unsigned int res_num)
+>  {
+> -       struct mbox_test_device *tdev;
+>         struct resource *res;
+>         resource_size_t size;
+> +       void *mmio = NULL;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, res_num);
+> +       if (res) {
 
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+if (!res)
+        return NULL;
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index f4f760aff28b..6acf524174c7 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -507,6 +507,7 @@ gic: interrupt-controller@44101000 {
- 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-+			#address-cells = <0>;
- 			reg = <0x44101000 0x1000>, /* Distributer */
- 			      <0x44102000 0x2000>, /* CPU interface */
- 			      <0x44104000 0x2000>, /* Virt interface control */
+> +               mmio = devm_ioremap_resource(&pdev->dev, res);
+> +               if (PTR_ERR(mmio) == -EBUSY) {
+> +                       dev_info(&pdev->dev, "trying workaround with plain ioremap\n");
+> +                       size = resource_size(res);
+
+With the reduced indentation, you don't need a temporary to avoid the
+next line being too long.
+
+> +                       mmio = devm_ioremap(&pdev->dev, res->start, size);
+
+return devm_ioremap(...);
+
+> +               } else if (IS_ERR(mmio)) {
+> +                       mmio = NULL;
+> +               }
+> +       }
+> +
+> +       return mmio;
+
+return IS_ERR(mmio) ? NULL : mmio;
+
+
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
