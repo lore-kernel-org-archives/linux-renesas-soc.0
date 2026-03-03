@@ -1,61 +1,63 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8650B3AC00
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 23:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544F7356A37
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 23:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772580804; cv=none; b=Myu8LPPJqz8xegDWbP/CmPmz6GxnftWDujjo3bKJWrjLwotSqPT28eNHg/Q6F6BLkEIsQdnbA1sZUtslFHZEIgVF98ZW5QCNL8lR+tFG4QCKAen3d+m2bjmiwXJXseoze8u+frcJ7RTCyjInNTGNE3zUG3jhgBVyHCLuej6q67k=
+	t=1772580806; cv=none; b=hOPutMk7Mm76O866fIcRrwsIuvhPmp2WzZ2TSdrPi1BImpIlLOe0Y81/CdAyxmzi4tkucjA3UTVB0CvoZ45D0CrHFLx0mVuNG1Mqnv1QT/E1whW4L+GVc1dUZ1KLG8YKd/JgTAJoUsCLHTy2Vw1d1oL531eyaJPmxAI7DaLCJFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772580804; c=relaxed/simple;
-	bh=fSrbO0X+3ySxw+b6KUMTuqz9PDm326zDCh5hV4ahPOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rvvK8GEJryDZfQlEypY8qwSc/yGGnygd1snSdH87JcqLeNuCvmeC09Ou9fVd3Uy4O6amqCWwlXKJB+qlVRxnY+E2kNe+X20ESvye+r552PG6ma/XrVtwC6I5/Z7R8ZiGjJorWwDf3qzjmleFIQrqXCNx+b+GjRP09t21WZC0/Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZEi65Fq; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1772580806; c=relaxed/simple;
+	bh=DVxyLgT1c/qaw7wr26tCEWN2Hw7Qwy3ie2oqtBAYrMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RciwMW0UDK+pKbB/spHmHdvzhuha23s34EsOG+ZPCYrbitjrXvopMRdaRa1u25be2wccu2WeZ+8QVjm9HM+VrpMfbQb1t1vVEHu+r2w7PTIQ/AEoVKzkx9UqsBylIcTI2/F7efryQnzR9pooyTeSaMbMuwF9F77fgm4SUKWNFYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNFN5vMu; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZEi65Fq"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48379a42f76so51349235e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 15:33:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNFN5vMu"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so70534185e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 15:33:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772580802; x=1773185602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNINmK1HzY8W2WXeM6TACfCUfupHIfdDHCepQJ9ZJr4=;
-        b=BZEi65FqHXFD+Fne5xRdiQxyQAVkhj/rGygxRtX7GhS0mWggict3bKIbAa7PK9SXWT
-         pd9i40sfEdMeMkq5NxRFO8+t9Shfk1hIt9LGasip+XXAn7pcRXsUlsuJ+fY1pQuY9mXq
-         oscF0xxg6nh2NFfW/zAhoFwGxn8fQB/0wd6OBbp/7N0NOwsyRChREeeChfLIf9iPFSzr
-         ZpDaFD9r6UeTHyVLWXPhZMSqClDFNeCmj2e5Vkrkp9/5Jp+TH+TEUNVLQkjLyfvnDbDK
-         EYFyQh9NY9/tJAKhScVpFo91XF0jD9DWOad2JdxVq8813ZfFxRYOgVR7UCc0URd0Z6Y9
-         cV3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772580802; x=1773185602;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772580804; x=1773185604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WNINmK1HzY8W2WXeM6TACfCUfupHIfdDHCepQJ9ZJr4=;
-        b=Po2JCiVrR9tByMLjxVrPhetdKiq6MwGPk2wtCNXQ0UN9gr6jMAmnCdr0GbbPW1M0za
-         ranMhVfzyNUCZqNyn41Lba5u1WRE+JsV8LCiKnhhYAekSWakg/AfvaaZiFSqBypNVEaj
-         zJEQK0zeh3Q6U2UUdea6fHhs7i2UwJylGiypA9Od23Gwd4WrW1p/JvKwnOl9FjOvGgJT
-         NxNk54rQxjVtx2sRnZYfPMaaIPqZfUEPu/K3CtSygyA1zZoVQt5lAn6hf0kJB64VfMOH
-         ZcRlJgbmPcBmqN5dBQ/acRx39CrX0y56V9v/GAIWqIuH4cVRLwagWRI7geP/JDusIAvb
-         5eDQ==
-X-Gm-Message-State: AOJu0YxWgcBwCxjxIvnDIeCM3Kdx03NDegR8pSyAHRXuadukYYxVXMv0
-	fLBGnjjGD/p5jNUypVwREh91KkXrZLOB7ORb25XNb678pBojl/sy6lH7
-X-Gm-Gg: ATEYQzxFN+jJLCk4ifQcQ1UfBAGmZ6MdpfBXVy1VgTmvEuU6osqRZ1xtwdBdA/7kZmn
-	h6YSxHwTBz1V89U1H2Z7zM6OyZijUOboBJeYGojMxXy0hV7cd+jn8ktc9avxrS6jv9n1oWBeOQk
-	J5MhYtz8J51oN2E+klOYDYjDK/tuKFdgiFCuVWTPmvYrewyRZS2Pl+nlfCuEut2OiBQQnV+zYYt
-	ofMjxuFIzfrlv7HWH6a227q7I/Zh1se1tRLMMQXy+j+taxqiufN1RLhjXXAwcYBliMYZJo1DO5d
-	g1DjhJHrhcRp5rWgMzPeL51cd+olJ9Kyh1VJ4cWOw+FOWU8tjNRZL9EH3B6j+E/akqyMcay87wz
-	2Q8hZk75ldcfCTFo8oAOfskUmDlTaZIZqC34qtTabfH4uJb+I+zug4iHh2H7odC55xl43NJ9nW2
-	2nyRQCOEsd/l9h3fUcQ/Bt8B73RGUaeuLmqXM+Og8qf3ZccktArHEp8sYxmENB0XqwTz6c4ZTNa
-	Y4d6IRMCea/KzEy7esxmLtNEFTBF9pkJzqHyg==
-X-Received: by 2002:a05:600c:6291:b0:47e:e20e:bbb0 with SMTP id 5b1f17b1804b1-48519837bbdmr1012905e9.6.1772580801762;
-        Tue, 03 Mar 2026 15:33:21 -0800 (PST)
+        bh=YS6NtC7nzXx1gPxu+nMjons5ksbseO96oSa6YbAgoHQ=;
+        b=dNFN5vMu+1jHMVz8y83Mt1ecCMp27xOmp9hNXZuzd3DSZxBm25JSgS4CJ2HPEHrwnp
+         oX2kYSLQ9x8nuW73Bgu+oXnNLFUoP02YtYhk8vP+QvdYHX0ITP64JfjFg2dnN5t3F/Ci
+         tLyJAX8COioiceFnljC8qSGZ8XT63fwocr1rSyEJeXMUCPaSAusyMUBGyrIqEiA08Yq3
+         k5me4IOT6r69C1cfvPBcmET3cQHR34J1Tczpw+7dKcvlNR00xNhaLNc92Z1jlWBkGakX
+         7xl4uG6v8s/7ju9PMLy4Y3xgdAHmKuahzdIqWV88iau8tpGvcNaOHoHt3zODDj6OVzQs
+         Y9Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772580804; x=1773185604;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YS6NtC7nzXx1gPxu+nMjons5ksbseO96oSa6YbAgoHQ=;
+        b=OSxvilVDb0O/EWuF0uwrZaSwIx+TQ3Eed+1l/kt8A2bDJf9leaZlyRNo4yGKRuu4LW
+         8AiUmW8TlyCueBp2d7VR0htK4hqRx/JahdHPGPph5l5531IFJc0fW7yKb0N1O41T9DcO
+         CwC6opMQcAjuo1sB0vLVz+qHs5y1M+Lr4RDt2ympBie5LDFcZPnhvD9WzgypqBQy08K3
+         YbIVY31hVuieLu1PEA9yOMR/qXblnMqE1skTOHPSGs41HGEt+jGujSFkWsY0fOXlS4rz
+         ss9vbN2Av5SHh8MYPGxG/L8IGa9wtd8Hc6cltCWRhWgmVH1QhQdBo0kcWCVO69vVWyuX
+         1eUw==
+X-Gm-Message-State: AOJu0YxVb6p7p917F7KhxrstccvCFv3s0Ys4qvpapwtoioZIjix+fdvy
+	ZUGTKJFSjj+nqn0DlhdDaRzrahQ60tWXD/QuxlYRLt71aIlbdq3zqb4X
+X-Gm-Gg: ATEYQzwTUZ3hnGhoTCd4O4xJMyN2WBlmisCfD1bn0RpYT/VqAediY6nys0Ndna+Cpbf
+	EbuXCttO6GYFS7LP3LbRLk+0YWEulpdYwEcRggNdnoVPv8wwF45A/ID8yTuQ/5c/zQLMNT0ezuw
+	hVczEe99C+aA38P1UIA6bDfpAujAXdPVcxxvp1amjcQq0x1GdSx9jHG/zkLHIkyQHBHgXfwQbSC
+	loVe7SVO1Lk5LTb/Ui/O5Brs5M+yKF3W3nJyvDoAZ/k87+uAZLvDelHcVrCRNBG+URgCFABKkIP
+	1G0N3yFqU/DbDMmRn5KjPvXBinHvKcCCFTD21q5rcf6NbQ99xHRH3CuQjusqKqXKOccFJdLOt9m
+	mMJ0jOsLTHzhBtOkGUc1RcjudMH/wTlGw7V61Ijd5cqZtFW7vlNGVOhO0RLWfKXyaPKbbzHRvSg
+	qEifGEv04PztoL7qBDrwIzKAXoXkPV4gP+C/qC7vlZ26GPaJOkA/eElFGfO2V5se7fxdednGFJE
+	aCRraNyjB1vx/IXnQZTAnUgJyqWF1ugNeBiUVtaFZuyY4Io
+X-Received: by 2002:a05:600c:8b6a:b0:480:3a72:524a with SMTP id 5b1f17b1804b1-48519888807mr811375e9.19.1772580803675;
+        Tue, 03 Mar 2026 15:33:23 -0800 (PST)
 Received: from iku.Home ([2a06:5906:61b:2d00:30fa:3523:429c:2894])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485126705e5sm26188185e9.5.2026.03.03.15.33.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485126705e5sm26188185e9.5.2026.03.03.15.33.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 15:33:21 -0800 (PST)
+        Tue, 03 Mar 2026 15:33:22 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -70,10 +72,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/2] Add DMA support for RSPI channels in RZ/V2H(P) and RZ/V2N SoCs
-Date: Tue,  3 Mar 2026 23:33:12 +0000
-Message-ID: <20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/2] arm64: dts: renesas: r9a09g057: Add DMA support for RSPI channels
+Date: Tue,  3 Mar 2026 23:33:14 +0000
+Message-ID: <20260303233314.2928711-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -84,25 +88,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Enable DMA support for RSPI channels.
 
-This patch series adds DMA support for RSPI channels in Renesas RZ/V2H(P)
-and RZ/V2N SoCs.
-
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
 v1->v2:
 - Added all the possible DMA channels
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (2):
-  arm64: dts: renesas: r9a09g056: Add DMA support for RSPI channels
-  arm64: dts: renesas: r9a09g057: Add DMA support for RSPI channels
-
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 21 +++++++++++++++++++++
+---
  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 21 +++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+ 1 file changed, 21 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index 02ec79a556f0..7be228f267fb 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -765,6 +765,13 @@ rspi0: spi@12800000 {
+ 			clock-names = "pclk", "pclk_sfr", "tclk";
+ 			resets = <&cpg 0x7b>, <&cpg 0x7c>;
+ 			reset-names = "presetn", "tresetn";
++			dmas = <&dmac0 0x448c>, <&dmac0 0x448d>,
++			       <&dmac1 0x448c>, <&dmac1 0x448d>,
++			       <&dmac2 0x448c>, <&dmac2 0x448d>,
++			       <&dmac3 0x448c>, <&dmac3 0x448d>,
++			       <&dmac4 0x448c>, <&dmac4 0x448d>;
++			dma-names = "rx", "tx", "rx", "tx", "rx",
++				    "tx", "rx", "tx", "rx", "tx";
+ 			power-domains = <&cpg>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -786,6 +793,13 @@ rspi1: spi@12800400 {
+ 			clock-names = "pclk", "pclk_sfr", "tclk";
+ 			resets = <&cpg 0x7d>, <&cpg 0x7e>;
+ 			reset-names = "presetn", "tresetn";
++			dmas = <&dmac0 0x448e>, <&dmac0 0x448f>,
++			       <&dmac1 0x448e>, <&dmac1 0x448f>,
++			       <&dmac2 0x448e>, <&dmac2 0x448f>,
++			       <&dmac3 0x448e>, <&dmac3 0x448f>,
++			       <&dmac4 0x448e>, <&dmac4 0x448f>;
++			dma-names = "rx", "tx", "rx", "tx", "rx",
++				    "tx", "rx", "tx", "rx", "tx";
+ 			power-domains = <&cpg>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -807,6 +821,13 @@ rspi2: spi@12800800 {
+ 			clock-names = "pclk", "pclk_sfr", "tclk";
+ 			resets = <&cpg 0x7f>, <&cpg 0x80>;
+ 			reset-names = "presetn", "tresetn";
++			dmas = <&dmac0 0x4490>, <&dmac0 0x4491>,
++			       <&dmac1 0x4490>, <&dmac1 0x4491>,
++			       <&dmac2 0x4490>, <&dmac2 0x4491>,
++			       <&dmac3 0x4490>, <&dmac3 0x4491>,
++			       <&dmac4 0x4490>, <&dmac4 0x4491>;
++			dma-names = "rx", "tx", "rx", "tx", "rx",
++				    "tx", "rx", "tx", "rx", "tx";
+ 			power-domains = <&cpg>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.53.0
 
