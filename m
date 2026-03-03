@@ -1,149 +1,121 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D103537CA
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Mar 2026 23:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB2C37E30D;
+	Wed,  4 Mar 2026 04:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772580806; cv=none; b=D9h2mLYlYas00GDX6du7Pup/IuOLRR3i8HIjig8NlPh2roEKZJcnK0v4Kg2TQLa0bsRvcCDWItu/xZLQrecTSPDpcR/kiPQSFHaJFhpRtrEk5scN7WHtKlAI/nCDsSw0tTJGa9LU6lYAnxxRReeTgNWXWicgm8Svzk7st87XhdM=
+	t=1772597201; cv=none; b=Kt8luikitGVDvJEonu5m6uX+HtekntOUAixo5gvO5GCV858/idbcTZRvGxErSv1qykMvgAxuTNu68rOvaG4oh9M9y6/bNUz2CrsH3qwmHqEifRv/AngdujHa9DkZ62V8IvZCMPQxQjHf1ZyAi25rXscgkTrw88L0cFVJ8xy9Tjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772580806; c=relaxed/simple;
-	bh=DzxA5HOVJC1lWCS3Zn0b5fckp0DX81RLCALuVVhdd2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r78/Rkm0J5FlFSyTdEoLGXmNypXJrlnbXeMm4ngESUQnv6ZgGwFn5fauhL4Dsc90o+5UAGtpxLx6V0be4qNgAKgx4Oc7clQoUjWXJDbVbWjTRiJ5D0sNyYMUK4S3c5mxTy4VTioHBJS2/VO2FqKEmeQ3gTeoCdxYWmTa889ZXZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fl7sf4gf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772597201; c=relaxed/simple;
+	bh=2Xo6gAecTWyPkwwPJ0nKXG46qtFHziZbhvy+RULr8jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tQHMYR9BjK98TwIRmQab1gTPVF1v4VnvI3wbK8DP9MRSj73YQ3NtOThE9Ymz+G8KjKiruvh2yEQz7t0Z4PDD2Ndrxf9FRHqRu1p33raLn6/OK+o0r8NzNuIJwrIINiKxFFr3n2ooalYo8UnOezHfRYN2DVbf7ra2nhsqBVBfPmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Z3G1ig/R; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Fwd7Nv6U; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fl7sf4gf"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48329eb96a7so42087595e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Mar 2026 15:33:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772580802; x=1773185602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oh+3G+7bH2ZmJrkS0IlH5a5mfzrOQ8n1ijjIvSM2a30=;
-        b=fl7sf4gfmMkMmZe//KyLQrSqbW4su5lIw+ufBneTtFMlfJ3aYg5yIJI9Nim5l1xWAT
-         KQGT1px4ayROHBRA+JYqlQLeOfQWcRo6SIWFsCFaE1eIklhmIkerX+pHYUqslqyARybD
-         0ANx6AE7smadoZQscWm0Ka4mjQj6xHa4wxGaCqHYHoolvbKZdHMH5Fuw/nQ14Sej6c0c
-         u7Taz01FLvWyKzFge7/DdWOPp/VxFq9SQiZImKvryP8oStwyB3ObAeLWVkJJO52LDrvG
-         Wdffu2412GqzeYib8m4ffatNCxbuiYOZMSWunrbS/h1/hnvL4WCHMxtQTgpvjiKvS1/v
-         MdmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772580802; x=1773185602;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Oh+3G+7bH2ZmJrkS0IlH5a5mfzrOQ8n1ijjIvSM2a30=;
-        b=neYqpdrRarJgW8CsawU8rNBrFNi/wSd+SUuwo4tiAs6OiFt3yHTJSiHq0qQ7mmbsXA
-         GFbB6oPD5QqCnvEl0XEZZC9aJtpXQu3WkzLVBJOAsQgOwrxe709vEVDOza+ROMHfzMm2
-         1USAXIfJrBimyvnqIY3bNeYIa6l44+kzQYvrgG0ci9yD0TwDJwc6ViRUEF3KvZSPV9dh
-         gIfAJpNCtVZWeumc7Su9Y45XSb2Om58zsIx/YRTMPYRbZ6WdY57dJSSPdiabe0jQFaje
-         cgi1v1hljDZNY0amFRBxDNubRpPw6POFV0dQsDCAJOar7869Go47PQNhafp+eiXwkoh6
-         Iv0g==
-X-Gm-Message-State: AOJu0YyS0GndTYngvUPjLahpYwJzRo8TJV3EB4GRu4c2eswR7FOIueQm
-	jQEcqQ51lSTxWPeCvPU4WpY3/CgSr3igl6jjZKeQR8dt9wzwJdyd4RD4zSTYoGjmFKU=
-X-Gm-Gg: ATEYQzypmQiSDnz8muaVds7bO+PZGv48hgX5YRhLrcUuJQtBRR0C80ntnHEcpfq8Zed
-	mLBtMr473oPFRiOcmFL1/WvJUsWSSjzN8DJPQC2zTYRctrVHp2WhMx0r37+i799y8mQuFreXBlm
-	4+s3tEnP70ag6S1pOLOkb54A9dslCCq/0VkjlDFMgadkSRcVqDwge85r3e9OT74BLXcBJPcYwcz
-	etO8U4ksdcBktp7icimXIaaQTrdjrjt1TYcDXEdF5y3nPjhGbfrPep/WkHsZxxH01Lbr1C7RV0G
-	rWoCAZ5qxhNCSZnyVZKmL/aiN6iRNQ7xfP9cDV076jC7v7FaJxTPl2QOZLvJKj6ELSA3PwdCw39
-	lr2E5bWinCnEuwsOyJQE3QaiXQKTDENXhsCvpQJ7hDPxs8WD/2RU4AWJzo9YTIr5wRhcCnrlnqV
-	gYbphXH6Q9bJcTP+kryy9OaMMgmEWgtA/f/b8LUyNuAKlXxgFDtUx9TpI5cCCDmiMxJpWGgRyKs
-	nfmfVewpHk+OKYd7hJHekEqtrx9YHH5xRYGqg==
-X-Received: by 2002:a05:600c:8b25:b0:480:1b1a:5526 with SMTP id 5b1f17b1804b1-48519874e40mr789395e9.16.1772580802470;
-        Tue, 03 Mar 2026 15:33:22 -0800 (PST)
-Received: from iku.Home ([2a06:5906:61b:2d00:30fa:3523:429c:2894])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485126705e5sm26188185e9.5.2026.03.03.15.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 15:33:22 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: r9a09g056: Add DMA support for RSPI channels
-Date: Tue,  3 Mar 2026 23:33:13 +0000
-Message-ID: <20260303233314.2928711-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Z3G1ig/R";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Fwd7Nv6U"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fQfHT6mgGz9tX6;
+	Wed,  4 Mar 2026 05:06:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1772597190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i8fdlXVX26MwcNio8HFgqq2WGnU2ojoh4wnFFfsJyso=;
+	b=Z3G1ig/R9gq7km2xC87D/XsDXEFqPX8BH3O3a/2kOTAyYwZNsUcCrOK534XnrYmoPjy1TQ
+	iYFQgtzY2TLc3NpmWqeVkHad6PNfkTj/JTrw5MGwc28VBqC2clRFBoXL7B4aYaTdSuqtUQ
+	62GB1DSRvKD2oEJ7qn0f/akv9qAxNF07zxPyqssJRx/qJUP64qbkiGUYOvSWUgqxYgjTKA
+	NZOhu2Gp5PU6lneDqi2twKfMBsKrfTMbC/J+Hf1U8sMnXNcKO3vGKUVi5NjeydGcW3eY0v
+	wG4Vhsq5597lg3boqRWmlBWZe+eatjFpAeAN0FKRfmJJMN1WY4MI/bJNsB8fZg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Fwd7Nv6U;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <e6c16dda-ef03-496d-aae9-1b872d362fb4@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1772597188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i8fdlXVX26MwcNio8HFgqq2WGnU2ojoh4wnFFfsJyso=;
+	b=Fwd7Nv6UUoUecnJQ8i6xYfceIVnQ6HwlswWSd+7xg1F6aJI8bRl/KGZCgd1I7B72r2E9Z4
+	zMIJOGdCVqTcP4VjdEGmzQ4l6CB1yTbxoFCf+kSTtkgJtx97BWe7HSxHncmKY8gcEcCYDi
+	Lgpv0Bn0grwoAmA7PYghH0rIxv+jHN8jFkm0p0L75wsSpum4n0ELdGeQlNBoup535i5rG2
+	1muVlhms+w7fjofkOLwfiTljjEnzkMPgXCcX6hfglY3uUL7VGH6DNWIe5Sj2oANGwAFdTx
+	79TBVUiKIPve16qs7MV0e0lbmwBmFCwmUzgbcQABhpyXYqEcws902HSNdzujJg==
+Date: Tue, 3 Mar 2026 21:57:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] drm: of: Fix drm_of_get_data_lanes_count_ep() return
+ value documentation
+To: Maxime Ripard <mripard@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260115024610.661624-1-marek.vasut+renesas@mailbox.org>
+ <20260303-uppish-finicky-mustang-cd135f@houat>
+ <CAMuHMdW4HwgwiBJFkA43MpYWOScG8n7p4p3_KBL+Cg3_P_a18w@mail.gmail.com>
+ <20260303-delectable-just-clam-d25e08@houat>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260303-delectable-just-clam-d25e08@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: eiuqb5g46pfy8jydnkd4w1sqf1tzfnb4
+X-MBO-RS-ID: 54b7360457c09a17b8c
+X-Rspamd-Queue-Id: 4fQfHT6mgGz9tX6
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 3/3/26 9:39 AM, Maxime Ripard wrote:
+> On Tue, Mar 03, 2026 at 09:14:53AM +0100, Geert Uytterhoeven wrote:
+>> Hi Maxime,
+>>
+>> On Tue, 3 Mar 2026 at 09:07, Maxime Ripard <mripard@kernel.org> wrote:
+>>> On Thu, Jan 15, 2026 at 03:45:53AM +0100, Marek Vasut wrote:
+>>>> Update drm_of_get_data_lanes_count_ep() return value documentation
+>>>> to match the drm_of_get_data_lanes_count() return value documentation.
+>>>> The drm_of_get_data_lanes_count_ep() is only a wrapper around the
+>>>> drm_of_get_data_lanes_count() and therefore returns the same error
+>>>> codes.
+>>>>
+>>>> Fixes: fc801750b197 ("drm: of: Add drm_of_get_data_lanes_count and drm_of_get_data_lanes_ep")
+>>>> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>
+>>>> --- a/drivers/gpu/drm/drm_of.c
+>>>> +++ b/drivers/gpu/drm/drm_of.c
+>>>> @@ -539,8 +539,8 @@ EXPORT_SYMBOL_GPL(drm_of_get_data_lanes_count);
+>>>>    *
+>>>>    * Return:
+>>>>    * * min..max - positive integer count of "data-lanes" elements
+>>>> - * * -EINVAL - the "data-mapping" property is unsupported
+>>>> - * * -ENODEV - the "data-mapping" property is missing
+>>>> + * * -ve - the "data-lanes" property is missing or invalid
+>>>
+>>> I have no idea what "ve" means in that context. We should rephrase or
+>>> pick something more obvious.
+>>
+>> "-ve" = negative, "+ve" = positive.
+> 
+> Thanks!
+> 
+> My point still stands though.
+What would you recommend ?
 
-Enable DMA support for RSPI channels.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
-- Added all the possible DMA channels
----
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index 494f0e5a83ab..9192c5bf7e59 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -784,6 +784,13 @@ rspi0: spi@12800000 {
- 			clock-names = "pclk", "pclk_sfr", "tclk";
- 			resets = <&cpg 0x7b>, <&cpg 0x7c>;
- 			reset-names = "presetn", "tresetn";
-+			dmas = <&dmac0 0x448c>, <&dmac0 0x448d>,
-+			       <&dmac1 0x448c>, <&dmac1 0x448d>,
-+			       <&dmac2 0x448c>, <&dmac2 0x448d>,
-+			       <&dmac3 0x448c>, <&dmac3 0x448d>,
-+			       <&dmac4 0x448c>, <&dmac4 0x448d>;
-+			dma-names = "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -805,6 +812,13 @@ rspi1: spi@12800400 {
- 			clock-names = "pclk", "pclk_sfr", "tclk";
- 			resets = <&cpg 0x7d>, <&cpg 0x7e>;
- 			reset-names = "presetn", "tresetn";
-+			dmas = <&dmac0 0x448e>, <&dmac0 0x448f>,
-+			       <&dmac1 0x448e>, <&dmac1 0x448f>,
-+			       <&dmac2 0x448e>, <&dmac2 0x448f>,
-+			       <&dmac3 0x448e>, <&dmac3 0x448f>,
-+			       <&dmac4 0x448e>, <&dmac4 0x448f>;
-+			dma-names = "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -826,6 +840,13 @@ rspi2: spi@12800800 {
- 			clock-names = "pclk", "pclk_sfr", "tclk";
- 			resets = <&cpg 0x7f>, <&cpg 0x80>;
- 			reset-names = "presetn", "tresetn";
-+			dmas = <&dmac0 0x4490>, <&dmac0 0x4491>,
-+			       <&dmac1 0x4490>, <&dmac1 0x4491>,
-+			       <&dmac2 0x4490>, <&dmac2 0x4491>,
-+			       <&dmac3 0x4490>, <&dmac3 0x4491>,
-+			       <&dmac4 0x4490>, <&dmac4 0x4491>;
-+			dma-names = "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.53.0
-
+Note that the documentation for this function is aligned with 
+documentation for drm_of_get_data_lanes_count() by this fix, and 
+drm_of_get_data_lanes_count() also uses -ve to denote negative error value.
