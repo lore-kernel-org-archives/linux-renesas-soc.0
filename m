@@ -1,85 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6537B3A4512;
-	Wed,  4 Mar 2026 14:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C33BED58
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 14:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772633082; cv=none; b=nXre8naVXOiusTMyZuCgHacqen/u0cYE/qGhrWVpKunbmka9AjkNMp/eLYU7uULNiTm9lAA9MqMj4MtfTHexrEgcBUCo3s9zOxpsT2/yQrRMWxJwG2UqYQ86kUYlASDUpO5CO1nG4sw0ykKD9r1ek9kQgrUA3EBf+B4bi7icHqc=
+	t=1772633478; cv=none; b=hm1IBfhhw4rYt5EqqIS7FK6BhXsulkk9a4ScdJoQxxRv12Q83e2OZuABFQkC5h7tJj8fNqyhqCoR5fQxNU9euNQsIdpwUmb2fMPK/Y2c69+2Cjf1s7Alwu0C3M3aQf+qNGKzLH0nPf7v0QPTEbIwMiGk5s9xa5/8wYTO3oZVTr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772633082; c=relaxed/simple;
-	bh=nJlM3uqhcdtv948kNs3zutBgWNIPD3VVSvIYRFuWgas=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kl8eml/ra7EbXcd/q7o/KRo7k9RGugHY7SS3nfQa0nofksy6+QY5hrW1HQM1aReFIUdriyJc1nMVjmcBkUWs3nQEwOqrX7mmxMMDyu0T+L3sT6xfZaCH7Ig2lMRS6daZ3SDg0aPEoIqMCXalqEvgX/ztq9ly+w4OJRU0QBpeP+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQR13/ZH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772633478; c=relaxed/simple;
+	bh=RRD82glsj6nOntxvtcB/gUHxdV3IX5WvC/uNfoVC8Bo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aog7rzj5cIGYMTDAwqcdZB+5ooFNeqg2gAxjhVfoHX9zJ7xivpGgC9cGKLR7nPJuaxsEsL+0Q3OTqdzBd4cOBMd7gBQNhw5Zle2tfEAlHMJxW7krgRBJUR4V9dxbow5Z4D4P7NzTjj6h7SE+Z/L5IYUBVkANPRoRLB7mxGRHzIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjwpUZhO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQR13/ZH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8433AC19423;
-	Wed,  4 Mar 2026 14:04:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjwpUZhO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47351C2BCB1
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 14:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772633082;
-	bh=nJlM3uqhcdtv948kNs3zutBgWNIPD3VVSvIYRFuWgas=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RQR13/ZHOPgwvVHfqE6n2f0tncVYAlkmBndcaOJ3G8T2tIQPyC5e2KpqdiP96w7yp
-	 fy/7KYvqOqjxgBDkC2O2FwB5qK37qR3zk/sa/1/VUfjI9YsbPy/K7D/lYR9Arn0p9/
-	 A8yKHc5ABj/BWal5Lp1nlQweE9m5+YVTkD5tEllllxTkGGGtfX5FJ5TEWcQfjXJ8h8
-	 smuW+LpKOczErVcmbKGiObB3LID/FGvcamGUxkyN/Q3BpUwC8Uh2VmXwWeaqKKWBvz
-	 oBi1HgKpufrZCKR6mIL8p9m/KxJYyc65kwM9bXFKiHYNq/i9rQWtyRuywgtBSXe6SM
-	 n3sh9iRJEvLGA==
-From: Mark Brown <broonie@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju <biju.das.au@gmail.com>
-Cc: linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260304072000.6787-1-biju.das.jz@bp.renesas.com>
-References: <20260304072000.6787-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: renesas,rz-ssi: Document RZ/G3L SoC
-Message-Id: <177263307926.96340.355429636551743485.b4-ty@kernel.org>
-Date: Wed, 04 Mar 2026 14:04:39 +0000
+	s=k20201202; t=1772633478;
+	bh=RRD82glsj6nOntxvtcB/gUHxdV3IX5WvC/uNfoVC8Bo=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HjwpUZhOiHy5YjL40RhBG3fdomNubKi5kiDja9gd8xIT84wzMdXAYDmZ/9KZGKaba
+	 G8fKqNlelm/1sW5HoG31CZJTMqJ+jPijG1tHdW+zj8dPDlM02gJ0OOCkTxefmYpWqy
+	 P0PjgXGWwHZ2iT+hNW2N2neMbH4ygfBvfwx4lgFkzmgSezQz7JVgehnzyKkmfnVfxo
+	 vPIkK89KL8t9Y0awS03Gx+PR7QAkT8MJ+otrgWFgY6JkcDXagbCKZK60KGhSudYkXv
+	 9Cd6bkaU4DGesvtwMo/VeF3UfvCd6m9U0Ri9dpSn9RUuW8Jtc9D7860tdKUAK95RLV
+	 IoBpl2v1hE0ig==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6775a46c6dfso2666999eaf.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 06:11:18 -0800 (PST)
+X-Gm-Message-State: AOJu0YxpOCWgd8AkJTZBqqjOScd2+WVBaWap09ObMsK8bL3K7YTfFb/7
+	qtqnZyIhIwndLxy8rPQE7HYQm5CEF/Q3/G2EWMKv7lw5U3Fl005Q9ZTZN7AyPMCWkfPYwn2ezv1
+	/KvlrhezejR55nuDbLaVz+0OTEhQpxFQ=
+X-Received: by 2002:a05:6820:16ab:b0:679:a650:cc0b with SMTP id
+ 006d021491bc7-67b17762deemr1124355eaf.51.1772633477338; Wed, 04 Mar 2026
+ 06:11:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-6ac23
+References: <20260303192600.7224-17-wsa+renesas@sang-engineering.com> <20260303192600.7224-26-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260303192600.7224-26-wsa+renesas@sang-engineering.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 4 Mar 2026 23:11:02 +0900
+X-Gmail-Original-Message-ID: <CAGb2v64Uvd9R-UBvsK7dH2FOAFy5LiVunj7eK3xXX_MYZBwPWw@mail.gmail.com>
+X-Gm-Features: AaiRm51UKZgMQvlJkBBvuicIHC1NRc6PgGvmlvXLPvJenUPydhv9dgHS9yfMsTk
+Message-ID: <CAGb2v64Uvd9R-UBvsK7dH2FOAFy5LiVunj7eK3xXX_MYZBwPWw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/15] hwspinlock: sun6i: use new callback to
+ initialize hwspinlock priv
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>, Bjorn Andersson <andersson@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, linux-remoteproc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 04 Mar 2026 07:19:55 +0000, Biju wrote:
-> Document RZ/G3L SSIF-2 bindings. The RZ/G3L SSIF-2 IP is identical to one
-> found on the RZ/G2L SoC.
+On Wed, Mar 4, 2026 at 4:31=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Apply the new helper to avoid using internal structures from the core.
+> Remove superfluous setting of drvdata while here.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: renesas,rz-ssi: Document RZ/G3L SoC
-      commit: fbb143e4a6efa4a175e856fc898754b06cb13c4f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
