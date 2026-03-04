@@ -1,62 +1,64 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E119258EE9
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 11:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC8634D4F9
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772624003; cv=none; b=QwwWbIx8AHuZsn+tklu+bJGgqtEXyLtDgd9D/Tk1JQHfPE0UGUcuwfEFQIrYFIPBvtMwLLxeolnZfNnMvMOj3XVVKuqGJTN1CHPWdsMQQzz2haTVqjASOOLHNlVvOw9+kfZqkpkThRG4DPriXkVMh1PpfrNINHSvyuU0I2mYeFA=
+	t=1772624004; cv=none; b=nn9gsmIL6GB6SIZZOzEdhlZw1MmSG3qPzhzQG05tKEEX0/sk9JMQS1bBdZVqKKgo/+7L1H7pktDaIDt7j36pTu7RcBKG9rf/a7Go42ki8muLbAxEU7epiH2ldo62kF79OwS3BrFFOhKbHcotlwChDL/gcRNTo5yPeCb9JiMKvMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772624003; c=relaxed/simple;
-	bh=s6u79hu5TG7LrxduCVv1+ShFy/u33BANogMkjzvcQAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLkEA2WvSHkmgQ4DimjUdr/bX92UZdKJX0GMLg5aUIFRs1HOiS3fO5/tnViD1snNO4M/PRDtOQz7xBjzuMH+ApJw8ND4VzF7BgRXU14WpmoThSDmJn78/piIYAza37ZenOhn9Qfm806bDgpyhDpgSEz9kEpKQq1gTZFd7YCBt/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZF/Vxqvp; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1772624004; c=relaxed/simple;
+	bh=g0JpY4qqML6uYgF5lgCUFPoSd6CF+LvzL45sjQkSO9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K/mQ/oa2Gd6oe2iyf/FEp1pHYwscQjgB0UtWTY47n1q8p6p+PYQob+LqaFpYVxcDUk9BYg3R85mJd3pvhHSjMFLUgH5LTU7+q3VHzxuyAcuadspN6g4qzeTvNQ/WezV4p+Fa2n74Fei1UELsPjcPmyBViAucQZE10pL5C3mhcd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+dbLhB+; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZF/Vxqvp"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4836f363ad2so78963155e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 03:33:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+dbLhB+"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48069a48629so71821195e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 03:33:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772623999; x=1773228799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LCMZuWYhdcgVvbB15NSFZelU750MTeWHKGgIh2wYoUM=;
-        b=ZF/VxqvpV2gjz245pwN8RqEammAbDAHY6iFO0bxuacWL1YMaLF06YDm/ZJCqNUDNQv
-         Me1uVyk+Y3BqfJHqlJkU44QvJqltVrZArbWD3XkkntGlQ0KOi8o7rbLT+rvHVCoYO7xV
-         OKC7bH7mzsPk9scxI1VmmwDzUtBtH/srOBP5dG+e4g6hjraxCNrQ+ISEO7I/kP6ja5bd
-         jpwgY0wV2MH1pP+OmjKPv67P8b/xL6XyAOT31Si74An0JcKTDvou1bDnhjNtzbpNubCk
-         7G6HGHfe2IV4LTFijH1cBnCski4oeC5zAKAipshmVTRT7DHDzqLX1f9Nb9YAixwzavoE
-         6KyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772623999; x=1773228799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772624001; x=1773228801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LCMZuWYhdcgVvbB15NSFZelU750MTeWHKGgIh2wYoUM=;
-        b=Ww9AHkkq+0AshH6zOr6Azc+PKQdRYNJ2JV7kF2x2cdEoO/eYS5yi1SQwR/lQeppOVB
-         OHCOnZ+oEN9pc8LJNNq6l4w0b6iMIlnJsdipgHtqmDaXEy52indL4/nLY2BogXU74iEP
-         ZOnyAMPlg+DQGDcZlKMNvUNIu8CpHY6lk3KPfFdYD3pvEYPrsE4pzGnrI/Mt8Lf3qt/c
-         4MPS7CY1lx438eHIg5zXr1/GWW1UhF+AntJEnSq0QVafT4Uf3w54aukDXfq6fTvpaDyv
-         737avkznFnSqBVgDaW1mTE00JF/5nWthjGaN3DU3DQAQRSqvidW6stUKSRi39x7EhgZb
-         8i1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWbWUbHITaM5Fst8E+KtdxKVHRvz7+T5jcJJ80j4KrNadb+SqtkkEgXcI7PU8qJgj329tA8muuJLrAs+AN0OwSDzw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7FLmTAeFeV/bEmeYofs9L3SpCkuTJJxOlf763dGtzzfVDV34o
-	XkU/20ugllvrX46X4uQjufSPQ5CGJWemWtalHdPcJak6YXpuWBx1/cjZ
-X-Gm-Gg: ATEYQzyefsfsUtIq/KEGHc4y9ckL8AK5zqAYRCJwM7B4gqdKKpfSpujsgRoJz9IDFce
-	0jjzX3x1j+pQvwjVnC9bBzjsIW0FfPdgHLIfpd7vbAQUZkBz0vQZcm0M9SQ3leJfWG5PF/VL52Y
-	HIhzBcazCHUeSGMovv6STNTLmxWkQEZH1K3oJCqKtUUF4GjegVltqmUEKHHng7ErBEG9We1fEPH
-	xptOTAlPt5K3XkSflzQjImLl+ZegWhEejGa60cJ5R025h+hdSGytCL8PMEzgx6U+sX7OTQgzxWL
-	tongtMvjZODgLg0yXLbz1vCCC57lj+gC9so6GmZX5cyLlMleoQVf0FMUCyQYHxCD5arB2N2Z0YQ
-	N2zRqJFLKIc8oG7DMRnkfsHUsIBwkTGVEHn/hMiBlwWD1cwuQIz5qJqcG5Hvvt8fnq54PNefLxH
-	EGROSlg1iGn2gBEMZOawy53kRVcmoUBQCopeA/80sdm8xyE6SV5Qy2znJ9xv15RsJ8HQmptKa/q
-	xZXnKIqw5tdKLlbCFgq+aUuGcxMdZW8nNdbQVOAIZ486cIsbQyDfrqCDw==
-X-Received: by 2002:a05:600c:4e8b:b0:480:1d0b:2d32 with SMTP id 5b1f17b1804b1-48519847bb7mr27785885e9.12.1772623999245;
-        Wed, 04 Mar 2026 03:33:19 -0800 (PST)
+        bh=FqDJQzyt/HO+E5E3p1uBbxbxOJuRk+sIa+A/ceu5jZ8=;
+        b=X+dbLhB+03ljqQz07xGQLp1lbiLbHItZpNwX98I+AfzjRyo0vm9af7zWkrRCZtZnJm
+         ORB6yzNSbBengvI7xU2uehdJv5LWPJM6DYGdLgwKUy0QoFRW5eHGqBw10nbbtS9yXwMS
+         b/HPXvRzJ8zTIpfGysHmMETqUsRutEBLuGBm+RFFPQPd/r+aXt4JAzO3sPX5HWOxTDgd
+         AF8OSJye/z63RA2RX9nLXXxkGDnmkW/iTqXCH85aFyQd/RMj4htFtPKmVZovXidBFvEu
+         JLj1R0A8wYCv02Rp1ymxumtzrehBIOT6bMRVWk9d1UE73B2/iyJ9EgMLDDzpLldC4Mrj
+         AkBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772624001; x=1773228801;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=FqDJQzyt/HO+E5E3p1uBbxbxOJuRk+sIa+A/ceu5jZ8=;
+        b=XlomnsS1/9zuaUmXNhxuMcdezHG+ScRf2yFsB9p0Tp5NoJTECwIYwFN1DyiNqq83Ux
+         MGtA1R7Hh1Gy/0IV7wCnVqizf2yZZYpLMvHaOTY+mgkRviJT69Aj4OgQROeYo79rmTxE
+         YxI5oqAz30XBkvz73lBuhDBLWGtZop9XkevwyeVSS5Z9FSlhDkLHVK/ymM1VkHgTw35U
+         rhDEQB75x8W97A4b7W1RIOHLeME20Us22Ld4IImjcu0sE6dFj6lRohUzXUvs5CfvXWas
+         n+ptG+WXBWJ5JGi2Kyq5fvwAa3rFAlrgiAGCeeAXNztVxLH3aCMtJ1++xiz+eh1gCW0J
+         5+3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcJW57OpJ9Ys+xjRafCQ3wcjD/F/1zoKRx6P10d+5nDVvz8ZPQ0X1a0FZY+b/ULBC7QW3lNt2TwrNdSyAujitBww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbIdInHbdJ/JYaFQ5RjSa5sfiC5EHNHX1PUepNjEXH6yoBMYDE
+	D2OOjCtqOgIL8jc5LdZf7gZ1XLyooAHVDn6kwJjHjh2UObbzi8fb1PGY
+X-Gm-Gg: ATEYQzxR2Efvd0SUrcp08OePktsZpcEl7St6gl5RSm+Gh7imHOBeMgeuKXCEwWfUpXW
+	A+a5bibVZl90euoXoa0gs7KjSuX9PiR1rxNAdWzo7FypsXKs43msMnh8C6fICmCBK4IVXb3UDTd
+	hk+BlSJBaBEVxbJqWhWFh3/z55Jm4oR4Zt0QHPPA0vDRunZOio7J0loFeYFXjv5OxLY7zYagIgp
+	KREvOd02/K1sxYeV8bWXwmHk5qm5gFHBvznvOUoZnrWcjwz93YGoODEAZ5huzlInrcnAymjfIVV
+	SkEcP6EdPwdwW2zkM9KclFcXSHxUyKb4XqM1EarNV2wVSrNnuWTnNn9BjJyuCNJvQ/+5bRDn6gQ
+	WKy/zO5vsNLFBd6EVqNqo5kgmTwKOjYJM4TUyMYH4BRjMp8NzPezfJGXc3srg/UzYkIny/XdQPy
+	ggbQ2kwhhY7qtiXuOc4RnxG5UqAm3aTt//jRNgzqfKYPZ1xXRksDF8Z/RhVac01/l7gqJe3jO9w
+	CbpVR/iZDJinSnTN5RDR/vBJ1skyYDJWL2C3VptsctTaZ1UR51daYX7vQ==
+X-Received: by 2002:a05:600c:45c6:b0:480:6999:27ec with SMTP id 5b1f17b1804b1-4851984b278mr29785695e9.13.1772624000723;
+        Wed, 04 Mar 2026 03:33:20 -0800 (PST)
 Received: from iku.example.org ([2a06:5906:61b:2d00:bddd:d1ed:d1ee:a876])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b03db76bsm27345379f8f.18.2026.03.04.03.33.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b03db76bsm27345379f8f.18.2026.03.04.03.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 03:33:18 -0800 (PST)
+        Wed, 04 Mar 2026 03:33:19 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Thomas Gleixner <tglx@kernel.org>,
@@ -69,10 +71,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 0/7] irqchip/renesas-rzv2h: Add support to handle ICU error IRQ and add SWPE trigger
-Date: Wed,  4 Mar 2026 11:33:10 +0000
-Message-ID: <20260304113317.129339-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 2/7] irqchip/renesas-rzv2h: Use local device pointer in ICU probe
+Date: Wed,  4 Mar 2026 11:33:12 +0000
+Message-ID: <20260304113317.129339-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260304113317.129339-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260304113317.129339-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,68 +87,107 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Use a local struct device pointer in rzv2h_icu_probe_common() to avoid
+repeated dereferencing of pdev->dev.
 
-This patch series aims to enhance the Renesas RZ/V2H ICU irqchip driver by
-adding support to handle ICU error IRQs and introducing a software
-generated interrupts using SWPE and SWINT. The series includes the
-following changes:
-1. Use local node pointer
-2. Use local device pointer in ICU probe
-3. Switch to using dev_err_probe()
-4. Make IRQ type handling range-aware
-5. Add CA55 software interrupt support
-6. Handle ICU error IRQ and add SWPE trigger
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v2->v5:
+- No change.
+---
+ drivers/irqchip/irq-renesas-rzv2h.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-v4->v5:
-- Rebased the changes on top of next-20260303
-- Dropped scoped_guard arround single writel
-- Used scoped_guard in rzv2h_irq_set_type/rzv2h_tint_set_type to ensure
-  irq_chip_set_type_parent() is called without locking
-- Dropped gaurd from rzv2h_icu_swint_set_irqchip_state() and
-  rzv2h_icu_swpe_set_irqchip_state() as we just did a single writel
-
-v3->v4:
-- Made a separate irq chip for tint/irq/nmi.
-- Added new patch for tint validation in irq allocation.
-- Made a separate irq chip for CA55 SWINT.
-- Made a separate irq chip for CA55 SWPE.
-
-v2->v3:
-- Updated the check in rzv2h_icu_alloc() to ensure hwirq is within the
-  TINT range when extracting TINT information in patch 4/6.
-- Replaced pr_debug with pr_info in the SWINT handler in patch 5/6
-  and 6/6 to ensure  visibility of the message.
-
-v1->v2:
-- No changes for patches 1-3.
-- Patch 4 is a new patch.
-- Patch 5
-  - Made CA55 SW interrupt as part of ICU IRQ domain.
-  - Implemented rzv2h_icu_irq_set_irqchip_state() to trigger SWINT.
-  - Updated commit message accordingly.
-- Patch 6
-  - Made Error interrupt as part of ICU IRQ domain.
-  - Updated rzv2h_icu_irq_set_irqchip_state() to trigger pseudo interrupt.
-  - Updated commit message accordingly.
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (7):
-  irqchip/renesas-rzv2h: Use local node pointer
-  irqchip/renesas-rzv2h: Use local device pointer in ICU probe
-  irqchip/renesas-rzv2h: Switch to using dev_err_probe()
-  irqchip/renesas-rzv2h: Clarify IRQ range definitions and tighten TINT
-    validation
-  irqchip/renesas-rzv2h: Replace single irq_chip with per-region
-    irq_chip instances
-  irqchip/renesas-rzv2h: Add CA55 software interrupt support
-  irqchip/renesas-rzv2h: Handle ICU error IRQ and add SWPE trigger
-
- drivers/irqchip/irq-renesas-rzv2h.c | 474 ++++++++++++++++++++++------
- 1 file changed, 376 insertions(+), 98 deletions(-)
-
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index 20c0cd11ef25..766b981cf3d8 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -555,57 +555,58 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+ {
+ 	struct irq_domain *irq_domain, *parent_domain;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
+ 	struct reset_control *resetn;
+ 	int ret;
+ 
+ 	parent_domain = irq_find_host(parent);
+ 	if (!parent_domain) {
+-		dev_err(&pdev->dev, "cannot find parent domain\n");
++		dev_err(dev, "cannot find parent domain\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	rzv2h_icu_data = devm_kzalloc(&pdev->dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
++	rzv2h_icu_data = devm_kzalloc(dev, sizeof(*rzv2h_icu_data), GFP_KERNEL);
+ 	if (!rzv2h_icu_data)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, rzv2h_icu_data);
+ 
+-	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, node, 0, NULL);
++	rzv2h_icu_data->base = devm_of_iomap(dev, node, 0, NULL);
+ 	if (IS_ERR(rzv2h_icu_data->base))
+ 		return PTR_ERR(rzv2h_icu_data->base);
+ 
+ 	ret = rzv2h_icu_parse_interrupts(rzv2h_icu_data, node);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
++		dev_err(dev, "cannot parse interrupts: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	resetn = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
++	resetn = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+ 	if (IS_ERR(resetn)) {
+ 		ret = PTR_ERR(resetn);
+-		dev_err(&pdev->dev, "failed to acquire deasserted reset: %d\n", ret);
++		dev_err(dev, "failed to acquire deasserted reset: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = devm_pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(dev);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "devm_pm_runtime_enable failed, %d\n", ret);
++		dev_err(dev, "devm_pm_runtime_enable failed, %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = pm_runtime_resume_and_get(&pdev->dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d\n", ret);
++		dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	raw_spin_lock_init(&rzv2h_icu_data->lock);
+ 
+ 	irq_domain = irq_domain_create_hierarchy(parent_domain, 0, ICU_NUM_IRQ,
+-						 dev_fwnode(&pdev->dev), &rzv2h_icu_domain_ops,
++						 dev_fwnode(dev), &rzv2h_icu_domain_ops,
+ 						 rzv2h_icu_data);
+ 	if (!irq_domain) {
+-		dev_err(&pdev->dev, "failed to add irq domain\n");
++		dev_err(dev, "failed to add irq domain\n");
+ 		ret = -ENOMEM;
+ 		goto pm_put;
+ 	}
+@@ -616,12 +617,12 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+ 
+ 	/*
+ 	 * coccicheck complains about a missing put_device call before returning, but it's a false
+-	 * positive. We still need &pdev->dev after successfully returning from this function.
++	 * positive. We still need dev after successfully returning from this function.
+ 	 */
+ 	return 0;
+ 
+ pm_put:
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put(dev);
+ 
+ 	return ret;
+ }
 -- 
 2.53.0
 
