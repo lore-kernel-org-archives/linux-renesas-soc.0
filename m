@@ -1,126 +1,117 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D753371D02
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBC936D515
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 11:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772622387; cv=none; b=F+EQuyVDHH5Zw/V0Ro3KuR1AsPADpK+ral4mViXtYQNYOrRNJFtArkqJ/yGkH0mPQ1onZHAhQ5IB5mDUhvS8Tb1Y80lLFdHqGMtQZp/iLZ3u+VFnhyMBy1b6NFLdTO7SJ9/3LNw0qiucqTDOFOAn6EDKCWMhobdl+QDAq1A+mtA=
+	t=1772624002; cv=none; b=PFbEflAn1U2vPU7s7ZKIlAISxKaE73HBVXPjDWiNDEM1zJZdPYOkpHiCSUzr/B4Na5ALYIxMhmYfEHK1tNDamlJyZFFkQbJmyrjK1l+DCa00oYp2cp226xLb3G3//OJ4hXeRgfgMS9cmm/d3HotsmxTtUm4RqMI5DK5CtcuoFAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772622387; c=relaxed/simple;
-	bh=h4xGx8Lo/3rAAkJbNp4e33YxvrMf+pmcL7aFTI610mE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G2n//+r6NM0g296egAu30pfnxZaoJpdb8l5vx54WkVr/cAeGExPpEM2hmzJ490sDqsyllosVXW7fBDxbqaakgAJedphiDKz2xncHHbA7z5SBUSiwbduqyd8Qe9NXvo4oH8FHxFZbxaEFzx3vJ4fAVZeU7OuvUkGe6bqzplKR3LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1772624002; c=relaxed/simple;
+	bh=l65YrjWfnzVqjLUJqgoB839k2YCbavvG1M0FVtjIv1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xm24x4prHEVN+yzT5UvyHKXvboNKuCON2XdlvfqMHGEn+C7hh4WrPKkv8M45DpbY19RjVHxMWsfbtcxYKfn08WJQmowgEleuyeoSVIkcbQOK1EZx65ZaLyymALTZw1EEJttuXz2XPTtGzFCqBC9NGhmYWs4s+WNeNu5LHRN6eZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=by2PchZa; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5688b9e4e80so1764066e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 03:06:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772622385; x=1773227185;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by2PchZa"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4836f363d0dso59686475e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 03:33:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772624000; x=1773228800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bc1lWKqwyxd1K+z/jMu8xneXJ1RZxhNWU8LvY2R0KKY=;
-        b=H0v+HQdKywhLhcQAOyVxmBrMNpuK9nPFKjIKO3aGY21wr/ubWyEzouWyG62LSkgW47
-         YZLwR4oSSFnm24IZMt7QyzBr4RpWL+LXnyFBu/Gj7cSZvW+9s4ql1Cheu4oobEYKOWTE
-         Cq8vbFU6PxAvhDcjVEAjb890mcUxOy8h5vBRaE7ZcqoT4fOWI1UVYSwVGkSOljWMMIuK
-         vDyiZy62KXTyR6lEoPNYmV9wKU61CVAnab4mVzg8wECrUuQV2N6hoay7XKBeBcBDQzNL
-         u5RyeTbYXGj+aGuzDSjvITLtqw1dKvN78eD9Pq2kBusfKZvPdVkikBFF/FPYNIfctSkJ
-         Hntw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDiyivEdlVOH1z1PAuMU7LXpCWDGHbUoc1Xk8yGt6DPBpXnj98ocQX/tE9xhR1wSnJpzB7r7dgxTdZvxrTRmKc1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhjUZqeW0Xh3QDen+3HVepls3eIvsREwMvtMRCHPRu+PpeD0Mu
-	mDKAd5pryP6Tat+1SOcIyaIWPAJAiDdHgUh9eIYjIPqJS2dDMe5TpUd0wT7DMrEk
-X-Gm-Gg: ATEYQzzROaMw7OkjRJGPTa6hyOtBgCknxZ9jN3tWAaI5QRgzwaG7HJxWamEm3KpF7Bc
-	OtehIJ0ZENBfr4VZGabNnlKQpMrjzu7wwtJ2L4ZHvMI/Zyc8UWZxEdtxAaxR1gCgJ0YkaUJtzXN
-	L10uF5MXVnlEBPPD6IHrucSne2WQa4vCa5illqe/iMJCDRUct0BsqquOqtC1RSpp1RhBgG31Epd
-	zXeHBhm8X/DHvaZwkmiv/KhpquRfi89vHkUAifKUKT6chlwu6W+frOS8PYd5dr1q7kLuo6mUPDn
-	vMctpZOWuMOtniYqvFvijEWM9UrX1bb1vxBRFN6oVKHEiII4Adc0JWBclTiCJm3IXfp8BT8/K4J
-	VDAlbekO77DfR6wVwSqcUHxmJsrdmXj1OD1QupB1EHgCFenA2VkNabBA+Sjkm6Z7Getc/uSjJdd
-	W687JqZrGlAu+rYZxWGWbYBCcpYlzGs0m2aFUULS7wIhq9WRBLK+4JfdHflHAs
-X-Received: by 2002:a05:6122:4d19:b0:55c:be5e:e9e9 with SMTP id 71dfb90a1353d-56ae7eae6e2mr638201e0c.1.1772622385076;
-        Wed, 04 Mar 2026 03:06:25 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a91bb97absm22318528e0c.6.2026.03.04.03.06.24
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2026 03:06:24 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-94ac3958788so3697713241.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Mar 2026 03:06:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU8BEAfWn3Z/6Hw3R2AGDY9ppqHtg5/oTlDEWxNft+zi+F/5HFxnv/s10wfhXT8TV4Q37EsqyF6YXzZlie5BoUymA==@vger.kernel.org
-X-Received: by 2002:a05:6102:c04:b0:5f5:3739:100d with SMTP id
- ada2fe7eead31-5ff8f555c1fmr2447437137.0.1772622384397; Wed, 04 Mar 2026
- 03:06:24 -0800 (PST)
+        bh=5Zd3jIzHzz21AHgX9eoicCLchGwYYyNKAYVckUex35s=;
+        b=by2PchZaO3nnuwR+Xs0XXYofpb0NiFWOhh7NOOJgh0b3KRZimm2WetQBRi+p93pxGn
+         vXj5jz+wJSfwoLnqOUoQQUrqCWk7rSeKdbE2334YdcE63mDJ/KbUzuDzTaSl1KIJS/+z
+         b7KCMqiI4BaFV4xPjoi4mbtr0S60ocI3NdhVfATbHbz4yXQYqGNE2eahzt1qTGkkOQnP
+         jhppeD7DIH539kYLp72nbX6IOutbe93s+EdQ3WchZEkwkkC4+SmxwmYSRLHM1Du0G6kB
+         Di+UVhxFHI1Y/kaNGXWKz19d+xCceDZZTKh1UAduU+B0Xkyno4z6cteQL5J1IjXhxuIK
+         Kanw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772624000; x=1773228800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5Zd3jIzHzz21AHgX9eoicCLchGwYYyNKAYVckUex35s=;
+        b=DdPvYOKryyCtUsiW+HGMjLXTMgS+dXseOHlqC48XyKtPCR6u2bxftjvdvkfCrPFc+E
+         4No1kvCcyE22KSQ3XC+sVGnHJtI29ZQ4b8QKhFU7HS4jewL9bpubA8NjKhnMoWy1IiEX
+         E5Hhe5Z53Q6k4CoZez0++ULnccJHwpddloP24LS1thGOaGd3MyJrmfvKpQAuRwEFBli0
+         QHj5LhsB6/OYWdZxWm8wqxmZa9FNzloF7CLjpcYOVGokr0RZ9h1okdad7/75Hjjl2kNA
+         zUFgssuuX1di2I4dCT/3iEdUrbJWQWAedwDr0h3jRUS0Upukf2mKh0G7KeNdabYShPrn
+         l6hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdG7lFPMNJKQT0vCGE8e0Z/OQW88Bt4SOWpdJ6bkloqDv4i8XGW2Bi1eDy3VglzA+UXqDuFgnxeDx/KKjI1y4xQA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx76gLGgds3ckX/UHvFypPfRX20fZBW1ACdvk0j/tVCn9xSwaMG
+	rJtzd4CdGB4wQ+br269IE0ou4SMemv97QqXB0D+x2RXzmxj2chEjFqNH
+X-Gm-Gg: ATEYQzzo2fofTRQ18RQ2ot9a6IOFocXj2qVv7YmLDszrmpsAPFkLOO07e9Mbqu/N9T5
+	NtPgmborA6fsYB8Z8/uCmCiyOxfTLwvgK9XtVXlUxZwyL0phLOqJ/XtuXdYRfwyTTLonzWSEO+V
+	lIhKnzAmEg4YfBeQeE9mbt2dcXG2lv2IQo8NEZW8vN7JY60jqm5k9ziJC3eoV/V+rcnBN59O+gD
+	dj9LfR+1wc3cMGnKoDihxWIBCuQr/QsbX2FnBxTdNKitsGOGjPv9DYBh6H/0QLke4KMFadrpJVK
+	bnh7gakDI+JG0jeMJrAM0Fh6UkMUZnyBhtYVWdz1VA0pTl/mZWVjEQqE18BM89xzmziLad16ob0
+	Q1T5qs9jbExBOl0ZqLdqt0djvaZoBuYC972sfjbbPBEy+2yQruN4S5MttFKkbJhSm9+Xvxl6J1T
+	YjcbCqY2MJorc9BWFZHP7bhFQnpcX6ivi5pPxlbSrXB7g7vd5r9VFa19O61mPyna4R8Fzpy0S/s
+	6xyYev6vuq6puJZri1J23imcCK+goHF5nteWWXLTiPxN4I=
+X-Received: by 2002:a05:600c:83cd:b0:477:2f7c:314f with SMTP id 5b1f17b1804b1-48519846ca8mr28410085e9.10.1772623999709;
+        Wed, 04 Mar 2026 03:33:19 -0800 (PST)
+Received: from iku.example.org ([2a06:5906:61b:2d00:bddd:d1ed:d1ee:a876])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b03db76bsm27345379f8f.18.2026.03.04.03.33.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 03:33:19 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Thomas Gleixner <tglx@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 1/7] irqchip/renesas-rzv2h: Use local node pointer
+Date: Wed,  4 Mar 2026 11:33:11 +0000
+Message-ID: <20260304113317.129339-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260304113317.129339-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260304113317.129339-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1cfa86b72b2a5aa2ade92f247dd318c9cb6ef2a1.1771267504.git.geert+renesas@glider.be>
- <CAPDyKFotV3bUEQic6X3PEC8m4fcXtc0JF0u7HTj9nRF1koowgA@mail.gmail.com>
-In-Reply-To: <CAPDyKFotV3bUEQic6X3PEC8m4fcXtc0JF0u7HTj9nRF1koowgA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Mar 2026 12:06:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUwLqWxp1pYj3fHf6OVtxrScg=wP=bdwLbjo7vpgmP4Jw@mail.gmail.com>
-X-Gm-Features: AaiRm51l8HwBRY_tDhyX1MH5hQpu6lRSnZBK8l-db6--eDbumd1dAL9LGKVifxA
-Message-ID: <CAMuHMdUwLqWxp1pYj3fHf6OVtxrScg=wP=bdwLbjo7vpgmP4Jw@mail.gmail.com>
-Subject: Re: [PATCH/RFC] pmdomain: core: Support pd_ignore_unused with sync_state
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, 4 Mar 2026 at 11:56, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Mon, 16 Feb 2026 at 19:47, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > Since the introduction of the sync_state mechanism, the
-> > "pd_ignore_unused" kernel command line option doesn't really work
-> > anymore.  While genpd_power_off_unused() still checks for that flag
-> > before powering down unused domains, the new sync_state callbacks lack
-> > such checks, thus powering down unused domains regardless.
-> >
-> > Fix this by adding checks to the sync_state helpers and callbacks.
-> > Factor out the printing of the warning message, to make sure it is
-> > printed only once.
-> >
-> > Fixes: 002ebddd695a5399 ("pmdomain: core: Restore behaviour for disabling unused PM domains")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > RFC as I have no need for this in upstream.
->
-> I am trying to understand the use case and whether we should consider
-> to land this upstream.
->
-> Would you mind elaborating on how this is useful for you?
+Avoid dereferencing pdev->dev.of_node again in rzv2h_icu_probe_common().
+Reuse the already available local node pointer when mapping the ICU
+register space.
 
-It is (currently) not useful for me, but it may be useful for others.
-During work on a new SoC, someone had hardcoded "pd_ignore_unused"
-in the kernel command line.  After adding support for PM Domains on
-that SoC, I noticed PM Domains were still powered down.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v2->v5:
+- No change.
+---
+ drivers/irqchip/irq-renesas-rzv2h.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The issue is that pd_ignore_unused no longer does what it claims to do:
-
-        pd_ignore_unused
-                        [PM]
-                        Keep all power-domains already enabled by bootloader on,
-                        even if no driver has claimed them. This is useful
-                        for debug and development, but should not be
-                        needed on a platform with proper driver support.
-
-So IMO that should either be fixed, or the option should be removed.
-Do you agree?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index da2bc43a0e12..20c0cd11ef25 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -570,7 +570,7 @@ static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_no
+ 
+ 	platform_set_drvdata(pdev, rzv2h_icu_data);
+ 
+-	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
++	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, node, 0, NULL);
+ 	if (IS_ERR(rzv2h_icu_data->base))
+ 		return PTR_ERR(rzv2h_icu_data->base);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
