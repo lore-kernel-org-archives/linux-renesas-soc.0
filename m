@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7A632ED54;
-	Wed,  4 Mar 2026 15:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C52611E
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 15:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772636741; cv=none; b=uK90g3QpC656RDodus+cryDRcY1lrSmrBh2YPtcoA68IeUiFrN21bqyuAOQ+0my0k+532FRysfFWLNsDsHeYSk4jhIDLjdlbSwcVVCGa5N0g2PNTZ9fATLT8B3cALU3k4kOMATfGdnJn5S5KbNd2vuf8LShyv3ewLuUiTxxGwMA=
+	t=1772637211; cv=none; b=YJmVoZ3PfRIxXus5WGNfcTVkeaJxBRUDTODNue2mALOT9Je92YGd9c7AG32C3heVtNrlGSJWA6EYkIr4POr5Li69pHfSkRvV/AFwKtgp7lvN0NhKze3XBGfMmUsMe8CZrO5o3qHLWJfUF7rkjbNnF/FrL7QEYN5KcB7V+CVzLZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772636741; c=relaxed/simple;
-	bh=EQq+Z/eEJ/BjZ3Sli8Trx7DoThRfnqXwppcDfiyKYXk=;
+	s=arc-20240116; t=1772637211; c=relaxed/simple;
+	bh=JRtKWSUO9zuqjTM84qJ7uj/w2a5yOxwSDpjFq8IvuVA=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Iue9niKNJocGwbfUCNvygH2DBRmHINEmlqCb7usdUniSip6k8TEszgfi0H7gRH68nEZX27XT+OUcAbLV5JQ3AIARMzb8lagPtQpv2NFvpHPi3gR1Rk6lFDk64Zj14WvYCAIsOZj/EjTxWeluevlh+fCGqFVCvClEHB6dKOxkHGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syDX+awR; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=JkjQtFagHoSaKEHyR5ZaUd1Y+jEY6oEEH4hdF/RpeIltYyTy54ep7ELtfZUv+kUeOVfErlP8liUOAn7Maq6VT8fqBgDWKwhUQE2SntdKCAzCzzGCJ3zTPO3i6p9kVK8beukdTscVR8K7JEnMe147AqYPU7kamEQ6Ga4+o6iXRLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgGnymR1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syDX+awR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D27C4CEF7;
-	Wed,  4 Mar 2026 15:05:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgGnymR1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23D4C4CEF7;
+	Wed,  4 Mar 2026 15:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772636740;
-	bh=EQq+Z/eEJ/BjZ3Sli8Trx7DoThRfnqXwppcDfiyKYXk=;
+	s=k20201202; t=1772637210;
+	bh=JRtKWSUO9zuqjTM84qJ7uj/w2a5yOxwSDpjFq8IvuVA=;
 	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=syDX+awRE0iFPv2HiOGRFYRW1webFqd8nfEis9HwTVlMlDXVi5hr3vwzm3cHQpNyN
-	 4tvGELJv8erZH5u0sIVVA5+P5KOpPmNuoII1/0AzJwk4fwRLFCKmAwHAB/T8FM+Em3
-	 Tajh03GZ972NiQbW5dEcgos4WTM/8ZQkPUcDK0OB8urvBRDhrjNlw2upM4ayF7k3T2
-	 1noEeQaw0i/o38VfPgvufeGwT9XVJ2smHaHOgFz/Zi5pIVCJb9WgnDygkA1paiIg4v
-	 jGzDLp6Mw1CvWlIcGa64kGKjGpsrGV/ZEYE3pJ9KtH2Mlf7+8a2m5OIwMnYa/WwZHz
-	 bTv2A8RN9nnFw==
-Message-ID: <3cec7787-0787-4b97-8eb6-5fe28f4c2a14@kernel.org>
-Date: Wed, 4 Mar 2026 16:05:35 +0100
+	b=CgGnymR1OHjdHeuO5Tp8ycxp287lpXgjVS3Ibknvzvp6SnDE1uDigzru6RFDE49QI
+	 CSoh9C8QiUyJPSBUFskEDtY+lM70NWxW5vlKD1/+doV0iVYPbc1spX0lqFxfZhh2HF
+	 HoX13ILXkWodg4DZx+rQQCtwZY3pDlwBaDvfJYMLbOa7rzuWLJKvDvqDtDYQJhWja6
+	 OYfR2gXQOEbmLZZZBTkDgsTC67ur+rRnh+upS8ApwbC3Krf1PJNRdo412S5nij9O4X
+	 WGYvuzXFFh0d+OwBoWi3IsYtOczTkR4Ds4UGrTHK9E2jROKg7dUGoUGGgPbjuNyBDv
+	 WEXde4z5r9L0w==
+Message-ID: <c1a7223c-42d3-45d2-a57d-6d990e38a78a@kernel.org>
+Date: Wed, 4 Mar 2026 16:13:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,23 +35,20 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3E
- SoC support
+Subject: Re: Lack of review from Renesas
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
- biju.das.jz@bp.renesas.com, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
  Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
- <f6b43f0dc64e13b1c9942c164dea30002d4c4466.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
- <20260218-qualified-octopus-of-luck-5fcbf1@quoll>
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <a3f0cb6c-cff7-419f-839b-13bb1ff4960a@kernel.org>
+ <aZW0GL8ufBgZlUbU@shikoro> <aagmDTa3KM3EYx0N@shikoro>
+ <8efddf8f-a9d3-4c29-b54f-201304339843@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -96,24 +93,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260218-qualified-octopus-of-luck-5fcbf1@quoll>
+In-Reply-To: <8efddf8f-a9d3-4c29-b54f-201304339843@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/02/2026 08:50, Krzysztof Kozlowski wrote:
-> On Tue, Feb 17, 2026 at 05:23:47PM +0100, Tommaso Merciai wrote:
->> Document the RSPI controller on the Renesas RZ/G3E SoC. The block is
->> compatible with the RSPI implementation found on the RZ/V2H(P) family.
+On 04/03/2026 15:58, Krzysztof Kozlowski wrote:
+> On 04/03/2026 13:31, Wolfram Sang wrote:
+>> Hi Krzysztof,
 >>
->> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
->> ---
->>  - This patch depend up on [0]
->>  - [0] https://lore.kernel.org/all/20260128215132.1353381-2-cosmin-gabriel.tanislav.xa@renesas.com/
+>>> I told you more than once that it is perfectly fine for us if you skip
+>>> reviews until peolpe you trust (e.g. Geert or me) have reviewed them.
+>>
+>> Can we agree on this now or do we need further discussion?
+>>
 > 
-> I am not even looking there, start reviewing each other patches, so you
-> won't be sending FIXES instead of reviews.
+> No problem, I will be marking patches as N/A in patchwork. Just have in
+> mind that they will not re-appear on the queue and pinging won't work,
+> because it does not change status of Patchwork.
 
-You kind of ignored the problem and the other patch got merged.
+That's pretty convenient actually, thanks for the idea of less work.
+Just dropped three unreviewed patches from Renesas from DT Patchwork,
+one even waiting for more than a week.
 
 Best regards,
 Krzysztof
