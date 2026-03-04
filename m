@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03EF3BE149
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Mar 2026 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645E346A04;
+	Wed,  4 Mar 2026 15:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772636301; cv=none; b=F7UZUwcPQSXWNgnEgYmYIgE/rWrRBF/vjqAZDwVL62zL4IIWRqR0h82mdiaWO/guMHf8IoK2AOHYLiEA5ZVjh7hMiJ2ih9IMj9xbviC/tITf+ysnFV9ovB+QdJ8IKRNF3sm/FIOwK+jNuClpvbbk4DQPH0lwB0UjBeHjLE9O9Sk=
+	t=1772636630; cv=none; b=HcQKgz1Bz2NGwDFiNBD3jpVh4+E5pb0kRVj8h70eTul+R6YR+20qTCIKtBfIuZMY1iw+aAV+FQlRMPpZc7Ma0iiIHXyrx77VHFYMnTSzmKMBZviySNSNWuBmYzVOWq7ufJky4kW76vHNPlUeIaPEmzJzjcC1cguLRSPDgKuh9U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772636301; c=relaxed/simple;
-	bh=6x9oGOBOKR5io9/8EPcNEpDIhkM54QK/4o1YxpxmOoA=;
+	s=arc-20240116; t=1772636630; c=relaxed/simple;
+	bh=fJ33ail4Ah99f/ZCjjOA8k6JalQAFYh/YFP20m3z4MU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCm35c2aJF7BpWlEr9kj4+JCaJgOLbuUblb8mnImzjey/Q0H2F+G/l6EL+wId8lceBI4DaJVNgqoeCKKjs6hk3vmB2SZ05slRGhM6GmvL5vVj1FjjcgZ410/lBwnqsuV46vhwIotsLZxP30VuFaQDdKLo/6+x1X+VviVspDiUiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWaavOvU; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=M5kT4S62xvbJtiKLADQGNlADZ2rlWH9qAsgTx7Bb9ActWuG4uRkF1b0hsX1Tx60EcRWWjrSqfjBwtuCI8HdGS0T/axSS7xH/V4v+GadmVgTRfcw6nq4CubpAg/yHjMtBB0dwKZpV0zYaajiruezrzNYBR5cMYoPI9P5yJ9zwVZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgGZU32G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWaavOvU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77823C2BC87;
-	Wed,  4 Mar 2026 14:58:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgGZU32G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF21CC19423;
+	Wed,  4 Mar 2026 15:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772636301;
-	bh=6x9oGOBOKR5io9/8EPcNEpDIhkM54QK/4o1YxpxmOoA=;
+	s=k20201202; t=1772636629;
+	bh=fJ33ail4Ah99f/ZCjjOA8k6JalQAFYh/YFP20m3z4MU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZWaavOvUGoLEPcT88SXhY22sFjCMF1yHjF/ypfChRegT1fWLNJ74SCqiPQSv2isWW
-	 LSnAXzVUPwTHdhy3EgtNYky126V7INySTstBxeXH9qKhHFKca+XgoE++9c+lsL4hFD
-	 w9siKLnK+wDFddvnIyUXK33sFPorHO03QfIcxXkt1sBsgEPSj5Ef+sWleqonSjgxkJ
-	 klhv0y+/5nBSoqiyKBFV7jx0Le0FFiQIlvReONoxzUZ8XjnRZAWxHI+81lIYd+XSUp
-	 jiPDf46FWrUi248Hja0yvLpXIIXs3J+Tkig58ZrIuTJS4LakcOohhJYfcqUvoab0Lc
-	 jvw7JrdVgXuyg==
-Message-ID: <8efddf8f-a9d3-4c29-b54f-201304339843@kernel.org>
-Date: Wed, 4 Mar 2026 15:58:17 +0100
+	b=BgGZU32G88aPIAwBDGwyNAAwy5dv7eUCsV/HfEvyHAq0ZC/OI1rsREQ+Tj5htUBYW
+	 7i07zO4kmErc6Osh7o4RKQx3R9N1RtPY3ZlGKZLjSii6meivV4SoieMTUbJxBrBjth
+	 4rrPaFcDE3NmSu8WpkHtnaP9XwvupVxer2TK8EAQEEgNKptfxEfBqqmgcNTzheSI/1
+	 QoqK+jlXsPix5H5BklH2GW8x/1JqtCF8GzLzY6quU+RIfrgRY9ZQRbN8Z5JlJAivGm
+	 UanDD06gTYsIeREo9VyKxNcE1oxCGbyDhGWcw5JAhXEu52xuUJ9dDqF0fC1WYlG53F
+	 0F5y9enHe7ppg==
+Message-ID: <13d4fd79-784e-407a-9f2b-41cd9a86f232@kernel.org>
+Date: Wed, 4 Mar 2026 16:03:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,18 +35,20 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Lack of review from Renesas
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+Subject: Re: [PATCH 1/2] dt-bindings: spi: renesas,rzv2h-rspi: Document RZ/G3L
+ SoC
+To: Biju <biju.das.au@gmail.com>,
  Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Magnus Damm <magnus.damm@gmail.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <a3f0cb6c-cff7-419f-839b-13bb1ff4960a@kernel.org>
- <aZW0GL8ufBgZlUbU@shikoro> <aagmDTa3KM3EYx0N@shikoro>
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-spi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260304074907.9697-1-biju.das.jz@bp.renesas.com>
+ <20260304074907.9697-2-biju.das.jz@bp.renesas.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,22 +94,67 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aagmDTa3KM3EYx0N@shikoro>
+In-Reply-To: <20260304074907.9697-2-biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/03/2026 13:31, Wolfram Sang wrote:
-> Hi Krzysztof,
+On 04/03/2026 08:49, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 > 
->> I told you more than once that it is perfectly fine for us if you skip
->> reviews until peolpe you trust (e.g. Geert or me) have reviewed them.
+> Document RSPI IP found on the RZ/G3L SoC. The RSPI IP is compatible with
+> the RZ/V2H RSPI IP, but has 2 clocks compared to 3 on RZ/V2H.
 > 
-> Can we agree on this now or do we need further discussion?
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../bindings/spi/renesas,rzv2h-rspi.yaml      | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> index cf8b733b766d..599c06ff08e5 100644
+> --- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> @@ -13,6 +13,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        - enum:
+> +          - renesas,r9a08g046-rspi # RZ/G3L
+>            - renesas,r9a09g057-rspi # RZ/V2H(P)
+>            - renesas,r9a09g077-rspi # RZ/T2H
+>        - items:
+> @@ -85,6 +86,31 @@ required:
+>  
+>  allOf:
+>    - $ref: spi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a08g046-rspi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 2
+> +
+> +        clock-names:
+> +          items:
+> +            - const: pclk
+> +            - const: tclk
+> +        dmas:
+> +          maxItems: 2
+> +
+> +        dma-names:
+> +          maxItems: 2
 
-No problem, I will be marking patches as N/A in patchwork. Just have in
-mind that they will not re-appear on the queue and pinging won't work,
-because it does not change status of Patchwork.
+So even after my objections here:
+https://lore.kernel.org/all/9d08ddda-403e-458d-95e4-4e76915df85d@kernel.org/
+
+this was not fixed and Renesas did not provide actual cross-patch review.
+
+This is still probably wrong as pointed out by other patches by Renesas.
+Also, you cannot have flexible names.
+
+NAK
 
 Best regards,
 Krzysztof
