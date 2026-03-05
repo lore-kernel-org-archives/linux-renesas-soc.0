@@ -1,110 +1,112 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CCC37EFF1
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Mar 2026 10:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47737C0F0
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Mar 2026 10:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772704943; cv=none; b=FaH485pVUOlDDx1zvgDo5tHBlZJPEdPVLmcrvdU81SJ6nfqnOemZPO0XmDS+bn4xNEnpZP1lDBSCcUm0i64JDuXZYOp73Hbl3aLnFNaqm0dQZcqPkyc9r4FaYtblN97yNNuwltKEuYVmOL1dH/bzw0uDgNzG5tvf3FTqCr1lJIQ=
+	t=1772705046; cv=none; b=JS4Yojf/QgzgcvTzWGwZF21bD50NdhQLKCPDB5CSlEN5HFNx297F/z+hZJ3LEaDR73/VXvr5xxvn80q2VhgVMpGKX1D0Z2ZkVFnk5DwGD3pXYgYhUFtrboSj/YoAtWFx9Es1ZvJwtZhqbXZhP+5izEHvQTRtMDtbrLJq1UQpMGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772704943; c=relaxed/simple;
-	bh=PLN3jU+WSp15lmHsKDg7F21c9tIpGoZokDbnzqxSsGE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qs8DZSKl9AcGifDwFOiz37rcfRsuTiwc6x4typyGeYD3fNXwgUNA8wgkcd9oy3p0dyhu86Kb1SBra6s7gKImeyzScnmyRoC0NT4R0cEQK71ijQE7h55tkKojESVyuG5d9wcdY0kq5B7a1yGiTElFssjq+VRm5y/7ebFR/He0kuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cD4UFgoA; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cD4UFgoA"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48371119eacso93559675e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Mar 2026 02:02:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772704940; x=1773309740; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PLN3jU+WSp15lmHsKDg7F21c9tIpGoZokDbnzqxSsGE=;
-        b=cD4UFgoAocJuZT5S6/FT4tLvo8eHic6win/PVVlM7THi42GfYkSi1TmQKp9oFjEvC9
-         4DuAmh8ioVJ3l0t9cfDz1F4uH57IMEgeY61EKqf0J4hgzotd10bzAWeqkIY3qxwq+gtt
-         KyD/BEhAcZymLIC+jEV+iqZhfRlSpIO7G5fxOWyrn6ZeoxUBzXJNaGNiXGXdwAwygc++
-         SJ3ShMbEL/2wC0WJ/VhDdOAftX90PfAz60BcupIG8OAGaPrCOCMIA27aaK++isLH44Iv
-         ENO8y4ePFW102JPN00G4qmjO8l3H2KXaQyAiU4DD52kTRmizIQUzeyakkq8kcPe749lH
-         0MxQ==
+	s=arc-20240116; t=1772705046; c=relaxed/simple;
+	bh=508+zCdHt9MWfUxEq50brZahkkEiVxDT5BqlILcd3+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ljZsdiI9t7GLpJVBodipwhEc4D33l2OUeED/rYD60ITdSdPMYIW9uzVr0fQZPjdF6MX0Q80Etm7Z5BkJBn0b1coFH+7h+WXgUZ4vPt2STcwsYadmuHf9XELw1fSycSMLav52duh6dwn9ZJfKUlGbOi2iInub38wnlYcnhvzVCgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2ae56f8776dso28316685ad.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Mar 2026 02:04:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772704940; x=1773309740;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLN3jU+WSp15lmHsKDg7F21c9tIpGoZokDbnzqxSsGE=;
-        b=b2/Rxs6otrDntzS7Z/Xl+dYbnpkZzqZisPzNjnXU2TahXD7EwlmRCWFh7VbKR+xKPz
-         LVIQJwgAVxvPQ4+Safkwo9shDAQF1SEAJvJ7p4OEKrLyInBPSZU/7jXwxba/MYEpckJH
-         ZQo2NDJCefL+Qm4rIypwZyaVKlQZkxyu5H+P2YBK3NGyGOMhwrl6pgNOdu7IPRdOpAKz
-         I4Md4X3T50jkKktW7tHsZhLsc0VrFAPQK0DmpEfNmqY/vOvG5vxG1jefdzo6Gdz2iCIU
-         GtKemePp+k1gVFnzKz9QBsR8TbYH6WuVSi6rarARHpm80T3L5bT1ai39hGFxaNKH587D
-         0OOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsBntV26DqAJPr+TzLWDEd7ICnA3gidTRz5XBeDX6r5mxn5m3JL4ktKXvPlZb4znnsle7UuRY88c/CmAslsrC1wg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHrjh6uVZrLeFg31TWMUZXBkhLTYuofMkriWcJLOa+Z7Pe5wml
-	FJn8J9hlSGSi4WgIe+oCaL280aaq/uTmguUN4Phd+3lIyY9pn9xJGtO/PbRlEZwEbrM=
-X-Gm-Gg: ATEYQzw8mv/IIb/lO0dBMxy47EdYV/6ga2kltmzGcuQfHOwFuphuG3BUWtN/ZiAVyI0
-	+GxC/w5wSVj3T2M9yRQKDRQX1EN0YNWwjpDPJ5O9P2d+8eXog9ysJpY5D7duXC09XiXnbSOlfB0
-	PWINWpfsXbYsXXi/1EbMsuFFv8749tWW6jLzEP1gdeIWTICwyVYcLtGotAxtmNcCYlA4zR6Sg3B
-	5StjwSE+BhOGGkg9u+NRrCwhDRSJc4ih2QbsfgzA9os1JcIQ46ZBel9Usn2az7SCyDSk32sg41Z
-	GnfUPObIcZEkMSJtNRCujZjF8AW7hcRwC+pjSU+gaz1jPnMO1pkXHhhXAYJf0NcvmC9Lz+25XSt
-	SaW5TUlACBcEhoQxNC1Acdzw9YbYUqY2kPPBhWOFO4UTzUp+WT/bpdYdKvLwf9nj0jaLE04SRlR
-	Gdkt/YgW+UUMIJuS9jKXgXIRuPw7lm
-X-Received: by 2002:a05:600c:a07:b0:47f:b737:5ce0 with SMTP id 5b1f17b1804b1-4851988f31dmr86977045e9.23.1772704939633;
-        Thu, 05 Mar 2026 02:02:19 -0800 (PST)
-Received: from salami.lan ([212.129.84.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4851fade9fdsm59453655e9.4.2026.03.05.02.02.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2026 02:02:19 -0800 (PST)
-Message-ID: <030737fd255a49288349f06e8c1217a126ea9081.camel@linaro.org>
-Subject: Re: [PATCH phy-next 05/22] phy: add <linux/pm_runtime.h> where
- missing
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>, linux-phy@lists.infradead.org
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, 	dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, 	linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, 	linux-can@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, 	spacemit@lists.linux.dev,
- UNGLinuxDriver@microchip.com, Peter Griffin	 <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Heiko
- Stuebner <heiko@sntech.de>
-Date: Thu, 05 Mar 2026 10:02:16 +0000
-In-Reply-To: <20260304175735.2660419-6-vladimir.oltean@nxp.com>
-References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
-	 <20260304175735.2660419-6-vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-8 
+        d=1e100.net; s=20230601; t=1772705045; x=1773309845;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cg9EXYcydfZ+ulIjzuaopPgTp0XFzaHPOEgk/rgt7WQ=;
+        b=dEaAB/O1Gu//a7J5SDZhUTF90H32Yq3YtbC++wj2/TUEg48aqy9Sip9EKeKnLtK2vK
+         tAy+pBIiLUg2+NBmjUqph1dsEc8Od7TQ/haHe/ZFBlX7MfpNT8O157GhXkU8P+qBJKS9
+         49qA+XAoVDerPlgOK+dtXY4kqxOFPimrgVFzH/EEvfTRCfxmgeS3GsAT46aFVAY5hmMv
+         hIcaYJziR08wU+k3gI+lVb7vGCCNXbZqeEuVLM/ZWpoTuqEDPi+Q0sr3FKwyqxp05yG7
+         I9tHfh6iVJ/mDF/lCJ7txx/m+IX+uaBSG1PGEE74lhJglNRvzaWiUROTN8k59xfAhul4
+         5wdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFB9cadV6zr4FvqfHFZ80S5FtjB9QFYjbR6ZrTTRRRRPahNXN53NFPchGSY4mluhMGcXezxhNbbrc80oN70dftLg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyejG0fJGZ8g+gR7E7eW4hMIA+aPPtFlbD98WevG1On3Jm6Owar
+	dKnEXosi3qP2MnaDJkuFRAYCWTlBJ+MolnSrXQa6nTCelUYVeBFsxxN2HWRRxzGp
+X-Gm-Gg: ATEYQzyRoI59HeDFBE0/fahaw/tZRvc5E20FwV7ZZJqWfaiDVygyJGUYEsCVOzTn6Cj
+	8nybH1fWvu5ykHDgIxzPrqQbHbb8CxB/Sel3PxgwYruVTmF0FOUh81LaZpBm57Bn5ur+X3299D/
+	Qu4i7i4q23hzT5mNSXCGkLcw4OTaoMX0WlU8czGaHx3VmjsUn1CmJQ0wYlJVPaBqiBUJ9x8ryfV
+	Mxz/tekMOzKfvo3J2/6c4Ao3on9kYJUHfBmpQtaa7KhnRlWqEpl3a9QGUIKcgfFg2gQ3atqz/BU
+	Qvg+GlNJh4xhc+vf10gonuEyehaY+vJKe2SCsTgh3VhWx/0h9pqJnTpCewHGYIrBLbFyOisD0zR
+	lyyWbXJA1cs1t77d15/vI5m1SB8+JvwAuYDHMHS3xyhoZxZNilI9eptYH1jYl3itfWLqcC24ngH
+	S+Y6txMlivY82sTIZD49CFIhKpQ2RkyFrivRpA9xuOe3Q1meMAEKBEkiKTj5Q=
+X-Received: by 2002:a17:903:283:b0:2ae:606b:bd98 with SMTP id d9443c01a7336-2ae6aab2a33mr52012195ad.26.1772705045244;
+        Thu, 05 Mar 2026 02:04:05 -0800 (PST)
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com. [74.125.82.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae541358bcsm102963325ad.72.2026.03.05.02.04.04
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2026 02:04:05 -0800 (PST)
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-12732e6a123so2541984c88.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Mar 2026 02:04:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWa0+gWYV9cDnuueWCVmq24sdr387DVZ+6wUYa9j3uhsEvi35BnL2DWCDYkQjBh18L3vVz2ctLZVA0jgviwRGun0g==@vger.kernel.org
+X-Received: by 2002:a05:6102:26d6:b0:5fe:c4aa:10d6 with SMTP id
+ ada2fe7eead31-5ffaaf7c9f3mr2333684137.34.1772704554695; Thu, 05 Mar 2026
+ 01:55:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1772643434.git.geert+renesas@glider.be> <ee2980af-e37c-4b4d-86c2-32467d2af454@oss.qualcomm.com>
+In-Reply-To: <ee2980af-e37c-4b4d-86c2-32467d2af454@oss.qualcomm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Mar 2026 10:55:43 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUCqozRx_WJesymXmP_PYo4Bf=oed=4fXycVOVk5g8D4Q@mail.gmail.com>
+X-Gm-Features: AaiRm50TZMfTdXxkme8-hNv5QLySSNWDLayLbCjX-hPHmdjBiItNwF_qP7aR9JM
+Message-ID: <CAMuHMdUCqozRx_WJesymXmP_PYo4Bf=oed=4fXycVOVk5g8D4Q@mail.gmail.com>
+Subject: Re: [PATCH 0/7] arm64: dts: Drop CPU masks from GICv3 PPI interrupts
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Marc Zyngier <maz@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <treding@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2026-03-04 at 19:57 +0200, Vladimir Oltean wrote:
-> It appears that the phy-mapphone-mdm6600, phy-qcom-snps-femto-v2,
-> phy-rcar-gen3-pcie, r8a779f0-ether-serdes and phy-rockchip-typec drivers
-> call runtime PM operations without including the proper header.
->=20
-> This was provided by <linux/phy/phy.h> but no function exported by this
-> header directly needs it. So we need to drop it from there, and fix up
-> drivers that used to depend on that.
->=20
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Hi Konrad,
 
-> =C2=A0drivers/phy/phy-google-usb.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+On Thu, 5 Mar 2026 at 10:33, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+> On 3/4/26 6:10 PM, Geert Uytterhoeven wrote:
+> > Unlike older GIC variants, the GICv3 DT bindings do not support
+> > specifying a CPU mask in PPI interrupt specifiers.  Hence this patch
+> > series drop all such masks where they are still present.
+>
+> I'm having trouble finding where that's used on pre-v3 even.. does
+> that actually get processed on the older iterations?
 
-For Google:
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+I had noticed the same, and had asked maz on IRC.
+His answer:
+
+   "so far, we have never seen a GICv{1,2} system that didn't have all
+of its PPIs
+    connected to the same set of devices."
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
