@@ -1,91 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E589372EC5;
-	Thu,  5 Mar 2026 08:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7472A86352;
+	Thu,  5 Mar 2026 09:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772701025; cv=none; b=BYiqUl51Qhrij/XXA3YCP7Xg/jjmi4UdVRS+OWDSoSR1N2WPzTdfcYKK+bLY8xx/bFc+uNCIDWGfBaY0vEjFzmYt4EVJSYQa3N72TA7J8imLVf4n1PEjm8/pxzFjIAZdPtvUXsRGETQbdSMmIWw1Jv7LPb267pCmhF9uCyhjBnU=
+	t=1772701709; cv=none; b=PjZjQC2RJzf8U9i/t/3o92kS8ZWMja3zsPOmzGnbmZqlqoP+iobAtVGaO5jhL3Q7vLHc0y+mBDJsj2H1YFPtEOnHylFRBv2z/QwzKCCMCO1SUygQFpaOz6UGLZfqzQXA3esBzIfoWNt/amT4leFWkCXhNCSHej0bNw2uHgPA9I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772701025; c=relaxed/simple;
-	bh=iqU5pDubMQ06tWai2ZxGuPk0TJeUQI6pQzatbxUVvj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DG4gK/48cmV1luOGa5V2eYPgBEbO9irzjEuoqaDHVHcIcbgAyBnsb0HGEu7gt1pAcI0xEGglfaDRkphyPz5dJTo8Cekzch7ALPYi7h4bVeyEGPEos53gApZkiBY+6T/1sS1FRZax8Dq89D/zgtpwiL67ljFtmCFNuUdQLKoGeI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyrzZSbv; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyrzZSbv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A26C116C6;
-	Thu,  5 Mar 2026 08:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772701024;
-	bh=iqU5pDubMQ06tWai2ZxGuPk0TJeUQI6pQzatbxUVvj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qyrzZSbvsg9feohGDgAsR0KJ58/BzUhcMLcVU8xgvBmH6cNwppZmtnArAj7ZOPzIr
-	 7bMY6ogG/hlpvycGq4ZmIXc5mZci/DgBwfbxburCw6ehmJtXlm+liXPo5fzirOVvAX
-	 ZeHm8ZxBa/2/ZcruOO1Stu6qN4qZ7c89+l0OGeZTpv2qcjx6Zg7ASY+WJrgST6GwNq
-	 YOCxzy3+lJoN2Z2zuvGVUwow5dCe+PkWwhEfkakXAn16HN1ZxtYbYtcvfqqqj5f5Xh
-	 tWVE6Wz7HbhXZnMdQvEZS3+fL+WDlIITDD+0Zx/8YBf/DbvGqHNfY7GDK8M5yX2zYz
-	 Vcna2ylwW93Zg==
-Date: Thu, 5 Mar 2026 09:57:02 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	William Breathitt Gray <wbg@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/5] pwm: rz-mtu3: fix prescale check when enabling 2nd
- channel
-Message-ID: <aalEXwdvHtToZmRQ@monoceros>
-References: <20260130122353.2263273-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260130122353.2263273-2-cosmin-gabriel.tanislav.xa@renesas.com>
+	s=arc-20240116; t=1772701709; c=relaxed/simple;
+	bh=pSUkOoJ4/ALTuvO3W1IcZcBwHHAMJ8QP4EcXEfW2+5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fihgyx0d2VwheVXOBnI3Lb37g9Hod+TbXt1w+ZKNrXE++B/VY6EbHpZJuNKacL1n6Rbei1tcjRpqumrMkkBeszNLksNIzxXSG/pqMZUYEstYaZxjXI/Cc14PrTwrl5Ls5dUJa9V5j7//9TN5pGTlEjLzkDhSrXcicm8mG4r15qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE620C116C6;
+	Thu,  5 Mar 2026 09:08:27 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] mmc: renesas_sdhi_sys_dmac: Convert to DEFINE_RUNTIME_DEV_PM_OPS()
+Date: Thu,  5 Mar 2026 10:08:24 +0100
+Message-ID: <a72e532c7364cd64b5cb4fc63c94b2af6b22ad8b.1772701528.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v3ukleok2z5qariw"
-Content-Disposition: inline
-In-Reply-To: <20260130122353.2263273-2-cosmin-gabriel.tanislav.xa@renesas.com>
+Content-Transfer-Encoding: 8bit
 
+Convert the Renesas SDHI SD/SDIO controller driver using SYS-DMAC from
+an open-coded dev_pm_ops structure to DEFINE_RUNTIME_DEV_PM_OPS() and
+pm_ptr().  This simplifies the code, and reduces kernel size in case
+CONFIG_PM is disabled.
 
---v3ukleok2z5qariw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 1/5] pwm: rz-mtu3: fix prescale check when enabling 2nd
- channel
-MIME-Version: 1.0
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Hello Cosmin,
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 543ad1d0ed1cff95..9215600f03a2340e 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -456,19 +456,15 @@ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+ 				  of_device_get_match_data(&pdev->dev), NULL);
+ }
+ 
+-static const struct dev_pm_ops renesas_sdhi_sys_dmac_dev_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				pm_runtime_force_resume)
+-	SET_RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
+-			   tmio_mmc_host_runtime_resume,
+-			   NULL)
+-};
++static DEFINE_RUNTIME_DEV_PM_OPS(renesas_sdhi_sys_dmac_dev_pm_ops,
++				 tmio_mmc_host_runtime_suspend,
++				 tmio_mmc_host_runtime_resume, NULL);
+ 
+ static struct platform_driver renesas_sys_dmac_sdhi_driver = {
+ 	.driver		= {
+ 		.name	= "sh_mobile_sdhi",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+-		.pm	= &renesas_sdhi_sys_dmac_dev_pm_ops,
++		.pm	= pm_ptr(&renesas_sdhi_sys_dmac_dev_pm_ops),
+ 		.of_match_table = renesas_sdhi_sys_dmac_of_match,
+ 	},
+ 	.probe		= renesas_sdhi_sys_dmac_probe,
+-- 
+2.43.0
 
-On Fri, Jan 30, 2026 at 02:23:49PM +0200, Cosmin Tanislav wrote:
-> enable_count is only incremented after rz_mtu3_pwm_config() is called
-> for the current PWM channel, causing prescale to not be checked if one
-> PWM channel is enabled and we're enabling the second PWM channel of the
-> same HW channel.
-
-I don't understand the issue. If the second PWM channel is enabled
-while the first is only requested, changing the period is fine?!
-
-Can you please show a sequence of events that result in bad behaviour?
-
-Best regards
-Uwe
-
---v3ukleok2z5qariw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmmpRVwACgkQj4D7WH0S
-/k7Fbgf/bx6EVifYdpoGaB5fRe2misGSlByQK+enGUL2JWVq7IxvXGPY5X+OPJK7
-ZvJQBh8SRtcfbW6Wo+g6oinHWPKhOB4+1Z1+9IRxk4mGuHNzTKnCdu5FvuMJVBNN
-04+ciEat4zNXhTKuFT2vQYCqEdWqQWoXt2jAIA5sZMPbTSd+u+1mKMREzUw4YwuR
-tcpCZAcvmGsQ23HRigkQIKWYvvXAETkmMBE5RhN5vbv1OmQ1PrB0UvKDebdrBNuz
-OOYYo07zrd6upaiMVz4Bq6uqOwdfx6/Wf1sRcLV+P2Bm2GXomZaqYtL01hlYelTI
-3oVz3coTM2rYYjERqikyAGAJArrkZQ==
-=vcUS
------END PGP SIGNATURE-----
-
---v3ukleok2z5qariw--
