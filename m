@@ -1,44 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A414130EF92
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Mar 2026 22:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B493537FA
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Mar 2026 22:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772748040; cv=none; b=Ta5iV8BWw/tZ8saPMT3oVWp+9FvFXvVfcshjjgSYxhUR+t1KMpnFDp9AIXd4Td6FrRDExglf05R60FfBDnkT6JVorPnP8NsU410Tvba/lm+Z0dN85DdpGHHB67HtoZoxx7EOp8uDCIvjkO5WvM6FvmQVZ8WdueSZm+MMaQvm91o=
+	t=1772749189; cv=none; b=n6dqbeh07L/vyeC7j4uUecGNamNu3oxNSdbshu0csNuIu8SeQxzR4s3TquThfyfGR8UCud2v2k15GxvRyMcl+JigMeJi+17nMJKGCL+y7i2Ok3vUw+xYiUdGxnQHtV8CqvXlxdjy9FgawW/j7l/Qyfx05l55colUeL/XfX59Upg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772748040; c=relaxed/simple;
-	bh=NcyaCipCrb3L7ejX/E+xZZI3B4F+Kcp8rHWDP8HnOeU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KAqzrtHyBSa+/63Dutd+5aKcA/pDX1THkezKekmnjLjwyTX+SR6D8jCulBW/wFpQETT0mASMbug9TVZmZ82OGfXsq9psxf4jUP+YASC0HG/4GrgvVjDAvwec6TJv+ExfKgupybADmsbADdBtyhRL4vRMLeDp8r6DjOZPcyvIRMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WbmwTcln; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1772749189; c=relaxed/simple;
+	bh=ve27/23CkRPhQ3axcIh4mjZYu7U1Bp5w5heJng5xG24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RL7t8sZyLghG6A/3tiz85T8JfL/hO8iD5Nh3U3yBNCCF4InDwlCdUxGqKd8kmhjCNkN2X0u7lFgplFLv5A6luu/a7p4b5EYbt7+I3SZHl6sNOmRBxMhsm1uQOljjuou6A7ptkUYxLy1zON8u8IO00OGjVQxKf+uVNyZUtkfsHRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gcwjW17t; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WbmwTcln"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gcwjW17t"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=38fUtNK13Iz/fi
-	0tPvgUDoQHQMIMQNDReTs8VIdeB5s=; b=WbmwTcln677sVckY2ZW9/zKaG2dj4p
-	6tSyIINHtTI4+2lPaZrSjWyD0Vrgvf1eajH0EN12gblf4KE4v3LUqDiQEiA01dwV
-	glU3xxuWvnlma1xbLnZ5SsPTFGxXYz/FNbnZduB29NkRN8dMRmJbQHPIaoYTRqmW
-	WAqsLkzTOJw3KMmJJwCV03udQhX6t/hi90GI8efe9W+7IqiZxfceQ0L9oQETxZUI
-	E93KJlm+fYbA/fF3OOq6QppIBpux1aph+5nW8dlXVGDHEa31+K6X9h07vUuUY0At
-	hHS3izh+ZFWaPUuf+teyYAasqnVSCr6mO3Pi4r9SK+NzeGkzrGZILjaw==
-Received: (qmail 1349977 invoked from network); 5 Mar 2026 23:00:33 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Mar 2026 23:00:33 +0100
-X-UD-Smtp-Session: l3s3148p1@x57OEE5MHOMujns5
+	:mime-version:content-transfer-encoding; s=k1; bh=fCYk96rdRbd7XG
+	ma/c4T8oweeYvi9rvqv8vWDIk/zWo=; b=gcwjW17tDwG0klo4ixS7vpJs7nRUKC
+	42jwtvwoT4Z9xlsHTarr2O16W/J27/x+pbOI/b24MnG7oWjzEQsawnV/957rVTM6
+	FKuoLzl7JLkCaHRMJbpepCgP9vr2zuqJjneUM1O/2ygxh2y1ygtZ0mw/+Hd1ztTj
+	C8kPnF8W+NWswxoDhNSuRbUqQ1PVB7yk1dkNQVM5xiRlnd3r7XemFhQj2aZRQSSQ
+	1nAh7WLIHZ/nGaXdKmn0f9zVV5p21dgHA7NrBhu04mjglIvtbyoauuZJmPDZwsxu
+	HBCKeBHjT1ZjkvTdpTGPKLVseePGGxq1XxTwRuKYZPb05lYV+ZSe9cgw==
+Received: (qmail 1354238 invoked from network); 5 Mar 2026 23:19:45 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Mar 2026 23:19:45 +0100
+X-UD-Smtp-Session: l3s3148p1@MkNvVU5MKsAujns5
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org
-Subject: [PATCH v2] ARM: dts: renesas: r9a06g032-rzn1d400-db: add QSPI node including NOR flash
-Date: Thu,  5 Mar 2026 22:54:04 +0100
-Message-ID: <20260305220023.28257-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2] ARM: dts: renesas: r9a06g032-rzn1d400-db: use interrupt for Micrel PHYs
+Date: Thu,  5 Mar 2026 23:16:58 +0100
+Message-ID: <20260305221939.32643-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -48,119 +49,71 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the QSPI controller to access the connected SPI NOR flash. The
-NOR datasheet may suggest faster tuning parameters but those did not
-work on my board.
+Make use of the interrupts wired to the Micrel PHYs via the GPIO IRQ
+mux.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 ---
-
-Depends on "[v5,4/4] ARM: dts: r9a06g032: Describe the QSPI controller":
-https://patchwork.kernel.org/project/linux-renesas-soc/patch/20260205-schneider-6-19-rc1-qspi-v5-4-843632b3c674@bootlin.com/
-
 Changes since RFC v1:
-* dropped RFC status, QSPI driver updates are upstream now
-* use KiB and MiB
-* use reg address in node names
-* dropped "qspi0:" prefix from partition names
-* explicitly describe size in the "remaining" partition
+* rebased to 7.0-rc2
+* drop RFC status, irqmux is now upstream
+* added tag from Herve (Thanks!)
 
-Thanks, Geert, for all the suggestions!
-
-Works on my N1D board and patch passes 'dtbs_check'.
-
- .../dts/renesas/r9a06g032-rzn1d400-db.dts     | 78 +++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ .../dts/renesas/r9a06g032-rzn1d400-db.dts     | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
-index 4a72aa7663f2..80f78998500b 100644
+index 80f78998500b..bf456130878e 100644
 --- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
 +++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
-@@ -300,6 +300,84 @@ pins_mdio1: pins_mdio1 {
- 		pinmux = <RZN1_PINMUX(152, RZN1_FUNC_MDIO1_SWITCH)>,
- 			 <RZN1_PINMUX(153, RZN1_FUNC_MDIO1_SWITCH)>;
+@@ -185,6 +185,18 @@ fixed-link {
  	};
-+
-+	pins_qspi0: pins_qspi0 {
-+		pinmux = <RZN1_PINMUX(74, RZN1_FUNC_QSPI)>,
-+			 <RZN1_PINMUX(75, RZN1_FUNC_QSPI)>,
-+			 <RZN1_PINMUX(76, RZN1_FUNC_QSPI)>,
-+			 <RZN1_PINMUX(77, RZN1_FUNC_QSPI)>,
-+			 <RZN1_PINMUX(78, RZN1_FUNC_QSPI)>,
-+			 <RZN1_PINMUX(79, RZN1_FUNC_QSPI)>;
-+		bias-disable;
-+	};
-+};
-+
-+&qspi0 {
-+	pinctrl-0 = <&pins_qspi0>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	bootph-all;
-+
-+	flash@0 {
-+		reg = <0>;
-+		compatible = "jedec,spi-nor";
-+		spi-max-frequency = <62500000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
-+		cdns,read-delay = <1>;
-+		cdns,tshsl-ns = <200>;
-+		cdns,tsd2d-ns = <255>;
-+		cdns,tchsh-ns = <20>;
-+		cdns,tslch-ns = <20>;
-+		bootph-all;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				/* 64KiB */
-+				label = "spl";
-+				reg = <0x0000000 0x00010000>;
-+			};
-+			partition@10000 {
-+				/* 64KiB */
-+				label = "pkgt";
-+				reg = <0x0010000 0x00010000>;
-+			};
-+			partition@20000 {
-+				/* 512KiB */
-+				label = "u-boot";
-+				reg = <0x0020000 0x00080000>;
-+			};
-+			partition@a0000 {
-+				/* 64KiB */
-+				label = "env";
-+				reg = <0x00a0000 0x00010000>;
-+			};
-+			partition@b0000 {
-+				/* 128KiB */
-+				label = "dtb";
-+				reg = <0x00b0000 0x00020000>;
-+			};
-+			partition@d0000 {
-+				/* 1MiB */
-+				label = "cm3";
-+				reg = <0x00d0000 0x00100000>;
-+			};
-+			partition@1d0000 {
-+				/* 6MiB */
-+				label = "kernel";
-+				reg = <0x01d0000 0x00600000>;
-+			};
-+			partition@7d0000 {
-+				/* Remaining */
-+				label = "data";
-+				reg = <0x07d0000 0x1830000>;
-+			};
-+		};
-+	};
  };
  
- &rtc0 {
++&gpioirqmux {
++	interrupt-map = <89 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* pin 147: phy@4 */
++			<91 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>; /* pin 149: phy@5 */
++	status = "okay";
++};
++
++&gpio2 {
++	pinctrl-0 = <&pins_gpio2>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&pins_i2c2>;
+ 	pinctrl-names = "default";
+@@ -256,6 +268,13 @@ pins_cpld: pins-cpld {
+ 			 <RZN1_PINMUX(122, RZN1_FUNC_USB)>;
+ 	};
+ 
++	pins_gpio2: pins-gpio2 {
++		pinmux = <RZN1_PINMUX(147, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(149, RZN1_FUNC_GPIO)>;
++		drive-strength = <6>;
++		bias-disable;
++	};
++
+ 	pins_eth3: pins_eth3 {
+ 		pinmux = <RZN1_PINMUX(36, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+ 			 <RZN1_PINMUX(37, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+@@ -401,11 +420,13 @@ mdio {
+ 		switch0phy4: ethernet-phy@4 {
+ 			reg = <4>;
+ 			micrel,led-mode = <1>;
++			interrupts-extended = <&gpio2a 25 IRQ_TYPE_LEVEL_LOW>;
+ 		};
+ 
+ 		switch0phy5: ethernet-phy@5 {
+ 			reg = <5>;
+ 			micrel,led-mode = <1>;
++			interrupts-extended = <&gpio2a 27 IRQ_TYPE_LEVEL_LOW>;
+ 		};
+ 	};
+ };
 -- 
 2.47.3
 
