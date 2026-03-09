@@ -1,40 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F5366DB7
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Mar 2026 07:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A621368956
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Mar 2026 07:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773041945; cv=none; b=MXp7GJt1zAl4w0RUzwRzqEeg4pYuQGqokSUJIdwymCqfqOx0DQKBja+BhPyEA3BxDNNgpS9BY4YscNVBgdRWM1E3JyL495CqSnuMycOOKSYRYn7fQ4eLiPrZh14DIdONqdeeMb2Osj03u1k3M43qdYxbhiKxdt9jgWCUf+qvmSU=
+	t=1773042144; cv=none; b=GjLfAUOGlKjXPmMNCEmMBu1fW4hZTpFoEeOaljvgmYfrgHvMhCaILQIHXfi2JcecrhvcBO9y6Vjeslhh2P39qpmc42BcX25JCO0v+uVShWV3mFeQyqB8MSiphhR1iMxLIJr0hQP72/gY7qC1Po80KBZmRzLFKKjenUsf6+Yci2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773041945; c=relaxed/simple;
-	bh=yE3skMqFifN6pJ2zJQHVtLkHWCWQ0rUYIC2lLJHFEYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QC4a24cROyr+7q53FC1tftzed5gSM5aOFNwy3iAaeiR6cQse8HXcgRcIfAr81ElrOD7cRW7Qlfq7g9gBbRhAXhkeag9CyAMRAE5JgY94bt39Ykim6ksfK2rnBfXzo/fOhRYY5hd8AgEBWs+BMggl0l+dz0tqu4zVy57VKP+af54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SDJmmdfV; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1773042144; c=relaxed/simple;
+	bh=wLT+P5immLGtGSbMvGWE3RVKTFujaWsLE5OCjzAKMtw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tcgUERC5Qx2kmEnDQAUj5e/89IFzOLLw2SaQui20pVwG59jKr2IHzw/BDQNinM2rBxivQGUFviiJZynrIQ+c0hnWmbtTJHtuwxBSztaF27nOAEEmQB3dyI/sFyB6I4PzR135OIA0qMPCqb1CmOvLYWOHtmuuch8MlfYx5zags8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bYVfChgS; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SDJmmdfV"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bYVfChgS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=8Q8AJiAfw57l3F
-	wfFbMcdm+a74vtF4BX1pgikU9ldik=; b=SDJmmdfVSlGFnzPHR5MBd8JE5qh6xM
-	BIKsgvInTIqD31Unixn27VNcSJj3ymsyGwxNQDGdJnHmoy12lzWfOM+zhhXt1VT+
-	0S9oIUxlT6bbpFX45Vaf2O53At4nuovQiRJNK97IxcEHkql9F4c4WXRDHr8FL+5h
-	hCealkIqazEKnNEddJ12xKnQhdx3InyIi6qirY8SOmb2yFEMxmTvp1mftvjzxr2Q
-	UHTvQaQCc/Zi3yGZh2J6Hal9AJuHEVx/zp9UYxtvPTbFfTgWJGpIsIkA6gZK8tc0
-	L3z5qxxl1X7fAcNtaceGp0InA+aLcGmrELOlMGiIX9YALFkT35cUByiQ==
-Received: (qmail 2668293 invoked from network); 9 Mar 2026 08:39:01 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Mar 2026 08:39:01 +0100
-X-UD-Smtp-Session: l3s3148p1@CaIQf5JMhp4ujnvm
+	:mime-version:content-transfer-encoding; s=k1; bh=q/d+PubUJJgEQn
+	QuB6s6hs0XHW992roQ6Kpop01fimU=; b=bYVfChgSsYZZkfABSlbgLaAeIVlgRg
+	ThOO34tnNRD0XaJoWrBZpmsLlNWvpsnrijWABsml/Hr1bB3qkMJjimHJ3CH01+xo
+	KqVdInUu0TFeEcQuLTO5qhsUCn8n228U8Z1eHzl4K4ANAEHrDyhU95PzueWUcaOh
+	dVZGHfnz7Qziun11V376dXlteOH6Lhii0y3wpYJakIYDXH44oroumW1HJ/J0iF77
+	mFtXoqca9oYtSmWH8HPb6zn0YUpoiwBjg1+KHF7hXUrmmHxf7yL7NAIhJpoNeH9m
+	/Dhz5W1Z/tLxt557jtjOkD6emhSIQiWJSBq1DrMRCiBdoam6leGF53iQ==
+Received: (qmail 2669355 invoked from network); 9 Mar 2026 08:42:21 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Mar 2026 08:42:21 +0100
+X-UD-Smtp-Session: l3s3148p1@K4v7ipJM+LQujnvm
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Subject: [PATCH v4] mailbox: test: really ignore optional memory resources
-Date: Mon,  9 Mar 2026 08:37:50 +0100
-Message-ID: <20260309073856.2209-2-wsa+renesas@sang-engineering.com>
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFT] mailbox: exynos: drop superfluous mbox setting per channel
+Date: Mon,  9 Mar 2026 08:39:20 +0100
+Message-ID: <20260309074210.2279-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -44,85 +49,41 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Memory resources are optional but if the resource is empty
-devm_platform_get_and_ioremap_resource() prints an error nonetheless.
-Refactor the code to check the resources locally first and process them
-only if they are present. The -EBUSY error message of ioremap_resource()
-is still kept because it is correct. The comment which explains that a
-plain ioremap() is tried as a workaround is turned into a info message.
-So, a user will be informed about it, too.
+The core initializes the 'mbox' field exactly like this, so don't
+duplicate it in the driver.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 
-Changes since v3:
-* fixed __iomem annotations (Thanks, sparse + buildbots)
-* rebased to 7.0-rc2
+Only build-tested. Found because I made the same mistake in my
+to-be-upstreamed driver and then looked for that pattern. Testing would
+be still much appreciated!
 
- drivers/mailbox/mailbox-test.c | 37 +++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/mailbox/exynos-mailbox.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 3a28ab5c42e5..058c0fe4b9c2 100644
---- a/drivers/mailbox/mailbox-test.c
-+++ b/drivers/mailbox/mailbox-test.c
-@@ -355,11 +355,27 @@ mbox_test_request_channel(struct platform_device *pdev, const char *name)
- 	return channel;
- }
+diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+index 5f2d3b81c1db..d2355b128ba4 100644
+--- a/drivers/mailbox/exynos-mailbox.c
++++ b/drivers/mailbox/exynos-mailbox.c
+@@ -99,7 +99,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	struct mbox_controller *mbox;
+ 	struct mbox_chan *chans;
+ 	struct clk *pclk;
+-	int i;
  
-+static void __iomem *mbox_test_ioremap(struct platform_device *pdev, unsigned int res_num)
-+{
-+	struct resource *res;
-+	void __iomem *mmio;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, res_num);
-+	if (!res)
-+		return NULL;
-+
-+	mmio = devm_ioremap_resource(&pdev->dev, res);
-+	if (PTR_ERR(mmio) == -EBUSY) {
-+		dev_info(&pdev->dev, "trying workaround with plain ioremap\n");
-+		return devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	}
-+
-+	return IS_ERR(mmio) ? NULL : mmio;
-+}
-+
- static int mbox_test_probe(struct platform_device *pdev)
- {
- 	struct mbox_test_device *tdev;
--	struct resource *res;
--	resource_size_t size;
- 	int ret;
+ 	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
+ 	if (!exynos_mbox)
+@@ -129,9 +128,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	mbox->ops = &exynos_mbox_chan_ops;
+ 	mbox->of_xlate = exynos_mbox_of_xlate;
  
- 	tdev = devm_kzalloc(&pdev->dev, sizeof(*tdev), GFP_KERNEL);
-@@ -367,23 +383,12 @@ static int mbox_test_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+-	for (i = 0; i < EXYNOS_MBOX_CHAN_COUNT; i++)
+-		chans[i].mbox = mbox;
+-
+ 	exynos_mbox->mbox = mbox;
  
- 	/* It's okay for MMIO to be NULL */
--	tdev->tx_mmio = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
--	if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
--		/* if reserved area in SRAM, try just ioremap */
--		size = resource_size(res);
--		tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	} else if (IS_ERR(tdev->tx_mmio)) {
--		tdev->tx_mmio = NULL;
--	}
-+	tdev->tx_mmio = mbox_test_ioremap(pdev, 0);
- 
- 	/* If specified, second reg entry is Rx MMIO */
--	tdev->rx_mmio = devm_platform_get_and_ioremap_resource(pdev, 1, &res);
--	if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
--		size = resource_size(res);
--		tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	} else if (IS_ERR(tdev->rx_mmio)) {
-+	tdev->rx_mmio = mbox_test_ioremap(pdev, 1);
-+	if (!tdev->rx_mmio)
- 		tdev->rx_mmio = tdev->tx_mmio;
--	}
- 
- 	tdev->tx_channel = mbox_test_request_channel(pdev, "tx");
- 	tdev->rx_channel = mbox_test_request_channel(pdev, "rx");
+ 	platform_set_drvdata(pdev, exynos_mbox);
 -- 
 2.47.3
 
