@@ -1,104 +1,110 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5F3BF68A;
-	Wed, 11 Mar 2026 10:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7223CF679
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 10:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773224485; cv=none; b=VwqyFVQ9XryfpzGyWMyfapbWQciC04IrTnzKbWBQ/aw3y57T3qdDyMGwMowTXlIPqGvICG2TpuHnvv70hDjsrFgbLxOIgRSuV0GHG5cCY+WvOcxS18msu1JAn3eR0K8CI/cUb84DYqXproNEpvcWZJedo9Q/Yukg6kA83TKBLX4=
+	t=1773225528; cv=none; b=bUmJ3AwYyQ1Zb8PwPWvCdkMQFjdhDNCVBWvVXeSl17/rX7VPpBe2prkj8Nt64WqAwI7fzj8HEiwkP58EKhlXYoD+Hlr4UnZTsxiAe/+mXNnPXWIPfqoKIUn3g02nN+llTC0DcZTiktT06KV7wHD4zEFEcVYKj4uSD6CIkDE4rIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773224485; c=relaxed/simple;
-	bh=NYEzxXwCjjB9jXQZwWbzlfrhqRkrR5nBQe83EMGp9ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pI/VuRt7niZThEw4cJliSYKPfS0YcCCWlmqARZ2E4zhHjP69QLxiMh+2DpwSsSgKekItXeT8bOK5ud7kTbf4L2o1LmkINHYE92G8o+zMVb5Mg6GCOq3LzBnZ+VlAWxNy2HMra/AZ2/i8VAwWLvX8seJVHyqbsBB16fXyAp00VX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HSNjnK8F; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1773225528; c=relaxed/simple;
+	bh=i7nUMXQbtZArZGnsatx9qQeykbtPVUo/SqQprsinRno=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tuMYgWekzNE6esVGzjbyDe2AI1hKzwvLqsl6aVdzS/PUqDNuwOB3nlrR3wfmLqKTHrFEg3yRrQ/RnqC1Lp72WyiDHi5biBsPnyhg4oHYHTStL1Nk+lCsCAwSCTdjuPEKzZGLHI02BGaGixBrUJ+r29Hos+qXi2UpVoIXWYv9dlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8E+qNcz; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HSNjnK8F"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 941031A2CD1;
-	Wed, 11 Mar 2026 10:21:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6434760004;
-	Wed, 11 Mar 2026 10:21:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DB43510369CA2;
-	Wed, 11 Mar 2026 11:21:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773224474; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=xc3f0j/XZyXDLXf8euWdBo9aYc/Z1fnksBlM+sWhSNo=;
-	b=HSNjnK8Fqi6KDQimKyif2DCt8Ml4ODd2Ae5YBZn/WMno6Hymu3jP+ZoewoqkS4OlASSJMN
-	joffF+yugKol6KHMmOV7vAzWwEb0g2qlpkPMrAhbDp8frIMLHtDQnTgtYnHhhaTlpEYzJV
-	wEp8SpYh4sx5NZ8Kln2BKaC0jS7FNGNEqYcOWFflPG2fYyyHkSxis/5ka3pE9BoHTAZuzL
-	vE6AY+hjNDPLtDnIhVeHPT6xeBfB0+yBrmoBkABd3CqjEcxHXk/+A4PZQG15nZ0VG4ss8A
-	pyXV1I0N66KNJzGIJ62ByB23GNQ4dC3O7LfbPnyz/E4UEe7pNKwZM/Yh74b8gg==
-Date: Wed, 11 Mar 2026 11:21:09 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm
- <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] ARM: dts: r9a06g032: Add #address-cells in the GIC node
-Message-ID: <20260311112109.061a1e4b@bootlin.com>
-In-Reply-To: <CAMuHMdX01rwBMGn1FLGm-fHA0w-7+BCskMiucgxcui+PTVF7rA@mail.gmail.com>
-References: <20260303102029.147359-1-herve.codina@bootlin.com>
-	<abEotS0ZbGwqEmO5@ninjato>
-	<CAMuHMdX01rwBMGn1FLGm-fHA0w-7+BCskMiucgxcui+PTVF7rA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8E+qNcz"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-82989744ee0so5580087b3a.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 03:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773225527; x=1773830327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=trxODt72+ZLmM73SSgKB2PrCW34S11oS3WsSFeUrg74=;
+        b=J8E+qNczqifmPq/ZFjhO3BYc1oRJN/PB3QhnQEsTSjTWa59nnf3Gyc27YH2UpdA3cd
+         Mv0+LI//wgiqAEOLdjLa5V8ncUgKiweo5oQWMHFkaMhfCD3Nsl7g6a419u6bN1U8rJsR
+         hnjnmd+m8tabfPNvYR2qj3f4ge2CFBKKieX70VZq/tBZWxLSs+eGNUKCVOs5HPZ7vB1w
+         ygmKehbSGLP0jLLRlnUw6AzOpq81DpVAyOLZpC7Yz4xuo01+WNYvZ85bTIqnrIRnE3kb
+         Wdk9JbIWB41dUzfA0SkorSZPljMyUwAjyYLxSHt45uIoIMQArNAI3NGVcrlHsqbVggsQ
+         HbrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773225527; x=1773830327;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=trxODt72+ZLmM73SSgKB2PrCW34S11oS3WsSFeUrg74=;
+        b=L8jKPu0SDwzZQ+KSUVOqKZHB2z/Wz6PpBvCPHAZumAxkQzIYLNe98p6TBtHdvA9slF
+         9tDBHmki2lfFSZBsp+Pt9xrmhNTAfDB+2lfIs/ElZAEVXn+7+HwZ1T+HhfrDJBsCI3hq
+         psZwxfj9T33yM3+zbM8l6Z2BN8ke2yTllHHIcabhTgzkgko+ofFTbNphQnkikSB0NhUD
+         sg9+Zn4WPmKnkdPpJHgHzLsXHXtsc8luhPXTez7SDIt4cWerW08W4Z0uJQ0tTfR0UoHo
+         +LU1ph0kndPGjWTyqFIRKqCC5dZnTjfWE+9CC64PHcfT6TXaMmlYrqHnMLFEIyTohn8J
+         iSSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzqLskK5bU5+AIIoNBJefEH+1UFR7xshIsmiaCZlHGHBkzQHllGWrazj8FuC4AmfXuQZFTYnkqXZ5vUbLD05+lkw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN74fy7nFbbs4C3sHhloHWthmkyiLXkwCey4hLbB7H9BPVzp5P
+	dTQWPoDjAK5zyLxoiNzoB01cujmlu+RZTG5j0KuosOxmQhxIvolmsb+j
+X-Gm-Gg: ATEYQzwRTNWMnpbEgl3VlXnQ8ZiUfQFD3iKXkS8iX2mX89lHBh2F0J0r0ZHjbF55Nap
+	HRqYEBYey+2ZTjW25hcjYCEeH9sYFnmZzBr0cjaSZSx2mQ15M5Scx65p2K6RjSKLK8R6s9lu2IF
+	V+EsH85RCLTmijeGw/e5Vilh+9BkSh5xDw1RRp+iG1Q1vtEIzoPQoAxic5EO7jeJ0a3ID88dfzL
+	t39Yc/jcK8aQoDzblz+lqTi7pE8A0kL8h/kabQT1UuNIXKDN3QvNNamOHDFmLy9pz/CrUoDYlja
+	e+ku2a4F8rcNIkmrRcurqCzNGwKf3NdaHwxUup0gB60bLemFeEc4MAjDS1wH6mXiJ6C3Fo+J/zC
+	Bl+u5GVYDjTiju95stMvwCbtZ98dbbJuUP75PdynY48vHhHnSEtxpH0Ot4vdIry1Ot+G/7jao9w
+	VSUkqbPtUnFnz2nC8wpcdzYLSpIFsXY/Qqi+/Xf3m5ryG+NzJABf+WCfOq5Ab5HqNC2lrfE016n
+	dBkFA==
+X-Received: by 2002:a05:6a00:189d:b0:81f:38f4:d774 with SMTP id d2e1a72fcca58-829f6ee156dmr2271399b3a.27.1773225526679;
+        Wed, 11 Mar 2026 03:38:46 -0700 (PDT)
+Received: from localhost.localdomain ([14.160.25.72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-829f6f1e374sm1785635b3a.44.2026.03.11.03.38.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 11 Mar 2026 03:38:46 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: wsa+renesas@sang-engineering.com
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	geert+renesas@glider.be,
+	hechtb@gmail.com,
+	javier.carrasco@wolfvision.net,
+	jeff@labundy.com,
+	krzk+dt@kernel.org,
+	krzk@kernel.org,
+	krzysztof.kozlowski@oss.qualcomm.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com,
+	phucduc.bui@gmail.com,
+	robh@kernel.org
+Subject: Re: [PATCH v4 0/2] Input: st1232 - add system wakeup support
+Date: Wed, 11 Mar 2026 17:38:38 +0700
+Message-Id: <20260311103838.5541-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+In-Reply-To: <abCkulmW8XDXkXiT@shikoro>
+References: <abCkulmW8XDXkXiT@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Geert,
+Hi,
 
-On Wed, 11 Mar 2026 09:39:40 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-
-> Hi Wolfram,
+> > Demo video showing wakeup from suspend:
+> > https://youtu.be/POJhbguiA7A
 > 
-> On Wed, 11 Mar 2026 at 09:32, Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > On Tue, Mar 03, 2026 at 11:20:29AM +0100, Herve Codina (Schneider Electric) wrote:  
-> > > When checking dts involving the r9a06g032.dtsi file, the following kind
-> > > of warnings are reported:
-> > >    Missing property '#address-cells' in node xxx, using 0 as fallback
-> > >
-> > > Indeed, #address-cells is not present in the GIC interrupt controller
-> > > node.
-> > >
-> > > Fix it adding the missing property.
-> > >
-> > > No functional change.
-> > >
-> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>  
-> >
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > I like Krzysztof's explanation "Value '0' is correct because GIC
-> > interrupt controller does not have children." Maybe it can be added to
-> > the commit message?  
+> Nice video! You really put some effort here, kudos.
 > 
-> Some of the examples in the GIC DT bindings, do?
-> But #address-cells is not a required property in the GIC DT bindings,
-> so why should it be added at all?
+> Really awesome seeing Linux 7 on this old platform :)
 > 
-> BTW, I never understood why an interrupt-controller should have
-> #address-cells (according to dtc)?
+> Happy hacking,
 
-I think this comes from the interrupt-map definition:
-  https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#interrupt-map
+Thanks for the kind words and encouragement.
+I'll keep learning from the feedback here and 
+continue hacking on it.
 
 Best regards,
-Hervé
+Phuc
