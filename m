@@ -1,104 +1,134 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85529258EC2
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 13:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6847F2D3EC1;
+	Wed, 11 Mar 2026 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773236449; cv=none; b=g5sIWE1e5+BDGC8AmN4X7VAwS7YU3xCY8V8M3yosLP7C5ZJzJ3SHtgAy9Zd0nWTYmMVb6+LK2WFUOBMf4l1IwF3Vngvgf+ff6EHUr433lmAiYtVo60EKPqVMXOjcTWbIxQKj6HBabwo9egC/fXXJEsIneqbemfct9MM5Msxs4pU=
+	t=1773237241; cv=none; b=rUNk0OOWL7ITLlwL08U42wD4Lqli5NTmo6OclA+2jGFjxK2wcrr4ov+429Pxew8+Tp4SClxXfX2u/p4qbZsZ/dYldD94HUzLOz00PHyE50oETTUT4qksVGL7rq0jmunp98jYkImG/125p3e5fZTBwTMvtDhFh+UU9G/xUTVJPiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773236449; c=relaxed/simple;
-	bh=5xYUudxznhB/9gI0iYC0XCpk27j9+cjg1Iajg5XCHoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rX1+v1/1Sld2qyupIIT3yMdXfgFCvJJ/wQs2pIrQwBk2XndN6CBj0dX4d8kFjw966LrvRCNe69c4mpBZwh197bh3cTy8LL5hLWdgao8QwgRqrV8J6MX1pyKZKXc2StaIoz4NcgJN12p0SnsSGVc05L5xtK92A/C4xilMzpcmRsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5ffe6887e29so2809797137.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 06:40:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773236446; x=1773841246;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cArsbpNTjSz4s4xSJeS/zGPEDFrbSvYY3oJhygDvULo=;
-        b=OyknqZGjACcdiiiyovkmvsigFBXuDX4MtkMKF+5f5NN+92w2q9V8v89+K55HvEK01j
-         D8LULidawLnH8+Pfm7rAyRWf9HyC0ZABSKjzIWiPhpToRRv7KswZECoNYzWPsd2i64zq
-         Wm+IEUZvHetFbKEo3lb0VvqBUU2zOSutULE40DRt4FofRgkBJHZTI98GYwT5iNbtVUTu
-         NTqfgvMlyZ6QUJoBpE4U2OkbCoIt/Ihfv+qjLY/01E/c8K0R75MV+cCEhfbkgie7+UjJ
-         AvHwnwJ/d8+Ilk5joRdT4nKJCtLQHB8TMPdJWGDjkUj6QRH5CXKj6lPPSnA9IYwA4zaH
-         3lGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkwI8K/0p02aiLh9+ZXm6FJFeRi8t6xvLXgyi7o5vSBSXBlGkcDuvDd4W2bo0Y6UUAT0wDbPh/NmVWIqAR6usDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrIgGpAppRfF8+4Bk6D7+d5Ngf+lcs+bPA4XanUCUDgbTo+Hw3
-	pmdgzscedQNcOvBuq4z0/GmMX+suaMnE1isBFZ1sb+MD42VxYNWyif9B2WiwfgSJ
-X-Gm-Gg: ATEYQzwDc2ah9+wS6/xY9S4PMCP33RaNUFYo4KLH8pOXBNAXZBNZMytvTmZ7PGWACts
-	HYSPmrDaBi6qgahsnrHdI4kgK0wn3pXXHO+9SoOPE3W+cq+ESzSWfBh7kicw77smB3PsQbt2gLM
-	DmGNrXRqHlrUue2ZUheQiv7EefxjXSLpX1Ch3p/O9dQKidIyWZh38g5idyBfaWCj0qNQGe6a/oa
-	/A5men+S8YjX5xIBY25rCL6CLCMk7uhwJ02Dpx5opL31xsEnGA2JovZZFXowqs/hsRiUWGuSEHe
-	PLI4JS3d5gfQeMJfZFfESN8Bgb+HS2+GQV7Ns6wPl3kWDaWonks7GemzuCEy8mt358Wi28TURBr
-	G4mNHCp3/jiAOWZ6XkLdCKwdwdoUGtNYtmzglBGxf2m+bzMjbiZMIqpMFcFQRIwrVGPS7P1yEJ7
-	CxzXRvvSYxdai31lVJitqLyPZwCAjTar9Op5xEwIsu2RNet4U5tdIBz0Vi9hwHCwKVlxTVmL4=
-X-Received: by 2002:a05:6102:d86:b0:5fe:f14:e701 with SMTP id ada2fe7eead31-601def4d596mr1003386137.24.1773236446424;
-        Wed, 11 Mar 2026 06:40:46 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-94ecf9f94e4sm589775241.0.2026.03.11.06.40.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 06:40:45 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5ffabb1dfbaso4381867137.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 06:40:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2KFNCYsv43xPUvO+1DIUFbmgTwVZVb5Dr13Us3JG9snyEGBa3Pi89t9y511TDTV4Ul82IKl1dIC53ayGoJD6dzQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:162c:b0:5f5:2e63:f574 with SMTP id
- ada2fe7eead31-601defb72a6mr1104622137.29.1773236445414; Wed, 11 Mar 2026
- 06:40:45 -0700 (PDT)
+	s=arc-20240116; t=1773237241; c=relaxed/simple;
+	bh=pdZyak81e8CG8vI3htglWPevuPv2rJAraMngVPQe9+o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=RwsHs8UteEojojSNrfeSO+UT8m1KfEQM6aNcmmwtph1uqTL6RwIuMDOOxAL2AopyYUG645u+rNh3UNunxzBcUN4qWNbhO1aNvHfYYXl7REnAudoKCZ0yucBnE4bvYsCfgDMbLAxrTABlcXqxDkBMkotS5L7Kud7IQQV9ua8dDgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WNQaMzsB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WNQaMzsB"
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6DF5F5A5;
+	Wed, 11 Mar 2026 14:52:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773237163;
+	bh=pdZyak81e8CG8vI3htglWPevuPv2rJAraMngVPQe9+o=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=WNQaMzsBRe3ziVVHxOSjzaEy6xqfuug9C+Y18T5I3yu0LXQVT/9He93EUMlTh6lDY
+	 LK2JppEB45fkzxvNMbpb7Aj+i12RbuFmJ/HMvN6btJKP4HdtMq+I6RuNRaYv2Zh1Lc
+	 bWl7hrSHmq0+/3mAEXgRbQEMsd9qmT799rSm6c9w=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Date: Wed, 11 Mar 2026 15:53:14 +0200
+Subject: [PATCH v5 01/10] media: rcar-vin: Link VINs on Gen3 to a single
+ channel on each CSI-2
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260205-schneider-6-19-rc1-qspi-v5-0-843632b3c674@bootlin.com> <20260205-schneider-6-19-rc1-qspi-v5-4-843632b3c674@bootlin.com>
-In-Reply-To: <20260205-schneider-6-19-rc1-qspi-v5-4-843632b3c674@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Mar 2026 14:40:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVcwnYyN56Ktee0wR=oT3oMoZ=5KD=5RF4Bq2ohueJNiQ@mail.gmail.com>
-X-Gm-Features: AaiRm509ZGDpwutdpDixUlMdHUAqZXZJALvV2NTJJn7lmkLWEJoaky0AqQwCh4s
-Message-ID: <CAMuHMdVcwnYyN56Ktee0wR=oT3oMoZ=5KD=5RF4Bq2ohueJNiQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] ARM: dts: r9a06g032: Describe the QSPI controller
-To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Vaishnav Achath <vaishnav.a@ti.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Santhosh Kumar K <s-k6@ti.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Pascal Eberhard <pascal.eberhard@se.com>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260311-rcar-streams-v5-1-3e6c957d7567@ideasonboard.com>
+References: <20260311-rcar-streams-v5-0-3e6c957d7567@ideasonboard.com>
+In-Reply-To: <20260311-rcar-streams-v5-0-3e6c957d7567@ideasonboard.com>
+To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2436;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=pdZyak81e8CG8vI3htglWPevuPv2rJAraMngVPQe9+o=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBpsXPpr68/L8Pm5FCMdmSav/Ta7zCoBpb+GNmNd
+ DLF23yR8NaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCabFz6QAKCRD6PaqMvJYe
+ 9UjtD/96nP3CDORCHG/zsL1B1M2h/x1s0EZARDA1JUe16r9BWwNogd0nx4Boi8OofqTGd9vPlUi
+ jZt3f7IPg70R8O+8QqZxijNC7BX7Eyf9WdPTs1KPvJKd3TMOBZcIj3X59lOQxstI+7UbD2N/ynu
+ HibU+qHR/cEaL6Seq4HqHQonu3uacIZhWvHYKdp2WgIKzEAgbhMnvA8iOPtb9QF7mGL1KKR1Wmm
+ Tb37lAnCWc3J8O/PeRMDjiLu0YhaxAz1QcDhyh62T69j/2LNi0+bUtrtllQBphDiRBI/2cOXoQu
+ VHSQdfu4LTyPz2bXj/P97iafwfm/G7fEnXcN4LIVHBcW4kUcdBS+nCppEDX0OBkdoBe8IVa2LkN
+ r8otridGWDl3Z7ApgzJt+fUDDO63YhpFBANDwwLxDqxp0XdSyH1T6UaHPMwA+tPA2/Ng7UwZXj/
+ ja3aRV0P1MQsfooqgxUV3kBmWz+SJQyPN1+hKNKeOyyNStX6nzN2OzhvUG/6qhtHCBOUySfrWJY
+ qlUFhKPktUewgK0byyE581z84XplWOpKw6eNHNEWu8XZnCSQ7upskpuuNV/SedAWDRwlu6Wbl8r
+ 1quAazcZ7Rw+AKOmKYgH68BJnwKAHus0yP2T4rQrnSH1X0Uyjd7GS5m15/t18vuFDZc9tqOCM7R
+ r0pKkSkUu+Rl7fg==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Thu, 5 Feb 2026 at 19:10, Miquel Raynal (Schneider Electric)
-<miquel.raynal@bootlin.com> wrote:
-> Add a node describing the QSPI controller.
-> There are 2 clocks feeding this controller:
-> - one for the reference clock
-> - one that feeds both the ahb and the apb interfaces
-> As the binding expect either the ref clock, or all three (ref, ahb and
-> apb) clocks, it makes sense to provide the same clock twice.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+The stream routing will be fully configurable when we add full streams
+support to the rcar pipeline. Thus there is no need for the user to be
+able to link VINs to different CSI-2 channels. In fact, allowing e.g.
+VIN0 to be connected to CSI-2 channel 3 would be wrong, as the hardware
+doesn't allow that.
 
-Thanks, will queue in renesas-devel for v7.1.
+Change rvin_csi2_create_link() so that it creates media links only
+between matching VINs and CSI-2 channels (VIN0 - channel 0, VIN1 -
+channel 1, etc.).
 
-Gr{oetje,eeting}s,
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+ .../media/platform/renesas/rcar-vin/rcar-core.c    | 27 ++++++++++++----------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-                        Geert
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-core.c b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+index c8d564aa1eba..2fcea715101c 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+@@ -673,23 +673,26 @@ static int rvin_csi2_create_link(struct rvin_group *group, unsigned int id,
+ 	struct media_entity *source = &group->remotes[route->csi].subdev->entity;
+ 	struct media_entity *sink = &group->vin[id]->vdev.entity;
+ 	struct media_pad *sink_pad = &sink->pads[0];
++	struct media_pad *source_pad;
++	unsigned int source_idx;
+ 	unsigned int channel;
+-	int ret;
+ 
+-	for (channel = 0; channel < 4; channel++) {
+-		unsigned int source_idx = rvin_group_csi_channel_to_pad(channel);
+-		struct media_pad *source_pad = &source->pads[source_idx];
++	/*
++	 * The channels from CSI-2 blocks and the VIN groups have a set of
++	 * hardcoded routing options to choose from. We only support the routing
++	 * where all VINs in a group are connected to the same CSI-2 block,
++	 * and the Nth VIN in the group is connected to the Nth CSI-2 channel.
++	 */
+ 
+-		/* Skip if link already exists. */
+-		if (media_entity_find_link(source_pad, sink_pad))
+-			continue;
++	channel = id % 4;
++	source_idx = rvin_group_csi_channel_to_pad(channel);
++	source_pad = &source->pads[source_idx];
+ 
+-		ret = media_create_pad_link(source, source_idx, sink, 0, 0);
+-		if (ret)
+-			return ret;
+-	}
++	/* Skip if link already exists. */
++	if (media_entity_find_link(source_pad, sink_pad))
++		return 0;
+ 
+-	return 0;
++	return media_create_pad_link(source, source_idx, sink, 0, 0);
+ }
+ 
+ static int rvin_parallel_setup_links(struct rvin_group *group)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
