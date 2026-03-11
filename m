@@ -1,128 +1,98 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9873C1961;
-	Wed, 11 Mar 2026 09:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135C03BB9FD;
+	Wed, 11 Mar 2026 09:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773220084; cv=none; b=VlTthohuRQWBKseNl4YDJL2BydWJJ/L9BG4xVzr8qlyDZI2wI02zvbyoKnEUR82s6vlibFIcQdjvwA7YjrKsXdscX2c4wQHAz6/hkB76/plFe5dcXnP2GwfqRO/XQfOW7PymDNIlsG3wWbbosNCNL4Wa4xMQwleL+i50j+vMFuA=
+	t=1773220555; cv=none; b=IO3booPEzpLbcFAZyFCagEFCys8nzTDZYXvtYcpNSu9T7zzfR9NpdAmG0PTmnZJmDx4ncTqj91orYiizR82FliRZfNvwNc1dKvmMwed+fkFCIYj3hJBEONmsyJHL0RwEsoqBHr4PASIStGswRWZcfl4CNO6gkAl2ZOePXdts6+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773220084; c=relaxed/simple;
-	bh=l0NY2xtEHPjp+H8rgkKWL4QitRlo/A7rCDhYtuhmGTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WdiyNSyX5sTXYMiTdLTCa9Z/yATQDuNroiaXekyyz8LxmJ+evNG0J0m2dh9B7zDK77lHBlThb4QCs2ZF6WqcCdXQeB153cFj4XHrxIrMskaFqg6ehbuhSyCM1wTZ3yysJs9PM/McwBcoysbh/Mld8ZQKxrSAtbkdOnZYJKnn2IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JUuREP4d; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1773220555; c=relaxed/simple;
+	bh=m7nGXQYeAA0lsTx32pqb/ddeD4x4/BSl2e6adiOao84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtBuVCrWIoCaNo9C4iTls+PjXm9KEA6cEo9YRq3bGhcxsMrfk9BzA2U/NW+u5oXN5GuBLd9UeozVl9uTehRAdt7Xe0qjbVxFbLNTiJV5+O8YB3mTnWMS9/+vtId3a9eQ6yOCY3C9pZZGntYzZ9m/EadroFBTw4g7jnLWqGsPlFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aGBRY5XQ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JUuREP4d"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BFB9C82A;
-	Wed, 11 Mar 2026 10:06:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1773220006;
-	bh=l0NY2xtEHPjp+H8rgkKWL4QitRlo/A7rCDhYtuhmGTQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JUuREP4dhkWLg17qHmtnbH4rCzX8XTLz8Y9pQ2ns9vqz883JnLoO4h8B0e/FlT7bt
-	 8hCalz/9IzlDkJfsGiRVmiQCUJeikcTkLyEEfOtwhTu8RRsItakV88OAOqSbSpDL17
-	 pp3+xygtz+GOx8wcp5wq5zF3dJ+aO8ewgGPpWeEg=
-Message-ID: <17915103-09f7-40a3-8330-dc4ecb6c3bd6@ideasonboard.com>
-Date: Wed, 11 Mar 2026 11:07:50 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aGBRY5XQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773220548; x=1804756548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m7nGXQYeAA0lsTx32pqb/ddeD4x4/BSl2e6adiOao84=;
+  b=aGBRY5XQnJt9MJMUSl5W2aodQcVi6MC0Zh/oeKLIBbUxn4php0Mn+NYZ
+   QhC/9+R0X37CLedoEwwF18Oplaf3PIJuy7WBiMLcuP/YexKarZ97K3NWv
+   3mDqigWWGBTeDCT5sF7gui/MVDSxokIdVtXntmo/P1Dn4btGVRyCpjlgF
+   j/aillEtX2/Rtjqh1h7nF+R47OPw41xeFV37JejndEUM8b5i8HF3vr1aV
+   1oute4A5aU1+vZI/ASvXiFclUpDZOMe1xJY5CiqFZETRHRLyKGmrw7jl8
+   lm3azNZo/75TSddigrZ1E4pQvDsP7NUsbyz8B6UbVfP/1V51WXs9CYTRJ
+   Q==;
+X-CSE-ConnectionGUID: SwISaHbXQPeGvm7BwVxoDw==
+X-CSE-MsgGUID: +0Tblh5dRX63yoVUNK1zkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="96898238"
+X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
+   d="scan'208";a="96898238"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 02:15:47 -0700
+X-CSE-ConnectionGUID: 2mnOGTD5TUeKm6rTvPhl9A==
+X-CSE-MsgGUID: nsoV8RloQG6IFQnDG3LzmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
+   d="scan'208";a="243411933"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.171])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 02:15:45 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8B00F121D1C;
+	Wed, 11 Mar 2026 11:17:40 +0200 (EET)
+Date: Wed, 11 Mar 2026 11:17:40 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH] media: renesas: vsp1: Fix NULL pointer deref on module
+ unload
+Message-ID: <abEzNDElf7b2JVaQ@kekkonen.localdomain>
+References: <20260115-rcar-vsp-crash-fix-v1-1-247bd51767fd@ideasonboard.com>
+ <0a8c0467-04f7-4b8f-8988-cb5665ca1d68@ideasonboard.com>
+ <abEwF39-dSVPWVAb@zed>
+ <17915103-09f7-40a3-8330-dc4ecb6c3bd6@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: renesas: vsp1: Fix NULL pointer deref on module
- unload
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-References: <20260115-rcar-vsp-crash-fix-v1-1-247bd51767fd@ideasonboard.com>
- <0a8c0467-04f7-4b8f-8988-cb5665ca1d68@ideasonboard.com>
- <abEwF39-dSVPWVAb@zed>
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Language: en-US
-In-Reply-To: <abEwF39-dSVPWVAb@zed>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17915103-09f7-40a3-8330-dc4ecb6c3bd6@ideasonboard.com>
 
-Hi,
-
-On 11/03/2026 11:06, Jacopo Mondi wrote:
-> Hi Tomi
+On Wed, Mar 11, 2026 at 11:07:50AM +0200, Tomi Valkeinen wrote:
+> Hi,
 > 
->    I intend to send out soon a series for other Renesas components
-> which shouldn't be controversial. If I can get tags quickly I intend
-> to send a pull request for v7.0 next week.
+> On 11/03/2026 11:06, Jacopo Mondi wrote:
+> > Hi Tomi
+> > 
+> >    I intend to send out soon a series for other Renesas components
+> > which shouldn't be controversial. If I can get tags quickly I intend
+> > to send a pull request for v7.0 next week.
+> > 
+> > I can include this patch and your other one which I don't see collected yet:
+> > [PATCH] media: renesas: vin: Fix RAW8 (again)
+> > 
+> > unless someone else intends to handle it.
 > 
-> I can include this patch and your other one which I don't see collected yet:
-> [PATCH] media: renesas: vin: Fix RAW8 (again)
-> 
-> unless someone else intends to handle it.
+> Sounds fine to me.
 
-Sounds fine to me.
+Both are already in my tree.
 
- Tomi
-
-> 
-> On Wed, Mar 11, 2026 at 08:15:43AM +0200, Tomi Valkeinen wrote:
->> Hi,
->>
->> Ping. Would be good to have this fix merged.
->>
->>  Tomi
->>
->> On 15/01/2026 11:22, Tomi Valkeinen wrote:
->>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>
->>> When unloading the module on gen 4, we hit a NULL pointer dereference.
->>> This is caused by the cleanup code calling vsp1_drm_cleanup() where it
->>> should be calling vsp1_vspx_cleanup().
->>>
->>> Fix this by checking the IP version and calling the drm or vspx function
->>> accordingly, the same way as the init code does.
->>>
->>> Fixes: d06c1a9f348d ("media: vsp1: Add VSPX support")
->>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>> ---
->>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->>> ---
->>>  drivers/media/platform/renesas/vsp1/vsp1_drv.c | 8 ++++++--
->>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->>> index 6c64657fc4f3..30df9b36642d 100644
->>> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->>> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->>> @@ -240,8 +240,12 @@ static void vsp1_destroy_entities(struct vsp1_device *vsp1)
->>>  		media_device_unregister(&vsp1->media_dev);
->>>  	media_device_cleanup(&vsp1->media_dev);
->>>
->>> -	if (!vsp1->info->uapi)
->>> -		vsp1_drm_cleanup(vsp1);
->>> +	if (!vsp1->info->uapi) {
->>> +		if (vsp1->info->version == VI6_IP_VERSION_MODEL_VSPX_GEN4)
->>> +			vsp1_vspx_cleanup(vsp1);
->>> +		else
->>> +			vsp1_drm_cleanup(vsp1);
->>> +	}
->>>  }
->>>
->>>  static int vsp1_create_entities(struct vsp1_device *vsp1)
->>>
->>> ---
->>> base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
->>> change-id: 20260115-rcar-vsp-crash-fix-8d4871f0f39e
->>>
->>> Best regards,
->>
-
+-- 
+Sakari Ailus
