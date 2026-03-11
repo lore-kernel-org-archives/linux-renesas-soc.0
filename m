@@ -1,46 +1,48 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C91248F64
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 15:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E193DF011
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Mar 2026 15:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773242172; cv=none; b=Gibgtlsjmob8AwNWMfQS4fjzmu69nnNGAL5+usjjOdnMP2B6yvUZ6ULtaqjdGogJuOi9KR23nRfDxFPMnyQwusmORt8VhRzBsHyRmekrz6PMC1gJU5mhoiVZUPZy9LZm5CZTIb3bl5jkvZmoUO/fce3yW3B+6am+3xfwl0DamS8=
+	t=1773242613; cv=none; b=ti7nYzYteVZokPoDOuInvnHFc5XOejMswETnUW4mbwkpp0qGdjqisW1kRAkDnYdGLevP3Reyl4KlbnFo6usMTkHyQqHYVhkCEzEpQ7zHb+7pwXksWInw39e2War4OMS0ksICu1ItaMoaNYslnVDOk6kF7yHAueyi9ETC4w06fJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773242172; c=relaxed/simple;
-	bh=nxtq2wPEnUnTlpi24gXu3Z410yIaHALM9yTRXZpJuO8=;
+	s=arc-20240116; t=1773242613; c=relaxed/simple;
+	bh=0k/rXyYOtlEMBBzf5uBtjj/zIzjRJkUsoOAFKy6wqYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KfJGsrjAG+8cQChAVtuRS5eOlkgr22KLM251vSGEObDPrx4tWu9icMaSeVFLeZFh7/CKXiG3XoCpE4VaKY6YiF3+CR5bzygsZ7eHg9sF5heiFOoXWC6MYtbiQ6fLgKjndpmfPw9+PtT31fXqJgHUngPkL1LhcxX8vHsxg0svsxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cT4+KO/k; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLY4A2nnX/JJGHTk2BIO7SDKlgoo+8EocFxslyBPJVjnN72ymGTfk5xHHxoFdhTPHi14/45DT4sKTC8pKRFPiOkVL0T5h4bZTwCZHcRIZFUxv4nyLFcbUWXZrYKmzkDmzdyR6tWwjP/viCpTqKI/OY4+rOdLM7Ad1W49k8f+Jaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BF4Er0Mt; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cT4+KO/k"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BF4Er0Mt"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=htNc
-	IrOF+PFlw7zenOeO9FQia6dj2plkNS7IIsDXECk=; b=cT4+KO/k8C+jdSBFDY0Q
-	sVd+6v+MCCSF6rMMcemsuWX6HKt36keIjKr4J6lUGaUzZjUnJSknhgTppGTJdZPH
-	n9ny6ULvYVTljCS/5v8RmHQ5IJhJ9nMVTkdOap2gC9UqLgNB7SS/LIk4lIzJ9zbn
-	w0frs03i+Qx7m3h3w0d7wMPTKFuNSWV5jUEys7vVvVFAJbOqyBscA08ScdjoXDJN
-	9YuV0fOTZmsxMIB6V74wGPI38+Uel8K9Uve8HkO5jvFkZJW/IJMzIPE7HTwD3JYy
-	dv+KbDMFrlW7PrGGwQCBqiUGGkhM8g/s34JMvbGUxbTJbmxMsqZCQjFO74HPJ08Q
-	oA==
-Received: (qmail 3703507 invoked from network); 11 Mar 2026 16:16:04 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Mar 2026 16:16:04 +0100
-X-UD-Smtp-Session: l3s3148p1@N5hEHcFMYUVUvUmE
-Date: Wed, 11 Mar 2026 16:16:03 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=2J3Q
+	X9QvAn/3GL6JClSvGzAVr7s88UXGSibUv2h/1rk=; b=BF4Er0MtPNlpDXlDqUvR
+	r2Q6lUeGfADOzNZc7dQSjG5xH4nj/VIHTpxavmaJDIFTgMPmx260d8uVmuJe0/SO
+	zKbRpFd2l6c4oyqXOR9yIpgj12CxZCGK2/ry7BDu25OQxNniVB9Q2tpmWzYwA+1a
+	IVv1574J/6n+dgJ6Df3tn8yQFD7hYV+qMeKYXciR4Qomdy0EgFKfSPUkOlH1iSZi
+	3REayAg8GjdQyv6pCQMmhwJQGzSpvjJ4hinoucx7R0DduAfwAwdCpmGI+87qjS1V
+	Mdk/UBj8cYyVp5CgLEwZuRKxawDDUIlV3n+iDwBNC+VR/JdJ7TAbnm/ZDKcSDdYp
+	vg==
+Received: (qmail 3705871 invoked from network); 11 Mar 2026 16:23:27 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Mar 2026 16:23:27 +0100
+X-UD-Smtp-Session: l3s3148p1@GqqtN8FMbfpUvUmE
+Date: Wed, 11 Mar 2026 16:23:26 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	=?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: renesas: r9a06g032-rzn1d400-db: Do not use
- underscores in node names
-Message-ID: <abGHM6-GgkRoAMZG@shikoro>
-References: <1c1fc11f1f183a8e72f168bf6eb35a40e01ecacb.1773240961.git.geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: renesas: r9a06g032-rzn1d400-db: use
+ interrupt for Micrel PHYs
+Message-ID: <abGI7kp9ugtFSDbG@shikoro>
+References: <20260305221939.32643-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVFsxsJW46Xb6BSXztAAvXqBgbD6N7A7jL_Xc-FEBCnVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -49,12 +51,32 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1c1fc11f1f183a8e72f168bf6eb35a40e01ecacb.1773240961.git.geert+renesas@glider.be>
+In-Reply-To: <CAMuHMdVFsxsJW46Xb6BSXztAAvXqBgbD6N7A7jL_Xc-FEBCnVQ@mail.gmail.com>
 
-On Wed, Mar 11, 2026 at 03:58:07PM +0100, Geert Uytterhoeven wrote:
-> Node names should not contain underscores; replace them by hyphens.
+Hi Geert,
+
+> > +       pins_gpio2: pins-gpio2 {
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Please move this below, to preserve sort order (alphabetical,
+> and ignoring underscores that will be removed soon).
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Will do.
+
+> 
+> > +               pinmux = <RZN1_PINMUX(147, RZN1_FUNC_GPIO)>,
+> > +                        <RZN1_PINMUX(149, RZN1_FUNC_GPIO)>;
+> > +               drive-strength = <6>;
+> > +               bias-disable;
+> 
+> Shouldn't this be bias-pull-up, given the pull-up resistors R20 and
+> R78 on the interrupt lines are marked "not assembled" in the schematics?
+
+Ups, yes, "not assembled". Will update and test on HW tomorrow.
+
+> The rest LGTM, so with the above clarified:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks,
+
+   Wolfram
 
