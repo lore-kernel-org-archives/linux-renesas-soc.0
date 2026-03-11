@@ -1,96 +1,100 @@
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B6737417F
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Mar 2026 23:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05F1946A;
+	Wed, 11 Mar 2026 02:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773185759; cv=none; b=ag3AZJmCLXlqCzfeRzZ3P6mIHAm48gGlNmZp+YXIR1TPALpvsilJ6B3Z2P5CPQbw76e11XSrRsXalQtPA77W80sGR7GgCNzQYuNwvNcilTJompcZpurSRfK7tZ+PIi583K4Lypaw61feT6RYEh4NIJheaJNu5lARZI34/l80vks=
+	t=1773195154; cv=none; b=JBTqk1mntAXUlKoPZ03Z1oWtsY1Io6318OEA4dUoDJbcWmWgfWHF+eA2U+pCqrNtKKiMVOGHH9j8neaVjDjBNERQQ7ospbe4NpsoiwUt/iUnI5Un4H9m1QOJsuloifilOhkpn2RXgKEUh1wWdBpzWuBbkjFGjucq6f/8q/4hUqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773185759; c=relaxed/simple;
-	bh=hP+WJz/jKU6NpzI4xyhs/JtORqAsnUOJ5KWRgrIVvoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrLfjR/Cfeml9t1IuIUNZPycltYdai7x++jpzmtyO+o9UQQ58kVkipyW879Sg8nNb1HU8S7k1RDq7/ujmYaJQD/fwkhI6WLnbP1Jc6ekKOB94Iarn8Lh3s6H3oCRzkDyK/IpPxp2t3jfwWOD64Syh0lqKHcDbWxJaPlH59LhTgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFkgOqJl; arc=none smtp.client-ip=74.125.82.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773195154; c=relaxed/simple;
+	bh=4CnovYDhNoNio5xEWsPkE1GeUH6w6lWSrJIetu2UlqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bCRBHZab/H2ipcYziKzB8AoexCst1TTixWLFbHXapL+AIf3HQ+ZH6XaaZW4sTPbgyS3MX5fXI7P3FlJHC2Aph7eNBRxlq3qU3zEBZA9Ax0dyccleZOIVl7SOSLhGYOmQVlXisXdlf5p4TlQwjN21h5W37R1HBsfT/gcUWSEDF+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACL9ssfN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFkgOqJl"
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-128d218c5f6so1085213c88.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Mar 2026 16:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773185757; x=1773790557; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KxUPjcUmulSXUd9DWxJ7ndVUYnE5TGazkQsXUEMmZVs=;
-        b=NFkgOqJlGiPlob9isuinp0sELIC5WGTzdsj3HbE7W0anXTs9Dwpfyc2CD8/AjoWqN2
-         dUuXCu8ExdG7U2T1/P78kxv7Or8EXG8b0HRGJuIMGcLya/sRkWtfAC5MKA6JDSqcKSob
-         JUwm7qmPdgRkuk7doXxEyYHFI6/wokj6J/40UUvRb3QzPPFEF4B8u7rkQcy/Ifar7oJj
-         OjfUs8mDYO0257I0BU4xrxtf8B6EBVbG7lpN4MauwhTgIrqvyYwJaniJcITwZ3xvIiu6
-         VzcEOx1PgRrYKDp2eifw7z2COQM57US6SQpnxwvPAugRWNGDMCUeTxGiHFIXFioKPSVX
-         F1DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773185757; x=1773790557;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KxUPjcUmulSXUd9DWxJ7ndVUYnE5TGazkQsXUEMmZVs=;
-        b=JfJR22i1Y0yEA4kSCwUM5AXmtWIk2ahX4YQu250Q3XxfR+50hnb0bTaLNyyMwQD+kh
-         WpV3dbIW97A36lLan2x8jeb2J8Wl9RJ04ouD2VHAPFceyCClOgr8KOwE6L5SlE6tfDoH
-         xVBeB/tkBYz5mKsWoKoe9T+95GyIdE5LvEQe8NCooAGFZIA0fcP09Jjvet6QnNz7dio2
-         bNClZQkBNzQX/1pPM4tBmgRZrHimjs7Y88rumgb6xcoDiPvIRxDXacIWja7Zk8VIHeMB
-         m8Ajpecninl46EI0L33PbUo4/cAuqEsbxtK57cp+hzPA+MFQMDWu1jwS8TgUBfNPE27Q
-         OR2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWwmQVC11lxPdz1tVwntJNSIEW4ZPrsoBb4Vw8ZyJMdHgB2EZdki6KrWIQKjX9rEOZztq9nOgcrC00x9cmLDDERZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbzu09pIg6O0Njv/Sp1lTQ3Vj310dE+rh1NCq+m4omlCOfkU20
-	6icUTXxpAiGRHjP2FBdChUx16p5cJXDRuy2K+4kS8BIG7nxJarcgkr1r
-X-Gm-Gg: ATEYQzxGKHEY4ANEnIBcRGF42NWlhwXufoXor6Whyj4aNhpdsPM0pqT7X5yLXpslnAe
-	xTNFkPi8572l+nfc8XMmuJEmLjWwvX66AHSFL/ejlI6Zp8lgz8QzMIUKXtzKNDOKzV0ttHR3qhB
-	u2opwaby0dWx/RnC3xGR6QjnJpd2ifB0n0Vp2YOHo+JBIx//jnV6PuSDONQpVuUD9PntNTwtAYT
-	mjxQuJKoUJzjFlF4KxFpRnPL6qdJlMaB0+juXTG8qSfZLyAbdv8liubvIfXqgGv+I/v/rB7dwap
-	FHYBthvUZHieaGJOqfyK+5x0sLSx7BJ5BMmexDKtZbRYfKYlCqXQU8L3YiI+1V50SphREx/LE6m
-	ZwJAQKKgtv7rMBCVEJlCw5IOCLel4lK5jeuAwtHzkeTH3mQ4ZZbJtGVRT5OkXeIlhIz4rA4vdma
-	MbRvNA0ZIk+9wHOEZ6rxL/fFbbrutNkzi8589yXw9OVDxUnp15rEB5yGIUmtu6fsqI2L35t42RM
-	u4=
-X-Received: by 2002:a05:7022:6983:b0:128:d375:f1d3 with SMTP id a92af1059eb24-128e77bee00mr299440c88.18.1773185756882;
-        Tue, 10 Mar 2026 16:35:56 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:6e17:9d84:ffa0:986b])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-128e7cd6aafsm445110c88.14.2026.03.10.16.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 16:35:56 -0700 (PDT)
-Date: Tue, 10 Mar 2026 16:35:52 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: phucduc.bui@gmail.com
-Cc: krzk+dt@kernel.org, geert+renesas@glider.be, krzk@kernel.org, 
-	krzysztof.kozlowski@oss.qualcomm.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	hechtb@gmail.com, javier.carrasco@wolfvision.net, jeff@labundy.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	magnus.damm@gmail.com, robh@kernel.org, wsa+renesas@sang-engineering.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: input: touchscreen: sitronix,st1232:
- Add wakeup-source
-Message-ID: <abCqyU2-iQgcghzy@google.com>
-References: <20260309000319.74880-1-phucduc.bui@gmail.com>
- <20260309000319.74880-2-phucduc.bui@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACL9ssfN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDEA5C19423;
+	Wed, 11 Mar 2026 02:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773195153;
+	bh=4CnovYDhNoNio5xEWsPkE1GeUH6w6lWSrJIetu2UlqQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ACL9ssfNiEmsJs0gEXwX5Fi1mKxQ7XWjCAL/GkRFhXCmTbFz4m+w2YgGvzsfVtYaU
+	 FhscloNlnTwRc+pIRWGHtYayFZIoTatIQ0EEsMskA22NcugVW9eQAelo7a5xlp4N1X
+	 VJifoQbj0w70CCGZDGF+35t81QoFS7dFAH/sEIv9gBiykpDIccxiSbdh9aM4tu2mjJ
+	 gxt8W7XHt9ILn/IOWiqFA2SN94RjwnYtaxsM/YQBk1n09PqbGnDBq9GPS8RBli9dnb
+	 MzLGYJaet7Z1NwDoAlIaMZIgcNMMZGFKA3U9yLoVjJ0YstnuGUpmEVEb5EpJMCgCTX
+	 HzcPXz9ogRMAw==
+Message-ID: <fee9a7fa-8195-43d3-b534-efeade00f275@kernel.org>
+Date: Tue, 10 Mar 2026 21:12:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260309000319.74880-2-phucduc.bui@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] arm64: dts: intel: agilex5: Drop CPU masks from GICv3
+ PPI interrupts
+Content-Language: en-US
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Marc Zyngier <marc.zyngier@arm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <treding@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1772643434.git.geert+renesas@glider.be>
+ <bdc7563fba133b600ad3e6c1ce8cb1e5856b1042.1772643434.git.geert+renesas@glider.be>
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <bdc7563fba133b600ad3e6c1ce8cb1e5856b1042.1772643434.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 09, 2026 at 07:03:18AM +0700, phucduc.bui@gmail.com wrote:
-> From: bui duc phuc <phucduc.bui@gmail.com>
+
+
+On 3/4/26 11:11, Geert Uytterhoeven wrote:
+> Unlike older GIC variants, the GICv3 DT bindings do not support
+> specifying a CPU mask in PPI interrupt specifiers.  Drop the masks.
 > 
-> Document the 'wakeup-source' property for Sitronix ST1232 touchscreen
-> controllers to allow the device to wake the system from suspend.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> index 352c96d144a84102..02e62d954e94905d 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> @@ -152,10 +152,10 @@ qspi_clk: qspi-clk {
+>   	timer {
+>   		compatible = "arm,armv8-timer";
+>   		interrupt-parent = <&intc>;
+> -		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+>   	};
+>   
+>   	usbphy0: usbphy {
 
-Applied, thank you.
+Applied!
 
--- 
-Dmitry
+Thanks,
+Dinh
+
