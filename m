@@ -1,122 +1,129 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE24D38F64B;
-	Thu, 12 Mar 2026 16:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80754390210;
+	Thu, 12 Mar 2026 16:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773333419; cv=none; b=GrFJPvhcjuZDQbJ7bUPyJNwFB5AtQlTpjUaqFrIYP3pOtWMVgbxOcVmmXifXaHK4nos22z5vuXeOvhHVZ+g4yRDFlG4t4d5sVcp6BrJk4W3iWR0wuMzVIRj5OiKQ9S2c8oGh7f5EKkFXkKqNswD3srIV0rYkWQWibmjizshlnxE=
+	t=1773333502; cv=none; b=krz3HB9LX+gYkfnJEcY1KNH3pP4XNcGupICuna9AtWczUqeel0T867LVyOLhvtKxcylZJTC8xWMjJHOoF29BEM5b5G+lKAo6OWt4hEjCJl4dKqLkufHBMzAX0zXHIUzhKos0N2xYlphod+fjOOb/qkHZuEfRn/6JsythlzBbSGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773333419; c=relaxed/simple;
-	bh=PHTycdlf1dFs7CToXS9wxFQ5DOSHhKZ3v+bxy6sc4qA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYOwfJiRpOXzACnkyz3xUhyygxQBQmr7Ytb46YeJfalL7YwLZSjRdTTRByu7rn3Xwo4oVY3CZ66vpoofTek94u9T0G7rplEEjazg7CXwlWtV2xnRIchvp3mkyE2xkp9ZCDbz/322Z6BtyijrES5R+3eIDJmLVkwW96Frne1g0eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9E60165C;
-	Thu, 12 Mar 2026 09:36:49 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0541C3F694;
-	Thu, 12 Mar 2026 09:36:52 -0700 (PDT)
-Date: Thu, 12 Mar 2026 16:36:43 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, philip.radford@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Subject: Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol
- initialization
-Message-ID: <abLrm7x8ggzAhYOg@pluto>
-References: <20260310184030.3669330-1-cristian.marussi@arm.com>
- <20260310184030.3669330-9-cristian.marussi@arm.com>
- <CAMuHMdUdqrA9kYeDpjwj-y6-4aALkAi2g2Od81Kxh-EVW2e2Nw@mail.gmail.com>
- <abG4VfyB2C-gBa5Q@pluto>
- <20260312-classy-misty-platypus-5baea1@sudeepholla>
+	s=arc-20240116; t=1773333502; c=relaxed/simple;
+	bh=PS08veSgSk3UxGP/F/Lk1A1tp354yiWiPHcmO/0I4H0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=vEn6i0TfYSr5FY7BDugn39DhzTM0opnXn45Ns1aMI5jbVXKHmSzNYjYe10H5bheN/MXCYS9R2UpFwvb9vyrbQMD8qC6FBhldjLLU/tqEQK9mn5f7YvRfhbfvIiTZN33EFQM1I9Imv2EE4mjFPPbuguFklGzn3A4uUJL3u1635J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mM77P+dW; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mM77P+dW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=EK
+	AEulDdVQpUy/F6OpD/8nSvWxKf3rH6D2RiMfRuwp8=; b=mM77P+dWkFeNfJifuo
+	hzNgYr2j2etbXn1mIt//3mZFUnDmV36czGxa8guAgfzEEaaikrU6M8afVB+7xLFC
+	1A9UQQsbZQ0W99NKeGbqhaEKMWyOGe3sXMu36sf79x6LFxIe0nKFrGULWQl714LD
+	2G2U43Eun5aGjegfT6ztU/KeI=
+Received: from zhb.. (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnN1Gl67JpMC_OAQ--.12929S3;
+	Fri, 13 Mar 2026 00:36:59 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	jingoohan1@gmail.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	helgaas@kernel.org,
+	florian.fainelli@broadcom.com,
+	jim2101024@gmail.com
+Cc: robh@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	claudiu.beznea.uj@bp.renesas.com,
+	linux-mediatek@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v8 1/5] PCI: Add pcie_get_link_speed() helper for safe array access
+Date: Fri, 13 Mar 2026 00:36:48 +0800
+Message-Id: <20260312163652.113228-2-18255117159@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260312163652.113228-1-18255117159@163.com>
+References: <20260312163652.113228-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260312-classy-misty-platypus-5baea1@sudeepholla>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnN1Gl67JpMC_OAQ--.12929S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF48JF4fKFW8CrWUXr13urg_yoW8ZF43pF
+	W2kw1Fyr10qF13Xr43Zas8uFy5X3ZxGFW7GrW7GasF9F43Jr9xXr4a9rWfJr9akrsrZry2
+	qF13tF4UC3W2yF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEF1vxUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCxAssz2my66tRVQAA3z
 
-On Thu, Mar 12, 2026 at 03:33:52PM +0000, Sudeep Holla wrote:
-> On Wed, Mar 11, 2026 at 06:45:41PM +0000, Cristian Marussi wrote:
-> > On Wed, Mar 11, 2026 at 05:59:43PM +0100, Geert Uytterhoeven wrote:
-> > > Hi Cristian,
-> > > 
-> > > On Tue, 10 Mar 2026 at 19:56, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > > Add proper error handling on failure to enumerate clocks features or
-> > > > rates.
-> > > >
-> > > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > 
-> > Hi,
-> > 
-> > > 
-> > > Thanks for your patch!
-> > > 
-> > > > --- a/drivers/firmware/arm_scmi/clock.c
-> > > > +++ b/drivers/firmware/arm_scmi/clock.c
-> > > 
-> > > > @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
-> > > >         for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
-> > > >                 cinfo->clkds[clkid].id = clkid;
-> > > >                 ret = scmi_clock_attributes_get(ph, clkid, cinfo);
-> > > > -               if (!ret)
-> > > > -                       scmi_clock_describe_rates_get(ph, clkid, cinfo);
-> > > > +               if (ret)
-> > > > +                       return ret;
-> > > 
-> > > This change breaks R-Car X5H with SCP FW SDKv4.28.0, as some clocks
-> > > do not support the SCMI CLOCK_ATTRIBUTES command.
-> > > Before, these clocks were still instantiated, but were further unusable.
-> > > After, the whole clock driver fails to initialize, and no SCMI clocks
-> > > are available at all.
-> > 
-> > ...and this is exactly what I feared while doing this sort of hardening :P
-> > 
-> > So there are a few possible solutions (beside reverting this straight away)
-> > 
-> > The easy fix would be instead change the above in a
-> > 
-> > 	if (ret)
-> > 		continue;
-> > 
-> > ...with a bit of annoying accompanying FW_BUG logs, of course, to cause future
-> > FW releases to fix this :D
-> > 
-> > Another option could be leave it as it is, since indeed it is the correct enforced
-> > behaviour, being CLOCK_ATTRIBUTES a mandatory command, BUT add on top an ad-hoc SCMI
-> > quirk targeting the affected FW releases...
-> > 
-> > This latter option, though, while enforcing the correct behaviour AND
-> > fixing your R-Car issue, leaves open the door for a number of possible
-> > failures of other unknowingly buggy Vendors similarly deployed firmwares...
-> > 
-> > ...that could be solved with more quirks of course...but...worth it ?
-> > 
-> > Thoughts ?
-> > 
-> > Let's see also what @Sudeep thinks about this...
-> > 
-> 
-> I prefer to fix it as a quirk to prevent similar issues on newer platforms if
-> the firmware baselines are derived from it. In the worst case, we can relax
-> the hardening until we figure out a proper quirk-based solution.
+The pcie_link_speed[] array is indexed by PCIe generation numbers
+(1 = 2.5 GT/s, 2 = 5 GT/s, ...).  Several drivers use it directly,
+which can lead to out-of-bounds accesses if an invalid generation
+number is used.
 
-Ok, I can post a V3 with a dummy quirk 'template' RFC to be filled by
-Geert with proper versioning....so I can check that there are no
-surprises round the (quirked) corner...
+Introduce a helper function pcie_get_link_speed() that returns the
+corresponding enum pci_bus_speed value for a given generation number,
+or PCI_SPEED_UNKNOWN if the generation is out of range.  This will
+allow us to safely handle invalid values after the range check is
+removed from of_pci_get_max_link_speed().
 
-Thanks,
-Cristian
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+ drivers/pci/pci.h   |  2 ++
+ drivers/pci/probe.c | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 13d998fbacce..6bf3e59f42e5 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -108,6 +108,8 @@ struct pcie_tlp_log;
+ 				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+ 
+ extern const unsigned char pcie_link_speed[];
++unsigned char pcie_get_link_speed(int speed);
++
+ extern bool pci_early_dump;
+ 
+ extern struct mutex pci_rescan_remove_lock;
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index bccc7a4bdd79..a95afbcee421 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -783,6 +783,22 @@ const unsigned char pcie_link_speed[] = {
+ };
+ EXPORT_SYMBOL_GPL(pcie_link_speed);
+ 
++/**
++ * pcie_link_speed_value - Get speed value from PCIe generation number
++ * @speed: PCIe speed (1-based: 1 = 2.5GT, 2 = 5GT, ...)
++ *
++ * Returns the speed value (e.g., PCIE_SPEED_2_5GT) if @speed is valid,
++ * otherwise returns PCI_SPEED_UNKNOWN.
++ */
++unsigned char pcie_get_link_speed(int speed)
++{
++	if (speed <= 0 || speed >= ARRAY_SIZE(pcie_link_speed))
++		return PCI_SPEED_UNKNOWN;
++
++	return pcie_link_speed[speed];
++}
++EXPORT_SYMBOL_GPL(pcie_get_link_speed);
++
+ const char *pci_speed_string(enum pci_bus_speed speed)
+ {
+ 	/* Indexed by the pci_bus_speed enum */
+-- 
+2.34.1
+
