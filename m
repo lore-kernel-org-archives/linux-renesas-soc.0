@@ -1,34 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AD923B63E
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Mar 2026 11:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06F139DBE9
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Mar 2026 11:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773313813; cv=none; b=EkGUFOx64KYrJFAqqlPEElzfaY2xYKTZBPZj/SfQYwV7G9v0au8ymIp4hc5xZCFP8WvBX8T2jqOwLgtCBO2L80jXaI2mvpLkZlKTqTD9fieKpZF+pBcf8UrQiFYX8A/5qTr3OzbOO4SCeIjLvFTHH32esba3BxdV3euaYZGYPPI=
+	t=1773314133; cv=none; b=neqZRfBe387pD7SUxy1NNzL3APZQPu2txVMonrkBxM5DIszUd4SGpM0vvrCnGcU/uFWoQcmNOv5ApvBuoMYM4UUmKRIeEbiClOOUZQyx24hzxV8p5Ll12sGtzRlExEGOvR7DV6mLnLuSJWFqTYBy69gPFqs5546/02rxJUf28PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773313813; c=relaxed/simple;
-	bh=IozB3cT8PKB4qBPbTcQt5TiZJd3YWplPRPaB94vXVNQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=Uu46fr6bB2zN36zXm2RcP8qK+9yvOMrommd410IZQyZ4y/ENoNLUfGOypefGEySwFAiuMloZgK3H72UI+0HjjVq/qPydCeeHxoZMMSHMJWYa5uFNQ+NylbAaY7LuV/FRKtegwD9FTw7yaAQediFc21lKlc5bN+/GyvcWA42t5QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcHehvhV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773314133; c=relaxed/simple;
+	bh=mVSTiklgT8j2fcLLBeE0uC2mMSd0YvRYVEMiGlYCFRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F4dI2Cl/J3mIVhHTlagdbBKZw8qmyYmbcm6Y/8/4xLCNpEwam05QJdiS2eHfkhDaqpojnwNDwO4xjEI/mPyXAF8GcSrrqBNCGhAEjahMVDRBji1Bj3biz7cEOEsuiw8LDeC9VQYW9aZE5Z9PW42yDu9/O0aRrdczYBV0QgDA2+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKfL5WS0; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcHehvhV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09FE3C4CEF7
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Mar 2026 11:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773313813;
-	bh=IozB3cT8PKB4qBPbTcQt5TiZJd3YWplPRPaB94vXVNQ=;
-	h=Subject:From:Date:To:From;
-	b=KcHehvhVefqpUbSmoNWwjO9EYPuI1Q/Mfq3A/vv6EMawplKK3cea+Qa46lCJZMTNO
-	 CskZVNc3QBZprNZlwbwTdSOm7NpHxkIQ4V5AOXr4MFcSfiwIQIPcoTLWGdCuBrmbkp
-	 8Qsq4vEOmKpNYdyVoMmoXUiOlLTSspdczxctwdoBw4NuyWANAntMSUFls9KGJ/+sZr
-	 IHjJVmU7cj9xmLk39yMT0G/o15UHDLYMSCXbQHcfWIeMwFDKZ0paX/WoULxzXn5/4r
-	 viTtHB0RHwslydVicid961zfs7WKMEAmEypY+rX+ysv9ir9NoKjGgP+umDlfLTTH8d
-	 LuD9L03HiEm3w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id BCBEE3808200
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Mar 2026 11:10:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKfL5WS0"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4853e1ce427so9417665e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Mar 2026 04:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773314129; x=1773918929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfRnDFh2VU0AWQY5oFOwQ40Dt8Qug7bA+xDy5JGD8pY=;
+        b=FKfL5WS0SMNkxGZntTuKtrj52AOGiMvhboUJ69/l6qm3kJgAgbBvYyw3e6keBUt5CO
+         pQpii9gzbfp4oMaD6DyNbyIvdWAD97CnTnR/OCCfo/UywLIzsL4byUo1VOoVEKH2kyBa
+         8YZ8wKnM/2JsRexuMhRruj4V3kUwU+iozAoZqnokhUSa93Yd9ZaUmRRFv1Ib984dsWHS
+         3LSB3lQRaDJYorF/jEJoZCc0nen3Ai0fcMmhMSjZHLbtaVjaC9smTi8OmwqbwRZNbBO/
+         B/hfDauamYlwTRT6AqFvf9p5rV7IOT0SZCy9km1yUA9UTXiIHMfC5CSOHPoILeMFfTU9
+         rvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773314129; x=1773918929;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bfRnDFh2VU0AWQY5oFOwQ40Dt8Qug7bA+xDy5JGD8pY=;
+        b=h0wlh+cPRHYuDsBPrPEleqRJTvknTaJ/sVEceewu4/50zjKPrz6xClXARqZqFTgTU/
+         gbKubfTMSrDK0KEGU2bc+4qkli1MXp6nwSL36mwCWNzgKs8hwrXm6SdAqwZdlx8A4/eu
+         AgWa0GevTwAx7OJ2MbNOBjA5RtbcRj/H7H+qjqwtgRm8Idyy24ohWJvBLwUmlue+oejS
+         S3YEIN/FUurGCKm07D1AoYz2DRqJfZC1oqGyiyfW0HIhcdGhKJpnzPTb3xduJ0Upm0Ia
+         xkkFLUnfzOmVTAVuCVEBsu4jGuANzPjt8R8Ws1X+T8viKbTUyQhYaBRYFYVkkUrsQOlG
+         0Cxw==
+X-Gm-Message-State: AOJu0Ywixc9ulycJnwWZmdC/EDV1E8Nuv8rm9/6roFWBznLMQ2ZYeAwy
+	2gjGI3grvpzdi9OZNZE9eW1W2Jm5rqMdKw57VFR0GZU7FioFMJuBX/lV
+X-Gm-Gg: ATEYQzw50WhKVzRA5D8o5fNqwtaxYc5CtV9UmzlOMP7b4iJaxuNnEGxqdwh7jKBlJ9i
+	a5OuwJZuEsOzydjGpZ0ceFjaQbg+dE9FzIjoKQbMKt7bkOb5OMjOhFBU/Vmo73ZyqmSckV3osGb
+	FN1XTl55NQZQIMVnXIBZeqCM1fe1CbpUONMqJ5YxCoe+gYPZd9p3klIdbfZZHiBTD5p50q91Mpv
+	WD2xPedrRf7DjW/ZwYqc33WeqppN3UgwggtYXgBimRyRACLSC4XugQwsUwj0Y/KXuTNaixg0Q/d
+	ScqjSxcrcz3q/yHgOJuhjmYZW9GpWQJDmDK2MAxguPGuHJVHECdyfQPXKxGmOK2G2PY2KEpjjOw
+	5YITtFfzETFTpSDFLRmwD3HBVx9rh85lfS/G6J8gialJQwycfcBFRfOWi0sa+43gXEjIHh1hoYf
+	hTOAI7yMWTPniuQnZWSvh1i3fbkjKyFxEIjw6UNkZG932naV5AVVnr0UGX8j2moeoEzzf/vKSoR
+	/swPg+pjtPfYh+mDk8HWQNBamADxQb0hitY8g==
+X-Received: by 2002:a05:600c:1e8f:b0:485:2ce2:4c8a with SMTP id 5b1f17b1804b1-4854b0a4c24mr99535165e9.1.1773314129024;
+        Thu, 12 Mar 2026 04:15:29 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:fc52:7d64:32f4:e21e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541b6f708sm311458385e9.11.2026.03.12.04.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 04:15:28 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/2] clk: renesas: r9a09g056: Add PCIe clocks and reset
+Date: Thu, 12 Mar 2026 11:15:20 +0000
+Message-ID: <20260312111521.115392-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260312111521.115392-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260312111521.115392-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -36,56 +83,39 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <177331380831.4049514.13253447403826231615.git-patchwork-summary@kernel.org>
-Date: Thu, 12 Mar 2026 11:10:08 +0000
-To: linux-renesas-soc@vger.kernel.org
 
-Hello:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Add clocks and reset entries for the PCIe controller.
 
-Series: spi: cadence-qspi: Add Renesas RZ/N1 support
-  Submitter: Miquel Raynal <miquel.raynal@bootlin.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1051276
-  Lore link: https://lore.kernel.org/r/20260205-schneider-6-19-rc1-qspi-v5-0-843632b3c674@bootlin.com
-    Patches: [v5,1/4] spi: dt-bindings: cdns,qspi-nor: Add Renesas RZ/N1D400 to the list
-             [v5,4/4] ARM: dts: r9a06g032: Describe the QSPI controller
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g056-cpg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Patch: [v3] ARM: dts: renesas: r9a06g032-rzn1d400-db: use interrupt for Micrel PHYs
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1065252
-  Lore link: https://lore.kernel.org/r/20260311200307.16034-2-wsa+renesas@sang-engineering.com
-
-Patch: ARM: dts: renesas: r9a06g032-rzn1d400-db: Do not use underscores in node names
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1065091
-  Lore link: https://lore.kernel.org/r/1c1fc11f1f183a8e72f168bf6eb35a40e01ecacb.1773240961.git.geert+renesas@glider.be
-
-Series: Add DMA support for RSPI channels in RZ/V2H(P) and RZ/V2N SoCs
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1060900
-  Lore link: https://lore.kernel.org/r/20260303233314.2928711-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-    Patches: [v2,1/2] arm64: dts: renesas: r9a09g056: Add DMA support for RSPI channels
-             [v2,2/2] arm64: dts: renesas: r9a09g057: Add DMA support for RSPI channels
-
-Patch: [v2] ARM: dts: renesas: r9a06g032-rzn1d400-db: add QSPI node including NOR flash
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1062203
-  Lore link: https://lore.kernel.org/r/20260305220023.28257-2-wsa+renesas@sang-engineering.com
-
-
-Total patches: 7
-
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
+index 549c882f9a18..6f9aefd5f069 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -505,6 +505,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(6))),
+ 	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
+ 						BUS_MSTOP(8, BIT(6))),
++	DEF_MOD("pcie_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 12, 4, 6, 4,
++						BUS_MSTOP(1, BIT(15))),
++	DEF_MOD("pcie_0_clk_pmu",		CLK_PLLDTY_ACPU_DIV2, 12, 5, 6, 5,
++						BUS_MSTOP(1, BIT(15))),
+ 	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
+ 						BUS_MSTOP(9, BIT(4))),
+ 	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
+@@ -628,6 +632,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
+ 	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
+ 	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
++	DEF_RST(11, 2, 5, 3),		/* PCIE_0_ARESETN */
+ 	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
+ 	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
+ 	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.53.0
 
