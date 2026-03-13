@@ -1,103 +1,124 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601E5364946;
-	Fri, 13 Mar 2026 18:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43172218ACC;
+	Fri, 13 Mar 2026 19:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773425962; cv=none; b=l+4Akc+iRlY7b71U7DXkcTvcrdxdzI3US9iMBMQMGtFhF6LD/bPDHnsUkzQz/XDZDILuVxQzzGZouatC8dvWFuIPoXpamyQEtWEtV6Uzz02H2JIhUxpaoQ1yUhTwaqxgSWqB2PhQP87GxHfZZnGnXieSiYocLYhfYs9nDzGq/WQ=
+	t=1773430453; cv=none; b=Y9Ti8dk4XeFn9D8UJjaH5IBHzHalhGlCwGTJWzbyYuLj3L3cmnvD5eEmYAjDWUFFxXA40Vvv8sLTivUKnLYyCM9BGUD2cY//OrHJy8vvpgd+cx0gIO1nE7MBozuPndRIe3G8yUU5V4HtRUIaUyazsvghkxXN4MsBwt2l3lY9J60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773425962; c=relaxed/simple;
-	bh=wGHHmea18QzDv20CIQ8/NkoCGCljzKpgR/2yblyc0Sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9DFHzR5TZVWh1zJGLsvEuJ4e1V4nD2TR9ECbEXObLiMhmTxrl5jYXupN2M+LDHi33KQZ5bnHBwbUpgzNRF8l/ecpdtmJg8FGihn4ozrvsoLV/JnD7fCwc4W2cBUBFxIWyVh92Owiu5Lr6HboVQfMHoeGrfSQd3smPM3p6ciZpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5pK6hhj; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1773430453; c=relaxed/simple;
+	bh=ruWuiHP6e8Pg/aqY9avsDVPT5k3lwjtf/rtJGs9XN5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1wuxyMHfEnM28rPi9c0cMhWrs2sjSJLRHd541DtPCakIhuGk4BBJV5+Dpk+Ggon3O3XhkbA6hILqE9hGMKZmP9q8fC8ni1seYFU7SI5yv4ZWkeF+kdzwL5qCWWD0PoHQc9mHTaJQrOGl5K0GnmlRwy1Gim8crc5xTwO9+MxJxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=oxISchqJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=erf4220P; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5pK6hhj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773425960; x=1804961960;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wGHHmea18QzDv20CIQ8/NkoCGCljzKpgR/2yblyc0Sk=;
-  b=F5pK6hhjocPrUn74BVv8E0HdKeSxqJd+lLfIar4C9o8xJvaIph+2St+x
-   xX36Rc4E141yyudPXfjAopNIs1hjfRYtMlLJnP5Rt/WWdtL9rpgw7VPwI
-   jRuLN9ZB7e9Nj21Xfz2fJGFfJiqcjSxYjsbgTP71kg6h+hzFsZN/EDN2+
-   VVuldfo539nWKub339SyWAuD6g3Liv2g2pemV12tHytIm/I0iVJXS9J8z
-   jo+ZuWhleGOyiyr2bwlp314UVwFMkWK+Au/T+mtktlzh9M6BMzDBxm32I
-   Ye38iFGflFxs/R4V+Wd4uJrQZ27beRXYimRMBsRqLF+GaK0y3Oq/wOnhp
-   w==;
-X-CSE-ConnectionGUID: TDsYYxbBQOGWR0aW5QS12g==
-X-CSE-MsgGUID: JMFk49YyRr+g5Oxi2iKKHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11728"; a="74618906"
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; 
-   d="scan'208";a="74618906"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2026 11:19:20 -0700
-X-CSE-ConnectionGUID: IsUab5fAS8+RjETs0meTqA==
-X-CSE-MsgGUID: tK2pfwEHS9KDtmikB151zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; 
-   d="scan'208";a="225347842"
-Received: from igk-lkp-server01.igk.intel.com (HELO 9958d990ccf2) ([10.211.93.152])
-  by orviesa003.jf.intel.com with ESMTP; 13 Mar 2026 11:19:15 -0700
-Received: from kbuild by 9958d990ccf2 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w176O-000000003h3-2O4L;
-	Fri, 13 Mar 2026 18:19:12 +0000
-Date: Fri, 13 Mar 2026 19:18:54 +0100
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org, kwilczynski@kernel.org,
-	bhelgaas@google.com, helgaas@kernel.org,
-	florian.fainelli@broadcom.com, jim2101024@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, robh@kernel.org,
-	ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, claudiu.beznea.uj@bp.renesas.com,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: Re: [PATCH v8 1/5] PCI: Add pcie_get_link_speed() helper for safe
- array access
-Message-ID: <202603131934.SHJnSGL9-lkp@intel.com>
-References: <20260312163652.113228-2-18255117159@163.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="oxISchqJ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="erf4220P"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4fXZRk1lQKz9tk3;
+	Fri, 13 Mar 2026 20:34:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1773430450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=40VUxoS5o3Aar/wuOcMdG6/+K5PJ2XzNyVo8xag5hlE=;
+	b=oxISchqJUHlflJyo2d0bhzKKP8KmKYGZqg/F8wxMGW4CCT36FvJaw1ozGZQRVukh3/t+4l
+	SBCbvL/Ot81oXNmZoXkr5T1SVhskk5Px7i35FcGFPlg8uYorobTCBriCAX1LJA1OpiNO48
+	2hmnYjjvKqsm251lVQWNC1r5AhaRXQ5xRUs1v6zw50D0sFic3dUEOEoVwhpDIwJwNQxY2I
+	XcaBhj6c+QKIT+OrBQ+fFMky6ilAu6+8weeh4ZbQRsASX7KsbleTX5TWM37u4sAY1hllI3
+	f6873U0pxk6x6kigTgL2CNlvg13+/wLgZgodmo/Gs9mu4srvewIkL6D5rentbw==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1773430448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=40VUxoS5o3Aar/wuOcMdG6/+K5PJ2XzNyVo8xag5hlE=;
+	b=erf4220P0CrcPPqIRqYbdHcfQtzEA4Yd3QRHOq9+XAT7ZArGduvYnW7/9PWVvPhLtU554m
+	2LGMl6II2clFUhxGQbx3e5KUeS6oZtRzL/mtBvakpHSqVOeVqFBQ8vFwVh4BuepXGKD0o8
+	E2cfVoNpKl0aycyoptHdq6Zuk/7os2qSTfCVb9RidWibx7xhiEh0JU6KWZOZReEz1c2JGt
+	1vDxpBKPlu4iYvaUPXboPz0FqTxiEaIKzgl80BY+smSSf2BV057lYIGWOsUlzCk/QlWjxU
+	AXW16waEE/4NkW7tNzSMbvtvaH4IA2IydE2wIctT37tiPQlssNlqQWPjQDn+Zg==
+To: devicetree@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Job Noorman <job@noorman.info>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-input@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: touchscreen: trivial-touch: Move allOf: after required:
+Date: Fri, 13 Mar 2026 20:33:41 +0100
+Message-ID: <20260313193403.118617-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260312163652.113228-2-18255117159@163.com>
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 0be02d3c2c070a2a9a4
+X-MBO-RS-META: fhd1dsfjtrcd7eboredi1bhf8k3y1wks
 
-Hi Hans,
+Majority of schemas place 'allOf:' after 'required:' . Documentation
+"Documentation/devicetree/bindings/writing-schema.rst" also hints at
+this ordering. Trivially update this schema. No functional change.
 
-kernel test robot noticed the following build warnings:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+NOTE: This comes from https://lore.kernel.org/all/20260117-grinning-heavy-crab-11f245@quoll/
+      where krzk comments "allOf: should be placed after required: block."
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Job Noorman <job@noorman.info>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-input@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: - Fix up the nits from Frank
+    - Add RB from Frank
+    - Add AB from Conor
+---
+ .../bindings/input/touchscreen/trivial-touch.yaml           | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-[auto build test WARNING on 80234b5ab240f52fa45d201e899e207b9265ef91]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Add-pcie_get_link_speed-helper-for-safe-array-access/20260313-220734
-base:   80234b5ab240f52fa45d201e899e207b9265ef91
-patch link:    https://lore.kernel.org/r/20260312163652.113228-2-18255117159%40163.com
-patch subject: [PATCH v8 1/5] PCI: Add pcie_get_link_speed() helper for safe array access
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20260313/202603131934.SHJnSGL9-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260313/202603131934.SHJnSGL9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603131934.SHJnSGL9-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/pci/probe.c:793 expecting prototype for pcie_link_speed_value(). Prototype was for pcie_get_link_speed() instead
-
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml b/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
+index 6441d21223caf..6316a8d32f39b 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
+@@ -53,14 +53,14 @@ properties:
+ 
+   wakeup-source: true
+ 
+-allOf:
+-  - $ref: touchscreen.yaml
+-
+ required:
+   - compatible
+   - reg
+   - interrupts
+ 
++allOf:
++  - $ref: touchscreen.yaml
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
