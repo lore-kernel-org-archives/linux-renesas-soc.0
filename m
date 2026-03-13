@@ -1,108 +1,123 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3C9388E75;
-	Fri, 13 Mar 2026 09:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837DA328B5E
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 09:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773393887; cv=none; b=A8sOIHQlb9J30qi/MDgsqFHb/c1t0anFZeSjA7dApqpdWYcMNHT37NUMTJ4SEnQgP49W/5ylLT7vQe0TMoXyhWzoYM88RgfSC3MW2zAIEIQ+xPL3Kzr3knBRVXtJImrcXkXC2mnxcH75IVm/ECyHfALJsSx5H0gHYedD/6ZQExo=
+	t=1773394754; cv=none; b=RHoA6yPunL1dwwCCPSWYpbgAB14aS5QCT4/NH4jMn8jvKioOyeotz+X8C4hDJk0GVqu7I0ubZJWhUYXZ4UK4mLA4VHzT0wNDE9yMUADma+2k3Ds0W2EBlvo0rgG9sWObvSKp9w3esS2ZsE4un1zE9UawVCX4Sgzy9LaMyn7l304=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773393887; c=relaxed/simple;
-	bh=r4MRcQQ5fLzSlLSMWtmjAFlFGJfP1WaE9lWedeWl40E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DCC4Mr0rXuBo4s8jU4N+e+HI2SX8cUGSsJ7vPw/oF8ZegAcZaohSy5ENvxf+MLGaTBiQj+NTOCAhTPhRED7sjnPVOq4HwCUh6RRnxBYhYaBWQgugkAbdleqJvin+VNMunQa9u6T29xlhLS2CkxCGTWHMjGREpPueSdxere3m+gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qHi0jlhX; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qHi0jlhX"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E35D64E4267E;
-	Fri, 13 Mar 2026 09:24:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B9B3F60027;
-	Fri, 13 Mar 2026 09:24:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DA4FC10369E63;
-	Fri, 13 Mar 2026 10:24:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773393884; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2m01zqv2yjjJhgTpMDzF0wiCkkyg/bS6uB02evTAf9A=;
-	b=qHi0jlhXeqoBjKFwCYdZp1XsCDnEhcQreVcyZ5vuXIIZGCb8MXzoq9oQh61vrZS1xKvpms
-	T5xNKLYRN2zJZTfcMW1vFZ1a67TVVhD464n3lUdPHdZXtv1hd9gwPHqKvZ1k3ACMHmmMoa
-	ISz9ULzXEGJuhIKHTzoXkHalO84Onmult9UKK4C5fLAKT1ypblvHUBxhzjTKGKymgkms+y
-	oaBuUNZCywCGPLCp8MFtySEYQBHOyODwgxGlXyos6ZMfhlhCqvdzAG7f07zIMqcu2QWG16
-	zwggGiiAU0Uif+NE4l3Ix79/b6Ey9+1u+0cXh0Up7doO+sfgCJCM9Dzr6Gsn1Q==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	"Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Subject: [PATCH v2 3/3] clk: renesas: r9a06g032: Enable watchdog reset sources
-Date: Fri, 13 Mar 2026 10:24:16 +0100
-Message-ID: <20260313092417.294356-4-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260313092417.294356-1-herve.codina@bootlin.com>
-References: <20260313092417.294356-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1773394754; c=relaxed/simple;
+	bh=PL67avBPtYMTmKLtVbuj476ob0Oj2q3BQ12b2+YW3gA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P495nb/itrnMgUNuP2rTEc1OPdMO1BtjKRqQqkmWOE16pTiggvu9x8dYxAH5vOXZ03rx5bIFBsBIvSODN/l8D4NO7W9T9ubpJscWSjDA879rrUtzmfAIOo+6iNBUL1XwMwqr8W2Dkl0Qx1qiwLStiYmt8WCdRl6cIjlsvp0YKGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-56a9076813bso804948e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 02:39:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773394752; x=1773999552;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/kFDLymno3ShHwPEKQQsYPw63HdXuC5g9oISBtZGhCk=;
+        b=sNMCTSWtqPM6kkL03DnpCDCiAHtrA68nme2xwuR9PulnHwJ7D2ycoiknxGy0rQrSZB
+         87nmqmf2A95eVJfjklyJLWHJqdduCfrrFIrQPrzUEuEIpEG3itCAnTbGEtdlum/7J1/Q
+         Zh2rJKk1BOR1bUei1GDOPkLh/O+6f1n0qCgnWSp5zY66khotXDBj0qS7U7wpRWL/TZkb
+         /QUDjuP2qbWK3XYqxnYVeDMbi8IELGqiLWR816bn458Cdi73eY2RkVj4VF4JjwuxHqYo
+         sCqM8iiWebrVBirZjvLQJhvHbKQM1V3j7wtezy8TH36pwN1n5OpH//Bb1jMA1YX52ove
+         446A==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+k5knQq2gWwIjMLm/DERxagqF96OC0ONk9fU9X8yCfUd+FFp6hqm4PkdVJVtuKT0mYOSZTVNGsJJVfcYgBzUSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3+QxrpUy0tTT/BLihcmQRnmAzzpGncVFZZBGXOfBOK07qasPC
+	W15QeDVimF4IqiuMVITxiiSfspqvbcm2Q9Z7r14469MK1dBmIut6NRHuwgUYuO9FEiY=
+X-Gm-Gg: ATEYQzynvbMRn5gONFdkSIkUsl4GlPzJb1dJsUQ5vvjRdfym6V7OMGr2sRdfsH9GSHu
+	eDvPvcACF3noNDTYCohDe8OfOhZda3f5WviwqvOXQl3Qp5FsF9NGq7Um+5skaYAiplqvtsMoJnB
+	RT0JWoWl5LJQyNRTvs+E3yYtd1g9tdzc2mVoqQZ7WJvJxDRZcUTGTDdqiecwW6QvywSWRFD2G0W
+	gkp6u7uZmwGU2ImKhxxRB5vgRYELMtfUwPOc31hmbzQtgbZhK3kQk3lMIWTsdcZtIn+rKdu2kg/
+	nKCr5DaLS0K216rQNYotrpp98/TsxxLyeTwTaFRZOQ3Yd/sR/0KkFzloDZxON9GlyeJb7eAG7Qm
+	MWkT8JYScYFu0Z6kQMLHIpPwnEockrpTOLk0Qvc4HNv4zkPvQEvnS6gXeJkVggrA/KrdBdHxzMB
+	/tSjbvWr0eSQQZrjtlgAyo76HQGcVEsvGBkMfPceKAC7cF83D0qRAT/UH7N/v1L42/CkfNxEc=
+X-Received: by 2002:a05:6122:46a5:b0:566:357b:ef25 with SMTP id 71dfb90a1353d-56b6295b4f7mr828035e0c.15.1773394752514;
+        Fri, 13 Mar 2026 02:39:12 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56b464a4235sm3648446e0c.16.2026.03.13.02.39.11
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Mar 2026 02:39:12 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-94dda16ff9fso506457241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 02:39:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQbX/0EBmhyMZ/IMcppJQjHGimJ8zXfU7K4HEfw6J2d/Pmq4MWTDKNp9IHJR8MzKJn1SH9C/IY1FlV0VQcQR99ow==@vger.kernel.org
+X-Received: by 2002:a05:6102:26d1:b0:5ff:cee8:6620 with SMTP id
+ ada2fe7eead31-6020e20d4afmr1001751137.11.1773394751766; Fri, 13 Mar 2026
+ 02:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260212073819.41304-1-phucduc.bui@gmail.com> <20260224074532.60046-1-phucduc.bui@gmail.com>
+In-Reply-To: <20260224074532.60046-1-phucduc.bui@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Mar 2026 10:39:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXhDfFUnfOATQEWKY-kYxyR3QgmLoD8QFXGbsuLL8SzsA@mail.gmail.com>
+X-Gm-Features: AaiRm52TLe172c21oV-Mw-rROyewWRa5GPG-BaaZAy05NtJZt9zNHx8--4wUlis
+Message-ID: <CAMuHMdXhDfFUnfOATQEWKY-kYxyR3QgmLoD8QFXGbsuLL8SzsA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm: dts: renesas: r8a7740-armadillo800eva: Enable SDHI1
+To: phucduc.bui@gmail.com
+Cc: magnus.damm@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, robh@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The watchdog timeout is signaled using an interrupt and, on this
-interrupt, a software initiated reset is performed.
+On Tue, 24 Feb 2026 at 08:45, <phucduc.bui@gmail.com> wrote:
+> From: bui duc phuc <phucduc.bui@gmail.com>
+>
+> The Armadillo-800EVA board provides an SD card slot and an AWL13 SDIO
+> interface connected to the SDHI1 controller. Routing between these two
+> interfaces is controlled by a mechanical DIP switch and a set of
+> multiplexers.
+>
+> This patch adds:
+>
+>   - A fixed 3.3V regulator for SDHI1 power, controlled by PORT16 (G2).
+>   - SDHI1 pinmux groups for data, control, and card detection.
+>   - A gpio-hog for PORT6 (J5) to control the SDHI1/AWLAN multiplexer.
+>
+> PORT176 (N21) is already configured as output-high in this DTS (via
+> lcd0-mux-hog), routing the SDSLOT2_ENABLE signal to PORT6. Since the
+> hardware includes an external 10k pull-up resistor (R94) on this line,
+> PORT6 is configured as an input to allow the physical DIP switch to
+> determine the routing without SoC interference.
+>
+> Both configurations have been verified:
+>
+>   - SD card (CON8): detected as mmcblk1, high-speed SDHC.
+>   - SDIO (CON14): detected as mmc1, high-speed SDIO.
+>
+> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 
-This software initiated reset performs, in the end, a hardware system
-reset using SWRST_REQ of RSTCTRL register.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.1.
 
-The watchdog itself is able to control directly the hardware system
-reset without any operation done by the interrupt handler. This feature
-allows the watchdog to not depend on the software to reset the system
-when a watchdog timeout occurs.
+> Note: While a specific driver for the AWL13 SDIO module may not be
+> present in the current mainline kernel, the SDHI1 host successfully
+> detects it as a high-speed SDIO device, confirming the hardware
+> description is correct.
 
-Indeed, when the watchdog timeout occurs, the watchdog requests a system
-reset using its own hardware dedicated line but this reset source is
-disabled at the reset controller level.
+With SW1.5 OFF, the AWL13 SDIO module is detected as a high-speed SDIO device.
+With SW1.5 ON, SD slot 2 works with SD cards (incl. card detect).
 
-To benefit of this feature and be robust against software issues, enable
-watchdogs reset sources.
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
----
- drivers/clk/renesas/r9a06g032-clocks.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 7407a4183a6c..a0734182d112 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -1342,8 +1342,9 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	/* Clear potentially pending resets */
- 	writel(R9A06G032_SYSCTRL_WDA7RST_0 | R9A06G032_SYSCTRL_WDA7RST_1,
- 	       clocks->reg + R9A06G032_SYSCTRL_RSTCTRL);
--	/* Allow software reset */
--	writel(R9A06G032_SYSCTRL_SWRST | R9A06G032_SYSCTRL_RSTEN_MRESET_EN,
-+	/* Allow software reset and watchdog resets */
-+	writel(R9A06G032_SYSCTRL_SWRST | R9A06G032_SYSCTRL_RSTEN_MRESET_EN |
-+	       R9A06G032_SYSCTRL_WDA7RST_0 | R9A06G032_SYSCTRL_WDA7RST_1,
- 	       clocks->reg + R9A06G032_SYSCTRL_RSTEN);
- 
- 	error = devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART, SYS_OFF_PRIO_HIGH,
+                        Geert
+
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
