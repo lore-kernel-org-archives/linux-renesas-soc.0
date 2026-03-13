@@ -1,71 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CCF36B072
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 10:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35F934A79D;
+	Fri, 13 Mar 2026 11:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773396610; cv=none; b=JfP9SilGhpRyeKwVW0ox45qPWK4Rukv0/ObYciT3Ab5qg4JQJ84sjn3oyVZTfX8SLCTTnYbTg6UKduS6rj2eP/JCxbvKb0U803ByQLZI/sdNnUYxLmLQEg6AN3PXaO8NtjGVOKMqBOs/RTuNeJXB+kbIQhT/3ZC0oAoc/yDXzrs=
+	t=1773400337; cv=none; b=o5o3RXt1jTAk2UmvMwRhOU6ZKZkJdZAvx1al2ZgPgNZPlmdBrYD2K7XqKnYa9I5dZDjgMTWBpqEBRw4jqJPMqdbfS9qt96NHryoRWWMlcsqPXb1poBAiOxQemF4bJoO89oOKN3jRClU8lM5mlcbdSQVZr0YGyqQIKQF28WPXXOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773396610; c=relaxed/simple;
-	bh=xbpKpzq4tONEyzU6MUuBtSoN12LFjSP8WPc1Z8ehykU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=KutFYG/Pk8gKAJmaKwdQiGPRM2iFhNwiicbPdaj85g/nXu3msQ0mHntaV//T9a9bVI1ZA7NC7zyuyhazGe75bDydkIQJEXllTYsfmwhN5SrzN4MwyNKSrMERjoWlnZcH8/5dypMv9gS6uhTD6y6DdiYdhqCQemBm+SUv3QKNQdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYzpA39P; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYzpA39P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 617D9C19421
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 10:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773396610;
-	bh=xbpKpzq4tONEyzU6MUuBtSoN12LFjSP8WPc1Z8ehykU=;
-	h=Subject:From:Date:To:From;
-	b=WYzpA39PAr8MKFgCM7KEBN7hNd4ff11dj5yIio1og4M4AORrIbs5iH/7DjYrl/UtB
-	 AsEnvCGC8P4/eCFxJgu0IanHZEe93s3zb9n7lY/jt0TDH5MJdBx++096qKDxueA/OX
-	 QqyIxLw7yVw2LX3t2sMGwiLTimXc0l2SbU1LH3KefZ2aRQRtpBubU8uZI1HqAm98sw
-	 l8d4fM+dSGHZAD0+IbAmPh4Olj7fJvgCv8BgSqTsq5DWsUYJ/BfdwsWnxfPWJVBHkC
-	 mPRr1yyJeKbP4naq8rQCn29JSaoupljGGhsMfC3Rho8wlsbnZBOwz4F7TcEjqFW14x
-	 Njber4QS9S9IQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7F8453808200
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 10:10:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1773400337; c=relaxed/simple;
+	bh=goLSVpJZbH5gmuwsXKkPPSZikbusu4LocscWzE3r2pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RdjRDX1flRvdh8AFnM9474XMGWuWNOdGLSLYcv+YFYdogVCNLrnmWIC8Lsyu8vplgQJmvXJnt+og3dtBeyo2xpbAuzvPsjsmxFphKQdomuq8awlaSL0PJG+lQIogEwZdiNTpWLn91H4V/FbEBGZw3L/YzBaS3xOumwhQwfHvKbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24881C19421;
+	Fri, 13 Mar 2026 11:12:15 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: soc@lists.linux.dev,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] Renesas SoC fixes for v7.0
+Date: Fri, 13 Mar 2026 12:12:09 +0100
+Message-ID: <cover.1773398984.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <177339660504.797092.7166565610802982759.git-patchwork-summary@kernel.org>
-Date: Fri, 13 Mar 2026 10:10:05 +0000
-To: linux-renesas-soc@vger.kernel.org
 
-Hello:
+	Hi SoC folks,
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-Patch: [v2] arm: dts: renesas: r8a7740-armadillo800eva: Enable SDHI1
-  Submitter: Bui Duc Phuc (Fukuda) <phucduc.bui@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1057059
-  Lore link: https://lore.kernel.org/r/20260224074532.60046-1-phucduc.bui@gmail.com
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
-Series: Input: st1232 - add system wakeup support
-  Submitter: Bui Duc Phuc (Fukuda) <phucduc.bui@gmail.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1063345
-  Lore link: https://lore.kernel.org/r/20260309000319.74880-1-phucduc.bui@gmail.com
-    Patches: [v4,1/2] dt-bindings: input: touchscreen: sitronix,st1232: Add wakeup-source
-             [v4,2/2] arm: dts: renesas: r8a7740-armadillo800eva: Add wakeup-source to st1232
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v7.0-tag1
 
-Total patches: 3
+for you to fetch changes up to 85c2601e2c2feb60980c7ca23de28c49472f61f1:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  arm64: dts: renesas: r8a78000: Fix out-of-range SPI interrupt numbers (2026-03-06 13:15:21 +0100)
 
+----------------------------------------------------------------
+Renesas fixes for v7.0
 
+  - Fix SD card initialization on the RZ/T2H and RZ/N2H EVK boards,
+  - Remove WDT nodes meant for other CPU cores on the RZ/V2H(P) SoC,
+  - Fix Clock Pulse Generator registers on the RZ/T2H and RZ/N2H SoCs,
+  - Fix Versa3-related boot hangs on the RZ/G3S SoM,
+  - Fix Extended SPI interrupts on the R-Car X5H SoC.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      arm64: dts: renesas: rzg3s-smarc-som: Set bypass for Versa3 PLL2
+
+Fabrizio Castro (1):
+      arm64: dts: renesas: r9a09g057: Remove wdt{0,2,3} nodes
+
+Geert Uytterhoeven (1):
+      arm64: dts: renesas: r8a78000: Fix out-of-range SPI interrupt numbers
+
+Lad Prabhakar (4):
+      arm64: dts: renesas: rzt2h-n2h-evk: Add ramp delay for SD0 card regulator
+      arm64: dts: renesas: rzv2-evk-cn15-sd: Add ramp delay for SD0 regulator
+      arm64: dts: renesas: r9a09g077: Fix CPG register region sizes
+      arm64: dts: renesas: r9a09g087: Fix CPG register region sizes
+
+ arch/arm64/boot/dts/renesas/r8a78000.dtsi          | 16 ++++++------
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi         | 30 ----------------------
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi         |  4 +--
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi         |  4 +--
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi   |  2 +-
+ .../boot/dts/renesas/rzt2h-n2h-evk-common.dtsi     |  1 +
+ arch/arm64/boot/dts/renesas/rzv2-evk-cn15-sd.dtso  |  1 +
+ 7 files changed, 15 insertions(+), 43 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
