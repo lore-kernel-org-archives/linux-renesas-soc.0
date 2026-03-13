@@ -1,97 +1,102 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A9F3CB2D6;
-	Fri, 13 Mar 2026 16:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A44F35BDA8
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 17:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773421029; cv=none; b=N9BM/7Ryk+VD9aIs69H6CTJPN1L9n71skFbzNI1tmUA+9BTVmgxEfC8Ms2i4eo47fz6syJlcNL3u+TbTEhaCjrp1JRzWhV3Q9HzxtPIPzoF8UvaAkZfqwMuyJ4B06zkB4wT/Sv75V6FmqGrW7yPWTYfFTCJ/FCw87qLZhgz/eCA=
+	t=1773421799; cv=none; b=X2e0Pk4gOFOIaThkglGmN6DQSOXxr6BDQeLCxe9k7NCgrVYOKp4XZSK5OkGcEp+d0ZRcoq2y8iLYSPAseZnSXxNDgzTXmtlzU4uuTBDyIlou4Yr13K/+Vy4+7mfPcKX9U1o/BO8/PQ4gz3zpUGYTbxXXavnt12ku3MXvkZRXVNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773421029; c=relaxed/simple;
-	bh=LaDMrP+pcd/JXJQNPKeJRt91RMSc2WISQEFS4Meu+2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xkr3Lsb9mpx5fpT0CkajgSmBIWZu5TaRClj4JaTGkayauiwMUYVBAVdcXfGva5z9MEGCbKUNYy8byYW/urrFc/mAM7kBYyjY5APNIF4s1kLsb8ytt1jQX4P5iwDo+hRV2A+Inp5RFqAZacuQllE0Bb9tSYHPaFIxth0tCvuggvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=n0zuwsdN; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1773421799; c=relaxed/simple;
+	bh=zgKdsEGdjdvUuCuj3NXoEiAo/0AGLqUvRArM22toq5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xus5rdDPoz/F8SlSdhxKt74Rx55KYobaUYsE6Cxj0+EdMnjDr1h524nXh5ZUEOqabt0EsfHo0kl6sLL8Ap6advg+TdUpBwnthAxsGV9961IQHLX2C2HiNH+Ol4OM14Uc89DCiy0mbNTfAmXkAJN7bX/EHmEDWpcOWs77g4fOOL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Kfukbwqp; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="n0zuwsdN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=jq
-	SuO3F12+BG9vDtSc8L1vzzspX/dhmwJJslZsHS+5w=; b=n0zuwsdNS0gS17QGuF
-	pXTmwopfCpJ8kBSb5N88HeJgmtmFZvZAnII+cqt0DOza14sHfaLdvpzkHzRkQo2T
-	XJHHJeWpoCPt9gFP3ON1hFls3+xe0tbEdUBgiI5oYe+sdRNKkwY2IWJ5GWVk2THK
-	IhNHb25YDUWgP+ZvqO5ewpr2Q=
-Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAX2JV7QbRpTApJAw--.54345S5;
-	Sat, 14 Mar 2026 00:55:28 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	jingoohan1@gmail.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	helgaas@kernel.org,
-	florian.fainelli@broadcom.com,
-	jim2101024@gmail.com
-Cc: robh@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	claudiu.beznea.uj@bp.renesas.com,
-	linux-mediatek@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shawn.lin@rock-chips.com,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v9 3/5] PCI: j721e: Validate max-link-speed from DT
-Date: Sat, 14 Mar 2026 00:55:20 +0800
-Message-Id: <20260313165522.123518-4-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260313165522.123518-1-18255117159@163.com>
-References: <20260313165522.123518-1-18255117159@163.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Kfukbwqp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zgKd
+	sEGdjdvUuCuj3NXoEiAo/0AGLqUvRArM22toq5c=; b=KfukbwqpzJhNoAxRs1CM
+	usGPS8xUhNq/i0LNijPkJ5tsnRW7JS2r3Muh8oAaRnPmruMbo8YpjJFshAyVw2kx
+	WDaWXlJOIfmzuxlVfkm8fSAvB1WhxWGkLbAo/1u6HL3ChLY8r05hn+pi7lI161Bc
+	gWkApd5TCAHJvuNH5vqmcTne0hCuOzOP5aF4eLupZ4PHQhJT4n1chU9DO6e6cN47
+	qBilPS2nJ6DrmfGnxuoVVz7FfgMe/3iX1Zl60ClRU1poS9oes8WWpZHJkUttgh0x
+	m997CSXkdCfe+NKFUQMjh46Siln+qUPgab6Fr9zd8qbJpkw4SRpN5ucj0Oq/o6M9
+	1A==
+Received: (qmail 387518 invoked from network); 13 Mar 2026 18:09:46 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Mar 2026 18:09:46 +0100
+X-UD-Smtp-Session: l3s3148p1@yLGd7+pMtJ0ujnuR
+Date: Fri, 13 Mar 2026 18:09:46 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 1/3] watchdog: rzn1: Fix reverse xmas tree declaration
+Message-ID: <abRE2v-raiGhGuQ2@ninjato>
+References: <20260313092417.294356-1-herve.codina@bootlin.com>
+ <20260313092417.294356-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAX2JV7QbRpTApJAw--.54345S5
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JF4rZw1ftr4xWFyxGF1DGFg_yoWDXFXE9F
-	1UXFWrAr4Uuryakr1YyryayF95A34Uuw18Wa4rtF4fAFyxWay5ZrnxAFWUWa97u3W7JF17
-	JFyDKFn5J3ZFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRNDGYtUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCxAD3m2m0QYDJ6wAA3W
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uqZG+egNaPCPpGfS"
+Content-Disposition: inline
+In-Reply-To: <20260313092417.294356-2-herve.codina@bootlin.com>
 
-Use the new pcie_get_link_speed() helper to validate the value read from
-the "max-link-speed" DT property.  If the value is missing or invalid,
-fall back to Gen2 (speed = 2).  This prepares for the removal of the
-range check in of_pci_get_max_link_speed().
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/cadence/pci-j721e.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--uqZG+egNaPCPpGfS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 6f2501479c70..bfdfe98d5aba 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -202,7 +202,8 @@ static int j721e_pcie_set_link_speed(struct j721e_pcie *pcie,
- 	int ret;
- 
- 	link_speed = of_pci_get_max_link_speed(np);
--	if (link_speed < 2)
-+	if ((link_speed < 2) ||
-+	    (pcie_get_link_speed(link_speed) == PCI_SPEED_UNKNOWN))
- 		link_speed = 2;
- 
- 	val = link_speed - 1;
--- 
-2.34.1
+On Fri, Mar 13, 2026 at 10:24:14AM +0100, Herve Codina (Schneider Electric)=
+ wrote:
+> Variables declared in probe() don't follow the reverse xmas
+> tree convention.
+>=20
+> Fix the declaration in order to follow the convention.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
+Not a fan of such changes. But it works and I am not opposing it:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--uqZG+egNaPCPpGfS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmm0RNYACgkQFA3kzBSg
+KbYikw//cv3cIz0tCzQsRnSS2RRZIjN+OyIBjFzKFjBdxShhG41SWNZ5/pwN/7Ah
+u7VMLIP9b30N8Ec9yGOdyKReEGCe2rW4ESf6Mp7ePdIoi++RnBsNZ0EjXVy04wcG
+vktacTR9K/N3NowEjlfnPdY6e1hap6gPDIhTTYWSWacmlsLcRe/LzpwFJV9RujYz
+kPwv7XAZ9E+citlLfC+JndMqQ6JS6IpDnEU7bjrfsq58xkSHzLQc7PkEuWJuH847
+Vg2NPYDwMnQOV3USX9aLyOX4yYhXHI0SynmuEKc8x4YCxh+z942ozaJfXmuqwVD4
+X5Ib158VRwOjw6iZXuYQsi746OXfMiiTtm7qszC5NbQ41nBIkl59zWlkNlvIfPUk
+jxyopg/rDEVvUPJWSQIN3DEaYeW6IO291x8IEaYjGO/CUMEkpfhGuGjTJeoY0wNL
+eH2wFC+y9LdgQBa3e+Y3SXgmJJ3bnu6jdjySuRDfCNsFUuxzgSbMruM/wkT8c2ZT
+plj/1rTGcyGRdxR9wx3B9BdxD0GOtQ9RNaKe7YH34nUKkoj54aSN1Gw5wBygvxIB
+gtwbxXziF0+FIkPuWfQq9wzrphLyy0fUKO8xo5rR8R8ZAt/oQiFr3RV34tZbwXSS
+OZIf11GV9SFhpHZELwOPc8ZL1lv4FOXztxoXlzHzpdEuaeNKFZ4=
+=j4b3
+-----END PGP SIGNATURE-----
+
+--uqZG+egNaPCPpGfS--
