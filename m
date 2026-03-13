@@ -1,100 +1,115 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC6E366061
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 08:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD393242CF
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 08:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773391746; cv=none; b=atJBB1woPhiU/tks4kYeI+CWXdtllJLh/wZMsFYnOPMhqg2Kg/z5zzaoY4ArldDNDn3SsLXXi+yGpU3IZ6bShJUsHihTcZ47ruKCdjOIwkfk19aO3zNzJ9sT/Mpmr5X9MD9mJG/PlXDzOrOV1XdVUyxE8aBLR/1LpaltfLwCEdA=
+	t=1773392158; cv=none; b=QtCYTXKk1zgt0ieyA8tpxRQsg7sh4uy6WjvU7T1yODz2sOU5QWre+TU5V7dpOWPvxPqy1uGD7SYoXiVAo4v27d9Q4oMtVtzD+/zedHT/BOIgGDYrPVtBY4fq2nyYko2VYwM5paefx9OsAoGXjfrYz6JNJ3+xz9UKUOZVWMxDyGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773391746; c=relaxed/simple;
-	bh=Ua52PBrMRguUB1TFGkRs7ufN3Wn+UHTtA/Ozw/l0cQA=;
+	s=arc-20240116; t=1773392158; c=relaxed/simple;
+	bh=dIPXg2emkEHtVSMn/uiweeN0mkAf0sj6N0jCu1Xxr2I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cbDt8fDq48gGwh/M8J7E2OQUPWHdf48hM1ikv3I5U4bxgM0C9h8OC62QfXh3uysNiyinT+LoZXFZach0Mui34Ra1fJd3YC7ooK0W17D+JCeUhz/8nZJz3LW095LzYnmIgpM5rk+lrGDqqVmZ4PkD+Q8WlubFCElxVODaqb7ruIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-509307e3854so27034541cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 01:49:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773391741; x=1773996541;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5aDo7j94ftgy77ygvSOcZoX2nYRGeP4vCbL31PwDsek=;
-        b=hYIfesVvPxI+PDXyrtOMO+c5ubFjOHtmDdMjeq1vKh725gTr963Eun3KqmulYFkStT
-         C1C1hsBrhbpui3puU4vonX3c8X7kawcvjVVXwrVIveqbHnDmq3MrJqp02zu3FZem5QbK
-         skmuNPaChV+CC3TAVrE3ZiKeWFNgNE086a+XjiJ8cW3F+855ZlME1Pj9fIZVKqdAdWyX
-         N4QYO1I1IXw2KXhHT/GqWZDGdqVl+ierGnxzFii5pWN4jTCRCD71vsn7+/w8BN84TWkx
-         o+/OzojhVw6glqo5V6N24GiBlx5BUPbRNNHlh4/rDtaRatp9fwiwFHBpVefF2Ty0RPAY
-         a4AA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5mph5kQoaTQMFRfPJKk6iixAMPMdW3JznEueWkdqyo1rhzcU7f/H0LyRLtooFfbt3CM1jDwo+v6aJlW2mTeK7Rg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhsyHHAoQ8exRMdDYO2q5BV7tYpWxbwJMqWGOfAG11pNehr47R
-	iDLJhfAj4Nk12UBIRTFp4wICUwTea7bfZTMbBXRU2ATMI4jJ2BAIyUUkCepF+pCEiGA=
-X-Gm-Gg: ATEYQzxy24zTSyg8IVsCw1IRk/SJUjKISo0b6W59LeFc+OL/4c9E1SGsSL7w+P3nYfA
-	he/lAUS7qngPLUHM+OmqGNQbpfl6AnPP+cKW+81cAoG75UOYNwcId18a1XTAOFjA5uYFjnEfLzc
-	ni/IEcBOVg5eRpCICu58qzT8orKhgddXMqwCtotN0S+28xJyPA7Dp+wAAwrDC1YONRBVmc5of4Q
-	UptoN5ewi7/cQYOshTQOAY5qCKsGe0G+OSQN6llrEif+ejHx6cgHVvcElnyEox959Y7ddS6ue7C
-	3Wsgtqedk0j1zalKuz0v7KRJYtJBjH32LvqN7J9mrQNqTxQz99wkkfbsQ2VkCMZkTmP9Toxlj63
-	VS8p00uWV5zrBMzUghxLiIO5m1WQHxAjGVODRBHtyZjkOsrYqMFqokJUOgqMLvY4te7ZWSLyece
-	gCbIhl2Bwxzla5ZlFtTaKzvRLvUFI/rRaViFbVsRWXL9vr6E26E9MErGwrFMNL3FZ+
-X-Received: by 2002:ac8:5805:0:b0:509:1dc8:e9e4 with SMTP id d75a77b69052e-50957279af7mr32680021cf.22.1773391741312;
-        Fri, 13 Mar 2026 01:49:01 -0700 (PDT)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com. [209.85.160.180])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50939ec56d0sm57017851cf.11.2026.03.13.01.49.01
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2026 01:49:01 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5091d71aa11so24950761cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 01:49:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVb0deX7zUpOQkrZvXqW9PARX+LgENjMwevt/wOV2VV7ZhMszy+87nMjRohJoUiNm+bibY18wAiDiAGyJazIpMAgQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:94d:b0:600:3b3e:681a with SMTP id
- ada2fe7eead31-601f49df949mr2684902137.14.1773391317301; Fri, 13 Mar 2026
- 01:41:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=ou7DlXi7rWTHgt/fyvU9xPwR2lud6M8ZK1ZDp8QkbEVnQ7W2Esl9h1rf/tNNApO6IgawGDcg8acas0tGk+E2G9wtdhmpOe5SQFqI3AHJbQJIurvLiaUMby0gYHXEj0UACwHwAcVsYDJ3UNZNd8o3AnUhwvmLZ1nWtXYmpC93Gto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuNN/sds; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuNN/sds"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ADEBC2BC86
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 08:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773392158;
+	bh=dIPXg2emkEHtVSMn/uiweeN0mkAf0sj6N0jCu1Xxr2I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TuNN/sdsSHwP/VHRKKsG1F4YTUS5ZhzO3eF6ZjflRECLSxm52GZn0O+a6DYtw8s9w
+	 AztRsZ6hwk6mFH9QjMLP6ul2unGjmpkpIqrGCVRM7XJ91lE5qjYrRo421vuqGU+Ips
+	 dUTvUP2lPwGo6cUpGRPiarN2csB7JvMb0jI/Ci+wBxM0t4CvddwnzhqGPCkq7OZ2uz
+	 q1FLHibPBhnYDoXHHAzK4gd8xjmC/HbpS/GJkB9AsODxRC/oP9dyHczV035sr3rZQ7
+	 zhugJAyuq9iyE0d58vLAu0TaPaxVAVMP78UrAtKR75moc4u0qVEPZakARFdazt8gZI
+	 bL3wWDwmcIB/Q==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3878de20527so17587311fa.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 01:55:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaUBYa2JzcGLIRuLf+h8x50V7QlWscFTKFiPy1hJWijwJWhh3W7ohliDywktvRZ2kqQZjPHAht+1r5brwD6zlsMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjx9XRas2SbS+KohHf9zh+P9/iR//IWxeMHklOOHYwFAzbljUl
+	xqveH9Ixe335rxDHX8vmGiXQHD/IUPtOLul3ccUu97xh4jav3b+f7uxSv16/DVoM1e1FOpdvOg7
+	QQn539HKCucHUGA3mNbCtUTkK3Pn4J6+D5+xyD8xvxg==
+X-Received: by 2002:a2e:350d:0:b0:38a:878b:b567 with SMTP id
+ 38308e7fff4ca-38a897de73cmr6682211fa.36.1773392156502; Fri, 13 Mar 2026
+ 01:55:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260309000319.74880-1-phucduc.bui@gmail.com> <20260309000319.74880-3-phucduc.bui@gmail.com>
-In-Reply-To: <20260309000319.74880-3-phucduc.bui@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Mar 2026 09:41:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUqiaP=COTkKU_jK6Hdii+YJ5+zXnxFkOOnhLri5NakTw@mail.gmail.com>
-X-Gm-Features: AaiRm50dDPHbKiQlKjcHuSZ939JQWLNa2vCYSRXIp8LSqUBGtQD6gyUdpS8tlkg
-Message-ID: <CAMuHMdUqiaP=COTkKU_jK6Hdii+YJ5+zXnxFkOOnhLri5NakTw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] arm: dts: renesas: r8a7740-armadillo800eva: Add
- wakeup-source to st1232
-To: phucduc.bui@gmail.com
-Cc: krzk+dt@kernel.org, krzk@kernel.org, krzysztof.kozlowski@oss.qualcomm.com, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, dmitry.torokhov@gmail.com, 
-	hechtb@gmail.com, javier.carrasco@wolfvision.net, jeff@labundy.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com, robh@kernel.org, 
-	wsa+renesas@sang-engineering.com
+References: <20260311-qcom-sa8255p-emac-v8-0-58227bcf1018@oss.qualcomm.com> <20260312181654.2d9ba69c@kernel.org>
+In-Reply-To: <20260312181654.2d9ba69c@kernel.org>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Fri, 13 Mar 2026 09:55:43 +0100
+X-Gmail-Original-Message-ID: <CAMRc=Md8i6oCAqOBB_3q9PkkbaUxrCftum+WBjvac2O+Hk8kTg@mail.gmail.com>
+X-Gm-Features: AaiRm5311s8a1dkokfIWdxBu9dTaoHy4sXAtnoSYnP4jjneoiOLY-XItyfiRHlE
+Message-ID: <CAMRc=Md8i6oCAqOBB_3q9PkkbaUxrCftum+WBjvac2O+Hk8kTg@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 0/6] net: stmmac: qcom-ethqos: add support for
+ SCMI power domains
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
+	Romain Gantois <romain.gantois@bootlin.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, Radu Rendec <rrendec@redhat.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
+	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 9 Mar 2026 at 01:04, <phucduc.bui@gmail.com> wrote:
-> From: bui duc phuc <phucduc.bui@gmail.com>
+On Fri, Mar 13, 2026 at 2:16=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> Add the wakeup-source property to the ST1232 touchscreen node
-> in the device tree so that the touchscreen interrupt can wake
-> the system from suspend when the panel is touched.
+> On Wed, 11 Mar 2026 18:03:35 +0100 Bartosz Golaszewski wrote:
+> > Add support for the firmware-managed variant of the DesignWare MAC on
+> > the sa8255p platform. This series contains new DT bindings and driver
+> > changes required to support the MAC in the STMMAC driver.
+> >
+> > It also reorganizes the ethqos code quite a bit to make the introductio=
+n
+> > of power domains into the driver a bit easier on the eye.
 >
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+> Not entirely sure what the conclusion was in the sub-thread with Russell
+> but FWIW this doesn't apply to net-next as posted so respin will be
+> needed either way.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.1.
+net-next is quite the moving target, isn't it? I did just that between
+v7 and v8. :)
 
-Gr{oetje,eeting}s,
+As for Russell's response: I think this is the third time we're doing
+this for this driver. :( This series is not touching the existing
+functionality and rebasing of Russell's changes on top of this should
+for most part be trivial. The core of the changeset is to add support
+for power domains to enable ethernet on SCMI driven SoCs. I would
+really appreciate it if we could get it upstream and then any
+subsequent rework can take into account the two types of systems we
+support.
 
-                        Geert
+Russell: I see your point and didn't mind the first two times but it's
+been way too long since I posted v1.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bartosz
