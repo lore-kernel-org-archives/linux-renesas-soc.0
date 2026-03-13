@@ -1,78 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6E63D5655
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 23:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9E42C029F;
+	Fri, 13 Mar 2026 23:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773445087; cv=none; b=oK8PxWXWY2CUMMEoOUqWWFs7UdbkSN83MlEOchOb5w4So2nxv8RtVzE9Q1xHtbDXtZDfF04rRt/hMvsF80xOPDaVYT+ShgC5q2t6TZXQGbX9AdKfzZJL9W2WXqcR5mQd8mScHSqtXT2ofNB8SFQQO4Qrc4+dGOFaibu/Gnt8nLo=
+	t=1773445584; cv=none; b=M7o5SFqs1xaPHMd3LSW/n3JpL4FIG0ATC8mYhxyTa8CT3Yj9dr/H7mNCMmPVwHMTb/lQBE9Q4VHG7MuQGTwxhESUXHKUjAj2iYicvBTcqfeiYXTjHMIe9OMLA81ID/qrlWwweqxDayw/NHZ2rE8oZnYqF5udnH01ypl4oL6oo0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773445087; c=relaxed/simple;
-	bh=KKnxkDEoWNIa9pNZxrMGY1sk/rXEff2G80DmQM2Dzps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LwDekeHxdzwXjzvt4O8JG2EPFHK+19XlwfzCXR07C7F1j64bvxn/wzYS8cURvznuyw5wQF+moFPKyvvzHl5KL/ULK0LSLZMX93ZXvcI17DvimTJi9rimOosMI0OlIQQpTCeVgR13rlDqyzlLIdMcTNfoKBoELf+i3YN1lEAXrfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJ8Ek8wz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773445584; c=relaxed/simple;
+	bh=l0J6UxG2Xo0qMbb5afxleJPxtISpCy1pVKLdkDdqZ1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHJydtVGw5+R8ZPxsr7LBgSkmzqAOPOuo0dbqgEAk2w+c6EVjvwLzMoeXrA/TBPUlRQj84tZuIhahN13z2bswXAnCYJ5zUaf/dJP2jPoV7twz9Kg3R42rBFdtYF+yLobUXK9L1oBYkJahNFrTtnU+SPfCI9xMCFPtYD6eBvbfqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nytqiSax; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJ8Ek8wz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CA7C19421
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 23:38:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nytqiSax"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB95C19421;
+	Fri, 13 Mar 2026 23:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773445087;
-	bh=KKnxkDEoWNIa9pNZxrMGY1sk/rXEff2G80DmQM2Dzps=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kJ8Ek8wzxzBaaxN/ED11y24Z/23/TEY9a3hodUvSb+6Y9jaeooLteE2tbs9Bn+O21
-	 k0oaV8YtVHY/szKNLAUrlWv4QysvzUk81GVUMyby8QiQPy5v7QHLy23S+YCb4Kot76
-	 L/WctlyOo3swfUgk1If6U1vmDguihYbsazTSFEKBuur7kvGBjuWF3wqjLoPKnxH5JW
-	 Wt9Jdik6y37//+Rcdpu+mBuadUxjx9xe+Ao+itcqFkmcLzUYXzXCMn+V0dZRRSa2aH
-	 JlO1lbgS7ECFTKlyBfvHneHC+YdM7Us0eOZIEiBM9eBPNfcgbB41xAk5PSxxzDQIa7
-	 6XuR0lua5uILg==
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-799001d73bdso21450617b3.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Mar 2026 16:38:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVP4ANm6dtY5lvHjRZKLCLAzRX30+h5a69wm74jAfBFFMqUfon+UYWwC+pTl1PKs14M1Rnp1Tm4D4jvs9RR0Bq9+Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI6YKr6omx18BLJ0/lfCsOnuuTwZeNnsEM088eptoDQaF9Sktu
-	JzSS76u6YQDV8/8w0cUGfqpMKKXgA9eJEPswbKl0J+uMcMSjOAYLwyUU4X5V2Mpx6CJYTcMXnn8
-	CxAozIfY3PPT3VXLeIrVP+aA7VOTwm1E=
-X-Received: by 2002:a05:690c:d91:b0:798:56eb:f227 with SMTP id
- 00721157ae682-79a1c0cf55emr58534237b3.23.1773445086387; Fri, 13 Mar 2026
- 16:38:06 -0700 (PDT)
+	s=k20201202; t=1773445583;
+	bh=l0J6UxG2Xo0qMbb5afxleJPxtISpCy1pVKLdkDdqZ1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nytqiSaxKQmJfhc175aQkILi0HvMCC42qFmYmmjrIU62A49gZcD3Ws5kRjLBJJhP9
+	 QBO14ad4AVIUYldwQXZ7IbnSaY4ns5ZsEBUAcRwyUzRHxOlz6wj3L8YbkGUuLcQqeh
+	 PsK+Id12aCFDftjU8LC+fGc/heeDDnwv0VyIbE2lg4Xi9O05GF1JcWZrwicsqd2WZL
+	 IcL1SNJwiqEBSMsMpNzSp7jaJptAlXV5OlgJtriSxD6TQa5Goy+I0fK0QlAWwho3lx
+	 cW9sDy6E0u6RyTd36Mgt1eMqVm267iqwgPXx+lUJ9z8jFfV94LRooiO6XXYRJTBaUo
+	 hnHcUQ5vwqF9g==
+Date: Fri, 13 Mar 2026 18:46:22 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] dt-bindings: memory: renesas,rzg3e-xspi: Add RZ/T2H
+ and RZ/N2H support
+Message-ID: <177344558150.3660030.11298746843207669134.robh@kernel.org>
+References: <20260310212927.3372410-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260310212927.3372410-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1773399246.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1773399246.git.geert+renesas@glider.be>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 14 Mar 2026 00:37:55 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=vBnHG_Wc4_nFFgYN9COS-d0Ak1KMXTk3tFphiEQbnWA@mail.gmail.com>
-X-Gm-Features: AaiRm51fXy_bp1rfhDcRF-amClZFYUPa_cs0-2DaSvYhRXjN9lRBn9NNXnIYXcU
-Message-ID: <CAD++jL=vBnHG_Wc4_nFFgYN9COS-d0Ak1KMXTk3tFphiEQbnWA@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: renesas: Fixes for v7.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260310212927.3372410-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Mar 13, 2026 at 12:12=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
 
-> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f2=
-7f:
->
->   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-pinctrl-fixes-for-v7.0-tag1
->
-> for you to fetch changes up to fb22bb9701d48c4b0e81fe204c2f96a37a520568:
->
->   pinctrl: renesas: rza1: Normalize return value of gpio_get() (2026-03-1=
-0 10:33:47 +0100)
+On Tue, 10 Mar 2026 21:29:25 +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add device tree binding support for the xSPI Interface on Renesas
+> RZ/T2H and RZ/N2H SoCs. The xSPI IP on these SoCs is closely related
+> to that found on the RZ/G3E SoC with some register bit differences
+> in the configuration registers.
+> 
+> The RZ/T2H variant has a reduced clock configuration, requiring only
+> the AHB and SPI clocks (without the AXI and spix2 clocks). It also
+> requires only the hardware reset (hresetn), without the AXI reset
+> (aresetn).
+> 
+> The RZ/N2H variant is compatible with RZ/T2H and uses the same clock
+> and reset configuration.
+> 
+> Update the binding schema to accommodate these differences using
+> conditional constraints based on the compatible string, while
+> maintaining backward compatibility with existing RZ/G3E and RZ/V2H(P)
+> implementations.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../renesas,rzg3e-xspi.yaml                   | 60 +++++++++++++++----
+>  1 file changed, 49 insertions(+), 11 deletions(-)
+> 
 
-Pulled in for fixes, thanks Geert!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Yours,
-Linus Walleij
