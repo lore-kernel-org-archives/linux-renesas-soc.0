@@ -1,83 +1,82 @@
 Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0433D388E66;
-	Sat, 14 Mar 2026 22:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F38B388379;
+	Sat, 14 Mar 2026 22:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773526268; cv=none; b=Ok1LYzt7FnplLrox182OVANCx0wrhSgvy/ajRUvp0+jsWvz4ZBsBtFW2ZbmTf0rP7hK3AJT++GCLq7lyRb+c7YE+hxLXIIDTwj3YreKFwDDw+ybz+Wu3bbHXpLjP7HHnD8iTV0g8Fr6lZg3z0WCiCbXajJp21HsWmqeK81DYS7k=
+	t=1773526274; cv=none; b=AK1uJ+1z6znzBCCyT8cAb9OqKK/mD5Ig2av6faZxZg7UuLGhiBf3EYh8AOe7KeNo1jeXqr48Xf3eLziy6PAWN5/Ll1Y8G04Ta0Ia7CS5h/V5fOl3+Y53x4Wk5HPI8BJKa+LJlAu3qozsO+sQjgkvS3uycuJXtzvmZBAS4EnBkHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773526268; c=relaxed/simple;
-	bh=bXaomthrrsc6/xK1mFb7y8IgrWLSDgKi9DVIcE3yizc=;
+	s=arc-20240116; t=1773526274; c=relaxed/simple;
+	bh=lndl02N0V0FZVqunf2THet0NJ1b6DJEPHdLVDMBoeYM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MF4w7/H3KvCCyt2S7szEMXaEeT16TGRuApJxSRZpQ/ZHkmGyiACaSBC9F3zlYGGFgvFK44C3onPoZbVWOsHI6vcHpwS2onNL4kvOGndscT2O/jDj515xgrA1HUkXzlbCBUwzQVtyU9MoSnnUec8gFuiIvGOU0HYlTGGMNcgSjhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Rf+N2n8o; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YpiDih24; arc=none smtp.client-ip=103.168.172.151
+	 MIME-Version:Content-Type; b=DGeECPPbfhnA7bo/jSNA4Ki6ZyxwOAkkdYdny7dpIANyMwnexkEYf3k8hrJCGJQkXq0ECJS2rxtJCXS3G72FNNUBMqOjNi0k7CdDVERtZ4utRL5jJXkKelniuhQwXzUzmdB3gTg8KNXYrmz+4kAnTlt0Vcsipbe7NkwQv+BJJdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=uvpH1nP1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UKqlJcfo; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Rf+N2n8o";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YpiDih24"
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 40A2DEC0B7A;
-	Sat, 14 Mar 2026 18:11:04 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="uvpH1nP1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UKqlJcfo"
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id CB1B0EC0B7B;
+	Sat, 14 Mar 2026 18:11:11 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sat, 14 Mar 2026 18:11:04 -0400
+  by phl-compute-12.internal (MEProxy); Sat, 14 Mar 2026 18:11:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1773526264;
-	 x=1773612664; bh=F7JSW+j/LkWt4whOeEkJ/DH35z9TIw1fR68SJHykOys=; b=
-	Rf+N2n8ocy/ghAeAyhc4uDaolVZCzOQ6zY7dXsy6exwfKEE42orqa3i6kNmDZ+b1
-	ql49jzq5wCewGK3MGt4r35D//qEQY/hjWvfIln2OnLoO3CGKVGWTwJgmmqNxaa39
-	H/otU21vUKRuzip7kKtnQ/VJJukyqI7fItuY0T75EKVpiBeMGOgd/4bNE9fS3XhN
-	9+fBT+2+IKL326ovM7AkgXp+wfda4WFIHfJlcDwtjOLmfOP8OnbrqPJeKRi/oXWa
-	YRdnU1gr9E+E8XZZP2+lLxP24lvQkQCnQYG/H1ciZAeA2StmZrjQDozsxJuvIBoY
-	NnKM94oasKaIIFmqpUpxRg==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1773526271;
+	 x=1773612671; bh=lOS7LHOMo9m9nmRwRsFYgmLXLp+Bwsbwnomhyk6Wnok=; b=
+	uvpH1nP1bx3MfzxsS+aoA9uK7T/bwnJox5rWiKnXPQG+xyHTG9p8DY4q+HcwIQcw
+	doxLio2orT5dyZHj3cgR7JSxzqPT+IVBw3v8JcKEFvGQ1akdnYEDa7KwyKnzggtp
+	2yGzhdnJh96j6kzbJMSaaVr5Heo4HgfJ/1Qg/nsvmgoS6G0uClIYg8uw85+mm4yy
+	o38To2zOw3frlBKXQoHenhAVDIyzZQQcyV/nLi00k5SbzOBJN1PQw3/2KoSTuwC4
+	iA0f/IOKdmGxg1ZaSfa74OQPss1RJtc0rQ7xHFqmrA6l7ikHJxIcVxaC7eA5hlpH
+	xuLe4g5wJ4LaGcFVXtSoIA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773526264; x=
-	1773612664; bh=F7JSW+j/LkWt4whOeEkJ/DH35z9TIw1fR68SJHykOys=; b=Y
-	piDih24baujmqKP4zMs8k8PG/8jogF3UYxml7Ls1FTNRBan9SrLvCmPyyaRxIyhz
-	/A8QA1S15DWp/rrD27gwamJxem6m1YDIlVKBbDd7Hrttoaw4ZkMXFADNaRC2lBFQ
-	Vt/zrA8v+SRwnukoMmT89aqUqJsKq/mmEOUk2EbQ8A0+MYVhpb4HLMf10K22nxHR
-	iDGCvnShIkda7r9xQxVhjnWGC4u8PeUSCqnBwX7dGf7ztJQz1lbsS6cgjUxp3ZH5
-	kuYgaiEfr2tta6jkvnrnCI4qSh2gC3KhKSW7h3P4yDb4FxrT5n1iXULpjqyw3xhT
-	b6u3FfqAt2+oY+jSynzbQ==
-X-ME-Sender: <xms:-Ny1aT4SweXrjVEyM8LQlPYIeiCTHuCMu0Euzhm9Xf9EVswNMh4gqg>
-    <xme:-Ny1aZUuYvD6kThONA5K53yqQMSJxqj5evGeFLl661zpF3IgGhFLyl2uLNsxtOlS1
-    H6k_2747aKoKRcueKMelr76_YAHZq9o6FBzgVgOGBrhXU6GiN8azlo>
-X-ME-Received: <xmr:-Ny1abKvCoDf5Pxkl-i9DnhBiky0FJ8vUmIRYVoRk-kdnDC5BZx0e3J-qCB3FuvoGajP6Y5qdfwIiD0FtkeMWR1zuzKLM-9ttR1p>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773526271; x=
+	1773612671; bh=lOS7LHOMo9m9nmRwRsFYgmLXLp+Bwsbwnomhyk6Wnok=; b=U
+	KqlJcfo9karN3NIx8e3q3YvbogpboK8uIbZSv/fLI64f7A7VzbJ0mwCDDtOZqXM8
+	MbRisugeGFGIMf6m9af3PWC11NlG7R0+ZhQb/fslcg0exphi4BhI59NrIXF16svS
+	95REfRIDD7P1QtBbVn/Q6aIkqs6m7O2MHDjEqLTD7iaBsRL4pDC+OjMUf06ECZr4
+	A08wV0BsP82SOLQGYJc3Xdigk2WDSSFnV0X3csGsivRiQ1vfEDPF5IL6YdcvkNWK
+	MKB5nxSZY1xDDdeqPRDXy+aqBOhkv+x+uiPd6f2skcAkUJB0ySf17nC3SE4BSHna
+	ngY9Zq7kZA+NUab+9PvXg==
+X-ME-Sender: <xms:_9y1acliKODD8gQh2NmU5eWjRDr9VCypUwSjcm16IVlkX6SuV5dgrQ>
+    <xme:_9y1aYaMCpEwtwCclYu6xNgTfxFAaBNxRLe5_rt9eyOaKBXZV9wygLoIkCd9_SP-c
+    UmEvBqy9FckUQuG4SesgEsgut6YRg0ds7xHp4Ll68ekKKsSbqdgCqw>
+X-ME-Received: <xmr:_9y1afFx7G4nC94D2WgcJ5jR-xaEwWnek82_knw9qO2CqhqEQgT2uUEDQFniQSYZfOTOyUeq_su0IA12zAithwQVoYZfHPGakIM6>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvleefjeegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
     shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
-    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeekheetffdukedt
-    keeijeevieehlefgfeekvdejueelheekfedutedvudetfeefieenucffohhmrghinhepfh
-    higigvuggpvhgrlhdrghhrpdhfihigvggupghvrghlrdhgsgenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluh
-    hnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkuhhnihhnohhrihdrmhhorhhimhhothhordhggiesrhgvnhgvshgrshdrtgho
-    mhdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgurd
-    gtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhn
-    sghorghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotges
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihhklhgrshdrshhouggv
-    rhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhrtghpthhtohepmh
-    grrhgvkhdrvhgrshhuthdorhgvnhgvshgrshesmhgrihhlsghogidrohhrgh
-X-ME-Proxy: <xmx:-Ny1abuhSurMqkUILZohjgS-XIIWLEe86GvfNz1N-tpT2lLabH4y8Q>
-    <xmx:-Ny1aYIXH4X2KxozEdqgq2eiC4CUDG_UKo2i7YLUZs1IPkxY33WFsw>
-    <xmx:-Ny1abPPqDURLu7d6rIRKlMsD7La3qLRZccxPlu5djymIM2LFzMovA>
-    <xmx:-Ny1aTUZnZIpN_WyJpTxeiGQswxLqRLbc4_wPgLSLCI2UVS-fXTPOw>
-    <xmx:-Ny1aaukaX7ngD5ayF36foHEsLU5b1nvIh1yhmUpAE4hV5EmIuT_qgO_>
+    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehiefgueevuedt
+    fefhheegkeevtdelueeukeevfeduhefhhfejfffggeffleefgeenucevlhhushhtvghruf
+    hiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
+    uhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeelpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehkuhhnihhnohhrihdrmhhorhhimhhothhordhggiesrhgvnhgvshgrshdrtg
+    homhdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgu
+    rdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsoh
+    hnsghorghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotg
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihhklhgrshdrshhoug
+    gvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhrtghpthhtohep
+    mhgrrhgvkhdrvhgrshhuthdorhgvnhgvshgrshesmhgrihhlsghogidrohhrgh
+X-ME-Proxy: <xmx:_9y1afYKrOFhE6GSrLbGrMXkXLHkUUiGbKjGaGjwR4MIcyn0FFgbxw>
+    <xmx:_9y1abyG_3L1pY4c_8mtYynN4xePyqlNXktFiNgWXg9pTWv2hYHzKw>
+    <xmx:_9y1aZS9K6AvOz8iHC-ggFhgCo_tz1aSneK4ZaDuYoy4Ww3cM6TyCA>
+    <xmx:_9y1aQIZIy94kpvE0nARO2DPzarzrGFvZPZisiQ2pbWdMHdundl6BA>
+    <xmx:_9y1aTWfv4P_cBoWJvy1AMQovSVvgz2oBJE4sbSpfgR03yunXgTyhWYz>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Mar 2026 18:11:03 -0400 (EDT)
+ 14 Mar 2026 18:11:11 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -88,9 +87,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Marek Vasut <marek.vasut+renesas@mailbox.org>
-Subject: [PATCH v6 07/12] media: rppx1: Add support for Black Level Subtraction
-Date: Sat, 14 Mar 2026 22:59:39 +0100
-Message-ID: <20260314215944.3674865-8-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v6 11/12] media: rppx1: Add support for Bayer Demosaicing
+Date: Sat, 14 Mar 2026 22:59:43 +0100
+Message-ID: <20260314215944.3674865-12-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260314215944.3674865-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260314215944.3674865-1-niklas.soderlund+renesas@ragnatech.se>
@@ -103,196 +102,174 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Extend the RPPX1 driver to allow setting the Black Level Subtraction
-(BLS) configuration using the RkISP1 parameter buffer format. It uses
-the RPPX1 framework for parameters and  its writer abstraction to allow
-the user to control how (and when) configuration is applied to the
-RPPX1.
+Extend the RPPX1 driver to allow setting the Bayer Demosaicing
+configuration using the RkISP1 parameter buffer format. It uses the
+RPPX1 framework for parameters and its writer abstraction to allow the
+user to control how (and when) configuration is applied to the RPPX1.
 
-As the RkISP1 parameters buffer have lower precision then the RPPX1
-hardware the values needs to be scaled. The behavior matches the RkISP1
-hardware.
+As the RkISP1 parameters are all 6- or 10-bit while RPP are either 8- or
+16-bit, the driver corrects for this allowing the RkISP1 parameters to
+be used.
+
+One particularity is that the RkISP1 driver lumps all settings in the
+FILT_LUM_WEIGHT register in a single value in the configuration buffer.
+As the format is slightly different for RPP we need to break it out and
+fix it before applying it to the RPP.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
- .../platform/dreamchip/rppx1/rpp_params.c     |   4 +
- .../platform/dreamchip/rppx1/rpp_stats.c      |   5 +-
- .../platform/dreamchip/rppx1/rppx1_bls.c      | 116 ++++++++++++++++++
- 3 files changed, 124 insertions(+), 1 deletion(-)
+ .../platform/dreamchip/rppx1/rpp_params.c     |   7 ++
+ .../media/platform/dreamchip/rppx1/rppx1_db.c | 112 ++++++++++++++++++
+ 2 files changed, 119 insertions(+)
 
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index d8dd783110c6..c1917585e19b 100644
+index a2f6c85893e3..77869ec7cf6a 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -16,6 +16,7 @@
- 
- static const struct v4l2_isp_params_block_type_info
+@@ -18,6 +18,8 @@ static const struct v4l2_isp_params_block_type_info
  rkisp1_ext_params_blocks_info[] = {
-+	RKISP1_PARAMS_BLOCK_INFO(BLS, bls),
+ 	RKISP1_PARAMS_BLOCK_INFO(BLS, bls),
  	RKISP1_PARAMS_BLOCK_INFO(AWB_GAIN, awb_gain),
- 	RKISP1_PARAMS_BLOCK_INFO(AWB_MEAS, awb_meas),
- 	RKISP1_PARAMS_BLOCK_INFO(HST_MEAS, hst),
-@@ -54,6 +55,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
- 		block_offset += block->header.size;
- 
- 		switch (block->header.type) {
-+		case RKISP1_EXT_PARAMS_BLOCK_TYPE_BLS:
-+			module = &rpp->pre1.bls;
-+			break;
++	RKISP1_PARAMS_BLOCK_INFO(FLT, flt),
++	RKISP1_PARAMS_BLOCK_INFO(BDM, bdm),
+ 	RKISP1_PARAMS_BLOCK_INFO(CTK, ctk),
+ 	RKISP1_PARAMS_BLOCK_INFO(GOC, goc),
+ 	RKISP1_PARAMS_BLOCK_INFO(LSC, lsc),
+@@ -64,6 +66,11 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
  		case RKISP1_EXT_PARAMS_BLOCK_TYPE_AWB_GAIN:
  			module = &rpp->pre1.awbg;
  			break;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-index 059bd76ecf64..1bffa6dd35f8 100644
---- a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-@@ -20,8 +20,11 @@ void rppx1_stats_fill_isr(struct rppx1 *rpp, u32 isc, void *buf)
- 		if (!rpp_module_call(&rpp->post.hist, stats_rkisp1, &stats->params))
- 			stats->meas_type |= RKISP1_CIF_ISP_STAT_HIST;
- 
--	if (isc & RPPX1_IRQ_ID_PRE1_EXM)
-+	if (isc & RPPX1_IRQ_ID_PRE1_EXM) {
- 		if (!rpp_module_call(&rpp->pre1.exm, stats_rkisp1, &stats->params))
- 			stats->meas_type |= RKISP1_CIF_ISP_STAT_AUTOEXP;
-+
-+		rpp_module_call(&rpp->pre1.bls, stats_rkisp1, &stats->params);
-+	}
- }
- EXPORT_SYMBOL_GPL(rppx1_stats_fill_isr);
-diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c b/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
-index de7008befd8e..164bc4a63c23 100644
---- a/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include "rpp_module.h"
-+#include "rppx1.h"
- 
- #define BLS_VERSION_REG				0x0000
- 
-@@ -54,6 +55,121 @@ static int rppx1_bls_probe(struct rpp_module *mod)
++		case RKISP1_EXT_PARAMS_BLOCK_TYPE_FLT:
++		case RKISP1_EXT_PARAMS_BLOCK_TYPE_BDM:
++			/* Both types handled by the same block. */
++			module = &rpp->post.db;
++			break;
+ 		case RKISP1_EXT_PARAMS_BLOCK_TYPE_CTK:
+ 			module = &rpp->post.ccor;
+ 			break;
+diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_db.c b/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
+index 5e233896cfc8..4a2a3719d7ed 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
++++ b/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
+@@ -39,6 +39,118 @@ static int rppx1_db_probe(struct rpp_module *mod)
  	return 0;
  }
  
-+static void
-+rppx1_bls_swap_regs(struct rpp_module *mod, const u32 input[4], u32 output[4])
-+{
-+	static const unsigned int swap[4][4] = {
-+		[RPP_RGGB] = { 0, 1, 2, 3 },
-+		[RPP_GRBG] = { 1, 0, 3, 2 },
-+		[RPP_GBRG] = { 2, 3, 0, 1 },
-+		[RPP_BGGR] = { 3, 2, 1, 0 },
-+	};
-+
-+	/* Swap to pattern used in our path, PRE1 or PRE2. */
-+	struct rpp_module *acq = mod == &mod->rpp->pre1.bls ?
-+		&mod->rpp->pre1.acq : &mod->rpp->pre2.bls;
-+	enum rpp_raw_pattern pattern = acq->info.acq.raw_pattern;
-+
-+	for (unsigned int i = 0; i < 4; ++i)
-+		output[i] = input[swap[pattern][i]];
-+}
-+
 +static int
-+rppx1_bls_param_rkisp1(struct rpp_module *mod,
-+		       const union rppx1_params_rkisp1_config *block,
-+		       rppx1_reg_write write, void *priv)
++rppx1_db_param_rkisp1_flt(struct rpp_module *mod,
++			  const union rppx1_params_rkisp1_config *block,
++			  rppx1_reg_write write, void *priv)
 +{
-+	const struct rkisp1_ext_params_bls_config *cfg = &block->bls;
++	const struct rkisp1_ext_params_flt_config *cfg = &block->flt;
++	u32 gain, kink, min;
 +
 +	/* If the modules is disabled, simply bypass it. */
 +	if (cfg->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + BLS_CTRL_REG, 0);
++		write(priv, mod->base + FILT_MODE_REG, 0);
 +		return 0;
 +	}
 +
-+	u32 ctrl = BLS_CTRL_BLS_EN;
-+
-+	if (!cfg->config.enable_auto) {
-+		static const u32 regs[] = {
-+			BLS_A_FIXED_REG,
-+			BLS_B_FIXED_REG,
-+			BLS_C_FIXED_REG,
-+			BLS_D_FIXED_REG,
-+		};
-+		u32 swapped[4];
-+
-+		rppx1_bls_swap_regs(mod, regs, swapped);
-+
-+		/*
-+		 * The RkISP params are 12-bit + 1 signed bit, while the RPP can
-+		 * be 12, 20 or 24 bit + 1 signed bit. Figure out how much we
-+		 * need to adjust the input parameters.
-+		 */
-+		const unsigned int shift = mod->info.bls.colorbits - 12;
-+
-+		write(priv, mod->base + swapped[0], cfg->config.fixed_val.r << shift);
-+		write(priv, mod->base + swapped[1], cfg->config.fixed_val.gr << shift);
-+		write(priv, mod->base + swapped[2], cfg->config.fixed_val.gb << shift);
-+		write(priv, mod->base + swapped[3], cfg->config.fixed_val.b << shift);
-+	} else {
-+		write(priv, mod->base + BLS_SAMPLES_REG, cfg->config.bls_samples);
-+
-+		if (cfg->config.en_windows & BIT(0)) {
-+			write(priv, mod->base + BLS_H1_START_REG, cfg->config.bls_window1.h_offs);
-+			write(priv, mod->base + BLS_H1_STOP_REG, cfg->config.bls_window1.h_size);
-+			write(priv, mod->base + BLS_V1_START_REG, cfg->config.bls_window1.v_offs);
-+			write(priv, mod->base + BLS_V1_STOP_REG, cfg->config.bls_window1.v_size);
-+			ctrl |= BLS_CTRL_BLS_WIN1;
-+		}
-+
-+		if (cfg->config.en_windows & BIT(1)) {
-+			write(priv, mod->base + BLS_H2_START_REG, cfg->config.bls_window2.h_offs);
-+			write(priv, mod->base + BLS_H2_STOP_REG, cfg->config.bls_window2.h_size);
-+			write(priv, mod->base + BLS_V2_START_REG, cfg->config.bls_window2.v_offs);
-+			write(priv, mod->base + BLS_V2_STOP_REG, cfg->config.bls_window2.v_size);
-+			ctrl |= BLS_CTRL_BLS_WIN2;
-+		}
-+
-+		ctrl |= BLS_CTRL_BLS_MODE_MEASURED;
-+	}
-+
-+	write(priv, mod->base + BLS_CTRL_REG, ctrl);
-+
-+	return 0;
-+}
-+
-+static int rppx1_bls_stats_rkisp1(struct rpp_module *mod,
-+				  struct rkisp1_cif_isp_stat *stats)
-+{
-+	struct rkisp1_cif_isp_bls_meas_val *bls = &stats->ae.bls_val;
-+
-+	static const u32 regs[] = {
-+		BLS_A_MEASURED_REG,
-+		BLS_B_MEASURED_REG,
-+		BLS_C_MEASURED_REG,
-+		BLS_D_MEASURED_REG,
-+	};
-+	u32 swapped[4];
-+
-+	rppx1_bls_swap_regs(mod, regs, swapped);
++	/*
++	 * RkISP1 values are 10-bit, RPP are 18-bit. Conversion verified with
++	 * table in datasheet and libcamera pipeline for rkisp1.
++	 */
++	write(priv, mod->base + FILT_THRESH_BL0_REG, cfg->config.thresh_bl0 << 8);
++	write(priv, mod->base + FILT_THRESH_BL0_REG, cfg->config.thresh_bl1 << 8);
++	write(priv, mod->base + FILT_THRESH_SH0_REG, cfg->config.thresh_sh0 << 8);
++	write(priv, mod->base + FILT_THRESH_SH1_REG, cfg->config.thresh_sh1 << 8);
 +
 +	/*
-+	 * The RkISP BLS stats are 12-bit while the RPP can be 8, 20
-+	 * or 24 bit. Figure out how much we need to adjust the output
-+	 * statistics.
++	 * RkISP1 values are 6-bit, RPP are 8-bit. Conversion verified with
++	 * table in datasheet and libcamera pipeline for rkisp1.
 +	 */
-+	const unsigned int shift = mod->info.bls.colorbits - 12;
++	write(priv, mod->base + FILT_FAC_BL0_REG, cfg->config.fac_bl0 << 2);
++	write(priv, mod->base + FILT_FAC_BL1_REG, cfg->config.fac_bl1 << 2);
++	write(priv, mod->base + FILT_FAC_MID_REG, cfg->config.fac_mid << 2);
++	write(priv, mod->base + FILT_FAC_SH0_REG, cfg->config.fac_sh0 << 2);
++	write(priv, mod->base + FILT_FAC_SH1_REG, cfg->config.fac_sh1 << 2);
 +
-+	bls->meas_r = rpp_module_read(mod, swapped[0]) >> shift;
-+	bls->meas_gr = rpp_module_read(mod, swapped[1]) >> shift;
-+	bls->meas_gb = rpp_module_read(mod, swapped[2]) >> shift;
-+	bls->meas_b = rpp_module_read(mod, swapped[3]) >> shift;
++	/*
++	 * For unknown reasons the 3 fields of the FILT_LUM_WEIGHT register
++	 * have been lumped together in a single field in the configuration
++	 * data and written as is to the hardware. For RkISP1 the register
++	 * layout is,
++	 *
++	 * 31:19	unused
++	 * 18:16	lum_weight_gain
++	 * 15:8		lum_weight_kink
++	 *  7:0		lum_weight_min
++	 *
++	 * For RPP the register layout is similar but kink and gain have higher
++	 * precision.
++	 *
++	 * 31		unused
++	 * 30:28	lum_weight_gain
++	 * 27:24	unused
++	 * 23:12	lum_weight_kink
++	 * 11:0		lum_weight_min
++	 *
++	 * Break apart the RkISP1 format, scale kink and min, and map to RPP.
++	 */
++	gain = (cfg->config.lum_weight & GENMASK(18, 16)) >> 16;
++	kink = (cfg->config.lum_weight & GENMASK(15, 8)) >> 8;
++	min = cfg->config.lum_weight & GENMASK(7, 0);
++
++	write(priv, mod->base + FILT_LUM_WEIGHT_REG,
++	      (gain << 28) | ((kink << 4) << 12) | (min << 4));
++
++	write(priv, mod->base + FILT_MODE_REG,
++	      (cfg->config.chr_v_mode << 4) |
++	      (cfg->config.chr_h_mode << 6) |
++	      (cfg->config.grn_stage1 << 8) |
++	      (cfg->config.mode ? FILT_MODE_FILT_MODE : 0) |
++	      FILT_MODE_FILT_ENABLE);
 +
 +	return 0;
 +}
 +
- const struct rpp_module_ops rppx1_bls_ops = {
- 	.probe = rppx1_bls_probe,
-+	.param_rkisp1 = rppx1_bls_param_rkisp1,
-+	.stats_rkisp1 = rppx1_bls_stats_rkisp1
++static int
++rppx1_db_param_rkisp1_bdm(struct rpp_module *mod,
++			  const union rppx1_params_rkisp1_config *block,
++			  rppx1_reg_write write, void *priv)
++{
++	const struct rkisp1_ext_params_bdm_config *cfg = &block->bdm;
++
++	/* If the modules is disabled, simply bypass it. */
++	if (cfg->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
++		write(priv, mod->base + DEMOSAIC_REG, 0x400);
++		return 0;
++	}
++
++	/*
++	 * Threshold for Bayer demosaicing texture detection.
++	 *
++	 * RkISP1 threshold are 8-bit, RPP threshold are 16-bit. Map the RkISP1
++	 * value range by left shifting by 8.
++	 */
++	write(priv, mod->base + DEMOSAIC_REG, cfg->config.demosaic_th << 8);
++
++	return 0;
++}
++
++static int
++rppx1_db_param_rkisp1(struct rpp_module *mod,
++		      const union rppx1_params_rkisp1_config *block,
++		      rppx1_reg_write write, void *priv)
++{
++	switch (block->header.type) {
++	case RKISP1_EXT_PARAMS_BLOCK_TYPE_FLT:
++		return rppx1_db_param_rkisp1_flt(mod, block, write, priv);
++	case RKISP1_EXT_PARAMS_BLOCK_TYPE_BDM:
++		return rppx1_db_param_rkisp1_bdm(mod, block, write, priv);
++	}
++
++	return -EINVAL;
++}
++
+ const struct rpp_module_ops rppx1_db_ops = {
+ 	.probe = rppx1_db_probe,
++	.param_rkisp1 = rppx1_db_param_rkisp1,
  };
 -- 
 2.53.0
