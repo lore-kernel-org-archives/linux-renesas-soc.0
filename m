@@ -1,109 +1,127 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA1D13DBA0
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Mar 2026 14:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D3267B05;
+	Mon, 16 Mar 2026 14:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773670661; cv=none; b=PJVBezQZuDQeBljnGJvJeQWMI/yI5aIyuTLStztWnN1d5rO6ZVEl6kkBiQqn1B//q9DsBi4bH16m0z6T4c5ZOs8Kbq2phiLo1vzhzfCrTXQcvE4Wj3Xo28ZcjhOODPoBOyPQ0Epts02+ouswKbRZ1UTInWJTyVBV4Jvg7JCyN5g=
+	t=1773670878; cv=none; b=d9Tb5/WdNLcMFnD8aTF7H4PeiV+LrnUC9k1+6tvetJlzacR7pSkiks2RYNaZ2oKyPgDyKXe6xnOdiyOM3+ICP03uBmkvfdCz52Bx1B4Zlztx753X0GErFHWnVSGryF4dXbl0Hvn0qEMzEk5fNBtwR8E2s83XlT0Wslla0X8Medk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773670661; c=relaxed/simple;
-	bh=HXyby1fC1woD0aOW+X0r3xZY4aiybILZs4zc4kb404o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EoTxl+yrjV57/D1mXUQdb6tbqWxeggJEf4uVck6TdjMHxTsAv6phSbAR7Dxj5W+7T3+nG3FPy9Eq/vX4fsz/qh5HeOwgm0oUcHSOiDQzC1LZsc50BSwvxUuvkzV//jbVguvJp2vELuNSCTBRoo8iBQ3S9ei1z2/aHBuhyMpLgMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LU4FUYp4; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1773670878; c=relaxed/simple;
+	bh=zh7kzq6IXE7fmpIHNvZtPWXZQztvbl6jS1cH5lX/jkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XkjUHACPXKsgJ3KanKgyPWusKpKOjxJM9vs/4dxfcoXJySSkb3Tv5+BCcL6yWWbWGSoeH/Fxzxkw2Ax5+Xcoaq/FeIQr4e+m95Ghcv6lZpc77zhaEz/q0YilmP2yb4hNECARhghNqRLIUf8hl4yKDW03SAU1q2WsrJvvfOqzIWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOk/Clan; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LU4FUYp4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Rg+/
-	J3EnrGFEOVXzIPjA7aMXCL8SqvKE+yvSPuZjfM4=; b=LU4FUYp4WtOE9Gmri1pX
-	EBTZ7KLGbq95t5cy2XsAukdYdRVRhLcsf5/V3D+zw0ao0/LECtx/6LzWyX3w2E3R
-	4fKeHK9SevvTF2hUSJK5odAAOasaPCmwbsSnT2+S/N1HZ7CI16owrPZqa0nUNmKK
-	m/Zt/GWO5NUF7iPqFjo1i/uVfECqvx7ZNuaMcR5TOXyS0zOa15ST179HbL0sXbTI
-	sIF4Tp169UN8piHhCG0UrSJ5YHtGDC0vtsO9XyjCUChB+znpgyZjHVY1cEfQ7B4R
-	BrURkwIAFwlm0soSJUGyN6iyjgQy3qhQ353TJlITnua2eF4nQZl8R6zb0J9ebfjB
-	Fw==
-Received: (qmail 1454690 invoked from network); 16 Mar 2026 15:17:37 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Mar 2026 15:17:37 +0100
-X-UD-Smtp-Session: l3s3148p1@y0Z24SRNDrw+XdJ7
-Date: Mon, 16 Mar 2026 15:17:36 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] memory: renesas-rpc-if: Fix duplicate device name on
- multi-instance platforms
-Message-ID: <abgRANFdpr3rEUQ2@shikoro>
-References: <20260310212927.3372410-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260310212927.3372410-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOk/Clan"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45C0C19421;
+	Mon, 16 Mar 2026 14:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773670878;
+	bh=zh7kzq6IXE7fmpIHNvZtPWXZQztvbl6jS1cH5lX/jkk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JOk/ClanckMAuCrgavQgClQPgB+pFYzYyK9Zf1XjG9UjCoQjOGtaWt2nJ3XpOD//3
+	 sfPAJeXYDDOsCKjBNbJM7C5Ti0hGXdbeVq0+uaFH5gk7ZyiafEakOjWtjJJsC+U+1K
+	 0dW6m434+q1R+p/oSKjuYKJxAkyZs9hNXdszv/Z5lzT60M11Pe0ipPxp6bojuDODGw
+	 iQMUxBty4ylLJbpKycOvcNRvnYgbrnqgbgghMzBnflUgifWPbv1GW6/8NdpXkDefzD
+	 84UPgzap/neY5yvZm0BdNEyFKHVKJcOMHP+3DwatPb16goNXEoFnYHgfzrqmOv3NnH
+	 bJve1tuW75moA==
+Message-ID: <c3af22f6-d937-4539-8eb7-d7f0b0892ca2@kernel.org>
+Date: Mon, 16 Mar 2026 15:21:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="28MoejGXT0OM86eb"
-Content-Disposition: inline
-In-Reply-To: <20260310212927.3372410-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] memory: renesas-rpc-if: Add support for RZ/T2H SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260310212927.3372410-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260310212927.3372410-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <abgQpsArW3VrCAns@shikoro>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <abgQpsArW3VrCAns@shikoro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 16/03/2026 15:16, Wolfram Sang wrote:
+> 
+>> Add a new compatible string "renesas,r9a09g077-xspi" for RZ/T2H while
+>> reusing the existing xspi_info_r9a09g047 OF data. This allows the driver
+>> to bind correctly on RZ/T2H while the register differences can be handled
+>> in future updates as the affected configuration registers are not currently
+>> accessed by the driver.
+> 
+> This sounds fragile to me. Can you add a comment somewhere in the driver
+> or headers so people wanting to use these registers will find out that
+> the SoCs are not compatible anymore?
 
---28MoejGXT0OM86eb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+IMO, this patch is not needed. If you need to handle differences in
+registers, then you add dedicated OF data.
 
-On Tue, Mar 10, 2026 at 09:29:26PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> On platforms with multiple xSPI instances, the driver fails to probe
-> additional instances due to duplicate sysfs entries:
->=20
->   [   86.878242] sysfs: cannot create duplicate filename '/bus/platform/d=
-evices/rpc-if-spi'
->=20
-> This occurs because platform_device_alloc() uses pdev->id for the device
-> ID, which may be PLATFORM_DEVID_NONE (-1) for multiple instances, causing
-> all instances to attempt registration with the same name.
->=20
-> Fix this by using PLATFORM_DEVID_AUTO instead, which automatically assigns
-> unique IDs to each device instance, allowing multiple xSPI controllers to
-> coexist without naming conflicts.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The change here (with the bindings) is actually confusing, because
+effectively it says two contradictory statements:
+1. Driver patch: devices are different but they are compatible in
+meaning of DT,
+2. Bindings: devices are not compatible
 
-Sounds reasonable to me.
+So you need to decide which above, but not both.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Eventually provide extensive arguments in terms of how DT understands
+compatibility.
 
-
---28MoejGXT0OM86eb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmm4EP8ACgkQFA3kzBSg
-KbZSKw//UQfVwpbk/u5gXDzzHRT9ApAYtCDR7TnxgKav8zKE+t++ECleHANll9+O
-+8k8a/R/vg6kFYJUPvcgjTASQ3CNTAwNKWGLZgYc/mezongVk4ee0Bpe1586CLxd
-SLDr7kB3xuEgXe/8MP6f2h7LQx99swyHCz4yygrXjSNsC5USCG14bGTagd1dN7kl
-b9+07wooMVkdzLRjsirLltf7wB40E/mKVwY5IFgULGawVnrAoCJPgTP/HZysw2Du
-zW3gg3CeO3qsiSGE4GkdW0Ssy78L4BjsXsmeKHNZveHYHYUvvqz2aqWYoNrLVuBV
-FIg4wm/nR7M4aGrq7RWYEMsnBnCZfa1rIGpPWmz1L5ryI2rs1T+UntFPQVr1PBQt
-CjWRGXVhC4oPFqtCifXh6DuJnMDwGjJNfuKzM8ImroFO+WD8PumNnaFuEs8VRpds
-uF3GiP4K1xNJnE5CkVn7AyXvhQpkzP2a4ghCP8RyACFpZ0odGko0jmdHIykVJ3UA
-dixjWKAOCsBY8ArbiiC/6l6TJ629xjjE4WbJzDLLzt7pnxfN1TM4iiOb+K6yMpLN
-+XjigoX3nEHn7BC8KvtmuUkxhh9eWDpywhPrqmyYyhqYA+rWeNmp0xmGly3xumnV
-2tn6N+lgGBzRUvfBcMBwXucQ9y3fyBQUIKxDJF3F/GfQ7i89ikY=
-=bjah
------END PGP SIGNATURE-----
-
---28MoejGXT0OM86eb--
+Best regards,
+Krzysztof
