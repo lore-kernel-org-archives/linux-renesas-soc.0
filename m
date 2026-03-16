@@ -1,111 +1,80 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41D53612D2
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Mar 2026 08:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5C13559F8;
+	Mon, 16 Mar 2026 08:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773649360; cv=none; b=GVQiOBKE8IjpsuT1HXCqbszb/ElGq5NbKeah4MI0r1mQAmlTeLRUFwhxMIpHBRKnHZO+8FUKaAgmXqKsg6hzvj9CoKJOflqSk8R1IyhVZaXUwTB1rny9diiHfnCnFFlwxHa/dDbFFyskjtzA7FJ54mhW9JgmltwfQxuJ4SkOaog=
+	t=1773649533; cv=none; b=h6quaXZf9doFGDHOA8MiKmiiyDI5khFf+5+WnjzEQI0bk3zIxbAAn6B0z6gyLQ8LD1+rq7A1AKa8fsd7jQBHwLogMgN45i+evTjAIUoxr0GaLRPOVgzn2LnK6NxT4BfF1GtiNHUfWclrIrcpb/nLyBWLyI9c/pb9k99Vv1za9zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773649360; c=relaxed/simple;
-	bh=K4PRTP6RiXe4ekfnxbKijRsel6dDC+QKM/gt9YizooE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ja/V1Hg0H3TA8BSXnM9a5hZ1VoFtz4sGas/TtfOpxPNdncrtLCH4ztfkEUo2AtVPOMv/cjzLgM09DlY2kPIbowEeItzw+oQnsMZOV/c+gYqUddspdHF7WbdH7SpzeAedNV5Rn1lUMUG4KE+yjSp0MoR2c3cCtN5+I4gdKx06SAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-94e2ad66abcso1037416241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Mar 2026 01:22:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773649353; x=1774254153;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gHPoB6LHBRts05kAm+HAniBgww0f16o7iYE+d6aW+Hw=;
-        b=bgvhF371CAS7tbqRGLh5q21PhzsK+Ujhtitnz76AZcR/2P9o/OzdWGdQRk8ug6UmX7
-         0wwRwfaf7Q1eOolJURtZc7jYLZIIS3v9vXII8gTBgdamvzMHuTkJ4FWqxQKDLrNRp+ed
-         2+Shkz66YGqGD6dE8o/1kZ0Nwf0CBxmEFthyXyg7DHl9E/253R8xaCrEzvT6aTHVSL9K
-         RX55ascFK1swTmXULt9chwbGGxLjCSy0bdvACLeXyRWHdV0erGjjk50nyv1gjTKlHE6V
-         bejFjoum6gdUAQbq5OyUNgPxKKNp88agIWh2rWPSKgum6Le5XmxzgyP++EqLec6hQ3Ll
-         ipxQ==
-X-Gm-Message-State: AOJu0YwLtAoUWjb48XG0B9r3PHyNjajcLc3B+ml1CyRtoGewOu0vmlsq
-	Tq8+3vHl95Brw1CkD4VNQ0B2vRyGFIX7zy9euz9I1O9xTo5gabQ/1t7HI9Fq50yK
-X-Gm-Gg: ATEYQzxVtcvwoIPaZFknVVBhnXBaNYpvP2TFl/ycgTf89PAGHyKPwRF+hid+I1SVZPk
-	R09BukzlDRcreZzwdO5S2+rZWn6tRcy1XG3n6qMDEfPt6lW7bAhZ8RF29LYNDOzxoC4zWtP5HXI
-	UQ3jHIuAyDF50bARsIuEYnDY0ygkjmT3a1LqceeOy3+yRnGSqOPLQaClMY8tFebxzz4ECy2S0TB
-	FsDdtRotAFCDys4Xoe+hgvSRBZkKWR+qdLeGOQDjumMteRe3QxAYDcyN6AhoS0Hbc1p2dIUUh9o
-	1GD9Yq2cPZ5Ok1HDALQnIFndNba7wmxm/0/Aal6oUMz8lNTTSiLWPGvfxW9MgEPIbtxeu8JESkL
-	Vne2ibnL9EQGP5K7C7HhTjdRZ0WXZ+Az7upaPibsz3WBzQVGVpMF0WkS/vTmXuDJeCv3Yo8Q0L8
-	byqi+Nzvevza3GLTXuGoJAd11kghA+9ioCjb8FL+lu0sQB12/n8zihxavXqpHTD6MN
-X-Received: by 2002:a05:6102:38ca:b0:5ff:1130:bdad with SMTP id ada2fe7eead31-6020e212d86mr4359868137.6.1773649352561;
-        Mon, 16 Mar 2026 01:22:32 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-60254bbe001sm476723137.13.2026.03.16.01.22.31
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2026 01:22:31 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5674d8be45eso1593316e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Mar 2026 01:22:31 -0700 (PDT)
-X-Received: by 2002:a05:6102:3a0e:b0:5fd:f744:660e with SMTP id
- ada2fe7eead31-6020e60078dmr4136686137.28.1773649350869; Mon, 16 Mar 2026
- 01:22:30 -0700 (PDT)
+	s=arc-20240116; t=1773649533; c=relaxed/simple;
+	bh=umt5R5UmuN9/aBRkI9DL5c/zKb/EjZuAcHuaR55PLIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NB0dKPjyNRyUvSL+HaG6T66GmPSgZ44npmxQq7qYoNDcnrZlItRlEqzZtD0e+je3a7Lk5l168ksie6PGlvElO9HNdybBSQ/vLX/yK+RApqmlzo7omxQF9sg3u/2DYriEsvVrGRAFVSCpSpb9U6F6HVqjbGZZKz40hXRStyIx04I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCGWlLv4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCGWlLv4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23309C19421;
+	Mon, 16 Mar 2026 08:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773649533;
+	bh=umt5R5UmuN9/aBRkI9DL5c/zKb/EjZuAcHuaR55PLIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iCGWlLv4KNRzPbHkdPlSHrxoFHz90z8aj9/QiCSOa53ufgnnmag20piDDZwHxqiu6
+	 nKhvDMUi/iY734kL2VpD5f7kCY/vT/1s9j0D9fLbp5mkJbY8mbp2f9QC2aZYghd4BJ
+	 paoq6qi1KQNQcZBF0ufrkh6AG3/ECOi52psPW27DHtO0UbN1EPrDg5YD8TC0mkNv+V
+	 0TDGKzo23AKSes3lEMakT0xffhLQ5VvIKwGAEKfPqFHhrtscesE9CLMwWPcBl8JUdO
+	 LvDmeV1tHQ/NpXZKLxaUeShKwpcsJ9eaN3eEmyxObvIo3nrUbCxa7oGk0DddHjke6z
+	 VcJ/xZoxVzPHQ==
+Date: Mon, 16 Mar 2026 09:25:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dawei Liu <dawei.liu.jy@renesas.com>
+Cc: linux@roeck-us.net, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	corbet@lwn.net, skhan@linuxfoundation.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, grant.peltier.jg@renesas.com
+Subject: Re: [PATCH 2/2] dt-bindings: hwmon: isl68137: Add compatible string
+ for RAA228942 and RAA228943
+Message-ID: <20260316-intrepid-koala-of-snow-33eceb@quoll>
+References: <20260316053541.3903-1-dawei.liu.jy@renesas.com>
+ <20260316053541.3903-2-dawei.liu.jy@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6ccda7a00f250e87b0457e276ac1070cb0708d71.1773321267.git.geert+renesas@glider.be>
- <20260314020107.2241383-1-kuba@kernel.org>
-In-Reply-To: <20260314020107.2241383-1-kuba@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Mar 2026 09:22:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW7TJoDTYRtca1Y86pVuvUbnDX_x3MUYtvEbgPu915Yhg@mail.gmail.com>
-X-Gm-Features: AaiRm50TKdino7hX__Fr8XbUbMY5_IOg8mWiIXEhr4B3B1Mph0NJ-Pgqg-orWL8
-Message-ID: <CAMuHMdW7TJoDTYRtca1Y86pVuvUbnDX_x3MUYtvEbgPu915Yhg@mail.gmail.com>
-Subject: Re: [2/2] dt-bindings: net: micrel: KSZ8041RNLI supports LED mode
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, edumazet@google.com, pabeni@redhat.com, 
-	eichest@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
-	devicetree@vger.kernel.org, andrew+netdev@lunn.ch, robh@kernel.org, 
-	davem@davemloft.net, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260316053541.3903-2-dawei.liu.jy@renesas.com>
 
-Hi Jakub(ot ;-),
+On Mon, Mar 16, 2026 at 01:35:41PM +0800, Dawei Liu wrote:
+> Add compatible strings for the Renesas RAA228942 and RAA228943
+> digital dual-output 16-Phase PWM controllers.
+> 
+> Signed-off-by: Dawei Liu <dawei.liu.jy@renesas.com>
 
-On Sat, 14 Mar 2026 at 03:01, Jakub Kicinski <kuba@kernel.org> wrote:
-> This is an AI-generated review of your patch. The human sending this
-> email has considered the AI review valid, or at least plausible.
->
-> For local reproduction steps see https://netdev-ai.bots.linux.dev/ai-local.html
+Please read submitting patches in bindings and process directories.
+
 > ---
-> dt-bindings: net: micrel: KSZ8041RNLI supports LED mode
->
-> Micrel KSZ8041RNLI supports LED mode, just like KSZ8041. This fixes (a.o.)
-> the following "make dtbs_check" warning for the r8a7791-koelsch device tree.
->
-> > diff --git a/Documentation/devicetree/bindings/net/micrel.yaml b/Documentation/devicetree/bindings/net/micrel.yaml
-> > --- a/Documentation/devicetree/bindings/net/micrel.yaml
-> > +++ b/Documentation/devicetree/bindings/net/micrel.yaml
-> > @@ -54,6 +54,7 @@
-> >        KSZ8021: register 0x1f, bits 5..4
-> >        KSZ8031: register 0x1f, bits 5..4
-> >        KSZ8041: register 0x1e, bits 15..14
-> > +      KSZ8041RLNI: register 0x1e, bits 15..14
->                   ^^^^
-> This isn't a bug, but there's a typo here. Should this be KSZ8041RNLI
-> instead of KSZ8041RLNI?
+>  .../devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml          | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> index ae23a0537..53d07c0ce 100644
+> --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> @@ -56,6 +56,8 @@ properties:
+>        - renesas,raa228228
+>        - renesas,raa228244
+>        - renesas,raa228246
+> +      - renesas,raa228942
+> +      - renesas,raa228943
 
-Yes, it is a typo. Shall I send a v2 with this fixed?
-Thanks!
+So are they compatible or they are not compatible with anything else,
+like driver suggests? That's what commit msg is for as well.
 
-Gr{oetje,eeting}s,
+Best regards,
+Krzysztof
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
