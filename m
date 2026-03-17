@@ -1,139 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010059.outbound.protection.outlook.com [52.101.228.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715543E3150
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 14:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773756787; cv=none; b=lqWqSwoSs1SCwsIBC4b+6zez/05cdIfwaQgC9+gomaFnnuIa5ZVMxRSohGujMCr1/atwsP/1J6lWZgcJefF09QNapwqLa42pGYqo4jaSCovVMvJSV2fgdjGhtghnJz1xQpY9Mcoy43nwjQUKetfDY2gBjQUIJ6qyw/4KhzVxRhE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773756787; c=relaxed/simple;
-	bh=9QDalKJYBUEDUJPFs8n5F17T6oCLIOfRdQADKKa+dtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qE8hUtlTn09ckTBbdjSEXFYV/AHbOXXKvpPVQQ24uryxHzQIZKFfS6zisP6roECbdk1Dn2OdUlRLOlzRvbDcIiDrHOTcuNufxX0Uj40YavQC98q5fjkK5uNHp3lbwxV7E8i6WKBSR8nN6SMf9EbE9Ih6xvryy50gyqCQWkQLYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZAEscpa; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E52D3E8C7E;
+	Tue, 17 Mar 2026 15:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773759668; cv=fail; b=KIeIAlaNskd4VNRvSx/UAU0y5+cZ4HHMmdgW5Y16MpNYs4C/BLRbftgtr8sVt4ahGDcxSmCAum1I33CnsEwOLiR0Ebjn8KYXc1grTA5Y45oG4y5cYakifliJ0YKGOekiNUGHwslyAyxzL+IdkC130fgKaswnT7M9UXJ7E5E1FHg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773759668; c=relaxed/simple;
+	bh=ySCxFwQCw9j7ZlK8Xt1MJiy3pERl4k171AoiftAPkWM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CGUJpddazNB1mTMmcw50Y59gCDzvCpJGwadyba7o6VBnIiGa3YZTTZrCKe/kHawQGLmKnfiCouP0HoyP+7JmhiCmUx63JIqIzmRB+pWZKc+05KlVJ6PoF/fLvNXqbLId2YOtBdb30U5tVG3sCJne9giB29cY1OzR9l9TryJQV2k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=TlQHH5lV; arc=fail smtp.client-ip=52.101.228.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZAEscpa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F46EC2BCB5
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 14:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773756787;
-	bh=9QDalKJYBUEDUJPFs8n5F17T6oCLIOfRdQADKKa+dtg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tZAEscpa8SCC5cIZ2JquMfgXyJ2cYbjRRZovEZ4pp9iCwMtzoyZvoUvuYiYMbRTYC
-	 SnQwovSWExy1qzNu8gKN2Re3kiqbZF6sZmkIooWlWa9EIx1ERfsbgtRs5rZB0SAIxf
-	 3lPrGMQ4Ue2TuM4ia8nL9lBYQlDl9Z6+Gmi7Vne8vrfCzyTk9J2Ck3dsbBaTLAPSfD
-	 NPCO+IQ8fm5HTfq9yr/wXF7f1MJldHxMFhyKqH3oTfoTSoTC0Dh5v2G2YRcDRDQgL5
-	 ObXNTsitNLuKk+KvWrgZ9pPDroH39BoYVIyc5TZiwHYdHQ131NS6aY+w9jvXRnJOfo
-	 pYQYSw8TEnjrw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-38a3486419cso38232931fa.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 07:13:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzKOdKOUNrs8kQuh1pEDl4xbmM+1DST6kqnmcRUDscsGNehm+JPExawJE7HfL9K+q2nx8EUMs6DdfOHOH0FKWLhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUgT4JXsX6LyraLWJMWZVkUim9KmYfNESlar2jZjyk+kdyg4bX
-	wD+SiHDAdn+8cQA2DQK4V6lDye4OndIsadSJh/mlYCyiNX0HdirclSyNgEjBhDK6mYocPusHbjW
-	3WHxS9HJZj5MZFGYoQzcf1IZwzSzc6NB9jqAygHUtSg==
-X-Received: by 2002:a05:651c:2115:b0:37f:c5ca:a6d4 with SMTP id
- 38308e7fff4ca-38a89666433mr58706271fa.6.1773756785569; Tue, 17 Mar 2026
- 07:13:05 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="TlQHH5lV"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FEKk+QvdOsLar/xHNQ9KpNfbmRLyc6C8CvGkec2qIOYx8OX6s7mECAPtJDgI5WdRuJEp8XqLGxiqCLulOVLixLLh2yR2UX/HnqwBV9ekQiokV6b86CnoCmvVuAF6kY89jMPZ3y5EIrl57ZXaw14WKMtZhImt6iKKm7f04L3ZrGuCW3IUcRJMU4ReFeFTWf5XBPZB84574ng0RuAYGvMS91n2lZIrp/+Vyhm3ZFB6EfGSLUzLFA3LuloeRDosM0N0nqQQWM/xgK6z7ZvjNTBJW5yDQEgO9P5zqI+yd9Lnky8rj1A6H2+7CYbVKTyndAqgSCWUhjTnEHZk5bPuoIT0Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ySCxFwQCw9j7ZlK8Xt1MJiy3pERl4k171AoiftAPkWM=;
+ b=c2G9OQz4jPJA+b9WiwB8Dzusluf0rXUcG3VDnhLdTVM69gKWfZ2wnFtXQIrDKuCK19gStWAqWgNVsdGBIWqOUv0DEytJGAYY+JHLjddTUY0N0pA8Z6EJqG/UkDcSyxD51np0YRhRarDG4tWIrVCoZwtNqVrg8LVzb1KNpd+JMfg8Vzu4p3kF+2DAqwl2Pj0Ufko3pSgPbUpn/PjGsRlcDzQdBUful/LEa4nHCxhDVH5R75JccGiwvzQoeUPt77GkwZn/ZJdYHGBNUjz0Fqr9+NeLZ8toqr3HIw9OYbhWdqD4N3sa29DUuIMSxU8RV58SQu/G1OJM24twSRqCzueyCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ySCxFwQCw9j7ZlK8Xt1MJiy3pERl4k171AoiftAPkWM=;
+ b=TlQHH5lVHGoXVllUrY/ZN+phICpngvBotMifp248ZIkkG39h5d6WkhGmapStmZkHisRBwgm2GbjawDMwdtiXpOsENQMsc7hFvG/aXiQpPPp1FObWzOtkZFLjt7ELDcExvdqW0NwLqgL+VERWFqL7ccvaCIHAo52PhrTR9ncBuF8=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYCPR01MB11915.jpnprd01.prod.outlook.com (2603:1096:400:387::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Tue, 17 Mar
+ 2026 15:01:01 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.20.9723.018; Tue, 17 Mar 2026
+ 15:01:01 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Hugo Villeneuve <hugo@hugovil.com>, biju.das.au <biju.das.au@gmail.com>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Chris Brandt
+	<Chris.Brandt@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 1/2] drm: renesas: rzg2l_mipi_dsi: Use fsleep() for 1ms
+ delay in D-PHY init
+Thread-Topic: [PATCH 1/2] drm: renesas: rzg2l_mipi_dsi: Use fsleep() for 1ms
+ delay in D-PHY init
+Thread-Index: AQHctgqoRUPN3p2KdE6QwNezekwI17WyzdOAgAAC/XA=
+Date: Tue, 17 Mar 2026 15:01:00 +0000
+Message-ID:
+ <TY3PR01MB113462938CC04F72C5970ABB88641A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260317123610.329630-1-biju.das.jz@bp.renesas.com>
+	<20260317123610.329630-2-biju.das.jz@bp.renesas.com>
+ <20260317104719.e251fb0feb2e99b7569c2dc4@hugovil.com>
+In-Reply-To: <20260317104719.e251fb0feb2e99b7569c2dc4@hugovil.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB11915:EE_
+x-ms-office365-filtering-correlation-id: e35991a2-d53a-4d97-2ff4-08de843600d4
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|56012099003|18002099003|22082099003|38070700021;
+x-microsoft-antispam-message-info:
+ pELL50HaKPwHGIb6ZGNrRknGxXquJkht5iBmIqrSx7Mh4kyHEErh4bHr0B4WA9oJsgQzNfvBCO34ZsRgUsxfiB8DE1jSzf6w1TzLZxb2KSiynpfHpVOdZDhZIKXR0YWW/o++8zrb7vlsrMgqEj9RniCy4xjGEl5y9VAS23kFHJHMGwUoo8sQL8S5lJJUR6zuQNtct1hWaJRPjUHCJlsZ+eyBRpgOUeblgCyTLq+sD5ex2PUsbza+hOjRm/TUGm+yENDRUOE59PfjP2f0MueAZX9fvu8CzuAld12CuM1bJ9MG09DH8yE2Ml3sm/c+LVV2uyiCVhHIKBePDV38UPfRirHwX1mkba69WXXf1l6wyDSXC0ne6HWyB9UK9zeJjW74FVCAgfSCaILEjHmBhrvuYpB0PKq99tvsGSgL7qVT/ge+hAep1hLcqFj5HL019/Nvq82U8lGVBAMdLw99gLhqA8ut09pVMNq7nYlUy6/B82fNVHTINk1q8JHGOjajzjYWrGhgci/mLmUuHkmRuUfc4Xz0Y+USHmLDq4VnFfJ6/PePw0ACmsHPWSqB3jeHL5xAEruxpj/t1mdpkdQbAol4pmS4IoCX8vaM50mJgimLcqR5TaEf6N7CF1lQoClZwWCWDuAd9zJLfZD37z9lwtgooc2xHFN3XgkNd4+xlY85O3/fJBf/yo9fsshQ9FkvKFE/FLnx1SzyWHI2PzN9nzcnPzN9tH/ntXbLpSUL8Mr/O3vMrAwHdArrCVpqXPK1ZrZ5Y8jgNHFlzxFB5w+T/2E4v1OxlB2kMFc3xpYFkpGx5W8=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(56012099003)(18002099003)(22082099003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?WG0Ua5EMo72nWt2FhsSOqomOLlfiDAlOMaa5gIbD1mhdlg9rfHu0dQLlj4qH?=
+ =?us-ascii?Q?klbBnph/ZJ2cjzF3nr/r39UskMFKRGs08J46qi6XAm9Z/z33Wkptq490rLET?=
+ =?us-ascii?Q?bHB0RmmGUPHp2kaF+8QrnizhwAcXqko97McHe/bupL6m1lXrNSfvklNIMhUZ?=
+ =?us-ascii?Q?gHKgwSe1BtpJx1d97/88KFGeUkWxYdMh0rPM7MmLuAXcW0DII71ItFGH1KB2?=
+ =?us-ascii?Q?6PkiGdIuUj/EBstqd7YyS3nbf6Jewt8X5Q99WQRuyvE6/vKEKRrOf0neoVU2?=
+ =?us-ascii?Q?+gwjLiIF7wo40yWUhOKvh9bGJbtmi2pQ/p1fczeMXCvXeLrvhgaN9cthOf+w?=
+ =?us-ascii?Q?NrQdhZ4ZFSocIoCscwPK/9kSwIHhiGx9oPR8mPcI3ukzRHxAdb+Uqr5YPrVb?=
+ =?us-ascii?Q?TgzNEJSDC1jnyJKzcjmoCQaCdFZy38lotsUnaWdgmP0AA3l/26xZ1nMjCZXV?=
+ =?us-ascii?Q?n9/EZIkAEvE44VVHnk6t2t9u9EI/L/UaTVVwMCMOhWASnGkjDU6w9Das8JmF?=
+ =?us-ascii?Q?rV/NLEE7CUugKEuhcD/wsOubj3gPC9Mm5bZG5+I3PXEzoSI5HN51gG0OAbge?=
+ =?us-ascii?Q?StjCdsjCK/ATGJm8OioChfZRmQVbAf6f9I64s7H6h+2T6onaYSu6R3jJzpVP?=
+ =?us-ascii?Q?5n3rWsh8NKjt+zBzfGlK2XDAq6CqT27KS5an7WL1wBt6osaYylvxj6kPADZK?=
+ =?us-ascii?Q?kQ0mx1uv29hDZFj2bhc9qD+z6t5PJ+bOuu7vGL58eklPVhtjqyv4w5/9izfw?=
+ =?us-ascii?Q?YNmGGzzhqxYHTltpByNXUW4hmg7NGSxKHotg6t913KheM92lsbZiHwjSYL9n?=
+ =?us-ascii?Q?/ciP3MIt0WXJKJ2kvVwARmPYzTr8upmSqEXZIeUfxneqwyR7EBbDepXp6Gug?=
+ =?us-ascii?Q?G47JZM3NUn4yIVf3TZbrJq5R9KebIjt8vrXOo5IpX5yAqB6cwxtkYGOiFY9h?=
+ =?us-ascii?Q?YJIZkciDnKNP40vNTK4VRnxeaSVbZGJkFFWu/oIkhtxdfrZY3Ee+1GoOxUfi?=
+ =?us-ascii?Q?f5ioXOFBfFmBBuSl5ctZcMWdxgegOvq0Urn3Z5Gxz27CBEAIYkSLCc50cu1S?=
+ =?us-ascii?Q?QwZaNEHQbBg5oUwtCB1MEha3gAkv/VmFHRWJ51Se4ZtLtjNjpaVm0L3yL900?=
+ =?us-ascii?Q?2QXG3W5fVmQKUl/FjZpJqhmMH76EtEVdM0uvFmbDmHhuL8tV+tvazpQZdCZ0?=
+ =?us-ascii?Q?8X/eRC7CLEvFP5veqzP2YU8Q4dx7oFNpCrS5bL6+Slf4l0OjykUfRK5jDWRt?=
+ =?us-ascii?Q?U/fGwKbMhocl7mw8BChi8xiZpwE9X4LBLZQ0v07AyCRdM+xyS7zF1b0Odq50?=
+ =?us-ascii?Q?GY3iZ19Wqhj3XBVElp5KJL16TfT0UQEGaymr+1RXJYM0Q488uM93O52xdZ7Z?=
+ =?us-ascii?Q?qqw4at2bT4SZpn0Rbmh7YvOGovKJ6PVMer+FyWhF9Yau0yuPut+vfsJ6yok9?=
+ =?us-ascii?Q?hqkXRDyroVOV+BjGKPLPHl9EMb357clb2MRPiEjUZBuULnCmGNUcgNf2FK8G?=
+ =?us-ascii?Q?dMK/UxU3xB6YtDeAE0Rh45SoavaVbDQHVxr7D2cuVcEkxCTqjbys8mJgSL5D?=
+ =?us-ascii?Q?UkfC+cU1WpDO5yLfG7bZSDXOYAI0fA5K2kr9m66UD5+W749Trgg+NJePhXcw?=
+ =?us-ascii?Q?MFFXot7Z9wA40Ce1mPk5DhJnGM+xTAc7MTVjS9HN/mMR12qu07cMztWk6+sh?=
+ =?us-ascii?Q?QPE/L3rP6IbulfMqldwiy9Fh7zRGroM1YMkk2ICbA/6G3IOhLE1ESMLR3vag?=
+ =?us-ascii?Q?Dve2DzB33w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260316-qcom-sa8255p-emac-v9-0-c58934e76ff2@oss.qualcomm.com> <64d282fd94be1546df75d7df5b47eacc0479797a.camel@redhat.com>
-In-Reply-To: <64d282fd94be1546df75d7df5b47eacc0479797a.camel@redhat.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Tue, 17 Mar 2026 15:12:53 +0100
-X-Gmail-Original-Message-ID: <CAMRc=MfNcK3MLndik1jy-yhHAph5=amnTGgn-MpXXG0Uv1ifpQ@mail.gmail.com>
-X-Gm-Features: AaiRm52mh793CgOH9S8BNXU-tBYi1I-pfEq9XQjt50faEkjR5xH42aEvJgG19dM
-Message-ID: <CAMRc=MfNcK3MLndik1jy-yhHAph5=amnTGgn-MpXXG0Uv1ifpQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 0/6] net: stmmac: qcom-ethqos: add support for
- SCMI power domains
-To: Radu Rendec <rrendec@redhat.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
-	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois <romain.gantois@bootlin.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Maxime Ripard <mripard@kernel.org>, Christophe Roullier <christophe.roullier@foss.st.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
-	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e35991a2-d53a-4d97-2ff4-08de843600d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2026 15:01:00.9923
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ls9x5zkGJfZHnXVCrBhNiJXZvhHXSBW5F/1JnKBnfsO+7UVYz2S/OImA/GjZNxOWcK9HwXu0chcULITtfv94RlGD2pGF94Tpksm/6t2toXM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11915
 
-On Mon, Mar 16, 2026 at 7:31=E2=80=AFPM Radu Rendec <rrendec@redhat.com> wr=
-ote:
->
-> On Mon, 2026-03-16 at 13:05 +0100, Bartosz Golaszewski wrote:
-> > Add support for the firmware-managed variant of the DesignWare MAC on
-> > the sa8255p platform. This series contains new DT bindings and driver
-> > changes required to support the MAC in the STMMAC driver.
+Hi Hugo,
+
+Thanks for the feedback.
+
+> -----Original Message-----
+> From: Hugo Villeneuve <hugo@hugovil.com>
+> Sent: 17 March 2026 14:47
+> Subject: Re: [PATCH 1/2] drm: renesas: rzg2l_mipi_dsi: Use fsleep() for 1=
+ms delay in D-PHY init
+>=20
+> Hi Biju,
+>=20
+> On Tue, 17 Mar 2026 12:36:00 +0000
+> Biju <biju.das.au@gmail.com> wrote:
+>=20
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> The commit message seems confusing to me, indicating that you only change=
+d fsleep, but did not change
+> the delay? Maybe change it to indicate that you increase the delay from 1=
+us to 1ms, which is the real
+> reason of the change (why).
+>=20
 > >
-> > It also reorganizes the ethqos code quite a bit to make the introductio=
-n
-> > of power domains into the driver a bit easier on the eye.
-> >
-> > The DTS changes will go in separately.
->
-> I'm seeing some weird behavior with this version. The probe part looks
-> good (but see below), but when I try to bring an interface up, it fails
-> with ETIMEDOUT. The relevant part of the stack trace leading to the
-> error is this:
->
-> dwmac4_dma_reset+0x208/0x220 [stmmac]
-> stmmac_reset+0x2c/0x68 [stmmac]
-> stmmac_init_dma_engine+0x108/0x400 [stmmac]
-> stmmac_hw_setup+0x5c/0x538 [stmmac]
-> __stmmac_open+0xc8/0x2a0 [stmmac]
-> stmmac_open+0xcc/0x238 [stmmac]
-> __dev_open+0x138/0x2a8
->
-> Now dwmac4_dma_reset() is very simple. It sets the soft reset bit in
-> the DMA_BUS_MODE register, then waits for the hardware to clear it, and
-> that never happens.
->
-> Now, getting back to the probe part, there is one extra message
-> (compared to my previous successful test on v7), which I see at the
-> very end of the probing:
->
->   qcom-ethqos 23040000.ethernet: clk_csr value out of range (0xffffff00
->   exceeds mask 0x00000f00), truncating
->
-> This is a sa8775p ride board, so there are two stmmac devices. I only
-> see that message for the 2nd one, which is also the one I'm trying to
-> enable, and which fails.
->
-> I realize this may or may not be related to your changes. But there is
-> no way to test on a SCMI-pd board without them. I'm not sure how
-> relevant it would be to test on the non-SCMI variant. I'm assuming the
-> DMA part should work the same way (regardless of SCMI-pd), so if I can
-> reproduce it there, and since I know it works on mainline Linux (that's
-> where I tested v7), I could bisect and see which commit in net-next
-> breaks it. If you don't have any better idea, let me know and I can
-> try. Meanwhile, I'll keep poking at v9.
->
+> > Replace udelay(1) with fsleep(1000) in rzg2l_mipi_dsi_dphy_init() to
+>=20
+> Same here, the real reason of the change is to increase the delay, and th=
+is is not obviously stated.
 
-Does current net-next on its own still work? Or is the second
-interface broken even without this series?
+Agreed. I will update the commit message for increasing the delay from 1us =
+to 1 ms to
+match with the hardware manual.
 
-Bart
+Cheers,
+Biju
