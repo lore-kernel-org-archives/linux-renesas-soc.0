@@ -1,33 +1,33 @@
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730563E8671;
-	Tue, 17 Mar 2026 15:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E633EAC8C;
+	Tue, 17 Mar 2026 15:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773759738; cv=none; b=qD4+mlYoEqdf08WTyznN7liwmBMJCBzO5N18Geg1vMa19miUCYBEE5hJ1Om1dYLyGGbPd7KoMESHjTA2oAY94r8fxWnJbjTzhazEjeU2+estaVMX4euDV9y9A9frJdpechVbAlNP0Uik7hVCC3LlmK0RQ0S/gl0++kO7zlD0uBE=
+	t=1773759911; cv=none; b=VxMlXId0uzlQLqDoqrXDB7jIC/7+Wz6N++7vyfKF7BB5pLuI3a73ffZt4z2trKyNmiNVazkJE4tKYkXdOf5EdP9YFTo99W91TmVd8ndWB/jB2x6Ba5Rkw5otBCsh0hTw952ETXYt0x40BPcnh5kjqisNZ4La5Ig39edEmMWYCy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773759738; c=relaxed/simple;
-	bh=32Kx8kKf6XDP0XJuoMKWXU4M2kJ5Nhv8yXlsJQMzUqY=;
+	s=arc-20240116; t=1773759911; c=relaxed/simple;
+	bh=6uAm27Ql5xQeTLaGM87R8Ws4yEgQXp9j5VjfQBBlIeQ=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=h1ZbI5oz+PquS3PghxffJdSvt9GpE/OOH3Z7mhSopr2RbOZkrJRNWI241iVk18XDS5BkFg9nr21MIiaYsCyis/Zdo7CluPidE36yW4LuSOnPby6OyTVB5sJ6PR1CLDSfGhVmJWWUtbILED1tklF42kfAKXs/O4MihWA36ArbFKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=U86YwYLL; arc=none smtp.client-ip=162.243.120.170
+	 Mime-Version:Content-Type; b=bcBXtveXUOmJSeWas5dmLRZ6FS/CEWRnTNavlWT1TAEomoQXEKu4eaLa8L1nr6YIWPzpjwGmvKh0ANSer51BviN579S5/ZqvRdvbR/KmO1FCqF/VwxIr6lsu+vfvsfod8AQQ8cJ6GWjAkwzUJFZyJmrJZrsG9NbBoIWUuCWlWwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=FSLPBW3U; arc=none smtp.client-ip=162.243.120.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="U86YwYLL"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="FSLPBW3U"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=default; h=Content-Transfer-Encoding:Mime-Version:Message-Id:Subject:Cc:
 	To:From:Date:subject:date:message-id:reply-to;
-	bh=ZauWGiw7JSkVbYA8nHrtW6EEMjerV0nDt8sMW92G+so=; b=U86YwYLLO+JCY4KexJ1qSb2wRS
-	/5oPEYM9vwD2Dn+HWO98KsUY6qhlHTS0DNh3grwkxkOeT87UP0/gDzxjyGwGpAnRgI6WGQ5fNcXcD
-	xoUdR4lDXElt3a2G2dpRj1lplrf9yE7+hRnt0DokeIgZ1Uf0ScsdF9LO8jPcFCeNXJI0=;
+	bh=koyUHICUcLifjkIlRusqBeAiTAEOVXVIw8qXKtQGB+o=; b=FSLPBW3U1WbAetHnlPjPQ0tMuc
+	uh2rP0SzSey0mDYpFwmjTfEoEADtqyDjK+CVv1EybBQMCgsdOEViUJuMARKE6gC0RXWCvHvJ9o3lU
+	TgXIgpbZnjm/cdXq5270EEE85JSK7AyCy/OI6zQEjojvKqnSHtpZpKEydapfVsxa9ziU=;
 Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61] helo=debian-lenovo)
 	by mail.hugovil.com with esmtpa (Exim 4.98.2)
 	(envelope-from <hugo@hugovil.com>)
-	id 1w2Vvy-000000001sV-0XFd;
-	Tue, 17 Mar 2026 11:02:14 -0400
-Date: Tue, 17 Mar 2026 11:02:13 -0400
+	id 1w2VhY-000000001jf-0EqC;
+	Tue, 17 Mar 2026 10:47:20 -0400
+Date: Tue, 17 Mar 2026 10:47:19 -0400
 From: Hugo Villeneuve <hugo@hugovil.com>
 To: Biju <biju.das.au@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
@@ -40,7 +40,7 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
  <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Subject: Re: [PATCH 1/2] drm: renesas: rzg2l_mipi_dsi: Use fsleep() for 1ms
  delay in D-PHY init
-Message-Id: <20260317110213.74bbbd19cc81d0918a627fe7@hugovil.com>
+Message-Id: <20260317104719.e251fb0feb2e99b7569c2dc4@hugovil.com>
 In-Reply-To: <20260317123610.329630-2-biju.das.jz@bp.renesas.com>
 References: <20260317123610.329630-1-biju.das.jz@bp.renesas.com>
 	<20260317123610.329630-2-biju.das.jz@bp.renesas.com>
@@ -62,16 +62,23 @@ On Tue, 17 Mar 2026 12:36:00 +0000
 Biju <biju.das.au@gmail.com> wrote:
 
 > From: Biju Das <biju.das.jz@bp.renesas.com>
+
+The commit message seems confusing to me, indicating that you only
+changed fsleep, but did not change the delay? Maybe change it to
+indicate that you increase the delay from 1us to 1ms, which is the real
+reason of the change (why).
+
 > 
 > Replace udelay(1) with fsleep(1000) in rzg2l_mipi_dsi_dphy_init() to
+
+Same here, the real reason of the change is to increase the delay, and
+this is not obviously stated.
+
+
 > follow the power-on sequence described in Figure 34.5 of section
 > "34.4.2.1 Reset" of the RZ/G2L hardware manual Rev.1.50 May 2025.
 > 
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Seems to me like this should be backported to stable branches (missing Fixes / Cc: stable tags)?
-
-
 > ---
 >  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
