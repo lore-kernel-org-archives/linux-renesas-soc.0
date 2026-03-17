@@ -1,82 +1,77 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0534DCC4
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 19:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B44285C88
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 19:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773776700; cv=none; b=KWQyoKFiQl4D7agBSdoxisrqUhkawe07hTckJLCXEK2AJQ4o595DGd23pgfxddhnJmGb2fFN/NrJ3mhBM1Y6AobyFSVJIRRAhSykxXHMWoJzw5Gi4KYDiC0GNIzsLzWiRsdmG1MOsEQq275SeZPdxnOQgzPZVVWQluqYlt0lXcQ=
+	t=1773776851; cv=none; b=Kj3iJPBk4seC9s1NuASkoprcOPTuiABpqbS/tKcNVUobP05IOyUCLcHspm808wMXao+kdi6C4sEiZ7Wjds/xp3JejT4R/UcsBYE1TyWE5UMLz7hI54Ev4t8Z3RhJPREc7naBTziOfkmQyxLdW35xL8rcpoe6IAu/OTMlY9zGXdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773776700; c=relaxed/simple;
-	bh=dn5dYtHgaaeDgKGCPYx083eAJbV1dxvbfBoMMROgS3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AWvDY8vw7Zsxw7poUCIC7yGOTtD/yqH1bowDev3FwM7yJF1159OdceObFBw7wekax4vpTYuDCU7TvpQ1YYQqQwrWHj/kmK/bMXgopYpCOa5fzQ2AFKWqFntHh7R/psyVfM4t8B7ALpwJBLVa1uxOFK7/cX6kLZIuPtjHAcW7xgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VoCcwT/G; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1773776851; c=relaxed/simple;
+	bh=/pfeBRZlSAeIZP2jyTAgG02IfuvKN3sK7yiMk55tNm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OP92JnWyfMby2SzfDVr+hVHQq2BQaz6yhyfA0QjlMaBGBzNwXz28c4b7D8s+GaVfwgdYtH79qrltFonTIe4L0eqRlDoEh6k6UpntgxgBCmCpQr5na8Y6GxezeI3r63yhWzoD4ynyrOi8gnf3utk8M+bIcNGfDuUp38pClxlN2i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSxKhaTu; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VoCcwT/G"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48540d21f7dso69951455e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 12:44:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSxKhaTu"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439c9bdc1eeso6084434f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Mar 2026 12:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773776695; x=1774381495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+wF52lbRB7DTjuwvGcCQ6Kt/mFwxZK5Ryn/ExuWo2fw=;
-        b=VoCcwT/G9toXYc2100owvoT9iyuPb0gL71POxaRLYN+L6GTV52nDOvyW+or6xgSDKa
-         GOL3LX4MFx1xdd7e1KnFlGQ5WiKxO5J5CncG7wrcnBMfMwaF1h/byDJiRW/MG6MbHPHK
-         USmVKlJOfYFgQeDEsJE1bsbKlaIyZgXJNMR3S+r9zYNHR6+8EFZTo9VmDJ8bG6toVMYk
-         78YqrvvAJiRzhorZtn8vm0x/kw0CdImpqzx7F+UHgZS0sPfjP8Qkf1T2jAxpOoPQMB1t
-         aWlSwrwvzqgUhIXOC8c5eHjeaniE+C9E+SiE8V7A7r5HVFkeEkjVMIMAqlytE6BVcoab
-         JjNw==
+        d=gmail.com; s=20230601; t=1773776849; x=1774381649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qy4MN32IlylccBxs69pXyCRPQ6AWrwsSuWmABVQKBWQ=;
+        b=nSxKhaTuBRv332k9NLLC6N8vRMBXs0T/TkRV44UQLdIMHxp0lmd9zNmUA/o0GfgFa8
+         xthlPMoCsTXg7zwOtNcoiESj9775TglTA/swuQAsRzeHNZ2mZfzDT3VBHU7yUn+YUdDI
+         PLQ6NODpZQoccnTJwzcKp+cfnDm1uUAJ8E6FzX1NmjPQlwHktgYgFF9EhEXfPOrzJP4W
+         f2BxvVs/7Onsbse24WeavEiLw74p4fXg9avfzRSpKxo5cbrJzdUpERx4feMn1XN3l0Bj
+         N04qOEExNjkjc/Et+NQBuMnqX2s7OVxgD8/GmBUvTgYIcHteaEpwb30koarVl0mSC2DI
+         T95g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773776695; x=1774381495;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+wF52lbRB7DTjuwvGcCQ6Kt/mFwxZK5Ryn/ExuWo2fw=;
-        b=TeQtsPGCPxZIt0N1M5HLElvogdr6PfGh2RRHoOF9rHyJeFEQZO8CXmQthyW2NFOQ10
-         eJUE4BWgs+fmfkboE70kFJk2geIzDmhrCRuFW9xsEBn9MkBOS37hqV4BMSFmngzUiLcT
-         r/NRHbwk4FSnekN4ZjDOJ0Uajs93KD5FvvxR1+v55z336JoIIb1K7FXGWwE0GvA/zisz
-         2PlWuaSgUIvzQzU680atiohecb7GtP/S+shgKkZg7K6zeIWN+WziLm49Hl04hJ1XErqB
-         bHVR+al20v0SXEd3OjEeF+S91GwEt76OZDz+XWPeRWYyb+s7zQINvdchK5twU52v5oR0
-         lBdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNCQ9ezS78Ws/kFVeQ0u0CYwlEpEtRRQiYzRGOjy2swMhrTlv67HFA5h5T9tewuLvE7pZzOWdaQuIraVbxVmnTaA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpV1mA4EnBUte6aDUT6GVW8LSJP4BZ1BDXh0BhPz60cJXW9sWU
-	N3BNnIwfW+29umU3qCQlUi+f8s2PJYpaLQPxIErWuL/+WshrbiU9FU95
-X-Gm-Gg: ATEYQzy7+Xm4e2zNfEfOgtMLyYtX6x+wgAS4iOxTfZVB+RGlgTeuUCSHXioy+5KgxDk
-	RSCgQhad1gxCj0s4GW5GwP9mgDuoVSS9oRRhltfe9+wN+g5dMhBrpiNoccKoeCMs4yyb0yhwyUO
-	N+Xo7xV7jqZvxQ7aub0RDgYOPXpx+nsbPU96ojodm7FO71sf6KCSJwqe2yVDABsBRsHPrXlOPWt
-	hAom5RJWn9iUyZcrf4mrG5jUq9ZXSSGfAyhGJZtDUl2RMbH7E05jjT5JrJVVYeaT94/rAcDN6qW
-	ZngPu5/SztSVkj+BmleVq6pJ0DgvxqgOPHRRG3YVpbz45Vez9jdyi6qn0UHE3GHqisuQ6guapkB
-	8mjsjFjCPdMMzfZEvht9Vl1MPIUMXBBMYW1VSioKR6IScDQ+g/o6nUcVlEWA4PT62FQvDEwHIZX
-	jXdYJq9Dd5EcaS0+EWy6uZWQWcJ4iRUz+cKZhqqi0I9x892lkY
-X-Received: by 2002:a05:600c:314c:b0:485:7f02:afd5 with SMTP id 5b1f17b1804b1-486f443845dmr15952565e9.13.1773776694620;
-        Tue, 17 Mar 2026 12:44:54 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773776849; x=1774381649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qy4MN32IlylccBxs69pXyCRPQ6AWrwsSuWmABVQKBWQ=;
+        b=ih1VooGEloDwXKjhqml9fSSqZVdk2RS0W5cZsLZHOpbfxG1Bc/u7RAs1mBAQssizEZ
+         wNkLC6PGlU3kwcKSjROuwH+qRDxebwGoQOm87Zz0hsfAHYUxC2poK9qjggR+69dnaFLv
+         95eb9vAeVBJ67jXBYqtjJmTV0N2iE2Xo1cKSMamzLF5JCykKKk8E0udajCE8lD+MQwWi
+         1yNRSrPb+xq8q36MsEQzAIkKCapbarbC0HY9DV+Cd+u8C5pzsalhVgBiHnF3/yfGjS7q
+         bgsP9BHnzHIWtp4He4ao1uTDPUXGhqt3KzC88qWQMb+AE5S6CD7FlFBlJeTttRncln1w
+         c9DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYt2UTRixC5kM7kCK6hv8ZE0mlFHO1eoqoCoV90jR9HgNDutKnEj+j8G8NiBgJUPbkGMQJuTB5Zil2Ry/eEh7IIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6nq8LYFaOtIFht0j4fHu+TH1P+hrHOuxbo2Zz9wD4E0sY8dFr
+	sF/x8z+E42/FD7502YosQ3r3Ng+JirjJY7+MH2BbmEQTSqiznhWzvi2g
+X-Gm-Gg: ATEYQzxehJprn1YUdjSBypy9QUB2JQ0cZirG9uodeSgSYTMoG4UlEAwt+Lebq5GnXg8
+	UKRnoS3vR4dj0EM2VHzUmGmSI1mU4mXcf0MD37MJn1h2lxPAzsWKn3rCMaQAb06oXuxBDaqQAAr
+	FV4BwlT5PjO1DpFgGas8RI7IQFkre2rEHDsU1RfWXUGiclCk/XE17jT9wB7bH+feEqLgyVur0G9
+	r7G58Yys91OhSGXSIsw2GtpjAMlYvN8YDfd4pMKJ9Sb3V60GYSMqhzkvjnbWksd9fix3zlKD6+N
+	pzWm/0V+E9jAG//vt2net+z3ZF9LNP+1wNSygDCZC+Uu11Ih6Y6N6/MmdyVHRz2NnIdlb5q/j2u
+	77gqe7TS3szFSgnt7Bqe1utEgQnS2+OltCWvV46/gLHcAY6fHv6YVGiBY5jWtBTrBuFVgn0kVKG
+	+t4Uxjt0cx6CupG981bWA0kSQKAtYy5BjstRIjHjaf93IMXZGX
+X-Received: by 2002:a05:6000:40cb:b0:43b:4f97:9608 with SMTP id ffacd0b85a97d-43b527a7368mr921067f8f.14.1773776848667;
+        Tue, 17 Mar 2026 12:47:28 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b51892161sm1788235f8f.21.2026.03.17.12.44.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b5189970fsm1767511f8f.27.2026.03.17.12.47.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 12:44:54 -0700 (PDT)
+        Tue, 17 Mar 2026 12:47:28 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v4 8/9] arm64: dts: renesas: renesas-smarc2: Move usb3 nodes to board DTS
-Date: Tue, 17 Mar 2026 19:44:35 +0000
-Message-ID: <20260317194442.468147-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 4/9] clk: renesas: rzg2l-cpg: Re-enable critical module clocks during resume
+Date: Tue, 17 Mar 2026 19:47:22 +0000
+Message-ID: <20260317194726.468270-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260317194442.468147-1-biju.das.jz@bp.renesas.com>
-References: <20260317194442.468147-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,58 +82,114 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The SMARC2 board DTSI is common to multiple SoCs. Move the USB3 nodes to
-the board DTS, as some SoCs (e.g. RZ/G3{S,L}) do not support USB3.
+After a suspend/resume cycle, critical module clocks may be left disabled
+as the hardware state is not automatically restored. Unlike regular clocks
+which are re-enabled by their respective drivers, critical clocks
+(CLK_IS_CRITICAL) have no owning driver to restore them, so the CPG driver
+must take responsibility for re-enabling them on resume.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Introduce struct rzg2l_crit_clk_hw to track critical module clock hardware
+entries in a singly-linked list anchored at crit_clk_hw_head in
+rzg2l_cpg_priv. Populate the list during module clock registration by
+checking for the CLK_IS_CRITICAL flag after clk_hw_register() succeeds.
+
+On resume, walk the list and re-enable any critical module clock that is
+found to be disabled, before deasserting critical resets, ensuring the
+correct clock-before-reset restore ordering.
+
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v3->v4:
- * Updated commit description
- * Collected the tag
-v2->v3:
- * No change
-v1->v2:
- * No change
+v4:
+ * Moved this patch from [1] as it is boot-dependent
+ [1] https://lore.kernel.org/all/20260306134228.871815-1-biju.das.jz@bp.renesas.com/
 ---
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 6 ++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi    | 8 --------
- 2 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 41 +++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 1ba50512f4ef..9e66f2179807 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -264,7 +264,13 @@ &sdhi1 {
- 	vqmmc-supply = <&vqmmc_sd1_pvdd>;
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 8165c163143a..c2d31b93f62b 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -130,6 +130,12 @@ struct div_hw_data {
+ 	u32 width;
  };
  
-+&usb3_phy {
-+	status = "okay";
++/* Critical clk list  */
++struct rzg2l_crit_clk_hw {
++	struct clk_hw *hw;
++	struct rzg2l_crit_clk_hw *next;
 +};
 +
- &xhci {
- 	pinctrl-0 = <&usb3_pins>;
- 	pinctrl-names = "default";
-+
-+	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index e2a34577a1a1..696a933af808 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -111,11 +111,3 @@ &sdhi1 {
+ #define to_div_hw_data(_hw)	container_of(_hw, struct div_hw_data, hw_data)
  
- 	status = "okay";
+ struct rzg2l_pll5_param {
+@@ -168,6 +174,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
+  * @info: Pointer to platform data
+  * @genpd: PM domain
+  * @mux_dsi_div_params: pll5 mux and dsi div parameters
++ * @crit_clk_hw_head: Head of the linked list critical clk entries
+  */
+ struct rzg2l_cpg_priv {
+ 	struct reset_controller_dev rcdev;
+@@ -186,8 +193,26 @@ struct rzg2l_cpg_priv {
+ 	struct generic_pm_domain genpd;
+ 
+ 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
++
++	struct rzg2l_crit_clk_hw *crit_clk_hw_head;
  };
--
--&usb3_phy {
--	status = "okay";
--};
--
--&xhci {
--	status = "okay";
--};
+ 
++static int rzg2l_cpg_add_crit_clk_hw_entry(struct rzg2l_cpg_priv *priv,
++					   struct clk_hw *hw)
++{
++	struct rzg2l_crit_clk_hw *node;
++
++	node = devm_kzalloc(priv->dev, sizeof(*node), GFP_KERNEL);
++	if (!node)
++		return -ENOMEM;
++
++	node->hw = hw;
++	node->next = priv->crit_clk_hw_head;
++	priv->crit_clk_hw_head = node;
++
++	return 0;
++}
++
+ static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b)
+ {
+ 	return (b + 1) << a;
+@@ -1737,6 +1762,13 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 		goto fail;
+ 	}
+ 
++	if (init.flags & CLK_IS_CRITICAL) {
++		if (rzg2l_cpg_add_crit_clk_hw_entry(priv, &clock->hw)) {
++			clk = ERR_PTR(-ENOMEM);
++			goto fail;
++		}
++	}
++
+ 	clk = clock->hw.clk;
+ 	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
+@@ -2086,8 +2118,17 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ static int rzg2l_cpg_resume(struct device *dev)
+ {
+ 	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
++	struct rzg2l_crit_clk_hw *node;
+ 	int ret;
+ 
++	for (node = priv->crit_clk_hw_head; node; node = node->next) {
++		if (!rzg2l_mod_clock_is_enabled(node->hw)) {
++			ret = rzg2l_mod_clock_endisable(node->hw, true);
++			if (ret)
++				return ret;
++		}
++	}
++
+ 	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
+ 	if (ret)
+ 		return ret;
 -- 
 2.43.0
 
