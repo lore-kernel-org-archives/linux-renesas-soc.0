@@ -1,145 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2835B125;
-	Tue, 17 Mar 2026 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A7A35A395;
+	Tue, 17 Mar 2026 09:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773739100; cv=none; b=hf6uH0aur5hMxK1vxi2ocynIcHzJA8QcDMHUC36/3Si+EaZMRUKCAFBoSkI3RJDgdkNjdrkYdjLSvXN8YrURDz7D7/zhEZR0qPc67wJ6pCfBiIw+bebzuDpSYy1o77CttS9ap7aU7RvgCD9+P2wHtjPTZR28+IZ44QFRfV2OSJw=
+	t=1773739369; cv=none; b=ZFB/ocqf5zI0WAJ6TwFKMiuqICimbbL1zMWMIUT7kchOYSRLigIuQWfZ1pisxkWit0eIpR7P3p5xZzbl2r62Az/HDDOSO+tF7e7Lx/pgiEtYx7PhPFXeCcF7DlRozg2Ei1dYVfmBlkq+p8dk86CXt3biWfAZ335OivUzbAQ+Y2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773739100; c=relaxed/simple;
-	bh=aDNsd04I+L/FbjpEUbNbTUbkn5QKAI4xvdupFjUj+7s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F4F/g+5zPi8+nhsJCTju7NrRSdUoKMQR2yo/rr2MhME9Bp9fjzjx7FADbH32MeqhDpPXlWNl1h55S86FAhdcKpvlQh/gwJWXoYXWVNq25x/JsqoXHHK0NRmBcE3UtPtReh4JRiM8laPLHmYXse51zSkPEYzPOeIFYlQ2f5DdylU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ReNXgdl8; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReNXgdl8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B28DC19425;
-	Tue, 17 Mar 2026 09:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773739099;
-	bh=aDNsd04I+L/FbjpEUbNbTUbkn5QKAI4xvdupFjUj+7s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ReNXgdl8wrMR0j9myTw0vxEUXdUH3VmbBFakEpeGWMQyqMywjtPl5Xtqb7CK3MSmU
-	 qEqNhLfqwOJ19vhybs59iW13+uwkx3KQPD1k0k49R2AF01pvm7oM/8bhpwu6TqSVHj
-	 U3AZOviPY7TMOtnC9489kfNRt6LCPMAYNZMv9zltaD4QIxRnuzLjQFi9j3bHLWFv0J
-	 79xnWFh2qUeQUt8ASeRZuMi2RryimNsz37FHt/1I8V/TuTHEJAKzClw6hbiX+LbLFP
-	 6qKpGFIeXpFt2tjpIv6KSmSCUuge4UXMpHfNph3juVSSLwwmFhtiqS83E7BmpwGge3
-	 YHW1tZ2nsZxbg==
-From: "Vincent Mailhol (Arm)" <mailhol@kernel.org>
-Date: Tue, 17 Mar 2026 10:13:45 +0100
-Subject: [PATCH 9/9] arm64: defconfig: remove obsolete assignment to
- SLIM_QCOM_CTRL
+	s=arc-20240116; t=1773739369; c=relaxed/simple;
+	bh=Xz17b+5X6ynEJKTd5JMVAR9verb1Jmtr4CsAB7EE3jE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cop8GFARmAaEWp/OUb4qhPPugUm2IRcZAPHYhmLxtD+7hYEdfCNO3NP6UpoT5EZfaWGOh00ds69CfOHXRjgWZjejchsVZjTVn7b43vdJlDWGpHLsAm9UECvC6bREzPqoSn0x1zejIFpoo1n4w0+BXrElH4a7c+PloV7h7Gt+ahw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ED331476;
+	Tue, 17 Mar 2026 02:22:41 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01E5A3F778;
+	Tue, 17 Mar 2026 02:22:44 -0700 (PDT)
+Date: Tue, 17 Mar 2026 09:22:38 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
+	philip.radford@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com, michal.simek@amd.com,
+	dan.carpenter@linaro.org, geert+renesas@glider.be,
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
+Subject: Re: [PATCH v2 11/13] firmware: arm_scmi: Add bound iterators support
+Message-ID: <abkdXkA4iyJ5HKH7@pluto>
+References: <20260310184030.3669330-1-cristian.marussi@arm.com>
+ <20260310184030.3669330-12-cristian.marussi@arm.com>
+ <abkGQn9ODanEVns5@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260317-arm_defconf_cleanup-v1-9-8eecb7fdd24d@kernel.org>
-References: <20260317-arm_defconf_cleanup-v1-0-8eecb7fdd24d@kernel.org>
-In-Reply-To: <20260317-arm_defconf_cleanup-v1-0-8eecb7fdd24d@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
- Mikko Rapeli <mikko.rapeli@linaro.org>, 
- Richard Henderson <richard.henderson@linaro.org>, 
- Matt Turner <mattst88@gmail.com>, Magnus Lindholm <linmag7@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
- Pablo Neira Ayuso <pablo@netfilter.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
- Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Arnd Bergmann <arnd@arndb.de>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Mark Brown <broonie@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
- Ard Biesheuvel <ardb@kernel.org>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Guenter Roeck <linux@roeck-us.net>, 
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Anna Schumaker <anna.schumaker@oracle.com>
-Cc: Alexandre Gonzalo <alexandre.gonzalo@arm.com>, 
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-omap@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
- linux-sh@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
- linux-renesas-soc@vger.kernel.org, linux-parisc@vger.kernel.org, 
- openbmc@lists.ozlabs.org, "Vincent Mailhol (Arm)" <mailhol@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=784; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=aDNsd04I+L/FbjpEUbNbTUbkn5QKAI4xvdupFjUj+7s=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDJk7pft4ZO8tTex4wfvw9YIiq6jtBybw7z0uX/S3IE/wW
- /Gtf8Y5HaUsDGJcDLJiiizLyjm5FToKvcMO/bWEmcPKBDKEgYtTACbS4MLwP4DxBcvGZZMnmd8M
- 9V0kJLhc+/yjhz7H/3y47t6w4o3BuxmMDHdCHOdwaR1uVt49bc6ST6s71+S/Mphb8ebstGlNC1b
- b2fEAAA==
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abkGQn9ODanEVns5@shlinux89>
 
-The Qcom Slimbus controller driver is not in the kernel tree
-anymore. Clean-up the leftover reference to CONFIG_SLIM_QCOM_CTRL
-which was left in the defconfig.
+On Tue, Mar 17, 2026 at 03:44:02PM +0800, Peng Fan wrote:
+> On Tue, Mar 10, 2026 at 06:40:28PM +0000, Cristian Marussi wrote:
+> >SCMI core stack provides some common helpers to handle in a unified way
+> >multipart message replies: such iterator-helpers, when run, currently
+> >process by default the whole set of discovered resources.
+> >
+> >Introduce an alternative way to run the initialized iterator on a limited
+> >range of resources.
+> >
+> >Note that the subset of resources that can be chosen is anyway limited by
+> >the SCMI protocol specification, since you are only allowed to choose the
+> >startindex on a multi-part enumeration NOT the end index, so that the
+> >effective number of returned items by a bound iterators depends really
+> >on platform side decisions.
+> >
+> >Suggested-by: Etienne Carriere <etienne.carriere@foss.st.com>
+> >Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> >---
+> >+static void scmi_iterator_cleanup(void *iter)
+> >+{
+> >+	struct scmi_iterator *i = iter;
+> 
+> I see you use no_free_ptr for allocation,
+> Do we need to use __free for i or drop the __free usage in allocation? 
 
-Fixes: 7cbba32a2d62 ("slimbus: qcom: remove unused qcom controller driver")
-Signed-off-by: Vincent Mailhol (Arm) <mailhol@kernel.org>
----
- arch/arm64/configs/defconfig | 1 -
- 1 file changed, 1 deletion(-)
+Neither I think...iter is allocated by iterator_init() which do use
+__free cleanups to simplify error paths, BUT if everything goes fine
+iter is returned with no_free_ptr() as a normal pointer and all the
+compiler-attached cleanup helpers are removed...
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c5e23beeaebf..88951844c203 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1822,7 +1822,6 @@ CONFIG_OPTEE=y
- CONFIG_MUX_GPIO=m
- CONFIG_MUX_MMIO=y
- CONFIG_SLIMBUS=m
--CONFIG_SLIM_QCOM_CTRL=m
- CONFIG_SLIM_QCOM_NGD_CTRL=m
- CONFIG_INTERCONNECT=y
- CONFIG_INTERCONNECT_IMX=y
+Then you can use in an iterator_run() or iterator_run_bound() and in
+borth case it HAS to be manually cleanup by calling this scmi_iterator_cleanup
+helper where...
 
--- 
-2.43.0
+> 
+> Regards
+> Peng
+> 
+> >+
+> >+	i->ph->xops->xfer_put(i->ph, i->t);
+> >+	kfree(i);
 
+..it is finally freed explicitly...
+
+...or I am getting something else wrong around the cleanup helpers :P ?
+
+Thanks,
+Cristian
