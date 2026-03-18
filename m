@@ -1,68 +1,68 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3722DEA61
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2026 17:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D89C355F58
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2026 17:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773854368; cv=none; b=V/aoot7gtHzduS2LGF0aprgGULM+dZz820sE897dVaVX3zjbvWY4Jzu3GwZXCNHxIJEHG+vp07aDwPpba8q7Fx4w2+PTxggZNdmjvgt8nQNrsbMvIgW0K5uuO/EZccfwWAFZSa0zzCreMsQiaGggFW8T5VlA3uRsy7S8YRCE+tE=
+	t=1773856154; cv=none; b=lg2uYbs/kZyouuAjAAjhWpvl4nXaDH9ey+sKSZyVtHBBRo2SpGST12SBxCNQF2Oll5eXqrs5FrD5WERbzyGZY1/v2Wm5oOmtEZ3SImiX5no3kf/fO/rrFcyZDohmdctVnF7UWkHneOgfAOS+ecoJDcFuIuXlL5rqZSQ1Wrc9ZVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773854368; c=relaxed/simple;
-	bh=MG3X2ZEDWTa8Pq/FDrZr++pCLMneFSRczgraMiw8aa8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=epS0sDBmdWfpIJrrzG49fk2ELOXKwvJuWNpRmInPtc3iiayb55IAr6FQ5hvRcAUQKtDpSDEz+I6W8vdbHSjpwcIgZqVwdgzFMnOy19fJjaicd8w0E3MgP4DqHYXjvueSTxsBupOyEJIL/Zz8PQ8NXqkJqjCSIg+ykNqX3ghO3Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q7ShYkTh; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1773856154; c=relaxed/simple;
+	bh=7foqOo4PO1+dY1J9snRPo3pULD+nFZ65/Jc53Tf6BUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nvCk2Skheg6TRYRoeiyZz9swu5jmlYaCiZhGJmUJykoghriXqPoyLI1ByvWQLvSvab6vUAWO87q0x+VceCWLYjMLMTCVfBTDTolMuimlg9ZCge/vkknuak7L2ZCcax9BmHkCNZb+xdVJlPDpgXZfbRpOqf+ZiCDtCoh4tOiNiJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2pRfzic; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q7ShYkTh"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-482f454be5bso11826035e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2026 10:19:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2pRfzic"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-356337f058aso166959a91.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2026 10:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773854365; x=1774459165; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fnOtvOn7pZpUz2FQiTPP/64haRLflpFLildzQHxvHt4=;
-        b=Q7ShYkThXM89J2i0NHB8pdky5ZMaFJSbvLaEGCbtqVoKwEaszOvzhcShaN6R6sCMdK
-         GcJijpudrtou7AVWUWeZQbEFNVuHiNwtlS+sH3PnxW6uSQWBM70vOL0utG1N0AKfnMUl
-         F+G4WgIjLHrKKhS1hOxz4QrkIWGUGaD5IdABonXueoUD1Ps6c5WZ8Kdym4UoUF1pr8EC
-         juY6B2lt6syghbPE43o0KXguC/Ukx268l41TXk1276j4Qrg+I9SKbW3f3SL5eM395tsW
-         fiFN8oSUQsZ+3u0VBKZE3LSFYEdzl22XLFX/+dYjWH8agVUXVw9K9vFYdilVaFr+2HIe
-         8skg==
+        d=gmail.com; s=20230601; t=1773856152; x=1774460952; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=kweWB3MHB0sQFqv3t56LlX9dg8y07f5j3ZR4fhpqzGk=;
+        b=R2pRfzicrEth/rmvQIt78s2xyxoRCQd63voZ+mMyEJnGU9WX7jxOySDIWfDcvm0JtZ
+         wRgZ5vbDgCfLaw9MzbBTZWYMB+wBZvblhyZvsIl+OUFCBowxwp5I8A/lUphHO619vqfi
+         S4Dnuk+2wTmhOiUsbmRDbppKWK7e6Vn61jpPNEJBnPd313pbyelMdPpv5MVpZr5V45DC
+         QMbZNzwVohf/ehlo/yI8wcpqdUZH98eomckDA0+jkgMsECYAG9hXceZhQis2pgofskEz
+         X776OXl+WZdaiZuLZVPiizbjnHuSh9SQTaVV4hv57DDhj2EkBj9mSFA0ELpJqLPNAyj6
+         CIlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773854365; x=1774459165;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20251104; t=1773856152; x=1774460952;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fnOtvOn7pZpUz2FQiTPP/64haRLflpFLildzQHxvHt4=;
-        b=kK8Hlasj2Or8okS/t8py7iJj2blqu+lf6hgoorAe5lezD/BcdmOCXCgb5osgJ0//kZ
-         mxn0PcU2ERESkjy92R6/O1prec+SEOsfeFQ6u8JJDQiZnsncLCtaPpThuh/CVBeZ34ms
-         5VsUwlQ/+6nGTS9IXJzKb4dS5/JMBphIa5EOcVrnil+MovZKbWO1+u9xuMNFKMAuBOkx
-         gNBDIhtquWfmg8go7stML4c/HVm7wxwtPmGYk0NRa82tPS7Z6zgs54mlpoEBti+VgtRU
-         XuN0H8RwcRHF3aehnr0sa4ZNFP8iZn9ybOWap0ki9O5jTyhd+TcDNQslPszlA5rpgN51
-         Es0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTGi/1/vGlqPelzrEjQLHguK7kpqCrcRhCCym1hYZwBDng5V7py/xtYCj+X/LeS2NnoIrmOcjkEnjvHq0FoaCgTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw++r9CGMmB1oVtk5YZ1qrRYFvHB9+lp+a9kthVzktOp+06Ut0r
-	EtZgDE9csjLVN80nXTtqkOhUMC1FFAq+mD9r0PoDpfV40xxY+3EdvbG5aWJb+yEqXw8=
-X-Gm-Gg: ATEYQzybMPKtGootoFQiNQ622l5RAAfflJa+CjP3hIjfnqO5euQ9uCRQXL8Cy8hmm4z
-	wQABL2RA+W3kFn+yU7zmSpJkgEt9yF/+Zxcwf/qi5WEnuSvg/BxoTmFBS9o2JA7uT6Rw3YRK44u
-	3ZMsImKnIcaFYzfUGLAVpNZbSAUVBQpWIbV7qvY66mBT5PMMFfWyaR+QyP6onIUG0VEgmvNT7ly
-	SBKKGtw5q3UVCnhDTGep8XtH4D75Jdnh8aZI9ltq405BMZ2Iw9HRGlgHPMaGU3srQAtptZrjGmH
-	QtXsIIdNgwFBzzYQaWHx+e0KPa0nFH8noftP0XianjZTTaGYxkz2N1+nUnpUFFMgeCqtScVmIJS
-	gpb9nVkEbpyIDPrwkY6BrGMxHssx4hALItIqKkQh4rGlWEy7d2LoqwaHWiUK6KxeJ9WB97mxns2
-	2k7b9VAm61CH8I/Jw7QHbnSqHPHjt/Bf6giC+fCAXP9ZbLwg60G/ksYi+N8Wt+RWEBYDloJD39U
-	Pe7iDY=
-X-Received: by 2002:a05:600c:c0c7:b0:485:526d:ea77 with SMTP id 5b1f17b1804b1-486f8b6cea2mr7358495e9.11.1773854365392;
-        Wed, 18 Mar 2026 10:19:25 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:106d:1080:ac75:790f:ef3c:2eb0? ([2a01:e0a:106d:1080:ac75:790f:ef3c:2eb0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b518922absm10076233f8f.18.2026.03.18.10.19.23
+        bh=kweWB3MHB0sQFqv3t56LlX9dg8y07f5j3ZR4fhpqzGk=;
+        b=JklbzCQwox2aniMunjtL8+YbWrJ6uplQFwuaTTxjHHRSyV9937Y+J/RAGI4Fdc31E9
+         QetmAPBM324Jk03PpXA0zIbbivg698M0Qm2tyVImcdjSl4282v4X4QecYW0rk/EeCtsB
+         xdJWMa/PDHgH+5e+4Jh7ZueGj20O4Swz8KyzkxJEjgwfHXH00lmAocWLq+UuxtZLFvj/
+         mlz0sfDQ70Hlg34vv1vBlnFjcUg3Ls/ZZcZIfi3ftqgcGj32wSifx2Ovj5NFVHZo/6aC
+         2MyV7fc2OOVsmksFcSvuR5ORKSt5hOCAs0GokrzJnaRftLqWRNGc9kYTwrkg0Mn1ai6J
+         MERw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaqJ6TQFi67ggDqDfTwkKN25RePXm03jkynvLGkXQ6WIxbZZeOuTy20emA1ShSttLB3RFuJs6QdaEizhdHZw+IMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuCpmQGvDpi/grRxwzY658QkYPvc9fgbDV7fuZlPmZz+Ld/pCt
+	99Mb1mLKeJDXhjT7NBbr5G65R3IyRzFaNNZJUohAwb92wDTB9Ce1dbdpD5ilRA==
+X-Gm-Gg: ATEYQzzqyQj4zvmANB/i8VQ77V0/xHlNJwNzrvC5xOt1SVJADnaKqtyFZmSLH8BwWrm
+	aJaD1mKBp+cuVNjZdOqukWV+GCOfMo7R3KQj0jv3EyWpfLICwpys42XAUgvItsyn9aG0HZtoz9A
+	pOt76Y+4WOIkJvhrazTL56ZZSgmIvXdAQl3UD0ET5qducudLIS2UQKErCMd3xpnV8UH+CIsCBzk
+	Iatkrf8uGsBe3tc4M3n65aYNx5AEREQ/O1sccbK8vYLPlbTWrlmt/OLmvwi48afSC3UJjqeI0V4
+	iNsHYtG0B6ZZFq/4aqzheYCHW9UKwJKhsbAbdqa/BIA3gXVxvSoFKhuRLrjfDmCaJTAV35U7Tl7
+	RGp935bdk4JOno4zYmu2dcor1k33OB/RHZBaVfc0G/y5MpNmdulXFqHFtG6c5pwq7BSUqn28coB
+	xFmRejKypgkSyVyOZ7jfeGXnmn4xVWM4NBXGe8ruop2aXHs2S2RNKm4shmruP6SOR4Kud4MgkUQ
+	OiTBzMP4O4=
+X-Received: by 2002:a17:903:1a67:b0:2b0:5a4c:726a with SMTP id d9443c01a7336-2b06e41afc9mr40969735ad.43.1773856152438;
+        Wed, 18 Mar 2026 10:49:12 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b06e603937sm34123755ad.57.2026.03.18.10.49.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Mar 2026 10:19:25 -0700 (PDT)
-Message-ID: <1822b843-8fd7-4154-8f9b-0e38b13342c9@linaro.org>
-Date: Wed, 18 Mar 2026 18:19:23 +0100
+        Wed, 18 Mar 2026 10:49:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f6101afc-b1df-4f6d-9e32-09b09e17afa9@roeck-us.net>
+Date: Wed, 18 Mar 2026 10:49:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -70,153 +70,96 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v5 0/9] arm64: dts: qcom: Add support for the Ayaneo
- Pocket S2
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- KancyJoe <kancy2333@outlook.com>
-References: <20260318171725.GA51567@bhelgaas>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20260318171725.GA51567@bhelgaas>
+Subject: Re: [PATCH v2 2/3] hwmon: (pmbus/isl68137) Add support for Renesas
+ RAA228942 and RAA228943
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dawei Liu <dawei.liu.jy@renesas.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ skhan@linuxfoundation.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ grant.peltier.jg@renesas.com, linda.xin.jg@renesas.com, tabreztalks@gmail.com
+References: <20260316053541.3903-1-dawei.liu.jy@renesas.com>
+ <20260318021921.75-1-dawei.liu.jy@renesas.com>
+ <20260318021921.75-3-dawei.liu.jy@renesas.com>
+ <9ec35dce-5f6a-454a-9ab5-e61b22796325@roeck-us.net>
+ <20260318-elite-archetypal-porcupine-a5d2a5@quoll>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20260318-elite-archetypal-porcupine-a5d2a5@quoll>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/18/26 18:17, Bjorn Helgaas wrote:
-> On Fri, Feb 20, 2026 at 04:04:39PM +0100, Neil Armstrong wrote:
->> The Ayaneo Pocket S2 is a gaming console based on the Qualcomm
->> Snapdragon 8 Gen 3. It has an internal UFS storage, WiFi,
->> Bluetooth, gaming buttons, SDCard, 2K display and USB-C
->> connector.
+On 3/18/26 01:25, Krzysztof Kozlowski wrote:
+> On Tue, Mar 17, 2026 at 10:23:57PM -0700, Guenter Roeck wrote:
+>> On 3/17/26 19:19, Dawei Liu wrote:
+>>> Both RAA228942 and RAA228943 are digital dual-output 16-Phase
+>>> (X+Y <= 16) PWM controllers. They are PMBus command compatible
+>>> with the RAA228228/RAA228244/RAA228246 family and use the same
+>>> 2-rail non-TC driver configuration.
+>>>
+>>> Signed-off-by: Dawei Liu <dawei.liu.jy@renesas.com>
 >>
->> Product Page [1].
+>> For my reference:
 >>
->> The Initial linux port was done by KancyJoe (Sunflower2333)
->> at [2].
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 >>
->> [1] https://www.ayaneo.com/goods/9344082149621
->> [2] https://github.com/sunflower2333/linux/tree/master
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->> Changes in v5:
->> - Rebased on -next
->> - Collected tags
->> - Rebased/renamed slot to generic based on changes from Bjorn
->> - Link to v4: https://patch.msgid.link/20260216-topic-sm8650-ayaneo-pocket-s2-base-v4-0-802c82795431@linaro.org
->>
->> Changes in v4:
->> - Renamed slot to generic, in the code as well, fixed Kconfig & commit message
->> - Switched the UPD72020x bindings additionalProperties to true to allow devices subnodes
->> - Collected acks
->> - Link to v3: https://patch.msgid.link/20260206-topic-sm8650-ayaneo-pocket-s2-base-v3-0-5b79c5d61a03@linaro.org
->>
->> Changes in v3:
->> - Made renesas,upd720201-pci bindings supplies required
->> - Fixed description and example of renesas,upd720201-pci bindings
->> - Renamed slot to generic, added renesas,upd720201-pci entry
->> - Used PMIC_GPIO_STRENGTH_LOW instead of numbers
->> - Removed all output-low in pinconf
->> - Link to v2: https://patch.msgid.link/20260127-topic-sm8650-ayaneo-pocket-s2-base-v2-0-c55ec1b5d8bf@linaro.org
->>
->> Changes in v2:
->> - Add proper regulators for the USB controller, with bindings & power ctrl
->> - Add proper regulators for FAN
->> - Dropped support for headset over USB-C, audio is connected to a jack port
->> - Cleaned up Audio routing and fixed the DP endpoint index
->> - Added i2c clk frequencies
->> - Renamed fan node and used interrupts-extended
->> - Dropped the usb-c self-powered
->> - Reordered nodes alphabetically
->> - Renamed pcieport1 to pcie1_port0
->> - Link to v1: https://patch.msgid.link/20260121-topic-sm8650-ayaneo-pocket-s2-base-v1-0-bb3f95f1c085@linaro.org
->>
->> ---
->> KancyJoe (1):
->>        arm64: dts: qcom: add basic devicetree for Ayaneo Pocket S2 gaming console
->>
->> Neil Armstrong (8):
->>        dt-bindings: usb: document the Renesas UPD720201/UPD720202 USB 3.0 xHCI Host Controller
->>        pci: pwrctrl: slot: fix dev_err_probe() usage
->>        pci: pwrctrl: rename pci-pwrctrl-slot as generic
->>        pci: pwrctrl: generic: support for the UPD720201/UPD720202 USB 3.0 xHCI Host Controller
->>        arm64: defconfig: enable pci-pwrctrl-generic as module
->>        dt-binding: vendor-prefixes: document the Ayaneo brand
->>        dt-bindings: arm: qcom: document the Ayaneo Pocket S2
->>        arm64: dts: qcom: sm8650: Add sound DAI prefix for DP
+>> Note that technically the devicetree patch should come first,
+>> and I can not apply this and the next patch because you dropped
+>> Krzysztof's Acked-by: tag from that patch.
 > 
-> I applied the drivers/pci/pwrctrl patches to pci/pwrctrl for v7.1,
-> thanks!
+> Was there an Ack? I see only one reply from me, but maybe something is
+> lost because entire posting is completely mixed up (v2 being part of v1)
+> so it all appears mixed in my inbox.
 > 
-> I reordered the rename to be first (and used "git mv") and updated the
-> subject lines to match the history.
 
-Thank you !
+My sincere apologies. No, there wasn't. Not a good excuse, but I got confused
+with another submission.
 
-Neil
+Sorry for that.
 
-> 
->>   Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
->>   .../bindings/usb/renesas,upd720201-pci.yaml        |   61 +
->>   .../devicetree/bindings/vendor-prefixes.yaml       |    2 +
->>   arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->>   .../boot/dts/qcom/sm8650-ayaneo-pocket-s2.dts      | 1551 ++++++++++++++++++++
->>   arch/arm64/boot/dts/qcom/sm8650.dtsi               |   47 +-
->>   arch/arm64/configs/defconfig                       |    1 +
->>   drivers/pci/controller/dwc/Kconfig                 |    4 +-
->>   drivers/pci/pwrctrl/Kconfig                        |   13 +-
->>   drivers/pci/pwrctrl/Makefile                       |    4 +-
->>   drivers/pci/pwrctrl/generic.c                      |  143 ++
->>   drivers/pci/pwrctrl/slot.c                         |  140 --
->>   12 files changed, 1795 insertions(+), 173 deletions(-)
->> ---
->> base-commit: df94cc5ccb88d2f6ebc0cac480a1b94162f4ff0f
->> change-id: 20260121-topic-sm8650-ayaneo-pocket-s2-base-05c348efd86d
->>
->> Best regards,
->> -- 
->> Neil Armstrong <neil.armstrong@linaro.org>
->>
+Guenter
 
