@@ -1,123 +1,86 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F0E34F255
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 16:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DE2DFA5B;
+	Thu, 19 Mar 2026 17:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773938928; cv=none; b=YBgb3lwAGNrDxu70f+NbgVPNFQUnEZtfMhF+fwE2ZU1BwGGFfFvz1A8+BT9zmpo7/WHJ7WhBUo93un+PFwY+X1c0W767v1Lx+lkcJlXJ1uwv3lI3z5V7aItny/Se4jt6xgSoEYRUL5RqVtPDRK3Yk/Ja23eFXmyjEU3B6uPZ9Qs=
+	t=1773940509; cv=none; b=OPTemgyt749x37dKsPXhKQk26t1kRsci5XHM6vX4CZcYXvbL+bxxP9Nuv8a9btOqVWkaoGxkaiAwlbMHpjcb0L37zU0axLhBETDbkacfptnZMcutNjtnfofgHsSKQlMMqboTrYnR/nT3XdrzjlfdradCgfhDFmZc4EZziRIf23E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773938928; c=relaxed/simple;
-	bh=nkLAM0jYneFvgblemuHPCxzulla/HTvZwrV6G1SRgpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JLphnC0ZDk0TbpyiGRcPbiiwTApohEPRMFEed9SJGZNF1W5+fSY/hkUCqSJA534jaidpd9L+nOlv62xKkpMEDNEshk3rvm0i78V5ta143dQ2vemsJg4+ec9/pB09oo4mSLS3T9Btbt0DctUbr86NpdWtIrWhPQ/nhQGqdLNjs+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbMvglSI; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773940509; c=relaxed/simple;
+	bh=UHJsWGTSlJTfY7QnX97XerQUNMUaLpd7tP4C0EEZkzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jgysmc9L+qDQBccbN/eoymwLldbrsbi262YHAoobvJZRp6Vzf+5qJglERs1JSWtpse6hfFEaqLa5E1QIadJODbo7F0OJHa3IwAaRfoNFALLdADBDWw67SlOaF2HTAyaPlBUyZPld7rjM2ZlR9c6qa1yY27CbAoyhp5zjcqM1UvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dFKmxQsx; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbMvglSI"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-483487335c2so8983995e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 09:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773938918; x=1774543718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ko0JSoqc92if9jLRax/3q0IGpdS1ahpKtbD0W9dlNH0=;
-        b=nbMvglSIxHRVrz0xjMpQN53dP+k65cUw2jfjd0FtjdpzocSM5Pna+bXHWNfwlgEqyk
-         LgNGxsIR88N3DokdheYXPtRDtPvI5F8yqT6UiTMVcD/rcO5oHwYUCIAApMBs23tMDWRt
-         m0CXx5dYA+FIPR9/9wFIV5Bg06YzZXcnh+SpgZcVvASzTstwxrEnPh35f0yUC6EoA/Dn
-         rOIAbNrc3TqqNrnfSiYHpz1GDqxneEwooL34/UmVyqvjwkmo83quPSr61CSSdXH9WvVm
-         YMHEhgJG6X6G++mmFGz6VcMk+B0M17M0XGLE2l6TeGjq0Bfizm1Bz+bW/ZD7gvo5vva8
-         ZsEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773938918; x=1774543718;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Ko0JSoqc92if9jLRax/3q0IGpdS1ahpKtbD0W9dlNH0=;
-        b=tFrG83K/8ryEUOnBRysW96wmbtZjzU+X4wt0chfHxcJuPT3UYUDuGt5HCfgSZjG4AF
-         DgN3++GJi/FjdSdXLcb/D00bX0be1knGaCk2QMjgkicPQqrFe1He1/nhuJy4QfiYLU40
-         JiHbX0qonZAvgV9LbxEvgXsIsfFlbUJMrNwOTZikimc4yGSlWfZCL6KVK/Gbff3RgZXQ
-         ObuP/958aASdTdyJwrchSkfdRfAt415UinbNwnvsdTzk1ewVorFOhz3wAjqVBPxgNhAb
-         71TE64Qc8+dxc79ny94l7rrtX2psqbfvvTfFLPmHfrOauZnpQQFO6OCtHop0bK7NJkd9
-         DhAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNbwyFaarnKLaac3Zr39NpOLy2SpjbTILBQIl0cx0hd3Q3zT6nMR4VYlunzTPqbuMZKPdIN7VhYeKiRPoEypHrfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylu4qCJCC6t1JenW4fnsCqMPlXTGE4ECG3ZHqsW/UUjNCF68sL
-	O/j6SzX2u233jP7z2J33+54v8CJmZH0GDbIwseNPUuc0TEQhiJGR4paf
-X-Gm-Gg: ATEYQzw1TTim6drq9/HEkvK/okjy6Nx14BmHRf6soms3FdwPFFPbMEb3mIyGgmXiK6H
-	HklEmiq14cSsc/oHSaqRlToyaz/iWaYb8AZG+LmewZLQnGV/UtWvN1LpnAxaDplhQElSe2XJdoe
-	OIncFPINhFKtzBkbNvf0c108lkOZyqfrkr9w2q2KeBwtnPLxv7io+9LNMMZm817TXWjo6X6gw2a
-	4fQDox5rmJ2HjUaq4NR7ABZ4vOAEdwkRlS7H6kZ29fdQnKzCKV++ZFO59cPy6XcvHxJmxIXlCoc
-	7udYzOyE3UUWfaRFTTgOU7OwVEtRPHDt08M2EiD1otWTVrKYPXh1Tnewne0jXafXnGGF/Qj/atr
-	qtV5cBqgy1oWhIPtSoKjBumeDYx4UudMe8YVT6kB/HkwH/m/A7hrdUt2Q4TgwvZbu338EXb6yge
-	7IbsTcBElY+S7NHFCEKo5cOBCjX6JnKDg=
-X-Received: by 2002:a05:600c:1d10:b0:485:3eba:ab96 with SMTP id 5b1f17b1804b1-486f4421c4cmr140167715e9.3.1773938918105;
-        Thu, 19 Mar 2026 09:48:38 -0700 (PDT)
-Received: from biju.lan ([2a00:23c4:a758:8a01:8326:7b31:bf82:d2d0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486fe68ec05sm5238505e9.0.2026.03.19.09.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 09:48:37 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-	Hugo Villeneuve <hugo@hugovil.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset deassertion delay to 1 msec
-Date: Thu, 19 Mar 2026 16:48:28 +0000
-Message-ID: <20260319164833.409126-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260319164833.409126-1-biju.das.jz@bp.renesas.com>
-References: <20260319164833.409126-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dFKmxQsx"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4fcC4X1zKzz1XM5kY;
+	Thu, 19 Mar 2026 17:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1773940495; x=1776532496; bh=UHJsWGTSlJTfY7QnX97XerQU
+	NMUaLpd7tP4C0EEZkzg=; b=dFKmxQsxM8O2hO+PntnmCfQmA2VsxQt1I9BWP45v
+	e99xashdlvnQ0iqpzna366213RNXzYUgf1v3+givoQ4OAgp6jhkArR0HgCsDDvLP
+	5u4QOdYjX9pUJlOX2DE3toANf60hlf5yDeqMcuMD1kjAv9XaSRRnHc2imlEmPZqQ
+	YiM5s2CDkWV6Mdk4AFzavdqTRL89qGFkfAxKt3lZ3gbdurzVjr4dSZvtrHFIkz0p
+	eIImjdzfLZxX4edUA95TsTfOxQ31EJmzDgr27Ispq2YeMv+HqZqSJu2XoNuEf+ZO
+	v8YxxK8gPLxPwbUnDpqGfT41WYhoPLQKKf/Ytf8IZrNWLA==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id kgNEXQsIxXTY; Thu, 19 Mar 2026 17:14:55 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4fcC482cLFz1XM5kW;
+	Thu, 19 Mar 2026 17:14:48 +0000 (UTC)
+Message-ID: <ea7a5729-3df0-49ef-ab8d-47ade75cc393@acm.org>
+Date: Thu, 19 Mar 2026 10:14:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 phy-next 09/24] ufs: exynos: stop poking into struct
+ phy guts
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev,
+ UNGLinuxDriver@microchip.com, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanho Park <chanho61.park@samsung.com>
+References: <20260309190842.927634-1-vladimir.oltean@nxp.com>
+ <20260309190842.927634-10-vladimir.oltean@nxp.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20260309190842.927634-10-vladimir.oltean@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On 3/9/26 12:08 PM, Vladimir Oltean wrote:
+> The Exynos host controller driver is clearly a PHY consumer (gets the
+> ufs->phy using devm_phy_get()), but pokes into the guts of struct phy
+> to get the generic_phy->power_count.
 
-The RZ/G2L hardware manual (Rev. 1.50, May 2025), Section 34.4.2.1,
-requires waiting more than 1 msec after deasserting the CMN_RSTB signal
-before the DSI-Tx module is ready. Increase the delay from 1 usec to
-1 msec by replacing udelay(1) with fsleep(1000).
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Updated commit header and description.
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 5020be0f72ac..715872130780 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -807,7 +807,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 		if (ret < 0)
- 			goto err_phy;
- 
--		udelay(1);
-+		fsleep(1000);
- 	}
- 
- 	return 0;
--- 
-2.43.0
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
