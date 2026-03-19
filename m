@@ -1,107 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956EA3E0C65;
-	Thu, 19 Mar 2026 15:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C22137DEAB
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 15:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773933670; cv=none; b=ZxSwy1260XaCLu/8shxLoIZKgd5RtSUfLaFDDmQVKIeRqsG/xHAirirAUpnI9ayy+Ys9GxnAkoJQJ04V+PR+wpW9AE2Y6JvJn5s7QjE8oDiKTZGayw0aayVKs8h+Km5RthW6yf/8r5pwKNIy/IvQT7Vz03AXpeCEytxMFvBeYo4=
+	t=1773934334; cv=none; b=u+u95PlHqUcVW5ze3nHFip0SErEwkTug90EKSooy5zs1FxNBPE9qyFqGvon9PfzZgE6q9MF0qi+gK5lVrdPSzvueKZOhoq3UGTo7OwftyvCoLYhuJPm2eeJQFWwKzspt5hLN/NrnnMdnfEE49H7gbWe/7/Bm7H+cm2uAnxROiYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773933670; c=relaxed/simple;
-	bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WjjF1wDNXzK8z1oy/PNSWh6Z5WKwN1WJjO4T8k/sNw3dSO5+3vxqmr84uVikxU0NAfzfKHRWjNLdON2UpSBdIAj2DV3blSMdgMeFfQtTkj/7YTgB+QEzg5t5B0Acvy3hgICitNAqy9l2pa91PK2RgueKeRe8yt43OvJwKUJ7D6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMG2IqVG; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMG2IqVG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB57C19424;
-	Thu, 19 Mar 2026 15:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773933670;
-	bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DMG2IqVGrVoHd+WDIX2nJm5k+4XOhMVlANmg90qjr23nkh9KCntc77dD1vAi/RzjL
-	 LIXXwj3k0Do/nm5Ru7H5HTfQ3/f+BaMXCn1KcLxAUL4ZMmRUWpJeZUsdAWBv0Yaxqv
-	 IWyB8WBkcHHtHhJYxu8gEZg5iVQPDKtzV6WbhTeY45wjnPHOJ8qj6D8mdOmG98AOio
-	 1c4orCeA38QUzN8g69H/CJjV0PD0ejYTiaZtAHXDLJCxgjmMDmntPAQ2jQm3PMUfJk
-	 RHQedk3piyKEU9Ju6dMRwlL7Nm9maYeCENKStGCskv5+PDk340i7QHfE2AhH+DsX2T
-	 jM9JBUSov8vlw==
-From: Mark Brown <broonie@kernel.org>
-To: tomm.merciai@gmail.com, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org
-In-Reply-To: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
-Subject: Re: (subset) [PATCH 0/5] Add RSPIs support for RZ/G3E SoC
-Message-Id: <177385558537.96554.829005700471715089.b4-ty@b4>
-Date: Wed, 18 Mar 2026 17:39:45 +0000
+	s=arc-20240116; t=1773934334; c=relaxed/simple;
+	bh=vXnxLZDFMsXbZH3qKkGOnVX/RNECvFZJUjIe10GDTaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gjq5W28CLHZ/1ZZ59SAe7HtJKvjdLXoT3Tb+KBS2LeBaAm1UdJMHoOQKDd3W91Q2vt4QdtwwoIkR0IHOi5DZu8TFFqr2yy1cCmrcG9PLW5ZwMyvtTyBYzRDVHoOkJjeEiU2SrgF3C2R0jZZGoS1hOrhOzN5Ll7GoaJmSDhqlWT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56a9c5cb48bso259599e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 08:32:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773934331; x=1774539131;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pD0xj8TjVx8IaFOOza8lFHCZSv/B3KHnHlTToYvdOjc=;
+        b=tMmTBCaNQXhkOqV8ycZLcbo/R0zWh/oIjAkTArEsDvRw5GjvWu8QlTaLNwttG4SLq/
+         lzLBUakqJPaObqIsFpM2IeVyrzEnbtKIgSsje9+MMu0m7LDQkierRtWSnvIV7ILBceko
+         iy28PohbxLdhT5nlL/rUYYTFsM7iF4qWPwzR1W2lT6I+wH+3zy/chSZRJIFwWK7hJWpm
+         WRTOELHYPky22pPfFmpPmQDfPGH8KzqTA23ZWdFZ+BwfZnM3wOYaugoUjyDuWFTWa5Bx
+         zz0ChiWVEqzqd9A8FICTiF6sCg7mtlIsaNr63qbztaxyqmkr86Z8hou1YDrERCzr6gP7
+         fDkw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/RFc41h5jZmTmmepMfkm+31yVaosLpX5LIeEXmBx+rq+d2JptNpXnXbBr7kUd3tOCypiShLKnX2ymYHadon2f6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2UTBV+B2vIum9aSlogZOHlALM66LqcgLY2p04Y+Aeayl5DNpB
+	8Kzo/FRE3nFHMHN+H39BuEKMB0pb2t3wtLoxpdujxZiS2I0jhCdLOE3MGoZDI+gu
+X-Gm-Gg: ATEYQzx68FOiasQXdSiLaN1lT+n9N3Dx45rk8+VwJCn7xZLbqJb2Mr6uzfXdNd8ngKT
+	cgCTTWuMbevAn0btSA0rQVjNoptIQpVmfg+MC7PFE+a0T+zxG9L5MuHDRuAjM6q8/TXdvebIH8Z
+	IOXv85ULgSBgU+0Kt6pZZIZLl6qMcakU/9SEn0fKxAzE7SXH2mQw186kZXIRPK21CiOH8qG+LcE
+	g1dd03ONhxx0MODUaxVxOs9uf5mrihWYHS6nN0tUvczD4Oqc45dwvO7jn8yujP9HexVebR9hMi6
+	sZ7Qxwbz6oLzJmTzKx0glP2wXXaZNIdYIIOA/uhiA0pVVY0oUej7I24i8nBoR+5ojEBxb87vxUh
+	B4h8IN8BJLJRXQ0qgFVRu6ykOtNv1+HP5WrrQb0u++rDKKV6JmJZ3Bdz4TNke8SRv7mN3a/aUVg
+	6boCwrTIdQ3DAmFG4vJSOBUTcNsEY9v4a1UtNoUPjP4TXhOK4TiTopssBDBsIvxCKE
+X-Received: by 2002:a05:6122:4888:b0:566:2711:d8ab with SMTP id 71dfb90a1353d-56ba7034c0emr4289663e0c.6.1773934331245;
+        Thu, 19 Mar 2026 08:32:11 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56ba6e2f265sm3467152e0c.2.2026.03.19.08.32.06
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2026 08:32:06 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56cc6fe8815so307776e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 08:32:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhXOomeg3ZdxzCh3qMjp3ccqHUys9isVEultLjGg/TpDMqKVD+77EX/sKaeR1wgNx96cau68iKRKwgGiZBLud0zw==@vger.kernel.org
+X-Received: by 2002:a05:6122:e183:b0:56b:7a5b:3cee with SMTP id
+ 71dfb90a1353d-56ba71419d6mr4293734e0c.12.1773934326451; Thu, 19 Mar 2026
+ 08:32:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9787
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1372; i=broonie@kernel.org;
- h=from:subject:message-id; bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpvBRh+Ygk8AAonklht1UTda+DWI/9qlNX1PNYP
- VEb+8Z2DP+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCabwUYQAKCRAk1otyXVSH
- 0NCwB/wMoTtUcWjChT/PKi3QHwGtqZHHd5DQjjjxyCRPSuU7RoSr0FZZDIk9Ivv3ots0DfZxTQJ
- qJ2sqvjDAsWtVUwx53E2p2IrLIkctEKv/uLmF2OTJMwXRQ6KeD3BNDxEioU59ExCEuqgzdNvv0r
- h/xwBMz3ALCrrFE5FgfqR0fazJNsLjp9UkQD5zuYN4sA/kSyEPrBercubhgBB5sV0yu/Zo4F2ng
- kov1d+FxmBbIMFLsaBZ3PM4jjebz5GrkHcMsLxkpnwK4Am7L8BTE3D02KUUo1FmnghYCn87f9Qe
- cWTdIJ7HbN892xdI8F3dxS8FYMArnV0IJwY9oDzSJnVIkKW7
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20260319125143.230377-1-biju.das.jz@bp.renesas.com> <20260319125143.230377-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260319125143.230377-5-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Mar 2026 16:31:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhU=mBKb6urrJ=wPsCANgWHWmAOfSNgRKMbgjSznMPZQ@mail.gmail.com>
+X-Gm-Features: AaiRm53xlVwi8FLwAu4pk5ImJpmsBy5XJ2IMtsQvF0FsPi9ny-Vah4lMnmzvt1Q
+Message-ID: <CAMuHMdWhU=mBKb6urrJ=wPsCANgWHWmAOfSNgRKMbgjSznMPZQ@mail.gmail.com>
+Subject: Re: [PATCH v6 04/10] clk: renesas: rzg2l-cpg: Add rzg2l_mod_clock_init_mstop_helper()
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Feb 2026 17:23:44 +0100, Tommaso Merciai wrote:
-> Add RSPIs support for RZ/G3E SoC
-> 
-> Dear All,
-> 
-> This patch series adds RSPIs support for the Renesas
-> RZ/G3E (a.k.a R9A09G047) R9A09G047 SoC.
-> 
-> [...]
+On Thu, 19 Mar 2026 at 13:51, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Refactor the mstop initialisation logic in rzg2l_mod_clock_init_mstop()
+> into a dedicated helper function rzg2l_mod_clock_init_mstop_helper(). This
+> decouples the logic for setting module stop state on disabled clocks from
+> the iteration loop, allowing it to be reused during resume to re-enable
+> critical clocks.
+>
+> No functional change.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Applied to
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.1
+Gr{oetje,eeting}s,
 
-Thanks!
+                        Geert
 
-[2/5] spi: dt-bindings: renesas,rzv2h-rspi: Document dmas property
-      https://git.kernel.org/broonie/spi/c/c2edd7841f58
-[3/5] spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3E SoC support
-      https://git.kernel.org/broonie/spi/c/5b7ac8ca0eae
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
