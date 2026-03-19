@@ -1,57 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F61C3BF7;
-	Thu, 19 Mar 2026 16:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D643C8701;
+	Thu, 19 Mar 2026 16:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773937332; cv=none; b=DQs8PwADcyKSs9Nq8csC6dd9zOgS82dUrrJyV7nL1LhDKgdWdC5cwD+Cq3eRt9hHV48ydt4mqQxfJqhyHxiTwsEFJvjCuoXYzCLgf+LDslKUrANEvvg7QhzWxjdhL/NKWkqXnH15qCTTQ2vPuTtJAOon7synJkXkHQe1Ukbz03c=
+	t=1773938813; cv=none; b=Q6kOJhX603vyKNiEf221D1leMx6MLzgzDtcU32Ru6y+WKG20j/+/c63s0UuBgFaxTThirowkmEvf9S5jlFVuhA3pyPA9kuz2Mj/mau1PyxnIuikEW5N0qwqNNSGMba+408KknNOKkOMHS+ChgPKE/DLrecXkxEXL+E9OAYCADsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773937332; c=relaxed/simple;
-	bh=iy3MeSA1uG9awnTTpbd86p02bVpAzL1FkXvQsaijl4c=;
+	s=arc-20240116; t=1773938813; c=relaxed/simple;
+	bh=GERYy/Od5aPTBnAMxVWqrm0W+xyQqIzbtLRcFBlUSXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cn3lhRTwrEnrlkhwSdW8dJIuqAN4/Vd6zDDj78z0oQL9N8Rlgj1ie66EkpKs30ZOEJyLUUzKRdG66bQu91S1JFzXCA8Yc/nLIJkjeY+ytulfhdKuvMsOx2oYE3KO7oEHlHP4+BT5pWcVffm6qb24foVF8oU5pCxqmjiKTKWsjhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQf3kgBC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXbRbiVQ03g/DimOSsPBTUZVyyfyvOwSbgnoBkyaaSXSBAbUDHHdVnisCxtg+JcpbQCOflr73yZ7tYba/+SRlfF+S03iVZL+g3x6A1cEhjLk76fYrn/7GyItJyDMJUeII8UBtvaPTOJclT9DWa2DoxhXQLWLQhFoT2AUXG47BgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/at+ofX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQf3kgBC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74006C19424;
-	Thu, 19 Mar 2026 16:22:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/at+ofX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407F2C19424;
+	Thu, 19 Mar 2026 16:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773937332;
-	bh=iy3MeSA1uG9awnTTpbd86p02bVpAzL1FkXvQsaijl4c=;
+	s=k20201202; t=1773938813;
+	bh=GERYy/Od5aPTBnAMxVWqrm0W+xyQqIzbtLRcFBlUSXc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQf3kgBCnof/ZaYwMhoDO6G4keSnpbBFIUoefTUXMF1FRPriUNksDVh6ZLYdNBVXE
-	 9eTymtpa8cFlrC46bUhG1xCW2YnGgSxCT5EPLVJA2pdmOJWu1rZe5PSkVaatYm8ivU
-	 FqUlhf7WKiLqzYCFwXBqp+hsSIhf9wJOTLfhkq09NwkhdZITP/LBb5LjCWFSBUZaw8
-	 bpzdkL5HSYuba/3URhFJQq8x7W3eS68QOp5V9SveFzoMzbPgdYNifin1EsPzBOmTJH
-	 fk9VWOpLdCFx+wH7s8WIDtOuh4nugdPkhBnusO6u6nJkjusJJ3n/1vMMzlaR0e4uMx
-	 5ILF66Isu27yQ==
-Date: Thu, 19 Mar 2026 16:21:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
+	b=k/at+ofX7q/fOxkkWtA1a3d20d6tomeA6a+qzkSx4Zef2UBw4c06vUNwA6k9gBHxG
+	 22tMGg0AXXjk9TapBGrDzncRM29vypwQJTezup8K+ThrcFIXmobYUnTstL9BJOA1S2
+	 l1DoLJSdcUuFWNsuox9CcFXuxBn1blcwJoKfbKRk0OHKUTogRW0xjg+VBENjaaL0yn
+	 flU78toU+k6ctFPaYpw2ftk92H+LodGA8tfkd9AMRacUUtzo/qMIG+IZk2iJKIbdZh
+	 XdbWKtQ+TWslGce9FIw3OdiNf56i9jMlA8LicVCPz3cLyD090tGKFEZyOKAzMZTFQv
+	 uBoifCRwX1LMQ==
+Date: Thu, 19 Mar 2026 16:46:47 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	John Madieu <john.madieu@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 00/22] ASoC: rsnd: Add audio support for the Renesas
- RZ/G3E SoC
-Message-ID: <b2347c14-7f29-4453-938b-8287f45aa5fd@sirena.org.uk>
-References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document
+ pin configuration properties
+Message-ID: <20260319-delegator-clinking-732b793c0682@spud>
+References: <20260319141515.2053556-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260319141515.2053556-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -59,45 +51,41 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="M0S6hMqfqBLF2RTC"
+	protocol="application/pgp-signature"; boundary="3Rx0+W9iJ6oCNSUj"
 Content-Disposition: inline
-In-Reply-To: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
-X-Cookie: Given my druthers, I'd druther not.
+In-Reply-To: <20260319141515.2053556-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
---M0S6hMqfqBLF2RTC
+--3Rx0+W9iJ6oCNSUj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 19, 2026 at 04:53:12PM +0100, John Madieu wrote:
+On Thu, Mar 19, 2026 at 02:15:14PM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Document the pin configuration properties supported by the RZ/T2H
+> pinctrl driver.
+>=20
+> The RZ/T2H SoC allows configuring several electrical characteristics
+> through the DRCTLm (I/O Buffer Function Switching) registers. These
+> registers control drive strength, bias configuration, Schmitt trigger
+> input, and output slew rate.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> This series includes:
->   - Clock driver support for audio clocks and resets
->   - DT bindings update for DMA ACK signal field
->   - IRQ chip extension for DMA ACK signal routing
->   - RZ-DMAC driver updates for ACK signal support
->   - R-Car Sound driver updates for RZ/G3E support
->   - System suspend/resume support
->   - Device tree nodes for RZ/G3E SMARC EVK
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Are there any non-runtime dependencies between the various patches here?
-It's a fairly large series touching multiple subsystems, we'll need to
-work out how it gets merged.  It looks to be mainly ASoC but perhaps the
-other subsystem changes are independent and can just go via their tree?
-
---M0S6hMqfqBLF2RTC
+--3Rx0+W9iJ6oCNSUj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm8IqMACgkQJNaLcl1U
-h9BHmAf+PMcOwgB9Gct8b6c7m1InEsr2pIiF/SbmLSRFXBzS58ook4aVD+JEvFm8
-tKmogJ2YDakAc/hOjP05KONmSns3bClBoV2BL3GPQHHvOH0Dw0LJQZwuyp3tH9zQ
-LZsnisVHORxfPABK2tUcbD31y+ZY2fqFF9goE3FxPLR4itZx7HjT2xSq2SFvlRxF
-FA1VMRYasUfV6TaJKcTJS3jxv/hpjgQADhFhT739qU4RvwAuZcfnMj0XzTOcHite
-Rl1Pj6kKEzO9KrHeu4Bx07Tg7VbiDNOQPy8dXeM7E/Cfr7G8lZPFh2V2edly312V
-nhRXGGvo8aAh6qR1ZNILCsdFMRzVsA==
-=PFGf
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabwodwAKCRB4tDGHoIJi
+0obrAQCvn8s5zeSyCDwl6roxhUmsJ2AOWtXmnnMei69Ua/54BQD9Gu5+UPyrs1S2
+/1MPDUeTa29xuFrnuxrwqf2NzNGttw0=
+=xOc/
 -----END PGP SIGNATURE-----
 
---M0S6hMqfqBLF2RTC--
+--3Rx0+W9iJ6oCNSUj--
