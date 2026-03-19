@@ -1,50 +1,48 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997733C661A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 11:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAD73876B1
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Mar 2026 11:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773918024; cv=none; b=TVkTLDNMK/n6bpmC9oOUWoMnJtx0Qtwk3UcvGQR0CwfrY9rN+yexQMxA9dGN+Cd0R8IxJM2ktAXTObqwElrcfgmK8MEQY58eeSmwf0q5qUOFSKr7wkcU0pfO8rUhk2W9UcDkAbgLvVAoQcvWqoogjowOusXINC0SYdiKLMX8H9o=
+	t=1773918030; cv=none; b=dh9TW48HMBvutT01WtQRk2vX2jsHvfJk/U3MN13+Dqg9vV32cZsngWI9mJ4w+frOM4pVt57kR+fw+AZOF2svZVcOMQWQjz+xqzT+EjUq86fv6gRBLuHVEzhgV0Vawx0thfo0ZMaoEHai5DZlU37c33xB6TrOkryjlJGHmFGRQN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773918024; c=relaxed/simple;
-	bh=lPUlWLDZEIHKetKHHdMSN3sOG8dRuYx7PE4oGAgK69o=;
+	s=arc-20240116; t=1773918030; c=relaxed/simple;
+	bh=KzyLEUFyySml/W/QoWMCTJFa5ir/a4hjtyApO1sVLuQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NG+2UQ6wzMlWTQuaDksnnCy3fJHDFJgjdthfUTBihdCfWj8eyfwroZwvAesxS5aMJ/7sZ8WAOlMJPzbHey8R9Ck065k1EfBpA83Ziyrp3KeyULqCrJkiOnXyYep+/nzRbbd1mKiTVH7iVoyIIA8zHZ2Vs9oH0dGsaCisK2AcENQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Vef3M3MZ; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=AeTxWOLVtexbgTPFGqD8KPWdZ850VzScTg7kCHAH8L4ZVpQ4yv6r/yQBpjM3/YAQQr9L9JKtd/sqPsTf3Co+OVjwdF7GePkWTefg3PAlMArrg5xHPoK+FVSIL8kZcg9kUYJGqoihwYvZZjqPlkfv5rEddH/9v3FsaRpQOkrH3N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=i3a2eKDx; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Vef3M3MZ"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="i3a2eKDx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=zC6Y1AkSSP6gBbG0k4SbZrnCH1NvYvCklVNqT+RHEM0=; b=Vef3M3
-	MZMMYT8RPLvd1Eq3WmfHKWQqATDW/hmqBvASwumh4Xnf6rfnsqDsKQ1HKRxN3h6L
-	LU6FLsKYCdaNhYJgjiK7rMbRKWjRVTxHt/WTrf5VVe0MDCFQr/V6i6FZfKnXLgVs
-	AAsiZodPtcmrySpT31FfDHmqNx0F1k658iF49PvAoam5g68okZpRZ73E/D5cRLGv
-	Dmbm4q4P/d9lza9egT98n0pl/H4o1blkUhORZ659TK3DnaBYPwEQi9ivbVTx3TjB
-	wFoK9R9Q5SdYeY7k8Zr1YuFHMslXdvD1JTWPZCAWaWtGIwO2fpEhEmmdG0MZTCWL
-	/Ss4U0a0ZWgnyXvg==
-Received: (qmail 1099649 invoked from network); 19 Mar 2026 12:00:00 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2026 12:00:00 +0100
-X-UD-Smtp-Session: l3s3148p1@d9dHeF5NcpsgAwDPXzF+ANZpdrMKUeLI
+	 s=k1; bh=zJPnV6sWCqcikZmuYtUvxsV1HgXNWyKzDo8+0458in4=; b=i3a2eK
+	DxSBMURYHxV4OXoM+UKykTDNhOCzRHayQxgVcIUd+QIen0ieRn56eQCrHfQvUD4R
+	uKZN/6u1fTHyr9YMdeKvdk/VWP4tz4AwGIVh4ZSuVDKTzGIy6zZy2W4jcYfNWH2Q
+	4BDHHl5PW96xUcmGZq6EdSohg46AJr+0HpY6PC8wGT3z1PLjF/yMaSIRFLCPgmyE
+	C5jJw/5W5DEdIfrxFYvlGpqYWbdqDA/GwcvC/Fco3N4voWMu3ZzML0Rr/JlCYHNn
+	WqYuE1gq6Z6BLTBY9g3nXbniafKoA7lhbRGUVXV1KWffXQuzsuvsrH0iA6jmp3ba
+	nvywWZbfAF3MKLPg==
+Received: (qmail 1099602 invoked from network); 19 Mar 2026 11:59:59 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2026 11:59:59 +0100
+X-UD-Smtp-Session: l3s3148p1@PFs7eF5NbJsgAwDPXzF+ANZpdrMKUeLI
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH v5 09/15] hwspinlock: sun6i: use new callback to initialize hwspinlock priv
-Date: Thu, 19 Mar 2026 11:59:31 +0100
-Message-ID: <20260319105947.6237-10-wsa+renesas@sang-engineering.com>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 08/15] hwspinlock: stm32: use new callback to initialize hwspinlock priv
+Date: Thu, 19 Mar 2026 11:59:30 +0100
+Message-ID: <20260319105947.6237-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260319105947.6237-1-wsa+renesas@sang-engineering.com>
 References: <20260319105947.6237-1-wsa+renesas@sang-engineering.com>
@@ -57,70 +55,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Apply the new helper to avoid using internal structures from the core.
-Remove superfluous setting of drvdata while here.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 ---
- drivers/hwspinlock/sun6i_hwspinlock.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/hwspinlock/stm32_hwspinlock.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwspinlock/sun6i_hwspinlock.c b/drivers/hwspinlock/sun6i_hwspinlock.c
-index a0c76bba3f05..c3db81cb1793 100644
---- a/drivers/hwspinlock/sun6i_hwspinlock.c
-+++ b/drivers/hwspinlock/sun6i_hwspinlock.c
-@@ -74,9 +74,15 @@ static void sun6i_hwspinlock_unlock(struct hwspinlock *lock)
- 	writel(SPINLOCK_NOTTAKEN, lock_addr);
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+index 51e8e533ac31..62214f31f909 100644
+--- a/drivers/hwspinlock/stm32_hwspinlock.c
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -48,10 +48,16 @@ static void stm32_hwspinlock_relax(struct hwspinlock *lock)
+ 	ndelay(50);
  }
  
-+static void *sun6i_hwspinlock_init_priv(int local_id, void *init_data)
++static void *stm32_hwspinlock_init_priv(int local_id, void *init_data)
 +{
-+	return init_data + sizeof(u32) * local_id;
++	return init_data + local_id * sizeof(u32);
 +}
 +
- static const struct hwspinlock_ops sun6i_hwspinlock_ops = {
- 	.trylock	= sun6i_hwspinlock_trylock,
- 	.unlock		= sun6i_hwspinlock_unlock,
-+	.init_priv	= sun6i_hwspinlock_init_priv,
+ static const struct hwspinlock_ops stm32_hwspinlock_ops = {
+ 	.trylock	= stm32_hwspinlock_trylock,
+ 	.unlock		= stm32_hwspinlock_unlock,
+ 	.relax		= stm32_hwspinlock_relax,
++	.init_priv	= stm32_hwspinlock_init_priv,
  };
  
- static void sun6i_hwspinlock_disable(void *data)
-@@ -91,10 +97,9 @@ static void sun6i_hwspinlock_disable(void *data)
- static int sun6i_hwspinlock_probe(struct platform_device *pdev)
- {
- 	struct sun6i_hwspinlock_data *priv;
--	struct hwspinlock *hwlock;
+ static void stm32_hwspinlock_disable_clk(void *data)
+@@ -73,7 +79,7 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_hwspinlock *hw;
  	void __iomem *io_base;
- 	u32 num_banks;
--	int err, i;
-+	int err;
+-	int i, ret;
++	int ret;
  
- 	io_base = devm_platform_ioremap_resource(pdev, SPINLOCK_BASE_ID);
+ 	io_base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(io_base))
-@@ -161,11 +166,6 @@ static int sun6i_hwspinlock_probe(struct platform_device *pdev)
- 		goto bank_fail;
+@@ -106,11 +112,8 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
--	for (i = 0; i < priv->nlocks; ++i) {
--		hwlock = &priv->bank->lock[i];
--		hwlock->priv = io_base + SPINLOCK_LOCK_REGN + sizeof(u32) * i;
--	}
+-	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
+-		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
 -
- 	/* failure of debugfs is considered non-fatal */
- 	sun6i_hwspinlock_debugfs_init(priv);
- 	if (IS_ERR(priv->debugfs))
-@@ -177,10 +177,8 @@ static int sun6i_hwspinlock_probe(struct platform_device *pdev)
- 		goto bank_fail;
- 	}
+ 	ret = devm_hwspin_lock_register(dev, &hw->bank, &stm32_hwspinlock_ops,
+-					0, STM32_MUTEX_NUM_LOCKS, NULL);
++					0, STM32_MUTEX_NUM_LOCKS, io_base);
  
--	platform_set_drvdata(pdev, priv);
--
- 	return devm_hwspin_lock_register(&pdev->dev, priv->bank, &sun6i_hwspinlock_ops,
--					 SPINLOCK_BASE_ID, priv->nlocks, NULL);
-+					 SPINLOCK_BASE_ID, priv->nlocks, io_base + SPINLOCK_LOCK_REGN);
- 
- bank_fail:
- 	clk_disable_unprepare(priv->ahb_clk);
+ 	if (ret)
+ 		dev_err(dev, "Failed to register hwspinlock\n");
 -- 
 2.51.0
 
