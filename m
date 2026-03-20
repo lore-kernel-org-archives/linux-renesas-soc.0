@@ -1,63 +1,63 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81903D2FE1
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 16:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0BA3D1CD7
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 16:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774024927; cv=none; b=GQFa9fiB2THG0HekMf0BeXSCwVAgkswxOMrlZLRWppziH/+0rxL5lHp0jogeh3L85sMp7RBPHmcf4gCk3cEJEcJ5iPBPZ1EoaC4Pm7A6XNc5ci0mR4a4wJ0egEQic0YXXQjW0n3w+IinZ39ttNNNp2cHpzmlp50eJsBBfk7hZsU=
+	t=1774024928; cv=none; b=vF1zkDSOEO46m7x+t2X+BEpCIaXrWCsSFqvnylrSGR+U/arv+eyMxhVwyp0zsAnXS8v+I2Y0HFUuzKLxhcr/g/ASDE74dJlYF83kue5sxo9fDFAYvHeKiysjWcART0/c1o2rUdpxPyRQcJZ57lOzpG0UPShcHOBToreyraTWOIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774024927; c=relaxed/simple;
-	bh=xEu9LJD1BjNp1PBcg8TnYk1Oxe/SU41CU/O72DexVVs=;
+	s=arc-20240116; t=1774024928; c=relaxed/simple;
+	bh=ajk2mACS5mpdqChjmZkeYkW3z57bokdCuI8BeMuRKA0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m8/PriGKj7ldnFwp1tXvDUvLcDYlof98NcnBqnMF5k166pTF9ZI9GwAICTxRy0oj/BnGTWjPCRlwJG0EL03qUAvlPpl5GJglxZPc8e95qeg8t/ZoiGBEhZuPZggXZ0ciMljkGWs8Li2eNtbxPwloo+mn3ppY4Mk4RYGWEeAJL7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fRhEeGTK; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=I+eTcZBGNGEpjmn5opbCKRTxxa7Ivk2//JK253ZI0hIStffRDURKQm9TOoH+MnaNv55hFi8jd26veP+cEc47wZPZc1JPDTwXyq5ze6gQCEfa8juCwwx5Th0cs8NrCu0czg03F5OBeXJvLW/lP6YToob3sb5W1NlYFieBSBDHRow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jad05NVQ; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRhEeGTK"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439af7d77f0so1514078f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 09:42:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jad05NVQ"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-486fb14227cso21086595e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 09:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774024923; x=1774629723; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1774024924; x=1774629724; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4rtUTy7c+JMXpO6EpoYVOPqOA1jyBKbjjOPg7/yERVQ=;
-        b=fRhEeGTKwtzjnITwVYksKLR4BMQ5W0ZEDAkYne14hVlrnaBAcJZyk92KYLfpU4sMBX
-         4Pnd0NQl/p6AiI4ZH5SGRjaBHPPxph0q6FtWoVmS7zonHBm2E5FcbzC1+lQZTectlgqc
-         9uRhjVXp5N/UlXKBxoFeiH6rUBNyHUkZZ1lfQD3T+u1DEgxR5fT+VK2CCT9KnDj5PxjU
-         GcyjwjTdPDVvIWIU25rLyZYUPGIL3ghzAPFbKc/YSYssGJKJo8bCH2ynhVeR+YkTXeL8
-         JpGaQt1lsuWV9Rc3OyOEwwlQpAyNa/z5sGqmnBXjTJQeiUrlw0ZsskVrHh+U4PeGoqAy
-         Ll1A==
+        bh=X0atMih6wv4MrL6fuegw3RReBHe0f+0yJzxdUtx87zE=;
+        b=jad05NVQsTsJD/rZLub1YEfuZ2v+sZWXCpsL9PtkKfy2LSfqDHfpGBqNutJYqKRA6k
+         1O71Em+D1OcsQ1ukeDoWcbkLsc2skWhayHPUsunLuuffVjpFercIQ/DNKfqYRk+Wiy2U
+         U6oKPwL4LZwyshYFK/dqyhHocRqipf0aC/TksKW7YQwafswoys7xEUaP4EOhhD5T9ze/
+         Pv7TaiPntygTupEPKTNzrcZTeVPx8kVe9rvwliCugivk7bBWJtjof7w+eEv7opA2aYSE
+         oiubTb6bXEytPdshMDeVIWiZldrlXiwIZmfVGUvrZ0Vyv5I6ZLpXJuIkLf71E1y3z06p
+         Ua6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774024923; x=1774629723;
+        d=1e100.net; s=20251104; t=1774024924; x=1774629724;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=4rtUTy7c+JMXpO6EpoYVOPqOA1jyBKbjjOPg7/yERVQ=;
-        b=ZowRtm4rqWjsu/z32fOUHuGK90DldjBbQJ+16gTNzMKgP551QnKSC6Bxfl3t/Cl+5Q
-         MLaYkQeEh9lQvK3xnPNWtrlWdjyV1LcI0DHP3c+ammpEEvuYKW6UU9/cEsRV/etd5Cuj
-         EglVZUbU32qD6SKf2Z7AVjxxuDUiiD4QK5MLgZUrHWPyy/e6yanIOm7cDeWxJNO64deK
-         KYcYZEk1ttXxMm/pcVh6wTVNriHaAxIepney8YiQh8gog+UdrIbcUxYdf34Gq0HvO5n3
-         ZCsyMsr2skD8Ztup3Gzv9ICv8JNwhaPdJgCpDpF3V8+SFvuqa1v9iII9M5m4bJ+sij6t
-         KHSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPyTj9GAk+KllQKXVNwJHnJsjyY0t79/IxuSmxurpEcRcIYkUdQYHeeP8x7Fkghr3cXpaAwfrIKwjnHOV+ShhXdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxac/p9l8d5/r2o58kUAyaH+pTbVa+I+lkFAUO7LDKHM+GhHG4S
-	EhbNHa3S8h7lJDGEafIYb/u79sTiG9Kz7nXUUPWUqlbcNKFD6WJQkay8
-X-Gm-Gg: ATEYQzyXLZHpQ0WFV2OiHDTY6zBBNgLm+Z7BWkdSklmg8Igl0JlE0PBnDNO7FcVVWrR
-	wtKtaFnW9EEusbUljgC+OTVzsBkyJzkMRz4drwMeASZ+5c4f4n/+88kYom/2QdFOpetctybFVM3
-	u0NRNS84yMXoClr6ag7SHpzAIIfthN/QE0x1gGpzJHZiGrt21wPF9m+ZgTIPyaI5lJCNTZSkEdh
-	LLWEZx2aYNzX4KUswIF+uQwHSWztuu/6BFECnWk1tkHIdmWsjmKXLMmwpc8HR9kHJxNMSAnxAfr
-	opMEvywWXMMs4Sv71TzKEzunRF/eIZbN2VaYkt3fxgPWDfXLGalJyPcQEksZmeqpGNym+xFp18U
-	eki3LvjenSxW7OtFWfB/mmD8lchkfQxpjN6WeK62uAyLyfN3aU4dE7QU+jdpMdOLTgXoXwpf/i5
-	/SiSkcjdlM2X9uga7U6ErooyQL9ih8Q4c=
-X-Received: by 2002:a05:6000:310d:b0:43b:3b80:6776 with SMTP id ffacd0b85a97d-43b64262ebbmr6599087f8f.30.1774024922785;
-        Fri, 20 Mar 2026 09:42:02 -0700 (PDT)
+        bh=X0atMih6wv4MrL6fuegw3RReBHe0f+0yJzxdUtx87zE=;
+        b=LOUZaQsukaZ+7dTUm7JPu5oPXSS036j0z9qoqUajFB5oLNfNrsN7GzFGRWM+SDygD0
+         dnxDlzo5ARDxp0rxTFaoY+R9PdStbuwl5k9t9IVUIS47kASgim8ge3ek5Q4X6Xcqfwyj
+         u17M4ti4JUkBbKYd61Zam8v5nIY9DiYPEdJXqtgg66NFJkhVbrfksL+TGtMAj5/mPMlF
+         pMsd96PNesq8d2xx82cfN1D6rRL0be80Ovk9eh5fz+ZUdLUDMLP3LX8xlgeLHvIuoCrL
+         oncEywY1D+/q72qS6wkNqZo9z87FqLw/ECg+Jh9p81zYALJDkR7cRy47t/unSOdMb7Ys
+         u4wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0dM+8mQd5eVm3mh87ubVbcRPnQHe0UXODScJ3xZM0b7p0/5IXv97HdEAfhHbVyCX6K0G8vwlOJLF9h9YiDMNbTA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ+NeFz/BDmluG06/d9Tc5jEId3o/mO3PSHo96+uf3mBxHItLG
+	FVBK70e/loRwT0RDOIWbzsPPf4qQzzXevKcNTa4Cswv4Pymn+2HFhaiL
+X-Gm-Gg: ATEYQzxn8o/Kal46+wpRXWKD2u3nqgJnM5m492KqAzcRKYZkIWZGNim/nlHe7E/5DIl
+	PEU7UEQ72CI9YHFVZpdGrGhCaEXyYTtGTalEa6YzmlevVkh9fybLcyKYkTap+tY/TmLZ8tc6xU3
+	BbZiKSx/Wf2fS74ALVaBa9gDuYZvVQAPeSxb4V31l+9xpYtxhGLqSuvBjW1gq9G1PHJHjb6r7aH
+	I6srQeinEhic7xkFnpIqPLE4b3aWpv9NsjHnz0G2cOxGzbtiwSEh+ygq61hp5GejpmkX22a+9iE
+	NOjGk3hGBNYoJmmy/Z9RatL5a2MKeskNvqUrgBDs6XCDw/NtoClLTtAAy6TCKy2kgEGOAA0InRl
+	gcF+VV22VyzpcDPANH0A57fWSvuZPfVZVf/hdBf+c/17gEzG95l5X+0uv/Yxtudl2l1jVbB6xvt
+	jn5C7qyX6GN8rt5UHMc0z6hqxq1LbEEDY=
+X-Received: by 2002:a05:600c:c167:b0:486:fab9:a578 with SMTP id 5b1f17b1804b1-486fedc3843mr55711415e9.11.1774024924016;
+        Fri, 20 Mar 2026 09:42:04 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:5b93:d2b1:bc5c:9231])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703650sm7016575f8f.20.2026.03.20.09.42.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703650sm7016575f8f.20.2026.03.20.09.42.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 09:42:02 -0700 (PDT)
+        Fri, 20 Mar 2026 09:42:03 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
@@ -76,9 +76,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/4] drm/panfrost: Drop redundant optional clock checks in runtime PM
-Date: Fri, 20 Mar 2026 16:41:48 +0000
-Message-ID: <20260320164158.487406-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 4/4] drm/panfrost: Add GPU_PM_RT support for RZ/G3L SoC
+Date: Fri, 20 Mar 2026 16:41:50 +0000
+Message-ID: <20260320164158.487406-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260320164158.487406-1-biju.das.jz@bp.renesas.com>
 References: <20260320164158.487406-1-biju.das.jz@bp.renesas.com>
@@ -88,16 +88,12 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The clk_enable() and clk_disable() APIs already handle NULL clock pointers
-gracefully — clk_enable() returns 0 and clk_disable() returns immediately
-when passed a NULL or optional clock. The explicit if (pfdev->bus_clock)
-guards around these calls in the runtime suspend/resume paths are
-therefore unnecessary. Remove them to simplify the code.
+RZ/G3L SoC is embedded with Mali-G31 GPU system. Add GPU_PM_RT support as
+it needs to be assert/deassert the reset during suspend/resume.
 
 Reviewed-by: Steven Price <steven.price@arm.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
@@ -105,39 +101,21 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 v1->v2:
  * Collected tag
 ---
- drivers/gpu/drm/panfrost/panfrost_device.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
-index dedc13e56631..01e702a0b2f0 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-@@ -429,11 +429,9 @@ static int panfrost_device_runtime_resume(struct device *dev)
- 		if (ret)
- 			goto err_clk;
- 
--		if (pfdev->bus_clock) {
--			ret = clk_enable(pfdev->bus_clock);
--			if (ret)
--				goto err_bus_clk;
--		}
-+		ret = clk_enable(pfdev->bus_clock);
-+		if (ret)
-+			goto err_bus_clk;
- 	}
- 
- 	panfrost_device_reset(pfdev, true);
-@@ -464,9 +462,7 @@ static int panfrost_device_runtime_suspend(struct device *dev)
- 	panfrost_gpu_power_off(pfdev);
- 
- 	if (pfdev->comp->pm_features & BIT(GPU_PM_RT)) {
--		if (pfdev->bus_clock)
--			clk_disable(pfdev->bus_clock);
--
-+		clk_disable(pfdev->bus_clock);
- 		clk_disable(pfdev->clock);
- 		reset_control_assert(pfdev->rstc);
- 	}
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 711f5101aa04..3d0bdba2a474 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -1156,6 +1156,7 @@ static const struct of_device_id dt_match[] = {
+ 	  .data = &amlogic_data, },
+ 	{ .compatible = "amlogic,meson-g12a-mali",
+ 	  .data = &amlogic_data, },
++	{ .compatible = "renesas,r9a08g046-mali", .data = &default_pm_rt_data },
+ 	{ .compatible = "renesas,r9a09g047-mali", .data = &default_pm_rt_data },
+ 	{ .compatible = "arm,mali-t604", .data = &default_data, },
+ 	{ .compatible = "arm,mali-t624", .data = &default_data, },
 -- 
 2.43.0
 
