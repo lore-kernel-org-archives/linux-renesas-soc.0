@@ -1,85 +1,84 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047133D1CDB
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 16:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069F3D2FFD
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 16:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774024925; cv=none; b=Q2JmnEVQ1oULcpPZTgnBod/PsJNOGFwC+ZhGLho5PjjhiZSp4rAfhG8jKZ8nZuMT4rzMheD9RIIoD0hAGJZj8AzLFEzJ3w0j64ovjmb8L50KsIyn1zXWkNmq2KIktEFkrfEYVJ+qub7HqQoEQqS1r3x+JGQ97sUADzQ7wjYKEXg=
+	t=1774024927; cv=none; b=fsvq9Hf0gZHe+GpAvsqWFf8sHMCs4ub4F7qZaqC0OnW0vXoCByr8QEwL0K7UedXtesOWvOV1cFnvdDhxglsGXGQd8+hMuZp3Z2T1BXZd+Z3oVkbHWHZaEbo2u/LwdgHQv4KIUFPp4bXLJZY5y3Zc1GGKrVibAgotutI1GMCd9cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774024925; c=relaxed/simple;
-	bh=fK3o9R4p5yoqkrXzCDN7J6tQOqKI0ucN7iP+Z2se9Wo=;
+	s=arc-20240116; t=1774024927; c=relaxed/simple;
+	bh=9gtEy4yg3z6hcSL+ls60gam+3XwsfImvBB3BuItXat4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I9mLElWgckmVCtyVzgGegxFeHL3+Gyut+yqCmUKWaQhaVsYjxCXnwanTyE+Pz3kFKt1Bwt5TUfRwsMDbHDzNGgdOfUDTUgHWcdbR6Wszj992oTMIgc48ssQiYzZUlFeHYRsxoxRinV5XLmPqfgSpMLKpHyzUOSmSxDHAfcOKKe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqxIjONF; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version; b=R8IFZKUdEInFS6ha0tCpUWT9rKRoXPIPjRrLjW43TDwwqpl02+4REJaAB7HkMMylnHuh5g617psma9S9OSBK391hANwKfjOWnC3++QzH/Ujzzf7ZFFl2Ts/uqMAjcdffqnM26UTUEoiZ/rvVa51SXut9ZxtRTEd6FpHHmTDFe1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbsNvtyR; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqxIjONF"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43b3d9d0695so1968621f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 09:42:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbsNvtyR"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4852c9b4158so15900335e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Mar 2026 09:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774024922; x=1774629722; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1774024923; x=1774629723; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wDx7nIMupZuya6kEy4r0T51ugjRAiOlO9zel+//9XXQ=;
-        b=CqxIjONFPLhLUXOKV4QUVzkCz7SXMGIc6hY+iKm1ObazbejILRuC2ny2FPBG4Lo+To
-         4lQFUnzBOV6rZUavqUu1SFi0iRmvbsAmEGBnZavymKVL6qGTirpe23qSQKFlqWd+bQhR
-         RR/eUDHmETuMTXGR58G7wLobg3CqJPKAtTGlQsSeGLGgUh7FwGdmRKHlHJ4MAIGFuHNy
-         nnKF44llAI9V2FYu2hqptccR3vTnijQMRJbVv3ihAKHiyNj4jnyRE0uiZK00RPnSB8pk
-         PElcbN2RYz0kZYzESRz1h06JQStn993zQ711q+uTnKqaMkrZnw5Rs2P2bMZygjaE6m5L
-         aZrA==
+        bh=7uiCTexBrx4dMD1Q5L1o5FxLTDC5BhBtXi4Vo6qoAUg=;
+        b=nbsNvtyR8D7BAt65dZGDn0xVfoB4ce41z6vYFnH483goHgw2id3wkRdRMXjvffrfC+
+         z2P2lJ5khkVdRfU8m5LeBs1IfG2+kCnMthKQ6BukA5IOLpvpak9qvCFR5hx6CnQEPGjW
+         MVlxT64ggpgHw5tyut2IFtthTyGi2kKFiyUP2PIZLHOG4Hmf8k5rET0dQWE21dkHR1uq
+         P9Jdr4S278BuRINXMKslDIyejhUvl/WX2jrYv+CLe6wW8y1fttqqqeYH/x65WxCh/zud
+         53X2BzfyK8q9ohTZhzTtCf2JXeZumAooSdRQDuvRVwstDp8/l6D6J1Ssw3OdEJGl3sSw
+         rZGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774024922; x=1774629722;
+        d=1e100.net; s=20251104; t=1774024923; x=1774629723;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wDx7nIMupZuya6kEy4r0T51ugjRAiOlO9zel+//9XXQ=;
-        b=AUngCAs4GZdm6sReEvc4jszC/x6MzaUvFW6bGfIKdJM9vswrUvyI73uvt2+oTqi0VF
-         GGMTholNbOBvtg+5rm2Rhp4G4sJ1LlOaT/ccIJGENgmeE3AVTEtDRbpbCTN0t6E2TU5d
-         a4zhigUdvBpRnPwZkZXiyFL3nfrlcNywgRd0NXYcePoih2GoxtkQ8MW+GnJxsdLN/xOi
-         25m+PWfVoMFr4lJeVvxMZlNYqTjxB9Sokefxni6FFb4qrdPEJCrZ77+GAG8YTYxMJ0b7
-         v+c6QzTwQ5ghm0vW3gqtV/OtARPizAVQbT6EcX1kLzODRD50PC5u9UucUn+LXfaK/Hzi
-         uxLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPJftXMpBrMZ1oKUnSCRoZgr7EEiWRNKzMOsXYQ2ceLnM1U/rTib7WGgrbfxuVCbTFv/8owI+14fPjMK1GPFItWw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4E1meyhe1tf82Du6pwkD7t6fGlppsipjOKXSDQ7LZD+I8X/MU
-	7B56cOjL7iDzGuWZnNcz+zWdffxzzHLndPb36/revchwPt9DKurTn5WL
-X-Gm-Gg: ATEYQzzyQ4iHL+qftlSauloUS95Jy8sf5cX5CZ7A3YLcB4QN0LbvM6rEWPWn7enIijs
-	OzZ9hWCG9hU8jS1dFk+efSAlFlqm8WdqliPo7xpyhGqapowjCYmnAIj0xHs5lp4Hgs/SSek8y9D
-	CqcO9ifRJcm/o1rxrre3e4o+LVxgtAIbtI+OoDy8euodaJxIVsxG1nnIPQlG99GaCEuXc7V9psO
-	n6Eb/C0St1+/Pvl6SSqc02ZkZ2yUoznIHx0M7kVBDs0bXya9Q17Xmc69J4O5Q+xUHPMVDBV5j/H
-	JYuY1OVdlDCGqq5jop6I2QIH7+pfnkkdAZml6ckIOxEz8nPMucpwMOQVW79iHa2cGPXtUPNO8yq
-	MFQgKHSYE/heHUw6JOZdQXBxHDJP6BwmKmFOBSlZAC07fNcoI2g9iLkY1UoBCY1f4IX7UpjKEvr
-	V6hwFVViV0HQTxEfu1UOZvYxzdcLGpjUo=
-X-Received: by 2002:a5d:5e88:0:b0:43b:4461:7adc with SMTP id ffacd0b85a97d-43b57729635mr15672004f8f.20.1774024922158;
-        Fri, 20 Mar 2026 09:42:02 -0700 (PDT)
+        bh=7uiCTexBrx4dMD1Q5L1o5FxLTDC5BhBtXi4Vo6qoAUg=;
+        b=ZfHZKi6vtcOXuvab7b21RtVDWxCRq+lFURbXKa/urwBqF07lniNVYSuLGBVQT7zjZi
+         1DVP0aGPsIiwz1Jaxk/m/nk/sc0dFfLGT//zUe3e1vx8TTO5IIRMaYlCpCMK1oGCRiio
+         XBXq2N6+i927rIxg3n+2wkAlESpU8zmt1wXU7/o98DyqjTdNUaQw4+A2CrgGiqEHrjfq
+         wOfypJGa3NaVnzx5KUP/fKHwqvtVnFcZmYPS/oH8tqhIFQAn3cquDMVaTjNcjME+ka58
+         LvkWNVCtWXdF8jlNMOA50TTIgTO7lcjDxTR8Bqu4gm3in3E+CJ/ROQaoPjf6tngmSThB
+         1gOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBmLwJrEIKr9YSeifrJviRfu7x/YhZMAcOsvfDX/i/7zINyxeqKhRvBAI9qtJK/rVXGCmaLBYWoxQu0xr6M0keFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQBl4V3jJKzDlRlbVQ4LwPQ0s+yerUhpkfz7zVVjym6gXNmZ5z
+	P7JCBVcX5Yk2CvFwcC0ECyk1Nw1Xbt+X5VpQPOxFDlfByCmvWcU82S0B
+X-Gm-Gg: ATEYQzyiQw0cBVPcKwWKdGIPtDCGtuzoXTnJ+eXNDjUH3pn8LmWsG1RPpAK6+WYHjs1
+	PQ/OMpubEnp2Ec9RcE6GwXW/puC/Uahl597p8r1bVsCqOw1yK6Vhh6vr5nQ1lssMtJavDkQHxEv
+	U2rExuTA8uoi9HKy1Un2RPVXKk0nY+FXEAV6AQAUAtxJjx/NvVD+Xmg4GWyYZXWj+lvVjMES+h5
+	4rmeYwMemi/pTouXz0pYvHVCBmD+nfhyfb+xlKC5lLnYpBEDTJcCvMqzzx8elultmiaJMNBZ7CP
+	HTBNREajE1jMLntcDHWItdW589AuLGNYCk0NBgSxOZ9JLiEXJ80vr64hq3RPtWjtjvtbp/QxfpX
+	hkkCq3bJfCXuq0pwS5fGNZiIskO64PajidX86FNllmif7mCieWq53USIsg5//QpjvZHKZzUP8yR
+	r6ju2ydA3DQ+puvD8nFXPX1MIkh7Dvqmw=
+X-Received: by 2002:a05:600c:35c1:b0:485:3b50:fe54 with SMTP id 5b1f17b1804b1-486fedb2545mr63880305e9.11.1774024923408;
+        Fri, 20 Mar 2026 09:42:03 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:5b93:d2b1:bc5c:9231])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703650sm7016575f8f.20.2026.03.20.09.42.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703650sm7016575f8f.20.2026.03.20.09.42.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 09:42:01 -0700 (PDT)
+        Fri, 20 Mar 2026 09:42:03 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 1/4] dt-bindings: gpu: mali-bifrost: Add compatible for RZ/G3L SoC
-Date: Fri, 20 Mar 2026 16:41:47 +0000
-Message-ID: <20260320164158.487406-2-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 3/4] drm/panfrost: Add bus_ace optional clock support for RZ/G2L
+Date: Fri, 20 Mar 2026 16:41:49 +0000
+Message-ID: <20260320164158.487406-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260320164158.487406-1-biju.das.jz@bp.renesas.com>
 References: <20260320164158.487406-1-biju.das.jz@bp.renesas.com>
@@ -93,40 +92,101 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add a compatible string for the Renesas RZ/G3L SoC variants that include a
-Mali-G31 GPU. These variants share the same restrictions on interrupts,
-clocks, and power domains as the RZ/G2L SoC, so extend the existing schema
-validation accordingly.
+On RZ/G2L SoCs, the GPU MMU requires a bus_ace clock to operate correctly.
+Without it, unbind/bind cycles leave the GPU non-operational, manifesting
+as an AS_ACTIVE bit stuck and a soft reset timeout falling back to hard
+reset. Add bus_ace_clock as an optional clock, wiring it into init/fini,
+and the runtime suspend/resume paths alongside the existing optional
+bus_clock.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Steven Price <steven.price@arm.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
+ * Dropped duplicate err assignment
+ * Changed the format string of dev_err to "%d" and simplify the dev_err()
+   line by using err rather than the same PTR_ERR().
  * Collected tag
 ---
- Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/panfrost/panfrost_device.c | 22 ++++++++++++++++++++++
+ drivers/gpu/drm/panfrost/panfrost_device.h |  1 +
+ 2 files changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-index db49b8ff8c74..9db9f84ad964 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-@@ -26,6 +26,7 @@ properties:
-               - realtek,rtd1619-mali
-               - renesas,r9a07g044-mali
-               - renesas,r9a07g054-mali
-+              - renesas,r9a08g046-mali
-               - renesas,r9a09g047-mali
-               - renesas,r9a09g056-mali
-               - renesas,r9a09g057-mali
-@@ -150,6 +151,7 @@ allOf:
-             enum:
-               - renesas,r9a07g044-mali
-               - renesas,r9a07g054-mali
-+              - renesas,r9a08g046-mali
-               - renesas,r9a09g047-mali
-               - renesas,r9a09g056-mali
-               - renesas,r9a09g057-mali
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index 01e702a0b2f0..7fed22d555a5 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -70,8 +70,21 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+ 			goto disable_clock;
+ 	}
+ 
++	pfdev->bus_ace_clock = devm_clk_get_optional(pfdev->base.dev, "bus_ace");
++	if (IS_ERR(pfdev->bus_ace_clock)) {
++		err = PTR_ERR(pfdev->bus_ace_clock);
++		dev_err(pfdev->base.dev, "get bus_ace_clock failed %d\n", err);
++		goto disable_bus_clock;
++	}
++
++	err = clk_prepare_enable(pfdev->bus_ace_clock);
++	if (err)
++		goto disable_bus_clock;
++
+ 	return 0;
+ 
++disable_bus_clock:
++	clk_disable_unprepare(pfdev->bus_clock);
+ disable_clock:
+ 	clk_disable_unprepare(pfdev->clock);
+ 
+@@ -80,6 +93,7 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+ 
+ static void panfrost_clk_fini(struct panfrost_device *pfdev)
+ {
++	clk_disable_unprepare(pfdev->bus_ace_clock);
+ 	clk_disable_unprepare(pfdev->bus_clock);
+ 	clk_disable_unprepare(pfdev->clock);
+ }
+@@ -432,6 +446,10 @@ static int panfrost_device_runtime_resume(struct device *dev)
+ 		ret = clk_enable(pfdev->bus_clock);
+ 		if (ret)
+ 			goto err_bus_clk;
++
++		ret = clk_enable(pfdev->bus_ace_clock);
++		if (ret)
++			goto err_bus_ace_clk;
+ 	}
+ 
+ 	panfrost_device_reset(pfdev, true);
+@@ -439,6 +457,9 @@ static int panfrost_device_runtime_resume(struct device *dev)
+ 
+ 	return 0;
+ 
++err_bus_ace_clk:
++	if (pfdev->comp->pm_features & BIT(GPU_PM_RT))
++		clk_disable(pfdev->bus_clock);
+ err_bus_clk:
+ 	if (pfdev->comp->pm_features & BIT(GPU_PM_RT))
+ 		clk_disable(pfdev->clock);
+@@ -462,6 +483,7 @@ static int panfrost_device_runtime_suspend(struct device *dev)
+ 	panfrost_gpu_power_off(pfdev);
+ 
+ 	if (pfdev->comp->pm_features & BIT(GPU_PM_RT)) {
++		clk_disable(pfdev->bus_ace_clock);
+ 		clk_disable(pfdev->bus_clock);
+ 		clk_disable(pfdev->clock);
+ 		reset_control_assert(pfdev->rstc);
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+index 0f3992412205..ec55c136b1b6 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.h
++++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+@@ -136,6 +136,7 @@ struct panfrost_device {
+ 	void __iomem *iomem;
+ 	struct clk *clock;
+ 	struct clk *bus_clock;
++	struct clk *bus_ace_clock;
+ 	struct regulator_bulk_data *regulators;
+ 	struct reset_control *rstc;
+ 	/* pm_domains for devices with more than one. */
 -- 
 2.43.0
 
