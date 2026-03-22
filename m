@@ -1,206 +1,93 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F36382F1F
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 12:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911935BDD5
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774182289; cv=none; b=OsI1kJrwhnrbIYJabrgBOxHo6MKQ0iwlvd4Wrbqkh/jC71L1VZGAWukKD2zkO062kzrr0wj6f3bEapWOxNK/+5jEeoeBTXTKtOsXoAN2r1PHU9KcDWeyXGACYGnQKSlGtqiqrobnxJV8C139pTmQNujBy1/s4diXiW8Wgbz1vdU=
+	t=1774188806; cv=none; b=D04+2fo42pPh9tik7+z7Ih0mkMvdmr7b08oJ5mZCCbqdzaZ5kQjnlhFLy+Qo74joq83RfFS2GMiaIiefqAX3cih0aZXMRn5hejVbbCLK03kwIB52LNs4jSU5WoLZhUE9SY6lSLmaMgnZAAmdUAoyns5LDLgxJIc6dcrHjlFORm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774182289; c=relaxed/simple;
-	bh=c9l2i7HPT8iNPuwqrZJz+dMN2SoQtpIGWFRWvS6zBI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VUTnEeM4zgWPw+hBxF4S/EZewW5qTPqJ+AJfvvOyJlns/obF5xpZISDXw3KUNhN8bKrLot7Mxccddzb8Lkb17EcFeVH1eTl6EoPqwS3WHlwQuSSLa+gKw4tEpwQViHexyGaa1FlzE7tQuWrVHRVmgZSQYc0qboN/NXFYAsJgk2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaTkhsbu; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774188806; c=relaxed/simple;
+	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y5hHDI+cQydzxfu1jh5+yr+o7913Cvu/DmeMbu606fEFfivNUl7S7Jm1D1JFdCFBl7kmU05H6GRX9zpEaCklZZ6d2RckjrWG3otiDG2q0OqZhwxA3BJHKjDqD2ycrd8AQ3Jw22aBRiWXI98OTH+vNoQavkNwAWOd7s8970mLKzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1JSvO3v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaTkhsbu"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439b6d9c981so2256459f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 05:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774182277; x=1774787077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vZOo4IkXrKT3vNwdWHp9bFAGOnopScx0rwaRBrsQYIM=;
-        b=GaTkhsbuiOfPXLtfwVLF1/SVHrAnjezP+1Vs9eEJrJep2hf3tzR2WLKCMnlaLW/lUw
-         ybQzrp3ehA/p52egkcU7XJPknAY4ju/d4mnTMjewviBgRLfky/yiQTvLR/D4m5F5FJ1R
-         YzIHm/u90n2yG8uIEDuAtQPlYZCfhefjbDFJW/0y/SgDdiM9I2/pZWqTUWwoehfzKJ5V
-         4pOCNkTH3NwB14IwL6d9MnMo2TopEg4UuhsilsZF+Of/BlI/izRPN6Ts/RkctMgWvEZg
-         FPM3IVrQVSFJlHHK87IUD8gIFu0OFczw1oRUcnYnIbb4Bvz86wf+Tc8wSR7tID+rdNqX
-         BIFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774182277; x=1774787077;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vZOo4IkXrKT3vNwdWHp9bFAGOnopScx0rwaRBrsQYIM=;
-        b=jlxNOktG/KiHzkfWHIM5sSf3isFvSJhxbhfnfHdKbWRk/hA2rMsuvD1xFsK0sAML7b
-         zKTdexg5PM7dMsI9WOrQHe5JV5UJmpa6+fNljpMIN/OtiDRNXRrCUobQ5gxMcal+/BSU
-         L9J6GZaJESgE8wEscfWa5Spn+b9WUyrjDWd7+GgwvDjW8x2BhQ6gEM3WbOHnEzszkZIs
-         6+PKNHWR6plKasgEKxOEfBwIg6aWsMcB4xhflNbN6ZFmt+f9hMFLHVgk5j1Wod0wn4GE
-         Z9Wh/sygVd9FOHgE6Xxi5czKd53JAxx4YcsKBsbC5BjD8UH3ObAW4zV9EgzlMURtMYoz
-         I2BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyhhGy9Pw+w6rJ7u7uJofsBCiPkGGzWkEmzcEsYYYetpnah+9HkfW2q47LpT7BfVsYbndHmMKhdBN4Ld4CKtmq/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnvsoBDIe0DRaAz1bXWAcQVXBQTXy9MeUWVWI+4NNqNWm/7GKI
-	xfhboON0YzZze4OuVTqZksNTo7VybU2ub4VMEwP4sNLQZ+A6zAS+wGU4
-X-Gm-Gg: ATEYQzwaoliRcFH4kTTG9DYmEjNBoTon5y05J1TBzMvkH5xEvidYjSqcV/3rpZDkCx5
-	8M9OKTEKBp7dYmILASX0Y54zTDBaSt30+dsT7VWBOobLlQWLVCC+YpA/RRKY5d5WeLldR/NKm6W
-	4gjobaOWb5jTsvAL1AGiZ3kLJUf+ASXxgOf1GcKvaYarCZYYoHmScwte+DyZoE5v6VROcmWfNAx
-	zvBwf++xhABglRZOhh41cesqPh9dPPpXXr2cvu47hNHwGOFuqKAcYt4Xld5caBc5O/iO0BwnimV
-	3jnojuhwVw+lZVSdx0PRnszYE8+70LlENaLhdYYwgij0yuUdb553Rmc6wA0i7iVsoSY2js1L4P1
-	hTAgJSqxxRo+77PyhD5/AQhTkO0DdHUnFzkerR6jeqLtMQPjBIVd8eKW4PSP0yTxpV1kKxHJcxi
-	2LiiepsaGWEgVe92KEan+MEMhJQtCRKIdu8RSeDMV7lSyY4iTU
-X-Received: by 2002:a05:6000:2501:b0:43b:4d2e:9ff8 with SMTP id ffacd0b85a97d-43b6423c4d6mr14984981f8f.6.1774182276669;
-        Sun, 22 Mar 2026 05:24:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:1bdc:7f84:18bc:1e56])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703343sm21072695f8f.19.2026.03.22.05.24.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2026 05:24:35 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 14/15] irqchip/renesas-rzg2l: Add RZ/G3L support
-Date: Sun, 22 Mar 2026 12:23:57 +0000
-Message-ID: <20260322122421.132474-15-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260322122421.132474-1-biju.das.jz@bp.renesas.com>
-References: <20260322122421.132474-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1JSvO3v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9F4C2BCF4
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774188806;
+	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m1JSvO3vBoAW11h+1jUFpD4M3o87pi5WVIS30EG+IpjrhSbVVm0n+a1tBuAfjEvBt
+	 DUqzvAtEE8KJ6CZfJtmKqQq9BVDuNmVeWZsoYGhGiqY+t+Q6RwWFQc5ZQdL1p/KZIY
+	 UFQwKK08jzzYTvqEXZ4Ac8G4DE5xsSYsUXc8IfhWTBw9DfA2DD2C6LLzRNU24IbyFb
+	 lrOIf3a8BJJBT9sBoXhMHNUMb8I5hhEpcoV0xfuwNuKiNcSCrIcGPuQKtmayUZ9HXR
+	 hFKtrSq+WjK11fCbeC076eyEPEXZo0kTu3ZozNAe6J8tQQi2tgc/U6j9xLH40yQ+qZ
+	 AsEOEj7QkGiCQ==
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-127380532eeso1358897c88.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 07:13:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQi5NqmpYtOXn+DvU2AF20Nq1u1uVB/IPP3mtqhEqL3REmm9iy3vy4jQjejbp8/Nqp6M/yNDQ2zaq27EW1ZUaJig==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyop9a7iZKH9ClKA12Pufb2Fb7qVjCwRF2rY3wezzi4Y0oo9BXC
+	UJyvd5szHCiEWyxDnuwGIb5LK3eiAxet8q46uv7Nge2bDHQ1xf7kksBog9qHlFjC7HkFhAkJFTj
+	tYkUkFB9wRT20+F0LTy+BIfaMJ/N6kQ==
+X-Received: by 2002:a05:7022:629f:b0:11b:9386:7ecd with SMTP id
+ a92af1059eb24-12a726e3eadmr3908663c88.42.1774188804941; Sun, 22 Mar 2026
+ 07:13:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
+ <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
+In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Sun, 22 Mar 2026 14:13:12 +0000
+X-Gmail-Original-Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
+X-Gm-Features: AaiRm5108rX0H_CDRkg1jedFrdyn5bPiHycKlLMUICMJdSqU48gN54_ILYySwo8
+Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/mediatek: mtk_hdmi*: convert to of_drm_find_and_get_bridge()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Luca Ceresoli <luca.ceresoli@bootlin.com> =E6=96=BC 2026=E5=B9=B41=E6=9C=88=
+7=E6=97=A5=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:22=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> of_drm_find_bridge() is deprecated. Move to its replacement
+> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
+> is put when done by using the drm_bridge::next_bridge pointer.
 
-The IRQC block on the RZ/G3L SoC is almost identical to the one found on
-the RZ/G2L SoC, with the following differences:
+Acked-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
 
- - The number of GPIO interrupts for TINT selection is 113 instead of 123.
- - The pin index and TINT selection index are not in the 1:1 map.
- - The number of external interrupts are 16 instead of 8, out of these
-   8 external interrupts are shared with TINT.
-
-Add support for the RZ/G3L driver by filling the rzg2l_hw_info table and
-adding LUT for mapping between pin index and TINT selection index.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v5->v6:
- * No change.
-v4->v5:
- * Updated rzg3l_irqc_probe() for supporting separate interrupt chips.
-v3->v4:
- * Updated commit description IRQs->interrupts.
- * Updated rzg2l_disable_tint_and_set_tint_source() for making
-   tint assignment very clear in the code.
- * Formatted rzg3l_tssel_lut as table format.
-v2->v3:
- * No change
-v1->v2:
- * No change
----
- drivers/irqchip/irq-renesas-rzg2l.c | 44 +++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 8aff8b9d49c9..1ff1c0efed66 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -67,11 +67,13 @@ struct rzg2l_irqc_reg_cache {
- 
- /**
-  * struct rzg2l_hw_info - Interrupt Control Unit controller hardware info structure.
-+ * @tssel_lut:		TINT lookup table
-  * @irq_count:		Number of IRQC interrupts
-  * @tint_start:		Start of TINT interrupts
-  * @num_irq:		Total Number of interrupts
-  */
- struct rzg2l_hw_info {
-+	const u8	*tssel_lut;
- 	unsigned int	irq_count;
- 	unsigned int	tint_start;
- 	unsigned int	num_irq;
-@@ -377,6 +379,11 @@ static u32 rzg2l_disable_tint_and_set_tint_source(struct irq_data *d, struct rzg
- 	u32 tint = (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
- 	u32 tien = reg & (TIEN << TSSEL_SHIFT(tssr_offset));
- 
-+	if (priv->info.tssel_lut)
-+		tint = priv->info.tssel_lut[tint];
-+	else
-+		tint = (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
-+
- 	/* Clear the relevant byte in reg */
- 	reg &= ~(TSSEL_MASK << TSSEL_SHIFT(tssr_offset));
- 	/* Set TINT and leave TIEN clear */
-@@ -683,6 +690,36 @@ static int rzg2l_irqc_common_probe(struct platform_device *pdev, struct device_n
- 	return 0;
- }
- 
-+/* Mapping based on port index on Table 4.2-1 and GPIOINT on Table 4.6-7 */
-+static const u8 rzg3l_tssel_lut[] = {
-+	 83,  84,					/* P20-P21 */
-+	  7,   8,   9,  10,  11,  12,  13,		/* P30-P36 */
-+	 85,  86,  87,  88,  89,  90,  91,		/* P50-P56 */
-+	 92,  93,  94,  95,  96,  97,  98,		/* P60-P66 */
-+	 99, 100, 101, 102, 103, 104, 105, 106,		/* P70-P77 */
-+	107, 108, 109, 110, 111, 112,			/* P80-P85 */
-+	 45,  46,  47,  48,  49,  50,  51,  52,		/* PA0-PA7 */
-+	 53,  54,  55,  56,  57,  58,  59,  60,		/* PB0-PB7 */
-+	 61,  62,  63,					/* PC0-PC2 */
-+	 64,  65,  66,  67,  68,  69,  70,  71,		/* PD0-PD7 */
-+	 72,  73,  74,  75,  76,  77,  78,  79,		/* PE0-PE7 */
-+	 80,  81,  82,					/* PF0-PF2 */
-+	 27,  28,  29,  30,  31,  32,  33,  34,		/* PG0-PG7 */
-+	 35,  36,  37,  38,  39,  40,			/* PH0-PH5 */
-+	  2,   3,   4,   5,   6,			/* PJ0-PJ4 */
-+	 41,  42,  43,  44,				/* PK0-PK3 */
-+	 14,  15,  16,  17,  26,			/* PL0-PL4 */
-+	 18,  19,  20,  21,  22,  23,  24,  25,		/* PM0-PM7 */
-+	  0,   1					/* PS0-PS1 */
-+};
-+
-+static const struct rzg2l_hw_info rzg3l_hw_params = {
-+	.tssel_lut	= rzg3l_tssel_lut,
-+	.irq_count	= 16,
-+	.tint_start	= IRQC_IRQ_START + 16,
-+	.num_irq	= IRQC_IRQ_START + 16 + IRQC_TINT_COUNT,
-+};
-+
- static const struct rzg2l_hw_info rzg2l_hw_params = {
- 	.irq_count	= 8,
- 	.tint_start	= IRQC_IRQ_START + 8,
-@@ -695,6 +732,12 @@ static int rzg2l_irqc_probe(struct platform_device *pdev, struct device_node *pa
- 				       rzg2l_hw_params);
- }
- 
-+static int rzg3l_irqc_probe(struct platform_device *pdev, struct device_node *parent)
-+{
-+	return rzg2l_irqc_common_probe(pdev, parent, &rzg2l_irqc_irq_chip, &rzg2l_irqc_tint_chip,
-+				       rzg3l_hw_params);
-+}
-+
- static int rzfive_irqc_probe(struct platform_device *pdev, struct device_node *parent)
- {
- 	return rzg2l_irqc_common_probe(pdev, parent, &rzfive_irqc_irq_chip, &rzfive_irqc_tint_chip,
-@@ -703,6 +746,7 @@ static int rzfive_irqc_probe(struct platform_device *pdev, struct device_node *p
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzg2l_irqc)
- IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_probe)
-+IRQCHIP_MATCH("renesas,r9a08g046-irqc", rzg3l_irqc_probe)
- IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(rzg2l_irqc)
- MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
--- 
-2.43.0
-
+>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+> 2.52.0
+>
