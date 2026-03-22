@@ -1,92 +1,84 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC837F8D8;
-	Sun, 22 Mar 2026 03:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C43382F7;
+	Sun, 22 Mar 2026 06:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774151049; cv=none; b=j0wXO2+iiwu+OzNrIVTMbYNW+UzgO/A8+qIbESAhTaHbOJrrpdS0eLtg8uQy6SBOwvvL/qN9JKnvgQKG3VWYAcvdBsOJdVIQ97Qn4w5p9g9G0jq1BFW4MNcAcqApgooMEWv4K2l9dDHubZWu4W5i4hFuVYr8ZGJPRjJp7PrL6MI=
+	t=1774162701; cv=none; b=lwGZhpN3Ytg+Ty7i5vXoKEIyjj4onXiMgtaaaf2nANHtYOlkhVCPGO4KGL31VAMJ4JyOrki7xap2raO7WAq2vjLXLuX/Il9Gj6aZCjfee4YgzOB3pMHq72HHiK5v7c2ahAJxVQWT9xIT9fvSaxwu/iMY1vC+3D6BlXO0Vy0xpXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774151049; c=relaxed/simple;
-	bh=y5zq2D3lOiI0Qw3PR34/ItRcvLMn+HjX7/inOrvLOHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TXEvCdq46iENX3GSIlLnECot6Z7jUHnnElmmAEXCZDFHznKyDzJEf1CZ8XlRL8LYN0M9gecqZKRRtUL2boIk2UAhC9tyjVMueWAS/qLj7NNH8ejl4b6LNrEOKjOlXxQHo1KgGvmbaHELrzXP4t6tXQlSesRBl0cVHtu7+68lCX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RySlusss; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yhFUUf3K; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1774162701; c=relaxed/simple;
+	bh=J0oBN7mLaCh0P3ukmH4JfbB6/WVDt4bg5xlG51w0gkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cwT29wZC5ET5LL+0S7HCe9s/laJiQtHFxisiTuciJOXbfuYgrAruGIgo9CtBZMHy+MmA/l6CNEBw6sLE40PgReIO5R44VwSMSYTIBz+x16Qlg7ojBMSGZvMbDRsFK5yQhSUJZKPmRJHwddj7cOlzysydG4larf0TBvbswDZlL8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RW09B80N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RySlusss";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yhFUUf3K"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fdhxD1Cvqz9tn7;
-	Sun, 22 Mar 2026 04:44:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774151040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pPmmUr2rdYksgu0/4NHiyOVIMPthGnBqroydjCMUJA=;
-	b=RySlusss3CTCUBE78BS8aXqfbboUE1Z1SicgUIk2VKxEJ2DWD0wwsa6GlRv1KfKJRQMys+
-	8sSYPF4MqxtaZkSvsZOI4lGIpJQRJYVVx6Ntg9HYd9HzHzQ6r4yqi86gO3iKBSxYsUE0WW
-	OU8WawIEdLlA665CNn+OFwmfWRIaAU3UqtvAbP4uyFHZPaz8xPe82zF1/VhPNE9ftsXOS0
-	T0CBDb1LpUxCYM7IX5rmzSd6sIvKUdVx4OiEkMRuLmep+rbSqj9YHJRLOSOo6vBSxk+MAL
-	lWrZC/eyC3lmHhtz5Af1FoBdzR2qZJIFiibopUN68O24t8nPYOk8BKestlk41A==
-Message-ID: <78d477a1-9f02-49e1-802e-4108b63141eb@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774151038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pPmmUr2rdYksgu0/4NHiyOVIMPthGnBqroydjCMUJA=;
-	b=yhFUUf3K1QVHAVbFAXyB66CAuhcs55jnwqqzHajoRG3esaKpWUMboXmW04Ypp3C6fATRot
-	LE+X7Bsd21XRQq6U1Nmx5eETTYi+gt2U836HcZ2AaVesGftQFQA/FjYNLvH151Pb/Qc3X4
-	Yu7pQ2OJiGHNTDrerqWANrCTbVLDGtWFOK86Fv4qpV9C4DsWUCrdtrd5tPd2C1AT6YpJxo
-	4+hW2d9ZB1FZEHQWAhcg+h0OaLlw/F38anRmtKmC0ZX5AD+3anLwdiMUt/TVoBwrEiy/uw
-	D9wWYXDfezVNcEObz2WcQQciVlFEa2v1FNbLvLLBvRmsmS1zTB8279UUSGMj+g==
-Date: Sat, 21 Mar 2026 19:52:57 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RW09B80N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7219C19424;
+	Sun, 22 Mar 2026 06:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774162701;
+	bh=J0oBN7mLaCh0P3ukmH4JfbB6/WVDt4bg5xlG51w0gkU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RW09B80NewEr4+1f/Osk33PN82xXXfxO25hunasttlPxf604ED3qxGuwu8o8TKWQH
+	 tczxqj0fAJP8IAI7n3gp4Hh8ml2BMJkAdGzDRoW2N8rCB82KhnunsKRESx++5R0Utx
+	 edq7YYXAVpThuWADs3Qb2zreAEQMwbYmt9qGbBb9J4dVskU/JzHr8URUUFWke04fRC
+	 vR15cpT9G2h0siSFjnz/VFNwJuCH1/uLb0aEw0sogjpRgzall6GSPnpo/20J70W3/9
+	 h6p75Ia0gNnApdSZUA2cpiaHGmJ7Frdi9M//aBIh+MU5AJeJVTKsxNzVgWAVPnZaqC
+	 zNVsbDL/Dfy1Q==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 5/5] counter: rz-mtu3-cnt: do not use struct rz_mtu3_channel's dev member
+Date: Sun, 22 Mar 2026 15:58:11 +0900
+Message-ID: <20260322065813.264398-1-wbg@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260130122353.2263273-6-cosmin-gabriel.tanislav.xa@renesas.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] dt-bindings: usb: document the Renesas
- UPD720201/UPD720202 USB 3.0 xHCI Host Controller
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-References: <20260319-topic-sm8650-ayaneo-pocket-s2-upd-bindings-v1-1-84e4ef564022@linaro.org>
- <CAMuHMdUACGC4rdXfvO-N-cgNAEzhczB0VYbMoxZMyazSAp6jWg@mail.gmail.com>
- <c8d878e2-8ce8-4526-9dbc-96e4f42be4cf@mailbox.org>
- <6c3829c4-3e1e-41ee-b969-820948d10611@linaro.org>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <6c3829c4-3e1e-41ee-b969-820948d10611@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1244; i=wbg@kernel.org; h=from:subject; bh=J0oBN7mLaCh0P3ukmH4JfbB6/WVDt4bg5xlG51w0gkU=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDJn7J132EdTIjTz28cnXxvqfcZrMBXK2rO6y+2eHv8yLO ml77/+9jlIWBjEuBlkxRZZe87N3H1xS1fjxYv42mDmsTCBDGLg4BWAiU54xMizf/zHeYVVGy7Sa xvdsq+Z3fpWr+2Ddd0+neeKv5Z9MYicx/M/sf5P9QSTpZLZbH+uNQI7PjL48e6u3Xz5xburJ4zI ZhlwA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 9f572a9e99c9b97cc2c
-X-MBO-RS-META: 9nomey8gwtghgdcywd5hib1z1ngije3q
 
-On 3/21/26 10:26 AM, Neil Armstrong wrote:
-> Le 21/03/2026 à 02:36, Marek Vasut a écrit :
->> On 3/19/26 10:22 AM, Geert Uytterhoeven wrote:
->>> CC Marek (for Sparrow Hawk)
->>
->> The upstream supplies to which the USB controller on SH would attach 
->> are not described in SH DT yet, and they are always on, so I don't 
->> think we need to describe the controller in SH DT yet, do we ?
+On Fri, Jan 30, 2026 at 02:23:53PM +0200, Cosmin Tanislav wrote:
+> The counter driver can use HW channels 1 and 2, while the PWM driver can
+> use HW channels 0, 1, 2, 3, 4, 6, 7.
 > 
-> Indeed, not necessarily, describing it would be required for power 
-> control and eventually to describe usb hubs as subnodes if they also 
-> need reset and power control.
-ACK, thank you for clarifying !
+> The dev member is assigned both by the counter driver and the PWM driver
+> for channels 1 and 2, to their own struct device instance, overwriting
+> the previous value.
+> 
+> The sub-drivers race to assign their own struct device pointer to the
+> same struct rz_mtu3_channel's dev member.
+> 
+> The dev member of struct rz_mtu3_channel is used by the counter
+> sub-driver for runtime PM.
+> 
+> Depending on the probe order of the counter and PWM sub-drivers, the
+> dev member may point to the wrong struct device instance, causing the
+> counter sub-driver to do runtime PM actions on the wrong device.
+> 
+> To fix this, use the parent pointer of the counter, which is assigned
+> during probe to the correct struct device, not the struct device pointer
+> inside the shared struct rz_mtu3_channel.
+
+It looks like you replace every instance of ch->dev in the file,
+except in rz_mtu3_cnt_probe where it is initially set as ch->dev = dev.
+Is that line in rz_mtu3_cnt_probe still needed, or can it now be removed
+too?
+
+William Breathitt Gray
