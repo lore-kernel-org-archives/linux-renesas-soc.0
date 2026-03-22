@@ -1,63 +1,63 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0467B3803C1
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 12:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C3370D4B
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 12:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774182271; cv=none; b=OpRA2QV4W23G6xKUHzrVIraQru+EMAaYoESFh63Hp9NBsjQ4edItUPUfm5tmuHQxVw5BJd9rzUFK2RWc17cJhC1+dL6SdfmTHtsEEo/8G6TYjsMtMPU76UNvQEv4xb33BeQV/XDhIbzUhj4ZypR5rBC0HvhcH1nAJOCaR3NoYAk=
+	t=1774182272; cv=none; b=GYr7EIVncqonWSichEylnowDke8hqU396sRkRFNGMJ/mrNf/N1W5aq+p9de6ralY6D201qibMuBDwqElPtOzljkVdzRlXFlX2ORXCT2UsdEfSjV/K+FvLyCoAhu//rL9Vr+r/xePis441RAm59RZwhl9NRLTGpzs3Si2OErDDig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774182271; c=relaxed/simple;
-	bh=UpRxGcWa3iAIEJufXLdXzxJHuZ+CAyQYllpOl9CaWjM=;
+	s=arc-20240116; t=1774182272; c=relaxed/simple;
+	bh=Q7ZMTU8tA4AeV4I3v7W7pGxsb09bhPm9Dym0oBZQwGw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=caV988iOQrx4EiN3n1HdiUqmejEsYDcnzhuKoPdzQHagSKjukxwLZ/PunSA+UUZ3gEcflSqMtkavWrqLFmJ3c5HqkC3TNcMgW5bOBy4GxA4svHrn2LcgU9k4Z8LRmuu9hmjJkgrcTpVx1CLIZHVRfIcNilAq/N6KOewDqkqAplE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=It35YV74; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=JRhYftmrm4VbgRvPFx+Gh8K8ycgFtV708nl7Yi3xEt/U9RcgasIjPESrgVWwDRIrkgvvFO5uhz3tMOw8TELfhJ2yvvwEPD5n55cSJsiGIQchaR3r7QJjwf4M/ugsHQifVFyBDvITIS1z3oyl4KZPqiWHjsSwtqlySZUpzv9KHXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avx3ZMWR; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="It35YV74"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43b40fb7f95so3261731f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 05:24:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avx3ZMWR"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-487035181a7so7066545e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Mar 2026 05:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774182267; x=1774787067; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1774182269; x=1774787069; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xtD9Mcdy4IAm2SWHw0ZQYZjstkdltAVZToJLw8rGIV4=;
-        b=It35YV74yHXHik0umay6p6qi5XR7VjeeJt+Q4ffgh9Kw5Ja8ywu0klGfugxclget2F
-         rlA9vJSGc0gG8nKYbQceUiQipjPFlBMRqyZAi1YX5zZsVEp/CJjVJzhBk8UgYlRs/I09
-         LzWtUwG/h+pJNxGL/P1ty2ufKSLlsx6pyWQR6vMFv1uyoQXISi49BcRPdZVOW+uHACo6
-         MSONaGgSTz8wzlPnuflHpQ/3C4cmZpacNUKIhUDnQGNe/OojlbbmjnEfNUoeCAeDxObf
-         8xTn2q6WTxEhjnE74Jes966oAhjbORsVLPitV0NCLRdzSslQbNk3D49gp4LpgCr87C4V
-         M0EA==
+        bh=vjfkIF3HASnSI8uhb4eTEC1yI6mapcnT2E5vNZU/SGc=;
+        b=avx3ZMWRvqGotZYODG/OyyguoJz4a6fEP7jxoCGChR1OBYu02+AwVG8SCH4wjTGIhy
+         6GOf3tS0kUlBikvWNO0F/FnVLY/FltH04qQivVott93iur4zkxcW0LlRtu8hnwxqsSfN
+         yXjdyVi5/4npcgm5NVsxy6/g+m1zFXQB02/mx9VAb30LY0eaqUMJx4k6RuOsy+lxm9Z2
+         7FKlYrFt0Pl9myZEtkakVk/beTHiiYjAp5XOY7vwLyPPVTvxLYF2boiYPC8eOCciEZ2U
+         zAJbJw6CJi/6GriJfMiDKxCKAAldGKrkA9Qwn7GVolKIfIL+kto+J1N0kXfqNlT2kJtn
+         jk/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774182267; x=1774787067;
+        d=1e100.net; s=20251104; t=1774182269; x=1774787069;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xtD9Mcdy4IAm2SWHw0ZQYZjstkdltAVZToJLw8rGIV4=;
-        b=fO0/bc+NlbI/NwurZ4aaYt6K3mO3h1YsEQL3ZjlFEKDc8e07yQYscaIRGNNNKyUOZm
-         myNX6TW5pNgOao7FUfPotvmmU4tcT9v0/ZYx2HLWdbseaFndftKC14DlL2XcvN3TiMiI
-         nbZvP1ATEMtN98f+v2ZnB8Aw+dpXgfOh2FN+sBHEIyU2Obp24Kl4Z+mKGy3diF2fq/s8
-         DcSMpN4Wh472Dn56TsKf0G767zJVeDK7tG2eYlLg7HWV96p/4lzRha2XT1nuk6JOsI47
-         GO1KNBdJPGf4GCTKXukCJ39t/yB0ksVXime9f98yvYeEPATJ6wa23C3oxdazgnPlJuvj
-         gBRg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2sY7f4ytYvZWi35gGHPKs+g1y1LjRYlF5SPjYHh+ttoYyjskZhTLSUOKjd6sn9eqCEkqc3pPl2QDU1yaRGABvOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOcLbMb/QFDUoBHhtlooA/S8CivL4gIM98Q3XsURC1czbRIj6c
-	+WKKq+1VAcbkR0XNM3cuZZVW1q4GwqTyG31MSDL1QxIRtlqsQC8bUuSj
-X-Gm-Gg: ATEYQzzgu3BWrCcAmoXn4V9K3j316Z9aVbIWSo8Bs0LrtgD65GhUJGkSMpJhShfupRP
-	YLme0VfrdHPynb4CJ1CY5V0S9mi4mWsNnkY5zbnPygSc78DDl1RU/iEKXeLSCfZUlF7Rg9cb0NE
-	7cGGlWH9pFsKtF0MIwILtzT77e4+mHDmPP6+QTqcE4fEwAfsZLKY2I0HTpUOTlxaEPWZZ0ofdQE
-	T6JUIaepXzLMPl9IDctbqHgpat+gvSUTazXdPLo7cfDWfwJeVeczj9zYffgFvXl6bLYHV6D8Yxy
-	5cRWLaRFXKSDqTinq4eTXBoC0AwVHAVy4Ph/I2xqh3ejKbkCLxFrPDEzzSmnnSEW5xjdb1l45d6
-	Tkdh6iLELjrj0ixFp3A3zkOL/GZjbrxCoywIJvHUOBRn3iNfv4HXuHQttPoNY6/y1pewRjZCzsp
-	hhi2qMcXEJqRauQezJ6UQ8kwL/x6X+aT7HALRBVlYg17XznDhy
-X-Received: by 2002:a05:6000:2890:b0:439:cc06:e134 with SMTP id ffacd0b85a97d-43b64242520mr14855907f8f.24.1774182267272;
-        Sun, 22 Mar 2026 05:24:27 -0700 (PDT)
+        bh=vjfkIF3HASnSI8uhb4eTEC1yI6mapcnT2E5vNZU/SGc=;
+        b=fEvrZHN8zro6JGV9/KRcPHAXmTVt4DaEZ/G8hP5em5C7Tun7iv/DBJTEsjd3QF4Am0
+         lWIbNcE17c656XhGOx8IB+VhUCp9ujVIhThcoJ0GinwJ/mEcifpH8PmSWseq0Ut+KTCo
+         rytsprrbLu19Iy31kpOqNZAUFBvWFnQpSSNliJF6vJ0G/pXENCAMBmz2atq/K2ZtNRz4
+         inXi2Z/TrArpUHuiDINTmXT7/YDGwlTkxnK+KGkG89pkXa8yP/MHS0U6uMdPrnn6RZcB
+         MBhp/0MDw5WYf+erCPpPijyRz1JUYb3VuRWlTRxbXDmnEVSTCo7eRhK90beezPtLYC5Z
+         FyPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/BA5MvcwcTXC5D3uDFV6n4C273yB9hSBqsjaRtwHdxhXhGFa5acr25mgGdbGew5l4bplkBAFhPLbnvIwtUY6rFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVq+JnrgD5yOqpC1fbdJBOeMYkwiPhTnqtrYR4Bn7dMxtIJGaX
+	akCEvj4rxeQjVlAOrrvGaUgJNOctKiGqmNVQsB7VbHPofg3QdeACWdOG
+X-Gm-Gg: ATEYQzxc//9a8iFUEaMWEmC5opgp4RgTP+rVmfHANE2hyZ/yyKNfn2GcPRU0578oDu7
+	QRxQMFPkgiUiXBeXIvqmTYQaWC3CIOuxRp0pAhvoQ0qLvlXLhMvE8lk9FBMa82PNZGMaOq/3/6D
+	QoGa6o9ooeRQTrExblO1dPM1zMwgUnbnVZSN+vIQM/50bSvu0tnW7wT9tbJKpdSfcpTLDOpmm6o
+	hpcPPu26dENIvZz6cS/T0NrafVbrxpWlWriItNwSF2ft4HsYNYG1HVt3j1D6DDAxp/466DIwNex
+	j7sjbwCMMbAjVg6Vjk1qieOFmGAcfWiw54lk7ZnQqvoJuHhBlZwmofjnCVYLFGb2ddNjOi85Y4x
+	BoMpxa5x7OS2WyFFcdUwoP7nj6bOjlMk6VHHKxCDWLE+5Pe8kraTivzk2FWVUT/Bsv+uCa/X0cp
+	Cf93TzyVQMtMnmYGtEOVv8wNCRYSow3veEFWxN51bR4T0uWg7X
+X-Received: by 2002:a05:600c:1f86:b0:483:1403:c47f with SMTP id 5b1f17b1804b1-486febbc653mr130128755e9.6.1774182268916;
+        Sun, 22 Mar 2026 05:24:28 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:1bdc:7f84:18bc:1e56])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703343sm21072695f8f.19.2026.03.22.05.24.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703343sm21072695f8f.19.2026.03.22.05.24.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2026 05:24:26 -0700 (PDT)
+        Sun, 22 Mar 2026 05:24:28 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Thomas Gleixner <tglx@kernel.org>
@@ -67,9 +67,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 03/15] irqchip/renesas-rzg2l: Drop redundant IRQC_TINT_START check in rzg2l_irqc_alloc()
-Date: Sun, 22 Mar 2026 12:23:46 +0000
-Message-ID: <20260322122421.132474-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v6 05/15] irqchip/renesas-rzg2l: Split EOI handler into separate IRQ and TINT functions
+Date: Sun, 22 Mar 2026 12:23:48 +0000
+Message-ID: <20260322122421.132474-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260322122421.132474-1-biju.das.jz@bp.renesas.com>
 References: <20260322122421.132474-1-biju.das.jz@bp.renesas.com>
@@ -83,38 +83,97 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The check `hwirq < IRQC_TINT_START` in rzg2l_irqc_alloc() is unnecessary
-as the condition is already guaranteed to be false at that point in the
-code. The outer `if (hwirq > IRQC_IRQ_COUNT)` block ensures that hwirq
-is always above IRQC_IRQ_COUNT before reaching this check, and since
-IRQC_TINT_START <= IRQC_IRQ_COUNT, the guard can never trigger.
+The single rzg2l_irqc_eoi() handler used a conditional to determine
+whether to clear an IRQ or TINT interrupt. Split this into two dedicated
+handlers, rzg2l_irqc_irq_eoi() and rzg2l_irqc_tint_eoi(), each handling
+only their respective interrupt type without the need for range checks.
 
-Remove the dead code to simplify the allocation path.
+While at it, simplify rzg2l_irqc_{irq,tint}_eoi() by replacing
+raw_spin_lock locking/unlocking with scoped_guard().
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v5->v6:
- * No change.
+ * Simplified rzg2l_irqc_{irq,tint}_eoi() by replacing raw_spin_lock
+   locking/unlocking with scoped_guard().
+ * Updated commit description.
 v5:
  * New patch.
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index e73d426cea6d..ed8044b0a339 100644
+index a0f03f81d5ef..0683559c31bf 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -491,9 +491,6 @@ static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int virq,
- 	if (hwirq > IRQC_IRQ_COUNT) {
- 		tint = TINT_EXTRACT_GPIOINT(hwirq);
- 		hwirq = TINT_EXTRACT_HWIRQ(hwirq);
--
--		if (hwirq < IRQC_TINT_START)
--			return -EINVAL;
+@@ -130,17 +130,25 @@ static void rzg2l_clear_tint_int(struct rzg2l_irqc_priv *priv, unsigned int hwir
  	}
+ }
  
- 	if (hwirq > (IRQC_NUM_IRQ - 1))
+-static void rzg2l_irqc_eoi(struct irq_data *d)
++static void rzg2l_irqc_irq_eoi(struct irq_data *d)
+ {
+ 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+ 	unsigned int hw_irq = irqd_to_hwirq(d);
+ 
+-	raw_spin_lock(&priv->lock);
+-	if (hw_irq >= IRQC_IRQ_START && hw_irq <= IRQC_IRQ_COUNT)
++	scoped_guard(raw_spinlock, &priv->lock)
+ 		rzg2l_clear_irq_int(priv, hw_irq);
+-	else if (hw_irq >= IRQC_TINT_START && hw_irq < IRQC_NUM_IRQ)
++
++	irq_chip_eoi_parent(d);
++}
++
++static void rzg2l_irqc_tint_eoi(struct irq_data *d)
++{
++	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
++	unsigned int hw_irq = irqd_to_hwirq(d);
++
++	scoped_guard(raw_spinlock, &priv->lock)
+ 		rzg2l_clear_tint_int(priv, hw_irq);
+-	raw_spin_unlock(&priv->lock);
++
+ 	irq_chip_eoi_parent(d);
+ }
+ 
+@@ -438,7 +446,7 @@ static struct syscore rzg2l_irqc_syscore = {
+ 
+ static const struct irq_chip rzg2l_irqc_irq_chip = {
+ 	.name			= "rzg2l-irqc",
+-	.irq_eoi		= rzg2l_irqc_eoi,
++	.irq_eoi		= rzg2l_irqc_irq_eoi,
+ 	.irq_mask		= irq_chip_mask_parent,
+ 	.irq_unmask		= irq_chip_unmask_parent,
+ 	.irq_disable		= rzg2l_irqc_irq_disable,
+@@ -455,7 +463,7 @@ static const struct irq_chip rzg2l_irqc_irq_chip = {
+ 
+ static const struct irq_chip rzg2l_irqc_tint_chip = {
+ 	.name			= "rzg2l-irqc",
+-	.irq_eoi		= rzg2l_irqc_eoi,
++	.irq_eoi		= rzg2l_irqc_tint_eoi,
+ 	.irq_mask		= irq_chip_mask_parent,
+ 	.irq_unmask		= irq_chip_unmask_parent,
+ 	.irq_disable		= rzg2l_irqc_irq_disable,
+@@ -472,7 +480,7 @@ static const struct irq_chip rzg2l_irqc_tint_chip = {
+ 
+ static const struct irq_chip rzfive_irqc_irq_chip = {
+ 	.name			= "rzfive-irqc",
+-	.irq_eoi		= rzg2l_irqc_eoi,
++	.irq_eoi		= rzg2l_irqc_irq_eoi,
+ 	.irq_mask		= rzfive_irqc_mask,
+ 	.irq_unmask		= rzfive_irqc_unmask,
+ 	.irq_disable		= rzfive_irqc_irq_disable,
+@@ -489,7 +497,7 @@ static const struct irq_chip rzfive_irqc_irq_chip = {
+ 
+ static const struct irq_chip rzfive_irqc_tint_chip = {
+ 	.name			= "rzfive-irqc",
+-	.irq_eoi		= rzg2l_irqc_eoi,
++	.irq_eoi		= rzg2l_irqc_tint_eoi,
+ 	.irq_mask		= rzfive_irqc_mask,
+ 	.irq_unmask		= rzfive_irqc_unmask,
+ 	.irq_disable		= rzfive_irqc_irq_disable,
 -- 
 2.43.0
 
