@@ -1,203 +1,154 @@
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51036C0CB
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Mar 2026 02:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA8C387347
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Mar 2026 02:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774318883; cv=none; b=kXVniNBv1qKumfZxxy30zdOq99GmHLGjCmFHnKvCcwEYbb8+23td465y3N3Q6UjrBp1/Jagej20FasGu06iqoPAN+SPyMQTa3DzqV3Asf3IR1HNYiS+jEYBfH3N6r5KKKvDhhsjLgMQKRgxeFwMPOfqvbuHTChVKcnRMWk2+ycE=
+	t=1774319408; cv=none; b=Cgc+1cFl9j2bnNr87WdTykAqY24SrR4M7DiMI1vkrs7kTS64gyF8mpljKOPbNZi0NlpQIM98+i407CAGjz52BPipKDZbJWoC1DLXyAaj3uTV0KreUxpol/aue+GifXgRwHL4Pk/4utlb8G7gKTVof6r0CW+uPbnHHfJ3C3Gg0h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774318883; c=relaxed/simple;
-	bh=N8uGtnOrLSSYq7rgYu08rxjElQse66qBIYWu/BzwXTE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SMkXY/e+vn1yxHzfSuPbgQtBeYne6f9/A9CPkH5T5LfehAyiFg2HDXsTh3/a8ZUEz/brOhRfgpeb5ayUfV6Dfxm+Ovo44StpEQFLFnqhl4zKhYXBwzwjntq3OpZ8CpD6C0Mb1RMM9fJcqUGBqbuS+lSgEiMsP66jjQw0B8co3b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Bx7tBR+R; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1774319408; c=relaxed/simple;
+	bh=Vr+wLb3/yfuaY7Ek50G5tqooWQuxrr2KXAF3tU7VBDw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=BPubriYweOMdd9chHUaXAUzWFVGdjqIVXs1jzC73XFBzzm6DHTL3e9G/nMCcp8u8dqPXpzWyP25OcI7SIr1aL/QQE2xOZOCIJp1HYdlPHvkcl7SX7B5W/DD7EU0L+3NIxgEed1weJgvLae/DcJdz8hKbZM/7LwQwyYurAMa3+Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RTFBubUc; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Bx7tBR+R"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1774318880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L6ywbevgg011A/v8dkRvqjFGFhUuQBymJSUH5ys5Owg=;
-	b=Bx7tBR+RASxBeR0llj4jjTeIAf+o+tXCCBFdZg+qSSQe00g1nm+YJq4QW/PGHIe0MljQJe
-	l4BnwfYfSLSMV6TpZdPycRlbb9SixlHtQhpTMcw1SwUl35K/z2oqVfhZBscWTxkidl6meb
-	wY0ByAmCpG8ZPkUEkDdpx8RrsGB3+vY=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jassi
- Brar <jassisinghbrar@gmail.com>,  Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: Sashiko review feedback (was Re: [PATCH 2/3] soc: renesas: Add
- Renesas R-Car MFIS driver)
-In-Reply-To: <ab-vWbjdlAIt1qaX@ninjato> (Wolfram Sang's message of "Sun, 22
-	Mar 2026 09:59:05 +0100")
-References: <20260317130638.2804-1-wsa+renesas@sang-engineering.com>
-	<20260317130638.2804-3-wsa+renesas@sang-engineering.com>
-	<ab-vWbjdlAIt1qaX@ninjato>
-Date: Mon, 23 Mar 2026 19:21:13 -0700
-Message-ID: <87a4vyynl2.fsf@linux.dev>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RTFBubUc"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260324023002epoutp0478fca0a218846f3f15f1b09cd30bce14~fphiUKf761355313553epoutp04-
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Mar 2026 02:30:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260324023002epoutp0478fca0a218846f3f15f1b09cd30bce14~fphiUKf761355313553epoutp04-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1774319402;
+	bh=xiEG8fs8U4waGFe76frAqj8GUGT8PfbUsJqfEpDU4H0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=RTFBubUceVdG5dBZjg2EJuOun+7AvU7K1xXJVOiY75v5S6AwPDX0GCIymngOFAphd
+	 E4RA3K/kK+gtTKLgy3khdnDiPmc2cGWIz79uHvHB6IujWAiNQY1L9e+YM2hT5hM2cb
+	 67/UCzZXuKEnGh+5DWuT53H601jKazX4GP44bHGA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20260324023002epcas5p3c3a08032a55b26ba4a7023fdeaebf3cd~fphhsTMXr1327213272epcas5p3T;
+	Tue, 24 Mar 2026 02:30:02 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ffvBx72xwz2SSKf; Tue, 24 Mar
+	2026 02:30:01 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20260323172713epcas5p4dd04df01adb71b7563e1cac14b927632~fiHlqRiPK1063110631epcas5p4A;
+	Mon, 23 Mar 2026 17:27:13 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260323172656epsmtip1078ac64ab1a734cd90e8019874a7de3a~fiHV3p2Rc1639516395epsmtip1L;
+	Mon, 23 Mar 2026 17:26:55 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Vladimir Oltean'" <vladimir.oltean@nxp.com>,
+	<linux-phy@lists.infradead.org>
+Cc: "'Vinod Koul'" <vkoul@kernel.org>, "'Neil Armstrong'"
+	<neil.armstrong@linaro.org>, <dri-devel@lists.freedesktop.org>,
+	<freedreno@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-can@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<spacemit@lists.linux.dev>, <UNGLinuxDriver@microchip.com>, "'Bart Van
+ Assche'" <bvanassche@acm.org>, "'Peter Griffin'" <peter.griffin@linaro.org>,
+	"'James E.J. Bottomley'" <James.Bottomley@HansenPartnership.com>, "'Martin
+ K. Petersen'" <martin.petersen@oracle.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Chanho Park'" <chanho61.park@samsung.com>
+In-Reply-To: <20260319223241.1351137-10-vladimir.oltean@nxp.com>
+Subject: RE: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
+ struct phy guts
+Date: Mon, 23 Mar 2026 22:56:51 +0530
+Message-ID: <1891546521.01774319401971.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJoz1sM+EbPjkyDopxrfJVWkMJWdwIGLiEOAj0DJam0ghnJMA==
+Content-Language: en-us
+X-CMS-MailID: 20260323172713epcas5p4dd04df01adb71b7563e1cac14b927632
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20260319223312epcas5p183a1e0c31206025da8cf00b5d745a0ce
+References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+	<CGME20260319223312epcas5p183a1e0c31206025da8cf00b5d745a0ce@epcas5p1.samsung.com>
+	<20260319223241.1351137-10-vladimir.oltean@nxp.com>
 
-Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
+HI Vladimir,
 
-> Hi all,
->
-> I am usually not into AI but I can definitely see value in its review
-> assistance. So, I checked what Sashiko thinks of my series and found the
-> comments to be largely reasonable. I'll copy and answer them here, a)
-> for a more complete review process and b) to give feedback to the
-> Sashiko-devs (CCed). Thank you for the service and efforts, I hope we
-> can justify the additional energy consumption here. Please let me know
-> if such replies are actually helpful for you.
+> -----Original Message-----
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Sent: Friday, March 20, 2026 4:02 AM
+> To: linux-phy@lists.infradead.org
+> Cc: Vinod Koul <vkoul@kernel.org>; Neil Armstrong
+> <neil.armstrong@linaro.org>; dri-devel@lists.freedesktop.org;
+> freedreno@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-arm-msm@vger.kernel.org; linux-can@vger.kernel.org; linux-
+> gpio@vger.kernel.org; linux-ide@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-media@vger.kernel.org; linux-
+> pci@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-
+> riscv@lists.infradead.org; linux-rockchip@lists.infradead.org;
+linux-samsung-
+> soc@vger.kernel.org; linux-scsi@vger.kernel.org;
+linux-sunxi@lists.linux.dev;
+> linux-tegra@vger.kernel.org; linux-usb@vger.kernel.org;
+> netdev@vger.kernel.org; spacemit@lists.linux.dev;
+> UNGLinuxDriver@microchip.com; Bart Van Assche <bvanassche@acm.org>;
+> Alim Akhtar <alim.akhtar@samsung.com>; Peter Griffin
+> <peter.griffin@linaro.org>; James E.J. Bottomley
+> <James.Bottomley@HansenPartnership.com>; Martin K. Petersen
+> <martin.petersen@oracle.com>; Krzysztof Kozlowski <krzk@kernel.org>;
+> Chanho Park <chanho61.park@samsung.com>
+> Subject: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
+struct
+> phy guts
+> 
+> The Exynos host controller driver is clearly a PHY consumer (gets the
+> ufs->phy using devm_phy_get()), but pokes into the guts of struct phy
+> to get the generic_phy->power_count.
+> 
+> The UFS core (specifically ufshcd_link_startup()) may call the variant
+> operation exynos_ufs_pre_link() -> exynos_ufs_phy_init() multiple times if
+> the link startup fails and needs to be retried.
+> 
+> However ufs-exynos shouldn't be doing what it's doing, i.e. looking at the
+> generic_phy->power_count, because in the general sense of the API, a
+> single Generic PHY may have multiple consumers. If ufs-exynos looks at
+> generic_phy->power_count, there's no guarantee that this ufs-exynos
+> instance is the one who previously bumped that power count. So it may be
+> powering down the PHY on behalf of another consumer.
+> 
+> The correct way in which this should be handled is ufs-exynos should
+> *remember* whether it has initialized and powered up the PHY before, and
+> power it down during link retries. Not rely on the power_count (which,
+btw,
+> on the writer side is modified under &phy->mutex, but on the reader side
+is
+> accessed unlocked). This is a discouraged pattern even if here it doesn't
+> cause functional problems.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+Thanks for the patch
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Hi Wolfram!
+Tested this patch for basic UFS functionality, UFS still works. 
+Feel free to add
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-These replies are definitely helpful! I can't realistically look into
-all cases across all subsystems (I simple have not enough expertise),
-but I'll try to look into most cases and hope that other engineers will
-help here.
 
-In your case it looks like most findings were real?
 
-Thank you!
-
->
->> > +static void mfis_write(struct mfis_reg *mreg, u32 reg, u32 val)
->> > +{
->> > +	struct mfis_priv *priv = mreg->priv;
->> > +	u32 unprotect_mask = priv->info->unprotect_mask;
->> > +	u32 unprotect_code;
->> > +
->> > +	/*
->> > +	 * [Gen4] key: 0xACCE0000, mask: 0x0000FFFF
->> > +	 * [Gen5] key: 0xACC00000, mask: 0x000FFFFF
->> > +	 */
->> > +	unprotect_code = (MFIS_UNPROTECT_KEY & ~unprotect_mask) |
->> > +			 ((mreg->start | reg) & unprotect_mask);
->> 
->> The mreg->start and reg variables are combined with a bitwise OR. If
->> mreg->start has overlapping bits with the reg offset, could this yield an
->> incorrect physical address for the unprotect code? Should this use
->> addition like mreg->start + reg instead?
->
-> No, if a device tree is so wrongly setup that the bits overlap, then '+'
-> instead of '|' will only lead to a different wrong address.
->
->> > +
->> > +	iowrite32(unprotect_code, priv->common_reg.base + MFISWACNTR);
->> > +	iowrite32(val, mreg->base + reg);
->> > +}
->
->> Can mfis_write() be called concurrently by different processors or
->> interrupted by an interrupt handler like mfis_mb_iicr_interrupt()?
->
-> Yes, it can. It even needs a hwspinlock instead of a regular spinlock
-> because it needs protection against cores which may not run Linux.
-> hwspinlock support will only be added later because of dependency
-> issues. My plan was to add the protection once we got hwspinlocks. But
-> maybe I should add just spinlocks now and convert them to hwspinlocks
-> once their support is in.
->
->> > +static void mfis_mb_shutdown(struct mbox_chan *chan)
->> > +{
->> > +	struct mfis_per_chan_priv *per_chan_priv = chan->con_priv;
->> > +
->> > +	free_irq(per_chan_priv->irq, chan);
->> > +}
->
->> Since mfis_mb_of_xlate() skips interrupt lookup for transmit-only channels,
->> leaving per_chan_priv->irq as 0, and mfis_mb_startup() guards the request
->> with if (per_chan_priv->irq), will this unconditional free_irq() trigger a
->> kernel warning when shutting down a transmit-only channel?
->
-> Yes, I seemed to remember that free_irq() can handle this, but it will
-> in-deed trigger a warning. Also, the reasons Geert mentioned in his
-> review apply.
->
->> [ ... ]
->> > +static struct mbox_chan *mfis_mb_of_xlate(struct mbox_controller *mbox,
->> > +					  const struct of_phandle_args *sp)
->> > +{
->> > +	struct mfis_priv *priv = mfis_mb_mbox_to_priv(mbox);
->> > +	struct mfis_per_chan_priv *per_chan_priv;
->> > +	struct mbox_chan *chan;
->> > +	u32 chan_num, chan_flags;
->> > +	bool tx_uses_eicr, is_only_rx;
->> > +
->> > +	if (sp->args_count != 2)
->> > +		return ERR_PTR(-EINVAL);
->> > +
->> > +	chan_num = sp->args[0];
->> > +	chan_flags = sp->args[1];
->> > +
->> > +	/* Channel layout is described in mfis_mb_probe() */
->> > +	if (priv->info->mb_channels_are_unidir) {
->> > +		is_only_rx = chan_flags & MFIS_CHANNEL_RX;
->> > +		chan = mbox->chans + 2 * chan_num + is_only_rx;
->
->> Does this code allow out-of-bounds access if a malformed device tree
->> provides an arbitrarily large chan_num? Should chan_num be checked against
->> priv->info->mb_num_channels before computing the chan pointer?
->
-> Yes, Geert pointed this out as well.
->
->> [ ... ]
->> > +static int mfis_mb_probe(struct mfis_priv *priv)
->> > +{
->> [ ... ]
->> > +	mbox->chans = chan;
->> > +	mbox->num_chans = num_chan;
->> > +	mbox->txdone_poll = true;
->> > +	mbox->ops = &mfis_iicr_ops;
->> > +	mbox->dev = dev;
->> > +	mbox->of_xlate = mfis_mb_of_xlate;
->> > +
->> > +	return mbox_controller_register(mbox);
->> > +}
->> The mailbox controller is registered using mbox_controller_register(), but
->> the driver lacks a remove callback to unregister it.
->> If the driver is unbound, devres will free the devm_kzalloc structures
->> backing the mailbox. Will this result in a use-after-free regression since
->> the mailbox subsystem still retains the controller in its global lists?
->> Should devm_mbox_controller_register() be used instead?
->> [ ... ]
->
-> Yes, this was overlooked so far.
->
->> > +static int mfis_probe(struct platform_device *pdev)
->> > +{
->> > +	struct mfis_priv *priv;
->> > +	struct device *dev = &pdev->dev;
->> > +	int ret;
->> > +
->> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> > +	if (!priv)
->> > +		return -ENOMEM;
->> > +
->> > +	priv->dev = dev;
->> > +	priv->info = of_device_get_match_data(dev);
->> Can of_device_get_match_data() return a null pointer here?
->> If the driver is bound manually via sysfs or instantiated in an environment
->> lacking device tree match data, would this lead to a null pointer
->> dereference regression later when accessing priv->info->mb_num_channels in
->> mfis_mb_probe()?
->
-> The latter case would be clearly a driver bug. In addition with the
-> former case, it probably makes sense to handle this more gracefully,
-> though.
->
-> Happy hacking,
->
->    Wolfram
