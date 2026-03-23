@@ -1,112 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313BA3C140D;
-	Mon, 23 Mar 2026 16:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B963CCFD2;
+	Mon, 23 Mar 2026 17:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774284984; cv=none; b=r1l3SBEjvDSNLCKw5AV01MGZM6jufHrWJbak5WMJ0crVSygSZ8/PXxWX3ETqGKreg/9/Uh4zSUjTt7MHoqzYtpz4AKp8PxvMrLjkRMJKKL4tzU9Fcj8nUhW4U2bDzld1gw8GePR7wYGyDAhKSApIxxtZ2ihE0CBh53zceqxmLnE=
+	t=1774287677; cv=none; b=q2bAM+CgHeSCgO+jiefzGMUThDd8EWVPm+/1A5Q8ivAAKs+VbkTSdqNVLViN9uWxzEpkPSonZMBe9FH61rJ+P/foTHihaZ8cFNUpY07D01YvkiUDXn1YxSqqM5Nxt9RMoayH7CTC6c6HMaaxiGykMJyqeshDxztdbIoatzVKNyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774284984; c=relaxed/simple;
-	bh=DlrDh0sXfpGleGJNkZAVP/G29Qv4UHj2GZJhraYhhAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h1XkJ6UByA19cfSXOLmIBU/caHuLCueygOn+rloB+S8JhXC830pSmTthJ7ofDHxKxwir0IE33hAkWl/XnQk7fFPdCkfiW9wMNLztz3VDQVnS0Bpt4OVHdYLcNQwHz9JC7C4M0aSBHEscnDrb7IUql26cDQLuj0mMo0NZI38aSTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFF9C2BC9E;
-	Mon, 23 Mar 2026 16:56:22 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] firmware: arm_scmi: Use proper iter_response_bound_cleanup() name
-Date: Mon, 23 Mar 2026 17:56:12 +0100
-Message-ID: <fab03f9edfad16c8bba8072874055d1872919498.1774283748.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1774283748.git.geert+renesas@glider.be>
-References: <cover.1774283748.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1774287677; c=relaxed/simple;
+	bh=VNbeoXsnXbo+98jSq/Bl5LZJAYWTKJV7TzFcNeLE4Oo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ulbOLKcFQscVEM5SSFdTG8Hsxi7Z2NvjIwuL+aMZhS/WyV8cx7NNxqe0VLI53syhO+zvV1NgTJbqSMcga0e2WBe7jcaLPrPocIT0PucHCOfVFyOtSCpHS3XIcj7aO4l+LAlgsIQ0VoE+qOC+zq/su8q+7/rshAEYtpGgB0t3eTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Nv8MHeXf; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Nv8MHeXf"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=default; h=Content-Transfer-Encoding:Mime-Version:Message-Id:Subject:Cc:
+	To:From:Date:subject:date:message-id:reply-to;
+	bh=EtCsnBnZz2wovDVb2c1WqzkKZB1qCNcO5X2CZ7cgDMk=; b=Nv8MHeXfYy1zDbtwL544BfXXL2
+	xUDpz9v2/6kr95JFN3HJAZ8/g8Ss8JhcYSEGO7/HSyZVKhCgf+fieiT2Dq1z8hz5mOzbSmtNwgHod
+	GeAmspCxs6Q/PuX5+h1F8BcpQo6CWFJAJj5O5evhQ96LIHTayRPxp7WsuwZjNssoIfPI=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168] helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.98.2)
+	(envelope-from <hugo@hugovil.com>)
+	id 1w4jH1-0000000028R-2NHB;
+	Mon, 23 Mar 2026 13:41:07 -0400
+Date: Mon, 23 Mar 2026 13:41:06 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: biju.das.au <biju.das.au@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Chris Brandt <Chris.Brandt@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Sam Ravnborg
+ <sam@ravnborg.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Prabhakar Mahadev Lad
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset
+ deassertion delay to 1 msec
+Message-Id: <20260323134106.a439ffad5d1ff6927e0c549f@hugovil.com>
+In-Reply-To: <TY3PR01MB113460833AFD4BE4422E5E737864BA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260319164833.409126-1-biju.das.jz@bp.renesas.com>
+	<20260319164833.409126-5-biju.das.jz@bp.renesas.com>
+	<20260323102015.957b2f855b7d54aa5d33869d@hugovil.com>
+	<TY3PR01MB113460833AFD4BE4422E5E737864BA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam_score: -2.0
+X-Spam_bar: --
 
-The documentation speaks of the "iter_response_bound_cleanup()" protocol
-helper, while the actual helper is called "iter_response_cleanup()".
-Settle on the former name, because the helper is only needed when using
-bound-iterators.
+Hi Biju,
 
-Fixes: 13289addf5a52e1f ("firmware: arm_scmi: Add bound iterators support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/firmware/arm_scmi/clock.c     | 2 +-
- drivers/firmware/arm_scmi/driver.c    | 6 +++---
- drivers/firmware/arm_scmi/protocols.h | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+On Mon, 23 Mar 2026 15:19:27 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 623dbc2f1e09303d..0205b37d219a88ed 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -604,7 +604,7 @@ scmi_clock_describe_rates_get_lazy(const struct scmi_protocol_handle *ph,
- 	}
- 
- out:
--	ph->hops->iter_response_cleanup(iter);
-+	ph->hops->iter_response_bound_cleanup(iter);
- 
- 	return ret;
- }
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 03fd7caa8b42a12c..bfcc3e3c931dc9cc 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -1875,7 +1875,7 @@ static int __scmi_iterator_run(void *iter, unsigned int *start, unsigned int *en
- 	return 0;
- }
- 
--static void scmi_iterator_cleanup(void *iter)
-+static void scmi_iterator_bound_cleanup(void *iter)
- {
- 	struct scmi_iterator *i = iter;
- 
-@@ -1888,7 +1888,7 @@ static int scmi_iterator_run(void *iter)
- 	int ret;
- 
- 	ret = __scmi_iterator_run(iter, NULL, NULL);
--	scmi_iterator_cleanup(iter);
-+	scmi_iterator_bound_cleanup(iter);
- 
- 	return ret;
- }
-@@ -2078,7 +2078,7 @@ static const struct scmi_proto_helpers_ops helpers_ops = {
- 	.iter_response_init = scmi_iterator_init,
- 	.iter_response_run = scmi_iterator_run,
- 	.iter_response_run_bound = scmi_iterator_run_bound,
--	.iter_response_cleanup = scmi_iterator_cleanup,
-+	.iter_response_bound_cleanup = scmi_iterator_bound_cleanup,
- 	.protocol_msg_check = scmi_protocol_msg_check,
- 	.fastchannel_init = scmi_common_fastchannel_init,
- 	.fastchannel_db_ring = scmi_common_fastchannel_db_ring,
-diff --git a/drivers/firmware/arm_scmi/protocols.h b/drivers/firmware/arm_scmi/protocols.h
-index e2ef604c16ef6771..15ad5162e37a90ec 100644
---- a/drivers/firmware/arm_scmi/protocols.h
-+++ b/drivers/firmware/arm_scmi/protocols.h
-@@ -286,7 +286,7 @@ struct scmi_proto_helpers_ops {
- 	int (*iter_response_run)(void *iter);
- 	int (*iter_response_run_bound)(void *iter,
- 				       unsigned int *start, unsigned int *end);
--	void (*iter_response_cleanup)(void *iter);
-+	void (*iter_response_bound_cleanup)(void *iter);
- 	int (*protocol_msg_check)(const struct scmi_protocol_handle *ph,
- 				  u32 message_id, u32 *attributes);
- 	void (*fastchannel_init)(const struct scmi_protocol_handle *ph,
+> Hi Hugo,
+> 
+> > -----Original Message-----
+> > From: Hugo Villeneuve <hugo@hugovil.com>
+> > Sent: 23 March 2026 14:20
+> > Subject: Re: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset deassertion delay to 1 msec
+> > 
+> > Hi Biju,
+> > 
+> > On Thu, 19 Mar 2026 16:48:28 +0000
+> > Biju <biju.das.au@gmail.com> wrote:
+> > 
+> > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > >
+> > > The RZ/G2L hardware manual (Rev. 1.50, May 2025), Section 34.4.2.1,
+> > > requires waiting more than 1 msec after deasserting the CMN_RSTB
+> > > signal before the DSI-Tx module is ready. Increase the delay from 1
+> > > usec to
+> > > 1 msec by replacing udelay(1) with fsleep(1000).
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > 
+> > In your first submission, I commented that "...this should be backported to stable branches (missing
+> > Fixes / Cc: stable tags)?" and you answered with "Agreed, will add fixes/stable tags".
+> > 
+> > If you still agree, this patch should be #3 in your list, so that it is easier/straightforward to
+> > backport to stable branches.
+> 
+> The patch order is changed. that is the reason I have not added any fixes/stable tags.
+
+This is not a logical nor valid justification if the change
+merits to be backported to stable branches as you indicated in
+series 1. Why have you changed your mind?
+
+> The if check in patch#3 makes it is not backportable to stable branches.
+
+If you put the delay patch before that "if check", then it is
+irrelevant, no?
+
+> If I reorder this to patch#3 it is fixing just the delay mentioned in the hardware manual.
+
+Yes, and that is also exactly what this current version does, no?
+
+For me, it is simply changing a delay from 1us to 1ms. Whether you
+change it before or after another patch isn't supposed to matter in the
+end, unless I am missing something?
+
+
 -- 
-2.43.0
-
+Hugo Villeneuve
