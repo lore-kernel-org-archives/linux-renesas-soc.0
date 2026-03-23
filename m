@@ -1,178 +1,141 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011026.outbound.protection.outlook.com [52.101.125.26])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8CF3B3BE7;
-	Mon, 23 Mar 2026 15:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774279187; cv=fail; b=e4x4nuZutJezsuy/mGJ8QhKu6cg4JKR+hS320sNDO64TrSEUDNjLQoH8xB5/EQCGLjmUBZeZYROH9gPKxQLHckMZl2SXT6Tmj9F3vBsLZpmFaVDmxUJDUqKPVRqIDGEs8oPeQg8fzbeaoVJIgxF8ShkKlyT37eX4KqxbP2qVkQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774279187; c=relaxed/simple;
-	bh=ZiOm7/b+Dox7oMXkvpCo2CZtrssrqTWFOa76i7vewAY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=In+5vg5UKRNZnq5jDHJTJKQYe3bagFvBRX93HVEnQ7i9T31s3pOi0pC/lG2vS2IUzQqZwppTkEZLkLFEhkTn/F9TgwmvJ8F1lkY24GxClg+NlB+ePfgqpni/t4N7StOpCPSx6lmjqT/yWRcmC+Jl5i62Zn7LU/cL2Ti+YX0pVRY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=aaCi/Upx; arc=fail smtp.client-ip=52.101.125.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EE83B6BE6
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Mar 2026 15:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774280290; cv=none; b=Ze+35sdjDA27LKpSG15rW4a6DECDJjFhTxcfYyh5R2KHgtJuhnaU/BFhR+l6k2bhIDDmfEam6hv1DzxuSeeeWZ7MtzVZbSMCaaKaeYxG6jea9pCDfb5W7yVFd4lLv/0oJbJwdybT/MU9lmMopZtwqHkHsahoXfn3Zkq/uUoEBNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774280290; c=relaxed/simple;
+	bh=vToF1UbNvL4l1OkVwlOI7+XcnxHkjKZMzjHswh/EJ+k=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=MzUK1iiTsUvks1hhL4oMgGyXFFRX5A1eZ5vkVBUS5hWLP/BCIXfOmlAFSO4wQN3gk0lEe+M8CVje6Zeg/qnrXbb+80//pzvi/m5pcEXA1hOgYvBbvMKRY9AWMTP+7v5xlTgC3HtXjpmMpADUwIbuYwA0EjG94f0PCO17k/FAa9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mgU9aFrC; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="aaCi/Upx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tBEistly4OS/nVnv+VHGDLZKHl2w3vwVxBTrUukyAw8psLe/zsCNow9ZiQzlz2hjEXnw3e/hez2bpq3m0Qtd3Em6kwczJkPZG5DX4Pm3BrvFzAknePsE1o04FWmDGAD3lhyzI+E89ftaMLM+WvqlgwHNwdNpmWPa6M41cD8DKM01b/IQ2zxUAajmisc53Z+Mge25eoFUQAH4AptQmwF1BKUWQh+LG2gzcOTSdhZpMcymG26WNHsbH8u1OlmQGvaQ2lAjCK88ToYrD0/e7ixivIyqqh0FDHgmZ199VXm8fLclaqwuudt1t+U83hwJCZEdtYLZ7N1WZkClCsk/ulEtpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZiOm7/b+Dox7oMXkvpCo2CZtrssrqTWFOa76i7vewAY=;
- b=OKbkWcZ/mbYsZlOpHYnKHmWv8bWMWtcjufAC7upHggcakVKsOFqXwF1r/Aao8f7AqN3cU3Fmw/B/jzzet+9sUv1JmjInJ6CUu4XRFOa0cI4EOVz9h3dcRqhuJs7XhWitJPbQmLMHiuLdIM8amc4OTyS+AJWcmo1AxGWa3V4aLOCMYfkxCGzHC5pv0mhMiEHwgwp+MDetCCnVV8xCs7SDNrrPiMBZBlOdLjD3Tok45OAWPdqX7H8pH5mKPX/cEThJnuAHBxj3+JieqebQLVSMRF010WOHaFFX76LfSxGcXFdpo5qa3gRn8oCkSsvzRRQKYylMvZoolJSZzPd01dd7tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZiOm7/b+Dox7oMXkvpCo2CZtrssrqTWFOa76i7vewAY=;
- b=aaCi/UpxAawVvAOwaP6qW2A/6r6VpMiAx+j1zTlu2icT2Ix/VSBjlaEHnJvFbv7v8gM1hb9mhl4mk7WfMi4tPHtccQmIfqTLkSkr7k6OgeMbe8qZKUG1TIpPyddnizIihrVZOzDOiqeyUfbeKiOjYAZ0IusPArTknea27SJxzfI=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYRPR01MB15881.jpnprd01.prod.outlook.com (2603:1096:405:2d5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.31; Mon, 23 Mar
- 2026 15:19:25 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.20.9723.030; Mon, 23 Mar 2026
- 15:19:27 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Hugo Villeneuve <hugo@hugovil.com>, biju.das.au <biju.das.au@gmail.com>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Chris Brandt
-	<Chris.Brandt@renesas.com>, Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>, Sam Ravnborg <sam@ravnborg.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset
- deassertion delay to 1 msec
-Thread-Topic: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset
- deassertion delay to 1 msec
-Thread-Index: AQHct8A+aOtg03CPv0GtnFeZnAcwLbW8MNWAgAAPJRA=
-Date: Mon, 23 Mar 2026 15:19:27 +0000
-Message-ID:
- <TY3PR01MB113460833AFD4BE4422E5E737864BA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260319164833.409126-1-biju.das.jz@bp.renesas.com>
-	<20260319164833.409126-5-biju.das.jz@bp.renesas.com>
- <20260323102015.957b2f855b7d54aa5d33869d@hugovil.com>
-In-Reply-To: <20260323102015.957b2f855b7d54aa5d33869d@hugovil.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYRPR01MB15881:EE_
-x-ms-office365-filtering-correlation-id: 0f7fd8f8-1f6a-46bf-f8f5-08de88ef928c
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700021|18002099003|22082099003|56012099003;
-x-microsoft-antispam-message-info:
- 0Tj3MGaogwO1c/3SufS0UkAOl8lXhR81MRsrHN7fnToOxr6HmNnwNon2dFgbsp24GONpO/lKIYsr9wFKweINeWi7LhrmAbmxFjL7pJRECMvLw7mu+2QwPLaZJb6MXA/MA58Orkq1fcFnDCfDKj0KFti8hw0wsM311Qh/GYFBnLBWw0U/RTQ0KctH1PjJWBrwq2rvdfNZcUjjJ8wTONILeuqOhUwUDAVLwgOwWwAg+/VxMwiYAjT7fnJDvD9vfF0fCK+N0n8lCkxcflMVJbjMKI934Ljrn8cxgPQa9wmW+bcTmaI0bCxSIJMfWVVLXjn5RudFJG0I+J0XHoWvSNRi825i6rZW9pLGOGciQXHPE2gckwXGvNDzhiy7qRiJ6npKcRZB+iAQVtqHIS9zBmm/dK/Y4kSLFWR3qhn9tQtSlcT23cVwwEGjzhn0X9ujeMttQPGIVMkd8Q5mTvw4KeFyPKTL9SMobc/JlYzD08vVXIDyBPnql0lIaWFYAl6FYvnHlQJ+bbYatffmlNF3WOTPqJTq+DJTgkxjbjj03d08khOmOqAH9iGvVYV4nbItMjkHjgVgS8RiWLYaocNqSZj9ftCoKYLADV6Nr1xyxIR1vHN04ukdDDXdy/UdMXfAKfBb0n7CKWcyWOzwD5W6PxPhzka3+7D46rKC96vezqI17mYyf9yr4bONy3/nDq7huUz4ZHWmLz/rOlzbi5S0s7UTDtwAN5APn8QLbmvBBVi/YpyueTICblNzaL0Wh4+x3YR5JMOzPGfA/Lk0P127F/9/otLKTZFvMxbgz1MjwkCxNVo=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700021)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LaSPO8B88SWbffBp5Ncu6gaPxL4vmZrfoAeiswpdd/13ldHtEqZDgpw3SXNg?=
- =?us-ascii?Q?NDA1IK8XkpXVputB4QmK/NaPQlNtDEdFSbfqjyKduKQsBtESKnf9GiB7RMBy?=
- =?us-ascii?Q?3SXOgNH7+n1Op9N4LJAW+nkDt69nMSN/kU8LDrfRyD2B/LFaiHW+LbN2CaTM?=
- =?us-ascii?Q?r55G+VQsl8dW5a988KPqays35ixREirSMLNJYlAPmOH5SpDesMSRG5vmzxAv?=
- =?us-ascii?Q?zxV0tLPj07QxTsOxte2AL7Zs5PzC+C7qd1NIH7I2YE4TVrQpxpAjsXtAV+Rm?=
- =?us-ascii?Q?LEExx5J8ctRnKPaR4tQfw6rA37B3tpTCVyakH+tATT5AEo+Gk1QEq++Mnvd/?=
- =?us-ascii?Q?jmOrTfRfgL103bSaKzy6DX5OHMeZJS9aDm8OF0hap+ccCK/T10KLrr1bbU1z?=
- =?us-ascii?Q?ZQyADnTHcMyWaqR/Z80fF0CIRt3/90K2vPPN5FdRhI43ugB4l5tQJ/fMf8Tt?=
- =?us-ascii?Q?sokovFy3EnMn2E3sxAiBb/Sel9Wa5XWiLBAhwEg3GmuF+3RlCGN3eCk8rQt7?=
- =?us-ascii?Q?GXdkVsXEQV1UfMlauK2qHujxW2Oz7zhpySq8PBbhVDQs8Omr16/cv73AUZmm?=
- =?us-ascii?Q?6ahBUW+C9AZm4MUtPQrkbVXWxbjiASykTo2sSTJZsT8Yc1YmW4DPRwCfUKpH?=
- =?us-ascii?Q?hxz67lWHIkVs+L7J7pWrcGr5WVrjmlvdi5Z83vmVqUCnXOaOA+orVy3+J0Ob?=
- =?us-ascii?Q?Q5sjPQpKRz6j2C9Kdw5KyeieGRBB/2W/HFE/yDiasBqSe6QBr7sRaUqpRvma?=
- =?us-ascii?Q?Vlejy2ii5/UlbYLJ9HOUq/keenpxvY3h1oscXZLv+fJ5gl4xxZKz5uczTVKJ?=
- =?us-ascii?Q?a9EQDmXng/MzpgvCN3zRgGKUn/vrzQpwi33uxIuT2aYJvMvjw+vhmu6kTgAP?=
- =?us-ascii?Q?J+7Tbg+DSlSwKDywk+A2lSyuSxI68nfIt815OHs4ki/uIqdpuGeMl7pcEb3z?=
- =?us-ascii?Q?L1lqlvqqwx6lcrvKUYt159KepEEd4iPgxpesT4onHIoBz8JMO45/+Qt70gX6?=
- =?us-ascii?Q?O6M9tOmYm03WTqAwcX2djPnpSbThqnakAtYU0GP8mSSYW1q2xwEWrhTQkGC7?=
- =?us-ascii?Q?XLJCY9OcpWscKPCw4TvVXZskUqkVwVVqve02BWbes3aqP9on0Tr4OWnt/luP?=
- =?us-ascii?Q?Wfy2aV3YkipMI4hZ1Jo3hZeJDDHdhEry0G31jxhS7l75ENiBsvGc4I64cdPf?=
- =?us-ascii?Q?yZ54HskXqO55e9Zo+DeqtjnrvvU4LXfKNApvfJOEe3jAaV65eZmEdh6MjqnX?=
- =?us-ascii?Q?n+qfF9UY9m2eBOV+xLXLFrQrdzC4lZ0mcXiGdH6KSFJVQYYsl98WlU4yLe/m?=
- =?us-ascii?Q?5L2FpxQLreTv+Za71zdl+wdkTyZCKqg/PBqblJ/k5DtXuk++IvjMz+v8YIAt?=
- =?us-ascii?Q?7goLeOb6TEeNDQfMelH6V8mSoz77VlCj7COws7hNF9V2NU/aICC12Kt7sUDY?=
- =?us-ascii?Q?BOSHu/pfVATHaRsAehB9pYA3T9C3f11L2qHjN+9aT9Dux9u4PzauZy2t0Uhi?=
- =?us-ascii?Q?QiZHXQYyjYLqTmi0Q5WY9Q/U4TXD7d1lJ2ARj34Il+TuodOtwNPbYsffC+YA?=
- =?us-ascii?Q?UPYfkJ4bk1BN06Zx7bYTGbDI2EbuM2fygPkebVJqK4M+Jm4l3ruZliAgvCDY?=
- =?us-ascii?Q?J0RnSS/rDRofpV/c92sx1VncW3digBy58tlW4n3lWS0xULZlf4/so3/7ed+a?=
- =?us-ascii?Q?QQrPccyNkA3pGwMLR55aGEFil+ebFVgTCm07UFwzxrKrADylaTc1FP3tiR6w?=
- =?us-ascii?Q?CRp0vaK4CA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mgU9aFrC"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260323153802epoutp01afaf84c9f887a82416f249796cae1286~fgoRDyXov0290102901epoutp015
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Mar 2026 15:38:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260323153802epoutp01afaf84c9f887a82416f249796cae1286~fgoRDyXov0290102901epoutp015
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1774280282;
+	bh=MYU9K1BczlLtBMfJPDu28QIk9pzoA+hXl3yf17nC2HI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=mgU9aFrC+5Kx+21CCBQ48vtUtevP0XGV5aHjupTGFTw7s0wbx2FYZ7piHu2gEGNx9
+	 7FiJ9iRzTsn7N6OtZVcQFwqx9+/yRy1FbPgDJReQh76dJWCUi3xQdbS9llr9OgF8ia
+	 3KFTDuksHm5/ZDwJUU6SICm8wW+RY1yai4quNiMM=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260323153802epcas5p1bb1e979594c5257c037cdf6411e7a177~fgoQZrLX82373723737epcas5p1t;
+	Mon, 23 Mar 2026 15:38:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ffckf0KMvz3hhT4; Mon, 23 Mar
+	2026 15:38:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260323123542epcas5p349d0e7c45d02ccaa06c84dbdf1777126~feJElRtj12139221392epcas5p34;
+	Mon, 23 Mar 2026 12:35:42 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260323123538epsmtip2099c850de3b514ee4ac3f5a0092dd02a~feJAkDKG92361023610epsmtip2P;
+	Mon, 23 Mar 2026 12:35:38 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Vladimir Oltean'" <vladimir.oltean@nxp.com>, "'Martin K. Petersen'"
+	<martin.petersen@oracle.com>
+Cc: <linux-phy@lists.infradead.org>, "'Vinod Koul'" <vkoul@kernel.org>,
+	"'Neil	Armstrong'" <neil.armstrong@linaro.org>,
+	<dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-can@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <spacemit@lists.linux.dev>,
+	<UNGLinuxDriver@microchip.com>, "'Bart Van Assche'" <bvanassche@acm.org>,
+	"'Peter Griffin'" <peter.griffin@linaro.org>, "'James E.J. Bottomley'"
+	<James.Bottomley@HansenPartnership.com>, "'Krzysztof	Kozlowski'"
+	<krzk@kernel.org>, "'Chanho Park'" <chanho61.park@samsung.com>
+In-Reply-To: <20260323115848.ghdu4sbk75tvggfb@skbuf>
+Subject: RE: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
+ struct phy guts
+Date: Mon, 23 Mar 2026 18:05:36 +0530
+Message-ID: <1891546521.01774280282025.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f7fd8f8-1f6a-46bf-f8f5-08de88ef928c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 15:19:27.0386
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lmVMtTbaEPG8NDZjPHvf4XR4UVk+soxrTy1+hYO5C7QU0H3VmcDOIpfTvU1T1iZZrC1OZrj3a4KS5x/J793faGbKy+eKh9dXzaV5RYbKm78=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB15881
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJoz1sM+EbPjkyDopxrfJVWkMJWdwI9AyWpAaSC6pgB9ZOp/gJXIgBltGJxFXA=
+Content-Language: en-us
+X-CMS-MailID: 20260323123542epcas5p349d0e7c45d02ccaa06c84dbdf1777126
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20260323115859epcas5p10177db12a2e8aee9578271ff1411137b
+References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+	<20260319223241.1351137-10-vladimir.oltean@nxp.com>
+	<yq1a4w3l04g.fsf@ca-mkp.ca.oracle.com>
+	<CGME20260323115859epcas5p10177db12a2e8aee9578271ff1411137b@epcas5p1.samsung.com>
+	<20260323115848.ghdu4sbk75tvggfb@skbuf>
 
-Hi Hugo,
+Hi Vladimir
 
 > -----Original Message-----
-> From: Hugo Villeneuve <hugo@hugovil.com>
-> Sent: 23 March 2026 14:20
-> Subject: Re: [PATCH v2 4/4] drm: renesas: rzg2l_mipi_dsi: Increase reset =
-deassertion delay to 1 msec
->=20
-> Hi Biju,
->=20
-> On Thu, 19 Mar 2026 16:48:28 +0000
-> Biju <biju.das.au@gmail.com> wrote:
->=20
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Sent: Monday, March 23, 2026 5:29 PM
+> To: Martin K. Petersen <martin.petersen@oracle.com>
+> Cc: linux-phy@lists.infradead.org; Vinod Koul <vkoul@kernel.org>; Neil
+> Armstrong <neil.armstrong@linaro.org>; dri-devel@lists.freedesktop.org;
+> freedreno@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-arm-msm@vger.kernel.org; linux-can@vger.kernel.org; linux-
+> gpio@vger.kernel.org; linux-ide@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-media@vger.kernel.org; linux-
+> pci@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-
+> riscv@lists.infradead.org; linux-rockchip@lists.infradead.org;
+linux-samsung-
+> soc@vger.kernel.org; linux-scsi@vger.kernel.org;
+linux-sunxi@lists.linux.dev;
+> linux-tegra@vger.kernel.org; linux-usb@vger.kernel.org;
+> netdev@vger.kernel.org; spacemit@lists.linux.dev;
+> UNGLinuxDriver@microchip.com; Bart Van Assche <bvanassche@acm.org>;
+> Alim Akhtar <alim.akhtar@samsung.com>; Peter Griffin
+> <peter.griffin@linaro.org>; James E.J. Bottomley
+> <James.Bottomley@HansenPartnership.com>; Krzysztof Kozlowski
+> <krzk@kernel.org>; Chanho Park <chanho61.park@samsung.com>
+> Subject: Re: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
+> struct phy guts
+> 
+> On Thu, Mar 19, 2026 at 10:15:17PM -0400, Martin K. Petersen wrote:
+> > Vladimir,
 > >
-> > The RZ/G2L hardware manual (Rev. 1.50, May 2025), Section 34.4.2.1,
-> > requires waiting more than 1 msec after deasserting the CMN_RSTB
-> > signal before the DSI-Tx module is ready. Increase the delay from 1
-> > usec to
-> > 1 msec by replacing udelay(1) with fsleep(1000).
+> > > The Exynos host controller driver is clearly a PHY consumer (gets
+> > > the
+> > > ufs->phy using devm_phy_get()), but pokes into the guts of struct
+> > > ufs->phy
+> > > to get the generic_phy->power_count.
 > >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> In your first submission, I commented that "...this should be backported =
-to stable branches (missing
-> Fixes / Cc: stable tags)?" and you answered with "Agreed, will add fixes/=
-stable tags".
->=20
-> If you still agree, this patch should be #3 in your list, so that it is e=
-asier/straightforward to
-> backport to stable branches.
+> > Ah, newer version. Would still like an ack from Samsung.
+> >
+> > And I hit the wrong key, I did not actually apply this...
+> 
+> I will have to resend v6 because of an armv7 build error I've caused for
+ufs-
+> qcom.c (which doesn't #include <linux/interrupt.h>, and relies on a
+transitive
+> inclusion from <linux/phy/phy.h>). It would be nice to get the ack from
+> Samsung, but I'll send the next version in the upcoming hours regardless.
+Will review and possibly test on one of the board later tonight
 
-The patch order is changed. that is the reason I have not added any fixes/s=
-table tags.
 
-The if check in patch#3 makes it is not backportable to stable branches.
 
-If I reorder this to patch#3 it is fixing just the delay mentioned in the h=
-ardware manual.
-
-Cheers,
-Biju
