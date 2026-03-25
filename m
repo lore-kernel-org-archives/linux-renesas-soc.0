@@ -1,103 +1,105 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043FB23D297
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 13:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDEB238166
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 13:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774445508; cv=none; b=AVjtI2tLuDgyq7oZdRxxJAr3Mu+Ct6sJHiAjQ13BtUYkhzRiZ2+7nWK8MnSZDeWu6rN/HGESqA85UI/6hjW3/oFCrX2zE4pZ4lWo2/O5+wIEqFoHadhIv68ktPb7ambCGdTDa2SoTNBbD2d3JwcNJ41pWuEuN3xp0/1FfeS3ly0=
+	t=1774445544; cv=none; b=bzCSe+EfZ2Yl4K7siLQQyIpJHUsY2xqjp7KkneJu+Szk4dqWBv3lrFp/wvT9xekLZkBAuMNKp/tggg7oOrMIay4Mrfj3qj0SD8tP9eECKJW3qutUfVNlOe8BC0B2lk7INfFYOGfEOV/vZVW/YRzz4FmJmsrv65FjKhUEWaGQxw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774445508; c=relaxed/simple;
-	bh=+q20ONbrOyxDkAN5+EHcA3ci9E6n9dWeyiwm4j9RLFk=;
+	s=arc-20240116; t=1774445544; c=relaxed/simple;
+	bh=rkpIXgDQz1UgC1XYYX1tm6OOg5kF5dWhygEa7cgINow=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dvDgUwYAgXTPjpTH3XhjuOPaSEQPTlUjkV8You7bwjYP07ygYIPyIvng2Y+mngB085d6YYMqq/YoGHTDawI8n+PDribS6KtHBqD8Nht0u1S1AXB7uJZvKbFtQ/dbQsF1fCENYYM80v/aKZzsPBCQEThZJGImF/nTMbPQ1lK/ilc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
+	 To:Cc:Content-Type; b=GQasSj8vOKMYg4xSZiSOJsE5Ndo1Cvp4UGxwpyonfROE41/PbL4NfEAe/WpqeMrrHovrdac4z5UjJLauMBZ+QwcjUfhlhWgMkzFMp4UkrdgHUX25P+4OMGomdBTLzNyLka2DdpJQKnN85ZmadHbJ1jmSjS0DcQgaf0c1YuV6DuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59dcdf60427so2507603e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 06:31:46 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-667de793310so4430348a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 06:32:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774445505; x=1775050305;
+        d=1e100.net; s=20251104; t=1774445542; x=1775050342;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=stp9ZXzQjSgCaz4WCE1iOcAb662w0+RcOPCoDeQo2tE=;
-        b=jqikoDzU8gca+Jl0Z2BnecX8kPpuswiiua0BUxL6SxhiVjw/2hWrhbZdeDQp1Yg2/l
-         vRwtoc/S5ltX882pWQjPotMFldeswTwwk/rSqFhB2stGDgc0pPSvENLUts8h/3hwn4gM
-         4r5Hga/ad2JvfZIYnBlrGOel6k9aC9EFyTFPVZqt0+lZpNLQZPEhTpXLyCvChc875ALQ
-         9NPSuSf4tX233obOSBNGFywxo7gJMrVHEJXB4Y6FmMQnk80Hapou2A+oRsKhol8Ah0YY
-         TVAlB7B3M+iKWFT4NUPpPobvSoCfzf6qgxZr922VemEfzXrxlDchHaF+gL+JdUrdYCBn
-         eyDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUidW0FoZR3QdGqcMsGD8goZ+W1loewOVjKtKv2mog3K2SuB7yywHHzEwuTdh2fiqQT3q8zVupTgLTABKsb06GkJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYkypUywMr77TA5o3o1r2R71cjLOBmcNJ3a/KUK5QZgRFvrtp5
-	hOFVrO60Wf2bTqGzthtIVv1/3xaS+Ygxr7ev9hyOihO/vG+6+LeqXuTkJ4jRtnePpGM=
-X-Gm-Gg: ATEYQzzuSdv4GZO46YvU3Myo6Wv4tWXX/Z3qNbtOlEP4SmjO7P+y000TYs19+Wm109H
-	rRtv/cHiynFM0BaHepjTXYPQAUq6dF15G9LXVNPjNJoVu4P0n46eiEnltpvQjn4DKpl1C3m8ZIv
-	PXISRFtoeq3JdxlLdITt66PMcj3a//c9NIhLL/ivh/aFvX1PkwlEo0RZ5baKPkQLkXmzo4AE0Ms
-	1wEhrdsN7EgCvOKlsadC0jPPfqSxsr4C+oaKiYXXW8pbuvTFnqq8UKdztZPdvT5CALOHAVegTOF
-	Yj6VsjU0bowHjcRz42N7x0XAXURybFeSt8DolUnEcjdLpKyYDgU8L05YcCZpboj5JFxQHfudVex
-	6o9at9tiuyztMNTMZFgKmx1fzBvfUg3lELWPgw9e1BO0MBPWCXf/HMeySvjG8MFiZllvvc6K43H
-	DkwvzQrYPrbDQx80Xhz3kYcmEOpa0qNKfkWSTJAqKGWATP6luiEnhVICWmx1USBaJSYviystQ=
-X-Received: by 2002:a05:6512:33d1:b0:59e:5c8f:a5 with SMTP id 2adb3069b0e04-5a29b9767bemr1433687e87.4.1774445504899;
-        Wed, 25 Mar 2026 06:31:44 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a285192e88sm3881148e87.12.2026.03.25.06.31.44
+        bh=71PZmwBCGt13+2E2u4S7ZamRqElFJ3XFkvVJ95R0Un4=;
+        b=b4+TXxECdhWtbelB5+3IP3g14GblNw+o9u7Tsbw1/i+pA9w3Atut/cZDvvLJF6uQ+a
+         z4kIxO/U12ob6nBD4iq40uAv01V+N3h5ZqEWnIz4kn9etDALokZN3KTqozc9eIvzaLDN
+         yZhjmo+kEn1qRndb0OQ1mQFbemjR/5xKwnR8JT5Tzv2iIPah1qVL4x/0jOb4Cjte2ibh
+         yQKJOp1Ve95L57YAaLxziwaStzHLvo1ogYE16VclDRa1JW3a+9XqsAu6ggpmsdxn7JHG
+         I9cFsbho6PHXjkwb+CvYxG9T5UmCAUy48vl1x812TdwMeKe2PIybNqp8fbqcmVMHnTfa
+         9sYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2VPkDYRcU2vrxOJ465bcqZnuz+Ad5vDVVphaJCbuoTS5xYZA+w5HuDqfphBYDfV3fgEqS7HNjYmXkGirSyQmrzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvF3AIPm5qR7dIaDTK5F2JycPrUHZOtGBPPvhEKia2z/e/dBmI
+	3qFkJjnevbpwLQezmDTmEZJmPm5d/bs3s2omaeXNdps1I1v9rYJN70Z6J/nGFfkdfJg=
+X-Gm-Gg: ATEYQzzZTwlhqzxX+st+VfWOqZTQpxWGzVfAJXrgQwUfFCnE9nubQBgbQWJUO6ISki+
+	KSA2N0Mht/iqtbqr9ec1JVZXxmDAcYClnkfG0PZSwQ3QsvPaEt5+W3Dec8HCxaBY+HFG7raLW7j
+	iKbkPG1lpbCW1765TbjJtiliSQvExAtsBFzkgCsC/i0Pg2ZL8SRrTJRXbOMc2t5+agFMbDL/AD+
+	KI2cEeJyClAHEZAdFfeLF+4AD/dozcx+/LY1RagwArmK/eI1YxQZw/CAZO1JNXI0HQ/4+pPBaxL
+	qmvOdgIsMVza2Vn9PHWu5OE4LCjMx3wKxaV1n+wbl2UaVXi85mk7YVrdDCQCNyzsYnoT+XAifR+
+	MC/S9goy3i/vGvKtnveSPBsvoeFdeYngw+mr23LzbhHB509f8ID5l8rVI1B8KxftIMCMLQq88+q
+	U86gRb0Nhm2nnYTUSbAPkHsfcopDfFRYN35yRrlFpV7i/6EVIG8zmGlqa2tf8t
+X-Received: by 2002:a17:907:61a3:b0:b99:1074:74f with SMTP id a640c23a62f3a-b9a54238966mr181628966b.34.1774445541617;
+        Wed, 25 Mar 2026 06:32:21 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9832fd7147sm791842666b.27.2026.03.25.06.32.19
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 06:31:44 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5a27a90a7b6so2858983e87.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 06:31:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPrl9j6peJXZM3EVkujv4KIyhvY4zO4sUt/xUhZzYwXa0VpTEOrV1Sds8Ozt/3vl2Pkl++Ty0YrW7/nqLjMkw4Iw==@vger.kernel.org
-X-Received: by 2002:a17:907:8690:b0:b98:2b55:f7c6 with SMTP id
- a640c23a62f3a-b9a677f3293mr242621366b.57.1774445026817; Wed, 25 Mar 2026
- 06:23:46 -0700 (PDT)
+        Wed, 25 Mar 2026 06:32:21 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-668d70fabc4so4725056a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 06:32:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUka1RTE8cwrlsLqFfwkTfHYbBqTncux1TVcdY0ZKJjd/vqK22lRZKuLCRO8sNFobKaWzzA1661a97VpcEJhlj61Q==@vger.kernel.org
+X-Received: by 2002:a17:907:c08:b0:b98:6984:661c with SMTP id
+ a640c23a62f3a-b9a3f14900fmr255405366b.10.1774445539317; Wed, 25 Mar 2026
+ 06:32:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260117005028.126361-1-marek.vasut+renesas@mailbox.org> <20260117005028.126361-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260117005028.126361-2-marek.vasut+renesas@mailbox.org>
+References: <20260320025328.509003-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260320025328.509003-1-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Mar 2026 14:23:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUM5W7PLEaX_7SEwxXuc2aUvRUX7L0cT5Fg7YEZ1n3AwQ@mail.gmail.com>
-X-Gm-Features: AQROBzCABV8bWPZtK2TcL9-PzQxkhTblJ0GblRNzGWfFAoDGkar56sRfrxg7ob8
-Message-ID: <CAMuHMdUM5W7PLEaX_7SEwxXuc2aUvRUX7L0cT5Fg7YEZ1n3AwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare Display 13.3"
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, Conor Dooley <conor+dt@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Maxime Ripard <mripard@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Simona Vetter <simona@ffwll.ch>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Date: Wed, 25 Mar 2026 14:32:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWO9Qc=mn1SAwZt1HJK2VkU++G_8N+eVuN5AWTrLnVxUQ@mail.gmail.com>
+X-Gm-Features: AQROBzATJnixo_UeI8ufWETnQDalm61zGkrEBTKZCHPPX7aWGGL_4MFy_z_N-QI
+Message-ID: <CAMuHMdWO9Qc=mn1SAwZt1HJK2VkU++G_8N+eVuN5AWTrLnVxUQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for Olimex
+ MIPI-HDMI adapter
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Scott Murray <scott.murray@konsulko.com>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
+Hi Marek, Scott,
 
-On Sat, 17 Jan 2026 at 01:50, Marek Vasut
+On Fri, 20 Mar 2026 at 03:53, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> Add a DT overlay to bind the WaveShare 13.3inch 1920x1080 DSI Capacitive
-> Touch Display on the Retronix R-Car V4H Sparrow Hawk board.
 >
-> Current device link is at https://www.waveshare.com/13.3inch-dsi-lcd.htm
+> From: Scott Murray <scott.murray@konsulko.com>
 >
+> Add a DT overlay to bind the Olimex MIPI-HDMI dual-lane DSI-to-HDMI adapter
+> on the Retronix R-Car V4H Sparrow Hawk board.
+>
+> Current device link is at https://www.olimex.com/Products/IoT/ESP32-P4/MIPI-HDMI/open-source-hardware
+>
+> Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
+Thanks for your patch!
+
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-ws-display-13in.dtso
-> @@ -0,0 +1,90 @@
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-olimex-dsi-hdmi.dtso
+> @@ -0,0 +1,94 @@
 > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +/*
-> + * Device Tree Overlay for the Waveshare 13.3 MIPI DSI panel connected
-> + * to J4:DSI on R-Car V4H ES3.0 Sparrow Hawk board
+> + * Device Tree Overlay for Olimex MIPI-HDMI adapter connected to J4:DSI
+> + * on R-Car V4H ES3.0 Sparrow Hawk board
 > + *
-> + * Copyright (C) 2025-2026 Marek Vasut <marek.vasut+renesas@mailbox.org>
+> + * Copyright (C) 2026 Scott Murray <scott.murray@konsulko.com>
 > + */
 > +
 > +/dts-v1/;
@@ -106,6 +108,10 @@ On Sat, 17 Jan 2026 at 01:50, Marek Vasut
 > +#include <dt-bindings/gpio/gpio.h>
 
 This include is not needed, so I will drop it while applying.
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.1.
 
 Gr{oetje,eeting}s,
 
