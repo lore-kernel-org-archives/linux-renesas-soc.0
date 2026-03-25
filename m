@@ -1,80 +1,75 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5AE3537EB
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 19:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5405635B65F
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 19:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774466699; cv=none; b=cMFP4TBA8XzNdw7fPYMTuZg/LRyGiZX2V5cy0rKEVysJgGb9yzC6uNelnI3T1QtT2N/8fgDxOlaULl6NQN9896m5/M52PAW4Xwcz23nk/KufWa4rSqDt+Oyaf+yixoGnlO9IgoXTwrmYVW5bMmu3EwoOYB1wWqvQrJnsPU3rkbg=
+	t=1774466700; cv=none; b=WMZhm2yeesZVBhOY6D7BBq6OaUnIWXFIuDljPDc3v8dc00TcIVsYOUcvIXkpUFw0PczOuuIRgY9NEjYcoJz/mqSzGNZ0EkYxpw6BR17XhlC5L5Zpnc/L4d7ES5YnzPP4dwjFrhUMu0jNZv5xCjitPLcyt5WKCd64MRbdCKNhHyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774466699; c=relaxed/simple;
-	bh=VLqRs4Z+TlZFkqPL9lA/KP2hABPrJ6FXrZ5BEUxerfU=;
+	s=arc-20240116; t=1774466700; c=relaxed/simple;
+	bh=9Z/FEUEI7IKD3/xYNJ+3r3mkZ4auHrIx0kRdou6eG4Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F7WgBebKAeS/jPtNLuRr2Z7WOUUdyjI1yq7Wt2DzFQXYLTDRHU6Uk3/SpLodYMbpi/tw7oK/1HDb9xLl589Wi+tO+J5yod4xkmMFypMFFWIe0qQqVIBqfINTs/yOBdSc1xCMihYzMtVsNgOR0S/sXC68XYKGKJPyYPwy7VosKrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7YkUyqf; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=OuufymNksgy6zXyMfEkwXK+zvMVHzs/WiWIjTaY0d4Ao9d+qaHNDNsBhjIi4D0hcu+jKanbXhpSQIHDFU21KAMTK1uUs0Vtnk2g0ZR8Nx2j7+onk98hD13ZrBo6FsVuEU2LmUzI8P6oWP2KYDFR8rJKiwCM2afAPHdP+INMMup4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=suf2NZff; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7YkUyqf"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-439b94a19fdso152704f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 12:24:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="suf2NZff"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43b5bded412so119071f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Mar 2026 12:24:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774466696; x=1775071496; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774466698; x=1775071498; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mFx6UUPP8hEeX+S9NN+ZbAQ52l6KXscUunPIZqDqnbg=;
-        b=f7YkUyqfxwgeTdF0HkWPV/I8WvbL/eJVIKReWPo03Ynp6t/RvJCtji6UQUKe3n6G4w
-         mrkrXOdL5hb2sBleXd5evtKHkyEA7KLMRNhYeBtlYtmhJ5v+jfhDAFa+/WQzh9nWpbS5
-         8fuC2BoDYzGL48ml1BBuzXmzzN/mTqMPLSO7rw5Av8c+C07ARGmezEzE5Fgzhxb3Ajhl
-         7gfFvgKJJri+s2SXpqNOoOcKbt/SlRy0dxeRs6TQY/yZyrdxHO0PkjLOPagSwhYDlCfa
-         avMyLX3HoSHra0M4GoPKbOoopVZoV+2eIJoYm0TwQk+LK9Q9+Sn9xsStJ3KusuKe8C5m
-         ODgg==
+        bh=snoY62jIXeVqVt7nk7FlqUp1jDOYYTaVPX97GLGeLEo=;
+        b=suf2NZffSaryaFoytZOhmCd3a+9K9t+ebRt4IAlEuCJAybkBj9KcOzLh9S8R/sK800
+         +8IBh2RlF0IIJnUIKF7rGpkCiy2JDzpUsVIpAy4dB/fvcDhgL/X0BjiWOVSHcKi+0sFH
+         Q2i6RHLo0/PQnx+Bu/vnuan3gGcrSyLKPBntqsSfdnMZl7FcFJeZKcfyMY5rfZz0NLWs
+         +hl+JePPGXq/PVET0F+ZOWMdsP1iX2ifVGO47AGFkQOR7aD0VOPzUFSEDhYUaGwPV+1m
+         pBc1axctaqBQzfV88h7f852bUUC5h1oPcv5uUYeo5/0YUXzHhMo7irm3uyM10nO/NPVu
+         fZsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774466696; x=1775071496;
+        d=1e100.net; s=20251104; t=1774466698; x=1775071498;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mFx6UUPP8hEeX+S9NN+ZbAQ52l6KXscUunPIZqDqnbg=;
-        b=qfCLcMNBYTm7W3762Kwn3MhBk0jzY+IAUP9A1HGo4SzHbln9ERg+/SqeUoc0iuRuef
-         mH1sqwFAhCriUks1mLUoqihLXi7iRwteFzN9iL4g1ahWe+EH3iCZq/DMNBwBFac7ccId
-         MbAN3YbX3Y6HLUFGXbjHMeKtRYjInwvBfTyNj6J6NvH5T6WRFttJAFhUNxr6mqyLSO1i
-         HIt11SpuVhnXfEK1aweGFkDQ98PBsZTX7FqN8RMqTgNTQCEUtoACFqgXOqunVYAmxhE3
-         opYD+L+22SBrxDJRRVdsD3QJlgFalBqttT0gWbfGR6nLZBtohkNvmmr5s8c7ao0ucx9t
-         pBcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfVlG9GI50MbKlIzKowzZEelxZUelDjQvS1FAJlZEG571Q9WNlwIhYhWXXBLjmU2g4yOGyYNrqqddE4NZq2eK3KA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7frYg08nVI9O7lhyMGpROU7PCaEhnOZ6br5mNoHwkJ+e/0KDs
-	bFtVrlD5juVqJGVvwscpMboSfs/PfEbnf5UYDx7z1VY3YPdy0K9TSuht
-X-Gm-Gg: ATEYQzxWYECck2VyT+vmp59tG42wrg2CzPcaVBPQbwt4gHJFLwibMwrTaKVyptlGEKg
-	bsiZuERoiuTGKv93ip1xj9rkicv+oJrBX1MLqIFPM16fE7iRD/L/IYS6esp2lwzWiS0kxiIO1c3
-	o0c2aZ+uDJ4b8Cebp4Nv28usTEcEbaMmMsRbD4L0+jYfY9+3a2oQyE+TUk/hMM3EGujQa9qPcNT
-	VoQJJbjIKtCO6vV1GzIJzhYjuEml+DVTpvc+5KgcEPTApSOyUslbdz5A4J4XfeqAetsd5hrI/9s
-	wZ0C5dM29B8k4jlyW9BgI84MxiF+9arwrsyge56WSCHWBceJLRbWcH/dySurLUJaRbJaruMYmyL
-	JBJV8z8OI7tsmG/hJPg0cK/lWRYKt1UXfdfwB2NwKKXQVQD9D64cG7LtoKezbxYIJuz+XfJ14/U
-	Ip8NitUiK/tFoyaIuOB+ThNaZu6QbW5nBdBzQCtUv97ULsrsNwSMJOXmXRTQ8=
-X-Received: by 2002:adf:e6cd:0:b0:43b:4989:869d with SMTP id ffacd0b85a97d-43b88a055f2mr5072167f8f.33.1774466695675;
-        Wed, 25 Mar 2026 12:24:55 -0700 (PDT)
+        bh=snoY62jIXeVqVt7nk7FlqUp1jDOYYTaVPX97GLGeLEo=;
+        b=CkXMFrfC1RBrWnx5jnM7yAI4YcY7TydGrROlPsUFqjBfDytKvBDd5JtH4qoQZtsELc
+         5XrnuWSCa6ceuoqy4tF9TN8sMvv3I/Y23Vrkt8W4gB8Uj4oGk/xKQJuCGXnQWP448JWn
+         LhHMMQss8KaiPcFAKNyR+9QPFnVrXbpirDvvXe7rLzshmcZECXoiSiydCmoB6+M6m0w5
+         4Yq3dorxG8r8MjZjJ3OnoN5OXg6DUL9UnI0F09aqKgUnnUIX0gyVtVJah/OC37R445SS
+         ZVKKR62haUVByI+aZ6BAJSPFtrQ31BS1Xl1h/FEBqgR2RznPeD2HVhLU7WMKx4olj+R0
+         GnTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXi1Ig2w2Z3yN9qbX/OJk4+AQNEWoxpAbTLI2ZQheXZbhNIizw+Az6mMJXdRNHEJ/3vhAYbiulo8RTaDO0SJmv+Nw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCbQ9Yj4p0vrtgNECPCmWph0K4KyHL3CX/UJxIBIiBTJ2/csYs
+	eekP0yeVLa9NIIFNR0bF5lWHceeF4iAZzOvDMwbvDKAoXTI9xjUptj2k
+X-Gm-Gg: ATEYQzw6GlQQr891HkZHhkTYxcWB+DzcXLYtt4Xkr8rsrBTiiBWW7ktJRF3wx362tcm
+	3pBB243FkV1p72oS5xKojhGZjaRLskLXeAJi1InEHBMXH0RR4/eK7Eutk7sjk6EaWguh8YONaxI
+	8cEu1tPj204hAEYG81EAMx7+rw1yqQt4tziX646F5Mi61q94X26dghlZUOPrzBTr2I5vsHdsWqb
+	K56p1GfQ716xAKaxdQTRdckGiQC+ZMSqg+z3U69zVvYjOxGe9aDD0xzmzHiyGOzQCQo/50a0P23
+	ueqUrirb6pel5ZRearzaeeBKv5sluX+xyIl8wsufuwhFOXYYGsxDiBRUNdMjQN7wgdPSQmYH1EX
+	qfd8BuguL1C3Z/g5Tjpcd5j2I9CDuDIhEd+/KkH3cd+uYewyFDRALV3on/UmBNUSBzJjJyewoi/
+	ASjQYEg7cMEp7F+VUhux546hW8GQWoOCQmtuREbNxdybPSLiQh
+X-Received: by 2002:a5d:5f47:0:b0:43b:851c:4479 with SMTP id ffacd0b85a97d-43b88991cbbmr7251231f8f.2.1774466697550;
+        Wed, 25 Mar 2026 12:24:57 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:8138:17e4:88b1:468c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b9192e533sm2464485f8f.2.2026.03.25.12.24.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b9192e533sm2464485f8f.2.2026.03.25.12.24.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 12:24:55 -0700 (PDT)
+        Wed, 25 Mar 2026 12:24:57 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Thomas Gleixner <tglx@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v7 02/16] dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G3L SoC
-Date: Wed, 25 Mar 2026 19:24:17 +0000
-Message-ID: <20260325192451.172562-3-biju.das.jz@bp.renesas.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v7 04/16] irqchip/renesas-rzg2l: Drop redundant IRQC_TINT_START check in rzg2l_irqc_alloc()
+Date: Wed, 25 Mar 2026 19:24:19 +0000
+Message-ID: <20260325192451.172562-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260325192451.172562-1-biju.das.jz@bp.renesas.com>
 References: <20260325192451.172562-1-biju.das.jz@bp.renesas.com>
@@ -88,135 +83,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Document RZ/G3L (R9A08G046) IRQC. The IRQC block on the RZ/G3L SoC is
-nearly identical to that found on the RZ/G3S SoC, with the following
-differences: it supports more external interrupts and GPT error
-interrupts, and adds registers for GPT/MTU interrupt selection and shared
-interrupt selection between external interrupt and TINT. A new compatible
-string "renesas,r9a08g046-irqc" is therefore introduced for the RZ/G3L
-SoC.
+The check `hwirq < IRQC_TINT_START` in rzg2l_irqc_alloc() is unnecessary
+as the condition is already guaranteed to be false at that point in the
+code. The outer `if (hwirq > IRQC_IRQ_COUNT)` block ensures that hwirq
+is always above IRQC_IRQ_COUNT before reaching this check, and since
+IRQC_TINT_START <= IRQC_IRQ_COUNT, the guard can never trigger.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Remove the dead code to simplify the allocation path.
+
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v6->v7:
  * No change.
 v5->v6:
- * Collected tag.
-v4->v5:
  * No change.
-v3->v4: [4]
- * Updated commit description.
-v2->v3: [3]
- * Dropped items and instead used enum for single compatible values
- * Add minItems for interrupts and interrupt-names properties of 
-   the RZ/{G2L,G2UL,Five,V2L} SoCs
- * Replaced maxItems->minItems for interrupts and interrupt-names
-   properties of the RZ/G3L SoC.
-v1->v2: [2]
- * Simplified the binding using pattern
-
-[4] https://lore.kernel.org/all/20260227140316.308106-3-biju.das.jz@bp.renesas.com/
-[3] https://lore.kernel.org/all/20260204180632.249139-3-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260206111658.231934-3-biju.das.jz@bp.renesas.com/
-[1]https://lore.kernel.org/all/20260204142320.103184-2-biju.das.jz@bp.renesas.com/
+v5:
+ * New patch.
 ---
- .../renesas,rzg2l-irqc.yaml                   | 43 ++++++++++++++++---
- 1 file changed, 36 insertions(+), 7 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-index a0b57d808639..3a221e1800a0 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-@@ -30,7 +30,9 @@ properties:
-               - renesas,r9a08g045-irqc     # RZ/G3S
-           - const: renesas,rzg2l-irqc
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index eb01d4c5aca7..8587d4c5f110 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -491,9 +491,6 @@ static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int virq,
+ 	if (hwirq > IRQC_IRQ_COUNT) {
+ 		tint = TINT_EXTRACT_GPIOINT(hwirq);
+ 		hwirq = TINT_EXTRACT_HWIRQ(hwirq);
+-
+-		if (hwirq < IRQC_TINT_START)
+-			return -EINVAL;
+ 	}
  
--      - const: renesas,r9a07g043f-irqc     # RZ/Five
-+      - enum:
-+          - renesas,r9a07g043f-irqc    # RZ/Five
-+          - renesas,r9a08g046-irqc     # RZ/G3L
- 
-   '#interrupt-cells':
-     description: The first cell should contain a macro RZG2L_{NMI,IRQX} included in the
-@@ -48,17 +50,17 @@ properties:
- 
-   interrupts:
-     minItems: 45
--    maxItems: 48
-+    maxItems: 61
- 
-   interrupt-names:
-     minItems: 45
--    maxItems: 48
-+    maxItems: 61
-     items:
-       oneOf:
-         - description: NMI interrupt
-           const: nmi
-         - description: External IRQ interrupt
--          pattern: '^irq([0-7])$'
-+          pattern: '^irq([0-9]|1[0-5])$'
-         - description: GPIO interrupt
-           pattern: '^tint([0-9]|1[0-9]|2[0-9]|3[0-1])$'
-         - description: Bus error interrupt
-@@ -75,6 +77,8 @@ properties:
-           const: ec7tie2-1
-         - description: ECCRAM1 error overflow interrupt
-           const: ec7tiovf-1
-+        - description: Integrated GPT Error interrupt
-+          pattern: '^ovfunf([0-7])$'
- 
-   clocks:
-     maxItems: 2
-@@ -106,6 +110,24 @@ required:
- allOf:
-   - $ref: /schemas/interrupt-controller.yaml#
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a07g043f-irqc
-+              - renesas,r9a07g043u-irqc
-+              - renesas,r9a07g044-irqc
-+              - renesas,r9a07g054-irqc
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 48
-+          maxItems: 48
-+        interrupt-names:
-+          minItems: 48
-+          maxItems: 48
-+
-   - if:
-       properties:
-         compatible:
-@@ -118,12 +140,19 @@ allOf:
-           maxItems: 45
-         interrupt-names:
-           maxItems: 45
--    else:
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a08g046-irqc
-+    then:
-       properties:
-         interrupts:
--          minItems: 48
-+          minItems: 61
-         interrupt-names:
--          minItems: 48
-+          minItems: 61
- 
- unevaluatedProperties: false
- 
+ 	if (hwirq > (IRQC_NUM_IRQ - 1))
 -- 
 2.43.0
 
