@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6834E74B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2026 07:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A287C379987
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2026 07:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774510600; cv=none; b=Q7Hqo+Ra/q/hP9PfF2xYpNh353h9E3q/ebqkUklIbqE/KQVt0yY6Z/wze6d/KPcLm+lZBcXGekhob0kk/oB1vRKXpzG7RTSdqdDnJ8qVbvoPt+jMKrdhPoofYDf+M9gJGj2nbk2W7xG6CzhIA8mPYH7Afquk/0odjKf2FKwQJho=
+	t=1774510807; cv=none; b=tI0e+S+2ngc3uUUxQXjiNG+D0dspiM2kbgjqb7biHIdyAA5M9GTewQ1h6J8uamTYamTkPVZ4lu+yp+H78LGxbWdCWg1UpTOO+HAkmjSR7eGEAO9zqMkOCARDnAzW0zLcAm/bAB+HbwqsvJnlBSKtCT69Xz1V92/KxcHXV3871uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774510600; c=relaxed/simple;
-	bh=yIwCN6cjgAv9d1W0Rcf2Es4iMNJ5NUc54pjyHO2vMZM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ZpEdhfdJ7kbZZDuo0zfKyiabrGBCQ0OJl2ZOrhAl/8nS6ALvRDIFMRdor9riyBPxJQa8lINGngAEFC7FXfUo7TIlNWC+hrL87eWsJm6O+GYw4KGuSKW6SHSk14RWmR2r/cGEU+4iJ2IgOK5TXa2XksdSg7gUb+CMng7M9j2Vn7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YSqk24ZC; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1774510807; c=relaxed/simple;
+	bh=CKXp7cPVz4JDPUYLDM8lY5DXON+OWXvERUSBtv4sdzo=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=p/sN3WJQkvvzTkPbX+qCg/IiJ6Q35M6gj8k2QYlk/GylKf62UTJpKUgv5Fb8EjDiC7rZysdosGKzrbBAN/7mIi/nFe5MY6JotM7eUcegGvY0BCFHAc8rh/AfddFbzxQ/KArvy8uKBQ0+98fqKdBFWPJ4yeSzMLZqZemZg84k6Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTWqOMKq; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YSqk24ZC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTWqOMKq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774510599; x=1806046599;
+  t=1774510804; x=1806046804;
   h=date:from:to:cc:subject:message-id;
-  bh=yIwCN6cjgAv9d1W0Rcf2Es4iMNJ5NUc54pjyHO2vMZM=;
-  b=YSqk24ZCcr1EqvKDogHodwOtixFd121zr/oV26tRC3T/FOG3AetNX/2Y
-   oKFl4rFtzExU4rzmiWKiZJqk7kO4EoAkOdZuis/6Ojaccr20ZMQ3meNt1
-   tXzSSaiG/8+7uvjog6KJnmcHH1KaX/sQah5BC6nCLv4aGXsaH9n4ux4rY
-   en1cnA+KC/p6TLR4NmrPWiyOys/8uo1J9NaVZt3FshMbFZ2vuAt9KJ2dy
-   QbX618+Ya/af7S1ugF5gzhXsk/eMXgrw6Vu8QcU0EPk1ljQK7thNdvLvv
-   xVvlFW06leMFqLxm8sFr0IjU6j5w9jz3CWzTTv0d2n22p6vII0gjorjYf
-   A==;
-X-CSE-ConnectionGUID: AppL7NblROuB0rLgfaqgOw==
-X-CSE-MsgGUID: Ze1YeDoBTjSs/9JpAVwBng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="75445443"
+  bh=CKXp7cPVz4JDPUYLDM8lY5DXON+OWXvERUSBtv4sdzo=;
+  b=lTWqOMKqAeqv5oCezB9EwlCKrnZp+UvOvwBniaIS5ijZ1guD5hbrbgL1
+   7vL0InNtApBBtPFjfJ4VrPzcEg3ccNQPQDN/9EX8zy19m4fS6LdA94iF2
+   1DD7G3dzvJDmlg/CtLeuMsUnqRGAWcDAv9sldt0J/+cazBATlw213mzoe
+   C8jB2i9MigbDI6xJtZxPgNenTvQECfef5nm//dDJaYBeQ8E/r0r8qBoe/
+   rQG1xYCbOZ9Amm6AipGfGZCNFhjiEkd5eAdjbOeFHBXgoaQkMIlU3V6cC
+   c1xXFwPMXEyKR6Vf1b/gQh0GXyInVGY1B77gvSKuqibSelJH8US//M7hE
+   g==;
+X-CSE-ConnectionGUID: 8FrZtRqLQ4OTN6kgba3SKw==
+X-CSE-MsgGUID: YqsWSjj4QKSg8xVzzuSlVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="98180750"
 X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
-   d="scan'208";a="75445443"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2026 00:36:38 -0700
-X-CSE-ConnectionGUID: mR6ishOeSEK0zcH02AoOfQ==
-X-CSE-MsgGUID: A/57Q2ZTSkaoSUDeQWAYow==
+   d="scan'208";a="98180750"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2026 00:40:03 -0700
+X-CSE-ConnectionGUID: RwjQOjcZQNyGMZi29dGrLw==
+X-CSE-MsgGUID: xdeT/+jiQd2VJC8hRXoURg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
-   d="scan'208";a="229694520"
+   d="scan'208";a="247963775"
 Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 26 Mar 2026 00:36:36 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 26 Mar 2026 00:40:02 -0700
 Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1w5fGb-000000008ZR-2vDn;
-	Thu, 26 Mar 2026 07:36:33 +0000
-Date: Thu, 26 Mar 2026 15:36:12 +0800
+	id 1w5fJv-000000008Zp-3qGf;
+	Thu, 26 Mar 2026 07:39:59 +0000
+Date: Thu, 26 Mar 2026 15:39:18 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk] BUILD SUCCESS
- 44ed098c6ef354dcd56367512f73a8f1e29846fb
-Message-ID: <202603261503.WFheBM1w-lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-dts-for-v7.1] BUILD SUCCESS
+ 1380e36cf8ffd923a4bb0a337abf6473529ce9a2
+Message-ID: <202603261510.FyM2NQ6I-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,13 +59,13 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
-branch HEAD: 44ed098c6ef354dcd56367512f73a8f1e29846fb  clk: renesas: r9a09g056: Remove entries for WDT{0,2,3}
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v7.1
+branch HEAD: 1380e36cf8ffd923a4bb0a337abf6473529ce9a2  arm64: dts: renesas: beacon-renesom: Remove LVDS Panel
 
-elapsed time: 753m
+elapsed time: 755m
 
-configs tested: 161
-configs skipped: 2
+configs tested: 160
+configs skipped: 148
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -75,12 +75,12 @@ alpha                             allnoconfig    gcc-15.2.0
 alpha                            allyesconfig    gcc-15.2.0
 alpha                               defconfig    gcc-15.2.0
 arc                              allmodconfig    clang-16
-arc                              allmodconfig    gcc-15.2.0
 arc                               allnoconfig    gcc-15.2.0
 arc                              allyesconfig    clang-23
 arc                                 defconfig    gcc-15.2.0
 arc                   randconfig-001-20260326    gcc-8.5.0
 arc                   randconfig-002-20260326    gcc-8.5.0
+arm                               allnoconfig    clang-23
 arm                               allnoconfig    gcc-15.2.0
 arm                              allyesconfig    clang-16
 arm                              allyesconfig    gcc-15.2.0
@@ -132,7 +132,6 @@ loongarch             randconfig-002-20260326    gcc-8.5.0
 m68k                             allmodconfig    gcc-15.2.0
 m68k                              allnoconfig    gcc-15.2.0
 m68k                             allyesconfig    clang-16
-m68k                             allyesconfig    gcc-15.2.0
 m68k                                defconfig    clang-19
 microblaze                        allnoconfig    gcc-15.2.0
 microblaze                       allyesconfig    gcc-15.2.0
