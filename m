@@ -1,92 +1,102 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68A8302767;
-	Thu, 26 Mar 2026 20:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF3630B53A;
+	Thu, 26 Mar 2026 20:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774556655; cv=none; b=hnkN3a9IATXT+BeLINNQeS/gx6tsOkUhdFFbAIcnjOsNyVsMsfxf0j/qNVwc3h1HPzzUfm2bkeMwKd35DZKQn4ZQb5a236o2KFALmMx695jlZ/mmFdBiFkXKEYG7ldpHSxbbYkumIu7+Z8W00utNUxa1HhZbaobf3CxMRCup/RE=
+	t=1774557629; cv=none; b=o+IT4i7own0lavTkZMmqX3ICAv+9GSffTTVJ1uzK3Qi37aoiF6qnWGgH9QQ/z6WbbTXEiw/aCzw5Kdx3iyoQLB+pPujKXF4e9vis9tz7nV2/l7d161G/ToBKzus3vy0oSPUbHcvgu7USWFhZRyxhsYg9FsRua2kwPbPFmTx4BNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774556655; c=relaxed/simple;
-	bh=NVhX/uMxZkpkB/iqDu5JZGx9lhZ9UdPlPo1XBRq95bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miN1kzYxX2o2PJ7kas91U7eJ+ooojyOoOAalSX4meBhxvZPw2ZEVV6W1QYXBAFuMLnvcxgJYDjBo76VNbbsW/RMhHMdjqkogxTiYVhMOeKTg/dPQnLMACXUNNEX1j7kRjcbKSGQhC/ASPwaFRyrrs+U9NyruSNosQR/otVxh+XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mNeN+YLD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1774557629; c=relaxed/simple;
+	bh=8a+/CieD0GhHGFs0zJNBuFHCEbl0c6fVpxAh2+MpsLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nEvZGnDT0BWSMdzG+Jvj9l0UzhOTgjrFErM0HW+pK90JRypD24e+yiRJ1J/XFg4ZRTrwNBFeO+XSgNojtU+bx3NikIaCN03IEmKJuBrh5qxXf92fWQbY6VjBZjorvUE/RPYfNgHFsm2RLXktKt+Pfvx3XKFaXPuLYDKPoS6Kzrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=inGwPJKw; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XQZqfJv0; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mNeN+YLD"
-Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id ECF6EC59;
-	Thu, 26 Mar 2026 21:22:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1774556572;
-	bh=NVhX/uMxZkpkB/iqDu5JZGx9lhZ9UdPlPo1XBRq95bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mNeN+YLDfw3MuX2TA+viY+TKCOWX3G9bMqKE64cCBilShGkf6X2SAvRqbSZ2O4tRD
-	 q5UjEYFaWlqDio3pkykZVhoVjQbxTeo3RWBFlcO4jIRyCOK/tMt15o9jTEoHODLBCw
-	 6gTsI4IWQgepC2mxAcjm/5zuryn6gDno7q/hl6uY=
-Date: Thu, 26 Mar 2026 22:24:09 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Amin GATTOUT <amin.gattout@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: Convert to of_drm_find_and_get_bridge()
-Message-ID: <20260326202409.GE2770072@killaraus.ideasonboard.com>
-References: <20260326-bridge-v1-1-c0c44b53f7b6@gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="inGwPJKw";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XQZqfJv0"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4fhbJ328wGz9thj;
+	Thu, 26 Mar 2026 21:40:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774557619;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwxYm6b4gzNXkghMb09qSf9ltTkLFWhWb7e84RMEH2o=;
+	b=inGwPJKw2ZKqtUghNNDNo6RahTUjv/uTihaDUEYunKvzDJDN8WOwg70KoHFie69cErA0Pp
+	YFkNhzhhjKLU+9itkgtq5XtATM0LmIBuowW8Q4GU2ajZdtEuptVxe9K4bOQ/hNGj6eyq76
+	F6A3z3C2HBYlfBzVW80BVJsf2j1xzPxJy0PUKYHmt+vwTchy6FKt5ThfkxGgVnOTM/HN2R
+	tOOirLoTgGbWtYmyEaKagH7ly4/zhbczFOu5FEHBywS6r6t3CP75nKDhgdyT7uBO72cP9u
+	NrpXXSqtauvlNh83MmeACzUGEdhKF4tVFfulLwMrUSXPCs0P+4+Q6lFGEMoNaA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=XQZqfJv0;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <2ad69ee6-9170-46dc-a963-71f327192bad@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774557617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwxYm6b4gzNXkghMb09qSf9ltTkLFWhWb7e84RMEH2o=;
+	b=XQZqfJv0+w8bL27DFlE4QIYWHH7et3lrMK9NYA9rLMj5SDvU44KwxfTVX3P5peYsLneBZD
+	l3jIXSuIguZVXhGfdVHGIt3Zm9QEOMPWgAopx9IzOEmC2ZoWnhJRcaG4g77ly1T13DNnSN
+	woa/UXmguaYmbzkJEx313N3toGxk0PGk92AdLf6BqH7goiyTeekfBt72XzdZxOgeexbHeN
+	hm0sKruiiUhec58jvjAdfB9K5RD0odIKAL4JEoO+0vUm3tGzCJOBPYvqMmgSvSh/oMkozi
+	q4pyvNnwFDw9YdSAhbgC3v5tASUoCAtl6/tnpdLR8hB6BTD/0ncsKScQ+9HDzA==
+Date: Thu, 26 Mar 2026 13:49:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260326-bridge-v1-1-c0c44b53f7b6@gmail.com>
+Subject: Re: [PATCH 0/4] arm64: dts: renesas: Fix missing cells and reg
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdVtea9q1Yoaq1sEquxEAnQ-armLRdO1cMtJnp2K2mYtOg@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVtea9q1Yoaq1sEquxEAnQ-armLRdO1cMtJnp2K2mYtOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: s3nhmh9fqayeirbex9kzm9hxj798zp68
+X-MBO-RS-ID: b89e9bfb6c652140b90
+X-Rspamd-Queue-Id: 4fhbJ328wGz9thj
 
-Hello Amin,
+On 3/26/26 11:07 AM, Geert Uytterhoeven wrote:
 
-On Thu, Mar 26, 2026 at 09:10:15PM +0100, Amin GATTOUT wrote:
-> of_drm_find_bridge() is deprecated.
-> Replace it with of_drm_find_and_get_bridge() which increments
-> the bridge refcount as required.
+Hello Geert,
+
+> Thanks for your series!
 > 
-> Signed-off-by: Amin GATTOUT <amin.gattout@gmail.com>
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, 26 Mar 2026 at 05:24, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+>> Add missing cells and reg DT property into DTOs to fix warnings like this:
+>>
+>> "
+>> arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso:30.10-34.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@1: node has a unit name, but no reg or ranges property
+>> "
 > 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
-> index 7ecec7b04a8d..42253c1251b5 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
-> @@ -72,7 +72,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
->  		if (IS_ERR(bridge))
->  			return PTR_ERR(bridge);
->  	} else {
-> -		bridge = of_drm_find_bridge(enc_node);
-> +		bridge = of_drm_find_and_get_bridge(enc_node);
+> All of these are dtc W=1 warnings, right?
 
-How did you test this ?
-
->  		if (!bridge)
->  			return -EPROBE_DEFER;
->  
-> 
-> ---
-> base-commit: d813f421930c5b01b9f61043932de02602dd6ae3
-> change-id: 20260326-bridge-43ecbef9d39f
+Yes, I slowly started linting and validating the various DTs we have to 
+remove leftover warnings.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Marek Vasut
