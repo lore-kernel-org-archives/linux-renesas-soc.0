@@ -1,180 +1,87 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C538734D;
-	Thu, 26 Mar 2026 11:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774526367; cv=pass; b=H1ZoUbIE5JXGd3paNRT1R/Xn6FfOTRGFFoRutVs4AoIWMIE5TrD0iOed2LQC+QVUSCoqngZpK7UB6meAlTgn8A5S9tcNEJMvoMsHAnZzotZJ47NRlRzGs2UGsg666ysomNm84xvPpCon/G092zpvDeTG43SNXOh0yDVrCBohxqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774526367; c=relaxed/simple;
-	bh=HKV+pqDUW70yS1IkUgHPQGOB1Ixw8VVKBshT19NRnpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDZkJowoth9vHrisyIFMLsvOsoRazYT+70KjNY971lUqkZLCjgcbyBTktu4tBwceDg0mWtg+k2fOHxYiG4uCnm8O4m9O5fKR5ilr0mvhYRIqFeS1wO0w5S1cWA2vqHqLg9RRUI5T81TwWuPbIhGS+iAy44XBsj8AvScJLgQ31bw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=FaX23d+e; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB43D2367CF;
+	Thu, 26 Mar 2026 12:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774529543; cv=none; b=MkhAGk07Fxku9mCbm8tHX70X4JXo3hKptMJBUDiC7C3KGJEPquhyKpJmM6vZTI0iLK2AznrNSxqM4aZfeEW5DoblghcDEm1WYOI0HzsuuAyB4Ftaue1HJ4wTEKdfrCSWjAr7Wm7rXV89VbOkJP4VU1SHMq5cJy8yPADKHxxGxfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774529543; c=relaxed/simple;
+	bh=6VTGxkyW4cvcq2uXEpakbEWpEtG2wAQ9UNwAI15+iYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inSCGgCG8TsO6YTNLW1ZY8fMuYufyHGS0F09Clf9HqbrjlBxSBrL+lKXGYrmqRrGDqJ6oc//LIa4Hs9LT4kTxUGYjVlfFc6H5m5Xi1jFdM9eoV9jHc8oDrRU4Ys9mPZ2DowmQcf94mnFod8SetVHOYx5GEfbnmu7SqH7Y3qlxTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YTUZUxBJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MEKXNnKQ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="FaX23d+e"
-ARC-Seal: i=1; a=rsa-sha256; t=1774526345; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eibIxsY4jbugMMsUsRzfo4YlKvNyygN1G/z8U3/IkGyIh8Zq0DkQhFwzN4tw5pi+hEU0gh5jdWnl2z78AMpnuEn2NsjfJO/AjvITE58ayAf9z2v4DsrSNNP3tasAgHD6TlCrTncyfu6cQIgf2sRZWnj9sTxmV1CwuSf1xUmvNN4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1774526345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ul3Elmvarjeo2F5dZsfHqeijZFTBr3ip2K2uSBcgO+g=; 
-	b=E/1m/krGiAxQ4hNv/5Mpn4vgVj5fFNbwsCMTFv0u41/ZCLamFFB9qv+Xvse2/lTguR/ApgPRASdggCk4N2A1UNyNMtEI0SiNy815MXaBW8sPXVVVPQjUN92Ki87TR0vCnOxVBfKOgrlsjggAPj1XtZ5YBkpWahI2ewD3DbWdg9k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1774526345;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=Ul3Elmvarjeo2F5dZsfHqeijZFTBr3ip2K2uSBcgO+g=;
-	b=FaX23d+eST4NvBkpuAforAXC1w55gz/e6Ca5LBk3is7dXSXr9k1BIT/VPol8QgIu
-	+dOHKibJ4DnlVUQM9Bagr2q1Ws43B6EOTWcy4O9+xOMyAXEs/wPBnFMYTQTdjoibHd0
-	yrEdWG4ZlahccvvmnXiakw2qLuzG79LoXwr8otCM=
-Received: by mx.zohomail.com with SMTPS id 1774526344009716.8538221987557;
-	Thu, 26 Mar 2026 04:59:04 -0700 (PDT)
-Date: Thu, 26 Mar 2026 11:58:59 +0000
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] drm/panfrost: Drop redundant optional clock
- checks in runtime PM
-Message-ID: <acUfZmYoDA_ZKVBk@sobremesa>
-References: <20260320164158.487406-1-biju.das.jz@bp.renesas.com>
- <20260320164158.487406-3-biju.das.jz@bp.renesas.com>
- <ab25E0kTBA4EjZ3Y@sobremesa>
- <TY3PR01MB11346F3DF5ACB55B5FE8DC96F864CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB11346DD20F7E2AB23A54A274B864DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <acLFYNHPODCYArCk@sobremesa>
- <TY3PR01MB11346F913241559462D109F2D8656A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YTUZUxBJ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MEKXNnKQ"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fhNvv6ZCHz9ttG;
+	Thu, 26 Mar 2026 13:52:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774529532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I9Chy8AgzevwPYn3/hEg4YkH331ROLRWKE0sUs35RwM=;
+	b=YTUZUxBJ3RzbZuMkbGTZyU2cHqO5J0MT0pTPXjOb2ufwyEWX68TABeLbIdZ6TTFW8NEUOE
+	P1+/i2GWHb1Cib/0vLXXR6g7XQUeUX/hO1Whwl2tcp5uNzbJmRznafMAjZHjyY/2km/S1M
+	gT3etrZkBCwElSlOKKu9a0W3DI9iX0q1yEzOZEkaQAEPf+h2IEm7Cn5Rvz6Qvsdrcgghpz
+	R7hlL4mrxyK/VBB9KpDJj5pi944csDVKuECCPMet9ZczEuGcLXK589E4Temv0hz1gXWtKz
+	rGnJoiAQzqFUrVMlFYApYJ/TBW8FlNf8+WTmMz2SHWYqhcKuGBredCBIkiJqcw==
+Message-ID: <d6696825-f739-4427-bb60-abf8afd82b66@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774529530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I9Chy8AgzevwPYn3/hEg4YkH331ROLRWKE0sUs35RwM=;
+	b=MEKXNnKQsTujq/wMDVDbuIdq5AnzVzA2L09JW/JbiGZfyOu3FYlqpvMBmY2GUCMUEuAMBV
+	nQtejxsfaEMlF2MMKxv6dyrLQTs+myKV94u8hCtg2A2Eu+LrHZhpW687mcYMXUKiMYXJ7K
+	QMaSwH6OMgxcDkR29L1ddHEY/vT0UOFwpJHCVTDD6geM9dwIViDOAESqUZd4qEzlO7wXgK
+	4t2gEG/OItcvI0DW9GXe5R3shX0MJEHiHJecdGyUHTMd8vWXUSmpb1TtOIvgA0mHKaYiSg
+	BqVyXddH4uXWUbwNcdgCkBDuxgA6xghOJy4MoCDY4ervnisz3eDucMI2mZnNRg==
+Date: Thu, 26 Mar 2026 13:52:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TY3PR01MB11346F913241559462D109F2D8656A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Subject: Re: [PATCH] ARM: dts: renesas: rza2mevb: Drop RTL8211F PHY C22
+ compatible string
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260326045416.223556-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdVwa47N2VsvH8pBkAD215dr3M-qkA0SXed0vhLS2-aoKA@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVwa47N2VsvH8pBkAD215dr3M-qkA0SXed0vhLS2-aoKA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 0aa1a6b254c98a861e0
+X-MBO-RS-META: 89mianiegazzsg9eorrsbp6xffnu78nw
 
-On 26.03.2026 08:55, Biju Das wrote:
-> Hi Adrian,
->
-> > -----Original Message-----
-> > From: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > Sent: 24 March 2026 17:11
-> > Subject: Re: [PATCH v2 2/4] drm/panfrost: Drop redundant optional clock checks in runtime PM
-> >
-> > On 21.03.2026 14:16, Biju Das wrote:
-> > > Hi Adrián Larumbe,
-> > >
-> > > Thanks for the feedback.
-> > >
-> > > > -----Original Message-----
-> > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf
-> > > > Of Biju Das
-> > > > Sent: 20 March 2026 21:32
-> > > > Subject: RE: [PATCH v2 2/4] drm/panfrost: Drop redundant optional
-> > > > clock checks in runtime PM
-> > > >
-> > > >
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
-> > > > > Behalf Of Adrián Larumbe
-> > > > > Sent: 20 March 2026 21:20
-> > > > > Subject: Re: [PATCH v2 2/4] drm/panfrost: Drop redundant optional
-> > > > > clock checks in runtime PM
-> > > > >
-> > > > > Hi Biju,
-> > > > >
-> > > > > On 20.03.2026 16:41, Biju wrote:
-> > > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > >
-> > > > > > The clk_enable() and clk_disable() APIs already handle NULL
-> > > > > > clock pointers gracefully — clk_enable() returns 0 and
-> > > > > > clk_disable() returns immediately when passed a NULL or optional
-> > > > > > clock. The explicit if
-> > > > > > (pfdev->bus_clock) guards around these calls in the runtime
-> > > > > > suspend/resume paths are therefore unnecessary. Remove them to simplify the code.
-> > > > > >
-> > > > > > Reviewed-by: Steven Price <steven.price@arm.com>
-> > > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > > ---
-> > > > > > v1->v2:
-> > > > > >  * Collected tag
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/panfrost/panfrost_device.c | 12 ++++--------
-> > > > > >  1 file changed, 4 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c
-> > > > > > b/drivers/gpu/drm/panfrost/panfrost_device.c
-> > > > > > index dedc13e56631..01e702a0b2f0 100644
-> > > > > > --- a/drivers/gpu/drm/panfrost/panfrost_device.c
-> > > > > > +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-> > > > > > @@ -429,11 +429,9 @@ static int panfrost_device_runtime_resume(struct device *dev)
-> > > > > >  		if (ret)
-> > > > > >  			goto err_clk;
-> > > > > >
-> > > > > > -		if (pfdev->bus_clock) {
-> > > > > > -			ret = clk_enable(pfdev->bus_clock);
-> > > > > > -			if (ret)
-> > > > > > -				goto err_bus_clk;
-> > > > > > -		}
-> > > > > > +		ret = clk_enable(pfdev->bus_clock);
-> > > > > > +		if (ret)
-> > > > > > +			goto err_bus_clk;
-> > > > > >  	}
-> > > > >
-> > > > > It seems clk_prepare_enable() can also deal with NULL clock device
-> > > > > pointers gracefully, so maybe you could also do away with pointer checks in panfrost_clk_init?
-> > > >
-> > > > This is the only check and no need to print rate for optional clk.
-> > > > That is the reason I have not touched this.
-> > > >
-> > > > 	if (pfdev->bus_clock) {
-> > > > 		rate = clk_get_rate(pfdev->bus_clock);
-> > > > 		dev_info(pfdev->base.dev, "bus_clock rate = %lu\n", rate);
-> > > >
-> > > > 		err = clk_prepare_enable(pfdev->bus_clock);
-> > > > 		if (err)
-> > > > 			goto disable_clock;
-> > > > 	}
-> > >
-> > > The above block is good for optional clock.
-> > >
-> > > Otherwise, there will be 2 checks for optional clk.
-> > >
-> > > One here:
-> > >
-> > > if (pfdev->bus_clock) {
-> > > 	rate = clk_get_rate(pfdev->bus_clock);
-> > > 	dev_info(pfdev->base.dev, "bus_clock rate = %lu\n", rate); }
-> > >
-> > > and one inside the clk_prepare_enable():
-> > >
-> > > err = clk_prepare_enable(pfdev->bus_clock);
-> > >
-> > > Please let me know your thoughts.
-> >
-> > You're right, it's probably best to leave it the way it is.
->
-> If you are happy with the series, can you please merge it?
+On 3/26/26 10:45 AM, Geert Uytterhoeven wrote:
 
-Will do, I'll add my Rb's and let you know when it's merged.
+Hello Geert,
 
-> Cheers,
-> Biju
-
-Adrian Larumbe
+> On Thu, 26 Mar 2026 at 05:54, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+>> Realtek RTL8211F PHY schema indicates that compatible string
+>> "ethernet-phy-id001c.c916" must not be followed by any other
+> 
+> This is actually RTL8201F / c816; I will fix this while applying.
+Ouf ... thank you.
