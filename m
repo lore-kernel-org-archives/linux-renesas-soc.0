@@ -1,91 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DD9399002;
-	Thu, 26 Mar 2026 03:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F102264D9;
+	Thu, 26 Mar 2026 04:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774495181; cv=none; b=it6ATsJYfua/hVE/4ibMHfHIAiz+6rb4D17Oaim19nv8Om1F46LWg1BSc/sEMYSJH/pxLcPT9hsOCf73BNikm1jjIKzYDgVUKQSoPaiuFTp5Jk8AhSTMCtzz7Uf4/UzA+cMwoaMy3cMvxuGPBFyCe1CcsLPq78sPtsYJ+sKBqas=
+	t=1774499067; cv=none; b=qVA8DpNC2aFzXWArSSL/gs4/hdS/Q19OK2xTGRYiWWHPqmzn2yS3++VxqzFtUzUDFTEmVdM/yZi26AA6AEAG4zjvLEEEVMbrERJWSqkuWVcz/KnIrhP3jbShRhJDzPn/fZ5gHloA/ZVkZyYX7fV/tdApkSl46QO7Ra5HOJqd9VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774495181; c=relaxed/simple;
-	bh=64GvIUh5BK+CA6321kY9KFkS39Cla/4+STtvnAwRWeg=;
+	s=arc-20240116; t=1774499067; c=relaxed/simple;
+	bh=qLTnJqZbaxwG2qOJyKqUwAntFRe+EXd9+bqnDfPzsFM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cymlS0+iX6pRjX/LWHWa+zU/0A4R/FKnOuY0Rtw32gMdMeat6dLODBMswyykmDmxE+gI2kDsKjmXCBa7Uz57tljLZ2BZJZrmP3PwqLwdiMZQB3+9JysNw7qGbdJAeiYZGPbrVKB8odirrMZaQU4W8KcBNQzSZL1ydtnah6Q6WAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoNJjbvs; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=oMzxIyR2v3Fz9mY8pt0LiDl/WpgE5cLFRPuyiAKgGieTnxw4x57ILLYQBvFre/dpKhxvrnU8rdK7Oo5z+dCPgL0naNQBszv72IjaKFh3tIhgwW6J2anYk+WBOABEObaM8PtbZmdWhgW68uUttaNja3+UPOC3Auu0l6lP2zAdds8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jlAxbEg0; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JC5Lxzg3; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoNJjbvs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B85C2BC9E;
-	Thu, 26 Mar 2026 03:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774495180;
-	bh=64GvIUh5BK+CA6321kY9KFkS39Cla/4+STtvnAwRWeg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DoNJjbvsdO9M8I355YakZTdyuT3xoRXpGtMM2wojdApb9Q7ajDoGdWHuW7T+qyJs8
-	 JLJtoasNll/fzCTKgF2pot1ARQr8/WJz18ymv6QdXj8Tag8zYprMsTUMGMVBz07VAn
-	 5/ol1dU6SqblhURvBbAUXWOT7ww/gO3Zmxb6zeoa1vKQWvC6Bi4QosLSw70nx8ljqL
-	 mxsSn9BJvJy2ba4neAZFnE1z8Z2JJhzsTZs5kI0u1/lgpSiGsj2hWBD4svpQ3mlUIl
-	 XLzSUDEneP1HMa3cDTXdRO7iUfFokDI5VOrhaCtSvbUNOFApAwpcyH/ryPfTXW5PdJ
-	 42LGsCrP7+iHQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/7] arm64: dts: Drop CPU masks from GICv3 PPI interrupts
-Date: Wed, 25 Mar 2026 22:19:21 -0500
-Message-ID: <177449516624.60308.16445349174496027428.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <cover.1772643434.git.geert+renesas@glider.be>
-References: <cover.1772643434.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jlAxbEg0";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JC5Lxzg3"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4fh9dy3wnqz9tQP;
+	Thu, 26 Mar 2026 05:24:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774499062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gz8iuoLUofR9ZYC8plHS1fC055EhXSSpkNZYn54JfOE=;
+	b=jlAxbEg0yC3imFvd2R1nHS5j0oNPp2IkXAldtOCbfcVtQ/oSM7gKdnklnPL06lRXEREA+A
+	0bsdNdMuAkTXKblyTp5tkX02f6kQZqW1np0Kt+HvnnIB1EaSI7JlSXJ76rOQoT/FHvMVai
+	3IIsFOWwIAaqt7OtE4qX0Yu8w/K8h8RjROOo7g1ZfDXP7SukK2ZFAqeFCIz9D+CTE4+LRT
+	Wd+lAY+S6BFDVfzLPs8ZeHpHWp9BL/iw1mZFZNmSK+D0XssuswpW8hy0B93k14Y/U4Cbf3
+	+1uq6DZCWP5aBXeaqlL6HL5Ht0KNyTmkW6pJZQZAm/3BXER6CkYgSUYCZiJUsw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=JC5Lxzg3;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1774499060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gz8iuoLUofR9ZYC8plHS1fC055EhXSSpkNZYn54JfOE=;
+	b=JC5Lxzg3aOVdFVeZ+AYsxNjj/KTzpZgK8hYLEVSpROVH/lWt6cK0Tiwte27XJL3pv4WoRl
+	RJQCWIJ7n+3iJIgDq05kjjPYI7cZxFrxk4Pn3wyBCZ32NqYDY3bHFED0eIgYcZS6bv6kjC
+	ul5hH7ox+F5xZxAI5qK7R2bnknyvSlzA9R+8p1uWs9ODD/ftV/h0iQmmOAH81Or2/IWNKc
+	L1Lu5e8LTCxC6DB5grbmiqM/QEC+2GZBTRtqz6YlZkorUuXJTNVP08AwnUISHu27wtiZ9m
+	R41JMvqlvCVzorh6GIugYi7eNuXWXdYGWNHYLOFpaPN5DTVQEcOOdN+e8h35jg==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/4] arm64: dts: renesas: Fix missing cells and reg in Draak/Ebisu panel DTO
+Date: Thu, 26 Mar 2026 05:23:58 +0100
+Message-ID: <20260326042411.215241-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org>
+References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 65319e4c90fd8c39f46
+X-MBO-RS-META: m5gzf5u5rteu7g3pc8n4f1u6u999tsa3
+X-Rspamd-Queue-Id: 4fh9dy3wnqz9tQP
 
+Add missing cells and reg DT property into Draak/Ebisu panel DTO to fix
+the following warning:
 
-On Wed, 04 Mar 2026 18:10:57 +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> Unlike older GIC variants, the GICv3 DT bindings do not support
-> specifying a CPU mask in PPI interrupt specifiers.  Hence this patch
-> series drop all such masks where they are still present.
-> 
-> This has been compile-tested only.  But note that all such masks were
-> removed before from Renesas SoCs in commit 8b6a006c914aac17 ("arm64:
-> dts: renesas: Drop specifying the GIC_CPU_MASK_SIMPLE() for GICv3
-> systems")).
-> 
-> [...]
+"
+arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso:30.10-34.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@1: node has a unit name, but no reg or ranges property
+"
 
-Applied, thanks!
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-[7/7] arm64: dts: qcom: Drop CPU masks from GICv3 PPI interrupts
-      commit: 99bb0693df91db9338fa69d496de4601c9582058
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
+index 258f8668ca361..90767d74e21b2 100644
+--- a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
++++ b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
+@@ -27,7 +27,12 @@ &lvds1 {
+ 	status = "okay";
+ 
+ 	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
+ 		port@1 {
++			reg = <1>;
++
+ 			lvds1_out: endpoint {
+ 				remote-endpoint = <&panel_in>;
+ 			};
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.53.0
+
