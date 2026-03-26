@@ -1,189 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C895309EE7;
-	Thu, 26 Mar 2026 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8813783B0
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2026 14:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774533820; cv=none; b=mdq+llzDI+RMdBzTpMDbmEwp3eJgxziaFNT5Wg0tJP0VKmHOtrSLAB0+5tDzjeDjGetfxRbMDK+NyhaRcIY7/C5rIZiKR5JsyDI1ZeWtRU6awYg2Wq3l0J766km+oUtnnqbKWSuT0epX2MtedcwsKJ1tB+g2ulExQyHbKir6rpA=
+	t=1774534270; cv=none; b=ajWq1/NkaEzZ0wf9rnsSm5Fv5HeF0HUNE/xAJU5Whi58hgJkcaMqxbgcTUvNb+J7UUTZ3W0KWYPV8rYWwoO0sorPsFq8nJdT/e5NmV79VKvW1csGxyNMZX1pkNAzM8KD7NiHWA6Oryam7cNRE5yw4bH0vgnQ+pnjxHPNk1qqYOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774533820; c=relaxed/simple;
-	bh=0oA7NWhlgKzbnBdmctJZwOZsjb0Vp/KeutODFRdBxHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+8X+S0BdXrt4SpM5d/GkKnoxE00DffvHnIeTZk4Jcan6tqu5atLQJFUhkqnzvGoU33/3xqx/opGuQvgcpiqAds5l4y+elB3kPbcegiS7+w3a82qWw30uVJEJSUZhNWa1aT1mWF+GCK50MqLFl94ZCRY+w5Z5vx5dGC+/Vt4sGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMSqdyfG; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMSqdyfG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB833C116C6;
-	Thu, 26 Mar 2026 14:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774533820;
-	bh=0oA7NWhlgKzbnBdmctJZwOZsjb0Vp/KeutODFRdBxHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VMSqdyfG0WGU8u6BVl2QpO82CQUMdCLxIKlHoXhyS5RB+wvwBUa6CmLedQuSR+F8R
-	 3/pJj8SyJDtckwuilnUYAwKtZVPxHu0ciP+kdWyz+Wu7Eq45TVWniG8bloSAC4yI4a
-	 vS1NdaDcMWMh6GYJwPxAmv3IIeNdUTddRhaogJLjvtDtj/6RrCLJPfkGHdkSnxBP0C
-	 TAYyFoJpQJvv66kC8gDalpSf6AY9NakkCntqMrp4Lyt2WX4R6WpBKBgrkDEEpwJJ6d
-	 k4L+gK1xLcRCCQ8uhPSXSYq52hojoY/sZfC/NDtVIy3XRM692Yiq96eqaO7q7NPBf/
-	 25jkycuzDixAQ==
-Date: Thu, 26 Mar 2026 09:03:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <mhecht73@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	Todor Tomov <todor.too@gmail.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@gmail.com>,
-	Marco Felsch <kernel@pengutronix.de>,
-	Lubomir Rintel <lkundrak@v3.sk>, linux-renesas-soc@vger.kernel.org,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: dt-bindings: i2c: Drop redundant endpoint
- properties
-Message-ID: <20260326140336.GA2291803-robh@kernel.org>
-References: <20260316134533.56941-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260316135352.GA31616@killaraus.ideasonboard.com>
- <a429887b-13f7-4ba3-9260-ddae92adfe51@oss.qualcomm.com>
- <abg7rvczKjyIA5jN@kekkonen.localdomain>
- <138cc10a-b30a-4fcc-8401-ed8ac89ac04c@oss.qualcomm.com>
- <20260318171246.GH633439@killaraus.ideasonboard.com>
+	s=arc-20240116; t=1774534270; c=relaxed/simple;
+	bh=mFU2c0LbIRehA7BI2cm6F9oxSoh6uyssNcntKmKFElY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oTTaDb9iLkRhQSzUX7tlPa1ZLRA29nkjOUJ0KHvboJMkEmtwVsjl8BPet6DfJg0tmufk5mB/5jwBJWzUGq2iXOYu1hMIKDH5yAxP3BUw3ezJCxlomUHFvHBi9EbnX9xWP8BDEcN4URkUo0Vg7S7jmOK+xpQhA8Ue+f3jim7cdH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-56ce54c8c82so375418e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2026 07:11:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774534264; x=1775139064;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V+bKV+ZQocjR4wxZ5VtPX9Yx9FjCc2fmvfO12wKPoP8=;
+        b=ot1hMAKOcoQCIN7IowWiiJ79YZhRDjfpkEQwpAxIAdAHr4sUwb6113TfU7Y8gYlXpk
+         SKnSBfFrW9DozASSpMhz0IhQWd10hTak5uC02c1TQ0EUX+TKNFIzfdS5hF9TObFApbgp
+         ZlRsrK3TrBaiq03k/e4ROtJyd6OMa1yYHsdzkNnk7CR6ADBcmys+RbeGG3IUMxY/M/8L
+         74Mp/f80eBu02TVPe2RatySWKhwgJzxIgDuIoRrVrfCtAzQZvL/LE+cbEJ+9zCqilxQ1
+         PlN5w4NLOw8ewox1nedaO7cuQAMITHbBGKCYKloJ4QXvk5fX6Z35zduIHT3IiqnaJ0V6
+         zJjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh8shGopgap7+RSBqPui8xGnyrjZ6agwlxOTGsRpvOUHz1CRenGBiLfvueHa6ceCr/0l4lOlGem1/kS2zXYditXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywww8oUCi36msYMrSJ+kSF8ABYLo7nYcxK/94uQFuDk7LxQWmBy
+	W3r2iyN/PIYrYp/htfStkZGL4cld2OUzKDS6YQ60OwPxhsYvsE+Xw5Eb73ZykFGww2o=
+X-Gm-Gg: ATEYQzwaN1ZVHyO+TAwlKS4s2AUyFZDbz1+nYkWHTcrxI+6wod8xCJhP+dP1WvvfWjp
+	WoCspbOtoviygK9KkxFlMJbk9SQbfE4cpeYjxsBw+B9x+ucoq3G6PldQkXdZkndNWxS1ayUBM6r
+	T7FSLR/aVy9/7mWGuScG8ksHEuLTJsbmHWlXBvPelbrCgXthXXyQzi94IBEcNe2rvpH84aRafAJ
+	waLX28bXnNOUL0RNHQBes4/+QjmWhYeZIYqhfrGQ8wE+FFvOexJ87i3L8lXyusaqlnV5gJfxnZT
+	DlsbLSFEnMQdiLUCnXbhLjrIbAUapdLU1MynH9kb9btwzO/kyjw15j8KS/m6UzIsKr+PbnleRba
+	8goSipDEA067qL/EdXnIxaeVh0Sh8A3fKjwK1oRxR5LES8w2aubFJ1d9J7jH5D82pZUFyGpxgmz
+	lFKK0jmdEzjVT+f1/n4Zjy8EdLIiage9SMjnTsUSzFI7+bbKOXz0zdUgKPN5gi
+X-Received: by 2002:a05:6122:905:b0:56b:1042:a24a with SMTP id 71dfb90a1353d-56d220ba1fbmr3737397e0c.13.1774534263799;
+        Thu, 26 Mar 2026 07:11:03 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d31d71947sm4294847e0c.14.2026.03.26.07.11.02
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2026 07:11:02 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-94abd52b274so261785241.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2026 07:11:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWwCGlrtUgNx1nq45oD4C3xW1Yaocq571Me/NgXuYcUYo7+9RxKJ/3VkHdB3uaILUB1M25j+371BoQUcNDq9o8U6A==@vger.kernel.org
+X-Received: by 2002:a05:6102:3976:b0:5ff:e769:44bb with SMTP id
+ ada2fe7eead31-60387319018mr2792199137.30.1774534262074; Thu, 26 Mar 2026
+ 07:11:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260318171246.GH633439@killaraus.ideasonboard.com>
+References: <20260320164158.487406-1-biju.das.jz@bp.renesas.com> <20260320164158.487406-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260320164158.487406-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Mar 2026 15:10:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWqgVmugEVV=k2_u1xKRswu+e8Hhi7dKD=E4Lep9S96OQ@mail.gmail.com>
+X-Gm-Features: AQROBzCL0y_jZA3BBZ1V00Z_wgTT1ywsDaOPuag8T0_jf1tfWGKQ90rerqBeNPg
+Message-ID: <CAMuHMdWqgVmugEVV=k2_u1xKRswu+e8Hhi7dKD=E4Lep9S96OQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: gpu: mali-bifrost: Add compatible for
+ RZ/G3L SoC
+To: Biju <biju.das.au@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 18, 2026 at 07:12:46PM +0200, Laurent Pinchart wrote:
-> Hello Krzysztof,
-> 
-> On Mon, Mar 16, 2026 at 07:02:41PM +0100, Krzysztof Kozlowski wrote:
-> > On 16/03/2026 18:19, Sakari Ailus wrote:
-> > > On Mon, Mar 16, 2026 at 03:42:09PM +0100, Krzysztof Kozlowski wrote:
-> > >> On 16/03/2026 14:53, Laurent Pinchart wrote:
-> > >>> On Mon, Mar 16, 2026 at 02:45:34PM +0100, Krzysztof Kozlowski wrote:
-> > >>>> The "endpoint" node references video-interfaces.yaml schema with
-> > >>>> "unevaluatedProperties: false" which means that all properties from
-> > >>>> referenced schema apply.  Listing some of them with ": true" is simply
-> > >>>> redundant and does not make this code easier to read.
-> > >>>
-> > >>> I think you know my opinion on this topic. I believe we would be better
-> > >>> off by turning "unevaluatedProperties: false" into
-> > >>> "additionalProperties: false" here, and keeping the list of applicable
-> > >>> properties. It brings value to device tree authors by telling which
-> > >>> properties are applicable to the device at hand. For instance ... (see
-> > >>> below)
-> > >>
-> > >> (let me trim)
-> > >>
-> > >>>> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov5647.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov5647.yaml
-> > >>>> index 2d7937a372a2..7a05a1eda58d 100644
-> > >>>> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov5647.yaml
-> > >>>> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov5647.yaml
-> > >>>> @@ -51,9 +51,6 @@ properties:
-> > >>>>          $ref: /schemas/media/video-interfaces.yaml#
-> > >>>>          unevaluatedProperties: false
-> > >>>>  
-> > >>>> -        properties:
-> > >>>> -          clock-noncontinuous: true
-> > >>>> -
-> > >>>
-> > >>> ... Without this, an integrator will need to dive into driver code to
-> > >>> know if non-continuous clock is usable for the device.
-> > >>
-> > >> I see. Our usual interpretation of common schema, expressed by @Rob in
-> > >> few places, that eventually all properties might be applicable. This
-> > >> applies especially for ABI tied to the core Linux specifics, e.g.
-> > >> rotation and orientation from video-interface-devices.yaml.
-> > >>
-> > >> Absolutely every sensor can be mounted rotated, therefore every binding
-> > >> referencing video-interface-devices should allow it, even if driver is
-> > >> not using it. Because basically that's the ABI we want to define for
-> > >> each sensor, thus each binding referencing common schema should have
-> > >> "unevaluatedProps: true" without listing them.
-> 
-> Yes, that's totally fine. I agree that properties defined in
-> video-interface-devices.yaml should not be listed in individual
-> bindings. They're generic, and all of them are applicable to each image
-> sensor device. That part is fine, I think we have no disagreement.
-> 
-> > >> Similarly touchscreen.yaml.
-> > >>
-> > >> OTOH, second option, properties which are strictly hardware, e.g. name
-> > >> of power supply or whether clock has or has not non-continuous mode,
-> > >> should be allowed only when they match the hardware. Such bindings
-> > >> should use "additionalProperties: false" so the hardware description is
-> > >> constrained/fixed/specific.
-> > > 
-> > > The patch may be technically correct but I'm afraid it won't improve the
-> > > bindings but rather the opposite: it removes information telling whether a
-> > > property is relevant for a given device.
-> > > 
-> > > I bet there are a lot of possibilities to write invalid DTS while the
-> > > checker says it's fine (missing data-lanes or link-frequencies, for
-> > > instance). That may have been the case before the patch but I'd make
-> > > properties a driver needs to function mandatory rather than removing them
-> > > from bindings altogether.
-> > 
-> > That's pretty different problem and I am not removing any mandatory
-> > properties. I changed absolutely nothing from functional point of view.
-> > 
-> > > It'd been on my to-do list to split the current video-interfaces.yaml into
-> > > several files: generic camera sensor properties, CSI-2 interface
-> > > properties, DVP/Bt.656 interface properties and the rest (full list
-> > > probably requires more thought). That way we could only include properties
-> > > that are relevant for the device without necessarily listing each one for
-> > > all bindings.
-> > > 
-> > > I'd also continue to list boolean properties relevant for devices as well
-> > > as other properties that are relevant for a device but not mandatory.
-> > 
-> > I don't think there is such goal and particular subsystem does not get
-> > exception here. What is relevant for device comes either from the
-> > hardware or implemented ABI, as I explained. Bindings arbitrarily
-> > choosing "I think this might be relevant" from some big schema with
-> > irrelevant pieces is not manageable and not correct.
-> 
-> But that's not what we're discussing. The properties you're dropping
-> here are not "arbitrarily" choosen as being relevant. Whether it is
-> possible or not to use a non-continuous clock is a hardware property,
-> it's not an arbitrary choice.
-> 
-> Your patch will not change anything when it comes to validation of DT by
-> tools using the schema, but it drops important information relevant to
-> DT writers. What I recommend instead is to switch from
-> "unevaluatedProperties: false" to "additionalProperties: false". Not
-> only will we keep the information, but it will also be enforced properly
-> by tools.
+On Fri, 20 Mar 2026 at 17:42, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add a compatible string for the Renesas RZ/G3L SoC variants that include a
+> Mali-G31 GPU. These variants share the same restrictions on interrupts,
+> clocks, and power domains as the RZ/G2L SoC, so extend the existing schema
+> validation accordingly.
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-I agree with keeping the information. Really, I'm indifferent, so if 
-anyone finds it useful then let's leave it. I'm also not going to care 
-in reviews either, so it's up to the media maintainers to care and 
-ensure consistency.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also, I don't think we can switch to additionalProperties here because 
-then we have to list all the standard graph properties, too. That I do 
-care about and don't care to see.
+Gr{oetje,eeting}s,
 
-Rob
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
