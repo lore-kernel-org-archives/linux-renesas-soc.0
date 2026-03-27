@@ -1,51 +1,46 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291EC3CF697;
-	Fri, 27 Mar 2026 09:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196D73C9EF0;
+	Fri, 27 Mar 2026 09:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774602291; cv=none; b=pnoQRK+bmksll8Xq0HVKEH7G9C9OfVurC0WwoXheZFWYCzWErzCVjMfEl8hxha8AlgwdKBlI7RipZMbfiTnRqsQKjfZOv9TYjKrU2JJNdwc4uoqcokJcoeZznQ4sBVJPySiEPDieVnpVDuJk5OAu4QdGHquYiOvgLv4OG3pe2c8=
+	t=1774602432; cv=none; b=oJG1fsOryfFql95sy2hutomHomD8JG8AuubzqPN7oTmk39oVx7niVNnKTOycS7+ZYUIGZY2wDO6854XO9LKk12zFnoRlL7n821z5JRfkhpmBpQHepf4MkGkPOc19CnbfrYfW7NQAA7VLfqONB2clF7UiLLDCxBuuktkNDpweloE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774602291; c=relaxed/simple;
-	bh=2q+MwjaTDQlDt2HK2ksY2sRwNISOSVyw4/LbSErZ+vs=;
+	s=arc-20240116; t=1774602432; c=relaxed/simple;
+	bh=lK1k8tVf48GHPvLwztHGlY4knt1Zw3SO9dEwb1AzehA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSxPEWc0M3XUYgIMWE2ZFP/gfyUTVn80RrSfTa8E349/HycC0gQBSyGzQOLnkl+l6i/QdDg0wM9hwO0WKE4p/h6Nrx8yOnluMEbCXdgxb2xVQde6ycSY125NdF1eH3/fibae0YEgMJpB+VlDiiziwX1svH3qGXGsyPBRlYOCdUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JEvrsZie; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=K44X1cDdAB3nUwLdYAIZGVKL/BHhRFvNP2Lom7fUrB7UCS9vSr3ob9iYxgD/r0OrPrD2VAkrxX0FtWW/alRpv96D5wJPcgehlkmCkv3qKYXFJJPLi+eiYx3Cc2e3Nh/H8SOuPucAKqOISwZXFMiIsAjV4it6tzM96d5po/uqwxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CN/BRyvh; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JEvrsZie"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CN/BRyvh"
 Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EAFB71783;
-	Fri, 27 Mar 2026 10:03:24 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 06EFF1783;
+	Fri, 27 Mar 2026 10:05:49 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1774602205;
-	bh=2q+MwjaTDQlDt2HK2ksY2sRwNISOSVyw4/LbSErZ+vs=;
+	s=mail; t=1774602350;
+	bh=lK1k8tVf48GHPvLwztHGlY4knt1Zw3SO9dEwb1AzehA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JEvrsZieYrtju8PjmnG2QOY2nPqKDNYPPc5aQBllB7bm6Z5EV6Cv345cROhB9s6yn
-	 RD4ATxHGt1qCLyA/qETm7cT7ovQjD1Ue4T6YecOe6pqDL6dmQxixo+V6+6j9QehYdc
-	 4toBc1zheMKmLGIJR/SCiZUZeUfRmZaTOqtQXTnk=
-Date: Fri, 27 Mar 2026 11:04:42 +0200
+	b=CN/BRyvhAdneg4XVvKktKriMy7t5utblF/xZKEnWtnArTviz/lflWGxBOLkJHkHey
+	 WyR8VVPk8lclPvE8jq0RI/9Bhd3GZvHPgNzQyWUcBySFXflOk5OWBIOOszoz/+0soe
+	 ZeZcJ70NXcxRwbKI4dgFNcVsnmigD2MvjprbZf2k=
+Date: Fri, 27 Mar 2026 11:07:07 +0200
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Amin <amin.gattout@gmail.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: Convert to of_drm_find_and_get_bridge()
-Message-ID: <20260327090442.GA3026673@killaraus.ideasonboard.com>
-References: <20260326-bridge-v1-1-c0c44b53f7b6@gmail.com>
- <DHDEL0VTRYDP.2D45EP8E07Y08@bootlin.com>
- <20260327083404.GA2993961@killaraus.ideasonboard.com>
- <CAHfa7xXeRaGw1ADFsuT2dcqkY+KXb9w_vi4tq8G6ehOS9r7cAA@mail.gmail.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4] arm64: dts: renesas: Fix missing cells and reg in
+ Draak/Ebisu panel DTO
+Message-ID: <20260327090707.GA3026970@killaraus.ideasonboard.com>
+References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org>
+ <20260326042411.215241-2-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -54,23 +49,54 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHfa7xXeRaGw1ADFsuT2dcqkY+KXb9w_vi4tq8G6ehOS9r7cAA@mail.gmail.com>
+In-Reply-To: <20260326042411.215241-2-marek.vasut+renesas@mailbox.org>
 
-On Fri, Mar 27, 2026 at 09:54:42AM +0100, Amin wrote:
-> Hi
+On Thu, Mar 26, 2026 at 05:23:58AM +0100, Marek Vasut wrote:
+> Add missing cells and reg DT property into Draak/Ebisu panel DTO to fix
+> the following warning:
 > 
-> Thanks for the feedback. I did reference commit 7282066e55347 (Luca's
-> earlier conversion) but I should have been more cautious since the
-> patch I submitted was a bit too simple/"dummy".
+> "
+> arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso:30.10-34.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@1: node has a unit name, but no reg or ranges property
+> "
 > 
-> To answer Laurent's question: I did not test this on hardware.
-> I was working through the deprecated API TODO  list and made the
-> mistake of treating this as a simple find-and-replace.
-> 
-> I'll send a v2.
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Luca has already submitted a patch, see
-https://lore.kernel.org/dri-devel/20260318-drm-bridge-alloc-getput-drm_of_find_bridge-4-v3-3-10f502520357@bootlin.com/
+It's slightly annoying to have to specify those properties in overlays.
+It would be nice to improve the tooling, but a warning-free build is
+probably a more important target for now.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
+> index 258f8668ca361..90767d74e21b2 100644
+> --- a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
+> +++ b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
+> @@ -27,7 +27,12 @@ &lvds1 {
+>  	status = "okay";
+>  
+>  	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+>  		port@1 {
+> +			reg = <1>;
+> +
+>  			lvds1_out: endpoint {
+>  				remote-endpoint = <&panel_in>;
+>  			};
 
 -- 
 Regards,
