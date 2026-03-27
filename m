@@ -1,229 +1,158 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F66B35B639
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 08:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C553D646C;
+	Fri, 27 Mar 2026 08:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774600033; cv=none; b=rFTKxzQymnkQpVcbPmzylpxeoFCace08cU0IFfS0UJ94Z+HM6thJgku0QrhXgHBgA3HQoT0pUFiWjXN4dOvhFwb9Gqrqt7Y3+Y5XbsmwALYWuyI/2MrEzHRLaEw3e9pMB7lnRfiexuK0FSiS/L9GGtNjtfNwYZId0Ow4lmGtcoQ=
+	t=1774600080; cv=none; b=U/4E1pxYHw7wSQKyNNRof2eJmc36Bu/2pSqkdAqD1KWqeWJwym4huf277mzSmVHWY78P64pausGBWeR8MYGplqKS1gKE//aYK3nflOWdIUbvZp3v5cFUx34O79dov3eKcKKYpz6CRvjLEDZqi7qllIirxlz1vqNCnNhFw+BM4rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774600033; c=relaxed/simple;
-	bh=uHQ/zQChMKtwlgmZZ157LZIBUXQcPchudbB5kN3qkcA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=JYiwzBRej/0OFcPIBS7oD0S+NYZDLkA7yDMTJX11E/Tq8AB5B21Tu/FwR8pcSgqO7qhgAIcpbe3yzyCAM2LunRJ1sJcIxUCnEI9Ixi0j0mOuqOA/wLyifg3EKRgcq2RFUyhpfZPgCGEPmY8mOHsaV5mEWQ9yhcimaAj7s2ZgqiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MqG/Lqgu; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MqG/Lqgu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774600032; x=1806136032;
-  h=date:from:to:cc:subject:message-id;
-  bh=uHQ/zQChMKtwlgmZZ157LZIBUXQcPchudbB5kN3qkcA=;
-  b=MqG/LqguvGgoxlzTV71PITFkS8f5f+BOoNuYY4/5HCGUz4LGDdKVjIuB
-   gN4/TEC1sb0qfJUjk2eMBFCxNAvwX6ymoGFdQF3ispF/MK+IIY+d7XE7O
-   sZuHF2DPfEM9sOqH9c43eZ++EfFygCX451B3+868HzwrOVMxpPURotIvc
-   zqUFpTFemFPg9I7eQobQxikj3LUQjjXxO0GeW5+d7TXea/c1JXxlu94Xm
-   0FJLUXt3qWbsUAV5YbMLwYGrzl0XrhAlyJteM0xqadOmvx8AND/E087dS
-   +/VEZ6U5mfsRe0dQ7+CZKsFM4PpYRkE/xm78UPmiAId0GcKnF1QKDAKgX
-   g==;
-X-CSE-ConnectionGUID: Di7VYSV8Raau3GX6mAxF/Q==
-X-CSE-MsgGUID: EtEAtXbMQYeQBpQf1yAbFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="87052051"
-X-IronPort-AV: E=Sophos;i="6.23,143,1770624000"; 
-   d="scan'208";a="87052051"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2026 01:27:11 -0700
-X-CSE-ConnectionGUID: zNEMSOCHTteOo5VmdS38KA==
-X-CSE-MsgGUID: ju/q/pcyRGaC/J0Z6/MxLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,143,1770624000"; 
-   d="scan'208";a="225257703"
-Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 27 Mar 2026 01:27:10 -0700
-Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w62X5-000000009y5-0Rxo;
-	Fri, 27 Mar 2026 08:27:07 +0000
-Date: Fri, 27 Mar 2026 16:26:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- 1ba26dfafb4dec62f21a1d85c0da04548209f0c9
-Message-ID: <202603271615.FGB5ZqTP-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1774600080; c=relaxed/simple;
+	bh=aqwo6YDRLA2mVz94WYaEU1NWDqPecZfQ0fOXF3ovnY0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=kkdjka3sGVpWZxp4GqN+JzGy1dL0Qc2kdpDskBzYxr/fnVL7lFlTriaE2NhCeOl9Cvt2edRhpfWTktDqkVsm3UNCGTwZ6Agkf7ZdxfbB38/g6AXh1IKQ8Wqzz2A6BP6ut7gW9i9z94yJ8UkTK+QOW/vsFmLdk4AedMi0WSX3VAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 4527kRwCRbataseaWfx2mg==
+X-CSE-MsgGUID: cbPRHiPbSmS3zTCwjnJF1Q==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 27 Mar 2026 17:27:48 +0900
+Received: from [127.0.1.1] (unknown [10.226.78.135])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4F51F401225D;
+	Fri, 27 Mar 2026 17:27:46 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+Date: Fri, 27 Mar 2026 09:27:31 +0100
+Subject: [PATCH net-next v2 01/13] net: renesas: rswitch: improve port
+ change mode functions
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260327-rswitch_add_vlans-v2-1-d7f4358ca57a@renesas.com>
+References: <20260327-rswitch_add_vlans-v2-0-d7f4358ca57a@renesas.com>
+In-Reply-To: <20260327-rswitch_add_vlans-v2-0-d7f4358ca57a@renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774600062; l=3529;
+ i=michael.dege@renesas.com; s=20251023; h=from:subject:message-id;
+ bh=aqwo6YDRLA2mVz94WYaEU1NWDqPecZfQ0fOXF3ovnY0=;
+ b=HE/FmLj49lJdTseOR3YBtRuvFgw23KcdVCbaGfTtStYnYXZsQ+lT1UwxedkzH+pYbOQopYDEo
+ D9MmteStKXKA7unV9vvQGd5p1YlP2zFSDK9MLgNZCW1T3WSw4U11xGq
+X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
+ pk=gu1rwIcCrAxNMv2I8fIfiQvt51xzZwnQy4Ua/DscQt8=
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 1ba26dfafb4dec62f21a1d85c0da04548209f0c9  Merge branch 'renesas-dts-for-v7.1' into renesas-next
+For ETHA and GWCA ports every mode change from operational to
+configuration and vice-versa requires to change the mode to
+"disable" first. This was done by calling the function twice.
+Let the change_mode functione take care of this requiered step
+in a single call.
 
-elapsed time: 752m
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch_main.c | 39 +++++++++++++----------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
-configs tested: 152
-configs skipped: 1
+diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
+index 6fe964816322..f6d1e610e7fa 100644
+--- a/drivers/net/ethernet/renesas/rswitch_main.c
++++ b/drivers/net/ethernet/renesas/rswitch_main.c
+@@ -176,14 +176,19 @@ static int rswitch_gwca_change_mode(struct rswitch_private *priv,
+ 	if (!rswitch_agent_clock_is_enabled(priv->addr, priv->gwca.index))
+ 		rswitch_agent_clock_ctrl(priv->addr, priv->gwca.index, 1);
+ 
+-	iowrite32(mode, priv->addr + GWMC);
++	iowrite32(GWMC_OPC_DISABLE, priv->addr + GWMC);
+ 
+-	ret = rswitch_reg_wait(priv->addr, GWMS, GWMS_OPS_MASK, mode);
++	ret = rswitch_reg_wait(priv->addr, GWMS, GWMS_OPS_MASK, GWMC_OPC_DISABLE);
+ 
+-	if (mode == GWMC_OPC_DISABLE)
++	if (mode == GWMC_OPC_DISABLE) {
+ 		rswitch_agent_clock_ctrl(priv->addr, priv->gwca.index, 0);
+ 
+-	return ret;
++		return ret;
++	}
++
++	iowrite32(mode, priv->addr + GWMC);
++
++	return rswitch_reg_wait(priv->addr, GWMS, GWMS_OPS_MASK, mode);
+ }
+ 
+ static int rswitch_gwca_mcast_table_reset(struct rswitch_private *priv)
+@@ -682,9 +687,6 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
+ 	unsigned int i;
+ 	int err;
+ 
+-	err = rswitch_gwca_change_mode(priv, GWMC_OPC_DISABLE);
+-	if (err < 0)
+-		return err;
+ 	err = rswitch_gwca_change_mode(priv, GWMC_OPC_CONFIG);
+ 	if (err < 0)
+ 		return err;
+@@ -717,9 +719,6 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
+ 			return err;
+ 	}
+ 
+-	err = rswitch_gwca_change_mode(priv, GWMC_OPC_DISABLE);
+-	if (err < 0)
+-		return err;
+ 	return rswitch_gwca_change_mode(priv, GWMC_OPC_OPERATION);
+ }
+ 
+@@ -727,9 +726,6 @@ static int rswitch_gwca_hw_deinit(struct rswitch_private *priv)
+ {
+ 	int err;
+ 
+-	err = rswitch_gwca_change_mode(priv, GWMC_OPC_DISABLE);
+-	if (err < 0)
+-		return err;
+ 	err = rswitch_gwca_change_mode(priv, GWMC_OPC_RESET);
+ 	if (err < 0)
+ 		return err;
+@@ -1116,14 +1112,18 @@ static int rswitch_etha_change_mode(struct rswitch_etha *etha,
+ 	if (!rswitch_agent_clock_is_enabled(etha->coma_addr, etha->index))
+ 		rswitch_agent_clock_ctrl(etha->coma_addr, etha->index, 1);
+ 
+-	iowrite32(mode, etha->addr + EAMC);
+-
+-	ret = rswitch_reg_wait(etha->addr, EAMS, EAMS_OPS_MASK, mode);
++	iowrite32(EAMC_OPC_DISABLE, etha->addr + EAMC);
++	ret = rswitch_reg_wait(etha->addr, EAMS, EAMS_OPS_MASK, EAMC_OPC_DISABLE);
+ 
+-	if (mode == EAMC_OPC_DISABLE)
++	if (mode == EAMC_OPC_DISABLE) {
+ 		rswitch_agent_clock_ctrl(etha->coma_addr, etha->index, 0);
+ 
+-	return ret;
++		return ret;
++	}
++
++	iowrite32(mode, etha->addr + EAMC);
++
++	return rswitch_reg_wait(etha->addr, EAMS, EAMS_OPS_MASK, mode);
+ }
+ 
+ static void rswitch_etha_read_mac_address(struct rswitch_etha *etha)
+@@ -1203,9 +1203,6 @@ static int rswitch_etha_hw_init(struct rswitch_etha *etha, const u8 *mac)
+ {
+ 	int err;
+ 
+-	err = rswitch_etha_change_mode(etha, EAMC_OPC_DISABLE);
+-	if (err < 0)
+-		return err;
+ 	err = rswitch_etha_change_mode(etha, EAMC_OPC_CONFIG);
+ 	if (err < 0)
+ 		return err;
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+-- 
+2.43.0
 
-tested configs:
-alpha                             allnoconfig    gcc-15.2.0
-alpha                            allyesconfig    gcc-15.2.0
-alpha                               defconfig    gcc-15.2.0
-arc                              allmodconfig    clang-16
-arc                               allnoconfig    gcc-15.2.0
-arc                              allyesconfig    clang-23
-arc                                 defconfig    gcc-15.2.0
-arc                   randconfig-001-20260327    gcc-8.5.0
-arc                   randconfig-002-20260327    gcc-8.5.0
-arm                               allnoconfig    gcc-15.2.0
-arm                              allyesconfig    clang-16
-arm                                 defconfig    gcc-15.2.0
-arm                   randconfig-001-20260327    gcc-8.5.0
-arm                   randconfig-002-20260327    gcc-8.5.0
-arm                   randconfig-003-20260327    gcc-8.5.0
-arm                   randconfig-004-20260327    gcc-8.5.0
-arm                           tegra_defconfig    gcc-15.2.0
-arm64                            allmodconfig    clang-23
-arm64                             allnoconfig    gcc-15.2.0
-arm64                               defconfig    gcc-15.2.0
-arm64                 randconfig-001-20260327    clang-23
-arm64                 randconfig-002-20260327    clang-18
-arm64                 randconfig-003-20260327    gcc-9.5.0
-arm64                 randconfig-004-20260327    clang-23
-csky                             allmodconfig    gcc-15.2.0
-csky                              allnoconfig    gcc-15.2.0
-csky                                defconfig    gcc-15.2.0
-csky                  randconfig-001-20260327    gcc-15.2.0
-csky                  randconfig-002-20260327    gcc-15.2.0
-hexagon                          allmodconfig    gcc-15.2.0
-hexagon                           allnoconfig    gcc-15.2.0
-hexagon                             defconfig    gcc-15.2.0
-hexagon               randconfig-001-20260327    gcc-8.5.0
-hexagon               randconfig-002-20260327    gcc-8.5.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    gcc-15.2.0
-i386                             allyesconfig    clang-20
-i386                                defconfig    gcc-15.2.0
-i386                  randconfig-001-20260327    clang-20
-i386                  randconfig-002-20260327    clang-20
-i386                  randconfig-003-20260327    clang-20
-i386                  randconfig-004-20260327    clang-20
-i386                  randconfig-005-20260327    clang-20
-i386                  randconfig-006-20260327    clang-20
-i386                  randconfig-007-20260327    clang-20
-i386                  randconfig-011-20260327    gcc-14
-i386                  randconfig-012-20260327    gcc-14
-i386                  randconfig-013-20260327    gcc-14
-i386                  randconfig-014-20260327    gcc-14
-i386                  randconfig-015-20260327    gcc-14
-i386                  randconfig-016-20260327    gcc-14
-i386                  randconfig-017-20260327    gcc-14
-loongarch                        allmodconfig    clang-23
-loongarch                         allnoconfig    gcc-15.2.0
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20260327    gcc-8.5.0
-loongarch             randconfig-002-20260327    gcc-8.5.0
-m68k                             allmodconfig    gcc-15.2.0
-m68k                              allnoconfig    gcc-15.2.0
-m68k                             allyesconfig    clang-16
-m68k                                defconfig    clang-19
-microblaze                        allnoconfig    gcc-15.2.0
-microblaze                       allyesconfig    gcc-15.2.0
-microblaze                          defconfig    clang-19
-mips                             allmodconfig    gcc-15.2.0
-mips                              allnoconfig    gcc-15.2.0
-mips                             allyesconfig    gcc-15.2.0
-nios2                            allmodconfig    clang-23
-nios2                             allnoconfig    clang-23
-nios2                               defconfig    clang-19
-nios2                 randconfig-001-20260327    gcc-8.5.0
-nios2                 randconfig-002-20260327    gcc-8.5.0
-openrisc                         allmodconfig    clang-23
-openrisc                          allnoconfig    clang-23
-parisc                           allmodconfig    gcc-15.2.0
-parisc                            allnoconfig    clang-23
-parisc                           allyesconfig    clang-19
-parisc                randconfig-001-20260327    clang-18
-parisc                randconfig-002-20260327    clang-18
-parisc64                            defconfig    clang-19
-powerpc                          allmodconfig    gcc-15.2.0
-powerpc                           allnoconfig    clang-23
-powerpc               randconfig-001-20260327    clang-18
-powerpc               randconfig-002-20260327    clang-18
-powerpc64             randconfig-001-20260327    clang-18
-powerpc64             randconfig-002-20260327    clang-18
-riscv                            allmodconfig    clang-23
-riscv                             allnoconfig    clang-23
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20260327    gcc-12.5.0
-riscv                 randconfig-002-20260327    gcc-12.5.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-23
-s390                             allyesconfig    gcc-15.2.0
-s390                  randconfig-001-20260327    gcc-12.5.0
-s390                  randconfig-002-20260327    gcc-12.5.0
-sh                               allmodconfig    gcc-15.2.0
-sh                                allnoconfig    clang-23
-sh                               allyesconfig    clang-19
-sh                                  defconfig    gcc-14
-sh                    randconfig-001-20260327    gcc-12.5.0
-sh                    randconfig-002-20260327    gcc-12.5.0
-sparc                             allnoconfig    clang-23
-sparc                 randconfig-001-20260327    gcc-14
-sparc                 randconfig-002-20260327    gcc-14
-sparc64                          allmodconfig    clang-23
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20260327    gcc-14
-sparc64               randconfig-002-20260327    gcc-14
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-23
-um                               allyesconfig    gcc-15.2.0
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20260327    gcc-14
-um                    randconfig-002-20260327    gcc-14
-um                           x86_64_defconfig    gcc-14
-x86_64                           allmodconfig    clang-20
-x86_64                            allnoconfig    clang-23
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20260327    clang-20
-x86_64      buildonly-randconfig-002-20260327    clang-20
-x86_64      buildonly-randconfig-003-20260327    clang-20
-x86_64      buildonly-randconfig-004-20260327    clang-20
-x86_64      buildonly-randconfig-005-20260327    clang-20
-x86_64      buildonly-randconfig-006-20260327    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20260327    gcc-14
-x86_64                randconfig-002-20260327    gcc-14
-x86_64                randconfig-003-20260327    gcc-14
-x86_64                randconfig-004-20260327    gcc-14
-x86_64                randconfig-005-20260327    gcc-14
-x86_64                randconfig-006-20260327    gcc-14
-x86_64                randconfig-011-20260327    gcc-14
-x86_64                randconfig-012-20260327    gcc-14
-x86_64                randconfig-013-20260327    gcc-14
-x86_64                randconfig-014-20260327    gcc-14
-x86_64                randconfig-015-20260327    gcc-14
-x86_64                randconfig-016-20260327    gcc-14
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    clang-23
-xtensa                           allyesconfig    clang-23
-xtensa                  nommu_kc705_defconfig    gcc-15.2.0
-xtensa                randconfig-001-20260327    gcc-14
-xtensa                randconfig-002-20260327    gcc-14
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
