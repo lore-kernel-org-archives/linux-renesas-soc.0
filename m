@@ -1,145 +1,96 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19333D47DB;
-	Fri, 27 Mar 2026 08:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C863D47DB;
+	Fri, 27 Mar 2026 08:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774600377; cv=none; b=gdn76TIJlafVkuMrkJSxI3ILSunYbAZX1ZUsfi35OnMoP8960/5jeXEcqauqHz7izg08PJ84eFXmI1tWg7l2kvaDbqJtBUS/bayDxZCDLUxXvZuufHCO3Z8IQE9FiUAwWM4r7tDvJl7nq8f/1c+CLD80g5GMZv0zXdDtgZYkuWQ=
+	t=1774600451; cv=none; b=Zic+sCIEj7So1bTbtpZEuNl/VybPffLqWwRR7cb1f0tvWcl1pjljY60wMaF8Z/yuKXeQVIIKMxuoFIJSM6oBE/715SIvDHJ9am+8dpoKvCE2cTPndIbqUXxPSWFm5qMGRTKI3OPmeU+V5Xjh3bQOOoy4GXwzmVcAbaWu2KzAHio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774600377; c=relaxed/simple;
-	bh=5sVvqqlN6CQ8D82GR0F47f6Lz9uuFnIDmt0lpbIo+6g=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K2F+P/tx5sPXn8ZvfWnJ0IZOeh2EPtVWx+Pf4UweeojCIloj/ijO+Zfuu3NSRBOPOqyj6KT9F1zRt+NoWf8h9Lgtdp3CUt9sdunziznxL5QtMcOiIXwbphXW1EGqH5G4N/c0//SoxGhZdOYlSeRd+lKjzFA/qMdvRn9+aW7Sins=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: Z67X1Hx4SpKRxd/gjClTLw==
-X-CSE-MsgGUID: 20yoYbAKTwyUuTMBMWBCGQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Mar 2026 17:27:45 +0900
-Received: from [127.0.1.1] (unknown [10.226.78.135])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3891440116AA;
-	Fri, 27 Mar 2026 17:27:42 +0900 (JST)
-From: Michael Dege <michael.dege@renesas.com>
-Subject: [net-next PATCH v2 00/13] net: renesas: rswitch: R-Car S4 add VLAN
- aware switching
-Date: Fri, 27 Mar 2026 09:27:30 +0100
-Message-Id: <20260327-rswitch_add_vlans-v2-0-d7f4358ca57a@renesas.com>
+	s=arc-20240116; t=1774600451; c=relaxed/simple;
+	bh=Rmk3YZOfeV80Jfhg4CfzxfdypSaxPXEVhEAPVsjEkUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGF8IMMdmlErFOp4C7FdVqcxW7LvpLe9ydaEvZq33Xsk56fbsi5h9ZExOgFnvp33+oZsmbNcq5MS12ttSW/dOMgksfoeTb13vC+Eh7QKq97ASp+Cwi/uq98/WwxQ5vTjsbMgQ4pH3pZIHwPgOWdsByc1JGiQq/FTyIoPDnrNJ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=exyRGiEB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="exyRGiEB"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 347E67CA;
+	Fri, 27 Mar 2026 09:32:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1774600367;
+	bh=Rmk3YZOfeV80Jfhg4CfzxfdypSaxPXEVhEAPVsjEkUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=exyRGiEBRpJf+51y+H0CSqe6/fPqeCUMrzT2XfyVvvcPEENDkOLBHvzewHFmJO0x+
+	 VESpApUpUdLHvgmlmgnKKhFU0Bygk9dixMYw9yNhJNLvhmZeOkV99hsa5aN1Lqvu1I
+	 qiyYKmsDLhTCda1gvAxuj/Njt/d4mWN1Vox5yxUs=
+Date: Fri, 27 Mar 2026 10:34:04 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Amin GATTOUT <amin.gattout@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rcar-du: Convert to of_drm_find_and_get_bridge()
+Message-ID: <20260327083404.GA2993961@killaraus.ideasonboard.com>
+References: <20260326-bridge-v1-1-c0c44b53f7b6@gmail.com>
+ <DHDEL0VTRYDP.2D45EP8E07Y08@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHM/xmkC/22NywrCMBBFf6XM2kiSah+u/A8pJU0mdkBTyZSol
- P67sW5dngP33AUYIyHDqVggYiKmKWTQuwLsaMIVBbnMoKWupNJSRH7SbMfeONenmwksyvbQNIM
- fdFtZyLtHRE+vrXnpMo/E8xTf20VSX/urlar+U0tKSFGaYz14I7126hwxIBve2+kO3bquH2kTa
- k+0AAAA
-X-Change-ID: 20260120-rswitch_add_vlans-39488bfb296c
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774600062; l=3517;
- i=michael.dege@renesas.com; s=20251023; h=from:subject:message-id;
- bh=5sVvqqlN6CQ8D82GR0F47f6Lz9uuFnIDmt0lpbIo+6g=;
- b=q7M6Zg12fgkv2tmDnteQrEfRiD395cEvKZwXZManFusAcbwNC/c3xCBnZtFxUNn6FypTmaXhH
- fLZWrVvCUcLCbjUHYmjWFi919F5Rk9xNXdIFbFkrp5/z+MxVgE3B07G
-X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
- pk=gu1rwIcCrAxNMv2I8fIfiQvt51xzZwnQy4Ua/DscQt8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DHDEL0VTRYDP.2D45EP8E07Y08@bootlin.com>
 
-Hello!
+Hi Luca,
 
-The current R-Car S4 rswitch driver only supports basic HW offloading
-for L2 switching/bridgeing. This patchset extends the driver with
-support for VLAN aware switching.
+On Fri, Mar 27, 2026 at 08:57:45AM +0100, Luca Ceresoli wrote:
+> On Thu Mar 26, 2026 at 9:10 PM CET, Amin GATTOUT wrote:
+> > of_drm_find_bridge() is deprecated.
+> > Replace it with of_drm_find_and_get_bridge() which increments
+> > the bridge refcount as required.
+> 
+> Thanks for taking care of the conversion to the new API!
 
-1. For every port mode change from configuration to operation and
-   vice-versa you need to change to disabled mode first. The
-   functions rswitch_<port>_change_mode now take care of this. 
+I suspect you may be talking to a machine (possibly through a human
+proxy).
 
-2. In upcomming changes for adding vlan support struct net_device
-   will not be available in all cases, therefore use struct device
-   instead.
+> > --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+> > +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+> > @@ -72,7 +72,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+> >  		if (IS_ERR(bridge))
+> >  			return PTR_ERR(bridge);
+> >  	} else {
+> > -		bridge = of_drm_find_bridge(enc_node);
+> > +		bridge = of_drm_find_and_get_bridge(enc_node);
+> 
+> This change alone is not correct I'm afraid. The difference between
+> of_drm_find_bridge() and of_drm_find_and_get_bridge() is the latter get a
+> reference to the bridge, so you have to put that reference when the bridge
+> pointer is no more accessible.
+> 
+> Have a look at previous commits doing the same API replacement, you can
+> find examples similar to this one, where:
+> 
+>  * the bridge pointer is stored in a local variable (not saved in a struct)
+>  * the bridge pointer could be set wither by of_drm_find_bridge() or
+>    a function adding a panel bridge
+> 
+> Luca
 
-3. Fix typo in register define macro and remove duplicate macro.
-
-4. Add register definitions needed fo vlan support.
-
-5. Add exception path for packets with unknown destitination MAC
-   addresses.
-
-6. Make the helper functions rswitch_reg_wait(),
-   rswitch_etha_change_mode() and rswitch_etha_change_mode()
-   available to the whole driver.
-
-7. Add basic start-up time initialization needed to support VLANs.
-
-8. Update ETHA and GWCA port HW initializations.
-
-9. Clean up is_rdev() rswitch_device checking.
-
-10. Provide struct rswitch_private to notifiers.
-
-11. Add handler for FDB notifications to configure bridge MAC address
-    to GWCA registers and update static MAC table entry.
-
-12. Add vlan support to L2 HW bridge.
-
-Configuration example:
-ip link add name br0 type bridge vlan_filtering 1
-ip link set dev tsn0 master br0
-ip link set dev tsn1 master br0
-ip link set dev br0 up
-ip link set dev tsn0 up
-ip link set dev tsn1 up
-bridge vlan add dev tsn0 vid 4
-bridge vlan add dev tsn1 vid 4
-bridge vlan add dev br0 vid 4 self
-ip a a 192.168.1.20/24 dev br0
-ip l a link br0 name br0.1 type vlan id 1
-ip l a link br0 name br0.4 type vlan id 4
-ip a a 192.168.2.20/24 dev br0.1
-ip a a 192.168.4.20/24 dev br0.4
-ip link set dev br0.1 up
-ip link set dev br0.4 up
-
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
----
-Changes in v2:
-- Reworked reswitch_update_l2_hw_forwarding_gwca() as suggested.
-- Fixed missing initialization found by test robot.
-- Link to v1: https://lore.kernel.org/r/20260317-rswitch_add_vlans-v1-0-3a57bfa0f2d1@renesas.com
-
----
-Michael Dege (13):
-      net: renesas: rswitch: improve port change mode functions
-      net: renesas: rswitch: use device instead of net_device
-      net: renesas: rswitch: fix FWPC2 register access macros
-      net: renesas: rswitch: add register definitions for vlan support
-      net: renesas: rswitch: add exception path for packets with unknown dst MAC
-      net: renesas: rswitch: add forwarding rules for gwca
-      net: renesas: rswitch: make helper functions available to whole driver
-      net: renesas: rswitch: add basic vlan init to rswitch_fwd_init
-      net: renesas: rswitch: update port HW init
-      net: renesas: rswitch: clean up is_rdev rswitch_device checking
-      net: renesas: rswitch: add passing of rswitch_private into notifiers
-      net: renesas: rswitch: add handler for FDB notification
-      net: renesas: rswitch: add vlan aware switching
-
- drivers/net/ethernet/renesas/rswitch.h      | 181 +++++++-
- drivers/net/ethernet/renesas/rswitch_l2.c   | 637 ++++++++++++++++++++++++----
- drivers/net/ethernet/renesas/rswitch_l2.h   |   6 +-
- drivers/net/ethernet/renesas/rswitch_main.c | 203 ++++++---
- 4 files changed, 871 insertions(+), 156 deletions(-)
----
-base-commit: 1f318b96cc84d7c2ab792fcc0bfd42a7ca890681
-change-id: 20260120-rswitch_add_vlans-39488bfb296c
-
-Best regards,
 -- 
-Michael Dege <michael.dege@renesas.com>
+Regards,
 
+Laurent Pinchart
