@@ -1,56 +1,53 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF08039E196;
-	Fri, 27 Mar 2026 23:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA603932DA;
+	Fri, 27 Mar 2026 23:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774654990; cv=none; b=Fnq4zpEZuvzWZmS3fHC1Y2Y/CyNFUK8+qyJZXiTUao156TFkaEWoPRtbBrO5HCJgMBK5/hLwmsEn3/AIoAVk7G0oCUl4w10uTbtLAhvNWnekMqu/OfgDlx1kG6Q3CFkciVMdubKwJvY+GEwQDpk+nypGTVSYXBQufmfkxXTFrHY=
+	t=1774654997; cv=none; b=XFDrX6UlvE9BpE0Tg84QZiNtdDCCq6Ctk6lFi8S9qhMASP92tEVJgPjsdkHhXc75+LDdc680p4rZw6Mlm0kALWM0gdupSk9IBWL7482pYOY0hDuXu1JPSCk34ijCRqCtoXgZ5lE/DtzNROwvb7M/L2Imz6zrjYxmQWWpufIrXPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774654990; c=relaxed/simple;
-	bh=ifVLXGubeDe4aryVuE84f7HPcEbRzgf+9RnGYK4UHcw=;
+	s=arc-20240116; t=1774654997; c=relaxed/simple;
+	bh=IbqJlybPQ41SoSjvph940DQUuGCFknCAE+/lxY+Wh4s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qANMmjyje4d/enIaPK/o36ik4CPipOFMmq6SVOGjDmVxqEp/YQQMQV7+dnWSYF/fb8hRVJycTCE3rVZuSp36vKE/+vOIgmf8unSEhVDhdaFfbz4Sq3+mTMYTRZk0e1UzVrr1AkgPpbSgbfb9gkAXGe1XYUE8Sg1Iey8hWEmWeqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xoZuuRCx; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Ocx//wCJ; arc=none smtp.client-ip=80.241.56.161
+	 MIME-Version; b=k26mWCiaVMOA6dPu2/wKDRtz6WwxYFASnRYiztOnASXnl09UI/BcM2jjoG/AHOXWcZDKuQxbNT4TSRzv4acXFJsJIh4RTQrhXR+57v+q2TIIR8R/L4q/CxzDi3buc6VzjIBlNgvCHGyeep0vGgGANGuDViRuuwhD+7Y0E/1pT/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hYxLEwow; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fLvx8Es6; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xoZuuRCx";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Ocx//wCJ"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hYxLEwow";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fLvx8Es6"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fjHJT0x0Vz9tCf;
-	Sat, 28 Mar 2026 00:43:05 +0100 (CET)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4fjHJX1ZkHz9tcZ;
+	Sat, 28 Mar 2026 00:43:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774654985;
+	t=1774654988;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h3E5laNUcpyFi0ktqHAkYL8SAWhUJy35oJrbXxzqXko=;
-	b=xoZuuRCxpHJ/LUkuonsdBniJu2e6To14l1PU2ljul7kl5ggRyBfhn61YrXEj5j1YUQBI94
-	aYswbRQCc8YKLUSi6H29wi3H4pyY/AKCXiEkH5egxOsPfscf996gQhHqVYjAvAx+w1tI+A
-	GK1U0mMhY0RJL11ubjX4HElVG5/2ro9iBEThCsOiUTK81YiidvhkIqu05JwwS5RHgGlCgp
-	LXLdtESruqqiYXrk+YRR9Q8+q3bdEsQCqhUqP3l3MBvCdQSqf6HOymAFyQrfkbJJa/oz91
-	zXS+F2q7tU2MCgvAaEcnRV+EynAS3gZYxoQn0IcPLCjsmHWdvW7/AN+UZg9W4Q==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="Ocx//wCJ";
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+	bh=2bex1hO3WMYeSCxBiwiXbZfxoHtDMi+nquBUcT0rGf8=;
+	b=hYxLEwowig8hDfdkmUVqZ1MFWBvzh4FdAYalK9wZGK7cCs7kO5LyTINCflFzggBGde9a/S
+	Cti44lp1Ui6P9PrdM5k+ScaIivXk20z4vPhB8I3gY8aMNJVwlikUR3nocH+Syf7CFYCHsM
+	7e36/fq5RwClRyxbQeeG5JrKN8l1Lp4XZsA7woovcGCr+AZ3oNM3L2tFOwaOOrw/3Inh9Y
+	O8yNpVKHlrzrmVK8RQzGzQ4VId6dzlcQJR7NXNEsVQpO7k8lt+ONeEuhd0LY9bIB6z3Dp6
+	I95euIFf4qv7/NmlqnljZtKfCWjNqoPJYltnDA2inuSFGvimK2HMDpDVWWbnVQ==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774654983;
+	t=1774654986;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h3E5laNUcpyFi0ktqHAkYL8SAWhUJy35oJrbXxzqXko=;
-	b=Ocx//wCJNTe/96KNqIJTGxh9kYf2uFXhFWBI0OerYoKIyUfmPMU303TfWaHOkPj0NrsDcs
-	NCB+JyC8eEy5PbOXnSjwq+5CVqv3ffa/BIUrii14tfisPuCS0LLtCJ4ZoUQ1FMQBIvKZh2
-	UMQNomjd8wG5yDctjWMMYLg2pMMtOAEy2yTNfeW+DTHADEyjgX8OaCio10z09ENrMVaWGI
-	hyT/YlgnVvcR9k7CPClyTphfoLzOwdcjBgCkDBqlOFq1gtAl0fqram6KvvtFw7mMAIQJHu
-	qTsuLVNXQhVAsUAevyEnFFHOIGInaxk0/I64CHYxoDekNFL7GHnevP0EpSyVCA==
+	bh=2bex1hO3WMYeSCxBiwiXbZfxoHtDMi+nquBUcT0rGf8=;
+	b=fLvx8Es6HS5jyDv3GRC/YvU7sKLQ4NKMg7WubinyrDPUsRn0i0YIj3B1SE0nj6Zb/XkYd+
+	VPBo3LuoL169iKI0rDtlPhlC1FWCLCLm1HouYVVAxt2+1xhrRIeRgKg/jOO9mm/aKfr5ZO
+	frgrAkoQ8OGfPcMZmfl+JIobtq6tMCGxIlCqZnfvAsA9uGkx3l14pxQqf5I+hLVVsSIoiB
+	Wf3RQ6A3Ju6xylekwFlS0U3BRTr6RhiiVYkvDh7Ebm/WUUw5H+VAjPHruL9bQYXMeTXQAp
+	4quxBXhd2+NrMja1ZjSph7e3q7/wf+Q7MNownypWSDpmCTI9/bl+shcI1bOHzg==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -61,9 +58,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/6] ARM: dts: renesas: genmai: Drop superfluous cells
-Date: Sat, 28 Mar 2026 00:42:10 +0100
-Message-ID: <20260327234244.91707-6-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 6/6] ARM: dts: renesas: rskrza1: Drop superfluous cells
+Date: Sat, 28 Mar 2026 00:42:11 +0100
+Message-ID: <20260327234244.91707-7-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260327234244.91707-1-marek.vasut+renesas@mailbox.org>
 References: <20260327234244.91707-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,13 +70,12 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: f613652e2bdcd2fc051
-X-MBO-RS-META: kup5x6brydqqhymerna9ezdeyksad5g5
-X-Rspamd-Queue-Id: 4fjHJT0x0Vz9tCf
+X-MBO-RS-META: sab3p9wxckwoyiwimqizp6zzbfxu98oi
+X-MBO-RS-ID: 0148749e24aab6b26ac
 
 Drop superfluous address-cells and size-cells to fix DTC warning:
 "
-arch/arm/boot/dts/renesas/r7s72100-genmai.dts:28.17-55.4: Warning (avoid_unnecessary_addr_size): /flash@18000000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
+arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts:32.17-72.4: Warning (avoid_unnecessary_addr_size): /flash@18000000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
 "
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
@@ -93,23 +89,22 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index 3c37565097145..da552a66615e0 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -34,9 +34,6 @@ flash@18000000 {
- 		clocks = <&mstp9_clks R7S72100_CLK_SPIBSC0>;
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+index 91178fb9e7210..3306bc9b7bc37 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+@@ -36,8 +36,6 @@ flash@18000000 {
  		power-domains = <&cpg_clocks>;
- 
+ 		bank-width = <4>;
+ 		device-width = <1>;
 -		#address-cells = <1>;
 -		#size-cells = <1>;
--
+ 
  		partitions {
  			compatible = "fixed-partitions";
- 			#address-cells = <1>;
 -- 
 2.53.0
 
