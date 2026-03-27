@@ -1,104 +1,78 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7483DA5C8
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 08:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291EC3CF697;
+	Fri, 27 Mar 2026 09:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774601924; cv=none; b=Z3E1rSz21zp/03HsbB/HyGpo9rz3uF8oeDSQ2JH5vTKys7Q1OUqP7twtHsAXxcsD0hY2kZ6kr2pOgJVL+wF9yaoQb7sOMKuo/bk6v3Mo8IR4NNOSVwjdWr0XTozK5wodX+zYpYm5svO8mZGGAZ7yKdwYJjDopbagh8yyeCUb4WY=
+	t=1774602291; cv=none; b=pnoQRK+bmksll8Xq0HVKEH7G9C9OfVurC0WwoXheZFWYCzWErzCVjMfEl8hxha8AlgwdKBlI7RipZMbfiTnRqsQKjfZOv9TYjKrU2JJNdwc4uoqcokJcoeZznQ4sBVJPySiEPDieVnpVDuJk5OAu4QdGHquYiOvgLv4OG3pe2c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774601924; c=relaxed/simple;
-	bh=9eBJ+rLvoPYL0juBJf2hbQ+0ADpXvr1r9kf9+5acKxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R4KSc0fzTCP9746PPVPGTHTKeu69LGcueEupCe6FatMsf5K5GRqkDxa46KIx5h2WDdb7E/YZ2ptz81rXWJjVTgB/0cGCGUHLIjZwGNTuzFTKsJRNWq6MFbhLoR2VIg/fwb5bvWTGc0qIZB7vC9ufgcEUOmBuyzVpEyY/N3eKxLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56adf76631cso908747e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 01:58:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774601920; x=1775206720;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sQ6H4EuAGDMRYfK/6DhwFkTF5tOZGWN8+jPb2MdRLyQ=;
-        b=j0c9AKVqtL7re2266NcWK+PaCOb9uFOVXwLpfdC3WPLPTxM+78sv2QMYggxZZ/zt76
-         v5r1VVfGDFnawh6kve7p2GtZiFQ0sGPNnogb/jZ/zAewXe9zH6B23vMxKspZOP8swhih
-         3hSbCE65OeCfZE1VxUDlU+AnmExoK/dXyXby6+YZYCylWa8ykeMjsgS8RXcWttyuKLFk
-         uJJ4IldeKKttk2hBcaJqaW5uViLsDFKxgD84ds7qSv48/PotD9VUORDMw8YG/uIJYeHn
-         UlbNC/01a3r5iFbKiBMGqL+W0ggRY4LOdoLOxFXDjJONtgXzd+QLyQ5P8jGS0iLrMias
-         d1iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvoDc5Ka75v08RPIhgx/FWTm/f46mcXlnGisakClVtoV/qzXaxtJo/t6fgEeEGGnu9UkNGhAjpNE9fZHh6PkqgGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3L4mshVCATcPTSxHo56PdUD/N1a6m65p/Ey+omY+dVcO/DvZE
-	MITh0yNV4KRSnl/Or0HNULR4Kb5mbjIY8oBeAskZ1+Z50zNX5rEd5fMjSu80A52O5ms=
-X-Gm-Gg: ATEYQzx5CVW35OSYJHIx8jwvBGZ2pca8hZ8VgfoEkT1jX3nPqFerpLyLnorzqhzYq88
-	eBstPcKERmKIZbL85z/pxbCcxifGFap1Tr+I2d6a0UA3OVEpvREVqQl2kdUaqMo2EUQ0egAZt1n
-	qG9u0f18OSYH9En3AvlZLVeEuwUU3ALLDLSqBNPbPCY+n2RdV97E6kpk+wAecblj/srrn9tJL6P
-	RnnWAoWS+z1rJCzEkdhdCxZSw9h1dJMzJ6xjwIuZbdVjE7vcTQaUJDCKqqeFNgxwilOniaPFIDk
-	kKvZDi7XSxj3xH/vEKNyBCqMdHTSZ/hkYxSOuGPyHB7hMeYcTJhWXUS+r+Q+UCsQWiJ34SDusoS
-	M9BJNMMIuqZhXTKanhG+1eOSj7u9h6nG3Dl2m+2OPre7dHopBGQ+aS2B9kYDmVEUWq9yGFgH3ki
-	HOt+306EFDzCcOt0+TQHbhwat0FAdgKCF+G/N8j1fmNqwytipAqNEwHgCap1fo
-X-Received: by 2002:a05:6122:311b:b0:56d:3c26:20a8 with SMTP id 71dfb90a1353d-56d4a4d2c9dmr499623e0c.3.1774601920261;
-        Fri, 27 Mar 2026 01:58:40 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d31d394fcsm7686288e0c.12.2026.03.27.01.58.39
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2026 01:58:39 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5ff05af29b4so729359137.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 01:58:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwolN9pL5IpGu++OWBqiLmpDAgiAWM1JtlsY2b31KECpWQ7MiLneSudne6TEKO9cyWQ0V/TN+klBwELG4R622cbg==@vger.kernel.org
-X-Received: by 2002:a05:6102:3c82:b0:5fd:ee19:8b30 with SMTP id
- ada2fe7eead31-604f936fc1cmr564249137.35.1774601918808; Fri, 27 Mar 2026
- 01:58:38 -0700 (PDT)
+	s=arc-20240116; t=1774602291; c=relaxed/simple;
+	bh=2q+MwjaTDQlDt2HK2ksY2sRwNISOSVyw4/LbSErZ+vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSxPEWc0M3XUYgIMWE2ZFP/gfyUTVn80RrSfTa8E349/HycC0gQBSyGzQOLnkl+l6i/QdDg0wM9hwO0WKE4p/h6Nrx8yOnluMEbCXdgxb2xVQde6ycSY125NdF1eH3/fibae0YEgMJpB+VlDiiziwX1svH3qGXGsyPBRlYOCdUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JEvrsZie; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JEvrsZie"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EAFB71783;
+	Fri, 27 Mar 2026 10:03:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1774602205;
+	bh=2q+MwjaTDQlDt2HK2ksY2sRwNISOSVyw4/LbSErZ+vs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JEvrsZieYrtju8PjmnG2QOY2nPqKDNYPPc5aQBllB7bm6Z5EV6Cv345cROhB9s6yn
+	 RD4ATxHGt1qCLyA/qETm7cT7ovQjD1Ue4T6YecOe6pqDL6dmQxixo+V6+6j9QehYdc
+	 4toBc1zheMKmLGIJR/SCiZUZeUfRmZaTOqtQXTnk=
+Date: Fri, 27 Mar 2026 11:04:42 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Amin <amin.gattout@gmail.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rcar-du: Convert to of_drm_find_and_get_bridge()
+Message-ID: <20260327090442.GA3026673@killaraus.ideasonboard.com>
+References: <20260326-bridge-v1-1-c0c44b53f7b6@gmail.com>
+ <DHDEL0VTRYDP.2D45EP8E07Y08@bootlin.com>
+ <20260327083404.GA2993961@killaraus.ideasonboard.com>
+ <CAHfa7xXeRaGw1ADFsuT2dcqkY+KXb9w_vi4tq8G6ehOS9r7cAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdVtea9q1Yoaq1sEquxEAnQ-armLRdO1cMtJnp2K2mYtOg@mail.gmail.com> <2ad69ee6-9170-46dc-a963-71f327192bad@mailbox.org>
-In-Reply-To: <2ad69ee6-9170-46dc-a963-71f327192bad@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Mar 2026 09:58:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW=7uzaR2Zj==STiHEfqNf02vpEOOdwJuaqpzdxh_Q5-g@mail.gmail.com>
-X-Gm-Features: AQROBzCCf0IPvdkdR2ssvnnJ_xpvUSm51aZ4644j2VSJYknbtlruA69dvm0rnxo
-Message-ID: <CAMuHMdW=7uzaR2Zj==STiHEfqNf02vpEOOdwJuaqpzdxh_Q5-g@mail.gmail.com>
-Subject: Re: [PATCH 0/4] arm64: dts: renesas: Fix missing cells and reg
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-arm-kernel@lists.infradead.org, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHfa7xXeRaGw1ADFsuT2dcqkY+KXb9w_vi4tq8G6ehOS9r7cAA@mail.gmail.com>
 
-On Thu, 26 Mar 2026 at 21:40, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 3/26/26 11:07 AM, Geert Uytterhoeven wrote:
-> > On Thu, 26 Mar 2026 at 05:24, Marek Vasut
-> > <marek.vasut+renesas@mailbox.org> wrote:
-> >> Add missing cells and reg DT property into DTOs to fix warnings like this:
-> >>
-> >> "
-> >> arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso:30.10-34.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@1: node has a unit name, but no reg or ranges property
-> >> "
-> >
-> > All of these are dtc W=1 warnings, right?
->
-> Yes, I slowly started linting and validating the various DTs we have to
-> remove leftover warnings.
+On Fri, Mar 27, 2026 at 09:54:42AM +0100, Amin wrote:
+> Hi
+> 
+> Thanks for the feedback. I did reference commit 7282066e55347 (Luca's
+> earlier conversion) but I should have been more cautious since the
+> patch I submitted was a bit too simple/"dummy".
+> 
+> To answer Laurent's question: I did not test this on hardware.
+> I was working through the deprecated API TODO  list and made the
+> mistake of treating this as a simple find-and-replace.
+> 
+> I'll send a v2.
 
-As this is about display and camera, I am pulling in some multimedia guys.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Luca has already submitted a patch, see
+https://lore.kernel.org/dri-devel/20260318-drm-bridge-alloc-getput-drm_of_find_bridge-4-v3-3-10f502520357@bootlin.com/
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
