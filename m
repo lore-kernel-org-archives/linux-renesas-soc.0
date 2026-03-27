@@ -1,41 +1,41 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD24392807
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 20:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B294D3976A9;
+	Fri, 27 Mar 2026 20:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774642269; cv=none; b=RWSXluaebQp40jzihptXQMt1C1LuzYb05NEhc5mzozBA4yxgRFtmIk0Dh9rI99+uatbnSGg/yEZGWD2PpZlE5vKkFKHhrQ3y1tpPz5i8+I87BzcdIiVecshvRQ3ij0hsnBbVhELIjUHdMX/50aaaFbqOmfL28bcbnIRWR+LN4wo=
+	t=1774642271; cv=none; b=GKs4NumD1WVUMehRBlzvLsYyYy07DzBEijWenvROoH5ck3C3v6/kME6IMzVJ1Ss1GFu3VIE137lLcOVvIb0eRyNBODp57Un8u3AxzEDwTc5BJZZkyRnQCjZYP6YGi3TFvewAhD8xJrHJjPZRW3gRpfVq7xln1odATrKWirncEwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774642269; c=relaxed/simple;
-	bh=Nf9fpJIFLTTMH1rqOO6JktpjV7GwoTEpWSNjp1wHe10=;
+	s=arc-20240116; t=1774642271; c=relaxed/simple;
+	bh=EBmjoQkH9LPRuThWexQIZ2OYduWjXu9isH5m17TGdNQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VLH0pMo7cgXEp2GGnEK5ZY2cqFU5RwTRPJpK3fAD8Z87uxPAYkUU4QC5lObZYMRvxfn6cnb0+f+UzG9TJ38ProYcLgPUML7hLP50K7XJ7QAYPeHpmNZZKWB1bGTCGk1D6+yOxNvwb3Q+QwxMoR3bMvRqqPUZbk7hQ1KfReniog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lAZZSD+a; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=pC5LQQ+BYyYHmCiLVNUh2zcDcfRCYxhLiXawyoGIrGFTVgJWKx3fq7uuZ7EnHw0rLBNF1lYlG4H0vmgF/IsbfGA3PZi+c8SzjmM+M0AZ4VPBDte7NvcNJ137zjhAUqjdeqGBQbZVAM/HhEDlimfrOHfFKC6rQgmctLYN45AteH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kQ9ynxwv; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lAZZSD+a"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kQ9ynxwv"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A2FB61A3033;
-	Fri, 27 Mar 2026 20:11:01 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7E19F1A3035;
+	Fri, 27 Mar 2026 20:11:08 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7748660268;
-	Fri, 27 Mar 2026 20:11:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5862610451AD3;
-	Fri, 27 Mar 2026 21:10:57 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 514CA60268;
+	Fri, 27 Mar 2026 20:11:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 692C310451AD3;
+	Fri, 27 Mar 2026 21:11:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774642260; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1774642267; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=BKAN+LocEYluLXRUx1tcZNSjXU8bGN4GDJ0xBETLZYU=;
-	b=lAZZSD+aUQ6+1kWQY2aytAygS/CmcZVLMi1w0xa/kWoGH1zqv9MjUDpInFse7Z/y6tCS0p
-	pjbaS0qWWaf9sN2VcP0poZKbZDQZ//zEwDzDuPBB0xnWu5MrKoUQP5RD7iPzn/zqSyMof7
-	9xa3I1dm1Y242bhTu8dqo9uqLQ9Wy11YgXIiTAWGQquAxDLqqbwXBi3bgcuMShz1RIyaXv
-	jF2wgHchNBynoPGGstX9/7PHL7mcg9+JsBvX9MAeXosZmf9aUy38Wa7kKmqYUr3mBBetSU
-	S+DTJLsBRuJAsNua48F/wFk1RjkB41x3n/xIV/T4kEsJXZjcxH/rvUUKjt4eLA==
+	bh=SXMVxKzfCtjtPW53QziO7/qN8dgM9GH3NrWg8FXgaJk=;
+	b=kQ9ynxwvi9POasUW9gtVJ5bCNrzyf1qSAK1blyZZKWqQe+wtZo6UMN8z1eJrWrAF83CI2q
+	vBb+UOZI7qYYxZwh9O/a/wEEdgCcZ8b7qrrOlbAHteWzc18ZnAmgYhvHf8kuGDXT0alBwX
+	4R2Q+nCHnoVaRmXLGECQRGAI2TuZSciYctbIHuv0c7smOkIYWWxq1tU6Zv5y8C2p+sZsCW
+	xvFdjxCQdqa9RkoCqaZ4Gg39KQXME6tnT0w1p70pmo73MelqKvrruvAZ+/tG/YZ9rVOQbU
+	fm8VMycr6NmZ4sPP8bUum5hCnfcZhIwPgzigdUouh0VYcM+Q0Otv1ReOkHYxsw==
 From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Date: Fri, 27 Mar 2026 21:09:33 +0100
-Subject: [PATCH 11/16] clk: tests: Add Kunit testing for nexus nodes
+Date: Fri, 27 Mar 2026 21:09:35 +0100
+Subject: [PATCH 13/16] hwrng: omap: Enable on Renesas RZ/N1D
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-11-5e6ff7853994@bootlin.com>
+Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-13-5e6ff7853994@bootlin.com>
 References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -68,70 +68,35 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add a nexus node with a child requesting a mapped clock in the fake DT
-overlay to verify that the parsing is also correctly working.
+The Kconfig symbol and associated seem to be badly named as they have
+nothing OMAP specific but instead refer to Inside Secure Safexcel
+devices which have been used in many SoCs from different
+manufacturers (like OMAP, Marvell but also eg. Renesas).
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
+The Renesas RZ/N1D features this IP, so add this architecture to the
+dependency allow list. In practice this dependency list does not seem
+very relevant and could be entirely dropped, given the fact that this IP
+has been implemented by many different vendors and seems to be
+architecture agnostic.
+
 Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 ---
- drivers/clk/clk_test.c                   | 20 ++++++++++++++++++++
- drivers/clk/kunit_clk_parse_clkspec.dtso | 10 ++++++++++
- 2 files changed, 30 insertions(+)
+ drivers/char/hw_random/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 8a17ad0d185f..cb0071955146 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -3660,10 +3660,30 @@ static void clk_parse_and_get_parent_name(struct kunit *test)
- 			   clk_parse_clkspec_1_init_data.name);
- }
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 492a2a61a65b..a26b705fb111 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -193,7 +193,7 @@ config HW_RANDOM_IXP4XX
  
-+static void clk_parse_and_get_nexus(struct kunit *test)
-+{
-+	struct clk_parse_clkspec_ctx *ctx = test->priv;
-+	struct clk_hw *hw1, *hw2;
-+	struct device_node *np;
-+
-+	/* Get clocks by index */
-+	np = of_find_node_by_name(NULL, "kunit-clock-nexus-child");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	hw1 = of_clk_get_hw(np, 0, NULL);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw1);
-+
-+	hw2 = of_clk_get_hw(ctx->cons_np, 1, NULL);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw2);
-+	KUNIT_EXPECT_PTR_EQ(test, hw1, hw2);
-+
-+	of_node_put(np);
-+}
-+
- static struct kunit_case clk_parse_clkspec_test_cases[] = {
- 	KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
- 	KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
- 	KUNIT_CASE(clk_parse_and_get_parent_name),
-+	KUNIT_CASE(clk_parse_and_get_nexus),
- 	{}
- };
- 
-diff --git a/drivers/clk/kunit_clk_parse_clkspec.dtso b/drivers/clk/kunit_clk_parse_clkspec.dtso
-index c93feb93e101..a4115216d2aa 100644
---- a/drivers/clk/kunit_clk_parse_clkspec.dtso
-+++ b/drivers/clk/kunit_clk_parse_clkspec.dtso
-@@ -18,4 +18,14 @@ kunit-clock-consumer {
- 		clocks = <&kunit_clock_provider1 0>, <&kunit_clock_provider2 0>;
- 		clock-names = "first_clock", "second_clock";
- 	};
-+
-+	kunit_clock_nexus: kunit-clock-nexus {
-+		clocks = <&kunit_clock_provider2 0>;
-+		clock-map = <&kunit_clock_provider2 0>;
-+		#clock-cells = <0>;
-+
-+		kunit-clock-nexus-child {
-+			clocks = <&kunit_clock_nexus>;
-+		};
-+	};
- };
+ config HW_RANDOM_OMAP
+ 	tristate "OMAP Random Number Generator support"
+-	depends on ARCH_OMAP16XX || ARCH_OMAP2PLUS || ARCH_MVEBU || ARCH_K3 || COMPILE_TEST
++	depends on ARCH_OMAP16XX || ARCH_OMAP2PLUS || ARCH_MVEBU || ARCH_K3 || ARCH_RZN1 || COMPILE_TEST
+ 	default HW_RANDOM
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
 
 -- 
 2.51.1
