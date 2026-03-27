@@ -1,40 +1,41 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC538E126;
-	Fri, 27 Mar 2026 20:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EF0390234
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 20:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774642226; cv=none; b=NXfY6IHTgPBmA7MqMPVzEoCbNnHSzYG6dTwvrVAiB8vQvbwOtuZHh840Zb/taUUEq5YOSQGn0IfKAQorTvzGHpjFQYbBPHWbbyIbfsHLdWlpAtOWVZbo902RX/GX6LxT62e4wfmv5X1dlPC3kEbx/H2D+Vd9K+HrZUfaULE1iT4=
+	t=1774642228; cv=none; b=sEmuYgSlG0v7ZXoaSHRqhSDp9MMWG0nV6ZXxOPGGiaiJxHcyO/hMU6o1CaLD2TvY99e9Nmt5MggQg8KkQDyI1uMfZoW+jbO6oI4H78g/o20gR/Kf2WYb1U9rbD0i7XHx7kR53MxSp+0LatriPUzeWwDWyqf7zIaTgKxLVygHDcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774642226; c=relaxed/simple;
-	bh=85MXpOpj6RSdKZ3x8OwGzEhLk72dNQDdaoUsy5d801g=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ihMMthAyL1DNbrmYcNRV+jjlsd89BvBQBaiQx0hlQpqqprtJkEVdYWi2dbtAW1dbry9U+C3D8NKfjvt1mTvd3gC3Tjn8N5L9DZGHYKIWnoGKL6b2FW1o/bnzD8+u3BqrpN/aE/vz/yq356McCCuaU1YigDPUTSW0a5ikXL1RTP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=idtjumX3; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1774642228; c=relaxed/simple;
+	bh=53ISBKabvLXIGpST9KmWh9Un7jYPoZOrSqGNFBlPPog=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=raPvwwwDKmHjod9YFMo4qL0JmFllemhi4Hh3rgeLYUvpocibixaJXfLpXgWyLGKwenoyhuXW+EQ3B1mWNXBeZLP4Ue/A9BEfvx0X5sNU+JZfGYk0Q/3YrGOVsHgiZ7SXBopvzWEAmn8waHVkbIDpjno4oxZo+iUTGJdyKVM772k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=s8LU75QG; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="idtjumX3"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="s8LU75QG"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 98FD71A302C;
-	Fri, 27 Mar 2026 20:10:21 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6BCEEC58750;
+	Fri, 27 Mar 2026 20:10:54 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 639E960268;
-	Fri, 27 Mar 2026 20:10:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A95C10451AF7;
-	Fri, 27 Mar 2026 21:10:10 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8FC7D60268;
+	Fri, 27 Mar 2026 20:10:25 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F1B5310451AD3;
+	Fri, 27 Mar 2026 21:10:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774642220; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=bIF1JM1V9WjeIpsAeYPNhtxBVFUAIahSL4+PQQ6GA8Q=;
-	b=idtjumX3N7aL5zh0U7AcOqrLvWNM+8wlPe7LjyhJBxmkInWzWdX/AT6Uhn0fXaqOSSZZIT
-	5XFgknSuIVE78+a/cIBq9PkB/ELxa4CFAP0g1DWCGytB3hI419L6E8MDmpF/h8c6p8757l
-	Pm+MMPUDr8qrygTFhnhf7QqLSuJV6oY5J/Km/Yge3BMszcuYxHjQ3IUcKiwI4Bj+MLwKmj
-	5fjtQksbvWTYwg/aJGmVQz3zoIor73mQshrQkEFoFu4C2fpNG2eZFERp/mjLDPKYDW+I4n
-	qBCLQEpj+L3ePYiAb1v8+IUfpsOkRXqastQOVymUBweYsMXRMuMksRoY3Wh8QA==
+	t=1774642223; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lE3QKXVXrOESVFGZ+EtmwjmJziMWMpwyr3ofoukXeI4=;
+	b=s8LU75QGO5PxR0VmI003T4y+A+OZdpHPLs8YNMTPr1r0366jG4m8cvSZaol9G77Dav1vIt
+	EeX6Sz5X5P59OZk7XXsQz8lWrnWBNkw+syOb3nRghVMJhWLWAf42gUAp6wCpU5jZRuUjKk
+	0+7T7lRjEMagnD1gccSqfuyZ5vMpzo2nK8zs9LEAQP63NKAm7wdcwAAGcJNwXLe3TVR0Z8
+	PW98+Pzbu2psIZgoBEZLT0+FFfB9WDEIJ0UBa58emzZ+bIkMrdHF1IO+LVggV2QkbpF5wg
+	YmN8uAnuNdjUqTfPdDfBebnxF2mf+tVrYiXOlBN6W55Z41bj7rkTqZJeMYzaGA==
 From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Subject: [PATCH 00/16] Add support for Inside-Secure EIP-150 crypto block
-Date: Fri, 27 Mar 2026 21:09:22 +0100
-Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+Date: Fri, 27 Mar 2026 21:09:23 +0100
+Subject: [PATCH 01/16] dt-bindings: clock: Introduce nexus nodes
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -43,10 +44,9 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MPQ6DMAxA4asgz1hKwl/Uq6AOYJviJSCnQkWIu
- zdi/Ib3LshiKhle1QUmh2bdUoGvK6B1Sh9B5WIILvSuCQNmWpMoi+ExoEMjj2Tn/t2wi8Sx7Zn
- n6KH0u8miv+c9vu/7D8kS3VJrAAAA
-X-Change-ID: 20260327-schneider-v7-0-rc1-crypto-58cd846ddb81
+Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-1-5e6ff7853994@bootlin.com>
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -64,83 +64,70 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
- Herve Codina <herve.codina@bootlin.com>
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+Hardware containers can just decouple external resources like clock
+without any more control. Nexus nodes already exist for PWM and GPIOs,
+add a binding to allow them for clocks as well.
 
-This is a series adding support for the EIP-150, which is a crypto block
-containing:
-- a public key accelerator
-- a random number generator
-- an interrupt controller
-
-The series is a bit long but every subsystem may take its own share
-independently. I might want to split it into several chunks in the
-future if it expands but at as for now, here is the full picture.
-
-For instance, the clock part has grown due to the inputs From Stephan
-Boyd (addition of Kunit tests + a couple of misc preliminary changes).
-Link: https://lore.kernel.org/linux-clk/20260129201003.288605-1-miquel.raynal@bootlin.com/
-
-Regarding the big engine, the EIP-28 Public Key Accelerator, it
-currently only supports RSA, but more algorithms might be added
-later. The hardware supports (EC)DSA and (EC)DH. It also requires a
-firmware.
-
-The very last patch adds the block in the Renesas RZ/N1D DTSI, as this
-is the platform I am using this hardware one.
-
-Thanks,
-Miquèl
+No examples are given, the file is litteraly a copy-paste from Hervé
+Codina's work on PWM Nexus nodes, hence we just point to the examples
+there which already illustrate very clearly the concept of the various
+properties.
 
 Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 ---
-Miquel Raynal (Schneider Electric) (16):
-      dt-bindings: clock: Introduce nexus nodes
-      dt-bindings: interrupt-controller: Describe EIP-201 AIC
-      dt-bindings: rng: Rename the title of the EIP-76 file
-      dt-bindings: crypto: eip28: Describe EIP-28 PKA
-      dt-bindings: bus: eip150: Describe the EIP-150 container node
-      clk: tests: Add clk_parse_clkspec() Kunit testing
-      clk: tests: Add Kunit testing for of_clk_get_parent_name()
-      clk: Improve a couple of comments
-      clk: Use the generic OF phandle parsing in only one place
-      clk: Add support for clock nexus dt bindings
-      clk: tests: Add Kunit testing for nexus nodes
-      irqchip/eip201-aic: Add support for Safexcel EIP-201 AIC
-      hwrng: omap: Enable on Renesas RZ/N1D
-      crypto: Group Inside-Secure IPs together and align the titles
-      crypto: eip28: Add support for SafeXcel EIP-28 Public Key Accelerator
-      ARM: dts: renesas: r9a06g032: Describe the EIP-150 block
+ .../bindings/clock/clock-nexus-node.yaml           | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
- .../bus/inside-secure,safexcel-eip150.yaml         |  58 ++
- .../bindings/clock/clock-nexus-node.yaml           |  39 ++
- .../crypto/inside-secure,safexcel-eip28.yaml       |  31 +
- .../inside-secure,safexcel-eip201.yaml             |  41 ++
- .../bindings/rng/inside-secure,safexcel-eip76.yaml |   2 +-
- arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  42 ++
- drivers/char/hw_random/Kconfig                     |   2 +-
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk.c                                  |  12 +-
- drivers/clk/clk_test.c                             | 154 +++++
- drivers/clk/kunit_clk_parse_clkspec.dtso           |  31 +
- drivers/crypto/Kconfig                             |  55 +-
- drivers/crypto/inside-secure/Makefile              |   1 +
- drivers/crypto/inside-secure/eip28.c               | 760 +++++++++++++++++++++
- drivers/crypto/inside-secure/eip93/Kconfig         |   2 +-
- drivers/irqchip/Kconfig                            |   8 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-eip201-aic.c                   | 221 ++++++
- .../inside-secure,safexcel-eip201.h                |  14 +
- 19 files changed, 1444 insertions(+), 31 deletions(-)
----
-base-commit: f6ad621bcf627fe4719cbf97c1d3c9366cc49eff
-change-id: 20260327-schneider-v7-0-rc1-crypto-58cd846ddb81
+diff --git a/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml b/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml
+new file mode 100644
+index 000000000000..f07e2972e8aa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/clock-nexus-node.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Clock Nexus
++
++description: >
++  A nexus node allows to remap a phandle list in a consumer node through a
++  container or a connector node in a generic way. With this remapping,
++  the consumer node needs to know only about the nexus node. Resources
++  behind the nexus node are decoupled by the nexus node itself.
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++select: true
++
++properties:
++  '#clock-cells': true
++
++  clock-map:
++    $ref: /schemas/types.yaml#/definitions/uint32-matrix
++
++  clock-map-mask:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  clock-map-pass-thru:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++dependentRequired:
++  clock-map: ['#clock-cells']
++  clock-map-mask: [ clock-map ]
++  clock-map-pass-thru: [ clock-map ]
++
++additionalProperties: true
++
++# See the original pwm-nexus-node.yaml description for examples
 
-Best regards,
 -- 
-Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+2.51.1
 
