@@ -1,90 +1,100 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC3630F534
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Mar 2026 15:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE6341ADF;
+	Fri, 27 Mar 2026 16:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774624419; cv=none; b=cKynjqF4SZJg35LKbjks8AWIdEZIu6AhnUUMtt2nDEQeNAylzRke7YBUQQg5QZRl4fQ114q7AMV5UnejnW/oBc4eHo2CNWqimdg5Lqc467UevjogfE6pCcly2IiWUpnTKMWD3iPUyUwvl/g09LV0ORc/beMniObpk0qSPdkz9RY=
+	t=1774629772; cv=none; b=dA8TlioAm+v8NjGZsCqT1rrK5xI7HcHip7lzTG6axMuDzX1kirduzRR2bYcUFIZtKxijtKKzd+H3CHtntC6uGGcvay9DBfB7kxw8jzUJ2TIgiGiwkJmR7gMhGS81yNNAiyGRuZJBUSITelM8fbEGX8PC1El8AD3j6MUu3pRbC8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774624419; c=relaxed/simple;
-	bh=iN1raRxQ2qcF/ep1luk3AQflduCS+ipQOkFu+lrDcuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvJD2hlJnrs4ZJvtk0SzDknitxPDHjHZwSREamYVfAcKWNh4iNjCQ+MP9E9d3hx5Z4Parm2EdWne/Q0VkQvQKTUr6EieLh/KRt9QWwvIc4o23JUCL7N8F75kiyn9znIoDsotpnTzaOxRo+AYWWA3w3uYoyA49pVdw9gfczbULoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iFk7N04c; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1774629772; c=relaxed/simple;
+	bh=1H+anKqAj6Tq4LBNW0lKVeIqT1Ggz4JI2pHYhsTtQEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M8aSppIS7OATrthC43/wzCjrPvS3Enfs+mBUV45jsTXaNuWBvr2RfecNimR5WPYAuv9DV7f3rV1abanim/bgc65+Rekx1+GAllk4DyknO1OkS+dyOfCZF57qMkcx3KK0hpm3HQP/wXdAt+iUOWymUv6NDzvK80O/5TEGTa3P/5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftfgFWUi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iFk7N04c"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=QbkRIDt0qoYiA3
-	XO98bAEG4jglboobxHd9T2H+sRSRo=; b=iFk7N04cl8TO6mkuDYPYVsx2O8GzUR
-	UzXdbVmAxbwiFbu++SIoVEWvSBJZnYY7bBPK6O6r6niT+pv7IJv5pnNzpBhB6cCp
-	v7x398eH4gOGpO+IPsafqbTcI4zPhBQCuEKhJWEvOlVewo45GFxU6moJSISYmp7y
-	eF8mo9yIGRGpzLTo+aMXpo///wke5tjj/VNhSDCVFLWnEpsysyqc1j57BMw4WmNK
-	Y/iZkz2hvv1LMSpLUOQpUwejlwAPNMer2647xxfHfqynH8J7qB2VnUM5UoZZXUfg
-	F42N6wK+8wLO3ChhEworuX8mjVGgYaXN0WAfXqsUzP4ixzcNE+NaW7fg==
-Received: (qmail 235509 invoked from network); 27 Mar 2026 16:13:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Mar 2026 16:13:35 +0100
-X-UD-Smtp-Session: l3s3148p1@Ugjk8QJOXuxUhsJN
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] mailbox: exynos: drop superfluous mbox setting per channel
-Date: Fri, 27 Mar 2026 16:12:46 +0100
-Message-ID: <20260327151332.5425-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftfgFWUi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7162C19423;
+	Fri, 27 Mar 2026 16:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774629771;
+	bh=1H+anKqAj6Tq4LBNW0lKVeIqT1Ggz4JI2pHYhsTtQEI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ftfgFWUiv2uIubpclBsTMgch+7bJqtUKOxfMVaaCQtoLdH8F8J1p1cp4toGBDqkXT
+	 sJ831ziotFibjYpRgrSCx4HUgGpsvsLk2TrWdLSEKIv0GFInB4FCfzank/hsbzjTph
+	 1QporGojGUe6IEdMqfTJsyYg2KvgX2wSANQVlM1602xbg+UTyyx3kRi1pg9TOuA8mh
+	 a4wctNMVne9H+wKlG8LvuvC8GMGDl4dPO+0Z8G73IEwmHb3C2c0aTPjV5UWDVSSNeD
+	 NfDAcpIJWg7aBEOfbglGtBdJBFHQA5o5jVEQDIiuhWelclc0gRawFLpRjQX42v5SDs
+	 dTggbqCGp+6Ug==
+Date: Fri, 27 Mar 2026 11:42:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
+	kwilczynski@kernel.org, bhelgaas@google.com,
+	florian.fainelli@broadcom.com, jim2101024@gmail.com,
+	robh@kernel.org, ilpo.jarvinen@linux.intel.com,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, claudiu.beznea.uj@bp.renesas.com,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-omap@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shawn.lin@rock-chips.com
+Subject: Re: [PATCH v9 0/5] PCI: of: Remove max-link-speed generation
+ validation
+Message-ID: <20260327164250.GA1513325@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260313165522.123518-1-18255117159@163.com>
 
-The core initializes the 'mbox' field exactly like this, so don't
-duplicate it in the driver.
+On Sat, Mar 14, 2026 at 12:55:17AM +0800, Hans Zhang wrote:
+> Hi,
+> 
+> This series moves the validation from the common OF function to the
+> individual PCIe controller drivers.  To protect against out-of-bounds
+> accesses to the pcie_link_speed[] array, we first introduce a helper
+> function pcie_get_link_speed() that safely returns the speed value
+> (or PCI_SPEED_UNKNOWN) for a given generation number.
+> 
+> Then all direct uses of pcie_link_speed[] as an array are converted to
+> use the new helper, ensuring that even if an invalid generation number
+> reaches those code paths, no out-of-bounds access occurs.
+> 
+> For several drivers that read the "max-link-speed" property
+> (pci-j721e, brcmstb, mediatek-gen3, rzg3s-host), we add an explicit
+> validation step: if the value is missing, out of range, or unsupported
+> by the hardware, a safe default is used (usually Gen2). Other drivers
+> (mainly DesignWare glue drivers) rely on the helper to safely handle
+> invalid values, but do not yet include fallback logic or warnings.
+> 
+> Finally, the range check is removed from of_pci_get_max_link_speed(),
+> so that future PCIe generations can be supported without modifying
+> drivers/pci/of.c.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
-Changes since v1:
-* rebased to 7.0-rc5
-* add tags (Thanks, Tudor!) and dropped RFT
+Thanks for this series.
 
- drivers/mailbox/exynos-mailbox.c | 4 ----
- 1 file changed, 4 deletions(-)
+We still have a couple references to pcie_link_speed[] that bypass
+pcie_get_link_speed().  These are safe because PCI_EXP_LNKSTA_CLS is
+0xf and pcie_link_speed[] is size 16, but I'm not sure the direct
+reference is necessary.
 
-diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
-index 5f2d3b81c1db..d2355b128ba4 100644
---- a/drivers/mailbox/exynos-mailbox.c
-+++ b/drivers/mailbox/exynos-mailbox.c
-@@ -99,7 +99,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	struct mbox_controller *mbox;
- 	struct mbox_chan *chans;
- 	struct clk *pclk;
--	int i;
- 
- 	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
- 	if (!exynos_mbox)
-@@ -129,9 +128,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	mbox->ops = &exynos_mbox_chan_ops;
- 	mbox->of_xlate = exynos_mbox_of_xlate;
- 
--	for (i = 0; i < EXYNOS_MBOX_CHAN_COUNT; i++)
--		chans[i].mbox = mbox;
--
- 	exynos_mbox->mbox = mbox;
- 
- 	platform_set_drvdata(pdev, exynos_mbox);
--- 
-2.51.0
+The array itself is exported, which I suppose we needed for modular
+PCI controller drivers, but we probably don't need it now that
+pcie_get_link_speed() is exported?
+
+  $ git grep "\<pcie_link_speed\>"
+  drivers/pci/pci-sysfs.c:        speed = pcie_link_speed[linkstat & PCI_EXP_LNKSTA_CLS];
+  drivers/pci/pci.c:      return pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)];
+  drivers/pci/pci.h:extern const unsigned char pcie_link_speed[];
+  drivers/pci/pci.h:      bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
+  drivers/pci/probe.c:const unsigned char pcie_link_speed[] = {
+  drivers/pci/probe.c:EXPORT_SYMBOL_GPL(pcie_link_speed);
+  drivers/pci/probe.c:    if (speed >= ARRAY_SIZE(pcie_link_speed))
+  drivers/pci/probe.c:    return pcie_link_speed[speed];
+  drivers/pci/probe.c:            bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
 
