@@ -1,56 +1,68 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918BA13AA2F;
-	Sat, 28 Mar 2026 13:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106C132B99F
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 15:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774706389; cv=none; b=F5TEswicgAG8nAsmCEY2rM5LmwCR0ARAwf7AMU+rvVS19OiAyCSZOk9/6bzY1BszB3C6LMDESNTiAZMHdvGIFGrwioZJ+A2IaAWRJDnSSZ7jaqxxgA7XjvMOznctJ+mYaXIWOByBo4UquKAtPD4rdgTgphv7NqaQYT0vg+yOfu8=
+	t=1774711459; cv=none; b=gLUP8+Pdkp4dzPJoplJZrPTbRzoGnjbapevv5kabi3RJk6SrGlNCa5GTWwGhGOH4KK17BbOoyAq97cYPauv8kNDi77j9CpyEh8nvdP43xw6tPVAud+umLW/VlFLAK9xm2C6uQDn6Y1HBgFz0nZM7HwP5a1eyE9t4TIiR42cCVPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774706389; c=relaxed/simple;
-	bh=h/tKi6QrqOTDKr4SqP1BIjcSeikVfTPP+W8yGCH6ZKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u5R+H+/npIqHM9JZs95yLUE4bAM9Zm6C4OErHRMI+BYCKRyfnmd5wG0htqOEIU/zXxN/A0yNphCvupAwDOiavd/Ib4oudWG0GBv1/m7/Nvl/NgFjl0dQMvCiu1ipK+2VfII/J974fuVukYkCgLCdU3GzJLiX2JdmyzneJY18p/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b/ywmdGQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1774711459; c=relaxed/simple;
+	bh=RJe9GzRsVnP9RgGUrpNPFKt+FZ5gT6tjolAsDsfcPn8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MrsYWEJ985Hxf3phuuJ84idvIGHctOjcTZT0t4h02mPVwTS6wBIAutoLLglDeRHrFvivB3bNRihezO6ep5b2247f+RNZ0cG3nOaCwRKIiHd0WQfWFRHD/ONV6klm3xMvxIPmx7IFNSwz6X0/Dj7qFEk0uISuDyqxrlLpmSjptxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViJBSHXv; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b/ywmdGQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774706388; x=1806242388;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h/tKi6QrqOTDKr4SqP1BIjcSeikVfTPP+W8yGCH6ZKg=;
-  b=b/ywmdGQVk5+LK2ljewhfhadf3hB0rwkseFi8bIwd71B1RKdwFSbAzYX
-   RL6v5yRuVgI0X9CCcZZiR/B4MaX/PBVNhdc1o/tDHbUuP4p7sCK4fMwFr
-   1YWnylLGBhX7uQQSD1IHhe5ns2P8eSLJkjopoiysa23jheAqVq32J+Vxh
-   mCHi5XTGBIavmeHY6zwslk4okiUg99Nh5x1VUrU7YVYycG53IGa0/Uuqk
-   FnUsMaiSLS7lnwej9k6jhVNJN9WAdKhDN/t6pyZc0H6L3fWN0eL1E0nfA
-   H2FZrZLVCkKNAaCx79t+RBgee1Z3G++l8zNLfCjGXgevM53CqSOPlqdOS
-   Q==;
-X-CSE-ConnectionGUID: Z/qEywF3TT2IqgR9DkVKLg==
-X-CSE-MsgGUID: WutoUK08SPuk+O6MRSY28Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11742"; a="74941681"
-X-IronPort-AV: E=Sophos;i="6.23,146,1770624000"; 
-   d="scan'208";a="74941681"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2026 06:59:47 -0700
-X-CSE-ConnectionGUID: Xtwd/9HMSvafUDAoEddeDg==
-X-CSE-MsgGUID: iTaJ75wkQcqbMOqqbZfwNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,146,1770624000"; 
-   d="scan'208";a="230354890"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.251])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2026 06:59:44 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id ECDAD121D3E;
-	Sat, 28 Mar 2026 15:59:47 +0200 (EET)
-Date: Sat, 28 Mar 2026 15:59:47 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViJBSHXv"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8f9568e074so462506566b.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 08:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774711455; x=1775316255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7X4Hw21VVlfFhBGvSzfDwQVT4JNcMNCdD8bUyasxiZU=;
+        b=ViJBSHXvlnxcZRbV6cpoqW8NXKfZ9EsoJeB+BX4PYz/NPDC+0MUwhBlujKKZPYK+lc
+         Gz/3/WyULZRxeIgK0yEgP/QbtyGlTVsblTwgUR9K5w9mUeB5Wvcm8Pz/G2sYftOBpnU0
+         PEwOx2Nk2WV4HcgNtD81f9vLIlHjS0pSuU3MuHJ+PMGTxYXO+yg5EXJA53tKgk2SJuOD
+         fspGc0rodEDBARVBxEBOJUIpvtXr3wQf5nEAIfa9rC8Gpi92dlA0YBH1qug2XcjzKKru
+         dvrCDp52xCXVUyxH4GWRc1Zrv8OK0W/Y4fKWQ97LtTy1gsCI5xO3rbGmPrlCyWVRVEeE
+         tkPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774711455; x=1775316255;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7X4Hw21VVlfFhBGvSzfDwQVT4JNcMNCdD8bUyasxiZU=;
+        b=Ya0R7diuum/k1UdLTncHFwiISsPfX06BNgsmxFjz92agSr2pt+PNHymiyNVqGXalNd
+         uo1lQJtobN5HQRjAtN+H6NNyVcDUDhSxOtJYFbbXxySrX1YPt8XQJ8+MA2Xaz5EOUGY5
+         hCcK8VQKznxZ/shfg0RoFfMOxX0Er4Hp+XgtqtGR5lM72naEZLXF8DLZ3YEcfNSI651C
+         kXsYMSWZOgupgSBuyiuvK8V2R+C4+KTsdbafgCZwDSmxFCx3RK3DPgvDGT63HpRPCiLG
+         LZ8M7T7/Kff5mI4mUS/qaTg3oDtyxbCU3TSeBhONOA6V0xkupk2b1nEx88B9oEk3WmzM
+         tVVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxYKGX3vKOmmX8WdQ2UOvua4BQ04bJ7+To0Ii9uKGZt+bosaYMLfdtLOXY2xlwGr7kgTRYdVfjQfgDKRLWhRFJmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybyUUEVV/ryxMk+vFLMKCMJVUfdycxKe114wJacK/BXYUDoYmg
+	2Kz0QS3g5zrhKGrC+YE9LjlQYDGNhjNJmi/1t2Jsd6UaEsVtNYNCVeC4ufJKRdCaPBY=
+X-Gm-Gg: ATEYQzw/jDTD/adPlQeMus6yRkvRSa6hYd2wwr9xqbdGG80/CJNJoSUZq7BKDZC0WaN
+	6ow9PN/q+4JxOoEy5DIjNaJ95KFvmnli2HjmnR3c+Ua9Vnxlx8peSuu18zdLAOO2ic1lpuzxq8/
+	jwB9xehb9DqFgJyFeG9qxwT9FylU1A3TkAQZ6LqkCwcLwT8bsw2PMbTsWEbTArCTvTs4/YefVSv
+	Bb3ensAOiQO7gdlIaKLTfMZx6LUngPPBUWO+yiILyeN/fpoZrfkIjmwtVJ3CUwb3w93KBjdhqoe
+	s71FEx0jK4mKpfK4NecUicoAmKwyXPtlgzkwAI6uoJLV9bQoxNn0Rjdxm2eM3dmvZuY9b4B0ZLS
+	gkIKJpeWbngnppF2DuKoa/VyqAzF2r+ECgHaxNlCruymZVy+P3b5DbuV2PZkQuqQY9UwgMlEXWw
+	x8oYMfUtd527vW52Ssl5jDGJAaoWLeC3q6lTDTkYnC5c5p7Dp+A3H+nNB1IY9tEjNwV6ezagmvT
+	7c9Ji2o/PP+fOvbJIB99bQPwyXlx4uviM+MhkqUAvxe464=
+X-Received: by 2002:a05:600c:4e15:b0:477:7ae0:cd6e with SMTP id 5b1f17b1804b1-48727d5a16fmr96169455e9.5.1774704568187;
+        Sat, 28 Mar 2026 06:29:28 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:e1de:7c03:e16f:8136])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf21e265fsm5369110f8f.1.2026.03.28.06.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2026 06:29:27 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Hans Verkuil <hverkuil@kernel.org>,
 	Hans de Goede <johannes.goede@oss.qualcomm.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -60,119 +72,123 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
 	Sylvain Petinot <sylvain.petinot@foss.st.com>,
 	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 1/2] media: i2c: ov5645: Report streams using frame
- descriptors
-Message-ID: <acfe0wCdyX20In8I@kekkonen.localdomain>
+Subject: [PATCH v2 1/2] media: i2c: ov5645: Report streams using frame descriptors
+Date: Sat, 28 Mar 2026 13:29:01 +0000
+Message-ID: <20260328132902.776757-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260328132902.776757-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260328132902.776757-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260328132902.776757-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260328132902.776757-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for the patch.
+Implement the .get_frame_desc() subdev operation to report information
+about streams to the connected CSI-2 receiver. This is required to let
+the CSI-2 receiver driver know about virtual channels and data types for
+each stream.
 
-On Sat, Mar 28, 2026 at 01:29:01PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Implement the .get_frame_desc() subdev operation to report information
-> about streams to the connected CSI-2 receiver. This is required to let
-> the CSI-2 receiver driver know about virtual channels and data types for
-> each stream.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
-> Changes since v3 [0],
-> - Added a macro for the source pad index.
-> - Updated ov5645_init_state() to use the new macro.
-> 
-> [0] https://lore.kernel.org/all/20241018153230.235647-9-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> 
-> Hi Laurent,
-> 
-> Ive restored your RB tag with the above changes. Please let me know if
-> you have any further comments.
-> Cheers,
-> Prabhakar
-> ---
->  drivers/media/i2c/ov5645.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index b10d408034a1..df9001fce44d 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -28,6 +28,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> +#include <media/mipi-csi2.h>
->  #include <media/v4l2-ctrls.h>
->  #include <media/v4l2-fwnode.h>
->  #include <media/v4l2-subdev.h>
-> @@ -68,6 +69,8 @@ static const char * const ov5645_supply_name[] = {
->  
->  #define OV5645_NUM_SUPPLIES ARRAY_SIZE(ov5645_supply_name)
->  
-> +#define OV5645_PAD_SOURCE	0
-> +
->  struct reg_value {
->  	u16 reg;
->  	u8 val;
-> @@ -817,6 +820,29 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
->  	.s_ctrl = ov5645_s_ctrl,
->  };
->  
-> +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> +				 struct v4l2_mbus_frame_desc *fd)
-> +{
-> +	struct v4l2_subdev_state *state;
-> +	u32 code;
-> +
-> +	state = v4l2_subdev_lock_and_get_active_state(sd);
-> +	code = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)->code;
-> +	v4l2_subdev_unlock_state(state);
-> +
-> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-> +	fd->num_entries = 1;
-> +
-> +	memset(fd->entry, 0, sizeof(fd->entry));
-> +
-> +	fd->entry[0].pixelcode = code;
-> +	fd->entry[0].stream = 0;
-> +	fd->entry[0].bus.csi2.vc = 0;
-> +	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v3 [0],
+- Added a macro for the source pad index.
+- Updated ov5645_init_state() to use the new macro.
 
-Instead of doing this, could you use my patch here
-<URL:https://git.linuxtv.org/sailus/media_tree.git/commit/?h=metadata&id=56eaab0eed55e5e777344e0b3973d8072786dd98>?
+[0] https://lore.kernel.org/all/20241018153230.235647-9-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Every caller needs to be changed, too, but there are less than ten so
-that's a non-issue.
+Hi Laurent,
 
-> +
-> +	return 0;
-> +}
-> +
->  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
->  				 struct v4l2_subdev_state *sd_state,
->  				 struct v4l2_subdev_mbus_code_enum *code)
+Ive restored your RB tag with the above changes. Please let me know if
+you have any further comments.
+Cheers,
+Prabhakar
+---
+ drivers/media/i2c/ov5645.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+index b10d408034a1..df9001fce44d 100644
+--- a/drivers/media/i2c/ov5645.c
++++ b/drivers/media/i2c/ov5645.c
+@@ -28,6 +28,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
++#include <media/mipi-csi2.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-fwnode.h>
+ #include <media/v4l2-subdev.h>
+@@ -68,6 +69,8 @@ static const char * const ov5645_supply_name[] = {
+ 
+ #define OV5645_NUM_SUPPLIES ARRAY_SIZE(ov5645_supply_name)
+ 
++#define OV5645_PAD_SOURCE	0
++
+ struct reg_value {
+ 	u16 reg;
+ 	u8 val;
+@@ -817,6 +820,29 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
+ 	.s_ctrl = ov5645_s_ctrl,
+ };
+ 
++static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
++				 struct v4l2_mbus_frame_desc *fd)
++{
++	struct v4l2_subdev_state *state;
++	u32 code;
++
++	state = v4l2_subdev_lock_and_get_active_state(sd);
++	code = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)->code;
++	v4l2_subdev_unlock_state(state);
++
++	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
++	fd->num_entries = 1;
++
++	memset(fd->entry, 0, sizeof(fd->entry));
++
++	fd->entry[0].pixelcode = code;
++	fd->entry[0].stream = 0;
++	fd->entry[0].bus.csi2.vc = 0;
++	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
++
++	return 0;
++}
++
+ static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
+ 				 struct v4l2_subdev_state *sd_state,
+ 				 struct v4l2_subdev_mbus_code_enum *code)
+@@ -897,7 +923,7 @@ static int ov5645_init_state(struct v4l2_subdev *subdev,
+ {
+ 	struct v4l2_subdev_format fmt = {
+ 		.which = V4L2_SUBDEV_FORMAT_TRY,
+-		.pad = 0,
++		.pad = OV5645_PAD_SOURCE,
+ 		.format = {
+ 			.code = MEDIA_BUS_FMT_UYVY8_1X16,
+ 			.width = ov5645_mode_info_data[1].width,
+@@ -988,6 +1014,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+ };
+ 
+ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
++	.get_frame_desc = ov5645_get_frame_desc,
+ 	.enum_mbus_code = ov5645_enum_mbus_code,
+ 	.enum_frame_size = ov5645_enum_frame_size,
+ 	.get_fmt = v4l2_subdev_get_fmt,
 -- 
-Regards,
+2.53.0
 
-Sakari Ailus
