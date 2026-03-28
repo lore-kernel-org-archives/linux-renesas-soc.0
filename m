@@ -1,133 +1,178 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7692377550;
-	Sat, 28 Mar 2026 13:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918BA13AA2F;
+	Sat, 28 Mar 2026 13:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774703450; cv=none; b=DDvQ7wS0YfUv721JTl4wve1px8F3RdH+6FYA1Mk/Y+PiYP4QRIhnqVcvlXqstkBcOQ/y9GIbJ64xvWvtqF+gsaRMS1iNFb02UCtklatmLMCTStmPSa2UR7Ap5GPKgLXgBKfq3hA4S2V0yroZ8UqD6viQS8xyc3sBSDh7ql2L5dY=
+	t=1774706389; cv=none; b=F5TEswicgAG8nAsmCEY2rM5LmwCR0ARAwf7AMU+rvVS19OiAyCSZOk9/6bzY1BszB3C6LMDESNTiAZMHdvGIFGrwioZJ+A2IaAWRJDnSSZ7jaqxxgA7XjvMOznctJ+mYaXIWOByBo4UquKAtPD4rdgTgphv7NqaQYT0vg+yOfu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774703450; c=relaxed/simple;
-	bh=BLDbeDKJZle3vRx68q25l2uuwBLUQTfRDz/M+4Dx/bc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A9c/NuExxdNBdftSOm0p9ctNUjbufg/ndKL+eV/m4WTcTfUEaCqi3jhkW53n9Ovs+/jB6//m5EBb4NthOWdTtOkRvPxW13cn9v02Zb/4oFGeIcqsCft48bzoSUMBCXuc+BMFa1rWfnXaok9amOu9DgJJwXnNeVPBJhzoaAvSjzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2NT2jnO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774706389; c=relaxed/simple;
+	bh=h/tKi6QrqOTDKr4SqP1BIjcSeikVfTPP+W8yGCH6ZKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u5R+H+/npIqHM9JZs95yLUE4bAM9Zm6C4OErHRMI+BYCKRyfnmd5wG0htqOEIU/zXxN/A0yNphCvupAwDOiavd/Ib4oudWG0GBv1/m7/Nvl/NgFjl0dQMvCiu1ipK+2VfII/J974fuVukYkCgLCdU3GzJLiX2JdmyzneJY18p/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b/ywmdGQ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2NT2jnO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6E7C4CEF7;
-	Sat, 28 Mar 2026 13:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774703450;
-	bh=BLDbeDKJZle3vRx68q25l2uuwBLUQTfRDz/M+4Dx/bc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=U2NT2jnOQC9F38xeBkF5DCdQklNsxk0J8b++wtfjtFoLzNZQxmrAaSqE8ceEfUdeU
-	 OVJmrcImMSpKDNFhH/JFPWeX18A2k14ft1fLJW2qKLP/3Gk6vTWb+TrGjxW9qsv01O
-	 uwlnCV3Out3cM+Ozl5rbAdsbJJjwXtUOot3TAKMzvI0l8Ff9q51+ihNrvUCpnwIYtH
-	 XeD6rMWaTtNgLEU3F/ny4gcKpE/lmu2s/qdeSPz7jtCUkt0IJZv4bU2eozVwoT20PE
-	 rO/Wt4QgYQAscBhVrczfx1kU5t0PUYKuZe2xccwdg6ackbVT4B8yu+Rt01JUpyA+ht
-	 4WOWaX3s8N8LQ==
-From: Thomas Gleixner <tglx@kernel.org>
-To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivia Mackall
- <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Jayesh
- Choudhary <j-choudhary@ti.com>, "David S. Miller" <davem@davemloft.net>,
- Christian Marangi <ansuelsmth@gmail.com>, Antoine Tenart
- <atenart@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Pascal EBERHARD
- <pascal.eberhard@se.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, "Miquel Raynal (Schneider Electric)"
- <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 12/16] irqchip/eip201-aic: Add support for Safexcel
- EIP-201 AIC
-In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-12-5e6ff7853994@bootlin.com>
-References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
- <20260327-schneider-v7-0-rc1-crypto-v1-12-5e6ff7853994@bootlin.com>
-Date: Sat, 28 Mar 2026 14:10:46 +0100
-Message-ID: <87pl4oayll.ffs@tglx>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b/ywmdGQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774706388; x=1806242388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h/tKi6QrqOTDKr4SqP1BIjcSeikVfTPP+W8yGCH6ZKg=;
+  b=b/ywmdGQVk5+LK2ljewhfhadf3hB0rwkseFi8bIwd71B1RKdwFSbAzYX
+   RL6v5yRuVgI0X9CCcZZiR/B4MaX/PBVNhdc1o/tDHbUuP4p7sCK4fMwFr
+   1YWnylLGBhX7uQQSD1IHhe5ns2P8eSLJkjopoiysa23jheAqVq32J+Vxh
+   mCHi5XTGBIavmeHY6zwslk4okiUg99Nh5x1VUrU7YVYycG53IGa0/Uuqk
+   FnUsMaiSLS7lnwej9k6jhVNJN9WAdKhDN/t6pyZc0H6L3fWN0eL1E0nfA
+   H2FZrZLVCkKNAaCx79t+RBgee1Z3G++l8zNLfCjGXgevM53CqSOPlqdOS
+   Q==;
+X-CSE-ConnectionGUID: Z/qEywF3TT2IqgR9DkVKLg==
+X-CSE-MsgGUID: WutoUK08SPuk+O6MRSY28Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11742"; a="74941681"
+X-IronPort-AV: E=Sophos;i="6.23,146,1770624000"; 
+   d="scan'208";a="74941681"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2026 06:59:47 -0700
+X-CSE-ConnectionGUID: Xtwd/9HMSvafUDAoEddeDg==
+X-CSE-MsgGUID: iTaJ75wkQcqbMOqqbZfwNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,146,1770624000"; 
+   d="scan'208";a="230354890"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.251])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2026 06:59:44 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id ECDAD121D3E;
+	Sat, 28 Mar 2026 15:59:47 +0200 (EET)
+Date: Sat, 28 Mar 2026 15:59:47 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Hans de Goede <johannes.goede@oss.qualcomm.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 1/2] media: i2c: ov5645: Report streams using frame
+ descriptors
+Message-ID: <acfe0wCdyX20In8I@kekkonen.localdomain>
+References: <20260328132902.776757-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260328132902.776757-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260328132902.776757-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Mar 27 2026 at 21:09, Miquel Raynal wrote:
-> +config SAFEXCEL_EIP201_AIC
-> +        tristate "Safexcel EIP201 AIC"
+Hi Prabhakar,
 
-TAB, not spaces please
+Thanks for the patch.
 
-> +	select IRQ_DOMAIN
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2026 Schneider Electric
-> + * Authored by Miquel Raynal <miquel.raynal@bootlin.com>
-> + * Based on the work from Mathieu Hadjimegrian <mathieu.hadjimegrian@non.se.com>
-> + */
+On Sat, Mar 28, 2026 at 01:29:01PM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Implement the .get_frame_desc() subdev operation to report information
+> about streams to the connected CSI-2 receiver. This is required to let
+> the CSI-2 receiver driver know about virtual channels and data types for
+> each stream.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+> Changes since v3 [0],
+> - Added a macro for the source pad index.
+> - Updated ov5645_init_state() to use the new macro.
+> 
+> [0] https://lore.kernel.org/all/20241018153230.235647-9-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> 
+> Hi Laurent,
+> 
+> Ive restored your RB tag with the above changes. Please let me know if
+> you have any further comments.
+> Cheers,
+> Prabhakar
+> ---
+>  drivers/media/i2c/ov5645.c | 29 ++++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index b10d408034a1..df9001fce44d 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> +#include <media/mipi-csi2.h>
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-subdev.h>
+> @@ -68,6 +69,8 @@ static const char * const ov5645_supply_name[] = {
+>  
+>  #define OV5645_NUM_SUPPLIES ARRAY_SIZE(ov5645_supply_name)
+>  
+> +#define OV5645_PAD_SOURCE	0
 > +
-> +#include "linux/irq.h"
-> +#include "linux/stddef.h"
-
-That's not a standard include format.
-
-> +
-> +struct eip201_aic {
-> +	struct device *dev;
-> +	void __iomem *regs;
-> +	struct irq_domain *domain;
-> +	struct irq_chip_generic *gc;
-> +	u32 type;
-> +	u32 pol;
-> +};
-
-Please follow:
-
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
-
-> +
-> +	/* Type register indicates:
-
-See 'comment style' in the same document.
-
-> +	 * - '1' for edge interrupts
-> +	 * - '0' for level interrupts
-> +	 */
-> +	if (*out_type & IRQ_TYPE_LEVEL_MASK &&
-> +	    EIP201_AIC_INT(aic->type, *out_hwirq))
-
-No line break required. You have 100 characters.
-
-> +static int eip201_aic_probe(struct platform_device *pdev)
+>  struct reg_value {
+>  	u16 reg;
+>  	u8 val;
+> @@ -817,6 +820,29 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
+>  	.s_ctrl = ov5645_s_ctrl,
+>  };
+>  
+> +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> +				 struct v4l2_mbus_frame_desc *fd)
 > +{
-> +	struct eip201_aic *aic;
-> +	struct clk *clk;
-> +	u32 rev;
-> +	int irq;
-> +	int ret;
+> +	struct v4l2_subdev_state *state;
+> +	u32 code;
+> +
+> +	state = v4l2_subdev_lock_and_get_active_state(sd);
+> +	code = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)->code;
+> +	v4l2_subdev_unlock_state(state);
+> +
+> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+> +	fd->num_entries = 1;
+> +
+> +	memset(fd->entry, 0, sizeof(fd->entry));
+> +
+> +	fd->entry[0].pixelcode = code;
+> +	fd->entry[0].stream = 0;
+> +	fd->entry[0].bus.csi2.vc = 0;
+> +	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
 
-See 'variable declarations' in the same document.
+Instead of doing this, could you use my patch here
+<URL:https://git.linuxtv.org/sailus/media_tree.git/commit/?h=metadata&id=56eaab0eed55e5e777344e0b3973d8072786dd98>?
 
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
+Every caller needs to be changed, too, but there are less than ten so
+that's a non-issue.
 
-Leaks the chip and the domain.
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
+>  				 struct v4l2_subdev_state *sd_state,
+>  				 struct v4l2_subdev_mbus_code_enum *code)
 
-> +static struct platform_driver eip201_aic_driver = {
-> +	.probe = eip201_aic_probe,
-> +	.remove = eip201_aic_remove,
-> +	.driver = {
-> +		.name = "safexcel-eip201-aic",
-> +		.of_match_table = eip201_aic_of_match,
+-- 
+Regards,
 
-See above.
-
-Thanks,
-
-        tglx
+Sakari Ailus
