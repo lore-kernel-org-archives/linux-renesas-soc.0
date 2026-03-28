@@ -1,116 +1,79 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2EB3932FF
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 16:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032D734CFA1
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 16:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774714001; cv=none; b=ADef2igN5VSNb8VFoLG9RBIp4aGmKy0TCRZjgzRpeor4taiajuTwF5kvTBvZs+w/XrT5ocQHmSkxCi+RqV607i48v/QgkdGCL8o9gGYK/htGsrOOeyHDWBKO8yW05d8WvM4CZ2hfOeNgjfS0SuzP8j8gCNhPQ3A/Rd0VMHFaurQ=
+	t=1774714687; cv=none; b=nZ+MUuikipje+kB65NByq0UlGGdd4+pNZBl4BM5Ba30SBsIBOoJQvl6oVDQ19ImM2MPjza4OtCE/8WozG/JWORo0vmLBxxSH0cU0C0I7mMmlp5MLj2kvXdFhEifNP0QikVhs7CfV4O2ZYoACj1QXDEnttRe6CNjzGxvUn9IrvR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774714001; c=relaxed/simple;
-	bh=MdQfG1i63z2+B8h+hGMucXuxr1uS0joRSYii9egx/pQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qyO5F+AZxkbXOT+pDaFklJ+h8XmEX9e3Fduu2jfEjp6FAHDJ4xP+F03jt3fj7qe8RW+ZCnHltN8qKKZWHYImT9BmqXUFTsA4rKeK1lsIe5onOZWIht33NfuY4yEmLEP5dckprmN0u7pZvIWn/4IL3DEaUmmYHkpEA88xouQl/kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/0AyRXB; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774714687; c=relaxed/simple;
+	bh=BCwhnZkHq7orJJATJ99lfTzegCRxTho8kUF2KkI0UXc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uSNyZRxsto1ItGzBQ43u4lmzu1Oy2al7eAp6AC17+apYPNYwU9/vg3i8K71aLk2O/q/+9dRiuxa7EbBCcyqTbVnwaN1D83iTUnF+Ph2bg5mgHjFopFy3TX2hBShSUeBALzmUBhPuOMSEWsN+cnjKkujGGsT9qZM9uQgdpfvNUCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAdfwMYk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/0AyRXB"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5a279ce9475so3686668e87.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 09:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774713996; x=1775318796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrtALhRQ+/dB+7gUCD8Q9TtNE8HoAMbogKYxXP9zCuc=;
-        b=l/0AyRXBQq0pAPm2APqqzfbl6hyGEMelQF987jNL49sEGEvJD/csp9CXCIGSsiy6Rq
-         a2PZxlvRwPl8ZIQkS281LY4Fnaw7fl6rpJexwT8HctRvpTgCdcCk4ELS9r7+c8M9mknW
-         ZxAqakMfQglmpKIHi7iAuMwX8sywclUS/PrmRjZGPML2/5IWPp0xIxEAn4cvb2BM+s3N
-         l+ZBLS5PqW5vwLKXUxIvdJPJ0Z66lJ48cA+P0hjWKnSoyXa/kg7wGHWia2mOWCfpsDnC
-         o/2Z3jc19cMl66rLZx8byl1HiidehJMDkMsOHegRvayQT9xOnoxSTlvLbKmLSmLiGjMQ
-         p2Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774713996; x=1775318796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrtALhRQ+/dB+7gUCD8Q9TtNE8HoAMbogKYxXP9zCuc=;
-        b=eXhz0Je8luIH/mQNI/DEc0ySH8aykER7GMJT5BR8Fbk6LykE/eN5kDxczWReKdLcZb
-         fZLEcyMWW2F8xuyoQ0YHZ6TNGZ5IaWN+wdcCkdxi5+ydvV6hMP7dIsSxkybUFerDDX+r
-         JGaiQLjexPgsfPUCE+Rn4KeiUiKPGSvxNisXGdVZzP+zzbnlpnZXxiIjVz5+zYDFAz9u
-         uhKWNPQhQJoPiowvBZ5HaiTChaz+QCEaL3BWml1S4/zC+7EKwGRymhhcIfnt4xJA+e3g
-         MEy09i8AFnluTSst8O8seamSyCl/1tKPPe3JZ+6a85KclsPjodYCBls6mCfw4zKADJFr
-         QxnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3y4nK4xqZtVjV29l4YNiz+hzQAjpp5apHlb+EoNib8XABOFdCAOyf2YYO9SEu1wAQ3Z4/QzI2mbzGPhbr8Jqy+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEnGp9IDMGF8QNTIgGx5oIA6xSCYEV9atmGKPkD5xKNdfBTFgP
-	xex+3RsLaHu0Fwb+XQxlqy/agKtsxslJ1zkW2lbNuzSi7osI2hJAR6fUY7Iy8A==
-X-Gm-Gg: ATEYQzyBmbUdnePwkwJIWJXfaXUnuXGHoE7LfOi6mpZROtINZU3Stq0EPgj1UtismnH
-	U5rzt9E2uA64qn8nGfKsnPmEkNrDcgqPmI5ucZVybLqYP/abrGpLlcNW7H2OEiwSrt61Qsq4wuE
-	jUTbXpx/cQn8/meWvwlOHeiOVGUUH3LnRHm/fzHrJBDTMFOEel3BKSgEAXL+sGIKgFyNolwttXL
-	ej7sBkZtHYSyGJuFjNSzXq/aar6rSHZctJFgkwMmnn0NlsmqdFAYCqjzoGVZK+rtvG0yX3uLPve
-	3XXkFWSrh1PT6oKFKVxpTbZVzsx+Cti1MHUsLdxUyPa7xCu7YEokNlVdcWMuwtWJEwOTPWqsDRa
-	mAAgCSyw/giEDdQsrnAyQCttcn4Rl+rsRiDtTzHJxrg2joYzyrVnNGBhyi3TQJHpkhMEYB80F9s
-	2p2oVAi85Zb/9tApsu3QsCyy0CoWD8SLVRNFTbXi3D4ArGe6GU
-X-Received: by 2002:a05:600c:6986:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-48729109c35mr75510485e9.11.1774688752254;
-        Sat, 28 Mar 2026 02:05:52 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:8a55:5310:98fe:930d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48727bfc5ecsm77227735e9.1.2026.03.28.02.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2026 02:05:51 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] pinctrl: renesas: rzg2l: Fix incorrect PUPD register offset for high pins during suspend/resume
-Date: Sat, 28 Mar 2026 09:05:45 +0000
-Message-ID: <20260328090548.84124-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAdfwMYk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1573C2BC9E
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 16:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774714686;
+	bh=BCwhnZkHq7orJJATJ99lfTzegCRxTho8kUF2KkI0UXc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZAdfwMYky+ewPT53loSUU1SH0FD4W7anCFmSswAELXMofGDUyAEMVbINnKfEkAS8N
+	 mvZb1gxdaDKv7WNI4grSYvkV3NE+vsSzsnXg6ptWlk13iF6oO8Hm381bhocsD9AoLw
+	 orGxnvvWuduAWBOc20l9QJlFJyYxJLzx6LVLzdWVlCW5KWEFjooiYHBjuW67fs/4gN
+	 ARs78kgHf/gaL2+JnCzmw97YXcT/vgEaUTJLE26ZJT+w0gwAcxZ6PjnsOZ7AlttVrs
+	 ua2iYH2Sn+EEbquvq6ryvFGXKZQ6RKH+5HIRlT1vyuHIGMA5DfFbibZ9KJe3P+bSl5
+	 /yGECJqYNJxZA==
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-65006c99d38so1355512d50.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 09:18:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX10sKdSEkK2uBY0QYMPx8hmWu7K0Pk6Lz7fu98uQ5eRvcrU2qwarMFkkSg8JUu20mtt5tbssa1lCR6QVnw39sTww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyapnIqBPrznCNM6OI3QicnzvLseQrrifwGkKbGPMzXyEkc2aqI
+	BOfjEbvmhAL5ChCaXu3SUzCr2xJDeONZKhee5mvNRFrZI5XZst2H2SOCpkPO8ALrtvHlgqO95QN
+	zoXJAp7ReKnRstEXEChiBlc/omk12Yu8=
+X-Received: by 2002:a05:690c:9304:b0:79a:6a75:554a with SMTP id
+ 00721157ae682-79bde01413dmr56222657b3.30.1774714686223; Sat, 28 Mar 2026
+ 09:18:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1774606726.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1774606726.git.geert+renesas@glider.be>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 28 Mar 2026 17:17:55 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=O+Vu+8HGL6wi9YtDAOi_a1yzEAAa8dyCZVGSuvcC-KA@mail.gmail.com>
+X-Gm-Features: AQROBzBQUfWkPkePszA79CkS_TXT32uL3CScuVQmzL-4Rb0wR8nfDTbIJuUvnQs
+Message-ID: <CAD++jL=O+Vu+8HGL6wi9YtDAOi_a1yzEAAa8dyCZVGSuvcC-KA@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v7.1
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Sat, Mar 28, 2026 at 1:11=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-When saving/restoring pull-up/down register state during suspend/resume,
-the second PUPD register access was incorrectly using the same base offset
-as the first, effectively reading/writing the same register twice instead
-of the adjacent one.
+> The following changes since commit fb22bb9701d48c4b0e81fe204c2f96a37a5205=
+68:
+>
+>   pinctrl: renesas: rza1: Normalize return value of gpio_get() (2026-03-1=
+0 10:33:47 +0100)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-pinctrl-for-v7.1-tag1
+>
+> for you to fetch changes up to 3f92867ce3ee2a274ebb7e7d5de7f6ee85da21f6:
+>
+>   pinctrl: renesas: rzg2l: Drop superfluous blank line (2026-03-26 20:05:=
+36 +0100)
 
-Add the correct + 4 byte offset to the second RZG2L_PCTRL_REG_ACCESS32
-call so that pupd[1][port] is properly saved and restored from the next
-32-bit register in the PUPD register pair, covering pins 4–7 of ports
-with 4 or more pins.
+Pulled in, thanks Geert!
 
-Fixes: b2bd65fbb617 ("pinctrl: renesas: rzg2l: Add suspend/resume support for pull up/down")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 561e6018fd89..68b94c748f53 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -3049,7 +3049,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
- 						 cache->pupd[0][port]);
- 			if (pincnt >= 4) {
--				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
-+				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off) + 4,
- 							 cache->pupd[1][port]);
- 			}
- 		}
--- 
-2.43.0
-
+Yours,
+Linus Walleij
