@@ -1,78 +1,29 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981C257821
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 10:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590A5378D86;
+	Sat, 28 Mar 2026 12:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774694011; cv=none; b=eMyf4pt0wfGl3Zkq+mCWdAYrxdx8WwjbWvz3r7qCWIKT4GxXnUORjltPabU7U5yBPkiElOgPjiK5y2ZB5DYR6NyX1mj7BCZr4hydY3a0aBxLA4q9ASbKbdzN6UeVrpknvbGCmGJXgXs5GsS0rw0YPoY4w0iqf4bcGXziKbF2v6A=
+	t=1774699857; cv=none; b=lhIh8WPe6sGzYU/F57p9k2fSumgCw/mlpTS9533KVVRLoFzv2AT4Cdp3qUyHB8q9IjILQVequxAtjWaRG+qfMS7VnGN50TnyDochZuiNs/1+1KWVt8EiFlKv1Edt7ycECcPMYaId8hg6/wHRQuA1EaJ+EtoNLfmIQi1SdAdWiCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774694011; c=relaxed/simple;
-	bh=zIXN1eOSFxHm08xg/0aS9h67G1NP0b1qZaBd3UKNS2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U3/f1bp3mayTTm81pois5maw70hlc8vqctAuIMiQrdBIrEuTobi7lJDDGjTK9MGgZToQHYi+kfvnNxNGlBQ1uWNHd7F0nP1P/G9Ba0olu1mjanslaxiYcMvuIvzgasjNueg/i7OWrFjAaYz1zgeKwWc0kbL6xxS0943QhBr4xBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEl1+sBB; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEl1+sBB"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-486fda2a389so23263835e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Mar 2026 03:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774694008; x=1775298808; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5/W97cpYOeY9DEXDRzpvu8BXZnfFoUWnEBDpZGzN5QQ=;
-        b=gEl1+sBBuNBnhGplr+iVCPiCl9oZFLVjux2D1y2GP/4QPAG8CgPy1VsCGjlV2bDOhb
-         +CybSDB2V6mGcDszuFOgkrMhjbC2DGfhLySH17IhLXPgjWpvk/mqYaZzjJ0M6b5XN3so
-         kTo9OdL0/hF2ZxoAsw0Nqlby8hoIYbX2latE4jmrz3tHRT8Qq4yVRuK4OU5xxrLkMdP9
-         pfQizaKV3EFgZNrkqW88T4USHU0wlQ31ThqZb08biFxoZa8r8tkVzl57LNUxWh+pugKq
-         4zsJLd1qavfvQhxsn4jaL0bkddW/rj2sDcgm2NwNwqFkkeCKEdXTfT9K1NnHfbfumJOk
-         TGTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774694008; x=1775298808;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5/W97cpYOeY9DEXDRzpvu8BXZnfFoUWnEBDpZGzN5QQ=;
-        b=XQ6l73QeO/iTuuM4SOwGfCI3fPgYQGR7t6TgTXUcoDdAbv3W+czVZrvXeiJaLhGV4G
-         pUQRQnST6zyuorWTXf+4UeGnuUotib6au2B6nRW5J1yzMgCR0CuKBIOb7RUaaj1BQMbr
-         JXf4fnvDgG+hNtiDR4mTbYBcZEnMtJK7qqFGe6mt9pbHJAqfYWDPn5TllNb4vXil2Pa3
-         xmmPKYEA+C5hhIUMSBI1DHPud2Ey2VvaN7IN3kzbyaxOMmkFjVxIH1/fB5UD9e+psPhx
-         KTOOX6cPcOLj1ILApBF55EqJzQic1ddjAc1j9bTNAEuGsj+7UpDxbNvyFOt4vNSBhVQ5
-         wdlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv4wA+vURgSnYSoY4XKcjtMyTJBfoG+eOuCSBvGJTW3tQLrdRhUhqGLQKUKXFNRIF28ky7/Lvu7ypbp362JYrC9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwogCKp+rCvFLYMXj37uQ+BxqhfoScZO+AIMxtL5ikhNcC2VpUR
-	wSBgUhLl1x7CX19cyOLgNoArT6A390vS7s0YBvskuL622Xta6uUmKagD
-X-Gm-Gg: ATEYQzy3/OJY84jlV6NJsMLTAZ5nJBEo6xqmItUIa4d4sgHIDTQK7haaQvtjNntiZmB
-	P7Edsptw52E0koklXC99FZeUF0zIyn/LRr7C4Uwv5RJ2QryvJWkZXPMsqrtv0mW7yzz4sxGmSH7
-	wmo8dh7hJCkK2oNKzXlxnU3MWgiXkv0oJcTy++I42h/sufchsi5qUK3v1BFmV+SEnwJtvOfKAgc
-	a41iATTpLGdqCe646iyDvzTHdmGR9B9TWC5O3jiar9LyP2SHbREpBMEIKz5P6EQ4zLtWQ6YcuUh
-	Tucr7Sn+JuN0uX59UWUNmBlhB01aNlfeKqmQfczIppfCxTwT5mLwFgFRvZDUkvM5suNFuKbxvEQ
-	nyezYWTdCuWwereRHI+xmInE6vRl+PtjclrDN1211BOo1yVXFZNnSXZPTWpzgjZh4mmK2KUU8Ut
-	b3bbIjmDU/JzGr9+t1oWGae22ftpNwwFkYY2QXCSKYYc91vghX
-X-Received: by 2002:a05:600c:1d15:b0:483:703e:4ad9 with SMTP id 5b1f17b1804b1-48727ee9b10mr91444565e9.19.1774694007925;
-        Sat, 28 Mar 2026 03:33:27 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:8a55:5310:98fe:930d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-487270fd880sm42270035e9.8.2026.03.28.03.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2026 03:33:27 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] irqchip/renesas-rzg2l: Fix shared IRQ bit not cleared on free
-Date: Sat, 28 Mar 2026 10:33:18 +0000
-Message-ID: <20260328103324.134131-2-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1774699857; c=relaxed/simple;
+	bh=XFhvW4GWrk9btT5W9zW4ChZWw8fj2/A37PrP+tca6Xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MrGTWgNIEFIxUWghgcde6nLwjMypl7we8nPZsxOU3G6HCY7nAhtYzJct/nADgIXPZcjRHthzyyqtfKvO0qVwDmgZv1nZI3B9+hYY/igtZiUbS5/e/dDJyMvPPzwgzmj419jD490xeGfPXJnwyMSYvIzqsw2YtT1fcsnZ5OH6gDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07FEC4CEF7;
+	Sat, 28 Mar 2026 12:10:55 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: soc@lists.linux.dev,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] Renesas SoC fixes for v7.0 (take two)
+Date: Sat, 28 Mar 2026 13:10:48 +0100
+Message-ID: <cover.1774606482.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260328103324.134131-1-biju.das.jz@bp.renesas.com>
-References: <20260328103324.134131-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -81,47 +32,41 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+	Hi SoC folks,
 
-Calling irq_domain_free_irqs_common() internally calls
-irq_domain_reset_irq_data(), which explicitly sets irq_data->hwirq
-to 0. Consequently, irqd_to_hwirq(d) returns 0 when called after it.
-Since 0 falls outside the valid shared IRQ ranges,
-rzg2l_irqc_is_shared_and_get_irq_num() evaluates to false, completely
-bypassing the test_and_clear_bit() operation. This leaves the bit set
-in priv->used_irqs, causing future allocations to fail with -EBUSY.
-Fix this by retrieving irq_data and caching hwirq before calling
-irq_domain_free_irqs_common().
+The following changes since commit 85c2601e2c2feb60980c7ca23de28c49472f61f1:
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/irqchip/irq-renesas-rzg2l.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+  arm64: dts: renesas: r8a78000: Fix out-of-range SPI interrupt numbers (2026-03-06 13:15:21 +0100)
 
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index f5c4d7e0aec3..3cc1efd8d914 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -699,15 +699,14 @@ static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int virq,
- 
- static void rzg2l_irqc_free(struct irq_domain *domain, unsigned int virq, unsigned int nr_irqs)
- {
-+	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
- 	struct rzg2l_irqc_priv *priv = domain->host_data;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
- 	irq_domain_free_irqs_common(domain, virq, nr_irqs);
- 
--	if (priv->info.shared_irq_cnt) {
--		struct irq_data *d = irq_domain_get_irq_data(domain, virq);
--
--		rzg2l_irqc_shared_irq_free(priv, irqd_to_hwirq(d));
--	}
-+	if (priv->info.shared_irq_cnt)
-+		rzg2l_irqc_shared_irq_free(priv, hwirq);
- }
- 
- static const struct irq_domain_ops rzg2l_irqc_domain_ops = {
--- 
-2.43.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v7.0-tag2
+
+for you to fetch changes up to ed8444006df9863ffa682e315352c44a49d9f4cb:
+
+  arm64: dts: renesas: sparrow-hawk: Reserve first 128 MiB of DRAM (2026-03-25 18:26:10 +0100)
+
+----------------------------------------------------------------
+Renesas fixes for v7.0 (take two)
+
+  - Fix TFA BL31 memory corruption on Sparrow Hawk.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Marek Vasut (1):
+      arm64: dts: renesas: sparrow-hawk: Reserve first 128 MiB of DRAM
+
+ arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
