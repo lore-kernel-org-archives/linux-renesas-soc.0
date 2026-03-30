@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF452A1CF;
-	Mon, 30 Mar 2026 13:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7D81FF1C7;
+	Mon, 30 Mar 2026 13:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774875697; cv=none; b=LgIeTwi8xGHudJI4CvfczdDCmpfU7W/mhjugAKJ9SQY09B1Ka7I01vhml0aOTiOTa3vSwYdAThVR53XLUx5vvhBOHE4K/T4HVQGqn23Tra+tFuEPYSdTcTmzriRRGx/ESxLdp29j/DHYAooYKL87TjiKN3g1+zB3ecxlGYCKmXI=
+	t=1774875737; cv=none; b=MDiZHCH9FAzIWvkAHMCi6kVWxqAIxyC2uKAPpwYdj7nB3sbbzPAw2ZssLVT1F7FE6usWlrr4WFR/2CJP+5S/jpwANxtP6T1g8RDnYNdufDJLmZSoCf0aVKZB16MXqQvDZAjqZ6eT3RQAof7AuIRgaXnmNutPNdqywMkafjpdP5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774875697; c=relaxed/simple;
-	bh=46hgEsoVh7DWB3Qb+l89sRe9XPzOO381zEYqmnaR2ZQ=;
+	s=arc-20240116; t=1774875737; c=relaxed/simple;
+	bh=kw6JkL3fkTeQ2AvlrTTSoLDXGz1GhOI3fV5Nyp70Uls=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oab7/Ea7f3ug8Dzck3q2DgN1z5WvMloF5VmvT4zWjy/LBxc7by/tbxm7kHR/VFfiU4+dY/IPXSDmVEYHTc6pVSAsboFe5RulKIWSq6jnHkFBTOyxvh/nBCvxgiQxB5Pp8vAZUPCl8bPDezNXpfEy+x41t47DEes3WOddRJ7mFI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bc2H5JIB; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=a6mEFB8zwYYpOAnFIy6y0THmJri1oqRkZipiko6DTg6/jtLI3Ue00iX1wyKDtoleQFq2Hf6fUF62zEJSaMp/cZ8PXBpuN2iQQcVufrd/GjLLMsBMwHBCEIrTgQwRhi2RsPnerRlQFtxvb84zk02LPOHUGflLGEyGxM/m/W/4s3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToBj58cw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc2H5JIB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6A6C2BCB0;
-	Mon, 30 Mar 2026 13:01:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToBj58cw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E77DC4CEF7;
+	Mon, 30 Mar 2026 13:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774875696;
-	bh=46hgEsoVh7DWB3Qb+l89sRe9XPzOO381zEYqmnaR2ZQ=;
+	s=k20201202; t=1774875737;
+	bh=kw6JkL3fkTeQ2AvlrTTSoLDXGz1GhOI3fV5Nyp70Uls=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bc2H5JIBV6OXdB5IVgmhTLdoaHeAQQcalOkaTPOpg2BsknEyq1C+h1vwryd2BWk3N
-	 c0xu+g0UE6jugkQddc6L6kFTPas/fUs7MUN6BEB/V0M9fJxsCcbam0Ntx83Ud+lv9w
-	 S/hTiNqcYi5RYOLjk3fIxXHsWi/AVEraa7qZL1/HnaQlPHi5ffUf+kW/FS7PtolKxw
-	 tZBk8SC/YdNa6HoQpopFbgByU2OOWXneHrDltgkx70sFYBDivX7//WwE0wqOcF89FM
-	 67XlR1Z8CEhjgGz6Ftru+DQXx3FWj91viaoeBsnydVoAZtgbRNcVFAIqgwQEGzkf6p
-	 5armVUPByaGdA==
-Message-ID: <0a8598aa-5207-4ff4-b4d9-034b6910bcaf@kernel.org>
-Date: Mon, 30 Mar 2026 15:01:30 +0200
+	b=ToBj58cwIW9MtOjqy2f1q/neD+/R79uMrsKv+YY90AnbI9gyPb/FgUSOo1MiC/tYE
+	 1QcijRB3YbGPtj+zmrVqgeZxzdll+ULPi3XcsqkzSMkeBtzLmfVk3AEK7wu9A+UB8W
+	 NSbFeQE7CkuiHwjvZHBNId0ujCtpwFpx1+h7kOSmP7ibT5aO0/KyodVNCweoJYlp4o
+	 oJwoUVZ7GyMasjSaEckWqF5I31Qbp1RDsgH+Wc1n3tF4oIqFNynzRexdG6OWkHjeEV
+	 JQ56v+7YDRhCq/Gjkcg4hO95DwGdAH0T93W+Ej/6989UvxJLonuMSsL41V+fav+qXu
+	 V5sSh6o1N+RXg==
+Message-ID: <8c01c910-21b4-4a16-98e4-197c20883d23@kernel.org>
+Date: Mon, 30 Mar 2026 15:02:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] cache: ax45mp_cache: refactor cache driver for
- generic Andes platform support
+Subject: Re: [PATCH 2/7] cache: andes_llcache: refactor initialization and
+ cache operations
 To: Hui Min Mina Chou <minachou@andestech.com>, pjw@kernel.org,
  palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
  geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -44,10 +44,9 @@ To: Hui Min Mina Chou <minachou@andestech.com>, pjw@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, jonathan.cameron@huawei.com,
  devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: tim609@andestech.com, alex749@andestech.com, az70021@gmail.com,
- charles <dminus@andestech.com>
+Cc: tim609@andestech.com, alex749@andestech.com, az70021@gmail.com
 References: <20260330102724.1012470-1-minachou@andestech.com>
- <20260330102724.1012470-2-minachou@andestech.com>
+ <20260330102724.1012470-3-minachou@andestech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,22 +92,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260330102724.1012470-2-minachou@andestech.com>
+In-Reply-To: <20260330102724.1012470-3-minachou@andestech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 30/03/2026 12:27, Hui Min Mina Chou wrote:
-> -
-> -static const struct riscv_nonstd_cache_ops ax45mp_cmo_ops __initdata = {
-> -	.wback = &ax45mp_dma_cache_wback,
-> -	.inv = &ax45mp_dma_cache_inv,
-> -	.wback_inv = &ax45mp_dma_cache_wback_inv,
-> -};
-> -
-> -static const struct of_device_id ax45mp_cache_ids[] = {
-> -	{ .compatible = "andestech,ax45mp-cache" },
+> This patch cleans up the Andes LLC cache driver:
+>  - improved error handling in andes_cache_init() by using goto labels
+>  - updated andes_dma_cache_inv/wback() to check for !size instead of
+>    start == end
+>  - cache-line-size mismatch from an error to a warning
+>  - Use ALIGN and ALIGN_DOWN helpers instead of the alignment logic in
+>    andes_dma_cache_inv() and andes_dma_cache_wback().
 
-NAK, actual ABI break.
+Please read submitting patches document. One thing per commit with
+proper rationale WHY you are doing this.
 
 Best regards,
 Krzysztof
