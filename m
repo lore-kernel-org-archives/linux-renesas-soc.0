@@ -1,103 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F933CB2C1;
-	Mon, 30 Mar 2026 13:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129933D410A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 13:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774876779; cv=none; b=iC6Z+f9vUDJGhnQEI6pFAKCev70FDQpEhE6Rfp5k/d6YW0R5187fvLM7C1qvexzChkHuslwWH2kQ2KVCvrLXByiateEJD5OVu44FuIY89o3kI2zCn9OJDpLDGjzD9wMFapnQOmSTIzczW3UOGWBXU6dp2uB/WFQpYQLSLiksF2A=
+	t=1774877035; cv=none; b=iGUgqziYUg4XsHgZJkS5SgNIf2ne5KKqLcsqMBG9RlD6qnhRkc0XFtDazh2pFe3tpydfIGNJSSOvMUyh/G0782KqZG8WBG0Zw/BfotHTx9gR17T0Cf+oYK6FuTTD8c/ii7AE5U/ipxUbiVtUGgMHY7ffWYZyZhpGB/ABMwQMa0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774876779; c=relaxed/simple;
-	bh=Xt08PXymCs4YwVjpcynOD9Y9BtXPNMqPh7FYH0XBhoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSLUfO0b69FtNA9etvnl0F5C3ppVy/YPwK7/aBk3LeGZKJFBmgwOs2Bz4vEy+uXRKcFvXXBnQ4WvkbKzs9mU+UPTEaYRA3wWu0d/hnOs/by8LWqoN/zAXR/H4i+9JXhRFg4kV71kZnUsnOzKFl6NWhcN6wCgr8j/r4Ztli+jI/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tQMNoMlj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774877035; c=relaxed/simple;
+	bh=318rkCOtOIcwyCbPWpmQU7rBPO8pQ3u3Zsk20tNNVWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Vm2cukECm7e/eZeLv12iNv8nOk7bMHYGBwLX/lhyGj0DetpP/nfg5BRdwgxK9dVBlHttvOiD0RwBwrpQoeHdzLwBhPjhLi/Ia9UsraF1VlhvIFodVp3EpWpZxACqQgTaGjAamO8O0NPy0jX3oVTm80C4BvREF4ezpAWps72G0uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T95pO3zm; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tQMNoMlj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF4BC4CEF7;
-	Mon, 30 Mar 2026 13:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1774876778;
-	bh=Xt08PXymCs4YwVjpcynOD9Y9BtXPNMqPh7FYH0XBhoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tQMNoMlj1NRnTs9ZoEczeHKRYMoX5a+Z2tQ+dI8ELcy1g1k55rFExNZj/XJUrwar7
-	 syT3h7GHUTt1HRLmW4etNkE+JZlDSQ76EMLxJi+sqnm7V23ANlSN1JjmuPnvi/36Sz
-	 W+Qoa8hF1tyo5SxMJWYeOAqcIeqXyclLnV4HabqQ=
-Date: Mon, 30 Mar 2026 15:19:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Peter Chen <peter.chen@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH v6 phy-next 03/28] usb: add missing headers transitively
- included by <linux/phy/phy.h>
-Message-ID: <2026033028-squint-yield-4c23@gregkh>
-References: <20260327184706.1600329-1-vladimir.oltean@nxp.com>
- <20260327184706.1600329-4-vladimir.oltean@nxp.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T95pO3zm"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48700b1ba53so39940395e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 06:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774877032; x=1775481832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7h3LG+LbAv4GOv1xUL9LKPpxkrnSVky+7zMr0jPZb0=;
+        b=T95pO3zm+DOkNymM1Ld0vsJrcpAJwoymWvJQSLzHRK3aZ3c2LnoOlChxnWOnLFwxu8
+         b/vx1WNs0gPMQrw2UE0Lam5qZ8SCVQp0IT84MyhIFSF449QzZxGcSFVSMuszRLoGwsGZ
+         DKnyw3LkRoRIFp9t/w/EB3dTMZ2t6LkDRlAOxhA+y8e4VYjl6Jf2mnbajlLCe5Vm4Hd/
+         SlnAIklvZ14VjeamPUFdqqeMBUqKBprG4nOvWyvOEOfrr5uR8Jzy5CNIiHY0oBNm7mej
+         rf2sN11Yxp21sextHb2WI73vktoU25C3S5fLdZlOK1KV+La56vnR0pNP5rS1WOWlWTh7
+         iiGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774877032; x=1775481832;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=g7h3LG+LbAv4GOv1xUL9LKPpxkrnSVky+7zMr0jPZb0=;
+        b=qEiH/pKZq7yCGXuD3qqO8IfPbpLqdpO0f4DjhwtT+93ADvxEX6QgPQQCGd4QnBTzZf
+         hzViZ/w8J3yUwVNdvaZAvkgRh153z3o59Jxv8NbxggDHW7xkKLbzqbfkxrz62+TSfI6/
+         7YkHDMUwW2g2Xr1cX85Ev54YRC0um2a6o/8n1OMc2gcqsQjdoYw4toaOb2zRjgp/+11P
+         A0f/yQ38+ACe+mI0ofovNB8mE7mpjcHwmz/JP7LTnIHyL3CwoF65hPkg9D4JXdGw8lFr
+         Tp+uXzoNFWy3nFHwPe5fcDj4/i497iSOMal9kOhPMk4CCvfYK6HlMLzMCdnvMOMC25RE
+         Y6jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsXtudyZVD7p4k57llqUWmBPdyRVUk52+evxXHYYgPxwBqSfo+uR3w5QohAYlI4yk9qfPOTmGwGsodf4hwI/qg5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVLJFr5io0ISzQqOTYCPmrgyA/foeiGkNzD7Ux+YmLqRWkLQHI
+	LQxLJnJ1PDsoOkyAuQs+w/CFzNsAtCsdPGjvPijWUfq7Fi2pqJxXNW8C
+X-Gm-Gg: ATEYQzx2W6uTFh5iarafHCg9dtjaZyEATdvMGcAYVeJWe88HvXfNbZFg6VRI+Bvuew+
+	9Gzf4zCFwA1C6fe0OVbmGjNP6dioiLLdewP5rTRxz44VZ7OLjvP2BbJQ+kAXGSPt/k/Lah6K5Es
+	I4Ri+1kFn5l7bM/FRkejSLY3MGf22ka9ck2YCAh21J3ODUQjmDU3JVjZFdVMSd80WUvTmpx/BK2
+	Y0WNeR7ii4Vu4aDkzhJqx6nysvycNJ5HAa6Fr2yPMLcGzvGtcmbWAML2HTcFnOnPfhAG6u9AGIk
+	jPgvQ7l2v+Y6fzRGy+HVHedrVOxa6AT4dkAfb3ve7og51z6pgxoNuHIQb41PxQFPEo72NGFHA2Q
+	x0R41s1ptQHk8nC173AE3mj2LjUbHGYEgs1WiXt27ULNUPz+boofVGphuCh/UMb9cXRWX0dtx/0
+	RJnW2eH7UXy2CFrOqBWpQtHM8rmcjjfw==
+X-Received: by 2002:a05:6000:40c9:b0:43c:fe0e:5bbc with SMTP id ffacd0b85a97d-43cfe0e5e22mr6360429f8f.19.1774877032194;
+        Mon, 30 Mar 2026 06:23:52 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a758:8a01:e60:2c8a:54bb:d692])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf21e2628sm20825906f8f.6.2026.03.30.06.23.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 06:23:51 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 1/5] clk: renesas: r9a08g046: Add GPIO clocks/resets
+Date: Mon, 30 Mar 2026 14:23:38 +0100
+Message-ID: <20260330132349.149391-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260330132349.149391-1-biju.das.jz@bp.renesas.com>
+References: <20260330132349.149391-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260327184706.1600329-4-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 27, 2026 at 08:46:41PM +0200, Vladimir Oltean wrote:
-> The chipidea ci_hdrc_imx driver uses regulator consumer API like
-> regulator_enable() but does not include <linux/regulator/consumer.h>.
-> 
-> The core USB HCD driver calls invalidate_kernel_vmap_range() and
-> flush_kernel_vmap_range(), but does not include <linux/highmem.h>.
-> 
-> The DWC3 gadget driver calls:
-> - device_property_present()
-> - device_property_count_u8()
-> - device_property_read_u8_array()
-> but does not include <linux/property.h>
-> 
-> The dwc3-generic-plat driver uses of_device_get_match_data() but does
-> not include <linux/of.h>.
-> 
-> In all these cases, the necessary includes were still provided somehow,
-> directly or indirectly, through <linux/phy/phy.h>. The latter header
-> wants to drop those includes, so fill in the required headers to avoid
-> any breakage.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com> # dwc3
-> ---
-> Cc: Peter Chen <peter.chen@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Frank Li <Frank.Li@nxp.com>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> 
-> v2->v6: none
-> v1->v2: collect tag
-> ---
->  drivers/usb/chipidea/ci_hdrc_imx.c   | 1 +
->  drivers/usb/core/hcd.c               | 1 +
->  drivers/usb/dwc3/dwc3-generic-plat.c | 1 +
->  drivers/usb/dwc3/gadget.c            | 1 +
->  4 files changed, 4 insertions(+)
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Add GPIO clock and reset entries.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g046-cpg.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
+index e75781198873..d31572a99f73 100644
+--- a/drivers/clk/renesas/r9a08g046-cpg.c
++++ b/drivers/clk/renesas/r9a08g046-cpg.c
+@@ -174,6 +174,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 	DEF_FIXED("ETHRM1", R9A08G046_CLK_ETHRM1, CLK_ETH1_RM, 1, 1),
+ 	DEF_FIXED("ETHTX12", R9A08G046_CLK_ETHTX12, CLK_SEL_ETH1_TX, 1, 1),
+ 	DEF_FIXED("ETHRX12", R9A08G046_CLK_ETHRX12, CLK_SEL_ETH1_RX, 1, 1),
++	DEF_FIXED("OSCCLK", R9A08G046_OSCCLK, CLK_EXTAL, 1, 1),
+ };
+ 
+ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+@@ -233,6 +234,8 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+ 					MSTOP(BUS_PERI_COM, BIT(3))),
+ 	DEF_MOD("scif0_clk_pck",	R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
+ 					MSTOP(BUS_MCPU2, BIT(1))),
++	DEF_MOD("gpio_hclk",		R9A08G046_GPIO_HCLK, R9A08G046_OSCCLK, 0x598, 0,
++					MSTOP(BUS_PERI_CPU, BIT(6))),
+ };
+ 
+ static const struct rzg2l_reset r9a08g046_resets[] = {
+@@ -244,6 +247,9 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
+ 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
+ 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
+ 	DEF_RST(R9A08G046_SCIF0_RST_SYSTEM_N, 0x884, 0),
++	DEF_RST(R9A08G046_GPIO_RSTN, 0x898, 0),
++	DEF_RST(R9A08G046_GPIO_PORT_RESETN, 0x898, 1),
++	DEF_RST(R9A08G046_GPIO_SPARE_RESETN, 0x898, 2),
+ };
+ 
+ static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
+-- 
+2.43.0
+
