@@ -1,48 +1,82 @@
-Received: from Atcsqr.andestech.com (exmail.andestech.com [60.248.187.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7131D3C5DB8;
-	Mon, 30 Mar 2026 10:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.187.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05DA3BF66E
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 10:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774867712; cv=none; b=ekY2J3mptNbmznfRtBDI8imyJxU4/9+jbUkfGyM55Nq6vneMent4XJRFfK6nVlDJ9YzMYWc1SNQKOGE/MRsyjHNhuIp2ydVUlmFDLEa/zpJWoDv0WZMajRAFFiFYqYRYLvXCs4LKHW5JawCOMQeNEyrlhiSRqONlANkCbbw5Axs=
+	t=1774868204; cv=none; b=h/Dnoa5CDgS1Q4gCU2IfqR3GLmBSzByUfBchN7ECOdtoiyiYOK2QOGuwJOSAk2j9gNFRUsj2MAcqIpLQ7jxIV9l6rfkc0dhqUsLT06jnYMBlXQ3gTV9dcRVPbm62oaLACnzR/57Sq7kHLvrlK4O0xznNmPp33azXnwLhvTPPDyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774867712; c=relaxed/simple;
-	bh=MFNlQBask5tlbqzXB2h6hAi9KVM4XqNTR+M9bQFxOkw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ozv08jD2tTCqEr7TmKPZndrUynA2Q+JMdqGrCcPPRhNIYrtvR7mlNJithqaM5EYx6FywXMaN1vMGmXPrY7BcxbdHKZbGJWvU6H0c6LLneaBaZALhTxQSZTlYz4WdXsOqkrucOxllW5iUxynF2wKrXJ08v8tgUfQdQ1fKj8JNp1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.187.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 62UATRAb040497;
-	Mon, 30 Mar 2026 18:29:27 +0800 (+08)
-	(envelope-from minachou@andestech.com)
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTP id 62UASGfH038279;
-	Mon, 30 Mar 2026 18:28:16 +0800 (+08)
-	(envelope-from minachou@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Mar
- 2026 18:28:16 +0800
-From: Hui Min Mina Chou <minachou@andestech.com>
-To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-        <alex@ghiti.fr>, <geert+renesas@glider.be>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <magnus.damm@gmail.com>,
-        <ben717@andestech.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <jonathan.cameron@huawei.com>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-CC: <tim609@andestech.com>, <alex749@andestech.com>, <az70021@gmail.com>,
-        "Hui
- Min Mina Chou" <minachou@andestech.com>
-Subject: [PATCH 5/7] dt-bindings: cache: ax45mp-cache: rename ax45mp-cache to llcache
-Date: Mon, 30 Mar 2026 18:27:22 +0800
-Message-ID: <20260330102724.1012470-6-minachou@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260330102724.1012470-1-minachou@andestech.com>
-References: <20260330102724.1012470-1-minachou@andestech.com>
+	s=arc-20240116; t=1774868204; c=relaxed/simple;
+	bh=m2CkOrXUMCZ8u/WunDlRMPt5n3OFxplRgyHeNoeq1XU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAZkmK2X954KwPkvDXnBdxB2P0g54i4NMZReANE7Oxbhh5y8ZsoN0zDpM8E78KPXwD7PfW4YgGEdEjAGD5sy9TSRbheAF/ENuAePT9AIebzIQQpR44OgrJ2fPYjBYIwFHHj9nLDAvPnVIEAb9huEQ7GqYIh+FLfiesH7xXD9ips=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPxR6xvo; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPxR6xvo"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43cfa33a983so721008f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 03:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774868200; x=1775473000; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zSCuUeGQ5Wwf5AGsJZnlfwfrW2VQbpTSMnU1lclD7ek=;
+        b=cPxR6xvo1OosRP+Cbamt+4XlzdSe+j1FOo/0bu/GbAzRfdHJ78YROC4hYJLp/7skhU
+         +vH7nX2xax6YWUl+kzqCTiCoKo2frwdRFmiTnNwBYDKe88UJZdla4ZlMpz/RKhMe+6TO
+         iM17uvt+VjyHSzDfpfUxkqo4aD0VTxfrW0EhcSBMuLNZg/8bWOqsGWZyCWuYnMHB95GX
+         fhTyKBtTWHwXdzwodRZA1y8ezoMP1FLvf0frxe2dJrMftW0koWPB+rhpU350gnmoMH23
+         DCKY3Xq+bPRvc715Zt4X4D/L0qirIddGjEfoOf3oh7GTim1REGWeoJ4aKzA2+SLhsgWV
+         Ua0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774868200; x=1775473000;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zSCuUeGQ5Wwf5AGsJZnlfwfrW2VQbpTSMnU1lclD7ek=;
+        b=fo06fyfgon84tOFmnJNN8TmVJ5f0s0CFQu/dFJJQnSe3+herK1uLM/SUgx2Fao7dAN
+         wi5toNWqG1/vha1hCMpmv+0D9VcvI2yWIgToYKuQ5NraJVY7y4bwcQUL6wHwg3EKpu0O
+         Bd/yKB3Y6iOgykM8EL5kILZhKUEjoaMjW1tmYAGnuV61NkVanngeUD2OSfUp9Nr9rxfJ
+         0BrpU7ag9wkCfUBk2g750JKAfcWdWBZcGulriK5oMSXK4RTRXfUgTC5mX9LbTQCNrfY9
+         Jd0cGMncV/77lrRJd65DBqQLKqQG9uIAO7qd/BZ+1XxzTA/X4q2mO9MURADueHAn0MDL
+         LBjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGsmEM8CDbIoqC2U1ZgJn6pSyqGmvMM1/kFNiAHax/7FPzuv/nQaIQeaxrTSlIjYEcSCBZrl2TTy1wjvBhXHa4Tg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNb0bhr9IIIc/Un99rgW3vjEoB4x7YBabZIfap+Y3uvJ8ZWTg3
+	pS3ZRWc4EU9Fj5JKW4htruIHlvCjCwby5qX2/FduOPNDJDWb83TQPHJY
+X-Gm-Gg: ATEYQzxNF9HpW8e9e8IDCamQpQbGVktiYrfuRcscX0wPRssBLf1CS/94W05x+Zn5aWH
+	w+gflIk2LJxkL/PhTgQaLPW2TgTfmQLgP+WK4+L+OLPf/fgB1qvXmei3t33F4oan34L8VULsHr3
+	Rj+E/2/zPl2pEenfIFNgvMh/OfstMwOSlZnPvRHNPeSrPnYBbO7ieX62+raZpEON9LMimv+KzOE
+	0rv9DPSAItMo/X1gmpFOm1yIYqjC+am++RxjW2vHGPQW6fL+4i588NZb5Lx7So5Ix5gcT5uyuyp
+	Ilu+Af2PsguQOi0ILKBj0kM99X/nsfloyIPmM6Ef2hfJWI8/6FowZR6SL4gOiojHGhnnFq/9hio
+	Oy4X9HMaeTHtp1SU2F/MGrvySbxsjwHBYnSpzWtcm9qDhIKb39FJlmJOjC7mUOyoRjVhNZeFCtF
+	p4a4PPoJS52QIUho6FZVqMiILH7wKqtXYZhl6ecSUi
+X-Received: by 2002:a05:6000:2c10:b0:43b:4960:60f2 with SMTP id ffacd0b85a97d-43b9ea766f6mr20597624f8f.47.1774868199956;
+        Mon, 30 Mar 2026 03:56:39 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a758:8a01:e60:2c8a:54bb:d692])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf330872asm16376324f8f.17.2026.03.30.03.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 03:56:39 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] media: dt-bindings: media: renesas,vsp1: Document RZ/G3L VSPD
+Date: Mon, 30 Mar 2026 11:56:29 +0100
+Message-ID: <20260330105637.130189-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,98 +84,29 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 62UATRAb040497
 
-The AX45MP-specific cache binding is renamed to a generic Last Level
-Cache (LLC) schema, as the driver now supports more Andes CPU cores
-beyond just AX45MP.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Updated compatible strings:
-  andestech,qilai-ax45mp-cache    -> andestech,qilai-llcache
-  renesas,r9a07g043f-ax45mp-cache -> renesas,r9a07g043f-llcache
-  andestech,ax45mp-cache          -> andestech,llcache
+The VSPD block on the RZ/G3L SoC is identical to the one found on the
+RZ/G2L SoC. Document RZ/G3L VSPD.
 
-Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- ...ache.yaml => andestech,andes-llcache.yaml} | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
- rename Documentation/devicetree/bindings/cache/{andestech,ax45mp-cache.yaml => andestech,andes-llcache.yaml} (76%)
+ Documentation/devicetree/bindings/media/renesas,vsp1.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,andes-llcache.yaml
-similarity index 76%
-rename from Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-rename to Documentation/devicetree/bindings/cache/andestech,andes-llcache.yaml
-index b135ffa4ab6b..5b97625edd37 100644
---- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-+++ b/Documentation/devicetree/bindings/cache/andestech,andes-llcache.yaml
-@@ -2,17 +2,17 @@
- # Copyright (C) 2023 Renesas Electronics Corp.
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
-+$id: http://devicetree.org/schemas/cache/andestech,llcache.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Andestech AX45MP L2 Cache Controller
-+title: Andestech Last Level Cache Controller
- 
- maintainers:
-   - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
- 
- description:
--  A level-2 cache (L2C) is used to improve the system performance by providing
--  a large amount of cache line entries and reasonable access delays. The L2C
-+  A last level cache (LLC) is used to improve the system performance by providing
-+  a large amount of cache line entries and reasonable access delays. The LLC
-   is shared between cores, and a non-inclusive non-exclusive policy is used.
- 
- select:
-@@ -20,7 +20,7 @@ select:
-     compatible:
-       contains:
-         enum:
--          - andestech,ax45mp-cache
-+          - andestech,llcache
- 
-   required:
-     - compatible
-@@ -29,9 +29,9 @@ properties:
-   compatible:
-     items:
-       - enum:
--          - andestech,qilai-ax45mp-cache
--          - renesas,r9a07g043f-ax45mp-cache
--      - const: andestech,ax45mp-cache
-+          - andestech,qilai-llcache
-+          - renesas,r9a07g043f-llcache
-+      - const: andestech,llcache
-       - const: cache
- 
-   reg:
-@@ -73,7 +73,7 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: andestech,qilai-ax45mp-cache
-+            const: andestech,qilai-llcache
- 
-     then:
-       properties:
-@@ -91,7 +91,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
- 
-     cache-controller@13400000 {
--        compatible = "renesas,r9a07g043f-ax45mp-cache", "andestech,ax45mp-cache",
-+        compatible = "renesas,r9a07g043f-llcache", "andestech,llcache",
-                      "cache";
-         reg = <0x13400000 0x100000>;
-         interrupts = <508 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+index 07a97dd87a5b..5447b9b78930 100644
+--- a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+@@ -25,6 +25,7 @@ properties:
+           - enum:
+               - renesas,r9a07g043u-vsp2   # RZ/G2UL
+               - renesas,r9a07g054-vsp2    # RZ/V2L
++              - renesas,r9a08g046-vsp2    # RZ/G3L
+               - renesas,r9a09g056-vsp2    # RZ/V2N
+               - renesas,r9a09g057-vsp2    # RZ/V2H(P)
+           - const: renesas,r9a07g044-vsp2 # RZ/G2L fallback
 -- 
-2.34.1
+2.43.0
 
