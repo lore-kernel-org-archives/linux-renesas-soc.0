@@ -1,127 +1,114 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4123D5234
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 13:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3D81B4F1F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 13:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774877038; cv=none; b=I12gC/skBbc8Y0qFE3YQAQtLIEllSidYAVQHqNE3mnES2dHJPjXyvsxsODVSybL/ss8YH53ubLiH31D+ppRNJCiKF4RjZLrjivzB6PYyYTgAWXljXjrM07eWHHlScg6YzweoZn7MB+modFUO3+ZTLs4OQrRGUXuX0GnFhzXi8H4=
+	t=1774878031; cv=none; b=eLwJNIOZ5h/T0N6zNBPuUIWTJk7nwd/gQDeIE5tea5aZ2vupq2lgNNKgneZqEFGUsz9CwSM5a86wkHOTMDPy/Vasa6LuxI1gz14DIj2mXw45n52tmmOWdfUshYEC4SMCGushksNKNRCNPZnqSGmHLWghJLhrmt9YkfHHBp3aPZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774877038; c=relaxed/simple;
-	bh=22Wj3PL59w7WQlU7uZqeJvafxD1ELLda18RL46qv9Uc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=leovdAbW3c2Qjh1xM98nfOe23ynsHvqFOXe3Vk9CeuXUDtyVD2AS9PJFt/0DtivnfpExZN0aS60qMqgzrj+9qcfQwodn+c/VwU8bujotCofkL5sSEQJci7FX9IXaS38ttShlcfM0GwhP20w9OHZdNnjG5lX72n+xSSECLN151Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oaDO0iDv; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1774878031; c=relaxed/simple;
+	bh=/kxWTA52BAt2g4WnQqRpqhpA4ac3KQhFlNL2rViCQp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tNzaZvY6FrQ9VAuQI3MEehjglbRx8uA47i6Wp++zK4o5bZ3kJRxFHejij47gH+HmsjYlyLlt78U0IMNVCCFqFup7bs55JEVjVVSaRGMiRGU7R13hCx1xL+O2oWWklGzGUKUFqDmokpCcdZPcIL/WTyOvRxmqWfDjupjgzYKyCdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oaDO0iDv"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-43d03db7f87so376102f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 06:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774877035; x=1775481835; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZAOuvFX8TFjsxOubezK4NKoeU7tZyw6BQVfZ55MuGkE=;
-        b=oaDO0iDvaIzCnfbJyjR+Mudvg9z8nUmFuV+gRm56II1bDbgOesodg5VrQqY4oE7fb5
-         xT8yir8peBSmYZ5i/Me8nLUceaDL9C7KzeUNFKCCD8JhenXL2qB21PRSPAa3ZWoSMrT4
-         GDdZA0L4eHh4w28a6J2HVgLftXsvmhvL8O7P0qOD85xem+4NZe9/euwvbdICIY+gxiku
-         8MFDnx5zijYy7XDSqAsD4VhycR86IzfZrXS/W4q4oZXIMFe1oZyhjyv0rhnR8ti9ueWV
-         8Rcp5eehSZAxTalm+t5Kk8HEAsGdB8b4EgfPC6xFrx1jKvnijhxWxBKBqCbe+zBivE4b
-         M3Ig==
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2b23f90f53aso22959775ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 06:40:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774877035; x=1775481835;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZAOuvFX8TFjsxOubezK4NKoeU7tZyw6BQVfZ55MuGkE=;
-        b=obdQk1qZ0e9CzNo2Y/43Gtwwh5a5oekSwgZuOZebU+I3PdMlDuAjl5oKcO+jLwkpsy
-         r/9IR+rxJ2G+5A3EkUaSv1cOv3Rjw42t38JxyJP0/o9q9cl4asDvEN/ShbM3y0COMsaL
-         USYQx3p35F9izQp0qTNgK9zmv3zItulFWEjan6Ug7sHaFmcE/WqoYZ3O8NVqtv65Jwq0
-         LWlIYh7d7h2sCqi3sw+X9QhNfj7nECHrcXbPpnabtVnozTklXMhexpdLqY7VCoIUbNzb
-         lquGNJ7wX6vFy1Oj2fYNFRLHmksAaeyV7uXWy8VPJ1iyzQZehQZBuUJBoDNWR5Wf0EIX
-         bFpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDw8WpPonUMmqKtmoTIxcKlzoD5AobzUMKqQGqK58VbPgLs0D8SA0sA6wBZbP7GejjlScZxVbJQbLmHIU0el5k8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKjjT1GRCTVstYK6dbBGgMFyUzy16zgheZGr2m04yxlqhdSgAw
-	R6v9j6QztRXMfG4GnKuXnf9Psr/cUgwOIBq0wWvHfj8kdn9Nqot3Z2IJ
-X-Gm-Gg: ATEYQzy23RsUlhiTb8kIUT+lpxcM+vAwL/v5RTvxzT7+oyP4realvWQLETzMRZP6hBG
-	8FbpOw2wkSEweRfgLNUq6fVLaVPQ/MYFRi5GlZ2BWTR2fofnJOeBNvNX9hKg435EBArG9TserNk
-	O4IJFDztWj7PhC1uDQ04rD2B9pINAbySHieuwRpnsHxEc/xu3NDrIH8aAFZAq+h/m8HV9/kSMwF
-	zU1dizupr2BmNmu+Z3TIazWqhxIQuBvXJ8lWBh0pbaF31fvBcQuwBia/zo/mKnoY/cxaxXGOkx6
-	nn/1YUw4XEWD8Vsxw8OlK/nMqy+mopycqn1JrLRqmasU0fTXji0VG7bsK3qEHMfyrmIqapIVpME
-	xlpvGk9dJcQU2IURU1+T3RNTc1crft2Es8g6jX/ClXQqKjKWnYeYrDdsSePnIgaOOi4AtIXcx2n
-	Wnlfyu2GXqYsQ5hrIc0EqWxHBbpizcLQ==
-X-Received: by 2002:a05:6000:188e:b0:43c:ffee:ee9b with SMTP id ffacd0b85a97d-43cffeef22emr5747643f8f.15.1774877034878;
-        Mon, 30 Mar 2026 06:23:54 -0700 (PDT)
-Received: from biju.lan ([2a00:23c4:a758:8a01:e60:2c8a:54bb:d692])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf21e2628sm20825906f8f.6.2026.03.30.06.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 06:23:54 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 5/5] clk: renesas: r9a08g046: Add I2C clocks/reset
-Date: Mon, 30 Mar 2026 14:23:42 +0100
-Message-ID: <20260330132349.149391-6-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260330132349.149391-1-biju.das.jz@bp.renesas.com>
-References: <20260330132349.149391-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1774878029; x=1775482829;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JCelPAg5TqeEG1G1zPAvcyqOUxcgqEhU8AXcqqEt3aI=;
+        b=JqCzdHfxovO1VGnuNdGHZH53M1RXeiH6B5xOj22/hO6t+cRIiu51AWneli1jM24XrC
+         hRXiNAKo3xH2/hgJzE4wC9hym7sxDBXZaD+gj40XpTlgbL353K3QFX0zzvGZPrttzSI4
+         bmSrIubbw93W0kQdHHBXvlfN2pzU537zF0pnTopX+N7QpeYRmADjil+LzmYQDqiaSUgU
+         PoFqAEYTgMw6IhDhSoXQizxqljOD1XRkFMt176dqa/xruAV2AbzqOP6TO9+A4S40ic8s
+         hFzLQGHTDKCTF7Bg5/gxNz8IliCovmnAFDuji6kjbt0CaSKshbCEPUX2dURLxEZtvSGQ
+         UaQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbCBmWgaysyY4J5tmSgSDIXn5YNUkqGgtcE50K50Awv7Nuzud3of2dxD9bzAvMwaplrCOIm02+QrNNfOqJafufNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn/+jBkzguKicar1EaIe9cLsehoQl2CcQ1nIDaVMkZ8Dplw+8o
+	VL1jxXpBKg03kZ0ZlMvnq7YOF6MnGf7HfN5VT796NOAgGuk/XrRUb9Jl2nACgNbD
+X-Gm-Gg: ATEYQzydfXeXxC8d1MOs9mxK4NFo6zOtUEBDyHbZhzuSymzRL4HFo7KYPNuQg8w4XZ3
+	7kVUZRvDKzthDPeM4xetetCtCl4ugcBZP7r/8G7mEzcNYEJ6rVLABzGs1WczPm9g4uTbfqcrGq+
+	7JgDElUQ8Or5wRI5r4DPqaJVqH9vgqPc/0Fr3FdPRsCa3L59YhxGMITJ9UAsmKpgUO2GQOADVff
+	Ongsk7wSwlkoXLIdaVDUDfADzOg/LTfkbyuzFarS9YjuzY1diAhPTNO4CfgrCL5HeheT/8GsDFk
+	+FmlQGDVMUHHvbEs81Ot50a1B7W2wzyb1tY/GnOqGifd3JCK+DYX8LCfnJ2XbKCfaBHQCNUzJrO
+	/oP2zKZAc9Bi2s7X+7hQHwA47oWxFVI/SXMzaOUQtxy3ENgQadJsfQCxC2SRI7MCBfO5jXAtzZs
+	/D3pgLYhL7A9NOVuan1+dIFypZNy0LHcwm9ERKxEa+ghBrnVlEtJvVV/UKrE2UY4Y=
+X-Received: by 2002:a17:903:947:b0:2b0:5cee:c421 with SMTP id d9443c01a7336-2b0cdc20ee6mr128589835ad.4.1774878029442;
+        Mon, 30 Mar 2026 06:40:29 -0700 (PDT)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com. [74.125.82.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b24265a954sm84228075ad.18.2026.03.30.06.40.29
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2026 06:40:29 -0700 (PDT)
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-2bd9a485bd6so8806686eec.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 06:40:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVmW0jEeDpTe8Q617+fnH0ZwEZfHkJh5iwzfOf9Z/lmuFzXCHG+6WHonSW5nKUZxdXuKyrX0T0qQZjMJN7xSSyddw==@vger.kernel.org
+X-Received: by 2002:a05:6102:2b85:b0:605:26eb:cc1a with SMTP id
+ ada2fe7eead31-60526ebcfa6mr1670554137.29.1774877621873; Mon, 30 Mar 2026
+ 06:33:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Mar 2026 15:33:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX23LQYFFzs9STykFVECb4uv1u3DmEMCh453GBK=4XbYQ@mail.gmail.com>
+X-Gm-Features: AQROBzDj9P2QcJJ03rVKxKEo5zx-Wow-J_zNYCm0-1wsBhaAiKvmNzwG6-mGiTE
+Message-ID: <CAMuHMdX23LQYFFzs9STykFVECb4uv1u3DmEMCh453GBK=4XbYQ@mail.gmail.com>
+Subject: Re: [PATCH 00/16] Add support for Inside-Secure EIP-150 crypto block
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Jayesh Choudhary <j-choudhary@ti.com>, 
+	"David S. Miller" <davem@davemloft.net>, Christian Marangi <ansuelsmth@gmail.com>, 
+	Antoine Tenart <atenart@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Pascal EBERHARD <pascal.eberhard@se.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Miquel,
 
-Add I2C{0..3} clock and reset entries.
+On Fri, 27 Mar 2026 at 21:10, Miquel Raynal (Schneider Electric)
+<miquel.raynal@bootlin.com> wrote:
+> This is a series adding support for the EIP-150, which is a crypto block
+> containing:
+> - a public key accelerator
+> - a random number generator
+> - an interrupt controller
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a08g046-cpg.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks for your series!
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 13c158bb9215..a962b5ec6977 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -267,6 +267,14 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 	DEF_COUPLED("eth1_rx_i_rmii",
- 				R9A08G046_ETH1_CLK_RX_I_RMII, R9A08G046_CLK_ETHRX11, 0x57c, 13,
- 					MSTOP(BUS_PERI_COM, BIT(3))),
-+	DEF_MOD("i2c0_pclk",		R9A08G046_I2C0_PCLK, R9A08G046_CLK_P0, 0x580, 0,
-+					MSTOP(BUS_MCPU2, BIT(10))),
-+	DEF_MOD("i2c1_pclk",		R9A08G046_I2C1_PCLK, R9A08G046_CLK_P0, 0x580, 1,
-+					MSTOP(BUS_MCPU2, BIT(11))),
-+	DEF_MOD("i2c2_pclk",		R9A08G046_I2C2_PCLK, R9A08G046_CLK_P0, 0x580, 2,
-+					MSTOP(BUS_MCPU2, BIT(12))),
-+	DEF_MOD("i2c3_pclk",		R9A08G046_I2C3_PCLK, R9A08G046_CLK_P0, 0x580, 3,
-+					MSTOP(BUS_MCPU2, BIT(13))),
- 	DEF_MOD("scif0_clk_pck",	R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
- 					MSTOP(BUS_MCPU2, BIT(1))),
- 	DEF_MOD("scif1_clk_pck",	R9A08G046_SCIF1_CLK_PCK, R9A08G046_CLK_P0, 0x584, 1,
-@@ -292,6 +300,10 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_WDT0_PRESETN, 0x848, 0),
- 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
- 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
-+	DEF_RST(R9A08G046_I2C0_MRST, 0x880, 0),
-+	DEF_RST(R9A08G046_I2C1_MRST, 0x880, 1),
-+	DEF_RST(R9A08G046_I2C2_MRST, 0x880, 2),
-+	DEF_RST(R9A08G046_I2C3_MRST, 0x880, 3),
- 	DEF_RST(R9A08G046_SCIF0_RST_SYSTEM_N, 0x884, 0),
- 	DEF_RST(R9A08G046_SCIF1_RST_SYSTEM_N, 0x884, 1),
- 	DEF_RST(R9A08G046_SCIF2_RST_SYSTEM_N, 0x884, 2),
+>       irqchip/eip201-aic: Add support for Safexcel EIP-201 AIC
+[...]
+>       crypto: eip28: Add support for SafeXcel EIP-28 Public Key Accelerator
+
+My OCD tells me to ask for using "SafeXcel" consistently,  ;-)
+
+drivers/crypto/inside-secure/eip28.c: .name = "Safexcel EIP28 PKA",
+drivers/irqchip/Kconfig:        tristate "Safexcel EIP201 AIC"
+drivers/irqchip/Kconfig:   inside Safexcel EIP150 IPs, gathering
+Public Key Accelerator
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
