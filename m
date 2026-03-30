@@ -1,86 +1,45 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from Atcsqr.andestech.com (exmail.andestech.com [60.248.187.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA06F3BED4A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 10:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD14E3C3BFC;
+	Mon, 30 Mar 2026 10:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.187.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774867498; cv=none; b=Cn4LaAfMC8vgfwj+dqgoTee2H+CJ9ytTi0AtpZkgvpWwSH+ZdTBu0dg3T9MgbjljdB3pWiFFjVX4C6A6iCAawDiuJv+QGuI2RY22dyrTmTzUWfV2ZzyPeXOLMIugimB3IBwEU3o9V9eefjItGjYMSdUjL0FgiHep9lObQX4ZcNU=
+	t=1774867675; cv=none; b=pnnhfv4TqEDHkrLHXAqfc/m4enYg+bEoER9WXvbEQN1sAjfeTk1AqWEBf7wczWyK4ZXQCJ72oE0zTIzgqO0ybF1F7cDFEmr3USkH1uUy6pw0QFvrItmhaLwoL6oK9PKwxV2gutXh+OYXSvDuls8AzhfUhKNHuxyAz5LCzX663kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774867498; c=relaxed/simple;
-	bh=JmV6JKnOIzmqemdJsb/v71+zMpzIGCGG/f1NutNSkbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DCNrKWCZ5PASgVbbZ1D9op1gjzMlNVJMYX8RxkfIyq0jt+JacUNtRRVTB59UmArzgOyhZgnmVTh2Mijcwrp1HZbIjAWE/ngJEn0nawKgPrgOgb5iFcSp0mZIgMccKM7z0wz5oGKh/VOpUa+jy9SMpnhowgWFYWMeHpJTt1HOJxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhe6acUX; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhe6acUX"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso36672805e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 03:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774867495; x=1775472295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WwQ4dRMFArea8SYkY8eqqNt1lO8reAvWgec/k1eN+cI=;
-        b=mhe6acUXgAzUsl+q8eTUOtmWIFF5Pup5QGjq9r/A0PQVZcDf65ZYeNrUlDz06N5rGY
-         IyZnwJqi2mE1ubytHOwsDytxL2Qgtxbfcm0HQAFbd5hhUAqCwx5e+lTpMNPTiTXgVetW
-         ey2E8SA6XaTwzj7ECsSWn5GeGIIMZMvP8o819Twzpi4h6yFcGk4GMlwaWESlvMqAkZMM
-         E9bZAUQDz75bHQ6zMBM9y2CEngl43ZRjoyP0DaiOMAQ6dT+2nItY/pmqM++UY1KvWWUZ
-         o4Cd8PnqVHjmmStc8kQ993oNZi07BZ0D4UDdUN5f9afCYpfOIcPTeKqDex+lNyRxeJNH
-         oXBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774867495; x=1775472295;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WwQ4dRMFArea8SYkY8eqqNt1lO8reAvWgec/k1eN+cI=;
-        b=l3X/ECTGE6azTjUTdqFsDInuv5OKdyDp+pdcGxS5AZMp/AOJCLJTwyKIk2hZhmOU33
-         K40QaEvWwckfxKRzU1HsCZT0m1LXwhIADVmLPxwvAU0y1tPMOn6LvxBULQNawLR/zORC
-         +P3VoI9Z5jiEFy74nBbyqXXLC4zossoL56M6NhFR2VfQEd+aEe6Q4hEUyYlKY9+P8Pvm
-         hFGNlzzHS7Ct/N4Aji652+yAEbdO0KAk6wozhSrHXkZtlBj1QSylfC5zzpgTZ/phuzIA
-         HXKpl5v0V2T3sn1i1M/cZNSBp1d/Cos2tTNa4r1niNkuCcLohc7eOuV606OD0imd8XI+
-         Xs3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXzV/5UuT/VKv8EEKAGqxGpj5Uh+eiIkEdmYmUk9lP14nDC2KedxaEiCZt0QhZzU6Of/XBvoyWZEXv4bikH50jk9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXuPezz1pm7AfrIZJiffiHsXu+hepZ8J4gT2qv86+hkjUSnRBT
-	a5e7zZk8YQpC4y0w8teGn2VPXyqg/OPPzEPmdy8aBWE35ZEqWcUQzL/L
-X-Gm-Gg: ATEYQzz0wsNri8/zYqPNzSKC4jXjq+5T0YJg6kdxMM9mMAdQs3eHxGQyXr/BaTgb0fm
-	Y4SxquGad/4Wk87HHP6W59BeaITPS00qJa//00A0BuOJZfNTL1U55Y5YU/uO9x2tD4zoLXJYrdy
-	KyoSNlZPBOi/xzIj3R9OTVRKMx0RsI7UZJ38guIzP32HYafHE5XCUomGxJwFsu/bU5cM4H8S4DD
-	/+Y00kHCZSHHpm0kasniT7e8342uvecf+/ZTdP2eLOmQFVpeK0qBCAfbVqGPFEPcI1U60garxfq
-	ksT/VAbctAHSfyeSothODRdf2tpWDQVj/R/yGdRdCSN8ckyLWZdLdfTiQc41eDNByeQNmoZaHjN
-	4e7LH0i30CssyXjBNBq4CtnNZA/eRz/I5lvor25kg2YVoHeDZgIvM7vjteQEfR2+3Y26SLWmJ9i
-	q6aO3kRhGNLHYVIl+/100rF6Z2fzS49Q==
-X-Received: by 2002:a05:600c:8489:b0:486:fbdb:b718 with SMTP id 5b1f17b1804b1-4872807483cmr201130955e9.25.1774867495178;
-        Mon, 30 Mar 2026 03:44:55 -0700 (PDT)
-Received: from biju.lan ([2a00:23c4:a758:8a01:e60:2c8a:54bb:d692])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48727bfc5ecsm185842685e9.1.2026.03.30.03.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 03:44:54 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 3/3] drm: renesas: rzg2l_mipi_dsi: Fix deassert/assert of CMN_RSTB signal
-Date: Mon, 30 Mar 2026 11:44:46 +0100
-Message-ID: <20260330104450.128512-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260330104450.128512-1-biju.das.jz@bp.renesas.com>
-References: <20260330104450.128512-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1774867675; c=relaxed/simple;
+	bh=zrHDITLakLIpn0eicQi7YjWpbVQ6gGg7UH0uPpSZxgI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nMYDvsAKYxgGh4hcAfucuN2kyY4aZ63qcOfBtCztZwf4QBgObersu6pq0WToMbmVZQ0lLcrwdvsRuBLTbGHdTkGsLm7laW1wzYRDReyuVJsZ5ecMjzkqUmJ6gbAOaEpYlHj6TCQUQtunLAHtSQt0+OMWyi1/tBIDC1q9XlKBHT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.187.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 62UASprB039458;
+	Mon, 30 Mar 2026 18:28:51 +0800 (+08)
+	(envelope-from minachou@andestech.com)
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTP id 62UARlIT038029;
+	Mon, 30 Mar 2026 18:27:47 +0800 (+08)
+	(envelope-from minachou@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Mar
+ 2026 18:27:47 +0800
+From: Hui Min Mina Chou <minachou@andestech.com>
+To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+        <alex@ghiti.fr>, <geert+renesas@glider.be>,
+        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <magnus.damm@gmail.com>,
+        <ben717@andestech.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <jonathan.cameron@huawei.com>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+CC: <tim609@andestech.com>, <alex749@andestech.com>, <az70021@gmail.com>,
+        "Hui
+ Min Mina Chou" <minachou@andestech.com>
+Subject: [PATCH 0/7] refactor Andes cache driver for generic platform support
+Date: Mon, 30 Mar 2026 18:27:17 +0800
+Message-ID: <20260330102724.1012470-1-minachou@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -88,92 +47,73 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 62UASprB039458
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+This series refactors the Andes cache driver from an AX45MP-specific
+implementation to a generic Last Level Cache (LLC) driver that supports
+a broader range of Andes CPU cores.
 
-The RZ/G2L hardware manual (Rev. 1.50, May 2025), Section 34.4.2.1,
-requires deasserting the CMN_RSTB signal after setting the Link registers.
-Move the reset_control_deassert() call from rzg2l_mipi_dsi_dphy_init() to
-rzg2l_mipi_dsi_startup(), placing it after the Link register writes. This
-reset signal is optional for RZ/V2H SoCs, so add a NULL check. Drop the
-unused ret variable from rzg2l_mipi_dsi_dphy_init().
+The main motivation is to decouple the driver from AX45MP-specific
+naming and assumptions, making it easier to support future Andes
+platforms without duplicating code.
 
-The CMN_RSTB signal is not required for reading PHY registers in the
-probe. Move reset_control_assert() from rzg2l_mipi_dsi_dphy_exit() to
-rzg2l_mipi_dsi_stop(), placing it before the dphy_exit() call. Since this
-reset signal is optional for RZ/V2H, the call is a no-op on that SoC.
+Changes in this series:
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Merged patch#2 and patch#3 to avoid breakage.
- * Updated commit description
-v1->v2:
- * Updated commit header and description
- * Moved the code from rzg2l_mipi_dsi_dphy_init() to rzg2l_mipi_dsi_startup()
- * Moved the check before calling reset_control_deassert(), so that it will be
-   skipped for RZ/V2H SoC
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+- Refactor the ax45mp_cache driver into a generic andes_llcache driver,
+  introducing support for multiple Andes CPU cores and updating the
+  compatible strings accordingly
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 9d9f77d8f949..715872130780 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -484,7 +484,6 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
- 	u32 dphytim1;
- 	u32 dphytim2;
- 	u32 dphytim3;
--	int ret;
- 
- 	/* All DSI global operation timings are set with recommended setting */
- 	for (i = 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
-@@ -524,12 +523,6 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYTIM2, dphytim2);
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYTIM3, dphytim3);
- 
--	ret = reset_control_deassert(dsi->rstc);
--	if (ret < 0)
--		return ret;
--
--	fsleep(1000);
--
- 	return 0;
- }
- 
-@@ -541,8 +534,6 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi)
- 
- 	dphyctrl0 &= ~(DSIDPHYCTRL0_EN_LDO1200 | DSIDPHYCTRL0_EN_BGR);
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYCTRL0, dphyctrl0);
--
--	reset_control_assert(dsi->rstc);
- }
- 
- static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_freq,
-@@ -811,6 +802,14 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	FIELD_MODIFY(DSISETR_MRPSZ, &dsisetr, RZG2L_DCS_BUF_SIZE);
- 	rzg2l_mipi_dsi_link_write(dsi, DSISETR, dsisetr);
- 
-+	if (dsi->rstc) {
-+		ret = reset_control_deassert(dsi->rstc);
-+		if (ret < 0)
-+			goto err_phy;
-+
-+		fsleep(1000);
-+	}
-+
- 	return 0;
- 
- err_phy:
-@@ -822,6 +821,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 
- static void rzg2l_mipi_dsi_stop(struct rzg2l_mipi_dsi *dsi)
- {
-+	reset_control_assert(dsi->rstc);
- 	dsi->info->dphy_exit(dsi);
- 	pm_runtime_put(dsi->dev);
- }
+- Improve initialization by centralizing cache operations
+
+- Improve LLC operation performance by switching to relaxed I/O
+  accessors and eliminating unnecessary fence instructions on I/O
+  memory, leveraging the platform's point-to-point strongly ordered
+  channel guarantee. Also fix hart ID mapping to use
+  cpuid_to_hartid_map() for correct behavior in AMP setups
+
+- Centralize cache operations and adopt native WBINVAL support,
+  simplifying the cache flush/invalidate path
+
+- Rename DT binding schema from andestech,ax45mp-cache to
+  andestech,llcache and update all compatible strings in the RISC-V DTS
+  files accordingly
+
+- Add MAINTAINERS entry for the Andes cache driver
+
+
+Hui Min Mina Chou (7):
+  cache: ax45mp_cache: refactor cache driver for generic Andes platform
+    support
+  cache: andes_llcache: refactor initialization and cache operations
+  cache: andes_llcache: improve performance of LLC operation
+  cache: andes_llcache: centralize cache ops and use native WBINVAL
+  dt-bindings: cache: ax45mp-cache: rename ax45mp-cache to llcache
+  dts: riscv: update cache compatible strings to LLC
+  MAINTAINERS: Add maintainers for Andes cache driver
+
+ ...ache.yaml => andestech,andes-llcache.yaml} |  20 +-
+ MAINTAINERS                                   |   8 +
+ arch/riscv/Kconfig.errata                     |   2 +-
+ arch/riscv/boot/dts/andes/qilai.dtsi          |   4 +-
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi   |   2 +-
+ drivers/cache/Kconfig                         |   6 +-
+ drivers/cache/Makefile                        |   2 +-
+ drivers/cache/andes_llcache.c                 | 215 +++++++++++++++++
+ drivers/cache/ax45mp_cache.c                  | 217 ------------------
+ drivers/soc/renesas/Kconfig                   |   2 +-
+ include/linux/soc/andes/csr.h                 |  12 +
+ 11 files changed, 254 insertions(+), 236 deletions(-)
+ rename Documentation/devicetree/bindings/cache/{andestech,ax45mp-cache.yaml => andestech,andes-llcache.yaml} (76%)
+ create mode 100644 drivers/cache/andes_llcache.c
+ delete mode 100644 drivers/cache/ax45mp_cache.c
+ create mode 100644 include/linux/soc/andes/csr.h
+
 -- 
-2.43.0
+2.34.1
 
