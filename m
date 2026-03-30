@@ -1,34 +1,44 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from Atcsqr.andestech.com (exmail.andestech.com [60.248.187.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0789389E07
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 09:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0DC1FF5E3;
+	Mon, 30 Mar 2026 10:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.187.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774864300; cv=none; b=H5XWDwncQCYIq0fXWaXYL5yCCj0tV9q8rXYgyVsMGq9aaGBU2UAt4HqAQoOTxqwINs/AgVi4N8Fs3OdNeBnMwr5MZebR2/HlI0arxit/8bBTSMsssHM2PvJgR3kqBBxDswEmDUyP44h4Gh0ian8Rhn4JHNYYl1Tr0K2GoE5ZDE8=
+	t=1774866580; cv=none; b=dkKRe5UpuA7B2jiQBc6n7alV4zFWVXG5x6kQU86ogvuOhTNR5GK3Ixk29bDK8wqW/r7xKzY8Jpzf0trkTqOTK5WaW3jAUj/wS3kdxfV1Md+1rIOz7VftskvJBC5kdTTi1y8OaGR1Y1zcBP6iAgdWA1gmF7H9VkY6i3Pn5f+YQCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774864300; c=relaxed/simple;
-	bh=OXNX/Ug2x6/gTt6PsDQ14KtrtSsY4bi054mDLVzJZXo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=H/rw+/Awn3jUMUXmCfBnmsNPvPJZYCJfzYLfXlDgm22MYoVbkVnVPrAc5fBhMCg3PGibso1QYXSXnDyKoTLdPh+p+6UNEi8dT6o2uz1KyiuIeMATFULA+Z9VSQyTwGDIyPizHESoeryoTPyRJCMByybd7jLMdPT8tPsUh1E7dy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRgV8pj/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRgV8pj/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48784C2BCB1
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 09:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774864300;
-	bh=OXNX/Ug2x6/gTt6PsDQ14KtrtSsY4bi054mDLVzJZXo=;
-	h=Subject:From:Date:To:From;
-	b=PRgV8pj/iupl+WYm/ikdqHQDnsZsRPAps3s11SW/N7ROYiKle8A1oWb1f2Xa8tYID
-	 bCUuWz4AVkBCyOlqIY6eySq82xUS2eunUX7VyTnJ3hLMqviLRpFsIjeiNrEk0RSa95
-	 Ce2VRvPN0ahHi2URWF7/CqgT1L3aVX2r/giIyrZLYv2uUZOTJlUKaHSAvQO7IQmoWJ
-	 Capz3bKpAR4bAzMwsIFGAPT14HZmMbyZXDF0K/XLUdHlptAIYSvIIq8EdnIqYHoGPj
-	 yWn3ag2JoDBkRAhiflLb6+G8nemQRg2zFz60wOoG94WYNjMj/VHePgFz8iAcgkAdhD
-	 3ouJZRKijr1wA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id BCD5C392FFC4
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Mar 2026 09:51:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1774866580; c=relaxed/simple;
+	bh=xR4/eiW2jwE62sTUaUNq6rB16VdY5+2Jv/gBv7tkuoc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RLMpaQe2sUJlSgouvjnkA1MLycIVGcBC4SIZ6kheASP0C8c2U61+nkRLNpTYNWj6uyuhprn6lNK3JjPqU5t4TIBeyKxSMZVjEsIh+Bg7TmMl2B0SmJuKNuwCDPRFosdak9vtvE2msz9O9Ap8moRyZHvdPX8ao76LcA86+xtdaZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.187.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTP id 62UASI1F038289;
+	Mon, 30 Mar 2026 18:28:18 +0800 (+08)
+	(envelope-from minachou@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Mar
+ 2026 18:28:18 +0800
+From: Hui Min Mina Chou <minachou@andestech.com>
+To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+        <alex@ghiti.fr>, <geert+renesas@glider.be>,
+        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <magnus.damm@gmail.com>,
+        <ben717@andestech.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <jonathan.cameron@huawei.com>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+CC: <tim609@andestech.com>, <alex749@andestech.com>, <az70021@gmail.com>,
+        "Hui
+ Min Mina Chou" <minachou@andestech.com>
+Subject: [PATCH 6/7] dts: riscv: update cache compatible strings to LLC
+Date: Mon, 30 Mar 2026 18:27:23 +0800
+Message-ID: <20260330102724.1012470-7-minachou@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260330102724.1012470-1-minachou@andestech.com>
+References: <20260330102724.1012470-1-minachou@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -36,30 +46,53 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <177486428423.1080314.14947368629452795068.git-patchwork-summary@kernel.org>
-Date: Mon, 30 Mar 2026 09:51:24 +0000
-To: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 62UASI1F038289
 
-Hello:
+Update the cache driver compatible strings from ax45mp-cache to llcache
+for both Qilai and RZ/Five platforms.
+This follows the Andes cache driver refactoring to use more generic
+Last Level Cache (LLC) naming.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
+---
+ arch/riscv/boot/dts/andes/qilai.dtsi        | 4 ++--
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Series: configs: cleanup obsolete or incorrect assignments
-  Submitter: Vincent Mailhol (Arm) <mailhol@kernel.org>
-  Committer: Nathan Chancellor <nathan@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1067836
-  Lore link: https://lore.kernel.org/r/20260317-arm_defconf_cleanup-v1-0-8eecb7fdd24d@kernel.org
-    Patches: [1/9] scripts: kconfig: merge_config.sh: use POSIX '=' in test
-
-
-Total patches: 1
-
+diff --git a/arch/riscv/boot/dts/andes/qilai.dtsi b/arch/riscv/boot/dts/andes/qilai.dtsi
+index de3de32f8c39..a7436cbf6f69 100644
+--- a/arch/riscv/boot/dts/andes/qilai.dtsi
++++ b/arch/riscv/boot/dts/andes/qilai.dtsi
+@@ -137,8 +137,8 @@ plmt: timer@100000 {
+ 		};
+ 
+ 		l2_cache: cache-controller@200000 {
+-			compatible = "andestech,qilai-ax45mp-cache",
+-				     "andestech,ax45mp-cache", "cache";
++			compatible = "andestech,qilai-llcache",
++				     "andestech,llcache", "cache";
+ 			reg = <0x0 0x00200000 0x0 0x100000>;
+ 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
+ 			cache-line-size = <64>;
+diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+index 571de3cafa82..83a5d4d41f8e 100644
+--- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
++++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+@@ -144,7 +144,7 @@ plic: interrupt-controller@12c00000 {
+ 	};
+ 
+ 	l2cache: cache-controller@13400000 {
+-		compatible = "renesas,r9a07g043f-ax45mp-cache", "andestech,ax45mp-cache",
++		compatible = "renesas,r9a07g043f-llcache", "andestech,llcache",
+ 			     "cache";
+ 		reg = <0x0 0x13400000 0x0 0x100000>;
+ 		interrupts = <SOC_PERIPHERAL_IRQ(476) IRQ_TYPE_LEVEL_HIGH>;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
