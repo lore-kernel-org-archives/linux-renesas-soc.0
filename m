@@ -1,138 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0813D5656;
-	Tue, 31 Mar 2026 07:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42313BE164
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Mar 2026 07:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774943538; cv=none; b=cJWdXTrKFEcK5BYScrPuqWrgqkWCuWbEaIafypry0opzWhBsXnDPjBtSir//aVEcpFdacfGdMy9iHynzJuRtrCzSDwKL7Z0Px5iQFjEgMyE5+JdDUUFD7mQvGJ370sKIM5K9bhgn0ugOwaYcrJ6iEGRjCnnYwnEdhu++uZ6HFQw=
+	t=1774943636; cv=none; b=uyu5bnfbRSgpnxtRLTbnZandsfSImfRuPO+JTg7ztMbRxsu9vV/tBnLeoA3hshtdHmkRppem8a9T5T6AFWg+lxI7frRWeSuQoxs+xLamNwwAYHCudOJZv1hS7InOUHuZaKJMjbEbu0DifmAn1wRsUk9SoJE2dUpbhEgs1Jnv9lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774943538; c=relaxed/simple;
-	bh=TXXZqyOfXzSwUt6NRYCFwgfR+C5ajY2e6cvWF8zXI1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JKiIffzn2xlNyucG797tl62wxQVbrKMUFR2r7LujTHdkJhrrmbclpkHEvowQl3E1iaV4S+c6aijDbil/nIllfyR1/PsKWEuu9D307pLSH6JkNs6DnoeRr+3FU3AEhUo/jy1UtAB2dNsAEaGZpWR5QySHU0Jz7bEFJLxv4+5B+co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrZ16Ij7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774943636; c=relaxed/simple;
+	bh=QZpa8Udxm1KQ5kM8QEQg3Dx9M6/8afOdTxUPuCHEhvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBVzbgSRSz0ejn8xH7KXTAu65UO/Z3aPzInUA3J8NwkTv2GtFkG0lB0G3iSKL1AaO/OF41JA1x402xJDZQwop1eWCg+d6PTWFqSSvj4+T7JIFUBj+nDasVWjjbc3hNu20Igh9d0UStNZiEalHQy6dAY/baXNbXBpC7qbjzd6BYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WfiXXcTo; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrZ16Ij7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8462C2BCB2;
-	Tue, 31 Mar 2026 07:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774943538;
-	bh=TXXZqyOfXzSwUt6NRYCFwgfR+C5ajY2e6cvWF8zXI1Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FrZ16Ij7HWlzeChy/r+lOapI+8qXHXNuBBC24XdwjFwHSfFrRAwOlg9ZZb8Xai8XD
-	 Mf0djReJqMuRxSRyaCzqFLJCwu5kSSnz5VS0IToQHa+hrmtwNesNGf5ztlAC0HzwNV
-	 5RaMnTaTmiBV5X21vojfknTucTZsyj5lnfzXhsYaftOtsI0BprrDKhdVrd9iNps6D8
-	 B57Qs7bFoX1enKR2OPuwgqRPHbp7jR9VE8FbLSRQRlM263D4PnSaHSS23O/3/yp86O
-	 HsCrCYg8Jm36tpDvpxRoAzc+m2AW1LR3Jdoa5ciew12Z4APmLSCxwP8POuy59t6Dxj
-	 1wxUwp+Fzm4ew==
-Message-ID: <3915fd13-1b0b-4faf-81f2-0acb97880766@kernel.org>
-Date: Tue, 31 Mar 2026 09:52:13 +0200
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WfiXXcTo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=QZpa
+	8Udxm1KQ5kM8QEQg3Dx9M6/8afOdTxUPuCHEhvY=; b=WfiXXcToB647nggrN8v2
+	fc+CeLhQ1FpJCwH3kIw0x541qt60syDCqWEhsDZohccvC8rJqUhrf2g2+WbAB7Mh
+	1ujktCIhQVnMOQ9Q1vee2XTUe19GVN1Hvazs/AtRIj6KyiBUNj/8mrPmBkx5XMcW
+	XV44cJEaC0WnAjp9ZL8ijUolczaalyjgwxxjHUgy5X9oHzUlZwkiP5Ghli1pPrDn
+	VJCMT6Avgb4ULrP+y9xckdQaVBDMqqs3SHRJbIUbi7Al3fz/xOLIwGsH1r1BYqlv
+	4jrAzNb8ybvWPTHszLpqXiWa+4RJdIqojQFiniWdoGVtE7rRz1X8xctf/zicPtgn
+	cA==
+Received: (qmail 1594237 invoked from network); 31 Mar 2026 09:53:52 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2026 09:53:52 +0200
+X-UD-Smtp-Session: l3s3148p1@j6y0RE1OCr8ujnu8
+Date: Tue, 31 Mar 2026 09:53:52 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Theodore Tso <tytso@mit.edu>, Roman Gushchin <roman.gushchin@linux.dev>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: Sashiko review feedback (was Re: [PATCH 2/3] soc: renesas: Add
+ Renesas R-Car MFIS driver)
+Message-ID: <act9kI96LT3HcSWy@shikoro>
+References: <20260317130638.2804-1-wsa+renesas@sang-engineering.com>
+ <20260317130638.2804-3-wsa+renesas@sang-engineering.com>
+ <ab-vWbjdlAIt1qaX@ninjato>
+ <87a4vyynl2.fsf@linux.dev>
+ <acIsrJp2Zq2ntS5f@shikoro>
+ <87ikalp9b2.fsf@linux.dev>
+ <aco7CM5N3E6A0v8v@shikoro>
+ <20260330135050.GD22278@macsyma.local>
+ <act1L-2tQV4fHyU7@shikoro>
+ <CAMuHMdUP+pQwFuZDLV6LSYc2EBK-R2di8hzi1GA=jFYSigZDfw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: soc: renesas: add MFIS binding
- documentation
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org
-References: <20260317130638.2804-1-wsa+renesas@sang-engineering.com>
- <20260317130638.2804-2-wsa+renesas@sang-engineering.com>
- <20260318-camouflaged-umber-oxpecker-b2b29e@quoll>
- <CAMuHMdX=DRnFWG1ky8wT7mK=LHeJ6LduL28nYd19QpASrn6mew@mail.gmail.com>
- <c46357c9-8cf4-45ec-8b48-8cf979de2e98@kernel.org> <actzUSIKKzcDmBCT@shikoro>
- <8988012f-b006-4aa8-bb8f-571b8526a15c@kernel.org> <act6gTgkYE6Az5hK@shikoro>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <act6gTgkYE6Az5hK@shikoro>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 31/03/2026 09:40, Wolfram Sang wrote:
-> 
->>> In case you mean this as unanswered questions to v1: This describes the
->>> device specific second mbox cell. Like Tegra does it here (even with
->>
->> I asked Linux ABI. Device specific numbers is not Linux ABI, because
->> Linux is not device.
-> 
-> I have no idea what you want here. I see it like this: DT is OS
-
-DT, but we talk about bindings. Bindings is not DT. Bindings bind the SW
-and DTS.
-
-> agnostic. So, the flags are to describe the hardware. The Linux driver
-
-Well, then no. Bindings headers do not describe the hardware.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nPCs5Hhs/MqaXZlW"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUP+pQwFuZDLV6LSYc2EBK-R2di8hzi1GA=jFYSigZDfw@mail.gmail.com>
 
 
-> then does the proper things according to these flags. Other OS driver
-> might do other things.
-> 
->>> shifts instead of plain numbers):
->>>
->>> include/dt-bindings/mailbox/tegra186-hsp.h
-> 
-> And I still have no idea why my header is different than the Tegra one.
-> 
+--nPCs5Hhs/MqaXZlW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No clue what is there. I am not going even to investigate, because this
-is argument of "I found a bug somewhere, so I can implement same bug".
 
-I responded to this *MULTIPLE* times already on the lists. I explained
-the rationale, I even provided old messages from Arnd and other people.
+> > What about Reported-by? The required closes by would then link to the
+> > actual report:
+> >
+> > Reported-by: Sashiko:Gemini 3.1 Pro
+> > Closes: https://sashiko.dev/#/patchset/20260319105947.6237-1-wsa%2Brene=
+sas%40sang-engineering.com
+> >
+> > The drawback currently is that only the whole report for the patchset
+> > can be linked. But probably Sashiko-reports could have some more HTML
+> > tags to reference only the paragraph needed.
+>=20
+> And the Closes-tag can only be used when the issue is closed in full.
+> You can still add a normal Link-tag.
 
-Best regards,
-Krzysztof
+We would need to update checkpatch for that. Doable. I prefer more HTML
+tags in the Sashiko report, still, because it will be handy anyhow. The
+reports can get quite large and it will make it easier to point people
+to a specific item.
+
+
+--nPCs5Hhs/MqaXZlW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmnLfZAACgkQFA3kzBSg
+KbZJOg/+Jt3OkNFKXRvaZGLpNMXG594H4kE1twO7oUXfGb65Hi7lKwOxpbLjBZp8
+LnNIqiLzUm1e5cEznX36e2UwNePrX2nNS4DE5Qnr6dG5ewazDIaf2gli5RA2ZmmM
++WIfaM8Mg9yvQ4dMxdmOl7Czhi0f/KWzX/fbPVwjGzsy3gx1zt9jHyQ8USwF1vYA
+UKgNvjpek4OyVKkk+wL9gD1j/ksOs/0gLATfxwM5hx5J5ySo/ew6wasIgMjlja8t
+s61mHnA5NqSe7Psl3KRuFIsWlrTEMFm6AqBnQG0wpZhwtEVI2A1h3CkHU206uVMM
+aw4OGrJAq+Eo6qQz3Z217F/Aj4OWbw6exN9ygTE+80vaHHkV6i66GqV6HKXAgDfY
+ffwuxho560M5elhe175DzbgjZ0gWIFy9exZ5etZmEYuBX1EPbRuIpM8yhUuyBhEI
+haCzGJqcf19B9psVwOxIzTLjWk5Zj9srZKA7UW5WObn6Bd8WxIue6rhCpcHf18pj
+CyMx8fVGOgszaHiVnaX4dtjbvyeAZOXXW09edMITmyoROz4l5lhbul1ZNztCGcce
+d8wjWggbYx7mCKFH36FbNUP0Oa2vhearCybaLsRgdvDCbrU0qW0oq09tfIN9EWkd
+XD9Z+7wLRRygesZ5YKT47eiCZtsEdEy56HUbBwIiZHMtBxbNfQo=
+=7thM
+-----END PGP SIGNATURE-----
+
+--nPCs5Hhs/MqaXZlW--
