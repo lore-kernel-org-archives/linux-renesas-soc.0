@@ -1,563 +1,95 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B1A3CCA16;
-	Tue, 31 Mar 2026 10:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9793A6400
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Mar 2026 10:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774951495; cv=none; b=CWbYega3lhuhCeV1AF9mg7/i5KMzSls8Mk3DhZm6Owny2ECF1DgfmOMr3L1sL5Q3OcldFb2K4lJOY7tFIr1F24cmUh8dOJWRwSJrgAV3MfGKOKM3oNz43J5war79JrkUdg9OhKUCUBzAhKsXorT8CurzCSkyq7Sg/73Wb4+OtCs=
+	t=1774953944; cv=none; b=cwbQBSsGneM8GDT1N8ZrDgRSBBpEzClELewL16/kMz3D/7ea1cF2JE5KzaouroNBFVO+sxjdtK6zjRjQhZ8uKS2KOTLzfit6t45BYp9HtDk+nuiVPM80PD59oWvfM6uaj002Khy6Go+gcLqjsAHNcQZ0vg0nDPUryxzEkeRNf6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774951495; c=relaxed/simple;
-	bh=VYRRItLBgOCi0ClLnqF5xeQ8XlkkFxVvkBLa4dcF7ZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YQj+08ZSZ8YIzVzqgNWe5tj0vjyGH98uAg5Wn6RusV2STSBfqBLZViuT/QRHTp1Y/zTIX9HKnepkteGqopwYpx5Gfy1EDp6+j6AmRxJNh81NqxMivrLwwnU//CMRT0x5L7AXpCrtPP/Mp2BTIR1mPvJmYM0dAGB6OYLmz2tvI6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: gD5FOTcFS6a+mVutX1zB8A==
-X-CSE-MsgGUID: IXD9uUsQTziKM8hCWxwiUQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2026 19:04:52 +0900
-Received: from [127.0.1.1] (unknown [10.226.78.135])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 97544416C823;
-	Tue, 31 Mar 2026 19:04:49 +0900 (JST)
-From: Michael Dege <michael.dege@renesas.com>
-Date: Tue, 31 Mar 2026 12:04:07 +0200
-Subject: [PATCH net-next v3 13/13] net: renesas: rswitch: add vlan aware
- switching
+	s=arc-20240116; t=1774953944; c=relaxed/simple;
+	bh=MhXebzY2l+UePRsoWuKRvuEtYZFTVabJDp6QhSopjvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BQ5DTfWF3cNV0t1a1SuX5Ea9gp4QOmMEsbqPTlcDUJ0gM1Fy+7PGpI/0gu37fsLLZ4x3UEJYRVJ9FM5/PUeTjiILT6naGgKcVgQd6PNk/gPqEH9dSVkeSG67waoYrkzFBBjAdmiHM+aRue34WSORV6qds5ySUyY5gZj2Gcm5dvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=K+uUHMOQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="K+uUHMOQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=v/OkImDE8PYM5dSeroRJxrCKUxjUqiHjXpB+sGkUpz0=; b=K+uUHM
+	OQFDNq8ByTS/41OfGlAj8+MnslPIgj7wAf0x8d7RqHAN0hfHmhx/gX6rEOC3hgNB
+	szGtOCgz3WkAxui0FQsN452wfhIjeRtXtYekr+wkibJdxr9sqApSyg+uhj1iPVNL
+	ICwhc8vJPULPDjSxFqUW4D0wYwDf9LrLI6cicZVI8+KBvNJuuyjLHeuysPXjATuA
+	QYl1V7jHd86C6ANzjFICJMmU6BIXpjvPnVsYS2+bcsqZp1+wA7Y+mziAKEk2JhPj
+	/tT515MSpi/Wrmkt24Mf6VV0RHHcm2Hw5M7fQYNHp+Ck2Pp37xjJRhSL/iAQcbZ/
+	Xf7omphv/tVlIP5g==
+Received: (qmail 1653904 invoked from network); 31 Mar 2026 12:45:41 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2026 12:45:41 +0200
+X-UD-Smtp-Session: l3s3148p1@Tmsiq09OEq8ujnu8
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Marek Vasut <marek.vasut@mailbox.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH v3 3/3] soc: renesas: add X5H PRR support
+Date: Tue, 31 Mar 2026 12:45:25 +0200
+Message-ID: <20260331104527.29170-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260331104527.29170-1-wsa+renesas@sang-engineering.com>
+References: <20260331104527.29170-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260331-rswitch_add_vlans-v3-13-c37f41b1c556@renesas.com>
-References: <20260331-rswitch_add_vlans-v3-0-c37f41b1c556@renesas.com>
-In-Reply-To: <20260331-rswitch_add_vlans-v3-0-c37f41b1c556@renesas.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Paul Barker <paul@pbarker.dev>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774951442; l=15544;
- i=michael.dege@renesas.com; s=20251023; h=from:subject:message-id;
- bh=VYRRItLBgOCi0ClLnqF5xeQ8XlkkFxVvkBLa4dcF7ZQ=;
- b=bZuu+1ACxF4jbuuBw7SViXDjz9/Pf5FFjAnYkxEBHIPd8EAQA/kGupzbOGpqSrL/kpxo4YWgn
- WoGmtQDe/sODtHmpunKCZ/dT5xsmB24XRZF27ymtoaPCt1lWI5yjD1C
-X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
- pk=gu1rwIcCrAxNMv2I8fIfiQvt51xzZwnQy4Ua/DscQt8=
+Content-Transfer-Encoding: 8bit
 
-Add vlan support to L2 HW bridge.
+On this SoC, PRR is now inside the MFIS memory block, so we need to
+access it similar to e.g. RZ/G2L.
 
-On R-Car S4 there is limited vlan support, which is not fully
-802.1Q compliant. The aim of this driver addition is to get as
-close as possible to the correct behavior. Limitations are:
-- all ports should be in the same default vlan
-- default vlans are not stripped on egress.
-
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/Kconfig      |   1 +
- drivers/net/ethernet/renesas/rswitch_l2.c | 408 ++++++++++++++++++++++++++----
- 2 files changed, 360 insertions(+), 49 deletions(-)
+Changes since v2: none
 
-diff --git a/drivers/net/ethernet/renesas/Kconfig b/drivers/net/ethernet/renesas/Kconfig
-index 9b7559c88bee..2494ff60e8c2 100644
---- a/drivers/net/ethernet/renesas/Kconfig
-+++ b/drivers/net/ethernet/renesas/Kconfig
-@@ -43,6 +43,7 @@ config RENESAS_ETHER_SWITCH
- 	tristate "Renesas Ethernet Switch support"
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on PTP_1588_CLOCK
-+	depends on BRIDGE || BRIDGE=n
- 	select CRC32
- 	select MII
- 	select PHYLINK
-diff --git a/drivers/net/ethernet/renesas/rswitch_l2.c b/drivers/net/ethernet/renesas/rswitch_l2.c
-index ea95a87ed234..b7d0e7f94ecd 100644
---- a/drivers/net/ethernet/renesas/rswitch_l2.c
-+++ b/drivers/net/ethernet/renesas/rswitch_l2.c
-@@ -7,6 +7,7 @@
- #include <linux/err.h>
- #include <linux/etherdevice.h>
- #include <linux/if_bridge.h>
-+#include <linux/if_vlan.h>
- #include <linux/kernel.h>
- #include <net/switchdev.h>
- 
-@@ -173,22 +174,6 @@ static void rswitch_port_update_brdev(struct net_device *ndev,
- 	rswitch_update_offload_brdev(rdev->priv);
- }
- 
--static int rswitch_port_update_stp_state(struct net_device *ndev, u8 stp_state)
--{
--	struct rswitch_device *rdev;
--
--	if (!is_rdev(ndev))
--		return -ENODEV;
--
--	rdev = netdev_priv(ndev);
--	rdev->learning_requested = (stp_state == BR_STATE_LEARNING ||
--				    stp_state == BR_STATE_FORWARDING);
--	rdev->forwarding_requested = (stp_state == BR_STATE_FORWARDING);
--	rswitch_update_l2_offload(rdev->priv);
--
--	return 0;
--}
--
- static int rswitch_netdevice_event(struct notifier_block *nb,
- 				   unsigned long event,
- 				   void *ptr)
-@@ -212,61 +197,397 @@ static int rswitch_netdevice_event(struct notifier_block *nb,
- 	return NOTIFY_OK;
- }
- 
--static int rswitch_update_ageing_time(struct net_device *ndev, clock_t time)
-+static int rswitch_port_update_stp_state(struct net_device *ndev, u8 stp_state)
- {
--	struct rswitch_device *rdev = netdev_priv(ndev);
--	u32 reg_val;
-+	struct rswitch_device *rdev;
- 
- 	if (!is_rdev(ndev))
- 		return -ENODEV;
- 
-+	rdev = netdev_priv(ndev);
-+	rdev->learning_requested = (stp_state == BR_STATE_LEARNING ||
-+				    stp_state == BR_STATE_FORWARDING);
-+	rdev->forwarding_requested = (stp_state == BR_STATE_FORWARDING);
-+	rswitch_update_l2_offload(rdev->priv);
-+
-+	return 0;
-+}
-+
-+static int rswitch_update_ageing_time(struct rswitch_private *priv, clock_t time)
-+{
-+	u32 reg_val;
-+
- 	if (!FIELD_FIT(FWMACAGC_MACAGT, time))
- 		return -EINVAL;
- 
- 	reg_val = FIELD_PREP(FWMACAGC_MACAGT, time);
- 	reg_val |= FWMACAGC_MACAGE | FWMACAGC_MACAGSL;
--	iowrite32(reg_val, rdev->priv->addr + FWMACAGC);
-+	iowrite32(reg_val, priv->addr + FWMACAGC);
- 
- 	return 0;
- }
- 
--static int rswitch_port_attr_set(struct net_device *ndev, const void *ctx,
--				 const struct switchdev_attr *attr,
--				 struct netlink_ext_ack *extack)
-+static void rswitch_update_vlan_filtering(struct rswitch_private *priv,
-+					  bool vlan_filtering)
-+{
-+	if (vlan_filtering)
-+		rswitch_modify(priv->addr, FWPC0(AGENT_INDEX_GWCA),
-+			       0, FWPC0_VLANSA | FWPC0_VLANRU);
-+	else
-+		rswitch_modify(priv->addr, FWPC0(AGENT_INDEX_GWCA),
-+			       FWPC0_VLANSA | FWPC0_VLANRU, 0);
-+}
-+
-+static int rswitch_handle_port_attr_set(struct net_device *ndev,
-+					struct notifier_block *nb,
-+					struct switchdev_notifier_port_attr_info *info)
- {
-+	const struct switchdev_attr *attr = info->attr;
-+	struct rswitch_private *priv;
-+	int err = 0;
-+
-+	priv = container_of(nb, struct rswitch_private, rswitch_switchdev_blocking_nb);
-+
- 	switch (attr->id) {
- 	case SWITCHDEV_ATTR_ID_PORT_STP_STATE:
--		return rswitch_port_update_stp_state(ndev, attr->u.stp_state);
-+		err = rswitch_port_update_stp_state(ndev, attr->u.stp_state);
-+
-+		break;
- 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
--		return rswitch_update_ageing_time(ndev, attr->u.ageing_time);
-+		err = rswitch_update_ageing_time(priv, attr->u.ageing_time);
-+
-+		break;
-+	case SWITCHDEV_ATTR_ID_BRIDGE_VLAN_FILTERING:
-+		rswitch_update_vlan_filtering(priv, attr->u.vlan_filtering);
-+
-+		break;
-+	case SWITCHDEV_ATTR_ID_BRIDGE_MC_DISABLED:
-+
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (err < 0)
-+		return err;
-+
-+	info->handled = true;
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int rswitch_read_vlan_table(struct rswitch_private *priv, u16 vid,
-+				   u32 *vlanslvs, u32 *vlandvs)
-+{
-+	int err;
-+
-+	iowrite32(FIELD_PREP(VLANVIDS, vid), priv->addr + FWVLANTS);
-+	err = rswitch_reg_wait(priv->addr, FWVLANTSR0, VLANTS, 0);
-+	if (err < 0)
-+		return err;
-+
-+	/* check if vlans are present in table */
-+	if (!(ioread32(priv->addr + FWVLANTSR0) & VLANSNF)) {
-+		*vlanslvs = (ioread32(priv->addr + FWVLANTSR1) & VLANSLVS);
-+		*vlandvs = (ioread32(priv->addr + FWVLANTSR3) & VLANDVS);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rswitch_write_vlan_table(struct rswitch_private *priv, u16 vid, u32 index)
-+{
-+	u32 vlancsdl = priv->gwca.l2_shared_rx_queue->index;
-+	u32 vlanslvs = 0, vlandvs = 0;
-+	int err;
-+
-+	err = rswitch_read_vlan_table(priv, vid, &vlanslvs, &vlandvs);
-+	if (err < 0)
-+		return err;
-+
-+	rswitch_modify(priv->addr, FWVLANTL0, VLANED, 0);
-+	iowrite32(FIELD_PREP(VLANVIDL, vid), priv->addr + FWVLANTL1);
-+
-+	vlanslvs |= BIT(index);
-+	vlandvs  |= BIT(index);
-+	iowrite32(FIELD_PREP(VLANSLVL, vlanslvs), priv->addr + FWVLANTL2);
-+	iowrite32(FIELD_PREP(VLANCSDL, vlancsdl), priv->addr + FWVLANTL3(GWCA_INDEX));
-+	iowrite32(FIELD_PREP(VLANDVL, vlandvs), priv->addr + FWVLANTL4);
-+
-+	return rswitch_reg_wait(priv->addr, FWVLANTLR, VLANTL, 0);
-+}
-+
-+static int rswitch_erase_vlan_table(struct rswitch_private *priv, u16 vid, u32 index)
-+{
-+	u32 vlanslvs = 0, vlandvs = 0;
-+	int err;
-+
-+	err = rswitch_read_vlan_table(priv, vid, &vlanslvs, &vlandvs);
-+	if (err < 0)
-+		return err;
-+
-+	vlanslvs &= ~BIT(index);
-+	vlandvs  &= ~BIT(index);
-+
-+	/* only erase empty vlan table entries */
-+	if (vlanslvs == 0)
-+		rswitch_modify(priv->addr, FWVLANTL0, 0, VLANED);
-+
-+	iowrite32(FIELD_PREP(VLANVIDL, vid), priv->addr + FWVLANTL1);
-+	iowrite32(FIELD_PREP(VLANSLVL, vlanslvs), priv->addr + FWVLANTL2);
-+	iowrite32(FIELD_PREP(VLANDVL, vlandvs), priv->addr + FWVLANTL4);
-+
-+	return rswitch_reg_wait(priv->addr, FWVLANTLR, VLANTL, 0);
-+}
-+
-+static int rswitch_port_set_vlan_tag(struct rswitch_etha *etha,
-+				     struct switchdev_obj_port_vlan *p_vlan,
-+				     bool delete)
-+{
-+	u32 vem_val;
-+	int err;
-+
-+	err = rswitch_etha_change_mode(etha, EAMC_OPC_CONFIG);
-+	if (err < 0)
-+		return err;
-+
-+	rswitch_modify(etha->addr, EAVCC, VIM, 0);
-+
-+	if (((ioread32(etha->addr + EAVTC) & CTV) == p_vlan->vid) && delete) {
-+		rswitch_modify(etha->addr, EAVTC, CTV, 0);
-+		rswitch_modify(etha->addr, EAVCC, VEM, 0);
-+	} else if (!delete) {
-+		if ((p_vlan->flags & BRIDGE_VLAN_INFO_PVID) &&
-+		    (p_vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED))
-+			vem_val = FIELD_PREP(VEM, C_TAG_VLAN);
-+		else if (p_vlan->flags & BRIDGE_VLAN_INFO_PVID)
-+			vem_val = FIELD_PREP(VEM, HW_C_TAG_VLAN);
-+		else
-+			vem_val = 0;
-+		rswitch_modify(etha->addr, EAVCC, VEM, vem_val);
-+		rswitch_modify(etha->addr, EAVTC, CTV, FIELD_PREP(CTV, p_vlan->vid));
-+	}
-+
-+	return rswitch_etha_change_mode(etha, EAMC_OPC_OPERATION);
-+}
-+
-+static int rswitch_gwca_set_vlan_tag(struct rswitch_private *priv,
-+				     struct switchdev_obj_port_vlan *p_vlan,
-+				     bool delete)
-+{
-+	u32 vem_val;
-+	int err;
-+
-+	err = rswitch_gwca_change_mode(priv, GWMC_OPC_CONFIG);
-+	if (err < 0)
-+		return err;
-+
-+	rswitch_modify(priv->addr, GWVCC, VIM, 0);
-+
-+	if (((ioread32(priv->addr + GWVTC) & CTV) == p_vlan->vid) && delete) {
-+		rswitch_modify(priv->addr, GWVTC, CTV, 0);
-+		rswitch_modify(priv->addr, GWVCC, VEM, 0);
-+	} else  if (!delete) {
-+		if ((p_vlan->flags & BRIDGE_VLAN_INFO_PVID) &&
-+		    (p_vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED))
-+			vem_val = FIELD_PREP(VEM, C_TAG_VLAN);
-+		else if (p_vlan->flags & BRIDGE_VLAN_INFO_PVID)
-+			vem_val = FIELD_PREP(VEM, HW_C_TAG_VLAN);
-+		else
-+			vem_val = 0;
-+		rswitch_modify(priv->addr, GWVCC, VEM, vem_val);
-+		rswitch_modify(priv->addr, GWVTC, CTV, FIELD_PREP(CTV, p_vlan->vid));
-+	}
-+
-+	return rswitch_gwca_change_mode(priv, GWMC_OPC_OPERATION);
-+}
-+
-+static int rswitch_port_obj_do_add(struct net_device *ndev,
-+				   struct switchdev_obj_port_vlan *p_vlan)
-+{
-+	struct rswitch_device *rdev = netdev_priv(ndev);
-+	struct rswitch_private *priv = rdev->priv;
-+	struct rswitch_etha *etha = rdev->etha;
-+	int err;
-+
-+	/* Set Rswitch VLAN mode */
-+	iowrite32(br_vlan_enabled(rdev->brdev) ? FIELD_PREP(FWGC_SVM, C_TAG) : 0,
-+		  priv->addr + FWGC);
-+
-+	err = rswitch_write_vlan_table(priv, p_vlan->vid, etha->index);
-+	if (err < 0)
-+		return err;
-+
-+	/* If the default vlan for this port has been set, don't overwrite it. */
-+	if (ioread32(etha->addr + EAVCC))
-+		return NOTIFY_DONE;
-+
-+	if (br_vlan_enabled(rdev->brdev))
-+		rswitch_modify(priv->addr, FWPC0(etha->index), 0, FWPC0_VLANSA | FWPC0_VLANRU);
-+
-+	rswitch_modify(priv->addr, FWPC2(AGENT_INDEX_GWCA),
-+		       FIELD_PREP(FWPC2_LTWFW, BIT(etha->index)),
-+		       0);
-+
-+	return rswitch_port_set_vlan_tag(etha, p_vlan, false);
-+}
-+
-+static int rswitch_port_obj_do_add_gwca(struct net_device *ndev,
-+					struct rswitch_private *priv,
-+					struct switchdev_obj_port_vlan *p_vlan)
-+{
-+	int err;
-+
-+	if (!(p_vlan->flags & BRIDGE_VLAN_INFO_BRENTRY))
-+		return NOTIFY_DONE;
-+
-+	/* Set Rswitch VLAN mode */
-+	iowrite32(br_vlan_enabled(ndev) ? FIELD_PREP(FWGC_SVM, C_TAG) : 0, priv->addr + FWGC);
-+
-+	err = rswitch_write_vlan_table(priv, p_vlan->vid, AGENT_INDEX_GWCA);
-+	if (err < 0)
-+		return err;
-+
-+	/* If the default vlan for this port has been set, don't overwrite it. */
-+	if (ioread32(priv->addr + GWVCC))
-+		return NOTIFY_DONE;
-+
-+	return rswitch_gwca_set_vlan_tag(priv, p_vlan, false);
-+}
-+
-+static int rswitch_port_obj_do_del(struct net_device *ndev,
-+				   struct switchdev_obj_port_vlan *p_vlan)
-+{
-+	struct rswitch_device *rdev = netdev_priv(ndev);
-+	struct rswitch_private *priv = rdev->priv;
-+	struct rswitch_etha *etha = rdev->etha;
-+	int err;
-+
-+	err = rswitch_port_set_vlan_tag(etha, p_vlan, true);
-+	if (err < 0)
-+		return err;
-+
-+	rswitch_modify(priv->addr, FWPC0(etha->index), FWPC0_VLANSA | FWPC0_VLANRU, 0);
-+	rswitch_modify(priv->addr, FWPC2(AGENT_INDEX_GWCA), 0,
-+		       FIELD_PREP(FWPC2_LTWFW, BIT(etha->index)));
-+	rswitch_modify(priv->addr, FWPC2(rdev->port),
-+		       0, FIELD_PREP(FWPC2_LTWFW, GENMASK(RSWITCH_NUM_AGENTS - 1, 0)));
-+
-+	return rswitch_erase_vlan_table(priv, p_vlan->vid, etha->index);
-+}
-+
-+static int rswitch_port_obj_do_del_gwca(struct net_device *ndev,
-+					struct rswitch_private *priv,
-+					struct switchdev_obj_port_vlan *p_vlan)
-+{
-+	int err;
-+
-+	err = rswitch_gwca_set_vlan_tag(priv, p_vlan, true);
-+	if (err < 0)
-+		return err;
-+
-+	rswitch_modify(priv->addr, FWPC0(AGENT_INDEX_GWCA),
-+		       FWPC0_VLANSA | FWPC0_VLANRU,
-+		       0);
-+
-+	return rswitch_erase_vlan_table(priv, p_vlan->vid, AGENT_INDEX_GWCA);
-+}
-+
-+static int rswitch_handle_port_obj_add(struct net_device *ndev,
-+				       struct notifier_block *nb,
-+				       struct switchdev_notifier_port_obj_info *info)
-+{
-+	struct switchdev_obj_port_vlan *p_vlan = SWITCHDEV_OBJ_PORT_VLAN(info->obj);
-+	struct rswitch_private *priv;
-+	int err;
-+
-+	priv = container_of(nb, struct rswitch_private, rswitch_switchdev_blocking_nb);
-+
-+	if ((p_vlan->flags & BRIDGE_VLAN_INFO_MASTER) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_RANGE_BEGIN) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_RANGE_END) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_ONLY_OPTS))
-+		return NOTIFY_DONE;
-+
-+	switch (info->obj->id) {
-+	case SWITCHDEV_OBJ_ID_PORT_VLAN:
-+		if (!is_rdev(ndev))
-+			err = rswitch_port_obj_do_add_gwca(ndev, priv, p_vlan);
-+		else
-+			err = rswitch_port_obj_do_add(ndev, p_vlan);
-+
-+		if (err < 0)
-+			return err;
-+
-+		break;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-+
-+	info->handled = true;
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int rswitch_handle_port_obj_del(struct net_device *ndev,
-+				       struct notifier_block *nb,
-+				       struct switchdev_notifier_port_obj_info *info)
-+{
-+	struct switchdev_obj_port_vlan *p_vlan = SWITCHDEV_OBJ_PORT_VLAN(info->obj);
-+	struct rswitch_private *priv;
-+	int err;
-+
-+	priv = container_of(nb, struct rswitch_private, rswitch_switchdev_blocking_nb);
-+
-+	if ((p_vlan->flags & BRIDGE_VLAN_INFO_MASTER) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_RANGE_BEGIN) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_RANGE_END) ||
-+	    (p_vlan->flags & BRIDGE_VLAN_INFO_ONLY_OPTS))
-+		return NOTIFY_DONE;
-+
-+	switch (info->obj->id) {
-+	case SWITCHDEV_OBJ_ID_PORT_VLAN:
-+		if (!is_rdev(ndev))
-+			err = rswitch_port_obj_do_del_gwca(ndev, priv, p_vlan);
-+		else
-+			err = rswitch_port_obj_do_del(ndev, p_vlan);
-+
-+		if (err < 0)
-+			return err;
-+
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	info->handled = true;
-+
-+	return NOTIFY_DONE;
- }
- 
- static int rswitch_switchdev_blocking_event(struct notifier_block *nb,
--					    unsigned long event, void *ptr)
-+					    unsigned long event,
-+					    void *ptr)
- {
- 	struct net_device *ndev = switchdev_notifier_info_to_dev(ptr);
--	int ret;
-+	int err;
- 
- 	switch (event) {
- 	case SWITCHDEV_PORT_OBJ_ADD:
--		return -EOPNOTSUPP;
-+		err = rswitch_handle_port_obj_add(ndev, nb, ptr);
-+
-+		return notifier_from_errno(err);
- 	case SWITCHDEV_PORT_OBJ_DEL:
--		return -EOPNOTSUPP;
-+		err = rswitch_handle_port_obj_del(ndev, nb, ptr);
-+
-+		return notifier_from_errno(err);
- 	case SWITCHDEV_PORT_ATTR_SET:
--		ret = switchdev_handle_port_attr_set(ndev, ptr,
--						     is_rdev,
--						     rswitch_port_attr_set);
--		break;
--	default:
--		if (!is_rdev(ndev))
--			return NOTIFY_DONE;
--		ret = -EOPNOTSUPP;
-+		err = rswitch_handle_port_attr_set(ndev, nb, ptr);
-+
-+		return notifier_from_errno(err);
- 	}
- 
--	return notifier_from_errno(ret);
-+	return NOTIFY_DONE;
- }
- 
- static int rswitch_gwca_write_mac_address(struct rswitch_private *priv, const u8 *mac)
-@@ -389,7 +710,6 @@ static int rswitch_switchdev_event(struct notifier_block *nb,
- 	struct switchdev_notifier_fdb_info *fdb_info;
- 	struct switchdev_notifier_info *info = ptr;
- 	struct rswitch_private *priv;
--	int err;
- 
- 	priv = container_of(nb, struct rswitch_private, rswitch_switchdev_nb);
- 
-@@ -424,16 +744,6 @@ static int rswitch_switchdev_event(struct notifier_block *nb,
- 		queue_work(system_long_wq, &switchdev_work->work);
- 
- 		break;
--	case SWITCHDEV_PORT_ATTR_SET:
--		err = switchdev_handle_port_attr_set(ndev, ptr,
--						     is_rdev,
--						     rswitch_port_attr_set);
--		return notifier_from_errno(err);
--
--		if (!is_rdev(ndev))
--			return NOTIFY_DONE;
--
--		return notifier_from_errno(-EOPNOTSUPP);
- 	}
- 
- 	return NOTIFY_DONE;
+ drivers/soc/renesas/renesas-soc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 38ff0b823bda..60b09020c935 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -442,8 +442,14 @@ static const struct renesas_id id_prr __initconst = {
+ 	.mask = 0xff00,
+ };
+ 
++static const struct renesas_id id_mfis __initconst = {
++	.offset = 0x44,
++	.mask = 0xff00,
++};
++
+ static const struct of_device_id renesas_ids[] __initconst = {
+ 	{ .compatible = "renesas,bsid",			.data = &id_bsid },
++	{ .compatible = "renesas,r8a78000-mfis",	.data = &id_mfis },
+ 	{ .compatible = "renesas,r9a07g043-sysc",	.data = &id_rzg2l },
+ 	{ .compatible = "renesas,r9a07g044-sysc",	.data = &id_rzg2l },
+ 	{ .compatible = "renesas,r9a07g054-sysc",	.data = &id_rzg2l },
+@@ -501,7 +507,7 @@ static int __init renesas_soc_init(void)
+ 		product = readl(chipid + id->offset);
+ 		iounmap(chipid);
+ 
+-		if (id == &id_prr) {
++		if (id == &id_prr || id == &id_mfis) {
+ 			/* R-Car M3-W ES1.1 incorrectly identifies as ES2.0 */
+ 			if ((product & 0x7fff) == 0x5210)
+ 				product ^= 0x11;
 -- 
-2.43.0
+2.51.0
 
