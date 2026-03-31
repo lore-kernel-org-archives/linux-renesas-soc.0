@@ -1,307 +1,195 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010007.outbound.protection.outlook.com [52.101.228.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23703A63FB
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Mar 2026 10:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774953946; cv=none; b=S1L/oOukBaobQbVh77GvQWsZeA69cgCCzOsipO+xGQSRWcPVDmvUXbmg1OarMsATpnjiDSctsr9EizdxGKiy5JAM6XmZBMry1d0Wjqu2M7SH83hduhZid2DExvdOhKhr911sh5lsukJbT/0dnU3GaJVGyJPuTtFIJXcWPZxSWhs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774953946; c=relaxed/simple;
-	bh=K0EX0cspVeWxNCtAKEUv2IpTsWN+IA1QxsQ1rNF3Vs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AOYYSud66blTVwqi2Hr6cx8TZ81y3J3MhR/WTaYpCk0lhAa0vc04Ec+D6bptGpa/9ui+62+7xI3XnHIXSi3zZFdRsZvWVooW20a8PzL6gidTb98QuArJw5aJUf4yqJw69qsMSQ+8kLVcvdN9yflkF02zIrV5j0HXqbBMSHM3x40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=g2KKJQv1; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFAE3A7829;
+	Tue, 31 Mar 2026 11:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774955382; cv=fail; b=ZauwGy3gMFkEpmglDU+XAcW/JF26SCegUyMlTy0jDivQFRY+t09UqKUB6EX5GHTbSk10xcBvakZaP/HkGgMxMFxlUn7K74zde2UFGY8v7izQsMUAIFWxgFM5qOUG+guf7mLGs8rzOaxiaIdhZe8f7OVCH7h28wGNTeIHWaEau9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774955382; c=relaxed/simple;
+	bh=MHV2DCEMmeXLf5MJAVV/mSbTOGk5cNLNZw3LXOLl6jY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fqZk9N0nRhYS41dZTKkRsoHDhIp2+7VYDZX3CZL1l/jRhTx9dbogEVzc4L7TROXZa4rJTjmt+k9SvoBnA7CEAi9ZPr4ToqOim38TTJl0DSqeOXf692LnNRcgvQN2Lt9A5rTPTf9PsQDqRNcJaGQBO7Er5xWcxbXkhEGGxO9bS+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=bJHOJQqQ; arc=fail smtp.client-ip=52.101.228.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="g2KKJQv1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=r0g0IpoxlP5va4wkaZmbiFkAib721mTMQMhw3iYp7pw=; b=g2KKJQ
-	v17g60ndBRl/eWM0TfPATbe1XyOdNli1t0lSyu1UvDf+98IbDYxoCydQVPvwgRfP
-	NuZZuzlKDQ9CZSZX9/5qfgRKSb2Vq+DJ1WHnfuDldgTkZqg8/p30NJkHhF2L26ed
-	YnAz8E/UPXY1T58Ta+xJZc3agZP5LxY8vpOx5YrfLYa7JkXqjikf1J/w/UHmf/c0
-	Z6KjQ3ohjyUVwdIrmRTJRq3W2ntGHSTmzRd7GwFUGx0g4mxdvJuNjgJ5kWrB0kRK
-	h2W0+rwFdRObTeO7yuTrv5botZAxSCi2vU600OsDgCuTXEelLHwJSwsm3f30gB3S
-	MLMDeURmccWNJz2Q==
-Received: (qmail 1653790 invoked from network); 31 Mar 2026 12:45:39 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2026 12:45:39 +0200
-X-UD-Smtp-Session: l3s3148p1@I3UCq09O/K4ujnu8
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Marek Vasut <marek.vasut@mailbox.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 1/3] dt-bindings: soc: renesas: Document MFIS IP core
-Date: Tue, 31 Mar 2026 12:45:23 +0200
-Message-ID: <20260331104527.29170-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260331104527.29170-1-wsa+renesas@sang-engineering.com>
-References: <20260331104527.29170-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="bJHOJQqQ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S56Kql3MAU2VEuIryu9Ks8P/jMSHmbCX4AZnhWDjKzD9IXwZGtEHe+B94uaAPQvwBw1pfCk0dmQp2uUk+C2kb3i4mIlgx6z7+Z5WiDLwwHAZkbKfQE89FEnJRFqHHpDx5WfU2iM5oAemDQ48ffNCAPv6RBrd9x2YTGOFq8L4hxtM0WDE+hdtSJl1ZRziN/ldRzleIObsY/IU7yZP70jdzu251tgIHaDdena1TBjCgCRDn4HNX2PEKHwdPt/wZwYT4R7XJ1VxrpnxhPkSo9Na6ut5xrF54V+zuuSURdgTn+LS7mZ7c2WCZMPLc/3X5rdA53Mh7dv8Yz6a3ovqOOsQNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MUZOZaBGRIo2C2+5P5ejApdB2vQkvYf1UY4jJlO3irY=;
+ b=QS6x7991pESrPV7aDNPi0IRLtS+IdkNO+eliFp4Tp81jA/Oq6q7qcWgxE/elEAuxBo3LeN7C/Q86w4eqTdXSvFN8CcnmrCtcIhklZHoLUi7Y9kIDC7Bx16p28xGDjW30+DaicGtdjPOAlJnm6O0LuFdIU1JX2iYy168mbJKcKEwkAAOOrtte+x0F65UIOz4lIqYfhrqyqdt0cTHzRbxiwdIyB8RLMdN81QvUJHq2lUQH+CojuOKd/seNN0yN+W+8uU22/fHawnmgC7mG4po0nAoB5AU4ymH9ka3d3+yZ2TOl9wPC923eU9AWjd/yVKWaqotBJv79Cjlv3KbUAg0jpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MUZOZaBGRIo2C2+5P5ejApdB2vQkvYf1UY4jJlO3irY=;
+ b=bJHOJQqQvfPvcGq+WA4jLloi4PN2aj+WvjT/bYPld8DblcL7LLkyGQsIwcUhnw2FIcRyVlT84LlpKQNnveF/iDTjbfueoyDYIfnWAYl/h+l1rarjiL5M4mZUgakMZhpnbeU/WjBEphvUxRKYCU/mkIULAqEH8PebPtZxaYQ6iOY=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by TYCPR01MB10696.jpnprd01.prod.outlook.com (2603:1096:400:294::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.28; Tue, 31 Mar
+ 2026 11:09:37 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::3468:d7ea:e817:1e6c]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::3468:d7ea:e817:1e6c%4]) with mapi id 15.20.9745.027; Tue, 31 Mar 2026
+ 11:09:37 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Rob
+ Herring <robh@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, magnus.damm <magnus.damm@gmail.com>, Prabhakar Mahadev
+ Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, geert
+	<geert@linux-m68k.org>
+Subject: RE: [PATCH v2 1/3] dt-bindings: watchdog: renesas,r9a09g057-wdt:
+ Rework example
+Thread-Topic: [PATCH v2 1/3] dt-bindings: watchdog: renesas,r9a09g057-wdt:
+ Rework example
+Thread-Index: AQHclQrDEukhAG0pA0ODsvKeUfiXJrWc9eoAgCvckFA=
+Date: Tue, 31 Mar 2026 11:09:37 +0000
+Message-ID:
+ <TYCPR01MB1209331146787ADF63F9C430CC253A@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20260203124247.7320-1-fabrizio.castro.jz@renesas.com>
+ <20260203124247.7320-2-fabrizio.castro.jz@renesas.com>
+ <CAMuHMdXtrAwAtqNPqwq5qKHo4SKQqFoGSE7qPnFRD4rbKkPfaA@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdXtrAwAtqNPqwq5qKHo4SKQqFoGSE7qPnFRD4rbKkPfaA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYCPR01MB10696:EE_
+x-ms-office365-filtering-correlation-id: fe68967b-87b4-408a-706c-08de8f15ff82
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700021|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info:
+ 4diCdMBq+liyASz3oem6OQ+67Ckyl9azsZ6jBVqlCzAGIWsloOVnONfnpYtjREnRic298QkWCcsil+OHRW+vBfLY1rrXqimdK+sbJK8LAHRUVpvIhDh41ckR68MiiAiVUH4qDvDRlF0M18mon6idznZBd8SBKlPGNq0EA3j7Fgh0JR8dJBFT0VZzy6DGdGKvE4T1uMoUqTJcttnFYUq6ejKggeiierbYfAfut9EduzVv1O2ZaQxD+l9ruLfEhwg0mf3wF74SfKIqNBX6Dgf3TllmK2h9ODoY3XvyJbAtSKFIpDoJK3ZPvAepDOyQbsguapXcdUvVJ8rzmW1ky/1SP+szaj5yiOFjE0L1C7JzqxtRVGsRAkw0Xl1mF/ZtncS/7D+1B5uZ/AhS56XyfReGyj8s7Jn8r2zU9e4F10FDegz9DK/ERFyHQv2MfCw3ITwFoordFB1zXE7ge/31l1KZZue7mlwSDW4W3qDotzBO3/GeOCcPYliRfuG6YdR8oLgoHFRCahK7PybRphBkN6bno+FtZh3j15jWGUfAKJT6qQ76Uw9b2OlFDYLc5I7//mhnD2ZY4FtQbY74rLZ+HX9tBPkdD1+smV/n097CMhxDG+hEk8u9OR9W2HgzJAZdjpjV6aR/QPnNcXLgsuNM3dfAP3gF77yEsNwIOlp6/DMH7ryGuGQj5hWv15AJpkwXUCeolHWtv4zXe1w7Lqnj2vuOcp1P00SyANS7tiYcF9PiEe8Pa81cnEodUrDshftk8KgFl6fxbnHjMRiq/PlPJyAqwGATiEnFYCkIfg9lxcmKDgY=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?QizdrN5ERPH92Ll+TyJbTATO3GNHQm2YO3+98D5sDbcZAsawzCyhOMKSyvsi?=
+ =?us-ascii?Q?cgPjJVFbndXQh6RNYuUONQ5VtOaNBusZ0zD3xIwzadXP2kEba+5DFjjR/T6y?=
+ =?us-ascii?Q?4//DFhPMcdr35Ba0n7NUnwVV5lP0m3C3EBS2GgsJpbhg1oRecaA5wxJVWMPU?=
+ =?us-ascii?Q?wgSGapIq54d140yAEe7fN1dGJ5GxVdkGzaRxle0qPpaKK9HhbIhO1t+4GD9T?=
+ =?us-ascii?Q?seyRuWCKiEJcpyRJDQp5JFHvFzLcs0DEo5usBgvBfF2S8nqzcCzazO1koSJp?=
+ =?us-ascii?Q?eBP+d1fBY59jJNrpL2WO6Gtqv/XYawZHTgdyjAmcQfVlqtfXr1JhK91YdEpZ?=
+ =?us-ascii?Q?GNjymQur91HwuqaynC1qW1BRHpTUPVY7G0aOkqvFDwXu919FlsEQ5oEqciC7?=
+ =?us-ascii?Q?VBKMfnZqAEtdQfOpKvedL0aSA43BOk03rqic7Tx3/1cyVonqWRtxgcpHYMfO?=
+ =?us-ascii?Q?Fdy7x5k+JdMS0+vYTL8YV6TDCqT6T8VM3ypMkhHTRj9VeC4GhyXuOuywuiF2?=
+ =?us-ascii?Q?YQXmkdaXudapdFWVH0dqzW/7AjepI6fmLSiehN3LJwbN0skeD27LYbQzg1H4?=
+ =?us-ascii?Q?EZSqbNSYRryaNX6b2Fub4N7lKhozzD7kVR0m5k+m2+D7e3PvFWoup3Iy1gL6?=
+ =?us-ascii?Q?DoHexk+hKtStfpfKpt+aBI+Bo6PV6U2sfG2kB9n0wkrgFvryKoVo/9lBjIXO?=
+ =?us-ascii?Q?Dlp6bWjN5Hj4tvZH/8cTTTc5VxIo5NwSJUM0SU1R520X3E/3jUHc0ebl8kns?=
+ =?us-ascii?Q?S5QIO0VIXFAe3KJPBFjI4m2Lc6hwCaC7RsfSb7YoDCRb5UhCiKbBsT005iw3?=
+ =?us-ascii?Q?VGnsvp/UrzLI2pFlEpyrHYUQcGbn/Kv+U/KVMKLxmCWKh72NyqbpAs6fVzSY?=
+ =?us-ascii?Q?Q9lMXX1SR8/EpHsn0hBothcC5iqSk8v7380uwvc/2kK0V1xWeOxj0n7AMiEa?=
+ =?us-ascii?Q?innbhi35m+njst4PUoA8b6rsfp0BkTWOX5tYBLZY5mdRGEBu8TOClkPWAfdR?=
+ =?us-ascii?Q?DRvB/WDLvKjVIuiJJnvyJzequWHEb6CqW8zQh75e7e8V6DhQrxdcpfzEn6O7?=
+ =?us-ascii?Q?9eRhfITrmQohJX9aQIrUWcH+Fy/o/Ubmgtjfr8iw7vbGbxv/g2LwXVIGY5Op?=
+ =?us-ascii?Q?bp73TPhQFDG+727+3XfKYNR5abSsz9CxqdJ2m8xOk5K+Y/sBWsV/b8YZdhra?=
+ =?us-ascii?Q?5XT6vOp3QPz/W5My6flk4v9ibJKKrgZ7v1xuV9Gpkpf6Ts2NQzDX6ghoEw9C?=
+ =?us-ascii?Q?w46pdTMxYCw9qmLp3ukSWqIr8ZTLTIn968mXpy30y8k/rkbZRMKvlwOvxqpl?=
+ =?us-ascii?Q?VT4RY47pZnX0r8s4+wQlHjYSMbVAOYO1IKz0DFDzPvfP9ZRgytFuYiKam+/T?=
+ =?us-ascii?Q?5xAdMzqyILQS3BkmSTrvxXy6SqowQ5HBg0YVUpzA9wF2jaD7579S2019V9gW?=
+ =?us-ascii?Q?WI8i8vI+0kara+HxpZDK0WCc2mgsf5hD0AIHMIHH6CIq7cJXz99DzN8CLE56?=
+ =?us-ascii?Q?DHn/ItMpqQr5jqVOoY7YX8bd18HomqpfaGoJ28pa5ob7PwF0q/0uW+2tjQbR?=
+ =?us-ascii?Q?ubqA+Xu+lKEYx85hcimsZ4CUvqzeGr8k9kkYkGHLUzG/1N9AK61QP6UCDnk8?=
+ =?us-ascii?Q?rhsGAWsFVAM2qN+GOqIkorWT/vTy2Z99wxiSO8CzJTkDp1aBpHH39EsfH0HG?=
+ =?us-ascii?Q?yFQNM61E1SIJznZqsRi0S+2Ax2OdVRE59QhcvN3jVm0WuYmmK+1riUzHfG02?=
+ =?us-ascii?Q?l4fILaBNkc2XpLV9tHgsEMw+enM97V8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe68967b-87b4-408a-706c-08de8f15ff82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Mar 2026 11:09:37.6863
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rmBqQJL/AQ0r1SSiw3RvQGzMuv8ocHGB4pIyLZA1huHl50QipgP1POx/I/Y+4DoFez4VemBQfYZLvp+nfbUBuQMX5EQwC13QRM+x7CWvsyI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10696
 
-Document the Renesas Multifunctional Interface (MFIS) as found on the
-Renesas R-Car X5H (r8a78000) SoC. MFIS includes features like Mailbox/HW
-Spinlock/Product Register/Error Injection/Error Detection and the likes.
-Family-compatible values are not introduced here because MFIS is usually
-very different per SoC.
+Dear All,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Changes since v2:
-* added interrupt constraints
-* fixed whitespaces in example (Thanks, Krzysztof, for both!)
+This is a gentle reminder that this patch is waiting for someone
+to kindly pick it up.
 
- .../soc/renesas/renesas,r8a78000-mfis.yaml    | 191 ++++++++++++++++++
- .../dt-bindings/soc/renesas,r8a78000-mfis.h   |  28 +++
- 2 files changed, 219 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,r8a78000-mfis.yaml
- create mode 100644 include/dt-bindings/soc/renesas,r8a78000-mfis.h
+Kind regards,
+Fab
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,r8a78000-mfis.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,r8a78000-mfis.yaml
-new file mode 100644
-index 000000000000..7ee3a82053d7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas,r8a78000-mfis.yaml
-@@ -0,0 +1,191 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/renesas/renesas,r8a78000-mfis.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas MFIS (Multifunctional Interface) controller
-+
-+maintainers:
-+  - Wolfram Sang <wsa+renesas@sang-engineering.com>
-+
-+description:
-+  The Renesas Multifunctional Interface (MFIS) provides various functionality
-+  like mailboxes, hardware spinlocks, product identification, error injection,
-+  error detection and such. Parts of it can be used for communication between
-+  different CPU cores. Those cores can be in various domains like AP, RT, or
-+  SCP. Often multiple domain-specific MFIS instances exist in one SoC.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - renesas,r8a78000-mfis       # R-Car X5H (AP<->AP, with PRR)
-+      - renesas,r8a78000-mfis-scp   # R-Car X5H (AP<->SCP, without PRR)
-+
-+  reg:
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: common
-+      - const: mboxes
-+
-+  interrupts:
-+    minItems: 32
-+    maxItems: 128
-+    description:
-+      The interrupts raised by the remote doorbells.
-+
-+  interrupt-names:
-+    minItems: 32
-+    maxItems: 128
-+    description:
-+      An interrupt name is constructed with the prefix 'ch'. Then, the
-+      channel number as specified in the documentation of the SoC. Finally,
-+      the letter 'i' if the interrupt is raised by the IICR register. Or 'e'
-+      if it is raised by the EICR register.
-+
-+  "#hwlock-cells":
-+    const: 1
-+
-+  "#mbox-cells":
-+    const: 2
-+    description:
-+      The first cell is the channel number as specified in the documentation
-+      of the SoC. The second cell may specify flags as described in the file
-+      <dt-bindings/soc/renesas,r8a78000-mfis.h>.
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r8a78000-mfis
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 128
-+          maxItems: 128
-+        interrupt-names:
-+          minItems: 128
-+          maxItems: 128
-+          items:
-+            pattern: "^ch[0-9]+[ie]$"
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r8a78000-mfis-scp
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 32
-+          maxItems: 32
-+        interrupt-names:
-+          minItems: 32
-+          maxItems: 32
-+          items:
-+            pattern: "^ch[0-9]+i$"
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - interrupt-names
-+  - "#hwlock-cells"
-+  - "#mbox-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    system-controller@189e0000 {
-+        compatible = "renesas,r8a78000-mfis";
-+        reg = <0x189e0000 0x1000>, <0x18800000 0x40000>;
-+        reg-names = "common", "mboxes";
-+        interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "ch0i", "ch0e", "ch1i", "ch1e", "ch2i", "ch2e", "ch3i", "ch3e",
-+                          "ch4i", "ch4e", "ch5i", "ch5e", "ch6i", "ch6e", "ch7i", "ch7e",
-+                          "ch8i", "ch8e", "ch9i", "ch9e", "ch10i", "ch10e", "ch11i", "ch11e",
-+                          "ch12i", "ch12e", "ch13i", "ch13e", "ch14i", "ch14e", "ch15i", "ch15e",
-+                          "ch16i", "ch16e", "ch17i", "ch17e", "ch18i", "ch18e", "ch19i", "ch19e",
-+                          "ch20i", "ch20e", "ch21i", "ch21e", "ch22i", "ch22e", "ch23i", "ch23e",
-+                          "ch24i", "ch24e", "ch25i", "ch25e", "ch26i", "ch26e", "ch27i", "ch27e",
-+                          "ch28i", "ch28e", "ch29i", "ch29e", "ch30i", "ch30e", "ch31i", "ch31e",
-+                          "ch32i", "ch32e", "ch33i", "ch33e", "ch34i", "ch34e", "ch35i", "ch35e",
-+                          "ch36i", "ch36e", "ch37i", "ch37e", "ch38i", "ch38e", "ch39i", "ch39e",
-+                          "ch40i", "ch40e", "ch41i", "ch41e", "ch42i", "ch42e", "ch43i", "ch43e",
-+                          "ch44i", "ch44e", "ch45i", "ch45e", "ch46i", "ch46e", "ch47i", "ch47e",
-+                          "ch48i", "ch48e", "ch49i", "ch49e", "ch50i", "ch50e", "ch51i", "ch51e",
-+                          "ch52i", "ch52e", "ch53i", "ch53e", "ch54i", "ch54e", "ch55i", "ch55e",
-+                          "ch56i", "ch56e", "ch57i", "ch57e", "ch58i", "ch58e", "ch59i", "ch59e",
-+                          "ch60i", "ch60e", "ch61i", "ch61e", "ch62i", "ch62e", "ch63i", "ch63e";
-+        #hwlock-cells = <1>;
-+        #mbox-cells = <2>;
-+    };
-diff --git a/include/dt-bindings/soc/renesas,r8a78000-mfis.h b/include/dt-bindings/soc/renesas,r8a78000-mfis.h
-new file mode 100644
-index 000000000000..52e17fea1a03
---- /dev/null
-+++ b/include/dt-bindings/soc/renesas,r8a78000-mfis.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef _DT_BINDINGS_SOC_RENESAS_R8A78000_MFIS_H
-+#define _DT_BINDINGS_SOC_RENESAS_R8A78000_MFIS_H
-+
-+/*
-+ * Constants for the second mbox-cell of the Renesas MFIS IP core. To be treated
-+ * as bit flags which can be ORed.
-+ */
-+
-+/*
-+ * MFIS HW design before r8a78001 requires a channel to be marked as either
-+ * TX or RX.
-+ */
-+#define MFIS_CHANNEL_TX (0 << 0)
-+#define MFIS_CHANNEL_RX (1 << 0)
-+
-+/*
-+ * MFIS variants before r8a78001 work with pairs of IICR and EICR registers.
-+ * Usually, it is specified in the datasheets which of the two a specific core
-+ * should use. Then, it does not need extra description in DT. For plain MFIS
-+ * of r8a78000, this is selectable, though. According to the system design and
-+ * the firmware in use, these channels need to be marked. This is not needed
-+ * with other versions of the MFIS, not even with MFIS-SCP of r8a78000.
-+ */
-+#define MFIS_CHANNEL_IICR (0 << 1)
-+#define MFIS_CHANNEL_EICR (1 << 1)
-+
-+#endif
--- 
-2.51.0
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Sent: 03 March 2026 13:17
+> To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Cc: Rob Herring <robh@kernel.org>; Guenter Roeck <linux@roeck-us.net>; Mi=
+chael Turquette
+> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Wim Van Sebro=
+eck <wim@linux-watchdog.org>;
+> Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.o=
+rg>; magnus.damm
+> <magnus.damm@gmail.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@=
+bp.renesas.com>; linux-
+> watchdog@vger.kernel.org; linux-kernel@vger.kernel.org; linux-renesas-soc=
+@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-clk@vger.kernel.org; Biju Das <biju.das=
+.jz@bp.renesas.com>
+> Subject: Re: [PATCH v2 1/3] dt-bindings: watchdog: renesas,r9a09g057-wdt:=
+ Rework example
+>=20
+> On Tue, 3 Feb 2026 at 13:43, Fabrizio Castro
+> <fabrizio.castro.jz@renesas.com> wrote:
+> > When the bindings for the Renesas RZ/V2H(P) SoC were factored
+> > out IP WDT0 was selected for the example, however the HW user
+> > manual states that only IP WDT1 can be used by Linux.
+> >
+> > This commit is part of a series that removes WDT{0,2,3} support
+> > from the kernel, therefore the example from the bindings has
+> > lost its meaning.
+> >
+> > Update the example accordingly.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
