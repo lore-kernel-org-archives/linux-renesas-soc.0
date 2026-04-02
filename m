@@ -1,96 +1,115 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F43361DA8
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Apr 2026 11:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06E03644BE;
+	Thu,  2 Apr 2026 11:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775129280; cv=none; b=fY3Z0hURZF1RhG6VpPZ/pj6Dg/4Djp+Z5KCl9GMzuI2ZgMJCWnLnCWuw5PX61leJKheYJTebmM5EjJbneIlUY6xLzJXpg73vbZbwB8MVSCbiXo9AdNs87qttXdxnuKB7qil09U15CEYeO9kOnMe84b1CqP8gzS5L2GPv7SlSAR8=
+	t=1775130929; cv=none; b=mxVfKFugbGguXmNgpvPiuWP1EwGADRzYR7MNtwpVwMXAbSMiA9XcfojYlcnIWRR6VdZEtlokDpv1Hn7P4W6+FVx7g4YXIFmU6nP3c04tZzPD8e6jzk4s2fW8KAlSDCe9gqYtbHqE3bBYqTtB0n78pTnunPbe4cYPOLCZvR6tt7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775129280; c=relaxed/simple;
-	bh=bGWGJx8MkhM629L4Zr31C8nT4U00Cvc66QjhBWFQUbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oBetG/XBeYTv13Kk+SpCsbCmTyG+ebcVkspxnvSLmV2++1wT2Ku/pK3x0nYGTV1/2RM/v8W1zRg92IBfCLIvZE6lRr6w+Fy1zhIKBiiOQ+8s4K8m8ugkEVPvOIb6p+9L31laXcZ+Bq6iVgfvbwNDd7GG0qHOh1wDmzSuTJYGNKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bUHfvwgQ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1775130929; c=relaxed/simple;
+	bh=V7yEqjb63NM1xNoEYdg0sNIEwHGZ2Gv7vhBDNOGUmdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPb+6Di2vp2C2MxsHBCFh+ItSdUg8nmQn87GMrl+tISaLPGfIYEc4qkLatyou4aj7gCYKInT+FDMiMa38+oJet56Wm1ndYo0Q3o8tIvk25VkdwChtKNLel7jV15qML0irEyt7pEx2tcsr6pUOcbZbhGn9Auqh9wu3tA6jnEY4+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIv+5W85; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bUHfvwgQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=Nn3QaFo1np3L98e7M0Y1IBqFkF+Jb/kbVUUslInmhH8=; b=bUHfvw
-	gQrUn4FWZGJMwNFr9asnOrs9n/PVtzCRhQ8iqThgvX+dNWBUO1oeVLzXHaZ2mJVp
-	8kcwF0lsMAiHcdtzpFGalV6XJV57Zej0zVXubrsKkD8Nr4wDXqr7fTx9GtPTCGiB
-	LdBUR4MzJnyl8sBIUcsDZV8WXLpcBLwzsy7dduwKQmf7/40+VQb3xwyzga7KIH7V
-	7q61iEEIXPWJqHHM4b/nipkYo+RC39SdLtu7xLANBqMmKW6Jn3dMhH2AEKsOqYq3
-	DstpZ4MxeP1YtmubDyxq5j7jsSfuP/sZl8j4SZjO8V5W0SPm06PxL+ncOPKmXy+L
-	rhIIzCd0k4OJDgbQ==
-Received: (qmail 2479232 invoked from network); 2 Apr 2026 13:27:43 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Apr 2026 13:27:43 +0200
-X-UD-Smtp-Session: l3s3148p1@0lUmfXhOq9BUhsJN
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Marek Vasut <marek.vasut@mailbox.org>,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v4 3/3] soc: renesas: add X5H PRR support
-Date: Thu,  2 Apr 2026 13:27:07 +0200
-Message-ID: <20260402112709.13002-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260402112709.13002-1-wsa+renesas@sang-engineering.com>
-References: <20260402112709.13002-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIv+5W85"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DDEC116C6;
+	Thu,  2 Apr 2026 11:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775130928;
+	bh=V7yEqjb63NM1xNoEYdg0sNIEwHGZ2Gv7vhBDNOGUmdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oIv+5W85XENi/fxklryH7DxRO63EugHlfpOCKSGeTri+Hpu544quH0fOhEHtaHbIe
+	 IGuqw4GbqRdWF69fzCxr9VhW3HwAnIxCHqiOQsNUdY46awhh1x8AgSuAprsB7Q/1QX
+	 swMNkNddsfD+/iTn99XjfuLze73n49QJxhEKch6K7D/UCif2LtKH/+KjBytnGJooyY
+	 OfKboLgTTBqSnODUsU+ySA+p4qH4Ml47A6owrOEGwQNQkOcufExY3f8J7FI0exK3UW
+	 bDT6RPiUBqVweVQ9aI6pX4zo2au8KLlzC9IzO6bpxQUdL+e/8SgsYBpGi8YgX5gO5V
+	 Ww0fsoiEZmg9A==
+Date: Thu, 2 Apr 2026 12:55:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	John Madieu <john.madieu@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 00/24] ASoC: rsnd: Add audio support for the Renesas
+ RZ/G3E SoC
+Message-ID: <0c5afdbd-1348-4c61-b036-89adafeb5109@sirena.org.uk>
+References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CkH7niCKfa0KXZAX"
+Content-Disposition: inline
+In-Reply-To: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
+X-Cookie: <doogie> dpkg has bugs?  no way!
 
-On this SoC, PRR is now inside the MFIS memory block, so we need to
-access it similar to e.g. RZ/G2L.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes since v3: none
+--CkH7niCKfa0KXZAX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/soc/renesas/renesas-soc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On Thu, Apr 02, 2026 at 11:04:59AM +0200, John Madieu wrote:
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 38ff0b823bda..60b09020c935 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -442,8 +442,14 @@ static const struct renesas_id id_prr __initconst = {
- 	.mask = 0xff00,
- };
- 
-+static const struct renesas_id id_mfis __initconst = {
-+	.offset = 0x44,
-+	.mask = 0xff00,
-+};
-+
- static const struct of_device_id renesas_ids[] __initconst = {
- 	{ .compatible = "renesas,bsid",			.data = &id_bsid },
-+	{ .compatible = "renesas,r8a78000-mfis",	.data = &id_mfis },
- 	{ .compatible = "renesas,r9a07g043-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g044-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g054-sysc",	.data = &id_rzg2l },
-@@ -501,7 +507,7 @@ static int __init renesas_soc_init(void)
- 		product = readl(chipid + id->offset);
- 		iounmap(chipid);
- 
--		if (id == &id_prr) {
-+		if (id == &id_prr || id == &id_mfis) {
- 			/* R-Car M3-W ES1.1 incorrectly identifies as ES2.0 */
- 			if ((product & 0x7fff) == 0x5210)
- 				product ^= 0x11;
--- 
-2.51.0
+> This series adds audio support for the Renesas RZ/G3E SoC and enables
+> it on the SMARC EVK board with the Dialog DA7212 codec.
 
+> The RZ/G3E audio subsystem is based on R-Car Sound IP but has several
+> differences requiring dedicated handling:
+>   - SSI operates exclusively in BUSIF mode (no PIO)
+>   - 2 BUSIF channels per SSI instead of 4/8 on R-Car
+>   - Different register offsets for SCU, ADG, SSIU, and SSI
+>   - Per-SSI ADG and SSIF supply clocks
+>   - DMA ACK signal routing through ICU
+>=20
+> This series includes:
+>   - Clock driver support for audio clocks and resets
+>   - DT bindings update for DMA ACK signal field
+>   - IRQ chip extension for DMA ACK signal routing
+>   - RZ-DMAC driver updates for ACK signal support
+>   - R-Car Sound driver updates for RZ/G3E support
+>   - System suspend/resume support
+>   - Device tree nodes for RZ/G3E SMARC EVK
+
+You said you were going to separate out the serieses:
+
+https://lore.kernel.org/all/TY6PR01MB173779BDE4BE11739D3B7DAACFF4FA@TY6PR01=
+MB17377.jpnprd01.prod.outlook.com/
+
+--CkH7niCKfa0KXZAX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnOWSgACgkQJNaLcl1U
+h9C68wf+MZsj0US6d4TmQr2yaV8ls0gzIbG9DnDhrRPorWZumeaFME9qPxyfIALP
+BT8JNC0R2KuT9nqmMMqJdKr+xpfcRaReczt8bENJXiHsU5ET/XxMR+C4Rqll+3gK
+VLV3NbYkbSLFeFvp/dpqwV5Y1PihtISdaYvIR6QNCyKGchmZ4aeVKB4ecuXNfI8b
+8E9Y6Mz6nweYfeJu0F2OHX3uqaVUQOIgkn2Y0xM8KwvtTfyAHolUJXljnO9QnJ3C
+4NjER7nMS713jJK8gwE9mBXo2NhBDyMDLT9mD7BMovknFIpj2F+omSqJ8TzF/2wr
+X6JijFphydiaJjgzrnILLf06j1vY4Q==
+=D/sa
+-----END PGP SIGNATURE-----
+
+--CkH7niCKfa0KXZAX--
