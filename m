@@ -1,41 +1,41 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AD63F0A85
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Apr 2026 16:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBDD3F20F8
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Apr 2026 16:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775147261; cv=none; b=pASxoeyspIc2SdLp0EuPmyvsAMePrpYns1KSsb4piu+vCOfkhQTQBDeq/xiwAgp22mLVbdJXZnH4hr9f3UYpI48beiQ1JOvHXUC477gWw9Xn5rqKSBof3sW5hrc2LRbX7vthA1rbcEsFN8rqg09SvaPUEgaVi/LhdF/PyXeA428=
+	t=1775147265; cv=none; b=CMuAPEybdW+nkoeO7/6AUWhmj3NLfolez1knhvzbISnZLaYyOjwc7525CEkZath3IJoLJwXcv7otrH4EM9pMGX5mV0HjVzdJqIShUV6ONaUo2Qm+gpuuXxdkquoaFuNqK+ztrrGuL7bgCje4ba2LIxkL7gVrU1Jr55k3A09dYTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775147261; c=relaxed/simple;
-	bh=nnmktu+i3aFT/v27nzZQ1hqCDT4h4lcVfrM54m82nsI=;
+	s=arc-20240116; t=1775147265; c=relaxed/simple;
+	bh=1Im8S6jtLTEPIZHXUvTz/t/ZBSn+UlzYRoKYUPn+VKk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LFhHWmvRK6r0x9i9zn6YSCY7Feg+AKznFSXWFLq2HPZN7YWBzVdMU7huWIgglWn4d2EbTafrgRqTIUnwgmDp+52ui0+eTC/ab7Uy/XqEE5dz1bVsaKH8ut/NfTEgm6i4u5MViOVytBjfzIc7oYEHOyrQv3ALvG8YQVUNSufnwC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xLBx7un4; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=nR2PuBJ2t8Bqam0ZDfmBEt/okOEezO3RaVloLIP8pF73ht89tJqtsEIRtoXGM+AQe1Hxgpl1dIA79uGSKG7zwaWTXpH9AB4mqc96UW+k254fofSIotWU7zWiIdMl4ZsUpgoPpyHRR4lB/oU2USQm1tpfy6gCHP+PKyVreQX2z7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a3Yt62CE; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xLBx7un4"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a3Yt62CE"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 1002D1A3107;
-	Thu,  2 Apr 2026 16:27:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D39BFC59F45;
+	Thu,  2 Apr 2026 16:28:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DA0A9602CD;
-	Thu,  2 Apr 2026 16:27:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0ED3710450288;
-	Thu,  2 Apr 2026 18:27:34 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 53344602CD;
+	Thu,  2 Apr 2026 16:27:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DEAF10450289;
+	Thu,  2 Apr 2026 18:27:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1775147257; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1775147261; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=DNyrSsXKwCyMcPcvmApHaYBSnc2gsMPCpE91ks41RvY=;
-	b=xLBx7un42jdVHDeZj4XlWypyoae4/uDPDLvC68pmajQWnxPcFdnIO/RjfCDA7trdlFE01Y
-	vklxoNR6dswXvSMex171zS0Fs6t/AVMB2/sgmCOorj9YsI6QmNyD8U4Jd2hY4JyzMpWVSP
-	+yDduzb36dPNMYy9Pe2sfrY+nY/B7oDyr0Y1NkgDw2SeqVmt9GBw5Azj8+l1nBbZlFSlM7
-	bipJIPzTHqSQ2VKOUAZWb5KFNHp/dCG2B5ljbqdiaFSyAobJYVILZMe/02Q22ZI8Szwxnw
-	wzUOPa/+MSTlCbfTnkvduZZRcdtQxQagAbMGDGSZZ7+r1ePV3HCoC+ix4O72UQ==
+	bh=xkg8WT1H4nXO5fcJJ7+qnjT9Yuxy0/lZMRRqi782Ryk=;
+	b=a3Yt62CEz5ez0s4cLghVDLDc2aQJaLQP+juu0vDczF+rdxZjelM+ZWEGAdyEfSP/8AXyuB
+	dPQa6i0VFLp4bQM7C/v83CMd4OQAD2eOhl3ddurh1rGGENaiWWjL2F93YpjZ4yv2PubWa1
+	Vp1mXmC3uU+Y8Kzon0SO/fd06mnjljua/FDm9RDnmafL5b+umeaG+CNonh4ijxxRLdKxbZ
+	+mbuhzeXCA2E5jRllrfx6E8imaanVwiM+Qjiu8LqA3/r3zYWTFIrZloYFuN3NVxvNhGaJ9
+	lM/KEPlvqVFlmzxopKMoSrzaBM3UxM44+O/tM6wqXrSFDXC6TVHNBTrjDVZJsw==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 02 Apr 2026 18:27:17 +0200
-Subject: [PATCH v4 1/4] drm: renesas: rz-du: rzg2l_du_encoder: convert to
+Date: Thu, 02 Apr 2026 18:27:18 +0200
+Subject: [PATCH v4 2/4] drm/kmb/dsi: convert to
  of_drm_find_and_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-1-421781c8c061@bootlin.com>
+Message-Id: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-2-421781c8c061@bootlin.com>
 References: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-0-421781c8c061@bootlin.com>
 In-Reply-To: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-0-421781c8c061@bootlin.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>, 
@@ -68,77 +68,31 @@ X-Mailer: b4 0.15.1
 X-Last-TLS-Session-Version: TLSv1.3
 
 of_drm_find_bridge() is deprecated. Move to its replacement
-of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-is put when done.
+of_drm_find_and_get_bridge() which gets a bridge reference.
 
-This is made somewhat simpler by the fact that 'bridge' is a local
-variable.
+This driver has global variables for the DSI host and DSI device, and code
+to allocate them on probe but no code to free them when on remove. So it
+does not at all support removal, and not even multiple instances. For this
+reason putting the reference would be pointless here.
 
-However we need to handle both branches of the main if().
-
-In the 'else' case, just switch to of_drm_find_and_get_bridge() to ensure
-the bridge is not freed while in use in the function tail
-(drm_bridge_attach() mainly).
-
-In the 'then' case, devm_drm_panel_bridge_add_typed() already increments
-the refcount using devres which ties the bridge allocation lifetime to the
-device lifetime, so we would not need to do anything. However to have the
-same behaviour in both branches take an additional reference here, so that
-the bridge needs to be put whichever branch is taken without more
-complicated logic. Ensure to clear the bridge pointer however, to avoid
-calling drm_bridge_put() on an ERR_PTR.
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
 ---
+ drivers/gpu/drm/kmb/kmb_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v4:
-- Added comment to clarify the additional drm_bridge_get() in the
-  panel_bridge case (keeping the R-by and T-by tags as it's just a comment)
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
-index 5e6dd16705e6..9edb90059830 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
-@@ -67,7 +67,7 @@ int rzg2l_du_encoder_init(struct rzg2l_du_device  *rcdu,
- {
- 	struct rzg2l_du_encoder *renc;
- 	struct drm_connector *connector;
--	struct drm_bridge *bridge;
-+	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
- 	int ret;
- 
- 	/*
-@@ -83,10 +83,21 @@ int rzg2l_du_encoder_init(struct rzg2l_du_device  *rcdu,
- 
- 		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
- 							 DRM_MODE_CONNECTOR_DPI);
--		if (IS_ERR(bridge))
--			return PTR_ERR(bridge);
-+		if (IS_ERR(bridge)) {
-+			// Inhibit the cleanup action on an ERR_PTR
-+			ret = PTR_ERR(bridge);
-+			bridge = NULL;
-+			return ret;
-+		}
-+
-+		/*
-+		 * The reference taken by devm_drm_panel_bridge_add_typed() is
-+		 * released automatically. Take a second one for the __free()
-+		 * when this function will return.
-+		 */
-+		drm_bridge_get(bridge);
- 	} else {
--		bridge = of_drm_find_bridge(enc_node);
-+		bridge = of_drm_find_and_get_bridge(enc_node);
- 		if (!bridge)
- 			return -EPROBE_DEFER;
+diff --git a/drivers/gpu/drm/kmb/kmb_dsi.c b/drivers/gpu/drm/kmb/kmb_dsi.c
+index aeb2f9f98f23..febca939bd01 100644
+--- a/drivers/gpu/drm/kmb/kmb_dsi.c
++++ b/drivers/gpu/drm/kmb/kmb_dsi.c
+@@ -251,7 +251,7 @@ int kmb_dsi_host_bridge_init(struct device *dev)
+ 		return -EINVAL;
  	}
+ 	/* Locate drm bridge from the hdmi encoder DT node */
+-	adv_bridge = of_drm_find_bridge(encoder_node);
++	adv_bridge = of_drm_find_and_get_bridge(encoder_node);
+ 	of_node_put(dsi_out);
+ 	of_node_put(encoder_node);
+ 	if (!adv_bridge) {
 
 -- 
 2.53.0
