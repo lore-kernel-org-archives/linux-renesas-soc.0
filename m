@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EF237FF44;
-	Fri,  3 Apr 2026 08:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25B92D94BA;
+	Fri,  3 Apr 2026 08:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775206112; cv=none; b=oY/Fg40LYhYLSdZcnuwnCAEbVdCMEIFo0s2XQA5HtKK0IQ7X2MBAOZ9ceQ58KFgcHLrksvi4TQlbPAnBUewLzJeNyot6TsIkIO32NAxvWG5sjvRqd09qtw0vVbwiPFUUFBBIanqmCXhkL6GaHQJ49qq8HWMWve/RgFYi/8xbq1c=
+	t=1775206115; cv=none; b=tMeQv9CZ4bNBvjxJ+pcr0lKEuVOyB+vt4fUpsLbm97AdbUMyyjCSpm/MQsuXffZxDbwRI1WbZVPFbIZFfJB2Cvofawq4JIRZL026bmPOIk8mcs9d6/k0/+v2aVSiWRKgA1yYGiPagY5XvR/A35SfyR8A1ZC2U3ZULf2PgsRTAfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775206112; c=relaxed/simple;
-	bh=ZiuLrgKsZYEpfewvxh4CcbmyajviW8yBBvV1yOgUefI=;
+	s=arc-20240116; t=1775206115; c=relaxed/simple;
+	bh=fJWeq4JGBPXVNBW/iUBRI9wUh3kZ6DeQJIi+JFzRxlQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y4RLKaoCvc3YNtDQpDss3AeZIHrBaIXtMwpHvFX9boUAy5lkj2GFqYxOQuB+rUaECmPRqNQ+RVBztPHRIjyTxYdf9Og1E+zGY1RsxwtgH7C8QO5H+DYjfczvoXR4lz5YOPYa3ZZYLo9lpxLdElec88m3K19YsmsEDLtYZhmehT4=
+	 MIME-Version; b=MO7IrV64xGyZfcxZP2XsAABgE9HLlTklevp7VbaY8IUBzHiO6z1m69CT2z77rcUqeamcRhMszUTfZoX6K/XEzXESYOwkHPuX26cJYIvbTkzELBHoUGrFJaxcsyDJn9gn2cblXTPWbkGf1Iq5u+MrHxGy2QfVzmTDPksKMu+V52A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900D4C19424;
-	Fri,  3 Apr 2026 08:48:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CF9C2BCB0;
+	Fri,  3 Apr 2026 08:48:33 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Thomas Gleixner <tglx@kernel.org>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
@@ -21,9 +21,9 @@ To: Thomas Gleixner <tglx@kernel.org>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] irqchip/renesas-rzv2h: Kill swint_idx[]
-Date: Fri,  3 Apr 2026 10:48:21 +0200
-Message-ID: <0f32ba2a4701311710d02ff4fa2fd472b56745c4.1775205874.git.geert+renesas@glider.be>
+Subject: [PATCH 3/3] irqchip/renesas-rzv2h: Kill icu_err string
+Date: Fri,  3 Apr 2026 10:48:23 +0200
+Message-ID: <c7472bec20dea2c4d63e390e8e293b7d7003ef39.1775205874.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1775205874.git.geert+renesas@glider.be>
 References: <cover.1775205874.git.geert+renesas@glider.be>
@@ -35,44 +35,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The array swint_idx[] just contains an identity mapping.
-Replace it by using the index directly, to simplify the code.
+Replace the string variable icu_err by its expanded value where needed,
+to improve readability.
+
+This reduces generated code size by 16 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index ce790590f7ca9932..6fa8141adcaa59f2 100644
+index d075196bdc741c7f..1633b118731f925f 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -745,7 +745,7 @@ static irqreturn_t rzv2h_icu_error_irq(int irq, void *data)
- 
- static irqreturn_t rzv2h_icu_swint_irq(int irq, void *data)
+@@ -755,7 +755,6 @@ static int rzv2h_icu_setup_irqs(struct platform_device *pdev, struct irq_domain
  {
--	u8 cpu = *(u8 *)data;
-+	unsigned int cpu = (uintptr_t)data;
- 
- 	pr_info("SWINT interrupt for CA55 core %u\n", cpu);
- 	return IRQ_HANDLED;
-@@ -760,7 +760,6 @@ static int rzv2h_icu_setup_irqs(struct platform_device *pdev, struct irq_domain
- 		"int-ca55-2", "int-ca55-3",
- 	};
- 	static const char *icu_err = "icu-error-ca55";
--	static const u8 swint_idx[] = { 0, 1, 2, 3 };
+ 	const struct rzv2h_hw_info *hw_info = rzv2h_icu_data->info;
+ 	bool irq_inject = IS_ENABLED(CONFIG_GENERIC_IRQ_INJECTION);
+-	static const char *icu_err = "icu-error-ca55";
  	void __iomem *base = rzv2h_icu_data->base;
  	struct device *dev = &pdev->dev;
  	struct irq_fwspec fwspec;
-@@ -780,7 +779,7 @@ static int rzv2h_icu_setup_irqs(struct platform_device *pdev, struct irq_domain
- 		}
+@@ -800,14 +799,13 @@ static int rzv2h_icu_setup_irqs(struct platform_device *pdev, struct irq_domain
+ 	fwspec.param[1] = IRQ_TYPE_LEVEL_HIGH;
  
- 		ret = devm_request_irq(dev, virq, rzv2h_icu_swint_irq, 0, dev_name(dev),
--				       (void *)&swint_idx[i]);
-+				       (void *)(uintptr_t)i);
- 		if (ret) {
- 			return dev_err_probe(dev, ret, "Failed to request %s IRQ\n",
- 					     rzv2h_swint_names[i]);
+ 	virq = irq_create_fwspec_mapping(&fwspec);
+-	if (!virq) {
+-		return dev_err_probe(dev, -EINVAL, "failed to create IRQ mapping for %s\n",
+-				     icu_err);
+-	}
++	if (!virq)
++		return dev_err_probe(dev, -EINVAL,
++				     "failed to create icu-error-ca55 IRQ mapping\n");
+ 
+ 	ret = devm_request_irq(dev, virq, rzv2h_icu_error_irq, 0, dev_name(dev), rzv2h_icu_data);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to request %s IRQ\n", icu_err);
++		return dev_err_probe(dev, ret, "Failed to request icu-error-ca55 IRQ\n");
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
