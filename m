@@ -1,71 +1,71 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91531353EDF
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Apr 2026 09:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE52723E320
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Apr 2026 09:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775206983; cv=none; b=j3sskub51nraTfOKq4151KYIFheqTgYGvPGZCVlWe48Ax05AC6NMxhKpBzqfxcbxDi4y+g61eEzULmyPg4IE78d6CHPbgo2cmQPz6/qpHN0jHw7hT7lpS68q6uH1A+DcF9iQgq8MtvN4kSlq5cH+d97UUJCM9EMjudHZgdmplXI=
+	t=1775207004; cv=none; b=J98na4MxT2FhCAa+Feb6fVBrH00oDSCKX2hcBdckadO2UZ4PCmkgnyMaN7nz+6Omi4m6qUT7u8lgo06W7FkmRL0cPtZN+ChHI+f9BPSsU4UUVO+oMrKeq8UbK7Zf8HE1FbUl0khpQdMZwgtX4MHJO2mdwa5X3r+OS4+IWJMxDbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775206983; c=relaxed/simple;
-	bh=cP8YSmhgi1YuGHKrhpk8W7JVu/It1uzDhcipHOHidYI=;
+	s=arc-20240116; t=1775207004; c=relaxed/simple;
+	bh=JEJTNt6yJrQY8C1EF2vPzaNXrIXOVaxrHd5bFcJyLeA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wwtca3ROETGiMBvVs9UWRo3ecHbV8S3lgp10NXbDPno1kNN6s6nG3xPznBIeHx2KkKvjy+1UqPPfAtvHNTpDj+k7F6/PPa9z8G44Z0GboFz+bwFUTDBISCVqF6WWonoOhQAQKBEUd66ND5ikeMaNsTEEw9rUwyAGuH/Jt2wgwVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+	 To:Cc:Content-Type; b=Af/WlG3AmpYDHM3seQOXe7r60uvxoDPgH7Vg1f0inG8D7qQfyZGd+SKMzJiqekYsb6a4ssCGLNSkfteh75VNOxogMZ4MSuwCcOeSeTrMiFNoqpLgzZnLbZ/GYQ1sUeJlBOkbCiDx0cKLpj/rzZvM/0S2lMaCIZhok/wpYkt3wz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-9539d9f1675so1088241241.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Apr 2026 02:03:02 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-94dd01deb53so467076241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Apr 2026 02:03:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775206981; x=1775811781;
+        d=1e100.net; s=20251104; t=1775207003; x=1775811803;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BeTldaeFKLb1jw+lVjLCkjUpuPTt3MmHsJN8YKLGAfM=;
-        b=IhrINub8XBcIsIjjld6iCoGT0wCglZ/XYzqooDRlDtPeblQyW7Ba/NiKMAbv0xdaQ7
-         xyGcspWHBqLOG7fywR3Yyi0KhtdO2weuHmlqogDBzeUB52pd6Nn7x4YmRc/CAqo/UlWo
-         Hc3NIxYGeHUMPgI+YpEm4R9627LecgzUOE9skdOdX1YHnyEQuW++a6agg3opA8/nq01u
-         jXlGDWGmVln51Nt3phTR06qyOTlaxxQMLLsv6RHpbbv7bRT0M/KpmBWFSLmL3QQGMyve
-         pEVlI95u4AY1GapAJ90hAR6Il9VFtcEc3SyfUtrIN2QF1Gv5D5fxkLMqWOV/Sd+gebie
-         w0CA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4RjIRfJbtQtnvr96vDW/6TBkzVe2C7hSyFOZv/QltZ3VT2i3BPYwljvvMzbdQDFCa6uiczxDAR9FUF9NyI7Dvhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDHmQsL97C1BaV5LC8si8G9Uu4XsniZ41yPhn9bQrVpvouXoFg
-	MSw7MD/NNh/eWWpXgZgt/x4ySmAV66Rbx0Wa6EIS4g6s0yxk+Cwk0vxYgXYX0xV6
-X-Gm-Gg: AeBDiessMdECTApCgxl6Hi4SnXMXWfecHZTNjEJ4xzsutU/Tbab8acdvjljiUsDjtdi
-	qosC4rC0G3XEMQiZVUrgN5mJlhqnJWcupfR33uXCxifrYP+LeROdtfCTnSlE1sVTMB6uIOOPJ0m
-	4YlnaZ0qBHgaVvZuMUsj3W0p1zX1GG4ceV4VDy2Ou4XDnqrKYUS4O1N1Wl5YskbQ0U/iSaCwCBP
-	cl905TeU9kH1pYg8H2FHm2CPGzKGVGH9oOS1Rg2h5FcVO6724XNiiycNEb+XectEi7F4cseAeE9
-	a9TlAnRV/aswEKokik6uFTs0DN+K/QakzMZzo/ZmbR0x3iVWn4Qkp3sm/6AIjAy2tGGXDuBlmiY
-	nAvBJPlQ6ENY+J+DCPYqmjkk+kdqoqd+1jHWw/OCq0TAIO61FXPlQtbVt4eyLhld4aM3sSVSp+T
-	wPW68ceJTd8lK8nFA94JeUy9CjOufpVXnf6GpZainDZ5MIN1jLV2MeQsFn003W72Oqy86ZV0o=
-X-Received: by 2002:a05:6102:f9a:b0:604:f29d:84be with SMTP id ada2fe7eead31-605a4d335fbmr781654137.3.1775206981304;
-        Fri, 03 Apr 2026 02:03:01 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-60582e1d1edsm6854996137.1.2026.04.03.02.03.00
+        bh=JrMS3BmPgb8kmzZIH9W4BGKhy4JgCpGMmlju1jJRqIE=;
+        b=VdkNkEJaUIs87eCYQyZ3X+0i6xdRQNZFlMb6F551nVYMPyx2L7A58Eigad8qc5/SmS
+         oR3rX7BiyfkT4BIm0TvVEnIwC4X6zBhTqmafek8ktMqAFRrs31rfgmcR/sKX10e1XpGq
+         aS3bZbemndSbYxUqEP9f3ylZ2oQ2LFQwiib6Rvn0+SSLavk3nWqtcWT4bCtqW3avIdRy
+         l2v7FZMrS6gi/DpPu5cIXQwE6lhSqJRDeRTlTQpjVqIYuZSDEIDTeLjw+Zrnos5/EfEh
+         PLKfsdhKzL4AaOi9zByuQNh1NxwDJjmcdMKgQDwYxfR2PRsNh2lEcJ9AFJM74oTc693n
+         ShMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzCKM2nJ2O6zRExO/NhcEvYn/H6VLTNUn1MWibIAmnlCQSuZls8KwPl6s/mcDTpZ3jxieP/cI8PB+OEkjr+J9hIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3zwQZAmDXlapSfUuKZ8MrgH1y9GkxDLs8z7b6f9x/GSsFUjjv
+	sR4xd3TarZQYPt9riohJJi04Q0cQDkmHRMBT8d/nOwyoYN4Avikwct+2EJdAWPOk
+X-Gm-Gg: AeBDiet9S5oOO+7MGa2AU80oC/rA5+4guHiZMnuKKpDqB1ulQ/R60my7EE+3oy3zigm
+	pbu0Zs3Fs5ITb60H64Nwykrty3etrJj3ye1Svg5JoMl0zVHw9XoI4GHDyIOhvziYY/ivn1Lhl9i
+	5lqVEb1UObZItVZZ/Vhoz2+voGelHXoAcVrdc4ytXbyKOMyI1Qe3aNxmSR+f14tviT3glEGP3P5
+	rC8U2Qbg5fY0iMnCHbyeuvlssh7hdYgnwtDsn/Bf0Y6zRb4bjsgfyLfTwWU2O9rkK4VGplXdEqf
+	79i6MByJzv9QRgjwwzovVxNpTmj3UD+a+IxhK0fX80bgexcXNt27pD1Ss1/psj5HNXx0YYqTZC2
+	GCpshu4iSwSbsPRZyXV5Wh0tnJzXxuNy9sbjXF+i/8HYHjv0iqFQPlbFcZTeVDhrFkp8LLImqZ0
+	4kYymjNuTKGHlrL7MKjIA99NcTNuA4M49uHlzxn23XVkkHT9TI4IeRfRKLBYJuVCLl
+X-Received: by 2002:a05:6102:f87:b0:605:56fe:8c47 with SMTP id ada2fe7eead31-605a4897360mr771412137.0.1775207002719;
+        Fri, 03 Apr 2026 02:03:22 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-60582e1cc7dsm6754843137.2.2026.04.03.02.03.21
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Apr 2026 02:03:00 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-94ac8cbf3feso1054087241.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Apr 2026 02:03:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWK7wd0FDa3acVgqxR2aCLscbucWDLRhjBrMe5ByDcMlEjfPaDbSzPFruhw1tEj0f2XmN8xArRtV5c1dlZFkogew==@vger.kernel.org
-X-Received: by 2002:a05:6102:801a:b0:605:8280:5e6b with SMTP id
- ada2fe7eead31-605a5006639mr842406137.16.1775206980479; Fri, 03 Apr 2026
- 02:03:00 -0700 (PDT)
+        Fri, 03 Apr 2026 02:03:22 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-56adf76631cso664203e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Apr 2026 02:03:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuGH+omBydPwIn/3nsjfsL76atXbQb8EXCtPY81hRhDd/GrFZ9rfEZV4k81mubPX63i+QgcG2WkwYYzWVqJegdFA==@vger.kernel.org
+X-Received: by 2002:a05:6122:6992:b0:56d:3c26:20a8 with SMTP id
+ 71dfb90a1353d-56dab8146e9mr655900e0c.3.1775207001558; Fri, 03 Apr 2026
+ 02:03:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org> <20260326042411.215241-3-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260326042411.215241-3-marek.vasut+renesas@mailbox.org>
+References: <20260326042411.215241-1-marek.vasut+renesas@mailbox.org> <20260326042411.215241-4-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260326042411.215241-4-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 3 Apr 2026 11:02:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVWrKfQSO4LHdDG6KV5tKahzpxN6073Mz4kjtF2MQRH_Q@mail.gmail.com>
-X-Gm-Features: AQROBzDCJPmdFGO3WLCOdZ77NkJ3IqtNsdBGX_ONT98Xal23qSXaiQziWiGG0kg
-Message-ID: <CAMuHMdVWrKfQSO4LHdDG6KV5tKahzpxN6073Mz4kjtF2MQRH_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: dts: renesas: Fix missing cells and reg in
- Salvator-X panel DTO
+Date: Fri, 3 Apr 2026 11:03:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVJsrB6vTHafKnpGDqb-Lc461T9Hd-nWPOVdm7E0MukDw@mail.gmail.com>
+X-Gm-Features: AQROBzAUWGgjsdDp3P5htV2JBQzE4EKlybGyOmFyU2VyK7rwylLSVOUsW4xN9NQ
+Message-ID: <CAMuHMdVJsrB6vTHafKnpGDqb-Lc461T9Hd-nWPOVdm7E0MukDw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: renesas: rzg2l-smarc: Fix missing cells
+ and reg into CSI2 subnode
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
@@ -75,11 +75,11 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Thu, 26 Mar 2026 at 05:24, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> Add missing cells and reg DT property into Salvator-X panel DTO to fix
+> Add missing cells and reg DT property into CSI2 subnode to fix
 > the following warning:
 >
 > "
-> arch/arm64/boot/dts/renesas/salvator-panel-aa104xd12.dtso:30.10-34.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@1: node has a unit name, but no reg or ranges property
+> arch/arm64/boot/dts/renesas/rz-smarc-cru-csi-ov5645.dtsi:49.10-55.5: Warning (unit_address_vs_reg): /fragment@2/__overlay__/ports/port@0: node has a unit name, but no reg or ranges property
 > "
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
