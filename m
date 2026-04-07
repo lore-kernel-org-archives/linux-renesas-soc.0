@@ -1,63 +1,63 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F253A3BE154
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8EB3BD23F
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 13:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775568958; cv=none; b=czqzn7d27yHvacJE2y9vWNBr2VQwalY/OhAbCYwDovUlvc49eqf0zX/J06mJDXvvFcxLAJQr6e0mWioTRgUj02hbf6GTH3xfy3gefvN2NdZ2JqDzkhalrfmqzNfvu8/ZEdzTOGmzITFU7GV/2A+Z/sr3QP0K46vi29YVgcERbCI=
+	t=1775568958; cv=none; b=Fy9oD4yxO8ZhLIeaIiM+4LVcYp130vtAZlJhkjDHeMlDJpUb8HmMzh/8ozbqQ9EEKdKYJTg+dlu1x+QQ6+yj9uIJjBPlFzr/OZ3SVaTgd9TZe9unFQKBqcSdfrctYhnQikQvMY1Dlgug4VYWuGPGtGuLMcDF9Z+Kpw6TbPEBqBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1775568958; c=relaxed/simple;
-	bh=rBbNuLetMHuecYYiQdVKCfgcTJZ2MFfS+stiyk79XS4=;
+	bh=qj2erbi8E1PHLHMBePLWqnr6WpeMTkKkmKKSAlTnqiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S6PpdDBcrMdOENO8MKThba53pTN5GDLMjfUEtWYJhdBIyWJcVKLrzmUEnRjvra9lZP4T78L+Rdp1nL2zLGYiwrExqtlaMM3BPiIVZT34zaQYFJS/TeqlrpSleKBwKdXLbsAtr2LLePc7cspjxsfX5rFKszLxkY1aSR7+NQ/GILQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Y7tsGpto; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=K+FDrpaxkJSJ2IOU2TVr+FwU060zzxBgNRpUzl2LbrTNSRomwRbUbCDl/dMnBeBPANuqq1HEbIDVeR791QwTjqGosJMngv4/LrdIYfCkQqvbD9BICZKaAdQw8vX1pPbDWFUj5S0m3p5znMJQTtE1DTLyy3KSvNQFQ3Kk24AagxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Nai77aew; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Y7tsGpto"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-488af9fdaa7so12132725e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 06:35:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Nai77aew"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-488971db0fdso38993385e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 06:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1775568950; x=1776173750; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1775568953; x=1776173753; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tR9Osv3U5Kocq80qg3AQf1FnSrs0NQ0fc/wysBCHSXo=;
-        b=Y7tsGptozEVoAmu0qgh+eXPwv99E9E41+7bEAA+4av8gexervSBx9zOOKJfJysdmwQ
-         7yIiIG18n7BVaV4S7FAIFj4C6AFmyuEKaRdO6eBbYtL7oWRVsszH/d5QOmp79ue3aKoA
-         LT1S7jkSV+GSxyDddKXxZwUrig2HnbfVCMT279g+mmxPriJuydAQrqcYYF6M7SKr2frN
-         WBhJp9a5TVivAuzQoqC3wz/fWoq7yFHM+gpoE9U4sL8nFKLokTsWnGX7EEF+ECVrOZCN
-         EyoCqbygs1VPVpaJ+Ir8T9f4Nm+EprJgZoUc4LxWK9e70p7e9xG5aqMKy1YBTL1CUjYi
-         QY6Q==
+        bh=rQUgXvLWYybp144uyKlEx9/0iJj8Kfku3jsi1mOzCQA=;
+        b=Nai77aew6DrKho186rrpgwSBX1nT6l5LAiqCPZLoJE/1j8eVlYfuPHS2BEF4EMxI02
+         LlIFiNFCFOldNbFwuH+hJUhU9GtZNK6bsm5kXXNjTfylpqDnn2mTPtXUYA4Fegl9RzVE
+         wGRp9a4UvLp1kfFvV3+zYztj6aI7bcXZGpKWibI5zISiHDnk53vl+8YOwEyEwyIrgOns
+         JX+mt4T85OulqeptHdzq0mJJiKtF5LMSDrfcZ2Ak3yZgiWgEmM5CEWv/kqR1XEscyh/w
+         +XmdyrkCyp62RjKMhDmLHGjhYq4fEjuiZAMPkRgJfBp8WlkfIlvyOZpdPfsfcxQEwHAH
+         5DcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775568950; x=1776173750;
+        d=1e100.net; s=20251104; t=1775568953; x=1776173753;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tR9Osv3U5Kocq80qg3AQf1FnSrs0NQ0fc/wysBCHSXo=;
-        b=TI/IHwvhcznC8sKEfxt4pcxhmb34JbbOQ3mW7kKFFd/df9FPx5/0ZElfF5Cwd4R9ae
-         SgvwTUSkfXulrlhtGBL7vMfyEji2I38fZpXT2Rr2r91Pk0xTSa7HL3mOCvSaFFT6xB6+
-         1oz7QZh8AERMjeqCJ/uwXDYmny7oxWUMEtoRKah6Cq3Gtpb3kjO3gRDR4C6JvrxuJBND
-         WeRrKJO7AW7RsI83ruFg3SDi7fHYMParrEdjfNpfpi7sfljMaXhMvHlFOa2U0EsUHT/n
-         fQXcp2CQGj+2wSJvCxJOwi6WqZbY68M2WJ+ms+seMqfKKrDkMGMk4nfqvOP6JHF5n4uf
-         R1wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULe57eYdBWYk2eoJ5054FP3Fp3jXX0Ne7sRJpsfeOV7UVMcLbotpxqGdYOzjzIa4m2jlW3l5XcLISk/0EpjRK1Kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSlqOV847Gsbro7zU0xATtCBOZe/QFow8303N79jQ5OEgwpwZ4
-	oir7139IW/f8rsI4/pTSKLaWnelhMAJDwZhzwBOLmDI3MTuzELWBHqRva0TMF5KyIGc=
-X-Gm-Gg: AeBDievA++kAhPITGvAzWqc+GWpjzCnVc57ywc8gu3gXoWrboHNCaiI9x7olOYuKtlg
-	caDKSdQRgiwz00RhqxBuJB/gKh0xlMrbU89LfTY5Eb896pr1SM1maz4NRKInKh3kbybGS/Ff6UG
-	DAlJKE3HuJLWjrwRf4VAHnUJVmYn/n1+GSH18szxRBuYWeCXeir2/RoRIvoDnKd4niH27La2AWk
-	TDY/S8yLzkFJSJWI4K0GTKKKC3xg3GRNaLgmgppYOctfBMFWdOJyav9lq//w6q1MpkxanXo/R4b
-	FT+ho0mrXZaQ5NSQhHY1nlHuNZZ832IvEykXtKzTIHUyokeAIxuOIHt5KOE1Rzj8GKI7IgHS3Uf
-	7b0yBy3yfqeRvcg600hdNdNAYZo1gy0tlD3nVZ25MnfGU4WK90kBfuRDkIgrUyY1sWWGs4QFYII
-	NYlgf39vlQTTycVMk9RHgv7eO+4GhaOprEuQVV9jvG7HV8BALQnvZJ
-X-Received: by 2002:a05:600c:638e:b0:487:575:5e1 with SMTP id 5b1f17b1804b1-488997adbbcmr239785785e9.24.1775568950101;
-        Tue, 07 Apr 2026 06:35:50 -0700 (PDT)
+        bh=rQUgXvLWYybp144uyKlEx9/0iJj8Kfku3jsi1mOzCQA=;
+        b=rL84VaLrG7o1fQC1FZbF7Gp43OZgi7Jebxw+JCg0P8VVjIu6gIP1WxR4Z9Si4PgPAo
+         ZWGmZvwh7ZYPdL/OjmpXTEigV0z9STcLu3c9rip+Uz/hF2mcyxGcpkGv3si+xDvu2Ljo
+         HxnYpDOGbMx2z8e7Hz0JIBog/pzUqvCBkD3mJdRHRyeliP0I1k/DpVpHyRl9f2b0ekF2
+         4HRjGri73D295jFuLGFCZl4u4DH0xa4V+mU3/jX2MbcWnv2lGgLP/7vVDpMkzGO9mFf7
+         UVTqYvt8HbNX5KlowVxTwGTpptzHy7Sg6cb0YPemUHw+OPUoWWJsSivTSzBCGVGLb+sM
+         MgDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFABy4DuXO1KLCyyH5SDLn4EtQI5d6o5RPhMRjkgAgfTXJAyFedY8SZA18XXA2q7WSxLkKb2OlSkBk2vke+tXQcQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0PCT4w/9KiRu3E+aUESoiu5qAImELqT2OSRsdQIx7iNzSyOuj
+	3s7CX02SpL7GAGTNo54VkoFtDYoTtMSge+mPQ9dOTBP+j6ZnlkQlEzWwFOvDNt/gvPQ=
+X-Gm-Gg: AeBDietFUlFgTdEeJr1Evw6tiV9Lt2lgw6X1xgyMTPdBv8HhyI+Wo0pZWncRfL93Q5Y
+	1HIcJ3HJtnoEb8AX9sGRWgV1Y7ITwns4QH6ZeicG9DWZhpjwbkGHUR1Qj/UGCRWXqRy4G2SV532
+	cr4x7ZfqM/rPAP+w6Ks+lVisHNfWe4fdHgoILxdgLSPzgzc8Ssq6yCIVJ8QapZboosXZnY6coJn
+	hjyJKXoKweTdrxj9ivRr0zBcvWozpTQjfSI8EzmCaY8VDufj34I6BlR/xBovKkqmXVmmR6y7XqD
+	KyQvVl0IlNMbGSqOqVeGGmDhZuARYnhHuppRD+hGFPckV+C92r3AdP64CjoqmIWf/iSkh260TyQ
+	xUndunJUSvY5pC+mVPnwUsOR2mJL3fN7EH5JCHiAeFSn1SwJIY7LfZ43Y9MKDD7kJoDd3gOcTej
+	YEGByMkw/y2ZBFD+xH678AAs1g54yEqp+q2StyM5OmHMgC1mrFJwLb
+X-Received: by 2002:a05:600c:638e:b0:485:1878:7b8c with SMTP id 5b1f17b1804b1-488997b21e9mr238787175e9.18.1775568953327;
+        Tue, 07 Apr 2026 06:35:53 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488a91686f9sm285777675e9.10.2026.04.07.06.35.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488a91686f9sm285777675e9.10.2026.04.07.06.35.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2026 06:35:49 -0700 (PDT)
+        Tue, 07 Apr 2026 06:35:52 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: vkoul@kernel.org,
@@ -77,9 +77,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-sound@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 13/15] ASoC: renesas: rz-ssi: Add pause support
-Date: Tue,  7 Apr 2026 16:35:05 +0300
-Message-ID: <20260407133507.887404-14-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 15/15] dmaengine: sh: rz-dmac: Set the Link End (LE) bit on the last descriptor
+Date: Tue,  7 Apr 2026 16:35:07 +0300
+Message-ID: <20260407133507.887404-16-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260407133507.887404-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260407133507.887404-1-claudiu.beznea.uj@bp.renesas.com>
@@ -93,47 +93,68 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add pause support as a preparatory step to switch to PCM dmaengine APIs.
+On an RZ/G2L-based system, it has been observed that when the DMA channels
+for all enabled IPs are active (TX and RX for one serial IP, TX and RX for
+one audio IP, and TX and RX for one SPI IP), shortly after all of them are
+started, the system can become irrecoverably blocked. In one debug session
+the system did not block, and the DMA HW registers were inspected. It was
+found that the DER (Descriptor Error) bit in the CHSTAT register for one of
+the SPI DMA channels was set.
+
+According to the RZ/G2L HW Manual, Rev. 1.30, chapter 14.4.7 Channel
+Status Register n/nS (CHSTAT_n/nS), description of the DER bit, the DER
+bit is set when the LV (Link Valid) value loaded with a descriptor in link
+mode is 0. This means that the DMA engine has loaded an invalid
+descriptor (as defined in Table 14.14, Header Area, of the same manual).
+
+The same chapter states that when a descriptor error occurs, the transfer
+is stopped, but no DMA error interrupt is generated.
+
+Set the LE bit on the last descriptor of a transfer. This informs the DMA
+engine that this is the final descriptor for the transfer.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v3:
-- none, this patch is new
+- none
 
- sound/soc/renesas/rz-ssi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes in v2:
+- none
 
-diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index 71e434cfe07b..d4e1dded3a9c 100644
---- a/sound/soc/renesas/rz-ssi.c
-+++ b/sound/soc/renesas/rz-ssi.c
-@@ -847,6 +847,7 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+ drivers/dma/sh/rz-dmac.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 3265c7b3ab83..ac388e7607df 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -200,6 +200,7 @@ struct rz_dmac {
  
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_RESUME:
-+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 		ret = rz_ssi_trigger_resume(ssi, strm);
- 		if (ret)
- 			return ret;
-@@ -888,6 +889,7 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 		break;
+ /* LINK MODE DESCRIPTOR */
+ #define HEADER_LV			BIT(0)
++#define HEADER_LE			BIT(1)
+ #define HEADER_WBD			BIT(2)
  
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
-+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
- 		rz_ssi_stop(ssi, strm);
- 		break;
+ #define RZ_DMAC_MAX_CHAN_DESCRIPTORS	16
+@@ -385,7 +386,7 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
+ 	lmdesc->chcfg = chcfg;
+ 	lmdesc->chitvl = 0;
+ 	lmdesc->chext = 0;
+-	lmdesc->header = HEADER_LV;
++	lmdesc->header = HEADER_LV | HEADER_LE;
  
-@@ -1054,7 +1056,8 @@ static const struct snd_pcm_hardware rz_ssi_pcm_hardware = {
- 	.info			= SNDRV_PCM_INFO_INTERLEAVED	|
- 				  SNDRV_PCM_INFO_MMAP		|
- 				  SNDRV_PCM_INFO_MMAP_VALID	|
--				  SNDRV_PCM_INFO_RESUME,
-+				  SNDRV_PCM_INFO_RESUME		|
-+				  SNDRV_PCM_INFO_PAUSE,
- 	.buffer_bytes_max	= PREALLOC_BUFFER,
- 	.period_bytes_min	= 32,
- 	.period_bytes_max	= 8192,
+ 	rz_dmac_set_dma_req_no(dmac, channel->index, dmac->info->default_dma_req_no);
+ 
+@@ -428,7 +429,7 @@ static void rz_dmac_prepare_descs_for_slave_sg(struct rz_dmac_chan *channel)
+ 		lmdesc->chext = 0;
+ 		if (i == (sg_len - 1)) {
+ 			lmdesc->chcfg = (channel->chcfg & ~CHCFG_DEM);
+-			lmdesc->header = HEADER_LV;
++			lmdesc->header = HEADER_LV | HEADER_LE;
+ 		} else {
+ 			lmdesc->chcfg = channel->chcfg;
+ 			lmdesc->header = HEADER_LV;
 -- 
 2.43.0
 
