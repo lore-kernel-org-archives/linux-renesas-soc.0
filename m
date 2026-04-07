@@ -1,110 +1,85 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D7831353B
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 09:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EB93A5E7C
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 09:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775553534; cv=none; b=HYOdOHwJeHoJZLWsFYgwLNTfWMDzc7bhilLNfJMQiN0+L/qyeC4uZ0hg39ddyxicKxE9T/ZIcxi+soMmWtzYKlSoIs79UgdqppwhD99JZT/GptpzlDvUOx8l+egFJ5pDPgcxDGDZlkDynAZMc/KVSfgl3CmbGionytTVcQmCdmM=
+	t=1775554866; cv=none; b=n6NGDyHr9PAJkegt2V8esqU1Fav9gOUbov4xcxrhGr0N62ztL3OSiuL3cB3PHAPKupmzVCEyK/o6vsAAw8S9BLw6x13UUXJsU3gfvsHwAjU/dsyCsDmoJ1jvoDAznobGI/XPI+5SSO8Msj383pwzuA7Wv4uHSPwcBuIl6rvhGBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775553534; c=relaxed/simple;
-	bh=1OHP9BR/GOroMzF7dgkqtD1IzaTBfVuKG0kgMkciu50=;
+	s=arc-20240116; t=1775554866; c=relaxed/simple;
+	bh=8SsH9km5SAPgEpA4A8y8P5I4CMQaaNq+s3t7JW1Vj4U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QCWd0mIdPzVXRjrI2+FAXnFtO5hea5EzP5x9pKX9n5qTgfvMAPaRjbxW6NitK+kHlkzd/cUlDl53MEd/m2QH9rQc+e11fsJ89aqE+yKaVR1gYmkFgFBr0a6sOI91v4nUINT5zPcc1i2LuNHcDWId2Sofxa2x4CC3PKXHRKyjGCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-951c5ac6253so1564323241.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 02:18:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775553532; x=1776158332;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cR9HGabiBXNm33M/l0GZLFmidathx2ZfsEf0OcHHACY=;
-        b=tHLTYLihKCnu8a1QMr7qli2sWuJ2bTyToe9ZvRSbYxIo6ZmRKXFXUlsemGnFsfFuFU
-         QjyJqHLzrRZDxTqsFn7Zomq2VnQOkRejTMqurzgt4PxuMMolYX9AAcpU3pF8U7I++h9g
-         mfmP2oxwhLd6Bj9bdxY4RMs2FFqp9hBY6+8HT0LshEapUd68vEihBKOhLfGak1A/L1M7
-         eFBzuI9BMOZP+2nS/43avBtt7oxJdvLUY8e4JPShHOX04IZomnuB4BKJzta+WTQk9Rnz
-         By0q5AddWANElt4oaVlUzMf2yBAGTxX2bc7Ak9AIhUMAfGvt1Jr9OQD/dKv5+8Ab1GCy
-         YW6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJVm6QOkImTx3NOwRpiVKsxhtXjQLPm55c2Z+VoRh084+C/GkIFVPNTx7pCxvYOSxUNp98I7Z2/h41sFAtSZ4yHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVNunoGVJGfKeZ0cpVrwsVHnlGu5899rSazPBLVZm0zCabufg/
-	cqwSfcAtz32Ht/kqEDF5a5RfnX1ANTHTczu/NACy4UzjJoed7Kz0PyfWf5+2ndid
-X-Gm-Gg: AeBDieuWlCXdMdSJSgoD80vjW+muZC6QZBNCeY2rw5czuo/VyCgmVseYsq+BemcELen
-	k5uvlxchCF5hN7Pg9HiDpzDPY4m0IisPc6Vohe9E4lNqFVtzKEkmJ9lQZSM9UtfMDaY7uFb6XYZ
-	4GdDxGhjCASDEThM7sYzHIhPI5pn9m0+Z2r22u5Fd2iLnLxiaHxbh+UtpjiTM7Uwsn4Ri4RTzz4
-	T1hyLUBVemnY8deu/d7WS92ZAqoFGjgHR5v7c8JAW6MGkI3Qtq9tKmvequ//Xg3D4q4lBOn7rj5
-	NBVgBzrLYVpOsZks6kcKN796koLm0PwSMcqhVHovslqMYICNNPLriJViU7yKLngYgOm5BcgUSjM
-	0yGyhKx6aQyfU6uap2csqEvIjFo4W+0y66BPql6kpKl4s3HaR55ITZf/RXaL4Z72GMCiXdcAJhx
-	oeiRcROgtvhRaSZ532vcPl0dbdU0iDr7Y2JPL9cmkiCI5Hjlwv7OPHbxPAWg+xg7cX
-X-Received: by 2002:a05:6102:5345:b0:602:ab63:b0ca with SMTP id ada2fe7eead31-605a4c9970bmr4755195137.1.1775553532497;
-        Tue, 07 Apr 2026 02:18:52 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-60582e730e9sm18887551137.6.2026.04.07.02.18.52
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Apr 2026 02:18:52 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-56d9ed609d2so1375669e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 02:18:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGsbs0k7uK1Z3xc6lYTVQf+n0GaW9+DJRMQNNTUrYiYWfDYaKxBeprcEU8eK7kjOL1hTbgMljnNd0wFRYeIwcSVg==@vger.kernel.org
-X-Received: by 2002:a05:6122:1d15:b0:56c:ca50:e963 with SMTP id
- 71dfb90a1353d-56daba4441amr5183687e0c.14.1775553531657; Tue, 07 Apr 2026
- 02:18:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=jZAY3yaMbaqfUPoY/P5d4amx2WaeA7UMqzxAbqIXtWBSuif/M/AsJ+FPHIqV5PlCZRRJ1rPvu/MTz8yRsg0grKt/QhmSOoN5o5HzeQQmenNU4qGfdHnDRAll0/BjWaciFBITZ1h67sUjBgfWGXYHiIyYw6qS+zKCgCWtbvqAv9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8JOJBER; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8JOJBER"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C836C2BCC7
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 09:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775554866;
+	bh=8SsH9km5SAPgEpA4A8y8P5I4CMQaaNq+s3t7JW1Vj4U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m8JOJBERsYI95/CH4JpQNjrjthcI64rsM9S9Da9h+DVNs99MxjlHJbDb5gY+G90Ku
+	 2bdTelWl2YBcvx9r/adp7+awLosyMEukuPeLjqKDLUQI6U0ym3+L0EUMxIBAx3ZYWw
+	 yAybDA96+zImeL9jFiQbdah32ntGQtcEoHe4QWf3h8RsIyFGaG2IpBT60siqg9x1of
+	 PTy833Gjj/OuNGJHaQn3kqhLxGtNTF9mfynaa2Srysw1HvSo2pkTSVDhmkuTPrDTPu
+	 inqct8VhoMJgeFQJ+fUKDiP98gVvPRosvT6DxbrgCXUl94N8wpYSTH9oSp7KU5W/Wy
+	 u+9NvPsb8LP2Q==
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7982c3b7da9so42216007b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 02:41:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXgN0mwYnHQa0joh6RF4AJK4AF0vuq7cI5YFZaI9eH/x+MTXFXsSg4oof9VjcywShguHqddJN6dqsz5hWShrcvkuw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIlPOUzqgcwDn0BwwAodIFr4aMEcmdx4xtBOQrD/nwr+a0DWmD
+	8P2XSv+T32h/9bEQ9JqQF88UXp58So1HxUpJkt4e2Mt76nxcxuHYdJbVGVjQO3/ALYzvMREwGhr
+	byDwwdE3Diz8KHJBI2fV+DMprLWP6bOo=
+X-Received: by 2002:a05:690c:dd5:b0:79f:2e53:8606 with SMTP id
+ 00721157ae682-7a4d5c5e341mr167507727b3.41.1775554865754; Tue, 07 Apr 2026
+ 02:41:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260323164526.2292491-1-laurent.pinchart+renesas@ideasonboard.com>
- <20260323164526.2292491-5-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXomz9GFDqkBjGX9Sda_GLccPcrihvFbOz0GAitDVNTbw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXomz9GFDqkBjGX9Sda_GLccPcrihvFbOz0GAitDVNTbw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Apr 2026 11:18:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWLcat1BegoTH_=ir9svJ2CECw2g672pfz-5CGg6xtWuA@mail.gmail.com>
-X-Gm-Features: AQROBzDsnfwxgRbWuNYO6rWIlZEto2LwHPdqUIPoMgm27H9bZD6G-qlMJsPH2Ss
-Message-ID: <CAMuHMdWLcat1BegoTH_=ir9svJ2CECw2g672pfz-5CGg6xtWuA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] drm: rcar-du: Don't leak device_link to CMM
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>
+References: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-0-421781c8c061@bootlin.com>
+In-Reply-To: <20260402-drm-bridge-alloc-getput-drm_of_find_bridge-4-v4-0-421781c8c061@bootlin.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 7 Apr 2026 11:40:54 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn7mP0_vDSSrvce-C+o20_sqNpviX7BKWTRn_uX8sNgnQ@mail.gmail.com>
+X-Gm-Features: AQROBzCfmWCuyLKdrRJGc7j_WCHfiMGHBS625Ijb9YPfc09N8yvcvrOHpbgfT-8
+Message-ID: <CAD++jLn7mP0_vDSSrvce-C+o20_sqNpviX7BKWTRn_uX8sNgnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] drm/bridge: convert users of of_drm_find_bridge(),
+ part 4
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 7 Apr 2026 at 11:10, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 23 Mar 2026 at 18:22, Laurent Pinchart
-> <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> > The DU driver creates device_link instances between the DU and CMMs, but
-> > never deletes them. Fix it by introducing a rcar_du_cmm structure to
-> > group the CMM device and device_link, and deleting the links at cleanup
-> > time.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Thu, Apr 2, 2026 at 6:27=E2=80=AFPM Luca Ceresoli <luca.ceresoli@bootlin=
+.com> wrote:
+
+> This series converts many DRM drivers from the now deprecated
+> of_drm_find_bridge() to its replacement of_drm_find_and_get_bridge() whic=
+h
+> allows correct bridge refcounting.
 >
-> Thanks for your patch, which is now commit 3bce3fdd1ff2ba24 ("drm:
-> rcar-du: Don't leak device_link to CMM") in drm-misc/for-linux-next.
->
-> This causes koelsch to hang during boot when a display is already
-> connected before boot:
->
->       [drm] Initialized rcar-du 1.0.0 for feb00000.display on minor 0
->       rcar-du feb00000.display: [drm] Device feb00000.display probed
->
-> When no display is connected, the system boots fine.
->
-> While looking into this, I noticed that hotplug after boot crashes,
-> but I haven't bisected that. It definitely worked a few months ago:
+> This is part of the work to support hotplug of DRM bridges. The grand pla=
+n
+> was discussed in [0].
 
-I am feeling lucky: reverting this commit fixes HDMI hotplug, too ;-)
+All makes sense to me. The series:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
