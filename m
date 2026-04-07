@@ -1,848 +1,180 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011071.outbound.protection.outlook.com [40.107.74.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7433B8949
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Apr 2026 13:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775568959; cv=none; b=no6MAZ5aowJIf9nLLHSiYyVSiC5xEW/zKyrJLtnUe41vMBuTxLqBzUWW2feVgGe1rKSWqzi6df5c+nopp5AF2C0yu7TzbSLZsUlMBv6nkA4ub49ianeMGaKXFgXcTb/oku8EAlq7VKtUg2y7MgcVyzttMnCjq15KhaXJIcSksvU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775568959; c=relaxed/simple;
-	bh=dEgda6prdyKNrEH9eXlVWw+bPbCo2eiAAIm+eNqZiKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ddifAeS7MXeuA8FDHbtst5h/XY/xeyTLhd7MAqUqG5isCRTtuNk/IQIAJRVxU9XyjHc139b6lZEzP93alKSjrVpieeYQ26rkIC6cz9YKXL6hK4WpPIB2+QKp4Ra8YRsPkrtRbwiJlOk40ovqmwfy0TaQNuxSKVDJzs/r0jABoHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KF44m/fF; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BEF3B8BC5;
+	Tue,  7 Apr 2026 13:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775569929; cv=fail; b=ixkmpk9tmTy8V7nfMqXxyK/avGP2L1G2H0ebHm8SDHmtOaY0Qi6qzsjf3Rwen8aB5ojUJGzRuXm4plob3FRFPMXmB0fwgJWp7eGA6HPc/7+NIb08U/juhTUoT2XW2ugTgPaJaS8b08MoKQ2iThP0VqXqD3jzhYuMzpJbT+b1XWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775569929; c=relaxed/simple;
+	bh=2DTW0BdgVpuBnn4PiXdAZ04dq4rG2zatLuNsMLiRssU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=u5zS1NEf6lMIlwqvK/CLz7VwVHLrHJojulFX9Rq/AphBfF/c33le5cbdH4uBZdVQ9Em+OXVELX0Vi/ZWeg/kGq1ymprhFcpHATv89tmM30RpEj9UahkMiI24BxLg7YXABTeDEtRy8Mc2qLAE+9d1BuP7QDDg5s8pSz+zDrPei1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=VeHt4k7c; arc=fail smtp.client-ip=40.107.74.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KF44m/fF"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so29052575e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Apr 2026 06:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1775568952; x=1776173752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Era3gLvW6UbQrK1SDomZfX1eYyDyN/liTVRV/BvCzPs=;
-        b=KF44m/fFSn76SAHkC0TDMEtT3cDY42Irhb6y4Wrf9fznzkf9gzeckZjvNelfBCujNt
-         k4U3zr8le06OecpYwdmXlWjcGMdqdjyvem1V1K/DNWRDKE1MSoN6DU4WUk8lylLoHJ5c
-         iYA+Z4FTrU6gHJd8wq+vTuAtJV0bPFPX2QdE42DDa23M4W+Cq2UkycnkdoCRoYOIXaUT
-         8X9CBvgWAkC6xk5gzEGc/7OLVzisWw61qWlO3Zv8XWABbKlCniRl3zk9cyqbfN3B2YLP
-         /nNaY8d8vSXUIHi+2/a/1y1Lyn//HycKymO+e3UVz2AFeb/lbLW3vW2kqZQ4/QT801Lg
-         iHrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775568952; x=1776173752;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Era3gLvW6UbQrK1SDomZfX1eYyDyN/liTVRV/BvCzPs=;
-        b=rDZ8RcqstMdWVUon+9jA388rAVAOI1J/VU9D4yNShyiK2/ojiYSL/NjwdxX3fijeKd
-         fM/U/+Nn/74B8c6hDd/RulMfeaCTkDPBBmzWv6RT32ss7LHKTGwkchT8KFspcYr7EUH5
-         s0LQnNOuQEUDRS34DaTqg9VKDVdcNDmV0xM0cz7rvEK5UwiQp698iS++1cO2h1cDI5BE
-         X3gb/r3SR+x7RfvZqa7mEXFAc37YaINDo++9fZwu/ibEebTktbWNP9BmzMxCj3sKK6c6
-         adikIcYyv5m8OODNJfgyA6khMEL2SxY4c3NWNYDmN/JxGrzoNY0aswBsqX88YCj/AopV
-         w7xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbpySwrGP/EVFzC5hd7wYxFVN+YlEqi9H13tOCCRBrI+4tz4FVIaMoCUbg/RLOK7hoJa0IxtqClMnQbQumbGtuiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEeBjD9ymKEv6v8IDJOxU21Gq9a9GipxGc/0DXVmdrQL4xDg4B
-	OPwo9yh6NdsCMY86aQV4z7V4/Li7y9NXpQwlH+FWOHj5ZppK9Qfb5OJiUBCsy/bmuDM=
-X-Gm-Gg: AeBDieuBQrqpHzoYqmdG/rxM6LrqnHI4P3JX9MyS2a7nIkAHFnFUV5ASZsOrVshowZP
-	rtOtxrog8l3T5jNfYamcYaEtaj3/bHCj3nUg9WUPYOoTR4Hov2rQ3sxr29XTFNL0b8fSyeI/WZq
-	b7VvjMvD5hnIRGXeWMTcJUBjobkjbdD5cCZ49X4Yj1Da9GHblOIlqPaJ7Ulk3Y702MpSAoStboo
-	mFtbRilMdt/M+bwcuDPElCBIl1M0NvjyuwJp0P/pPSKH4FWh998OkjgkHAHmOyplfj+YGADu6ee
-	1fTw5Iadf8kDWu6sGN9VlZ1Um20KLt9CF6nbwQ54nr4uEgrRYKr96BBJx4KVFva/20x8kCQ+Oz3
-	6QpcbY/h0BIcsLVSW/+fBoOMqZzasLCQoDduV9GanAzVK0UfU+2VcRkGUaLAcZ5hcuIgLlRp7IC
-	ILJ5VCgEc6pBK9bJbE/D2j9NBl0uUyvR5LMVtsNo8tCkIzDZSjJZNO
-X-Received: by 2002:a05:600c:4593:b0:485:33ad:3c9f with SMTP id 5b1f17b1804b1-488997de1c6mr267025665e9.25.1775568951719;
-        Tue, 07 Apr 2026 06:35:51 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488a91686f9sm285777675e9.10.2026.04.07.06.35.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2026 06:35:51 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: vkoul@kernel.org,
-	Frank.Li@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	p.zabel@pengutronix.de,
-	geert+renesas@glider.be,
-	fabrizio.castro.jz@renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 14/15] ASoC: renesas: rz-ssi: Use generic PCM dmaengine APIs
-Date: Tue,  7 Apr 2026 16:35:06 +0300
-Message-ID: <20260407133507.887404-15-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260407133507.887404-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20260407133507.887404-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="VeHt4k7c"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cj9shBDLcBcyy5JbXsuceOA9GLT1Lq1UtSGBHtcqcA7lpNkaUZR/ZQBALHZlR0Qze2EAYeD16D6VnulXrVeplOuNn60DxfpbQ7xd72Y8USqYli3ADS6MBO3eS+PxpS4CP2YoBwPaKEcEn3CToK29V7J8PI7VbjNi5ZY4m7buT+kKbsFGgsbncDqJRJc+qHwhUQHUzmCLgD8S1KTdHdRBMzcCcXXE5j4qUOIEnxicDY7pbp/LyxC7xyh2PE8hHpjcd4A/WnYTr0Upy/ebbPlMwRB9NcmSv8heYp9IIwBqyIeZ3PYpvWlQnvqRssIT/zGF9tmhXuUNXfUKzxTt3Cwipg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2DTW0BdgVpuBnn4PiXdAZ04dq4rG2zatLuNsMLiRssU=;
+ b=a4fZ4E+rOZ4SVhIDQ/NT9Bl6RzjC9FBjZeqtN59LTDv2cNEhEpPQqTuJosmMH3Ex42ptQTsQhyPKEuwxEvOiUXlCkTOwlQJIesNFsR6G5pJ5xeMGUjNusFLfU6BFB5VTzv4CGq9bDYBD9RG//gf03VWaYurDQq0WiBVXy92GZuw0jaugAzmHLFpBGU94gxCQHTLwATm7b62WW1XGWxPJdzsjQIlUIzlvRdD6KRVTSz0yLDz3IL87cBzjffwm2mcVrSwfmaygTT/wm1gohSu4dr333nbL5xDNRPMvGYkSYxaA9DmHsjit4b3yaDv8mNNHL7SMweK0j/H+VpHIiQW8WQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2DTW0BdgVpuBnn4PiXdAZ04dq4rG2zatLuNsMLiRssU=;
+ b=VeHt4k7csS+pT5B6XBXoB9vy3aZ0rcjG+DrOQ2hkucHCbb1NdfQ1W+wvlDl6uydud162CboIOE6e9tC0nwo4NG2YnlHLl9LxUQHYAmsxAJR+/FCLZnbCA8gbNOPc+GiqZ5swIn0VCQCnNvkj5A6a3TuJWsr8OC0/1OhEHtReQGQ=
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
+ by OS9PR01MB17250.jpnprd01.prod.outlook.com (2603:1096:604:40f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.16; Tue, 7 Apr
+ 2026 13:51:58 +0000
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::2511:10cd:e497:4d97]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::2511:10cd:e497:4d97%5]) with mapi id 15.20.9769.020; Tue, 7 Apr 2026
+ 13:51:58 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, biju.das.au
+	<biju.das.au@gmail.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>
+CC: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Prabhakar
+ Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 1/2] dt-bindings: spi: renesas,rzv2h-rspi: Document RZ/G3L
+ SoC
+Thread-Topic: [PATCH 1/2] dt-bindings: spi: renesas,rzv2h-rspi: Document
+ RZ/G3L SoC
+Thread-Index:
+ AQHcq6tl0kg0H5FQ2EeOkUiXc+QUbbWeeNkAgAABc7CAAAmVgIAtdw+QgARiWQCAA3YREA==
+Date: Tue, 7 Apr 2026 13:51:58 +0000
+Message-ID:
+ <TYCPR01MB1133240E6A08628EE70D4610F865AA@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20260304074907.9697-1-biju.das.jz@bp.renesas.com>
+ <20260304074907.9697-2-biju.das.jz@bp.renesas.com>
+ <13d4fd79-784e-407a-9f2b-41cd9a86f232@kernel.org>
+ <TY3PR01MB11346B3A18D2EDE88B8A45C1B867CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <dde6b95c-2d18-4a44-9127-bce26c99901e@kernel.org>
+ <TY3PR01MB113461341DE0677746358F5BD8651A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <c5a8ba40-1315-4654-b188-1c7a5f744d03@kernel.org>
+In-Reply-To: <c5a8ba40-1315-4654-b188-1c7a5f744d03@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|OS9PR01MB17250:EE_
+x-ms-office365-filtering-correlation-id: 83da7e34-bc19-4260-0929-08de94acd67c
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700021|18002099003|22082099003|56012099003;
+x-microsoft-antispam-message-info:
+ 7xHGZF6dvc1VUG9YocRCtRPA2PUEVAi47chmv3xGodIuj60dWwcrozHne6CIU1iN7lMwXH1PyBaAp/oG3HsdMoASURaBJrFRDdQeC6ihj+8JC6H4seBteysf3/s5BP83cA0mDd6UO64lIfDCCqyVxU2rMWS4XIG/hBFMcsxK3/lNHJNq3m2XeVkJcWLRA+XqQ+6BG/5sdviV3l+xEONqyqyP39B65g9ler9FsmJM8yVxTjO7ikqpJKxIFLkrBVe/5FLS6Qc5mqbob5yR8p08V+WqThIu1ophR526uhh6nGfwKafJ6OY6+o7+tDFgq4PNpMQHFFVe+kymbArtXW3lXTZY1A7jLD9tUNhlAnOPYCwJiNan84n1HjtzKl4ru8K64NO5hGmz9FUHhtY0LebiCSwY3BAbM4VfXVEs6Dv/xhW9rKKzbVm93fB3TwQNO6Ylm9zesPlB9hc4qVQ6h3CDn5CjEgUxDPb84d/ZD9fhukFLnRQcxc5Q7uHPOE3IWz9qJiHmrcmw/WYtjJwunACNAj3MHYbQq55ctz2iIyAao7pk5gw2oXpIus+f2MzO3BMEn+pm2ibG1tCziqCBvnijrQidIEEOs16VfEW803I2TS7NhN1TYDfcfrLaJK75zJB5tDR3GERepDbHKgjXwwl5S40wldOTZ7AXPx1bAd+Y3S07EXbsCc52jozYgH41wx6q0XnbbRThnZlrIHFwAfM3Xujfm9Bsugv1VUE1XiMnQAljAJw5eEMAIyQ9EJYKFISK
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700021)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MHNic0wvQmhucDl3QndXWFpuN1JoTUprN0NxQjVqVlBqUzJwTGVLNzJneDJk?=
+ =?utf-8?B?eVh2OXJDWjVUTHlJSXlVL1o5U3UzK0lWSVNvQVdlcnJISGM4VnQrRDNlbFI5?=
+ =?utf-8?B?V0hPalBTQ3pBdWp3Q2R3Q2xoL2MzRGF1OEV5elI5d0VWR05UbHBJU1hkdzZX?=
+ =?utf-8?B?NUt4bE9tV3FmaERZbTR4Z2o0bGcyQS82YUhIN25lRDIrZVBjZ1ZKUTNhM0pr?=
+ =?utf-8?B?dTdBUW42MWE1L1dGSGpJZmdUU0JZd2V5dHVPdzlRSzIycnBDUXhaMDNISlNp?=
+ =?utf-8?B?cFJ3QUp6cCtQaUdvcktuVXVRTUM3WWozMk1aNS8vZEx5UWRrUmUyZ0hFQjJ0?=
+ =?utf-8?B?cmlsSnNWb1FRS3JsREhKYzVqbEZxakU2V29vQ29HbnVxZkRKUWpTU3RLUFFs?=
+ =?utf-8?B?TzZMaWNPVmswaVN2bCszZ1NoWGJaWnJEZjNQUFRUUmFQUWJOdml0TmsvQ3R6?=
+ =?utf-8?B?dno5a2grV1QxaE1wKytEeDlGRlJDaVdWV1hjemxUMXV1OFJ6ZFFiY09aZ0NF?=
+ =?utf-8?B?V3Fzd3VrK3FCdGhyamhPQW1EM0VucnZ3TDJvelRsRkhveXdKRmtPSDZzVHkx?=
+ =?utf-8?B?bWh1ejZLcE9yaUdSR2pkaTVXOVlDVEpWeWN3SFhYczJDSFVqam55Z3hBdWRU?=
+ =?utf-8?B?RXoxOU5qQ2hvYjZPQTlUT1RPNW1sWk94U3ZTVHBlNDQxZ3VTNFphNnVoc1pD?=
+ =?utf-8?B?Q1ZuS2hWNHFYRjlvaysrYkJ5dkltU1JhNndURkx5QVZYMGZRSllyWFB4cTRv?=
+ =?utf-8?B?UHlnbi85dzhTY2VEb3Bha01Yc2ZxZTd1d283WFlueEZBYWxwNmVTZzJiZEpO?=
+ =?utf-8?B?clEySFVJRmhPWXUxTWp5YUw0R0VxbXZNTEI1QVdXcHI2a21qT1hTK0xLK0dx?=
+ =?utf-8?B?a0JTUGJKV3dybzlZamZDMU1zTzRXTzlNV0dJeXhvOEV0MFVQdGRCcDdtVDdp?=
+ =?utf-8?B?aUdnNFlUT290a1BYT01tZEIvUHd1VUdTYzlJVnZUaVdLUWhTSm0yS25QS0Za?=
+ =?utf-8?B?QVovUThEeTdQNE9CV202MkY0ZHAwMUNqcG42SzZOaTN1RTdrei8vWXhDWm5K?=
+ =?utf-8?B?WllVUENMT3VwL2U5dGJGYU02Z0hjZWl3VktFcVhpTWE4ak1tYTJSMFk3Nkc3?=
+ =?utf-8?B?NHNYQ08yYzAvT2U3SmxwbTEzaTNZSTFpTjZpVWNqYlhKWC9UNTg0Yy9MdWg0?=
+ =?utf-8?B?QjE1S1VudldoSHNqVForYnhvMDB1aTlwZkt6NWJ2cnFKRUJLQ05MSGxvdCt4?=
+ =?utf-8?B?WU1UT04ydk1MdkszYzZJT042aXZVOUZoTGVzT29IR2QrNUlqUnY2Z0Y5N01S?=
+ =?utf-8?B?U2hiRVVNMlZEY3FLMEJLcThteDg3VnNFMW1jbkpLZkZmQXRxczhZRk1SaTRZ?=
+ =?utf-8?B?bnM0UlN2Z2EzZ2JZdCtGNFpub0tDS095YmVCMmpLYzZXZnY0Q1Jrd1JNVVVv?=
+ =?utf-8?B?QlcxejlXVFZvUy8wRDZoL3E0L2JBR0FUMmY4aGwrSTdJN21RV2hIUWFWbEtT?=
+ =?utf-8?B?MDhMMzZyNDdaWE9USjNMUXpiM2ZzSVVMaXN1MlozRjZoQ256am5wRkR0QTBT?=
+ =?utf-8?B?MjBLM2xFS1NIUXVQS21rbG8yVUdhQU0xL1RJRWVWNm00cWRMK2ZrVnhDaXpt?=
+ =?utf-8?B?ZnRkSFRaZm1kWUJvL3Flc0s0Y0Z4bDVzUzEzZEdzNTBuSXZKMU00TFdKNGZl?=
+ =?utf-8?B?MTd0MGJCZnpONFpnMzJ3OGV3RGRLbW1TQU5NQ21HK1JQQmxIdXBaOUpyZGti?=
+ =?utf-8?B?RitPbDMwbk9EdWYvTDFsRG9zWkhyYjFjdlluMHpBa1MvOUpaaktubWJFaVBH?=
+ =?utf-8?B?ZWxYZlRCVnk3ZEc4MFp4UjZmQzY2VDZhejQ0Ti9Yajd4NzhwY2FKYW04N0Nx?=
+ =?utf-8?B?SitMYVlqaUY5QU4xV1FYYmR0c2JIdEdnSnN4K3dqalFJSzdydGVsTHpEczNX?=
+ =?utf-8?B?dW9OWnNZNUxXaDhEQTdMaHZYbDY5NGNVamJZanZObUlwWXBDQTc3U2hmNmV2?=
+ =?utf-8?B?UDBBMVA4NGpFZDU4K25HWTNQcm13V1VNa1E4Y1p2SDRoT0V3T3JUSHpQU0Fl?=
+ =?utf-8?B?dUJrcTRLRStEMFJJaytmSGxZeUhNc2JQNkNYeEUrcUZLTDk2RXp5TVQxbEo2?=
+ =?utf-8?B?Z2ZYeVJwZ2VPNWp4TngxQ3lQMDRVd2s3VkFuWkJiekYwbzZhMXdiUlFnQnJp?=
+ =?utf-8?B?djE4Sm5HdXZ4dWtyWHhFaHRkVnBuNFpKWWRHQzlEOU8vanIxdW5nRWU2MzlB?=
+ =?utf-8?B?UnhkVVl3eEpRbTFqSGYwK3UvNG1Kc2laR3NCbnFiQ1pIUFloRURGeHVHR3dU?=
+ =?utf-8?B?WlZDTmp5N3k5U1lwM1JFQ3Q3UXFOMTJvRkY4N1Y1bEhrK2NCazVsUT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83da7e34-bc19-4260-0929-08de94acd67c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2026 13:51:58.6827
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LMjyDKXPQ0OLZsPI9kRZcClEVRVOROZYTKiF89s80mmFoJ6oj0PGuTWMIY7w7w0JVAbMh8R4odbvUgwY463gOvDoE+TvEGalWeDqkUpsxAU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB17250
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-On Renesas RZ/G2L and RZ/G3S SoCs (where this was tested), captured audio
-files occasionally contained random spikes when viewed with a tool such
-as Audacity. These spikes were also audible as popping noises.
-
-Using cyclic DMA resolves this issue. The driver was reworked to use the
-existing support provided by the generic PCM dmaengine APIs. In addition
-to eliminating the random spikes, the following issues were addressed:
-- blank periods at the beginning of recorded files, which occurred
-  intermittently, are no longer present
-- no overruns or underruns were observed when continuously recording
-  short audio files (e.g. 5 seconds long) in a loop
-- concurrency issues in the SSI driver when enqueuing DMA requests were
-  eliminated; previously, DMA requests could be prepared and submitted
-  both from the DMA completion callback and the interrupt handler, which
-  led to crashes after several hours of testing
-- the SSI driver logic is simplified
-- the number of generated interrupts is reduced by approximately 250%
-
-In the SSI platform driver probe function, the following changes were
-made:
-- the driver-specific DMA configuration was removed in favor of the
-  generic PCM dmaengine APIs. As a result, explicit cleanup goto labels
-  are no longer required and the driver remove callback was dropped,
-  since resource management is now handled via devres helpers
-- special handling was added for IP variants operating in half-duplex
-  mode, where the DMA channel name in the device tree is "rt"; this DMA
-  channel name is taken into account and passed to the generic PCM
-  dmaengine configuration data
-
-All code previously responsible for preparing and completing DMA
-transfers was removed, as this functionality is now handled entirely by
-the generic PCM dmaengine APIs.
-
-Since DMA channels must be paused and resumed during recovery paths
-(overruns and underruns reported by the hardware), the DMA channel
-references are stored in rz_ssi_hw_params().
-
-The logic in rz_ssi_is_dma_enabled() was updated to reflect that the
-driver no longer manages DMA transfers directly.
-
-To avoid software reported underruns (e.g. when running aplay during
-consecutive suspend/resume cycles, or when the CPU is nearly 100%
-loaded), rz_ssi_pcm_hardware.buffer_bytes_max was increased to 192K.
-At the same time, rz_ssi_pcm_hardware.period_bytes_max was set to 48K
-to reduce interrupt overhead.
-
-Finally, rz_ssi_stream_is_play() was removed, as it had only a single
-remaining user after this rework, and its logic was inlined at the call
-site.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v3:
-- s/CONFIG_SND_SOC_GENERIC_DMAENGINE_PCM/SND_SOC_GENERIC_DMAENGINE_PCM
-  in Kconfig
-- in rz_ssi_clk_setup(): drop the update of dma_dai->maxburst
-- in rz_ssi_interrupt(): pause the DMA channels in case of HW over/underruns
-- add different open APIs for rz_ssi_soc_component_pio and
-  rz_ssi_soc_component_dma 
-- set rz_ssi_pcm_hardware to rz_ssi_dmaengine_pcm_conf.pcm_hardware
-  and updated the buffer_bytes_max to avoid underruns detected by
-  applications just before suspending; along with it updated
-  period_bytes_max for lower interrupt overhead; updated the patch
-  description for this; with it updated the snd_pcm_set_managed_buffer_all()
-  arguments to use the rz_ssi_pcm_hardware
-- added back rz_ssi_soc_component_pio.pcm_new instantiation as the
-  PIO mode was broken w/o it
-- use specific rz_ssi_soc_component_dma.open implementation for DMA
-- updated rz_ssi_dmaengine_pcm_conf.chan_names[].{tx, rx} either if
-  there is about full or half duplex instantiation and move the flags
-  variable local to the code block that uses it
-- check devm_snd_dmaengine_pcm_register() for defer errors
-
-Changes in v2:
-- fixed typos in patch description
-- select CONFIG_SND_SOC_GENERIC_DMAENGINE_PCM for rz-ssi driver
-- in rz_ssi_dai_hw_params() check if DMA is enabled before calling
-  snd_dmaengine_pcm_get_chan() to avoid failures for PIO mode
-- do not drop rz_ssi_pcm_pointer() and rz_ssi_pcm_new() as these
-  are necessary for PIO mode
-- added 2 struct snd_soc_component_driver, one for PIO mode, one for
-  DMA and updated probe() to register the proper
-  snd_soc_component_driver based on the working mode
-
- sound/soc/renesas/Kconfig  |   1 +
- sound/soc/renesas/rz-ssi.c | 370 +++++++++++--------------------------
- 2 files changed, 112 insertions(+), 259 deletions(-)
-
-diff --git a/sound/soc/renesas/Kconfig b/sound/soc/renesas/Kconfig
-index 11c2027c88a7..6520217e7407 100644
---- a/sound/soc/renesas/Kconfig
-+++ b/sound/soc/renesas/Kconfig
-@@ -56,6 +56,7 @@ config SND_SOC_MSIOF
- config SND_SOC_RZ
- 	tristate "RZ/G2L series SSIF-2 support"
- 	depends on ARCH_RZG2L || COMPILE_TEST
-+	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	help
- 	  This option enables RZ/G2L SSIF-2 sound support.
- 
-diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index d4e1dded3a9c..400e79054ef3 100644
---- a/sound/soc/renesas/rz-ssi.c
-+++ b/sound/soc/renesas/rz-ssi.c
-@@ -13,6 +13,8 @@
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-+#include <sound/dmaengine_pcm.h>
-+#include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- 
-@@ -87,8 +89,6 @@ struct rz_ssi_stream {
- 	struct rz_ssi_priv *priv;
- 	struct snd_pcm_substream *substream;
- 	int fifo_sample_size;	/* sample capacity of SSI FIFO */
--	int dma_buffer_pos;	/* The address for the next DMA descriptor */
--	int completed_dma_buf_pos; /* The address of the last completed DMA descriptor. */
- 	int period_counter;	/* for keeping track of periods transferred */
- 	int buffer_pos;		/* current frame position in the buffer */
- 	int running;		/* 0=stopped, 1=running */
-@@ -96,8 +96,6 @@ struct rz_ssi_stream {
- 	int uerr_num;
- 	int oerr_num;
- 
--	struct dma_chan *dma_ch;
--
- 	int (*transfer)(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm);
- };
- 
-@@ -108,7 +106,6 @@ struct rz_ssi_priv {
- 	struct clk *sfr_clk;
- 	struct clk *clk;
- 
--	phys_addr_t phys;
- 	int irq_int;
- 	int irq_tx;
- 	int irq_rx;
-@@ -148,9 +145,10 @@ struct rz_ssi_priv {
- 		unsigned int sample_width;
- 		unsigned int sample_bits;
- 	} hw_params_cache;
--};
- 
--static void rz_ssi_dma_complete(void *data);
-+	struct snd_dmaengine_dai_dma_data dma_dais[SNDRV_PCM_STREAM_LAST + 1];
-+	struct dma_chan *dmas[SNDRV_PCM_STREAM_LAST + 1];
-+};
- 
- static void rz_ssi_reg_writel(struct rz_ssi_priv *priv, uint reg, u32 data)
- {
-@@ -172,11 +170,6 @@ static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
- 	writel(val, (priv->base + reg));
- }
- 
--static inline bool rz_ssi_stream_is_play(struct snd_pcm_substream *substream)
--{
--	return substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
--}
--
- static inline struct rz_ssi_stream *
- rz_ssi_stream_get(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream)
- {
-@@ -185,7 +178,7 @@ rz_ssi_stream_get(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream)
- 
- static inline bool rz_ssi_is_dma_enabled(struct rz_ssi_priv *ssi)
- {
--	return (ssi->playback.dma_ch && (ssi->dma_rt || ssi->capture.dma_ch));
-+	return !ssi->playback.transfer && !ssi->capture.transfer;
- }
- 
- static void rz_ssi_set_substream(struct rz_ssi_stream *strm,
-@@ -215,8 +208,6 @@ static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
- 			       struct snd_pcm_substream *substream)
- {
- 	rz_ssi_set_substream(strm, substream);
--	strm->dma_buffer_pos = 0;
--	strm->completed_dma_buf_pos = 0;
- 	strm->period_counter = 0;
- 	strm->buffer_pos = 0;
- 
-@@ -242,12 +233,13 @@ static void rz_ssi_stream_quit(struct rz_ssi_priv *ssi,
- 		dev_info(dev, "underrun = %d\n", strm->uerr_num);
- }
- 
--static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
--			    unsigned int channels)
-+static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream,
-+			    unsigned int rate, unsigned int channels)
- {
- 	static u8 ckdv[] = { 1,  2,  4,  8, 16, 32, 64, 128, 6, 12, 24, 48, 96 };
- 	unsigned int channel_bits = 32;	/* System Word Length */
- 	unsigned long bclk_rate = rate * channels * channel_bits;
-+	struct snd_dmaengine_dai_dma_data *dma_dai;
- 	unsigned int div;
- 	unsigned int i;
- 	u32 ssicr = 0;
-@@ -290,6 +282,8 @@ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
- 		return -EINVAL;
- 	}
- 
-+	dma_dai = &ssi->dma_dais[substream->stream];
-+
- 	/*
- 	 * DWL: Data Word Length = {16, 24, 32} bits
- 	 * SWL: System Word Length = 32 bits
-@@ -298,12 +292,15 @@ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
- 	switch (ssi->hw_params_cache.sample_width) {
- 	case 16:
- 		ssicr |= SSICR_DWL(1);
-+		dma_dai->addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
- 		break;
- 	case 24:
- 		ssicr |= SSICR_DWL(5) | SSICR_PDTA;
-+		dma_dai->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 		break;
- 	case 32:
- 		ssicr |= SSICR_DWL(6);
-+		dma_dai->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 		break;
- 	default:
- 		dev_err(ssi->dev, "Not support %u data width",
-@@ -344,7 +341,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ssi)
- 
- static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- {
--	bool is_play = rz_ssi_stream_is_play(strm->substream);
-+	bool is_play = strm->substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
- 	bool is_full_duplex;
- 	u32 ssicr, ssifcr;
- 
-@@ -423,14 +420,6 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 	/* Disable TX/RX */
- 	rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
- 
--	/* Cancel all remaining DMA transactions */
--	if (rz_ssi_is_dma_enabled(ssi)) {
--		if (ssi->playback.dma_ch)
--			dmaengine_terminate_async(ssi->playback.dma_ch);
--		if (ssi->capture.dma_ch)
--			dmaengine_terminate_async(ssi->capture.dma_ch);
--	}
--
- 	rz_ssi_set_idle(ssi);
- 
- 	return 0;
-@@ -458,10 +447,6 @@ static void rz_ssi_pointer_update(struct rz_ssi_stream *strm, int frames)
- 		snd_pcm_period_elapsed(strm->substream);
- 		strm->period_counter = current_period;
- 	}
--
--	strm->completed_dma_buf_pos += runtime->period_size;
--	if (strm->completed_dma_buf_pos >= runtime->buffer_size)
--		strm->completed_dma_buf_pos = 0;
- }
- 
- static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
-@@ -606,12 +591,6 @@ static irqreturn_t rz_ssi_interrupt(int irq, void *data)
- 	if (irq == ssi->irq_int) { /* error or idle */
- 		bool is_stopped = !!(ssisr & (SSISR_RUIRQ | SSISR_ROIRQ |
- 					      SSISR_TUIRQ | SSISR_TOIRQ));
--		int i, count;
--
--		if (rz_ssi_is_dma_enabled(ssi))
--			count = 4;
--		else
--			count = 1;
- 
- 		if (ssi->capture.substream && is_stopped) {
- 			if (ssisr & SSISR_RUIRQ)
-@@ -631,18 +610,29 @@ static irqreturn_t rz_ssi_interrupt(int irq, void *data)
- 			rz_ssi_stop(ssi, strm_playback);
- 		}
- 
-+		if (!rz_ssi_is_stream_running(&ssi->playback) &&
-+		    !rz_ssi_is_stream_running(&ssi->capture) &&
-+		    rz_ssi_is_dma_enabled(ssi)) {
-+			dmaengine_pause(ssi->dmas[SNDRV_PCM_STREAM_PLAYBACK]);
-+			dmaengine_pause(ssi->dmas[SNDRV_PCM_STREAM_CAPTURE]);
-+		}
-+
- 		/* Clear all flags */
- 		rz_ssi_reg_mask_setl(ssi, SSISR, SSISR_TOIRQ | SSISR_TUIRQ |
- 				     SSISR_ROIRQ | SSISR_RUIRQ, 0);
- 
- 		/* Add/remove more data */
- 		if (ssi->capture.substream && is_stopped) {
--			for (i = 0; i < count; i++)
-+			if (rz_ssi_is_dma_enabled(ssi))
-+				dmaengine_resume(ssi->dmas[SNDRV_PCM_STREAM_CAPTURE]);
-+			else
- 				strm_capture->transfer(ssi, strm_capture);
- 		}
- 
- 		if (ssi->playback.substream && is_stopped) {
--			for (i = 0; i < count; i++)
-+			if (rz_ssi_is_dma_enabled(ssi))
-+				dmaengine_resume(ssi->dmas[SNDRV_PCM_STREAM_PLAYBACK]);
-+			else
- 				strm_playback->transfer(ssi, strm_playback);
- 		}
- 
-@@ -679,153 +669,11 @@ static irqreturn_t rz_ssi_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static int rz_ssi_dma_slave_config(struct rz_ssi_priv *ssi,
--				   struct dma_chan *dma_ch, bool is_play)
--{
--	struct dma_slave_config cfg;
--
--	memset(&cfg, 0, sizeof(cfg));
--
--	cfg.direction = is_play ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
--	cfg.dst_addr = ssi->phys + SSIFTDR;
--	cfg.src_addr = ssi->phys + SSIFRDR;
--	if (ssi->hw_params_cache.sample_width == 16) {
--		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
--		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
--	} else {
--		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--	}
--
--	return dmaengine_slave_config(dma_ch, &cfg);
--}
--
--static int rz_ssi_dma_transfer(struct rz_ssi_priv *ssi,
--			       struct rz_ssi_stream *strm)
--{
--	struct snd_pcm_substream *substream = strm->substream;
--	struct dma_async_tx_descriptor *desc;
--	struct snd_pcm_runtime *runtime;
--	enum dma_transfer_direction dir;
--	u32 dma_paddr, dma_size;
--	int amount;
--
--	if (!rz_ssi_stream_is_valid(ssi, strm))
--		return -EINVAL;
--
--	runtime = substream->runtime;
--	if (runtime->state == SNDRV_PCM_STATE_DRAINING)
--		/*
--		 * Stream is ending, so do not queue up any more DMA
--		 * transfers otherwise we play partial sound clips
--		 * because we can't shut off the DMA quick enough.
--		 */
--		return 0;
--
--	dir = rz_ssi_stream_is_play(substream) ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
--
--	/* Always transfer 1 period */
--	amount = runtime->period_size;
--
--	/* DMA physical address and size */
--	dma_paddr = runtime->dma_addr + frames_to_bytes(runtime,
--							strm->dma_buffer_pos);
--	dma_size = frames_to_bytes(runtime, amount);
--	desc = dmaengine_prep_slave_single(strm->dma_ch, dma_paddr, dma_size,
--					   dir,
--					   DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
--	if (!desc) {
--		dev_err(ssi->dev, "dmaengine_prep_slave_single() fail\n");
--		return -ENOMEM;
--	}
--
--	desc->callback = rz_ssi_dma_complete;
--	desc->callback_param = strm;
--
--	if (dmaengine_submit(desc) < 0) {
--		dev_err(ssi->dev, "dmaengine_submit() fail\n");
--		return -EIO;
--	}
--
--	/* Update DMA pointer */
--	strm->dma_buffer_pos += amount;
--	if (strm->dma_buffer_pos >= runtime->buffer_size)
--		strm->dma_buffer_pos = 0;
--
--	/* Start DMA */
--	dma_async_issue_pending(strm->dma_ch);
--
--	return 0;
--}
--
--static void rz_ssi_dma_complete(void *data)
--{
--	struct rz_ssi_stream *strm = (struct rz_ssi_stream *)data;
--
--	if (!strm->running || !strm->substream || !strm->substream->runtime)
--		return;
--
--	/* Note that next DMA transaction has probably already started */
--	rz_ssi_pointer_update(strm, strm->substream->runtime->period_size);
--
--	/* Queue up another DMA transaction */
--	rz_ssi_dma_transfer(strm->priv, strm);
--}
--
--static void rz_ssi_release_dma_channels(struct rz_ssi_priv *ssi)
--{
--	if (ssi->playback.dma_ch) {
--		dma_release_channel(ssi->playback.dma_ch);
--		ssi->playback.dma_ch = NULL;
--		if (ssi->dma_rt)
--			ssi->dma_rt = false;
--	}
--
--	if (ssi->capture.dma_ch) {
--		dma_release_channel(ssi->capture.dma_ch);
--		ssi->capture.dma_ch = NULL;
--	}
--}
--
--static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
--{
--	ssi->playback.dma_ch = dma_request_chan(dev, "tx");
--	if (IS_ERR(ssi->playback.dma_ch))
--		ssi->playback.dma_ch = NULL;
--
--	ssi->capture.dma_ch = dma_request_chan(dev, "rx");
--	if (IS_ERR(ssi->capture.dma_ch))
--		ssi->capture.dma_ch = NULL;
--
--	if (!ssi->playback.dma_ch && !ssi->capture.dma_ch) {
--		ssi->playback.dma_ch = dma_request_chan(dev, "rt");
--		if (IS_ERR(ssi->playback.dma_ch)) {
--			ssi->playback.dma_ch = NULL;
--			goto no_dma;
--		}
--
--		ssi->dma_rt = true;
--	}
--
--	if (!rz_ssi_is_dma_enabled(ssi))
--		goto no_dma;
--
--	return 0;
--
--no_dma:
--	rz_ssi_release_dma_channels(ssi);
--
--	return -ENODEV;
--}
--
- static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- {
- 	struct snd_pcm_substream *substream = strm->substream;
--	struct snd_pcm_runtime *runtime = substream->runtime;
- 	int ret;
- 
--	strm->dma_buffer_pos = strm->completed_dma_buf_pos + runtime->period_size;
--
- 	if (rz_ssi_is_stream_running(&ssi->playback) ||
- 	    rz_ssi_is_stream_running(&ssi->capture))
- 		return 0;
-@@ -834,7 +682,7 @@ static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi, struct rz_ssi_stream *
- 	if (ret)
- 		return ret;
- 
--	return rz_ssi_clk_setup(ssi, ssi->hw_params_cache.rate,
-+	return rz_ssi_clk_setup(ssi, substream, ssi->hw_params_cache.rate,
- 				ssi->hw_params_cache.channels);
- }
- 
-@@ -843,7 +691,7 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
- 	struct rz_ssi_stream *strm = rz_ssi_stream_get(ssi, substream);
--	int ret = 0, i, num_transfer = 1;
-+	int ret = 0;
- 
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_RESUME:
-@@ -858,28 +706,7 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 		if (cmd == SNDRV_PCM_TRIGGER_START)
- 			rz_ssi_stream_init(strm, substream);
- 
--		if (rz_ssi_is_dma_enabled(ssi)) {
--			bool is_playback = rz_ssi_stream_is_play(substream);
--
--			if (ssi->dma_rt)
--				ret = rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch,
--							      is_playback);
--			else
--				ret = rz_ssi_dma_slave_config(ssi, strm->dma_ch,
--							      is_playback);
--
--			/* Fallback to pio */
--			if (ret < 0) {
--				ssi->playback.transfer = rz_ssi_pio_send;
--				ssi->capture.transfer = rz_ssi_pio_recv;
--				rz_ssi_release_dma_channels(ssi);
--			} else {
--				/* For DMA, queue up multiple DMA descriptors */
--				num_transfer = 4;
--			}
--		}
--
--		for (i = 0; i < num_transfer; i++) {
-+		if (!rz_ssi_is_dma_enabled(ssi)) {
- 			ret = strm->transfer(ssi, strm);
- 			if (ret)
- 				return ret;
-@@ -1026,6 +853,10 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
-+	/* Save the DMA channels for recovery. */
-+	if (rz_ssi_is_dma_enabled(ssi))
-+		ssi->dmas[substream->stream] = snd_dmaengine_pcm_get_chan(substream);
-+
- 	if (rz_ssi_is_stream_running(&ssi->playback) ||
- 	    rz_ssi_is_stream_running(&ssi->capture)) {
- 		if (rz_ssi_is_valid_hw_params(ssi, rate, channels, sample_width, sample_bits))
-@@ -1041,10 +872,21 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 	if (ret)
- 		return ret;
- 
--	return rz_ssi_clk_setup(ssi, rate, channels);
-+	return rz_ssi_clk_setup(ssi, substream, rate, channels);
-+}
-+
-+static int rz_ssi_dai_probe(struct snd_soc_dai *dai)
-+{
-+	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
-+
-+	snd_soc_dai_init_dma_data(dai, &ssi->dma_dais[SNDRV_PCM_STREAM_PLAYBACK],
-+				  &ssi->dma_dais[SNDRV_PCM_STREAM_CAPTURE]);
-+
-+	return 0;
- }
- 
- static const struct snd_soc_dai_ops rz_ssi_dai_ops = {
-+	.probe		= rz_ssi_dai_probe,
- 	.startup	= rz_ssi_startup,
- 	.shutdown	= rz_ssi_shutdown,
- 	.trigger	= rz_ssi_dai_trigger,
-@@ -1058,9 +900,9 @@ static const struct snd_pcm_hardware rz_ssi_pcm_hardware = {
- 				  SNDRV_PCM_INFO_MMAP_VALID	|
- 				  SNDRV_PCM_INFO_RESUME		|
- 				  SNDRV_PCM_INFO_PAUSE,
--	.buffer_bytes_max	= PREALLOC_BUFFER,
-+	.buffer_bytes_max	= 192 * 1024,
- 	.period_bytes_min	= 32,
--	.period_bytes_max	= 8192,
-+	.period_bytes_max	= 48 * 1024,
- 	.channels_min		= SSI_CHAN_MIN,
- 	.channels_max		= SSI_CHAN_MAX,
- 	.periods_min		= 1,
-@@ -1068,8 +910,8 @@ static const struct snd_pcm_hardware rz_ssi_pcm_hardware = {
- 	.fifo_size		= 32 * 2,
- };
- 
--static int rz_ssi_pcm_open(struct snd_soc_component *component,
--			   struct snd_pcm_substream *substream)
-+static int rz_ssi_pcm_open_pio(struct snd_soc_component *component,
-+			       struct snd_pcm_substream *substream)
- {
- 	snd_soc_set_runtime_hwparams(substream, &rz_ssi_pcm_hardware);
- 
-@@ -1077,6 +919,13 @@ static int rz_ssi_pcm_open(struct snd_soc_component *component,
- 					    SNDRV_PCM_HW_PARAM_PERIODS);
- }
- 
-+static int rz_ssi_pcm_open_dma(struct snd_soc_component *component,
-+			       struct snd_pcm_substream *substream)
-+{
-+	return snd_pcm_hw_constraint_integer(substream->runtime,
-+					     SNDRV_PCM_HW_PARAM_PERIODS);
-+}
-+
- static snd_pcm_uframes_t rz_ssi_pcm_pointer(struct snd_soc_component *component,
- 					    struct snd_pcm_substream *substream)
- {
-@@ -1093,7 +942,8 @@ static int rz_ssi_pcm_new(struct snd_soc_component *component,
- {
- 	snd_pcm_set_managed_buffer_all(rtd->pcm, SNDRV_DMA_TYPE_DEV,
- 				       rtd->card->snd_card->dev,
--				       PREALLOC_BUFFER, PREALLOC_BUFFER_MAX);
-+				       rz_ssi_pcm_hardware.buffer_bytes_max,
-+				       rz_ssi_pcm_hardware.buffer_bytes_max);
- 	return 0;
- }
- 
-@@ -1116,16 +966,29 @@ static struct snd_soc_dai_driver rz_ssi_soc_dai[] = {
- 	},
- };
- 
--static const struct snd_soc_component_driver rz_ssi_soc_component = {
-+static const struct snd_soc_component_driver rz_ssi_soc_component_pio = {
- 	.name			= "rz-ssi",
--	.open			= rz_ssi_pcm_open,
-+	.open			= rz_ssi_pcm_open_pio,
- 	.pointer		= rz_ssi_pcm_pointer,
- 	.pcm_new		= rz_ssi_pcm_new,
- 	.legacy_dai_naming	= 1,
- };
- 
-+static const struct snd_soc_component_driver rz_ssi_soc_component_dma = {
-+	.name			= "rz-ssi",
-+	.open			= rz_ssi_pcm_open_dma,
-+	.legacy_dai_naming	= 1,
-+};
-+
-+static struct snd_dmaengine_pcm_config rz_ssi_dmaengine_pcm_conf = {
-+	.pcm_hardware		= &rz_ssi_pcm_hardware,
-+	.prepare_slave_config	= snd_dmaengine_pcm_prepare_slave_config,
-+};
-+
- static int rz_ssi_probe(struct platform_device *pdev)
- {
-+	const struct snd_soc_component_driver *component_driver;
-+	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
- 	struct rz_ssi_priv *ssi;
- 	struct clk *audio_clk;
-@@ -1141,7 +1004,6 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 	if (IS_ERR(ssi->base))
- 		return PTR_ERR(ssi->base);
- 
--	ssi->phys = res->start;
- 	ssi->clk = devm_clk_get(dev, "ssi");
- 	if (IS_ERR(ssi->clk))
- 		return PTR_ERR(ssi->clk);
-@@ -1165,16 +1027,35 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 
- 	ssi->audio_mck = ssi->audio_clk_1 ? ssi->audio_clk_1 : ssi->audio_clk_2;
- 
--	/* Detect DMA support */
--	ret = rz_ssi_dma_request(ssi, dev);
--	if (ret < 0) {
-+	ssi->dma_dais[SNDRV_PCM_STREAM_PLAYBACK].addr = (dma_addr_t)res->start + SSIFTDR;
-+	ssi->dma_dais[SNDRV_PCM_STREAM_CAPTURE].addr =  (dma_addr_t)res->start + SSIFRDR;
-+
-+	if (of_property_present(np, "dma-names")) {
-+		unsigned int flags = 0;
-+
-+		if (of_property_match_string(np, "dma-names", "rt") == 0) {
-+			flags = SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX;
-+			rz_ssi_dmaengine_pcm_conf.chan_names[SNDRV_PCM_STREAM_PLAYBACK] = "rt";
-+		} else {
-+			rz_ssi_dmaengine_pcm_conf.chan_names[SNDRV_PCM_STREAM_PLAYBACK] = "tx";
-+			rz_ssi_dmaengine_pcm_conf.chan_names[SNDRV_PCM_STREAM_CAPTURE] = "rx";
-+		}
-+		ret = devm_snd_dmaengine_pcm_register(&pdev->dev, &rz_ssi_dmaengine_pcm_conf,
-+						      flags);
-+	} else {
-+		ret = -ENODEV;
-+	}
-+
-+	if (ret == -EPROBE_DEFER) {
-+		return ret;
-+	} else if (ret) {
- 		dev_warn(dev, "DMA not available, using PIO\n");
- 		ssi->playback.transfer = rz_ssi_pio_send;
- 		ssi->capture.transfer = rz_ssi_pio_recv;
-+		component_driver = &rz_ssi_soc_component_pio;
- 	} else {
--		dev_info(dev, "DMA enabled");
--		ssi->playback.transfer = rz_ssi_dma_transfer;
--		ssi->capture.transfer = rz_ssi_dma_transfer;
-+		dev_info(dev, "DMA enabled\n");
-+		component_driver = &rz_ssi_soc_component_dma;
- 	}
- 
- 	ssi->playback.priv = ssi;
-@@ -1185,17 +1066,13 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 
- 	/* Error Interrupt */
- 	ssi->irq_int = platform_get_irq_byname(pdev, "int_req");
--	if (ssi->irq_int < 0) {
--		ret = ssi->irq_int;
--		goto err_release_dma_chs;
--	}
-+	if (ssi->irq_int < 0)
-+		return ssi->irq_int;
- 
- 	ret = devm_request_irq(dev, ssi->irq_int, rz_ssi_interrupt,
- 			       0, dev_name(dev), ssi);
--	if (ret < 0) {
--		dev_err_probe(dev, ret, "irq request error (int_req)\n");
--		goto err_release_dma_chs;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "irq request error (int_req)\n");
- 
- 	if (!rz_ssi_is_dma_enabled(ssi)) {
- 		/* Tx and Rx interrupts (pio only) */
-@@ -1236,43 +1113,19 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 	}
- 
- 	ssi->rstc = devm_reset_control_get_exclusive(dev, NULL);
--	if (IS_ERR(ssi->rstc)) {
--		ret = PTR_ERR(ssi->rstc);
--		goto err_release_dma_chs;
--	}
-+	if (IS_ERR(ssi->rstc))
-+		return dev_err_probe(dev, PTR_ERR(ssi->rstc), "Failed to get reset\n");
- 
- 	/* Default 0 for power saving. Can be overridden via sysfs. */
- 	pm_runtime_set_autosuspend_delay(dev, 0);
- 	pm_runtime_use_autosuspend(dev);
- 	ret = devm_pm_runtime_enable(dev);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enable runtime PM!\n");
--		goto err_release_dma_chs;
--	}
--
--	ret = devm_snd_soc_register_component(dev, &rz_ssi_soc_component,
--					      rz_ssi_soc_dai,
--					      ARRAY_SIZE(rz_ssi_soc_dai));
--	if (ret < 0) {
--		dev_err(dev, "failed to register snd component\n");
--		goto err_release_dma_chs;
--	}
--
--	return 0;
--
--err_release_dma_chs:
--	rz_ssi_release_dma_channels(ssi);
--
--	return ret;
--}
--
--static void rz_ssi_remove(struct platform_device *pdev)
--{
--	struct rz_ssi_priv *ssi = dev_get_drvdata(&pdev->dev);
--
--	rz_ssi_release_dma_channels(ssi);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to enable runtime PM!\n");
- 
--	reset_control_assert(ssi->rstc);
-+	return devm_snd_soc_register_component(dev, component_driver,
-+					       rz_ssi_soc_dai,
-+					       ARRAY_SIZE(rz_ssi_soc_dai));
- }
- 
- static const struct of_device_id rz_ssi_of_match[] = {
-@@ -1307,7 +1160,6 @@ static struct platform_driver rz_ssi_driver = {
- 		.pm = pm_ptr(&rz_ssi_pm_ops),
- 	},
- 	.probe		= rz_ssi_probe,
--	.remove		= rz_ssi_remove,
- };
- 
- module_platform_driver(rz_ssi_driver);
--- 
-2.43.0
-
+SGkgS3J6eXN6dG9mIEtvemxvd3NraSwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQoNCj4g
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxvd3NraSA8
+a3J6a0BrZXJuZWwub3JnPg0KPiBTZW50OiAwNSBBcHJpbCAyMDI2IDA5OjU4DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggMS8yXSBkdC1iaW5kaW5nczogc3BpOiByZW5lc2FzLHJ6djJoLXJzcGk6IERv
+Y3VtZW50IFJaL0czTCBTb0MNCj4gDQo+IE9uIDAyLzA0LzIwMjYgMTY6MTAsIEJpanUgRGFzIHdy
+b3RlOg0KPiA+Pj4+DQo+ID4+Pj4gU28gZXZlbiBhZnRlciBteSBvYmplY3Rpb25zIGhlcmU6DQo+
+ID4+Pj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzlkMDhkZGRhLTQwM2UtNDU4ZC05NWU0
+LTRlNzY5MTVkZjg1ZEBrZQ0KPiA+Pj4+IHJuDQo+ID4+Pj4gZWwub3JnLw0KPiA+Pj4+DQo+ID4+
+Pj4gdGhpcyB3YXMgbm90IGZpeGVkIGFuZCBSZW5lc2FzIGRpZCBub3QgcHJvdmlkZSBhY3R1YWwg
+Y3Jvc3MtcGF0Y2ggcmV2aWV3Lg0KPiA+Pj4NCj4gPj4+IFRoYXQgcGF0Y2ggaXMgbm90IGNvcnJl
+Y3QuIFNlZSBiZWxvdy4NCj4gPj4+DQo+ID4+Pj4NCj4gPj4+PiBUaGlzIGlzIHN0aWxsIHByb2Jh
+Ymx5IHdyb25nIGFzIHBvaW50ZWQgb3V0IGJ5IG90aGVyIHBhdGNoZXMgYnkgUmVuZXNhcy4NCj4g
+Pj4+PiBBbHNvLCB5b3UgY2Fubm90IGhhdmUgZmxleGlibGUgbmFtZXMuDQo+ID4+Pg0KPiA+Pj4g
+WW91IGNhbiBoYXZlICJyeCIsICJ0eCIgaW4gYW55IG9yZGVyIGFuZCB7cngsIHR4fSBzaG91bGQg
+YmUgdW5pcXVlDQo+ID4+PiBkbWEgc3BlY2lmaWVyDQo+ID4+DQo+ID4+IE5vLiBZb3UgY2Fubm90
+LiBJIGp1c3QgdG9sZCB5b3Ugc28uIFBsZWFzZSByZWFkIHdyaXRpbmctYmluZGluZ3MgZm9yIGFy
+Z3VtZW50cy4NCj4gPg0KPiA+IDxzbmlwcGV0IGZyb20gd3JpdGluZy1iaW5kaW5ncyA+DQo+ID4g
+LSBETyBkZWZpbmUgcHJvcGVydGllcyBpbiB0ZXJtcyBvZiBjb25zdHJhaW50cy4gSG93IG1hbnkg
+ZW50cmllcz8gV2hhdCBhcmUNCj4gPiAgIHBvc3NpYmxlIHZhbHVlcz8gV2hhdCBpcyB0aGUgb3Jk
+ZXI/IEFsbCB0aGVzZSBjb25zdHJhaW50cyByZXByZXNlbnQgdGhlIEFCSQ0KPiA+ICAgYXMgd2Vs
+bC4NCj4gPiA8L3NuaXBwZXQ+DQo+ID4NCj4gPiBJcyB0aGF0IHRoZSByZWFzb24geW91J3JlIHNh
+eWluZyB3ZSBjYW5ub3QgaGF2ZSBmbGV4aWJsZSBuYW1lcyBmb3IgRE1Bcz8NCj4gDQo+IFllcw0K
+PiANCj4gPg0KPiA+IEFyZSB5b3UgZXhwZWN0aW5nIHRoZSBSWi9HM0wgRE1BIGVudHJpZXMgdG8g
+YmUgbGlrZSBiZWxvdz8gUGxlYXNlIGxldCBtZSBrbm93Lg0KPiA+DQo+ID4gVGhpcyBpcyBub3Qg
+ZmxleGlibGUg4oCUIHRoZSB1c2VyIGFsd2F5cyBuZWVkcyB0byBzcGVjaWZ5IFJYIGZpcnN0LCBm
+b2xsb3dlZCBieSBUWC4NCj4gPg0KPiA+ICsgIGRtYXM6DQo+ID4gKyAgICBtYXhJdGVtczogMg0K
+PiA+ICsNCj4gPiArICBkbWEtbmFtZXM6DQo+ID4gKyAgICBpdGVtczoNCj4gPiArICAgICAgLSBj
+b25zdDogcngNCj4gPiArICAgICAgLSBjb25zdDogdHgNCj4gDQo+IA0KPiBZZXMNCg0KT2ssIHdp
+bGwgc2VuZCBuZXh0IHZlcnNpb24gbWFraW5nIGl0IG5vdCBmbGV4aWJsZSBmb3Igc2luZ2xlIERN
+QUMuDQoNCkkgYWNjaWRlbnRseSBzZW50IHYyLCBzbyB0aGUgbmV4dCB2ZXJzaW9uIHdpbGwgYmUg
+djMuDQoNCkNoZWVycywNCkJpanUNCg==
