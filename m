@@ -1,61 +1,63 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333283D0917
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Apr 2026 14:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CDD3D3487
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Apr 2026 14:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775658072; cv=none; b=uKeOIa83ssvcHrLau+YWgQ42fTid4lib7xS7bojnABryLFb51uSrwOU3wUkAhb5NRex6pfRqwiWAdRSYPYKTpRWpa1Ko2imVBESQSSUhsfhMhEqD+pPCELhyd9TWpZoNdJzpuZX2TnD7BuPue5g4PxWaEpaCwKgz/XMXUL9V69Q=
+	t=1775658073; cv=none; b=pbzZo3MsGkAGcrTSEwKUuQM3AgCZ5UFqeVRWJgyS4J5LjdMg1F5X5tG9ckfMJSTzE0YyC5cmQ2WyKQRY1HeBPKk1AT4UJ8Eli+lBsBa9uQ4Ua4nI2ltYWQ7LzbdeTEDTnjvUIH2A7+RXPtHHZDmIXzyHFSx/Zq3qT4nm2uTdpKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775658072; c=relaxed/simple;
-	bh=GEsOH353p/1G/JzP0djxYvZlTie3JSvCRDJMrIeAh+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m9w+oFvu69NAt12YSpwen25kUfTNgUZfE0b/VESyOhW2LX2VySTscrT37WNAfjtxJw4WzMudqc6XQ/251d+6BxnK7esqck24dyY9SOY9YQnoa79kZc7TZakyk1v/6yH80WeyPRnjVUH2zrFTaS2xXNK8lAdK1ZUtagzfksFKlSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=phAkUg1R; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1775658073; c=relaxed/simple;
+	bh=ddrfr3rql9m/sbOnBCJC/YlBY3/WX7/HgB5dY7+ixvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mpvILY7Y5x42V3xb78ifbIdIJlwz4hkVSWpD7TtfVhQAOtzrf1shcndn3sWlt29sq5aJbbDfNLCm1RRL0jE3dYCvxdphtpXaRK4V2aUARvALllDij0BRuOZbvf+fpYpVZsHeHqepGzAFfZNLk7+H2wfcVcTu/HvJXqA8QcKN+zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBVsyJrb; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phAkUg1R"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43cf8d550bdso5827794f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 07:21:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBVsyJrb"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-488a041eae5so34080595e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 07:21:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775658068; x=1776262868; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CMF6apjPFsM64OzbUJQDdgH7IQW/+yy5CdRNlHUwV6U=;
-        b=phAkUg1RnGbO7UHtnqFdsWio3AHfh+tRYGPMEP0cwVV4GsIM43eU7bDqTGGluv7rZy
-         UJ+IcLxfLmQQTRKByWo/VdVmkETTltwhI2vk5SCrbobEGu1sIH0kE11q+uLrWMAA8K2b
-         i+I5yemRg4ziTvcmTkID4Cwf0bV1h6lMhkkMyTKwI+Mg+G+B/pfLEBrSGLJmvtz+lxdG
-         FFpRrhr/SJ/OZgy+84Q7QdMs6S11nK1ripAA9GtvMob7AORt/6uik+jz/lgS0cwvqO4R
-         2skR/oTcGsUrRk42iFW+ymG89G/Cpu9anMcShs6gpaebNxewKGOjaVyu3Va4i+jKQaJP
-         O4qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775658068; x=1776262868;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1775658070; x=1776262870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CMF6apjPFsM64OzbUJQDdgH7IQW/+yy5CdRNlHUwV6U=;
-        b=moKTh5Ksvd395bpEGxhNUNsiqzRw73enygg9VA7ORIZz5YT+qzRUjt6qsMFcsaMNwv
-         yKtVgTWZiC1ZLjF2IzY1YFmCAxWOXmfRb4zkKj1JP8XqPs5yoTf2/t/CcsCmE8nKJnGO
-         9gD4jktSyuTmGb1+PLNqPCJJEiBsuLcIgoqoPQb31gtAwGcBGvXlAvz2YIxOLoikXDLI
-         XvJ4hmUNqA7WwPw82LBzzwEkry3MmVOmW30PEOQ4yxmSBDLxojtJfNHjfmVEEqPmuj8s
-         qJfCJKmuIf1TYRQMkyyoy0hhJw9hyZRSRi34oy5dX0y9YFsnzPF18XPRxkNBBtB4sdIM
-         bibg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHyz3nkjVnIRmhdivc58aIDs/1BgkCN3sjVOaokCDTHa2y9fqenZqaodsH0s49oyNzgzdUS9gsd7jxWYJt9MxaVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEY2IagX5XUfQBtAC1xCyt72FzAdQNp/3XL163UbwX8Ix2gWh1
-	wS4JZ+foTtVctuZDE5fZ8jBZs6ER2L5WpuAhkFwYhXURNNR+/nqvo8ru
-X-Gm-Gg: AeBDiesx05Hi0OCv/pjIV47ajpKeLKBgrQ+fD7/iQqK45vJF9HzIO/s865SXl3g4F7r
-	YAm7BlUrngtPaBcrRZwwqrvfc3tym3loANQ3AZFViLZagGs8bPgqNhbE5oFBBD5/jF7KCEYgRCW
-	ps/belZDR1XPOtrlsfm2lzm+qCf+fjNWWNdT5tHlMyjhgoqB0KeurvHsTK4TUz3hdDupCWFLTe7
-	jC2gpJnj6CuZ1/uEQUEihRKuFJrBZLK7EiUyQLBbBulVrlvQ0KxfNgXSFBnaq5x7F7iyVuDS2eg
-	DFF5jybu1hNLFeN+nqICevC58sfKLAtb7ubi2lTjZFLnsOWRIr0trbeJv8VtB32vAZWyY6EJE0K
-	ii4ldIh7cfoWL14UQXcqn6lGSXeM6L+RbYSaALhVAvB3nreJja8Hng9fc4y43gS/7ThZb/SEqbV
-	NTd0qqzrVLGS41AYdwu0/osgvgW/j/+XEYjL0aRG2efnd7azI=
-X-Received: by 2002:a5d:5f85:0:b0:43c:f7f6:6016 with SMTP id ffacd0b85a97d-43d292daa51mr31326678f8f.32.1775658068345;
-        Wed, 08 Apr 2026 07:21:08 -0700 (PDT)
+        bh=xt7/zv+UwHJyWIBrUUqp/D/ZXiUTMuYqdObuX9zLVHA=;
+        b=BBVsyJrbKPFtcy2Rz7Hey1WwovPgkvZo0SNnfjnoz7ULn3mZ9b2p9FMFDo1ODG68pL
+         kT0IRnGeh6RKsujwalXC79uC00tL4TBmRJ7GjNYBp7/7vbqOe20CGoClunKp8vh157bQ
+         02Ult0lXYwTr/CxYzCv08r7zOBheaw59tUo9R+vOTUthMzKLMgwyiyzDE6rUhawQ5m1d
+         f1GHt9tTcySsDNuAOtMKNkNA97UxQiV5etToZwM4SeCT+HaqUEtLMRKqeO586ltdG4eI
+         M2hfYwaCQbYplzs8nSBUnEhdLRAf2HI3yjU8sf6QqtrcubFbyCbsg8CURLJI1YNM6d06
+         5rmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775658070; x=1776262870;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xt7/zv+UwHJyWIBrUUqp/D/ZXiUTMuYqdObuX9zLVHA=;
+        b=sDgrwj+g/k6CWSiUrDNDhgkE78DoC/SMMHuAseANNLCwNgcrUL1VsFGjI8egixhyYi
+         YuscFAugozld7BLqHPnbyEMDfCzba1e9A3XanCz/VtZWiAzarffsfEwI+sMeKwsISAit
+         ZkKmSabE53lxp0uIhR3sNw9xYE1Lw8OraPpVTo3tJylaImh8zyBT8WjXocOdcXM4PJ63
+         phz2+6qGYaKEhBnfeJe04FyyG7CwA9of1RUiqqLLl736E34RKOH0xFp2Uxsf+kWL/3Ex
+         ndnsbXIGQNks9Y7e39/jJBs5tAUG4d1Qz8i4531p33RGheKO++zySU1v9U//1JaQifct
+         3Bqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+oXbsd0JzF0D+gGSrQ19svFJWYq1Rd8i/75UYHemsuBp6kYdfPXQ4Rnew08zKuEsqCRFUATAxkVpo8mK4n3WY0g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIR2RO7irajgdg8QQR2HDKlqZbW/AXjbBiRw6DzH0ng5k+L4+W
+	JbACdbmyloXg7yizV/90GKVwb+zRZegAz+dqs7gdRig2Tw0gsaojCzUw
+X-Gm-Gg: AeBDieuc3NnlRZNFQeT7Lvs2v+hVjTtKt+deza2fhtA+jZlqTnuJdK0gT+yxK1dI/m4
+	Y/bK+YwKzCFeEQMgejtz5CzV+j8pMlz4HZQJS+0x0oA7k4E5vIt+Sq9YlmTCDDyAeKvbPcBJ185
+	3PDx6mWZSKwx8pZSNATYz1Duo6+wKjY1dP9SbJJyI/WQeuLBxzLqIlu0rNlnoTN1Xemtfc7VtWt
+	WRevS5nYdGZFDjczOmkyC/yteOjakc3TuqlH1YnYzvMoN6tZlSqf0cBLcW4eEWFOOPmIL79PMra
+	/vFik0/QhufxeaIurUFdky1wFPB6xPjpNTb+JYRDsG6W1TkBBuDR3infQ9G+qz0InFOKnSyX/cK
+	evHQgdADjax8wCS2Z3QIyZIm8uUwzzikqMKwy1oxeHnvW0f5ARZxYDDvCCwMav1ap9jTqwzwILO
+	GhSTcFSA5t86BfDDJgtjbYRIKruiMoUfir3vtnwVWgkxaDyOyfVGVZ6scTiQ==
+X-Received: by 2002:a05:600c:a318:b0:480:3ad0:93bf with SMTP id 5b1f17b1804b1-488997dd54fmr202593925e9.24.1775658070197;
+        Wed, 08 Apr 2026 07:21:10 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:f65c:8080:131a:202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e1fe0b0sm60474467f8f.0.2026.04.08.07.21.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e1fe0b0sm60474467f8f.0.2026.04.08.07.21.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 07:21:08 -0700 (PDT)
+        Wed, 08 Apr 2026 07:21:09 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -68,11 +70,14 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/2] serial: sh-sci/rsci: Fix divide by zero and clean up baud rate logic
-Date: Wed,  8 Apr 2026 15:20:57 +0100
-Message-ID: <20260408142105.310210-1-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org,
+	Pavel Machek <pavel@nabladev.com>
+Subject: [PATCH v2 2/2] serial: rsci: Remove goto and refactor baud rate clock selection
+Date: Wed,  8 Apr 2026 15:20:59 +0100
+Message-ID: <20260408142105.310210-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260408142105.310210-1-biju.das.jz@bp.renesas.com>
+References: <20260408142105.310210-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,25 +88,25 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series fixes a divide-by-zero in the sh-sci and rsci serial drivers
-and follows up with a cleanup of the baud rate clock selection logic in
-rsci that the fix exposed as unnecessarily complex.
+Replace the goto done pattern in rsci_set_termios() with a positive
+conditional block. When baud rate is zero, the clock selection logic
+is now simply skipped rather than jumping to a 'done' label, eliminating
+the goto entirely.
 
-Patch 1 guards both uart_update_timeout() call sites in sci_set_termios()
-and rsci_set_termios() with a baud != 0 check. uart_update_timeout()
-divides by the baud rate internally, so passing zero causes a divide-by-
-zero fault when the hardware returns an unsupported or invalid rate.
+Since RSCI only uses a single clock source (SCI_FCK), the multi-clock
+tracking variables (best_clk, min_err, brr1, srr1, cks1) are redundant
+and removed. ccr0_val and ccr4_val are likewise dropped, replaced with
+hardcoded 0 at their write sites, as they were never modified from their
+initial zero values.
 
-Patch 2 addresses a related issue reported by Pavel Machek: the goto-based
-early-exit pattern in rsci_set_termios() was obscuring the control flow.
-Since RSCI only ever uses a single clock source (SCI_FCK), the multi-clock
-candidate tracking variables (best_clk, min_err, brr1, srr1, cks1) were
-redundant. These are removed and the goto is replaced with a straight
-forward positive conditional block. ccr0_val and ccr4_val are also dropped
-in favour of hardcoded 0 at their writes.
+No functional change intended.
 
+Reported-by: Pavel Machek <pavel@nabladev.com>
+Closes: https://lore.kernel.org/all/abPpZULsXhRmXTX9@duo.ucw.cz/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v1->v2:
- * Add a patch for avoiding divide-by-zero fault.
+ * Dropped the check (abs(err) < abs(min_err) as it is always true.
  * Dropped the check (abs(err) < abs(min_err) as it is always true.
  * Dropped variables best_clk and min_err as they are no longer needed.
  * Dropped intermediate variables brr1, cks1 and srr1; results are now
@@ -111,15 +116,82 @@ v1->v2:
    write sites, as they were never modified from their initial values.
  * Scoped variables err and srr locally within the if (baud) block.
  * Updated commit description.
+---
+ drivers/tty/serial/rsci.c | 33 +++++++++++----------------------
+ 1 file changed, 11 insertions(+), 22 deletions(-)
 
-Biju Das (2):
-  serial: sh-sci: Avoid divide by zero
-  serial: rsci: Remove goto and refactor baud rate clock selection
-
- drivers/tty/serial/rsci.c   | 36 +++++++++++++-----------------------
- drivers/tty/serial/sh-sci.c |  3 ++-
- 2 files changed, 15 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
+index a0858bab0822..c2440fd5c02d 100644
+--- a/drivers/tty/serial/rsci.c
++++ b/drivers/tty/serial/rsci.c
+@@ -217,16 +217,13 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			     const struct ktermios *old)
+ {
+ 	unsigned int ccr2_val = CCR2_INIT, ccr3_val = CCR3_INIT;
+-	unsigned int ccr0_val = 0, ccr1_val = 0, ccr4_val = 0;
+-	unsigned int brr1 = 255, cks1 = 0, srr1 = 15;
+ 	struct sci_port *s = to_sci_port(port);
+ 	unsigned int brr = 255, cks = 0;
+-	int min_err = INT_MAX, err;
+-	unsigned long max_freq = 0;
++	unsigned int ccr1_val = 0;
++	unsigned long max_freq;
+ 	unsigned int baud, i;
+ 	unsigned long flags;
+ 	unsigned int ctrl;
+-	int best_clk = -1;
+ 
+ 	if ((termios->c_cflag & CSIZE) == CS7) {
+ 		ccr3_val |= CCR3_CHR0;
+@@ -265,23 +262,15 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	}
+ 
+ 	baud = uart_get_baud_rate(port, termios, old, 0, max_freq);
+-	if (!baud)
+-		goto done;
+-
+-	/* Divided Functional Clock using standard Bit Rate Register */
+-	err = sci_scbrr_calc(s, baud, &brr1, &srr1, &cks1);
+-	if (abs(err) < abs(min_err)) {
+-		best_clk = SCI_FCK;
+-		ccr0_val = 0;
+-		min_err = err;
+-		brr = brr1;
+-		cks = cks1;
+-	}
++	if (baud) {
++		unsigned int srr;
++		int err;
+ 
+-done:
+-	if (best_clk >= 0)
++		/* Divided Functional Clock using standard Bit Rate Register */
++		err = sci_scbrr_calc(s, baud, &brr, &srr, &cks);
+ 		dev_dbg(port->dev, "Using clk %pC for %u%+d bps\n",
+-			s->clks[best_clk], baud, min_err);
++			s->clks[SCI_FCK], baud, err);
++	}
+ 
+ 	sci_port_enable(s);
+ 	uart_port_lock_irqsave(port, &flags);
+@@ -289,7 +278,7 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if (baud)
+ 		uart_update_timeout(port, termios->c_cflag, baud);
+ 
+-	rsci_serial_out(port, CCR0, ccr0_val);
++	rsci_serial_out(port, CCR0, 0);
+ 
+ 	ccr3_val |= CCR3_FM;
+ 	rsci_serial_out(port, CCR3, ccr3_val);
+@@ -298,7 +287,7 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	rsci_serial_out(port, CCR2, ccr2_val);
+ 
+ 	rsci_serial_out(port, CCR1, ccr1_val);
+-	rsci_serial_out(port, CCR4, ccr4_val);
++	rsci_serial_out(port, CCR4, 0);
+ 
+ 	ctrl = rsci_serial_in(port, FCR);
+ 	ctrl |= (FCR_RFRST | FCR_TFRST);
 -- 
 2.43.0
 
