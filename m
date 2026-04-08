@@ -1,259 +1,98 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD2F3CAE9A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Apr 2026 13:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC973368AF
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Apr 2026 13:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775653790; cv=none; b=KTcBBDtPY5ntnZ2XjVRs1nHBxX8MyUBuOS9q7zQO2Xixm8XqLxvOXNF1cfhjKb2nJlh1cZ/P30l0Rh0UvXe0K0q2xm+MQhhp8yC6mm7RrvQ4+rrT+U+EchATX7rE/I4Cw4dZPQQAP/pvx8DC46D9y5JYJLDxehR3Re7iqIIFjSo=
+	t=1775654609; cv=none; b=VX1y6nAT1Eo7ZZ2qajw4Jy/oJQbzafJq7h6X5XNQakuGgr93BPzi5T2uPEspukw/RVkE0l8or97sV3nrRBhrFeYcLWaVTbuMbBegeNiU8ZYvcjVdj6X3X54tf405h8nloPQLC8ZbiuQWR1B4ByH8QXpD9gHNINeDdkMYJGb6/j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775653790; c=relaxed/simple;
-	bh=sQmw9lWDcF2d/4KFoX+2MzyqctprsKDF8SgNpypvZGo=;
+	s=arc-20240116; t=1775654609; c=relaxed/simple;
+	bh=Esa6dVRyYOOr3vJIDSY5cJEBLjvkhKepH2lKClA4ih8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzS0wMLM1rL5Y6/a93/u8ar35m3uHJFLFf1SUh0gMYuUkUtsda3q/P1t7sEnQbJtfuEXM7ruD6LkRG+zPTZqIDC042GpjK9KjTyfhnObiWzFv0grdwgYUWTxza5NFrmqJRMmRYemrIBL/MeMMgj1J/Ul9NPxI6IQeMKJMiw+/Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+	 To:Cc:Content-Type; b=h+gseUlzaT8KhlAGHCLE6tGAzrGAgKJvB5bqnpUyqe1yvao9Y+3g0oDgkcSgAH7Pc5lLIG+ttpRf1fWXsxxNCofwTe00+WZjtOG24Qy9FXiErjkelnHeTMmsdHOX9lZTOL33xmTrA6W7Pi/sUSDTOOzcR4Jww21qWP1/voczvGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56d958880ecso1775799e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 06:09:49 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-56b8804f37cso2686005e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 06:23:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775653788; x=1776258588;
+        d=1e100.net; s=20251104; t=1775654606; x=1776259406;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H/ehc1JvHivWXa8+tx/BxLqhZP9bLnNS5TsQxkh+zto=;
-        b=b5L5zjX23UZ+KUpxdxkpEv3cQ0IdqdmxQPhc2VOX0kY0nBUHf/eUGDhm2JNlzg8wdZ
-         ZYf0Azpl+Z77bKCu2E4Vk3D128gB88GOXivmrc1JSRvBD5IKsvkfvGML4EvnDxlGEmLF
-         kCWFv9q02XO68AdoLXDq9Y0/hVqefXVqlO1q9e0XTZ5gNrBY/Y6dr3iC+7i4BKqFDbTN
-         rxouoTxd+Ane98Hk9VHu46HPX3UdAiiXiz3o/RCvVeFIVuXSoZI4E1cq2bPK1slwmPDo
-         5xXqSDtYElhF7XyXDaqMJWQNwtFJVORVNlnDmf7hMtwbK6gpwgrYUMqbUr1hf4yieHIP
-         VkFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7UqeWooeGTtNBnYZgwqKbkvSWTLi2wq1yG4ZwmtMQjgSC39myKNKBrInshuBhizyKohBtDCGhWzC4Ym6Nfwx0sw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI2eSlcd6E+8ShWJIOUk665o7a3cdqsQXMuViHmfzRqIGPT2Xs
-	7tDYcoxnhd4skZcsPrOR7FAd3Qt4jTxSDstAf2x7GOho7n3ukjvgijt0i3LwVAH+
-X-Gm-Gg: AeBDiesxM0REDz8e0G8GsaL/222RkovDiY3acmyVXiVeFKCdRovtEHcjHDKkMlh6HPV
-	Q3aXNSD0zAmTvZ5HANNEulXRm29j3dxyPdlPXVSSAILJJPhl05cnX898l2AkBWNVxt5/5weeum0
-	GaMZC79RIaP1HwkQbkmh/SKzLMwUjTbEAlegNX71HHN7lwF8Pqicv5uI2FU+wKSpsOy2kiAGc+e
-	9YKC1DaOPpi9WwOq/NS5ueZyM/K37cFN0ZlgKzWVMcblh1wrYhOs54orLdPbIVgzaNoMuUnMcYx
-	HNYyU6XERLXWpXzxHbivN/crAA3Lrut+z3ZRQBQgnBKL+EjmkjcJF8s6X6hTKuB19eXtVD7VEIL
-	5poKtI9pXUz1ngCEUYRFqxcNyWXHrm1n2KU5+zJ6apnM1tLUb4aliavfUuB9V4phwVrsgMayDSi
-	VJCyW6uH/48ygOLTl+Jpy3PPWNtYO5scm6Y36IjMOXdAYpQiiRQKSaeeM3UyJB
-X-Received: by 2002:a05:6122:4893:b0:56f:1c32:bd07 with SMTP id 71dfb90a1353d-56f1c32cbc6mr925246e0c.2.1775653788424;
-        Wed, 08 Apr 2026 06:09:48 -0700 (PDT)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com. [209.85.219.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ac56e3a898sm43657366d6.38.2026.04.08.06.09.48
+        bh=8VHgesrf5StiprJKDytJNXvB7R5FJ2lBTM9ZJItFuhE=;
+        b=GLtZCw1TTDeaqvVVwHLthrKdV9d67YRhWHrN+Yv9gCqLP4LCvzIwYo/tlDXdc5FWZY
+         I3AwCf4jlBWgRtqjEIppgWeuv3BcFgzpsI0z7+7ZXLOvbmwUs58cAjrLB+BJtrNGLou+
+         UdxMShD78trxaPfJwh/erBQ/xWg1vUCPJINTyeA5kbTzY7HkFV8vr3RFNw/GN0TnSo+Z
+         oDNhooGYBwej/RKu4B8G64c9i5Nr9nyplrd4wQXLAf7JdXo3LGXYimhcdV093NrfkFE+
+         OENpdf7MVhelX17pPWEzX0CimD2p6Zdrnku5k1wpb3GG4/cz3dBGfs8NfgiYRzL6Wufn
+         bjig==
+X-Forwarded-Encrypted: i=1; AJvYcCUORCt1ZYWt8leAQ2J7/PgkEWCksnP62uaaw3SUDXhIcuzSSEyA9d4diCT2XBUzLyjbVKrMLwzi4QspbiEhpVc71A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynUEs2iEOTS0QgtmBsaG3pNDHlbfZZGSZX00WjeTAaAw8M5d5E
+	OPWWZvqPsTB9JkGf/Or3pJvy6jJB3bDb1hoBelRJNljGBLifrzr8nX+MIfo22HPQ
+X-Gm-Gg: AeBDievsJ2M3A9RcT9MjJTZZdO2kju/X+AnEAettvTP9LKiMdkb4aQ4o/EDeqEdOvsF
+	RancX3fQg27BhA5uUu4Dcm0mzTwJbLwvTXpDbZfQLXaFkcfNthv1k3RFcBz352m7hMOXVhw60cT
+	iAibUuzJCjhO+VzRJhEpzasQ4DYMZ8fiTIXrUmfG2diQLDZPLHTqGonV0NVViwmXeU0psM1F6Qy
+	OAIDC/gZZMGJtOBI4CJPItLrmFy98rA3pThKuKryydMjlni/QGh0LsitzPIlzi6Bj41h9syqlKs
+	qje4TCgX5x69jCdQEWAwNRTZe4WMd+uGAiviRiS3mOCe46B6wUpsbknZzQGOuGsFHowCKixrR+1
+	7BOTesQKV0Sk9y1sEg/cmPJjtIQ7hb7e71dE6amvO64wTE67FoKt/QXv/VKSgcKZ4Wf4GflE+0w
+	rmYixv/lq281I25V2rqEyntkBH63pyGHVPUHSSGArikL09lsbLW7VEx9YAD1GglAFn
+X-Received: by 2002:a05:6122:4891:b0:56d:9e98:4676 with SMTP id 71dfb90a1353d-56daba1f4famr8435641e0c.13.1775654606446;
+        Wed, 08 Apr 2026 06:23:26 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d9ba8019bsm20172911e0c.1.2026.04.08.06.23.26
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2026 06:09:48 -0700 (PDT)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-89cc797547fso72601606d6.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 06:09:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUm5VcR7R4J2x9zg4Hpt+XCBW62PqfHV0rX0Fctou5S9PH4KAho7gkPvMG5NRUbFltmOw+bKSQjj0nuJHT1CmzCYA==@vger.kernel.org
-X-Received: by 2002:a05:6122:a05:b0:566:2711:d8ab with SMTP id
- 71dfb90a1353d-56dab90cf81mr7244283e0c.6.1775653285855; Wed, 08 Apr 2026
- 06:01:25 -0700 (PDT)
+        Wed, 08 Apr 2026 06:23:26 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-56db63456d4so1607778e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Apr 2026 06:23:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWS1Cwg4Yt9fCopjvtpTStZfoEGMnHL4srD+bZmVkBizbZUYTpRLawO8B6oC+kICnOKuT46o1ehqA1jaRVGtDkkvQ==@vger.kernel.org
+X-Received: by 2002:a05:6122:3a03:b0:56f:1a26:563a with SMTP id
+ 71dfb90a1353d-56f1a265761mr1211064e0c.7.1775654605828; Wed, 08 Apr 2026
+ 06:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com> <481fefa0c9f6f0629a663fe3da1fb17e7f4a1a05.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <481fefa0c9f6f0629a663fe3da1fb17e7f4a1a05.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com> <9595f56ce8ab120477bfc11eaafb0f2b655d049a.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <9595f56ce8ab120477bfc11eaafb0f2b655d049a.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Apr 2026 15:01:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWimH9kaOcwVx1LnujT=Lbm8cE50mj+YFxtBQMZCT0N8w@mail.gmail.com>
-X-Gm-Features: AQROBzB38k87n7vfkgAHJ2zbU_998n7zblsjoYLjCSjeXBMYaqe_VAmcFna50bs
-Message-ID: <CAMuHMdWimH9kaOcwVx1LnujT=Lbm8cE50mj+YFxtBQMZCT0N8w@mail.gmail.com>
-Subject: Re: [PATCH v6 21/21] arm64: dts: renesas: r9a09g047e57-smarc: Enable
- DU0 and DSI support
+Date: Wed, 8 Apr 2026 15:23:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXr_=E+WhCd0Tfrehn+2Mo3L+GUUUCWX5vc-gunYx_oTw@mail.gmail.com>
+X-Gm-Features: AQROBzCAS3tdwS4I5i1ony0ZYqV2Tos82DINalsSZpND3OxFU3AJc31boq9f15A
+Message-ID: <CAMuHMdXr_=E+WhCd0Tfrehn+2Mo3L+GUUUCWX5vc-gunYx_oTw@mail.gmail.com>
+Subject: Re: [PATCH v6 06/21] clk: renesas: r9a09g047: Add support for SMUX2_DSI{0,1}_CLK
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: tomm.merciai@gmail.com, laurent.pinchart@ideasonboard.com, 
 	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
 	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Tommaso,
-
-On Wed, 8 Apr 2026 at 12:40, Tommaso Merciai
+On Wed, 8 Apr 2026 at 12:38, Tommaso Merciai
 <tommaso.merciai.xr@bp.renesas.com> wrote:
-> Enable DU0, DSI and ADV7535 on RZ/G3E SMARC EVK.
+> Add support for the SMUX2_DSI0_CLK and SMUX2_DSI1_CLK clock muxes
+> present on the r9a09g047 SoC.
+>
+> These muxes select between CDIV7_DSI{0,1}_CLK and CSDIV_2to16_PLLDSI{0,1}
+> using the CPG_SSEL3 register (SELCTL0 and SELCTL1 bits).
+>
+> According to the hardware manual, when LVDS0 or LVDS1 outputs are used,
+> SELCTL0 or SELCTL1 must be set accordingly.
 >
 > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-> @@ -33,6 +33,7 @@ aliases {
->                 ethernet0 = &eth0;
->                 ethernet1 = &eth1;
->                 i2c2 = &i2c2;
-> +               i2c7 = &i2c7;
->                 mmc0 = &sdhi0;
->                 mmc2 = &sdhi2;
->         };
-> @@ -77,12 +78,47 @@ reg_vdd0p8v_others: regulator-vdd0p8v-others {
->                 regulator-always-on;
->         };
->
-> +       reg_1p8v_adv: regulator-1p8v-adv {
-
-Please preserve sort order (alphabetical, by node name).
-
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "fixed-1.8V";
-> +               regulator-min-microvolt = <1800000>;
-> +               regulator-max-microvolt = <1800000>;
-> +               regulator-boot-on;
-> +               regulator-always-on;
-> +       };
-> +
-> +       reg_3p3v_adv: regulator-3p3v-adv {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "fixed-3.3V";
-> +               regulator-min-microvolt = <3300000>;
-> +               regulator-max-microvolt = <3300000>;
-> +               regulator-boot-on;
-> +               regulator-always-on;
-> +       };
-
-Why not reusing the existing reg_1p8v and reg_3p3v?
-Note that reg_1p8v driving eMMC and QSPI are also not the same
-physical power rail.
-
-> +
-> +       osc1: cec-clock {
-
-Please preserve sort order (alphabetical, by node name).
-
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <12000000>;
-> +       };
-> +
->         /* 32.768kHz crystal */
->         x3: x3-clock {
->                 compatible = "fixed-clock";
->                 #clock-cells = <0>;
->                 clock-frequency = <32768>;
->         };
-> +
-> +       dsi-to-hdmi-out {
-
-hdmi-out?
-
-Please preserve sort order (alphabetical, by node name).
-
-> +               compatible = "hdmi-connector";
-> +               type = "d";
-> +
-> +               port {
-> +                       dsi_to_hdmi_out: endpoint {
-> +                               remote-endpoint = <&adv7535_out>;
-> +                       };
-> +               };
-> +       };
->  };
->
->  &audio_extal_clk {
-> @@ -107,6 +143,37 @@ &eth1 {
->         status = "okay";
->  };
->
-> +&dsi {
-
-Please preserve sort-order (alphabetical, by label).
-
-> +       status = "okay";
-> +
-> +       ports {
-> +               port@0 {
-> +                       dsi_in0: endpoint {
-> +                               remote-endpoint = <&du0_out_dsi>;
-> +                       };
-> +               };
-> +
-> +               port@2 {
-> +                       dsi_out: endpoint {
-> +                               remote-endpoint = <&adv7535_in>;
-> +                               data-lanes = <1 2 3 4>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&du0 {
-> +       status = "okay";
-> +
-> +       ports {
-> +               port@0 {
-> +                       du0_out_dsi: endpoint {
-> +                               remote-endpoint = <&dsi_in0>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
->  &gpu {
->         status = "okay";
->         mali-supply = <&reg_vdd0p8v_others>;
-> @@ -132,6 +199,48 @@ raa215300: pmic@12 {
->         };
->  };
->
-> +&i2c7 {
-> +       pinctrl-0 = <&i2c7_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +       clock-frequency = <400000>;
-> +
-> +       adv7535: hdmi@3d {
-> +               compatible = "adi,adv7535";
-> +               reg = <0x3d>, <0x4d>, <0x2d>, <0x5d>;
-> +               reg-names = "main", "edid", "cec", "packet";
-> +               clocks = <&osc1>;
-> +               clock-names = "cec";
-> +               avdd-supply = <&reg_1p8v_adv>;
-> +               dvdd-supply = <&reg_1p8v_adv>;
-> +               pvdd-supply = <&reg_1p8v_adv>;
-> +               a2vdd-supply = <&reg_1p8v_adv>;
-> +               v3p3-supply = <&reg_3p3v_adv>;
-> +               v1p2-supply = <&reg_1p8v_adv>;
-> +               adi,dsi-lanes = <4>;
-> +               interrupts-extended = <&pinctrl RZG3E_GPIO(L, 4) IRQ_TYPE_EDGE_FALLING>;
-> +
-> +               ports {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +
-> +                       port@0 {
-> +                               reg = <0>;
-> +                               adv7535_in: endpoint {
-> +                                       remote-endpoint = <&dsi_out>;
-> +                               };
-> +                       };
-> +
-> +                       port@1 {
-> +                               reg = <1>;
-> +                               adv7535_out: endpoint {
-> +                                       remote-endpoint = <&dsi_to_hdmi_out>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +};
-> +
->  &i3c {
->         pinctrl-0 = <&i3c_pins>;
->         pinctrl-names = "default";
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
