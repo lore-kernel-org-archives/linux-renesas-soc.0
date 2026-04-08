@@ -1,105 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7ED2BEFFF;
-	Wed,  8 Apr 2026 18:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC7385513;
+	Wed,  8 Apr 2026 18:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775671529; cv=none; b=lF7s23sQ0rimBau/d3CM+I2z2D1xg4wldB4W8NUY1l56dRhSknwGg2wLSgjTsxLlV+0K/9ERXeFrEqPxNlYb0EZaMPCqIsb/A2y/YO4p5D/8ZOMfTQTTweoCpQ4aJb+Jah0agV7fmZcMkgabjLgFnp/mh+a00mDF+iHY8U0VTws=
+	t=1775672121; cv=none; b=nNBnkKdte5S9b1f20FcxDWHRhcI/Rw4krVujq+wN+seV2tr7n0lTxhm89RCxioEFEdRO44u0r5MzSrikt42XSCgvrG+wtDrBIBIP02E2ceHgj2Ryg8wszeiY8W6jWo0HqNoPwd4fXTz0sFezM8GSG/PDh3lrhuKczuqoRYPMdac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775671529; c=relaxed/simple;
-	bh=GhyHRrnRDdoZEf3u2lIzQom5Mm/U0u0XxoBDoA6t7sQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dD6TdzzEfO54rnThdlts/qNOG5JJ2XzTDXrKAgHfkzkrrihXqWKYyBmzQ3UqGgPABkzLmAhTyN3QmM7yMnNEOUKEn8PrxL8rtbVStj8pCLdSHl7qnPbZfWcu6L+wNRO7hSzk1bD5SCe8ddP2533XMe5GsoCdih/HiiFKs2IGK5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBHl+gQL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775672121; c=relaxed/simple;
+	bh=U5N99pSeLajzDDGN7pkmqfhQpRr+EX4p8ltQRS53UJk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=E4yAVT8RKgvq8VQKHEYRHvw+bolyXLmYIdYgUxol3A66Je7ChjkurqYRxNTT0F4B2QoYQdQkNzAQ+XNGDGKWRy88WYCRxS4puLhwD4pIAaErpAT6Tk6Cphw+73kudc6L4n2VeAUa8vEA9P6kbrl3XQJz4X7P0W8JBSYpGzhjzxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=kH7YfPMM; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBHl+gQL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211FBC19421;
-	Wed,  8 Apr 2026 18:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775671528;
-	bh=GhyHRrnRDdoZEf3u2lIzQom5Mm/U0u0XxoBDoA6t7sQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VBHl+gQL3K0YD8ZaOTd/UgUkLx1IRN4VvaitxXgAUlcQSTUTXK/WbIkIPncHv6f+H
-	 00ZmLuF0C/2s2iUahTvvd2f5aimVVdhyVMlvnLdLmAOVRupoMOPqzLXUSSprahyeAg
-	 YGjWuAMdVip4A9G/beaqSSqOGvlxoxjZr6fNbx3NAbR+FQThvj/iWP0nI840AJyJ4C
-	 7IBwi8U2kA0T+92AnAQ+5YIj8rEbWFre21HU810K3IiPXBzt/YWMjIaTzLBhk+4dta
-	 +j53W/SXt1ar/18EWjZ4G9Kwi2XIa4hMQKonVh9NsVSwM6qL9G5XQ80J0NfSBVwMyB
-	 5NzB7UfIo+YtA==
-From: Mark Brown <broonie@kernel.org>
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-spi@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260408085418.18770-1-biju.das.jz@bp.renesas.com>
-References: <20260408085418.18770-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v4 0/2] Add Renesas RZ/G3L RSPI support
-Message-Id: <177566031748.101848.1310660051859646381.b4-ty@b4>
-Date: Wed, 08 Apr 2026 15:58:37 +0100
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="kH7YfPMM"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=default; h=Content-Transfer-Encoding:Mime-Version:Message-Id:Subject:Cc:
+	To:From:Date:subject:date:message-id:reply-to;
+	bh=Dzvz+c+dzLUm/IFQK0oBH4SlRuQdV3daA1JqnO+uzSo=; b=kH7YfPMMHwFsvACNOLGGrJkhRI
+	4dA9qzMSky2cfc3S9jArSm/rMf3pJmRNTlNX5cpnH0C0yH6nfw071+R+eVtWi6033eIs0sp9od9GV
+	AVRSqpTT063AnvTruxMI1GErONeCbNYmsugzZ99MBsEGkzg3Eg7IiQ0CxIWbO5ANbZd0=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168] helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.98.2)
+	(envelope-from <hugo@hugovil.com>)
+	id 1wAXQp-0000000048M-1iGy;
+	Wed, 08 Apr 2026 14:15:16 -0400
+Date: Wed, 8 Apr 2026 14:15:15 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: biju.das.au <biju.das.au@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Thierry Bultel
+ <thierry.bultel.yh@bp.renesas.com>, wsa+renesas
+ <wsa+renesas@sang-engineering.com>, Prabhakar Mahadev Lad
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+ <linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] serial: sh-sci: Avoid divide-by-zero fault
+Message-Id: <20260408141515.fc210b4b3c86f7a61f680dd1@hugovil.com>
+In-Reply-To: <TYCPR01MB11332859E901171C91C543061865B2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20260408142105.310210-1-biju.das.jz@bp.renesas.com>
+	<20260408142105.310210-2-biju.das.jz@bp.renesas.com>
+	<20260408123039.922a75327fd7672df3bd61da@hugovil.com>
+	<TYCPR01MB11332B594964DDF0763499184865B2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+	<20260408125142.24cd94f094ba3ca512e7f346@hugovil.com>
+	<TYCPR01MB11332859E901171C91C543061865B2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1457; i=broonie@kernel.org;
- h=from:subject:message-id; bh=GhyHRrnRDdoZEf3u2lIzQom5Mm/U0u0XxoBDoA6t7sQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp1pjlO0VFZ9Mmwr4g5MPC/IjkRBKXtwYYKcO94
- Ggex8iGxACJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCadaY5QAKCRAk1otyXVSH
- 0NcFB/sGR9+36PoNhe+h8cpOP4fDRRiY+KFWWoAlHZKhSzdpfxzb7uu/wtef2wma5PehJf17mS/
- dHTdnMtKyqfKQP1ZVovAG9BYtP3d2NMPpA+LncgzMsIb1Q62Bk1/VNjv6y6Gw5Whuxa8m7D+kzh
- zThI/bpVYi/t3vejjuAyUEzP0XbNysf/vGONV1jY6TyhZf9V1vMipRTqMfPE6pw57/haYG1JEkw
- OTH3x+iEmLkxQwipk+61ddGcnwn62jiAzcJpEiH6iyApcZ+hn+wIsfGY56E9/rnnyy4G+wnWbpf
- Oi40zvR338BOo6rwvCvFXEzssZCNkAJ1gRW11/wPQpSBmrJY
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam_score: -2.0
+X-Spam_bar: --
 
-On Wed, 08 Apr 2026 09:54:13 +0100, Biju wrote:
-> Add Renesas RZ/G3L RSPI support
+Hi Biju,
+
+On Wed, 8 Apr 2026 17:25:19 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
+
+> Hi Hugo,
 > 
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+> > -----Original Message-----
+> > From: Hugo Villeneuve <hugo@hugovil.com>
+> > Sent: 08 April 2026 17:52
+> > Subject: Re: [PATCH v2 1/2] serial: sh-sci: Avoid divide-by-zero fault
+> > 
+> > Hi Biju,
+> > 
+> > On Wed, 8 Apr 2026 16:35:44 +0000
+> > Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > 
+> > > Hi Hugo,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > > -----Original Message-----
+> > > > From: Hugo Villeneuve <hugo@hugovil.com>
+> > > > Sent: 08 April 2026 17:31
+> > > > Subject: Re: [PATCH v2 1/2] serial: sh-sci: Avoid divide-by-zero
+> > > > fault
+> > > >
+> > > > Hi Biju,
+> > > >
+> > > > On Wed,  8 Apr 2026 15:20:58 +0100
+> > > > Biju <biju.das.au@gmail.com> wrote:
+> > > >
+> > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > >
+> > > > > uart_update_timeout() computes a timeout value by dividing by the
+> > > > > baud rate. If baud is zero — which can occur when the hardware
+> > > > > returns an unsupported or invalid rate — this results in a divide-by-zero fault.
+> > > >
+> > > > baud is returned by uart_get_baud_rate(), so this is not returned by the hardware?
+> > >
+> > > You are tight, Will update commit description.
+> > 
+> > How can uart_get_baud_rate() return a zero value? If I am not mistaken even for the B0 case, it will
+> > return 9600?
 > 
-> This patch series adds binding and driver support for RSPI IP found on the
-> RZ/G3L SoC. The RSPI is compatible with RZ/V2H RSPI, but has 2 clocks
-> compared to 3 on RZ/V2H.
+> As per the comment and code, this API can return 0.
 > 
-> [...]
+> * If the new baud rate is invalid, try the @old termios setting. If it's still
+> * invalid, we try 9600 baud. If that is also invalid 0 is returned.
+> 
+> In drives/tty currently only 1 driver is checking the return value
+> and it calls panic
+> 
+> https://elixir.bootlin.com/linux/v7.0-rc7/source/drivers/tty/serial/apbuart.c#L214
 
-Applied to
+Hmmm, more than 1:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.1
+icom.c:
+    if (!baud)
+         baud = 9600;    /* B0 transition handled in rs_set_termios */
 
-Thanks!
+8250/8250_fintek.c:
+    if (!baud)
+         goto exit;
 
-[1/2] dt-bindings: spi: renesas,rzv2h-rspi: Document RZ/G3L SoC
-      https://git.kernel.org/broonie/spi/c/5277c291968d
-[2/2] spi: rzv2h-rspi: Add support for RZ/G3L (R9A08G046)
-      https://git.kernel.org/broonie/spi/c/9be114351647
+> I believe we should call panic, if baud =0, instead of proceeding.
+> Geert, any thoughts??
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+There once was a warning, removed by:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+commit 23bf72faaebdf2cb199c0ef8cf96467b10904b35
+Author: Max Filippov <jcmvbkbc@gmail.com>
+Date:   Tue Oct 10 01:59:22 2023 -0700
+    serial: core: tidy invalid baudrate handling in uart_get_baud_rate
+    ...
+    Clarify that 0 can be (and always could be) returned from the
+    uart_get_baud_rate. Don't issue a warning in that case.
+    ...
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Hugo Villeneuve
