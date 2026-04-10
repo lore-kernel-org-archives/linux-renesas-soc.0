@@ -1,113 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B9E23EA92;
-	Fri, 10 Apr 2026 16:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A280E3DD51B;
+	Fri, 10 Apr 2026 16:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775838565; cv=none; b=UZI7VW8+3GP2rbabonyaDWRGAwBe45nL6Jxdu51S0g3Fhg6eVLlYan5bsrkiAlbCTXNgU/Lnx6aPtUh6/VlOi8y/nWTWd1OYj9lhLsrGnu5hVoSoHEC1GpDjHUEsfo1HdUhfPYtCOjpKOaUkZBgAR1EqyRNQ7BX3PZqdZeZYDPI=
+	t=1775838993; cv=none; b=GS8Y3+20n5aLrst/eoB+DSNTGFhgf8w3cua/1x7rGbiXb5Z0gVrnO6mWCe+Km4FSwd4dcXYNhpbNT5+NXsYsT/ieW4B2OMtt8mxapxAWyRIe7Yl8d5JFX4OiaJJ5Rhuq/1VMMl74sJz/uQsDx5DeeesjA5jUG+2S5z+4iOmn//I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775838565; c=relaxed/simple;
-	bh=Yjk/98TJLyq9/SO5ax/zuYcqbnEKqgEWfUM/H/5nOFY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P/niHmnC7MmamKpOAJwo/f99816FmjUvFSQ7mxxpE2GedCK+K7Ryxt/3EyxrWOc4CZQ3IC30fqPRPeVBhm4/bRhBVZHB9dD3EqZM2LFojtMMOBtsqIVf2VWDQlDuNIwY2PwMgTyISuYeU68q46Mtlu6rS41XMORLbwquoIDAYxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDMz/eBL; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDMz/eBL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E89C19424;
-	Fri, 10 Apr 2026 16:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775838565;
-	bh=Yjk/98TJLyq9/SO5ax/zuYcqbnEKqgEWfUM/H/5nOFY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=XDMz/eBLMNQD/aoBj4eR2IRHsB9kbk/X2mFw9ZTN836e49Oed3Rs7uzeNhBB0Hf6R
-	 fDSZ80ZbHWemyc+lLt55If40qT1j4EsndOJfEGBgb1tR8GtqScY6eM+sy6ztNdVClP
-	 bic7Yi9Hf/jEqo7mLKv+DiPHugiTATLoz8HrdUDqjXIiuRG1haBW5+DXIvShodHOOw
-	 DTiA09HOreogd5RIczTgCBIHB1M0GkFq9r91faY1eM1aRx4iColZQivRCnReOaPRp3
-	 1Yr5BafkbgzaBA8aWSze2D/D02pOSnikqOUbIdCb82uBbdbyB2ZwvCQ/6LEP5/lo7g
-	 chloTTQu5mzsA==
-From: Mark Brown <broonie@kernel.org>
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
- Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260410080517.2405700-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260410080517.2405700-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 0/3] spi: rzv2h-rspi: Fix max_speed_hz and clock
- configuration issues
-Message-Id: <177582360550.1175120.15096708255588882361.b4-ty@b4>
-Date: Fri, 10 Apr 2026 13:20:05 +0100
+	s=arc-20240116; t=1775838993; c=relaxed/simple;
+	bh=MHsuapnVqVvtErwyI+RLIPBL2U+Tz9GyW/nkEUEMkhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G0N7sKok0+1lOyRDJhXD80c4oKFCvK7cT1YaDoV2qI4XOtZdnRgwciNquSKYu+fVdwedoTn6DxmJkIrCN85JFO3Na2ApWObK3X0SfMEEO3iQpskoPw3a39YTCCNjoY9xohANFolfv2hs2nakPl6rr7b/ecyLAzgaHNW9WR+g6Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: uxruXWlLRKmiakba6A6Wig==
+X-CSE-MsgGUID: bp8J//fcReioQBLYlud6ag==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 01:36:23 +0900
+Received: from demon-pc.localdomain (unknown [10.226.93.85])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C7AFF400CD4C;
+	Sat, 11 Apr 2026 01:36:17 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH v2 00/10] Add MTU3 for RZ/T2H and RZ/N2H
+Date: Fri, 10 Apr 2026 19:35:20 +0300
+Message-ID: <20260410163530.383818-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1985; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Yjk/98TJLyq9/SO5ax/zuYcqbnEKqgEWfUM/H/5nOFY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp2SVi98uv4C18ECGZw51oNttJcT0+YbzCgJ7eL
- zoqfCXdkuqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCadklYgAKCRAk1otyXVSH
- 0BJyB/4z8/7oyUzP12RlejYlVqD8U/omzYrS74b+XGy9upM7MEagK2CMoKk3mRErjYgeflrDVNa
- mN6SYVyV+aG9u1G58Ne+laco997hVHyayFckkbFuJKieawQkqoL40j90n0EKSeuP1DRQgf1rciq
- D87qnJZNHrLbDdEAw8bI6wFiTiA8eAwQXU6XzoDhbM2ogI1sGSXjvWCCwKOHiiNMOLhG22CKDLd
- hNMmdjLDCf4QBDbMO9rr3GwcGQWUYg2KkkAKl8oTp79ymUFQ2ica2bviz8xzmy39Cp8i+HP9y6V
- IjPaQdd5GkB/lNXyhY9AtKPRZA/egPKCS4OnIhunbMTWaEnZ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-On Fri, 10 Apr 2026 09:05:14 +0100, Prabhakar wrote:
-> spi: rzv2h-rspi: Fix max_speed_hz and clock configuration issues
-> 
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Hi all,
-> 
-> This patch series addresses three issues in the RZV2H RSPI driver:
-> 1. The max_speed_hz field was advertising a prohibited bit rate, which
->    could lead to incorrect behavior when userspace applications attempt
->    to set the SPI clock speed.
-> 2. The clock configuration logic allowed for an invalid combination of
->    SPR=0 and BRDV=0, which is not supported by the hardware.
-> 3. Simplified  the clock rate search function as min/max speed parameters
->    are not needed.
-> 
-> [...]
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have an MTU3
+block. Add support for them and fix the non-existing TCIU8 interrupt.
 
-Applied to
+V2:
+ * reword to mention that TCIU8 used to exist
+ * squash "move required resets to conditional" into
+   "document RZ/{T2H,N2H}"
+ * disable the resets in the else branch of the condition
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.1
+Cosmin Tanislav (10):
+  clk: renesas: r9a09g077: add MTU3 module clock
+  mfd: rz-mtu3: use device-managed reset deassert
+  mfd: rz-mtu3: use device-managed mfd_add_devices()
+  mfd: rz-mtu3: store &pdev->dev in local variable
+  mfd: rz-mtu3: make reset optional
+  dt-bindings: timer: renesas,rz-mtu3: remove TCIU8 interrupt
+  dt-bindings: timer: renesas,rz-mtu3: document RZ/{T2H,N2H}
+  arm64: dts: renesas: r9a07g0{43,44,54}: remove TCIU8 interrupt from
+    MTU3
+  arm64: dts: renesas: r9a09g077: add MTU3 support
+  arm64: dts: renesas: r9a09g087: add MTU3 support
 
-Thanks!
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 26 +++++--
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |  5 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  5 +-
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  5 +-
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    | 68 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    | 68 +++++++++++++++++++
+ drivers/clk/renesas/r9a09g077-cpg.c           |  1 +
+ drivers/mfd/rz-mtu3.c                         | 39 +++--------
+ 8 files changed, 173 insertions(+), 44 deletions(-)
 
-[1/3] spi: rzv2h-rspi: Fix max_speed_hz advertising prohibited bit rate
-      https://git.kernel.org/broonie/spi/c/4e292cbf3890
-[2/3] spi: rzv2h-rspi: Fix invalid SPR=0/BRDV=0 clock configuration
-      https://git.kernel.org/broonie/spi/c/0335767dd8e7
-[3/3] spi: rzv2h-rspi: Simplify clock rate search function signatures
-      https://git.kernel.org/broonie/spi/c/c958bb67b2df
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.53.0
 
