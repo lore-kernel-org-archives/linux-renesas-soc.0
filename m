@@ -1,155 +1,124 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F061F507
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2026 14:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3195A30FC23
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2026 14:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776002439; cv=none; b=XvoLosh3pBiZlU/M5VapFxlFT0BAnH1vBrzh0tkghWxl3c4e+iaFsSMXhEyIhgjhGfAwS3mKSnkar8OWphllvrvftymDfI7JUnEGvF7oKPFCx7yMo7qZmRnNiLgfX0J1RkSuG58Jte+Wz8uIpyyYQt3Yiz46ttbWxhonhAMspZk=
+	t=1776002440; cv=none; b=WPmepBiowR9owk+cVDasV/exLifeVuz6/C7PM7NhkfkXYCiTPDKsOg5/kKmwgJFYLcJ2x+olfPPvHCHNRqdiUMFt6HXlZsIPmIB49yTg2dM9kom3bkP+Dpp1aWbQuqUzCYzKrVpMC8Y8aD6OqVASS+xHsCMVHtwQih1XxvY/cP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776002439; c=relaxed/simple;
-	bh=/sqScrnw3ggo4gUALiOlFcqYn0WWnguQdDnIl/9up9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NPGRITwntZ1viWl6vQQS0Wp+ZL9Y+9ciWdiXb5LhLbh364G6a7tZUDC0o/PkNkaUO59j3e1fjB+muBpqG1q8Rt/FWWl2reVV5M07U9EBiK9ZwgNV2svBeFnVtrhLPkCDDyDKnL7J9kHlb+hf1Yhqi1wGkT1ivh4BuQfMor62cus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m30I/4sO; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1776002440; c=relaxed/simple;
+	bh=0kCU53SzmV+uinnrkVidKHIPcWwqk66luWO+WnEojvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SqpIdkM+4VeKSY/PierXyKkCyxTbrCiZCQ7vO3OjCwjw8cs2MdogX/rq/b8VCBZi10IpO2hOQyxCsdQ4wrg3fVPx/+OjXPJt26CfnD1vUZ/yAfr2uHp7b+plepZzlx1S60VUvIJgjIowRzNwrxv0g6+IUNtcm2eET6e44EhLmy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djZqx/vD; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m30I/4sO"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43d73352cf2so394415f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2026 07:00:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djZqx/vD"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-43cfe71e5d3so2508573f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2026 07:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776002436; x=1776607236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OBLPLzgMTGCkIPvjqhv1Ou+HTen4SAjdH1A4wTecJ/M=;
-        b=m30I/4sOYT0SmbIfDGQkVHndhSlDVIHvR6JkTSYD0gvKYg0cuJwE+PqkuCWvDvQAh+
-         TZm/Hygev7n2B6fFQnaBFTdUliQud5LzrLWm2pGSxu2zPmkEm99tWQINFnK4Viz2ohm9
-         ql5D1fDiaKE7WoIRxoPFQktFbXniIhrt5OnIPIZyq1iQ+iGT0nUFzKSEFT54xGves3Ac
-         OoCIQHX6+x0BrncqZWJp+ZgI5WIZz3ol2tMgL+PruFUW85zwUxIaqT6HV6fr8x08BLhp
-         bvXyuwyhYpCeDuy4ZyfGXoBJYVWP7DIXCkEBke12TVXw8gpvxmOPhC3yoDhU9J4Xmcf7
-         H9dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776002436; x=1776607236;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1776002438; x=1776607238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OBLPLzgMTGCkIPvjqhv1Ou+HTen4SAjdH1A4wTecJ/M=;
-        b=Y28HnhUpTHJKWGlV7kzlzVjeHy8WRJ2nKgV0j/M6S2jm1SxPGn3dHNbnSqS7F9nkbC
-         23MXJ5aJMpXUk2j0kRBto3ntZfS+Qq+W9k3f9s8F/CVTTvC+jqsAob+ivyGS0GkyPUIZ
-         w7c73GLOzIDihSfBs/hllorgf5OE7nYVxGbH3FGiS4PwqWQ8F33LdYnJ/gMIvyqX9hwj
-         jWTFIDn82GKU87vGqudAOEkXnleaWihyZgMv84/kmxmhWO1DWRiRZ0m/yCubeyE0RMTM
-         dylabKxnmaZw/wcSvWymiqm7xupaUa4XEANMu/DwTfLFuto3a4rfsIPM2c1ukO6LB6wc
-         Maew==
-X-Forwarded-Encrypted: i=1; AFNElJ/6auCan3nreuOfdQJt8j9IACdXjUsx9ETl4lp7JoXzbBlReMwBd5ET8mbnIzgHXfRhwcBTW4FKdl8ct6fYEvA0xA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx8sNBQBKWRlyEpUbxe0MhmT+U1V2xJrLJeA2jEIXr0uley8hY
-	I+B3Prz/AkUhdZkk2/8F6y5fpFbXNQ0lT1sP+R8X4TrBMcMpA0YyTXLg
-X-Gm-Gg: AeBDietleUqCRamMyRwqc47Mvqgd1Cniz+wA8miejLUEbQsI3XevTcNxZoRWSrPA/+c
-	D/PIVLvJLaTh2QiUfGob2vWXiw5mHDLcAs1a7cc5BC/L0va9BIl7sh7lbFV48G/ckZN2BYCRa6G
-	6oYJWK3DiB9mH8d4npMBHuCVgZ+UV/rAxuAqKABx8gfpRPIcs1W9XNRmGU34i1VeZmhZrMcAhR5
-	TaGFxb0dndd82jox8b3xD/e62c3zjHomMM+VslliTt+h7JPVF5aIb6HTO6ihZzNECtp7xvm0CK4
-	9u1eRDqcmNzHzJjzPtRaiJiZ8geMGGOwKKl5P7HM8x6Y6lOqvI7vbwvm0yHdRfhEOzMj+bDmFVh
-	GUy9MGnAov7DbFYF5nJBeGh+fy+wGFqMQAdQiCclY20PCBXLDhsU5jqCisPUwDCD+jbwmofDRY0
-	J4SzGiEF5uTGXEhfG8kxgJGyVr+XEaI84tHIw7xjdUsHcN3IPN
-X-Received: by 2002:a05:6000:1a8d:b0:43c:fde6:212d with SMTP id ffacd0b85a97d-43d642cd3ddmr14625503f8f.33.1776002435503;
-        Sun, 12 Apr 2026 07:00:35 -0700 (PDT)
+        bh=jIWV0wD0IVAod/dfAsNX5Qr54zSgEU8/W7tRZNFLB0I=;
+        b=djZqx/vDe5Thv2DKY82iTkaU9cAkcWPQvWc4bWhja7r817oLp/YSNGxS3nw0O84FC6
+         hZt6b7pCHb+vWOm7HSZQxlPaIdubIu0yOOTBOiacnV8XC1HzfsNcqUh0H3KL59Ro4D1p
+         Mh9WdGLX5+ffSbT27xs6HjbcNHTohWdXWAycl0zhAlJ1kL6MFRaSgvAXDfoI2TdVIjoC
+         fgEUkVtkP43QVLKba8MuDKkgldZJTYwX/lgMe/EhufTOOhLS4kAD9urVf2XZwNzHbPwF
+         4JTcxBIYp3naWyIpYeqHmXEX6ByTDy/AkGo6eyHpbWKgDRTmVoSbj3RwF6uQQdI/ikDL
+         fr4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776002438; x=1776607238;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jIWV0wD0IVAod/dfAsNX5Qr54zSgEU8/W7tRZNFLB0I=;
+        b=sVwUkA9I7S72GhS7emKchD6d/B77KpOlSut0rMGIHeky70M8VVA0KMI/e/uQQH31UT
+         F+8XAnDGDmEU8/QAg3jXs9qBf9TCtIAfhMl5UB6hZ4Wy2ytc+FJ8W0GrIEgWRlSleXED
+         lIQYyxV2IphWpfqTiFOkUbDgl/SBv8dPcA7r5u0qoJAb2hwFk533+2Dqpf5S4J0aiODi
+         GfobKlBcILm6+qn/w1jTJL0dl6ZIfVIh4GZOxz4OXC11MO9JlXAC4Ekxz/qyGkM5wszK
+         w8j18ybmgSnaiW4qCKgGqlzEOb/D51dxmWGwSGg4Jirw3nwKRJNPskImEdcj8r+TjNmJ
+         ge9A==
+X-Forwarded-Encrypted: i=1; AFNElJ96kBc2YbRTrzXmmfG9W4irZjAAqIf8pEr1dRn+OD+3I96i9pe55uIPTh7zsJ8449z3plm+6WwNtzerDImgWE1olg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVIzlT3mD3oDBtf2GJ/KZEOkuyzckOhXQlWky+4L3RFf+20dcm
+	h0UzBNAdci4uX4paEZ6vmmYZdBfNibf3VAI8/ebnuLSMpa/htrY2iSlf
+X-Gm-Gg: AeBDiesMbWdzBg+hyToZ9JgHz9jrCgUKcq0GcmME9r8i4hNIspb6FLoaj2kLHtNgFaj
+	H4DnOXN0ylQrtLY4LHxYxKlP/cFIsuoe/9QcwG0ExXQxutHV/w6hTQVaMcTF96e58IiVWE1l4/R
+	xtJy5ydIKE45w8YVqjq/TxIF+lF9d+jnS7B42+LUoibTyD+e1g0UHJr76IUQRnD6aDb49gJfD4z
+	lS7hbsrPHKA+tyDec2wrnru2qXsseKu9gvapokWwgvVQ/NEUJtnyCBAqxF6pO6JNXOTiNYLkHnz
+	XMl2HfTC5rEmR6d8zWQvquB5d4KQt+Px98LVuOoulXfBUM6Xp3lTrHq8jZ1DZac9mpq5keNgLW5
+	YzPges315mqeGQdrLyYTW1KhwA4ZzKulCRpbUfyw5KkiwP0HzNqSGwJqRhPpXABfolEJfw2qAtq
+	qvrdG5/j8R0mfMiqaw2f2XXAh6TwmK78QweEMEKna0a3dM8AtN
+X-Received: by 2002:a05:6000:18a9:b0:43c:fd0a:5c6b with SMTP id ffacd0b85a97d-43d642bb025mr14837112f8f.50.1776002437560;
+        Sun, 12 Apr 2026 07:00:37 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:6956:2074:5220:4650])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm26127538f8f.27.2026.04.12.07.00.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm26127538f8f.27.2026.04.12.07.00.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 07:00:34 -0700 (PDT)
+        Sun, 12 Apr 2026 07:00:37 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+	nic_swsd@realtek.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Russell King <linux@armlinux.org.uk>,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v3 0/5] net: phy: Fix phy_init_hw() placement and update locking
-Date: Sun, 12 Apr 2026 15:00:22 +0100
-Message-ID: <20260412140032.122841-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next v3 2/5] r8169: Drop redundant phy_init_hw() call in rtl8169_up()
+Date: Sun, 12 Apr 2026 15:00:24 +0100
+Message-ID: <20260412140032.122841-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260412140032.122841-1-biju.das.jz@bp.renesas.com>
+References: <20260412140032.122841-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series fixes two related issues in the PHY subsystem: incorrect
-placement of phy_init_hw() in the resume path, and drop/update locking
-in several PHY drivers.
+Since phy_resume() now calls phy_init_hw() internally as part of the
+resume sequence, the explicit phy_init_hw() call immediately before
+phy_resume() in rtl8169_up() is redundant. Remove it.
 
-Patch 1 identifies that when mac_managed_pm is set, mdio_bus_phy_resume()
-is skipped entirely, meaning phy_init_hw() which performs soft reset and
-config_init is never called on resume for that path. To make both paths
-consistent, phy_init_hw() is moved into phy_resume() so it runs
-unconditionally. As a consequence, the separate phy_init_hw() +
-phy_resume() call sequence in phy_attach_direct() is collapsed
-into a single phy_resume() call.
+No functional change intended.
 
-Patch 2 removes the now-redundant explicit phy_init_hw() call in
-rtl8169_up(), since phy_resume() already handles it.
-
-Patch 3 removes manual mutex_lock/unlock(&phydev->lock) from four
-functions in the MSCC PHY driver. In vsc85xx_edge_rate_cntl_set(),
-the lock wraps a single phy_modify_paged() call, which is already a
-fully locked atomic operation that acquires the MDIO bus lock
-internally, so the additional phydev->lock is unnecessary. The
-remaining three functions — vsc85xx_mac_if_set(),
-vsc8531_pre_init_seq_set(), and vsc85xx_eee_init_seq_set() — use
-phy_read(), phy_write(), phy_select_page(), and phy_restore_page(),
-all of which operate under the MDIO bus lock, so taking phydev->lock
-around them provides no additional serialisation. Error-path labels
-are updated accordingly.
-
-Patch 4 fixes lan937x_dsp_workaround() in the Microchip T1 driver,
-which was incorrectly taking phydev->lock. The function performs raw
-MDIO bus accesses and must instead hold mdio_lock. The phy_read() and
-phy_write() calls are also switched to their unlocked __phy_read() and
-__phy_write() variants since mdio_lock is now held explicitly.
-
-Patch 5 refines the placement introduced in patch 1 by moving
-phy_init_hw() from phy_resume() down into __phy_resume(), so that it
-is called with phydev->lock already held. This is necessary because
-many MAC drivers and phylink reach the resume path via phy_start() ->
-__phy_resume() directly, bypassing phy_resume().
-
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v2->v3:
- * Moved all the patches into series as the order they get merged
-   matters, otherwise a git bisect could land on a deadlock.
- * Updated commit description for patch#2 and #3.
-v1->v2:
+ * Added the patch into series
  * Updated commit description.
- * phy_init_hw() is moved from __phy_resume() -> phy_resume() to make it
-   lock-free.
- * Dropped redundant phy_init_hw() call from mdio_bus_phy_resume() and
-   phy_attach_direct().
+v2:
+ * New patch
+---
+ drivers/net/ethernet/realtek/r8169_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Biju Das (5):
-  net: phy: call phy_init_hw() in phy resume path
-  r8169: Drop redundant phy_init_hw() call in rtl8169_up()
-  net: phy: mscc: Drop unnecessary phydev->lock
-  net: phy: microchip_t1: Replace phydev->lock with mdio_lock in
-  net: phy: Move phy_init_hw() from phy_resume() to __phy_resume()
-
- drivers/net/ethernet/realtek/r8169_main.c |  1 -
- drivers/net/phy/microchip_t1.c            |  8 ++---
- drivers/net/phy/mscc/mscc_main.c          | 41 +++++++----------------
- drivers/net/phy/phy_device.c              | 14 ++++----
- 4 files changed, 22 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 791277e750ba..cb22105f323f 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -5032,7 +5032,6 @@ static void rtl8169_up(struct rtl8169_private *tp)
+ 		rtl8168_driver_start(tp);
+ 
+ 	pci_set_master(tp->pci_dev);
+-	phy_init_hw(tp->phydev);
+ 	phy_resume(tp->phydev);
+ 	rtl8169_init_phy(tp);
+ 	napi_enable(&tp->napi);
 -- 
 2.43.0
 
