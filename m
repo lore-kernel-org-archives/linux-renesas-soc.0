@@ -1,82 +1,160 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518D37C914
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2026 11:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6078A946A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2026 12:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776081525; cv=none; b=NINfKSekfitRLltpvIt99J4SGTQHZ9HefODsO35PIH2UKaMayr45lA0qhO9Q8IVG7PHSsuv3/RINBdLm+5SNB9o18Hg1kH1f5eV7nY1F3bXV129/qfJrkvrN7HLkbY/y400UBr1UFkGtJIC6Z7jElqy1Q1KuB/BJG1/QTO8S/Cw=
+	t=1776081707; cv=none; b=IIa9LsmQlbIhvEvQgaw2CRIVoT8FZGH5c5v/cOBtea+ALq0wZcwCQVjSFiqvXnK3kkUmn6qT+5xbjCmIrn0hq+4ZW441GRb0gC13w+/WEoWyxjVSHDCjMFc8WBJssVeQfcT2Kn+VZAde4RRSzMDbBZwi2D57HKPDGcECAo4rMf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776081525; c=relaxed/simple;
-	bh=CTaj2fBb6tBQrC29q7U9VIzLkGb/XoplmVPaGMhEfms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjCoXErw4yJBbe50BaNScJusCAUXY78btTuuLDp0896m0HO3yiDOPYGD7dKAkFfHilffI/YIiiB0fNhk8z94tKyi2Wsa9w7HrzXs2STJQuN6kgwDGK/LqwVariRpm3j+wAQ2zMwTL4GUj9P6KB47RWufknROwtXRbErBUX9jXzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SkPc5JO+; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1776081707; c=relaxed/simple;
+	bh=rXeAs+pxXWhQLsfwth7Q5G2j6R0vKHmr919a4IRuB5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W/9Ey5/THCUUcZshW5sb6/uUL3CUp//zuf4F9WT+lzm2oZa6VUv8RyR1XDX9EqgTHlbWFa4d2ePL32EQhrdDN7Gk/zwGzWS2/wgz7Df4Dqw3MXzaC5bfvzz7A/B+p2MlbHFL2mYT6mVbJ1xipDrNSuMX8wbxxQ4PQJXVmMcKw5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fbOGQr7o; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SkPc5JO+"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fbOGQr7o"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=J9yI
-	zcNG17Fe8KvlX3huEhtWxnTshE0yYgtLfeu9plY=; b=SkPc5JO+QFhnwa13v6Fy
-	T+7VRSn/oU/0vDBYd54PXNcQ5M1Ez5ixs7OAUFG5ZDjvrfQps7RbLrQebcGdIYh8
-	6wnc46icRyGmnn8LqiDHt9NAkxcplCDG6swdln2cakjmI71DNdwYRPeDPT4ZnHPA
-	KiOSaAyOw9IMKoKzzF0YbgaUz8HEUQHjzby0Dc07+e5QBh4Cbc23OuiGU6TUpQsE
-	su43ri5/NFzjlg4+6vm4U8uTghtmF2mCkDo4XqBrv87NIqu0PwkZtXSp6iz+9KWf
-	UkmXKx4LtNLI7M9FM7Ce46UHmGVhGm4t9b84dqSI7rx16US/8xSWujUMvA63tEAd
-	xg==
-Received: (qmail 2281618 invoked from network); 13 Apr 2026 13:58:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Apr 2026 13:58:41 +0200
-X-UD-Smtp-Session: l3s3148p1@m80wNFZP2Ngujnvz
-Date: Mon, 13 Apr 2026 13:58:41 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=zCrjZ2kxQ8gV8Q
+	SJ8ayX8lL/M6i1tXw+LcC/RYBjBfU=; b=fbOGQr7oyjlq3kBrYllO5Pvc8YdbI4
+	rtA7spjcfCrsyxpGnGehaY0bF+VDm8SzcsBnLVP0kPJdyGmD2Wx16UgoOrm3+8bj
+	l+oMsIBYqiPD3I79M4oOKg4BGvwoGAIwnBvMoGRWhdm+8HfG7j8vql+lDzXwMJbM
+	zzKUzirICe3AfvSWtEfdukysnvu6XWVf3Exe3nVrLg3td21H52I7tniSrDUlAIpp
+	guRXlFyejRkn3mWGKtquw26HzBKecghKW9TM6vykmErzH4xWLJV/CXl9TbJ+zSuS
+	M8gTfqTOqwUazch/UEQm4nfRpnvE9YZRqTFL50dgG8KGymWsfK4zX0xg==
+Received: (qmail 2282743 invoked from network); 13 Apr 2026 14:01:43 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Apr 2026 14:01:43 +0200
+X-UD-Smtp-Session: l3s3148p1@Z6UCP1ZPOKgujnvz
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@kernel.org>,
+Cc: linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v2] mailbox: add list of used channels to debugfs
-Message-ID: <adzacXjbYoLnycHv@shikoro>
-References: <20260413115416.35830-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3] mailbox: add list of used channels to debugfs
+Date: Mon, 13 Apr 2026 14:00:30 +0200
+Message-ID: <20260413120139.36287-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PxXVwfrsMrdXLUPE"
-Content-Disposition: inline
-In-Reply-To: <20260413115416.35830-2-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 
+During development, it is useful to see which mailboxes are currently
+obtained. Use a seq-file in debugfs to list the currently registered
+controllers and their used channels. Example output from a Renesas R-Car
+X5H based system:
 
---PxXVwfrsMrdXLUPE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+189e0000.system-controller:
+   0: c1000000.mailbox_test_send_to_recv
+   1: c1000100.mailbox_test_recv_to_send
+ 128: c1000100.mailbox_test_recv_to_send
+ 129: c1000000.mailbox_test_send_to_recv
+189e1000.system-controller:
+   4: scmi_dev.1
+   5: scmi_dev.2
 
+Note that mailbox controllers currently can be instantiated at any
+initcall stage. So, per-controller debugfs handling was discarded
+because it is not clear when to create the root "mailbox"-debugfs entry.
+A central file was chosen, similar to the GPIO subsystem, which is
+independent of the initcall stage because it will be accessed only when
+userspace is available anyhow.
 
->  #define DEBUG
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Damn! Sorry!
+Changes since v2:
+* rebased on top of linux-next
+  (used the wrong branch previously, I am sorry about that!)
 
+ drivers/mailbox/mailbox.c | 57 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
---PxXVwfrsMrdXLUPE
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 138ffbcd4fde..d3a29e361f33 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/cleanup.h>
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+@@ -16,6 +17,7 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/property.h>
++#include <linux/seq_file.h>
+ #include <linux/spinlock.h>
+ 
+ static LIST_HEAD(mbox_cons);
+@@ -633,3 +635,58 @@ int devm_mbox_controller_register(struct device *dev,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(devm_mbox_controller_register);
++
++#ifdef CONFIG_DEBUG_FS
++static void *mbox_seq_start(struct seq_file *s, loff_t *pos)
++{
++	mutex_lock(&con_mutex);
++	return seq_list_start(&mbox_cons, *pos);
++}
++
++static void *mbox_seq_next(struct seq_file *s, void *v, loff_t *pos)
++{
++	return seq_list_next(v, &mbox_cons, pos);
++}
++
++static void mbox_seq_stop(struct seq_file *s, void *v)
++{
++	mutex_unlock(&con_mutex);
++}
++
++static int mbox_seq_show(struct seq_file *seq, void *v)
++{
++	const struct mbox_controller *mbox = list_entry(v, struct mbox_controller, node);
++
++	seq_printf(seq, "%s:\n", dev_name(mbox->dev));
++
++	for (unsigned int i = 0; i < mbox->num_chans; i++) {
++		struct mbox_chan *chan = &mbox->chans[i];
++
++		scoped_guard(spinlock_irqsave, &chan->lock) {
++			if (chan->cl) {
++				struct device *cl_dev = chan->cl->dev;
++
++				seq_printf(seq, " %3u: %s\n", i,
++					   cl_dev ? dev_name(cl_dev) : "NULL device");
++			}
++		}
++	}
++
++	return 0;
++}
++
++static const struct seq_operations mbox_sops = {
++	.start = mbox_seq_start,
++	.next = mbox_seq_next,
++	.stop = mbox_seq_stop,
++	.show = mbox_seq_show,
++};
++DEFINE_SEQ_ATTRIBUTE(mbox);
++
++static int __init mbox_init(void)
++{
++	debugfs_create_file("mailbox_summary", 0444, NULL, NULL, &mbox_fops);
++	return 0;
++}
++subsys_initcall(mbox_init);
++#endif	/* DEBUG_FS */
+-- 
+2.51.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmnc2m0ACgkQFA3kzBSg
-Kbb8CQ/+Mqlewf0SczVz8PLd6y9QxvYYIw9NX8kXL9pZ924C1CsZzDfVgrQ9qrva
-APfAXnBNRtAWrUfQ8Iai4ygqD3WY8S0b2JvoTeNq3jTsWto68HhnhASmV9lEIsIl
-JKTk+2ZJZT1Kt4xsV9pRwIEvng/Hnfxtx/ZTKc4nh0/MDPbyW3ZsmgCd3+KOlA4B
-BAVsTCCZP5loJUtFgvrp9T2deQM9EZg3Cly1B4dGptRC5NrCQY2vAFY7jhMT1cfF
-LAorzdFgZta+QUGZKOfWOjFcOf/VO50BmA6p1L0RNzUP8q80gwACpU9EU3CTuNsu
-CuaPtdlb4wPpt14q77fXEo5nCOPvtYrh7lu4IUJbxM/OMyKrpSXTiXOvOzDGr2JL
-6VtJ3q/DIicb0X0umt0Nu/qmaxLCfx/wm3flJNTKmK2e1tk8jvMNq0utJs5TeDS2
-eLokiFK0xz+8OmV0Tedq3fzO885nC1rPMAblQxv/jIsCHIbkGXrlOmybhb5tuiuB
-vy5IVcGiSmk+QDa+hxFFFKfJsRh0pnGjVF6Y1NKDEPh8alVYE3EJcTCSvbE/Vt0c
-2SKkfcSK6TLej11ILn1ojUQhpg+iEGIHZ2djxPC+v5e1GLg3HXOXug1yx0G1thMF
-A6T3cNiN33vwkgwLmxd8VUdQwUNvRjj7gYzD891F8Ov1aGZJJgE=
-=vb58
------END PGP SIGNATURE-----
-
---PxXVwfrsMrdXLUPE--
