@@ -1,113 +1,135 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4593D6698
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 10:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776164049; cv=pass; b=d3XIt+CriYtQ5SKf5P7z8EgLgMA+jvD8yPJQwqex+yZYQ0KaHUSKj5LO1zwuQNUYN4BCZIgv32e+gIHjq4HqyBkLSzTWaVK/7Cg6kPubItvwGmpL0aRml8zv97pge1Bq/pBjnJshXD8QrF97ITXWDO1Jc+js+0IYcaNwvTCf02k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776164049; c=relaxed/simple;
-	bh=IJ6eZNFa4BvzEyhZzc3NkU6Mj7y0nTg/7TgB/BQzNgs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F2E3DBD59
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 13:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776172360; cv=none; b=U/NcW06dbZyRfnTrhd4eCOo5sgB/T0767aRjD0v5GYzfAAMCL3h4PyLd7f6Rr/O8Fw+VlP+z4Zmh8CC1rL5GmptjAYWra5GyN3G8BSvmNX0DgFF/1gXB41GKVnwYTDTy7zxgRjBoe5Q5T1Aogheas/ol8q3cryaVJcUEEDu45ms=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776172360; c=relaxed/simple;
+	bh=fS8zJr94oxWcqsByLfYI69JECmGzWhKtK7dvLqH02zw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mskbjtye4pXjSNVealTMksrw96hWQplyVY5VTGM4RLLcqq8YCayyx6aIoPUV0eVtAEyfKxzEBww5bBS1vxTq37jozuVTvQ6o/hyYev9SKrIx8gx0fXoxLVHjhiP5pLHH9HGmoPkcwm884MHLvTMvRvH/mFJ2JQBtkIajCw1KZaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+bHQ/XX; arc=pass smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=CeHb2Zd9k0a/WEC4BFCKEqcbSMa+ky0nbl3A0+kGldVapuC5NcTMZ8mGFRdfpv/U8uuRHU5T0GUtbJgmabgoNq9gd/FPwK0L4THnQ16kLhszwR5qumbmGx8bL/uOevJXRJdrKwNnrH50EnGRa4Bb6o/IT0lkk2HMVhza20Raxqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+bHQ/XX"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c76b9efc299so2141182a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 03:54:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776164046; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aGpV9ocVOPJHeNfzs3PB7IOlUzL9kQrnPr/HE7h5aVb5G07CDqDgu3VXyZBZcGhuWO
-         rdP2gyaCMy+O6UxThknVuWaqB4XhjAzri13/y5UUdO8aPpzDhqJytez6QZ/AsxlssBiA
-         baaMAZjj/8WoLWITjmd3vAp3teFG/M8FcC1cKTMkRQY0ZE4HXE9wj1wvpuTy/NDDHPMY
-         k4SyIqXp28Ww7U6ilerj/MXQCT5CLJJ61LihQrWy62Q8t2dXTGsISzbenYea7Qehms0/
-         IB74dSHJ3M1rbtjN7J3UGz4USV2yDIAxDCVjD1XU2E6oeIMjXAps0l1oCtCIvwfzNey1
-         cZIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=IJ6eZNFa4BvzEyhZzc3NkU6Mj7y0nTg/7TgB/BQzNgs=;
-        fh=rmusH+yb/0Js4RzlQ/9oAcpS/Rgg+POnYg7+3wJv7pc=;
-        b=Pa3A2OkhWf580uzcD1ov90j/+zqnE6Oush1Y/tNjXe6vrlHCJnefsRg8oF7BwUioH6
-         3SKlx0zz8auqWUbV43Z9VaST2DFjr5+Oabg2BHp/WhrPjFEDb1foXZhWDzcp8RcNSQIT
-         7L4ObkkXint+WzjNz3tj3/LBkDejggi0Ldos1RsbPyKrKrYMdsm/UOmMvqckEWzyGwnj
-         FScynA1bame9RFMWJ/Wv4bAu1vOCbNfK2ER6ToaX0y2wmSug9I99Z3kWpOkW3RdtpinZ
-         Qa8ziMVHAd54Ki1C2fEPafRKiOcVBgoLzmV5dis+lLkNcfuTnvL8HlCu0WubXninRsUJ
-         +0vw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776164046; x=1776768846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJ6eZNFa4BvzEyhZzc3NkU6Mj7y0nTg/7TgB/BQzNgs=;
-        b=O+bHQ/XXtMGwOQKs7GXvIf1SYUw0hn5HcY0huKkwdIYFQr+5ASKkIzPgfvjvu/SPBm
-         wlrKWa7vT2KMB6lrdVmz1jXhGzaMdGt80RelWBHBV27o+OnkDaK4gtNpEY6P/mUzD3Yi
-         FQhIQzuJf48ekau/E2Xt65k1WyPv/xlJNadUaPjFhGotWXGMR/7LipkbY33NXiqjF/Eg
-         AqxCpCr+5GjZVaTbIZlNtBaDgQSvKnz4BnsRIwokRoomXvjWZZqUtyfJ7hNX/UwYSK2A
-         PUl9tqmNgchVRx71zA4nfsGJy3nmyUCsdYffgFWeCxU5eH286nPrCl15Eb80i7HiaRvK
-         1DNA==
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-953ac1602f8so3212569241.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 06:12:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776164046; x=1776768846;
+        d=1e100.net; s=20251104; t=1776172358; x=1776777158;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IJ6eZNFa4BvzEyhZzc3NkU6Mj7y0nTg/7TgB/BQzNgs=;
-        b=XwUxOSg2ctAcTv8hdaJK9QNx0CfsbS2nixHLvdFi0ENROHm2s0cn3vfdQ+M2/PXKUx
-         U4mqo3RfFeGOslWo4gak0ismDlmW09gk7hTdurpFXr/+5rU40QxPo86C+UyI4w8vUUPL
-         pwEU9qSx2AVJFRSWhkb6V3w0TVf6nJzkIoNlSAO1INiL2kF+aOgIz+vGhPZOj6kx27wV
-         Eatu8+iQmee4p9BKeYcZwZ44chh3xFTsUeEmOnsFDjXT8p/ADFd+7xM72+4Atz85lzjE
-         pg3GaMJm4te1XPfhDsSIlfytjqc300p+jM/36YEzoU14NmdXX26rRRhrKKR8RXfv6l8c
-         OERA==
-X-Forwarded-Encrypted: i=1; AFNElJ+w8xJ+ZSSIo3QB/RDdGBEpnbNlOQxFfE3BfOXrKvRy1if4FID7zwfNEaEIyKnqnFsBAb35FJYrD+OSi3Zmx6a6TQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGFxj5fN7boEDdZWe57ULvA/Cuub0fWUqzXgVxbbdn2G+3H19U
-	v/c3yye94oU6OwCX5f8HdeHE7ZNhx+gsUALNi00+MPRjjz/+/nXp49pC1gG3B4Am9C8XNiOETIQ
-	pHjp1RTCRI3tDYgj7ANvCKRE3LLe6YK8=
-X-Gm-Gg: AeBDieuE0+XGgbx/hoEksPa9LXdOvPuvOg2aIIZijlYJwLY9Mmr7j42mP2kkWQfKwm9
-	DYKVdwUj8TAR8JmWyDLGrTJGlGYlaU6nKupE3AlW7IsMzl3HuFvUXZgHQMRYs86aMb8Ar+xc2Sb
-	hjTxP4BQ1ForPGWxERaw0lPJsZRD9vAW/SeH10+vaxwRouugyyfjw8UIsxIjSFMVydncmFtFde/
-	ek9qY3JV1KFkcvdvViZlTyCvKotN+Ihfie75tY0bH5IT2ymwQDHmeAWA0F8DBxi113u8RJXdABK
-	BwCbrNaqcTQreCjxBqQCP7n8Vy94D5JbJmsOGg==
-X-Received: by 2002:a05:6a20:6a13:b0:398:a060:a97b with SMTP id
- adf61e73a8af0-39fe3c2d507mr18527614637.1.1776164046322; Tue, 14 Apr 2026
- 03:54:06 -0700 (PDT)
+        bh=1Z39CEUxNE/zBr+6BQR6piBSXx/BD8B2b6sRTgoYN/8=;
+        b=b4JxZ9SVV3sw06/F4+03Yf+ttoS4u9gC28+TFoniJbMK92vAtMsZMzM3/22bhmIpEl
+         8VL6tHSw78fYkc81G4lMsNMSdO2AfO0OZny11WBbVdEqWxBQz0iCbl+NwPaHdGw0Ce81
+         3T60r3T6NGtozTJcqY12mtjnD1d3tUdEbZjT04Cc0/X9spdx9D6oc7FTX6rIxW4rvTLQ
+         PtOgdXhMHh2s+Xax1yaEwNi82X77AXlTE4dExxgVOXDE6zEaUhEugVUOZCvF9NMhuIl9
+         37VZqXWMCq+E3DKEUpDvDwmM6iSp9JXwR6bPPkQHt09ubhu7Ek756FiR/mRhnLzZpbUF
+         EvtQ==
+X-Gm-Message-State: AOJu0YyJEC2fSg6/6aZ7eeHwKo1AZuT44kF88FhN1kLdXgXyQAN8XjV6
+	bUY3VJoZxiFJ/zg/rpHdOgMXCUmop5pZhiCL42fanZrKWYYAQkUrZAgX8Oq97SHZ
+X-Gm-Gg: AeBDietrpSFuoOIO8FbSccSNvnA47dyRH0mrl2slFVqTJwHketRUlA8gA7rOTXrUsDo
+	GYZEupxq7/Nkwp9/ByF0YN1PFedKNolyeAdh0Y7y+ur2mWvF8w0QGGHcLwE8KyL5CSmspP9Xuvy
+	M4luYZ2hDaBtBDOS/O3kPsWBPl3RVK1disXHEajaXY26dvJQIMrj/sSrjDapGPxNJIs0v5JK/Mj
+	fMTV49voWtEJ8SelUi8ltDzjsaNuLy9uoIhr4liUeN1rc0Oe/NerXaUaTxSSqzJUrCAhyx+miYC
+	uKX1Cpd3MLEFLQvMtuH2yYHcJpdT2vodPBN4LRRx3zu7NAjRJRn7QcYkzof6XqRyitVRuk6FWPM
+	psUXSON3IpV2y3N3u9f7ADIt42yq0+gcEBNvN7wlFVe0LSUCuVNq624YoGFdnpJkJyljONhBDpW
+	4VeveMMQp9iZ1lgHfBaWGR7sxWhfYc1Q677Z4mewo1of6zfBqgSHu8aN/c+JLeVcEJ
+X-Received: by 2002:a05:6102:a4a:b0:611:aecd:34d9 with SMTP id ada2fe7eead31-611aecd3efamr404199137.9.1776172358030;
+        Tue, 14 Apr 2026 06:12:38 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-609db3ed0e3sm7768286137.9.2026.04.14.06.12.37
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Apr 2026 06:12:37 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56d8a5f0e44so4986314e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 06:12:37 -0700 (PDT)
+X-Received: by 2002:a05:6122:6301:b0:56b:9534:c06f with SMTP id
+ 71dfb90a1353d-56f2906fedfmr6387662e0c.3.1776172357560; Tue, 14 Apr 2026
+ 06:12:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260413100700.30995-1-phucduc.bui@gmail.com> <20260413100700.30995-2-phucduc.bui@gmail.com>
- <87v7dupfx6.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87v7dupfx6.wl-kuninori.morimoto.gx@renesas.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Tue, 14 Apr 2026 17:53:54 +0700
-X-Gm-Features: AQROBzDvbXBRQEOHytM6mfwHKRF-_puUL3-UZMWiLosO-tI7eLbkJKI2mRDU4oM
-Message-ID: <CAABR9nGu6HyP7HA-0RJX7t0kbufu7pAkbUq9MV9cWUAd+uzS3g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] ASoC: renesas: fsi: Add shared SPU clock support
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260413120139.36287-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260413120139.36287-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Apr 2026 15:12:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXr2cM0KZhvOqueMZ+wQ6FqEeoPGvdOLG4g+AzWirpcGg@mail.gmail.com>
+X-Gm-Features: AQROBzAUQgEYOisNdLNs91kUsleXJbPooXGXo9klKaclhqsqWfgF_KoDiGKeWKU
+Message-ID: <CAMuHMdXr2cM0KZhvOqueMZ+wQ6FqEeoPGvdOLG4g+AzWirpcGg@mail.gmail.com>
+Subject: Re: [PATCH v3] mailbox: add list of used channels to debugfs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Wolfram,
 
-Thanks for the review and explanation.
+On Mon, 13 Apr 2026 at 14:09, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> During development, it is useful to see which mailboxes are currently
+> obtained. Use a seq-file in debugfs to list the currently registered
+> controllers and their used channels. Example output from a Renesas R-Car
+> X5H based system:
+>
+> 189e0000.system-controller:
+>    0: c1000000.mailbox_test_send_to_recv
+>    1: c1000100.mailbox_test_recv_to_send
+>  128: c1000100.mailbox_test_recv_to_send
+>  129: c1000000.mailbox_test_send_to_recv
+> 189e1000.system-controller:
+>    4: scmi_dev.1
+>    5: scmi_dev.2
+>
+> Note that mailbox controllers currently can be instantiated at any
+> initcall stage. So, per-controller debugfs handling was discarded
+> because it is not clear when to create the root "mailbox"-debugfs entry.
+> A central file was chosen, similar to the GPIO subsystem, which is
+> independent of the initcall stage because it will be accessed only when
+> userspace is available anyhow.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> You added clk_spu in this patch, but not touched.
-> When I checked whole patch-set, you initialize it at [4/6], but [2/6] is
-> using it. Maybe it works, but is strange.
+Thanks for your patch, which looks useful!
 
-You are right, clk_spu is used before being initialized.
-I was not careful with the patch ordering and only ensured the series
-worked as a whole.
-I understand now and will fix the ordering accordingly.
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
 
-Best regards,
-Phuc
+> +static int __init mbox_init(void)
+> +{
+> +       debugfs_create_file("mailbox_summary", 0444, NULL, NULL, &mbox_fops);
+
+Can you please put it in a subdir, like all other summaries:
+
+    ~ # ls  /sys/kernel/debug/*/*summary
+    /sys/kernel/debug/clk/clk_orphan_summary
+    /sys/kernel/debug/clk/clk_summary
+    /sys/kernel/debug/devfreq/devfreq_summary
+    /sys/kernel/debug/dmaengine/summary
+    /sys/kernel/debug/pm_genpd/pm_genpd_summary
+    /sys/kernel/debug/regulator/regulator_summary
+
+? More mailbox-related files might be added later.
+(But more importantly, that way my summary grabbing script will save
+ it automatically ;-)
+
+> +       return 0;
+> +}
+> +subsys_initcall(mbox_init);
+> +#endif /* DEBUG_FS */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
