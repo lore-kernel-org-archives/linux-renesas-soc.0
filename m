@@ -1,135 +1,117 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F2E3DBD59
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 13:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE79225775
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 13:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776172360; cv=none; b=U/NcW06dbZyRfnTrhd4eCOo5sgB/T0767aRjD0v5GYzfAAMCL3h4PyLd7f6Rr/O8Fw+VlP+z4Zmh8CC1rL5GmptjAYWra5GyN3G8BSvmNX0DgFF/1gXB41GKVnwYTDTy7zxgRjBoe5Q5T1Aogheas/ol8q3cryaVJcUEEDu45ms=
+	t=1776172586; cv=none; b=kVQ5n+zZlryM5ZbeCWWvcGT1cQsy6GSRD4aPELqIdTIc9PpuEZAn2ZbJDvuSUP1rav8H3rfuChjHaXhKA31xtNVOwzXJ/fdD8Tj4cCpxVYYVzT/WBOxKvJjuHCu0h52KV0KO17STwVmmCD8kb+0VtUX9okXQOZksM0MXtexSm8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776172360; c=relaxed/simple;
-	bh=fS8zJr94oxWcqsByLfYI69JECmGzWhKtK7dvLqH02zw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CeHb2Zd9k0a/WEC4BFCKEqcbSMa+ky0nbl3A0+kGldVapuC5NcTMZ8mGFRdfpv/U8uuRHU5T0GUtbJgmabgoNq9gd/FPwK0L4THnQ16kLhszwR5qumbmGx8bL/uOevJXRJdrKwNnrH50EnGRa4Bb6o/IT0lkk2HMVhza20Raxqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-953ac1602f8so3212569241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 06:12:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776172358; x=1776777158;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Z39CEUxNE/zBr+6BQR6piBSXx/BD8B2b6sRTgoYN/8=;
-        b=b4JxZ9SVV3sw06/F4+03Yf+ttoS4u9gC28+TFoniJbMK92vAtMsZMzM3/22bhmIpEl
-         8VL6tHSw78fYkc81G4lMsNMSdO2AfO0OZny11WBbVdEqWxBQz0iCbl+NwPaHdGw0Ce81
-         3T60r3T6NGtozTJcqY12mtjnD1d3tUdEbZjT04Cc0/X9spdx9D6oc7FTX6rIxW4rvTLQ
-         PtOgdXhMHh2s+Xax1yaEwNi82X77AXlTE4dExxgVOXDE6zEaUhEugVUOZCvF9NMhuIl9
-         37VZqXWMCq+E3DKEUpDvDwmM6iSp9JXwR6bPPkQHt09ubhu7Ek756FiR/mRhnLzZpbUF
-         EvtQ==
-X-Gm-Message-State: AOJu0YyJEC2fSg6/6aZ7eeHwKo1AZuT44kF88FhN1kLdXgXyQAN8XjV6
-	bUY3VJoZxiFJ/zg/rpHdOgMXCUmop5pZhiCL42fanZrKWYYAQkUrZAgX8Oq97SHZ
-X-Gm-Gg: AeBDietrpSFuoOIO8FbSccSNvnA47dyRH0mrl2slFVqTJwHketRUlA8gA7rOTXrUsDo
-	GYZEupxq7/Nkwp9/ByF0YN1PFedKNolyeAdh0Y7y+ur2mWvF8w0QGGHcLwE8KyL5CSmspP9Xuvy
-	M4luYZ2hDaBtBDOS/O3kPsWBPl3RVK1disXHEajaXY26dvJQIMrj/sSrjDapGPxNJIs0v5JK/Mj
-	fMTV49voWtEJ8SelUi8ltDzjsaNuLy9uoIhr4liUeN1rc0Oe/NerXaUaTxSSqzJUrCAhyx+miYC
-	uKX1Cpd3MLEFLQvMtuH2yYHcJpdT2vodPBN4LRRx3zu7NAjRJRn7QcYkzof6XqRyitVRuk6FWPM
-	psUXSON3IpV2y3N3u9f7ADIt42yq0+gcEBNvN7wlFVe0LSUCuVNq624YoGFdnpJkJyljONhBDpW
-	4VeveMMQp9iZ1lgHfBaWGR7sxWhfYc1Q677Z4mewo1of6zfBqgSHu8aN/c+JLeVcEJ
-X-Received: by 2002:a05:6102:a4a:b0:611:aecd:34d9 with SMTP id ada2fe7eead31-611aecd3efamr404199137.9.1776172358030;
-        Tue, 14 Apr 2026 06:12:38 -0700 (PDT)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-609db3ed0e3sm7768286137.9.2026.04.14.06.12.37
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2026 06:12:37 -0700 (PDT)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56d8a5f0e44so4986314e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 06:12:37 -0700 (PDT)
-X-Received: by 2002:a05:6122:6301:b0:56b:9534:c06f with SMTP id
- 71dfb90a1353d-56f2906fedfmr6387662e0c.3.1776172357560; Tue, 14 Apr 2026
- 06:12:37 -0700 (PDT)
+	s=arc-20240116; t=1776172586; c=relaxed/simple;
+	bh=frcHGcmNBhUVwLRTZcGXGbjt36Dib+5OJvL4DZga9Go=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qcPq7/lP/OyBlEICJGCDJkvVrXK6cuM6Mj4u9qTo3LvT6sgLa/jwPinhGIEhCFab1dvsGThJPnGznJb22MO/zjLnpjVmpicZuaEjFGShiWpeSbghAomeSewadUC72xigLkrBDGFGn2V9N8uJXEa7zwzBhVMwR5kZESYYqvSqZNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF4FC19425
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Apr 2026 13:16:25 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2026-04-14-v7.0
+Date: Tue, 14 Apr 2026 15:16:24 +0200
+Message-ID: <20260414131624.1119327-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260413120139.36287-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260413120139.36287-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Apr 2026 15:12:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXr2cM0KZhvOqueMZ+wQ6FqEeoPGvdOLG4g+AzWirpcGg@mail.gmail.com>
-X-Gm-Features: AQROBzAUQgEYOisNdLNs91kUsleXJbPooXGXo9klKaclhqsqWfgF_KoDiGKeWKU
-Message-ID: <CAMuHMdXr2cM0KZhvOqueMZ+wQ6FqEeoPGvdOLG4g+AzWirpcGg@mail.gmail.com>
-Subject: Re: [PATCH v3] mailbox: add list of used channels to debugfs
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+I have pushed renesas-drivers-2026-04-14-v7.0 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-On Mon, 13 Apr 2026 at 14:09, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> During development, it is useful to see which mailboxes are currently
-> obtained. Use a seq-file in debugfs to list the currently registered
-> controllers and their used channels. Example output from a Renesas R-Car
-> X5H based system:
->
-> 189e0000.system-controller:
->    0: c1000000.mailbox_test_send_to_recv
->    1: c1000100.mailbox_test_recv_to_send
->  128: c1000100.mailbox_test_recv_to_send
->  129: c1000000.mailbox_test_send_to_recv
-> 189e1000.system-controller:
->    4: scmi_dev.1
->    5: scmi_dev.2
->
-> Note that mailbox controllers currently can be instantiated at any
-> initcall stage. So, per-controller debugfs handling was discarded
-> because it is not clear when to create the root "mailbox"-debugfs entry.
-> A central file was chosen, similar to the GPIO subsystem, which is
-> independent of the initcall stage because it will be accessed only when
-> userspace is available anyhow.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-Thanks for your patch, which looks useful!
+Today's version is based on renesas-devel-2026-04-13-v7.0.
 
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
+Included branches with driver code:
+  - renesas-clk-for-v7.2
 
-> +static int __init mbox_init(void)
-> +{
-> +       debugfs_create_file("mailbox_summary", 0444, NULL, NULL, &mbox_fops);
+Included fixes:
+  - drm: rcar-du: Fix crash when no CMM is available
+  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
+  - ARM: shmobile: defconfig: Update for renesas-drivers
+  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
+  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
-Can you please put it in a subdir, like all other summaries:
-
-    ~ # ls  /sys/kernel/debug/*/*summary
-    /sys/kernel/debug/clk/clk_orphan_summary
-    /sys/kernel/debug/clk/clk_summary
-    /sys/kernel/debug/devfreq/devfreq_summary
-    /sys/kernel/debug/dmaengine/summary
-    /sys/kernel/debug/pm_genpd/pm_genpd_summary
-    /sys/kernel/debug/regulator/regulator_summary
-
-? More mailbox-related files might be added later.
-(But more importantly, that way my summary grabbing script will save
- it automatically ;-)
-
-> +       return 0;
-> +}
-> +subsys_initcall(mbox_init);
-> +#endif /* DEBUG_FS */
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host-fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
+  - https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
