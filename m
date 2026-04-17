@@ -1,105 +1,126 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64AB37B01C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Apr 2026 07:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1DA382287
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Apr 2026 07:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776411770; cv=none; b=fvT98um1hKZ/Lxn2zTk8xnynqC+/FK048L3FO45BOlZnxpJhEPSsFd3Rof6gjAGLBJz+M32yHLc7xCz+ml8CMxzvWUxSnk+ur22E595OHLZS9gMOD2kFI7YiEjlEOiyYCImY77leMBYD4om4Qi0T3MRG7vgjmuvJMNs8srGVFx4=
+	t=1776412244; cv=none; b=uNcFfCXXMe4B1JXgy/a3afGnUNSpo5v2t71a/KyGZq15d1ENTQtLmiU88pI2C95tGMcSYBaJwdUtxaDBLwU0AG9dChWfMpLdUG5e5U6UPUY1psIPOyx9/J5KBj3zjqjtLh3RPVXYmdtHVTIoOp57nSEkFNp7v35KPRl2gU8sBGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776411770; c=relaxed/simple;
-	bh=PdR0t6PIPrfwC1VtD4zPq/c3A3Hha66LQa/sH7nzyas=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oSg6KH1h1AaIfrrw+PD9ghDKmOrJ1ai5KXr+8oOqWS+fKCzIpaU3A7XXjRLcLsSz0jn4zupd/sJD9YdzDWvLQYJdjE4L5ZvRnvZpkjB9/caGsgfBltqXQJR2A+PoHATes2ZnaRH4OTC0NIzCawzPCRg7sWo3GYmn05vmdH0zIxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=icPlPV29; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1776412244; c=relaxed/simple;
+	bh=mN9SIeXfRCe7zV5stdN76y8+361AYnzBpG7i78ynP6E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Oh15f104Rcl5zhYx7a2YPvDYoMAuZtnA2P4ufWb6CPpzNXLUSA62vNcoIpFPmjy8UdQgy68bMbaqtJJgC+/Z+Nm07RWqp6oSn1fNYLlmvE7sXFEC1j5GyAbdSdAKeV8a0NPhqh7uPCGVlL+ARBs53i0SUA5hI5GHu4sMZ34jcAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kSSVjutW; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="icPlPV29"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ttbAflTbp0B7HiuzcNLymn4toX13Ln+9145vIJ0/gvE=; b=icPlPV
-	294iKY0rGL9nJyKu+N15xmZS6foDslcev9dSOFRbvlMxBoHm42zavsSUR82jJ0ie
-	QMT5ZQHuNQe9AqRGVWBHsm6HzQZfExifJB+y4FLATq4dQKLyOIL8jYpOFFM0Y0z6
-	4lRDvILfzeo5BO+QRc5DI5bvCV0JQm4OYMYAcJJJ9R4E0a+MPZ9mpAOXRKvF5sdu
-	UPWTHB4eq54DELoBKz8aJ7+AOM9t61LLClZEmY3thbrICXXBYrzM46e5BY7a4aX5
-	vyjnPmKt7V//KDmGivBccU4bnru6X0WjKdO6l3UkKfT+5I16doe6snag3CcK8B/f
-	5sPmFPohXQCWCCYg==
-Received: (qmail 3856016 invoked from network); 17 Apr 2026 09:42:42 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Apr 2026 09:42:42 +0200
-X-UD-Smtp-Session: l3s3148p1@paURGKNP6lltKXL4
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Lee Jones <lee@kernel.org>
-Subject: [PATCH v2 3/4] mailbox: mailbox-test: initialize struct earlier
-Date: Fri, 17 Apr 2026 09:42:35 +0200
-Message-ID: <20260417074237.16053-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260417074237.16053-1-wsa+renesas@sang-engineering.com>
-References: <20260417074237.16053-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kSSVjutW"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 304B91A332D;
+	Fri, 17 Apr 2026 07:50:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 00A6360497;
+	Fri, 17 Apr 2026 07:50:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C98CC10460952;
+	Fri, 17 Apr 2026 09:50:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1776412230; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TfT7hmmZx8Kr7kxPd8PXiGjFEe0ZJMTCF2H4FVfguC0=;
+	b=kSSVjutW5+6st3wLsgmGMbKBs+AWGo9jKztX2gQQHiLq/D5ZaxHz6TQmy6/ktSAAKONcQq
+	f3ydv7wWoVRA6Q5iHv23NRExFtqmD9MxBsLqw46YhA1XbbTeTWEdLuqNRIiUJ25ghokeOm
+	+b2o1rbkO6Ue3xrujQzfvDBIKF4otZMr3Wl6w4NGIFcwa7U9Ibfj777V/EBtTxB9DL9ix4
+	gLttANP+B7PX+lLr0ygG+R9l7BDCTonz097+IYQlWJdZ0Ug7lkLK82rZhjofdasPo+lkbr
+	XIsX6CNajkMrXAtWPPRhhFfWhMYEmWYGQrV8PRbFtQl8v/l3UL9y0V+mTI3WFw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Thomas
+ Gleixner <tglx@kernel.org>,  Olivia Mackall <olivia@selenic.com>,  Herbert
+ Xu <herbert@gondor.apana.org.au>,  Jayesh Choudhary <j-choudhary@ti.com>,
+  "David S. Miller" <davem@davemloft.net>,  Christian Marangi
+ <ansuelsmth@gmail.com>,  Antoine Tenart <atenart@kernel.org>,  Geert
+ Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  Pascal EBERHARD <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 02/16] dt-bindings: interrupt-controller: Describe
+ EIP-201 AIC
+In-Reply-To: <444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl> (Aleksander Jan
+	Bajkowski's message of "Thu, 16 Apr 2026 20:04:03 +0200")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-2-5e6ff7853994@bootlin.com>
+	<444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 17 Apr 2026 09:50:20 +0200
+Message-ID: <87tstac9fn.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-The waitqueue must be initialized before the debugfs files are created
-because from that time, requests from userspace can already be made.
-Similarily, drvdata and spinlock needs to be initialized before we
-request the channel, otherwise dangling irqs might run into problems
-like a NULL pointer exception.
+Hi Aleksander,
 
-Fixes: 8ea4484d0c2b ("mailbox: Add generic mechanism for testing Mailbox Controllers")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mailbox/mailbox-test.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+On 16/04/2026 at 20:04:03 +02, Aleksander Jan Bajkowski <olek2@wp.pl> wrote:
 
-diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 0a56b593fcac..ec591616fe46 100644
---- a/drivers/mailbox/mailbox-test.c
-+++ b/drivers/mailbox/mailbox-test.c
-@@ -382,6 +382,12 @@ static int mbox_test_probe(struct platform_device *pdev)
- 	if (!tdev)
- 		return -ENOMEM;
- 
-+	tdev->dev = &pdev->dev;
-+	spin_lock_init(&tdev->lock);
-+	mutex_init(&tdev->mutex);
-+	init_waitqueue_head(&tdev->waitq);
-+	platform_set_drvdata(pdev, tdev);
-+
- 	/* It's okay for MMIO to be NULL */
- 	tdev->tx_mmio = mbox_test_ioremap(pdev, 0);
- 
-@@ -400,12 +406,6 @@ static int mbox_test_probe(struct platform_device *pdev)
- 	if (!tdev->rx_channel && (tdev->rx_mmio != tdev->tx_mmio))
- 		tdev->rx_channel = tdev->tx_channel;
- 
--	tdev->dev = &pdev->dev;
--	platform_set_drvdata(pdev, tdev);
--
--	spin_lock_init(&tdev->lock);
--	mutex_init(&tdev->mutex);
--
- 	if (tdev->rx_channel) {
- 		tdev->rx_buffer = devm_kzalloc(&pdev->dev,
- 					       MBOX_MAX_MSG_LEN, GFP_KERNEL);
-@@ -419,7 +419,6 @@ static int mbox_test_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_free_chans;
- 
--	init_waitqueue_head(&tdev->waitq);
- 	dev_info(&pdev->dev, "Successfully registered\n");
- 
- 	return 0;
--- 
-2.51.0
+> Hi Miquel,
+>
+> On 27/03/2026 21:09, Miquel Raynal (Schneider Electric) wrote:
+>> diff --git
+>> a/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201=
+.h
+>> b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201=
+.h
+>> new file mode 100644
+>> index 000000000000..ead73bd96296
+>> --- /dev/null
+>> +++ b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-ei=
+p201.h
+>> @@ -0,0 +1,14 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>> +
+>> +#ifndef _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
+>> +#define _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
+>> +
+>> +#define AIC_PKA_INT0 0
+>> +#define AIC_PKA_INT1 1
+>> +#define AIC_PKA_INT2 2
+>> +#define AIC_TRNG_INT 3
+>> +#define AIC_RESERVED 4
+>> +#define AIC_SL_ERR_INT  5
+>> +#define AIC_PROTECTION_INT 6
+>> +
+>> +#endif
+>
+> This interrupt mapping is specific to the EIP-150. The EIP-201 is also
+> integrated
+> into other accelerators, such as the EIP-97, EIP-196, and EIP-197, and the
+> interrupt mapping is likely different there. Maybe it would be better to =
+use
+> eip150 name instead of eip201?
 
+Thanks a lot for the heads up, I didn't had that information, I will
+adapt the naming to make it more accurate future proof.
+
+> As for EIP-28, it is also part of EIP-94. EIP-94 is supported by the
+> amcc driver.
+> EIP-94 consists of four components:
+> * crypto accelerator (unnamed?),
+> * PRNG (EIP-73d),
+> * TRNG (unnamed?),
+> * PKA (EIP-28).
+> Only the first three components are supported by the amcc driver.
+
+Is this driver upstream? I didn't find it. Anyhow, thanks for the
+feedback, I will update with this knowledge in mind.
+
+Miqu=C3=A8l
