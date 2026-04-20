@@ -1,116 +1,150 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DDD346AC1
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 07:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFAC39A803
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 10:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776671193; cv=none; b=JsVqbyJh4sZPnF6zTJXjL0K0Digp1WqfyYZm5ag+A+2MoC30fTf02Ot/jj0h71OsBAPZXxthoD/h4Ra14+ZxVj+W4EPC60/MkhgNza1wgOT3moR83lukopPcDZP/AFmPWWB9robcD1+c9zIUeR6iUut4Rhztr/XUxy2wbS35fss=
+	t=1776681819; cv=none; b=k8wnAClqbuit/reNhgWBeRVfXwcO7u/4dz/t4zPcvAlzw4Ta+D2JvUIiaDN3ybb/m6Z3ZUioHd+H/rAGQs5Et8VJVKn3t7ZYLjdODIoueTPnWTSi7YoTU5t6uAc1qIQJTjrVD+cTBZmCYQDE0eRqpVzWYgVL+0g3ieVYVSXwMg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776671193; c=relaxed/simple;
-	bh=Uu9Q3CvMrXJizvKFrRbVnqMhMioHkGUActslcpT+wyk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aKa4m7s79XMQseoD5Eq3FLLP3kLhUlnM1nO5F98iK2nkbJpOFDI8hlSaU5b/ZdQfC6jYQssMwVJJGMRW2IwpdqFSVpqiXacQVNyLqzvOVMP767Xp1KsXAtTWCDlTQ68/qnpOJNkTqMYp+rxTcd3NlHWKH/ykUtoSYhZWhwq3pZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1776681819; c=relaxed/simple;
+	bh=VhekGTjk/1zXeGIGbEp+mvkiBuKm0sxCLfNTFeimcHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=phkMsCeZrphQaYKsjQDLa44NfYzKyxxpVbcB2m03OwPsXKFQdCwUHbsD+Wa2DjSuJfjHdxDxtQ+tVAoQ66hujGonrxEW8o0HgVo7quv/521nIozv6rbiKmJMCS0046ISWvfOh+67dpcL048EmgTiEacSj+Jcz9h7z2DvpD89YX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZco2aAJ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-60579e72ff9so2039035137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 00:46:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776671192; x=1777275992;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZco2aAJ"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43eb05b1875so1674176f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 03:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776681817; x=1777286617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vr9++th+piD84iSgm0F19Q87mZM1OH80P77AJIEKCDU=;
-        b=UMRj176cEf3zFQxwruuThAaz5yhbs+Ul1Bij5pMK2WLbIBCq1qOtCzwSFu1etnSovi
-         jO6hI+lNsag4DwEBWprTq40D24jbHByGTSio5VXijSdLQMTlxPC901Je1GqWNJqlikzJ
-         iJIYEfiD2MK1Q/PXjxV2NS3uVLwTPHMayStu0W4rzGu06DwOT745SJBZrAhd5BBVrCqV
-         KMOVdkx6DBDAZuf4exS2il6ArkLIoczYAX61yfOXt0EjZ4aqV59rM+h8SCNZX7asW1N5
-         p02ioz67EpeENLsGUdFACCFkxSxf2peTSCdfP9xFXW4cZmgmdUJQQtYCdwg9U6GsSwSu
-         uUWQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8VlHg+iS7rm6RcMeLje3CEqlNUpO7TLD3XwAdr8rjmYwMOwMIDtAcF6L2q1O/JJMUM2eQVgYVWNmS7cYWHduAeqA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyNQuStGUE3GGqQoZRic4I+7LrO4n6NAGfx6vlvwP++NI4t8NV
-	3C1+JwZOffp8SABwjQKXWJoHcbGVE8ZEKJ0yy7uS/7wIaG4eo4zE7fTg2RLP4qdc
-X-Gm-Gg: AeBDieuzmR2EXf0L1zsQmYX/QuHvqGVWi7d6k3dHUTpkVNWdBKZbxFXIqFqHA59+aqA
-	B2UUmxrGSzLMR9b//+BaX5+wIQHh8byRV2Z8fCZCTHyDBKEvFPYEYlwbGTkFBWEiht5Czj8cGY4
-	WmfMr0TwOhfiMAs1yj6CKeVkSG9QYme+v2GDtlQYjWETbjd58SYA2hZMCBxuwnwPhrYYmyTm6ii
-	W1ebosddSQFv04Xz1IxhPhmzqTn4etiYUC0HrPKz9BE0lV82RW2VsOyNFjwFKCOX1lchOFlIUGC
-	35H/Miykt39/JkQ94xvMkg1qrhaJLlv3k2TrOALnEXHOg7t0+pFIllbjQOwZ/S+aeY6hordAO+x
-	5mCGxnYuZDU/+sijKNgMsLJJp4tsqR12H4L+QUERNncgXmhZSsxkORCkVC8WXQqO63A8z+JXBFS
-	dSBh4wH2wL9ck670r4Ll8jYkfNtAjS5TKNi66CJTVgGztqaw6yY3eVtND3zkd2mCs54hr0hyjLN
-	fU=
-X-Received: by 2002:a05:6102:9d4:b0:60a:f74e:8875 with SMTP id ada2fe7eead31-616fb583789mr3718451137.1.1776671191686;
-        Mon, 20 Apr 2026 00:46:31 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-617455b62a4sm4372035137.2.2026.04.20.00.46.30
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2026 00:46:31 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56f72d27e7eso3307746e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 00:46:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/zl+ZIpRmDJ8yAfbaXzJF2xBnTApzjzl2NSJ1q9cdEEnXQj3z/3V/aG55XaT78V9CSp5Qo+K5tuTXcb7y8uRyvdw==@vger.kernel.org
-X-Received: by 2002:a05:6122:289a:b0:56b:9534:c06f with SMTP id
- 71dfb90a1353d-56fa6542098mr3883427e0c.3.1776671190654; Mon, 20 Apr 2026
- 00:46:30 -0700 (PDT)
+        bh=bhm2GeLeG1UM0/AQDKFsQSbZ5IfXuExVpXyI9JPf4cs=;
+        b=VZco2aAJ9RKZn+y48b6y5KhQxByBjuwm3Kgk7lgj3BvOUSEqQSdfWaLrzFHMuWg9Tr
+         O1rg14RdAxE5MQJKSxSHVLRCP1AjPWJle962XWIHVGTiWOkrX70EvuVASDEEXtvsX3uB
+         NESzrhQ8W/FvJFj6s6VbLqJh1N9t0RKlgDkL0tTVXD4yvclwoehbVClSG4NpQuHKKDp6
+         3GhhIvAnNuPWRoi04UIJuAz/FdmfGCD7v/LnG2tgFRov2VTZx1KeG1/pmFzOKhbKdi9b
+         3qaapAP6JgI71odqO43GtbIQ90GR8wepoEIz8RpaPEUtlanO1RrorWUqKubzcM2A9yPX
+         rBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776681817; x=1777286617;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bhm2GeLeG1UM0/AQDKFsQSbZ5IfXuExVpXyI9JPf4cs=;
+        b=j55x5aFflGPC0ElFU02ZGUosEn2tgLfFft4ZhkDUnTjBzC/j3O0zDXgLkbrp4pQBr7
+         9o2aC9DsvmpY6svrRsQd86WfVzAzdQTcIygCmyPfizyf2TEUjiWroUwX0S9t6IyroaUo
+         BzLtgSCxZzBTMrPV0x2BdjKKOltQsHp3mXbjmaONZysvvJxELQ7X19pHZxdmP5lpxcb0
+         v7bdsXV4vvqutp05rJipNvNmqFxm9YWcCVQkswaY+fwW9IfW+ummeCcLI12kZ2z0hKOU
+         1perHYlVOyhdKFu1P0PnrNZ/lHN2oEXf0tl2jzr8EuNC/EEH3hu2zPhVK3UZ1zqTxDa0
+         tGqQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+TIRiHbK5BeJjd6DMqecYq5072sBTNarvfzbXLU3N96DzIog9h794kiRDsvmmaZgBbN76C5sMGI9Og0UmL6C440A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzqcVQUgzLD55Y07JPaacBh90o1PJzGF4pSvbQxljp3Nmazgee
+	oi0ns1TO+saCwepYfjQ5P0iU5w2qlNBvelswEgVuDCfPwZn0kcbmZkoU
+X-Gm-Gg: AeBDiesNt8VjKQ6w1aUFSpl4ZyY4DOYpCAjdpXxaZsSnDdKGWlUFEQqpRg5USe+HOHf
+	zXkbKhXKcSbGqXQOI6yKhZoOirmhJhtmMwbuYeEkQRaHrwKRG4OO2FAHZ71pVvqvUSuuMc6DFF1
+	8HyZ6ba6KU7CObzeDAxfmHqplN5jzBXAYdGkc1IFm/w8Gh9WnxS3bwM2EWMIURXIWQKm33/dB0V
+	mwfyIEdpdYJh9aiEcQUNGZwPb/khY2/J77uOUwpwUYE4iSse1ICTLe6KU0mE8ZcUsG2+eHbcg0n
+	EbXI92txFeM/YFj9eM3b9lGZqHOhcQFm73Vs3DCTWJJFqSbxStGRaqpfzCU6Rc264KYVQvd/7P2
+	0W+li1VUmLoonbhh2FaKtsH1f35/ZbuuqbQwYtJNjNHC8BkP8ZlGC30CVI9luJ4fSVO7mGH3IlG
+	reWPMx3ekpZQ/4xQyoNM2ABhtU45Cf3kCR9mMDYIdEmLUJdKsbikB6a53Y0IcVInAWeTJMTg==
+X-Received: by 2002:a05:6000:22ca:b0:43d:6f0f:32fe with SMTP id ffacd0b85a97d-43fe3dfd65fmr18556724f8f.31.1776681816481;
+        Mon, 20 Apr 2026 03:43:36 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:5f3e:f914:6f8c:72c3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4c221cdsm28038301f8f.0.2026.04.20.03.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2026 03:43:36 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v5 1/9] dt-bindings: pwm: rzg2l-gpt: Document renesas,poegs property
+Date: Mon, 20 Apr 2026 11:43:18 +0100
+Message-ID: <20260420104332.153640-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260420104332.153640-1-biju.das.jz@bp.renesas.com>
+References: <20260420104332.153640-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260417140231.3972749-1-chris.brandt@renesas.com>
-In-Reply-To: <20260417140231.3972749-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Apr 2026 09:46:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUVCtzxumM6yniuGTKfqG_z6BuySHNcZYE9UHP5AuDoLw@mail.gmail.com>
-X-Gm-Features: AQROBzBuq_XRHepFNQh1JPCL5m8jICz5bAQa5xeGTgiQQMKwx8PdJeiPrEwUY60
-Message-ID: <CAMuHMdUVCtzxumM6yniuGTKfqG_z6BuySHNcZYE9UHP5AuDoLw@mail.gmail.com>
-Subject: Re: [PATCH] drm: renesas: rz-du: mipi_dsi: Fix return path on error
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Pavel Machek <pavel@nabladev.com>, Hugo Villeneuve <hugo@hugovil.com>, linux-renesas-soc@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Chris,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Sat, 18 Apr 2026 at 14:49, Chris Brandt <chris.brandt@renesas.com> wrote:
-> In case of error, we should unwind correctly.
->
-> Fixes: 6f392f371650 ("drm: renesas: rz-du: Implement MIPI DSI host transfers")
-> Suggested-by: Pavel Machek <pavel@nabladev.com>
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+RZ/G2L GPT IP supports output pin disable function by dead time
+error and detecting short-circuits between output pins.
 
-Thanks for your patch!
+Add documentation for the optional property renesas,poegs to
+link a pair of GPT IOs with POEG.
 
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -1476,8 +1476,10 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
->
->         dsi->dcs_buf_virt = dma_alloc_coherent(dsi->host.dev, RZG2L_DCS_BUF_SIZE,
->                                                &dsi->dcs_buf_phys, GFP_KERNEL);
-> -       if (!dsi->dcs_buf_virt)
-> -               return -ENOMEM;
-> +       if (!dsi->dcs_buf_virt) {
-> +               ret = -ENOMEM;
-> +               goto err_pm_disable;
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v5:
+ * No change
+v24 from [1]:
+[1] https://lore.kernel.org/all/20250226144531.176819-1-biju.das.jz@bp.renesas.com/
+---
+ .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Shouldn't you call mipi_dsi_host_unregister(&dsi->host) first?
-
-> +       }
->
->         return 0;
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+index 13b807765a30..98bcde755fb9 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
++++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+@@ -245,6 +245,28 @@ properties:
+   resets:
+     maxItems: 1
+ 
++  renesas,poegs:
++    minItems: 1
++    maxItems: 8
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      items:
++        - description: phandle to POEG instance that serves the output disable
++        - enum: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
++          description: |
++            An index identifying pair of GPT channels.
++              <0> : GPT channels 0 and 1
++              <1> : GPT channels 2 and 3
++              <2> : GPT channels 4 and 5
++              <3> : GPT channels 6 and 7
++              <4> : GPT channels 8 and 9
++              <5> : GPT channels 10 and 11
++              <6> : GPT channels 12 and 13
++              <7> : GPT channels 14 and 15
++    description:
++      A list of phandle and channel index pair tuples to the POEGs that handle the
++      output disable for the GPT channels.
++
+ required:
+   - compatible
+   - reg
+@@ -375,4 +397,5 @@ examples:
+         power-domains = <&cpg>;
+         resets = <&cpg R9A07G044_GPT_RST_C>;
+         #pwm-cells = <3>;
++        renesas,poegs = <&poeggd 4>;
+     };
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
