@@ -1,191 +1,274 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043639A06E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 10:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D686139A818
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 10:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776681820; cv=none; b=AWQDTg2UTnvLo7m4eZm97HBN8s2HzwnO5ygc5NMVFc6EfmZESqUg3x21j0ksdnxEy8zeh58neoeMxcihHuZt89TYbHU0TDX6fpF06kXlGSsacd5bZmkEfXXsUcFR7Upz/l7DlMwXesBFe5HowBITf06Mp8xOZGztWMZgYeoEnh0=
+	t=1776681820; cv=none; b=MJLqzTW7mAogngSEOcnff2uKK2seo7nTPrNg/O/tJ/e6onQoH5xNKOH3Dxi4IN+SEjHZGk5+PWVA/BBKrQ07mlTGJbcouMcgWG93C7YPI8u0SgT05rrpl8P0a94EPOKXfShfT2ImoJ1hMk4iZL32JDw2kHoEvUceIlYJhCfKnOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1776681820; c=relaxed/simple;
-	bh=6K3LBwKZtl/O5qux1dZKU/P19V+qTupizNtd2usjTr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ViS0jzhYVGM+1bd9Fy6u6623O71GeueyapyHt32iFYGc/SxyRKBMbntDv1dCJOMBGzf7yvoHFhxvBjjVVWDbffjMqh5jWhBVa049czTgHr9nLwMJ1/2vtCqoEV/dOsCK4BfPBBI7YgHug50kNe8QI3peGQ5Wff609K4kIQXGtzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpYPIpNB; arc=none smtp.client-ip=209.85.221.50
+	bh=nrDwUsLA26hzIjayJTgFjPGid/cYtDJ5PDB04XhXoKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kOhteoIP3dqzhGGD1PTcEUFQv7LZx/nMbw2Kruaic303loC0nTjZLlzabs0HP0HtgbfVJsr1rd+GkJHctJl2JCsmky2LuOAtZiUlH+F2HDuRPjJ51d2ay3akD3z2AOVmTWoKxAnBrLDNE7P9HV5aRkxIccv8NpQcesWxt98i6eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUADfpue; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpYPIpNB"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43fe608cb92so1879080f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 03:43:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUADfpue"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43d70b3e159so1289413f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Apr 2026 03:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776681816; x=1777286616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+YOFEVCA4Qb/vVfgbvY+5B7C1GS5CQEkyZ79MqsT48=;
-        b=dpYPIpNBtVaMRlo374KMURJjoFUHHwvAvNPVqm5Z+ONcSFjKojQ9ZcI6KP1Ky5y9ta
-         PjRN6rfPbOubK8YLfSPfO59XsTtMmSkC0cL9QFXQEs4kYOnF97hs3gUVDNYhm6PciAsQ
-         PsUn6lxgucsKoeTgk4ozWmg/7hBNlKi47MH71pZ5Ak01c1w5ZjdpycG3KwUCYp3oLKr1
-         ohXK8zwoHI100ilYA+oT5xFz+a1MBzxjXGKc+qSJd/gDH925ozHBu91/so2cZccUksh8
-         LCQS6pVaOq8pmaRLSS9pu0gxLh9xYZUs58ML7iGVc4KX/9sNV7b9iBzBsI73uZLJEhKy
-         32kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776681816; x=1777286616;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1776681817; x=1777286617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r+YOFEVCA4Qb/vVfgbvY+5B7C1GS5CQEkyZ79MqsT48=;
-        b=Qic+pWDu4PZx7UnvsHuDEXyGiiHSA7WFcweG1zezunLFWwCHWofRHvScK6Q8mQrqMR
-         l2Ta9r7pFdm13HCBV1loKsHHQZTMhmndrDzO0RUKuqskV1w5kxUD80xo9jUh4TnNGetY
-         sbKO1qQX9esVUrD9W3noGOkcd0jIGVEzS9haE9bsEZ/wu83WMFN/53uSAmlkhIvW0wuC
-         MG4tsaEzQc4AhIbsan6JX6TjvdIbR7gq0vV6B5b8Iws3JOK6ODa27DTBrX7OCENdMU/w
-         lYtnC8DKo0mnFCmgF4kO02x16rosYgADwobBLJUNzrfXh3bjagc4FjYoSYsqWgBkbngn
-         Weyw==
-X-Forwarded-Encrypted: i=1; AFNElJ/HFiTbwsIOrqzWnawZeUCV6vsxLeQoaFcrQ3aQVDyo4Bm0vLVSJQYDagHwnwkB34hCXPyh6oxlJfBYcYGkUMHziQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhGrWmiaSz0e82lTCqeaZaeF1lBpyWbANfgmZ3qfzkmCX5t6Q8
-	6YWRJXKQewOzY2RZuO+Zq2gtYYho12WqdjAE0LaKD1Dz5cE0MtRV4mfm
-X-Gm-Gg: AeBDietyLbuGuvgOEmN1jO2rW99pmS15FdLaRUuxCb5Lb70i8hmJN2KYn0sj0M6Kx2t
-	yhQ/DwUgqQIgtpgrJqu1fzVbZ2qqvfH/Pby2U6gXjtmlbw0iL7t5llsRS7+PzMnWXSz2f8FvGd2
-	6kWFl+sETtoYxIZgzKSKCxo1ckF43+0kNzN6IUgRK2tyhq5NLFUnkJnuTReKuw7K4wSnLR+mr1n
-	DgRUDtNgrXkKldgH0ItFCF/E0amQZcQm9kD0NND96wmZnfuPsvWWkiP3WTQrU87hDydAGGTkw+X
-	G+MmGMVWJThAeJWVu00/VRlb/TGNYQoTCHixeDk1EXGF81xsWPl/J6LxKZeHvX4cr7muYdFqujI
-	uV3Fw5rbN0B783mxF/8ubocYlGyUDYznq2zFYF3xDV67hFhtF5BrKRGxhRnY9Agj1jaeiNOGW2Q
-	7HOvydGT9ne1zcgZk2/C+ALU+0mAPF5qtzL1WfkhsBdIDT4GVDpyE2/NAcAFY=
-X-Received: by 2002:a5d:5f92:0:b0:43d:71f4:7ed5 with SMTP id ffacd0b85a97d-43fe3dc54famr20093995f8f.17.1776681815619;
-        Mon, 20 Apr 2026 03:43:35 -0700 (PDT)
+        bh=z/Csqb4UQrcrof3DTRO1RvzP+CgGq/GLAveFMe3H3iI=;
+        b=VUADfpueIZofBYjacztlf7D+NKSH6JXq72sUEpINI4IZ063QYfDAx5dUkwXFnrRX9s
+         e5iAp1mUqdhlln22ZwPjRDjryX7YnnJJ/XCmei1xWrYoW77z9GbvmapbEX5cXgOnSEoM
+         pEZe4E3nC7QlYfzOO+87tgcpVIdlh+nUDboC4tIHWK8ZJq/nyLiSp+ng5jeuPIGf+d8a
+         WGa3s/eCtzpxEjwINZE0AHQP4R9opj7JB64qUdeATmEnt6ZLCb4QuVP+XaYKZGXPevUx
+         R8qsxwILOwMQkM41a7Pu0YM7XcflnYE3CQGEsJMvlEHJ1XzeoUpWK2+GIRKwFauBsURi
+         o4uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776681817; x=1777286617;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=z/Csqb4UQrcrof3DTRO1RvzP+CgGq/GLAveFMe3H3iI=;
+        b=mwN3QXJrBMty7LCVaMZQf0PlstQcZlP3b/e842R0/VX/V1PEwZjGw1pUIzeCZyRtFH
+         9TNN7XWHzDLLiRs09CJ6FzX1yvkpa+WLf4MbozIaaAL2yIDNsu6EYZpFCroHDOCOaMXY
+         wIPA/hFZeNxfyTzpfMldic0B6OlUARoas8C5CdBvFI+Ol3+7xWnbwexlQmDqGNAO3CeD
+         02wRpL1U/vHHmesOgeeHUsjQu2KLldEm8XW5PE4j/ioSCfln9EN1Um5qZdjmAk7L1lCh
+         ulcuXqQIs4uII+hiZnr7UFPhYAenRf//wT+ZwlKXSXJRVVaQ/nlQR4S8OcdGYB4MqB7o
+         oddg==
+X-Forwarded-Encrypted: i=1; AFNElJ8Bv/EbbN9PGD1+X0tsw1ieD3g5V9otyjyph340ATnFO21DrN8wppNOiMaxqPwnuiuyZtHFYX5YElpAL1wBZoVtAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye1vUCOHZWTK7gz7T0Bon4KKdyK0L9IDUDDJdbAoVflAIgyxAH
+	Bvg3MlswwMU70hfSY7mwENcDrZssHa+yV0OzxbzGWvfW2D+bHb8xwzYr
+X-Gm-Gg: AeBDieswN+dfSGK/R3p3tvPykrF3EYnrvHSZ5pmqpk5d4PaugEuR6UFaSvSwDZMPJQc
+	PXCLcBLEgdjvS+x02ozkbOjp8Pa1hVjI6LkzA8OCEEf8RMvqu8BX8sHnzkAu9qIwTrS9coFafrr
+	DoBsPUefX1GQ6MozpahbaSIbMaP8vbMBnpTUeqsmLFu9+HaO240co3gamiFbUEI1j6tRfjOBQr5
+	6vJEfV7yZx6PLZlnmmQjxG+Nc76JDu3d3a3Ls3QvP5McVOJxa/PiNRQwmwRf8sm8+Xe53+ef8N/
+	zCqqHqm0dBZEGqb0O6qZ88IsBh1SVDRu7X+3ezohIM7I+0MhAusrcqZqserZJkVDTWnjOzY8OTb
+	EWQxiZbbBYwZ5H2kn3k2omMQi/rWVlJ9Si0eac5/5V1Ehaw5uqZmSTsRZEhbGrAWGd+rpi43VbR
+	t2eAiPxCKccuO+9xM/OyVRLqKGNItLLyCKIZb+emoQrwcAzYHURXbeWK9I43o=
+X-Received: by 2002:a05:6000:144d:b0:43c:fe0e:5bbc with SMTP id ffacd0b85a97d-43fe3dc59a6mr18783496f8f.19.1776681817237;
+        Mon, 20 Apr 2026 03:43:37 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:5f3e:f914:6f8c:72c3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4c221cdsm28038301f8f.0.2026.04.20.03.43.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4c221cdsm28038301f8f.0.2026.04.20.03.43.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2026 03:43:35 -0700 (PDT)
+        Mon, 20 Apr 2026 03:43:36 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v5 0/9] Add Renesas RZ/G3E GPT support
-Date: Mon, 20 Apr 2026 11:43:17 +0100
-Message-ID: <20260420104332.153640-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v5 2/9] pwm: rzg2l-gpt: Add support for gpt linking with poeg
+Date: Mon, 20 Apr 2026 11:43:19 +0100
+Message-ID: <20260420104332.153640-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260420104332.153640-1-biju.das.jz@bp.renesas.com>
+References: <20260420104332.153640-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series extends the RZ/G2L GPT PWM driver with RZ/G3E SoC support.
+The General PWM Timer (GPT) is capable of detecting "dead time error
+and short-circuits between output pins" and send Output disable
+request to poeg(Port Output Enable for GPT).
 
-The RZ/G3E GPT has a number of hardware differences compared to RZ/G2L:
-it exposes 16 channels (across two GPT instances of 8 channels each),
-uses a 4-bit GTCR prescaler field (versus 3-bit on RZ/G2L), and has a
-discontinuous prescale sequence with powers-of-2 scaling rather than the
-continuous powers-of-4 sequence on RZ/G2L. It also has additional clocks
-and resets (bus clock and rst_s).
+Add support for linking poeg group with gpt, so that gpt can control
+the output disable function by adding rzg2l_gpt_poeg_init() to parse
+the renesas,poegs device tree property and establish links between POEG
+groups (A–D) and GPT hardware channels (0–7). For each valid, enabled
+POEG phandle entry, the driver:
+ - Reads the renesas,poeg-id from the POEG node and validates it against
+   the supported range
+ - Records the GPT–POEG association in a per-chip bitmap (poeg_gpt_link)
+ - Configures GTINTAD to route the output disable request to the correct
+   POEG group
+ - Configures GTIOR (OADF/OBDF fields) to set both output pins to
+   high-impedance on an output disable event
 
-To accommodate these differences cleanly the series proceeds as follows:
+Non-enabled POEG nodes are silently skipped.
 
-Patches 1-2 add DT binding documentation for the renesas,poegs property
-(allowing GPT channels to be linked with POEG for output-disable) and
-implement the corresponding driver support. This configures GTINTAD to
-route output-disable requests to the correct POEG group and sets GTIOR
-to tri-state both output pins on an output-disable event.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v5:
+ * Updated commit description.
+ * Replaced return type of rzg2l_gpt_poeg_init() from void->int and
+   probe() checks this return value.
+ * Added more error checks in rzg2l_gpt_poeg_init() 
+V24 from [1]:
+[1] https://lore.kernel.org/all/20250226144531.176819-1-biju.das.jz@bp.renesas.com/
+---
+ drivers/pwm/pwm-rzg2l-gpt.c | 93 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
-Patch 3 is a small cleanup removing an unused parameter from
-rzg2l_gpt_calculate_prescale().
-
-Patch 4 migrates the driver from the legacy .get_state/.apply ops to
-the new waveform callback interface, introducing struct
-rzg2l_gpt_waveform to hold the hardware configuration (gtpr, gtccr,
-prescale) for a single channel.
-
-Patches 5-7 introduce struct rzg2l_gpt_info to capture SoC-specific
-hardware differences, adding fields for the GTCR prescaler mask
-(gtcr_tpcs), the prescaler multiplier (prescale_mult), and a
-calculate_prescale() function pointer. This cleanly abstracts the
-per-SoC prescaler logic needed for RZ/G3E.
-
-Patch 8 adds DT binding documentation for the RZ/G3E GPT
-(renesas,r9a09g047-gpt), covering its 16-channel layout, 64 interrupts,
-dual clocks and dual resets.
-
-Patch 9 adds the RZ/G3E driver support itself, wiring up the new
-rzg3e_data match entry with its own prescale calculation, prescaler
-field mask, and prescale multiplier.
-
-v4->v5:
- * Merged GPT linking POEG patch series here.
- * Dropped suspend/resume patch; will be added later.
- * Updated commit description for patches #2, #4, #5, and #6.
- * Replaced return type of rzg2l_gpt_poeg_init() from void to int and
-   probe() check this return value.
- * Added more error checks in rzg2l_gpt_poeg_init().
- * Added a patch to drop the unused rzg2l_gpt_chip parameter from
-   rzg2l_gpt_calculate_prescale().
- * Updated rzg2l_gpt_round_waveform_tohw() to initialize gtccr when the
-   period of the second channel is smaller.
- * Replaced period_ticks with RZG2L_MAX_TICKS for the duty_ticks maximum
-   value check in rzg2l_gpt_round_waveform_tohw().
-v3->v4:
- * Added wave form callback conversion back to this patch series.
- * Updated rzg2l_gpt_is_ch_enabled() fit into 80-character limit for
-   consistency with other functions.
- * Dropped field_{get,prep} as mainline now support it.
- * Updated commit description for patch#3
- * Retained RZG2L_GTCR_TPCS bit definitons
- * Replaced gtcr_tpcs_mask->gtcr_tpcs
- * Updated commit header and description for patch#4
- * Renamed prescale_pow_of_two_mult_factor->prescale_mult
- * Added RZG3E_GTCR_TPCS bit definition for RZ/G3E and added to
-   rzg3e_data.
- * Added error checks on suspend() and device set to operational state
-   on failure().
- * Added Rb tag from Geert for SoC dtsi.
- * Added SW_GPIO9_CAN1_STB check to gpt0 node.
-v2->v3:
- * Added Rb tag from Rob for bindings patch
- * Dropped wave form callback conversion from this patch series as
-   it is covered in another series[1]
- * Added suspend/resume support.
-v1->v2:
- * Created separate document for RZ/G3E GPT.
- * Updated commit header and description for binding patch.
- * Added waveform callback conversion to this series.
- * Collected tag.
- * Added link to hardware manual
- * Updated limitation section in driver patch.
-
-Biju Das (9):
-  dt-bindings: pwm: rzg2l-gpt: Document renesas,poegs property
-  pwm: rzg2l-gpt: Add support for gpt linking with poeg
-  pwm: rzg2l-gpt: Drop unused rzg2l_gpt_chip parameter from
-    rzg2l_gpt_calculate_prescale()
-  pwm: rzg2l-gpt: Convert to waveform callbacks
-  pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
-  pwm: rzg2l-gpt: Add prescale_mult variable to struct rzg2l_gpt_info
-  pwm: rzg2l-gpt: Add calculate_prescale() callback to struct
-    rzg2l_gpt_info
-  dt-bindings: pwm: Document RZ/G3E GPT support
-  pwm: rzg2l-gpt: Add RZ/G3E support
-
- .../bindings/pwm/renesas,rzg2l-gpt.yaml       |  23 ++
- .../bindings/pwm/renesas,rzg3e-gpt.yaml       | 323 ++++++++++++++++
- drivers/pwm/pwm-rzg2l-gpt.c                   | 360 ++++++++++++++----
- 3 files changed, 626 insertions(+), 80 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
-
+diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+index 4856af080e8e..71ae2f891fd2 100644
+--- a/drivers/pwm/pwm-rzg2l-gpt.c
++++ b/drivers/pwm/pwm-rzg2l-gpt.c
+@@ -39,6 +39,7 @@
+ #define RZG2L_GTCR(ch)		(0x2c + RZG2L_GET_CH_OFFS(ch))
+ #define RZG2L_GTUDDTYC(ch)	(0x30 + RZG2L_GET_CH_OFFS(ch))
+ #define RZG2L_GTIOR(ch)		(0x34 + RZG2L_GET_CH_OFFS(ch))
++#define RZG2L_GTINTAD(ch)	(0x38 + RZG2L_GET_CH_OFFS(ch))
+ #define RZG2L_GTBER(ch)		(0x40 + RZG2L_GET_CH_OFFS(ch))
+ #define RZG2L_GTCNT(ch)		(0x48 + RZG2L_GET_CH_OFFS(ch))
+ #define RZG2L_GTCCR(ch, sub_ch)	(0x4c + RZG2L_GET_CH_OFFS(ch) + 4 * (sub_ch))
+@@ -55,12 +56,19 @@
+ #define RZG2L_GTUDDTYC_UP_COUNTING	(RZG2L_GTUDDTYC_UP | RZG2L_GTUDDTYC_UDF)
+ 
+ #define RZG2L_GTIOR_GTIOA	GENMASK(4, 0)
++#define RZG2L_GTIOR_OADF	GENMASK(10, 9)
+ #define RZG2L_GTIOR_GTIOB	GENMASK(20, 16)
++#define RZG2L_GTIOR_OBDF	GENMASK(26, 25)
+ #define RZG2L_GTIOR_GTIOx(sub_ch)	((sub_ch) ? RZG2L_GTIOR_GTIOB : RZG2L_GTIOR_GTIOA)
+ #define RZG2L_GTIOR_OAE		BIT(8)
+ #define RZG2L_GTIOR_OBE		BIT(24)
+ #define RZG2L_GTIOR_OxE(sub_ch)		((sub_ch) ? RZG2L_GTIOR_OBE : RZG2L_GTIOR_OAE)
+ 
++#define RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE	BIT(9)
++#define RZG2L_GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE	BIT(25)
++#define RZG2L_GTIOR_PIN_DISABLE_SETTING \
++	(RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE | RZG2L_GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE)
++
+ #define RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE	0x1b
+ #define RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH \
+ 	(RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE | RZG2L_GTIOR_OAE)
+@@ -71,12 +79,17 @@
+ 	((sub_ch) ? RZG2L_GTIOR_GTIOB_OUT_HI_END_TOGGLE_CMP_MATCH : \
+ 	 RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH)
+ 
++#define RZG2L_GTINTAD_GRP_MASK	GENMASK(25, 24)
++
+ #define RZG2L_MAX_HW_CHANNELS	8
+ #define RZG2L_CHANNELS_PER_IO	2
+ #define RZG2L_MAX_PWM_CHANNELS	(RZG2L_MAX_HW_CHANNELS * RZG2L_CHANNELS_PER_IO)
+ #define RZG2L_MAX_SCALE_FACTOR	1024
+ #define RZG2L_MAX_TICKS		((u64)U32_MAX * RZG2L_MAX_SCALE_FACTOR)
+ 
++#define RZG2L_MAX_POEG_GROUPS	4
++#define RZG2L_LAST_POEG_GROUP	3
++
+ struct rzg2l_gpt_chip {
+ 	void __iomem *mmio;
+ 	struct mutex lock; /* lock to protect shared channel resources */
+@@ -84,6 +97,7 @@ struct rzg2l_gpt_chip {
+ 	u32 period_ticks[RZG2L_MAX_HW_CHANNELS];
+ 	u32 channel_request_count[RZG2L_MAX_HW_CHANNELS];
+ 	u32 channel_enable_count[RZG2L_MAX_HW_CHANNELS];
++	DECLARE_BITMAP(poeg_gpt_link, RZG2L_MAX_POEG_GROUPS * RZG2L_MAX_HW_CHANNELS);
+ };
+ 
+ static inline struct rzg2l_gpt_chip *to_rzg2l_gpt_chip(struct pwm_chip *chip)
+@@ -375,6 +389,81 @@ static const struct pwm_ops rzg2l_gpt_ops = {
+ 	.apply = rzg2l_gpt_apply,
+ };
+ 
++/*
++ * This function links a poeg group{A,B,C,D} with a gpt channel{0..7} and
++ * configure the pin for output disable.
++ */
++static int rzg2l_gpt_poeg_init(struct platform_device *pdev,
++			       struct rzg2l_gpt_chip *rzg2l_gpt)
++{
++	const char *poeg_name = "renesas,poegs";
++	struct of_phandle_args of_args;
++	struct property *poegs;
++	unsigned int i;
++	u32 poeg_grp;
++	u32 bitpos;
++	int cells;
++	int ret;
++
++	poegs =  of_find_property(pdev->dev.of_node, poeg_name, NULL);
++	if (!poegs)
++		return 0;
++
++	cells = of_property_count_u32_elems(pdev->dev.of_node, poeg_name);
++	if (cells < 0)
++		return cells;
++
++	if (cells & 1)
++		return -EINVAL;
++
++	cells >>= 1;
++	for (i = 0; i < cells; i++) {
++		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
++						       poeg_name, 1, i,
++						       &of_args);
++		if (ret)
++			return ret;
++
++		if (of_args.args[0] >= RZG2L_MAX_HW_CHANNELS) {
++			dev_err(&pdev->dev, "Invalid channel %d >= %d\n",
++				of_args.args[0], RZG2L_MAX_HW_CHANNELS);
++			goto err_of_node;
++		}
++
++		if (!of_device_is_available(of_args.np)) {
++			/* It's fine to have a phandle to a non-enabled poeg. */
++			of_node_put(of_args.np);
++			continue;
++		}
++
++		if (!of_property_read_u32(of_args.np, "renesas,poeg-id", &poeg_grp)) {
++			if (poeg_grp > RZG2L_LAST_POEG_GROUP) {
++				dev_err(&pdev->dev, "Invalid poeg group %d > %d\n",
++					poeg_grp, RZG2L_LAST_POEG_GROUP);
++				goto err_of_node;
++			}
++
++			bitpos = of_args.args[0] + poeg_grp * RZG2L_MAX_HW_CHANNELS;
++			set_bit(bitpos, rzg2l_gpt->poeg_gpt_link);
++
++			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTINTAD(of_args.args[0]),
++					 RZG2L_GTINTAD_GRP_MASK, poeg_grp << 24);
++
++			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(of_args.args[0]),
++					 RZG2L_GTIOR_OBDF | RZG2L_GTIOR_OADF,
++					 RZG2L_GTIOR_PIN_DISABLE_SETTING);
++		}
++
++		of_node_put(of_args.np);
++	}
++
++	return 0;
++
++err_of_node:
++	of_node_put(of_args.np);
++	return -EINVAL;
++}
++
+ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ {
+ 	struct rzg2l_gpt_chip *rzg2l_gpt;
+@@ -426,6 +515,10 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ 	if (rzg2l_gpt->rate_khz * KILO != rate)
+ 		return dev_err_probe(dev, -EINVAL, "Rate is not multiple of 1000");
+ 
++	ret = rzg2l_gpt_poeg_init(pdev, rzg2l_gpt);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to link gpt with poeg\n");
++
+ 	mutex_init(&rzg2l_gpt->lock);
+ 
+ 	chip->ops = &rzg2l_gpt_ops;
 -- 
 2.43.0
 
