@@ -1,203 +1,126 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C2F3EB7F1;
-	Thu, 23 Apr 2026 11:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B0C3E0C7B;
+	Thu, 23 Apr 2026 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776945570; cv=none; b=VjooEUR2yDPlnZ2g4iHpPSkuTrelPoYzgPdCkx+r6afiJ//LSQWNrfWeWkvOQE65pnjOHiv1hQXAbmKwyg9igJWZl60UYXfymI4MRS8vlCCNVeheLcUb12FLYnwNyg4GBshDFnoRnR5WtfjXPogfR46akikXlHSHfDdNWI7XcvE=
+	t=1776945852; cv=none; b=N7hipsMezAVeBLGFCpC2rH1VsZ8DjuvuqDnGduRTRy2LojWzUjJs5o1kdzDWYENmhbURt81Anvg8RjbshWT38toDpTl6KcEunz7Z4AAbJt1hvnmV6fQQdP9njJRpY1Coksh+fKuJ+k7+Kf1VIJa0iH5WiUrJRRf7QgKhT7HObjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776945570; c=relaxed/simple;
-	bh=r400RnvBBwtf4yjnHfB5HfGRVqz7s/s46rjjt3dq68I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AO3SxlFRPAgdZwraW6ZS/cuTsBELMMFUOfm43CQejNjUEqGiDkD8mh8INyc3lepEDHOEjkGrx44nUjHIOQDbTv9CBSEDkPE12Njw/pr0oPqTZBHPJR2HHaGa7rr4kgGwISoRj5rG/LKS0TTIWEyJZio+OpDJ8wQpThnHd98AxI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WlStTxqG; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1776945852; c=relaxed/simple;
+	bh=wF1sSE88mFTZYVL6I2iywx1vtTst2NH6hybuyhiSjAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rsp6BbWLQMvAaZCMTU5ABbV6bvQR+PsGDW1MzF502WYHBGifag1OQQ4pi5unPQ3xnHu+PBcpUnmQDXUmWUv3OMSoBfJXutheXjkDmibjFAJv19E2Vr0SjIi878CcbDhREAaGB1PZXISm04SboIS5fAjWFEjHIjVwHkZzZ8Ap+Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vc22Ys8m; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=kAdSidQZ; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WlStTxqG"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9B3C71A33C4;
-	Thu, 23 Apr 2026 11:59:27 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 69D61604EB;
-	Thu, 23 Apr 2026 11:59:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5309B10460BF2;
-	Thu, 23 Apr 2026 13:59:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776945564; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0cIzziXQXBlswI5he/Z1p9UVN9gXfIafkur4yQLuNKM=;
-	b=WlStTxqGzva9+UFSYhFfXw4/eyvnNhgwpre83ebDV7irThXx3jpNRYnWO16QrVNcMMUvPa
-	FtqvwIEFzz1tDTi3nQMemL7s2ni2N5ABm2DKLe/xjA9s9AGh/vfXXFmQ+Ix5neYQpUggUE
-	ZkZ21Yrus5l3d9xGjFkYkOvTZpps9BvhfTY2TQgvgGgOjnl7ZVfUyrQEb88q3IfxCsNhlP
-	OFyLzhp9rcJGWmKKtalqgU7Zg963yUOKfMu+Yf0/VXh1SnUEd9dPdKa1GHuQ5iAzalT8L2
-	gWTTR+Ma0QEQnp454zzEqKiIy5BYmW0LpXZy4mqze37S9YM/iIdSVAQFxUomwQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Janne Grunau <j@jannau.net>,
-	Liu Ying <victor.liu@nxp.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Marek Vasut <marex@denx.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Michal Simek <michal.simek@amd.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
-	Ian Ray <ian.ray@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 41/41] drm: renesas: shmobile: remove now-redundant call to drm_connector_attach_encoder()
-Date: Thu, 23 Apr 2026 13:55:50 +0200
-Message-ID: <20260423115550.444930-7-luca.ceresoli@bootlin.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vc22Ys8m";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="kAdSidQZ"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4g1ZWW6cZVz9tcZ;
+	Thu, 23 Apr 2026 14:04:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776945848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LZ6eAskc0SjvK0cbtp0eTdGWooXU74WxP4QkBVjTPwI=;
+	b=vc22Ys8mO4lCpBbBJzWUZaYex6UVwP0T6b38CxYAUBXBy1ycKBsVEUcLQfjzQoFjIlaSA4
+	NVyUCDNyn1agESjGVb6DGnkKVYYuVNJLRAAgdDPx0LBMksqpwD2iRgBcZ4Xy8vZT9nbmDD
+	hvipyUkdNLwoiN6iUAxVROSnekzwM0cYD9fnerQvePRv/EHJX1MBNraw5vek7o0GWT+vK+
+	h89kAtrdLgNKwxCA93NYsx0K8p4fhCDeN/pFaXa4ZA1pyiZsUi1e1sD5WgiTzYyWim3g5G
+	kIqQqPKy7Tv3VjqNyLXXa5reis0mRBdzt4pORY8ie/0Wle9J+eKZB+vOfmePXg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=kAdSidQZ;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <c9ef9d73-6f1b-42ea-b5f0-09fcf904c78e@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776945844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LZ6eAskc0SjvK0cbtp0eTdGWooXU74WxP4QkBVjTPwI=;
+	b=kAdSidQZWvcnIbb1jopdE6erSur+0eBatbUmq3GW3hrZTPo6OjuZfWqX2XEHQqOb6usqUa
+	/MD4TaQxDGGLZaJqRT5DP89hYeLTjiKNoUf+CbT8TxUuOtOhpnlw3/WscfsmZ7USxl5ZKm
+	XJsEI/2+5de+AWkHF3GdgJzQ1JZLAbYjbYNQiQdQmVa0L8oMSxjNdAzMODbvXGIqnao+MF
+	Wfwyun1ZJT4S9DI5I9J+oKFJO2KNGi4CNdjx0QyYa5+9e92xKBuGrU6rYJPgyc5ApXQ5gm
+	r4OF47Ej08WhwOaZBreJ+wdXLqMETVJan2nDB+0xopi2Essr/kRH7jme47w80A==
+Date: Thu, 23 Apr 2026 12:00:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH v2 3/4] ARM: dts: renesas: r8a7740: Add ZT/ZTR trace clock
+ on R-Mobile A1
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260415233300.457892-1-marek.vasut+renesas@mailbox.org>
+ <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
+ <20260421-cherubic-urban-beluga-49ee00@quoll>
+ <0f933506-c196-4503-844f-2a375e2cf690@mailbox.org>
+ <161eb29f-2d07-455a-bd74-4f22061b5dfb@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <161eb29f-2d07-455a-bd74-4f22061b5dfb@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 4rurf9ku7rt7u9f8jrock8stus9woi4h
+X-MBO-RS-ID: 74424914be6ca4b683f
+X-Rspamd-Queue-Id: 4g1ZWW6cZVz9tcZ
 
-shmob_drm_connector_create() can init the connector in two ways, based on
-the 'if (sdev->pdata)':
+On 4/23/26 11:26 AM, Krzysztof Kozlowski wrote:
+> On 23/04/2026 01:33, Marek Vasut wrote:
+>> On 4/21/26 10:02 AM, Krzysztof Kozlowski wrote:
+>>> On Thu, Apr 16, 2026 at 01:31:40AM +0200, Marek Vasut wrote:
+>>>> Add ZT trace bus and ZTR trace clock on the R-Mobile A1.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>>> ---
+>>>> Cc: Conor Dooley <conor+dt@kernel.org>
+>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+>>>> Cc: Magnus Damm <magnus.damm@gmail.com>
+>>>> Cc: Michael Turquette <mturquette@baylibre.com>
+>>>> Cc: Rob Herring <robh@kernel.org>
+>>>> Cc: Stephen Boyd <sboyd@kernel.org>
+>>>> Cc: devicetree@vger.kernel.org
+>>>> Cc: linux-clk@vger.kernel.org
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>> ---
+>>>> V2: Add ztr/zt clock at the end of the list to match bindings
+>>>> ---
+>>>>    arch/arm/boot/dts/renesas/r8a7740.dtsi    | 2 +-
+>>>
+>>>>    include/dt-bindings/clock/r8a7740-clock.h | 2 ++
+>>>
+>>> This goes to the binding patch.
+>>>
+>>> Didn't you have also a checkpatch warning?
+>> I only got this warning, but the docs 1/4 and includes 3/4 are a
+>> separate patch in this series:
+>>
+>> "
+>> WARNING: DT binding docs and includes should be a separate patch. See:
+>> Documentation/devicetree/bindings/submitting-patches.rst
+> 
+> So you did not implement it... Include goes with the binding. Always.
+> Look at other commits.
+The warning says the exact opposite thing , does it not ?
 
- 1. manually in shmob_drm_connector_create(), or
- 2. delegating to drm_bridge_connector_init()
-
-Whichever branch is taken, drm_connector_attach_encoder() is called
-immediately after to attach the connector to the encoder.
-
-Now drm_bridge_connector_init() calls drm_connector_attach_encoder() on the
-connector so it is not needed anymore in case 2 and should be removed, but
-it is still needed in case 1. Move drm_connector_attach_encoder() from the
-common path to inside shmob_drm_connector_create() in order to get back to
-a single drm_connector_attach_encoder() in both cases.
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
----
-
-Changes in v2:
-- rewrote completely, fixing potential ERR_PTR deref and ending up with
-  a cleaner patch
-- also wrote more extensive commit message
----
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c    | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 5f460b38596c..815c770147ed 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -583,6 +583,13 @@ shmob_drm_connector_init(struct shmob_drm_device *sdev,
- 
- 	drm_connector_helper_add(connector, &connector_helper_funcs);
- 
-+	ret = drm_connector_attach_encoder(connector, encoder);
-+	if (ret < 0) {
-+		drm_connector_cleanup(connector);
-+		kfree(scon);
-+		return ERR_PTR(ret);
-+	}
-+
- 	return connector;
- }
- 
-@@ -594,7 +601,6 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 			       struct drm_encoder *encoder)
- {
- 	struct drm_connector *connector;
--	int ret;
- 
- 	if (sdev->pdata)
- 		connector = shmob_drm_connector_init(sdev, encoder);
-@@ -606,17 +612,9 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 		return PTR_ERR(connector);
- 	}
- 
--	ret = drm_connector_attach_encoder(connector, encoder);
--	if (ret < 0)
--		goto error;
--
- 	connector->dpms = DRM_MODE_DPMS_OFF;
- 
- 	sdev->connector = connector;
- 
- 	return 0;
--
--error:
--	drm_connector_cleanup(connector);
--	return ret;
- }
--- 
-2.53.0
-
+Maybe the warning text needs to be updated ?
