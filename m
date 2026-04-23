@@ -1,117 +1,98 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5020E31F9AB;
-	Thu, 23 Apr 2026 03:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40F29ACF6
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 07:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776913352; cv=none; b=aQAFFnrg7U7zbS6boLvT+4ecHDED2GcIO75gSOOR+XlJHONs6oTMyeFVolL4eos9F3h1s8Pyl8zLzEGIGOUCND+YbWSk6yD4ZWusdpRnjubX9U9CEDuKXI6z53vD7HxgbjloJ6EBCIhKKpUk1HFIvfPPkwj4o9PCVpVmdal9wWo=
+	t=1776930534; cv=none; b=IYHM4ZgD68c7ci5Qnv3RddshrY5sNTvLmD6fXjpPjsR62pTMwudjY//5fnczTEyPclS5DYdMb6gXQ7QX+K4CtxDScHdys+xT4TJOPKPY/vtOGZjPv3+KZp1Nep10AT/gHUwmse7sjPstGBzeJZbVqDyYBWvl9+HA/BEGj3bzzhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776913352; c=relaxed/simple;
-	bh=FM9dP01dJCtr51VHVWMIkMtHea+N86+1H9ig79I7IJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ieEu6SBzlpWJJxFmnleWwujRdooIeuSkMi0VmkruxaB8wX18wgfi1m3mOgL5TNMM2XD2a5+PPwBE/Emn+dy4NB0nZxJ+urf2iaeaelDckWII8Lk0TXtJd7wbOa5+eWipZimhp9EKKTlormbkmH6TM4e7FmM90xbpktRWtNncibY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DPutjH9M; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FUIbgGXM; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DPutjH9M";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FUIbgGXM"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g1LVW4745z9tkP;
-	Thu, 23 Apr 2026 05:02:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776913347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/5nrVUEisrdFvdhbKV6CkO0NTyBn09hOKHVIHlVzjGE=;
-	b=DPutjH9MQYYO5ATse/UEF28ucYfgakB2kWu4c9xRmx35gIPQnQLsJeZt/Cwky43mPUl5ve
-	0y4dhQRLuvY0D4BcBFQbOuRbTyZv5oQnqkRzTKZxnDxXPPzLUA3bECh8qHQTLkO+72eZqF
-	bkC2rlH/vYiDCiZfNXyE/cYB1X/FKiMF47BpkXss0v66JVIpX5fMU2ToX7dTpBhhiEfEML
-	lshXWUGBLNGrJe9g4ULXtMK/YMCl8gQzX+rNLxvhKdJBd3bhzEW6Yrt3cQNYoIX9w2ybTh
-	/virglpGrKZO56UmDZAgafy0M77NxAqMuuEGlxcvOGjKaBr34RTUygt4hcSDAw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=FUIbgGXM;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <0f933506-c196-4503-844f-2a375e2cf690@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776913345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/5nrVUEisrdFvdhbKV6CkO0NTyBn09hOKHVIHlVzjGE=;
-	b=FUIbgGXMsv1sill9OPNXBYLB4NOUVzzMVBDSstCCOyKvP2wG7IxvSD/tIH1PcFfOiWMgO1
-	pFXITu8yWV5lsIYqOuHAm7zVw8ZG55s1E0sqja+Hjdo4wYthVPQgKb2gk7mo78x9xo77z6
-	11N0GZKAaQmHjjjKmKTy/pPw9R5v05XU0OpQfmD7sh+JxeWnvaAtAyMNzUsP70qa/+GD+l
-	2QS4SO8nlvM+f7J0MDUr+IPPWPbzMgWTmqmAcWTCS5s9MfgRmZsH/zQrn7itA7jot11Nwi
-	aXQcQJfcpvZvdCdEdGIMgIwLlK/yTgXIEliOEvUM+BUAV3g57WV5AHNiDj5YEw==
-Date: Thu, 23 Apr 2026 01:33:33 +0200
+	s=arc-20240116; t=1776930534; c=relaxed/simple;
+	bh=bV6aTtX0hDvOCc3SXegbi1yOc8CAutUCssPxRF8+8rI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZbiZFUR35tCJDhze0aE8gXOU0YkpUj/nohbTVaCJGTKfaeXZwtz3dCDWMUr33TKjDMlrrCj6irHKo73Ndtn2Fhfyu7yGm6v5fVMYN0EDWLy7OqeGDtAYCI1g0Jcynczx+ce5T4FD2IzOCirdkV/zE2bP0Ux9gcWntYxu/fqnocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56739adfa1aso4428043e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 00:48:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776930532; x=1777535332;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rz4Ubyu3jfWWynl0S5lveC14mxcG1dEX9l+5mJrbEc=;
+        b=YrQaiOArBGqM13Bu6SHSxxvsX4wpszGo4NomQtk6bEod7XeqzPIda9tCfF2ZyXLRYK
+         wFzjE6Nd2p+wLJSwsxd6EAzXW4YFSvYm2avdRvTgCmtCyzDahcJlR214W7qOBQHTetkB
+         Q1hckJMZcXpG/NoZdjPDXQmBCZRZPfL+w2BhkUaMiWHnEkSoTs5SI0lbRJggjbMxWaW4
+         n1iGwqr4GT5KCzMeRNRY7IAiYcfe+Y8Wa8k69wCuKrF6q5KS+ls4aYkl6yXuQV9Izl3+
+         scqxf82UUvx123Ezze5nGdhqmqTT+62R9OvRsUibTe6JMnPcyMNZ2tDXPXT03zHNWz32
+         dWWg==
+X-Forwarded-Encrypted: i=1; AFNElJ9KKCvTkfpxQjL8fXc8iqGuX3r2KnWcoOxh6zH9WAcUzFm6Zipx8zh3x8ZvVCUvf06sw0cxw+yDn65ZFpuLtpjNfQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLJt89GWJokjDZcXKyK9kkD7ISsr7Nadr2COaPs1/3uevoAWT7
+	zp9sbNCvHPRS+TQ+ZNoFctOAK5swhK0ak1WwBXlcfDAwInmieNLQNTXP/WxmMpoT/4s=
+X-Gm-Gg: AeBDietNyDoHqui+HDDd4pQnFs/O5nn9h2k5wc10nJvub4yRqu3I1IiMVjqC+/sx3hB
+	cYeMKsXH65PIN8WriQ/rxsX9OJrgoNpSLdr7rYl7E3CHnvEI5RaMQMxCu4JkZmMr7YzsAFR/uIq
+	orE6rgfUZwkzIqRhTPni8SU47x3fJsJ15SYXY/MVCSbPwBy5RFQUhKanMrh9AtBgQuoVl2vqTZP
+	ULD18unrPUmpaJaIRpjZC4TKdv4hHp84aCSCFAuwiXQ8kowqsc/CmsJxqO+PQi2qUNaF5iS5kUn
+	aR1pV5+L/5Yg3ywBE0+Ws8ZR8tm8GoM8Cber/KmOWy0dwoHiYMBHU2RmopxffiYx2XnBrX4HUYo
+	vbaSIRMT9PLF7EuN10gjOh2D1xOvlEIces8ZuBsmT8tfwInEEzfPseZqiwoU0RgUYonX5ThS5vx
+	GFdkFePVUvgif+sJH+9HIKDtzWgSLZPxXa3eQHJ1si925DitOXf/ecdtUov33Y8csT1EGiGIe0T
+	vcg+TrP7CMxsg==
+X-Received: by 2002:a05:6102:6a92:b0:603:273f:3576 with SMTP id ada2fe7eead31-616f4d72895mr14610514137.10.1776930532184;
+        Thu, 23 Apr 2026 00:48:52 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-61a52772936sm6240087137.8.2026.04.23.00.48.51
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Apr 2026 00:48:51 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-56efdc96b05so3969257e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 00:48:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9y8pF4eOBxPePdmMi/CN8viF7/XSQOYMUqGjHJzw4LNc56p8b6htTTORWJEQ9A7kcvitoqAsEvpJzLjfuGMMsZDQ==@vger.kernel.org
+X-Received: by 2002:a05:6123:5d9:10b0:56f:bb91:4861 with SMTP id
+ 71dfb90a1353d-572278284b4mr3012743e0c.0.1776930531157; Thu, 23 Apr 2026
+ 00:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 3/4] ARM: dts: renesas: r8a7740: Add ZT/ZTR trace clock
- on R-Mobile A1
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
- Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260415233300.457892-1-marek.vasut+renesas@mailbox.org>
- <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
- <20260421-cherubic-urban-beluga-49ee00@quoll>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20260421-cherubic-urban-beluga-49ee00@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 54kwxq1tnha1mex66tf4qrwip4irbwrn
-X-MBO-RS-ID: e40272b9ab78651b54b
-X-Rspamd-Queue-Id: 4g1LVW4745z9tkP
+References: <20260326110648.29389-1-biju.das.jz@bp.renesas.com> <20260326110648.29389-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260326110648.29389-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Apr 2026 09:48:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXVZfsEHRSJO=C3iuEpa+2k2Xgji3uNxnkyzUrEEtz9xw@mail.gmail.com>
+X-Gm-Features: AQROBzDG_5783iyOqKuu3KbfFJR0HwgxpR86ZMXywqtk_FNHF0_cGI7fUu1kcT4
+Message-ID: <CAMuHMdXVZfsEHRSJO=C3iuEpa+2k2Xgji3uNxnkyzUrEEtz9xw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] clk: renesas: rzg2l: Drop a check in rzg3s_cpg_pll_clk_recalc_rate()
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/21/26 10:02 AM, Krzysztof Kozlowski wrote:
-> On Thu, Apr 16, 2026 at 01:31:40AM +0200, Marek Vasut wrote:
->> Add ZT trace bus and ZTR trace clock on the R-Mobile A1.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
->> ---
->> Cc: Conor Dooley <conor+dt@kernel.org>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
->> Cc: Magnus Damm <magnus.damm@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Stephen Boyd <sboyd@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-clk@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-renesas-soc@vger.kernel.org
->> ---
->> V2: Add ztr/zt clock at the end of the list to match bindings
->> ---
->>   arch/arm/boot/dts/renesas/r8a7740.dtsi    | 2 +-
-> 
->>   include/dt-bindings/clock/r8a7740-clock.h | 2 ++
-> 
-> This goes to the binding patch.
-> 
-> Didn't you have also a checkpatch warning?
-I only got this warning, but the docs 1/4 and includes 3/4 are a 
-separate patch in this series:
+On Thu, 26 Mar 2026 at 12:06, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Drop the unwanted check in rzg3s_cpg_pll_clk_recalc_rate() as the function
+> is SoC specific.
+>
+> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-"
-WARNING: DT binding docs and includes should be a separate patch. See: 
-Documentation/devicetree/bindings/submitting-patches.rst
-"
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.2.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
