@@ -1,70 +1,70 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DAF3E51D9
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 09:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E10D352C58
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776937049; cv=none; b=Gq1hMlbDSfDtrXPUncaqMdZR+JW1yQAghVyzdPpkR9PrPaNlS2DdBohcZI0h5bazEet2bzTFBuh1nvR8uCfHY/VO3ABPRLwvjXDr01nSuB/buBUQI9XqnpsWQi5jEs/5XBeYtKIaETynR0DGrCORJOZdm5UjpRCm6pKi7Eidxk8=
+	t=1776937060; cv=none; b=Kg9EjtZxh3n9PXXizFRn5Iwwos9QYzC+BiIvDU3l+F9y0D24qkCP/BO8B62zlGwQzaOx4mBZ8alTsmFFz1KZ6UJF/TgTG2Jcasi+HDFZTCFsI8Vx1qMdPzc0EK3WT8uv5zH2Ucok9hk12nPk9KHq1ipnDLFsA5t8y2W3IPJ0OVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776937049; c=relaxed/simple;
-	bh=MMW8tY8fFNjxzkTNFQdlqOQr9QMK/x8eljdm5gJfveY=;
+	s=arc-20240116; t=1776937060; c=relaxed/simple;
+	bh=49P1ANy6/XGJGB1NNommdNWD+0xmIT+v6QWy7dtyDN4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DlPDp7D/TadF+ujEDNISi2OyBpEcwuu5/+HMIXLYVZM8Rk2nHcKrXB2VsFzqXn4wYbuGP1GMROYs0MFD33g1lFWTWTsWgAJn7D+qNftFLbQFV+TDTO8vdpwH4id4FcHA/OanBufvqu/VVPLEYU73Edsbg3GtsJ0fVIOFYN2sBBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+	 To:Cc:Content-Type; b=YOe4nHyzbKJ8Q7wmSXShUqRyuMR7oVcSvCRMGsf52bYkJiOEGjDfznbnkN0JSxPDkS1lsfRKRh6DlkyO7y2+b4HbJnSEjL5pf8zJREmf2sVPz+kAA7PDMoSCduivXoGfDmy4KCJ2n6YLgy+qh9TQhsMX4gngGi3lXAm+CLWBE8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56f660d9a51so4201601e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 02:37:27 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-95687f6ce13so1927854241.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 02:37:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776937047; x=1777541847;
+        d=1e100.net; s=20251104; t=1776937058; x=1777541858;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2sPVy0d3Q09KZb/RrhEpm6fKzZd0ZrDUPEVCPpd/6xc=;
-        b=N2TBWFzvEgivuvTLVFfiVxOmV65zn/nwPNIlkvlr+4sSIdJNy7zqD2GaQd06IzTJIL
-         nwPSjZ99Q2pNtCiVm5YqGGcJJaSGKJiEIBHxw44cnu4eDcTDK6cl3mWOjvuB8G7/OLXJ
-         liNOOT6Bp3cqnBlgKZNtIkcQtinU0/1+EfD9LOnN/BVodnEivXFH8p68hmXNOGfLcyVy
-         Ii5eJ07PsCSQPQu/5YdAxw6nk+AVKFI9BdnILzFtjOkt2eyp7XfWEQs2r1+OJOhrsNQz
-         qpntlMzoRv0KiEWkXJz2hbBroIbS1Zo85SkjIb/VRFe9f1EvPgipdzPF+k753/R3nFeh
-         roMQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+lZt3N0WGG1nc8VqxDGqhcwVqSb/aNRnXqa7NMmnWuBAZ9FS1Bs1O47JEvxQ22l3DKmFZAVN87osU2Sb3uUNAoxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtuiPDkEUiPA6dOn8ECsm4ix0Cn7giuPePpYF97+ogfX5+3cXn
-	QJ4bTOjINBG3X+oCQ/CKEWgFXKuGUH1xwDYhqo1Jp+QDpuVX7vyUmJjYYLms0S3/IIs=
-X-Gm-Gg: AeBDiesyRx1NwowiWtRskKKkhowKT93WoxuLQ+Ij4OX2aRKUfHGNVO+gcLy/HFEcOoB
-	AqWmtTtFhLJWnh1roZ2kIQt8rl8iVDxyzRht9KBiJmgmSUXm75rlBzFCEThQwdebcrTvVPnDopn
-	Xk2oR6kCkY+AgVyPLggBvglQ7gi7BzqrpeRQGRB2XR1sWh+gaSHZ1IQ6Vt/Y9BkLD5SjSPXnBYe
-	DWpfwlBbX186mE3kRbixX/0+c5hQyc0cHX/YE9QYWhUy2PGjktS+DDg44ATSxgPs+8lMwjMKR9j
-	UMfw/lssX7rPdi2+5M+9gsiPKVUY3MbBpmqFoaZ6I3UVxBIVBwgkPtGaFVtThlGySi9NLM972rr
-	grmg4jpbYs2nl/wo3D8sF6aE/QkF0iSlZLUrITRKGkER8jFIRIhh5/rKGyCY+DN0FJGrh6G/ldk
-	8yK7skFrnJzH+hEGOa9ixwI8JUiq1Hd5ePZDoEV7x8UaZj63UJw/LydqbaFQfqQNOHY/Uzlvc=
-X-Received: by 2002:a05:6122:225:b0:56d:8bdb:fa50 with SMTP id 71dfb90a1353d-56fa5a4281dmr14538457e0c.13.1776937046659;
-        Thu, 23 Apr 2026 02:37:26 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56fa93253aesm11151154e0c.14.2026.04.23.02.37.25
+        bh=J4avnyk2r/thqEE/8ekAW8GXrcxQQiB8UiCWb8+JQfs=;
+        b=IdoUwux70yKH+/hpXjA3Bj+Wk6bAOZoGCkjxvY/rcI5ypYSS28qYsy0G4h/+VIMzJh
+         HNnp0mUNy7jWvCPZObYOf70WkdX/UhvKBCxdknrT1oQo0Y6pjUwpawZiYx+s7Qu3k5zR
+         q4TzSIsaBtiV6oLTwb2LSq4CPU+vbkyY4WAKn9FS2+F7v6ZYfhPNVyGTFgM/bJf5zDxH
+         BizICkKYzrwRvO7uLCkrL661m1HSx5TBTG6UCWigFlUXJiI78SN5R1wy89+R5pRDbvEz
+         XcmxM51SOrEt3jpowc8AzIuSU/enhGLR6ug+K50pn0lUHE/hUkgdinjzbnTxJQyomiIk
+         9/Qw==
+X-Forwarded-Encrypted: i=1; AFNElJ+c6K+meIhKSnODbVkyZnuuDlLsYrN62GdAkTuPJ4ZC6Oi84gbyXb9IxZXosYfoJkV/jsVvKBIqAF4BU0d+O4hVxQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq3T9Xb7p6pX1qdFkPByb1FdlBmLfcN/wTJW/AUVrY2VEJ/Wl7
+	MClAxQixZ20DLLP6nOmexCXvzCrvYPRPUORQOx0XafHPdyaN0c3tc6wStxdk+UjlvHQ=
+X-Gm-Gg: AeBDievykZfeJ5uBEVY0fqinNC4VDYKi8fto/gpwq0HGeuvJHcoC7x2g8pUSBJ9RSaI
+	rLNg3WNAnWUnHwTuxniIYxBawhw+Lyg0gMc45LR9gl2JhKVM654r39qzFJSJau9jBUt3w0K/Qgn
+	JMMKdPZX+R4EdvEsT6YDGdKiFyRryUWrz7H3ubJt0N9Kda80eOm0Qp93bdFFURPquUlWPhS0WIz
+	YAB1yLvXCYm4pnZqVPX8qnzp13YV2fyzQdRwWM4AasETX+t6/qpd241XA0hkFG/oHVosJ9ZORPe
+	/PZdaUlwrh2kHWlzUA38GZJxLlwdapnqDW0Mt+MrGQCfd2OGhBj3MxOYxEbkbSjsu1XZWL/zb3M
+	++in2CEdf25BjznOcY7jartC0zkrfa7uPekE4Yf6TvfM7CtT8hVQqyFs9wJtyMy0djXZZsPjLYB
+	HbKfS4V1DlF6qSp7d/k/5SvT5t9kOqz9H2r6wW22tOkd2t8xVWD9PssZDR8S1E8wtflVagPPM=
+X-Received: by 2002:a05:6102:80a8:b0:607:a215:5b7e with SMTP id ada2fe7eead31-616f4d7cfcdmr13362844137.7.1776937058193;
+        Thu, 23 Apr 2026 02:37:38 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-621983b414asm167348137.2.2026.04.23.02.37.37
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2026 02:37:25 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-605a3cff8d0so3872274137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 02:37:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8D1gDutoaHVyC/1cliRboo0d72dB72u6KCxKuTSi2z4m1oiSbTUnPL89TyC4uMkqjWB0Xpb7TpTimMq3g6aCABEw==@vger.kernel.org
-X-Received: by 2002:a05:6102:2d09:b0:605:17b8:16dc with SMTP id
- ada2fe7eead31-616f6ef7d62mr14489475137.20.1776937045430; Thu, 23 Apr 2026
- 02:37:25 -0700 (PDT)
+        Thu, 23 Apr 2026 02:37:38 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-60579b9c0ccso4988599137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2026 02:37:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+qa15/Ypp6Vh6CUNzZZMfDWyWIrVsfxPVgu+zfBP2mWndlYXCIeGUDRf6On/67LQalH+AZSJhx9gMTjBpN0hDXIg==@vger.kernel.org
+X-Received: by 2002:a05:6102:dcd:b0:612:b3af:39f1 with SMTP id
+ ada2fe7eead31-616f68d1bafmr13648560137.18.1776937057736; Thu, 23 Apr 2026
+ 02:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260326110648.29389-1-biju.das.jz@bp.renesas.com> <20260326110648.29389-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260326110648.29389-3-biju.das.jz@bp.renesas.com>
+References: <20260326110648.29389-1-biju.das.jz@bp.renesas.com> <20260326110648.29389-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260326110648.29389-4-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Apr 2026 11:37:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUAdDAzRVkn6yOnTuN8nMWHwQsmfSncYu-0g=0KzUXbhA@mail.gmail.com>
-X-Gm-Features: AQROBzATkhB-bEdA01TJo1KbJI6u1Ear7Clb_HG6YiZ4zlpVNu741tRlDhNBios
-Message-ID: <CAMuHMdUAdDAzRVkn6yOnTuN8nMWHwQsmfSncYu-0g=0KzUXbhA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] clk: renesas: rzg2l: Add support for enabling PLLs
+Date: Thu, 23 Apr 2026 11:37:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWEQpg8biC1BFJx1n4byXDWGDK+QZdLkpHFypX3zYFWCQ@mail.gmail.com>
+X-Gm-Features: AQROBzBb1MKj-k5CTCdcl13Ho8NscavUFViNzxMLmeCGP4nXMPTVcdPIbSR_3Lo
+Message-ID: <CAMuHMdWEQpg8biC1BFJx1n4byXDWGDK+QZdLkpHFypX3zYFWCQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] clk: renesas: r8a08g046: Add support for PLL6 clk
 To: Biju <biju.das.au@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
@@ -72,80 +72,13 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Biju,
-
 On Thu, 26 Mar 2026 at 12:06, Biju <biju.das.au@gmail.com> wrote:
 > From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Add support for enabling PLL clocks in the RZ/G3L CPG driver to turn off
-> some PLLs, if they are not in use(eg: PLL6, PLL7)
->
-> Introduce `is_enabled` and `enable` callbacks to handle PLL state
-> transitions. With the `enable` callback, PLL will be turned ON only when
-> the PLL consumer device is enabled; otherwise, it will remain off. Define
-> new macros for PLL standby and monitor registers to facilitate this
-> process.
+> Add support for PLL6 clk by registering with rzg2l-cpg driver.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -58,6 +58,13 @@
->  #define RZG3S_DIV_NF           GENMASK(12, 1)
->  #define RZG3S_SEL_PLL          BIT(0)
->
-> +#define RZG3L_PLL_STBY_OFFSET(x)       (GET_REG_SAMPLL_CLK1(x) - 0x4)
-> +#define RZG3L_PLL_STBY_RESETB          BIT(0)
-> +#define RZG3L_PLL_STBY_RESETB_WEN      BIT(16)
-> +#define RZG3L_PLL_MON_OFFSET(x)                (GET_REG_SAMPLL_CLK1(x) + 0x8)
-
-This - 0x4 / + 0x8 is a bit hard to follow.  I don't want to block
-this series, so for now it's OK.
-I think it would be good to refactor the whole PLL sub register offset
-handling: currently the config value contains the offsets of both the
-CLK1 and CLK2 registers (which differ by a fixed value of 4) in the
-config value, and the other register offsets are derived using the
-macros above.  Instead, it could store the lowest PLL registers offset
-(STBY), and derive all others from that by additions only.
-
-> +static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
-> +{
-> +       struct pll_clk *pll_clk = to_pll(hw);
-> +       struct rzg2l_cpg_priv *priv = pll_clk->priv;
-> +       u32 stby_offset, mon_offset;
-> +       u32 val, mon_val;
-> +       int ret;
-> +
-> +       stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
-> +       mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
-> +
-> +       if (enable) {
-> +               val = RZG3L_PLL_STBY_RESETB_WEN | RZG3L_PLL_STBY_RESETB;
-> +               mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
-> +       } else {
-> +               val = RZG3L_PLL_STBY_RESETB_WEN;
-> +               mon_val = 0;
-> +       }
-> +
-> +       writel(val, priv->base + stby_offset);
-> +
-> +       /* ensure PLL is in normal/stanby mode */
-
-standby.
-
-> +       ret = readl_poll_timeout_atomic(priv->base + mon_offset, val, mon_val ==
-> +                                       (val & (RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK)),
-> +                                       10, 100);
-> +       if (ret)
-> +               dev_err(priv->dev, "Failed to %s PLL 0x%x/%pC\n", enable ?
-> +                       "enable" : "disable", stby_offset, hw->clk);
-> +
-> +       return ret;
-> +}
-
-With the typo fixed:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
