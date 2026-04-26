@@ -1,224 +1,184 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F20288AD;
-	Sat, 25 Apr 2026 23:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3411155C82;
+	Sun, 26 Apr 2026 23:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777160337; cv=none; b=ejTvLH95CYprpIQovRt8Wmq8v5S7rb9eHJxQSWt2KmS6tGN79xp8Wv2SLgY5oYoxNRMQZUmWYXJFDst/lKsJGbPIA3W9GLaanYUlGe2dpFH7OSVtW6jo6Zsp7LTKPtLkvc17UU3tYO/PNkpZ1VWUhOSIIJtsFYXluYmUXXpZOCA=
+	t=1777245060; cv=none; b=V+WpYc9sVIqOs3PawvayJWO3yuV7W+y58F83qbtiWo50VaPAjk8kbwQ+K608s9TiJtJDIdBJqySNR23M2Fz2f6HWajYdkzSwblcrHq0dFyh3gCQUlRGq+zYsPbasR2+QBPZF/h6yhFEbO1aO5ZpBdiPnRqREycSoZgYZygeQhnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777160337; c=relaxed/simple;
-	bh=kfOjTCZ/WD/9yCW5AWc3k+LiKZnkPI4OkmQxEMM0K5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sPgn3zlPt7RHuF6U6Hn9N3CL5CMYrUtdPjCgIiQGPV/Wo6KQ6eYZZBMwwbtVDd4ej957/CC/38EqlHhzvV3bwCYz5Z1aY7I0BpaFZVMl2wYzBJ1h+20LPhDpG/J7KMxojeM6orz4wHBwdQchY9Jefr/S/OaqwyKEjFJS5v7saBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=AurzOrSo; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=g6eecBUm; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1777245060; c=relaxed/simple;
+	bh=a/aJYD6pRvMxLS87Yj3RcGUYhcRUIAX2XSq4KMBsQQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GI5msmD0drl614XPEsEvzd4y3lfuOO20Ar3/nVdHYIqeiNdDmNFJUn+MDa9WS7PoHJjlqZxkPmuXVgf4/ZDTeHxqq4IOPgvk039iMkvxwyzrTWwtH4hx0JZDrw23mfxfWGx+aqik9irDWFmorsainPp4vpDejlPe3EbeZN9tn1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=qNPJZs6+; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AurzOrSo";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="g6eecBUm"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g35rD3DHSz9tf7;
-	Sun, 26 Apr 2026 01:38:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777160332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sAz7g1dUi5hi0b+215Mn7DEKA29E+hd6TPfNhohZZAY=;
-	b=AurzOrSojFAvdt1g48mMPvzZRwJFPN3kNgApXaR80getd4hrWqwvXxyDdvG16Q9a0sAK1Z
-	bqL2MH2bHvdKrz4zaBbcXy9/OdrYIXLL3fJ4Eg0v2IWxpGc+zt1ZY4K2Fsi2Y0dbaT0ILT
-	HV8ceUr3xQO11jO8im3cwZ/ZrErA3IAGzjjOOJqWV3DY8xQrTPDWrkNyv9/KjUiweFEuDS
-	M280Ce6Q42MFvPjhkVuNPYoBzdXsRZgc5pXTVPNf/ISVgceWMR2OMXXJAB2+pbtFrANylE
-	MkNkd9dfwaYCxVHDUmBpDMeg3eRP9GQNofcm6C4e9hHBXrDiS0SviLJQb1K9pQ==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777160331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sAz7g1dUi5hi0b+215Mn7DEKA29E+hd6TPfNhohZZAY=;
-	b=g6eecBUmvcWtI59d4IpWU1TpbMNTB5i+jzsa0jQE+2d6U9w8EmjsR+UdJRkTGA6quZgmOn
-	oRYXLTiYA0Wo5/1tQkoOTfnYX48hN1/bcrk1FhFJxnFHYBbU2wkrCIDvHfCTne02qw4Vrl
-	1XP4qfWugCp1YNBdBpxSCJEYp3VXmN3nytWSiYPhO+fawEJZlTlIqhV7zqAphqUEXmBHxx
-	SqGSW1weZXcTcCPU6jNBHRhKFivMNjJDXppqyBXE4xfEYBQN8NjA7P7fgIG21wV86z7tBc
-	p0gHhGhpmRSAjOVcxM/4oUJ/h421aZM1QFV2CsTT6dKRyUIKFf3j1v9j22TCGw==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <den@valinux.co.jp>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar-gen4: Limit Max_Read_Request_Size and Max_Payload_Size to 256 Bytes
-Date: Sun, 26 Apr 2026 01:38:28 +0200
-Message-ID: <20260425233845.459175-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="qNPJZs6+"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 815121F02;
+	Sun, 26 Apr 2026 16:10:51 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2440A3F763;
+	Sun, 26 Apr 2026 16:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1777245057; bh=a/aJYD6pRvMxLS87Yj3RcGUYhcRUIAX2XSq4KMBsQQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qNPJZs6+vgMSeAnGjNou/szz7erkEx2r0b/jVAFVKxomqucUko7deq+yVJfoEwiJG
+	 ggRKCCt9/wSae87dDwayalhIbqUpyAsN1LZ0OG3OXf3lNxskhdQGD7tgLFnB/ZlaLi
+	 sLCex6afDiGYaXlHstiEwyxomHUg/JkEDxMbYIAI=
+Date: Mon, 27 Apr 2026 00:10:47 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
+	philip.radford@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, dan.carpenter@linaro.org,
+	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com,
+	marek.vasut+renesas@gmail.com
+Subject: Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol
+ initialization
+Message-ID: <ae6bdwhHoft3p0lv@pluto>
+References: <20260310184030.3669330-1-cristian.marussi@arm.com>
+ <20260310184030.3669330-9-cristian.marussi@arm.com>
+ <WNCeTzosRbKm_zGsbSPx8w@collabora.com>
+ <aetw1WcSCDxk11AV@pluto>
+ <CAMuHMdXYGRzq2j3z1io=kHj_QsWtJBirPhbZPa5bFBD7U9e0sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 457bd6f4a564d15300f
-X-MBO-RS-META: r11zh8f91w5eo8fpxks54nrjtcmwxayk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXYGRzq2j3z1io=kHj_QsWtJBirPhbZPa5bFBD7U9e0sw@mail.gmail.com>
 
-R-Car Gen4 PCIe controller has a hardware limitation of 256 Bytes
-maximum payload size. The PCIe DMA generates requests of size up
-to minimum(Max_Read_Request_Size, Max_Payload_Size). Force limit
-both Max_Read_Request_Size and Max_Payload_Size to 256 Bytes and
-propagate this limit to all downstream devices.
+On Fri, Apr 24, 2026 at 03:55:08PM +0200, Geert Uytterhoeven wrote:
+> Hi Cristian,
 
-This limitation can be triggered for example by using an NVMe SSD
-which does not use host memory buffer, Samsung 980 PRO is such an
-SSD. Affected SSD reports 'hmpre' field as 0:
-"
-$ nvme id-ctrl /dev/nvme0 | grep hmpre
-hmpre     : 0
-"
+Hi,
 
-The symptom is a read from the SSD which wraps around at 256 Byte
-boundary. The test for this symptom can be implemented by writing
-512 Byte of random data into the SSD and reading the data back. If
-the read back data repeat after 256 Bytes, the device is affected.
-"
-$ dd if=/dev/urandom of=/tmp/data.bin bs=256 count=2 \
-  dd if=/tmp/data.bin of=/dev/nvme0n1 bs=256 count=2 \
-  dd if=/dev/nvme0n1 bs=256 count=2 of=/tmp/readback.bin
-"
+> 
+> On Fri, 24 Apr 2026 at 15:32, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > On Fri, Apr 24, 2026 at 02:07:59PM +0200, Nicolas Frattaroli wrote:
+> > > On Tuesday, 10 March 2026 19:40:25 Central European Summer Time Cristian Marussi wrote:
+> > > > Add proper error handling on failure to enumerate clocks features or
+> > > > rates.
+> 
+> > > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > > > ---
+> > > >  drivers/firmware/arm_scmi/clock.c | 22 ++++++++++++++++------
+> > > >  1 file changed, 16 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> > > > index c9b62edce4fd..bf956305a8fe 100644
+> > > > --- a/drivers/firmware/arm_scmi/clock.c
+> > > > +++ b/drivers/firmware/arm_scmi/clock.c
+> > > > @@ -402,10 +402,16 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+> > > >                 SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(attributes))
+> > > >                     clk->rate_change_requested_notifications = true;
+> > > >             if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> > > > -                   if (SUPPORTS_PARENT_CLOCK(attributes))
+> > > > -                           scmi_clock_possible_parents(ph, clk_id, cinfo);
+> > > > -                   if (SUPPORTS_GET_PERMISSIONS(attributes))
+> > > > -                           scmi_clock_get_permissions(ph, clk_id, clk);
+> > > > +                   if (SUPPORTS_PARENT_CLOCK(attributes)) {
+> > > > +                           ret = scmi_clock_possible_parents(ph, clk_id, cinfo);
+> > > > +                           if (ret)
+> > > > +                                   return ret;
+> > > > +                   }
+> > > > +                   if (SUPPORTS_GET_PERMISSIONS(attributes)) {
+> > > > +                           ret = scmi_clock_get_permissions(ph, clk_id, clk);
+> > > > +                           if (ret)
+> > > > +                                   return ret;
+> > > > +                   }
+> > > >                     if (SUPPORTS_EXTENDED_CONFIG(attributes))
+> > > >                             clk->extended_config = true;
+> > > >             }
+> > > > @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
+> > > >     for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
+> > > >             cinfo->clkds[clkid].id = clkid;
+> > > >             ret = scmi_clock_attributes_get(ph, clkid, cinfo);
+> > > > -           if (!ret)
+> > > > -                   scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> > > > +           if (ret)
+> > > > +                   return ret;
+> > > > +
+> > > > +           ret = scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> > > > +           if (ret)
+> > > > +                   return ret;
+> > > >     }
+> > > >
+> > > >     if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> > > >
+> > >
+> > > I see that a quirk is being added for this, but I thought I should chime
+> > > in with my opinion for future approaches in this direction.
+> > >
+> > > I don't see how this hardens anything. All this does is break platforms
+> > > that were previously working by returning early. At most, this should
+> >
+> > Certainly the naming in the subject was chosen badly (by me!)...indeed it
+> > should be more something like "Enforce strict protocol compliance",
+> > because at the end all of the broken platforms really run a slighly odd
+> > out of spec SCMI firmware that does NOT implement one or more of the SCMI
+> > mandatory command...
+> >
+> > > be a warning (as in not WARN but pr_warn/dev_warn/...). If firmware
+> > > returns nonsense, a clock driver should imho try its best to work
+> > > around the nonsense in a safe way, because the alternative is that
+> > > a major part of the system (and thus likely the entire system) no
+> >
+> > ..well yes we definitely dont want to break deployed platforms BUT also
+> > we dont want to legalize this kind of out of spec behaviour in future
+> > firmwares...hence (a number ?) of quirks an FW_BUG warns probably to
+> > let already broken deployed platforms survive while discouraging such
+> > implementation in future fw implementations...
+> >
+> > These firmware most certainly wont pass the SCMI compliance test suite [1],
+> > which indeed we do not mandate, but the reason these bugs happened is
+> > exactly because the kernel SCMI stack was buggy and left that door open...
+> >
+> > More specifically these kind of out-of-spec behaviours are not really just
+> > a matter being 'picky', the problem is that any resource set in any
+> > SCMI protocol is defined by the spec such as to be described by a
+> > contiguos set of IDs and the drivers are designed anyway under that
+> > assumption from the allocation point of view, so allowing a clock ID to
+> > just fail one of the mandatory commands and skip a domain would jeopardize
+> > all of this and, even if clearly is NOT a problem here, seems a fragile
+> > assumption.
+> 
+> How can you have all of:
+>   1. a contiguous list of IDs,
+>   2. implement all mandatory commands,
+>   2. restrict the use of some clocks to a subset of the agents in the system?
+> Use a different list of IDs for each agent?
 
-Expected data:
-"
-$ hexdump -vC /tmp/data.bin
-00000000  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca
-00000010  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b
-...
-00000100  7a ce 3c b2 e1 d5 d9 11  88 63 10 59 76 3c dc 32 <-- random
-00000110  72 32 2a 7d a3 e1 aa 13  7c da 58 a1 7b 21 11 50 <-- data
-"
+Yes, the SCMI server can provide a per-agent view of the world to each
+agent, and ideally it should not even expose resources that are not
+needed at all to an agent...and by that I mean that the server SHOULD
+not enumerate that resources when queried, by dropping them from the
+list of resources that return to that agent WHILE maintaining the set of
+IDs contigous...
 
-Faulty readback, collected without this change in place:
-"
-$ hexdump -vC /tmp/readback.bin
-00000000  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca <---.
-00000010  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b <-. |
-...                                                          | |
-00000100  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca <-:-+- repeated
-00000110  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b <-+--- data
-     ^^^
-      |
-      '--- Repeat starts at offset 0x100 = 256 Bytes
-"
+...the SCMI server provides an illusion ideally where the agent is in
+control and can access whatever it wants, while the reality is that the
+agent can only issue commands that are deemed safe and sensible by the server,
+which is the ultimate arbiter on the system, to the extent that can hide
+resources or simply silently ignore requests...
 
-Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 56 +++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+> What if a mistake was made, and a clock was exposed to an agent by
+> accident?
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 8b03c42f8c84c..82f0a074a71da 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -576,6 +576,7 @@ static int r8a779f0_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable)
- static void rcar_gen4_pcie_additional_common_init(struct rcar_gen4_pcie *rcar)
- {
- 	struct dw_pcie *dw = &rcar->dw;
-+	u16 offset = dw_pcie_find_capability(dw, PCI_CAP_ID_EXP);
- 	u32 val;
- 
- 	val = dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW);
-@@ -584,11 +585,66 @@ static void rcar_gen4_pcie_additional_common_init(struct rcar_gen4_pcie *rcar)
- 		val |= BIT(6);
- 	dw_pcie_writel_dbi(dw, PCIE_PORT_LANE_SKEW, val);
- 
-+	val = dw_pcie_readl_dbi(dw, offset + PCI_EXP_DEVCTL);
-+	val &= ~(PCI_EXP_DEVCTL_PAYLOAD | PCI_EXP_DEVCTL_READRQ);
-+	val |= PCI_EXP_DEVCTL_PAYLOAD_256B | PCI_EXP_DEVCTL_READRQ_256B;
-+	dw_pcie_writel_dbi(dw, offset + PCI_EXP_DEVCTL, val);
-+
- 	val = readl(rcar->base + PCIEPWRMNGCTRL);
- 	val |= APP_CLK_REQ_N | APP_CLK_PM_EN;
- 	writel(val, rcar->base + PCIEPWRMNGCTRL);
- }
- 
-+static void rcar_gen4_rc_pcie_quirk(struct pci_dev *dev)
-+{
-+	static const struct pci_device_id rcar_gen4_pcie_rc_devid = {
-+		PCI_DEVICE(PCI_VENDOR_ID_RENESAS, 0x0030),
-+		.class = PCI_CLASS_BRIDGE_PCI_NORMAL, .class_mask = ~0
-+	};
-+	struct pci_bus *bus = dev->bus;
-+	struct pci_dev *bridge;
-+
-+	if (pci_is_root_bus(bus))
-+		bridge = dev;
-+
-+	/* Look for the host bridge */
-+	while (!pci_is_root_bus(bus)) {
-+		bridge = bus->self;
-+		bus = bus->parent;
-+	}
-+
-+	if (!bridge)
-+		return;
-+
-+	if (!pci_match_one_device(&rcar_gen4_pcie_rc_devid, bridge))
-+		return;
-+
-+	/*
-+	 * R-Car Gen4 PCIe controller has a hardware limitation of 256 Bytes
-+	 * maximum payload size. The PCIe DMA generates requests of size up
-+	 * to minimum(Max_Read_Request_Size, Max_Payload_Size). Force limit
-+	 * both Max_Read_Request_Size and Max_Payload_Size to 256 Bytes and
-+	 * propagate this limit to all downstream devices.
-+	 *
-+	 * For details, refer to:
-+	 * R-Car S4 R19UH0161EJ0130 Rev.1.30 Jun. 16, 2025 or
-+	 * R-Car V4H R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 or
-+	 * R-Car V4M R19UH0217EJ0100 Rev.1.00 Dec. 12, 2025,
-+	 * chapters 104.1.1 Features and 104.3.9 DMA Transfer
-+	 * section DMA Read Transfer.
-+	 */
-+	if (pcie_get_readrq(dev) > 256) {
-+		dev_info(&dev->dev, "Limiting MRRS to 256 bytes\n");
-+		pcie_set_readrq(dev, 256);
-+	}
-+
-+	if (pcie_get_mps(dev) > 256) {
-+		dev_info(&dev->dev, "Limiting MPS to 256 bytes\n");
-+		pcie_set_mps(dev, 256);
-+	}
-+}
-+DECLARE_PCI_FIXUP_ENABLE(PCI_ANY_ID, PCI_ANY_ID, rcar_gen4_rc_pcie_quirk);
-+
- static void rcar_gen4_pcie_phy_reg_update_bits(struct rcar_gen4_pcie *rcar,
- 					       u32 offset, u32 mask, u32 val)
- {
--- 
-2.53.0
+Quirk ! 
 
+More detail on all of this in my babbling on the other thread...sorry
+for the flood of words :P
+
+Thanks,
+Cristian
