@@ -1,120 +1,198 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012034.outbound.protection.outlook.com [52.101.66.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B71285CA4;
-	Mon, 27 Apr 2026 06:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777272440; cv=none; b=M2u5fCxA4pNf1E7Cp4/Tb2sKqDEf23vTDKcptXPs+fTYk/obAiBDjz0DQAfaYp1qWuDpPdq3unR8vvCthgrE9dn/PzDrsdFP5a6ZeWvwN+n/L3KMpr/eTx7NZ6TZ18w2bxgDMeQjnmvKSZTM3mmAr3QCgsU5+2AgZPCcusHXYPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777272440; c=relaxed/simple;
-	bh=ilnIqpXFCyNt6g6RokOmstrJQTMIjyHCwgEExR/hbPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZ58gZBYxv8PsbyMHRi2UABuqAhSs0mjlfGFV5/ul494f65tMQM4UX5xduyxj9AL+dIDCv230TTgF7pf7rBh/ARXR30g0pr7wRBM57d+7EgYYIp74Ef2v00DwMFF64uciCeZq5khqJBoT4gwfBWLXtomuyso24VxMyW447aOzvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=tVn55DDp; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ACA2857C7;
+	Mon, 27 Apr 2026 07:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777274041; cv=fail; b=W/2c9ptQ13uD4q9jA3wzwvlP5AcwghsxTvzvxaEkPn5mEa07hMdRW++l6F8UGFsHnCUuH46VR82hdEIUB0Em474RPRXQEw8GJkIynXhPXZWEbGWoqtMj5bEKjp/bEv5kRGJpFP/1ADESVO7ZPvBWvil0strZkm/czciY/pUDO6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777274041; c=relaxed/simple;
+	bh=db5JkrKlCd9dkIz2of+guID6dzomm/7yZx2cmKW3Yg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=M0qRuALOF7POAHjejb4PvOT1Pd7Dh27Ee/KaiHNXo8UJrQ0ImKFMru/1MRSv8AOol7DB7+ezvrz2mjrRJMX6lsc111A9SIWuqGOm5OXwsfvTdl9bBa3nQ7LGOeutpUlO8eG7XYxeXd/d35CsMvc+UfF0aP+YsptD5RtQwBvP1W4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GIQVFyPz; arc=fail smtp.client-ip=52.101.66.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="tVn55DDp"
-Received: from francesco-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
-	by mail11.truemail.it (Postfix) with ESMTPA id 2944B1F94F;
-	Mon, 27 Apr 2026 08:47:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1777272429;
-	bh=kbd+KJ62CZU4qnR3q8Wb/lGJuOs9KI6EpKwpM2lUoVc=; h=From:To:Subject;
-	b=tVn55DDp/bNzLaXOdmrsekwW1j/RGVrzSryO6xtEvOGnM47lLZu4sHZoIbLZ3O50D
-	 QLuh58iINvRQlZPI2oGj7ijDMlBombEcGp2s8l7Q3FBbnFd61SujArKZkArTLsgeQ/
-	 8KL7u/Ias7XgtOuEtORdSLFCSDGyrOmLvQ3r7WQy50GvXVY8+M+84PkbchtzHu7Fmc
-	 d/yTv5mVVO8G+2veajDbG2BO9od7+77/ts0/pSmt1iVFL4SltVKOxvDZEc53S2gPY3
-	 w78TFRrQa3eRrvWRfBPkMUx69iEKQcoQ3jWRrCVcLMHByifQEwQXtJYW9yqeAZSiv0
-	 6hIZ5IIubfeSw==
-Date: Mon, 27 Apr 2026 08:47:04 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GIQVFyPz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hEng9Ww5yqkqCOLg9x27rp1EfDEjAXl4p+mDgZJfBPiTm44d0WSoXUVZHgdOCqcsVMcGTAmRcK+PjjQ1MhfI7W/AZXtcWzHhi6fgo9cystks4BDjxje8p4iUy8A+36J5C/j+9NOLFRYUm5pXo9f5ih27Zpoh35ue4fUqBtLTgPUTznKXNVEY/9sBrQgTIaUQL2ey3agOe4mAOY139OP2+2pxdvWbunjCRkXAEzuUIEh1Y5ocTu+jFqKb4u60uUPtQZ5OWJr0hBTPEjpNyKlXjykqEz9TDaeOYK4zTi+x3eZC3Myjz3UuGFeWwQNrUN4zlI0km02BCcCW4u5szFs6OA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9UxvBUVWJXuEj3j3j0WXhoX5RINdSvWVBF0Y4Q6PtCA=;
+ b=L9nKF4PtJJ3OQLMfyTPxV8UEStRXC7ZLMCmlRjNCWDF+ehtIaNdp69O77S28+xFFvWAR6r1eKPtjI3X16uqHzmAaupmm82cpN/IDSEi8NU2BENOUqK92fFCcSB840iJ2jXgHHPa16DFgVXjehIluFesqq/H0gb50kP5IiuzENs+e/BoG9OYfd4u3N2UcG6GNjvvFkd6DL9/m+bkXqRrA0HG/02BSKRoRD9QaRdkNSaehB5WFo5vSmeE9YjtGufblbCGokIPvbO/vlHrPa012UTafZ+YvBEs8pMhBS+/+83Ul0phLI/v7bvA2c8P1QCP++Hi1JyEgIPL8jmF3U2QncA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9UxvBUVWJXuEj3j3j0WXhoX5RINdSvWVBF0Y4Q6PtCA=;
+ b=GIQVFyPzb4Jb9BQXgvVnHeD+mGEEGyIi1YCjFQUbmrBSI1BKqRtem5Q0+k5yGljX+zf0u4VaxPoHK9STytVk5cd7WpWprWqdhHboPyfnc4RwCigO5F0ESJHJIaYzW+PGt2+hAvKTaVeHDyXCP6yOdSjGLWAnO0udwgtTOw7jFv+uHwXKJPh8H2Ydub57JUeI+eTO9rcXNTJIjm6C2JdORcE2qNdXFKm3cf+JGTv9EikVrmKFTiB7yru0XmlKj4K72+z4ipVsYmfDE8AT7SBjW/tKS8zQawrB3b+ThKlGhlvWb4REs5dGto/hVhVkOTr/knRdTW6O8yKm856WTH9+QQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS1PR04MB9287.eurprd04.prod.outlook.com (2603:10a6:20b:4dd::8)
+ by PAWPR04MB11648.eurprd04.prod.outlook.com (2603:10a6:102:50e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 27 Apr
+ 2026 07:13:56 +0000
+Received: from AS1PR04MB9287.eurprd04.prod.outlook.com
+ ([fe80::6f30:763d:17d2:b79c]) by AS1PR04MB9287.eurprd04.prod.outlook.com
+ ([fe80::6f30:763d:17d2:b79c%3]) with mapi id 15.20.9846.025; Mon, 27 Apr 2026
+ 07:13:56 +0000
+Date: Mon, 27 Apr 2026 15:14:49 +0800
+From: Liu Ying <victor.liu@nxp.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Janne Grunau <j@jannau.net>,
+	Douglas Anderson <dianders@chromium.org>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Frank Li <Frank.Li@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, driver-core@lists.linux.dev,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v2 6/9] soc: imx8m: don't access of_root directly
-Message-ID: <20260427064704.GA17710@francesco-nb>
-References: <20260223-soc-of-root-v2-0-b45da45903c8@oss.qualcomm.com>
- <20260223-soc-of-root-v2-6-b45da45903c8@oss.qualcomm.com>
- <6593091.DvuYhMxLoT@steina-w>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>, Jyri Sarha <jyri.sarha@iki.fi>,
+	Michal Simek <michal.simek@amd.com>,
+	Hui Pu <Hui.Pu@gehealthcare.com>,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 04/41] drm/bridge: ite-it6263: remove now-redundant
+ call to drm_connector_attach_encoder()
+Message-ID: <ae8M6QZHRJueeDBQ@raspi>
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+ <20260423-drm-bridge-connector-attach_encoder-v2-4-2ae6ca69b390@bootlin.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-4-2ae6ca69b390@bootlin.com>
+X-ClientProxiedBy: SI2PR06CA0004.apcprd06.prod.outlook.com
+ (2603:1096:4:186::20) To AS1PR04MB9287.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4dd::8)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6593091.DvuYhMxLoT@steina-w>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS1PR04MB9287:EE_|PAWPR04MB11648:EE_
+X-MS-Office365-Filtering-Correlation-Id: 382d1cda-4af3-4e1a-0fb3-08dea42c8b74
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|19092799006|1800799024|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+ 3nWIA7tf94yldf0lQZDw2XbnX0xvGAWZu/vAXOGg5Vehbzubj4n37PS7fnKtFwOSaM1hWmCwlBlnt1XsE31m1zWk/JpslmOcwrT0X8W/NlJ+CV98/ioWeCurvTc3fCNZdr0txy1mhwceJLibPb3Ea4l17iADukBhJl7JmnvEvlrdX/YXmfdOcLTEV+g1yRhEypTKMVzLQTrvLv1P8aZ+rD18As8vWo6qPo5VVSggTirXWmM+2H7uSz3n9K80B/dzXc+wxtJu2g6urNTW0hyOJp4oyafIOZmR79gS0j+qoZvi/KhqwUtukjxW+hARnp3WaenR5mdSCcFmwaoo8FoY/sosCldX/kqEC+lngIfspNfmS9uYUiZPIRwXlqcCKAz1OBICNL+lNpvfinWxvasrDPhhJ8GxfDR0Z0kuToKOFqV5TDplPF1xNzcb+DVSNRIx1ejEeOM1+BD3S4kEumyA5PJLp2XxLIXuFYV1EwVudB67cbQjWM6Xe7XjBcG6M1cJTIRiu0A9OOWAB+B3hv2CraqJhHfBtzGA8M/d9787GkDTO1KKggTNNNq3Xr1H7wDaVbNWpF7M0Fm5HD1xO23TmMI6tE53+yxEcChEQ8aHfl2QTN2QbdLdsmLb0BYz7y/QrPgqRF4pVGxoAMwaeEx4WcrDU0QuCwX8405bzUQXdHqol9Zj1I8EPahbXFABmjsKfHHO743okAbuQoPRxMzrC3SxuxL7zPIuqXocJJxJcaI=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR04MB9287.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(19092799006)(1800799024)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?ezkD9YeZawPcjD5We9kRvzFgx69RffO2WyaYt2LWnD/S+XESYgdfwxCZp1SG?=
+ =?us-ascii?Q?w3KOfZvdW87GHJU70Xmw1FnqyHu9xu+ZytsZcutsVIffGFQTnNh8BuFkLHJu?=
+ =?us-ascii?Q?To/pjCuHsSPRKjKSThukCjU2JYnVnaNgvwEc3+Ybcb7Bs70jULHTo4TzxKEJ?=
+ =?us-ascii?Q?5XDslpP3JMdgN5vERbOlZcir5a7yLVsLJsktC1kj7T2dXSOSP/IBTDxtjaRW?=
+ =?us-ascii?Q?FojX2O5yMZyflqbsw1Agtizb0qpvAi3P7U4NzDAJEcOCnLAGCSvE1QcaRr02?=
+ =?us-ascii?Q?HBe2orKXQKvphVUUgRyg/Zy1p7rD+5vSxIIl76x7kenosdMfGhhZ62vBFrYu?=
+ =?us-ascii?Q?VmyFErruiJpffrmuxmPJnRt6GGHPMblC/wrf3ACmWm4dSajDL/Ex6hmM53j/?=
+ =?us-ascii?Q?nNc1czifunTOUMvWw+8WO3jmg7d3fNPm8Y3gvULcRoPawZM2TaukWUoGwBfB?=
+ =?us-ascii?Q?YDeszN2CtEv6GixlksgyEpaS0R+hJyMc2qMmGeI86ufHWsG9bwM6ufJMXlEK?=
+ =?us-ascii?Q?zoi8WN9QuTb6seM0ZuzOrWkH94WhDo+7NpW+QfV0eUhqLs+TdVBRFb1DyrV1?=
+ =?us-ascii?Q?SH0JCCSD3KlwSIp7aMJuedjt1rPTJDNBqwHE8cxp25RLQzCgerIN2+ki0ZQ7?=
+ =?us-ascii?Q?kf/0pD7F+UJBGEr9UPbx8sv4r9v4F+O5cvGl2RB5G3nnqFta3xXHdbwYhXKo?=
+ =?us-ascii?Q?pdCYLVclfvzZ6bODs3s9Ax08kNI6Bna0xBYm3ubxBKekYlY+3uRnQ/lTJ3Zs?=
+ =?us-ascii?Q?v4VXnXNEuEza2sQ9seAzgMsEIh5TDY5IQ656Bl0l12p9Wq6JLTh3emIn8nds?=
+ =?us-ascii?Q?6uJglbBfJLKj6VZTqiYiKRmfFDrKVlrFiQvhff34R1DIl+KixSheH2BM7z2f?=
+ =?us-ascii?Q?q/9UK6TgmGJFg4SKk2jWNklZDwIRWJJwRtqyd/Za8GMxEioy/rVpdGquWuQL?=
+ =?us-ascii?Q?0OWOCguMKRuLZnL9G8FHtMbpHg7nidk80C5fk4i0xiK+Ev7kjZUw2bVspR0j?=
+ =?us-ascii?Q?R2FQcDc4cQmJkaLkviHuJ17LkDqAQNFAKeaw/K2K5Abr+Ab/wT5VjOKa9IHQ?=
+ =?us-ascii?Q?pvYUVOqHjYJnwoXyYLwZTKv7F6CrcZf1Ro9zIL/EMgwGggztJ7YN+SIwIHfj?=
+ =?us-ascii?Q?H8iM1byqTQYBn/PJkCR8pCc1cJgMSJPbDvqVe8YLzK/AhKfxX0oE6wAaR1OK?=
+ =?us-ascii?Q?DE7ZQySLBEhyONNvfR644dVnKOuBE9SHFlRSp+8/NZ3zyDbH9Oe9hpLaPxZ/?=
+ =?us-ascii?Q?DbuGkjhVIz6DXzxHHHqWHrUPuiCEE27nLGSX6vO79h5nlyOazoFQqWKN+erF?=
+ =?us-ascii?Q?7/xdcMB/hFTgsi8xLDfpds/yMFJc6hEcFE7+awl9cx4+ZjWmFC+OxRSo8mgl?=
+ =?us-ascii?Q?TOQUURhHijvIMSCFOgMdiz/kOGCYzNg/JsRKP+XoaBK82GDzXL3C2e7rummr?=
+ =?us-ascii?Q?aUOx6XBLcHkN6jW5+rLipT1I4C19WmDwvzvx+kQOmATaNifX9RjRavW+NbIp?=
+ =?us-ascii?Q?tH0qkjHXIi46IYWcqX+ejLO3Nqwc2oDYUqq1EsNxtpgiZ1+eqj2C69fBt03x?=
+ =?us-ascii?Q?VqDqH3Ce3FgU7zctfcHf6T0L+m0LBMbI7sWa9qjZU229IgfIVwGV3OeDiaQ7?=
+ =?us-ascii?Q?3jSqJOBKnNAtMoRYAHwKTvWHXfzyzvbqxAdKHWMGJFPZzpSvwuTxRodlOBUP?=
+ =?us-ascii?Q?fbMAtzOyMjbz5R/8zVwFhV2mzzrS5fEFZgrMNFpvsxA5mqgDQSWLIBFIRQpk?=
+ =?us-ascii?Q?zwWxU9MY9Q=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 382d1cda-4af3-4e1a-0fb3-08dea42c8b74
+X-MS-Exchange-CrossTenant-AuthSource: AS1PR04MB9287.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 07:13:56.0415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: L5n3mmGI98D1yIJSrWSWWcFnwKUi7dq8Gvw08b/VK1BSK3Z7axZqaLXn+VMKUlETsqnJ6rXbKFzOKqw5SFcnqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB11648
 
-Hello Alexander, Bartosz
-
-On Tue, Mar 24, 2026 at 11:24:09AM +0100, Alexander Stein wrote:
-> Hi,
+On Thu, Apr 23, 2026 at 11:16:58AM +0200, Luca Ceresoli wrote:
+> drm_connector_attach_encoder() is now called by
+> drm_bridge_connector_init().
 > 
-> Am Montag, 23. Februar 2026, 14:37:21 CET schrieb Bartosz Golaszewski:
-> > Don't access of_root directly as it reduces the build test coverage for
-> > this driver with COMPILE_TEST=y and OF=n. Use existing helper functions
-> > to retrieve the relevant information.
-> > 
-> > Suggested-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> 
-> today I noticed the following warning running next-20260323:
-> > caam 30900000.crypto: No clock data provided for i.MX SoC
-> 
-> This happens when there is no matching against the soc_id.
-> 
-> Checking the source it turns out this patch is the cause that the SoC info
-> does not provide soc_id anymore.
-> next-20260323:
-> > $ grep . /sys/devices/soc0/*
-> > /sys/devices/soc0/family:Freescale i.MX
-> > /sys/devices/soc0/machine:TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MP-RAS314
-> > grep: /sys/devices/soc0/power: Is a directory
-> > /sys/devices/soc0/revision:unknown
-> > /sys/devices/soc0/serial_number:0000000000000000
-> > grep: /sys/devices/soc0/subsystem: Is a directory
-> 
-> reverting this patch (2524b293a59e586afd06358d0b191ab57208a920):
-> > $ grep . /sys/devices/soc0/*
-> > /sys/devices/soc0/family:Freescale i.MX
-> > /sys/devices/soc0/machine:TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MP-RAS314
-> > grep: /sys/devices/soc0/power: Is a directory
-> > /sys/devices/soc0/revision:1.1
-> > /sys/devices/soc0/serial_number:469677A693A4B8CE131D180033E44903
-> > /sys/devices/soc0/soc_id:i.MX8MP
-> > grep: /sys/devices/soc0/subsystem: Is a directory
-> 
-> soc_id is restored. Now that I write these lines I noticed that
-> serial_number also contained empty value which is restored with the revert.
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6263.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Any update on this? I would say this is a regression in 7.1-rc1.
+Reviewed-by: Liu Ying <victor.liu@nxp.com>
 
-I noticed the same issue, and CAAM is not working.
-
-[    0.000000] Linux version 7.1.0-rc1-0.0.0-devel (oe-user@oe-host) (aarch64-tdx-linux-gcc (GCC) 15.2.0, GNU ld (GNU Binutils) 2.46) #1 SMP PREEMPT Sun Apr 26 21:19:00 UTC 2026
-...
-[   10.611139] caam 30900000.crypto: No clock data provided for i.MX SoC
-[   10.611211] caam 30900000.crypto: probe with driver caam failed with error -22
-
-Francesco
-
+-- 
+Regards,
+Liu Ying
