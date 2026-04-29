@@ -1,152 +1,167 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88B31F990
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Apr 2026 19:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCB8359A6C;
+	Wed, 29 Apr 2026 22:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777490386; cv=none; b=J3yYdtpvbPJ0bhS/cG/obasy7kwmnKBwLGg1VCwqnI2gkqiXqxRLKyxVJ62QtxZeE7SjPLskMfjnGwivwnryFEkcofInFGG2n1VIAPI5UIo04uvcXMt5lOtqGgFN7MG7n1PycRUAuONPh452jaSDYul6jSmUBPHOBoYf+IU/mGc=
+	t=1777500719; cv=none; b=EbDt8tKLVDnSMLjtb7IZr+kZHG5PFY4/ZZwO4/f97YgRBo8/jb+WE371Ywbe8WID6KJHrDbIDPfL7kYqXuCIyOdYpu9rPHF5C/NMBEdFsR7+4W6H+JLTwVCDj4fJzM2TpMW78Ybeyg+vBxRpAAOQZNAU8ooU9Y/aJ0s2i1Cwjgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777490386; c=relaxed/simple;
-	bh=bj63JSqbRrkWaCPwSv+QK3cDB7Q6zz133AhjRdti4MY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=YPZCOq2MajwS7YTe+5xsWHM8krqleaBifRYYwbZNCwueAqmqOdBgzEeoKyzoxrp0+WKkgWlJJnw0zAWc4lHPNyPQzYDlTezNXxc1sppPrBXdD2frZUXOApQAxNc53ZDx/TuQAXfHxoWb7pFN0VAnhUTU+d6uBip/d4ksJjt46eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMlLhWaf; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1777500719; c=relaxed/simple;
+	bh=YIv9iZYultS1nlhWrV7cBQansovtAf+/IYGOeXT8hXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1xpht285VC6kZGE2YREa263ACKutMUa26wAlN++QVpwLX1EprvNHtj84u1B5Fp10j72X+sc+osx3nJ8sDyjGhShkShvKGqxkic/PR3bhbgWL+dNDL885yIbHBexMbHH3MM6iGSfBpFofp4z/dTspHToWkDNOrGnacg3CT3N8xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mSfKIVal; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMlLhWaf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1777490383; x=1809026383;
-  h=date:from:to:cc:subject:message-id;
-  bh=bj63JSqbRrkWaCPwSv+QK3cDB7Q6zz133AhjRdti4MY=;
-  b=KMlLhWafcNPajVWsN3fRooxJNHRUrLSlDrdi7ZgDs2xgfQ60robNlnf/
-   qNsVJMoSjPcwgMrso8ZH60kjA6FTgGOsT76nIJ/VbxXaSEFgfm7nndWhN
-   MyTkL4MPAy8Uryoh8WkDOTkLZuq/ix84qcPJLVNLKtTh00IKxwYZDw6uX
-   UODWwX3Sjl4id43gGpuGraoanKUhvguNxr2x3kOhe3czqimmKRyDcGYno
-   ntgPmX5613jmVlsa7dOk6ptW6awYOInBxaZCCi5clqnYz3alXO960HNqa
-   pNIAhivnWRSuI0PpEfUx0065S7gjZevJZYkRLg458Go6kCfHTdtd3rZ9e
-   g==;
-X-CSE-ConnectionGUID: Q9xPQ97QSkWAXkuD9JAzfQ==
-X-CSE-MsgGUID: LzjrV834TNSQiZc1Pp/UNg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="65960953"
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; 
-   d="scan'208";a="65960953"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 12:19:42 -0700
-X-CSE-ConnectionGUID: rWi91/UmQSKlX8WP1+zZUA==
-X-CSE-MsgGUID: r2UUoW6uQkykbkVr3V3wwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; 
-   d="scan'208";a="264744665"
-Received: from lkp-server01.sh.intel.com (HELO aa799cca880d) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 29 Apr 2026 12:19:42 -0700
-Received: from kbuild by aa799cca880d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wIARe-00000000BS2-3xM9;
-	Wed, 29 Apr 2026 19:19:38 +0000
-Date: Thu, 30 Apr 2026 03:18:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-drivers-for-v7.2] BUILD SUCCESS
- 269337466db3649abea4c294b4154a916e0e3a99
-Message-ID: <202604300341.xUJmcnp4-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mSfKIVal"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A502E241;
+	Thu, 30 Apr 2026 00:10:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1777500610;
+	bh=YIv9iZYultS1nlhWrV7cBQansovtAf+/IYGOeXT8hXE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mSfKIValxq5w1WchamENa9pwEWRxuBmTjrS98h4LZL7njev2Z0awfkAzZssAw4nrc
+	 vs/iG2YiB1lTOAXhn8RbNg7raRn/BOJSam9x6xVQb9j4+saYDhOjYOfkjJxDO7qkA3
+	 nAWdf1hhHh16pPWimm6qsNCNwWj0RNDe4+xLuGM0=
+Date: Thu, 30 Apr 2026 01:11:53 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Nguyen Tran <nguyen.tran.pz@bp.renesas.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 6/7] arm64: dts: renesas: r8a779md: Add Renesas R-Car
+ R8A779MD M3Le DTs
+Message-ID: <20260429221153.GD132396@killaraus.ideasonboard.com>
+References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
+ <20260419193718.133174-7-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260419193718.133174-7-marek.vasut+renesas@mailbox.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v7.2
-branch HEAD: 269337466db3649abea4c294b4154a916e0e3a99  soc: renesas: r9a09g057-sys: Move common code to a helper
+Hi Marek,
 
-elapsed time: 2971m
+Thank you for the patch.
 
-configs tested: 75
-configs skipped: 1
+On Sun, Apr 19, 2026 at 09:35:37PM +0200, Marek Vasut wrote:
+> From: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+> 
+> Add support for the Renesas R-Car M3Le (R8A779MD) SoC, a variant of the
+> R-Car M3-N (R8A77965) SoC. The Renesas M3Le SoC is a register-compatible
+> variant of the R8A77965 (M3-N) with reduced set of peripherals.
+> 
+> Signed-off-by: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  arch/arm64/boot/dts/renesas/r8a779md.dtsi | 48 +++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a779md.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779md.dtsi b/arch/arm64/boot/dts/renesas/r8a779md.dtsi
+> new file mode 100644
+> index 0000000000000..7e0f5fe4cd439
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a779md.dtsi
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for the R-Car M3Le (R8A779MD) SoC
+> + *
+> + * Copyright (C) 2025-2026 Renesas Electronics Corp.
+> + */
+> +
+> +#include "r8a77965.dtsi"
+> +
+> +/ {
+> +	compatible = "renesas,r8a779md", "renesas,r8a77965";
+> +};
+> +
+> +/delete-node/ &csi20;
+> +/delete-node/ &drif00;
+> +/delete-node/ &drif01;
+> +/delete-node/ &drif10;
+> +/delete-node/ &drif11;
+> +/delete-node/ &drif20;
+> +/delete-node/ &drif21;
+> +/delete-node/ &drif30;
+> +/delete-node/ &drif31;
+> +/delete-node/ &hdmi0;
+> +/delete-node/ &mlp;
+> +/delete-node/ &pciec1;
+> +/delete-node/ &sata;
+> +/delete-node/ &sdhi3;
+> +/delete-node/ &usb3_peri0;
+> +/delete-node/ &usb3_phy0;
+> +/delete-node/ &vin0csi20;
+> +/delete-node/ &vin1csi20;
+> +/delete-node/ &vin2csi20;
+> +/delete-node/ &vin3csi20;
+> +/delete-node/ &vin4csi20;
+> +/delete-node/ &vin5csi20;
+> +/delete-node/ &vin6csi20;
+> +/delete-node/ &vin7csi20;
+> +/delete-node/ &xhci0;
+> +
+> +&du {
+> +	compatible = "renesas,du-r8a779md";
+> +	renesas,cmms = <&cmm0>, <&cmm3>;
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Shouldn't you then also delete the cmm1 node ?
 
-tested configs:
-alpha                   allnoconfig    gcc-15.2.0
-alpha                  allyesconfig    gcc-15.2.0
-arc                     allnoconfig    gcc-15.2.0
-arc         randconfig-001-20260430    gcc-8.5.0
-arc         randconfig-002-20260430    gcc-8.5.0
-arm                     allnoconfig    gcc-15.2.0
-arm         randconfig-001-20260430    gcc-8.5.0
-arm         randconfig-002-20260430    gcc-8.5.0
-arm         randconfig-003-20260430    gcc-8.5.0
-arm         randconfig-004-20260430    gcc-8.5.0
-arm64                   allnoconfig    gcc-15.2.0
-arm64       randconfig-001-20260430    clang-23
-arm64       randconfig-002-20260430    clang-23
-arm64       randconfig-003-20260430    clang-23
-arm64       randconfig-004-20260430    clang-23
-csky                    allnoconfig    gcc-15.2.0
-csky        randconfig-001-20260430    clang-23
-csky        randconfig-002-20260430    clang-23
-hexagon                allmodconfig    gcc-15.2.0
-hexagon                 allnoconfig    gcc-15.2.0
-hexagon     randconfig-001-20260430    gcc-14.3.0
-hexagon     randconfig-002-20260430    gcc-14.3.0
-i386                   allmodconfig    clang-20
-i386                    allnoconfig    gcc-15.2.0
-i386                   allyesconfig    clang-20
-loongarch               allnoconfig    gcc-15.2.0
-loongarch   randconfig-001-20260430    gcc-14.3.0
-loongarch   randconfig-002-20260430    gcc-14.3.0
-m68k                    allnoconfig    gcc-15.2.0
-microblaze              allnoconfig    gcc-15.2.0
-mips                    allnoconfig    gcc-15.2.0
-nios2                  allmodconfig    clang-23
-nios2                   allnoconfig    clang-23
-nios2       randconfig-001-20260430    gcc-14.3.0
-nios2       randconfig-002-20260430    gcc-14.3.0
-openrisc               allmodconfig    clang-23
-openrisc                allnoconfig    clang-23
-openrisc                  defconfig    gcc-15.2.0
-parisc                  allnoconfig    clang-23
-parisc                 allyesconfig    clang-19
-parisc                    defconfig    gcc-15.2.0
-parisc      randconfig-001-20260430    gcc-13.4.0
-parisc      randconfig-002-20260430    gcc-13.4.0
-powerpc                 allnoconfig    clang-23
-powerpc     randconfig-001-20260430    gcc-13.4.0
-powerpc     randconfig-002-20260430    gcc-13.4.0
-powerpc64   randconfig-001-20260430    gcc-13.4.0
-powerpc64   randconfig-002-20260430    gcc-13.4.0
-riscv                   allnoconfig    clang-23
-riscv                     defconfig    gcc-15.2.0
-s390                   allmodconfig    clang-19
-s390                    allnoconfig    clang-23
-s390                      defconfig    gcc-15.2.0
-sh                     allmodconfig    gcc-15.2.0
-sh                      allnoconfig    clang-23
-sh                     allyesconfig    clang-19
-sparc                   allnoconfig    clang-23
-sparc                     defconfig    gcc-15.2.0
-sparc64                allmodconfig    clang-23
-um                     allmodconfig    clang-19
-um                      allnoconfig    clang-23
-um                     allyesconfig    gcc-15.2.0
-x86_64                 allmodconfig    clang-20
-x86_64                  allnoconfig    clang-23
-x86_64                 allyesconfig    clang-20
-x86_64                        kexec    clang-20
-x86_64                     rhel-9.4    clang-20
-x86_64                 rhel-9.4-bpf    gcc-14
-x86_64                rhel-9.4-func    clang-20
-x86_64          rhel-9.4-kselftests    clang-20
-x86_64               rhel-9.4-kunit    gcc-14
-x86_64                 rhel-9.4-ltp    gcc-14
-x86_64                rhel-9.4-rust    clang-20
-xtensa                  allnoconfig    clang-23
-xtensa                 allyesconfig    clang-23
+And does the DU still need three clocks and three interrupts ?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +	renesas,vsps = <&vspd0 0>, <&vspd1 0>;
+> +
+> +	ports {
+> +		/delete-node/ port@1;
+> +	};
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
