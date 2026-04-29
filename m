@@ -1,92 +1,67 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6F81A9F9B
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Apr 2026 07:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1413382E8;
+	Wed, 29 Apr 2026 07:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777446136; cv=none; b=bF06FR0R/xAsm1pLCHvANIUyozUOWra7lfS5EJUWyekUwfwfeJao2TU602KLJuJE4zMtbL5D2Fc4k25VOq2SijIEnu07my27Ej5d4ZXqn7683LvdYKce8E1BaSu3qrgWapdb94aGlQZ7OttwIi9ynyxpLa5RXii6uvNGPDmox2k=
+	t=1777447393; cv=none; b=CaeC2B/IX0hd9efLo9Rn+PIJ6caZnn5s4qxgqlkx5Csr4hEbXInSPohRcv20zO7bqKrqvoHyENTMJEUibuAc5SdCOqX4jyP5rjGrirRlG2SxiJXfhjzxzGeHFezjavikgKk1ovKGaqX+EXoBPacN4qp9yL2YIM84aWYRWb8hANc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777446136; c=relaxed/simple;
-	bh=V35ZW2YnkHgO0RfXOUoYbcnt9bguN1mK4UQfElfcjqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOjYx8oLrmlkXbyx3J4FSbQVO3+pB7SWUeot/WFjUL+/fo3nKipy3sN5Iz6Qs0m7O2v9TG3pGheNGqykjJQpfNRnqvCPD2aTCDH6I7eR7+YjVjOhzV8mT27AYU495jgj4V72bLAricQgksfyN2l/u8zrkIrnEX6OHsMXQXYWJzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-94de664b541so3476460241.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Apr 2026 00:02:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777446135; x=1778050935;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3SMcHmd/G4Qm9j51Mi9eY7BLzwpv46B8Xc3O0CQPw8=;
-        b=YnhIKkwxQVnRkh0GFy9sJHgk+jLxKFH1i5sNwvNsEZYDajxVuUquJvTsd3qiqalRR+
-         R4tdAXefmCCCCpWRTIsiC6dGFg81fH0U69JU1aorOjcuOsao+TJ9yAgvMjC49K0bvo5+
-         wVlxSOqy5C/gPNe5WEjGcJQZqlqVFbYzfJc2rBf4uPcQhKByMkVeoZnHvqFPljXNaN3B
-         /+ypGxDAwUkENDT4iZy8mvzQ8dZDxq9bTHyaTbpZDfkihk3v7XdmSlQARojHFV5eVTo/
-         nKA7y5GHHO+OqUgYHag81pN8HNKcMdVPXHeLqhchJ+D5W596QcSDnmn8+dV2TR1EWQjQ
-         Ct8Q==
-X-Gm-Message-State: AOJu0YwCAoojdk8BYANC9pRygeayiAVV4hCGy8oIkQKXkvwmggvOpuak
-	yo76EXMlg592Jky27xjdz2SG/JRPLroffOQ3BYE3BYdtOqvpuK/ISB3ONQQLkXpWLX4=
-X-Gm-Gg: AeBDiesiTeNhybZ/14Si5aQD0wf/Qc5Q40qLYPSDkR27qGMOTU95vW64LIW6BYr8swM
-	NGywWrXtKWGAtBzs0Udk2r5v8XgFp8yULOiWonnMBlD+EZ4lm/qtqKBCEewarXAdVb1uPdHcjS8
-	Cqnh4X8Ft3MTP97CTMvZ0SDK10Zx4vA2PmSqZS33RTxDpVx5cWXzAXLsFRc6lLzWJ3VW0W8KueN
-	X6BZvDVqNz4P1lKiyjAYr0SUj31D6YBiwP2oCT2gQwVf/DziyCoYjNG4EqvHcbvqgVDPgL3aEkK
-	ytcMI7CeHwF4JqHWfESbW+lBd6GygIaMZTIYIlpraoKzsHXE1WTFJUw6mBxpxvoCJU59i+cgT+a
-	09CuKjC3XTdeGWQ8uA63f3BwudRzpJyHmYm1XIyZWn5LwuJHzr8vENO3iJK8ueGdAbamrVk0wOc
-	UVInWMVokgTDqmkJo1mS3mAsk53BbfCnNq/YaGBHjPTz8o5PALAQIWXhmScupfoSU7nNbg1OE=
-X-Received: by 2002:a05:6102:1588:b0:611:8e5e:4143 with SMTP id ada2fe7eead31-6280b1e0c7fmr2741226137.27.1777446134391;
-        Wed, 29 Apr 2026 00:02:14 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-629848683ebsm606883137.12.2026.04.29.00.02.13
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 00:02:14 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-6120528b8b4so3572313137.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Apr 2026 00:02:13 -0700 (PDT)
-X-Received: by 2002:a05:6102:2c11:b0:608:2acf:cd19 with SMTP id
- ada2fe7eead31-6280abb415emr2946346137.22.1777446133255; Wed, 29 Apr 2026
- 00:02:13 -0700 (PDT)
+	s=arc-20240116; t=1777447393; c=relaxed/simple;
+	bh=1ssGSorAy5PoaEeCfmBtER31TLfuEAHQUOeK/X2bdfM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gQzZgiisVtweAwfaKTRhAJfhtkqJ7Yl7TjIa3Nt0Pe3xtwqFbkWd7qfRcpwHYgVqgT7tm2vFwnSNLNJ1mKPSuLsu+DhJbgeEKebwk5DeqdxVGLdKcbPZhVsKs+XAB7yU0qOTTQ/qAb5go4ntNV8Stj7z8G/WObEzTz7XeyYW1bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKfwvM/4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKfwvM/4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D33A9C19425;
+	Wed, 29 Apr 2026 07:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777447392;
+	bh=1ssGSorAy5PoaEeCfmBtER31TLfuEAHQUOeK/X2bdfM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UKfwvM/4STLtb8fTT+oC69eYHq480Cz5vn8K/VNR5HaP8Di49riqaniYP6sDQZ4xK
+	 LH/StJbUPx9cn934vDpMXRtZOWYdltYPHmC0G2TsCl0a2K5uESZ9l1vpfafmSYPMgn
+	 JKPXbgViBd1UL4LrZrCCRVK4c5/774M4SQX2eZgFV45PHu3YPTNc3gnsvGcXI1gycR
+	 5eGeDVF09ntDek6F7LYD2jOhL+Vew3nvv79IWSXdLKsKi8PJmpPbuey9k72+5hKZdW
+	 KmqdmFcr/tYzaOSRgBpcpahmY+Qac4wgznPTg0hBl17484+r/CUcHx6Xhbt47F8JJt
+	 Cq2gWrfYNXqeA==
+From: Thomas Gleixner <tglx@kernel.org>
+To: John Madieu <john.madieu.xa@bp.renesas.com>, Vinod Koul
+ <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Cosmin Tanislav
+ <cosmin-gabriel.tanislav.xa@renesas.com>, john.madieu@gmail.com,
+ linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: Re: [PATCh v3 1/2] irqchip/renesas-rzv2h: Add DMA ACK signal
+ routing support
+In-Reply-To: <20260402162212.12016-2-john.madieu.xa@bp.renesas.com>
+References: <20260402162212.12016-1-john.madieu.xa@bp.renesas.com>
+ <20260402162212.12016-2-john.madieu.xa@bp.renesas.com>
+Date: Wed, 29 Apr 2026 09:23:08 +0200
+Message-ID: <87qznyxmar.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260402112709.13002-1-wsa+renesas@sang-engineering.com> <20260402112709.13002-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260402112709.13002-4-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Apr 2026 09:02:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU_kWCLvb6V=Q+42YPaf+VN5cUY5NNsDCYdQG6si6w-dA@mail.gmail.com>
-X-Gm-Features: AVHnY4L6nIpcvMSmKF5tD2EbsnGQ0WPXJVgyDxXyU53hMZMzbXwbThISGQiWtxQ
-Message-ID: <CAMuHMdU_kWCLvb6V=Q+42YPaf+VN5cUY5NNsDCYdQG6si6w-dA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] soc: renesas: add X5H PRR support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Vasut <marek.vasut@mailbox.org>, 
-	linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Thu, 2 Apr 2026 at 13:27, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> On this SoC, PRR is now inside the MFIS memory block, so we need to
-> access it similar to e.g. RZ/G2L.
+On Thu, Apr 02 2026 at 18:22, John Madieu wrote:
+> Some peripherals on RZ/G3E SoCs (SSIU, SPDIF, SCU/SRC, DVC) require
+> explicit ACK signal routing through the ICU via the ICU_DMACKSELk
+> registers for level-based DMA handshaking.
 >
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Add rzv2h_icu_register_dma_ack() to configure ICU_DMACKSELk, routing
+> a DMAC channel's ACK signal to the specified peripheral.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-Thanks, will queue in renesas-devel for v7.2.
+Assuming this goes through the DMA tree:
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Thomas Gleixner <tglx@kernel.org>
