@@ -1,126 +1,60 @@
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11FE3FADE9
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 07:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9443D9443
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 07:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777535686; cv=none; b=pHNDy6lGZoVdSrFDkQIv4aLj9x3hVb0PVHQ/SAktdDbO0fCMBTfbHRMAIErydyVa4JA65uMSKCkRIo11VEf9cHCyNfV4vgAipichYVNUORVPc8E4lUbwYd/jep96BvTPgCsnN3akempiINlIcdpw4Zr+svsv6UpJKNwsNRRzNao=
+	t=1777535822; cv=none; b=nHyIMC7ntJj+0cGnEB1uolA/Us2vaS3YSPn43BklOMwBC85WCcf31eV9CfqBRAim7X1VLo7ZcUks+LApKTfeBVCy6BU2IgMtpsoyNuFbqd0J1X3zx6NEOxcI6tfFKLxa7ZpuRnItzyGeDzsS79abZaKyIk/SvgZ0EzlEfZB9mLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777535686; c=relaxed/simple;
-	bh=Qx7N7XiwMTRZOnlR3A3+kreNFdqkjoXXuGIkHSLG/HE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=shJ/TxybM9xj5pjfG+dxP59LPO1o1ekC1eLiLc3fNV6B8dRWa1PamTJcjtwoDNGAGESCCMunYPh1HanjsVwrx5N9vySE+NE5OAjuP568jEQwPbDVJWePvGlyFTMuI8Zii1qwMZojbpAvf0/qPVUzRdZTsP5STWdcuWGrH8r63bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6949831a7bcso341964eaf.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 00:54:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777535683; x=1778140483;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SE8U24d9+nmbb0Ym2Vjd+YsrRui7aXN0DwD087novig=;
-        b=pfptjtg/+HmMnhNbMmQOkOGWp9jNtyzvSWDVWI4FkNuLzEjIWiN82B1lOFQd/RysVh
-         rWAj2v4zh7GnFlOaYECfxsL5TqgqBjum7eCYLkcs91x6Re35zsDKGZ3IzzjFouSbnfu+
-         88XbndbY9Ipg9XKqIiL0zaprMNV4O0ESK0y2p04GgW5IEmOdrKqEDpNHKdnyObMOJbGB
-         YxOCgb1HjgocPqkISgoxR/Yn1z23afkDr0QSbPFopC7UlAH/wlF7O2+QLmtcez7Dp67d
-         ZZh2lvJ6jncPi5doZUlfOY5vYdDFh4WKC+vN4SjkaCGRRnyJ4HiaApkavlsWTjVLCNgZ
-         qWlw==
-X-Forwarded-Encrypted: i=1; AFNElJ8NL/aEHE2dlLPKtlFqGkJfqN9kfXlr81aFBapErjEepQDPOx2p8/WriLvQKGvLC0ObVkVfnPpTcmcgYo32E1v1KQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/n3XbA6gNTCVKnifkGPV93MQa62+3XpxSpLBJSNNtjfq2NKmK
-	QqIpDPomel0WVyGZJiHeJwl0cUNPxRsYvSSsZ2kZiocNPyWbYXPtkrkxg0M6hbUd+NA=
-X-Gm-Gg: AeBDiev+m0wCLp+p0sUtAmZuWkDJqox3R5J/Ze+M8J0TRl6QK0MtmneLQvucL+pUe2w
-	8Qm073PDYnt3Oao3VOXQgfOkvFLiIBnIAEUDWEjuRGdve80Iwxu6YCF1qVAMQuscHhpxuidPH2W
-	qk4j070XxKNsTklL+l3/anARSG914lG6iMCWLlQKzm+b1uKlGDwJONuLNnRIze1l1zvnPyadq+k
-	77CtX7w68H/55gtKMskWDiOBjX8KDmS+VGIhM0xkmqzOBwZ3mK0JqV8H5dwxKown+3v2x/xHdki
-	lW8kvdiui5bW4hxi0kk0aXa1LcmkciQZXM7UHesxrFDHIuTVuujwhBUzf30MXeI/nsBAzhHYt/6
-	7/EyWl9cLhEY4RkVDPWyhv7yNXvbpRqEqehk0hJjFZEstV+SjLBb9wH0jFwdXAsj6UVzp5h7n02
-	ZYhZOurhSsy3t/yz79PTHUBf0xyFSXxlNZy4qWugqOTaE8tbdED1KlPSXhzP2xcelOjLfEKIg=
-X-Received: by 2002:a05:6820:61d:b0:68b:990a:8eb3 with SMTP id 006d021491bc7-6967a9f56c6mr832117eaf.34.1777535682972;
-        Thu, 30 Apr 2026 00:54:42 -0700 (PDT)
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-43436a811a7sm991739fac.1.2026.04.30.00.54.41
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2026 00:54:42 -0700 (PDT)
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-694891f8f62so365413eaf.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 00:54:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/QWiWghk2WMdF18HXqLOS9lTXqIm9H9brHvTteh0nyRlOe+GsftJ5ohVY6kqbHsh4vbiNlN4a375z21MZQ9EdX0w==@vger.kernel.org
-X-Received: by 2002:a05:6102:2c03:b0:607:97b7:c283 with SMTP id
- ada2fe7eead31-62adc184803mr537851137.14.1777535299133; Thu, 30 Apr 2026
- 00:48:19 -0700 (PDT)
+	s=arc-20240116; t=1777535822; c=relaxed/simple;
+	bh=S0ihjKkcBn3xomo0TkGvY2pk9aiL3v1pV3jfmooNhR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZqaIV8i7pGujx83VdwyIynh6KY5z68y7L+32qjC6PhY0kW/+y9NLvXPTxENx5IbRNlohDKuTk8FYh2St50WSAByk28d93YcKMSn5m3+NFzXTbjkQ59K8/kuftUAAIdvnQBsHaeYl3q4usbPx7Dy2yVREEvNLK5IaK4XgovKajGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88578C2BCB3;
+	Thu, 30 Apr 2026 07:57:01 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v7.1-rc1
+Date: Thu, 30 Apr 2026 09:56:54 +0200
+Message-ID: <33e5562de46405d41ea55cee0ae781c02a75cdc6.1777535762.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260429170012.366537-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260429170012.366537-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260429170012.366537-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Apr 2026 09:48:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUne5vUermQ7NnN67-QL_PM-SxJQogFpmSVUo1ussohXw@mail.gmail.com>
-X-Gm-Features: AVHnY4JziB5Cy-6q6RNu-Sgl0OAxCbsRcDaFW7edOENQcMoEBistztZzpXDIEcw
-Message-ID: <CAMuHMdUne5vUermQ7NnN67-QL_PM-SxJQogFpmSVUo1ussohXw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drm: renesas: rz-du: Add support for RZ/T2H SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+Refresh the defconfig for Renesas ARM64 systems:
+  - Replace CONFIG_PCI_PWRCTRL_SLOT=y by CONFIG_PCI_PWRCTRL_GENERIC=y
+    (cfr. commit ff124bbbca1d3a07 ("PCI/pwrctrl: generic: Rename
+    pci-pwrctrl-slot as generic")).
 
-On Wed, 29 Apr 2026 at 19:00, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The RZ/T2H (R9A09G077) SoC includes a DU with a DPI interface,
-> supporting resolutions up to WXGA with two RPFs for layer blending.
-> Unlike earlier RZ/G2L SoCs, RZ/T2H requires explicit assertion of a
-> DPI output-enable signal (DU_MCR0_DPI_EN) during CRTC startup.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your patch!
-
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
-> @@ -20,6 +20,8 @@
->  struct device;
->  struct drm_property;
->
-> +#define RZG2L_DU_FEATURE_DPIO_OE       BIT(0)  /* Has DPIO output enable control */
-
-Note that this addition conflicts with
-
-    #define RZG2L_DU_FEATURE_SMUX2_DSI_CLK BIT(0) /* Per output mux */
-
-in "[PATCH v6 15/21] drm: renesas: rz-du: Add RZ/G3E support"
-https://lore.kernel.org/11313371ef0b31cb5f014e171ba0d9868eb0710d.1775636898.git.tommaso.merciai.xr@bp.renesas.com/
-
-> +
->  enum rzg2l_du_output {
->         RZG2L_DU_OUTPUT_DSI0,
->         RZG2L_DU_OUTPUT_DPAD0,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 792d5ebb1553ef30..8341dab1cf1c023a 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -119,7 +119,7 @@ CONFIG_PCIE_RCAR_GEN4_EP=y
+ CONFIG_PCI_ENDPOINT=y
+ CONFIG_PCI_ENDPOINT_CONFIGFS=y
+ CONFIG_PCI_EPF_TEST=y
+-CONFIG_PCI_PWRCTRL_SLOT=y
++CONFIG_PCI_PWRCTRL_GENERIC=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ # CONFIG_DMIID is not set
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
