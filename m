@@ -1,61 +1,63 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD55410D0C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 12:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B4040F8E4
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777553635; cv=none; b=al+gEtXPIuBCkuUVyvd9WyqA/Dox1fsihO17Zrc1KjqcHtxFTgjcEPaYrbihVqFhu5leXrr73PCIbnAQ2mm3mJV21am63DwVc1BgrgJoa7CJHGPWJbgy/EvonyVS1hEA6IQyeLPyvX06VquyqWmeR4lGSk0bsVGO1/4IBw/e3VM=
+	t=1777553638; cv=none; b=nweDSJb7vExZp0tCLjajwQn2iGLQSpbswvzT6BqlDw0oRXxatm4PMIYojZt1F9j5hGh3jxyn7Cj48zKZcLH+Oro4DnPyvLSR9QBo1mfK12ChyBjJI4vweAmSgxLk2K7V7w4cR4nboC9D6p80mI0epXzPIZiC6D/O0qbZBu0XxrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777553635; c=relaxed/simple;
-	bh=G0mT1x0tDvGdPeonFeTbaQx9eBvyLg9Be12Sllr9F0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+88RK6nlGUGRPHnf1MCTOXk2eJSnu6esgIoClAEdAiZWsvevUKxpk44wX7lHPmh36SFxC/8l46ueZ50/9QlapuVjT9+9JK4XairZGt3ujNhW7kLtMZwS6Q2/nhMRBcmqgjn46XMXkUWCLOyAlXWaIY8qIZAdJuaZwV0MdRuipc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CodCqSrD; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1777553638; c=relaxed/simple;
+	bh=RKgftYwLZm9ZGB9SUzhmAcs8FH11+yEFMapqpF+AAXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bG/oGvvcILmbDjWUm5rpZjtluY0jMa/Clqzn3zBomJaMhyz5mHwW3AKn6BGc8W8UYiFIc5R3+7qkYhGIaOCCVAHdfHNVxpjp/P26/Jsa7ub7N7sq0iNwpwNg3gCJC10LsxV2Xa5KDSH5mpLSFJopAl0045TBcWfN+zbGYEyomy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3xXQgeQ; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CodCqSrD"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488b8bc6bc9so5872615e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 05:53:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3xXQgeQ"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43d75312379so1221775f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2026 05:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777553628; x=1778158428; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q5/c8Ct83SJKpAdR0Bd4iD5LrQUgDQEBElFL+L+8Gt0=;
-        b=CodCqSrDDCVmpEjssQS+NSU+PZgYJNjV9GkwOnHB1z7HlUKh9nn/rCDxfrfvY/OKD7
-         qTxOmTRSGNnAjlopZqrtHR2/sYpGP1BWlag+p1FFaFRNkTtkC5bG2OOOXo+ipiQItKMG
-         O6pTPzNbfFTwjBvNI67K3p28WfYct63ZCKrZ/vdl6pYXRbGmMrZ3XM1yU/A5EgiOnYWq
-         FzmdQ3r4/oXW1950jzTnHiWAfI3mC9yeLT3cCWneCAbk59HEAroOOIJ8BoZ9pEnScDUZ
-         PZ4mhGEXKTjWfuu1IyQtvyW8a5W9oHXU1mACwOeIBZxkBVWjAl1io63zSQmpQwKlsPTB
-         1gSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777553628; x=1778158428;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1777553633; x=1778158433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q5/c8Ct83SJKpAdR0Bd4iD5LrQUgDQEBElFL+L+8Gt0=;
-        b=tYeFZCPQeYvIjLgGKlpxVC5p8F42php75TKmVh6BRQ9Z9cIoPXbEIfaBNrc5QHvj+D
-         zO20DQU2akThIJsOLxovW1nalMJyZCmVlYg5Km54yOLBMjMGGBbptX5Q/z0ORm6BM+Wq
-         BVVhHzWxsf1DC7zvhDF6gbggKWBm+DDi6gs4Mjq13wbNxYVBf99NM7eudkmBAs/g8ZQt
-         cOm8YadCxEE3LfvyLrHYuSl6PxLF1SDziVmIAVRuooSrowD+76oh2j4Off/fgExj2ExC
-         fpqQ3BOTGd/leIBXThggey6Xg4cqIEsuvgbnrEQOr+W5FdILrQQ0cmuIMkLC+y+XiFPX
-         +Fgw==
-X-Forwarded-Encrypted: i=1; AFNElJ+IACruZaAJ1sEj3VismoHXDurBbC6r/1Z7tHPp5Asiuz5ShiKarls0UW6vg9O/j3M6v8weCmzYiSXDAufPnuu5Qw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0ZcIRQalJKhDZquq82hJPi97IOdMCkqS2RKVqt/fsCLJMA2Vi
-	t9cc5xGI5fnJrEuSlPjSweMQHQmB+0sFoJP9UUYjlp1i4zu2Ff2UyB/9
-X-Gm-Gg: AeBDiesbGCy6B7HrMRdqMD8y5Iw5vWP9o70NtV663Rk7qOeUAAAPQ/WXcUhAjhZIR3h
-	Nc274eZ0lhqxAGX8BCxGq10r8c2FO3vxRA1bDJSNS3rTcPD+at5Mfq7K4hSMNwU2w0q/vwBWlw2
-	2Ek3lBG0IIfjrF/l5YQpaEwI+IJCimMDwuCv8YbtQRXZt62vQ+rGptMlgsVtmj/dsdxDItKO/At
-	gCbce3SNxhcMGYWb/XGQcuJWJ+kM4S5uWAqv1LXOZvKlXUW3PwK/sJNfwpUluUvGj0zEOcaOI45
-	01XvzXxkgXyNNZpev/4vsHvBAAF+Bubz30NDEiGvdqZzQFXm3gseINE9n9rpgDtlgoRi40U01ie
-	XUwtLMNFzt5s5viPkos9mJNzQktFshvLjCs6neP4n6y2uH/QQt1WvC2guIZZoUsRQAH3Wg3H/PA
-	sF/CBhNxzk5eoZNiDhn7qXN0hJ22UX48+ZrBrniaH5/n1FLlzRtQ==
-X-Received: by 2002:a05:600c:4e05:b0:486:fbd1:9dc0 with SMTP id 5b1f17b1804b1-48a84473724mr48644605e9.22.1777553627693;
-        Thu, 30 Apr 2026 05:53:47 -0700 (PDT)
+        bh=2ui9wMRPRd5WRi+7Ed1qkDLUf56FuZLXbegfJioV/+c=;
+        b=e3xXQgeQ+1SeOBl7dPMOJcmlczj7DcTyqNJjQAHoN7lYFzP7YY1R5f582vPEWh7U53
+         OeId/INBuVnTsAUw3GcX+a8mHI9bmpd9zTq3FQHrpwsLLwUS7yPuEsJrOmwwbYyhz0cr
+         xM6OpTrjjcQZhCyyAFj6xPKezUk9d53QbKllSaiSW9rgpAaLOd0WU5+RcIsQlx2Ux7gQ
+         oMMGmE27FDO0hd0BoKIRrlrNgcdu0rZ9bvRLeVXI9f3PL030cK0jZmEjVAT7vl5YxyWY
+         /cZ1YfDsmB+QeB8ntNFhFX20toLtb2+HOecjruvHIT4lviyU5lT6AkU5Z46zd+bDH0aJ
+         VkWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777553633; x=1778158433;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2ui9wMRPRd5WRi+7Ed1qkDLUf56FuZLXbegfJioV/+c=;
+        b=dNdCvQQ6wAE6rmgOyGcSWr5vtg+FcjRxGey6e7iocqLzdRa7K1H8lvRTeWlv3ejtmA
+         qsRK2cfKcb1PdZ4FEf1RaFVh5IWQ0Gf0TcJc9UAktjqvuRmZfMBSFGMzHHBiIpWtTAgu
+         l9BlP4Ujm6eYwRDiYquLwTybqiqspbqx+qTXPprOeGEcy+J7cEPkJN+OqffZKegivMWY
+         QsgumHv2EHnWyY5/36F0IVWoBNm8w4f89HVLiBJUMAjcxBts9UDx5DkaHo2MLgULSSAK
+         uwSpgJe7aZ4VKeSXLJkwjS/BqJN1+zsdtWeAjvuPDFVfPNd9OoUPMFZ/nCfChzybyWM/
+         rZAw==
+X-Forwarded-Encrypted: i=1; AFNElJ+VXGvWTKnBBmOVuOrITx58f/BkkkO2VfO7CzwnUvRG9smQ47grSBoi5/f/CDpbgHky1bni/65siS8PZJvBd4SdRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxZO5SKO0Jsh1uodoBkpeqmEEGP7JhUI+0AMa2P8nfOGra0KeD
+	tuCq4XgyOsKJwvd8aOwW0axyZYlXoP4M5jjQ8zLNs1JErbZnP1EhZKoU
+X-Gm-Gg: AeBDievI7n/0KXVAAL53IuP77CH2lTkuTZwYo/lVx/SQhsN3Y42T5oPRfHaXtoCighO
+	iPOmCZMnHvXZU2GTMqxx+TWvHM3QV4FNtxWsZ0oTtp8AWqF0DfrjHbhXrk7wD0isuiONCa2Ckdb
+	s4Zp0CBi46oTmJrp9CKVPej6qRwRDUa9M5JnLfc1lVzE0J6DokJtUK6JI3lCYK/BvEjS3yg5WCB
+	3f3wXaMlB4SY2SRUe2ISoRZzy5MwOUQ2aD4ahKBbKvEh2tTaQqt3TkhIv3PUEHtw3lKOUfidG3E
+	AWpkHWtBv3KKgZjfV61sZ1E53jd1qeLX679MDjMeSNEo62eu5JQ8WK8HKtCZ+TxaevTGzIjRA5V
+	T73rs25dN7rYHhJq5V2tImHdzrTGIXiW5oiRCLFvLiKsJK1J4kV67gLhQcQJgyhoqqaNLx6OCSW
+	CPEDad/Q5d7+gJEa5sWEtC07zNIRGwKAPJ7is8UQA=
+X-Received: by 2002:a05:600c:8b62:b0:48a:53cb:8604 with SMTP id 5b1f17b1804b1-48a8609bebdmr41523175e9.14.1777553632363;
+        Thu, 30 Apr 2026 05:53:52 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:342:901:e785:f7d2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c3057ecsm40995825e9.20.2026.04.30.05.53.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c3057ecsm40995825e9.20.2026.04.30.05.53.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2026 05:53:47 -0700 (PDT)
+        Thu, 30 Apr 2026 05:53:51 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -69,10 +71,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 0/6] Add more support to Renesas RZ/G3L SMARC EVK
-Date: Thu, 30 Apr 2026 13:53:04 +0100
-Message-ID: <20260430125342.439755-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 5/6] arm64: dts: renesas: rzg3l-smarc-som: Add pinctrl configuration for ETH0
+Date: Thu, 30 Apr 2026 13:53:09 +0100
+Message-ID: <20260430125342.439755-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260430125342.439755-1-biju.das.jz@bp.renesas.com>
+References: <20260430125342.439755-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,67 +87,85 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This patch series extends the RZ/G3L SMARC EVK platform to add OPP
-table, IA55 and pin control support for Ethernet and SCIF0.
+Add pin control configuration for the ETH0 Ethernet interface on the
+RZ/G3L SMARC SoM board and also enable hotplug support.
 
-Patch 1 adds an OPP table for the RZ/G3L SoC, defining six operating
-points ranging from 37.5 MHz to 1.2 GHz, and links each of the four
-CA55 CPU cores to the OPP table along with their respective clocks.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v3:
+ * Split from patch#6
+ * Added hotplug support.
+---
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  1 +
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 32 +++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-Patch 2 adds the Interrupt Control Unit node to the RZ/G3L SoC DTSI,
-wiring up the NMI, IRQ, TINT, and other interrupt sources to the GIC.
-
-Patch 3 completes the pin controller node by adding the compatible
-string, GPIO ranges, interrupt controller properties, clock, resets,
-and the clone channel reference, and sets the ICU as the
-interrupt-parent of the pin controller.
-
-Patch 4 adds SCIF0 pin control configuration to the RZ/G3L SMARC board
-DTS.
-
-Patch 5 adds pin control configuration for the ETH0 Gigabit Ethernet
-interface on the RZ/G3L SMARC SoM, including RGMII pin muxing and
-hotplug interrupt support via the ICU.
-
-Patch 6 enables the second Gigabit Ethernet interface (GBETH1/ETH1) on
-the RZ/G3L SMARC SoM, adding its pin control configuration and PHY
-settings mirroring those of ETH0.
-
-This patch series depends upon [1], which has no further dependencies as
-all the prerequisite patches have been accepted.
-
-v2->v3:
- * Split from [2].
- * Added ICU node and set ICU as the interrupt-parent of the pin
-   controller.
- * Moved ETH0 pin control support to a separate patch.
- * Dropped ethernet-phy-ieee802.3-c22 from mdio1 device node.
- * Fixed typo txdv-skew-psec -> txen-skew-psec.
- * Added hotplug support for ethernet.
- * Renamed SCIF_{RXD,TXD} -> SCIF0_{RXD,TXD} pins.
- * Added patch for OPP table support for RZ/G3L SoC
-v1->v2:
-  * Split DTSI patches from bindings
-  * Fix typo maxItems->minItems in bindings
-  * Collected the tag
-
-[1] https://lore.kernel.org/all/20260326111953.31024-1-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260203131048.421708-1-biju.das.jz@bp.renesas.com/
-
-Biju Das (6):
-  arm64: dts: renesas: r9a08g046: Add OPP table
-  arm64: dts: renesas: r9a08g046: Add ICU node
-  arm64: dts: renesas: r9a08g046: Add pincontrol node
-  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
-  arm64: dts: renesas: rzg3l-smarc-som: Add pinctrl configuration for
-    ETH0
-  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
-
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 147 +++++++++++++++++-
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 ++
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  93 +++++++++++
- 3 files changed, 252 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+index acead2b1c842..0ae052238b3b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+@@ -14,6 +14,7 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h>
+ #include "r9a08g046l48.dtsi"
+ #include "rzg3l-smarc-som.dtsi"
+ #include "renesas-smarc2.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index fb781d9035aa..d0516d7db8ba 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -23,6 +23,8 @@ &eth0 {
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-id";
+ 
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
+ };
+ 
+@@ -38,6 +40,7 @@ &mdio0 {
+ 	phy0: ethernet-phy@7 {
+ 		compatible = "ethernet-phy-id0022.1640";
+ 		reg = <7>;
++		interrupts-extended = <&icu 3 IRQ_TYPE_LEVEL_LOW>;
+ 		rxc-skew-psec = <1400>;
+ 		txc-skew-psec = <1400>;
+ 		rxdv-skew-psec = <0>;
+@@ -52,3 +55,32 @@ phy0: ethernet-phy@7 {
+ 		txd3-skew-psec = <0>;
+ 	};
+ };
++
++&pinctrl {
++	eth0_pins: eth0 {
++		txc {
++			pinmux = <RZG3L_PORT_PINMUX(B, 1, 1)>;  /* ETH0_TXC_REF_CLK */
++			power-source = <1800>;
++			output-enable;
++			drive-strength-microamp = <5200>;
++		};
++
++		ctrl {
++			pinmux = <RZG3L_PORT_PINMUX(A, 1, 1)>, /* MDC */
++				 <RZG3L_PORT_PINMUX(A, 0, 1)>, /* MDIO */
++				 <RZG3L_PORT_PINMUX(C, 2, 15)>, /* PHY_INTR */
++				 <RZG3L_PORT_PINMUX(C, 1, 1)>, /* RXD3 */
++				 <RZG3L_PORT_PINMUX(C, 0, 1)>, /* RXD2 */
++				 <RZG3L_PORT_PINMUX(B, 7, 1)>, /* RXD1 */
++				 <RZG3L_PORT_PINMUX(B, 6, 1)>, /* RXD0 */
++				 <RZG3L_PORT_PINMUX(B, 0, 1)>, /* RXC */
++				 <RZG3L_PORT_PINMUX(A, 2, 1)>, /* RX_CTL */
++				 <RZG3L_PORT_PINMUX(B, 5, 1)>, /* TXD3 */
++				 <RZG3L_PORT_PINMUX(B, 4, 1)>, /* TXD2 */
++				 <RZG3L_PORT_PINMUX(B, 3, 1)>, /* TXD1 */
++				 <RZG3L_PORT_PINMUX(B, 2, 1)>, /* TXD0 */
++				 <RZG3L_PORT_PINMUX(A, 3, 1)>; /* TX_CTL */
++				 power-source = <1800>;
++		};
++	};
++};
 -- 
 2.43.0
 
