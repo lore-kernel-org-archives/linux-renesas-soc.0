@@ -1,145 +1,113 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8658D17D2;
-	Sun,  3 May 2026 00:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882C91A3029;
+	Sun,  3 May 2026 00:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777767100; cv=none; b=ZLdOM+kEoiWsPnOf0KUkmL2xu55NcSoz4FvhLDMynQxLiBbSXRawG74yIr7JvWCDJk6C4yACeCGKhd8fnTX+sT35MijUvEugx66H97MYIas/jd3/1/akDa+AmVVD2WeUEOLGv0gQ6+cdTJ1mGDmWpXJNYAqSCzdCtZxUz8La3Z0=
+	t=1777769826; cv=none; b=L+QEAj9gSb4Qe03+6cQHfKFBodfflD5AHP4ZyQYOrtzLEmUvbD8Cu60ICgOC39ZmacJu0Z/ZrWtdUuPHhkfOltb0UoDyd3ei0Udiq9lyJpdkZGApTfeVujzhUXDxACGvFaAFThEDHtJaVJxI+xOGTSW0IC89Yh+k5ZBbCKitlEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777767100; c=relaxed/simple;
-	bh=nOqQcF/V39Xx7ALmukDgSIKiFUQ4IoB3wcksu9SymaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BctmaDRAQF8hDkvDi1cgi3qh064ipYg64Nx+S7B4btAF+gCLwrIXPbAZFGo84ZPasilj2wdV4PyCCt93bd03qPsGcT5bLS3EtDO5kC8VP0RJEpPGe6Gw/PBR7GinNRlGQ4zp3AC+J7MKDl5F/LryG4XSvSokJC1CikDHWAWNspI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jysqW7jA; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1777769826; c=relaxed/simple;
+	bh=2UbWxPWQRA+49QsIwAgsL3xu1aY2a6ldo2fzX6NDexI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rguA03fmL0LlA0mo+oBWyibix3DsQkZiwr0BadQKiwA6BDk06HJgKMEVX0u1bKiCLnQa1B7JrjwhonjQAZNPDnttUcX+/MpCIxcTqeAMqyImCt/6kQA/8d+tV0DB1Lh3kja1jjWpF79X3CRqNuwNDWaqqoBQOuYt/72HPqT1VCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDHCAUGS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jysqW7jA"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4g7QDk6sXSz9tRD;
-	Sun,  3 May 2026 02:11:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777767095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rBbGG49lvszkSs6r+vkoyB+q5ycwyPUBvGTobwqzXCY=;
-	b=jysqW7jAuDFJrbua8FgWRyjdkmFUEE3iRBd6BzYPCL/hjHNKhq/AgbzZZgkZhOUQDQU+pJ
-	ahFjUj3IB9jL++70DEsokWc+NrPeaVURtK2Z0c/5MAEptyxrW23tDQph3dL7ByjW+WvowP
-	iFQCCEhTJaLnIbsnHaS+ZeRkiRj89a4Cn77U2MlR6Mpd1aK7vfhF85jPwF1zJehov1wKUA
-	0miMQTqWQNhbM6MQCR51Zju7C/4XvZqBeIfVlyN+F8vIDMkoV2wwbAHvIUj8iQ4W7a+z2T
-	zkq1WTNX5jj6xJk5UiRQPtbvDBAv2/Y9PRv4/twjkNg7OaVNI8a6oT3qa7d5sw==
-Message-ID: <7e4283f1-c179-45e4-a8ee-5026e467fd21@mailbox.org>
-Date: Sun, 3 May 2026 02:11:29 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDHCAUGS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D70D4C19425;
+	Sun,  3 May 2026 00:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777769826;
+	bh=2UbWxPWQRA+49QsIwAgsL3xu1aY2a6ldo2fzX6NDexI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DDHCAUGSMq2QI7MonUw2J4SjT6Nw2ODR9Ww1j0J+/bAozw58wEWTOhpOzeC0BS2hF
+	 nhB01ev5hUoKENm35EUitNosZBp+6+343jsB4Xj3GF+tkYxVlTi/v87yLPr1dCyX1k
+	 4kIfz4esi4ADGZ/b1XyUyJRFWQzVrcWL/zQDpZcSfHOLtEjJuVV/GcmfnUyFVaBSHd
+	 lARW3SKOilTE8d8sLmz8Q5qqx2SU8b0Z6GIZO5Cm7etlmbK2nJZBafpf5cBoQTrQ83
+	 yobtlGG9GWwJlruJ8ACJUL9xejmM6jpEG1eqKWhyJLHSbc7tVOm1y0CPTbSyiSiM+N
+	 2LNYx/jFV54gQ==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 544DF1AC5863; Sun, 03 May 2026 01:57:03 +0100 (BST)
+Date: Sun, 3 May 2026 09:57:03 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jon Nettleton <jon@solid-run.com>,
+	Mikhail Anikin <mikhail.anikin@solid-run.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] regulator: raa215300: add support for
+ configurable 32kHz clock output
+Message-ID: <afadX4IC9o-zj6qC@sirena.co.uk>
+References: <20260502-raa215300-clkout-v1-0-fd1c2a240963@solid-run.com>
+ <20260502-raa215300-clkout-v1-2-fd1c2a240963@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6/7] arm64: dts: renesas: r8a779md: Add Renesas R-Car
- R8A779MD M3Le DTs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Nguyen Tran <nguyen.tran.pz@bp.renesas.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
- <20260419193718.133174-7-marek.vasut+renesas@mailbox.org>
- <CAMuHMdV5NRFjGmLLSAFkst=y_v=haZ9_-oiZ7_3M2J1s5jiJSQ@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdV5NRFjGmLLSAFkst=y_v=haZ9_-oiZ7_3M2J1s5jiJSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 5b19e038c16ec512322
-X-MBO-RS-META: bs89hkih9ipn8s579q3adtcmkkc76bmw
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jnDnNwSikhbrcgUZ"
+Content-Disposition: inline
+In-Reply-To: <20260502-raa215300-clkout-v1-2-fd1c2a240963@solid-run.com>
+X-Cookie: 667:
 
-On 4/29/26 2:16 PM, Geert Uytterhoeven wrote:
 
-Hello Geert,
+--jnDnNwSikhbrcgUZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[...]
+On Sat, May 02, 2026 at 06:07:05PM +0200, Josua Mayer wrote:
+> Renesas RA215300 PMIC can be configured to output a 32kHz clock on its
+> multi-purpose MPIO2 pin.
 
->> +/delete-node/ &pciec1;
->> +/delete-node/ &sata;
->> +/delete-node/ &sdhi3;
-> 
-> I am not sure disabling sdhi3 is correct.
-> The R-Car M3Le documentation says:
-> 
->     "M3Le does not support MMC1.
->      M3Le supports one MMC channel (MMC0) only.
->      SD3 is used only for SDHI and is not used for MMC.
->      M3Le does not support MMC HS400 class transfer rate."
-> 
-> The main R-Car Gen3 documentation says:
-> 
->     "This LSI has four SD card interfaces (SDHI0 to SDHI3), two of
->      which can also be used as MMC interfaces (SDHI2 and SDHI3)."
-> 
-> So while MMC1 is indeed sdhi3, sdhi3 can still be used in SD mode?
-> Do we need a new compatible value, as R-Car M3Le does not support HS400?
+> There are in total 6 configurable multi-purpose pins, however only one
+> of them supports outputting a clock in one specific configuration.
 
-I think we do need new compatible string, yes, I'll include that in V2.
+So there should be some pinmux support here then?  This is starting to
+sound like a MFD...
 
-We can inhibit MMC support in sdhi3 with 'no-mmc' DT property, which I 
-will also include in V2.
+> +#define RAA215300_MPIO2_POWER_OFF_DELAY			GENMASK(6, 0)
 
-[...]
+> +static unsigned long raa215300_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	struct raa215300_clk *clk = to_raa215300_clk(hw);
+> +	unsigned int val;
+> +
+> +	regmap_read(clk->regmap, RAA215300_REG_MPIO2_POWER_OFF, &val);
+> +	val &= RAA215300_MPIO2_POWER_OFF_DELAY;
+> +
+> +	return 32768 >> val;
+> +}
 
->> +/delete-node/ &vin7csi20;
->> +/delete-node/ &xhci0;
-> 
-> Shouldn't the following be disabled, too?
->    - ohci1, ehci1, and usb2_phy1,
+Given the mask above val could be up to 127?  If nothing else it'd be
+good to have some validation.
 
-Yes, they should.
+> +		/* register mpio2 32k clkout in common clk framework */
+> +		raa215300_register_clk(dev, regmap);
 
->    - cmm1 and vspd1 (cfr. DU below).
+You should check the return value here.
 
-Please see my response to Laurent in here in
-[PATCH 6/7] arm64: dts: renesas: r8a779md: Add Renesas R-Car R8A779MD 
-M3Le DTs
-as well as my response to
-[PATCH 1/7] dt-bindings: display: renesas,du: Document Renesas R-Car 
-R8A779MD M3Le
+--jnDnNwSikhbrcgUZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The CMM1 and VSP1 are actually present, so I think the DT should 
-describe them, even if they are not used. If only to allow the 
-driver(s)to bind to those IPs and bring them to low power state.
+-----BEGIN PGP SIGNATURE-----
 
->> +
->> +&du {
->> +       compatible = "renesas,du-r8a779md";
-> 
-> Assuming the DU needs a new compatible value...
-> 
->> +       renesas,cmms = <&cmm0>, <&cmm3>;
->> +       renesas,vsps = <&vspd0 0>, <&vspd1 0>;
-> 
-> Shouldn't this be
-> 
->      renesas,vsps = <&vspd0 0>, <&vspd0 1>;
-> 
-> ? DU1 is unused, but DU3 is used.
-It should, and will be fixed in V2, thanks !
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmn2nV4ACgkQJNaLcl1U
+h9AD0gf8Cywe1GC2skqLy50qq1mCL+LSbHagEhKOttYnPlUs2YI0vdgxaHViHj+w
+LdC9qtGTchnOmtMP3Nzw1E3+wyKwItFve5rdb+jzvenOJnw5zrtVJw5Lss5YcCXR
+uzozaEYLTkWTqU7nfGLvLRUxVVbfD4JQxtOcbkegTppnQpTmrmphAw4CZgRb7T11
+4+bh8V8PMJafnuuFWgmZoGYphfdiKA2he6vFkhU8EP0JzSpnj2LYGYO9Hw4r555U
+XizJb8gqM6B7mOLCv6heuB/b5WRbZ750ecRJUA1Wueko0wU1yO3tyhSm3WvbeQq6
+i0h+yQvOqqeKmdECR71nLcDKl0PcRA==
+=YsOv
+-----END PGP SIGNATURE-----
 
-[...]
+--jnDnNwSikhbrcgUZ--
