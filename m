@@ -1,107 +1,168 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652A914EC73;
-	Sun,  3 May 2026 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E202D877A;
+	Sun,  3 May 2026 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777823088; cv=none; b=kyiNlV4LZ92hAt7sFNMM7SzqwEbUINryC/fhv+2EwUmo2UKbgVX4WfkOP9oa3PrGRm/uj0tDf8oQJhgX1pWEPz0sJ35LdmKL41Arlgz5hnIAe3K4uO8hXHEvCDVUUgBv7fJhU8tGU/Aziv4K75fa4rr984012AIcQBOEFOS3Qts=
+	t=1777827463; cv=none; b=eVCHCDw/81Hhf4VQWGk5JCICQmz1KpZYVvLc7sWsNvhRULF1XLnF8Xz3eAal+EDYyCyv+7IYhlvlUvsJ5pqWBoDBNcZUYEem+57x8XDH0fjfXO5r2Cw4kngk2V9kYdwR6wefYGjcQuZddDBu4jAqL6dZqr7jNGhsOKvTsMHyvzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777823088; c=relaxed/simple;
-	bh=KvrSzVRlTtgdyIyOHllZeU18ckjlbXnfOtScHBIg2+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fsnmQBmAApwfxxvtH47zCSJbHHhCFHAuCCDldfavGt46EfnLZVNU2ukrHI/1Ck261shkL7u3pm1JoqQ6jQZaNg0VmnFh+5UDNtJaKTUFwhtPLxs3C4ML8VbcRziJsFhIb8YxMF2C+h8OSXfsYI7pX8F1KnrVo+ctOez2nt0/DxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NYF1sa57; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=U0gP5MBz; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1777827463; c=relaxed/simple;
+	bh=T9k76UIlfgn5aHBqK2gi3rGusZZXx87NFJ5kF/vgN2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRVn6vdb53er+dop4OBoG0nlQtJwJ7VCeXQjL0S4QeVbcNW4CmQac3ciATp5KELnmBgSZMztuhEmCS+tyF8BzEFS+l4QAQloWxVjZUeo29KSNckoeQemuzSrBAj9F6BDiGd7drYiazQZcJtFQH+Ehh3bq0zgFVOqyj3vCzN2TCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1iDIZ0s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NYF1sa57";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="U0gP5MBz"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g7pxS0xq3z9tRM;
-	Sun,  3 May 2026 17:44:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777823084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C5ndckZy3D++ygR4S2KuLZlKgbLjiLF0FZ4orIPcy4o=;
-	b=NYF1sa57Mu7V6hHn+z/sgUVc0p2VzdOu2fxRzR0Q/nlqSXZZP3Yxg7deD77CNd3PB5o0+G
-	ZIrWrknCgmkaO8g5a//sdYHH+e5pki0kMiFkJvDn7nr11VPSfSfdHd+AqiEQthnhiwenux
-	RQugUWpmp6tI7UHKZzmvOEJoGlVB0MrPeTsCmuE7iNpvaqv5IWehoNzAsyqpMxtvN80HeD
-	NHwhGiBh4N+2P5H+SKIbkRT2vVYiLZGG1GCnrSshjAtIaVmwmBNknZ2d8LPmnjWfIiCgsR
-	2ap7xek2E+NJeFuCRCCd0tCeIRHybZRqXnJbtDXP1wxt+BHktc9uzzDSycSkpA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=U0gP5MBz;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777823083;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C5ndckZy3D++ygR4S2KuLZlKgbLjiLF0FZ4orIPcy4o=;
-	b=U0gP5MBzbWM5mlEYDBACRaWwxW2CAsnl0H48y1IlyPg6UGxFA05hAu4lBpvZ2tTwqM6FcB
-	ifHQdKJyMiLsa/RmSNaL88d70y65/yY5dbCzuVDQhtDjyxakT0kxVjjeDobo3aFRfagDtH
-	ybg1ClfOZWYoXBOskA7afdlg8iC9LitWJnCVclWNH9th/Hxrt+lcrxbS5cSSYz+UiY04it
-	coXAZ4O/OOMONWcIQNaLArQYrtK/+PmpaZvzvpMqIjlIRLg50EAB1wWpJsPDM0M3wtP3o5
-	KwVNcqpywb8BiouEt8kXwQkDxcPspYKN0bIP4rJatp+1+564BT2unP54ZSzCZA==
-To: devicetree@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1iDIZ0s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7473AC2BCB4;
+	Sun,  3 May 2026 16:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777827463;
+	bh=T9k76UIlfgn5aHBqK2gi3rGusZZXx87NFJ5kF/vgN2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F1iDIZ0sU+H2ARQR0a6JW8S8kGNBEO6wzX+Ag5koZKKhF2xyzKZkfMsuOkDZKc1O+
+	 Nmn0tGnIv1FGZJQdcG9+RIoYA3EsYiUvRiLkSY2/XQQdjiW7RXBQrLjrfKVKNRlpLX
+	 inNOwrBJ/B1m4pTYIjuedlvyfc2O0N1M2qpVivgH8FKDYje9coLyw1NJ8SZIdbHCR5
+	 ZQqKYj0oVm4Md7vtPs1kYStorsrLo5fwuOKBj1q1Vq8adKB57aVzjdxzmj2Gfe1CmS
+	 wNpq5unWOzIM5iVJgPoCmo3L7fw7qV9czud0/3XupqxhNE78l14Zpo63c0RB60NX3q
+	 BoMLZf7bFfYwA==
+Date: Sun, 3 May 2026 22:27:38 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: neil.armstrong@linaro.org, biju.das.jz@bp.renesas.com,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] schemas: Allow clocks: property in cache nodes
-Date: Sun,  3 May 2026 17:44:13 +0200
-Message-ID: <20260503154439.27362-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH] phy: renesas: phy-rzg3e-usb3: Fix runtime PM underflow
+ during suspend
+Message-ID: <afd-gj-F3OYDfCwJ@vaman>
+References: <20260427194741.161533-1-ovidiu.panait.rb@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 7fa1ca7aec103e1c8da
-X-MBO-RS-META: 4xodjuiiisazkf7hch37sdzhftahx3kq
-X-Rspamd-Queue-Id: 4g7pxS0xq3z9tRM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260427194741.161533-1-ovidiu.panait.rb@renesas.com>
 
-Renesas R-Mobile APE6 currently describes clock which supply the cache
-controller in their DT using "clocks" property. This is not the only
-hardware that has cache controller clock controllable via some sort of
-clock controller, for example Altera SoCFPGA Cyclone V and Arria V also
-has controllable cache controller clock. Allow clocks: property in cache
-controller node to allow users to fully describe such hardware.
+On 27-04-26, 19:47, Ovidiu Panait wrote:
+> On the Renesas RZ/V2H platform, if the xhcd driver is unbound and the
+> system is suspended afterwards, a PM underflow error will occur:
+> 
+>  # echo 15850000.usb > /sys/bus/platform/drivers/xhci-renesas-hcd/unbind
+>  # systemctl suspend
+>  15870000.usb-phy: PM: dpm_run_callback(): genpd_resume_noirq returns -13
+>  15870000.usb-phy: PM: failed to resume noirq: error -13
+>  15870000.usb-phy: Runtime PM usage count underflow!
+> 
+> Since the PHY framework is managing the runtime PM of the PHY via
+> phy_power_on()/phy_power_off(), there is no need for the PHY driver to
+> manipulate the runtime PM state during suspend.
+> 
+> To fix this, remove the runtime PM calls from the suspend/resume paths
+> and add a get/put pair inside rzg3e_phy_usb3_init_helper() to make sure
+> the clock is enabled during init, even when there is no consumer for
+> the PHY.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- dtschema/schemas/cache.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+Ok
 
-diff --git a/dtschema/schemas/cache.yaml b/dtschema/schemas/cache.yaml
-index 73d345f..dee1cd5 100644
---- a/dtschema/schemas/cache.yaml
-+++ b/dtschema/schemas/cache.yaml
-@@ -33,6 +33,9 @@ properties:
-   compatible:
-     const: cache
- 
-+  clocks:
-+    maxItems: 1
-+
-   power-domains:
-     maxItems: 1
- 
+> 
+> Also, change the suspend ops from NOIRQ_SYSTEM_SLEEP_PM_OPS to
+> SYSTEM_SLEEP_PM_OPS because runtime PM is disabled during the noirq phase
+> and pm_runtime_resume_and_get() would not actually enable the device clock.
+
+This is a fix, so split this up please
+
+> 
+> Fixes: ee5f1a3f90a4 ("phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver")
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> ---
+>  drivers/phy/renesas/phy-rzg3e-usb3.c | 31 ++++++++++++++++------------
+>  1 file changed, 18 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/phy-rzg3e-usb3.c b/drivers/phy/renesas/phy-rzg3e-usb3.c
+> index 6b3453ea0004..055775e1a0f7 100644
+> --- a/drivers/phy/renesas/phy-rzg3e-usb3.c
+> +++ b/drivers/phy/renesas/phy-rzg3e-usb3.c
+> @@ -64,6 +64,7 @@
+>  #define USB3_TEST_LANECONFIG0_DEFAULT		(0xd)
+>  
+>  struct rz_usb3 {
+> +	struct device *dev;
+
+This does not belong in a fix, please split
+
+>  	void __iomem *base;
+>  	struct reset_control *rstc;
+>  	bool skip_reinit;
+> @@ -130,11 +131,21 @@ static int rzg3e_phy_usb3test_phy_init(void __iomem *base)
+>  	return 0;
+>  }
+>  
+> -static int rzg3e_phy_usb3_init_helper(void __iomem *base)
+> +static int rzg3e_phy_usb3_init_helper(struct rz_usb3 *r)
+>  {
+> -	rzg3e_phy_usb2test_phy_init(base);
+> +	int ret;
+> +
+> +	ret = pm_runtime_resume_and_get(r->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rzg3e_phy_usb2test_phy_init(r->base);
+>  
+> -	return rzg3e_phy_usb3test_phy_init(base);
+> +	ret = rzg3e_phy_usb3test_phy_init(r->base);
+> +
+> +	pm_runtime_put_sync(r->dev);
+> +
+> +	return ret;
+>  }
+>  
+>  static int rzg3e_phy_usb3_init(struct phy *p)
+> @@ -143,7 +154,7 @@ static int rzg3e_phy_usb3_init(struct phy *p)
+>  	int ret = 0;
+>  
+>  	if (!r->skip_reinit)
+> -		ret = rzg3e_phy_usb3_init_helper(r->base);
+> +		ret = rzg3e_phy_usb3_init_helper(r);
+>  
+>  	return ret;
+>  }
+> @@ -187,6 +198,7 @@ static int rzg3e_phy_usb3_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, r);
+>  	phy_set_drvdata(phy, r);
+> +	r->dev = dev;
+>  
+>  	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>  	if (IS_ERR(provider))
+> @@ -199,7 +211,6 @@ static int rzg3e_phy_usb3_suspend(struct device *dev)
+>  {
+>  	struct rz_usb3 *r = dev_get_drvdata(dev);
+>  
+> -	pm_runtime_put(dev);
+>  	reset_control_assert(r->rstc);
+>  	r->skip_reinit = false;
+>  
+> @@ -215,27 +226,21 @@ static int rzg3e_phy_usb3_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = pm_runtime_resume_and_get(dev);
+> +	ret = rzg3e_phy_usb3_init_helper(r);
+>  	if (ret)
+>  		goto reset_assert;
+>  
+> -	ret = rzg3e_phy_usb3_init_helper(r->base);
+> -	if (ret)
+> -		goto pm_put;
+> -
+>  	r->skip_reinit = true;
+
+https://sashiko.dev/#/patchset/20260427194741.161533-1-ovidiu.panait.rb%40renesas.com
+
+
 -- 
-2.53.0
-
+~Vinod
