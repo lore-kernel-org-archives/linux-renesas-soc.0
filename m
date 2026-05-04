@@ -1,66 +1,77 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953E529E116;
-	Mon,  4 May 2026 14:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0807D3DEAEC
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 May 2026 14:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777905489; cv=none; b=EAei33c23s0RvgnJqs5t3I9NRMlGc7PrzWl2uT/IOpLU+JwkoOt7FIDjUxzUX0tHJ0jSdL3u+O9ATjrwWClBEd1DM5lKZ3XxEDsk1um2tr/mKnzGxzBfnXQgwRhWE3K/qmpn2OARg1wfewuJweorB+gpKXZHiT0xSk1sLJG1Ceg=
+	t=1777905929; cv=none; b=G2E6j0isSy+aA0TkaPfPElhr4iSS8RMTG6jRelbIhMcfFFF7jmBfVKU20shsr8QhdMm5bqM8U+u5ylfhcO1Eaglh1xQUCaVt8PhkiJR4X31ZaJGuyO1KSFE5GuWGpodzde6bnBj3YImpfg2+S585fDWPM8+JLKP9LLnkksiIHnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777905489; c=relaxed/simple;
-	bh=TNTaMNn9Qx6juhS0o5aGXz+wACJyj+lXsh9rSoIO/eo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mfvLsDpOhNQa32v6wQupciiyxBJReax2s0kEIOkuEta41q3dXenuIdebsa8d8qxTs3P9YEDiTDYzSDrnxZK2km0MykJQvbPQlHH45OcsWbw8q4QSPeoGcH2S49ze1/98NkYqAre8gc3W3N7lXSmlhCOM9S73wkvSaW/3i7iGbUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=v1OAtEQ/; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=V2KO/UXm; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1777905929; c=relaxed/simple;
+	bh=ORAOwSOu1au513HAgD2ycO0jYFY23lld5AbZqARyQKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YB1bV4ROADcB9Xe8efZt3SjFUocXo8CeU/PM/ohD/8iM4eCYU6RAodBcnbc8J4qLxi4JoqheyRDRYwhOd6Nre6iVDdKPKZhIYNuVBCY5lz1nY4r5HTxDsH+kykxOpxMsvKHTgMQn862fqszcHIpFFeFKMxwFRhV2rmNW8PNr4RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oW0lEQSE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="v1OAtEQ/";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="V2KO/UXm"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4g8PPz2KwFz9v0b;
-	Mon,  4 May 2026 16:37:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777905479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wBBgH/SwekkvEUj5hUEj4xBQU7ZFg8QEvCj3rWtRhYY=;
-	b=v1OAtEQ/iIuJbMejFNzyBoxHginAmhPCOi7gulFDDj4GOMs5ylY4snBvuOLhUT2IgvBLzd
-	iLelwOZucftPCXtvPEFUu2kYEIelPmprnM6FKSozLzROJ+RjJR5ZvayQKFPYwVonsDV8Q5
-	J4zXgPByuLAWwz9zGIz9GXfnEj5kQfYAJMevXvhCrOFY5QOoGbHH0uSqXfK0HJ8ENEjZwa
-	RAcxEulictj1kqtqSICD3NFvSm/b1iVN4hR1G+cedt3jnujmNLVcMqszV5Yb/gxjdQK8gb
-	Vpb4NKKnTHIR7okjrNgmhTD6OGSJQjrr9x0xS6ZrXiFt4ZD+KeJHt6Pj8lTwMA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="V2KO/UXm";
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777905477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wBBgH/SwekkvEUj5hUEj4xBQU7ZFg8QEvCj3rWtRhYY=;
-	b=V2KO/UXmenPspVl241dUMK//P4ADnYPSie9K4/xxflqBjBKGkU/ixNsP75QKC2faSQdFvR
-	QqF0kWmx0H4ldrB95bVZx0s+3SMc/wFSJv3cw5Ex6aHYN+zp35SrNsYkiaQfleK26AlY4+
-	opZo5ze60f7EfaJ5drzy+ZRf6GZXaLGdiDTJvH4f3otGnEYIZvHb1+F8RuFLaHu3kG0Pbx
-	eVZlLgAyY2LTG9tn4rzfp0LivH8wxc8sE+G4M0Zz4vjXHPi2nYOp0Nt04ZHFf+cQER3Par
-	Y2T45IG8AZF1gvWJa7ZtNfGToACSVYWYFfgQr3evEEUb8O5cziRLcLopsyLEiQ==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oW0lEQSE"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-43d73352cf2so3754397f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 May 2026 07:45:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777905926; x=1778510726; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EiyJE29nUoz3rJ6eRkS9mylfjXne22lltijPJ26O8Gw=;
+        b=oW0lEQSEpg0UhInJ3lwOmHZIlmzzMWGqYcr6fC6qe/FmlahENJDSBDAPWPj1uy1+Cq
+         E1XqidzWqM1EHsuMQj8x04DVXKUL1TBzgwW0l9XcDlWc3fFX6IoP197sHetWqIQI+bWb
+         BiHoZyHH9NWjwu5IFSTnQDk4e+5k3WNm19oLhU4tWUjxg3sqlwEGBEnTAR4uezfoRLJ+
+         O4caNj42WlyPj1841bnj0yCt2acCV0PVT6Lol1HIOB3PWjpa671O0MOg4dCbc7SVgOmm
+         yVOq7haEgxAF/tZJ0JbuMLBuyXS0lzjUrns0ZxcauhDeI+mLs/aMpZpJh/y21GK6mKLh
+         Y3ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777905926; x=1778510726;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EiyJE29nUoz3rJ6eRkS9mylfjXne22lltijPJ26O8Gw=;
+        b=aWyhfaC+EHAKyMtI4a+xfqOQD1yi/Y5Q2DeAxeJzbD1R//Lk9XPEEWvdx5rTHlH37T
+         0J8UBUzkTiNnej6T31JNqxooaOLZ1W9zcmHKDB38g+H7cmE6mmS2GRfo7WkiotJqhkxT
+         Viqy6Bxu8gnOra3vuBIr8j8+I5bWRBh3qcaMKKP1DdWryNd7ArVQLVCyF6Q+VC5uoqGn
+         Pjhkll4wTPHcNhjfk4glf7RVmmRPROi0KMSlIKE0pvRsbOBfsdjcNWArElWciyw5y0ql
+         cXUrbbL0/6r+jsDEfIa5+VvfFxd+xLIrOJkXXsf3TyzOH5CCACNtXEa619S/kYiTVibU
+         RNzw==
+X-Forwarded-Encrypted: i=1; AFNElJ8YlEfEqlgUAmBCiZJL0Kho+qqDdikwp6B0HUSBnKOCtOi4E1Vb01Kqa+X0LPMEUqAG+Mz1A2aAPhbDQTUrcZUc1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBwWdx83Dxj0IF2tB9FFElXLYgkECj0jvS5fEU6hdkzjw7glmG
+	zPRk+dvitGFfrnxv0mJ+WP41H56ElhebyjLt1Abf2TFIGCXOkvChwf8W
+X-Gm-Gg: AeBDieuJnudzFjdfiyo0dtYhvfE6U27VGBxTzs8iSmfncPWCmmm66AyMZU2l1ubLfla
+	qEQSgJxueroAXlLyjxMmuqRR3Pw4AokCUb/8gS1M0aImtHO1xhSJfsbgmDCyjlIyVFJJBLY0am3
+	SuJno3iNvzda6WJJDGuEFYztxMfqaEGEPwF543o2uhVnvpxwiXXyp23PVMO8RSNj/Qemrp+xlDE
+	ceE77WFgbNmbB31pE5bgIam5zJqpeI96yL6pEoqAXVQ0+S6mlwnz09K2FbZuTObUQPrw+rXn8c9
+	aIjVT1Ylp0GDuHDwWP4Waree0wZP4VEg+HDumEBjEZrp838xPotuPoJOGO2TxUaik7qPS5HOCjV
+	xFqVOE5T9cqmBHc8DWKjwzBHAp7Vtsb5Wyst+n0hQFgzEqnjjNIhxwXmIUr0i3/tvEASoFAAO+/
+	SwsyjXQcyJ0ZdkZTeMyYspAn7rpmKVXpJq2GKcUUNjNiVy9TomPnjfYTjlaiQ=
+X-Received: by 2002:a05:6000:178d:b0:43d:773d:7908 with SMTP id ffacd0b85a97d-44bb65df88fmr15957594f8f.32.1777905926121;
+        Mon, 04 May 2026 07:45:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:6444:b23f:58b2:338c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-44a981defa6sm24371239f8f.24.2026.05.04.07.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2026 07:45:25 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: Simplify AA1024XD12 display DTO
-Date: Mon,  4 May 2026 16:37:15 +0200
-Message-ID: <20260504143751.42753-1-marek.vasut+renesas@mailbox.org>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/3] clk: renesas: rzg2l: Unify SAM PLL configuration macros
+Date: Mon,  4 May 2026 15:45:16 +0100
+Message-ID: <20260504144523.153906-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -68,191 +79,46 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: qtdtonkhjf5zyfsokwgws7cdwn8ejha3
-X-MBO-RS-ID: db7a51eb740a63470bb
-X-Rspamd-Queue-Id: 4g8PPz2KwFz9v0b
 
-Simplify the AA1024XD12 display DTO, move all the differences into the
-panel-aa104xd12.dtsi , rename OF_GRAPH links to generic lvds_panel_out
-and lvds_panel_in names, and parametrize the LVDS output in use using
-RENESAS_LVDS_OUTPUT macro. No functional change.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- .../renesas/draak-ebisu-panel-aa104xd12.dtso  | 33 +---------
- .../boot/dts/renesas/panel-aa104xd12.dtsi     | 64 +++++++++++++------
- .../dts/renesas/salvator-panel-aa104xd12.dtso | 33 +---------
- 3 files changed, 47 insertions(+), 83 deletions(-)
+This series cleans up and unifies the SAM PLL configuration macros across
+the RZ/G2L, RZ/G3S, RZ/G3L, and RZ/V2M CPG drivers.
 
-diff --git a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
-index 90767d74e21b2..2ab7e947a05b9 100644
---- a/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
-+++ b/arch/arm64/boot/dts/renesas/draak-ebisu-panel-aa104xd12.dtso
-@@ -6,36 +6,5 @@
-  * Copyright 2021 Ideas on Board Oy
-  */
- 
--/dts-v1/;
--/plugin/;
--
--&{/} {
-+#define RENESAS_LVDS_OUTPUT	lvds1
- #include "panel-aa104xd12.dtsi"
--};
--
--&{/panel} {
--	backlight = <&backlight>;
--
--	port {
--		panel_in: endpoint {
--			remote-endpoint = <&lvds1_out>;
--		};
--	};
--};
--
--&lvds1 {
--	status = "okay";
--
--	ports {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		port@1 {
--			reg = <1>;
--
--			lvds1_out: endpoint {
--				remote-endpoint = <&panel_in>;
--			};
--		};
--	};
--};
-diff --git a/arch/arm64/boot/dts/renesas/panel-aa104xd12.dtsi b/arch/arm64/boot/dts/renesas/panel-aa104xd12.dtsi
-index 4b1f0982b9e4a..11113a13a337d 100644
---- a/arch/arm64/boot/dts/renesas/panel-aa104xd12.dtsi
-+++ b/arch/arm64/boot/dts/renesas/panel-aa104xd12.dtsi
-@@ -5,26 +5,52 @@
-  * Copyright (C) 2014 Renesas Electronics Corp.
-  */
- 
--panel {
--	compatible = "mitsubishi,aa104xd12", "panel-lvds";
--
--	width-mm = <210>;
--	height-mm = <158>;
--	data-mapping = "jeida-18";
--
--	panel-timing {
--		/* 1024x768 @65Hz */
--		clock-frequency = <65000000>;
--		hactive = <1024>;
--		vactive = <768>;
--		hsync-len = <136>;
--		hfront-porch = <20>;
--		hback-porch = <160>;
--		vfront-porch = <3>;
--		vback-porch = <29>;
--		vsync-len = <6>;
-+/dts-v1/;
-+/plugin/;
-+
-+&{/} {
-+	panel {
-+		compatible = "mitsubishi,aa104xd12", "panel-lvds";
-+		backlight = <&backlight>;
-+
-+		width-mm = <210>;
-+		height-mm = <158>;
-+		data-mapping = "jeida-18";
-+
-+		panel-timing {
-+			/* 1024x768 @65Hz */
-+			clock-frequency = <65000000>;
-+			hactive = <1024>;
-+			vactive = <768>;
-+			hsync-len = <136>;
-+			hfront-porch = <20>;
-+			hback-porch = <160>;
-+			vfront-porch = <3>;
-+			vback-porch = <29>;
-+			vsync-len = <6>;
-+		};
-+
-+		port {
-+			lvds_panel_in: endpoint {
-+				remote-endpoint = <&lvds_panel_out>;
-+			};
-+		};
- 	};
-+};
-+
-+&RENESAS_LVDS_OUTPUT {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
- 
--	port {
-+			lvds_panel_out: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/salvator-panel-aa104xd12.dtso b/arch/arm64/boot/dts/renesas/salvator-panel-aa104xd12.dtso
-index 7807c3f80409a..4eb3e06ce52bb 100644
---- a/arch/arm64/boot/dts/renesas/salvator-panel-aa104xd12.dtso
-+++ b/arch/arm64/boot/dts/renesas/salvator-panel-aa104xd12.dtso
-@@ -6,36 +6,5 @@
-  * Copyright 2021 Ideas on Board Oy
-  */
- 
--/dts-v1/;
--/plugin/;
--
--&{/} {
-+#define RENESAS_LVDS_OUTPUT	lvds0
- #include "panel-aa104xd12.dtsi"
--};
--
--&{/panel} {
--	backlight = <&backlight>;
--
--	port {
--		panel_in: endpoint {
--			remote-endpoint = <&lvds0_out>;
--		};
--	};
--};
--
--&lvds0 {
--	status = "okay";
--
--	ports {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		port@1 {
--			reg = <1>;
--
--			lvds0_out: endpoint {
--				remote-endpoint = <&panel_in>;
--			};
--		};
--	};
--};
+Currently, each SoC family defines its own local macro for encoding PLL
+register offsets into a conf field (PLL146_CONF, G3S_PLL146_CONF,
+G3L_PLL1467_CONF, PLL4_CONF), and the driver uses separate decode macros
+(GET_REG_SAMPLL_CLK1, GET_REG_SAMPLL_CLK2, GET_REG_SAMPLL_SETTING) to
+retrieve register offsets at runtime. This leads to duplicated logic and
+implicit coupling between PLL index and register layout.
+
+The series introduces a pair of shared macros, CPG_SAM_PLL_CONF(stby) and
+CPG_PLL_CONF(stby, setting), that encode only the standby offset and
+optional setting field. CLK1/CLK2 register offsets are then derived from
+the standby offset using fixed +0x4/+0x8 deltas via new CPG_PLL_*_OFFSET()
+helpers, removing the need for separate CLK1/CLK2 fields in the conf value.
+
+Finally, the RZG3L-prefixed STBY/MON macros are renamed to CPG-prefixed
+equivalents to reflect their shared nature across SoC families.
+
+This patch series depend upon [1]
+[1] https://lore.kernel.org/linux-renesas-soc/cover.1777562043.git.geert+renesas@glider.be/T/#t
+
+Biju Das (3):
+  clk: renesas: rzg2l: Simplify SAM PLL configuration macro
+  clk: renesas: rzg3s/rzg3l: Simplify PLL configuration macro
+  clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed
+    ones
+
+ drivers/clk/renesas/r9a07g043-cpg.c |  2 +-
+ drivers/clk/renesas/r9a07g044-cpg.c |  2 +-
+ drivers/clk/renesas/r9a08g045-cpg.c |  5 +---
+ drivers/clk/renesas/r9a08g046-cpg.c |  7 ++---
+ drivers/clk/renesas/r9a09g011-cpg.c |  7 +----
+ drivers/clk/renesas/rzg2l-cpg.c     | 41 +++++++++++++++--------------
+ drivers/clk/renesas/rzg2l-cpg.h     |  7 ++---
+ 7 files changed, 29 insertions(+), 42 deletions(-)
+
 -- 
-2.53.0
+2.43.0
 
