@@ -1,50 +1,53 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6324E377543;
-	Mon,  4 May 2026 22:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA02377543;
+	Mon,  4 May 2026 22:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777935278; cv=none; b=JoHgnzKYlCUhgb4VSB9YShASngtzqPmXPeZgSVj2wTjDVweVj1pKFF99cWcL1noC9adYr1zjJhwOaIPzrhRDuKttg3bMEu7Lenl76sKNsezhWa5L/NsSQrdRWBDq/JqhpWURYOxA5ECHsk+2JaHVXK/ds5m8rng39m02bPM/k0E=
+	t=1777935331; cv=none; b=C8+soj1rJuHoYjOGslOGMIKzLiEjb/SrT4YJxanhaWg+1sT7hviTZwheoOt2FsFPzQeOM2TpxH/yTfUktU5yfPvZhhym9D8ND7hAc6WbR2wXMOP0imu9Y9XOIlqehaK84SyAxTSXDNvVGxvpI9UjbAcShWWoYY0EU7flBOiY7Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777935278; c=relaxed/simple;
-	bh=TFizqkprizVZ/JVROJeHuo63cZ+5/xDfNZmDvJ9Ml6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMgpsnlJfkRoT6v/tZiNoL5E2y/lVVxpz5zU8+rehQLdXNxDxTgXHcQnmdx2vZYCpZiOMUmTbtBwz0dON8tGFHY/bZihrcCWWsw/9xc7sdEetPaYf9LyZAbizzRmdd8U4Xm8rvSzOu8s6KYqhNoajekttNHmlMr8tCD/UGf//IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=H9hQAFCg; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Zct78XmZ; arc=none smtp.client-ip=80.241.56.151
+	s=arc-20240116; t=1777935331; c=relaxed/simple;
+	bh=slpc2J/3lNzKHQP/8qGYvGhCJsv4Wqjr5IXLib9PUc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gn5EWN+7qVDD7oAtm8EhV2ASx63xVZO/6U8KEYTHLCkqbWDpOSFGsTnuEEESVqHd0TIdwgi4+wI856KMLzGccMz/zyxRxfIVUp8r5ims/A5MNyhdtcxMxUNh3hEhlgaYTmwFwreAFN2wfnOIxQ3naVjvKSnVn7AbO+/Wn2Ed6ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Tpv7d+h5; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=p5mcKY7T; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="H9hQAFCg";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Zct78XmZ"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Tpv7d+h5";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="p5mcKY7T"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g8cQy53D5z9smc;
-	Tue,  5 May 2026 00:54:34 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4g8cRz2W9zz9sss;
+	Tue,  5 May 2026 00:55:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777935274;
+	t=1777935327;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=CoJTTc4LifgVvH1iZUJDue9e9zSt7Dnw1uU0HFW4Jnw=;
-	b=H9hQAFCgFDBHWoHMU9Di6/x+AmBsnCUGRoJKEaxEIlXEDKLNDJxCmbCqMsdWZluujmIkWa
-	6aOFqjzQky9wSjowdkIKBSGMI3MyeaEVUwRWT6x8t9iNfLYxoTlIn8ANBH/Gme3iah2nTg
-	JIB2iHwOaBIcw3bm/bIoXEkOzbrqnSTgtNXft5hATCrfP2rgF+AUETJhyNR8ZqQOAhzV+8
-	gycB+1q+1dnNC2nvt9V9FPvCDWy8jK4qFCDDAor5PhjDR7NiEx7n6n3yG9OrLlUJYm5QgJ
-	92NSCFp7LASEJmwjGLgtdHUb5iRR9fvV9Ro0UQ3Rgh+Z7BFbMESiPoVzU3Ye3g==
+	bh=P6wqddPFyyag+0HqiKhjqX5gfmmABljWiCbj0h87e8Y=;
+	b=Tpv7d+h5dL1knisdlh7UBjkinEoKoBsPW95Jq5jM5NdIZy/C1vMaInpTJ91KZOcfMGaujW
+	Tw8if6Y0wzXkmmJdEjx6K8YxPyREdwzHRCMcBCl7Hr9sykPs8xaK5kaAAXdZBNpYjGmfaP
+	inQbW7Ql8bF1ls2Gt+P6crcFD7cN2+9R2O7cAbEGTYc95AjRPYyKpjEDnrq9JwvxSoT10x
+	Vnity6tE9ryB1i+hCwRNRrFRhNPj2rBgDBhz7H8lXEErvvVf9Gi+0ffkgn02sfQaO3EMT4
+	oVGg08KonaGpu26RMipX0qT5UrX6acBhwFrLb2YwGbVOc5nEnpjoLT4g8XyKNw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=p5mcKY7T;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777935273;
+	t=1777935325;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=CoJTTc4LifgVvH1iZUJDue9e9zSt7Dnw1uU0HFW4Jnw=;
-	b=Zct78XmZHHRIeg+une4mXPEyiOtapbEQaJpMR9ZLypoHtiFZgmMPtNd9TbeD+Mh/YqPh09
-	N+8cUptxTBUbRwM4bzDj0nNQ7Wf0BcAwle72YlgOcj9MTp+B+BiDvv4XmlAx9jJfzA1QXj
-	PWUstiBRFy4AwNKsJTb7tFJEYy+/gUZOXm77NNl5LJWMOclFDe8FZaHdmnIeMNycyMEIEd
-	f6yRZlMd6+OPN9L0BgIu+jrVWRroL8Cu4ESuIrlPPTdSw0zajRq4j+Yu5YoyKu++IHyzb8
-	dwScRUMKm1ZIKoiNjaIVa5eCxX2scCxMYIXsiMKt9aAMV2gMlMDWRAPCjCxf6A==
+	bh=P6wqddPFyyag+0HqiKhjqX5gfmmABljWiCbj0h87e8Y=;
+	b=p5mcKY7T8eA+iyL+Ft9GmRBAOVZK54B+jHNOXsCnPsXy16OLq3AgG49wOrnsduUJ9dgxal
+	Z39GKelv6YRGGsRJFgFkQIU1z5iKwNdxoE2U8PnBMLwraJDMq74Xt5LcVfllsqLB4M5sG9
+	SxaTN/E/i2kNbP8KgOItmqDg6qZqMdzQLCeWsH23ckGKzMoYtiuVd+hWFNECRJcy6+TA7Y
+	8FznnD/Iv6DLMsiZOeBDO0p/eY+y1nNLvUiCCzNLn+nBW/gSDssswFOLmNA9ejlk4UjwVa
+	LPdnkupK9mGkZFxN1PMfbTqkB3WGAtSnmkWk9Uw4hhuUHBd8tswlUotOMMcGRA==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -55,9 +58,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: gray-hawk: Fix AVB0 PHY node alignment
-Date: Tue,  5 May 2026 00:54:11 +0200
-Message-ID: <20260504225428.114959-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 1/2] arm64: dts: renesas: ebisu: Sort sound node
+Date: Tue,  5 May 2026 00:54:42 +0200
+Message-ID: <20260504225515.114986-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -65,10 +68,12 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: e0f6812975bef9ca280
-X-MBO-RS-META: 84iub63huudmao9odd5n1z1htpgr7cpb
+X-MBO-RS-ID: 51c91871026be051011
+X-MBO-RS-META: fcqpm9xnkumw5gk6o8hkimkjef8fjrrm
+X-Rspamd-Queue-Id: 4g8cRz2W9zz9sss
 
-Trivially fix PHY node alignment. No functional change.
+Sort /sound {} node in the correct order alphabetically.
+No functional change.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -81,30 +86,61 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/renesas/ebisu.dtsi | 34 +++++++++++++-------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi b/arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi
-index 2edb5cb3407b4..792a4aa8f4a9d 100644
---- a/arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi
-+++ b/arch/arm64/boot/dts/renesas/gray-hawk-single.dtsi
-@@ -208,11 +208,11 @@ mdio {
- 
- 		avb0_phy: ethernet-phy@0 {
- 			compatible = "ethernet-phy-id0022.1622",
--				"ethernet-phy-ieee802.3-c22";
--				rxc-skew-ps = <1500>;
--				reg = <0>;
--				interrupts-extended = <&gpio7 5 IRQ_TYPE_LEVEL_LOW>;
--				reset-gpios = <&gpio7 10 GPIO_ACTIVE_LOW>;
-+				     "ethernet-phy-ieee802.3-c22";
-+			rxc-skew-ps = <1500>;
-+			reg = <0>;
-+			interrupts-extended = <&gpio7 5 IRQ_TYPE_LEVEL_LOW>;
-+			reset-gpios = <&gpio7 10 GPIO_ACTIVE_LOW>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+index aaedb1fb51aed..ba564aa098661 100644
+--- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
++++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+@@ -186,23 +186,6 @@ reg_12p0v: regulator-12p0v {
+ 		regulator-always-on;
  	};
- };
+ 
+-	rsnd_ak4613: sound {
+-		compatible = "simple-audio-card";
+-
+-		simple-audio-card,name = "rsnd-ak4613";
+-		simple-audio-card,format = "left_j";
+-		simple-audio-card,bitclock-master = <&sndcpu>;
+-		simple-audio-card,frame-master = <&sndcpu>;
+-
+-		sndcodec: simple-audio-card,codec {
+-			sound-dai = <&ak4613>;
+-		};
+-
+-		sndcpu: simple-audio-card,cpu {
+-			sound-dai = <&rcar_sound>;
+-		};
+-	};
+-
+ 	vbus0_usb2: regulator-vbus0-usb2 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -260,6 +243,23 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
+ 
++	rsnd_ak4613: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,name = "rsnd-ak4613";
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++	};
++
+ 	vga {
+ 		compatible = "vga-connector";
+ 
 -- 
 2.53.0
 
