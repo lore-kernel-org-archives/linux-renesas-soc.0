@@ -1,55 +1,55 @@
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459B41C84BB;
-	Mon,  4 May 2026 01:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4528C1C2324;
+	Mon,  4 May 2026 01:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777856967; cv=none; b=RV4OMEiduhcPJP4dxl+FSp5Kmfed9ZnbDW1Q/PbT3FguZH2tqSM4sfqxtFHJQih2JE7SDSuDY8nSxB5zq0EZelXd+lW/S+ujbKm4Yq6w4ElF4SZdre97Gy/J3cFAepjcCE0fyxR0ifE0aC6mpI2SHe1Buq7lgaH7gjNWGo75wG8=
+	t=1777856969; cv=none; b=pTj+iV/CfyElAkmoEiiY0mSKy+zkeiJzBr9Ok02f1sPexBqZcjcWSt0GR3YAk6BwgoJ8dHRvlxFTbOzAqn7yO84VfoBJzn8cGyJqXCD/x9Uf6RqG9fpnI/5xNbq6QPuY33GEePcf0USaS5JAT9l+EJMBq01JaJZXS/AYfSSTALU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777856967; c=relaxed/simple;
-	bh=1JOx4buRaqy7ZCKbFNddsStC5O64q+nBTD/mNssUk34=;
+	s=arc-20240116; t=1777856969; c=relaxed/simple;
+	bh=xxOlNRhTYS3KW8d2XN+BLjiBVOdj9CFMr4miUr5CH7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oEA3OclidhkZ5DwLrQ+xBECpDcnpdLVJV2n5qYJm4wc97+mvwgi+vgYSvi6Jj11RxVSKrY61b87CQUL2cuQdNQuPOS3gubG4aRII03Xgq7fOx/qkG65kwo+pSWdVpkR0wAoX7q4bYGRVTD1h8SLLbdW7pHPTQclFadyVwAhV6DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=wYweQt2K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PfZeOHO5; arc=none smtp.client-ip=202.12.124.154
+	 MIME-Version:Content-Type; b=Bc9EoFOeEQKSmJa33V0w7TOuMEBvIVyJz0JVEsNMeR04UCBAV7YGPjOU2efIDlsvbKcNfdn6SrvEYQ6Zxir0MJFubPbO0BYCFA5zC44DC1JVRc0gG01wMy51LobxYQBublhIUDYbSzsjM5RkrI3imm4Mwc8dvYCd/j4CC3UKkng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=v/X4YP2A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Fwu5hJSB; arc=none smtp.client-ip=202.12.124.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="wYweQt2K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PfZeOHO5"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 697DF7A00AF;
-	Sun,  3 May 2026 21:09:21 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="v/X4YP2A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Fwu5hJSB"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 74D031D000AA;
+	Sun,  3 May 2026 21:09:26 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 03 May 2026 21:09:21 -0400
+  by phl-compute-03.internal (MEProxy); Sun, 03 May 2026 21:09:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1777856961;
-	 x=1777943361; bh=7oZ4icoRWnKqdCHZ6th+2SLLP2ppq2IGfqgYbvI+JLQ=; b=
-	wYweQt2Kh/764uCysuBU2SDRYoBMMLg5b4ZqIusQiXBAm6jenxErnOGFg77EXDMA
-	iy7j9SaaV9uL564nTtfmGy2/rYqb1I1Za/gZoqUg9vuTBGjwwWp20qr1K7amtkha
-	VNqat5vIufJBcyf2UePzY0Qf3ez35BC/wHYIgmQll4YzqJGXuRRlfG5Iz++tHnOr
-	JPbNfWafCFaanpzvNPXSkYfmjqnET5pTm2+gSe86erxLgie/IZzN83WRtswhV//a
-	99A1k912LwqUxgq5XZTJXbvg19U+Q5n21O3nfyM5fYBhQ32bvwyRU77yqRzbUpQa
-	MuQHSgGyN5Ghp1fleZsAsA==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1777856966;
+	 x=1777943366; bh=KO+zXsiDEQdPM69zo1W6+Ooum3g9XlqZXXEyMTfn+7s=; b=
+	v/X4YP2Aw+Yydbs/2ECpuwir4K0+6H33IN/8qrvXftUtTWB5btbLPfEnVCd6r+Bt
+	TkhYtQerp8SpygkOTXE9/9Hy5w7v85n4LGD7aiRkO1DxXVrZWvgrLaylxgkboHT7
+	7KMgR5mcGC1g+Q5rsyj5pa2hKFjSz4PKHnU7QF9pkOQi9ZEW5HzEocioiPdJLJph
+	8bMxSKxSI3DVFVPK7LHxnDuqZe/dJjaYN+1VKzO1A13YpXKeNvDhFesWVmH9bwTt
+	iB0aZuqYqZt7xVDwdKJVKMrHN0PymWqc5yZ4nsrH6SubLGE7oqWq+thMhxCMlt65
+	Hqz9ykQMPWsrROyfDPyNfQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1777856961; x=
-	1777943361; bh=7oZ4icoRWnKqdCHZ6th+2SLLP2ppq2IGfqgYbvI+JLQ=; b=P
-	fZeOHO5715S/7qEziJmSDCD4O0/C9orOaqPpeO2sFq+C6myxoCST5p13tFHRjDej
-	kF32LB5aStd8F8J3KelrFjAnFaE+TngxzrjD5hJVSYELmqr7e3xmyq0wJqeoXlkt
-	YmkvNei/LgBhakGszodG1c46Au6Dt0P3K6Kx3ZVmGu70UWfQGmBdfgFf1R1wsI5O
-	oWHpzIIbm6f0eL2jSObL0AEQ0ERYwuxPUyoGaRZ6r5U2p2Sx+Isyf/5n/2D4Rs74
-	XvkNceQYlc6H6eTiQFcbKvi9/vzMiA5XIlDA2sNIy/XVrHu6IylhnMPAWDPhNNG1
-	KwuWO8WHpnkuE4gNiNvXw==
-X-ME-Sender: <xms:wfH3aXacO4mAizGJ4pzOdi8fSMO211fII5pMLL1QWSSXdVXMa39_sg>
-    <xme:wfH3aW1YXZ82QhfWU8OM5n5-46KYc0vW21fpu9DPwsIK66BC_AW0E6dBnFv3enkZX
-    0HPp-CeoPSV_sXi1q7sK2O5TfLe_S-ebVAuOg69XThw3f2g5qqA8A>
-X-ME-Received: <xmr:wfH3aaqQs4sbdKSQpXuX_aIpPkVavV3D9Z48BkTlo9IM7SetuQ1_sqjzA_ajKzMRJkmNMt_D6QYLt27WrPVO9Kz3eXEwSKgYeUqJ>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1777856966; x=
+	1777943366; bh=KO+zXsiDEQdPM69zo1W6+Ooum3g9XlqZXXEyMTfn+7s=; b=F
+	wu5hJSBGlbKD5IVwKtSs28Uc8LZ8ubDvsCyGQ1ribFeJ2I5amJkvv1wuVFtyitwa
+	oSYsoUqI13u95tsP8Vh/8vl+XxWjs5TicFRWXmQKjuZV9F9zsfW39jeivvYLW6/i
+	u0gLmxofor6X6XR5bTHSpJUiFMqn4YUixVPdNzLmni0W4kSt7k1X57onLxCMUFH5
+	4kjlQlcVWqPqVzY5vL2Rb0yB9/rFB2P5rmrBKeEjMDqhUjMGeRU4qbOI6JG6/A0q
+	SSu1Ko9pnS37tFkHRlW1cIsNVvGOUf+0e4z6AT63EtaVu4Lpva+/rwW8JY7ifj1Q
+	hQCMljo1fKSaHWltxDnrw==
+X-ME-Sender: <xms:xvH3aUa7PIckPYvyQve91k2ibVpwn-1EabwPKOXuR8nwxqANy_ghjQ>
+    <xme:xvH3aVYYp1aAwxHSPJyTJfo9HPzu28P3u9_XYjthp2rghX4SRdj-jWGGaBV2UhHf1
+    M6wKttW7QAP_k_-Y3wX4Dop9gyH5elSurtSF-LvE4ks8gUBpLvlXcg>
+X-ME-Received: <xmr:xvH3aZwJC5zyH7Ao2GJODpMEdbxEKEWyKVmCi0Xpx2mKawPrI-WfoJMjvk2enI76aS_LLs4R5kpS4m0_x0I6kwc1ZaWDd8wnFOmq>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdeljeegkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -57,26 +57,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdeljeegkecutefuodetgg
     ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrg
     hssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheeigfeuveeutdef
     hfehgeekvedtleeuueekveefudehhffhjeffgfegffelfeegnecuvehluhhsthgvrhfuih
-    iivgepgeenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhu
-    nhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepjhgrihdrlhhuthhhrhgrodhrvghnvghsrghssehiuggv
-    rghsohhnsghorghrugdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehkuhhnihhnohhrihdrmhhorhhimhhothhordhggiesrhgv
-    nhgvshgrshdrtghomhdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrsh
-    honhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhht
-    sehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguih
-    grsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgv
-    shgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihhk
-    lhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:wfH3aVM78Q8QCf6aDG4iep6gdkkVwTb6x5NMRtiBPqOGL-eGJcWzsQ>
-    <xmx:wfH3aToNLaM6v2wwWG1zvTzl3mbBv29U4sI-A-P97TdiujanpV_Jxg>
-    <xmx:wfH3aQu__aFNSNI5HqPznYGwtISeJDf0TTPT4-5nDSfrqg3wcxzRsw>
-    <xmx:wfH3aa0R8Pb10aS9hlcOcfsqNoEjDB4DRW1sSBLWJ6Db8-5bjPXFFQ>
-    <xmx:wfH3abXN9n6vWKlRgpx_OIhoKvKWF9sf_fVw6yrpPw9rdQL60trtsJt_>
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhu
+    nhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehjrghirdhluhhthhhrrgdorhgvnhgvshgrshesihgu
+    vggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepkhhunhhinhhorhhirdhmohhrihhmohhtohdrghigsehr
+    vghnvghsrghsrdgtohhmpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrg
+    hsohhnsghorghrugdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghr
+    thesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqmhgvug
+    hirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghn
+    vghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgr
+    ihdrlhhuthhhrhgrsehiuggvrghsohhnsghorghrugdrtghomh
+X-ME-Proxy: <xmx:xvH3aRdQl0FlPPsRSlq6Exb_w0BstFax_q1jP11DCLrZSQhERkc6gA>
+    <xmx:xvH3ae6FEDBkDNLPwxo6KVa-4yq4L5mCS5OOQKexzGX86wyKa8fR3A>
+    <xmx:xvH3aWJgPY01U7MTMhUeFAho8VM-wjgv8QjWpENpoAIfVTEdv7puug>
+    <xmx:xvH3aWxZYBXKm1Sz__PB13X1xOKaPBexs5fo_wmDoxKlDOaj6T9Piw>
+    <xmx:xvH3aT9L2BFttGwReL5c0EOLo06EbI8yGGPRe9CqvGi3d0J7qX9yyS9E>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 3 May 2026 21:09:20 -0400 (EDT)
+ 3 May 2026 21:09:25 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -86,10 +86,11 @@ To: Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
 	linux-media@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [v8 12/14] media: rppx1: db: Add support for debayering filters
-Date: Mon,  4 May 2026 03:05:54 +0200
-Message-ID: <20260504010556.2796398-13-niklas.soderlund+renesas@ragnatech.se>
+Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [v8 14/14] media: rppx1: lin: Add support for gamma sensor linearization
+Date: Mon,  4 May 2026 03:05:56 +0200
+Message-ID: <20260504010556.2796398-15-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260504010556.2796398-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260504010556.2796398-1-niklas.soderlund+renesas@ragnatech.se>
@@ -102,239 +103,208 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Extend the RPPX1 driver to allow setting the debayering filters
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+
+Extend the RPPX1 driver to allow setting the gamma sensor linearization
 configuration parameters. It uses the RPPX1 framework for parameters and
 its writer abstraction to allow the user to control how, and when,
 configuration is applied to the RPPX1.
 
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Co-developed-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
-Signed-off-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
 ---
- .../platform/dreamchip/rppx1/rpp_module.h     |  2 +
- .../platform/dreamchip/rppx1/rpp_params.c     |  7 ++
- .../media/platform/dreamchip/rppx1/rppx1_db.c | 82 +++++++++++++++++++
- .../uapi/linux/media/dreamchip/rppx1-config.h | 58 ++++++++++++-
- 4 files changed, 148 insertions(+), 1 deletion(-)
+ .../platform/dreamchip/rppx1/rpp_module.h     |  1 +
+ .../platform/dreamchip/rppx1/rpp_params.c     |  5 ++
+ .../platform/dreamchip/rppx1/rppx1_lin.c      | 55 +++++++++++++++++++
+ .../uapi/linux/media/dreamchip/rppx1-config.h | 48 +++++++++++++++-
+ 4 files changed, 108 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_module.h b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-index 830ef0df7228..064da13082fe 100644
+index 136ec4d48054..27235fdfb749 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_module.h
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-@@ -88,6 +88,8 @@ union rppx1_params_block {
+@@ -86,6 +86,7 @@ void rpp_module_clrset(struct rpp_module *mod, u32 offset, u32 mask, u32 value);
+ union rppx1_params_block {
+ 	struct v4l2_isp_params_block_header header;
  	struct rppx1_bls_params bls;
++	struct rppx1_lin_params lin;
  	struct rppx1_lsc_params lsc;
  	struct rppx1_awbg_params awbg;
-+	struct rppx1_db_demosaic_params db_demosaic;
-+	struct rppx1_db_filter_params db_filter;
- 	struct rppx1_ccor_params ccor;
- 	struct rppx1_hist_params hist;
- 	struct rppx1_exm_params exm;
+ 	struct rppx1_bd_params bd;
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index 317ed715f1de..3320ca3998bd 100644
+index edea25293d64..1995a80890f4 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -22,6 +22,8 @@ rppx1_ext_params_blocks_info[] = {
+@@ -18,6 +18,8 @@ static const struct v4l2_isp_block_type_info
+ rppx1_ext_params_blocks_info[] = {
+ 	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE1, bls),
+ 	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE2, bls),
++	RPPX1_PARAMS_BLOCK_INFO(LIN_PRE1, lin),
++	RPPX1_PARAMS_BLOCK_INFO(LIN_PRE2, lin),
+ 	RPPX1_PARAMS_BLOCK_INFO(LSC_PRE1, lsc),
  	RPPX1_PARAMS_BLOCK_INFO(LSC_PRE2, lsc),
  	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE1, awbg),
- 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE2, awbg),
-+	RPPX1_PARAMS_BLOCK_INFO(DB_DEMOSAIC_POST, db_demosaic),
-+	RPPX1_PARAMS_BLOCK_INFO(DB_FILTER_POST, db_filter),
- 	RPPX1_PARAMS_BLOCK_INFO(CCOR_POST, ccor),
- 	RPPX1_PARAMS_BLOCK_INFO(HIST_PRE1, hist),
- 	RPPX1_PARAMS_BLOCK_INFO(HIST_PRE2, hist),
-@@ -74,6 +76,11 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
- 		case RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1:
- 			module = &rpp->pre1.awbg;
+@@ -72,6 +74,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+ 		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1:
+ 			module = &rpp->pre1.bls;
  			break;
-+		case RPPX1_PARAMS_BLOCK_TYPE_DB_DEMOSAIC_POST:
-+		case RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST:
-+			/* Both types handled by the same block. */
-+			module = &rpp->post.db;
++		case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1:
++			module = &rpp->pre1.lin;
 +			break;
- 		case RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST:
- 			module = &rpp->post.ccor;
+ 		case RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE1:
+ 			module = &rpp->pre1.lsc;
  			break;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_db.c b/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
-index 5e233896cfc8..5571b3a9562d 100644
---- a/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rppx1_db.c
-@@ -39,6 +39,88 @@ static int rppx1_db_probe(struct rpp_module *mod)
+diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c b/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
+index f595f56a292e..cc8efe3b3f2c 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
++++ b/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
+@@ -24,6 +24,11 @@
+ #define LIN_B_Y_REG_NUM				17
+ #define LIN_B_Y_REG(n)				(0x0098 + (4 * (n)))
+ 
++#define LIN_PRE1_DEGAMMA_CURVE_MASK		GENMASK(23, 0)
++#define LIN_PRE1_SAMPLE_POINTS_MASK		GENMASK(3, 0)
++#define LIN_PRE2_DEGAMMA_CURVE_MASK		GENMASK(11, 0)
++#define LIN_PRE2_SAMPLE_POINTS_MASK		GENMASK(2, 0)
++
+ static int rppx1_lin_probe(struct rpp_module *mod)
+ {
+ 	/* Version check. */
+@@ -52,7 +57,57 @@ static int rppx1_lin_start(struct rpp_module *mod,
  	return 0;
  }
  
-+static int
-+rppx1_db_fill_params_demosaic(struct rpp_module *mod,
-+			      const union rppx1_params_block *block,
-+			      rppx1_reg_write write, void *priv)
++static int rppx1_lin_fill_params(struct rpp_module *mod,
++				 const union rppx1_params_block *block,
++				 rppx1_reg_write write, void *priv)
 +{
-+	const struct rppx1_db_demosaic_params *cfg = &block->db_demosaic;
++	const struct rppx1_lin_params *cfg = &block->lin;
++	u8 sample_mask;
++	u32 mask;
 +
-+	/* If the modules is disabled, simply bypass it. */
 +	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + DEMOSAIC_REG, 0x400);
++		write(priv, mod->base + LIN_ENABLE_REG, 0);
 +		return 0;
 +	}
 +
-+	/* Native threshold is at RPP 16-bit precision. */
-+	write(priv, mod->base + DEMOSAIC_REG, cfg->demosaic_th);
++	switch (cfg->header.type) {
++	case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1:
++		mask = LIN_PRE1_DEGAMMA_CURVE_MASK;
++		sample_mask = LIN_PRE1_SAMPLE_POINTS_MASK;
++		break;
++	case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2:
++		mask = LIN_PRE2_DEGAMMA_CURVE_MASK;
++		sample_mask = LIN_PRE2_SAMPLE_POINTS_MASK;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	u32 dx_lo = 0;
++	u32 dx_hi = 0;
++
++	for (unsigned int i = 0; i < 8; ++i) {
++		dx_lo |= (cfg->dx[i] & sample_mask) << 4 * i;
++		dx_hi |= (cfg->dx[i + 8] & sample_mask) << 4 * i;
++	}
++
++	write(priv, mod->base + LIN_DX_LO_REG, dx_lo);
++	write(priv, mod->base + LIN_DX_HI_REG, dx_hi);
++
++	for (unsigned int i = 0; i < RPPX1_LIN_DEGAMMA_CURVE_NUM; i++) {
++		write(priv, mod->base + LIN_R_Y_REG(i), cfg->curve_r[i] & mask);
++		write(priv, mod->base + LIN_G_Y_REG(i), cfg->curve_g[i] & mask);
++		write(priv, mod->base + LIN_B_Y_REG(i), cfg->curve_b[i] & mask);
++	}
++
++	if ((cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_ENABLE))
++		write(priv, mod->base + LIN_ENABLE_REG, LIN_ENABLE_GAMMA_IN_EN);
 +
 +	return 0;
 +}
 +
-+static int
-+rppx1_db_fill_params_filter(struct rpp_module *mod,
-+			    const union rppx1_params_block *block,
-+			    rppx1_reg_write write, void *priv)
-+{
-+	const struct rppx1_db_filter_params *cfg = &block->db_filter;
-+
-+	/* If the modules is disabled, simply bypass it. */
-+	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + FILT_MODE_REG, 0);
-+		return 0;
-+	}
-+
-+	/* Native values are at RPP 18-bit precision. */
-+	write(priv, mod->base + FILT_THRESH_BL0_REG, cfg->thresh_bl0);
-+	write(priv, mod->base + FILT_THRESH_BL0_REG, cfg->thresh_bl1);
-+	write(priv, mod->base + FILT_THRESH_SH0_REG, cfg->thresh_sh0);
-+	write(priv, mod->base + FILT_THRESH_SH1_REG, cfg->thresh_sh1);
-+
-+	/* Native values are at RPP 8-bit precision. */
-+	write(priv, mod->base + FILT_FAC_BL0_REG, cfg->fac_bl0);
-+	write(priv, mod->base + FILT_FAC_BL1_REG, cfg->fac_bl1);
-+	write(priv, mod->base + FILT_FAC_MID_REG, cfg->fac_mid);
-+	write(priv, mod->base + FILT_FAC_SH0_REG, cfg->fac_sh0);
-+	write(priv, mod->base + FILT_FAC_SH1_REG, cfg->fac_sh1);
-+
-+	/*
-+	 * The lum_weight field is provided in RPP register format:
-+	 *
-+	 * 31		unused
-+	 * 30:28	lum_weight_gain
-+	 * 27:24	unused
-+	 * 23:12	lum_weight_kink
-+	 * 11:0		lum_weight_min
-+	 */
-+	write(priv, mod->base + FILT_LUM_WEIGHT_REG, cfg->lum_weight);
-+
-+	write(priv, mod->base + FILT_MODE_REG,
-+	      (cfg->chr_v_mode << 4) |
-+	      (cfg->chr_h_mode << 6) |
-+	      (cfg->grn_stage1 << 8) |
-+	      (cfg->mode ? FILT_MODE_FILT_MODE : 0) |
-+	      FILT_MODE_FILT_ENABLE);
-+
-+	return 0;
-+}
-+
-+static int
-+rppx1_db_fill_params(struct rpp_module *mod,
-+		     const union rppx1_params_block *block,
-+		     rppx1_reg_write write, void *priv)
-+{
-+	switch (block->header.type) {
-+	case RPPX1_PARAMS_BLOCK_TYPE_DB_DEMOSAIC_POST:
-+		return rppx1_db_fill_params_demosaic(mod, block, write, priv);
-+	case RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST:
-+		return rppx1_db_fill_params_filter(mod, block, write, priv);
-+	}
-+
-+	return -EINVAL;
-+}
-+
- const struct rpp_module_ops rppx1_db_ops = {
- 	.probe = rppx1_db_probe,
-+	.fill_params = rppx1_db_fill_params,
+ const struct rpp_module_ops rppx1_lin_ops = {
+ 	.probe = rppx1_lin_probe,
+ 	.start = rppx1_lin_start,
++	.fill_params = rppx1_lin_fill_params,
  };
 diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
-index d173c0c1bfc0..378b18dbc48d 100644
+index 0246e9af1d1d..e743e11d11e9 100644
 --- a/include/uapi/linux/media/dreamchip/rppx1-config.h
 +++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
-@@ -91,6 +91,8 @@ enum rppx1_meas_chan {
-  * @RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2: PRE2 Lens Shading Correction
-  * @RPPX1_PARAMS_BLOCK_TYPE_GA_HV: Human Vision Pipe Gamma Out Correction
-  * @RPPX1_PARAMS_BLOCK_TYPE_GA_MV: Machine Vision Gamma Out Correction
-+ * @RPPX1_PARAMS_BLOCK_TYPE_DB_DEMOSAIC_POST: Debayer demosaicing
-+ * @RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST: Debayer filtering
+@@ -95,6 +95,8 @@ enum rppx1_meas_chan {
+  * @RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST: Debayer filtering
+  * @RPPX1_PARAMS_BLOCK_TYPE_BD_PRE1: PRE1 pipe De-noise Pre-Filter
+  * @RPPX1_PARAMS_BLOCK_TYPE_BD_PRE2: PRE2 pipe De-noise Pre-Filter
++ * @RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1: PRE1 pipe Linearization (Sensor De-gamma)
++ * @RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2: PRE2 pipe Linearization (Sensor De-gamma)
   */
  enum rppx1_params_block_type {
  	RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST,
-@@ -109,6 +111,8 @@ enum rppx1_params_block_type {
- 	RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2,
- 	RPPX1_PARAMS_BLOCK_TYPE_GA_HV,
- 	RPPX1_PARAMS_BLOCK_TYPE_GA_MV,
-+	RPPX1_PARAMS_BLOCK_TYPE_DB_DEMOSAIC_POST,
-+	RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST,
+@@ -117,6 +119,8 @@ enum rppx1_params_block_type {
+ 	RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST,
+ 	RPPX1_PARAMS_BLOCK_TYPE_BD_PRE1,
+ 	RPPX1_PARAMS_BLOCK_TYPE_BD_PRE2,
++	RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1,
++	RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2,
  };
  
  /**
-@@ -544,6 +548,56 @@ struct rppx1_ga_params {
- 	__u32 gamma_y[RPPX1_GA_MAX_SAMPLES];
+@@ -735,6 +739,46 @@ struct rppx1_bd_params {
+ 	struct rppx1_bd_nll nll;
  };
  
-+/**
-+ * struct rppx1_db_demosaic_params - Debayer demosaic configuration
-+ *
-+ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_DB_DEMOSAIC_POST)
-+ * @demosaic_th: threshold for texture detection, 16-bit
-+ */
-+struct rppx1_db_demosaic_params {
-+	struct v4l2_isp_params_block_header header;
-+	__u16 demosaic_th;
-+};
++/* Linearization (Sensor De-gamma) */
++#define RPPX1_LIN_SAMPLE_POINTS_NUM 16
++#define RPPX1_LIN_DEGAMMA_CURVE_NUM 17
 +
 +/**
-+ * struct rppx1_db_filter_params - Debayer filter (denoise) configuration
++ * struct rppx1_lin_params - Linearization (Sensor De-gamma) configuration
 + *
-+ * RPP-X1 thresholds are 18-bit and factors are 8-bit.
++ * The RPP-X1 linearization module is available on the PRE1 and PRE2 pre-fusion
++ * pipes. Userspace selects which pipe to operate by setting the @header.type
++ * field to RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1 or
++ * RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2.
 + *
-+ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_DB_FILTER_POST)
-+ * @mode: filter mode
-+ * @grn_stage1: green filter stage 1 select (range 0x0...0x8)
-+ * @chr_h_mode: chroma filter horizontal mode
-+ * @chr_v_mode: chroma filter vertical mode
-+ * @thresh_bl0: If thresh_bl1 < sum_grad < thresh_bl0 then fac_bl0 is selected (blurring th)
-+ * @thresh_bl1: If sum_grad < thresh_bl1 then fac_bl1 is selected (blurring th)
-+ * @thresh_sh0: If thresh_sh0 < sum_grad < thresh_sh1 then thresh_sh0 is selected (sharpening th)
-+ * @thresh_sh1: If thresh_sh1 < sum_grad then thresh_sh1 is selected (sharpening th)
-+ * @lum_weight: luminance weight, min (bits 0:11), kink (bits 12:23), gain (bits 28:30)
-+ * @fac_sh1: filter factor for sharp1 level
-+ * @fac_sh0: filter factor for sharp0 level
-+ * @fac_mid: filter factor for mid level and for static filter mode
-+ * @fac_bl0: filter factor for blur0 level
-+ * @fac_bl1: filter factor for blur1 level (max blur)
++ * The LIN module applies the per-color channel de-gamma linearization curves
++ * @curve_r, @curve_g and @curve_b defined on the input sampling points @dx.
++ *
++ * For the PRE1 pipe the de-gamma curves values are 24-bits, for the PRE2 pipe
++ * the de-gamma curve values are 12-bits.
++ *
++ * For the PRE1 pipe de-gamma module sampling points @dx values are in the range
++ * [0, 15] (4 bits). For the PRE2 pipe de-gamma module sampling points values
++ * are in the range [0, 7] (3 bits).
++ *
++ * Userspace is expected to provide the curve values and sampling points with a
++ * bit-depth matching the one of pipe in use.
++ *
++ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1 or
++ *	    RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2)
++ * @curve_r: de-gamma linearization curve for red channel
++ * @curve_g: de-gamma linearization curve for green channel
++ * @curve_b: de-gamma linearization curve for blue channel
++ * @dx: input sampling points
 + */
-+struct rppx1_db_filter_params {
++struct rppx1_lin_params {
 +	struct v4l2_isp_params_block_header header;
-+	__u32 mode;
-+	__u8 grn_stage1;
-+	__u8 chr_h_mode;
-+	__u8 chr_v_mode;
-+	__u32 thresh_bl0;
-+	__u32 thresh_bl1;
-+	__u32 thresh_sh0;
-+	__u32 thresh_sh1;
-+	__u32 lum_weight;
-+	__u32 fac_sh1;
-+	__u32 fac_sh0;
-+	__u32 fac_mid;
-+	__u32 fac_bl0;
-+	__u32 fac_bl1;
++	__u32 curve_r[RPPX1_LIN_DEGAMMA_CURVE_NUM];
++	__u32 curve_g[RPPX1_LIN_DEGAMMA_CURVE_NUM];
++	__u32 curve_b[RPPX1_LIN_DEGAMMA_CURVE_NUM];
++	__u8 dx[RPPX1_LIN_SAMPLE_POINTS_NUM];
 +};
 +
  /**
   * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
   *
-@@ -566,7 +620,9 @@ struct rppx1_ga_params {
- 	sizeof(struct rppx1_lsc_params)				+	\
- 	sizeof(struct rppx1_lsc_params)				+	\
- 	sizeof(struct rppx1_ga_params)				+	\
--	sizeof(struct rppx1_ga_params))
-+	sizeof(struct rppx1_ga_params)				+	\
-+	sizeof(struct rppx1_db_demosaic_params)			+	\
-+	sizeof(struct rppx1_db_filter_params))
+@@ -761,7 +805,9 @@ struct rppx1_bd_params {
+ 	sizeof(struct rppx1_db_demosaic_params)			+	\
+ 	sizeof(struct rppx1_db_filter_params)			+	\
+ 	sizeof(struct rppx1_bd_params)				+	\
+-	sizeof(struct rppx1_bd_params))
++	sizeof(struct rppx1_bd_params)				+	\
++	sizeof(struct rppx1_lin_params)				+	\
++	sizeof(struct rppx1_lin_params))
  
  /* ---------------------------------------------------------------------------
   * Statistics Structures
