@@ -1,56 +1,56 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320593B38A1;
-	Tue,  5 May 2026 03:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5B23B6371;
+	Tue,  5 May 2026 03:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777952634; cv=none; b=Fcn/sDcg/XQZwGTOLMjdimOzNnbvkamYrWBMT/e5FclMn7RmO7RGIirAxR4lpmyO7Qnf9mrY18syEA5RefiXcaK4TislDDqSjp3WgKmdCiCrEB0gEMNpCLkcTSxE7i6MoKMscqVwqFZMMKLL/AcBjdDBYoG5foCCMYU5i9CiWGs=
+	t=1777952635; cv=none; b=AU6VE8kgT1AuyGjxXDVIwgV3vRU8gVuRqxGk7aACd+p1rs1+9ch1HBuw02r2fwQbG5UIKJ8buV4yCyVfqUHYgmDnmaqwBTCIUK27UBrN/RqRha/DJYK2F531t7LlSLswGXIhG+44y6sY4Y3KII0SdPY3zXF+FgS5NRTfz+VJD5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777952634; c=relaxed/simple;
-	bh=phui/MA85BYTGwna1CJpXqQ3X42QFzYzX9sLGb2HFoY=;
+	s=arc-20240116; t=1777952635; c=relaxed/simple;
+	bh=fDOEi+Aq5NzdtBKIIh3gfp348g+/wbJHKJyNsDPl7tc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HXAkJBeJ4EsMCsKG3GLIMaTlIQ+ahOTkybWn2En5fND2egNopc8hXSXsPnp1WIRwpTq9mz6bn+OaYsRs96vawvasQt4FaBsgpLuvE2XFpw3gP+A5Y0SYeAmGK/YwC6m0J5DdLnxBm05IQdFP2tDMDt1BMg5ihWIJKSGR1JHCeAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GglVB3tf; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mz+uOm0S; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=nHPtN3ItqO8W3b3TftQ6bJH+rO7N0gPUr//yC+Y7PeJr5vb42DNmkua1t5lGaoTl8KcPBcc6e6EZVIan0CyvJzwHZtg8KHY3y9ejsVvRAZW0BkOdG9H+K2t2Qqkfy7Hi39aMB9yGLuuJnICJ+0fAH1t0BFimdSwnBq0+DrqDQLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Pull76nJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MUerl1Zx; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GglVB3tf";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mz+uOm0S"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Pull76nJ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MUerl1Zx"
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4g8krd3jlgz9th7;
-	Tue,  5 May 2026 05:43:45 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4g8krm23m2z9tgZ;
+	Tue,  5 May 2026 05:43:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777952625;
+	t=1777952632;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DWuHnng5BOFVjspVoCh2CO/fn8L6gvKLnoeyOZOicYU=;
-	b=GglVB3tfnHbt1lRx1Q40TFoBY68Wqj/MAuW4UhAuzpX0+s5vN5+54B4roCzyzct/qPOMaO
-	dHrvcgB+HnFJxrmbGOHjYdDZhX7hk/tHQylLnloTjWdM6JmU4peAfiDpPN3OGEwmOiPLRf
-	ji8HCO3oaxIFu6HusTfNHDTavQyhgTx+rw8EHfz5BUP6cRUwLkkCvs9SJjHDLfU9uzoWKk
-	0/rP66vfZtu3Rov6dn3IANh5KezBOCNQ82Sgu6QW0CeEp68RhA34UrZxBeXPOHgzImQO8U
-	3N5pRNiAvrKetwr5oZ2n4smOZS4e/txVOqHm3OReVqY0fiI7D7DUaOjshyZLTA==
+	bh=RHIDLb+i1jfPZrKXryOfk6JpigCT9IGdYyMM3y5DI+s=;
+	b=Pull76nJe1Lk9Ez4HIqTPra3hdBz49swW8WQWEpkd6bwn7E6SPtRWQgIR7vktVA0jrny0I
+	eb/nqeuwPBIw2iM2Ged18Qcf8gN94LmMaV+mqUxzREf7zb8JynHEG4MaemceTCs6qODvaj
+	KeLigrLAbLUVAwFv+kEdbCtvo6jdnTrP2ASPqZ45HRVTPgshWxrfM2Tx1NDogFa7xURAxe
+	qrEcv5/oJMG+k9k7kzNsxaNo7oIg61m6LaIuP35IrZwmB7Xbr39yFRkfEgvD/iGc//voRo
+	vlWUtsL2b3TpNUFD3FtFnoEJ+uYUcFa2E/94n4ld/0U5q4Z97W8ZKhN3hVsUQQ==
 Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=mz+uOm0S;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=MUerl1Zx;
 	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777952623;
+	t=1777952630;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DWuHnng5BOFVjspVoCh2CO/fn8L6gvKLnoeyOZOicYU=;
-	b=mz+uOm0S2YOmJCE8Q08lFXGXe+cEYLd7C/jKTm25LDIvA3KIA1NIoiM84OuwqKsKg8lQee
-	saqeBS3aT2A5e6lGi/ugDOGpzjw9aN3o3LWBxILrH+mEbumJxYHjJYwUb2QhJpdvXWWkmG
-	QaT9ZhslCz4Rc6eFY6C7KU/I5orJ7F5SevSU0ngrOwZRE7g9jFOQWrHBx77gTEBTvyKOJg
-	M/DF4LmvadMHGahfE0lnaupUeAP2xkcNLa1SDIc5Lu9nOksCkK8lFepXnTiKsBcYe67+Y/
-	B0SXLyNghReT+ku+icmLXa1DzTqREom5ucjjjsC4dxTLBHHXDrh02zoFARF18g==
+	bh=RHIDLb+i1jfPZrKXryOfk6JpigCT9IGdYyMM3y5DI+s=;
+	b=MUerl1Zxa4YzbNVwb28gD/T2RCciNwMXoFscdrnIYPxVrqpZmPZzZ1zggXCNJkjx2RvADq
+	ZtVC4N0yW+hrp70dKWPaNAHU6sIyLsIV49Lvl1y214tgY0jDpp1jiqYlvHZrR27za9g5gf
+	3j+chdZQw6ENQog8FbT7TB252l7BV7OIkWRdqoo3VbD9gIKv5pwPGT+tmAKnG1rgUrmRnC
+	cL4C1YW7RXJx4A1XsgoyXVNL8HhO4tEPIrAxdskCzI4SphZGCaJA8CQSNcmd/2iTT2QNMx
+	qDVzKoXBNE4/vtCjZQzTHGyCAbEQR2h78s2Qkj82ZjV+G/jSQY2iBEdFEJh/vg==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -61,9 +61,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 03/11] arm64: dts: renesas: eagle: Specify ethernet PHY reset timings
-Date: Tue,  5 May 2026 05:42:44 +0200
-Message-ID: <20260505034325.167797-4-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 06/11] arm64: dts: renesas: v3hsk: Specify ethernet PHY reset timings
+Date: Tue,  5 May 2026 05:42:47 +0200
+Message-ID: <20260505034325.167797-7-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260505034325.167797-1-marek.vasut+renesas@mailbox.org>
 References: <20260505034325.167797-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -73,9 +73,9 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: e4826d3424b96bfec04
-X-MBO-RS-META: ky1ycbawq9mcw7k5buxkdftnypnozhw9
-X-Rspamd-Queue-Id: 4g8krd3jlgz9th7
+X-MBO-RS-ID: 3cdfe458e5e35da172d
+X-MBO-RS-META: 3jmdtg7h7rhayz7pqabmgmf7mj9edpar
+X-Rspamd-Queue-Id: 4g8krm23m2z9tgZ
 
 The KSZ9031RNX reference manual [1] DS00002096H page 60 FIGURE 7-7:
 POWER-UP/POWER-DOWN/RESET TIMING Note 2 states, that after the
@@ -104,17 +104,17 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 2 ++
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index b26c5a7097771..a2ad79ddf73db 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -113,6 +113,8 @@ phy0: ethernet-phy@0 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+index e3725304fed0b..52462e61b7194 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -126,6 +126,8 @@ phy0: ethernet-phy@0 {
  		reg = <0>;
- 		interrupts-extended = <&gpio1 17 IRQ_TYPE_LEVEL_LOW>;
- 		reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
+ 		interrupts-extended = <&gpio4 23 IRQ_TYPE_LEVEL_LOW>;
+ 		reset-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
 +		reset-assert-us = <10000>;
 +		reset-deassert-us = <300>;
  	};
