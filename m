@@ -1,150 +1,136 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372814218BD
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 May 2026 12:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041D393DDC
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 May 2026 12:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777982542; cv=none; b=fAv89ju+8cxxDwMHaFtCJcKjlfANdZi1fhha1rXGfbZKd/pzJy6p7HUhDPlSqt5KmjIeWsnFvzPYdIms+bPszxvMN9eIp0ilEBOb5uIthGQjxWinliS7yDthOfIc9hht9YqkTVvefNorNrE4dJlf5g5lubnqUFG3qNtayYkaAIs=
+	t=1777983480; cv=none; b=G79BYoatbLb+Cz3R+bejFpjrIePvHtjg2Djs/cnmmiCSvMf2scI46j4qBZHvD1w+QNEgSP0ZzeIvIeeE1Fp4s2+kb7zeo7mUx6KEBpdSW2ZDDbHRX1Mow0bx28YnMdnOq8lCiMFXQIU7gA5JDoxP2JS7rHfBr6oZY8l+vJXgV1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777982542; c=relaxed/simple;
-	bh=nyDAkXQ297bC2hhhcyANjebrHdsEJhyDOOdv90RCoCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R8KnEe0OXBnhCnyZAxXVI+rdjrPF8pGv4nEcNnNbTcRjPOtKGuHe/R2s/kFtDKvqOf9ilPlEBaaDPDfuCCVCD8lqvAg2UQqDSM3l+pRkn+Zin6nJYz0F4uKhJnV/5BSqPZzo+IpCGQVoLPyKdBze5cPjdgsUhX91zpnwzPiORjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTeD/7FO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1777983480; c=relaxed/simple;
+	bh=l/41ncjvsWNG/pOaCT3/ej2L9B5PHEMsEQj3Jxazb6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O2Eyz85pYgH+hdbvmFg+DPSS/RHCMBEABYp97R5/Q88XGP1wsI5NaSmIxKIpWiFmLBCOl2//aoUiZ23Cvi06C+hZstxJOo9Q5nz9q+LFfPljq8v+uRuA5ZK1QM3tKz8mEwZtflSkyenrQT7uxGvcnb2McLzfiLBVFNIpPNwnp/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTeD/7FO"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a40502e63bso5244293e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 May 2026 05:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777982538; x=1778587338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aaJj/oLXLFqOqhgdWNSv4aF1pZo4Id+fK6SJZ89dQWA=;
-        b=aTeD/7FOVF8hvdh2HqJ1tZfzz1oXRgcJsqOxFMWLDWjiJfWeOesPy42uD2Z3RzfBTM
-         vaadz+4/ntzpu6CELRodNp8Glt5xdwcpk5EaduA9VPVrwOA0UL33RZCSTwH/sRgYCFNy
-         ssjtCelNgcAitgl1bsS4jAcilwxyvdX5wT3FjZEoL/BqkxyRBI3/JkVQKNUaMh/Fp1HP
-         7/c1eSVE5LHVvbSlx8Gaxko7EXP2huUZTCfVlNGBY1d+KCuTMMA3+SlcSPzNU7bSby/A
-         23W18lJc0DFTl/D36mKPD7mE1fw2VbsIuiublNA416WtcA1AsmuLYxBSJ9pskyqwxfS1
-         X9dw==
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-944168e8c5fso3068720241.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 May 2026 05:17:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777982538; x=1778587338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aaJj/oLXLFqOqhgdWNSv4aF1pZo4Id+fK6SJZ89dQWA=;
-        b=VdFpfsqz4nZfVUrXasd9BtUAh1vnNIlZuE7XNrZ7TLk+aPKT1+ORJWR0p44mo1l5Ds
-         aHZEu/0930H9KtwG6GVHIdmBC8jmbdDXBJ3iuYdMXBmEVozIdgSVRi4bXIRJ+fTKTIj+
-         tbxI7yhKJkHbi3LGkt/w2Eo5lFns6f8WUNEt9qAAMyIyZLtueLSs/fc1kYpoAEGpu3Lt
-         6S6XltpTJ2WAx8ZF8TCn9bAa3G/qkP+SKFhsng8NFTuwvcC6MYrND/ifJdqRn2Dk5X8L
-         HfGeE8VI05ecvb5IMeBumEWBrefs7eUpDFI0ACEFrYec9zbjev/di58Gac/XWg3kH2Io
-         B0pg==
-X-Gm-Message-State: AOJu0YyQ44A5vlKejp0skfITH0zhJtGYgwKt27D4kng4Nt5wvUNbypF8
-	/G8WnrMitSmU8WfvP1uSTnIBKJtkGFbkYSSaZUlWF25NEvmD5P2KLDlj
-X-Gm-Gg: AeBDiev8/Yf5w/yNDrOhxxgdDJdnUyI0WCPQvs4VpxRHhIazWp4L8b5D0mwbjv8LnXP
-	jlHHJE98AoLObrpNhXwvtBJ2kgMj+jO8RhWSmZbhymwUjgWrHMmwMUIN4SPyAHiU2S7ys/FiRyS
-	S56/tq5rlPt7PWI2C2f3dT/nncD63d1nGnNTVt3txx/hKNz1Wc+6wkizMPwxqjN4lGqn3RJ6rmg
-	CPR/1ImbL/47lgrqY8BaZ9bYbQO2WtvWvUnK0ClWE2Kz+c8fvRa+tXjDO9GEPRDy1CBY02/dKKR
-	FQy7T1f7RT1ODNFSOSQpWhpMzi0RYYSxdemKzrpK+wSJ7xSQzqgHl6OnDVgnsn3VEwy8ePBjFmK
-	sx2VBnW7huLBsePrU59Ms8Rysvcd3fcS3kYVJcVKIE6616iP+91CLh7SUSCnWJgCk2WD7rSPUsI
-	DE2zWxdESQH1XabvQNARtbxRArMIm7UraoGAAuIPI/CbEmuxwpK9cIX5boqjWBZ/4C4BckEzxrN
-	pR6Jswvlr1+oH2Y8vIG8x0OSKT/e7O3cvyKjPcCReD/OdPB96XDetKTszLnuhASVb+2
-X-Received: by 2002:a05:6512:3e20:b0:5a8:73c3:f277 with SMTP id 2adb3069b0e04-5a873c3f37fmr3001152e87.12.1777982533511;
-        Tue, 05 May 2026 05:02:13 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:7d2a:9b5b:a191:3b81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45054b03e04sm4386398f8f.21.2026.05.05.05.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 05:02:12 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/3] arm64: dts: renesas: r9a09g077: Add xSPI nodes
-Date: Tue,  5 May 2026 13:01:51 +0100
-Message-ID: <20260505120153.680979-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260505120153.680979-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260505120153.680979-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1777983478; x=1778588278;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mx10RFm2VbKGi60P1ByLYAwwUUKZhzhPZIKANt76f2M=;
+        b=pxqEEBiZgoVy+1iNMaxV6q/FP8OD0gyul+RfWSooHfPZD51AAPeMv/Arf7Na8ZWA/8
+         yvBETOmmhGjqyZNUgXz52Amta3dB6ImgMC8vP9lGwXuX0Kqfgzi2cRayfIGlejga4WA+
+         cdufdvn1MDYM183DLGR9Jq+Wdz4NGYv0b+TS/iiikjZmI9A4uYYgY08H0RGNM/3q2sL0
+         zyefcNm2Y/d+5smeLaeJXzqU+jI5ItX+zBCh4+zOK5uVNkcny9Ct/Vq5whbJXl8mzE1X
+         P6MtHcurZ71VQxtL4/BFhEpy9NfB23ZOaewb5zyAAkR2yNXxhBlNuF87ek8IQbwZbQQw
+         kvlw==
+X-Forwarded-Encrypted: i=1; AFNElJ+AYsAsGNo7KM+6ky+PBMa+Ovc9skmXSsT5q8BCWxWJNJTb7IHjJpJkr76NntMHlg8l35LqVtuxzuDzgAkPaocV3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7WzTwX0MRh/DLZU2yVjIar3lGtnBhVOBmsWiqCqGhzUlkqCYl
+	9XXadBxowDEEZ3wsueZVGazwXAr501JlD0YXQcraPiW6OTzu+faVGoDjRCnlwmCg
+X-Gm-Gg: AeBDiet0PSQMqOfuBenDskrgNS5jJQ640+VS2AvGrKEhKMIMssNX43mjaq48iEOrey0
+	iFn3TWRTETGELQ/oAwmKkc57E6HkpQyA3DPPTelDqNhP8RQJpMzYWIVEULfPVHzCq324lJZ/JA5
+	yhTndOB1ieyhqH44+XHlHwrL1gmUBS29mIcWncvJDBUNe55LeKpAisYbBAhzn9NfcNSZm4CV+yK
+	j4rUR5m4B9qRpq7SUBvd092RU+Yf7P6+iZ9dHzeFdEG9gy+U5s6uCtZ9u/7VRUNtsq/YwNL0sjQ
+	1OqSUzOXY4AjhdHUTZHruJnA7jRqsghDuX52uqotomV6dxlUWc9PITd5kP20IeO5f2LcfTjXgHd
+	OEAde04yJQqcJDWM1sovU86wfzLFKOl7UM+vVxWP+VBkm0H5L+HvkJj2EljgfqbfotfD6+irWEB
+	vp3paft1lQ3EBC+Nph+xL2TXWcVVtM8EUwLQKp2r79qKQ4hdaBaxLZGp6ew5yAlJseCnLiLQnDV
+	pI=
+X-Received: by 2002:a05:6102:809e:b0:610:2912:adc9 with SMTP id ada2fe7eead31-62f592c6049mr1342350137.28.1777983478334;
+        Tue, 05 May 2026 05:17:58 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-62bfb14fbfasm6928835137.1.2026.05.05.05.17.56
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 May 2026 05:17:57 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-56a86f0a23bso5278567e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 May 2026 05:17:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8FeYq6PDQScXKIjp60wMYRFcp0PpVac1udspjuTZE4iL5lzriInsumBhr0G/qJUiRZDOqUkH1WgP2jPJ67zXhK6A==@vger.kernel.org
+X-Received: by 2002:a05:6122:3c44:b0:56f:7c7e:f33a with SMTP id
+ 71dfb90a1353d-57547fd53a0mr1268108e0c.0.1777983476537; Tue, 05 May 2026
+ 05:17:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260428201522.903875-1-cristian.marussi@arm.com> <20260428201522.903875-5-cristian.marussi@arm.com>
+In-Reply-To: <20260428201522.903875-5-cristian.marussi@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 May 2026 14:17:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUF1dW0hR-UZMVVqTnpWbMcv1D41jfL_4rEj6Vzj9wGSg@mail.gmail.com>
+X-Gm-Features: AVHnY4JwQvUlXCNsMN5caeA9aMIeCzl1Epu5sphmxX2UtNuOS2ulpV9OaCHfntE
+Message-ID: <CAMuHMdUF1dW0hR-UZMVVqTnpWbMcv1D41jfL_4rEj6Vzj9wGSg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/15] firmware: arm_scmi: Simplify clock rates exposed interface
+To: Cristian Marussi <cristian.marussi@arm.com>, sudeep.holla@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, philip.radford@arm.com, 
+	james.quinlan@broadcom.com, f.fainelli@gmail.com, vincent.guittot@linaro.org, 
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com, michal.simek@amd.com, 
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Cristian, Sudeep,
 
-Add xSPI (Expanded SPI) device nodes to the RZ/T2H (R9A09G077) SoC DTSI.
-The RZ/T2H integrates two xSPI interfaces.
+On Tue, 28 Apr 2026 at 22:16, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> Introduce a new internal struct scmi_clock_desc so as to be able to hide,
+> in the future, some of the needlessly public fields currently kept inside
+> scmi_clock_info, while keeping exposed only the two new min_rate and
+> max_rate fields for each clock.
+>
+> No functional change.
+>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Thanks for your patch, which is now commit 83fd9d34b6b75be5 ("firmware:
+arm_scmi: Simplify clock rates exposed interface") in scmi/for-linux-next.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index 3761551c9647..a5b570ae82c0 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-@@ -1006,6 +1006,44 @@ mii_conv3: mii-conv@3 {
- 			};
- 		};
- 
-+		xspi0: spi@801c0000 {
-+			compatible = "renesas,r9a09g077-xspi", "renesas,r9a09g047-xspi";
-+			reg = <0 0x801c0000 0 0x1000>,
-+			      <0 0x40000000 0 0x10000000>;
-+			reg-names = "regs", "dirmap";
-+			interrupts = <GIC_SPI 654 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pulse", "err_pulse";
-+			clocks = <&cpg CPG_MOD 4>,
-+				 <&cpg CPG_CORE R9A09G077_XSPI_CLK0>;
-+			clock-names = "ahb", "spi";
-+			resets = <&cpg 0x4>;
-+			reset-names = "hresetn";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		xspi1: spi@801c1000 {
-+			compatible = "renesas,r9a09g077-xspi", "renesas,r9a09g047-xspi";
-+			reg = <0 0x801c1000 0 0x1000>,
-+			      <0 0x50000000 0 0x10000000>;
-+			reg-names = "regs", "dirmap";
-+			interrupts = <GIC_SPI 656 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 657 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pulse", "err_pulse";
-+			clocks = <&cpg CPG_MOD 5>,
-+				 <&cpg CPG_CORE R9A09G077_XSPI_CLK1>;
-+			clock-names = "ahb", "spi";
-+			resets = <&cpg 5>;
-+			reset-names = "hresetn";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@80280000 {
- 			compatible = "renesas,r9a09g077-cpg-mssr";
- 			reg = <0 0x80280000 0 0x10000>,
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+
+> @@ -457,14 +466,14 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
+>         flags = le32_to_cpu(r->num_rates_flags);
+>         st->num_remaining = NUM_REMAINING(flags);
+>         st->num_returned = NUM_RETURNED(flags);
+> -       p->clk->rate_discrete = RATE_DISCRETE(flags);
+
+This removes the last setter of scmi_clock_info.rate_discrete.
+However, it is still used until the next commit cd73d1bfaa8d34bb
+("clk: scmi: Use new simplified per-clock rate properties").
+V2 did now have this issue, as the patches were ordered differently
+in that series.
+
+After both commits, there are no more users of
+scmi_clock_info.rate_discrete, so it can be removed.
+
+> +       p->clkd->rate_discrete = RATE_DISCRETE(flags);
+>
+>         /* Warn about out of spec replies ... */
+> -       if (!p->clk->rate_discrete &&
+> +       if (!p->clkd->rate_discrete &&
+>             (st->num_returned != 3 || st->num_remaining != 0)) {
+>                 dev_warn(p->dev,
+>                          "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
+> -                        p->clk->name, st->num_returned, st->num_remaining,
+> +                        p->clkd->info.name, st->num_returned, st->num_remaining,
+>                          st->rx_len);
+>
+>                 SCMI_QUIRK(clock_rates_triplet_out_of_spec,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
