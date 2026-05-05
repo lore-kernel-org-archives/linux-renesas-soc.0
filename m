@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A502C030E
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 May 2026 04:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ED5239E9B
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 May 2026 05:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777956673; cv=none; b=jWWaGLii6IHsJJs9S9QYtXvqS5wFjN1FriCB03fzIvPUdhN4ThqbjrGHP5dAOBLxPONNb9jO9RLqXLN36eff3Vi2LZZQzfZ9LvgRS3KOllaWpmqRw0kZtEukQwI7s3j6we0Znn2qgiM3KWu6xXY39eG5uDEUxPQRmMJRtV0Uu0g=
+	t=1777958623; cv=none; b=iyco7A6dFVS4jGWfiYSrJYkTuLbCMBKy0IHz9miWsRuljg+8jolsWAWSkYOKFiJhHZp7iy5Q9k29WHQ9Y07oLSawt4uBEO6Znm63SBWV1w0SnSfMkEaW8FfqmjXUvP2VU+nYA6yxY5oLalFZhN448X4UmJIUDKMFWu1o0iGcqIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777956673; c=relaxed/simple;
-	bh=6y2jpJ0Z5z8oy0v/nVZPxI/Pqxtm8zKvX3Stc7tieGw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=an5qq/uZjnypasWPWfAJyfdI6Bzgd+e9lBZJYBUkM+Ey2VFr96njqkVc0BEG7K6uvu0HDRSZ9XAjBm1wUSgQYQGj07stqINk3FkgmixrKVyLYons3YDEiKiukGE0jPB6cCzVdUjEdIc28XK0rSd81Hsd7TCzUREXZh76F7Ji+xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JqrTu+fL; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1777958623; c=relaxed/simple;
+	bh=iOljLJpzk6It9ueOn3OeI1PLTNmAEKy5eY3YPNEb/9A=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=de2PfC1A7ueoikqnXHRah3HWgG21B8XwTPONfURRM8r0axMl0iv3vYQQAVDyhvRuAOrP4tJYx5m7HJrVMr5PqGBxcvbXauaeHZ/0qGZjyvu/0BXyh72vPQ0IJvXyo+OYMnpvof/eGxAW2wvX1urbl6N+UXSarcCPZbvIu9maKQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGFjMwpT; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JqrTu+fL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGFjMwpT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1777956671; x=1809492671;
+  t=1777958621; x=1809494621;
   h=date:from:to:cc:subject:message-id;
-  bh=6y2jpJ0Z5z8oy0v/nVZPxI/Pqxtm8zKvX3Stc7tieGw=;
-  b=JqrTu+fLGotjWEF4rv9bBzsP1+Cfj3weqwR/yyMRr7FYMPawuEJJtuSP
-   yUrdJu6TpyLuX4K9W5+SvSboBPXmW7IDOqrGtv3Mb0Y9PhTOVRSkeC+hI
-   pIeuGUmcnxJfYVofXbIFBgbnnuLxxBhAK/s6C27KXaVgv/UqvwzYhgHJ0
-   P3X5fbwTxtk4M/5nY3isjjTC+8owdpH0r5k36ks6+075Ni045n1i32qOa
-   3z9j6Dy2EeYJx+GjHUhS3KKPmysvMyWlHLBuL/1UOrgiWtJWs4RzMmy5l
-   fTOFjv138yzYa6OY9J47IBnngGgc0l+o+SUF5rrOT4eTw/Q5sXAh+USE5
-   Q==;
-X-CSE-ConnectionGUID: Bdj4vQ3GTG+cz3EXJyw1dw==
-X-CSE-MsgGUID: kZxfc4agR9GkZOOKQ/d+KA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="78868855"
+  bh=iOljLJpzk6It9ueOn3OeI1PLTNmAEKy5eY3YPNEb/9A=;
+  b=gGFjMwpTBvUPJgr0w+bWOB/RqnzPTlgONSviYjzLJkb8fcPX7Qt5tieu
+   NNeCcALquZ/KoaKQ1xBMi8/AFOFnr6cPGO3Wz+OL467jmCfiovlOGfQm2
+   wJF//HEa4ntc6FX7Px0u+JAdn9ETFrHauRav143XTtYVuPnHipPcFEq1n
+   9fnHU5gs2pziXubf0ls5Ii97S7Fqu0XqpKGQwBiGsCVXqrLlUfm0jOfy/
+   72lbNbyFzqV5nMLaCLNGUmkLcD6h1r8DR607QePz53QJfg+AIqgGv8aj5
+   um3nolx+ylPHFVD5DXI5Rp5VN3aLjfetBlQm2UyRzsJMWa5iZi7oL+AxW
+   w==;
+X-CSE-ConnectionGUID: eWTB+P/MSd6zTBnNcQoesQ==
+X-CSE-MsgGUID: txWw1O/dRRGbJZZECwUbPg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="77843704"
 X-IronPort-AV: E=Sophos;i="6.23,216,1770624000"; 
-   d="scan'208";a="78868855"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2026 21:51:10 -0700
-X-CSE-ConnectionGUID: AbocdLfaTsaKL2e7bdh1eA==
-X-CSE-MsgGUID: A2e5YwrVT7qON1MzatTXWQ==
+   d="scan'208";a="77843704"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2026 22:23:40 -0700
+X-CSE-ConnectionGUID: u1JbhVPRTOaYlgxReSGMRw==
+X-CSE-MsgGUID: JMgV9Cz2QBO4pp32ywx9iQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,216,1770624000"; 
-   d="scan'208";a="237481043"
+   d="scan'208";a="232573997"
 Received: from lkp-server01.sh.intel.com (HELO 781826d00641) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 04 May 2026 21:51:09 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 04 May 2026 22:23:39 -0700
 Received: from kbuild by 781826d00641 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wK7kL-000000004GP-0bUI;
-	Tue, 05 May 2026 04:51:02 +0000
-Date: Tue, 05 May 2026 12:49:56 +0800
+	id 1wK8Fo-000000004HB-1t4G;
+	Tue, 05 May 2026 05:23:34 +0000
+Date: Tue, 05 May 2026 13:22:50 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
- a59abd74ba79ed1265baad7d57b3532cd1cf5b6a
-Message-ID: <202605051246.ZgoCmXp2-lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-r8a78000-dt-binding-defs] BUILD
+ SUCCESS 0f63ba15dde8748ed3818fa6553c81b5296318f1
+Message-ID: <202605051339.reUpWL1x-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,13 +59,13 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git topic/renesas-defconfig
-branch HEAD: a59abd74ba79ed1265baad7d57b3532cd1cf5b6a  arm64: renesas: defconfig: Refresh for v7.1-rc1
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-r8a78000-dt-binding-defs
+branch HEAD: 0f63ba15dde8748ed3818fa6553c81b5296318f1  dt-bindings: soc: renesas: Document MFIS IP core
 
-elapsed time: 1101m
+elapsed time: 1134m
 
-configs tested: 368
-configs skipped: 73
+configs tested: 356
+configs skipped: 69
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -81,7 +81,6 @@ arc                              allyesconfig    clang-19
 arc                              allyesconfig    clang-23
 arc                              allyesconfig    gcc-15.2.0
 arc                                 defconfig    gcc-15.2.0
-arc                   randconfig-001-20260504    gcc-12.5.0
 arc                   randconfig-001-20260504    gcc-13.4.0
 arc                   randconfig-001-20260505    gcc-8.5.0
 arc                   randconfig-002-20260504    gcc-13.4.0
@@ -92,15 +91,13 @@ arm                              allyesconfig    clang-16
 arm                              allyesconfig    gcc-15.2.0
 arm                       aspeed_g4_defconfig    clang-23
 arm                                 defconfig    gcc-15.2.0
-arm                   randconfig-001-20260504    clang-20
+arm                       netwinder_defconfig    gcc-15.2.0
 arm                   randconfig-001-20260504    gcc-13.4.0
 arm                   randconfig-001-20260505    gcc-8.5.0
-arm                   randconfig-002-20260504    clang-23
 arm                   randconfig-002-20260504    gcc-13.4.0
 arm                   randconfig-002-20260505    gcc-8.5.0
 arm                   randconfig-003-20260504    gcc-13.4.0
 arm                   randconfig-003-20260505    gcc-8.5.0
-arm                   randconfig-004-20260504    clang-23
 arm                   randconfig-004-20260504    gcc-13.4.0
 arm                   randconfig-004-20260505    gcc-8.5.0
 arm64                            allmodconfig    clang-19
@@ -122,7 +119,6 @@ csky                  randconfig-001-20260504    gcc-15.2.0
 csky                  randconfig-001-20260505    gcc-14.3.0
 csky                  randconfig-002-20260504    gcc-15.2.0
 csky                  randconfig-002-20260505    gcc-14.3.0
-hexagon                          allmodconfig    clang-17
 hexagon                          allmodconfig    gcc-15.2.0
 hexagon                           allnoconfig    clang-23
 hexagon                           allnoconfig    gcc-15.2.0
@@ -266,6 +262,7 @@ parisc                            allnoconfig    clang-23
 parisc                            allnoconfig    gcc-15.2.0
 parisc                           allyesconfig    clang-19
 parisc                              defconfig    gcc-15.2.0
+parisc                generic-32bit_defconfig    gcc-15.2.0
 parisc                         randconfig-001    gcc-14.3.0
 parisc                randconfig-001-20260504    gcc-13.4.0
 parisc                randconfig-001-20260505    gcc-14.3.0
@@ -330,7 +327,6 @@ sparc64               randconfig-002-20260504    gcc-8.5.0
 sparc64               randconfig-002-20260505    gcc-15.2.0
 um                               allmodconfig    clang-19
 um                                allnoconfig    clang-23
-um                               allyesconfig    gcc-14
 um                               allyesconfig    gcc-15.2.0
 um                                  defconfig    gcc-14
 um                             i386_defconfig    gcc-14
@@ -351,36 +347,28 @@ x86_64      buildonly-randconfig-002-20260505    clang-20
 x86_64      buildonly-randconfig-003-20260504    gcc-12
 x86_64      buildonly-randconfig-003-20260505    clang-20
 x86_64      buildonly-randconfig-004-20260504    gcc-12
-x86_64      buildonly-randconfig-004-20260504    gcc-14
 x86_64      buildonly-randconfig-004-20260505    clang-20
 x86_64      buildonly-randconfig-005-20260504    gcc-12
 x86_64      buildonly-randconfig-005-20260505    clang-20
 x86_64      buildonly-randconfig-006-20260504    gcc-12
-x86_64      buildonly-randconfig-006-20260504    gcc-14
 x86_64      buildonly-randconfig-006-20260505    clang-20
 x86_64                              defconfig    gcc-14
 x86_64                                  kexec    clang-20
-x86_64                         randconfig-001    gcc-14
 x86_64                randconfig-001-20260504    clang-20
 x86_64                randconfig-001-20260504    gcc-14
 x86_64                randconfig-001-20260505    clang-20
-x86_64                         randconfig-002    gcc-14
 x86_64                randconfig-002-20260504    clang-20
 x86_64                randconfig-002-20260504    gcc-14
 x86_64                randconfig-002-20260505    clang-20
 x86_64                randconfig-002-20260505    gcc-14
-x86_64                         randconfig-003    clang-20
 x86_64                randconfig-003-20260504    gcc-14
 x86_64                randconfig-003-20260505    clang-20
-x86_64                         randconfig-004    clang-20
 x86_64                randconfig-004-20260504    clang-20
 x86_64                randconfig-004-20260504    gcc-14
 x86_64                randconfig-004-20260505    clang-20
-x86_64                         randconfig-005    gcc-14
 x86_64                randconfig-005-20260504    clang-20
 x86_64                randconfig-005-20260504    gcc-14
 x86_64                randconfig-005-20260505    clang-20
-x86_64                         randconfig-006    clang-20
 x86_64                randconfig-006-20260504    clang-20
 x86_64                randconfig-006-20260504    gcc-14
 x86_64                randconfig-006-20260505    clang-20
