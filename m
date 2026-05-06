@@ -1,166 +1,106 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B7A368271
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 May 2026 07:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB5D3CF695;
+	Wed,  6 May 2026 07:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778052037; cv=none; b=j45QbxHPkLtpnH7VG/hAbRUQ9DsYgLcFFrwUoMsurx+L6NBSG10aJgGQD2J/XzBMij8sIbWFrAJKW8dNxhGH7noSvbS8CJYwB60c/npt7YSA6wYep2V7EDB8TPU/ebAaKuDsmKqeLVk5Ob9zgCJ5SDvSiA61HbqdAx1pmVL9r/E=
+	t=1778053510; cv=none; b=XRbrw6Ld52mTRlAmwxZTxGFawR2OPWBw0yjbfejk81ZZoC4TEgGNCnI+BbEh3JXxHpzNyEl65zh4YNdKrYpHerCWlao/Yh/kw7lAu6suaRya9eON03RXJDw83hPsoirnlc0FMe8RBLei3PnSvE1QIpAeevl/RdnJ8T6uq5z/y10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778052037; c=relaxed/simple;
-	bh=DQ8l+LhXfMiI0/8/s4jrgxM9hhNcUgGoh3wrwwBlO1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fcKDwVHU/xh2PEAt5GA8eMPyrp7lMRq12rhVHAiadAV/cZDhdDfxaM1uEHRPoaXpgLrG45QKOlDwBDUtVvaut28wL+Zb5jUVcZTfiUQ2KO4aWMpP3+Oj5PvhbFpajhJcHXhvFMuVt6xxVneKsbM0cCNUZSrFOhW+80Z3aNeSoh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WzNnBmcY; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1778053510; c=relaxed/simple;
+	bh=/SSiiVNcG6Dr70JSz9aZJkOI5mbAtoVtckNTE0FlKY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSTj4kRtGPFfGSWtJDTbe+CzI1yhibnIPkoB0USHAIk9R1XKYueGmE/YF0IvpYdnCx30sETEtFz/Xdjsf5eEyUVdEwl0tgutd9C5f2u6dmiQH3OZzgKNU/qEhqO5M04o551SzlxxRelJtQ1wnyF0IkgkREdVqilBGpv+avmquCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DUX5hekG; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WzNnBmcY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=3oLvX8H0JfjMnE
-	asSxxrTvaptE77qSSWzUL4EZLI0U0=; b=WzNnBmcY1Zt0SDo0UvEHOz1bW4WroW
-	liwrviQn3ePoPxT+J/LoVwWkD4CkngWqcFEAKVVo7u0MAfloAp1xZC/uli58orJH
-	9wgaChla5f6j+M1TP7WbU3hoHnOJ0fMD4EDFE6zqN46gtAspESs1HmorEKrKDPRQ
-	I6iFh+S/T2nqGuAs7jXAiW32z0WcRiUBLNAH1Rx43m5dkiNQRqmay4XJWE0VBF+i
-	1jc77tnH9RfMOsB+oEii/D86wLCzRPNVzLlAlgR12ffQogDpuYHS3HJKd23Dyujm
-	2PqEGzbNsSJB91p1tquiMnaLSdNjAsnbgUdDybaxFy+J/Uk8w7vbblvA==
-Received: (qmail 583450 invoked from network); 6 May 2026 09:20:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 May 2026 09:20:32 +0200
-X-UD-Smtp-Session: l3s3148p1@XavD/yBRMMoujnsj
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Subject: [PATCH v5] mailbox: add list of used channels to debugfs
-Date: Wed,  6 May 2026 09:16:06 +0200
-Message-ID: <20260506072030.4288-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DUX5hekG"
+Received: from ideasonboard.com (net-93-65-100-155.cust.vodafonedsl.it [93.65.100.155])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A658378E;
+	Wed,  6 May 2026 09:45:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1778053500;
+	bh=/SSiiVNcG6Dr70JSz9aZJkOI5mbAtoVtckNTE0FlKY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DUX5hekG/CQLhLakH0Pjl+6O0Fu8KM1hvEyjk0H45jER/AfAJUoccRNkxrWoKfF+o
+	 OkHbpUZRrpWD6NtqNk9ZZkRAdBgswqiyIzGZeCxyMbFd/mWsH/7h+NUD59RnSU8lR3
+	 +omdbPDe5cwLhZG5KtX3EETLmwh7P2bQvGqZq4bk=
+Date: Wed, 6 May 2026 09:45:00 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v8 01/14] media: Add RPP_X1_PARAMS and RPP_X1_STATS meta formats
+Message-ID: <afrxNOsSoDO2mq9c@zed>
+References: <20260504010556.2796398-1-niklas.soderlund+renesas@ragnatech.se>
+ <20260504010556.2796398-2-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260504010556.2796398-2-niklas.soderlund+renesas@ragnatech.se>
 
-During development, it is useful to see which mailboxes are currently
-obtained. Use a seq-file in debugfs to list the currently registered
-controllers and their used channels. Example output from a Renesas R-Car
-X5H based system:
+Hi Niklas
 
- # cat /sys/kernel/debug/mailbox/mailbox_summary
+On Mon, May 04, 2026 at 03:05:43AM +0200, Niklas Söderlund wrote:
+> From: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
+>
+> Register V4L2 metadata fourcc codes for the Dreamchip RPP-X1 ISP
+> parameters and statistics buffers. These formats are used by the driver
+> to exchange ISP configuration and 3A statistics with userspace through
+> the extensible parameters framework.
+>
+> Signed-off-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-189e0000.system-controller:
-   0: c1000000.mailbox_test_send_to_recv
-   1: c1000100.mailbox_test_recv_to_send
- 128: c1000100.mailbox_test_recv_to_send
- 129: c1000000.mailbox_test_send_to_recv
-189e1000.system-controller:
-   4: scmi_dev.1
-   5: scmi_dev.2
+As pointed out in the review of the previous version you need to add
+documentation for the formats in
+Documentation/userspace-api/media/v4l/metafmt-dcc-rppx1.rst (or
+similar)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-This patch was created on top of "[PATCH v3] mailbox: don't free the
-channel if the startup callback failed". It is no dependency, though.
-The patch applies without it with just some line offsets.
-
-Changes since v4:
-* improved comment to explain the initcall situation
-* rebased to v7.1-rc2
-
- drivers/mailbox/mailbox.c | 65 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 006ea5a5c320..3716b8ccbe7f 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/cleanup.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -16,6 +17,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/property.h>
-+#include <linux/seq_file.h>
- #include <linux/spinlock.h>
- 
- static LIST_HEAD(mbox_cons);
-@@ -636,3 +638,66 @@ int devm_mbox_controller_register(struct device *dev,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(devm_mbox_controller_register);
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void *mbox_seq_start(struct seq_file *s, loff_t *pos)
-+{
-+	mutex_lock(&con_mutex);
-+	return seq_list_start(&mbox_cons, *pos);
-+}
-+
-+static void *mbox_seq_next(struct seq_file *s, void *v, loff_t *pos)
-+{
-+	return seq_list_next(v, &mbox_cons, pos);
-+}
-+
-+static void mbox_seq_stop(struct seq_file *s, void *v)
-+{
-+	mutex_unlock(&con_mutex);
-+}
-+
-+static int mbox_seq_show(struct seq_file *seq, void *v)
-+{
-+	const struct mbox_controller *mbox = list_entry(v, struct mbox_controller, node);
-+
-+	seq_printf(seq, "%s:\n", dev_name(mbox->dev));
-+
-+	for (unsigned int i = 0; i < mbox->num_chans; i++) {
-+		struct mbox_chan *chan = &mbox->chans[i];
-+
-+		scoped_guard(spinlock_irqsave, &chan->lock) {
-+			if (chan->cl) {
-+				struct device *cl_dev = chan->cl->dev;
-+
-+				seq_printf(seq, " %3u: %s\n", i,
-+					   cl_dev ? dev_name(cl_dev) : "NULL device");
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct seq_operations mbox_sops = {
-+	.start = mbox_seq_start,
-+	.next = mbox_seq_next,
-+	.stop = mbox_seq_stop,
-+	.show = mbox_seq_show,
-+};
-+DEFINE_SEQ_ATTRIBUTE(mbox);
-+
-+/*
-+ * subsys_initcall() is used here but controllers may already have been
-+ * registered earlier or will be later. The rationale is that debugfs is
-+ * accessed only late, i.e. from userspace. So, files created here must make no
-+ * assumptions about initcall ordering.
-+ */
-+static int __init mbox_init(void)
-+{
-+	struct dentry *mbox_debugfs = debugfs_create_dir("mailbox", NULL);
-+
-+	debugfs_create_file("mailbox_summary", 0444, mbox_debugfs, NULL, &mbox_fops);
-+	return 0;
-+}
-+subsys_initcall(mbox_init);
-+#endif	/* DEBUG_FS */
--- 
-2.51.0
-
+> ---
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
+>  include/uapi/linux/videodev2.h       | 4 ++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index a2b650f4ec3c..cd3f4a86e27f 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1471,6 +1471,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
+>  	case V4L2_META_FMT_MALI_C55_PARAMS:	descr = "ARM Mali-C55 ISP Parameters"; break;
+>  	case V4L2_META_FMT_MALI_C55_STATS:	descr = "ARM Mali-C55 ISP 3A Statistics"; break;
+> +	case V4L2_META_FMT_RPP_X1_PARAMS:	descr = "Dreamchip RPP-X1 ISP Parameters"; break;
+> +	case V4L2_META_FMT_RPP_X1_STATS:	descr = "Dreamchip RPP-X1 ISP Statistics"; break;
+>  	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index eda4492e40dc..1f78b5378b3b 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -889,6 +889,10 @@ struct v4l2_pix_format {
+>  #define V4L2_META_FMT_MALI_C55_PARAMS	v4l2_fourcc('C', '5', '5', 'P') /* ARM Mali-C55 Parameters */
+>  #define V4L2_META_FMT_MALI_C55_STATS	v4l2_fourcc('C', '5', '5', 'S') /* ARM Mali-C55 3A Statistics */
+>
+> +/* Vendor specific - used for Dreamchip RPP-X1 ISP */
+> +#define V4L2_META_FMT_RPP_X1_PARAMS	v4l2_fourcc('D', 'R', '1', 'P') /* Dreamchip RPP-X1 Parameters */
+> +#define V4L2_META_FMT_RPP_X1_STATS	v4l2_fourcc('D', 'R', '1', 'S') /* Dreamchip RPP-X1 Statistics */
+> +
+>  #ifdef __KERNEL__
+>  /*
+>   * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
+> --
+> 2.54.0
+>
