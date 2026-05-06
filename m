@@ -1,101 +1,173 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545633E92B3
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 May 2026 10:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B5A2DCF45;
+	Wed,  6 May 2026 12:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778062768; cv=none; b=lcFCwspCdwqa85v6NgsS7iyeO4TsGOvPUCc8vsALjuznm5TUqBGDDapoVaf11K9Xa+c+M4cWgy3CBitgZHVdOkIy5HQlIYCGRJlZfOd3RRWGes7IiZeUno9g45zj3INItlkV6b7hmDY/Ixc4lcGLIPagHX+s4C4Cyq8ML7cQoFA=
+	t=1778068953; cv=none; b=dYoCxSDVM0r+tvk8Uj9Mic4U6gRm8OJNClgQqmsKA0NVXz0bPB3PapGMaEjB5TqmL3dB+kZSMGCMHPjt5uopmVoWErN8hDZ/2mL13H26K52ZAjqzzisH0ogfEKvbwRDIY2lSKPvkKO43jlVEb+1V3oGk6W+ljwSlOoQbDPtb7Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778062768; c=relaxed/simple;
-	bh=B2Xa6VZztFm42sxYFXowro4G1pwYLrRZg7/codjLEJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hjA3BWQPH76aznKdAfgce+ymahei/AlAD0i40yAb7b+MBOifymZ62kcvC6BF8QT22UtACk6pYWV1APXEX9O08Wlcvxkt0upUe/eNcpk4odl8HtJrJDrPVeSteFpvfLZNQhPJk7gICfQ1rXM2+hraNGfdjVxwSGb8EWmbsPPFa8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5675d609621so5814778e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 May 2026 03:19:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778062763; x=1778667563;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=frOZWVrduNGKMu3VYaa4JiBvzYZTtFtYjox5RDxS4rA=;
-        b=fGiGoi9Zklt1vD15RmzeiWbfL1YObNbl4BXHXoOLgp8ghRlsUeX33Gc5BE2zqxsyra
-         2v0CXujj/WQ9mcbS9LvPceabCgl9lqCQJ2PD+y0OS3Gt0F5gt7uYedezlRIvbaXVftu6
-         28UD/MpMjB1AiFPpMBelCKXDEJItb8HBcgo+xjx2XrlRWKpJM8iGtOPS/O9JXjiFmkOo
-         iUn8bPGvBnzqc4PoMWqH4EpU8+Iaq0AkH0SKIF2xAxBca4gHe7g0cm0MR6oZsbJi1pOr
-         Iv/4GIYdJzInnqX/CELKDir6h6CuVgfvj6rMgSU2xGCDxmAuW1GvSXIulrRyf8YVzQ2m
-         XaPQ==
-X-Forwarded-Encrypted: i=1; AFNElJ80zUlpFsqv8c/pE5TDgWqIsTZSzmp+NbwFbQfB2P1T/GE+KWONGct3dTEpQRjLUAHWdO3ND4TS7t8EHbP8YM9DBw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxPO0h6cjRNDzHTwq8MJ+VEAMP95HhMQiSKQe0ufBaqBODyudY
-	LtapRv2gs4P+HtcGMpY7zMk0nKwwKpw6S5fGeTv2EuwY5RtBb5dqu3cMFu2h4B09
-X-Gm-Gg: AeBDievyQY3ZdRqpXXdvhWmRjUB0+sqFoyT9wzLsx638FCQ7/D7WmwmMOtYuOFG1SSt
-	zpU6LRTScD0YIBbR9wcFOJp6ll9qG33PZWjRQkcyIvVucLoxGxdfxMoIBYxFahhqneHG4XIo0Uq
-	id7funaHpERydhHyKF/pDLTphLY1AEUhvY+25sesK5KpAqICoU4xMH5UBk0+zL00MVj7W61VHyC
-	OlbvxU+3KOyOqQyuIdCFw6L4u0py7Chs5bYlJhuuWiIy3QgIC6JIxeJJXTrNu46+NS5FO2Jl/uf
-	vDVOkA0kYb4vqZLwzOzpEQ4ikfz+ncDOkh63W2Epz6ZHKKXAtkC+OJK+pFKMCFU2eIYIr51Ckky
-	QZ6KqQrw97IoX8SJND+hjxRpRQttkhh98AiruY5yj4Vflj3hzTFCkEQomAbfwXJ4Nx+H4ytUpYR
-	Z8/UFn7j8xXrgJFFJ0YhZPf441Cfu+2rWDWUYoYleuklaMGUXJGPaM9uOj77y2dYQtZK4c/zLgb
-	qYUf9j3d2KbEg==
-X-Received: by 2002:a05:6102:f82:b0:607:960e:aed1 with SMTP id ada2fe7eead31-630f8e765cfmr1046111137.1.1778062763038;
-        Wed, 06 May 2026 03:19:23 -0700 (PDT)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-95ce08efbcesm9066175241.4.2026.05.06.03.19.22
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 03:19:22 -0700 (PDT)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5675d609621so5814758e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 May 2026 03:19:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8J4+3gId+UlTHt6ZFRfEzq8yEovO4k9v3luFHkAC15RKoglKvDcTqREkqDt4MEoNxEJBNw5PtkbZ6fZQJGKes4fg==@vger.kernel.org
-X-Received: by 2002:a05:6122:3214:b0:56b:815c:961d with SMTP id
- 71dfb90a1353d-5755963f49fmr1289109e0c.5.1778062762167; Wed, 06 May 2026
- 03:19:22 -0700 (PDT)
+	s=arc-20240116; t=1778068953; c=relaxed/simple;
+	bh=GZprgIAB9sRvn03XwrZOtWssEEU0EdmAX08zzZM6Hi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeKchnKHRq4xX5HQIMOLJF3YrZcjsKVQjgH1i1b2KfFKBXApFzvlg9e3cRtqc+NI+5vg5A/RSe69ioQyKWmxesKkrfp26hgHNkOujoufcMh0PHscbPrN30UsdlEhEntIxboVk02ilMWmooi+H6gc6tMOcda2O02wxR8inUuQa0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZptcKHy; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZptcKHy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F896C2BCC4;
+	Wed,  6 May 2026 12:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778068952;
+	bh=GZprgIAB9sRvn03XwrZOtWssEEU0EdmAX08zzZM6Hi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rZptcKHyJFinMWr9iUXtcnKXCCt5nIrk4mWFyyjdSCbdDG7B9ufhRLkUx+gP5k6OE
+	 Td0fSqCI3PUotqfylC3gq4ECM1lslgzLG5BEu3aEie2qrzhe1ZKwx4Cjf6BljwgSN7
+	 +ZoPOO3rF77N74dOUMvi58j/Zt+Kk3VItAWAnHAG11f6V1PQvMlC70oL17GqsYSD1q
+	 NICrz0Iv+8ZvMgWwBAFDDC2hemwdPMEokE7FBzbHEmqU6hCH8oXwA1bavkVYvUyzrt
+	 EdQOk18SanJjtYVzac9f7oM+V87b6pe6WlNkODqV/enD0RlJji9ogmtmkrn+XDiLZA
+	 NaCkmY8QpX5TA==
+Date: Wed, 6 May 2026 17:32:22 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, John Madieu <john.madieu.xa@bp.renesas.com>, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 5/5] PCI: rzg3s-host: Add support for RZ/V2H(P) SoC
+Message-ID: <phuerp2kp6ngruqjkpyjczpn5ya7iywrsiaqiiydvqxwlkntks@gyfcws3intsw>
+References: <20260318124450.163471-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260318124450.163471-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <605e8d4c-09e7-4d11-acdb-7829a85eacc3@tuxon.dev>
+ <CA+V-a8srS9g2WDMARDJn98K=nL9v1LiZYxqM8evsVrzR-s5ZMA@mail.gmail.com>
+ <lvix7p4e7c4dtchtdti3rwrs7jkda5iy7lthcffhqc7g6vgu2p@54qywklrspi7>
+ <CA+V-a8sd=dyTZmViLbDrCPYbx5ujWzjk74HxhP0aBEqxLuEqJA@mail.gmail.com>
+ <leky6ktelj7t3uwd4bakgefrk32m3ceyxmwbkkjpp5zqp6rjgj@jtiqktxchws3>
+ <CAMuHMdUpzABKKRBwK3mMmTS1+S21R+0k94bOX-+4ZBoa+bRWSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org> <20260504144534.43745-4-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260504144534.43745-4-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 May 2026 12:19:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWdqDpU+AZrwz5ccbZPjJfp5DspoVscYi=Q+w-nniuuCQ@mail.gmail.com>
-X-Gm-Features: AVHnY4JCwkwAqaqLSNXuaf0ETjjPOv64a8QgXMobUA_baaUFwZots-RZr9ezKew
-Message-ID: <CAMuHMdWdqDpU+AZrwz5ccbZPjJfp5DspoVscYi=Q+w-nniuuCQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: clock: cs2000-cp: document CS2500
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUpzABKKRBwK3mMmTS1+S21R+0k94bOX-+4ZBoa+bRWSA@mail.gmail.com>
 
-On Mon, 4 May 2026 at 16:46, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Document backward compatibility support for CS2500 chip, which
-> is a drop-in replacement for CS2000 chip.
->
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On Mon, May 04, 2026 at 11:05:11AM +0200, Geert Uytterhoeven wrote:
+> Hi Manivannan,
+> 
+> On Fri, 1 May 2026 at 16:42, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > On Fri, May 01, 2026 at 12:13:55PM +0100, Lad, Prabhakar wrote:
+> > > On Thu, Apr 30, 2026 at 4:26 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > > On Wed, Apr 08, 2026 at 07:54:41PM +0100, Lad, Prabhakar wrote:
+> > > > > On Wed, Mar 25, 2026 at 10:18 AM Claudiu Beznea
+> > > > > <claudiu.beznea@tuxon.dev> wrote:
+> > > > > > On 3/18/26 14:44, Prabhakar wrote:
+> > > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > >
+> > > > > > > Add support for the RZ/V2H(P) SoC PCIe controller to the rzg3s-host
+> > > > > > > driver.
+> > > > > > >
+> > > > > > > The RZ/V2H(P) SoC features two independent PCIe channels that share
+> > > > > > > physical lanes. The hardware supports two configuration modes: single
+> > > > > > > x4 mode where one controller uses all four lanes, or dual x2 mode
+> > > > > > > where both controllers use two lanes each.
+> > > > > > >
+> > > > > > > Introduce configure_lanes() function pointer to configure the PCIe
+> > > > > > > lanes based on the number of channels enabled. Implement
+> > > > > > > rzv2h_pcie_configure_lanes() to detect the active PCIe channels at
+> > > > > > > boot time and program the lane mode via the system controller using
+> > > > > > > the new RZG3S_SYSC_FUNC_ID_LINK_MASTER function ID.
+> > > > > > >
+> > > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > > ---
+> > > > > > >   drivers/pci/controller/pcie-rzg3s-host.c | 142 +++++++++++++++++++++++
+> > > > > > >   1 file changed, 142 insertions(+)
+> > > > > > >
+> > > <snip>
+> > > > > >
+> > > > > > This introduces some limits in the systems with RZ/V2H(P) SoCs with regards to
+> > > > > > the usage of linux,pci-domain. I would like the PCIe maintainers take on this.
+> > > > > >
+> > > > > > As this is necessary to index in the system controller driver specific data (as
+> > > > > > there are different SYSC offsets for different PCIe controllers) I see the
+> > > > > > following alternatives, if any:
+> > > > > >
+> > > > > > 1/ add a dedicated DT property for this, e.g. renesas,pcie-controller-id
+> > > > > > 2/ Add dedicated DT bindings for RZ/V2H(P) SoC that would be used to specify the
+> > > > > >     system controller register offset and mask for different functionalities.
+> > > > > >
+> > > > > >     E.g.:
+> > > > > >     renesas,sysc-l1-allow = <&sysc 0x1020 0x1>;
+> > > > > >     renesas,sysc-mode = <&sysc 0x1024 0x1>;
+> > > > > >     renesas,sysc-link-master = <&sysc 0x1060 0x300>;
+> > > > > >
+> > > > > >     And use them in each controller DT node. E.g.:
+> > > > > >
+> > > > > >     pcie0: pcie@add1 {
+> > > > > >         // ...
+> > > > > >
+> > > > > >         renesas,sysc-l1-allow = <&sysc 0x1020 0x1>;
+> > > > > >         renesas,sysc-mode = <&sysc 0x1024 0x1>;
+> > > > > >         renesas,sysc-link-master = <&sysc 0x1060 0x300>;
+> > > > > >
+> > > > > >         // ...
+> > > > > >     };
+> > > > > >
+> > > > > >     pcie0: pcie@add1 {
+> > > > > >         // ...
+> > > > > >
+> > > > > >         renesas,sysc-l1-allow = <&sysc 0x1050 0x1>;
+> > > > > >         renesas,sysc-mode = <&sysc 0x1054 0x1>;
+> > > > > >         renesas,sysc-link-master = <&sysc 0x1060 0x300>;
+> > > > > >
+> > > > > >         // ...
+> > > > > >     };
+> > > > > >
+> > > > > I'd like to get a clearer steer from the PCIe and DT maintainers
+> > > > > before investing further in either direction.
+> > > > >
+> > > > > To recap the two approaches on the table:
+> > > > >
+> > > > >   Option 1: A single renesas,pcie-controller-id property used to look up
+> > > > >             SYSC offsets in the driver.
+> > > >
+> > > > Can you explain what is the limitation with 'linux,pci-domain' property?
+> > > >
+> > > As sashiko pointed out.dev, The linux,pci-domain property is generally
+> > > an OS-specific logical property intended to assign a stable PCI domain
+> > > number across reboots. Restricting it to [0, 1] would prevent system
+> > > integrators from using non-conflicting domain numbers like 2 or 3 if
+> > > the board incorporates other PCIe controllers.
+> >
+> > "linux,pci-domain" is supposed to be used in SoC.dtsi, not in board.dts. AFAIK,
+> > the board designers have no reason to change it.
+> >
+> > Yes, the property name implies that it is a Linux specific property and if you
+> > want, you can propose a generic one (not vendor specific one). Other than that,
+> > I don't see a blocker in using this property. Many SoCs already do this and
+> > other DT projects like u-boot do not end up parsing this property.
+> 
+> Sounds like this overlaps with pciN DT aliases, which are in use on
+> some (PPC) boards?
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hmm. DT aliases are discouraged these days, AFAIK. Are those boards also need
+these register configuration? I thought only RZ/V2H(P) SoCs need them. If not,
+then RZ/V2H(P) DTS can use 'linux,pci-domain' property.
 
-Gr{oetje,eeting}s,
+If yes, then it would be better to hardcode these offsets in the driver based
+on the compatible. DT's job is to describe the hardware topology and resources,
+not register offsets.
 
-                        Geert
+- Mani
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+மணிவண்ணன் சதாசிவம்
