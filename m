@@ -1,128 +1,92 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D3836E496
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 May 2026 07:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B44836BCC3
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 May 2026 07:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778051505; cv=none; b=ecgWiN8zmS3As1/cj2ZvYAgfWmr850zjt05un+oDUobPyTg1elRK/af8gvUVd6cVGXVHrEOsRBV68LtW39V/v+fw++nTIPlq6+CwuCk/Zcywe6NICoFoStNI2f7XwiXs5T+lmPka5EaoqEIAnqNv7gBlx7Q2gDtCM7GCr9hStTA=
+	t=1778051990; cv=none; b=OWs6mnzeCnXJoqvfoe6HNZIl+6of86GQnCuAjsnW7lCukIyJw8cRuqxG9bNLn/25uWcv8kuRU9tRGuCmgiJ4N8gjzYyYMeZ7zVx3yGmf4xTtWTI9L95AUicHgTnrl47I/IKL7x3/8XL3itNvcWXqyu0+v7ZCTkKJqFx9Pey6MTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778051505; c=relaxed/simple;
-	bh=10neDbhblG1//qoHC35Hxr+5t29WiZR0KczoM+q5JvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PBUk9Y9NPTK7Wsnj3CGHemkvn3jzxbBUbnDL7ELkD9pmqASXEpm9HywoDfCKhxcFSM8jUzKFu5EECcVVvS0jZ8W29tzOjIwJLUkQJ15OXiqgFroHQAp9ZL6aGma7wrkC2nAqOnAZUPVaJs+KMO5rU0Y0FxCOlevey5RVPbBS5sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=K4bIQYxt; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="K4bIQYxt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=BA5LlGEfCKaqnm
-	80+ReCofkFUnXmdPl9UR+EZq47Hos=; b=K4bIQYxtC4t4rAe0G8G39TmUBcqAo2
-	m5Ie4qVFGXyf/a4gwpRzJ6Us/A8D+9If+d9P+PtaPOxb+amvAnEXG+yrkQNZWJLa
-	laLsC8EnaYwAgRT64Cue0CkNiqmcLLyjpnytQ9pi0QbFTJfGoFF6RWaXYm5zSPM/
-	B51l8GXVcsasgPw2iWGO7pgR4VtnBDstBgC9d4VJTvNKNgbHy9Y6jQNkGBsNOQ3B
-	VgCIUNF3kp1hDr+zBHnjVdOkKENJBJWGmfWkkTQLe/vhf1/eukDF5z8npQmjCQ+h
-	3EftWFYYcDApqQYwjMJgwT4atf9jxLQJAQCtSDMVWGrcKatDeYTkpPLg==
-Received: (qmail 579968 invoked from network); 6 May 2026 09:11:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 May 2026 09:11:32 +0200
-X-UD-Smtp-Session: l3s3148p1@DVKX3yBRmqYujnsj
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Mark Brown <broonie@linaro.org>
-Subject: [PATCH v3] mailbox: don't free the channel if the startup callback failed
-Date: Wed,  6 May 2026 09:09:47 +0200
-Message-ID: <20260506071128.4114-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1778051990; c=relaxed/simple;
+	bh=kCaOvIzrUuZaZ9zllpWZlClqzHH+Po6WdcxW6bwXC1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xq3G5fzqSwvA3oag3UpALJ2AEiubollpiF/+KxWB9zhDCEio/awBQLwdo7B9gPOb95gT+oP59QrS0xQ/OQhyrt/87ndM1MRFrY6KrJiQJUs7g3tTINZplFnx5ITdbOWiLP7IspSo2qjJl3tDKGCyoLYVNneZAlLbhBhuICNWMPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-56a86f0a23bso6224117e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 May 2026 00:19:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778051988; x=1778656788;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vFUn+S4/jA9VkVtPTANA9vhies8/mQGo7p0EcziVSIc=;
+        b=XPLgt2oJcVfOY5cTYKX5B1ERPiH343Gnhd1rTuS4gaO+HhIVZAviM8lofQnJh/0T2l
+         Hs3xAqXTHMWLEfYuwYzaoNPQDjSqb0n2NJm39ORrrooLPQl2KIIqMxqX+Z5FNrC8NNGD
+         1AGHwxtgEdUHYB4mE/4tRBD9tpr+Tua5PUlUzCm8yUMJA2kgMv0V/3IsSyyk6jXoZi31
+         UUonKmmZYk8u0svLmn1SAaM2qqRzbfLUL0wusGM66TZyUR2bTwqipGfAci0ZqBRMWTc6
+         Du4X5kGVaIiChUbmiWs6c6ESfCqm9hmMvKA+9TsWO1PjvMxvg2f70tB6cQZJzciuo4HS
+         AvTg==
+X-Forwarded-Encrypted: i=1; AFNElJ9840//iN+n7Nci5pB5BZlRQeZgE1zfXohT+w06uxWTSlc75M2ejk5oETesiCjMftiGjEPa9jA1SyF4qK0041Nitg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHjQM+KbaI6gcKQNvr5j544tVwxz837w8pke978XLL3kvGLAZa
+	u5Nl26V7+JD6eLFTM6cmM8CKo5xrZJTS9XInVX18iKKY4nOhk0V+oPrC2u6LFf7j
+X-Gm-Gg: AeBDieuaNUsMNpkgm0pJbYJdvrZSaFtBzmsNTy5eMaaJVMo4a0O1Nu0EeKRs4zSIOuJ
+	yGqIjG/N+ySWk2n2fGQGWSZuD16k6E+Lb1Y7An+Te8UyLwk9h6Px2IK1RasK5b1lqLxl1yZ9Ux7
+	IYRZd4z2MNQl8T2jbJN6x0X5gnuSPoL0cOxKWxPHkEc4RjAHDfduE3Pgc1p1xt+0hS2acsoyXRB
+	JTT0CzLvCl9zqMvKPcKuCQZc1DDYnJCtDgedmSJGKryLyxoYRTwLAT8/1dm0WzTpq02YTCOLD1e
+	PjH/Bga0zqgVlKelwM52tG9CvIeiYpOu+atTP+/TmjtriyEzaLk9/hYLSx84vhXFG0i31RH/nL2
+	sHQALJ4SvE1QFz55QrzKWAeYjQAQ5rOQhIi55ZyRBXJVlAhDEXwDr9iC3A0AX0xKHTEV68jsrWS
+	U2fOzoQRYSpkMywEvkmPcDCxmK2MVL/SB+N/oCnAXVvU8ghBxQMKVECLwGwCxkUVGNohjkj6M/D
+	9nZs89U5g==
+X-Received: by 2002:a05:6123:163:b0:575:352f:ead0 with SMTP id 71dfb90a1353d-575595589f7mr1297492e0c.6.1778051987952;
+        Wed, 06 May 2026 00:19:47 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-95ce0b71f31sm8421828241.13.2026.05.06.00.19.46
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 May 2026 00:19:46 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-628086439b6so4476806137.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 May 2026 00:19:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ99Y2Aq45An7Goi1GBHLFhsonW9qWDzUA9eIjelPveGbh0XF5A/PcaLtkgIXMNcJM7jyRli9P+3E6GbigY5UFrEnA==@vger.kernel.org
+X-Received: by 2002:a05:6102:5787:b0:62f:3abe:907f with SMTP id
+ ada2fe7eead31-630f8e78da2mr845360137.4.1778051985729; Wed, 06 May 2026
+ 00:19:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com> <20260505-clk-determine-rate-noop-v3-8-f3f829fbacdf@redhat.com>
+In-Reply-To: <20260505-clk-determine-rate-noop-v3-8-f3f829fbacdf@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 May 2026 09:19:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVWBx0Ob8BUWaRzeK_4OEHA1wwhfdPcBSG+jGV7dbbqgw@mail.gmail.com>
+X-Gm-Features: AVHnY4LSv9zQeRlq1BPG1reoiAmWUtec3W-OeL3hQqk0PVXd-J0IaxIjKyjNPVs
+Message-ID: <CAMuHMdVWBx0Ob8BUWaRzeK_4OEHA1wwhfdPcBSG+jGV7dbbqgw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/15] clk: renesas: rzg2l-cpg: use clk_determine_rate_noop()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If the optional startup() callbacks fails, we need to clear some states.
-Currently, this is done by freeing the channel. This does, however, more
-than needed which creates problems. Namely, it is calling the shutdown()
-callback. This is totally not intuitive. No user expects that shutdown()
-is called when startup() fails, similar to remove() not being called
-when probe() fails. Currently, quite some mailbox users register the IRQ
-in startup() and free them in shutdown(). These drivers will get a WARN
-about freeing an already free IRQ. Other subtle issues could arise from
-this unexpected behaviour.
+On Wed, 6 May 2026 at 02:50, Brian Masney <bmasney@redhat.com> wrote:
+> Drop the driver-specific empty determine_rate() function and use the new
+> shared clk_determine_rate_noop() helper.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-To solve this problem, introduce a helper which does the minimal cleanup
-and use it in both, in free_channel() and after startup() failed.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Link: https://sashiko.dev/#/patchset/20260402112709.13002-1-wsa%2Brenesas%40sang-engineering.com # second issue
-Fixes: 2b6d83e2b8b7 ("mailbox: Introduce framework for mailbox")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Gr{oetje,eeting}s,
 
-Changes since v2:
-* moved helper function up and made it static (buildbot)
-* rebased to v7.1-rc2
+                        Geert
 
- drivers/mailbox/mailbox.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index bbc9fd75a95f..006ea5a5c320 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -327,6 +327,19 @@ int mbox_flush(struct mbox_chan *chan, unsigned long timeout)
- }
- EXPORT_SYMBOL_GPL(mbox_flush);
- 
-+static void mbox_clean_and_put_channel(struct mbox_chan *chan)
-+{
-+	/* The queued TX requests are simply aborted, no callbacks are made */
-+	scoped_guard(spinlock_irqsave, &chan->lock) {
-+		chan->cl = NULL;
-+		chan->active_req = MBOX_NO_MSG;
-+		if (chan->txdone_method == MBOX_TXDONE_BY_ACK)
-+			chan->txdone_method = MBOX_TXDONE_BY_POLL;
-+	}
-+
-+	module_put(chan->mbox->dev->driver->owner);
-+}
-+
- static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- {
- 	struct device *dev = cl->dev;
-@@ -350,10 +363,9 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- 
- 	if (chan->mbox->ops->startup) {
- 		ret = chan->mbox->ops->startup(chan);
--
- 		if (ret) {
- 			dev_err(dev, "Unable to startup the chan (%d)\n", ret);
--			mbox_free_channel(chan);
-+			mbox_clean_and_put_channel(chan);
- 			return ret;
- 		}
- 	}
-@@ -495,15 +507,7 @@ void mbox_free_channel(struct mbox_chan *chan)
- 	if (chan->mbox->ops->shutdown)
- 		chan->mbox->ops->shutdown(chan);
- 
--	/* The queued TX requests are simply aborted, no callbacks are made */
--	scoped_guard(spinlock_irqsave, &chan->lock) {
--		chan->cl = NULL;
--		chan->active_req = MBOX_NO_MSG;
--		if (chan->txdone_method == MBOX_TXDONE_BY_ACK)
--			chan->txdone_method = MBOX_TXDONE_BY_POLL;
--	}
--
--	module_put(chan->mbox->dev->driver->owner);
-+	mbox_clean_and_put_channel(chan);
- }
- EXPORT_SYMBOL_GPL(mbox_free_channel);
- 
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
