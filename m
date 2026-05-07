@@ -1,49 +1,47 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8543E8671
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 May 2026 10:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8676D3D564E
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 May 2026 10:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778149460; cv=none; b=RjtBbt1QkMOJ991DfaXfmKCeqwqX2jzw7LeG1ADnnVXWbSgVntiL1vvKEAsE5NPqAe2BKSuoV4nMrfh+Hr0yU2dYg4Yv2A1Jalveef8FVOASvDplBsi0mmNnEr2/1jLZ4m2Q7Tj2jJVhhEiQlFG8CMOklbcODK32RY36o9f7eho=
+	t=1778149460; cv=none; b=GXOfIFMj3z4Gdkt+XNTZ1Hr3xrJbgiK5qI5UzZB58yulZ5Ae5uV5syiLCBNmCDnxNg/j+D3cn9cNg72IllIU3oYHWpFnjWx6oZd+B/LgX5G0C762NPHhUPYKq1sU/MbJpChn7H7deMoH7/+0hakY5FuGWzB6L5TMO7mR3dAufIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778149460; c=relaxed/simple;
-	bh=95zihIsNKMOoXD5OwnlTEVyg8/vmcAqsbbGd8t9RAOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yqdx5/KvggZ4xrEu6ENTwCMkL4s412MPwT6OwtQGA22SwnYE9P69rUCXVpdE1E5ArX0nsdaFAR6urpR+geXJSS708iKVXtck3j/mQ3HpabITx8peSZ2AOodg0+l34MaVe+cwRlcrNVZXU+LuwMa0lh6T0GVPvl5FJxJMt4axazw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Hmfo0pbw; arc=none smtp.client-ip=194.117.254.33
+	bh=PEBmWLsNLDcSW50JEPK3HzO2y997HxNC5pylc7gDSPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=He/NLuR5rXy8jF2wNBVK2woGwYbOkzH26a9JEZfP7b3pjVnA4Tr3CF+4jah3W92fNtXsUV4IKGXvy2P3l/G7dneH7qx4amsB/N/8KuJwRloXGl3B0mPjEtXrYVVUcdcHQQuHP4oM0DpBeyiXQpz0QgVrm5Ghif0w96p0SvJoyYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DrZC1sio; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Hmfo0pbw"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DrZC1sio"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=U7lcVXhRrsNyaU
-	ZcRjVHn9MrYR2QSycVByrONFV6V7k=; b=Hmfo0pbwBz01tYugrbmAHJQallIdxT
-	nNxrH1gRC3KqLMin/Y7yyLnTnoH8jRMv/q0hQS8GspARYH628glx5gsmYbWRvFcM
-	ouzgZsGLUslv/IyLXDLwsicjzcMdc43ztMKtDwgm6HctNFogOXUFqg3ZFA+49Tgc
-	hBxOPlIrQPLbrn5Azq8RGUjczu28PwEYj5iiOaW7dJdAH01Pxb7W+c31yKXQy/XH
-	z2YUfccHNKWVbcX3JinhmgoMLYDJlWdy/HVJiryiezxW2rUOpKzfgGeQJzSfTrgf
-	xoWE8ARSNzSXTbqQaVq620JnQ+19z2vID6+xuPmEMItBPMCaJ2KvwXRA==
-Received: (qmail 1070349 invoked from network); 7 May 2026 12:24:12 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 May 2026 12:24:12 +0200
-X-UD-Smtp-Session: l3s3148p1@GTV7rjdRrOcujnu4
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=0bPQHhTlMGHkow0cp7D5dntPctxUPfYHw5mO1fd6jqA=; b=DrZC1s
+	iodv5PdmTWuxQJ5dusdZ3PXdQ2PZlLaIxZxz1Q/DST0i13ry14swHN/oYFX8Gq9E
+	JegHpKGTczy1m1qrnu78TtlF3JFTiY3CcQAgXIsfPQ25O3iyywoEJ2ZygOk3ab2o
+	VwUiQ1Ezpe6/2LVSo+DMC07laNlbZLb8sAWR80azANTjFWtvlUY0REXrbK/yNnrM
+	bEBrVdzEmrixrgFFdn95wsff7rvMF/v5PaeGoBCI3OI3h/IFXKrBhqjxk2PZU/xt
+	u0/65Lt7aUlwM+fKCgDkUC1ZmQpO14BItGh1ykmi6n4PnrYghSGJyPLKJPOOxN6y
+	QpZSV0aiCvgMBQMg==
+Received: (qmail 1070473 invoked from network); 7 May 2026 12:24:15 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 May 2026 12:24:15 +0200
+X-UD-Smtp-Session: l3s3148p1@hYimrjdRyucujnu4
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
 	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-watchdog@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH v4 0/4] watchdog: rzn1: clean up and drop irq requirement
-Date: Thu,  7 May 2026 12:24:05 +0200
-Message-ID: <20260507102410.43384-1-wsa+renesas@sang-engineering.com>
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH v4 3/4] watchdog: rzn1: remove now obsolete interrupt support
+Date: Thu,  7 May 2026 12:24:08 +0200
+Message-ID: <20260507102410.43384-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260507102410.43384-1-wsa+renesas@sang-engineering.com>
+References: <20260507102410.43384-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,33 +50,65 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes since v3:
-* rebased to v7.1-rc2
-* added patches 3+4 to remove irq handling
-* added tags for patches 1+2 (Thanks, Guenter!)
+Previously, it was overlooked that the watchdog could reset the system
+directly. So, a workaround using the interrupt which called
+emergency_restart() was implemented. We now configure the controller
+when booting properly to allow watchdog resets directly. Thus, remove
+the interrupt workaround.
 
-For easier dependency handling, I picked up Herve's v3 series and added
-my patches on top. Herve's changes to the N1D syscon are now upstream,
-so the watchdog can reset the system directly. Leaving only his cleanup
-patches to be applied, already reviewed by Guenter. Then, my patches
-remove the now unneeded irq handling and make irqs optional in DTs. All
-tested on the Renesas RZ/N1D demo board.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/watchdog/rzn1_wdt.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-Please apply.
-
-
-Herve Codina (Schneider Electric) (2):
-  watchdog: rzn1: Fix reverse xmas tree declaration
-  watchdog: rzn1: Use dev_err_probe()
-
-Wolfram Sang (2):
-  watchdog: rzn1: remove now obsolete interrupt support
-  dt-bindings: watchdog: renesas,rzn1-wdt: interrupts are not required
-
- .../bindings/watchdog/renesas,rzn1-wdt.yaml   |  1 -
- drivers/watchdog/rzn1_wdt.c                   | 35 +++----------------
- 2 files changed, 5 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/watchdog/rzn1_wdt.c b/drivers/watchdog/rzn1_wdt.c
+index 48d5afef62a5..4fdc5363ba98 100644
+--- a/drivers/watchdog/rzn1_wdt.c
++++ b/drivers/watchdog/rzn1_wdt.c
+@@ -79,14 +79,6 @@ static int rzn1_wdt_start(struct watchdog_device *w)
+ 	return 0;
+ }
+ 
+-static irqreturn_t rzn1_wdt_irq(int irq, void *_wdt)
+-{
+-	pr_crit("RZN1 Watchdog. Initiating system reboot\n");
+-	emergency_restart();
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static struct watchdog_info rzn1_wdt_info = {
+ 	.identity = "RZ/N1 Watchdog",
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING,
+@@ -101,12 +93,10 @@ static const struct watchdog_ops rzn1_wdt_ops = {
+ static int rzn1_wdt_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
+ 	struct rzn1_watchdog *wdt;
+ 	unsigned long clk_rate;
+ 	struct clk *clk;
+ 	int ret;
+-	int irq;
+ 
+ 	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
+ 	if (!wdt)
+@@ -116,15 +106,6 @@ static int rzn1_wdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(wdt->base))
+ 		return PTR_ERR(wdt->base);
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+-	ret = devm_request_irq(dev, irq, rzn1_wdt_irq, 0,
+-			       np->name, wdt);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "failed to request irq %d\n", irq);
+-
+ 	clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(clk))
+ 		return dev_err_probe(dev, PTR_ERR(clk), "failed to get the clock\n");
 -- 
 2.47.3
 
