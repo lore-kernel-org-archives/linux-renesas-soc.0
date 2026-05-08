@@ -1,62 +1,64 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A99239448B
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  8 May 2026 11:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561ED39447C
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  8 May 2026 11:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778239075; cv=none; b=HLYt9WWcb8eyFyTdnLzzGdV0zRoWP5RLFH6Igf08tyIgd3xaFxLNRLRta6zve65YgE0qAX+l+IsiQOfd5VGGta3JQhNIbUhV/zO7fsbD3StVgpytgqJeRinaAImVHAx0MXULo7NJ/hcjJDps320AbOWnConHxhctmjj948uReMI=
+	t=1778239076; cv=none; b=QuxIqBtN0CW0t4kJlBidgmYwX/SJKAVYymk2G8gNOuT/QR2+4bzVskGxEqNS6gKdzxk2JhagyxdYHjyEikLEXiIOGaLJgds7LxvwzvtnB89Iv4LSiYVH5QH7A9kQOUgFhkPZrZHtUBR3kd/A8y40UB8FO1kH0HfE2xXAS0OoC9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778239075; c=relaxed/simple;
-	bh=cih7KlGPpFgUEiNss2zxTKa0s7P9pJ/t9FSqGyajF5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=thPccbrXptqjkS02oyLHEb0S6Ynsmy0FNGniCZn3UTR6in+CacYCCJiHtnx9OHjltx3Ai/aHixp9gich1D2fOn+2ohtCIUl2YD+9BeXdY+OM5Kc9QYw7vguO07828rQRUoXytCbx/DEQSRC3Pff/B+PH76jLrebsGNEFiN9LgFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qoQW5PU/; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1778239076; c=relaxed/simple;
+	bh=C7OdMfskX1yrAh3+I7YrVhMxB61DSFtW1LvR/WZMIrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HL6JapyBqKPGDlAAd/ygdqEjctF+wW9dBONAGPyfiMGHz9xA66D+x8pVmJPTqMJjIiUSrmATZiIG0qffq6JMtsM1EZgNG7eSrh8aHLK0vd0Lmn359jbUvKP0gxP+jxYltq1bMWpgYWZN3LYLtmz+DnEA3ouP5MPtGNxCXzZrqDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITVf5MUF; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qoQW5PU/"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-44a74032ff8so1408087f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 May 2026 04:17:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITVf5MUF"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-44985f4ab0fso1096140f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 May 2026 04:17:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778239069; x=1778843869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a++Qkbe0N+QcN8OOW7PnS6Fd5+vAfw/HCIN0DGOehPI=;
-        b=qoQW5PU/ocOIDWH4Y4s1oi2scwRHbI8lKD7J12PTQ0ZI/1EbMKUbd0vmPDxKRnzcGH
-         CptoQxgBX8jNYjliO8zdQqt9xei8gixbQsEICZjIwOTFnqSXZ5vcMaVmzDWQ1vWmI7m+
-         p4EGjSVPGkK5p71KlZpfTwaOEZOrNI44RyNtdSdcdwshkg+Yu5VYejBRtnfLexKYTHgm
-         J3Zm4vywuGXGxVg7Hia8pYvG/4XL7l3WsXDMFH2KpUMVHq+Q1nsik/1sLr4EPxBblpWW
-         1weuKoY4+8YhSWwkiisXfPP+892r+Mq5ihScQKOTpexCFizXhu4xSqHeKtMH88Z7lfZb
-         40fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778239069; x=1778843869;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1778239071; x=1778843871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a++Qkbe0N+QcN8OOW7PnS6Fd5+vAfw/HCIN0DGOehPI=;
-        b=mn4TlDu4/9YKBoFFXPpv2i3gXWBwZ2a+V1qscGcHN7Xb+dYSuwbRk5Fe/iBFYUq+YV
-         ywG7FYCWR7YEE1P2nrlYYsvK0QXtDgAtc1dIeDONKgHxY2CazC+DFgV82cJhlIsewYlT
-         Wm5s9AfXqGcqkvA/iv9j62JafdDBriq0NInEas2BhmLSEgXjt3ojuQsEHAPBujaI9Ijc
-         r7BAh1WN/dgBYZ9mVWApsSbXs4PPpkQ/w7b3X2QopS+bhfT2MTXIWBDsCdCJnNV6ZLxZ
-         771jefdAl4Z+xRjSnad2UqnhsjVHTTDEXtOU7o+2Ce7cqblxc2w74dQQdx70KUvnuaqZ
-         7xYA==
-X-Forwarded-Encrypted: i=1; AFNElJ9h4ADb8ObfZX3UQ3oct+XhV7D/4fMlm/87VDXH0ROLIB9fleuSZV/0bIcCzw31Yb3f4ZLkUwMk494O5/NROXu3Pg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVqG2Bl+5+nrl68MnA7TeBWh7Iy7uC4vgUhhx1dx2p3VWtwiyz
-	2jKzpgDB3aawuELPOg0xOTr4lgiUO8LqTkmAbMNzDwPv14jQ7HDlP1m7
-X-Gm-Gg: Acq92OHtcKUpXhXRUeAPFBD9DtsYkIX+76r1kk7Ww4TZedaWM26bgdJ7MlU5ciLTAT0
-	/zjYyGUTu1AxdALGdDFuZ71ajF8YwpkkcPg/bD/myEwjp9i+15p8QrvfLy8lSzbIHCTIkdtNTmb
-	IGBotZ+p/V/ocRil1i7wHxw3NDX5pvAh2SP6r4a9xqADeyjkGJdlp4mxXZZ3bJotNizkDmch+Po
-	51iD2UFgX6FJfdCVmHojoNE1PiUG2YfnUTfl2svTFLRMDQP79+soFGe9xeDepYlqsAFKkfSCH+D
-	h04vVDPhJ7kn+mtExu7YDmbyleTmBXCBo+zrAQY6GOc3YcbyAEJY0EzgOyWwX5duF0U/IxfKkbR
-	mt7lUHS82sMnE2F17bT5s0/aW/berZ3pUrBGNL4prN8FhxzWqQoKhA+jmueoAcp15u8xqpSw7bn
-	nRmpDxRW980Y19tKAQXGnd6NFvHJKZus1gne7cWVpruqHTIDmPBRmGXc1pOBsvKi8u2ijNUN/6O
-	O3+NSfqpncenwp8Gxl2ExBlKsnzJmcKGIY3f6WijSfjDADA
-X-Received: by 2002:a05:6000:288f:b0:43e:a8ad:975e with SMTP id ffacd0b85a97d-4515ce1c8damr20978761f8f.27.1778239068762;
-        Fri, 08 May 2026 04:17:48 -0700 (PDT)
+        bh=39w49gZKpFRzhgKjJD0rTXzt/7rwWxh4HEQyrYnkNBo=;
+        b=ITVf5MUFk40pa11mzI8mybuavlrncSTBVb+JMrRh9ybkpSXDKzIJhJpZ4pkP0b8vqy
+         rbt+duMoCMr4Z1xrYmcCKcLMV18jsJa2C/cRHFsIDfIN+lwtOoyZfRYuRqqHpOtGBBQm
+         nlSFJlYK5T50Z0HMY9ldQglgLLH/fd+td6DnWtmJduqOazNHl5nFk5jo2+K3XYTJQfKp
+         EqcrGo75KO264I9OQWwchX0pFrIi5sd7p3na8T3mm9pK7PG7X7P5M8Bhg1R6+BvAfPj9
+         V+PV3JqwtE6dSEv1Ahf+R6npYO3n+T20dekyW/MmX28/NVgh29mL6WdMxmCzJ42EhqEb
+         4vWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778239071; x=1778843871;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=39w49gZKpFRzhgKjJD0rTXzt/7rwWxh4HEQyrYnkNBo=;
+        b=pifPB0voLptb1gH3CKTEj7/Dbqxgx9/bRLUWEYipRvmYwSCc/LYl/GApPJnNS9jx+w
+         kGdHHVdXnvjfKFKxEjKPspjAWvfONCBRBEzbH3Z4mdolBMt4bIz5TGLWZ4YsT3CgQy25
+         XDBPDM3wzLA9bTKWzY88SaIDeyg4Zi1fhqps3h0yXtDfpAhw1aDfRyoeFRCsJwK91zOS
+         2Npz453WH9gyqfoxvmqSw/10QCev/cHjJfrUA7SxxgQwrIDkW7l/ii9xCA9jx4gYFhVH
+         i7I0oNGVrCXBqC+NQ1CRGXAuQH1JO8GerkQi8ghoOPRRAMxSU0GUjn9WRoEaLxmXhS81
+         89ZA==
+X-Forwarded-Encrypted: i=1; AFNElJ8xiNrtAUiW+isCqUcVFJrx84aGBePMLLXwPysGc1vsSGonFYDAGrqgP4BQi0fM/flnkeEnZv4tge8uayq7dWLqlQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YziVCmO3UvWSGcI0FWQn1O+vVV6ZJTBKV1yZK2F6mRnjC9DhM3e
+	XerWtJcM3TFfwiAfipap9KkAdcFTDEGjC97G3tgGSez2pxLMGyI4+UPr
+X-Gm-Gg: Acq92OGTD9vzLxhMGIT6oJ0TTCD3FFH7as6+ow53JEIlOkfzVkPGOM44dZAINDkxeEl
+	/nwSIl9u5OxgN6sskahh0SM1YVrWkwnkUVAS/F3i7UyfQBa/JfpuQFRQurTnc6VP3PQ/k5f0lPs
+	BHgIatljLg4eWAkheh6VkVtp+u74fj4dq2uSk741pwzG0HQTkl7FuB4h0b/QLg2rxFrvpz3QFvV
+	7j3F7XL8MOZJgHmMAFI/8apoMH4fZWj9EO1n8NxA3fApdZqGaV85Bqy2Mi7NlW233sm56YEi3Rg
+	SM8JyyOssjBO5w1cKVWXm3FkJyiWV8mDD6Yj4rNpytOgZu0VvosV36z1gr6fe5/iMRv/BYSffd3
+	KH68WFvBNcuaoOWaqKwbY68nEmxMJh/OfZ+JPbajHNHqMLaq73cCL+GKTq+8BlOlBFdFlECSSgj
+	bI1HpS3woc7Unjl/38UlZYOf0TWskhuwwCo+JNjxXhdt/lp73dCtFiYepg0XAvifwsn39A+TQLx
+	urD5N5S7yOT4WxwCVkNYsK4c7e7ubDHOaKJmOkwwlD6Ze78
+X-Received: by 2002:a05:6000:40c7:b0:448:7420:9ada with SMTP id ffacd0b85a97d-4515b0570fcmr17977390f8f.9.1778239070587;
+        Fri, 08 May 2026 04:17:50 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:74ae:919a:e57c:bd9c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-454916df968sm3535563f8f.25.2026.05.08.04.17.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-454916df968sm3535563f8f.25.2026.05.08.04.17.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2026 04:17:48 -0700 (PDT)
+        Fri, 08 May 2026 04:17:50 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -79,10 +81,12 @@ Cc: dri-devel@lists.freedesktop.org,
 	Prabhakar <prabhakar.csengg@gmail.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/4] Add DU support for RZ/T2H and RZ/N2H SoCs
-Date: Fri,  8 May 2026 12:17:40 +0100
-Message-ID: <20260508111744.771659-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/4] drm: renesas: rz-du: Make DU reset control optional for RZ/T2H support
+Date: Fri,  8 May 2026 12:17:42 +0100
+Message-ID: <20260508111744.771659-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260508111744.771659-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260508111744.771659-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -93,52 +97,33 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Update the DU CRTC initialisation to request the reset control using
+devm_reset_control_get_optional_shared(). On RZ/T2H SoCs the DU block does
+not expose a reset line, and treating the reset as mandatory prevents the
+driver from probing on those platforms.
 
-This series adds support for the Display Unit (DU) on the RZ/T2H
-and RZ/N2H (R9A09G087) SoCs. The DU on these platforms is
-functionally similar to the RZ/G2UL DU but includes some SoC
-specific differences such as a single output port and explicit
-DPI output enable control. The series includes the following
-changes:
-1. Add device tree bindings for the RZ/T2H and RZ/N2H DU variants,
-   including a new compatible string.
-2. Make the DU reset control optional to allow probing on RZ/T2H
-   where the DU does not have a reset line.
-3. Move pixel clock validation logic to per-SoC constraints in
-   rzg2l_du_device_info to accommodate different clock limits
-   across SoCs.
-4. Implement support for the RZ/T2H DU variant in the driver,
-   including handling of the DPI output enable signal.
-
-Patches are rebased on next-20260507 and apply on drm-next.
-
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
 v1->v2:
-- Dropped the "port" property in favor of "ports" with a single port@0
-  child, to align with the existing RZ/G2L bindings and simplify the
-  device tree structure.
-- Updated the commit message to reflect the change from "port" to "ports".
-- Dropped storing info pointer in struct rzg2l_du_encoder as it's not
-  needed.
-- Add Reviewed-by tags from Laurent for patches 2-4.
-- Rebase on latest next-20260507.
+- Added Reviewed-by tag from Laurent Pinchart.
+---
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Prabhakar
-
-Lad Prabhakar (4):
-  dt-bindings: display: renesas,rzg2l-du: Add RZ/T2H and RZ/N2H support
-  drm: renesas: rz-du: Make DU reset control optional for RZ/T2H support
-  drm: renesas: rz-du: Move mode_valid logic to per-SoC clock limits
-  drm: renesas: rz-du: Add support for RZ/T2H SoC
-
- .../bindings/display/renesas,rzg2l-du.yaml    | 20 +++++++++++++++++--
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |  9 +++++++--
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 16 +++++++++++++++
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  | 14 +++++++++++++
- .../gpu/drm/renesas/rz-du/rzg2l_du_encoder.c  |  6 +++++-
- 5 files changed, 60 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+index 26b95153ce88..48065f4952a3 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+@@ -380,7 +380,7 @@ int rzg2l_du_crtc_create(struct rzg2l_du_device *rcdu)
+ 	struct drm_plane *primary;
+ 	int ret;
+ 
+-	rcrtc->rstc = devm_reset_control_get_shared(rcdu->dev, NULL);
++	rcrtc->rstc = devm_reset_control_get_optional_shared(rcdu->dev, NULL);
+ 	if (IS_ERR(rcrtc->rstc)) {
+ 		dev_err(rcdu->dev, "can't get cpg reset\n");
+ 		return PTR_ERR(rcrtc->rstc);
 -- 
 2.54.0
 
