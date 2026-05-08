@@ -1,168 +1,183 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244262D2382
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  8 May 2026 10:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221AA39449C
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  8 May 2026 11:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778236449; cv=none; b=AW+y2HnINkA241fL+kvqz/BthTLXP635TitSxZtNdxiwEF1kqTrFplZlq4KYUb/61jg/YxPFAt7d64La3YlN9kFcWXOCUnJmKEwIQ7VsFcNJntpqg4A5elfh77ogPucwGun1E35tN+JTUTz6EAfkRfNEX17N94pAlrPIe43g7tI=
+	t=1778239074; cv=none; b=THElawz1MAjuD06I7ogNec5W2omWdxAl+RFmY2H5PdTwtQraJgbNLQTgxLMXG0eDjK6XPr+61hZJxYByRoAEYvsveSOabOrKEDDiIscnuCf/dRUFwWLD8tuH3p6SlqTKmpxEh5OpHs7bvnrPkh9R9OOeqA8aPl+5OuRsKpmwK8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778236449; c=relaxed/simple;
-	bh=36lBpAkEr0H2Wsx1O/r0B32FSIwBe2F6o8wScyIxU0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GSGIVYDP67cSUdEJCv8LxVX44PCiI53DTtJU626TR82Q7Gzbl/N1fO4zjiycdnLh5uowRMRBA90ThGJLMOd31ZyCI0GLTu2K6trO4Ov93fFozBnhIllTh3UTbsl/ov+9xzVWTmvMIxor0A1LPZXP3/7OHOfXaPd/fSc6pykXUbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1778239074; c=relaxed/simple;
+	bh=MlbtACyaTMMI5yMaKErn0MSWJwT8IfR5hys4lJuVZmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rrHzrZYi2+kLgJ6b79nEc9fp2ksYc224aO0SoiQ6iDA3lAwi6ZB/w/TxVZuF9drbvR1YOtPUZ61vAEmP3n9NRbt24XxNZOUC6MDNTGqoJqYNDsm2q9mFGXaco/XcbX6OEoUnuQgGzhqzdzr2gctfQJnFfP8E3UEYsrmxeFIWIAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrvFTadJ; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-944168e8c5fso1097607241.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 May 2026 03:34:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778236447; x=1778841247;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrvFTadJ"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43d75312379so1970168f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 May 2026 04:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778239070; x=1778843870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LZIqmD8zZ0qFeOi8hR6tlVmjP85Y0OQ26EIUPvE1H2I=;
-        b=aBgTEvJHv+PPndyQgwUdRcOkjQ2yNklkBUIni6EM3A7I1N9iYa20V5uEYblXiEKXIZ
-         xNVWL1sYR+HTtKBuD4ywMp8yuM7KvL1NZrWSIU2nNI8QDyZMeZNyYJLXG/KVzxjKc9b1
-         e4tAMRbW0W8r197TWFpF9HpdTr74zzWwhGrS9wi11HqTbZWhxNAH42hXPMsw3qg0rYpi
-         fnHZ3GOJKM799SpqmUO7vOEy8dqaBWU3BXguluEs6KMcHwHPx67hgpDDBhxYcYyzk8pr
-         uf0N1P+bOFOjYsYZ5fkHM3cO0G9Pr4uPgs+6cq2GSJfJTBBkpV/3zY4fyBl82C2JwoLo
-         sbWw==
-X-Forwarded-Encrypted: i=1; AFNElJ+H6/E3bVmh1n1AzASr+jCDyc5ndODA31lF0oYyGv9NpeXFepxNPK2XS2dTm/ZJMiiZwEjeIyEXTJuJyaZfLbIgxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMfdOWbeVsWMhxutOYpK7c2QESdW/Ytg+Ikf+GDom5IzHXOvH7
-	ESBc/2vtdbI2F/3iMkAN5IyWlm/zpc09t4qMJe3DZeJwc8Zgu3a3dM0thXLzaPe7p+U=
-X-Gm-Gg: Acq92OGG8mtycCi0rrbs9+QTk5BxTZyCN4HEm1bgIKkx1eiOBOSS78ZVlnYWcMPdko3
-	i8QIJ6csdY2OC+4tXcNbZcLze8NfOtZU9A5I4+WXOY0ZYuUy72ORPM4k1pE703wMk1c2aineeZo
-	ylgsmIRk6nSYYXYAhPjfIVwp5Av5i/ne93Fzps8Qhumw4vDKZBdkvVQREZiPWCkIUIP6zTrS0kI
-	xBG0XXkDAXPuByJBbQ6WFiXtiADY8nTHsKE/fEKoDui4VlJgCrpi6kbVWZpRs3cEAciy8wN/y7g
-	wszd+IcZd8ZjvFNn4BOEFDDTJuu22GDWydOcJOhKs27nNCMP3UNR9lyz/zlluxw7FzLLh8GD72S
-	12SkoayCftFlHHMBTSEp3GZhmKqxnDQPop3R9oT+xR6M0O+kWAdFWkBbECZzZ7UgcY/AKoNaZdF
-	BW/BvJD7XhzvvG7IPC9qWBY/0v9KmgQGgAvmBApwdtCs7KHhy4H74IV6MnJWjO
-X-Received: by 2002:a67:e70d:0:b0:605:17b8:16dc with SMTP id ada2fe7eead31-630f902ee3cmr6525482137.20.1778236446855;
-        Fri, 08 May 2026 03:34:06 -0700 (PDT)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-63140216a98sm638766137.8.2026.05.08.03.34.06
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2026 03:34:06 -0700 (PDT)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-94b07fddecbso1102187241.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 May 2026 03:34:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/Dk7SWzZRCh6d6O/kFO0dNn99Z/CN9hgbSN1TO0mENEQIKBjvZvY2FGxfOtTLIk4CwgRj3qIp9qBv0dNejAhPUfw==@vger.kernel.org
-X-Received: by 2002:a05:6102:3048:b0:614:bef5:637c with SMTP id
- ada2fe7eead31-630f8c2bb7dmr6450388137.0.1778235990622; Fri, 08 May 2026
- 03:26:30 -0700 (PDT)
+        bh=umnPqhqqv013uzG5MHEH2JE+ZpMvEjDm4eYLN1odRbQ=;
+        b=DrvFTadJNF86zB8O3xJHVsQUrF68KfYD1t3H00Pz6UmI/AVSxOVxi9mke4V0iOh8Uk
+         wjR7c9RImGdq5nb775tyv0ev2ozXrdzX63luMZAT5zs5u8itazo5hc+P5aP0O2yaNfA8
+         n1gCyYctyttkwG2c9TVozaz6rkWclvp6nckmYWn4aoAEEs5Z9BduS6LPa9n2ePQ9t48n
+         Ru3omzihedsHP6f1gFlMQq2ET0k423jnAAsmHy5R+tvaQCnXoy2wTC0Zj6XuWWJfa9VP
+         y+5sGGIpKmh98QZtXXexf5zX+4Fhcn5+ZsEU9pc1Xdau1lh2FpigR6xz7riJr9VUa3xU
+         SZEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778239070; x=1778843870;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=umnPqhqqv013uzG5MHEH2JE+ZpMvEjDm4eYLN1odRbQ=;
+        b=E8kD0a4Y1wUXOddxnycpfwVAObbojD/9Fc4w52Nd1SWOLsB5O5iQ0wiaRVovufej+i
+         9CBVryexCJqhRouja1auEioYUsMWQU039RyYRUC8chZGWqdFFmIryLOv7hE+IgmmjSah
+         rCIWJ+A8wgrXZoTU11iJEGVfB8a6aM6gwEYZnQQkn9iTOOQ22PaWw1zERHDczesyG8+L
+         eDQu+Iq6/xUkUmbVxicP2a+5/6LPM56nD9Fi4YniZf8tMy9VXULDcKxgqwC2hYSsdb5M
+         kAB8Znz5lLXT0o2sTZVVtZzV82NOU1NC6yRVfbbe2mOn512nXOVaEwdKF+evR/oNsf+9
+         Ftnw==
+X-Forwarded-Encrypted: i=1; AFNElJ9rRrZ4Ge+XifnbJnxi105o8J11Sl8VEP3j1m/cbUhBipCuPEpj8g/smoIcerK2KWMA6o8CIojboJoeEbTlnfPouw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxijRcr3XexrgMWautw4yLcfG5yVpmTrPitjkX9wHc+OzSJnzM1
+	sjVbUTco2Mn7cI6Vbo4qpHMkpx4r0Q6Y6+m/PVU/22BH7mZ9HwbFK0gF
+X-Gm-Gg: Acq92OHmYRuqIMk45U+7NR51WhJcesW3WO2317FMjIoyJvZR6F3Ajd+/ue8GA8hkTnf
+	dQZfUTw6zDXuG2BvrfL8kxm+Z+UzQoREQVoSrDyAvLETpHO2MVMW5qvCdJQSnHLesoEELTVcr79
+	0sIf7dVvvMys8U36Mo4tm6Cmi6YwTaFHlOnYpVe2denwmIlKm4MNernwWFSXv9Ln/w3DMbaOUpV
+	cFJIhGT3SDXbWfq8IFzedQCnpd2xs2hjobkl28UNTeU2yeI+F/gkMui0nu/G2EJugc39Ssr71vD
+	We+xQcwQeYpLr++r79Mh8oBAmm5HEmSeS0JVC2eCh+j8FgiUF9Y/OAgqrcL78pAyDbONuoQMpmG
+	iwsCSI7GhmbRjZBX3J2C0j2YWbhKT2YqNJLad+jcAP47sIlcOvCNZ1hUZ2UFuDd4A/bWl6Kxw08
+	TGPp94xhKFGuzelCjaZ5HjFz6h/cwrASrDxBGgXOmtApKULlvaPQswt2H57ozaKjGul3APU4Gwv
+	B0W4EkNNhKMPad/5ioLoWiGWnes0SF+cYgyFpqnQItkmjQp
+X-Received: by 2002:a05:6000:20c6:b0:449:8650:954d with SMTP id ffacd0b85a97d-452e84663e6mr7389736f8f.12.1778239069759;
+        Fri, 08 May 2026 04:17:49 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:74ae:919a:e57c:bd9c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-454916df968sm3535563f8f.25.2026.05.08.04.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2026 04:17:49 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 1/4] dt-bindings: display: renesas,rzg2l-du: Add RZ/T2H and RZ/N2H support
+Date: Fri,  8 May 2026 12:17:41 +0100
+Message-ID: <20260508111744.771659-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260508111744.771659-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260508111744.771659-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1776793163.git.geert+renesas@glider.be> <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
- <aekXUvIPb8nkhdKu@pluto> <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
- <ae6Zp54NhKlVes8J@pluto>
-In-Reply-To: <ae6Zp54NhKlVes8J@pluto>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 May 2026 12:26:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWK3Noh5ZQVWT9C0EKyXZePMaJ97C0A_syK+xCb_=abeQ@mail.gmail.com>
-X-Gm-Features: AVHnY4J3TVnOKvIG81cskhXstanCgVV2EYjhdTAUgyNfFJiiKyj4H0BCwyLVTfY
-Message-ID: <CAMuHMdWK3Noh5ZQVWT9C0EKyXZePMaJ97C0A_syK+xCb_=abeQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Cristian,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, 27 Apr 2026 at 01:03, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> On Fri, Apr 24, 2026 at 02:08:55PM +0200, Geert Uytterhoeven wrote:
-> > On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > Also because this should be one of the selling point of the SCMI stack
-> > > in a virtualized environment: you can ship the same kernel drivers with
-> > > the same DT and you know that ID=<N> will always identify the specific
-> > > resource that is needed by your driver without worrying about the fact
-> > > that in reality in the backstage the effectively managed physical resource
-> > > could be different across different platforms, because that does not matter
-> >
-> > This sounds strange to me, do I understand it correctly?
-> > So the ID should (1) be tied to the use-case, and not to the underlying
-> > hardware, and (2) be the same for different platforms?
-> >
-> > For (1): Then we must not put these IDs in DT at all, as DT is supposed
-> >     to describe the hardware (and firmware IDs in DT were IMHO already
-> >     a stretch before).
-> > For (2): How can there be a contiguous list of IDs, as not all platforms
-> >     may have the same underlying hardware?
->
-> I would NOT say that an SCMI FW must behave like this regarding IDs, but it
-> is a possible SCMI deployed setup that can be useful in virtualized setups
->
-> I mean, the DT describes the hardware of course BUT when you refer to
-> some of this hardware DT bits from some other subsystem by referencing a
-> phandle, even in the non-SCMI world, you are in fact selecting a specific
-> resource that fit you use case, right ? Can we say this ?
-> I mean you needed that specific clock or regulator that you described
-> previously so as to be able to enable some other piece of HW...
->
-> Now, the SCMI provides an abstraction on top of this, since you really
-> discover domain IDs of a specific class (clocks/regulators etc) you are
-> in fact describing an HW abstraction that you then refer with the usual
-> phandle...also because there is NOT so much SCMI hardware to describe,
-> given that the HW is handled transparently (opaquely really :P) by the
-> driver on the FW side...
->
-> ...you basically obtain such domain ID, usable as phandles through dynamic
-> SCMI enumeration so that you can use it all over your DT to make use of such
-> resources...
->
-> ...on top of this, consider that the SCMI server CAN provide to its agents
-> a per-agent-view of the world, IOW it can (and should) expose to a specific
-> agent ONLY the resources needed by that agent, i.e. it can expose the set
-> of resources 1-N to two distinct agents and that does NOT mean that the
-> underlying physical resource mapped by ID=3 in both agents has to be
-> effectively the same piece of hardware: it could be the case, and this
-> would be useful to exposed and managed properly a shared resource, or
-> it could also be that the same ID=3 could refer to completely distinct
-> pieces of the same class of hardware...(same protocol same class of
-> resource...)
+Document the Display Unit (DU) support for the RZ/T2H and RZ/N2H SoCs.
 
-Exposing only the clocks/reset/power domains the agent can use,
-in a contiguous list of IDS, means that the number space changes,
-depending on which resources are exposed.
+The DU block on RZ/T2H is functionally equivalent to the RZ/G2UL DU and
+supports the DPI interface, but includes SoC-specific register differences
+and has no reset control. Add a dedicated compatible string to represent
+this variant and update the allOf constraints accordingly.
 
-Suppose you have a system where you want to assign a specific hardware
-block in the SoC to the realtime CPU core instead of the application
-CPU core running Linux.
-That means all resources used by that block must no longer be exposed
-to the Linux agent, and the corresponding IDs must be removed from
-the ID space exposed to Linux.  As the ID space must be sequential
-and contiguous, the IDs must be renumbered, impacting resources that
-are exposed to Linux.  As these IDs are used in the SoC .dtsi, they
-must be changed there, too, However, these IDs have become part of
-the stable DT ABI, and thus cannot be changed.
+As the DU implementation on RZ/N2H matches RZ/T2H, describe it using an
+RZ/N2H specific compatible string with the RZ/T2H compatible as fallback.
 
-This patch series fixes that issue, too, by describing the actual
-hardware in DT, and doing the mapping to exposed SCMI features in the
-kernel, based on which firmware version is running on the SCP.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2:
+- Dropped the "port" property in favor of "ports" with a single port@0
+  child, to align with the existing RZ/G2L bindings and simplify the
+  device tree structure.
+- Updated the commit message to reflect the change from "port" to "ports".
+- Dropped RB tag from Rob due to above changes.
+---
+ .../bindings/display/renesas,rzg2l-du.yaml    | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+index 2cc66dcef870..18776ac9e7c7 100644
+--- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+@@ -21,6 +21,7 @@ properties:
+           - renesas,r9a07g043u-du # RZ/G2UL
+           - renesas,r9a07g044-du # RZ/G2{L,LC}
+           - renesas,r9a09g057-du # RZ/V2H(P)
++          - renesas,r9a09g077-du # RZ/T2H
+       - items:
+           - enum:
+               - renesas,r9a07g054-du    # RZ/V2L
+@@ -28,6 +29,9 @@ properties:
+       - items:
+           - const: renesas,r9a09g056-du # RZ/V2N
+           - const: renesas,r9a09g057-du # RZ/V2H(P) fallback
++      - items:
++          - const: renesas,r9a09g087-du # RZ/N2H
++          - const: renesas,r9a09g077-du # RZ/T2H fallback
+ 
+   reg:
+     maxItems: 1
+@@ -83,7 +87,6 @@ required:
+   - interrupts
+   - clocks
+   - clock-names
+-  - resets
+   - power-domains
+   - ports
+   - renesas,vsps
+@@ -95,7 +98,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: renesas,r9a07g043u-du
++            enum:
++              - renesas,r9a07g043u-du
++              - renesas,r9a09g077-du
+     then:
+       properties:
+         ports:
+@@ -137,6 +142,17 @@ allOf:
+ 
+           required:
+             - port@0
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-du
++    then:
++      properties:
++        resets: false
++    else:
++      required:
++        - resets
+ 
+ examples:
+   # RZ/G2L DU
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.54.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
