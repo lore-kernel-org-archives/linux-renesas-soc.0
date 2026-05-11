@@ -1,70 +1,99 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A6B37B3F6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2026 12:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE053BB9F8
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2026 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778502176; cv=none; b=BlRcKwNK5wx4zPEbfzZWv3X92n4KlEfxE4g2QGTPySqiauVPVy31x3UlOJ4Id4UCnt+t52Pb6lakVQ6u2YUaC99WSPQFGS6n3aBOBqnYf1EiA1pVzl3XWpqXqsIzgUbtXSG/hPebiiqcoR7sCI2IjYTVrl0gGr+E2efBw3bBwYI=
+	t=1778505874; cv=none; b=ogWa9kES0I+q/zdKXxJj8K5YXhNaFaVMEnB/qR7xauJIv45fd2mIukwUFh6ozwC58b+qczoEYCzWQRzlI2ZBlv+x/6HKx+XPiVUYpMPzWWu2gfXLPOTZQhb3FbMbJN1SmGicbhqHtz5aXoi9g5UHiFZoKzKj7BRrCaA6Cy/xma8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778502176; c=relaxed/simple;
-	bh=KBUChl4XRf16bOkf6V6U0wsXT+WF9QFU7IYawomblPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CgVEG6jALvXeEW5Sn1mJFT/6mv/dvzn4ik9NOcMdo0HJ8BS9fumNgtc1pufGv53iRoIxq+dBRq2qAIvkwm9MwBM0YTep4Cl37R9gBzewcNWnYsozDKywDkHuyi8nUfsezzJMLkpD5NQlIOjHVLfn+8FWKBCemYYjFRozsfLxNyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ISer/pmr; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ISer/pmr"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0082D2886;
-	Mon, 11 May 2026 14:22:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1778502159;
-	bh=KBUChl4XRf16bOkf6V6U0wsXT+WF9QFU7IYawomblPQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ISer/pmrlZP7CzFK68Kq7odAqiI01G3atW9dFRZCINrq+b2F14K2B3f9I3KbSVDeE
-	 K18GbNWMM28+Re+3FGb5dQoQ0fNEdSmvJaAcnMZgocsvc2gJBfinve4HOwUEcofJeA
-	 EWKR+ykawTrFAeWAEnfuIR5kjrjRKo/kbxV8Ljhc=
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [kms-test] [PATCH v1 5/5] kmstest: Fix typo in comment
-Date: Mon, 11 May 2026 15:22:37 +0300
-Message-ID: <20260511122237.3084426-6-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260511122237.3084426-1-laurent.pinchart@ideasonboard.com>
-References: <20260511122237.3084426-1-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1778505874; c=relaxed/simple;
+	bh=YfKRsoMpcmlRfc2xnButWGYPrfkohycR20/XxXRIfqE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BNkPtarGUufn2E33puUXdR+gj+GEEvgYzTr4YIDv6ZD8ytqk8n7YFN9TnP0SE+hcBr6VV+Z7QOuJnTCrewIdY2ZNw0wCc/J6lkALsgx1d1UoHHOUAISNgZVR6Qcz0phIcMoAsE93djqvB0KiH8Epg5H5BMb/+6OshcKpMqOkrp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-6314a0eefb1so762436137.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2026 06:24:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778505872; x=1779110672;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=law7pV0kaAFlrOEy6awjJWyzbjCOdnKqodHrGvaGQIk=;
+        b=NxfG2b5KexWj0aZUYkVkzxYwWHA7zhTtUHkTauy7ZVAaBQvx8vIsP15xLTDhFqJp/N
+         jd3FWowSxWontFQcO2wCMUkb1Y1kvK4qGazRyH5cYAOwpIgHkr1mwfuR4GcQjadzr0pF
+         pVq8oFCxNTQnFNcgZO5SqEn69AxP2INS0fU94JXmOFExtDZRSJoGCnJdYhp+bRYaCV4J
+         QhmX3RCDdCujhVD58C2FyQ28A8LGcGzMqDJnyOpKvorDR+VikqAJh6sVhHmk5TY7SHO2
+         JM9WBwb7nDAspTOTICwF0jFN4dXwLovpiiFRNVgIx71RbeOQy7+4Z8W+ZeIAQCWjlCur
+         Zy/A==
+X-Forwarded-Encrypted: i=1; AFNElJ+isThPfVaOsRB0RN36L8bZ/7QTRK+SHrX5TdkEMUW0lqUCCPjsSDWbJwsNns2P/USN8ubDKq7ee1W+E2XUsOt0BA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGqd5WWCl87PaHCb5P+JJNwrYGrM3XwutQSf2btIM2NAQQDy7i
+	LpZ5SQgtjHavZIoMoYW3tq5vI/koYmhPrWFU/UWibqnOcHlVbCBjJlRqAne++vaA
+X-Gm-Gg: Acq92OE7hj85w8fz8Sn+QXkf4b9NwaOdrgGWuMKYlNI0SfgpdACLyrPWf/ioxGDfXjp
+	r336KB1DjOeSMai4WYiUDbdzbb1Kg5MU0B+DDVI5LUEMVJWR9jHKLXICOee7dOlAuzyEuVnGgAf
+	qCVjNBaGyOSdNpkBkk7ijp7CnUE3Hb10jJD11HACyy6HOHTkMQ898cxY2uZ9SQE/DFzzPxuksyp
+	CcQ/1hOOJtcBsXitiEHWcpA8lIBx3hcKJAn5hL3Ahs+l/FFNgAdxXyiTzwToT6qcGtQ+HekiLaz
+	YT5PQ1IRRDZ2UjEw8fJdwf7pJ4sWhSVnzuyyGiuebhgtuEWKHwqF0NX/DEZrHHQFnAU4RURPJVb
+	SKNrd5pOdhpSThdosRbP7UeagDrAODFTII1yL0MAIZ3IvbbOho5L3BcAbccbqrPGBJaEEp49wTi
+	sKlJHAz2GEs4azz2JlXXZzPw63NGHYKq60DtlZqevniP6eoaOV3U9NSMXxtBjAfqc7Lt4Akbdbd
+	R4=
+X-Received: by 2002:a05:6102:4499:b0:632:3bb5:95f1 with SMTP id ada2fe7eead31-6323bb5cd8cmr2684918137.27.1778505871650;
+        Mon, 11 May 2026 06:24:31 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-95f21b50247sm5332423241.9.2026.05.11.06.24.30
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2026 06:24:30 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5752b279662so1284795e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2026 06:24:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8htGXlHAogM12aGmEo6aBzOR/CJqbvzH0JTAZlhq/DmaXDhybSB+K3j1jtwymGE3F+LWqfNSpagcho/k5L89e2Ng==@vger.kernel.org
+X-Received: by 2002:a05:6122:a07:b0:56e:f071:d4ef with SMTP id
+ 71dfb90a1353d-575595be49amr10895995e0c.8.1778505870316; Mon, 11 May 2026
+ 06:24:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org> <CAMuHMdVwXjE0Bq1KjENkN4m2h0_nN0F2S=CC8mW3B92NdpN2_g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVwXjE0Bq1KjENkN4m2h0_nN0F2S=CC8mW3B92NdpN2_g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 May 2026 15:24:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVmpxtMno3Tt5LbiUHH1etGD2aq0c2rjde1kcs5e4Acsw@mail.gmail.com>
+X-Gm-Features: AVHnY4KM_QK8CB2bNfMDHhNxtA1NDb0fdW8Zso7UqyzZiddKho5PeDYIcKub3kQ
+Message-ID: <CAMuHMdVmpxtMno3Tt5LbiUHH1etGD2aq0c2rjde1kcs5e4Acsw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] arm64: dts: renesas: r8a77960-ulcb: Enable GPU support
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix incorrect grammar in comment.
+On Wed, 29 Oct 2025 at 15:51, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Mon, 27 Oct 2025 at 22:13, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+> > Enable GPU on M3ULCB with R-Car M3-W.
+> >
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- tests/kms-test-brxalloc.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Now the crash in case of missing firmware is fixed by commit
+26735dfdd8930d9e ("pmdomain: core: Fix detach procedure for virtual
+devices in genpd") in v7.1-rc3, I will queue this and the other patches
+in this anonymous series in renesas-devel for v7.2,
 
-diff --git a/tests/kms-test-brxalloc.py b/tests/kms-test-brxalloc.py
-index 3ccd6995b449..04d4029a8c54 100755
---- a/tests/kms-test-brxalloc.py
-+++ b/tests/kms-test-brxalloc.py
-@@ -19,7 +19,7 @@ class BRxAllocTest(kmstest.KMSTest):
-     def main(self):
-         # This test requires usage of two CRTCs connected to the same VSPDL
-         # instance to test dynamic assignment of the BRU and BRS to pipelines.
--        # This is only occurs on H3 ES2.0 and M3-N. Check the SoC model through
-+        # This only occurs on H3 ES2.0 and M3-N. Check the SoC model through
-         # sysfs as we can't detected it through the DRM/KMS API.
-         soc = open('/sys/devices/soc0/soc_id', 'rb').read().strip().decode()
-         if soc not in ['r8a7795', 'r8a77965']:
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
