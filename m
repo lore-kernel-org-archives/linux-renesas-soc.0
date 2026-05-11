@@ -1,283 +1,185 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232753CF674;
-	Mon, 11 May 2026 08:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778489870; cv=none; b=WOp6OcYJAbhm7gY5HvA7vuagsvu9eYdrZTE34h37hekwQjMGLFwac9jP8TvT7uNL3LWbEf0+PdwbvxTI1X1zRyp/PEof8etAGHfaDW3jc3HK4fu7+kMENwlCve/Ov0Xr9QCTnOPbM2KPLXAy45Pk2lzMdg935gLuryAEe0B+oeU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778489870; c=relaxed/simple;
-	bh=BK4EhySTkA3ZOziO+g6xAlQYH+gxhg9yeiDTQtpN6IE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nBRMAzg9FIa0Bt76Tkiu+KIoeZXU4yhrx5FHpc8RtpsZaK8/+QFRuEC2xrFeghisEcOSm+NMrIwIEKcejQc47zUwr7RI8MCSydl+8orL2v+T74tobs/c2BksIw0fBWZUvpxuEJH7ngSI8P8Ch2Ucq+wuW04U6BW2hYuQ0GNvfig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010007.outbound.protection.outlook.com [52.101.229.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0300820E334;
+	Mon, 11 May 2026 09:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778491016; cv=fail; b=Ip3SuPWIywWFMFbVhCEeFGEymCYM1qE5YxyVxYRkcgLZf6dN7eus4HVV1ebl6QXwgUWNfAs6npJNUeAJaXUHPoZjY0qajcPf4E9VfQzRf9BIHl1W5kflUscGmxMQ205dNMkkBlX33h/yd3s1anByja5BgsdFC2u/OHgiBWICWtU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778491016; c=relaxed/simple;
+	bh=5yW5vStuf2GF5ajWxAV11BxJ8yCSHzxMfa0v52AzJmI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xl9o5MciVICZYvfSvSKs7uN0EuIzsigFIdupg47ZptPz/0/05NHWQ8cb6/1XN5/Zw5cd2+deuW/yXe8B/1URCG+cyhEeGpwH5tP6ng9DmoW/hvUaU1U/m2SRe1pM5Aeg77epMXN5y6QJJ4B4pantFdkG3NafjixhtcGMCVjpwVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=X4vybbL8; arc=fail smtp.client-ip=52.101.229.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 6Ck5V8yqT8WvcbqrBUeWCA==
-X-CSE-MsgGUID: l+UWU5y1R9GxX3gtFeLoxQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 11 May 2026 17:52:45 +0900
-Received: from [127.0.1.1] (unknown [10.226.78.135])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CFC114009A31;
-	Mon, 11 May 2026 17:52:42 +0900 (JST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="X4vybbL8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yrUvE0GC/nW0TYnKE3rModXa+eJgBytnweb9I5EeoQjtJ4jYpTuC1snwnb29H8HDnDm7pIZvRoyFFn/Bc9inlULiPcRsCXT/+5khQTrInbpu8LtlpqYdn57LtEHTUqx/aSrJgaZhSw/e6mDDeNOq5kOSSTi0zUGhH9xBh5nUR0BVF6GasG+kYV8urN0Mq0IwRug40lrIFsHD13nysLvA2wSu9w5Fgh6CJ9aHb99bBH2tFgv9UTvR9QyeD89msWctImXpe4eKZ0p2zudjIPCr8NsnxHBjlbidXP1x0TIPyI+MRaIUXiplVduRGufN9p2dM+kfSkh2I3ZrhIrjES7BPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5yW5vStuf2GF5ajWxAV11BxJ8yCSHzxMfa0v52AzJmI=;
+ b=gvMd4a/NBX089D330xaaR9m8oUkyKeGAEGEEEHf1B8wKXv1LS0DQSkjeYDvdrT6vO4xHucMoJHq6Xz51xZHIepGUHlLRTUXfymA97MwHdO7cTj9jV6ZX5yKTGC+9nkraANSR7UnAdTYxSxqDgJj3pZ387AjBwlWDZCDkIAv9/G4TGPK10UXxGOIY/taOlu2p64l+7e4y/fnMdwL+rTC//M8YWQbN2xmaEkKJrL3nfj7hgZ9+LbMCzwZxPQVL6r/ZxB5CKrQltWi0oW49eNG2zjoX8UGXU72tXtOr15ajvb0WgTj5fv5WbSQzAx1w5Dg6csR/0Elal/bREiDLrTnd9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5yW5vStuf2GF5ajWxAV11BxJ8yCSHzxMfa0v52AzJmI=;
+ b=X4vybbL86BaArxZ5D/mrt4FxUCi8SKG2W0M7bKfBeMV7+tOYvH+/5dXrb9Jox946JpLxvzWq3YyP2TQ6XxepLrcraXiLsYPK3q8SyC9Vh45iHl3APMiscjmbpBCZkoOB/2/PfyIRIpunyi/kq+X3yHbVKrLOgT4rP7WrDOWOJ68=
+Received: from TYRPR01MB14284.jpnprd01.prod.outlook.com (2603:1096:405:21b::6)
+ by TY4PR01MB15657.jpnprd01.prod.outlook.com (2603:1096:405:2d0::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.22; Mon, 11 May
+ 2026 09:16:50 +0000
+Received: from TYRPR01MB14284.jpnprd01.prod.outlook.com
+ ([fe80::4fad:2240:4042:6338]) by TYRPR01MB14284.jpnprd01.prod.outlook.com
+ ([fe80::4fad:2240:4042:6338%5]) with mapi id 15.20.9891.021; Mon, 11 May 2026
+ 09:16:49 +0000
 From: Michael Dege <michael.dege@renesas.com>
-Date: Mon, 11 May 2026 10:52:08 +0200
-Subject: [PATCH net-next v4 05/13] net: renesas: rswitch: add exception
- path for packets with unknown dst MAC
+To: Paolo Abeni <pabeni@redhat.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, niklas.soderlund
+	<niklas.soderlund@ragnatech.se>, Paul Barker <paul@pbarker.dev>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next v3 12/13] net: renesas: rswitch: add handler for
+ FDB notification
+Thread-Topic: [PATCH net-next v3 12/13] net: renesas: rswitch: add handler for
+ FDB notification
+Thread-Index: AQHcwPXQ97XM2omt00CQ1unu/MWXwLXLwRuAgD0KRqA=
+Date: Mon, 11 May 2026 09:16:49 +0000
+Message-ID:
+ <TYRPR01MB1428405271FFF79A580628EAB82382@TYRPR01MB14284.jpnprd01.prod.outlook.com>
+References: <20260331-rswitch_add_vlans-v3-0-c37f41b1c556@renesas.com>
+ <20260331-rswitch_add_vlans-v3-12-c37f41b1c556@renesas.com>
+ <09e99e68-f7b1-415d-b1ed-efe632432222@redhat.com>
+In-Reply-To: <09e99e68-f7b1-415d-b1ed-efe632432222@redhat.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYRPR01MB14284:EE_|TY4PR01MB15657:EE_
+x-ms-office365-filtering-correlation-id: d6afce13-4934-4dee-52db-08deaf3e0888
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|18002099003|22082099003|38070700021|56012099003;
+x-microsoft-antispam-message-info:
+ 987gxaDjKe/8P1j8JdZ31lOdTHLKxDvgV3jmPZwuPDZJ+RAlkK3x4GYm3C9abx/+8OtKHrqbW8tAur0NtjnfTY7SH2g3j2/HyL9rw9J1WpKqCuck81nbZqfgUyazpCK2FwAMDqfy4wux0WrE11TtBOdW8+oGeiZkmcJ+Vji2vwpieboTcbrs1EnT72E+rpopq8xo1wWgLFimOzXb7QBVGxxatlCN55KApVsuEslBl/SXcE4mTRcQFEAkBwOltGHbH1r7ZfLzI2ZlLImJ3zK6vgIBMlTCiF+WBX89LC98BTRt9kMDsza2axvQ9bSgl4fT8534Oenz95J2nHYvQ1o9Giw/OuGYVzJR0tXVIQpE58ObncMPC6czGgWyb0KB14wYtCuGL2vAtnXWeMPkiZDjeY/je/DKybZFyjKqQyioFPAjoBpQFGCz+m7piDTAtjMTvc5uwTCIbotj6nvOdmPI/1M3ZWyF9/opCfa1+j8Mhv/u4B28uq7vCPGIgWAGQat6hvX+lNIPiLmOEA1B5OsozieInTRW2wqB1CopcTHgySghEsy7OqwP6dhnjWvKGj3a3xXCVAzD+Y/gAn/F7RmDyogJiAop4nNrgsOo3ETGNodEa/JN5bCguEAgrAFJ9Xi9DRJwrJyTpdnpns6bEKafyKMJt3L5O2oQ0GSqwRSuO4GY+TSQPan0wRrAaIKpnuUIHapkci/212Tj7CH9oj8Q3FVrPECs8SJUTMCBmj7L1tiDAMeBW6gw8Z0xE/Bp2SXx
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB14284.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(18002099003)(22082099003)(38070700021)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bkt1SDQ3NEUxTnhwbEJIMis4TXN5dUd6QjI2RzVmekNPNmYvSTdzcVpYRTZL?=
+ =?utf-8?B?UldHQURheVJsNWZ1MzhBcDF5Nk9lc0YzSWlQdWdXVm5BeE1NVGJ3L1hLQk01?=
+ =?utf-8?B?amNXbGlJdUR4b1QzczArbFIxTUxjd2t1NjZxQlV1QlRYWEJPZDRXREZZRXB5?=
+ =?utf-8?B?ZFNUL29obUhjMGY3M3lXaVpjVGJkZ2tPNVlLbjJQU2tYVXRia1M1OVZRQVlB?=
+ =?utf-8?B?ZXIxdEljZDVLSzQrS2UwMzJ6YUVDRk5BbFcxdTQweHhXcDcvUjNXaFdndVdP?=
+ =?utf-8?B?VXVIZndIdXZjSS9DN2pEM0FTczU4TkQyOS95TmdEOFdncFExS04rZEpjcERM?=
+ =?utf-8?B?aUZhQlp6bWVnZXVVVkt0SVRscTNtcnZ2WEVWMFljMVEvcGJMQjE2RS9lL0pN?=
+ =?utf-8?B?RDQyZFcwUlFyWkYyN3QwWGUyZ09SclBaWGtrQjQ4aE9mS0VocTFIcEZESjNa?=
+ =?utf-8?B?RVBLanY0cmxmRzR0Y1MrbHZJR3gzUURCVGhpUVZLRk1IWG5hNUw2WjhteWtS?=
+ =?utf-8?B?UFh4RVo1MnJvR3ludmVBYVFXQnZyeGNTTTZVa1ArbW5ERDFHcEhnRW1acnNN?=
+ =?utf-8?B?SDJXOXdIZDNYems3ZDhBYUdJQ0YxNzBMTUJIeDJPMlFoOWphSSszT1pvMUdH?=
+ =?utf-8?B?YnhYYUgyZGFDeEpCWmJHbDZWQURENlIzRzhSMXFZdkczV2hiUU1Gczc3cWZM?=
+ =?utf-8?B?ZVFEY3RsbUc4c3p1T29DUlQ0Rkl6S1RSOU1EMEo5ZDdoeXYwMk5CNHVxdTNh?=
+ =?utf-8?B?Ukc4Z2N5dTVLdUxXdXptWWh0dm1WdVRBbWw4WWNFcGdvMHNGK1B2RmsxM1Zi?=
+ =?utf-8?B?NGRzd0VlM01EV2lXVE5DcHVmY2FsSjhtMjBWbVBFbDgycUJsUUJ2WmFhV1Nl?=
+ =?utf-8?B?bklGVHBrL3YzbGRLZWhGSVZzTUJudEJBazlKU01iMnRPRzR3L1c5NnB3Y2x2?=
+ =?utf-8?B?VVF1Q0x3Qms1MGQzS1V4ZkQwd3lJcE5sbDJ3YktBU2JldXpmTmhjdXFXbGMy?=
+ =?utf-8?B?Rmh2UUJNOWZKNDI4UVpQNVpjOXJDMnlYeWZJK01RTUpNQWpjZVkrcXpMWGFt?=
+ =?utf-8?B?ZUpCc1pUSGhxL0h6V3ZnNGxXMUZPRjlqRWxLcWJZLzVEYm1NeXZvZ1FKeGpJ?=
+ =?utf-8?B?K1diRGdwcVN1SGVkcjV0aHcxZFB6bGozVzcvTmxDLzNoKzJMRFBpSG91eTFK?=
+ =?utf-8?B?ZUxzN2xlNVNkcXJoclU3K3hKQy9uSGhxVHNuQWZ3TWtIYTRqRC9zZ0lzbXdQ?=
+ =?utf-8?B?T3lDWXNXY3czZ3ZVcWxBazhycVlEc294akJid29RanFzN1Y5NW1yZGg5MU45?=
+ =?utf-8?B?RUhZY09NOWVqQXhuMWRlTU05eTlCNmNIQXAxc1Iyc0RIc3NrOFZPamVzdDVY?=
+ =?utf-8?B?eExLeHVST1ZmcnVkTnBCd0xKc2M4V1dCQUwzR0ZsOFZaU2hleWJrZ3B0b0xB?=
+ =?utf-8?B?UlBkbTl5U29UNE5hNk5JcWhUQVdaOHpFb28vY1duNmZnSjMwSlV1ZjNqajky?=
+ =?utf-8?B?OTdmbkJOTDRTa2ZSSjJaTEd1MmhUVHJKK0R6OVd4b2NXRnV6UmgwWGZpN0p1?=
+ =?utf-8?B?RmR4cytBREtPL2NNVHE3V2t5ZzRlU3JOOEM0a1kzczNDNjhrRVNDNzdmdFAr?=
+ =?utf-8?B?L2RGMlpyUHFKTzdmaS9vNDVSYXhDT01FcG5FZk5CSG1vNFM0R2ZoOTE3LzVT?=
+ =?utf-8?B?eE9pQ2tDb21aSTVTcDBXTll5UWczOGxyVVNFdUNmZlorK09tT29UNkFqaWZC?=
+ =?utf-8?B?N0RlKzQ5c3JCMXo1S0Q3b2kzbldnWjUydzQ3SEFlaUl4aXlXc1I0REJoOUNp?=
+ =?utf-8?B?R1BOQjFnK245MzFJNVgyVnhOaFNLdEpFMFlMdzFlZlVTZUorR2hlSlI0RnVw?=
+ =?utf-8?B?SlZRQ3FFdm9lNDJPV2hqVVdaLzl2SUJRanMzNElZRmo2bVRqQWNPckNCOEU3?=
+ =?utf-8?B?a08rb2dQelMzU1N6azUwK0lTaGpHdlFURkxvVXphbmZjbFhTc3Nic1llSmRp?=
+ =?utf-8?B?T3lRL2FqaVljS1pTd2pyZXh3UytGNWhXditTQU8xTVgvOFF1QW9lOFZXNVR5?=
+ =?utf-8?B?VWR4S0s3NFBWZ0ZSSXZzWjZFenE3Z0tYUk0xb2NBODlhT2szdlVKRkVpOHMv?=
+ =?utf-8?B?R0xvVDdua0dwRHJmZkJrd0pRWVZkeXNPbHMrNjZYdFpCZUFNeGlXcVBBZXZl?=
+ =?utf-8?B?VzJTbTVpNVByZnFFcmdtb2xVV2J4K2RNeUJjeURobXBtY2VvSm1yWXZYM0xE?=
+ =?utf-8?B?Z3luOWpoWCtFdnVXNmhYdzhVcHVybi9qUGpYUnJYekZhZmh5cm4vbHdFaVla?=
+ =?utf-8?B?U01QN2wxdWN6M05Wd1BTMXJla0NmMG1FU0FQcFNqSm9VUWNUbDhsdz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260511-rswitch_add_vlans-v4-5-a5a225f8faae@renesas.com>
-References: <20260511-rswitch_add_vlans-v4-0-a5a225f8faae@renesas.com>
-In-Reply-To: <20260511-rswitch_add_vlans-v4-0-a5a225f8faae@renesas.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Paul Barker <paul@pbarker.dev>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778489544; l=8735;
- i=michael.dege@renesas.com; s=20251023; h=from:subject:message-id;
- bh=BK4EhySTkA3ZOziO+g6xAlQYH+gxhg9yeiDTQtpN6IE=;
- b=NeQ1zwXSjSn7k/H8SqaRzia+VMx1B8sBbbH+KOPhXJ6P1lQwPsuIZE2J06A2ydzwU15nqiu3W
- 1Kms3vabOX9CadlidIe2uGCEJo8EJTsLA5Wp7xrAqMZhWOd5Wzi47a2
-X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
- pk=gu1rwIcCrAxNMv2I8fIfiQvt51xzZwnQy4Ua/DscQt8=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB14284.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6afce13-4934-4dee-52db-08deaf3e0888
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2026 09:16:49.9097
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: c3bQ3+6L+EGYr7+ggZS0CFK0aQwnqVEcWnJYQ+U1udmZr49j524mFVQQ2smc0lwtXE0orsOKbcBQJ7tfVbVm/bc5NN5uJBszo3KYSVynppI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15657
 
-Packets with unknown MAC address cannot be handled by the HW forwarding.
-These need to be forwarded, via an exception path, to the network driver.
-
-Creates a queue for the exeption path. Packets received with unknown
-src/dst address need to be passed to the CPU. The received packet does not
-have the correct source port information, this is derived from the
-descriptor and added to the new queue. The received packet is added to the
-new queue and sent to the CPU for MAC learning. The CPU will broadcast the
-received packet, to all ports. This is how the HW learns the new MAC
-address.
-
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
----
- drivers/net/ethernet/renesas/rswitch.h      |  2 +
- drivers/net/ethernet/renesas/rswitch_main.c | 94 ++++++++++++++++++++++++++---
- 2 files changed, 89 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index e56c15dd4ecd..8415f52a239e 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -1148,6 +1148,7 @@ struct rswitch_gwca {
- 	struct rswitch_gwca_queue *queues;
- 	int num_queues;
- 	struct rswitch_gwca_queue ts_queue;
-+	struct rswitch_gwca_queue *l2_shared_rx_queue;
- 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
- 	u32 tx_irq_bits[RSWITCH_NUM_IRQ_REGS];
- 	u32 rx_irq_bits[RSWITCH_NUM_IRQ_REGS];
-@@ -1162,6 +1163,7 @@ struct rswitch_device {
- 	void __iomem *addr;
- 	struct rswitch_gwca_queue *tx_queue;
- 	struct rswitch_gwca_queue *rx_queue;
-+	struct rswitch_gwca_queue *rx_old_queue;
- 	struct sk_buff *ts_skb[TS_TAGS_PER_PORT];
- 	DECLARE_BITMAP(ts_skb_used, TS_TAGS_PER_PORT);
- 	bool disabled;
-diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
-index e05c42db5f4c..bf26c1a3384a 100644
---- a/drivers/net/ethernet/renesas/rswitch_main.c
-+++ b/drivers/net/ethernet/renesas/rswitch_main.c
-@@ -682,6 +682,34 @@ static int rswitch_rxdmac_init(struct rswitch_private *priv, unsigned int index)
- 	return rswitch_gwca_queue_ext_ts_format(ndev->dev.parent, priv, rdev->rx_queue);
- }
- 
-+static int rswitch_shared_rx_queue_alloc(struct rswitch_private *priv)
-+{
-+	struct rswitch_gwca *gwca = &priv->gwca;
-+	struct device *dev = &priv->pdev->dev;
-+
-+	int err;
-+
-+	gwca->l2_shared_rx_queue = rswitch_gwca_get(priv);
-+	if (!gwca->l2_shared_rx_queue)
-+		return -EBUSY;
-+
-+	err = rswitch_gwca_queue_alloc(NULL, priv, gwca->l2_shared_rx_queue, false, RX_RING_SIZE);
-+	if (err < 0) {
-+		rswitch_gwca_put(priv, gwca->l2_shared_rx_queue);
-+		return err;
-+	}
-+
-+	return rswitch_gwca_queue_ext_ts_format(dev, priv, gwca->l2_shared_rx_queue);
-+}
-+
-+static void rswitch_shared_rx_queue_free(struct rswitch_private *priv)
-+{
-+	struct rswitch_gwca *gwca = &priv->gwca;
-+
-+	rswitch_gwca_queue_free(&priv->pdev->dev, gwca->l2_shared_rx_queue);
-+	rswitch_gwca_put(priv, gwca->l2_shared_rx_queue);
-+}
-+
- static int rswitch_gwca_hw_init(struct rswitch_private *priv)
- {
- 	unsigned int i;
-@@ -719,6 +747,10 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
- 			return err;
- 	}
- 
-+	err = rswitch_shared_rx_queue_alloc(priv);
-+	if (err < 0)
-+		return err;
-+
- 	return rswitch_gwca_change_mode(priv, GWMC_OPC_OPERATION);
- }
- 
-@@ -730,6 +762,8 @@ static int rswitch_gwca_hw_deinit(struct rswitch_private *priv)
- 	if (err < 0)
- 		return err;
- 
-+	rswitch_shared_rx_queue_free(priv);
-+
- 	return rswitch_gwca_change_mode(priv, GWMC_OPC_DISABLE);
- }
- 
-@@ -938,10 +972,15 @@ static int rswitch_poll(struct napi_struct *napi, int budget)
- 
- 	if (napi_complete_done(napi, budget - quota)) {
- 		spin_lock_irqsave(&priv->lock, flags);
-+		if (rdev->rx_old_queue) {
-+			rdev->rx_queue = rdev->rx_old_queue;
-+			rdev->rx_old_queue = NULL;
-+		}
- 		if (test_bit(rdev->port, priv->opened_ports)) {
- 			rswitch_enadis_data_irq(priv, rdev->tx_queue->index, true);
- 			rswitch_enadis_data_irq(priv, rdev->rx_queue->index, true);
- 		}
-+		rswitch_enadis_data_irq(priv, priv->gwca.l2_shared_rx_queue->index, true);
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 	}
- 
-@@ -954,15 +993,40 @@ static int rswitch_poll(struct napi_struct *napi, int budget)
- 	return 0;
- }
- 
--static void rswitch_queue_interrupt(struct net_device *ndev)
-+static void rswitch_queue_interrupt(struct rswitch_private *priv, struct rswitch_gwca_queue *gq)
- {
--	struct rswitch_device *rdev = netdev_priv(ndev);
-+	struct rswitch_ext_ts_desc *desc;
-+	struct rswitch_device *rdev;
-+	struct net_device *ndev;
-+	unsigned int rx_q_index;
-+	u32 spn;
-+
-+	rdev = netdev_priv(gq->ndev);
-+	rx_q_index = rdev->rx_queue->index;
-+
-+/* If we receive a shared queue through the exception path, it will be missing the ndev
-+ * pointer. This needs to be added to be able to determine from which port the packet was
-+ * received. Then we temporarily exchange the rx_queue pointer in rdev. This will be
-+ * restored after the packet has been processed.
-+ */
-+
-+	if (gq->index == priv->gwca.l2_shared_rx_queue->index) {
-+		desc = &gq->rx_ring[gq->cur];
-+		spn = FIELD_GET(SPN, desc->info1);
-+		ndev = priv->rdev[spn]->ndev;
-+		rdev = netdev_priv(ndev);
-+		gq->ndev = ndev;
-+		/* store original rx_queue */
-+		rdev->rx_old_queue = rdev->rx_queue;
-+		rdev->rx_queue = gq;
-+	}
- 
- 	if (napi_schedule_prep(&rdev->napi)) {
--		spin_lock(&rdev->priv->lock);
--		rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, false);
--		rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, false);
--		spin_unlock(&rdev->priv->lock);
-+		spin_lock(&priv->lock);
-+		rswitch_enadis_data_irq(priv, rdev->tx_queue->index, false);
-+		rswitch_enadis_data_irq(priv, rx_q_index, false);
-+		rswitch_enadis_data_irq(priv, priv->gwca.l2_shared_rx_queue->index, false);
-+		spin_unlock(&priv->lock);
- 		__napi_schedule(&rdev->napi);
- 	}
- }
-@@ -980,7 +1044,7 @@ static irqreturn_t rswitch_data_irq(struct rswitch_private *priv, u32 *dis)
- 			continue;
- 
- 		rswitch_ack_data_irq(priv, gq->index);
--		rswitch_queue_interrupt(gq->ndev);
-+		rswitch_queue_interrupt(priv, gq);
- 	}
- 
- 	return IRQ_HANDLED;
-@@ -1517,6 +1581,14 @@ static int rswitch_serdes_set_params(struct rswitch_device *rdev)
- 	return phy_set_speed(rdev->serdes, rdev->etha->speed);
- }
- 
-+static void rswitch_etha_set_exception_path(struct rswitch_private *priv)
-+{
-+	iowrite32(FDMACUFEF, priv->addr + FWCEPRC2);
-+	iowrite32(FIELD_PREP(EPCS, GWCA_INDEX) |
-+		  FIELD_PREP(EPCSD, priv->gwca.l2_shared_rx_queue->index),
-+		  priv->addr + FWCEPTC);
-+}
-+
- static int rswitch_ether_port_init_one(struct rswitch_device *rdev)
- {
- 	int err;
-@@ -1570,6 +1642,8 @@ static int rswitch_ether_port_init_all(struct rswitch_private *priv)
- 	unsigned int i;
- 	int err;
- 
-+	rswitch_etha_set_exception_path(priv);
-+
- 	rswitch_for_each_enabled_port(priv, i) {
- 		err = rswitch_ether_port_init_one(priv->rdev[i]);
- 		if (err)
-@@ -1620,6 +1694,7 @@ static int rswitch_open(struct net_device *ndev)
- 	bitmap_set(rdev->priv->opened_ports, rdev->port, 1);
- 	rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, true);
- 	rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, true);
-+	rswitch_enadis_data_irq(rdev->priv, rdev->priv->gwca.l2_shared_rx_queue->index, true);
- 	spin_unlock_irqrestore(&rdev->priv->lock, flags);
- 
- 	phy_start(ndev->phydev);
-@@ -1646,6 +1721,7 @@ static int rswitch_stop(struct net_device *ndev)
- 	spin_lock_irqsave(&rdev->priv->lock, flags);
- 	rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, false);
- 	rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, false);
-+	rswitch_enadis_data_irq(rdev->priv, rdev->priv->gwca.l2_shared_rx_queue->index, false);
- 	bitmap_clear(rdev->priv->opened_ports, rdev->port, 1);
- 	spin_unlock_irqrestore(&rdev->priv->lock, flags);
- 
-@@ -1953,6 +2029,7 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
- 	rdev->port = index;
- 	rdev->etha = &priv->etha[index];
- 	rdev->addr = priv->addr;
-+	rdev->rx_old_queue = NULL;
- 
- 	ndev->base_addr = (unsigned long)rdev->addr;
- 	snprintf(ndev->name, IFNAMSIZ, "tsn%d", index);
-@@ -2170,6 +2247,9 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
- 	priv->gwca.index = AGENT_INDEX_GWCA;
- 	priv->gwca.num_queues = min(RSWITCH_NUM_PORTS * NUM_QUEUES_PER_NDEV,
- 				    RSWITCH_MAX_NUM_QUEUES);
-+	/* One extra queue for L2 switch reception */
-+	priv->gwca.num_queues = min(priv->gwca.num_queues + 1,
-+				    RSWITCH_MAX_NUM_QUEUES);
- 	priv->gwca.queues = devm_kcalloc(&pdev->dev, priv->gwca.num_queues,
- 					 sizeof(*priv->gwca.queues), GFP_KERNEL);
- 	if (!priv->gwca.queues)
-
--- 
-2.43.0
-
+SGVsbG8gUGFvbG8sDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXcgY29tbWVudHMuDQoNCj4g
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGFvbG8gQWJlbmkgPHBhYmVuaUBy
+ZWRoYXQuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgQXByaWwgMiwgMjAyNiAzOjA2IFBNDQo+IFRv
+OiBNaWNoYWVsIERlZ2UgPG1pY2hhZWwuZGVnZUByZW5lc2FzLmNvbT47IFlvc2hpaGlybyBTaGlt
+b2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT47DQo+IEFuZHJldyBMdW5uIDxh
+bmRyZXcrbmV0ZGV2QGx1bm4uY2g+OyBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5u
+ZXQ+OyBFcmljIER1bWF6ZXQNCj4gPGVkdW1hemV0QGdvb2dsZS5jb20+OyBKYWt1YiBLaWNpbnNr
+aSA8a3ViYUBrZXJuZWwub3JnPjsgbmlrbGFzLnNvZGVybHVuZA0KPiA8bmlrbGFzLnNvZGVybHVu
+ZEByYWduYXRlY2guc2U+OyBQYXVsIEJhcmtlciA8cGF1bEBwYmFya2VyLmRldj4NCj4gQ2M6IG5l
+dGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZzsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIG5ldC1u
+ZXh0IHYzIDEyLzEzXSBuZXQ6IHJlbmVzYXM6IHJzd2l0Y2g6IGFkZCBoYW5kbGVyIGZvciBGREIg
+bm90aWZpY2F0aW9uDQo+IA0KPiBPbiAzLzMxLzI2IDEyOjA0IFBNLCBNaWNoYWVsIERlZ2Ugd3Jv
+dGU6DQo+ID4gKy8qIGNhbGxlZCB1bmRlciByY3VfcmVhZF9sb2NrKCkgKi8NCj4gPiArc3RhdGlj
+IGludCByc3dpdGNoX3N3aXRjaGRldl9ldmVudChzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sgKm5iLA0K
+PiA+ICsJCQkJICAgdW5zaWduZWQgbG9uZyBldmVudCwNCj4gPiArCQkJCSAgIHZvaWQgKnB0cikN
+Cj4gPiArew0KPiA+ICsJc3RydWN0IG5ldF9kZXZpY2UgKm5kZXYgPSBzd2l0Y2hkZXZfbm90aWZp
+ZXJfaW5mb190b19kZXYocHRyKTsNCj4gPiArCXN0cnVjdCByc3dpdGNoX3N3aXRjaGRldl9ldmVu
+dF93b3JrICpzd2l0Y2hkZXZfd29yazsNCj4gPiArCXN0cnVjdCBzd2l0Y2hkZXZfbm90aWZpZXJf
+ZmRiX2luZm8gKmZkYl9pbmZvOw0KPiA+ICsJc3RydWN0IHN3aXRjaGRldl9ub3RpZmllcl9pbmZv
+ICppbmZvID0gcHRyOw0KPiA+ICsJc3RydWN0IHJzd2l0Y2hfcHJpdmF0ZSAqcHJpdjsNCj4gPiAr
+CWludCBlcnI7DQo+ID4gKw0KPiA+ICsJcHJpdiA9IGNvbnRhaW5lcl9vZihuYiwgc3RydWN0IHJz
+d2l0Y2hfcHJpdmF0ZSwNCj4gPiArcnN3aXRjaF9zd2l0Y2hkZXZfbmIpOw0KPiA+ICsNCj4gPiAr
+CXN3aXRjaCAoZXZlbnQpIHsNCj4gPiArCWNhc2UgU1dJVENIREVWX0ZEQl9BRERfVE9fREVWSUNF
+Og0KPiA+ICsJCWZhbGx0aHJvdWdoOw0KPiA+ICsJY2FzZSBTV0lUQ0hERVZfRkRCX0RFTF9UT19E
+RVZJQ0U6DQo+ID4gKwkJc3dpdGNoZGV2X3dvcmsgPSBremFsbG9jKHNpemVvZigqc3dpdGNoZGV2
+X3dvcmspLCBHRlBfQVRPTUlDKTsNCj4gPiArDQo+ID4gKwkJaWYgKCFzd2l0Y2hkZXZfd29yaykN
+Cj4gPiArCQkJcmV0dXJuIE5PVElGWV9CQUQ7DQo+ID4gKw0KPiA+ICsJCXN3aXRjaGRldl93b3Jr
+LT5uZGV2ID0gaW5mby0+ZGV2Ow0KPiA+ICsJCXN3aXRjaGRldl93b3JrLT5wcml2ID0gcHJpdjsN
+Cj4gPiArCQlzd2l0Y2hkZXZfd29yay0+ZXZlbnQgPSBldmVudDsNCj4gPiArDQo+ID4gKwkJZmRi
+X2luZm8gPSBjb250YWluZXJfb2YoaW5mbywNCj4gPiArCQkJCQlzdHJ1Y3Qgc3dpdGNoZGV2X25v
+dGlmaWVyX2ZkYl9pbmZvLA0KPiA+ICsJCQkJCWluZm8pOw0KPiA+ICsNCj4gPiArCQlJTklUX1dP
+UksoJnN3aXRjaGRldl93b3JrLT53b3JrLA0KPiA+ICtyc3dpdGNoX3N3aXRjaGRldl9icmlkZ2Vf
+ZmRiX2V2ZW50X3dvcmspOw0KPiA+ICsNCj4gPiArCQltZW1jcHkoJnN3aXRjaGRldl93b3JrLT5m
+ZGJfaW5mbywgcHRyLA0KPiA+ICtzaXplb2Yoc3dpdGNoZGV2X3dvcmstPmZkYl9pbmZvKSk7DQo+
+ID4gKw0KPiA+ICsJCXN3aXRjaGRldl93b3JrLT5mZGJfaW5mby5hZGRyID0ga3phbGxvYyhFVEhf
+QUxFTiwgR0ZQX0FUT01JQyk7DQo+ID4gKwkJaWYgKCFzd2l0Y2hkZXZfd29yay0+ZmRiX2luZm8u
+YWRkcikNCj4gPiArCQkJZ290byBlcnJfYWRkcl9hbGxvYzsNCj4gPiArDQo+ID4gKwkJZXRoZXJf
+YWRkcl9jb3B5KCh1OCAqKXN3aXRjaGRldl93b3JrLT5mZGJfaW5mby5hZGRyLA0KPiA+ICsJCQkJ
+ZmRiX2luZm8tPmFkZHIpOw0KPiA+ICsJCWRldl9ob2xkKG5kZXYpOw0KPiANCj4gUGxlYXNlIHN3
+aXRjaCB0byBuZXRkZXZfaG9sZCgpL25ldGRldl9wdXQoKSwgcHJvdmlkaW5nIGEgc3VpdGFibGUg
+bmV0ZGV2aWNlX3RyYWNrZXIuDQoNCkRvbmUuIA0KDQpCZXN0IHJlZ2FyZHMsDQoNCk1pY2hhZWwN
+Cj4gDQo+IC9QDQoNCg==
