@@ -1,86 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCF73B7759;
-	Mon, 11 May 2026 08:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51A2DF719;
+	Mon, 11 May 2026 08:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778486986; cv=none; b=VtTiYusIswwWw6QHQ+6rBzzHwYejHFq9vwwJ5sH8NX4ksgZNNHYHj4PKpWaIRidpSZ76Bfc7rM9C0Ed99WSkESJEWfs6CEq1lWaakXFjoIsicF6S55uEwBcz78W9RlBnE5sutrX5DTAixrHZrEwKOyEq1/naH3YBh42n1NW7b4M=
+	t=1778489572; cv=none; b=Hst5JoDVm4KvXivlX2Lji2PAksVT0Q2jIifRbCGAs0+TQ5mK45V5nkefh4odKYysshVCj33mTvMmeiLcYRj8RG5RlI953PC5Ohdn/3Ub/JJOMkqFdmRsaZm0yjx1QUjFBoKckXSnAYclnHnU9H8msZHQEJoNJCAeJjYkL/o8m1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778486986; c=relaxed/simple;
-	bh=D5nuHM+mugpGQ52uN5n0jU/6pVfYhQKN2nkbAbZm+aY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ss4uLNKfT5NdRtQyRg/lMWPIuZfSG0OIGaQ2fn9l9lSwAOJ8q4MLLw5vj4nDtMXRea5rTf35F1aurQVQAi89EYRXER1zF/Y20zQvFSC50YkIxSxFZlkRAeBigl1us+q+yNomfRs6hGpUoL1EKQUyqtCs7t+9wsbA4960e0a/NHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHo/7wVD; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHo/7wVD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9200EC2BCB0;
-	Mon, 11 May 2026 08:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778486985;
-	bh=D5nuHM+mugpGQ52uN5n0jU/6pVfYhQKN2nkbAbZm+aY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JHo/7wVDARqN/DmKY5ZFWVrtLQ3RDTXa0iAJEzkvidACsVtMuPD6VtKXDOf1hmZPI
-	 ehy+XYEyctdHURUgKJajWs6c52TuO4lTiOrlyszCpGMaVA/MVTiDZGdJ+zoXDVjnIf
-	 jAd/UZMosPZ1bqYz1c2qDH9hmb46PlpYi1rEmuriNTn8F0CP4A0eT5N/nzJL7NkIcL
-	 JIzBMKyMDG3g+7GqIopFYPbVWh1Rn7i1skmVTuobOgL/jCrT4xgj0V+igpRxONJvys
-	 z56u6wSYv717DvEH5eFEKLhfGUBXHq35tiXRPMM1gKY2KgI+ieKM1UoNUEuJo2Hngm
-	 4/TdyLNnOHB7Q==
-Date: Mon, 11 May 2026 09:09:40 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, philip.radford@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Subject: Re: [PATCH v4 00/15] SCMI Clock rates discovery rework
-Message-ID: <20260511-origami-ape-of-inspiration-7b55f3@sudeepholla>
-References: <20260508153300.2224715-1-cristian.marussi@arm.com>
- <CAMuHMdXyJcmL1k+odRC3ej1fx2oH_Li3RjniXuqXyJUMpBo7CA@mail.gmail.com>
+	s=arc-20240116; t=1778489572; c=relaxed/simple;
+	bh=JGGhbyQumfo3wcFix6PAjLF371iAqBT/aYF9KzKp2j0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TP5VLoM1lSn9Ccznm3nLO7O5HQKscULa6AJkE2+XM8LHhOgrPvCDP/eM8zyHNrjEc14/p5GLwUiJmQbeBK1jtWEfFFhk1DKlM4Ys+SiY1lxeyZ5vwqADmD9259g/WUoq63bBvhy9vaUY5N5HORxZ9wbyQz7cKpKhpsuVHZZnhOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 6Y0GVprmRP6GR5Y34Z0ckQ==
+X-CSE-MsgGUID: 3Q8s+sSFS/CDIRXHLgYV8g==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 May 2026 17:52:49 +0900
+Received: from [127.0.1.1] (unknown [10.226.78.135])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 628764010E3A;
+	Mon, 11 May 2026 17:52:46 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+Date: Mon, 11 May 2026 10:52:09 +0200
+Subject: [PATCH net-next v4 06/13] net: renesas: rswitch: add forwarding
+ rules for gwca
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXyJcmL1k+odRC3ej1fx2oH_Li3RjniXuqXyJUMpBo7CA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260511-rswitch_add_vlans-v4-6-a5a225f8faae@renesas.com>
+References: <20260511-rswitch_add_vlans-v4-0-a5a225f8faae@renesas.com>
+In-Reply-To: <20260511-rswitch_add_vlans-v4-0-a5a225f8faae@renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Paul Barker <paul@pbarker.dev>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778489544; l=1614;
+ i=michael.dege@renesas.com; s=20251023; h=from:subject:message-id;
+ bh=JGGhbyQumfo3wcFix6PAjLF371iAqBT/aYF9KzKp2j0=;
+ b=zd8gZHvEnZ+as+0jFP5rCe67MXdKRbRlv9++VcKUhzrxSrd2FO6wqa18Ufpsq+18jDLFYkRE2
+ SP0rQLqM8+uBzQxdpehfT5Ubydp/3/CvXc1KZZAUQqB5pluTUcR+M2q
+X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
+ pk=gu1rwIcCrAxNMv2I8fIfiQvt51xzZwnQy4Ua/DscQt8=
 
-On Fri, May 08, 2026 at 07:25:49PM +0200, Geert Uytterhoeven wrote:
-> Hi Cristian,
-> 
-> On Fri, 8 May 2026 at 17:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > it was a known limitation, in the SCMI Clock protocol support, the lack of
-> > dynamic allocation around per-clock rates discovery: fixed size statically
-> > per-clock rates arrays did not scale and was increasingly a waste of memory
-> > (see [1]).
-> 
-> [...]
-> 
-> > v3 -->v4
-> >  - Rebased on v7.1-rc2
-> >  - Removed unused info.rate_discrete [Geert]
-> >  - Made dev_dbg() more meaningful by printing tot_rates [Geert]
-> >  - Fixed build bisectability by renaming properly to iter_response_bound_cleanup()
-> 
-> Thanks for the update!
-> 
-> I believe you still have a possible runtime bisectability issue
-> between "[PATCH v4 04/15] firmware: arm_scmi: Simplify clock
-> rates exposed interface" and "[PATCH v4 05/15] clk: scmi: Use new
-> simplified per-clock rate properties": 04/15 removes the last setter
-> of scmi_clock_info.rate_discrete, before 05/15 removes the last getter.
-> 
+Add rules to forward packets from the Ethernet ports to the CPU port (GWCA)
+using L2 forwarding instead of port forwarding.
 
-I have fixed this up by adding some initialisation in 04/15 and removing it
-in 06/15. Cristian, if possible can you check if the functionality will
-remain intact after 05/15 ?
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch_l2.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch_l2.c b/drivers/net/ethernet/renesas/rswitch_l2.c
+index 709524c8a5c4..3cc0ce8762f3 100644
+--- a/drivers/net/ethernet/renesas/rswitch_l2.c
++++ b/drivers/net/ethernet/renesas/rswitch_l2.c
+@@ -93,10 +93,32 @@ static void rswitch_update_l2_hw_forwarding(struct rswitch_private *priv)
+ 	}
+ }
+ 
++static void rswitch_update_l2_hw_forwarding_gwca(struct rswitch_private *priv)
++{
++	struct rswitch_device *rdev;
++	u32 fwpc0_set, fwpc0_clr, fwpc2_set, fwpc2_clr;
++
++	fwpc0_clr = FWPC0_MACSSA | FWPC0_MACDSA | FWPC0_MACRUDA;
++	fwpc0_set = fwpc0_clr;
++	fwpc2_clr = FIELD_PREP(FWPC2_LTWFW, BIT(AGENT_INDEX_GWCA));
++	fwpc2_set = fwpc2_clr;
++
++	(priv->offload_brdev) ? (fwpc0_clr = 0, fwpc2_set = 0)
++			      : (fwpc0_set = 0, fwpc2_clr = 0);
++
++	rswitch_modify(priv->addr, FWPC0(AGENT_INDEX_GWCA), fwpc0_clr, fwpc0_set);
++
++	rswitch_for_all_ports(priv, rdev) {
++		rswitch_modify(priv->addr, FWPC2(rdev->etha->index),
++			       fwpc2_clr, fwpc2_set);
++	}
++}
++
+ void rswitch_update_l2_offload(struct rswitch_private *priv)
+ {
+ 	rswitch_update_l2_hw_learning(priv);
+ 	rswitch_update_l2_hw_forwarding(priv);
++	rswitch_update_l2_hw_forwarding_gwca(priv);
+ }
+ 
+ static void rswitch_update_offload_brdev(struct rswitch_private *priv)
 
 -- 
-Regards,
-Sudeep
+2.43.0
+
