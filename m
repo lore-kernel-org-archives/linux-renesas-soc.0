@@ -1,29 +1,29 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11020135.outbound.protection.outlook.com [52.101.84.135])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11021112.outbound.protection.outlook.com [40.107.130.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785CD37DACA;
-	Tue, 12 May 2026 13:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D344372064;
+	Tue, 12 May 2026 13:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.112
 ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778590839; cv=fail; b=JLYX7Ymu8YT0R6yEW2lNz2cFtvgTbLcLnVdP2LKMYxZEpLzbA4jQ9QG0x0vhkBTk8PRFusxy936nVeg+/5zj8QCVc6eB2CKCe8CScCBfg1tiYjHVUdEkYtwu3ZG5gFMloObHTpA32MktqCUrxhzV/XsMYI2VZYw714GOoGzmZOs=
+	t=1778590850; cv=fail; b=pznGxm6DLTJm+pkUrCTM/NziSKb8nq99z4UUgIk0aSviTt7AAdq3GYUsHwzDqU6sIPVDCINDX/8wnbIO36ISlUTL1qYW0PtJQ+oILBgY9lyAP/LxXZUEVD/n/kg3PBaBC5FKiliZ/Ft8qB5h8F9jUpcK4fw3nMec0tk9AnMM/8A=
 ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778590839; c=relaxed/simple;
-	bh=4SOW6qWeM/WRXsqDxhS/H07B7R9tJGhB6sQ+X5Fe/6w=;
+	s=arc-20240116; t=1778590850; c=relaxed/simple;
+	bh=MjAj/uaikIohzziTQ5vXQSq/0zK8wtWZiuHYvhtCs3g=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=h1zwplJdysXkQXxVSMIjT3+RMwIl+6m+hQ5Z80ev7sY45OVxS8NNNfFkJ5m7EsqDBcIEt7VJoNYS9ocd+zuZYwozsI7xSYiyVDr9HWSeACqJomjzP0Tf1fVREMHISJoUCEUEnLYJV5OtpOXNZY+yAYmMAkzDhPZtFMD/nz4dSN4=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=kc9GWlyj; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=kc9GWlyj; arc=fail smtp.client-ip=52.101.84.135
+	 To:Cc:MIME-Version; b=uuu9+9T0wVVfxkGLMHUiBC6vec4rAAU+0Fy8R1Jcz+POySoIRyxK6htcwj1GjFzDd73TJo9GxmJC5b9/c0p2Lz2bqvLbjTUIggNxi4N94L352HF3nR1rxgpaGgCm62ywEp1/9AtVBlSoZcA5ZlYpyvSjP/R47jkYNpsdR06hwfg=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=N6fI22XM; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=N6fI22XM; arc=fail smtp.client-ip=40.107.130.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=solid-run.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="kc9GWlyj";
-	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="kc9GWlyj"
+	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="N6fI22XM";
+	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="N6fI22XM"
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=AY1OcD2wTAc2l267vvuDKdMQrmsBcqAqVT7jQkaH65olvL3BOuJu1tWb7osNSHD5mikTiJ/EpOPUMVK/EjHSbr0uVIcOkKlkd7c6RvZNlVI3S+1065IrCl2VXf8+X3oY/Vnv0DGiAaFXH+aIeLOJInuXDIAlcLS2wGGeebeoBRHEw2C63dzYRdFHmI2rpdOq+7cUzJJ9hZe8Xh+pFOf8zk8u6Ed0yie7uea7pNBhw7HkZFbAG5bC5I1oG36CtdwDV7dhqFwC1o7fyPlmHU1HOAzeshrZVSpcUxuIkEhevY6M8qa9klQA+AOMiHpzxXkbvWV6cb2x4vCZjwgRrFjLzA==
+ b=gIIi+QD019gwtIBJr1kuEhx80Zzu4CjjqtYumFKlEtct9wuKX9FNCfEgtaZjWbsiAfxVOzz05q1h6id71QPFM2BKburdQoEjIdrlb8DlisyB8UuQCgJJwNYhj0ceIpjO7xc+OFTjQRIyzGNxBX42tCAeXMGK/T/3s336OYVVtRfi/KvMA2Wz/bn3WtPClinToLL6yNwYjNWNXrJD6cIlt6rw6lil7tNQRTRYwN+cWYKhLAoTxqHCVtfCHIttXmVQbrjkpWspzly6wmQ0LeL/0yIuSlzMQzeEdWumxmxOYnX6xUCRRLUx5Ib8CeLCGwG4pfr/NHdTX+FGe+X5VUJdEQ==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U2FCUR1FpHgxsicULCtjjEMsoc1p4F5WxsDCX/uLR/k=;
- b=OFKkoab2NbU7yUQ5V6rtu6LIvTJ82/Msz8wpXVpbF2N3QGW8z0enSdRryOFyEaTrsjiJZbj2Uf/Jcq4Vly80M+CVxOz1vcU6Ls4KPw5FZoVwHiI8xMr7o6KUbxZXgnvVAm2M7TtcshMI7ni8SKSul7dPpRvg8qomVCWUy3QoVmgB8mkreqOjsm3wkMISLjz4aui2uzgMBzXIztXV95KHVNNlUkJsRf15c4noIG74J83GpBKcU5ezLoKcDR0QRYGLJ51Ec8/IHts2lDJV1a+eOymJAlr8XpE/KPluDul8w7+U77z8WUashrhjvPt5OosBKgKpodbZWSItZ3Tc4z3G8g==
+ bh=1u/Q1LI1yfEYH6loh2w38e/iyPoOHyQ8wKWGsCO0fUE=;
+ b=Qpx9wVcKZM/MpwTj5meH7Z3vQ5JPNNynK6MQQdJESMC9/Y7paQ/RE6SSmE8AX0hX03Y4DQ+rEvMTBL5TVmQEuCuDialncEG5OKCNHYrsADQ/58Yr4CRScUXU7pxv2efvn0wSplS0uwIbQgeiT8xD2riU75KM9oDQps4Ve6KS9xMiAb36pUMxK4Bo6jav1kWSkPtVeQc8AgOYJcwumriqj7pPwp5Bvc0FxZER8JFt2NyrFsvBNYr/PzCQfyjuRTXddMi7fB5ZK/bWbiiOAeH9G95Pt6MI9auLYB9lw3fm4po8e0lIgWx/hlISTkTkYOhKrLWpEY291YSPYK6tRDuKbQ==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=fail (sender ip is
  52.17.62.50) smtp.rcpttodomain=glider.be smtp.mailfrom=solid-run.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none
@@ -34,18 +34,18 @@ ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=solid-run.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U2FCUR1FpHgxsicULCtjjEMsoc1p4F5WxsDCX/uLR/k=;
- b=kc9GWlyjoRUuo2d7SxVbSE1Ws4lIU9d266qz6dJ3l1LdKBDtRZ2hYW0H7xnWRvHYYUJYI3H3QPW4m+uW+KRz5BGw6VxZuPRRoO4zVf2DnQs4bZ5zObcirBxGsIrG79GyBhq6TsrsFgBJ4lfQ5vsrji68rpTUCNZ929ANNtzfWsgKKS4GmJOMeYVESd8UQUxxby39xpF3p76r7M/bC7xbg/WAidOcQ2fxCQrvQWJlRweeJfbpgPA+WcoB238bJIzBA3ySxksYwKDbgqBboZu2n/t01gUt70GvdSYHFQlXqxlki3ORYgH3i1Lb3vSKr/3wTj50e/rsLQ/DvKF3WvFhmA==
-Received: from DU2PR04CA0248.eurprd04.prod.outlook.com (2603:10a6:10:28e::13)
- by DBBPR04MB8009.eurprd04.prod.outlook.com (2603:10a6:10:1ef::11) with
+ bh=1u/Q1LI1yfEYH6loh2w38e/iyPoOHyQ8wKWGsCO0fUE=;
+ b=N6fI22XMx+GGIezc2N0qWnXl7ID4dn01xf790OeoagTo3FlvE2xy3wEK0vg9cTkpfqSFBXBJVQ6VPXY2CIz/tjalRUcI7gInJ1OG/f2gXDJGKHONbfCl4UOZs5JfNDiilLiL8vsE3OmNEWzHTGhpjLTq7xtdsbe7H2a4Sx5XlCx3J1PVC13OinvkhJrEjWRY26SdsLxKWvjQTsUKsAOBpxWLHeZDSZykgrywAbJfbYKeQfQXSdSPRnqo45o/BqJ/F8xnMx++qS2mrJ46/vBjQ/UA6zUvq2xVkMhE//KsT4xounHjCCou4i+uAGPGg2AyRpedqZuG2mjTzG2XtArQpQ==
+Received: from AS4PR09CA0026.eurprd09.prod.outlook.com (2603:10a6:20b:5d4::9)
+ by PA6PR04MB11945.eurprd04.prod.outlook.com (2603:10a6:102:51c::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Tue, 12 May
- 2026 13:00:34 +0000
-Received: from DB5PEPF00014B8E.eurprd02.prod.outlook.com
- (2603:10a6:10:28e:cafe::4d) by DU2PR04CA0248.outlook.office365.com
- (2603:10a6:10:28e::13) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:00:43 +0000
+Received: from AM3PEPF00009BA2.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5d4:cafe::de) by AS4PR09CA0026.outlook.office365.com
+ (2603:10a6:20b:5d4::9) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.11 via Frontend Transport; Tue,
- 12 May 2026 13:00:34 +0000
+ 12 May 2026 13:00:42 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
  smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
  header.d=solid-run.com;dmarc=pass action=none header.from=solid-run.com;
@@ -53,46 +53,46 @@ Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
  designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
 Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- DB5PEPF00014B8E.mail.protection.outlook.com (10.167.8.202) with Microsoft
+ AM3PEPF00009BA2.mail.protection.outlook.com (10.167.16.27) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.13
- via Frontend Transport; Tue, 12 May 2026 13:00:34 +0000
-Received: from emails-2807192-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-103.eu-west-1.compute.internal [10.20.6.103])
-	by mta-outgoing-dlp-588-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id AAE7E8048D;
-	Tue, 12 May 2026 13:00:34 +0000 (UTC)
-X-Mailbox-Line: From b'josua@solid-run.com' Tue May 12 13:00:20 2026
+ via Frontend Transport; Tue, 12 May 2026 13:00:42 +0000
+Received: from emails-106719-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-103.eu-west-1.compute.internal [10.20.6.103])
+	by mta-outgoing-dlp-305-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 867CA7FE3C;
+	Tue, 12 May 2026 13:00:42 +0000 (UTC)
+X-Mailbox-Line: From b'josua@solid-run.com' Tue May 12 13:00:18 2026
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h23mnZcjrglK3LLLfxntM+1Bq395eMKpptHQAL99x3/1I8ePbX674nA8d/OvyMA5D9gtZ//xE7RM2jT3qXCVHOeiR9/h1hgm3HzM1LCNrJh1HM3Yehwbsng1BqwxD1z/mlNQvhI11hJK/LLCBpjCEsD+VqXe0FtvcdAzVaZY2Or/xVjpxCiQrJYt3m2dmXRULOg6laj0WQFnyJFrc+86mc86ngIWNjOJDFVyqxcGYw6f/H+jeUae0jjQkK8YJ92KB42zfj5+uwB4BIUStp4F3TF3oLO8E/9iJeCttX/4n4MYz77y1eX+XqKsiHODU1BofFTDdq2GChOmQbvBEo4hUw==
+ b=grc2CaeRUjw2l8vhvYOIDYWuFVbnrMsvrnzC7Z+f3P3lWKK7fakdd0TVaqkPUsEgMwK/JWaFF7sFa/2cb8YBjtPrxC2PtRVKoRIayMudiatsp7tRPB7Q2yDsruqkQeOGJka9ZTcF96FdSpdhTG2GYGHTFSiHDFMLxDlbTmi6hPQkxaKyaJgpxH7PWsSilhiK8W9Lt+uhc6KjoT4PDtTFYMzzKi7/VFsjJDCBgEBigtfzZJZSrZlgmgfcYYX9wMsCXrXsVfnsSOhyEJMiY9VfxGPgwTKU5UFDpb20NE+/Vs1d1mgyDb+T+Tai2+Uz7j874oPWGRoPho3BDmvYPyVt+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U2FCUR1FpHgxsicULCtjjEMsoc1p4F5WxsDCX/uLR/k=;
- b=lj+aUAXQm+ZHdc3ApuwVGuOKYNH3Ppi6aa+6X6MixOQmtmyP6/PXIoZjI3gntQkc1kVxpIN/O1ct1IlbBV81e9HTDKo1xNSARK3MQ49db2lHoXi6sJeswVM3Ox+JjAl853UVx+sp6vM+/b8Ornkcv3Bq99XR+4cYyvaFvvhxPxZEmwCkeFjVMa/z1N+yEtO19uvSYOE2uPaeUKldi35XUVO5NyWxIw+S7Os+MDzzFC0p1WG3Mw6xUMkbYOEzjI3OoHBunJ3YKyMIQd30fLJnozsqTuUaJn6KbTmsmEk+XlGe1TpfWOZYcqglxPBGBC009y60clHLi4xsw43CvegYCQ==
+ bh=1u/Q1LI1yfEYH6loh2w38e/iyPoOHyQ8wKWGsCO0fUE=;
+ b=mvmY7DvVDrlaGBK4ER/l2IUG7wmln9daZ5xseD4LroLUprplPvhXdzy1OgYejTb8hK1fxEa5CANyqB4AP8/f3aytQQSfxs8FXkd3AvCm94ZD+6jm6fmqRPQMLdpQBUskDLEb7HuG1LXHCAcJTRyxxKsmx8zt5adL8/hM52N25SEZc0YcASQHLPlqv8omM+avNC4QBw3XSWGEVQEIflYy/2kUArCB6mX+vCky4mIOQYEpT4zPq9dGMiG0Qi/RmcCFEFlj/fprVejLUYsUlEGoeJRsPR6+fi0mefXgQ9vJQMIxfuL+So7DwxozMwPUl6Flv6F7Yxq5dzMGF24xzxqqhw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=solid-run.com; dmarc=pass action=none
  header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=solid-run.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U2FCUR1FpHgxsicULCtjjEMsoc1p4F5WxsDCX/uLR/k=;
- b=kc9GWlyjoRUuo2d7SxVbSE1Ws4lIU9d266qz6dJ3l1LdKBDtRZ2hYW0H7xnWRvHYYUJYI3H3QPW4m+uW+KRz5BGw6VxZuPRRoO4zVf2DnQs4bZ5zObcirBxGsIrG79GyBhq6TsrsFgBJ4lfQ5vsrji68rpTUCNZ929ANNtzfWsgKKS4GmJOMeYVESd8UQUxxby39xpF3p76r7M/bC7xbg/WAidOcQ2fxCQrvQWJlRweeJfbpgPA+WcoB238bJIzBA3ySxksYwKDbgqBboZu2n/t01gUt70GvdSYHFQlXqxlki3ORYgH3i1Lb3vSKr/3wTj50e/rsLQ/DvKF3WvFhmA==
+ bh=1u/Q1LI1yfEYH6loh2w38e/iyPoOHyQ8wKWGsCO0fUE=;
+ b=N6fI22XMx+GGIezc2N0qWnXl7ID4dn01xf790OeoagTo3FlvE2xy3wEK0vg9cTkpfqSFBXBJVQ6VPXY2CIz/tjalRUcI7gInJ1OG/f2gXDJGKHONbfCl4UOZs5JfNDiilLiL8vsE3OmNEWzHTGhpjLTq7xtdsbe7H2a4Sx5XlCx3J1PVC13OinvkhJrEjWRY26SdsLxKWvjQTsUKsAOBpxWLHeZDSZykgrywAbJfbYKeQfQXSdSPRnqo45o/BqJ/F8xnMx++qS2mrJ46/vBjQ/UA6zUvq2xVkMhE//KsT4xounHjCCou4i+uAGPGg2AyRpedqZuG2mjTzG2XtArQpQ==
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=solid-run.com;
 Received: from GVXPR04MB12057.eurprd04.prod.outlook.com
  (2603:10a6:150:313::24) by PA4PR04MB7934.eurprd04.prod.outlook.com
  (2603:10a6:102:ca::23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Tue, 12 May
- 2026 13:00:13 +0000
+ 2026 13:00:11 +0000
 Received: from GVXPR04MB12057.eurprd04.prod.outlook.com
  ([fe80::14f1:a127:2988:de5b]) by GVXPR04MB12057.eurprd04.prod.outlook.com
  ([fe80::14f1:a127:2988:de5b%7]) with mapi id 15.20.9891.021; Tue, 12 May 2026
- 13:00:12 +0000
+ 13:00:11 +0000
 From: Josua Mayer <josua@solid-run.com>
-Date: Tue, 12 May 2026 15:00:08 +0200
-Subject: [PATCH v3 4/4] arm64: dts: renesas: add support for solidrun
- rzg2lc som and hb-iiot evb
+Date: Tue, 12 May 2026 15:00:06 +0200
+Subject: [PATCH v3 2/4] arm64: dts: renesas: add support for solidrun rzg2l
+ som and hb-iiot evb
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260512-rzg2-sr-boards-v3-4-f033fc96c906@solid-run.com>
+Message-Id: <20260512-rzg2-sr-boards-v3-2-f033fc96c906@solid-run.com>
 References: <20260512-rzg2-sr-boards-v3-0-f033fc96c906@solid-run.com>
 In-Reply-To: <20260512-rzg2-sr-boards-v3-0-f033fc96c906@solid-run.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -115,53 +115,53 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-TrafficTypeDiagnostic:
-	GVXPR04MB12057:EE_|PA4PR04MB7934:EE_|DB5PEPF00014B8E:EE_|DBBPR04MB8009:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5536578-1aff-4ffa-b12a-08deb02674c9
+	GVXPR04MB12057:EE_|PA4PR04MB7934:EE_|AM3PEPF00009BA2:EE_|PA6PR04MB11945:EE_
+X-MS-Office365-Filtering-Correlation-Id: a09d2d10-04fa-4425-b79a-08deb026799e
 X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|56012099003|22082099003|18002099003;
+ BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|56012099003|22082099003|18002099003|3023799003;
 X-Microsoft-Antispam-Message-Info-Original:
- 0DqvtalHlC3HEx6ALgZi0NG2mqRLRusa4WqS212ybjdFxXAoobi2fHH4YyNF+TrlDoXvNbPVlxQY4UXAeaMU5Vlcg+gJhvYq84adq1LsZu+lJc66JaoYfnOe+A1u//8aLIz4AIMq5IGvJG5A4yxqdJoigLwCdona0Cuv9gsPxN0ZDq2q0dplA9zYQzXJcQpImR4kFdtdQ7HrcxMbIXAuvo5rIo9ArWAaqEAiDRcQlO0D/iioOMBKi2gKAgFs+UznZnFndnbJbG+LFWVW3C6cxWDT9l4kk2xBsngUwCbzTv1BP+Bh4HhTFJ1GoUWbfRFEohRr6iByq25O/f0sKNIsb4ZE8pzb/jggrtHBz9PG1M9PvstsnsMclXlMRI7prj2lC6YsHMlrDXDmj1hME9MUJ8ylL09FcXZmXlgSPAuSkhHBfNt+uNK5f9HWOYjVK+Lql8Wdf/OkjvPaI1dEJnD3ZG2fYb2X2fOmi/4zhiEkItDrHrARxv21LTe5skCciIWANaosoMhNuk95E7rqE62S0F8HxV3tx3uTTjUiQVoyYpWJqdlk5ZSU1Tr9dKPdWLZbrWjRImraoNvoWloW0dcFfdVuL3ovcXuzod4NP2vO+YXkFab33pCQ9MINzbbo2GN4CDf7FzxJsmuq1Oou5IjffpNFdMUgYMw+7s3h+VAmRknz4Ncxr2eWWp4/20SIBPo+I1Abto+u2xaoKioNz4zxFyboBT7dcPUXnxTLnLE0h0sh4fldi2gaw1sO44OzHtRj
+ 055RkkDxoQuIRafl0l2GXCUHVv9IVICMJtZiiEUyyK9LutAEA0osNi/LZz602KBuGOkAMbqrExPdJBQKY6yNlyLekgtKXPzVvFk8mYng0rHGEZJlkaXKvSBYb8fbbd/sVXMvTp8vkioJXQ5CZ78Tn5mbRY/wF1QY77/5ATlFRUPP1/o94HUWnd1rXVid/QWuurKTYXCptpm5McKh9ZR/NBHksSFIUKyh7QqLQbXBw1paGtdMvzzTgUJlgjx4jzLlkdCVDfiVppfI70lx+D6iiXlEuiS6Spu9Bvv9PqhCNh4l+ANJnvKQW/XZOweNlXmUpbjefm0wEXqnaqM04IWdDCepUkDTCfl/RIfgp7oK6DjSSCyQKZK8ngRnQIsi97DDKbamZSHsAGgH3KOGdqWZGzQVJXmz6CT5H46dK4ZeCx/azOGRM/M/2jCDpC67WfJ6I6CqleecdeKaE+4dbiuZ6zFV9qR5UxA6Fbyy9DFdpqC5IldvMt+OtDWQr3ERGt8/rTGD0UV1lfTpvbCLG8cWlpbYGSJWv1z/KPZsSeGOVFjHLpTL3caxVuaWWts+4mrU1o4JF1PS18r6tE3MfPiuKbXU4rVa2kNn5COZGEAF4pja3sCgYtf7nfhhvONzjgu2plbyzciqDFd3Dqp3M85DoQpxkxGuxwYe9V2wS4B2SC2EsbjQbshMKxU2+18vVvHhxhiR3c+dzrWZLddQqseIAbrZyGO4mG0imPDnA1D5rnlHL92JBAPuAnbCrs4B8YFr
 X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12057.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12057.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(56012099003)(22082099003)(18002099003)(3023799003);DIR:OUT;SFP:1102;
 X-Exchange-RoutingPolicyChecked:
- RShqRbCBzCOYlrH2jcCHuLf7DJLxrh4hzxETVBLp5JA2EtOqQXtJGVfmMY1CK9XBe4Snkd9HPPfrUy/WyVYPRcUDN90kQCCNQEZDu+pTnAgO2Kz/k6eg8HbmU7QRFNLcmggFRSGtNfEoCueZrYl/qiasrmGs+oUHhFSDH6bls9VtliPW+ZJ0wz8efUQBr3bBVeydXkxgPknDBgUXt1cgiKxUzcbXNPw8Hxbs3qUBBMUFG2oQRXupW8ZHkGqgbVn+mm2TyDKk1nG26c1Y5U2dGLWsBYefB45PSudopmUG4f5Eta4dlvBBTjB3t1Z9BbInrrEfhnj9s3iTF85pC9Xh3Q==
+ QNyiRrdnd1xpe+WRMn1VItJqp4tEDWY50+wEV6upaaTw2L91NuI6k5mt8h10n77ZM+4EyktzSO9D5v8YlFWYDYPjNGV3Xzr4myPcAXj2gaS9UFlkKQ1u/2Ol/FobtZiewiJ5JO1UpjnsY3opN/1C5Q4TMtQTu6jxquGSAhdxOA2QE9fpIdb9uIgohwPt+FmHwMHAEn7zVeO5FEHUWOpqJp0lWMenlXF6nCEOBoyyL3VHxVLLe3KIVJWJw2iMz8DZ9pCCp37WmfuTJ4BHnm3VzqDP622wJDxdebsFAK9y2jc+YHqRBtwDM3HgKFHGbCSPLK3cEwrZEuTDnWXCuDTwmA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7934
 X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2-7.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: 4216c9af408c4db88cfaffd86b8d69b3:solidrun,office365_emails,sent,inline:7a8888ac466080aa94ee14b06e0b315c
+X-CLOUD-SEC-AV-UUID: 926426606a044c0a983054b28a23786a:solidrun,office365_emails,sent,inline:7a8888ac466080aa94ee14b06e0b315c
 X-EOPAttributedMessage: 0
 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B8E.eurprd02.prod.outlook.com
+ AM3PEPF00009BA2.eurprd04.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	76d0c098-da54-44e7-40ab-08deb0266754
+	987e03ba-6d0c-4df2-ffe1-08deb0266689
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|35042699022|14060799003|36860700016|376014|56012099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|14060799003|36860700016|82310400026|35042699022|376014|22082099003|18002099003|56012099003|3023799003;
 X-Microsoft-Antispam-Message-Info:
-	sQfQIGl9+INc6PVLRPooV5dSZLO7pdP7sJyR2JHQVFTUcT2ehk1iEgwUFvHyARU5wNZfGMWWOAFjRRRCQTY/KWZJ4CBPuiNb11ZFFARpwxZ6PDPsQjA5nl0U1cf9s/GmgVUqyDOSdd6mSF4CPB1Vm1dIFq19KlJ+8PBdFRZIBmx2TA6FBNTdKqdr+KVb6B947bUJflXN6VIJ1wbZLztxmWr/YNCBtAaQjSX41w1uCwZuSuWMK3W3gN34bTYVPwE6beUXCsbA2LutzJ8qA1sEVqnOcYTOTq//0tK7XdWNPgMMycLjFvNJoAsUHjqXDgJT2JKN3p/CI/MhLXBKqGiGXkj2euJRyY6GW/EkU/UQpqrsD34eCcaVlGphRWyQNAWhPTr2QVqMTXiZwvBhzWKIriLJ8tmm8bmlqolkyJ/HTKNptatYDCYkS4FsS1Q90lwtuTXBhNH/Zmtioea/7exDdO+GG91qg0t0h4F9OPNJZJQS73UJ4DZuwAtxQf6aXhy6uMZW4hxTI66+1TtXZqjWO0+O03gfjjXVh9JbXqcWYTre/BtFJ5gGR3cKwZvkDFKt7GzCRrISgg8C7g52hl36ykA1ViIL06zPIPEqVUyy3L/JQCo6miYPCiMWEXVef9Cgoa2ZuJw/txwuHexCESerbUsI0EI2sv748HN10SbHrboB1VXZumHdCVclHMzg/hBPPq8COPQ5zTBRLE2nfNyOZn9sTCPlIZQEcoCQqtXJjNQ=
+	L8eOOtW0GsVGMq6016eyHNq6w11w+wY5q221rtxazPoVMRMqiFjGAr6c+ld/6kfMM/oHQ4vNUAW7VnQMQONyrO/eeWgzJtTWp6gLv18aS76AhSWNF8vBpAoW8RrJoT7EjaohgzV675dJGwBPueuv1OdBNqGhmHdiuI+3tuHsSjUFZCr3egHaikd6W6et6VTnwDhQOxNWYIoqdEvswz+iQHg1NrIZGIGjbctMFvCDxx0a6AIu1kOmG77Kirmrb3w4OxjxXhJ0xE3vSsgSaU+YpMAOaK/S0srHXSNaOzz/sX/OKZ3YEkntQbHdnlAHttWTQyTyyNFKoNUfyy+e4/H4FVyq0P90dvoBbP6eP1yg8Z/1i6lWqJ4a589t04g4K3O3QuZCLFJZ2wjArWhZwi+YtO5cNTgwH/e68eEElUJDWkJ+k8KYtdx+13usNi+XSbMO3RnR72luBKDhhVMJyY4lHTJ5UvKB6vXsViGx4ZGG7hiZvst9Z9GXmMO9Pp9+2POc++7o1VSpBOiNZPr9j3Fx89IynMLly1v/b9sUpN+YhCYWsQFaJAYSbtSZK+STcYqJWEzYNyyannxZUMwboHVCKXg0+DD3K5JresxkMXHfVe4btwC2ZcZ7FqctPjqbPvhQzy/rNs6n6R63/iNfa8r+Rb+GPeTB7HFqrHamxxCdJkX1QRbY38EzyKM6tGoo8WEx6e5tJXeIw2f+eSkWHkOm60vkkhCm+D/joi8Z4jieTs0=
 X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(35042699022)(14060799003)(36860700016)(376014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(1800799024)(14060799003)(36860700016)(82310400026)(35042699022)(376014)(22082099003)(18002099003)(56012099003)(3023799003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	qqISFYkAYgh8ObsdLnlsqbPNCBjo+o8rF4zdFlYcf8u53nHhjEJlaTCTbNgyG0JPffPB0UwT7USNdjovTC5cB59MQdOKj1nR4C65vkio2j83LBPNhD5FWNmCIOH01UVp2kqNfochSm/ymL3kAUEqsutuKSfdujOuFf4AdYP/OMBBrZX5CwNJZPX4TohJbAZYWtMKvMxyFPkZXqRVnRl3A6BfPoINjggZIt1UB3NHsIsWLKRt0Yoy3ToSaS3RW76g8Iw/3W4yaDzCH8IYCq6qOHjYvjomdHQ1V9B9H9jIkfsqoG8n7TyFFRnAkYhYkuo7ALC87P0oArov5O1zJ+6E1gheRFnWjFOZcQJ4PLGWF6u0JEFgEe9rXPTH2drqv9S76WwHixxnbYDfmHiuzI0globoALaPjC2xaODcX9vluxmkS+hrzwTJXPpUw0EZaitS
+	jE0B81AwSEtyWx4oxnIzr/Jrrh0bs3IP8i8SxjPHaRUgwXidT7LBBkV7tdUvMnUhHE0zYzXbP3LowWuzPJ0eky87j3lb9Zh8GzXyWOmHTTOeaP8HKOpiOvofNlHptfrjoON/SG12CO+CAvcNIWlXu27DO/HaJf8ztWP4in+CPNXUrYhKLVIQITjFI49+OXi2iGk62V9c23t+O6wdYBN3Ix+frlDWi72HXq2iLtBxOBFnzeopGKS5o2ECNNP34M7VXe7BOnSxz9LxKqbeiPyohA9ZNUFaJ/e9PigfTiGaIH5Sqk8juBWovLu1RkjpsWjhMThT+qKAQ9hP8bNqG8B1K0vhmhMThGj1mYGb01qXxclypLYICcgHJfxJH4soK+Gd2qDgKW3FfaVqay24FzMz96p7GzcR3wOXk/f23MOFbWMaToTFFHTm9ERHueXAwM33
 X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 13:00:34.7371
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 13:00:42.7863
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5536578-1aff-4ffa-b12a-08deb02674c9
+X-MS-Exchange-CrossTenant-Network-Message-Id: a09d2d10-04fa-4425-b79a-08deb026799e
 X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B8E.eurprd02.prod.outlook.com
+	AM3PEPF00009BA2.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8009
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR04MB11945
 
-Add support for the SolidRun RZ/G2LC SoM [1] on Hummingboard IIoT [2].
+Add support for the SolidRun RZ/G2L SoM [1] on Hummingboard IIoT [2].
 
 The SoM features:
-- 1Gbps Ethernet with PHY
+- 2x 1Gbps Ethernet with PHY
 - eMMC
 - 1/2GB DDR
 - WiFi + Bluetooth
@@ -169,7 +169,7 @@ The SoM features:
 
 The HummingBoard IIoT features:
 - 3x USB-2.0 Type A connector
-- 1x 1Gbps RJ45 Ethernet
+- 2x 1Gbps RJ45 Ethernet
 - USB Type-C Console Port
 - microSD connector
 - RTC with backup battery
@@ -178,48 +178,57 @@ The HummingBoard IIoT features:
 - 1x DSI Display Connector
 - GPIO header
 - 2x RS232/RS485 ports (configurable)
+- 2x CAN
 
-The RZ/G2LC SoM was designed to be pin compatible to G2L SoM, with
-slightly reduced feature set.
+Descriptions for eMMC, microSD and RS485 are provided as overlays due to
+their dependency on configurable mux states.
 
-Descriptions for eMMC, microSD, and RS485 are shared with G2L.
-
-[1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2lc-som/
+[1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
 [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
 
 Signed-off-by: Josua Mayer <josua@solid-run.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   9 +
- .../dts/renesas/r9a07g044c2-hummingboard-iiot.dts  |  20 ++
- arch/arm64/boot/dts/renesas/rzg2lc-sr-som.dtsi     | 374 +++++++++++++++++++++
- 3 files changed, 403 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile               |  13 +
+ .../dts/renesas/r9a07g044l2-hummingboard-iiot.dts  |  16 +
+ .../renesas/rzg2l-hummingboard-iiot-common.dtsi    | 572 +++++++++++++++++++++
+ .../renesas/rzg2l-hummingboard-iiot-microsd.dtso   |  26 +
+ .../renesas/rzg2l-hummingboard-iiot-rs485-a.dtso   |  17 +
+ .../renesas/rzg2l-hummingboard-iiot-rs485-b.dtso   |  17 +
+ .../boot/dts/renesas/rzg2l-hummingboard-iiot.dtsi  |  49 ++
+ arch/arm64/boot/dts/renesas/rzg2l-sr-som-emmc.dtso |  44 ++
+ arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi      | 421 +++++++++++++++
+ 9 files changed, 1175 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index cff17cb8574a3..04a68d472064f 100644
+index ca45d2857ea7f..38163ce845e7a 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -164,6 +164,15 @@ dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043u11-smarc-du-adv7513.dtb
- r9a07g043u11-smarc-pmod-dtbs := r9a07g043u11-smarc.dtb r9a07g043-smarc-pmod.dtbo
- dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043u11-smarc-pmod.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-hummingboard-iiot.dtb
-+r9a07g044c2-hummingboard-iiot-emmc-dtbs := r9a07g044c2-hummingboard-iiot.dtb rzg2l-sr-som-emmc.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-hummingboard-iiot-emmc.dtb
-+r9a07g044c2-hummingboard-iiot-microsd-dtbs := r9a07g044c2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-microsd.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-hummingboard-iiot-microsd.dtb
-+r9a07g044c2-hummingboard-iiot-rs485-a-dtbs := r9a07g044c2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-rs485-a.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-hummingboard-iiot-rs485-a.dtb
-+r9a07g044c2-hummingboard-iiot-rs485-b-dtbs := r9a07g044c2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-rs485-b.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-hummingboard-iiot-rs485-b.dtb
- dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
- dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc-cru-csi-ov5645.dtbo
+@@ -169,6 +169,19 @@ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc-cru-csi-ov5645.dtbo
  r9a07g044c2-smarc-cru-csi-ov5645-dtbs := r9a07g044c2-smarc.dtb r9a07g044c2-smarc-cru-csi-ov5645.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-hummingboard-iiot.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-hummingboard-iiot.dts
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc-cru-csi-ov5645.dtb
+ 
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-hummingboard-iiot.dtb
++dtb-$(CONFIG_ARCH_R9A07G044) += rzg2l-sr-som-emmc.dtbo
++r9a07g044l2-hummingboard-iiot-emmc-dtbs := r9a07g044l2-hummingboard-iiot.dtb rzg2l-sr-som-emmc.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-hummingboard-iiot-emmc.dtb
++dtb-$(CONFIG_ARCH_R9A07G044) += rzg2l-hummingboard-iiot-microsd.dtbo
++r9a07g044l2-hummingboard-iiot-microsd-dtbs := r9a07g044l2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-microsd.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-hummingboard-iiot-microsd.dtb
++dtb-$(CONFIG_ARCH_R9A07G044) += rzg2l-hummingboard-iiot-rs485-a.dtbo
++r9a07g044l2-hummingboard-iiot-rs485-a-dtbs := r9a07g044l2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-rs485-a.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-hummingboard-iiot-rs485-a.dtb
++dtb-$(CONFIG_ARCH_R9A07G044) += rzg2l-hummingboard-iiot-rs485-b.dtbo
++r9a07g044l2-hummingboard-iiot-rs485-b-dtbs := r9a07g044l2-hummingboard-iiot.dtb rzg2l-hummingboard-iiot-rs485-b.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-hummingboard-iiot-rs485-b.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-remi-pi.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc-cru-csi-ov5645.dtbo
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2-hummingboard-iiot.dts b/arch/arm64/boot/dts/renesas/r9a07g044l2-hummingboard-iiot.dts
 new file mode 100644
-index 0000000000000..06d9d031cbe91
+index 0000000000000..eba4f423c8f05
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-hummingboard-iiot.dts
-@@ -0,0 +1,20 @@
++++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-hummingboard-iiot.dts
+@@ -0,0 +1,16 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
 + * Copyright 2025 Josua Mayer <josua@solid-run.com>
@@ -227,28 +236,785 @@ index 0000000000000..06d9d031cbe91
 +
 +/dts-v1/;
 +
-+#include "r9a07g044c2.dtsi"
-+#include "rzg2lc-sr-som.dtsi"
-+#include "rzg2l-hummingboard-iiot-common.dtsi"
++#include "r9a07g044l2.dtsi"
++#include "rzg2l-sr-som.dtsi"
++#include "rzg2l-hummingboard-iiot.dtsi"
 +
 +/ {
-+	compatible = "solidrun,rzg2lc-hummingboard-iiot", "solidrun,rzg2lc-sr-som",
-+		     "renesas,r9a07g044c2", "renesas,r9a07g044";
-+	model = "SolidRun RZ/G2LC HummingBoard IIoT";
++	compatible = "solidrun,rzg2l-hummingboard-iiot", "solidrun,rzg2l-sr-som",
++		     "renesas,r9a07g044l2", "renesas,r9a07g044";
++	model = "SolidRun RZ/G2L HummingBoard IIoT";
 +};
-+
-+&vmmc {
-+	gpio = <&pinctrl RZG2L_GPIO(18, 1) GPIO_ACTIVE_LOW>;
-+};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-sr-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-sr-som.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-common.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-common.dtsi
 new file mode 100644
-index 0000000000000..0505af6926a5e
+index 0000000000000..fbf2e7c393bf3
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-sr-som.dtsi
-@@ -0,0 +1,374 @@
++++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-common.dtsi
+@@ -0,0 +1,572 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Device Tree Source for the RZ/G2LC Solidrun SOM
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++/ {
++	/* power for M.2 B-Key connector (J6) */
++	regulator-m2-b {
++		compatible = "regulator-fixed";
++		regulator-name = "m2-b";
++		gpios = <&tca6416_u20 5 GPIO_ACTIVE_HIGH>;
++		regulator-always-on;
++		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <3300000>;
++		enable-active-high;
++	};
++
++	/* power for M.2 M-Key connector (J4) */
++	regulator-m2-m {
++		compatible = "regulator-fixed";
++		regulator-name = "m2-m";
++		gpios = <&tca6416_u20 6 GPIO_ACTIVE_HIGH>;
++		regulator-always-on;
++		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <3300000>;
++		enable-active-high;
++	};
++
++	/* power for USB-A J27 behind USB Hub Port 3 */
++	regulator-vbus-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus2";
++		regulator-always-on;
++		regulator-max-microvolt = <5000000>;
++		regulator-min-microvolt = <5000000>;
++		gpio = <&tca6416_u20 12 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	/* power for USB-A J27 behind USB Hub Port 4 */
++	regulator-vbus-3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus3";
++		regulator-always-on;
++		regulator-max-microvolt = <5000000>;
++		regulator-min-microvolt = <5000000>;
++		gpio = <&tca6416_u20 13 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	aliases {
++		gpio1 = &tca6408_u48;
++		gpio2 = &tca6408_u37;
++		gpio3 = &tca6416_u20;
++		gpio4 = &tca6416_u21;
++		i2c3 = &i2c_exp;
++		i2c4 = &i2c_csi;
++		i2c5 = &i2c_dsi;
++		i2c6 = &i2c_lvds;
++		rtc0 = &carrier_rtc;
++		rtc1 = &pmic;
++		serial3 = &scif3;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		wakeup-event {
++			interrupts-extended = <&tca6416_u21 11 IRQ_TYPE_EDGE_FALLING>;
++			label = "m2-m-wakeup";
++			wakeup-source;
++			linux,code = <KEY_WAKEUP>;
++		};
++	};
++
++	can_mux: mux-controller-1 {
++		compatible = "gpio-mux";
++		/* default J9-55/57/59/61 to on-board transceivers */
++		idle-state = <0>;
++		#mux-control-cells = <0>;
++		/*
++		 * Mux routes CAN bus signals between SoM connector pins,
++		 * expansion connector (J22) and on-board transceivers using
++		 * two GPIO:
++		 * - IO3: 0 = on-board transceivers, 1 = expansion connector
++		 * - IO4: 0 = J9-55/57/59/61, 1 = J7-12/16 & J9-54/56
++		 */
++		mux-gpios = <&tca6416_u20 3 GPIO_ACTIVE_HIGH>,
++			    <&tca6416_u20 4 GPIO_ACTIVE_HIGH>;
++	};
++
++	spi_mux: mux-controller-2 {
++		compatible = "gpio-mux";
++		/* default on-board */
++		idle-state = <0>;
++		/*
++		 * Mux switches spi bus between on-board tpm
++		 * and expansion connector (J22).
++		 */
++		mux-gpios = <&tca6416_u21 0 GPIO_ACTIVE_HIGH>;
++		#mux-control-cells = <0>;
++	};
++
++	scif1_scif3_b2b_mux: mux-controller-3 {
++		compatible = "gpio-mux";
++		/* default on-board */
++		idle-state = <0>;
++		#mux-control-cells = <0>;
++		/*
++		 * Mux switches both scif1 and scif3 tx/rx between expansion
++		 * connector (J22) and on-board rs232/rs485 transceivers
++		 * using one GPIO: 0 = on-board, 1 = connector.
++		 */
++		mux-gpios = <&tca6416_u20 0 GPIO_ACTIVE_HIGH>;
++	};
++
++	scif1_rs_232_485_mux: mux-controller-4 {
++		compatible = "gpio-mux";
++		/* default rs232 */
++		idle-state = <0>;
++		#mux-control-cells = <0>;
++		/*
++		 * Mux switches scif1 tx/rx between rs232 and rs485
++		 * transceivers. using one GPIO: 0 = rs232, 1 = rs485.
++		 */
++		mux-gpios = <&tca6416_u20 1 GPIO_ACTIVE_HIGH>;
++	};
++
++	scif3_rs_232_485_mux: mux-controller-5 {
++		compatible = "gpio-mux";
++		/* default rs232 */
++		idle-state = <0>;
++		#mux-control-cells = <0>;
++		/*
++		 * Mux switches scif3 tx/rx between rs232 and rs485
++		 * transceivers. using one GPIO: 0 = rs232, 1 = rs485.
++		 */
++		mux-gpios = <&tca6416_u20 2 GPIO_ACTIVE_HIGH>;
++	};
++
++	v_1_2: regulator-1-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "1v2";
++		regulator-max-microvolt = <1800000>;
++		regulator-min-microvolt = <1800000>;
++	};
++
++	v_3_3: regulator-3-3 {
++		compatible = "regulator-fixed";
++		regulator-name = "3v3";
++		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <3300000>;
++	};
++
++	reg_dsi_panel: regulator-dsi-panel {
++		compatible = "regulator-fixed";
++		regulator-name = "dsi-panel";
++		gpios = <&tca6416_u20 15 GPIO_ACTIVE_HIGH>;
++		regulator-max-microvolt = <11200000>;
++		regulator-min-microvolt = <11200000>;
++		enable-active-high;
++	};
++
++	vmmc: regulator-mmc {
++		compatible = "regulator-fixed";
++		regulator-name = "vmmc";
++		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <3300000>;
++		startup-delay-us = <250>;
++		vin-supply = <&v_3_3>;
++		gpio = <&pinctrl RZG2L_GPIO(4, 1) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	/* power for USB-A J5003 */
++	vbus1: regulator-vbus-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus1";
++		regulator-max-microvolt = <5000000>;
++		regulator-min-microvolt = <5000000>;
++		gpio = <&tca6416_u20 14 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	rfkill-m2-b-gnss {
++		compatible = "rfkill-gpio";
++		/* rfkill-gpio inverts internally */
++		shutdown-gpios = <&tca6416_u20 10 GPIO_ACTIVE_LOW>;
++		label = "m2-b gnss";
++		radio-type = "gps";
++	};
++
++	rfkill-m2-b-wwan {
++		compatible = "rfkill-gpio";
++		/* rfkill-gpio inverts internally */
++		shutdown-gpios = <&tca6416_u20 9 GPIO_ACTIVE_HIGH>;
++		label = "m2-b radio";
++		radio-type = "wwan";
++	};
++};
++
++&ehci1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	hub_2_0: hub@1 {
++		compatible = "usb4b4,6502", "usb4b4,6506";
++		reg = <1>;
++		peer-hub = <&hub_3_0>;
++		reset-gpios = <&tca6416_u20 11 GPIO_ACTIVE_LOW>;
++		vdd2-supply = <&v_3_3>;
++		vdd-supply = <&v_1_2>;
++	};
++
++	/* this device is not visible because host supports 2.0 only */
++	hub_3_0: hub@2 {
++		compatible = "usb4b4,6500", "usb4b4,6504";
++		reg = <2>;
++		peer-hub = <&hub_2_0>;
++		reset-gpios = <&tca6416_u20 11 GPIO_ACTIVE_LOW>;
++		vdd2-supply = <&v_3_3>;
++		vdd-supply = <&v_1_2>;
++	};
++};
++
++&i2c0 {
++	/* highest i2c clock supported by all peripherals is 400kHz */
++
++	tca6416_u20: gpio@20 {
++		compatible = "ti,tcal6416";
++		reg = <0x20>;
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-line-names = "TCA_INT/EXT_UART", "TCA_UARTA_232/485",
++				  "TCA_UARTB_232/485", "TCA_INT/EXT_CAN",
++				  "TCA_NXP/REN", "TCA_M.2B_3V3_EN",
++				  "TCA_M.2M_3V3_EN", "TCA_M.2M_RESET#",
++				  "TCA_M.2B_RESET#", "TCA_M.2B_W_DIS#",
++				  "TCA_M.2B_GPS_EN#", "TCA_USB-HUB_RST#",
++				  "TCA_USB_HUB3_PWR_EN", "TCA_USB_HUB4_PWR_EN",
++				  "TCA_USB1_PWR_EN", "TCA_VIDEO_PWR_EN";
++
++		m2-b-reset-hog {
++			gpios = <8 GPIO_ACTIVE_LOW>;
++			gpio-hog;
++			line-name = "m2-b-reset";
++			output-low;
++		};
++
++		m2-m-reset-hog {
++			gpios = <7 GPIO_ACTIVE_LOW>;
++			gpio-hog;
++			line-name = "m2-m-reset";
++			/*
++			 * M.2 Key-M connector only supports PCI,
++			 * but RZ/G2L(C) has no pci controller.
++			 * Keep any card in reset.
++			 */
++			output-high;
++		};
++	};
++
++	tca6416_u21: gpio@21 {
++		compatible = "ti,tcal6416";
++		reg = <0x21>;
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-line-names = "TCA_SPI_TPM/EXT", "TCA_TPM_RST#",
++				  "TCA_I2C_RST", "TCA_RS232_SHTD#",
++				  "TCA_LCD_I2C_RST", "TCA_DIG_OUT1",
++				  "TCA_bDIG_IN1", "TCA_SENS_INT",
++				  "TCA_ALERT#", "TCA_TPM_PIRQ#",
++				  "TCA_RTC_INT", "TCA_M.2M_WAKW_ON_LAN",
++				  "TCA_M.2M_CLKREQ#", "TCA_LVDS_INT#",
++				  "", "TCA_POE_AT";
++		/* Level triggered irq does not currently work well on RZ/G2L, fall-back to edge */
++		interrupts-extended = <&pinctrl RZG2L_GPIO(4, 0) IRQ_TYPE_EDGE_FALLING>;
++
++		lcd-i2c-reset-hog {
++			gpios = <4 (GPIO_ACTIVE_LOW|GPIO_PULL_UP|GPIO_OPEN_DRAIN)>;
++			line-name = "lcd-i2c-reset";
++			output-low;
++			/*
++			 * reset shared between U37 and U48, to be
++			 * supported once gpio-pca953x switches to
++			 * reset framework.
++			 */
++			gpio-hog;
++		};
++
++		lvds-irq-hog {
++			gpios = <13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP | GPIO_OPEN_DRAIN)>;
++			gpio-hog;
++			input;
++			line-name = "lvds-irq";
++		};
++
++		m2-m-clkreq-hog {
++			gpios = <12 GPIO_ACTIVE_LOW>;
++			gpio-hog;
++			input;
++			line-name = "m2-m-clkreq";
++		};
++
++		rs232_shutdown: rs232-shutdown-hog {
++			gpios = <3 GPIO_ACTIVE_LOW>;
++			gpio-hog;
++			line-name = "rs232-shutdown";
++			output-low;
++		};
++
++		sensor-irq-hog {
++			gpios = <7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP | GPIO_OPEN_DRAIN)>;
++			gpio-hog;
++			input;
++			line-name = "sensor-irq";
++		};
++
++		tpm-irq-hog {
++			gpios = <9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP | GPIO_OPEN_DRAIN)>;
++			gpio-hog;
++			input;
++			line-name = "tpm-irq";
++		};
++	};
++
++	led-controller@30 {
++		compatible = "ti,lp5562";
++		reg = <0x30>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		/* use internal clock, could use external generated by rtc */
++		clock-mode = /bits/ 8 <1>;
++
++		multi-led@0 {
++			reg = <0x0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			color = <LED_COLOR_ID_RGB>;
++			label = "D7";
++
++			led@0 {
++				reg = <0x0>;
++				color = <LED_COLOR_ID_RED>;
++				led-cur = /bits/ 8 <0x32>;
++				max-cur = /bits/ 8 <0x64>;
++			};
++
++			led@1 {
++				reg = <0x1>;
++				color = <LED_COLOR_ID_GREEN>;
++				led-cur = /bits/ 8 <0x19>;
++				max-cur = /bits/ 8 <0x32>;
++			};
++
++			led@2 {
++				reg = <0x2>;
++				color = <LED_COLOR_ID_BLUE>;
++				led-cur = /bits/ 8 <0x19>;
++				max-cur = /bits/ 8 <0x32>;
++			};
++		};
++
++		led@3 {
++			reg = <0x3>;
++			chan-name = "D8";
++			color = <LED_COLOR_ID_GREEN>;
++			label = "D8";
++			led-cur = /bits/ 8 <0x19>;
++			max-cur = /bits/ 8 <0x64>;
++		};
++	};
++
++	light-sensor@44 {
++		compatible = "isil,isl29023";
++		reg = <0x44>;
++		/* IRQ shared between accelerometer, light-sensor and Tamper input (J5007) */
++		interrupts-extended = <&tca6416_u21 7 IRQ_TYPE_EDGE_FALLING>;
++	};
++
++	accelerometer@53 {
++		compatible = "adi,adxl345";
++		reg = <0x53>;
++		interrupts-extended = <&tca6416_u21 7 IRQ_TYPE_EDGE_FALLING>;
++		/* IRQ shared between accelerometer, light-sensor and Tamper input (J5007) */
++		interrupt-names = "INT1";
++	};
++
++	carrier_eeprom: eeprom@57 {
++		compatible = "atmel,24c02";
++		reg = <0x57>;
++		pagesize = <8>;
++	};
++
++	carrier_rtc: rtc@69 {
++		compatible = "abracon,ab1805";
++		reg = <0x69>;
++		/*
++		 * AM1805 RTC used on this board has only nTIRQ pins wired,
++		 * which is for countdown timer irqs only.
++		 * Driver does not support this, disable for now.
++		 *
++		 * interrupts-extended = <&tca6416_u21 10 IRQ_TYPE_EDGE_FALLING>;
++		 */
++		abracon,tc-diode = "schottky";
++		abracon,tc-resistor = <3>;
++	};
++};
++
++&i2c1 {
++	/* highest i2c clock supported by all peripherals is 400kHz */
++
++	i2c-mux@70 {
++		compatible = "nxp,pca9546";
++		reg = <0x70>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		/*
++		 * This reset is open drain with HW 10k pull-up resistor,
++		 * but reset core does not support GPIO_OPEN_DRAIN flag.
++		 * The pull-up and GPIO voltages match, push-pull is safe.
++		 */
++		reset-gpios = <&tca6416_u21 2 GPIO_ACTIVE_LOW>;
++
++		/* channel 0 routed to expansion connector (J22) */
++		i2c_exp: i2c@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		/* channel 1 routed to mipi-csi connector (J23) */
++		i2c_csi: i2c@1 {
++			reg = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		/* channel 2 routed to mipi-dsi connector (J25) */
++		i2c_dsi: i2c@2 {
++			reg = <2>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			tca6408_u48: gpio@21 {
++				compatible = "ti,tca6408";
++				reg = <0x21>;
++				#gpio-cells = <2>;
++				gpio-line-names = "CAM_RST#", "DSI_RESET",
++						  "DSI_STBYB", "DSI_PWM_BL",
++						  "DSI_L/R", "DSI_U/D",
++						  "DSI_CTP_/RST", "CAM_TRIG";
++				/*
++				 * reset shared between U37 and U48, to be
++				 * supported once gpio-pca953x switches to
++				 * reset framework.
++				 *
++				 * reset-gpios = <&tca6416_u21 4
++				 *                (GPIO_ACTIVE_LOW|GPIO_PULL_UP|GPIO_OPEN_DRAIN)>;
++				 */
++				gpio-controller;
++			};
++		};
++
++		/* channel 2 routed to lvds connector (J24) */
++		i2c_lvds: i2c@3 {
++			reg = <3>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			tca6408_u37: gpio@20 {
++				compatible = "ti,tca6408";
++				reg = <0x20>;
++				#gpio-cells = <2>;
++				gpio-line-names = "SELB", "LVDS_RESET",
++						  "LVDS_STBYB", "LVDS_PWM_BL",
++						  "LVDS_L/R", "LVDS_U/D",
++						  "LVDS_CTP_/RST", "";
++				/*
++				 * reset shared between U37 and U48, to be
++				 * supported once gpio-pca953x switches to
++				 * reset framework.
++				 *
++				 * reset-gpios = <&tca6416_u21 4
++				 *                (GPIO_ACTIVE_LOW|GPIO_PULL_UP|GPIO_OPEN_DRAIN)>;
++				 */
++				gpio-controller;
++			};
++		};
++	};
++};
++
++&phy0 {
++	leds {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* LED_0 pin */
++		led@0 {
++			reg = <0>;
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "keep";
++			function = LED_FUNCTION_LAN;
++		};
++	};
++};
++
++&pinctrl {
++	/* UARTA */
++	scif1_pins: scif1 {
++		pinmux = <RZG2L_PORT_PINMUX(40, 1, 1)>, /* SCIF1_RXD */
++			 <RZG2L_PORT_PINMUX(40, 0, 1)>; /* SCIF1_TXD */
++	};
++
++	/* UARTB */
++	scif3_pins: scif3 {
++		pinmux = <RZG2L_PORT_PINMUX(0, 1, 5)>, /* SCIF3_RXD */
++			 <RZG2L_PORT_PINMUX(0, 0, 5)>; /* SCIF3_TXD */
++	};
++};
++
++&scif1 {
++	pinctrl-0 = <&scif1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&scif3 {
++	pinctrl-0 = <&scif3_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&spi1 {
++	/* native cs does not support cs persistence required for tpm */
++	cs-gpios = <&pinctrl RZG2L_GPIO(44, 3) GPIO_ACTIVE_LOW>;
++	num-cs = <1>;
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	spi1_muxed: spi@0 {
++		compatible = "spi-mux";
++		reg = <0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		mux-controls = <&spi_mux>;
++		/* mux bandwidth is 2GHz, soc max. spi clock is P0/2 = 50MHz */
++		spi-max-frequency = <50000000>;
++
++		tpm@0 {
++			compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
++			reg = <0>;
++			interrupts-extended = <&tca6416_u21 9 IRQ_TYPE_LEVEL_LOW>;
++			reset-gpios = <&tca6416_u21 1 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
++			spi-max-frequency = <43000000>;
++		};
++	};
++};
++
++&usb2_phy0 {
++	dr_mode = "host";
++	vbus-supply = <&vbus1>;
++};
++
++&usb2_phy1 {
++	dr_mode = "host";
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-microsd.dtso b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-microsd.dtso
+new file mode 100644
+index 0000000000000..aa85054efa0c4
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-microsd.dtso
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++* Device Tree Overlay for the RZ/G2L(C) Solidrun SOM SD
++*
++* Copyright (C) 2024 SolidRun Ltd.
++*/
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++&sdhi0 {
++	bus-width = <4>;
++	full-pwr-cycle;
++	mux-states = <&sdhi0_mux 1>;
++	pinctrl-0 = <&sdhi0_pins>, <&sdhi0_cd_pins>;
++	pinctrl-1 = <&sdhi0_uhs_pins>, <&sdhi0_cd_pins>;
++	pinctrl-names = "default", "state_uhs";
++	sd-uhs-sdr104;
++	sd-uhs-sdr50;
++	vmmc-supply = <&vmmc>;
++	vqmmc-supply = <&reg_pmic_ldo1>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-a.dtso b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-a.dtso
+new file mode 100644
+index 0000000000000..4bcb22d518f05
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-a.dtso
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ *
++ * Overlay for enabling HummingBoard IIoT on-board RS485 Port A on connector J5004.
++ *
++ * Because Renesas uart driver does not support rs485,
++ * users must manually toggle P41_1 between RX & TX.
++ */
++
++/dts-v1/;
++/plugin/;
++
++&scif1_rs_232_485_mux {
++	/* select rs485 */
++	idle-state = <1>;
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-b.dtso b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-b.dtso
+new file mode 100644
+index 0000000000000..6f460b3e0b256
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-rs485-b.dtso
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ *
++ * Overlay for enabling HummingBoard IIoT on-board RS485 Port B on connector J5004.
++ *
++ * Because Renesas uart driver does not support rs485,
++ * users must manually toggle P41_0 between RX & TX.
++ */
++
++/dts-v1/;
++/plugin/;
++
++&scif3_rs_232_485_mux {
++	/* select rs485 */
++	idle-state = <1>;
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot.dtsi
+new file mode 100644
+index 0000000000000..22f066079e69a
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot.dtsi
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++#include "rzg2l-hummingboard-iiot-common.dtsi"
++
++&canfd {
++	pinctrl-names = "default";
++	pinctrl-0 = <&can0_pins>, <&can1_pins>;
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++
++	channel1 {
++		status = "okay";
++	};
++};
++
++&phy1 {
++	leds {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* LED_0 pin */
++		led@0 {
++			reg = <0>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_LAN;
++			default-state = "keep";
++		};
++	};
++};
++
++&pinctrl {
++	/* CANA */
++	can0_pins: can0 {
++		pinmux = <RZG2L_PORT_PINMUX(10, 1, 2)>, /* CAN0_TX */
++			 <RZG2L_PORT_PINMUX(11, 0, 2)>; /* CAN0_RX */
++	};
++
++	/* CANB */
++	can1_pins: can1 {
++		pinmux = <RZG2L_PORT_PINMUX(12, 1, 2)>, /* CAN1_TX */
++			 <RZG2L_PORT_PINMUX(13, 0, 2)>; /* CAN1_RX */
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-sr-som-emmc.dtso b/arch/arm64/boot/dts/renesas/rzg2l-sr-som-emmc.dtso
+new file mode 100644
+index 0000000000000..c59c7e7e70bfa
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-sr-som-emmc.dtso
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++* Device Tree Overlay for the RZ/G2L(C) Solidrun SOM eMMC
++*
++* Copyright (C) 2024 SolidRun Ltd.
++*/
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++&reg_pmic_ldo1 {
++	/*
++	 * This ldo can switch mmc host controller io voltage between
++	 * 1.8V and 3.3V. The eMMC IO voltage however is supplied from
++	 * reg_pmic_buck3 which is fixed at 1.8V.
++	 * Lower this ldo maximum voltage to 1.8V to prevent setting 3.3V.
++	 */
++	regulator-max-microvolt = <1800000>;
++};
++
++&sdhi0 {
++	/*
++	 * Host controller and eMMC have separate io voltage regulators:
++	 * reg_pmic_ldo1 (1.8V/3.3V); reg_pmic_buck3 (1.8V only).
++	 * Link to the switchable regulator ensuring that it gets configured.
++	 */
++	vqmmc-supply = <&reg_pmic_ldo1>;
++	bus-width = <8>;
++	cap-mmc-hw-reset;
++	mmc-hs200-1_8v;
++	mux-states = <&sdhi0_mux 0>;
++	non-removable;
++	no-sdio;
++	pinctrl-0 = <&sdhi0_uhs_pins>, <&sdhi0_rst_pins>;
++	pinctrl-1 = <&sdhi0_uhs_pins>, <&sdhi0_rst_pins>;
++	pinctrl-names = "default", "state_uhs";
++	vmmc-supply = <&reg_pmic_buck4>;
++	/* emmc io voltage is hard-wired for 1.8V, disable sd modes */
++	no-sd;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi
+new file mode 100644
+index 0000000000000..297256299e7a8
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi
+@@ -0,0 +1,421 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G2L Solidrun SoM
 + *
 + * Copyright 2023 SolidRun Ltd.
 + * Copyright 2025 Josua Mayer <josua@solid-run.com>
@@ -259,9 +1025,11 @@ index 0000000000000..0505af6926a5e
 +/ {
 +	aliases {
 +		ethernet0 = &eth0;
++		ethernet1 = &eth1;
++		gpio0 = &pinctrl;
 +		i2c0 = &i2c0;
 +		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
++		i2c2 = &i2c3;
 +		mmc0 = &sdhi0;
 +		mmc1 = &sdhi1;
 +		rtc0 = &pmic;
@@ -281,9 +1049,15 @@ index 0000000000000..0505af6926a5e
 +		/*
 +		 * Mux switches SD0_DATA[0-3], SD0_CMD & SD0_CLK between
 +		 * on-SoM eMMC and board-to-board connector using one gpio:
-+		 * 0 = connector, 1 = eMMC.
++		 * 1 = connector, 0 = eMMC.
 +		 */
-+		mux-gpios = <&pinctrl RZG2L_GPIO(22, 1) GPIO_ACTIVE_HIGH>;
++		mux-gpios = <&pinctrl RZG2L_GPIO(22, 1) GPIO_ACTIVE_LOW>;
++	};
++
++	clk_pmic_32k: pmic-32k-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
 +	};
 +
 +	reg_pmic_buck1: regulator-pmic-buck1 {
@@ -359,7 +1133,7 @@ index 0000000000000..0505af6926a5e
 +
 +	sdhi1_pwrseq: sdhi1-pwrseq {
 +		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&pinctrl RZG2L_GPIO(23, 0) GPIO_ACTIVE_LOW>;
++		reset-gpios = <&pinctrl RZG2L_GPIO(23, 1) GPIO_ACTIVE_LOW>;
 +	};
 +
 +	/* 32.768kHz crystal */
@@ -389,7 +1163,7 @@ index 0000000000000..0505af6926a5e
 +	pinctrl-names = "default";
 +	/*
 +	 * ravb driver does not configure mac internal delays for RZ/G2L(C),
-+	 * instead delays are added by the ADIN1200 phy driver.
++	 * instead delays are added by the MxL86110 phy driver.
 +	 */
 +	phy-mode = "rgmii-id";
 +	status = "okay";
@@ -397,6 +1171,23 @@ index 0000000000000..0505af6926a5e
 +	phy0: ethernet-phy@0 {
 +		reg = <0>;
 +		interrupts-extended = <&pinctrl RZG2L_GPIO(27, 0) IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
++&eth1 {
++	phy-handle = <&phy1>;
++	pinctrl-0 = <&eth1_pins>;
++	pinctrl-names = "default";
++	/*
++	 * ravb driver does not configure mac internal delays for RZ/G2L(C),
++	 * instead delays are added by the MxL86110 phy driver.
++	 */
++	phy-mode = "rgmii-id";
++	status = "okay";
++
++	phy1: ethernet-phy@4 {
++		reg = <4>;
++		interrupts-extended = <&pinctrl RZG2L_GPIO(42, 4) IRQ_TYPE_LEVEL_LOW>;
 +	};
 +};
 +
@@ -413,6 +1204,13 @@ index 0000000000000..0505af6926a5e
 +	pinctrl-0 = <&i2c0_pins>;
 +	pinctrl-names = "default";
 +	status = "okay";
++};
++
++&i2c1 {
++	clock-frequency = <400000>;
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
 +
 +	eeprom: eeprom@50 {
 +		compatible = "atmel,24c01";
@@ -421,16 +1219,9 @@ index 0000000000000..0505af6926a5e
 +	};
 +};
 +
-+&i2c1 {
++&i2c3 {
 +	clock-frequency = <400000>;
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	clock-frequency = <400000>;
-+	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-0 = <&i2c3_pins>;
 +	pinctrl-names = "default";
 +	status = "okay";
 +
@@ -482,6 +1273,24 @@ index 0000000000000..0505af6926a5e
 +			 <RZG2L_PORT_PINMUX(26, 1, 1)>; /* ET0_RXD3 */
 +	};
 +
++	eth1_pins: eth1 {
++		pinmux = <RZG2L_PORT_PINMUX(37, 2, 1)>, /* ET1_LINKSTA */
++			 <RZG2L_PORT_PINMUX(37, 0, 1)>, /* ET1_MDC */
++			 <RZG2L_PORT_PINMUX(37, 1, 1)>, /* ET1_MDIO */
++			 <RZG2L_PORT_PINMUX(29, 0, 1)>, /* ET1_TXC */
++			 <RZG2L_PORT_PINMUX(29, 1, 1)>, /* ET1_TX_CTL */
++			 <RZG2L_PORT_PINMUX(30, 0, 1)>, /* ET1_TXD0 */
++			 <RZG2L_PORT_PINMUX(30, 1, 1)>, /* ET1_TXD1 */
++			 <RZG2L_PORT_PINMUX(31, 0, 1)>, /* ET1_TXD2 */
++			 <RZG2L_PORT_PINMUX(31, 1, 1)>, /* ET1_TXD3 */
++			 <RZG2L_PORT_PINMUX(33, 1, 1)>, /* ET1_RXC */
++			 <RZG2L_PORT_PINMUX(34, 0, 1)>, /* ET1_RX_CTL */
++			 <RZG2L_PORT_PINMUX(34, 1, 1)>, /* ET1_RXD0 */
++			 <RZG2L_PORT_PINMUX(35, 0, 1)>, /* ET1_RXD1 */
++			 <RZG2L_PORT_PINMUX(35, 1, 1)>, /* ET1_RXD2 */
++			 <RZG2L_PORT_PINMUX(36, 0, 1)>; /* ET1_RXD3 */
++	};
++
 +	i2c0_pins: i2c0 {
 +		input-enable;
 +		pins = "RIIC0_SDA", "RIIC0_SCL";
@@ -492,9 +1301,9 @@ index 0000000000000..0505af6926a5e
 +		pins = "RIIC1_SDA", "RIIC1_SCL";
 +	};
 +
-+	i2c2_pins: i2c2 {
-+		pinmux = <RZG2L_PORT_PINMUX(42, 3, 1)>, /* RIIC2_SDA */
-+			 <RZG2L_PORT_PINMUX(42, 4, 1)>; /* RIIC2_SCL */
++	i2c3_pins: i2c3 {
++		pinmux = <RZG2L_PORT_PINMUX(18, 0, 3)>, /* RIIC3_SDA */
++			 <RZG2L_PORT_PINMUX(18, 1, 3)>; /* RIIC3_SCL */
 +	};
 +
 +	qspi0_pins: qspi0 {
@@ -509,10 +1318,10 @@ index 0000000000000..0505af6926a5e
 +	};
 +
 +	scif2_pins: scif2 {
-+		pinmux = <RZG2L_PORT_PINMUX(42, 0, 4)>, /* SCIF2_TXD */
-+			 <RZG2L_PORT_PINMUX(42, 1, 4)>, /* SCIF2_RXD */
-+			 <RZG2L_PORT_PINMUX(5, 1, 2)>, /* SCIF2_CTS# */
-+			 <RZG2L_PORT_PINMUX(5, 2, 2)>; /* SCIF2_RTS# */
++		pinmux = <RZG2L_PORT_PINMUX(48, 0, 1)>, /* SCIF2_TXD */
++			 <RZG2L_PORT_PINMUX(48, 1, 1)>, /* SCIF2_RXD */
++			 <RZG2L_PORT_PINMUX(48, 3, 1)>, /* SCIF2_CTS# */
++			 <RZG2L_PORT_PINMUX(48, 4, 1)>; /* SCIF2_RTS# */
 +	};
 +
 +	sdhi0_pins: sdhi0 {
@@ -530,7 +1339,7 @@ index 0000000000000..0505af6926a5e
 +	};
 +
 +	sdhi0_cd_pins: sdhi0-cd {
-+		pinmux = <RZG2L_PORT_PINMUX(18, 0, 1)>; /* SD0_CD */
++		pinmux = <RZG2L_PORT_PINMUX(47, 0, 2)>; /* SD0_CD */
 +	};
 +
 +	/* SD0_RST is only routed to eMMC which uses fixed 1.8V IO voltage */
@@ -548,7 +1357,7 @@ index 0000000000000..0505af6926a5e
 +	spi1_pins: spi1 {
 +		pinmux = <RZG2L_PORT_PINMUX(44, 2, 1)>, /* RSPI1_MISO */
 +			 <RZG2L_PORT_PINMUX(44, 1, 1)>, /* RSPI1_MOSI# */
-+			 <RZG2L_PORT_PINMUX(44, 0, 1)>; /* RSPI1_CK# */
++			 <RZG2L_PORT_PINMUX(44, 0, 1)>;
 +	};
 +
 +	spi1_cs_pins: spi1-cs {
@@ -557,6 +1366,10 @@ index 0000000000000..0505af6926a5e
 +
 +	usb0_vbus_pins: usb0-vbus {
 +		pinmux = <RZG2L_PORT_PINMUX(4, 0, 1)>; /* USB0_VBUSEN */
++	};
++
++	usb1_vbus_pins: usb1-vbus {
++		pinmux = <RZG2L_PORT_PINMUX(42, 0, 1)>; /* USB1_VBUSEN */
 +	};
 +};
 +
@@ -588,7 +1401,7 @@ index 0000000000000..0505af6926a5e
 +
 +/* WiFi */
 +&sdhi1 {
-+	/* Murata 1YN max rate is 50MHz */
++	/* Murata 1MW max rate is 50MHz */
 +	max-frequency = <50000000>;
 +	bus-width = <4>;
 +	cap-sdio-irq;
