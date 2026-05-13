@@ -1,173 +1,100 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7365B36F8EB;
-	Wed, 13 May 2026 22:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CC4221DB6
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 13 May 2026 22:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778711503; cv=none; b=jra9d8m+sJc5xK61rnlm6aLM/i2WamOiIkmy0UXqpa5MalD+PrJqGH6pBI0BQqsDdru2qqy5+biYIvEPNWrmIyNLK0SsmIhOnuFiQt9VxnX1gzipV+nKCW7vY7m/jYTtGzBGwXTaJtXU1NKoXa56sTg1Fi5zxO3COp1fz8QgM3Q=
+	t=1778711994; cv=none; b=Sc6OUmuOJ1umJBV0DB3KjSwZ5QGk/cJC3J0a6A/8mcZnbJXI1QgbGeDd8LgUGu6XSkWApYI12MsXhO9vnTw3/+hlo9P5DgFKgJgvcnio1LWuyoZjm4rzMiRd7xzi2oQbI53km1QdrReCSGU/sXF+2t+RMjPjQW9+jlMRqxm26vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778711503; c=relaxed/simple;
-	bh=U1R8edRmFcjQFPnsNre+GIRjPI0kbx/WQuaw3rH7YKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xp9R0xOvLyNoxt1qJ96r505RAVPeT1ZmRNIjLKQsRvTNvabtDlivmdR+q8s8txLxxt+bAZu50CVvu1qSV5XHB6U5nn5E1Bo+GQVOvzTlkvpnIE6gcsAj4MOG8+A5tGCyi0uP16MZSBaRljvw6dgD+G0k7DJBIfCyfHaKlz5A02I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hNAMBlxU; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=lKslt6Q4; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1778711994; c=relaxed/simple;
+	bh=0VqbTRVEZlpoi5Ld1YnV7oWMDYNnumYR5TrZ6zn2sPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8SlwHSVvvRxJIgvGJoh1uG8sx8Z8mimT7Hsl7xD8sP8hwP7CA9Yp/jiqYA6le0m77qW9/b8ovo4Mr+6W27l+ksS/3vyRpxdOKg/ov5IuVj04U2V2Giz1yxxmomdPs2eEk5jJ/sKTOuURFuBhVk8frVaUZ0dzhlnbUzawxrU0qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbeZA5pN; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hNAMBlxU";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="lKslt6Q4"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gG7VJ6QrCz9vL6;
-	Thu, 14 May 2026 00:31:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1778711496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YaX/Xo+aYjHdQZOl52aRhuT+hJsQaI4oWfGWWCZOJZg=;
-	b=hNAMBlxUaqoHIkR0xiFX6TG8ieW3zHxUqwE/3zbedEVYZtohfKC2xboGPytY1wAqVvs4Gr
-	Da6zirJ0qUJZE/27hLiC5DhnFfih3tDBNTQdQGYUA3RCpj/REuxu2iy52dAt4CTvYx7n3j
-	5KaFNsubSJ2URFXVK0qIqDGTv4ZTWcgZLrkMgNzkvAoCCRwRuQ4GwGrxMasKprtGRaZ9jw
-	/P7pcaMieigeFmlGYu7LVhx3vSBi6veNoodSYjBjbTNhm8nb/cOTAiiAX8/+mGPTdFRu/4
-	cBwhoEnLlvKRS4xMHENfDCFApb3JiU7/A3+ZhalEVxRHB7BYXtfhg/voljmUNQ==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1778711494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YaX/Xo+aYjHdQZOl52aRhuT+hJsQaI4oWfGWWCZOJZg=;
-	b=lKslt6Q4R8iLS52CuB54bOm1JFkDprgAKfhNyEcMbzk/4aNhPyjfSCdad2Jd89wE/UNDu+
-	Cz58gpdO5GYMLr7n2M6kEwd5hKGjZFos2O4TCMLFUMFGMTwTkf22h2YLT0U7BEQljaN8O0
-	m6nHyQNAnnj29e3FdMk3LA44JtqgSrkhvSAIw8mprBJuehvr6Lc06lMQEGMmQICn2AyIVF
-	9hmjbrdQpFeLg3MJYMDHHRkKVAQLisLApHF0opIbJQj3Zkf5Deb37+Rj2abb3ZTE6XCly0
-	ZPaxixhvt4yQfeVr5KC3xWNbne1ikrlZ1xO78FVPTj/tnB+DiBkxO2jVLoyLeQ==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbeZA5pN"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ba0714574fso40512855ad.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 May 2026 15:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778711993; x=1779316793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=miM3jTAggAFQJz2CzbBvHc0aYdt6SXz1ObmRHBqYD2M=;
+        b=XbeZA5pNH6IFvMJCizA0sjWapJaKNJH27lSsQWG2InYGMKMUThiey6ZJYqg8cIEVBm
+         r0UhW9S02zUKEVHkMH4P3XarBQw0dUFBvfmZ7INC6HwSqiipCGAsyhqND4I8fcr2oskH
+         eq9ygmWEDq7l8NrXuWqB4XNmTUnx0PcFt68WAtD7QAzA2htqUjxGlbO+laNAMjCJQDsg
+         iAqFlhkWcSV/PvlkLNcy+8dRc0bCACySGPN7zKZn+TCPTqpGNbWdrkbO9eim840oPYY9
+         aHh6TEpRu/kCWv+P/xlY+oBniDIsXDOZoFzRnFs6XWFIT45iwLXXQCpF9RvnmAvs7YsD
+         Kc2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778711993; x=1779316793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=miM3jTAggAFQJz2CzbBvHc0aYdt6SXz1ObmRHBqYD2M=;
+        b=fKvGCE9H3tDp0NH7VSlvn+Akah5qSIzDzmfN4DLVhVWPhRUFNSvZopK1ofwG5a0AYj
+         j5cLOpTKPbqxsbPDt/O2X4YYJHLFHjvmIpIIGpdx1fg/fp4OEJkDQsoVKvB5oYwzMfC2
+         hIcbgavV6dM6kV5BC2mxETxPkY1XZHyISI7T9baMNqMznMHykmgfV5nSAENEELV7GYED
+         CRKXWbL71RVZ8s8zxA7rxfUSZqSYqlopMUhJRXH8rLAUa8W5e3gCaOgZeTNgB+Kz6hnt
+         FFKZbamR892b0H9W5QL/tEkRoNdppW7zWb0Dc92m4Vt9pN+TE7XhLuzc5+86kCfPpBcM
+         hc4A==
+X-Gm-Message-State: AOJu0Yx9bczUMicqq8psBh1Hz0uD3gzrzNxKKr3pz+vySZPLYItBMexW
+	g7VsYV7vme8BWQOhawuxwGBbjdmUJ5SMJy+vIaPGtSAkTIMw1dytkpFM
+X-Gm-Gg: Acq92OEiWMSz/BRHMHQvZFtaZ/hzaVZgRss+CIs2GAuh1OLDfMqiFitJ08i7rn+GOaf
+	Xjl/xxTNziiSopPD1tZ5E9E+nWeUfplbMVu8CNCRO0qdPn0XrE3J6aXn8smWeXKkkGpAxDyrR1u
+	1xRTL6wMhoJ6++J1ua/ercYLsb1FlN3par6IDhM79G4HLgw6o8KF2MB9RNHnt1QqPx2VFz8X492
+	XOOI9p2lNor3bOLGWHfLNR+9YnjxQDvegRxAH+NrInr3osyRv0ipJjgrQIVHfTHDyLyjExb6zRX
+	4inQv88rh/yn4pba374uWwgkMVyUnuhA9LWNAqV6vetXLuiv8rBRlOr43MoRxd8GPXeBnGhejas
+	kcm/hd/fkHKqN7T/swcFDJXRyr3QW88gij48l4kgZosH7s68pxzmeTOXxBhliXn+g7FDjHGOATB
+	51q4iTG6bE4ldxeu0vUCWzBG3f4MOpY+owab4B
+X-Received: by 2002:a17:903:2f4c:b0:2b7:a350:463f with SMTP id d9443c01a7336-2bd2f4e4c49mr48108145ad.10.1778711992677;
+        Wed, 13 May 2026 15:39:52 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5bd5f2e7sm2853795ad.5.2026.05.13.15.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2026 15:39:52 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 13 May 2026 15:39:51 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	"Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: r8a78000: Fix GIC-720AE View 1 Redistributor description
-Date: Thu, 14 May 2026 00:30:08 +0200
-Message-ID: <20260513223125.43337-1-marek.vasut+renesas@mailbox.org>
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] dt-bindings: watchdog: renesas,rzn1-wdt:
+ interrupts are not required
+Message-ID: <c06eaf33-6817-4016-9ff3-600027501445@roeck-us.net>
+References: <20260507102410.43384-1-wsa+renesas@sang-engineering.com>
+ <20260507102410.43384-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 1836kzmypo36jkf9t45gcq77knmzzhm7
-X-MBO-RS-ID: 6de09209b627974ea58
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260507102410.43384-5-wsa+renesas@sang-engineering.com>
 
-The Renesas R-Car X5H (R8A78000) SoC contains Arm CoreLink GIC-720AE
-Generic Interrupt Controller with Multi View capability. Firmware has
-access to configuration View 0, Linux kernel has access to View 1.
+On Thu, May 07, 2026 at 12:24:09PM +0200, Wolfram Sang wrote:
+> It is now understood how the watchdog can do its job without the need of
+> an interrupt. So, it is not required anymore but optional.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-The Arm CoreLink GIC-720AE Generic Interrupt Controller Technical
-Reference Manual, currently latest r2p1 [1], chapter "Programmers model
-for GIC-720AE", subchapter "Redistributor registers for control and
-physical LPIs summary", part "GICR_TYPER, Redistributor Type Register"
-clarifies register "GICR_TYPER" bit 4 "Last" behavior in Multi View
-setup as follows:
+Applied to my watchdog-next branch.
 
-"
-Last
-Last Redistributor:
-
-0 ... This Redistributor is not the last Redistributor on the chip.
-1 ... This Redistributor is the last Redistributor on the chip.
-      When GICD_CFGID.VIEW == 1, for views 1, 2, or 3 this bit
-      always returns 1.
-"
-
-On this SoC, GICD_CFGID.VIEW is 1 and the Linux kernel has access to
-View 1, therefore Linux kernel GICv3 driver will interpret register
-"GICR_TYPER" bit 4 "Last" = 1 in the first Redistributor in continuous
-Redistributor page as that first Redistributor being the one and only
-Redistributor and will stop processing the continuous Redistributor
-page further. This will prevent the other Redistributors from being
-recognized by the system and used for other PEs.
-
-Because the hardware indicates that the continuous Redistributor page
-is not continuous for View 1, 2, or 3, describe every Redistributor
-separately in the DT. This makes all Redistributors for all cores
-accessible in Linux.
-
-[1] https://developer.arm.com/documentation/102666/0201/Programmers-model-for-GIC-720AE/Redistributor-registers-for-control-and-physical-LPIs-summary/GICR-TYPER--Redistributor-Type-Register?lang=en
-
-Fixes: 63500d12cf76 ("arm64: dts: renesas: Add R8A78000 SoC support")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm64/boot/dts/renesas/r8a78000.dtsi | 36 +++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a78000.dtsi b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-index 3ec1b53d27828..73be51787265c 100644
---- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-@@ -689,8 +689,40 @@ gic: interrupt-controller@39000000 {
- 			#interrupt-cells = <3>;
- 			#address-cells = <0>;
- 			interrupt-controller;
--			reg = <0 0x39000000 0 0x10000>,
--			      <0 0x39080000 0 0x800000>;
-+			#redistributor-regions = <32>;
-+			reg = <0x0 0x39000000 0x0 0x10000>,
-+			      <0x0 0x39080000 0x0 0x40000>,
-+			      <0x0 0x390c0000 0x0 0x40000>,
-+			      <0x0 0x39100000 0x0 0x40000>,
-+			      <0x0 0x39140000 0x0 0x40000>,
-+			      <0x0 0x39180000 0x0 0x40000>,
-+			      <0x0 0x391c0000 0x0 0x40000>,
-+			      <0x0 0x39200000 0x0 0x40000>,
-+			      <0x0 0x39240000 0x0 0x40000>,
-+			      <0x0 0x39280000 0x0 0x40000>,
-+			      <0x0 0x392c0000 0x0 0x40000>,
-+			      <0x0 0x39300000 0x0 0x40000>,
-+			      <0x0 0x39340000 0x0 0x40000>,
-+			      <0x0 0x39380000 0x0 0x40000>,
-+			      <0x0 0x393c0000 0x0 0x40000>,
-+			      <0x0 0x39400000 0x0 0x40000>,
-+			      <0x0 0x39440000 0x0 0x40000>,
-+			      <0x0 0x39480000 0x0 0x40000>,
-+			      <0x0 0x394c0000 0x0 0x40000>,
-+			      <0x0 0x39500000 0x0 0x40000>,
-+			      <0x0 0x39540000 0x0 0x40000>,
-+			      <0x0 0x39580000 0x0 0x40000>,
-+			      <0x0 0x395c0000 0x0 0x40000>,
-+			      <0x0 0x39600000 0x0 0x40000>,
-+			      <0x0 0x39640000 0x0 0x40000>,
-+			      <0x0 0x39680000 0x0 0x40000>,
-+			      <0x0 0x396c0000 0x0 0x40000>,
-+			      <0x0 0x39700000 0x0 0x40000>,
-+			      <0x0 0x39740000 0x0 0x40000>,
-+			      <0x0 0x39780000 0x0 0x40000>,
-+			      <0x0 0x397c0000 0x0 0x40000>,
-+			      <0x0 0x39800000 0x0 0x40000>,
-+			      <0x0 0x39840000 0x0 0x40000>;
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
--- 
-2.53.0
-
+Thanks,
+Guenter
