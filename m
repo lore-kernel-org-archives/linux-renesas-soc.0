@@ -1,480 +1,184 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010029.outbound.protection.outlook.com [52.101.61.29])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011040.outbound.protection.outlook.com [52.101.125.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D7031E835;
-	Thu, 14 May 2026 16:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C469D31E835;
+	Thu, 14 May 2026 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778775706; cv=fail; b=CAQnaPt7IyI8iVABfLf1iUXZdVyZoDys67/VlbKTr/FI/6E3AqVHIbLYjJ+amDL7kcIjGOynfIizuuQoATuNNkd95ckGZ8olkpoBSbo2xddc2Y5UYReZnHxWgG8K06oPblo26KagVTYoZd4Pa4V/gWMSHxDv1BWib37itci444k=
+	t=1778779883; cv=fail; b=neJuLt6XRciLs2s7VfcUEUeswQgRmysgAEAA61fggi2mEAkJfsFz6rbKf9+/3UTfX1Qs1jxRFUwOhLdqwdG7+o//trgxBGrzqYpogHVqlsg+NIypAWjfPo4+lbfeJQWJk0uXbKf9roUH3KQENZXcNurHCkx4ggXdvXsYgp/4zfU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778775706; c=relaxed/simple;
-	bh=jIEFWV8bQ5xTrRT1hX1ToJdHfD1YxKr+LI7h7Qck49E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JMp9YzT87peTjaRbDznlpOk1IlZIYBxyu4Ye3qmBq3czILThb8YpK+I0ufP47YIBH+ygvdbysuSlKF/hXHifdtO3QBFx8mZS3xMuUp0bOVbWwxWg2OBpQfqIS54abcSrZCye67rD+K8Lue8OwPTrR9Rjx/EQ35yI/HobU43LfO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWbfUAR1; arc=fail smtp.client-ip=52.101.61.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1778779883; c=relaxed/simple;
+	bh=Ow2eCInf+Eeh+4mq3S44URxwUhSDlItLIh6z9/k1t0Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Qa0DZUSi1FHcuvQonXwX+9RqB45dqO4ANaNbErcANV6wV5CiTbNf/sy2vWWVxHkQOQK7dorqhCIxiSU8jwqSx1IEa9E+RocPN8xRR3SzqDJDPKFEIluqyN2WAz5XVId0vSCzApvjGlGEQVG1SlX7O0NCnz48YDCnNhjo+s5UeF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=dzn5zsK9; arc=fail smtp.client-ip=52.101.125.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWbfUAR1"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="dzn5zsK9"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZABSdCNAdbpkzkQ13lXqCUtfmef+a45x0g0qrGs1ZYftIEKaawwHgwZzmc7tjCZMeeE8j/wpWIBGRCkcO+a6+5cIk4MpCc8QVRFr/F5RI++9gbDLSOydClnMA6HklqnTq0iUxWFmr7UX6xbfOZ1Wyr9T7cMnVAtBiXFGEUImnGXC5DRyKip1Qjirr+acWWGGXLCDAtiSA5Udri9pJLwYED9wH13Kd7PS/CzVlmi7dMRE/MgaWqzOZSd0EFgXXnedy1HPj76qwOJWZXvFhvwpvOkYNqUu60doN6jfoMuOHfDVvOOT2GMAG+7ELV9sJM6yZ3m4s3aEM9KA2DVviO1VXw==
+ b=htkhx0Jux51CRQEvcycEOKZ3H/RxDRptBReYtQyLKxHdDY3gIZV8NT9Y00gR5JN/56wccDZslpemZrHyrA7Fwwtvs+cwUJgVQoJag9pedfkP33wAD8gp/r8Cq06u+UejEBF+6kw3MLvSsHsb6a5E5mT66Q3SXgl92MERvxkBmRlgV+JIUVyLSXXvaP0qiLbYJ4NS7u6n50s+46z9KLeUmSdfwa4s3uvYohhQZiZumGS/SWJdorkXnWo/2rnNR48+c/Ld/8XWEduwEJ3wuBsj+oIWgCvfotCaXA2FEZopDJOjGe1ZB3ArGZI8BaoQM4GiNcl5pIDCzprfeJnyn8My8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAlaUC+C7TO70Q5/EhBX948/0Dkd+NkfiadMk2VWktA=;
- b=GpiaAqYjMXi7xZ0sMevirc6+NQksDRAY1WEM1GirpTpPbAmdEOfOqgURE+wuPiv1JycW5SyFQNP5qlQ8OJzKo5ho1+ut/J8GE8AM2ozgSmpK300YYX3NQTux8OpGAGTBu+MXFnzKK4uK41+ZHeD4flehC1CzegtWnhbmyQXZW7CQJRQh5U9ynoZHHNH2EfphYQ2AsEu0Oswa1JRNqIzOLHFve9wX7reQ/zzJrA3nd3D7XQ8ZeeZfAMLmH0YIr7QCxlgV9TiGLDHWGYqyYwoVZybMgfJE0Bfat9WO+4dzhoy5C35ktYwl6qWg1ES4w+D+f2/Q3xK34OClJnbKKWmQkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=Ow2eCInf+Eeh+4mq3S44URxwUhSDlItLIh6z9/k1t0Q=;
+ b=tlbSqP3raCESKVtbYh3QbFbf9oGi3+M5x2Kz3LXr02n41CtnEKRj3/I/f6/f5rqTYrN/MxzBLd+OqK9m6Z7AtSTnt0QEXgba8fgJUFLYhk1BohyJ3gUhuVe7fJpnQDJAnzG41VmzJozbuJ1WXpcHj+Oue18pNeNemrG/rHOyncu3SxUsnGOMzaLTSN+3CJjWPvIU7SlEQHXOTpJbzgE5z8rXoborg/ZkNpVYrqA6E/Tb/WQKm/hnaFL/biNiqoCAU0V5nKfEQ797rkO65ng146/lb0pSPLJ0Y/3VZnCwnpQBpWPLYz8sqkaAK6EWopBmPYuvvXvH4LCdT/7Edp4FOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAlaUC+C7TO70Q5/EhBX948/0Dkd+NkfiadMk2VWktA=;
- b=qWbfUAR1sRRd/Y2x4ntmCLOrSbgmDINzpj87+eie8Zehi6JCylZgAaPoIDAdPudh7SscNIoyVgn46XgToAoOPQv4edRqmGTiB9jcNMAr0Qy3c5mzoPR/T3uEndMtP3wWxlj6I0/BcOPlZnVz9Sm2AbVrj90SZHsHxpx7wbqfGvI=
-Received: from CH5PR03CA0021.namprd03.prod.outlook.com (2603:10b6:610:1f1::15)
- by MN0PR12MB6269.namprd12.prod.outlook.com (2603:10b6:208:3c3::14) with
+ bh=Ow2eCInf+Eeh+4mq3S44URxwUhSDlItLIh6z9/k1t0Q=;
+ b=dzn5zsK9r2JvTg/R4iPITdmqlesbwTZHkT3DXs9QxDewyisP3ZY/46ElKcyBhyGh7rpHdWcj3OIS0Pxal5uyRpjB7EMEzATDGBz4m9z6sfi1g54smm1Iu14hQXEGrMlTBP29STNJb59qXGQ2ZgdToggC4kS95SuePiMLYEYC3Tw=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by TYRPR01MB12740.jpnprd01.prod.outlook.com (2603:1096:405:1b8::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.19; Thu, 14 May
- 2026 16:21:34 +0000
-Received: from CH2PEPF0000013D.namprd02.prod.outlook.com
- (2603:10b6:610:1f1:cafe::1a) by CH5PR03CA0021.outlook.office365.com
- (2603:10b6:610:1f1::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.13 via Frontend Transport; Thu,
- 14 May 2026 16:21:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH2PEPF0000013D.mail.protection.outlook.com (10.167.244.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Thu, 14 May 2026 16:21:33 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Thu, 14 May
- 2026 11:21:33 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 May
- 2026 11:21:33 -0500
-Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Thu, 14 May 2026 11:21:32 -0500
-From: Ben Levinsky <ben.levinsky@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<linux-remoteproc@vger.kernel.org>
-CC: <Frank.Li@nxp.com>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-	<festevam@gmail.com>, <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
-	<patrice.chotard@foss.st.com>, <mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>, <arnaud.pouliquen@foss.st.com>,
-	<daniel.baluta@nxp.com>, <tanmay.shah@amd.com>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v2 2/5] remoteproc: switch exact-match drivers to wc-ioremap callbacks
-Date: Thu, 14 May 2026 09:21:26 -0700
-Message-ID: <20260514162129.1504162-3-ben.levinsky@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260514162129.1504162-1-ben.levinsky@amd.com>
-References: <20260514162129.1504162-1-ben.levinsky@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Thu, 14 May
+ 2026 17:31:18 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::3468:d7ea:e817:1e6c]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::3468:d7ea:e817:1e6c%4]) with mapi id 15.20.9913.009; Thu, 14 May 2026
+ 17:31:18 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: geert <geert@linux-m68k.org>
+CC: magnus.damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk: Configure eMMC/SDHI
+ pins
+Thread-Topic: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk: Configure eMMC/SDHI
+ pins
+Thread-Index: AQHcwR4EFWEDt2xdQkmzwPdsZFWRsLXq+oWAgCMQhxA=
+Date: Thu, 14 May 2026 17:31:18 +0000
+Message-ID:
+ <TYCPR01MB12093EC770044559239236A51C2072@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20260331145221.7974-1-fabrizio.castro.jz@renesas.com>
+ <CAMuHMdXNwMU-TSOSuHseHN_=TJD8H8ufXbELhw=tbNnEu9fUfA@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdXNwMU-TSOSuHseHN_=TJD8H8ufXbELhw=tbNnEu9fUfA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYRPR01MB12740:EE_
+x-ms-office365-filtering-correlation-id: 46607dd9-0250-44c5-809e-08deb1de9b75
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|18002099003|22082099003|11063799003|56012099003|38070700021|4143699003;
+x-microsoft-antispam-message-info:
+ 1PYwYUZBq2divfdnkaHddX6Q4ENs+Z6P9LAUiYYpkDHj+G/LrEH9Tko8UbEr1nA7kLypZViAD8rTn8ifIBHzUXobvc7t+f8S2xLwPEHhcXRhBbzYXtDM8pJuUZFxsLW9zeQBQf7436II9e/yGUbYAxfgENKJoDBPpTGJjfK2tPXrStt+bfXcW1jGzibFkoi2UzeQt0VIkzMhZjvTbjaiuCHTGPymf41d0fZ8V7+rsElJYLlLCqZfBT42Nj7f1GUNJRgss4H8FT3efzlUHC0eUt0M/+UeUMQ7tpaxwDTiacl+pdUysPxZOryMOeENe0fi+pLg8QCDZQP/1EbST9dbvEJjyu06wCKjZdwOFNv/r8W54lLpX589Tjg2kyJXX1mlxPq91tAp4ZC+pkKGCxULGTyoogUZHN+0wJUH2fUfwx1EQvW7FaPjYhCz2/0coipYbcOd05Hq2nYZ6E9MRcbXEIbDwvuUzSy5/dQeDewHQtYlBvnW3RuxpQxtxfQ4iCHje4QsqzCSjvkHGXIHAmWpOO5L+swp7WQcz1C315wvlElvcBHxrsxIa33GZK0We7P5oUtvqHmZu+dlx/m+Xj5J7d7zl2G9jkxDod9oO1BO//jfbGNaPNpYyJLMgwwyq4vWylw50caCmMuqewD5maNfO4Kvvgjbnf+4Qsvosp+qkt8zvN4wrR2iS9xoX+tGlHHOQnnsom3+/9Ob4epGojoHZGrrhz/j/AFAc3yZWoNNwHzaFVt1dhSanFtXaTc4k3e/
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(22082099003)(11063799003)(56012099003)(38070700021)(4143699003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?czdYcmZ6b0VwRWUwWnQ1YmttVnRSMitUbFJ2OGNrbWtmOTZPbGp4dC9QMXdH?=
+ =?utf-8?B?clY3S2l5QjN0VWlwdXM4bWpxZE4zMFlHYkZ5bDdCVVhEUi9DakRKTHFhQU5m?=
+ =?utf-8?B?bkFybkVIYjZNam9ERjdWOVhyQXRlZE12THVtVytyM2w3UGdCazR6bitQVkhk?=
+ =?utf-8?B?Y2Uzejh0R245SHMzMXN3UDRtcEJOdWNKMmJ3Vlc2c2pUVThQZ0p2UkNOcjZj?=
+ =?utf-8?B?TllObDZqMDRIcHhUZjh1WEdSY0FCMTJaTlhDb2pPeGdFM2JRTEduSk9hYVJV?=
+ =?utf-8?B?a0xQcEM0UFp2N09vdmhsMGJPc2FwblpUTlZHajdwTFNYbGt3K05oS3ZpaTdV?=
+ =?utf-8?B?dngzWXF6K3B5WXBldE9KWEk3aVFHMG4rNjVtUkdvQmVKY1pXcVNXQm9zTmUx?=
+ =?utf-8?B?SzNpQ3dKUUVTTVFlWCtwU0NHa0NhVU55NmkxWXZ0SE9kem9ZNEF2US9teVpQ?=
+ =?utf-8?B?QncycFQ5Y3pZN0hYSEtLYlFDdm5Kc09HdDQ0RWtCZmJ0NjdmWDA2d3pFNlBP?=
+ =?utf-8?B?Ukg0MklRY0JLZWlzcHdZTTNMdWVaOTBaaysvbVN2S2grNm5iMjNzZER2Yk90?=
+ =?utf-8?B?NVVGcEJoalorVndyZjRiK3JVdGdONmk3dlR1dFEzcHJocVBTN1dXaHhDbk5y?=
+ =?utf-8?B?eHlrbTI2a2NOWWx5QUloMnM4NVFOUlNNL2ovbngzNWQ0ajdXbUdKS2pVR1Ry?=
+ =?utf-8?B?bDJKeklrQko2U3pUNk82eFZZbHZCSTVJTGw3alBTVG96empnb3g2dzJ5K2cy?=
+ =?utf-8?B?ZDZ3QjBFckZKTFVpU1dld0daaHJZWnFKOGxXamxHMmNmdHVCdDhuanJpUHVi?=
+ =?utf-8?B?OEUvTDQ2RFNmZUxMZGR0bkVtRDRvQzYxeTB1NjN5WHpKdU92TnZjZmNuSU5M?=
+ =?utf-8?B?emdScGtoQUI1S2pxcW9QTlFhN0FzV3g3TTdpaWVlNHl5bEl3Nm00Qk0vY3lD?=
+ =?utf-8?B?YVFsbUtrYzQ3NURBdFlHcFpXQXNNVVI3QzcrdU9XVkJGcENUUW9tdGd6RWY5?=
+ =?utf-8?B?RmEyd0Foa2tFeFJnaHF2aG45S0t1MEt2bFF2dWpscFJId3JRakRIOERNM3hR?=
+ =?utf-8?B?TUI2TW5MZmlkZlFqcXNZUFVUT1RaR21YK0tCRkNYT3RDMzFvaUdyMllmMnE0?=
+ =?utf-8?B?dHRwenZGOUovQld4anlmK2dSemNkczFFRUIvVWZwOVhEYW1nSnpncFJqTy9q?=
+ =?utf-8?B?WktrRVVOcjFWVkc4QVRJakJXdGpGazE1ZUVYbG1zL0tsR29hb1llV1VUeU9Q?=
+ =?utf-8?B?SUh0b0xFMzdWYWdlaGNlTlpPWGxhQTZ5RHV3YjhveGZOUis3K0k4anVvNjk5?=
+ =?utf-8?B?QVJDR1NtTG95d2lzdE1QM0lHb1dVTXhwRDNGUHg4UE9Pa0dqZkZKTzBEZnJJ?=
+ =?utf-8?B?N2M1d0x2Y1F5cnpubHBTcFladVpnZkhYdDNkUDNOaGFRczFSRGh0TGdSSkhS?=
+ =?utf-8?B?YS9BeTljVlR1UU5ZT1VYRENpOUM1VHR0Ry9lV2hTbGg1Q0FNTzNyek05Qndp?=
+ =?utf-8?B?dlVjb1FlMHRLbFhaZmhpQVRlNzVLSjRQbFRFYVpjMVJGSVlXM1kvbVNGRCtk?=
+ =?utf-8?B?VXY1VU9wb3ZPOEVoL3p0b0trOUhDYTMzNEZscUNDd2pjNXlBSUdYZFpYQzRN?=
+ =?utf-8?B?djl4TzFaWGh0UXMvSEI5RlE5YWp1U0RCNVlsTjJQQXY4L09nZVZjMHpGc044?=
+ =?utf-8?B?bDI3a0RYRXhtdU9ySHVJT3RmQ3dpVzNybTVSemFzU1JwRk4zdTlmV1RKYzRL?=
+ =?utf-8?B?aFRyQ2hOVDdXVWxoMkREUFJVVlBJUWtIQzFJeWk0SExrWS95bVdmWFJWWFpD?=
+ =?utf-8?B?d0RyaXRNaDVHVytTaUU5T1ozenRJNitwbnI0dStaYkJYZzd0S3JIaWJZNm4v?=
+ =?utf-8?B?MzhZOThCb1pwSmhLUFRhSzY3RUZRTE41bzhEeGZpU3AxOG4weGVGT3JOek95?=
+ =?utf-8?B?SzhaUWkyUUNRZnN1SmFDYVdYYWN2cWluUUdwYXNQOVlEVzVVTzZBQmEyUkE0?=
+ =?utf-8?B?alVPdHlMeGNSdDI3M09rMFlvODZXVENtZUlFaitoY1dwMWRWRE00WjZ5eHRM?=
+ =?utf-8?B?bE9ZMlVxVXBUd1JKS2tiUzdRQWFzM2Y5NE1tWllZbWtwZWt4YlJNcW1FRVdx?=
+ =?utf-8?B?bGJnVHBZMFBTSkVNL3VGNU14ZFJKcTBCL0dDVGZNc3RhYWg2TWpjMjRFN1Bp?=
+ =?utf-8?B?NStocUVHV051ei9NejdWT1dhWGdnajFHOGVGRGFSUlBneWxjTkpZY2w2bFNR?=
+ =?utf-8?B?Zk15M1lhL1Y2SEZiWUZTWUxGR01JalY4UlB5TlFsc09xUmN6c0V0M0MyRXM5?=
+ =?utf-8?B?QUdKVy9nSHBOUUJnc1dnTm5RL2lNZzl4dmVCOFVNbDdMRE1TOG9DNWZxODdv?=
+ =?utf-8?Q?8qgDVYic6HbV4JVY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: ben.levinsky@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013D:EE_|MN0PR12MB6269:EE_
-X-MS-Office365-Filtering-Correlation-Id: 235cb102-1fdb-4574-8c74-08deb1d4dd66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|82310400026|7416014|376014|1800799024|18002099003|22082099003|56012099003|11063799003;
-X-Microsoft-Antispam-Message-Info:
-	2fTWhFuJHZMR8Eyzjed/0dAniZaYDIrLYELLg0AMjsGwpUyWvjMbi0vtbn92YkerVpcxteNM+5WRG2nMaKiLHf4qPKQuYUzXvCHrT5cNyBQteWCzS+gHKxihP+JmwPSXP3mdOE94YfEhM0L1pPdWgAlI5j/bev7UPKT4MW9WygLMktQmU20yrgU4U/D78QiSw1erRNu960ORJmGCUwOq6AQ9D0XCh9qfc6GFwat4XUlFcnBMDScCJyBzOAQUr6poaj+nNgl14D67+deeyxpTgQ4Wx65HNR4AMkx02Cd6PV02HGZDu9YhbgReMR8Loe/NLDUfctDrLn7Wk7Xlu6IyqybDK1l6GfM6bE4zwpec3NTtD8fsV7bb3V9+KmiFClz5X9QqVMiYsO+V7nfaKWXz6yffNdksVeMpEcfaMg0ShHCUHT7K/EW3GACm0ARDhs4EWgs1tb762HYlXPoUcywfc30SaoLkbh4e2P3ak+AghjK3EkPD8v84yDqY9YZgN/w1USSuAJv8GRkfvDyw1wSonQ/M8zj3rwgRHCeZKvyp/pGd7B2xH3+qi5MpB7rqgNhAYtW7J8twhmzFVyOQLpJJ6nxXtu4aTCIWSlmCJu/DrNLDApblnCs6LgO8/EZRA9X1L4gutg3YU6KBaUaYuBxrg5ReLG6t3w8syTruvv/ZLOB+cGRvNK/JcddrjSzZIATYd9y7+kSWjpGcyAnPTHCTGJUUQIuYGTio3cypVP8xJZ4=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(7416014)(376014)(1800799024)(18002099003)(22082099003)(56012099003)(11063799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	tARKXJ3ElxrQXgfEPDtpaw0TubPCtrppVtLnpevGm4I5ZsA2gUf0sS9Oz8SXi0JJM+TLgBlWb4GKqMzFzZrEGjkpEaEbXRUYdcrohKSVkLK4+WJYuO5A/Wm8jHHSgTjEY0WnU1vtthz7cXndSjDlIf9woGqjp5npr7UM5elhm5Q7Hdh3BL6yC9DRTOwmmck9qkna5FPksXwYedxwQJKJ0hsefufTZGlT6JqQN1IpA+JIhxCGZUiCzOsUs66pthekWcTkz1xbQktjReZ5eyVLol0/orknwB0d9aIuITNWqVYlDnZYdLm2csLaoulPW1SRgHMP3Q10uU68HqHITxltUsggHqUn1rXofITUytFA2hjZZYLiyw9NOygPR7Jp26KC0sPp290zb70tEfMe0GkFBgJFiN1c3gQX2pJ0Oa2ZcnfnO9Av6U01VBvU25lAHnfL
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 16:21:33.8323
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46607dd9-0250-44c5-809e-08deb1de9b75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2026 17:31:18.2138
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 235cb102-1fdb-4574-8c74-08deb1d4dd66
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013D.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6269
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: egv8qoq5hisqjz6YCZXaiuS7zPb7g5H8zuxI5zyE6UOwR3ix2BIbwyyB5W20bP3yFoHi6u2ZHghkZDDbG/sM0+oi/wvlzIha1TMDjwG30xo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12740
 
-Replace the exact-match carveout map and unmap callbacks in the
-existing remoteproc drivers with the common wc-ioremap helpers. This
-covers xlnx_r5_remoteproc, rcar_rproc, st_remoteproc, stm32_rproc,
-imx_rproc, and imx_dsp_rproc.
-
-Leave the zynqmp R5 TCM callbacks alone because they also clear the
-mapped memory and are therefore not exact matches for the shared
-helpers.
-
-Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
----
- drivers/remoteproc/imx_dsp_rproc.c      | 36 ++++---------------
- drivers/remoteproc/imx_rproc.c          | 32 ++---------------
- drivers/remoteproc/rcar_rproc.c         | 33 ++---------------
- drivers/remoteproc/st_remoteproc.c      | 31 ++--------------
- drivers/remoteproc/stm32_rproc.c        | 34 ++----------------
- drivers/remoteproc/xlnx_r5_remoteproc.c | 47 +++----------------------
- 6 files changed, 18 insertions(+), 195 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 008741af9f11..2d9f14fbef1d 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -644,32 +644,6 @@ static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
- 	mbox_free_channel(priv->rxdb_ch);
- }
- 
--static int imx_dsp_rproc_mem_alloc(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	mem->va = va;
--
--	return 0;
--}
--
--static int imx_dsp_rproc_mem_release(struct rproc *rproc,
--				     struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- /**
-  * imx_dsp_rproc_add_carveout() - request mailbox channels
-  * @priv: private data pointer
-@@ -700,8 +674,10 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)att->sa,
--					   att->size, da, imx_dsp_rproc_mem_alloc,
--					   imx_dsp_rproc_mem_release, "dsp_mem");
-+					   att->size, da,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
-+					   "dsp_mem");
- 
- 		if (mem)
- 			rproc_coredump_add_segment(rproc, da, att->size);
-@@ -732,8 +708,8 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					    imx_dsp_rproc_mem_alloc,
--					    imx_dsp_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name, res.name);
- 		if (!mem)
- 			return -ENOMEM;
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 7f54322244ac..6249815b54d8 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -600,35 +600,6 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *i
- 	return va;
- }
- 
--static int imx_rproc_mem_alloc(struct rproc *rproc,
--			       struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %p+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int imx_rproc_mem_release(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
- {
- 	struct imx_rproc *priv = rproc->priv;
-@@ -692,7 +663,8 @@ static int imx_rproc_prepare(struct rproc *rproc)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					   imx_rproc_mem_alloc, imx_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name,
- 					   res.name);
- 		if (!mem)
-diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index 3c25625f966d..e3121fadd292 100644
---- a/drivers/remoteproc/rcar_rproc.c
-+++ b/drivers/remoteproc/rcar_rproc.c
-@@ -19,35 +19,6 @@ struct rcar_rproc {
- 	struct reset_control *rst;
- };
- 
--static int rcar_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	struct device *dev = &rproc->dev;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int rcar_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(&rproc->dev, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int rcar_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -73,8 +44,8 @@ static int rcar_rproc_prepare(struct rproc *rproc)
- 		mem = rproc_mem_entry_init(dev, NULL,
- 					   res.start,
- 					   resource_size(&res), da,
--					   rcar_rproc_mem_alloc,
--					   rcar_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   res.name);
- 
- 		if (!mem)
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index a07edf7217d2..486180cdccb4 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -88,33 +88,6 @@ static void st_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "failed to send message via mbox: %d\n", ret);
- }
- 
--static int st_rproc_mem_alloc(struct rproc *rproc,
--			      struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int st_rproc_mem_release(struct rproc *rproc,
--				struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -138,8 +111,8 @@ static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), res.start,
--						   st_rproc_mem_alloc,
--						   st_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s",
- 						   strchrnul(res.name, '@') - res.name,
- 						   res.name);
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 632614013dc6..7ac8265b60ac 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -113,35 +113,6 @@ static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
- 	return -EINVAL;
- }
- 
--static int stm32_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
--	va = (__force void *)ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int stm32_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap((__force __iomem void *)mem->va);
--
--	return 0;
--}
--
- static int stm32_rproc_of_memory_translations(struct platform_device *pdev,
- 					      struct stm32_rproc *ddata)
- {
-@@ -237,8 +208,8 @@ static int stm32_rproc_prepare(struct rproc *rproc)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), da,
--						   stm32_rproc_mem_alloc,
--						   stm32_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s", strchrnul(res.name, '@') - res.name,
- 						   res.name);
- 			if (mem)
-@@ -957,4 +928,3 @@ MODULE_DESCRIPTION("STM32 Remote Processor Control Driver");
- MODULE_AUTHOR("Ludovic Barre <ludovic.barre@st.com>");
- MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
- MODULE_LICENSE("GPL v2");
--
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 45a62cb98072..e5d1903c9636 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -447,45 +447,6 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
- 	return ret;
- }
- 
--/*
-- * zynqmp_r5_mem_region_map()
-- * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem descriptor to map reserved memory-regions
-- *
-- * Callback to map va for memory-region's carveout.
-- *
-- * return 0 on success, otherwise non-zero value on failure
-- */
--static int zynqmp_r5_mem_region_map(struct rproc *rproc,
--				    struct rproc_mem_entry *mem)
--{
--	void __iomem *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va))
--		return -ENOMEM;
--
--	mem->va = (void *)va;
--
--	return 0;
--}
--
--/*
-- * zynqmp_r5_rproc_mem_unmap
-- * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem entry to unmap
-- *
-- * Unmap memory-region carveout
-- *
-- * return: always returns 0
-- */
--static int zynqmp_r5_mem_region_unmap(struct rproc *rproc,
--				      struct rproc_mem_entry *mem)
--{
--	iounmap((void __iomem *)mem->va);
--	return 0;
--}
--
- /*
-  * add_mem_regions_carveout()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -522,8 +483,8 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 							 (dma_addr_t)res.start,
- 							 resource_size(&res), res.start,
--							 zynqmp_r5_mem_region_map,
--							 zynqmp_r5_mem_region_unmap,
-+							 rproc_mem_entry_ioremap_wc,
-+							 rproc_mem_entry_iounmap,
- 							 "%.*s",
- 							 strchrnul(res.name, '@') - res.name,
- 							 res.name);
-@@ -560,8 +521,8 @@ static int add_sram_carveouts(struct rproc *rproc)
- 		rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 						 dma_addr,
- 						 len, da,
--						 zynqmp_r5_mem_region_map,
--						 zynqmp_r5_mem_region_unmap,
-+						 rproc_mem_entry_ioremap_wc,
-+						 rproc_mem_entry_iounmap,
- 						 sram->sram_res.name);
- 		if (!rproc_mem) {
- 			dev_err(&rproc->dev, "failed to add sram %s da=0x%x, size=0x%lx",
--- 
-2.34.1
-
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoNCj4gRnJvbTogR2VlcnQgVXl0
+dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gU2VudDogMjIgQXByaWwgMjAyNiAx
+MDo1Nw0KPiBUbzogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm8uanpAcmVuZXNhcy5j
+b20+DQo+IENjOiBtYWdudXMuZGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgUm9iIEhlcnJp
+bmcgPHJvYmhAa2VybmVsLm9yZz47IEtyenlzenRvZiBLb3psb3dza2kNCj4gPGtyemsrZHRAa2Vy
+bmVsLm9yZz47IENvbm9yIERvb2xleSA8Y29ub3IrZHRAa2VybmVsLm9yZz47IGxpbnV4LXJlbmVz
+YXMtc29jQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5l
+c2FzLmNvbT47DQo+IFByYWJoYWthciBNYWhhZGV2IExhZCA8cHJhYmhha2FyLm1haGFkZXYtbGFk
+LnJqQGJwLnJlbmVzYXMuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBhcm02NDogZHRzOiBy
+ZW5lc2FzOiByenQyaC1uMmgtZXZrOiBDb25maWd1cmUgZU1NQy9TREhJIHBpbnMNCj4gDQo+IEhp
+IEZhYnJpemlvLA0KPiANCj4gT24gVHVlLCAzMSBNYXIgMjAyNiBhdCAxNjo1MiwgRmFicml6aW8g
+Q2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm8uanpAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+IFRo
+ZSBIVyB1c2VyIG1hbnVhbCBmb3IgdGhlIFJlbmVzYXMgUlovVDJIIGFuZCB0aGUgUlovTjJIIHN0
+YXRlDQo+ID4gdGhhdCBmb3IgU0RSMTA0LCBTRFI1MCwgYW5kIEhTMjAwIHRvIHdvcmsgcHJvcGVy
+bHkgdGhlIGVNTUMvU0RISQ0KPiA+IGludGVyZmFjZSBwaW5zIGhhdmUgdG8gYmUgY29uZmlndXJl
+ZCBhcyBzcGVjaWZpZWQgYmVsb3c6DQo+ID4gKiBTRG5fQ0xLIHBpbiAtIGRyaXZlIHN0cmVuZ3Ro
+OiBVbHRyYSBIaWdoLCBzbGV3IHJhdGU6IGZhc3QNCj4gPiAqIE90aGVyIFNEbl8qIHBpbnM6IGRy
+aXZlIHN0cmVuZ3RoOiBIaWdoLCBzbGV3IHJhdGU6IGZhc3QsDQo+ID4gICBTY2htaXR0IHRyaWdn
+ZXI6IGRpc2FibGVkIChub3QgYXBwbGljYWJsZSB0byBTRG5fUlNUIHBpbnMpLg0KPiA+DQo+ID4g
+QWRqdXN0IHRoZSBwaW4gZGVmaW5pdGlvbnMgYWNjb3JkaW5nbHkuDQo+ID4NCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryby5qekByZW5lc2FzLmNvbT4N
+Cj4gDQo+IEFjY29yZGluZyB0byBUYWJsZSA1OC4xMSAoIklPIHNldHRpbmcgKERSQ1RMbSByZWdp
+c3RlciBzZXR0aW5nKQ0KPiBjb25kaXRpb24iKSwgdGhlIHJlY29tbWVuZGVkIGRyaXZlIHN0cmVu
+Z3RoIHZhbHVlIGZvciB0aGUgU0RuX0NMSyBwaW5zDQo+IGRlcGVuZHMgb24gdGhlIHRyYW5zZmVy
+IG1vZGUuIFNvIHNob3VsZG4ndCB0aGlzIGJlIGNoYW5nZWQgYXQgcnVudGltZSwNCj4gZGVwZW5k
+aW5nIG9uIHRoZSB0eXBlIG9mIFNEIGNhcmQgdGhhdCBpcyBwcmVzZW50LCB1c2luZyBkaWZmZXJl
+bnQNCj4gcGluY3RybCBzdGF0ZXM/DQoNCllvdSBhcmUgdG90YWxseSByaWdodC4gQWxzbywgb3Ro
+ZXIgcGlucyB3aWxsIG5lZWQgYWRqdXN0aW5nIGFzIHdlbGwuDQoNCkknbGwgc2VuZCBhIHYyIHNo
+b3J0bHkuDQoNCkNoZWVycywNCkZhYg0KDQo+IA0KPiBDdXJyZW50bHkgd2UgaGF2ZToNCj4gDQo+
+ICAgICAmc2RoaTAgew0KPiAgICAgICAgICAgICBwaW5jdHJsLTAgPSA8JnNkaGkwX3NkX3BpbnM+
+Ow0KPiAgICAgICAgICAgICBwaW5jdHJsLTEgPSA8JnNkaGkwX3NkX3BpbnM+Ow0KPiAgICAgICAg
+ICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiLCAic3RhdGVfdWhzIjsNCj4gICAgICAgICAg
+ICAgLi4uDQo+ICAgICB9Ow0KPiANCj4gSS5lLiBpdCB1c2VzIHRoZSBzYW1lIHBpbmN0cmwgc3Rh
+dGUgZm9yIGFsbCBtb2Rlcy4NCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAt
+LSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5v
+cmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxl
+LCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3Vy
+bmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0K
+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
