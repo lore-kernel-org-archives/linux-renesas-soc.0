@@ -1,134 +1,119 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3961E37DAB7;
-	Thu, 14 May 2026 21:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3EE3ACA49
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 May 2026 21:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778793533; cv=none; b=ZKSIKkguOFxnmIMfz/2t+MF6nwCmM/YlwrMAWSHs7KYYvrXl47SQVTudfYRg6aPGWH0taGBWfGnq/gm2zUXjlcGkng6/wsIOkU16EQ5YPyYaZNnzexclzRHMBtR/kSZzpc5p1One8Oe48apyABGJasUphQokFnjBSdZ7hqrVIL0=
+	t=1778793631; cv=none; b=Mz6HgyIRjiMtELeB7AT3gq037yaakWdVvwsPH0IlDkwPi3RgL+TuSk/0N7QNyzTy+Hk5DYvCOLDlhQa5KlnsLWohWoSuzp+CqSnOb/7Clf1jj1d15lz0iGj48eicNku/OzuUfUc42dfAR/Skw31QWNl47WiXLOcmksZzu2lbnjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778793533; c=relaxed/simple;
-	bh=nHFN+EeGy9H4fiYsR/Tzdsuw8cbjSxNx8CM71Qksky4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDNV01WsDUBTOjMNTviO8p84I0fTkv12J4sR8CVebGPcngASoqZ0vKzw+yvfiZ21LDcnw4PAIQtpc2GZqDgbS5L43Zyc2AZl62qTbs7cS6GAoo1DmzMS6PfiDUwLSt8C0ZCK1Mdv4ZZTuKCuuEsduhxmLghfDCGIebbpVBtXRNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=JIxhNPeC; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1778793631; c=relaxed/simple;
+	bh=lhPMKEQU86GVpnKxpDjfM0xA4kJZxbopeeIHT2P/Xco=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VtiYYTwhoTs4wM2Umy9yMwrPwsT5pClebP29/hmqhStugSD+vtkeL90thyDJiS9p1bv1pPhSR35TqY+uBg85giob5NRudFKT56Pdcy2ezj0qHSN4yaUrTQ9iC5SitQryFmKqFHttyYkq3eUZvQbdlTxi4ibKv91WtC3TxqCue6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=q/vdd830; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="JIxhNPeC"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5894610D2B0;
-	Thu, 14 May 2026 23:18:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1778793528;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=fWIwSSucsz37Y4TFwVU3mNclvHt2V4rfnNHQHEULdZA=;
-	b=JIxhNPeCmXyziGyByiRcG07xZvIvWVrbCZ9A0Q2CqNJ81QOMUF3A2Kwctfb/0BAfBak3Rm
-	1VKU2QkHsG4wqMb2ecFg3ZKEWS3Cm9BoQ2nNacQKqjfmW0/7pXFTsw6hTmC2wRyot5sOwC
-	eLrIeaQKRbrPu1BzUqqVnWZ4Ihgn4vcGdOGEa2/iuFvd+K6gCQrMAfixQW007uDM3sCSjm
-	C0KUsZDsgcLMjc7Dn2dcZ9oy1Uwm4Z3zYh960Mhx8WyMsUni/wy46N+Iav7bN2t73DSbcv
-	pHHMOl+P1FV+QW8mpdhlbWPqCPWUnimMtOcSSuopnhhGnWOaXtb8kOuR5Iff1A==
-Date: Thu, 14 May 2026 23:18:44 +0200
-From: Pavel Machek <pavel@nabladev.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org,
-	neil.armstrong@linaro.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q/vdd830"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d76dd4ee8so7825717f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 May 2026 14:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778793628; x=1779398428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=86LPxHAuIBTZBybQT8TPj1X7ACqmLq5UiCY29MJP/cg=;
+        b=q/vdd830Ia/9roJlAYZgN6CruuBjgtbNmFxobMOhrvbjzEIkKLCxDhQT6jO4GMTzxa
+         fIwITcoqhWoXNOuVXDDABtxEgBGYVr790HtXOH+ikJ3OC0BUy5ot64QefRL8HTYeIGEb
+         sgbEEXsklbDZlB4nRjTAu+s818KkT4tFmGORFbtlOqqSSgtShnkchCfYvoxY1r8PkfRP
+         bk/1jbyS+Y+/pb9RHh6HR9ddeIv/1b5ivPvK8KE6/wG5teoUfIevyAxRYZWWL9J84HCr
+         5G6mjfE4EEFgUDzg7REXV1+x4NQLtAihKBBn4C3nyOz9m/b1nIigppixsp7MmFtN6vG8
+         /xbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778793628; x=1779398428;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=86LPxHAuIBTZBybQT8TPj1X7ACqmLq5UiCY29MJP/cg=;
+        b=fxg8kDu4Me9VAbSlKCs/Y5ypiUAvhRfA7MuXAxxcHm9RVStg/5VdsXJjr6Cxd0XSm9
+         P+Vtvant0e8Nmr8GeeyN9qjv5iwb16iFzxP9SGj8QRU+350YvuCvLwFbAYRYtlbDegAb
+         OVjTjCqpCMJijfU4cL5nz/grES+x9ctaK+eZDIgqXFPO8d/vWHbD/1eLlfiCUzvyJxhO
+         Y0PJUxTOHpv5e4u+C/fkDVAICW0S6GGnm6a8vEZeJw7XMe44NW29MmP2iAlySaRiheJc
+         z0XNEPImOtRnp+SjOYiEfg142/tmKj7qHDiO602oIHo2NkcfV+pvku7c8ED0qTwNyzeR
+         DHaQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+7tvKaZDuKyd8nBDI+sIVtVvwa2vYqTGz1QQo8EDwl5SQ9qPuPs9cyQXpYIuHKJIjf3IuySaHNfcpjJDUrpsKaNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrvBCqZ92TTnHcouOVS5Gl7SG3nlMsSdkm/FYHa73Xu1IAPTc5
+	aEV6lTjSYFikNsfnlmy8Zu2l7XMZeUjtivtS+TM45e6EPduyKNyYNChmtUPSGvWL
+X-Gm-Gg: Acq92OEIcN+mXvbVMGRRjdrIFHuT0Jt8JbHhCpriXWxcHgjahDdm4+QinnmCAFiL7+y
+	nK5GjSmLsdCsczNbd7fUKguyV1QfT18x3EiUhHFD/WPkkoK4YMQi9vNx9XjJXljoAasvpbAWtRf
+	OAhP2dhl1fOP8S1Qj7ScFc55Yj1t0JEl9MZa5GBmXFnPsiLpobpRW6fHm+nX1VyUuG4I2MsJ6Cu
+	IvkmIxaXtgZ9rhuVkxzD8ztiQSaZjIBBOL1I3VVYAxcE6HJtPjaC6CJkTQlv7W54eQScNtzAD6k
+	SNk5c5FMFtZXMmYAAC2NKbAfxF32itESOkir2aNqp1Gj2Tuxhh2Ai/NwUqDFT3Z9NGIAXOjwtel
+	xNbNeXV1w4OGe9wQIM1xbrUU9hE94wz+cR1CeWje61NfDC8pCX8wrc57+NJVrZqEXUMcHVP8ehX
+	3PhVG+MDSFuIuvqzR/AtpPmu2mLII7KQaNT79QFpfWo75SvmfyiHNBrm1Mi94RGjSCNmqdONtW3
+	jVk+k/JbfzqD/MDasZ/NHo4RxnBRjvdz449UEbj8QhYNewJ
+X-Received: by 2002:a5d:5f45:0:b0:455:7e5d:9142 with SMTP id ffacd0b85a97d-45e5c5953ccmr1060884f8f.32.1778793628199;
+        Thu, 14 May 2026 14:20:28 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:4d56:d792:6583:2fd5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da0fe13a7sm10216038f8f.29.2026.05.14.14.20.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2026 14:20:27 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org, Pavel Machek <pavel@nabladev.com>,
-	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Avoid long delay in atomic
- context
-Message-ID: <agY8NAyCcHkhBvBv@duo.ucw.cz>
-References: <20260514111300.2152386-1-claudiu.beznea@kernel.org>
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/3] mmc: renesas_sdhi: Apply bad taps quirk to RZ/G2H
+Date: Thu, 14 May 2026 22:20:22 +0100
+Message-ID: <20260514212024.1624517-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260514212024.1624517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260514212024.1624517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y638fiKJVX+YDLWt"
-Content-Disposition: inline
-In-Reply-To: <20260514111300.2152386-1-claudiu.beznea@kernel.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---y638fiKJVX+YDLWt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Apply the sdhi_quirks_bad_taps2367 quirk to the RZ/G2H (R8A774E1)
+SoC.
 
-Hi!
+RZ/G2H is identical to the R-Car H3-N (R8A77951), which already uses
+this quirk to avoid unreliable tuning tap positions. Use the same
+quirk entry for RZ/G2H to ensure consistent SDHI tuning behaviour.
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The OTG PHY initialization sequence needs to wait for 20 ms at a specific
-> step, as described in commit 72c0339c115b ("phy: renesas:
-> rcar-gen3-usb2: follow the hardware manual procedure").
->=20
-> Commit 55a387ebb921 ("phy: renesas: rcar-gen3-usb2: Lock around hardware
-> registers and driver data") tried to address various problems in the
-> rcar-gen3-usb2 driver and converted the mutex protecting HW register
-> accesses to a spin lock, leaving, however, a long delay in the critical
-> section protected by the spin lock. This may become a problem,
-> especially on RT kernels.
->=20
-> To address this, release the spin lock before sleeping for 20 ms as
-> required by the HW manual and reacquire it afterwards. To avoid other
-> threads entering the critical section and configuring the HW while the
-> software is waiting for the OTG initialization to complete, introduce the
-> otg_initializing variable alongside the otg_init_done completion. Any
-> other thread trying to configure the HW while the OTG PHY initialization
-> is in progress waits for the completion instead of immediately returning
-> errors to PHY users. The IRQs were also disabled while waiting for the OTG
-> PHY initialization to complete, as the interrupt handler may also apply HW
-> settings.
+Fixes: 31941342888d ("arm64: dts: renesas: r8a774e1: Add SDHI nodes")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Just... there has to be a better way.
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index f6ebb7bc7ede..e5aae7fce1cb 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -224,6 +224,7 @@ static const struct renesas_sdhi_quirks sdhi_quirks_rzg2l = {
+  */
+ static const struct soc_device_attribute sdhi_quirks_match[]  = {
+ 	{ .soc_id = "r8a774a1", .revision = "ES1.[012]", .data = &sdhi_quirks_4tap_nohs400 },
++	{ .soc_id = "r8a774e1", .data = &sdhi_quirks_bad_taps2367 },
+ 	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_4tap },
+ 	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_4tap_nohs400_one_rx },
+ 	{ .soc_id = "r8a7796", .revision = "ES1.[12]", .data = &sdhi_quirks_4tap_nohs400 },
+-- 
+2.54.0
 
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +static int rcar_gen3_phy_wait_otg_init(struct rcar_gen3_chan *channel,
-> +				       unsigned long *flags)
-> +{
-> +	unsigned long timeout =3D msecs_to_jiffies(25);
-> +	unsigned long ret =3D 1;
-> +
-> +	lockdep_assert_held(&channel->lock);
-> +
-> +	/*
-> +	 * The OTG can be initialized only once and needs to release the lock
-> +	 * and wait for 20 ms due to hardware constraints. Wait for the OTG PHY
-> +	 * initialization to complete if another PHY executes configuration
-> +	 * code while the OTG PHY is waiting. This avoids returning failures to
-> +	 * PHY users.
-> +	 */
-> +	if (READ_ONCE(channel->otg_initializing)) {
-> +		spin_unlock_irqrestore(&channel->lock, *flags);
-
-This is not nice, passing flags between functions like this is a red flag.
-
-You are only accessing otg_initializing under the spinlock. That means
-that READ_ONCE is reduntant.
-
-But AFAICT spinlock is only held over this function to protect
-channel->otg_initializing access. I suspect correct answer here is
-getting rid of spinlock over this function, and using
-test_bit(BIT_INITIALIZING, ...) or something similar.
-
-Best regards,
-								Pavel
-
-
---y638fiKJVX+YDLWt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCagY8NAAKCRAw5/Bqldv6
-8kIyAKCub4uUA4428i2iky/At/AjsQbCUQCdGEn8frZbIA7Svvvs4RzSMZ4QgA0=
-=iyqe
------END PGP SIGNATURE-----
-
---y638fiKJVX+YDLWt--
