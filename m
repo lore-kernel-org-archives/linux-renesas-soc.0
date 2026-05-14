@@ -1,83 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678B33E025C;
-	Thu, 14 May 2026 13:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3409F3EE1D4;
+	Thu, 14 May 2026 13:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778764862; cv=none; b=UXD9oOCVunAdqe5rAMNIVo8VPJQP2zRK4WLnBDxQr06Bs2xi5N670OsxaYlnrUWTNfHWh27ZEe0y4yr8V1ZcYNR4NxI2LqnhnnNU5UOxWdJCSe7yEYXMZgyaxAjg8hMWNZidp++Uq1md8X9kjclydX8AXpGg7IaEORb1/i6zD2M=
+	t=1778766475; cv=none; b=naP4M7ChjirUoOFr8Z4iUhj+JFUmGeFoME/UHQxFEIB0DPZdVcJoUie3wncJnEhjhleGHsEKf/l9zTWI+pqkl74OP5NNqYuZ/5BP2VaNs0ydHmw0/O5YAhfhK/gl9ei9AU3/afrlZYgIle1xlDWjNYsUK3qwp9YtR2dVH55+WVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778764862; c=relaxed/simple;
-	bh=/d6JkD/4Duqh2N5CT7o3NdRCDzek83LRZbMUXKP5S00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmFojGZJv0LakYyqWkU8CCoDdf7UXGybgqv6gUImZTRgUf5gULn7LQj2tFm5plsjhwFwPpjDYwPCjsYv1rOFXC8HrxI92Xy5076ln/OCzY+SYA4OztAfd2nRg0pXf5LCB9nLvHpxxnK5vx/IZisD+hjzCOhol+FCmPd063//K68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhl+pvbS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778766475; c=relaxed/simple;
+	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=qIqe67YJ4XyhDdQ4zdwCAipNunfyJEHDwk3RU1zzyUp93Kd21WPZHbzNUXC7oF/eLSw8XukTTkW2zQ+hM3kHzfNOZmm/EJuKjom6Ba75xYTw6t84gi0OsdO4IjduJHKZPwQyA4dP9KB98S/ZUFFjnb9NzSWVIh9ZbMJJM0tiNbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7EXKpOW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhl+pvbS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A688DC2BCB8;
-	Thu, 14 May 2026 13:21:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7EXKpOW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABD9C2BCB3;
+	Thu, 14 May 2026 13:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778764862;
-	bh=/d6JkD/4Duqh2N5CT7o3NdRCDzek83LRZbMUXKP5S00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rhl+pvbSZ6S7HzUWEwRzIj50xuMqM3Kgs2qd7rxxwC4uLXgbHc3tWEqcAYPoSxtkU
-	 3DEN8LsChgWX4ZRW+YUit/4awrUqPZPc58VxaVbbCfQrvBwB/x/krfHDcJzxdy0XMY
-	 08YIQcSG5vtx5EUc98+p53OrmIbu+n/ibskNAyTv2L3X3S83QwQsx73KBM1CcKk1BG
-	 BIEueWAugB+95p5UFSETqu2XgSq0IplOZEOTTYNy8xmAm35pXsfDGfEOiu41vfmuLJ
-	 5Pbbt6gWe02B6QLI1UvdAzouzyWrgHJvymcmpaecpV7z/+vItbu7DJNqNtAuXKfxOl
-	 GMhSDq9UjtDMg==
-Date: Thu, 14 May 2026 08:20:54 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v3 1/5] dt-bindings: display: renesas,rzg2l-du: Refuse
- port@1 for RZ/G2UL
-Message-ID: <177876485382.133353.4226109265397951012.robh@kernel.org>
-References: <20260512144104.761531-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260512144104.761531-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=k20201202; t=1778766474;
+	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=C7EXKpOWFDkvDfP/p5daDRdRVCwGfDPPZjOkgTeSJyoed/M0ElC97exv5FIfXjnQY
+	 cKtbTi+LBroo5O6Sn31YPv/w7Cb5UcvQsNO5HcoGAKD6cnB9ixP0D+iqlZ8lBocRLS
+	 hWiCYd4K+f4vXOPbDeE0vGGtOexTXdCEM+fAhd8vwK5kG6ifZtjtYNp18eXCje8kSk
+	 yEGcuC00P7s7lEdyCuU1pOqTHL+4SFtsVXJL6pLRTOcwc7Dy666CPCJUO99G9qHfll
+	 G6RNDJzKRmY6sms9uYMfuPFvVTJy2CdQcRSJGYW1+XIdfrnHq2eWL5VQ7zcsRqPILS
+	 BSSB6/uUW3yBg==
+Date: Thu, 14 May 2026 08:47:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260512144104.761531-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ David Airlie <airlied@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Michael Turquette <mturquette@baylibre.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, 
+ Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ linux-renesas-soc@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, dri-devel@lists.freedesktop.org
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
+References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
+ <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
+Message-Id: <177876647180.321742.13836175505095800376.robh@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
 
 
-On Tue, 12 May 2026 15:41:00 +0100, Prabhakar wrote:
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On Thu, 14 May 2026 15:24:54 +0300, Tomi Valkeinen wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > 
-> The RZ/G2UL DU supports only a single port@0 DPI. Explicitly refuse
-> port@1 in the ports node.
+> The Renesas DSC Display Stream Compression is a bridge embedded in the
+> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+> 8k or 400 Mpixel/s .
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> [tomi.valkeinen: fix the example]
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > ---
-> v3:
-> - Was orignally part of separate series [0]
-> [0] https://lore.kernel.org/all/d1e0d4e0fe74e60345a3d043fb4f9128c1057638.1778141145.git.tommaso.merciai.xr@bp.renesas.com/
-> ---
->  Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/renesas,dsc.example.dtb: dsc@feb8d000 (renesas,r8a779g0-dsc): reg: [[0, 4273524736], [0, 1024]] is too long
+	from schema $id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
