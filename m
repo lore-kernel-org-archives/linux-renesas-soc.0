@@ -1,56 +1,56 @@
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E38737DEB2;
-	Sat, 16 May 2026 21:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C6737F73B;
+	Sat, 16 May 2026 21:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778966059; cv=none; b=ucxyDVAYxGJMtm91zasdO/uYXPllQj7jv7ZY+gHQVrJ4lEcpplkmzr/w9W5TOTSTa2rd16A97tB2aTfS1gbor4PXDKbCXKL5Gjg8HYnQM0EWwWPO+a1ZosFmxUVNUMWjkWJjIBaojQfmFWezoNiAfy2NlIO4CUsjujpX/25TkKI=
+	t=1778966065; cv=none; b=kmqAZRvjhVXpTQagDjlDIVw10m9nrfeXT1Hf9XD0rpdm0eYQr0mqggILguGzTDAHSlsRuTAedUNENgsudXDD0e3Sgfae2H7L6I5hfH8f4nmkH7nmKUheUUDIJjMRVNr22rq8i490iCBRPkuSg7yj/H0iiOt7xMb751pvbAPbbyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778966059; c=relaxed/simple;
-	bh=432TSX2olAHF/degZAFqNXZY/O+XgbMNKNgZVR5nl1M=;
+	s=arc-20240116; t=1778966065; c=relaxed/simple;
+	bh=ZrfaVeEJBK0kaAeQ2RxDZhg9Nr2tn/Ev8CfgjxOM8Xk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n8f1zc2lrQuHF/oFJG2iDSsP2Ub/YPt6NMr+IwUElw5Q2s/Flw2egD0QeHfyhuQ7jmckkeoxzgsi38YWHhI757FhFrV9oUpv23+m1vwtFoiywuJ80PnhVxciK9tZ9FVpeZRS0LeCBHXrOniAmHTd+BKojZrCpd3zqzkuwNGBxBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=BRr3vF3J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kjD9J9t3; arc=none smtp.client-ip=103.168.172.152
+	 MIME-Version:Content-Type; b=GXP34oxRjAbCmSS30pEE21TQ3Ur4xW+E2NKILJq7JdsVgDwtOnu7cBy/TcEeJUYM7HwySPzY43aR73xLViWyOHzS8uojXh0e3andgLQpNhtpPZQ41xy26/vd6CfzOas6j1f/FWjJlY+V+f+WX3GWTzWJmvfTLf/DIdTsKSj2/nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=pE3P2gru; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Blb1KiI/; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="BRr3vF3J";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kjD9J9t3"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B97A6140003E;
-	Sat, 16 May 2026 17:14:12 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Sat, 16 May 2026 17:14:12 -0400
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="pE3P2gru";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Blb1KiI/"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7892DEC00B4;
+	Sat, 16 May 2026 17:14:18 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sat, 16 May 2026 17:14:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966052;
-	 x=1779052452; bh=zxnExz/qAHLfvprU/09rCl6q8AsTXOrJHTBTlEOxlP0=; b=
-	BRr3vF3JGlptm1yj6ObCJHtayP8KVWZ27Gizh/p7V8WvBU9+CrmWc857tAQR8sew
-	YR1HSbLcC5R/UM5nNtAXCAUUpw4e9xcNIeKV0IyODpWUncMFwcJSf7bnvJaAfS+t
-	vdM14S3lbRJt99BrUFxsUDrBtBHgxmJgdfRB5q7GyAzhBON71D0N0UxI2sfiCV7y
-	r11pvHA9gZlw3ojGYuWfAgceoJd+78xAA4ipFpmLmUKKe8hNlLema0Sgdn0EA1UV
-	CxYR0+IZzfIiWyCxuypxt/E1DinqEwrozRapig2pGJAw/E4CpMuT7Y5BImTOsx/j
-	BrKkCNiu6JOJPwFlxmnzHg==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966058;
+	 x=1779052458; bh=RhujGj17gGpCLzSV/UYOg6Drb1r/5gGKcbPvwBlAyzs=; b=
+	pE3P2gru/7ciq65iTEZnot1xXuMy+NQb4LI2qJSjM8y1umYIPvZz8wJL0E977xgd
+	eMw83BUQWZdDtyEa5bFQJgt9Ob8IpYiIkO70H5pcDqWaU+c7qQYCr5mGLLdkvcVZ
+	lHuLC0ZsGZ6DaPvXtY4bHEtZGrdGCwt7FhbKFRQMiUtymnBNJmLseEVbNbr+L92g
+	6zGMCr0vL+3AD3poyZeLI3w86MwfQT+om/3SiFvpfWW27epiHn2OrDvoErOBSqba
+	hx0jPRAGm5RfC/7u7kEg07oinvInCaS8eFq3jM5bjN9/xxVZ2lCD3Stp8NzL/d73
+	af1GIBfpKKG3vQUKtx3L2g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966052; x=
-	1779052452; bh=zxnExz/qAHLfvprU/09rCl6q8AsTXOrJHTBTlEOxlP0=; b=k
-	jD9J9t3JaKUbVSCApZRXhaUoHpdSGCzPXaqa8Ayurm+IQeSyzm65xCSzPJvbsnvY
-	CkoeM56xNdf04jv19+mG0oboDFrat3e70fjA1ifGjr0Fz0s82QuDp/mYJQGI+46/
-	Ra/j0F+eotVYtePcbJE4MlAW24LhKHuHK+ybiyygI4qK6G0CuKjP8Dh72kngBR/m
-	O44T9zLOM/9EMMmi9Bykx/dyYwe0dC/0h6idND/iz2uQE3FwsVIph23GnP5rUJgV
-	H9lUAsdjoqbHJQLYESVbJGyopk6+VvPGxvhEl62+nh7591QMya9QSm7dEWsWt5lC
-	rNTO6JzPcsBcHP09O1XMQ==
-X-ME-Sender: <xms:JN4IatCcvNmU5OlnFIBI_k4nwcmU7-XrMrYwS8mzBiwKkmZFfy6PJg>
-    <xme:JN4Iahgc9PJCe7Gz2jOd8ouAG2tUNXRgRswhx-sBphxXklVFHDaXsBvzoQYvPA_J1
-    Sfvyttl8Z8PgoiwTq5683Msxed80k19BzsyNvVrKxUC4OgpHSHa3gy->
-X-ME-Received: <xmr:JN4IajbvDQ3AN2clI7OcaI3_vPwX4wDgPCHXzHJthH--rHIBPwwfYodybt6urlo2xIc80CQ4eraXET8UfK4D0to9gdz1wtRp6EoH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeegucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966058; x=
+	1779052458; bh=RhujGj17gGpCLzSV/UYOg6Drb1r/5gGKcbPvwBlAyzs=; b=B
+	lb1KiI/uEwaXHuMCSi+2Kaxv/r3iseNARxF3qiKuvwAlSqnWOlS9OWYukAzJDc4m
+	mDRPulfhJbomR+jHtB14p+39M3ocUba+DjdYfrFokH1iws2qRjCFDT9F1MPCheOA
+	uZXTb+isKBIn9XcS0WZHBDtUx1/Txah+9kIR9PItnLWOAHsI7NH44flHGCUO99Dj
+	96Jz3issnXsrjCftw4O6Fil7Nj+jQZPb3FvAs27SSIsln8L5sCzVO7ataba1WsUD
+	15qknGY4LDGA1SgVIt8/DIWqcK5zOCe27jukambPSuUFStjn+2AeZVqQ9W5Thxt4
+	iapB0vxoRJSUhQ2qt+zRA==
+X-ME-Sender: <xms:Kt4IaorqBZtoOpXmAUlUTpIu-QMsjz7qktUOaQHDzqXA8mzGyqTkxw>
+    <xme:Kt4IakpQdw5LaXHzHQbVHZ5CS6yuJoEmOHmbq7u2kCizZREbd-pDFJ0XTOH2ep0zp
+    c0iTly7d8t2OEMy34lUJGRC-cS5FhMsiav_R_yv9q0rnXiWNiTd0q0>
+X-ME-Received: <xmr:Kt4IaoAU6B5PZU1aUcqVq1HnQSXJ5bEHerhTwJ6DPJN82czYtHU0MNHfF3-t9fU2bK3yCeP-jm2BDOsE2WaDLx54E62VGVgC3NuP>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
@@ -70,14 +70,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeegucetufdote
     hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehn
     ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
     gv
-X-ME-Proxy: <xmx:JN4IaqluEzDt0mz91iegRs5xGjKzWhhTnXTeBJmMY9_ZjcjmAodOIw>
-    <xmx:JN4Iahi2-AgEmgZOT8pV1Vhb8qhlMUYiaeI7CyoYoK1CDHCleErU1g>
-    <xmx:JN4IakSeF1ZVpDOOBzFYFt5Zq1tz0kT0-ZYB4AKdeS3qWOi0UidbWQ>
-    <xmx:JN4Iaqa-PbYWXz5n7vagpi9UxkK-QCI31cfWjY_teCRWDoFlYbndmg>
-    <xmx:JN4Iahn0JyKhWmcpJEuUh30wXd04cuXuFK6FXwOmu30hHww9hfgcxSbf>
+X-ME-Proxy: <xmx:Kt4IaivLrVNQAhllfqCw8eO1WKyTGhZzLsZsuCv13zzS7vpd2lpsuw>
+    <xmx:Kt4IanLlpuT16QRNEivbo-1OgCpz-Iijh-jIF-XgTN-F4dDpK2P23w>
+    <xmx:Kt4IapajxBAbLqITDLiWMfcHm7XQ97MDz4U9wbCdPwzfcJHVUwxRwg>
+    <xmx:Kt4IapCuSKhDFQZ0cotAtJEQH7qW8VtJnuQKJz7n-ixH8AYmNc06ng>
+    <xmx:Kt4IaqNSqutcMhY0wqMtWAHXlfm73k2SJdhlVreg-gq0c0Fjt_uGETk_>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 16 May 2026 17:14:11 -0400 (EDT)
+ 16 May 2026 17:14:17 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
@@ -89,9 +89,9 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: [PATCH v9 04/13] media: rcar-isp: Add support for ISPCORE
-Date: Sat, 16 May 2026 23:13:11 +0200
-Message-ID: <20260516211320.3041412-5-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 07/13] media: rppx1: exm: Add support for exposure measurement
+Date: Sat, 16 May 2026 23:13:14 +0200
+Message-ID: <20260516211320.3041412-8-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
@@ -104,2296 +104,385 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The Renesas R-Car ISP block consists of two different IP blocks, one
-CSI-2 Channel Selector (CSISP) and one traditional ISP for image
-operation (ISPCORE). The R-Car ISP driver currently supports the CSISP
-functionality as part of the video capture pipeline, this change adds
-support for the ISPCORE functionality.
-
-The ISPCORE functionality is further split in two parts, a Renesas
-specific part and a Dream Chip Real-time Pixel Processor IP part
-(RPPX1). The Renesas part deals with I/O to/from the block while the
-RPPX1 part deals with the actual ISP functions.
-
-The RPPX1 functionality is implemented in a support framework (DCT
-RPPX1) as this block can be used by different vendors or setups.  This
-change deals with the Renesas part of exposing the V4L2 elements needed
-for a user-space interface to the RPPX1 and deals with the DMA to/from
-the RPP block. It also facilitates the user-space V4L2 API to allow
-configuring the RPPX1 using the DCT RPPX1 support framework.
-
-The functionality exposed are one input video device where RAW bayer
-frames can be queued for processing, one output video device where the
-debayerd image can be read as either ABGR32 or NV16M format. Further
-more a video device to queue the image processing parameters to
-configure the RPPX1 IPS as well as a video device to read statistics
-about the processed image is available.
-
-There is no change in the operation of the CSISP functionality.
+Extend the RPPX1 driver to allow setting the exposure measurement
+configuration and consuming the resulting statistics. It uses the RPPX1
+framework for parameters and its writer abstraction to allow the user to
+control how, and when, configuration is applied to the RPPX1.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[ VSPX interfacing + locking sanitizing ]
+Co-developed-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
+Signed-off-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
 Co-developed-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 ---
 * Changes since v8
-- Fix spelling in comments.
-- Added Jacopo's Co-Developed tag.
-- Removed superfluous dev_info at probe.
-- Moved power on and clock Enablement to stream start time.
-- Reduce indentation in risp_io_buffer_prepare().
-- Adjust colorspace fields depending on format.
-- Add WARN_ON and comment on defensive check in risp_core_job_prepare().
-- Fix misspelt symbol names risp_core_vspx_frame_end and
-  risp_core_io_destroy.
-- Unregistered io nodes and subdev if registration fails.
-- Add linux/spinlock.h include in risp-core.h
-
-* Changes since v7
-- Fix kdoc tag.
-- Update to init ISP device pointer.
-
-* Changes since v5
-- Use NULL instead of 0 when init rcar_isp_core in probe.
-
-* Changes since v4
-- Add depend on VIDEO_RENESAS_VSP1
-
-* Changes since v3
-- Make sure VSPX is stopped before queueing next job, starting with
-  v6.18-rc1 the two can get out of sync.
-- Fix a possible race with VSPX when stopping streaming.
-
-* Changes since v2
-- Rework the start procedure so the ISP is reset without from a context
-  that can sleep.
+- Use IS_ERR to check rppx1_init_stats_block() return code.
 ---
- .../media/platform/renesas/rcar-isp/Kconfig   |    2 +
- .../media/platform/renesas/rcar-isp/Makefile  |    2 +-
- .../media/platform/renesas/rcar-isp/core-io.c | 1000 +++++++++++++++++
- .../media/platform/renesas/rcar-isp/core.c    |  890 +++++++++++++++
- .../media/platform/renesas/rcar-isp/csisp.c   |   48 +-
- .../platform/renesas/rcar-isp/risp-core.h     |  176 +++
- 6 files changed, 2110 insertions(+), 8 deletions(-)
- create mode 100644 drivers/media/platform/renesas/rcar-isp/core-io.c
- create mode 100644 drivers/media/platform/renesas/rcar-isp/core.c
- create mode 100644 drivers/media/platform/renesas/rcar-isp/risp-core.h
+ .../platform/dreamchip/rppx1/rpp_module.h     |   2 +
+ .../platform/dreamchip/rppx1/rpp_params.c     |   5 +
+ .../platform/dreamchip/rppx1/rpp_stats.c      |  10 ++
+ .../platform/dreamchip/rppx1/rppx1_exm.c      |  78 ++++++++++-
+ .../uapi/linux/media/dreamchip/rppx1-config.h | 121 +++++++++++++++++-
+ 5 files changed, 213 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/renesas/rcar-isp/Kconfig b/drivers/media/platform/renesas/rcar-isp/Kconfig
-index 242f6a23851f..bacc15c250fe 100644
---- a/drivers/media/platform/renesas/rcar-isp/Kconfig
-+++ b/drivers/media/platform/renesas/rcar-isp/Kconfig
-@@ -5,10 +5,12 @@ config VIDEO_RCAR_ISP
- 	depends on V4L_PLATFORM_DRIVERS
- 	depends on VIDEO_DEV && OF
- 	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on VIDEO_RENESAS_VSP1
- 	select MEDIA_CONTROLLER
- 	select VIDEO_V4L2_SUBDEV_API
- 	select RESET_CONTROLLER
- 	select V4L2_FWNODE
-+	select VIDEO_DCT_RPPX1
- 	help
- 	  Support for Renesas R-Car Image Signal Processor (ISP).
- 	  Enable this to support the Renesas R-Car Image Signal
-diff --git a/drivers/media/platform/renesas/rcar-isp/Makefile b/drivers/media/platform/renesas/rcar-isp/Makefile
-index b542118c831e..c0c80303682c 100644
---- a/drivers/media/platform/renesas/rcar-isp/Makefile
-+++ b/drivers/media/platform/renesas/rcar-isp/Makefile
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--rcar-isp-objs = csisp.o
-+rcar-isp-objs = csisp.o core.o core-io.o
+diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_module.h b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
+index 0e36b717b4ef..e968ec67b9f5 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rpp_module.h
++++ b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
+@@ -48,11 +48,13 @@ void rpp_module_clrset(struct rpp_module *mod, u32 offset, u32 mask, u32 value);
+ union rppx1_params_block {
+ 	struct v4l2_isp_block_header header;
+ 	struct rppx1_awbg_params awbg;
++	struct rppx1_exm_params exm;
+ 	struct rppx1_wbmeas_params wbmeas;
+ };
  
- obj-$(CONFIG_VIDEO_RCAR_ISP) += rcar-isp.o
-diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-new file mode 100644
-index 000000000000..b7ba787c2e29
---- /dev/null
-+++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-@@ -0,0 +1,1000 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ * Copyright (C) 2026 Ideas on Board Oy
-+ * Copyright (C) 2026 Ragnatech AB
-+ */
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-event.h>
-+#include <media/v4l2-ioctl.h>
-+#include <media/v4l2-isp.h>
-+#include <media/v4l2-mc.h>
-+
-+#include <linux/media/dreamchip/rppx1-config.h>
-+
-+#include "risp-core.h"
-+
-+#define risp_io_err(d, fmt, arg...)         dev_err((d)->core->dev, fmt, ##arg)
-+
-+static struct risp_buffer *risp_io_vb2buf(struct vb2_v4l2_buffer *vb)
-+{
-+	return container_of(vb, struct risp_buffer, vb);
-+}
-+
-+static int risp_io_open(struct file *file)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+	int ret;
-+
-+	ret = mutex_lock_interruptible(&io->lock);
-+	if (ret)
-+		return ret;
-+
-+	file->private_data = io;
-+
-+	ret = v4l2_fh_open(file);
-+	if (ret)
-+		goto err_unlock;
-+
-+	ret = v4l2_pipeline_pm_get(&io->vdev.entity);
-+	if (ret < 0)
-+		goto err_open;
-+
-+	mutex_unlock(&io->lock);
-+
-+	return 0;
-+err_open:
-+	v4l2_fh_release(file);
-+err_unlock:
-+	mutex_unlock(&io->lock);
-+
-+	return ret;
-+}
-+
-+static int risp_io_release(struct file *file)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+	int ret;
-+
-+	mutex_lock(&io->lock);
-+
-+	ret = _vb2_fop_release(file, NULL);
-+
-+	v4l2_pipeline_pm_put(&io->vdev.entity);
-+
-+	mutex_unlock(&io->lock);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_file_operations risp_io_fops = {
-+	.owner		= THIS_MODULE,
-+	.unlocked_ioctl	= video_ioctl2,
-+	.open		= risp_io_open,
-+	.release	= risp_io_release,
-+	.poll		= vb2_fop_poll,
-+	.mmap		= vb2_fop_mmap,
-+	.read		= vb2_fop_read,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Common queue
-+ */
-+
-+static int risp_io_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
-+			       unsigned int *nplanes, unsigned int sizes[],
-+			       struct device *alloc_devs[])
-+
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vq);
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(vq->type)) {
-+		const struct v4l2_pix_format_mplane *pix = &io->format.fmt.pix_mp;
-+
-+		if (*nplanes) {
-+			if (*nplanes > pix->num_planes)
-+				return -EINVAL;
-+
-+			for (unsigned int i = 0; i < pix->num_planes; i++)
-+				if (sizes[i] < pix->plane_fmt[i].sizeimage)
-+					return -EINVAL;
-+
-+			return 0;
-+		}
-+
-+		*nplanes = pix->num_planes;
-+		for (unsigned int i = 0; i < pix->num_planes; i++)
-+			sizes[i] = pix->plane_fmt[i].sizeimage;
-+	} else {
-+		if (*nplanes) {
-+			if (sizes[0] < io->format.fmt.meta.buffersize)
-+				return -EINVAL;
-+
-+			return 0;
-+		}
-+
-+		*nplanes = 1;
-+		sizes[0] = io->format.fmt.meta.buffersize;
-+	}
-+
-+	/* Initialize buffer queue */
-+	INIT_LIST_HEAD(&io->buffers);
-+
-+	return 0;
-+};
-+
-+static int risp_io_buffer_prepare_set(struct rcar_isp_core_io *io,
-+				      struct vb2_buffer *vb, unsigned int plane,
-+				      unsigned long size)
-+{
-+	if (vb2_plane_size(vb, plane) < size) {
-+		risp_io_err(io, "Buffer too small (%lu < %lu)\n",
-+			    vb2_plane_size(vb, plane), size);
-+		return -EINVAL;
-+	}
-+
-+	vb2_set_plane_payload(vb, plane, size);
-+
-+	return 0;
-+}
-+
-+static int risp_io_buffer_prepare(struct vb2_buffer *vb)
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vb->vb2_queue);
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(vb->vb2_queue->type)) {
-+		const struct v4l2_pix_format_mplane *pix = &io->format.fmt.pix_mp;
-+		int ret = 0;
-+
-+		for (unsigned int i = 0; i < pix->num_planes; i++) {
-+			ret = risp_io_buffer_prepare_set(io, vb, i,
-+							 pix->plane_fmt[i].sizeimage);
-+			if (ret)
-+				break;
-+		}
-+
-+		return ret;
-+	}
-+
-+	return risp_io_buffer_prepare_set(io, vb, 0,
-+					  io->format.fmt.meta.buffersize);
-+}
-+
-+static void risp_io_buffer_queue(struct vb2_buffer *vb)
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct risp_buffer *buf = risp_io_vb2buf(vbuf);
-+
-+	guard(mutex)(&io->core->io_lock);
-+
-+	list_add_tail(&buf->list, &io->buffers);
-+
-+	if (risp_core_job_prepare(io->core))
-+		risp_io_err(io, "Failed to prepare job\n");
-+}
-+
-+static void risp_io_return_buffers(struct rcar_isp_core_io *io,
-+				   enum vb2_buffer_state state)
-+{
-+	struct risp_buffer *buf, *node;
-+
-+	lockdep_assert_held(&io->core->io_lock);
-+
-+	list_for_each_entry_safe(buf, node, &io->buffers, list) {
-+		vb2_buffer_done(&buf->vb.vb2_buf, state);
-+		list_del(&buf->list);
-+	}
-+}
-+
-+static int risp_io_start_streaming(struct vb2_queue *vq, unsigned int count)
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vq);
-+	int ret;
-+
-+	scoped_guard(mutex, &io->core->io_lock) {
-+		if (io->core->io[RISP_CORE_INPUT1].format.fmt.pix_mp.width !=
-+		    io->core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp.width ||
-+		    io->core->io[RISP_CORE_INPUT1].format.fmt.pix_mp.height !=
-+		    io->core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp.height) {
-+			risp_io_return_buffers(io, VB2_BUF_STATE_QUEUED);
-+			return -EPIPE;
-+		}
-+
-+		io->streaming = true;
-+	}
-+
-+	ret = risp_core_start_streaming(io->core);
-+	if (ret) {
-+		guard(mutex)(&io->core->io_lock);
-+
-+		risp_io_return_buffers(io, VB2_BUF_STATE_QUEUED);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void risp_io_stop_streaming(struct vb2_queue *vq)
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vq);
-+
-+	scoped_guard(mutex, &io->core->io_lock) {
-+		io->streaming = false;
-+		risp_core_stop_streaming(io->core);
-+		risp_io_return_buffers(io, VB2_BUF_STATE_ERROR);
-+	}
-+
-+	/*
-+	 * Wait for buffers part of the jobs not yet processed. Note that this
-+	 * might complete buffers out of order.
-+	 */
-+	vb2_wait_for_all_buffers(&io->queue);
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Common V4L2 IOCTLs
-+ */
-+
-+static int risp_io_querycap(struct file *file, void *priv,
-+			    struct v4l2_capability *cap)
-+{
-+	struct video_device *vdev = video_devdata(file);
-+
-+	strscpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
-+	strscpy(cap->card, vdev->name, sizeof(cap->card));
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Input Exposure
-+ */
-+
-+static int risp_io_input_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
-+				     unsigned int *nplanes, unsigned int sizes[],
-+				     struct device *alloc_devs[])
-+
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vq);
-+	struct rcar_isp_core *core = io->core;
-+	struct device *bus_master;
-+	int ret;
-+
-+	ret = risp_io_queue_setup(vq, nbuffers, nplanes, sizes, alloc_devs);
-+	if (ret)
-+		return ret;
-+
-+	bus_master = vsp1_isp_get_bus_master(core->vspx.dev);
-+	if (IS_ERR_OR_NULL(bus_master)) {
-+		risp_io_err(io, "Missing reference to bus-master device\n");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Allocate buffers using the bus_master device associated with the
-+	 * VSPX associated to this ISP instance.
-+	 */
-+	alloc_devs[0] = bus_master;
-+
-+	return 0;
-+};
-+
-+static const struct vb2_ops risp_io_input_qops = {
-+	.queue_setup		= risp_io_input_queue_setup,
-+	.buf_prepare		= risp_io_buffer_prepare,
-+	.buf_queue		= risp_io_buffer_queue,
-+	.start_streaming	= risp_io_start_streaming,
-+	.stop_streaming		= risp_io_stop_streaming,
-+};
-+
-+static const struct v4l2_pix_format_mplane risp_io_input_default_format = {
-+	.width = 1920,
-+	.height = 1080,
-+	.field = V4L2_FIELD_NONE,
-+	.pixelformat = V4L2_PIX_FMT_SGRBG8,
-+	.colorspace = V4L2_COLORSPACE_RAW,
-+	.xfer_func = V4L2_XFER_FUNC_NONE,
-+	.ycbcr_enc = V4L2_YCBCR_ENC_601,
-+	.quantization = V4L2_QUANTIZATION_FULL_RANGE,
-+	.num_planes = 1,
-+	.plane_fmt = {
-+		[0] = {
-+			.sizeimage = 1920 * 1080,
-+			.bytesperline = 1920,
-+		},
-+	},
-+};
-+
-+static const struct risp_io_input_format {
-+	unsigned int fourcc;
-+	unsigned int bpp;
-+} risp_io_input_formats[] = {
-+	{ .fourcc = V4L2_PIX_FMT_SBGGR8,	.bpp = 1 },
-+	{ .fourcc = V4L2_PIX_FMT_SGBRG8,	.bpp = 1 },
-+	{ .fourcc = V4L2_PIX_FMT_SGRBG8,	.bpp = 1 },
-+	{ .fourcc = V4L2_PIX_FMT_SRGGB8,	.bpp = 1 },
-+	{ .fourcc = V4L2_PIX_FMT_SBGGR10,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SGBRG10,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SGRBG10,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SRGGB10,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SBGGR12,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SGBRG12,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SGRBG12,	.bpp = 2 },
-+	{ .fourcc = V4L2_PIX_FMT_SRGGB12,	.bpp = 2 },
-+};
-+
-+static void risp_io_input_try_format(struct rcar_isp_core_io *io,
-+				     struct v4l2_pix_format_mplane *pix)
-+{
-+	unsigned int bpp = 0;
-+
-+	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-+			      &pix->height, 128, 4096, 2, 0);
-+
-+	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
-+		if (risp_io_input_formats[i].fourcc == pix->pixelformat) {
-+			bpp = risp_io_input_formats[i].bpp;
+ union rppx1_stats_block {
+ 	struct v4l2_isp_block_header header;
++	struct rppx1_exm_stats exm;
+ 	struct rppx1_wbmeas_stats wbmeas;
+ };
+ 
+diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
+index 17bbcf366970..8c0f45e8066a 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
++++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
+@@ -19,6 +19,8 @@ static const struct v4l2_isp_params_block_type_info
+ rppx1_ext_params_blocks_info[] = {
+ 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE1, awbg),
+ 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE2, awbg),
++	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE1, exm),
++	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE2, exm),
+ 	RPPX1_PARAMS_BLOCK_INFO(WBMEAS_POST, wbmeas),
+ };
+ 
+@@ -56,6 +58,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+ 		case RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1:
+ 			module = &rpp->pre1.awbg;
+ 			break;
++		case RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1:
++			module = &rpp->pre1.exm;
 +			break;
-+		}
-+	}
-+
-+	if (!bpp) {
-+		pix->pixelformat = risp_io_input_formats[0].fourcc;
-+		bpp = risp_io_input_formats[0].bpp;
-+	}
-+
-+	pix->field = V4L2_FIELD_NONE;
-+	pix->colorspace = V4L2_COLORSPACE_RAW;
-+
-+	pix->num_planes = 1;
-+	pix->plane_fmt[0].bytesperline = pix->width * bpp;
-+	pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-+}
-+
-+static int risp_io_input_enum_fmt(struct file *file, void *priv,
-+				  struct v4l2_fmtdesc *f)
-+{
-+	if (f->index >= ARRAY_SIZE(risp_io_input_formats))
-+		return -EINVAL;
-+
-+	f->pixelformat = risp_io_input_formats[f->index].fourcc;
-+
-+	return 0;
-+}
-+
-+static int risp_io_input_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (f->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		return -EINVAL;
-+
-+	f->fmt.pix_mp = io->format.fmt.pix_mp;
-+
-+	return 0;
-+}
-+
-+static int risp_io_input_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (vb2_is_busy(&io->queue))
-+		return -EBUSY;
-+
-+	if (f->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		return -EINVAL;
-+
-+	risp_io_input_try_format(io, &f->fmt.pix_mp);
-+
-+	io->format.fmt.pix_mp = f->fmt.pix_mp;
-+
-+	return 0;
-+}
-+
-+static int risp_io_input_try_fmt(struct file *file, void *fh,
-+				 struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	risp_io_input_try_format(io, &f->fmt.pix_mp);
-+
-+	return 0;
-+}
-+
-+static int risp_io_input_enum_framesizes(struct file *file, void *fh,
-+					 struct v4l2_frmsizeenum *fsize)
-+{
-+	bool found = false;
-+
-+	if (fsize->index != 0)
-+		return -EINVAL;
-+
-+	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
-+		if (risp_io_input_formats[i].fourcc == fsize->pixel_format) {
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	if (!found)
-+		return -EINVAL;
-+
-+	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-+
-+	fsize->stepwise.min_width = 128;
-+	fsize->stepwise.max_width = 5120;
-+	fsize->stepwise.step_width = 2;
-+
-+	fsize->stepwise.min_height = 128;
-+	fsize->stepwise.max_height = 4096;
-+	fsize->stepwise.step_height = 2;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ioctl_ops risp_io_input_ioctl_ops = {
-+	.vidioc_querycap		= risp_io_querycap,
-+
-+	.vidioc_enum_fmt_vid_out	= risp_io_input_enum_fmt,
-+	.vidioc_g_fmt_vid_out_mplane	= risp_io_input_g_fmt,
-+	.vidioc_s_fmt_vid_out_mplane	= risp_io_input_s_fmt,
-+	.vidioc_try_fmt_vid_out_mplane	= risp_io_input_try_fmt,
-+	.vidioc_enum_framesizes		= risp_io_input_enum_framesizes,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Parameters
-+ *
-+ */
-+
-+/* Max 2048 address + value pairs in one VSPX buffer, increase if needed. */
-+#define RISP_IO_PARAMS_BUF_SIZE	16384
-+
-+static int risp_io_params_buf_init(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct risp_buffer *buf = risp_io_vb2buf(vbuf);
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vb->vb2_queue);
-+	struct rcar_isp_core *core = io->core;
-+	size_t size;
-+	int ret;
-+
-+	memset(&buf->vsp_buffer, 0, sizeof(buf->vsp_buffer));
-+
-+	size = RISP_IO_PARAMS_BUF_SIZE;
-+	ret = vsp1_isp_alloc_buffer(core->vspx.dev, size, &buf->vsp_buffer);
-+	if (ret)
-+		return -EINVAL;
-+
-+	memset(buf->vsp_buffer.cpu_addr, 0, RISP_IO_PARAMS_BUF_SIZE);
-+
-+	return 0;
-+}
-+
-+static void risp_io_params_buf_cleanup(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct risp_buffer *buf = risp_io_vb2buf(vbuf);
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vb->vb2_queue);
-+	struct rcar_isp_core *core = io->core;
-+
-+	vsp1_isp_free_buffer(core->vspx.dev, &buf->vsp_buffer);
-+}
-+
-+struct risp_conf_dma_write_desc {
-+	u32 *buf;
-+	u32 base;
-+	unsigned int count;
-+};
-+
-+static int risp_conf_dma_prepare(void *priv, u32 offset, u32 value)
-+{
-+	struct risp_conf_dma_write_desc *desc = priv;
-+
-+	/* Bounds check, 8 bytes = address (4)+ value (4). */
-+	if ((desc->count + 1) * 8 > RISP_IO_PARAMS_BUF_SIZE)
-+		return -ENOMEM;
-+
-+	(*desc->buf++) = desc->base | offset;
-+	(*desc->buf++) = value;
-+
-+	desc->count++;
-+
-+	return 0;
-+}
-+
-+static int risp_io_params_buffer_prepare(struct vb2_buffer *vb)
-+{
-+	struct rcar_isp_core_io *io = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct risp_buffer *buf = risp_io_vb2buf(vbuf);
-+	struct risp_conf_dma_write_desc desc;
-+	u32 *cpu_addr;
-+	int ret;
-+
-+	/* Prepare params. */
-+	cpu_addr = (u32 *)buf->vsp_buffer.cpu_addr;
-+
-+	desc.buf = cpu_addr + 2;
-+	desc.base = io->core->rppaddr;
-+	desc.count = 0;
-+
-+	/* Fill params body. */
-+	ret = rppx1_params(io->core->rpp, vb, io->format.fmt.meta.buffersize,
-+			   risp_conf_dma_prepare, &desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Fill params header. */
-+	cpu_addr[0] = desc.count;
-+	cpu_addr[1] = 0x0;
-+
-+	return 0;
-+}
-+
-+static const struct vb2_ops risp_io_params_qops = {
-+	.queue_setup		= risp_io_queue_setup,
-+	.buf_init		= risp_io_params_buf_init,
-+	.buf_cleanup		= risp_io_params_buf_cleanup,
-+	.buf_prepare		= risp_io_params_buffer_prepare,
-+	.buf_queue		= risp_io_buffer_queue,
-+	.start_streaming	= risp_io_start_streaming,
-+	.stop_streaming		= risp_io_stop_streaming,
-+};
-+
-+static const struct v4l2_meta_format risp_io_params_default_format = {
-+	.dataformat = V4L2_META_FMT_RPP_X1_PARAMS,
-+	.buffersize = v4l2_isp_buffer_size(RPPX1_PARAMS_MAX_SIZE),
-+};
-+
-+static int risp_io_params_enum_fmt(struct file *file, void *priv,
-+				   struct v4l2_fmtdesc *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (f->type != V4L2_BUF_TYPE_META_OUTPUT || f->index)
-+		return -EINVAL;
-+
-+	f->pixelformat = io->format.fmt.meta.dataformat;
-+
-+	return 0;
-+}
-+
-+static int risp_io_params_g_fmt(struct file *file, void *priv,
-+				struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+	struct v4l2_meta_format *meta = &f->fmt.meta;
-+
-+	if (f->type != V4L2_BUF_TYPE_META_OUTPUT)
-+		return -EINVAL;
-+
-+	*meta = io->format.fmt.meta;
-+
-+	return 0;
-+}
-+
-+static int risp_io_params_s_fmt(struct file *file, void *priv,
-+				struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (vb2_is_busy(&io->queue))
-+		return -EBUSY;
-+
-+	return risp_io_params_g_fmt(file, priv, f);
-+}
-+
-+static const struct v4l2_ioctl_ops risp_io_params_ioctl_ops = {
-+	.vidioc_querycap		= risp_io_querycap,
-+
-+	.vidioc_enum_fmt_meta_out	= risp_io_params_enum_fmt,
-+	.vidioc_g_fmt_meta_out		= risp_io_params_g_fmt,
-+	.vidioc_s_fmt_meta_out		= risp_io_params_s_fmt,
-+	.vidioc_try_fmt_meta_out	= risp_io_params_g_fmt,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Statistics
-+ */
-+
-+static const struct vb2_ops risp_io_stats_qops = {
-+	.queue_setup		= risp_io_queue_setup,
-+	.buf_prepare		= risp_io_buffer_prepare,
-+	.buf_queue		= risp_io_buffer_queue,
-+	.start_streaming	= risp_io_start_streaming,
-+	.stop_streaming		= risp_io_stop_streaming,
-+};
-+
-+static const struct v4l2_meta_format risp_io_stats_default_format = {
-+	.dataformat = V4L2_META_FMT_RPP_X1_STATS,
-+	.buffersize = v4l2_isp_buffer_size(RPPX1_STATS_MAX_SIZE),
-+};
-+
-+static int risp_io_stats_enum_fmt(struct file *file, void *priv,
-+				  struct v4l2_fmtdesc *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (f->type != V4L2_BUF_TYPE_META_CAPTURE || f->index)
-+		return -EINVAL;
-+
-+	f->pixelformat = io->format.fmt.meta.dataformat;
-+
-+	return 0;
-+}
-+
-+static int risp_io_stats_g_fmt(struct file *file, void *priv,
-+			       struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+	struct v4l2_meta_format *meta = &f->fmt.meta;
-+
-+	if (f->type != V4L2_BUF_TYPE_META_CAPTURE)
-+		return -EINVAL;
-+
-+	*meta = io->format.fmt.meta;
-+
-+	return 0;
-+}
-+
-+static int risp_io_stats_s_fmt(struct file *file, void *priv,
-+			       struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (vb2_is_busy(&io->queue))
-+		return -EBUSY;
-+
-+	return risp_io_stats_g_fmt(file, priv, f);
-+}
-+
-+static const struct v4l2_ioctl_ops risp_io_stats_ioctl_ops = {
-+	.vidioc_querycap		= risp_io_querycap,
-+
-+	.vidioc_enum_fmt_meta_cap	= risp_io_stats_enum_fmt,
-+	.vidioc_g_fmt_meta_cap		= risp_io_stats_g_fmt,
-+	.vidioc_s_fmt_meta_cap		= risp_io_stats_s_fmt,
-+	.vidioc_try_fmt_meta_cap	= risp_io_stats_g_fmt,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Video capture
-+ */
-+
-+static const struct vb2_ops risp_io_capture_qops = {
-+	.queue_setup		= risp_io_queue_setup,
-+	.buf_prepare		= risp_io_buffer_prepare,
-+	.buf_queue		= risp_io_buffer_queue,
-+	.start_streaming	= risp_io_start_streaming,
-+	.stop_streaming		= risp_io_stop_streaming,
-+};
-+
-+static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
-+	.width = 1920,
-+	.height = 1080,
-+	.pixelformat = V4L2_PIX_FMT_XBGR32,
-+	.field = V4L2_FIELD_NONE,
-+	.colorspace = V4L2_COLORSPACE_SRGB,
-+	.ycbcr_enc = V4L2_YCBCR_ENC_601,
-+	.quantization = V4L2_QUANTIZATION_FULL_RANGE,
-+	.xfer_func = V4L2_XFER_FUNC_SRGB,
-+	.num_planes = 1,
-+	.plane_fmt = {
-+		[0] = {
-+			.bytesperline = ALIGN(1920 * 4, 256),
-+			.sizeimage = ALIGN(1920 * 4, 256) * 1080,
-+		},
-+	},
-+};
-+
-+static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
-+				       struct v4l2_pix_format_mplane *pix)
-+{
-+	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-+			      &pix->height, 128, 4096, 2, 0);
-+
-+	pix->field = V4L2_FIELD_NONE;
-+	pix->colorspace = V4L2_COLORSPACE_SRGB;
-+	pix->ycbcr_enc = V4L2_YCBCR_ENC_601;
-+	pix->xfer_func = V4L2_XFER_FUNC_SRGB;
-+
-+	switch (pix->pixelformat) {
-+	case V4L2_PIX_FMT_NV16M:
-+		pix->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-+		pix->num_planes = 2;
-+		pix->plane_fmt[0].bytesperline = ALIGN(pix->width, 256);
-+		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-+		pix->plane_fmt[1].bytesperline = ALIGN(pix->width, 256);
-+		pix->plane_fmt[1].sizeimage = pix->plane_fmt[1].bytesperline * pix->height;
-+		break;
-+	default:
-+		pix->pixelformat = V4L2_PIX_FMT_XBGR32;
-+		pix->quantization = V4L2_QUANTIZATION_FULL_RANGE;
-+		pix->num_planes = 1;
-+		pix->plane_fmt[0].bytesperline = ALIGN(pix->width * 4, 256);
-+		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-+		break;
-+	}
-+}
-+
-+static int risp_io_capture_enum_fmt(struct file *file, void *priv,
-+				    struct v4l2_fmtdesc *f)
-+{
-+	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-+		return -EINVAL;
-+
-+	switch (f->index) {
-+	case 0:
-+		f->pixelformat = V4L2_PIX_FMT_NV16M;
-+		break;
-+	case 1:
-+		f->pixelformat = V4L2_PIX_FMT_XBGR32;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int risp_io_capture_g_fmt(struct file *file, void *priv,
-+				 struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-+		return -EINVAL;
-+
-+	f->fmt.pix_mp = io->format.fmt.pix_mp;
-+
-+	return 0;
-+}
-+
-+static int risp_io_capture_s_fmt(struct file *file, void *priv,
-+				 struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	if (vb2_is_busy(&io->queue))
-+		return -EBUSY;
-+
-+	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-+		return -EINVAL;
-+
-+	risp_io_capture_try_format(io, &f->fmt.pix_mp);
-+
-+	io->format.fmt.pix_mp = f->fmt.pix_mp;
-+
-+	return 0;
-+}
-+
-+static int risp_io_capture_try_fmt(struct file *file, void *fh,
-+				   struct v4l2_format *f)
-+{
-+	struct rcar_isp_core_io *io = video_drvdata(file);
-+
-+	risp_io_capture_try_format(io, &f->fmt.pix_mp);
-+
-+	return 0;
-+}
-+
-+static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
-+					   struct v4l2_frmsizeenum *fsize)
-+{
-+	if (fsize->index != 0)
-+		return -EINVAL;
-+
-+	switch (fsize->pixel_format) {
-+	case V4L2_PIX_FMT_NV16M:
-+	case V4L2_PIX_FMT_XBGR32:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-+
-+	fsize->stepwise.min_width = 128;
-+	fsize->stepwise.max_width = 5120;
-+	fsize->stepwise.step_width = 2;
-+
-+	fsize->stepwise.min_height = 128;
-+	fsize->stepwise.max_height = 4096;
-+	fsize->stepwise.step_height = 2;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ioctl_ops risp_io_capture_ioctl_ops = {
-+	.vidioc_querycap		= risp_io_querycap,
-+
-+	.vidioc_enum_fmt_vid_cap	= risp_io_capture_enum_fmt,
-+	.vidioc_g_fmt_vid_cap_mplane	= risp_io_capture_g_fmt,
-+	.vidioc_s_fmt_vid_cap_mplane	= risp_io_capture_s_fmt,
-+	.vidioc_try_fmt_vid_cap_mplane	= risp_io_capture_try_fmt,
-+	.vidioc_enum_framesizes		= risp_io_capture_enum_framesizes,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Create and remove IO video devices
-+ */
-+
-+int risp_core_io_create(struct device *dev, struct rcar_isp_core *core,
-+			struct rcar_isp_core_io *io, unsigned int pad)
-+{
-+	struct video_device *vdev = &io->vdev;
-+	struct vb2_queue *q = &io->queue;
-+	int ret;
-+
-+	switch (pad) {
-+	case RISP_CORE_INPUT1:
-+		snprintf(vdev->name, sizeof(vdev->name), "%s %s input1",
-+			 KBUILD_MODNAME, dev_name(dev));
-+		vdev->vfl_dir = VFL_DIR_TX;
-+		vdev->device_caps = V4L2_CAP_VIDEO_OUTPUT_MPLANE;
-+		vdev->ioctl_ops = &risp_io_input_ioctl_ops;
-+
-+		q->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-+		q->ops = &risp_io_input_qops;
-+
-+		io->pad.flags = MEDIA_PAD_FL_SOURCE;
-+		io->format.fmt.pix_mp = risp_io_input_default_format;
-+		break;
-+
-+	case RISP_CORE_PARAMS:
-+		snprintf(vdev->name, sizeof(vdev->name), "%s %s params",
-+			 KBUILD_MODNAME, dev_name(dev));
-+		vdev->vfl_dir = VFL_DIR_TX;
-+		vdev->device_caps = V4L2_CAP_META_OUTPUT;
-+		vdev->ioctl_ops = &risp_io_params_ioctl_ops;
-+
-+		q->type = V4L2_BUF_TYPE_META_OUTPUT;
-+		q->ops = &risp_io_params_qops;
-+
-+		io->pad.flags = MEDIA_PAD_FL_SOURCE;
-+		io->format.fmt.meta = risp_io_params_default_format;
-+		break;
-+
-+	case RISP_CORE_STATS:
-+		snprintf(vdev->name, sizeof(vdev->name), "%s %s stats",
-+			 KBUILD_MODNAME, dev_name(dev));
-+		vdev->vfl_dir = VFL_DIR_RX;
-+		vdev->device_caps = V4L2_CAP_META_CAPTURE;
-+		vdev->ioctl_ops = &risp_io_stats_ioctl_ops;
-+
-+		q->type = V4L2_BUF_TYPE_META_CAPTURE;
-+		q->ops = &risp_io_stats_qops;
-+
-+		io->pad.flags = MEDIA_PAD_FL_SINK;
-+		io->format.fmt.meta = risp_io_stats_default_format;
-+		break;
-+
-+	case RISP_CORE_OUTPUT1:
-+		snprintf(vdev->name, sizeof(vdev->name), "%s %s output1",
-+			 KBUILD_MODNAME, dev_name(dev));
-+		vdev->vfl_dir = VFL_DIR_RX;
-+		vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE_MPLANE;
-+		vdev->ioctl_ops = &risp_io_capture_ioctl_ops;
-+
-+		q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-+		q->ops = &risp_io_capture_qops;
-+
-+		io->pad.flags = MEDIA_PAD_FL_SINK;
-+		io->format.fmt.pix_mp = risp_io_capture_default_format;
-+		break;
-+	}
-+
-+	io->core = core;
-+
-+	mutex_init(&io->lock);
-+	INIT_LIST_HEAD(&io->buffers);
-+
-+	/* Create media graph pad. */
-+	ret = media_entity_pads_init(&io->vdev.entity, 1, &io->pad);
-+	if (ret)
-+		return ret;
-+
-+	/* Create queue */
-+	q->io_modes = VB2_MMAP | VB2_DMABUF;
-+	q->lock = &io->lock;
-+	q->drv_priv = io;
-+	q->mem_ops = &vb2_dma_contig_memops;
-+	q->buf_struct_size = sizeof(struct risp_buffer);
-+	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	q->dev = dev;
-+
-+	ret = vb2_queue_init(q);
-+	if (ret < 0) {
-+		risp_io_err(io, "Failed to initialize VB2 queue\n");
-+		return ret;
-+	}
-+
-+	/* Create video device */
-+	vdev->v4l2_dev = &core->v4l2_dev;
-+	vdev->queue = &io->queue;
-+
-+	vdev->release = video_device_release_empty;
-+	vdev->lock = &io->lock;
-+	vdev->fops = &risp_io_fops;
-+
-+	vdev->device_caps |= V4L2_CAP_STREAMING | V4L2_CAP_IO_MC;
-+
-+	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-+	if (ret) {
-+		risp_io_err(io, "Failed to register video device\n");
-+		return ret;
-+	}
-+
-+	video_set_drvdata(&io->vdev, io);
-+
-+	v4l2_info(&core->v4l2_dev, "Device registered as %s\n",
-+		  video_device_node_name(vdev));
-+
-+	switch (pad) {
-+	case RISP_CORE_INPUT1:
-+	case RISP_CORE_PARAMS:
-+		ret = media_create_pad_link(&io->vdev.entity, 0,
-+					    &core->subdev.entity, pad,
-+					    MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE);
-+		break;
-+	case RISP_CORE_STATS:
-+	case RISP_CORE_OUTPUT1:
-+		ret = media_create_pad_link(&core->subdev.entity, pad,
-+					    &io->vdev.entity, 0,
-+					    MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE);
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+void risp_core_io_destroy(struct rcar_isp_core_io *io)
-+{
-+	if (!video_is_registered(&io->vdev))
-+		return;
-+
-+	video_unregister_device(&io->vdev);
-+}
-diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-new file mode 100644
-index 000000000000..01232617096b
---- /dev/null
-+++ b/drivers/media/platform/renesas/rcar-isp/core.c
-@@ -0,0 +1,890 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ * Copyright (C) 2026 Ideas on Board Oy
-+ * Copyright (C) 2026 Ragnatech AB
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/of_platform.h>
-+#include <linux/pm_runtime.h>
-+
-+#include <media/v4l2-ioctl.h>
-+#include <media/videobuf2-dma-contig.h>
-+#include <media/vsp1.h>
-+
-+#include "risp-core.h"
-+
-+#define ISP_CS_STREAMER_MODE_REG				0x7000
-+#define ISP_CS_STREAMER_MODE_STREAMER_EN			0xf
-+
-+#define ISP_CS_STREAMER_VBLANK_REG				0x7004
-+#define ISP_CS_STREAMER_HBLANK_REG				0x7008
-+
-+#define ISP_CS_STREAMER_CONFIG_DMA_CONTROL_REG			0x7100
-+#define ISP_CS_STREAMER_CONFIG_DMA_REG_ADDRESS_UPPER_8BIT_MASK	GENMASK(31, 24)
-+#define ISP_CS_STREAMER_CONFIG_DMA_ENABLE0			BIT(0)
-+
-+#define ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_REG			0x2100
-+#define ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_ENABLE1		BIT(31)
-+#define ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_CONFIG_DATA_START_REG_ADDRESS_MASK	GENMASK(15, 0)
-+
-+#define ISP_CS_STREAMER_CONFIG_DMA_CONTROL2_REG			0x2104
-+
-+#define ISP_CORE_ISPCORE_INT_STATUS			    0x80000
-+#define ISP_CORE_ISPCORE_INT_ENABLE			    0x80004
-+#define ISPCORE_DMA_IMAGE_FRAME_MODE(i, f)		    (0x84000 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_PIXEL_POSITION(i, f)	    (0x84004 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_PIXEL_BITWIDTH_MINUS1(i, f) (0x84008 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_PIXEL_BPP(i, f)		    (0x8400c + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP0(i, f)    (0x84010 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP1(i, f)    (0x84014 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP2(i, f)    (0x84018 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP3(i, f)    (0x8401c + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP0(i, f)	    (0x84020 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP1(i, f)	    (0x84024 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP2(i, f)	    (0x84028 + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP3(i, f)	    (0x8402c + 0x1000 * (i) + 0x100 * (f))
-+#define ISPCORE_DMA_IMAGE_FRAME_AXI_ID(i, f)		    (0x84030 + 0x1000 * (i) + 0x100 * (f))
-+
-+#define ISPCORE_DMA_IMAGE_FLUSH_OUT_REG(i)			(0x84400 + 0x1000 * (i))
-+#define ISPCORE_DMA_IMAGE_FLUSH_OUT_PADDING_PIXEL_EOF_MASK	GENMASK(31, 16)
-+#define ISPCORE_DMA_IMAGE_FLUSH_OUT_PADDING_PIXEL_EOF_SHIFT	16
-+
-+#define ISPCORE_DMA_IMAGE_AXI_CONFIG_REG(i)			(0x84800 + 0x1000 * (i))
-+
-+static void risp_cs_write(struct rcar_isp_core *core, u32 offset, u32 value)
-+{
-+	iowrite32(value, core->csbase + offset);
-+}
-+
-+static u32 risp_cs_read(struct rcar_isp_core *core, u32 offset)
-+{
-+	return ioread32(core->csbase + offset);
-+}
-+
-+static void risp_core_write(struct rcar_isp_core *core, u32 offset, u32 value)
-+{
-+	iowrite32(value, core->base + offset);
-+}
-+
-+static u32 risp_core_read(struct rcar_isp_core *core, u32 offset)
-+{
-+	return ioread32(core->base + offset);
-+}
-+
-+static void risp_core_job_run_params(struct rcar_isp_core *core,
-+				     struct vsp1_isp_job_desc *vspx_job,
-+				     struct risp_buffer *buf)
-+{
-+	u32 *params_buf = (u32 *)buf->vsp_buffer.cpu_addr;
-+	bool have_config = !!params_buf[0];
-+	u32 ctrl0, ctrl1, ctrl2;
-+
-+	/*
-+	 * If we have a configuration but not asked the VSPX to program it,
-+	 * use MMIO to write the configuration. This might be needed to work
-+	 * around limitations of the VSPX ConfigDMA, see comment in
-+	 * risp_core_job_prepare().
-+	 */
-+	if (have_config && !vspx_job->config.pairs) {
-+		for (unsigned int i = 0; i < params_buf[0]; i++)
-+			risp_core_write(core, params_buf[2 + i * 2] & 0xffff,
-+					params_buf[3 + i * 2]);
-+
-+		/* Disable ConfigDMA. */
-+		have_config = false;
-+	}
-+
-+	ctrl0 = risp_cs_read(core, ISP_CS_STREAMER_CONFIG_DMA_CONTROL_REG) &
-+		~ISP_CS_STREAMER_CONFIG_DMA_ENABLE0;
-+	ctrl1 = risp_cs_read(core, ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_REG) &
-+		~(ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_ENABLE1 | 0xffff);
-+	ctrl2 = 0;
-+
-+	if (have_config) {
-+		ctrl0 |= ISP_CS_STREAMER_CONFIG_DMA_ENABLE0;
-+		ctrl1 |= ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_ENABLE1 |
-+			(params_buf[2] & 0xffff);
-+		ctrl2 = params_buf[3];
-+	}
-+
-+	risp_cs_write(core, ISP_CS_STREAMER_CONFIG_DMA_CONTROL_REG, ctrl0);
-+	risp_cs_write(core, ISP_CS_STREAMER_CONFIG_DMA_CONTROL1_REG, ctrl1);
-+	risp_cs_write(core, ISP_CS_STREAMER_CONFIG_DMA_CONTROL2_REG, ctrl2);
-+}
-+
-+static void risp_core_job_run_output(struct rcar_isp_core *core,
-+				     struct risp_buffer *buf)
-+{
-+	const struct v4l2_format *fmt = &core->io[RISP_CORE_OUTPUT1].format;
-+	dma_addr_t mem;
-+	u32 reg;
-+
-+	for (unsigned int frame = 0; frame < 4; frame++) {
-+		reg = ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP0(0, frame);
-+		mem = vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf, 0);
-+		risp_core_write(core, reg, mem);
-+
-+		/* Only NV16 uses 2 planes. */
-+		if (fmt->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV16M)
-+			continue;
-+
-+		reg = ISPCORE_DMA_IMAGE_FRAME_BASE_ADDRESS_COMP1(0, frame);
-+		mem = vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf, 1);
-+		risp_core_write(core, reg, mem);
-+	}
-+}
-+
-+static void risp_core_job_run(struct rcar_isp_core *core)
-+{
-+	struct rcar_isp_job *job;
-+
-+	lockdep_assert_held(&core->lock);
-+
-+	/* ISP not yet started, nothing to do. */
-+	if (!core->streaming)
-+		return;
-+
-+	/* If we have active buffers in the ISP core, nothing to do. */
-+	if (core->vspx.job)
-+		return;
-+
-+	job = list_first_entry_or_null(&core->risp_jobs,
-+				       struct rcar_isp_job,
-+				       job_queue);
-+	if (!job)
-+		return;
-+
-+	list_del(&job->job_queue);
-+
-+	core->vspx.job = job;
-+
-+	/* Program the ISP register before kicking the VSPX. */
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		struct risp_buffer *buf = job->buffers[i];
-+
-+		switch (i) {
-+		case RISP_CORE_PARAMS:
-+			risp_core_job_run_params(core, &job->vspx_job, buf);
-+			break;
-+		case RISP_CORE_OUTPUT1:
-+			risp_core_job_run_output(core, buf);
-+			break;
-+		}
-+	}
-+
-+	if (vsp1_isp_job_run(core->vspx.dev, &job->vspx_job)) {
-+		/*
-+		 * Release all buffers in this job if running on the VSPX
-+		 * failed. Userspace should recover from this, no new jobs are
-+		 * scheduled.
-+		 */
-+		for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+			struct risp_buffer *buf = job->buffers[i];
-+
-+			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+		}
-+
-+		vsp1_isp_job_release(core->vspx.dev, &job->vspx_job);
-+		core->vspx.job = NULL;
-+		kfree(job);
-+
-+		dev_err(core->dev, "Failed to run job");
-+	}
-+}
-+
-+static int risp_core_pixfmt_to_vspx(u32 pixfmt)
-+{
-+	switch (pixfmt) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+	case V4L2_PIX_FMT_SGBRG8:
-+	case V4L2_PIX_FMT_SGRBG8:
-+	case V4L2_PIX_FMT_SRGGB8:
-+		return V4L2_PIX_FMT_GREY;
-+	case V4L2_PIX_FMT_SBGGR10:
-+	case V4L2_PIX_FMT_SGBRG10:
-+	case V4L2_PIX_FMT_SGRBG10:
-+	case V4L2_PIX_FMT_SRGGB10:
-+		return V4L2_PIX_FMT_Y10;
-+	case V4L2_PIX_FMT_SBGGR12:
-+	case V4L2_PIX_FMT_SGBRG12:
-+	case V4L2_PIX_FMT_SGRBG12:
-+	case V4L2_PIX_FMT_SRGGB12:
-+		return V4L2_PIX_FMT_Y12;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+int risp_core_job_prepare(struct rcar_isp_core *core)
-+{
-+	struct vsp1_isp_job_desc *vspx_job;
-+	int vspx_pixfmt = -EINVAL;
-+	struct rcar_isp_job *job;
-+	int ret;
-+
-+	lockdep_assert_held(&core->io_lock);
-+
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		if (list_empty(&core->io[i].buffers))
-+			return 0;
-+	}
-+
-+	/* Memory is released when the job is consumed. */
-+	job = kzalloc(sizeof(*job), GFP_KERNEL);
-+	if (!job)
-+		return -ENOMEM;
-+
-+	vspx_job = &job->vspx_job;
-+
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		struct risp_buffer *buf;
-+
-+		/*
-+		 * Extract buffer from the IO queue and save a reference in
-+		 * the job description. Buffers will be completed when the
-+		 * corresponding frame will be completed by the ISP.
-+		 */
-+		buf = list_first_entry_or_null(&core->io[i].buffers,
-+					       struct risp_buffer, list);
-+		/*
-+		 * This should not happen as we have checked there is buffers,
-+		 * with the lock held, but check the return value anyhow.
-+		 */
-+		if (WARN_ON(!buf)) {
-+			ret = -EINVAL;
-+			goto error_return_buffers;
-+		}
-+
-+		switch (i) {
-+		case RISP_CORE_INPUT1: {
-+			u32 isp_pixfmt = core->io[i].format.fmt.pix_mp.pixelformat;
-+
-+			vspx_pixfmt = risp_core_pixfmt_to_vspx(isp_pixfmt);
-+
-+			vspx_job->img.fmt = core->io[i].format.fmt.pix_mp;
-+			vspx_job->img.fmt.pixelformat = vspx_pixfmt;
-+			vspx_job->img.mem =
-+				vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf,
-+							      0);
-+			break;
-+		}
-+		case RISP_CORE_PARAMS: {
-+			/*
-+			 * Work around undocumented behavior of the ConfigDMA
-+			 * interface by using MMIO if 16 or less pairs are to
-+			 * be programmed.
-+			 *
-+			 * Programing 15 or less pairs corrupts the image data
-+			 * following the config buffer, programing exactly 16
-+			 * pairs freeze the whole VSPX.
-+			 */
-+			u32 *params_buf = (u32 *)buf->vsp_buffer.cpu_addr;
-+
-+			if (params_buf[0] <= 16) {
-+				vspx_job->config.pairs = 0;
-+			} else {
-+				vspx_job->config.pairs = params_buf[0];
-+				vspx_job->config.mem = buf->vsp_buffer.dma_addr;
-+			}
-+			break;
-+		}
-+		}
-+
-+		list_del(&buf->list);
-+		job->buffers[i] = buf;
-+	}
-+
-+	if (vspx_pixfmt < 0) {
-+		ret = -EINVAL;
-+		goto error_return_buffers;
-+	}
-+
-+	ret = vsp1_isp_job_prepare(core->vspx.dev, vspx_job);
-+	if (ret)
-+		goto error_return_buffers;
-+
-+	scoped_guard(spinlock_irqsave, &core->lock) {
-+		list_add_tail(&job->job_queue, &core->risp_jobs);
-+		risp_core_job_run(core);
-+	}
-+
-+	return 0;
-+
-+error_return_buffers:
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		if (!job->buffers[i])
-+			continue;
-+
-+		vb2_buffer_done(&job->buffers[i]->vb.vb2_buf,
-+				VB2_BUF_STATE_ERROR);
-+	}
-+	kfree(job);
-+	return ret;
-+}
-+
-+static int risp_core_config_output(struct rcar_isp_core *core,
-+				   unsigned int index,
-+				   const struct v4l2_pix_format_mplane *pix)
-+{
-+	/* For all frame capture slots. */
-+	for (unsigned int frame = 0; frame < 4; frame++) {
-+		switch (pix->pixelformat) {
-+		case V4L2_PIX_FMT_NV16M:
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_MODE(index, frame),
-+					1);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_POSITION(index, frame),
-+					0 << 24 | 0 << 16 | 4 << 8 | 16 << 0);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BITWIDTH_MINUS1(index, frame),
-+					0 << 24 | 0 << 16 | 7 << 8 | 7 << 0);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BPP(index, frame),
-+					0 << 28 | 0 << 24 |
-+					0 << 20 | 0 << 16 |
-+					3 << 12 | 0 << 8 |
-+					3 << 4  | 0 << 0);
-+
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP0(index, frame),
-+					pix->plane_fmt[0].bytesperline);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP1(index, frame),
-+					pix->plane_fmt[0].bytesperline);
-+			break;
-+		case V4L2_PIX_FMT_XBGR32:
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_MODE(index, frame),
-+					0);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_POSITION(index, frame),
-+					0 << 24 | 0 << 16 | 0 << 8 | 0 << 0);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BITWIDTH_MINUS1(index, frame),
-+					0 << 24 | 0 << 16 | 0 << 8 | 23 << 0);
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BPP(index, frame),
-+					0 << 28 | 0 << 24 |
-+					0 << 20 | 0 << 16 |
-+					0 << 12 | 0 << 8 |
-+					3 << 4  | 2 << 0);
-+
-+			risp_core_write(core,
-+					ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP0(index, frame),
-+					pix->plane_fmt[0].bytesperline);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		risp_core_write(core,
-+				ISPCORE_DMA_IMAGE_FRAME_AXI_ID(index, frame),
-+				0);
-+	}
-+
-+	/* Set image out flush EOF. */
-+	risp_core_write(core, ISPCORE_DMA_IMAGE_FLUSH_OUT_REG(index),
-+			pix->plane_fmt[0].bytesperline <<
-+			ISPCORE_DMA_IMAGE_FLUSH_OUT_PADDING_PIXEL_EOF_SHIFT);
-+
-+	/* Enable DMA and set burst length. */
-+	risp_core_write(core, ISPCORE_DMA_IMAGE_AXI_CONFIG_REG(index),
-+			BIT(31) | 7);
-+
-+	return 0;
-+}
-+
-+static u32 risp_core_pix2bus(const struct rcar_isp_core_io *io)
-+{
-+	switch (io->format.fmt.pix_mp.pixelformat) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+		return MEDIA_BUS_FMT_SBGGR8_1X8;
-+	case V4L2_PIX_FMT_SGBRG8:
-+		return MEDIA_BUS_FMT_SGBRG8_1X8;
-+	case V4L2_PIX_FMT_SGRBG8:
-+		return MEDIA_BUS_FMT_SGRBG8_1X8;
-+	case V4L2_PIX_FMT_SRGGB8:
-+		return MEDIA_BUS_FMT_SRGGB8_1X8;
-+	case V4L2_PIX_FMT_SBGGR10:
-+		return MEDIA_BUS_FMT_SBGGR10_1X10;
-+	case V4L2_PIX_FMT_SGBRG10:
-+		return MEDIA_BUS_FMT_SGBRG10_1X10;
-+	case V4L2_PIX_FMT_SGRBG10:
-+		return MEDIA_BUS_FMT_SGRBG10_1X10;
-+	case V4L2_PIX_FMT_SRGGB10:
-+		return MEDIA_BUS_FMT_SRGGB10_1X10;
-+	case V4L2_PIX_FMT_SBGGR12:
-+		return MEDIA_BUS_FMT_SBGGR12_1X12;
-+	case V4L2_PIX_FMT_SGBRG12:
-+		return MEDIA_BUS_FMT_SGBRG12_1X12;
-+	case V4L2_PIX_FMT_SGRBG12:
-+		return MEDIA_BUS_FMT_SGRBG12_1X12;
-+	case V4L2_PIX_FMT_SRGGB12:
-+		return MEDIA_BUS_FMT_SRGGB12_1X12;
-+	case V4L2_PIX_FMT_XBGR32:
-+		return MEDIA_BUS_FMT_RGB888_1X24;
-+	case V4L2_PIX_FMT_NV16M:
-+		return MEDIA_BUS_FMT_YUYV12_1X24;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static void risp_core_try_next_job(struct rcar_isp_core *core)
-+{
-+	lockdep_assert_held(&core->lock);
-+
-+	struct rcar_isp_job *job = core->vspx.job;
-+
-+	/* If the ISP or the VSPX is not done with the job, wait. */
-+	if (!job || !job->done_isp || !job->done_vspx)
-+		return;
-+
-+	core->vspx.job = NULL;
-+	kfree(job);
-+
-+	core->sequence++;
-+
-+	/* Kickoff processing of next frame (if any). */
-+	risp_core_job_run(core);
-+}
-+
-+static void risp_core_vspx_frame_end(void *data)
-+{
-+	struct rcar_isp_core *core = data;
-+
-+	guard(spinlock_irqsave)(&core->lock);
-+
-+	/*
-+	 * In tear-down the ISP may report a frame end event but we have already
-+	 * freed the job. It is safe to ignore the end of frame event.
-+	 */
-+	if (!core->vspx.job)
-+		return;
-+
-+	core->vspx.job->done_vspx = true;
-+	risp_core_try_next_job(core);
-+}
-+
-+static int risp_core_power_on(struct rcar_isp_core *core)
-+{
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(core->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = reset_control_deassert(core->csrstc);
-+	if (ret)
-+		goto err_pm;
-+
-+	ret = clk_prepare_enable(core->clk);
-+	if (ret)
-+		goto err_csrstc;
-+
-+	return 0;
-+
-+err_csrstc:
-+	reset_control_assert(core->csrstc);
-+err_pm:
-+	pm_runtime_put(core->dev);
-+
-+	return ret;
-+}
-+
-+static void risp_core_power_off(struct rcar_isp_core *core)
-+{
-+	clk_disable_unprepare(core->clk);
-+
-+	reset_control_assert(core->csrstc);
-+
-+	pm_runtime_put(core->dev);
-+}
-+
-+int risp_core_start_streaming(struct rcar_isp_core *core)
-+{
-+	struct vsp1_vspx_frame_end vspx_fe = {
-+		.vspx_frame_end = risp_core_vspx_frame_end,
-+		.frame_end_data = core,
-+	};
-+
-+	struct v4l2_mbus_framefmt inputfmt = {
-+		.width = core->io[RISP_CORE_INPUT1].format.fmt.pix_mp.width,
-+		.height = core->io[RISP_CORE_INPUT1].format.fmt.pix_mp.height,
-+		.code = risp_core_pix2bus(&core->io[RISP_CORE_INPUT1]),
-+		.field = V4L2_FIELD_NONE,
-+		.colorspace = V4L2_COLORSPACE_RAW,
-+		.ycbcr_enc = V4L2_YCBCR_ENC_601,
-+		.quantization = V4L2_QUANTIZATION_FULL_RANGE,
-+		.xfer_func = V4L2_XFER_FUNC_NONE,
-+	};
-+
-+	struct v4l2_mbus_framefmt hvout = {
-+		.width = core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp.width,
-+		.height = core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp.height,
-+		.code = risp_core_pix2bus(&core->io[RISP_CORE_OUTPUT1]),
-+		.field = V4L2_FIELD_NONE,
-+		.colorspace = V4L2_COLORSPACE_SRGB,
-+		.ycbcr_enc = V4L2_YCBCR_ENC_601,
-+		.quantization =
-+			core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp.pixelformat ==
-+			V4L2_PIX_FMT_XBGR32 ?
-+			V4L2_QUANTIZATION_FULL_RANGE :
-+			V4L2_QUANTIZATION_LIM_RANGE,
-+		.xfer_func = V4L2_XFER_FUNC_SRGB,
-+	};
-+	int ret;
-+
-+	scoped_guard(mutex, &core->io_lock) {
-+		for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+			if (!core->io[i].streaming)
-+				return 0;
-+		}
-+
-+		/*
-+		 * The state core->streaming is protected by core->lock, which
-+		 * is not held yet. It is however safe to read it here since
-+		 * core->io_lock is held both in risp_core_stop_streaming() and
-+		 * here, the only two places the variable is modified.
-+		 *
-+		 * With this small implied dependency on the two locks for write
-+		 * access, the interrupt handler can safely depend sole on the
-+		 * spinlock core->lock for read access to core->streaming.
-+		 *
-+		 * The gain is an interrupt handler which can hold the spinlock
-+		 * and a start/stop procedure which can reset the ISP using the
-+		 * reset_control_reset() API, The later which can not be called
-+		 * from a context that may sleep.
-+		 *
-+		 * All other locations core->streaming is read and _all_
-+		 * locations where it is written core->lock is held.
-+		 */
-+		if (core->streaming)
-+			return 0;
-+
-+		ret = risp_core_power_on(core);
-+		if (ret)
-+			return ret;
-+
-+		/* Reset and wait for ISP core to initialize itself. */
-+		reset_control_reset(core->rstc);
-+		usleep_range(2000, 4000);
-+
-+		scoped_guard(spinlock_irqsave, &core->lock) {
-+			risp_core_write(core, ISP_CORE_ISPCORE_INT_ENABLE, 1);
-+
-+			/* Configure output DMA */
-+			risp_core_config_output(core, 0,
-+						&core->io[RISP_CORE_OUTPUT1].format.fmt.pix_mp);
-+
-+			risp_cs_write(core, ISP_CS_STREAMER_VBLANK_REG, inputfmt.width * 25);
-+			risp_cs_write(core, ISP_CS_STREAMER_HBLANK_REG, 64);
-+
-+			/* Enable ISP Streaming bridge. */
-+			risp_cs_write(core, ISP_CS_STREAMER_MODE_REG,
-+				      ISP_CS_STREAMER_MODE_STREAMER_EN);
-+
-+			/* Start RPP ISP */
-+			ret = rppx1_start(core->rpp, &inputfmt, &hvout, NULL);
-+			if (ret) {
-+				risp_core_power_off(core);
-+				return ret;
-+			}
-+
-+			core->vspx.job = NULL;
-+			core->sequence = 0;
-+			core->streaming = true;
-+		}
-+
-+		/* Start VSPX */
-+		vsp1_isp_start_streaming(core->vspx.dev, &vspx_fe);
-+
-+		scoped_guard(spinlock_irqsave, &core->lock) {
-+			risp_core_job_run(core);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+void risp_core_stop_streaming(struct rcar_isp_core *core)
-+{
-+	struct rcar_isp_job *job, *tmp;
-+
-+	/*
-+	 * This function releases buffers and jobs: make sure the queues mutex
-+	 * is held.
-+	 */
-+	lockdep_assert_held(&core->io_lock);
-+
-+	scoped_guard(spinlock_irqsave, &core->lock) {
-+		/* Stop is called by each vdev, only act on the first call. */
-+		if (!core->streaming)
+ 		case RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST:
+ 			module = &rpp->post.wbmeas;
+ 			break;
+diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
+index c99ea158abcf..388c758d805d 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
++++ b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
+@@ -17,6 +17,7 @@
+ 
+ static const struct v4l2_isp_stats_block_type_info
+ rppx1_stats_blocks_info[] = {
++	RPPX1_STATS_BLOCK_INFO(EXM_PRE1, exm),
+ 	RPPX1_STATS_BLOCK_INFO(WBMEAS_POST, wbmeas),
+ };
+ 
+@@ -34,6 +35,15 @@ void rppx1_stats_fill_isr(struct rppx1 *rpp, u32 isc, void *buf)
+ 
+ 	v4l2_isp_stats_init_buffer(stats, V4L2_ISP_VERSION_V1);
+ 
++	if (isc & RPPX1_IRQ_ID_PRE1_EXM) {
++		block = rppx1_init_stats_block(rpp, stats,
++					       RPPX1_STATS_BLOCK_TYPE_EXM_PRE1);
++		if (IS_ERR(block))
 +			return;
 +
-+		/* Stop queueing jobs to VSPX. */
-+		core->streaming = false;
++		rpp_module_call(&rpp->pre1.exm, fill_stats, block);
 +	}
 +
-+	/* Wait for active VSPX job to finish. */
-+	for (unsigned int retry = 0; retry <= 10; retry++) {
-+		if (!core->vspx.job)
-+			break;
-+
-+		usleep_range(2000, 4000);
-+	}
-+
-+	if (core->vspx.job)
-+		dev_err(core->dev, "Failed to complete running job");
-+
-+	/* Free all buffers and switch off the hardware. */
-+	scoped_guard(spinlock_irqsave, &core->lock) {
-+		/* Free all jobs and buffers. */
-+		list_for_each_entry_safe(job, tmp, &core->risp_jobs, job_queue) {
-+			vsp1_isp_job_release(core->vspx.dev, &job->vspx_job);
-+
-+			for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+				struct risp_buffer *buf = job->buffers[i];
-+
-+				vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+			}
-+
-+			list_del(&job->job_queue);
-+			kfree(job);
-+		}
-+
-+		rppx1_stop(core->rpp);
-+		risp_cs_write(core, ISP_CS_STREAMER_MODE_REG, 0);
-+		risp_core_write(core, ISP_CORE_ISPCORE_INT_ENABLE, 0);
-+	}
-+
-+	vsp1_isp_stop_streaming(core->vspx.dev);
-+
-+	risp_core_power_off(core);
-+}
-+
-+static irqreturn_t risp_core_irq(int irq, void *data)
-+{
-+	struct rcar_isp_core *core = data;
-+	struct rcar_isp_job *job;
-+	u32 status;
-+
-+	status = risp_core_read(core, ISP_CORE_ISPCORE_INT_STATUS);
-+	if (!(status & BIT(0)))
-+		return IRQ_NONE;
-+
-+	if (!rppx1_interrupt(core->rpp, &status))
-+		return IRQ_HANDLED;
-+
-+	guard(spinlock_irqsave)(&core->lock);
-+
-+	job = core->vspx.job;
-+	if (!job)
-+		return IRQ_HANDLED;
-+
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		struct risp_buffer *buf;
-+
-+		buf = job->buffers[i];
-+
-+		switch (i) {
-+		case RISP_CORE_STATS:
-+			rppx1_stats_fill_isr(core->rpp, status,
-+					     vb2_plane_vaddr(&buf->vb.vb2_buf, 0));
-+			fallthrough;
-+		case RISP_CORE_OUTPUT1:
-+		case RISP_CORE_INPUT1:
-+			buf->vb.sequence = core->sequence;
-+			buf->vb.vb2_buf.timestamp = ktime_get_ns();
-+			fallthrough;
-+		case RISP_CORE_PARAMS:
-+			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
-+			break;
-+		}
-+	}
-+
-+	core->vspx.job->done_isp = true;
-+	risp_core_try_next_job(core);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct v4l2_subdev_ops risp_core_subdev_ops = {
-+};
-+
-+static int risp_core_create_subdev(struct rcar_isp_core *core)
-+{
-+	struct v4l2_subdev *subdev = &core->subdev;
-+	int ret;
-+
-+	subdev->owner = THIS_MODULE;
-+	subdev->dev = core->dev;
-+	v4l2_subdev_init(subdev, &risp_core_subdev_ops);
-+	v4l2_set_subdevdata(subdev, core->dev);
-+	snprintf(subdev->name, sizeof(subdev->name), "%s %s core",
-+		 KBUILD_MODNAME, dev_name(core->dev));
-+	subdev->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	subdev->entity.function = MEDIA_ENT_F_VID_MUX;
-+
-+	core->pads[RISP_CORE_INPUT1].flags = MEDIA_PAD_FL_SINK;
-+	core->pads[RISP_CORE_PARAMS].flags = MEDIA_PAD_FL_SINK;
-+	core->pads[RISP_CORE_STATS].flags = MEDIA_PAD_FL_SOURCE;
-+	core->pads[RISP_CORE_OUTPUT1].flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&subdev->entity, RISP_CORE_NUM_PADS,
-+				     core->pads);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+int risp_core_registered(struct rcar_isp_core *core, struct v4l2_subdev *sd)
-+{
-+	int ret;
-+
-+	core->v4l2_dev.mdev = sd->v4l2_dev->mdev;
-+
-+	/* Register ISP Core subdevice. */
-+	ret = v4l2_device_register_subdev(&core->v4l2_dev, &core->subdev);
-+	if (ret)
-+		return ret;
-+
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++) {
-+		ret = risp_core_io_create(core->dev, core, &core->io[i], i);
-+		if (ret) {
-+			/* It is safe to destroy io node that is not created. */
-+			for (unsigned int n = 0; n < RISP_CORE_NUM_PADS; n++)
-+				risp_core_io_destroy(&core->io[n]);
-+
-+			v4l2_device_unregister_subdev(&core->subdev);
-+
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int risp_core_probe_resources(struct rcar_isp_core *core,
-+				     struct platform_device *pdev)
-+{
-+	struct platform_device *vspx;
-+	struct device_node *of_vspx;
-+	struct resource *res;
-+	int ret;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "core");
-+	if (!res)
-+		return -ENODEV;
-+
-+	core->rppaddr = res->start;
-+	core->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(core->base))
-+		return PTR_ERR(core->base);
-+
-+	ret = platform_get_irq_byname(pdev, "core");
-+	if (ret < 0)
-+		return -ENODEV;
-+
-+	ret = devm_request_irq(&pdev->dev, ret, risp_core_irq, IRQF_SHARED,
-+			       KBUILD_MODNAME, core);
-+	if (ret)
-+		return ret;
-+
-+	core->clk = devm_clk_get(&pdev->dev, "core");
-+	if (IS_ERR(core->clk))
-+		return -ENODEV;
-+
-+	core->rstc = devm_reset_control_get(&pdev->dev, "core");
-+	if (IS_ERR(core->rstc))
-+		return -ENODEV;
-+
-+	of_vspx = of_parse_phandle(pdev->dev.of_node, "renesas,vspx", 0);
-+	if (!of_vspx)
-+		return -ENODEV;
-+
-+	vspx = of_find_device_by_node(of_vspx);
-+	if (!vspx)
-+		return -ENODEV;
-+
-+	/* Attach to VSP-X */
-+	core->vspx.dev = &vspx->dev;
-+
-+	ret = vsp1_isp_init(&vspx->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Attach to the RPP library
-+	 *
-+	 * 1. Start and wait for the ISP to startup.
-+	 * 2. Attach the RPP library and talk with the RPP ISP.
-+	 * 3. Turn off ISP.
-+	 * 4. Fail if the RPP is unhappy with the hardware.
-+	 */
-+	ret = clk_prepare_enable(core->clk);
-+	if (ret)
-+		return ret;
-+
-+	usleep_range(2000, 4000);
-+
-+	core->rpp = rppx1_create(core->base, &pdev->dev);
-+
-+	clk_disable_unprepare(core->clk);
-+
-+	if (!core->rpp)
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
-+		    void __iomem *csbase, struct reset_control *csrstc)
-+{
-+	int ret;
-+
-+	core->dev = &pdev->dev;
-+	core->csrstc = csrstc;
-+	core->csbase = csbase;
-+
-+	ret = risp_core_probe_resources(core, pdev);
-+	if (ret) {
-+		core->base = NULL;
-+		return ret;
-+	}
-+
-+	ret = v4l2_device_register(core->dev, &core->v4l2_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = risp_core_create_subdev(core);
-+	if (ret)
-+		return ret;
-+
-+	mutex_init(&core->io_lock);
-+	spin_lock_init(&core->lock);
-+	INIT_LIST_HEAD(&core->risp_jobs);
-+
-+	return 0;
-+}
-+
-+void risp_core_remove(struct rcar_isp_core *core)
-+{
-+	/* If we did not probe the ISP core, nothing to do. */
-+	if (!core->base)
-+		return;
-+
-+	dev_info(core->dev, "Remove ISP Core\n");
-+
-+	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
-+		risp_core_io_destroy(&core->io[i]);
-+
-+	v4l2_device_unregister_subdev(&core->subdev);
-+
-+	mutex_destroy(&core->io_lock);
-+	rppx1_destroy(core->rpp);
-+}
-diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
-index 8fb2cc3b5650..53ce47020d17 100644
---- a/drivers/media/platform/renesas/rcar-isp/csisp.c
-+++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
-@@ -11,14 +11,13 @@
-  */
+ 	if (isc & RPPX1_IRQ_ID_POST_AWB_MEAS) {
+ 		block = rppx1_init_stats_block(rpp, stats,
+ 					       RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST);
+diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c b/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
+index 10b899ba201f..1694f2b487fc 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
++++ b/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
+@@ -11,10 +11,14 @@
+ #define EXM_START_REG			0x0004
  
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of.h>
--#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
--#include <linux/reset.h>
+ #define EXM_CTRL_REG			0x0008
++#define EXM_CTRL_EXM_AUTOSTOP		BIT(1) /* HW doc says not supported. */
+ #define EXM_CTRL_EXM_UPDATE_ENABLE	BIT(0)
  
- #include <media/mipi-csi2.h>
--#include <media/v4l2-subdev.h>
-+#include <media/v4l2-async.h>
+ #define EXM_MODE_REG			0x000c
 +
-+#include "risp-core.h"
+ #define EXM_CHANNEL_SEL_REG		0x0010
++#define EXM_CHANNEL_SEL_CHANNEL_SELECT_MASK	GENMASK(2, 0)
++
+ #define EXM_LAST_MEAS_LINE_REG		0x0014
+ #define EXM_COEFF_R_REG			0x0018
+ #define EXM_COEFF_G_GR_REG		0x001c
+@@ -27,7 +31,6 @@
+ #define EXM_FORCED_UPD_START_LINE_REG	0x0038
+ #define EXM_VSTART_STATUS_REG		0x003c
  
- #define ISPINPUTSEL0_REG				0x0008
- #define ISPINPUTSEL0_SEL_CSI0				BIT(31)
-@@ -158,6 +157,7 @@ struct rcar_isp {
- 	struct device *dev;
- 	void __iomem *csbase;
- 	struct reset_control *rstc;
-+	struct rcar_isp_core core;
+-#define EXM_MEAN_REG_NUM		25
+ #define EXM_MEAN_REG(n)			(0x0040 + (4 * (n)))
  
- 	enum rcar_isp_input csi_input;
- 
-@@ -451,6 +451,21 @@ static int risp_parse_dt(struct rcar_isp *isp)
- 	return ret;
+ static int rppx1_exm_probe(struct rpp_module *mod)
+@@ -47,6 +50,79 @@ static int rppx1_exm_probe(struct rpp_module *mod)
+ 	return 0;
  }
  
-+/* -----------------------------------------------------------------------------
-+ * ISP Core connection
-+ */
-+
-+static int risp_cs_registered(struct v4l2_subdev *sd)
++static int
++rppx1_exm_fill_params(struct rpp_module *mod,
++		      const union rppx1_params_block *block,
++		      rppx1_reg_write write, void *priv)
 +{
-+	struct rcar_isp *isp = sd_to_isp(sd);
++	const struct rppx1_exm_params *cfg = &block->exm;
++	u32 h_offs, v_offs, h_size, v_size;
 +
-+	return risp_core_registered(&isp->core, sd);
-+}
++	/* If the modules is disabled, simply bypass it. */
++	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
++		write(priv, mod->base + EXM_MODE_REG, 0);
++		return 0;
++	}
 +
-+static const struct v4l2_subdev_internal_ops risp_cs_internal_ops = {
-+	.registered = risp_cs_registered,
-+};
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -477,7 +492,7 @@ static int risp_probe_resources(struct rcar_isp *isp,
- 	if (IS_ERR(isp->csbase))
- 		return PTR_ERR(isp->csbase);
- 
--	isp->rstc = devm_reset_control_get(&pdev->dev, NULL);
-+	isp->rstc = devm_reset_control_get_shared(&pdev->dev, NULL);
- 
- 	return PTR_ERR_OR_ZERO(isp->rstc);
- }
-@@ -541,14 +556,31 @@ static int risp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error_notifier;
- 
--	ret = v4l2_async_register_subdev(&isp->subdev);
--	if (ret < 0)
-+	ret = risp_core_probe(&isp->core, pdev, isp->csbase, isp->rstc);
-+	switch (ret) {
-+	case 0:
-+		/* The device have an ISP core. */
-+		isp->subdev.internal_ops = &risp_cs_internal_ops;
-+		break;
-+	case -ENODEV:
-+		/* The device don't have an ISP core, that is OK. */
-+		ret = 0;
++	switch (cfg->mode) {
++	case RPPX1_EXP_MEASURING_MODE_RGB:
++	case RPPX1_EXP_MEASURING_MODE_BAYER:
++		write(priv, mod->base + EXM_MODE_REG, cfg->mode);
 +		break;
 +	default:
-+		/* Something went wrong registering the ISP core. */
- 		goto error_subdev;
++		write(priv, mod->base + EXM_MODE_REG, 0);
++		return 0;
 +	}
 +
-+	ret = v4l2_async_register_subdev(&isp->subdev);
-+	if (ret < 0)
-+		goto error_core;
- 
- 	dev_info(isp->dev, "Using CSI-2 input: %u\n", isp->csi_input);
- 
- 	return 0;
- 
-+error_core:
-+	risp_core_remove(&isp->core);
- error_subdev:
- 	v4l2_subdev_cleanup(&isp->subdev);
- error_notifier:
-@@ -564,6 +596,8 @@ static void risp_remove(struct platform_device *pdev)
- {
- 	struct rcar_isp *isp = platform_get_drvdata(pdev);
- 
-+	risp_core_remove(&isp->core);
++	write(priv, mod->base + EXM_COEFF_R_REG, cfg->coeff_r);
++	write(priv, mod->base + EXM_COEFF_G_GR_REG, cfg->coeff_g_gr);
++	write(priv, mod->base + EXM_COEFF_GB_REG, cfg->coeff_gb);
++	write(priv, mod->base + EXM_COEFF_B_REG, cfg->coeff_b);
 +
- 	v4l2_async_nf_unregister(&isp->notifier);
- 	v4l2_async_nf_cleanup(&isp->notifier);
++	/* Select sample point */
++	write(priv, mod->base + EXM_CHANNEL_SEL_REG,
++	      cfg->channel_sel & EXM_CHANNEL_SEL_CHANNEL_SELECT_MASK);
++
++	/*
++	 * Adjust and set measurement window to hardware limitations,
++	 * - Offsets must be even.
++	 * - Width and height must be divisible by 10.
++	 */
++	h_offs = cfg->wnd.h_offs & 0x1ffe;
++	v_offs = cfg->wnd.v_offs & 0x1ffe;
++	h_size = (cfg->wnd.h_size - 1) - ((cfg->wnd.h_size - 1) % 10);
++	v_size = (cfg->wnd.v_size - 1) - ((cfg->wnd.v_size - 1) % 10);
++
++	write(priv, mod->base + EXM_H_OFFS_REG, h_offs);
++	write(priv, mod->base + EXM_V_OFFS_REG, v_offs);
++	write(priv, mod->base + EXM_H_SIZE_REG, h_size / 5);
++	write(priv, mod->base + EXM_V_SIZE_REG, v_size / 5);
++
++	/*
++	 * Set last measurement line for ready interrupt. Ignore the value
++	 * from the parameters as it is only useful for fast-channel switching.
++	 */
++	write(priv, mod->base + EXM_LAST_MEAS_LINE_REG, v_offs + v_size + 1);
++
++	write(priv, mod->base + EXM_START_REG, 1);
++
++	return 0;
++}
++
++static int rppx1_exm_fill_stats(struct rpp_module *mod,
++				union rppx1_stats_block *block)
++{
++	struct rppx1_exm_stats *stats = &block->exm;
++
++	/* Return measurements at native hardware precision. */
++	for (unsigned int i = 0; i < RPPX1_EXM_NUM_WIN; i++)
++		stats->exp_mean[i] = rpp_module_read(mod, EXM_MEAN_REG(i));
++
++	return 0;
++}
++
+ const struct rpp_module_ops rppx1_exm_ops = {
+ 	.probe = rppx1_exm_probe,
++	.fill_params = rppx1_exm_fill_params,
++	.fill_stats = rppx1_exm_fill_stats,
+ };
+diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
+index 5ed8a335c9de..dbc1e116fdf5 100644
+--- a/include/uapi/linux/media/dreamchip/rppx1-config.h
++++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
+@@ -33,6 +33,36 @@ struct rppx1_window {
+ 	__u16 v_size;
+ };
  
-diff --git a/drivers/media/platform/renesas/rcar-isp/risp-core.h b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-new file mode 100644
-index 000000000000..e8288b00a1a5
---- /dev/null
-+++ b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-@@ -0,0 +1,176 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ * Copyright (C) 2026 Ideas on Board Oy
-+ * Copyright (C) 2026 Ragnatech AB
++/**
++ * enum rppx1_meas_chan - Measurement point for the Histogram and EXM Modules
++ *
++ * Measurement points for the RPP-X1 Histogram measurement module and Exposure
++ * measurement module.
++ *
++ * All tap points are available for the PRE1/PRE2 pipes. Only
++ * RPPX1_MEAS_CHAN_SEL4 and RPPX1_MEAS_CHAN_SEL7 are available for the
++ * MAIN_POST pipe.
++ *
++ * @RPPX1_MEAS_CHAN_SEL0: after input acquisition
++ * @RPPX1_MEAS_CHAN_SEL1: after black level subtraction
++ * @RPPX1_MEAS_CHAN_SEL2: after sensor gamma linearization
++ * @RPPX1_MEAS_CHAN_SEL3: after lens shading correction
++ * @RPPX1_MEAS_CHAN_SEL4: after auto white balance gains
++ * @RPPX1_MEAS_CHAN_SEL5: after defect pixel correction
++ * @RPPX1_MEAS_CHAN_SEL6: after denoise pre-filter
++ * @RPPX1_MEAS_CHAN_SEL7: after demosaicing
 + */
++enum rppx1_meas_chan {
++	RPPX1_MEAS_CHAN_SEL0,
++	RPPX1_MEAS_CHAN_SEL1,
++	RPPX1_MEAS_CHAN_SEL2,
++	RPPX1_MEAS_CHAN_SEL3,
++	RPPX1_MEAS_CHAN_SEL4,
++	RPPX1_MEAS_CHAN_SEL5,
++	RPPX1_MEAS_CHAN_SEL6,
++	RPPX1_MEAS_CHAN_SEL7,
++};
 +
-+#ifndef __RCAR_ISP__
-+#define __RCAR_ISP__
-+
-+#include <linux/clk.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+#include <linux/spinlock.h>
-+#include <linux/videodev2.h>
-+
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-subdev.h>
-+#include <media/videobuf2-core.h>
-+#include <media/videobuf2-dma-contig.h>
-+
-+#include <media/rppx1.h>
-+#include <media/vsp1.h>
-+
-+struct rcar_isp_core;
-+
-+enum risp_core_pads {
-+	RISP_CORE_INPUT1,
-+	RISP_CORE_PARAMS,
-+	RISP_CORE_STATS,
-+	RISP_CORE_OUTPUT1,
-+	RISP_CORE_NUM_PADS,
+ /* ---------------------------------------------------------------------------
+  * Parameter Structures
+  *
+@@ -51,12 +81,16 @@ struct rppx1_window {
+  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1: PRE1 pipe White Balance Gains
+  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE2: PRE2 White Balance Gains
+  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_POST: MAIN_POST White Balance Gains
++ * @RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1: PRE1 pipe Exposure Measurement
++ * @RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2: PRE2 pipe Exposure Measurement
+  */
+ enum rppx1_params_block_type {
+ 	RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST,
+ 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1,
+ 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE2,
+ 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_POST,
++	RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1,
++	RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2,
+ };
+ 
+ /**
+@@ -144,6 +178,64 @@ struct rppx1_awbg_params {
+ 	__u32 gain_green_b;
+ };
+ 
++/**
++ * enum rppx1_exm_mode - Exposure measurement mode
++ *
++ * Exaposure measurement mode selection (RGB/Bayer).
++ *
++ * @RPPX1_EXP_MEASURING_MODE_DISABLED: no measurement
++ * @RPPX1_EXP_MEASURING_MODE_RGB: Y/R/G/B measurement
++ * @RPPX1_EXP_MEASURING_MODE_BAYER: Bayer RGB measurement
++ */
++enum rppx1_exm_mode {
++	RPPX1_EXP_MEASURING_MODE_DISABLED,
++	RPPX1_EXP_MEASURING_MODE_RGB,
++	RPPX1_EXP_MEASURING_MODE_BAYER,
 +};
 +
 +/**
-+ * struct risp_buffer - Describe an IO buffer
-+ * @vb:		The VB2 buffer
-+ * @list:	List of buffers queued to the IO queue
-+ * @vsp_buffer:	Buffer mapped from VSP-X, only used for params IO
++ * struct rppx1_exm_params - Exposure measurement configuration
++ *
++ * The RPP-X1 Exposure measurement unit is available on the PRE1 and PRE2
++ * pre-fusion pipes. Userspace selects which pipe to operate by setting
++ * the @header.type field to RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1 or
++ * RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2.
++ *
++ * Exposure measurement is performed in the RGB or Bayer domain, according to
++ * the setting of the @mode field. The exposure measurement tap point is
++ * selected according to the value of @channel_sel.
++ *
++ * The exposure measurement is performed on an input window specified in @wnd.
++ * To each color component a programmable weight coefficient is associated.
++ * Coefficients are represented as unsigned 8 bits integer values in Q1.7 format
++ * ranging from 0 to 1.992.
++ *
++ * The @last_line fields controls when the exposure measurement completes. It
++ * is usually programmed to the value of (@wnd.v_offs + @wnd.v_size + 1).
++ *
++ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1 or
++ *	    type = RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2)
++ * @mode: exposure measure mode (from enum rppx1_exm_mode)
++ * @channel_sel: exposure measurement point (see enum rppx1_meas_chan)
++ * @last_line: line number for which the exposure measurement completes
++ * @wnd: measurement window coordinates
++ * @coeff_r: coefficient for the red Bayer sample or red color channel, Q1.7
++ * @coeff_g_gr: coefficient for the green/red Bayer sample or green color channel, Q1.7
++ * @coeff_b: coefficient for the blue Bayer sample or blue color channel, Q1.7
++ * @coeff_gb: coefficient for the green/blue Bayer sample, unused in RGB mode, Q1.7
 + */
-+struct risp_buffer {
-+	struct vb2_v4l2_buffer vb;
-+	struct list_head list;
-+	struct vsp1_isp_buffer_desc vsp_buffer;
++struct rppx1_exm_params {
++	struct v4l2_isp_params_block_header header;
++	__u32 mode;
++	__u8 channel_sel;
++	__u32 last_line;
++	struct rppx1_window wnd;
++	__u8 coeff_r;
++	__u8 coeff_g_gr;
++	__u8 coeff_b;
++	__u8 coeff_gb;
 +};
++
+ /**
+  * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
+  *
+@@ -154,7 +246,9 @@ struct rppx1_awbg_params {
+ 	(sizeof(struct rppx1_wbmeas_params)			+	\
+ 	sizeof(struct rppx1_awbg_params)			+	\
+ 	sizeof(struct rppx1_awbg_params)			+	\
+-	sizeof(struct rppx1_awbg_params))
++	sizeof(struct rppx1_awbg_params)			+	\
++	sizeof(struct rppx1_exm_params)				+	\
++	sizeof(struct rppx1_exm_params))
+ 
+ /* ---------------------------------------------------------------------------
+  * Statistics Structures
+@@ -171,9 +265,13 @@ struct rppx1_awbg_params {
+  * NOTE: Only append to the enumeration as the numbers are uAPI.
+  *
+  * @RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST: post-fusion white-balance measurement
++ * @RPPX1_STATS_BLOCK_TYPE_EXM_PRE1: pre-fusion pipe1 exposure measurement
++ * @RPPX1_STATS_BLOCK_TYPE_EXM_PRE2: pre-fusion pipe2 exposure measurement
+  */
+ enum rppx1_stats_block_type {
+ 	RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST,
++	RPPX1_STATS_BLOCK_TYPE_EXM_PRE1,
++	RPPX1_STATS_BLOCK_TYPE_EXM_PRE2,
+ };
+ 
+ /**
+@@ -193,6 +291,23 @@ struct rppx1_wbmeas_stats {
+ 	__u32 mean_cr_or_r;
+ };
+ 
++/* Exposure Measurement */
++#define RPPX1_EXM_NUM_WIN 25
 +
 +/**
-+ * struct rcar_isp_core_io - Information for a IO video devices
-+ * @core:	Backlink to the common ISP core structure
++ * struct rppx1_exm_stats - Exposure measurement
 + *
-+ * @lock:	Protects @vdev, @pad and @queue + open/close fops
-+ * @vdev:	V4L2 video device associated with this IO port
-+ * @pad:	Media pad for @vdev
-+ * @queue:	VB2 buffers queue for $@vdev
++ * RPP-X1 exposure measurement calculates the mean value on 25 programmable
++ * windows on the input picture.
 + *
-+ * @qlock:	Protects @streaming and @buffers
-+ * @streaming:	Flag to indicate if device is streaming, or not
-+ * @buffers:	List of buffers queued to the device
-+ *
-+ * @format:	The active V4L2 format
++ * @header: block header (type = RPPX1_STATS_BLOCK_TYPE_EXM_PRE1)
++ * @exp_mean: mean luminance values per block, up to 20-bit
 + */
-+struct rcar_isp_core_io {
-+	struct rcar_isp_core *core;
-+
-+	struct mutex lock; /* See KDoc block. */
-+	struct video_device vdev;
-+	struct media_pad pad;
-+	struct vb2_queue queue;
-+
-+	bool streaming;
-+	struct list_head buffers;
-+
-+	struct v4l2_format format;
++struct rppx1_exm_stats {
++	struct v4l2_isp_block_header header;
++	__u32 exp_mean[RPPX1_EXM_NUM_WIN];
 +};
 +
-+/**
-+ * struct rcar_isp_job - R-Car ISP job description
-+ *
-+ * Both done_isp and done_vspx shall be set before the job can be considered
-+ * completely done.
-+ *
-+ * @buffers: IO buffers that form a job
-+ * @vspx_job: VSPX job description
-+ * @job_queue: list handle
-+ * @done_isp: Flag to indicate the ISP is done with the job
-+ * @done_vspx: Flag to indicate the VSPX is done with the job
-+ */
-+struct rcar_isp_job {
-+	struct risp_buffer *buffers[RISP_CORE_NUM_PADS];
-+	struct vsp1_isp_job_desc vspx_job;
-+	struct list_head job_queue;
-+	bool done_isp;
-+	bool done_vspx;
-+};
-+
-+/**
-+ * struct rcar_isp_vspx - R-Car ISP job description
-+ *
-+ * @dev: Device reference to VSPX
-+ * @job: Job currently being processed by VSPX
-+ */
-+struct rcar_isp_vspx {
-+	struct device *dev;
-+	struct rcar_isp_job *job;
-+};
-+
-+/**
-+ * struct rcar_isp_core - ISP Core
-+ * @dev:	(OF) device
-+ * @rppaddr:	Hardware address of the RPP ISP (from OF)
-+ * @clk:	The clock for the ISP CORE
-+ * @rstc:	The reset for the ISP Core
-+ * @csrstc:	The reset for the ISP Channel Selector
-+ *
-+ * @base:	MMIO base of the ISP CORE
-+ * @csbase:	MMIO base of the ISP CS
-+ *
-+ * @subdev:	V4L2 subdevice to represent the ISP CORE
-+ * @pads:	Media pad for @subdev
-+ *
-+ * @v4l2_dev:	V4L2 device
-+ * @rpp:	Handle to the RPP ISP connected to the ISP CORE
-+ *
-+ * @io_lock:	Protect io[*].streaming and io[*].buffers
-+ * @io:		Array of IO ports to the ISP CORE
-+ *
-+ * @lock:	Protects @vspx, @risp_jobs, @sequence and @streaming
-+ * @vspx:	Handle to the resources used by VSPX connected to the ISP CORE
-+ * @risp_jobs:	Queue of VSPX transfer jobs
-+ * @sequence:	V4L2 buffers sequence number
-+ * @streaming:	Tracks if the device is streaming
-+ */
-+struct rcar_isp_core {
-+	struct device *dev;
-+
-+	u32 rppaddr;
-+	struct clk *clk;
-+
-+	struct reset_control *rstc;
-+	struct reset_control *csrstc;
-+
-+	void __iomem *base;
-+	void __iomem *csbase;
-+
-+	struct v4l2_subdev subdev;
-+	struct media_pad pads[RISP_CORE_NUM_PADS];
-+
-+	struct v4l2_device v4l2_dev;
-+	struct rppx1 *rpp;
-+
-+	struct mutex io_lock; /* See KDoc block. */
-+	struct rcar_isp_core_io io[RISP_CORE_NUM_PADS];
-+
-+	spinlock_t lock;  /* See KDoc block. */
-+	struct rcar_isp_vspx vspx;
-+	struct list_head risp_jobs;
-+	unsigned int sequence;
-+	bool streaming;
-+};
-+
-+int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
-+		    void __iomem *csbase, struct reset_control *csrstc);
-+void risp_core_remove(struct rcar_isp_core *core);
-+int risp_core_registered(struct rcar_isp_core *core, struct v4l2_subdev *sd);
-+
-+int risp_core_job_prepare(struct rcar_isp_core *core);
-+
-+int risp_core_start_streaming(struct rcar_isp_core *core);
-+void risp_core_stop_streaming(struct rcar_isp_core *core);
-+
-+int risp_core_io_create(struct device *dev, struct rcar_isp_core *core,
-+			struct rcar_isp_core_io *io, unsigned int pad);
-+void risp_core_io_destroy(struct rcar_isp_core_io *io);
-+
-+#endif
+ /**
+  * RPPX1_STATS_MAX_SIZE - Maximum size of all RPP-X1 statistics
+  *
+@@ -200,6 +315,8 @@ struct rppx1_wbmeas_stats {
+  * multiple pipes.
+  */
+ #define RPPX1_STATS_MAX_SIZE						\
+-	(sizeof(struct rppx1_wbmeas_stats))
++	(sizeof(struct rppx1_wbmeas_stats)			+	\
++	sizeof(struct rppx1_exm_stats)				+	\
++	sizeof(struct rppx1_exm_stats))
+ 
+ #endif /* __UAPI_RPP_X1_CONFIG_H */
 -- 
 2.54.0
 
