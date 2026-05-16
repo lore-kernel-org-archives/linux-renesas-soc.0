@@ -1,55 +1,55 @@
 Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C6737F73B;
-	Sat, 16 May 2026 21:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D83363C4B;
+	Sat, 16 May 2026 21:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778966065; cv=none; b=kmqAZRvjhVXpTQagDjlDIVw10m9nrfeXT1Hf9XD0rpdm0eYQr0mqggILguGzTDAHSlsRuTAedUNENgsudXDD0e3Sgfae2H7L6I5hfH8f4nmkH7nmKUheUUDIJjMRVNr22rq8i490iCBRPkuSg7yj/H0iiOt7xMb751pvbAPbbyQ=
+	t=1778966066; cv=none; b=gXzseBqjU0R0riTXqcxCeCWo+SEvpykx2zVXizJyW+GOC+AN2/TM5RWVOYcJjH+7EsH8gsOnfHQ/6yHQO8fakSg5JyxVsY8Df/5joB0yUPETMyNyOfMh6WAaUxiom69vX6Ock2/U9ynApd5NxkVpvTDMIwSgWcbAwgi+Nhi/Y68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778966065; c=relaxed/simple;
-	bh=ZrfaVeEJBK0kaAeQ2RxDZhg9Nr2tn/Ev8CfgjxOM8Xk=;
+	s=arc-20240116; t=1778966066; c=relaxed/simple;
+	bh=NA+H9ccsQ+VbslaDjTRJd82XbELnGMyFkWVihmBUsNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GXP34oxRjAbCmSS30pEE21TQ3Ur4xW+E2NKILJq7JdsVgDwtOnu7cBy/TcEeJUYM7HwySPzY43aR73xLViWyOHzS8uojXh0e3andgLQpNhtpPZQ41xy26/vd6CfzOas6j1f/FWjJlY+V+f+WX3GWTzWJmvfTLf/DIdTsKSj2/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=pE3P2gru; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Blb1KiI/; arc=none smtp.client-ip=103.168.172.145
+	 MIME-Version:Content-Type; b=bviIV75Dxgp6yTOpOvK/X7REK4e8UYg2hLeHV6bgsVncWAJDOsLQ/0IcWLHtnQl28jn0Kj/AMhAtK18sVGoFlIyygH0RS5woLrdd9fuNQCSp9dlTpcuIb3GfjHB84WrHAtJVuTyVyDExO7K++EnTkDsI34LMMQ9fMwymt/ThJmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=BPmm5y+F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K3R9Yuza; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="pE3P2gru";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Blb1KiI/"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7892DEC00B4;
-	Sat, 16 May 2026 17:14:18 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="BPmm5y+F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K3R9Yuza"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 58D28EC00B8;
+	Sat, 16 May 2026 17:14:22 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sat, 16 May 2026 17:14:18 -0400
+  by phl-compute-06.internal (MEProxy); Sat, 16 May 2026 17:14:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966058;
-	 x=1779052458; bh=RhujGj17gGpCLzSV/UYOg6Drb1r/5gGKcbPvwBlAyzs=; b=
-	pE3P2gru/7ciq65iTEZnot1xXuMy+NQb4LI2qJSjM8y1umYIPvZz8wJL0E977xgd
-	eMw83BUQWZdDtyEa5bFQJgt9Ob8IpYiIkO70H5pcDqWaU+c7qQYCr5mGLLdkvcVZ
-	lHuLC0ZsGZ6DaPvXtY4bHEtZGrdGCwt7FhbKFRQMiUtymnBNJmLseEVbNbr+L92g
-	6zGMCr0vL+3AD3poyZeLI3w86MwfQT+om/3SiFvpfWW27epiHn2OrDvoErOBSqba
-	hx0jPRAGm5RfC/7u7kEg07oinvInCaS8eFq3jM5bjN9/xxVZ2lCD3Stp8NzL/d73
-	af1GIBfpKKG3vQUKtx3L2g==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966062;
+	 x=1779052462; bh=uD+uybLBunx7AimDHRKmo2olCNJija+N4gDe7cP4E9s=; b=
+	BPmm5y+F+fy0DLoRNoBXLHsG59oRQxsCLEYCuxbsuRCTnKUjT9uCZ4xTvLgSu6ID
+	7klyQSXJ/K6U9iNfRo4fhWUTqF4RtVOggJ0MWE8lwIYp8kTquXUOpuSenPCsqagR
+	ztJjyFeNFhJY3VFxVsxEvO35/mU1UbiJTEK1BZ5aXKVfq36nN/nK9OYw6OnOmOgM
+	OOohzRdslyFANXcHRFZ2oz+rYy2Jg7icP4rotGvPYIo0z8Mk6Qm57Amb4pGOdAAR
+	soNcdYIb3wV4y7BdikUQ+6+PFYI56g+4kA/piqsEmtlpTGOnJQtIRnH2BZxRQxYE
+	BtrVYsmZPjn13Sbur02Y8g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966058; x=
-	1779052458; bh=RhujGj17gGpCLzSV/UYOg6Drb1r/5gGKcbPvwBlAyzs=; b=B
-	lb1KiI/uEwaXHuMCSi+2Kaxv/r3iseNARxF3qiKuvwAlSqnWOlS9OWYukAzJDc4m
-	mDRPulfhJbomR+jHtB14p+39M3ocUba+DjdYfrFokH1iws2qRjCFDT9F1MPCheOA
-	uZXTb+isKBIn9XcS0WZHBDtUx1/Txah+9kIR9PItnLWOAHsI7NH44flHGCUO99Dj
-	96Jz3issnXsrjCftw4O6Fil7Nj+jQZPb3FvAs27SSIsln8L5sCzVO7ataba1WsUD
-	15qknGY4LDGA1SgVIt8/DIWqcK5zOCe27jukambPSuUFStjn+2AeZVqQ9W5Thxt4
-	iapB0vxoRJSUhQ2qt+zRA==
-X-ME-Sender: <xms:Kt4IaorqBZtoOpXmAUlUTpIu-QMsjz7qktUOaQHDzqXA8mzGyqTkxw>
-    <xme:Kt4IakpQdw5LaXHzHQbVHZ5CS6yuJoEmOHmbq7u2kCizZREbd-pDFJ0XTOH2ep0zp
-    c0iTly7d8t2OEMy34lUJGRC-cS5FhMsiav_R_yv9q0rnXiWNiTd0q0>
-X-ME-Received: <xmr:Kt4IaoAU6B5PZU1aUcqVq1HnQSXJ5bEHerhTwJ6DPJN82czYtHU0MNHfF3-t9fU2bK3yCeP-jm2BDOsE2WaDLx54E62VGVgC3NuP>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966062; x=
+	1779052462; bh=uD+uybLBunx7AimDHRKmo2olCNJija+N4gDe7cP4E9s=; b=K
+	3R9YuzaOq1v02T9DWev9bb0CpDXfo0j6L4UVxFComaC8zNKF+Jp68tvlsl0C0kZ8
+	H68UwuPu7F+7mCPaQUvbKlVcKD0w5+FHo6vwoYH9eMNTwklAIHaaChzKirrWJhX6
+	93CbAAOC4yB4RfTvLrocBjR/wj28DiF754Gjw/9Z6bGy0fi81iOsAQ8IMmXuUIZE
+	ZszLC/DABaEYaa0qXiE6tQ+U34O1Oure//IKr3uj1QkXQoL1hxnRBAnnQtEnESn/
+	gZYTTCFTlHuIQCIQ4aJsl8LLYzTNmxZmJETi0WcVNpH4Wva6FJ+9Agcg76qoB4z5
+	xWtKRpc5Jnw/8IZi2bBzQ==
+X-ME-Sender: <xms:Lt4IanFFmo1Iyj4kKJemPxoAl74ybqYEwTxdzfrQxAFwAGTCTZKgCA>
+    <xme:Lt4IaqWOQcD5z7kPPFYNo2tJccmIRL6lQTN6E2R-XObTqNiILK9D5oWgMQbJqe8Cw
+    a_bjLf1lowlh7aHw-djh-Ryj3mXECUoFi-9ErsOjpo_b3059ukq-iI>
+X-ME-Received: <xmr:Lt4Iaj9j7usnodazG9OxPvm2E83xTCoVwJdrUNgXa2jL55vP0Z7n1mDmEgwf_fnC9eJgbe7aMWREfNGnW4Cum8Z2hBFukgJHBmiS>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -57,7 +57,7 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdote
     shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
     grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehiefgueevuedt
     fefhheegkeevtdelueeukeevfeduhefhhfejfffggeffleefgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
+    hiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
     uhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedutddpmhhouggvpe
     hsmhhtphhouhhtpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhn
     sghorghrugdrtghomhdprhgtphhtthhopehjrghirdhluhhthhhrrgdorhgvnhgvshgrsh
@@ -70,14 +70,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdote
     hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehn
     ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
     gv
-X-ME-Proxy: <xmx:Kt4IaivLrVNQAhllfqCw8eO1WKyTGhZzLsZsuCv13zzS7vpd2lpsuw>
-    <xmx:Kt4IanLlpuT16QRNEivbo-1OgCpz-Iijh-jIF-XgTN-F4dDpK2P23w>
-    <xmx:Kt4IapajxBAbLqITDLiWMfcHm7XQ97MDz4U9wbCdPwzfcJHVUwxRwg>
-    <xmx:Kt4IapCuSKhDFQZ0cotAtJEQH7qW8VtJnuQKJz7n-ixH8AYmNc06ng>
-    <xmx:Kt4IaqNSqutcMhY0wqMtWAHXlfm73k2SJdhlVreg-gq0c0Fjt_uGETk_>
+X-ME-Proxy: <xmx:Lt4Ian7sMIQspZT5qNstUQtSQ5ptsYighBnUkevGCuOLhr72olmsIA>
+    <xmx:Lt4Iasmn8A7V0d_rQQtM8DH34d-y0mubfU6_JR7pCJFVIw8T_MGZvg>
+    <xmx:Lt4IaqGM-vDIbHmdu_sFjBLzEhB-f6GWFSPPqBVWAmIeBX6tLk4fdA>
+    <xmx:Lt4Iaj_KwO7kvcVrksQeB_crtefnBqQ64kteoNtjOuASLP7njw4u_Q>
+    <xmx:Lt4IakJRINiQTS1pfSB2muRQXF6l00AAX4_ltAIEVKC8OEEUiDyRK69c>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 16 May 2026 17:14:17 -0400 (EDT)
+ 16 May 2026 17:14:21 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
@@ -89,9 +89,9 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: [PATCH v9 07/13] media: rppx1: exm: Add support for exposure measurement
-Date: Sat, 16 May 2026 23:13:14 +0200
-Message-ID: <20260516211320.3041412-8-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 09/13] media: rppx1: bls: Add support for black level compensation
+Date: Sat, 16 May 2026 23:13:16 +0200
+Message-ID: <20260516211320.3041412-10-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
@@ -104,10 +104,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Extend the RPPX1 driver to allow setting the exposure measurement
-configuration and consuming the resulting statistics. It uses the RPPX1
-framework for parameters and its writer abstraction to allow the user to
-control how, and when, configuration is applied to the RPPX1.
+Extend the RPPX1 driver to allow setting the black level measurement
+and gain configuration. It uses the RPPX1 framework for parameters and
+its writer abstraction to allow the user to control how, and when,
+configuration is applied to the RPPX1.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Co-developed-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
@@ -115,374 +115,306 @@ Signed-off-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
 Co-developed-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 ---
-* Changes since v8
-- Use IS_ERR to check rppx1_init_stats_block() return code.
----
- .../platform/dreamchip/rppx1/rpp_module.h     |   2 +
+ .../platform/dreamchip/rppx1/rpp_module.h     |   1 +
  .../platform/dreamchip/rppx1/rpp_params.c     |   5 +
- .../platform/dreamchip/rppx1/rpp_stats.c      |  10 ++
- .../platform/dreamchip/rppx1/rppx1_exm.c      |  78 ++++++++++-
- .../uapi/linux/media/dreamchip/rppx1-config.h | 121 +++++++++++++++++-
- 5 files changed, 213 insertions(+), 3 deletions(-)
+ .../platform/dreamchip/rppx1/rppx1_bls.c      |  97 ++++++++++++++++
+ .../uapi/linux/media/dreamchip/rppx1-config.h | 105 +++++++++++++++++-
+ 4 files changed, 207 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_module.h b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-index 0e36b717b4ef..e968ec67b9f5 100644
+index b134d140fe22..5e20fcdcbcc4 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_module.h
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-@@ -48,11 +48,13 @@ void rpp_module_clrset(struct rpp_module *mod, u32 offset, u32 mask, u32 value);
+@@ -47,6 +47,7 @@ void rpp_module_clrset(struct rpp_module *mod, u32 offset, u32 mask, u32 value);
+ 
  union rppx1_params_block {
  	struct v4l2_isp_block_header header;
++	struct rppx1_bls_params bls;
  	struct rppx1_awbg_params awbg;
-+	struct rppx1_exm_params exm;
- 	struct rppx1_wbmeas_params wbmeas;
- };
- 
- union rppx1_stats_block {
- 	struct v4l2_isp_block_header header;
-+	struct rppx1_exm_stats exm;
- 	struct rppx1_wbmeas_stats wbmeas;
- };
- 
+ 	struct rppx1_hist_params hist;
+ 	struct rppx1_exm_params exm;
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index 17bbcf366970..8c0f45e8066a 100644
+index 975ce3a42fb5..831cf7ca154c 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -19,6 +19,8 @@ static const struct v4l2_isp_params_block_type_info
+@@ -17,6 +17,8 @@
+ 
+ static const struct v4l2_isp_params_block_type_info
  rppx1_ext_params_blocks_info[] = {
++	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE1, bls),
++	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE2, bls),
  	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE1, awbg),
  	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE2, awbg),
-+	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE1, exm),
-+	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE2, exm),
- 	RPPX1_PARAMS_BLOCK_INFO(WBMEAS_POST, wbmeas),
- };
+ 	RPPX1_PARAMS_BLOCK_INFO(HIST_PRE1, hist),
+@@ -58,6 +60,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+ 		block_offset += block->header.size;
  
-@@ -56,6 +58,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+ 		switch (block->header.type) {
++		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1:
++			module = &rpp->pre1.bls;
++			break;
  		case RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1:
  			module = &rpp->pre1.awbg;
  			break;
-+		case RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1:
-+			module = &rpp->pre1.exm;
-+			break;
- 		case RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST:
- 			module = &rpp->post.wbmeas;
- 			break;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-index c99ea158abcf..388c758d805d 100644
---- a/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rpp_stats.c
-@@ -17,6 +17,7 @@
+diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c b/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
+index 882a9a819229..01a61db279bf 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
++++ b/drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
+@@ -6,6 +6,7 @@
+  */
  
- static const struct v4l2_isp_stats_block_type_info
- rppx1_stats_blocks_info[] = {
-+	RPPX1_STATS_BLOCK_INFO(EXM_PRE1, exm),
- 	RPPX1_STATS_BLOCK_INFO(WBMEAS_POST, wbmeas),
- };
+ #include "rpp_module.h"
++#include "rppx1.h"
  
-@@ -34,6 +35,15 @@ void rppx1_stats_fill_isr(struct rppx1 *rpp, u32 isc, void *buf)
+ #define BLS_VERSION_REG				0x0000
  
- 	v4l2_isp_stats_init_buffer(stats, V4L2_ISP_VERSION_V1);
+@@ -32,6 +33,8 @@
+ #define BLS_B_MEASURED_REG			0x0040
+ #define BLS_C_MEASURED_REG			0x0044
+ #define BLS_D_MEASURED_REG			0x0048
++#define BLS_PRE1_FIXED_MASK			GENMASK(24, 0)
++#define BLS_PRE2_FIXED_MASK			GENMASK(12, 0)
  
-+	if (isc & RPPX1_IRQ_ID_PRE1_EXM) {
-+		block = rppx1_init_stats_block(rpp, stats,
-+					       RPPX1_STATS_BLOCK_TYPE_EXM_PRE1);
-+		if (IS_ERR(block))
-+			return;
-+
-+		rpp_module_call(&rpp->pre1.exm, fill_stats, block);
-+	}
-+
- 	if (isc & RPPX1_IRQ_ID_POST_AWB_MEAS) {
- 		block = rppx1_init_stats_block(rpp, stats,
- 					       RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST);
-diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c b/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
-index 10b899ba201f..1694f2b487fc 100644
---- a/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
-@@ -11,10 +11,14 @@
- #define EXM_START_REG			0x0004
- 
- #define EXM_CTRL_REG			0x0008
-+#define EXM_CTRL_EXM_AUTOSTOP		BIT(1) /* HW doc says not supported. */
- #define EXM_CTRL_EXM_UPDATE_ENABLE	BIT(0)
- 
- #define EXM_MODE_REG			0x000c
-+
- #define EXM_CHANNEL_SEL_REG		0x0010
-+#define EXM_CHANNEL_SEL_CHANNEL_SELECT_MASK	GENMASK(2, 0)
-+
- #define EXM_LAST_MEAS_LINE_REG		0x0014
- #define EXM_COEFF_R_REG			0x0018
- #define EXM_COEFF_G_GR_REG		0x001c
-@@ -27,7 +31,6 @@
- #define EXM_FORCED_UPD_START_LINE_REG	0x0038
- #define EXM_VSTART_STATUS_REG		0x003c
- 
--#define EXM_MEAN_REG_NUM		25
- #define EXM_MEAN_REG(n)			(0x0040 + (4 * (n)))
- 
- static int rppx1_exm_probe(struct rpp_module *mod)
-@@ -47,6 +50,79 @@ static int rppx1_exm_probe(struct rpp_module *mod)
+ static int rppx1_bls_probe(struct rpp_module *mod)
+ {
+@@ -55,6 +58,100 @@ static int rppx1_bls_probe(struct rpp_module *mod)
  	return 0;
  }
  
++static void
++rppx1_bls_swap_regs(struct rpp_module *mod, const u32 input[4], u32 output[4])
++{
++	static const unsigned int swap[4][4] = {
++		[RPP_RGGB] = { 0, 1, 2, 3 },
++		[RPP_GRBG] = { 1, 0, 3, 2 },
++		[RPP_GBRG] = { 2, 3, 0, 1 },
++		[RPP_BGGR] = { 3, 2, 1, 0 },
++	};
++
++	/* Swap to pattern used in our path, PRE1 or PRE2. */
++	struct rpp_module *acq = mod == &mod->rpp->pre1.bls ?
++		&mod->rpp->pre1.acq : &mod->rpp->pre2.bls;
++	enum rpp_raw_pattern pattern = acq->info.acq.raw_pattern;
++
++	for (unsigned int i = 0; i < 4; ++i)
++		output[i] = input[swap[pattern][i]];
++}
++
 +static int
-+rppx1_exm_fill_params(struct rpp_module *mod,
++rppx1_bls_fill_params(struct rpp_module *mod,
 +		      const union rppx1_params_block *block,
 +		      rppx1_reg_write write, void *priv)
 +{
-+	const struct rppx1_exm_params *cfg = &block->exm;
-+	u32 h_offs, v_offs, h_size, v_size;
++	const struct rppx1_bls_params *cfg = &block->bls;
 +
 +	/* If the modules is disabled, simply bypass it. */
 +	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + EXM_MODE_REG, 0);
++		write(priv, mod->base + BLS_CTRL_REG, 0);
 +		return 0;
 +	}
 +
-+	switch (cfg->mode) {
-+	case RPPX1_EXP_MEASURING_MODE_RGB:
-+	case RPPX1_EXP_MEASURING_MODE_BAYER:
-+		write(priv, mod->base + EXM_MODE_REG, cfg->mode);
-+		break;
-+	default:
-+		write(priv, mod->base + EXM_MODE_REG, 0);
-+		return 0;
++	u32 ctrl = BLS_CTRL_BLS_EN;
++
++	if (cfg->mode == RPPX1_BLS_MODE_FIXED) {
++		static const u32 regs[] = {
++			BLS_A_FIXED_REG,
++			BLS_B_FIXED_REG,
++			BLS_C_FIXED_REG,
++			BLS_D_FIXED_REG,
++		};
++		u32 swapped[4];
++
++		rppx1_bls_swap_regs(mod, regs, swapped);
++
++		/*
++		 * The PRE1 pipe fixed values are 24-bits + 1 sign bit, while
++		 * the PRE2 pipe values are 12-bits + 1 sign bit.
++		 */
++		u32 mask;
++
++		switch (cfg->header.type) {
++		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1:
++			mask = BLS_PRE1_FIXED_MASK;
++			break;
++		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2:
++			mask = BLS_PRE2_FIXED_MASK;
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		write(priv, mod->base + swapped[0], cfg->fixed.a & mask);
++		write(priv, mod->base + swapped[1], cfg->fixed.b & mask);
++		write(priv, mod->base + swapped[2], cfg->fixed.c & mask);
++		write(priv, mod->base + swapped[3], cfg->fixed.d & mask);
++	} else {
++		write(priv, mod->base + BLS_SAMPLES_REG, cfg->samples);
++
++		if (cfg->en_windows & RPPX1_BLS_WIN_EN_WIN1) {
++			write(priv, mod->base + BLS_H1_START_REG, cfg->window1.h_offs);
++			write(priv, mod->base + BLS_H1_STOP_REG, cfg->window1.h_size);
++			write(priv, mod->base + BLS_V1_START_REG, cfg->window1.v_offs);
++			write(priv, mod->base + BLS_V1_STOP_REG, cfg->window1.v_size);
++			ctrl |= BLS_CTRL_BLS_WIN1;
++		}
++
++		if (cfg->en_windows & RPPX1_BLS_WIN_EN_WIN2) {
++			write(priv, mod->base + BLS_H2_START_REG, cfg->window2.h_offs);
++			write(priv, mod->base + BLS_H2_STOP_REG, cfg->window2.h_size);
++			write(priv, mod->base + BLS_V2_START_REG, cfg->window2.v_offs);
++			write(priv, mod->base + BLS_V2_STOP_REG, cfg->window2.v_size);
++			ctrl |= BLS_CTRL_BLS_WIN2;
++		}
++
++		ctrl |= BLS_CTRL_BLS_MODE_MEASURED;
 +	}
 +
-+	write(priv, mod->base + EXM_COEFF_R_REG, cfg->coeff_r);
-+	write(priv, mod->base + EXM_COEFF_G_GR_REG, cfg->coeff_g_gr);
-+	write(priv, mod->base + EXM_COEFF_GB_REG, cfg->coeff_gb);
-+	write(priv, mod->base + EXM_COEFF_B_REG, cfg->coeff_b);
-+
-+	/* Select sample point */
-+	write(priv, mod->base + EXM_CHANNEL_SEL_REG,
-+	      cfg->channel_sel & EXM_CHANNEL_SEL_CHANNEL_SELECT_MASK);
-+
-+	/*
-+	 * Adjust and set measurement window to hardware limitations,
-+	 * - Offsets must be even.
-+	 * - Width and height must be divisible by 10.
-+	 */
-+	h_offs = cfg->wnd.h_offs & 0x1ffe;
-+	v_offs = cfg->wnd.v_offs & 0x1ffe;
-+	h_size = (cfg->wnd.h_size - 1) - ((cfg->wnd.h_size - 1) % 10);
-+	v_size = (cfg->wnd.v_size - 1) - ((cfg->wnd.v_size - 1) % 10);
-+
-+	write(priv, mod->base + EXM_H_OFFS_REG, h_offs);
-+	write(priv, mod->base + EXM_V_OFFS_REG, v_offs);
-+	write(priv, mod->base + EXM_H_SIZE_REG, h_size / 5);
-+	write(priv, mod->base + EXM_V_SIZE_REG, v_size / 5);
-+
-+	/*
-+	 * Set last measurement line for ready interrupt. Ignore the value
-+	 * from the parameters as it is only useful for fast-channel switching.
-+	 */
-+	write(priv, mod->base + EXM_LAST_MEAS_LINE_REG, v_offs + v_size + 1);
-+
-+	write(priv, mod->base + EXM_START_REG, 1);
++	write(priv, mod->base + BLS_CTRL_REG, ctrl);
 +
 +	return 0;
 +}
 +
-+static int rppx1_exm_fill_stats(struct rpp_module *mod,
-+				union rppx1_stats_block *block)
-+{
-+	struct rppx1_exm_stats *stats = &block->exm;
-+
-+	/* Return measurements at native hardware precision. */
-+	for (unsigned int i = 0; i < RPPX1_EXM_NUM_WIN; i++)
-+		stats->exp_mean[i] = rpp_module_read(mod, EXM_MEAN_REG(i));
-+
-+	return 0;
-+}
-+
- const struct rpp_module_ops rppx1_exm_ops = {
- 	.probe = rppx1_exm_probe,
-+	.fill_params = rppx1_exm_fill_params,
-+	.fill_stats = rppx1_exm_fill_stats,
+ const struct rpp_module_ops rppx1_bls_ops = {
+ 	.probe = rppx1_bls_probe,
++	.fill_params = rppx1_bls_fill_params,
  };
 diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
-index 5ed8a335c9de..dbc1e116fdf5 100644
+index 50aba160c6cd..dbbd6223f33c 100644
 --- a/include/uapi/linux/media/dreamchip/rppx1-config.h
 +++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
-@@ -33,6 +33,36 @@ struct rppx1_window {
- 	__u16 v_size;
- };
- 
-+/**
-+ * enum rppx1_meas_chan - Measurement point for the Histogram and EXM Modules
-+ *
-+ * Measurement points for the RPP-X1 Histogram measurement module and Exposure
-+ * measurement module.
-+ *
-+ * All tap points are available for the PRE1/PRE2 pipes. Only
-+ * RPPX1_MEAS_CHAN_SEL4 and RPPX1_MEAS_CHAN_SEL7 are available for the
-+ * MAIN_POST pipe.
-+ *
-+ * @RPPX1_MEAS_CHAN_SEL0: after input acquisition
-+ * @RPPX1_MEAS_CHAN_SEL1: after black level subtraction
-+ * @RPPX1_MEAS_CHAN_SEL2: after sensor gamma linearization
-+ * @RPPX1_MEAS_CHAN_SEL3: after lens shading correction
-+ * @RPPX1_MEAS_CHAN_SEL4: after auto white balance gains
-+ * @RPPX1_MEAS_CHAN_SEL5: after defect pixel correction
-+ * @RPPX1_MEAS_CHAN_SEL6: after denoise pre-filter
-+ * @RPPX1_MEAS_CHAN_SEL7: after demosaicing
-+ */
-+enum rppx1_meas_chan {
-+	RPPX1_MEAS_CHAN_SEL0,
-+	RPPX1_MEAS_CHAN_SEL1,
-+	RPPX1_MEAS_CHAN_SEL2,
-+	RPPX1_MEAS_CHAN_SEL3,
-+	RPPX1_MEAS_CHAN_SEL4,
-+	RPPX1_MEAS_CHAN_SEL5,
-+	RPPX1_MEAS_CHAN_SEL6,
-+	RPPX1_MEAS_CHAN_SEL7,
-+};
-+
- /* ---------------------------------------------------------------------------
-  * Parameter Structures
-  *
-@@ -51,12 +81,16 @@ struct rppx1_window {
-  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1: PRE1 pipe White Balance Gains
-  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE2: PRE2 White Balance Gains
-  * @RPPX1_PARAMS_BLOCK_TYPE_AWBG_POST: MAIN_POST White Balance Gains
-+ * @RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1: PRE1 pipe Exposure Measurement
-+ * @RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2: PRE2 pipe Exposure Measurement
+@@ -86,6 +86,8 @@ enum rppx1_meas_chan {
+  * @RPPX1_PARAMS_BLOCK_TYPE_HIST_PRE1: PRE1 pipe Histogram Measurement
+  * @RPPX1_PARAMS_BLOCK_TYPE_HIST_PRE2: PRE2 pipe Histogram Measurement
+  * @RPPX1_PARAMS_BLOCK_TYPE_HIST_POST: POST pipe Histogram Measurement
++ * @RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1: PRE1 pipe Black Level Subtraction
++ * @RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2: PRE2 pipe Black Level Subtraction
   */
  enum rppx1_params_block_type {
  	RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST,
- 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1,
- 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE2,
- 	RPPX1_PARAMS_BLOCK_TYPE_AWBG_POST,
-+	RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1,
-+	RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2,
+@@ -97,6 +99,8 @@ enum rppx1_params_block_type {
+ 	RPPX1_PARAMS_BLOCK_TYPE_HIST_PRE1,
+ 	RPPX1_PARAMS_BLOCK_TYPE_HIST_PRE2,
+ 	RPPX1_PARAMS_BLOCK_TYPE_HIST_POST,
++	RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1,
++	RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2,
  };
  
  /**
-@@ -144,6 +178,64 @@ struct rppx1_awbg_params {
- 	__u32 gain_green_b;
+@@ -321,6 +325,103 @@ struct rppx1_hist_params {
+ 	__u8 sample_shift;
  };
  
 +/**
-+ * enum rppx1_exm_mode - Exposure measurement mode
++ * struct rppx1_bls_fixed - BLS fixed subtraction values
 + *
-+ * Exaposure measurement mode selection (RGB/Bayer).
++ * Fixed black level values subtracted from sensor data per Bayer channel.
++ * Negative values result in addition.
 + *
-+ * @RPPX1_EXP_MEASURING_MODE_DISABLED: no measurement
-+ * @RPPX1_EXP_MEASURING_MODE_RGB: Y/R/G/B measurement
-+ * @RPPX1_EXP_MEASURING_MODE_BAYER: Bayer RGB measurement
++ * The PRE1 pipe BLS module operates on a 24-bits input data and fixed black
++ * levels are stored as a signed 2's complement representation ranging from
++ * -2^24 to 2^24-1.
++ *
++ * The PRE2 pipe BLS module operates on a 12-bits input data and fixed black
++ * levels are stored as a signed 2's complement representation ranging from
++ * -2^12 to 2^12-1.
++ *
++ * Userspace is expected to provide fixed black level values with a bit-depth
++ * matching the one of pipe in use.
++ *
++ * These subtraction values are matched with the sensor native Bayer components
++ * ordering according to the cropping configuration on the input port.
++ *
++ * @a: subtraction value for channel A
++ * @b: subtraction value for channel B
++ * @c: subtraction value for channel C
++ * @d: subtraction value for channel D
 + */
-+enum rppx1_exm_mode {
-+	RPPX1_EXP_MEASURING_MODE_DISABLED,
-+	RPPX1_EXP_MEASURING_MODE_RGB,
-+	RPPX1_EXP_MEASURING_MODE_BAYER,
++struct rppx1_bls_fixed {
++	__u32 a;
++	__u32 b;
++	__u32 c;
++	__u32 d;
 +};
 +
 +/**
-+ * struct rppx1_exm_params - Exposure measurement configuration
++ * enum rppx1_bls_mode - BLS subtraction mode
 + *
-+ * The RPP-X1 Exposure measurement unit is available on the PRE1 and PRE2
-+ * pre-fusion pipes. Userspace selects which pipe to operate by setting
-+ * the @header.type field to RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1 or
-+ * RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2.
++ * Select if subtracted black level come from fixed or measured values.
 + *
-+ * Exposure measurement is performed in the RGB or Bayer domain, according to
-+ * the setting of the @mode field. The exposure measurement tap point is
-+ * selected according to the value of @channel_sel.
-+ *
-+ * The exposure measurement is performed on an input window specified in @wnd.
-+ * To each color component a programmable weight coefficient is associated.
-+ * Coefficients are represented as unsigned 8 bits integer values in Q1.7 format
-+ * ranging from 0 to 1.992.
-+ *
-+ * The @last_line fields controls when the exposure measurement completes. It
-+ * is usually programmed to the value of (@wnd.v_offs + @wnd.v_size + 1).
-+ *
-+ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE1 or
-+ *	    type = RPPX1_PARAMS_BLOCK_TYPE_EXM_PRE2)
-+ * @mode: exposure measure mode (from enum rppx1_exm_mode)
-+ * @channel_sel: exposure measurement point (see enum rppx1_meas_chan)
-+ * @last_line: line number for which the exposure measurement completes
-+ * @wnd: measurement window coordinates
-+ * @coeff_r: coefficient for the red Bayer sample or red color channel, Q1.7
-+ * @coeff_g_gr: coefficient for the green/red Bayer sample or green color channel, Q1.7
-+ * @coeff_b: coefficient for the blue Bayer sample or blue color channel, Q1.7
-+ * @coeff_gb: coefficient for the green/blue Bayer sample, unused in RGB mode, Q1.7
++ * @RPPX1_BLS_MODE_FIXED: subtract fixed values
++ * @RPPX1_BLS_MODE_MEAS: subtract measured values
 + */
-+struct rppx1_exm_params {
++enum rppx1_bls_mode {
++	RPPX1_BLS_MODE_FIXED,
++	RPPX1_BLS_MODE_MEAS,
++};
++
++/**
++ * enum rppx1_bls_win_en: BLS measurement configuration
++ *
++ * Select the measurement window to use for measured black level values.
++ *
++ * @RPPX1_BLS_WIN_EN_OFF: disable measurement
++ * @RPPX1_BLS_WIN_EN_WIN1: Enable measurement from window 1
++ * @RPPX1_BLS_WIN_EN_WIN2: enable measurement from window 2
++ * @RPPX1_BLS_WIN_EN_WIN12: enable measurement from window 1 and window 2
++ */
++enum rppx1_bls_win_en {
++	RPPX1_BLS_WIN_EN_OFF,
++	RPPX1_BLS_WIN_EN_WIN1,
++	RPPX1_BLS_WIN_EN_WIN2,
++	RPPX1_BLS_WIN_EN_WIN12,
++};
++
++/**
++ * struct rppx1_bls_params - RPP-X1 Black Level Subtraction Module
++ *
++ * The RPP-X1 Black Level Subtraction module is available on the PRE1 and PRE2
++ * pre-fusion pipes. Userspace selects which pipe to operate by setting the
++ * @header.type field to RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1 or
++ * RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2.
++ *
++ * The BLS module operates on fixed or measured data according to the setting of
++ * the @mode field. When RPPX1_BLS_MODE_FIXED is used userspace shall provide
++ * the per-channel black levels in @fixed. When RPPX1_BLS_MODE_MEAS is used
++ * userspace shall configure the measurement windows @window1 and optionally
++ * @window2 to select the optically black pixels region in the input frame. The
++ * @samples fields controls how many measure samples are used for averaging the
++ * measured black levels.
++ *
++ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1 or
++ *	    type == RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2)
++ * @mode: BLS subtraction mode (see enum rppx1_bls_mode)
++ * @en_windows: BLS measurement mode (see rppx1_bls_win_en)
++ * @samples: log2 of the number of measured pixels per Bayer position
++ * @window1: BLS measurement window 1 (14 bits)
++ * @window2: BLS measurement window 2 (14 bits)
++ * @fixed: fixed subtraction values (see enum rppx1_bls_fixed)
++ */
++struct rppx1_bls_params {
 +	struct v4l2_isp_params_block_header header;
-+	__u32 mode;
-+	__u8 channel_sel;
-+	__u32 last_line;
-+	struct rppx1_window wnd;
-+	__u8 coeff_r;
-+	__u8 coeff_g_gr;
-+	__u8 coeff_b;
-+	__u8 coeff_gb;
++	__u8 mode;
++	__u8 en_windows;
++	__u8 samples;
++	struct rppx1_window window1;
++	struct rppx1_window window2;
++	struct rppx1_bls_fixed fixed;
 +};
 +
  /**
   * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
   *
-@@ -154,7 +246,9 @@ struct rppx1_awbg_params {
- 	(sizeof(struct rppx1_wbmeas_params)			+	\
- 	sizeof(struct rppx1_awbg_params)			+	\
- 	sizeof(struct rppx1_awbg_params)			+	\
--	sizeof(struct rppx1_awbg_params))
-+	sizeof(struct rppx1_awbg_params)			+	\
-+	sizeof(struct rppx1_exm_params)				+	\
-+	sizeof(struct rppx1_exm_params))
+@@ -336,7 +437,9 @@ struct rppx1_hist_params {
+ 	sizeof(struct rppx1_exm_params)				+	\
+ 	sizeof(struct rppx1_hist_params)			+	\
+ 	sizeof(struct rppx1_hist_params)			+	\
+-	sizeof(struct rppx1_hist_params))
++	sizeof(struct rppx1_hist_params)			+	\
++	sizeof(struct rppx1_bls_params)				+	\
++	sizeof(struct rppx1_bls_params))
  
  /* ---------------------------------------------------------------------------
   * Statistics Structures
-@@ -171,9 +265,13 @@ struct rppx1_awbg_params {
-  * NOTE: Only append to the enumeration as the numbers are uAPI.
-  *
-  * @RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST: post-fusion white-balance measurement
-+ * @RPPX1_STATS_BLOCK_TYPE_EXM_PRE1: pre-fusion pipe1 exposure measurement
-+ * @RPPX1_STATS_BLOCK_TYPE_EXM_PRE2: pre-fusion pipe2 exposure measurement
-  */
- enum rppx1_stats_block_type {
- 	RPPX1_STATS_BLOCK_TYPE_WBMEAS_POST,
-+	RPPX1_STATS_BLOCK_TYPE_EXM_PRE1,
-+	RPPX1_STATS_BLOCK_TYPE_EXM_PRE2,
- };
- 
- /**
-@@ -193,6 +291,23 @@ struct rppx1_wbmeas_stats {
- 	__u32 mean_cr_or_r;
- };
- 
-+/* Exposure Measurement */
-+#define RPPX1_EXM_NUM_WIN 25
-+
-+/**
-+ * struct rppx1_exm_stats - Exposure measurement
-+ *
-+ * RPP-X1 exposure measurement calculates the mean value on 25 programmable
-+ * windows on the input picture.
-+ *
-+ * @header: block header (type = RPPX1_STATS_BLOCK_TYPE_EXM_PRE1)
-+ * @exp_mean: mean luminance values per block, up to 20-bit
-+ */
-+struct rppx1_exm_stats {
-+	struct v4l2_isp_block_header header;
-+	__u32 exp_mean[RPPX1_EXM_NUM_WIN];
-+};
-+
- /**
-  * RPPX1_STATS_MAX_SIZE - Maximum size of all RPP-X1 statistics
-  *
-@@ -200,6 +315,8 @@ struct rppx1_wbmeas_stats {
-  * multiple pipes.
-  */
- #define RPPX1_STATS_MAX_SIZE						\
--	(sizeof(struct rppx1_wbmeas_stats))
-+	(sizeof(struct rppx1_wbmeas_stats)			+	\
-+	sizeof(struct rppx1_exm_stats)				+	\
-+	sizeof(struct rppx1_exm_stats))
- 
- #endif /* __UAPI_RPP_X1_CONFIG_H */
 -- 
 2.54.0
 
