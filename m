@@ -1,55 +1,55 @@
 Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A9937F8BA;
-	Sat, 16 May 2026 21:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF68637FF5A;
+	Sat, 16 May 2026 21:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778966071; cv=none; b=mC/bFEta0sCRhECvxEiaez9pLliUEp1HVYa6nmWuyUZuQMJzOAsp7Mb826jyq8KJRiaSx93e6kjnuXqnwONwPw3ql9HRnPFUKuV++0zdLHsmnYkbwDQhwk3PpUhCu86kqP6xqDPwYg1AN7SM0LiVzu0lwxQs1k7Fn1mQHPLLKiU=
+	t=1778966072; cv=none; b=nrQjSsiJ5kau4WmuFuOcQhYIpXupdBcbyhKevzWjuv+M8pNVxK60i2VTi6UzCT6LK+Q02CF4Cy4EiZ8rTtL7Hb9S73Vdwe82xntuX4bdXd+T8q3yGnUAUG17Uzap28Qq6GbvOykfodoBQVYPTNHW6+e+edf1Ak/6xludAZWxIoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778966071; c=relaxed/simple;
-	bh=XPBVKtGJuSAp0G51y5mhI4PH1WrFJIGQ+sPE4HVIYjY=;
+	s=arc-20240116; t=1778966072; c=relaxed/simple;
+	bh=gzVO9YrwtFn/SA5si4hnglh5pfqQorNFLr1HxaI4YJk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gjTHaZ400V7hmH/JGUkeckJmLqHcKYEWR1MMD1akF6FaGXmfLCKWFTPMlXx99kiWNhC6CC4qpqi7GWbV00TYy8IoFTX8eEKgWOupFapicKm2KS7vKhRfEvbm4nOixEvDRkclb8alcW8BaqqQy1/rlU2KuHDSQVWYAvKJczFqaLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=n9bu71Wj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J7OdWIEO; arc=none smtp.client-ip=103.168.172.152
+	 MIME-Version:Content-Type; b=eaQWymHkwhNg5ysrpQkveQXfFSyugPHbd2dkTmFiHrukvhYDD9AsFW0DuHY5dJwvZyg0rHUXqIsvrKY/GLmPWjqJdw2O5ZJAShotoQuWaBE+wzVjmHHWiTlCAni9A800E4YMYw1+asK59ygR/M3eID175gGq7BYubLm8c5mlyG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=LRtLovMT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ODgATwFr; arc=none smtp.client-ip=103.168.172.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="n9bu71Wj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J7OdWIEO"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5402814000E3;
-	Sat, 16 May 2026 17:14:24 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="LRtLovMT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ODgATwFr"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1D9EC14000EB;
+	Sat, 16 May 2026 17:14:28 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sat, 16 May 2026 17:14:24 -0400
+  by phl-compute-06.internal (MEProxy); Sat, 16 May 2026 17:14:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966064;
-	 x=1779052464; bh=1vL3+FxwS2iOizkgmLZNojxoX1ulQFatFkFsHgQfPLk=; b=
-	n9bu71Wjb3gobOlw7P7fvI/M2PQW1iEawskzS0EZMdP3KVSTB8I0pCZgkw2UJPUm
-	8T3O2j0IO968ODmb1Oq9i33Bvg+lg6Auv60sQFlx6NB5hb7RF371uoBuC/QdgEmh
-	h0O/bTWvDb/B2mbogmYzf30m5+gwlVVKneq/PlcR8H5UdEWy9e5ygOlyk/gzGoSl
-	mOeSAKMauz8jLGTganjoOpH8hNL7p1Atrt++x6jzOhnu2qvwFsFQuF/Ou+Z3Ntn7
-	jZoswvLGX0FROcm2CMeBMmVp5d2rd9PQH1y021rrorfi0+CS2lRrnOaVgJ7SY10D
-	kHGvImROyIUe24T0/uYiqw==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1778966068;
+	 x=1779052468; bh=4AXAqLtTjvWE5HRkgk3vZiWivnxhoIuhy+DZ4qzA/2Y=; b=
+	LRtLovMTFhhdEIR226SxnqpCAH18187qwKUgeZzYKxCGoVUyyMj80On3bsxB5OSp
+	By2qFVwChIWrsqKg0qdJcjzeHVkShtoAwSjDal/mKP5G3I1t6cJRDaVR7FNM2fx/
+	9nSI1XewZUi99a1O63C+8uDqaS2sH0s+ToN9V2Gg5SNNnXNq4GqIegDBMghURqdG
+	3w2X0RV0iVw/WxgNuGLL49FaHqxYlkRi8iwG4RwhGIFbpZUY9SZLiiiJHTSP33KL
+	W5yf9aT4POmmAXczJLyD1q8xYnszdYSFvIf3Ek37Cbs4QgNtnKTTCygy+on0vkx4
+	U9WhbNEq1qqOmozmsdGgOA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966064; x=
-	1779052464; bh=1vL3+FxwS2iOizkgmLZNojxoX1ulQFatFkFsHgQfPLk=; b=J
-	7OdWIEOR+hY/KmBL+KJr8fDfyZB34EpamIHkoghcVZWA63m62EZ1MJWwVZQnsv1N
-	Qt7t9NKugs8JY0M7J5fKev3++nEDQr02Mwgo4+1QyrPXZZunNWJ6+PX+HsGAI4Op
-	2NUSZjZNISCloxSC9/eunsLJtVRDC04QvBPsDUcbyEZ4nWqCAEnhnu32PIEXbdSo
-	ECrgObYJS6dMk06xRHEfbjilfUdKt6u6e8C9f2EtBqGiczswGDPs0KE3SwB8QY6z
-	FYJEYSZoO046ipEiUdXuYD7g8cxFyyItnaPbCijgvFQQQhxrWGnzwCK28nDrJNJC
-	LZQtEELkWJZLyzcs7/F3w==
-X-ME-Sender: <xms:MN4IapB--DYTydMrgcFZ8-zO4mrc9PpmWof00pA-Sop-skiOFs4yZw>
-    <xme:MN4Iati6RQ-k0mTk9cWQAAbOROdejpJrTicf6XzaqCpafXSm77nPumM8G1OSPTBEp
-    WhlxONJW-UOwIo-3QDOih-_7m14mysEjEsoKFt3GdYlsaGdAYJ9ZIY>
-X-ME-Received: <xmr:MN4IavYGb0l9Nm3fsWOJOnXwPLgBvGP1ED6V7Ozx9TZ6dIlYZUhRF6NlvAj4imgZT7Rpk_H4JYWK33EUd_9MeN02IvPdWjsb5CAe>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778966068; x=
+	1779052468; bh=4AXAqLtTjvWE5HRkgk3vZiWivnxhoIuhy+DZ4qzA/2Y=; b=O
+	DgATwFraq1GCmPng/RkQN2yuLkBrpHf7KDH141d1UxwAfdP6O7C2M6YOubMfof0q
+	MU5AWQIKRHfjsqufNk+NcsZI6SgQXoVy507P7Mr4PDuhrjGIvjwVQHu3J45vzPeb
+	qlvwvrdvDRaA6nBa1JagMAchy/1c7Oq0EzOQOXhAtFqxR56Ttg6LippZY7zcJuez
+	oubn0SUP8Jct8KzzbJXwWqBK7vzHs6G0oNgPQb9nuQXHvZNh6yltM+wQdI3CGyZh
+	VnXzZ7U2ScQERsjKXmT6igVhmtqje4Q0uKsPXVWe212JoeiANbW9A6wuOS/Z1ALa
+	Tjvn4zq3uK/IEu9hh8nPQ==
+X-ME-Sender: <xms:NN4IauF3fxsYVv7eKNbrbEyckG9u5QH7haLHfTMXxIP3oArh1Qixsw>
+    <xme:NN4IalWoaLUTxVl9b9pegaMCVMekLIbsoZR-szbjvliQ7kb1hVchjzGgqxlg2RTXq
+    K_1wJA74_VVJgYShqCtn4nQsKDY1box9r42OWp1HccY4hUgqss-1U4>
+X-ME-Received: <xmr:NN4Iai9z6Lx_NvqNR-EDJ7mKuOtS1TP6jZfL1YuXyhyg_6zdkI1i-ewlS_8WHkcOVWOyzeuvZrQDwMRGWIModAZ3WyBgif0rELDW>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -57,7 +57,7 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdote
     shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
     grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehiefgueevuedt
     fefhheegkeevtdelueeukeevfeduhefhhfejfffggeffleefgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
+    hiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
     uhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedutddpmhhouggvpe
     hsmhhtphhouhhtpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhn
     sghorghrugdrtghomhdprhgtphhtthhopehjrghirdhluhhthhhrrgdorhgvnhgvshgrsh
@@ -70,14 +70,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeegfeefucetufdote
     hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehn
     ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
     gv
-X-ME-Proxy: <xmx:MN4IamkLwYWD8j2BuI_n748UdYCgjMZaFxJxA8rEKnvk1XE974KsMQ>
-    <xmx:MN4IatjzuH9jrJKzvpEtoy4WhCNr-hZWCRJkDgjjqJqRIXW4xUDlNA>
-    <xmx:MN4IagRpbApzyUaT3dCv5ginv_RpVQNa-zU4M3bKSY1zlT1lqFyssA>
-    <xmx:MN4IamaSgBUT-LHPNR88J0p___2OiflKVWB6av3mULKLI88oqZdGwg>
-    <xmx:MN4IatkDYuwaZRq5nqBP7b2lABACAGKxHf6GSU0uKareiyZLvIYWesYg>
+X-ME-Proxy: <xmx:NN4Iaq5VO_rgNpyK2Rq3AuX4W6QUTR4iAnH81s55CNmupevaGgIQRA>
+    <xmx:NN4IajmRIET5pBtFa2ymJZzEwcMTKfV-9pxqRNTFfa6ehb_TbENrcg>
+    <xmx:NN4IalGRW_WBbhkmOP3cPmB12ofnmHwzeGM371XeOgzUn-DVh5I5_A>
+    <xmx:NN4Iai_phehC8zRjFu_Xsg2cc33aXTOAuZjhoLLE3i3TUajjV4qapw>
+    <xmx:NN4IajLfWaDk_K5fV-QCt0OiVGx7mrz9a3MqBof1RdirVRYqhYnsLPvB>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 16 May 2026 17:14:23 -0400 (EDT)
+ 16 May 2026 17:14:27 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
@@ -89,9 +89,9 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: [PATCH v9 10/13] media: rppx1: ccor: Add support for color correction matrix
-Date: Sat, 16 May 2026 23:13:17 +0200
-Message-ID: <20260516211320.3041412-11-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 12/13] media: rppx1: ga: Add support for gamma out correction
+Date: Sat, 16 May 2026 23:13:19 +0200
+Message-ID: <20260516211320.3041412-13-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
@@ -104,7 +104,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Extend the RPPX1 driver to allow setting the color correction matrix
+Extend the RPPX1 driver to allow setting the gamma out correction
 configuration parameters. It uses the RPPX1 framework for parameters and
 its writer abstraction to allow the user to control how, and when,
 configuration is applied to the RPPX1.
@@ -116,177 +116,192 @@ Co-developed-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 ---
  .../platform/dreamchip/rppx1/rpp_module.h     |  1 +
- .../platform/dreamchip/rppx1/rpp_params.c     |  4 ++
- .../platform/dreamchip/rppx1/rppx1_ccor.c     | 61 +++++++++++++++++++
- .../uapi/linux/media/dreamchip/rppx1-config.h | 28 ++++++++-
- 4 files changed, 93 insertions(+), 1 deletion(-)
+ .../platform/dreamchip/rppx1/rpp_params.c     |  5 ++
+ .../media/platform/dreamchip/rppx1/rppx1_ga.c | 43 ++++++++++++++-
+ .../uapi/linux/media/dreamchip/rppx1-config.h | 53 ++++++++++++++++++-
+ 4 files changed, 100 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_module.h b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-index 5e20fcdcbcc4..e039746ac542 100644
+index 48b61b5c35b4..948e26d7361d 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_module.h
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-@@ -49,6 +49,7 @@ union rppx1_params_block {
- 	struct v4l2_isp_block_header header;
- 	struct rppx1_bls_params bls;
- 	struct rppx1_awbg_params awbg;
-+	struct rppx1_ccor_params ccor;
+@@ -54,6 +54,7 @@ union rppx1_params_block {
  	struct rppx1_hist_params hist;
  	struct rppx1_exm_params exm;
  	struct rppx1_wbmeas_params wbmeas;
++	struct rppx1_ga_params ga;
+ };
+ 
+ union rppx1_stats_block {
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index 831cf7ca154c..a83d393d0504 100644
+index 8d85d0c7bff1..86d445b52504 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -21,6 +21,7 @@ rppx1_ext_params_blocks_info[] = {
- 	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE2, bls),
- 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE1, awbg),
- 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE2, awbg),
-+	RPPX1_PARAMS_BLOCK_INFO(CCOR_POST, ccor),
- 	RPPX1_PARAMS_BLOCK_INFO(HIST_PRE1, hist),
- 	RPPX1_PARAMS_BLOCK_INFO(HIST_PRE2, hist),
- 	RPPX1_PARAMS_BLOCK_INFO(HIST_POST, hist),
-@@ -66,6 +67,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
- 		case RPPX1_PARAMS_BLOCK_TYPE_AWBG_PRE1:
- 			module = &rpp->pre1.awbg;
+@@ -30,6 +30,8 @@ rppx1_ext_params_blocks_info[] = {
+ 	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE1, exm),
+ 	RPPX1_PARAMS_BLOCK_INFO(EXM_PRE2, exm),
+ 	RPPX1_PARAMS_BLOCK_INFO(WBMEAS_POST, wbmeas),
++	RPPX1_PARAMS_BLOCK_INFO(GA_HV, ga),
++	RPPX1_PARAMS_BLOCK_INFO(GA_MV, ga),
+ };
+ 
+ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+@@ -84,6 +86,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
+ 		case RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST:
+ 			module = &rpp->post.wbmeas;
  			break;
-+		case RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST:
-+			module = &rpp->post.ccor;
++		case RPPX1_PARAMS_BLOCK_TYPE_GA_HV:
++			module = &rpp->hv.ga;
 +			break;
- 		case RPPX1_PARAMS_BLOCK_TYPE_HIST_POST:
- 			module = &rpp->post.hist;
- 			break;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_ccor.c b/drivers/media/platform/dreamchip/rppx1/rppx1_ccor.c
-index 3bfad3ba12e6..5ddc7edf6930 100644
---- a/drivers/media/platform/dreamchip/rppx1/rppx1_ccor.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rppx1_ccor.c
-@@ -67,9 +67,70 @@ static int rppx1_ccor_start(struct rpp_module *mod,
+ 		default:
+ 			dev_warn(rpp->dev,
+ 				 "Not handled RPPX1 block type: 0x%04x\n",
+diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_ga.c b/drivers/media/platform/dreamchip/rppx1/rppx1_ga.c
+index 0667672b2694..1d9c24c43f77 100644
+--- a/drivers/media/platform/dreamchip/rppx1/rppx1_ga.c
++++ b/drivers/media/platform/dreamchip/rppx1/rppx1_ga.c
+@@ -15,9 +15,11 @@
+ #define GAMMA_OUT_MODE_REG			0x0008
+ #define GAMMA_OUT_MODE_GAMMA_OUT_EQU_SEGM	BIT(0)
+ 
+-#define GAMMA_OUT_Y_REG_NUM			17
+ #define GAMMA_OUT_Y_REG(n)			(0x000c + (4 * (n)))
+ 
++#define GAMMA_OUT_HV_GAMMA_CURVE_MASK		GENMASK(11, 0)
++#define GAMMA_OUT_MV_GAMMA_CURVE_MASK		GENMASK(23, 0)
++
+ static int rppx1_ga_probe(struct rpp_module *mod)
+ {
+ 	/* Version check. */
+@@ -44,7 +46,46 @@ static int rppx1_ga_start(struct rpp_module *mod,
  	return 0;
  }
  
 +static int
-+rppx1_ccor_fill_params(struct rpp_module *mod,
-+		       const union rppx1_params_block *block,
-+		       rppx1_reg_write write, void *priv)
++rppx1_ga_fill_params(struct rpp_module *mod,
++		     const union rppx1_params_block *block,
++		     rppx1_reg_write write, void *priv)
 +{
-+	const struct rppx1_ccor_params *cfg = &block->ccor;
++	const struct rppx1_ga_params *cfg = &block->ga;
++	u32 mask;
 +
-+	/* If the modules is disabled, configure in bypass mode. */
++	/* If the modules is disabled, simply bypass it. */
 +	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + CCOR_COEFF_REG(0), 0x1000);
-+		write(priv, mod->base + CCOR_COEFF_REG(1), 0x0000);
-+		write(priv, mod->base + CCOR_COEFF_REG(2), 0x0000);
-+
-+		write(priv, mod->base + CCOR_COEFF_REG(3), 0x0000);
-+		write(priv, mod->base + CCOR_COEFF_REG(4), 0x1000);
-+		write(priv, mod->base + CCOR_COEFF_REG(5), 0x0000);
-+
-+		write(priv, mod->base + CCOR_COEFF_REG(6), 0x0000);
-+		write(priv, mod->base + CCOR_COEFF_REG(7), 0x0000);
-+		write(priv, mod->base + CCOR_COEFF_REG(8), 0x1000);
-+
-+		write(priv, mod->base + CCOR_OFFSET_R_REG, 0x00000000);
-+		write(priv, mod->base + CCOR_OFFSET_G_REG, 0x00000000);
-+		write(priv, mod->base + CCOR_OFFSET_B_REG, 0x00000000);
-+
++		write(priv, mod->base + GAMMA_OUT_ENABLE_REG, 0);
 +		return 0;
 +	}
 +
-+	/*
-+	 * Coefficient n for color correction matrix.
-+	 *
-+	 * RPP coefficients are 16-bit signed fixed-point numbers with 4 bit
-+	 * integer and 12 bit fractional part ranging from -8 (0x8000) to
-+	 * +7.9996 (0x7FFF). 0 is represented by 0x0000 and a coefficient
-+	 * value of 1 as 0x1000.
-+	 */
-+	write(priv, mod->base + CCOR_COEFF_REG(0), cfg->coeff[0][0]);
-+	write(priv, mod->base + CCOR_COEFF_REG(1), cfg->coeff[0][1]);
-+	write(priv, mod->base + CCOR_COEFF_REG(2), cfg->coeff[0][2]);
++	switch (cfg->header.type) {
++	case RPPX1_PARAMS_BLOCK_TYPE_GA_HV:
++		mask = GAMMA_OUT_HV_GAMMA_CURVE_MASK;
++		break;
++	case RPPX1_PARAMS_BLOCK_TYPE_GA_MV:
++		mask = GAMMA_OUT_MV_GAMMA_CURVE_MASK;
++		break;
++	default:
++		return -EINVAL;
++	}
 +
-+	write(priv, mod->base + CCOR_COEFF_REG(3), cfg->coeff[1][0]);
-+	write(priv, mod->base + CCOR_COEFF_REG(4), cfg->coeff[1][1]);
-+	write(priv, mod->base + CCOR_COEFF_REG(5), cfg->coeff[1][2]);
++	write(priv, mod->base + GAMMA_OUT_MODE_REG, cfg->mode);
 +
-+	write(priv, mod->base + CCOR_COEFF_REG(6), cfg->coeff[2][0]);
-+	write(priv, mod->base + CCOR_COEFF_REG(7), cfg->coeff[2][1]);
-+	write(priv, mod->base + CCOR_COEFF_REG(8), cfg->coeff[2][2]);
++	for (unsigned int i = 0; i < RPPX1_GA_MAX_SAMPLES; i++)
++		write(priv, mod->base + GAMMA_OUT_Y_REG(i),
++		      cfg->gamma_y[i] & mask);
 +
-+	/*
-+	 * Offset for color components correction matrix.
-+	 *
-+	 * Values are a two's complement integer with one sign bit.
-+	 */
-+	write(priv, mod->base + CCOR_OFFSET_R_REG, cfg->offset[0]);
-+	write(priv, mod->base + CCOR_OFFSET_G_REG, cfg->offset[1]);
-+	write(priv, mod->base + CCOR_OFFSET_B_REG, cfg->offset[2]);
++	/* Enable module. */
++	write(priv, mod->base + GAMMA_OUT_ENABLE_REG,
++	      GAMMA_OUT_ENABLE_GAMMA_OUT_EN);
 +
 +	return 0;
 +}
 +
- const struct rpp_module_ops rppx1_ccor_ops = {
- 	.probe = rppx1_ccor_probe,
- 	.start = rppx1_ccor_start,
-+	.fill_params = rppx1_ccor_fill_params,
+ const struct rpp_module_ops rppx1_ga_ops = {
+ 	.probe = rppx1_ga_probe,
+ 	.start = rppx1_ga_start,
++	.fill_params = rppx1_ga_fill_params,
  };
- 
- static int rppx1_ccor_csm_start(struct rpp_module *mod,
 diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
-index dbbd6223f33c..97c333c72d56 100644
+index 7ebcc00ace04..05faec2f68e3 100644
 --- a/include/uapi/linux/media/dreamchip/rppx1-config.h
 +++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
-@@ -88,6 +88,7 @@ enum rppx1_meas_chan {
-  * @RPPX1_PARAMS_BLOCK_TYPE_HIST_POST: POST pipe Histogram Measurement
-  * @RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1: PRE1 pipe Black Level Subtraction
-  * @RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2: PRE2 pipe Black Level Subtraction
-+ * @RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST: POST pipe Color Correction
+@@ -91,6 +91,8 @@ enum rppx1_meas_chan {
+  * @RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST: POST pipe Color Correction
+  * @RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE1: PRE1 pipe Lens Shading Correction
+  * @RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2: PRE2 Lens Shading Correction
++ * @RPPX1_PARAMS_BLOCK_TYPE_GA_HV: Human Vision Pipe Gamma Out Correction
++ * @RPPX1_PARAMS_BLOCK_TYPE_GA_MV: Machine Vision Gamma Out Correction
   */
  enum rppx1_params_block_type {
  	RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST,
-@@ -101,6 +102,7 @@ enum rppx1_params_block_type {
- 	RPPX1_PARAMS_BLOCK_TYPE_HIST_POST,
- 	RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1,
- 	RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE2,
-+	RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST,
+@@ -107,6 +109,8 @@ enum rppx1_params_block_type {
+ 	RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST,
+ 	RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE1,
+ 	RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2,
++	RPPX1_PARAMS_BLOCK_TYPE_GA_HV,
++	RPPX1_PARAMS_BLOCK_TYPE_GA_MV,
  };
  
  /**
-@@ -422,6 +424,29 @@ struct rppx1_bls_params {
- 	struct rppx1_bls_fixed fixed;
+@@ -497,6 +501,51 @@ struct rppx1_lsc_params {
+ 	__u16 y_sect_size[RPPX1_LSC_NUM_SECTORS];
  };
  
++/* Gamma Out */
++#define RPPX1_GA_MAX_SAMPLES 17
++
 +/**
-+ * struct rppx1_ccor_params - Color CORrection configuration
++ * enum rppx1_ga_seg_mode - Gamma out curve segmentation mode
 + *
-+ * The CCOR (Color Correction) module is available on the MAIN_POST pipe. It
-+ * performs color space correction on a pixel-per-pixel basis using a 3x3 matrix
-+ * of coefficients and per-color channel offsets.
++ * Segmentation mode of the 16 input sampling points for the Gamma Out
++ * Correction module.
 + *
-+ * The matrix coefficients are represented as 16 bits signed fixed point values
-+ * in Q4.12 format ranging from -8 to +7.999.
-+ *
-+ * The per-channel color offsets are represented as 2's complement values
-+ * stored in 25 bits ranging from -16777216 to 16777215.
-+ *
-+ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST)
-+ * @coeff: color correction matrix coefficients, 16 bits signed Q4.12
-+ * @offset: R, G, B offsets, 2's complement 25 bits
++ * @RPPX1_GA_SEG_MODE_LOGARITHMIC: logarithmic-like segmentation mode
++ * @RPPX1_GA_SEG_MODE_EQUIDISTANT: equidistant segmentation mode
 + */
-+struct rppx1_ccor_params {
++enum rppx1_ga_seg_mode {
++	RPPX1_GA_SEG_MODE_LOGARITHMIC,
++	RPPX1_GA_SEG_MODE_EQUIDISTANT
++};
++
++/**
++ * struct rppx1_ga_params - Gamma Out Correction configuration
++ *
++ * The Gamma Out Correction module is available on the Human Vision Output
++ * Pipe (HV) and the Machine Vision Output Pipe (MV). Userspace selects
++ * which pipe to operate by setting the @header.type field to
++ * RPPX1_PARAMS_BLOCK_TYPE_GA_HV or RPPX1_PARAMS_BLOCK_TYPE_GA_MV.
++ *
++ * The module allows to apply a @gamma_y gamma correction curve to RGB data
++ * represented as a table of 16 entries. The 16 input sampling points can be
++ * equidistant or segmented using a logarithmic scale according to the value of
++ * @mode.
++ *
++ * The gamma curve values are 12 bits on the HV output pipe and 24 bits on the
++ * MV output pipe. Userspace is expected to provide the curve values with a
++ * bit-depth matching the one of pipe in use.
++ *
++ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_GA_HV or
++ *	    type = RPPX1_PARAMS_BLOCK_TYPE_GA_MV)
++ * @mode: gamma curve input segmentation mode (see rppx1_ga_seg_mode)
++ * @gamma_y: gamma out curve y-axis values
++ */
++struct rppx1_ga_params {
 +	struct v4l2_isp_params_block_header header;
-+	__u16 coeff[3][3];
-+	__u32 offset[3];
++	__u8 mode;
++	__u32 gamma_y[RPPX1_GA_MAX_SAMPLES];
 +};
 +
  /**
   * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
   *
-@@ -439,7 +464,8 @@ struct rppx1_bls_params {
- 	sizeof(struct rppx1_hist_params)			+	\
- 	sizeof(struct rppx1_hist_params)			+	\
+@@ -517,7 +566,9 @@ struct rppx1_lsc_params {
  	sizeof(struct rppx1_bls_params)				+	\
--	sizeof(struct rppx1_bls_params))
-+	sizeof(struct rppx1_bls_params)				+	\
-+	sizeof(struct rppx1_ccor_params))
+ 	sizeof(struct rppx1_ccor_params)			+	\
+ 	sizeof(struct rppx1_lsc_params)				+	\
+-	sizeof(struct rppx1_lsc_params))
++	sizeof(struct rppx1_lsc_params)				+	\
++	sizeof(struct rppx1_ga_params)				+	\
++	sizeof(struct rppx1_ga_params))
  
  /* ---------------------------------------------------------------------------
   * Statistics Structures
