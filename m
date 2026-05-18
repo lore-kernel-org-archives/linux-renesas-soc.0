@@ -1,138 +1,87 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0960D3F7887
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 11:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575EA413D7F;
+	Mon, 18 May 2026 12:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779104471; cv=none; b=YiD0/i+GE3vEiXhcYBNIyVJ41WM2qWXtOp1h8rF17qqKSylAmqMFAGbD5MZv7qb8WRZSW0fcrdlC+9fgD0/FbtX0Bn+e/P3ni8Ia2+TsEh+YEppghiqra9UXJZbgdxXuBjqgPZLgEtO9Fq1UpCCsb8+OuAyIxBCR1nMLGpMz3GY=
+	t=1779107962; cv=none; b=pj6Jw6M5FuYrXyiuEC28UNtBPC8rd8QGK0QPrkHdy+B8ZWU8BkxkiF14RHFeAWDpIqn6vY8bY7kpPafc4EGJkmg8eOmrLn+a6vNV8vtCFhXqYLubeV4dfVh0cOJo1f31cBYADuU+Py0KrwktVvRcq8LvxdHaIIcU716tHMPDTYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779104471; c=relaxed/simple;
-	bh=Ax2y7pmSuZrEkSP0ce0Fej26Z6ct7xdJQdPYertuzbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VdxqNC+rDzxYpop0qn8hB22qX5UghkUqowFGiXp94M837C+LvYbmwzLjLBhUgXwjW6sPTtMj6UMevt56fZPRFxFAsUF2IOO3DX62ANba8fez39nzgwbVk1W/5A0qsrQu3E4OuZyUWS2d0MJuQ2eSnyhZsQzzQMUqRPJ9ZL+36y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-6314d2e31d6so668958137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 04:41:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779104465; x=1779709265;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M3bmWUZgjAYZamnd3Aw3Zf+CdNP9jYAgiNz9GJP8Rro=;
-        b=YE6Qmv7h2coPzVlKaNw+wX1OOSHCrhMI6UwWJ6KHyH8pcO+Y7DFdXmd0O6C4Qk0Klw
-         WkR7zjPoLrHtMZqqrdJwGGiQwhmcsi7AByYIIBdRTHP6zqzRIIcwaUixi5qSvx58nqNF
-         qZH7d/kMKltZQSmPrskJoM1obZK8VOBj6I9LSDiWXCJCG6e2xLNbLQ/qBo2z3PqVbVtF
-         hKFHD6c3KSro+A19zglgPWXWTso+zE5eh+fL3Hcjl7XrSynCo3yMo6L5+ncAmTdehUqn
-         3YHCAVkmdFfVvU+AK84PDMkjmAXytMVHY2JA+5tiraoS+NQ9mG6lul8jF/AYHB3xLv2V
-         Y4xA==
-X-Forwarded-Encrypted: i=1; AFNElJ9Jl7zwsMui62cM/M0IFmQ7QTzJKh0zU7WnAJiJ623XGaSyZxr0clX2IXKD/5UziOKRlAsZ41T+VPSM+dKzfVcwfw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLkXFkGfHJx0DWtvx3Ps1V4w6e7l5tCagzL6W57t25GA+dl1F
-	vrEqyetQ75CIyTlJWcVBvpmExljxBSbjY0LHlXi4l7c3Nof3O6AZd/43Ahxmwvqu
-X-Gm-Gg: Acq92OGjMsMQSQ49+tzwpPRVCVj6XPJT5lDdlXDXL8bLmxalzOU9GxOmOAjNfRvKiTz
-	K1oRj9dHT5vP34sOp7cMV1H6p2Cm9tVC3nC0wUUd57I40bu0InuhTVBW7a8XeBhEyANOoVOzWgx
-	BRHkIVgdIrc4SlppKB407phXvr35+a+lrc5GKibvEKxMlhb/REESJ54He1A6ZwZlsj6RqvBQDjI
-	RK2hOgjEluRxIs4p/LMyBJSBGMtMq9a+Jq5c1/d5cwH/Jercpg/GuSiRFxTJexn/dWl6fXC15/K
-	6Yby2i+aLpyxRqYgsf3mkBnFvmSyn0HeJVBYnXZ9I7wu5NL72yU9slIQg3s8CvMvFzcxmw9fxlg
-	nfNHzYIq42Qme1ZeEhWsjcILH80yfMJ4Sqqhtg3KvDJ90mLXANRW3VAROpupFPYwqTIXeOQ0WSY
-	JX2k2x47nEaH1xv132HTg/QVenmjubanULB17KOyvn8YQzJeKLhp1uIBK1iI+lop37
-X-Received: by 2002:a05:6102:5092:b0:62f:522f:5b2a with SMTP id ada2fe7eead31-63a3f887b32mr5957038137.22.1779104465201;
-        Mon, 18 May 2026 04:41:05 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-63ccf18cfc4sm4466614137.2.2026.05.18.04.41.03
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2026 04:41:04 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-57611a6a69eso481253e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 04:41:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/kJad480yhGhFsN4zfEOgYak9gbahy9aE7iEtxm+i9JPbHzGcvkCO8UP5xIMlaIkUYXIrlA8xlP6KWaWLr/HmfZA==@vger.kernel.org
-X-Received: by 2002:a05:6122:4690:b0:573:a779:62cf with SMTP id
- 71dfb90a1353d-5760beaed3bmr5626640e0c.7.1779104463611; Mon, 18 May 2026
- 04:41:03 -0700 (PDT)
+	s=arc-20240116; t=1779107962; c=relaxed/simple;
+	bh=9DFPUWo/xhbO7nadFRnr3uICPmucT9jBoHg+R2lnUrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gjt+RZ5mTJqtUMxAKd0XFl0o9Gjo6Ya2VCAW4JiVXdJUIPMuM8+u5BbF4HtSTFXoad+mN/lwCoDQSrgsKvPVTQvGBxvKnUVQSQgiN1Az88yvdE+88goGiAvqd8R6fiIZ67QfzQSHZk1NSdud4JFak4r9JE4jHQLjb1jqF3JL+vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aV9XU4nU; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aV9XU4nU"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gJy6X06rNz9tf2;
+	Mon, 18 May 2026 14:39:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1779107956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SwQtsH68VPF+LHaAUjoh8HC7NSHn396Czn49ocrEmyU=;
+	b=aV9XU4nUc96xqgi0almy3cDyvR3Gdl+jOg2q3Ylv/diL2QZMFKn/LL7q3BmdnPTuLO8H3r
+	1ncLzWuRFhj5z6zyRdlt18fAVP1DYIvoaZLFrCUVkrAphbwlFID/F5tuHbZGRGkO4ahcZS
+	gsUTG+9oWxjCqWBJAAMX6iBBCAqPKaogfICciC+2cWFR1GmMiVbdxCuMt6KzeM3qdGUH/u
+	O3KMJy9l10i3k0y3+eIvmSJuRLuR2Fh0nCCLs29s6BGc7ubvvbtGCwVdg+IytdQRAv3SJY
+	cqudrXoD/5B7m7HCjcc7A76QfPkh27zI8mlwKHzNq15Rp01X9SNDkF8shpbyow==
+Message-ID: <0404752d-ad50-4d10-bce3-85fcc249b754@mailbox.org>
+Date: Mon, 18 May 2026 14:39:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com> <20260515-rcar-du-dsc-v3-3-164157820498@ideasonboard.com>
-In-Reply-To: <20260515-rcar-du-dsc-v3-3-164157820498@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 May 2026 13:40:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUf4dGnK4ooTyw_31Ueanr-Ym3nhML4a12exU+5nFYh2g@mail.gmail.com>
-X-Gm-Features: AVHnY4Lo5h0gdtI7uD_PcBRMzgonT5rakDO4TjP7cpU7h0ngOw5-dH_yEpIVciE
-Message-ID: <CAMuHMdUf4dGnK4ooTyw_31Ueanr-Ym3nhML4a12exU+5nFYh2g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7] drm/rcar-du: dsc: Add rudimentary Renesas R-Car
- V4H DSC driver
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] arm64: dts: renesas: r8a78000: Describe all reserved
+ memory
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260517163212.18016-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdVcpR96smOd4sdEXHoRp=WTLLzWNN9hO0P0=ZBTe4fKog@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVcpR96smOd4sdEXHoRp=WTLLzWNN9hO0P0=ZBTe4fKog@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: d6fqep6pemmjf7zkmfn5k7xc3hapw1w9
+X-MBO-RS-ID: 1b7f9417d81e0cad594
 
-Hi Tomi,
+On 5/18/26 9:18 AM, Geert Uytterhoeven wrote:
 
-On Fri, 15 May 2026 at 11:10, Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
->
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
->
-> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> 8k or 400 Mpixel/s . Add rudimentary driver, which currently acts as a
-> pass-through bridge and allows DSI1 to be operational on R-Car V4H.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: use bridge->next_bridge, minor changes]
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Hello Geert,
 
-> --- /dev/null
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c
+>> +               /* TEE TZ DRAM. */
+>> +               tee@8c400000 {
+>> +                       reg = <0x0 0x8c400000 0x0 0x02000000>;
+>> +                       no-map;
+>> +               };
+>> +        };
+> 
+> Shouldn't these reservations be added by the bootloader stack, when
+> passing the DTB to Linux?
 
-> +static void rcar_dsc_atomic_enable(struct drm_bridge *bridge,
-> +                                  struct drm_atomic_state *state)
-
-drm_atomic_state is no more since commit 5164f7e7ff8ec7d4
-("drm: Rename struct drm_atomic_state to drm_atomic_commit") in
-drm-misc/for-linux-next (next-20260506 and later).
-
-> +{
-> +       struct rcar_dsc *dsc = bridge_to_rcar_dsc(bridge);
-> +
-> +       WARN_ON(pm_runtime_resume_and_get(dsc->dev));
-> +}
-> +
-> +static void rcar_dsc_atomic_disable(struct drm_bridge *bridge,
-> +                                   struct drm_atomic_state *state)
-
-s/drm_atomic_state/drm_atomic_commit/g
-
-> +{
-> +       struct rcar_dsc *dsc = bridge_to_rcar_dsc(bridge);
-> +
-> +       pm_runtime_put(dsc->dev);
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
+They should be added by the bootloader stack components, TFA and TEE, 
+but they do not generate those reservation nodes thus far. TFA I can fix 
+up for 2.16 (2.15 is in code freeze now), optee-os will need upstreaming 
+of all the outstanding patches first, and then this can be fixed too. 
+This is all long term plan though. Short term plan, which also prevents 
+issues with SDK TFA/TEE, is this reserved memory node.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Marek Vasut
