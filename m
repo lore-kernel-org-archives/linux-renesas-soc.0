@@ -1,87 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49A03E3C40
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 09:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C983E3DAA
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 09:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779095439; cv=none; b=hMxIOLZqvoEt7JaVPgNQ2rq7vNg0/4C0E60urGEOCEWL1wJZnLqFhR6L+gjBY2gH41R55bnrMK3iwN4I7aPKf9tHXdYIJgWpQT76ItKGM5y5K6E7uGSnEQkZ5bK4t43j0XuEMvEtx+Jrt7kBYJEtgICeuPNJEMce/QWV4XEe5Rg=
+	t=1779095451; cv=none; b=IDu17wU/n7I5YJKn9cWoX+UEzvtc259O21FcOazx518wiCmeemKlcb7TalBTiRF6SG2rfLS4fjdmsbGuG29LmcGzUvSaHoq/Ho0LdTDNbBUQepeBuXflZ4ZeWTuZzP2Rigf/tlMZlYCRTNz/pioP6FmhB+HSkfNhKg/HqgDkyOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779095439; c=relaxed/simple;
-	bh=hajp0DZRTet1z1y/6sWDp4t2WMSMUpWwUf/1hDpcsXM=;
+	s=arc-20240116; t=1779095451; c=relaxed/simple;
+	bh=4yT5EZN656SF2/gngje7SHiaxQJejlgBvUV/6lWTxWY=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvAnXnpO2BMPAtmTHFkOce9eq74EXMAl8ITFpIb24GjJm/PrNdrEAmo2Wk5Umj3aWBJCdnqU2eQ0oeedmxR2+FyfHV/VCyrpuF1Qce8IOF3SKUhcligpNnDcv6SMlD0AqCtMkHB3pgo5isYNfI0sLGRw1yejtpEiyzdjjHlyMzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zk4d42Ub; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=jR6oALdlezUEkPV97X1PwPCRypX5u6Pmmmy1FuyfMxuP0v99pMDbbBSG3PIeK5mmAOBkG8PXBJKho1TsbsFL3wKldlbJxNmmI+mlVrQDoGcBb8a8yNB3qKPSUs0VBSWHMT8fIczL2WG88cbewlSb/aTqouhLmiXgd/8YNzPcbog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYL8VN2S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk4d42Ub"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDCEC2BCF6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 09:10:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYL8VN2S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AA3C2BCF6
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 09:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779095439;
-	bh=hajp0DZRTet1z1y/6sWDp4t2WMSMUpWwUf/1hDpcsXM=;
+	s=k20201202; t=1779095451;
+	bh=4yT5EZN656SF2/gngje7SHiaxQJejlgBvUV/6lWTxWY=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=Zk4d42UbtBSYWUU4astGHOUEq1lbCJIgmNW01NGXYZjPs7KTESX2hXiJigcCci1d8
-	 k1F+jihIgShnVgmjLAjMcgwZUYgRqQz5g0m0l7lcdWGqG7A+xxaV9rd426wNh0Fn2g
-	 8YyTTNkdtABrvba085Bwk1wGOyHKWdquBU6AMDSZi12uoDD7RxFC1/VkRzhEELbw7C
-	 /j9JMgkWw7dqldX+du9KVwfpneG2aZg2brA6HOgWHF34bAzBUui+38YDeCPLhQJwGs
-	 xp4rzDCKo4EPfvN5FnoThZgKOjgFV6esIhKHvQPhDwjE+BzZqTWfSeLXOT0UJEy0lj
-	 nRQvxfyTQaphQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5a88de2b52eso2663664e87.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 02:10:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9ERk+BNJYqCJ3sfNeldkqF2MccBQomKTCa3rmiT5bKACJPX7Ak0N+CGDVldMx25/Jx9YGSUZOQc2DDzdi+fZ4wyg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLs9dFR1q3InCF1EC5H8q3dPONz68FR1n24GGjgY1y4ktiFava
-	NCTx3DcE2d3XH3oAFJ0yAdMl4u8nRSj/BIXLCJAedE7/xTAES2vIVO8JTSBBNvUXvSH2gnG4/sr
-	Ri/ifQ90+pydQUN7nougkvG0LU7xy58Z5AWIbNlNdyA==
-X-Received: by 2002:a05:6512:2301:b0:5a8:6d58:b29 with SMTP id
- 2adb3069b0e04-5aa0e73c0a3mr4149381e87.22.1779095438247; Mon, 18 May 2026
- 02:10:38 -0700 (PDT)
+	b=IYL8VN2SlhoEq+R4Xm1vmkheerpFsUOAR6Kt6ORsUFyaD6j7rQjzyMaNxzypGEhSu
+	 HfjThg9CSUoofrPqvkWB5QSjgVDQUCqyoKj5w5Z3QWsMts6o+Aorhw+V57yooaOAMc
+	 uvTa7dOJdaZi/SMIRJzIKBgw8IwNANK8BE+bZqrLRStq7Ui+VbqBAFBQVg4SEdF/sq
+	 0X3yqe0ByXFoLWc1AtrRsIhO3h9kmjw4W3WxkbBLyZjwIKWERSwrbQ8/qMBMTzpJz/
+	 Ga9rr4muANXKjdOw3yEIgJh5z65mQvat5pFxpw/UFQ2iQENNr3HMC89kzB2MqLcqMo
+	 w+Y1dF6+7XyRg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5a8cb92f26aso2227646e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2026 02:10:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8EEfiybpPBxQgOXns9f1PuZGJenRgyo3hxOWnKfM4UcvoGwvJ2B73z1NDFqaIrvWfeynQ7N3wXJI87slQnqXPGdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzat8KKTTlUJGsPpYRmq2Kv4QgwqiQY4y9b0VARU4Svaxbl8ia4
+	txjaKFhFxhwlOJU93gQt4Yn006XjKZ+u6rQhc/2SCykcL+XeFiGYV8g5/bSEAnw5IaKW46aBDoL
+	/Rtvnr+AUifNHEeTYnj2nvf6UNoRoA2ie9tFrCv8mYg==
+X-Received: by 2002:a05:6512:3b84:b0:5a8:64c4:38cd with SMTP id
+ 2adb3069b0e04-5aa0e73c7demr4152960e87.21.1779095449709; Mon, 18 May 2026
+ 02:10:49 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 18 May 2026 02:10:37 -0700
+ HTTPREST; Mon, 18 May 2026 02:10:47 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 18 May 2026 02:10:37 -0700
+ HTTPREST; Mon, 18 May 2026 02:10:47 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260515124008.2947838-2-claudiu.beznea@kernel.org>
+In-Reply-To: <20260515124008.2947838-3-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260515124008.2947838-1-claudiu.beznea@kernel.org> <20260515124008.2947838-2-claudiu.beznea@kernel.org>
-Date: Mon, 18 May 2026 02:10:37 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Me+PuOwObQ_zPKjLbpj6zs2rFjgCehD52A3W9WacVKCjQ@mail.gmail.com>
-X-Gm-Features: AVHnY4Jqy1SOJcsrwATZK4tdEyvP8FVXL8hm-7A7J_54rMD6AnGZw7ds634wgiU
-Message-ID: <CAMRc=Me+PuOwObQ_zPKjLbpj6zs2rFjgCehD52A3W9WacVKCjQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: renesas: rzg2l: Use -ENOTSUPP instead of -EOPNOTSUPP
+References: <20260515124008.2947838-1-claudiu.beznea@kernel.org> <20260515124008.2947838-3-claudiu.beznea@kernel.org>
+Date: Mon, 18 May 2026 02:10:47 -0700
+X-Gmail-Original-Message-ID: <CAMRc=McmEB-QiH0E2L6pKH6hpjs5TebBwD8Q0+UGX9y6gRRDRw@mail.gmail.com>
+X-Gm-Features: AVHnY4KErhf_NUM0SHKxTHxG6bi6FJwz8ioPaQ4HfLLiIr4BiwwiMep3RXJG8qc
+Message-ID: <CAMRc=McmEB-QiH0E2L6pKH6hpjs5TebBwD8Q0+UGX9y6gRRDRw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: renesas: rzg2l: Populate struct gpio_chip::set_config
 To: Claudiu Beznea <claudiu.beznea@kernel.org>
 Cc: claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, 
 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org, 
-	geert+renesas@glider.be, linusw@kernel.org, brgl@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, geert+renesas@glider.be, 
+	linusw@kernel.org, brgl@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	biju.das.jz@bp.renesas.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 15 May 2026 14:40:07 +0200, Claudiu Beznea
+On Fri, 15 May 2026 14:40:08 +0200, Claudiu Beznea
 <claudiu.beznea@kernel.org> said:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The pinctrl and GPIO core code make exceptions for the -ENOTSUPP error
-> code. One such example is gpio_set_config_with_argument_optional(), which
-> returns success when gpio_set_config_with_argument() returns -ENOTSUPP, but
-> reports failure for all other error codes.
+> Populate struct gpio_chip::set_config to allow various GPIO settings.
 >
-> Returning -EOPNOTSUPP from the pinctrl driver on the unsupported pinctrl
-> operation may lead to boot failures when pinctrl drivers implements
-> struct gpio_chip::set_config, the system uses GPIO hogs, and the
-> struct gpio_chip::set_config implementation returns -EOPNOTSUPP for the
-> unsupported operations.
->
-> Return -ENOTSUPP for the unsupported pinctrl operation.
->
-> Fixes: 560c633d378a ("pinctrl: renesas: rzg2l: Drop oen_read and oen_write callbacks")
-> Fixes: c4c4637eb57f ("pinctrl: renesas: Add RZ/G2L pin and gpio controller driver")
-> Cc: stable@vger.kernel.org
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
+>
+> Changes in v2:
+> - used gpiochip_generic_config()
+>
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> index 05a33655e6cc..ac42093fc579 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -3212,6 +3212,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+>  	chip->direction_output = rzg2l_gpio_direction_output;
+>  	chip->get = rzg2l_gpio_get;
+>  	chip->set = rzg2l_gpio_set;
+> +	chip->set_config = gpiochip_generic_config;
+>  	chip->label = name;
+>  	chip->parent = pctrl->dev;
+>  	chip->owner = THIS_MODULE;
+> --
+> 2.43.0
+>
+>
 
 Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
