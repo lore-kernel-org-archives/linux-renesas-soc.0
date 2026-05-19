@@ -1,80 +1,163 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA0376A0F;
-	Tue, 19 May 2026 14:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C8F31327D
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 May 2026 16:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779201902; cv=none; b=t2Sl1XeknCq7E2UBjMPnvn5xMHIrZk4+/1iaVFblpXJ8ErqTeid6OaUW3uQEW1Z9o/fOVfIT+9O5Q+5cZ7jPoGJgXQWpolsrzKB+THmySlUT4I6O7EViZ0Ao+aw1s57ZRllxgEyi4Do+OfVg5UC5kNvwdHkc3uxuPHKqaSGPz/Q=
+	t=1779206926; cv=none; b=pAdNysAjbxdXmIsJ0Nae3cD3+QgqI1YVp9d322ZbrNL6TfEEFjq43O6QQRDhOGKRHyQc/IqqKN/bckoh8uhAcAjL5QV69w7lZRWngwE5c5L5p+p2dMwKlKJeL2ndblfFOLBP1FNbQPczJEwCy0+hbJUk4Qoao+qAexQ/G3cJZRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779201902; c=relaxed/simple;
-	bh=GfJBGOrJX8zseLt8bHkGFdVnHP59hHjNP00vIllEVnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGinKc3Frtd/v7cXcrjF9LMt5Fex0P2i0cVQ6XCVzcxQG26pPcreWwX2vVRUwWUWGrB8wu8rqyfLHDBKZaw1dcfJl3qgZmON3/u3uJJz8FCyDaYAFxXBR+VDnNeHq5ZrMxmqpfpLRVmJCrJ9COewsoKyAJYBXqIAHiwUT9FUjkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UxP3EnTX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1779206926; c=relaxed/simple;
+	bh=A+yoSoKj7bowNjrT/qO9FE96PQ7mxA4+K9JfLWTgufg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cx/2bu9P8nuhZ2SAx34XQRrysKhcFIUB238463GimMkNPFn5oWgmWlkibsd9dnAntIrX8U7ZbiqaOFLWdg8+qK8oqQaefOxiHzI2mxq8J6lsOsoHXZsOqfX5bze3L5oLoDqsF3lnw2NyD1ukPkfgddIMgoZI/onmm/B0vdNbjjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3w/GFFk; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UxP3EnTX"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rCWmDjb6QlG0p+c+DVYWjWo/iZPdmAjXivYJpRn3Www=; b=UxP3EnTXxgtqiLyO0j4jiXK+NF
-	EU6OLNwwlvHtcjqoclJfxvCoA1h6pbAPM1q+VNa+ZHb/Uvhs+ZCbITckPgUTWAenGn+RjN2lXGlC8
-	w8/9ghAFMAOOGOK35jwI5llS/TMI8nz2dBovv3zks337aXEUukzUvrxrL28JHPg2bWLI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1wPLgc-003gPV-1R; Tue, 19 May 2026 16:44:46 +0200
-Date: Tue, 19 May 2026 16:44:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3w/GFFk"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so41911765e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 May 2026 09:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779206923; x=1779811723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxS3QQnk5GN7d0xeWk5k+vZ7DrxTc2p5byKRqEc/Aw0=;
+        b=K3w/GFFkSkFhGUM/8iRFReXCNW3BopNaZX2JdirSq1tkGIgO4Rfb8tUU9f/oGVW1oU
+         LHczQEUzfEq88fvSwpCzyAXdk5OFEu8t7bsnkJx+X3O0nMzjEa8tPn5WlJzuRi3r2ruQ
+         85xooOnNM7YufRNGM/CJiyrx4MpkHA1UJknPHoGg0E67DQ2bX5CNO1XaTd2BHHYzmmsq
+         lCFGMV5+3Kt8/gYREkKJqwYlKaQkAJSY4qVpYNkWLtLuKoHFVUMr9QHwzZNGcA29YSu+
+         psoZhMUN9tvFewT34NSkt83CvgvvhelTvLeX0LPzfKVtRrAlpa64xAoH6V8BCs4AWhEf
+         9VSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779206923; x=1779811723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxS3QQnk5GN7d0xeWk5k+vZ7DrxTc2p5byKRqEc/Aw0=;
+        b=Tnf0msho7gUBzEz53nY1DrXVikswPTYIzmOVmkEZh1ARyG44JBWGAAgTVaIp+cPhi8
+         Wj0aiLUOgQ8of31/gWM1q3O20uPx+Q7AHXf7Ws8GtwASWmlVNe/YOt139OgumcdYTWmb
+         qQEV2vmQiXX9OtM1UFQ/0wCmO/SHHljQTuNc/W2m3xH0cswDojege761cl5qnNyRE6YY
+         kx27RFGkf1JUmK7M3LBnlRfX9840Qn0WQbmFtA7IdgkRP6F9J1z3XN0eYpLKXtoe2ALb
+         114Yr81sXm2U9fCqafpJgFkm3JVp6veZhDvLsJNNFSd49OV84NlDKda6pgZqRpNpkDC/
+         xNKw==
+X-Forwarded-Encrypted: i=1; AFNElJ85QYsQnwQYMWnBYSQXTzO4yJkWDWOxF1XUGvLb8X3Ont2cOPEPQBBEoo4XMpPuw6r8FmyjS4RFsOSPU5xvt0UH1g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw31pGRp4WTANKm9PgEiU8FQO8mKo3idP5w4Yloe+VAyYLqJKKS
+	7oxdwnOaacgvqMwd/PTAXc5PxgdxKw7PYtPk5nlZojlfn5ocx/KQuLwm
+X-Gm-Gg: Acq92OGm1U0qC15JJQFICfT9eWKN6ODodMwPM/Z0/X4StKSplQeP/L8K9Q6GQJqwU9/
+	ks/2PuYr9zQl86rlUm0zcRAhyxyQVAIh8ZqXRZ+pFZh4fBGNCEXTi98lDYAypGeJAE+mmTR8tiF
+	jiUlddV79cMjcgjtTWjIGZUKZacRIZnNpAaCdYxB+qkPAOF+iC2nZSJgIy6dV1u0PqdqDhzCPNq
+	GizM/MaF/AJVNPd3XoZqH6tH68myqbA/HTicQlKGEXpCGMdvWylPI6KVv2wWWgOXQXKawDAmlF0
+	dID1FwSdxwv4GsDBQZ5KwuDhv73NIelHhszS5sEO1x2Q7gUI719v8VlmjIMN4yup3hScGxXnm4f
+	vWVEib/wbFVLvA2s0MbU+/do+lQ/aR5LNeYTrviChzJGgeVHc0ONsKjSePijblFU4lkc+QtTdqe
+	ohy813Gde3ZX+z3AupUttPT0pJV6O08T5ZQkEi1v0rViBbs1+nNxsqwvdHbBBk4tk06RYTeWqCC
+	aZF48FiNQuVEvBCi/B9ETHFodfj7CSw2n+5ZPKclSZLsCv8
+X-Received: by 2002:a05:600c:491e:b0:48e:978f:c45a with SMTP id 5b1f17b1804b1-48fed455991mr192575895e9.19.1779206923119;
+        Tue, 19 May 2026 09:08:43 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:3f5e:825d:a98f:fd29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe5ab527asm372645305e9.11.2026.05.19.09.08.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2026 09:08:42 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Paul Gerber <paul.gerber@tq-group.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: freescale: add initial device tree for
- TQMa8MPQS with i.MX8MP
-Message-ID: <a59c05b3-aacf-4f36-a172-0fa3eb74ba0c@lunn.ch>
-References: <20260505063346.1799500-1-alexander.stein@ew.tq-group.com>
- <20260505063346.1799500-2-alexander.stein@ew.tq-group.com>
- <710ae855-0f44-4b2d-8afe-415b30afd37e@lunn.ch>
- <5102480.31r3eYUQgx@steina-w>
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/5] Add DU support for RZ/T2H and RZ/N2H SoCs
+Date: Tue, 19 May 2026 17:08:20 +0100
+Message-ID: <20260519160825.4082566-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5102480.31r3eYUQgx@steina-w>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 19, 2026 at 04:11:05PM +0200, Alexander Stein wrote:
-> Am Dienstag, 5. Mai 2026, 17:02:12 CEST schrieb Andrew Lunn:
-> > > +/* GBE1 */
-> > > +&fec {
-> > > +	pinctrl-names = "default";
-> > > +	pinctrl-0 = <&pinctrl_fec>;
-> > > +	phy-mode = "rgmii-id";
-> > > +	phy-handle = <&ethphy3>;
-> > > +	fsl,magic-packet;
-> > 
-> > One of my FAQs: Has WoL been tested?
-> 
-> Well, I can "wake" the system per WoL. But resume stucks after CPUs are up
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-So probably not a networking problem, somebody elses problem, so this
-is O.K. for me :-)
+Hi All,
 
-Thanks
-	Andrew
+This series adds support for the Display Unit (DU) on the RZ/T2H
+and RZ/N2H (R9A09G087) SoCs. The DU on these platforms is
+functionally similar to the RZ/G2UL DU but includes some SoC
+specific differences such as a single output port and explicit
+DPI output enable control. The series includes the following
+changes:
+1. Add device tree bindings for the RZ/T2H and RZ/N2H DU variants,
+   including a new compatible string.
+2. Make the DU reset control optional to allow probing on RZ/T2H
+   where the DU does not have a reset line.
+3. Move pixel clock validation logic to per-SoC constraints in
+   rzg2l_du_device_info to accommodate different clock limits
+   across SoCs.
+4. Implement support for the RZ/T2H DU variant in the driver,
+   including handling of the DPI output enable signal.
+
+Patches are rebased on next-20260519 and apply on drm-next.
+
+v3->v4:
+- Added Acked-by tag from Rob for patch #1
+- Added Reviewed-by tag from Rob for patches #2
+- Dropped per pad limits in patch #4 and added
+  a check to return early if the output is not DPAD0,
+  as the clock limits only apply to that output.
+- Updated commit message in patch #4
+
+v2->v3:
+- Rebased on latest next-20260508.
+- Included Tommaso's patch to refuse port@1 for RZ/G2UL, which was
+  previously in a separate series.
+- Moved clock limits from device_info to output_routing to allow
+  per-output constraints.
+- Updated commit message for patch#4
+
+v1->v2:
+- Dropped the "port" property in favor of "ports" with a single port@0
+  child, to align with the existing RZ/G2L bindings and simplify the
+  device tree structure.
+- Updated the commit message to reflect the change from "port" to "ports".
+- Dropped storing info pointer in struct rzg2l_du_encoder as it's not
+  needed.
+- Add Reviewed-by tags from Laurent for patches 2-4.
+- Rebase on latest next-20260507.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  dt-bindings: display: renesas,rzg2l-du: Add RZ/T2H and RZ/N2H support
+  drm: renesas: rz-du: Make DU reset control optional for RZ/T2H support
+  drm: renesas: rz-du: Move mode_valid logic to per-SoC clock limits
+  drm: renesas: rz-du: Add support for RZ/T2H SoC
+
+Tommaso Merciai (1):
+  dt-bindings: display: renesas,rzg2l-du: Refuse port@1 for RZ/G2UL
+
+ .../bindings/display/renesas,rzg2l-du.yaml    | 21 +++++++++++++++++--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |  9 ++++++--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 20 +++++++++++++++++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  | 14 +++++++++++++
+ .../gpu/drm/renesas/rz-du/rzg2l_du_encoder.c  |  9 +++++++-
+ 5 files changed, 67 insertions(+), 6 deletions(-)
+
+-- 
+2.54.0
+
