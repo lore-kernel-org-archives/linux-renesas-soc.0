@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2154F36DA18;
-	Wed, 20 May 2026 13:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1312D36C5B2;
+	Wed, 20 May 2026 13:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779282740; cv=none; b=ScMece5EvdwdrEqI8pFfh6nPAbDETsvzjnMqjo0LJPdJjZnuh3ndXMtkGOLgOQFPwnssTlUWKNLVE9QKdqGikMwTypgzLIx5YnojQHxdqC3yhCVrRnlYS8fvBW9xs/T2/asi4nBnmuChu82eGwNqo0l2KGkTkjJV7Lu52TRFx1Q=
+	t=1779282742; cv=none; b=Jrgc/luqkLrZZSr3Blg+Gm/0pC9JQxaEYQK8EujAKfla21qVGP2ylZ28P5vIwAp/UMNFw+dVtwhQHcweVtzChpAQdLX5RYxzK1L8c2TqNIC6ZsM/jHHtRNwDRqpS6Grz0ou/8cMciV2a99tvW7AbLT0kn1TLE1onEgASK+I4F3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779282740; c=relaxed/simple;
-	bh=hP6+afbmeA9Dkz2R4kVhoYZge7pz5bXrHSigVIlNRvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1vldBxmOAUPr4S6MoIgIJWmAS60MRCchxeMaXGiuhKt1Ht5BbP2oPHK+4Z2UJx0qf1Dud/YeEBS+ARD25APRcsU9PjZRzRDMCUnT2KQW5CBChxEkrFhvei9HtHcEm1hk5dT/hfzeL7fPhDWD/TH3KwriFJP/m5R4vlwy01bB+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CO85eqRx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779282742; c=relaxed/simple;
+	bh=isNqYpEPQPwp5q3jaJBWsp35bUizqljfK/dcy3HWk6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AVR4Gey48REC1tGypKT9CMamWoi1TIoso6itsY2G2KuRjH3ofyCPDhBjOS/MHqg8PfHzwiMtsVF2/uyysq1IqQqD4fatV/W4zYEMgyCU1TzOSYLPnO1FcoYz2sCQWO5ZiREauCuQGm3nvFyNmX3eQxIZwq8IXHToZnR6as6xXoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uzrz3jMy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CO85eqRx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DC71F000E9;
-	Wed, 20 May 2026 13:12:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uzrz3jMy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BE51F00894;
+	Wed, 20 May 2026 13:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779282729;
-	bh=9QPcLxK+odyIogWs54Syoz/XMsSnhC9cw0O3XSTps4w=;
-	h=From:To:Cc:Subject:Date;
-	b=CO85eqRxRBYKxHb2DiRjAvyYgKJfRAwmWdF3lCZzzuogEB+GS43+u6/MwFTZbLaDi
-	 X0CNJaqJ80bYSDy4sC77frAimcW/OWryntHVjsbpvA+KBpPNSWQt4Hs+M5Vor+vR5P
-	 47yrM4JHu7p1zXji0Uxl9YVi3JIZcY+faR0Wqh/u4UU5v0I1PWeeESC7k1xpQcV4u1
-	 Gxbm0SljfmJOk1zX+1tttdyXRB79BsSf4cv0FKR9RcJrdbaevD01iYHeIccMBwcD7U
-	 lK1Jvfr9xNBaB+pSJkWodrqxQuTL3iv4WbR2tYp+d9bbVQ0uJToNjtjRgCc2wuzUfb
-	 kEF4QoMJ+PIuA==
+	s=k20260515; t=1779282734;
+	bh=2ZkHMQTXgNWvGQhiKoyxL7YDjlhPRCsA5ABjKF5RpUw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Uzrz3jMyhoLYUkh6vDWeUmT8fmHvs8eqwzzs3UBb1NNNneF2EQbGugQwX4dWTW1gm
+	 AwrUYqhjPm6Sv6DZlTDMZSm1u/88hqOoPNyAwvm8k5upUqCDuuUotrr1vdSMFNngJP
+	 Bv5ewATfhSd1PKmemS70TaCfHNsEyqOJ+3ao+qg5rVAIcoOd/dS7A53yiMJx0jtqwH
+	 olEqpr2eYN8imlV7MXLXUMe4iE4BM9yVwP+cSG0pvd8OgGLkKVYKRpjGb+n6HEjJks
+	 uOpjgWEvDNqpmwNOe10hh7DERtkFbMlpWWiC/+WaIBr5WWIvcc7pxcQp1jYcoC6PKz
+	 JTRQqeihqMlYQ==
 From: Claudiu Beznea <claudiu.beznea@kernel.org>
 To: chris.brandt@renesas.com,
 	andi.shyti@kernel.org,
@@ -34,10 +35,12 @@ Cc: claudiu.beznea@kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] i2c: riic: Fixes and cleanups
-Date: Wed, 20 May 2026 16:12:02 +0300
-Message-ID: <20260520131206.932050-1-claudiu.beznea@kernel.org>
+Subject: [PATCH 2/4] i2c: riic: Use the "dev_name:irq_name" format for the interrupt name
+Date: Wed, 20 May 2026 16:12:04 +0300
+Message-ID: <20260520131206.932050-3-claudiu.beznea@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260520131206.932050-1-claudiu.beznea@kernel.org>
+References: <20260520131206.932050-1-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,22 +51,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+Use the "dev_name:irq_name" format for the interrupt names. This makes it
+easier to identify interrupts in systems where multiple devices may request
+interrupts with the same name.
 
-Series adds one fix and few cleanups for the Renesas RIIC I2C driver.
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
-Thank you,
-Claudiu
+ drivers/i2c/busses/i2c-riic.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Claudiu Beznea (4):
-  i2c: riic: Abort the transfer on completion timeout
-  i2c: riic: Use the "dev_name:irq_name" format for the interrupt name
-  i2c: riic: Drop the space in front of the "out" goto label
-  i2c: riic: Drop empty line
-
- drivers/i2c/busses/i2c-riic.c | 41 ++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 68d359ce2e66..57b64d82b681 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -567,13 +567,18 @@ static int riic_i2c_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < riic->info->num_irqs; i++) {
+ 		const struct riic_irq_desc *irq_desc;
++		char *irqname;
+ 
+ 		irq_desc = &riic->info->irqs[i];
+ 		riic->irqs[i] = platform_get_irq(pdev, irq_desc->res_num);
+ 		if (riic->irqs[i] < 0)
+ 			return riic->irqs[i];
+ 
+-		ret = devm_request_irq(dev, riic->irqs[i], irq_desc->isr, 0, irq_desc->name, riic);
++		irqname = devm_kasprintf(dev, GFP_KERNEL, "%s:%s", dev_name(dev), irq_desc->name);
++		if (!irqname)
++			return -ENOMEM;
++
++		ret = devm_request_irq(dev, riic->irqs[i], irq_desc->isr, 0, irqname, riic);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret, "failed to request irq %s\n",
+ 					     irq_desc->name);
 -- 
 2.43.0
 
