@@ -1,120 +1,125 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B7E3C0A12
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AF3A2543
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 09:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779269274; cv=none; b=moQSo1L/TF2PxFTiO8VeIfOA2E1b2CoJIclFR9uVt8ky+0eQfMG4gsQweIuEEJyH5Dwa1fPPjSRmfVJOW9laFJhGTafLxAnPYSrg33d2kODUAJEebqzqNDanXdwk9/xdKemTK8KCcZdlD00dpqTT6HuKl7YE/maKqlTi7F+tni8=
+	t=1779269393; cv=none; b=OjOsxKw19cAgeI+Hs0Qpoe+oYfKhTtLCKjTmv9LuEgZUUnJjUh+nsaGKPLOimu3CtInG/6BDg+mIil99MduqMBBh3C961ZWGemns+quvBPiDAkHdP6BeV4XQyrJdrqVo8g/Dr6v6kapNU7eaw1Crxk/3PZQ5FJkDT8nhqXdY+xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779269274; c=relaxed/simple;
-	bh=cqcKGoxGxtGWXpqUGB19b7cxo39gytYLyy/dKTEdc5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n53K/iJ4VKN9z47v6967MdHplgBHgn3SuL2iyyFcoH3gb+iWy1exXqkXxjCC3yaao3nlueCW7c9ow3UjZkjWVRditRUzZwGLrMPUAiLq5Hm5r51wVkjoiZCG95s209JbgDu6Ij+jgrTOVawZEdNO+7PniifIZ8hjq5WJwSP12Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1779269393; c=relaxed/simple;
+	bh=EjAMWc65H0NBHcJrRF8ZPun1V8oREyg5MoMG6na1NY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DQpB7V/4q0DYBrnxNe+vh31mGGrJ23lsMBUvWsLOHstNXiWJXSBUbmvmRGB60cdLs50ZMebCELHNSSw1XVnGYTw+LrGAsYaLnxZazZd0Etx6jQz5i30c1KNkV7SJ5TR76EX5Qxo06GMTlmZdZKwVaWEiR7FbgCr8atOOSnhkBZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSmnGDtz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-90ea08cc5ceso791035085a.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:27:50 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSmnGDtz"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488b8bc6bc9so27015165e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779269390; x=1779874190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJXcLlUsgEhIc4w3TLsV9eUQAnqp7oDifuEz48zVFFQ=;
+        b=RSmnGDtznFgo4bDc0IOGhB/U0vb0Srz6uY4KXU2iAk94w2j2woqd27Qridu06tEREj
+         lMcZXqkk6/e9ZtS5RZBLh+ZS2e9ayD35Fl1ZTWFC6zVjOw8rAcI4Hdzgn3CSnI6V4+Yv
+         KJo2COOUTe9f8dm3+QmV+LqPJfhQPV1yXw5gvlfaGPnZxv3yezGjxLUrDCmVA1STLagS
+         /NY9utkxaQ+A3uLKHPxNq9kvl/cVEs+vy4uUw5jywPkg86KlWOISeGFz/sd4IvIdVU1o
+         R4aEgjgOx6cjz5eZFmthRtxP/px8YfxQ4o0ROjTOZSclDZfoVzZYU81DajoH9JJuCl6z
+         VAQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779269269; x=1779874069;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1779269390; x=1779874190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bSg8CcmcyzhUpjDW73nfoHFxPOMVgUx5GEZqNXk4ccg=;
-        b=VBBlcChGJk/XQV0Kyx6PC7c3KrAWF/BzmyOnzbSPt72pP3g8XynLt9VrgqXeHAOy8K
-         2yy09DnlrXOMhmkyEogDVdwtrB+PaQspEbND1OorhrDWERYhx991/4W1UjKirPq0UYSd
-         HFjcD3/Z3HQgmzU5mR/ToZ/73KD5Iqplum44pKcSOe6Yz8AI4lBV8Yv6t7h/mBe2BWQ2
-         N7rF9uvYcUGjQOdDzA/vsPIDxIxwmCfWPToAeIkb7/Wz7EvvJ297j9g92uC5tHbn49KY
-         54jfYgHbe7+7Xw6vaJFdq8/9++ddI/5IUN/7+nHFaqcvMaVgxqlHqkZudFo0+Lm0rUwW
-         TeLw==
-X-Forwarded-Encrypted: i=1; AFNElJ8cGi9nB/hBMzelwqMRVyAwEZTJrE8f4yEjKU6SAsfIGPhoIiCnduJvbopLIh5ZhoqCfUpv8QVnfEIJP0fXmoo2Kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhM+tGXtL391fbpOA3BHLQpFgBhk7ygeiwnET4hQUYlAmg+47l
-	D/0CxhfJ+Dg1fvMzaFhTSRM/m44PIdq2H9HvTlbD6PujxKh4eeEYWSyqDsefl0RyvEI=
-X-Gm-Gg: Acq92OG1waGMYeYLAaMXPg93JYGEIyv81ZHtTnfkUdx0cIcEtJvv63dIOXQphWNZDHX
-	YSwpSJ8/ytTYV9Qsm6R+Rvxns/utHtxtx8fGfxvdSLjpfFIc98YTtpeD55CFe3W3FaTVZXW28dp
-	k0aL/gReoD38xIx5/ZTrfSa+cOwqjo1vvgwbDPEP9rSWPXgUrN4IxGV2cC8BLOF17bjltrg43vh
-	wmp3Z1nDhNWCod3ZFXM4Y2+tVRzhQ2qqfToyjTf8pa6U7VHs24RPJrqcDsMAgB5X+N37pIMaIkS
-	ZqJ+M2bu+Dd/2r0oAcTemsdk3E7RKoBRzl0NjhqudHa3bbX/f0z4x3bKpwGPJctVWqH6iZEIfBU
-	zEaBuAOZ6K0w/+1UsHVAIE3ead+zuX4aUmQX+dlaKOudNzCNHwkrQwDS3kLl1l+nSAvCxW9hAIG
-	YE5OC2HzevCbo7PnciG4NCmgSHVPqyG6Fhwhkk408GVeNWUXqvCwEdWA3RRqzI
-X-Received: by 2002:a05:620a:4406:b0:911:2d04:6649 with SMTP id af79cd13be357-911cfbd1dd1mr3359719585a.29.1779269269224;
-        Wed, 20 May 2026 02:27:49 -0700 (PDT)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com. [209.85.219.51])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-910baf22315sm2144452385a.21.2026.05.20.02.27.48
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 May 2026 02:27:48 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8ca12973e15so64656416d6.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:27:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+U5bAP5c0I8gUcFNQY+r7EBDAl8+Lz0Yp1zgw+E3Sb0YQEyROxNkktIWBrTN4MZn77v7ZSMaQp0OWJFeY1sryp0g==@vger.kernel.org
-X-Received: by 2002:a05:6102:3e1a:b0:631:28c1:154e with SMTP id
- ada2fe7eead31-63a3ea83841mr14744535137.16.1779268834569; Wed, 20 May 2026
- 02:20:34 -0700 (PDT)
+        bh=oJXcLlUsgEhIc4w3TLsV9eUQAnqp7oDifuEz48zVFFQ=;
+        b=O7ebiqAsZTejP2woYvj/dPeUzvL8+y7UMzvCC3hYVnenD2K6SjekSB2lPSuYMBjupW
+         WgoWZHcq+ss3TnoL1jMfPKo+YPzmDp83AArM56MUHxlVMna2xTrdZUvcJFYnp2mx5mo0
+         bK03iThvFYlCTURWF5YffwmnpfogkiOAw8vBfgFlFQ/Wm1K6VL1yI+MYH+z4wZC/l0rg
+         NOnxLQlt6/Wg7yT4LAHE1m8PEykgrqvdRM5h8nakG7YIiFEjJzuzBxOgRIiMv0T72Mw8
+         7YE/Vt/NJbX9IqmLh6dxQa2XAFGEaa1Puij7X9d4NLRlHi08xODxMLqTLpyVfzsNQw85
+         C49A==
+X-Gm-Message-State: AOJu0YwSJmNknkV1pTHDbYXS0+hRm9rYypdvtya3h3gtS3cMWA12rot0
+	bgXEelf3HUK6Iq/9LjRYPtIF2Bng58uM1eCaejyA/fwoJX3vNvLEadiM
+X-Gm-Gg: Acq92OHJJkZ2kbYvm88DAq+kVMe/4ea+R4pdM4949y0dh6o2IVC6Cqr/J0YkxwjLuMX
+	xmuk6ZhIaC7h7a18PYuB+01nVaYRoZmXgPwzAUTksNiYUQgIDmHceYZaGUgoSKeR1qwCUrL6HTN
+	DJBVpkhaZjMKYm7BPUjvgimvnIlopQKk1be85XczOFu0iggsovfQCE+mQpr4UN+rHwGYvRo3M5X
+	ymPpnw0cFraNepA5HPx31YUPypnxNhgvhRyRHjdpfTA2A7fMi2FjnLuK4pGRREG+B/usYVc5rR/
+	K5kcJBr1A9yMaIVMpEnKv2LKtcxxhr5Tj8Ol1+HGZLQ/W7PgzV+SGe9VJSk1dUIkKNV3NxYD07Z
+	XfmNDn6VkVa1M/chEdXuxj7ibyQl7Qx8neDxMFj99qefukE4imS1WmwW1lOh2odf6zdX6D+BOwF
+	lx5REIpHVtfscYNkEFDxMoF1onZKRdAvUjprOImtvvvpMNjWTDuSh0GAKnzP3v1NkZGkk9Op3ji
+	1BuomrDhMCLOLSrOmdHxKSKC1AH/K34IFKyI6l/NcHEfTN4
+X-Received: by 2002:a05:600c:1512:b0:48f:e26a:1744 with SMTP id 5b1f17b1804b1-48fe60ecd67mr211947555e9.9.1779269390015;
+        Wed, 20 May 2026 02:29:50 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:dcb8:81c1:dc9e:cd68])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48feb00bbe4sm126455775e9.12.2026.05.20.02.29.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2026 02:29:49 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: rzg2l: Rename iterator in for_each_mod_clock() to avoid shadowing
+Date: Wed, 20 May 2026 10:29:47 +0100
+Message-ID: <20260520092947.70596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260520091111.67666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260520091111.67666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 May 2026 11:20:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUpa_R0C70eJjS6urpSx3jtcVnbjZ8K0OvhO25Bx1-u4g@mail.gmail.com>
-X-Gm-Features: AVHnY4KsTghlnywZI5vA1H9Z8FXzfT5cshnAIjblbGSvrCdV0vTaYH8EOrOdrQA
-Message-ID: <CAMuHMdUpa_R0C70eJjS6urpSx3jtcVnbjZ8K0OvhO25Bx1-u4g@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rcar-host: Remove unused LIST_HEAD(res)
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, 20 May 2026 at 11:11, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Remove the unused LIST_HEAD(res) declaration from
-> rcar_pcie_hw_enable().
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Rename the internal loop iterator variable in the for_each_mod_clock()
+macro from 'i' to '__i'.
 
-Thanks for your patch!
+The current naming conflicts with local loop variables named 'i' inside
+code blocks that utilize the macro, triggering compiler warnings due to
+variable shadowing:
 
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -346,7 +346,6 @@ static void rcar_pcie_hw_enable(struct rcar_pcie_host *host)
->         struct rcar_pcie *pcie = &host->pcie;
->         struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
->         struct resource_entry *win;
-> -       LIST_HEAD(res);
->         int i = 0;
->
->         /* Try setting 5 GT/s link speed */
+  drivers/clk/renesas/rzg2l-cpg.c:1494:36: warning: declaration of `i` shadows a previous local [-Wshadow]
+   1494 |                  for (unsigned int i = 0; i < clk->num_shared_mstop_clks; i++)
 
-Indeed, this was never used since its introduction in commit
-ce351636c67f75a9 ("PCI: rcar: Add suspend/resume").
+Using a unique identifier for the macro-internal iterator resolves the
+shadowing warnings globally across all macro expansions.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 3fd4a8bb4b63 ("clk: renesas: rzg2l: Add macro to loop through module clocks")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Since this does not seem to cause a warning, even with W=2 (TBH,
-I had expected some shadowing warning), no Fixes-tag is needed?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 426e93dc7a98..782367a3d98c 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1402,10 +1402,10 @@ struct mod_clock {
+ #define to_mod_clock(_hw) container_of(_hw, struct mod_clock, hw)
+ 
+ #define for_each_mod_clock(mod_clock, hw, priv) \
+-	for (unsigned int i = 0; (priv) && i < (priv)->num_mod_clks; i++) \
+-		if ((priv)->clks[(priv)->num_core_clks + i] == ERR_PTR(-ENOENT)) \
++	for (unsigned int __i = 0; (priv) && __i < (priv)->num_mod_clks; __i++) \
++		if ((priv)->clks[(priv)->num_core_clks + __i] == ERR_PTR(-ENOENT)) \
+ 			continue; \
+-		else if (((hw) = __clk_get_hw((priv)->clks[(priv)->num_core_clks + i])) && \
++		else if (((hw) = __clk_get_hw((priv)->clks[(priv)->num_core_clks + __i])) && \
+ 			 ((mod_clock) = to_mod_clock(hw)))
+ 
+ /* Need to be called with a lock held to avoid concurrent access to mstop->usecnt. */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.54.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
