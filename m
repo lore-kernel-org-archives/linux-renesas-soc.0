@@ -1,110 +1,104 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0173BD64D
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 09:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E183C0617
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779268611; cv=none; b=mTshxwxoiVAzPHvnenYvHrrrrc3rrbQXCBh2/q66dOOlg+O0LS14CRK34MXnv1WqGGQrrdbnacSmhRzFkJH6HEe+Y+QmghKKbrDX6dxYL5XdLSbltmKOyKOli9V20Q4hz0bSLAxRL7JxD9xi1trb4QlGt3QaEeGxhpYb7NaAVE4=
+	t=1779269058; cv=none; b=IJsUCrZNBnjHwxCMf2TSTXMr+SndFJHNqwjA2mNCXDRmD2qFMQjXmM206JUpOMfaetiO7LkXCZnEAE/r1KxFBMzx6oJkmQMHiLQMEYgBKuU+cuL+i1DeItfqlJN9ufzycuTgntCt6/A9FljzoV8K+wFmTLPRbMqUvcpfiAXlO8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779268611; c=relaxed/simple;
-	bh=IOr9JFAYkK0D1GYYFaktBsHjla5a2OoBdt+TfXAJ2QA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LRcUdwbj5zup6pBIlD5L+qhwfq9clS7jlE7wvC1JO3I/TmaXJPVUuZwwbPgtm4WpsJP1r3Cw5DP845nMss0Pas08Cq9NZZRs062OcCDw62AZ8GsjkXl0PYSUS9ehLnje1xEL/LtOFSL3BkZjCWvFwpFuQnXazBRNoeE0Wu3DPuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGtsgmpJ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1779269058; c=relaxed/simple;
+	bh=t0R7qCOJA+kypC4pLNsFX7y7i6Obkil8w8Yp7ar07jU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RWwr/Klwtwtl8ZHVzvYDlQokW+Lh7SBxIasvALB8TzSj9jV4lRX10PqUvK4/GVib3AIzTzH9pOc4CUGgdIZxKGzh4W9YeigZj1DOrz7jRuRdDDTuZO89sCmeG3VuczXYWA+xkpwwztg+xDrbwGU6v0XegM2g0DbuTyOM7LZSr+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGtsgmpJ"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43d7e23defbso2534870f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779268608; x=1779873408; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nbhwFmtr4akbt5wCUcFxq3oA7aB27CG9nkAIDB9UvGw=;
-        b=KGtsgmpJn2VO0Wb0YJ3rqmJnVbtXj9k8n+thRN3CvjcSGdZQ5wiTUWNAtLwp9buklE
-         0CB6gNIhUYTROvatU/b6pSC6UxZyGGWvAaWPMVTpWs62Gm6ax/O6DeEMnGecHZRaRS+M
-         dNJxHfZdV7nZhmgBjyLXM6sApmJZQJ9GyFIeJGKB0xp0K3lEdcwZF/+3WqdwMbsSgn8E
-         j0iSIfj5w+lvIkqqMGL6pgoHMU+zAXa9VlqHYyidRykhA0n1K6MdRHxYBTStBJj2kBTB
-         nFgI1oO8kK77WHO9yE4J5dw8uFs2g6Gfvu6xS4+jMQJZCIriVgk+vc13zumpcohLe1JU
-         c/EQ==
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-57512b86273so3405672e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:24:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779268608; x=1779873408;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1779269054; x=1779873854;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nbhwFmtr4akbt5wCUcFxq3oA7aB27CG9nkAIDB9UvGw=;
-        b=Au1PkZ0YV5jT0yY+VB+pQF0j6Je7UJz2oe/ZRtMgn8YpnfNwJ2LtKZO9qxYoc5wRlL
-         tB+d8m/gOffOewAmeaU7ASs3C+NIAkeRwXofgjWF5tSTCOEmVoqPFtlRgGU9YjlB+FBm
-         0r3SJ1oWV3bEm1NePQfe99V4A9YYu3XCCRONhzIrotL8URVwYZ+e0NyNRqRod2JSPRu2
-         WgpZ8hr4Zb7I5ACrjd5u3GYjH2J2fiOdp6lgH/Vp82QsPOZO+SgJhBY+1lxKCEsReEfy
-         bKT9ae5nXMO731FnMdE6CPLONiKla7WP0w8sbPXe3MMTVKrWOyN7zo3KAoSoo60MCi34
-         4G3Q==
-X-Forwarded-Encrypted: i=1; AFNElJ9fqwDm/vHRqI0roii9+TCBx0p/Vd3aQVBNONrYcvj+V4rfUPJqdyDjldHId+bje8mTfsJRmJprv3sucVDIhYUf+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQaFl88Mr1tv3PjZpwl2xNXrWipjeLXoRZ1qgBxHh5Skesvnje
-	vYzcUEoKqMXmRkTQPwW1I0vx8icR44iixhrxUKlP8LRfucKY58tfgetQ
-X-Gm-Gg: Acq92OGxOcEFgC23IQ5HPktGtA6ekdWIdBvuDwPCXg9ri2db54O+yjywkCbKrMyLBoZ
-	1u/I9B9NroQd0bVvjedjfMo/aSpGLB8f5fH8gciMIlpWXMlFXOKqI+zNWwMQeolwACerEj+kNl/
-	DYEQQpMnBwWDTUjzFp6xbHJAgEUZvcgZ3ZMaZZVAiSBSk9DHyIpUExgLIyXKiPQWwolRyQbApPp
-	u2BR89JsLApX5By/xcjzBN/9LQHpF5C8Q6qUYZrEW1usKx/AnLW0I6rj9nfgkDGTZ5ezwm4phkz
-	Hqa3DDFoN0PUj45ljJoNoTy1Nb2QlqiG1vakP3J3Vh581wlMa7wyQWOS+hMUFKGbCQy3xF5k0Hz
-	wkcisa5egcj7r28fowzthxpx6WhmWEecgQmx0+z1GpjyivqkPpPlAZLgK3b8HDPy3unPqK3HtaD
-	Al9w+7A2vFaB/KD0IF7FFTCSORgKUk7IPDI0ZTCdu3ASyC0qJF9nLgVFyPGjPVWnQeBILdsSaeX
-	NthyLUhENHCOg7km+6vPdOUuCr3zbDJAEnYdckJrrYf7nK9
-X-Received: by 2002:a05:6000:4007:b0:456:ba09:3e64 with SMTP id ffacd0b85a97d-45e5c5b3669mr36536376f8f.1.1779268607316;
-        Wed, 20 May 2026 02:16:47 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:dcb8:81c1:dc9e:cd68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45d9e767d0bsm50751059f8f.3.2026.05.20.02.16.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 02:16:47 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: John Madieu <john.madieu.xa@bp.renesas.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] thermal: renesas: rzg3e: Drop stale syscon documentation
-Date: Wed, 20 May 2026 10:16:38 +0100
-Message-ID: <20260520091638.68370-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
+        bh=jWlK525gobXa09fkjsvfYWkLJerETe977EgEuu7dj3A=;
+        b=SaPdz1ejqyAS4hIXQDiM848GecwEGI9D987UkjwCaE76mQBME8mMFsx1PEX2sCVmed
+         yUkuT6f773zkvFVfinpVBGoelNrYfBx/ACtVxFYddk1jumWq3eBLsPjdVm4Mai6Yaoae
+         vO9WI4SCEHePP740NWPm2DRe7IeKJjUPxUv2kpNBuIA61UxZF/kCNDLGB+m9eXeIw3pS
+         fpGtAoVaFfbNFEEOBVs0+vrp2ayhxFxgYavEhm1ixIwfslLvNL0oPoJ0UfKt40AiwGPS
+         EJ6Gcg2KrZS7u3xNaqZ6G8Nlx40My0ZIymSmQAYL1ssWYNEYDm8TEiUWBxD0YRBEIvMw
+         JI0Q==
+X-Forwarded-Encrypted: i=1; AFNElJ/ymbsY8rB0i54RrSPcG+w5Yq7IF8+oojU1qZvEofo0ChQbCF03BBl1LEK0GUfTh0Fgpzt8+eMkXhpZGJ1Uy/Q3xA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8KrLiKDojEoC0r+W2Ed/flj53zFDH1riWxdhqroyfcLvSrHME
+	+nogX81gYG++5Y6vNAihDikuEqilxaMZELMeWPK86n18s/w43zmEmyijSe+5Bf8c1UY=
+X-Gm-Gg: Acq92OHqHTA31z8O71aGjLvnuqzOKXoAcVoEwHBC1zDeScOBo0Y1HxGaXTd1vdczNbV
+	EwZlM3sg3cw6wSAxbq9rfDQXHt/AJ6bb96ekF35AeTefC/FslnetXegV3mcdN/I3vS8nL6k5IMV
+	FL7/K/VOCBm1w5bErAWAYfusQey8qL3gzWVVjQvAff4CB6bgtoLg3I8mUpJRXcCFWlFg4W1SZuP
+	QD6EYP+v4PGJE8NCy1h/ZT1FQ3xC3c4uy60Vla0MG6UOzePYtnn0VihDQ8y1gAiY/48A2RyIqPc
+	aJOdNrynk5PptujljENqSXhn156J/aUXaODpnjX8HuSxA5yJiNK2fBUGoM8bYanQAkO/q1/fBMU
+	FFctTBcq7k/tRCKv9Uu6JFzsOmHbuRZwBy7myVcXVbzXimBgy30CFf80VrCMv++2VrPq+36vKIC
+	1yaXL1S8KpbimSib7NmUjbH2/W/sk9OnxbGC5kc0mVl9az5KkUxRQFaKTt+8oy
+X-Received: by 2002:a05:6122:224:b0:56b:815c:961d with SMTP id 71dfb90a1353d-5760bfebc46mr12793887e0c.5.1779269053791;
+        Wed, 20 May 2026 02:24:13 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5760f3031b0sm10733255e0c.0.2026.05.20.02.24.13
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 May 2026 02:24:13 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-6312d29596cso3411597137.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 May 2026 02:24:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ88XzDuz9SCjyv0g7V8d3RtSBGnywJCRXmEC0ry6a8SFQ9F+qzuo/UkDzvetvVOC3rlWqMTAMaig/HYli9c2l2MZg==@vger.kernel.org
+X-Received: by 2002:a05:6102:3752:b0:631:81d6:e153 with SMTP id
+ ada2fe7eead31-63a3fe96d2cmr13359189137.30.1779269052807; Wed, 20 May 2026
+ 02:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260520091638.68370-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260520091638.68370-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 May 2026 11:24:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXDdS1_69+36h=HRKGvbZQ9j8_ma_sFW=ajXy=sn1M2Cw@mail.gmail.com>
+X-Gm-Features: AVHnY4JncTFJPC2vXbJQCCFkFYfP6cmRpG6koumSuxYI6KHadzsWv8rM-ius6wo
+Message-ID: <CAMuHMdXDdS1_69+36h=HRKGvbZQ9j8_ma_sFW=ajXy=sn1M2Cw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: renesas: rzg3e: Drop stale syscon documentation
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, 20 May 2026 at 11:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Remove the stale kernel-doc description line for the 'syscon' member
+> from struct rzg3e_thermal_priv.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Remove the stale kernel-doc description line for the 'syscon' member
-from struct rzg3e_thermal_priv.
+Fixes: c33edd8f936ccf2e ("thermal: renesas: rzg3e: make calibration
+value retrieval per-chip")
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/thermal/renesas/rzg3e_thermal.c | 1 -
- 1 file changed, 1 deletion(-)
+If commit bf746e2a41efd986 ("thermal: renesas: rzg3e: Remove stale
+@trim_offset kernel-doc entry") would have had that Fixes-tag, perhaps
+it would have been noticed that that commit removed _two_ members?
 
-diff --git a/drivers/thermal/renesas/rzg3e_thermal.c b/drivers/thermal/renesas/rzg3e_thermal.c
-index f0e29fe633db..086bd3da10e1 100644
---- a/drivers/thermal/renesas/rzg3e_thermal.c
-+++ b/drivers/thermal/renesas/rzg3e_thermal.c
-@@ -87,7 +87,6 @@ struct rzg3e_thermal_info {
-  * struct rzg3e_thermal_priv - RZ/G3E TSU private data
-  * @base: TSU register base
-  * @dev: device pointer
-- * @syscon: regmap for calibration values
-  * @zone: thermal zone device
-  * @rstc: reset control
-  * @info: chip type specific information
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
