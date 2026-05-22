@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D23D3DD863;
-	Fri, 22 May 2026 10:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A85F3DEFEB;
+	Fri, 22 May 2026 10:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779445139; cv=none; b=cgTgkaG/IVE7c2/AOuR86jRqvg3ecNijp9EMT2xJpkULsVmvPsiDZHpxcyS+gxdedLwD+YwELxJvHux2I3I1cSX2iz9EUaSzxixNiZ3z+TkUp1dBhE/XMzgddf5niMKD94nQPk9JSOmr1tKf2xhTe5diAKRSsNVqxxVGW8zcfv4=
+	t=1779445142; cv=none; b=txgASzkiRnwcDxcp+et4DOPQmj3728YLVoH24otNLdYTg8dSjV+vrrEjXpfDsxJScNm1X/f7Is2CJ1qBOQK0th0o893/i8gxewa+HyLLwQrsY5sUOmBHWyVMjKnwnLZkDC0HihvePffOsROtF35GeJI14XhFA22Nu8ndVCdTcV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779445139; c=relaxed/simple;
-	bh=hLXRApDK04Hhk2uYEURZglRIH56F+fpQjp7Tww4fcGc=;
+	s=arc-20240116; t=1779445142; c=relaxed/simple;
+	bh=/X62KWmzAmStDDgZowmuKDOpnjU2J3YPFUr+QdPAhBg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ohbijc/wBkMtBcMblqveaRL2wfWa8E/I2h5gGL673SvZDIbWjKmNj3En28rJ67zud9twkkmzika2AAIcGJixILhT8nuWW1zpF3VdPtf7Jj+H9NOqA5pYFtXTq8XQCo35lPT6rNRVmmL3a1dPKJJVYAp21asmQVFATWJfZAqYOWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zoj3Kl8Z; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=kTkaBdGrouX3FZ/nrYCs9Y/W0r7KW7YylqHIgpTM+AfMI5K73jpu4gaOgE/S522RjsnWswzoLL0eVc41jGEp02E9EFYuaTLlxaLT9HM92d8eLVdc8Nq6RQnir4BGuAAOXzwHy2pPLDRLgz3P8VSTIshwmlCTr775XDQYHcCuvus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eR948MYO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zoj3Kl8Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 549101F000E9;
-	Fri, 22 May 2026 10:18:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eR948MYO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659D61F00A3D;
+	Fri, 22 May 2026 10:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779445137;
-	bh=FzC0PfLaUCFbX40pK4alDEqv916An2KDJu11AtBrqdg=;
+	s=k20260515; t=1779445141;
+	bh=+vFJFlgaUSzlhWn87F6K4JPStiuv1ICWwA4GM2ytu98=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Zoj3Kl8ZSQOE6ScbTouakXO/xAzb9g7EICV6dBevs/Py4FSGEMd5AayGjRvt0S5d2
-	 ykGam6xyi60rg34v3wnfX2EFk5JoKG1aErC7z9rNOhltiQTMpRA7PWX84RqICw1ZcY
-	 B097XIqFX+rJO2FluwaEq7Z8zf246yi7ysGiBlnQedj26sNRndK/mDtuLQ0cgw9vA7
-	 R+Ui+BZKADuBinnAvwPemoVAZHjxVqNQVw0Qtc2QdGs+b7zzHbED+VM/lkaVKKRHoS
-	 tz2DeLGAI3djNHpK3oiFa+8ZQiwx2Ag13uQCW7881giUTEF7m67NIvFcsrIF0gx3os
-	 JD7y0BGxkgbAg==
+	b=eR948MYOknWWdHEvPctgZ+boHq0n3tHGuKVcPKzZM9R8pSXK9MBflVTBU8ZbYPUc1
+	 t32ppFnSSusuWRaMvAhJqB/HB5GTdfa2AQiimTc6kHEygdBIZsTxjHyPVgOAQ1dApX
+	 4iTPZe5TRO7Sjim1AV9JSe/uCA2Bxj1cANr23nirX9Iaz3wi9CB+y3GwSNxoT8PUeQ
+	 OTloT1Z4z7iqLpuZ2nnvfgPIb42WWbJ2JumVbdebBtDjxTRf70mBnEufvLU6Lnoq66
+	 6EQrafoLNc8IjJXiNReWC48j41rs7b9midToC8wcmKdmVsjTFudZGpd86mUH+Obhqc
+	 fFjoJd4agtWZw==
 From: Claudiu Beznea <claudiu.beznea@kernel.org>
 To: wsa+renesas@sang-engineering.com,
 	tommaso.merciai.xr@bp.renesas.com,
@@ -38,9 +38,9 @@ Cc: claudiu.beznea@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 11/17] i3c: renesas: Follow a unified pattern for transfer and command initialization
-Date: Fri, 22 May 2026 13:18:09 +0300
-Message-ID: <20260522101815.1722909-12-claudiu.beznea@kernel.org>
+Subject: [PATCH 12/17] i3c: renesas: Drop the explicit memset() call
+Date: Fri, 22 May 2026 13:18:10 +0300
+Message-ID: <20260522101815.1722909-13-claudiu.beznea@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
 References: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
@@ -54,92 +54,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Follow a unified pattern for transfer and command initialization across
-the driver. This keeps the code cleaner and easier to follow. Also, in
-some cases the I3C device was enabled before the transfer data structure
-was even allocated.
+Drop the explicit memset() call on struct i3c_device_info object, as it is
+already initialized at declaration through compiler initialization.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/i3c/master/renesas-i3c.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
-index de75125eb013..12bf4797a70d 100644
+index 12bf4797a70d..865e67ac0fd2 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -648,6 +648,10 @@ static int renesas_i3c_daa(struct i3c_master_controller *m)
- 	if (!xfer)
- 		return -ENOMEM;
+@@ -624,7 +624,6 @@ static int renesas_i3c_bus_init(struct i3c_master_controller *m)
+ 	i3c->dyn_addr = ret;
+ 	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYAD(ret) | MSDVAD_MDYADV);
  
-+	init_completion(&xfer->comp);
-+	cmd = xfer->cmds;
-+	cmd->rx_count = 0;
-+
- 	/* Enable I3C bus. */
- 	renesas_i3c_bus_enable(m, true);
- 
-@@ -669,10 +673,6 @@ static int renesas_i3c_daa(struct i3c_master_controller *m)
- 		renesas_writel(i3c->regs, DATBAS(pos), datbas_dvdyad_with_parity(ret));
- 	}
- 
--	init_completion(&xfer->comp);
--	cmd = xfer->cmds;
--	cmd->rx_count = 0;
--
- 	ret = renesas_i3c_get_free_pos(i3c);
- 	if (ret < 0)
- 		return ret;
-@@ -760,13 +760,13 @@ static int renesas_i3c_send_ccc_cmd(struct i3c_master_controller *m,
- 	if (!xfer)
- 		return -ENOMEM;
- 
--	renesas_i3c_bus_enable(m, true);
--
- 	init_completion(&xfer->comp);
- 	cmd = xfer->cmds;
- 	cmd->rnw = ccc->rnw;
- 	cmd->cmd0 = 0;
- 
-+	renesas_i3c_bus_enable(m, true);
-+
- 	/* Calculate the command descriptor. */
- 	switch (ccc->id) {
- 	case I3C_CCC_SETDASA:
-@@ -816,15 +816,15 @@ static int renesas_i3c_i3c_xfers(struct i3c_dev_desc *dev, struct i3c_xfer *i3c_
- 	struct renesas_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
- 	int i;
- 
--	/* Enable I3C bus. */
--	renesas_i3c_bus_enable(m, true);
--
- 	struct renesas_i3c_xfer *xfer __free(kfree) = renesas_i3c_alloc_xfer(i3c, 1);
- 	if (!xfer)
- 		return -ENOMEM;
- 
- 	init_completion(&xfer->comp);
- 
-+	/* Enable I3C bus. */
-+	renesas_i3c_bus_enable(m, true);
-+
- 	for (i = 0; i < i3c_nxfers; i++) {
- 		struct renesas_i3c_cmd *cmd = xfer->cmds;
- 
-@@ -947,12 +947,12 @@ static int renesas_i3c_i2c_xfers(struct i2c_dev_desc *dev,
- 	if (!xfer)
- 		return -ENOMEM;
- 
--	renesas_i3c_bus_enable(m, false);
--
- 	init_completion(&xfer->comp);
- 	xfer->is_i2c_xfer = true;
- 	cmd = xfer->cmds;
- 
-+	renesas_i3c_bus_enable(m, false);
-+
- 	if (!(renesas_readl(i3c->regs, BCST) & BCST_BFREF)) {
- 		cmd->err = -EBUSY;
- 		return cmd->err;
+-	memset(&info, 0, sizeof(info));
+ 	info.dyn_addr = ret;
+ 	return i3c_master_set_info(&i3c->base, &info);
+ }
 -- 
 2.43.0
 
