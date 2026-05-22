@@ -1,74 +1,75 @@
-Received: from mail-vk1-f196.google.com (mail-vk1-f196.google.com [209.85.221.196])
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AF43A1CD
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 15:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED02378D87
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 15:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779463729; cv=none; b=bTnfLULGK4MvzLtK2/RG4y2ETZixHdn/5YNHULJqT3Mab3Z60l+hdloZzTx7bIY5k2Sgi94p7kwdydL3KK/EOhkbEV2wUaExAmXKRnqrl19eDNvc2hm/XnWcxcaaUtLvCQqdmOmUDe0+FAVorXXxltcWsU3KOEHtmjYGro+HhkY=
+	t=1779464096; cv=none; b=EaDWfqh4DpClxjdMHpmswZqQYVP+1Fy2mPrN6zArC6SQJ5W5T9MVgzr6bHa6uMW9c0o0KU4YrkwwHuawPYCmf4/M8jMhfvDXid/4JkRAft7LGL9lUaMVLQk3HFXtEtGv2Q7CYuKVAENI/AYCUSde5S7PpHHYnsr6Pv62qGRV2Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779463729; c=relaxed/simple;
-	bh=kN/9y9XwGUDJ1nAC1IWWtL6XoKcE5qMK3/fWnrEnzQM=;
+	s=arc-20240116; t=1779464096; c=relaxed/simple;
+	bh=RcKm+MJQR01WbzgcsBzYoy8Uo599kOW4Z1qyK0a9O74=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2i4yUaXyln6py3kYjKi1coYJoyBZ01/IsgtredhIYSKlFd788Xsno2ihPVnZPO75Js3WeKyPDq7fyz5tbIYv+AIMcpRs9rNcq8Y19JLUhLlGDJqvVHOzdpGKl5wvL/HZyJEP2Fba/X5zTP0A3lIOWHWjoh37fpXqUt3ZP7nyGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.196
+	 To:Cc:Content-Type; b=ESgsnwkHeDhoAfcZEmYDhrgHIXANwnziIaJKGWlZSZFadogjKJggRlkHi/XAAQBvDDQa0LItmwDuxYXDFeotHNvOzF9l/dR6s1JfxCnOoZYS90kgapXYUxKLq4ZLPujVq1763qs7GSMbAzuJ/yrkRFPQSoehHe4riw29lC+pq2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f196.google.com with SMTP id 71dfb90a1353d-57524e52a3dso6126628e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 08:28:48 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-57602a2d80aso2393422e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 08:34:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779463727; x=1780068527;
+        d=1e100.net; s=20251104; t=1779464094; x=1780068894;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=szBb9VN5OI/LxN852+H6x+3LXcGPvGU0m4BLzBAkL+k=;
-        b=rESWXidUbcerx+MofUtSxCwK4Boby1nbq77gx4f+lBS0FlcFciPSQLN+S0z6DpL8pm
-         mNLH5EWBmhTBf16e3ZcnWhsbmgdRdyzIeHKz+JnSM5OYjKUG6c3UdgBmhm/IlwC3vhgh
-         yo9mvIye04tHmH+TVXBBVcy1sdUf08ZnvDTrLLYhakJWQiUtfK4W159KtvZ31fs9zmkI
-         TqXJWOdpAm0PrGN9IefgOEn+RMU/ix47M6P/N/AjX7gBT2Q9AA6h6UIR+7D5H+rl7Sla
-         YbB8SzRrhjJiIdIFE4FD8VkrB31ZwgmmUMCkCglu/G3VuS56zxVjZiqPkEoPfMiYhJrU
-         ubZA==
-X-Forwarded-Encrypted: i=1; AFNElJ8/gfAN3AjJ8wUIkL+KX21b9rjgPp5+OqditkGPoTlZHzFxNL5dElzHnjuDm6lFhaKNjap66f8m9Ix2UAOcRbb5mQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkMp6XGv14cX4G5ZMQ67IiMFZOx1KQG1+/8AhbrNiDMWCNujSH
-	9MXo83igvNPsg6Alma6m34ToFfOixhuw/5sVnfptQ4fWMWKO7hte79j3Re3CaNNA0dLMCg==
-X-Gm-Gg: Acq92OF5jvJKtcXQi9dqHUc7ki4jmPwXWfFzdOGGKUF+KqOg0sDnNRe6nDyY0z/UAMk
-	AAMdzzue4ZRBhiOe3H/rMjhiHCVTQErsnGMNtGAAgS43GNL34OzmPsYxxb38PslAQJMVhtyQTnp
-	Bh4OS+LyHOwXt+QgCdP1xfJMJ3bGcNckSammeb9SE7gscEVNrIAW6ZimuHGJN6hYuXXTzEdA9zc
-	69lxiFK9o6KDbbyEql2dRtf5/FlBtyQOMT6xfmUfoDu3m2D3a8WiLqEhPeGrRqum+BYkDNjUc16
-	3GJ6S90tjtRlJ1zc/3oQ8543ZdPUnhz79b1Cs9+LZ6/qTCY8vCk85r2uZJ6SfNkEhaCMp92W3p/
-	K7zKAU8NRyr3LdgwrqTEO2eiQZb0XDQL+AIipp+rrTcR1k68EL5Zm/Z18sGzm0NQuqe2M21nRVM
-	iejp6aZp/sWr/78QcIuMHCWhmtrYI1igQ6mUORKWKyuRaW07ItEcoXowZAxOlm
-X-Received: by 2002:a05:6122:2203:b0:56e:e80c:bb25 with SMTP id 71dfb90a1353d-586649efacfmr2614934e0c.13.1779463727371;
-        Fri, 22 May 2026 08:28:47 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-586f791fa49sm2599163e0c.12.2026.05.22.08.28.47
+        bh=FixydBMStjIkh+xhknFyVmJmnf/BoQ9WGZ0+yOe1GDc=;
+        b=Pud7BMmMm6+grFKpsG6t54ZhASy06nIOMyDa74Ztpx+x6Cn0VNgM/MlY+lAi03xvSU
+         vb+kIzA9mgth2meXXo8YUenYNoCx97MIRzRvCpMKvuDClZqd9yXdY/AS5Mkqen11AmDM
+         tFiJYXbe6zrbYVvKCQ5aG4hfIj9SwzBNcmsaQLmGHt40wRcUmTIXcadMboKBPAprX27F
+         P+o2bkq8GeNPoWMeAZg4E4tv65uE9jcbBLrsbRzGSrNGmbBILyukSm9fS251pvJaWoEp
+         XEv0yRMAHsDlVj6iB/wNHjL6abf4Fnwq4XcsItJxUBqT+77RyF4qvEI+ePcuHTOPg9gh
+         lgIw==
+X-Forwarded-Encrypted: i=1; AFNElJ9Yqjv5XaVy2+rEN1dRTzixQh/tS3bZj265ld9l3uzQ6BfH5zRznav7nk41P1EmrQmnSeKbH6kbsUxr/TqfDkX1/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4VAB7q1MrBrpw21kNql0DN718XUtoUEU8vILYfsg3Qc+eUGew
+	LtkCkGAdpoRC+1fx20ST0xAnFfkm1JrQlGpADdH/+n6q9hM/B0kaT/ysMMQHk4tEHIA=
+X-Gm-Gg: Acq92OEn50ZHr7lH+jrO3xoiTmaaFImAn2JX3utznGkeviD/4tBdaQjGvRbX38WO89x
+	pMpsis1NnAGDT4NHDZkf3bZ9W35PBaMnDBSa2kvIki4QYjYYum38dHEPNt6L3f97U1GDZ9YN7ET
+	0c630IAkwHcr6CUDT2iyixtmw9iFz/dnMxUh/Ny2b2GYQJkyqcw4LWXtSfY58cRO6IO3t+xsjKo
+	vrPYkETBliWVVTw6bn+mQCgn9EXAAE88aigw338NimP0g/M+GKjl+A9D8oeMNh3vhZ2aznSPrvP
+	6Kng3mqph/AL9WcXm4Pn9TmTbM5BkUkbZCyLBkx/FYhRlNjurWwPq1cqibJtAhwBuTZ0Fh17Rnw
+	ER+kLURWdtXl5Wro0kDBpyudHvSy0Kkn3jXCMpvH6Sfmp3FZzMoqAMOd9o1HhFuDRbbkqxhRraT
+	lRkiA/fNB7Pqc/PYmMgt5cZQwx1Ufgzb4ZGFF7TKOHUKld3XuAnSOavQzCQaB+OVxd3uJMTOc2S
+	yc=
+X-Received: by 2002:a05:6122:a5d1:10b0:586:f3ee:2150 with SMTP id 71dfb90a1353d-586f3ee2352mr1145796e0c.13.1779464093657;
+        Fri, 22 May 2026 08:34:53 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96173baf56bsm1943356241.13.2026.05.22.08.34.52
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 May 2026 08:28:47 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-631466587e9so5517282137.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 08:28:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9RkIVK0Pro2yhDL3XYLwK1bZcDWeR8BwBBxIkOX4XAJNPYHoNrWfz5Mnvv5cwVsJ+gT+Ex+8+0DUXzuy4yRRa2Vg==@vger.kernel.org
-X-Received: by 2002:a05:6102:f8e:b0:604:f29d:84be with SMTP id
- ada2fe7eead31-67c70e5f66cmr2706370137.3.1779463726809; Fri, 22 May 2026
- 08:28:46 -0700 (PDT)
+        Fri, 22 May 2026 08:34:52 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56a857578a8so2979621e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 May 2026 08:34:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/K8z3/XAoezAR0k+MiD1gLyh8QGJVfiesOPXRJsw1Oc2SQh/3eG8sObrEygSzxX3MUUNFzaSdtaZ0ynd4OiR5MAA==@vger.kernel.org
+X-Received: by 2002:a05:6122:4d0d:b0:575:3b9e:db3e with SMTP id
+ 71dfb90a1353d-5865d70cb8amr2549460e0c.1.1779464091785; Fri, 22 May 2026
+ 08:34:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org> <20260504144534.43745-5-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260504144534.43745-5-marek.vasut+renesas@mailbox.org>
+References: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org> <20260504144534.43745-7-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260504144534.43745-7-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 May 2026 17:28:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUTsoEH60DBWCNnXzaZmfOcDfZ7vEaUgJetqqU-qwBxXA@mail.gmail.com>
-X-Gm-Features: AVHnY4K2cO6mOrwYyMVCwX6fOKSnvdh0vCSY19G3lWwxUQ8j7rXhdTpY2ZF4U8M
-Message-ID: <CAMuHMdUTsoEH60DBWCNnXzaZmfOcDfZ7vEaUgJetqqU-qwBxXA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] dt-bindings: soc: renesas: Document Renesas R-Car
- R8A779MD Geist
+Date: Fri, 22 May 2026 17:34:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWGsdn-8R7BeOfXOtrhHNW=FKW+rdG8cH1r=+GDnAE+Qw@mail.gmail.com>
+X-Gm-Features: AVHnY4Jf1Pww2GHfOAXrLj07kMcY44kD7u6kHAIZKMSWedE81wNkTdVC9LQ0_SE
+Message-ID: <CAMuHMdWGsdn-8R7BeOfXOtrhHNW=FKW+rdG8cH1r=+GDnAE+Qw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] arm64: dts: renesas: r8a779md: Add Renesas R-Car
+ R8A779MD M3Le DTs
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Brian Masney <bmasney@redhat.com>, 
+	Nguyen Tran <nguyen.tran.pz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
 	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -80,21 +81,22 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Mon, 4 May 2026 at 16:46, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> Document the compatible value for the Renesas R-Car M3Le (R8A779MD)
-> SoC and the Renesas Geist development board. The Renesas M3Le SoC is
-> a register-compatible variant of the R8A77965 (M3-N) with reduced set
-> of peripherals. The Geist board is derived from Renesas Salvator-X/XS
-> boards, with adjustment for the R8A779MD SoC.
+> From: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
 >
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Add support for the Renesas R-Car M3Le (R8A779MD) SoC, a variant of the
+> R-Car M3-N (R8A77965) SoC. The Renesas M3Le SoC is a register-compatible
+> variant of the R8A77965 (M3-N) with reduced set of peripherals.
+>
+> Signed-off-by: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-> V2: - Add AB from Conor
->     - Fill in Geist (RTP8A779MDASKB0F10S)
->     - Add RB from Geert
+> V2: - Drop DU until it can be tested
+>     - Reinstate sdhi3, switch SDHI to dedicated M3Le compatible strings
+>     - Add no-mmc DT property to SDHI3/MMC1, because MMC1 is not supported
+>     - Disable ohci1, ehci1, usb2_phy1
 
-Thanks, will queue in renesas-devel for v7.2.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.2.
 
 Gr{oetje,eeting}s,
 
