@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A953CB2CF;
-	Fri, 22 May 2026 10:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542F13D25C0;
+	Fri, 22 May 2026 10:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779445103; cv=none; b=SHCVQeYvP5SdvH+CrLmIdIuB0368v+7cXyIzUDWXGOfa4llDtLyw0O/yLt9sXeUNHBa813xVMqMK75yMFK+wVcyhTzgBJJjKPEgc5P933Ze+DwvSqD1N1seDtxKl9oaWBZAhOVWSBy/1laGwknMCIHXqm5MAkkYpqoaj9R2YQ3I=
+	t=1779445106; cv=none; b=bVMpUySTsHApvZKbd/bWCBzLXj5dcVxjhRCGO00cQWnjmbgpJoD1E5/lsaxjFsMA2IKZNW4vsx46FWBGB0BJ9FeWEYL47odhaCYyfh4s/8eUn5q+jOAMiiw7d4HtDiC8RdsII77ayVmcfIb2p45amrSghbcGhcIs0FCdMlPP7wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779445103; c=relaxed/simple;
-	bh=Gb2R7Q7KxRPa7OvjnnJrmx+h476jjR8xevZrD/43+2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sRcsPJiim7/4JBpnkCAcb3SUUiPLnt9b7SDkwzaa/lX9kxPSaQ9YRLq2QzJLXifzgYsgbKpFOCgnQ1verCEus2IUZTbYW92h9o4cBDDoJkTA5mZLt2Cd+/FTsLXwpFZWJscL0oy1dNbUwQOxI0B59R3oQ53dyJYL4kjHUJZWbyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNybE/I7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779445106; c=relaxed/simple;
+	bh=9PKlfJsF/AxORq/IuH3S75bzvw56fX4Ng5OOi276b+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AzJM204Ya1sdb3GmLro1j0FeTLe4z2Uaj9+pwtiRYhDJAnCH+e5kZ6vqwAV+01RtLNAcSwbRR6mGN1OpPjTdyo+SMg10AtMruNTZurEhjLFXpm2kKKuoCOvOX6aSu5Mc705DxOtkVqJUMHvxQwPj7eksoJjSdRQejbxSBQA70NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVC9Nrpa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNybE/I7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187E61F000E9;
-	Fri, 22 May 2026 10:18:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVC9Nrpa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A1D61F00ADE;
+	Fri, 22 May 2026 10:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779445101;
-	bh=s6tq9StxoEbiDNdCIQ5hfjPx7p09OfsA8EPreaLNSF8=;
-	h=From:To:Cc:Subject:Date;
-	b=XNybE/I7GwVDZwSv1DyMKqdqua7C6StYbeQzSxSq79l72DCvyG5UlpVUZQm0lFXQT
-	 1gPA+YxQzEa2e4LWUnJHMra/GWVnajUl4W/QjyIUXmdhNViOw1/7bzdCFPxHRgadoV
-	 NxRQvVEGAOKSAH2bD/0JXC/YGZ2JuoSy+qij/PJKJurhU8tOlm1suqwLvc0Y+pNQWT
-	 dsZJ1sNZNA+ck5d1roGPLrr/nuOzgpm7b5HUuwUa7Topn9bTnzCDChSvCPlqSHleIE
-	 YzBr1XhTohUhyRGTPyVSsgluP2u/pBzYrQzLKJ/B8A61exHytMa25J5qQl+wkbVTHe
-	 6M3bTiUB1Xj4A==
+	s=k20260515; t=1779445105;
+	bh=N6Yc39X/4veC5J+8erpunKoVVlC+FuQ18yNeUE2JwLw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jVC9NrpalTn7f3YOXQ1lobtn+LyQGxi8uCSwmMo2t4tzbYnCO3sDAIh9v0iTFmF3Q
+	 JtINr5KHf+5iAgEMCiXTYhHCYFXjTCsaou3FwYZS0mVBCIZU4PfVSHr8nHm0Sto9bo
+	 tUYR7eRu50OiBZ8jUtjYf/uAWPebBgpDy7YD41J4HpOfoKleCjcNdZ+p2FDxldjOAI
+	 BrbKJ9VBCF87wCF3CAtxZIA8XY0QHkTi+788yF5HknQ6UXWj7zLveflxPzwYNrQYxT
+	 3lC289XnGAMew0QrK9I97F35beaNpkP8N54Xo8Jnq/mjqrwIzODIqXZ4wt9SlC5WFZ
+	 UArUFUTFie/4Q==
 From: Claudiu Beznea <claudiu.beznea@kernel.org>
 To: wsa+renesas@sang-engineering.com,
 	tommaso.merciai.xr@bp.renesas.com,
@@ -36,11 +37,14 @@ Cc: claudiu.beznea@kernel.org,
 	linux-i3c@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 00/17] i3c: renesas: Suspend to RAM with power loss and runtime PM
-Date: Fri, 22 May 2026 13:17:58 +0300
-Message-ID: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 01/17] i3c: renesas: Check that the transfer is valid before accessing it
+Date: Fri, 22 May 2026 13:17:59 +0300
+Message-ID: <20260522101815.1722909-2-claudiu.beznea@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
+References: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,42 +55,88 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+The Renesas I3C driver uses an asynchronous model to transfer data. It
+prepares a struct renesas_i3c_xfer, enqueues it, and waits for completion.
+The interrupt handler dequeues the transfer, updates/uses it, and signals
+the waiting thread.
 
-This series adjusts the suspend to RAM code to handle cases where power
-to the connected devices is lost during suspend to RAM. The fixes
-included in this series are required for that support.
+If the completion times out, the waiting thread dequeues the transfer and
+free it. If an interrupt fires after that, the handler may access freed
+memory, leading to crashes.
 
-Along with suspend to RAM support, runtime PM support is also added.
-Cleanup patches were included to prepare for clean runtime PM support.
+Check that the transfer is still valid before accessing it in the
+interrupt handler.
 
-Thank you,
-Claudiu
+Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+Cc: stable@vger.kernel.org
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/i3c/master/renesas-i3c.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Claudiu Beznea (17):
-  i3c: renesas: Check that the transfer is valid before accessing it
-  i3c: renesas: Use the divider 128
-  i3c: renesas: Restore STDBR and EXTBR registers on resume
-  i3c: renesas: Follow the reset deassert order used in probe
-  i3c: renesas: Fix re-attach
-  i3c: renesas: Reset the controller on resume
-  i3c: renesas: Perform Dynamic Address Assignment on resume
-  i3c: renesas: Clean DATBAS register on detach
-  i3c: renesas: Use reset_control_bulk_{assert, deassert}()
-  i3c: renesas: Return immediately if there is nothing to transfer
-  i3c: renesas: Follow a unified pattern for transfer and command
-    initialization
-  i3c: renesas: Drop the explicit memset() call
-  i3c: renesas: Update HW registers after SW computations are done
-  i3c: renesas: Organize structures to avoid unnecessary padding
-  i3c: renesas: Use the "dev_name:irq_name" format for the interrupt
-    name
-  i3c: renesas: Drop unnecessary tab
-  i3c: renesas: Add runtime PM support
-
- drivers/i3c/master/renesas-i3c.c | 378 ++++++++++++++++++++++---------
- 1 file changed, 273 insertions(+), 105 deletions(-)
-
+diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+index f39c449922ca..36e3ccbe66b0 100644
+--- a/drivers/i3c/master/renesas-i3c.c
++++ b/drivers/i3c/master/renesas-i3c.c
+@@ -1014,6 +1014,9 @@ static irqreturn_t renesas_i3c_tx_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
++
+ 		cmd = xfer->cmds;
+ 
+ 		if (xfer->is_i2c_xfer) {
+@@ -1054,6 +1057,9 @@ static irqreturn_t renesas_i3c_resp_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
++
+ 		cmd = xfer->cmds;
+ 
+ 		/* Clear the Respone Queue Full status flag*/
+@@ -1138,6 +1144,9 @@ static irqreturn_t renesas_i3c_tend_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
++
+ 		cmd = xfer->cmds;
+ 
+ 		if (xfer->is_i2c_xfer) {
+@@ -1184,6 +1193,9 @@ static irqreturn_t renesas_i3c_rx_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
++
+ 		cmd = xfer->cmds;
+ 
+ 		if (xfer->is_i2c_xfer) {
+@@ -1235,6 +1247,8 @@ static irqreturn_t renesas_i3c_stop_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
+ 
+ 		/* read back registers to confirm writes have fully propagated */
+ 		renesas_writel(i3c->regs, BST, 0);
+@@ -1259,6 +1273,9 @@ static irqreturn_t renesas_i3c_start_isr(int irq, void *data)
+ 
+ 	scoped_guard(spinlock, &i3c->xferqueue.lock) {
+ 		xfer = i3c->xferqueue.cur;
++		if (!xfer)
++			return IRQ_HANDLED;
++
+ 		cmd = xfer->cmds;
+ 
+ 		if (xfer->is_i2c_xfer) {
 -- 
 2.43.0
 
