@@ -1,90 +1,120 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47F52F28EA;
-	Wed, 27 May 2026 02:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E46238F65D
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 27 May 2026 07:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779849058; cv=none; b=VlPAs1RsbB9OO36AQ2MnJd/I8LDvZuw1pyXW/8IhAUEz8tkuPRiL3hDh1NfbA5fd1VQpxbCIQXtVORGXoapQGVa+iZ7pf1FCuZwnpJ0LXb3MvuU0PHoKSi4nF6wwmQcS2LBZIXE44QWKDehUKkd+3yGBy5uYPipNylswWliinhY=
+	t=1779865491; cv=none; b=lP1tcY5h/F+vkTasSMU3xDowe+qE6tNb/96yg4V4K3dezNCGSxMkWkRlAUSS6sT29P0MjBUV1NBb1YXOYb+hYTVsyU0DGhx3fblKhkJhD8yo/9sxo9MdulDJNAkPtLV0VDFgrM6+Q3VaycVGfvrFNf1g7wvzxUb/by/mkaHutS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779849058; c=relaxed/simple;
-	bh=lpr9xFXmjkNhPC9HzvxzWnPCgQ3zrHpMC0tkqgto9vg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mQnlW7enI8ctRCUrBrlFq35QqNGkbt+fi8npQAwC1rg7WPMvE7MMjoExeNhysf+3DdqsUz4CFUJicC93coVy/DjS07uf/W8pJvXMeqRnHMQH+shZej26Ja1ON3IYTybxYu1OJnxgZp2sb3xeZ7iUvW5q5Nxr8YC0srzScPT4nt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=iaw4GdLk; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="iaw4GdLk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1779849053;
-	bh=lpr9xFXmjkNhPC9HzvxzWnPCgQ3zrHpMC0tkqgto9vg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=iaw4GdLkKPvJimvx0rRGPb1FU4Og6DZcEVWiEFk3C4ea1qo/69d9KV7zgPPlYFrLg
-	 3qCpRwECTDFtqxyNvqiY7CeIS52rjWDyz9tJ9seSNbP/wq958BRXok6rUq6uf1s9as
-	 L3uoqUFb3GDz3UezCLDC8sZIKkCBAcAoYrHqcfVia4ka+Co4wfiiKsHAEqL8k+H4iF
-	 Xp61ckQRtn+Bjw5ncWT5sE1ASUS7X1R+3Uq1dhraKFoSXYQmSbIE+1zy0LgOBRLAG0
-	 T0r/q7F647PkQZtfsOFXuq3VexiER0SMscedY8dhYRd0CzAQ/rqbft/4yCNvaa4aPO
-	 TIjAj6saULZ5Q==
-Received: from [192.168.68.117] (unknown [180.150.112.11])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 00261607F4;
-	Wed, 27 May 2026 10:30:52 +0800 (AWST)
-Message-ID: <a0a62d6bcc1d1253a38fa166f4b121caf0463345.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 0/2] Add Meta Rainiera6 BMC support
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Neil Cheng <neilcheng0417@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, 	conor+dt@kernel.org, joel@jms.id.au,
- geert+renesas@glider.be, 	magnus.damm@gmail.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Date: Wed, 27 May 2026 12:00:52 +0930
-In-Reply-To: <cover.1779157117.git.neilcheng0417@gmail.com>
-References: <cover.1779088499.git.neilcheng0417@gmail.com>
-	 <cover.1779157117.git.neilcheng0417@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1779865491; c=relaxed/simple;
+	bh=GKMmnSobBzwl8JTLQd/YSJsYNvtWz84m/vNFGhXlBbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pTkZKHNTQvcuhXAIgdPAgrwuT3glJ8Tmc5EoX7TSNd+PRLbiqBmgGTVUOGl9P62dS5wyzPATM/sVXllGLY65cGr/kcwSCLCvtkNlLmCKc2eUn3RmmE14LY6hawSVa4bwkFkkrzjh4nvwG2wnx6ay39Tg/qhUOM5TwU1H0HAHa7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5753a289955so3940280e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 May 2026 00:04:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779865489; x=1780470289;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6b1O7SqPXRKk3Tzhi5LoKK3yhm2w/yWFcqIE+eebFbc=;
+        b=r5ObfYFF4OvT+5g4QjsmGDNpTRRISw7JGgZ9SB3sPRjOIdHBq5gbWHXgDMutzuk4Cr
+         0jd6CV9WsdJoPQxweEK10cguANhGK8if18mwMiJJkfikbTXbVszvUzMhOSvXIgdJ1rc8
+         xKL8uvCJ/iWbxX94s7SO1PsJZk2oQfCRF3p3DtKTNSzpZlG28qiYcx+345lZhD01OlPI
+         DL3Dgh0l0xCsEDqUQvMcgjVzvz1rJRxdGfDmPpHlYbxVGeK9+eepxLwpPyMIFuSrt574
+         W6Vk0OfOXYxQGsy1K2NFxtml3ib/mLyuVP6NFLn5tgJD2ioQrzRIG040dSCw0yzr8Uh+
+         YC/g==
+X-Forwarded-Encrypted: i=1; AFNElJ97oQ60Hp/mA8a36k50/VewBA8DnQ1JQSBIqd2kj8q+Pk/fHCfOC2Aaxth3RrnWcWWF3NtC0c7S7halVsiLfIZ3ww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydoVjC1bgCAEZNABB6Qg55YttxA2Q+M852ZGW/gXp/gbqrB5Wo
+	7PrBNrvag0ZJ+WV3CKOSXiz5YIYVWWT0MSsR+EysG37LQaMGCO4OshJ56fxqjR2yHtg=
+X-Gm-Gg: Acq92OH62nXOOLWZqWJ7w5GHZO5frMnG/+U/VJC6SwI1U7Iy8EiIyMjswy6+0CAMapL
+	98Bg1eI5P0rTUgBhLBalQHhXDQtk+5kn13VthlzowFkYXVMdj2vtqxWsrHEdRnfQAsJ460wcn9t
+	bnmF0TG6rxajfl+9Nrk6QFtKcMr31SiXt+irkGk+gKoA0rs5+mDdiz3932/efpVOQS/2MTB/hL8
+	zL2kjo3ZZpNVedNDYA7rrEjml02vU+WbYVqd7nphdRNgBMU3cgioDJ6sV7UvSqimlwueqHDOxQk
+	oFs3Acw1cUYR291icNghwH55hjkBOBNfOnvWyPC7NBEKkG0x/88Qvx2lTq8f43FyYyANh1tQs4Y
+	ghoYl59IATKgNvymzcGyUiCIz/A7oOhlSWWoIKhPWLaFOvxsgVRQRcC5FkMNqs3fhKSJMLzf4c1
+	xnw1kR9fM1Y9dW7YSWc4MolqdGHOhHdcVlhbPQtiR6bykiZTtMvNIshKaP1xnTd1dhjtQ/0f0=
+X-Received: by 2002:a05:6122:130e:b0:575:360e:600a with SMTP id 71dfb90a1353d-58661834f53mr10280665e0c.8.1779865489121;
+        Wed, 27 May 2026 00:04:49 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-586f791f719sm18997906e0c.11.2026.05.27.00.04.48
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2026 00:04:48 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-95d0476490fso3361972241.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 May 2026 00:04:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+VEdpKlbDu7JBId7gSDoecRzKP25Gbd6y9jTabkSyNnLCksTY8uunmzLuF4/ZqDislCjDDM8GjzD6yxyaYdD4YxQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:3e8d:b0:62f:34db:9474 with SMTP id
+ ada2fe7eead31-67c8c3f0c9amr10644205137.20.1779865487931; Wed, 27 May 2026
+ 00:04:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260522105717.1727837-1-claudiu.beznea@kernel.org>
+In-Reply-To: <20260522105717.1727837-1-claudiu.beznea@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 May 2026 09:04:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQCKmmNMYOs1nbE3nEoBk5uoQBVPy448pKAEq8aqLPDw@mail.gmail.com>
+X-Gm-Features: AVHnY4JnV7OBtFs3jVCT30b4PRifJZS7GqIqdG2hkN5jrcNMinu4UQ3d7c-uTdo
+Message-ID: <CAMuHMdVQCKmmNMYOs1nbE3nEoBk5uoQBVPy448pKAEq8aqLPDw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzv2m: Use -ENOTSUPP instead of -EOPNOTSUPP
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: linusw@kernel.org, brgl@kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2026-05-19 at 10:38 +0800, Neil Cheng wrote:
-> Add initial device tree support for the Meta Rainiera6 platform.
->=20
-> Changes in v2:
->=20
-> - reorder adc0/adc1 properties
-> - add Acked-by from Conor Dooley
->=20
-> This series adds:
-> - Meta Rainiera6 compatible entry
-> - Rainiera6 BMC DTS
->=20
-> The DTS has been validated with:
-> - make dtbs
-> - make dt_binding_check
-> - make CHECK_DTBS=3Dy
->=20
-> Neil Cheng (2):
-> =C2=A0 dt-bindings: arm: aspeed: Add Meta Rainiera6 board
-> =C2=A0 ARM: dts: aspeed: rainiera6: Add Meta Rainiera6 BMC
->=20
-> =C2=A0.../bindings/arm/aspeed/aspeed.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0arch/arm/boot/dts/aspeed/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0.../aspeed/aspeed-bmc-facebook-rainiera6.dts=C2=A0 | 1012 +++++++++=
-++++++++
-> =C2=A03 files changed, 1014 insertions(+)
-> =C2=A0create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-rai=
-niera6.dts
+On Fri, 22 May 2026 at 12:57, Claudiu Beznea <claudiu.beznea@kernel.org> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The pinctrl and GPIO core code make exceptions for the -ENOTSUPP error
+> code. One such example is gpio_set_config_with_argument_optional(), which
+> returns success when gpio_set_config_with_argument() returns -ENOTSUPP, but
+> reports failure for all other error codes.
+>
+> Returning -EOPNOTSUPP from the pinctrl driver on the unsupported pinctrl
+> operation may lead to boot failures when pinctrl drivers implements
+> struct gpio_chip::set_config, the system uses GPIO hogs, and the
+> struct gpio_chip::set_config implementation returns -EOPNOTSUPP for the
+> unsupported operations.
+>
+> Currently, the driver does not implement struct gpio_chip::set_config().
+> To avoid future failures, return -ENOTSUPP from
+> rzv2m_pinctrl_pinconf_set().
+>
+> rzv2m_pinctrl_pinconf_group_get() is used when dumping pinctrl
+> configuration. pinconf_generic_dump_one(), which calls it, makes
+> exceptions for the -EINVAL and -ENOTSUPP error codes. The documentation
+> for struct pinconf_ops::pin_config_group_get states that it "should
+> return -ENOTSUPP and -EINVAL using the same rules as pin_config_get()".
+> The documentation for struct pinconf_ops::pin_config_get states:
+>
+> "get the config of a certain pin, if the requested config is not available
+> on this controller this should return -ENOTSUPP and if it is available but
+> disabled it should return -EINVAL".
+>
+> Return -ENOTSUPP for the unsupported pinctrl operation.
+>
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Applied to aspeed/arm/dt in the BMC tree.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.2.
 
-Thanks,
+Gr{oetje,eeting}s,
 
-Andrew
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
