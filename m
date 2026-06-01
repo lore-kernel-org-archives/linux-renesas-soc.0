@@ -1,86 +1,44 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1167A3B4EA3
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  1 Jun 2026 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772672BFC8F
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  1 Jun 2026 16:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780324955; cv=none; b=UlS4bSmhi/uawmI9wQaAALs2kgnv7000UQ5g7+ltv34l4wynNJZehC1SjEEns535F2ibapXg+nzocezGfREDiCJFYZhJAVAQIsjuHSW3a2YvgOh6PlCGsx0uL3jO93aF028WAlDCje2l8SKtELNjrzP2vjQoPNL/JlNOBQ6hrP8=
+	t=1780329980; cv=none; b=ui8OsIPbRLFxtiJ1xnozOOuFGWXCpZ9dDtWjzIP8HRrxJm1EIZITBpkYTS3QmNeoA+Zz3nHS+XCrBYcIy9m/LOxpTBLWpDBB2lnnceCmmwPU1yJlLRMqUlmrvvn3dwB/0p5OxB2bcia4lbKzyAMa91HpY7DqiJ2pwIYeC0pUY78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780324955; c=relaxed/simple;
-	bh=KwKEkwDhKFllduxQFt6dT+HKbaAW3P77Mq493+G7AAI=;
+	s=arc-20240116; t=1780329980; c=relaxed/simple;
+	bh=r2qQGBpS4eUQWthHp6CjtZnM+zqd0YLLqfu8XZkqlWw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNV6JiM9ieB5EY1+XsgMYE1Zp8LWBEtGtcwqx0/be6Y5eJc8ofME6gnvZHA9XGanVO0P1/fiThwbaVGqT7KXUZB8iXtmiGjRigVWgUioZLpPtR7qqMFDVp3I87NaDR68aEGJqZahaYnrFvQGUU2f/pay94a7b2fRtPYGIEKeWPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hfVplF3P; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp101jpPm0HYuAWGvncR4/WJtlAXsS1MhrirQ5XELplkkO/QvSoEo0A2bGI8xASMPy6D4D/77sQJRntxuZuZ7p7OrtcRFx3Nl5WIJkrCJ5JVm3honH/5R32ionliFcBJJGdNwJWrCCN63I1s6DPxm/bwtt05q53TCXQg7APIJ2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EHYuhi30; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfVplF3P"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2bea7176c72so83541605ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1780324953; x=1780929753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
-        b=hfVplF3PmsPoQqwZhHw84uwWoUUcR0wwcT/kGW6BmfQddv7vCn7DCId8KAEX1/ubBN
-         AFZ5FlwNFYyF9zGHO06WRF3m36qClaRkMERZvP6em5fLFm34C590b28M/fuODPuEEjbL
-         sK0rEa9KRseEUad4xJAKOE6JKLWBS+vvuWwxihpRWCOb3ge79HQ+vOMh9pwhItdCupcC
-         tMn3x9xF1dO04ykTM4boJaUYQer6RnF9CLDWNsgnqe2TabLbUTWMc10IQQVV3xpcF9t3
-         zzmJLQI0vny597fY0PKUgZEgcM9vUrRHwPxmXfEF7UWfWtC5itiUGKotVE8GY+DUZjB6
-         wTqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780324953; x=1780929753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
-        b=a+pY2MFb0zvx7vmfXF2d5lYrCGT0J9B6/suIiDz1B+W3dxL+M+7PeJB3vcYnGfGN5/
-         wtGK6+gc0xjByZmyfZIfyOevTChcOpdQzWIKWQRe1HxEAsJU1vh+iD+ETNhOIryWz4gZ
-         wkFzxFAb+B5Tsu2Wnf3oOdva+A0pHxu4zx3c2hAwPxLOErvoha+F2iTzoQTaBgiz6nt/
-         kT+zZVbYy/uhgmsBpQe7tCBDx98UXThdalew4YoZdJEYlR7iGAPpu3CUvmsgJSdfmvD2
-         X6Em6obiDAn2la617DCUvfhR91B93FEBMs9ceoSQt1n7FRPZk/rIJPDi07Zy1jY6pASx
-         SAEQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+FxPE6iex5cQESkC2zf+Bkvow4gFx/DaRRa7BBPO7/tPiTEb6dXHpVhbDLA+V1MPSd1qvFTwNzUDYQder/HjzLww==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUz56dg7Chj/xywycHIxcnDQnmDi2pTFFGcA2NZbIcH6RJpHOi
-	HEF99cyQ8rgWg6eC3gOpBJQuh6/yB0XWjgSGHW1GQn0vg/jxovHT5XAgNi/TLofjaSM=
-X-Gm-Gg: Acq92OGRwljjqcBI4j5yIa5lxOppWp9SrzEl70iGa4B3Axk1QVjfEdIjLorzx/S8ExE
-	E04nShOlD7u9JTiHxVnZq+U/FSf62mQNM83ZnL55i0vs/NbAv9kEnOInS+FW8uEVPzRwfVTf6hs
-	zQQHpdPYMknbB37rw23ALTnjRuVYqt0AJixqFAMVN+jL/fsTZ2E4KramBsM7mGRuYpcNW+k3Wuz
-	NAH/cjy8WmB5j5qkHcDHj5Y2k4ddIv5JdxXKO39x8Q4xLVZ8htijCPet3Rc8jPNN+LF4b/bNmof
-	WPoCX3lFLWtBUYLmBgf+HL9qxZnk7L50lBQZpF4PfRYmm26vv84eeEaCCLEzRsKWYVRtUQwIIlV
-	lTrmvldEH3KTA9JAUiyYIhFpTb8xrLuuNMC3rjQHP7dD/WhJpIWx0xx+wEtojVwfpuTmTI9LFI8
-	Nq9nsGMP9+dzdTZVyPyxyCtzFKcx+CCVFX9UiqD0BQZISHSMn0
-X-Received: by 2002:a17:902:e74b:b0:2bd:63dc:b7ad with SMTP id d9443c01a7336-2bf3679ebc4mr132076775ad.2.1780324953150;
-        Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:86cc:b476:3696:fced])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf23c0842esm107038115ad.57.2026.06.01.07.42.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 07:42:32 -0700 (PDT)
-Date: Mon, 1 Jun 2026 08:42:29 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Ben Levinsky <ben.levinsky@amd.com>, arnaud.pouliquen@foss.st.com,
-	daniel.baluta@nxp.com, peng.fan@oss.nxp.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EHYuhi30"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=kS/1
+	40q1KYIt9nS75TO3Zn/k6H05m95K0Z3RWECza+U=; b=EHYuhi30bul1KP9zXjp4
+	GDnp5GGNa1psLSTEmTfucGVCKjbBv3durzxCKcSG1suyZm4q5BSOQopiW0nOOonS
+	4kmQjce0jdUS8dMxly0Uc+c0geap/4IrCvul/r5DuSEahdofmXoh4XaKb3/bpJ1n
+	R+3nQC94OB/LZLa8r9qfxzPtMzcuaiY6NjPeXgliPko5Lwoqf9B8c9wSNBNC57kC
+	CsORTnYVMT3tSe3KCEiq/xhUVQhC94YeqSRA+clyr28ewbaxIIb/97yDP6wlPnMV
+	q2Xxy6KDt/1XhMBlkhxOoE7LdvhFpeBGn7DUjL1IMOzIApEok0v1IxXBIESi77wT
+	1w==
+Received: (qmail 2553433 invoked from network); 1 Jun 2026 18:06:09 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jun 2026 18:06:09 +0200
+X-UD-Smtp-Session: l3s3148p1@ZhpjXzNTSoYujnub
+Date: Mon, 1 Jun 2026 18:06:08 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: soc@lists.linux.dev, soc <soc@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Tanmay Shah <tanmay.shah@amd.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 0/5] remoteproc: cleanup shared carveout and
- resource-table helpers
-Message-ID: <ah2aVdlsLqy9aeHP@p14s>
-References: <20260529021637.2077602-1-ben.levinsky@amd.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [GIT PULL 0/2] Renesas SoC updates for v7.2 (take two)
+Message-ID: <ah2t8FPZpJCF6CL7@shikoro>
+References: <cover.178031911driver8.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -89,105 +47,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260529021637.2077602-1-ben.levinsky@amd.com>
+In-Reply-To: <cover.178031911driver8.git.geert+renesas@glider.be>
 
-Good morning,
+Hi Geert,
 
-On Thu, May 28, 2026 at 07:16:32PM -0700, Ben Levinsky wrote:
-> This series is a preparatory remoteproc cleanup split out from review of
-> the AMD BRAM-based remoteproc series.
+On Mon, Jun 01, 2026 at 03:18:17PM +0200, Geert Uytterhoeven wrote:
+> 	Hi SoC folks,
 > 
-> During review, there was a request to move the duplicated plain
-> ioremap_wc()/iounmap() carveout callbacks into common code and to
-> factor the "missing resource table is OK" ELF parsing path into a
-> common helper as well. There was also a request to send that cleanup as
-> its own patchset first, with the AMD BRAM series respun afterwards on
-> top once this cleanup is merged.
+> This is my second pull request for the inclusion of Renesas SoC updates
+> for v7.2.
 > 
-> This version keeps the same overall cleanup goals as v2, but reworks
-> the optional resource-table pieces based on follow-up review:
+> It consists of 2 parts:
 > 
->   - reshape the optional resource-table helper in patch 4 into the thin
->     parse_fw() wrapper form suggested on the thread
->   - switch the patch 5 clients over to that helper shape directly,
->     without post-helper rproc->table_ptr checks
->   - keep the driver-local parse_fw() wrappers and their existing log
->     messages and severity choices
->   - retain as much of the existing per-driver parse_fw() logic and code
->     placement as possible while moving the missing-table handling
->     through the shared helper
+>   [GIT PULL 1/2] Renesas driver updates for v7.2 (take two)
 > 
-> This series now does that in five patches:
-> 
->   1. add common subsystem-private callbacks for the exact-match
->      wc-ioremap carveout case
->   2. switch the in-tree exact-match users over to those callbacks
->   3. mark carveouts mapped through the shared wc-ioremap helper as
->      iomem so the framework uses the proper I/O accessors
->   4. add a common helper for drivers that treat a missing ELF resource
->      table as optional while keeping per-driver logging decisions local
->   5. switch the matching in-tree drivers over to that helper while
->      keeping thin local parse_fw() wrappers
-> 
-> For the carveout map/unmap cleanup, this series covers the exact-match
-> users called out in review: xlnx_r5_remoteproc, rcar_rproc,
-> st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
-> TCM mapping path is left alone because it also clears the mapped memory
-> and is not an exact match.
-> 
-> For the optional resource-table handling, this series converts
-> xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
-> imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
-> parse_fw() callback also builds carveouts and is therefore not a direct
-> match for the helper introduced here.
-> 
-> Changes in v3:
->   - rework patch 4 so the optional resource-table helper matches the
->     thin-wrapper form suggested in review
->   - note that patch 4 still triggers a checkpatch --strict warning for
->     the flow-control macro form, but that implementation follows the
->     maintainer's review suggestion for the thin parse_fw() wrapper shape
->   - update patch 5 to use that helper shape directly in the client
->     parse_fw() callbacks
->   - drop the post-helper rproc->table_ptr checks from the converted
->     drivers
->   - keep the converted parse_fw() wrappers otherwise close to their
->     existing structure and placement
->   - test xlnx_r5_remoteproc on the latest tree with firmware images
->     both with and without an ELF resource table
-> 
-> Changes in v2:
->   - split the mem->is_iomem change out into a separate patch
->   - add a common error message on ioremap_wc() failure
->   - drop logging from the optional resource-table helper
->   - keep driver-local parse_fw() wrappers to preserve per-platform
->     missing-resource-table logging policy
-> 
-> Ben Levinsky (5):
->   remoteproc: add common wc-ioremap carveout callbacks
->   remoteproc: switch exact-match drivers to wc-ioremap callbacks
->   remoteproc: mark wc-ioremap carveouts as iomem
->   remoteproc: add helper for optional ELF resource tables
->   remoteproc: switch drivers to optional resource-table helper
-> 
->  drivers/remoteproc/imx_dsp_rproc.c       | 41 +++-----------
->  drivers/remoteproc/imx_rproc.c           | 40 ++------------
->  drivers/remoteproc/rcar_rproc.c          | 41 ++------------
->  drivers/remoteproc/remoteproc_internal.h | 38 +++++++++++++
->  drivers/remoteproc/st_remoteproc.c       | 31 +----------
->  drivers/remoteproc/stm32_rproc.c         | 39 ++-----------
->  drivers/remoteproc/xlnx_r5_remoteproc.c  | 70 +++++-------------------
+>     - Identify the R-Car M3Le SoC,
+>     - Add Multifunctional Interface (MFIS) support for R-Car V4H and V4M.
 
-This set looks good to me.  I am fine with the checkpatch warning on the macro -
-given the redundancy it avoids, I think it can be tolerated.
+The bindings patch for this V4H update...
 
-Wolfram has already indicated he wanted to test these changes - Arnaud, Daniel
-and Peng, please do the same for your platforms.
-
-Thanks,
-Mathieu
-
->  7 files changed, 73 insertions(+), 227 deletions(-)
 > 
-> -- 
-> 2.34.1
+>   [GIT PULL 2/2] Renesas DTS updates for v7.2 (take two)
+> 
+>     - Add timer (MTU3) and xSPI FLASH support for the RZ/T2H and RZ/N2H
+>       SoCs and their EVK boards,
+>     - Add PCIe support for the RZ/V2N SoC and the RZ/V2N EVK board,
+>     - Add support for the R-Car M3Le SoC and the Geist development board,
+>     - Specify ethernet PHY reset timings on various R-Car boards,
+>     - Add (more) serial, I2C, DMA, and sound support for the RZ/G3L SoC,
+>     - Add PSCI, Multifunctional Interface (MFIS), and SCMI support for the
+>       R-Car X5H SoC and Ironhide development board,
+
+... depends on the initial X5H binding addition in this pull request.
+
+>     - Add serial DMA support for the RZ/G2L SoC,
+>     - Add keyboard, I2C, Versa clock, and audio support for the RZ/G3L
+>       SMARC SoM and EVK boards,
+>     - Miscellaneous fixes and improvements.
+
+I am confused, does this really work?
+
+Thanks for your work,
+
+   Wolfram
+
