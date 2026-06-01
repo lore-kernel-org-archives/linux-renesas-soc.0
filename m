@@ -1,27 +1,26 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBFD342519;
-	Mon,  1 Jun 2026 13:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69803A6B8A;
+	Mon,  1 Jun 2026 13:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780319919; cv=none; b=crqr3jv6fYpJQag8Rmsdg4QdHjc11GQZxf091eiybRgpQ+7IIz/BKozNxVivddeepr1N9tnXcVZYe1SV3lcFe4/1OjDS7lFQFFt9e7ZrTEDpIRvr8iTDYPdHsIZ5BSxRDk/F0NRMLstNNhX1mKDiSqoHBI8PnJBadDqdIikLrEU=
+	t=1780319983; cv=none; b=KxlKh06lUBl+bR7OUrr3aiwvP/wTu/h3aq2NJm4bCWapf8o/mz7niQ+rThWIeKrh58r4yF2A/xSCxSKtIqwwh9wRCTHNCKiEUk7tmcKvxr3FfR00f4V9Ii1wKb2c2xHCXm0n9ZApSfzmHx3Yp+gOvAiK6ukmliSUtpdxtPwIm4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780319919; c=relaxed/simple;
-	bh=5WW1bwN/yfr3zTfea2XM9J3I5aHzpZV+6l/6ZZ9QjJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drF/NSV1s4piiBr1eqe6xSuJaWpEo/0shvR5l8wCONBIStW44Msw33av25TCFhcOBHChVtkgKa7h+EVjvjiu/CtvbBvRK1gn/+vpMqV8zp2S6TGWNllhrn2Rq6RwX49IXAtr9JUJxTP7iyHTGNbaMEROjw+g7RwPHJwPItEinCs=
+	s=arc-20240116; t=1780319983; c=relaxed/simple;
+	bh=3W+D3xZWOVgznnU57w3vHat8ECUEX96oxvliRrQaDjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F+ki9l/3Vat03kZ+dG2blX1ZtISJT55du+mpzTYOjbjSuNnbUEi3A+FFu1D0pUghh73O2ZuL7WYEQKuqmszRPQhe+G68pTINBU9J8hifMoHzbvWHJ7bDrKTZ6aPtRNZiJtOyYnXH5tpqZ6PFUNKIdlEk0N1nSECa7iKef5KzhMQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AECC21F00893;
-	Mon,  1 Jun 2026 13:18:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842941F00893;
+	Mon,  1 Jun 2026 13:19:41 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
+To: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v7.2 (take two)
-Date: Mon,  1 Jun 2026 15:18:33 +0200
-Message-ID: <cover.1780319315.git.geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Updates for v7.2 (take two)
+Date: Mon,  1 Jun 2026 15:19:38 +0200
+Message-ID: <cover.1780319402.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -31,51 +30,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi Mike, Stephen,
+	Hi Linus,
 
-The following changes since commit 4f42053949324867dc40d67829f18a01539e6322:
+The following changes since commit c7c8352fe569d17e3d379a83075a8ea12168526f:
 
-  clk: renesas: r8a73a4: Add ZT/ZTR trace clocks (2026-05-15 11:30:51 +0200)
+  pinctrl: renesas: sh-pfc: Implement .pin_config_group_get() callback (2026-05-15 11:15:19 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.2-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v7.2-tag2
 
-for you to fetch changes up to f5e45196023dd454dcf5dd8add1cf99d77336271:
+for you to fetch changes up to 80538a53978bb9788080caea6e5ee3393dfb6a72:
 
-  clk: renesas: r9a08g045: Drop unused pm_domain header file (2026-05-28 15:09:54 +0200)
+  pinctrl: renesas: rzg2l: Use tab instead of spaces (2026-05-28 15:07:29 +0200)
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v7.2 (take two)
+pinctrl: renesas: Updates for v7.2 (take two)
 
-  - Add the Display Stream Compression (DSC) clock on R-Car V4H,
+  - Add GPIO config support on RZ/G2L,
   - Miscellaneous fixes and improvements.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Biju Das (4):
-      clk: renesas: rzg2l: Simplify SAM PLL configuration macro
-      clk: renesas: rzg3s/rzg3l: Simplify PLL configuration macro
-      clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed ones
-      clk: renesas: r9a08g045: Drop unused pm_domain header file
+Claudiu Beznea (5):
+      pinctrl: renesas: rzg2l: Use -ENOTSUPP instead of -EOPNOTSUPP
+      pinctrl: renesas: rzg2l: Populate struct gpio_chip::set_config
+      pinctrl: renesas: rzv2m: Use -ENOTSUPP instead of -EOPNOTSUPP
+      pinctrl: renesas: rzg2l: Keep member documentation aligned
+      pinctrl: renesas: rzg2l: Use tab instead of spaces
 
 Lad Prabhakar (2):
-      clk: renesas: r9a08g045: Drop unused DEF_G3S_MUX macro
-      clk: renesas: rzg2l: Rename iterator in for_each_mod_clock() to avoid shadowing
+      pinctrl: renesas: rzt2h: Remove unused variable in rzt2h_pinctrl_register()
+      pinctrl: renesas: rzt2h: Skip PFC mode configuration if already set
 
-Marek Vasut (1):
-      clk: renesas: r8a779g0: Add DSC clock
-
- drivers/clk/renesas/r8a779g0-cpg-mssr.c |  1 +
- drivers/clk/renesas/r9a07g043-cpg.c     |  2 +-
- drivers/clk/renesas/r9a07g044-cpg.c     |  2 +-
- drivers/clk/renesas/r9a08g045-cpg.c     | 13 +---------
- drivers/clk/renesas/r9a08g046-cpg.c     |  7 ++---
- drivers/clk/renesas/r9a09g011-cpg.c     |  7 +----
- drivers/clk/renesas/rzg2l-cpg.c         | 46 ++++++++++++++++-----------------
- drivers/clk/renesas/rzg2l-cpg.h         |  7 ++---
- 8 files changed, 32 insertions(+), 53 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 15 ++++++++-------
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 13 ++++++++-----
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c |  4 ++--
+ 3 files changed, 18 insertions(+), 14 deletions(-)
 
 Gr{oetje,eeting}s,
 
