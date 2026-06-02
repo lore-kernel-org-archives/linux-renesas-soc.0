@@ -1,58 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B063E866C;
-	Tue,  2 Jun 2026 15:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4F6360EFF
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Jun 2026 15:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780412780; cv=none; b=AM5z3+3FVwTbxC3CBYT/cEPc3aoSU6NAFtsRX+R7EPnAmj9FxAYbK73tLei3ndhrmwVrsl6QXCq3OOTH/3IRmi0/utQGzYpxXmgvGvycZ7c2nFC3gPiyw1tYjPOYxdS0r38Fag2B2EKSTGEiEJ7EbnM49dZw4Twcio7EfUHy67Y=
+	t=1780414194; cv=none; b=koV3FbVsLY+0q8p/D6KZQ8FB6127c50moALdI+zvmz+OC1XfOGT4U/0t8loV+9hARZYBI8aYInxtZr56yDfAtbAHTBVTuwCK2b179PwkDpgdEiaMSgEP20KIjXG/zssm1TcLhHUTB/Zy5X+a3xCBaDlQWMi/dGTvRc4+w3TkBE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780412780; c=relaxed/simple;
-	bh=/qDh6glUqJG9/CGdc2rsf6urAuT/oRosIX/vQk+S0Qw=;
+	s=arc-20240116; t=1780414194; c=relaxed/simple;
+	bh=BmaogNle+gIaeUNsW/TU42ucQpsv6uqwwdUr1XI9n60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2ZuQBbjamcA+PoPChVnpoR1qK+Qxo47p9re50iMonT9RxAZz06/sPfXvAIVWK9KMIlYceHhrwuGTGJMJDTHlZIZRQbnlgwxXmLxD0xgifqf2MwFC7kqHXO7n9qdWk//iTAzsiDROKTIbybTU662RMXup+84sVEw0599IIh9G/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnCevYMK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=XW4PzF4P+mMoA/gy+x3o6C5JR+fdpl/CqKxGVtKwYA6hXUWM1ToobHur1ZgfjENdOryAiaeWSUJGowgJfKTSvll8p3Ytx4qlpzNl2GkBICzEdCdx83Yulz+GLme0XFKI+6q50DH1fTQ7oWBKW3XyvwtKgrDNa9+Adn9XSDPc+VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GNK8sP38; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnCevYMK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04011F00893;
-	Tue,  2 Jun 2026 15:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780412779;
-	bh=6pKmZ/dzoUsp0qMEiTbEP3JNPcfP6yeX1skgJisax60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NnCevYMKe3vepac/omn2XU8h8dP4YVML0a+aXS1aBG6L21OGpNRroEkZcE1v8IWcY
-	 Jr8GigbO2ydOsupOwgEYVRH4KxEhEll+rUkbmYf1e8BG80wHC/Kysccw4pKGE8i8KP
-	 0Xh9GHB56tTDoflogwpC7WVMebaJUJYUG+9ufOFt0OHT7cN1Ip2bu8ffakMw32r9y1
-	 AShcnvWkD2n2ioO1O9rAxmAmgkpwL8BDNDa/Tv6uuDtTUsVUx/DcUlsKWyz+YfeDr1
-	 jMlO6yvdjc2H6MPVUK7kBp9l1DuoqhPz4WiaM0XeoynwTiyQwx4kR5cE44t/KWisZq
-	 YHxFbQreG0vvw==
-Date: Tue, 2 Jun 2026 16:06:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GNK8sP38"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=pX+x
+	PppqzP5D0Fb2dTDQLPJYTfhqUhRGodlzwIoZNlY=; b=GNK8sP38od1Ssfcq4v1n
+	CuZpazrAo2xaYTaNrvZOkn3ZdjcX0ImAzELKj5nRHkHCcop1GxraVO1SurgyAPyT
+	ZWgOoKCApVeytGVgk1o77XwswBB6nsYAG8aCLtJgFGT2KjIhxXkelCJSm36b/W3T
+	9anpMfVhuQfIvl4jXnOrtun/ijwYV/CNbxPz4J5lN7ec/ouLrvS2a5YuSWf772W+
+	6I4ttEO4XPXmusnB+a/dpa/ur98gL03+O6TUqanhCFMLo+Qi1hRzqb8heK8KgBY0
+	+24jmCQL/dfdonA8DJ3Alfo6I4P7+kn0tAWDBnyMuhbIfR3UCMHGktOvxdiIOApS
+	XQ==
+Received: (qmail 2942103 invoked from network); 2 Jun 2026 17:29:47 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 17:29:47 +0200
+X-UD-Smtp-Session: l3s3148p1@Yqk1+0ZTwqAujnv7
+Date: Tue, 2 Jun 2026 17:29:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 01/18] ASoC: dt-bindings: sound: Add DT binding for
- RZ/G3E sound
-Message-ID: <e4eb9d9d-9bc5-464e-a73e-f6871c5e0582@sirena.org.uk>
-References: <20260525110230.4014435-1-john.madieu.xa@bp.renesas.com>
- <20260525110230.4014435-2-john.madieu.xa@bp.renesas.com>
- <20260602145527.GA211368-robh@kernel.org>
- <987befcc-2fd2-4d4f-8293-72df4dbc03f3@sirena.org.uk>
- <TY6PR01MB173772D84C91DA67CDD557D66FF122@TY6PR01MB17377.jpnprd01.prod.outlook.com>
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: renesas: r8a779g0: add MFIS node
+Message-ID: <ah7262yZmtFsx8o6@shikoro>
+References: <20260530080340.24715-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdX8gGvjTPat-7=r3q-bXgQJU=A2DsDEPXZy6k20_JKx9w@mail.gmail.com>
+ <ah64Y3fuO2ofgsDG@ninjato>
+ <CAMuHMdWBfaxdK+Ov7xSVK+TfD0rbrOwVg-a_+mMHhU9wfE5_7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -60,39 +49,54 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rCN1v4T/e48+g5p5"
+	protocol="application/pgp-signature"; boundary="ICYZizeKSCSaMhx6"
 Content-Disposition: inline
-In-Reply-To: <TY6PR01MB173772D84C91DA67CDD557D66FF122@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-X-Cookie: The wages of sin are unreported.
+In-Reply-To: <CAMuHMdWBfaxdK+Ov7xSVK+TfD0rbrOwVg-a_+mMHhU9wfE5_7g@mail.gmail.com>
 
 
---rCN1v4T/e48+g5p5
+--ICYZizeKSCSaMhx6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 02, 2026 at 03:01:19PM +0000, John Madieu wrote:
+Hi Geert,
 
-> > Please delete unneeded context from mails when replying.  Doing this makes
-> > it much easier to find your reply in the message, helping ensure it won't
-> > be missed by people scrolling through the irrelevant quoted material.
+> However, according to attachment R-CarV4H_UM_018_AXI-bus_D_r1p30.xlsx,
+> MFI14 applies to MFIS H'E626_E000 - H'E626_FFFF, thus covers 8 KiB,
+> i.e. double of the other regions.
 
-> Noted.
+Thank you for pointing me to that document! I did look for the size of
+the memory area but could not find it.
 
-That was more for Rob than for you.
+> > Can change if you want...
+>=20
+> Yes please.
 
---rCN1v4T/e48+g5p5
+Will change it.
+
+Happy hacking,
+
+   Wolfram
+
+
+--ICYZizeKSCSaMhx6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoe8WQACgkQJNaLcl1U
-h9ARVwf/aiY9DSoMbmhzDZg0L79q/J6m0X/uNlaRb6HTBXNl2X3ghP6UT4MHxCPl
-WgHOqnNbwOySPtnNmWKLA9DPDAATJmfC6OJYnHXA63wo26vpAdlRF2MTu8s2CBxx
-DChE7MGiaRb2OazQfDIbCjWZD/ur6MQ9cCiXmelV2jIvGVcK3HZsQGSeboiEcsGp
-lthsQlRF09hjqWy9Hggf34Xc6LM3wf7jHUJPQljS8Sp5LwVzknURcTtO4So/fD6q
-zLpryzonhScF3jZBtICV4cEBsS85W1pzkt7C3i68JaUBWkgoJNS1npSz3SU6V2dS
-unZL5o1QGczFU4yygdFXF15z+64yEQ==
-=9QJJ
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoe9ucACgkQFA3kzBSg
+KbbSkBAAoYtiOFGifE35KhXjpsIBUo5tiysiYu7zGim54NaC3rbl0im7uhSeLokA
+p5MlNLAZDra+wFfXTvBr1jEJlnfLsB0oh4oImB4dkQPDyeWHibxOQoS7zYjknGaf
+Kcao50F+jrV4NFgnv8UpcXzPgP61hMBugRLicCCBUmya0Rwp46gUvw1tq84GJf9S
+iLsaRuGfdp7t96T9W8t5FwQuDn9kAGusOke8QJhqjDaxLugxMVHKVunl4dV7fWny
+7sbpbuPGyFNPPk4q53bV4F+o6xUItfdpmaaenMXXnxJhNyGZSPAANlJ9/v4pO4KI
+pOq5Fvj8gPq+BYQEfO9Dp5bujFc1lwIYnDdTslNnDpWSmv4ukOyPui0znW0lj155
++mdG8tZl4lL2ErXEr5feH24CofSHWZzDnhiyhisfyM/1bK7reBDkjO1ZP3aSqGh3
+kS4I1BMdyisf3G63OZ8U6n09uDrzDL/a5f4FCZ4kERicrv3EpN05rg/DOKcgcigK
+qWt6yqWhru+wOZDPxqGNeQVrpGIVVz5EJVnafF5Nvvz+ZzM8/TZbFyb4vw/VHe5y
+14F0sjAH4a7F5zlVeIWt7UJtevawBo2I/Ak9gwRtVgQZG7gD4i12Z2q/PgEEqnR/
+Ro43f+qvm2Jbd2tBJkpGko/2EpPJxEI7RwOojPX8IyXjewTwUJg=
+=Im2W
 -----END PGP SIGNATURE-----
 
---rCN1v4T/e48+g5p5--
+--ICYZizeKSCSaMhx6--
