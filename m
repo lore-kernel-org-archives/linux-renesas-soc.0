@@ -1,91 +1,67 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E557E3DD513
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Jun 2026 11:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA1334676F;
+	Tue,  2 Jun 2026 11:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780400137; cv=none; b=jQIHI5VFlzG6WkB5iu1Og2xZLLpzZs/c01ZP/cRgCZPnFUUX3qEHt4L2UjEOAXDPFmmntZrmBxAep8rB0WUX3UnYSN/N4ZnmoBE8ZGrYBVQ9ZH5zMErrYWwdAMzQpR8zFMy7gggLMqEQ2FjsDXmMED3SN7ENOy92s5DwmrDJLxE=
+	t=1780400959; cv=none; b=TAqHUGIq2qzlyBbO4lTp8R78Aw/0REI604KX99ZLiQ3Ix/aLeYvQK8NUOJ1py/Fn02N7h7L3unGjyIXQ/cAAZfX7R0ZVbjbW4+SKLzXnjiFvDAY3L6QU5e/AZb7p6rdzbmc4npVq9fthqN7qyIKd3gcguGbNoRSoDsErDzQWl9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780400137; c=relaxed/simple;
-	bh=uOdOyMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REHSGG3IpeWJbOWy9JD1fgDwIOc1s65WmS2DkQBJZxYtoW7vAl/DNSxDhWIpwH+RPQ3x32Py2JCywjHlWSVz6MAZJ+h3T9yu9eVhDXSug9NNhNZghJcYsBFyDOlbOMrgosq6JoWr/atUpARJmqlnUQAfgNnrpYae36bItQOxiNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AwxgrlLm; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AwxgrlLm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=uOdO
-	yMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=; b=AwxgrlLmHrIS8S4p9Kc+
-	/oEr7YS9Tlpm2YEc3jKVAg8GgqmE6hVboRKuwKphSImcLQKfv2t2fVdFz9HhMsZi
-	d144HwCyM1hcfLUZXrp3GvrFb5kQWEkTJIDmIerLhOcwWw67m/DbHn/FzkGOhfNw
-	d6Z+VvDP5rT6T06/TApfxwXjD639FnGaXn/oMH+nd+uUilnR937oBggjM/F3RUuA
-	q2KJLlswFG6AWwJ9q21EoqVhXnVevzfKaiww80e7FKU2HJUlBzSptQiPHVXMhEMV
-	8tRvIEwi6s5Nh43W4M/nkWWS2Mnybk4RpeYNfpMbaoy5YvQ/dbfCK1ExnAgyp6fO
-	Sw==
-Received: (qmail 2867990 invoked from network); 2 Jun 2026 13:35:30 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 13:35:30 +0200
-X-UD-Smtp-Session: l3s3148p1@DSxWtUNTzK4ujnv7
-Date: Tue, 2 Jun 2026 13:35:30 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/7] pinctrl: renesas: rzg2l: Add support for RZ/G3S
- I3C
-Message-ID: <ah7AAgK0plmNfL5C@ninjato>
-References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+	s=arc-20240116; t=1780400959; c=relaxed/simple;
+	bh=BPaQXDX9DfioE/lo/6/O84iTu0gb9JOE47FAzI78Yo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eu/McjtU+amvnYdSkcxSpezA7qlqqdkqgpSxzvhdhTWd4qyQxSoxRVBoZ0SgaTD0v2CM9ERXhuC6lI8LOFr7QIgyW3cmdmlMFy9dIPq1e7tsVGB/2eki3P1qbxkLgusfjAGMYkGRAZvbbGtgNzSi7ImY+hemvciSQ+sLWW1vpmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3587D1F00893;
+	Tue,  2 Jun 2026 11:49:16 +0000 (UTC)
+Message-ID: <343031b7-f011-4c27-a1d6-a84b31ab30ce@tuxon.dev>
+Date: Tue, 2 Jun 2026 14:49:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rsfaeCIwtI8MyDA2"
-Content-Disposition: inline
-In-Reply-To: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/17] i3c: renesas: Add runtime PM support
+To: Claudiu Beznea <claudiu.beznea@kernel.org>, Frank Li <Frank.li@nxp.com>
+Cc: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
+ alexandre.belloni@bootlin.com, p.zabel@pengutronix.de,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>
+References: <20260522101815.1722909-1-claudiu.beznea@kernel.org>
+ <20260522101815.1722909-18-claudiu.beznea@kernel.org>
+ <ahC2NfJl0bD1pFcX@lizhi-Precision-Tower-5810>
+ <8f1cd05b-b866-47ac-8ef4-e5e607247cf7@kernel.org>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <8f1cd05b-b866-47ac-8ef4-e5e607247cf7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---rsfaeCIwtI8MyDA2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
+On 5/23/26 13:23, Claudiu Beznea wrote:
+>>> +    i3c->dev = &pdev->dev;
+>>> +    pm_runtime_set_autosuspend_delay(&pdev->dev, 300);
+>>> +    pm_runtime_use_autosuspend(&pdev->dev);
+>>> +    ret = devm_add_action_or_reset(&pdev->dev, 
+>>> renesas_i3c_dont_use_autosuspend,
+>>> +                       i3c->dev);
+>>
+>> do you cleanup resource in renesas_i3c_dont_use_autosuspend(), look likes
+>> needn't it.
+> 
+> According to documentation at [1] this is necessary.
+> 
+> [1] https://elixir.bootlin.com/linux/v7.1-rc4/source/Documentation/power/ 
+> runtime_pm.rst#L616
 
-> Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
-> clean I3C support, cleanup patches for the pinctrl driver were also
-> included.
+Actually, the cleanup helper of devm_pm_runtime_enable() takes care of this, 
+thus I'll be removing the renesas_i3c_dont_use_autosuspend().
 
-I am ready to test but this series doesn't apply on neither master nor
--next of today. Could you kindly push a branch to pull from somewhere?
-That would be great. Thank you!
+Thank you,
+Claudiu
 
-
---rsfaeCIwtI8MyDA2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoev/4ACgkQFA3kzBSg
-Kbbliw//RSqgU2ZakkJblEOhzJXnCpeLCL8GlK+fDNm548nuABjDL/ujlZQKWCdr
-+3BZrVwp690+PXOYhqeL8HU5aQqXKNLsijj973wc+ybCuuvZWoAM6QcWxUDCrD1D
-LsF5dLBByVQalpDDcGD1E4KNTWhr3J8WD+MvAGdhBXEd0qUgbNekH4zDLteID1cv
-m08qO6K5IZ4H/O69pK+nAn2vpe19+0H9cLyqVDxPZmcl7aNtxH7ZJWRhDczG4qry
-RWI3UhPa0EjGlY1kU9wfV1vGxPg6/rcu4E4U8GmfKijt8W+MFt6Mx8nRrk9TqNwz
-o3/mrYINCNXjHO0cf9+vri5VvjPUJY5FBxq3S0IBhF+M1otSO3BFmY4XEXYIzdzf
-UwmbMxqbyYR0668vfxzISzgHCwqkLcf47m9cnHKtbyNg1CcGCsnDzM/2HEbQJ5TF
-IrSeL74lxHNAdrc0kHyoJCIH5v6+UDppzLjv4ItNqeJdYWKaFo/18C+fa+qJdGZv
-LSbl9L+4OgclqNL7CIN99hlj09VGEJIkMC/BDoE5aYjiz5OuFR8MkpNkTQue9A4M
-bC+naTZdZ6xz3EHYZttBhA5FIiN77fFmxo6VQljIivslrH+u/+ANT7/C20n3YKL+
-peALgijaD3xQ3PmH7IMeI77Q4wXR4BsOh2DI5Hl9a8f90SUVllw=
-=5DZw
------END PGP SIGNATURE-----
-
---rsfaeCIwtI8MyDA2--
