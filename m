@@ -1,107 +1,102 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6314135E953
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Jun 2026 21:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DA0381B1F;
+	Tue,  2 Jun 2026 22:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780434104; cv=none; b=Dl7E1vWMOGso/JSWhagY1xwyjSY7y67W4ZxsMkkM+RCauyiOkx6Z/3XteVB4FFifs0FrOvjkE0QWe5uFpDUsijZbT00Ym6Cxy0shqYTb0nDHseM0BP9tLp5IrGuwjh5aSAAuW4EGDVS8PyTi+kgUQLcLTvU5IiGzaGxLinsLhvc=
+	t=1780437783; cv=none; b=QvOsVhg/qnYJSbEguVf0LqyC42eLtG0HLFGPBHdmRoImRw2wHAqY5nFTZ0QnNxYzdm10MSxiofPYUIC8ulumvvglebi5LH/Be0lzejzA7hIIBgNlPBNElH5iVtenoj6i2ESQwskFpPTBtGkRWesVilf0NNLS6lXPfPGhwnBMHo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780434104; c=relaxed/simple;
-	bh=xGSBBdZRO7z7VI/FAZc2A0j9OplvL/xNRGdcbNke2nw=;
+	s=arc-20240116; t=1780437783; c=relaxed/simple;
+	bh=5Eu+KLYLa0nbb+xrRIQGmpnkV2DnY5IS9nq+/lttbRQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPIYANY4CVWXMvQ0Yo+VPhjsOqWGTJOZkKbK+VmHd6r+ctUR07fKJ+hOfeEQWD0ywDxPlCc9f1G6gKdMEbzfSty4/aa9VCyKDmXGQ+hDyC4XZBKAznHWAoAicy5ZawGsiA37R/do5cbCL4iuXjX5sW0GOFyiijSp3nfoskTuoVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OQ5k6o0S; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVWvIu4AZTOp4gvaerh+5bfBo9okeEnRunojPtBY0E7+jELU5LP8bz83gjy4fIusfnGSIu1yq6xNCLfSRqoapVGqeRYvAehIWhNNO4quX7bddy7EOMUZFfDAUjiVYj4QHxxtiCY+32yfyH3/NhNAQOhzZg+oQ3dMljMY55guy4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EV6+790M; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OQ5k6o0S"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=xGSB
-	BdZRO7z7VI/FAZc2A0j9OplvL/xNRGdcbNke2nw=; b=OQ5k6o0Sun3RP1zH8B7n
-	wvkGP3siNud8Q0w8mbWkBk/gRODeUL96RfpqVgLGnJxDgGcDyiGvwziMd1OSKRjY
-	qHyAjrzvbnmrQdZrGEAfX22iFPTcAeI2RBlA7KrWOR+4k04e/tthjLq4uRuuHw63
-	btJM+0RbyU3hrZ4UGp4EJpJrvyXchPmsNulbtBPBF506F9HzDcU95erJJOBTErFU
-	IzQQ2KXDjmpA8w/D2KjnA988XyeJuu1A7JntNpBtn/s4vmZ3egeb6FHBggFOCeVg
-	uuQAfPR2bKQT0EZkBBUqXoFXdFjYm843sDQqjlEhYQCy/OZnXiSStOa9GHSYqeLd
-	7A==
-Received: (qmail 3022471 invoked from network); 2 Jun 2026 23:01:41 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 23:01:41 +0200
-X-UD-Smtp-Session: l3s3148p1@TssknktTwugujnv7
-Date: Tue, 2 Jun 2026 23:01:41 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EV6+790M"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780437783; x=1811973783;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5Eu+KLYLa0nbb+xrRIQGmpnkV2DnY5IS9nq+/lttbRQ=;
+  b=EV6+790MeN4WaFYVrRxBSkKmE267lV8ZtuamkLPK607eyRiP8NxfrVPs
+   y5yIVOxV/XfGKeZrYejaQqPexijlZou10fb5rOE16H29RSWCpkNvC5GTK
+   xFaOXzZDAuZbZdkH80j0sZErIsfoNiCukvIGzI8b3mvQLkUcARYBlW1eE
+   e6QC38h+LxDIvShrKMBXVogdMTDEXoURKmmgUHrS6s6C2FqxMagjr95ni
+   1f0TX9MQsgkaHA9uDau4Plx+UvMNjnOopTNmY+WgP7BJQh8nn3MWLQREZ
+   VVULSXWleo/UReMvoQLGUMBeaTPnOtAw5Qls3hgwXmyPmpB/TS2N5LneW
+   Q==;
+X-CSE-ConnectionGUID: qoVrKFHXSlqYzYGs3N9cVA==
+X-CSE-MsgGUID: 2fZ3HYOfRLWC0PBeqLUtJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="68778024"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="68778024"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 15:03:02 -0700
+X-CSE-ConnectionGUID: YjSbJmO7SdqHodQ3uxUwsQ==
+X-CSE-MsgGUID: lnBU+o19RgmQlsdItY2dVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="237674514"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.116])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 15:02:59 -0700
+Date: Wed, 3 Jun 2026 01:02:56 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 00/17] Add Renesas RZ/G3L SD/eMMC support
-Message-ID: <ah9EtYNGBiyms_KY@ninjato>
-References: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] sh: mach-rsk: rsk7203: use static device
+ properties for LEDs and GPIO buttons
+Message-ID: <ah9TEJ_jrfcJwrb9@ashevche-desk.local>
+References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
+ <20260520-rsk7203-properties-v2-3-465f3308021b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kmXOm/pm/MaYEqtK"
-Content-Disposition: inline
-In-Reply-To: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
-
-
---kmXOm/pm/MaYEqtK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260520-rsk7203-properties-v2-3-465f3308021b@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sat, May 30, 2026 at 05:07:54PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> RZ/G3L SoC has:
->=20
-> Channel 0 supports SD and eMMC (including HS400/HS400ES).
-> Channel 1 supports SD and eMMC (except for HS400).
-> Channel 2 supports SD.
->=20
-> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
-> not support IOVS and PWEN in the SDHI register (no internal regulator),
-> unlike SD1 and SD2. It has an internal divider for all modes except HS400.
-> It also has a 2048-bit divider compared to 512 on others. Moreover
-> RZ/G3L supports HS400 enhanced strobe mode.
+On Wed, May 20, 2026 at 10:13:19PM -0700, Dmitry Torokhov wrote:
+> Convert the board to use static device properties instead of platform
+> data to describe LEDs and GPIO-connected buttons on the board, so
+> that support for platform data can be removed from gpio-keys and other
+> drivers, unifying their behavior.
 
-Sigh, so many HW changes again...
+...
 
-I want to review it but I won't have time before the next merge window
-ends. In the meantime, could you resend the series properly in just one
-thread, please? From patch 14 on, it gets messy...
+> +	for (i = 0; i < ARRAY_SIZE(rsk7203_devices); i++) {
+
+	for (unsigned int i = 0; i < ARRAY_SIZE(rsk7203_devices); i++) {
+
+...and drop the above definition of i.
+
+> +		pd = platform_device_register_full(&rsk7203_devices[i]);
+> +		error = PTR_ERR_OR_ZERO(pd);
+> +		if (error) {
+> +			pr_err("failed to create platform device %s: %d\n",
+> +			       rsk7203_devices[i].name, error);
+> +			return error;
+> +		}
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---kmXOm/pm/MaYEqtK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmofRLQACgkQFA3kzBSg
-KbYUGxAAmN83rTxKy+OCAttjLLPMw6hdhokpkjA7yY1gwiAB/WpP0KH1JOG4+E4p
-5aaJYTpLdY0/t1LXELQM0GWjDgPXiQ3qlUUOrtDcDYYaFIYp+S+QbIW2iX8kcppG
-ZMVl/FthfXXwSAm/3qm/RL0+whmBxjTe2uzeZB/Ptrp09xOIdRYTo/lCIdhI0ig/
-j39xSoj22xrvady0lkIfHJfnHnxs82Qmj5CXvmUFJ9idypKQVSwMOT56oF+Fd3lZ
-ks6JzW6Lq+uTOb8OqKvN2SP6gduBUMx21SSXgVP5MfEGEdeNYxn8yDS/rShlYKP9
-2Az1z+qiT7T45j0xBe7scH8yOxKU1FS4JKWgr/Spnojk3/B5S0Yi1Kcja28UvRx1
-fD7eC6ApMwCOc5SkeansUuxRDHjbI5zo4au1kkzbQn8kVbMV7gZ8KagWxqKNimiK
-oCKhAjJ30mnrHZOcCfxIKm698E4ZOwpGmtBaxUVieFyVZwf8IGNynNY8v6WsRj+L
-uNh452vvAEhluQCtsjBsYvnng5Go6bBZ34//rwYHUSXpFdcsY019E7b8EBGPfqX0
-nSsbD3QC5MS37NcYffcrBRNi6gNCyU4KIS1kLn2M/5KGPvL6ptncqtpWIkl6zFK2
-wTuHpJ8s+dIlZhJht6dZ1Ek9AaN2qw2tVb4NLSJ4V8s7QaI28/k=
-=xUEP
------END PGP SIGNATURE-----
-
---kmXOm/pm/MaYEqtK--
