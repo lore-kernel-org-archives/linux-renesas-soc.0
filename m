@@ -1,180 +1,128 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519B83314B9;
-	Wed,  3 Jun 2026 10:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE4407592
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Jun 2026 11:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780484199; cv=none; b=ANC8kbT0YcoicFLUp6k6Zu5RLkLUYhyI6rvRSB/srkzWbIVTy83HRM4muy71N/BpE+TVFJulndjn2KfRwmpo2C5AnmO3eUxXpuTNO3RYweeJPtZPoeuEet6Yx9gv+PiNx+PsDJSepF7vo4w4nhQeNXvGorNRHDD+6XrJ+/oFpQo=
+	t=1780484494; cv=none; b=RljpdUc+rAO/riWxxJvzVI2LlnhgUxfB06zcHj/MGBgkjUhJmrV7c7f/KBm80MyvHuGzn8w1grghvWSBPMtbxMWMWNGV0RpSqlvQPJ1fgCbCphUzuCHjdZj62Ow/gnZds2ulN39KrVmBtVRTctiX07mZDhmU82GyOh3J92s5AYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780484199; c=relaxed/simple;
-	bh=bt8ClXGe1tma98inRptOqEQMuax6JOkpf6nqc1GOUKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvXpMXZO5+rzCcmqpQqPRNwbLzQyJ+ohm+gb1jZ6vYO9lRgzIbQcDkOzfB2EnFd6zDl/jC5m1pW2f9o7VxIS/bpeWwzH1XIk2oim1F1Pusal9X33NNDdE31d/zw9llk+4yKBd+V3WmwIdzIwtYJxaYvWZjGfsBB6aQU6hZN59aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YLg7Gve8; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1780484494; c=relaxed/simple;
+	bh=LOrULc1iZDTGIdl+ETs35u9hgIKubwyvl2ebHAU2vSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UuttVPxhg+YY9AAhzE/CUHI6yvEq7Lup13wjatiz+1hgU3V96GF4Vf4hc/FSOwYyWNVe8D9btTVQiDTuG9bGI4ul7Qnl5BlFhW4OaK4B6dZoj5Wxp2ERp6MoI+h0K/oRuh+GHfarFdF5SLJeRWxSvXfO336Jxt/s+2x7xIqcUPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=KKHStzNz; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YLg7Gve8"
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D8911929;
-	Wed,  3 Jun 2026 12:56:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1780484171;
-	bh=bt8ClXGe1tma98inRptOqEQMuax6JOkpf6nqc1GOUKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YLg7Gve8akVKtvHys5qEul6GB5NyHpaitunVARJlexKED0nmZvpIUDcjAlNHIrjVM
-	 hu6TXpHv7vwW6t4H8ojLKJz76vMF/kqnBO/XcEL1b3IBdmRZGIZ3bBhU/QKChVnEC3
-	 t7bxxks1TROPYpLQ6MNqNJdEdt28W1mEHVhcwyJQ=
-Date: Wed, 3 Jun 2026 12:56:32 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Jai Luthra <jai.luthra+renesas@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: Re: [PATCH v9 03/13] media: rppx1: Add framework to support
- Dreamchip RPPX1 ISP
-Message-ID: <aiAHZnFg6UvFf0Xd@zed>
-References: <20260516211320.3041412-1-niklas.soderlund+renesas@ragnatech.se>
- <20260516211320.3041412-4-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="KKHStzNz"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49041fb8c23so94676685e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jun 2026 04:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1780484492; x=1781089292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IvwOj7IozsLi3dm+wQtK/2q0qsSj46KnFnlknrmF+Y8=;
+        b=KKHStzNz8CDpKxlJmB79NNHO6J4rSUmdnz50AqbyZv/T//rrhUGjSTL+YbYj1owc/7
+         rPhtrelU48GP4z2BKbzR7v+olEXDnEldfSQDHuoACWTa+tB02ShTHJW29Jrpmhe7v2/9
+         3oZvKztk4mwbbKI2bb4c8OK9TakD6dt9u9usu9DgOQC1p/7dkDK7dXw6s5qUMDlBrZQ9
+         7iAMmzU6BHwkSl//Lvb4oN4eqHHFo9s833loBC7eIyi/lkpr12aH7d7uY0cS4FDpnrn1
+         lG7Jug9B/2gi1WZsB2IGZlC40q1e1XeD8Zh8cZYvVi1XTlQPA9zbeCCMxQbfm7JFnuzz
+         P7hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780484492; x=1781089292;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IvwOj7IozsLi3dm+wQtK/2q0qsSj46KnFnlknrmF+Y8=;
+        b=R99qkzMzE+pGwOVaIl+jRlH6wXNaABB6NyikSZAKSB24BG6Wo1bhC7WRiuRIvMJB4k
+         nJ4+u7wnTEmhEdvNJbbE1YPl77DbuEmsMF2rUqTlmcdXgBs++l9n/6HwyCmERklbjmIi
+         a6fF00HgBmKVwmeOc0LIFlm2wcmLYpOshn65WvTB/YdDqVPBWTujQPybqqnogop1e3Sp
+         BQ0MM07iiIyI27zRQcJMFd5rrwI6qhzSU3MO+LxMN/dcUye/Jmc384/kl25AUrt9Y7Vj
+         g1ZWbr8O4Ga7YA2imqKcFpTCTOH/OKGkp54tUbCXrxr6ZIEJfG2V2ohatAJHIPqF3XWZ
+         28eQ==
+X-Forwarded-Encrypted: i=1; AFNElJ93mPbU7WkxrmhQp2K55oY+0cid+TI2k9PV65Ft4IWkF1UfHGlNMcC6/8yaa836q5EUEBy3z/p6SquBCIyjof4yJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPiBEiV7oMN0ArZmYlH9RUwtSJ+uFPQdlwy6tzFh2mjF6kgDb9
+	gvdrGBiIi8pd1W8fZLV9+GU/bwr4yqei+uH6I0mZ8uYxpx9j7kw39EzyT5jFZBQKZR0=
+X-Gm-Gg: Acq92OH4qqjV8OR/9XNFq9ISQEW7RWF0w55dxJoJImIJ/eoqS4wvdTZWzXgVoWuOWfZ
+	6aYbyAz9SHLRbiRJRhOzaLK8S3eFkoWbujpPJNKFgtqycOHqI5cP9E8LuEL0+PXpbK+elFW0reP
+	0n1tKpXC6BUSb2Q3ggqMuJjOXSFNVUMpJU41kijGFweS2latbtynxoiL0+sIZBFCFPZhTPGkPbb
+	gl/nVZeOTgBEzpNIftnkrkSRaKiJa2aQwm4WZWBIH2GNDOz0xtppksaEky6m4zvzZN42a42qdvc
+	iE2EhlRLLBeQPiQKZmv2rVgbWGwP61NfthxPD/sdQmjJyhvJtiCrFwjml9T6TxDKEbDDPcrMHOn
+	SI7uCQ0fMwYlkdJVVkRYltPdr4O77b1sMDdcnzF2bjZE17sLklTkS/smNza0ysxzJaIpwDSu8gv
+	8p28DONZWg22N9Iw3PHwfeBYufJYad48DGtfVZ69oXGFy2qQmoD6sWLU4OrlDutN7k6TLBBJPtQ
+	NP0JppDuL6/1BaHDZYNcb3G9E8Yv2++BeQu7u9U8D6Bc9BVwiWhjA==
+X-Received: by 2002:a05:600c:1c1e:b0:48a:5565:ec3d with SMTP id 5b1f17b1804b1-490b5ed1283mr47522445e9.22.1780484491776;
+        Wed, 03 Jun 2026 04:01:31 -0700 (PDT)
+Received: from nareshubuntu2404-gh-runner.lab.9e.network ([188.111.3.154])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490b0e76153sm138908575e9.11.2026.06.03.04.01.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jun 2026 04:01:31 -0700 (PDT)
+From: Naresh Solanki <naresh.solanki@9elements.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>
+Subject: [PATCH 2/2] hwmon: pmbus: isl68137: Add support for RAA228234
+Date: Wed,  3 Jun 2026 11:01:27 +0000
+Message-ID: <20260603110127.23930-2-naresh.solanki@9elements.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260603110127.23930-1-naresh.solanki@9elements.com>
+References: <20260603110127.23930-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260516211320.3041412-4-niklas.soderlund+renesas@ragnatech.se>
 
-Hi Niklas,
-  let me point Hans to a single part of this patch then I'll review
-  the rest
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-On Sat, May 16, 2026 at 11:13:10PM +0200, Niklas Söderlund wrote:
+The RAA228234 is an 8-phase PWM controller from Renesas. It uses the
+same DMPVR2 PMBus interface as the RAA228228 (a dual-output 20-phase
+controller), so it can share the raa_dmpvr2_2rail_nontc configuration.
 
-[snip]
+Add the device to the I2C and OF device ID tables.
 
-> diff --git a/Documentation/userspace-api/media/v4l/metafmt-rppx1.rst b/Documentation/userspace-api/media/v4l/metafmt-rppx1.rst
-> new file mode 100644
-> index 000000000000..ad256ae1c1b2
-> --- /dev/null
-> +++ b/Documentation/userspace-api/media/v4l/metafmt-rppx1.rst
-> @@ -0,0 +1,99 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. _v4l2-meta-fmt-rppx1-params:
-> +.. _v4l2-meta-fmt-rppx1-stats:
-> +
-> +*************************************************************************
-> +V4L2_META_FMT_RPP_X1_PARAMS ('DR1P'), V4L2_META_FMT_RPP_X1_STATS ('DR1S')
-> +*************************************************************************
-> +
-> +Configuration Parameters
-> +========================
-> +
-> +The configuration parameters are passed to the metadata output video node, using
-> +the :c:type:`v4l2_meta_format` interface. Rather than a single struct containing
-> +sub-structs for each configurable area of the ISP, parameters for the Dreamchip
-> +RPPX1 use the v4l2-isp parameters system, through which groups of parameters are
-> +defined as distinct structs or "blocks" which may be added to the data member of
-> +:c:type:`v4l2_isp_buffer`. Userspace is responsible for populating the data
-> +member with the blocks that need to be configured by the driver.  Each
-> +block-specific struct embeds :c:type:`v4l2_isp_block_header` as its first member
-> +and userspace must populate the type member with a value from
-> +:c:type:`rppx1_params_block_type`.
-> +
-> +.. code-block:: c
-> +
-> +	struct v4l2_isp_params_buffer *params =
-> +		(struct v4l2_isp_params_buffer *)buffer;
-> +
-> +	params->version = V4L2_ISP_PARAMS_VERSION_V1;
-> +	params->data_size = 0;
-> +
-> +	void *data = (void *)params->data;
-> +
-> +	struct rppx1_ccor_params *ccor =
-> +		(struct rppx1_ccor_params *)data;
-> +
-> +	ccor->header.type = RPPX1_PARAMS_BLOCK_TYPE_CCOR_POST;
-> +	ccor->header.flags |= V4L2_ISP_PARAMS_FL_BLOCK_ENABLE;
-> +	ccor->header.size = sizeof(struct rppx1_ccor_params);
-> +
-> +        ccor->coeff[0][0] = 0x1000;
-> +        ccor->coeff[0][1] = 0x0000;
-> +        ccor->coeff[0][2] = 0x0000;
-> +        ccor->coeff[1][0] = 0x0000;
-> +        ccor->coeff[1][1] = 0x1000;
-> +        ccor->coeff[1][2] = 0x0000;
-> +        ccor->coeff[2][0] = 0x0000;
-> +        ccor->coeff[2][1] = 0x0000;
-> +        ccor->coeff[2][2] = 0x1000;
-> +
-> +        ccor->offset[0] = 0x200000;
-> +        ccor->offset[1] = 0x200000;
-> +        ccor->offset[2] = 0x200000;
-> +
-> +	data += sizeof(struct rppx1_ccor_params);
-> +	params->data_size += sizeof(struct rppx1_ccor_params);
-> +
-> +3A Statistics
-> +=============
-> +
-> +The ISP device collects different statistics over an input bayer frame. Those
-> +statistics can be obtained by userspace from the metadata capture video node,
-> +using the :c:type:`v4l2_meta_format` interface. Rather than a single struct
-> +containing sub-structs for each statistics area of the ISP, statistics for the
-> +Dreamchip RPPX1 use the v4l2-isp statistics system, through which groups of
-> +statistics are defined as distinct structs or "blocks" which may be added to the
-> +data member of :c:type:`v4l2_isp_buffer`. Userspace is responsible for parsing
-> +the buffer and extracting the blocks of statistics. Each block-specific struct
-> +embeds :c:type:`v4l2_isp_block_header` as its first member and userspace must
-> +interpret the type member with a value from :c:type:`rppx1_stats_block_type`.
-> +
-> +.. code-block:: C
-> +
-> +        const struct v4l2_isp_buffer *stats =
-> +                (struct v4l2_isp_buffer *)buf;
-> +        size_t block_offset = 0;
-> +
-> +        while (block_offset < stats->data_size) {
-> +                const struct v4l2_isp_stats_block_header *block =
-> +                        (void*)(stats->data + block_offset);
-> +
-> +                block_offset += block->size;
-> +
-> +                switch (block->type) {
-> +                case RPPX1_STATS_BLOCK_TYPE_HIST_POST:
-> +                        for (unsigned int i = 0; i < RPPX1_HIST_NUM_BINS; i++)
-> +                                printf("hist.hist_bins[%u] = 0x%08x\n",
-> +                                        i, hist.hist_bins[%i]);
-> +                        break;
-> +                default:
-> +                        printf("Unknown block type 0x%04x", block->type);
-> +                        break;
-> +                }
-> +        }
-> +
-> +Dreamchip RPPX1 uAPI data types
-> +===============================
-> +
-> +.. kernel-doc:: include/uapi/linux/media/dreamchip/rppx1-config.h
+Tested on RAA228234 hardware; confirmed all sensor readings are correct.
 
-Hans, compare this with the existing (for example) Mali documentation
-in Documentation/userspace-api/media/v4l/metafmt-arm-mali-c55.rst
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+---
+ drivers/hwmon/pmbus/isl68137.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The Mali one is short on the stats part, but here there's is really
-nothing that is platform specific apart from the reference to the uAPI
-file here above.
+diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
+index 21d047b577a4..bef1459cec48 100644
+--- a/drivers/hwmon/pmbus/isl68137.c
++++ b/drivers/hwmon/pmbus/isl68137.c
+@@ -448,6 +448,7 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
+ 	{"raa228004", raa_dmpvr2_hv},
+ 	{"raa228006", raa_dmpvr2_hv},
+ 	{"raa228228", raa_dmpvr2_2rail_nontc},
++	{"raa228234", raa_dmpvr2_2rail_nontc},
+ 	{"raa228244", raa_dmpvr2_2rail_nontc},
+ 	{"raa228246", raa_dmpvr2_2rail_nontc},
+ 	{"raa228942", raa_dmpvr2_2rail_nontc},
+@@ -501,6 +502,7 @@ static const struct of_device_id isl68137_of_match[] = {
+ 	{ .compatible = "renesas,raa228004", .data = (void *)raa_dmpvr2_hv },
+ 	{ .compatible = "renesas,raa228006", .data = (void *)raa_dmpvr2_hv },
+ 	{ .compatible = "renesas,raa228228", .data = (void *)raa_dmpvr2_2rail_nontc },
++	{ .compatible = "renesas,raa228234", .data = (void *)raa_dmpvr2_2rail_nontc },
+ 	{ .compatible = "renesas,raa228244", .data = (void *)raa_dmpvr2_2rail_nontc },
+ 	{ .compatible = "renesas,raa228246", .data = (void *)raa_dmpvr2_2rail_nontc },
+ 	{ .compatible = "renesas,raa229001", .data = (void *)raa_dmpvr2_2rail },
+-- 
+2.43.0
 
-One reason why we want generic formats is exactly because we're
-repeating this documentation bits on every formats, without them
-adding much if anything at all.
-
-Thanks
-  j
