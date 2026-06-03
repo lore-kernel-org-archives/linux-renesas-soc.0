@@ -1,143 +1,91 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB032413240
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Jun 2026 08:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2618472;
+	Wed,  3 Jun 2026 08:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780474617; cv=none; b=OwrjMQyPR3IKhG2o+8M2jv/UQj/78oQwvMbhlpYFzSnKcDFjMWd5WyIIvEL3z1C6nHWw0dto3cdfgdGOCaqqnuP6qkQf3mRz2mi9NKodntoNqOFMIPmGf7P8G1EyNP5zumD3LtFSEHlBg3HuU+XeX3ehBsPiFugTYgXmN9bgEmE=
+	t=1780474779; cv=none; b=lty3YuNbCfKviaKU8qW8DcD4PFOHSM0zQVx1+rinB653mqD1RhLM35XHlkn5egw/lg0+4uchFjm2fMqpv1ezUXovpajcr6G2QdjDzmtAQqLE+8cGaqxfdrgu67oGfjeBTsOy+XOCTjfD+sTicGYuzNnsqIw1YOHuJFzcGN/X1i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780474617; c=relaxed/simple;
-	bh=NRGp7ciKl4RNiUi+iulN7hzq/FhBMMKaYzGB9VRrhxU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DlD4qv3PLd1Fjqm/S86drIPF7rmPu+U7BtSV4zaLCGSQ3K0tWEyffV7Rjlf6hzX0FT335st8A2Eig1iqsvcnzrErq/DLwk51TqcSuwjCjm56WUKDKlUSyzlynJlvgZArZUnnpbpeQBHKdXRXl9hCu9gqNqn+/t/Fu4WjsYQXOLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUgmJ-0001Xn-Ca; Wed, 03 Jun 2026 10:16:43 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUgmI-000sok-30;
-	Wed, 03 Jun 2026 10:16:42 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUgmI-000000002l3-3UCX;
-	Wed, 03 Jun 2026 10:16:42 +0200
-Message-ID: <50a908557bb3ce5f14b67396d1e73e70289a583a.camel@pengutronix.de>
-Subject: Re: [PATCH v4 2/4] PCI: rzg3s-host: Use shared reset controls for
- power domain resets
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Claudiu Beznea	
- <claudiu.beznea.uj@bp.renesas.com>, Manivannan Sadhasivam
- <mani@kernel.org>,  Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring
- <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven	 <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, 	linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date: Wed, 03 Jun 2026 10:16:42 +0200
-In-Reply-To: <20260602195019.1798126-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: 
-	<20260602195019.1798126-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	 <20260602195019.1798126-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1780474779; c=relaxed/simple;
+	bh=nWwjS8Mr20fDWKSL0zfgfubdVpa6oMYco7fA71M/hAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IrkX6Ci346Gu1YicPzXX4GfBMle5pWQr0iiwaAXSBF8lEhyioNiYAp8nmqLOthDHAqbqTtlQ5L8j5RtLArPFMsLBb3I5tOt7TH6thj18K4gWBO54fkIY0ArgrAbRjMZsiP4+NOe6yrgio7ojG3Au8IU1KrkLrSMsupTqbzwspoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWvm/YIk; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWvm/YIk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919751F00898;
+	Wed,  3 Jun 2026 08:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780474778;
+	bh=JcYA2oFILzb6weg9P7dCyayz8oFLadaOOZdee5CSgOQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=SWvm/YIkETWsR0+HHd1o6beNzkUd/KKdobYbOCh05Lm+8gIhs4MeR+3xEl9obrGdG
+	 AqcHLpG+OjWP2m7BsJBU+w0xU5V8XWaQZdVFMqF2foRkSTVshRUZ3jBL06Yq4ZYkKZ
+	 r3ejsSBdm40Il+8NXJWCnIJBhRXtMKtKnoJ8damxm3i8IVOV7xGr7zopfE81FnvcvM
+	 2+SwgmTWA9QHrG56g+yJI4cAMWTZ77P1vkUOCmIEYxu9VzCwF3xUNQxzB5PFWANCy7
+	 LbG/3gyg1Jk94lM2BPOHAWJZMO7miFmlMolxUJO+8WE8gW6PUUgS3eB7MGF/ut7272
+	 6j8u8jBMoB40Q==
+Message-ID: <096df078-1027-44f2-b02c-c0a27b646a87@kernel.org>
+Date: Wed, 3 Jun 2026 11:19:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] pinctrl: renesas: rzg2l: Generalize the power
+ source code
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+ <20260528080439.615958-2-claudiu.beznea@kernel.org>
+ <ah9BkQjUKwZ9KXMH@ninjato>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+In-Reply-To: <ah9BkQjUKwZ9KXMH@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Di, 2026-06-02 at 20:50 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Switch to shared reset controls for PCIe power resets to prepare for
-> RZ/V2H(P) support. On this platform, multiple PCIe controllers share
-> the same reset line, requiring shared ownership of the reset control.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> v3->v4:
-> - Added RB/TB tags.
->=20
-> v2->v3:
-> - No change.
->=20
-> v1->v2:
-> - Updated commit message.
-> ---
->  drivers/pci/controller/pcie-rzg3s-host.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/contr=
-oller/pcie-rzg3s-host.c
-> index d86e7516dcc2..a5192e4b58df 100644
-> --- a/drivers/pci/controller/pcie-rzg3s-host.c
-> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-> @@ -1276,9 +1276,9 @@ static int rzg3s_pcie_resets_prepare_and_get(struct=
- rzg3s_pcie_host *host)
->  	for (i =3D 0; i < data->num_cfg_resets; i++)
->  		host->cfg_resets[i].id =3D data->cfg_resets[i];
-> =20
-> -	ret =3D devm_reset_control_bulk_get_exclusive(host->dev,
-> -						    data->num_power_resets,
-> -						    host->power_resets);
-> +	ret =3D devm_reset_control_bulk_get_shared(host->dev,
-> +						 data->num_power_resets,
-> +						 host->power_resets);
->  	if (ret)
->  		return ret;
-> =20
 
-I have a few questions about this.
 
-Can you move rzg3s_pcie_resets_prepare_and_get() and
-rzg3s_pcie_power_resets_deassert() up before setting
-RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B in
-rzg3s_pcie_probe() without ill effect?
+On 6/2/26 23:48, Wolfram Sang wrote:
+> On Thu, May 28, 2026 at 11:04:33AM +0300, Claudiu Beznea wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The current functions used to get/set the pin power source check the
+>> OTHER_POC register, which is specific to the RZ/G3L SoC only. To allow the
+>> code to be extended for other power source functionalities (e.g. I3C on
+>> RZ/G3S), generalize the functions used to get/set the pin power source.
+>>
+>> For this, introduce the struct rzg2l_register_masks data structure whose
+>> purpose is to store SoC specific register bit masks. The members of this
+>> structure are then used in rzg2l_caps_to_pwr_reg() to retrieve the bitmask
+>> corresponding to a SoC specific power source capability.
+>>
+>> The conversion between HW specific power source values and SW specific
+>> power source values is now handled through rzg2l_pwr_reg_val_to_ps() and
+>> rzg2l_ps_to_pwr_reg_val().
+>>
+>> Finally, to keep the code generic, the register update in
+>> rzg2l_set_power_source() was changed to a read-modify-write approach to
+>> cover all cases.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Have you seen the comment from Sashiko about this patch? Doesn't sound
+> entirely wrong to me...
 
-Can you move rzg3s_pcie_power_resets_deassert() up before setting
-RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B
-rzg3s_pcie_resume_noirq()?
+Indeed, that should be fixed. I'll add a fix patch in the next version.
 
-Those would have the same effect as the reset already being deasserted
-by the other controller.
+Thank you for testing this,
+Claudiu
 
-Is the "power-on" mentioned in the comment about the delay in
-rzg3s_pcie_power_resets_deassert() the same for both controllers or are
-they powered on individually? Specifically, when the first controller
-deasserts the resets during resume, is it guaranteed that the necessary
-delay has also passed for the second controller, which is resumed
-later?
-
-Can the reset_control_bulk_assert(..., host->power_resets) be moved
-down past setting RZG3S_SYSC_FUNC_ID_RST_RSM_B in
-rzg3s_pcie_suspend_noirq() and in the rzg3s_pcie_resume_noirq() error
-path without issue? That would have the same effect as the reset still
-being held deasserted by the other controller.
-
-The power_resets are initially deasserted in rzg3s_pcie_probe(), but
-never asserted in .remove. This unbalances the deassertion counter if
-one controller is unbound and rebound while the other still holds the
-reset requested, which would cause the reset to never be asserted
-during suspend.
-
-regards
-Philipp
