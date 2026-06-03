@@ -1,55 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4B63D1717;
-	Wed,  3 Jun 2026 15:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87BC3D45C1;
+	Wed,  3 Jun 2026 15:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780499834; cv=none; b=MBKR1VgowIh0Av5NkWSDpakV/M6A1CS7BYUQt5mZNoJla3aF/75jTqK9WKSUj3rlVLh2LY3X+yh77DZx9kQISuzjh+m8y3R0StbNQnfu25SqHxj1/v4YhQgiaOyOn0/IG2BrsIIHhEXcnMP6daGq3C525SmlxO4Vm+q6YpsZMic=
+	t=1780499835; cv=none; b=Ll8GqCNjB648SiMpRMp1zEAwbbB6IIiK6UO+E93+RyTvBGhS95rR/f3kmmnulU/itlZAicnSpG6n5TpNfGRMTYv/BSa2ls4LkovMPPK5SPY/z05jXDLJTO5sPb6oOQVDBZMfIL3r+mVBsZSJZIBpZk+P4XS0+7gCNdV6ulMX990=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780499834; c=relaxed/simple;
-	bh=LtTbRDsK4gjdoYdesANaiItjHA/I+jljw0J8rnBxa60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gNfqzNYn+SnmQGRkYCwoaaTGCXUCond9CLSF3LwTH32QmMqIiiQelc/HGF+n75+eXFrBLL23j/xL5r4eAZuqf6RYMe3MnpmG4mH6aeOQ1Te31fVgBntXIUwwonBC2MkdKxYXCvhCK6APqoX6EFmLCmzUEAupuzKs0kno7qpNRcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2tmbu5u; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2tmbu5u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388B91F00893;
-	Wed,  3 Jun 2026 15:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780499832;
-	bh=aYa8cW3ExKVcGtvZx9/d68cn0QCtm1meSMNr+qL06Nk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=U2tmbu5ufzgCRljltgRBMr9bjnPQoP/XzbPdZrBfY3M+OkRay5iHr13sAKG4mghw7
-	 EKCYT2AOk6QNUAgPIzjkVuUUMKKXGYxboikCZu/VmO29ckBjyDo8YuCtgXbegcrexB
-	 lOzbyYK4WrNjFTOdwMRw+aMehEoDmb6IqgIVSCP6sOqkM9CDnKr3qSTQ+IL5R7QAVM
-	 3NbKdECP7KjsWx5dmVUq/D/fJ1ww72YtPX/u4bAEb8590WF1bc+fhj+eoJTL+pXxtW
-	 Is6mHEwlmVyNSmHY/zg2FmXmKY3R3lY4QDD6gAw8HiMnMizP8NN138c5d18SZT8AuD
-	 ybar7Td20PT4A==
-From: Claudiu Beznea <claudiu.beznea@kernel.org>
-To: geert+renesas@glider.be,
-	linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@kernel.org,
-	claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
+	s=arc-20240116; t=1780499835; c=relaxed/simple;
+	bh=+3I8wOy+75gvvBtz6c8y77At198hB9zAdvxpQGyGrno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btgFqRKyAAFFevYY5n3HqBsGnnHSLfFxXkvJZXZmdjbFP+aCHo/rVl2cd8mXZHFhXu9PHJIHsF6vePeYkocyQq7SVpHvSkg48d7fjndCUsNXQ4T9dsVsCLFjUaZT9tfWXknzJc8A6NgXkuwj/1GMmMR+b09nfn4/UqQ3bQ6eAqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002D51F0089D;
+	Wed,  3 Jun 2026 15:17:12 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 4/6] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the missing I3C power source option
-Date: Wed,  3 Jun 2026 18:16:40 +0300
-Message-ID: <20260603151642.4075678-5-claudiu.beznea@kernel.org>
+Cc: linux-usb@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] usb: host: xhci-rcar: Avoid repeated matching
+Date: Wed,  3 Jun 2026 17:17:08 +0200
+Message-ID: <cover.1780499433.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260603151642.4075678-1-claudiu.beznea@kernel.org>
-References: <20260603151642.4075678-1-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -58,38 +33,36 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+	Hi all,
 
-The I3C pins on the Renesas RZ/G3S SoC can be powered at either 1.2V or
-1.8V. Document the missing 1.2V power source option.
+On R-Car Gen2 and Gen3, the .plat_start() callback checks the XHCI's
+controller compatible value on each call, which happens multiple
+times during the lifetime of the device.  This series fixes that by
+using separate .plat_start() callbacks, reducing source and binary size
+in the process.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+This has been tested on R-Car H2 (Lager, disable pci2 first), and R-Car
+H3 ES2.0 (Salvator-XS).
 
-Changes in v3:
-- collected tags
+Thanks for your comments
 
-Changes in v2:
-- collected tags
+Geert Uytterhoeven (2):
+  usb: host: xhci-rcar: Remove SET_XHCI_PLAT_PRIV_FOR_RCAR() macro
+  usb: host: xhci-rcar: Split R-Car Gen2 and Gen3 .plat_start() handling
 
- .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml      | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci-rcar.c | 70 +++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-index fb1fe1ea759f..32864c9add4a 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-@@ -129,7 +129,7 @@ additionalProperties:
-           enum: [ 33, 50, 66, 100 ]
-         power-source:
-           description: I/O voltage in millivolt.
--          enum: [ 1800, 2500, 3300 ]
-+          enum: [ 1200, 1800, 2500, 3300 ]
-         slew-rate: true
-         gpio-hog: true
-         gpios: true
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
