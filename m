@@ -1,61 +1,63 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C35D339719
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Jun 2026 14:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D1834D90C
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Jun 2026 14:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780497225; cv=none; b=SUK6cJ+HOpGwjZS5QaCPbf7wIwai+AVbZHEeglVfe8kcn1X1tlbVwiOzt0CxzfO+bh7xiKtKs8CDdWxqIIiAck95d6YjxSs9r+uN9VAIrLlYdBOVye9GGSDl23Z2DV1I7oDx4/qVqnyoJEjH0fVjQJC42KwVzvFAE1mPm8lSLYs=
+	t=1780497227; cv=none; b=NqtJFx9cXYqdyW6xm3KdaV1ScquFouHgPF6HKfuGFjW5WvKtclZaMBb0NQo2Da8UqYi/qcf6lJXeuTxjkPh3FBjnzHgV2tPKa18ZKxeQ3FJpCW2BMv8k2JQD1v1w+tCic/SKvu4a8oay3Rhp4WIBg3EBwGLo/h95bJr0HyMPwIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780497225; c=relaxed/simple;
-	bh=nvrltdpc60saNI7UcS08/7LPNY7tUi4OaUtWoXm2MHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ao4cu27m07keS/mKk1kYiH4lyvaZVFfDXLB109T9RvK3SHxNNTlzZHL4P+zmx/iyyufna8FznNmx/IJxZsndySb+E7VaaL716T5VkoBb0EWLRm17Ku/Y5JiQeLP4pljac8IIiyKQ4i0X8jjX0hjvBuYndtJWoj2ygjRfv21VvMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYKGB0pY; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1780497227; c=relaxed/simple;
+	bh=DYaktsBqOc25DaPSr846Lq7CCic5W7A90K1koGLeUdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r+mVOBuAVm+Lg3q6rxITGop0qa54X3ZhTl96ouZoMUt3TxS2f0nEeSxsn6TzicIHnB+8jRf245/7J7Qweb3aRlBO9nsdWezDXtbz63rnrRENNOB0h8d6KlQJgDNDtBRMvbGneymuyw2DrKmetEdVSehfie8I/gi4V4Bc3cQmdAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6elcTAg; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYKGB0pY"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490b1bbcf3aso19092685e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jun 2026 07:33:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6elcTAg"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-490b4a8e28bso11237075e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jun 2026 07:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780497223; x=1781102023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XHnyZnS+fqlQALxl3qFob5dnW2yNrlaDTB0OvsnizSk=;
-        b=QYKGB0pYnP/RyBr16ytWBAzcc5eZpwnE5MIXgTn92vkZMnaE8hjT/1oKT7dsMY+DGO
-         BNY8WBdid0m4OKIiqhf1DQne/H4mbRPocIM9EjGpk4LKz3dxhAv+FbnPI8aFfEwZ62uX
-         rZbKHjgesIUVE0qQxgenFzRWAk3eqUB1wkmToCbvGQL8faoPI/SJaGDp12hiZeyttrNb
-         s7vF2ShmGZBp2BtdN88Q9UjbCNYIYwJ/6132XFULlrjd6ITmePuqMR7i0dXBVPyiFBXr
-         60AziPbpHpdz54tdNG7moKivHUEF7KylTWy03u2d9rvy/bvHEIanm59lqWUsJRjk2LAt
-         FxGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780497223; x=1781102023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1780497224; x=1781102024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XHnyZnS+fqlQALxl3qFob5dnW2yNrlaDTB0OvsnizSk=;
-        b=aGjZRDq8voX5kMsYjHNYPve7FgJZoNjlXGT/xRgcu22i3YVdaZiC5oStYcSYeEv6+c
-         mZ1RKONa8HbQRlah5D8wjwWxZ5etu3j56i9hhNYGLY4n7QumidqGByJuQO+YOU+67iDd
-         AY8XBrzL17ytxUzA+ypYyh3gCfAeUuTZApXERB3rFQIdCaYij2bmeJV7xZmVNhi6Q74/
-         s633KheH510WYDFSLt6rnDfNy9wgo2AuDRDF4yzXtqUPNPC2x5bf2cq7kbz5WeiQKGuM
-         HjB3E49R6BWO2w4J6x6oobsf5/WUnZVFNE9FQX5g1CKQJeZ+YdDgWCTkAQeqw2YvmCuA
-         wc8w==
-X-Forwarded-Encrypted: i=1; AFNElJ/IQt8oZJ2SlDBZaNcdUWN6RYnqpk6LllBAXdCo0ljkliMSNtVyjD0DHIMc+g/9OKqYcQ5M1m9mMp/UQux7tiJ2iA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ6wQKcUL8AKrUXo8NG430RnACboZzgGuaUMnvDbriQZdkhkYl
-	+m0gwYU0bYIH1vFolYwknCsbRT6gNmYNnPyiVB5izjyxj2SCmWlVPHL6
-X-Gm-Gg: Acq92OHOl2Afp62irJXqiIhk0PBTcXBUSNrf9hJrAjn2hHi7+gNmD2Xau4SSybDcEse
-	T7Uc4Ldu7HQmQWiaIfrtvR/taq3Nqei4RCsIF+z7H6rXWdVXvL7K9Cy9dpuXQS+pb6Pfu3tFjrc
-	mwLYGn9w8zvuBqXxL1P1saEogq6DhYC37AZ65jh+Hb3wquJi4QxQSaIdzXWDwWXcX5VkWAp0ICJ
-	XV/HlvbvXyVDdMrc8HSC7S4gpffZzSbrE2Mt8IffPP1OMETEwJIn41dcM7YYisXWZD9C0jqX2zE
-	z++/wBc4BNj1xwgyGwyaz+wsFqLONScFKZwndV2to5vZTOc+3FG8VmJoI8KpNGcauD2aOf1gZqL
-	TvhgloCMQwnBwGkCbsWKFf+dREP/dfY6jwnYAnPFinqnBBzSJrN4Z9NVDqD/74sJA/x+EhoEq3f
-	rJ/mG+3WVOiKKogM/SC+bJbE7u8tvrq0afr9+1/f1w7dAa8mnCnVcUn9G6t4g=
-X-Received: by 2002:a05:600c:8b23:b0:490:b115:e03f with SMTP id 5b1f17b1804b1-490b5e893admr60436345e9.8.1780497222723;
-        Wed, 03 Jun 2026 07:33:42 -0700 (PDT)
+        bh=uhBI88HcMxiu/qVRbd3Bgg5S6TL2Bjx/bQArdCqGIeA=;
+        b=c6elcTAgtmW2qCEz/5fF5QjKN6h8fUTlJjx8ETql1g6pvznAhcrHcNOVmnSNWNOrgO
+         mHAxgsikJN6EGZdTrHCz38vCakUdnPA83hHw2yFxo3rMULg54KpVT2ADUUP3MnLXvFgL
+         rurHwK9vkb0yBsdQDAZH5oMDp8zZBiyRJJA4Isf0CiwGYPZzoMqQ8vKGbL4vVh1xbmcH
+         0sFocROk16hcVYKtYA5mhrStWZ1aJ0KWDB7SY919K6U6zf0mDvkZTylW2U/ONJufzoPg
+         7Vrb11xSTV3Nb7P9Hr5p1xgr8yeRt1oZBo1mmn7crADROt5gcwAGtS0IlS++lNIP+PNQ
+         JaXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780497224; x=1781102024;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uhBI88HcMxiu/qVRbd3Bgg5S6TL2Bjx/bQArdCqGIeA=;
+        b=D+yoEL/+TGJEu/mWPtKzWSZTRV3mHt5bqVh4TSYc+88TrZyTA2ReNiaZD4lOUstxon
+         h+N4lY6MOg2s28yJz1SnUAEmwrrNFOez6yPV1YSsM3GQN46cvJorbCGT51bO40xw8o/h
+         r65LJwuasiCvs47NjmBzthDrgcqeb8r/Aj3ct6MWnDyj6s3gTA95if/ffC5fgFnSd9u1
+         PLxEJwe7e4zVO1h83VLBT3mkaINQ1w+10uDaHTkq26VgiCDmu4DLogYVrojEbFPY3z6B
+         lCFDFSP8JL02olKc8EZ9SonDMCKazaaqaS/JAiyfaYwsdxzQp8oGlKQfO5/TbEmXDbfD
+         ZmyA==
+X-Forwarded-Encrypted: i=1; AFNElJ8MOnA0k/1R/FXVAqabriw938VKa4jf2i/RZCn6/MJImUt1n6OKRS1eZjDM+0iIOWwGXJxnQ0CVMD7ItMOv1arB0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPj1XtZllzK00ivGmdz2jpzc1OAtb87+arMUhknbKI88+gwYBI
+	Uu5w5ODFxpG4z7WN4oK/jrlqS+AeyFfcn/0bl2cF+Oh0vacqfFWj2gYb
+X-Gm-Gg: Acq92OGb/vpaRjY4C8TrJY8xMjw+MAy4n49EyP1nk+fMBEytNjV2iWkQmjc3KFNahoX
+	mnGfbDFwzfUKERNGDkcqlSNVitWGMt+3tBoGTa/i8P7h0eiCyxU/gyBSFqQv9l2APzeSkSCEJra
+	MV9/HjUHa8s/3A42UHV4VxVEt7vF5G18beoT1G+opNMk/a3Iv3zZZRY8MrUUoM9Qhv2zpf/k5Q+
+	e6EK7SjTvChV2RH+3Q5QJa5GBT+XYIraEvJ1n0sAzcGUPFd2vtg/YYkSeA13vNI0TZU6be191fD
+	PMQ/Q7opSGJ1GSrBGKIFsmmME0TgQKqEIqgkFILxhLmSdf28utVk/zJyzXazj5g5m7e71gXajIW
+	7udvcsbqepkWn2OuyJHySZXkRmfe3LfSKWG/h1FhT2Bo4JQk7jDka6AgEa2Ygk/VLR18k5anjOs
+	hNBJQKT2++a6c7POkJqQKtMOvGfKuN4lmL4DY4dRvSLU6Enbdswr99ivZXcz4=
+X-Received: by 2002:a05:600c:810c:b0:490:afc5:f95d with SMTP id 5b1f17b1804b1-490b5e82e89mr65586495e9.29.1780497224451;
+        Wed, 03 Jun 2026 07:33:44 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a700:7301:179c:89ab:19f6:9ba4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490b0e823f7sm160147395e9.13.2026.06.03.07.33.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490b0e823f7sm160147395e9.13.2026.06.03.07.33.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2026 07:33:42 -0700 (PDT)
+        Wed, 03 Jun 2026 07:33:44 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -69,10 +71,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/2] Subject: [PATCH 0/2] arm64: dts: renesas: RZ/G3E DTS fixes and updates
-Date: Wed,  3 Jun 2026 15:33:34 +0100
-Message-ID: <20260603143340.162457-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g047: Add max-frequency for SDHI controllers
+Date: Wed,  3 Jun 2026 15:33:36 +0100
+Message-ID: <20260603143340.162457-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260603143340.162457-1-biju.das.jz@bp.renesas.com>
+References: <20260603143340.162457-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,24 +87,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series contains two DTS fixes/updates for the R9A09G047 SoC.
+Add max-frequency property of 200MHz to the sdhi0, sdhi1, and sdhi2
+MMC controllers in the R9A09G047 SoC DTSI to define the maximum
+supported bus frequency.
 
-Patch 1 drops the unnecessary SW_SER0_PMOD condition for rsci4 on the
-R9A09G047E57 SMARC board, as rsci4 is available regardless of whether
-it is routed to the PMOD or M.2 connector.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Patch 2 adds the max-frequency property of 200MHz to the sdhi0, sdhi1,
-and sdhi2 MMC controllers in the R9A09G047 SoC DTSI.
-
-Biju Das (2):
-  arm64: dts: renesas: r9a09g047e57-smarc: Drop SW_SER0_PMOD condition
-    for rsci4
-  arm64: dts: renesas: r9a09g047: Add max-frequency for SDHI controllers
-
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi         | 3 +++
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+index b48da8534a3d..760099697278 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+@@ -1265,6 +1265,7 @@ sdhi0: mmc@15c00000  {
+ 			clocks = <&cpg CPG_MOD 0xa3>, <&cpg CPG_MOD 0xa5>,
+ 				 <&cpg CPG_MOD 0xa4>, <&cpg CPG_MOD 0xa6>;
+ 			clock-names = "core", "clkh", "cd", "aclk";
++			max-frequency = <200000000>;
+ 			resets = <&cpg 0xa7>;
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+@@ -1285,6 +1286,7 @@ sdhi1: mmc@15c10000 {
+ 			clocks = <&cpg CPG_MOD 0xa7>, <&cpg CPG_MOD 0xa9>,
+ 				 <&cpg CPG_MOD 0xa8>, <&cpg CPG_MOD 0xaa>;
+ 			clock-names = "core", "clkh", "cd", "aclk";
++			max-frequency = <200000000>;
+ 			resets = <&cpg 0xa8>;
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+@@ -1305,6 +1307,7 @@ sdhi2: mmc@15c20000 {
+ 			clocks = <&cpg CPG_MOD 0xab>, <&cpg CPG_MOD 0xad>,
+ 				 <&cpg CPG_MOD 0xac>, <&cpg CPG_MOD 0xae>;
+ 			clock-names = "core", "clkh", "cd", "aclk";
++			max-frequency = <200000000>;
+ 			resets = <&cpg 0xa9>;
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
 -- 
 2.43.0
 
