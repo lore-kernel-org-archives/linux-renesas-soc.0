@@ -1,78 +1,77 @@
 Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641203FDBE2
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 09:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026B13FE656
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 09:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780567021; cv=none; b=heZVUIdwgF7ARZRGfEE7NXjRXjEqAy+FJsRkwN7ECpT74eV5qrofjsd/ZsK7iVEnmT2KPCT0EaAC/YJYNa0WhZ8ze/3fcPnGSAPHVrvdw1gltA+1gEzKkWC6Tui++i9h/9ExhASd7X0zx71r3aF2ry4oDyQPJ33IQQXtwczdXOQ=
+	t=1780567022; cv=none; b=RzYayeh/EKrdEi1luiovGv28vDeO4g1uWtyJVtrp0RcccTGJeAa8a65LUBi+YKrLzGVAdwHGPetJC/9ubUxxWG7ziGqto3JpIFq/6eRzxqTOArBSV8w03x+BSnqbnAdZ1a2vvkGvjeSMWKnYSYksa/1V+fH1JhYzfj6IVt0ZAVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780567021; c=relaxed/simple;
-	bh=7k9zOJLQmwMA/uzYIEjXOvz20d0UsGHSnWUHZU6C/nA=;
+	s=arc-20240116; t=1780567022; c=relaxed/simple;
+	bh=DSOrnh+y1FR5hznD6d87goguRPCs/nf79LO/QwtZvLs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VvEbb9Gj5yrOBIzUg4sBw/Ro7HYQ0KQcYwmgm70rlFj56GHyxm6rR67O7st0OTmN6+UpLk0GDltOgBveqz//trmTFLu5fq3vB3l6pc1nBBQj1dYVZSdfhXxGPEaSAfnr5HybBw+ijCMKB/o1su3NSbhnf2IyDxlVlM2w5s38ZEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Opfn+kfT; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version; b=AdONAo+giA/+ZJAvVW2WjxLVdzGpKHSbF1pltRoig/PBFPafq1JPezt3x2qAHr2Qyk62GSP2hBVtAgot3AkjAiQAJR/AtQAvGL4E1AZvZJZdTcGGOKNL1TX8uGIZBTEhL9q9KdOLv1/Lx3kbjEUSh1bULzit+EBFQzO1dbZiEgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EO/2fHqq; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Opfn+kfT"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-45f3cf907ceso239445f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jun 2026 02:56:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EO/2fHqq"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-45e9f4a3510so276301f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jun 2026 02:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780567017; x=1781171817; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780567018; x=1781171818; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a5m4IybCJvRhAGS6FWlVTrHuns1jqnPal3+xcRsaPBs=;
-        b=Opfn+kfTunl5vKIxlP7ahtKla8gu65LCou0ae0mOdksuCKYIYZimfx3ElTAv/FERrU
-         rsujUIBbOZES1EupyVVxLWnfhlSbM/rYu0Mh0OVBfQ2tkX8OwkbDkZ8KsotkpViYZ3td
-         8+h6LEl6XzSev2d5Az4HUpiOTUXnBLHN/RVxHGSIjpfhT4RPxYRZnGM6GEIe0oew0MGC
-         BPHfvEsfR5VhUJZdzT/Z2oaJORJlfAALPMaKACgHtgEwVGB5+e9RNRQAMLA16TVLQtU6
-         BrXN4ut/TB8xJB3sg/Osqr1ONjqkKEtzlr/LNdNXThmUndqmG5nMSxVsYrgO76DPhelM
-         RRsA==
+        bh=0+OfL2gz90L3t0N5J/m3NQlBjpG1dV2rmeosaocF/dE=;
+        b=EO/2fHqqptII7S5/MbSpi4XZB7E0hoqgA2NM3CtTdNMP9oca9lAdJcieDRZAMjL0o4
+         oDjuw4HLpWRoOJu7iaxJvSAvtTVefmhT0EaL5b/Eogbm0qnWvzexlXZz4xBv9A7TO3wv
+         OpJ7iDlxXPtqOIGxuZoZHrhzTt+iOe5Wp0pkopQL2MgtxZgg9t4kq2crWR7hXJFM2z8+
+         U9QnEgJPBc5jV9zBZvQQk9gHCwap3apcPZCGAhVyzQVncbLZSlyPP209TwFyoM6xliMM
+         5BCL9vQTCWI2mtWhYNJOxM6VnlXNvA2kVZzv1T+T6uErxPjS5zIJNuNGh1u6i5FkhKTV
+         nTgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780567017; x=1781171817;
+        d=1e100.net; s=20251104; t=1780567018; x=1781171818;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=a5m4IybCJvRhAGS6FWlVTrHuns1jqnPal3+xcRsaPBs=;
-        b=KirHHY1JOFhtyhV1Cn9y81il0yFt66qRRRd6sejYKNhlCX2eTlV0AcLTWLH7Cubv6k
-         g57yUVOfYy9Fjqc11dbR9dy6M+VH71Jkr9ilWGNW3aKfBU43/iRrB1PGcsO1m8Z8Hs+0
-         O4ySOpzgvoIIMtxkKYGMR/eN8ftO2Dug9ofWytgB1nc5Brwrj/KNxjtaq5b5tPIokDOV
-         cl98gC07Z452sXvm8yYRCf9AtrUOkDwzPyPbWvKMe9zYopNf1k6uRuq1Frxw0ZDnE2LE
-         uOJb64RXqqoj+ywk1xH9ilUzrxVFu+9vA2DW9R0diaBgMAsS5jMqkeUKuc49aJ4eUqdV
-         S8Xg==
-X-Forwarded-Encrypted: i=1; AFNElJ91jagv1CISKFq1gTbnAqISGJMrn4xdqoTISDznFR2oHFcsG8WbZ4Dx2NvtB0z/uB9RqRVkdZo9GNUewBxTcu7IQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl6XWxaA08UN8ESNaKLOqIpUwe5bj8Jk60mMb1JzmwxnVrUvyU
-	GWB+xW+mD5iLssKf4lbVJj+Dsa2xzu4d3YXzg+kAskdjmi+tC33tua4L
-X-Gm-Gg: Acq92OEcfh6xoGesnIARd6mlpblfi+iTOz3uf2+6iWiyHgqxnDENFDg8BCfJtxsvBOY
-	5mTmBGX8zgVGAswoebs6nEywvaOEZeDDdScZlZ1qdxqEOOn0+Dz1HSuYl9QaH7at/OLtjCygeLM
-	Lh9sl0GbP4LtQ5XMmFRW5Jrb1h/68ZHR4hbRfF34hRoBJmdkNbABX6EE86czAOD8M4S96GWaTzg
-	1samOsp3Oo/PxUlzuKVH9tA8rPLdEm+iJErlP4pmJY70msJJFxEulr0NC1G7MdTDtL6itkKT9tj
-	QjfqJgoYYiB1Xc32L9YGYvias+jET1BbOA80okPiyedb8+Er1BLH0wo4C+Mdjtn64D6/bZZQ9j6
-	Bk/E2FWvgw9Brz/Lmvbt9RFLWGJmu3fDSKmAnXkA+fgDTLwvpuEr0/YD9gfU5ix4V2RmZjMtSEM
-	s42rouqmGxhrBKeDLfvLdqkw085xjFrP0i99PMKagPahwzHaW3nXMEQEopdc4=
-X-Received: by 2002:a05:600c:4fcc:b0:490:59cc:999f with SMTP id 5b1f17b1804b1-490b5ea1016mr120694265e9.4.1780567016697;
-        Thu, 04 Jun 2026 02:56:56 -0700 (PDT)
+        bh=0+OfL2gz90L3t0N5J/m3NQlBjpG1dV2rmeosaocF/dE=;
+        b=bVEOes12nrWJ2upjlVgYFf13FkohTS05RO6qogpu5cO1Vm+EL/dNc3vNCxbLy2BM+a
+         3+gIPvl8Ya7aW7nQ7efFa8ipSQKQ5d3D0YJfODv6gLlgkNPvVQCfG2MDVtqklY7ca7c8
+         9RsnlQYm7BFSF1fPZ2XOQBR0+KkuvrSctbzhwUEO5G4MDrOdnskAh8dQWNI0wi27Oqnb
+         QGHFU8zic9zUIuILtH5MBnmqgx6Kee9W5D1AsnFTaJdCHvnSd+j04NQRgDiNjEKcfABV
+         MlGY2CjGcNncrPYbWONzlmXa9TD92IBZFMghvQeddbCIr9OZ8980KbaL3HFYjUE2kaeU
+         F/0Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8+j0VeVkXucQqyqnIZXnHtANYuhAVXI3PtY4Jtt4oFihxmxE/s2I+6ONjluJKSzylY0a5Xme9eDv4iz6TG1t2fxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyfO4gkaSjBkozFp+JgnP4zUBtIOrA3Zpk6uhYOTvXPXXUEyNr
+	3r5jY6+9Joxyr42NSEA8lWtRFN2VTN0Attp3NGpn8sAUWZTLEuaLkrgI
+X-Gm-Gg: Acq92OG2+LMbBPvPGG+NVgXOAGJpvTjdJAj5slr71zwR8xWXZLANWXHsQaKkDbh07cA
+	dmQwuzSX1mBWNMuEhl/AZMOF69l1XPtlumNX6fbdowUdgf5FK/V7x2d3OCWEOdryhjM6foe+c7q
+	5NfsxAZw8KpHjvUrBEIIcq8WoXlhMqRAwUKC58etEakjPnl8ecMK+jVsLZTXOqm10gXmFJPf0qg
+	r0178oXoxGLMZH1JxL0fXhq9Pp7N2UEZlbQVhb1NpUjfiiF0IuCL2Hff9KqBdMKwGs+ARqdMAtn
+	TNvQkBIn1xvgrcf2/cCpu8t6t8j50b5LakPgles+IG0Kt4sFZUiMw//p/XEG0NOhojWnNdn0tiD
+	lBw5HmTYQnsgjiXtjOcN0vmvfWeyviuYMhzq001soMK4Kynjfr72eg8ahQZTuNNvDq0fhmoaGlE
+	Kf26QCqiV703gYzeXU1WWqEJqbns6fmufoJhae5KY1qeUYnqDEdoKY0xgIaczBynb4LKZwRQ==
+X-Received: by 2002:a05:600c:354e:b0:48a:75b9:b0bc with SMTP id 5b1f17b1804b1-490b60edb8bmr112259485e9.29.1780567018421;
+        Thu, 04 Jun 2026 02:56:58 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a700:7301:1615:3574:e0c0:837d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490be1f69bcsm38037335e9.8.2026.06.04.02.56.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490be1f69bcsm38037335e9.8.2026.06.04.02.56.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 02:56:56 -0700 (PDT)
+        Thu, 04 Jun 2026 02:56:58 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-pwm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
 	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v6 07/11] pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
-Date: Thu,  4 Jun 2026 10:56:37 +0100
-Message-ID: <20260604095647.108654-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v6 09/11] pwm: rzg2l-gpt: Add calculate_prescale() callback to struct rzg2l_gpt_info
+Date: Thu,  4 Jun 2026 10:56:39 +0100
+Message-ID: <20260604095647.108654-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260604095647.108654-1-biju.das.jz@bp.renesas.com>
 References: <20260604095647.108654-1-biju.das.jz@bp.renesas.com>
@@ -86,10 +85,14 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Introduce struct rzg2l_gpt_info to capture SoC-specific hardware
-differences, starting with the gtcr_tpcs field mask for the prescaler
-bitfield in GTCR. This is needed because the RZ/G3E GPT has a 4-bit
-prescaler field versus the 3-bit field on RZ/G2L.
+The RZ/G2L GPT prescaler steps are continuous powers of 4, while RZ/G3E
+uses powers of 2 but with a discontinuous sequence. Add a
+calculate_prescale function pointer to struct rzg2l_gpt_info to allow
+per-SoC prescaler selection logic. Replace the direct call to
+rzg2l_gpt_calculate_prescale() in rzg2l_gpt_round_waveform_tohw() with an
+indirect call through info->calculate_prescale(). Wire the existing
+rzg2l_gpt_calculate_prescale() into rzg2l_data to preserve current RZ/G2L
+behaviour.
 
 Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
@@ -99,80 +102,44 @@ v5->v6:
 v4->v5:
  * Updated commit description.
 v3->v4:
- * Dropped field_{get,prep} as mainline now support it.
- * Updated commit description.
- * Retained RZG2L_GTCR_TPCS bit definitons
- * Replaced gtcr_tpcs_mask->gtcr_tpcs
+ * No change.
 v2->v3:
  * No change.
 v1->v2:
  * Collected tag.
 ---
- drivers/pwm/pwm-rzg2l-gpt.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ drivers/pwm/pwm-rzg2l-gpt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-index 18e6c0f28e29..3ee5a70ca265 100644
+index 4f3b4dd959e6..7e669406dcdd 100644
 --- a/drivers/pwm/pwm-rzg2l-gpt.c
 +++ b/drivers/pwm/pwm-rzg2l-gpt.c
-@@ -90,9 +90,14 @@
- #define RZG2L_MAX_POEG_GROUPS	4
+@@ -91,6 +91,7 @@
  #define RZG2L_LAST_POEG_GROUP	3
  
-+struct rzg2l_gpt_info {
-+	u32 gtcr_tpcs;
-+};
-+
- struct rzg2l_gpt_chip {
- 	void __iomem *mmio;
- 	struct mutex lock; /* lock to protect shared channel resources */
-+	const struct rzg2l_gpt_info *info;
- 	unsigned long rate_khz;
- 	u64 period_ticks[RZG2L_MAX_HW_CHANNELS];
- 	u32 channel_request_count[RZG2L_MAX_HW_CHANNELS];
-@@ -336,7 +341,7 @@ static int rzg2l_gpt_read_waveform(struct pwm_chip *chip,
+ struct rzg2l_gpt_info {
++	u8 (*calculate_prescale)(u64 period);
+ 	u32 gtcr_tpcs;
+ 	u8 prescale_mult;
+ };
+@@ -305,7 +306,7 @@ static int rzg2l_gpt_round_waveform_tohw(struct pwm_chip *chip,
+ 		}
+ 	}
  
- 	guard(mutex)(&rzg2l_gpt->lock);
- 	if (rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm, &gtcr)) {
--		wfhw->prescale = FIELD_GET(RZG2L_GTCR_TPCS, gtcr);
-+		wfhw->prescale = field_get(rzg2l_gpt->info->gtcr_tpcs, gtcr);
- 		wfhw->gtpr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTPR(ch));
- 		wfhw->gtccr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch));
- 		if (wfhw->gtccr > wfhw->gtpr)
-@@ -380,8 +385,8 @@ static int rzg2l_gpt_write_waveform(struct pwm_chip *chip,
- 		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTUDDTYC(ch), RZG2L_GTUDDTYC_UP_COUNTING);
- 
- 		/* Select count clock */
--		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_TPCS,
--				 FIELD_PREP(RZG2L_GTCR_TPCS, wfhw->prescale));
-+		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), rzg2l_gpt->info->gtcr_tpcs,
-+				 field_prep(rzg2l_gpt->info->gtcr_tpcs, wfhw->prescale));
- 
- 		/* Set period */
- 		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTPR(ch), wfhw->gtpr);
-@@ -525,6 +530,8 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
- 	if (IS_ERR(rzg2l_gpt->mmio))
- 		return PTR_ERR(rzg2l_gpt->mmio);
- 
-+	rzg2l_gpt->info = of_device_get_match_data(dev);
-+
- 	rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
- 	if (IS_ERR(rstc))
- 		return dev_err_probe(dev, PTR_ERR(rstc), "Cannot deassert reset control\n");
-@@ -571,8 +578,12 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
- 	return 0;
+-	wfhw->prescale = rzg2l_gpt_calculate_prescale(period_ticks);
++	wfhw->prescale = info->calculate_prescale(period_ticks);
+ 	wfhw->gtpr = rzg2l_gpt_calculate_pv_or_dc(info, period_ticks, wfhw->prescale);
+ 	wfhw->gtccr = 0;
+ 	if (is_small_second_period)
+@@ -588,6 +589,7 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
  }
  
-+static const struct rzg2l_gpt_info rzg2l_data = {
-+	.gtcr_tpcs = RZG2L_GTCR_TPCS,
-+};
-+
- static const struct of_device_id rzg2l_gpt_of_table[] = {
--	{ .compatible = "renesas,rzg2l-gpt", },
-+	{ .compatible = "renesas,rzg2l-gpt", .data = &rzg2l_data },
- 	{ /* Sentinel */ }
+ static const struct rzg2l_gpt_info rzg2l_data = {
++	.calculate_prescale = rzg2l_gpt_calculate_prescale,
+ 	.gtcr_tpcs = RZG2L_GTCR_TPCS,
+ 	.prescale_mult = 2,
  };
- MODULE_DEVICE_TABLE(of, rzg2l_gpt_of_table);
 -- 
 2.43.0
 
