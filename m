@@ -1,135 +1,98 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCEF331A65
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 15:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3243B0AEF
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 20:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780586344; cv=none; b=WOTNrNyl75MiPF/+KjPRz9pKcDCim/wBSKN+qbsb/Tb4+tkX+Mb+e/Sn206/nSD0nqtxC7Ayq0w20J+DgGkrtYCRZkk+kSfrCjWxNcHknfq0qZsZmWgjScGONGLZeXDOt+H5u/vSgcnbkwyBTEb3hS4RvcbZ9GZ4TLKg6jLhnnU=
+	t=1780604275; cv=none; b=GZ2QXHfdIoqEnc39SRAEm6/XeL7ODKiePOIDCH48jviji6jKJSQixWSznIkoQTiy83uZ8nZxELe3PEOW5TLrDV17Ya3ujEbKdkkJv9GELQnVNy22qzYo+hX65q0orGo88ya35YFnq1dS62VZ/ac5xMYjS6xQq9aF47IICZg88DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780586344; c=relaxed/simple;
-	bh=yL2qAKI2jcxosbs/pLkS1PbpJbGzxbxr0FtX8S8lgC4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EPHz1yOzPeoEXPoaHCmy9koD0HvjoXur434CAA+6oxFV+dc99CJs/rTTOwUQNYfvVAnjnlZ6aB6QEVewxTa6vfp/OsOHi0sJ/v4ymDWgvF1QkPQ5mpzvaDeS257xFoEvfXim34c1D0aAbGsnQs8LA7ADkJ2mO35uLfD9IfrgxBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFW47HuH; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780604275; c=relaxed/simple;
+	bh=5USPnixnroDY2Ii176W0lkmp5qUYAY3f8YiS24Bm3zM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pz9JnVV3EoOVObWcV66JZP34oxbsjRIT9aPvYoAxQrTwizlsnOA39jjS9WpowpqRmTU8+pW5nDN6G/IqDG+Fvx50N+tWg55wYzRLe4xsMK2rF3EdcGg2wyAGLqSHJsw1cSQaiB5Uc49fcFkTE6qrH+IKgrSPIQi/+nFYTBScOUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XJAO3cPT; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFW47HuH"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-490b64c8311so10280465e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jun 2026 08:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780586341; x=1781191141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LWUcXwhNpagO6TYVN1qjS6SxZrgnvhazVIX5TODrDgE=;
-        b=SFW47HuHzzQ7+WwHoHu81QT0srelIUtYheHA53exrwdCVnNhskIczaDqa+pupoSY5g
-         ATfv1vpPRxuLtgWoGgbPhyvlPLal+bkGIH5/PT2VZ5rZMLyBc3c/HaCZnj9JLHPlZ0j+
-         n1NzrdtHgl5Qn2chCKnaM5imudNypFvHITfaZGKXlNxLw1rlRu6wrRhvU6kG5mM2uFFQ
-         DVUrUeSpT4WAY38BibBmpwTuOxP+Ou4cdejPzDBaH/R78UiXUDRT0Wz+pJHIT9DOsrBK
-         UI/nf3lZcMIKgNFiRfw71T1oklM3NvBswtUPJty5cQnVwGJ9p0+WsXfVKixlYtUJKwyQ
-         RPkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780586341; x=1781191141;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LWUcXwhNpagO6TYVN1qjS6SxZrgnvhazVIX5TODrDgE=;
-        b=DwV+R9UC8xFWFj27afV0c4Tj3k9grcxBx/eqMP8S9Hf4Av+QFdpExkGvON9Xlm1jaf
-         bMsHD2B1oJM/yWCJYSrsTua7i36C1wUs/CqgorfPNUcyNeNpo63lmH9G4O3KwAMHvcM3
-         qSdcAj8RI4Df4150kuTkGSGhnq4IBPpwdOa5p3o3Em7FnA7jz0qNmkRU9p7H2bKWfJP5
-         rV++ZjkjTq6F1rEju89rE+eCg4BYZI+4+W3PzvbM3j0dEL4Jj52j4uiwU+03BGdhT3LU
-         mOB/ZFBUqEON0KF9y/i5OFapXF+0qsCWYghTOJw8zkUDisKxMGxRt9BcytzwfUvQBtqz
-         qWYA==
-X-Forwarded-Encrypted: i=1; AFNElJ/BYblD6mCa2ciOmnBl2w+UZyd1QjyXvBSA5+hCuY05Q75HhFK73vzkXrIGBrSQ7lvZPa65R01hAL/7MZ1oF50kdg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0cVvu4GNTUJ1vvJNdrH/roDIBZrJIALd4NV4f7G9KhEjy/s3t
-	EU3HfnyAmkgFIXSaT9vQ6Bh+UVFfjFYzY/muHZQy6XM3HUzHGMlp6U3t
-X-Gm-Gg: Acq92OFyBRveFGDDnTDTZzaqpW34W8Ze/rSOn0/8Zb+AFjxZXdHRZ2T3LD2+PCiBrFH
-	W1G/y9hPHJsDCbS1dfm2gyxv4D15XfQbS87ZYJ6sfeEucORW1xO5LcpS61so2Z7uix/bFyBSzBP
-	Z44bOCukr9wjjx/GMSZZ6o9UA0gmRVdmC1nzV1Eo5tzG2en7ywXceB/49Gx3y3YucAG7CtjHvB1
-	zA2gt2zFPs9DvWJVMDl5kKlgbsCsHoytLQ42eZX6i17UQF0BwJB9J537+GWO8paTdOnYT/ZacTW
-	HLaXzXkCwIJRqTFJwTQT2Dc61ycngjU5hHYKEZSfOxsWuql74MrQ5IffYYROEa18r+UZqW2ANb/
-	77gkmdH+ETXUjQOnu+A8iKLNXpsVdSbkPr53lT1EZVk8ZwVr1ZmqnKJ+6Zli54D9+t5nuTbQwcX
-	v3FUl7cUZ0J0gsY8LVbs4NM6U5YMHsVL4qL61YOlHc3g2bHf5Z996uQ7VNkPY=
-X-Received: by 2002:a05:600c:5288:b0:490:b0f1:c27e with SMTP id 5b1f17b1804b1-490b5ee1c64mr140495465e9.24.1780586341284;
-        Thu, 04 Jun 2026 08:19:01 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a700:7301:1615:3574:e0c0:837d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3b5b82sm82776805e9.1.2026.06.04.08.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 08:19:01 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XJAO3cPT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DqGT
+	LZeMUHe7mZh6wHehvpuUwVazb5ezhmruKOpiiHY=; b=XJAO3cPTK5IeKDlxxO3u
+	/+NCKM+BH+aIl115LTWq8jeE1E8t3P7eTKbitOBNMrdKcz/S6wCP/RHgsxMK+lVl
+	Z2b+hZ8j/O6V0ANbtxmyk4c6fFnx800qxFqlv3y0JMkcAA3VUn8Uv9o0wVjyNSmL
+	KigfcB2wsoiRCwSZcpCq539Zv4JNFuj52qLzSdsKt1ug7sMk8EszDrNVsB5fMdXH
+	h51z819ReIxPeZJ+SikU/ucFGz7a6Fy/iycGtQbKYsZsqdTgn9Ujt/o9HT2v3C0b
+	wmQraQ12JJN3muH9cFM/3FgF06YDvgVw6ZAuzrkrLJu1eya+y3E27buWs7hNYriy
+	WA==
+Received: (qmail 3752435 invoked from network); 4 Jun 2026 22:17:49 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2026 22:17:49 +0200
+X-UD-Smtp-Session: l3s3148p1@pGDrPHNToLxtKDDL
+Date: Thu, 4 Jun 2026 22:17:48 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+	claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 3/3] arm64: dts: renesas: rzg3l-smarc-som: Enable Mali-G31
-Date: Thu,  4 Jun 2026 16:18:51 +0100
-Message-ID: <20260604151855.307772-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260604151855.307772-1-biju.das.jz@bp.renesas.com>
-References: <20260604151855.307772-1-biju.das.jz@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 9/9] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Message-ID: <aiHdbC2wxXpdqBd9@shikoro>
+References: <20260522102251.1723392-1-claudiu.beznea@kernel.org>
+ <20260522102251.1723392-10-claudiu.beznea@kernel.org>
+ <ahBMKWrKQDko3cG8@shikoro>
+ <fb892151-33e5-4bb2-9a01-9abebe0f3b39@kernel.org>
+ <ahXQnt4MTVoBB9bF@shikoro>
+ <dc1c2c1c-73f1-43a9-a157-7cd362faf89f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qvGIMNYVtV8rCBXY"
+Content-Disposition: inline
+In-Reply-To: <dc1c2c1c-73f1-43a9-a157-7cd362faf89f@kernel.org>
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Enable the Mali-G31 (GPU) node on the RZ/G3L SMARC SoM board.
+--qvGIMNYVtV8rCBXY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-This patch depend upon [1] and [2]
-[1] https://lore.kernel.org/all/20260603065731.93243-17-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260603065731.93243-18-biju.das.jz@bp.renesas.com/
----
- arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Hi Claudiu,
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-index 3d5e6b8489a9..fd2aa064f9a4 100644
---- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-@@ -51,6 +51,15 @@ memory@48000000 {
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
- 
-+	reg_1p0v: regulator-1p0v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.0V";
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -119,6 +128,11 @@ &extal_clk {
- 	clock-frequency = <24000000>;
- };
- 
-+&gpu {
-+	status = "okay";
-+	mali-supply = <&reg_1p0v>;
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
--- 
-2.43.0
+> Standby mode is not intended for power consumption control, but rather for
+> placing the I2C interface into a standby (non-communicating) state.
 
+As I suspected before, to hide from the bus. Linux doesn't support that,
+so we can skip this bit IMHO.
+
+Happy hacking,
+
+   Wolfram
+
+
+--qvGIMNYVtV8rCBXY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoh3WEACgkQFA3kzBSg
+KbZD8g/6AsqOQ+LHt+PVp68Wk6LgkRF901h/EvOexy/tREHjWUtSAKQjaM4RUIzk
+F80+yoBROP5T8gRFl7l9qsrGR12fwHRc4zX0YiCHisyhE1uTEYQLJfoJX8Roy2YS
+Ou4XiKl0G5ytkYHIR9YDeyt5021P6eEvbASZs5P7/2hPNEax7KVXrKRVopjERWqe
+hzgbWqC8flqQTOBCSsZPnyunG9Ed70x/iIWwEIFgNDlOcKSZXItLYJc2fz+xNhL9
+F3l7kgE7jBKSHqbT/ayyO8FamPIISvnZ2Yl/i10HKpgjDEQW7Iqfefh10nTw7IOh
+RnewP3edmULxOzy2DeeOHuteCeVqQmaWyVhXBxWoyBhLQY7mg1ZPFlt9xP5G9RGo
+zS0nIcpD89ttlWqkjTY59j0eIrquKjVK+R2DuExv5I98GPi97G9WHLaaqHp7mAQ3
+8M35UHwBjLV3qS8g/Z30r+NGRSNBTZyjzMH795B1MnPlnhFh1sAiAot+5ta9vwkS
+ZMsWciBIQeD1qQSPfPHyfZLnPTG2dTESHx/vXYQt/1sAecC206Ns3OBzguZLn0e+
+/d4QF060IG3Bp6szVGpO6DIjew+9tpKpxeBnDdOe9l8zZxQ/zjnbyL7zyvxJ23F4
+gEePXhggiXCmRo9U/RrGqGVvSXmhYdqxMQP1bt58ZkMMRkLjQoE=
+=9Shs
+-----END PGP SIGNATURE-----
+
+--qvGIMNYVtV8rCBXY--
