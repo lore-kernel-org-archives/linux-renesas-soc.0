@@ -1,81 +1,78 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493713A1CFE
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 09:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8033DFC6C
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jun 2026 09:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780567015; cv=none; b=ScaFTYZBrkF1AcB+Y44UnaqZ6cak2+5JNonbqbeesd2GqcMlkSHAcS1MIJKk/MREZRnAb3ep5ct8o4EA34Pm+zs3TihwYeMheobjSrPlZLxPVq1Aacmn9PyFuI3Iefr/9xcNbZsahLpsILev36pM/LEVOp1EicfVM3ovBCDlmdk=
+	t=1780567017; cv=none; b=WXBxxa3GgVkfJphZBTUeBtrslxQALasE6QDyg4JHG8NQF4DmZCKxDkY6B6FeUVHJreLEkWX2a2ONc84+b5l2DfTIxK29tKPTJzA4M4SM3LqbT7bHSuwO8aCGiHyYyTrxJ2IK7aP6ehl/x6lGQzdXFhHyHZSmmp6haVvTrKw/Ilc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780567015; c=relaxed/simple;
-	bh=GlK9ixHx54Su6flP5suqw3t57abQqWUB6DRE7SgXo5Y=;
+	s=arc-20240116; t=1780567017; c=relaxed/simple;
+	bh=ormcBKXgtMUbxhPH8flZunLMCWwtspwzC/31OfGnHNA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DL1tb6n1KnvEcKYNSABX/MrHjdOpjkpyzbJ+AK81mXyOBd1P56qaxQi0KsLN1bPSKwrCQ7qlPmLgMT1l+xX1DgIOH6veKnGhGi90uu+6hKvj8afuOjKh13kijRZJ7/+p6VQ/7oFaduhyjcvpZ46sKSRWa7NNJRsSR6BWqa9FLq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USqgekZk; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=Wt+w3c6zk0W0oUUn7jnDpm9w9V7wXN1nST6eptW1HXjyOU3QYXxmItNga5Zc6muzXuM4mlC4FnHURDplzS0zE5huofgiTk9gU03N/bB7TWzCNrafVsWydgR8UGWIBafiU9LeXi5xiaF29BSkZG0MjkZdeDbvTukA35TaARDcqcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQe6f7bo; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USqgekZk"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-490b8ac62baso11122355e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jun 2026 02:56:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQe6f7bo"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490b3e03939so4045695e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jun 2026 02:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780567013; x=1781171813; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780567014; x=1781171814; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bpnqT/H77UIaNdz4UGNV31fQveT8Q7DBDQnTYavMONs=;
-        b=USqgekZkAxbpGQV2ymPvT1uNwjPrBfku36ElBt/jclzS/CHcGL/dTM/2EzLQwllb1b
-         LK5klRIooUYTdjT1AXH3n98y1y0NgyVP2yM/9dsrra2nmwfKV2/BGyLo+RH4R5dgh2JT
-         a3vbklzKhfS6rAUbSkxDoijh3FUcHIFBuoP1b7IiDu+hJOEISUfrqmFEwZUSo6dKOG8e
-         +IF/13eVJI6NzLNn9qfp/xbXlnHGyezVzfhtv6IkJE3sUW8drNexJr4Ul/q0HXVb+A3n
-         JXCtPyT3LvOlQp4aq2ub+LD35Ud/crSqew7XiLwhVxpIFSo436RyrcAIFJeFBvaac36f
-         oTSw==
+        bh=WRHuLwRJMvtvIKprdTuRI74u8tyjnb0ERZ60XzwxUP4=;
+        b=VQe6f7bon18+7QGKbdzoaphzaYbDRWjE82U1lnsUKukrj6AhWfqavsECmqK5mwt6Jp
+         zzilVHMarGcY60iHp66zx+z4BYmy/iUlq1t1S5od6LgdyDlwQY51Vy5sVvjFfSYBUXH1
+         NaONf7TYElPn3goeaa/OEY2TwYdogf56wAM0R7qzoDpsTs/j87lIj4JJzM8yxnAXN/zz
+         Xzx04jA1wnFSNHBt3pjLMzlquuF8PJWBhUwPwS2MogPxg8cKt+jy3QHJZcI2BwuVJ1NR
+         i0KD9uyu3+kYNS7jNz/1nc2HfpiE6YexFdmWm0IWaBFbdWGWoSd2N4sxGyTqu6VSOGhn
+         aEug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780567013; x=1781171813;
+        d=1e100.net; s=20251104; t=1780567014; x=1781171814;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=bpnqT/H77UIaNdz4UGNV31fQveT8Q7DBDQnTYavMONs=;
-        b=IzwJV2KO1gAQvrv2iNHkflwBki1fCbcoVItT5HUgOeWUbkMSP5JEYh654ojXY4NmSe
-         h4w/jqw1eVH4nWLTXeljLSJ8tu5G1dFWyU4wn7Nw3xjm8R40Bpi9BToK7R53BItbiRA1
-         MyRt0bAjdECJrTDuFt48FG1jYeUdVfgzQ3XxuUsnk4mRFOzJkc27k7UdzOtP1fXsmB95
-         mMhFT9MZadb1EZuRcTxXUoHYhEnctv1A0xJEVAyORNMHIaqpCvbO/m9vT71sri6xcSvx
-         gzmKEYGIJNGC/R3IUSZsnJBUV7pYKaNoj7LO/YHofVWqXvxvCU6Ya7vmtVN9MyetsgvP
-         LKJA==
-X-Forwarded-Encrypted: i=1; AFNElJ/hW2GrI85MHFmBMJdhUx+A4FNPRz2F7kRurH0lFBpv+rLJoZYP8fwUg9lkXUjyNKQl8qVTbqVHcsAmwo6ta8OTLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYQhhgca8JEC6tuw2QrL1cuq7C1q2OnaaNw89GWAkEBDPBEx6f
-	V2GfG2dQWPnA0Dt1Ok9DxIpkbDtaWToPPTnalK7M1z2DNh9516s2OYZe
-X-Gm-Gg: Acq92OET6DG8SpcRDMdEdvOm7VPpXPWlvYWypDkXNKnFm8xY1QU0Cddz8vexZwagUqB
-	1xLV3GqOWaamTiGttW/+T5zkZEAfR8Qq0Xx+APeC7gF5ecSBbTfU1SmVCKOrWcFr8Om39UNOQKC
-	LKWdA5zDze/8iXZZSmZk3cXqETfa3NXVEuANNtDgP8W+aOSrFcuLScitn3MYeTOVAJZVYoHyyM8
-	LlZJ0ISM90Ealio34KwKYCK28554Gy+jTRsGCFG8TZHjBlg/3UaaW5iAFUY3JS2MjNO8J9l6s+J
-	MP9ORhJATljapu4yQbuPk4DotrcC5HturmdhcPX5IyQRB85ng1X5v9tQ4zQ1SOb8IqERo6C5Wip
-	T+1RMKEeK/xeWexOGJi+nwFII0SWlYIUszsC7JkSmnnqgGAJGpL62Jz4UT+HLGizTW8314Z6g4R
-	2+uTZsM0/jJXYM5Xf8glZw1RjCJz40guL3xilXwQ7+lFF0ZBOAxebNP0Fpvfw=
-X-Received: by 2002:a05:600c:4453:b0:48f:e230:29f5 with SMTP id 5b1f17b1804b1-490bc50dcecmr42162245e9.16.1780567012510;
-        Thu, 04 Jun 2026 02:56:52 -0700 (PDT)
+        bh=WRHuLwRJMvtvIKprdTuRI74u8tyjnb0ERZ60XzwxUP4=;
+        b=LjUZSK9dRBt8qK5VkEqelIE1hVTj7I5d5orOnxnj6MmlPxoAEfMd3V8DFUB69CAvuA
+         yzYrs2ZQIBOWfxNk2rqKEjLtoU+g2fphNq46C23kOgFTqTl+JHnDmJQBQ1OZXgX9o9AQ
+         Ouc2dTlft2lnGOGIzIVSUzN8eivMgadt9g2X5fYtqk62qVr8pdRYfz8IZUzglKR0LFk0
+         QJzN7vZJasaKIELVVSiO749+C5aD4fIBbLc4updEOtYjYeioWrtJOb9JV0/j9ke+3azT
+         fZUwsuepko/aK0e01t7riQSfwZmxj3T8jl27BOx/AG8b3dpCynsUOjTEAyViqvMgk/As
+         pVCw==
+X-Forwarded-Encrypted: i=1; AFNElJ+n2iNuoKoHbrL1hzxMA+DxWqJCX/ghsbKN8ncPGCnY+pC1NBVLarL2tOrzWxe8mAzz4zxKRxziKL78U4Ij/WZtFw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9aNW8is1UEDKlJDm4tTbd7a542OCynFverzen27jcJxtsXWXv
+	J2QeDXMtqxxl33eh4t8qw9QSFXk6FJJ0hKQZVYkdDXnYVG7fSNTVXaxX
+X-Gm-Gg: Acq92OGptnMHxWj46pNC8LiHhA9j4YwQ1NGzcRomMprAhw19EVLHLb3z4Hdqo9jWWLL
+	6BWJYklXX4VSesd2Rk5zo4npKaZODKmKqZfIpCZujDLo6oI7alaTZp401YWiqsgToL8Pw619bpr
+	2iJrL0torOdqTnNNlMHSi/wdy69uNWmQ0zotPbqzbrx0GPweXLBm86GeR1Yp3Yuli0nZjwIwI0Y
+	zXiDQrsXREVs25Mm9U5yodMahH4s7WiJ7Ulmj3R0DqKVFnNos9xsNpadB2xpQe1TfCA2msjW3x3
+	CtGxZVR+/r1i/Sl/tRF2Z5HfHHPY+8eBBsLjc/c13R8t4n4N0EvZO8fYlrlfk6Hc6ystCI781I+
+	1gyoHmV7bYPz1QDOaeruhBBNqVxhvQwbUkUz0216kQYf4NxatZ0ZhvankzIk0wZcMPZXsJugtLB
+	JyeHV+cFFSdjRkn+0u9xTwrV30g7G8F/NGK7tK22P1oux1oqy3fe4CCf5Eclw=
+X-Received: by 2002:a05:600c:83c6:b0:48a:53cb:8604 with SMTP id 5b1f17b1804b1-490bc5001e0mr48514435e9.14.1780567014180;
+        Thu, 04 Jun 2026 02:56:54 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a700:7301:1615:3574:e0c0:837d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490be1f69bcsm38037335e9.8.2026.06.04.02.56.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490be1f69bcsm38037335e9.8.2026.06.04.02.56.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 02:56:52 -0700 (PDT)
+        Thu, 04 Jun 2026 02:56:53 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document renesas,poegs property
-Date: Thu,  4 Jun 2026 10:56:32 +0100
-Message-ID: <20260604095647.108654-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v6 04/11] pwm: rzg2l-gpt: Add missing newlines to dev_err_probe() messages
+Date: Thu,  4 Jun 2026 10:56:34 +0100
+Message-ID: <20260604095647.108654-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260604095647.108654-1-biju.das.jz@bp.renesas.com>
 References: <20260604095647.108654-1-biju.das.jz@bp.renesas.com>
@@ -89,64 +86,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-RZ/G2L GPT IP supports output pin disable function by dead time
-error and detecting short-circuits between output pins.
+dev_err_probe() internally calls dev_err() which uses pr_fmt() and
+printk(). Kernel log messages should end with a newline character
+to ensure proper log formatting. Add missing '\n' at the end of
+the error strings in rzg2l_gpt_probe().
 
-Add documentation for the optional property renesas,poegs to
-link a pair of GPT IOs with POEG.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v5->v6:
- * No change
-v5:
- * No change
-v24 from [1]:
-[1] https://lore.kernel.org/all/20250226144531.176819-1-biju.das.jz@bp.renesas.com/
+v6:
+ * New patch.
 ---
- .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/pwm/pwm-rzg2l-gpt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-index 13b807765a30..98bcde755fb9 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-+++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-@@ -245,6 +245,28 @@ properties:
-   resets:
-     maxItems: 1
+diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+index 233e5ff2d04d..47c6c2eb3067 100644
+--- a/drivers/pwm/pwm-rzg2l-gpt.c
++++ b/drivers/pwm/pwm-rzg2l-gpt.c
+@@ -497,14 +497,14 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
  
-+  renesas,poegs:
-+    minItems: 1
-+    maxItems: 8
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      items:
-+        - description: phandle to POEG instance that serves the output disable
-+        - enum: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
-+          description: |
-+            An index identifying pair of GPT channels.
-+              <0> : GPT channels 0 and 1
-+              <1> : GPT channels 2 and 3
-+              <2> : GPT channels 4 and 5
-+              <3> : GPT channels 6 and 7
-+              <4> : GPT channels 8 and 9
-+              <5> : GPT channels 10 and 11
-+              <6> : GPT channels 12 and 13
-+              <7> : GPT channels 14 and 15
-+    description:
-+      A list of phandle and channel index pair tuples to the POEGs that handle the
-+      output disable for the GPT channels.
-+
- required:
-   - compatible
-   - reg
-@@ -375,4 +397,5 @@ examples:
-         power-domains = <&cpg>;
-         resets = <&cpg R9A07G044_GPT_RST_C>;
-         #pwm-cells = <3>;
-+        renesas,poegs = <&poeggd 4>;
-     };
+ 	rate = clk_get_rate(clk);
+ 	if (!rate)
+-		return dev_err_probe(dev, -EINVAL, "The gpt clk rate is 0");
++		return dev_err_probe(dev, -EINVAL, "The gpt clk rate is 0\n");
+ 
+ 	/*
+ 	 * Refuse clk rates > 1 GHz to prevent overflow later for computing
+ 	 * period and duty cycle.
+ 	 */
+ 	if (rate > NSEC_PER_SEC)
+-		return dev_err_probe(dev, -EINVAL, "The gpt clk rate is > 1GHz");
++		return dev_err_probe(dev, -EINVAL, "The gpt clk rate is > 1GHz\n");
+ 
+ 	/*
+ 	 * Rate is in MHz and is always integer for peripheral clk
+@@ -513,7 +513,7 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ 	 */
+ 	rzg2l_gpt->rate_khz = rate / KILO;
+ 	if (rzg2l_gpt->rate_khz * KILO != rate)
+-		return dev_err_probe(dev, -EINVAL, "Rate is not multiple of 1000");
++		return dev_err_probe(dev, -EINVAL, "Rate is not multiple of 1000\n");
+ 
+ 	ret = rzg2l_gpt_poeg_init(pdev, rzg2l_gpt);
+ 	if (ret)
 -- 
 2.43.0
 
