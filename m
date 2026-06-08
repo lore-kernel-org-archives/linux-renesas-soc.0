@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6410C3CE4B1
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jun 2026 14:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC0E3C9EFB
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jun 2026 14:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780929551; cv=none; b=QvlrcqUwR9x03UAMSpy1K6AoAE4WOVdh1L1eH3w6E/MymD4GGg2LfVs7ARa017lZ30jBxYPaFC5ZN8kerFnuEBlf/SrbBDdlETEMurGZTLTJ1ln5eavVmeOXpbVOtksBmRb65dNk4P6S+lV+iLDDkfrt7vzwmVbuElmF4xjXBX0=
+	t=1780929554; cv=none; b=SNJSk2jvs7iM/PVnF+5SUk4cuxIJFTmrf+sPyPKpDxB2CJlB4SKsSxU57iKxMOQ+doEZl8Nbfom+Zyg/7KVbSsIyBUSKzVRYWyqACNPhz5zSGVi5iVLQfoOfZLIzG14JEudufDCX/v1w+NNCNm4K4XXqws1zuN2wpRSMDWgqGfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780929551; c=relaxed/simple;
-	bh=dGURqbE4HepT4WvbzLd9xdUA1rIAFCGuCcyl1XW5eiY=;
+	s=arc-20240116; t=1780929554; c=relaxed/simple;
+	bh=bacVvb6kDoR91wSeLjd3x7j+m9ph7MurfY3FVR33UKk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PtxMWm9GoegC6qw2ulXsffgf+Haz0oImdrpOH4D/Q7qTWiMW0aDWCy/cdHmAY2TKzAO5EY3DBDQ72ho2c0EkRbNgAgJW2Uk1XDEgFqOqsHKhdnlub70Df4II769fQ/5pQWGQ1BWMqOX2DBbFUHEddYwNgKl+r2I3cqgDG34YUuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lp4wlwQp; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=ZfKOy1peQjyFGr0+dmI6uZmeiZvG2LmdZPWuZguwiqpMwYUxIDivsgIbffFaXO/Y3e4ib1O/OFb5AAZyLWCOY40AVLTrD5vupACKKhDuuuhmy71rPN8vo96aVRTyNBnuDbCVNZ/ReEZ+Cs8WFzisMka1kYQKPNOmWjoRl7V6lMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTS7/Oc0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lp4wlwQp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC14A1F00893;
-	Mon,  8 Jun 2026 14:39:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTS7/Oc0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772501F00893;
+	Mon,  8 Jun 2026 14:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780929550;
-	bh=gYZf1ZSLKidaGLTUJJikyt/NFIKxJqatogmOTfb8lJk=;
+	s=k20260515; t=1780929553;
+	bh=Lf535QyZCex7JQ2a7o9ANcaV5PHkieAcb90gA4YNnns=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Lp4wlwQpxe0rdXTOU5lXa9pFoRBHE3W9pJ207eH0Ch6YQBrkFVxqI2jG4emdhZpjO
-	 xcatyr1xwViw5WfxwaXuDrBounB3I1ZIVtPKC8ychESoyMu2vdCiW1N24QzbRBSppL
-	 tdw71QYbepXrUyTn6Uy+bc0TwyTgvKSHkcDLH+qzbLO40dlQgz4IC/LAE2DbUnAMRw
-	 I3UttZK416tsG6Fz27bYPNlH8/xHri8AIeTmxm7ae0XtiJwyiYv2b97U6sgSQbG222
-	 G3hL0WSbT/puCrR0DjFss7iuw59r7E9s5z0HOF+ue9d2aLNXF1UNwg8f2hXk4qQhC0
-	 Uj9YjZiVocKEA==
+	b=OTS7/Oc0ZYGPWyeDSnb1PR540GpgXLhvVT4BjctVKGzY2XVQVShJ4f6BEVovvDalU
+	 ZmZf6k7gbbyN+HahF8DQgHAEWXlepjy+xVljOxEiqlE+/GJC7hfTHRzVqInPDwK46z
+	 axZR9R8LMrWY92/84gcveNBrYSV55hEwNXMQ0ePCecoc7CYaGT8T5etpeOw4kmhYIb
+	 BrbZb6HiSZ/7SPZVlTBSMS1QCwyUz3SkSS4fM2vLJtNyv0OgH0S0S7qdft5qc5eyAZ
+	 3LgvVzi0qhX69i1zwMWPPkWaopcSjoBG9XYTQm7vYkn9V3AuU1qu1IznmUhkVwskv1
+	 TQ2Zu7cwEIT0g==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 08 Jun 2026 16:36:43 +0200
-Subject: [PATCH v2 61/78] drm/renesas: rcar-du: lvds: Switch to
+Date: Mon, 08 Jun 2026 16:36:44 +0200
+Subject: [PATCH v2 62/78] drm/renesas: rcar-du: mipi_dsi: Switch to
  atomic_create_state
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260608-drm-no-more-bridge-reset-v2-61-0a91018bf886@kernel.org>
+Message-Id: <20260608-drm-no-more-bridge-reset-v2-62-0a91018bf886@kernel.org>
 References: <20260608-drm-no-more-bridge-reset-v2-0-0a91018bf886@kernel.org>
 In-Reply-To: <20260608-drm-no-more-bridge-reset-v2-0-0a91018bf886@kernel.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -58,12 +58,12 @@ Cc: Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org,
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
  linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1730; i=mripard@kernel.org;
- h=from:subject:message-id; bh=dGURqbE4HepT4WvbzLd9xdUA1rIAFCGuCcyl1XW5eiY=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlql+O1c//wNbw+n1OwWWH3x0kLDsrOfVYy796PPUuZO
- Z21z22f0zGVhUGYk0FWTJHliUzY6eXti6sc7Ff+gJnDygQyhIGLUwAmkrmSsWH3dtkmHrfDrLeL
- jj2qqD2cF7tA7dD+eUmb5gVM28p42zvhuMZXxUi7gzO8g4/d6FL748TYcGv1rIDjuc4HcvMDdzJ
- 0ftB3Cf9narcw+jLzY21Jn748xtumx6rve9ln6VnOE7fh2GQBAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1751; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=bacVvb6kDoR91wSeLjd3x7j+m9ph7MurfY3FVR33UKk=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlqlxM8LCJPrBMWy2oXueitJnNP/n74GrvFUb6G2iknC
+ p6JbanrmMrCIMzJICumyPJEJuz08vbFVQ72K3/AzGFlAhnCwMUpABPx7Gds2MMceCD+m8nPx2pL
+ xPfJ2Wuv+9Qd93LShM2Hl9tcWj6j0/vmyihuzQUyvf3fyvpdPzmKMDY8ff/JPVdigfeR5nfGx99
+ Gm0scX+5j+7J49nOP5L6L519t2v97x69PYXt6Uo4YyhwKNCwHAA==
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
@@ -85,24 +85,24 @@ Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c | 2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
-index 154410745a74..e433ce61d431 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
-@@ -656,11 +656,11 @@ static int rcar_lvds_attach(struct drm_bridge *bridge,
- static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
- 	.attach = rcar_lvds_attach,
- 	.destroy = rcar_lvds_destroy,
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+index aaafee1c060b..6e46d6d99f3c 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+@@ -922,11 +922,11 @@ rcar_mipi_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 
+ static const struct drm_bridge_funcs rcar_mipi_dsi_bridge_ops = {
+ 	.attach = rcar_mipi_dsi_attach,
  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
 -	.atomic_reset = drm_atomic_helper_bridge_reset,
 +	.atomic_create_state = drm_atomic_helper_bridge_create_state,
- 	.atomic_enable = rcar_lvds_atomic_enable,
- 	.atomic_disable = rcar_lvds_atomic_disable,
- 	.mode_fixup = rcar_lvds_mode_fixup,
+ 	.atomic_enable = rcar_mipi_dsi_atomic_enable,
+ 	.atomic_disable = rcar_mipi_dsi_atomic_disable,
+ 	.mode_valid = rcar_mipi_dsi_bridge_mode_valid,
  };
  
 
