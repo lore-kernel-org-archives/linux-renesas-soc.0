@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CE2379EDC;
-	Mon,  8 Jun 2026 12:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979C831327D;
+	Mon,  8 Jun 2026 13:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780921405; cv=none; b=Ivlb+6kLDb2x3WrRZLcW28z9L3idp/kAFjlbca3SzKAYHlHo7mugbOe1J309IRNCoGByAtBZnDqc97hlo1TJmY8y5cuqCNf1icZjfvfD75IkPNRzNTFigJJfuO/GwPuE9BPVGEOx9Q65AMsbKcok+eqozRbqGfYH82Y93dTtoek=
+	t=1780924405; cv=none; b=Parj8ZsR7xtYnfWTcp8u7fompFxzPQGktpTs3CVu8xP3NwNMoRPxx4TbpOqKaKf6nJlqMNS4dOm0R61+SYIFwLgkd+YFQwM/4b+D/uYr2IMMT8wtzpbQpWXnOapE25IimSeBybpcSlFBfccLZXwGu8tY+grOUU4HdlCgdrlhjh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780921405; c=relaxed/simple;
-	bh=rbFX9M+2LmuZcZzM12WRgKaExaOmTUUjiqz4U1zNIwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rrCU6n799teIGOf9zGgaUUYSdLGLBCeNSs3Z2YwHYG1wgNA8V39wCkmqkz2wfPz2Q7FZR6HzTH3sjwOF5XU7Us1pAInHA5bBueLf/YQvrftYYOzIJHcAMnzUWm99blItvhgUgJmyXfmIK4CqSTd8CNY+mukJpAD31WfiwlYYoR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyWq5BOS; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780924405; c=relaxed/simple;
+	bh=bdxdIuhi13b8e9fNa2BF1fqMMuKNRS9dcEFPYqsXNJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C/Sy3foag7Vimrncj3akf9U90j4dtQT4dkE9Ci+hiXueYqnZSCmw9uWhNzLpnmn8CWR+6eferzvqkygxyOS9MoylX34ov6jEbZWG/F8F3QQXajH9BKBGS7yBSLz1RmU+1tAKS8m2LZ3UDEMICEZHOxd2PRYzxpUrwRHELYcXVF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACO5Bd4l; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyWq5BOS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F6A1F00898;
-	Mon,  8 Jun 2026 12:23:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACO5Bd4l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94991F00893;
+	Mon,  8 Jun 2026 13:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780921404;
-	bh=hM9zxnTVffvnlTo5vdzGAHPP02BS6ARLANK6P0XzTNM=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=PyWq5BOSi2Tb1zsi0/jMegQd7eLftAaNMrRlBl/XawAcV90adOrf8LbV4dgli+L0h
-	 b3xED9wTutWwnXAeFBhLIxkAYBW7SapaNpoogTelkixsHCHEbQnCgKxPv8P+qQ5fy7
-	 Bgdime/+7WcMGayzxkwl7A+YkXLk3tQ91dYTxRRUXOBqBafE2DnZEDVoAoO5qzhpRe
-	 q3LnKs8Sq34S+3Msy0ymnJfKxwi8hxqU/kXHFkE/bsfR3XriqW1rUlUMRYyBGB0BmQ
-	 yAJ8DmUj0dV3MInHmqQlzQX97I44O+uHi2zYSdlifIZnRiSlQe2yGkpJxH5YaKDL+z
-	 oGqF5RLK+IaBw==
-Message-ID: <5f1b0d7d-3105-4371-a603-7e7bacd5f112@kernel.org>
-Date: Mon, 8 Jun 2026 14:23:18 +0200
+	s=k20260515; t=1780924404;
+	bh=Ss7XElV01ECd43zBdNuY0Yuw55Rjcmx3Um6QxT7WlnQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ACO5Bd4l3+zzALOHtp4LszXh7o4Ty22xaU8l9eypRRQhMKxjyJYQs+nLZpDcrCYha
+	 rhhBCGUtF7xBi/cq0aYQ3DXwzoqOqpCXGkNMRJWdulubr/9g8DVEv1kZvwsaIVDCqr
+	 OttR2K1cRzZ2W4Fpy2WXB6MPXzH1LBN54DXKV4P/Kyo4LAb/mhtw3ZvbnaDamxWRFs
+	 VktnTw9kdaMyybAKO52+t4ech0MXkabyhNY84G9H/KWdF/o8oUEj277dACEy4J33rp
+	 Y8G5ThDv/lQRIL74QIxJl0yBdU6nNDJteu4mt5jrHGBMHNCmWd4IBKbfQjMSopnqZu
+	 XVAa7gS7Mj58A==
+Message-ID: <06ee3c40-1d4d-4e66-a722-3f3267c1f094@kernel.org>
+Date: Mon, 8 Jun 2026 15:13:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,22 +35,28 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Revert
- renesas,r9a08g046-lvds-cmn
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- "magnus.damm" <magnus.damm@gmail.com>,
+Subject: Re: [PATCH v3 1/2] dt-bindings: display: bridge: Document Renesas
+ RZ/G3L LVDS encoder
+To: Biju <biju.das.au@gmail.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-References: <20260608115507.134969-2-krzysztof.kozlowski@oss.qualcomm.com>
- <TY3PR01MB113460B7F122E23FAC4D35502861C2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <c4ae68b7-d423-4714-8415-679671467ac5@kernel.org>
- <TY3PR01MB113461D43EFBA56BAE7C8F403861C2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20260526074746.20371-1-biju.das.jz@bp.renesas.com>
+ <20260526074746.20371-2-biju.das.jz@bp.renesas.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,47 +102,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <TY3PR01MB113461D43EFBA56BAE7C8F403861C2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <20260526074746.20371-2-biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/06/2026 14:15, Biju Das wrote:
-> Hi Krzysztof Kozlowski,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 08 June 2026 13:12
->> Subject: Re: [PATCH] dt-bindings: mfd: syscon: Revert renesas,r9a08g046-lvds-cmn
->>
->> On 08/06/2026 13:59, Biju Das wrote:
->>> Hi Krzysztof Kozlowski,
->>>
->>>> -----Original Message-----
->>>> From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->>>> Sent: 08 June 2026 12:55
->>>> Subject: [PATCH] dt-bindings: mfd: syscon: Revert
->>>> renesas,r9a08g046-lvds-cmn
->>>>
->>>> Revert commit 51284d8b1dbc ("dt-bindings: mfd: syscon: Document the
->>>> LVDS_CMN syscon for the RZ/G3L") because it is completely not
->>>> matching reality and clearly incorrect in respect of renesas,r9a08g046- lvds-cmn.
->>>>
->>>> It wasn't ever build-tested by author on their DTS, either.
->>>
->>> You are wrong here.
->>>
->>> It is tested with below DTS,
->>
->> Sure, I believe you. Binding is still obviously wrong and does not match the DTS at all.
-> 
-> You are not actually pointing to the mistake in the bindings. It is reviewed by Conor.
+On 26/05/2026 09:47, Biju wrote:
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/renesas,r9a08g046-cpg.h>
+> +
+> +    lvds-cmn@108a0000 {
+> +        compatible = "renesas,r9a08g046-lvds-cmn",
+> +                     "simple-mfd", "syscon";
+> +        reg = <0x108a0000 0x10000>;
 
-I described it very clear in the part of the msg YOU REMOVED.
+In current form patch is not correct. MUST NOT BE APPLIED.
 
-Does not matter if it was reviewed by Conor. The patch looked correct
-for our eyes when looking ALONE at this patch, I also would not spot the
-issue. You as the author have the complete picture and you should see
-that it is completely bogus combination of compatibles.
+If you apply it, it will introduce new warnings.
+
+Reviews could stay if not the fact that dependency was incorrectly
+described and to do it properly this patch should be changed. Thus
+please drop all review tags and re-do the patches.
+
+NAK
 
 Best regards,
 Krzysztof
