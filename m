@@ -1,97 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8B54279FD;
-	Tue,  9 Jun 2026 13:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781013044; cv=none; b=jgUONHXt3iap/yOzMMS/IBQpk6U7tf8tJ3gOozANnvYWznjnKQe9LVV4B9Z4udxJbvZDPXf1GH32lJgL3W2bXyfI1r4BfI0k9dL8ME8KzXL68WYM5Bfhm5zxVHaylEim74uSBLOK1hAIvHr6BLrucBFZ9oPyV/ALHAVofw2NBwI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781013044; c=relaxed/simple;
-	bh=ZC0JEzG9itL2kSSG7Pn2Zc0SKj3e2yz4afPqbxGo48w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAKXUjpyaDfjyAOy7rcjxQkK3T0MODl9jCzBqTkoR5cD07bBG3HCutoAXpGGo8nzwDxR3kOBw/m806pFhShysOPniGS/1OG84VpCw5G53BW/3f5i0H0oVDRSYmgUrR6xEF9N+YJ9xD7vGQl7QuDvXu1ifIsklOWXhiODlKIKQOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlqhAAvi; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BEC31353C
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jun 2026 14:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781014476; cv=pass; b=RtwpW9CGTzr1mJAIS+nOcuqKUgNsYLDuYdplEwCQS/AlvoFftyYfsslnt7KyMboUV/IlQCR4zR7JbV5AQwNmefjhc0Y2xGTIB39xel7fUu0SwdWH0lQuw8//sUaKcRHXhgssm252Wy3Hj6XZ5cpk6JzOd/5/rdG1VHlZLQXGeGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781014476; c=relaxed/simple;
+	bh=Wt9b0GDOzfbd/0ns8DJu7GyOrhJ4Z/5e5VGfsnNYW50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGyGk0KZ4gxWajN2BkGc1RB0nP7I+RaoTB0OGD17yuTsqdDNt5wvHH1LWzFiLAL6R6zwY3fjtg68VZfg9us+fe80f+5KfgSXiv9NdroizWbiR4jIYIYNFMloqON14SCFFGLkTWZPeT2ZfKEZSOzd8yKSZzrrM+WFKhwKRc74vFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVkDsuBl; arc=pass smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlqhAAvi"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BA8E61F00893;
-	Tue,  9 Jun 2026 13:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781013043;
-	bh=ZC0JEzG9itL2kSSG7Pn2Zc0SKj3e2yz4afPqbxGo48w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BlqhAAviZAPdK7Zxm9Kk3/j7tuUJ8YEQcErcP5hH6OEkCXyvhPn4CKEGE6biFlPfH
-	 p3j5m9IRmrQP0lQa8i2FLwrEr/NOOM6zh9eKDWNW0+21HFUjJxkCCoG/tOT8SXk0ob
-	 MNQvNbhse2ZqNdG1ww4DI/Z1C1ec/TtESboWwdaDfRc/C5aWC8xUwAjSgibu1hmvi+
-	 AZ4NUHu1be+PSoaRI9l4YoK3J7wXOJ5VQTv4J0M3xtJKfaGNUL6TF1nDrJgMSQvri4
-	 U6HobwAXhb8+mVVWH5RbDNbJA6e55yQUTryoJ9VF2HZ0yJL64aV9Q8DZgiUH6qMwmD
-	 YT8T9h9wtwHwA==
-Date: Tue, 9 Jun 2026 15:50:41 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v6 04/11] pwm: rzg2l-gpt: Add missing newlines to
- dev_err_probe() messages
-Message-ID: <aigZ62nJDQjD_U04@monoceros>
-References: <20260604095647.108654-1-biju.das.jz@bp.renesas.com>
- <20260604095647.108654-5-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVkDsuBl"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-36d98b9aa9aso4965380a91.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jun 2026 07:14:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781014475; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Y0P1xMxtMYjzeiG1QHCDhql1YAIuA5gVbiXnSvo5byy9GN+pAAeJVhJeSNfM9zT9Pd
+         RvdlDCi6g1SNlalbCZkAeIxptHjBUkAfqBH6Oo7hfUGiGlBi5066wgMt5RNqwAfzdiGq
+         Lmzqi4vUv68X5XVEwFTszq2A7J8BlxweK64sZ/O6BbVmYEMD1m9WEkxnwcbdzUYjDuNK
+         9UmGyEL97bbSRKelEVev2Qzw8aVtzjZxXpox9lG5IL7kd0roDIMSQ6D8x/N86P4KCn7M
+         rO6d3NoVGvkvXWyrfGy0ZpjfOSTGEiklNqYCAMKAGHuoJj4c//dh9oCyUziZYjPpqiaP
+         mUYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=YVCTP06+ReD7xAAc8z3Zxd2jt06xnT3/d3ueG+sZj3A=;
+        fh=3u6UO/Ikb+Xmck2LNZCF389m4AqJRrq0/ycELeGc/Ms=;
+        b=Gt/gRaSFivj9S9fuR19EIcquFcsWVgsIRJcGBSVagTgsZjmlMAyBZfziBLOH1Mhai6
+         MuzSgOUV/ZTtKklqnJJ6+oP6rBJVqtebB6XgxrMdJaDAzq/hNZRwdgAIgKQS0/SUFKRX
+         2+zxx21wssuNa39RPY2u0LysnF/ykUrGxCy7gZ84RZ8mtcJH+tZYZuYC1EolbZRWh1ET
+         uePP5us5A8ZM88fIUwJsHPKHzR5neyorpE6qtKdhJwEyP3Da0IpBEFDbxE0fsZltL9gu
+         R8Iszt+intuwBQOJKdRaubDhdoaYIxV2mbC4NtThCmwB/MCzcFS5mNTvB16gtQKFexSN
+         H4fw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781014475; x=1781619275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVCTP06+ReD7xAAc8z3Zxd2jt06xnT3/d3ueG+sZj3A=;
+        b=hVkDsuBl01Ge5M5dAy+QxgOS9LQWkHB33ioPVqAlcCl+TdXELe99YQD//3QSxX/81g
+         eekSaO87B3uipPBc2pfixMYXSRZ2Air01xlT4t4PqbsKG7WjWI9JEWt5/T7IKEcgDmyQ
+         j/VX81B9OknFjzaKndLenwmrBcEHJX8BPK2Hsv/ShcDuGaKPIb8sBDEI0mTOTc3hvlt0
+         gwVJu4H/SYcUnPIyLO4ck5OaSKc9w6iNzDkisERqsweDZBrKwmHHkxWX/pDaD6E6mV2O
+         urAGTx66Fp/s02pXB+MLE8n10lLWHb3+xc4YXZXKFacpnr2iftzzZv08jbxmKwcGAIMo
+         Gdbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781014475; x=1781619275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YVCTP06+ReD7xAAc8z3Zxd2jt06xnT3/d3ueG+sZj3A=;
+        b=WoLCTWlG4tPVjMxONovdauU3dLVcRzBBsQaA8YAv4+4sr+bC+c9INFvrcgmZ08DQ9B
+         ReigYE+opoo+9ZqzqjKLUPgAGh/N1IgN/meNj/8nKMAM5hjeMpCVr/hpGzC01nd1tDZ4
+         /AdNHz3ScALqems+GPSTmmsT2buy2QJ3pczyU+J1hKyT6ugP2LD3jUBNSAW7s4cx6oK2
+         /CA47SlleYmortAQp5GaqGDb7VrLgoEOG8IHjqlYOD/r7XnGcXwME33Wl1SgDeG2z5Q9
+         yxSy2yvAi5rRWeEnqVKCfpi1YscNvwxtZbbIYegZHaY0uD3OnS0eE/LN0GB1E4A+OpK3
+         0MbA==
+X-Forwarded-Encrypted: i=1; AFNElJ+01+MtmBYVuuE2C//BExW+XMw1yG6bocdmZ4s6btms6hDr0oQLrxp1jL6fOCXYiku+vxwcfTDWvKnkD4RfCWMPfg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJoO4f0NSP3/X+DhEkqdHqS4s39ReV0XvXXCdyk3EB1xcKSeqa
+	XFhjk8RqwjH8Osmuh9ge1CWQn5hAsDop+1W8+tkv8/JDZBjuIwk+SjbwBdiKwmfN9QkYEdDrelx
+	fn6uIJlmUAKrS9nSPmAqyyvqhMwknsgQ=
+X-Gm-Gg: Acq92OEJ5/UWDUYZ0cczkHCNkf6r85XrcmJX8gZ1sG1Z2JsEptVMlbBrqh0NW1zbFU+
+	NRZyObIrrCnInQthqDVE6ufMgqg2ehXjJXF3IbWDIorBqum7g30PAiC9lQcAFUaZtq08tKT5Wqv
+	fpzrGoVwstn7iNh6Vz2oCZKgD5JANPELWQrmqqvxYmPbe4kwLRTtwrGxU5nJ9M/tpKEt7gNkvC9
+	yhc4Id90x9Hk2Wjt/yQ3zMvDL+Sk94SQGPZ1yB5UsLbi6d7bJ3o4QUEnDZl4RSeIDk8ADS+XlpF
+	CVkgRLhEv8+SVgBJomzUSDNAOCapWaKG2TgiGPSDOoo45DDMAQ+4TRWrpMjdFX25280DpgWZLg=
+	=
+X-Received: by 2002:a17:90b:58e7:b0:36b:936e:73c8 with SMTP id
+ 98e67ed59e1d1-370f0e4ad33mr24408813a91.19.1781014474736; Tue, 09 Jun 2026
+ 07:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rgdiqpb3ss33hvdk"
-Content-Disposition: inline
-In-Reply-To: <20260604095647.108654-5-biju.das.jz@bp.renesas.com>
-
-
---rgdiqpb3ss33hvdk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20260605-rzv2h-rspi-v1-1-c1d5ed562249@gmail.com> <CAMuHMdVEYciUYq6savTuOqDUQp6AqHGkeP30s6Z7PoZ3q-Pqvg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVEYciUYq6savTuOqDUQp6AqHGkeP30s6Z7PoZ3q-Pqvg@mail.gmail.com>
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Tue, 9 Jun 2026 22:14:24 +0800
+X-Gm-Features: AVVi8CegqVqtWbCTnlD2kodnPbitaAU8L0BkslvTa0l9OTb7Eanw1TWxLeemMds
+Message-ID: <CAN4SLj0o+3Bjq0aBJUYbKU-YkXUeM9aPgRxiwmOHX_Fz-_Hq+A@mail.gmail.com>
+Subject: Re: [PATCH] spi: rzv2h-rspi: fix incorrect readl() accessor for 8-bit
+ RX path
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>, 
+	linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 04/11] pwm: rzg2l-gpt: Add missing newlines to
- dev_err_probe() messages
-MIME-Version: 1.0
 
-Hello,
+Hi Geert,
 
-On Thu, Jun 04, 2026 at 10:56:34AM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> dev_err_probe() internally calls dev_err() which uses pr_fmt() and
-> printk(). Kernel log messages should end with a newline character
-> to ensure proper log formatting. Add missing '\n' at the end of
-> the error strings in rzg2l_gpt_probe().
+On Mon, Jun 8, 2026 at 3:55=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Felix,
+>
+> On Fri, 5 Jun 2026 at 17:26, Felix Gu <ustc.gu@gmail.com> wrote:
+> >
+> > Fixes: 8b61c8919dff ("spi: Add driver for the RZ/V2H(P) RSPI IP")
+> > Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+>
+> Thanks for your patch!
+>
+>
+> According to Chapter 7.5 Serial Peripheral Interface (RSPI) Subsection
+> 7.5.2.1 List of Registers, the SPI Data Register supports access sizes
+> of 8, 16, and 32 bits.
+>
+> However, the "Access Size [bits]*1" column header has a foot note:
+>
+>     "Note 1.  The read access size is fixed at 32 bits."
+>
+> Hence that means the rzv2h_rspi_rx_u8() function as generated by the
+> RZV2H_RSPI_RX() macro is correct, but rzv2h_rspi_rx_u16() is not?
+>
+> Also, readw() in rzv2h_rx_irq_handler() is wrong, too?
+>
+Thanks for the detailed explanation.
+I didn't check the reference, just thought it's a little weird here.
 
-While marking patch #1 as Applied in patchwork I spotted this patch. I
-applied it also to
+Although the column header has a footnote to indicate the access
+size is fixed at 32bits.
+But in 7.5.2.2 register description, it specifies that for registers like
+SPDR, SPCR, SPSCR, SPCMD, SPDCR2, SPSSR, their access
+size are fixed at 32bits, but for SPSR, there is no footnote to specify
+the access size.
+And SPSR is 0x52, readl on the register cause alignment issue?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
 
-=2E
+Best regards,
+Felix
 
-Best regards
-Uwe
 
---rgdiqpb3ss33hvdk
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmooGi0ACgkQj4D7WH0S
-/k7W1gf/UWODQJeMksuzbz1WkEfCgCGaI/hA1ebo35WR6k3cET4NJIp8/GCEB0KV
-kdir5J7EwVGbM9J9ptl8KXF0OFOzGdYZlltFWGPXyhAnBmK8Z6qJ3FjCJzaXujhD
-GqWjgv8bMx6lq/m7aEywgHMzC5TV5ZbFxt67WjXXW9Jb2ppvGJXZLw8A5tK2RKwn
-/C0w7dBS3Ct6/DtjHxm3bica1aRS7TeCa27nfj7HcyNscHG8OfHXPP4ZGsBHLAO2
-MuMwAlJN3nYR/z8wy3dIXu8ICG9/DCUoEpEipIuaEQxJuG1LCAVcDS1mzAHAPb7C
-7T6v8GsTjaQbUNkdkQnQSbvbbXDR3g==
-=vtOe
------END PGP SIGNATURE-----
-
---rgdiqpb3ss33hvdk--
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
