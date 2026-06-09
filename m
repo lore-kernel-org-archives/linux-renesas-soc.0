@@ -1,199 +1,123 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D107848A2DE;
-	Tue,  9 Jun 2026 18:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8475A3F1AA6
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jun 2026 18:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781028509; cv=none; b=Aa5BxlpWTaCNvm4KAFluyhLG8p/bgTBfHiQ1+sNrYciICrT+Ioq/G0SLshBi95RFwdh0V6ZUV1j73JtYDiIRbr+ZHZGFZstdDa/y4XGZskgsKyu7Dy/NDikrss9O5AOKZmtvRzZr3VcOo2tmIYmlA9wiCLYmoSZaELAtXh+7xII=
+	t=1781030102; cv=none; b=HHJmWlCAi33w4FOPT2h0S7b2+XmqxR5UZX/BncGnTQSV55ifA9e3GGGKv9Nxb2P7bumtSIPm1L0aGIqA8yY8R/ZMvMgQNW5bL+2DTuENJ0T9YD9OswrU1aJWwr2uRP1sVIHzTJBU1+nR2tatWh02QMtq+NdC9VBqKVOOGkUgwQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781028509; c=relaxed/simple;
-	bh=bpY3QemIeCjx1P5g4wlHRCgNdtE4UdTtHtJcbUjHLv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwP/d+OcKo/5vmz8JwcEFk6agLTGXmEJmAsTEiC7qRzSjv4Fm7VdjWh6Wpwv8NpxdQc9E6wPCURABuTeMSbL7K8xKdm/d6HWxdjlULqP9CQ10HJeeM2aSGEAyLURBZpJA68by0/PP2RWFTtgWQfLwWKtwJBPuR7FKPTtnjXjFwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com; spf=pass smtp.mailfrom=Igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=qaJnOM4x; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="qaJnOM4x"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jmQG5WeeSfeQ4cMKQ+NS5lS+P+mvFzUDCDF4Y0YvZF4=; b=qaJnOM4xPbHRuRrA/5QhuyqXHT
-	wioW2PB9MmIR2QLo77PGoDvfr+ictJoxPSLT/QZjD6bsNqfkL2bqt6rTL+dheMHsMnmoazrGhQ4Xq
-	0o586vrmwRQCh0mF0oAkLmSOV6KsTsOCbjQJt5VPrjUvCjbyxbM1McFV6KW7qI01QHp45/Y77vs95
-	cUoG4SX2evcoqrSl6MLoC+uEqVbU26jWNngzJ97UXJ3fmNKp2VhBtDBSJTbF8FKDs5HQXoagkG0D3
-	qxRL6ws+ZNIZ3vTUpQlU9HI55lkDtsS9Wc2cJ0GUHRBdRWgzo0e5lldN5FQ3lJNQkaFv0YK/Xl4e9
-	SM4geRnA==;
-Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1wX0rj-00F6Ah-JX; Tue, 09 Jun 2026 20:07:55 +0200
-Message-ID: <23cc1a03-39a6-4cc3-86ca-0d7c914ee40d@Igalia.com>
-Date: Tue, 9 Jun 2026 11:07:44 -0700
+	s=arc-20240116; t=1781030102; c=relaxed/simple;
+	bh=weG+WnATiwSboCSfZI5wuiceEFC+K+fQBeLW00p34ds=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=nxmu+kUuWrAGfW0Hathi4AZEYCGJ7U5WRhL8SHB77Zh4eip9nlGNfGFz1wq57w0HgNnORedUsjYOWGUlFakntQ9TTUoQu96y2vG48Tl2h748EkI8wIBNpLZ7RRbos31lgT7lmyxJrYCe0uWy8zjTZK3XAuCOCnpgcXR8RxD+t6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CA81F00893
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jun 2026 18:35:00 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2026-06-09-v7.1-rc7
+Date: Tue,  9 Jun 2026 20:34:59 +0200
+Message-ID: <20260609183459.262543-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/8] drm/amd/display: use
- drmm_writeback_connector_init()
-To: Alex Hung <alex.hung@amd.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- "Kandpal, Suraj" <suraj.kandpal@intel.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20260505-wb-drop-encoder-v5-0-42567b7c7af2@oss.qualcomm.com>
- <20260505-wb-drop-encoder-v5-2-42567b7c7af2@oss.qualcomm.com>
- <27db214f-b57b-45ab-8deb-da2aa8efb9d7@amd.com>
-Content-Language: en-GB
-From: John Harrison <John.Harrison@Igalia.com>
-In-Reply-To: <27db214f-b57b-45ab-8deb-da2aa8efb9d7@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Ping @Dmitry - is there any progress with this patch set?
+I have pushed renesas-drivers-2026-06-09-v7.1-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Thanks,
-John.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-On 5/26/26 11:46, Alex Hung wrote:
-> Will allocating wbcon with drmm_kzalloc before calling 
-> amdgpu_dm_wb_connector_init be more memory-safe as below?
->
->
-> @@ -5790,7 +5791,8 @@ static int 
-> amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
->          link = dc_get_link_at_index(dm->dc, i);
->
->          if (link->connector_signal == SIGNAL_TYPE_VIRTUAL) {
-> -            struct amdgpu_dm_wb_connector *wbcon = kzalloc_obj(*wbcon);
-> +            struct amdgpu_dm_wb_connector *wbcon =
-> +                drmm_kzalloc(adev_to_drm(adev), sizeof(*wbcon), 
-> GFP_KERNEL);
->
->              if (!wbcon) {
->                  drm_err(adev_to_drm(adev), "KMS: Failed to allocate 
-> writeback connector\n");
-> @@ -5799,7 +5801,6 @@ static int 
-> amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
->
->              if (amdgpu_dm_wb_connector_init(dm, wbcon, i)) {
->                  drm_err(adev_to_drm(adev), "KMS: Failed to initialize 
-> writeback connector\n");
-> -                kfree(wbcon);
->                  continue;
->              }
->
-> On 5/4/26 18:24, Dmitry Baryshkov wrote:
->> The driver uses drm_writeback_connector_init() instead of its drmm
->> counterpart, but it doesn't perform the job queue cleanup (neither
->> manually nor by calling drm_writeback_connector_cleanup()). On the
->> contrary, the drmm_writeback_connector_init() function ensures the
->> proper cleanup of the job queue.
->>
->> Use drmm_plain_encoder_alloc() to allocate simple encoder and
->> drmm_writeback_connector_init() in order to initialize writeback
->> connector instance.
->>
->> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
->> Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> ---
->>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    |  2 +-
->>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 18 
->> +++++++++++++-----
->>   2 files changed, 14 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c 
->> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> index e96a12ff2d31..2ac64495cdb7 100644
->> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> @@ -10683,7 +10683,7 @@ static void dm_set_writeback(struct 
->> amdgpu_display_manager *dm,
->>           return;
->>       }
->>   -    acrtc = to_amdgpu_crtc(wb_conn->encoder.crtc);
->> +    acrtc = to_amdgpu_crtc(crtc_state->base.crtc);
->>       if (!acrtc) {
->>           drm_err(adev_to_drm(adev), "no amdgpu_crtc found\n");
->>           kfree(wb_info);
->> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c 
->> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
->> index 110f0173eee6..fdc3da40452f 100644
->> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
->> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
->> @@ -169,7 +169,6 @@ static const struct drm_encoder_helper_funcs 
->> amdgpu_dm_wb_encoder_helper_funcs =
->>     static const struct drm_connector_funcs 
->> amdgpu_dm_wb_connector_funcs = {
->>       .fill_modes = drm_helper_probe_single_connector_modes,
->> -    .destroy = drm_connector_cleanup,
->>       .reset = amdgpu_dm_connector_funcs_reset,
->>       .atomic_duplicate_state = 
->> amdgpu_dm_connector_atomic_duplicate_state,
->>       .atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> @@ -188,17 +187,26 @@ int amdgpu_dm_wb_connector_init(struct 
->> amdgpu_display_manager *dm,
->>       struct dc *dc = dm->dc;
->>       struct dc_link *link = dc_get_link_at_index(dc, link_index);
->>       int res = 0;
->> +    struct drm_encoder *encoder;
->> +
->> +    encoder = drmm_plain_encoder_alloc(&dm->adev->ddev, NULL,
->> +                       DRM_MODE_ENCODER_VIRTUAL, NULL);
->> +    if (IS_ERR(encoder))
->> +        return PTR_ERR(encoder);
->> +
->> +    drm_encoder_helper_add(encoder, 
->> &amdgpu_dm_wb_encoder_helper_funcs);
->> +
->> +    encoder->possible_crtcs = 
->> amdgpu_dm_get_encoder_crtc_mask(dm->adev);
->>         wbcon->link = link;
->>         drm_connector_helper_add(&wbcon->base.base, 
->> &amdgpu_dm_wb_conn_helper_funcs);
->>   -    res = drm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
->> +    res = drmm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
->>                           &amdgpu_dm_wb_connector_funcs,
->> -                        &amdgpu_dm_wb_encoder_helper_funcs,
->> +                        encoder,
->>                           amdgpu_dm_wb_formats,
->> -                        ARRAY_SIZE(amdgpu_dm_wb_formats),
->> - amdgpu_dm_get_encoder_crtc_mask(dm->adev));
->> +                        ARRAY_SIZE(amdgpu_dm_wb_formats));
->>         if (res)
->>           return res;
->>
->
+Today's version is based on renesas-devel-2026-06-08-v7.1-rc7.
 
+Included branches with driver code:
+  - renesas-clk-for-v7.2
+  - renesas-pinctrl-for-v7.2
+  - renesas-clk-for-v7.3
+  - renesas-pinctrl-for-v7.3
+  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v2-wip
+
+Included fixes:
+  - Revert "arm64: mm: Defer remap of linear alias of data/bss"
+  - Revert "arm64: mm: Unmap kernel data/bss entirely from the linear map"
+  - Revert "pmdomain: core: switch to dynamic root device"
+  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
+  - ARM: shmobile: defconfig: Update for renesas-drivers
+  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
+  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host-fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-host
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
+  - https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
