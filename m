@@ -1,86 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A64640683E;
-	Tue,  9 Jun 2026 16:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D107848A2DE;
+	Tue,  9 Jun 2026 18:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781022870; cv=none; b=l0nwPnMcM8tjcGOLChcTROtQPTuYdUpik2AkritXisso11lnz1lXHrK1UVhtrPd0UPoJftV7C+3SrqLwvmJ8bOzi2yi11+C5oFeT2xGqLU4dc0mlkGBWhaIgFwUQYJKzf6aK1CD0ydRibzjeoMPODVtm6B9ahnTCey0O8lB5FLs=
+	t=1781028509; cv=none; b=Aa5BxlpWTaCNvm4KAFluyhLG8p/bgTBfHiQ1+sNrYciICrT+Ioq/G0SLshBi95RFwdh0V6ZUV1j73JtYDiIRbr+ZHZGFZstdDa/y4XGZskgsKyu7Dy/NDikrss9O5AOKZmtvRzZr3VcOo2tmIYmlA9wiCLYmoSZaELAtXh+7xII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781022870; c=relaxed/simple;
-	bh=TE0JVkVZrrj0DYaTmlnaaMVVZ3bum6caTUwXERfVn5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GF9xBxn4ic7C832oIOro/LiFlEatu+CVn3WQo4MRDTKSIxtdE13uDcuCBFff68OOUisb6MZ1PjiUbVVXIBhRoQvDfN4IO+3TKcxCl5MWLny0cqER/HWJLBbElg0DOPOWjiuwWILZqIYuTEWsZ3bFF3+9qg39n9oz+5YwkhWukAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBKUl9B3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781028509; c=relaxed/simple;
+	bh=bpY3QemIeCjx1P5g4wlHRCgNdtE4UdTtHtJcbUjHLv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwP/d+OcKo/5vmz8JwcEFk6agLTGXmEJmAsTEiC7qRzSjv4Fm7VdjWh6Wpwv8NpxdQc9E6wPCURABuTeMSbL7K8xKdm/d6HWxdjlULqP9CQ10HJeeM2aSGEAyLURBZpJA68by0/PP2RWFTtgWQfLwWKtwJBPuR7FKPTtnjXjFwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com; spf=pass smtp.mailfrom=Igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=qaJnOM4x; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBKUl9B3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B70781F00893;
-	Tue,  9 Jun 2026 16:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781022868;
-	bh=TE0JVkVZrrj0DYaTmlnaaMVVZ3bum6caTUwXERfVn5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MBKUl9B3Hw8cHltz45RL1oqLl0KnwJX+t4Su1K7RyigUJAdgC+3SupRx4IKE5orMO
-	 BnC89sm8cuNX6gmuZ+0aWaWl2G583n8bLV4qqloTseQYPSCmZHQo9Sm8AH70+pv497
-	 L3WYYjc5tdNTfdYcB3SZQdReouellKPywO+D3ggeBNAvb4M/4JzXzTlan7HHlDdLk4
-	 n9zVCZvrX7Ya9pzSrgCFhSawrvPNiCyoWKio3Fl5F4Dl0R21/JMl+j8aK1kflPi3aI
-	 bE6/HrtKeJC1wWSbTubnaZCx6CCjn+B60XYNN73JJaOLaEo4Ju9eKRam3NP+xIbxx8
-	 pFKnKGP/bY4Dg==
-Date: Tue, 9 Jun 2026 17:34:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ARM: dts: ti: Add specific compatibles for SCM
- conf nodes
-Message-ID: <20260609-riverbank-buffalo-ae12ae1317c6@spud>
-References: <20260608-n-dt-bindings-simple-bus-syscon-v3-0-4eba9ec1212a@oss.qualcomm.com>
- <20260608-n-dt-bindings-simple-bus-syscon-v3-3-4eba9ec1212a@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="qaJnOM4x"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jmQG5WeeSfeQ4cMKQ+NS5lS+P+mvFzUDCDF4Y0YvZF4=; b=qaJnOM4xPbHRuRrA/5QhuyqXHT
+	wioW2PB9MmIR2QLo77PGoDvfr+ictJoxPSLT/QZjD6bsNqfkL2bqt6rTL+dheMHsMnmoazrGhQ4Xq
+	0o586vrmwRQCh0mF0oAkLmSOV6KsTsOCbjQJt5VPrjUvCjbyxbM1McFV6KW7qI01QHp45/Y77vs95
+	cUoG4SX2evcoqrSl6MLoC+uEqVbU26jWNngzJ97UXJ3fmNKp2VhBtDBSJTbF8FKDs5HQXoagkG0D3
+	qxRL6ws+ZNIZ3vTUpQlU9HI55lkDtsS9Wc2cJ0GUHRBdRWgzo0e5lldN5FQ3lJNQkaFv0YK/Xl4e9
+	SM4geRnA==;
+Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1wX0rj-00F6Ah-JX; Tue, 09 Jun 2026 20:07:55 +0200
+Message-ID: <23cc1a03-39a6-4cc3-86ca-0d7c914ee40d@Igalia.com>
+Date: Tue, 9 Jun 2026 11:07:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qQ5L5UMcTh/jjl/e"
-Content-Disposition: inline
-In-Reply-To: <20260608-n-dt-bindings-simple-bus-syscon-v3-3-4eba9ec1212a@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/8] drm/amd/display: use
+ drmm_writeback_connector_init()
+To: Alex Hung <alex.hung@amd.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ "Kandpal, Suraj" <suraj.kandpal@intel.com>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20260505-wb-drop-encoder-v5-0-42567b7c7af2@oss.qualcomm.com>
+ <20260505-wb-drop-encoder-v5-2-42567b7c7af2@oss.qualcomm.com>
+ <27db214f-b57b-45ab-8deb-da2aa8efb9d7@amd.com>
+Content-Language: en-GB
+From: John Harrison <John.Harrison@Igalia.com>
+In-Reply-To: <27db214f-b57b-45ab-8deb-da2aa8efb9d7@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Ping @Dmitry - is there any progress with this patch set?
 
---qQ5L5UMcTh/jjl/e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks,
+John.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+On 5/26/26 11:46, Alex Hung wrote:
+> Will allocating wbcon with drmm_kzalloc before calling 
+> amdgpu_dm_wb_connector_init be more memory-safe as below?
+>
+>
+> @@ -5790,7 +5791,8 @@ static int 
+> amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
+>          link = dc_get_link_at_index(dm->dc, i);
+>
+>          if (link->connector_signal == SIGNAL_TYPE_VIRTUAL) {
+> -            struct amdgpu_dm_wb_connector *wbcon = kzalloc_obj(*wbcon);
+> +            struct amdgpu_dm_wb_connector *wbcon =
+> +                drmm_kzalloc(adev_to_drm(adev), sizeof(*wbcon), 
+> GFP_KERNEL);
+>
+>              if (!wbcon) {
+>                  drm_err(adev_to_drm(adev), "KMS: Failed to allocate 
+> writeback connector\n");
+> @@ -5799,7 +5801,6 @@ static int 
+> amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
+>
+>              if (amdgpu_dm_wb_connector_init(dm, wbcon, i)) {
+>                  drm_err(adev_to_drm(adev), "KMS: Failed to initialize 
+> writeback connector\n");
+> -                kfree(wbcon);
+>                  continue;
+>              }
+>
+> On 5/4/26 18:24, Dmitry Baryshkov wrote:
+>> The driver uses drm_writeback_connector_init() instead of its drmm
+>> counterpart, but it doesn't perform the job queue cleanup (neither
+>> manually nor by calling drm_writeback_connector_cleanup()). On the
+>> contrary, the drmm_writeback_connector_init() function ensures the
+>> proper cleanup of the job queue.
+>>
+>> Use drmm_plain_encoder_alloc() to allocate simple encoder and
+>> drmm_writeback_connector_init() in order to initialize writeback
+>> connector instance.
+>>
+>> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    |  2 +-
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 18 
+>> +++++++++++++-----
+>>   2 files changed, 14 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c 
+>> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> index e96a12ff2d31..2ac64495cdb7 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> @@ -10683,7 +10683,7 @@ static void dm_set_writeback(struct 
+>> amdgpu_display_manager *dm,
+>>           return;
+>>       }
+>>   -    acrtc = to_amdgpu_crtc(wb_conn->encoder.crtc);
+>> +    acrtc = to_amdgpu_crtc(crtc_state->base.crtc);
+>>       if (!acrtc) {
+>>           drm_err(adev_to_drm(adev), "no amdgpu_crtc found\n");
+>>           kfree(wb_info);
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c 
+>> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+>> index 110f0173eee6..fdc3da40452f 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+>> @@ -169,7 +169,6 @@ static const struct drm_encoder_helper_funcs 
+>> amdgpu_dm_wb_encoder_helper_funcs =
+>>     static const struct drm_connector_funcs 
+>> amdgpu_dm_wb_connector_funcs = {
+>>       .fill_modes = drm_helper_probe_single_connector_modes,
+>> -    .destroy = drm_connector_cleanup,
+>>       .reset = amdgpu_dm_connector_funcs_reset,
+>>       .atomic_duplicate_state = 
+>> amdgpu_dm_connector_atomic_duplicate_state,
+>>       .atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>> @@ -188,17 +187,26 @@ int amdgpu_dm_wb_connector_init(struct 
+>> amdgpu_display_manager *dm,
+>>       struct dc *dc = dm->dc;
+>>       struct dc_link *link = dc_get_link_at_index(dc, link_index);
+>>       int res = 0;
+>> +    struct drm_encoder *encoder;
+>> +
+>> +    encoder = drmm_plain_encoder_alloc(&dm->adev->ddev, NULL,
+>> +                       DRM_MODE_ENCODER_VIRTUAL, NULL);
+>> +    if (IS_ERR(encoder))
+>> +        return PTR_ERR(encoder);
+>> +
+>> +    drm_encoder_helper_add(encoder, 
+>> &amdgpu_dm_wb_encoder_helper_funcs);
+>> +
+>> +    encoder->possible_crtcs = 
+>> amdgpu_dm_get_encoder_crtc_mask(dm->adev);
+>>         wbcon->link = link;
+>>         drm_connector_helper_add(&wbcon->base.base, 
+>> &amdgpu_dm_wb_conn_helper_funcs);
+>>   -    res = drm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
+>> +    res = drmm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
+>>                           &amdgpu_dm_wb_connector_funcs,
+>> -                        &amdgpu_dm_wb_encoder_helper_funcs,
+>> +                        encoder,
+>>                           amdgpu_dm_wb_formats,
+>> -                        ARRAY_SIZE(amdgpu_dm_wb_formats),
+>> - amdgpu_dm_get_encoder_crtc_mask(dm->adev));
+>> +                        ARRAY_SIZE(amdgpu_dm_wb_formats));
+>>         if (res)
+>>           return res;
+>>
+>
 
-
---qQ5L5UMcTh/jjl/e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaihAjQAKCRB4tDGHoIJi
-0hzzAP9IgmdOgnqiwiYVQ2g4qdVGTjE27anCdxGOJk/6ywkmjgD+JWKwOZ6gm9aJ
-GYmHT/Qbuljwrlk++nV9KotKQ5dCGgI=
-=3af6
------END PGP SIGNATURE-----
-
---qQ5L5UMcTh/jjl/e--
