@@ -1,63 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A96719CC0C
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jun 2026 12:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9DC41931B
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jun 2026 12:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781009688; cv=none; b=Af8WsKdYj86O+pPnSCiw7+ac6URRn9bcL7/t8aUFhh/BRjiYphS5ixVKhDJLeSZxuWcQY4pkkug34wD4cIqY0yb8p8Mw4g7cjgtiSzjwgdxPcI0Wba48+Bsa7CSH051ynaq3YSe5iHImy/Rm15eqe3Ex/6JINV4ruWtO2FgQcss=
+	t=1781009689; cv=none; b=F3lTVCPoIXdpVFoKFYgDYoUfonDRnranoNcV9Lyif2P/tCS1kJveXeEJr1SINlHomF+sePxC5y/DfhVojeY5DBlEVF7c2iYvyr3tveOdlB71B+LDwCxeWAZhZuwbGYqhqgw0LNjH+v4Iofb9gtU7ELp9C6gbWIR0jTV/tsb8e7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781009688; c=relaxed/simple;
-	bh=jpAzcsar83RT/yJsgZz3cbdGzD5XuyeMnf3Y+zyOldU=;
+	s=arc-20240116; t=1781009689; c=relaxed/simple;
+	bh=QWHKMECdkDgTHMEhYoueuEWaT+qT7FqBN2oGC03gpKw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WGpDFJdAORzUrRNKo8HQzQIRY6blHmGotmA8rSxVef0yDhFZXfeLcxDackmxy42uTJqozXWWCRuP+FzftSwwt2fulVavx5+o0Qf9k/v9IjFwMeJTKN8c2YOV5yZ8FpyM0OlOGtyw20s0Jc61uAymC++r2nPzlEYnzGgToKKXAhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDfl/XTe; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=PynAaZLMKnCRqWqaQmV06CT0lspuXDt8UpjujATCi1Bqo4FXCmdSdt3SEKS61je3yHEaPJl6OtcMf/d2oaGUn5WvUXhTl+nKejDqcKWXXVusc1sDpaHwfhxZkWqdOi66Ij3GWKlqgrX5YPd5WjUEU6+7dckhugUl+muy8KHjGDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVulrFFe; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDfl/XTe"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-490b12270b3so33061935e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jun 2026 05:54:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVulrFFe"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-490c0c92cffso38885015e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jun 2026 05:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781009684; x=1781614484; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781009685; x=1781614485; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LZbdhxNRHx0Zryd46XkBMjMtJwqMLavPuhsEZIYoVkU=;
-        b=HDfl/XTeZUCD217RLs54Z2TKrKBvaxJreTkz8oicVKPk1NTpon9CGJsmjb2yzoqwJY
-         ozoojxieVtq5KZgXDzqOJXERCu2H5EatEowNsGAQ+8a55cBvvgJB24z0Oc+5w6Z6ydsz
-         EJUUKjdtxdy+f96ubUCm6InEJkNbLon0lm2y1tbf/KAcnO+PhoiHSyZJ0jAgInQEIsxP
-         2+4rds7G2jIfncw4J8yMgmJn4IUamSi7QBJMPL++xqYaGhJbz8cWwAA9fGYXBl1W0LQK
-         Et1ThKe/m3U4NojyJz4q+7eYuA/YCe+cJKWdLxq8Ds4Y74mBdZsMyemU8m5OObE0gxqB
-         LuZA==
+        bh=Qu7loVp/RhhbK5pFGzQisJHK7vzMUicuCCUYX824N9E=;
+        b=NVulrFFeZuaYN0nM9hekFSYfJTPreCaWPvuMFH8X+Hv4l0LNUbrnIlu6/7ybM49Neh
+         IRTvPhm/s6l/9EKuGn6TBarmeeSwtQTHM3OdezqCnHI3o30QoMzWC/iHWeKf1hbdqpxE
+         HMIzkEaOnWSr9Xo1wqgpmK309vnT4HE+fL3ybPVy8l6hYLIW0wBrLTCXInZTuIwgPUt2
+         dkl8OuBlD+SW8IRmjUJWKVjmRQwxw1omuyxLoTcN8NsmLUZVf8glzQfUewjlI5XxxuaQ
+         l5GxayXhT93/U+coACh5eROyzp2aUGSMleK+S/X3T0/MyhXz9HYhZSpnotVegKa6+fOe
+         AKQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781009684; x=1781614484;
+        d=1e100.net; s=20251104; t=1781009685; x=1781614485;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=LZbdhxNRHx0Zryd46XkBMjMtJwqMLavPuhsEZIYoVkU=;
-        b=QutdFtsErdqvc0HuPZyoHSkXsKilvNSN0To1CCIYggCDPUtXvkUpyhB93sYehJAtic
-         2Y1WvKa6+kGKsfpG93aCvLS3R2+gtT8solCZ4+H1AvMbPv0q7PiQzSdUMtH8jRYbqgBl
-         zMWNrEDw6TiCQe7yoAObp77Apyn44+AAMw1K5QQCMPtTEkn9U9zScVXGH4Px6n5zK6KP
-         GxefKrDrhgFYrmObTdAQx8wy9efEkYfjSqzEfU2d4OK8PQf0oS1ylFRrByuV03E3fiAF
-         24A9rLXpeaf49ghLCXNTaFOkAAetyVqC5QkuUF4x7VaeT73tyX//E62ZsoqOjeBBAA2c
-         16Uw==
-X-Gm-Message-State: AOJu0Yy8GjXKB/Ymppwiyq/a3uHatQaSlyWPGf8qW0Li05g1EUZzFwI+
-	3dhjF0iyKW8AfV3kp7JX34dcB4MNaKYM9P6yZY4h0QiR9kIM/WjN7vw4
-X-Gm-Gg: Acq92OFcUdFFj9obUvRdaPDmiBctsfRBBIJ/Vxw0UNvkgK1U8ocj39XjfhM/KzK0rwC
-	/lbiucubrfFG8uvAbWqv5FbmHSKQ49ZYBhQCaU3sqVbDoOVjJYJNhD9LH502f4Oc5wGZCFxKFEf
-	sMUa00yrYY944E69r+DWzLQJA+CuFJHiJvXZhbuxbjXHqjJuEFeOFK9WaXuhMG/Zk4orVfuBqMo
-	hEQGdBWXNxTgrVJnz24yxU8/ZA5kRhaIw2onffqlRdx5bapQJNfsiDMdmlGZd3MAGM12G5IBsQ4
-	X0BB+W7vYCTcWJmfdj8pjnb9ac5NS3NCXYPjDF+PWb9yv9mA1v4ZpMURdyYBb00mNHAgSp/G29I
-	6WKBxOwQ6wqpIBylZWPIpAmx4yFGAhqQMDKAeR7iLwqXaKf5Drhu27BeqbeLr7sfVtDt3ihf/rG
-	4B3JeeFvyvcRvzjTmdHauylwFljMbYnPpECga9x/jTDkWKDP02k4DF3FsQcsTJNa5nn2stH06Lb
-	6d1mpw+2/NDJzCMp1eK55JXj5AiPO5gmUEOR3AWoGv7RSQUqMn8jLZ5FWD1V0RLT4fL
-X-Received: by 2002:a05:600c:608e:b0:490:b202:4772 with SMTP id 5b1f17b1804b1-490c25af61dmr321650975e9.2.1781009683630;
-        Tue, 09 Jun 2026 05:54:43 -0700 (PDT)
+        bh=Qu7loVp/RhhbK5pFGzQisJHK7vzMUicuCCUYX824N9E=;
+        b=ZIQtg94hRl9IOpQVuZc4QY6GpNtpJNa8hl5QyGCg5tOD5k1DhOVSkslDBW2uqURKi+
+         rBlUFBh9QXOEXfmd+UXjXvx3XQfkoFuI9/XEk40QUaGULd3ZtlFP5Kv4TudF+3JfIqQW
+         mRTLxzu1NoLbeFm7mPjk6rv5Jxunrk79BhNOwWEAkni84wAX2dRPg6hGDl3blSeAX0gH
+         cq00s3GcCo/W4Sl8FkJo+6Veza3DcG3LqML5DhdlkpQVG4MTbYAD3OVIqsaojrz2Chte
+         XK723VaYEib7PFDtdn2bfi+simMnSQWnE3SSNTf1guN7oaqUh0CcBSKRLzwlUiXzG77/
+         vloQ==
+X-Gm-Message-State: AOJu0Yzh/0kpkp00S7NVGC37cG+spilsl5M7DV4FgJHhWhdxx+07JjOR
+	czrnugTRh7nnheFQC4+oitcN8us9sZSPWtnNO2YwT+QsqQwBadZ7yHSL
+X-Gm-Gg: Acq92OFbb/oA7nZvyP2Mv/PmmJeAjYgMxAt1lyIiRveWAsGlnNqCW4S8d0CqxJc4tjj
+	QeclL7k0tnOxxVqs5UGPgTt5NRntwptO65uWPNic9jFh0nnGd1S9VVUo75awqdzZccZcwvsoVhA
+	4TVTQdVqmJVICUKfOou1USyYVVnP1LHRD7RaPC6rr1MziTlM4dAlt13Obt/11GJ1npjK5jUPDPm
+	g3MPmdkdiax4ZBnzVe2v7g+gqWFs4rQ7sXJFCGADSaDjtUHx41Epb6+8aD5hxydzH9HBg/ox3nv
+	bUzDgquIyJ5FlQLf0Ud1AG4IJ1NidcmYAUx9OWay8/H+i1DlxPluaM2Khb+WNHjK8a/ku/Sh+o9
+	cg1CF38dZkgKJ6rC5osnWl8HrptBc42+KIxWPVRGDOr4T1ZWjMb0OcUk7MqZ1IB5Ln8M0lKqViZ
+	9rr8KcaUB7Wpq2q1ceQjpSjStPt2AgPXSe3VJZj2uId9VYygBP6I7iwhnZm/sk6FEp4F/EuxIBN
+	MhiOOxFICyTh0TCM5JnvDdL84291wAOs1qhAnPmPxcVRPxMV/aOx+KbIw==
+X-Received: by 2002:a05:600c:1c20:b0:490:6237:5200 with SMTP id 5b1f17b1804b1-490c259eaccmr310171145e9.10.1781009685453;
+        Tue, 09 Jun 2026 05:54:45 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:2b2d:6009:3bbe:fb84])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3b5b06sm435968425e9.3.2026.06.09.05.54.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3b5b06sm435968425e9.3.2026.06.09.05.54.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 05:54:43 -0700 (PDT)
+        Tue, 09 Jun 2026 05:54:44 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -72,9 +72,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/5] arm64: dts: renesas: r9a09g077: Add VSPD and FCPVD nodes
-Date: Tue,  9 Jun 2026 13:53:49 +0100
-Message-ID: <20260609125353.401124-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/5] arm64: dts: renesas: r9a09g087: Add VSPD and FCPVD nodes
+Date: Tue,  9 Jun 2026 13:53:51 +0100
+Message-ID: <20260609125353.401124-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260609125353.401124-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260609125353.401124-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -88,39 +88,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add VSPD and FCPVD nodes to RZ/T2H SoC DTSI.
+Add VSPD and FCPVD nodes to RZ/N2H SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 22 ++++++++++++++++++++++
  1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index 40494159831d..dda7008acdd9 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-@@ -1376,6 +1376,28 @@ sdhi1_vqmmc: vqmmc-regulator {
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+index e8d4f76949cc..174f683fa68d 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+@@ -1379,6 +1379,28 @@ sdhi1_vqmmc: vqmmc-regulator {
  				status = "disabled";
  			};
  		};
 +
 +		fcpvd: fcp@920d0000 {
-+			compatible = "renesas,r9a09g077-fcpvd", "renesas,fcpv";
++			compatible = "renesas,r9a09g087-fcpvd", "renesas,fcpv";
 +			reg = <0 0x920d0000 0 0x10000>;
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKAH>,
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKAH>,
 +				 <&cpg CPG_MOD 1204>,
-+				 <&cpg CPG_CORE R9A09G077_LCDC_CLKD>;
++				 <&cpg CPG_CORE R9A09G087_LCDC_CLKD>;
 +			clock-names = "aclk", "pclk", "vclk";
 +			power-domains = <&cpg>;
 +		};
 +
 +		vspd: vsp@920e0000 {
-+			compatible = "renesas,r9a09g077-vsp2", "renesas,r9a07g044-vsp2";
++			compatible = "renesas,r9a09g087-vsp2", "renesas,r9a07g044-vsp2";
 +			reg = <0 0x920e0000 0 0x8000>;
 +			interrupts = <GIC_SPI 780 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKAH>,
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKAH>,
 +				 <&cpg CPG_MOD 1204>,
-+				 <&cpg CPG_CORE R9A09G077_LCDC_CLKD>;
++				 <&cpg CPG_CORE R9A09G087_LCDC_CLKD>;
 +			clock-names = "aclk", "pclk", "vclk";
 +			power-domains = <&cpg>;
 +			renesas,fcp = <&fcpvd>;
