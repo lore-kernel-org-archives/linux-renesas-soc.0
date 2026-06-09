@@ -1,133 +1,91 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0113EFD0F;
-	Tue,  9 Jun 2026 21:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BFA3AFD12;
+	Tue,  9 Jun 2026 23:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781042263; cv=none; b=IjnSn6VLtLRD4BdcpJ3VqH6UyP2LxdW2feXPtMziqBPvyn1E2+RcXQxoXg2XU4X6n++L7IyiRnzxRdLUP4IqbQTsvd+ORZP7DdqJE0cd4u3UJMeRdVNuJ2tuUTxOtljGi7ycAZrKWWfBXSIVuR2hjcgCNoVO8wmcNzxl8V/2vPs=
+	t=1781046341; cv=none; b=Cu3pcUgOrTJeXHY5pZyZyaRFuKFduk/XzyTtiZIMeX8n7CzlLstm7/KHJ0/6YXrTR6LdaneAZ6SN4l/AMcQO84peODZl3POY9vDicoDo4rXlrqD1Y8fBJSnCVw26B5I/1ZsJyCfY4WixFzFyWXOyEIBe081zP+LkFGruKYrVUIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781042263; c=relaxed/simple;
-	bh=bOY5j0lsdbSSw/GjkHe2DT2zC9dncvZOzWsKht0fgHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kMPrOd8J8eNiEfZPk8s/qDrH22co0kOGb8IMRNPyK648sV1b6GmbHogXzVO/KGeJdu39+xfq7FU1TxGvIG1FBV58U3oB/aV3g+Zl1o6/u3n1XH+Ka0ELB+knQGFj5IJYYrirSq2PZUg/EDV924FbQuGx7NFYiQ5Et4pGoDd6PQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=m1/hU6vt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BCfJjB0Q; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1781046341; c=relaxed/simple;
+	bh=ra3Ot0dD21La+p6doqPoqTkhF/nL/hx+gpU6xyIOI2s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HIj4kTCMW0e11wJCgCIHGCVfLBq2JJygtshmcx2srPsEBQbDrleOwcrdQnEaNYRfxm4e2DGC6pTxpm6nmZc8xS4y0z3AxBBAoqJVysWYQDep6BAGvOR1SC+oYVzu951l2Fu1/yHNMBr37Pad9Oa5k+Cx686xLswCRw2+rYXHo2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihzAXgVj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="m1/hU6vt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BCfJjB0Q"
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4EC0E1400154;
-	Tue,  9 Jun 2026 17:57:36 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 09 Jun 2026 17:57:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1781042256;
-	 x=1781128656; bh=KobzeavsFurxRDmS0bXJLW+Z7dYcPJXD7KLN71UxJG4=; b=
-	m1/hU6vtjLLm22h0sKvQvGoVbaxB3LssfggoAMLHeDvfvs3SkU0rlgigmGcl+qKP
-	fhVNR6JsOBLVM2xLlqrgFJ6bGMeBwyq5MPTYxBHOS4FvX152o/7h1+o/ThcJBFxa
-	B80aS6/aD+f24cU2c28Rpf6/WT2GQjUPUNA8Z2/tKyB6a5sWqy+uXfSNpJYZh4xS
-	K636DBUylgNUCfeR0QeT9Fa4MnyJutcH4ZA2umUhhJo01Z+AWKqQXHQeiFcHYrQn
-	S/5r+Orwmlvsap08n/4SZPC09MOWxJ0PHL1DSHZXxfe9OAMtLyHxW27xfstTdnp7
-	UsTYMzl70iwS57LQY77fIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781042256; x=
-	1781128656; bh=KobzeavsFurxRDmS0bXJLW+Z7dYcPJXD7KLN71UxJG4=; b=B
-	CfJjB0Qv5RwE2TVNK6UjVSgIOASEAXx3MRsDGMU3jPp3D5SCdmK0ULC8ElEPdd44
-	tGI0GKamTGDuWxGBalIQ4ZGBkoq7WcZslnTS3uf1nqMzxpGFLYlz7wU1SRltRsWu
-	rUNotx4X8nwNQrSlDT4sDTNKRw1f7GzihfiOg5WopOxydKcjjJZmH0UgJqC1Umf6
-	apDTac73fX2BekBLZyzZgvMyW81ZzpNyCCLjMicY+XvPpHmKIbb4Nq27PGn9VkdT
-	0dd9+hLwzulxv1Cjl656hHgldimQd/j7GrNzJJYuenCINI5ZwNrWIEkBJYOTV1X9
-	S+LkZx7pne8aWmvHfrjVg==
-X-ME-Sender: <xms:UIwoahLz5qzngGlBiY9OvZrE9z9pCzoRzII_l4H5Tw4gO9S_SWXQIg>
-    <xme:UIwoarro1awATmbSW0u7O8EhudbIe4tQ5rGe5beLQDxVnolD5NUVqWrQZpHvWxvsa
-    Tz_gxMibM76NNDg17iArWbNAAXV-zE-yJLcG1FPaupMqIvLY2Ib>
-X-ME-Received: <xmr:UIwoaghPnxMAWyrtD8zUky6KIN6oWqKJD3374VuGM6a2ZIObXvhsQjxqbCSKP1dapJeT0NRDIYUh2p2ex5AqS2UTN5IpYUbetPSf>
-X-ME-Proxy-Cause: dmFkZTEZnLlG/zm6YP9pu3O+052H5Qov2LG/vKRxGlwYKmDtobM65hzmOwbcE8wjk1Ke7m
-    CoRPTz6s8xZHNz6r7EYxSYaY21nQ+WxuJ6l8pnYqUwz87RVhHrcx+o9pJK0PetFza14MpY
-    bjFOrr/AOWjqckZ8ZmPSwi+eufSM6Du4onr8KkjVhXfIB0vMWuEypvWURdgBawYR+SdDC5
-    /iFtdvrB6ZAI82abtDhhgk1Lzn6n0rqAjWcCiPfUc4kpTV3GqCDn1H5tuToXBmOBPlSyHS
-    mX52nU63LRJyGPOZDqxy5h1sNQfc/TNd/6sumTSLKrdnQPNT+/el9tfMKOgqQMXFcuUojm
-    VBl89RpFLPfYDkgUMIoE8/4RMqNeS20pMMohukNvrE2Te98wgcY7jMhN1UGGyeEi9CUEiU
-    GlpKIk4e8KvdX/22ZJ/GhTd4s249fvZn49pLyMwlfxQyZsHbKB+W7sQBH1DuiZ3Jzm3a9l
-    9KJHQH3Wrxm+IGJvTrwkH1P8TufwQTvxyoZM9OY6ffv1WqgjKHqYQZX4H2AlxSGW0Vo0qV
-    0DZOw3TeVKkVQUEFTYnjm19IROrlIAub5wK4EsaaxeMQkgFNe7Okem6CF0oPbd8lqvy1UG
-    RylBT+sdyUvXsSmGo6GaJC7S1ndSEa+Y2GFCLV9OiRS9Hw4CAUob1djxCXpA
-X-ME-Proxy: <xmx:UIwoaiYinBhw7SAtW0MOHZt8P9o-5SgThPT2TOMvJg0Ncp9ksrjvgQ>
-    <xmx:UIwoagnsLwBL5iz2J5Uco3uVYEDlPLsvidHEX2V_SQR7gSd3_Jfg6A>
-    <xmx:UIwoagwU_MSX3XJLBHm4QiCaVj96Pkmt9Z5K28mRUXIkSsQ5WF87PQ>
-    <xmx:UIwoau9WFBtmPuxZJzT-G9QO2FcRBfUf0DNISyDcqRUsrCPmwb8T-g>
-    <xmx:UIwoarkuM12tB6wp03YZWCuaAKcqtaWJWwmLLhd-xzZLhB6Xb6HgRfUK>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Jun 2026 17:57:35 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"DavidS. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [net-next 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-Date: Tue,  9 Jun 2026 23:57:11 +0200
-Message-ID: <20260609215711.2960150-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260609215711.2960150-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20260609215711.2960150-1-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihzAXgVj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 139AB1F00898;
+	Tue,  9 Jun 2026 23:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781046340;
+	bh=H1ypLjGdWaHg1Pbo3gmt09FjgL1ztMAJAs0Zww3l3ak=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=ihzAXgVjK99GcVi5pPZVLY3Q4ifxxCuGadc+NF/VkCAR3024NAIGVZh8uqW0VUlS6
+	 UOq/f3kEX3qCyvjUNRGOkcI6CuUrpEcVopMnJaQrLFNcF2BTWxUxJaoTkpZ0lF+J5A
+	 R3lbMtzzv87pxlVrPAKOPSgKsyuMX1EnUqj365ItjqoWc49JfUnkDcTOtRcctmCB6F
+	 AdVX7+Jb9nKrEUiOJqBbVyiiQZOgTbcHFucj4OrK/MJu+S7yDpXcndn1WrlbLnMkyN
+	 tHtoMQ97inGvISWBiS7rp0WP8wKtEvRsl5PgWdfz5CIX5flBWH0w3gYRW1i9DhGILU
+	 6CFqWSE0Zh5GA==
+From: Mark Brown <broonie@kernel.org>
+To: tomm.merciai@gmail.com, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260608202509.3651345-1-tommaso.merciai.xr@bp.renesas.com>
+References: <20260608202509.3651345-1-tommaso.merciai.xr@bp.renesas.com>
+Subject: Re: [PATCH] spi: rzv2h-rspi: Add suspend/resume support
+Message-Id: <178104140109.34323.21151893515331912.b4-ty@b4>
+Date: Tue, 09 Jun 2026 22:43:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1103; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ra3Ot0dD21La+p6doqPoqTkhF/nL/hx+gpU6xyIOI2s=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKJxB2i4TVRFFfMtTNnvGvV8YhJQCzamsMvzIx
+ BUI3wh+MXWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiicQQAKCRAk1otyXVSH
+ 0Fi6B/wIq7yO9CBdAf9FRBhiKCv28OoRZzncdVg3GpZV50rwBZRw5r6XYWCRJYvoC2e8rCNIab3
+ TCfn+6mWhzKuvMHXh3a/6g0zCKy25tjrejHKQZBPV3yOEHIAxWpXpxzSBWzxVSYQRNdvLv3LbBS
+ gJdWEG6PXMfWD5OQvDcjmIrIl97xYGbcgtLtJyx26k+voAqrYSLgSRvma7C7xqXO6LZB1HhN/wY
+ R23NyWBoyrcH5dhxhxzYI7ogzRZVi8ziPIFWuDc796v7P+glkjXFwvmTHbaySN08XYdbyNdsr4k
+ S5+5P4efje9NHNdh466s7kVIkQH24fwwe5peNBWSNhupUVrG
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-the SoC.
+On Mon, 08 Jun 2026 22:25:08 +0200, Tommaso Merciai wrote:
+> spi: rzv2h-rspi: Add suspend/resume support
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Applied to
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 82a7278836e5..758c4ca0ae5f 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -603,6 +603,15 @@ tsn0: ethernet@e6460000 {
- 			status = "disabled";
- 		};
- 
-+		gptp: gptp@e6449000 {
-+			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-+			reg = <0 0xe6449000 0 0x500>;
-+			clocks = <&cpg CPG_MOD 2723>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 2723>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a779g0",
- 				     "renesas,rcar-gen4-i2c";
--- 
-2.54.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
+
+Thanks!
+
+[1/1] spi: rzv2h-rspi: Add suspend/resume support
+      https://git.kernel.org/broonie/spi/c/2cf4ad412f90
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
