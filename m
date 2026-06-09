@@ -1,91 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BFA3AFD12;
-	Tue,  9 Jun 2026 23:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85997320CAD;
+	Tue,  9 Jun 2026 23:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781046341; cv=none; b=Cu3pcUgOrTJeXHY5pZyZyaRFuKFduk/XzyTtiZIMeX8n7CzlLstm7/KHJ0/6YXrTR6LdaneAZ6SN4l/AMcQO84peODZl3POY9vDicoDo4rXlrqD1Y8fBJSnCVw26B5I/1ZsJyCfY4WixFzFyWXOyEIBe081zP+LkFGruKYrVUIA=
+	t=1781047499; cv=none; b=cORz/ByqEu7uQVMJj/BV+uJmC+vS2c/mA41lbYCw3vvXBq6PM+1GsXbtzJ3wr7Dud1dTrFShVTYexGjjG4tDgA6YoZYH/aDCdxDYJp/Nz9W3k+a9VE/od2qVplJD/H+XTjkZ/0cJ8UK59R7c54XQPfKVGT4jb+Bb47Phg9ScJhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781046341; c=relaxed/simple;
-	bh=ra3Ot0dD21La+p6doqPoqTkhF/nL/hx+gpU6xyIOI2s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HIj4kTCMW0e11wJCgCIHGCVfLBq2JJygtshmcx2srPsEBQbDrleOwcrdQnEaNYRfxm4e2DGC6pTxpm6nmZc8xS4y0z3AxBBAoqJVysWYQDep6BAGvOR1SC+oYVzu951l2Fu1/yHNMBr37Pad9Oa5k+Cx686xLswCRw2+rYXHo2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihzAXgVj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781047499; c=relaxed/simple;
+	bh=9MdWy2QrDz5exOOLcEuBuj6NyRKlWXPx6gtf5833H4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pRpwundnTRiQ/mOcV58mrJG7NJ5IPUEjsxhZce60FPCkeMWpIItVpA+GfE+T4AFS2IZQV2t2YG7R1HrXJ0Pro5B+Vhv2E5YL0VN5dQcfOgV1lbfrwMYwvh87TJC+y/mFbRnDNnZqip2PUWVqbv8nbNpPJ+70e7loky7OuJKxFao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WELQ078C; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihzAXgVj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 139AB1F00898;
-	Tue,  9 Jun 2026 23:05:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WELQ078C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4D561F00893;
+	Tue,  9 Jun 2026 23:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781046340;
-	bh=H1ypLjGdWaHg1Pbo3gmt09FjgL1ztMAJAs0Zww3l3ak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=ihzAXgVjK99GcVi5pPZVLY3Q4ifxxCuGadc+NF/VkCAR3024NAIGVZh8uqW0VUlS6
-	 UOq/f3kEX3qCyvjUNRGOkcI6CuUrpEcVopMnJaQrLFNcF2BTWxUxJaoTkpZ0lF+J5A
-	 R3lbMtzzv87pxlVrPAKOPSgKsyuMX1EnUqj365ItjqoWc49JfUnkDcTOtRcctmCB6F
-	 AdVX7+Jb9nKrEUiOJqBbVyiiQZOgTbcHFucj4OrK/MJu+S7yDpXcndn1WrlbLnMkyN
-	 tHtoMQ97inGvISWBiS7rp0WP8wKtEvRsl5PgWdfz5CIX5flBWH0w3gYRW1i9DhGILU
-	 6CFqWSE0Zh5GA==
+	s=k20260515; t=1781047498;
+	bh=XECSwOdG7aWv+AWzkviwG4lcJ5iemprDQN3GLacZFEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WELQ078Cnx3ZRgxOd9TJSEoDMyp4ZPhSZQoulwds1G3zBSC/ve1v+j8gSMDVmqo8Y
+	 N721YOKAn20IE0/TAql5rkEUqo86waFSU9AhrjTyMRuVJNxDoAPjKP4JZfLp9xrY48
+	 4WBSTcXWPvwABjPWblyjWVQwZRflo06m1juhCm5bmXhjUKgP0v5W6LA2g85vYyY0ne
+	 Qox08IOwOPpG2XLO/gPu8Ma22b9SMQvfmnqgdRtMVfYWPzQeLTrbsC9+/BuWOREr3A
+	 zuOaRaPnRw7DHvKXzo9JZlVcgr5SRZAfMZB6ePMBxf8Tn9fRETUsJXEORVPzldr40W
+	 m4tqDeuyC7/Kw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 856FC1AC56BD; Wed, 10 Jun 2026 00:24:39 +0100 (BST)
+Date: Wed, 10 Jun 2026 00:24:39 +0100
 From: Mark Brown <broonie@kernel.org>
-To: tomm.merciai@gmail.com, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260608202509.3651345-1-tommaso.merciai.xr@bp.renesas.com>
-References: <20260608202509.3651345-1-tommaso.merciai.xr@bp.renesas.com>
-Subject: Re: [PATCH] spi: rzv2h-rspi: Add suspend/resume support
-Message-Id: <178104140109.34323.21151893515331912.b4-ty@b4>
-Date: Tue, 09 Jun 2026 22:43:21 +0100
+To: phucduc.bui@gmail.com
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 11/11] ASoC: renesas: fsi: Add SPU clock control in
+ hw_startup/shutdown
+Message-ID: <aiigtwDM-qEBxjH5@sirena.co.uk>
+References: <20260609113836.45079-1-phucduc.bui@gmail.com>
+ <20260609113836.45079-12-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1103; i=broonie@kernel.org;
- h=from:subject:message-id; bh=ra3Ot0dD21La+p6doqPoqTkhF/nL/hx+gpU6xyIOI2s=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKJxB2i4TVRFFfMtTNnvGvV8YhJQCzamsMvzIx
- BUI3wh+MXWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiicQQAKCRAk1otyXVSH
- 0Fi6B/wIq7yO9CBdAf9FRBhiKCv28OoRZzncdVg3GpZV50rwBZRw5r6XYWCRJYvoC2e8rCNIab3
- TCfn+6mWhzKuvMHXh3a/6g0zCKy25tjrejHKQZBPV3yOEHIAxWpXpxzSBWzxVSYQRNdvLv3LbBS
- gJdWEG6PXMfWD5OQvDcjmIrIl97xYGbcgtLtJyx26k+voAqrYSLgSRvma7C7xqXO6LZB1HhN/wY
- R23NyWBoyrcH5dhxhxzYI7ogzRZVi8ziPIFWuDc796v7P+glkjXFwvmTHbaySN08XYdbyNdsr4k
- S5+5P4efje9NHNdh466s7kVIkQH24fwwe5peNBWSNhupUVrG
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rIVLtUXf0Jj60L4V"
+Content-Disposition: inline
+In-Reply-To: <20260609113836.45079-12-phucduc.bui@gmail.com>
+X-Cookie: Leave no stone unturned.
 
-On Mon, 08 Jun 2026 22:25:08 +0200, Tommaso Merciai wrote:
-> spi: rzv2h-rspi: Add suspend/resume support
 
-Applied to
+--rIVLtUXf0Jj60L4V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
+On Tue, Jun 09, 2026 at 06:38:36PM +0700, phucduc.bui@gmail.com wrote:
+> @@ -1560,6 +1560,11 @@ static int fsi_hw_startup(struct fsi_priv *fsi,
+>  			  struct device *dev)
+>  {
+>  	u32 data = 0;
+> +	int ret;
+> +	/* enable spu bus bridge clock */
+> +	ret = clk_enable(fsi->master->clk_spu);
+> +	if (ret)
+> +		return ret;
 
-Thanks!
+This is unconditional...
 
-[1/1] spi: rzv2h-rspi: Add suspend/resume support
-      https://git.kernel.org/broonie/spi/c/2cf4ad412f90
+>  static int fsi_hw_shutdown(struct fsi_priv *fsi,
+>  			    struct device *dev)
+>  {
+> +	int ret;
+>  	/* stop master clock */
+> -	if (fsi_is_clk_master(fsi))
+> -		return fsi_clk_disable(dev, fsi);
+> +	if (fsi_is_clk_master(fsi)) {
+> +		ret = fsi_clk_disable(dev, fsi);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	/* stop spu bus bridge clock */
+> +	clk_disable(fsi->master->clk_spu);
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+...but the matching disable is skipped if !fsi_is_clk_master().
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--rIVLtUXf0Jj60L4V
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoooLYACgkQJNaLcl1U
+h9BikQgAgs32gfdN4Rngk/+MZu3KLIyYeq4PEjHKyPBS45e/hcQAox/9hL3UG9ok
+y41NH8g3rJIB0pGpxqkdhgy0comqz/j8jke5fF2Tutv2nnzCKeZ8u6ZZqY5ZgI6Y
+ttlqSXpeRuCNBKLr+Psk27CJsvUALBTrahTK9IraRIbODD27+BYqbpH5u2eq4NTJ
+cBHwq+GB+8IDWUrVq39gZA6+/u7mY4YfuWe8r8EhvkOyEfcW414tjaPiMCEEsu9c
+tXejrZloBhnG4xrH1c+dmvC+aqhhBGoReDUPWEjqsc7RQIqK9rNumDb/s763UxYd
+gxKLg1je7le4XGT4P+ojFZh6gLU0kg==
+=q5yz
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
+--rIVLtUXf0Jj60L4V--
