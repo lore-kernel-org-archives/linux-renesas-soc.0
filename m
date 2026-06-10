@@ -1,139 +1,105 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4C43F9F44
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 12:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B9B31E107
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 12:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781093304; cv=none; b=cWJhmZbge8Mmle1TEbPcshIgGDjVjzAv8TPSiwjmjUYSXeyigks3DkXjxxPhssVaMJKJgPdvZfhhZP5H8o+NRRwpA7M3WcgX6E99MDje+aeEVCCV/y2wp5cktkFyNxRNTisDsns+82J4Qgb3mhveMxQbpxODawA18CIH1IfiOMU=
+	t=1781094989; cv=none; b=niJzQK3awifSiawkcUx2VJPjNcaPzA9DVnXB3U6CAP3jeEdSB6FDU2pJ9EANvIvVFDh9B3lTmuKRWiCx0pXU5XfFzLCjZimd/hXaGtnkSB1WyEgZNW384mss565G/qCpu/C+GW/I8OpxH0QOnG33/qB3Dy/TBrNjCR4zFQQmoms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781093304; c=relaxed/simple;
-	bh=gRYmgtFz61CTrLJuMU4IYn49sqh/BxMTge3k2DLT6VI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mOVe3yVIBdeSfFA0GNg9+SI9XSXwHb0ynFfKBza8cT2jrrB1vq1JDCuA67bAhY/O1x1vgA8ZdoZ/dYgG1Fr3bHp2GaVxj3TYHXrOQkt7RNMNiX8wYiHPw9I21EuOtCZwoqnVfY+4fTrPotRF/9IogZwezu9NgRP202pEGkXHu/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjuG3zTN; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1781094989; c=relaxed/simple;
+	bh=1jaQI/yXwfNl56dzYfed7eyhyT0Bb1rMZNDi1ewH0oE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iKtHNbxOkZNkViw6fJ6Rb2oSrnUtHKIFZu5P1HcSoz7auXFvcX1MYZpsCUtcoCaJw5KTlfp+NPAQjdH09ottviIsxHt7b8sZhkbSvXOl3OMH0pGKkbilD+T4Drl04CA2mTJs8SM1YWiGAnx2h4hTwkeZqry2/bPaOuJVpFmQw+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjuG3zTN"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2bf2e8ccca1so47730385ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 05:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781093302; x=1781698102; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=80QEDLORROQQ3BtM7atufx0QxPfqyLlC7mZSU27RJko=;
-        b=mjuG3zTNUBLBgsU8IRHbC/KxEhLb9EvKhWRQ3zzw4UCyE3WsmhIvmzUKejEsTjwtLj
-         4slYDGA9dKxPgFfNWp4vi925PpOVptqgLRk/qFu/CLI53NtVu+dsa43yuhKdpzZOkGYg
-         6lRZS5V49SsiwRLe9975mKlCef/2eFHL60j+pMf+vso0oZ6C0Pq3sUCCi1yi3dRc9pw6
-         RTsTugwej5zGkkzBbgK1dxHolLFQ6LDOH3wCKst+ZeG6keI/0RrppQiz55m2K7HS0eRe
-         sv6KPDhig03jCoVv6jYdhiivs0gQUCH5TaJcvTlwKdeKEQ96unI3yR+PQ1qkxO3hpeeS
-         W6SA==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-bebbc325000so879656166b.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 05:36:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781093302; x=1781698102;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1781094986; x=1781699786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=80QEDLORROQQ3BtM7atufx0QxPfqyLlC7mZSU27RJko=;
-        b=SqfuzP6XPmS4UL/IoUu5jvqjc5ydpDFbp9Utl+4KL6D8BSNGYu7BL2dxB+ryZTnYAc
-         DfXht89mP0RcmW3qFLY1v+ibB9/90iYnu1MoLHyaf/I6Gk3G+HnE96U1VsWJ3x2gv6ed
-         ZOeJDKe4R9scxHoqEpjUt3nZreJIiW3kULenhpqQAwXIUE8b7SaLsTWkCwy91Lnl6XCL
-         erNJ5gDurbqUpg9/NRayR8wgt9V7taXmhjktnqgqG1hXQeU86c8/OKpH3GXjCzS+IZNH
-         JGZ3fikJ/aPnwa9RB5RJDTkHHF5TdAYu5Kq2FSf8nL9f6NOyPqHPbPFH/Z/Ep29hDIuz
-         gtxA==
-X-Forwarded-Encrypted: i=1; AFNElJ8IYTsycYdzdTn4QQx+N7qKrtxo9k4fyvLTvUlcGbUvmIgDAJrvMEhwI/Cho5khz4ND1VzUvLVBtJB7oKORgAl/AA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzluyv7emhFilgY+MnjUEK33rfCaMe21AE0cUqUIJujQAaN36Hs
-	3WDMcI2oSIxDbh3fSxmJHCbp6bCAWPNU4c8hmN8NqXLocVBOLcYHeWGI
-X-Gm-Gg: Acq92OGcfGaVzk/gy68JhjtKw4FK4ZrWuUnZCGEgJDMZcCbG+CZleJi8P7FTGi/FrFR
-	sjxxs6dplakieOGWk4yppJBQHvemAMxRhP1CWYy9dHtXniw78Q7bzcPqVsGxnHigynXNLdbjGbk
-	FbHX6ELT/OUC3UXWBmtkq5/uMZY8E+NhXcSFJegBB0Q5IJTLohh8z/yN5KSIKzSv8aSq7FBq9qX
-	NanEO77l8Z6xXSPCClRjQw8ABwHzIYZegUGQlVehPe4c8p2hbmSaUtdS1FmDB7uwP9I1fT+iwPm
-	qpjvoz0Y05aipff8AxvdFN1nP9wD2csh3UOih6Kg7s++RzxxJf8e6VZUOeAjqn0e8VgVlbbVcze
-	qX3hQFbJpzorDFhHlwNYLhiJ8H/tPLpssBwG0AiIhMdkGvkU1W487MR8Tk7DbUqskioPwx8Kbh3
-	p6ZE1T+Km8Uch9J5NOTUSsV8VUu1aaWe28SltadKnt+7+Etbr8W9awnSipQiwmRryYqtzEWaou3
-	+SYXOV2Dtq9wku3yhumLMewxzzb
-X-Received: by 2002:a17:903:291:b0:2c0:bcff:e191 with SMTP id d9443c01a7336-2c1e8332c1amr297123285ad.36.1781093302066;
-        Wed, 10 Jun 2026 05:08:22 -0700 (PDT)
-Received: from junjungu-PC.localdomain ([223.166.246.74])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c164f8679esm236919415ad.21.2026.06.10.05.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 05:08:21 -0700 (PDT)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Wed, 10 Jun 2026 20:08:17 +0800
-Subject: [PATCH v2] spi: rzv2h-rspi: Fix SPDR read access width for 16-bit
- RX
+        bh=qnkRL9A9yLDp0586KseS3kXnfXEIgenVBxyMiwtAEuc=;
+        b=jOzf5OmMg+26Ru/WV6i98emTimLii/pH9wQr3kh22E65fWgRWs6Vqip/SuZejuyfZ/
+         uYlnBNz+524YAybt60UZ107/AviOj2TWEdzwMlsP17QO5rHnc7tbQgCv0Emmatn2s8/q
+         59sJdyKzuEHmyV4DvQq2RdN/qkyACKBzyVbZGRTQkRj/L3OUxlzl64XzrRxBaEXsxiNq
+         Ay9uMYDOu92B8h2ffeBIqozeYnInXacx/nixzj2NZzmFpNtztdrqGvQg6WaNxQk8MWAz
+         DBP4Nv7kXzMksuEXDp1JKErIpA8ulGl4f6uIhsLZ7AEkbmJVDSnerLS1Oq6jOVMCjVPa
+         QqTA==
+X-Forwarded-Encrypted: i=1; AFNElJ80Wr4qYk3ICgxtWqCz8Efl3poWxm9P6bGRJa34BEjGadYVOpdrH++SwM4nZw1UWIVbPDAWQAhDa74HCvrWCRjm0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznN7waltlT3kGpTSFVIsPhAlBuslyuXp92K0qGeXc+4LS4TARp
+	YU9spj2L6Odl5bcpZPDenUE2TCqCXghFlKyrSEHj8GkKcqnHIysv/AiICvOcTRPRRHA=
+X-Gm-Gg: Acq92OEfwjFKDhSBxrgAdHCocn/n6tHJySeccxZ+2Y7f99RpwW5rZ3REO+LrzczpvvE
+	0RnWdUX1NyfQzt/zdGFIars1GG0scu3/7GjRkFYeSPFWjI0Jvy3R4WgVp19whCYGDjrHMVizB6S
+	2AnNI0VszZElzkB6qZaMwraCruxQ8W1QA7DMrt2stQqamWnD4np/98ORNOPXG81t5Nd520CkEB0
+	dq/4MrK9ALtaePriJlXvxOBHoPhhQ2CK+/eyKMDWzze5ACsR+EfSTBBjgoPDthUwQmYekrLk9vc
+	UD+VBNldhJeJgFmpLt1wt/vCPTaXcLV+rMwOLPnv7TSOmBmuviS9SCGye7VPJMXNiamORvhzG1a
+	nNHldLT4v0EJPHDjWHUPt/F5R4r9wtA8cqAvbmdfled4N9XrHpio8Y80QyVtus4RlaSfrwl6DZS
+	SYC4V+hYZuWqu1q8ds88sF9ajXa3kT+FRFVXfbQ1gzY+DqzKDlbvZYupWK047+gmSiqDZiKBw=
+X-Received: by 2002:a17:907:5012:b0:bf5:2395:8d5b with SMTP id a640c23a62f3a-bf523a56354mr607712966b.47.1781094986179;
+        Wed, 10 Jun 2026 05:36:26 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bf0517721c2sm1144424366b.3.2026.06.10.05.36.24
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jun 2026 05:36:24 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6913160c9ddso9147454a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 05:36:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ89TtQvl3XvDIv/4Y19jKF4a6cBnLwF47yc+q/zJgijzPWfEh45yzy0PzxGyKpFOtPC92Fj8ZQrkzNBOWjwF/Q1Dg==@vger.kernel.org
+X-Received: by 2002:a17:907:6e9f:b0:beb:7979:47dd with SMTP id
+ a640c23a62f3a-bf3738f1f81mr1412187766b.27.1781094984425; Wed, 10 Jun 2026
+ 05:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260610-rzv2h-rspi-v2-1-40c80b4a2c90@gmail.com>
-X-B4-Tracking: v=1; b=H4sIALBTKWoC/22NQQ6CMBBFr0JmbQ0dpaIr72FYQDvAGKGkxUYl3
- N0Wty5f8v77C3hyTB4u2QKOAnu2YwTcZaD7euxIsIkMmKPKVV4I9wnYC+cnFgddGiNV2TYnhDi
- YHLX82mK36sf+2dxJz6mQjJ79bN17ewsyeX/DQQoptDQFmUIhHs/Xbqj5sdd2gGpd1y+FR3q5t
- gAAAA==
-X-Change-ID: 20260605-rzv2h-rspi-3c8dd168fb72
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781093299; l=1688;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=gRYmgtFz61CTrLJuMU4IYn49sqh/BxMTge3k2DLT6VI=;
- b=Z+SHh11T+eA5g1RF+ZYwJotSyzA1VacKym9Yev1/NlWp0pPW5TEmvnNIb3baEQ7riX6bDcxvJ
- Drcb+TNYyiJAB5polxXgzeDhTZuIsPh+/B9R+yBMqobOTRs1uvBPCAW
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+References: <20260610-rzv2h-rspi-v2-1-40c80b4a2c90@gmail.com>
+In-Reply-To: <20260610-rzv2h-rspi-v2-1-40c80b4a2c90@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Jun 2026 14:36:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyj-6zNhkZR4SRm_F-JK1QKnpPkSvzK0Z+TSE58yq3BA@mail.gmail.com>
+X-Gm-Features: AVVi8CfbEH3Hc3J2sCeattAV0AJLSnQxbhugQPZSnzmY28ff2IF_tFxiTy0lV70
+Message-ID: <CAMuHMdUyj-6zNhkZR4SRm_F-JK1QKnpPkSvzK0Z+TSE58yq3BA@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: rzv2h-rspi: Fix SPDR read access width for 16-bit RX
+To: Felix Gu <ustc.gu@gmail.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>, 
+	linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The RZ/V2H hardware manual (section 7.5.2.2.1) specifies that read access
-size for the SPI Data Register (SPDR) are fixed at 32 bits. The
-RZV2H_RSPI_RX macro for the 16-bit data path used readw(), violating
-this requirement.
+On Wed, 10 Jun 2026 at 14:08, Felix Gu <ustc.gu@gmail.com> wrote:
+> The RZ/V2H hardware manual (section 7.5.2.2.1) specifies that read access
+> size for the SPI Data Register (SPDR) are fixed at 32 bits. The
 
-Switch to readl() for the 16-bit RX path to conform to the hardware
-specification.
+is fixed
 
-Fixes: 8b61c8919dff ("spi: Add driver for the RZ/V2H(P) RSPI IP")
-Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
----
-Changes in v2:
-- Fix comments from Geert.
-- Link to v1: https://patch.msgid.link/20260605-rzv2h-rspi-v1-1-c1d5ed562249@gmail.com
+> RZV2H_RSPI_RX macro for the 16-bit data path used readw(), violating
+> this requirement.
+>
+> Switch to readl() for the 16-bit RX path to conform to the hardware
+> specification.
+>
+> Fixes: 8b61c8919dff ("spi: Add driver for the RZ/V2H(P) RSPI IP")
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+> ---
+> Changes in v2:
+> - Fix comments from Geert.
+> - Link to v1: https://patch.msgid.link/20260605-rzv2h-rspi-v1-1-c1d5ed562249@gmail.com
 
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/spi/spi-rzv2h-rspi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index 1655efda7d20..6ed3fad873b8 100644
---- a/drivers/spi/spi-rzv2h-rspi.c
-+++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -135,8 +135,9 @@ static inline void rzv2h_rspi_rx_##type(struct rzv2h_rspi_priv *rspi,	\
- RZV2H_RSPI_TX(writel, u32)
- RZV2H_RSPI_TX(writew, u16)
- RZV2H_RSPI_TX(writeb, u8)
-+/* The read access size for RSPI_SPDR is fixed at 32 bits */
- RZV2H_RSPI_RX(readl, u32)
--RZV2H_RSPI_RX(readw, u16)
-+RZV2H_RSPI_RX(readl, u16)
- RZV2H_RSPI_RX(readl, u8)
- 
- static void rzv2h_rspi_reg_rmw(const struct rzv2h_rspi_priv *rspi,
+Gr{oetje,eeting}s,
 
----
-base-commit: a225caacc36546a09586e3ece36c0313146e7da9
-change-id: 20260605-rzv2h-rspi-3c8dd168fb72
+                        Geert
 
-Best regards,
---  
-Felix Gu <ustc.gu@gmail.com>
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
