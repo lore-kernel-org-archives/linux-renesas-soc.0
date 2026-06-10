@@ -1,128 +1,68 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874E831F98E;
-	Wed, 10 Jun 2026 14:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4B32BE05F;
+	Wed, 10 Jun 2026 15:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781102468; cv=none; b=tFwOeyn832/sgZf+igigjO0ErMEYxNschaDWA8SQud50jiolYRi2HBGYwSmg5FSk7nvDMjTvEHqYj0tXvdP1CptiUg+ilNK2kf8eLgGAT5LFp3IHmEnWcxhs/v4a41TiOWO0MbHRQG23q4ribbcPbblKVWTxt2hcw4koYuQplvA=
+	t=1781105094; cv=none; b=tEIo+xhRoKM/CbE/a3Bfi51M+XrfSJR9iZZzmS5axKIp+q+2v5bxOCHalVcOYvMCg3vkeUUc/kVzfK/wI6hAMp/fo5E1jjdLgtc75hrcS95rfRW7V7Dc7ZgUEDIHXp9hkEosMYsa2tCA99riKmSx4O+v7cyaPa09367KyrajDZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781102468; c=relaxed/simple;
-	bh=OXkDqgugWTx2wbBXlzDRLQYZ4Bu4IwYIo60C0ZcxkqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwh/m4Lucp+YJMuCzRoLaGmVBVsjI2CB6n4pnXmPv0MtwTx3IQqxvMe7qOw9bkm5wlmIJcV+qUJiDDPAlJBJNHUWUq65x4cPGwJPiQ2Otv8yP9ZEOdoXqcBJKWD+NCRaLz1nG0BZlinb07xYt5qsRORwze7YPsTkR8FU+mZg080=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VXoWlKSs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VXoWlKSs"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 63CA49A0;
-	Wed, 10 Jun 2026 16:40:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781102435;
-	bh=OXkDqgugWTx2wbBXlzDRLQYZ4Bu4IwYIo60C0ZcxkqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VXoWlKSsE7gtrCz12i/oGwCtqNRmYGdUoB7tx4lxSre3fUtJgxv1P3vIDtQWQ3HFR
-	 gTVJNy7qnQf7CB5ksPzIn89qvdjy1X6gPFSQuxqjo3KUbBhvNyOPgf67Dskpj1avOU
-	 3QxQ8eXNTQ0yi2LSS/CC9WqUyydJOFsYTYLrlGkk=
-Date: Wed, 10 Jun 2026 17:41:03 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	s=arc-20240116; t=1781105094; c=relaxed/simple;
+	bh=8IzCxAQXih+Sb8cJNqqX04/FqubEw8GSFBCCrdW1htE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahBLbF8j95GAMzsD/py1Gxlp4RVal7BcdSXIiEu8AQjnlH6TwsvnRctcxOkiPlPdQRqafjdioJkckAf8pbFgxD54n9oxGd+NOvEOVWFTnBV3DhZjZb0b+ctMjgQi8ldfEDEKvurNqN6r1hO88sUiO4Aw3N6NEa3nKAjvDUtwnFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3CE1F00898;
+	Wed, 10 Jun 2026 15:24:49 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	Thomas Gleixner <tglx@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] media: dt-bindings: media: renesas,vsp1: Document
- RZ/T2H and RZ/N2H SoCs
-Message-ID: <20260610144103.GB1335994@killaraus.ideasonboard.com>
-References: <20260430100929.1088281-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260430100929.1088281-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v2] dt-bindings: interrupt-controller: renesas,r9a09g077-icu: Fix reg size in example
+Date: Wed, 10 Jun 2026 17:24:45 +0200
+Message-ID: <364ff570c8a1845fab24bd89557f06c9e406f8de.1781105007.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260430100929.1088281-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+According to Figure 5.1 ("Unified memory map"), the safety register
+block is 64 KiB large, just like the non-safety register block.
 
-Thank you for the patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+v2:
+  - Drop Fixes tag,
+  - Add Acked-by.
+---
+ .../bindings/interrupt-controller/renesas,r9a09g077-icu.yaml    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Apr 30, 2026 at 11:09:28AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Document the VSP2 blocks present on the RZ/T2H and RZ/N2H SoCs.
-> 
-> The VSP2 implementation on these SoCs is identical to that on the
-> RZ/G2L SoC.
-> 
-> Update the schema to disallow the "resets" property for these SoCs to
-> reflect the hardware integration.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
->  .../devicetree/bindings/media/renesas,vsp1.yaml | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-> index 803358780f01..a28632165804 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-> @@ -29,6 +29,8 @@ properties:
->                - renesas,r9a09g047-vsp2    # RZ/G3E
->                - renesas,r9a09g056-vsp2    # RZ/V2N
->                - renesas,r9a09g057-vsp2    # RZ/V2H(P)
-> +              - renesas,r9a09g077-vsp2    # RZ/T2H
-> +              - renesas,r9a09g087-vsp2    # RZ/N2H
->            - const: renesas,r9a07g044-vsp2 # RZ/G2L fallback
->  
->    reg:
-> @@ -67,7 +69,6 @@ required:
->    - interrupts
->    - clocks
->    - power-domains
-> -  - resets
->  
->  additionalProperties: false
->  
-> @@ -101,6 +102,20 @@ allOf:
->            maxItems: 1
->          clock-names: false
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,r9a09g077-vsp2
-> +              - renesas,r9a09g087-vsp2
-> +    then:
-> +      properties:
-> +        resets: false
-> +    else:
-> +      required:
-> +        - resets
-> +
->  examples:
->    # R8A7790 (R-Car H2) VSP1-S
->    - |
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,r9a09g077-icu.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,r9a09g077-icu.yaml
+index 78c01d14e765721b..a809bc4f75159c60 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,r9a09g077-icu.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,r9a09g077-icu.yaml
+@@ -165,7 +165,7 @@ examples:
+     icu: interrupt-controller@802a0000 {
+       compatible = "renesas,r9a09g077-icu";
+       reg = <0x802a0000 0x10000>,
+-            <0x812a0000 0x50>;
++            <0x812a0000 0x10000>;
+       #interrupt-cells = <2>;
+       #address-cells = <0>;
+       interrupt-controller;
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
