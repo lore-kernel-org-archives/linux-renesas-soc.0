@@ -1,141 +1,91 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E79D233936
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jun 2026 09:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781169182; cv=pass; b=MDDd9LbjvpiVajyhwv6f7FSnDoabLZwwPejqhDKvTMJB14MadkifFLNEllByYW6GcuikYZAyjDHVquZ0UcVwL2kAHUaQwF5tpIl69Laqm83fAHnIvVVUXCP7i42tAgTUBN1M64Nld/yhIctUfAvXxcpexrkBfHUtY1wNZq0hfCY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781169182; c=relaxed/simple;
-	bh=hoj0ig+CoCGbFQUO4jVjy2N6O6hJkky1VIHSBDR3r70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mp0wAb7YNnC6kYxtAHYusfbeoofGxo068EIX93Vg9gsur8VpnZwV0+o5inkocBtNfFFT1e3Jhg3r8zunX6yeF30HF+xO71S29dl1ecAtWP7p8mHMdnOk7nrcrZZmtajjD6sC9sopih6YO5AH1VJAIpAeN1CcGRXU5DYSUv46KEg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ekIXc12a; arc=pass smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE053AC0EB;
+	Thu, 11 Jun 2026 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781169849; cv=none; b=bljMPE1m5m5Y6MXqUHZmSj8M28j4pHIGhpzaUhRPg6sZrY2yUR4T09M8gada7pqUEyLHjWoSx6T3GiPB8AEpbCg3B7tpLsEEy/hUcEh38+0TYABBVFHgY7RxcNi0Unx7EgHzjg2ugRRWIzr1Yh83vcnrYf5eyYW/IHa7cccTkwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781169849; c=relaxed/simple;
+	bh=eDxguddQlxUrvId4LbOlhtWIxfA+Fqms1ywpsbZCJzE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Vd2tgZPhvb0/jQ5QJpBPLGN3Ge9y5XPuVxNYXr32JjDcJUmZuRSMvEbZ9AewRqDHSoIWbO/LOV6EkLArj9t4fsJcesO/T1vd59Nb6/RuuTrN3UscuZAAgg6UvgdCrF86HWfALJgvwNizB9ZiNZQG/GoBWBTHTpkxX29ee1I3zW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WufietZD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ekIXc12a"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7e8b45dfb3dso91542647b3.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jun 2026 02:12:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781169178; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GDPPDac7w8unTdUSsKU/k9NPoXlMGQL7q76R9g4qKiL36TIUzcEQWAFyfXwpDlyeM3
-         kDD/RrW21tKt2eP2iB/s1z34JWHCKa6UiLDw08PdCmz5C6TbAlMeZC3gVib0YId1hnVf
-         H2k8mVjWF8SAvfK2BTINNZzw37fQCY80IYbFc97zmajz1uofRc3uCYOu0B1Mo8IUiUpM
-         SU+BDyEgeZHahEWiEoLN1JDXZlWVG28G32lOY/cFXJ1OStNOeaFxp2VE39oL0AyFT88x
-         pu6YuQBc4zw7I95tNjJcVcaVqJowN0hzAiIYhu8sBSUSd9wvZlavxKI/vSdkkzO9R+Ga
-         HcMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=MYKB6iu0PDtjrE3F0ztsAOmxTHIzR1YcZn5jcZ5lz6I=;
-        fh=xR7yp8UELAIqEzwMl3cQXHDcPbLqzQdiMLAMSuihht0=;
-        b=ll34SNsb6EfNOLcpU79qv9zFtFEhY22ZZsnUen1fOLBZeMpeCfZHXt65pcKPzFCP8/
-         Vo6uz15yW+QLsoHNQ/tz2AFkyFX3G/CSzV/gMJgd2f4IYuC5F7r79Rd3bRCVmaL1eBKz
-         r+NH78g1CS2ifj/fA3eFxVlBWrpPyZTzCzTuV//h0dlvi5sh+6le/2Tj0XShJsbqa7pw
-         6FUccMuhU1ty3oCLK7+7aPpaT80CTBT0xGOnrrFpobHSLhobKq+sgu7CBJPN0QewraCN
-         SbECzwQ44FkptGc+BJtEMXFkA1THPDGRzARGfWfzPQL4drZF5RIynY/tAD/cQT9DkNA3
-         +Xwg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1781169178; x=1781773978; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYKB6iu0PDtjrE3F0ztsAOmxTHIzR1YcZn5jcZ5lz6I=;
-        b=ekIXc12afGVdUxXaQYa5y2/VWZnuBX4t1DzfChztT7VR/BCX01A18IiP3aLdD7wUXO
-         6Moo1qZIvSjzWVu93WSvxTxPh5LhTLIfaO6cJds4bK1SSV0cv80TOQcqtfBR3a/cyCvq
-         07KkEGWcWzuHV2Kn/ccQV8AIYv7dY/QAAlQANNqjeloZr9VS6p63Hma6cRvZV1JBGjMS
-         wNX/0euW/dyuwUw62NQVafyPz3dcllMSe3pYXMXSFh/dCZyDscbwhc+b40yPdEdf4iel
-         4GvwLMSHtm3hN0SYYTsiRR31vOy39aNfn4iDEMYWFfdA1uVYW7sRRU+0IWtdMjYXE1eR
-         DqRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781169178; x=1781773978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MYKB6iu0PDtjrE3F0ztsAOmxTHIzR1YcZn5jcZ5lz6I=;
-        b=GpZ8b6OTuCu39y2g2Xa+Q1ZEdh/nVpaq+P+wRgIKSBoDYOJnDTgUe9KWWia7oEpxLp
-         OKu/7g88Eq8IhPzEw0DhB/POvAtX4iG6KkrLRBoehNnMLTZb6j1wEkMW6a5bXgzPBAyd
-         j0FvCblj6JPXsS6USAf2bZfUibg/FM0U3d2nFXOkCOP4Tq2G8GOlI9U8w/58ZkYZGLyz
-         Py48C6uHX+9NCMlg73YEW9bh8+yREnKIdZNccy7CQIpMAsvH417jLWAjE9bvxoCBuTeo
-         r6CDcWjW1Nyip8rI+Nj4l8dFR68eYWXN/b7zV/rbVwblVV+maZaAjPTd+8KFpFdalQsL
-         Stbw==
-X-Forwarded-Encrypted: i=1; AFNElJ8ix/cQJXtegbiedSrsYTFpCaaCGdxtexg3CvVMGFO9+elA0zNEk8Dq8QLMB8n9Juo+J4O9kaeWYtcr/kGljlBscg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDbDy41TSr1vu1XA4kUVyc3+dmt2CuO15BTE/oOHGkOO35PwBu
-	gJr6Sq3mnQ9Pp4IbkyyxT2qAs+6SXH968F7OAoXgGGMDRExkJ36FL7IFEoxkQC/57AYVDV/ISye
-	Ru3IW2/ZLw7wiH2bwSRngpY5NilySHWTU9rQjEUcLmA==
-X-Gm-Gg: Acq92OEltGUC40FkqKeoHGDDfQQRD7wHFYGQcMvd/bBqh18E5uvT75w50yjMxDsCOZC
-	1qD84ODJh+70e6iITbTCFmj8HFSrWzXJCIlcXLcGmEXkFqtgr+JxfwTfADlmEBV9errxOVjxsYB
-	EB8JMjIfzZXXtadwkGiFLq34a5RDEOb9zx1l2jB0lAIdhrFkS5V4G7dgfoD61vRk3sAzNftla70
-	TgtnkvgAyjshxGNNC32S2KoXxBMbklAO5hVZuVFEvtnlfw2o6mKmwWXGJLcN3+jJl/+pM69+NHP
-	jVw0zHTSRyB1CPQdAMGAF/stS32d1xA3OhMXeYSFTaPhg1ZYRcUMt57stv/hu6VzIF5u1107w2w
-	bBy9/HQyE5ib1OdYTc48rGoDI8oyx5TzL4MA=
-X-Received: by 2002:a05:690c:490c:b0:7dc:605d:7a9a with SMTP id
- 00721157ae682-7f655ee0d17mr21296917b3.12.1781169178177; Thu, 11 Jun 2026
- 02:12:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WufietZD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7703D1F00893;
+	Thu, 11 Jun 2026 09:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781169847;
+	bh=hsCJH8jkgkWPbKFNS/J0Gi7UaLaw1J8pfTQzvdF0Tfo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=WufietZDjPb5CokDRjI7rTaJ19XaBnORqIqUBCqPDNFlUJLDST+lu/GP+g5w9SRqs
+	 KUUE0l4RJEWsoaGlsxj0Bztv9HodMxlPKbX3LK6riOxpRf6LQOZRXq+yWKXESzrolw
+	 o4ZrX/9N8oiqKjCR0yLb7tZ796KXkvNDX8hK2ex19RAeZWebXDRrLgiJSTwd6oBSjo
+	 iPIxk9JtMbknojWBhxGARkGkb4OTOhthE1rh4BWTo+0QLRUzuWRj7gLXFeUdHwLay2
+	 UsR7qd1HpY5Ix6OerX9NFZ8zGJKR0UPnRWaTWz/+DXsg9iRbRFIqDOSW8c2fsGfYp3
+	 c0h7CvbURMHVg==
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, Felix Gu <ustc.gu@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260610-rzv2h-rspi-v2-1-40c80b4a2c90@gmail.com>
+References: <20260610-rzv2h-rspi-v2-1-40c80b4a2c90@gmail.com>
+Subject: Re: [PATCH v2] spi: rzv2h-rspi: Fix SPDR read access width for
+ 16-bit RX
+Message-Id: <178110595731.232889.12415517955627517232.b4-ty@b4>
+Date: Wed, 10 Jun 2026 16:39:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260610-media-ci-7-2-v1-0-3c61a482a44e@chromium.org> <20260610-media-ci-7-2-v1-1-3c61a482a44e@chromium.org>
-In-Reply-To: <20260610-media-ci-7-2-v1-1-3c61a482a44e@chromium.org>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 11 Jun 2026 10:12:42 +0100
-X-Gm-Features: AVVi8CfaG3sU9PQt2tyzbFw_FkBWxmHg2PzweaVreKbZNnE6xiybcEosb6zW1uw
-Message-ID: <CAPY8ntD=f_S8fjOG4=3viScGMVEsHWivs7qn=X_-UqvqB791wg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] media: ov9282: Remove unused kerneldoc description
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Xiaolei Wang <xiaolei.wang@windriver.com>, 
-	Tarang Raval <tarang.raval@siliconsignals.io>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Daniel Scally <dan.scally@ideasonboard.com>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1128; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=eDxguddQlxUrvId4LbOlhtWIxfA+Fqms1ywpsbZCJzE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKn6057gNmSr6fRNjOM5BUW6GMalSTAt65x4kf
+ Rc/iuxklvGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaip+tAAKCRAk1otyXVSH
+ 0G2gB/9QuLENy7kPtBpNMI85hBBgz6hMpB/k16OzZA4U4qKCJrTCc/3/apUA/j8n2sLE0jtL1lF
+ aQ8fR9N2sdP1GbZWT8dt6EkrdagTynRGSyHb+bbBLvV1XGFVMU7gIDEcGSezEM+EL4XbO/FieQ/
+ EB7z/3Mgg30/EQm7mKYCfin1FU+Etq5Ia32onq9rxrum+bmhCb+TWpu3zwvV4VFRdbIhLotjuCq
+ Tqlv1RYqFzKno4yoGyVoLH87yocB2yfyv1lFQKLX0cANPn8mWbjGI0FowJajelaUdpbATJMHMJo
+ wa8oSV4uY5jOcfN4TAX/p7MJUAZAa4hA9diry80QfwFs8z8a
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, 10 Jun 2026 at 17:20, Ricardo Ribalda <ribalda@chromium.org> wrote:
->
-> The field has been removed, but the kerneldoc not. Let's take care of
-> this.
->
-> This patch fixes the following warning:
-> Warning: drivers/media/i2c/ov9282.c:223 Excess struct member 'mutex'
-> description in 'ov9282'
->
-> Cc: stable@kernel.org
-> Fixes: 0c69a963a300 ("media: i2c: ov9282: Switch to using the sub-device state lock")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+On Wed, 10 Jun 2026 20:08:17 +0800, Felix Gu wrote:
+> spi: rzv2h-rspi: Fix SPDR read access width for 16-bit RX
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.1
 
 Thanks!
 
-> ---
->  drivers/media/i2c/ov9282.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index 5b6f897a74fc..3ba630ec4f2a 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -197,7 +197,6 @@ struct ov9282_mode {
->   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
->   * @cur_mode: Pointer to current selected sensor mode
->   * @code: Mbus code currently selected
-> - * @mutex: Mutex for serializing sensor controls
->   */
->  struct ov9282 {
->         struct device *dev;
->
-> --
-> 2.54.0.1099.g489fc7bff1-goog
->
+[1/1] spi: rzv2h-rspi: Fix SPDR read access width for 16-bit RX
+      https://git.kernel.org/broonie/sound/c/310628484ef0
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
