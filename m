@@ -1,95 +1,118 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3600B43C063;
-	Wed, 10 Jun 2026 15:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898542EC090
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 16:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781106602; cv=none; b=IbO9T2Li3RycG1AvFeDV7KI+/UTTDAtbEORkurec7hpGQq8hTL+MqDnSDawTrDxMHwVOuwdiAehCbYIC6Q9ddwZOQbntvMcq7wozgk0qRgkEDLwCxoHZCe23HOkmY2SisHznTRIoObYbQav1m84Q2WfmTqamlR1RtzqQDtDrlRQ=
+	t=1781108417; cv=none; b=KWGK9whSTUfyFqf0ywK9RYekht4iEhlqFwVo7vDVODSeZRj1nLfb5Cf9fdUsuzmQ/onIlgOrrVvfH69qF7lpOZO5gMPWUN4RZKs199GXqgPL7SBec40ZxK9TCMv/q5OEoS5zc1Bm2S4S9I/EqrnJfh0Dx5Y+Xuwvw+4+oPxVPcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781106602; c=relaxed/simple;
-	bh=1HLHVotbcuXMCV9qhlxe/fp4cX8c46z4aJrEatBj7JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+0er24nIJCa1kWMPgFQdV0ZfgxAMOTDDmnlB0p8GoMWXEigRkfjr1nL+CqBXXP/REx5VlVNG96U3AhgNSFVftMbfG/qVqYNKlQIFGyZBGtQdte5WrIlBkEKqwHdlawI3mFfO95KI6lXFPJ3ZSyaXTMo9oIHXXQ/JRBukVZcDOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MenOPSRW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1781108417; c=relaxed/simple;
+	bh=s8wfvmKnT5EThbr+o6FwlV78PF2rGcjx4RuC4H0QgtQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sPA0JYiKdfgdPRgtGnvmE56EpRhKjrPeylJUC++Ts9BUOmmMfDjlPAmaM9Ltv7RltCvTxWmdLRgMkOHYQMl4icaKr3XHX+UQMTgQzdq5Sd6XNViUa55743vDPqajUqDRfoEK9BUytvJB+5d6J0ww3vDXgZtz43qXMEOGpQ25sg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cpnejtQ6; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MenOPSRW"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3DB3B6DF;
-	Wed, 10 Jun 2026 17:49:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781106567;
-	bh=1HLHVotbcuXMCV9qhlxe/fp4cX8c46z4aJrEatBj7JM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MenOPSRWFuX3Je9PwZ1VrE10Dt5Hw6SyfZgi70H7epYacaBQ20LgOOo3UaHpjB+x7
-	 WG+ZiCK1Twbfn+Dzekt21xjOXo9dsyLkKxON01o9ChhYWv1Vdl/FybtVL8BIgVGUSM
-	 5afqTePVl4BJ7weA/XYA0dNzMxJ1g3V7csbjRsUo=
-Date: Wed, 10 Jun 2026 18:49:54 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] media: renesas: vsp1: Make reset control optional to
- support platforms without a reset line
-Message-ID: <20260610154954.GC1335994@killaraus.ideasonboard.com>
-References: <20260430100929.1088281-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260430100929.1088281-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cpnejtQ6"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aa61503fdaso36093e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2026 09:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1781108415; x=1781713215; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ca/qQ2yJUURFkQI8KWw8AjEcxJ3dgga4R9Q3zcxa4Yk=;
+        b=cpnejtQ6Ag/jFo8etOQXl33qG4QIeAWIEqRjqu2fsv7HbuoSEp4lQ2LIT62iG2fQx2
+         jqAnwsPHG9y67lXZlz5mN6nt+NKn32wYEEhpExLveAMi+63yRXPPyat8r17ql1yKAFdS
+         NJ0cUKfsDcY8SLWt64wVEKDNbeey+McSlD1Ic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781108415; x=1781713215;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ca/qQ2yJUURFkQI8KWw8AjEcxJ3dgga4R9Q3zcxa4Yk=;
+        b=eem6tdx7BYasDXyFBFNpB/Zc7QquaOARpytOUKydiYOif1GoSBZctDpiYXYeMoFx7n
+         DkEe1a32pSIeYXICaiu6lnXYzclVWT0GvTF2h+VK/wBwTsSveuygKBR2iihs1wSL2t/r
+         G6My7m9RN9vOTVREmjozvobf8cYh+uI8VrTHUs+laEFe6kByEAmCW8SvZfI7s98sgHKS
+         SZxLBeCvT3A0VPs/WKU3DWqndJrPRwLXaDMHvZcRvKiTA9Y53nRUW6W6dc67MieekBMe
+         1U98MiSVqXImNfkCIN/u9rH0xPB2yeYZIfqYA0PtfWayD7mTUFS7F3t2+bDCq8N50OJ1
+         Awxw==
+X-Forwarded-Encrypted: i=1; AFNElJ8srm2tFn2TFognPVz1I7xndqiSyarbpj06/6soqzF3VkEVaJV2kprV76xDEhCwiDPJ8Rms0vREk69Qr2v/bw0YRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrQPXHVHI0NF8Gve36KHmqJpmyoXWxIKWTazjVDbIr0RytbjKX
+	BqSwwSNSUS4WSMaEEvcPzkPobVxzuOtzkJ9fxFDAIu5Ez7quX3okG5Esg+RIFdlm4w==
+X-Gm-Gg: Acq92OGgB5Y0AjrB5wmwDtsGhoMF0jOj8rCZmrjum7UWVb7QjkhpsWCmJ1iH3D0EkKe
+	Tcr2qUSSGMTU+nyPT5yGnVloC7XmM9ohoa8t6F7EBO8UoivwpFgIxBiuJ64cnkQAssI45ILYlH9
+	gomGH0rvQpGQWS24H1ichdeGrb+4jwvt+LWL51ogNBcsx7RnsDD8iNhOSwG+XDGGThyOOmPIBK0
+	JGklIXPkp1EdDblyTsOE2fgpUwNQYkrFDqqO0kJZ9Nba6ubrFx9hSFJQ0he2eDr9zGb1UQrE6XS
+	2zO+w0/linOleb8qZI/aG6cJdRNnaH+XI/WDkJBSUO8/LR1yvXOX4pgLEzJMy1KmDesJSxz5D0X
+	jXwaLjeyPmB4Co54M9Mq46dlYaQgap4cIeXmOHjGDAir0CgK+ok/On6c9h/xfICWC29HR0JUKbW
+	S54ZUGEmszaONX/7ot3xl1g1mBbHM5ADSkAzTlKl6BF/1vgZ+oxVua6cYX83tjSd4C+2kbPwPIK
+	iq0xSVEmGAIQT60zA==
+X-Received: by 2002:a05:6512:6718:b0:5aa:6f46:83d8 with SMTP id 2adb3069b0e04-5aa8867d1d9mr5258791e87.11.1781108414772;
+        Wed, 10 Jun 2026 09:20:14 -0700 (PDT)
+Received: from ribalda.c.googlers.com (216.148.88.34.bc.googleusercontent.com. [34.88.148.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa7b8ee219sm5608915e87.15.2026.06.10.09.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2026 09:20:14 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/3] media: Media-CI patches for kernel 7.2
+Date: Wed, 10 Jun 2026 16:20:05 +0000
+Message-Id: <20260610-media-ci-7-2-v1-0-3c61a482a44e@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260430100929.1088281-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALWOKWoC/x3MQQqAIBBA0avErBtQQ5OuEi1Mp5pFFgoRiHdPW
+ r7F/wUyJaYMU1cg0cOZr9gg+w784eJOyKEZlFBGGCnwpMAOPeOICoO2g14tkbIBWnIn2vj9d/N
+ S6wd9Vyp+XgAAAA==
+X-Change-ID: 20260610-media-ci-7-2-d5835b8ee28d
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Xiaolei Wang <xiaolei.wang@windriver.com>, 
+ Tarang Raval <tarang.raval@siliconsignals.io>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Hans Verkuil <hverkuil+cisco@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+ linux-renesas-soc@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
+ stable@kernel.org
+X-Mailer: b4 0.14.3
 
-Hi Prabhakar,
+This series fixes all the media-ci errors for the current linux-next.
 
-Thank you for the patch.
+They are pretty trivial, so it would be great if we could land them just
+after we merge with -rc1, that way we do not need to add more things to
+the allowlists.
 
-On Thu, Apr 30, 2026 at 11:09:29AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Switch the VSP1 driver to use devm_reset_control_get_optional_shared()
-> when requesting its reset control. Some newer Renesas SoCs integrating
-> VSP1 such as RZ/T2H do not provide a reset line for the VSP IP block.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+I have added Fixes: tags for all of them, but feel free to remove them.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hans, Mauro, please let me know if this is feasible.
 
-> ---
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> index 627b5046fa80..605fac57bd93 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> @@ -947,7 +947,7 @@ static int vsp1_probe(struct platform_device *pdev)
->  	if (irq < 0)
->  		return irq;
->  
-> -	vsp1->rstc = devm_reset_control_get_shared(&pdev->dev, NULL);
-> +	vsp1->rstc = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
->  	if (IS_ERR(vsp1->rstc))
->  		return dev_err_probe(&pdev->dev, PTR_ERR(vsp1->rstc),
->  				     "failed to get reset control\n");
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Ricardo Ribalda (3):
+      media: ov9282: Remove unused kerneldoc description
+      media: rzg2l-cru: Remove unused kerneldoc description
+      media: mc-entity: Add missing kerneldoc
 
+ drivers/media/i2c/ov9282.c                           | 1 -
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h | 2 --
+ include/media/media-entity.h                         | 1 +
+ 3 files changed, 1 insertion(+), 3 deletions(-)
+---
+base-commit: 06cb687a5132fcffe624c0070576ab852ac6b568
+change-id: 20260610-media-ci-7-2-d5835b8ee28d
+
+Best regards,
 -- 
-Regards,
+Ricardo Ribalda <ribalda@chromium.org>
 
-Laurent Pinchart
