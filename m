@@ -1,123 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4283EFFB5;
-	Wed, 10 Jun 2026 10:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2123DB30F;
+	Wed, 10 Jun 2026 10:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781086998; cv=none; b=VrLBx43G4UFBT4hnLQR/ofToKpix0A1euRftw3XwZGlEqRPod+mp3UUTFfd1VPz8dDw1zZyXTyO+y+4wwKogbzZIQ8NQqInjOIw3ZfL0FwvWZimeKWNFnkGY0ItWF2hMXgKVOO8AWtzSWBqA4rbo9GzanLDssxQiKa/oxZ2Fc3A=
+	t=1781087148; cv=none; b=aL0HMbqiSe9udWZ5r3MXAsJyRpap7PsJbfj2aKVT81faUPFqjipU77JCLVMYgOuoGZhMZQfJi8zmx+d8m0r3w4V7183CHQL+cHgHj7lEanXpp4CkgwD0MUwi+/9JWUVCJr/2lM4V1emKVIxjYpIolmUTHpSbKmWus+NixxQvjHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781086998; c=relaxed/simple;
-	bh=GjQoMSl+S+ijDAnNQXjwhwnaSIySn/7/CBufcCjNSyA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Mx2qZxLuOVVxR1mvvLm0CZevZswHcf6vXR2BPtFLq3GbrUraOZ/MLHlCVWvHAAF96EKNZl//EcKA225c4OtksBy8KRK+YyAsVY/vKVIgDPvfXVtSuRXyL4XINEmZUOiR28rcTLjo1fjXq0tYNxoJtVQGaRnGrEHieNNFoPhdNn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvvMwC5h; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781087148; c=relaxed/simple;
+	bh=nnu5y6YvOIIbuYcYRqMgqjMRpGk0Lmy29mPmaH6wfh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A6vpCWqfTg7rdfj+7fYYOzasD9UOLTjx1ED0AkYeIvpWeGyiX35t2P4K1SzYV+97u1PMCXzMPrYrW/FKUV9k+Vqfs4Dfxq58Mbk8ZwT2a5AJu4RPjS1mAvhNy58sjkaLneJR8V/StK7ebi8jkxrKylzuxgHTxWEyeixVoNrPHcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=hv9i8t5J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X/ft0gLo; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvvMwC5h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416461F0089B;
-	Wed, 10 Jun 2026 10:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781086994;
-	bh=Hu3axCTPjfMs3cUhhhjRYZSUzNrC+vMNBMn69voBuMs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=kvvMwC5hvuAadTTNgtBkxkJ/4i/OhV97HPFAOGw04yvN/C0tHKMtwfFN+CFBYYy+O
-	 fQX8hRrnql+Sn/jhjXmSLaJ6ZYoV4Kn7IGZtTzTUjf20k0n3+f6mRQaUT6j4qFM/n2
-	 QESfwtwsftiUZ+msK/fJA2Iuyq2V0x1ftbZm7XqyRI38XhT362kwIqqxlruKMtJYDN
-	 cbg/JESdE/r7/W9IYFSza4/OJmD8C/Q8W0BPieEnVmrjtvhGOGeTfLeQ1qL4eTN5Sn
-	 EgmYWWqsqiMB0lQ54TuyT9VutGFMxAYxrtNZLon3F2+qYdh00qdL5U7CeuWGShS2sJ
-	 iYNTHzYNOmVMA==
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, phucduc.bui@gmail.com
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260609113836.45079-1-phucduc.bui@gmail.com>
-References: <20260609113836.45079-1-phucduc.bui@gmail.com>
-Subject: Re: [PATCH v6 00/11] ASoC: renesas: fsi: Fix system hang by adding
- SPU clock
-Message-Id: <178104804456.232889.7203992010119048881.b4-ty@b4>
-Date: Wed, 10 Jun 2026 00:34:04 +0100
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="hv9i8t5J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X/ft0gLo"
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 986921D0015E;
+	Wed, 10 Jun 2026 06:25:44 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Wed, 10 Jun 2026 06:25:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1781087144; x=1781173544; bh=t7
+	EgACiwMXPrgdnvARu9mX1mO8EGyge6ZpUp7AcO8QI=; b=hv9i8t5Jqx460Lz9hl
+	Voyy9vCQ3BL2kY2RaC5yNInIzFhcxG7ZG5fjtvRhRNxnHXUlnxGLa2j2iw5XKj6k
+	AHdwfuZcT9Ji2FJqewlUNN4nRrHgqLp8OsfgO1hdTa/irXvchhquq6j6QIvcWce1
+	YKJno9fegfTr2Y3E/LLPOUpPyQXFYJWRZk6PZpKFyCzDz1Z1iOsTWmvRiI3E3Kh4
+	nmMBEd44StUjyvmFd7yma4usPrtLlp5y0qe2j5lCiUHwQi4ClQv3CnROwmMvPi0O
+	yynUGLCgoyel62ui9aDiHXSnfdVuZ0scoCs6an4wVGNGsALufDqOT7/ehZkfUPjy
+	mVUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1781087144; x=1781173544; bh=t7EgACiwMXPrgdnvARu9mX1mO8EG
+	yge6ZpUp7AcO8QI=; b=X/ft0gLo0qFqNFel1nBrWr2IRBogVSzLE1NMUVzc/Mie
+	yjCacOt6BR2gosXglD1m0j36oD0TAMhoRl9Ep5IICDIiHTaDmWlHNloSpJz6DBsm
+	/ts4Jri4U0lp7VA8RNIEECMc99qHmmvHbK65+EN5kPGZYrG7qgllQBozF7GW27tG
+	8crCYhCgaE2Zv5N3YaNYFcpOnEomhvXQrW2kuZwGnU6LU9vPskUNDa4IzJ8kWUCX
+	N3Fg38Ntnl4csoHla5w0h3T5pwL1H5jZcJPLE6Jo4qqbltyqUW72ccF30awlOQS6
+	HgSAeS+BeypeFU9pn7uj0ntUxN+49APNiGAqHfWFPg==
+X-ME-Sender: <xms:pzspammFYdVDAC6chwm2whQHNcfglere6tjBwFiHXUdpbGmeLOO_pw>
+    <xme:pzspajVDzc1zTjCF9tNS2wwbbab3-Z-YWsm2i2ppDqRqe9sVzKHaplOLtSjkTsvhl
+    1FBBsMv2AG-9Nu7XRZ2FDWSzqzmnzXNS5J2-LbEM_Y139uCN2fa1yc>
+X-ME-Received: <xmr:pzspas_SvVc3-_-lGZ5X-7Jzq183gSbSprvpqFndu2VmuGu5xOrcDivk1Rqw7d_DRyNLDuw9f1Uot62gPGzG18XksMDSy2UsSJl1>
+X-ME-Proxy-Cause: dmFkZTETd21Tfpz7nQSr4dvrlxw9MjshlnUPxHu7fmtPDLYd220IGmfOSbXblfSCiHDVHx
+    FJgVztLtcbFM3jiU+38dOg0kJLYjrQUTWjXOnh4hjHloELkueSbKDe1/KLPKu8Tj1UE7M8
+    hx17ShFKa4BYfxGONo3mK/iO0gaFbtEj4a2rDXJ3wzrcY19+4G2uwVDjoTqxtITb5E5Szg
+    ZykOXjmQTEd5tzkvtctjnbO5GmF2fKQZJAP4H6YYODuJsigj2eGgjMa6Jdpze9SXu4+okJ
+    eMWDw9cF7ASyzqmuS+jb8kKx6xvQFyw/DK60unsVqQbqAb7e6KnK70CceuEKGnz83991ch
+    EtdmXFiGiK7bDEcuRv2dr/ltx5xKL7hugDHM+5aib0wCAhS3QJ+7faLQ8igGNdfoN81H3t
+    7CaqUMDquREij25DYQ1z42ETPaoPQf7euKHIXPiQ86hjN27LYEFXcim+PLym0nl4J41JE5
+    QEaT5rlvzjWx/+PUo6lTcQvXR0Ij4js+vIkz3eiL5PnuHulK2KIdcUt/jJY5jlnnD9dSD1
+    2dPxbfs3Ofz5WXVi1/lkeYekTmxoKwtf0fDGG6Nrx0idy1Sn71EjkBvw1pmVJLTlEAN3IK
+    1qx14ZrB6o858K1cr+B9gk4bsa2gAZrmR/7AX7khDyXaUbpi7M5p9vWxMerQ
+X-ME-Proxy: <xmx:pzspaop7w1vnjTsSBxa5TqFMqZmH3A3eLdu8a66bPVfssQyj7NzytA>
+    <xmx:pzspamlMaEZXncH0WUrbMjSKir8Ml1MWWiqJ5Kn6EDAK3iDxeSNDXA>
+    <xmx:pzspakbogEP6nWRSBfrx1pHl_5Yy6a2H9jO4L040BXt3fSrpE3a_Jg>
+    <xmx:pzspamUn_XcptsdM1PBBC_Mc0L2zyBnrqBqlQwT8ThKY9xw5g3S5kQ>
+    <xmx:qDspavLhU5lIkZLkdNA6u6nkOkJQh3RZwGXadnDswTth9tH1XYgylQIV>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Jun 2026 06:25:42 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Paul Barker <paul@pbarker.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [net-next 0/9] ravb: Add gPTP support for Gen4
+Date: Wed, 10 Jun 2026 12:24:23 +0200
+Message-ID: <20260610102432.3538432-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2546; i=broonie@kernel.org;
- h=from:subject:message-id; bh=GjQoMSl+S+ijDAnNQXjwhwnaSIySn/7/CBufcCjNSyA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKTsORBTxRP91rPH4QXSV+YoHKfvpSBoH9EWz4
- WPuauw5ch6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaik7DgAKCRAk1otyXVSH
- 0F9iB/0bvlHYY5F8KFfNZKW4GcfAdhhY74UpfzFD5YO+aoOgnhk0ebhuMJoGoYYaMbERCbsEmxi
- RgKTPEe6o0s+Wgo2k2TnfZFDn3EjBlnTuZK+5B0QzMM4Fv799zLhm62nCPnxeRrIggfivmAMKIS
- L9poiI/RUR3qZ5mSQKrxvTHVj83Dnnoc43XQ9vEwIhFG7FiY5UNZKVx7wPEwMpYyhxxFgGoDcvx
- YKBO6ZsH++QESoEuUsS6W/F/6cNlmDgsrjaL2bxED9SChoaPJm9JGN9xwqTy9iHbl6bEPCw4pC3
- 83N3BDd6DbcNGUb4yfvDUifktXojtCv4W7U3bxEyWqNPtR94
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 09 Jun 2026 18:38:25 +0700, phucduc.bui@gmail.com wrote:
-> ASoC: renesas: fsi: Fix system hang by adding SPU clock
-> 
-> From: bui duc phuc <phucduc.bui@gmail.com>
-> 
-> Hi all,
-> 
-> The FSI on r8a7740 requires the SPU clock to be enabled before accessing
-> its internal registers. Without it, register accesses may hang the system
-> even when the FSI functional clock is enabled.
-> 
-> [...]
+Hello,
 
-Applied to
+This series is the second part cleaning up how PTP timer support is
+implemented on R-Car Gen4. Currently there is partial support for it in 
+some of the Ethernet devices that can use it, but not all.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
+On Gen2 and Gen3 each RAVB instance have it's own private PTP clock as 
+part of the RAVB register space. For this reason the PTP functionally 
+was implemented directly in the RAVB driver. For Gen4 however there is a 
+system-wide PTP clock shared by all RAVB instances, and on some Gen4 
+platforms with other Ethernet devices.
 
-Thanks!
+The RAVB Gen4 driver currently advertise PTP support to user-space, but 
+the support is in fact completely broken. It tries to use RAVB private 
+PTP clock, which do not exist on Gen4.
 
-[01/11] ASoC: dt-bindings: renesas,fsi: add support multiple clocks
-        https://git.kernel.org/broonie/sound/c/955fecff55c3
-[03/11] ASoC: renesas: fsi: Fix trigger stop ordering
-        https://git.kernel.org/broonie/sound/c/859efe92b0bc
-[04/11] ASoC: renesas: fsi: Move fsi_stream_is_working()
-        https://git.kernel.org/broonie/sound/c/c9e05e2fa089
-[05/11] ASoC: renesas: fsi: Fix register access from in-flight IRQ after shutdown
-        https://git.kernel.org/broonie/sound/c/e813df3ef529
-[06/11] ASoC: renesas: fsi: Move fsi_clk_init()
-        https://git.kernel.org/broonie/sound/c/cfa1466e6dfd
-[07/11] ASoC: renesas: fsi: Use devm_clk_get_optional() for optional clocks
-        https://git.kernel.org/broonie/sound/c/5fb4660ce59b
-[08/11] ASoC: renesas: fsi: refactor clock initialization
-        https://git.kernel.org/broonie/sound/c/2330e0b49f14
-[09/11] ASoC: renesas: fsi: Add SPU clock support
-        https://git.kernel.org/broonie/sound/c/39033b278f9c
-[10/11] ASoC: renesas: fsi: add fsi_clk_prepare/unprepare()
-        https://git.kernel.org/broonie/sound/c/05e1ebfeb726
-[11/11] ASoC: renesas: fsi: Add SPU clock control in hw_startup/shutdown
-        https://git.kernel.org/broonie/sound/c/26deeee42f4f
+Further more the PTP clock behaved slightly different on Gen2 and Gen3.  
+These decencies have been handled by adding platform specific flags 
+inside the driver.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The usage of these flags have grown organically and been extended all 
+over the driver as it gained new features. Adding a new third set of 
+flags for Gen4 would be messy and add to the confusion.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Therefore patches 1/9 thru 7/9 refactors the usage of the PTP flags into 
+optional callbacks and untangles the usage. This allows adding Gen4 
+support easy as it can just implement it's own set of Gen4 specific 
+callbacks without altering the driver logic.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Patch 8/9 is a small DT binding addition adding an optional phandle to 
+link a RAVB device to the external PTP clock. Ideally this property 
+should be mandatory, but for backward comp ability is is made optional.  
+If the phandle is not set, or the PTP clock not enabled, the RAVB driver 
+will continue to faction as before, but no longer advertise PTP support 
+to user space.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Finally patch 9/9 adds the Gen4 specific PTP callbacks which allows the 
+driver to use the external PTP clock.
 
-Thanks,
-Mark
+For part one of this work see [1]. The two series are independent of 
+each other but both are needed before a third series liking the RAVB to 
+the PTP clock in the platforms device tree. I will hold posting the 
+third series until all dependencies are merged. For this reason there is 
+no user of the new renesas,gptp device tree property added in this 
+series.
+
+The work is tested on both Gen3 and Gen4 R-Car devices (with [1] and 
+appropriate DTS). I do however not have access to any Gen2 device where 
+the RAVB IP is wired to a MAC, so the small rework of the flags for Gen2 
+to callbacks have only been compiled tested. If anybody have a RZ device 
+where RAVB is wired and uses the Gen2 method of starting/stopping the 
+PTP timer together with the DMAC please test this.
+
+1.  https://lore.kernel.org/all/20260609215711.2960150-1-niklas.soderlund+renesas@ragnatech.se/
+
+Niklas Söderlund (9):
+  net: ethernet: ravb: Remove gPTP control from WoL setup and restore
+  net: ethernet: ravb: Move programming of gPTP timer interval
+  net: ethernet: ravb: Simplify gPTP start and stop
+  net: ethernet: ravb: Remove redundant argument to ravb_ptp_init()
+  net: ethernet: ravb: Replace gPTP flags with callbacks
+  net: ethernet: ravb: Add callback for gPTP probe
+  net: ethernet: ravb: Add callback for gPTP clock index
+  dt-bindings: net: renesas,etheravb: Add optional gPTP phandle for Gen4
+  net: ethernet: ravb: Add gPTP support for Gen4
+
+ .../bindings/net/renesas,etheravb.yaml        |  16 ++
+ drivers/net/ethernet/renesas/ravb.h           |  34 ++-
+ drivers/net/ethernet/renesas/ravb_main.c      | 246 ++++++++++++------
+ drivers/net/ethernet/renesas/ravb_ptp.c       |  15 +-
+ 4 files changed, 219 insertions(+), 92 deletions(-)
+
+-- 
+2.54.0
 
