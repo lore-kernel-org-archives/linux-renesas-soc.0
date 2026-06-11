@@ -1,169 +1,122 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB84C92;
-	Thu, 11 Jun 2026 00:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E16E2CCB9;
+	Thu, 11 Jun 2026 01:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781136210; cv=none; b=BCZuZOrJVu0quO4JfwMEETMgHlCnuwHBtlTnQgw8QRu7U0ZStzh00oOYQsMcsZZlWwpEBR7eUxE/shkLUPjNMmuDgsM9FhklahjpT2vPSQobRxO4USBj/tATMA5t3khcnyBcthnCvSCc/mfO25ylD10d6mNF5YfC4kgn8MM/4EM=
+	t=1781139623; cv=none; b=kAYcj+9LhrcPblF4myDKj9CoyOY+2SUuvOiivJMdjmRJG55ZmpR3IlXOAqePmhXuhO2R8uRuY0aNbXnmKkrEm3zGvFIMDarmHC6DNByKQg0Z1dXTqe7hYZQUo1IVmpkgnj7MoLvVDlgUEUgN5VcJWlBHLqtyUXBKu+A9M+rQOdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781136210; c=relaxed/simple;
-	bh=7Lc1rx8Jp41JTvrcWNEo7iJ/+E/l8wCtqHTTiQ1kiKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRYNZYH17EvFGU35UJxpegyoCZUIxRngDqX46oWfQwhBKruZxLhDw7aIw4ppb9qBCCrAFPJ0oWGD2Yrv3mdltFqt8ursM18SEqMrjCCoefbh2eU8Pxp8nhgy+YZCgIGk6bJ47XONpUilB0vbfN1+KiQPhJ4gR+JoXPJTj0d/+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KkynWMvH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1781139623; c=relaxed/simple;
+	bh=ZnUwz3H4dXTqAYOyymU5Ir6/n+3SLqhJSc/8+xIbBtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BBJYuRFpqZ6eS+pgdp7s36lft6GM0sc2t2yQ9UD7fj3PIJLT23aZGxRWcd2z/94HZ+0BbDFGHGHfvGvBEtweKC7OSZKSy+k2Wm5+DGdflZ4GKdXcYxNduzvv8uTzog8d2WxsXVD7mjz6vur9Q7OJ/YtFMLOJmwFaeQbMdEgS6KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PjjQcqlN; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tyGggic0; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KkynWMvH"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80DE52D9;
-	Thu, 11 Jun 2026 02:02:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781136176;
-	bh=7Lc1rx8Jp41JTvrcWNEo7iJ/+E/l8wCtqHTTiQ1kiKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KkynWMvH4/GKiABKartnvdELDg8NTpkhQD92fWte+U+KU7Tlt/JUY4Yc+8KJ7k0qG
-	 cBLvV61QlTfXBUChPHMJhNSVPSBT4Aqt+gdcmkMEXhhJiagpstoGWC9nBuu5t3pauW
-	 01H1kUOWt0IQOTdUvUA4AEbjtX6QtanSzrHSPBvY=
-Date: Thu, 11 Jun 2026 03:03:24 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PjjQcqlN";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tyGggic0"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gbPSz00VRz9vNd;
+	Thu, 11 Jun 2026 03:00:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1781139619;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1aX965CQukLCI1Qo1GktUQYfgY2SwoR7uedgK0lphqw=;
+	b=PjjQcqlNBL/NM4aa4Qnqov9PNKb2hAYKOq4vrwCrkzrdIOag4K9EbMKxNGlsZBFMfbx7z6
+	2mHxFK79hhBp0Uo1N7VTsUhPt+Pb4qiX2PkMg6MSD/cZB09ATS/KBv/A1Lex47hoBU2L+R
+	Du8m5/43WdPJgR55HWn/1/ogCOfaCkwD13gWBZ5vdVCkkuqSwA06I2Z2/9DvtCL1dPaBp1
+	LfqKCXoU/0CoRWYWBBBgVC3tjO1sKrrmVZDPl2yz2t4rClViVFFoL2Uc8dyYPJ/JKWQrhm
+	FZ3AtiGqoCtn4cU3XxHSaA29geHSqO+P7qIYgm96C5GvvFqFVMMYkaHu/uvD7Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=tyGggic0;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1781139617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1aX965CQukLCI1Qo1GktUQYfgY2SwoR7uedgK0lphqw=;
+	b=tyGggic0YnscO44Vj+ppbuM0zhnC3fz5NVGdsymk0TSpHVL710q93YGYBYTY3/EChkKwLi
+	0QlGu+g5tatVuoP0TyJv5ajScj+6S8yjyUvQhjDkFVBoby/dLFrSYlO+EEkEdHGoUt4YCR
+	/cebDBWASBXS7OjC+TwmVmD4dSiqw19AQttRxlbvYnTYxTlGlr2An4PzHH4yG31rE4THmW
+	CULd0db219ZCwmOeN3YIQDPVIEMEO7LXulsVnAIGvttV5UdSC61hBbo67TOvhZTsRrGatN
+	CKyW963cn8dAzemPkxcPBlu2mRubR978XFLvwAav5qZyBeBsIX+7AmpUyoI9lg==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
-Message-ID: <20260611000324.GH1632628@killaraus.ideasonboard.com>
-References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
- <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+	Matt Coster <matt.coster@imgtec.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/3] arm64: dts: renesas: r8a77965-salvator-x: Enable GPU support
+Date: Thu, 11 Jun 2026 02:57:29 +0200
+Message-ID: <20260611005952.146825-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 5umjyam7fxaw386rcihnthbewtayxad7
+X-MBO-RS-ID: 07aa668f81783f80a0d
+X-Rspamd-Queue-Id: 4gbPSz00VRz9vNd
 
-Hi Tomi,
+Enable GPU on Salvator-X with R-Car M3-N.
 
-Thank you for the patch.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Frank Binns <frank.binns@imgtec.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Matt Coster <matt.coster@imgtec.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: devicetree@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Fri, May 15, 2026 at 12:09:29PM +0300, Tomi Valkeinen wrote:
-> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
-> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
-> crtc, when enabling the crtc.
-> 
-> With DSC (added in upcoming patch) in the pipeline, between the DU and
-> the DSI, the above call path is broken as the crtc tries to call
-> rcar_mipi_dsi_pclk_enable() on the DSC.
-> 
-> Adjust the rcar_mipi_dsi_pclk_enable() so that it detects the DSC, and
-> in that case gets the next bridge from the DSC, which is the DSI.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 36 +++++++++++++++++++++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index 4ef2e3c129ed..085e229bcb0b 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -88,6 +88,8 @@ struct dsi_setup_info {
->  	const struct dsi_clk_config *clkset;
->  };
->  
-> +static const struct drm_bridge_funcs rcar_mipi_dsi_bridge_ops;
-> +
->  static inline struct rcar_mipi_dsi *
->  bridge_to_rcar_mipi_dsi(struct drm_bridge *bridge)
->  {
-> @@ -844,15 +846,39 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
->  	rcar_mipi_dsi_stop_video(dsi);
->  }
->  
-> +/*
-> + * We need to skip the DSC bridge when we have DSC in between the DU and
-> + * the DSI. We detect the DSI bridge via bridge->funcs, and assume the
-> + * next_bridge is the DSI bridge. If this is not the case, the DT data
-> + * is wrong (so it shouldn't really happen).
-> + */
-> +static struct drm_bridge *
-> +rcar_mipi_dsi_resolve_bridge(struct drm_bridge *bridge)
-> +{
-> +	if (bridge->funcs != &rcar_mipi_dsi_bridge_ops)
-> +		bridge = bridge->next_bridge;
-> +
-> +	if (!bridge || bridge->funcs != &rcar_mipi_dsi_bridge_ops)
-> +		return NULL;
-> +
-> +	return bridge;
-> +}
-
-Hmmmm... It's quite a bit of a hack. It would be nicer to do this in
-rcar_du_crtc.c instead, where we cache the dsi bridge pointer. The
-question is how to then identify the right bridge, as we won't have
-access to rcar_mipi_dsi_bridge_ops. Should this driver set the bridge
-type field to DRM_MODE_CONNECTOR_DSI ?
-
-> +
->  void rcar_mipi_dsi_pclk_enable(struct drm_bridge *bridge,
->  			       struct drm_atomic_state *state)
->  {
-> -	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
->  	const struct drm_display_mode *mode;
->  	struct drm_connector *connector;
-> +	struct rcar_mipi_dsi *dsi;
->  	struct drm_crtc *crtc;
->  	int ret;
->  
-> +	bridge = rcar_mipi_dsi_resolve_bridge(bridge);
-> +	if (WARN_ON(!bridge))
-> +		return;
-> +
-> +	dsi = bridge_to_rcar_mipi_dsi(bridge);
-> +
->  	connector = drm_atomic_get_new_connector_for_encoder(state,
->  							     bridge->encoder);
->  	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
-> @@ -885,7 +911,13 @@ EXPORT_SYMBOL_GPL(rcar_mipi_dsi_pclk_enable);
->  
->  void rcar_mipi_dsi_pclk_disable(struct drm_bridge *bridge)
->  {
-> -	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
-> +	struct rcar_mipi_dsi *dsi;
-> +
-> +	bridge = rcar_mipi_dsi_resolve_bridge(bridge);
-> +	if (WARN_ON(!bridge))
-> +		return;
-> +
-> +	dsi = bridge_to_rcar_mipi_dsi(bridge);
->  
->  	rcar_mipi_dsi_shutdown(dsi);
->  	rcar_mipi_dsi_clk_disable(dsi);
-> 
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+index f84c64ed4df7b..af8cfdccd2103 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -30,3 +30,7 @@ &du {
+ 	clock-names = "du.0", "du.1", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.3";
+ };
++
++&gpu {
++	status = "okay";
++};
 -- 
-Regards,
+2.53.0
 
-Laurent Pinchart
