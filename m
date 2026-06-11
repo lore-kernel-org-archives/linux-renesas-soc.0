@@ -1,127 +1,98 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868231552FD;
-	Thu, 11 Jun 2026 01:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA5136F90A
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jun 2026 07:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781139635; cv=none; b=NGLwBG8sQA9r36T5c6DJHqbOIX0pPjcOzphZ7glV60ITXb8qvwkmUZzxuVLMFm+7K04GUnmk0zLw/amhQP/dQcpaOkjRU8l+gvF7UXw1+AkFa042v+lgC0I28y6uEBxq0w5v4KDQfBDwSofo98DpiLmmFyovjK5QT3BFuhzomZc=
+	t=1781164563; cv=none; b=VbBmRhaDUiAqcalNTZhNgVxpKXIuqXW6L4MB2DVEcEE1QnNLODVWCmtIS4xFOL7ccNJdvEyjDAFkGm45rzu2ujCoKbfOaa0q5H3eM8l8FXVkddsl+KB5F7r72St5Cj+HzfdQSNkl+6/LFFQyiVDtMYx94BYApIo9CuGm5b0KVS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781139635; c=relaxed/simple;
-	bh=7sl3DgJjEULgeWOBJXoYH622WuCnl3XArZmTjkCyPzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HTfwF9+b6JgkARNrGMfZwreEROI9PmiMsAFVBGa43SpXK+jyyV4SJmUgzdgm5iZV3b+QgXRsS5Xnan6YfX1sy2veyRYUgMra5c2XDE/Rs5+KggG13ZUph9Mv0q6jUUEFE0i5UQAO5XqGwNeLqNg5NQuVnnWcf/h3TkjyF6jwbFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=d3nxPABZ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=A/gn0upq; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="d3nxPABZ";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="A/gn0upq"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gbPT55M6yz9tm6;
-	Thu, 11 Jun 2026 03:00:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1781139625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDqPGUp99kdvfGBqZPF1+5zVeTXmq1wN95svWlPadWw=;
-	b=d3nxPABZk6Q4MbTPemZVWnitupGqEfgw1OgIoIGc/lOM7bDSnPXaJ/WC71xlz3MgShRv1+
-	NKWy5JJZS09CJ0ZLxybYyEWM3Fc3RHnhR3ww4MOKvEdFccvDjMugu2ngfZ3gORnwGq0dhZ
-	REKqdlvt3u3fzH44R6RAOn01c/MO/MoZNOPj2yplx2UN4NO4+kdOWKbHADhh1hisnaOPmw
-	252gJeJhd9ZKz0AyxG5zwVJ4WsaV6epGpcxbvR5izGHblDxQOXXBT6ZhkLFQGkbJ49zCIp
-	MBUAHVkI7q/ho7EOCdkq9NCmTd3UlJbhsNwTKqjQ1elE+KBuzIvtqxNSVojh9A==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="A/gn0upq";
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1781139623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDqPGUp99kdvfGBqZPF1+5zVeTXmq1wN95svWlPadWw=;
-	b=A/gn0upq51JOgG9eNWbtPQ7uz9t0XVLyw1wKHC6pu8sKUpHoVGWMK0XhwophrBNiu/BKGF
-	VaZ+6F5l4GDqfnERFUOoZ3fpqgTZ3+/rB4ef8f4zHPB3CCEw26lFExRMOvgCCnkR8amr9c
-	H9LFvbvpw2g6GeJjwM5RPb9ou99VIPTMVTgu0InqBGQQP323oS3C0o28CeeTZajS8nT7Ct
-	s9MQswa5GEqqVgc/yX0N1x4DhTpjuCD5D45VIVY6EqxAVdBYs3HNxgCo9RhdlaptTGWyAc
-	MhutJIDhdrSdiIhp5nbuMWckUA6oQNBuSFeaMctCXV9P+RP1CgDxJmHb52bCSA==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Rob Herring <robh@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a77965-salvator-xs: Enable GPU support
-Date: Thu, 11 Jun 2026 02:57:30 +0200
-Message-ID: <20260611005952.146825-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260611005952.146825-1-marek.vasut+renesas@mailbox.org>
-References: <20260611005952.146825-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1781164563; c=relaxed/simple;
+	bh=N3TVIW3IoPJ5aqKXJxvhtdjPvgHzwg4Wp2iCFFQhCL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMyteAdiPKQhbU/rL8uYAUIR77G+shoxwDQyiE4iGH5LScqVHyvsSAvurNtslzHyv+8V2IEA0QFkqqWjQFyd6m/nXrEytIvYh5qkSKhoqUabBHoDrnYL7KOLUTB3A8NAVgF+3n5UZzknCxtf7Qz7K5YG5841VQn3F1aZ1Xep5Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-6cfc8f8e127so2519975137.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jun 2026 00:56:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781164561; x=1781769361;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0QWA/oASaoEGszjXXYseH4EEvJ11J7t3dPdy+riQNNw=;
+        b=VWoqQhxal5DkIzEzDx69/0TIiAsSwFMNsPJ8EU2YKguRLGpOhizqR81fzN8hetZqg9
+         4Piw3iwmXU8e2m77Ey+D8bZuDkjvleONV/IZw7T2FglUTpSFDtfNL6Deawj9k2xBvFoW
+         E/mOMsoSJbDJTj3546tuD+aGptTMPfE3ymQu9RvC5azjvQsnZVkcha8fxMf/opB97VqE
+         kUqwKA1NV/sRINOVOn2oATMDwLm5S5pWjgtLp/OSp+1iRK+YUzHnyiP+66Axh6TcztRj
+         s3PZ2yWdaU8bqB3xgSX11P39ofXxVN5gqcDw+qxhFdjWcXJ7MNtrAFxPI6CN6QXaTFvx
+         ipfg==
+X-Forwarded-Encrypted: i=1; AFNElJ8Bkr56ymbmHIw4wYOppKzW/GMXeja+Tk7CzBpJpa/TWrc2vOYHbZWPf/UDEMQYJe1y3zRrCR0Axs6/LcugkZBXiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlJoEuoyAQzGKGCgyINy15woPdPQcyVmtSbMxVSo4Pd12DBoWx
+	a0PJAKK3FzR/8bXe4Q5NA1/FntS+OyspCYEhZScEB3cjSlwJsHelsAbQTH6Q4dNyt7w=
+X-Gm-Gg: Acq92OEO9E8YNqm6F84I7GCdxtAfvjgw7lfBrkv6rAE3Ivkd1bbtnJjYUDliTWXWq0y
+	/kSNAUIo8iFOU7Iso0aR5tkJhUhJ9rSQQhv/UMIZxwQbgIBu6SJSjrgcHJzAETiMqLYvrKnmiz7
+	uWeMbOk3YDKPMHTRb5UfBak57xay0US/6n+RKTTh3WGb85eTh3HuoieRyv7WJMLes3/RPDStPRF
+	NLx7I7gdeqbwsxjnzapqwX1mUtSF1CndWkYg80K35TuMd+tCjKtL0bNrXZU6prZ2JAxNUCQJfp7
+	H4QOlR3XHC+OoYU1p6mbnLEf6oKo8do1z40+dn0RFUhAdNOx6W8vnOb1fqCbIrG/1qKZQBi2xO3
+	N/Qi1D43Xb54qn/a5XojH6Van6BFZ1h/1tqP5zH/xglo9ZN2Bqc02GGBQ8yZrpUwnecNQFJxnBP
+	tTQtPCQNBFATQBu9Jn+a9MFPulsj6QBcz2+55iFZzSfxh1oL2Ra5PLcHCM5QPRyiDAb+3Pf61Xs
+	CPSTkLpcw==
+X-Received: by 2002:a05:6102:3709:b0:6c3:1bcd:31dd with SMTP id ada2fe7eead31-71d5d395ca7mr389435137.6.1781164560949;
+        Thu, 11 Jun 2026 00:56:00 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-71d900c44e9sm488635137.2.2026.06.11.00.55.58
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jun 2026 00:55:59 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-6cfc8f8e127so2519967137.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jun 2026 00:55:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9Xh3Gbp8J93aXqs1SzGTb265X3suTwsB2HSawXS5QsjEIbo0YYeZDYyRrQR5PWmalvH+DCPvoslOPp+gYO2yAwMg==@vger.kernel.org
+X-Received: by 2002:a05:6102:3e02:b0:6d3:aad5:6d2d with SMTP id
+ ada2fe7eead31-71d5f2c9e58mr483488137.18.1781164558613; Thu, 11 Jun 2026
+ 00:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 55d97cd60b23676f93c
-X-MBO-RS-META: hqm5t4yprqfwp5pufsmmuaitd6durq7a
-X-Rspamd-Queue-Id: 4gbPT55M6yz9tm6
+References: <20260611005952.146825-1-marek.vasut+renesas@mailbox.org> <20260611005952.146825-3-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260611005952.146825-3-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Jun 2026 09:55:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXZASW=5v55QqsSjt0y_0Cf-3H4xuVYcQO96spfvQevug@mail.gmail.com>
+X-Gm-Features: AVVi8Cc4jIWBETm4Ynpi7szi6_VsDVkjFdXWa9mml-KaDUYCZmOXsqOLYp1ugKQ
+Message-ID: <CAMuHMdXZASW=5v55QqsSjt0y_0Cf-3H4xuVYcQO96spfvQevug@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a77965-ulcb: Enable GPU support
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Frank Binns <frank.binns@imgtec.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable GPU on Salvator-X 2nd version with R-Car M3-N.
+On Thu, 11 Jun 2026 at 03:00, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Enable GPU on M3NULCB with R-Car M3-N.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Frank Binns <frank.binns@imgtec.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Matt Coster <matt.coster@imgtec.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: devicetree@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.3.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index a1d3c8d531cfe..f0d9c0124f69c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -30,3 +30,7 @@ &du {
- 	clock-names = "du.0", "du.1", "du.3",
- 		      "dclkin.0", "dclkin.1", "dclkin.3";
- };
-+
-+&gpu {
-+	status = "okay";
-+};
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
