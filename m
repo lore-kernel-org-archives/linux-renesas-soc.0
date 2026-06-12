@@ -1,114 +1,164 @@
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD81D30F94D
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709FB30C37E;
+	Fri, 12 Jun 2026 09:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781256474; cv=none; b=TanM7ItsJuOZZaHAMYOlGndk8JuwT7F9vmTGE9zMQOhz9uPv7uj6ZKHiTqI//SXgiD1wxyjBps55oU6JYIzw1ZUzfgfqh+/1nkA83zAaNstnGPGj0slLk2wz2Yu+Rr74uSCPdg4qVMApEBL+CPUoIBgbmhY9qPVt0I35AooLU8M=
+	t=1781256552; cv=none; b=p0XpZzU9FQb3vWI5KZve2xRNJuKqLfveZPnHO0M5vQcS0Ql382+T68bC7tic+2XOeVYjtyOCUtT1XC1OztgJV9Nawtvk0TaV1DsS96yfIOREgzmkcS+VsXSh1k8Bgn7RlawUBHZhbPGMlp0UD01dcGNn2gItKxulXLRtldeHVuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781256474; c=relaxed/simple;
-	bh=rw8Tvs+tqVHlE1yz/4QqXObm6oY6UdP3I1/O30mTwAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WpQon+Fs2cbgNG6CVxOF5l6iWsoUWHiPk8Zhe58QTMt7iQGQOAzUWW3d8nEDkdoXTSIAqfoATbiTLa44vjXTABLmxPHifXbUQSS8pD7k+e0+n5SInQcMijimSJMSr9Nw68WJGE2CnVxfaBFbrTed13A5L0cKvhdASZzOC682eGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-9639d7daff3so444950241.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 02:27:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781256472; x=1781861272;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSZwYOeTmzPIFgGHYKIxzTEqMNY8O4D81LGf3X98Xhg=;
-        b=c6vvdjSMkVtOHGX+3ZR4LowmK3trwzC1sglODr1e4XUxoqw/K4+P3Stpc9yEvVHJRa
-         t6DtGnJvPzOZeJ64YzZxIhNoxhvopyUtMdEMnMZHXyaMqi+TGYu+StlW9wCsdRcXn/op
-         dq94LYIUwhMxwRBhvsMtKMr38+HWy28/4I5yw9XTrRqfglxUZYavDpYbxtzZgpqRImcm
-         rzbtkeDhdCVjHwb44HjCYWct9IU4tbq5p2ftF1RK1IIH3IE1+WLzeI0LWeFmzGD4sTPV
-         N5h5izUzCxXwLpoZ9J1YbYXGMSiaN0k3VMAiBgq/Mn7OtgzWIN0g8zguhJrKu8/JMfcp
-         uN9A==
-X-Forwarded-Encrypted: i=1; AFNElJ/GV+OaEtpv3ruD7B9uabJzaKQs4TkVqt5mlFragHla/G3Pi2GjWNTV3uu4MZi1Pnt3Kek3L/ngrazarRbTRVXfRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjRVo0cOpdQrKkcsO62k3SGnMWy3X9yVpQd7g52GZwsGt4YHIO
-	Wzs4m17oaeUeQlQyWEb1L7L0zZ71rtnc10W53pn7hD4kWBThBARHwB8FZhvrouGu
-X-Gm-Gg: Acq92OEKKd6hXh5gn/44vpZmET/0lkfa38GN/cOVcwPp2e3x3rw42s3STK0h3vZUEB0
-	pTfcrIL17y8QwjYsByAy7I5jBTkNvlsC3yhIHMILGyDHuVcCb4oWevMSwe1kQrTytrqwbIprM77
-	thNZu77uBnL/mIH2Q3DwFCjB6Bh7f1chb4XzTXbUhxV1q2lSG79pub34XdT7J0+UKriOtbwzxCU
-	GP6Pp4dFGN9mlHP/TU2wPL5YQ2u0jucfj87T7/iB9Cg5FA9ldIqvHrnaLs5ePWmO/uXZUT9BZh0
-	T+mLfzkshveq3myklpaVH2l8dc5Un2gZoVX++Q1rH5dAVxM19XxC+lE8KUchEuj2iD2z1C69IXM
-	twzXu68OnuvDRTtn3cyDCZpN/VNnK9HhpTwWC7nebASir7pU/zSU5uJR+JF4p4wfc55CC+Ew1oY
-	ci4VZGAjvdK2V0ZnLEGl0MgoZ8x4hPjuU8WfC3ChnVXmmZHgat/uBqUHGKUxu5
-X-Received: by 2002:a05:6102:644b:b0:71b:e02f:65e2 with SMTP id ada2fe7eead31-71e88c8401dmr810979137.20.1781256471700;
-        Fri, 12 Jun 2026 02:27:51 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96673eb0e3csm993499241.7.2026.06.12.02.27.50
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2026 02:27:50 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-9639aa8ca17so456201241.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 02:27:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+xmunzOCNC7SpuZZgKfDnfE65j+aVDMPUXqKzyoI6OAvZNzJGF7FthVj1U4UuoQnbJ3ZBd+ugGw6CUwfJCz747ng==@vger.kernel.org
-X-Received: by 2002:a05:6102:1626:b0:610:1c78:9531 with SMTP id
- ada2fe7eead31-71e88dcdcc8mr852032137.24.1781256470532; Fri, 12 Jun 2026
- 02:27:50 -0700 (PDT)
+	s=arc-20240116; t=1781256552; c=relaxed/simple;
+	bh=+64b1xkKPWAK2wGTqVMfh99WOftJjaCQAYpwclFZ95Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNA9KyqduqLlVEqVcv7lbDZpcev9dPcoU9kfd2fk99WfQM87HcrXoHP2+ewW0u8BRzaL6s4ugDf3o+eNVWkXg9AnHHwQDaxWeXe0ux66SOJOVsXNLNQyIm5SqG3iUMKCnH7t9hfZ/rUuzYirup9oRbW4M0nCAM1P/95muhe/WJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=qpVd/0/A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JLmCR/aj; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="qpVd/0/A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JLmCR/aj"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 947C4EC01CF;
+	Fri, 12 Jun 2026 05:29:09 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 12 Jun 2026 05:29:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1781256549; x=1781342949; bh=OU
+	P+fuYeImDEZtjX+66E39B681jfCuygJRIplPq1bjI=; b=qpVd/0/AE3dgtsame0
+	h+YRLYWxASmA1eV7n/v/kw65RH0NXymtW+N320n0r1sTgsaIdBd3lkQK3U4XUH6y
+	TPOr/KWu+cXrBOK+FNQYLeH0ywRJ93L0KIHV39yOou6JXpR933lUGp0K+bhV7biJ
+	Lns0P66+vrJjNjY3AiQiNSXWveuRIthiGPlXY3c3LQEGe/F7ruMrlCNQdA7wd9z5
+	rmQ9KB0X2gbyxx1oeIJ7krEQ2s7N0l3msfO5T71w0hhW02rV0T78yZAOt8cTvvtf
+	c0s8WDLxWTvcnNarIiF2tzgvornDODse9i2EGyoVJyaX/Pm2SzA1WEkrOBCQ/yfR
+	ilAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1781256549; x=1781342949; bh=OUP+fuYeImDEZtjX+66E39B681jf
+	CuygJRIplPq1bjI=; b=JLmCR/ajs5+IUWIvEKROt80ETn5fAi7RNyoZH1owCiXA
+	h7Mp0s0IwGE8Edc2b2afEj0ghUVRNgtA+SAz4ZPYDWB4rRJPdtzAFkm9p5gX9tcP
+	kbBW2vyfS8f2/OyrIx1V/21ZcBt86D8MCxUCKqXwxVA8LxH311jRwUeb8E2a6lW/
+	ameDeyHc4Cu7+fnhZkKVY9++eHZ9jqu15H47aO2xwonMvGZTkW7Owzvg3/CdY112
+	W7fa5GTcna6whAvZOfW10A2oasbn9L6Y4R3slIqJkj+pne1XM6+nbCRZMGFSIKy3
+	HiDDTIUfq2IQkixTY1+bPcVpyYBewPcdYKr2pSSjJQ==
+X-ME-Sender: <xms:ZdErajOsFgCaYGk4gBZHw5r15cdEY7gpRWK4ZK8WyYO4gDkKSkUl7Q>
+    <xme:ZdErasdh50BimTB3ljL6vxeLqd8PymPMrjY7xdc_yvCc8e6LpVwMM7mfOFRxesLCK
+    Q8LfBBA7dJNmoF7fI7hqNQWtXK9hHm6t_gti4XGqc7IdMcOXdwkrGB5>
+X-ME-Received: <xmr:ZdErapGHza_U4vz0rtpry-PT8BRJspafTBsaCVXGJtKX6hOFKKWpXVLcTY7MrcifBwcb8g7NK5M9W1Urqdltg-YtI47H>
+X-ME-Proxy-Cause: dmFkZTExWmTCGu6/QYF8p+rlXBBoEymTBWKT8utBsZoZ53cI0ZoH5hTR9yek0C+EKbegGF
+    QfD1aCxmtNcO9g8zL5R55C8XwC/LS2ANksB/UOraGciHOIj8i8zIcYSY2W3X9ivZmkxuE4
+    1r09Y7jzZvHEK3WCxzDES3nVW2/Bw0M8XRi4ser/1UGmVs8cF6LD1GyOB8r/DReD65cU3m
+    tCWFXFGtWRa0+jEeut7eD2gLwdDwFYVZk2t5dkA6W1mBo+BJAnPqQVlHpsGtJ4ohvphDrA
+    5pZSlnkv+AorvNQr6kNj+6TPJX2GnVARYypsJj9a0XVsZDg7QqFJR0+2G1gzhaQ0DjNaa0
+    y5Ts5CMJRJ+51AQOemFUJOX6eHGHbWul68WpMzVyM98LqqsfO3R4qF0gOPNmLNAaeavW4B
+    kwEDHPVmI8K3NcN9CrCAplGcLRJnKmEnyZJm+5JT6cYl/qVLue7D0eSHRJsoOFdCVpe9i6
+    ExOTjnyDQONZJasWqi9pjdzYmZYusXhE3srJtDu4jmM7s9UT/xuOn3y6tkhT3V7v89E0ke
+    4RSoftUcNc5oi6+iXae0E8IP/l9ohcctit6hHoIJsKOzdVjEkpbUw3vouvtd+eVHVQ00bQ
+    yos7JA1s+crdtSD+vvAXCWZ4FFCdRR6657ohNfxGzzpStmrfYFmpJK1wKCdw
+X-ME-Proxy: <xmx:ZdErantKYQsJvTIQ-QJlnYu0xQBh4l1zkPmoG9uxo_pJUygWpLYu6g>
+    <xmx:ZdErajp2umSIkWfA1egdUU6ZpGTQFCUcWpBpdzTlCJbln_-hRMFWyA>
+    <xmx:ZdEraunwTO8IlSR3jy386ByGSrDRK3PD43cbUaEAoPzI2GH_cq8tqg>
+    <xmx:ZdEragjvrAc7vh5lIBbkJTmQMOfz_RukYMpfWplqB_ChT9RX0emLrw>
+    <xmx:ZdEramrXhetWdcq19s7GfhEhEnD5C3dHrt2CvBj1CFmbyUStRnabY3eL>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Jun 2026 05:29:08 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"DavidS. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH net-next v2 0/3] ptp: Add driver for R-Car Gen4 gPTP timer
+Date: Fri, 12 Jun 2026 11:28:48 +0200
+Message-ID: <20260612092851.2141782-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260609113836.45079-1-phucduc.bui@gmail.com> <20260609113836.45079-3-phucduc.bui@gmail.com>
-In-Reply-To: <20260609113836.45079-3-phucduc.bui@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jun 2026 11:27:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXku0BVRgwWWv1vNccKpRbvTu+1b0TjYacNJH94XBDOGg@mail.gmail.com>
-X-Gm-Features: AVVi8CfaZvz-9jhnktf26BGxmAFl5Vd7m2Fjtdz0B71l3uBx6X_lEfTe-t2LChA
-Message-ID: <CAMuHMdXku0BVRgwWWv1vNccKpRbvTu+1b0TjYacNJH94XBDOGg@mail.gmail.com>
-Subject: Re: [PATCH v6 02/11] ARM: dts: renesas: r8a7740: Add clocks for FSI
-To: phucduc.bui@gmail.com
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Phuc,
+Hello,
 
-On Tue, 9 Jun 2026 at 13:39, <phucduc.bui@gmail.com> wrote:
-> From: bui duc phuc <phucduc.bui@gmail.com>
->
-> Add the SPU bus clock, icka/b functional clocks, and xcka/b external
-> clock inputs to the FSI device node.
-> This prepares for subsequent driver changes that explicitly manage the
-> SPU clock required for FSI register access on the r8a7740.
->
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+This series is the first part cleaning up how PTP timer support is
+implemented on R-Car Gen4. Currently there is partial support for it in
+some of the Ethernet devices that can use it, but not all.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.3.
+The partial support have been implemented by hacking the gPTP module
+directly into the first Ethernet device driver that used it, RTSN for
+V4H and RSWITCH for S4. This is understandable as earlier R-Car
+generations had a dedicated gPTP timer for each Ethernet device, but on
+Gen4 there is a single system-wide PTP timer shared by all.
 
-I have one more general question.
-arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts configures
-audio for FSI (fsia_pins), but does not fill in a clock-frequency
-in fsiack_clk.  Instead, it fills in 12.288 MHz in fsibck_clk, while
-the schematics call it FSIACK.
-Apparently the FSIACK pin is shared with FSIBCK on R-Mobile A1, so
-which function is used depends on pin control.  However, the DTS does
-not perform any pin configuration for this pin?
+The current implementation makes it impossible for other Ethernet
+devices on the platform to use the PTP timer without messing around with
+other Ethernet device drivers.
 
-Note that I have never tried audio on Armadillo myself.
+The effort to clean this up starts with this series which adds the
+system-wide gPTP timer as its own driver and device tree node.
 
-Thanks!
+This series will then be followed by work to add proper PTP support to
+the R-Car RAVB Gen4 driver, which currently advertises to user-space it
+supports PTP but which implementation is broken and does not work.
 
-Gr{oetje,eeting}s,
+This will in turn be followed by work to the RTSN and RSWITCH drivers
+will be be switched from its current partial support by mapping the gPTP
+address space directly to instead use this driver.
 
-                        Geert
+Having both this and RTSN/RSWITCH described and enabled (!) in device 
+tree will not work as they will try to use the same memory region. For 
+this reason this new solution will only be enabled on platforms
+after all user's of the gPTP clock have moved to only use the new
+centralized timer. But in the interim both devices will be described 
+(but not enabled) in the platforms base dtsi file.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+For some platforms this is straight forward, such as V4H Sparrow Hawk,
+which only have the RAVB Ethernet interface. This platform currently
+have no users of the PTP timer, but still advertise it supports it. This
+and the soon to be posted RAVB patches solves that.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+As the RAVB patches depends on this series the device tree node for the
+gPTP clock is added in this series but will be enabled and linked to
+consumers in the RAVB gPTP series for platforms where it will not
+conflict with RTSN and RSWITCH. And further enabled as more of this is
+cleaned up.
+
+The gPTP driver itself is heavily influence by the existing partial
+support for gPTP in the RTSN and RSWITCH drivers and the Renesas BSP.
+
+Niklas Söderlund (3):
+  dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4
+  ptp: Add driver for R-Car Gen4
+  arm64: dts: renesas: r8a779g0: Add gPTP node
+
+ .../bindings/ptp/renesas,rcar-gen4-gptp.yaml  |  64 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi     |   9 +
+ drivers/ptp/Kconfig                           |  12 +
+ drivers/ptp/Makefile                          |   1 +
+ drivers/ptp/ptp_rcar_gen4.c                   | 219 ++++++++++++++++++
+ 6 files changed, 312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ptp/renesas,rcar-gen4-gptp.yaml
+ create mode 100644 drivers/ptp/ptp_rcar_gen4.c
+
+-- 
+2.54.0
+
