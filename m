@@ -1,76 +1,79 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2260394798
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 14:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07B43A0B1D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 14:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781274661; cv=none; b=NOXhMjKZKW82RIueD9AuGts0iXhNJAxYAbz0Rf9dMeMVmKf2c9kWMTDBtV3SGrmuzdHfIJ6cEXnBZ8gI5tGC+CCAlkcvmrP6IVpkPeg54Hy9/v8uwvHaLGtj85MfUChUiAR3b8JEEOpc8ZGM4wM0zjOMm9vVG04oFnlraYT3JN0=
+	t=1781274662; cv=none; b=kdW6LsjDxERUTe++dk70zZfiNE3YN6wRrcKfJp+Q6U/N45Lw41pv7QDFq7xVng1eD/yzt4D+OvQuMIHWJyUfOdqW/Is8SrMOnoGdY+8mEPOtrZ8dc+/g0WHhbllFPy8H1G8T4muJ6v/PWs5Fgu66cVhrtIHSLA6Dk3BCMHmW5cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781274661; c=relaxed/simple;
-	bh=o16FdZkLpgpjGm3cXc5Y8RdEBCqXZNgENwMFXRRpkNw=;
+	s=arc-20240116; t=1781274662; c=relaxed/simple;
+	bh=s43LqaxWJoz+8KoBSafLl3SEaGnKHh5t4Kj6iU9I7ZQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sLnBhdzsypK1MHGFb9Coex+wb+szs/S/xG4dQQrz/is0QWFY9LyPj9gMWbG/UT/64DK8DXlHMKAzMEatqlIHfCRectCEfLw3UfS6uSDaz+kwoATUJPenhHzsF4o1dD3xl8pyELahJscciyLIuKC+mpgLPt42EXBp2tgc3vCDh6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0k3Npvx; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=Bei6aBVzkPc75dtmbyunfY7sCLDUxF8YfGAjse32vZNzHEe2VsZb+dAnzHA80RLWq3/+GrLemfH/lq4v8428FuryrylNE9ihQkIb8fk1aGGeeFr40uWrlY1xygUUi+0/983SogZZlILa2NZ455ztuMwc2nU6zIy9J0+daE20ojs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rRaignoN; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0k3Npvx"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-45eee266c6cso935866f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 07:30:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rRaignoN"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-bebb72b845aso175423966b.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 07:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781274658; x=1781879458; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781274659; x=1781879459; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0FDKMOIxKn4AoGs1v789cKRGd16F8QDM2JHSO79Z/OU=;
-        b=C0k3NpvxVCIDES4sUltUYMKt5v9GmVgzmq48sBKAwi0MPFxnNGoHraxnNU51luE8+N
-         TyicxF6BA0dgncZjnE8G+ObAzvH9tmUCFQRSR+SBKgErVvxxZ1AA36BlTGksJAwK4X7d
-         bol4VqM+3narAkwjvrVbvz+NCQSpZn12lQEgk1Cko6u7lVeQT7W9Oa7el6RNV5uQzH1L
-         TKMTPnZoKp8RWcpX17Zvw5AfltCAVvic7P1JAVIc1My7ALvs59rAQKwwQjlPlz9E43tP
-         9izequniymEagOWoy2QwF+ZF64Hkfs8m4NqOSwBWmU3WJYUFbEVQL3D4RcXsIomhKFV+
-         n5RA==
+        bh=dlNfWCkBlvoF7s7VT/UN315rRjUSgiiIqxtqEozxAsM=;
+        b=rRaignoNflmjhsCZkY32KaH4R45udG2WnUPmidMh0/RgpIhk1u2PjnyJdFDLAGqNS4
+         RU737VAZqrn3cbMlOzGANcAA7S06k1MvdvuzIUAPMrM2j7ZWkb4V3LFM5arw0Mbz2XAh
+         P33jvAtYWtlNiAaai/6CmBe5OHSYVIHN0vclvFqwRJRp4dMe3eQfhJ9G7p0PWlxBIKDV
+         kP682xXsHAvsVId/yEutbH80k4fu0lSIdmuYavkq7FS+BX5roXFWTfDiMPTV9lBJ0myC
+         kXDIYngkLGjcKbvTKiwElJn674YGGJy7fzlMspfYQR/jQJbnW96gmGgrnfiqc0oebXJG
+         zNkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781274658; x=1781879458;
+        d=1e100.net; s=20251104; t=1781274659; x=1781879459;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0FDKMOIxKn4AoGs1v789cKRGd16F8QDM2JHSO79Z/OU=;
-        b=WUYHDEPE2GvjBcR3jMO7EPL1e4nC2ICQNtNMoMjlSZi/2MRp+RDPbB3uKtK5PuR8h/
-         dMWozy4pgKQPW6/5wh6l8Etj8nD+nNMKdHT/P5Vcu8JHCglc8kqx8X1CNI+ZMn8C2oMs
-         X3Da4PEgUlcMJG5YIpe4qgtYSGoe/SV/K1CRt4sX3NCHyXcEJ9ax4OcJKBSMMP3wfipk
-         7/P/sClXamyT7fAZ6FOOHeX3WiMGoeoO6yCcIm0MOSco9Ycz48JBjfP3v3RerUkXmk3O
-         ejMo2TDu+89Z1J+MIsGh5dIFslpFp0pheFwuyRwPcax++idd05j+SAnBzID8n/uAQM/5
-         Nl3Q==
-X-Forwarded-Encrypted: i=1; AFNElJ99nqZKs54Qc5ZmQBm6O33DUxcBQnzIR+h4Xno/7nXTgBwv0RrHRNJ2GWWEH8OIH6tx4SNgMy6k0hewr99mb7Y0Dg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKZ/BAyqwPZRvNhxu0Qidn3Ow5T5rtCLv0lymZ9ZXheDhSk2ZK
-	iTMLXsjFiIwzyPuI390yAhEJTIWBBitTi39iTQwkYkw4ZM1UOEPj9DP4
-X-Gm-Gg: Acq92OEOb1Ozn8oB/kcR9p4PYBWXBMMjIW74IHOu+yDWH+PKW+/0wQ96DBAvhcrQoj2
-	ecQJZkNzFrEqut7W5sZzk6MLHxZK+mht4tVFkgNIhVr53S335KAJvadXRbvacOru1uyN1BXJMAC
-	MAPp+wRDymUv5EyshW3PmnoQJd+B8tAl9a4+vdAPtatzDJzotMaR5rpVAoPmb8qQ/3n3PNBmRC+
-	R3IyVH0Sp5A8dhF2y0k8R7sy+MJBnNaCOCPBZ2xV3hw7kdrVhFHHVoGJ2yOGFW7q05ACuL9xxtI
-	zqvQuN3A/xSZlmAoJzHnt6Ffu61cmKxRqsUPlitb0Itqyg/fehKS9qbw5pP6xeoMK3Nh5RJ5LOz
-	cxGbysVkZ3z62rynsrT7lC5v6CPJ4btUFjmV1wR//C73tzld7OoglfelC2KNPJZ7X2fLVvcUFnL
-	xvBZ491w84yqBEiW17Gwjz3442wPI6ORutxoeCZe8bxRi3+jed
-X-Received: by 2002:a05:6000:987:b0:43d:69ff:6898 with SMTP id ffacd0b85a97d-4606da5e648mr4634724f8f.9.1781274657908;
-        Fri, 12 Jun 2026 07:30:57 -0700 (PDT)
+        bh=dlNfWCkBlvoF7s7VT/UN315rRjUSgiiIqxtqEozxAsM=;
+        b=O0oiX5lzn+fAG/9X1z+1wsqECXm+EirfZNY8tszrPC/T3AtxT8CA61qnZwjkDhMT/X
+         JtFx430c5GRolvoYWNoNKqhNkfmEhod20YzD7RwTuT0wNfy8l31x84okIkxSJ+7ymD6/
+         wAIi8aAnpPzuwnXz4ZsNPYRo9B27QgHUl1OUR/LVXAxWzJLPP8ryXRBrjDDbqKOFlUyW
+         g94O7rGkM8fOj+eNyLWHV6ijd9zJHAzvcsCv4yG0dPN7z4WFAqhli7HvVXTMH4Q37nTA
+         99Jf7rWuXkordTkx2B1iy3F8nfMjqDRdCc3ocCWlcvXYBGPH+uqssmzwC8lw8EoPnjkv
+         +cvg==
+X-Forwarded-Encrypted: i=1; AFNElJ/e3mslpxsT4d/Wlfki2Kh+a7E9YnCha6YzqQwB20r+oCYVSwySqNZx25CGxIb9IACiaLapShnhuCqpEE555ku/8g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0IJgTrtT3thNvKx0Tq1Vtl628rdL0QCzvA2/hEhOZThiCRBYk
+	Mi9LGaJvEEwUuchujLqxoIYLHwjNEcIWDLUJ1+n7ULaur7ff8JehnBA7
+X-Gm-Gg: Acq92OGTl49BU6EpEDa3uMSbc3ziE22Yh+9Ha4AcG0Ul0CjIG1nEZa68kssr5pgunfK
+	g1XXK2n4Brb8DpAqcDTOxTb9ti71f7Nap3ISLD/DUFpTR//P2N1M6siOd+7In9+cg+PtYAT27Bi
+	p2bgcMt+Sskd3Joqq4etFoRN6hwJxPZ2y+A3ZhRYewpcqrQezDPgvrJcqkyRkk9cAJgEKjaFo28
+	mYALcHBzKTrqmBzzKikTqmfyNjCOM6QiHNj1kszst/KMRA7j0EFjRvtXDoaLz8jFDFKkE34o4rc
+	SZz5Ai0mf7FT3Z7aYMB/3rCPImXY2u3x8/9fWiSqsL1V7HvNIWvKdBC+UObi2G4oxCo8vfj7ZfX
+	kgqbTBuVbC1d5OHN0qA5Ac7qe/5KF8myfsmed6lmbkBiM0zCPEs4Y+w5EbPbLB6tsvXLLbT7CMu
+	BDsOJtXks/D1n0eA3Z/tcjWXP9swij4btPEhBDWPxCeYFY6ZL2gXs7pVdItgc=
+X-Received: by 2002:a17:907:75e6:b0:bee:4562:3308 with SMTP id a640c23a62f3a-bfe2a1149d8mr95992766b.26.1781274658810;
+        Fri, 12 Jun 2026 07:30:58 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a700:7301:c72c:50c4:8b28:9a3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 07:30:57 -0700 (PDT)
+        Fri, 12 Jun 2026 07:30:58 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/11] regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator support
-Date: Fri, 12 Jun 2026 15:30:35 +0100
-Message-ID: <20260612143048.317907-8-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 08/11] phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
+Date: Fri, 12 Jun 2026 15:30:36 +0100
+Message-ID: <20260612143048.317907-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
 References: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
@@ -84,107 +87,33 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add support for registering two USB VBUS regulators for the RZ/G3L
-(r9a08g046) SoC, which has 2 OTG controllers unlike RZ/G3S which has one.
+Add renesas,usb2-phy-r9a08g046 to the OF match table, reusing
+rz_g3s_phy_usb2_data since the PHY configuration is shared with RZ/G3S.
 
-Add a second regulator descriptor rzg2l_usb_vbus_rdesc1 for the second
-USB port (regulator1-vbus, enable_mask BIT(1)) alongside the existing
-rzg2l_usb_vbus_rdesc (regulator-vbus, enable_mask BIT(0)).
-
-Introduce a common probe helper rzg2l_usb_vbus_regulator_common_probe()
-with a multi_regulator parameter, and a dedicated
-rzg3l_usb_vbus_regulator_probe() and platform driver
-rzg3l-usb-vbus-regulator for RZ/G3L.
-
-The existing rzg2l_usb_vbus_regulator_probe() continues to register only
-regulator-vbus for other SoCs.
+Unlike RZ/G3S, RZ/G3L has two OTG controllers, OTG interrupts on port 2,
+and a controllable OTG_PERI bit in COMMCTRL for host/device switching on
+the port 2 USB controller (fixed to host-only on RZ/G3S).
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../regulator/renesas-usb-vbus-regulator.c    | 46 +++++++++++++++++--
- 1 file changed, 43 insertions(+), 3 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/regulator/renesas-usb-vbus-regulator.c b/drivers/regulator/renesas-usb-vbus-regulator.c
-index 511631a788c2..ea04d29bb9c9 100644
---- a/drivers/regulator/renesas-usb-vbus-regulator.c
-+++ b/drivers/regulator/renesas-usb-vbus-regulator.c
-@@ -31,6 +31,19 @@ static const struct regulator_desc rzg2l_usb_vbus_rdesc = {
- 	.n_voltages	= 1,
- };
- 
-+static const struct regulator_desc rzg2l_usb_vbus_rdesc1 = {
-+	.name = "vbus1",
-+	.of_match = of_match_ptr("regulator1-vbus"),
-+	.ops = &rzg2l_usb_vbus_reg_ops,
-+	.type = REGULATOR_VOLTAGE,
-+	.owner = THIS_MODULE,
-+	.enable_reg  = 0,
-+	.enable_mask = BIT(1),
-+	.enable_is_inverted = true,
-+	.fixed_uV	= 5000000,
-+	.n_voltages	= 1,
-+};
-+
- static int rzg2l_usb_vbus_regulator_register(struct device_node *np,
- 					     const char *name,
- 					     const struct regulator_desc *desc,
-@@ -50,10 +63,12 @@ static int rzg2l_usb_vbus_regulator_register(struct device_node *np,
- 	return 0;
- }
- 
--static int rzg2l_usb_vbus_regulator_probe(struct platform_device *pdev)
-+static int rzg2l_usb_vbus_regulator_common_probe(struct platform_device *pdev,
-+						 bool multi_regulator)
- {
- 	struct regulator_config config = { };
- 	struct device *dev = &pdev->dev;
-+	int ret;
- 
- 	config.regmap = dev_get_regmap(dev->parent, NULL);
- 	if (!config.regmap)
-@@ -61,8 +76,24 @@ static int rzg2l_usb_vbus_regulator_probe(struct platform_device *pdev)
- 
- 	config.dev = dev;
- 
--	return rzg2l_usb_vbus_regulator_register(dev->parent->of_node, "regulator-vbus",
--						 &rzg2l_usb_vbus_rdesc, &config);
-+	ret = rzg2l_usb_vbus_regulator_register(dev->parent->of_node, "regulator-vbus",
-+						&rzg2l_usb_vbus_rdesc, &config);
-+
-+	if (ret || !multi_regulator)
-+		return ret;
-+
-+	return rzg2l_usb_vbus_regulator_register(dev->parent->of_node, "regulator1-vbus",
-+						 &rzg2l_usb_vbus_rdesc1, &config);
-+}
-+
-+static int rzg2l_usb_vbus_regulator_probe(struct platform_device *pdev)
-+{
-+	return rzg2l_usb_vbus_regulator_common_probe(pdev, false);
-+}
-+
-+static int rzg3l_usb_vbus_regulator_probe(struct platform_device *pdev)
-+{
-+	return rzg2l_usb_vbus_regulator_common_probe(pdev, true);
- }
- 
- static struct platform_driver rzg2l_usb_vbus_regulator_driver = {
-@@ -74,6 +105,15 @@ static struct platform_driver rzg2l_usb_vbus_regulator_driver = {
- };
- module_platform_driver(rzg2l_usb_vbus_regulator_driver);
- 
-+static struct platform_driver rzg3l_usb_vbus_regulator_driver = {
-+	.probe = rzg3l_usb_vbus_regulator_probe,
-+	.driver	= {
-+		.name = "rzg3l-usb-vbus-regulator",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 9a45d840efeb..d06fb52ed5f1 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -721,6 +721,10 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+ 		.compatible = "renesas,usb2-phy-r9a08g045",
+ 		.data = &rz_g3s_phy_usb2_data,
+ 	},
++	{
++		.compatible = "renesas,usb2-phy-r9a08g046",
++		.data = &rz_g3s_phy_usb2_data,
 +	},
-+};
-+module_platform_driver(rzg3l_usb_vbus_regulator_driver);
-+
- MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/G2L USB Vbus Regulator Driver");
- MODULE_LICENSE("GPL");
+ 	{
+ 		.compatible = "renesas,usb2-phy-r9a09g057",
+ 		.data = &rz_v2h_phy_usb2_data,
 -- 
 2.43.0
 
