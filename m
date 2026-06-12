@@ -1,80 +1,79 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DE63BB117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ACE3C2799
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 14:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781274663; cv=none; b=lXEeZsJH9qJto6aWkovGGJsIKVvJnLwTQIUbj/xGGnIEc+bEpySfSkR5SwafbNd4cD5owSbX4uq0KQfSoBD76Sbgk/y8fxuKQPdWuIA3soH80ZGhQnB087HQvpBQpx50LZKXvw76siGDMd/RENq1XsqYJ0cRjhH+7rpBBFshMzE=
+	t=1781274663; cv=none; b=dEqcqOYDzkfafglYFv4X+aF2rnLehMFQey1EWxAAA20yZusUHSEz/81MHqhRUQLd15sOGzWH2JaoKkJ3nYhphvutOjpNlV+rrISBHfpfrNGxdcDK57/kNqq4h1oQKSYG4vNoCP5/QOikBu0DWjCHrJ6NmDwj5R/DlGAq8rYDB8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781274663; c=relaxed/simple;
-	bh=72eGwrRmAN9yFzSvXWaIpYv0xF7W3qLJnLdq9nhGBns=;
+	bh=SxTM6VRQ0YMFjzDqrZ6PIDgXoXZRNr5erd8yR6hxoD4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PxENJBCzr0m0t12bmZ0yM9RnRwuhXMjDMos15qO/VQ2HXl9K/peGrXE/3/aNlji4Btz3OqGsrV9r949d/Ym25aLnYC3jm3YDRZWqy+/nXB0ztNNDTLCk2SOjgEOqliw0dzvIWWHltZxCiY6i4RPf86oyMpqNG8tNp2LcVN2Gek0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbdMcVWj; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=T8Wst/ljpwbVaZ7DLzCn9waIMYaecXvs7s8jU8ZZYA5hj114+wNvOebgCzCmr5HjuCxphDCJTu9Q6WmfQYg3i5I+zxRFeswb/40S7wKDu1kEEt46bhd96bCSrweN64MWuRQMR3NQYQ81HnyJoWuda6EpsBSXCZB9O9FYVrbM3Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfnQaYKo; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbdMcVWj"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-490ae94a89eso9015305e9.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfnQaYKo"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-45ef56d9b67so830058f8f.2
         for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2026 07:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1781274661; x=1781879461; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cMdyexsnk9vzJ+WoVc+Ut0/kOTtTWH91CWtJGBzMv6s=;
-        b=SbdMcVWj9+kZDcA2sOE9uTk7WbG8aF1dApHrQpecw4vjWwdEXJEoTaLpOZTFJwOCRm
-         MahmipgW8cWSlf1zmqP0DiBKj67dmb++Ys8OYLTn73p6f+/pxsL/i7D0a9hUu/zAid8m
-         nk9Pm531un3pW0t1Y3T51JNJ9JgswiEVvYtKOV4Jz3WRtuAaJqMVQJFqmTUtW+hNkmFZ
-         7he9V/FgMBWJOi7v8mDVWu2fmHt/BTLLDuQkFieQqzNur5IzRHWy4CYHcsUsQZ/jC5lJ
-         ECZro3F0fjmTCP9UOt375FoXaoqO53Rhp17sjLm8ta/jTFs/W075THMtbpAzo5EK3xEx
-         /RmA==
+        bh=3PS6UrnYbPHUhkh2dJtXOKFyRqOtNX0OJoH+34jYxBU=;
+        b=WfnQaYKo+sTpVe96cK6qRsK+xzIoIT7VDCcmJX9xQU/2vJX5AFRdgEJ6o6rqaPMm18
+         B/FP+OhyB8BHmg4bLqnB7NrOU2l81dRjxcfXcB/kSvhBovajaW+me3XBrm1ktGayCMFc
+         yuwLTdjy+sSrBJeCpDOOYre9BWHmFpBdvJ1wLw918Mt3PVxdyXAcTmotROou8yuTGl2Q
+         3BY+YLoDITqps4lSgpwMXhbaTFEhwIgwp6X7AqiQJ+Z+95UGWbewQSVRcibrNUtv8j1E
+         2f1QSR29UcDvuPV3omEFKR6UelYkQwV+v0ccDBC2gofCM6roXWY3ZrokFuPkIXHmnKoU
+         uWxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1781274661; x=1781879461;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cMdyexsnk9vzJ+WoVc+Ut0/kOTtTWH91CWtJGBzMv6s=;
-        b=qkExAP+5uPcu2tiC3qY1AabSrG7xbvmbhU54D+0o/klKr5wtMxKEyhcH3GLNeEIehT
-         YLXJjvmn+LdmxJhnzxjNgDR1l3HjpnkK4v7/cAz+bzKiRgPhH5Lzp09iWZZ5ACSisCxK
-         EQSpnuw6RiSbOaxhtu1w8of+C0GqBk0p/tq6+Vs35nkT7NlibVoW+tVPhADhc1b9bd/X
-         0SivSm5FL1A9TicZL/LjQ1YUCIT1EA9OR5hwZPi2iDMHjwvguS4Nd68omyMf9Yljo9XM
-         nzy02B8RCVzn7V7bBAAY4Nyxz0cXDFvuSRaRIlbF3pOB0xz/OMZ57iqWkJGXQ9a6iZN1
-         ppIg==
-X-Forwarded-Encrypted: i=1; AFNElJ/UEO+Lq0uQparsnWb3ehKAC0wnCxo9XdWeBKXvynI3ccHSWSeGKXsN367ShH/NtjFYC5Pp/QLlrrbSSrbGSTZ43g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAnHhgjzn6ZY+wHqc2gWM3nv374IQdecTs3qdVNr6hjkxngK52
-	BPMPeIy9F+fK3GCA1b/pU9k24rARhRcnMZZOeK/MJpwlrn+5qyC5VR60
-X-Gm-Gg: Acq92OErObQf+Oe2bbhQMBVTB0zEo4SDoQ+IXpsLZ2G/lKxFZuOtDm/H3oc3uuK4AZ3
-	fbzKEi3RtnDY9iGaz5QqdXjT2utcbUSMsrqDKaWrnBYlErwro174eSoaMBgsOBVAVSneuZMAgXV
-	gizJTr/cr772xDCZu9kRvX287WatrOTCZDgxXlIHPYSwifaAHTF2YBV5GjdvjJtjUvaa+QydyqG
-	J0IghcEFgDRMD5k3K5iuTHoWuRqb5Ng24fu2GEBPSazUnhvA0vUajkMwfQ1tJMAvubK1p2B50JV
-	B9xT5wpxTHkn+WqDBC8htani0qU6SanV67yIg38Biu+jTjGaTCUHLHVL6s8mQXQ1HdTUWR/T+If
-	tKUjQvc4nPK/lKGpZ89vTXHLnHSnzl0Dtsn+iJ82zMa0WewvbC3dTSLjExmaQLoWVFFRYNtdWp2
-	0aC7zlTsXmRhfCAeQv8IgBXcZ4ABgYzZoqZ/9Yacp/g12c7k+C
-X-Received: by 2002:a05:600c:3586:b0:490:c024:2ec8 with SMTP id 5b1f17b1804b1-490ec339ec0mr49640985e9.0.1781274659660;
-        Fri, 12 Jun 2026 07:30:59 -0700 (PDT)
+        bh=3PS6UrnYbPHUhkh2dJtXOKFyRqOtNX0OJoH+34jYxBU=;
+        b=irnOPfi1Z7Y+A4M2k0L1f/ghSLgGJbySOCGcfPD2no72mQYFHpNwA2/voBFNWYbv+v
+         c05AbWIpF8u9TAEufofsu0TXAObnIc0dgBeMN4c7ente+5COvTM09fiD8beATe6L/VIj
+         sx4VVo0+CkD/xXf0XK9jjYqYdemBaeXYlKzkfwmPT9WePbNtTw3qOx7BVmdKrwycak9Y
+         Tp6X8k+ILrM9fvb97Vn+0dlp9lYcidhsck5qZa65q31B5+6hRq19UbjUSGsyPb/7Qg6R
+         lWebZiEOg4Yx/qZle+SFpYIZNUFq/VwnLJpcPcuxhBA7zkxKOU8gRqkyAxbnqPKpskYp
+         OLjQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/bvkmKVDhCHpvOqtB/JziONHxUoWOvlZZtH0Ma0YEndGxdFZVqetplHxyQpEzlXzOPz8lTSLdddbSk+h6vWsL81Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRqECiDB8StnUUZYZ1qhBGGikq0RfgGkg344KlQbOEFnP0h6oL
+	1jxlNC1WI7z6wYoFlcQOfPDxElmWVtrwUFUESHACQqEH9RG4Q5QY7wjM
+X-Gm-Gg: Acq92OHaVmvB86NYX/ZsBz5sf/A9E/UkGEFd43EKhD133MBYWlGbcGIR5CWhRQFecWQ
+	plf7Uow/1OOdV1P+NuS1JCf79MbvpstU6jIDDHmPDj2L03cKxqy7JxxYLqL/QJnYr18psS5cQyy
+	ufcyg9ML9i1QjCU4DEUxqsBCh8vK4RW94mfLgWDBK7OeDd4AFzvROsDb0f5xI1QqDJtOF8PqfYg
+	7DUj0qYSHhMj6+bB+WpdswXjdJ1z/3cmJq2yOee899bWGWyh1+CDCFFQmrNzFoYZfrwmhYTBUlo
+	TkhEqUew9VsKPQH+dUFVP39Efs0sQZAN48sEmsxrzdInJdmVIGKMBeeZAkmFxcbQvtVWdHeVzz5
+	ghH1/BUu9LMb8nxavub9IykmMCL9IP/cou/oWOTf61/c3/wNg5pZUWdEHqXex531DcRZFFw06hF
+	aYmdq/H2g2CMeC9AdVoZcrujH1aKFOvqYnjto+pZ9395Vm50SL
+X-Received: by 2002:a5d:4605:0:b0:45e:f381:cd8c with SMTP id ffacd0b85a97d-4606dba5075mr3406307f8f.30.1781274660401;
+        Fri, 12 Jun 2026 07:31:00 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a700:7301:c72c:50c4:8b28:9a3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 07:30:59 -0700 (PDT)
+        Fri, 12 Jun 2026 07:31:00 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 09/11] phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for disabled VBUS regulator
-Date: Fri, 12 Jun 2026 15:30:37 +0100
-Message-ID: <20260612143048.317907-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 10/11] arm64: dts: renesas: r9a08g046: Add USB2.0 device nodes
+Date: Fri, 12 Jun 2026 15:30:38 +0100
+Message-ID: <20260612143048.317907-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
 References: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
@@ -88,56 +87,127 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-devm_regulator_get_exclusive() initialises the regulator with
-enable_count = 1, requiring the consumer to disable it before release.
+Add USB2.0 device nodes to the RZ/G3L (r9a08g046) SoC DTSI.
 
-Previously, the devm disable action was only registered when the
-regulator was explicitly enabled, causing the cleanup path to skip
-decrementing enable_count on device removal when the regulator was
-left disabled.
-
-Fix this by always registering the devm disable action when the regulator
-is enabled (checked via regulator_is_enabled()), covering both the
-explicitly-enabled case and the initial state set by
-devm_regulator_get_exclusive().
-
-This fixes WARN_ON enable count during regulator release.
-
-Fixes: 24843404efe4 ("phy: renesas: phy-rcar-gen3-usb2: Control VBUS for RZ/G2L SoCs")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 103 +++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index d06fb52ed5f1..ef38c3b365d4 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -905,15 +905,17 @@ static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(struct rcar_ge
- 	if (IS_ERR(channel->vbus))
- 		return PTR_ERR(channel->vbus);
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+index 85e409ac8d5c..45aa41467e08 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -1198,6 +1198,109 @@ queue3 {
+ 			};
+ 		};
  
--	if (!enable)
--		return 0;
-+	if (enable) {
-+		ret = regulator_enable(channel->vbus);
-+		if (ret)
-+			return ret;
-+	}
- 
--	ret = regulator_enable(channel->vbus);
--	if (ret)
--		return ret;
-+	if (regulator_is_enabled(channel->vbus))
-+		return devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_vbus_disable_action,
-+						channel->vbus);
- 
--	return devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_vbus_disable_action,
--					channel->vbus);
-+	return 0;
- }
- 
- static int rcar_gen3_phy_usb2_vbus_regulator_register(struct rcar_gen3_chan *channel)
++		phyrst: usbphy-ctrl@11e00000 {
++			compatible = "renesas,r9a08g046-usbphy-ctrl";
++			reg = <0 0x11e00000 0 0x10000>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>;
++			resets = <&cpg R9A08G046_USB_PRESETN>;
++			power-domains = <&cpg>;
++			#reset-cells = <1>;
++			renesas,sysc-pwrrdy = <&sysc 0xd70 0x1>;
++			status = "disabled";
++
++			usb0_vbus_otg: regulator-vbus {
++				regulator-name = "vbus0";
++			};
++
++			usb1_vbus_otg: regulator1-vbus {
++				regulator-name = "vbus1";
++			};
++		};
++
++		ohci0: usb@11e10000 {
++			compatible = "generic-ohci";
++			reg = <0 0x11e10000 0 0x100>;
++			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H0_HCLK>;
++			resets = <&phyrst 0>,
++				 <&cpg R9A08G046_USB_U2H0_HRESETN>;
++			phys = <&usb2_phy0 1>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		ohci1: usb@11e90000 {
++			compatible = "generic-ohci";
++			reg = <0 0x11e90000 0 0x100>;
++			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H1_HCLK>;
++			resets = <&phyrst 1>,
++				 <&cpg R9A08G046_USB_U2H1_HRESETN>;
++			phys = <&usb2_phy1 1>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		ehci0: usb@11e10100 {
++			compatible = "generic-ehci";
++			reg = <0 0x11e10100 0 0x100>;
++			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H0_HCLK>;
++			resets = <&phyrst 0>,
++				 <&cpg R9A08G046_USB_U2H0_HRESETN>;
++			phys = <&usb2_phy0 2>;
++			phy-names = "usb";
++			companion = <&ohci0>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		ehci1: usb@11e90100 {
++			compatible = "generic-ehci";
++			reg = <0 0x11e90100 0 0x100>;
++			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H1_HCLK>;
++			resets = <&phyrst 1>,
++				 <&cpg R9A08G046_USB_U2H1_HRESETN>;
++			phys = <&usb2_phy1 2>;
++			phy-names = "usb";
++			companion = <&ohci1>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		usb2_phy0: usb-phy@11e10200 {
++			compatible = "renesas,usb2-phy-r9a08g046";
++			reg = <0 0x11e10200 0 0x700>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H0_HCLK>;
++			resets = <&phyrst 0>,
++				 <&cpg R9A08G046_USB_U2H0_HRESETN>;
++			#phy-cells = <1>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		usb2_phy1: usb-phy@11e90200 {
++			compatible = "renesas,usb2-phy-r9a08g046";
++			reg = <0 0x11e90200 0 0x700>;
++			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A08G046_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_USB_U2H1_HCLK>;
++			resets = <&phyrst 1>,
++				 <&cpg R9A08G046_USB_U2H1_HRESETN>;
++			#phy-cells = <1>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
+ 		pcie: pcie@11e40000 {
+ 			reg = <0 0x11e40000 0 0x10000>;
+ 			ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>;
 -- 
 2.43.0
 
