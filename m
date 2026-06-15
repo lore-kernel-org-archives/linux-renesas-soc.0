@@ -1,146 +1,153 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319A23BF699;
-	Mon, 15 Jun 2026 09:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8B30D40C
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jun 2026 09:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781515157; cv=none; b=VH5noG5dY25swZSTuZnvDgPnbwG4skf5U4cFQI247+wq1UPOvdNqFl/xhs8PXJaJmZHAT4a0muCXei3VHpJa7yTJdnP/9ohrR3l0z6HJ7ak0CHOPHLi16JCFmy7nvtnS1xgewi4OSoGW+VuLDsQdfSNkem6DOt26KfrcUDlssCk=
+	t=1781515896; cv=none; b=Kdq+bNHYv3Z3yujULRL6KrdjNtLy/9gS2Aij5IhvsxBVdMXHDrLU+Z3d1b3xL8r2SmHaG8IJnG0pJHgSd0MoyyE56IhWS7vINe817I+X4OQ99DffcS5EQIYmJfgPx5fg8fs5pe+xFmz5bvmtXJt1EcCwYAtQ1j1f4zyNvl98d2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781515157; c=relaxed/simple;
-	bh=7pnF6vbhipc5/ZDsAUAMs10wUOTE+lh7/ts9Pr31Pwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kazjCnZNljN5EP/RCRDeKdbVBjT1O8HsqrklMB2BEtz/EUz21xd0sxQUxFLnFqiIMjJdD/XOOmDGy3JoxIZ/SGzEleFY3fTl47N46t2iM91RzYUgsqCmhUWU9KOkQuC4hbCPXFgk0dZzGPGK09lluSxuaw4tijYSYL/PFjRgFZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AkGYBH5+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AkGYBH5+"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8235C1E6;
-	Mon, 15 Jun 2026 11:18:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781515120;
-	bh=7pnF6vbhipc5/ZDsAUAMs10wUOTE+lh7/ts9Pr31Pwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AkGYBH5+p+7BRF9FQ3H+qI8DoQKULNnakyPm2K1iTyvEvcalh5iWWwoSIdoHldHmq
-	 kFMDiduPjFm9S+Eawnjn0Ep71HnyAmVhM1cgNX5T1uWw/ZjKhLkojp1VdCdC0u764I
-	 jkJ+5CkAHGqh7rfKCHkLh8B8V0uRzaTDViFkp9Ac=
-Date: Mon, 15 Jun 2026 12:19:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
-Message-ID: <20260615091911.GB2821720@killaraus.ideasonboard.com>
-References: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com>
- <20260615-rcar-du-dsc-v4-4-93096a1b56a3@ideasonboard.com>
+	s=arc-20240116; t=1781515896; c=relaxed/simple;
+	bh=cokh81Cx7W15QrHxXBRjalQp7kxTMzsuksUx0kqLiGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=blOASX4+hxRwnnXPNTH+JkChlBve8JgWf6vhTNy9ZJwb8BFkviiWNm1I23B4/XU1NXwRQU682o0BTkwikC2w4r5rEA8IHvoYSVWLJjqKNbGQbNYyWwjHQhlAOXgKalKKf6rHMOWgDw4UU5IKo4U5pP9Q72KsTe05TVutetBMnGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-5175eab3a93so25734541cf.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jun 2026 02:31:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781515894; x=1782120694;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ekHktY4/Tubvm6BgE1BfS1UNgz1F/icrKZN3pNx8f0Y=;
+        b=X3ghHtBmc0K4mYKp1jyyvF9Rup2l5DJ7oL5//PteBPSh90sYPJL0y5RzIty4sS6GBN
+         8mNr6I21Y+N6F3vWpdtBqKHvtlJLC7S/VtSwy2LOkuNDSgvw8Gf1g1soCB1WMZNbyLq/
+         cQcOkSa2xJsoksnXt9xjEz5q3zqaugnJiKvrQsr2WJ158qkUCrVeODWznHVP4z2HNEo6
+         Km+oopm5jhZ6vaR8HQ4LYwOqaKgAJq+7oSNQfK7dAByrtc0hD1+MpG5Zr0/G69iyud2k
+         7hzccMgRKj4s2cUV3GUB9Fgdd5wFinNHEKR6wFWTxKU3j/kEUVGYr1fTW9VhbL8KB9ir
+         AB5A==
+X-Forwarded-Encrypted: i=1; AFNElJ8iiS8/kaKKT/lgw8GF9D9IlRmJN7aLH0XiokNYQus5ge+t3kEbmCH7/rOhWWJgstuVJzl86k+mNjBxGOkilw9iwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRwSyVpH43AIbVYtcRHFu/6h4lE+GZ82umYM9aDa6JMZd3e4jW
+	y1xfIkZiRMZHONiOWfdeHKYR25T6K2jHB5e+Dbx6PbbfN5Fl/mPXkeA/KEWONk1p
+X-Gm-Gg: Acq92OELxXtzfxWFX6x2PLpuZlWAHloXDJGZna2UgVJKlklbm67r8nT+U1NOLt1BQy1
+	wVcIvxd46WIBZT+FTfKKLjIXUDDLk2RhtAtrOroJxUrRtXvTqWcoEkA7+BtgjhSfCoBaTi50Q10
+	We9Kbh5okZuEnHZRGsTo0ZwHczP8eod9QWhguV/rLOTeJ/cq8Rbs5xx/oqOUKcsxJLiYAIaXtKK
+	NgFMoFv7NTtLSAyRcFaZRs9huZoHmZFk1aX+LJN0g4oUBDXTyJVYZ9kPawenpDseV2PyqMXSiVU
+	mghI7qU3dEj3I9g32qfW9K0Sn3iGcSS/7fZqt8B7JQvWcbYrzqu0y19Ee8kBeoVu6ltc3Pov0v6
+	IbbiAI7huRyPgQ9MAoTfw+IG6+AUfvGXsh6E93rtCHFNiA9+Dy9nY4SBv8vUm1miYZHsHAxIlTC
+	uTWH2gCxM46H1hchL7boRJidDyTa1vtmmvW4z3907AAxBKQksP5ylLTY6Zfxy+KdMsIHYRkGDnW
+	ak=
+X-Received: by 2002:a05:622a:1315:b0:516:e1a0:e28a with SMTP id d75a77b69052e-5195355451amr162589551cf.45.1781515893732;
+        Mon, 15 Jun 2026 02:31:33 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb83db58sm101032801cf.27.2026.06.15.02.31.33
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jun 2026 02:31:33 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-5175eab3a93so25734471cf.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jun 2026 02:31:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/ycnJJSKKaFq2YUbbrIygjyjc6c7m6rZ8Ciqixar8SVfUKOWtP5j6Iz2/HJJsD95pbtc7BAN08jx8yM9+Dyc+tww==@vger.kernel.org
+X-Received: by 2002:a05:6102:32c4:b0:6c2:e290:cc69 with SMTP id
+ ada2fe7eead31-71f60e0fc5bmr5388435137.23.1781515508903; Mon, 15 Jun 2026
+ 02:25:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260615-rcar-du-dsc-v4-4-93096a1b56a3@ideasonboard.com>
+References: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com> <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
+In-Reply-To: <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Jun 2026 11:24:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
+X-Gm-Features: AVVi8Ceq73VEJddOjmb1j9jjrYgT5rbGI4-mYSdD7C_MYewqPqxZACymjTcgJ3U
+Message-ID: <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
 Hi Tomi,
 
-Thank you for the patch.
-
-On Mon, Jun 15, 2026 at 09:28:09AM +0300, Tomi Valkeinen wrote:
-> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
-> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
-> crtc, when enabling the crtc.
-> 
-> With DSC (added in upcoming patch) in the pipeline, between the DU and
-> the DSI, the above call path is broken as the crtc tries to call
-> rcar_mipi_dsi_pclk_enable() on the DSC.
-> 
-> To solve this problem, add checks to rcar_du_crtc_atomic_enable() and
-> rcar_du_crtc_atomic_disable() to detect the DSC via the bridge type, and
-> skip the DCS bridge when needed.
-> 
+On Mon, 15 Jun 2026 at 08:28, Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>
+> The Renesas DSC Display Stream Compression is a bridge embedded in the
+> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+> 8k or 400 Mpixel/s .
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> [tomi.valkeinen: fix the example]
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c  | 18 ++++++++++++++++++
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c |  1 +
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c
-> index 6c07c406f725..f14fd89f9104 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c
-> @@ -754,6 +754,15 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
->  	     (BIT(RCAR_DU_OUTPUT_DSI0) | BIT(RCAR_DU_OUTPUT_DSI1)))) {
->  		struct drm_bridge *bridge = rcdu->dsi[rcrtc->index];
->  
-> +		/*
-> +		 * When we have a DSC block between the DU and the DSI,
-> +		 * the "bridge" points to the DSC. Detect the DSC by looking
-> +		 * at the bridge type, and skip the DSC if the bridge is not
-> +		 * the DSI bridge.
-> +		 */
-> +		if (bridge->type != DRM_MODE_CONNECTOR_DSI)
-> +			bridge = bridge->next_bridge;
-> +
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Is there a reason you don't do this in rcar_du_encoder_init() instead ?
-It would avoid running this code on every enable/disable.
+Thanks for the update!
 
->  		rcar_mipi_dsi_pclk_enable(bridge, state);
->  	}
->  
-> @@ -796,6 +805,15 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
->  	     (BIT(RCAR_DU_OUTPUT_DSI0) | BIT(RCAR_DU_OUTPUT_DSI1)))) {
->  		struct drm_bridge *bridge = rcdu->dsi[rcrtc->index];
->  
-> +		/*
-> +		 * When we have a DSC block between the DU and the DSI,
-> +		 * the "bridge" points to the DSC. Detect the DSC by looking
-> +		 * at the bridge type, and skip the DSC if the bridge is not
-> +		 * the DSI bridge.
-> +		 */
-> +		if (bridge->type != DRM_MODE_CONNECTOR_DSI)
-> +			bridge = bridge->next_bridge;
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
+> @@ -0,0 +1,99 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  		/*
->  		 * Disable the DSI clock output, see
->  		 * rcar_du_crtc_atomic_enable().
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index aaafee1c060b..f429f03a380c 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -957,6 +957,7 @@ static int rcar_mipi_dsi_host_attach(struct mipi_dsi_host *host,
->  
->  	/* Initialize the DRM bridge. */
->  	dsi->bridge.of_node = dsi->dev->of_node;
-> +	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
->  	drm_bridge_add(&dsi->bridge);
->  
->  	return 0;
+> +title: Renesas R-Car DSC Display Stream Compression
+> +
+> +maintainers:
+> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
+> +
+> +description: |
+> +  This binding describes the VESA DSC Display Stream Compression encoder
+> +  embedded in the Renesas R-Car V4H SoC. The encoder supports all DSC1.1
+> +  encoding mechanisms, configurable bits-per-pixel, resolution up to 8k.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r8a779g0-dsc
+> +      - const: renesas,rcar-dsc
+
+Please do not introduce new "renesas,rcar" fallback compatible values,
+unless you are adding new support for a hardware block that is present
+in SoCs belonging to multiple (nowadays I would say at least three)
+R-Car generations.  The DSC is only found in R-Car Gen4 SoCs, so
+"renesas,rcar-gen4-dsc" sounds more appropriate.
+However, so far R-Car V4H is the only R-Car Gen4 SoC that has a DSC.
+Even the very similar R-Car V4M does not seem to have it.
+R-Car X5H has DSC-functionality integrated in its DisplayPort TX
+controller, so that seems to be a different implementation?
+Hence that rules out any family-specific compatible value for now.
+
+The rest of the (system/core) SoC integration LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
