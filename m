@@ -1,35 +1,34 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C803F54BF;
-	Wed, 17 Jun 2026 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBD13F5BCF;
+	Wed, 17 Jun 2026 11:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781697372; cv=none; b=jpbOu2jZZ3Sv06pgqO0MuBmScCH052JdZRuYdNX+TMGJNyNPWFJPAcsTEoCC6828FVGEDMI5jvXcsRZ40aresaHHLa0D+k6DihvQ6dE7XRPqVOiFGISQ6sbAmCvCBka3cAN5ltgxm1kj5UtCYXb7bRqxsBa2h9udXnIYU3rRZAE=
+	t=1781697372; cv=none; b=FTKKlIjCNXgsGspXhbe4tXpjsHpcr1rgmlbkmAAAHYRxP4k4ro3eTct/ErfGYgXC1DhB0okbvRNXC+cFhcMKtd840j3RTku9byqNIYQNivrihTaR3YU6ZlzNcz2X/g0DSEHnlXrFG09e3R1gD0hCpj2aqCLl7BaerzzlKlxH0Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781697372; c=relaxed/simple;
-	bh=fLSaZatxZGVezSWbEtVA1QixYVyhOQYtg1eGVTt/5WM=;
+	bh=6sHE00vbDvzvrybHQclSR6qWqqhtviFdFTBgc5dIgYE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nMFkLg8FhH0rFQZad1EFviwjr3rjbOMkMl4ueJAwuNkS7QoBDA93XmIvQ7qLtGBFI2iAnzNWM9HltsUwp1KUz8+8LeKhCQ12a2d+r4M9IdDGs9dabgJDRsnNz3uCvOssmIMb/9rHl8jQ4Wc5VT1m6kdelA+3xUQyQdOTZzuO3fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GVrJu1UF; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=KE9l7JqCUHPKB26NWHYDSLlbT7ECAW/LNSqVyFvADMhKW7dsXwfCmO6t0qyzJqposn8T2WSKRZ1VrK/68NCFPNEkia6tYgBeeL0gEbOdPYeV3w++h5PAaDe0j/yMGT4k+CmhfnvbWUkOpVBuURCxsLRA17F8TRtLAUlfqQRErlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XBRodase; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GVrJu1UF"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XBRodase"
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A402016F9;
-	Wed, 17 Jun 2026 13:55:20 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6587518E9;
+	Wed, 17 Jun 2026 13:55:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
 	s=mail; t=1781697321;
-	bh=fLSaZatxZGVezSWbEtVA1QixYVyhOQYtg1eGVTt/5WM=;
+	bh=6sHE00vbDvzvrybHQclSR6qWqqhtviFdFTBgc5dIgYE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GVrJu1UFJ/IEND04SfxgJODDYTfZHlo8LxjQiheBg/A+ctBwiSTA6qRgv0jBleaCh
-	 hkJYXpwBUu4ALtHrwNY/oP6mKwDS2gfZTSl7LDrtJH3rSfM+dJ52IhjGiA2O33BQAl
-	 O6FejUg0EPbjzmfwmPBC505EKKnaQNXnKKnfaLFU=
+	b=XBRodase4zRAh1axK1oCitwH9puPynRJ8wCQbB33Kweftix4ac7UEU0muondnFp6m
+	 W7z9uapz5tJl4wxnewWm+1tdAfdCtU99ign9SBtneJbN/51SmJFUYTandPhKjqFHJs
+	 wYCct0fbVIbG0T0abKfkfAzOKYGueXr8SpaZRnBI=
 From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Wed, 17 Jun 2026 14:54:57 +0300
-Subject: [PATCH v6 04/11] media: rcar-csi2: Move {enable|disable}_streams()
- calls
+Date: Wed, 17 Jun 2026 14:54:58 +0300
+Subject: [PATCH v6 05/11] media: rcar-csi2: Switch to Streams API
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -38,7 +37,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260617-rcar-streams-v6-4-1260eb72dff7@ideasonboard.com>
+Message-Id: <20260617-rcar-streams-v6-5-1260eb72dff7@ideasonboard.com>
 References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
 In-Reply-To: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
 To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
@@ -52,162 +51,170 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4090;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5188;
  i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=fLSaZatxZGVezSWbEtVA1QixYVyhOQYtg1eGVTt/5WM=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqMotEmmV/gtknz5Yn43xKdU7KYsWTNOvTzLODo
- 1bH27q8ne2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCajKLRAAKCRD6PaqMvJYe
- 9ffnEACiIGPtz90VoxIS71QGFHNUxqNvKhIZmIJr6eSkKoyXhhW0EqMvuidgWQ0/NPK5FMAM4NM
- InpRl/Mur69nCrzyiH0Yd8W/g8mTI1n+PkwfhT9UzRtA4WFCc/SkyBmjLkipyyiJwWySq/jj6D3
- 11ySg4+je+HUmvUs+ltliKdYCU5L6QomfQ6QqI/npy2gedi2c1aBkM8Y5eXlXJtBHEza9FJApKg
- THs5VaRzm4uM8lEQf6HyglZZnHUPl6ZrGrqDSnt9A+s0Fx9sjM9S10r5qEqkd15WTeslEOOUQvk
- DEs7kGe0ArzqOU4zRu9J/QXm2IVqXK9irMOyCw5NuBFnt2KABYQP+z7Gd8UnotqW9n5h4j1+SIa
- rBtNgS42Txj81WDa8XABHN6HGbUrJ/87MgUvtxIF/rF3aNIRrrqm4bFsMwN+HapKbX+rYo8pJGl
- bDarw+HkdUNDEPzZy4YXqqnUtvNPbFC2mQLIWr7yIhyhbWtas/QEXaJi3TA6rZHAZ/tdsU2HGKO
- cxIDBmjLlxJP6kc1M9xf4xjT/xTK3GYMCxf7ozwtKhOLjGHv2pWwGLsv1SHjkZLRNpz4/m49xd8
- gMfRN8Gbq/HVPHDc0nMh2/0bYTJ6N+ji+HT8W5rsub13hGCA4TdwKXtI7Kmdyt4YdGdIdxVbdXa
- cqgYczvFoEqvuew==
+ bh=6sHE00vbDvzvrybHQclSR6qWqqhtviFdFTBgc5dIgYE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqMotE+5XiH48zvOMT+Ws2VpWXRzXys0wFe2cWe
+ 7Mny+iC1ieJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCajKLRAAKCRD6PaqMvJYe
+ 9flQD/0RGHQ7OXugT3lskQHoLsZJu7Tp+zg2e0MpqoMaw4+uBvKiMy3yXRan7MG4XDRK9ZkD/Qu
+ BO7TUIt8yooXRoO4PIIb6lIdErL0vJIy9oG4iWClnyTPxvJs8ce+yyNhU7SvTqUHTprTznTFwEF
+ Y4KYP3QfSAzcDy36shEMbvYEMSTjy6ovHBc5elZQiwY1PQCLvi1V7hi/+Or+L2O/SkBetsg4qjX
+ A5H88j3cqkbcLzdkG07hWmjjTbO1SS3gPDyu0B8GJW4QQSYkAPFJri2WjPvtaZSXPCrxj20wJBX
+ hBXzfOvghOLPtl/S5vr+T+4veIQAzjVzRExqw2XrmkaC6Ogd7ta2nOS1u3EBrV3hqPbPzXDynR8
+ 2xZeAAMiDm2vq/9jLFdksipNzI8tflQt5kCYWdIljPrGtHEGTUZRq9Fqy6lKWWC6bhWaIWZzi/S
+ ISwgmyzHGNtValGvTLZg7fmarXekLVpbIrRKMHoG51cXdqJQP6raHSqs/uZVXHZT8MmpEvlqc/Z
+ CEcf6hz2zZYpQ18niH+7uU96E9i56RLwMZI3sTCng2mCwPecv8jGNPn30DAXSs8nO/pitlges1e
+ /ZBnxqtjbfZCrs3y9ZGmh8y7rg+kw8z99Auz/IvbAR/RUpRg+xMf1h2fxgTZv8w13i9DHqTZQl5
+ 0FqPhzYdK5G5F4Q==
 X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-With multiple streams the operation to enable the CSI-2 hardware and to
-call {enable|disable}_streams() on upstream subdev will need to be
-handled separately.
+Switch to Streams API with a single hardcoded route.
 
-Prepare for that by moving {enable|disable}_streams() calls out from
-rcsi2_start() and rcsi2_stop().
+For single-stream use case there should be no change in behavior.
 
-As the error recovery in rcsi2_irq_thread() relies on rcsi2_start() and
-rcsi2_stop(), we need to modify rcsi2_irq_thread() accordingly.
-
-On Gen3, a side effect of this change is that if the sink side devices
-call .enable_streams() on rcar-csi2 multiple times, the second call will
-fail. This is because we always use stream ID 0, so the second call
-would attempt to enable the same stream again, leading to an error. In
-other words, a normal single-stream setup continues to work, but trying
-to use the current driver's custom VC based routing will fail.
-
-On Gen4, this doesn't matter as the rcar-isp behaves in a similar way as
-described above, and thus rcar-csi2 will only get a single
-.enable_streams() call.
-
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 ---
- drivers/media/platform/renesas/rcar-csi2.c | 59 ++++++++++++++++++++++++------
- 1 file changed, 47 insertions(+), 12 deletions(-)
+ drivers/media/platform/renesas/rcar-csi2.c | 64 +++++++++++++++++++++++-------
+ 1 file changed, 50 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-index 7305cc4a04cb..f5d8b06dff51 100644
+index f5d8b06dff51..91f713e1f8c2 100644
 --- a/drivers/media/platform/renesas/rcar-csi2.c
 +++ b/drivers/media/platform/renesas/rcar-csi2.c
-@@ -1822,20 +1822,12 @@ static int rcsi2_start(struct rcar_csi2 *priv, struct v4l2_subdev_state *state)
- 		return ret;
- 	}
+@@ -1023,17 +1023,24 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
+ 	 */
+ 	freq = v4l2_get_link_freq(remote_pad, 0, 0);
+ 	if (freq < 0) {
++		const struct v4l2_subdev_route *route;
+ 		const struct rcar_csi2_format *format;
+ 		const struct v4l2_mbus_framefmt *fmt;
+ 		unsigned int lanes;
+ 		unsigned int bpp;
+ 		int ret;
  
--	ret = v4l2_subdev_enable_streams(priv->remote, priv->remote_pad,
--					 BIT_ULL(0));
--	if (ret) {
--		rcsi2_enter_standby(priv);
--		return ret;
--	}
--
++		if (state->routing.num_routes != 1)
++			return -EINVAL;
++
+ 		ret = rcsi2_get_active_lanes(priv, &lanes);
+ 		if (ret)
+ 			return ret;
+ 
+-		fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
++		route = &state->routing.routes[0];
++
++		fmt = v4l2_subdev_state_get_format(state, route->sink_pad,
++						   route->sink_stream);
+ 		if (!fmt)
+ 			return -EINVAL;
+ 
+@@ -1062,6 +1069,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
+ static int rcsi2_start_receiver_gen3(struct rcar_csi2 *priv,
+ 				     struct v4l2_subdev_state *state)
+ {
++	const struct v4l2_subdev_route *route;
+ 	const struct rcar_csi2_format *format;
+ 	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
+ 	const struct v4l2_mbus_framefmt *fmt;
+@@ -1070,7 +1078,16 @@ static int rcsi2_start_receiver_gen3(struct rcar_csi2 *priv,
+ 	int mbps, ret;
+ 
+ 	/* Use the format on the sink pad to compute the receiver config. */
+-	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
++
++	if (state->routing.num_routes != 1)
++		return -EINVAL;
++
++	route = &state->routing.routes[0];
++
++	fmt = v4l2_subdev_state_get_format(state, route->sink_pad,
++					   route->sink_stream);
++	if (!fmt)
++		return -EINVAL;
+ 
+ 	dev_dbg(priv->dev, "Input size (%ux%u%c)\n",
+ 		fmt->width, fmt->height,
+@@ -1892,8 +1909,7 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ 				struct v4l2_subdev_state *state,
+ 				struct v4l2_subdev_format *format)
+ {
+-	struct rcar_csi2 *priv = sd_to_csi2(sd);
+-	unsigned int num_pads = rcsi2_num_pads(priv);
++	struct v4l2_mbus_framefmt *fmt;
+ 
+ 	if (format->pad > RCAR_CSI2_SINK)
+ 		return v4l2_subdev_get_fmt(sd, state, format);
+@@ -1901,11 +1917,20 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ 	if (!rcsi2_code_to_fmt(format->format.code))
+ 		format->format.code = rcar_csi2_formats[0].code;
+ 
+-	*v4l2_subdev_state_get_format(state, format->pad) = format->format;
++	/* Set sink format. */
++	fmt = v4l2_subdev_state_get_format(state, format->pad, format->stream);
++	if (!fmt)
++		return -EINVAL;
++
++	*fmt = format->format;
++
++	/* Propagate the format to the source pad. */
++	fmt = v4l2_subdev_state_get_opposite_stream_format(state, format->pad,
++							   format->stream);
++	if (!fmt)
++		return -EINVAL;
+ 
+-	/* Propagate the format to the source pads. */
+-	for (unsigned int i = RCAR_CSI2_SOURCE_VC0; i < num_pads; i++)
+-		*v4l2_subdev_state_get_format(state, i) = format->format;
++	*fmt = format->format;
+ 
  	return 0;
  }
- 
- static void rcsi2_stop(struct rcar_csi2 *priv)
+@@ -1925,8 +1950,15 @@ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+ static int rcsi2_init_state(struct v4l2_subdev *sd,
+ 			    struct v4l2_subdev_state *state)
  {
- 	rcsi2_enter_standby(priv);
--	v4l2_subdev_disable_streams(priv->remote, priv->remote_pad, BIT_ULL(0));
+-	struct rcar_csi2 *priv = sd_to_csi2(sd);
+-	unsigned int num_pads = rcsi2_num_pads(priv);
++	static struct v4l2_subdev_route routes[] = {
++		{
++			.sink_pad = RCAR_CSI2_SINK,
++			.sink_stream = 0,
++			.source_pad = RCAR_CSI2_SOURCE_VC0,
++			.source_stream = 0,
++			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
++		},
++	};
+ 
+ 	static const struct v4l2_mbus_framefmt rcar_csi2_default_fmt = {
+ 		.width		= 1920,
+@@ -1939,10 +1971,13 @@ static int rcsi2_init_state(struct v4l2_subdev *sd,
+ 		.xfer_func	= V4L2_XFER_FUNC_DEFAULT,
+ 	};
+ 
+-	for (unsigned int i = RCAR_CSI2_SINK; i < num_pads; i++)
+-		*v4l2_subdev_state_get_format(state, i) = rcar_csi2_default_fmt;
++	static const struct v4l2_subdev_krouting routing = {
++		.num_routes = ARRAY_SIZE(routes),
++		.routes = routes,
++	};
+ 
+-	return 0;
++	return v4l2_subdev_set_routing_with_fmt(sd, state, &routing,
++						&rcar_csi2_default_fmt);
  }
  
- static int rcsi2_enable_streams(struct v4l2_subdev *sd,
-@@ -1857,6 +1849,14 @@ static int rcsi2_enable_streams(struct v4l2_subdev *sd,
- 			return ret;
- 	}
+ static const struct v4l2_subdev_internal_ops rcar_csi2_internal_ops = {
+@@ -2629,7 +2664,8 @@ static int rcsi2_probe(struct platform_device *pdev)
+ 	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
+ 	snprintf(priv->subdev.name, sizeof(priv->subdev.name), "%s %s",
+ 		 KBUILD_MODNAME, dev_name(&pdev->dev));
+-	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
++	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE |
++			     V4L2_SUBDEV_FL_STREAMS;
  
-+	ret = v4l2_subdev_enable_streams(priv->remote, priv->remote_pad,
-+					 BIT_ULL(0));
-+	if (ret) {
-+		if (priv->stream_count == 0)
-+			rcsi2_stop(priv);
-+		return ret;
-+	}
-+
- 	priv->stream_count += 1;
- 
- 	return ret;
-@@ -1867,7 +1867,7 @@ static int rcsi2_disable_streams(struct v4l2_subdev *sd,
- 				 u32 source_pad, u64 source_streams_mask)
- {
- 	struct rcar_csi2 *priv = sd_to_csi2(sd);
--	int ret = 0;
-+	int ret;
- 
- 	if (source_streams_mask != 1)
- 		return -EINVAL;
-@@ -1878,9 +1878,14 @@ static int rcsi2_disable_streams(struct v4l2_subdev *sd,
- 	if (priv->stream_count == 1)
- 		rcsi2_stop(priv);
- 
-+	ret = v4l2_subdev_disable_streams(priv->remote, priv->remote_pad,
-+					  BIT_ULL(0));
-+	if (ret)
-+		return ret;
-+
- 	priv->stream_count -= 1;
- 
--	return ret;
-+	return 0;
- }
- 
- static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
-@@ -1971,14 +1976,44 @@ static irqreturn_t rcsi2_irq_thread(int irq, void *data)
- {
- 	struct v4l2_subdev_state *state;
- 	struct rcar_csi2 *priv = data;
-+	int ret;
- 
- 	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
- 
-+	if (priv->stream_count == 0)
-+		goto out;
-+
- 	rcsi2_stop(priv);
-+
-+	ret = v4l2_subdev_disable_streams(priv->remote, priv->remote_pad,
-+					  BIT_ULL(0));
-+	if (ret) {
-+		dev_warn(priv->dev,
-+			 "Error recovery: failed to disable streams: %d\n",
-+			 ret);
-+		goto out;
-+	}
-+
- 	usleep_range(1000, 2000);
--	if (rcsi2_start(priv, state))
--		dev_warn(priv->dev, "Failed to restart CSI-2 receiver\n");
- 
-+	ret = rcsi2_start(priv, state);
-+	if (ret) {
-+		dev_warn(priv->dev,
-+			 "Error recovery: failed to start CSI-2 receiver: %d\n",
-+			 ret);
-+		goto out;
-+	}
-+
-+	ret = v4l2_subdev_enable_streams(priv->remote, priv->remote_pad,
-+					 BIT_ULL(0));
-+	if (ret) {
-+		dev_warn(priv->dev,
-+			 "Error recovery: failed to start streams: %d\n",
-+			 ret);
-+		goto out;
-+	}
-+
-+out:
- 	v4l2_subdev_unlock_state(state);
- 
- 	return IRQ_HANDLED;
+ 	priv->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+ 	priv->subdev.entity.ops = &rcar_csi2_entity_ops;
 
 -- 
 2.43.0
