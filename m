@@ -1,93 +1,98 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED663806C2
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Jun 2026 11:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEDB3F0777;
+	Wed, 17 Jun 2026 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781694730; cv=none; b=uCMup16kWuWxZh+imvsDLqIddmF8clBW3Q3DahsrU/c/q6yj9p/RB6Wnf6Wh22UWdyUaNEtmFF1YOFiORM71T98fb8d+7cTlSTHKPcrNUNwffqSsG/KbPxGDTP75uTqVM130eGGtpTrE8duuHkQXBmM0E2CNoAGpCz13CZH25uU=
+	t=1781697365; cv=none; b=X09ulTd66tXZetCnZbc8emm3jihkIidcb6s3HA48pDHHsZ6gx2v0F2soyWjiRXfaCX8zgRoVWafO9D6gFH8FJ9qN4CLNMMPd7ImWj99SJxLJP4O7KGdBNCg187OlFujRzjYjLPLRPqCQpAwqNOVO9skz/xxJMo9RtcQO71I0GyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781694730; c=relaxed/simple;
-	bh=pqfx1Kz9Wn12PIFaf55ovBxOXez+eh0VV23VISnLVBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNpV/+6SA9+juVymNTiyNmKTpEU6Gk5WDcEjLnvusn86ipMNoJ+SpFnnp77JY31SGYqbxwdn+w2xXeIRMANC9XIaZDTQ7ihyc9HkUX1DKGWgwMN1ahzqqUSfM0uUmftCXNXET/UqMCfodg6iCM+X+vD+vqSmbpm564QAAba7Gss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cz3cZLCm; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1781697365; c=relaxed/simple;
+	bh=TQpu4ZDSe8o6iU2aimqX4sqTDMPQM2QGuVyZ2YPewCk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dnpQgWQQt4W44sogsKv6S3WAnj5p9JrjQ3lrzjKYH20qrAY791CsD9xyPOzmT0rNitjNdhpRZVM8IbS5YrLPqausMQjTZ6CQ8cS3J+3eafDM4MuHFefIkI5HFQYePMAdyxFE5mnL2KbLwg96k/O938udPwjTw7xVQvzROj/diBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=stAN+czd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cz3cZLCm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=pqfx
-	1Kz9Wn12PIFaf55ovBxOXez+eh0VV23VISnLVBk=; b=cz3cZLCmGhaN3okhv6ue
-	V3XbwjDFla4dDy7biZbA4wJgzOovjXx4knrA1smyakh242lT/dN9PUduIQTFjX7V
-	YM5nWFR01cxHP8iS0TSa+aL09mhVuUz8NNYLS0R6cOxaa3WHVx+Oj06llfVf5TV9
-	rotjUcHC1wxH40KSebI+oERV8Q0z2zAKfg+y3TTjwlCHp/+t8noQUemOiNoQ06l8
-	dxVwqyNT9SFX/BsWgErSLiG7x6pvbYwXHo637CQCpL2lzvhBFZrsZpWjHvSvu5xu
-	bczW2yS6n0WR8yDpUy3IKHWi/pqUSAGaqI07TacbVFkGcUJqbNC85oPyASi8mC8P
-	2A==
-Received: (qmail 137433 invoked from network); 17 Jun 2026 13:12:07 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Jun 2026 13:12:07 +0200
-X-UD-Smtp-Session: l3s3148p1@Dk9OIXFUBM0ujnvI
-Date: Wed, 17 Jun 2026 13:12:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 00/12] Add RTC support for Renesas RZ/T2H and RZ/N2H SoCs
-Message-ID: <ajKBBqJZssGk79dV@shikoro>
-References: <20260615154805.1619693-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ajJmacl9ZJtkoLyf@shikoro>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="stAN+czd"
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 60D9A664;
+	Wed, 17 Jun 2026 13:55:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1781697318;
+	bh=TQpu4ZDSe8o6iU2aimqX4sqTDMPQM2QGuVyZ2YPewCk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=stAN+czdJofimo4QLtFOFcc10yCEfdEJCzgH/1Q1aiKlcG7qttKUGOQIkk9deaNJP
+	 0EGcWOYcvT/LAA0PopbEdGQVnjICEdTyCZGYeFPCR55tjr2u030hDAivrQf1g73fgY
+	 3/2ZkzTyGjpBBP7G0McK5GlvJ8SoBaMw2zPmWvtw=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Date: Wed, 17 Jun 2026 14:54:54 +0300
+Subject: [PATCH v6 01/11] media: rcar-vin: Fix comment related to stride
+ handling
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QZhgB7Djq8Hxo8mR"
-Content-Disposition: inline
-In-Reply-To: <ajJmacl9ZJtkoLyf@shikoro>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260617-rcar-streams-v6-1-1260eb72dff7@ideasonboard.com>
+References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
+In-Reply-To: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
+To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1033;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=TQpu4ZDSe8o6iU2aimqX4sqTDMPQM2QGuVyZ2YPewCk=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqMotDIdYZJdjnamP4uo8u0YiJvpkcCKjPlJcna
+ lmnzZDCP0WJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCajKLQwAKCRD6PaqMvJYe
+ 9b8ND/9BrO/14zJcxA0f4UyvxTrTZVYQI1f4rIYelwaTKOY63M4ZiptFiTLvEKunUPQdkh6wIOP
+ JEd/oayedBpC/rtDimdCNFaOy8WEW6KKBHKV54KvxLx2arV51ExGopLX+BdO7/cJppyftwJndEk
+ q0OjRBBkJnk2Ps/SEDTyhpjSXHHfMawu+dX/dT7yF2GFZwYckN6NMSIj8TMH51cjQJtUPekDcey
+ w8e4YOokzgXoqeXDQPt2qr4N4IkyxakDHbc0v7Y708FHzkdpQFBKW9iLRC0/nEXh+l+ZqdQUuX0
+ ySVryDFWaC7FQwe+3C9LsLXiwd1soU6BoCYVTqMHaKYWaOcL3+AI+ty2fiEARHP+43zYreWEays
+ tjXl+ZFXQROeRB9musYzllgGz1cdHdQ44hIeCRf7GzkiQ7TvdQ6oPL896hYFn+i6Fnf7/pDClMP
+ U5zcxwJ+KW+y+RpP8Iu5XkMhZSQiBHyZGS2LuLkDKJ7pRRi1LBbh8K6Xq9xlknsCo+SoFJnovK+
+ vBq6KmTiM5xN+RvSg4ZCzWQjynNSPFGDpyN8XuALLWdPlDdve2Fo7YfpouTriHbBIE0qtN+ydHm
+ OpKkMkKhsq/3uDUwwzQM40dXT8/gOpUu7r/0E0ugjOiVfKD2PLdtSwyYEmjVrZbCXuWiXuL9zhc
+ JMdEL0cQrJ9DRuQ==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
+The comment says the stride has to be aligned to 16 bytes, but it should
+be 16 pixels, as VNIS_REG register is in pixels.
 
---QZhgB7Djq8Hxo8mR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Fixes: 40c6da8a9c0f ("media: renesas: vin: Fix RAW8 (again)")
+---
+ drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+index f9af9177e02f..d6c69c674d57 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+@@ -678,7 +678,7 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 
+ 	/*
+ 	 * VNIS_REG has four lowest bits always 0, i.e. the stride has to be
+-	 * aligned to 16 bytes. This is done in rvin_format_bytesperline().
++	 * aligned to 16 pixels. This is done in rvin_format_bytesperline().
+ 	 */
+ 
+ 	fmt = rvin_format_from_pixel(vin, vin->format.pixelformat);
 
-> I will review and test in on my N1D-board today.
+-- 
+2.43.0
 
-Except for the strange alarm-boundary behaviour, the tests went well.
-Will do further tests, it is probably not related to this series.
-
-
---QZhgB7Djq8Hxo8mR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoygQYACgkQFA3kzBSg
-KbaDbw/9GG7nh3Fgh5SM6xw0smJjzDmMORq2jOlkPvZVFyypPhumd8th2/tMAjbi
-8dqhmiUQMhutMWhFRn0SPCHU3hqbVxuzIp47VaJKOPzYF8CFHsNEm7y/gcdVegJG
-s9rQ5fcWAkP8Jyr2Mi//3tNYXe0+soZqdREkV9m4Z7d724AZmuapm/QZtr0FaQ1w
-fzpSzTKN9auZ+egqW8Gt8iUknwG1mLucr8zkVsH7AdslJwlQc7nnHN+1hg+qr98/
-0F/mbTnr8lACF6U7VgIMKY82Y+UgS3KPe9/LvOVJIS+nyPmvhlTzao8ndSSZkpzt
-+PY2D3bCYgSNhCq+LgpxoRbK3BKt+4h3DxOuYi7dA6sRjR+LzPB0QELbXRblOigE
-NilH4dNe6AUQm05C1giTLcIB9bwH1gzCwbmWJVDYEqUNpOGvH+ILmDTVlqoRfW5c
-1U3ZovEGW8whpRvHBYD3VtlBuYCictRaZeA9183xRWY1vhR14VQikVWxRd6zoRoc
-f+dG65WJeCoY90r3yvju7Aiaa67HpSywjlxIRgyA+/txIXdBNO8J862qKZDeL7FF
-Sk2uU1C1dYAxE+4R7aqKaEIKVSHceSW/2A3ydEMamKvdSfz6ry4sKmwZOoRX/Nmt
-c+KlT+nGh3m8Hi22O4EU+V/2x0F7Tmivenb9NWFCWmuCk8WWtOU=
-=Q3Hz
------END PGP SIGNATURE-----
-
---QZhgB7Djq8Hxo8mR--
