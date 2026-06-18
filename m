@@ -1,652 +1,437 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010051.outbound.protection.outlook.com [52.101.228.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF78369D5D
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jun 2026 18:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781806802; cv=none; b=MqtriCWUgNRoI+0jLIDxbeFraFZrFFZDQIZLyLNk/BZty7yLN/dcwqgfIqvdMbvO+s9k3rs5H7K3wVbNEAQXQZ2KchbZH8meXGCY1Y6AmTxXGdJqAyptRuntfBuFWcB7idEukdLEpIPXTZkitxZXAz4vBgnbCS+dR3o11ZnDyAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781806802; c=relaxed/simple;
-	bh=HS97OvURjgF/ATPSYkF3kKW6r0k21n6EQMBA7t+I63k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kh1BpGg2ySxvCLySFMEj+zpobkJu4/uinvGqB/1Yep5qwOP2wxBF4o7YoNMJ4/Ya++9zIDCTNzXRlFBmGvbo22hguHoiNrulSZ2k5DJSY+zmHUdeyxSSCR1g+HaZzSlv2WvcEQN9A2RASxr1RzLj204q9MQnjIgTLkcMFa+6eWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGQMVQ2H; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B1A2AE8D;
+	Thu, 18 Jun 2026 19:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781809807; cv=fail; b=eziTWskFbQwROKJixhPYYTF/7rCJwniIbjoStnqwbMdOZsgwvZ0xaDXWJzfmE7LlW89rcjmKWpMZa/2UxfCoKRPPIJv8VyRMclx35EelVHDVGz1CSsPRAKXuhIkGCQJ+KRSG+3oaryywQXiYhb9PqpXhR/OEeGDrbotTKWTYYwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781809807; c=relaxed/simple;
+	bh=GCH6Xlvq0gOas/m+SnjBti9ZH5I2jC/jjWM3HEN4H4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FW957NusCnUZlCzyq+iXdQ5vBMfA4shYZIPunmlE7AIdANbrT9z4sVB1iAkDLAAImwMlxGyDjeMrSqSJn4p8IB4bPMK5iGQTd/Pv648iZPLBrTfdRn0Kc2gfyZNUdNNb9jYgussE6RYtQV1VtbD4x1WhDTJ1lJGIAkC4yohuesM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=rGcoexLm; arc=fail smtp.client-ip=52.101.228.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGQMVQ2H"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4629d80fa08so1263672f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jun 2026 11:19:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781806797; x=1782411597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t0zhtl8MOp5qThcIZ4Nj35BLbB4CZkIjiaqJYoGM1R4=;
-        b=jGQMVQ2HIlRXORatrcXDipxPlqWuykSMkzlqtq55LLYeRYuAlApbIMHSTeF9eqPoCg
-         2mh1bZedVhKGlrhO1rNJgac7oZuzWW045jzguIE0am4Y04J+CTWcaQSoF7mvtU4Tfseg
-         I30U02EAFdPHU3X65CuwATv+wI/pAqovDwKzNskjvtlNbDirBrHvtChIRr7RK1IrZxcg
-         6H6MCR+PNzmSWN5O8HW6ZIMni+NgsLknrES1LBpFvOHBXvMRrsGPBb37gcrKlLnX/3rE
-         JMm06VXdgV2aYQhGGoxxQzOKn/BiGQbhOID2NEPSBWFzM7jkl2HLu50N7VM5JnrxrBZV
-         H/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781806797; x=1782411597;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=t0zhtl8MOp5qThcIZ4Nj35BLbB4CZkIjiaqJYoGM1R4=;
-        b=tQkEriAIa5s5F5p3TrvpCkpR0EC78J+wq10G8KhST0Z+QQXaI7fIDklA/qxs4OMJow
-         JgSxRCLMys4PrJQI8+qjSIjy3EsqIjADGuCFgbLQQrIzwRE1CWlM9dTcPt/hdrBCjHs9
-         DsIrJfweR12+MAFauAmjJXBPUUGlUBtTYP/9lMdZ7doZrCnjgANipT8R4h/ehD9OgD4O
-         YVOgXZVfVbb1QYgAwLutvKhv79FTs7e5nF65RkApgw7t2ZZZQTp6ysf1wy0DBTlwa8zi
-         cHhidCPwWG7j0eKz6nrhJg0IKLImNa9yxgpQT/9P4u0yxHNWk4iq23tALJSIDlrHUIvr
-         PyKQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/bZe2/10lxzlukz2e2nhZRIq+6LsFzfKEtEXMQW4snLsJPoX3FNmYYLBBcTa1355X/LLabJbnAJlANqK2Lo4YJvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE237tL33W3j0W3gvHMidfBwbBb2zeKFG0uiieZ0+lkVKmaLXV
-	ZJa33yln5rMPbkwRAktfEm35w+N255wnK4Iwhxz/Wzij8kIzuOKxiIu7ocfL11J2rIY=
-X-Gm-Gg: AfdE7cmj6TJ5A3elfLv3llEzuEe+r3HNt54oazmbpYgytQWxS7PUgED26hIK0Xhp4QQ
-	yJrvWbQT+V+ltwHYDHssLr0lO0bzgSHcBF2fZhORyrYZpzx6iwZYO/M1jfptS6nTZglXTe0x5Z3
-	pRwqPvGyPRCKM95l1Usy9l5SL3ruTekPak4NIFzLDXuKjlZZE4ybdnl2N9ANyAx/PiosbvZ3Q4q
-	NLzqtSRObXrn+Hco31AYwEhA/TwOArctPUaH7n8NSmSxSlBmfPjTIrbNbdWSsNLxSYsxIf5DSTp
-	BEgI68mE3LboBFUhWUEgdU/r1P8elXo6UY+EMCRHt/rUy8FfGMh1tnKBdwDIpxtFUiPAPHXi5UC
-	FT5xtDjACbqQGldpdUwdPk8fdq/Z6LPPw9uaGL8O+pSjY05TqXs77tqTs2+GEueq9aRxoRZdlyf
-	t/vZBTPgn9pmM3P+0K2/rsU1XFM4s46qE83uCQn6CuMR7jLxQASeZtTJO5qsfvQG0LM1JjsCrzC
-	W+Z0CwUtq+AO0kvOhKZZxtn4Sw=
-X-Received: by 2002:adf:e3c1:0:b0:460:18cc:dcfe with SMTP id ffacd0b85a97d-46508afa647mr750669f8f.34.1781806796293;
-        Thu, 18 Jun 2026 11:19:56 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:3bf7:d534:a488:f67d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-465090c42e1sm869435f8f.11.2026.06.18.11.19.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 11:19:55 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="rGcoexLm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EdhmMu369JwKd0BLSXQpCRdxwSE3K+LwX6IPnE17MHkDqM12Oz3u11UG5dZLWZYuWk6doXLTDM+ECwF0dPtSWXHr2CXnpWPur/5/0DVLvGdF2eUUD2on/nWZkGtKmATo7HXHTdTxGLGGeItBUoYDbSjg1tq1ST7SuDQMfXKheXJIroqvPTdOx8NMh6eRsAdvmXLVbObGD8xu0bUG9EYURVMfCP3ULgAhlCedZSKtjD7y36pdfYZR9IqoWUCNAi0/886B/XV+1HTRge1X6qOFWmt+JGKEPFsjSoveVJ1cw1VwfLnVX2cXOa4DTwN5WLky93ONQFSziJZE6XOUZX6zxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yEjY3n2r5juM4yFbx9sm6R0q7N2NTiCNhkDyTJ8NLAI=;
+ b=cA43qVJ4+/cSvYkfBVdsMj3uGG2xhtkDs5iHN7L7wPnkA+Q3V0zK1IaAkSuFf94rO3RJnE5jj0SxwdjtRlqo7vs+PVR1sWhUdyb419lh8sLX5JipDM/k1IGynWRw0fvtwGi9f4pkoPbd0gSG7STx+iq/t9iQZkETrceA/Oi/xOEjTKLHj8bmZgXNvZq3YmvsLXlPiG8cV4PiG0dWbJCVUzCCT7TZX6iShrGKhxjPh2ex+TFm2vAAaEFRfwbBJ6SblfRkq5zPB47MEXyeQ8NIw8rUhUaU3G8yMUERfRIWjOme3zH8QGrC2qlGsLb9YQA1lxgdbwMvNuT91vFeTnoqRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yEjY3n2r5juM4yFbx9sm6R0q7N2NTiCNhkDyTJ8NLAI=;
+ b=rGcoexLm7kfqM2bV0HIWnynmiyZROFVBjFfWJZp0XrbKrXxSC8afs48e9WIxQ9x09vo2O887/ky/8OCCdOLvd1Sf7aqjdj5u/ojnVaLhyOo23M25vdk1X4sU4CiDUmaqNwvg7u9CFufqdt0C0Nse+gEv4Jso4m0bcEWz3Ao7C5Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
+ by OS9PR01MB17516.jpnprd01.prod.outlook.com (2603:1096:604:450::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Thu, 18 Jun
+ 2026 19:10:02 +0000
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.21.0139.009; Thu, 18 Jun 2026
+ 19:10:02 +0000
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	bhelgaas@google.com
+Cc: robh@kernel.org,
+	linux-pci@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 5/5] clk: renesas: r9a09g077: Add LCDC and PLL3 clock support for RZ/T2H display pipeline
-Date: Thu, 18 Jun 2026 19:19:49 +0100
-Message-ID: <20260618181949.3036280-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260618181949.3036280-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260618181949.3036280-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	linux-kernel@vger.kernel.org,
+	john.madieu@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	geert+renesas@glider.be,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH] PCI: rzg3s-host: Re-enumerate the bus on PCIe link-state changes
+Date: Thu, 18 Jun 2026 19:09:35 +0000
+Message-Id: <20260618190935.3018531-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PAZP264CA0135.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:1f8::10) To TY6PR01MB17377.jpnprd01.prod.outlook.com
+ (2603:1096:405:35b::6)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY6PR01MB17377:EE_|OS9PR01MB17516:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a4265e6-934f-4512-06a0-08decd6d32b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|23010399003|52116014|376014|1800799024|56012099006|3023799007|11063799006|6133799003|38350700014|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	7mOzp2ysw6qniaw1RJPGRKptUaTyssNL/Ph3dDxXlXWiwgDAnkt2vrz6+Nj/LyqygdKFgm42s+jIK4+NglbSnSv6wPCIwNaQ5UG58AEzOMyiiZJ1FeBe//pIEAuEpuJHM7OTtS9xn2kP3xBxVwqhzufoXnhZUbHX87eWqcfgY5G7fsuNpXfDgEl3I8R0tGtRjXYgkpFzU7cPGcfHgG6EqlF0eNIdzzZpI+QuW4d0hYf6ynUVJTHtwk+RnxfK3F0dw2z/rdkdQCPDKaUsZU2mJoJBkrauN7BcLQxJkLl1r6NbwN0mFlOfxDgE0j85VX0MiWzWuXUhUy0QHFPQY/UOJTLSIqb4fCrBnDJvdoAteC3zOJzaQeAkciIEojtli3JOX8UvZ6vpGSa8whcbgB33hvBoZ3uYemLt4vv5Q/sTUdBXX6Yx4+Fy38sa9wzN322gh1K2335oS+l7i/UOLEuCOMw7cDB84peO/iQVPBXuZ1KIsz3Jovgqs7icMKGJNp8sfCvFeZQYLntCuWd1s45+7vNKKtHwqV7JBEWddACyfKwgBpomDcYm+UciKyNZYGp9+RApSb2S7aoRr2U2Y2hnbjtPOXURx8WQdgJBBDCEh6FbFNtsHnDbzn6h9+zD7jsGuLD32oS3/r9TLGO2YTobF4/rqgMtiXCCzzAyQo17JC9dyeDqtOLibL7CLo5UGz75Eli7iW18RM8taY4yx9vjIfxQWTgQ1LMb/US6MHtA1ZuUyCUvuSJrFUq01WPxzC1J
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(23010399003)(52116014)(376014)(1800799024)(56012099006)(3023799007)(11063799006)(6133799003)(38350700014)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NcrQUZog8xo/tLhMfNX3SG5JbIDJfiS6k/LmL8dPSt8DF9E7XYNSWvHvRege?=
+ =?us-ascii?Q?dNu4agWWODeLjOdJA8alqg2XdYWbLI2jaE2Hcn8ItqyoHmSOoQTDToCxusH5?=
+ =?us-ascii?Q?ghYUs4bPq/QSCVOSkbfyGgI1+aJTwElXqqGqHlxz81bPH5bQWQvZ4x3uNjkL?=
+ =?us-ascii?Q?3auuEndSL4uEUmgdiSKJTGN7ZUR8dOIxti8EnYvjZpSXU4yYMoL23Bgj3OVC?=
+ =?us-ascii?Q?iVpeOCCFBIxPhYAXzpLMaBC8Z2BHLS+2xKHLksf6c1jJOejXmUKGkuK9QO+f?=
+ =?us-ascii?Q?sfzv64/6lKGS3AONmypr0YBkehJZNEN9NCCXsS6E1ZtvvN0rZ3RqptAtArER?=
+ =?us-ascii?Q?NF7kJvxcd1KAKGbi4/t1w1y8GS5f0Rxmm0Q9doWmXK4C7Cl5031lR5ZFuWwP?=
+ =?us-ascii?Q?61vzAfCKdXdjLlQ2G7LXdj5nvWSPLDzDyOLy6D9ntaWFqtJ5pWOluPJN5/Je?=
+ =?us-ascii?Q?T9ORE7FSZPyvFWQ7EiBsVGbwewZlxZFEFjde7W+xhpb+gCoi+glyTUmAZ6OX?=
+ =?us-ascii?Q?daHR4ifdhwUYBinigkLYRrCKL+x6EsPAjQh0+7QzOFvEJaXwgUbfS/PtClf/?=
+ =?us-ascii?Q?yNTMOEGDcsCTf0kbH5j0EzRHdNhwPDHR8kMJ8yUZNPmnMLpPNrYjysTwIxvg?=
+ =?us-ascii?Q?ZmhtJtucBuwCemG8tnkcZvkSsz2eQ+K8XagJEL459U38cNqgRW1jC4OdOHzq?=
+ =?us-ascii?Q?V6EreW4bO4Sp4qv4gPzokVq7xklA8psd54isyPTGpusCrpuVvW8LJmauWIfn?=
+ =?us-ascii?Q?erKUydsbN/fXGz6fcgPccrEjw7acPsVmFCKSLGQk/uvVzdwelxCZbDKRKsH1?=
+ =?us-ascii?Q?KXkvTXgKANe+qr8xXbkMAdjppttO4LtuCvLLFGGME5+NcnxSjpS72lbeNLbm?=
+ =?us-ascii?Q?QWv8kPy7fJsMmiYWticpOHLP5cpUy+C/3i9CZE/Yj19rNGakNOXDIGR3BdoO?=
+ =?us-ascii?Q?oHT9gtN85x2OpDUp5mtRK1VZliPV13zj5P/EHCha6NjlLJ9VttBjUlUSypTn?=
+ =?us-ascii?Q?Qi/y8rvtQLvTQCigsHTGd1/FhDujmgd7JOkUaN6xDAXGIZHEqVPcU0vJFnKZ?=
+ =?us-ascii?Q?MmOAypRPIpPvhKgvXtMbLfWnEjkahgRrWq5D8lj+RwOgXXSCYABzITzba0o8?=
+ =?us-ascii?Q?csqPVr+IvdQRpiiP8IsoW374YJmo9RWKiTz2GSqB10bzAN6iUVQjaKaeIv7L?=
+ =?us-ascii?Q?TE3lmiyEO7ZgBIdNyhMr7Ov90HmGWo0IdYXoiQqoH1NH3hHDf/mdR4m9+rxI?=
+ =?us-ascii?Q?E7433WgEgiRb2jsQtfOoRt4YpN350VloXbIOLde9knlTpbGKqGM/QztT5ese?=
+ =?us-ascii?Q?9hexFHLkGcqxtwPLC1TqHhkzwXMyX2Dp7IOVmcwbiw0IzMqXoEjDrrLOMyIm?=
+ =?us-ascii?Q?QXlcdD8q5p6hnQzhH0H8nnEvBa4Dl8jIul6B1rcVlkdZ4BSvpW9lqOCBIsmf?=
+ =?us-ascii?Q?y4n1Qmq7p+w4l7GQCTZSnCeb7oOPOuRBtkSAh4O55NNdc1u5g7SiCyMA5E1e?=
+ =?us-ascii?Q?syhhmQeNBpiuaQcWX5cUKxICEfS22cm3F+LnB5Vx3+pVdZAVwvGzfrmF8KNe?=
+ =?us-ascii?Q?D2IWamgXp70oolDppCvP6wt4CqWCS3kEyZaaZflJ2QXRuZKaVtMokEVsFZOD?=
+ =?us-ascii?Q?fO/kC0Vavsd+KTkuJmMDGGZCbSMSyFt2M0VBbax+yOGp91PXW4By6SEKwopz?=
+ =?us-ascii?Q?yPRot/hlEmELneawr3MwtcFPikJv1xrW3mqQ5b301rSZJYveWuLh+lN0gGEB?=
+ =?us-ascii?Q?Qr0RhOesIN3gCTkpZNUp5f4ZJFHi1ic=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a4265e6-934f-4512-06a0-08decd6d32b5
+X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2026 19:10:02.0809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jMnwKZsdkD6ReU8M5egl9LRp3HoSIyi13ziGKlvqakrgdam/vev8jbwWXO9/s94qFgIZC4b5BU/wr1lAH27lxmNfygEl3oIJ8OhtVDgAOw4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB17516
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The RZ/G3E PCIe controller does not expose the standard PCIe Slot
+Capability registers, so the generic pciehp driver cannot be used. The
+only link-state signal the hardware provides is the DL_UpDown bit in the
+PEIS0 event status register, which is raised on every Data Link layer
+up/down transition.
 
-Add the clock definitions and PLL logic required to supply the LCDC
-(VSPD/FCPVD/DU) blocks on the RZ/T2H (R9A09G077) SoC. The RZ/T2H display
-subsystem depends on a dedicated PLL (PLL3) and a set of new derived
-clocks.
+Enable DL_UpDown in PEIE0 and hook up an interrupt handler so the driver
+can react to link-state changes: a device that trains after boot gets
+enumerated, and a device that disappears on link loss is removed. This
+provides hotplug-like behaviour without the PCI hotplug core, which is
+unavailable for the reason above.
 
-Introduce a new PLL clock type and implement rate recalculation,
-programming and locking sequences for PLL3 using the RZ/T2H specific
-divider and VCO limits. Add the corresponding muxes and divider entries,
-expose the LCDC core clock, and register the LCDC module clock using the
-correct PCLK parent.
+On a DL_UpDown event the handler acks the W1C status bit and schedules a
+worker that inspects PCSTAT1.DL_DOWN_STS:
 
-This enables the RZ/T2H clock driver to generate the display pipeline
-clocking tree needed by the DU and VSP-based composition engines, allowing
-upcoming display support to be integrated without duplicating CPG logic.
+  - link up: re-run max link speed negotiation, wait for the link to
+    settle and pci_rescan_bus() the root bus;
+  - link down: walk the bus in reverse and
+    pci_stop_and_remove_bus_device() each child.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Both paths take pci_lock_rescan_remove() to serialise against the PCI
+core.
+
+Link events are only acted upon once the controller is fully
+initialised. A DL_UpDown latched while the registers are not configured,
+for example when the event IRQ is used as a system wakeup source during
+resume, is acknowledged but does not schedule a rescan. The
+hw_initialized flag, set at the end of controller setup and cleared on
+suspend, gates this.
+
+While at it, make probe tolerant of an absent device. Previously, if the
+link failed to come up during rzg3s_pcie_host_init(), probe tore the
+controller back down and failed. Distinguish this case with -ENODEV,
+leave the controller and refclk running, and let the link-up path
+enumerate the device once it appears.
+
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
-v3->v4:
-- Added RB tag from Geert.
+ drivers/pci/controller/pcie-rzg3s-host.c | 153 +++++++++++++++++++++--
+ 1 file changed, 143 insertions(+), 10 deletions(-)
 
-v2->v3:
-- In r9a09g077_cpg_lcdc_div_determine_rate() made use of 
-  clk_hw_get_parent_by_index() to ensure we retrieve pll3 as the parent.
-
-v1->v2:
-- Switched to use the new library
-- Kconfig now selects CLK_RZV2H_CPG_LIB
-- Renamed CPG_PLLEN to CPG_PLL_EN_EN
-- Renamed LCDCDIV to LCDC_CLKD
-- Changed ctr0/1 in r9a09g077_cpg_pll3_clk_recalc_rate() to use u32
----
- drivers/clk/renesas/Kconfig         |   2 +
- drivers/clk/renesas/r9a09g077-cpg.c | 373 +++++++++++++++++++++++++++-
- 2 files changed, 374 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 7659550b8566..5c0238e878b7 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -218,10 +218,12 @@ config CLK_R9A09G057
- config CLK_R9A09G077
- 	bool "RZ/T2H clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
-+	select CLK_RZV2H_CPG_LIB
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index d86e7516dcc2..5a10422ced2e 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -34,6 +34,7 @@
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/units.h>
++#include <linux/workqueue.h>
  
- config CLK_R9A09G087
- 	bool "RZ/N2H clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
-+	select CLK_RZV2H_CPG_LIB
+ #include "../pci.h"
  
- config CLK_SH73A0
- 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index f777601a23b9..873c41ae5606 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -8,16 +8,23 @@
- 
- #include <linux/bitfield.h>
- #include <linux/clk-provider.h>
-+#include <linux/clk/renesas.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/math.h>
-+#include <linux/module.h>
- #include <linux/types.h>
-+#include <linux/units.h>
- 
- #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
- #include <dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h>
- #include "renesas-cpg-mssr.h"
- 
-+MODULE_IMPORT_NS("RZV2H_CPG");
-+
- #define RZT2H_REG_BLOCK_SHIFT	11
- #define RZT2H_REG_OFFSET_MASK	GENMASK(10, 0)
- #define RZT2H_REG_CONF(block, offset)	(((block) << RZT2H_REG_BLOCK_SHIFT) | \
-@@ -66,11 +73,26 @@
- #define DIVSCI2ASYNC	CONF_PACK(SCKCR3, 10, 2)
- #define DIVSCI3ASYNC	CONF_PACK(SCKCR3, 12, 2)
- #define DIVSCI4ASYNC	CONF_PACK(SCKCR3, 14, 2)
-+#define LCDCDIVSEL	CONF_PACK(SCKCR3, 20, 4)
-+
-+#define PLL3EN		FIELD_PREP_CONST(OFFSET_MASK, (0xc0))
-+
-+#define CPG_PLL_EN_EN		BIT(0)
-+#define CPG_PLL3_VCO_CTR0(x)	((x) + 0x4)
-+#define CPG_PLL3_VCO_CTR0_PDIV	GENMASK(21, 16)
-+#define CPG_PLL3_VCO_CTR0_MDIV	GENMASK(9, 0)
-+#define CPG_PLL3_VCO_CTR1(x)	((x) + 0x8)
-+#define CPG_PLL3_VCO_CTR1_KDIV	GENMASK(31, 16)
-+#define CPG_PLL3_VCO_CTR1_SDIV	GENMASK(2, 0)
-+#define CPG_PLL_MON(x)		((x) - 0x10)
-+#define CPG_PLL_MON_LOCK	BIT(0)
- 
- enum rzt2h_clk_types {
- 	CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,	/* Clock with divider */
- 	CLK_TYPE_RZT2H_MUX,			/* Clock with clock source selector */
- 	CLK_TYPE_RZT2H_FSELXSPI,		/* Clock with FSELXSPIn source selector */
-+	CLK_TYPE_RZT2H_PLL3,			/* PLL3 Clock */
-+	CLK_TYPE_RZT2H_LCDCDIV,			/* LCDC divider clock */
+@@ -294,7 +295,12 @@ struct rzg3s_pcie_port {
+  * @msi: MSI data structure
+  * @port: PCIe Root Port
+  * @hw_lock: lock for access to the HW resources
++ * @link_work: work for DL_UpDown link-state change handling
++ * @event_irq: PCIe event interrupt for DL_UpDown detection
+  * @intx_irqs: INTx interrupts
++ * @hw_initialized: set once the controller HW is fully initialised; gates
++ *                  DL_UpDown event handling against events latched while
++ *                  the registers are not configured
+  * @max_link_speed: maximum supported link speed
+  */
+ struct rzg3s_pcie_host {
+@@ -309,7 +315,10 @@ struct rzg3s_pcie_host {
+ 	struct rzg3s_pcie_msi msi;
+ 	struct rzg3s_pcie_port port;
+ 	raw_spinlock_t hw_lock;
++	struct work_struct link_work;
++	int event_irq;
+ 	int intx_irqs[PCI_NUM_INTX];
++	bool hw_initialized;
+ 	int max_link_speed;
  };
  
- #define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
-@@ -83,10 +105,51 @@ enum rzt2h_clk_types {
- #define DEF_DIV_FSELXSPI(_name, _id, _parent, _conf, _dtable) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_FSELXSPI, .conf = _conf, \
- 		 .parent = _parent, .dtable = _dtable, .flag = 0)
-+#define DEF_PLL3(_name, _id, _parent, _conf) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_PLL3, .conf = _conf, \
-+		 .parent = _parent)
-+#define DEF_DIV_LCDC(_name, _id, _parent, _conf, _dtable) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_LCDCDIV, .conf = _conf, \
-+		 .parent = _parent, .dtable = _dtable, .flag = CLK_SET_RATE_PARENT)
-+
-+struct pll_clk {
-+	void __iomem *reg;
-+	const struct rzv2h_pll_limits *limits;
-+	struct device *dev;
-+	struct rzv2h_pll_pars pll_parameters;
-+	struct clk_hw hw;
-+	unsigned long cur_rate;
-+};
-+
-+#define to_pll(_hw)	container_of(_hw, struct pll_clk, hw)
-+
-+struct r9a09g077_lcdc_div_clk {
-+	const struct clk_div_table *dtable;
-+	void __iomem *reg;
-+	struct device *dev;
-+	struct clk_hw hw;
-+	u32 conf;
-+	u8 divider;
-+};
-+
-+#define to_lcdc_div_clk(_hw) \
-+	container_of(_hw, struct r9a09g077_lcdc_div_clk, hw)
-+
-+#define RZT2H_MAX_LCDC_DIV_TABLES	16
-+
-+static const struct rzv2h_pll_limits r9a09g077_cpg_pll3_limits = {
-+	.input_fref = 48 * MEGA,
-+	.fout = { .min = 25 * MEGA, .max = 430 * MEGA },
-+	.fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA },
-+	.m = { .min = 0x40, .max = 0x3ff },
-+	.p = { .min = 0x2, .max = 0x8 },
-+	.s = { .min = 0x0, .max = 0x6 },
-+	.k = { .min = -32768, .max = 32767 },
-+};
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A09G077_PCLKCAN,
-+	LAST_DT_CORE_CLK = R9A09G077_LCDC_CLKD,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -96,10 +159,12 @@ enum clk_ids {
- 	CLK_PLL0,
- 	CLK_PLL1,
- 	CLK_PLL2,
-+	CLK_PLL3,
- 	CLK_PLL4,
- 	CLK_SEL_CLK_PLL0,
- 	CLK_SEL_CLK_PLL1,
- 	CLK_SEL_CLK_PLL2,
-+	CLK_SEL_CLK_PLL3,
- 	CLK_SEL_CLK_PLL4,
- 	CLK_PLL4D1,
- 	CLK_PLL4D1_DIV3,
-@@ -107,6 +172,7 @@ enum clk_ids {
- 	CLK_PLL4D3,
- 	CLK_PLL4D3_DIV10,
- 	CLK_PLL4D3_DIV20,
-+	CLK_PLL4D50,
- 	CLK_SCI0ASYNC,
- 	CLK_SCI1ASYNC,
- 	CLK_SCI2ASYNC,
-@@ -119,6 +185,7 @@ enum clk_ids {
- 	CLK_SPI3ASYNC,
- 	CLK_DIVSELXSPI0_SCKCR,
- 	CLK_DIVSELXSPI1_SCKCR,
-+	CLK_LCDDIVSEL,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -130,6 +197,26 @@ static const struct clk_div_table dtable_1_2[] = {
- 	{0, 0},
- };
- 
-+static const struct clk_div_table dtable_2_32[] = {
-+	{0, 2},
-+	{1, 4},
-+	{2, 6},
-+	{3, 8},
-+	{4, 10},
-+	{5, 12},
-+	{6, 14},
-+	{7, 16},
-+	{8, 18},
-+	{9, 20},
-+	{10, 22},
-+	{11, 24},
-+	{12, 26},
-+	{13, 28},
-+	{14, 30},
-+	{15, 32},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_6_8_16_32_64[] = {
- 	{6, 64},
- 	{5, 32},
-@@ -152,6 +239,7 @@ static const struct clk_div_table dtable_24_25_30_32[] = {
- static const char * const sel_clk_pll0[] = { ".loco", ".pll0" };
- static const char * const sel_clk_pll1[] = { ".loco", ".pll1" };
- static const char * const sel_clk_pll2[] = { ".loco", ".pll2" };
-+static const char * const sel_clk_pll3[] = { ".loco", ".pll3" };
- static const char * const sel_clk_pll4[] = { ".loco", ".pll4" };
- static const char * const sel_clk_pll4d1_div3_div4[] = { ".pll4d1_div3", ".pll4d1_div4" };
- static const char * const sel_clk_pll4d3_div10_div20[] = { ".pll4d3_div10", ".pll4d3_div20" };
-@@ -173,10 +261,14 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 		sel_clk_pll1, ARRAY_SIZE(sel_clk_pll1), CLK_MUX_READ_ONLY),
- 	DEF_MUX(".sel_clk_pll2", CLK_SEL_CLK_PLL2, SEL_PLL,
- 		sel_clk_pll2, ARRAY_SIZE(sel_clk_pll2), CLK_MUX_READ_ONLY),
-+	DEF_MUX(".sel_clk_pll3", CLK_SEL_CLK_PLL3, SEL_PLL,
-+		sel_clk_pll3, ARRAY_SIZE(sel_clk_pll3), CLK_MUX_READ_ONLY),
- 	DEF_MUX(".sel_clk_pll4", CLK_SEL_CLK_PLL4, SEL_PLL,
- 		sel_clk_pll4, ARRAY_SIZE(sel_clk_pll4), CLK_MUX_READ_ONLY),
- 
- 	DEF_FIXED(".pll4d1", CLK_PLL4D1, CLK_SEL_CLK_PLL4, 1, 1),
-+	DEF_FIXED(".pll4d50", CLK_PLL4D50, CLK_SEL_CLK_PLL4, 50, 1),
-+	DEF_PLL3(".pll3", CLK_PLL3, CLK_PLL4D50, PLL3EN),
- 	DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
- 	DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
- 	DEF_FIXED(".pll4d3", CLK_PLL4D3, CLK_SEL_CLK_PLL4, 3, 1),
-@@ -229,6 +321,7 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
- 	DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
- 	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
-+	DEF_FIXED("PCLKAL", R9A09G077_CLK_PCLKAL, CLK_PLL4D1, 24, 1),
- 	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
- 	DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
- 	DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
-@@ -242,6 +335,8 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 			 FSELXSPI1, dtable_6_8_16_32_64),
- 	DEF_MUX("PCLKCAN", R9A09G077_PCLKCAN, FSELCANFD,
- 		sel_clk_pll4d3_div10_div20, ARRAY_SIZE(sel_clk_pll4d3_div10_div20), 0),
-+	DEF_DIV_LCDC("LCDC_CLKD", R9A09G077_LCDC_CLKD, CLK_SEL_CLK_PLL3, LCDCDIVSEL,
-+		     dtable_2_32),
- };
- 
- static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-@@ -272,6 +367,7 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
- 	DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
- 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("spi3", 602, CLK_SPI3ASYNC),
-+	DEF_MOD("lcdc", 1204, R9A09G077_CLK_PCLKAL),
- 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
- 	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
- };
-@@ -481,6 +577,276 @@ r9a09g077_cpg_fselxspi_div_clk_register(struct device *dev,
- 	return hw->clk;
+@@ -575,6 +584,30 @@ static irqreturn_t rzg3s_pcie_msi_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
-+static unsigned long r9a09g077_cpg_pll3_clk_recalc_rate(struct clk_hw *hw,
-+							unsigned long parent_rate)
++static irqreturn_t rzg3s_pcie_event_irq(int irq, void *data)
 +{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	u32 ctr0, ctr1;
-+	u8 pdiv, sdiv;
-+	u64 rate;
-+	u16 mdiv;
-+	s16 kdiv;
++	struct rzg3s_pcie_host *host = data;
++	u32 status;
 +
-+	ctr0 = readl(CPG_PLL3_VCO_CTR0(pll_clk->reg));
-+	ctr1 = readl(CPG_PLL3_VCO_CTR1(pll_clk->reg));
++	status = readl_relaxed(host->axi + RZG3S_PCI_PEIS0);
 +
-+	pdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_PDIV, ctr0);
-+	mdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_MDIV, ctr0);
-+	kdiv = (s16)FIELD_GET(CPG_PLL3_VCO_CTR1_KDIV, ctr1);
-+	sdiv = FIELD_GET(CPG_PLL3_VCO_CTR1_SDIV, ctr1);
++	if (!(status & RZG3S_PCI_PEIS0_DL_UPDOWN))
++		return IRQ_NONE;
 +
-+	rate = mul_u64_u32_shr(parent_rate, (mdiv << 16) + kdiv, 16 + sdiv);
++	/* Clear the DL_UpDown status (W1C) */
++	writel_relaxed(RZG3S_PCI_PEIS0_DL_UPDOWN, host->axi + RZG3S_PCI_PEIS0);
 +
-+	return DIV_ROUND_CLOSEST_ULL(rate, pdiv);
++	/*
++	 * Drop the event until the controller is fully initialised. The
++	 * event IRQ may act as a system wakeup source and fire during
++	 * resume before the HW registers have been reconfigured.
++	 */
++	if (READ_ONCE(host->hw_initialized))
++		schedule_work(&host->link_work);
++
++	return IRQ_HANDLED;
 +}
 +
-+static int r9a09g077_cpg_pll3_determine_rate(struct clk_hw *hw,
-+					     struct clk_rate_request *req)
+ static void rzg3s_pcie_msi_irq_ack(struct irq_data *d)
+ {
+ 	struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(d);
+@@ -1107,6 +1140,47 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
+ 	return ret;
+ }
+ 
++static void rzg3s_pcie_link_work(struct work_struct *work)
 +{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	u64 rate_millihz;
-+
-+	if (req->rate == pll_clk->cur_rate)
-+		return 0;
-+
-+	rate_millihz = mul_u32_u32(req->rate, MILLI);
-+	if (!rzv2h_cpg_get_pll_pars(pll_clk->limits, &pll_clk->pll_parameters,
-+				    rate_millihz)) {
-+		dev_dbg(pll_clk->dev,
-+			"failed to determine rate for req->rate: %lu\n",
-+			req->rate);
-+		return -EINVAL;
-+	}
-+	req->rate = DIV_ROUND_CLOSEST_ULL(pll_clk->pll_parameters.freq_millihz, MILLI);
-+	pll_clk->cur_rate = req->rate;
-+
-+	return 0;
-+}
-+
-+static int r9a09g077_cpg_pll3_set_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long parent_rate)
-+{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	struct rzv2h_pll_pars *params = &pll_clk->pll_parameters;
-+	void __iomem *offset = pll_clk->reg;
++	struct rzg3s_pcie_host *host =
++		container_of(work, struct rzg3s_pcie_host, link_work);
++	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
++	struct pci_bus *bus = bridge->bus;
 +	u32 val;
-+	int ret;
 +
-+	/* Put PLL into standby mode */
-+	writel(0, offset);
-+	ret = readl_poll_timeout_atomic(CPG_PLL_MON(offset),
-+					val, !(val & CPG_PLL_MON_LOCK),
-+					100, 2000);
++	val = readl_relaxed(host->axi + RZG3S_PCI_PCSTAT1);
++	if (val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS) {
++		struct pci_dev *dev, *tmp;
++
++		dev_info(host->dev, "PCIe link down, removing devices\n");
++
++		pci_lock_rescan_remove();
++		list_for_each_entry_safe_reverse(dev, tmp,
++						 &bus->devices, bus_list)
++			pci_stop_and_remove_bus_device(dev);
++		pci_unlock_rescan_remove();
++	} else {
++		int ret;
++
++		dev_info(host->dev, "PCIe link up, rescanning bus\n");
++
++		/*
++		 * Attempt link speed negotiation now that the link is up.
++		 * Failure is non-fatal: the device works at the negotiated
++		 * speed.
++		 */
++		ret = rzg3s_pcie_set_max_link_speed(host);
++		if (ret)
++			dev_info(host->dev, "Failed to set max link speed\n");
++
++		msleep(PCIE_RESET_CONFIG_WAIT_MS);
++
++		pci_lock_rescan_remove();
++		pci_rescan_bus(bus);
++		pci_unlock_rescan_remove();
++	}
++}
++
+ static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
+ {
+ 	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
+@@ -1217,8 +1291,8 @@ static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+ 		       RZG3S_PCI_PEIS0_RX_DLLP_PM_ENTER,
+ 		       host->axi + RZG3S_PCI_PEIS0);
+ 
+-	/* Disable all interrupts */
+-	writel_relaxed(0, host->axi + RZG3S_PCI_PEIE0);
++	/* Enable DL_UpDown interrupt for link state change detection */
++	writel_relaxed(RZG3S_PCI_PEIS0_DL_UPDOWN, host->axi + RZG3S_PCI_PEIE0);
+ 
+ 	/* Clear all parity and ecc error interrupts */
+ 	writel_relaxed(~0U, host->axi + RZG3S_PCI_PEIS1);
+@@ -1384,16 +1458,21 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+ 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI,
+ 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
+ 				 PCIE_LINK_WAIT_MAX_RETRIES);
+-	if (ret)
+-		goto config_deinit_post;
 +	if (ret) {
-+		dev_err(pll_clk->dev, "Failed to put PLL into standby mode");
-+		return ret;
++		/*
++		 * Link is down. Leave the controller running so the
++		 * DL_UpDown handler can enumerate a device that appears
++		 * later.
++		 */
++		dev_info(host->dev, "PCIe link down, waiting for DL_UpDown\n");
++		ret = -ENODEV;
 +	}
-+
-+	/* Output clock setting 1 */
-+	val = readl(CPG_PLL3_VCO_CTR0(offset));
-+	FIELD_MODIFY(CPG_PLL3_VCO_CTR0_MDIV, &val, params->m);
-+	FIELD_MODIFY(CPG_PLL3_VCO_CTR0_PDIV, &val, params->p);
-+	writel(val, CPG_PLL3_VCO_CTR0(offset));
-+
-+	/* Output clock setting 2 */
-+	val = readl(CPG_PLL3_VCO_CTR1(offset));
-+	FIELD_MODIFY(CPG_PLL3_VCO_CTR1_KDIV, &val, params->k);
-+	FIELD_MODIFY(CPG_PLL3_VCO_CTR1_SDIV, &val, params->s);
-+	writel(val, CPG_PLL3_VCO_CTR1(offset));
-+
-+	writel(CPG_PLL_EN_EN, offset);
-+
-+	/* PLL normal mode transition, output clock stability check */
-+	ret = readl_poll_timeout_atomic(CPG_PLL_MON(offset),
-+					val, (val & CPG_PLL_MON_LOCK),
-+					100, 2000);
-+	if (ret) {
-+		writel(0, offset);
-+		dev_err(pll_clk->dev, "Failed to put PLL into normal mode");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops r9a09g077_cpg_pll3_ops = {
-+	.recalc_rate = r9a09g077_cpg_pll3_clk_recalc_rate,
-+	.determine_rate = r9a09g077_cpg_pll3_determine_rate,
-+	.set_rate = r9a09g077_cpg_pll3_set_rate,
-+};
-+
-+static struct clk * __init
-+r9a09g077_cpg_pll3_clk_register(struct device *dev,
-+				const struct cpg_core_clk *core,
-+				void __iomem *addr,
-+				struct cpg_mssr_pub *pub,
-+				const struct rzv2h_pll_limits *limits)
-+{
-+	struct clk_init_data init = {};
-+	const struct clk *parent;
-+	const char *parent_name;
-+	struct pll_clk *pll_clk;
-+	int ret;
-+
-+	parent = pub->clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
-+	if (!pll_clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	parent_name = __clk_get_name(parent);
-+	init.name = core->name;
-+	init.ops = &r9a09g077_cpg_pll3_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll_clk->dev = dev;
-+	pll_clk->hw.init = &init;
-+	pll_clk->reg = addr;
-+	pll_clk->limits = limits;
-+
-+	ret = devm_clk_hw_register(dev, &pll_clk->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return pll_clk->hw.clk;
-+}
-+
-+static int r9a09g077_cpg_lcdc_div_determine_rate(struct clk_hw *hw,
-+						 struct clk_rate_request *req)
-+{
-+	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
-+	struct clk_hw *mux_hw = clk_hw_get_parent(hw);
-+	u8 table[RZT2H_MAX_LCDC_DIV_TABLES] = { 0 };
-+	struct rzv2h_pll_div_pars dsi_params;
-+	const struct clk_div_table *div;
-+	struct pll_clk *pll_clk;
-+	unsigned int i = 0;
-+	u64 freq_millihz;
-+
-+	/* index 1 is always .pll3 in sel_clk_pll3[] */
-+	pll_clk = to_pll(clk_hw_get_parent_by_index(mux_hw, 1));
-+
-+	for (div = dsi_div->dtable; div->div; div++) {
-+		if (i >= RZT2H_MAX_LCDC_DIV_TABLES)
-+			return -EINVAL;
-+		table[i++] = div->div;
-+	}
-+
-+	freq_millihz = mul_u32_u32(req->rate, MILLI);
-+
-+	if (!rzv2h_cpg_get_pll_divs_pars(pll_clk->limits, &dsi_params, table,
-+					 i, freq_millihz)) {
-+		dev_err(dsi_div->dev,
-+			"LCDC divider failed to determine rate for req->rate: %lu\n",
-+			req->rate);
-+		return -EINVAL;
-+	}
-+
-+	req->rate = DIV_ROUND_CLOSEST_ULL(dsi_params.div.freq_millihz, MILLI);
-+	req->best_parent_rate = req->rate * dsi_params.div.divider_value;
-+	dsi_div->divider = dsi_params.div.divider_value;
-+	pll_clk->cur_rate = req->best_parent_rate;
-+	pll_clk->pll_parameters = dsi_params.pll;
-+
-+	return 0;
-+}
-+
-+static int r9a09g077_cpg_lcdc_div_set_rate(struct clk_hw *hw,
-+					   unsigned long rate,
-+					   unsigned long parent_rate)
-+{
-+	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
-+	const struct clk_div_table *clkt;
-+	bool divider_found = false;
-+	u32 val, shift;
-+
-+	for (clkt = dsi_div->dtable; clkt->div; clkt++) {
-+		if (clkt->div == dsi_div->divider) {
-+			divider_found = true;
-+			break;
+ 
+ 	val = readl_relaxed(host->axi + RZG3S_PCI_PCSTAT2);
+ 	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+ 
+-	return 0;
++	return ret;
+ 
+-config_deinit_post:
+-	host->data->config_deinit(host);
+ config_deinit_and_refclk:
+ 	clk_disable_unprepare(host->port.refclk);
+ config_deinit:
+@@ -1655,8 +1734,15 @@ rzg3s_pcie_host_setup(struct rzg3s_pcie_host *host,
+ 
+ 	ret = rzg3s_pcie_host_init(host);
+ 	if (ret) {
+-		dev_err_probe(dev, ret, "Failed to initialize the HW!\n");
+-		goto teardown_irqdomain;
++		if (ret != -ENODEV) {
++			dev_err_probe(dev, ret,
++				      "Failed to initialize the HW!\n");
++			goto teardown_irqdomain;
 +		}
++
++		/* Link is down: hotplug via DL_UpDown will recover. */
++		WRITE_ONCE(host->hw_initialized, true);
++		return 0;
+ 	}
+ 
+ 	ret = rzg3s_pcie_set_max_link_speed(host);
+@@ -1665,6 +1751,8 @@ rzg3s_pcie_host_setup(struct rzg3s_pcie_host *host,
+ 
+ 	msleep(PCIE_RESET_CONFIG_WAIT_MS);
+ 
++	WRITE_ONCE(host->hw_initialized, true);
++
+ 	return 0;
+ 
+ teardown_irqdomain:
+@@ -1682,6 +1770,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+ 		of_parse_phandle(np, "renesas,sysc", 0);
+ 	struct rzg3s_pcie_host *host;
+ 	struct rzg3s_sysc *sysc;
++	const char *evt_name;
+ 	int ret;
+ 
+ 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
+@@ -1745,6 +1834,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+ 		goto rpm_disable;
+ 
+ 	raw_spin_lock_init(&host->hw_lock);
++	INIT_WORK(&host->link_work, rzg3s_pcie_link_work);
+ 
+ 	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_init_irqdomain,
+ 				    rzg3s_pcie_teardown_irqdomain);
+@@ -1758,8 +1848,39 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto host_probe_teardown;
+ 
++	/*
++	 * Request the PCIe event IRQ at the end of probe to avoid
++	 * spurious link-state events during controller setup and bus
++	 * enumeration. From here on, DL_UpDown events trigger the link
++	 * worker to (re)scan the bus.
++	 */
++	host->event_irq = platform_get_irq_byname(pdev, "pcie_evt");
++	if (host->event_irq < 0) {
++		ret = host->event_irq;
++		goto pci_host_remove;
 +	}
 +
-+	if (!divider_found)
-+		return -EINVAL;
++	evt_name = devm_kasprintf(dev, GFP_KERNEL, "%s-pcie-evt",
++				  dev_name(dev));
++	if (!evt_name) {
++		ret = -ENOMEM;
++		goto pci_host_remove;
++	}
 +
-+	shift = GET_SHIFT(dsi_div->conf);
-+	val = readl(dsi_div->reg);
-+	val &= ~(clk_div_mask(GET_WIDTH(dsi_div->conf)) << shift);
-+	val |= clkt->val << shift;
-+	writel(val, dsi_div->reg);
++	ret = request_irq(host->event_irq, rzg3s_pcie_event_irq, 0,
++			  evt_name, host);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to request pcie_evt IRQ\n");
++		goto pci_host_remove;
++	}
 +
-+	return 0;
-+}
+ 	return 0;
+ 
++pci_host_remove:
++	pci_lock_rescan_remove();
++	pci_stop_root_bus(bridge->bus);
++	pci_remove_root_bus(bridge->bus);
++	pci_unlock_rescan_remove();
+ host_probe_teardown:
+ 	rzg3s_pcie_teardown_irqdomain(host);
+ 	host->data->config_deinit(host);
+@@ -1789,9 +1910,19 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+ 	struct rzg3s_sysc *sysc = host->sysc;
+ 	int ret;
+ 
++	/*
++	 * Stop accepting DL_UpDown events, then drain any worker that may
++	 * already be running, before tearing the controller down.
++	 */
++	WRITE_ONCE(host->hw_initialized, false);
++	cancel_work_sync(&host->link_work);
 +
-+static unsigned long
-+r9a09g077_cpg_lcdc_div_recalc_rate(struct clk_hw *hw,
-+				   unsigned long parent_rate)
-+{
-+	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
-+	u32 div;
-+
-+	div = readl(dsi_div->reg);
-+	div >>= GET_SHIFT(dsi_div->conf);
-+	div &= clk_div_mask(GET_WIDTH(dsi_div->conf));
-+	div = dsi_div->dtable[div].div;
-+
-+	return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
-+}
-+
-+static const struct clk_ops r9a09g077_cpg_lcdc_div_ops = {
-+	.recalc_rate = r9a09g077_cpg_lcdc_div_recalc_rate,
-+	.determine_rate = r9a09g077_cpg_lcdc_div_determine_rate,
-+	.set_rate = r9a09g077_cpg_lcdc_div_set_rate,
-+};
-+
-+static struct clk * __init
-+r9a09g077_cpg_lcdc_div_clk_register(struct device *dev,
-+				    const struct cpg_core_clk *core,
-+				    void __iomem *addr,
-+				    struct cpg_mssr_pub *pub)
-+{
-+	struct r9a09g077_lcdc_div_clk *clk_hw_data;
-+	struct clk_init_data init = {};
-+	struct clk **clks = pub->clks;
-+	const struct clk *parent;
-+	const char *parent_name;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	parent = clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	clk_hw_data = devm_kzalloc(dev, sizeof(*clk_hw_data), GFP_KERNEL);
-+	if (!clk_hw_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_hw_data->dtable = core->dtable;
-+	clk_hw_data->reg = addr;
-+	clk_hw_data->conf = core->conf;
-+	clk_hw_data->dev = dev;
-+	clk_hw_data->divider = 32; /* Initialize divider for LCDC */
-+
-+	parent_name = __clk_get_name(parent);
-+	init.name = core->name;
-+	init.ops = &r9a09g077_cpg_lcdc_div_ops;
-+	init.flags = core->flag;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	hw = &clk_hw_data->hw;
-+	hw->init = &init;
-+	ret = devm_clk_hw_register(dev, hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return hw->clk;
-+}
-+
- static struct clk * __init
- r9a09g077_cpg_clk_register(struct device *dev, const struct cpg_core_clk *core,
- 			   const struct cpg_mssr_info *info,
-@@ -497,6 +863,11 @@ r9a09g077_cpg_clk_register(struct device *dev, const struct cpg_core_clk *core,
- 		return r9a09g077_cpg_mux_clk_register(dev, core, addr, pub);
- 	case CLK_TYPE_RZT2H_FSELXSPI:
- 		return r9a09g077_cpg_fselxspi_div_clk_register(dev, core, addr, pub);
-+	case CLK_TYPE_RZT2H_PLL3:
-+		return r9a09g077_cpg_pll3_clk_register(dev, core, pub->base1 + offset,
-+						       pub, &r9a09g077_cpg_pll3_limits);
-+	case CLK_TYPE_RZT2H_LCDCDIV:
-+		return r9a09g077_cpg_lcdc_div_clk_register(dev, core, addr, pub);
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
+ 	ret = pm_runtime_put_sync(dev);
+-	if (ret)
++	if (ret) {
++		/* Suspend aborted; keep handling DL_UpDown events. */
++		WRITE_ONCE(host->hw_initialized, true);
+ 		return ret;
++	}
+ 
+ 	clk_disable_unprepare(port->refclk);
+ 
+@@ -1822,6 +1953,8 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+ refclk_restore:
+ 	clk_prepare_enable(port->refclk);
+ 	pm_runtime_resume_and_get(dev);
++	/* Controller is alive again; resume DL_UpDown handling. */
++	WRITE_ONCE(host->hw_initialized, true);
+ 	return ret;
+ }
+ 
 -- 
-2.54.0
+2.25.1
 
