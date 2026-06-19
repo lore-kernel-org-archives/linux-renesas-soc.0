@@ -1,301 +1,501 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011024.outbound.protection.outlook.com [52.101.125.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3F235B63B;
-	Fri, 19 Jun 2026 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781858465; cv=fail; b=C53q7yJgc9AT9sJNxb69pMfOP4JMZ2XsHjyGuMueMlMH7N5Wt3kWAnaldbhYTtAO4JibOUn5JpMe3mn8mHqos3+rFyyTj8j0VM7CZK2m1WEWXGU+pbHHPvNtK7zqN7PfIhsoaus4c4saG2Zy0Cur3EAECYejefDqAx/VjIEq7H4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781858465; c=relaxed/simple;
-	bh=ZdIKlJTYotwaWaZNvoQoNhhdP0WxaAxevo5PDURF748=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rIcQnrhPDmLyeahIcFJMLUg1mfRaffMeCT9WZGSASJ9372/Cob5Fo6TFpniF3FLZgM6icmejfYmdiwvIRQmEX/AaBhZx5JTrdBbHcc9Cq1riKOpffyDF5sGBSYnu03OHldb7c90NyD4l59mCGEt+1NJXUG4PRGhAbwo8xTJhxfA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=uGeAzLW1; arc=fail smtp.client-ip=52.101.125.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF9336F8EA
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jun 2026 10:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781863837; cv=none; b=UtOCnoZ95Wca/f57BghK26DoTqlMRSGA694lXlu6e5EkD11zUq5kykSd+PSaJHhXjxA1GH3/caBvnl779ySHhgwJYoCevX0XAV6qlWfFzRfaZJw6MzIM2OAe6iFdVCkYKWcQSWlPLWgXbIfwcYZZzhPBB/KT3xmbNue9yxsedRk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781863837; c=relaxed/simple;
+	bh=7HXDu9AQLJ2MXQno8fXwJXGH9TAuNCxBR7X+FyV1XLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LZDItLuQxqXJ2phyDSsM+AGB2w/LszKIP59ZLQKjZgBbqBHTG5Zxf5gvIZhJcdcaJgDc0VBqJpDLimAjGTr4sIFvtVce1ksoWnMeKx0Um11j0ZlSA/pswIqXrzW7tDic8imuVFx50FN+Tpc2f8xU8i32Iz6Sa5GYf8huktydGVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtM/9a6O; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="uGeAzLW1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xIIKptf5IZ9UOQPT6xUcG+jqDrlEw3FqXji4RLZoQgWb/F7/IX0QP6fuGLDxX7XlD0duRyZBoyqBtxRQFmMwXbZUcXO07k7WeWQZqWEL0zmnufxNgFrdmL139d0qztsc/rSpozu1zDfeX9fT1UOOgTMTZXqbGVJld6+IOF+8gDIhLE0p1N7q8Ps+enrcY6YQI62uHOT3mMtTiWvGP6As7LFKHdLpVpJgzMB2mOtekBSsF41ycuqdxDGwnhX2ArddAgH9+BaS9Mf1Ca4tp2NqXIWQ57PE4Rw+ir4j/g/2ScyZXpP/kyDk+M+f1a3ia+8y5WaUE7k+XPPZDuCJ3mqN2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6eV+XpwarriGng8GzGZfDSu8A7XSEWEhF80kkGdDtjA=;
- b=BvkmUJttaT8gaGjSdURF2JqymdjkQzNrv7y5QiIsMzC1oEkppvSRm31G83Dvu2lUg9Ye4uf8BOQvKg9DZ37zLJALY23CmKuHXcu08GLUQMlko0p7IqpQSqCmndXOOnBWAbx2T+WWN356FLmPHWvCNNg9TmT1JJKpEeRlIdhPTK0exE2pLmWMkW6gQdGL6zukcm5EioFp0mw60U0zmlvUbDe6bpFEJRbZ3pofEibSQuJpiuC/7X5qyKbHSYne/3hIjFOgSGKrRMOm9X28r/IB60FAoyg6nLfDEj5enBcYAo9nlVVpnIKy1nBJ+endA+sAynu0PSpm7sMlZGmfDkVPQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6eV+XpwarriGng8GzGZfDSu8A7XSEWEhF80kkGdDtjA=;
- b=uGeAzLW1W3+Le9L7uzH95McMdUgcKVrjZRYY3hpwYIp8bSpn+/QTDGGp49oQ6lDexKFru/E5k07lrNLMIx2A6ZW1cg2Ih1LZuIrV3jQzBy6A8ogj7Jr9OSdviurJV9nI0D1a0cEmayWrlEdb5vekB/PIK4uTCiMkPT7LJixCYdM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
- by TY4PR01MB13920.jpnprd01.prod.outlook.com (2603:1096:405:1fc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Fri, 19 Jun
- 2026 08:41:01 +0000
-Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
- ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
- ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.21.0139.009; Fri, 19 Jun 2026
- 08:41:01 +0000
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	john.madieu@gmail.com,
-	biju.das.jz@bp.renesas.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v6 4/4] arm64: dts: renesas: r9a09g047e57-smarc: add DA7212 audio codec support
-Date: Fri, 19 Jun 2026 08:39:51 +0000
-Message-Id: <20260619083951.3777556-5-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260619083951.3777556-1-john.madieu.xa@bp.renesas.com>
-References: <20260619083951.3777556-1-john.madieu.xa@bp.renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PR1P264CA0066.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:2ca::20) To TY6PR01MB17377.jpnprd01.prod.outlook.com
- (2603:1096:405:35b::6)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtM/9a6O"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-492329c5514so8030695e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jun 2026 03:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781863830; x=1782468630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=taVH6VDsxr0epaBEYBPBztJ59H1NN+zH7RTG3Yoq7WU=;
+        b=HtM/9a6OEDvzPvNhAWnrJTVcPT5rn8VolAPT8KBgbwQ9YAuM57Qp8sTX/xm7jIreQb
+         9Kx9yLTVhoqGr7da8FYtCkCQWBPz1Ls9KDsf8qbDhebfBNN2f997rUjVniXg0DirAOi8
+         cwO9XVJ5y2rKRwzm6DvCvd45KRp0zhGPhUfijQye2lD6oyLkq26En34zVYwbiZiD7I4/
+         37Vsfiyfzj3guNxSr3lBlzdI99PRnZcZrMX5LH4WcMOD2qzFM0iL/RBldMy0dGJN0QCz
+         oBsV4nYbHr6fPPmTmhFs/jHNKebKGeKrgC66OAJ6W2DQzxy8E76yv+NpMNIWVnFSlH27
+         wl1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781863830; x=1782468630;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=taVH6VDsxr0epaBEYBPBztJ59H1NN+zH7RTG3Yoq7WU=;
+        b=L9oo3wuoupDVqANH0f7ZmaDLhe7WMV6JlFbz8bSiSYXxI/WiLTYAsWCBRxS/WIk8lf
+         Fo+v59POiiKeuQS1L998T2FvebO8g1nz8vupBDNvuZprKlo+sAg/MiKkV1ZLVhF+AYPz
+         TyfjYEgvBoSAs7rzor/NQ/9AI1DLc3ePiu44oOIdEkXxGfRciqE+WJDJZ7odinFR/iMT
+         lJpMxP/lMtqXirk6N5bNURPy1/HtzIZUD10Jps6i5dY/3V6Cenr+iDzhRzmdu2+DxLwu
+         A25SAzncGn+4NZEsy2riVudAY4yskO57dMk3G6Zk1VFgSmzQjfxmEVQiCN9mqNCvPXkA
+         GU2g==
+X-Forwarded-Encrypted: i=1; AFNElJ8XMOVsSxjsfkWnJoRkR+m5L77xk/lw3/kfc66WDno15x9IGe/sCFZZ0Cwrhbr4+As+Eca+42lgFkmKc9S8hjJYYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwCj3XkGfAyqkk/H7vCESxI0gulIGb0bxUJkIEgjLrZEInd4GZ
+	PpoyZy0LIxP5n31/i3rOCgHyaniP+FcvNXUmad8GdwCIdNy+YMycEG2b
+X-Gm-Gg: AfdE7cmmMjrqh2jzLVJgQGo5YB7xb3YkLqJUk1y8D1SzTGZB305SzIRH71l2U2SkvMC
+	9Ds4yEz2n9kYjOCpTvSK5Z4M4HddFiiryLU5cwDnveMyFGhAD3SRk8x3IHodgR+XV/thoCIs5uJ
+	b6j3PO6i2sOSOhrQuZVUlL5/Ym+RqhDM/5HX2gRndFyLF6oKOuN37dhdBryR2dCxPkl3a5uEyDa
+	qP9LnPsk6DsJ30UOciRfvsB+2f7W7+2ix6G1/rIac2u9SSMeRZGBfq6BC6V8Atwdf/fFSo+jzkJ
+	bD32mladDI2ZY64c+XBP2rT0tgbwUqjDru9wUItqMN4myHtgjJ+C8bYdDTFkCQCTJZGjB2+E/0w
+	Xm6NQr/lhp2/lqp4SNE7OCX2pRnfx5o707IK5SYccVep9quLQV0sPLSGTctJ7ZRUk6eINNy1sUe
+	J5Lufa2/CrWbi0LJ9hrQ==
+X-Received: by 2002:a05:600c:4e4f:b0:48f:e230:29f5 with SMTP id 5b1f17b1804b1-49240a486cemr35738875e9.16.1781863830318;
+        Fri, 19 Jun 2026 03:10:30 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a702:d301:435:f63f:6fb:bfa4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4923fcdd08esm34577555e9.0.2026.06.19.03.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2026 03:10:30 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH v4 2/2] drm: renesas: rz-du: Add support for RZ/G3L LVDS encoder
+Date: Fri, 19 Jun 2026 11:10:17 +0100
+Message-ID: <20260619101026.323633-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260619101026.323633-1-biju.das.jz@bp.renesas.com>
+References: <20260619101026.323633-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY6PR01MB17377:EE_|TY4PR01MB13920:EE_
-X-MS-Office365-Filtering-Correlation-Id: b714420f-cf53-446d-80aa-08decdde7e00
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|52116014|376014|18002099003|22082099003|3023799007|38350700014|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	PAcz0zVFsKn+UaLN797/XrRtz+HmGgDmpcAnz1UTyRhLpQy6ivDbQYExISvQ1+7sSedTJnU9UnmQUzROZUZkcNlU4r8HlZF7YpNe6iyzT0B1w3uQUvhTx7yECmsW8e05ILkK3jBtMw8jid/wtShFeRM93aovz0grohk1JXTFyNPzMBJivWLcKvTFub2i2UpW8XfkGDSyODPT3QbfGDjLDuPfV9mLYExBy4cj6jb26RHqzqiI3mk10LOG9emZTIL/5kTBGmW3s4McTjE3yjivP6tuG/nOx89ccErHWksCGihnUmwwWKzHQLGbaotqeVzXne53CQE5DguT0n2JoEjHmP95WPzK2AFVAD+uZDyllhq4EKMU+AOd4uUiQUHNM0dKUDO6vDFcKsLfz97qT1P47o/KHjtJFJJ2Ig84BnU9s8tHFp3R28vx7FBgWJcoojxctOBKaTggaEjKuHAbB5F/OL6O6mfJ4W3/9xm9hDzsTCQqC3mKoPjiibOGJim5s69ak+g46jSjmnyBTPSzed3PlLJtSeKN6GmUzgezk2GOD2UxhIrbo8wFff6TIzrlWW8Cx00OLYi1XPeUdVjrybfRcWoGMmLKgNZEYxLmtM0wIIdMVYMMwi5qpmVm6mTHRloiXiaa791TzccFpkGt7jmlj8nWxVS2ZicKqGrNzmedi/kWCJL7dX3AAtSG05TXt4/ok8B60NMd9d/reUce/C1fK00pqYT382w+beLzW04y9iU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(52116014)(376014)(18002099003)(22082099003)(3023799007)(38350700014)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GjLEo4xhdK1bO83gV5MZFlp1NHGS951fZBUlAm5VGnpblZwUGcsM6gXxI6Bp?=
- =?us-ascii?Q?FcO34UqVrtMZF/4GCVlKEZLjLXOijkkIBKFDKh7xW5GlocKBrGoao6NlxW5A?=
- =?us-ascii?Q?HvyzK84brLmCDgw0xujmOGT+cCQ5sr2XDZ6/AiDk36k4XbJR3A/aLKcdWKM6?=
- =?us-ascii?Q?zu47GXrX6gKv3GPZY3QOsdqqX1FqfCNCIiwHQf8uqpd5Lf1uXhJRWlCOcDwL?=
- =?us-ascii?Q?Pa0JXsIIOwhKBDjqIXMX6jrZgaqk1yho+xocS9fa89cXOynXr+kRL0LrjH1f?=
- =?us-ascii?Q?xCCJuoya0OJ7aPMv5GbbqNu6kJZ17dUZXi/zXUpppXboSWDQKukILE1T6e27?=
- =?us-ascii?Q?RWues6Act8mkLCXRtDwZDFxhqPGo8utmHc1rx5JirKHoClLzcyju9BatLUxt?=
- =?us-ascii?Q?7Zfj7Au/CeICMOYpsOEvDU3fHAr3mKO1lxwO0kgqtkLSX3HIa2JhiqRlx31J?=
- =?us-ascii?Q?bCqaVS9+wICfAaykh5cas1zUbH0JAZpyzfSnBOp9B6vvXmOfMbd0fOZY7VmV?=
- =?us-ascii?Q?cbGWZW0LjJm+hxSaGOyK2VJW6vFmcLKFQxdriaEXB8xY48Rl7OP5gWISKdJd?=
- =?us-ascii?Q?7Vwcr34oTdDObqKQvjSzbE8KmvoppN9sa2pwDz2sL+frRGmuOlb3l2QGkpe3?=
- =?us-ascii?Q?Fi4JkRTZeEbDKRwDPXgBjZysgZ/5OXTMBbHrT9VWfm2Wr7bdmAsgxQX3DTBB?=
- =?us-ascii?Q?/gg0TJblreiMDSN/llIk8mOE2T4nVqzhKfX307G/96iE9U1eP6neR8BlnhoJ?=
- =?us-ascii?Q?boUZLJILxiJfTp1vDtnf0fVtVI0mQimCXUrkerNZZO5pxpUXdM9NndaMT5aZ?=
- =?us-ascii?Q?EGZqdppIRGUa2gFIqagiw1itI2i1khnQewV4upR1TFxyFQup8ZIAfevlQqAP?=
- =?us-ascii?Q?mvJ7EjUEDBMmvNjWmMJQcAZKcK8SZx992UygPxlgkKL3175vECXD6f23tSe4?=
- =?us-ascii?Q?Tuvv4bmYbXkkVkidWBZBUwnzrzeTjV7C7hTS069fwlP97Kzm3cX64kgpHCki?=
- =?us-ascii?Q?lVfZVdGYpS/hzQG77eMyk/k59lNCcQ22Tnq7LSpU7x6RciNyezIXX8wg+Lfp?=
- =?us-ascii?Q?o+9ze+p59r/P1zAskz0+gJdu+U4E0a/BFuJk8pSYLU6SrLDuC/q3cgKO5GYh?=
- =?us-ascii?Q?kh4WGNCBp0RP1VKURHBr5exCfZsDqZxxqu+Rdd/jQG3yAbmqmcejIBokwcYF?=
- =?us-ascii?Q?FhwXFezvkDx6rNaRIO/3adqKAX06csE+Qb93CBEuAKuCbh02VPryaOGYDqGK?=
- =?us-ascii?Q?Q+HAVnFjLrTCcvUzB0DKKgyRy09qCVNfXblPF6Ugl2FcumcnJE8QLJHIcGSU?=
- =?us-ascii?Q?HSYFO2a6doQg+imY7uAIDM0kx3hRRg7MxtYJXbIOmUPku+NvXbS6AVdOZwOv?=
- =?us-ascii?Q?Ra0UoCQ5EdfsRJPJaiJ9Hgji3S2iMoWs9SGqAKYziY+ZL79F1yvJ+4nypDDV?=
- =?us-ascii?Q?vjIRASJ7CL2g7luPecIYJNX7GWP79GI2YUkAPtdScyEkHEOOLSpf/W7PdEUm?=
- =?us-ascii?Q?nMfRdrIJ13B3IWsO5FoKS0QMPeF0LdaWH051ZDJ7PecCegT7hqs3p07JX4z0?=
- =?us-ascii?Q?olj4cX7l5EFBPL+VgKADsAdl8R8f9ycrkG9jsnNLsLd99oS6A+SwLgqtVN6E?=
- =?us-ascii?Q?gXTG/2nQtXZRn/U5xmqlsCHpqAMDsrn4aZlJD1/AoVn2r1JG8XJOHLgpAauH?=
- =?us-ascii?Q?rX1Fkta5lh686W7yFT7QhN0twKjNhp/X2q42BbdNKPsjrLHpzwBZOlR0ec+A?=
- =?us-ascii?Q?2ZlJr44TQ71FfeR3GPhP0cUXS7agQbY=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b714420f-cf53-446d-80aa-08decdde7e00
-X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2026 08:41:01.7576
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0EdU5xguJ5FjLM4XeHKVc5u2d9chlSXZOBFhqp3QBbd2nOwqLIWSTQB09DbB8zCAQSSiQbtIujWIPXsrzKOKpLC5oisdSBNNo5PiZGr+FJw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13920
+Content-Transfer-Encoding: 8bit
 
-RZ/G3E SMARC board has a DA7212 audio codec connected via I2C1 for
-sound input/output using SSI3/SSI4 where:
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
- - The codec receives its master clock from the Versa3 clock
-   generator present on the SoM
- - SSI4 shares clock pins with SSI3 to provide a separate data
-   line for full-duplex audio capture.
+Add support for the RZ/G3L LVDS encoder driver. It operates in single-link
+mode with 4 lanes (Data) + 1 lane (Clock) and supports pixel clock rates
+from 25 to 87 MHz. The LVDS module cannot be used at the same time as
+MIPI-DSI. However, LVDS and the DSI interface share a peripheral clock and
+the MIPI_DSI_PRESET_N reset signal. Also, the MIPI_DSI_CMN_RSTB and
+MIPI_DSI_ARESET_N reset signals must be asserted before using the LVDS
+module.
 
-Enable audio support on RZ/G3E SMARC2 EVK boards with a DA7212 audio codec.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
+v3->v4:
+ * Dropped the header files clk.h and syscon.h
+ * Dropped next_bridge check in attach().
+ * Dropped syscon for getting regmap.
+ * Replaced the below macros to match with hardware manual:
+	LVDS_0_CTL_FMT_SEL_MSK->LVDS_0_CTL_FMT_SEL0_MSK
+	LVDS_0_PHY_CH_IO_EN_MSK->LVDS_0_PHY_CH_IO_EN0_MSK
+	Replaced LVDS_0_PHY_CH_IO_EN->LVDS_0_PHY_CH_IO_EN0
+ * Replaced atomic_reset()->atomic_create_state()
+ * Dropped the tags as there are new changes.
+v2->v3:
+ * Collected tags.
+v2->v2[1]:
+ * Replace drm_atomic_state with drm_atomic_commit in
+   rzg3l_lvds_atomic_{en,dis}able().
+ * Drop local variable ret and dev_err() messages in
+   rzg3l_lvds_atomic_enable(); use WARN_ON() instead to
+   capture unexpected failures since atomic_enable should not fail.
+ * Drop local variable next_bridge from rzg3l_lvds_probe().
+[1] https://lore.kernel.org/all/20260524194457.479681-3-biju.das.jz@bp.renesas.com/
+v1->v2:
+ * Dropped unused function rzg3l_lvds_is_connected() and removed the 
+   corresponding header file rzg3l_lvds.h
+ * Dropped next_bridge from struct rzg3l_lvds instead using bridge's
+   next_bridge.
+ * Replaced pm_runtime_resume_and_get()->pm_runtime_get_sync() as
+   atomic_enable doesn't fail and for each enable there always will be an
+   atomic_disable() call.
+ * Started using DEFINE_RUNTIME_DEV_PM_OPS for PM callback.
+ * Replaced rzg3l_lvds_parse_dt() with devm_drm_of_get_bridge() in probe()
+ * Started using reset_control_bulk_*() in rzg3l_lvds_pm_runtime_{suspend,
+   resume}()
+---
+ drivers/gpu/drm/renesas/rz-du/Kconfig         |  13 +
+ drivers/gpu/drm/renesas/rz-du/Makefile        |   1 +
+ drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c    | 285 ++++++++++++++++++
+ .../gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h   |  26 ++
+ 4 files changed, 325 insertions(+)
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h
 
-Changes:
-
-v6: No changes.
-v5:
- - Drop the unnecessary #address-cells / #size-cells from the
-   codec@1a node; the port child has no unit address or reg, and the
-   da7212 binding sets unevaluatedProperties: false.
-
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 112 ++++++++++++++++++
- 1 file changed, 112 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 6372f582a7c4..ac525b73c1bb 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -32,6 +32,37 @@
- #include "rzg3e-smarc-som.dtsi"
- #include "renesas-smarc2.dtsi"
+diff --git a/drivers/gpu/drm/renesas/rz-du/Kconfig b/drivers/gpu/drm/renesas/rz-du/Kconfig
+index 7f2ef7137ae5..1e5b3dd1c0de 100644
+--- a/drivers/gpu/drm/renesas/rz-du/Kconfig
++++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
+@@ -26,3 +26,16 @@ config DRM_RZG2L_MIPI_DSI
+ 	def_tristate DRM_RZG2L_DU
+ 	depends on DRM_RZG2L_USE_MIPI_DSI
+ 	select DRM_MIPI_DSI
++
++config DRM_RZG3L_USE_LVDS
++	bool "RZ/G3L DU LVDS Encoder Support"
++	depends on DRM_BRIDGE && OF
++	default DRM_RZG2L_DU
++	help
++	  Enable support for the RZ/G3L Display Unit embedded LVDS encoder.
++
++config DRM_RZG3L_LVDS
++	def_tristate DRM_RZG2L_DU
++	depends on DRM_RZG3L_USE_LVDS
++	select DRM_KMS_HELPER
++	select DRM_PANEL
+diff --git a/drivers/gpu/drm/renesas/rz-du/Makefile b/drivers/gpu/drm/renesas/rz-du/Makefile
+index 2987900ea6b6..46decb7ac4f1 100644
+--- a/drivers/gpu/drm/renesas/rz-du/Makefile
++++ b/drivers/gpu/drm/renesas/rz-du/Makefile
+@@ -8,3 +8,4 @@ rzg2l-du-drm-$(CONFIG_VIDEO_RENESAS_VSP1)	+= rzg2l_du_vsp.o
+ obj-$(CONFIG_DRM_RZG2L_DU)		+= rzg2l-du-drm.o
  
+ obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+= rzg2l_mipi_dsi.o
++obj-$(CONFIG_DRM_RZG3L_LVDS)		+= rzg3l_lvds.o
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c b/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c
+new file mode 100644
+index 000000000000..6100888ea728
+--- /dev/null
++++ b/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c
+@@ -0,0 +1,285 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * SSI-DA7212
++ * RZ/G3L LVDS Encoder Driver
 + *
-+ * These commands are required when Playback/Capture
-+ *
-+ *	amixer -q cset name='Aux Switch' on
-+ *	amixer -q cset name='Mixin Left Aux Left Switch' on
-+ *	amixer -q cset name='Mixin Right Aux Right Switch' on
-+ *	amixer -q cset name='ADC Switch' on
-+ *	amixer -q cset name='Mixout Right Mixin Right Switch' off
-+ *	amixer -q cset name='Mixout Left Mixin Left Switch' off
-+ *	amixer -q cset name='Headphone Volume' 70%
-+ *	amixer -q cset name='Headphone Switch' on
-+ *	amixer -q cset name='Mixout Left DAC Left Switch' on
-+ *	amixer -q cset name='Mixout Right DAC Right Switch' on
-+ *	amixer -q cset name='DAC Left Source MUX' 'DAI Input Left'
-+ *	amixer -q cset name='DAC Right Source MUX' 'DAI Input Right'
-+ *	amixer -q sset 'Mic 1 Amp Source MUX' 'MIC_P'
-+ *	amixer -q sset 'Mic 2 Amp Source MUX' 'MIC_P'
-+ *	amixer -q sset 'Mixin Left Mic 1' on
-+ *	amixer -q sset 'Mixin Right Mic 2' on
-+ *	amixer -q sset 'Mic 1' 90% on
-+ *	amixer -q sset 'Mic 2' 90% on
-+ *	amixer -q sset 'Lineout' 80% on
-+ *	amixer -q set "Headphone" 100% on
-+ *
-+ * When Capture chained with DVC, use this command to amplify sound
-+ *	amixer set 'DVC In',0 80%
-+ * For playback, use: amixer set 'DVC Out',0 80%
++ * Copyright (C) 2026 Renesas Electronics Corporation
 + */
 +
- / {
- 	model = "Renesas SMARC EVK version 2 based on r9a09g047e57";
- 	compatible = "renesas,smarc2-evk", "renesas,rzg3e-smarcm",
-@@ -55,6 +86,22 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/media-bus-format.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_graph.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
 +
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge.h>
++#include <drm/drm_of.h>
++#include <drm/drm_panel.h>
++#include <drm/drm_probe_helper.h>
 +
-+		label = "snd-rzg3e";
++#include "rzg3l_lvds_regs.h"
 +
-+		dais = <&rsnd_port0>;	/* DA7212 */
++enum rzg3l_lvds_mode {
++	RZG3L_LVDS_MODE_JEIDA = 0,
++	RZG3L_LVDS_MODE_JEIDA_MIRROR = 1,
++	RZG3L_LVDS_MODE_MODE2 = 2,
++	RZG3L_LVDS_MODE_MODE2_MIRROR = 3,
++	RZG3L_LVDS_MODE_VESA = 4,
++	RZG3L_LVDS_MODE_VESA_MIRROR = 5,
++	RZG3L_LVDS_MODE_MODE6 = 6,
++	RZG3L_LVDS_MODE_MODE6_MIRROR = 7,
++};
++
++struct rzg3l_lvds {
++	struct device *dev;
++	struct reset_control *prstc;
++	struct reset_control *lvd_rstc;
++	struct regmap *regmap;
++	struct drm_bridge bridge;
++};
++
++#define bridge_to_rzg3l_lvds(b) \
++	container_of(b, struct rzg3l_lvds, bridge)
++
++static const struct regmap_config rzg3l_lvds_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = LVDS_0_CTL_OFFSET,
++};
++
++/* -----------------------------------------------------------------------------
++ * Bridge
++ */
++
++static void rzg3l_lvds_atomic_enable(struct drm_bridge *bridge,
++				     struct drm_atomic_commit *state)
++{
++	struct rzg3l_lvds *lvds = bridge_to_rzg3l_lvds(bridge);
++	const struct drm_bridge_state *bridge_state;
++	u32 fmt;
++
++	/* Get the LVDS format from the bridge state. */
++	bridge_state = drm_atomic_get_new_bridge_state(state, bridge);
++	if (WARN_ON(!bridge_state))
++		return;
++
++	switch (bridge_state->output_bus_cfg.format) {
++	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
++		fmt = RZG3L_LVDS_MODE_JEIDA;
++		break;
++	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
++		fmt = RZG3L_LVDS_MODE_VESA;
++		break;
++	default:
++		fmt = RZG3L_LVDS_MODE_VESA;
++		dev_warn(lvds->dev, "Unsupported bus fmt 0x%04x\n",
++			 bridge_state->output_bus_cfg.format);
++		break;
++	}
++
++	if (WARN_ON(pm_runtime_get_sync(lvds->dev) < 0))
++		return;
++
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_EN_BGR, LVDS_0_PHY_CH_EN_BGR);
++	fsleep(20);
++
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_EN_LDO, LVDS_0_PHY_CH_EN_LDO);
++	fsleep(10);
++
++	regmap_write(lvds->regmap, LVDS_CMN, LVDS_CMN_RST_PHY0_SEL);
++	regmap_update_bits(lvds->regmap, LVDS_0_CTL_OFFSET,
++			   LVDS_0_CTL_FMT_SEL0_MSK,
++			   FIELD_PREP(LVDS_0_CTL_FMT_SEL0_MSK, fmt));
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_IO_EN0_MSK, LVDS_0_PHY_CH_IO_EN0);
++	regmap_write(lvds->regmap, LVDS_CMN,
++		     LVDS_CMN_RST_PHY0_SEL | LVDS_CMN_PHY_RESET);
++	fsleep(100);
++}
++
++static void rzg3l_lvds_atomic_disable(struct drm_bridge *bridge,
++				      struct drm_atomic_commit *state)
++{
++	struct rzg3l_lvds *lvds = bridge_to_rzg3l_lvds(bridge);
++
++	regmap_update_bits(lvds->regmap, LVDS_CMN, LVDS_CMN_PHY_RESET, 0);
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_IO_EN0_MSK, 0);
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_EN_LDO, 0);
++	regmap_update_bits(lvds->regmap, LVDS_0_PHY_OFFSET,
++			   LVDS_0_PHY_CH_EN_BGR, 0);
++
++	pm_runtime_put(lvds->dev);
++}
++
++static int rzg3l_lvds_attach(struct drm_bridge *bridge,
++			     struct drm_encoder *encoder,
++			     enum drm_bridge_attach_flags flags)
++{
++	struct rzg3l_lvds *lvds = bridge_to_rzg3l_lvds(bridge);
++
++	return drm_bridge_attach(encoder, lvds->bridge.next_bridge, bridge, flags);
++}
++
++static enum drm_mode_status
++rzg3l_lvds_bridge_mode_valid(struct drm_bridge *bridge,
++			     const struct drm_display_info *info,
++			     const struct drm_display_mode *mode)
++{
++	if (mode->clock > 87000)
++		return MODE_CLOCK_HIGH;
++
++	if (mode->clock < 25000)
++		return MODE_CLOCK_LOW;
++
++	return MODE_OK;
++}
++
++static const struct drm_bridge_funcs rzg3l_lvds_bridge_ops = {
++	.attach = rzg3l_lvds_attach,
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_create_state = drm_atomic_helper_bridge_create_state,
++	.atomic_enable = rzg3l_lvds_atomic_enable,
++	.atomic_disable = rzg3l_lvds_atomic_disable,
++	.mode_valid = rzg3l_lvds_bridge_mode_valid,
++};
++
++/* -----------------------------------------------------------------------------
++ * Power Management
++ */
++
++static int rzg3l_lvds_pm_runtime_suspend(struct device *dev)
++{
++	struct rzg3l_lvds *lvds = dev_get_drvdata(dev);
++	struct reset_control_bulk_data resets[] = {
++		{ .rstc = lvds->lvd_rstc },
++		{ .rstc = lvds->prstc },
 +	};
-+};
 +
-+&audio_clkb {
-+	clock-frequency = <11289600>;
-+};
++	return reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
++}
 +
-+&audio_clkc {
-+	clock-frequency = <12288000>;
- };
- 
- &canfd {
-@@ -99,6 +146,35 @@ &i2c0 {
- 	pinctrl-names = "default";
- };
- 
-+&i2c1 {
-+	da7212: codec@1a {
-+		compatible = "dlg,da7212";
-+		#sound-dai-cells = <0>;
-+		reg = <0x1a>;
-+
-+		clocks = <&versa3 1>;
-+		clock-names = "mclk";
-+
-+		dlg,micbias1-lvl = <2500>;
-+		dlg,micbias2-lvl = <2500>;
-+		dlg,dmic-data-sel = "lrise_rfall";
-+		dlg,dmic-samplephase = "between_clkedge";
-+		dlg,dmic-clkrate = <3000000>;
-+
-+		VDDA-supply = <&reg_1p8v>;
-+		VDDSP-supply = <&reg_3p3v>;
-+		VDDMIC-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_1p8v>;
-+
-+		port {
-+			da7212_endpoint: endpoint {
-+				remote-endpoint = <&rsnd_endpoint0>;
-+				mclk-fs = <256>;
-+			};
-+		};
++static int rzg3l_lvds_pm_runtime_resume(struct device *dev)
++{
++	struct rzg3l_lvds *lvds = dev_get_drvdata(dev);
++	struct reset_control_bulk_data resets[] = {
++		{ .rstc = lvds->lvd_rstc },
++		{ .rstc = lvds->prstc },
 +	};
++
++	return reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
++}
++
++static DEFINE_RUNTIME_DEV_PM_OPS(rzg3l_lvds_pm_ops,
++				 rzg3l_lvds_pm_runtime_suspend,
++				 rzg3l_lvds_pm_runtime_resume, NULL);
++
++/* -----------------------------------------------------------------------------
++ * Probe & Remove
++ */
++
++static int rzg3l_lvds_probe(struct platform_device *pdev)
++{
++	struct reset_control *rstc, *arstc;
++	struct device *dev = &pdev->dev;
++	struct rzg3l_lvds *lvds;
++	void __iomem *base;
++	int ret;
++
++	lvds = devm_drm_bridge_alloc(dev, struct rzg3l_lvds, bridge,
++				     &rzg3l_lvds_bridge_ops);
++	if (IS_ERR(lvds))
++		return PTR_ERR(lvds);
++
++	lvds->dev = dev;
++	lvds->bridge.of_node = pdev->dev.of_node;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	lvds->regmap = devm_regmap_init_mmio(dev, base, &rzg3l_lvds_regmap_config);
++	if (IS_ERR(lvds->regmap))
++		return dev_err_probe(dev, PTR_ERR(lvds->regmap),
++				     "failed to init regmap\n");
++
++	rstc = devm_reset_control_get_exclusive(dev, "rst");
++	if (IS_ERR(rstc))
++		return dev_err_probe(dev, PTR_ERR(rstc), "failed to get rst\n");
++
++	arstc = devm_reset_control_get_exclusive(dev, "arst");
++	if (IS_ERR(arstc))
++		return dev_err_probe(dev, PTR_ERR(arstc),
++				     "failed to get arst\n");
++
++	lvds->prstc = devm_reset_control_get_exclusive(dev, "prst");
++	if (IS_ERR(lvds->prstc))
++		return dev_err_probe(dev, PTR_ERR(lvds->prstc),
++				     "failed to get prst\n");
++
++	lvds->lvd_rstc = devm_reset_control_get_exclusive(dev, "lvdrst");
++	if (IS_ERR(lvds->lvd_rstc))
++		return dev_err_probe(dev, PTR_ERR(lvds->lvd_rstc),
++				     "failed to get core reset\n");
++
++	platform_set_drvdata(pdev, lvds);
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable Runtime PM\n");
++
++	lvds->bridge.next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
++	if (IS_ERR(lvds->bridge.next_bridge))
++		return dev_err_probe(dev, PTR_ERR(lvds->bridge.next_bridge),
++				     "failed to get next bridge\n");
++
++	ret = reset_control_assert(rstc);
++	if (ret < 0)
++		return ret;
++
++	ret = reset_control_assert(arstc);
++	if (ret < 0)
++		return ret;
++
++	ret = devm_drm_bridge_add(dev, &lvds->bridge);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to register drm bridge\n");
++
++	return ret;
++}
++
++static const struct of_device_id rzg3l_lvds_of_table[] = {
++	{ .compatible = "renesas,r9a08g046-lvds" },
++	{ /* sentinel */ }
 +};
 +
- &keys {
- 	pinctrl-0 = <&nmi_pins>;
- 	pinctrl-names = "default";
-@@ -280,6 +356,42 @@ &sdhi1 {
- 	vqmmc-supply = <&vqmmc_sd1_pvdd>;
- };
- 
-+&snd_rzg3e {
-+	pinctrl-0 = <&sound_clk_pins &sound_pins>;
-+	pinctrl-names = "default";
++MODULE_DEVICE_TABLE(of, rzg3l_lvds_of_table);
 +
-+	status = "okay";
-+
-+	/* audio_clkout */
-+	#clock-cells = <0>;
-+	clock-frequency = <11289600>;
-+
-+	/* Multi DAI */
-+	#sound-dai-cells = <1>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		rsnd_port0: port@0 {
-+			reg = <0>;
-+			rsnd_endpoint0: endpoint {
-+				remote-endpoint = <&da7212_endpoint>;
-+
-+				dai-format = "i2s";
-+				bitclock-master = <&rsnd_endpoint0>;
-+				frame-master = <&rsnd_endpoint0>;
-+
-+				playback = <&ssi3>, <&src1>, <&dvc1>;
-+				capture = <&ssi4>, <&src0>, <&dvc0>;
-+			};
-+		};
-+	};
++static struct platform_driver rzg3l_lvds_platform_driver = {
++	.probe		= rzg3l_lvds_probe,
++	.driver		= {
++		.name	= "rzg3l-lvds",
++		.pm	= pm_ptr(&rzg3l_lvds_pm_ops),
++		.of_match_table = rzg3l_lvds_of_table,
++	},
 +};
 +
-+&ssi4 {
-+	shared-pin;
-+};
++module_platform_driver(rzg3l_lvds_platform_driver);
 +
- &usb3_phy {
- 	status = "okay";
- };
++MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
++MODULE_AUTHOR("Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>");
++MODULE_DESCRIPTION("Renesas RZ/G3L LVDS Encoder Driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h
+new file mode 100644
+index 000000000000..3dca3b630818
+--- /dev/null
++++ b/drivers/gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * RZ/G3L LVDS Interface Registers Definitions
++ *
++ * Copyright (C) 2026 Renesas Electronics Corporation
++ *
++ */
++
++#ifndef __RZG3L_LVDS_REGS_H__
++#define __RZG3L_LVDS_REGS_H__
++
++#define LVDS_CMN			0x00
++#define LVDS_CMN_RST_PHY0_SEL		(1 << 24)
++#define LVDS_CMN_RST_PHY0_SEL_CH0	(1 << 24)
++#define LVDS_CMN_PHY_RESET		(1 << 0)
++
++#define LVDS_0_PHY_OFFSET		0x10
++#define LVDS_0_PHY_CH_IO_EN0_MSK	(0x1f)
++#define LVDS_0_PHY_CH_IO_EN0		(LVDS_0_PHY_CH_IO_EN0_MSK << 0)
++#define LVDS_0_PHY_CH_EN_BGR		BIT(8)
++#define LVDS_0_PHY_CH_EN_LDO		BIT(9)
++
++#define LVDS_0_CTL_OFFSET		0x14
++#define LVDS_0_CTL_FMT_SEL0_MSK		GENMASK(23, 20)
++
++#endif /* __RZG3L_LVDS_REGS_H__ */
 -- 
-2.25.1
+2.43.0
 
