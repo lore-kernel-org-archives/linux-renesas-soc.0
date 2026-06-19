@@ -1,93 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670F53B9DBB;
-	Fri, 19 Jun 2026 17:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA5E3C10A3
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jun 2026 17:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781888703; cv=none; b=Ix98/6teal3WBT4yQgrXZs2+s5sbdVhsIaY4O/EOztGj17/5GnQufSpdx+kRLhf03FaMg5yuIqzxr9J7cjXMD8rzj3TwDGg1/AYjpPVLVy/inByNDWa9kkZQFxvIgtCCXk0jQteKI6c1pHFXrleoGSm/3XW5n9DWudU0DyTmbaY=
+	t=1781888939; cv=none; b=ms5CEc6ERhKhKSj9GB7jiTndY6syYcNJVN1jOZLmen6vKltY0BzhuCCFHGDFCpCBB4MKwleMqMTDNs+M14yd94Y6M8tb0GFOApnU8RZjsuxP96qJFAoZ2qkX+eTSI1TGJNpcJT/ZyvYLom9aGvaQWz+vG5NKWsMUCdpT25yeAiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781888703; c=relaxed/simple;
-	bh=I+2t532ZrR3tSKHWvKwp51X+ayzP+jiU3EzT+XnFMC4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QSvX19d5qHaKi1gjKbzg5o1GOetpJy1j9rXwjGiJpNwnspMla/YbbY6fwjhfTaWOph6tcfdxvWOx4KZlWsl0TUEFx3QOL8UajeHKogLY+DXazrzQ+1rqfICiYPAY5JMQxR9nfsFwn4FXxU3xZBdBfsZbvOftDjsJDX3pHKGAwg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kwkx3Van; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781888939; c=relaxed/simple;
+	bh=mRl+p8NKZ4Uqi2DbJxfA0N/bImQMn69IfQP2gWfdIn0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=oSQwx9sJqCwgrI5JNC3OKrGeSpMv4wuhszex40BXxSYfWEh+zgFLal2sOCjScEiCN3SlZsWYfpFiNWy+2nnEoEameL9xg97BPf2qB/jh/sxUlog17TNWJRJqOnz2/shBWeFJ30PXs7jR2hM0CKw3W3iY7YPahjnoD7CmlGfK9zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GtrXlAr8; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kwkx3Van"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B211F000E9;
-	Fri, 19 Jun 2026 17:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781888702;
-	bh=zJX1LZbpNkNg/k4AzJPrwfSQQa5YP3+zYN5KX/BBMEw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Kwkx3VanrWh7+OFddqkZ8VQ2lPHN/cRP3Nk4hOV5PVv+q4NaGBBispejxe+IiBP4n
-	 5e4ZbKQp5BYLs0LwhOFz1qEl0zPmShn6fGstxTTFG5rb8NRLdheytsP6PLjAHhTTcj
-	 TwpeRqkjlAqU+sAg5O2w0KKo79sE/EAmEHVQyTFbnwE4WmPyYneeZi/MaNYyxeDOVS
-	 /vdET136ZySSdr6/kBn3nHFPkjDW+a8f7v3uF698z52e7K+yG/39SFqlmrtZCjiCfw
-	 luAbYvsJnxwioLCMAgoPTTiiPKx2n5vSuttNGM0xbdwr6gnP+yz3i8NIbfIOC0JPVl
-	 xhTd8JOhzr/Iw==
-From: Mark Brown <broonie@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Quang Nguyen <quang.nguyen.wx@renesas.com>, 
- Biju Das <biju.das.jz@bp.renesas.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20260618081932.172168-1-biju.das.jz@bp.renesas.com>
-References: <20260618081932.172168-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH] spi: rpc-if: Use correct device for hardware
- reinitialization on resume
-Message-Id: <178180686113.62759.12100775429244612281.b4-ty@b4>
-Date: Thu, 18 Jun 2026 19:21:01 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GtrXlAr8"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 23E064E42FD1;
+	Fri, 19 Jun 2026 17:08:56 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D0853601B9;
+	Fri, 19 Jun 2026 17:08:55 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ABDCB106C81BC;
+	Fri, 19 Jun 2026 19:08:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1781888933; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=mRl+p8NKZ4Uqi2DbJxfA0N/bImQMn69IfQP2gWfdIn0=;
+	b=GtrXlAr82THdxC+x0ULzqK2LukzejYV/HHoWOhy0rnLT9OCpYYx7DI0Ca2otXI9MC6rt/O
+	PsvsTGMeYR1QQyMhXODXb0bsnVpo8b1AJ5+BgWuRE1TXpWDRyaaCCbnZP5H1KaZxDHKOq8
+	LO9lu7HAld9YGGFAMtt1mZ3JVL+4nqR9ev+P20IAsV/TdprJ6Y3Ojqy3AdzA+jesc0ToOp
+	juIU32H7fFGeN2OVgc7cbk8rehCcARkdf3oE9Mh7qI0ISz6SprChxJjgB103aMMhEs3RCn
+	air8p6ZpJxAcff89Au6uOVPjVLW7KZvMw6SPD2Zm3W+p1HNv5XsA8iGWnatxuQ==
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1148; i=broonie@kernel.org;
- h=from:subject:message-id; bh=I+2t532ZrR3tSKHWvKwp51X+ayzP+jiU3EzT+XnFMC4=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqNXa7BDTby8jxXKIa+keee4aW383vEJyAlrSD1
- tOToWh1U/+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCajV2uwAKCRAk1otyXVSH
- 0LGFB/9vxRLZilZQ2l5qG1PL7x1OkVFtFq9UFIpj7yGkshHPyyJqvTbBFGpCpJABxa8fZdMJQq9
- KCeE6kbRspfhe4MlPxBJ796d3NKJXV1U2nVE74O4PaCsjl4pdl6725nkPBJ2ay5cSSuhYIkUX/Z
- NQ+WtBr4TiBG/CoULLCivVFZpNKAJFDlW1BvYGcZ7+UPyAEiCg/T5NFoCzOHafkSz8IKqpfQzL2
- 9fnfZ+F9cOiPM1aTVJ1UBQEexpj06McdkwHR5shH8UQ/qO1YpfMtxFoz4Ci0TGxrH5k2TU3nAAf
- bNiGEDUsti5Xu4/fCv5pYKMizJC0iwr3CNeVHs/2alR6WeF2
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 19 Jun 2026 19:08:35 +0200
+Message-Id: <DJD6WITJWQHS.1XR1LK4S8N5H5@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>,
+ "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 00/78] drm/bridge: Convert all reset users to
+ create_state
+Cc: "Dmitry Baryshkov" <lumag@kernel.org>,
+ <dri-devel@lists.freedesktop.org>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Jagan Teki"
+ <jagan@amarulasolutions.com>, "Liu Ying" <victor.liu@nxp.com>, "Frank Li"
+ <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Phong LE" <ple@baylibre.com>, "Douglas
+ Anderson" <dianders@chromium.org>, "Inki Dae" <inki.dae@samsung.com>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Paul Cercueil" <paul@crapouillou.net>,
+ <linux-mips@vger.kernel.org>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Jerome Brunet"
+ <jbrunet@baylibre.com>, "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>, <linux-amlogic@lists.infradead.org>,
+ "Tomi Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
+ <magnus.damm@gmail.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>,
+ <linux-renesas-soc@vger.kernel.org>, "Biju Das"
+ <biju.das.jz@bp.renesas.com>, "Heiko Stuebner" <heiko@sntech.de>, "Sandy
+ Huang" <hjc@rock-chips.com>, <linux-rockchip@lists.infradead.org>, "Yannick
+ Fertre" <yannick.fertre@foss.st.com>, "Raphael Gallais-Pou"
+ <raphael.gallais-pou@foss.st.com>, "Philippe Cornu"
+ <philippe.cornu@foss.st.com>, "Maxime Coquelin"
+ <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
+ <alexandre.torgue@foss.st.com>, <linux-stm32@st-md-mailman.stormreply.com>,
+ "Jyri Sarha" <jyri.sarha@iki.fi>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Dave Stevenson"
+ <dave.stevenson@raspberrypi.com>, =?utf-8?q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, "Raspberry Pi Kernel Maintenance"
+ <kernel-list@raspberrypi.com>, "Icenowy Zheng" <zhengxingda@iscas.ac.cn>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Michal Simek"
+ <michal.simek@amd.com>
+X-Mailer: aerc 0.21.0
+References: <20260619-drm-no-more-bridge-reset-v3-0-ff399263111b@kernel.org>
+ <DJD2IQSFENH4.337VSFOU7OJ29@bootlin.com>
+In-Reply-To: <DJD2IQSFENH4.337VSFOU7OJ29@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 18 Jun 2026 09:19:30 +0100, Biju wrote:
-> spi: rpc-if: Use correct device for hardware reinitialization on resume
+On Fri Jun 19, 2026 at 3:42 PM CEST, Luca Ceresoli wrote:
+> On Fri Jun 19, 2026 at 2:24 PM CEST, Maxime Ripard wrote:
+>> Hi,
+>>
+>> All the bridges use reset to create a blank state only and don't use it
+>> to reset the hardware at all. This is what the new atomic_create_state
+>> is exactly supposed to be doing, so we can convert all existing bridge
+>> users to it, and remove the reset hook and helpers.
+>>
+>> Let me know what you think,
+>> Maxime
+>>
+>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+>
+> Whole series:
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Applied to
+And now also:
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # imx8mp + sn65dsi84 +=
+ bridge hotplug
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
-
-Thanks!
-
-[1/1] spi: rpc-if: Use correct device for hardware reinitialization on resume
-      https://git.kernel.org/broonie/spi/c/7b25dbafa2fc
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
