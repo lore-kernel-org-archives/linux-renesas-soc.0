@@ -1,53 +1,53 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9424E4B5;
-	Sun, 21 Jun 2026 02:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AFF26ED45;
+	Sun, 21 Jun 2026 02:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782010266; cv=none; b=pnRyo9TtcHA3SXLgnINljvUnmrkkML7wn/er/bM9slpgaUxBhrXcHRTjq7hDmupGnbxTHY3sxlTeZaUSWsGcjfrVgGgVvwfQiPiScfyvTPMDIgfMQ2qSO3fWU7Vl+eGKhJDgtyGnhxP4AE/edNNmZgA8BKjMffM+mslvK6gSvSU=
+	t=1782010269; cv=none; b=R66UjdhEgbhgxq66/Cyr41xiDW52f8GvNGFlsl7z5mvCC21uoZBOYl8qOXPSeC/2dwl8FMVYGazbeeJGXRnQxPErx8Dd+BuFQzsbmPUc5dp59dqnI/tKkFckTD4O0wOclztecbGvOChkcyEiEWWWHLpOT5Scp8JzOAWcuInNX5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782010266; c=relaxed/simple;
-	bh=/OJRwb2ASJGhl1Dvb2cGKZ3URNLGW36xlZcFZuxIAHY=;
+	s=arc-20240116; t=1782010269; c=relaxed/simple;
+	bh=r0JYLCDnw3mju5T1u1K5KGc9oE5o5pgb/+FA0d6CNt4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SuMn5hIAiDMZRSxTcIR9PKETSiFUnQziSDUAHY7nhgASxNFsTaOiFTRoH8x4nDSQ+TG4NZNpacpwlPgKOQIzmIXMjwI8x1+gJTTbilnzB8SaaIO67Zj+Sfqe8gQsYt7FqV03bzXMYPvyw8sTQA7Fx5Cxs2o15uPFKSTqfJWFES4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xgolok+H; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ZFbYxBwj; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=LAquhVnXPy9DHIj0qBfddgvm9zxVZileLYnvIkkpLtj8kJpU7I+xp7XcFgrkXy74l3+ij2wovboat+tr0GgnB0VuKyECV5/Zjafy0MNrLLBBLNLW73YMyJWse8PXrd7b3iMSrzSP7LxaXgbsueU7rPY7E/fYuNBuS83HE5CCak8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=blZ3x85d; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=kop7N3tb; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xgolok+H";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ZFbYxBwj"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="blZ3x85d";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="kop7N3tb"
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gjbS75kpgz9ty9;
-	Sun, 21 Jun 2026 04:51:03 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gjbS94Ljrz9tg2;
+	Sun, 21 Jun 2026 04:51:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1782010263;
+	t=1782010265;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LSpCTFvM5CGoSh0YNKp7bvTUJBpZmhGPb6YmCd8E2Ys=;
-	b=xgolok+HUXFciW7Rsg2+BEXtdHSvg4W4IQueB/lbHgwBXtWJQbUsuukZ2AhVek2cBABiZd
-	Xlw08xXgSiiV/czU+efoJx3WKacN5lK4ZTJfgs7DNDBpeKNbLtmNbYXdU2BcdtT/mrK5G+
-	lxipHEyF8/ZUi+QW6u/pumdrRBvfhKbQ/O2VMjatde+pnJ8A+Dpu5+mC+ru7hsA9Fo0lHE
-	D7VEtAZ3bcHpoRfcZrW7t0rdz9u+ZbZQvABu62bKeI4Jmet8RAqaQT8UK6zqrS6OZuQiLn
-	S8fsv9hyZLMM7SMMXSFz/FNch+/3XvbTDXuPGUcagw4wQmygnNVKSqeRGDFYrA==
+	bh=4vwDhshsfBptlMTY7VE86CNApFtJIrIMOdCXnOtH5pk=;
+	b=blZ3x85di0Mc+8DspDB8JvOLib+SYJtaijiVM7iFGt05YDPjHvwtzoNL6u/eNZ0EdrQeQ3
+	OE9Y6zqqqqv26yNtBNMYO2HvNruTWbNPn9hlKkZk9kSkhvOh2tIU2/ddkXXkSwwDAQ0wBj
+	JPdYb4QB76BzuBCETFNjLnCw10ZsoKfQfRU6khb+0tVlEqvzZwRalbvQA+fA/IAFLgvYYK
+	aVWKQQ4XU0UZyNHT4WX8MSa5Ehv/oPUZJPHQicFUyf6Nu47iWmmenH49V622lgc3idgWqe
+	1JR6a/NzKzltYBZZcQDNVs8DTo3P1r/RFNXhIx6gMglCBSrIA+HjPpa9yNH1QQ==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1782010262;
+	t=1782010264;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LSpCTFvM5CGoSh0YNKp7bvTUJBpZmhGPb6YmCd8E2Ys=;
-	b=ZFbYxBwjAe18YFejK6UrLCttXPjtHawlF3QoO65z0SPHeE072X/EC/1eqP9NAY4yFK/Vw1
-	Dkfns4YilhjeV/QtNoJ7UlpwL2Je6gwaxOXI63TVNcmxWAJBV6YZ9owZF4B/t3jxjZ6yd4
-	01LJ+1LzaXFin+07sI1qpWt734SZlNnubk/4RcAnqXs3FLixwR3P1RQbqF+Gltpvg80f+I
-	hQnspsmHcgY6bM5QNdjjGq0TmjfSzsPBj6+tN5nilwDtPUbKVZcu+Yq5JSNCdICMhJ3+Nb
-	GHmn8aRKWKSjwQGMNRWWdEk5MhCp2IzZ5CD59/7JHczjiWL+5fFHAoPoxkluFQ==
+	bh=4vwDhshsfBptlMTY7VE86CNApFtJIrIMOdCXnOtH5pk=;
+	b=kop7N3tb5P52tgfdugkvynN9OQOUzztGStgYOJtjV9QyXUn1pnmVP8dolDLB2PlQ6cxEqE
+	/FzyRaTZlwWLZoXfeNg3og0sw9fUvsnjah3uRorGGKNhsK5ofCP2HpqIo6gq+fanibz1WR
+	5KAvKZHvhtZBErGODNlAXH1jKtP3k6c88MReV5uX7lYAy8Fe3n2v/bIfd93jUsNgX56stv
+	XmyPveN1S2RzlRl7X9bpTRYudJwbNq6DLmGcqCYUp80OM4/CTEfio46Bv/L/bE99UXy0TK
+	9+S+1iaNFJB4nm6+edlAh1QxJoYfhVqg7+tSjH6Ul1KrOXGbQnrVEhSTMIdY7w==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/9] arm64: dts: renesas: r8a774e1: Add soc: label to soc node
-Date: Sun, 21 Jun 2026 04:50:23 +0200
-Message-ID: <20260621025052.406507-3-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 4/9] arm64: dts: renesas: r8a77960: Add soc: label to soc node
+Date: Sun, 21 Jun 2026 04:50:24 +0200
+Message-ID: <20260621025052.406507-4-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260621025052.406507-1-marek.vasut+renesas@mailbox.org>
 References: <20260621025052.406507-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -69,8 +69,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: b3ntanrgis7dwbcbub16a3pz5m9ukp67
-X-MBO-RS-ID: 8adb634046178569373
+X-MBO-RS-META: ba4zb9oa13djny9jfwb6adoethxgwh5w
+X-MBO-RS-ID: 00a4af7481a848232c8
 
 Add soc: label to the /soc {} node to align the DT with r8a77951.dtsi
 which already has that soc: label. The soc: label is useful in U-Boot
@@ -86,14 +86,14 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 9df5f1a424004..0ae9bb72d2dda 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -326,7 +326,7 @@ scif_clk: scif {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+index ad36aa8e75435..4f9989b5e77a8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+@@ -311,7 +311,7 @@ scif_clk: scif {
  		clock-frequency = <0>;
  	};
  
