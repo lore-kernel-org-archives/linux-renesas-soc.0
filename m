@@ -1,99 +1,100 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D55D37189B;
-	Mon, 22 Jun 2026 08:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEACA3921F6
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 08:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782115620; cv=none; b=b8fzbzaZLR4Lhwij/SJj2L0OEZHvewpakBALfPHoqo/KA4LkSkBcDz/IvVsyKBTiyKCAL6C6udrApSdg3kD+DqeWN0ibc4Rq2SZZQbRwJ9t8LPj6HG8kmJ3RkvoZcrJFE6GLkUOcZPQXtlaTTnat63Em92J8JeQm2tT4sjwAPQI=
+	t=1782118340; cv=none; b=ERwGSC5NkZjWJeRXnmAoOMxwk8j2jwJ0jX3r66DyWRGQYVP+3Xw/vDRdsFNJrWn8yATIrTB9DBr7XobgBX12qgZAH1XWN1wjRgSLnqBHmNZyB9GKFKG8FVoDv+eInbZp5HoursmPS0ozzHYvCXZpNmt2EBmtaaIBZrHrIweP+gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782115620; c=relaxed/simple;
-	bh=j+ZiNP/2iXlbvglh0ym+BSqUGqjaYgLNKPDF1Q2zDlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jkt3DBsS6jotIx6Md9ak/y8/KcnR+99uc+bTNNKpQ6NfM9Q+rG9vR2qiTX4L28/zGBzfC6SHA5GDwqtuzivOK2wZnooMTbJQOpqfBUOKjgN6ljIYZrc0I+duUVr1WB6pRxq6d1ZS/KsKZ9RCuHJrwJUyXcrQl7afRlgovPcUEro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LW9sObFc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1782118340; c=relaxed/simple;
+	bh=7grLb8fpXdl88V/G0DH0d6VvzMgy79Jvs3Cd+JXNhTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DTeErjBuyNArOeGeYf727WpEdRrwF5iXcD2COGLDtbhxj1ST4GC6v3jtkjZFG4m54GZeM9azQIq49wVbapAWQLkDsNdrkWLDJnJAeKF8F+DqgiahnQJhAmC7lfyBt6yW9NGp0WIoA0ZLfPHE2A83vSCWtWdOxM0irqkFBMYc3VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CmsDZozV; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LW9sObFc"
-Received: from ideasonboard.com (mob-109-113-9-173.net.vodafone.it [109.113.9.173])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A1285219;
-	Mon, 22 Jun 2026 10:06:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1782115579;
-	bh=j+ZiNP/2iXlbvglh0ym+BSqUGqjaYgLNKPDF1Q2zDlg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LW9sObFcqbKY7FNH+xfCY/EkejIuiY5MIj8eFI90901BHQWJ3lZBXQ4yU6ygHkXH7
-	 I0JheXAhGv3XcevtUYk/V/zKrnslWlxhiiKJnIzZQ+uqwbP164Q1JWRjFAG9dQoPHk
-	 Sk+7JMIf3zGsxGe2po5661fv6TxfdZeoPQJ4dYW0=
-Date: Mon, 22 Jun 2026 10:06:54 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Biren Pandya <birenpandya@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	laurent.pinchart@ideasonboard.com, sakari.ailus@linux.intel.com, mchehab@kernel.org
-Subject: Re: [PATCH v2 1/4] media: renesas: rcar-csi2: Add missing
- media_entity_cleanup()
-Message-ID: <ajjsrRVdvV-tkr-i@zed>
-References: <20260619102241.22887-6-birenpandya@gmail.com>
- <20260619121729.24899-5-birenpandya@gmail.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CmsDZozV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=58x3xnDGzSsm6q
+	cobwOQ+q8gCfYb7i9HbwnHo+j3tfk=; b=CmsDZozVLo3nc7WU2qYHIc+lVBOCLP
+	tvkOye1So5m/IJgDibwOugLLlaUV1ZApQWy4ZZ756FJeoTgOql8V7JXlPmMK2avE
+	UFtFfGuV19KDd8qUs8E6+KlK5nO9fhfkJjfrOZWgZTANdulF/COSHLgBiMGx7hU6
+	KDj6sIcJ0LLLBF8gLiSeqgymCLyFDv3p1qkN79D1Wo2IVTJwme8TCLnp5azwIq51
+	EwaLQ9Mz9V9FRjNPmp1Oy9Isd80034ilY6TBoysetdnb1UAHbjEQv79ibYh6Dgki
+	VYqHxQZ7qHk5bwE4MMdE9yQQXHpahwsg9cDgXq59RMGfT3O3iYyYxvgQ==
+Received: (qmail 1894039 invoked from network); 22 Jun 2026 10:52:06 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2026 10:52:06 +0200
+X-UD-Smtp-Session: l3s3148p1@/wrPwdNU9qQujnum
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [PATCH v2 0/4] hwspinlock: add summary in debugfs
+Date: Mon, 22 Jun 2026 10:51:59 +0200
+Message-ID: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260619121729.24899-5-birenpandya@gmail.com>
 
-Hi Biren
+Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
+R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
+multiple instances and, thus, multiple spinlock providers. The spinlocks
+are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
+development on these systems, it is helpful to have an overview of
+registered spinlocks in debugfs. This series adds support for that. The
+first two patches update the radix-tree header to support more lock
+types. The third patch fixes a missing RCU annotation for the slot
+pointer. The fourth patch finally adds the desired functionality.
 
-On Fri, Jun 19, 2026 at 05:47:30PM +0530, Biren Pandya wrote:
-> The probe error paths and remove function are missing calls to
-> media_entity_cleanup(). Add them and introduce an err_entity label
-> to ensure teardown logic properly inverses initialization.
->
-> Signed-off-by: Biren Pandya <birenpandya@gmail.com>
+Because the radix tree seems to have no dedicated tree nor maintainer, I
+suggest that all these patches go in via hwspinlock. This also keeps the
+dependencies zero.
 
-Have you at least compiled this patch ?
+A branch for testing is here:
 
-../drivers/media/platform/renesas/rcar-csi2.c: In function ‘rcsi2_probe’:
-../drivers/media/platform/renesas/rcar-csi2.c:2634:1: error: label ‘error_entity’ defined but not used [-Werror=unused-label]
- 2634 | error_entity:
-      | ^~~~~~~~~~~~
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mfis/hwspinlock
 
-Also, don't send v(n+1) in reply to v(n). Each version of a series
-goes in its own thread, with a proper cover letter and changelog.
+It has been tested on a SparrowHawk board (R-Car V4H) and an Ironhide
+board (R-Car X5H).
 
-I suggest to use b4.
+Looking forward to comments.
 
-> ---
->  drivers/media/platform/renesas/rcar-csi2.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 7305cc4a04cb..61d7dfe14688 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -2631,6 +2631,8 @@ static int rcsi2_probe(struct platform_device *pdev)
->  	v4l2_subdev_cleanup(&priv->subdev);
->  error_pm_runtime:
->  	pm_runtime_disable(&pdev->dev);
-> +error_entity:
-> +	media_entity_cleanup(&priv->subdev.entity);
->  error_async:
->  	v4l2_async_nf_unregister(&priv->notifier);
->  	v4l2_async_nf_cleanup(&priv->notifier);
-> @@ -2646,6 +2648,7 @@ static void rcsi2_remove(struct platform_device *pdev)
->  	v4l2_async_nf_cleanup(&priv->notifier);
->  	v4l2_async_unregister_subdev(&priv->subdev);
->  	v4l2_subdev_cleanup(&priv->subdev);
-> +	media_entity_cleanup(&priv->subdev.entity);
->
->  	pm_runtime_disable(&pdev->dev);
->  }
-> --
-> 2.50.1 (Apple Git-155)
->
->
+Changes since v1:
+* dropped patch inverting the HWSPINLOCK_UNUSED logic
+* added radix tree patches to support the mutex treelock of hwspinlock
+* included RCU annotation patch sent previously as independent patch
+* addresses Sashiko comments in patch 4
+	* ensure correct locking
+	* add error codes
+	* proper ppos handling
+	* no leaking iterator when done
+	* mark pointer dereference as protected (needs patch 2)
+	* split up long lines
+
+
+Wolfram Sang (4):
+  radix-tree: add parameter doc for radix_tree_deref_slot_protected()
+  radix-tree: allow more lock types with
+    radix_tree_deref_slot_protected()
+  hwspinlock: annotate slot pointer as RCU sensitive
+  hwspinlock: add summary in debugfs
+
+ drivers/hwspinlock/hwspinlock_core.c | 91 +++++++++++++++++++++++++++-
+ include/linux/radix-tree.h           |  9 ++-
+ 2 files changed, 94 insertions(+), 6 deletions(-)
+
+-- 
+2.47.3
+
