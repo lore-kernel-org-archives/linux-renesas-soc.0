@@ -1,102 +1,130 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEF92620DE
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31C729D291;
+	Mon, 22 Jun 2026 14:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782138612; cv=none; b=bMdTCoytXw4wHl+CHcfAmyw3AXM5X6mFEoEzCV6HLDiZUVUjfvCQPnK9ar119Vyu8fcmYpfjfEPan1RVv07uMX3ZjkRTK4wR6JbNP/BOFg66mZhxc3jKKuhb/N0SDga7tqMdASBhiqVHYPU9Zu0Gl9JeiP0AK49oekHk7ul7i5E=
+	t=1782138650; cv=none; b=UXdCihG30vD4PSkGEoHvUeYcU/1rZWQ9p4WKXz9EuWb1jETgsMNRqwmkmzTZeqbjuNqVmJVaIy3axQeeOI4JrFn5arSTS3BmWKGnfjny3oYFdiRDF6Or7TqhadsE0zrzH+DDGORTTntzAQLDZxlsSK7s1LovHhd5+w3Y/Hhl3L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782138612; c=relaxed/simple;
-	bh=Ro4kldSGCj75UbrLEjM6s2V1KehmmbZXkph4aFioNGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+RXvrIAY6cLzXmE+t37udGh2H+bzCMmY79gSenRcfi9437rlY7SP0OqqE89gGIxBQ6hvg2+IOuYj+fDI3kF4LBEc6ufPWlx3Z18lk/wTHBr1uErOOZMAZI3yNdfdsFIMnr9Pcb4FQwknY1GoQGuWmuAqm7qwfUNMdkJBgqsSbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2c0aa420401so27861345ad.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:30:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782138611; x=1782743411;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2aOq01qBfWokATPNy4wCdepesNQ6uzH++qL84v4Uj4o=;
-        b=FODqSQcXI7z30jqU5NW8l+6CY33GbTTA50IlhB8r6PltEtQiWEdEGM7BXOGhEcsZag
-         ar8Vt/YFHZxFcNuPJOOBHcidoT298eWBsUboEIWJgCgWTZdUR74R4JM07pfv0Tm0q0P7
-         hbuKOK7DTegnUHzwhTi6i/0DzpAw/3VZZ8xEReHFCpXH1hhT3bCzCFJ3qrJEMiUsLEP8
-         TjoPYjk6wPlfHpTbdnipnUgV/wrygTS8PG2wnfxLklDQahcw+Z9Zbo10K6pCKE3k1HmC
-         JQaDIGsnJ0XlAsqMuUeIqaq6oCUJ5uny6eUR6RAoZp2fjEea3X4g+JyyDFP4ajxq9mGY
-         DN8w==
-X-Forwarded-Encrypted: i=1; AHgh+RoCoorPVw0hH77dFq2MjKQcsVzXuQr/RgBcvDAsCTSO1bG1FIAhGRzAIjBBuOpH2duV988iR6VvbmVatmHDRzXr6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcwRQuKeUZWzYGG6Ug00GYhwV3AnTG/27UsjBJo14y7VKSl82K
-	LqEkhWr+57FBY4avto5ZuHnOcvjUNL9V1eX+c7X9x5zt7QLYW5JkkBQCFr4B/g1ho1s=
-X-Gm-Gg: AfdE7cmlz04HA+xL5vHKzwJeC0QURufZXx9yQXvy5AGezLZtr2OiI0guz8ya4J1c7PB
-	uRjYyxdJG00Tz6yD7zULjjoW8uAUuGWcmPBTLP9jhQc/7mI79dDWMxtOgNKEt50UmU/R+ECD8lI
-	vkUw/4rlXNqX45ZhAm2rrVV5qXDx8jwLLma19u1K4LL0wgM20g/+RqE+Kse55a4R1j1XOU4hgUj
-	ZuzeqM0jfA6pEmqM7NA3m8RZHWomNnOntmCiQ174CJuVRLZGzcdKVJh8gbw5RXcAUyKjbQYqjLc
-	rTswUGDoSCD2oMl0qiG7Trw9iC4lsME8ImBrt1JeBuWOTvRJh2Xw8SyF1PGNzgLX0v5AWeYT520
-	s4MIuD/NwyBT/ggg1kww/4+EQMhIRyFmjC6fsHeQ5WE1Z2qNxQDh+Wuawp/Ka5UPPpJDC7Ppy2F
-	jP4RenrhKVupfjdkzcqtnt9vKI9XqTvRKLivKeZEqbMgpx0QxM/hKo
-X-Received: by 2002:a17:903:2983:b0:2c6:abaf:85fb with SMTP id d9443c01a7336-2c725d9f80amr155389195ad.32.1782138610806;
-        Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com. [74.125.82.180])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7436f6395sm84152605ad.28.2026.06.22.07.30.10
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-30bbe98c3f0so8327995eec.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RomWMPsAbJ1tyy02puLkpmB4rR5i3haGY872x91vfp3GOuIa4rv+TCdok2zWmpSnuWJ6p2j3gRioPiXTiHrZAqSKw==@vger.kernel.org
-X-Received: by 2002:a05:6102:3ec8:b0:65b:c17:70b4 with SMTP id
- ada2fe7eead31-72a737b1e13mr8162349137.0.1782138164258; Mon, 22 Jun 2026
- 07:22:44 -0700 (PDT)
+	s=arc-20240116; t=1782138650; c=relaxed/simple;
+	bh=2/KCs5cXviVR0AWXnT72lyR1D13dxtQZZGsCKYjBlvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWzScgN60XsbGidT05yKh8q7itPTFO5G7RAK2NKxhuenzIZeZXM4PbGuCzXQa/cDPwPzs05+qrlShsasGlHA9ySkckVJzSbP7/ociYBl5d+QkttkfShGxR1rXFJB7JE6qSX0868xl9zzr1IEM75M/pk6JHTGddaJK25aZamYie8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGDzqL9U; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGDzqL9U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D53441F00A3A;
+	Mon, 22 Jun 2026 14:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782138648;
+	bh=Sh2R1sfAQBWk4IEUspavNMGRBRkiMYOuCiBxaMrOB88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GGDzqL9U0o/ME1ub4lBGJ1/VIUgsPexkDLuWdcp8Q5X11zzcMopYU6WKdnrp8Cda3
+	 SeMDKHzRP3ZFPahd6l69xdjGJmKQiRGoaQerBTXcdQ01V/TSTqTJQzv3i+Gr40CogW
+	 JsdxdiHj42K2E6DdxErMTecfA/Z5Gwut61beCciwc7D58j7F/Dcv25XTDbBKaXL31V
+	 hfw07sBZrYsDOC4zTHyQ/VIp/v6caLw5CkH8KOeHf3Rg6/twquH+2KtvN9aLhbEjvW
+	 uBgNPxaGco750ZF+fZ90EciDbcTsH2aZ0o62NMFgG1Q9dseMsD5d1eNIK9Xk0lAEZZ
+	 7GO5yAe9MCoyw==
+Date: Mon, 22 Jun 2026 16:30:37 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 2/4] PCI: rzg3s-host: Use shared reset controls for
+ power domain resets
+Message-ID: <fuefvecgjdqbnbvpvam4gmewmpmhofllyq2ootwi6cjqhnyoys@edjzqlh6fjw4>
+References: <20260602195019.1798126-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260602195019.1798126-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <50a908557bb3ce5f14b67396d1e73e70289a583a.camel@pengutronix.de>
+ <CA+V-a8uGho2RMhreDgieOOZTggUALoF0bGyjdEEDvyL_75sAyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-2-herve.codina@bootlin.com>
-In-Reply-To: <20260429115054.158160-2-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jun 2026 16:22:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWsPgy9=n9GOHgPV8de30b2meCYQzSrc1pjukhgzXTNSQ@mail.gmail.com>
-X-Gm-Features: AVVi8CcgwVfL1IUsAw20nH_KUPK4EgmpmvX_pvnt0Py4OJDVBYzHBOW9UXb430A
-Message-ID: <CAMuHMdWsPgy9=n9GOHgPV8de30b2meCYQzSrc1pjukhgzXTNSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8uGho2RMhreDgieOOZTggUALoF0bGyjdEEDvyL_75sAyw@mail.gmail.com>
 
-On Wed, 29 Apr 2026 at 13:51, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> The Renesas RZ/N1 timer block controller is the controller in charge of
-> timers available in the Renesas RZ/N1 SoCs family.
->
-> This controller handles 8 timers:
->  - 6 16-bit timers
->  - 2 32-bit timers
->
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+On Fri, Jun 05, 2026 at 12:54:46PM +0100, Lad, Prabhakar wrote:
+> Hi Philipp,
+> 
+> Thank you for the review.
+> 
+> On Wed, Jun 3, 2026 at 9:16 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> >
+> > On Di, 2026-06-02 at 20:50 +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Switch to shared reset controls for PCIe power resets to prepare for
+> > > RZ/V2H(P) support. On this platform, multiple PCIe controllers share
+> > > the same reset line, requiring shared ownership of the reset control.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > ---
+> > > v3->v4:
+> > > - Added RB/TB tags.
+> > >
+> > > v2->v3:
+> > > - No change.
+> > >
+> > > v1->v2:
+> > > - Updated commit message.
+> > > ---
+> > >  drivers/pci/controller/pcie-rzg3s-host.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> > > index d86e7516dcc2..a5192e4b58df 100644
+> > > --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> > > +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> > > @@ -1276,9 +1276,9 @@ static int rzg3s_pcie_resets_prepare_and_get(struct rzg3s_pcie_host *host)
+> > >       for (i = 0; i < data->num_cfg_resets; i++)
+> > >               host->cfg_resets[i].id = data->cfg_resets[i];
+> > >
+> > > -     ret = devm_reset_control_bulk_get_exclusive(host->dev,
+> > > -                                                 data->num_power_resets,
+> > > -                                                 host->power_resets);
+> > > +     ret = devm_reset_control_bulk_get_shared(host->dev,
+> > > +                                              data->num_power_resets,
+> > > +                                              host->power_resets);
+> > >       if (ret)
+> > >               return ret;
+> > >
+> >
+> > I have a few questions about this.
+> >
+> > Can you move rzg3s_pcie_resets_prepare_and_get() and
+> > rzg3s_pcie_power_resets_deassert() up before setting
+> > RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B in
+> > rzg3s_pcie_probe() without ill effect?
+> >
+> > Can you move rzg3s_pcie_power_resets_deassert() up before setting
+> > RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B
+> > rzg3s_pcie_resume_noirq()?
+> >
+> > Those would have the same effect as the reset already being deasserted
+> > by the other controller.
+> >
+> Yes to both. I have reordered the sequences as suggested, and it works
+> perfectly without any ill effects.
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Are you going to respin the patches incorporating the review comments?
 
-Gr{oetje,eeting}s,
+- Mani
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+மணிவண்ணன் சதாசிவம்
