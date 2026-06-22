@@ -1,378 +1,390 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C9D3BB12F;
-	Mon, 22 Jun 2026 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160453AC0E9
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782136772; cv=none; b=XhlnNXKYM+WDwbIovAi5bERdAzLhHLRYCmEGHWFa30IRntUqK+oF0IlRZY646g4pukahLHTGlmKB8dPFl8/rDaMZW/cDmAzErAwIKuHcDLv9yNT69qQqZ8wsRnGaBOf9kn4B6XAR3drsWClsNNeybByUM579eCuldkh0FgpInYY=
+	t=1782138143; cv=none; b=k9n+cx4cSNK1DjvuOVlLUtpmEyNnTNKwkaSP7bffSMTjRwVXZlvOv9QUgIc1Ksz/8j/ku49NpAbkpLy9dfdxkXOOPYtoDMPikNd3GnTgRqmWIn/pEVI9HDq3vg9dwjSAQe4ViQvz9p4pGzEfdDi0UF3agQdqbMtH980i7ok4mO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782136772; c=relaxed/simple;
-	bh=FQE09fR0Ixu5Bl2Umm/99gcUwTCewvCEHOO3SMAKm+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSbuc4Gpvva7TZ46GDkYnbnwbLUVGGoFG3VOvUHTi3MKFIjnKiwvWwxE8Wmp1NEnESVUOfPhO26fNAWPw1aBYhNPBjONB+2vid/6WW+8z58DWBk4+Wsd0y9+Vgfb5K44a8wfRBiyLrA7NDIu9LhilRhmKYv3/A4cBle+WKbHw2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YG6XSx1B; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YG6XSx1B"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=16eXztzjvZz9uTEFcy3hhq0oL9gQGsESCUoQ/xCycio=; b=YG6XSx1BLx6vyZ0VAj2ajDZ1Ti
-	3BjGc0CKaz/I9U8nKkepT16/Hl/J9xaXxNJtDtnnJMS+gQ8lLL789ijeUd6DSRU+F9zMVBsAB8fcB
-	7ejtybN9oEJaC5XlmNoxIfOMiZ/v7lErBiWzF8v2sTobEowoLICDVaNyJuyIImEW7z6WLlcf0v112
-	Y/E4KThAi8Cd60R4bFGc4iPCu7dbk+YaJ3j+eRnmIhheN5WvfK1n45OHba+o5D/kt1I83f3OF7v09
-	iegQKiVhktxtGNJQx6987WAY8m4h5XV3TCjr2QTFEEdGZNt1cOUah4Wz2wuBu8r5x+5DGgkOIp8Yk
-	c1hvU8Og==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wbfBM-00000004LOh-080h;
-	Mon, 22 Jun 2026 13:59:24 +0000
-Date: Mon, 22 Jun 2026 14:59:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH v2 0/4] hwspinlock: add summary in debugfs
-Message-ID: <ajk_u7TVT-kL8z2A@casper.infradead.org>
-References: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1782138143; c=relaxed/simple;
+	bh=LpYby/C3sB5tpZd2Qt85jlNF3iOGWtYp99Y8ihB1gPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GntgQXfUONtVf5geO9dpiBx+TnlYfzlfttYGSvp4fpXgiThUUlvUjZwNVMwgSgTF/lTgrnyrTtiw2SjMaKMaKnVeia2oanRLJIApsAk6gNuZUrlm+ATxLIXOgZ1ylkGULuU8Zws1kLnL9vw6mdSLM/5M8AlMdAsgIZ1azAn3owc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-729d8f9238dso1060730137.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:22:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782138141; x=1782742941;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cADZZnn4gjK5Oixge29dOaGqF3MIQ1dd5O+dWVLo+Gk=;
+        b=mZtYeBzRjkC+n5ZYrVPJMQSROb/wP9Sp7Z7RDzcx4kI7v171Mz68BKdeuMCba+Jwjq
+         KEW0QJomq7EjPlMqOo1FfgOwYVsGI4jJfJ2DbCqiT0qgvRL29tdxEhWaJgwp/Pr8O8Mp
+         Zxun9JrIHGBNRUmejbBc/4wLYbDDLLoUF6GPLOoD2UECPjkLRem4LXwhMjprNiSL4E1p
+         hUSz1GpNDvRUoffzjkDNNHjDiaGvyx5+VbUkiDGk9vQfOjhwx5jJaqE/Z/0YS1PsY6tH
+         rmjRAtHpDjMaT0DCkngWmd2HK/90TF/zK8MFWQy/DkQiowTvxpnePgMRbgP2qC6AlTfF
+         tPKw==
+X-Forwarded-Encrypted: i=1; AFNElJ9OLB/B6gr3JEUF+gQwRon1hFnbkO3KQc68Vcx4/i0jXifhpE2D5x5cgAeg34qslZtwmRrFiQHYexfkdd6kRGONtQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY1/07FEeDCfHI4DHN/hLYYLa17yY8jb3NSUszdYtuRtVNzp3N
+	HkLwpHSpa+HxMKpDrN2rzj0sKJFSZQ0P3R7Cr4g+OFqVjvThWS9+0fl9vMRIROOz8h0=
+X-Gm-Gg: AfdE7cmUV4HOB441drOo5mlOk7KzfdT7uo0epcn+5ggk395ZrthXp1a23mKGiEWK4C1
+	ce0EmPb/FqA+odYJIynYV9qNCXfmEkTmjXfvvjkOueiabOdpgQj+VQheGZiy+5qiRiYubUm3IRq
+	Qch0Yp0tcCGzNpVs3598IxyZ1trw4Gwdq63IOveYireoxFFQcNVcwS2lJtJSKjxuIyJLHfL/GMx
+	1KT8r/OXBmh6fFn4EdAgzMfA2lG39SrZlyCVRYzPeimynuKDPk/IO63RYEy0EpM4N7TC9JQWOkL
+	YsJxJ4Q51vfOUCylTJPEEa935C+NNhw2eLUolKngoOkvRtRBRg7db2MDcpc2jPwzP6ZKiTs3NGx
+	Vf5VyQUhrRIevj1bovjNRPC+wLbWRPNJCwOWIHVLdx72kfYQ6+OYf5hFryUeLSk6kJuT/DTaDo0
+	xNjNy9KVyeJ2jHP6aL0yLlBXTTopRyVHqJj+LpFDemrfMrWQR3Ug==
+X-Received: by 2002:a05:6102:554a:b0:6ef:db57:ed3f with SMTP id ada2fe7eead31-72a047d882bmr7313890137.29.1782138140828;
+        Mon, 22 Jun 2026 07:22:20 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-72ba229c7fdsm5911872137.2.2026.06.22.07.22.19
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jun 2026 07:22:20 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9673385b1efso258012241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:22:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+eTlha6wU8H3+b7jdPjDoMjFlyW3bR4USqP7mSVzmBItTCo/eB/aa/x6aq92S2BcG509UIa9krRp9fVMJBYWGqwQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:2922:b0:631:2cb0:bf8d with SMTP id
+ ada2fe7eead31-72a01882303mr8022720137.6.1782138139212; Mon, 22 Jun 2026
+ 07:22:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-3-herve.codina@bootlin.com>
+In-Reply-To: <20260429115054.158160-3-herve.codina@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Jun 2026 16:22:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVwMjLFJz0NeSP+BJVYoePw6oRDdj9P2Ra5nC=4yRXd6w@mail.gmail.com>
+X-Gm-Features: AVVi8CeGC9Vn8JWkJO7xDytlZEDscCIDRlTTaudbtw3_YSqPMLV4PY62I2DvSS4
+Message-ID: <CAMuHMdVwMjLFJz0NeSP+BJVYoePw6oRDdj9P2Ra5nC=4yRXd6w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clocksource/drivers: Add support for the Renesas
+ RZ/N1 timers
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 22, 2026 at 10:51:59AM +0200, Wolfram Sang wrote:
-> Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
-> R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
-> multiple instances and, thus, multiple spinlock providers. The spinlocks
-> are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
-> development on these systems, it is helpful to have an overview of
-> registered spinlocks in debugfs. This series adds support for that. The
-> first two patches update the radix-tree header to support more lock
-> types. The third patch fixes a missing RCU annotation for the slot
-> pointer. The fourth patch finally adds the desired functionality.
-> 
-> Because the radix tree seems to have no dedicated tree nor maintainer, I
-> suggest that all these patches go in via hwspinlock. This also keeps the
-> dependencies zero.
+Hi Herv=C3=A9,
 
-The radix tree is deprecated.  I don't want to add any new functionality
-to it.  Here's a replacement patch to convert hwspinlock to use an
-XArray instead of a radix tree.  Compile tested only.
+Thanks for your patch!
 
-From 8ec88ed466e8153f546f7e8e69193cd5389488ee Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Mon, 22 Jun 2026 09:38:30 -0400
-Subject: [PATCH] hwspinlock: Convert to XArray
+Just a few generic comments, as I am not a timer expert, and have no
+access to the hardware.
 
-The radix tree is deprecated.  The XArray uses the same data structure
-with a nicer interface.  The hwspinlock_tree_lock is not needed as the
-spinlock built into the XArray is sufficient for all these cases.
+On Wed, 29 Apr 2026 at 13:51, Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
+> The Renesas RZ/N1 timer block controller is the controller in charge of
+> timers available in the Renesas RZ/N1 SoCs family.
+>
+> This controller handles 8 timers:
+>   - 6 16-bit timers
+>   - 2 32-bit timers
+>
+> Each timer has its own interrupt, its own prescaler that can be used to
+> device the clock by 25 and all of them can work in either one-shot or
 
-hwspin_lock_register_single() used to always return 0.  Its caller
-thinks it can return an errno, so I believe this to be a bug and so I
-have restored its ability to return an error.
+divide
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- drivers/hwspinlock/hwspinlock_core.c | 133 ++++++++++-----------------
- 1 file changed, 50 insertions(+), 83 deletions(-)
+> periodic mode.
+>
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
+> ---
+>  drivers/clocksource/Kconfig      |  10 +
+>  drivers/clocksource/Makefile     |   1 +
+>  drivers/clocksource/timer-rzn1.c | 442 +++++++++++++++++++++++++++++++
+>  3 files changed, 453 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-rzn1.c
+>
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index d1a33a231a44..f8e49a4ac8f6 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -152,6 +152,16 @@ config REALTEK_OTTO_TIMER
+>           RT8391, RTL8392, RTL8393 and RTL8396 and chips of the RTL930x s=
+eries
+>           such as RTL9301, RTL9302 or RTL9303.
+>
+> +config RZN1_TIMER
+> +       bool "Renesas RZ/N1 Timer"
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index cc8e952a6772..1dd68b8410dd 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -16,7 +16,7 @@
- #include <linux/types.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
--#include <linux/radix-tree.h>
-+#include <linux/xarray.h>
- #include <linux/hwspinlock.h>
- #include <linux/pm_runtime.h>
- #include <linux/mutex.h>
-@@ -27,34 +27,21 @@
- /* retry delay used in atomic context */
- #define HWSPINLOCK_RETRY_DELAY_US	100
- 
--/* radix tree tags */
--#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
-+/* XArray search mark */
-+#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
- 
- /*
-- * A radix tree is used to maintain the available hwspinlock instances.
-+ * An XArray is used to maintain the available hwspinlock instances.
-  * The tree associates hwspinlock pointers with their integer key id,
-  * and provides easy-to-use API which makes the hwspinlock core code simple
-  * and easy to read.
-  *
-- * Radix trees are quick on lookups, and reasonably efficient in terms of
-+ * XArrays are quick on lookups, and reasonably efficient in terms of
-  * storage, especially with high density usages such as this framework
-  * requires (a continuous range of integer keys, beginning with zero, is
-- * used as the ID's of the hwspinlock instances).
-- *
-- * The radix tree API supports tagging items in the tree, which this
-- * framework uses to mark unused hwspinlock instances (see the
-- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
-- * tree, looking for an unused hwspinlock instance, is now reduced to a
-- * single radix tree API call.
-- */
--static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
--
--/*
-- * Synchronization of access to the tree is achieved using this mutex,
-- * as the radix-tree API requires that users provide all synchronisation.
-- * A mutex is needed because we're using non-atomic radix tree allocations.
-+ * used as the ID of the hwspinlock instances).
-  */
--static DEFINE_MUTEX(hwspinlock_tree_lock);
-+static DEFINE_XARRAY(hwspinlocks);
- 
- 
- /**
-@@ -369,10 +356,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
-  */
- int of_hwspin_lock_get_id(struct device_node *np, int index)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct of_phandle_args args;
- 	struct hwspinlock *hwlock;
--	struct radix_tree_iter iter;
--	void **slot;
- 	int id;
- 	int ret;
- 
-@@ -389,15 +375,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
- 	/* Find the hwspinlock device: we need its base_id */
- 	ret = -EPROBE_DEFER;
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
--		hwlock = radix_tree_deref_slot(slot);
--		if (unlikely(!hwlock))
--			continue;
--		if (radix_tree_deref_retry(hwlock)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, hwlock, ULONG_MAX) {
-+		if (xas_retry(&xas, hwlock))
- 			continue;
--		}
--
- 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
- 			ret = 0;
- 			break;
-@@ -452,51 +432,47 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
- 
- static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
- {
--	struct hwspinlock *tmp;
-+	XA_STATE(xas, &hwspinlocks, id);
-+	struct hwspinlock *existing;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
--
--	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
--	if (ret) {
--		if (ret == -EEXIST)
--			pr_err("hwspinlock id %d already exists!\n", id);
--		goto out;
-+	xas_lock(&xas);
-+	existing = xas_load(&xas);
-+	if (existing) {
-+		pr_err("hwspinlock id %d already exists!\n", id);
-+		xas_set_err(&xas, -EBUSY);
- 	}
-+	xas_store(&xas, hwlock);
- 
- 	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
-+	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
-+	ret = xas_error(&xas);
-+	xas_unlock(&xas);
- 
--	/* self-sanity check which should never fail */
--	WARN_ON(tmp != hwlock);
--
--out:
--	mutex_unlock(&hwspinlock_tree_lock);
--	return 0;
-+	return ret;
- }
- 
- static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock = NULL;
--	int ret;
-+	bool marked;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
- 
--	/* make sure the hwspinlock is not in use (tag is set) */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
--	if (ret == 0) {
-+	/* make sure the hwspinlock is not in use (mark is set) */
-+	marked = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
-+	if (!marked) {
- 		pr_err("hwspinlock %d still in use (or not present)\n", id);
- 		goto out;
- 	}
- 
--	hwlock = radix_tree_delete(&hwspinlock_tree, id);
--	if (!hwlock) {
--		pr_err("failed to delete hwspinlock %d\n", id);
--		goto out;
--	}
-+	hwlock = xas_store(&xas, NULL);
-+	if (!hwlock)
-+		pr_err("hwspinlock %d already deleted\n", id);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- 
-@@ -667,19 +643,20 @@ EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
- 
- /**
-  * __hwspin_lock_request() - tag an hwspinlock as used and power it up
-+ * @xas: XArray state
-  * @hwlock: the target hwspinlock
-  *
-  * This is an internal function that prepares an hwspinlock instance
-  * before it is given to the user. The function assumes that
-- * hwspinlock_tree_lock is taken.
-+ * the xarray lock is held.
-  *
-  * Returns: %0 or positive to indicate success, and a negative value to
-  * indicate an error (with the appropriate error code)
-  */
--static int __hwspin_lock_request(struct hwspinlock *hwlock)
-+static int __hwspin_lock_request(struct xa_state *xas,
-+		struct hwspinlock *hwlock)
- {
- 	struct device *dev = hwlock->bank->dev;
--	struct hwspinlock *tmp;
- 	int ret;
- 
- 	/* prevent underlying implementation from being removed */
-@@ -697,16 +674,9 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
- 		return ret;
- 	}
- 
--	ret = 0;
-+	xas_clear_mark(xas, HWSPINLOCK_UNUSED);
- 
--	/* mark hwspinlock as used, should not fail */
--	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* self-sanity check that should never fail */
--	WARN_ON(tmp != hwlock);
--
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -724,13 +694,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
-  */
- struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
- 
- 	/* make sure this hwspinlock exists */
--	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
-+	hwlock = xas_load(&xas);
- 	if (!hwlock) {
- 		pr_warn("hwspinlock %u does not exist\n", id);
- 		goto out;
-@@ -740,7 +711,7 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- 	WARN_ON(hwlock_to_id(hwlock) != id);
- 
- 	/* make sure this hwspinlock is unused */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
-+	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
- 	if (ret == 0) {
- 		pr_warn("hwspinlock %u is already in use\n", id);
- 		hwlock = NULL;
-@@ -748,12 +719,12 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- 	}
- 
- 	/* mark as used and power up */
--	ret = __hwspin_lock_request(hwlock);
-+	ret = __hwspin_lock_request(&xas, hwlock);
- 	if (ret < 0)
- 		hwlock = NULL;
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-@@ -772,8 +743,8 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-  */
- int hwspin_lock_free(struct hwspinlock *hwlock)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct device *dev;
--	struct hwspinlock *tmp;
- 	int ret;
- 
- 	if (!hwlock) {
-@@ -782,11 +753,11 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	}
- 
- 	dev = hwlock->bank->dev;
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
-+	xas_set(&xas, hwlock_to_id(hwlock));
- 
- 	/* make sure the hwspinlock is used */
--	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
-+	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
- 	if (ret == 1) {
- 		dev_err(dev, "%s: hwlock is already free\n", __func__);
- 		dump_stack();
-@@ -798,16 +769,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	pm_runtime_put(dev);
- 
- 	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* sanity check (this shouldn't happen) */
--	WARN_ON(tmp != hwlock);
-+	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
- 
- 	module_put(dev->driver->owner);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_free);
--- 
-2.47.3
+So this cannot be a module.
 
+> +       depends on HAS_IOMEM && COMMON_CLK && (ARCH_RZN1 || COMPILE_TEST)
+
+I would split this in two lines, to make it easier to read (and
+maintain, if the same timer ends up in a different SoC series).
+
+> +       help
+> +         Enables support for RZ/N1 SoC timers.
+> +         A timers block in RZ/N1 SoCs is composed of 8 timers
+> +           - 6 16-bit timers
+> +           - 2 32-bit timers
+> +         Two timers blocks are available in RZ/N1 SoCs.
+> +
+>  config SUN4I_TIMER
+>         bool "Sun4i timer driver" if COMPILE_TEST
+>         depends on HAS_IOMEM
+
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-rzn1.c
+
+> +/*
+> + * 8 timers are available. Among those 8 timers, the first 6 timers are =
+16-bit
+> + * timers and the last two ones are 32-bit timers.
+> + */
+> +#define RZN1_TIMER_BASE_INDEX_16BIT_TIMERS 0
+> +#define RZN1_TIMER_NB_16BIT_TIMERS 6
+> +
+> +#define RZN1_TIMER_BASE_INDEX_32BIT_TIMER 6
+> +#define RZN1_TIMER_NB_32BIT_TIMERS 2
+
+Align the number columns?
+
+> +static int rzn1_timer_probe_first(struct platform_device *pdev, struct r=
+zn1_timer *tab_timers,
+> +                                 void __iomem *base, unsigned long clock=
+_rate)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct rzn1_timer *timer;
+> +       unsigned int i;
+> +       char *name;
+> +       int irq;
+> +       int ret;
+> +
+> +       /*
+> +        * Probe the first instance. In that case, timers are assigned as
+> +        * follow:
+> +        *   - First 16-bit timer: clocksource and sched_clock
+> +        *   - Other 16-bit timers: clock events for all possible CPUs
+> +        *   - 32-bit timers: clock events per CPU
+> +        *
+> +        * First step, perform all operation that could fail without call=
+ing
+> +        * clockevents_config_and_register(), sched_clock_register() nor
+> +        * cpuhp_setup_state(). Those operation don't have unregister nor
+> +        * teardown counterparts and so, once called, we cannot remove th=
+e
+> +        * related resource.
+> +        */
+> +
+> +       /*
+> +        * First step for 16-bit timers except the first one and all 32-b=
+it
+> +        * timers.
+> +        */
+> +       for (i =3D RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1; i < RZN1_TIMER=
+_NB_TIMERS; i++) {
+> +               timer =3D &tab_timers[i];
+> +
+> +               rzn1_timer_init(timer, i, base, clock_rate);
+> +
+> +               irq =3D platform_get_irq(pdev, i);
+> +               if (irq < 0)
+> +                       return irq;
+> +
+> +               name =3D devm_kasprintf(dev, GFP_KERNEL, "%s-%u", dev_nam=
+e(dev), i);
+> +               if (!name)
+> +                       return -ENOMEM;
+> +
+> +               rzn1_timer_clkevt_init_ced(timer, name, irq);
+> +
+> +               ret =3D devm_request_irq(dev, timer->ced.irq, rzn1_timer_=
+interrupt,
+> +                                      IRQF_TIMER, timer->ced.name, timer=
+);
+> +               if (ret < 0)
+> +                       return dev_err_probe(dev, irq, "timer%d: Failed t=
+o request IRQ\n", i);
+
+%u
+
+> +
+> +               rzn1_timer_int_enable(timer);
+> +       }
+> +
+> +       /*
+> +        * Second step, almost all operations that can fail have been cal=
+led.
+> +        * Timers are ready to work. Start with the last operation that c=
+an fail,
+> +        * installing and invoking hotplug callbacks
+> +        */
+> +       rzn1_tab_timers =3D tab_timers;
+> +       ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> +                               "clockevents/rzn1/global_timer:starting",
+> +                               rzn1_local_timer_starting_cpu, NULL);
+> +       if (ret < 0)
+> +               return dev_err_probe(dev, ret, "Setup CPU hotplug state f=
+ailed\n");
+> +
+> +       /*
+> +        * At this point, no more operations can fail. Perform remaining
+> +        * operations. Starting by handling the first 16-bit timer
+> +        */
+> +       timer =3D &tab_timers[RZN1_TIMER_BASE_INDEX_16BIT_TIMERS];
+> +
+> +       rzn1_timer_init(timer, RZN1_TIMER_BASE_INDEX_16BIT_TIMERS, base, =
+clock_rate);
+> +       rzn1_timer_config(timer, GENMASK(timer->width - 1, 0), true);
+> +
+> +       rzn1_sched_clock =3D timer;
+> +
+> +       sched_clock_register(rzn1_sched_read, rzn1_sched_clock->width, rz=
+n1_sched_clock->rate);
+> +
+> +       rzn1_clocksource.mask =3D CLOCKSOURCE_MASK(rzn1_sched_clock->widt=
+h);
+> +       clocksource_register_hz(&rzn1_clocksource, rzn1_sched_clock->rate=
+);
+> +
+> +       /*
+> +        * Register clockevents only for 16-bit timers. 32-bit timers clo=
+ckevents
+> +        * are registered by CPU hotplug startup function set previously =
+by the
+> +        * cpuhp_setup_state() call.
+> +        */
+> +       for (i =3D RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1; i < RZN1_TIMER=
+_NB_16BIT_TIMERS; i++) {
+> +               timer =3D &tab_timers[i];
+> +               clockevents_config_and_register(&timer->ced, timer->rate,
+> +                                               1, GENMASK(timer->width -=
+ 1, 0));
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int rzn1_timer_probe_other(struct platform_device *pdev, struct r=
+zn1_timer *tab_timers,
+> +                                 void __iomem *base, unsigned long clock=
+_rate)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct rzn1_timer *timer;
+> +       unsigned int i;
+> +       char *name;
+> +       int irq;
+> +       int ret;
+> +
+> +       /*
+> +        * Probe other instance(s), i.e. not the first one. In that case,
+> +        * all timers are used as clock events and available for all poss=
+ible
+> +        * CPUs
+> +        *
+> +        * First step, perform all operation that could fail without call=
+ing
+> +        * clockevents_config_and_register(). Unregister counterpart does=
+ not
+> +        * exist and so, once called, we cannot remove the related resour=
+ce.
+> +        */
+> +       for (i =3D 0; i < RZN1_TIMER_NB_TIMERS; i++) {
+
+Technically "0" is RZN1_TIMER_BASE_INDEX_16BIT_TIMERS.
+
+> +               timer =3D &tab_timers[i];
+> +
+> +               rzn1_timer_init(timer, i, base, clock_rate);
+> +
+> +               irq =3D platform_get_irq(pdev, i);
+> +               if (irq < 0)
+> +                       return irq;
+> +
+> +               name =3D devm_kasprintf(dev, GFP_KERNEL, "%s-%u", dev_nam=
+e(dev), i);
+> +               if (!name)
+> +                       return -ENOMEM;
+> +
+> +               rzn1_timer_clkevt_init_ced(timer, name, irq);
+> +
+> +               ret =3D devm_request_irq(dev, timer->ced.irq, rzn1_timer_=
+interrupt,
+> +                                      IRQF_TIMER, timer->ced.name, timer=
+);
+> +               if (ret < 0)
+> +                       return dev_err_probe(dev, irq, "timer%d: Failed t=
+o request IRQ\n", i);
+
+%u
+
+> +
+> +               rzn1_timer_int_enable(timer);
+> +       }
+
+This loop is identical to the first loop in rzn1_timer_probe_first(),
+except for the lower bound. Perhaps it can be factored out?
+
+> +
+> +       /*
+> +        * Second step, all operation that can fail have been called. We =
+can
+> +        * register our timers
+> +        */
+> +
+> +       for (i =3D 0; i < RZN1_TIMER_NB_TIMERS; i++) {
+
+Technically "0" is RZN1_TIMER_BASE_INDEX_16BIT_TIMERS.
+
+> +               timer =3D &tab_timers[i];
+> +               clockevents_config_and_register(&timer->ced, timer->rate,
+> +                                               1, GENMASK(timer->width -=
+ 1, 0));
+> +       }
+> +
+> +       return 0;
+> +}
+
+This loop is identical to the second loop in rzn1_timer_probe_first(),
+except for the lower and upper bound. Perhaps it can be factored out?
+
+Alternatively, you can
+  1. Unify rzn1_timer_probe_{first,other}(), and pass the different
+     bounds as parameters, OR
+  2. Split rzn1_timer_probe_first() in three sub-functions, and call
+     these from rzn1_timer_probe() directly.
+
+> +static struct platform_driver rzn1_timer_driver =3D {
+> +       .driver =3D {
+> +               .name =3D "rzn1_timer",
+> +               .of_match_table =3D rzn1_timer_of_match,
+
+This driver can't be modular, and can't be unbound:
+
+    .suppress_bind_attrs =3D true
+
+> +       },
+> +};
+> +builtin_platform_driver_probe(rzn1_timer_driver, rzn1_timer_probe);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
