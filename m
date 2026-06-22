@@ -1,32 +1,34 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEACA3921F6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 08:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E683932DC
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 08:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782118340; cv=none; b=ERwGSC5NkZjWJeRXnmAoOMxwk8j2jwJ0jX3r66DyWRGQYVP+3Xw/vDRdsFNJrWn8yATIrTB9DBr7XobgBX12qgZAH1XWN1wjRgSLnqBHmNZyB9GKFKG8FVoDv+eInbZp5HoursmPS0ozzHYvCXZpNmt2EBmtaaIBZrHrIweP+gI=
+	t=1782118340; cv=none; b=W+LL1im3ziMQhnI6fXXc2150lwp3VZ/or12utRiE1zL3ROb7AErZOLYVsqgqKTM+6fMXWEcqPqFeawc1M5ZotC89rbtfOkSfjwVRNRjBzTiVLBXiR3Z+RgTPJ1O+QPSGV+njF2ABStqCWbwuwaHMNbfifhYYNcUeuOHHsGgR4ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782118340; c=relaxed/simple;
-	bh=7grLb8fpXdl88V/G0DH0d6VvzMgy79Jvs3Cd+JXNhTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DTeErjBuyNArOeGeYf727WpEdRrwF5iXcD2COGLDtbhxj1ST4GC6v3jtkjZFG4m54GZeM9azQIq49wVbapAWQLkDsNdrkWLDJnJAeKF8F+DqgiahnQJhAmC7lfyBt6yW9NGp0WIoA0ZLfPHE2A83vSCWtWdOxM0irqkFBMYc3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CmsDZozV; arc=none smtp.client-ip=194.117.254.33
+	bh=eW5CEjp5oPCLohwGPhaXYx2BqS8El6bS1qdPHFb+TfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XRdVtzn7oXjkUyg6kZvJqEnpgyVVou2ycjJsr27Qh4zoHI6EvGQ+sR/UiTr8p3pIBhpkw14p2WgTa176dMatZ8Fxe6Wdme4wv4fb0cc3md/ZaFEFkPADkuihb6f+CodJfOhCu2n6NS7iZbvYybsnvguN0qVE52fj/qnLEkx/Hfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WNYuxsEF; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CmsDZozV"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WNYuxsEF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=58x3xnDGzSsm6q
-	cobwOQ+q8gCfYb7i9HbwnHo+j3tfk=; b=CmsDZozVLo3nc7WU2qYHIc+lVBOCLP
-	tvkOye1So5m/IJgDibwOugLLlaUV1ZApQWy4ZZ756FJeoTgOql8V7JXlPmMK2avE
-	UFtFfGuV19KDd8qUs8E6+KlK5nO9fhfkJjfrOZWgZTANdulF/COSHLgBiMGx7hU6
-	KDj6sIcJ0LLLBF8gLiSeqgymCLyFDv3p1qkN79D1Wo2IVTJwme8TCLnp5azwIq51
-	EwaLQ9Mz9V9FRjNPmp1Oy9Isd80034ilY6TBoysetdnb1UAHbjEQv79ibYh6Dgki
-	VYqHxQZ7qHk5bwE4MMdE9yQQXHpahwsg9cDgXq59RMGfT3O3iYyYxvgQ==
-Received: (qmail 1894039 invoked from network); 22 Jun 2026 10:52:06 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2026 10:52:06 +0200
-X-UD-Smtp-Session: l3s3148p1@/wrPwdNU9qQujnum
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=5jyOYvvpYirIPQNjSrR9lQ6VjRePGmcGcXwKDCTXjrg=; b=WNYuxs
+	EFrfWP2NjYb9M69i9gZo7UOqgqfGX8oxp9sfL6zPcj8F+eFna8B6yX86yAG/oxEu
+	qjDaP4xUUs6RjsL908FmwQ2nmJJI//kFgrHu2P3eXbBBNYj2rktTukZQyw38xzp1
+	8ACHwz1hs2faMN4Jsimt+o6WmNJCyanYADFVT875qqmdSfz1UATPrWa1FqwJanpc
+	PT3uRWGsrN+PlBHTJmBU8FvUceKGWMl72LAsOHSBpFBWZdOcrsmjugrLCIcCnYvg
+	xsP2sVVg61IFV9pvu+FkAle6mrzQQ5IfqiECFzjkkfPgkhT29kmUI0AUEz9/W0fN
+	+b0/16kbA/kUwSbg==
+Received: (qmail 1894161 invoked from network); 22 Jun 2026 10:52:08 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2026 10:52:08 +0200
+X-UD-Smtp-Session: l3s3148p1@zR7uwdNUFKUujnum
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -36,10 +38,12 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: [PATCH v2 0/4] hwspinlock: add summary in debugfs
-Date: Mon, 22 Jun 2026 10:51:59 +0200
-Message-ID: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 3/4] hwspinlock: annotate slot pointer as RCU sensitive
+Date: Mon, 22 Jun 2026 10:52:02 +0200
+Message-ID: <20260622085204.54248-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+References: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,53 +52,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
-R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
-multiple instances and, thus, multiple spinlock providers. The spinlocks
-are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
-development on these systems, it is helpful to have an overview of
-registered spinlocks in debugfs. This series adds support for that. The
-first two patches update the radix-tree header to support more lock
-types. The third patch fixes a missing RCU annotation for the slot
-pointer. The fourth patch finally adds the desired functionality.
+Because 'slot' is used within an RCU read-lock, it must not be accessed
+directly but with RCU helpers. Annotate the pointer to enforce checking
+this. Sparse confirms the missing annotation:
 
-Because the radix tree seems to have no dedicated tree nor maintainer, I
-suggest that all these patches go in via hwspinlock. This also keeps the
-dependencies zero.
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:393:48: warning: incorrect type in argument 1 (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:393:48:    expected void [noderef] __rcu **slot
+drivers/hwspinlock/hwspinlock_core.c:393:48:    got void **slot
+drivers/hwspinlock/hwspinlock_core.c:397:30: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:397:30:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:397:30:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void [noderef] __rcu **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
 
-A branch for testing is here:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/hwspinlock/hwspinlock_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mfis/hwspinlock
-
-It has been tested on a SparrowHawk board (R-Car V4H) and an Ironhide
-board (R-Car X5H).
-
-Looking forward to comments.
-
-Changes since v1:
-* dropped patch inverting the HWSPINLOCK_UNUSED logic
-* added radix tree patches to support the mutex treelock of hwspinlock
-* included RCU annotation patch sent previously as independent patch
-* addresses Sashiko comments in patch 4
-	* ensure correct locking
-	* add error codes
-	* proper ppos handling
-	* no leaking iterator when done
-	* mark pointer dereference as protected (needs patch 2)
-	* split up long lines
-
-
-Wolfram Sang (4):
-  radix-tree: add parameter doc for radix_tree_deref_slot_protected()
-  radix-tree: allow more lock types with
-    radix_tree_deref_slot_protected()
-  hwspinlock: annotate slot pointer as RCU sensitive
-  hwspinlock: add summary in debugfs
-
- drivers/hwspinlock/hwspinlock_core.c | 91 +++++++++++++++++++++++++++-
- include/linux/radix-tree.h           |  9 ++-
- 2 files changed, 94 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index a509b73da190..c97d68050102 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -372,7 +372,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	struct of_phandle_args args;
+ 	struct hwspinlock *hwlock;
+ 	struct radix_tree_iter iter;
+-	void **slot;
++	void __rcu **slot;
+ 	int id;
+ 	int ret;
+ 
 -- 
 2.47.3
 
