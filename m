@@ -1,47 +1,47 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568C134104E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 17:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6E340A76
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 17:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782150507; cv=none; b=BkUQhmGCddVoXSXLoUH+JWBVelJJxsA0COq4RO/PuNkk7L23VkTmh1GpUBD5DLQqr1MepGG0EcXJh/2tW3c/o/UDw+PlLo7C99z+v/NvAVA2Zdi8swoBSos0ZKRwnFHYFwjAl+2R4cFgjiQqpFX1ircCYugmV4AYEoyKlJAST1Y=
+	t=1782150507; cv=none; b=TOhyvAN1Tbj9/vk+5QtaYZ90T/XNdYNLbUlz2vGIzvVHHQwoN9fp192jTs9iMiq+x+TSwNL/MDbxxNXJ0HLu80Q5oL1eiw1L2oiyyk7cRce7ENw8WBaThwR1+uyukVM58nQydqDfEUwquyxSToeio874NTt79OAbu4km0kmV7nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782150507; c=relaxed/simple;
-	bh=7TPZVOChhXFJ+Xzv8h12VhLMWCoe41c8rsUOGMrITss=;
+	bh=caV7deyxPHviTL0Ffz/Fz1pVlomFjHjr1ZkaJ5JplSU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mcp4YDOjbzNwP5zNNLx1tOs2H9eKMHyY1V8yXHqR+rZMv7AR7PYyYWSWkOQafVmKOT6E9xkmO8iFArDSe4cukhygkBcuElGvkc241EQ//CeAMzktIZVOX66046Fh09jfSzSAT5S5GBbl4x+jcD/M25GgBEczrKehmXIw9Wfom+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XDnB0Gzc; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=DQITvx9tiMoCgrO15xJSW/rKr42sxbBOnFeq/YZPPV4tAyjZ826271LL2YVKukBkb1KKQ1KyBTYmdUnryD678pVLYMeQK74xQw5AI2yCoJmR0TdS44hcm75xssQVpH9p9tq4SbXSm54aufbH5YlbJ24V+TeLNvNZr6+csdjDFGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Kjeyu75R; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XDnB0Gzc"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Kjeyu75R"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=cHKJCJji6pcQ2HCUYNNZYTZH61nVppa6O7UMGWt56gg=; b=XDnB0G
-	zcrMIrv0Dy3EzrYYhPFLnvMRpVCPhDRRMsesvWcDeO78/abv0TMZV5hI9fFQJg7K
-	xSwMAsdo/KWxL5ehYf4IY81XL+myCdxXz3wJlbxenJQD/zZHpXGWWcaqeIkBvKA0
-	zJbi9JyFKYAktr2Y+a+7tcZKk59bjsSCjFDa54QSl3AMEh/1fTWqc8sMrmPB2G6Q
-	gQJ6dmkIYPjQWpQUJm0SRa8YfUhJckkFp0iHJrAENiNmz+HYA0T8QlQ6YOSsKNJi
-	R/pYc1LvX+dQNvkjyIu5zDONerTmqQ92zAnskzLCULYSNyRGVs535LSgn5a/r+az
-	pMNHHX/I69JMSXbg==
-Received: (qmail 2061448 invoked from network); 22 Jun 2026 19:48:21 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2026 19:48:21 +0200
-X-UD-Smtp-Session: l3s3148p1@THqSP9tUtOcujnum
+	 s=k1; bh=q3GXbkpPLRYkVhY0RAHbo/X+MNy2pzHyQr7Nil8svLw=; b=Kjeyu7
+	5RESgy2A6B5Y9YUkNwkg83Mu8TljPmExAu692NggtdH6FSlj7jmXZVPQDjVXaBaw
+	Qri76uwGqtX0uJHdySMoOo0MwxCwGAtgcNNY7qAfZfDvMMvm8yEnCYWOP1Fjej6N
+	7VIaTsehwigZtKak/7gXWJWHZBdZI/W5bZb9QY4XjY6gtxnhOMKuNb8/8W6rlCXs
+	DiW+oNwotWrE05E8FuZo28fXatB6qn8QwxcO+PHfBxitZmYw6xgIcU8DHNTvA1bI
+	RixJAVWLNGxVT8eg+3bi37CXiZOXgJ7u4OwCWKZ5mXNDr8DGrvcbC/5dxCN0bVkD
+	J5HJsM9FS4/HR/uA==
+Received: (qmail 2061403 invoked from network); 22 Jun 2026 19:48:20 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2026 19:48:20 +0200
+X-UD-Smtp-Session: l3s3148p1@aRuIP9tUhKQujnum
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Herve Codina <herve.codina@bootlin.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	linux-spi@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v3 2/3] ARM: dts: renesas: r9a06g032: Describe SPI controllers
-Date: Mon, 22 Jun 2026 19:48:08 +0200
-Message-ID: <20260622174806.74450-7-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 1/3] spi: dt-bindings: snps,dw-apb-ssi: add 'power-domains' property
+Date: Mon, 22 Jun 2026 19:48:07 +0200
+Message-ID: <20260622174806.74450-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260622174806.74450-5-wsa+renesas@sang-engineering.com>
 References: <20260622174806.74450-5-wsa+renesas@sang-engineering.com>
@@ -53,116 +53,34 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add nodes for the 6 SPI controllers of the Renesas RZ/N1D SoC. The first
-4 can only be controllers, the latter 2 can only be targets. DMA nodes
-are not added yet because DMA needs some extra code in the drivers and
-cannot be tested yet. Basic FIFO mode works reliably, though.
+On the Renesas RZ/N1D SoC, this SPI controller belongs to a power
+domain. Enable the property to describe it in DTs.
 
+Reported-by: Herve Codina <herve.codina@bootlin.com>
+Closes: https://lore.kernel.org/r/20260622132842.7e0d772c@bootlin.com
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Herve Codina <herve.codina@bootlin.com>
 ---
 
 Change since v2:
-* tag added (Thanks, Herve!)
+* new patch (Thanks, Herve!)
 
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 84 ++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index 442ea26b40f5..19c9bce0a26d 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -563,6 +563,90 @@ gic: interrupt-controller@44101000 {
- 				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+index 8ebebcebca16..3896ee02d7b6 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+@@ -88,6 +88,9 @@ properties:
+       - const: ssi_clk
+       - const: pclk
  
-+		/* Controller only */
-+		spi1: spi@50005000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x50005000 0x200>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI0>, <&sysctrl R9A06G032_HCLK_SPI0>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			num-cs = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++  power-domains:
++    maxItems: 1
 +
-+		/* Controller only */
-+		spi2: spi@50006000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x50006000 0x200>;
-+			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI1>, <&sysctrl R9A06G032_HCLK_SPI1>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			num-cs = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		/* Controller only */
-+		spi3: spi@50007000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x50007000 0x200>;
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI2>, <&sysctrl R9A06G032_HCLK_SPI2>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			num-cs = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		/* Controller only */
-+		spi4: spi@50008000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x50008000 0x200>;
-+			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI3>, <&sysctrl R9A06G032_HCLK_SPI3>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			num-cs = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		/* Target only */
-+		spi5: spi@50009000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x50009000 0x200>;
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI4>, <&sysctrl R9A06G032_HCLK_SPI4>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			spi-slave;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		/* Target only */
-+		spi6: spi@5000a000 {
-+			compatible = "renesas,r9a06g032-spi", "renesas,rzn1-spi";
-+			reg = <0x5000a000 0x200>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_SPI5>, <&sysctrl R9A06G032_HCLK_SPI5>;
-+			clock-names = "ssi_clk", "pclk";
-+			power-domains = <&sysctrl>;
-+			spi-slave;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		/*
- 		 * The GPIO mapping to the corresponding pins is not obvious.
- 		 * See the hardware documentation for details.
+   resets:
+     maxItems: 1
+ 
 -- 
 2.47.3
 
