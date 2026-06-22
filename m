@@ -1,71 +1,70 @@
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160453AC0E9
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2572E7F20
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782138143; cv=none; b=k9n+cx4cSNK1DjvuOVlLUtpmEyNnTNKwkaSP7bffSMTjRwVXZlvOv9QUgIc1Ksz/8j/ku49NpAbkpLy9dfdxkXOOPYtoDMPikNd3GnTgRqmWIn/pEVI9HDq3vg9dwjSAQe4ViQvz9p4pGzEfdDi0UF3agQdqbMtH980i7ok4mO0=
+	t=1782138209; cv=none; b=Me6mkTvKZH4t7bH2zr+vxk/mHzA+ErYjLMNd9JTEpywVw3Lh7abE63RsFcCvLb5pa8BTrjwqYiGyLJouR140EbFkZ4yhctE6khJYWLLsJIKNiYcHqQ/KQJVNJHhwXLCjpDZC92rtpZzT9pc0QoEc+YVv0qxUYL0A1qmfELczaxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782138143; c=relaxed/simple;
-	bh=LpYby/C3sB5tpZd2Qt85jlNF3iOGWtYp99Y8ihB1gPA=;
+	s=arc-20240116; t=1782138209; c=relaxed/simple;
+	bh=F5GDFMTmKzRznIyQUX/zD80spn6OJc/D0Xk1TLD53Mg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GntgQXfUONtVf5geO9dpiBx+TnlYfzlfttYGSvp4fpXgiThUUlvUjZwNVMwgSgTF/lTgrnyrTtiw2SjMaKMaKnVeia2oanRLJIApsAk6gNuZUrlm+ATxLIXOgZ1ylkGULuU8Zws1kLnL9vw6mdSLM/5M8AlMdAsgIZ1azAn3owc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+	 To:Cc:Content-Type; b=OmCTgjWUJuKZhmKMyYoEQjcr2IpRYtrgHdi+WFus84MXdJGpbmGeXZBS8pa+jbBzmymB8si4G8loobiaHffZBt4koh1S0kB0oz6/yOuLAdpIyzoXFBqT9skBMPKQZWHMH8fk4b5nzG2SUypz7Z6ljySei6vqliVzqmkkBAm7p/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-729d8f9238dso1060730137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:22:21 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-9670c11410cso1283031241.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:23:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782138141; x=1782742941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cADZZnn4gjK5Oixge29dOaGqF3MIQ1dd5O+dWVLo+Gk=;
-        b=mZtYeBzRjkC+n5ZYrVPJMQSROb/wP9Sp7Z7RDzcx4kI7v171Mz68BKdeuMCba+Jwjq
-         KEW0QJomq7EjPlMqOo1FfgOwYVsGI4jJfJ2DbCqiT0qgvRL29tdxEhWaJgwp/Pr8O8Mp
-         Zxun9JrIHGBNRUmejbBc/4wLYbDDLLoUF6GPLOoD2UECPjkLRem4LXwhMjprNiSL4E1p
-         hUSz1GpNDvRUoffzjkDNNHjDiaGvyx5+VbUkiDGk9vQfOjhwx5jJaqE/Z/0YS1PsY6tH
-         rmjRAtHpDjMaT0DCkngWmd2HK/90TF/zK8MFWQy/DkQiowTvxpnePgMRbgP2qC6AlTfF
-         tPKw==
-X-Forwarded-Encrypted: i=1; AFNElJ9OLB/B6gr3JEUF+gQwRon1hFnbkO3KQc68Vcx4/i0jXifhpE2D5x5cgAeg34qslZtwmRrFiQHYexfkdd6kRGONtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY1/07FEeDCfHI4DHN/hLYYLa17yY8jb3NSUszdYtuRtVNzp3N
-	HkLwpHSpa+HxMKpDrN2rzj0sKJFSZQ0P3R7Cr4g+OFqVjvThWS9+0fl9vMRIROOz8h0=
-X-Gm-Gg: AfdE7cmUV4HOB441drOo5mlOk7KzfdT7uo0epcn+5ggk395ZrthXp1a23mKGiEWK4C1
-	ce0EmPb/FqA+odYJIynYV9qNCXfmEkTmjXfvvjkOueiabOdpgQj+VQheGZiy+5qiRiYubUm3IRq
-	Qch0Yp0tcCGzNpVs3598IxyZ1trw4Gwdq63IOveYireoxFFQcNVcwS2lJtJSKjxuIyJLHfL/GMx
-	1KT8r/OXBmh6fFn4EdAgzMfA2lG39SrZlyCVRYzPeimynuKDPk/IO63RYEy0EpM4N7TC9JQWOkL
-	YsJxJ4Q51vfOUCylTJPEEa935C+NNhw2eLUolKngoOkvRtRBRg7db2MDcpc2jPwzP6ZKiTs3NGx
-	Vf5VyQUhrRIevj1bovjNRPC+wLbWRPNJCwOWIHVLdx72kfYQ6+OYf5hFryUeLSk6kJuT/DTaDo0
-	xNjNy9KVyeJ2jHP6aL0yLlBXTTopRyVHqJj+LpFDemrfMrWQR3Ug==
-X-Received: by 2002:a05:6102:554a:b0:6ef:db57:ed3f with SMTP id ada2fe7eead31-72a047d882bmr7313890137.29.1782138140828;
-        Mon, 22 Jun 2026 07:22:20 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782138207; x=1782743007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tjO0vpP3bcciv6+r1jFH4CXawVtxzP6zfYl8Vthe3iY=;
+        b=gzn0hRtgs5ivBb/ZQ41u2MnriV4e4LNQlieWUZ9yffgBXxfNq5munoukrYX6SM9/9c
+         ZJhZ2agDzTiYEn9hij7HjU3w2V2iN4+SpZPYqYjUnph4LpHrsvQzhDJSyv9M3Cfw1SNo
+         a++m6wknDFKTJx6kg3hq518LEJFNiamRaoIdLylFPAR5ByPdQJpSVXhC9wA6XeKc1Ig4
+         biEdzR1WMVlgyEKI4RNEu8SwdPXQzAzOx1N8nou0NF4LTRJUOSk1e2X7iPAy7Y6+ZreF
+         DdIGspEOOB2F7bh2D4zrOVMY7JYoGCH2VGpioLmHNfJj2XStPRTcroGoUDSvaTeFBZOH
+         qA+A==
+X-Forwarded-Encrypted: i=1; AFNElJ84H70Awj4eiDQQbPSgSS0F8OtzNhGzOK71BuW/S+6OCg+Q/0A3ZwpiyclesJHgEYTuzhZ8/XzDU4ehx1bJo3hcBg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQWBMv8hkeiKzkQpKXr5u8JJUsn3TT5QzcmuvRLl2vL+MGsso+
+	2ieChsf+zlVX7aSWSsLuZN4NBxZ6G15E5YDTtViqTZrlup8yf/fcSyINNYRgKhYDCvM=
+X-Gm-Gg: AfdE7ckC9NvGS8IzFbwk7gJcOHf2BixNW1r5HuwW5EBnfcT2QnySK4EZalG5hL94NYf
+	gr9CdV8hojgR+1S1Kos/S1Xhiis/KaCNYvHmzC5LVVW7yXi0+Qn9b5x/w5AcQGF47wkv96UwG5T
+	rTR3fzbHYWTTtg/8yKmo69HeI8ERlU1+avXT5h5B2XupNwfVxdG5a/9OqFcXL/WZ6i8fmyqwkvN
+	Fd7J+jDx1Z6497OCNLv5lPJOAyYK6W3MThju+Tgzt7PG3TMepoH89c2D79eL1BW/uhkHLm4ENab
+	NVMTzwYEFLcXQn5BWQbX82oOPUSidRhl7c7dOdWjaz8mm9aKbTYlV0yM+Np66lu+s7xBRELIsmg
+	VVVvCKqk0yrfOdp9B0vpIrv7s1QZNWQaA/YzP4SEqAGWJNm4y7vqdQYSGFATwzjaMN/ukRDzGsG
+	5cT0dvx3UAnLSNsfn5kOxHXAAw4ni8xgNCe6fTt6wVYLQKlXHMvQ==
+X-Received: by 2002:a05:6102:ccb:b0:650:94b2:b209 with SMTP id ada2fe7eead31-72a1d20fd0fmr9256927137.4.1782138207096;
+        Mon, 22 Jun 2026 07:23:27 -0700 (PDT)
 Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-72ba229c7fdsm5911872137.2.2026.06.22.07.22.19
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-72ba22997ccsm6102370137.3.2026.06.22.07.23.26
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 07:22:20 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9673385b1efso258012241.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:22:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+eTlha6wU8H3+b7jdPjDoMjFlyW3bR4USqP7mSVzmBItTCo/eB/aa/x6aq92S2BcG509UIa9krRp9fVMJBYWGqwQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:2922:b0:631:2cb0:bf8d with SMTP id
- ada2fe7eead31-72a01882303mr8022720137.6.1782138139212; Mon, 22 Jun 2026
- 07:22:19 -0700 (PDT)
+        Mon, 22 Jun 2026 07:23:26 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-966e7380109so2580124241.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:23:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+qhXlm/b3Nol3pzrWIkUb1R3qE6l1D+aWp0fz9SWKfhoRVgdHUXcEM8bH13+sBfKqK2y9AsvhtCXmKyLn8McZ6OA==@vger.kernel.org
+X-Received: by 2002:a05:6102:cd0:b0:631:7781:fe91 with SMTP id
+ ada2fe7eead31-72a1d82fb9amr9896596137.9.1782138205971; Mon, 22 Jun 2026
+ 07:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-3-herve.codina@bootlin.com>
-In-Reply-To: <20260429115054.158160-3-herve.codina@bootlin.com>
+References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-4-herve.codina@bootlin.com>
+In-Reply-To: <20260429115054.158160-4-herve.codina@bootlin.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jun 2026 16:22:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVwMjLFJz0NeSP+BJVYoePw6oRDdj9P2Ra5nC=4yRXd6w@mail.gmail.com>
-X-Gm-Features: AVVi8CeGC9Vn8JWkJO7xDytlZEDscCIDRlTTaudbtw3_YSqPMLV4PY62I2DvSS4
-Message-ID: <CAMuHMdVwMjLFJz0NeSP+BJVYoePw6oRDdj9P2Ra5nC=4yRXd6w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] clocksource/drivers: Add support for the Renesas
- RZ/N1 timers
+Date: Mon, 22 Jun 2026 16:23:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXzLB6tjgLFoxHgROUNZzyJxTc7n+w5mwuOofFjJmjgqA@mail.gmail.com>
+X-Gm-Features: AVVi8CeRRavvQLT356DCXy2-7RBj9jzC5WtAT-mLur0kf5Z40ESkA2m96DB7MyM
+Message-ID: <CAMuHMdXzLB6tjgLFoxHgROUNZzyJxTc7n+w5mwuOofFjJmjgqA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] ARM: dts: r9a06g032: Add support for timers
 To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
 	Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
@@ -75,316 +74,33 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Herv=C3=A9,
-
-Thanks for your patch!
-
-Just a few generic comments, as I am not a timer expert, and have no
-access to the hardware.
 
 On Wed, 29 Apr 2026 at 13:51, Herve Codina (Schneider Electric)
 <herve.codina@bootlin.com> wrote:
-> The Renesas RZ/N1 timer block controller is the controller in charge of
-> timers available in the Renesas RZ/N1 SoCs family.
+> In the Renesas RZ/N1 SoCs family, two timers block are available.
 >
-> This controller handles 8 timers:
->   - 6 16-bit timers
->   - 2 32-bit timers
+> Each block contains 8 timers composed of 6 16-bits timers and 2 32-bits
+> timers.
 >
-> Each timer has its own interrupt, its own prescaler that can be used to
-> device the clock by 25 and all of them can work in either one-shot or
-
-divide
-
-> periodic mode.
+> Each timer has its own interrupt line.
 >
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
-> ---
->  drivers/clocksource/Kconfig      |  10 +
->  drivers/clocksource/Makefile     |   1 +
->  drivers/clocksource/timer-rzn1.c | 442 +++++++++++++++++++++++++++++++
->  3 files changed, 453 insertions(+)
->  create mode 100644 drivers/clocksource/timer-rzn1.c
+> Describe those timers blocks.
 >
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index d1a33a231a44..f8e49a4ac8f6 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -152,6 +152,16 @@ config REALTEK_OTTO_TIMER
->           RT8391, RTL8392, RTL8393 and RTL8396 and chips of the RTL930x s=
-eries
->           such as RTL9301, RTL9302 or RTL9303.
->
-> +config RZN1_TIMER
-> +       bool "Renesas RZ/N1 Timer"
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
 
-So this cannot be a module.
-
-> +       depends on HAS_IOMEM && COMMON_CLK && (ARCH_RZN1 || COMPILE_TEST)
-
-I would split this in two lines, to make it easier to read (and
-maintain, if the same timer ends up in a different SoC series).
-
-> +       help
-> +         Enables support for RZ/N1 SoC timers.
-> +         A timers block in RZ/N1 SoCs is composed of 8 timers
-> +           - 6 16-bit timers
-> +           - 2 32-bit timers
-> +         Two timers blocks are available in RZ/N1 SoCs.
-> +
->  config SUN4I_TIMER
->         bool "Sun4i timer driver" if COMPILE_TEST
->         depends on HAS_IOMEM
-
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-rzn1.c
-
-> +/*
-> + * 8 timers are available. Among those 8 timers, the first 6 timers are =
-16-bit
-> + * timers and the last two ones are 32-bit timers.
-> + */
-> +#define RZN1_TIMER_BASE_INDEX_16BIT_TIMERS 0
-> +#define RZN1_TIMER_NB_16BIT_TIMERS 6
-> +
-> +#define RZN1_TIMER_BASE_INDEX_32BIT_TIMER 6
-> +#define RZN1_TIMER_NB_32BIT_TIMERS 2
-
-Align the number columns?
-
-> +static int rzn1_timer_probe_first(struct platform_device *pdev, struct r=
-zn1_timer *tab_timers,
-> +                                 void __iomem *base, unsigned long clock=
-_rate)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct rzn1_timer *timer;
-> +       unsigned int i;
-> +       char *name;
-> +       int irq;
-> +       int ret;
-> +
-> +       /*
-> +        * Probe the first instance. In that case, timers are assigned as
-> +        * follow:
-> +        *   - First 16-bit timer: clocksource and sched_clock
-> +        *   - Other 16-bit timers: clock events for all possible CPUs
-> +        *   - 32-bit timers: clock events per CPU
-> +        *
-> +        * First step, perform all operation that could fail without call=
-ing
-> +        * clockevents_config_and_register(), sched_clock_register() nor
-> +        * cpuhp_setup_state(). Those operation don't have unregister nor
-> +        * teardown counterparts and so, once called, we cannot remove th=
-e
-> +        * related resource.
-> +        */
-> +
-> +       /*
-> +        * First step for 16-bit timers except the first one and all 32-b=
-it
-> +        * timers.
-> +        */
-> +       for (i =3D RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1; i < RZN1_TIMER=
-_NB_TIMERS; i++) {
-> +               timer =3D &tab_timers[i];
-> +
-> +               rzn1_timer_init(timer, i, base, clock_rate);
-> +
-> +               irq =3D platform_get_irq(pdev, i);
-> +               if (irq < 0)
-> +                       return irq;
-> +
-> +               name =3D devm_kasprintf(dev, GFP_KERNEL, "%s-%u", dev_nam=
-e(dev), i);
-> +               if (!name)
-> +                       return -ENOMEM;
-> +
-> +               rzn1_timer_clkevt_init_ced(timer, name, irq);
-> +
-> +               ret =3D devm_request_irq(dev, timer->ced.irq, rzn1_timer_=
-interrupt,
-> +                                      IRQF_TIMER, timer->ced.name, timer=
-);
-> +               if (ret < 0)
-> +                       return dev_err_probe(dev, irq, "timer%d: Failed t=
-o request IRQ\n", i);
-
-%u
-
-> +
-> +               rzn1_timer_int_enable(timer);
-> +       }
-> +
-> +       /*
-> +        * Second step, almost all operations that can fail have been cal=
-led.
-> +        * Timers are ready to work. Start with the last operation that c=
-an fail,
-> +        * installing and invoking hotplug callbacks
-> +        */
-> +       rzn1_tab_timers =3D tab_timers;
-> +       ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-> +                               "clockevents/rzn1/global_timer:starting",
-> +                               rzn1_local_timer_starting_cpu, NULL);
-> +       if (ret < 0)
-> +               return dev_err_probe(dev, ret, "Setup CPU hotplug state f=
-ailed\n");
-> +
-> +       /*
-> +        * At this point, no more operations can fail. Perform remaining
-> +        * operations. Starting by handling the first 16-bit timer
-> +        */
-> +       timer =3D &tab_timers[RZN1_TIMER_BASE_INDEX_16BIT_TIMERS];
-> +
-> +       rzn1_timer_init(timer, RZN1_TIMER_BASE_INDEX_16BIT_TIMERS, base, =
-clock_rate);
-> +       rzn1_timer_config(timer, GENMASK(timer->width - 1, 0), true);
-> +
-> +       rzn1_sched_clock =3D timer;
-> +
-> +       sched_clock_register(rzn1_sched_read, rzn1_sched_clock->width, rz=
-n1_sched_clock->rate);
-> +
-> +       rzn1_clocksource.mask =3D CLOCKSOURCE_MASK(rzn1_sched_clock->widt=
-h);
-> +       clocksource_register_hz(&rzn1_clocksource, rzn1_sched_clock->rate=
-);
-> +
-> +       /*
-> +        * Register clockevents only for 16-bit timers. 32-bit timers clo=
-ckevents
-> +        * are registered by CPU hotplug startup function set previously =
-by the
-> +        * cpuhp_setup_state() call.
-> +        */
-> +       for (i =3D RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1; i < RZN1_TIMER=
-_NB_16BIT_TIMERS; i++) {
-> +               timer =3D &tab_timers[i];
-> +               clockevents_config_and_register(&timer->ced, timer->rate,
-> +                                               1, GENMASK(timer->width -=
- 1, 0));
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int rzn1_timer_probe_other(struct platform_device *pdev, struct r=
-zn1_timer *tab_timers,
-> +                                 void __iomem *base, unsigned long clock=
-_rate)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct rzn1_timer *timer;
-> +       unsigned int i;
-> +       char *name;
-> +       int irq;
-> +       int ret;
-> +
-> +       /*
-> +        * Probe other instance(s), i.e. not the first one. In that case,
-> +        * all timers are used as clock events and available for all poss=
-ible
-> +        * CPUs
-> +        *
-> +        * First step, perform all operation that could fail without call=
-ing
-> +        * clockevents_config_and_register(). Unregister counterpart does=
- not
-> +        * exist and so, once called, we cannot remove the related resour=
-ce.
-> +        */
-> +       for (i =3D 0; i < RZN1_TIMER_NB_TIMERS; i++) {
-
-Technically "0" is RZN1_TIMER_BASE_INDEX_16BIT_TIMERS.
-
-> +               timer =3D &tab_timers[i];
-> +
-> +               rzn1_timer_init(timer, i, base, clock_rate);
-> +
-> +               irq =3D platform_get_irq(pdev, i);
-> +               if (irq < 0)
-> +                       return irq;
-> +
-> +               name =3D devm_kasprintf(dev, GFP_KERNEL, "%s-%u", dev_nam=
-e(dev), i);
-> +               if (!name)
-> +                       return -ENOMEM;
-> +
-> +               rzn1_timer_clkevt_init_ced(timer, name, irq);
-> +
-> +               ret =3D devm_request_irq(dev, timer->ced.irq, rzn1_timer_=
-interrupt,
-> +                                      IRQF_TIMER, timer->ced.name, timer=
-);
-> +               if (ret < 0)
-> +                       return dev_err_probe(dev, irq, "timer%d: Failed t=
-o request IRQ\n", i);
-
-%u
-
-> +
-> +               rzn1_timer_int_enable(timer);
-> +       }
-
-This loop is identical to the first loop in rzn1_timer_probe_first(),
-except for the lower bound. Perhaps it can be factored out?
-
-> +
-> +       /*
-> +        * Second step, all operation that can fail have been called. We =
-can
-> +        * register our timers
-> +        */
-> +
-> +       for (i =3D 0; i < RZN1_TIMER_NB_TIMERS; i++) {
-
-Technically "0" is RZN1_TIMER_BASE_INDEX_16BIT_TIMERS.
-
-> +               timer =3D &tab_timers[i];
-> +               clockevents_config_and_register(&timer->ced, timer->rate,
-> +                                               1, GENMASK(timer->width -=
- 1, 0));
-> +       }
-> +
-> +       return 0;
-> +}
-
-This loop is identical to the second loop in rzn1_timer_probe_first(),
-except for the lower and upper bound. Perhaps it can be factored out?
-
-Alternatively, you can
-  1. Unify rzn1_timer_probe_{first,other}(), and pass the different
-     bounds as parameters, OR
-  2. Split rzn1_timer_probe_first() in three sub-functions, and call
-     these from rzn1_timer_probe() directly.
-
-> +static struct platform_driver rzn1_timer_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "rzn1_timer",
-> +               .of_match_table =3D rzn1_timer_of_match,
-
-This driver can't be modular, and can't be unbound:
-
-    .suppress_bind_attrs =3D true
-
-> +       },
-> +};
-> +builtin_platform_driver_probe(rzn1_timer_driver, rzn1_timer_probe);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.3, pending acceptance of the
+DT bindings.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
