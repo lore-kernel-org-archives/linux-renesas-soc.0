@@ -1,70 +1,70 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF2025B0B2
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEF92620DE
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 14:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782138238; cv=none; b=V+g411hwvm/HqbwPyMt3XCIBrafmwPJt4tGDqj34/c11UzCDd9wkZzb9cW+ohkAUrgrkiqPcjAJ+tkgc91xhIT4NxFdcplCLIdXDLDIB71p7Z2jMOgcdzQBeSaVVYz8ovFGeWUmHrYy4uKYfFa9xnsM3EtXbGpuW7+hYWNIqDCM=
+	t=1782138612; cv=none; b=bMdTCoytXw4wHl+CHcfAmyw3AXM5X6mFEoEzCV6HLDiZUVUjfvCQPnK9ar119Vyu8fcmYpfjfEPan1RVv07uMX3ZjkRTK4wR6JbNP/BOFg66mZhxc3jKKuhb/N0SDga7tqMdASBhiqVHYPU9Zu0Gl9JeiP0AK49oekHk7ul7i5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782138238; c=relaxed/simple;
-	bh=r3lJ4kiRDypA2TdCk466l6gnOvWQLdaxP8w03fLtVio=;
+	s=arc-20240116; t=1782138612; c=relaxed/simple;
+	bh=Ro4kldSGCj75UbrLEjM6s2V1KehmmbZXkph4aFioNGo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i3AN+AQ0h7dqlKZzLzDbt5H7h6Cm44/1KmwzbrgS25Kk1Me+WQv4BXSMFKWI1OxDYpsx1A1wWzjlw8Ge1DTaCksKy3J8Y54Xrw85ODldyUoDYXu9A9/yHcVtSadg1L36barPG9kmt021YN5F9qXRlllaP8ZPK9eTBrBNBpxHXtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+	 To:Cc:Content-Type; b=L+RXvrIAY6cLzXmE+t37udGh2H+bzCMmY79gSenRcfi9437rlY7SP0OqqE89gGIxBQ6hvg2+IOuYj+fDI3kF4LBEc6ufPWlx3Z18lk/wTHBr1uErOOZMAZI3yNdfdsFIMnr9Pcb4FQwknY1GoQGuWmuAqm7qwfUNMdkJBgqsSbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-59ebf30a91dso1567050e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:23:57 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2c0aa420401so27861345ad.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:30:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782138237; x=1782743037;
+        d=1e100.net; s=20251104; t=1782138611; x=1782743411;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dTuN3bG+ueEYLxM+WscVd56YjnZYXVGUSccycTk8sM4=;
-        b=iFEN1XEigM3wr7ZxOYSMrL5JZO+7pRbLcO7tdIRm7AysMgTOgrElLEAB5KYF0yk5Ut
-         5899Uu5T8pk5OPbWTGo5vQ6fES3r7XDJ6lkG8Mhofyq59WnKEihs4cPG1SDGitWK0Do4
-         MToUjr9DcCNJgbNyCTFo4BWVqdP8IaWqPueRBwboH6sApBq0JNMGsAI1e7BJYhq7/+nC
-         fsG5iOsqP0fWxrl7n1FRV+MjUh3eckg34mFc3VnOhMnIf7uWEY/iq+yfzD92SbayN23U
-         f+c0gBiSY+yU/oKfVlhsBrxjdWFm2kkYM8Xxjx1lFkC7HvrZt8tQaJrrgIZHXnAivFDt
-         L9hQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9B5XZXsJEQV+6BK387qiq51n3KYfRYY7XTIrtuumKpWYYhjAl8TN1ANDYH3L5FtOWlGbDlde0m4yv77z79qP+oAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/VJBOOpc1xp94FxWTb3ZbJpy1Jk3I03FbzpJNrFpfvCVVkqAb
-	fm4eJ0sA45fwy8tMuVdudL4JpNCrTZNUy4C2Fsjfw2juRXWKSQbSAdySSj5bkmXm9h8=
-X-Gm-Gg: AfdE7clHga7ZdXVJqRwgD2LcAawOzolZ+t2esrX+W82wpokYHq8yQOtzlSJCHM3g8Dr
-	v9eRj41qt5t1cjO6lq3Dlm5VdO0wnNd/i5gzU0zoiN+upyjGgc8aN2w7OOYFDTVBi603FA9prfU
-	TGfqIfSLx8rBEPHQ8Vj+AqayRn002Yc4a1h4Q0wPX1gt5MIGpBP8VuAt19s1u/gA+6GeJ3kBFcn
-	IQZLiuhEQ09FVqVrkKntntOU+gLnijuF/MjE0bojWOAsK+II6U6czhVoo3uxoVgiI1TUItlytX5
-	gP2nUGMpLSM51YH/HeqCbe5h1EwaU59S6tgV7jTlohoK06Zc9PXWHVBxx62edkq0GqYhvqJKGh9
-	BOYNnXWDnVN0SRt2rPkwJKf71s5DUnfA1SKIkBEA4qPE8kHk8qLbLxq/5sUesidxnQWHTIWhCvC
-	eE13VUubP07R+0guBOlsnp/uAkfisANjhLCOvogLu287dQV4KOuQ==
-X-Received: by 2002:a05:6122:6161:b0:56f:a3e2:66a4 with SMTP id 71dfb90a1353d-5bbeba3e5e5mr7205783e0c.1.1782138236673;
-        Mon, 22 Jun 2026 07:23:56 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bbfb7d309asm7136719e0c.1.2026.06.22.07.23.55
+        bh=2aOq01qBfWokATPNy4wCdepesNQ6uzH++qL84v4Uj4o=;
+        b=FODqSQcXI7z30jqU5NW8l+6CY33GbTTA50IlhB8r6PltEtQiWEdEGM7BXOGhEcsZag
+         ar8Vt/YFHZxFcNuPJOOBHcidoT298eWBsUboEIWJgCgWTZdUR74R4JM07pfv0Tm0q0P7
+         hbuKOK7DTegnUHzwhTi6i/0DzpAw/3VZZ8xEReHFCpXH1hhT3bCzCFJ3qrJEMiUsLEP8
+         TjoPYjk6wPlfHpTbdnipnUgV/wrygTS8PG2wnfxLklDQahcw+Z9Zbo10K6pCKE3k1HmC
+         JQaDIGsnJ0XlAsqMuUeIqaq6oCUJ5uny6eUR6RAoZp2fjEea3X4g+JyyDFP4ajxq9mGY
+         DN8w==
+X-Forwarded-Encrypted: i=1; AHgh+RoCoorPVw0hH77dFq2MjKQcsVzXuQr/RgBcvDAsCTSO1bG1FIAhGRzAIjBBuOpH2duV988iR6VvbmVatmHDRzXr6g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcwRQuKeUZWzYGG6Ug00GYhwV3AnTG/27UsjBJo14y7VKSl82K
+	LqEkhWr+57FBY4avto5ZuHnOcvjUNL9V1eX+c7X9x5zt7QLYW5JkkBQCFr4B/g1ho1s=
+X-Gm-Gg: AfdE7cmlz04HA+xL5vHKzwJeC0QURufZXx9yQXvy5AGezLZtr2OiI0guz8ya4J1c7PB
+	uRjYyxdJG00Tz6yD7zULjjoW8uAUuGWcmPBTLP9jhQc/7mI79dDWMxtOgNKEt50UmU/R+ECD8lI
+	vkUw/4rlXNqX45ZhAm2rrVV5qXDx8jwLLma19u1K4LL0wgM20g/+RqE+Kse55a4R1j1XOU4hgUj
+	ZuzeqM0jfA6pEmqM7NA3m8RZHWomNnOntmCiQ174CJuVRLZGzcdKVJh8gbw5RXcAUyKjbQYqjLc
+	rTswUGDoSCD2oMl0qiG7Trw9iC4lsME8ImBrt1JeBuWOTvRJh2Xw8SyF1PGNzgLX0v5AWeYT520
+	s4MIuD/NwyBT/ggg1kww/4+EQMhIRyFmjC6fsHeQ5WE1Z2qNxQDh+Wuawp/Ka5UPPpJDC7Ppy2F
+	jP4RenrhKVupfjdkzcqtnt9vKI9XqTvRKLivKeZEqbMgpx0QxM/hKo
+X-Received: by 2002:a17:903:2983:b0:2c6:abaf:85fb with SMTP id d9443c01a7336-2c725d9f80amr155389195ad.32.1782138610806;
+        Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com. [74.125.82.180])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7436f6395sm84152605ad.28.2026.06.22.07.30.10
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 07:23:55 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-963a722ed59so1460908241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:23:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/vzd4sY3aqWma82eFLd86SuMfOO+WcwDZWZq2iXWT31GG/qHjMg8+zYTgy0yrUvQFy5DKRn/26Bu6ZK55/hEoexQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:4425:b0:643:80f1:33d8 with SMTP id
- ada2fe7eead31-72a0168eaf6mr8780905137.4.1782138235741; Mon, 22 Jun 2026
- 07:23:55 -0700 (PDT)
+        Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-30bbe98c3f0so8327995eec.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2026 07:30:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RomWMPsAbJ1tyy02puLkpmB4rR5i3haGY872x91vfp3GOuIa4rv+TCdok2zWmpSnuWJ6p2j3gRioPiXTiHrZAqSKw==@vger.kernel.org
+X-Received: by 2002:a05:6102:3ec8:b0:65b:c17:70b4 with SMTP id
+ ada2fe7eead31-72a737b1e13mr8162349137.0.1782138164258; Mon, 22 Jun 2026
+ 07:22:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-5-herve.codina@bootlin.com>
-In-Reply-To: <20260429115054.158160-5-herve.codina@bootlin.com>
+References: <20260429115054.158160-1-herve.codina@bootlin.com> <20260429115054.158160-2-herve.codina@bootlin.com>
+In-Reply-To: <20260429115054.158160-2-herve.codina@bootlin.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jun 2026 16:23:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU_PT=H6POjaQDNe0T3wDnRR0zzR=DERAs8tCmbd7yhLQ@mail.gmail.com>
-X-Gm-Features: AVVi8CcQco2AWKdlNRMxb7JEavLjHlygQDEK2M26qkwC5lqRACV6o9lCgFa_anc
-Message-ID: <CAMuHMdU_PT=H6POjaQDNe0T3wDnRR0zzR=DERAs8tCmbd7yhLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] MAINTAINERS: Add the Renesas RZ/N1 timers driver entry
+Date: Mon, 22 Jun 2026 16:22:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWsPgy9=n9GOHgPV8de30b2meCYQzSrc1pjukhgzXTNSQ@mail.gmail.com>
+X-Gm-Features: AVVi8CcgwVfL1IUsAw20nH_KUPK4EgmpmvX_pvnt0Py4OJDVBYzHBOW9UXb430A
+Message-ID: <CAMuHMdWsPgy9=n9GOHgPV8de30b2meCYQzSrc1pjukhgzXTNSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
 To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
 	Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
@@ -72,22 +72,27 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
 	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 29 Apr 2026 at 13:51, Herve Codina (Schneider Electric)
 <herve.codina@bootlin.com> wrote:
-> After contributing the driver, add myself as the maintainer for the
-> Renesas RZ/N1 timers driver.
+> The Renesas RZ/N1 timer block controller is the controller in charge of
+> timers available in the Renesas RZ/N1 SoCs family.
+>
+> This controller handles 8 timers:
+>  - 6 16-bit timers
+>  - 2 32-bit timers
 >
 > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
-
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
