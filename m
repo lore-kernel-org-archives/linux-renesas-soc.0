@@ -1,149 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F93F306746;
-	Tue, 23 Jun 2026 06:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD02242910
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2026 06:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782194695; cv=none; b=FBb0yvkEJQJvIDIYfY5h7Yi77IDs8C79cRskG9rHGGiRqn3rxfFqssDuh1pFN/YsLRC6GKvloUPj6ttpvrlrXhmuDlZ2m1ARv4m/XNlpTKhL/GMqB/JiwwLj/BZQ7uX3uzg1sPtTyhcn5czKpgJAy+1lNoAiGh/IJ0VncmuuXa4=
+	t=1782197447; cv=none; b=XrsJ/XjnM2WFOMloBXUXN2VyKSbcc/Gvs8KyMxjd7Gw5swb+VtSiKHKdiGZoNyiY+IqTt9XJSlpbZ6st4U0vLP+lzULqNva1Iq5uWALUSnAbCmM6i+YcnEklkglUoyAEHy8XaXfl+6NVei4WIDFp00lSr1OtoTEym4AuOmQfBzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782194695; c=relaxed/simple;
-	bh=fGs6zTIutUW0qECkrDbevTMOjjIx02kPZ3JtVZXIzBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6bGRkgzsj2yWSKDZh9regE0oZj/KqVbFJy+chfz+8TLn7M4WNqbfdD5xV+3YJNcM7evxf8FFqIuiA5E5nPTEYUzGvKMbLshHbkgkbuv8vNx3DE4KPp4jngrW8m0dL6Qg4ONueg6cimBze9VA0zywXHWNFNYQIlGzEOvSdud8KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUnsruAv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782197447; c=relaxed/simple;
+	bh=bk1D7Hv2j5LlFxzJPfk4eEz1qtWqPt73+9vzRO6kQjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kXYWFSVktZefcnafB5GO+LhjNOLYxr7oZEfdGEjVGCnRYZT19oyYnhzgZWcZNlohzlIXY1UQOYlJFyNDyMcsreRYzqWs4AKKZe9hL7rKP73mIvbE1Fmh2Po6DCu/L9c4/MbYdwWBzkAZbJuEPplXGTl2vy9WR99uTPCM70oHivA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z/xELTxL; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUnsruAv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC5C1F000E9;
-	Tue, 23 Jun 2026 06:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782194694;
-	bh=7P6aWzyQ8qict/dJu3CzxuJcqtMPA0MghThn8dibXEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aUnsruAvyoLMArbh/g4mBxzC0FmEOROTkWum6xPDMW4bEqPiEargO13uDS9XyBMiE
-	 QyOFqwK0Xk5aqDvdXzYSFMY4NxMoWqqO+a9CIqwxyeRE0bwcT1zrY1r8UQHtYdg+nW
-	 NrbCMsDLtk1HqmXx8UDAlk7d+dA+hIu2cbNt2X7Rq63oRpO8oieDvg/qU9zlnGc/i3
-	 3wWug6E8m/aHNeef9+H+dWrv7bM1bMCYjF/U1DXFboEAVshR/nD+Mln+dt9/BC8ia3
-	 snAMZAOFStso0+W8K2y+F0LxdWZZROH7cjHw9hM2WaO9vHhXfZQy5FIkuOnXXTGYXE
-	 kqwWrIxMgVfXQ==
-Date: Tue, 23 Jun 2026 08:04:42 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v4 2/4] PCI: rzg3s-host: Use shared reset controls for
- power domain resets
-Message-ID: <txpkke2xogecipyetascqajgaxamd3ualcuhsibxf75llzcym5@xgcn7efcbmp4>
-References: <20260602195019.1798126-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260602195019.1798126-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <50a908557bb3ce5f14b67396d1e73e70289a583a.camel@pengutronix.de>
- <CA+V-a8uGho2RMhreDgieOOZTggUALoF0bGyjdEEDvyL_75sAyw@mail.gmail.com>
- <fuefvecgjdqbnbvpvam4gmewmpmhofllyq2ootwi6cjqhnyoys@edjzqlh6fjw4>
- <CA+V-a8sRxoR96TRM2V3cFXS5NPiQUVrUJCWwkh7o10cGYPU9_w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z/xELTxL"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5B8244E40727;
+	Tue, 23 Jun 2026 06:50:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 22C46601C2;
+	Tue, 23 Jun 2026 06:50:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6E149106C89D0;
+	Tue, 23 Jun 2026 08:50:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1782197442; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=L/lBbAF7XdZGIhYkOZjtkdbea2sZjVKjUy3nHeAK2II=;
+	b=Z/xELTxLErzhUdG9d/ub0GxDPQ4cFiRuCKHaqk5+km0hZJHurnA7K6NZdM1QtXjy+UdUB4
+	JF6l98q9YL0UdwZIpwp5Di0MsNTqxHBvNk+CBA7IJWbC9Ptj6CxOeyrUoHATmbDu6hBxKE
+	Xojb4GgI3KYL3tcnNoZ0ys8QTMWtmv+XHaue5E0st0P5RX/Tz97vrQBa6hWK2Iv9zsuJL5
+	bs3wPamDFZhdGS94b1EgTYAU/KCIkVhrK9q+MAt0EChjp8nC7UcMRYkJB9ogdPE4YlaZf1
+	i+LUuElHv0CdZ4T6Ijj+gY0aj99GFuJPzJqF1fGUiHSze9TLZZHTqEx6fjJACA==
+Date: Tue, 23 Jun 2026 08:50:39 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] spi: dt-bindings: snps,dw-apb-ssi: add
+ 'power-domains' property
+Message-ID: <20260623085039.315235c3@bootlin.com>
+In-Reply-To: <20260622174806.74450-6-wsa+renesas@sang-engineering.com>
+References: <20260622174806.74450-5-wsa+renesas@sang-engineering.com>
+	<20260622174806.74450-6-wsa+renesas@sang-engineering.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8sRxoR96TRM2V3cFXS5NPiQUVrUJCWwkh7o10cGYPU9_w@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Jun 22, 2026 at 03:53:57PM +0100, Lad, Prabhakar wrote:
-> Hi Manivannan,
+Hi Wolfram,
+
+On Mon, 22 Jun 2026 19:48:07 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+
+> On the Renesas RZ/N1D SoC, this SPI controller belongs to a power
+> domain. Enable the property to describe it in DTs.
 > 
-> On Mon, Jun 22, 2026 at 3:30 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > On Fri, Jun 05, 2026 at 12:54:46PM +0100, Lad, Prabhakar wrote:
-> > > Hi Philipp,
-> > >
-> > > Thank you for the review.
-> > >
-> > > On Wed, Jun 3, 2026 at 9:16 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > > >
-> > > > On Di, 2026-06-02 at 20:50 +0100, Prabhakar wrote:
-> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > >
-> > > > > Switch to shared reset controls for PCIe power resets to prepare for
-> > > > > RZ/V2H(P) support. On this platform, multiple PCIe controllers share
-> > > > > the same reset line, requiring shared ownership of the reset control.
-> > > > >
-> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > > > Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > > > ---
-> > > > > v3->v4:
-> > > > > - Added RB/TB tags.
-> > > > >
-> > > > > v2->v3:
-> > > > > - No change.
-> > > > >
-> > > > > v1->v2:
-> > > > > - Updated commit message.
-> > > > > ---
-> > > > >  drivers/pci/controller/pcie-rzg3s-host.c | 6 +++---
-> > > > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-> > > > > index d86e7516dcc2..a5192e4b58df 100644
-> > > > > --- a/drivers/pci/controller/pcie-rzg3s-host.c
-> > > > > +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-> > > > > @@ -1276,9 +1276,9 @@ static int rzg3s_pcie_resets_prepare_and_get(struct rzg3s_pcie_host *host)
-> > > > >       for (i = 0; i < data->num_cfg_resets; i++)
-> > > > >               host->cfg_resets[i].id = data->cfg_resets[i];
-> > > > >
-> > > > > -     ret = devm_reset_control_bulk_get_exclusive(host->dev,
-> > > > > -                                                 data->num_power_resets,
-> > > > > -                                                 host->power_resets);
-> > > > > +     ret = devm_reset_control_bulk_get_shared(host->dev,
-> > > > > +                                              data->num_power_resets,
-> > > > > +                                              host->power_resets);
-> > > > >       if (ret)
-> > > > >               return ret;
-> > > > >
-> > > >
-> > > > I have a few questions about this.
-> > > >
-> > > > Can you move rzg3s_pcie_resets_prepare_and_get() and
-> > > > rzg3s_pcie_power_resets_deassert() up before setting
-> > > > RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B in
-> > > > rzg3s_pcie_probe() without ill effect?
-> > > >
-> > > > Can you move rzg3s_pcie_power_resets_deassert() up before setting
-> > > > RZG3S_SYSC_FUNC_ID_MODE and RZG3S_SYSC_FUNC_ID_RST_RSM_B
-> > > > rzg3s_pcie_resume_noirq()?
-> > > >
-> > > > Those would have the same effect as the reset already being deasserted
-> > > > by the other controller.
-> > > >
-> > > Yes to both. I have reordered the sequences as suggested, and it works
-> > > perfectly without any ill effects.
-> > >
-> >
-> > Are you going to respin the patches incorporating the review comments?
-> >
-> If I have not mistaken, no code changes were requested; it was just
-> that Philipp wanted to ensure the shared reset worked correctly after
-> shuffling the code around.
+> Reported-by: Herve Codina <herve.codina@bootlin.com>
+> Closes: https://lore.kernel.org/r/20260622132842.7e0d772c@bootlin.com
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 > 
-
-Ah, I was mistaken.
-
-> I can respin the series if it fails to apply on top of pci/next.
+> Change since v2:
+> * new patch (Thanks, Herve!)
 > 
+>  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> index 8ebebcebca16..3896ee02d7b6 100644
+> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> @@ -88,6 +88,9 @@ properties:
+>        - const: ssi_clk
+>        - const: pclk
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    resets:
+>      maxItems: 1
+>  
 
-Sure. Please respin once v7.2-rc1 is released.
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Hervé
