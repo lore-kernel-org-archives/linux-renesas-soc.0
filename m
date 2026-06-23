@@ -1,77 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FAA3998A4;
-	Tue, 23 Jun 2026 20:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11055318EF4
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2026 21:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782246415; cv=none; b=fDCunhbSCUj1NpmFagp6EFmjOAVRnscpMgAMVyanPRI7oHUzp8Y5qZSS18R93kZkToV3g/76sQYvQSNLhGMl+/f4sWyPqqWjXUnnS5Jyx5OqJaS1KVE9DCaGVGKMv7SacEA0WglTDQRIMHgAfsVqnaQUEV+zvS9USoPWyK00b8E=
+	t=1782248904; cv=none; b=adSu0M1UXIOq0E5XHiCJJ7bAZbcILL2vnWFbGx+1pq71S3NC6+DQBQoVhBqS6HWulUHhoz7c6e5fROKVm+XlmKiuuurigbB1PbaAg1cOwcXr75XaJYSkQaOv9C1nosOcAvd4QRhnR/K72scUnGyw5Li0sAcsX50o0pxgybiVifs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782246415; c=relaxed/simple;
-	bh=/SK4QNgdunGn1N8wdLrCElrEdfOZM2pD0csWQG2dai4=;
+	s=arc-20240116; t=1782248904; c=relaxed/simple;
+	bh=bH02PQgUP+LOytn8ULqS+x6+APWJqOhdUw98JalmD0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3C+fEzMjsQRCM/styMg0LGPr/aoC9P5PcVSj4m0MiTekMWfTFaXXs6McCMGBl7t/DCtFS8yIvhy5AMZsfcXJQn44RezZCaTOkBXTN1AoxJP4CWAr3ad6pOKEoBONAdNaB14k6kMSw4AQvKjjRPTzpJ1XLkhIjY1PPNmRHpgdZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdV3vIl1; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bdey9MVgtxiDTHHgG5w5EhtSr4uT4BLJnOv6jnfrvZw+aB0aOBMI6M469sM/SFF2Onwr2bWzebmjgTZQRWdAzxllYTZhM0Lv7SDbYf/KxXnecnptaohSIHypw0y6yKEvHaxoHYyARE3a3gfS03gSQt2W8hojuMh7xctDAWb2q1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OuSaxk9E; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdV3vIl1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEB11F000E9;
-	Tue, 23 Jun 2026 20:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782246413;
-	bh=ie03j2TujfKNZ9SmiUM47+g20ngBeN5app0Z2aJgO5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SdV3vIl1abrSY17gzTT9hztTEbhwquYA6Vs7OUZpc94JI6ISBgsnmR1vFRzYAbNF7
-	 9Tr2FIHpVBlYa6NElHKrnxsvp4Pi62ZRiu6ZcNK/Ddnb9d+0N55yg70A7Sc3OAmmuo
-	 gGH+W4Rk+ut9YdHxepJ2JBs3Fgot++hdLbyAB+Ue1wEYl/JBrUyiS4KBsgbj99LLj1
-	 JuKTNkbso/iyDMuwzRNmR+ilwZL9W66z6iWVP0IYIXe4oSGIeh+mhOSbn0eoQ0BsNF
-	 pWx8lZpIIBAwvItYGkl8IE2xb8GXHH9TV3F1Zon8KTDKEA9NP2ugzAVfCv6XE10pKo
-	 tuRPBdR9JzcXw==
-Date: Tue, 23 Jun 2026 22:26:50 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: Drop incorrect usage of double '::'
-Message-ID: <ajrr5pWNSmx4K-Dc@zenone.zhora.eu>
-References: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260623054842.21831-4-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OuSaxk9E"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bH02
+	PQgUP+LOytn8ULqS+x6+APWJqOhdUw98JalmD0Y=; b=OuSaxk9EwdXEEVLyybMX
+	H4waTPkSIOoUlqt2N68GEQkZmLTo/52h2DaT6ICShipoY+rKEHk+qvVHKfickyY/
+	UqMFYce/yioSQQq7owCmt7Ym68nNxlQse9ze+GoPokr8vas0YiY9URswbdSwmFq/
+	6ADvkO/eydafkhwpNpDK/tpojNbSsgiBX2DSLPQFwn4VSha1KrE8bpmxkAmHMOto
+	VxoKmB/TWnA3guZmzIr4kdBBJX2yO7UGeJG0I1Q6UvUXJt3HzD9MBLJE9g7AzeWV
+	a+CKSd1ldsP/0abua8bJaOaNse6W1t7vBKnccNTNuDQ0kGLUET3YtEFzld+QM5CP
+	wg==
+Received: (qmail 2505875 invoked from network); 23 Jun 2026 23:08:17 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Jun 2026 23:08:17 +0200
+X-UD-Smtp-Session: l3s3148p1@SWdzKPJUqOMujnuj
+Date: Tue, 23 Jun 2026 23:08:17 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 07/12] rtc: rzn1: fix alarm range check truncation on
+ 32-bit systems
+Message-ID: <ajr1wXCI2U23d1sY@shikoro>
+References: <20260615154805.1619693-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260615154805.1619693-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ajJ9kNJtrY6DyQ-S@shikoro>
+ <CA+V-a8u2wt6623mYjhipOvJPo4va+bXs3qirQewocFr2QmUFhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IQrbvfrJwKbLcqHs"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260623054842.21831-4-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <CA+V-a8u2wt6623mYjhipOvJPo4va+bXs3qirQewocFr2QmUFhA@mail.gmail.com>
 
-Hi Krzysztof,
 
-On Tue, Jun 23, 2026 at 07:48:44AM +0200, Krzysztof Kozlowski wrote:
-> There is no use of double colon '::' in YAML. OTOH, the literal style
-> block, e.g. using '|' treats all characters as content [1] therefore
-> single use of ':' in descriptions is perfectly fine, whenever '|' is
-> used.
-> 
-> Cleanup existing code, so the confusing style won't be re-used in new
-> contributions.
-> 
-> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+--IQrbvfrJwKbLcqHs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-Thanks,
-Andi
+> Can you please share the commands you tried, I'll try and replicate it
+> on my side.
+
+Sorry, can't give you the commands, just from my head: I tried to set an
+alarm more than a week in the future, and the alarm was set to the next
+day. But I was in a hurry, maybe I overlooked something, because that
+handling used to work in the past IIRC. I can return to this topic on
+Friday earliest, sadly. Maybe next week only...
+
+
+--IQrbvfrJwKbLcqHs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmo69b0ACgkQFA3kzBSg
+KbbL/g/9Ffzr85nk4fwKrR+OVge9gQk368nR5HR+bXQ4T16cuZi6EwVQd8v7IeRL
+v2TNInbehi15qf2+T51IRvyBLlkAxEx/GHhDMp3AwVL4HAN4HpEPbjYU3WV/nxO2
+VcZBHdb9PvTMIzTrx8gpbXsVLRgxzNito4xdMEON5AEs3UImWIU8wqAjAGL0Co3T
+6nsfVTPkZyasJa6aqFDTYQtL3UZeio4a11HGUZdmm9RhIIthW0EcXaeMIuTHsrfQ
+6JA8FI6h6iZCxTVSuShdPCLl7+a34cLdudvlttGzRFkWcdNP5ORx8MKax8JuRkJr
+fNTvTMkOeuHbPTHZd7u/djq7iBK4mGVW55vghOZY7xw3rB9YDmSDPYQMCqyDkPbF
+BzLVONEYVvhpQYhOUHedypNJL6fSVTBKkfzlid5npy/EWUjuhzU8A//qkRAfyZBi
+FCw8O0RZafJ5WBpueWSGaeU1KCzIYyvv8jBsG1VVNcpOI/9reppr7Hihk0wCqSH6
+JmRmQqbesU4E63yTC6pZ7wH+fM6qA6bkBCX/eIRL3tApxXz1uRCARp5yG5hC3sBq
+bsiPOg/vQOaTInQLf71E/WgNaHDktBUOCv3uzWl2JZ0vML/TDnunzk9vHcR8kl3J
+sHx6QYjJLdhhL4+AM2Qj0P8pK0UgbWdvUAXeV8qfwc2DO5ecC44=
+=WL+b
+-----END PGP SIGNATURE-----
+
+--IQrbvfrJwKbLcqHs--
