@@ -1,34 +1,33 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3812472A2;
-	Wed, 24 Jun 2026 15:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F163195FA;
+	Wed, 24 Jun 2026 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782316080; cv=none; b=eXErbxNooOehQcCnOy2uWwqI0QGwzPwjUJC4QB8g5KbzZ7Qf977i6aoC+9wi3nqmigCV38lGZLgWMea23rmE2bQ00l2Fag2F0VNKKP/rB/bC5V5cbY+UhIgxHIgxH6XUSbaNqBdDoSyvmKkPYjTZHMJncaCh/mO0lWmY4lhokQY=
+	t=1782318964; cv=none; b=fgr5Jkq0S2Bub8P0E6p4MTPafBNqvwXVQhma/zA47kN2eJP1LeRHaluaKLzP0FkLVH7JCDEEHzbksSYxpCJBImNKZNKuN7UBe9h7ONKih7Yt5G3xMwNaRVjmcfFJbrhWL80j+bsiWoNMoZ/hUvggf/2Lpkuj8buFSr1/AKAL0GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782316080; c=relaxed/simple;
-	bh=7J2J/dLnlRj4aSjmO5v7bgI3Ux75gRq7GNoMbOqMS/g=;
+	s=arc-20240116; t=1782318964; c=relaxed/simple;
+	bh=p08OngOsIzGr6ZhopN+/dY2mbYDLgnBM/tGzG5KMUsw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBG738nP2FEcrw7FaB/rOd3lRAYPRC/kmzoZAJwsn89g/xFlxBZDifS1kpJlnvGrtQmJ8LNMbyZelAlSra4FmKih8NkjbFJ/8L3wpLnOilA73RoLkOMdCa92keZoQJSJOo9pBEu2h+u2iFiW4sZHZcPjO6ACt7KiGX/AYYA7K94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=N5zaSFjY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rtn6vmCw4wqAg4cNnMO6cl6CurV0LAnMbLEsm8ZVcpEIhaImLArsZGGU1qyuq2E9fdjIam+XdeEig/AgmB2jeeCKat6rVhoZKjBmNiUkyyfr/yhVz+8TwBkBxs2NKtHFEiGfFHqbX6MK5jW+5No52W/7DkKb56B91nHueeqeKhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5oRNt7j; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="N5zaSFjY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=t+KAQaFyheAN8Ki0OI+yBZfJ8T98Ct8ygzCe9SARqCg=; b=N5zaSFjY4oSHxOBsCCqa+LLd40
-	fZFYNT7CYhx1TgytoRFGpKgdUgLqhQyH1gAJI+RFSM6z9Vpj52dqvdx2FszQuyKBPM0Qfp9K534WF
-	SUtZSDbBcmGM/fgGBS90CnS4K5p7L6ey4Vsa+WHqIUQn2RSJaOagsmH9NufV6UaSP600=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1wcPpM-0096zD-Jc; Wed, 24 Jun 2026 17:47:48 +0200
-Date: Wed, 24 Jun 2026 17:47:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5oRNt7j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C5F1F000E9;
+	Wed, 24 Jun 2026 16:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782318963;
+	bh=p08OngOsIzGr6ZhopN+/dY2mbYDLgnBM/tGzG5KMUsw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=g5oRNt7jHwV1inO+CWVFbTML0PH7pCY4GZx5EU3nFW5GzHBwDchc0evlBpiLpu3qK
+	 l1RBUCs/I2mM9q8yxPZg0bG8TW7v12+/Y/anReySyEL2baAGq5qVRxX648bPu6PYpR
+	 zvp9ITsOETD9qlB8FqOPowI7eIuiIZuqedqYfwO+zPVv5EgIZ0F19RVOtPUmgBCVeV
+	 HkRRgJ65iK1xZD0vNOZFaZFmikJz4VmI81r5Nj9vXnVVEF3oF649KdC+jPxW1UyaEQ
+	 2MVueMq0P8vP51IbSZXnchOlXftFuV1fQdBoNWICA7e/Tc8pTGfVlvHarL5JWalOhg
+	 A85BueHHww1yg==
+Date: Wed, 24 Jun 2026 17:35:58 +0100
+From: Conor Dooley <conor@kernel.org>
 To: "Rob Herring (Arm)" <robh@kernel.org>
 Cc: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
@@ -44,7 +43,7 @@ Cc: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH net] dt-bindings: net: renesas,ether: Drop example
  "ethernet-phy-ieee802.3-c22" fallback
-Message-ID: <7272ced5-c5eb-46cc-acd8-168b694d526a@lunn.ch>
+Message-ID: <20260624-navigator-candle-1c5beb80f86f@spud>
 References: <20260624150250.131966-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -52,21 +51,27 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/bmMDEtLuouUAJqo"
 Content-Disposition: inline
 In-Reply-To: <20260624150250.131966-2-robh@kernel.org>
 
-On Wed, Jun 24, 2026 at 10:02:50AM -0500, Rob Herring (Arm) wrote:
-> Fix the Micrel PHY in the example which shouldn't have the
-> fallback "ethernet-phy-ieee802.3-c22" compatible:
-> 
-> Documentation/devicetree/bindings/net/renesas,ether.example.dtb: ethernet-phy@1 \
->   (ethernet-phy-id0022.1537): compatible: ['ethernet-phy-id0022.1537', 'ethernet-phy-ieee802.3-c22'] is too long
->         from schema $id: http://devicetree.org/schemas/net/micrel.yaml
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Fixes: 37a2fce09001 ("dt-bindings: sh_eth convert bindings to json-schema")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+--/bmMDEtLuouUAJqo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Andrew
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--/bmMDEtLuouUAJqo
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajwHbQAKCRB4tDGHoIJi
+0la/AQCah45Q3RREHspmj82zTCeY0rS8vYHCdVEpQDgxSl8o6gEAlB/SpV9wcc90
+zE2XuJetPcft0syPmsVSNmWkDLq+GQI=
+=4Rx0
+-----END PGP SIGNATURE-----
+
+--/bmMDEtLuouUAJqo--
