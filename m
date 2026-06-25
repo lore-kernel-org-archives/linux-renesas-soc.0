@@ -1,93 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644621D5174;
-	Thu, 25 Jun 2026 17:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7F337CD31
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jun 2026 17:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782407252; cv=none; b=opFNlM5jM1VCSrHmeRnZnuEChiwpn/AQISjF0Lkt0EgVr+fqdPSM6G0xW9om3+rmAO0euAPmtxtqZP6cV05vMsYqvr1WYfiDHMGkzrjID5R1Wa33I+bsdkE4Y+/GE40mATYIsKXJmiNkbk07YJ9sA5JL8Pnrf8K5Ssg/q7kWg/I=
+	t=1782408246; cv=none; b=oguko8o/3w2n9TEoN5iWj7VQVYuYd2umwuL2OLwmCXjTEaPQW3KkmjF7yBWciMx3ksH4ekJbOJh6S6Q7v94KnmHJPwGZRBiwLX1uwPATZUsJVljDszLxHe+wncm3qxDCntcN3Z3CaTwWylkZtACcYn+Jcq/QvmUfKMNwsfgRrzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782407252; c=relaxed/simple;
-	bh=dC+JBzxebaOXyA9OOvT2b33Z9C9XGKYBYzH60DJgZKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QVzDo1xcyD0G1E1gBRwSfcWPE1rblISAf8PG0sdOcvb+mAtj0Dn/4HovDgEWjsmrA3nCEflSqQUojC+VxZwX97qdzhJcx/wwvrjVNt7WklfbEzOsOE79X7k+AqqWkcZSf3hN5Qh3z4K4lZy2D5jDt1l3r3Htay0FZVX84Jj+kQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw783CVm; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782408246; c=relaxed/simple;
+	bh=BnZyledwajI7EV7MoATy0MicsPRLg2sl6XVKHLKTm0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dw7BMtK/XGzX11srq5m9Oobmk4ccwW2LXinBmjnEAeUn0bu5ZeqlmeQU/IlbZN7IZtEu7IsoUgUXXq6+7pgZ+XkcGX9m9ptM76Pv9J8td0hu+EkTT4SeUxlDf5R4Fid2pnvGO1DWBJsVibqkcyR/0cXtlIc9/hMFu+8Tg7wmwmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmm/kJqs; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw783CVm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14DC1F000E9;
-	Thu, 25 Jun 2026 17:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782407251;
-	bh=YxAQYhRsry2MpZzvQqF03q8jbMwMkEhXrYA2x4B6dp8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=kw783CVmu/bDPIDBgjXws/S8Ehevrn4DXVULURkR1+Zm3RvUzXOynx5v6vD9iRIA8
-	 6ThIw4ygulv93EYm14Z5H60iW2t4gbFdK0NA+dDqMbNQ/tOLwsdzcw2jNHKh4XFLfn
-	 Ol6iYqKSgblZ0ZBZaalcOzd7dKGSIg0fwz20EHesuL9Y1AlglTZWEGmD9QS4Xdekx/
-	 MVdMgDFUpcjgm9Tg357+I0YB3lQwyELlReU7+8FXMyoh+pUjl66U7plyAS9ljQrxnH
-	 IkmL3Z1OsNFOwL8lTCOvkx/ROwKcIyx7GS7BVtQnGNVUqXjKOpcazZOd+QyGQUu6b+
-	 e0jySbZa7AbDw==
-Message-ID: <126053be-ecdc-44fe-9242-d4267d332683@kernel.org>
-Date: Thu, 25 Jun 2026 19:07:26 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmm/kJqs"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-49249072f03so689555e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jun 2026 10:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782408244; x=1783013044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BsMZVPfVRATp7NVDC8FWrCYbdkwciYq6TDikcpY8QOc=;
+        b=jmm/kJqsRPR5ShGgY8pOYrBBMqgRzMsd0xNCgkCuyjATrwMxCvX/K9RBWtwqWoGRp5
+         cp7RUSIgvKGmEjUjGEW6ryWIILdSPC7nyt8CKfCYbk+F0NhsB+oK+17azM3j2uPYWZCK
+         ags3VWxp83jrNwmo+uidgUnFDiXzHA7LmMA2FmnTUOMW61Ye4t0b3obq1GINXeMb7h/R
+         FPhUjofqxKAouBKCqhBUfqhIlPqlynzgLZyRKwkKgO/Q5EGu8xrtFn6TmGL7DKmhhO41
+         JKPGNPH5tIcZHPjYjydqLJUHrfEoVtb13aqf7sRMxffp7c+ZEQnFwNGEmiUFfSfNfZxo
+         Jx+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782408244; x=1783013044;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BsMZVPfVRATp7NVDC8FWrCYbdkwciYq6TDikcpY8QOc=;
+        b=TkJHp+jeHAgOEMbVSB5f34zgPd1F97fJ+lHUNlVdjJyV6hRgzF1MwAfXlZfA6qkABr
+         G22rE4S9qV+C/nBKhNIGAHE6FFN36wgs/Xmhge4GXSMbTgnKPNh5sP7IN8DS3T8kuCUK
+         eq4/lxMWh+d5gTi3YbghnB415lLb27oMa+yXWGC3tG8Sb909Y+QHwfy+agWaCFhctc75
+         Ujei9bAGjMm51p4qhX9KAklXDbQotMDFQKPf2Zb8/jzWUh2hAkr3ttHcFPR/iwZXDm5q
+         JfFc6t4PE0YkrOdD3UBB9yQ4kz9/M3PcMQ2TY1KKz3zdOyG0dNvRJ7UgmnmrhUVVsxYs
+         DC6w==
+X-Forwarded-Encrypted: i=1; AFNElJ+IYbre8ab7wmVRcmKDAVS4/XfZ6qBHDB7N/Z5XYTBinfy1+Iv8IkK8y9qU/hx31HMh5RWlk+mdKlHx+TbZTzFt7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvG+JPh+P+AluIoGfW91IFKMy5s3VPm7/Qlr62+hNcvnKbUJOi
+	o50RALItF7fIa0QSMHNLqXDJ+adPPzHi/oezDEcUBKZyYZSi6Ks9iOLc
+X-Gm-Gg: AfdE7clewGcO8Lk6U+MjWPEdkxfhvKyd5oHKQvpwd9MoGOFDy59R0Ca9hChXdRmqc1d
+	hDC2Ha8UuB7LtL2JqtMqc2Q54Bw1PP0/Y5ujFEsvZv1m8Vq8M82fQ2Eq/C8WogR0Q2cqLqyEYGB
+	p8TWLdNIJmC5JEM31XZiw3WMfUiPPLV4nl+VZSRSt37di6yO18ulvHeDd0E6QWEmbZ9/wvyuECE
+	7eKR7e/Cw/YTEmc/BsSjInIlLJAkB7Mr3/fAmVukvJYiYuq4IOVLENtONupfbiecIV7um1czoIk
+	wjP2JnEZ/W8RGsIBMKOXujY33YISmA9aHWLARx8MeZRYq3zM5EqhfkICZiHmUjk6Me45DJZGZ58
+	4oeRWcO2kOY4+q7hPSm8VOLwYh/8Oa4ksitBwwCee3vCkIEE4FYQixXeLc5DWATpN5k0PANz+Fi
+	z1bA0A/V6fTsSUnOMS5ST12yglkbhqoFhpag4g
+X-Received: by 2002:a05:600c:c3ce:20b0:492:62eb:ebe8 with SMTP id 5b1f17b1804b1-4926686638emr41836615e9.16.1782408243598;
+        Thu, 25 Jun 2026 10:24:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:6aa7:b2d:3460:b689])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49268fd9e77sm11167265e9.4.2026.06.25.10.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jun 2026 10:24:03 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v5 0/2] Add support for Renesas RZ/G3L LVDS encoder
+Date: Thu, 25 Jun 2026 18:23:47 +0100
+Message-ID: <20260625172359.292631-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] can: rcar_canfd: Change the initializing flow for clocks
- and resets
-To: Biju <biju.das.au@gmail.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Tu Nguyen <tu.nguyen.xg@renesas.com>,
- Biju Das <biju.das.jz@bp.renesas.com>, Duy Nguyen
- <duy.nguyen.rh@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260625135216.130450-1-biju.das.jz@bp.renesas.com>
-From: Vincent Mailhol <mailhol@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20260625135216.130450-1-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/06/2026 at 15:51, Biju wrote:
-> From: Tu Nguyen <tu.nguyen.xg@renesas.com>
-> 
-> Testing CANFD on RZ/G3E shows that many registers do not reset to their
-> initial values with the current flow of deasserting resets first and then
-> enabling clocks.
-> 
-> Based on the HW manual, clocks should be supplied first and the
-> resets deasserted afterward.
-> 
->  section 7.4.3 Procedure for Activating Modules: RZ/G2L
->  section 4.4.9.3 Procedure for Starting up Units: RZ/G3E
-> 
-> So, update the order of the initializing flow for resets and clocks
-> to match the hardware manual, resetting all CANFD registers to their
-> initial values. Also update rcar_canfd_global_deinit() to assert
-> resets before disabling clocks, so the teardown path mirrors the new
-> init ordering.
-> 
-> Fixes: 76e9353a80e9 ("can: rcar_canfd: Add support for RZ/G2L family")
-> Signed-off-by: Tu Nguyen <tu.nguyen.xg@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Vincent Mailhol <mailhol@kernel.org>
+Add support for the RZ/G3L LVDS encoder driver. It operates in single-link
+mode with 4 lanes (Data) + 1 lane (Clock) and supports pixel clock rates
+from 25 to 87 MHz. The LVDS module cannot be used at the same time as
+MIPI-DSI. However, LVDS and the DSI interface share a peripheral clock and
+the MIPI_DSI_PRESET_N reset signal. Also, the MIPI_DSI_CMN_RSTB and
+MIPI_DSI_ARESET_N reset signals must be asserted before using the LVDS
+module.
 
+v4->v5:
+ * Collected the tags.
+ * Added Kconfig functional dependency for DRM_RZG2L_DU
+ * Dropped DRM_PANEL from DRM_RZG3L_LVDS config
+ * Dropped unused headers of_device.h,of_graph.h and drm_panel.h
+ * Dropped the unused macro LVDS_CMN_RST_PHY0_SEL_CH0
+ * Used plain number for macro LVDS_0_PHY_CH_IO_EN0_MSK
+ * Retained the tag as the above changes are trivial.
+v3->v4:
+ * Reworked bindings, dropping parent node containing simple-mfd and
+   syson.
+ * Dropped the tags
+ * Dropped the header files clk.h and syscon.h
+ * Dropped next_bridge check in attach().
+ * Dropped syscon for getting regmap.
+ * Replaced the below macros to match the hardware manual:
+	LVDS_0_CTL_FMT_SEL_MSK->LVDS_0_CTL_FMT_SEL0_MSK
+	LVDS_0_PHY_CH_IO_EN_MSK->LVDS_0_PHY_CH_IO_EN0_MSK
+	Replaced LVDS_0_PHY_CH_IO_EN->LVDS_0_PHY_CH_IO_EN0
+ * Replaced atomic_reset()->atomic_create_state().
+v2->v3:
+ * Collected tags.
+v2->v2[1]:
+ * Dropped patch#1 as it is accepted.
+ * Replace drm_atomic_state with drm_atomic_commit in
+   rzg3l_lvds_atomic_{en,dis}able().
+ * Drop local variable ret and dev_err() messages in
+   rzg3l_lvds_atomic_enable(); use WARN_ON() instead to
+   capture unexpected failures since atomic_enable should not fail.
+ * Drop local variable next_bridge from rzg3l_lvds_probe().
+[1] https://lore.kernel.org/all/20260524194457.479681-1-biju.das.jz@bp.renesas.com/
+v1->v2:
+ * Collected the tags for binding patches.
+ * Dropped unused function rzg3l_lvds_is_connected() and removed the 
+   corresponding header file rzg3l_lvds.h
+ * Dropped next_bridge from struct rzg3l_lvds instead using bridge's
+   next_bridge.
+ * Replaced pm_runtime_resume_and_get()->pm_runtime_get_sync() as
+   atomic_enable doesn't fail and for each enable there always will be an
+   atomic_disable() call.
+ * Started using DEFINE_RUNTIME_DEV_PM_OPS for PM callback.
+ * Replaced rzg3l_lvds_parse_dt() with devm_drm_of_get_bridge() in probe()
+ * Started using reset_control_bulk_*() in rzg3l_lvds_pm_runtime_{suspend,
+   resume}().
 
-Yours sincerely,
-Vincent Mailhol
+Biju Das (2):
+  dt-bindings: display: bridge: Document Renesas RZ/G3L LVDS encoder
+  drm: renesas: rz-du: Add support for RZ/G3L LVDS encoder
+
+ .../bridge/renesas,r9a08g046-lvds.yaml        | 120 ++++++++
+ drivers/gpu/drm/renesas/rz-du/Kconfig         |  13 +
+ drivers/gpu/drm/renesas/rz-du/Makefile        |   1 +
+ drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c    | 282 ++++++++++++++++++
+ .../gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h   |  25 ++
+ 5 files changed, 441 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,r9a08g046-lvds.yaml
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg3l_lvds.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg3l_lvds_regs.h
+
+-- 
+2.43.0
 
