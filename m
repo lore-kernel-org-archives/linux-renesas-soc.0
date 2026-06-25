@@ -1,94 +1,215 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D7E3E5A2F;
-	Wed, 24 Jun 2026 21:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566D2EC57C;
+	Thu, 25 Jun 2026 05:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782335769; cv=none; b=mX89uENkCPwkkyP3NQnoDcvp1W+ySrDPzOrOvlx3khN2suLbZC0ZHVU6CEt1qIMfN37H0Odrvb1TEoN4SkQYbsun8dDz4/gkk0EJitTfUPvQ+zb2EQ0iXVlegSVLRXuD+oRcffEoBZgOorH7/mp5fg7sBcfZbIC0jUWBKopWmUg=
+	t=1782364499; cv=none; b=WlU3FuB1XlwidO2eTL1G2JQuickMLV4W2i2z1GmfTX1EX9BW+iLMxAQKDplrf5FqId/A7SBIiATE4cZ35akiF+S41eYZhcWQpJ83cLFp5Aq3yxwjUMndD1YK1yWBGFiK0dqfdcVNqF8KdDb+uPbbM7bIh+1RsIR2jMLoUH5I7g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782335769; c=relaxed/simple;
-	bh=CpDh3jVLvozEA5RyGrt3ugXB1cZs3JKi/bYsPDELKFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0gvrT3IGtJ2VhYW7K7pLlBpemuJ1RgY+MgvhStqKiXipKuEjvbZ474TdjoJyd1F+3u/ya8hVQXIDlfxa6pxnXfx+Eu1G1S1mqwAcvjF2JNroC8mETQFyzUC1fc5r/qNNKocjuVJeQuI9oojOguQTG2ktG5hPltdT6OWZbHZPTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ogqr69aO; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1782364499; c=relaxed/simple;
+	bh=FCAeukJ8RzLyq5Vj+dqHzRjEQyC/Qev+o4x6kcL55HY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DCTFO/PPLhwVii4yUxwbsI5ZrFLVAtlyA75Wqj+5F23mWQyvileN4lMHSSDumV0csXi3yBrFzv1IsHFoNjVpqCP8XTX8niwgyS0VYrYrHUOiFkC15NG5CkgX7BU+4WzIKjMLzz0Jfo/HSUa5uMaSiYmwAp4JEI3bndmIULjtlPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TPykId9t; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ogqr69aO"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6AA7EC6B3BA;
-	Wed, 24 Jun 2026 21:16:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 51535601C5;
-	Wed, 24 Jun 2026 21:16:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3E992106C8468;
-	Wed, 24 Jun 2026 23:16:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782335766; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=wraPUdLmVqtTkNdtQ5IedrZ/juHLC6UWUxYbYgjV4pU=;
-	b=ogqr69aOM+wZnVAD1MhmYkQ3DfOusUIHQ9PER7dBpnYQcO4OO42El0q0HhN06W4rFTx9Wr
-	sNHetlqkNnT6Sr7zglMEciDZho+UamjMtMde34hQgQ+rGrSWZR0ofs7w6K39L7cIrCImv7
-	JFWSt4rysOaXnxGp84JLrFF8rsOMf9fygsJXgDfkuyBhj2+XHR90stg/bfzKbKsdNV6QvX
-	RcJOWRFObE6mZzTKumxwOUBPn8r97fS/ntgHJ2m0BlEiHUAKwWZNItmGe7vdA9Onx2KapL
-	Yifw6k7Xd8Cgt3YQSfYuwLHoPdxfQoTZEkwn4mIvBxzoAcIdg6zeIIp/lM/6xA==
-Date: Wed, 24 Jun 2026 23:16:04 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TPykId9t"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=xBI/2YDcHNtE+QcZY8pKqHohUJo6d3H7lbIGpWyQnYA=; b=TPykId9tmRhwUUOAMGOJ3Eg1Wn
+	IyvzitS/1DW24MYRHtuhCKnh9MgVv+wLrDnQId3e5HnTU4YkiFF9u7WjPBxKsROSL52oN6NZFAB0S
+	wOLjdW5SiO2Hcxz5AsoG+VdwIzbyE3Z+1qRkKBXIQcwmAqqoZk18BWU3a3H+YPQQIjUoVmPvT9LHX
+	BsJePCoFvpoE4b+NxAXiqqleVqwHCk4w7EVAiH6IhrTbPqTvyCQGjzlGCaSiahq/HQxvLnJWNeYWW
+	i6ycpuZqC/cSLcSIVPQWBmd7OVQQtMcZpWJoiPx2qIiOcrDKWBFOsdPuXRF18OVb1bXo7y6MrjpDX
+	DtGKYgrw==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1wccQP-0001e6-2Q;
+	Thu, 25 Jun 2026 07:14:53 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1wccQP-0002rW-2w;
+	Thu, 25 Jun 2026 07:14:53 +0200
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-rtc@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/5] rtc: renesas-rtca3: Various fixes and improvements
-Message-ID: <178233558788.1517260.4788362549360273691.b4-ty@b4>
-References: <20260602192559.1791344-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Paul Gerber <paul.gerber@tq-group.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com,
+	linux-renesas-soc@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: [PATCH v6 3/4] arm64: dts: freescale: add LVDS overlays for TQMa8MPxS
+Date: Thu, 25 Jun 2026 07:14:46 +0200
+Message-ID: <20260625051449.2560197-3-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260625051449.2560197-1-alexander.stein@ew.tq-group.com>
+References: <20260625051449.2560197-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260602192559.1791344-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28041/Wed Jun 24 08:24:54 2026)
 
-On Tue, 02 Jun 2026 20:25:54 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Hi all,
-> 
-> This patch series includes various fixes and improvements for the
-> Renesas RTCA-3 RTC driver, including:
-> - Fixing the polling condition when clearing the PIE bit during alarm
->   setup error handling.
-> - Checking the result of the RADJ polling during initial setup and
->   propagating errors.
-> - Correcting an error message related to reset control.
-> - Fixing a typo in the documentation for the rtca3_ppb_per_cycle struct.
-> - Refactoring year decoding logic into a helper function for better
->   readability.
-> 
-> [...]
+From: Paul Gerber <paul.gerber@tq-group.com>
 
-Applied, thanks!
+This adds overlays for the supported LVDS display tianma tm070jvhg33
+for both LVDS channels.
 
-[1/5] rtc: renesas-rtca3: Fix PIE clear polling condition in alarm setup error path
-      https://git.kernel.org/abelloni/c/7e342d87aa8e
-[2/5] rtc: renesas-rtca3: Check RADJ poll result during initial setup
-      https://git.kernel.org/abelloni/c/fafb016d0812
-[3/5] rtc: renesas-rtca3: Fix incorrect error message for reset assert
-      https://git.kernel.org/abelloni/c/09939630aad9
-[4/5] rtc: renesas-rtca3: Fix typo in rtca3_ppb_per_cycle documentation
-      https://git.kernel.org/abelloni/c/9fb12656a7a5
-[5/5] rtc: renesas-rtca3: Factor out year decoding helper
-      https://git.kernel.org/abelloni/c/2098bb8ac5f5
+The display timings have to be specified explicitly. Using the typical
+pixel clock, the LDB clock can not be configured as the 7-fold of that.
+By setting pixel clock to 74.25 MHz, LDB can be configured to exactly
+519.75 MHz.
 
-Best regards,
+Signed-off-by: Paul Gerber <paul.gerber@tq-group.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v6:
+* None
 
+ arch/arm64/boot/dts/freescale/Makefile        |  5 +++
+ ...qma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtso | 43 +++++++++++++++++++
+ ...qma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtso | 43 +++++++++++++++++++
+ 3 files changed, 91 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtso
+
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index acb73cde76f16..2f4568e7105f4 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -498,6 +498,11 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33-imx219.dtb
+ 
++imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33-dtbs += imx8mp-tqma8mpqs-mb-smarc-2.dtb imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtbo
++imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33-dtbs += imx8mp-tqma8mpqs-mb-smarc-2.dtb imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtb
++
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
+ imx8mq-evk-pcie1-ep-dtbs += imx8mq-evk.dtb imx-pcie1-ep.dtbo
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk-pcie1-ep.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtso
+new file mode 100644
+index 0000000000000..2cf1de8c05b49
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds0-tm070jvhg33.dtso
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2025-2026 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Paul Gerber
++ */
++
++/dts-v1/;
++/plugin/;
++
++&backlight_lvds0 {
++	status = "okay";
++};
++
++&panel_lvds0{
++	compatible = "tianma,tm070jvhg33";
++	status = "okay";
++
++	panel-timing {
++		clock-frequency = <74250000>;
++		hactive = <1280>;
++		vactive = <800>;
++		hfront-porch = <64>;
++		hback-porch = <5>;
++		hsync-len = <1>;
++		vfront-porch = <40>;
++		vback-porch = <2>;
++		vsync-len = <1>;
++		de-active = <1>;
++	};
++};
++
++&lcdif2 {
++	status = "okay";
++};
++
++&lvds_bridge {
++	status = "okay";
++};
++
++&pwm3 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtso
+new file mode 100644
+index 0000000000000..cbad0cfab2925
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpqs-mb-smarc-2-lvds1-tm070jvhg33.dtso
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2025-2026 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Paul Gerber
++ */
++
++/dts-v1/;
++/plugin/;
++
++&backlight_lvds1 {
++	status = "okay";
++};
++
++&panel_lvds1{
++	compatible = "tianma,tm070jvhg33";
++	status = "okay";
++
++	panel-timing {
++		clock-frequency = <74250000>;
++		hactive = <1280>;
++		vactive = <800>;
++		hfront-porch = <64>;
++		hback-porch = <5>;
++		hsync-len = <1>;
++		vfront-porch = <40>;
++		vback-porch = <2>;
++		vsync-len = <1>;
++		de-active = <1>;
++	};
++};
++
++&lcdif2 {
++	status = "okay";
++};
++
++&lvds_bridge {
++	status = "okay";
++};
++
++&pwm2 {
++	status = "okay";
++};
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.54.0
+
