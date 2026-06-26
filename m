@@ -1,188 +1,120 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256353F4DC8;
-	Fri, 26 Jun 2026 12:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6F31F8AC5
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jun 2026 12:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782475704; cv=none; b=YwPfnvYq1JuOi2Z/Pgs06kXOcWuRxjCoI33Jdld9/4cyWfdT/9u5dk9HlWxHl2nr4zfTZDfAvtCI4vafYGUoPNCvAYQYUUtR4aJOkIjDhb0di+Yg5RnTHLq/7k0KklBoEZ9tXzOFsVir4t/7o7l8tPMCyOCNVL0RoTy/Hp0JHTg=
+	t=1782477040; cv=none; b=dxa/o2ulTu/P9zfY+DisP4jV54X4fmi1sYgbKR91po/ERtJuIhhu4luLKVhsRLC9PGLrifI8ynjH+DBrZGmV8PAF1ztRrEwkJtQAVmLDCc0IVT2rog2RMCr5v+KuQufkrH9sREXBhgqOqfC+pXRqAd9jb9kTcXN4qPPy91j0x3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782475704; c=relaxed/simple;
-	bh=1/oUhVk74PsiN3MZzcdIYvqyHY+Gnerhson6lRR0lpk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W0X3dfC53lpXgHmM9wvE16p0vITBQapGr+wnWKqCOSLNlBQg1QBY1xwHgNqJ8s1qHfJRAW1CkT7OHkqLmk3PBDpf9IpqXJNGDA/a5rsWuZM2V9hC6lPmfLinQI9j+j3p7dpk/0u68slNbHTtutz8ECWsx3mJC/tLUSx174iyAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GHWKZshp; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GHWKZshp"
-Received: from ping.linuxembedded.co.uk (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0EFA1D0A;
-	Fri, 26 Jun 2026 14:07:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1782475650;
-	bh=1/oUhVk74PsiN3MZzcdIYvqyHY+Gnerhson6lRR0lpk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GHWKZshpDcFnXFUHNVMtu/UJLiytezMts/EH87Rqx3kQJqmogwz1sdI8oQ0ms2fsV
-	 RUTiUZ15R/OQm8y29EwifB0WRr8G+KrRSirOP0DqcqDkoCPmR8j9p5bxVfrLszRDIM
-	 JsO78O9kqBlayrEpObQjwws28vWrevT9lYQZ19uQ=
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Date: Fri, 26 Jun 2026 13:07:59 +0100
-Subject: [PATCH v2 7/8] arm64: dts: renesas: Convert to new media
- orientation definitions
+	s=arc-20240116; t=1782477040; c=relaxed/simple;
+	bh=L8m+v9Mumd9PBrIoKCr6p8n/MbxpHP4z26Qvy7erVnI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V1kPgr8Njb1t8oSjtOcci7FUgOdw+st7gCj9UXmUbTchExBvAUgDCrO+c8C3iO69HXIfbLTic1wbaTkqPEqZrH+SHEKLEoadqFFEfK1k/CMOc3NWzC9T1jHgljLZvmwHQQppqAV/Ic7OksQju0/o76uv8IkWhGuUxU99KrgsuD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5bbf01bcfb9so624856e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jun 2026 05:30:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782477038; x=1783081838;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Qc4TavqegVrav+S2qpl9+8s6wcCSKt3nqOoGSJ8Fvk=;
+        b=FSCojNMvGzSOpPRBkcAIL+m5tEHUx5jhXAYBy3skzK6OxJIGa44rgb0+ZKvOoxJqhh
+         di66FEFeremZGrazC3OJiwiiWgkI4ZQrF4e1x3sSdy/d0s64LuS03Js2pZQlOMIMOyAW
+         4tWjfKujmnSyp/Z4eeTnZBSHP30mn4xdavvirf90bOdFNBN18ugYF+C8QsQPU21il84A
+         gA26E2LLKvbKu9oZ4Hv5o/qOIU5rQ60rpCRtqwXOnb4Ke0QJ9CjxytWe5b/swWaALqco
+         HgY3XVQ1VcA5ukENDpzOE18jH/rb+EU8RKVoW9jbHenotdZz0PzWnFEEj2zEe8wQ2KlQ
+         OpKw==
+X-Forwarded-Encrypted: i=1; AHgh+Roh3CDsIA4+XzeCCDG0kqdAXRFx/+cbjG+XbHOxe1JH+kedLtQmQOhDsgi+Z0YuAZr9SOeEqrWMgQgyO70/5B3kug==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytg9v71MqBnPqnwonJr/aDWk5gM1GpeFxnLHmjScPjdjpKBfDt
+	Lqw/WAco5sMaVW0F6NMRY8b01zaKozEVLyG+hqBYC6Z0vw5bBaWoR4CuyeO1zh+y
+X-Gm-Gg: AfdE7ckS/XBxEVy0j+2cbxe7beScMXlWBv+mULTEnxs8jrPiZmgU3tTSkXXDepVaEzE
+	oMEEh0L7u2fonqFTCqIbTTFMqGS87p3GpV8x+8+zuig+cr3W5d4uQB5sufE8PPm1dW98kLTbvGq
+	+B9BPzGbnE8GMLYHj/gaaM++8zFd/szRrhy4v52yIiZowsUXMHn8n2cX3O6nmrbwAClH8XHXkbC
+	RFMg+qwbJxM9MzaDEcnZky4A12eS1yoBMJYXILjP/zFH5RmREeCkbBVMmAcpz2zoXBEdqBY04kU
+	QQZYCJPoKxmzEhCmIkX+LU3q3eCty3C3zS0w4roa5MWpqAiuns7xf3jITuYEoSVZggJIYGoTcMn
+	No+5q/M5YGvs7yEe9pzW1GUB+PTTzqs+negO7+67aliyqNt9qZjXCoeatJarAG4IJU+TnJNym47
+	nOSkQ2gm5SrNoCihNhqACsS6t71Q0mIROb/WdoYDL9vIHAOrRjeA==
+X-Received: by 2002:a05:6122:d87:b0:56e:f1d2:c3ca with SMTP id 71dfb90a1353d-5bd69c31db8mr3293004e0c.2.1782477038410;
+        Fri, 26 Jun 2026 05:30:38 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bd7908a3d1sm969264e0c.12.2026.06.26.05.30.37
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jun 2026 05:30:37 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-966e7380109so664564241.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jun 2026 05:30:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro9yken7Y8K4kP6zGhowud8QUjog9R2qNOplty+ZdT3rY2qkp1NqBTy3krZq0Sc0mSTDwksbl3kdi789cQC4RByEg==@vger.kernel.org
+X-Received: by 2002:a05:6102:5491:b0:631:4580:6a46 with SMTP id
+ ada2fe7eead31-73435b90f5fmr3476500137.17.1782477036873; Fri, 26 Jun 2026
+ 05:30:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260626-kbingham-orientation-v2-7-47178be927b4@ideasonboard.com>
-References: <20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com>
-In-Reply-To: <20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
- Matthias Fend <matthias.fend@emfend.at>, 
- Mikhail Rudenko <mike.rudenko@gmail.com>, 
- Daniel Scally <dan.scally@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Paul Elder <paul.elder@ideasonboard.com>, 
- Martin Kepplinger <martin.kepplinger@puri.sm>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- Tommaso Merciai <tomm.merciai@gmail.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- Richard Acayan <mailingradian@gmail.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux@ew.tq-group.com, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782475679; l=3758;
- i=kieran.bingham@ideasonboard.com; s=20260207; h=from:subject:message-id;
- bh=2rSGjcZ6Wtxs4n28tXYT3YrV2tMO4y4R6/uKEOMLHZ4=;
- b=M2sPkEEhGzwwR4wOZOH8hrGe0NikpT9cwMXZiqcMlIOrSlHLxC4reijwMKw37IEDOBpvZsUpj
- acEeh+ARrdaA+Uybdsid9t9l0atzeRv08JnGdrORhBtZhgmJbqe7Gsa
-X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
- pk=FVXKN7YuwHc6UtbRUeTMAmranfsQomA+vnilfglWdaY=
+References: <20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com> <20260626-kbingham-orientation-v2-7-47178be927b4@ideasonboard.com>
+In-Reply-To: <20260626-kbingham-orientation-v2-7-47178be927b4@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jun 2026 14:30:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV+BDLjuhVo5fyHxSEibW8E4opXbaDrgsmTgygXXJoATA@mail.gmail.com>
+X-Gm-Features: AVVi8Cc1rFvCNNORSHDtFmL_tkYQ91oxJ5vGSfmmYwanPmDM2yIyJwQSJ-fX378
+Message-ID: <CAMuHMdV+BDLjuhVo5fyHxSEibW8E4opXbaDrgsmTgygXXJoATA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: renesas: Convert to new media
+ orientation definitions
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Jimmy Su <jimmy.su@intel.com>, Matthias Fend <matthias.fend@emfend.at>, 
+	Mikhail Rudenko <mike.rudenko@gmail.com>, Daniel Scally <dan.scally@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Michael Riesch <michael.riesch@collabora.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Paul Elder <paul.elder@ideasonboard.com>, Martin Kepplinger <martin.kepplinger@puri.sm>, 
+	Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Richard Acayan <mailingradian@gmail.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux@ew.tq-group.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Fri, 26 Jun 2026 at 14:08, Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+> The orientation property for video interface devices now has definitions
+> to prevent hardcoded integer values for the enum options.
+>
+> Update the users throughout the renesas device trees to use the new
+> definitions.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The orientation property for video interface devices now has definitions
-to prevent hardcoded integer values for the enum options.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Update the users throughout the renesas device trees to use the new
-definitions.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso | 3 ++-
- .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso | 3 ++-
- .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso | 3 ++-
- .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso | 3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+                        Geert
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
-index 3acaf714cf24..b816382bba0a 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
-@@ -12,6 +12,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- 
- &{/} {
- 	clk_cam_j1: clk-cam-j1 {
-@@ -44,7 +45,7 @@ cam@10 {
- 		VDIG-supply = <&reg_cam_j1>;
- 		VDDL-supply = <&reg_cam_j1>;
- 
--		orientation = <2>;
-+		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
- 		rotation = <0>;
- 
- 		port {
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
-index a19bc0840392..4019b80a88b7 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
-@@ -12,6 +12,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- 
- &{/} {
- 	clk_cam_j1: clk-cam-j1 {
-@@ -46,7 +47,7 @@ cam@1a {
- 		vdda-supply = <&reg_cam_j1>;
- 		vddd-supply = <&reg_cam_j1>;
- 
--		orientation = <2>;
-+		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
- 		rotation = <0>;
- 
- 		port {
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
-index 512810b861aa..fea1ef4a1178 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
-@@ -12,6 +12,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- 
- &{/} {
- 	clk_cam_j2: clk-cam-j2 {
-@@ -44,7 +45,7 @@ cam@10 {
- 		VDIG-supply = <&reg_cam_j2>;
- 		VDDL-supply = <&reg_cam_j2>;
- 
--		orientation = <2>;
-+		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
- 		rotation = <0>;
- 
- 		port {
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
-index a31524b59834..177201a8a6d2 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
-@@ -12,6 +12,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- 
- &{/} {
- 	clk_cam_j2: clk-cam-j2 {
-@@ -46,7 +47,7 @@ cam@1a {
- 		vdda-supply = <&reg_cam_j2>;
- 		vddd-supply = <&reg_cam_j2>;
- 
--		orientation = <2>;
-+		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
- 		rotation = <0>;
- 
- 		port {
 
--- 
-2.52.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
