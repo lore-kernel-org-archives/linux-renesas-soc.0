@@ -1,93 +1,149 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB133EF64F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 16:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D785466B59
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 16:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782750787; cv=none; b=BAAxWfc23Z1P3MJIYletnzMxgq9GOL0QA7tjbXVcnMlSguqnhPrb5r29EaKWUmPF0i1vIw474aKYZiSKW73+0j8aqDxjPZM2VVHiYTg718oniIEX2c1rLf/em28v19Wp7+GvL12R1L1J6xQ1s4T3d10p7DJre6w8776dza3HEqE=
+	t=1782752061; cv=none; b=QVp9pVQe9n42IK7caAzcPYLvQ3u7Q9RIKRTfB7IT3pdgnDsWMStwaCacflzPzMghl/7S8iOltxVCXe7oz0B96q8NeGUf28knU5Vzs0LL/bnH6NwEItV2+NXjI7hC5Rwn+qvNcDHooWu3mPC7Cy1P8k4qlsOfqonzp9XvAaPVBWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782750787; c=relaxed/simple;
-	bh=8rP3x0htxY/A0MfSa61V9+zBK94rm82LmijUT5jUvSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDomcrNgLfq9bK4j2aPf0F+600agzBhigeSQK7kPNqeA+syZrJJ7/3/T4DsvksRDJNLbb9EYGLyISBYeKaC8OtG0XIb4qdT8rTL6l/g0EArMmtd52z5qtVioPPRRAEUysuIkTACfuxgDMSDAQQa8vFYyODPOwh51hwKjdkacQ94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=St7LK6yF; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1782752061; c=relaxed/simple;
+	bh=eE8NJJlLWJmGLS8Mjp0uHMgdO7h8J7DYtf3wXUf3DU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NwmfKjFiapNmAPBxSb6YNRbdiywt1eSUY7ZxwLLBt0pbHyw1zLERClL3sOE0mgVZhnq2xwjBjiE0VLWOAD8WdKx5a9LDEyEotr5dApd6+mfJvYZHzWDL3yoj7KJ2TDDfvSF59/iO46z4G1QbiH+T90BedzssuhML+O156Sq4L14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtH5gwa+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="St7LK6yF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=8rP3
-	x0htxY/A0MfSa61V9+zBK94rm82LmijUT5jUvSc=; b=St7LK6yFLuXpJvomQZLm
-	38BoK400HaRsNhlZ97DMK/TtyiQu2L835cmDEt08Tsn/FSLa6z6CN4vvmGj8vznZ
-	mc8rjGXE5yUikZd6N/JVSfoTEN0sosoKe63/IINxfZCPdoJ7a0TF6Cm8V7cmymmg
-	0kDXIRC3a4d5IwI4k0giLoxOShv3jlrXLx8UvUYym8WA3siXiIf+0JSBJWQlBhDm
-	rNJW7jcKnqGIDlzJ4RJAnTo872ykxh450YQ+1DQEizfLssPd7m1tQPJMp9aX3Q93
-	3M9dUPV1GCXxPW1tSxEidIVhDKoqywAct+As9pDcygvzP3THCFNbCDOW93WQwC2i
-	Kg==
-Received: (qmail 454313 invoked from network); 29 Jun 2026 18:33:04 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2026 18:33:04 +0200
-X-UD-Smtp-Session: l3s3148p1@8IQyA2dVjpYujntC
-Date: Mon, 29 Jun 2026 18:33:03 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Felix Gu <ustc.gu@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: rzv2h-rspi: Fix DMA transfer error handling for
- signal interruption
-Message-ID: <akKeP6CL7vHDImQY@shikoro>
-References: <20260627-rspi-v1-1-170c93ee14da@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtH5gwa+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502DA1F00A3F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 16:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782752058;
+	bh=nrtvzAHL3u6/v5L5E9Co3P0QE5xowtwOQFIomSwMWjk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=UtH5gwa+U1zvJ6MiDKihq7fz1abrI92vBGcYoq95X9rWwvz5W22oGlu4vG8sTBX+v
+	 lZvuZzP6DS79zjdwBazFvkl6XvoQbUodjizsh/Y5t56PyS2oiOkfYCx7wkLk7cdr+q
+	 2NhTOPmDU9hdWHEJWT+FaK8smDYBGn2B+2GOFurQSd53ujUwxlBKe0UjPhBCgGA3QX
+	 k22qz2Jmw2cBhPjOS+8yx0ottM8TY6XGd5Ka/4VbWDj5PV4d5a2kNIQXOJuCPPFOrx
+	 MdEVXZTxj/5NUCsyS7s46Ae8fQuMQf8DXRbIUUrciT9U9mcW4df21f2qy+RvS22A4/
+	 JmKSNxfAR6eag==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5aeb36ed873so1401246e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 09:54:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoX6kTAZN1Y4rlPCBgH11lDjX52jp+VzxHPLxLZXnS7HoGqZm2+5+5kvLt90cDp0h+LsSmbHmUgg791houmrDpRiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBN3IHrrOA8lXFeTi8i91fbYHLxqhxt3SJr0pKyRVbk4TnHuQI
+	Kh7n3WRIT1Im3XqypwhPKuEGC/dTBvaMBH51P2fsV90jLmAZPBZ518R3GR3NzF2+5g7jwM3UF9x
+	r5j06pmxHwXLdttamkY8yfvd9w23petYrU8qsigOh0w==
+X-Received: by 2002:a05:6512:3d19:b0:5ae:b97b:f75a with SMTP id
+ 2adb3069b0e04-5aebdbbc205mr24885e87.55.1782752056582; Mon, 29 Jun 2026
+ 09:54:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OxiOyS8ryrau5BCe"
-Content-Disposition: inline
-In-Reply-To: <20260627-rspi-v1-1-170c93ee14da@gmail.com>
-
-
---OxiOyS8ryrau5BCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260629-qcom-sa8255p-emac-v11-0-1b7fb95b51f9@oss.qualcomm.com>
+ <20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com>
+ <CAMuHMdXen+E-Ai51aWBa_KV9W8Fz2cQPpT-FG_kQ7akhrrYa_A@mail.gmail.com>
+ <CAMRc=Me3jaZXiXa1sFXr=8Do4sCd+XN1pKTcWC8-0j78SjCkKA@mail.gmail.com> <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Mon, 29 Jun 2026 18:54:04 +0200
+X-Gmail-Original-Message-ID: <CAMRc=Meb58KCuLXkNSJwUq6KJUzZv0u49FBA2L4C8Vd3NVo8Cg@mail.gmail.com>
+X-Gm-Features: AVVi8CdXDDErrbJGCmrBnsO12t_UfV9Z0jI02dBWCQjihPCNNCZY7ROJGiFNTUI
+Message-ID: <CAMRc=Meb58KCuLXkNSJwUq6KJUzZv0u49FBA2L4C8Vd3NVo8Cg@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 1/7] dt-bindings: phy: document the serdes
+ PHY on sa8255p
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
+	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois <romain.gantois@bootlin.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, Radu Rendec <rrendec@redhat.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
+	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 27, 2026 at 12:02:29AM +0800, Felix Gu wrote:
-> wait_event_interruptible_timeout() can return a negative error code when
-> interrupted by a signal. The original code treated all non-zero return
-> values as success, which would incorrectly synchronize DMA channels and
-> return 0 instead of propagating the interruption error.
->=20
-> Fixes: fa08b566860b ("spi: rzv2h-rspi: add support for DMA mode")
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+On Mon, Jun 29, 2026 at 4:58=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Bartosz,
+>
+> On Mon, 29 Jun 2026 at 16:07, Bartosz Golaszewski <brgl@kernel.org> wrote=
+:
+> > On Mon, 29 Jun 2026 15:51:31 +0200, Geert Uytterhoeven
+> > <geert@linux-m68k.org> said:
+> > > On Mon, 29 Jun 2026 at 13:29, Bartosz Golaszewski
+> > > <bartosz.golaszewski@oss.qualcomm.com> wrote:
+> > >> Describe the SGMII/SerDes PHY present on the Qualcomm sa8255p platfo=
+rms.
+> > >> This is essentially the same hardware as sa8775p rev3 but the PHY is
+> > >> managed by firmware over SCMI.
+> > >
+> > > So why can't it be reuse the DT bindings, and be compatible with
+> > > qcom,sa8775p-dwmac-sgmii-phy?
+> > >
+> > >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+.com>
+> > >
+> > >> --- /dev/null
+> > >> +++ b/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgmii=
+-phy.yaml
+> > >
+> > >> +  power-domains:
+> > >> +    maxItems: 1
+> > >> +
+> > >> +  power-domain-names:
+> > >> +    items:
+> > >> +      - const: serdes
+> > >
+> > >> +examples:
+> > >> +  - |
+> > >> +    phy@8901000 {
+> > >> +        compatible =3D "qcom,sa8255p-dwmac-sgmii-phy";
+> > >> +        reg =3D <0x08901000 0xe10>;
+> > >> +        #phy-cells =3D <0>;
+> > >> +        power-domains =3D <&scmi7_dvfs 0>;
+> > >> +        power-domain-names =3D "serdes";
+> > >
+> > > Ah, this uses power-domains, while the existing bindings for
+> > > qcom,sa8775p-dwmac-sgmii-phy use a clock.
+> > > I guess the clock is the correct hardware description?
+> > >
+> > > Adding to my list of examples for backing a hardware-to-SCMI remappin=
+g
+> > > driver...
+> > >
+> >
+> > Russell King asked me to put the PHY logic for SCMI pm domains into the=
+ PHY
+> > driver instead of the MAC driver where it was previously. Instead of cr=
+amming
+> > both HLOS and firmware handling into the same driver, I figured it make=
+s more
+> > sense to have a dedicated, cleaner driver as the two share very little =
+code (if
+> > any).
+>
+> I think you are mixing up DT bindings and driver implementation?
+>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Ah indeed, but the bindings don't share a lot of content either.
 
-
---OxiOyS8ryrau5BCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpCnj8ACgkQFA3kzBSg
-KbYaMw//fASLo7A5pAiwRLSXSDlxJJTDQf5Pi3WbH1TW72LzOS4fxyz62MAQr9jl
-Ums21KAjzfAi3otkfOip0yb3hdsP4sIXp8ANR1DAro+eWC6c7LnHe2biETH9P/Df
-d3PzPjILpSQ2LuwrEkHR6OqKjhxC7SV/Xagb9Jy/uwSmvVrpN5e8BHLI/GlVSkcL
-RrLL/qTstErQcif7BCnkFpxArXrpU5CR4m1n93c0o4LsPtXk9dH+aQvuqQnFUeyk
-Z4mhz0VaLTww26Ll39z5EtWo/wZKNNGU9+XnMLgJW0RyDDDRKGKyvwKc8O2FqZj2
-nrKTqTFzvzDD9i9tp8/Hxgq/mT2YkFPwuDKfbwXfwO6mr7jBnIhMydxG+u1iCHZZ
-p/HorwyXEC5v7hAJBQUV0h7ipji2AHGTg26R+N8ejcWPO/Xq1KV0HUxKzCyIiNY/
-YfVKRaaiRwQhACy4wEQCNI2SYjMVB7cCWTIt6tzuDBdTtXpJAenJiJ+kaU6kb/E+
-d6NEvdW/noX+LjtrnfmPjhZvcE5s6/2142T6FoTVyAkhHzbeF87bjVVNxI1AJEAX
-dwb3zF4FDIaFJGfG84Z9XfrGhQes5g6eKZ63dCa/DzB+adLm3Hhqh+dIcOpmvl5t
-rff5b1waIospX8zwvfX2EllQbKCuHsPKaH1bxNzVDvyBCr/27qE=
-=4qyM
------END PGP SIGNATURE-----
-
---OxiOyS8ryrau5BCe--
+Bartosz
