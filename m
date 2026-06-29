@@ -1,157 +1,185 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18C33B5847
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 14:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C1A423A6C
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 15:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782745174; cv=none; b=MYlFOso/8c/+C9KM7VCZWOH5aWLTiTtBzBrUIhvU2fZx1WHfhMepxzgvdGuqZzC4yRXG359kRCLESFk5txTXVDWtbinDY+8miL4wBmFO/kck3ldkvRI163th6dwvuVPpBj0RjSI2/XDhQDfpQ/cuAuFdwyYnz0wmfL/e1bs5yJg=
+	t=1782747368; cv=none; b=eRHYr0dVzWz9qrXHwJ7WBAMA6KfSMH2mBeTkMaTBsQT1r31+oSiC7AnLYLPZHJ7LNgFUwYE7mDfGskrtBNV40TK44avJQ1BV0uQFdazrjbjJNtG3WkLa22nErastm9r67BC+rrtnQhc/Rg5lYMDkVPStvq7990+/I5KpfmY9EAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782745174; c=relaxed/simple;
-	bh=LAoZJqVfdU9+V8F5hBZtY//uWnuQHis0eN8ii8DLed0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qx+aO9p5myEovEfV05iFU+hjMzQR3C0xfQjqdcgmLnwQAGH9iS6ruqT4Vmwo6/I6E11FyCbGpVfS+u/UItvapNuapApOMN9BpJIs52CYFhNQVduQ5jt87latpft2q06W5rD0bk0A2WsLTo7W5rnrdJqYJGkbkWT6HSfoeX5dkGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-448b89f700fso546621fac.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 07:59:32 -0700 (PDT)
+	s=arc-20240116; t=1782747368; c=relaxed/simple;
+	bh=dPo8To4lMTniabQIFcwXhKUudpCTlGapUPHUrc4t7vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCYOI0QTghbwE038URwriY2oDZ9raaRiDFU+Vy8DDZuvLnMp0Y2qCSOJ+hBkDT2vdoPnWOHXs4E6VwdwiIS4th3iCe+tq8GQRKwNu+cp5tJDm68q+uWBl6BaTZkf+++1dqawQYVUaIz+F8/U66SQVC9aW5J+8PJt3TwZj/Jk+7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ivuyIXk1; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ivuyIXk1"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2c9b1edf2bdso11898875ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 08:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1782747365; x=1783352165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RsiAkF5rnsXrEzna1iMYWZla+7JEf5EC3Z4oGTp3rT8=;
+        b=ivuyIXk1NnQNuMeWlJvjZkrpeKXoBAcIKz4Uj1WpGnzkY0BVFnf6Tcp6bDOgYiGKxl
+         MiJYT6jhdY1KyRsVi1PuUAfmQj4Y9NpaQZ5WpUjRilfPUJ/D1oO8SAg/zoxLw7AqhH08
+         g6ien+v33DrmsfxNIh6Aqcrd2ip35GTcb55tHxVHuFFUj6eYkg8NjHrkaePsPVQNVGXa
+         PwGmaBStyxZqFKFJo8aMYYH5P2+64XoL6YOvDGbpojTPAdFvyG+7EwcWFWE2BnSf8O9c
+         R2IuNBUwgOFcJ0wE/5EmkEOPMCIoP/ii6H/X8trWv0KZDXkUQmPvQU08KGMk764jMxYO
+         TghQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782745172; x=1783349972;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YrA9ccFaco9J2BZQ3eRpFjtGI3CKCK/xF2koXbFr26M=;
-        b=CSLgs0Apy7dvPGM91Zp0n5l0j3Ud7FStYyiWePhqLJnnD2naOTWUwE3mFr/RWJSrXL
-         aNtqjXhDsjoSwL4/EkCbKmO/qOzDFux0gzrtnvnq+x4MKhb8T6y9c6yFnU1fqZyDc5o2
-         bvHkoTg1IAUu/YT0dbwOeOHpuZpNRolNphUrZvn95991QdfmjwSTMP3aBaUQxNh1UJX3
-         0gZ+hXmInc3Qu9LhAsGul1/dv6R1EAmZwIS6mI3LlpqFz1P3KTCuJ1XnxqN2auj8ZCFt
-         hg3g+uCPEdMx5XDX2qXoEITCyEt1X3RMu9pznrz73+/sZo4rBaKP+eqTFqKkjAdf5koj
-         CMrg==
-X-Forwarded-Encrypted: i=1; AFNElJ82BEEqH4bHphH7yNJDtJWMyXoUwJPLU/9zOcKIAFCtebeS2r7D29GN6OqeKhlWh9jGJXUN3dmubtpKD5NAfWPAAA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCL7GGmoOlBeCYqRKc5NzIUuNiw0U+5XMFbLsAQBfx+vEj2TVP
-	50OGHOJQByesLL8I09TMPJQH2I0ow4/a6VdL5FRxlyqvUdozgAr3dGiZ2DDK9Vbl
-X-Gm-Gg: AfdE7cnRcLIclhhuoSPIcnGiLVDPQBuUYH1Ua688AuQKa+ojdvZn/ACGFF+6Fvipj/c
-	5xmnsVRZeBButqVWATu3q6cshdqdlvxDRp6LoQVJfpCM0PXZw49/cNVnzl1BlwCZrrhG7G9pIYI
-	ByeajPILZaohOEBmCg6bMFApTIvxaT/WOoCWFJAvm8YZsljd1FTYmyz51dfULAE/57IAi7uYPuI
-	CZxurcfBAWwNFle2yD6YsQi4cHoCmdauT31PA+15+r/k0Kp1nVTE05/TKQf+OT0X7NKbqHXwFVt
-	6ByolQ0M17SsCSC2UKcWTupwzCMN7aewj+yRU/8WS1PFegNyR+s3RVx+9psKnnAxWbgxM6uCJCM
-	qhY4b9BmKuX9hWIv/xcW7B5kf4fXcvIl3X18KZi/zOY6WR9xbW7DdUOdJv32Q2GxULoGcG+LpFu
-	wVwJqXCXAn0gCzyl13lZMQ68rtHszctpt92glBQUolQieQFKS97NnG4apzShCH
-X-Received: by 2002:a05:6808:171b:b0:490:5ba4:18a3 with SMTP id 5614622812f47-4921ab3af4cmr12716211b6e.30.1782745170279;
-        Mon, 29 Jun 2026 07:59:30 -0700 (PDT)
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com. [209.85.161.54])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-495de66f115sm994055b6e.1.2026.06.29.07.59.29
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 07:59:30 -0700 (PDT)
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6a17f6cce4fso311338eaf.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 07:59:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ86zEwvhdzT10vPKokL1IS7P2ypSwTfVhlQNkDG2XvNujArHZJbOPLIflMlkomaWppSvbnvdC5InQvE1lWqvYUcXw==@vger.kernel.org
-X-Received: by 2002:a05:6102:c86:b0:738:ecd7:198e with SMTP id
- ada2fe7eead31-738ecd71defmr1394925137.19.1782744721048; Mon, 29 Jun 2026
- 07:52:01 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782747365; x=1783352165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RsiAkF5rnsXrEzna1iMYWZla+7JEf5EC3Z4oGTp3rT8=;
+        b=ixfIQVqq/EebbNgApH3ajnIRD4cnakMj9hUjUthnQWD80UOHTqAjElCwbdmCg1BkMS
+         cCFQOCmPNd14eJcKT5559tPgIsdTD7oK7xRISBHa4gkOOO0/L2YiaJU/KS8oaASqL3Gp
+         zFZGLdI7VAwHVmTeEMYLDfr5UJL9OBMebxuwpbfhKgtlvyA0+OE23p8090eguOJFfQsY
+         +2Q44j2nWnvdVJ0bz02ZPalvMlyIEqp0r6nehhPAjcRWlB2vEbFTjCStxxtFWzmUffOF
+         V1M6HgZYEXwjDjWEX5cUhhEpyInqTYThS8hDgxefwuB7WDQErVVfZ3KH/AtCyX476rzB
+         N2vQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrxaj9nu5UC9S7NxYXHVryNgQSBmrz1QsaigDiBV06tKkHKeoGu+LA/u7aoQDyAnYvRR6MkKhlEgTjQlMcFZokcyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6BtnPzzl4iYodzVsgDm8qhPh5+F+GSHeHbUwiwDOASipDa1+s
+	3eP2Oe4Yb0aKhq0M/R6hvAz4iEll3P//dhoMBa5bcAm2JHWHXUf4mDsYUTioaHq6h7k=
+X-Gm-Gg: AfdE7cnei5QyjRvJXJLdAm5xo2bNqjjuQIV6eeLzRfY+B7EPG7oKtFqqJEuUSASPkDc
+	aRFE+V7V753Bhykkockq+283JtSSxFPAbe5N59Eseu4CJQg0ChKGIbhM+yDpBWpPDJlWYWHRWzN
+	diaulX5nDqK2QLZFDcZnypAap+eglUqj4yOfY4Hevksa6X2oZtyIf7GDgTCahZW/vEpOmhHP0hY
+	jOSlTKvIPhebBL1cru2rKCx2D4T5J9LCYKrTJLIMsdN8SLuK6C5V0G+l7j0BJ7CprZQhBUiyoZ2
+	MiOMOWVIesUFDgY/NVqN6ZGaQ6VyYfuWohHJ3v8QjTvoWV+0jawx0CuT1QX+axu7+Ktmv9JwJqf
+	fGhNjCiiU3Z1uCJpvpQq4s/L/H4A8ko/+dPP01UfjppCkV1eJ0BJRLKJJq6MSuHF2+5frtYjLFH
+	ttPy/DJxaQhfPvwE/apE+9dEA2mJo=
+X-Received: by 2002:a17:903:2f8a:b0:2c0:b5c1:8e22 with SMTP id d9443c01a7336-2c9854b5597mr89458355ad.12.1782747364963;
+        Mon, 29 Jun 2026 08:36:04 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:aa83:261a:68a7:9974])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7f63d09f0sm98408955ad.56.2026.06.29.08.36.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2026 08:36:04 -0700 (PDT)
+Date: Mon, 29 Jun 2026 09:36:00 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Ben Levinsky <ben.levinsky@amd.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Tanmay Shah <tanmay.shah@amd.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 0/5] remoteproc: cleanup shared carveout and
+ resource-table helpers
+Message-ID: <akKQ4H09G2MpRVGN@p14s>
+References: <20260529021637.2077602-1-ben.levinsky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260629-qcom-sa8255p-emac-v11-0-1b7fb95b51f9@oss.qualcomm.com>
- <20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com>
- <CAMuHMdXen+E-Ai51aWBa_KV9W8Fz2cQPpT-FG_kQ7akhrrYa_A@mail.gmail.com> <CAMRc=Me3jaZXiXa1sFXr=8Do4sCd+XN1pKTcWC8-0j78SjCkKA@mail.gmail.com>
-In-Reply-To: <CAMRc=Me3jaZXiXa1sFXr=8Do4sCd+XN1pKTcWC8-0j78SjCkKA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Jun 2026 16:51:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com>
-X-Gm-Features: AVVi8CdkJoaQviVQ7ltoNYHwA2g-kW32TDsBBJn2QkEKdC-zwJrV4O3to75iJ6g
-Message-ID: <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v11 1/7] dt-bindings: phy: document the serdes
- PHY on sa8255p
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
-	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois <romain.gantois@bootlin.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, Radu Rendec <rrendec@redhat.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
-	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260529021637.2077602-1-ben.levinsky@amd.com>
 
-Hi Bartosz,
+Applied.
 
-On Mon, 29 Jun 2026 at 16:07, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> On Mon, 29 Jun 2026 15:51:31 +0200, Geert Uytterhoeven
-> <geert@linux-m68k.org> said:
-> > On Mon, 29 Jun 2026 at 13:29, Bartosz Golaszewski
-> > <bartosz.golaszewski@oss.qualcomm.com> wrote:
-> >> Describe the SGMII/SerDes PHY present on the Qualcomm sa8255p platforms.
-> >> This is essentially the same hardware as sa8775p rev3 but the PHY is
-> >> managed by firmware over SCMI.
-> >
-> > So why can't it be reuse the DT bindings, and be compatible with
-> > qcom,sa8775p-dwmac-sgmii-phy?
-> >
-> >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> >
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgmii-phy.yaml
-> >
-> >> +  power-domains:
-> >> +    maxItems: 1
-> >> +
-> >> +  power-domain-names:
-> >> +    items:
-> >> +      - const: serdes
-> >
-> >> +examples:
-> >> +  - |
-> >> +    phy@8901000 {
-> >> +        compatible = "qcom,sa8255p-dwmac-sgmii-phy";
-> >> +        reg = <0x08901000 0xe10>;
-> >> +        #phy-cells = <0>;
-> >> +        power-domains = <&scmi7_dvfs 0>;
-> >> +        power-domain-names = "serdes";
-> >
-> > Ah, this uses power-domains, while the existing bindings for
-> > qcom,sa8775p-dwmac-sgmii-phy use a clock.
-> > I guess the clock is the correct hardware description?
-> >
-> > Adding to my list of examples for backing a hardware-to-SCMI remapping
-> > driver...
-> >
->
-> Russell King asked me to put the PHY logic for SCMI pm domains into the PHY
-> driver instead of the MAC driver where it was previously. Instead of cramming
-> both HLOS and firmware handling into the same driver, I figured it makes more
-> sense to have a dedicated, cleaner driver as the two share very little code (if
-> any).
+Thanks,
+Mathieu
 
-I think you are mixing up DT bindings and driver implementation?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On Thu, May 28, 2026 at 07:16:32PM -0700, Ben Levinsky wrote:
+> This series is a preparatory remoteproc cleanup split out from review of
+> the AMD BRAM-based remoteproc series.
+> 
+> During review, there was a request to move the duplicated plain
+> ioremap_wc()/iounmap() carveout callbacks into common code and to
+> factor the "missing resource table is OK" ELF parsing path into a
+> common helper as well. There was also a request to send that cleanup as
+> its own patchset first, with the AMD BRAM series respun afterwards on
+> top once this cleanup is merged.
+> 
+> This version keeps the same overall cleanup goals as v2, but reworks
+> the optional resource-table pieces based on follow-up review:
+> 
+>   - reshape the optional resource-table helper in patch 4 into the thin
+>     parse_fw() wrapper form suggested on the thread
+>   - switch the patch 5 clients over to that helper shape directly,
+>     without post-helper rproc->table_ptr checks
+>   - keep the driver-local parse_fw() wrappers and their existing log
+>     messages and severity choices
+>   - retain as much of the existing per-driver parse_fw() logic and code
+>     placement as possible while moving the missing-table handling
+>     through the shared helper
+> 
+> This series now does that in five patches:
+> 
+>   1. add common subsystem-private callbacks for the exact-match
+>      wc-ioremap carveout case
+>   2. switch the in-tree exact-match users over to those callbacks
+>   3. mark carveouts mapped through the shared wc-ioremap helper as
+>      iomem so the framework uses the proper I/O accessors
+>   4. add a common helper for drivers that treat a missing ELF resource
+>      table as optional while keeping per-driver logging decisions local
+>   5. switch the matching in-tree drivers over to that helper while
+>      keeping thin local parse_fw() wrappers
+> 
+> For the carveout map/unmap cleanup, this series covers the exact-match
+> users called out in review: xlnx_r5_remoteproc, rcar_rproc,
+> st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
+> TCM mapping path is left alone because it also clears the mapped memory
+> and is not an exact match.
+> 
+> For the optional resource-table handling, this series converts
+> xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
+> imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
+> parse_fw() callback also builds carveouts and is therefore not a direct
+> match for the helper introduced here.
+> 
+> Changes in v3:
+>   - rework patch 4 so the optional resource-table helper matches the
+>     thin-wrapper form suggested in review
+>   - note that patch 4 still triggers a checkpatch --strict warning for
+>     the flow-control macro form, but that implementation follows the
+>     maintainer's review suggestion for the thin parse_fw() wrapper shape
+>   - update patch 5 to use that helper shape directly in the client
+>     parse_fw() callbacks
+>   - drop the post-helper rproc->table_ptr checks from the converted
+>     drivers
+>   - keep the converted parse_fw() wrappers otherwise close to their
+>     existing structure and placement
+>   - test xlnx_r5_remoteproc on the latest tree with firmware images
+>     both with and without an ELF resource table
+> 
+> Changes in v2:
+>   - split the mem->is_iomem change out into a separate patch
+>   - add a common error message on ioremap_wc() failure
+>   - drop logging from the optional resource-table helper
+>   - keep driver-local parse_fw() wrappers to preserve per-platform
+>     missing-resource-table logging policy
+> 
+> Ben Levinsky (5):
+>   remoteproc: add common wc-ioremap carveout callbacks
+>   remoteproc: switch exact-match drivers to wc-ioremap callbacks
+>   remoteproc: mark wc-ioremap carveouts as iomem
+>   remoteproc: add helper for optional ELF resource tables
+>   remoteproc: switch drivers to optional resource-table helper
+> 
+>  drivers/remoteproc/imx_dsp_rproc.c       | 41 +++-----------
+>  drivers/remoteproc/imx_rproc.c           | 40 ++------------
+>  drivers/remoteproc/rcar_rproc.c          | 41 ++------------
+>  drivers/remoteproc/remoteproc_internal.h | 38 +++++++++++++
+>  drivers/remoteproc/st_remoteproc.c       | 31 +----------
+>  drivers/remoteproc/stm32_rproc.c         | 39 ++-----------
+>  drivers/remoteproc/xlnx_r5_remoteproc.c  | 70 +++++-------------------
+>  7 files changed, 73 insertions(+), 227 deletions(-)
+> 
+> -- 
+> 2.34.1
