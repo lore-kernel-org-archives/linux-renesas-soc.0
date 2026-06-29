@@ -1,115 +1,177 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6104266BF
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 14:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782744270; cv=none; b=sFGr2GBtYoRdukYGq4N283p1r+NRZvAuePHLenBFg6FKHHeQPdxBKr6HZXJNY3Q7j3e6Ruv9Qv9eqHkpUimT8AnIbtc1EAtuMA/MEYrhjsvMK9H80ct3Wln4lbq48/Jwnh3x5W7mLDos52ho68/HJLitgABYRSn7UlQBIjzwjGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782744270; c=relaxed/simple;
-	bh=kVTh23sJez09owmKcyEw5w2806Rb9SC0opFLcX1IrTs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9754218A9
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 14:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782744971; cv=pass; b=dBcZuIVJPEMwuyjQceyeABZOFhDTZuU9tYEvUD+QaZdvoPGdHNlPNCJQFl51nsEtj4WayPUxWyGJwU1mc8HwvFmhsimH+CXCUTv2zxkyx/OLkTlyo29uic/T/0Tucdb3oUG2pO37b9fUOHWuaEqa06C2WKc9uBhNlqwnSR3oTd0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782744971; c=relaxed/simple;
+	bh=+/9wgcUIWX9IAAUfj8TCtTHYJM6EUs1rELw9Q2zMQWg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBkWDyhrr1PLhlo7m12xzvedYoyzKLpq0z+kEJE4Ju7D+uGycJ4hDwovG8EQi+2miBgF0IUj8WkU3U99kT/1ws6FVT7kd8U3mT+W+HIztD1/hGXop3UJyWDJO6mv+FbUrsLLMfZi61qmygPG8GF90i30H30vENhHex1k0dO0rlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=ES+a5VNMpSJOEeyCGekbxedmxmPiToZ7Dx72G5lhf8G8mDG4N71hwPANCqyQWRvKaWkf4c5BF3ID7DkcfhaWCG8tI2NG00UiGBPiWONwq50w2bqhGVFGxPzmfQxDGmVI4OXslSk8gl0noDQGFo/feI5MBmW6/chcfWKSLu9y4HI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqXNDHUQ; arc=pass smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-59f8a140a51so2550049e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 07:44:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782744266; x=1783349066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqXNDHUQ"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-4624a44e152so3141077f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 07:56:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782744967; cv=none;
+        d=google.com; s=arc-20260327;
+        b=gqK57sK+eLvEG5uvzlFIvvFF5WoFa7N/MCQZmzTFuEiMNOUpYutiHYJ+3rT4rJviMq
+         6rD73cmn3GE1rQGQ5p9ikL3t7RJOXFs8rd8Q1D/8vMylCkOy1WEJMLG0SH2Cg79RJXi0
+         ecxwqGMdV3YakrGrZm+jUlO1K9OkU20omfzLtjQx4o6RffrIpQoYa5ugeZ7ovDdC0CYe
+         PAEgarb3pKTZZBncz8SAGzWtLpe/E29tP3cQPO2IoBI0JcXYFnAV/kQcUKG2vj721s5x
+         5WovsXbQ+Pd62fRaSmLPNYYSZpgSYQBU1AA0PJ52vRqJfNohVQRBVO/aR7g9NrBScAR6
+         xARA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=cg0nj+nO7raxM91vFADNla65NdWnOShdokPbAPfZ4QA=;
+        fh=iJZTijm6QPoLnU9RdcuJXV7vF+gh/2TIdsbqX4F1CP0=;
+        b=bBLaqIlIQuYPEqeIco38Nv5Z+Ktf+Aw0CJFtfQri+bFgPqgshmnYzZpj2NNFfFZ8gh
+         tZho8uhQkqwfQeABbkbRU/iDutYTFXe1EjgqCOUGChowY5+AxdBVO9/TSaCODy2zLBma
+         h9kbX+BEwlVepHSyF8l5MqxmD3+npqJ06JWNMxKOaNrRrq/IAxaWc4wIeHV7nP0nno2R
+         DZfPJrXEs13FRhJdwWZn4vN0qQwTUHTirynMwUGzT9ciaVzOUNPhWKG9nLDePb6IugbC
+         1JQkhok++OVk2JjhToJHhHoSVXfFZSrVT6SL64CfXFBHOVMpyGXbil2prohDFtahqxon
+         LP+Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782744967; x=1783349767; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=msXjx8KznxQkzXcrCPFA3zsW20N5m9gILYTYEJqxx1E=;
-        b=ojdDWn62PHjiToy8GF9Xe2GHmwBM5f3CQSUH7pcLTLWYWZYzzkMG6Qs4Uf1eTVgD9R
-         IJUkNJ1f0M/gXbUcxYx32eMXPFAQVEM1FzTiUaiybGrJrysEzhR6bktD82rOREY747VZ
-         RiloVJNdN8L6QlNfcV3mcmLVoZMSpJWN+/SFnN9xZI/7EcWj4ubnlZAAWzONgh25vyq3
-         haKCAVSxcXDq622lHZDj9Ba2WOVXQZAQVdkx4m3msW49ZKjp5yUqXw2tfGMkTVJdy+Ow
-         W0ZablqUvZKoxP7LzTnZoeFJq9BzBZX9tPK8yd4QwlGUmExfUHxZk8TfsZwld5aE+F/g
-         RoBQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqIrlTe5j1V5aQYjSPWEc/J52Jt5swE9eT6QwYL5p9ga/OCgNUNkBT+CUEpbGY5BQ0soGsht3XgfPqEgajYe3Ma8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk+mFmbTSIV6qB8qCn+O79fcsuTjAZT/5mPQ2Zsn3iP4BLi/oQ
-	wpLkSOltvHldyp1+hJo19Xh5cixZvJLeCibSj0KTwZoHoaUlNl7nX1l/OMZ6HbGO
-X-Gm-Gg: AfdE7cnEvZ1Qdtwm2FzXKf6DcuKxRQrY1N7M6FQz7AHrHSpeq+zrBLLz14A3JHsQ5zZ
-	6j0YShxhWYg4qBQImWsMAqofxIl8InmjLdTIQyDvcr9N9xLBmTqDwpCiD0bHGWRYviUEu8dTl3Y
-	n0dbCOR/L0zqoxqmgDn0bXDXfaeI18UEvLwuNhA2dGi42YDOPY6m/snFdHh9HW/b0psGqQ/N7sS
-	8link1FRrBJobTMLQnHKxGouelOHmmgvHctbciZSI4BD2WSTG2Lfzp1YtVsL8czYCs52WfmSGi3
-	Jb2qP0RRI0t3pIJus/rkabR1CAgMi0QC9C6ZkjjdhuMKnL4hSTQXHw3FgpM5qxj+zjGhI7I5kH7
-	1BCZv/LWkofNmMulm7fkMaukDu8F2RLI2oUL+qKbGqKKY7U8+nR7M0UCdEFpWYD4++uy/rZySLp
-	GI0mz9bFGziXS3SfifklGpKOAuN8O5aTDqLZWRIVaU+3cthnDZsw==
-X-Received: by 2002:a05:6122:1d89:b0:59d:ac8d:e130 with SMTP id 71dfb90a1353d-5bd69da672amr8164557e0c.9.1782744266300;
-        Mon, 29 Jun 2026 07:44:26 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9692fedd988sm3351687241.13.2026.06.29.07.44.23
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 07:44:23 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-738a5cc517eso788195137.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2026 07:44:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpzPueFNLd03+dBR2gGD1tNz54E6Dbu6ZGmeXsoex33hD0wBgxagIb2VjI4Ya84sXMX+gW7+rZRqeo7XHRnlNxDeQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:41ab:b0:737:8ff4:147f with SMTP id
- ada2fe7eead31-7378ff41b94mr3107111137.17.1782744263174; Mon, 29 Jun 2026
- 07:44:23 -0700 (PDT)
+        bh=cg0nj+nO7raxM91vFADNla65NdWnOShdokPbAPfZ4QA=;
+        b=CqXNDHUQGycD8TWc5Y829JYP/JedyVL5xNDdeV+MYl3nzObEwx7uplne30eoNOH/M/
+         9UNrr1NK9cWIpKRaRAVEQK84HXKMIztG6wWYs5EBZ5J8SlFRGmSUo1PPYE5iCr+QRose
+         T26AURsUxEarpwb/xY1WP07OeYJrK8C2ZUknI9V50alafJ7dSv+rJwVxQLQCOmyFtpL5
+         I15zxAa4g4d5DLDVDDSNqYFZPcBe8dIcLZL0fHf+7Judz7WJo5trAtsmeYXe3p1Oip5K
+         y4Sgeia7FO2jBBhC6qZ2Ul7akMyWgJHWXYlU2saQF7YxsLx3cBaRwfxF4UTvhR4FfZsp
+         WODg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782744967; x=1783349767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cg0nj+nO7raxM91vFADNla65NdWnOShdokPbAPfZ4QA=;
+        b=cCWBb5pgqPsrDQUgtTXv9x+9AC5KOt3YTY3v2nJMSvT4QFUwuddXunuMj8xgqV4mL7
+         ZPkhhXjm8StmQSybmfGqqjUlux3220MiftLChe106UGJyDlHow2b9yjVziac54KPuLQx
+         LHY1/Uc3Xk49D5J4+ARA1rwR1yVFOsJx4z/4xO+hQKAoMD08wF6M9LPV5k4/AsWIyLl+
+         HuWVSUwGFriucem5rnc8smvaFg9wC/uG4P6KlkYHPO6PUPb3WzYyE3M79BpjDDiA+k1E
+         WSNuPJU+hMuP4i5E9y/2NAqX80s2HIrTnTpP54LLooBGaX2G/EC4Y+Vl2GHX+sxa+tLF
+         cRUg==
+X-Forwarded-Encrypted: i=1; AHgh+RrVHERKE1lEbxwAibfN5nxlEIp0ldGMs08KUBFgP4j+sp++hIw4yNbCd/IUALM1+Jdld/CdnGWkQxFuxWGDKF/o+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKq3CrvPIdZ4q3fUja+PSHSVilIKt7pCPHqVuZNfVwixR4B/+2
+	ysfarPAB1bjVGByQHqlRs7931LQk7AzpzVO29WE+QfUFJOugbDrUFzEJlyfbTyYCxgvog7hnMyI
+	eknHWhCOZSYbcjvs/wUBTSf3qDvowvqY=
+X-Gm-Gg: AfdE7cmgTL1qOm0dCV+deqYX+WZWkXqmLsF471yJURUjk2FE51fyhe8X2Kq/CEJOUdu
+	ANzSNnYhBiLKjtOzBdq/lFmtiJMevTnyBGr+0qMpscFLe85FS9Y2p1SOKt64X+7tMGxOvEz7wON
+	wz+nJHrSrwiinAwkhhjmb4hSy5aTBffYOyuLv0zFqyUGi8YBKhCmwb8owas4pOGqwEwKknVrXWt
+	YhcSeBUwTYMDeIP+0VDG12+d56xYt4PrT4Arb36rp3Hy1R9qNywSfVJ5JlTCBo7rERM/d+k5bOT
+	BhSuC6LkwJX7gLYyPqpKC9ueC5ti47tb4kAh+A65+GAK2j1m6SHb7HmNVyk8z9fx7LN7nQ4C76x
+	BY08mXxJ6UFmZLv8=
+X-Received: by 2002:a05:6000:4208:b0:441:1e41:194 with SMTP id
+ ffacd0b85a97d-46dbfab53a2mr26248348f8f.17.1782744967392; Mon, 29 Jun 2026
+ 07:56:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260625135216.130450-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260625135216.130450-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Jun 2026 16:44:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXF_2HiWosZfsm=wVUN7C0ow5eFtOczQAoTzsNKDw_+Dg@mail.gmail.com>
-X-Gm-Features: AVVi8CeObIM6aaBJ-mhYyAFRlYPaZfnGXmLPaP4HjXsOdJzbgQQdrv_VqcGn0JQ
-Message-ID: <CAMuHMdXF_2HiWosZfsm=wVUN7C0ow5eFtOczQAoTzsNKDw_+Dg@mail.gmail.com>
-Subject: Re: [PATCH] can: rcar_canfd: Change the initializing flow for clocks
- and resets
-To: Biju <biju.das.au@gmail.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Tu Nguyen <tu.nguyen.xg@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-can@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260622170733.1703585-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV-OWEd732BpM1XSJiu+7d+ABGYpxYUe8OUSkVV5X2Wdg@mail.gmail.com>
+In-Reply-To: <CAMuHMdV-OWEd732BpM1XSJiu+7d+ABGYpxYUe8OUSkVV5X2Wdg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 29 Jun 2026 15:55:40 +0100
+X-Gm-Features: AVVi8Cflxc-TFENMnQmfkdpU70UG_4X31nRwUCCV4ZYKWZbAtMO-azM9MIk3nT4
+Message-ID: <CA+V-a8t=PGgB5-o5=oHVXE63_nZj5nA-ZmacPSBA4dx-99qaRA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk-common: Add memory nodes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 25 Jun 2026 at 15:52, Biju <biju.das.au@gmail.com> wrote:
-> From: Tu Nguyen <tu.nguyen.xg@renesas.com>
+Hi Geert,
+
+Thank you for the review.
+
+On Mon, Jun 29, 2026 at 2:03=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Testing CANFD on RZ/G3E shows that many registers do not reset to their
-> initial values with the current flow of deasserting resets first and then
-> enabling clocks.
+> Hi Prabhakar,
 >
-> Based on the HW manual, clocks should be supplied first and the
-> resets deasserted afterward.
+> Thanks for your patch!
 >
->  section 7.4.3 Procedure for Activating Modules: RZ/G2L
->  section 4.4.9.3 Procedure for Starting up Units: RZ/G3E
+> On Mon, 22 Jun 2026 at 19:07, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add memory nodes for the RZ/T2H and RZ/N2H EVK boards.
+> >
+> > These boards populate 8GB of DDR memory, which is exposed through two
 >
-> So, update the order of the initializing flow for resets and clocks
-> to match the hardware manual, resetting all CANFD registers to their
-> initial values. Also update rcar_canfd_global_deinit() to assert
-> resets before disabling clocks, so the teardown path mirrors the new
-> init ordering.
+> GiB
 >
-> Fixes: 76e9353a80e9 ("can: rcar_canfd: Add support for RZ/G2L family")
-> Signed-off-by: Tu Nguyen <tu.nguyen.xg@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Thanks for taking care of this (and below).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cheers,
+Prabhakar
 
-As CAN-FD on R-Car does not have rst[pc]_n, this patch has no impact
-on R-Car, and I don't have to provide my Tested-by :-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > address ranges.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/ar=
+ch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > index 1f575ea23db4..a0e1e4b1f23d 100644
+> > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > @@ -30,6 +30,17 @@ chosen {
+> >                 stdout-path =3D "serial0:115200n8";
+> >         };
+> >
+> > +       memory@c8000000 {
+> > +               device_type =3D "memory";
+> > +               /* first 128MB is reserved for secure area. */
+>
+> MiB.
+>
+> > +               reg =3D <0x0 0xc8000000 0x0 0x38000000>;
+> > +       };
+> > +
+> > +       memory@240000000 {
+> > +               device_type =3D "memory";
+> > +               reg =3D <0x2 0x40000000 0x1 0xc0000000>;
+> > +       };
+> > +
+> >         reg_1p8v: regulator-1p8v {
+> >                 compatible =3D "regulator-fixed";
+> >                 regulator-name =3D "fixed-1.8V";
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v7.3, with the above fixed.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
