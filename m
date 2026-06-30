@@ -1,170 +1,121 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F79367293
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 14:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C360844DB7B
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 15:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782829677; cv=none; b=PooEkMuZ3jgK1/k4glAK9Oud784rgwD0iylf/ogDKA4wTbNeP1A8nIf+gpneWPTkGtLUsOeLD347a0DbxP7rLtRcRJO3zwfFj09OPfFLeHEhGgdgJAnJtgiZN1Az9Z+B4z5HCljJpTcZIbxvBSy5PnF+vu6x/HsFb/8y+oc/wnI=
+	t=1782834074; cv=none; b=d3jHxdipZCgbHQQ3o7ArWod2vwuch/6lvJGNCqts12xNJ6PX2sB0AlzlXrC2qYc2bM4PU9HNmkceVFUv8jkuvWc0Y0iEba79yDOZIIbUDQ5wdW7i769CgFAdJefqPfiiw5xvRIIw7jBwj3b+sy4PJgSvUxHMYNZ+UQe2DULe3GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782829677; c=relaxed/simple;
-	bh=ohIgmR0mYCbPCube/lf9WDIrNuXt9646cuatsuA7c2k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TLza2sG5ADJMgaqZqU2G3lcMpPnRV3RdSPHDxCEg4q2WgLJ0pJSB7CtEJoGfY0FNBY8faaaLIWNNczYJ2LZJZUXoW0YAQwhUUvyg7tzQ02XtbZpWGCVE5pVvnn9OiiHGBJAPSnoodwx3yUc+KeUiz6osBO/zuAR/k8FIplFBbfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IBOFsgGb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WFTMIDzl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IBOFsgGb";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WFTMIDzl"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65UEDGme2209647
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 14:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sZPoDywCNwFTIMKzJKOShHepkzGRvIYESnrp+JhqWPI=; b=IBOFsgGby1XPNUw5
-	aIBeHGXi4nZ4B+FVFabNOqgQTa4DacN8dpLt0jt2VYxB1479UQVDeUUbNBM0S8++
-	YdNMzPaDnn4uql5GH+RgKyQJx/RVua8RlfjgiymwEc4kWbF7pNBs1ybE/Zuh7NdR
-	yjEmyF5IeJRACj05///WHX87JA+BQ3hUr/FI5CaBkCfVtlaitumDg5e0JPd8mdUB
-	NS7XxTpDwhQNgxHUhOLO4y2dnjqHuFKpI5DFDu9OzMo7qK5UN8DxmW5sQiOWGkcP
-	nZU3dABPM10ymllGskdlawUAJRZeHUIXB1M8EA+V/gj0Fyi5afFFDEl2PVfRLAsM
-	Stq0cg==
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f4avpscfa-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 14:27:55 +0000 (GMT)
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-30e773699d6so3272147eec.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 07:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782829674; x=1783434474; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sZPoDywCNwFTIMKzJKOShHepkzGRvIYESnrp+JhqWPI=;
-        b=WFTMIDzlLjWgIFoWGq/GXwfs0nDYRlWrIthQftNlkXZIOk/TGXnjC7JSL3ZUk1XvuU
-         PgwsqvegTaCAUZCvR+JEXhEOCiKO1/a8Ycx4H2FnRTQPLIw3PuHOmYNU4Xcwyu2VKOmN
-         J9wWnZgjU/UCBI8ZYVWNis+6ru/rM95aGM93uOv1k1RkdB8d49B/pPWEQB0OYfvri943
-         ZhUYoYup5fsV5cKPnU/2toN+3OwrBpvAfODToUk1arbQs5PINKnF1YmQfxQ5v09GhHfZ
-         kcYVyq25mMZlabG5NixYbzVDj+fI22h7TQxVGXD4buoibQahm9IKEaSLWX2MiZt7kcvC
-         +74g==
+	s=arc-20240116; t=1782834074; c=relaxed/simple;
+	bh=HECdCdoiVcKsHL9ieEZjduz0kz0EHHXfKnn7LggCP2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNoAD3becFnKNHaq/r3+tVMeyLidrNX8qBfVN7NM//WIzJJP1z6FrHKruiUbzHJAU3+/mgbnQes413Z2YBJ9mtHq2JebKciyjx3wgFXunSsfUJKET13b8ndhezLM3EjWasA1VKONp8AcajRh7A2GTMItNo8Nfeogv5OPapljgo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5bdb162ee53so1155432e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 08:41:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782829674; x=1783434474;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sZPoDywCNwFTIMKzJKOShHepkzGRvIYESnrp+JhqWPI=;
-        b=nsvpM2IilNJf3ntBwk30TDbOi8FW7wQOv/IAyIfZRBexMudPNYMCIDO5N27M2Et/Xb
-         ixt8adEC7oeztRxIs3snVk0VMu8f6bzbTasYKKNGAWpp8agIHdycPH+obXzwFkrMiLpZ
-         wTuBBrVlRZKx70mTOyHiJEV3ptMrZpHd/9ZGuaI+2lyfO7hHnQakTje7ia60Vwt8gXc3
-         EImBWkL0ZF1b9zkGRynPbPWAktyMrt9fNJQow7jm7kT+Sf0uHMksIhBXtUyylsTSd2hT
-         CRGu4/aOjuc1xdIox2bFK0u3b1bcYZAhleFPRymnmm98cTRTgyr6AL6OIPCLZMj4/mV8
-         y08Q==
-X-Gm-Message-State: AOJu0Yy/OMl1QU3TtUoxUVohJyig1j8PHD5XCM9QjS400usfJo0cNHmu
-	q8OV3mQur3Z5HvTaTEQifKaLC9T52Oejcq/CXfORQsN7hKj510bLahuCjZnK5I7Oh0JB5PXtnV0
-	iJsTWgVMQtlb9j/5jwNMQAT38wOHAoOkjQSTO1w1t5sVKZ0EMKeDK5iDpDqvOerIN+WcjpU/uqA
-	==
-X-Gm-Gg: AfdE7cnvswXPjA+LWzK0tJagQiqRfBWVb2uyMU5f7orHo1OaksB5YKL+MCUYq1KVY+7
-	83PjoD48gmpYCyn9KJShYAhsjOhtmX3eqFjzx0qOw80N7dGMY7bk1U73alEDnk0s0sIVxZNWpk6
-	9413TzziqLtvRIxePa8nPCFrQ/tGz78LKzGElEz/vZ5fmSfIiMTxbA+X8cm6+hfvOoYaDIMmtWG
-	YkSt6e4wfUeXAgr91mziGGaLtC6SYiQlzwDApxf1Jf3OFE5G7ILZMMc5/z0k3aCUTNtyimwvs02
-	IMpKN3XoUctjBCzQPRfIgUyNXS6BidDeXbJopIPhCIjWNj+tsh8HQ2bmb4W4sv8I7HTfVfL4AqI
-	HafW8bStki8jRmwvB0N7ODgmKMDtbGA==
-X-Received: by 2002:a05:7300:50a:b0:30e:d8ae:3077 with SMTP id 5a478bee46e88-30ee10177edmr2858183eec.0.1782829674031;
-        Tue, 30 Jun 2026 07:27:54 -0700 (PDT)
-X-Received: by 2002:a05:7300:50a:b0:30e:d8ae:3077 with SMTP id 5a478bee46e88-30ee10177edmr2858091eec.0.1782829672762;
-        Tue, 30 Jun 2026 07:27:52 -0700 (PDT)
-Received: from QCOM-IvKeorbwK5.na.qualcomm.com ([120.60.61.127])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30ee3170ef9sm13992508eec.16.2026.06.30.07.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 07:27:52 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-X-Google-Original-From: Manivannan Sadhasivam <mani@kernel.org>
-To: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260629220932.861445-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260629220932.861445-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 0/4] Add PCIe support for RZ/V2H(P) SoC
-Message-Id: <178282966564.295664.9943371162356556784.b4-ty@b4>
-Date: Tue, 30 Jun 2026 16:27:45 +0200
+        d=1e100.net; s=20251104; t=1782834073; x=1783438873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FudzaGflml93J0qLROb0/HyeenVr7sqBJ6ASEnUvtg=;
+        b=FyLRAnkeT+7Eg5GoN6noTp1HZi8vXZOVhzIDS/zIRnl2hbstvnHiTN6iqPDz/wILCD
+         gVZbRozSKw8zkOMiT8bA9sTgAz1EO6iwuET20Qw6d2vb/U+EZjKcP72C77WK0Vkn+w5B
+         QYzLGUlHY6gl1mnVUCVq/ge29MYnHQFMU1eddyLBU/rY57KMk2oKdspW9bkfduxuSfpz
+         2Ut7MT+LDNFtq3UyYDdoq4IOKhvNiZq+u9H8SIFiIsYfs0/xBnpWYs9YZPzhYt6fonzt
+         eU/79ZuJJck+JhL/vAbu6dBwWvKnvWaZa3qiIePwk00wppprannxQCYZrQ32miXouc9L
+         LdcQ==
+X-Gm-Message-State: AOJu0YySgR46Dq1vwkR/FfJXIIeSDVbtQfvLnfiMsW+1l79dDTl0LmjU
+	5tWhBxKGGDHI6gRnzYc5bPzOvEGT1gien5PrA28bKpsTFG4n90gxEEGIK+BDhCv8zk4=
+X-Gm-Gg: AfdE7ckwhBG8RTypwzNBe/7ekCKYF11OvlbPzOiADSTOGHQtLRPGPoP8sF2daiRbXxs
+	QLqgq3OKq+yzkvwhhEiyCmmSFvAYe2gCCccZFCOPe4me+YdkGOdCByROZeQc3h34RlLFL4QDk+j
+	UGn1OW1myy5CMXCpxOYjoRdYD8X8oG9rc3E5Qjfaqwed2Wye7p4gm0yOkpXiMPXQnNxuG69hFiH
+	apEQNk+UYsuFsfXQOE9LQlFhZxpnc6Lm+8yGENzLJQXc/aZAwAlfUBeFmPIlzqp86vBLG9OlnwV
+	Q3xVxb3xXghYrS6jKDiKjB3VZVkHNnFnBqMmZTk/TLhloJk1EfwI1DiXb31c98dqt1+T4h1Zdqo
+	/s3TtbT340PQzuseNcdr4o5LOjeqwwm0siqDESBIeljVll/BM/DbzFyPC2fYwoTYjGp897luyg4
+	HTH7aTuvwom5mFd4zOFPUBDaSVzfTnjty9pCIJtHBZa8pdivLkYw==
+X-Received: by 2002:a05:6122:6161:b0:59e:f727:4bb4 with SMTP id 71dfb90a1353d-5bdbebd1b66mr2049388e0c.1.1782834072616;
+        Tue, 30 Jun 2026 08:41:12 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bdc189bfc0sm1596098e0c.7.2026.06.30.08.41.12
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jun 2026 08:41:12 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-738bd0b7960so1505967137.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 08:41:12 -0700 (PDT)
+X-Received: by 2002:a05:6102:598c:b0:737:5c42:858b with SMTP id
+ ada2fe7eead31-73a36aee835mr2136553137.11.1782834071816; Tue, 30 Jun 2026
+ 08:41:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15.2
-X-Proofpoint-GUID: zvxeIo87dJ7crSn-0IbarKwt8YV9yjeA
-X-Authority-Analysis: v=2.4 cv=KqJ9H2WN c=1 sm=1 tr=0 ts=6a43d26b cx=c_pps
- a=Uww141gWH0fZj/3QKPojxA==:117 a=H7IkG6lIOHbWVTtTQWLpKw==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=yC-0_ovQAAAA:8 a=7o43ttlTypSgoYAFp-oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=PxkB5W3o20Ba91AHUih5:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjMwMDEzNiBTYWx0ZWRfXyLTmSz5QaTLC
- hgYpMRVVPus+2a+1I5MImLmsRpPXzLgjNcsDN8XSm894/E35hJNDmkU/7LisYJbbtcJYOaFrLRQ
- yBoUkArB9hDulIicQIo57WbsgIodnPXW56XS4QBQyqFm+DVz+0RYdM2dMbWlqBbSzvBTWCaZGiM
- vOZrIH6QN+nOFUKsVG/WaUEKXDT0Aqql35Wp32VcwbpHFdegzdgUztp4Xo8SX7nYaQzSJU3HDd8
- SfP+M/NtVCYu0wEf7pboX5Olb/5zHG4gERWLwPRZC28mS3lxoB6SbfAWxzgFL9vR3341zZcqyzD
- IYUTGeDkUDSL2laLwRUpGnNrNMMENgxlwDXwpbgwv1p2P8D7tk6PxW5QXwa7YWLzWvy1nwIVlJk
- Q7+WXffmA+N2XIyA1srBZ1/ZEjeOo9W0FSslY4hzsOJWHO9Jx6ZsMRfQTbIt43RHXupEzsFvsif
- kNtaeopjBq7F6uIt6ow==
-X-Proofpoint-ORIG-GUID: zvxeIo87dJ7crSn-0IbarKwt8YV9yjeA
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjMwMDEzNiBTYWx0ZWRfX2LqqQ4G4hNi8
- mraF6iJ9voHbpTPMipPEZHHxjzzY9rCbWlYGNXUhXFtIo9/j1asUDN4cCWKRq/5Lolo/9eT07Cv
- hhRQq4Zf65kLX8WOnfBbIPBJ++RZ9xA=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-30_04,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 suspectscore=0 spamscore=0
- phishscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606300136
+References: <20260626180326.9593-1-wsa+renesas@sang-engineering.com> <20260626180326.9593-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260626180326.9593-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 30 Jun 2026 17:41:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUi74DDa_xoJ8Lo=eV54w4q9Jhu-1N02vUkNGCKgEywow@mail.gmail.com>
+X-Gm-Features: AVVi8CcUvJP0aecjrianzUPa4AqYvcUMhpUwuDQPV--pueaST2jff09tZFzGmBc
+Message-ID: <CAMuHMdUi74DDa_xoJ8Lo=eV54w4q9Jhu-1N02vUkNGCKgEywow@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] spi: dt-bindings: snps,dw-apb-ssi: add
+ 'power-domains' property
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Wolfram,
 
-On Mon, 29 Jun 2026 23:09:28 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Hi all,
-> 
-> This series adds support for the PCIe host controllers found on the
-> Renesas RZ/V2H(P) SoCs. The RZ/V2H(P) controller includes additional
-> features for PCIe lane control and supports multilink operation with
-> two independent controllers.
-> 
-> [...]
+On Sat, 27 Jun 2026 at 11:20, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> This SPI controller likely belongs to a power domain for all the SoCs
+> listed. For sure, it belongs to one on the Renesas RZ/N1 SoC, so
+> enable the property to be able to describe its power domain in DTs.
+>
+> Suggested-by: Herve Codina <herve.codina@bootlin.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>
+> Change since v3:
+> * reworded commit message to make clear other SoCs likely use a
+>   power-domain, too (Krzysztof)
+> * change Reported-by to Suggested-by (Krzysztof)
+> * add Rev-by (Herve)
 
-Applied, thanks!
+Thanks for your patch!
 
-[1/4] dt-bindings: PCI: renesas,r9a08g045-pcie: Add RZ/V2H(P) support
-      commit: a61588a75d923c5935180e746bfe5f32d7467c5f
-[2/4] PCI: rzg3s-host: Use shared reset controls for power domain resets
-      commit: e2260454946d4624d4e0f8b55378398c7c6ebf55
-[3/4] PCI: rzg3s-host: Prepare System Controller handling for multiple controllers
-      commit: 9f2ed7c3de5dc4ccd223784d8ad80909a7bae884
-[4/4] PCI: rzg3s-host: Add support for RZ/V2H(P) SoC
-      commit: 007c7304d80f1462b98a36284f45adcc1eb8adec
+> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> @@ -87,6 +87,9 @@ properties:
+>        - const: ssi_clk
+>        - const: pclk
+>
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    resets:
+>      maxItems: 1
+>
 
-Best regards,
+RZ/N1 definitely needs a power-domains property, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I don't know about the others, they don't seem to have it in their DTS.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-மணிவண்ணன் சதாசிவம்
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
