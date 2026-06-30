@@ -1,182 +1,183 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9A4201004
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 10:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4818C413D66;
+	Tue, 30 Jun 2026 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782815209; cv=none; b=IfHLo/syp9stnK3a5ivjgQbX8mkg/eVWZxNFo9B+jqlHT7vr4omNldsXLYc8ECH8VmQS7nkW66BHqGvlawr8h1HGMgIazy/+TFWd3QPY+o9v01mmS+uoR7D1YvHDJ33yXJH+xZQf+9fqiKLfGDlzy1bSHQHHe0npJqcy8FKQyU4=
+	t=1782825244; cv=none; b=O6qqJfTeeibpjmLzlFE1EHNiePkKIjU+o9SJsKFOICPSRNo/dfqwz3Al/PdblP9FHJrErcJPvx72B53pMzEI2HRsCAs1YMhu+KB1jyMx3rQGmdRrnFs8XbDnRjwKvtaoTTq+Q/gBo7OA1fWBbot3e14MKDNGFexRxLlmDkRi7qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782815209; c=relaxed/simple;
-	bh=QB+yFg75hqQqe4KF7RxRn4SKV1v/JdxFtb5/52LHcYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gGRYrL5PyP9umDZ5kqsRGD2uLEDw8KyYEefo9cSWh5rHBHFiwdy/gYE8ygBUEBMWRJnuzcxmw2S4BcDoFxn7KMzeQxYnBil+6Zoj4+46TDtz6fkyuJZJTkY0aPojBeU4deTCWcptT6G8KrBWzeYavhF3sCmTFX+w9kCoGxIuWu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5aeb89359a3so1881895e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 03:26:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782815205; x=1783420005;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=u+1GiMffsMJvBdu44BU50jfVnBubjZ5dimn//DJ5+Rg=;
-        b=GBgC/LqXc/bIlmDD3e+nYM8nDhkWuek6o4XuuHyaVWbdby7dgoYPdATZZcpCee7Feb
-         HBfKswnuXVro3rf+4EfDNreqEVTkUYV78ejYbep6kRy0bu55xrNd/0zZ94uyi2J7IdIL
-         FXMbU2VE28kVz/5/OVwm7orOHcilU2SllbWlFF7WY5K6hUrGwKNQefICj6kdxEOOQNv9
-         V316ZiXbXhRIYj8tzR2UHtvDyQ5/d6dZSYQcCDwnLkt80GBTibtpiLxl9XVtWgRKHgeA
-         DfLx8R/Hw1ltDDti4oD8NlFV+lz7NVFb6HRJj1z6c9ZKykWor5OvwRKkAY+nRkBO1nsf
-         pefA==
-X-Forwarded-Encrypted: i=1; AHgh+RqrzX6NA3kyQATublCiBmg+aVacsynhL7vK8y8qTMa3OQeHonpKzOwo9AxMezdNTOoMwUK2BcHAtSX5wXvxY7gM4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzGoHzBHcf45tc1ZxnMspbnuYCFoTymQBqMBQdZBKsaplOhsx0
-	cvwtOmfopuKJAgPI4saByorBXwIYTsZSLbaVnOLbkyALpkWC8EztwEfq2zkS4KzPmB8=
-X-Gm-Gg: AfdE7cnv00fh0rDfVZzwausPccTvRVUinPBLS/5BMb/JXNAqMwMPB7SUxm7VbmC3Ng+
-	dTWZmdsuwNQvQqKKwH63geP5AKmtE4RyK/C0yocLNjxe1CoygVmJkEaFGPKMJqJC/an0Hf01Vsu
-	Pm4lMrz85n7DQsz5Hj0QS2bO0vyUCMlLJxpfGI3LNsoYG/0ftrqZpRr3X4WRfr8AA/vWgHaqvlw
-	MXaIS8Ygrei6amC5+PoExOF017bpXgat+jDoofkJUHUTNAXqbUTVw9PTgmCjFmoJ1WRVPA/mAIv
-	YzrxFy1VoJj9LbGd0eMj7QrXpulepAOQJrIgSDlisrrTYXhqPKQPpDgkFqlAkBnrMT231yrb90B
-	6kwiuUfAxCRIb7hUcbWXcTaWp5wFr58rUJw0ZFtnC4xOIkWivPwNWYSGLSRhCFKk5wrfzMXXSpy
-	AZRD+qBfpRkZX2CiKjuQGvpBEyWos94vyujxIAx6LiqMeO4EyQTNkcxQ==
-X-Received: by 2002:a05:6512:2254:b0:5ad:5a76:7d58 with SMTP id 2adb3069b0e04-5aebdb98187mr774940e87.29.1782815205335;
-        Tue, 30 Jun 2026 03:26:45 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aebe4ab23asm453948e87.78.2026.06.30.03.26.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jun 2026 03:26:45 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-39669bcaadfso46942321fa.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 03:26:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq7oWBEloiBWLGYzQBeeKBlTwjF0djEkWL836/R4WIpsXSkR7y+T1asBkSLpLWhxqan12KybLc+eCo1cdKZgWy85A==@vger.kernel.org
-X-Received: by 2002:a05:6402:3223:b0:695:f580:a66f with SMTP id
- 4fb4d7f45d1cf-69879e3e43bmr1292708a12.21.1782814728107; Tue, 30 Jun 2026
- 03:18:48 -0700 (PDT)
+	s=arc-20240116; t=1782825244; c=relaxed/simple;
+	bh=xFwetoL8Vuck3E69GGR5DG/ScQBvfKjkLbbRxYolLus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSxeWf3zVq8I+kl5ASFY4VKvuXj1IVcgzw6aUWbjbFeki06zUJGzu5+UQUTZNRa9tFmYjyqeetdzQEjFIhz1zEvL1uQd1Ake+Eyv7fvuDP1DoGr5NSpGwfjRJISlxtd4ppkb7Cthy92YJTfskiiaZXyF3Xt0qit5uxRrkhKJwQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+NR4PWB; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+NR4PWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A928F1F000E9;
+	Tue, 30 Jun 2026 13:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782825242;
+	bh=3VuQxWyNENL8ziwIh4+vVmGpesCoHqcx8KGFgDaDinE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=D+NR4PWBy6W6iM/Ff9MJncwYZfKq30z/VF5MnSG8JFLGmwT0FzFrXQ6aqWQn6tpWz
+	 chHpLPggi5lTbCoTpu69t94kXbZr+54B8Qro/1rU8YF3QIJBK4COjPZil73sSsG/rd
+	 CiVe+KSnk9WsTojsa9gNlK1n26D3/mnvCqbZMD5cX6k9unq4jh7CGsXJojiyasmvDq
+	 7w0D/ZsVBTMrSr6IcdOr8M0V26GjKqIDvDX2FrobXBhsyL6Jjt3N6f1qpqH6gdqybZ
+	 eLCJc7XBSLae7AfshSoISbnWfGD+cmyyDGkCoKB0jaQPJzFZxNYKlq0Y2hgnslfXEp
+	 2ae+MO2588wVg==
+Date: Tue, 30 Jun 2026 08:14:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Lee Jones <lee@kernel.org>, Sean Paul <sean@poorly.run>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Lukasz Luba <lukasz.luba@arm.com>, Vinod Koul <vkoul@kernel.org>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Chanho Park <chanho61.park@samsung.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Anusha Rao <quic_anusha@quicinc.com>, linux-mmc@vger.kernel.org,
+	Jonathan Marek <jonathan@marek.ca>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Taniya Das <quic_tdas@quicinc.com>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Zhang Rui <rui.zhang@intel.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sunyeal Hong <sunyeal.hong@samsung.com>,
+	freedreno@lists.freedesktop.org,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Simona Vetter <simona@ffwll.ch>, Andi Shyti <andi.shyti@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-i2c@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Robert Marko <robimarko@gmail.com>, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, Jiri Slaby <jirislaby@kernel.org>,
+	linux-phy@lists.infradead.org, Shin Son <shin.son@samsung.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, Luo Jie <quic_luoj@quicinc.com>,
+	linux-serial@vger.kernel.org,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Andy Gross <agross@kernel.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-leds@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-media@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-pm@vger.kernel.org, Alina Yu <alina_yu@richtek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Drop incorrect usage of
+ double '::'
+Message-ID: <178282524123.2726988.10975134253725315687.robh@kernel.org>
+References: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260629-qcom-sa8255p-emac-v11-0-1b7fb95b51f9@oss.qualcomm.com>
- <20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com>
- <CAMuHMdXen+E-Ai51aWBa_KV9W8Fz2cQPpT-FG_kQ7akhrrYa_A@mail.gmail.com>
- <CAMRc=Me3jaZXiXa1sFXr=8Do4sCd+XN1pKTcWC8-0j78SjCkKA@mail.gmail.com>
- <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com> <CAMRc=Meb58KCuLXkNSJwUq6KJUzZv0u49FBA2L4C8Vd3NVo8Cg@mail.gmail.com>
-In-Reply-To: <CAMRc=Meb58KCuLXkNSJwUq6KJUzZv0u49FBA2L4C8Vd3NVo8Cg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jun 2026 12:18:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWAPesQWMR4F_dx5axi6EwL+KfwLUmAyctLuYicaGHrkQ@mail.gmail.com>
-X-Gm-Features: AVVi8CfDZI-66BCdudtb8k9h_4xIWUPsPqj5BKaSPsoCDQPTdsJgDTc_K9d7_9w
-Message-ID: <CAMuHMdWAPesQWMR4F_dx5axi6EwL+KfwLUmAyctLuYicaGHrkQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v11 1/7] dt-bindings: phy: document the serdes
- PHY on sa8255p
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
-	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois <romain.gantois@bootlin.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, Radu Rendec <rrendec@redhat.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
-	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 
-Hi Bartosz,
 
-On Mon, 29 Jun 2026 at 18:54, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> On Mon, Jun 29, 2026 at 4:58=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Mon, 29 Jun 2026 at 16:07, Bartosz Golaszewski <brgl@kernel.org> wro=
-te:
-> > > On Mon, 29 Jun 2026 15:51:31 +0200, Geert Uytterhoeven
-> > > <geert@linux-m68k.org> said:
-> > > > On Mon, 29 Jun 2026 at 13:29, Bartosz Golaszewski
-> > > > <bartosz.golaszewski@oss.qualcomm.com> wrote:
-> > > >> Describe the SGMII/SerDes PHY present on the Qualcomm sa8255p plat=
-forms.
-> > > >> This is essentially the same hardware as sa8775p rev3 but the PHY =
-is
-> > > >> managed by firmware over SCMI.
-> > > >
-> > > > So why can't it be reuse the DT bindings, and be compatible with
-> > > > qcom,sa8775p-dwmac-sgmii-phy?
-> > > >
-> > > >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualco=
-mm.com>
-> > > >
-> > > >> --- /dev/null
-> > > >> +++ b/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgm=
-ii-phy.yaml
-> > > >
-> > > >> +  power-domains:
-> > > >> +    maxItems: 1
-> > > >> +
-> > > >> +  power-domain-names:
-> > > >> +    items:
-> > > >> +      - const: serdes
-> > > >
-> > > >> +examples:
-> > > >> +  - |
-> > > >> +    phy@8901000 {
-> > > >> +        compatible =3D "qcom,sa8255p-dwmac-sgmii-phy";
-> > > >> +        reg =3D <0x08901000 0xe10>;
-> > > >> +        #phy-cells =3D <0>;
-> > > >> +        power-domains =3D <&scmi7_dvfs 0>;
-> > > >> +        power-domain-names =3D "serdes";
-> > > >
-> > > > Ah, this uses power-domains, while the existing bindings for
-> > > > qcom,sa8775p-dwmac-sgmii-phy use a clock.
-> > > > I guess the clock is the correct hardware description?
-> > > >
-> > > > Adding to my list of examples for backing a hardware-to-SCMI remapp=
-ing
-> > > > driver...
-> > > >
-> > >
-> > > Russell King asked me to put the PHY logic for SCMI pm domains into t=
-he PHY
-> > > driver instead of the MAC driver where it was previously. Instead of =
-cramming
-> > > both HLOS and firmware handling into the same driver, I figured it ma=
-kes more
-> > > sense to have a dedicated, cleaner driver as the two share very littl=
-e code (if
-> > > any).
-> >
-> > I think you are mixing up DT bindings and driver implementation?
->
-> Ah indeed, but the bindings don't share a lot of content either.
+On Tue, 23 Jun 2026 07:48:43 +0200, Krzysztof Kozlowski wrote:
+> There is no use of double colon '::' in YAML. OTOH, the literal style
+> block, e.g. using '|' treats all characters as content [1] therefore
+> single use of ':' in descriptions is perfectly fine, whenever '|' is
+> used.
+> 
+> Cleanup existing code, so the confusing style won't be re-used in new
+> contributions.
+> 
+> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
+> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+> I split the patches to avoid bounces from mailing list due to email size.
+> 
+> This can go via clock tree (no dependencies)... or both could go via
+> Rob's tree.
+> 
+> Changes in v2:
+> 1. Add tags (partial Reviews as Acks, as that's the meaning of Ack)
+> ---
+>  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8084.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq6018.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9607.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9615.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8660.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8909.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8916.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8974.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-sdm660.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq5018-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq9574-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qca8k-nsscc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qcm2290-gpucc.yaml       | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml  | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml    | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml      | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm8350-videocc.yaml      | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,videocc.yaml   | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5260-clock.yaml | 6 +++---
+>  .../devicetree/bindings/clock/samsung,exynos5410-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5433-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos7-clock.yaml    | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml  | 2 +-
+>  .../bindings/clock/samsung,exynosautov9-clock.yaml          | 2 +-
+>  .../bindings/clock/samsung,exynosautov920-clock.yaml        | 2 +-
+>  .../devicetree/bindings/clock/samsung,s5pv210-clock.yaml    | 2 +-
+>  32 files changed, 34 insertions(+), 34 deletions(-)
+> 
 
-That's the (maintenance) problem: it is essentially the same hardware,
-but the DT bindings (and driver) are different. Does this scale?
+Applied, thanks!
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
