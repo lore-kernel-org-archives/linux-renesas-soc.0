@@ -1,120 +1,92 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F57D42848B
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 11:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B60643C046;
+	Wed,  1 Jul 2026 11:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782903663; cv=none; b=Q7JEpWCrbTbDxHIJ0TPWFEqrVxm+L+CPTU5XFIi5LTU2cfz6c5w7z6It9NMwkWg84FMSE6QA8snJgNmv4porRGbJcDs/JWKUMCtU9SAy3HXuFqzKZl0YXNlmD9TIfnGAakRq9Sozg5B2KS7sMTlNlsbX1cf2I1Oj1FJhqOi4Qrg=
+	t=1782903780; cv=none; b=orNFrqhsa8yBVFaqFwcYzSi3dz521HHMZEAoQMn5IGmD+ndOkrihjpBlE8HhYqsRKjjEW1gfPkd/mVpNq08ScTdUf6abXoSSpXfrs2ryfl1eQdAAI9mYjNx1q9GKXEseDIb1MJQAMc52SjHFp9H1tpQScwCTyu0nDpvsCVlNgCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782903663; c=relaxed/simple;
-	bh=UZy0n/01gszj1LovSYaViZ/RBxd5MKpgSyrcZMJ/Kgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SL/SMK7vI7RDhUp3iL1CiWbN8q0Rr0xBSMKIvFAe6pEWyEGzhyAAcMZODL/lG3iuL9eVUQ8WqouDTEpNxZv7NoiA7MiHmamKQtBQ/AatbMsALbuqT9/KDuRunzxjhu4Dwi9J9TQuSO3GhQ4hbiQUWwxVva/PZKMqpxJr19/3UZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UWxG8p5s; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1782903780; c=relaxed/simple;
+	bh=KkcApZep57iNGVL+X0XwY2PQjTaRbF5nC0YxjIuHXfc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gE5Bf7Ulzb9wY7V3q2qX9aNNVgVMgBL0PDVkcczm9rUIpibWkmr3saK502+PWpJhwYlwgdIeshtOcE6Ln1ZLDaezCq3YuAucUaqLlYJaKD/eTQ2bRZsrf/BWI8LmUMHvfWyBNowqEzkjYtxRayJPdGFpMD3otNW8yu4bXusyaU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeArBZM+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UWxG8p5s"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=jHv5
-	jf6o0MBfPU0bNEf/sSgaluNexXsyMjiq7q5MTFs=; b=UWxG8p5sAeTl4gF/M64G
-	GI/za0sy9zeCbmwNh8AGmiiYTuaMbAn1fKCef1xHAabmKteJiX9yUYV4lSfsAZZT
-	kjk8Xev6AaIwtD/uOwsA0v1bHWqSp/WFc4ARm+weO0RPZcLkQGDtP/OJLfybaI6d
-	p2UcErIPx4XWSDy8D8xf4OPATL4I0ohgmnLiQHaQ5Et0AXfY0d7/yQjZMYnny3Tb
-	pPJp0xzz6iqecpUFYnp4UImVfb6YISDPmZs7iEKFkc4pLPUX0bWm3vocEV1S8P4Z
-	Bcx9S1LpqlSElb1/8JCFiQWgCErlgF14qK7AYz2Pt9hWPB+Bw/oY5IQz61I/UvtE
-	Nw==
-Received: (qmail 667004 invoked from network); 1 Jul 2026 13:00:51 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 13:00:51 +0200
-X-UD-Smtp-Session: l3s3148p1@FbLPmopV6FZUhsc0
-Date: Wed, 1 Jul 2026 13:00:51 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 07/12] rtc: rzn1: fix alarm range check truncation on
- 32-bit systems
-Message-ID: <akTzY0hQqwAprV4g@shikoro>
-References: <20260615154805.1619693-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260615154805.1619693-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ajJ9kNJtrY6DyQ-S@shikoro>
- <CA+V-a8u2wt6623mYjhipOvJPo4va+bXs3qirQewocFr2QmUFhA@mail.gmail.com>
- <ajr1wXCI2U23d1sY@shikoro>
- <CA+V-a8tfb5YFsh-K5F8OOBsuJi0PG72vQ=2PQb2avVNF8-kcrQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeArBZM+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AEBB1F000E9;
+	Wed,  1 Jul 2026 11:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782903776;
+	bh=2jIbI2Xbh4fWr1WBw/WIrOfSkCplB1YP1Da4WFSsGGo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=eeArBZM+6D8kbU2YNUxN7RSxQU4/sPAlmnggx1i4DOL8F9AhhZCuE/f6XKEQ6Lh6y
+	 LNgsNWgtZNJ6GmUKsoLOfGFdpQXdIYqx0aq0MTZh3piGfBSHTNPL+LLh/kkK/NP4+X
+	 QrmwIz0SnGBAPrWcd9fQHcFPwJ2meTHt9xMC6WFCPgLucfuRUY1blH0YjXPtlqYjRe
+	 WEP8yiBC14HfXU6N1xOUQnvnDVVAlPT8fgUTH61+nyogUE+kRfC6fesqfy7/MlRU/e
+	 e4+6OQITpHK1IeoUt7O7cPS0O8CcoQBHWSaVcC7FOvSdIVuyhihQmsZeKtNR5yqB/U
+	 dioy+gixAh+oA==
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
+ Felix Gu <ustc.gu@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260627-rspi-v1-1-170c93ee14da@gmail.com>
+References: <20260627-rspi-v1-1-170c93ee14da@gmail.com>
+Subject: Re: [PATCH] spi: rzv2h-rspi: Fix DMA transfer error handling for
+ signal interruption
+Message-Id: <178284590924.368110.17887374079271436010.b4-ty@b4>
+Date: Tue, 30 Jun 2026 19:58:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6yLW7/UnYGTOQ+QC"
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8tfb5YFsh-K5F8OOBsuJi0PG72vQ=2PQb2avVNF8-kcrQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1154; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=KkcApZep57iNGVL+X0XwY2PQjTaRbF5nC0YxjIuHXfc=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqRPPeRptSvMtWMheRDmAl7qsOQlWcSLaUXW/j2
+ zIvrbzftLGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCakTz3gAKCRAk1otyXVSH
+ 0EnBB/99idlvFw5v792Ve3XQdQ9UEtWLoXl3iR0+vLxav8WBV3RVhNKDj9Gt2T/9dbTlIEnpvqK
+ sOHGfqfKUYMPDn/B9oIpDsr1d3gaJMvgi/0ypltcZ/nhD5Add/AmDmStxdqjq5FfGrjyG6GLffb
+ xGKLMpD0n0gDqU6hEQCKZPi42t4oC0tUykCum3ttru+Jyn1B56som1JSBAeTajexVcB3cCKPAGF
+ L2Fi28tVMDJioliyduIch42rSqKGqHGJWSWH7uGqU7+99NZNpMwvM9q0TULRXHBiy1OOVVCxDGW
+ C7t07ylnJQGZk9ei0yN4/NBVvsvPuTGjAJ5V/GwpitPs7Sns
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+On Sat, 27 Jun 2026 00:02:29 +0800, Felix Gu wrote:
+> spi: rzv2h-rspi: Fix DMA transfer error handling for signal interruption
 
---6yLW7/UnYGTOQ+QC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-Hi Prabhakar,
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
 
-So, when I improved this driver back then, 'rtctest' from within the
-kernel was my reference. This test still passes with the current kernel.
-However, setting an alarm one day in the future does not work for me. It
-just stays the old alarm. Without your patch series, that is. So, I
-think this issue should not affect your series. Especially if you can
-set an alarm more than one day in the future (and less than a week, of
-course, because of the HW limit). Can you? I recall I had issues with
-RTC programs compiled against uclibc. Despite I am sure I used a
-glibc-compiled version of the rtc-tools, I need to investigate this. But
-not now, but somewhen. I have to take care of other issues first. Let's
-assume for now that I am the problem.
+Thanks!
 
-> I ran some tests for cases #1 and #2, and we see an out-of-range
-> error. By adding a 1-sec leeway when checking the ranges I don't get
-> the out-of-range error. Let me know what you think (I'll create a
-> seprate patch for it).
+[1/1] spi: rzv2h-rspi: Fix DMA transfer error handling for signal interruption
+      https://git.kernel.org/broonie/spi/c/7fc2c3dcae28
 
-=46rom a glimpse, I think -ERANGE is correct. Increasing the already
-calculated 'farest' doesn't sound like a good idea to me TBH, unless I
-am missing something.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Happy hacking,
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-   Wolfram
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---6yLW7/UnYGTOQ+QC
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Mark
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpE814ACgkQFA3kzBSg
-KbZuQw/9F8vOkvGVvom2XSpAo4p7tOaRGeP4N4aAoV6daZ1amS+Nqy9Bo2Ydd4yz
-Jj1JWxrCXRy8aagau7ITRF0jAQ7Eh+bSo5ZFdK8Iq+6mFozyhAAPUBqqBPHQQMGl
-t021ZcvrBDevjpwuXkoWz0ka18MrleDAiRuN0YPLXtUzq4+oGIrlwCtPgzZpERv4
-rIIv5A1h92HtQVee59fumaPO25w9Wgy7vG3zZkiyhxRSr6DMUUj0c0bDgOlnt4xE
-xIW5qHoLWrN3Lg8DtAfflkMrWPJXNksot+583+33UwyA5fVjkfKhigBCGNapZESu
-cPKQ1BIGnBktKQieQG59XFuDzxTslJhSQ/APxCMbQ+Nj+gl5c8xQZosnmTv+KjuX
-s/vEUtw208jrg+NO5rf2hd8tilRX6OYKRThTC9ml3B6E9x66REu6WcyDGw4WOGOY
-42UB6a0l1+rM6BNz22OclrHiCbrHZavF+9XeeDrIl72wHwsirJNfnkSrNqOrI/KV
-Bja1xsHAnW484NlR+FE1+yxWYaZkWYcRqVvx4QO6CReCvlzkn6WdNtMvtTQGBCfs
-xkkdKLPZAJafMbiLsDHdPxV+lZkx1zW/wmZ84LjLB3/BYPN1CqWjy4jH8hVIFCwN
-S/5F2yikYzWobxgDDYvH19H/XWHq8SfUJ4zqS+GwcqufreyL17M=
-=Nc8W
------END PGP SIGNATURE-----
-
---6yLW7/UnYGTOQ+QC--
