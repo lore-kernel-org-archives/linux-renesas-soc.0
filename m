@@ -1,61 +1,63 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050F8283FD9
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 13:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96443ED5C5
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 13:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782827486; cv=none; b=iq0zDq6ySFn3b/oYyz9nFtV8RkmeXpkft3NOV0LAe+us+MvljN8rTLZNutwUVQrdtMF9lrYPtDSEr0yEga36sL68jelv2qHOKc3gbwXMJU4BBQLHXd6mVKw336U2Tn+DXOa2M/QtL9rAKY1D0La2juqd3jtnmDX5x9DJORerwgs=
+	t=1782827488; cv=none; b=dvNrkACZJAIuGwoGh35mi5EzBcq006UijnpmDGBJEUkqhhFqkjF7r7E+/5zqmSNAk9ysP5pEdgPzddaJkPSeoZYPtePVY1V6IkB69IdIHxPoPrv6a3pwIJOKCx9UOBoCpCPJ9mk7YGWKFtCq09CNGZYDO4gLjnrHN21gpCd6gIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782827486; c=relaxed/simple;
-	bh=PgojFsD1/N3BmrsVTkPr2gfq4qeEOrZIF9naADyS8pU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZdQ9vAT1oSOWjxBqa85mtQk8Xrs2QpHnXyJdI+sRuJwdP+wiHFur7t3q5voDjky1kg0K/G3PGcb+jeggslqjPjGJr+rI0JFbyUJ46Bd/z67B+7W5F4X8plNtI7LoTzIrFYNSDWtWysbJgKvl6IepvI2Q3uZiJhAvPlphpt80Ylc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqvDthPe; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1782827488; c=relaxed/simple;
+	bh=l0XTIMkKqN1zTE6zpDaySzAYwNEEjSWW841rF1IHlzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RaVy35BGKnAi47oA1erJfmJmOmkcYgNrwgWhc1lG6UtakxKydgyo8030GxdGrCZANqyrceKvA9pwPUvDYLW0CvfSyfa1knLagdnrgBC2mbNfvKyeEN/XRj0SK0D/XC1EuxAnnkz7pl5ZUImk5vALvdw3YMk1czZPhxlRx5DsWCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHp358nL; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqvDthPe"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4745492ed3aso1359725f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 06:51:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHp358nL"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47248615e4dso2868042f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jun 2026 06:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782827482; x=1783432282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXI5HLrGQCJ/qDQSn0D2WY2pyWpMCSDIiJq7g2CIyqQ=;
-        b=AqvDthPep5EtWVZnDh320En24EHekwWnPrk7e/vTya6lsvlnlo2h3vYmWBdViymTJ4
-         djISsTl2DmiQ44O7yFMT1TJ8aMCabQDDwys22mf6LJ3OIxHqIF4BU258TuS34fRlGamM
-         phXiKiygXaPekefBB6AT15x5LptkfQxIfmZuA28fecQJnK9CQHv5BZx4I0dahnE1cgEU
-         GVsWLBwhI09kSsBFot4Tc9ka2TYyNtJhA9+KOJc1wD2SL8cK4SAWtM6b40xDuVxWb5LW
-         pUUPxz+sYWPOLASmkXn0kQIEoM+6pAgIAGukb6Wum/KId7du8NQyyZozF/ddEz62KdPF
-         8vSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782827482; x=1783432282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1782827485; x=1783432285; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fXI5HLrGQCJ/qDQSn0D2WY2pyWpMCSDIiJq7g2CIyqQ=;
-        b=FICIlC52RsKGByTHg8e2P3tTDHbAFPFko3XNhqAUFVn5S2EO25jzVVpT5RUgwaUrrB
-         bW0/NWYbQkZZbmY5Q4Njzllzclo+y40xSk3TeWpFMEwlq8kC06r5mHjnIV5RnB9QpCdA
-         6KmacjWQ0pW+Lvh9hDU8tQjKo56xIHZgWBkGzIAUXD4AYibkBXCZb8h7/qxtbbA6nOIJ
-         zWiTA8BMwMCDRtp8JJfhdoHHM/mnbpByHoJqaXxfayjQIp8u8+1wlcCDLL2WQ3SLV/SL
-         itVQOLaUFz6VOZ8KluOU1K+aTuXghn7lZzSXEIpbPqWtRYlZk4aU7oDwD2K10Ec4Blt9
-         zpxg==
-X-Forwarded-Encrypted: i=1; AHgh+Roi4uOPVJ43grCAKhVKhvGlG4ox7mEkbMDhW/fKLhojxeUWchl7Cwma74n0VJ1HPqdijtTHfXJ7oc49mbpOD4OIfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5jul+q7bdLzKAvzRGF8eUnQ+4EKQ8feLe8AcXWWKpQyU8+kxw
-	CzB2G1wPGnZKF6e7H++jDoKzQe4KP7tSxra549ctjq4vsWoP7pf3UEAn
-X-Gm-Gg: AfdE7clBStQPSZbvkSmbmgC7OV/ht4BRRFHTfEzzUjPR32ZYGONLzfXlWCdDoFg6ezs
-	6h5+f7TrFxN04ftsM9/Zyy5CDzMRRL4FmCQ6L0w9AEX/OmtPlMvO0ABnUG3x6xqOVKKWNRZ2olm
-	UjSP1gkRYv66I/iqDVKrn0EXmdiJaC2sCSuAdPyG96uw0VyqcnhkaiExdFInMzvhajXQYzQSpVY
-	0N2fPg+oRN61JeCjNoPPg184LKsCM/otSv/WzWdgKk8/4eae6V6Wwk7EublMvqHa6WxjhOfV2uZ
-	ZKpK9NKOpVCCPh49aFUCmdq9a/eW84K8Sq9cGbPz15QPP77g9awK/vgrZ8HIimkMZeObRqjWth0
-	c4cC7CoAiXVvJmWuKhXjEOCSToszGtGR5TWEqr7NyqMbuk0Zg0WJSWec/MvO5liw0jLiAkqP6Jl
-	yBpyg0mFcwNoGL60UnvqLK5RC+vVz8aUwJXaRfSQ==
-X-Received: by 2002:a05:6000:46d0:b0:472:7dce:d8c7 with SMTP id ffacd0b85a97d-4765b608f21mr647635f8f.36.1782827482164;
-        Tue, 30 Jun 2026 06:51:22 -0700 (PDT)
+        bh=DmtMFmdutnbR/Vf/MchNEdAZUmVTy7ZFFM6Crcn12+g=;
+        b=nHp358nLX8xU9/n2gs/I9pZR0TS8AVR1Vlo2+bUmmgMjHCLe5G3Scr8nR+lDIf3K8H
+         xMebfEiSJF727vSrUSlBEwNEBiAUvBn3m/zoJGeHlmx/bRObiwZf5G+gGuhSSOyw1mNr
+         UTFgypV3diKgFSvwmMQvk26Td3iSdQ8crTQwJF2CCWL/KusQpgJEUPDtTlKC+zsEIMll
+         rmd9WfYpzpFC7UQQ6iM8m24Jr2ndSmgUeEVlXLTYmvlvQf4RXetEPrKyLzQ6ZnmkyWn+
+         4sHrD1b6UnyTVM3FZ6AO+51Xay/lW74cg7Hswf52X2Gbh0Yz9KZuBEEJ4MvWcDUtuOGo
+         herw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782827485; x=1783432285;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DmtMFmdutnbR/Vf/MchNEdAZUmVTy7ZFFM6Crcn12+g=;
+        b=P1pII5C0eOC0UopYHYqiGyUwhDuotD2Pf4+q4zwKdMH6dbNOfpOUj1k2i2UkcNEKR8
+         hB1yWunbawa/Mn1KNPvCfuFGqIYXsaQKN/qh8npExMn3hGodcTrV4KRbt+a5B5hTCLbJ
+         6iMnFSMO47xlX8HVzd3uVBNBTI9TmGihAi5+QRxcpnh2Z6wn0ecGON8/Zv9V8ao1WmST
+         WLZMZV8XbPiHyfjhr9oVnUnB9BP6xzILQVdeSaXZnWPSWcVxmE/dccwM+y7jeHBtVPgO
+         hZZ+JTqg/VRfFLkdK2wROq9AxIIybXdU5/3Ns+pXR00JvKNAMZ0hhXRE7msPDQVlc90u
+         F0Rw==
+X-Forwarded-Encrypted: i=1; AHgh+RobpYorih0n+RXcA+HZflweo+X/uvAhV0XYnHyMJP0HI8o/37TbeAuZ5CfS2LtizFd94B7rshN0MAtUhsyp7UL3Vg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhHuPtgyH7nrZ188cbYegiPS1OMtUWWWY035fvBuhW0T8ylekT
+	762zX/Fm/WwZh3JV2l0a7wzMKovUigQDFwQBYtlzJ1vtogk9W3fC6XqO
+X-Gm-Gg: AfdE7ckRgnNF0fS09CWrfcqlv+jTG3+Smvs23QcH7mDTov+38I0Dmf57TK31NmlLwrv
+	5Q+m8VOlogZ7iHUWJW++6AJRWElaDNkIVKBZvZ00XL6KQWR1si5BD2vv8F/aEKb0qrr/86hk0Rq
+	GEzb9Sr/FBMGNvx2MRXEdeyPg4QzFiJsyY+pDIOThnk/Xxocdbl9dj0OXOsk+SdrwYr9NypJKWf
+	0f9NpuiKuAcp3U7j89zR9OCF7q/HgroEfI/kkoSyFeUgcLaDB3mzptnmUnwtYw7AwILRxE3xIZW
+	lam6abDErT4vdWssMl9zX48xXIDFnvYzJKTbSBzC/V2Aw8GNAPawoarf1aATPFQIVKzlHWl24pJ
+	urNm6APJdaSbkKswmdkPFTBVufhpwqLuVgpp6nW94gxnr9WYTZg7XbYYT58gvP2A8Cv0YJvE03C
+	E7yTRnUf1dM7MklX400kChCkVXUhCqcODlvxd/wQ==
+X-Received: by 2002:a05:6000:e4f:b0:475:69ce:ac4a with SMTP id ffacd0b85a97d-47659ee671amr755903f8f.33.1782827485050;
+        Tue, 30 Jun 2026 06:51:25 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4756636cf26sm7216964f8f.19.2026.06.30.06.51.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4756636cf26sm7216964f8f.19.2026.06.30.06.51.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 06:51:21 -0700 (PDT)
+        Tue, 30 Jun 2026 06:51:23 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Marc Kleine-Budde <mkl@pengutronix.de>,
@@ -72,10 +74,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/3] Renesas CANFD Fixes
-Date: Tue, 30 Jun 2026 14:51:13 +0100
-Message-ID: <20260630135119.104774-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/3] can: rcar_canfd: Fix double-cleanup and unclocked register access on init failure
+Date: Tue, 30 Jun 2026 14:51:15 +0100
+Message-ID: <20260630135119.104774-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260630135119.104774-1-biju.das.jz@bp.renesas.com>
+References: <20260630135119.104774-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -86,22 +90,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series fixes the pre-existing issues reported by sashiko[1].
+In rcar_canfd_probe(), if rcar_canfd_global_init() encounters an
+error, it disables the clocks and asserts the resets before
+returning. However, the probe function then jumps to the fail_mode
+label and unconditionally calls rcar_canfd_global_deinit().
 
-This patch series depend upon [2]
+The deinit function calls rcar_canfd_disable_global_interrupts(),
+which writes to the hardware registers. Since the peripheral clock
+has already been disabled by the failed init, this leads to a
+synchronous external abort.
 
-[1]https://lore.kernel.org/linux-renesas-soc/aj2PBvZYaVs0G-be@shikoro/
-[2]https://lore.kernel.org/all/20260625135216.130450-1-biju.das.jz@bp.renesas.com/
+Make the rcar_canfd_global_init() failure path jump directly to
+fail_dev, skipping the redundant global_deinit() call, since
+global_init() has already unwound its own clock/reset state on
+error.
 
-Biju Das (3):
-  can: rcar_canfd: Fix dangling pointer on channel probe failure
-  can: rcar_canfd: Fix double-cleanup and unclocked register access on
-    init failure
-  can: rcar_canfd: Fix interrupt registration order
+Fixes: fa5f4ec8fff8 ("can: rcar_canfd: Extract rcar_canfd_global_{,de}init()")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/net/can/rcar/rcar_canfd.c | 33 ++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 57f1710caa89..e88554388553 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -2257,7 +2257,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 
+ 	err = rcar_canfd_global_init(gpriv);
+ 	if (err)
+-		goto fail_mode;
++		goto fail_dev;
+ 
+ 	for_each_set_bit(ch, &gpriv->channels_mask, info->max_channels) {
+ 		err = rcar_canfd_channel_probe(gpriv, ch, fcan_freq,
+@@ -2275,7 +2275,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ fail_channel:
+ 	for_each_set_bit(ch, &gpriv->channels_mask, info->max_channels)
+ 		rcar_canfd_channel_remove(gpriv, ch);
+-fail_mode:
++
+ 	rcar_canfd_global_deinit(gpriv, false);
+ fail_dev:
+ 	return err;
 -- 
 2.43.0
 
