@@ -1,47 +1,52 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212C548C3F6
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 13:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D6648167C
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 13:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782911584; cv=none; b=Qe5z2rl6RNENPzsHDe++nm03j6iPuuOugC2oqTqO664scHwIoFvFTAENhjUIfDziMaczXPGMgklZHt/Z/sXLfd+ta9lNDeZeUANALWz42Mcxaln24n2nNMbWpPCEzjNWHdVA3yI0pAbYx2oUHdg21Z/aLkR5eSygnJlPq7y+Xwc=
+	t=1782911585; cv=none; b=iFdjLV6x6l5xwgSxCvqBWUGR2DXxTGtb7O65Ls7ee89lVzSXaS3XZTSOIDhJIm5354koxJMqLgZHscnQH6rIWoHhDAzPcga64VX1OfDI7mAMhFNoggzSihHl12ZGY5tnx9SvRQCgDl8tZBmVEtcy3A3fri/MsYWNDl2GZD2Cj5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782911584; c=relaxed/simple;
-	bh=3yepFYZGWP7OCDCU1WhwbZCJftBue5NPWyqGLDZgBcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JpZpQEP++Dd/sgh0n2Kje18xW8/17nDVTboU87OceDqn5fT3ZayAX/WX4G86LlxEE0HSK/MfiMbkfCr7u9GrcJ3ob6iNQpIkwV8ivfbvUSr57mMJEySYDTXdy22jzH6RIQR9SXv0I5Odh5t4P6azU3p5DDn9EY//wxZUoJoweR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HtHvrBjE; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1782911585; c=relaxed/simple;
+	bh=e+zh3j/wykjMlC3CQS6q56Obs4SCdT1AUtHglJSriS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fIUnQPGeUsYna5JJ+2WXy7yXQzlZdsNVSRGJ4oT6MzTi9XpIKCLv5DKalTvfU7EXs4cIPL5JoZvF733ti2bKYHZzWXBMHsKxkEhBvwprLSp78hFunGiPS6UTG70G4cf+chTPwy27JeTptGETnWG56qZmhG1esx3oQSL/Wx7BUXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=H7QUtUUj; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HtHvrBjE"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="H7QUtUUj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=vitzn9qdLoqkMt
-	nHkttu4JwWU5DXcRVqxYSkJlcdvO8=; b=HtHvrBjEXkDcop8cACubCuhnhT+Bgq
-	tBIna+QnVpAAi97qFkpFay3FLsrPQdbPG/X6Ul9vNneVeGF3UZqTnuizonS/vu/n
-	xtAi+BBdEYlTN9vvFTKptN9wRNj+/MyDfA+suWAI4xNLWE5msgHPnujaHXp0y6MA
-	wPGGJHupZrp67NTsukn6uI77yG0NUN3nbi2jfWXq7/JWSQnssox4CQ43qnOkQvEK
-	y6T49qVMrW4ghOAoImHsy3ICDn+EJ/r8gROZm0Eg3hjsqQ0tcWi7VhhFiRDTmxwW
-	r0d+mwZ7mFKYc/dq7J8cF+Clr4/HvTE63H9/TPXMX4QZVw3QO4QcXXPA==
-Received: (qmail 712996 invoked from network); 1 Jul 2026 15:12:57 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 15:12:57 +0200
-X-UD-Smtp-Session: l3s3148p1@Yboxc4xVVKxUhsc0
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=OXn9V7e86bi/5vj+IElGStXrZ9tOEkkQid7B89BoAeM=; b=H7QUtU
+	UjNwOBlkwXMCReCE5CUhzRYfcfX6sJfkK3WyCHXnCY3EeQORBnUgJrzTXy/woiDl
+	GdGZCrTEa7WqQwPbuUhwjIAmB1QGR57USzuqLnQ3sj0L3iiuCNdTmtRQhMI9jvCJ
+	weT9zRhCiLoUdiaLoswV49AYFy+ZbjRIgdS9e9o5IfwbQBnNdbc5xMRZKPL+E/4W
+	FTrTfBgXtxb/b77Ros8G5OGql9lonMrLxrLxoLk591l4ef5u/GB08QfrU/FTXkTA
+	boexaZOi3mx0wIThcMHV6pLPXHrg8SQJCdUDYHk+iP2RQzAEk3W3Q+0tiI11QBG4
+	W5sSRMkwKLPlXCHg==
+Received: (qmail 713126 invoked from network); 1 Jul 2026 15:12:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 15:12:59 +0200
+X-UD-Smtp-Session: l3s3148p1@IatWc4xVlMNUhsc0
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-spi@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 0/2] spi: dt-bindings: snps,dw-apb-ssi: updates for RZ/N1D
-Date: Wed,  1 Jul 2026 15:12:48 +0200
-Message-ID: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v5 2/2] spi: dt-bindings: snps,dw-apb-ssi: add 'power-domains' property
+Date: Wed,  1 Jul 2026 15:12:50 +0200
+Message-ID: <20260701131248.4545-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
+References: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,21 +55,38 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since the actual DT additions are in -next now, here are the remaining
-DT binding updates for the Renesas RZ/N1D SoC. Changes since v4 are
-described in the individual patches.
+This SPI controller likely belongs to a power domain for all the SoCs
+listed. For sure, it belongs to one on the Renesas RZ/N1 SoC, so
+enable the property to be able to describe its power domain in DTs.
 
-A branch is here:
+Suggested-by: Herve Codina <herve.codina@bootlin.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/n1d/enablement
+Change since v4:
+* rebased to -next as of today
+* added Geert's nad Krzysztof's tags (Thanks!)
 
-Wolfram Sang (2):
-  spi: dt-bindings: snps,dw-apb-ssi: drop duplicated RZ/N1 entry
-  spi: dt-bindings: snps,dw-apb-ssi: add 'power-domains' property
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+index 447be88caf34..95a5bd894e93 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+@@ -93,6 +93,9 @@ properties:
+       - const: ssi_clk
+       - const: pclk
+ 
++  power-domains:
++    maxItems: 1
++
+   resets:
+     maxItems: 1
+ 
 -- 
 2.51.0
 
