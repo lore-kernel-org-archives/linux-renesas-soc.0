@@ -1,26 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9256E42EEAD
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 12:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212C548C3F6
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 13:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782907626; cv=none; b=YVCcreQgOgrCohxlbYvnd8nV/m6VYt2/C6rFyNHO7ne01w0mmi2YnfA39FoaGufihiLvfEN0s5j92rH5EaYvkaEU0guxwGPEd6WpUZ9efoI8o2xIoe68uqbbbht+UF3Vubtnd2Q/3jepVHtIWMSklTszYWPm02Dqo01elklS1rg=
+	t=1782911584; cv=none; b=Qe5z2rl6RNENPzsHDe++nm03j6iPuuOugC2oqTqO664scHwIoFvFTAENhjUIfDziMaczXPGMgklZHt/Z/sXLfd+ta9lNDeZeUANALWz42Mcxaln24n2nNMbWpPCEzjNWHdVA3yI0pAbYx2oUHdg21Z/aLkR5eSygnJlPq7y+Xwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782907626; c=relaxed/simple;
-	bh=J6RTNHwr3LO/NPFjvUK1VOdZpBRpvePFzGraNI7bUdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pWdkCRW+9Tp8ZOrVN945iQrSEO+3rJHC19aaoWrobJxqGCuOsZXnWljDJz7s92DYUyUq/bGwEtLZUFX0pANgqEAeDus0p6xhRxybWa7gM+ZmshGkTmZ9/Dz6z5A2GSlMZd4dEELs/RPuMZ8ibdNzxS+bltkilV2IDDTKM9dbt9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7541F000E9;
-	Wed,  1 Jul 2026 12:07:04 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] riscv: rzfive: defconfig: Refresh for v7.2-rc1
-Date: Wed,  1 Jul 2026 14:07:00 +0200
-Message-ID: <acdb2c6320865c24bbd3bf7a83c35db21cefd21b.1782907423.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1782911584; c=relaxed/simple;
+	bh=3yepFYZGWP7OCDCU1WhwbZCJftBue5NPWyqGLDZgBcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JpZpQEP++Dd/sgh0n2Kje18xW8/17nDVTboU87OceDqn5fT3ZayAX/WX4G86LlxEE0HSK/MfiMbkfCr7u9GrcJ3ob6iNQpIkwV8ivfbvUSr57mMJEySYDTXdy22jzH6RIQR9SXv0I5Odh5t4P6azU3p5DDn9EY//wxZUoJoweR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HtHvrBjE; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HtHvrBjE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=vitzn9qdLoqkMt
+	nHkttu4JwWU5DXcRVqxYSkJlcdvO8=; b=HtHvrBjEXkDcop8cACubCuhnhT+Bgq
+	tBIna+QnVpAAi97qFkpFay3FLsrPQdbPG/X6Ul9vNneVeGF3UZqTnuizonS/vu/n
+	xtAi+BBdEYlTN9vvFTKptN9wRNj+/MyDfA+suWAI4xNLWE5msgHPnujaHXp0y6MA
+	wPGGJHupZrp67NTsukn6uI77yG0NUN3nbi2jfWXq7/JWSQnssox4CQ43qnOkQvEK
+	y6T49qVMrW4ghOAoImHsy3ICDn+EJ/r8gROZm0Eg3hjsqQ0tcWi7VhhFiRDTmxwW
+	r0d+mwZ7mFKYc/dq7J8cF+Clr4/HvTE63H9/TPXMX4QZVw3QO4QcXXPA==
+Received: (qmail 712996 invoked from network); 1 Jul 2026 15:12:57 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 15:12:57 +0200
+X-UD-Smtp-Session: l3s3148p1@Yboxc4xVVKxUhsc0
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-spi@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 0/2] spi: dt-bindings: snps,dw-apb-ssi: updates for RZ/N1D
+Date: Wed,  1 Jul 2026 15:12:48 +0200
+Message-ID: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -29,30 +50,21 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refresh the defconfig for Renesas RZ/Five systems:
-  - Drop CONFIG_CRYPTO_SHA1=y (auto-enabled since commit
-    bf8672b99402abd8 ("SUNRPC: Add Kconfig dependency on CRYPTO_KRB5")).
+Since the actual DT additions are in -next now, here are the remaining
+DT binding updates for the Renesas RZ/N1D SoC. Changes since v4 are
+described in the individual patches.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
-To be applied to the topic/renesas-defconfig branch.
----
- arch/riscv/configs/rzfive_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+A branch is here:
 
-diff --git a/arch/riscv/configs/rzfive_defconfig b/arch/riscv/configs/rzfive_defconfig
-index a07c75d5f5aea719..a5d9622c47a00146 100644
---- a/arch/riscv/configs/rzfive_defconfig
-+++ b/arch/riscv/configs/rzfive_defconfig
-@@ -204,7 +204,6 @@ CONFIG_SECURITY_SELINUX=y
- CONFIG_SECURITY_APPARMOR=y
- CONFIG_DEFAULT_SECURITY_DAC=y
- CONFIG_CRYPTO=y
--CONFIG_CRYPTO_SHA1=y
- CONFIG_CRYPTO_USER_API_HASH=y
- CONFIG_CRYPTO_DEV_VIRTIO=y
- CONFIG_PRINTK_TIME=y
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/n1d/enablement
+
+Wolfram Sang (2):
+  spi: dt-bindings: snps,dw-apb-ssi: drop duplicated RZ/N1 entry
+  spi: dt-bindings: snps,dw-apb-ssi: add 'power-domains' property
+
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
 -- 
-2.43.0
+2.51.0
 
