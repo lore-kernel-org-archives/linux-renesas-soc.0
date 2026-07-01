@@ -1,93 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE2A3EFD37;
-	Wed,  1 Jul 2026 11:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7F143E49B
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 11:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782903785; cv=none; b=fujV0I62u0CelVJbAOOIzQf8rq/p/HOOtm0ZlivrF/7dH2UlKY+0TTj9Zcr9a67t7vwth0SskNcMoF6Vy6Sxinfy5gaNrk1UU+L6X3LFQehxPOL4v4D5NlbwyfSbBgrXXAov/60y+p/QkvFCHyOD2yfTy8Zr76awf4fXanxEOjw=
+	t=1782904622; cv=none; b=YNSrUbt9tRJ5mqxWdaREXw0biDv/MbyVF62C/wpyX9249dUsxiWeg5f0CM7+XTYO9cclZyw5xSX+Rd7t/tEuJvOSlF0/0QMzTAYNO5t54ZzcGgOzuYhsI2hJhTX89oaMrjecdjL693EcgYm/fpbqzMBkLSJ2aUVrdcloX6E6G3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782903785; c=relaxed/simple;
-	bh=oSXoKiQbcnn/eFBQoGnHI/NFWn0OUGz8XEf+BbJFaOM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A4jSWD03uiEFTTwiCeUANpErwRLoIlkTkK+SZfOb5F8OsUsqAM6RXK0WqhzA/fuwI97H4FWHBP1ohwrDge6f8r7jNE/EPu5PltoM4Xubd9mOhVUNyl7C9h94IyDpz2aLRR8OeuMdAPtICFH/vtk7hhCP3Q7RyEIwM1j90Y+gYy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqpT5q+o; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782904622; c=relaxed/simple;
+	bh=Ju6G30nPmVF/JwZK4zThMrqgftJV0nXXCv80BHQAxH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4TPdukVAhy/kYB6LnIBxWou66hTpNNbWTz7zGrheVcXM/vKcqWFgVorEsCtLEjjAs/0+ZqgTSa6ixaVDtj39dMnEheqvQEiAtgpl0owu/BhusNMjVnhxzQRB9s/o71/VrGA2qv+Fc4XMn8HCN/AMbpxe1QcAsWeeZz72Y0hdPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HCN5EfcL; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqpT5q+o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C6F1F00A3E;
-	Wed,  1 Jul 2026 11:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782903781;
-	bh=0nJAphDVGN2oAiE07pv9pV03rezp6xzrirqRR1IPuCs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=jqpT5q+oxak8lw4OKg7KObRDsPCPA5ybKmTnKIItmtU2YwajHDcgcV+l+yiGlusWb
-	 HramakaJDwmOqycBgu1uZlu8cHvUDCIgCWgrRbqbZW5RSCQ+tAjWFTtcL3H8bq+Axd
-	 kAYmnsRVBz1sJYqzdX+0C7u6J4VUy8YzGDoqiF8DZsCfN+qahBipJhqUDDUzlCNKW1
-	 7UIiv6V9zaofM9kGpNGj08FbFyB/Q/gZN9m92ywGNwZIYyRerxhcF5xn/1ukwFNlEq
-	 sHnGbRvKgzzInU0eNpJNzdtOpMNksIi0FaHENW/j/OG1DloxuLYruqs70ikpsE4hsw
-	 ExO4or+hOVucw==
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Narasimharao Vadlamudi <ahmisaranrao@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
- linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260630171333.36396-1-ahmisaranrao@gmail.com>
-References: <20260630171333.36396-1-ahmisaranrao@gmail.com>
-Subject: Re: [PATCH v2] ASoC: renesas: fsi: Propagate platform_get_irq()
- errors
-Message-Id: <178284457267.368110.14436206886662500739.b4-ty@b4>
-Date: Tue, 30 Jun 2026 19:36:12 +0100
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HCN5EfcL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Ju6G
+	30nPmVF/JwZK4zThMrqgftJV0nXXCv80BHQAxH0=; b=HCN5EfcLkITKJVGDJGCF
+	T6b1u4EyEGQb7BBeoQr1FK5o+vy+sOZ8zmaV8tJyieIcBNONaFUcGnYlsEa162iu
+	o54TzXBJnWL+sXHgT5MfxvDnBqXSX4NRaOu144fu3jWt7EZ5Vp1uVzQWGqEJr6i8
+	M5j5opA0QCbbS+6WhQJM8QVOjzerpapI4Zi7PNfiXOhPPPtgZ03prnBHGltB22XC
+	NygthqlXNPSGXFJQfe2gMSPMep+zG8xChDhBDh3TDVR9YDsgrqJ7cpwjgPUkqOqU
+	jnQMsfRuq2SndbzMJwb1+yFSPdu5frz+e9jQLnqlP67++fv6YdaxTEEbh7Qxh3Y7
+	+g==
+Received: (qmail 672995 invoked from network); 1 Jul 2026 13:16:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 13:16:59 +0200
+X-UD-Smtp-Session: l3s3148p1@vMt31IpVLelUhsc0
+Date: Wed, 1 Jul 2026 13:16:58 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] spi: dt-bindings: snps,dw-apb-ssi: drop
+ superfluous RZ/N1 entry
+Message-ID: <akT3KiUJccT2bjRn@shikoro>
+References: <20260626180326.9593-1-wsa+renesas@sang-engineering.com>
+ <20260626180326.9593-2-wsa+renesas@sang-engineering.com>
+ <20260630-dazzling-intrepid-lobster-c83db6@quoll>
+ <b4a42f27-595b-4c02-a792-0e11c306d2ea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1138; i=broonie@kernel.org;
- h=from:subject:message-id; bh=oSXoKiQbcnn/eFBQoGnHI/NFWn0OUGz8XEf+BbJFaOM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqRPPi3wX4sCcg8RZyslZf2wjJO+7A0T0C5Qx7m
- yjFFBtYoKiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCakTz4gAKCRAk1otyXVSH
- 0BhhB/0YW9PujkxPuvXd310T3js6J1KlCl1674uJJebf5Be4pekzpgRIzQOccTrPxEXxxIm3bfH
- 4K9NedibJZAJwI36daA85XPo0qoSGuqAYeMWHagnFUMlrojEpSxvoBm27HtgyPiDCqOO9aMdDgw
- Fug3nKh7UItmv0S/EvkJHAviEIYrbvUFoOcedBLv2hV95RkOnKBE/LVotXc3OkaGtshwb4EWJA6
- C2wtHIGIvzH6LwaXhuwZHC5DPzGWxpfAQphCHE/mlwbeoKgV2vzAWSPujSd9yJTj/aZD/EqXrNW
- VAsgNBwd3NG7xQHMQlDzlD0xh7eRxiG44PRWmKHubGDbXt9y
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SupshW18AQZrgaw3"
+Content-Disposition: inline
+In-Reply-To: <b4a42f27-595b-4c02-a792-0e11c306d2ea@kernel.org>
 
-On Tue, 30 Jun 2026 22:43:33 +0530, Narasimharao Vadlamudi wrote:
-> ASoC: renesas: fsi: Propagate platform_get_irq() errors
 
-Applied to
+--SupshW18AQZrgaw3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
 
-Thanks!
+> Uh... the compatible is listed twice (!) and you remove it only one
+> instance. That's completely missed in the commit msg. Patch is fine, but
+> please be explicit that you remove the variant which should be used as
+> fallback while leaving the ABI documented.
 
-[1/1] ASoC: renesas: fsi: Propagate platform_get_irq() errors
-      https://git.kernel.org/broonie/sound/c/3848617c64ac
+Okay, I could have used 'duplicated' instead of 'superfluous' to
+make this more obvious. Will reword.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--SupshW18AQZrgaw3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpE9yoACgkQFA3kzBSg
+KbZPDA//cEfcjG5ymTzgvGp2vHN41NVqUEM85KtpECI6mgPJcgrmhtjPP2s7xAKk
+0kxf8k6xcMp7XBat8hlh2OJbZyibKEMeWp5aKfUZWfGn7J4ys+QK2uf3YEeg6w1k
+iC25q/KsmwdVAj1CKGx/QNeMeWoyG5HstDfZSutNoHUHyE/VDF8K+u2jyiNkz0yi
+A5wZtc9Q8IPKfkHDhGhHaby3UieaaPdWr1i3Ax0PqSJna0iBL0v+mHQbiJPld320
+DguNQDmceeBp0PFznrx34zgbcZj5NJbvBWrzomwiZWLF5/bbBwGPhqk8B7t5jrGC
+Bd9jk/pNVlv4gnZbzJq5AZptJEWARYVSTKwEGbWfoZDfTIUIM+9/3TU43BdMWbJ2
+uUNsaIreK0KdRvVC9JnRNayAxPIVD+3ag9FTO9gNEoDWXf8w1PxMJr/XUwEmp99i
+D69HJZlKWaevCePkPt2uPEG+OpB+oi8fnCAdW4IJzR/5JYPlPA/hAwUZIX+4nTQj
+0tvSGINdQV0G9nbgBmYTo48OvP8nz8LOzHb87e5FuU69ROlSJUPqGcrPs1ftnhRk
+8q9v6AX4nVSTh27/tBUTZILWNl2fbl0wwG8vp/DnD/VTV/kPGdizanU9UtnBNxe1
+5GVFu1cPEjWZNHW3Y6B/asrDa6K3RfF7YcoagQBUNPZ4kmcqj6A=
+=e157
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
+--SupshW18AQZrgaw3--
