@@ -1,49 +1,48 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D6648167C
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 13:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4380E48C403
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 13:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782911585; cv=none; b=iFdjLV6x6l5xwgSxCvqBWUGR2DXxTGtb7O65Ls7ee89lVzSXaS3XZTSOIDhJIm5354koxJMqLgZHscnQH6rIWoHhDAzPcga64VX1OfDI7mAMhFNoggzSihHl12ZGY5tnx9SvRQCgDl8tZBmVEtcy3A3fri/MsYWNDl2GZD2Cj5Q=
+	t=1782911585; cv=none; b=jsiOxyCpLKkFxsIpDCseHmzSKi51bGJRua/isX7EvSI2E40SjeMi8BKvmD3HV2L3Jz/HQLpM0Exk9D+AoqWimLf0lfOKpgz9+6QF2vVXrrmr7/YDndSOzVWALu+hYLRtKm3rIPtRJUGvd0ZZ1FVtJO9Kg8q5SQQgiHV05BWZ/hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782911585; c=relaxed/simple;
-	bh=e+zh3j/wykjMlC3CQS6q56Obs4SCdT1AUtHglJSriS8=;
+	bh=F9gWWpxdSDcNRPe+XQpbs0aOTlnBvasMoYOq1x8/6zE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fIUnQPGeUsYna5JJ+2WXy7yXQzlZdsNVSRGJ4oT6MzTi9XpIKCLv5DKalTvfU7EXs4cIPL5JoZvF733ti2bKYHZzWXBMHsKxkEhBvwprLSp78hFunGiPS6UTG70G4cf+chTPwy27JeTptGETnWG56qZmhG1esx3oQSL/Wx7BUXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=H7QUtUUj; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=QAEO2lTPI0GNxBjker/94rqefBG5EHc9DMZricafmxKFtXat+EBCfwPLtFbi6FNvJmtQVoJ+jPEqHQ0YKBY1zlZfiSpygX8aNO480dO1ztmDWYkG1qEaLc+qbyZOA2enZ+ztHxA2iEYvV5nGvuyV8eFiTyaXbMQWhzKzaVIviWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J+NGXv9d; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="H7QUtUUj"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J+NGXv9d"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=OXn9V7e86bi/5vj+IElGStXrZ9tOEkkQid7B89BoAeM=; b=H7QUtU
-	UjNwOBlkwXMCReCE5CUhzRYfcfX6sJfkK3WyCHXnCY3EeQORBnUgJrzTXy/woiDl
-	GdGZCrTEa7WqQwPbuUhwjIAmB1QGR57USzuqLnQ3sj0L3iiuCNdTmtRQhMI9jvCJ
-	weT9zRhCiLoUdiaLoswV49AYFy+ZbjRIgdS9e9o5IfwbQBnNdbc5xMRZKPL+E/4W
-	FTrTfBgXtxb/b77Ros8G5OGql9lonMrLxrLxoLk591l4ef5u/GB08QfrU/FTXkTA
-	boexaZOi3mx0wIThcMHV6pLPXHrg8SQJCdUDYHk+iP2RQzAEk3W3Q+0tiI11QBG4
-	W5sSRMkwKLPlXCHg==
-Received: (qmail 713126 invoked from network); 1 Jul 2026 15:12:59 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 15:12:59 +0200
-X-UD-Smtp-Session: l3s3148p1@IatWc4xVlMNUhsc0
+	 s=k1; bh=KmO63xgx7KFW2kYR+qtnu3annPDisLEXrTj5KUOG+4A=; b=J+NGXv
+	9dfy7itCiK0jSQ6d91pI/tGLnMO6iYYiaqK5+kYMyWJwU5k1uQTzlyNb7/W7iRoP
+	yxiqpGEgO9S2ABaAfSXb2WTAnCoMbgcl+xIg27jcRSfwtoQS9Xe+mJfA32nlF9oK
+	N2Ul43kCRwnqr6Idk7qy8zqGn3S3ou5THRgWX2Zk4nchrnTJfV++yUGQuucJKz/9
+	H1jeGDy0ygmQ10PHJ0LDHy//9dOc0PwtiMQuvUBmLc9wQay2TqNiAFyooswRlHJU
+	ziV9FFUIsSTBP6Ks7L9LdY5OI3rvDi0B+EAR9HKqpj0ufA/8Hy+AjH69BEgVKwY/
+	UV7TAsBO9bb4eoPw==
+Received: (qmail 713056 invoked from network); 1 Jul 2026 15:12:58 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jul 2026 15:12:58 +0200
+X-UD-Smtp-Session: l3s3148p1@wQREc4xVCYxUhsc0
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	linux-spi@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v5 2/2] spi: dt-bindings: snps,dw-apb-ssi: add 'power-domains' property
-Date: Wed,  1 Jul 2026 15:12:50 +0200
-Message-ID: <20260701131248.4545-6-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v5 1/2] spi: dt-bindings: snps,dw-apb-ssi: drop duplicated RZ/N1 entry
+Date: Wed,  1 Jul 2026 15:12:49 +0200
+Message-ID: <20260701131248.4545-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
 References: <20260701131248.4545-4-wsa+renesas@sang-engineering.com>
@@ -55,38 +54,40 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This SPI controller likely belongs to a power domain for all the SoCs
-listed. For sure, it belongs to one on the Renesas RZ/N1 SoC, so
-enable the property to be able to describe its power domain in DTs.
+Commit 164c05f03ffa ("spi: Convert DW SPI binding to DT schema") added
+an RZ/N1 SoC family entry which was not in the original txt-file. It
+doesn't follow the usual "<soc entry>, <soc family entry>" style for
+Renesas SoCs. That was properly added later with commit 029d32a892a8
+("spi: dw-apb-ssi: Integrate Renesas RZ/N1 SPI controller"). In that
+commit, removing the old and bogus SoC family entry was overlooked, so
+two SoC family entries were present. Remove the variant which should be
+used as fallback while leaving the ABI documented.
 
-Suggested-by: Herve Codina <herve.codina@bootlin.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 
 Change since v4:
+* reworded commit message to explain there is no ABI breakage because
+  only a duplicated entry gets removed
 * rebased to -next as of today
-* added Geert's nad Krzysztof's tags (Thanks!)
+* added Geert's tag (Thanks!)
 
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-index 447be88caf34..95a5bd894e93 100644
+index 4458316326fc..447be88caf34 100644
 --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
 +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-@@ -93,6 +93,9 @@ properties:
-       - const: ssi_clk
-       - const: pclk
- 
-+  power-domains:
-+    maxItems: 1
-+
-   resets:
-     maxItems: 1
- 
+@@ -50,7 +50,6 @@ properties:
+           - enum:
+               - mscc,ocelot-spi
+               - mscc,jaguar2-spi
+-              - renesas,rzn1-spi
+               - sophgo,sg2042-spi
+               - thead,th1520-spi
+           - const: snps,dw-apb-ssi
 -- 
 2.51.0
 
