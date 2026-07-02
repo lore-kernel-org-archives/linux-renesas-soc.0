@@ -1,132 +1,131 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF547DF96
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 09:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C49847CC8E
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 09:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782984933; cv=none; b=kmIKPak/ga71lYwu2deSeaEKBCGVI9qHq5BKPw4T4McSsd7qTwBKjdgLSQUvAFgCfdaXIKlP0tTaJ1D8v3lBb5sHtKZD7IvPjS3+OrS2mJh4mDOz8IuKl6ZtxLX/8a7Sc2/nhS1ge6BmknVtcUVBFYzJ2p8FoSRdU1Oy9AqfxiU=
+	t=1782985499; cv=none; b=fUpaEcfGfVBgmkUR7jZd7aw2NYxGzCufgH9G+0czTtRt1r7vFl/1IrPMBb1EH4ssUmSx767xOhMXW4XhRoS7d0Ohhj0ppapTh96u2WkysCaoBcWlANHC9Rt8mpMJyzGAYrp10KpyE7BDHjcuVmu5Mt3zBHP5x7MbLB67N9P0vKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782984933; c=relaxed/simple;
-	bh=oaHVnd87z43W7j09tTxLlnmC4YG6JXhvjpcX3CpNAuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oSAVBFbjTg+eMdREgLq1A7COJRYzoKMwC3TA/GQFqzr9XJm66VOsFL1D5Dn47fy8vjpB6xY2GPNaLUaMDhRs1CGruavu8MkV76cEG2mSRSZ4me9s1sI8lBPQwvzkY4YEHrgc1pW+eq/57uwDR74/7oGjdhpU6c6VznIhCJYOB7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-847d1e9db22so454314b3a.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 02:35:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782984931; x=1783589731;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9xiqnp7i51oc7KGFElhrnKuIK1In1osntTe68gEGmGg=;
-        b=ayEHVYPvltCRHf6HynLumHDP5z/kUiPHcpBQ6UoNXTn+aFlztzZTm3wwXBV/6E+a1l
-         xGyVkWQR2SgQL+YjL6z+U9iGh4jtYc2lsOKlLYxEofCF9bHg47vjsz/ufGuexWFwu0Cm
-         XrB4b4C6WQvJkSPvqSTGmpPHIA8+oDsT4+/KVXHiKCAqHYpWqxmQLICXwQzwzI2WEyAQ
-         ud/HxRxO5fcYf1oo+D1luaHxz07Bq1bIv9xNpaqo3d5Tuj7j/CM6QaB+hf2Pl+kKhOCS
-         AliY5XVuhl/nhDAnN+Aw4C+8Vaflh9NceD3TVtJaKZLemTev7O36ufh7c1VHzeKZlERp
-         mmGw==
-X-Forwarded-Encrypted: i=1; AFNElJ/99fkhmy0SLhsFRFah6XPrB0pYKSoJsL/WPkN8stuvR4EgOYwjHNG/eRyMHidrTqq6/9x5hjikEBLy4PEOg2H1MQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4IetQMufVozVag90TpYJvbzaaVRs5xqQPAw9uBV28WXz7DOGj
-	XsuFS2c55ix7+x5qwyw7SfknSwi+wIuu1m/fQSx5yke+K1tOES67ZV1qG/Xcy2DFvJU=
-X-Gm-Gg: AfdE7cnUQAl2PRAI2db1oWXQNxwOixD1aSREyd5x+t24bcQ/gxXQJVjSMfp2QajWEJe
-	pvayt6+T2UHmKikHU9i0ptd0dfKyuALQOj+gWRxuTQU+7twEKjwjtCBTmRWhG5dc9CY1fTUEc6e
-	NOS8CnAOLe+6c35/f0izo4y4OLVptMB/fvRksNdxtNkRz4m1yR94WXDl4uLvGbOvZL9R6Uv9x2O
-	1uR097uYVosnV/GsAkVajTMa9gU5RxkhhKgkw3oUvqyHQRhTl+jv3yrMFLQS04/jWvpH1Epk+7z
-	uKtozYYb/NrOWElj/e1vefbyXBnNh8a9XjiynolmquRLbDHjZ5jGHBBEc43K6YdrMalyCNpqQC9
-	+74MkzOpv774qmBoMAVw/0lHppP/gs7y84NobIDTCJv1R+nZaxBblwNnGhXcJz5jmYN/3sIdgoB
-	yNL89bS7fAqf8pOxfVEXcorBCT7z9DdTF3NSwE+n2P23ojy+3mYvvBFA==
-X-Received: by 2002:a05:6a00:a253:b0:846:4d4c:23f8 with SMTP id d2e1a72fcca58-847c075cb0dmr5658295b3a.1.1782984931310;
-        Thu, 02 Jul 2026 02:35:31 -0700 (PDT)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com. [209.85.210.175])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-847cb94b38asm1060534b3a.35.2026.07.02.02.35.30
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jul 2026 02:35:31 -0700 (PDT)
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-84532e3dbf7so1206561b3a.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 02:35:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ82qGEM+IAAENc7s8o3PzfiNouYInXQe+gzXVvq/CWBrClnYfuk5+VK3WBD5o4+G3qywaW0StO8XlcY7UjixUxOQw==@vger.kernel.org
-X-Received: by 2002:a05:6102:dd4:b0:650:aa33:5dd7 with SMTP id
- ada2fe7eead31-73da8519caamr2375794137.2.1782984487236; Thu, 02 Jul 2026
- 02:28:07 -0700 (PDT)
+	s=arc-20240116; t=1782985499; c=relaxed/simple;
+	bh=ECZSUW9hSj34SFz4G8bfbFkApIByTwPPDgQgHBlg2lY=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=umMYXSizRM2JDkPvHnKAoe5VARNdJGTEUPd3BTTBKgBeU9DQ9TLx2l6vxhVAIy6OI1/EJUVbak12CYfmcP+ehnHvf4vmZx2oGjNLNn8JE08PbeLfoyrMsA7VyDc6IratugezQcaHIjIUA/8pPLbxDIejH1oqF+39NRFltuGpn0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM1pHfbL; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM1pHfbL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DFE1F01564
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 09:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782985498;
+	bh=ECZSUW9hSj34SFz4G8bfbFkApIByTwPPDgQgHBlg2lY=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=CM1pHfbLgxMYkSotRohphHAwfHiS2Jq6WgdNtLNVx9uS9WhtbtNpBou5sFbv3Zfbs
+	 t4EYEkBRrQ2RPOdC3sKXIYU/bXdz1i/2PmuYsFxoCMwyYQGcvrEq342mZyLtAsgOpG
+	 w/sfT7k5FjdRPizXj5j9sXzzoLSxaH4bXp0ZuISOJV1Aj9GCea4PDHBExCwb2cLFYk
+	 vD2m1iI2wTjiyqshwUVGQuj011ZBWZgfKMQS8l8tVqa50gCgevokuKhUvpXzlG1EZ+
+	 4tnuwDISjYXV/puQzCG1Qd5pr3KEdBJbwvMtN8gpQX6Ik/85EwSf3YqBWFGGYzSx4P
+	 2QjvHhzDq8Dhw==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39b26e2ad5eso15192131fa.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 02:44:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoOdJj1eby4W2DH5XXUvVdwSsPe3kSu0EIQCRHn1Q1MVTRfLPL07tHDtDo7VtgwpS9MV6MEbu17Snqeeb+RNmEq8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr5fYUNDAGqqngc/5Wu61eywPTi+pmEfmqHBAhY8m60i1w/BZV
+	h16BjKtqQn8mwI578Qr8W3IfKkPVG2aQ96EjYcRXiJ0oQg0oKIBDlbFGH+dVY+UHvlG3lT1Dmvf
+	z2wO4fkTvn6M/B/VIt3fS+XeJqiUm/ciVxFsfoI0wXQ==
+X-Received: by 2002:a05:651c:2129:b0:39b:128e:ae5d with SMTP id
+ 38308e7fff4ca-39b36e539cdmr10506381fa.9.1782985496830; Thu, 02 Jul 2026
+ 02:44:56 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 2 Jul 2026 04:44:55 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 2 Jul 2026 04:44:55 -0500
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CAMuHMdXNG=C=XcioQUEN1M7cQgKhO0AxUyg5X+TWb2rQ3-H3fw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615-rcar-du-dsc-v5-0-aed1a28610e4@ideasonboard.com> <20260615-rcar-du-dsc-v5-3-aed1a28610e4@ideasonboard.com>
-In-Reply-To: <20260615-rcar-du-dsc-v5-3-aed1a28610e4@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 2 Jul 2026 11:27:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUoR_dUG9gHKpaR_53EcS5gm68=gqF3UE3aNApBZ5Wd_g@mail.gmail.com>
-X-Gm-Features: AVVi8Ccj1J5pvkR0bSkeR64npr1GsYH8otXyCLdk_qEnm1EVAcQxHJFY-QII4Ko
-Message-ID: <CAMuHMdUoR_dUG9gHKpaR_53EcS5gm68=gqF3UE3aNApBZ5Wd_g@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] drm/rcar-du: dsc: Add rudimentary Renesas R-Car
- V4H DSC driver
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20260629-qcom-sa8255p-emac-v11-0-1b7fb95b51f9@oss.qualcomm.com>
+ <20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com>
+ <CAMuHMdXen+E-Ai51aWBa_KV9W8Fz2cQPpT-FG_kQ7akhrrYa_A@mail.gmail.com>
+ <CAMRc=Me3jaZXiXa1sFXr=8Do4sCd+XN1pKTcWC8-0j78SjCkKA@mail.gmail.com>
+ <CAMuHMdVUBgG0EFB16OxHisbxx-sBvDKvBPNZdpyDnmBrnX4ptQ@mail.gmail.com>
+ <akOZFIowVvprnAMf@vaman> <CAMRc=MfBcOhbj=ETxy2Xz9o_nyzykrEhKAc3jYi6V5_jMZEE3Q@mail.gmail.com>
+ <CAMuHMdXNG=C=XcioQUEN1M7cQgKhO0AxUyg5X+TWb2rQ3-H3fw@mail.gmail.com>
+Date: Thu, 2 Jul 2026 04:44:55 -0500
+X-Gmail-Original-Message-ID: <CAMRc=MfwB_51OLjX_19eagZ1m3UUM2iHny5rx6besR6+Np_A0g@mail.gmail.com>
+X-Gm-Features: AVVi8Cfm4QcPsY-kBu80DyHJVbYDW8Jkdy81l2_sPTIAALqyBLBgGUF_GjAGTTs
+Message-ID: <CAMRc=MfwB_51OLjX_19eagZ1m3UUM2iHny5rx6besR6+Np_A0g@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 1/7] dt-bindings: phy: document the serdes
+ PHY on sa8255p
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
+	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois <romain.gantois@bootlin.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, Radu Rendec <rrendec@redhat.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
+	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Tomi,
-
-On Mon, 15 Jun 2026 at 15:12, Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+On Thu, 2 Jul 2026 11:16:22 +0200, Geert Uytterhoeven
+<geert@linux-m68k.org> said:
+> Hi Bartosz,
 >
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> On Thu, 2 Jul 2026 at 11:12, Bartosz Golaszewski <brgl@kernel.org> wrote:
+>> On Tue, 30 Jun 2026 12:23:16 +0200, Vinod Koul <vkoul@kernel.org> said:
+>> > On 29-06-26, 16:51, Geert Uytterhoeven wrote:
+>> >> > Russell King asked me to put the PHY logic for SCMI pm domains into the PHY
+>> >> > driver instead of the MAC driver where it was previously. Instead of cramming
+>> >> > both HLOS and firmware handling into the same driver, I figured it makes more
+>> >> > sense to have a dedicated, cleaner driver as the two share very little code (if
+>> >> > any).
+>> >>
+>> >> I think you are mixing up DT bindings and driver implementation?
+>> >
+>> > Should the bindings change if we have different driver and firmware
+>> > implementations? Isn't binding supposed to be agnostic of
+>> > implementations..?
+>>
+>> I've thought about it some more and I believe this question is philosophical in
+>> nature.
+>>
+>> sa8775p and sa8255p are *the same* hardware. I can flash different firmware on
+>> the same Lemans Ride board and it becomes one or the other. Yet they are not
+>> described by the same DTS and the bindings differ as well. I don't see why we
+>> wouldn't allow the same approach for the this PHY.
+>>
+>> We treat it as different HW variant when it's managed by firmware - just like
+>> we do with the rest of the SoC.
 >
-> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> 8k or 400 Mpixel/s. Add rudimentary driver, which currently acts as a
-> pass-through bridge and allows DSI1 to be operational on R-Car V4H.
+> DT describes hardware, not software policy.
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: use bridge->next_bridge, minor changes]
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-> --- /dev/null
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c
+I'll defer to DT maintainers then for that particular case because it affects
+more than just this platform. For instance: Qualcomm Nord[1] is already being
+upstreamed with a similar split into common parts and then sources specific to
+the SCMI and non-SCMI variants - even though it's the same SoC.
 
-> +static const struct drm_bridge_funcs rcar_dsc_bridge_ops = {
-> +       .attach = rcar_dsc_attach,
-> +       .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> +       .atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-> +       .atomic_reset = drm_atomic_helper_bridge_reset,
+Bartosz
 
-As of commit 57acfbe5bbc16624 ("drm/atomic-state-helper: Remove
-drm_atomic_helper_bridge_reset()") in drm-misc/for-linux-next, this
-no longer builds:
-
--       .atomic_reset = drm_atomic_helper_bridge_reset,
-+       .atomic_create_state = drm_atomic_helper_bridge_create_state,
-
-> +       .atomic_enable = rcar_dsc_atomic_enable,
-> +       .atomic_disable = rcar_dsc_atomic_disable,
-> +       .mode_valid = rcar_dsc_bridge_mode_valid,
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[1] https://lore.kernel.org/all/20260526051300.1669201-1-shengchao.guo@oss.qualcomm.com/
