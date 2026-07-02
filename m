@@ -1,104 +1,128 @@
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF713947B5
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  1 Jul 2026 21:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7668F39D3DA
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 07:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782942463; cv=none; b=FyVSejaCSalqNmGRa7VYueVWWs0ywDXwU/oorknYxZ4mB6dSOn131sX1I35ZnvJFoYI/o1uCfFYiAuttJPa2ce1Cg8WUTbasAvAXfTJr6MXazfO6yD1TDfjZR47t+7F+ReB6BnJ2+fBwBYuwZ7xoYxWnwCNHx8jfVpOSTlZ3Wgg=
+	t=1782977918; cv=none; b=oXwGX7dkct7wzsRGhwBcvKdfoHXVTtT9T3cNNExdLomofB3mMxJuMyjPN/jLKpgjgDAnp6zwLGcyyF0Mc1MjMNOx+R/61oIrjJo4ugE6AVkCq6naAloGXXmNDNa84myX1kLa70YCtXCdfX2aW7vX2V879m2W59PiKh0pQlzeC9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782942463; c=relaxed/simple;
-	bh=U1MHLwzs2hVH2Bl+EC1aDM8E/bTMCVplBdWelSXv1rA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jb7aXxAfCEf9iOXjce2Co2U5PEGeIrkHF2VHDkw7EoZ0CNuGR35j+BRrks5iNiqpMsWi9NVUTcpWMU4aoc3dOAV014FmHTT9X3Rui9ko8qz+Abc3WpfRDQz1LfL+ZjQo4KAIbGjayvz1y+i77yFu7Ry7SQurth97MLl54Gv/Lgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rzoGVCf9; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1782977918; c=relaxed/simple;
+	bh=DdLjUC1ksuo+PVzG3yADpMg7xDZKtpZfVtK9cx+fcI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Em/pYFr+CkeHuo5xd/Njni8dUqX6/7vwP4zh2jZrlCBe4rw4tspto5L4CfOkxZ/1iIlaUZeuNIeoG7PdjvPNCR0vhsug/6tA+GqNsIrtHHIsMBSjYahh0inwAkpSG5H5GMqbdHYYaH1PccqUKtyuHRnp3eQb89tVcpBiJd4pjrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BV018Qxe; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rzoGVCf9"
-Message-ID: <89720193-e8ad-4bb3-b6d2-3253413b18ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782942450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zfnpZAPYTjU1y1/bwelr25Tajv7sMv4wyV/Tmx+tLN8=;
-	b=rzoGVCf9Acoz9pVzpj75/n7UWOFKgNHVycrnsStv71NID/Qz5Ub0cTx3lcOw5vNVod2J6N
-	TsrOJMMr/45V3a5iN9QYmSE0AT8pNjLNo09jOfmP6GhFin4fHZ8svOooad4TGjqFxRENlu
-	Ic/WX4RdMeR75Zo13tcGVVOEwoSEDrA=
-Date: Wed, 1 Jul 2026 22:47:16 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BV018Qxe"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4745492ed3aso908890f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 00:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782977915; x=1783582715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+eqRtwOb4f8aCqe1mEHXBn99q8o4sBYVGzbWmzuP10=;
+        b=BV018QxeEXIfBas2KL/xdTtJqXoWWriDanZZ4iJX997qalMvcQiqzP1vRBTbmzJ6M1
+         A2AoDO+ze0OX5y0Jix4VuVGnpsUXakv6MgT/GQ5BOobpuzHBTV39ovrniCk8U+8xBJ3y
+         D8XMiaDUCMJdsiXEmZSQQaKUmdbCjAWmKdwgRzTwiPZ0TMh92IzRLwnsqQvTRFTZYPdt
+         BghKH7W7WvCpIMt2xZ7stfr67IV7TcnJCmwizWGumZQ7lxZnjLTymyeW7Gj+rd0BVTli
+         HZb1F1UCjPZbOt30UldGwXrO2MLa0e6/yLHjj0I8YjgHI76eHAHK/LulyX8s0gyL7/oZ
+         CFHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782977915; x=1783582715;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+eqRtwOb4f8aCqe1mEHXBn99q8o4sBYVGzbWmzuP10=;
+        b=MYvM8zYwpw2E4qSo/FyOIp9T39f4MAaOe0TSgfqDZC0g1uCC2XfH1tAtf0wz21A+/T
+         c93ckXQJrpKlDIUYRGrPnLqfbjQyNcUTq8s+bk3TTZUJsJdauT4AgbxP4SCvpvQBF3dV
+         Z2pY1HpxoNpOORgrv1nRrpsFMZJ4Ogl8s77E4tUcPNo9m9Saq74icZPsNlBi6WlsXBHt
+         5XuCdzCtUG9zWYgP3M9urC5tLbHcykc0aBi7fBllgjkFBUDxuU6BsQ4H5S0+5cUgwY+A
+         PBFJhU91pOCJCv00v44BRUM+lcZd5YjVSImYj2kcdsxiOLs2XvMkdTeUseJUYO8mrouR
+         x0hQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqtthMYq0r0grujfEa75IZQOZFDwXQayK2nF151nrceR1rDsCdjXHDs5py0JvRyb0H95p5vi0c8WMAY9zU0mcFO/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9CJBevsalYs/J+lDzoe1mrK4rzVtavAITTQfIRaxTq5cSBIrI
+	vIdLR9apFTPYP/N5Qs9QD2UC6rc8XTqkHalYJDxP+Q66z+zW1FpdRoTo
+X-Gm-Gg: AfdE7cmKsJsHJsmKrVys8Mra2UGUsBBXE86rpn5SYTNljr4WdSVzmU0gpk9dZoRbmtF
+	v/xoiQPmBynyS4RDKgLPtrFd2IIr90R6JWbjYoXPd5arVqW9uA8ZFfqixcbzmmg5aOicPouDmlw
+	tHqCnzZq5NMCTvCndjEwYgqJ0AezACWSk+8oSiwKvyOvk+/B1mWpVOU/DiWBL3/T4zQnU4psvOT
+	wx746JmjutApHbJV81TOQnCBIIQpXt3htjaabIGmNZs3A6hn3mw/5HXIFSOAW44S6Y4CTV3M7/E
+	no8CewCM5zesgESKpD9IVQZ21sLKO4wt4+C81qErFWw5TaBnMGS/yqsd+DzIjWRmmwHuKgFqgc6
+	oQHu9NAD4ADVO7MchBvBjKJoDD/azcwWg0t3mUK5X4Upsb2lPWfvv6YPfZjeaoO8i2NRvFHRgcB
+	Fmwf7KxC5D2/kib6iQ0OYBqkDT+rgXD88Od6w95Q==
+X-Received: by 2002:a05:6000:607:b0:461:9950:da50 with SMTP id ffacd0b85a97d-477574b0300mr7823320f8f.11.1782977914687;
+        Thu, 02 Jul 2026 00:38:34 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:8d97:896e:a65c:20e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477de3dd0b1sm6331170f8f.35.2026.07.02.00.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jul 2026 00:38:34 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fan Wu <fanwu01@zju.edu.cn>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] usb: renesas_usbhs: Fix power-off ordering on unbind
+Date: Thu,  2 Jul 2026 08:38:29 +0100
+Message-ID: <20260702073832.175047-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 2/3] ptp: Add driver for R-Car Gen4
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "DavidS. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20260701090607.1108208-1-niklas.soderlund+renesas@ragnatech.se>
- <20260701090607.1108208-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20260701090607.1108208-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 01/07/2026 10:06, Niklas SÃ¶derlund wrote:
-> Add driver for the gPTP timer found on R-Car Gen4 devices. The timer is
-> system-wide and shared by different Ethernet devices on each Gen4
-> platform. The operation of the timer is however not completely in
-> depended of the systems Ethernet devices.
-> 
->    - On R-Car S4 is gated by the RSWITCH Ethernet module clock.
-> 
->    - On R-Car V4H is gated by the RTSN Ethernet module clock.
-> 
->    - On R-Car V4M is gated by its own module clock, the system have
->      neither RTSN or RSWITCH device. But the module clock is the same as
->      RTSN on V4H and the documentation referees to it as tsn (EtherTSN).
-> 
-> The gPTP device do have its own register space on all three platforms.
-> But on S4 and V4H it will share its clock and reset property with
-> RSWITCH or RTSN, respectively.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[...]
+Move the usbhsc_power_ctrl() call to before hardware_exit() and
+reset_control_assert() in usbhs_remove(), so the PHY is powered off
+while priv->phy is still valid, rather than after hardware_exit()
+has already cleared it.
 
-> +static int ptp_rcar_gen4_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
-> +{
-> +	struct ptp_rcar_gen4_priv *priv = ptp_to_priv(ptp);
-> +	s64 addend = priv->default_addend;
-> +	bool neg_adj = scaled_ppm < 0;
-> +	unsigned long flags;
-> +	s64 diff;
-> +
-> +	if (neg_adj)
-> +		scaled_ppm = -scaled_ppm;
-> +	diff = div_s64(addend * scaled_ppm_to_ppb(scaled_ppm), NSEC_PER_SEC);
-> +	addend = neg_adj ? addend - diff : addend + diff;
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +	iowrite32(addend, priv->base + PTPTIVC0_REG);
+Fixes: eb9ac779830b ("usb: renesas_usbhs: Fix synchronous external abort on unbind")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Moved reset_control_assert() to avoid synchronous abort
+   during unbind.
+ * Updated commit description
+---
+ drivers/usb/renesas_usbhs/common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-how are you so sure that addend will always fit into s32? It looks like
-it may go over in some cases, no?
-
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 8c93bde4b816..51d3035f82be 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -813,9 +813,6 @@ static void usbhs_remove(struct platform_device *pdev)
+ 
+ 	flush_delayed_work(&priv->notify_hotplug_work);
+ 
+-	usbhs_platform_call(priv, hardware_exit, pdev);
+-	reset_control_assert(priv->rsts);
+-
+ 	/*
+ 	 * Explicitly free the IRQ to ensure the interrupt handler is
+ 	 * disabled and synchronized before freeing resources.
+@@ -832,6 +829,9 @@ static void usbhs_remove(struct platform_device *pdev)
+ 	if (!usbhs_get_dparam(priv, runtime_pwctrl))
+ 		usbhsc_power_ctrl(priv, 0);
+ 
++	usbhs_platform_call(priv, hardware_exit, pdev);
++	reset_control_assert(priv->rsts);
++
+ 	usbhsc_clk_put(priv);
+ 	pm_runtime_disable(&pdev->dev);
+ }
+-- 
+2.43.0
 
