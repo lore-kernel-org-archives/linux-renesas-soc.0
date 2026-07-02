@@ -1,63 +1,63 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FC4481FC9
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 12:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F677480320
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 12:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782995501; cv=none; b=itBGquJEYKjVQgucOlkZ+tD4OYMYL4j2sUE8sPXICSPU8EgMr/H8P+JCUpEk+w6ryb174x+wuR/ib7nnTdYOYuvkjEKrW17xKGN9Mmps4Xadw/d7eZqmXeOxqBJIOif79D2rA6rs+FI+vs7TxmrVWBT2C8W4LeJQoj1nZHv7zbE=
+	t=1782995501; cv=none; b=oFqcaHqSC8HB7AkZqIFiTn/MUjfBLXCiOlLtDHLWVXg60yHyzbfEHqDGeoXsdcC98hVKyzmpuLUirEn5V/YHxiob51NiPTJSsZDUdiLZ1GvtHHntEe7qC5dBGeaNfbABtnnL9+XUII9nrr1uvuApNDDrxaYNmJbpOP0Bt/Rf6jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782995501; c=relaxed/simple;
-	bh=8SJCiMa3lPfv/rTE+pQQTxr30mOA3gxwQGR0gmNnTo4=;
+	bh=LLBGYETo7UHzw7JEEb38VkUBZTw9MmReiAAkH02D5Ug=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AaQVqnzf1r26O6bkdPwlneQ4xlU3269KH16sdC3LTnIwOIUzfAJkcE0u2mNF5iFSWJ6NSI47aooWqM8x0NVTrR4//00zeLhbGK/AlRQRkRH5UOqyIMhKWwpoIVlxmO68KZDlzMc6CRDRSV++lwPf9ZuOUwllu53aVy/aqTNP8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFtZPpZc; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=AJ1jTfJekbPhnj40Uhgo3zHucUcctaRm6mhfVcaBT//Sd5PLbVBz9k3eTuSvr/R5d1zCiHj5x4Vs24b96c18p5nhhEzzLtWgg3n3i95XyhA2KoaQJDm2eaZvLgwhQOjwNhNjQ6LN7w5vbogMXruAo+87ZOb1HO6AGyL7hBCG4TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCxdiOQN; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFtZPpZc"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493b68b4643so10708625e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 05:31:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCxdiOQN"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-475417f010dso1147923f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 05:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782995493; x=1783600293; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1782995491; x=1783600291; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=eithLOELKkNE1v5JgvDJ80gc2YnZ90Sl+cwRSRw9Ky4=;
-        b=fFtZPpZcwflwpwdK16YVWrNmW7n/qa44AsCSQI07AHAuFa37DKYx6L4K9SbAkjzNUF
-         7IN4qTxFfj3OCbin1rZ6jD3wggKqO6v3urGiEjXI20ZJgf0wcr0ej2o1myZnGZVgGTPE
-         71i6Ia5NjM/Pq/tfKudmICHcT4VxH50VwaAvbpofgJ/BFM4QwSnZuubNjeRkTWpKwAkB
-         Wrh79oklEU/PJp3d24kjihwkT287j7EmXhxL2rB+MHJovEquSCTcrsTpQGcOjz9GLW2x
-         xtxWWjgcbgaYlKT4J3y638Ki+oKjfRJlG5rpIVyYrWoj3FH3eRl1fFz8KmZV0xSf9J5D
-         y+aQ==
+         :message-id:reply-to;
+        bh=iBG6RmxV0wZ1TxKhcgYIrEKKrZLQUV/g3tbFJ1MS3eY=;
+        b=cCxdiOQNZF6pdZJUiVh8W16Wm9wHd8SF6ICU4QhNy4nuF6lMFPoNUe2WPM4hQUnhDD
+         LT9hMOSWctl1eLGUkwu9rFKqi+MmsdwuFtDHGn+kyIHoQaZKmmsUO7V10SS5WjlJ8wOh
+         sblKIxeOCilY6vzllFbhoV56yuwQvdhyyPGi/ZmOAp630IPMfCHpSg9Mbwdi56Xf6oMt
+         MyUVJtjKFSDcYor4jCFLw2x4aaP640aaM4PLxmt6GAgmrxYD7+GV+bGkPbIYLt0yOME7
+         7SfA8e7lIR4bJ98pm7KqrgtFM/Nd5iDpagcoyr2HHX4QNW9PbGlhEqRfYI2ruaVue4xo
+         Xdcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782995493; x=1783600293;
+        d=1e100.net; s=20251104; t=1782995491; x=1783600291;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=eithLOELKkNE1v5JgvDJ80gc2YnZ90Sl+cwRSRw9Ky4=;
-        b=irzNiNBTGS4pT+jIg+ujBEFBc1yJzz6Aq7WHapGu8hA7B71VrlMop6MjjuptkPL1dp
-         ZbjXYZyOcbsvHoLruVHfCKnyiQGObgWCxILnfSvw/Q24SISLv8c0hQ7brVSGn9qkL5Y8
-         RF0ddpZhV6KejREcVJh47ociVctattvcYpcncZ6D8CBx2eEQ733EQ0ioEQErWpTKOOYY
-         MAiwSa5mfUxZWtU0tZM+Ki5BR/uO18G/EirCjF6pmANml+PO069i7M75YUB4guW1CZEh
-         ezDp4ZptX++ZAQWJakcUojvu3+yZsXmT+0wDYR7dfG/vfUqjBzg/Jeccs4zYf8eNKdEV
-         Omwg==
-X-Gm-Message-State: AOJu0Yzns+Pt314XsdTHVYXtfJ6jJGcEpLtEnd0LxqGVq20tJmUe/yA4
-	sXuiYzUXsZ3/d3Rk6AbHRLVaWPMlfjO9Yq/ce/VKf1+jxAH6+QPCUFBH
-X-Gm-Gg: AfdE7cnP9RfPe0bQ+JFjehHFpbPbhsR48GKsa2K/k9w18o9T+0cqa56K8j2UKZuFZh2
-	4iXPXeMe7s2ePZhLiBdAWJQX+qfEtjaIw7slB4r+xVtM7q4dx2D43to0Tp7ETul10bcK+IWpMpR
-	CJbTNS8nv00HjZL9p87PsqBtkhw8o2dOpup6WF8JItd8I+SJ8FKuRmQfXHoWQVOFzpVMKj7JBRF
-	CWsP38NARCOCBJgQLQXpOjJDFRNFbx4ON8jqXnrLBjfAKcaSWKFUe5Ye3V/C/+BXnmLZ2MnNXG8
-	b1xOQpVa+/FLYBJQcUoI8CSgrDHrgZewwiKq/F44wKup01Kue2u8DdHXEuApqr/dAHQVSPRF841
-	dwdaFNjDS/QsAMQku6cQApnptC22Rsu5FaE/yW1ggl2Yv2DZd4ZskOlr2uAHCwWTvPnC5mvWXTl
-	ub/vfAG8e7Qn2ptze1Cgj266k9KFznJW3jDyqm0r63JqX6UaKDd05vuwLYq6aqYJ97y1HGF0KUk
-	VRZTZTYTpRa9vInaLgnJIjmlYw=
-X-Received: by 2002:a05:600c:34c8:b0:493:a5f9:d345 with SMTP id 5b1f17b1804b1-493c3cf0a35mr71155705e9.26.1782995492556;
-        Thu, 02 Jul 2026 05:31:32 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iBG6RmxV0wZ1TxKhcgYIrEKKrZLQUV/g3tbFJ1MS3eY=;
+        b=BfECnxoXtkKDD9LGTEJ53KVMEBNgBurXISmr0N+gpSmsXXL32pkj71Hj2v2XdnjEqi
+         8ReXetrpFTpyNtsDtI+McnKSQ3urCwSgl0xcW4iGlMejq3oxi5mw66Qr3T6vafXqRYIO
+         GKJYVkwPehS9ykC40vnmc3rYS45dZiDOfzIjmqnU3V/Ezez8fXYjTwzs5GEEVtojeXtc
+         4HiGL8I31QbnYVLx1iddJoWXhVlfe7kSf1WCGCXh0rwIOStIYppLzY33F/kqA20z0XVT
+         Js8s81FT5H/e8G38TxB8bDSZz8cCMimiRISmKtO3nTg8PqYuLAUMQIDZhtaSky/RVlGq
+         hthw==
+X-Gm-Message-State: AOJu0Yy/RdHXmdvR+5IqqNRhFmzLLI8QooLdIkp53/8/re8KdjncmPI8
+	JmWPPRsx1ATj2fFjnHikkqzwhG9LDjV7vBm+WyFODSyF04BVw3TZdJll
+X-Gm-Gg: AfdE7cmV2b3GKgsHt+Ilc6H9pchsqfEdxrIEP/aF61f3LWEbb5lAGKSxREE45GGF7Zd
+	jj9+Wyn+TNcjBM7X7JbVnf4kuYKGs8UtM/hOIhqqfDrRnYo4oLY43AZAEV5t0UvHaVKaDAt/Re0
+	EI0g3KIi7nBAvbgVQ3+xc2jQTMFEc2x6ZpL4J6vSSswr8f9ZJvd78pVheg2LhnBRJb6Ib3CCMVG
+	sKdGng8vE7a+4JZ9JWRvxfPmp5ABbjXRAAW1pR2WXCHjYnkSE+1oHCAoHdPEYkqq0D1W2PFy6br
+	YdOTszcQWdR3EE2WeRKPhGenWdBme4Zp6XVwtUDDpinrMTo1qDbz0kBNozsetZWKF7ZxEdwqnCl
+	JDVUwW8K1VJt4hxlEfvM+tHt5m/t1tJC3h+OwYAzVQkV2gb2wN70+/5jyVah0X3dd7ax/WWbD91
+	Pn4pRYKeH5pEBjJxc0Ed5vwDLoW/48dCeR2qXnOSwV0tEbc3XBa9bYI56VX/nVkbTg4t1RkKPWI
+	HjNT3gaCuA2O6zbw5MkKGYXhxM=
+X-Received: by 2002:a5d:6f1b:0:b0:472:67de:27c2 with SMTP id ffacd0b85a97d-47759568433mr8144074f8f.40.1782995490822;
+        Thu, 02 Jul 2026 05:31:30 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:7a4b:58b4:175e:8c2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477ddf0f433sm9772923f8f.32.2026.07.02.05.31.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477ddf0f433sm9772923f8f.32.2026.07.02.05.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 05:31:32 -0700 (PDT)
+        Thu, 02 Jul 2026 05:31:30 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -80,9 +80,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC v2 9/9] arm64: dts: renesas: r9a09g087: Use SYS syscon for WDTDCR access
-Date: Thu,  2 Jul 2026 13:31:12 +0100
-Message-ID: <20260702123112.161160-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC v2 7/9] watchdog: rzv2h: Add syscon support for RZ/T2H and RZ/N2H WDT control register
+Date: Thu,  2 Jul 2026 13:31:10 +0100
+Message-ID: <20260702123112.161160-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -96,101 +96,244 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The WDTDCR registers for wdt0-wdt5 reside in the second region of the
-System Controller (SYSC) block at 0x81290000, which is now managed by
-the dedicated SYSC driver and exposed via a unified syscon regmap
-interface.
+On RZ/T2H and RZ/N2H SoCs the WDTDCR register resides in the second
+region of the System Controller (SYS) block at 0x81290000, which is
+shared with other peripherals. A dedicated SYS driver now manages this
+region and exposes it via a syscon regmap interface, making direct
+mapping of the WDTDCR register by the WDT driver no longer viable.
 
-Replace the direct mapping of the individual WDTDCR registers with the
-new "renesas,sys" phandle property pointing to the SYS syscon
-node.
+Update the WDT driver to support both access methods to maintain
+backward compatibility with old device trees that use direct mapping:
+
+  New binding (syscon):
+    reg = <0 0x80082800 0 0x400>;
+    renesas,sys = <&sys1 2>;
+
+  Old binding (direct mapping):
+    reg = <0 0x80082800 0 0x400>,
+          <0 0x81295108 0 0x04>;
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v1->v2:
 - No change.
 ---
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/watchdog/Kconfig     |  1 +
+ drivers/watchdog/rzv2h_wdt.c | 96 +++++++++++++++++++++++++++++-------
+ 2 files changed, 79 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 165c404dfd36..90a2fd02ae89 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -327,61 +327,61 @@ channel1 {
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 08cb8612d41f..c48293f93ff5 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1007,6 +1007,7 @@ config RENESAS_RZV2HWDT
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on PM || COMPILE_TEST
+ 	select WATCHDOG_CORE
++	select MFD_SYSCON
+ 	help
+ 	  This driver adds watchdog support for the integrated watchdogs in the
+ 	  Renesas RZ/{G3E,V2H(P)} SoCs. These watchdogs can be used to reset a
+diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
+index e9545b8f5fd0..e14ff853a4e9 100644
+--- a/drivers/watchdog/rzv2h_wdt.c
++++ b/drivers/watchdog/rzv2h_wdt.c
+@@ -8,10 +8,12 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/units.h>
+ #include <linux/watchdog.h>
+@@ -45,6 +47,10 @@
  
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082000 0 0x400>,
--			      <0 0x81295100 0 0x04>;
-+			reg = <0 0x80082000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 0>;
- 			status = "disabled";
- 		};
+ #define WDT_DEFAULT_TIMEOUT	60U
  
- 		wdt1: watchdog@80082400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082400 0 0x400>,
--			      <0 0x81295104 0 0x04>;
-+			reg = <0 0x80082400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 1>;
- 			status = "disabled";
- 		};
++#define RZT2H_WDT_MAX_INSTANCES	6
++
++#define RZT2H_WDTDCR_OFFSET(n)	(0x5100 + (n) * 4)
++
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+ module_param(nowayout, bool, 0);
+ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+@@ -65,6 +71,11 @@ struct rzv2h_of_data {
+ 	bool wdtdcr;
+ };
  
- 		wdt2: watchdog@80082800 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082800 0 0x400>,
--			      <0 0x81295108 0 0x04>;
-+			reg = <0 0x80082800 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 2>;
- 			status = "disabled";
- 		};
++struct rzv2h_sys_wdtdcr {
++	struct regmap *regmap;
++	unsigned int offset;
++};
++
+ struct rzv2h_wdt_priv {
+ 	void __iomem *base;
+ 	void __iomem *wdtdcr;
+@@ -73,6 +84,7 @@ struct rzv2h_wdt_priv {
+ 	struct reset_control *rstc;
+ 	struct watchdog_device wdev;
+ 	const struct rzv2h_of_data *of_data;
++	struct rzv2h_sys_wdtdcr sysc;
+ };
  
- 		wdt3: watchdog@80082c00 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082c00 0 0x400>,
--			      <0 0x8129510c 0 0x04>;
-+			reg = <0 0x80082c00 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 3>;
- 			status = "disabled";
- 		};
+ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+@@ -89,9 +101,18 @@ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+ 	return 0;
+ }
  
- 		wdt4: watchdog@80083000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083000 0 0x400>,
--			      <0 0x81295110 0 0x04>;
-+			reg = <0 0x80083000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 4>;
- 			status = "disabled";
- 		};
+-static void rzt2h_wdt_wdtdcr_count_ctrl(struct rzv2h_wdt_priv *priv, bool start)
++static int rzt2h_wdt_wdtdcr_count_ctrl(struct rzv2h_wdt_priv *priv, bool start)
+ {
+-	u32 reg = readl(priv->wdtdcr + WDTDCR);
++	struct rzv2h_sys_wdtdcr *sysc = &priv->sysc;
++	u32 reg;
++
++	if (sysc->regmap) {
++		return regmap_update_bits(sysc->regmap, sysc->offset,
++					  WDTDCR_WDTSTOPCTRL,
++					  start ? 0 : WDTDCR_WDTSTOPCTRL);
++	}
++
++	reg = readl(priv->wdtdcr + WDTDCR);
  
- 		wdt5: watchdog@80083400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083400 0 0x400>,
--			      <0 0x81295114 0 0x04>;
-+			reg = <0 0x80083400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sys = <&sys1 5>;
- 			status = "disabled";
- 		};
+ 	if (start)
+ 		reg &= ~WDTDCR_WDTSTOPCTRL;
+@@ -99,16 +120,18 @@ static void rzt2h_wdt_wdtdcr_count_ctrl(struct rzv2h_wdt_priv *priv, bool start)
+ 		reg |= WDTDCR_WDTSTOPCTRL;
  
+ 	writel(reg, priv->wdtdcr + WDTDCR);
++
++	return 0;
+ }
+ 
+-static void rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
++static int rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
+ {
+-	rzt2h_wdt_wdtdcr_count_ctrl(priv, false);
++	return rzt2h_wdt_wdtdcr_count_ctrl(priv, false);
+ }
+ 
+-static void rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
++static int rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
+ {
+-	rzt2h_wdt_wdtdcr_count_ctrl(priv, true);
++	return rzt2h_wdt_wdtdcr_count_ctrl(priv, true);
+ }
+ 
+ static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+@@ -158,8 +181,14 @@ static int rzv2h_wdt_start(struct watchdog_device *wdev)
+ 	rzv2h_wdt_setup(wdev, of_data->cks_max | WDTCR_RPSS_100 |
+ 			WDTCR_RPES_0 | of_data->tops);
+ 
+-	if (priv->of_data->wdtdcr)
+-		rzt2h_wdt_wdtdcr_count_start(priv);
++	if (priv->of_data->wdtdcr) {
++		ret = rzt2h_wdt_wdtdcr_count_start(priv);
++		if (ret) {
++			reset_control_assert(priv->rstc);
++			pm_runtime_put(wdev->parent);
++			return ret;
++		}
++	}
+ 
+ 	/*
+ 	 * Down counting starts after writing the sequence 00h -> FFh to the
+@@ -179,8 +208,13 @@ static int rzv2h_wdt_stop(struct watchdog_device *wdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (priv->of_data->wdtdcr)
+-		rzt2h_wdt_wdtdcr_count_stop(priv);
++	if (priv->of_data->wdtdcr) {
++		ret = rzt2h_wdt_wdtdcr_count_stop(priv);
++		if (ret) {
++			reset_control_deassert(priv->rstc);
++			return ret;
++		}
++	}
+ 
+ 	pm_runtime_put(wdev->parent);
+ 
+@@ -196,9 +230,10 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+ 			     unsigned long action, void *data)
+ {
+ 	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
++	bool active = watchdog_active(wdev);
+ 	int ret;
+ 
+-	if (!watchdog_active(wdev)) {
++	if (!active) {
+ 		ret = clk_enable(priv->pclk);
+ 		if (ret)
+ 			return ret;
+@@ -242,8 +277,17 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+ 	rzv2h_wdt_setup(wdev, priv->of_data->cks_min | WDTCR_RPSS_25 |
+ 			WDTCR_RPES_75 | WDTCR_TOPS_1024);
+ 
+-	if (priv->of_data->wdtdcr)
+-		rzt2h_wdt_wdtdcr_count_start(priv);
++	if (priv->of_data->wdtdcr) {
++		ret = rzt2h_wdt_wdtdcr_count_start(priv);
++		if (ret) {
++			if (!active) {
++				reset_control_assert(priv->rstc);
++				clk_disable(priv->oscclk);
++				clk_disable(priv->pclk);
++			}
++			return ret;
++		}
++	}
+ 
+ 	rzv2h_wdt_ping(wdev);
+ 
+@@ -264,21 +308,37 @@ static const struct watchdog_ops rzv2h_wdt_ops = {
+ static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
+ 				 struct rzv2h_wdt_priv *priv)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	int ret;
+ 
+-	priv->wdtdcr = devm_platform_ioremap_resource(pdev, 1);
+-	if (IS_ERR(priv->wdtdcr))
+-		return PTR_ERR(priv->wdtdcr);
++	if (of_property_present(np, "renesas,sys")) {
++		struct rzv2h_sys_wdtdcr *sysc = &priv->sysc;
++		unsigned int wdt_index;
++
++		sysc->regmap = syscon_regmap_lookup_by_phandle_args(np, "renesas,sys",
++								    1, &wdt_index);
++		if (IS_ERR(sysc->regmap))
++			return PTR_ERR(sysc->regmap);
++
++		if (wdt_index >= RZT2H_WDT_MAX_INSTANCES)
++			return -EINVAL;
++
++		sysc->offset = RZT2H_WDTDCR_OFFSET(wdt_index);
++	} else {
++		priv->wdtdcr = devm_platform_ioremap_resource(pdev, 1);
++		if (IS_ERR(priv->wdtdcr))
++			return PTR_ERR(priv->wdtdcr);
++	}
+ 
+ 	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	rzt2h_wdt_wdtdcr_count_stop(priv);
++	ret = rzt2h_wdt_wdtdcr_count_stop(priv);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int rzv2h_wdt_probe(struct platform_device *pdev)
 -- 
 2.54.0
 
