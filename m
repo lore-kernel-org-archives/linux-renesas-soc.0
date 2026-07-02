@@ -1,64 +1,64 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39916318ED7
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 16:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D65340416
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 16:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783008314; cv=none; b=BWIwx9OrRXBqQlFHt/nt5rV7Qdft9f3AHZgl2aAxPjI8U2xeP5i77wLTa94r2nUkst4nQLrztDYDKzlE3ORkrpwvgRhufQXsg1fUF3Qz+kn7bST12SJv030T8CDPC0+0M+Ol69gAuQLeE+ZoauzeuM+MPwgCFINlGzrVeicmkUs=
+	t=1783008316; cv=none; b=CvIT5Zm6/BXiiXwkMSo5Ba98WwFPNjKCVrHJOLDHu9ekRqb/d4tVrTffwPixhgzbIo2N66blywLpvzw6Zh1SKpjD4+85fSYMCV0jAlRFX69+fnvR+4aGrTaZucOOHolcr1PnkbIMUfoLbPwVW3ka8POR/Gd2YaVWis0tmMF5Yeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783008314; c=relaxed/simple;
-	bh=nDJAbJCFuUB7OnJXjKjnKvBkXflAc5qn8SUxoJPyYn8=;
+	s=arc-20240116; t=1783008316; c=relaxed/simple;
+	bh=U1yr0rmZWpngaJ/BudO4/jmhPQiRqYk79Fyt/OQ0N5E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nwKuxJBbjLkASs0Hv8NvQ3FrKmi88NpJ/f1aZj/3peY64QqovGRBPhEofgO4h9+ldHxTOBzojCkP3dfjHMrPogbqdC0W9RLvTveMxhVYrJVsRD1kqKVoYGb2drjwPvmK3QIyUFcauFFuLRv+YxksZVQ1h/qxSJBsx5CEEmm/FOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pwEAZgGo; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=AQvnycKyhe7NeYCSIyoNIKaCBfN9qEKos21urS9TUCuBtqeJTdS4V0GlrbROI25NT+SSCJc3dBmsAyHPxquXOp09er4N4cPh3Ni24pDpshNrYfGqq4CuyDJfXLD9vQBIVvJEX5TlPcE9AI1CZYTX0n5gtvXDFFWUSKQGYBMrzFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhhGXzKf; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pwEAZgGo"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493c52cde9eso12094505e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 09:05:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhhGXzKf"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493c2c0b9a8so13784655e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 09:05:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783008312; x=1783613112; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783008313; x=1783613113; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2Av9KMOeHNoLZjJvkQ1HtWMUmgg+DhH4RllPkn9qKDs=;
-        b=pwEAZgGo+aJVKaOMSA+BI4DL7U/LgVBrDmWkbU8sQZovQb6Ush0lx/LVr9x56ga4Xi
-         +hwyMWunrGoXPa4IdXMWhrBAIIOtgN2qn4URSG/b8sJe1F/2Ux9iw6BEK1P3fzUeXLkG
-         PBVVHyXPSzPAF1IZgEPn073HBqWr9EXUlm1CMsz2nTVyEfvbByE5IBD8rrMuCGsG3qCn
-         TSJTDB/nVWmVoZc95CmE+8uvkvdrVpPJyVKdnHux/2WhBWe2r/dlJGTg9w/HppENtoYP
-         onUPd89pIycPbe+y004uKJdJnbkTz2RcaVKaDGKfAZW8j38iOI2Flm2J677mVf6ShEH4
-         IeBQ==
+        bh=FziwhrrBaAoQlQIWrQ6Wv9jX6eR8Vhyo1gV1RAx6nac=;
+        b=dhhGXzKfSBKc5YAA7v+Yu2TuelJ+or0V76gy5/7W1MFmzLwjuZlR6AhqsrZvDeAyf/
+         0MRvroTHcJsaE33RsZ/MM1k/BAf6nLmzCOx4K0zfUOZ32ZhiYLaRPzex7mBqlkqF7+Tg
+         vG9A0YUxa/DRBxj+gWndwoJGhdl75l4XL1cMH91wgpMLU0mtoasY/BjFeceOfKrIj3KA
+         CFgTpozDGcx1DenU9wW8dlRxH1xKNMHTSeaPSOszPAVOBsDhfTzt3WZ91yV4uVfLHULO
+         64CpPjCJQZjPVLij7M5CrTqjkv+6dN1qOcxaOncVEqSFhuHd9RiA88u3/IEyg/8Lf52M
+         T5ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783008312; x=1783613112;
+        d=1e100.net; s=20251104; t=1783008313; x=1783613113;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2Av9KMOeHNoLZjJvkQ1HtWMUmgg+DhH4RllPkn9qKDs=;
-        b=RvU1Umk/gE0odwnEWevdXoDYZF9Xnc6teErvWqXvoWDOft2LiiRDzwmvTzktBYklPM
-         6+nfNQ8R1/zPkJGcL0Y/7hIwa9+yGNnfzxlecS6huDXrCUNHC/84TR4yVk+vkbM4dxkk
-         Nt5mbJbGJHq+5SVTPyBGBF58myBddIay1HKp3qgmv52F2Mvsp4H5nxZtgKpjDz/cNYJI
-         i8qFuyLX2YfZbEiDaEq8BA8Aje6KzM4vUuHCObJUjvWeoPvDaY0fIIsHES7JJgjyePTS
-         VbpC/RaHaiWi5SlGbgtRsn4BW5NlkuzL9jetB9tl6c3zIe8hHMENkbDGxDsCJ/PVhu89
-         teXQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/nytG2OW8KYYzjCWCvZNUa/TWHiplZpTWXl70NE9XrgM2YfR+mDE0WXZnjACDRUxukEAQ7OlWgzZ4JriYywzu2kA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5wzUBPM7BXu1UjWn+AZ/a2HTA+a+24tHKzw6Lqk9bSPhanN2D
-	npMghDFpH5RiE4dJtYtVa1nFCFyB3Ao109defXV0JJ9OyCMFUGmiUkwn
-X-Gm-Gg: AfdE7cmBdidMy8MQmbW316KPhwyCFewy49czbNPbn1oMxUuTWn14l7Vg1+GBIpYiQ6u
-	bNDKjuNSA/cz2hCT998F6hU6wi5r3T6n7DQkIgrjcA2FiHcA9dLV/BgHzKGhigUIEOJskOMZWjI
-	zhYbHoq/CuignIb5gEwA3BA7+Q539gxZo2451I7gnobn/fyJdsMiaEaW6ZN4keEYqw/D9X4NHLA
-	AA06HQMurKjk9A0SavrBAcqY22VmC2HDs2wtOVNhSCtCG3FrZF4XS7Vzb52X+Pr0YPUU/rLFKRR
-	VGkJgugOWbgnMmZnQafZxTRT0K6UzSdEH0Wy+pi6CTe+sP446Pvn/uucNq/9tfcQfE9W50Q5h7G
-	F/76Np9WN1Bnixr7T7OQ6JITXD+jOrBcVpyIqVTy5fSi5yBCYHGrKNMtnVNTFRm8El2avS2eYVA
-	kF1BbLdXN5ZawxdmiMwKD2CTh+IPg326dV1eWDIKQLrt5rUioJGK0gC6H4ygdQPja++p2c/4hRW
-	KmZj9X9u5HaSq22cL2Q9ItCxgQ=
-X-Received: by 2002:a05:600c:524d:b0:493:c82d:f3fb with SMTP id 5b1f17b1804b1-493c82df4e8mr25197755e9.28.1783008311282;
-        Thu, 02 Jul 2026 09:05:11 -0700 (PDT)
+        bh=FziwhrrBaAoQlQIWrQ6Wv9jX6eR8Vhyo1gV1RAx6nac=;
+        b=KjLEcbpKoSYvUHi/+Lt+/M+NAYVLooZb2djABjgtxplembfpIu3pnxhZdBIR0W+3Uo
+         neKF+nHBs0Mn2sD//aF11gdr6X3bTWo7FhpTXVg2y5z4xvAY37CKC8/CaKhR6tTQk3nW
+         j3yPITY5nFURoQQYG0SHy7KfVe7U1N8PJG7wrZeeEekencjbWQh9lDoXAEL8VD6ELF+d
+         ZTBNcWjt5+OMiQ3UCHIPRmptMZ7JjMzXNdeRZ9S7wwDJ9QhEIX6CY1gl2VhCUtgk2whM
+         2hqW9BIGuPAhoh7Pcyh9Y4q0jmIhDMVmN0i+dUQGTjL1ftoTiMOV1BrOVlu1mddJV5Ga
+         L7kQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9leoTMZpsdJPTHzZtX/rnN1F7s8NcLcbGMe2Mk0cqP2RvmJxh3xrngFE5zPrKKyUToRF8s4LlpiOT+06FjChNMCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfJrMcPydrTJLDUq7J/ZhO621J9vxZq1no6njvwEDbKsVZ6h1G
+	0OLvY5S/e8rYCuqq0bSWwCvWNnmyLfB4w3aLGSs7uxz5DZ/0pq+foWCC
+X-Gm-Gg: AfdE7cm+27pNiA+q0KMGulT3O2acerXm+hNMfwzYHD1JeDvo/jIkVhnjgD0ivMp3hlr
+	lcN8gMijfDxhoiLmiuDbIlQXHRlxigoTh8ClytL8vBhgFXdfye+0AS+Hc0pgXyHzOC5ouh10+KW
+	dQU+0GwOOV6CEEoHtqUvObYX53kKClxCIk7r5vV/wZE6nEwBu8mFarf7tz++RsS2csVRlNprwoc
+	Ari8XBcuSE0vawwK9l71RO0ImJzVzfM1qfRteLh/sHnHWOnVPEoRilK2x+LNFtUv8ppoFyt1MSC
+	n/qZuLoghoHQfllb1BNfyQvqPOiSFNLIUIraxsEnEfEjX5e/bgM8ekgzPYIgYlSMkYcL7dTLz6g
+	w1M9SVkmhYgLNYPcpJa+GZKDIhPzfKa/lbJE2bqyLHTnZLAQA+qemNwLfzXuD8X99wlh4V6AYu6
+	NAmew6q+f3a5+k52yKcZGr2iMmJdTR+1UaxHN01IcaRl4CTlurIbz5/9VH/sul/mLbFmP1Zvtr6
+	6KYM9fNcscixhkaz9wopWQO9mI=
+X-Received: by 2002:a05:600c:c4b7:b0:493:c785:e0d7 with SMTP id 5b1f17b1804b1-493c785e283mr37402085e9.28.1783008313040;
+        Thu, 02 Jul 2026 09:05:13 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:7a4b:58b4:175e:8c2d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c637bc21sm85444715e9.7.2026.07.02.09.05.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c637bc21sm85444715e9.7.2026.07.02.09.05.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 09:05:10 -0700 (PDT)
+        Thu, 02 Jul 2026 09:05:12 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Wim Van Sebroeck <wim@linux-watchdog.org>,
@@ -72,9 +72,9 @@ Cc: linux-watchdog@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/3] watchdog: rzv2h: Refactor WDTDCR start/stop handling
-Date: Thu,  2 Jul 2026 17:04:55 +0100
-Message-ID: <20260702160457.1884345-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/3] watchdog: rzv2h: Drop WDTRCR_RSTIRQS macro
+Date: Thu,  2 Jul 2026 17:04:57 +0100
+Message-ID: <20260702160457.1884345-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260702160457.1884345-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260702160457.1884345-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -88,55 +88,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Refactor the WDTDCR start/stop helpers by introducing a common
-rzt2h_wdt_wdtdcr_count_ctrl() function that controls the WDTSTOPCTRL
-bit based on a boolean parameter.
-
-This is in preparation for switching WDTDCR access to regmap-based
-handling, where consolidating the control path simplifies the
-conversion.
+WDTRCR_RSTIRQS macro is unused so drop it.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/watchdog/rzv2h_wdt.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/watchdog/rzv2h_wdt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index 3b6abb66a1da..e9545b8f5fd0 100644
+index d0b38450cc32..e36f3d3c98ea 100644
 --- a/drivers/watchdog/rzv2h_wdt.c
 +++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -89,18 +89,26 @@ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
- 	return 0;
- }
+@@ -40,8 +40,6 @@
+ #define WDTCR_RPSS_25		0x00
+ #define WDTCR_RPSS_100		0x3000
  
--static void rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
-+static void rzt2h_wdt_wdtdcr_count_ctrl(struct rzv2h_wdt_priv *priv, bool start)
- {
- 	u32 reg = readl(priv->wdtdcr + WDTDCR);
+-#define WDTRCR_RSTIRQS		BIT(7)
+-
+ #define WDTDCR_WDTSTOPCTRL	BIT(0)
  
--	writel(reg | WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
-+	if (start)
-+		reg &= ~WDTDCR_WDTSTOPCTRL;
-+	else
-+		reg |= WDTDCR_WDTSTOPCTRL;
-+
-+	writel(reg, priv->wdtdcr + WDTDCR);
- }
- 
--static void rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
-+static void rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
- {
--	u32 reg = readl(priv->wdtdcr + WDTDCR);
-+	rzt2h_wdt_wdtdcr_count_ctrl(priv, false);
-+}
- 
--	writel(reg & ~WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
-+static void rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
-+{
-+	rzt2h_wdt_wdtdcr_count_ctrl(priv, true);
- }
- 
- static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+ #define WDT_DEFAULT_TIMEOUT	60U
 -- 
 2.54.0
 
