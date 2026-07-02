@@ -1,63 +1,63 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EC4480DC7
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD1C480DE6
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jul 2026 12:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782995493; cv=none; b=mjA9xKUKygrSJvOYl0V2/wAIMwj2Qc+kAPSKMA9JHXx+hwpOxwHDocjef/P3L6B2LVt+Ao2RqAaFVEgl5h6+bX8SwXpLPWgbYWsmnJs9OZ3InZgDiAiG2uYzwBVmayh8V0W5/3nCEuPzsvnADGcOb/keKKL2kfvRpJ8IFAgU++0=
+	t=1782995494; cv=none; b=qMHmp+/RKNQMZluLNFI+OrYGOBmWqlgLwbreavqdijLCesSM1MxwLa7gBPGTKCdx1bLak0v9PeBqsVsi1y5d6Mce8sU8R8LHfuJY9ieFsAUilcEwHBKZq5NiOTLW8THhsb4SbB6IcbOqFENB3pzGrQ9j/MgE3EmwLHUG3xlDlZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782995493; c=relaxed/simple;
-	bh=u4hTc5blzEHReAE+9qeOwTXdBKyWPW//pATNVCNoHq4=;
+	s=arc-20240116; t=1782995494; c=relaxed/simple;
+	bh=KlT+vAqF3fImgRh+vi1G/HlEXKdYDmQI0eT/ODYlQg0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cu+NdlcV/U0ly5Q3Nfx5YB0d57OK1b+SR/Ul+dfjJgzb1LhM0OCXdQS/CUh/z6gk3WkfDhcFEXjshFDyeBIxMNoehJF1clIpOd4lgX4rB5LRplsO4L1cpRSfjkvTSl4nYFE3LFho0E0gaNUpTKGDaTU3gLU5FymA8ZkygSZLhTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9zl4OfQ; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=PM3imRwQGRQHAHRuOXmv75/9PBbJffJGLZw4+/Xtk4tmSJPY4AZNVnCpYrn2CPwDkuNg2vk96F2nwU6T9u1Y5pBSpmeul6vz1THW5gu9xuK4NsB9Rq1NShJjiUzrYRux6H8klIzNdKGFtZMNUGi6biGvJSL/zcU7Y5Kh2dhqEbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ice2rAme; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9zl4OfQ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-493c2c0b9a8so11767665e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 05:31:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ice2rAme"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4629051c9d1so1156063f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jul 2026 05:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782995486; x=1783600286; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1782995488; x=1783600288; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V51M+/oe04vuF+Mphkpe8n8kxFz5uYaP4IST+R1jshs=;
-        b=d9zl4OfQp669HfmYnbtf5eUG198nf6KGD8ksasOVfxgf/34/1tjQwPSr8VX3KoYpDw
-         NXFz8YWt4ODikc8MwbL7VarA2YBtwuo9I2n+FrcYMB1c/mtGMd7bQYN7Fn5gy/f0l2MJ
-         B95BcrBMQUkdPgjBLwQ4pWAlssngLFtqkPD3Vwr/WAYRL6CtyJVPvYF7K4DtQ3JYEOPQ
-         PR1LHxYgzd1DQn5pdvAyCUYvjgJLWmk0nw8mzr9Ft2woyvKs+IvxrndK06UJl2xwngBZ
-         Su1ud2rJai3ZTGIzZgW7cSIu/51N5sqXe7N5kUMAWM6pE0dGPEiy7JMtLeHZYV7ajxzh
-         pq1Q==
+        bh=Mht4rxb3FmKDNCITNNMglstOGe9jBi788HmIfrM2viw=;
+        b=ice2rAmewA/0cKlxCDUKDKvdKv1h1+21KuCop0o38Q0McCyZhPPs4Tao41bKvUlh1Q
+         RV2vfQNep18XHuZ5Uk3kOjZhK+K6tG9YroLfv7DJYHNaWiTICOe9hLP7EgheH9FoGEFN
+         /+bUiETQTDwHKwookLXP63o9/mz0mvVJ/gWzoGmSIxuH/D6XqJFQfgyQhnMGDQ2R4xbf
+         +N/ZTLVZt+bCR4dP+vwhcnk3avtSiWqdYN8dwMsYbPv7Q2zB9zVfiWRTG4KwQP0FiVeI
+         fuOMNw98y2myMypsIufofeJR1bLCfKlejSQuss48UvQOR85OZCeiX+c+HQKkPnpoAqiy
+         WVhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782995486; x=1783600286;
+        d=1e100.net; s=20251104; t=1782995488; x=1783600288;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=V51M+/oe04vuF+Mphkpe8n8kxFz5uYaP4IST+R1jshs=;
-        b=UAfLQtYVzwNxEWfMoKj5T0itd4ktO4uDkFKJugNl29AdjQBBM8Ryh2lXJp8xUd9PpQ
-         Ian3I/DQRB/Xe5rQWLnITo+M47FcKX/maifw058pMZo4zj04Onh5zXpKeZdAOisGBMpi
-         8HSCMxZfV2GZ+1sbdiO+qzO+KfxZUL4GUwbj6Vngj1dIfV8ONpynEVsUICHDfRYugvdL
-         67PTucKLzlegC3dhnqQ7sZOXdO3QlbtwTDeqIl7p5btBbKNsWVzgrYt0V0W1+TFH/Ton
-         jJkyIIYJLNE6gKGRpd66GzqHnNghr++5yGkvAmvsLck2F/F7DFIrzNE9+Bgr6peXSgDl
-         Et3w==
-X-Gm-Message-State: AOJu0Yw3ENXr9fu0VrVV4ZnW/1Js8kKc8y60HBvaTrExnMb3a8mzckZG
-	8c9xS7pcy7u/mS41IWUowcgz/hp+iOQpbe5hoSIcjqzHzhpvtzFX3oIz
-X-Gm-Gg: AfdE7cmdo+mgx0xBXYpRGr+uDDitjaIkbmsla6a08eU0cZOG8rIim7K3epKI2eL/y4w
-	D1A0gxGptnsoRhDGI86Lj4QDVAKsJ0ApL6ndr9mqzyVrUwR+izR2WCGDXrTeippQLxZgZH5k1FN
-	lDbuzkwmGJp+Zye+y/zAdjvAhnCS9R2Rjx/ZWhIDbaBG/Y90P76U9WZhK6FfCzD6QrmPE4L5AUX
-	qzLRqlT8RK5uxE97tscZOsZwES5IU8N/64zCdXAkPp6OFaCIxN8Az7NEVr1tbHlPmYNcQZs236D
-	SLhU+cxqjXipSB9Du8JMSXxB1uK4fYn4w//0KoOZPSYqh/3S2CMeGL+KKeGu7CfrZKdP0lJPb5o
-	t/V44VEj6+Yikwu5SYlWOFhU0BTMxI8nrztvwmIO3m2y9Dta/sYyzp+PTLwI6aOuwolDTSYSCq8
-	xtRiEiOuy38ysJDGGfPHKQkYrMnBXQxuMT28Oqh4UVP5dyTxLhlyeJGtfGvuwEUyJpWqAY1hB2x
-	pT8fjl7ZNnFXOVaCL+SXvfR1E4=
-X-Received: by 2002:a05:600c:19c8:b0:493:c1bc:79c4 with SMTP id 5b1f17b1804b1-493c3cd494fmr75775095e9.7.1782995485918;
-        Thu, 02 Jul 2026 05:31:25 -0700 (PDT)
+        bh=Mht4rxb3FmKDNCITNNMglstOGe9jBi788HmIfrM2viw=;
+        b=AWPMyORbn40iy6lZSrR7ZXTZ7Vzfuv/2LcWIAulYP2o5pY1JzD5nKt5KFZYqr8sP64
+         HYzbFqtPJIrC5zh1RzZ4bwbrw/5nXPYCS/qAP/8PntFI8MZgmm7izaOAqzrkf/QhdqHI
+         pijcmRp84/r5EbEzrK74Hwf/irNMP6Qs7BGUBPofEs//gJFFR0oY1h2i8lpTN+e4wSBl
+         7Z32hq6juLTS8K5GGDhbpy21bUuek/HMq2GHCbh1/DIsBWclZIwqswnolwsYRRty+Uxs
+         sdzNWE3KhG/n75qQKcAiskQ82I2UMM8e6haaF62beQDteLw/t+CL0oX0gD/l24qApUl+
+         rlQQ==
+X-Gm-Message-State: AOJu0Yw/yEx1fTvexr6Nby2J+B7myceYQfIOW4S3zsG0EULqipDDsuCR
+	4xJb56JUmWDZLIo+AAtkh7umirmfZI+YkDFGY1aX7eXKJCIomBKUuJaG
+X-Gm-Gg: AfdE7clYm7Knh8gH+Ep//yV/Y+DhqWNvW5vCjBRF9IjHRoGHH7QEkm4rzqMzOg/ElIo
+	+Nbz+r393ADWS6W/QIq1zjS17YvJvUijr0OqMhEkJDCzpXvdbxg73b8uVefAb6NWWOAXZ8tU+HS
+	EJfJnqqDtAZ2+w9VFhSc7orFnV0CUhwm3y5/B8zO5a5ocgACOxD6/DSLlm1d27DoxSB9F7Bs8U8
+	HLS59/VcHhoATCz7BnU1CKxgaTzsdnKkoCSrB6ZWpbv7tkaGQVGq8hcXvzBYAhcx69noSA7P3k+
+	4AkwG/NrJguu5XSQuP8mZkLbEXiXj2q1dcwW3akHK5Cf0475lnnVkGKLWd2d7QnZ9i/9hoFxvg5
+	TjeE6+VN1UOApQcyuNpO7IfIm/zpLfRTV6Qb9Ql7YCwmSXjKRTietODwXIXM0TUXWJlZR0qFH10
+	58i/kWGlBoy+6V5mvQAek51DA0E4tL3/YeoHDtsGUBVQg6xXzS73n3w9CXSIXJ/iC4R4Wj2sFAe
+	YvgGxDaTPnTBz2mlJynzLmbR8k=
+X-Received: by 2002:adf:ec49:0:b0:475:f0f0:9ecb with SMTP id ffacd0b85a97d-477b5d37949mr5581503f8f.54.1782995487566;
+        Thu, 02 Jul 2026 05:31:27 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:7a4b:58b4:175e:8c2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477ddf0f433sm9772923f8f.32.2026.07.02.05.31.25
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477ddf0f433sm9772923f8f.32.2026.07.02.05.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 05:31:25 -0700 (PDT)
+        Thu, 02 Jul 2026 05:31:27 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -80,9 +80,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC v2 1/9] dt-bindings: clock: renesas,cpg-mssr: Support RZ/T2H system controllers
-Date: Thu,  2 Jul 2026 13:31:04 +0100
-Message-ID: <20260702123112.161160-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC v2 3/9] arm64: dts: renesas: r9a09g077: Add system controller child nodes
+Date: Thu,  2 Jul 2026 13:31:06 +0100
+Message-ID: <20260702123112.161160-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -96,84 +96,44 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The RZ/T2H and RZ/N2H SoCs features system controller blocks for low-power
-management and access control that reside within the CPG/MSSR address
-space. To properly represent these hardware modules, allow them to be
-defined as child nodes of the CPG/MSSR controller.
+The RZ/T2H SoC contains system controller (SYSC) blocks for low-power
+management and access control within the CPG/MSSR address space.
 
-Update the CPG/MSSR binding to support child nodes by adding
-system-controller child nodes using a patternProperty, requiring a reg
-property and a renesas,sys-block property to identify the controller
-instance.
-
-Restrict these new properties to the RZ/T2H and RZ/N2H SoCs to ensure
-existing bindings for other Renesas SoCs remain unaffected.
+Represent these SYSC blocks as child nodes of the CPG/MSSR controller.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v1->v2:
-- Updated commit message.
+- No change.
 ---
- .../bindings/clock/renesas,cpg-mssr.yaml      | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-index 655154534c0f..ec13fcaf763e 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-@@ -99,6 +99,41 @@ properties:
-       the datasheet.
-     const: 1
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+index bc109035fbac..6f4c1086afcd 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+@@ -1055,6 +1055,20 @@ cpg: clock-controller@80280000 {
+ 			#clock-cells = <2>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <0>;
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			sys0: system-controller@80290000 {
++				reg = <0 0x80290000 0 0x10000>;
++				renesas,sys-block = <0>;
++			};
++
++			sys1: system-controller@81290000 {
++				reg = <0 0x81290000 0 0x10000>;
++				renesas,sys-block = <1>;
++			};
+ 		};
  
-+  '#address-cells':
-+    description:
-+      Required for the RZ/T2H SoC to define the address space for child
-+      system-controller nodes.
-+    const: 2
-+
-+  '#size-cells':
-+    description:
-+      Required for the RZ/T2H SoC to define the size of the register
-+      blocks for child system-controller nodes.
-+    const: 2
-+
-+  ranges:
-+    description:
-+      Required for the RZ/T2H SoC to provide 1:1 address translation
-+      from the child system-controller nodes to the CPU address space.
-+
-+patternProperties:
-+  "^system-controller@[0-9a-f]+$":
-+    type: object
-+    description:
-+      System controller child nodes representing sub-blocks for
-+      Low Power Management (LPM) and Access Control.
-+    properties:
-+      reg:
-+        maxItems: 1
-+      renesas,sys-block:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Index of the system controller instance.
-+        enum: [0, 1]
-+    required:
-+      - reg
-+      - renesas,sys-block
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -126,6 +161,10 @@ allOf:
-       properties:
-         reg:
-           maxItems: 1
-+        '#address-cells': false
-+        '#size-cells': false
-+      patternProperties:
-+        "^system-controller@[0-9a-f]+$": false
-   - if:
-       not:
-         properties:
+ 		icu: interrupt-controller@802a0000 {
 -- 
 2.54.0
 
