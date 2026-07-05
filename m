@@ -1,83 +1,72 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A20126ED25;
-	Sun,  5 Jul 2026 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10883322533;
+	Sun,  5 Jul 2026 14:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783258554; cv=none; b=KvLu6WZ0s4BEWAcsc8KR+U/PIiP3EHUpeWmxEskc3Y6wpgUSHweS6R2fNDQQeC8LG2c1ZC5XRhWqyn2yMTX0vVpoRjaEQ6A/wDp4L05vILgQitmTJbevUCK63zZhxjct2IZ+V/Xsy/hAho+xR1cvAFGwkZhhP2hqaKuyJP/rrCI=
+	t=1783262412; cv=none; b=l2NAxXWlb9T7Yp3G0r9dmViK3rd266f2iFA3uKocTJhYTAKj01G6iOfCq3LWvLezESQIGFxIbC61+0t+UniSPQw0S4alsJKpe6GYS+oMi0IGL/IBvBWE/OgejfqL1/x9+xIpzGeZG73prlfGmY0a30ZH1umt4M6gscCNbz3noZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783258554; c=relaxed/simple;
-	bh=6jZ/QKLNuRd11AGxY03FdRTzvsUy+WcX/uRBcUFvBYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eutoipVh/voc8I/LtpjQDifD+yjuW4iTOFAA9egUwmn7myNiJFy5a9foSrbSs1T72OtVG5GrJQsuZaSUL+QANLQx7bgfod4e6E7Y1LW68/RdlstiByxP43O+QVv3ZXi7VBu1t9zI/WckelJuhdPgEfHjnOmVt+y5uT70F7knDAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Mt2aVkWH; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1783262412; c=relaxed/simple;
+	bh=BwKl9eMFvBj2osYggeywwCFY0L9kYCh5LIP7hc+VV10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qcE2scOGwiquAC+yFVZM55nMlk+Y6rZzuiqR73Rn0MlmgCIlgW8hu3LxLGgZMMZ59GhlXdp61UyRf22ReJgaZpwuTdJN9GW1hVXTqF9pYU18w2dHwxotvR2aN47F7QVglpqkbx68CrwJKYLFS66vI4epABewwKdmkAsvHfIDJJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqJAyhuq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Mt2aVkWH"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gtT5d0q1Wz9tmt;
-	Sun,  5 Jul 2026 15:35:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783258549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ex9HeM9mg6JkQnPJIPiED9PQNgJpxKIVIPPfPa4WkMY=;
-	b=Mt2aVkWHypYRPAdNmS+Q3RXtJz1tlnlm+BQ7n7W4bRp3LrZ2OOhoYb2Rp6zSWMDYrL7yR5
-	yaVQ2BRI6N9HmffRZ46lnJA8fq5sP2ldpxS82+X25Ca2A9FEG2OAYOTK/wHZlRAFM5Hakr
-	SH4NQpbvg14tR+1wGYWKQtCt4zTjkhGImb/R3vWekF9CD7AL0OP+YhL9oYI5XPR6la8vHc
-	NCmdWIHzuAj8RESy+xUH08VfY451Mp+NtnpraA1T2TP4QzyraZwcwxomMeUubbJ5mAxXX/
-	2XEcfFfDIb7sG8dyHJxLLXH6OICWRuGLOndoPXLIA4urv9hbst1snvW7xUmuew==
-Message-ID: <8c39f742-b690-4cbf-90f0-b0b01644a196@mailbox.org>
-Date: Sun, 5 Jul 2026 15:35:44 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqJAyhuq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7CC1F000E9;
+	Sun,  5 Jul 2026 14:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783262410;
+	bh=BwKl9eMFvBj2osYggeywwCFY0L9kYCh5LIP7hc+VV10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WqJAyhuqBiLYHCzO847uhFl2ZcRvAwHUrPn4aD9iwmwmVPr+JJM4SK21TGh4Sg/+2
+	 GxaPbvsMQenTd5e/K/o2pJs+xHOvdwxfV1ENX0Bh9VPr3xi/MaOdzxESRLNJqJ6Gbr
+	 EXS/rQopGjuzVCzU501QtaYS1SbBaLfvlMme6arz6PbpH4NcyoDbIta6TpL1Rql21S
+	 R0hdAQwo8m4jP6R/rpl9VMsW1Cnm3gB0zmhFMWFTl8g5CR2wXy7dFu5MnthIKWA38l
+	 ktdwMhCqWYY7nkjHbORAhnpQF/nuWGZNM4fT17qMRPMaKHNXOtzSu78J/kDd+fmcXz
+	 YNnW494n7neuw==
+Date: Sun, 5 Jul 2026 15:40:06 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: renesas,rcar-gpio: Document R-Car
+ X5H (R8A78000) support
+Message-ID: <20260705-bonded-zen-203d1a3e5c6a@spud>
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 2/5] PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not
- used
-To: linux-pci@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260701203918.63189-1-marek.vasut+renesas@mailbox.org>
- <20260701203918.63189-3-marek.vasut+renesas@mailbox.org>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20260701203918.63189-3-marek.vasut+renesas@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: fx6sg5pqj4b5z9aib3jgoqm6s4e8fawf
-X-MBO-RS-ID: 7a5b940343e406281b2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+Un3OC9OyrYdULEP"
+Content-Disposition: inline
+In-Reply-To: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
 
-On 7/1/26 10:37 PM, Marek Vasut wrote:
+--+Un3OC9OyrYdULEP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[...]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-> +/* INTC control & mask */
-> +#define AXIINTCCONT		0x0a04
-> +#define INTC_EN			BIT(31)
-> +#define INTC_MASK		GENMASK(11, 2)
-I just noticed the GENMASK() here should be GENMASK(11, 3) instead of 
-GENMASK(11, 2), I'll fix that in V4.
+--+Un3OC9OyrYdULEP
+Content-Type: application/pgp-signature; name=signature.asc
 
-Before I send a V4 and flood the list more, can I please get feedback on 
-the new 1/5 patch in the series ?
+-----BEGIN PGP SIGNATURE-----
 
-Thank you !
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCakpsxgAKCRB4tDGHoIJi
+0tEQAP97T9HhU5jtAU/UofNCxdWT+VF/390G/n/9FSpRmxum6AEAw9CENBOsBSdE
+77+QdJ/tEk/Istd5cPG8WFhEnNZKyQg=
+=dNlk
+-----END PGP SIGNATURE-----
+
+--+Un3OC9OyrYdULEP--
