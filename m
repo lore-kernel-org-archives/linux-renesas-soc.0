@@ -1,117 +1,137 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BE02DC792;
-	Sun,  5 Jul 2026 21:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739271FBC8C
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2026 00:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783287361; cv=none; b=XdMvQ8bfNem/6cSt+ohA8RjpiEIiESoWW1wNice3EvDORxILO0l//zXUEy9fS+5b0JjuFgJLRfZOXdqIVVc42pdTrK36/l5EJevMcbSQMGewrpp5SIGFtTYiCW+xDA6q0fFP5mZpra6VAyWNA43JVvH79D0rf8rEOmFDwofG4VM=
+	t=1783298075; cv=none; b=S8m4WvmH1lQJ+RHPjyHKE/Dzkt6wLS8Fn4E25OdBrpoi7Rzizd38EaYyjTmyhD02UeIXx/2XbdbQnrvDzvHLMqfJsUKr5oZzN4SYnhbPLh0lc0Zp5vDJ1nIdHzk+VXpUurI5gWK53FLEEvO7jtPJuQZ+PgfFhZiPtzALUPZG/CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783287361; c=relaxed/simple;
-	bh=OVQquYq7XAws381xlfx8gj0kNbXXHUcl5HkUotC6DAk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dpx4DgbRHDPzhgbhxG31oEJge514efB6ZtIp9pghgnsO4xxqc7P2ttUx+sX9QXoPPsVCdiHc9V1pvgODlocaEVfa/w/HwfSP90nb8n4Ihjhz1WccRu7dZA2FrMci4dP+sfBzQGQyjhLteQeRAlcuLmBk9zeV68kK8SNXmBM7xsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rX0bvdS8; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1783298075; c=relaxed/simple;
+	bh=2PxUxZPMKUCuY9XPy73Y/KPmQ0r97rw0cg10OraDCjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kfLauQ51ir0rR0M+xR7KGfPxbjoWdONuskxIGg9WGBf60LAWRXfbx4VzgQ4yd21+RY42/Q2fRgzX7nsB+0fU2M+0fqLnluOy2v90hW+xSS9yEH/7Jyn82YMyJgre3RuLBvR6atwa/XhLx27dZdzDKFRPTg8LO9ztQDrr6iTJzhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mLsuUED9; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rX0bvdS8"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 931F0C77;
-	Sun,  5 Jul 2026 23:35:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1783287301;
-	bh=OVQquYq7XAws381xlfx8gj0kNbXXHUcl5HkUotC6DAk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rX0bvdS889KGDUcsw0YE7Ggkf0hG17Sw8eBdFq0ZPynnOWk5+OY11AvBw3SFNK8FJ
-	 GIL3q18SHAfyta6rUnfbLPH32SRQPOH6vP2EQN5DD60GYvnZiQQgHd62wrr4HlKKMG
-	 6n0vVSRew02melLe0VUjUKMgxKjpBTHOB8gk29MY=
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Cc: Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/4] [DNI] arm64: dts: renesas: salvator: Add overlay for Dell P1911 VGA display
-Date: Mon,  6 Jul 2026 00:35:42 +0300
-Message-ID: <20260705213542.28987-5-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mLsuUED9"
+Message-ID: <973f3d6f-6ff4-4685-9c9f-b07987f74d98@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1783298059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYrjdzAhnc0P88BFwUH/b6uj52WFQfIRb2R1u4QFCds=;
+	b=mLsuUED9ENIp3ed3h8bdKFYcEwFgoRzOELLNc1jLIXF6taZ+WEztXLwd9/BAKQWvUz2Hs3
+	3EKLIatmB5Z+Df3dgdlCr8bmpTJQbWFj3Jp6WCvzaQnW40BXVB4LUsJRj7jQdhncagFIYu
+	oCbFYryMjDBm1fu5il4d+x3rl9gBRyM=
+Date: Mon, 6 Jul 2026 08:33:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v1 4/5] pwm: Unify coding style of of_device_id arrays
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
+ <u.kleine-koenig@baylibre.com>, linux-pwm@vger.kernel.org
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+ Neal Gompa <neal@gompa.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
+ Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Paul Walmsley <pjw@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Michael Walle
+ <mwalle@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Hammer Hsieh <hammerh0314@gmail.com>,
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+ Alexey Charkov <alchark@gmail.com>, Sean Anderson <sean.anderson@linux.dev>,
+ Michal Simek <michal.simek@amd.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev
+References: <cover.1783263835.git.ukleinek@kernel.org>
+ <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chen Wang <chen.wang@linux.dev>
+In-Reply-To: <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add an overlay that hardcodes the EDID of the Dell P1911 VGA display
-connector to the VGA port of the Salvator board. This is meant to test
-EDID hardcoding and should not be merged upstream.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/Makefile          |  2 ++
- .../dts/renesas/salvator-vga-dell-p1911.dtso  | 21 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/salvator-vga-dell-p1911.dtso
+On 7/5/2026 11:14 PM, Uwe Kleine-König (The Capable Hub) wrote:
+>   - Use a single space in a of_device_id array terminator; A single space
+>     after the opening { and before the closing } in non-empty
+>     initializers;
+>   - No comma after an array terminator;
+>   - Also no trailing comma after a named initializer iff the
+iff -> if
+>     closing } is on the same line;
+>
+> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8bf155badd11..f6a6fb959a6d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -58,6 +58,8 @@ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x-panel-aa104xd12.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
- r8a77965-salvator-xs-panel-aa104xd12-dtbs := r8a77965-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs-panel-aa104xd12.dtb
-+r8a77965-salvator-xs-vga-dell-p1911-dtbs := r8a77965-salvator-xs.dtb salvator-vga-dell-p1911.dtbo
-+dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs-vga-dell-p1911.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a779md-geist.dtb
-diff --git a/arch/arm64/boot/dts/renesas/salvator-vga-dell-p1911.dtso b/arch/arm64/boot/dts/renesas/salvator-vga-dell-p1911.dtso
-new file mode 100644
-index 000000000000..d963f5a65576
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/salvator-vga-dell-p1911.dtso
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree overlay for the Dell P1911 monitor connected to VGA port of a
-+ * Salvator-X or Salvator-XS board
-+ *
-+ * Copyright 2026 Ideas on Board Oy
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&{/vga} {
-+	edid = [00 ff ff ff ff ff ff 00 10 ac 74 a0 55 4b 55 30
-+		2b 14 01 03 80 29 1a 78 ee ee 95 a3 54 4c 99 26
-+		0f 50 54 bf ef 80 95 00 71 4f 81 80 95 0f 81 00
-+		01 01 01 01 01 01 9a 29 a0 d0 51 84 22 30 50 98
-+		36 00 98 ff 10 00 00 1c 00 00 00 ff 00 31 57 4b
-+		4a 56 30 41 4b 30 55 4b 55 0a 00 00 00 fc 00 44
-+		45 4c 4c 20 50 31 39 31 31 0a 20 20 00 00 00 fd
-+		00 38 4b 1e 53 0e 00 0a 20 20 20 20 20 20 00 ba];
-+};
--- 
-Regards,
+[......]
 
-Laurent Pinchart
+> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+> index 7d07b0ca7d29..0b6461172e6a 100644
+> --- a/drivers/pwm/pwm-sophgo-sg2042.c
+> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
+> @@ -225,11 +225,10 @@ static const struct sg2042_chip_data sg2044_chip_data = {
+>   static const struct of_device_id sg2042_pwm_ids[] = {
+>   	{
+>   		.compatible = "sophgo,sg2042-pwm",
+> -		.data = &sg2042_chip_data
+> -	},
+> -	{
+> +		.data = &sg2042_chip_data,
+> +	}, {
+>   		.compatible = "sophgo,sg2044-pwm",
+> -		.data = &sg2044_chip_data
+> +		.data = &sg2044_chip_data,
+>   	},
+>   	{ }
+>   };
+
+Changes to sophgo related files：
+
+Reviewed-by: Chen Wang <chen.wang@linux.dev>
+
+Thanks,
+
+Chen
+
+[......]
+
 
