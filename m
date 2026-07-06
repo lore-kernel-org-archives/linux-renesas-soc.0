@@ -1,225 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB6F4DC54F
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2026 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB11CEAC2;
+	Mon,  6 Jul 2026 09:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783329549; cv=none; b=ZBlblazwD1n8hfRdyE9ccDywO6yXGwxjIKdNvk4W7Z4SgQFsJc0zw8QDjMDzpNY8rsqfQpB+JcTnBVFYhXQAKefZj5ueelKwZXd635Ij4ENHb8/LX1zrGy31vgYYoiZHYf60nLEdwECFfU2ShzsVg/CDm6QQDmyrBIeBtffLd/w=
+	t=1783331131; cv=none; b=H27ib+Z3ETWGqVLEACXC0RLp9s7ZasjwhMo0BHwPnouhpvzdIn1bXBsMMDr8q3EGPUJ6VnHxLK/Ch8rwQL/WMBmL8osMAgeurh7WKdZz95sP1FDg1Dfq4tj76qfM5c2c0jEvR0ulQV+iS/pezbt4qj2Lf3K3zuPcyDIWVviiaTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783329549; c=relaxed/simple;
-	bh=1P9oxnt1RR+i6Jmost3GXU/54qRAntILBoaU+gZI+Vc=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJNcAkK2xbwQDmSYK39EKdW48GvbkWXNUAfIroIMA2KS3BSjrSNCWQ4XXw5ZxXPhwGJgR/sproKA6WcHbhNwIaepMyuDPS2twvLHJ3QumfIv8Zgxl/cIZIc8LDyu41BLzKiYqHvmUoBDkkBsVqQU0fGi16e3a+a3gVDp/NgQBcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxc4QCdX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783331131; c=relaxed/simple;
+	bh=M8pn+QlLLysMqwQcLRLoz0lnTqJieKWaHHlj88GmCQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n0Wnc40/8YPIyLAT44nkbgmkU3555sMyp96DG/5zbT4inAiciAF2EJiNbVG0IhAA8cum+YWyCkBMid4jDLO42ftsj31K4vTt0nU7cP8ljDqyBvMyBWJEIBzGJAi561uGdOkdOwnu5ySixPB5yAiWixlNwrLB4ZlAlC3F5ZA75Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=l/eOddAd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxc4QCdX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D391F00ACA
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2026 09:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783329545;
-	bh=xqr7iCIFd2mIIDYlSLvi4QE4QRnGR4gQBpIY4BwdrK4=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=Nxc4QCdXwCcc6n2//tjIJUA7/35/FqCECAXQ6wRhcxP2iBnd1RMo2n2bBwQ0ZMVxk
-	 +YESmTDojNsFcy48wgVttXwe7a9SKjTPrQugEUgYO0f5jTKoVAOSVS+FZSeBl36c35
-	 tnphUdtQGX9jsqbsR4BJqw9B0SKIGnHCd+bCtuwiSFuXLVdSG7GwZjOOAFEmmJ0INR
-	 QWG20lZbYYOlx8khl+Z4AvLrvmYciYpNCPwOXhnNzEZfnmXzk8+SojQLcqVp3WOOcI
-	 ibPWmXPTHB6P0O8NHd7NBmTSfy4bppMgQiNmta76ELA1eP1dBQ94G4IsWQ8omDqGu4
-	 wK6b4b02Qe+MA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39b1eb7bd9bso23353271fa.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2026 02:19:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpN8uiQN9U3E4j+vbMNGLrzCI+QvnqfKdUqjKKAH1UUcU+vIp2vljAV1URFI4Lh7DI20D94URkQ9g2agYO/dkA7/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzxKu2c+HF8l0HlMVioNsB/7ckExpBIiYhI8LQoITcH36t5F5k
-	jKXzdhIDJBJFXeB+Jqbzd2WTdhRL47P7Lu6D0AJ06WRBu3AbQULzIeY1isk0lgdxcqmuHzksHt5
-	A20+cK9WPWv0Aq4yaVeuLtQ07IC6/02daRRsgjBbrLg==
-X-Received: by 2002:a2e:bc0e:0:b0:397:e391:c0a9 with SMTP id
- 38308e7fff4ca-39b53bb6f38mr16641141fa.10.1783329543999; Mon, 06 Jul 2026
- 02:19:03 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 6 Jul 2026 02:19:02 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 6 Jul 2026 02:19:02 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="l/eOddAd"
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 32794524;
+	Mon,  6 Jul 2026 11:44:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1783331076;
+	bh=M8pn+QlLLysMqwQcLRLoz0lnTqJieKWaHHlj88GmCQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l/eOddAdOyPtNffoM9mczj3RP1ic6Gc38MwtOFPIqRqPlvgsz5EZ3KhnYEmFxlt4x
+	 Erd5fCEETscm3HdL3RkU3IXF8ojzNtcr4Wb54IYIP/WHSRLfeu9t2EktMSK9ffVfcB
+	 JXzIy1OGkvxejhGV8z5E1kNRrtzNjshDa0x3qWLA=
+Date: Mon, 6 Jul 2026 12:45:22 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow
+ hardcoding EDID
+Message-ID: <20260706094522.GA42740@killaraus.ideasonboard.com>
+References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
+ <20260706-capable-beaver-of-excellence-a3cf10@houat>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org> <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
-Date: Mon, 6 Jul 2026 02:19:02 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MeyKGv75rTLauZuGxSfgjCPXVE_r=A7uNduRr6kAd43aA@mail.gmail.com>
-X-Gm-Features: AVVi8Cf8lfGTKX_OdhM-ELP82F_HX1LJB7zZdswu6qjGqp9698E2Ktz2Mev3i2E
-Message-ID: <CAMRc=MeyKGv75rTLauZuGxSfgjCPXVE_r=A7uNduRr6kAd43aA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260706-capable-beaver-of-excellence-a3cf10@houat>
 
-On Sat, 4 Jul 2026 17:13:47 +0200, Marek Vasut
-<marek.vasut+renesas@mailbox.org> said:
-> R-Car X5H (R8A78000) is the first member of the R-Car Gen5 family.
-> Add support for R-Car X5H, which has slightly different GPIO block
-> register layout compared to previous generations. Introduce offset
-> remap function which performs 1:1 remap for R-Car Gen1..4 and a bit
-> more complex remap for R-Car Gen5.
->
-> The GPIO block register offsets on R-Car Gen5 changed and the change
-> can be divided into five groups, registers which remained at the
-> same offset, INDT register shifted by +0x10, OUTDTSEL register
-> shifted by -0x34, INEN register shifted by -0x38 and the rest of
-> the registers used by the driver shifted by +0x70 .
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: Bartosz Golaszewski <brgl@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Linus Walleij <linusw@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  drivers/gpio/gpio-rcar.c | 61 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-> index 09bebde5c4260..a22112d9dce0f 100644
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -36,6 +36,7 @@ struct gpio_rcar_info {
->  	bool has_both_edge_trigger;
->  	bool has_always_in;
->  	bool has_inen;
-> +	bool has_layout_gen5;
->  };
->
->  struct gpio_rcar_priv {
-> @@ -65,14 +66,59 @@ struct gpio_rcar_priv {
->
->  #define RCAR_MAX_GPIO_PER_BANK		32
->
-> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
-> +{
-> +	/* R-Car Gen4 and older do not need any offset remap. */
-> +	if (!p->info.has_layout_gen5)
-> +		return 0;
-> +
-> +	/*
-> +	 * R-Car Gen5 register layout is slightly different and the offsets
-> +	 * that have to be added to or subtracted from each register offset
-> +	 * can be divided into five groups, listed below.
-> +	 */
-> +	switch (*offs) {
-> +	case IOINTSEL...OUTDT:
-> +		return 0;
-> +	case INDT:
-> +		*offs += 0x10;
-> +		return 0;
-> +	case INTDT...EDGLEVEL:
-> +		fallthrough;
-> +	case BOTHEDGE:
-> +		*offs += 0x70;
-> +		return 0;
-> +	case OUTDTSEL:
-> +		*offs -= 0x34;
-> +		return 0;
-> +	case INEN:
-> +		*offs -= 0x38;
-> +		return 0;
-> +	default:
-> +		/*
-> +		 * This here must never be reached, if this is reached, that
-> +		 * means there is a catastrophic failure in the driver. Skip
-> +		 * any IO read/write to prevent further damage.
-> +		 */
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static inline u32 gpio_rcar_read(struct gpio_rcar_priv *p, int offs)
->  {
-> +	if (gpio_rcar_remap_offset(p, &offs))
-> +		return 0;
-> +
->  	return ioread32(p->base + offs);
->  }
->
->  static inline void gpio_rcar_write(struct gpio_rcar_priv *p, int offs,
->  				   u32 value)
->  {
-> +	if (gpio_rcar_remap_offset(p, &offs))
-> +		return;
-> +
->  	iowrite32(value, p->base + offs);
->  }
->
-> @@ -399,6 +445,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
->  	.has_both_edge_trigger = false,
->  	.has_always_in = false,
->  	.has_inen = false,
-> +	.has_layout_gen5 = false,
->  };
->
->  static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
-> @@ -406,6 +453,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
->  	.has_both_edge_trigger = true,
->  	.has_always_in = false,
->  	.has_inen = false,
-> +	.has_layout_gen5 = false,
->  };
->
->  static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
-> @@ -413,6 +461,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
->  	.has_both_edge_trigger = true,
->  	.has_always_in = true,
->  	.has_inen = false,
-> +	.has_layout_gen5 = false,
->  };
->
->  static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
-> @@ -420,6 +469,15 @@ static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
->  	.has_both_edge_trigger = true,
->  	.has_always_in = true,
->  	.has_inen = true,
-> +	.has_layout_gen5 = false,
+Hi Maxime,
 
-This looks good but do we really need to change these lines if it's zeroes
-anyway?
+On Mon, Jul 06, 2026 at 10:52:32AM +0200, Maxime Ripard wrote:
+> On Mon, Jul 06, 2026 at 12:35:39AM +0300, Laurent Pinchart wrote:
+> > Since DDC version 2, introduced in 1996, VGA monitors have exposed EDID
+> > data over an I2C bus. The bus is also used to detect the presence of a
+> > connected monitor by trying to read the EDID data.
+> > 
+> > Some devices where the VGA display is integrated in the device and
+> > always connected do not connect the DDC pins. Some development boards,
+> > such as the Renesas M3N Salvator-XS, also do not connect the DDC pins.
+> > 
+> > To support those, add the ability to provide hardcoded EDID data in the
+> > device tree. This is mutually exclusive with specifying a DDC bus, and
+> > can only be done when the VGA display is guaranteed to be always
+> > connected.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> This feels redundant with the EDID firmware loading mechanism we have in
+> KMS already. It should at least be mentioned why we would need to set it
+> in the device tree at all.
 
-Bart
+Very good question.
 
-> +};
-> +
-> +static const struct gpio_rcar_info gpio_rcar_info_gen5 = {
-> +	.has_outdtsel = true,
-> +	.has_both_edge_trigger = true,
-> +	.has_always_in = true,
-> +	.has_inen = true,
-> +	.has_layout_gen5 = true,
->  };
->
->  static const struct of_device_id gpio_rcar_of_table[] = {
-> @@ -438,6 +496,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
->  	}, {
->  		.compatible = "renesas,rcar-gen4-gpio",
->  		.data = &gpio_rcar_info_gen4,
-> +	}, {
-> +		.compatible = "renesas,rcar-gen5-gpio",
-> +		.data = &gpio_rcar_info_gen5,
->  	}, {
->  		.compatible = "renesas,gpio-rcar",
->  		.data = &gpio_rcar_info_gen1,
-> --
-> 2.53.0
->
->
+I assume you're talking about CONFIG_DRM_LOAD_EDID_FIRMWARE, as the
+debugfs override_edid feature isn't meant for production. If there are
+other relevant mechanisms I'm not aware of, please let me know.
+
+In the use case at hand, the VGA display is an integral part of the
+device, the same way an LVDS or DSI panel would be. Using
+CONFIG_DRM_LOAD_EDID_FIRMWARE, the manufacturer would need to set the
+drm.edid_firmware command line parameter, and provide EDID as a file in
+/lib/firmware/ (possibly in an initramfs). Beside the complexity, and
+the fact it won't be very friendly to people who run a different
+userspace on the device, I think EDID counts in this case as system
+description, the same way we support specifying panel timings in device
+tree.
+
+Does this make sense ? If so, I'll update the commit message accordingly
+in v2.
+
+-- 
+Regards,
+
+Laurent Pinchart
