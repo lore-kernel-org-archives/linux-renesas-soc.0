@@ -1,137 +1,146 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22DF395AF1
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2026 08:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540B93AE187
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2026 08:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783324865; cv=none; b=L/ctMgHROmwy0SG/LfqyxUdoXyWKmGEPaDZM/GImw06n+Cy/qsHk2wx49eDK3THXaeR5ccZAL+l+50xJBLTCP0Cxr4m8D/xixIrcFmdFz24HnKLbT+SL6j3BQLYEWdy6LuHyRcvKX0RtpJxt0qAZOTcttTy0LD/0ERh8ynfeGMU=
+	t=1783325699; cv=none; b=bEPpa541K2vti/+tXpNbUUbqvMa6tjRIYeqSM9K2lQ7tc9C7MZR4sNR7r7vaNrAFcWWjgRf16EZpOVFfltZjUB74cBRsVL4awJZWvGnncmA3tfgyXXlEwewvKjTjWVXYilqiCo20LW4qOMQezr+3tQmU0prN+GLUJRXrAivpTrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783324865; c=relaxed/simple;
-	bh=6FRXXocn1lfRgJnxiPkpYYSBB5w4wnBEBhNnIuipX2o=;
+	s=arc-20240116; t=1783325699; c=relaxed/simple;
+	bh=glp/HdZjPID3k9JwT/K76pg9j++zO7I3Rw77qWLA6Kg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDQ9sDuoZwGGgJfMz6S10SLiHjMJEBMzFZg1mIltKLaSevu0dHw40sArc7gsUS3IBE8yJ0Z4jXnSl5J5ohIrcvbH6tyC5XcvagZPRFyllXPMflS35kH/OEyqf9ymcLB0D6RjqwC2IDxglTZuMvzWhGcJKFxEdj4yORaMlmfEQ2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+	 To:Cc:Content-Type; b=pvLle2Ob80GR+Gof3xDSIbnVS+i2Oof+8NMIS3cE4d1uy+TimZ/XHoaNsIrxB5AzBciOP0t0e8zUJxsXEUnJ/72yMwnDBklPnYpkWwlJFWKkoJFPGKpaRDsD+PtfgtZuQImOdv22y89Mb2J7oLKFswxy5uhzb0SMoK59GRXZs5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-59c9b666822so2316902e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:00:59 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-44cd990a94dso1794206fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:14:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783324858; x=1783929658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xlcdnSGCAGaaD3Qtz41jPpd7wkV1TEYjW94sOKYd3zY=;
-        b=KVTB5dOG5FyRJqW9Z2X70cJWKwUsseqft0bZgzgPh3O2GyOVhJhqvU5FJUjGdXksN7
-         1ZKbjmdx9IZaEVp+ECZfxkFJ7F8rjUI/cwzEj0+e+YLQYEhB53gQuoaVsUB/2AHfZNSI
-         tvqxMkE4ISpMf5lbqNW0leHIuchEEccjsCO4C/P1R+pL/+JkK7tgR1JfbRbU/1nlC/j+
-         GQusNshXRzlI4i/KAL86nsTKjSaanGtCjnj16uvFe6p6PL4IvqVJ/UvO7YuS6UAqC9d9
-         oDrZjFYOqFrsunuj85tkZzVrvWyIr0lsaEjeQL6XVJdPhb1fnJR8foSXy9ndenznokYk
-         eSnQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rq7bNxn8xiab6S0k9NCBCYnJoXRB/vIQ/49GY9yi64WBRfJlTArByO+b9MUntYXYe/IkYY56E9Ah7+QBbX1Gx71qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEpstmxrzVKInURYwN1N1x2awguyTlh5PGi2DAmMR/DaP+6TIg
-	z3nnhDigPxmOl2WWTBuPaGWhKcOTKcFemLQdGuoCquTbrQZrx6OG0PxOhRCz/FOA
-X-Gm-Gg: AfdE7clkgW3dI6NHbgQWDERhM3H+dHCtIeJlmEZFBMkS3hPCNf1yHtjMLSoXJhIBZMA
-	9BbpW/D/mXlT+WEJxsB4dK1kwJ4ZRqgE5CRcJuzw+f5MuYOHEiT5hL2XK9xsKsgB/vUrGthhMDK
-	Cgf2L49ZXiyIT/hFOQxGhbz9DMt+Ov13wKAXUT8sCMnnfCj7eSWqrH4Wy+pbrbmQFW8mGCHBL/N
-	XEEm0GSjdm365KcojqYK63ayiBwA+rdVERIBEgbc3XLfX6zb/IvkGB2PQSF1XSYhY79/HldjrbL
-	864a0zFByozyFLiK++xclNEStV7kgdShwg8ky+ApWuBDAW9fA/hfKkdhhRDff/Uy9RAaX9Deh+P
-	wamDzFu9zgN/yPobk6FaWjI6f6icSbXzSHS8vitMhVc1HTw+HNLXyWxKKr6Y6as/iiLaUOqrhXW
-	LFRcmx3MNj3ayv9+jztbhAeoOP/8tA/iH0USLdiRBq/0JDnZKxsGC8BA==
-X-Received: by 2002:a05:6102:6883:b0:73a:16eb:ac94 with SMTP id ada2fe7eead31-7427f040e22mr2945979137.19.1783324857852;
-        Mon, 06 Jul 2026 01:00:57 -0700 (PDT)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-73e1a447ffbsm5573999137.4.2026.07.06.01.00.55
+        d=1e100.net; s=20251104; t=1783325688; x=1783930488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qf9yz7bHOmjN0sKgSDCZJBffOCMRQyGOU+wzNPd/KAs=;
+        b=Au9cWhmx3gp+7+qZt2s6fQqA2c9hvXXvk1EayfOYALGS8NTd/BAGaF6SwuYVmfvyq1
+         fQIns2ga7h3KJdUJ+AtVtBreZEZoJaKhtiaerOGuZnAKtv7BrbZY5LKeMJOEUkuXr6XF
+         4ksXiU7N1IWDS1VtXAGg6G2QNvaVTV/159x5DxK23LzsUshJbV18IUXHw9zhkdQqVvs6
+         4AllhCKsVlbY+/WijEC51nwGmLovXseCAYFlvSRD5yGHUD/BrMnZFyp8u7kOYsgEIe8l
+         xhqNOwmza12HoS4l8CAfQqTYTdOtrI7N5JpDRgXoG9/4bj6DwqXEZEOJjURHTfuPWzJ2
+         nryA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq59N1t5BegS3UnT/ENKsiuV6cKSSCkdukG7lY0l5+gkvosHlsD7gFVJJVUXZoinr1dxOENvE7HmwgLrM2E0Z2Lww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV0ONEYTX//IaMvzOL1OTeFWwzGl0CuXdfMFBRZCqFLWRYju25
+	fc9klMFmF8CqbCiZCoO5nHz9wwvmZT0w3FMtKYdQfsSZAuS3WUeix3qEm2j2OCeu
+X-Gm-Gg: AfdE7cmWvc2j13X3hx5b9fdlTND2x+Rtebpv27E0YPml8GHNqOPxgdyqX5FLimyHa+L
+	aI8tvmNUTo+/tNUO+AQ1z4eTl0gQYtA7Gqo4viKmWdd+wdczfZ8mZJ1n80MFP0LZ0Q/TwYyzhup
+	5QbrrqeWDgXygH7iTNzTA1uPO3wB9ehtRAUkbal48w8VHgVmtX7UtqgfRb+kkgOCKdG6t44118N
+	5aOF83xMpIDAxBBbfHHTfL6H7A5O+ktDbH9LnrdbYo2TffA0UqkgPNTJobIv3TvDBAwNv3GufwB
+	KIoS1eJbyGipPO7n5Sc6UPNAT+kco3ykkV4IoN4KIxAUCC9fn/CtGjxPHQcTaILQ5X8I3ZMjdI7
+	fFwpF3JECc2Rlf+v8T4PXzaLcVt/bEJG3dxUZfXqNfp5I1S4pJeZ0WELWujcS8VpKSbAI2SsbKV
+	WvpQBvWcEV+Td65Co5l4SGWCRWTR5CRl3Kp07Dn9ffRb2N5RbdQQ==
+X-Received: by 2002:a05:6870:a0aa:b0:448:6ba8:be6f with SMTP id 586e51a60fabf-44d1813dd5dmr5702714fac.19.1783325687728;
+        Mon, 06 Jul 2026 01:14:47 -0700 (PDT)
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-44cfb5fa20fsm9013979fac.16.2026.07.06.01.14.47
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jul 2026 01:00:56 -0700 (PDT)
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-59c9b666822so2316865e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:00:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpQO3o4yzJefffuehOoeT0qziO96SVdg1UtF5fM/InbYVjUsRdZBl+SILI77VWQWSTPb+Qk2CqycjWdLS9XcqJAeA==@vger.kernel.org
-X-Received: by 2002:a05:6102:800d:b0:722:826e:1423 with SMTP id
- ada2fe7eead31-7427f0478a0mr3286706137.20.1783324855096; Mon, 06 Jul 2026
- 01:00:55 -0700 (PDT)
+        Mon, 06 Jul 2026 01:14:47 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6a18eab71bfso1473600eaf.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:14:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8sHGYUPBnK0Hm07zacGXYuMwX5TYaUL0Ku4tnSYd25C/e4oOh3fuqrSuNcIfpsfwFq0c6K3m7R+IMTbiRnTGHy4w==@vger.kernel.org
+X-Received: by 2002:a05:6102:32cd:b0:73a:2195:4386 with SMTP id
+ ada2fe7eead31-7427f05af6fmr3257389137.24.1783325349869; Mon, 06 Jul 2026
+ 01:09:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783263835.git.ukleinek@kernel.org> <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
-In-Reply-To: <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com> <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 6 Jul 2026 10:00:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXKyFJ20N6qKafvMZ_0sVj5+XTxcod_6wGkwTsokn7dvw@mail.gmail.com>
-X-Gm-Features: AVVi8CfQACxAMot5VlqKHI6FXvkOZpEWhTZp1dlkgWSruFHOk1f-I-dS5kVo31s
-Message-ID: <CAMuHMdXKyFJ20N6qKafvMZ_0sVj5+XTxcod_6wGkwTsokn7dvw@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] pwm: Unify coding style of of_device_id arrays
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Neal Gompa <neal@gompa.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+Date: Mon, 6 Jul 2026 10:08:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUCqTQ0fWDyHJkU=0gzFe88r0hsSk9tsgfQUZq4TRcAoQ@mail.gmail.com>
+X-Gm-Features: AVVi8CeGulURzBLLfkjFzqZ7MqehawY40QKBoJDeR4KrDLoVwstpoZpBrt3N2ag
+Message-ID: <CAMuHMdUCqTQ0fWDyHJkU=0gzFe88r0hsSk9tsgfQUZq4TRcAoQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow hardcoding EDID
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Michael Walle <mwalle@kernel.org>, Chen Wang <chen.wang@linux.dev>, 
-	Inochi Amaoto <inochiama@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Hammer Hsieh <hammerh0314@gmail.com>, 
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Alexey Charkov <alchark@gmail.com>, 
-	Sean Anderson <sean.anderson@linux.dev>, Michal Simek <michal.simek@amd.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, chrome-platform@lists.linux.dev, 
-	imx@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, 5 Jul 2026 at 17:14, Uwe Kleine-K=C3=B6nig (The Capable Hub)
-<u.kleine-koenig@baylibre.com> wrote:
->  - Use a single space in a of_device_id array terminator; A single space
->    after the opening { and before the closing } in non-empty
->    initializers;
->  - No comma after an array terminator;
->  - Also no trailing comma after a named initializer iff the
->    closing } is on the same line;
+Hi Laurent,
+
+On Sun, 5 Jul 2026 at 23:35, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Since DDC version 2, introduced in 1996, VGA monitors have exposed EDID
+> data over an I2C bus. The bus is also used to detect the presence of a
+> connected monitor by trying to read the EDID data.
 >
-> Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@b=
-aylibre.com>
+> Some devices where the VGA display is integrated in the device and
+> always connected do not connect the DDC pins. Some development boards,
+> such as the Renesas M3N Salvator-XS, also do not connect the DDC pins.
+>
+> To support those, add the ability to provide hardcoded EDID data in the
+> device tree. This is mutually exclusive with specifying a DDC bus, and
+> can only be done when the VGA display is guaranteed to be always
+> connected.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
->  drivers/pwm/pwm-rcar.c            |  4 ++--
->  drivers/pwm/pwm-renesas-tpu.c     | 10 +++++-----
->  drivers/pwm/pwm-rzg2l-gpt.c       |  2 +-
+Thanks for your patch!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+> --- a/Documentation/devicetree/bindings/display/connector/vga-connector.yaml
+> +++ b/Documentation/devicetree/bindings/display/connector/vga-connector.yaml
+> @@ -19,10 +19,25 @@ properties:
+>      description: phandle link to the I2C controller used for DDC EDID probing
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>
+> +  edid:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description:
+> +      When the DDC signals are not wired to the connector, and the connected
+> +      display is not removable, this property is used to supply a binary EDID
+> +      blob for the display.
+> +
+>    port:
+>      $ref: /schemas/graph.yaml#/properties/port
+>      description: Connection to controller providing VGA signals
+>
+> +allOf:
+> +  - if:
+> +      required:
+> +        - ddc-i2c-bus
+> +    then:
+> +      properties:
+> +        edid: false
+> +
+
+What if the DDC signals are wired to the connector on the provider side,
+but not on the consumer side?
+A DT overlay describing the consumer device can add an edid property,
+but it cannot delete the ddc-i2c-bus property in the base DTB.
+
+>  required:
+>    - compatible
+>    - port
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
