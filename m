@@ -1,314 +1,82 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3013C465;
-	Tue,  7 Jul 2026 20:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82BD47ECF3;
+	Tue,  7 Jul 2026 21:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783457175; cv=none; b=h7YAIu4Ex7LThp+MqDq6R0K+4VIocVquttSzbd223/FX0TinKRmqQyHTCQKvahU1fHVyLEYgbGYAbyhUDQEi+ZBAQglPtJJqZuAisGYAkQCNRNp1xGjkCc4RSmT7JovSff/6egeVU5hWmUCstbQoaAOKxW/qO4cr6v7xgxW5YsA=
+	t=1783460786; cv=none; b=UoKWtJvFlB1Yqlvl7Ni68ejN+c4ivIuLHQYK8MmR+bgbjK2F4tRpjhaN26GQ4WtULZiCD0g9vTHktwrcQyVn2xSLgjI7Rubg/M92tEbTpPqEKw3qVYrPFUIh3HOTth4wC/rpeVS5TDxOH7DoKPnFLfBjJ1MlGrRuk0hS2txZLCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783457175; c=relaxed/simple;
-	bh=sTqMhYE+xLCp28bXAFAQdjGE/gfFj/qOo86cYqaWGWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fXqoKoFPHuFW+TakdezOt3ryDVOkXGnsiKPZ6maRzhojoQBvzYaC4cKatlyForN0LbYetQ5DMpdMxiLy3PGbuAeyJZmg+HrRtk6EAbLPJFrN5HZh+P0S1Cc1/aLE8VcIT2tZraBCPkGHvKgPw8VbFcStlLx7cmqHY0/DuMJNww8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Kv/4dQd1; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MtpujWlS; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1783460786; c=relaxed/simple;
+	bh=sTAF8Uo74CwK6oOKZp6DOLh3+pYXXmBJ3wbYtR3+424=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m63k/QBhsSeNRBLcWm8uUcKEjL9LCQ7BdlGEQOuyNOdUpkIYSJ8BLHZxTbMoGn/xYXh+SFynl9R4OC5TldwrGjoe2WaauX2xL+SZWyEDM1w3saG0d6FGlxokcWtJ1pbA34lY08uG6ZEO5WUTy01KzxD7xbALNJ14YYVYyrDRcpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcUG9cFU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Kv/4dQd1";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MtpujWlS"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gvtN02F1Nz8v8b;
-	Tue, 07 Jul 2026 22:38:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783456688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P+KHULNUGO23fKouFSgH85v42r+d7/wZHkSXeBZEIno=;
-	b=Kv/4dQd1kRa42MH6ABoVp5Gta9fBtNQ9sonVEZl4HjeOrBOLzVXQ+CTgNZ2ErPn2JEIOVO
-	X4NsZF6XG3DVdQ8coTN7zqCdTizNujWbWf7OJgw4qgGKBRUev6gUcwAjhptLx1DmazjBei
-	91ACjR4MaKScBtVWY49LJd8WDD8INIPY20WtZc8wK4FN+8+oIZwkAPNV3MYlS7oriliwyR
-	QG0mQVc835nyh9m1YGFtTrIdGJwtJYqpLlKyQRFJh7SpDzHfYcAGt4drIogTq9TWGNnTcn
-	Tx+uk4ND3AHBFVE9GpB9YCMxC/sVZEJHIoO8aaq+GJssAExulpiGUIiHCRtlMA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=MtpujWlS;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783456686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P+KHULNUGO23fKouFSgH85v42r+d7/wZHkSXeBZEIno=;
-	b=MtpujWlSni6HxH3bWQh6hxG/aOjSfBZJf6MoZ+KNdrpJ6cSLEyhzdlxlgwxB9KyeTLc6il
-	9sic+Tl1/YSW9qyAmwULkIJD06A0Rvu8UuSyYD10UGXhcPrqyZZut1k2fMnjlLKnaZVgTn
-	QLssvOEB9VGJDTKzkbH3DcGvEeb6aNZqO0N8hYFy7+V/iiHT7Pjm8gFjxfDD9vPQlM9Iyh
-	RfY31GN2erNmlXk8cK3PUokCS0sCpJYuQ1pqbSkz8hk3BjwYr/bI63XBDSBiAZHQzg82iu
-	KqGz1U+BLpaWrP3iyhALY5MlvqC3KdK00/yoPEorzcWVOiih2eKVwxOpJrhFcQ==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcUG9cFU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD681F000E9;
+	Tue,  7 Jul 2026 21:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783460785;
+	bh=sTAF8Uo74CwK6oOKZp6DOLh3+pYXXmBJ3wbYtR3+424=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BcUG9cFUaqr3nmsbyavprrM8gV6wm5iB1hxZhGZIFlZjZq7gXa8S3ZK2OtyuC5zEf
+	 3+W3x2bzqbYGnRdF5+efS9pIzTBASuA9MTYn/HttLLwh8QfXswruqrkw1WK+6cqpro
+	 otwdrKUPvHYK7t0/4qUyMw2lHz0ensR8y8pGwqPAwgnExusSPN764LfXBFf22XjtRf
+	 Lm/Ye77Zfjx2ZcF3iAZbtfW1POxg/k62DArwHFlwjbjg79Zo+7v3f49v9pPit9jbn4
+	 /+N6fEhJTxIMCLfHpgqbDxF+piHzMjo69ySKtpT3E+GbdwvpMXVvTCsbrvTwhk968R
+	 THxUjdvqLdBPg==
+Date: Tue, 7 Jul 2026 22:46:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/5] PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
-Date: Tue,  7 Jul 2026 22:35:40 +0200
-Message-ID: <20260707203743.88299-3-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
-References: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
+	Magnus Damm <magnus.damm@gmail.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: renesas: adg: Drop redundant NULL check on
+ clk_get and clk_register_fixed_rate
+Message-ID: <eb4dc48b-76b0-4b47-82f8-be0d35437967@sirena.org.uk>
+References: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 325d9fb9c0dbff73c3a
-X-MBO-RS-META: wxct99y3u7k5nqxtqbj4samnz8ui7drt
-X-Rspamd-Queue-Id: 4gvtN02F1Nz8v8b
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TcAC3ZacrnmTGTc0"
+Content-Disposition: inline
+In-Reply-To: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
+X-Cookie: Alaska:
 
-In case MSI are enabled, but DWC built-in iMSI-RX is not in use, the
-MSI are handled via GIC ITS. Configure all controller MSI registers
-fully.
 
-Set or clear MSI capability register MSICAP0 MSI enable MSIE bit and
-PCIe Interrupt Status 0 Enable register PCIEINTSTS0EN MSI interrupt
-enable MSI_CTRL_INT bit according to MSI enable state, set both bits
-if MSI are enabled, clear both bits if MSI are disabled.
+--TcAC3ZacrnmTGTc0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If MSI are disabled, or MSI are enabled and iMSI-RX is used, then
-deconfigure AXIINTCADDR and AXIINTCCONT to 0, which disables any
-pass through of MSI TLPs onto the AXI bus and then further into
-GIC ITS translation registers.
+On Sun, Jul 05, 2026 at 07:23:26PM +0200, Krzysztof Kozlowski wrote:
+> devm_clk_get() and clk_register_fixed_rate() do not return NULL (only
+> valid clock or ERR pointer), so simplify the code to drop redundant
+> IS_ERR_OR_NULL().
 
-If MSI are enabled and iMSI-RX is not used, the configure AXIINTCADDR
-with target address of GIC ITS translation registers, and configure
-AXIINTCCONT to enable MSI TLP pass through onto AXI bus and into the
-GIC ITS. This specific configuration allows handling of MSI via the
-GIC ITS instead of integrated iMSI-RX.
+The two patches here aren't obviously related and should probably have
+been sent independently.
 
-Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-NOTE: This would not be possible without prior work from Shimoda-san
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Pull GITS_TRANSLATER address from DT, which also fixes missing +0x40
-    offset of the GITS_TRANSLATER register
-V3: Add Co-developed-by to credit Shimoda-san
-V4: Fix INTC_MASK to be GENMASK(11, 3) instead of GENMASK(11, 2)
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 118 +++++++++++++++++++-
- 1 file changed, 113 insertions(+), 5 deletions(-)
+--TcAC3ZacrnmTGTc0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 8b03c42f8c84c..5f7211b91ee5b 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -13,8 +13,11 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/irqchip/arm-gic-v3.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -31,6 +34,10 @@
- #define DEVICE_TYPE_RC		BIT(4)
- #define BIFUR_MOD_SET_ON	BIT(0)
- 
-+/* MSI Capability */
-+#define MSICAP0			0x0050
-+#define MSICAP0_MSIE		BIT(16)
-+
- /* PCIe Interrupt Status 0 */
- #define PCIEINTSTS0		0x0084
- 
-@@ -55,6 +62,14 @@
- #define APP_HOLD_PHY_RST	BIT(16)
- #define APP_LTSSM_ENABLE	BIT(0)
- 
-+/* INTC address */
-+#define AXIINTCADDR		0x0a00
-+
-+/* INTC control & mask */
-+#define AXIINTCCONT		0x0a04
-+#define INTC_EN			BIT(31)
-+#define INTC_MASK		GENMASK(11, 3)
-+
- /* PCIe Power Management Control */
- #define PCIEPWRMNGCTRL		0x0070
- #define APP_CLK_REQ_N		BIT(11)
-@@ -305,13 +320,103 @@ static struct rcar_gen4_pcie *rcar_gen4_pcie_alloc(struct platform_device *pdev)
- 	return rcar;
- }
- 
-+static int rcar_gen4_pcie_host_msi_addr(struct dw_pcie_rp *pp, u32 *msi_addr)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
-+	struct device_node *msi_node = NULL;
-+	struct device *dev = dw->dev;
-+	struct resource res;
-+	u64 addr;
-+	int ret;
-+
-+	/*
-+	 * Either the "msi-parent" or the "msi-map" phandle needs to exist
-+	 * to obtain the MSI node.
-+	 */
-+	of_msi_xlate(dev, &msi_node, 0);
-+	if (!msi_node)
-+		return -ENODEV;
-+
-+	/* Check if "msi-parent" or the "msi-map" points to ARM GICv3 ITS. */
-+	if (!of_device_is_compatible(msi_node, "arm,gic-v3-its"))
-+		return dev_err_probe(dev, -ENODEV, "Compatible MSI controller not found\n");
-+
-+	/* Derive GITS_TRANSLATER address from GICv3 */
-+	ret = of_address_to_resource(msi_node, 0, &res);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "MSI controller resources not obtained\n");
-+
-+	addr = res.start + GITS_TRANSLATER;
-+	if (addr >= SZ_4G)
-+		return dev_err_probe(dev, -EINVAL, "MSI controller address above 32bit range\n");
-+
-+	*msi_addr = addr;
-+	return 0;
-+}
-+
-+static int rcar_gen4_pcie_host_msi_init(struct dw_pcie_rp *pp)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	u32 val;
-+	int ret;
-+
-+	/* Make sure MSICAP0 MSIE is configured. */
-+	val = dw_pcie_readl_dbi(dw, MSICAP0);
-+	if (pci_msi_enabled())
-+		val |= MSICAP0_MSIE;
-+	else
-+		val &= ~MSICAP0_MSIE;
-+	dw_pcie_writel_dbi(dw, MSICAP0, val);
-+
-+	if (!pci_msi_enabled() || pp->use_imsi_rx) {
-+		/* Clear AXIINTC mapping. */
-+		writel(0, rcar->base + AXIINTCADDR);
-+		writel(0, rcar->base + AXIINTCCONT);
-+	} else {
-+		ret = rcar_gen4_pcie_host_msi_addr(pp, &val);
-+		if (ret)
-+			goto err;
-+
-+		/* Point AXIINTC to GIC ITS and enable. */
-+		writel(val, rcar->base + AXIINTCADDR);
-+		writel(INTC_EN | INTC_MASK, rcar->base + AXIINTCCONT);
-+	}
-+
-+	/* Configure MSI interrupt signal */
-+	val = readl(rcar->base + PCIEINTSTS0EN);
-+	if (pci_msi_enabled())
-+		val |= MSI_CTRL_INT;
-+	else
-+		val &= ~MSI_CTRL_INT;
-+	writel(val, rcar->base + PCIEINTSTS0EN);
-+
-+	return 0;
-+
-+err:
-+	/* Deconfigure MSICAP0 MSIE. */
-+	val = dw_pcie_readl_dbi(dw, MSICAP0);
-+	val &= ~MSICAP0_MSIE;
-+	dw_pcie_writel_dbi(dw, MSICAP0, val);
-+
-+	/* Clear AXIINTC mapping. */
-+	writel(0, rcar->base + AXIINTCADDR);
-+	writel(0, rcar->base + AXIINTCCONT);
-+
-+	/* Deconfigure MSI interrupt signal */
-+	val = readl(rcar->base + PCIEINTSTS0EN);
-+	val &= ~MSI_CTRL_INT;
-+	writel(val, rcar->base + PCIEINTSTS0EN);
-+
-+	return ret;
-+}
-+
- /* Host mode */
- static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
- 	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
- 	int ret;
--	u32 val;
- 
- 	gpiod_set_value_cansleep(dw->pe_rst, 1);
- 
-@@ -328,16 +433,19 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
- 	dw_pcie_writel_dbi2(dw, PCI_BASE_ADDRESS_0, 0x0);
- 	dw_pcie_writel_dbi2(dw, PCI_BASE_ADDRESS_1, 0x0);
- 
--	/* Enable MSI interrupt signal */
--	val = readl(rcar->base + PCIEINTSTS0EN);
--	val |= MSI_CTRL_INT;
--	writel(val, rcar->base + PCIEINTSTS0EN);
-+	ret = rcar_gen4_pcie_host_msi_init(pp);
-+	if (ret)
-+		goto err;
- 
- 	msleep(PCIE_T_PVPERL_MS);	/* pe_rst requires 100msec delay */
- 
- 	gpiod_set_value_cansleep(dw->pe_rst, 0);
- 
- 	return 0;
-+
-+err:
-+	rcar_gen4_pcie_common_deinit(rcar);
-+	return ret;
- }
- 
- static void rcar_gen4_pcie_host_deinit(struct dw_pcie_rp *pp)
--- 
-2.53.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpNc6sACgkQJNaLcl1U
+h9DKyQf8D8SFSnDWgLpb24bUzc0z8xEmhX482RB3IdiW0Pd1Q1csJOgkLn+wvBPD
+07s4cL7KvZdFvfQsLeiLEmp4ZdwOZK92MArKDMgZtGH8J7ZPimiQg46aP5uPZfNr
+9ERKkteF5Vh3SM8vvZHHjZ2KsGQMVoajk/A61xVxrvT7rXjU9s0wwjqmWSwEPjDH
+nBaNSgFR9owOKthresvEXkFjOrYEXq79vUv/puF/25rveunEOL1RkPluMXyvBVdk
+ETnvSNn1R3kuvkLlvy6AtPacj9z3MvLKD/sGHgage6jUUlvcOO9csnuw4d6BqNmi
+v5MkqHz9AQFZPhFRV3fKXTPM8n+k4A==
+=exgB
+-----END PGP SIGNATURE-----
+
+--TcAC3ZacrnmTGTc0--
