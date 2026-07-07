@@ -1,114 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF0B33291F;
-	Tue,  7 Jul 2026 16:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38F442087F;
+	Tue,  7 Jul 2026 20:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783441011; cv=none; b=E1aRAOyw8nwr9pgcj1OvNHRCYuWkMrph1rsRgo0qrl9P/r2dLBk1lBo3edcH5V0eOikI33YFEzTqQEVFXNpRDbafbBOEVhwB0OTXxLEzVcLiZMDOVRmv49X8zEC/0rLXg/+uzWyx2ogQ7EEWpV9Fg740RR53/7d3WwWt8gjkZ8k=
+	t=1783455861; cv=none; b=bp+ag6D0kCMed7oSiJyygW+jHv36+sVMPuz9M6PZJQ1yNcfpvNnL9x7QPO6qEtffb3sEzDUVRflWYxoasVTFa4dnRJPvtxwWQeR27gIa7C0qUggm2Zr94pX3RxHa5In57zQtj0qME62BEWxXgQNTbGSCgF+a4ph1JqBnl0oBZOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783441011; c=relaxed/simple;
-	bh=eJkZScH+2tUpPvrz10Rhvl4xlNR1MRvbgEd4Iyhc5xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7bnFToITRAk7uaPu81fT9UjOtkBeoLcPw4qT3IGBDpdE0pDoZRfmBXdSDoB9JVkGNXe7omHk+3KMzxiHwcKbd1dP+TNjXd7aBVYLZkp3D4BklxrlJnSsE/oUxB6fypOq2blXRkz92hJObDurpd++CO/X5tDHZOPsKmmGUAqbds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwHp8YDU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783455861; c=relaxed/simple;
+	bh=fwReva9uoUxB1MQyBfEquSl0KIEHdpI1AQyr6XKGsNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aa32OWy9EGSIVcOwfJHEX0kU7L2lUA/8Vxe4kFEdl74/h26T8nGWCqQdImAzK4iDCmnD/y1XWveGMA1W/rdCE7XrEHHp5SJ9qQ0kmIkyK/jQ8e+KFQWpbsXqoexiuoi8a06ZmnZd+nr+9la1AxkzkglLKdnuR0EIFzGdOKNOCDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hlX9qH3P; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwHp8YDU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 212CE1F000E9;
-	Tue,  7 Jul 2026 16:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783441009;
-	bh=BRTWTtCF/TnwArUxZSwcgJyax6Qi1uu00oQiI0rI0uc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YwHp8YDUX9RDnLOs9agp75luftXSWn5gLU2QXfbsH+X7GpQ4Akn0Whoa/lIll7mng
-	 rberCHmBpbbxHdA9O6ymUFiO3sjiIJ8VgT0L1xCVJaL+40L7QtfTD8yOxRvssSrMW7
-	 f80sfKLKngKZIGr2LM8yc6+E72ncSVvMcAP0mriNv0GB8Zk1O/XqmDyDA1glIUR1Uy
-	 GDC+3vKq9mynsZR1NbiVDqsTIgtVOkYIz5Q50e2iyBUiPMnaS2/ydZ6A5YkzlrowdU
-	 2pJTjxji3/LVIjffS2qm9k3st5RwrpD06LPyu7mV27X4SrMORN8qTU8bg2LlJAm64y
-	 qnGpwyMWz+k2A==
-Date: Tue, 7 Jul 2026 17:16:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-	bmasney@redhat.com, biju.das.jz@bp.renesas.com,
-	tu.nguyen.xg@renesas.com, fabrizio.castro.jz@renesas.com,
-	claudiu.beznea@tuxon.dev, linux-can@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 2/8] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3S SoC
-Message-ID: <20260707-suffice-panorama-7083120803cc@spud>
-References: <20260707102418.1646159-1-claudiu.beznea+renesas@tuxon.dev>
- <20260707102418.1646159-3-claudiu.beznea+renesas@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hlX9qH3P"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4gvt3r6X4zzMlHZ;
+	Tue, 07 Jul 2026 22:24:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783455848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pE6yNMp+uXpgGUcwJt1cNGBLI12Hj8FXQ5m2BI8bX4s=;
+	b=hlX9qH3P7QNIy3fjcF4n/8eSucWZ176Mk6rgjs1M739zaMKvTQvGGk549o/lK7yzZY8UKe
+	jrzFdT6d+qGQ8TmH5E8onyjvFhIdY+IgHM7HLT6Llob5IE5V+y8Fk7WgrW3QqWf4ODCQIa
+	eYSgnfyQrdAPnV8IUCnsSUcelKJAkz9guNykDXeTGHK/kY5secL5vamRRk/cwduEriTwSM
+	f8CZF+4XnDZ0VgOApdQJ4+L+WpHH7MVIYfFxN6LKJEcgVUhp1FGVkc5sucYDAu0sbcym+B
+	BmjQEfAMRLzikJr7elz3UFrWy8d2X9uQAUaLcjfAlrZXHRJsHRxMO6xWLW81Dw==
+Message-ID: <e67d526b-7e4c-424d-b971-35e06c163376@mailbox.org>
+Date: Tue, 7 Jul 2026 22:24:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9vvr7ueiVvdUxT5x"
-Content-Disposition: inline
-In-Reply-To: <20260707102418.1646159-3-claudiu.beznea+renesas@tuxon.dev>
+Subject: Re: [PATCH v3 1/5] PCI: dwc: Determine whether iMSI is used before
+ calling .init
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260701203918.63189-1-marek.vasut+renesas@mailbox.org>
+ <20260701203918.63189-2-marek.vasut+renesas@mailbox.org>
+ <4qyn4fljtb3cbzcmfpkdomkm7vqnwn2rfbtqng4iwmtvfd4bpj@t6kkw53erl7f>
+ <8a921ce9-e339-445a-af05-d20f9f2df01e@mailbox.org>
+ <p4it4hcg24narbtjtoqdk6zg7wpfs5hc2mm77acyoi6hwfkh5u@5bqlwhylosmo>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <p4it4hcg24narbtjtoqdk6zg7wpfs5hc2mm77acyoi6hwfkh5u@5bqlwhylosmo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 073d86a19c85a0d025b
+X-MBO-RS-META: 5dycfot7945dqgf3kieqojhkr9yf6hae
 
---9vvr7ueiVvdUxT5x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 07, 2026 at 01:24:12PM +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The CAN FD controller found on the Renesas RZ/G3S SoC is largely compatib=
-le
-> with the variant present on the RZ/G3E SoC. The main differences are:
-> - the RZ/G3S provides only two CAN FD channels
-> - the RZ/G3S supports only CAN FD operation; the Channel n CAN FD
->   Configuration Register does not implement the bits used to select
->   classical CAN-only mode (bit 30) or CAN FD-only mode (bit 28);
->   consequently, bit 31 (CAN FD Frame Distinction Enable) of the same
->   register is also not implemented
-> - some bits in several registers (mainly reserved or status bits) are
->   read-write on the RZ/G3S but read-only on the RZ/G3E; their behavior is
->   otherwise identical: the bits read back as 0 on both SoCs and software
->   is allowed to write only 0 to them on the RZ/G3S
-> - the RZ/G3S provides 128 acceptance filters, compared to 64 on the
->   RZ/G3E
-> - the RZ/G3S can use PCLK clock as the CAN FD clock source through an
->   internal clock divider, while also supporting an external CAN FD clock
->   source
->=20
-> Since:
-> - the SoC clock generator provides to the CAN IP only the peripheral and
->   the RAM clocks
-> - when sourced from the peripheral clock, the CAN-FD clock is obtained
->   inside the IP itself by dividing the peripheral clock
-> - the assigned-clocks and assigned-clock-rates properties are specific to
->   the CAN-FD clock
-> the assigned-clocks and assigned-clock-rates properties were dropped from
-> the required properties list of the Renesas RZ/G3S SoC.
->=20
-> Add documentation for the Renesas RZ/G3S SoC.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-No idea if patchwork will pick up the response to Sashiko, but the thing
-it raises about the fd properties seems valid.
-pw-bot: changes-requested
-
-
---9vvr7ueiVvdUxT5x
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCak0mbAAKCRB4tDGHoIJi
-0rtdAQCT+LGnXwr1M/rIKrgiH02r2W9lRu1Yof4RbsBDQnSnTQEAjPWj+nHIbYt/
-ry4uBSNCnAZDQFSiCGgSrRzEw/pN4Ak=
-=4Yrq
------END PGP SIGNATURE-----
-
---9vvr7ueiVvdUxT5x--
+On 7/7/26 5:36 PM, Manivannan Sadhasivam wrote:
+> On Mon, Jul 06, 2026 at 07:48:24PM +0200, Marek Vasut wrote:
+>> On 7/6/26 6:43 PM, Manivannan Sadhasivam wrote:
+>>> On Wed, Jul 01, 2026 at 10:37:44PM +0200, Marek Vasut wrote:
+>>>> The R-Car Gen4 PCIe controller integration configures MSI registers
+>>>> in the controller driver .init callback, because those registers
+>>>> have to be configured while PERST signal is asserted, and the PERST
+>>>> signal is asserted across the controller driver .init callback.
+>>>>
+>>>> The registers have to be configured differently in case the iMSI is
+>>>> or is not used. Assign pp->use_imsi_rx before the controller driver
+>>>> .init callback is called, so the controller driver .init callback
+>>>> implementation can use the pp->use_imsi_rx value.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>>
+>>> LGTM!
+>> Thank you. Can I get AB/RB before sending V4 ?
+> 
+> Why? Since this series goes through PCI tree and all PCI patches are controller
+> patches, I'm going to merge the series. So no need of the A-b/R-b tags.
+All right, V4 patchset is coming shortly.
