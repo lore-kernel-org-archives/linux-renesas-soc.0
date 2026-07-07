@@ -1,53 +1,53 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D53EB0FF;
-	Tue,  7 Jul 2026 20:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FE010785;
+	Tue,  7 Jul 2026 20:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783456685; cv=none; b=B222hasMOkuP5TsAsEhVbU8AiZ/ywmAu0xv7Qyu0dJrQEcIyn8UCDv5RYeEb/1bxJekbxPrZzRazg8LN31cP/RoW4LIh4QkN8/3tKt7Dwtcl1OYiGcXyQlGnlg3F5Q4ftD6RISI2hYfxdtF4KUwgMnQpv1SnVjNP6jHFig4HejA=
+	t=1783456693; cv=none; b=WxJaQfeuGpD3zMDaNiz/ExtCzzQqroax5qNCcsxIrsQneB+jm5n7bTiGGESFMC6K7D0vlTup+/EGIE12OlfDvQNSNfkTt2BKJttaGtJ9xpJ3tec1ZYTkgkn99Tf8tccx2n8tpYWXTV54T27j7XRhXxuXOZWMuSayxAJhCkhHmHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783456685; c=relaxed/simple;
-	bh=45ktKS63svINguA/03znAG+kUb0GrmqNXv1eYU/+Fto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TW7WqYydB1v4Fgm07UO5gb4jlPPZpx/YbXgmVzWjZMqTOtNvZKorvPXxrK/BfSsAU7inrA9PnHIRR04JP53CpqQTwjNuLR3KbeKrlsRrROwSrqWqExq62T6vY5kvu39oBNm6Npfma40YFfzmlreBHl8Hicv2Rgh3BxRVASz/Kc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qG71dQnD; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=W8BbqTMc; arc=none smtp.client-ip=80.241.56.161
+	s=arc-20240116; t=1783456693; c=relaxed/simple;
+	bh=Zi3czAew4d3ZlftWkZwM7s4gZmhFyFUIS+7NMB7dNwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OULcd0ntgvCZlerIw3xJZBYbOhRonZ1Ar00Tm1XWXpoLNyLPXSRrSSJOpin/b3pwrmoz3C89MNeBg+Oo/Ds6c2nEra1x/fkkvXxDPN6SIaU7FpRp7suqQMZndzSm8vpP+MOf3K8lpkCFjSXG05oO33dWXcdRWMOW5YuDXc+Ihvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Tmxt6nto; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YdS1Cmmj; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qG71dQnD";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="W8BbqTMc"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Tmxt6nto";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YdS1Cmmj"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gvtMq4YlWzKnYq;
-	Tue, 07 Jul 2026 22:37:59 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gvtMv5yBGzMlMJ;
+	Tue, 07 Jul 2026 22:38:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783456679;
+	t=1783456683;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NkxAlTQFGbaiuEekACY4kTmb7QT3eq8R9Ya17Km0roM=;
-	b=qG71dQnDHH5TbSzfaJY2ona/Zb/tcdBlDpng/N0QlID4fOXL5xmMnK5F9f2JuF4e5oP5pe
-	TPcfE75Dvf2+4gjiZp4hPYZAWRQOjh88H+uho6Yy4RWLAQAz1VcCbiz2M72Fh3ulQJnyDX
-	1Km6wm68zp6THQZUjy2gSHFy1ixoUjrerDGF9lGRTKhslmXRToya2dWnY0zuCfd9Z7uUrN
-	1ytkNDWC9YS5M2c6BpfvkGq22zFE+54bu1bVYdA7iQlMC4Am4x7J/GRBavyV3fFvGWmsoH
-	NSVsnRKca3e4IaOlLcV42xwz8w0deYIliR2HQhJ2XDCKsp679HdB0JDJPM/RDw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=W8BbqTMc;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X2Us4mdNEvhuyOgKQU3GzWXQxNS9dEkI8BiRToUpUN4=;
+	b=Tmxt6nto5vPwu2cDgw3ZE1aOER2/fwL/o8QTkxlb1D3WMHQtFRuOw/EwwYhWenpOVN7D4e
+	lYY/cKImq427Lkhp7UfiDgsY1cWq1qge7a2jcJ1Bar/zcF9TYNG2dJ5DE6USCXasVkxvmd
+	rf6mGOxjJSf7A6bBTiWVH/dG1aJHOv8am7u2FnpsrJQ1n8qalKOuP3EP8MKKmf9AcG49hM
+	8Iova3+cnmhdZD5L65uSepuMlC7MbftlelCtBmIycKYh+QKCuV9yiUFPja7/iAAcC0EwUC
+	msvcGyAplSWkr75vS+NIJCRgYEimBKQ6XJ4EhlmdPfvtM6W+kED0r6UgUXE0mQ==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783456677;
+	t=1783456682;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NkxAlTQFGbaiuEekACY4kTmb7QT3eq8R9Ya17Km0roM=;
-	b=W8BbqTMcowFTauoj2C93jHgxjUCLS+vheaflWcub1dTsog1pIptOUUE1eQNpWlQQ9wa9zv
-	Cvsb0wGqtDb8Lz/IOtZ7WvOYoW2tQimEw2SKZIu2xK0D2yY4wg9RAqpOzUO8Z4PTvjMSnu
-	bhuubDLXN5RnvxwtFHwp9WF0WG427YJNBX3GEM//Q8/h8T9/Oba954959U1+pIlwMNkEFx
-	HC4xTe2+XQkbC2cNH/dnFqwWsArN3GZYK4KgW6++GDbGkcUaX75oRUcXhwoZumTOpy8sPW
-	GgzPrVzL90wf88N6SXzYzfkR7cm66ss3blUM6PhP6cs7jlgvgHNvzP6m5T8U0Q==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X2Us4mdNEvhuyOgKQU3GzWXQxNS9dEkI8BiRToUpUN4=;
+	b=YdS1CmmjByWm7CZo4bLVwH/7paBZDulYxGFpsF0EN3oN6Nv8Opd1PqZqZ2ZEA2yr4PmnfO
+	zsem0EAM3t9zExN7bEpwsTkjDWTV+FLG3eynh8ghZbL407r6ObMu1QPF53QFchpwO4YD3y
+	icVrAnn0AIYy/oqpLqCUqbiZevj9nWtcPbQYdLYbjuj7mAw2OX8LLpIhzNQuOmMb+uGzF1
+	Oo+nxQBk/aJtXipiTP6GWpwtpKEPRrg5pSL/Ej3NzfDz4eBAAfUiNWQA6I/+rQWW7qeYZ1
+	s/TBPo8FcVVrGWCQYfwj3HENFbc0E2S2UhL4mvyfuagiVv1DyEcNj85FrNifug==
 To: linux-pci@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
@@ -66,9 +66,11 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/5] PCI: rcar-gen4: irqchip/gic-v3: Handle GIC ITS
-Date: Tue,  7 Jul 2026 22:35:38 +0200
-Message-ID: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v4 1/5] PCI: dwc: Determine whether iMSI is used before calling .init
+Date: Tue,  7 Jul 2026 22:35:39 +0200
+Message-ID: <20260707203743.88299-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
+References: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -77,34 +79,20 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: u96g9godcfeirhu3zryyw76zncezkakh
-X-MBO-RS-ID: 68c9bf0ca49950fc27a
-X-Rspamd-Queue-Id: 4gvtMq4YlWzKnYq
+X-MBO-RS-META: r583po4qoa15sromgjb4oesm4cdjryrp
+X-MBO-RS-ID: f11fc97ecda8cba6624
 
-Configure all R-Car Gen4 PCIe controller MSI registers fully, both in
-case MSI are enabled and disabled.
+The R-Car Gen4 PCIe controller integration configures MSI registers
+in the controller driver .init callback, because those registers
+have to be configured while PERST signal is asserted, and the PERST
+signal is asserted across the controller driver .init callback.
 
-Patch GIC ITS driver and add quirks for R-Car Gen4 GIC ITS, which is
-configured to 32-bit address width for AXI or APB interface.
+The registers have to be configured differently in case the iMSI is
+or is not used. Assign pp->use_imsi_rx before the controller driver
+.init callback is called, so the controller driver .init callback
+implementation can use the pp->use_imsi_rx value.
 
-Switch R-Car V4H to use GIC ITS in its DT and describe the GIC ITS
-implementation cacheable and shareable limitations.
-
-Marek Vasut (5):
-  PCI: dwc: Determine whether iMSI is used before calling .init
-  PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
-  irqchip/gic-v3: Refactor GIC600 limited to 32bit PA erratum handling
-  irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround
-  arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes
-
- Documentation/arch/arm64/silicon-errata.rst   |   1 +
- arch/arm64/Kconfig                            |   9 ++
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi     |  31 +++--
- drivers/irqchip/irq-gic-v3-its.c              |  24 ++--
- .../pci/controller/dwc/pcie-designware-host.c |  10 +-
- drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 118 +++++++++++++++++-
- 6 files changed, 168 insertions(+), 25 deletions(-)
-
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
 Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
@@ -123,7 +111,41 @@ Cc: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
+---
+V3: New patch
+V4: No change
+---
+ drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 06722259d2e37..f5a38e6fd8d79 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -587,6 +587,12 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+ 	if (ret)
+ 		return ret;
+ 
++	if (pci_msi_enabled()) {
++		pp->use_imsi_rx = !(pp->ops->msi_init ||
++				    of_property_present(np, "msi-parent") ||
++				    of_property_present(np, "msi-map"));
++	}
++
+ 	if (pp->ops->init) {
+ 		ret = pp->ops->init(pp);
+ 		if (ret)
+@@ -594,10 +600,6 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+ 	}
+ 
+ 	if (pci_msi_enabled()) {
+-		pp->use_imsi_rx = !(pp->ops->msi_init ||
+-				     of_property_present(np, "msi-parent") ||
+-				     of_property_present(np, "msi-map"));
+-
+ 		/*
+ 		 * For the use_imsi_rx case the default assignment is handled
+ 		 * in the dw_pcie_msi_host_init().
 -- 
 2.53.0
 
