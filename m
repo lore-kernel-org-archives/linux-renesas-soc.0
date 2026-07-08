@@ -1,115 +1,91 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439AD42DA56
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jul 2026 17:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866F53F6C50;
+	Wed,  8 Jul 2026 21:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783531747; cv=none; b=aZTYKdV1laBPYjWCi6kn5z2mN/7W+BC/fKcJHoF5pclqM/eGWn157FTtQ2I0wVPechuVMuAgr9g/7pszrqAGjyX/3QKRCipqHFY9LlNMy5nuLFIyWrNkaUdUraH04NJ3aLH6qFNpFxWCuiz/EsNps8OJ2/oIsbv/3PuYCgf8YR4=
+	t=1783547758; cv=none; b=e7YYcqbvIPVxKc5xnSfbYtRDdCgSo078e8o7rqX1YyI7Zk4cXltBShDtzmBGvZWfU1MzviPmPmMTsJ47VILouyKKfLVGOYOJYLgq32JHQR18GO9pJYS1ZeqtLDHJLXGkKK83Jg8r1k4Oej2n3FiSrXFBKpIXSQ5x6yDCg/6FHJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783531747; c=relaxed/simple;
-	bh=ioCtDb6Hpyegnn4dLa/LBc0pEMO402CSdMCwg9kodwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NwJxk0aB3uuzuCPkh7r3PVe/p7tBKPYTXn6zW1+jOZslxoBcjjhfAB1s6O53yxKOWGtR239RldxbjxQiRZE9VHHdwqIQR8H2eRf9Jv6K+1e8yzIR53/mJailTBHiMZeT4CRxeQza4VK3f4jBi/pxTXfvrxMyFnktjBTOQ2kgZlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIL1vxxO; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783547758; c=relaxed/simple;
+	bh=E13s4px4HpU1DHPkDGA690/6O5c9oaQoSSbxK1RW4Zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfj918S53XuE8fQyh0ALjUoj0UDmqCVy6chu4NXsOWhtwdyOPxOiyQ84FhdWHAu/aUn1TrSZ9xWO+XHe+SbehRw9VDlRHJ4Muyq9IHnI8uUzb6zEHooUa5DiOsEOygSB5wK+PemU1bg+AWPz5bXpIRuKMmmxB3eB0FLgHmcNZbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vLvb3sDh; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nYaqeC9A; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIL1vxxO"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4759b4f0897so600422f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jul 2026 10:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783531745; x=1784136545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=rKuTPeLP5x2TPSDUEcA4a1QbA/RpwWIA3uH8yYjcuQs=;
-        b=mIL1vxxOWlPYE6Py0olswa6dnjNeZvzNpb+ZKO1DGGXlvpc8IqA3v0zzv8p6KGMJvS
-         +LNLkZ/YmjqDYBTqX2cwxYAtErr6ZXuKJjn/NR7EJS38/sswjrtTl3yrVhLU44ZEG5YM
-         t+rMvv/NLAze5ZWKVN74xIbqszJh6brlMlbSCAaL6+nrdn/WHOu2tO2D2UR1drwiI64K
-         dAFy/LriVbAqyVjkmg43EmD60QovzhudLVSWPUAzFu5NXKKuPe+1FwE4em+03NuNmL+M
-         zu509PcOmMr36sz4q12Uwv3wkxNmUxhF0miWjZis5Zlrh+8DNHHpwZlwI/4jvPybSzU3
-         f46w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783531745; x=1784136545;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rKuTPeLP5x2TPSDUEcA4a1QbA/RpwWIA3uH8yYjcuQs=;
-        b=L936AKgDINP3WutknsN8Yhqw+36vYW1RFHcVnO4pz/vUDhhM4svO1XkOzoAy9+Ftl8
-         57xpovepOUz7DNCN8E5MDdX9LUTi2iaBSUmyL6Z2QT9F1bI+2Q+P/ZoRZVH2pinS0Ih5
-         d2eRi0Uq150b1qWz8EcONMyM8tzUxJbVca0/2kwhZt1qYl4eLjwvNp2+ovREg6BM0gac
-         YxKcARjPED07hi8UfYkGruQN+csGYsP4zaWlG6jLDQU/5bT2FnHR3AAO9uUh/5wMJhcX
-         tF6NCec/kOOYCkMTywtPG87luhF0aR4GSIZsKdGVPcvcrrtD3sp82kaGNuSV3Am8gVjd
-         pNEQ==
-X-Gm-Message-State: AOJu0YwbaK+76JaqkmhYz6jTAH/9YWWhvSMEFKCXROd+oHgcIgfO0YRN
-	KyrEPIlxZft1OqA+RzA8hi99YaPQoECjyAd4DJRPZZQpo9gxrsrmb46w
-X-Gm-Gg: AfdE7clIxTeOkOfbGpJ9Fm0/ath3bTCK/qFpNnQamkVjlRuJCvKrJnNVrpuCUkshfqz
-	aaXe9avsArx4vlBFiqhyStm4ghnICoDXU60Dlr1uiq97iTV7OuFyXMOhAijPe7UatqM9SfX3fq7
-	bu+odwt0P5MHTotV8MdNrtNy0aunGp3NcaVQ92tc2+ilPpVmjOxah2mJO6CeghcIbpGtu/M7rKq
-	lkeENSL7Z0MeJhC/D/T9eU1Zd6YxWOz8NKX1hJlIa2bTiW07Hf5WqIQ6eHcam3SOV+2wghD7+zW
-	tikm23e41H+oeI1BEQ4vjyjJAoEbQZLjpBtKBa3Mqh0qVi9fdQ3VBrJFglpLtSpr2MN9nDMhYTc
-	cI+3cn3TklhI8ZLhLQC7VOFsTSvgyibHbHVdIitokpRZ17sLlPuY6ZQJLPPAhQc1EWQS8h00RU1
-	AwP5a+M3o6AQC2sasj2xmP9P2kcgh6yiCNcRmcJrQoZz7FL3vxM80s99mDndT4/bGTasuYnrSW+
-	XKVkdt1/qPGr2Zdc4nCSGevbdQ=
-X-Received: by 2002:a05:6000:400a:b0:473:823:1924 with SMTP id ffacd0b85a97d-47df07f7654mr3574332f8f.39.1783531744610;
-        Wed, 08 Jul 2026 10:29:04 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:ca98:2759:6fb2:4aa7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47a9de1d905sm46588469f8f.2.2026.07.08.10.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 10:29:04 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g047: Fix PCIe dma-ranges memory space code
-Date: Wed,  8 Jul 2026 18:28:49 +0100
-Message-ID: <20260708172849.227915-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260708172849.227915-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260708172849.227915-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vLvb3sDh";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nYaqeC9A"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gwX385Sw4zKw3Y;
+	Wed, 08 Jul 2026 23:55:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783547748;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OUt8rJZ/0AQq1r05KhxBp9d1v78gt9AIlJqD+iFhvcE=;
+	b=vLvb3sDhhB6nPt89m4m8Uz15sXDTqI7whoSF1zVP9CNL2mH3EzfYRLOHY/O4UD0bB++5yZ
+	omii7FWlBOpRA5FTGV9aH9DoVwsH4zQU9eN5pv8ZOl4Wf+BH9PiGxp58OzAfHaud+tCFf7
+	Y3e2YgQ8ip13t/2HJ2k0fP+qnBzQ7ID/HV2V/y7ZvVJTXipJ7JqvKOBRt1OCB2NODce4Kz
+	rY1U6+b25Vh0hxo1bsW/lBI3y8V2XUI+3kZoCTI5G+Zm2++0d+T4O1nFssZmCGqQpo9Vxw
+	Bowl+WrgNZbssBRczd4H53E8eGCd0CsQRid6jCFeO+wFR17gaVqvMlsReSZW3w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=nYaqeC9A;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <9c29915b-0b57-41b9-a6cf-5d970756527c@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783547747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OUt8rJZ/0AQq1r05KhxBp9d1v78gt9AIlJqD+iFhvcE=;
+	b=nYaqeC9ARNfKvDhiZffpXJQxY+Z+/gFn3LTQ+2FfP/4KjwAy0vs4L9K09YtlYcSgZRPeZA
+	pJseT5WmLFAzE+ynTiyoXCK1pe98XaCHQskMCYmFbp2JTEHb9q+muRm2a/jpa0WtJ2aX5h
+	xCsgQzeOdrSQhaDRynfr3zTk3PH2nD5VZs/9ECt65Hgq2MtE1yA59S2qmUr+qbMg6RWD4z
+	/FfKx7oMhtOJMe/C5pOsOunw0SIDas7YPAxRukba7uiEKQiJUl4wfmzUqP4GuFdfeEeKqX
+	Kd+s6+WBA5jV6cVpiWaM7Fa2GGZVFmZ9OnLKOfvPGk7o76Is+xIdthEEfvhJFg==
+Date: Wed, 8 Jul 2026 14:38:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/6] dt-bindings: power: Document Renesas R-Car X5H
+ Module Controller
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1783505142.git.geert+renesas@glider.be>
+ <1d79020a5eb2f269ea7ebb354cdfdf880049721c.1783505142.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <1d79020a5eb2f269ea7ebb354cdfdf880049721c.1783505142.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: d9791c4cacc79975d9f
+X-MBO-RS-META: owwmi4kprmaabd8g38rhbdeqr9d9i8uo
+X-Rspamd-Queue-Id: 4gwX385Sw4zKw3Y
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-The RZ/G3E SoC supports up to 8 GiB of memory. Update the PCIe dma-ranges
-property to use the 64-bit prefetchable memory space code.
-
-Fixes: 1ac57c9830cb ("arm64: dts: renesas: r9a09g047: Add PCIe node")
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 310f988a63c4..73757e8e2197 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -1447,7 +1447,7 @@ pcie: pcie@13400000 {
- 			reg = <0 0x13400000 0 0x10000>;
- 			ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>,
- 				 <0x43000000 4 0x40000000 4 0x40000000 6 0x00000000>;
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 2 0x00000000>;
-+			dma-ranges = <0x43000000 0 0x40000000 0 0x40000000 2 0x00000000>;
- 			bus-range = <0x0 0xff>;
- 			interrupts = <GIC_SPI 800 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 801 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.54.0
-
+On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
+> Document support for Renesas R-Car X5H Module Controllers, and add
+> binding definitions for power domains not backed by registers.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
