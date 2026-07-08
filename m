@@ -1,82 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82BD47ECF3;
-	Tue,  7 Jul 2026 21:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F6CA4E;
+	Wed,  8 Jul 2026 02:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783460786; cv=none; b=UoKWtJvFlB1Yqlvl7Ni68ejN+c4ivIuLHQYK8MmR+bgbjK2F4tRpjhaN26GQ4WtULZiCD0g9vTHktwrcQyVn2xSLgjI7Rubg/M92tEbTpPqEKw3qVYrPFUIh3HOTth4wC/rpeVS5TDxOH7DoKPnFLfBjJ1MlGrRuk0hS2txZLCE=
+	t=1783476613; cv=none; b=kHPwhZTbAca9XxL1zDRcsNYchxBOkIFAPe3coud/1MCeKB3VlYn5hqHhjz+LG24pwVk7DBkTc8sv8G61BcWbH/9rBz6ZNd/RWOnGVS0clwlw7/S6QV3Oy0qKWx9vm3xfCxG7zKvgW6HPKSP8JUSqaurdeekzK7jStyx0Doou8BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783460786; c=relaxed/simple;
-	bh=sTAF8Uo74CwK6oOKZp6DOLh3+pYXXmBJ3wbYtR3+424=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m63k/QBhsSeNRBLcWm8uUcKEjL9LCQ7BdlGEQOuyNOdUpkIYSJ8BLHZxTbMoGn/xYXh+SFynl9R4OC5TldwrGjoe2WaauX2xL+SZWyEDM1w3saG0d6FGlxokcWtJ1pbA34lY08uG6ZEO5WUTy01KzxD7xbALNJ14YYVYyrDRcpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcUG9cFU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783476613; c=relaxed/simple;
+	bh=J+SZUfqic6/ltANCTK9VK8yT70fLsWGOY2qGxrOvwIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=as6jf5NFVj2WQafAFfGNqouzHKczCoejoxYFGWbdr9zMTSB52gYuV1RDr0UMs3Zd9/+Auakw2oyPv2wOtzrNN4mtAz/J4id7p+cNNuq6cmRom99/hZiXrt5qSmrFHlPxh/3G47wrHJnFVOyx/uhmDncgZi3aUZxtmDuAXsMbvNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Dk0gwcII; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcUG9cFU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD681F000E9;
-	Tue,  7 Jul 2026 21:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783460785;
-	bh=sTAF8Uo74CwK6oOKZp6DOLh3+pYXXmBJ3wbYtR3+424=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BcUG9cFUaqr3nmsbyavprrM8gV6wm5iB1hxZhGZIFlZjZq7gXa8S3ZK2OtyuC5zEf
-	 3+W3x2bzqbYGnRdF5+efS9pIzTBASuA9MTYn/HttLLwh8QfXswruqrkw1WK+6cqpro
-	 otwdrKUPvHYK7t0/4qUyMw2lHz0ensR8y8pGwqPAwgnExusSPN764LfXBFf22XjtRf
-	 Lm/Ye77Zfjx2ZcF3iAZbtfW1POxg/k62DArwHFlwjbjg79Zo+7v3f49v9pPit9jbn4
-	 /+N6fEhJTxIMCLfHpgqbDxF+piHzMjo69ySKtpT3E+GbdwvpMXVvTCsbrvTwhk968R
-	 THxUjdvqLdBPg==
-Date: Tue, 7 Jul 2026 22:46:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Dk0gwcII"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=T0
+	IoP/9Oalyij3Arr8NbBDMufKM9vtzr6NDd31RAFlM=; b=Dk0gwcII9eTjo/7EXa
+	GoKh8ARPdIFJnbP7XFjH+5lqlp49XT/3XnNuUqCty0lPPiIXr7yKTG54L9IkRT/C
+	fhXw47+PNVcPJm94eGWDy/uyRl4VPSAme1DynoXpCiFTqAr+LYmWWGPgMW2GRwO6
+	rntLlF9TJT88gC4xc9apzjXC8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAHFldOsU1qLYw_Hg--.62619S2;
+	Wed, 08 Jul 2026 10:09:19 +0800 (CST)
+From: Qingshuang Fu <fffsqian@163.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Magnus Damm <damm+renesas@opensource.se>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: renesas: adg: Drop redundant NULL check on
- clk_get and clk_register_fixed_rate
-Message-ID: <eb4dc48b-76b0-4b47-82f8-be0d35437967@sirena.org.uk>
-References: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
+	Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-irqchip@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Qingshuang Fu <fuqingshuang@kylinos.cn>
+Subject: [PATCH v3 RESEND] irqchip/renesas-irqc: fix generic IRQ chip leak on remove
+Date: Wed,  8 Jul 2026 10:09:02 +0800
+Message-Id: <20260708020902.429126-1-fffsqian@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAMuHMdVGM6YZ0xm2RzBRK+nf=G1-sB8DOjzLO7=OetZS_WcHXA@mail.gmail.com>
+References: <CAMuHMdVGM6YZ0xm2RzBRK+nf=G1-sB8DOjzLO7=OetZS_WcHXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TcAC3ZacrnmTGTc0"
-Content-Disposition: inline
-In-Reply-To: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
-X-Cookie: Alaska:
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHFldOsU1qLYw_Hg--.62619S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4xJFWDKry3tFWDZw17GFg_yoW8ZFy5pF
+	4xu3s09r4UGF1UXF18Cr1kZFyag3y7t3y7ta4SgwnIv345Jw1kWFyqqFWjvFyjkay8Ga1a
+	vF4kXay8uFyUAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYdgAUUUUU=
+X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbC6g9tOGpNsU-ftwAA3B
 
+From: Qingshuang Fu <fuqingshuang@kylinos.cn>
 
---TcAC3ZacrnmTGTc0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The driver allocates domain generic chips using
+irq_alloc_domain_generic_chips() during probe. However, on driver
+remove, the generic chips are not automatically freed when the IRQ
+domain is removed because the domain flags do not include
+IRQ_DOMAIN_FLAG_DESTROY_GC.
 
-On Sun, Jul 05, 2026 at 07:23:26PM +0200, Krzysztof Kozlowski wrote:
-> devm_clk_get() and clk_register_fixed_rate() do not return NULL (only
-> valid clock or ERR pointer), so simplify the code to drop redundant
-> IS_ERR_OR_NULL().
+This causes both the domain generic chips structure and the associated
+generic chips to be leaked. Additionally, the generic chips remain on
+the global gc_list and may later be visited by generic IRQ chip suspend,
+resume, or shutdown callbacks after the driver has been removed,
+potentially resulting in a use-after-free and kernel crash.
 
-The two patches here aren't obviously related and should probably have
-been sent independently.
+Fix the resource leak by explicitly calling
+irq_domain_remove_generic_chips() before removing the IRQ domain in
+both irqc_remove() and the probe error path.
 
---TcAC3ZacrnmTGTc0
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 99c221df33fbfa1b ("irqchip/renesas-irqc: Move over to nested generic chip")
+Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/irqchip/irq-renesas-irqc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index a20a6471b0e4..a340d27dd8d7 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -211,6 +211,7 @@ static int irqc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_remove_domain:
++	irq_domain_remove_generic_chips(p->irq_domain);
+ 	irq_domain_remove(p->irq_domain);
+ err_runtime_pm_disable:
+ 	pm_runtime_put(dev);
+@@ -222,6 +223,7 @@ static void irqc_remove(struct platform_device *pdev)
+ {
+ 	struct irqc_priv *p = platform_get_drvdata(pdev);
+ 
++	irq_domain_remove_generic_chips(p->irq_domain);
+ 	irq_domain_remove(p->irq_domain);
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpNc6sACgkQJNaLcl1U
-h9DKyQf8D8SFSnDWgLpb24bUzc0z8xEmhX482RB3IdiW0Pd1Q1csJOgkLn+wvBPD
-07s4cL7KvZdFvfQsLeiLEmp4ZdwOZK92MArKDMgZtGH8J7ZPimiQg46aP5uPZfNr
-9ERKkteF5Vh3SM8vvZHHjZ2KsGQMVoajk/A61xVxrvT7rXjU9s0wwjqmWSwEPjDH
-nBaNSgFR9owOKthresvEXkFjOrYEXq79vUv/puF/25rveunEOL1RkPluMXyvBVdk
-ETnvSNn1R3kuvkLlvy6AtPacj9z3MvLKD/sGHgage6jUUlvcOO9csnuw4d6BqNmi
-v5MkqHz9AQFZPhFRV3fKXTPM8n+k4A==
-=exgB
------END PGP SIGNATURE-----
+base-commit: 0e35b9b6ec0ffcc5e23cbdec09f5c622ad532b53
+-- 
+2.25.1
 
---TcAC3ZacrnmTGTc0--
