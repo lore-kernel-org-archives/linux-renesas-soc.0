@@ -1,122 +1,98 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887443FBB7E;
-	Wed,  8 Jul 2026 21:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953642F3C19;
+	Wed,  8 Jul 2026 22:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783547773; cv=none; b=godVnrYlRiWSS/8K1nMV8felnxB0cm9aF3+9JhhuZUmwBRyaCbpuM76dSyvQb7YcVF78T/0vkwzDl8QHc85HDKpKnSHjrTourVFASXRE36/3XkenGITCX10vessXEpKDNy9Y3QglJqKaEom89o1JB97hQT14TBunFk8sUeLlmkI=
+	t=1783549908; cv=none; b=UGdbB+YTVOaR3R49QLcwI57LiPHTgpTtR+8m7LWjLYrKHRyykWGQPGeW/GKXm7J35j/cciS3NZHMnbW8UP2X9FthxcVRlbOpegv/4e87pq9oaynVMUgc2hJ7YDqnFyZsXg16QZyt8InOh+fw9N0S8HKlcS0MSRKcJ4D1DbLYyzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783547773; c=relaxed/simple;
-	bh=L/V0i+tBTm3xM5Y3CascIjVDxfqTLbMhc/kcakfbtN4=;
+	s=arc-20240116; t=1783549908; c=relaxed/simple;
+	bh=TwPNIap4o9alfoMGrHjKWF4JR0px4d7fD/wJeY6TlV0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mOMDK/MFZlgwsbQVvtmaLi0Kfrh3bnVpblzQz2Ue1wplQOJ2lUBpaDiStBM+5u+jDVWlEz3ntQ2Z9v+pDUjY9isPnGI9xrKygWw6vorpPrnPiOQyPTeCStKJuAvzEXP+vr19r3xXbCzPBHxttU3bHjHDnqwVieloLqJG40yMGLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wqwYngLV; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sw8ZGUcl; arc=none smtp.client-ip=80.241.56.151
+	 In-Reply-To:Content-Type; b=laC7jUOszs6z0CUsVMIWlwW1kbn3bjhLdvQdTCuWLJbkSV/ScRgJ7YTB5pZwAyTfYSemW/j75Aj3Br0JWqqjc6unEzwiym+8lp1XGMA8edz80XIcNfAVuF+0GAiFWH8hGstxOl8YakmBUvbc3itNppld0T/g3bYZ9dizpHowDas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=k2eHq3Y1; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wqwYngLV";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sw8ZGUcl"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="k2eHq3Y1"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gwX3R5DgLz8v4b;
-	Wed, 08 Jul 2026 23:56:03 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4gwXrb2NCfzMlHw;
+	Thu, 09 Jul 2026 00:31:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783547763;
+	t=1783549903;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HzvBEeJ5wdYXClPXLrmc2/W46aJenc8FFAfoLDxjZi4=;
-	b=wqwYngLVVmMeY2bpMaFiVTrMKc0ovlIcK8JL1hGtGzfUSV70WkKp/hXAbjWxZ6DkFeT/uE
-	TIAJJo1tnFC2PRxiTS8pLkKE1WtkMJfxlUzq+ia1VCZlExZKdplL0hXNS8nMU7H48UJV/+
-	HoRgnSl5sjTmb7NF2SvcKZIuriTMp1jLqyoFwcedzh9hQtoAiopJNYLTXOgmHHsFmkzl5z
-	96QcIcFixt+GgFGyNaOZOm+3s5y1MvXjP3wUEVlOXluRQOyJQPOsXrZC1DFKPKUmvw5lja
-	KZQIXaz6b5nXc1BuqrOlUgbsxKoOetg2J/QL1NhCGLa0D4y8YOECYVxmPBjU1w==
-Message-ID: <59725f93-5269-4b0e-8633-48821219877f@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783547762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HzvBEeJ5wdYXClPXLrmc2/W46aJenc8FFAfoLDxjZi4=;
-	b=sw8ZGUcl5e3xihbCg2aT+g6H4ko5yZcdtxzrqesfKSBURVIqY2cbMnr0FBZFggidxEcvdJ
-	ZD8Mzyx+0bIiJJAbfzzGOwrQyfNfC+cXf1iOb+8Jywj5V3QOfZJDgQK/LI/7XqZMQmi/5X
-	jIV2qZPAtS6ptTEls1CFj0bjOuKp2Eryyq27A9MKDCuE3f5OIntcrejoH21iyn/hFi4UMb
-	aPIRlYzabNymh/vQeRfijsiwJ8cwhm4geK8NdZMEL1FaNi5uk75OwBc2mPklr3QBL+fM84
-	Lx8tLm+rDlVsVGhyrAIrFq4DsK4P9EJ9NP28hA1+yHs/betaDEHzC9wgRSpuIA==
-Date: Wed, 8 Jul 2026 15:07:30 +0200
+	bh=153NGcG1DPWuSXRcq4z9zBLGMIc6zuyh1qAdI4RAZiI=;
+	b=k2eHq3Y1gdAukQn2jHL3lPY6q2pTwZmYCQfEiX/3LfjZH+0YnWX76gdlkczjxYYo95aUJz
+	hdonlaaoddJsyIm2RDY9iqEGDfG8vIn73MoJ6JiCcj4+OWYLImLmM2hMgqyvijNB6osGU1
+	IueO2hsKXV3lNyJbRQSYwig1PQmGB4/bb4MglHtRoyYYmB9bJwAobTCzll46KpA+LWGsbX
+	+XffLbtofMiAckleXsbpoxo/DlAk4PxOo34VE/LTUMF/qI6YeJykz+hItU/NA6SqEEnh1r
+	0ahc95ox2Uw3F6rvCFp55XsE8SiTiwbrNeDuYS0+Sx32pKv/IGOqmXEoa+RRgg==
+Message-ID: <9ecabfec-d428-4c64-b398-4e80baaf3752@mailbox.org>
+Date: Thu, 9 Jul 2026 00:31:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 6/6] arm64: dts: renesas: r8a78000: Add MDLC nodes
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1783505142.git.geert+renesas@glider.be>
- <dca2c4940ba38b897f04b6fb67591de9835900e1.1783505142.git.geert+renesas@glider.be>
+Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
+ <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
+ <CAMRc=MeyKGv75rTLauZuGxSfgjCPXVE_r=A7uNduRr6kAd43aA@mail.gmail.com>
+ <edc7505e-1103-42d7-b88d-013ca10753b3@mailbox.org>
+ <CAMuHMdXQQWmn612R3y6qSXOZ7YMwZcfrBTrQZ9GzGekhFhtWSw@mail.gmail.com>
 Content-Language: en-US
 From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <dca2c4940ba38b897f04b6fb67591de9835900e1.1783505142.git.geert+renesas@glider.be>
+In-Reply-To: <CAMuHMdXQQWmn612R3y6qSXOZ7YMwZcfrBTrQZ9GzGekhFhtWSw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: ox9kdwr3htbuf418b9dpqo5cy4n7x8wj
-X-MBO-RS-ID: 08bf7c3d4b9e58172e1
+X-MBO-RS-ID: 272722f82881645b40f
+X-MBO-RS-META: 1mwb6twn3dfq1me165a49ir9q7udb4g3
 
-On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
-> Add device nodes for the Module Control (MDLC) blocks on the R-Car X5H
-> (R8A78000) SoC.
+On 7/7/26 8:52 AM, Geert Uytterhoeven wrote:
+
+Hello Geert,
+
+>> On 7/6/26 11:19 AM, Bartosz Golaszewski wrote:
+>>>> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
+>>>> +{
+>>
+>> I am hoping to get some input on this remap function.
 > 
-> Complete hardware desciption of all (H)SCIF serial ports, by linking
-> them to an MDLC for power domains and resets.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I haven't looked at your patch in detail yet, but the remap function
+> was the first thing that struck my eyes.  This might impact performance
+> of bit-banging and of the sloppy logic analyzer.
+
+Regarding the performance impact -- yes, this will impact performance. 
+Both the remap function and register table look up will, but at least 
+the remap function is small and (subset of it) ends up inlined, the 
+indirect look up table is bigger and unlikely to be inlined. That is why 
+I opted for this over a table look up.
+
+> Have you looked at the code generated by the compiler?
+
+I did, but there is a lot of inlining going on.
+
+> Perhaps it would be better to use a table, like sci_port_params.regs[]
+> in the sh-sci driver, and riic_of_data.regs in the riic driver?
+
+Please see above.
 
 [...]
 
-> +		mdlc_ddr7: system-controller@e8380000 {
-> +			compatible = "renesas,r8a78000-mdlc";
-> +			reg = <0 0xe8380000 0 0x1000>;
-> +			#power-domain-cells = <2>;
-> +			#reset-cells = <1>;
-> +			bootph-all;
-> +		};
-> +
-> +		mdlc_hscn: system-controller@c9c90000 {
-> +			compatible = "renesas,r8a78000-mdlc";
-> +			reg = <0 0xc9c90000 0 0x1000>;
-> +			#power-domain-cells = <2>;
-> +			#reset-cells = <1>;
-> +			bootph-all;
-> +		};
-> +
-> +		mdlc_rt: system-controller@19440000 {
-
-Please keep the list sorted (0x19440000 should be before 0xc9c90000).
-
-> +			compatible = "renesas,r8a78000-mdlc";
-> +			reg = <0 0x19440000 0 0x1000>;
-> +			#power-domain-cells = <2>;
-> +			#reset-cells = <1>;
-> +			bootph-all;
-> +		};
-With that fixed:
-
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-Thank you !
+-- 
+Best regards,
+Marek Vasut
