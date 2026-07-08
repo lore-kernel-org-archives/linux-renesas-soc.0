@@ -1,101 +1,137 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267273F7A8C;
-	Wed,  8 Jul 2026 09:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1593022A80D
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jul 2026 09:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783503606; cv=none; b=f90CJZrAIecEKNVZZPwqhlaqqmUIeLc8T1+PKhSqAGVJEHfaIZhQkQyhODLjhCdTjQgAReKHk2sgtvejDY6XisplO0hppnvb2fH3VnpqDo3T93n+PXdZOyBlu1+KrXLGL/vP+qriFKMka+yM3rsBdXlm9hwfS7MBulkNmUsycpI=
+	t=1783504104; cv=none; b=jwNi8tF+ZlpjODdMVm7kJbqbINi+j2ZuNOl1ZYaLqR7eeXkgphtD0DSlEs8qYwkAVBr6gzI99S0x3MGqoLmBawSP6sMwO5xw00SmAPuJExBcCDOSndCdtriLbeKXJkgQC5TH/B9fU33yTnbbXPi8TGvXCyl+5CS5aswBTfBIRvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783503606; c=relaxed/simple;
-	bh=Dgi4zJSRBR4tTAMxRAVsOIdCbQmmsNIvCebfKJQrVxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ucdWbHsLgDA+ZNq4ocng8ZEpfUBTemI1LIZLO4oUOI9dwFakQUDcbfbdKQa8aeknI7VRSsqe/P/4aN22IAG8a9X/190MeL9mh7+II0Jfl1q4+zgZot8OThpjyy96h2+K13YOlTB3q3C7EiFtqSUTn3MJaowm9zPI7brg3uIIXGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=O1MiNJa5; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="O1MiNJa5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=BN
-	3JMg0HYmw0vU84AVFHk2ryR5gBgwYoUDQjnI9SpYE=; b=O1MiNJa5Vkhf+7DN5N
-	ntbVM1H9ZnbMZQik5IEUtV27GspaiJiCDuBUD2NpKj3qw5d+zHcYpdGxlOMtTXg/
-	cD+g7+vN7UKEmh2ixF37RY7OhDYjAwL7h4z90l8mXHIV/8bH7nshL0R5V9lCG/WR
-	3BvTi32Yk9z33uvAIAeLeBeMU=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnN5K1Gk5qaNc6Ig--.55155S2;
-	Wed, 08 Jul 2026 17:39:02 +0800 (CST)
-From: Qingshuang Fu <fffsqian@163.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Qingshuang Fu <fuqingshuang@kylinos.cn>,
-	Qingshuang Fu <fffsqian@163.com>
-Subject: [PATCH v4] irqchip/renesas-irqc: fix generic interrupt chip leak on remove
-Date: Wed,  8 Jul 2026 17:38:49 +0800
-Message-Id: <20260708093849.501946-1-fffsqian@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <874ii9svk6.ffs@fw13>
-References: <874ii9svk6.ffs@fw13>
+	s=arc-20240116; t=1783504104; c=relaxed/simple;
+	bh=Ab+JgtklIuaTwIzIlejccK/nbnujg/TLM57r4nffUVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GlnsWGZpIyNFHyBPLM4vA+MJL9sW9sReiXDZtfTVnjNQsW9gbcEiWrvZiIIEqmErrQtFWmT4wSesR/a07of5VLS9zqKprhg24dGzxcWAxA5io4Wxl4MItl/lFzw3sas2EnEfnf6H7vuOiRK1g5ZAYImcobRcARSES7LE7CCBmys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-725cf9a923aso386804137.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jul 2026 02:48:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783504101; x=1784108901;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vrsRMl5x0fGauko67pdxw6xjCe9Z/et8Wfkv+xqCWRE=;
+        b=Vm7RAYOPHaEdfkL+Y+tsQimyVwyijbyTVe7nlcEamKrHgEKsB0BveDSxdimvTZkMYN
+         7e7Hrrg5sed5mybqtx3w67gCJKwCItlbHvFlok8l7uVzzgNIYh6fPtJsbI8mzUYywk9G
+         BK/Jdybn4V9BqSHAGjnBKYbPtnlbJmvHbMiW7H+3vZHybcI4FMm6smGzIjWVzRn9V6PK
+         N5X8CYwRSeZSQkjMdE++QhipX6lDB1iVjWICm7gwyFsEB1q7unY4nxLT2KdLYn7/RDLf
+         CMI5MQYsvbaRMfjzrpNuY2D7gUIJ1HilqwhCDgFh9TZMHHln6c1zhWqBUxTBA+xhi95y
+         7jPg==
+X-Forwarded-Encrypted: i=1; AHgh+Row7D6YtyOfyu+2kjUdDCBl7X34828NvnFoffoq0U/4Ab/49daOqOXKTKrVIW4Jexsow2IFPdesmRckFrGn4RteWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEzd8o4LWBEaVgEUd4uspuFUAkSGzEkoQCxDAuvzy/HwuDzWeT
+	9GPFOe8B5K0Hsso8O5FdYWpNYc5TXaVgBMfvPxbxXd8SvplQIrkTntOG43QrwZQ72/0=
+X-Gm-Gg: AfdE7ckun8hLsQ4v6oHxl41oh8VADoOjFyWTQvhM6GazhljM+mACKxFVYQpa8EUA98P
+	d0Bq87YLeyJBwjM+SUCUl5sWvIvfS/9yf1LNYepfqKslA48LO+CZN68Af2ZTX9j2qAuQF7VqOJo
+	ZltI7WjTpGDN8dSx3y6UIRGoX2JmXtefJ4EviBT82HLQVSCLCY5NEr6923wJB+2fJipCO2sQ0wV
+	H5vRNDy9lHvRYd6Y3sTm5q0rnfiEDZuLb/xHNQWixPDwfd2jEOTas5H/3r/YpGasBgB162MyVA5
+	TUoSw5pQKHHBgRCqdMDdWN26C73r9sD1SEH/djN1mc9Hz/hYlEeNoQlhNnJBpUv81C+mgNc89I0
+	rMOVYHUGgfwLixSim8N+AivT0vBVOXlBWd0McgYd3HxKDMsO1Bc+uCKtPkgfiA+JOxLXzVSF46b
+	lbVZZT+nYXSjo3zpGGWatWD/CfVetjdsrP+yGwJTtO/rB7/HLYYfky1g==
+X-Received: by 2002:a05:6102:3ed4:b0:738:ff1b:940 with SMTP id ada2fe7eead31-744dfd069c7mr833884137.4.1783504101009;
+        Wed, 08 Jul 2026 02:48:21 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96ed5d4d40esm948073241.9.2026.07.08.02.48.20
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2026 02:48:20 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-59d4aa96ef2so389989e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jul 2026 02:48:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Row/5387Dg5lj4GH+Ak0zSNd6MiVffKBUA35dj4JEn4wN0VVSHlrGY9/w4Nel1L/LNsyOo1bGil/L+R+KS8wWdO1Q==@vger.kernel.org
+X-Received: by 2002:a05:6102:54a8:b0:643:80f1:350a with SMTP id
+ ada2fe7eead31-744dfd09748mr963351137.2.1783504100001; Wed, 08 Jul 2026
+ 02:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnN5K1Gk5qaNc6Ig--.55155S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4xJFWDKryxZF1rJF4kXrb_yoW8ZFWfpF
-	W8W345Zw4UGryUZw17CF48ZFyYq3W3t3yak34rG34av3W5Gw1DWF9FvFWqvr12kay8Ka1Y
-	vFs8Gay8Wa4UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEAhLUUUUUU=
-X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbCwhbhrGpOGrZ34wAA3F
+References: <874ii9svk6.ffs@fw13> <20260708093849.501946-1-fffsqian@163.com>
+In-Reply-To: <20260708093849.501946-1-fffsqian@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Jul 2026 11:48:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUxEnBx-2dvjSUPMjEb__0c-44y00OH9oftkPqoW18YyA@mail.gmail.com>
+X-Gm-Features: AVVi8CdKTsFskqZXwoy_LhkkJH2OBDPdyjuPRc0TcUMEZ0agBTkTWrpb0UcysZ8
+Message-ID: <CAMuHMdUxEnBx-2dvjSUPMjEb__0c-44y00OH9oftkPqoW18YyA@mail.gmail.com>
+Subject: Re: [PATCH v4] irqchip/renesas-irqc: fix generic interrupt chip leak
+ on remove
+To: Qingshuang Fu <fffsqian@163.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Magnus Damm <damm+renesas@opensource.se>, 
+	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Qingshuang Fu <fuqingshuang@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+Hi Qingshuang,
 
-The driver allocates domain generic chips using
-irq_alloc_domain_generic_chips() during probe. However, on driver
-remove, the generic chips are not automatically freed when the interrupt
-domain is removed because the domain flags do not include
-IRQ_DOMAIN_FLAG_DESTROY_GC.
+On Wed, 8 Jul 2026 at 11:39, Qingshuang Fu <fffsqian@163.com> wrote:
+> From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+>
+> The driver allocates domain generic chips using
+> irq_alloc_domain_generic_chips() during probe. However, on driver
+> remove, the generic chips are not automatically freed when the interrupt
+> domain is removed because the domain flags do not include
+> IRQ_DOMAIN_FLAG_DESTROY_GC.
+>
+> This causes both the domain generic chips structure and the associated
+> generic chips to be leaked. Additionally, the generic chips remain on
+> the global gc_list and may later be visited by generic interrupt chip
+> suspend, resume, or shutdown callbacks after the driver has been removed,
+> potentially resulting in a use-after-free and kernel crash.
+>
+> Fix the resource leak by setting IRQ_DOMAIN_FLAG_DESTROY_GC on the
+> interrupt domain; this lets the interrupt domain core automatically
+> release all generic chips when irq_domain_remove() is called, removing
+> the need for manual cleanup calls in error paths and remove callback.
+>
+> Fixes: 99c221df33fbfa1b ("irqchip/renesas-irqc: Move over to nested generic chip")
 
-This causes both the domain generic chips structure and the associated
-generic chips to be leaked. Additionally, the generic chips remain on
-the global gc_list and may later be visited by generic interrupt chip
-suspend, resume, or shutdown callbacks after the driver has been removed,
-potentially resulting in a use-after-free and kernel crash.
+Thanks for the update!
+No changelog?
 
-Fix the resource leak by setting IRQ_DOMAIN_FLAG_DESTROY_GC on the
-interrupt domain; this lets the interrupt domain core automatically
-release all generic chips when irq_domain_remove() is called, removing
-the need for manual cleanup calls in error paths and remove callback.
+> Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 99c221df33fbfa1b ("irqchip/renesas-irqc: Move over to nested generic chip")
-Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/irqchip/irq-renesas-irqc.c | 3 +++
- 1 file changed, 3 insertions(+)
+Please do not retain Rb-tags when completely changing a patch.
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index a20a6471b0e4..4b8b86c89b6a 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -194,6 +194,9 @@ static int irqc_probe(struct platform_device *pdev)
- 	p->gc->chip_types[0].chip.irq_set_wake	= irqc_irq_set_wake;
- 	p->gc->chip_types[0].chip.flags	= IRQCHIP_MASK_ON_SUSPEND;
- 
-+	/* Automatically free generic chips when interrupt domain is destroyed */
-+	p->irq_domain->flags |= IRQ_DOMAIN_FLAG_DESTROY_GC;
-+
- 	irq_domain_set_pm_device(p->irq_domain, dev);
- 
- 	/* request interrupts one by one */
+> --- a/drivers/irqchip/irq-renesas-irqc.c
+> +++ b/drivers/irqchip/irq-renesas-irqc.c
+> @@ -194,6 +194,9 @@ static int irqc_probe(struct platform_device *pdev)
+>         p->gc->chip_types[0].chip.irq_set_wake  = irqc_irq_set_wake;
+>         p->gc->chip_types[0].chip.flags = IRQCHIP_MASK_ON_SUSPEND;
+>
+> +       /* Automatically free generic chips when interrupt domain is destroyed */
 
-base-commit: 0e35b9b6ec0ffcc5e23cbdec09f5c622ad532b53
+I am not sure you need the comment.
+
+> +       p->irq_domain->flags |= IRQ_DOMAIN_FLAG_DESTROY_GC;
+> +
+
+LGTM, but you may want to do this right after creating p->irq_domain,
+like is done in pdc_intc_probe().
+
+>         irq_domain_set_pm_device(p->irq_domain, dev);
+>
+>         /* request interrupts one by one */
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
