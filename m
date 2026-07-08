@@ -1,89 +1,120 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613B2949E0;
-	Wed,  8 Jul 2026 16:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC52E30DECB
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jul 2026 16:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783526571; cv=none; b=L+KE9E233frF8ToEgNadY7JogxT2B/FFeh3/CsTcpRrmlcGDYEL7YHUj1np9CKPj4J3D9N/G7zb6Hl6j4zj3gSxtrBXD2a5WMm5UjrXyRbBzh2pjRRxnbN2amPpIl9skrhigDdQjKPi3NlH22YvNkKoH/JWn/gwoaFUE2CD+S1U=
+	t=1783527154; cv=none; b=Yc4DlZ3hkgbM0/5yjhgZnKt23ExQZhh8tujR85RESx+IJV19m4S6qzPdWkewpS2wi8R16ewfOG0QhpcH1ye+251Gny1xTxnHBvHP065+EbNq6KPZare9emUTspPR+BiY2cBJ1r8V74rssuTu2reJPkafRlyNdvm9yx1zuk/ERMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783526571; c=relaxed/simple;
-	bh=9zzaZUv8KiEl1PkZH1yBjf1pc+o80nBplH7xffI0+Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CcrqDTOkgyXtYNOpaAMRRZ/C2PPHx47A1ZlGLcaGnnBZyET8C6WMrbk9R0inkEpEo+MPRO03sbQXE4Iz8M+xmej8C7GOKJZRfX1FQh1NYUjrfErzeBVOmwEskQEPgNouJpj+RGVSGOBBMcLbkPYkhLaJnHOHwCJcvg/bh+5C5kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ccMpnuuu; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ccMpnuuu"
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 86739EAA;
-	Wed,  8 Jul 2026 18:01:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1783526518;
-	bh=9zzaZUv8KiEl1PkZH1yBjf1pc+o80nBplH7xffI0+Kk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ccMpnuuunoZ2qgyO4hgTkyUZNbkjthL01dQ9edwqXBdUF+ZWOT6hnVQIOQ/8hewzF
-	 sUxWeiDFsX4Ql+imN03HQDoUMF9kRDOvuYrKIIh9EZrDEzAetcoViVbtBikMCDl9w9
-	 DcYIf0VkGBploIL/u0L2+CsfcxRVcz7laYAzGwlw=
-Date: Wed, 8 Jul 2026 18:02:45 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Biren Pandya <birenpandya@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, niklas.soderlund@ragnatech.se, mchehab@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, 
-	jacopo.mondi@ideasonboard.com
-Subject: Re: [PATCH v3 4/4] media: renesas: rzg2l-core: Add missing
- media_entity_cleanup()
-Message-ID: <ak50Yfw3DbewFDv0@zed>
-References: <20260704174638.66302-6-birenpandya@gmail.com>
- <20260704174638.66302-10-birenpandya@gmail.com>
+	s=arc-20240116; t=1783527154; c=relaxed/simple;
+	bh=y8j2/FQNeXE1C/2iMG1jjFg6VhJGfmA3AX/0fZrBhX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kO5ytvKclBU7g8bJy5bOYxSSX0ZwqAZDF2BDTZGgcXan+hItscR4qf3Tt2GivpojveWjd8YpjpOha9+ghI0QK3fUZmTOgTffmJxqPd0TbpCz/og2cm0/YdDc8ZpXtAm9ljE/lNpCYPAJgInRAlP6ssG0H/WC1q1B0LqXQdxf0NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c126e47a82cso113488866b.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jul 2026 09:12:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783527151; x=1784131951;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=hO17YRpuaXnOXgeP7ftbHwpUP+dSdnes8jnl1DmJr/I=;
+        b=oeUlOUHdJqPVxyn7ANYXLT+fP6q187JWMi/arbLUNgJWR8N22U8ehEYDLviaqO/Y/l
+         qbgMZsNY7hGyMPHy2lPiWyz85M14Bu+v57vGuxeceSWA3c5tDCZmkj6pE+sHjfsw2RQe
+         rvDeNM+e0v9UWD7SpIEOIrRtJ1SAVJdeUV7eEqJ9juK6XuyemEGhGwUuAVvxV9aoYpCM
+         dmcHwi2ICTJRKQUZ/AW6nCpoykqs91mmhMBCuRQ7puGLdXev+BfXyv8dNu0OIMSMDZbT
+         5fEXjgoAAUwy7Z2vbuIFfe+SHOUERfZufnSkurJ+hZdPewmDQ9Fe6zYbu3eviHk2QRqD
+         rA/Q==
+X-Forwarded-Encrypted: i=1; AHgh+RqqHayy5zA8XQlf2G1LXogYyYbJtcJIF1L7aC5Lg8JYh/PZh3jR1WPetLHqmbvEnhOc5FOGsU7vew71XonuS5AyCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzge61m9gR73Pi6vb9xr417YsmSA7cvYlir6n2AaE6X9SgJ7Avp
+	ZJrAIToNfQG+RxyJXBhN8afr7K+kwzNX7P/J54IdDdfEM++yKBhD28lzyba/APNa9G4=
+X-Gm-Gg: AfdE7cmesWsjzms+jE5B7P2c8UaJ9bk00uTba2G2TwP2PNRuFFEQhaOox1e+9FdbYai
+	/cBWGDmDYxOymAFbetc66E8RApwv05MDQorKNscLdhMTsCuo520KEUaIzf4UpPkwc0Bg1Ulr859
+	lRmy1XoZm0CXNbdzpBOzntimOveQnckY/EhZTM93wIZjqQf+qOXMrx5QvOFCpeH9tmQvwgXwij1
+	4T+GpKe/ntMJgCzdxAjxlx3vu9Wx50RDr5nsO0pGt6mFWYTEFnqedM4dpTNweil26dy58UoEcJn
+	245ts6ba3D/8beUxAAhE1gB2cqdEFY3EI+gQM1K6lp6NKczD38hlCcfI9sX7oR4+jcCzA+P86md
+	ehZ+HfmCX5hIFr6EilFhH7tFy7jNp9lxYSqedK3A3dQYSNVdfoaPJf1kcWn82nKA77nKsU0Iiey
+	XNxFvYq2XNuWuHOECBOOUX2uoVAUS+P6LquYa2jSw7ngcjkh5WeA==
+X-Received: by 2002:a17:906:1255:b0:c12:80f5:d841 with SMTP id a640c23a62f3a-c15ce0e87femr112136866b.56.1783527151247;
+        Wed, 08 Jul 2026 09:12:31 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15cfac0f76sm146205166b.33.2026.07.08.09.12.31
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2026 09:12:31 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6989c0ec3c5so1592442a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jul 2026 09:12:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rq/YlLUeOg5a1L0jw3VonTsP5sVJUHOSS2qRVfAPjHwfntL4AKwTZdlVUBtW4GTEaoG2Jo9SqeCrHJjrgi9rB7keg==@vger.kernel.org
+X-Received: by 2002:a05:6402:1475:b0:698:1973:1da9 with SMTP id
+ 4fb4d7f45d1cf-69ab44a2082mr1330602a12.19.1783526681164; Wed, 08 Jul 2026
+ 09:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260704174638.66302-10-birenpandya@gmail.com>
+References: <cover.1783505329.git.geert+renesas@glider.be> <3c76a2d4-a8b8-493a-9196-c5cc72958118@mailbox.org>
+In-Reply-To: <3c76a2d4-a8b8-493a-9196-c5cc72958118@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Jul 2026 18:04:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
+X-Gm-Features: AVVi8CdIlIxklIbGHNZaygjBAfJd_Dhsc8WBwlY036WlOLVf0uDAr_hqlDulMbU
+Message-ID: <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 04, 2026 at 11:16:43PM +0530, Biren Pandya wrote:
-> The remove function fails to call media_entity_cleanup() upon teardown.
->
-> While currently a no-op in most cases, calling media_entity_cleanup()
-> is an API requirement for entities initialized with media_entity_pads_init()
-> to prevent memory leaks.
->
-> Add the missing media_entity_cleanup() call in rzg2l_cru_remove().
+Hi Marek,
 
-Same comments as per the other patches
+On Wed, 8 Jul 2026 at 17:42, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 7/8/26 12:16 PM, Geert Uytterhoeven wrote:
+> > Geert Uytterhoeven (10):
+> >    firmware: arm_scmi: Add scmi_get_base_info()
+> >    of: property: fw_devlink: Add support for firmware
+> >    pmdomain: Make genpd_get_from_provider() public
+> >    reset: Add reset_controller_get_provider()
+> >    dt-bindings: clock: renesas,r8a78000-cpg: Add firmware property
+> >    dt-bindings: power: renesas,r8a78000-mdlc: Add firmware property
+> >    clk: renesas: r8a78000: Add SCMI remapping support
+> >    pmdomain: renesas: r8a78000: Add SCMI remapping support
+> >    arm64: dts: renesas: ironhide: Enable SCMI devpd, sys, clock, and
+> >      reset
+> >    arm64: dts: renesas: ironhide: Add CPG/MDLC firmware properties
+>
+> I think 10/10 did not make it either to my inbox or lore.k.o , but the
+> remaining 9 patches look good. Thank you !
 
-> Signed-off-by: Biren Pandya <birenpandya@gmail.com>
-> ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> index 3c5fbd857371..84d4883e2fe7 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+Thanks, I did something silly while sending.
+Lore now has it, b4 still seems to miss it, unless I specify the
+Message-ID of 10/10.
 
-While at it, you could consider patching the error path in
-rzg2l_cru_media_init()
+Gr{oetje,eeting}s,
 
-Thanks
-  j
+                        Geert
 
-> @@ -312,6 +312,7 @@ static void rzg2l_cru_remove(struct platform_device *pdev)
->  	v4l2_async_nf_cleanup(&cru->notifier);
->
->  	rzg2l_cru_video_unregister(cru);
-> +	media_entity_cleanup(&cru->vdev.entity);
->  	media_device_cleanup(&cru->mdev);
->  	mutex_destroy(&cru->mdev_lock);
->
-> --
-> 2.50.1 (Apple Git-155)
->
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
