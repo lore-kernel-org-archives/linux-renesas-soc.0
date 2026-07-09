@@ -1,136 +1,87 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151B2406804
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jul 2026 10:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292093D25CC
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jul 2026 10:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783593109; cv=none; b=VHW0WwLOGYZ5RMgdB0Qg6niUR+GCl7EsSVh38AN5dFjirFyyW1jlpYOccfJVCsyvLynKACvnPGUqegIeOVJGyjooXZmdiXTc665Bul2h6APPADpo8FoTphrV/DRAbdXbv8+AJ8T3OBkZlaaH15iZPTxrLQIdSGdBVdo9JdBn0Z4=
+	t=1783593416; cv=none; b=T1N31XXpLg4zURQYXIOqtQ61JAw2PFDoc01aUkuQCOCTcxO91F1lHx4B0qMoTyzgrbQOxOi4zsZw+aK34eg5xzmjqfXG6ZM1OLDIIK79O4YxwGbbfWcRQjMAmm4qJSrQ6Mw2Xxp2gs6oF2r0JzTYNcSy+6vWKeH1oYDS270iQyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783593109; c=relaxed/simple;
-	bh=FxUfzWpCleIQzfr8y72a6t+Wi81Fv5S94Ccqz6vyAuY=;
+	s=arc-20240116; t=1783593416; c=relaxed/simple;
+	bh=4CIPkQb4KkhTWhyWxYY18u//D5r796JDgZpLE+nZYNk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B21PGCC6zfSaihQelPDfD+u3zB2EcquUgvspMBLt2b+OfVUYWNfFBK/8ue8SMdalfeOUilrf+7sImPf6H+y+v/+uwnTArTzWFPneIde06WZfvflpbV9SXNpK6e34/EbXPK7DHcMaXjictPsQo07iyIoPkvJzbYBj607iHefro+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+	 To:Cc:Content-Type; b=LodbNP+PqNvaY0QE50UDquk/qh0lnyBSNN+FUdne6VoW+77ROTYqYB1zv+bpqTsZ/vSxuE52W6jQkTOOSVbKuSmr+48kiBhLUH1txoJSifldCyAMvPZvs8qFVCiyom3+ow7GzxYDyj3mvpMdxsqfDEhKJXdGMW15r+6wgK5Z69k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-9691ba8bc8aso860822241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:31:47 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-738f3419eedso458097137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:36:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783593107; x=1784197907;
+        d=1e100.net; s=20251104; t=1783593414; x=1784198214;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=s6cZ9HNvj5euq2IsKqnGtW9n38TCf44UpefkQ/0EfN8=;
-        b=Gl+skCKBboT0zM/DsIvhgfUc+YmDhnItZAzq1VmWDy78cfOmrznlIfzbTjtOxyMl8S
-         B7K7lhfjYPgWOy9xnYd+9GyokZ5SaFTIz3/omklmJ+5DS4tpyUEv5PWt+M9CyJFUeLkP
-         HZgcef2nMQo7E+FDQMu+7NraUeAC8mGj660pURrIpNJJ8GFJSdmZpPFfcyeikwswhS/w
-         re8J/7eqoDsg3R778NKOz010hIVhcPkBRMPk6UH88/PkHuH0sBgcFCF7peGxBuQ9/zoe
-         Q9EbMTWdcuiVozWcJbe2jz0e/KZu2tvhpQTI8Je3Hh8f+XQCRpUWMCSQJOYPkJ+bt8hB
-         f8Xg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrx4ZSIBhseHD3EXsEq1uDiFFvdyaLFT1BmqS1/RQzF9zv8NZD5CwKJV+nG01rcbD2nshU/IqBOBiB8/ayxtdBC4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlvb7DE5jsoJJ3QJjElQcK1vHb3Zaa7rZykTIxYE1t/ztPUJkc
-	FTIggQyeM9fKvy5dmmevjOvDevx+nJM+SbH00KE8H+40vBAPKEkKpDiLFeROnqG88P8=
-X-Gm-Gg: AfdE7ckMsbYzGAS94rMKd+Ra4gJO4/RLNq9+kaerB+JkpBM9szroU/FtOGDxxq4N09M
-	pZt18xiN9vrs4SdMtkWSKFaqYMQ9k1eHzbEr1mnFnIYLAxergejdLZ/coU9tesc08h8jlDDms/n
-	h/BllBWqZXxXoH66NOOvBUflG+XjpM7VgkHksB1ARjYSLqQRM0HwSkqpMeGiAy0SxwXrohW+DfQ
-	t5cEiIEfjaU9KJz86Xi6XYwdiEqCW/1wysTfjK4gcZFLCr5gRbRbT/hwIZu2PTbbgJL2sRc6gXz
-	/jiKFEQkM43P8dHZPZBh5pJl3DS9pxxYPy+xQmbhbWftBcymtWfo4I1jdV+xmqSQEiE5EBmcQGn
-	GPe4H2DGbkaVa92AD1qijPb4tzMCF9wTFwTfcsX/j+GOhDVENX9PClQy3phyxkaBAAp9DtBBBt2
-	J+fdVYFdBJFHh6bHnpQri/LZHm0p3WFJ0DU3E5+YL3XjUaNzazzA==
-X-Received: by 2002:a05:6102:4489:b0:726:717a:696f with SMTP id ada2fe7eead31-744e0426b80mr3851774137.25.1783593106944;
-        Thu, 09 Jul 2026 03:31:46 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6e38d35sm3342815137.12.2026.07.09.03.31.44
+        bh=52Mzwh5zuD3pl6tySjFoedOc+SKNqyM0wWZqkOZl5UQ=;
+        b=EciuK06x1soILYy0uWxxFsdqUW39dDCTwK1mTeuGgzuTSgrQCdXMLEJu67zemm1L+c
+         tvBZ8ZoVoOVso7rrqIekEjJO9yYDfN7v4ihtJdSFS6wvn+5vfxkCTSYQoAJDFqC9HGB+
+         +tSMHLuphTkRbVdFIRooEdYzDdWIomG0sh+1yjYegb0oWAvJdxhk1kWL1UetSzwQuecw
+         EMQvFtpEdn5PI4gFiPmOt38oUd0wixHBfrS670QPu26ycL9JxBYKyR6nVPTeHkPKqoLt
+         mYQVZQ/C1vnp+ZnmylZM0pii+wo5K1GYzkfQwGD+4QuYLALpIKRENkWPHUvydn1eR/fu
+         Jl8w==
+X-Forwarded-Encrypted: i=1; AHgh+RpzAJDh5WIu2oj+HUaLvNvPqTlJw85UuAaA1JYya3E1roTCn3M2wRMV5NCwuQOyBOCKkvcnPhPGRvYyeLDNP08F+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWsD9wJhKeVGm/wMWKkNQJ2jGcidCi1cMedii/MiLXGV6dvlFx
+	ofr24CZClHzm6GgP4WHGRjU1JgqesXmmyiv46kH9gnhYZaMzovxh2uYUxv71iHYqmas=
+X-Gm-Gg: AfdE7cnT/Wu3jDR+NaML4XPMFpR2+kOC1eFP0kbaXaLG57/Y8ygLelsB8S09ZwbeONO
+	y60mhR4pLYv26lZwczgQjRPZy6Nf+PgB7Po+DVQeZuOcIqhlmVfrHEGjwCAUI6wn4Onf6qPw1DY
+	ZSYsiDepkd3wpVh7xX5DvEcRCiCX9AeuPyVxPWFfuf86kwbcWGXkquoQ/FiEMHPbqw7aRmzLhbt
+	sICYqoao9XOLIBk+Bz0TYcnb8LRWITsBPZYWnvSAFGnDp2nycj7OUrsSIEbYolCNDyUkWPkda5f
+	vZ7R7OHowM8pg9CdpeDukpWgfDVTQqgEZ7K2TIVLGD9UHoPs22bSw6kyFTCkbtP1syBk6Sn1NM+
+	wBbXQe/3yCHSxFAvTGWjyE2BlKBeCH58q61EXWrLRlHk0ewMG5WKH2U263zF4BOWAq2lgNRPZwc
+	6rBQ3lUVljJ9033rSj+ie0sbzg+tkRbZJEi0MBo9JmlUnt2CvKHQ==
+X-Received: by 2002:a05:6102:3e25:b0:737:dbc6:3ef5 with SMTP id ada2fe7eead31-744e01dff95mr3620750137.28.1783593413960;
+        Thu, 09 Jul 2026 03:36:53 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6a90d4fsm3307449137.5.2026.07.09.03.36.52
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2026 03:31:44 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-73720e58dafso717422137.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:31:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqXNbZS2tLhib0kUGLqhvba/oNFHpdFV3IHg4mxr8m2z47KEnH4PVpAVC8AE6FUU9i/sP/a9nzO4TgqbyrK44S8yw==@vger.kernel.org
-X-Received: by 2002:a05:6102:94f:b0:738:531e:a43e with SMTP id
- ada2fe7eead31-744e00634cbmr4111626137.7.1783592670751; Thu, 09 Jul 2026
- 03:24:30 -0700 (PDT)
+        Thu, 09 Jul 2026 03:36:52 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-73915ff1d64so457847137.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:36:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp4OAyD7c1RN09Ad9PBm2+fPXB3/u8aDVo7jVFja5X8mY3InKZUEkjqTtvVP+aLXpP9+i7WLYMk2bnnwlN5EKSwoA==@vger.kernel.org
+X-Received: by 2002:a05:6102:290a:b0:739:adba:f27c with SMTP id
+ ada2fe7eead31-744e00f5e2fmr3715156137.20.1783593411950; Thu, 09 Jul 2026
+ 03:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505142.git.geert+renesas@glider.be> <dca2c4940ba38b897f04b6fb67591de9835900e1.1783505142.git.geert+renesas@glider.be>
- <59725f93-5269-4b0e-8633-48821219877f@mailbox.org>
-In-Reply-To: <59725f93-5269-4b0e-8633-48821219877f@mailbox.org>
+References: <20260709023048.599150-1-panchuang@vivo.com> <20260709023048.599150-15-panchuang@vivo.com>
+In-Reply-To: <20260709023048.599150-15-panchuang@vivo.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 9 Jul 2026 12:24:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXCooODm3YuE1JjZJAc2BeQuD==kWbA+ZzpXRA3fqa0Vg@mail.gmail.com>
-X-Gm-Features: AUfX_mzHlNNTYZ42llQz3ksPLOjU-3fWPe_bQZCByAo9mLJpSl17fS0OhOffgPc
-Message-ID: <CAMuHMdXCooODm3YuE1JjZJAc2BeQuD==kWbA+ZzpXRA3fqa0Vg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] arm64: dts: renesas: r8a78000: Add MDLC nodes
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Thu, 9 Jul 2026 12:36:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWhbufoj4PMBN4jZqBhvrVVkNP86By7vcjEjiDRRGz_Og@mail.gmail.com>
+X-Gm-Features: AUfX_myNXBXKGEc9hKQlW5AX1iVW4ix7pcbGGCDTwzpx-MfG5CyqtA2qNt_vs9E
+Message-ID: <CAMuHMdWhbufoj4PMBN4jZqBhvrVVkNP86By7vcjEjiDRRGz_Og@mail.gmail.com>
+Subject: Re: [PATCH 14/18] thermal/drivers/renesas: Remove redundant dev_err()
+To: Pan Chuang <panchuang@vivo.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, John Madieu <john.madieu.xa@bp.renesas.com>, 
+	"open list:RENESAS R-CAR THERMAL DRIVERS" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:THERMAL" <linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
-
-On Wed, 8 Jul 2026 at 23:56, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
-> > Add device nodes for the Module Control (MDLC) blocks on the R-Car X5H
-> > (R8A78000) SoC.
-> >
-> > Complete hardware desciption of all (H)SCIF serial ports, by linking
-> > them to an MDLC for power domains and resets.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, 9 Jul 2026 at 04:32, Pan Chuang <panchuang@vivo.com> wrote:
+> The devm_request_threaded_irq() now automatically logs detailed error
+> messages on failure. This eliminates the need for driver-specific
+> dev_err() calls that previously printed generic messages.
 >
-> [...]
->
-> > +             mdlc_ddr7: system-controller@e8380000 {
-> > +                     compatible = "renesas,r8a78000-mdlc";
-> > +                     reg = <0 0xe8380000 0 0x1000>;
-> > +                     #power-domain-cells = <2>;
-> > +                     #reset-cells = <1>;
-> > +                     bootph-all;
-> > +             };
-> > +
-> > +             mdlc_hscn: system-controller@c9c90000 {
-> > +                     compatible = "renesas,r8a78000-mdlc";
-> > +                     reg = <0 0xc9c90000 0 0x1000>;
-> > +                     #power-domain-cells = <2>;
-> > +                     #reset-cells = <1>;
-> > +                     bootph-all;
-> > +             };
-> > +
-> > +             mdlc_rt: system-controller@19440000 {
->
-> Please keep the list sorted (0x19440000 should be before 0xc9c90000).
+> Signed-off-by: Pan Chuang <panchuang@vivo.com>
 
-These are sorted by instance (Module Number), as per Table 18.1
-("Target Module hierarchy of Module Power Gating and Module Standby")
-in the documentation.  This order is indeed a bit odd, as it differs
-from both alphabetical label order (unlike e.g. hscifN), and numerical
-unit address order...
-
-Any guidance?
-
-> > +                     compatible = "renesas,r8a78000-mdlc";
-> > +                     reg = <0 0x19440000 0 0x1000>;
-> > +                     #power-domain-cells = <2>;
-> > +                     #reset-cells = <1>;
-> > +                     bootph-all;
-> > +             };
-> With that fixed:
->
-> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-Thanks! ;-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
