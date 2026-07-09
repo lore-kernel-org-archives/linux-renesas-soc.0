@@ -1,104 +1,121 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13304229B9;
-	Thu,  9 Jul 2026 12:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585F5423A83;
+	Thu,  9 Jul 2026 12:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783600413; cv=none; b=czYTjW0xnOS6CwGhXDl5Vfu6jG9GHjT3QG+CF4zVSt6nldTGzYCewqNKKnn+VXJjfm/biCUuxD22ktARzejmCIiCsYZZfvmWd2CI6nrnY5nXzWarwVIe9TFQN4MJYKmFegKPuXVwcw+WwdI1oNfaUwQdVPCBmjhkY+x3ifxzHaY=
+	t=1783600905; cv=none; b=h0ebnFZrhDNUpa2IfR0Rjm9kc7J06vpeA23dijwYRHm9jBYtOIr3+DOd7R5zeFzwNxfcx+xNjaZ1/db8lk1h+3SsXocOqJ8WhT019RFIwGBsx5vsFR9BQjQ9MchNQVbM5J+2ieyM4UAxDPqE1cnH87IyVbhTehFpfJJY+JSNcz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783600413; c=relaxed/simple;
-	bh=5SS856U/nCy4jJiMrV8ZnkSZPJeo0BvH/8EL343aghc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YRJojjeXSnLvt/YA27LJmhYuIt6rv5wqv9BEUk3CK/eKlNY5N1ZHplTUM67XpXQHLjd7HyGPkrjGMijWnJ+iD8uTJ1jX4Tgl1Rr9ejCFgv92X7x0ZZo6yvZFTb+T5x2a2EG/vtZReeNuHyho3+5ZKCbqu7ZAYlzb+MbFQq7RVlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tyMdvF2x; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1783600905; c=relaxed/simple;
+	bh=LvE5Bv+Q9Kb3QhOwyuRjRXb/JhFAVTspcyRqZ8jaZaA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pyDW3kiWtDIp2GcgdxU7svO9HmMjZ922bDRejtstw1bQGB9oNkvc6QzOJk4dKQZCBiVyIiEC4oj+JzSosFlbVEaoX5KEL+LA4uHgdzNcdzlwaS8LSHX8Nq40KxwuSHM8zcg5H5SMD0qokSbYlWBEKOCtzqGYnyDimdlQe8R4CRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xzjy5hPy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tyMdvF2x"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4gwvWr1BmTzMlHC;
-	Thu, 09 Jul 2026 14:33:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783600408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bTRYbwF/XxEjYYFob5S+WLNVX0HYy0ckmE1WUa6o3cY=;
-	b=tyMdvF2xv5nIaXfmCYxbD6fRdAiNP55s0Xay6tcyDLZrqQOMXLTJyKpAAw0Axl9uJsn9H/
-	p8JvUbMcfGOoTIZRbQddoYA0iZ7D5dLVGObch3s0ZKgetZBbBOuGBJHV3zuvlpjIjec333
-	maPFXff9ntUELPQ7/XzebTVp/tx9R/9W2i+mzO9lF9F82FWnTE/+jTH05RsMS1XGZOS7nu
-	zSibBMFF8pCrKFwSRGQfvwvyVTLwG83C9AF0CW0YzlkPEd/nTsLetHNaY1d2vL2XZWF3SK
-	262lnO+lrhsIe+m5MAM8+pTj4smXWeFKJM2iZC7KXGU/1xScS8lLbZhzoKdiWg==
-Message-ID: <c12941e4-3715-404e-b674-090c62b868b8@mailbox.org>
-Date: Thu, 9 Jul 2026 14:33:22 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xzjy5hPy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90C01F000E9;
+	Thu,  9 Jul 2026 12:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783600904;
+	bh=WQqtsvZ3BMfepcYWgRcnRUjPPP25Gh+uDRBYwRXYJWE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=Xzjy5hPyo2DjQhrnPLTIzPPYdMyyaV7ZD45/nq1TbE60yWbX/IIB0ild2cKXv5CD+
+	 omiPZc+Fjr8HR7CNhBGhSnuUhyEZBmnSAL03WO8W/K/4O1G8U3Y98cDqkD6cJb6GL9
+	 0UhM+8nWfaisUyai710fHlLO5QNWvvMlQVtIsL50BuvG1aSdoiKqSfa+rtVbITJmo0
+	 prZYGStsyMBKoiyMSzXo/+qM6nj/wW7pCI46zNcGD41ieo0wTPUvgH3ROsJ+PGYya2
+	 u9HM1jyNGc/S+KOLm45XYmTi/mcBHMmb9W26tP6nOdMyYvzqkGnYsLRs+pHAU6/QeS
+	 fvDoBTX9su/Tg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1who4T-00000003H2e-1Npk;
+	Thu, 09 Jul 2026 12:41:41 +0000
+Date: Thu, 09 Jul 2026 13:43:26 +0100
+Message-ID: <87v7ao5o5t.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,	linux-pci@vger.kernel.org,
+	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Bjorn
+ Helgaas <bhelgaas@google.com>,	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,	Geert Uytterhoeven
+ <geert+renesas@glider.be>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	devicetree@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] PCI: rcar-gen4: irqchip/gic-v3: Handle GIC ITS
+In-Reply-To: <c12941e4-3715-404e-b674-090c62b868b8@mailbox.org>
+References: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
+	<ybnitlgx3dcqsesubz6jz7pn6snseuxhtz564tinbtvukianaq@33ubmcynyqmt>
+	<c12941e4-3715-404e-b674-090c62b868b8@mailbox.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v4 0/5] PCI: rcar-gen4: irqchip/gic-v3: Handle GIC ITS
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260707203743.88299-1-marek.vasut+renesas@mailbox.org>
- <ybnitlgx3dcqsesubz6jz7pn6snseuxhtz564tinbtvukianaq@33ubmcynyqmt>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <ybnitlgx3dcqsesubz6jz7pn6snseuxhtz564tinbtvukianaq@33ubmcynyqmt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: a566168d3a29b829815
-X-MBO-RS-META: r9xtkd8txggmkzk54mcmgk1r644y6icg
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: marek.vasut@mailbox.org, mani@kernel.org, linux-pci@vger.kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, catalin.marinas@arm.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lpieralisi@kernel.org, robh@kernel.org, yoshihiro.shimoda.uh@renesas.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 7/9/26 2:19 PM, Manivannan Sadhasivam wrote:
-> On Tue, Jul 07, 2026 at 10:35:38PM +0200, Marek Vasut wrote:
->> Configure all R-Car Gen4 PCIe controller MSI registers fully, both in
->> case MSI are enabled and disabled.
->>
->> Patch GIC ITS driver and add quirks for R-Car Gen4 GIC ITS, which is
->> configured to 32-bit address width for AXI or APB interface.
->>
->> Switch R-Car V4H to use GIC ITS in its DT and describe the GIC ITS
->> implementation cacheable and shareable limitations.
->>
->> Marek Vasut (5):
->>    PCI: dwc: Determine whether iMSI is used before calling .init
->>    PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
->>    irqchip/gic-v3: Refactor GIC600 limited to 32bit PA erratum handling
->>    irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround
+On Thu, 09 Jul 2026 13:33:22 +0100,
+Marek Vasut <marek.vasut@mailbox.org> wrote:
 > 
-> Is there a functional dependency between irqchip and PCI patches? Since the
-> irqchip patches touch ARM64 Kconfig etc... I'm wondering if it still need to go
-> through PCI tree.
-I do not believe there is.
+> On 7/9/26 2:19 PM, Manivannan Sadhasivam wrote:
+> > On Tue, Jul 07, 2026 at 10:35:38PM +0200, Marek Vasut wrote:
+> >> Configure all R-Car Gen4 PCIe controller MSI registers fully, both in
+> >> case MSI are enabled and disabled.
+> >> 
+> >> Patch GIC ITS driver and add quirks for R-Car Gen4 GIC ITS, which is
+> >> configured to 32-bit address width for AXI or APB interface.
+> >> 
+> >> Switch R-Car V4H to use GIC ITS in its DT and describe the GIC ITS
+> >> implementation cacheable and shareable limitations.
+> >> 
+> >> Marek Vasut (5):
+> >>    PCI: dwc: Determine whether iMSI is used before calling .init
+> >>    PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
+> >>    irqchip/gic-v3: Refactor GIC600 limited to 32bit PA erratum handling
+> >>    irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround
+> > 
+> > Is there a functional dependency between irqchip and PCI patches? Since the
+> > irqchip patches touch ARM64 Kconfig etc... I'm wondering if it still need to go
+> > through PCI tree.
+> I do not believe there is.
+> 
+> These two configure the PCIe controller hardware:
+>   PCI: dwc: Determine whether iMSI is used before calling .init
+>   PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
+> 
+> These two fill in GIC ITS quirks:
+>   irqchip/gic-v3: Refactor GIC600 limited to 32bit PA erratum handling
+>   irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround
+> 
+> This one does yes depend on the two and two patches above, and can
+> only be applied once all four aforementioned patches land, otherwise
+> things really yes will break:
+>   arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes
+> 
+> Would you like me to split the series up , or can you and Marc (?)
+> pick the relevant parts via matching trees ?
 
-These two configure the PCIe controller hardware:
-   PCI: dwc: Determine whether iMSI is used before calling .init
-   PCI: rcar-gen4: Configure AXIINTC if iMSI-RX not used
+I don't think there's anything for me to pick. The whole thing looks
+like a consistent set, and it probably should be kept together.
 
-These two fill in GIC ITS quirks:
-   irqchip/gic-v3: Refactor GIC600 limited to 32bit PA erratum handling
-   irqchip/gic-v3: Add Renesas R-Car Gen4 erratum workaround
+Given that the irqchip stuff has been acked by the relevant party, and
+that the last patch will cause havoc if taken on its own, the only
+course of action is to route the whole thing together, the PCI tree
+being the most obvious victim.
 
-This one does yes depend on the two and two patches above, and can only 
-be applied once all four aforementioned patches land, otherwise things 
-really yes will break:
-   arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes
+	M.
 
-Would you like me to split the series up , or can you and Marc (?) pick 
-the relevant parts via matching trees ?
+-- 
+Jazz isn't dead. It just smells funny.
