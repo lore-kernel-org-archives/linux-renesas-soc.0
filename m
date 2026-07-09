@@ -1,44 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8873B4DB54F;
-	Thu,  9 Jul 2026 18:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF093B389A
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jul 2026 19:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783621454; cv=none; b=dzrSdkuHz/wSZzCU3ve6eK+U+bkZV/CkrZuBjfVHun7l0/7QGBuRAqzWHh48FlzozRPLFVLvwBNqAfn4RLW5TMhzk58tBK40xXQfYCKsB5jd4Cty/MkajJKQQv6Z+7qEwhz9yCHnlZ2mXjOitntSU7tjGIG5JD4OFtBx1WFcvRM=
+	t=1783625361; cv=none; b=JAeNRX1gXJtSP4XByTOPEH2HWYSA+HkJOhY3RUgio0/YmubbVTjhHBFmQC32+ZhZ+MMfj7iz9qDTHOsWaFYLRB6uJ5m98CgLksbVO6WVkNYC9KBGnNfUHI/B3CIgenNty6nZnzO/hJuf4cZEIcXn6scoOe5Ojooe8utnLv3N2XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783621454; c=relaxed/simple;
-	bh=FFrCCJIMXixu6s/pgno5wc6JZRQ7VmLYX+OtFZr6yBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KC8JA+kbrCj/cCS/b5xPemTSciS7DYua1+t8G9NPqOhs+qCoJEqnoobDOiQE7GsrQ/6IryatuI2U3Eq6B0vjb9ZH4rzOPKGLGYeTgU/+7ANHE+xGg6rOFxmaV+R5h1lFLIHUwOb9G3NDjya28fmb8cAFoKkSpvYPBT57XLwu6n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921241F00A3A;
-	Thu,  9 Jul 2026 18:24:09 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-To: mkl@pengutronix.de,
-	mailhol@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	biju.das.jz@bp.renesas.com,
-	claudiu.beznea.uj@bp.renesas.com,
-	fabrizio.castro.jz@renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-can@vger.kernel.org,
+	s=arc-20240116; t=1783625361; c=relaxed/simple;
+	bh=dPCjt2VVOrgeOOiej3J1U81Vg/oNhi0nOgkXTTXIb8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a5x5pbrffeLtxqgLuZvKmhAi/SIKk9a2oBhhvJ7Qe2hryn1F29mv7mkixURaSJCGK91cLEdpUlSq8IcoBMZgtHtghun8GLITgjxqBR3ZDmsyYI0qEpBF1t8nplVGPeSXbexOdn7BJV8UCfR456nfNILWTfw6Q+PtjCQdQFV4tmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbmW8maq; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbmW8maq"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-493ce08a75bso537255e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 12:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783625358; x=1784230158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=iJQOEk5yqB+dE9SiEhcvYRxkNhnNp9MLYOiszo4g7GA=;
+        b=SbmW8maqe6RrhgpI1e5+/YVHoWVT6bJS1yzE17CVYAatNWNSTvVGo8jQj7HV16ezzp
+         2/iE0NlcPsP5qF4gAXdCpjQLe1tN4j2RutsWj6ZnzBl8wPdBTwqa82SURrq41I9UDuBV
+         dDlWQVhlmpBCqE7Es/3Py8uAsOcfg8WQUUhzN1rMmfgFNsO0uxEP6gYU4YksJi8KBKpk
+         V71oiAedIENv1hFGDQYTzCYl6T2r8IDeHOVnM+m8uV2zKMvLhybd56WfZf4nrHycRIWs
+         zdDIXlmF7OiSlYUhvIN+J1ohyqUGlYblQMFQEpzl9GHFeDefRkKi6qzd/qo+bHbsI8ZP
+         MOSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783625358; x=1784230158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iJQOEk5yqB+dE9SiEhcvYRxkNhnNp9MLYOiszo4g7GA=;
+        b=KngukXRaMyLDmWstgtkYHQk2lsIB1rbIeJ7+TYZdA06EqWufTMM7+miCX/iVYa4/YO
+         dfAMX2SUEzjMXj3P2S9Oi6WRqsXmCo6KGx+pUPK3VgNzBvOw+3JxNJK5wxxCPdArQ24G
+         Ua0CbdkLn6Jp5aWkvFdugNiCa7d0yLPRNsHOXcVQ8n0VeIZyw/DAfOl22Dq9nlP5ntwC
+         p0IHZg3wyxad8QTxx4816jCettKaZpP23nuqj44fdHw6rf2OrXePJ9T3cH9REMyz/H0m
+         G6prOYDaKCA0fJh8HVZ6vRkdbSCnXOQjkm8nwwOzjiNOdWuR/V5rmND/PA3CDSWHrTAg
+         lVLw==
+X-Forwarded-Encrypted: i=1; AHgh+RqOwloHZW1zpdxs1ptN+rQcq+Vsk/33r9Gcer/N06sRoWJmcIhLM7Vbqdmx9PlClPpJ9HatS0o3ouFC5DpDXkcwyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNa7I1xBrPLeqHgyDPJW939Gv6QA6npB5Mnc7+Vm6UJEEpwv2Z
+	RD82Z3w57ui4iKaLni8VrI+VR34lnkad4hXIrN3w0LTF7+H+ayp6jriM
+X-Gm-Gg: AfdE7cnW9YOTRU1B6v/eMDFKln84K2L04hJNqq2ey3x5YlWp2/zD13kh4PA3746hOr2
+	MgKjxuTYBmg4N2gS2cCRUkPNkV12HtGTw3f+pCahfgM/jO/OcnSmlmqQGKAwI1zODyt2Uv9LTI2
+	l6HP+gxr6RR8Jcg8jlu8CgyFGHXF5hyXPICYNTX7de8bwstxQCeFA85ywrl+jOYarOScCtSXSHT
+	sJwIy09iPj5karI+fxnIktTBxOXsA0XXIjmP6/aGmfykgAryMxZtqDiVKnMnLgehokmsdU8dUQ5
+	V72Bkqw0ZDgDs2hGSMptt6nybbzBrrFeKeimh/TOUiWGMIuOIkQw5u5T3/+YH5wV+0mvvvso80U
+	EVlFSbkcqKEFQINbSHzRRhjMn0N6UCFAUmV9W2/0edfb72Bn1idJrskVZMyv4eFFXAOCSLVCwSM
+	gGJgTqz2DfiMgKAZ+fCUEJ
+X-Received: by 2002:a05:600c:4e93:b0:490:e5c1:b8b9 with SMTP id 5b1f17b1804b1-493e67f7c3emr78360215e9.0.1783625358090;
+        Thu, 09 Jul 2026 12:29:18 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a702:d301:8fb6:1d85:3dc1:42ab])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493eb6ccdbbsm84366045e9.3.2026.07.09.12.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jul 2026 12:29:17 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Ulf Hansson <ulfh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mmc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 8/8] arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
-Date: Thu,  9 Jul 2026 21:23:32 +0300
-Message-ID: <20260709182332.876408-9-claudiu.beznea+renesas@tuxon.dev>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v19 00/12] Add Renesas RZ/G3L SD/eMMC support
+Date: Thu,  9 Jul 2026 20:28:57 +0100
+Message-ID: <20260709192916.630794-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260709182332.876408-1-claudiu.beznea+renesas@tuxon.dev>
-References: <20260709182332.876408-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,121 +85,86 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The two CAN FD channels available on the Renesas RZ/G3S SoC are routed
-through the Renesas SMARC Carrier II board when used with the Renesas
-RZ/G3S SMARC Module.
+Hi All,
 
-The CAN transceiver on the Carrier II board has its standby pins connected
-to GPIOs that are selected through the SW_GPIO_CAN_PMOD switches. By
-default, these switches route the GPIOs to the PMOD interfaces.
+RZ/G3L SoC has:
 
-Enable the CAN FD controller and its two available channels.
+Channel 0 supports SD and eMMC (including HS400/HS400ES).
+Channel 1 supports SD and eMMC (except for HS400).
+Channel 2 supports SD.
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
+not support IOVS and PWEN in the SDHI register (no internal regulator),
+unlike SD1 and SD2. It has an internal divider for all modes except HS400.
+It also has a 2048-bit divider compared to 512 on others. Moreover
+RZ/G3L supports HS400 enhanced strobe mode.
 
-Changes in v2:
-- collected tags
+v18->v19:
+ * Updated commit description for patch#1,#2,#6,#8,#11 and #12
+ * Updated clock and reset description with AXI master and AXI slave
+ * Added else condition for reset and reset-names.
+ * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
+ * Retained the tag got binding patch as the changes are trivial.
+ * Fixed the clk_mask for non-DT platforms.
+ * Fixed max-divider setting for non-DT platforms.
+ * Replaced the magic number '9' with ilog2 function in
+   renesas_sdhi_clk_enable().
+ * Dropped divider variable from struct renesas_sdhi.
+ * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
+   and non HS400 mode(uses 1/2 internal divider).
+ * Updated handling for clk divider.
+ * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
+   hardware tuning delays
+ * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
+ * Updated suspend/resume with scoped runtime calls in suspend.
+ * Fixed extra space in HS400MODE2 comment block.
+ * Updated the comment HS400mode2->HS400MODE2.
+ * Dropped the updation of clk handling as it is taken care in
+   previous patches.
+ * HS400ES support is enabled based on of_data.
+ * Fixed the space in HS400ES comment block.
 
- .../boot/dts/renesas/rzg3s-smarc-switches.h   | 12 +++++
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  | 46 +++++++++++++++++++
- 2 files changed, 58 insertions(+)
+v17->v18:
+ * Collected tag
+ * Merged patch #4 and #5 and updated commit description
+ * Annotated the empty sentinel entries in the OF match tables with a
+   "Sentinel." comment for clarity.
+ * Retained the tag as it is a trivial cleanup.
+ * New patches drop struct renesas_sdhi_hw_info, instead using
+   renesas_sdhi_of_data and tmio_mmc_data.
+ * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
+   will send later.
+v1->v17:
+ * Collected tag for binding patch.
+ * Resending the series as there is an issue with patch threading from
+   patch #14.
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-index bbf908a5322c..198874ad9a65 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-@@ -37,4 +37,16 @@
-  */
- #define SW_OPT_MUX4	SW_ON
- 
-+/*
-+ * SW_GPIO_CAN_PMOD[x] switches' states:
-+ * @SW_GPIO_CAN_PMOD1:
-+ *	SW_OFF - GPIO8 connected to CAN0_STB (position 1-2)
-+ *	SW_ON  - GPIO8 connected to PMOD1 (position 2-3)
-+ * @SW_GPIO_CAN_PMOD2:
-+ *	SW_OFF - GPIO9 connected to CAN1_STB (position 4-5)
-+ *	SW_ON  - GPIO9 connected to PMOD1 (position 5-6)
-+ */
-+#define SW_GPIO_CAN_PMOD1	SW_ON
-+#define SW_GPIO_CAN_PMOD2	SW_ON
-+
- #endif /* __RZG3S_SMARC_SWITCHES_H__ */
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 70af605168b0..2be684f55914 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -68,6 +68,24 @@ codec_dai: simple-audio-card,codec {
- 		};
- 	};
- 
-+	can_transceiver0: can-phy0 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <8000000>;
-+#if SW_GPIO_CAN_PMOD1 == SW_OFF
-+		standby-gpios = <&pinctrl RZG2L_GPIO(13, 0) GPIO_ACTIVE_HIGH>;
-+#endif
-+	};
-+
-+	can_transceiver1: can-phy1 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <8000000>;
-+#if SW_GPIO_CAN_PMOD2 == SW_OFF
-+		standby-gpios = <&pinctrl RZG2L_GPIO(13, 1) GPIO_ACTIVE_HIGH>;
-+#endif
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI1 Vcc";
-@@ -92,6 +110,22 @@ &audio_clk2 {
- 	clock-frequency = <12288000>;
- };
- 
-+&canfd {
-+	pinctrl-0 = <&canfd_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	channel0 {
-+		phys = <&can_transceiver0>;
-+		status = "okay";
-+	};
-+
-+	channel1 {
-+		phys = <&can_transceiver1>;
-+		status = "okay";
-+	};
-+};
-+
- &ehci0 {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -171,6 +205,18 @@ audio_clock_pins: audio-clock {
- 		input-enable;
- 	};
- 
-+	canfd_pins: canfd {
-+		can0_pins: can0 {
-+			pinmux = <RZG2L_PORT_PINMUX(6, 1, 3)>, /* CAN0_TX */
-+				 <RZG2L_PORT_PINMUX(6, 2, 3)>; /* CAN0_RX */
-+		};
-+
-+		can1_pins: can1 {
-+			pinmux = <RZG2L_PORT_PINMUX(17, 0, 3)>, /* CAN1_TX */
-+				 <RZG2L_PORT_PINMUX(17, 1, 3)>; /* CAN1_RX */
-+		};
-+	};
-+
- 	key-1-gpio-hog {
- 		gpio-hog;
- 		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>;
+Biju Das (12):
+  dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+  mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
+  mmc: renesas_sdhi: Add clk_mask field to support flexible clock
+    divider widths
+  mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
+    ranges
+  mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
+  mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
+  mmc: renesas_sdhi: Add optional axis/axim reset controls
+  mmc: renesas_sdhi: Add RZ/G3L SDHI support
+  mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
+  mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
+  mmc: renesas_sdhi: Add RZ/G3L HS400 support
+  mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 ++++++--
+ drivers/mmc/host/renesas_sdhi.h               |  11 +-
+ drivers/mmc/host/renesas_sdhi_core.c          | 250 ++++++++++++++----
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  73 ++++-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  12 +-
+ include/linux/platform_data/tmio.h            |  18 ++
+ 6 files changed, 385 insertions(+), 87 deletions(-)
+
 -- 
 2.43.0
 
