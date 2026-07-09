@@ -1,394 +1,162 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011066.outbound.protection.outlook.com [40.107.74.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC56827B357;
-	Thu,  9 Jul 2026 06:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783576851; cv=fail; b=Mq5OyNDVR7kYYx3g/OOiqhDlA8A1nJZ3xTY2BqL0TZJ/mT2h6attP/yH4ko98GnexY/YtHY2T5GLuGydMHeBDBk/oP4n8rHdOPUzjEBdaGjCuDnanQDTlC24QdI62iaJfSMivEOKL1mxH1ydzKPP22U71LkbVTs2+FF88K+6R60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783576851; c=relaxed/simple;
-	bh=zi++pq01CVwOVXIAGJX3YLEV7m8EdMyV7lGDhSHMtg0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=D4455QkLMu9Fkp9UdUogVHSUy3usQ5hXrcrkR+cf1Oy6nfmogMgxGC1eNWC6ZS2ywAgtNVGkhjTUjxs+OS73i3NyYceo99yKE37sBmb14xhHboyDfx7XfNP6y2q5iXZAaYyZ4XTJTi54hSa1SzcPVyxGH/ckyRuY5aRCaq6FX3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=wyXWcfqG; arc=fail smtp.client-ip=40.107.74.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23ED3A5E7D;
+	Thu,  9 Jul 2026 07:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783580999; cv=none; b=e6mZ0SpMAtQxZDVYcVW3CbYu8jpwFkt/yPvcpajpfEunBKwV5MXr7KYPVIRKRMQCqpL5p7itkFYCorDTz7UHZSZtBDMnKX7RfOdMSQft3tQrkls6KRmVHJ2oWmTj7ByhtdIFtAwd7SsY+tkeLHD0UfbgfCYXkzkE+z+LLTNga2A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783580999; c=relaxed/simple;
+	bh=V8tAHQoZZK5CBWPDXc9UbohR4LaGTAsCVpK17BOyYHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Wr1Sl520xmDRQbFfma5Cc/FnQWzCA5hmLPaIYeXeKCLkhYw0+rYhYVDQGdip6yAPflOGcNkiIFXPHLCgr7IRSWWEpP3bsvs1XJbl+nd/uFrufd5sFzS3ZeWilarPIcMdMI4PdtAiNaX1jsmDe96uL43rm0aVwH5Wp/uQUA/o2nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyCMezGF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="wyXWcfqG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mm5atUejgl3Jgm2eHNCd7U2kZFkv4J7qZIjP9JssZDb9KWNpTeVoaX9AIb8hD6O7AbF3vN5dNbJT3PbbqINJJboifa92U/Pl2XMsEdueYB+iXXRby12aacUnl0hZ9xmfB2aHBezjHIojC2ke2LNRBmcK/b7bcb/KN+6lxIfeNRGvQto5uRiVEy+c506eaecjSEgdOGjr+R8SoZjZWtDKbK7ZexSz/8x59T67tYjHta6JqUg9sc5RXQxs7Z5PVF+zN2mvu/OC4PamYj3gNEhyn1S3HJRBWM/E2wCHCGKQtVnncwlk6ZiSK6yWo0B08U9qMqzSXKGKBu5zoeNB0fQlhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGkeILTMDFOV37HFlgWBzgZhaBLC7d0835fKbwFSEHs=;
- b=cOECpFii2wjDPYPor/+jVMbmhV0di3JrDLzi7bnz6KaILk4iaC3ZCaP+2MIN3cEzLZhuXM0789ZWUw5qi2t/+vnSrovE6uRdsb799Y74NH+qmPN7T4MMNIX5aeH3X2wVn6bNpwAVZ4zuOwtpgT2EnnDcyFsV+HBElIAtwKRWgxcxl/9kDJh63FVaqm6C5Mjb3xTOSfxcWel8VPtbMfZDTGll9MaS7uDwj2W9+DLcPEY9wL7E/7IuumjGfK7ds7eEMv0Csxt6JmOKx/j4QgWdsFiiSWRoeY+194qGcsZMPUTNj9O1tZb1QuoRsGb33jIfCUZySBLRvagwqGBV6S7QiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGkeILTMDFOV37HFlgWBzgZhaBLC7d0835fKbwFSEHs=;
- b=wyXWcfqGd62J0piblpg/4ay3SCUbzEEpOBe+CnFMTkyyGQFKp8AsgbiO9ginoFQBx2bY9k9SyyMVKFe1nAgacp9jvImG9QfPURigIEtbXApBDwGqxDOXWLqlxTljSa6OvmOT54mJIt5QEpLy1y/0/ilXFSAV5jeq9wZT80y1odE=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYYPR01MB12434.jpnprd01.prod.outlook.com (2603:1096:405:f8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
- 2026 06:00:45 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0181.009; Thu, 9 Jul 2026
- 06:00:45 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Rob Herring
-	<robh@kernel.org>
-CC: Tommaso Merciai <tomm.merciai@gmail.com>, geert <geert@linux-m68k.org>,
-	laurent.pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	magnus.damm <magnus.damm@gmail.com>, Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 02/13] dt-bindings: display: renesas,rzg2l-du: Add
- support for RZ/G3E SoC
-Thread-Topic: [PATCH v7 02/13] dt-bindings: display: renesas,rzg2l-du: Add
- support for RZ/G3E SoC
-Thread-Index: AQHc3gMIeY2WJ7+Cdk6/LqmJCyov0rYMk1KAgCzwRoCAK474sA==
-Date: Thu, 9 Jul 2026 06:00:45 +0000
-Message-ID:
- <TY3PR01MB11346733171878A6D2E38076286FE2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <cover.1778141145.git.tommaso.merciai.xr@bp.renesas.com>
- <ff8e401a0667970a42a55420dcb071e34730a923.1778141145.git.tommaso.merciai.xr@bp.renesas.com>
- <20260513222725.GA2069022-robh@kernel.org> <aiqtSWTTa4ZIThrp@tom-desktop>
-In-Reply-To: <aiqtSWTTa4ZIThrp@tom-desktop>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB12434:EE_
-x-ms-office365-filtering-correlation-id: 4047388d-8b31-45f3-7066-08dedd7f6ad4
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|23010399003|1800799024|13003099007|38070700021|22082099003|18002099003|3023799007|6133799003|56012099006|5023799004|11063799006|4143699003;
-x-microsoft-antispam-message-info:
- tFte69RRv0CkSgv0dLLZAzGhMn2/8WujD1K4K9KU51cvUndFYSPuiFti/0iQ2+hGvYmDusR1oPH3n4IRbLYGJispDgaCF0Zhz+Kdp5a1KTneSxBu7eNhYnDGxGTR+zClgAyo5h0bkKgKGJbDWJaCrsypb1kN2u2yw8vV+gYr6eWdnJbFN0OMEZQYaUB7Xy41QWP3PB9s3Bh33XGTnJvUtDEyyFG6PAIndNuhnZjGpCfUUMcp7HBPiQsqtQVYBTb4ro11EPOvz1goZvIuBEKTQpHscmDPCVmLQXzMvv/XLcJuCqtYIOw/wD14X7gdSrZL3C+vU23sYNfsynZ94kvN7tmauqAF67R1QM8AEwRnf+fWXA6gWxjrETGM43WGc8hRlzAzmWqSZXpG7dQqY4m5N1ryPYGoL3xcwanZyMDnglj3kw+Gej3XC5UJhm1Nr/k9kXICSdropvwZ8AjHFdFRjHk/RfNQxQz+n1s0+Gc4V+lx7lDxKxOtH+NwXeSuOuCPoWWRXc87bAPOFj/R67OthhxBS8zS/hWPGJtjUbFswgxmr6ACo/RRneWDiYyyUxd/ZDjrqLUhNlpAhbqIrthsHc1BC0XMZAa0WkTHoT33agNGO7Ti6e0cdPhR6Ywyan6jGw/VMSVQa4+YOlBInc2HODlmFwZXsti2qlZCjunTbkaeC5hwCpFcqZgojd0s9DKDi77uQrbOP068W4NHMltOJGtEcYdIR5sCcv9oN4zzePo=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(23010399003)(1800799024)(13003099007)(38070700021)(22082099003)(18002099003)(3023799007)(6133799003)(56012099006)(5023799004)(11063799006)(4143699003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?BI/AQ3ToXdEe3BAbR3IwgUCGsPr8yL+ur3CCPqDfADZ8CiheOueHowG2qm5d?=
- =?us-ascii?Q?XJi3jbJOVZ2ZICsZca6xcZAbL4NPYMjE5eDHBagDKEcSN7UP4nOemjs2hvXS?=
- =?us-ascii?Q?Pr2z8K8E7W+StcUXCvdQQT4o3HiMDBCTLTD/r5k4NbFinwxWqxyKC3F+/0/N?=
- =?us-ascii?Q?lh3H0H/GYUxRYjF6YrZrD2Q+CCvcdlgFvn8tCDBYA8yMxUxyea3qOrb3nedy?=
- =?us-ascii?Q?rqG/QwBMrqvR1/pRk2d3GYZjXYJVK24DZoTjNRJQOt95X4/hpsGvCxqgLahV?=
- =?us-ascii?Q?YGOjFrwoPoNtzzJ20qXHAPn0uHi53WpcRfV9QBlLMsoNmvj9aLCWugWcjRg8?=
- =?us-ascii?Q?O3GCcAsisaLfUsNd6clhoBMqLUH7Nff6euIj5QvFKNg2Ml133/oiQhJg26fZ?=
- =?us-ascii?Q?0AS4StaBMUfVnlDliJHrSd2ltfVCfkp8851bndp+z4LuS6UWJzl5UNc+bRpr?=
- =?us-ascii?Q?mmj9aaxIcbNFcUvrjDNj/BYLPmdiqD1UdjFHUOsvGq6II/X6NKjGMmwqP1z7?=
- =?us-ascii?Q?ISE0TF6xHJCGtq5MnWsA1aSWVGYqbXzPmxhzzBThzPzBGyFFCjnbNS2PHwlp?=
- =?us-ascii?Q?4/4PTkAhAoaijSThj78dypf4ASzD/Q+8tUk9wNpWj6zKaRiVaiqUYHVt1Dfy?=
- =?us-ascii?Q?/ZknzaopE6thIdDHzQC9cgrkQjR4kw/fVLMp9ZiyawB01TUgr7LsXUHS3ouI?=
- =?us-ascii?Q?1Nv3vD1z8iYDCoGnw8fJjUZE9NBezrM+3XzehxS7PmYgNjyegpTB8ouawBc9?=
- =?us-ascii?Q?DFDUn1CCFHe0I3EtceUROZvQImolxjYOGH/LfrBUFweFbV20iRvlNj/pCVqB?=
- =?us-ascii?Q?JIz0leWUHDNRbxPd8F4rj7PHRabU10oUazl1HaItiC8FWZAdOIR3QLoKBSj/?=
- =?us-ascii?Q?u6X+FxbPXdkSfFfWWBxkZyM9UajX98X3ZAio13weC0NXfcC/kPAei1VrcuHh?=
- =?us-ascii?Q?lB2yDkwJ7LcOnovcNsc8K38eSW6MkkUZoL8kAK0OY5LKr99jnOoAlRrVVh7y?=
- =?us-ascii?Q?riHDxqfmycfagqT1agKq2JlDvwpdZ/m1pq54aLnATUkX9jLGWj14IzTn4vO5?=
- =?us-ascii?Q?VKTA/c7T/FKOTcZEbOTY3coi8dFZ2YO4zLKz6+d9lsb+ZSf3zUzqcylcarc/?=
- =?us-ascii?Q?JxB2ZMFDPRYk8MAclW447tOExyKEJayT8s6Ed83xymuNckO/a2y1wuWAPy30?=
- =?us-ascii?Q?KJWXSRXFEEj5DejkX+u+3SfV+McLNHkQCfLo/XfFldUaJMqmagoSqrsnQzOW?=
- =?us-ascii?Q?4XpqEo1bzpe/fUZOmt6GCapuD5kev5+nPRRGOHQCGTdM+Upv99XTvKYc0Wzg?=
- =?us-ascii?Q?hoouHtrVIW7pERgqQI0+O6cn0Y0DX7YXpxzq55yLWWTu/WiIBH4FzZenLlNt?=
- =?us-ascii?Q?0KE9C8FP1Ddt3QXFNmY3EJHB8RJvvqpaN8mFrhNgZ7RRfSD38ylUbrXZWX6p?=
- =?us-ascii?Q?NpN/bzpxOwXQvBAKDbfw5MvkA7KAR04FS3Kja2oe8MKlsAjtQ/2W3+9NcJMc?=
- =?us-ascii?Q?lnvM2bzIUDWecNAq5jv5tGZLNRuDmd9La8ofwxqoH0JxV7VUZKadGUP25XFV?=
- =?us-ascii?Q?18KYF5ey0zVAmV1TMeHkVTMDGHROa9HbusHfMMgJPRieDJWXvqVECMMZ2Cg/?=
- =?us-ascii?Q?HDYM4vYSp7CYC26tC+RNBe8jI67inHpsv/D1EAlWChmziqBUT5GLmRtxy6dw?=
- =?us-ascii?Q?xrxan3DC2psaVGt2Rms0jcR7mp/Oa+Bn+HYxPVltvlKnfOIe1P0S36eaDo5i?=
- =?us-ascii?Q?q1lOiNMfPg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyCMezGF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09E41F000E9;
+	Thu,  9 Jul 2026 07:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783580998;
+	bh=8CZ6VWb0nM5COiMthOV8CMsPQyxMKQz9LsCOWLJSmww=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=kyCMezGFcDcoDQc7mkfhr5nwNWzKjRiLatXO2hHu9zrk8wolLDIgWCj0G8n8DudSh
+	 MfiJqfJay5iEEME0Jq6iIN0PBm4TdZkh0/RRG8BNpjDUhQUdLIKiaKCDZz9nC6EiUq
+	 oTwl62v7bL+WBcG6qWfx0SSd84BdFTapVjOW7C5xWoF3q8qWPdv1xAFQuGx4GpXTvl
+	 fPfS60I61smBVEdPVpNtoGxmnhGNlB5mz1h9LkShhb8yL1/yT1T2osynRaWXGyRS9w
+	 lTgwE9WxBfhdBGuoUdJpr/yhKictmDrhFOrNRsk9m5fDPKe54vtMmRXRgtASXggu4V
+	 /bnAA4Q2ECfFA==
+Message-ID: <d31c4217-4733-4459-a9d7-265731d295fc@kernel.org>
+Date: Thu, 9 Jul 2026 09:09:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4047388d-8b31-45f3-7066-08dedd7f6ad4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2026 06:00:45.5430
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WTE4G7RgqDfWRgzIbgJyNhzTHit1TkFilSHOUbUQrQ6yO0ToUlz6+wCQpxZ6OUw1tioEDDR0DPrtQnRBqp557ALwhEao1OYjuv95rm/c+Is=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12434
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/18] thermal/drivers: Remove redundant error messages on
+ IRQ request failure
+To: Pan Chuang <panchuang@vivo.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Markus Mayer <mmayer@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Frank Li
+ <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, zhanghongchen
+ <zhanghongchen@loongson.cn>, Yinbo Zhu <zhuyinbo@loongson.cn>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ John Madieu <john.madieu.xa@bp.renesas.com>, Heiko Stuebner
+ <heiko@sntech.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ Mason Chang <mason-cw.chang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>,
+ "open list:THERMAL" <linux-pm@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "open list:QUALCOMM TSENS THERMAL DRIVER" <linux-arm-msm@vger.kernel.org>,
+ "open list:RENESAS R-CAR THERMAL DRIVERS"
+ <linux-renesas-soc@vger.kernel.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ "moderated list:ARM/STM32 ARCHITECTURE"
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support:Keyword:mediatek"
+ <linux-mediatek@lists.infradead.org>
+References: <20260709023048.599150-1-panchuang@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260709023048.599150-1-panchuang@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tommaso,
+On 09/07/2026 04:30, Pan Chuang wrote:
+> Commit 55b48e23f5c4b6f5ca9b7ab09599b17dcf501c10 ("genirq/devres: Add
+> error handling in devm_request_*_irq()") added automatic error
+> logging to devm_request_threaded_irq() and
+> devm_request_any_context_irq() via the new devm_request_result() 
+> helper, which prints device name, IRQ number, handler functions, and
+> error code on failure.
+> 
+> Since devm_request_irq() is a static inline wrapper around
+> devm_request_threaded_irq(), it also benefits from this automatic
+> logging.
+> 
+> Remove the now-redundant dev_err() and dev_err_probe() calls in
+> thermal drivers that follow these devm_request_*_irq() functions, as
+> the core now provides more detailed diagnostic information on failure.
+> 
+> Pan Chuang (18):
+>   thermal/drivers/airoha: Remove redundant dev_err()
+>   thermal/drivers/armada: Remove redundant dev_err()
+>   thermal/drivers/db8500: Remove redundant dev_err()
 
-> -----Original Message-----
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Sent: 11 June 2026 13:43
-> Subject: Re: [PATCH v7 02/13] dt-bindings: display: renesas,rzg2l-du: Add=
- support for RZ/G3E SoC
->=20
-> Hi Rob,
-> Thanks for your review.
->=20
-> On Wed, May 13, 2026 at 05:27:25PM -0500, Rob Herring wrote:
-> > On Thu, May 07, 2026 at 11:21:30AM +0200, Tommaso Merciai wrote:
-> > > The RZ/G3E SoC integrates two LCD controllers (LCDC0 and LCDC1),
-> > > each containing a FCPVD, VSPD, and Display Unit (DU).
-> > >
-> > >  - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
-> > >  - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
-> > >
-> > > Add compatible string 'renesas,r9a09g047-du' and extend the binding
-> > > to support two DU instances: add reg-names ('du0'/'du1'), extend
-> > > reg, interrupts, and resets to maxItems: 2, and extend
-> > > clocks/clock-names to six entries (aclk/pclk/vclk per instance, minIt=
-ems: 3).
-> >
-> > Don't write what the diff has. I can read the diff for that.
->=20
-> Ouch, thanks.
->=20
-> >
-> > >
-> > > Drop the "Each port shall have a single endpoint." constraint since
-> > > RZ/G3E ports expose multiple endpoints.
-> > >
-> > > Add a RZ/G3E-specific allOf rule mapping two DU instances to two port=
-s:
-> > >
-> > >  - port@0 (DU0): endpoint@0 DSI, endpoint@2 LVDS ch0, endpoint@3
-> > > LVDS ch1
-> > >  - port@1 (DU1): endpoint@0 DSI, endpoint@1 RGB (DPAD), endpoint@3
-> > > LVDS ch1
-> > >
-> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > ---
-> > > v6->v7:
-> > >  - Rebased on top of [1]
-> > >    [1]
-> > > https://lore.kernel.org/all/20260429170012.366537-1-prabhakar.mahade
-> > > v-lad.rj@bp.renesas.com/
-> > >  - Use single DRM device aggregating both DU instances (1 DU dt node)=
-,
-> > >    modelling single port for each DU0, DU1 and multiple endpoints for
-> > >    outputs.
-> >
-> > That seems like the completely wrong thing to do and you've given no
-> > reason why you think it is the right choice.
->=20
->=20
-> We had a discussion with Laurent at [1] about this topic.
-> In particular:
->=20
-> DSI ip can select at runtime input data path or DU0 or DU1 via DSI_LINK_G=
-PO0R VICH register. This can be
-> done by managing the
-> 2 DUs as single DRM device aggregating both DU instances that will spawn
-> 2 crtcs. In this way at runtime we can select the output for DSI ip via t=
-he following commands:
->=20
-> modetest -M rzg2l-du -s 58@55:800x600-56.25@XR24 (DU0 -> DSI) modetest -M=
- rzg2l-du -s 58@56:800x600-
-> 56.25@XR24 (DU1 -> DSI)
->=20
-> This can be done using option [B] (single drm device that spawn 2 crtc).
->=20
-> Using option [A] we will have 2 drm devices 1 for DU0 and 1 for DU1 that =
-each will spawn a single CRTC
-> and the above feature will be not achievable.
->=20
-> In the end we need a way to have single DRM device that spawn 2 CRTCs.
->=20
-> A) Two device tree nodes rapresenting DU0 and DU1 design [v6]:
->=20
-> du0: display@16460000 {
-> 	compatible =3D "renesas,r9a09g047-du";
-> 	reg =3D <0 0x16460000 0 0x10000>;
-> 	interrupts =3D <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>;
-> 	clocks =3D <&cpg CPG_MOD 0xed>,
-> 			<&cpg CPG_MOD 0xee>,
-> 			<&cpg CPG_MOD 0xef>;
-> 	clock-names =3D "aclk", "pclk", "vclk";
-> 	power-domains =3D <&cpg>;
-> 	resets =3D <&cpg 0xdc>;
-> 	renesas,vsps =3D <&vspd0 0>;
-> 	status =3D "disabled";
->=20
-> 	ports {
-> 		#address-cells =3D <1>;
-> 		#size-cells =3D <0>;
->=20
-> 		port@0 {
-> 			reg =3D <0>;
-> 			du0_out_dsi: endpoint {
-> 			};
-> 		};
->=20
-> 		port@2 {
-> 			reg =3D <2>;
-> 			du0_out_lvds0: endpoint {
-> 			};
-> 		};
->=20
-> 		port@3 {
-> 			reg =3D <3>;
-> 			du0_out_lvds1: endpoint {
-> 			};
-> 		};
-> 	};
-> };
->=20
-> du1: display@16490000 {
-> 	compatible =3D "renesas,r9a09g047-du";
-> 	reg =3D <0 0x16490000 0 0x10000>;
-> 	interrupts =3D <GIC_SPI 922 IRQ_TYPE_LEVEL_HIGH>;
-> 	clocks =3D <&cpg CPG_MOD 0x1a8>,
-> 			<&cpg CPG_MOD 0x1a9>,
-> 			<&cpg CPG_MOD 0x1aa>;
-> 	clock-names =3D "aclk", "pclk", "vclk";
-> 	power-domains =3D <&cpg>;
-> 	resets =3D <&cpg 0x11e>;
-> 	renesas,vsps =3D <&vspd1 0>;
-> 	status =3D "disabled";
->=20
-> 	ports {
-> 		#address-cells =3D <1>;
-> 		#size-cells =3D <0>;
->=20
-> 		port@0 {
-> 			reg =3D <0>;
-> 			du1_out_dsi: endpoint {
-> 			};
-> 		};
->=20
-> 		port@1 {
-> 			reg =3D <1>;
-> 			du1_out_rgb: endpoint {
-> 			};
-> 		};
->=20
-> 		port@3 {
-> 			reg =3D <3>;
-> 			du1_out_lvds1: endpoint {
-> 			};
-> 		};
-> 	};
-> };
->=20
-> ---
->=20
-> B) Single device tree node design aggregating both DU instances [v7]:
->=20
-> du: display@16460000 {
-> 	compatible =3D "renesas,r9a09g047-du";
-> 	reg =3D <0 0x16460000 0 0x10000>,
-> 		<0 0x16490000 0 0x10000>;
-> 	reg-names =3D "du0", "du1";
-> 	interrupts =3D <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>,
-> 			<GIC_SPI 922 IRQ_TYPE_LEVEL_HIGH>;
-> 	clocks =3D <&cpg CPG_MOD 0xed>,
-> 			<&cpg CPG_MOD 0xee>,
-> 			<&cpg CPG_MOD 0xef>,
-> 			<&cpg CPG_MOD 0x1a8>,
-> 			<&cpg CPG_MOD 0x1a9>,
-> 			<&cpg CPG_MOD 0x1aa>;
-> 	clock-names =3D "aclk", "pclk", "vclk",
-> 			"aclk1", "pclk1", "vclk1";
-> 	power-domains =3D <&cpg>;
-> 	resets =3D <&cpg 0xdc>, <&cpg 0x11e>;
-> 	reset-names =3D "resetn", "resetn1";
-> 	renesas,vsps =3D <&vspd0 0>, <&vspd1 0>;
-> 	status =3D "disabled";
->=20
-> 	ports {
-> 		#address-cells =3D <1>;
-> 		#size-cells =3D <0>;
->=20
-> 		port@0 {
-> 			#address-cells =3D <1>;
-> 			#size-cells =3D <0>;
->=20
-> 			reg =3D <0>;
->=20
-> 			du0_out_dsi: endpoint@0 {
-> 				reg =3D <0>;
-> 			};
->=20
-> 			du0_out_lvds0: endpoint@2 {
-> 				reg =3D <2>;
-> 			};
->=20
-> 			du0_out_lvds1: endpoint@3 {
-> 				reg =3D <3>;
-> 			};
-> 		};
->=20
-> 		port@1 {
-> 			#address-cells =3D <1>;
-> 			#size-cells =3D <0>;
->=20
-> 			reg =3D <1>;
->=20
-> 			du1_out_dsi: endpoint@0 {
-> 				reg =3D <0>;
-> 			};
->=20
-> 			du1_out_rgb: endpoint@1 {
-> 				reg =3D <1>;
-> 			};
->=20
-> 			du1_out_lvds1: endpoint@3 {
-> 				reg =3D <3>;
-> 			};
-> 		};
-> 	};
-> };
->=20
-> ---
->=20
-> Please Biju, Laurent correct me if I'm missing something.
->=20
-> [1] https://patchwork.kernel.org/project/linux-renesas-
-> soc/patch/8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso=
-.merciai.xr@bp.renesas.com/
-> [v6] https://patchwork.kernel.org/project/linux-renesas-
-> soc/patch/8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso=
-.merciai.xr@bp.renesas.com/
-> [v7] https://patchwork.kernel.org/project/linux-renesas-
-> soc/patch/ff8e401a0667970a42a55420dcb071e34730a923.1778141145.git.tommaso=
-.merciai.xr@bp.renesas.com/
->=20
+all of these 18 are just one commit, no?
 
-RZ/G3E LVDS support single link (2ch): extended display and single link (mu=
-lti) mirror display
-I believe to support this feature you need single node solution.
-
-Not sure, you just need to extend like R-Car with 1 ports containing all th=
-e 4 ports
-Maybe You could try this as well??
-
-Or
-
-1 Ports containing 2 port that contains 3 endpoints each (Current patch)
-
-Cheers,
-Biju=20
+Best regards,
+Krzysztof
