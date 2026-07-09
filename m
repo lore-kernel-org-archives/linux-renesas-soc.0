@@ -1,233 +1,107 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011032.outbound.protection.outlook.com [52.101.125.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A043F660B;
-	Thu,  9 Jul 2026 10:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783592227; cv=fail; b=EqXy3KrfrxNxoGZPi39Q3HpbmBVAWyAiD4W3/47ePBdRHtNbpTAxc3L124oTw4L+3ncxUREQV5jLWqzqiyxisoitVGO7FIMczGW6Um4fLiselv6ohyHvwxyMr7UNSD7GHmxqL13uhdTiijM40O4dTolhDUmqY2H8/m25AtC5qXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783592227; c=relaxed/simple;
-	bh=JpG9Et5e8+PxquqxhBOzX7dDnlFEs1pIGhcFn76VanI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IYaKe5x/z41IzR2LVGkUAbtdulEAL+o64U4U5IwWTpZWI7ryvrM5MYMuHN/AFHphlYs63E25jRXq8AMnG5e0NcKODVbbwFvUSyRCLEx+TS2D2DdTOIIY5uFWU7HxWFs2wqn6VVKnJPWhA7A5Qeta7M5n32+D9TkhGisT5CCXezc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=GmB6TYLs; arc=fail smtp.client-ip=52.101.125.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="GmB6TYLs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F7t+jjHi++9kKnyK0E9HX0cEKG7Kg0elDhEyIsw/GDiLBN/+/Rsjb3W7qAki2wXIlYWAWPhgyQeYtR6KAm0SWF0tCAjHy++XSizivuJBIZTrxzTpEgr+1QVHL3HqQDGPYHMVN0hdLiRwY3HJa5aNkzQBB9CZa8M9FUl2AoVMaxmSKLl872DzoSb0MDFLigigoI5W/97EhZlskYEmDTV1C8PMhEMi6bOGzG1dMyPDMZX0RD+l2UdqMygfeFk34Ov+epBm4YJAC/CzS3Hkz1tSRL7ePXgkcGhvJKJuHk7xQrDLzUerd4Ckkh7gWOKxFi/K6IISyebvDkAa0FOpqTcjBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mZ0enGGORT3XbehuXWxphE6BoCqQZBGg5G9vm4QrS8U=;
- b=DPx5jZotCk5+G7POKgYnw6rFxccDx9SHM9Qsr4Quc0e6wJiKgDrbnkF+JyXWAmTyBcBTmTWR2K+fqcpTvnBZt9ldukygcFA+1RUVXnk7zvkoFZ6p4bHZtHIWiWnerpspPwgrQVShy+M6B9Wp0dkG8CNYJuCA51wFdvEGRr2ElHr3XfLKXlbPQvIHI5/ekKN8ukARF4+ccIGwXGiGbS3VGxsIL8cljF/IoSuoT/Mg4uCQx9PprI4cwRVO4HmeYz5iYbWULnF7x805TeGSpherj7I2mwPW3OZbAcoEaVg6vcw4B4y4bYB0RarSOvu0YbYnrnD7UClDs5/ZbLu8ikxGvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mZ0enGGORT3XbehuXWxphE6BoCqQZBGg5G9vm4QrS8U=;
- b=GmB6TYLstCawub3DbXOiAYx+qLUHdO1il3IynhTmmT3CQPXEYT8FI1brjFs00mG87k6cvxKR/ArT3kEiYKcTx25MnvNcjKFLhaIHn9DE8WnUxmVbEay7Ps3X6n1rkBgrxVwajJ5gN7SCMlHfgmN1mjkuL96T5EKwGIPfEIU9+I0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by OS9PR01MB16121.jpnprd01.prod.outlook.com (2603:1096:604:3d9::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
- 2026 10:16:57 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0181.014; Thu, 9 Jul 2026
- 10:16:57 +0000
-Date: Thu, 9 Jul 2026 12:16:37 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Sven =?iso-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Isaac Scott <isaac.scott@ideasonboard.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] media: rzg2l-cru: Align bytesperline to hardware
- DMA stride requirement
-Message-ID: <ak91BYMOgqJZoCSm@tom-desktop>
-References: <20260708161406.396183-1-tommaso.merciai.xr@bp.renesas.com>
- <20260708161406.396183-5-tommaso.merciai.xr@bp.renesas.com>
- <ak9l33lrocjxj1Gd@zed>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ak9l33lrocjxj1Gd@zed>
-X-ClientProxiedBy: FR3P281CA0048.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4a::20) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D5B3FBB5B
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jul 2026 10:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783592964; cv=none; b=eP4dlo2FhmRucizDUKnSzJhVUZO8tjV1UgMN4tikjBCdT4N1uQ0TqgGAYSErj8WoWhl+hGieBv5oT9ahAVyFi31zSY1GbyHAQqRMlvRASSKRR1nx7KtXez7L3jdA40NXRVmXMzQtkRd75wB3On58pUWMnkbAkcCXOOHn4KLNE/Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783592964; c=relaxed/simple;
+	bh=SGuHeYTcGstwO5n9DDhvCGTcKVnams+042+BkbBAGTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FGkTVweWxdy84Zi8WB87iQdY++8dDYH8TG881zIZyiVPfAUSpKA7pyb66cBffHgLeyNCFle0WIiJT0fjGKoAcX67LbQQfDDZNsx2EkdwUxkVri3QA7Y95xVIKtaZnMQUgeXjKOOztYkTLEYApm4LfMSbq18yyXGc1Y3uqQRuRmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5bdb162ee53so1192031e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:29:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783592962; x=1784197762;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ZamOEqvf20g5QpO72EPkaDRuNkZPExK+6Unu2WZF2DI=;
+        b=jZ5fd9uv6AJxZAD7Md//TsAhvmoXxm06blJfNyLwiV8JCdvxOmSjztqeqdJC3m1zqm
+         TaBaRXzI0bAcFtWlIhRTawR0JJEI+uXT3s1Ip19h3YUFfHyV+M5UFmzsKpg9pChBv8je
+         cQRweEIkvjb3+SdxBmRLBvA0SctgpMt+/yPNUBe8EzqfETGkXbrsRylGtPJfsgDl39YO
+         0Sl/EuWBwBMBxUaNDagCavTlXZswg0u9F0YvmOQNBrX2+o480dGDlCd9t0T2dbMe9it8
+         BurYAb7OvpV4u9pfrajGiSsU5dTEqzyBtH03v7Bch9/o/N3kBrOOOYIIpOecOvqwWfgk
+         MKMg==
+X-Forwarded-Encrypted: i=1; AHgh+Rovlzg4rG2+jrKxw7eXVcYl2eHKBmzw16M3zon1BVeek+jIRorLa/nNXFpqQHMj6OWNWhel07GR0o+2AYVzabTkxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw56sqKTOZN+wbcMz+U4CoEDyemU2MMP03T8XSzrnw7FuRUFgLa
+	ueXum+qNx3xnU44XwHOB+ZHppCoiJRPwYCWrIDrgOMwqyiAxDKBjXp2JcawtPi3e2nc=
+X-Gm-Gg: AfdE7cmu00aQ4mCBi+5byXU6vCEoI8/9YQu3eR/5x/RdpdudJv+ARWoS7k3xA3XbefY
+	nWe0qaWSkD7X0X9pUensdu27T78bk1GRWjFY4xgpme48GSmaQygXQq0pS6DLgNzIbAlfPNEBzeW
+	ZS/o/o4tb77ikIyZC8oyMwcjuZQhD7rwCfndQOaOB1LknmJPJsUEaNV/cob6aUxNRhx/sRTig+u
+	8sfosjGiqqHm4uRz+2Gv3dM6gs2Ve36ge8L45vFmALalWj8du9xUm8d/usI+uDo6Hih06nW1BaI
+	jvrXA1quYuxuma7XN4l6KiZd4Df/lhM36M2KR6Gt1Jmffrj6mwkI/BEtpx+YFJMGTMQK8P/Orl6
+	4j33c7ugKnR+HHg+ztFaXx6sYrEV2hfOexi6rUVwYzM2fry5wHmn18iIR8t/SpjhuIJdIrtbKDi
+	JjvKGpH73MU1TB1fUv5TCfBTWtDxctfF2mcX6QEX+l+Laf7eorNVkE+g==
+X-Received: by 2002:a05:6122:4b12:b0:5bd:ecad:8f9c with SMTP id 71dfb90a1353d-5bf75d5b57dmr3856360e0c.6.1783592962297;
+        Thu, 09 Jul 2026 03:29:22 -0700 (PDT)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f5e1191sm3257725e0c.4.2026.07.09.03.29.21
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2026 03:29:21 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5bf959b820cso158654e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jul 2026 03:29:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrTw7p9bE6b0KxK2U4MXiik3s8AG/daO40AGGI+HmtyA5Ld4MN5BFtWou4VuhmubD3N1wz7+4/atkJERxrsMlpj8A==@vger.kernel.org
+X-Received: by 2002:a05:6122:16a2:b0:5bd:9d27:1ded with SMTP id
+ 71dfb90a1353d-5bf75d09a7dmr3522535e0c.3.1783592960849; Thu, 09 Jul 2026
+ 03:29:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|OS9PR01MB16121:EE_
-X-MS-Office365-Filtering-Correlation-Id: f231c559-0c64-4d02-7a2b-08dedda33523
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|52116014|23010399003|1800799024|366016|38350700014|4143699003|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
- Dk5B7d+fiXBydqoovO3GEuSFabGjY6U85jm/eiCIBLckVi5XdJ/GeZ1L4vIwgGojC4BQzw/uDqJ3IzRt5bzwpD9GTuQ6ypeBxrcCtBtB4yaThoyd5y1DGaO8kVfXGUwwzAbdwd9zVJTD+S5r2cXWvrO3dy5HFx7AAiHKm+972Mu2OVdLx19V3rvN+aKRJfVjG44s+XUDRHnat6TAzTQQAuzO7KAG1tety5JoxL/NB6ESbXtb1kS+WerjwyKkolDv4abPmgEacYoZbMnc2gh3ZRRcrVd93gTqhfqsATkZ1nrEkwn8zEunFiTX0ceh6ka7tJjDfvVcHBt+0DjZWUjKJ2KwS57KdYbW5AC+1ZFQpxRw0FkSWjcCgOLHmaVxiQ3i8+gj4RtOgilJVMYCKEwwXRI5vp5KX3ZRj1UVS7njOcaORRtTZKCrJyBsqHXwzwzd4RQKBzsdfS0huVo47QvVjMBs5G2KdDSnrk3Z76ZvYzBM98R9A8nLKLUMQcpFmZp+BDxTvfbaNPEU/0q6wDN/0PZ1L3yMPixHzxHstLWhbHrjBCTpMQaxOWWGHK6GNGkMsXFduopjCRVDZclsJqLRK1XJMAeGiZMjb4oOPWj+zkNHjz500Mvx7Fkkp83D1QEV0fojYQ1GPRNntZQ5tWgE+n+rOAnsnuB50grgDqEcE+ys+CU28nEosFEuPGf/X6YnIXAHJwmRSi7VyEgKQ5/vwIB6pYocZe+CpPIF/2nEsEU=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(23010399003)(1800799024)(366016)(38350700014)(4143699003)(11063799006)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?YfPa/7NISvAxa2RioBq5kWKEc8ogyHMz3B154vZisC8YDEeUnMuMqBZ0iFag?=
- =?us-ascii?Q?obijc+OV5u2eIHP5XiioEH7e1zcSP+g8SjTjumRthbR71QSIj++/7p+t5E8P?=
- =?us-ascii?Q?NIccfLA2mEkNiJ1IMF521D6us3sHhpeWLak4CsJChTjdbRMIZD+/pBpLKbde?=
- =?us-ascii?Q?BbXXl4E5HHUV1Idz/xxqrfptmpFqWtlJjn0ttSDnHiPLqWh8XNzzBi+bvOkP?=
- =?us-ascii?Q?mYqoJDzWqknwiyTBVf0xsghVEByWfEL7KHqfHekl9e40CnBr0Jn4B4Hi5XSv?=
- =?us-ascii?Q?TU4wGniWdIz9dxT/XtNaClvqrSJZBtCMkW3xdPPoh8o+izYjQNz77d0ECQw8?=
- =?us-ascii?Q?4HprUbDlHe2ci71NlLn1Yk/9TUME8QBW8zvqI3g9OM50j2940SG32T3r/3Ws?=
- =?us-ascii?Q?AKitrF2ykwttVnF2TbvgKOlRHS5AkW3kRGCDB8jcM2DTMQEKpfKb8iSvSuVX?=
- =?us-ascii?Q?kWtVevZwMMRthgs8je/8cwPKrVInf/r7bsSaCHMM85g8fOxGFMZiWd9I0t44?=
- =?us-ascii?Q?/4P1nBXzKthCt1BFq3aIj4yXaHC98Up8M47vh5SY1bg3J9pxiXKS0Iy64KDi?=
- =?us-ascii?Q?81be7g0QNtsGcB0uM2O6m9vUHxcu27RDwEWb49xvaMmAhYNmr+Em1c6ecUYe?=
- =?us-ascii?Q?uQp4KD72n9FoufINgQJDrGHhVD9nbqfhjzuyHOXwy3agUsL7Jah17TBhHQCx?=
- =?us-ascii?Q?BMpmLOSTWY3uX7bZi2VTdy1df1+yhzhpdvKGKfIsp52G1uDOICsEll2bE4Sw?=
- =?us-ascii?Q?mryWhkUyknGEvp72NoEh+WpTX3NzS3hH8bwGiNk+uUEt8QX1rE8AkA/Vlxj3?=
- =?us-ascii?Q?QMsF8yExdf0L8dW640RVRzCVlQ9PgOYPmMNYgTRg5OmKhRffNBlk6NS2nhsz?=
- =?us-ascii?Q?7utmGrTXzbKx/sbNwlgQVi22WMVmwDYxEW/Tv4zBNA0BNWeIy1LMXMbluCbz?=
- =?us-ascii?Q?FLaRLSh/S1dWzJfz+UTkvi8M4T5XiN7BBwwyfbcmTa3m10G2BSQknF4yiVfL?=
- =?us-ascii?Q?SQ9UBzCm8woCCgDUaOzIlhrsMP4zImXUbahKuhPF60JWLtfwJuFucX6H2j6/?=
- =?us-ascii?Q?eXtT4rcmMVHit0NepxVu21noarCtyksRQUuPbttqn/ndxN7+7jIMH3k8qB3U?=
- =?us-ascii?Q?ZiQN06IG7+RtfnWL2DTo94b7eHsmllQjsb1KfW1Zq61zIxRFOSeB1t+nKjC6?=
- =?us-ascii?Q?J+1I5ue6xEdTmvwYg0vdapTITLgQol2bhdyok/thqsFBdaNS76ZZ5L14KecE?=
- =?us-ascii?Q?UiAE37drqX7KWTZdnoG5MAokfi6W+iMXNvsn6QHkE7J9kE/DBKMMOKzJD+dy?=
- =?us-ascii?Q?/tjsVPoVq+Y5ApUBWHU22ngvswLZAEZvnsfCLwqr/5KwblQdaAMgyDVXNdOx?=
- =?us-ascii?Q?q3VhISlpfQQWQ/Z7m/3eJPS3Zr78pixPE1kZNkHpqQW+pJf2K1h7100YHQI0?=
- =?us-ascii?Q?jUVwnYQCxIw1kDXda3wXevZ5L8KT0QTUuuclLwGZCvU9qxZ8VZCYpJSAgkQN?=
- =?us-ascii?Q?jy+wwB0MPRIH1GOIHkm/8GaAt3r+lGr90Q0ddO1ai1ADJGGwKo5lNr6vvXc3?=
- =?us-ascii?Q?BLh2koDCBPGJFg/uqKv3G6qF+tSfNEJnn1oGJVC6/fxuMjYusGH9+jncKgG/?=
- =?us-ascii?Q?77h4ubLJKo8wcM6HFEvB41BL65qBNVuDUT++ESSSwBeQGyi3M92JBflwysnD?=
- =?us-ascii?Q?sxK/Kq0Ame+LwQx0+bt9ixqTBI3NJyGIPKtjfkVUp4mBmqSxz3gXLQ77NmeN?=
- =?us-ascii?Q?r/A0SYn03Bo7kBhscbO2s0Vy/yf5gjq1fvzjFaTb1dD0qD5D90GJ?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f231c559-0c64-4d02-7a2b-08dedda33523
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 10:16:57.7547
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: adUI2LO2vPpNEj0mh5qsixWtOhJMhE35s5+IIpY9tGsfOUSJsgzf6VPZu62Rd1lKrX3VNgdMR8+H9HEyh4yzrHiiI4BT5np0U0RtJRPM8yOZ7QjzkOOBdmiHPFddjgAg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB16121
+References: <cover.1783505142.git.geert+renesas@glider.be> <23f979b0903ca11513ac339ab8b6dd40435603c5.1783505142.git.geert+renesas@glider.be>
+ <a069d50d-030d-4189-ae9d-37f989829da4@mailbox.org>
+In-Reply-To: <a069d50d-030d-4189-ae9d-37f989829da4@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Jul 2026 12:29:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWCXVYtN+jykp3Uz4tBHpWwW488=NguxSpWkYkO63BB3w@mail.gmail.com>
+X-Gm-Features: AUfX_mxryCBg0UJms9GxmXbM4sVe50wH12jLcYc8l3gBc8Xa9jNslCUWm3ZIyfc
+Message-ID: <CAMuHMdWCXVYtN+jykp3Uz4tBHpWwW488=NguxSpWkYkO63BB3w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jacopo,
-Thanks for your review.
+Hi Marek,
 
-On Thu, Jul 09, 2026 at 11:19:17AM +0200, Jacopo Mondi wrote:
-> Hi Tommaso
-> 
-> On Wed, Jul 08, 2026 at 06:14:05PM +0200, Tommaso Merciai wrote:
-> > The RZ/G3E CRU programs the line stride via the AMnIS register, whose
-> > IS field encodes the value in units of 128 bytes. If bytesperline is
-> 
-> Unrelated, it seems for RGB888 the alignemtn requirement is 384 bytes,
-> something that doesn't seem handled at the moment ?
+On Wed, 8 Jul 2026 at 23:55, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
+> > --- a/drivers/soc/renesas/Kconfig
+> > +++ b/drivers/soc/renesas/Kconfig
+> > @@ -358,6 +358,7 @@ config ARCH_R8A78000
+> >       default y if ARCH_RENESAS
+> >       default ARCH_RENESAS
+>
+> I know this ^ is not related to this patch, but is the "default y" and
+> "default ARCH_RENESAS" above valid ? I can find exactly one such use of
+> Kconfig in the tree.
 
-Yes, I had a similar discussion with Laurent at [1]
+Thanks, both are valid, but sort of duplicates.
+I will send a patch to drop the latter, and restore consistency.
 
-Currently neither RGB888 nor semi-planar YUV 4:2:0 are supported.
-I will handle this once the support for those formats will be added
-if for you is ok.
+Gr{oetje,eeting}s,
 
-> 
-> > not a multiple of 128, the division truncates and the hardware uses a
-> > wrong stride, causing horizontal banding.
-> >
-> > Commit ace92ccef0c9 ("media: platform: rzg2l-cru: Use v4l2_fill_pixfmt()")
-> > replaced the open-coded aligned calculation with v4l2_fill_pixfmt(),
-> > which sets no alignment, reintroducing the issue.
-> >
-> > Switch to v4l2_fill_pixfmt_aligned() with RZG2L_CRU_STRIDE_ALIGN when
-> > info->has_stride is set. RZ/G2L has no AMnIS register and keeps using
-> > v4l2_fill_pixfmt() unchanged.
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > Cc: stable@vger.kernel.org
-> > Fixes: ace92ccef0c9 ("media: platform: rzg2l-cru: Use v4l2_fill_pixfmt()")
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> > v2->v3:
-> >  - No changes.
-> >
-> > v1->v2:
-> >  - Collected tag
-> >  - Add missing Cc stable
-> >  - Fix s/commit/Commit/ into commit body
-> >
-> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index 69346a585f9f..478264f26466 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -860,7 +860,8 @@ static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
-> >  	v4l_bound_align_image(&pix->width, 320, info->max_width, 1,
-> >  			      &pix->height, 240, info->max_height, 0, 0);
-> 
-> This doesn't apply on media-committers/next which has
-> 
-> 	v4l_bound_align_image(&pix->width, 320, info->max_width, 1,
-> 			      &pix->height, 240, info->max_height, 2, 0);
-> 
-> in this line.
-> 
-> What have I missed ?
+                        Geert
 
-Mmmm my fault I errenously have [2]
-on top of my local media-committers/next tree.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Will fix that in v4
-
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20260624104153.798953-3-tommaso.merciai.xr@bp.renesas.com/
-[2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20260521131911.92845-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Kind Regards,
-Tommaso
-
-> 
-> >
-> > -	v4l2_fill_pixfmt(pix, pix->pixelformat, pix->width, pix->height);
-> > +	v4l2_fill_pixfmt_aligned(pix, pix->pixelformat, pix->width, pix->height,
-> > +				 info->has_stride ? RZG2L_CRU_STRIDE_ALIGN : 1);
-> 
-> Rebasing apart, this seems correct
-> 
-> Reviewed-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> 
-> Thanks
->   j
-> 
-> >
-> >  	dev_dbg(cru->dev, "Format %ux%u bpl: %u size: %u\n",
-> >  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> > --
-> > 2.54.0
-> >
-> >
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
