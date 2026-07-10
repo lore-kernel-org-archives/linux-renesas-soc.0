@@ -1,118 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F33938E5D4
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA52428461;
+	Fri, 10 Jul 2026 22:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783712768; cv=none; b=a1Tl7o7rutX03aw9g2JQxTbrvXc4nj5WbrpvB22pZXOmQ6i/B5qPpboUFmRxXd4Ib8cQO8iG7Psg7oKFlMSdRt6QapTKM8T1PuviDkKxFeLe5oeZCCBR+cU3O4O03IkT/2Gn3jgSHMfBRwwtRZW1xcOFq4xOiXtCYGbQ/KuC+Es=
+	t=1783722077; cv=none; b=TNsDymVcZO3cWUtiYIN1w6+kmVAfd86lbAgu1ENiydaIM8XlDkWCDeZisMGCKMW7WHYQGv/7wbd7C8Mui1zh6QFhrWFj94tuHHJpnY7bn65XagQsnDdBDD0OTw9IyxDVkEuZEzyDlJaKAHbA2ovx8ocZM3bcqyZZabMpYuw2E+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783712768; c=relaxed/simple;
-	bh=sZDwGaUkGBLrMyNSIpb3kLYEJV1iPNS+5Pn9t9xv6aE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5CerGp9Qe+MZfPmNAT0N5WMzwqt/+U6D8yeLXg0UrR3jZ1BX7upSiY4t549BKf2w+Dl+9qhcbSevvArDoAqEdCW728aab1UncBf+0cJjrvLf5p5ur1wIIEp1rH6jNCNZStpOrXszA78qAuwn97xv9LYt8gEnSAdu1HbIBsDE5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQ5prH05; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783722077; c=relaxed/simple;
+	bh=bJl5fQPl/8SCiPA7HP6kJnaSwYgVGISoszxcNL4MMmc=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=irE98ehtBjhqu/JAMsmvYSu1f+37zPojeG4EWIgd4Z0bviVWKdF78v0RJA+/HMoW03lWcGdLhayr0b04O0FuoyFxVIRIel5Yv5e69uHafP8QsKR3YzGhZ8OcSGdJJmtN3UjXLQAAnQr6Izkxfm5PwghB5DMzi7uBRCDYKxwv0EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeLBvzjk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQ5prH05"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA501F0155A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:46:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeLBvzjk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A2E1F000E9;
+	Fri, 10 Jul 2026 22:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783712765;
-	bh=sZDwGaUkGBLrMyNSIpb3kLYEJV1iPNS+5Pn9t9xv6aE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=eQ5prH05UmMQ5nGzy2ipeXY4lkQKyESaExDjUsgSfLeW4Exvc2X3hmxZBp+HDDnwh
-	 gy5xn0rCrTfjNjQPuHqcu0FzPQaJ1YAZQhahxV6T71deZYeziM3pxHW7W2QMq7y6oo
-	 FhrHfQwcIy8kJ5vfpHKHkPBPGkAXF61R0T/lZ2ElQ2NH5ERxyQsy7VX/rtQZXyubbl
-	 A2sLjBzEZvP7c6oEza0bh+NHkyjHOxBrmO5f6L+sHKF4PsUJlyZudG5MyYb+SAYa+Q
-	 NxdYQYovNbSqCC+VoYxV741dZW8VrYV1dSt2xDZrMn+OppxGaWxi3KV0Oc/ks13nm6
-	 ThnjUYcTxcrQg==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aebd52488cso1366749e87.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 12:46:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoradYDqabl3KmOpE5MSQvelviOQblHxubqgvrGCzIRb4lbzywyanIKhIsSuT1T34sffyQgq8S+y0JngDOaKDg4XA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQcHtHzUPcDUG9vfv28HR66cEOLxBirTocVpM5a1y6MyNWVJAM
-	0pqpoY0vfTK9v/dHs/bTlMCDc9P+QTvOdDBQ1DhhlFnAJ0XTS5MS18b6knjGw3OyagCXOdwH7dT
-	NOy5Lv5pRVTGe/DC2zSYUUmMHrHdEXBQ=
-X-Received: by 2002:a05:6512:32cf:b0:5ae:b792:7f1e with SMTP id
- 2adb3069b0e04-5b0236a3891mr89821e87.30.1783712764308; Fri, 10 Jul 2026
- 12:46:04 -0700 (PDT)
+	s=k20260515; t=1783722076;
+	bh=e5VaWoT+JyBfzZCc0Ceb0NCpR1zGV0RFto2LvwVs61I=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=oeLBvzjkEq9TS4WuRj31zDBgX/HfWKxSEpQHWmuTdgaSxHM5NbiOHqITFT+L7RmpA
+	 ThVJHHRXLI/Xw26Mrk5PgtbEmNJ+eFT7W+ppnEqsFSo6sqArjkoYVAM7DZWJ0+1/4g
+	 siANgGFUYh38EQyHU9dnzjk/NCt9ZiciUaQAiuVmXB/pRibhwdnuCX6lDCodPA7bUv
+	 pAyy57PeyMV/OUbR6ofnZa1zntYRj/I+txpZ2hfK06TsrY6iPGnOXF5DQeGOnJmgjG
+	 16VPSdYJohdl/xM3pO0jRkkf1QVRMAFc2s73jlT+WQi1p05UH+4gYOPtgPo2O0clUU
+	 8YPHw29nHBXnQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] ASoC: renesas: adg: Drop redundant NULL check on
+ clk_get and clk_register_fixed_rate
+Message-Id: <178369992206.82617.16738196828533126762.b4-ty@b4>
+Date: Fri, 10 Jul 2026 17:12:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783615311.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <cover.1783615311.git.u.kleine-koenig@baylibre.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 10 Jul 2026 21:45:51 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkJthrzmVCDE=BopUDMECBpMtPOpCJ9S0CKWRg--Zfz3A@mail.gmail.com>
-X-Gm-Features: AUfX_mx_vh7ziiGHTkkaiMBQb1TjjZ8vahBxzqeJira0tID9YqDdR27A_6wUme0
-Message-ID: <CAD++jLkJthrzmVCDE=BopUDMECBpMtPOpCJ9S0CKWRg--Zfz3A@mail.gmail.com>
-Subject: Re: [PATCH v3 00/23] mfd: Use named initializers for arrays of *_device_data
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Lee Jones <lee@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, mfd@lists.linux.dev, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-mediatek@lists.infradead.org, Qunqin Zhao <zhaoqunqin@loongson.cn>, 
-	linux-crypto@vger.kernel.org, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
-	Colin Foster <colin.foster@in-advantage.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Zha Qipeng <qipeng.zha@intel.com>, 
-	Thomas Richard <thomas.richard@bootlin.com>, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, Xu Yilun <yilun.xu@intel.com>, 
-	Tom Rix <trix@redhat.com>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
-	James Ogletree <jogletre@opensource.cirrus.com>, Fred Treven <fred.treven@cirrus.com>, 
-	Ben Bright <ben.bright@cirrus.com>, Support Opensource <support.opensource@diasemi.com>, 
-	Andy Shevchenko <andy@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Samuel Kayode <samkay014@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
-	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	linux@ew.tq-group.com, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Tim Harvey <tharvey@gateworks.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravanan Sekar <sravanhome@gmail.com>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-rockchip@lists.infradead.org, Peter Tyser <ptyser@xes-inc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1309; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=bJl5fQPl/8SCiPA7HP6kJnaSwYgVGISoszxcNL4MMmc=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqUXBZ+rZGW2WKc9HLptVS1mb7yESq5dqGgoQvR
+ sBlAoMRvLGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCalFwWQAKCRAk1otyXVSH
+ 0PB7B/45UpBS6WA7tvCTfKnhJgxO+JY52/cun8iMdLzjHUSETkn1u+0tCsMdzTaYEjdSPCo7Twp
+ ngHnUD7kt+IXhfkqclWk7MVHUMMWePDiGIUu3xziyRw0MpLnzJlNQ5xxHzUeA41sgaqPzUA41Ub
+ wv8J8hkAs6Cfluc6yQfVtGjzgnQZpSjSDGrEmTB28sWmuC/BASDgLpson7bns8XWMTgdwVl8Dy9
+ bXNWPPCdwIPjMnFv5JFOQibAgfNNCmT5TNHs2jsHNLfBK8+xMaVXbnFACTbvH55bjlhPZTXXG6X
+ wiJWOvYqS9+ZqSEaTFNHwJL2uyMzNZfkICSp0beA8vvqAqL0
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, Jul 9, 2026 at 6:59=E2=80=AFPM Uwe Kleine-K=C3=B6nig (The Capable H=
-ub)
-<u.kleine-koenig@baylibre.com> wrote:
+On Sun, 05 Jul 2026 19:23:26 +0200, Krzysztof Kozlowski wrote:
+> ASoC: renesas: adg: Drop redundant NULL check on clk_get and clk_register_fixed_rate
 
-> The objective for this series is to prepare mfd for changing
-> of_device_id and the others to make driver_data a union, see
-> https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre=
-.com/
-> for the idea behind it.
+Applied to
 
-The series:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
 
-Yours,
-Linus Walleij
+Thanks!
+
+[1/2] ASoC: renesas: adg: Drop redundant NULL check on clk_get and clk_register_fixed_rate
+      https://git.kernel.org/broonie/sound/c/af58a647f9c9
+[2/2] ASoC: codecs: es9356: Constify regmap_sdw_mbq_cfg
+      https://git.kernel.org/broonie/sound/c/6ef98181eac3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
