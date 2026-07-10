@@ -1,63 +1,52 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ED34071DC;
-	Fri, 10 Jul 2026 12:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331DB413240;
+	Fri, 10 Jul 2026 12:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783685406; cv=none; b=R0XqmkeDuKEE2itrIbaQrGCYWqxk3wDVS2RUr4PLLNUJM3GeES+Pr9IfkfK2BTG2//mA/vxafd3qIeRxvh28jIYfZ9nt+NNfPR+DrvzwP0gbRE6i/IjDyEABrxvieIipqxtPTl0VpZPEMVRlB26RnAXWK5gBphPqtUxCVLat2m4=
+	t=1783685739; cv=none; b=sEI8o4xpPFHsYQ/F4u3lxHNlCoBgrS3f8VjDv1gS3e0yvQFHbKcvsEK6LHVduARlJysUJxkVrY/7xMZScKn0GkWa1CLZQYqhyeiVCQ37E+SWdUbXsiRv7WsyhVzLha67l3w1a6VjgM/W7h3YEGv5pqsthwp1lSsdymtxMqFHjJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783685406; c=relaxed/simple;
-	bh=aQwcX9XYj4VW0rglRN9smWthALe2etv1kQSIKdoKzCE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PGCofu+SkFWZezToD+jrjAG8QwZ3d/YchuLRfrwAHkpwesNs5Ob3XrS13U1yDArWk+bdS7f+3ThZdhX5RP3iBp1AD6m/XfLg9ZVD5ChDRuygZoQPFYHs7ql1wo8q7N5QPJHzET4kUkkVrMYakaYyXX9acwWpTJN+yaTQ4YnKUZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qBXCa+db; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1783685739; c=relaxed/simple;
+	bh=Z/Rs/qraqvHesKDAc0IRdGMSTgEPPxdrv8Fjzo5dznE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1ehtXg76WZX0oieAWJFD35MoNSOu7ZJ0pW2bptb1JUdIPesVdzziEkujImA/k7Pf+y6Pnyic6/zTZw9qVBexkzyV4lVV23Ke5lWAJ8TuUC04GXF5m/Xi2fAlewi/zN2JGAfYz1vPdmU1s4PVBGVNgTEhTmcM52i+cFZwepMu0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hKCn4Ixr; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qBXCa+db"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D10F91A0F3A;
-	Fri, 10 Jul 2026 12:10:03 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9A00A60342;
-	Fri, 10 Jul 2026 12:10:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 685E411BD0BCF;
-	Fri, 10 Jul 2026 14:09:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783685402; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=gk9jwtLF3KGI28XFf4LplvEp5Vfvp7PmyBj6FTbwmKM=;
-	b=qBXCa+dbAg0BNoCZk3+hs+XRRziKjwAkvc4JhGgW5DNe5/RJIBfvLG7PIV9YVJ40wWu327
-	HwlDB6D6x6OAvhHiGXr5LdSSGbdnVAvwI2oozlhWDK4jX5Libs1WZqKCB/NX1OqKeX/qvj
-	/JgoCoRzLITcujEVYb75FmyyDBuMF+jNxpOL+pM9YoO7NStT1WQ9deuM4RBUVw+1HufR7P
-	QoXJQfuP7mQ0oxSuDOEqKEw3vIxcpCU/2SG4TMU8PHbwSnLF2Bme6b0altUu8FzzGBGP6l
-	ITuhPTj+bYbZD0FFGJCMpOqGrDNidsELwyq5ggS51pqW576QB7qdwcP89awUjQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Antoine Tenart <atenart@kernel.org>,  Christian Marangi
- <ansuelsmth@gmail.com>,  Conor Dooley <conor+dt@kernel.org>,  David S.
- Miller <davem@davemloft.net>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Herbert Xu <herbert@gondor.apana.org.au>,
-  Jayesh Choudhary <j-choudhary@ti.com>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Magnus Damm <magnus.damm@gmail.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Olivia Mackall <olivia@selenic.com>,
-  Rob Herring <robh@kernel.org>,  Thomas Gleixner <tglx@kernel.org>,
-  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Pascal EBERHARD
- <pascal.eberhard@se.com>,  Wolfram Sang
- <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 07/16] clk: tests: Add Kunit testing for
- of_clk_get_parent_name()
-In-Reply-To: <177595738949.5403.11279360430887628318@lazor> (Stephen Boyd's
-	message of "Sat, 11 Apr 2026 18:29:49 -0700")
-References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
-	<20260327-schneider-v7-0-rc1-crypto-v1-7-5e6ff7853994@bootlin.com>
-	<177595738949.5403.11279360430887628318@lazor>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 10 Jul 2026 14:09:53 +0200
-Message-ID: <87echbgi5q.fsf@bootlin.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hKCn4Ixr"
+Received: from ideasonboard.com (mob-109-113-15-151.net.vodafone.it [109.113.15.151])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F1E0324;
+	Fri, 10 Jul 2026 14:14:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1783685682;
+	bh=Z/Rs/qraqvHesKDAc0IRdGMSTgEPPxdrv8Fjzo5dznE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hKCn4Ixrx3R9hs7Ta2vjZKUiFSFVQVc06RYrNlMKa459/T7YApoUjRvrtgGuOnL9V
+	 B6NlhQFmtutKVPev9FlV3EDYQfnFOe19MlJhN+4MCxcX5Ldv3qO+29QVlkwuJ3RlK4
+	 fOAVHHHEOFfNafJyEn8GH8EeRU+PWgdwPHoenO1U=
+Date: Fri, 10 Jul 2026 14:15:30 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Sven =?utf-8?Q?P=C3=BCschel?= <s.pueschel@pengutronix.de>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil+cisco@kernel.org>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mehdi Djait <mehdi.djait@linux.intel.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Isaac Scott <isaac.scott@ideasonboard.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] media: v4l2-common: Add
+ v4l2_fill_pixfmt_aligned() helper
+Message-ID: <alDgNTv9M2_aVV7U@zed>
+References: <20260708161406.396183-1-tommaso.merciai.xr@bp.renesas.com>
+ <20260708161406.396183-3-tommaso.merciai.xr@bp.renesas.com>
+ <ak9pPzjABetdgUiq@zed>
+ <210aa2ee-8931-4dd2-a51f-eeb0c205d647@pengutronix.de>
+ <alC6DDFZ23q5h33W@zed>
+ <00b18307-f982-44bc-bbab-4a640753d8fc@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -65,67 +54,56 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00b18307-f982-44bc-bbab-4a640753d8fc@pengutronix.de>
 
-Hi Stephen,
+Hi Sven
 
-On 11/04/2026 at 18:29:49 -07, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Miquel Raynal (Schneider Electric) (2026-03-27 13:09:29)
->> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
->> index b814b45f1f7e..8a17ad0d185f 100644
->> --- a/drivers/clk/clk_test.c
->> +++ b/drivers/clk/clk_test.c
->> @@ -3651,9 +3651,19 @@ static void clk_parse_clkspec_with_incorrect_inde=
-x_and_name(struct kunit *test)
->>         KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
->>  }
->>=20=20
+On Fri, Jul 10, 2026 at 01:54:06PM +0200, Sven Püschel wrote:
+> Hi Jacopo,
 >
-> Add a comment here to tell us what the test is expecting.
-
-Yep, done.
-
->> +static void clk_parse_and_get_parent_name(struct kunit *test)
->> +{
->> +       struct clk_parse_clkspec_ctx *ctx =3D test->priv;
->> +
->> +       KUNIT_EXPECT_STREQ(test,
->> +                          of_clk_get_parent_name(ctx->cons_np, 0),
->> +                          clk_parse_clkspec_1_init_data.name);
->> +}
+> On 7/10/26 11:38 AM, Jacopo Mondi wrote:
+> > > This is due to the fact, that while we have a hdiv of 2 we also interleave
+> > > the cb and cr parts in a single plane, which results in the stride being the
+> > > same number of bytes as for the y plane (and vdiv isn't relevant for the
+> > > stride).
+> > >
+> > > Therefore the stride scaling also respects the bits per plane (bpp) value to
+> > > determine the scaling.
+> > >
+> > > @Tommaso : While the sentence looks ok, the NV12 example is misguided. The
+> > I guess the usage of NV12 was as example of a "formats that store
+> > multiple component planes in a single memory"
+> >
+> > NV24/42 works the same, but being 444 it needs the chroma plane stride to
+> > be a multiple of the fist plane stride and might prove as a better
+> > example ?
+> >
+> My potential concern is that NV as an example misguides the reader into one
+> of the following:
 >
-> Reading this test is pretty hard because all the context is in the
-> common setup. Maybe the common setup is too broad in this case and
-> should be simplified so that tests can show more setup and assert code
-> for the things it wants to do. For example, if the name can be passed
-> from this test directly it would clarify by moving context into test
-> function scope.
->
-> 	const char *pname =3D "expected-name";
->
-> 	KUNIT_ASSERT_EQ(test, 0, setup_parent(pname));
->
-> 	KUNIT_EXPECT_STREQ(test, pname,
-> 			   of_clk_get_parent_name(ctx->cons_np, 0));
+> - It's only for formats which interleave cb/cr into one plane (whereas
+> YUV420 also gets scaled)
+> - NV24 in the example being though of including the NV24M variant (whereas
+> latter won't be affected)
 
-While I understand the feeling, provider 1 and 2 are shared with other
-test cases which would require restructuring quite a bit the whole test
-suite for IMHO little benefit. I can however make more obvious the string
-that is actually expected by redefining it in plain sight at the call
-site.
-
->>  static struct kunit_case clk_parse_clkspec_test_cases[] =3D {
->>         KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
->>         KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
->> +       KUNIT_CASE(clk_parse_and_get_parent_name),
 >
-> Better to call the test something like
-> of_clk_get_parent_name_gets_parent_name to indicate what we're
-> testing.
 
-Fine by me.
+M variants are not supported by the single-planar APIs
+https://docs.kernel.org/userspace-api/media/v4l/pixfmt-yuv-planar.html
 
-Thanks,
-Miqu=C3=A8l
+Some planar formats allow planes to be placed in independent memory
+locations. They are identified by an ‘M’ suffix in their name (such as
+in V4L2_PIX_FMT_NV12M). Those formats are intended to be used only in
+drivers and applications that support the multi-planar API,
+
+And here we're dealing with single-planar API only if I'm not mistaken
+
+
+> Maybe smth. like YUV420 but not YUV420M is a better example (could also be
+> NV24 but not NV24M)?
+>
+> Sincerely
+>     Sven
+>
