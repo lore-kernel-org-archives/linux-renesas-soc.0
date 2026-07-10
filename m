@@ -1,147 +1,140 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F33940800B
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 10:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95025407CF4;
+	Fri, 10 Jul 2026 10:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783679355; cv=none; b=FrmRxgM7zvQH9moJY0TBNrMBwweKoHgfQYeYI/lAFnkoyTs/ivdp8b06jFIOUUD8jtpPFTHPbUZQAikPNVHZqestPLnLC9LG1BYeSFr1nUrvGstX/xp4J55l9eHCB4nQCDQ8+HjoGActk9xgUodEjuGiuUPEaCLW0rBEaM8HIeQ=
+	t=1783679773; cv=none; b=m3Hbrg2VzY8mevOFxGJfdvwK2oX98ZkkTWFq1wnCH3qWWWVi7tZFdrfjwxhuHCtifT360bR0vjK4QK9BrhTj4tXPNC2RVwie1jFZZAzcy4fqkAwJDsPAk4Ml07luAlT28GxLSxMyHLTWh9NHjV5zUG3WY1SCATnsM/592m8gMc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783679355; c=relaxed/simple;
-	bh=8Lu8OMpVPc16MxdZvSkmOEt9Lvt01fn1EVEQixIYHBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lnEnPeQgxMGms/W0mg+l25M2QsfznstfjxJPsydUTrbjDoZv2yQ6G2qCMXAQYb25prgvbCoEKE+p3yUOw0v/IjOwiGyHX6in3OtoERJDLrYXm8jblMMgnjJehokLGuhefz/p9HueNjZsGHO4WNtT3kW8u9EjJvSPa4J3O5rvS14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-80dc4a68e4aso9191597b3.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 03:29:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783679353; x=1784284153;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HsVN2cPDw+/JUxMMLcOD68aRVLlq59TmevfTz9ChQ+g=;
-        b=aisS6Q5ojDL+v8a7ajNjSKLqx4vrraWN3/ujg2Xcta6pVb9bgTGi4Q90WpPbzxwt4b
-         QRUL5bOKtMjly+3+/6I/cFxG+TMxnl46s/ap/Vwd12hTEJm6bMvhn3PbNxEhXM2XWlzj
-         VB+7SYgL0xqLXQkQfM1W2LMPvglT0Kr1EG1iMpZExWBHwd/mByGcOeu5ef2Ig+lI0ywx
-         XNd5CTSfGyIGMtKITOhSSgtPTFVFITwFuK1FfhmJMGncpJ9R3SnrXD5bpn8qNnLmM8yP
-         cnqOYmKRVZarxyNrO54DPCqiM8IRKj3cuGHzaU0ySH/NNUiR0FgBwjD6Wi49vSsDFPJY
-         pcVQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrE2zzHLiuTF5Ix2e4a9o2q7oNJryjqoKtc55RcNHoN0unkWREKDC6NlZTVY9zgmz2EUEOrqvOfhtwOlmw0n2wxZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1lDc2fwI1JwmQzRSaEl7hv8iT+6lVW6BCTyAAOawli4rLi7kb
-	Yj+ykw9t/3HVoCIWt2TPJQ98OLPY0uTrmXuHjBR3JFq6YWlEgSvH6u6C3kdwv7rrGVM=
-X-Gm-Gg: AfdE7cnVjeq3bU7+2ZDDCkMoet06FG5Uo7cHkB5bnrhU3qnkfNrkCayh2Vw+GUJluSl
-	LEhfApF0vnKAxwUt+zz1NaSoWxcYVty92WSEfgQ4Owz3pVa10mubNDxzKCgsm5CYr2ZjH4OLy+G
-	5xHYIFeEB0ANrae9t6DGx3pxDtMig6dYcdGQkLpXapfYmzdb5dE3R5XeGWunzqkuMtQSor/SLUR
-	gTwgCLJXwmzK+Lg4mOYnMsAe5Gmqi57FdCJJyaNDCCRn6VSVpct0PFKKOybp6jFEYOIQTjUe72D
-	77YSvg5qxggmDsRO2lIqqZEypzc2Mgu7XL2Au5Sle3j/LU2oFZ6WEzXoekYYWHTo+2VtIeKx5KY
-	Yhe2BrtIoUe1HTp6hmjYJsZdbtSn1VQXKXzoeDyFDVpaxJIjwbZkPyVwdBgb1PYT4+pR8ldXaF1
-	1GZcJr2KVaI2pBtkm5afNM2lEcFxCoh+EFDcDth8Ja0EUDYceLuw==
-X-Received: by 2002:a05:690c:e207:20b0:81e:4e5d:4849 with SMTP id 00721157ae682-81e4e5d4880mr51133427b3.16.1783679353217;
-        Fri, 10 Jul 2026 03:29:13 -0700 (PDT)
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com. [74.125.224.43])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81e6bea2114sm41554077b3.3.2026.07.10.03.29.13
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2026 03:29:13 -0700 (PDT)
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-66771ded50aso1272739d50.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 03:29:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqJf+KX05DOU/U3BNapjQgUeTQ5EUROMabaIc9Ex04K5ocpX+xDzVKU3u+GYG2XYZ5/L5AlFyL0AnRGzVwdtU2O1A==@vger.kernel.org
-X-Received: by 2002:a05:6102:3911:b0:726:e608:6658 with SMTP id
- ada2fe7eead31-744dff43a82mr6415934137.11.1783678885257; Fri, 10 Jul 2026
- 03:21:25 -0700 (PDT)
+	s=arc-20240116; t=1783679773; c=relaxed/simple;
+	bh=s8e719fI1lh4iwu6ag1ePU0Hg7fs4+ScAlrOQK5mJEY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=etXf0ZDNjYHPepmSZi/ezlc+LEpZXogDCayzO0OcugQmuqTR/yJVLIbSaSx8iH80gp4N9lqNrfZhZ7hF04clUTC4mlbj7eIkLnbrUV5yrS7Ccxg4FHp7qqvkRGwi68baput2dm+FjorFRKlCvE6QjfT7xuTMXwVgpN6lerQTbyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ivn/hFi6; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ivn/hFi6"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id DC77E4E40D46;
+	Fri, 10 Jul 2026 10:36:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A5AC560342;
+	Fri, 10 Jul 2026 10:36:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 61FA011BD295D;
+	Fri, 10 Jul 2026 12:35:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783679766; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6+ULItnJf1sGBisnEhPjjWTOmY5NUXBuwBhmcIC8+UQ=;
+	b=ivn/hFi6a/lBi80O3yMvQB+B5mpswIxbNWWE0pYlbkVMWfvJ0d53+YTLfaOeqhKHYWy1Lv
+	IsOt5buug5pmXbjNeNF/MTreiCyObz2CGX2MhHx1i/34ziBh73lVxNvc0OOVdW2bF7k9jh
+	mAQ7grUpbxuTFL5Q3Em+P2MfzyCNoJxXVeXtlypBY4aMBNHCJZXoSfR+VnMQo8m/8iIC1F
+	OLt0pP5DlOs7wKDSQzWCNDPMyig2+5dli64tvbJ8L+oOteUTjVV95+9+Xo+BADYmzXipJL
+	YLV1ForjqpmWJgDfcjxSBKiEV2r2yvRJBCZNCfG7TwQZ0Far/7ghqNcJOxWglQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Antoine Tenart <atenart@kernel.org>,  Christian Marangi
+ <ansuelsmth@gmail.com>,  Conor Dooley <conor+dt@kernel.org>,  David S.
+ Miller <davem@davemloft.net>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Herbert Xu <herbert@gondor.apana.org.au>,
+  Jayesh Choudhary <j-choudhary@ti.com>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Magnus Damm <magnus.damm@gmail.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Olivia Mackall <olivia@selenic.com>,
+  Rob Herring <robh@kernel.org>,  Thomas Gleixner <tglx@kernel.org>,
+  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Pascal EBERHARD
+ <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 11/16] clk: tests: Add Kunit testing for nexus nodes
+In-Reply-To: <177595802905.5403.1342882536380309490@lazor> (Stephen Boyd's
+	message of "Sat, 11 Apr 2026 18:40:29 -0700")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-11-5e6ff7853994@bootlin.com>
+	<177595802905.5403.1342882536380309490@lazor>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 10 Jul 2026 12:35:57 +0200
+Message-ID: <87se5rgmia.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783615311.git.u.kleine-koenig@baylibre.com> <e5cc82aa51da5f545f745b126923fdd6085a68a0.1783615311.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <e5cc82aa51da5f545f745b126923fdd6085a68a0.1783615311.git.u.kleine-koenig@baylibre.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jul 2026 12:21:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW4Thb0en6jeD23KhDp4pTe2F8o5GcBx4fnB+JAxPG-bQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxlLApCIjqxIsg4l7Qhe6Rgf_3Xy6YCZC9GZlPPApUQFkmqIVPuBIh_jUI
-Message-ID: <CAMuHMdW4Thb0en6jeD23KhDp4pTe2F8o5GcBx4fnB+JAxPG-bQ@mail.gmail.com>
-Subject: Re: [PATCH v3 21/23] mfd: Unify style of of_device_id arrays
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Chen-Yu Tsai <wens@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
-	James Ogletree <jogletre@opensource.cirrus.com>, Fred Treven <fred.treven@cirrus.com>, 
-	Ben Bright <ben.bright@cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Tim Harvey <tharvey@gateworks.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>, Sven Peter <sven@kernel.org>, 
-	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Saravanan Sekar <sravanhome@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, 
-	linux-rpi-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
-	linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 9 Jul 2026 at 19:00, Uwe Kleine-K=C3=B6nig (The Capable Hub)
-<u.kleine-koenig@baylibre.com> wrote:
-> These arrays already mostly match the most used and generally
-> recommended coding style. That is:
+Hi Stephen,
+
+On 11/04/2026 at 18:40:29 -07, Stephen Boyd <sboyd@kernel.org> wrote:
+
+> Quoting Miquel Raynal (Schneider Electric) (2026-03-27 13:09:33)
+>> Add a nexus node with a child requesting a mapped clock in the fake DT
+>> overlay to verify that the parsing is also correctly working.
+>>=20
+>> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin=
+.com>
+>> ---
+>>  drivers/clk/clk_test.c                   | 20 ++++++++++++++++++++
+>>  drivers/clk/kunit_clk_parse_clkspec.dtso | 10 ++++++++++
+>>  2 files changed, 30 insertions(+)
+>>=20
+>> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+>> index 8a17ad0d185f..cb0071955146 100644
+>> --- a/drivers/clk/clk_test.c
+>> +++ b/drivers/clk/clk_test.c
+>> @@ -3660,10 +3660,30 @@ static void clk_parse_and_get_parent_name(struct=
+ kunit *test)
+>>                            clk_parse_clkspec_1_init_data.name);
+>>  }
+>>=20=20
+>> +static void clk_parse_and_get_nexus(struct kunit *test)
 >
->  - no comma after the list terminator;
->  - a comma after an initializer if (and only if) the closing } is not
->    directly following;
->  - no explicit zeros in the list terminator;
->  - a space after an opening { and before a closing }, a single space in
->    the list terminator;
+> of_clk_get_hw_maps_thru_nexus()
 >
-> Adapt the offenders accordingly.
+>> +{
+>> +       struct clk_parse_clkspec_ctx *ctx =3D test->priv;
+>> +       struct clk_hw *hw1, *hw2;
+>> +       struct device_node *np;
+>> +
+>> +       /* Get clocks by index */
+>> +       np =3D of_find_node_by_name(NULL, "kunit-clock-nexus-child");
+>> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+>> +       hw1 =3D of_clk_get_hw(np, 0, NULL);
+>> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw1);
+>> +
+>> +       hw2 =3D of_clk_get_hw(ctx->cons_np, 1, NULL);
+>> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw2);
+>> +       KUNIT_EXPECT_PTR_EQ(test, hw1, hw2);
 >
-> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org> # for Maxim MA=
-X77759
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@b=
-aylibre.com>
+> I think hw2 is expected? Rewrite it like this?
 
->  drivers/mfd/rz-mtu3.c          |  2 +-
+Correct.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+> 	struct clk_parse_clkspec_ctx *ctx =3D test->priv;
+> 	struct clk_hw *expected;
+> 	struct device_node *np;
+>=20=09
+> 	np =3D of_find_node_by_name(NULL, "kunit-clock-nexus-child");
+> 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> 	expected =3D of_clk_get_hw(ctx->cons_np, 1, NULL);
+> 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected);
+>
+> 	KUNIT_EXPECT_PTR_EQ(test, expected, of_clk_get_hw(np, 0, NULL));
 
-Gr{oetje,eeting}s,
+I took your proposal.
 
-                        Geert
+> We're also leaking the of_node if an assert triggers so we need to use a
+> kunit wrapper version of of_find_node_by_name() or do a hand code
+> version of putting the node when kunit asserts.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Indeed, I just create the _kunit() variant to handle it. I see most
+other similar cases in the test file are handled like that and it looks
+pretty neat afterwards.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks for the suggestions,
+Miqu=C3=A8l
