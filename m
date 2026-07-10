@@ -1,92 +1,97 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC63D3CA49A;
-	Fri, 10 Jul 2026 11:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F06941DEE4
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 11:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783683081; cv=none; b=tplX/876h8DKwDON46E0jtJkhqFlrzo7SE4ErKVGf7+RZHB5pm5LYk2kuICN5BRfOsK4PTEQ1FbSbkH4bFiQvUHtBE6zH9U8lEeGZDyZExSClE0cqFQpE87AjKY2wiHtflZIOCGs6Rk3HHt/074Zxa6lTt/0qwYNF82MNgnbVrM=
+	t=1783683364; cv=none; b=hh2qit8xZa2XAfyOVLZVRaIjj8xUrSdCkt/9k7+NIoZcAFeN8NuPsmDAZD5viewsOt0L5x0R1fl1/4LSt/ekONeaQWAeF9txpbnMgYEQReDgREum8f/WH9BlzCc6TUJFVgHP/teS8Ji+kjy+Im4uRNiwZ+2we79eoTsKUPItaS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783683081; c=relaxed/simple;
-	bh=tGPfE6qKuA+vlOgrYeOKM12QStYUc80MBZhiTokpJiY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jsG9uXjXdvSqmtMG1bpIrYbiycCscDfAyxikkRydL7Qgck+qq3dv98O+qFjxoC0Gi4ulaAulojl06PnF22ZIo04A6GlyF5SUEuFOn3zNFextm6rw/xF108UKB8+zD/IP5WBAC/N5c6KUmyimWnvguGnOgDm/LmXsaqR6dJZQbEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Y/DMUIyx; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cct4uoRu; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Y/DMUIyx";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cct4uoRu"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gxV5M2hnVz8tvK;
-	Fri, 10 Jul 2026 13:31:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783683063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=E0cvBCWOSMbGwMP2ewHHGiksfp4JHwRC4Wz6rZ4DvQQ=;
-	b=Y/DMUIyxs4wOlhbanKBtphfpX+AMZrYoH0Xrtoi567IscZTpc0Bybx6Rc7UFYRlytDVoHx
-	zSho24SmW9rVugGXQhqXwRxa2y8M2omZMv1wvdQ1g9artoCIjrZ2+Qf4Eds+/8tcJGzTWU
-	zoM1rVapmlIylC/cTny1oV0ZtAV95spOxWf0K9avppvH5WFQ0pwjPmqWKEku1v088rgWU0
-	4Kppj+FYp8Q0OXMbqaztOz9GkDlgYlDAvGFsU/u8fIZDOvDWqUqGWiEbGjolpOGEIRHaev
-	ZbYPJyWgIp3k4jR9FSFprsJ39Gl46q29UQxJ2Zg2KEOVejPQq01mlVyrrxoyWw==
-From: Manuel Ebner <manuelebner@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783683062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=E0cvBCWOSMbGwMP2ewHHGiksfp4JHwRC4Wz6rZ4DvQQ=;
-	b=cct4uoRugBRvfRFa+hcsKo5XydDVHWDioptl4mRCckn2geJFI5JnNcSamyqSiUeMW9f24q
-	/fbdtkGjRx5CxiQjL+yz4lOlO0mpW+YAMx9f9O4Ab0KZP2X4kucQ/daYPUdRvbfrkW9s/X
-	eh9yIvW2x8HNu2qUbRPK888zoJ3WehAxW2vkM8/glWpWTlSgJxx7AOIzf8z/i0QqH9Fjqk
-	0LZkpNt7eEW3IiHQZsMZHNP+DGAIdGAaeRmudZqA31mcGJ2jTWe9Ov1FaYxgg2iXdT3coE
-	ST3WOXYmKQVcqt0iiHJ59RkH0T5ASJ2DhWUZHGXguKl14nkpmEZBgzSxr17kJg==
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Manuel Ebner <manuelebner@mailbox.org>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: memory-controllers: renesas,dbsc: fix bracket
-Date: Fri, 10 Jul 2026 13:30:29 +0200
-Message-ID: <20260710113029.436415-2-manuelebner@mailbox.org>
+	s=arc-20240116; t=1783683364; c=relaxed/simple;
+	bh=4pksEl7hMLsBYG9ZkoLxK/BecZCy0PswewcYkqaTKsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k1uT9AtaqlE6fxeUTBfgfB0XOAR+4oAydp4345kprmxU+3+PKmib2fJTsMvIYnJeIArFtTno0agce+tyjjNCTexIghhmv9UpMJbhtq82R+VflQmAEAuJdu/EIE+3fJQe0QDP2HX4c1VVlWsp/osOodQn69afTT/t4TxhYMHTclE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9674d727c0aso1001148241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 04:35:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783683341; x=1784288141;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=OJD6tiSjIPreQ8N2oNzf0qaDxzfObFILUs5bMv8F2lc=;
+        b=XvMWTdLm/jELr5zNBCwIrwZjsts190tPkahuOxKI6vCBK2bHFn4cMAXkBBLfjD9deQ
+         1PbBh/m4AXlzAhYJXwGSoMpAtNt5IFCSH3wO5cQ2BkLELw5zY/pwaTowaXXdl1LOW2mF
+         KgzlZquxUjutBpJ5G6feo7tC8Vd0DcV+WmZ513MC+eU+4jmdbqY9Dtrcsdi/ckIAY/i5
+         lnr8h5oeE/QXMWf79plLn0SHDr/brqgJrxbesUWXmVcWIvfv6H3iOhrLj8TYB2rnp7/n
+         fyqrmzxt5hq1luIlj05BQcTLwjZpTzYAKfye2x+8DJlPUcNWPYSaxAz3T5/GLqFimkfE
+         mECg==
+X-Forwarded-Encrypted: i=1; AHgh+RrOo3tiON3Pl//k2upAys9CJ/QdyKc6mv62ziOWEkVkd1DfyVjlLx9vSZigKtPVKvZS78ppnibPd4S8Rjc5UW2DeQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbi+Ts6ueXu9vwLBwUH/hor5UZAUXMdglmd6Hs6gA2/L1yeE/w
+	aPijvPFGCDI9ExMeeTSsqF77Nhl957JwMUD+eWfnoAuB2ypLp9HJ+sVZ6ahfjbaCgrk=
+X-Gm-Gg: AfdE7ckx8WG1snzmtFizhis5rkpwW8BtuETqAtUtEqrHV6V+ynxgALZV1RmXhkdozxm
+	MiZ2JLh69abreYcVN4v6g25fcraIqaeqaVu3fJJjqfMzmk6vrZXfTyPJqVlE/bH290jTxQXnRPS
+	Cg31MatMkAfcqOSGEVX+9eu1BZxWPukA2a7KIiL2ANIUZkc2HvucplgAAyO2ZqaCQ156eSvqzBn
+	orDTlLElkaORG8HpRY/uWCIWzMSeLy/6YXDpJkNgrQj7jC39v3uo8iAyo/8sMIQvUzgf/BZreAR
+	3UGQlDsd3TZgLcTQV+08QxrH5pZCSqFpOm8YsOxXOjiKbWZfZc6cSTND5lfGfSWr20mITo1kDuJ
+	xvN126OObInyUB0wHNpemFx+8ORv/UItQYSAw0i2PVtTP26KFkueWAs8LmnRLpf12NAqA8CuXFn
+	yD4psm2dGkZgRW2m0d77+7oURm77A4Ihr/mV5YDqa4ObdqqKHbKg==
+X-Received: by 2002:a05:6102:5a86:b0:631:4385:15cc with SMTP id ada2fe7eead31-7450d017b12mr1756126137.1.1783683340683;
+        Fri, 10 Jul 2026 04:35:40 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6e38d35sm5104403137.12.2026.07.10.04.35.40
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jul 2026 04:35:40 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-971de219a85so354495241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 04:35:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqUommZKju/glPv15Hdbp4VPyIc+VdCB7oZ33jQcksJmZhQ3sPhoxKQhUKR7D5GENn7ncRykU1ikrqhp6g4hHwtFQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:8195:10b0:737:edda:e7d7 with SMTP id
+ ada2fe7eead31-7450c6bee37mr1282524137.1.1783683340215; Fri, 10 Jul 2026
+ 04:35:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: d4o19nfdker7p7zkwidqgfkq76fstzjd
-X-MBO-RS-ID: f0c29b116a1dbcc3dd0
+References: <20260707145135.247565-1-biju.das.jz@bp.renesas.com> <20260707145135.247565-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260707145135.247565-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jul 2026 13:35:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXh4LZ8yFyca2EXSq34P0+OgxLyA2J7O6OhZD1PPVanhg@mail.gmail.com>
+X-Gm-Features: AUfX_mx1HkmTEWvYMocI1aNW_zjBk9JHXgCAqkMrY6has8ck0rJ6O0h4yvq4kRE
+Message-ID: <CAMuHMdXh4LZ8yFyca2EXSq34P0+OgxLyA2J7O6OhZD1PPVanhg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: usb: renesas,usbhs: Document RZ/G3L SoC
+To: Biju <biju.das.au@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Remove needless ')'.
+On Tue, 7 Jul 2026 at 16:51, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> The USBHS IP block on RZ/G3L SoC is identitcal to the one found on the
+> RZ/G3S device. Document the RZ/G3L USBHS IP block.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
----
- .../devicetree/bindings/memory-controllers/renesas,dbsc.yaml    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
-index 8e3822314b25..30ad2a858844 100644
---- a/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
-@@ -13,7 +13,7 @@ description: |
-   Renesas SoCs contain one or more memory controllers.  These memory
-   controllers differ from one SoC variant to another, and are called by
-   different names, e.g. "DDR Bus Controller (DBSC)", "DDR3 Bus State Controller
--  (DBSC3)", or "SDRAM Bus State Controller (SBSC)").
-+  (DBSC3)", or "SDRAM Bus State Controller (SBSC)".
- 
- properties:
-   compatible:
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
