@@ -1,147 +1,119 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6713EF0D3;
-	Fri, 10 Jul 2026 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783671601; cv=pass; b=OqNkPatFlD0NSztCEYPwBfc9YiFRf6xXYoex2ICdvWeUU0cKgeDCKU4zUkJx6cCiVKijobfmSloWPV4cb7NprTg0yNsuVZSoBI6HUYOIt0Y+Ia6VRAMdMghBfT69pFHE15DWwGtsA655AHbaiBKfmct9pnK+HcDauNNXkRbJtYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783671601; c=relaxed/simple;
-	bh=A6yuDsR2nZi6+auXXFpGtmRTYQlKL2m32zKzAUWpsuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M+BJ55CTh98rrmuc0znOTxtL6W4A0ZrSF/wRnGkj4XJKx4Do6bnyHtC49JUcDKIQm9Y6QPlglWEGLGDKbw/3nfIgBVpltik4Isw56gYlfDEqD5H7keDwEmAJ2E6sbdOIhGduGsmGyA5dXC+jps/Kk4WP1JfiGYTJ2c2dBIgNeMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=michael.riesch@collabora.com header.b=FFnMn0Cf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149D3EFFD7;
+	Fri, 10 Jul 2026 08:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783672097; cv=none; b=YNeZ8k/I8I45QER+Lp6H72zCw+aND4GnEEEQrg8QqQa5PGprGBc9XjyEhd5FpEGl1uUwHDKVCehahULaLkleR9vm79mJKlIKEALrm4FiG5DnvEruShNw6qFrtuVWB5pFF1pwltc9dh0/QRfTwb+x7EGMYkU4IufP2CpNxCohiJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783672097; c=relaxed/simple;
+	bh=SXhT/IG4Sn1qQjgoVmJGVUCKPwTprjMulXhkXSPMVk8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rixWurDLRJzzr4+j16C4x386za4oDGzXOcH5SCrC3dryCjb/7jAxTfhl089Td6MU00witxBuRiLBbGdfb2Yq21UwoOtKZFS7RBxr2ejep7rwCyOvjMX1HSCdH6o6aIGybvAAgU82wARZUNXDIcYzYCdWxS5y1Ewat+PBV0kRLvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+SX3jrl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=michael.riesch@collabora.com header.b="FFnMn0Cf"
-ARC-Seal: i=1; a=rsa-sha256; t=1783671496; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=n1lilrOhB4g5YW6x6G9IiFkIE7cfPY646RXZhmeBeRU8vt/Xx9bipqzOH437Yw97SoOGWsi6diBYmTI0TYz7Spkgc8HTkBcyOyMzfh59yPBSw05OA6h2azT2bgsLebTK/kztYKqSVt1g4J+Lfr3EC3HBXmEksib7LE6CevODMbI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1783671496; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wNhWASr7b/ZTOhcTDo/rAGZJQBNr7Kmww1CuII50ggg=; 
-	b=KzVJV3qeyarguw6hz9kE7z6vCLOBH41NDHxBP60XjAWbYdVyRx4BdzoxPYnBsKXqISCpPpiknHP/lbrKwWbfZSlZj8qPWnerYwHuVZfthM/RiwyHsk1sJsbpbDcruZtep4SIczOrhwHVxxhJF8ObBRv1kKP+7ED7nKrf1V47Ws0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=michael.riesch@collabora.com;
-	dmarc=pass header.from=<michael.riesch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1783671496;
-	s=zohomail; d=collabora.com; i=michael.riesch@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=wNhWASr7b/ZTOhcTDo/rAGZJQBNr7Kmww1CuII50ggg=;
-	b=FFnMn0CfDn5F3352XtaZr/QmRsRz8rLmzZocUKukr5Ojp1+hiTHPyc3rbW2Zy+S1
-	bOUZDwihK/kW3HXc+EyDdMZPXBcsEVnrUiNVKyPQWNQCSgGFPDMhHaTIewGDobgikZT
-	oCrvfmpvHCAuKEHCF4PM+K5AHYqHi8YICnThQ1PA=
-Received: by mx.zohomail.com with SMTPS id 1783671494588655.4558382967103;
-	Fri, 10 Jul 2026 01:18:14 -0700 (PDT)
-Message-ID: <66d4ed68-f8b1-4275-96de-83d1125d49c9@collabora.com>
-Date: Fri, 10 Jul 2026 10:18:05 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+SX3jrl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 587891F000E9;
+	Fri, 10 Jul 2026 08:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783672095;
+	bh=F6KudrFDGEDQqOhegar75aieWQMc2k5wBts8J2fU69w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=N+SX3jrlYmsL5bMWiQ1GMDeRKxW9iAigjmPFC06Wz319fosORES2zhht2QaH/6qFq
+	 DwmmN17OAX/kzxh+a2JI+o4ifiTmNWEPHKxuiUuX0B0MULGUhJi0t3Fevbi0OiDEXz
+	 A7laFPH8WbFKGhOC36Yygn6qAz+sNpKGn9pdookoPdWdYqt+2MlTojVKF+9R54TIcR
+	 /FYacKL0pAatQHo3G/oFCy5hp54dc69KxWmNbAxfdmpv20n+KQyxYbVLNn/aCzECBJ
+	 3dUBpVjy1o7y2Roi5/yQdpsZn102AV8KToXzOnO+/W/q0dLmu64YnwWJiju6W4aqJU
+	 lmzAH9Fcl7WeQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wi6aj-00000003b2r-1kdZ;
+	Fri, 10 Jul 2026 08:28:13 +0000
+Date: Fri, 10 Jul 2026 09:30:02 +0100
+Message-ID: <87qzlb5jsl.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org,	kernel test robot <lkp@intel.com>,	Krzysztof
+ =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Bjorn Helgaas
+ <bhelgaas@google.com>,	Catalin Marinas <catalin.marinas@arm.com>,	Conor
+ Dooley <conor+dt@kernel.org>,	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,	Manivannan Sadhasivam <mani@kernel.org>,	Rob
+ Herring <robh@kernel.org>,	Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>,	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar-gen4: Inline GIC_TRANSLATER offset macro
+In-Reply-To: <20260709201103.90162-1-marek.vasut+renesas@mailbox.org>
+References: <20260709201103.90162-1-marek.vasut+renesas@mailbox.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] media: dt-bindings: video-interface-devices: add
- video-interface-devices.h references
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>,
- Matthias Fend <matthias.fend@emfend.at>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Martin Kepplinger <martin.kepplinger@puri.sm>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- Richard Acayan <mailingradian@gmail.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux@ew.tq-group.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
- <20260628-kbingham-orientation-v3-2-4ed92968aff8@ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20260628-kbingham-orientation-v3-2-4ed92968aff8@ideasonboard.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: marek.vasut+renesas@mailbox.org, linux-pci@vger.kernel.org, lkp@intel.com, kwilczynski@kernel.org, bhelgaas@google.com, catalin.marinas@arm.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lpieralisi@kernel.org, mani@kernel.org, robh@kernel.org, yoshihiro.shimoda.uh@renesas.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Kieran,
-
-On 6/28/26 12:22, Kieran Bingham wrote:
-> Expand the documentation of the video-interface-devices orientation to
-> reference the include/dt-bindings/media/video-interface-devices.h header
-> which provides human readable defines for the orientation enum, to help
-> avoid hardcoding values in dts.
-> 
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
-Acked-by: Michael Riesch <michael.riesch@collabora.com>
-
-Thanks and best regards,
-Michael
-
+On Thu, 09 Jul 2026 21:10:03 +0100,
+Marek Vasut <marek.vasut+renesas@mailbox.org> wrote:
+>=20
+> Instead of pulling in the whole linux/irqchip/arm-gic-v3.h , copy the
+> one GITS_TRANSLATER register offset macro directly into the driver.
+> This repairs the ability to build the driver on non-ARM non-GIC targets
+> the way it was possible until now, which retains good build test coverage.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202607100310.iQw5m9Uo-lkp@i=
+ntel.com/
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
->  .../bindings/media/video-interface-devices.yaml         | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/video-interface-devices.yaml b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> index a81d2a155fe6..c9c3f4f16719 100644
-> --- a/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> +++ b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> @@ -392,17 +392,22 @@ properties:
->        The orientation of a device (typically an image sensor or a flash LED)
->        describing its mounting position relative to the usage orientation of the
->        system where the device is installed on.
-> +      See include/dt-bindings/media/video-interface-devices.h.
-> +
->      $ref: /schemas/types.yaml#/definitions/uint32
->      enum:
-> -        # Front. The device is mounted on the front facing side of the system. For
-> -        # mobile devices such as smartphones, tablets and laptops the front side
-> -        # is the user facing side.
-> +        # MEDIA_ORIENTATION_FRONT
-> +        # The device is mounted on the front facing side of the system. For
-> +        # mobile devices such as smartphones, tablets and laptops the front
-> +        # side is the user facing side.
->        - 0
-> -        # Back. The device is mounted on the back side of the system, which is
-> +        # MEDIA_ORIENTATION_BACK
-> +        # The device is mounted on the back side of the system, which is
->          # defined as the opposite side of the front facing one.
->        - 1
-> -        # External. The device is not attached directly to the system but is
-> -        # attached in a way that allows it to move freely.
-> +        # MEDIA_ORIENTATION_EXTERNAL
-> +        # The device is not attached directly to the system but is attached in
-> +        # a way that allows it to move freely.
->        - 2
->  
->  additionalProperties: true
-> 
+> Cc: "Krzysztof Wilczy=C5=84ski" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> Note: The alternative I could think of would be ifdeffery which
+>       is not nice and thwarts the build coverage, or limit the
+>       driver to ARM/ARM64 in Kconfig which also thwarts the build
+>       coverage. I could also split off the register macros in
+>       linux/irqchip/arm-gic-v3.h into some separate header
+>       linux/irqchip/arm-gic-v3-regs.h and include that which
+>       might be OKish and avoids duplication. Thoughts ?
 
+No, I'm not hacking something that is purely architecture specific for
+the purpose of a bizarre integration quirk that should be handled by
+the boot firmware, and not Linux.
+
+Add whatever you want to the PCI glue code, limit this to arm64 (which
+is the only architecture this can ever be used on, and the build
+coverage argument really doesn't hold), but please leave the GIC code
+alone.
+
+	M.
+
+--=20
+Jazz isn't dead. It just smells funny.
