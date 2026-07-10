@@ -1,136 +1,95 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E483D6CB7;
-	Fri, 10 Jul 2026 09:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D303DC4A4
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 09:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783676303; cv=none; b=Ku+rYDRg/1T97PG5ppertaJjNpeuiPQbMvC/FuqGXMqpU7uhyCQ1aWSbFivXXiJbgJtfmTmUfeG39pzo26f76mQb9owfawPpNbbdOhPL0aNhT9eClLhP4fdJCS3m/ncvuIG1oa95m6GeqEjnYaR5mTrfPOqPnFNBQYw83H/JN1M=
+	t=1783676599; cv=none; b=QezXKwiGiLVgbx9b3jZkY62hQPoh/bF3Vyz2a6EcWMPoMGMGoH2wUelmjwWwPojLfao9uatlLiWoai1EE9v2lknoOEMNqha9CS/xkMaJub1sHLaEGQ0Zo4gxgfkVXQhLSVN0QXDkowM3Ghwsad5SjYzqaIfaw9R68wCH5r3qHUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783676303; c=relaxed/simple;
-	bh=bChyDOxuBfSs24Klt5WlN2EeJo189nvFjaDAK0cHc50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NHOZjfK3CoCeU0MYzxWR2G87zC/7XIV/uG8MBzeTVTzoyL6H0JY06+czvWeQ6hP0l0IxXfuhFFb/8PcA4wkQrqj0K3QxSW6H+Aof/Ngd6eEFJLCTadp+31CNodk8fc/9jBznHMDPmzfSf7x6z5P9s/3mnNyNwcObKUHXVZuxYqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=c06Zp7H4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="c06Zp7H4"
-Received: from ideasonboard.com (mob-109-113-15-151.net.vodafone.it [109.113.15.151])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8930F12F;
-	Fri, 10 Jul 2026 11:37:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1783676245;
-	bh=bChyDOxuBfSs24Klt5WlN2EeJo189nvFjaDAK0cHc50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c06Zp7H4LyXaOzgsMZ7op+fQIB3PToyYzYJGMGGpQ7vOhAWNO265b6WvcWW+IiS2j
-	 +uUuMwWH533ifgDA+586lztYZM5uUG195In9SD2UECAR6cE/+BgVXq+Dkc+/ayEjsf
-	 kaIaWy0wnvt6Kshn9IfCnVOCqwLB2ZPoiI68yepY=
-Date: Fri, 10 Jul 2026 11:38:13 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Sven =?utf-8?Q?P=C3=BCschel?= <s.pueschel@pengutronix.de>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil+cisco@kernel.org>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mehdi Djait <mehdi.djait@linux.intel.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Isaac Scott <isaac.scott@ideasonboard.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] media: v4l2-common: Add
- v4l2_fill_pixfmt_aligned() helper
-Message-ID: <alC6DDFZ23q5h33W@zed>
-References: <20260708161406.396183-1-tommaso.merciai.xr@bp.renesas.com>
- <20260708161406.396183-3-tommaso.merciai.xr@bp.renesas.com>
- <ak9pPzjABetdgUiq@zed>
- <210aa2ee-8931-4dd2-a51f-eeb0c205d647@pengutronix.de>
+	s=arc-20240116; t=1783676599; c=relaxed/simple;
+	bh=g8x9dhwFyyvlvTkxK6+R/6CliWApPEOeK/YoKDP+uMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sGCu6/8mODuLkjrULL1ogM8dwKNvoj6dXP0/DbIok8sqBvxWtuEShwGo9iA+SXQtssRlm4X3D8+DOJ/C7LfVDMAbu3oajApCMWRc00ukq0DNBPiAYIJA/AULy5d5El6el3/lqWpERNS906uc1eDKs/ZazBV77/TpuZAOIX7mRik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5bf9466412fso664878e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 02:43:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783676594; x=1784281394;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=OJUbLwMEIOBZTFEvOkGzQdLJGFR8K38bCJj4Tk6Zpnk=;
+        b=DN677bT1GbEVoZ8E7CNFjhLyCRqWwUVtpi/LhYS1n49sw2aqB0mK3M4Y74QY0IapzB
+         oeQtZS2BMe0TwnrKtjJnauCaoOTOVgW8rdoplhplyJLgNaJR1fBcBkl3sZ4pahkC4bld
+         tJxt/jfAfCrXXIJY/d+i0WM4gMrWcRPu0k4jdnj1Koion5ZlPhR7PuzDQYZT7pCLsg6w
+         LLiPC3Am/A8umvJeXawkACl8gODADhawCxsEH2nqYedXZ3gSwEe69BMy3dmYgIoRZjtH
+         Un+4G/JxCi1OK7gq6BACH6coXvphX3tbJ00z5zZDLhzS9QxUXEx4hwmNFyn3LRJkifcx
+         kejQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqxutXIomt1MzIb9vk3NOvgdZiXgOD6QlBApmEGsHD3igkZJQXYjpvAsl8YKgjkMbrShnRiLw4C8hv/Q9duS+mTNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmpV98AIYdY3ZJ8WwOWMCDWiYn6G0ijlbWcASsPSm8liyl4k0y
+	SsTL72aOy+Oxvf8VN3YM7T0SIUTAHj21fi0u/cVQTa4xHG1fcgjjqsq9rXpY4VAUjSg=
+X-Gm-Gg: AfdE7cnA7NtkB0yOa0ScgkLsIYLeGsLKvOoR1MyUZSGcqhlLbFO/UQK/BeVNbjNzCSL
+	4XDcME/QeBridvvVWDuGqb16g9VUDGPz1s70J4ZVE8aE3Jv7ml6MBgNhBh65Z03z+WBFpU6vDEB
+	4yDYNKb56lahTREXbaNF4R6kBnLVjIMoyazIHGcUj6BjrOfgQc281LYSjJovLqK//UZPq/obUOB
+	E+pUxaXkdKKxQXJm5DCS6+9j4AStfG2V4ATiPEmChOkCeyfdAhz6w4yM8FFGoshntsd1QkEY8BX
+	HPVLdubDn7rvKe3MTU9TPAsc9W3egIkHt9Wg20xTZWGwKV4WOcpze0qdPmmUaqhyy0Pj0SQraJz
+	2M4OoKsuL6Qf7/cFxihWxUqd2gMtcaGCBsxI2hLFfsHvIRn/Obl28Y4q8Pgs1/uMF99w+CWD2dC
+	B7tQznkNF5/sukmQoQRbd5/Deo3b9hcWS2BQVLVMEauOLe80+G0A==
+X-Received: by 2002:a05:6122:510:b0:5a5:3eea:4513 with SMTP id 71dfb90a1353d-5bf75eabfebmr6474778e0c.12.1783676594369;
+        Fri, 10 Jul 2026 02:43:14 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f8ed2adsm4668940e0c.16.2026.07.10.02.43.13
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jul 2026 02:43:13 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-73a442f7cd3so152877137.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 02:43:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrUL7838i9sOWrMMTMQ18jrmXb2LjSo8kz77GuXHdmaCrXJGHgoby1lGYmIbUw802Yk1/k81O4osIFr7KRKw9If6w==@vger.kernel.org
+X-Received: by 2002:a05:6102:5494:b0:738:3525:43ff with SMTP id
+ ada2fe7eead31-744e01c148dmr7640472137.13.1783676593488; Fri, 10 Jul 2026
+ 02:43:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <210aa2ee-8931-4dd2-a51f-eeb0c205d647@pengutronix.de>
+References: <20260710085744.430340-2-manuelebner@mailbox.org>
+In-Reply-To: <20260710085744.430340-2-manuelebner@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jul 2026 11:43:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVZeNfzsN5=b_v4ociTYYxLUFT8YM0nLZ6FZE2y198U_Q@mail.gmail.com>
+X-Gm-Features: AUfX_mwSwZvpHCNyboZJL6Dr0sUh2j3LLuURj3GixHiR77P7hS7W9LcUOCBov34
+Message-ID: <CAMuHMdVZeNfzsN5=b_v4ociTYYxLUFT8YM0nLZ6FZE2y198U_Q@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: arm: qcom,coresight-tpdm: fix bracket
+To: Manuel Ebner <manuelebner@mailbox.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sven
-
-On Fri, Jul 10, 2026 at 10:36:53AM +0200, Sven Püschel wrote:
-> Hi Jacopo,
+On Fri, 10 Jul 2026 at 10:58, Manuel Ebner <manuelebner@mailbox.org> wrote:
+> Add ')' and fix sentence structure.
 >
-> On 7/9/26 11:35 AM, Jacopo Mondi wrote:
-> > Hi Tommaso
-> >
-> > On Wed, Jul 08, 2026 at 06:14:03PM +0200, Tommaso Merciai wrote:
-> >
-> > > + *
-> > > + * @pixfmt: pointer to the &struct v4l2_pix_format to be filled
-> > > + * @pixelformat: the V4L2 pixel format (V4L2_PIX_FMT_*)
-> > > + * @width: image width in pixels
-> > > + * @height: image height in pixels
-> > > + * @stride_alignment: stride alignment in bytes, must be a power of 2
-> > > + *
-> > > + * Fills all fields of @pixfmt for the given pixel format, dimensions, and
-> > > + * stride alignment. Only formats stored in a single memory plane are
-> > > + * supported; returns -EINVAL for multi-memory-plane formats.
-> > > + *
-> > > + * @pixfmt->bytesperline is set to the stride of the primary (plane 0) plane,
-> > > + * rounded up to a multiple of @stride_alignment. For formats that store
-> > > + * multiple component planes in a single memory buffer (e.g. NV12), the
-> > > + * alignment applied to each component plane's stride is scaled relative to
-> > > + * @stride_alignment so that the chroma stride remains consistently derivable
-> > Does this rather mean that
-> >
-> > "For formats that store multiple component planes in a single memory
-> > buffer (e.g. NV12), the alignment applied to each component plane is
-> > the first plane @stride_alignment scaled by the plane's sub-sampling
-> > ratio" or have I mis-read this ?
->
-> No, for the example of NV12, no stride will get scaled (although the
-> sub-sampling of 4:2:0, resulting in a vdiv and hdiv of 2).
+> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
 
-Ah, I had looked at v4l2_format_plane_stride() for the NV12 case where
-byte_alignment gets adjusted for the second plane as:
+With the patch subject fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-byte_alignment *= DIV_ROUND_UP(info->bpp[1], info->hdiv * info->bpp[0]);
+Gr{oetje,eeting}s,
 
-which for NV12 resolves at *= 1
+                        Geert
 
-and I got confused
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Indeed this is not just
-
-"the first plane @stride_alignment scaled by the plane's sub-sampling
-ratio"
-
-I proposed
-
->
-> This is due to the fact, that while we have a hdiv of 2 we also interleave
-> the cb and cr parts in a single plane, which results in the stride being the
-> same number of bytes as for the y plane (and vdiv isn't relevant for the
-> stride).
->
-> Therefore the stride scaling also respects the bits per plane (bpp) value to
-> determine the scaling.
->
-> @Tommaso : While the sentence looks ok, the NV12 example is misguided. The
-
-I guess the usage of NV12 was as example of a "formats that store
-multiple component planes in a single memory"
-
-NV24/42 works the same, but being 444 it needs the chroma plane stride to
-be a multiple of the fist plane stride and might prove as a better
-example ?
-
-> intention is that for non-mp (not ending with M) formats we might do the
-> scaling (e.g. YUV420 will have it's Y component stride alignment scaled to
-> not break the u and v stride alignments, but YUV420M not)
->
-> Sincerely
->     Sven
->
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
