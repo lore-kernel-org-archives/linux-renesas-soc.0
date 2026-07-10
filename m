@@ -1,95 +1,116 @@
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D303DC4A4
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 09:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F663F164E;
+	Fri, 10 Jul 2026 09:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783676599; cv=none; b=QezXKwiGiLVgbx9b3jZkY62hQPoh/bF3Vyz2a6EcWMPoMGMGoH2wUelmjwWwPojLfao9uatlLiWoai1EE9v2lknoOEMNqha9CS/xkMaJub1sHLaEGQ0Zo4gxgfkVXQhLSVN0QXDkowM3Ghwsad5SjYzqaIfaw9R68wCH5r3qHUM=
+	t=1783676930; cv=none; b=tGdBT29alBeA1CyfTmQdI+cJ9PKZZcXn9DHTj/g0tY0p8jiQaGNMj2d6OSfOQeEq8EnI3xuSGmPYrOZvCO7kMsfZhItJXourbRKdDFgefD8KQ/KHMhaqRiC/JcKcUpQ40Ajeh0wE1OjiF1YbFWnysFJ9QaGu1fFAlmMMKGzzQ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783676599; c=relaxed/simple;
-	bh=g8x9dhwFyyvlvTkxK6+R/6CliWApPEOeK/YoKDP+uMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sGCu6/8mODuLkjrULL1ogM8dwKNvoj6dXP0/DbIok8sqBvxWtuEShwGo9iA+SXQtssRlm4X3D8+DOJ/C7LfVDMAbu3oajApCMWRc00ukq0DNBPiAYIJA/AULy5d5El6el3/lqWpERNS906uc1eDKs/ZazBV77/TpuZAOIX7mRik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5bf9466412fso664878e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 02:43:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783676594; x=1784281394;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OJUbLwMEIOBZTFEvOkGzQdLJGFR8K38bCJj4Tk6Zpnk=;
-        b=DN677bT1GbEVoZ8E7CNFjhLyCRqWwUVtpi/LhYS1n49sw2aqB0mK3M4Y74QY0IapzB
-         oeQtZS2BMe0TwnrKtjJnauCaoOTOVgW8rdoplhplyJLgNaJR1fBcBkl3sZ4pahkC4bld
-         tJxt/jfAfCrXXIJY/d+i0WM4gMrWcRPu0k4jdnj1Koion5ZlPhR7PuzDQYZT7pCLsg6w
-         LLiPC3Am/A8umvJeXawkACl8gODADhawCxsEH2nqYedXZ3gSwEe69BMy3dmYgIoRZjtH
-         Un+4G/JxCi1OK7gq6BACH6coXvphX3tbJ00z5zZDLhzS9QxUXEx4hwmNFyn3LRJkifcx
-         kejQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqxutXIomt1MzIb9vk3NOvgdZiXgOD6QlBApmEGsHD3igkZJQXYjpvAsl8YKgjkMbrShnRiLw4C8hv/Q9duS+mTNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmpV98AIYdY3ZJ8WwOWMCDWiYn6G0ijlbWcASsPSm8liyl4k0y
-	SsTL72aOy+Oxvf8VN3YM7T0SIUTAHj21fi0u/cVQTa4xHG1fcgjjqsq9rXpY4VAUjSg=
-X-Gm-Gg: AfdE7cnA7NtkB0yOa0ScgkLsIYLeGsLKvOoR1MyUZSGcqhlLbFO/UQK/BeVNbjNzCSL
-	4XDcME/QeBridvvVWDuGqb16g9VUDGPz1s70J4ZVE8aE3Jv7ml6MBgNhBh65Z03z+WBFpU6vDEB
-	4yDYNKb56lahTREXbaNF4R6kBnLVjIMoyazIHGcUj6BjrOfgQc281LYSjJovLqK//UZPq/obUOB
-	E+pUxaXkdKKxQXJm5DCS6+9j4AStfG2V4ATiPEmChOkCeyfdAhz6w4yM8FFGoshntsd1QkEY8BX
-	HPVLdubDn7rvKe3MTU9TPAsc9W3egIkHt9Wg20xTZWGwKV4WOcpze0qdPmmUaqhyy0Pj0SQraJz
-	2M4OoKsuL6Qf7/cFxihWxUqd2gMtcaGCBsxI2hLFfsHvIRn/Obl28Y4q8Pgs1/uMF99w+CWD2dC
-	B7tQznkNF5/sukmQoQRbd5/Deo3b9hcWS2BQVLVMEauOLe80+G0A==
-X-Received: by 2002:a05:6122:510:b0:5a5:3eea:4513 with SMTP id 71dfb90a1353d-5bf75eabfebmr6474778e0c.12.1783676594369;
-        Fri, 10 Jul 2026 02:43:14 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f8ed2adsm4668940e0c.16.2026.07.10.02.43.13
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2026 02:43:13 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-73a442f7cd3so152877137.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jul 2026 02:43:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrUL7838i9sOWrMMTMQ18jrmXb2LjSo8kz77GuXHdmaCrXJGHgoby1lGYmIbUw802Yk1/k81O4osIFr7KRKw9If6w==@vger.kernel.org
-X-Received: by 2002:a05:6102:5494:b0:738:3525:43ff with SMTP id
- ada2fe7eead31-744e01c148dmr7640472137.13.1783676593488; Fri, 10 Jul 2026
- 02:43:13 -0700 (PDT)
+	s=arc-20240116; t=1783676930; c=relaxed/simple;
+	bh=wuG2shP5X+UkXSmhr4knH5rocVOOk/BakyEWwoAFI/0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h/Fc8cwg0XpqisHisD4Uoa0SEE+DVd+3Z59Ixun8Jee6jx9L9O0nbzRxn2O2QPhkQ7bemOa+yoF0gAvbvDP6QZT3UsV5dsz+9eSKPyVO9qkd5zQAt8OSZUuThfJ0shkiSiriLE/xKFYra9WE5we+ZuY2aziMJwOXQlii/DRkQpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ffO+0698; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ffO+0698"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EE7704E40D3C;
+	Fri, 10 Jul 2026 09:48:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id ACA1360341;
+	Fri, 10 Jul 2026 09:48:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A21C611BD2834;
+	Fri, 10 Jul 2026 11:48:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783676924; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S8k4iLzkxJVSSUQQwc8HGDvZ17LYlFShfGvdGTUVWi8=;
+	b=ffO+0698dM6X34VENvE0Cje5NMC4UCdo5a7VKBYCqDDJFmSorUxab4kQs7JbvzFyYURbcv
+	jTwk1gynEPETItolgJXuY0ZTtmn/jbcpEXq+ip3OLqPaOhyK16EgKQFGQFuquH2uf5F52m
+	J6WZTychwmy5vzMTENDNgSuFjl0pgprv0h1iOM9ZGzElyDo4By8qCmfqGZL/lOW5ZhOBTm
+	TshJisWrE6WbOzwCGGEDbxU9vtLiQ5GW5u/WIkf4RVB5FId3rIdJN7rrxB026RgN1sAavk
+	3LxOHW3vk1FVgZPcgmmYNap0tUz1NvwrxangAvzwdh/FZZFRTiOKEAYRthfaow==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Thomas
+ Gleixner <tglx@kernel.org>,  Olivia Mackall <olivia@selenic.com>,  Herbert
+ Xu <herbert@gondor.apana.org.au>,  Jayesh Choudhary <j-choudhary@ti.com>,
+  "David S. Miller" <davem@davemloft.net>,  Christian Marangi
+ <ansuelsmth@gmail.com>,  Antoine Tenart <atenart@kernel.org>,  Geert
+ Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  Pascal EBERHARD <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 02/16] dt-bindings: interrupt-controller: Describe
+ EIP-201 AIC
+In-Reply-To: <444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl> (Aleksander Jan
+	Bajkowski's message of "Thu, 16 Apr 2026 20:04:03 +0200")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-2-5e6ff7853994@bootlin.com>
+	<444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 10 Jul 2026 11:48:38 +0200
+Message-ID: <87y0fjgop5.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710085744.430340-2-manuelebner@mailbox.org>
-In-Reply-To: <20260710085744.430340-2-manuelebner@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jul 2026 11:43:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZeNfzsN5=b_v4ociTYYxLUFT8YM0nLZ6FZE2y198U_Q@mail.gmail.com>
-X-Gm-Features: AUfX_mwSwZvpHCNyboZJL6Dr0sUh2j3LLuURj3GixHiR77P7hS7W9LcUOCBov34
-Message-ID: <CAMuHMdVZeNfzsN5=b_v4ociTYYxLUFT8YM0nLZ6FZE2y198U_Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: arm: qcom,coresight-tpdm: fix bracket
-To: Manuel Ebner <manuelebner@mailbox.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 10 Jul 2026 at 10:58, Manuel Ebner <manuelebner@mailbox.org> wrote:
-> Add ')' and fix sentence structure.
+Hello,
+
+>> --- /dev/null
+>> +++ b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-ei=
+p201.h
+>> @@ -0,0 +1,14 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>> +
+>> +#ifndef _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
+>> +#define _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
+>> +
+>> +#define AIC_PKA_INT0 0
+>> +#define AIC_PKA_INT1 1
+>> +#define AIC_PKA_INT2 2
+>> +#define AIC_TRNG_INT 3
+>> +#define AIC_RESERVED 4
+>> +#define AIC_SL_ERR_INT  5
+>> +#define AIC_PROTECTION_INT 6
+>> +
+>> +#endif
 >
-> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+> This interrupt mapping is specific to the EIP-150. The EIP-201 is also
+> integrated
+> into other accelerators, such as the EIP-97, EIP-196, and EIP-197, and the
+> interrupt mapping is likely different there. Maybe it would be better to =
+use
+> eip150 name instead of eip201?
 
-With the patch subject fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I was about to rename the file (and the ifndef/define section), but in
+the end I feel like it does not actually make sense to do that, because
+it would require to include one header per container in the
+driver. Instead, I propose another way: let's keep the file name as-is,
+but mention with a comment above the definitions that these are specific
+to the EIP-150 implementation. This way, if someone want to reuse the
+controller for another integration, they can just add their own
+interrupt names/numbers below, with another comment stating the name of
+the container they apply to.
 
-Gr{oetje,eeting}s,
+For future people who would like to extend this driver to another
+container: mind that there is currently a list of "unused" interrupts in
+the v2 of the driver (in the generic chip structure). This list may
+simply go away if one needs one of the three interrupts currently
+listed.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Miqu=C3=A8l
