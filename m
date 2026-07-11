@@ -1,96 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA52428461;
-	Fri, 10 Jul 2026 22:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9DD2B9BA;
+	Sat, 11 Jul 2026 05:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783722077; cv=none; b=TNsDymVcZO3cWUtiYIN1w6+kmVAfd86lbAgu1ENiydaIM8XlDkWCDeZisMGCKMW7WHYQGv/7wbd7C8Mui1zh6QFhrWFj94tuHHJpnY7bn65XagQsnDdBDD0OTw9IyxDVkEuZEzyDlJaKAHbA2ovx8ocZM3bcqyZZabMpYuw2E+E=
+	t=1783746900; cv=none; b=Ec1Bli0bZQw1WyDYX+MQwVpH9ZXp4lM+tpQnfbBn8OTGh3kXYAgkQovgesVFqU2pM446asPZI+NkINdu4X8vwCbG0e5o5to7Gtmmn0rY36YPQxmAhlv+ibCyuL3n/LirWyw+CMT43jkdOr4c3SiKJcdQINb139gcEyTSy6Z/jyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783722077; c=relaxed/simple;
-	bh=bJl5fQPl/8SCiPA7HP6kJnaSwYgVGISoszxcNL4MMmc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=irE98ehtBjhqu/JAMsmvYSu1f+37zPojeG4EWIgd4Z0bviVWKdF78v0RJA+/HMoW03lWcGdLhayr0b04O0FuoyFxVIRIel5Yv5e69uHafP8QsKR3YzGhZ8OcSGdJJmtN3UjXLQAAnQr6Izkxfm5PwghB5DMzi7uBRCDYKxwv0EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeLBvzjk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783746900; c=relaxed/simple;
+	bh=EhVGZ4XrUueG3AOvBA0Tqqe2K6YlFedTxBKIW/6prqY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WHyxLu70aNL8qvoJT46Xl4nWcP8MdeDWWgHIXKM6gmxuLlsjdUx2aH7RKCkGI+yZpxKZz6LGcXvNGx78Ozcdbs5vaOr0BndzL23xi2SWz/sxcXxZMocpubJPQaCiOq9watCdHyfYzmY6xE+yGoEz3cGazWmMKcvnpNqB01wBRDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=JDtGbDz7; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeLBvzjk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A2E1F000E9;
-	Fri, 10 Jul 2026 22:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783722076;
-	bh=e5VaWoT+JyBfzZCc0Ceb0NCpR1zGV0RFto2LvwVs61I=;
-	h=From:To:In-Reply-To:References:Subject:Date;
-	b=oeLBvzjkEq9TS4WuRj31zDBgX/HfWKxSEpQHWmuTdgaSxHM5NbiOHqITFT+L7RmpA
-	 ThVJHHRXLI/Xw26Mrk5PgtbEmNJ+eFT7W+ppnEqsFSo6sqArjkoYVAM7DZWJ0+1/4g
-	 siANgGFUYh38EQyHU9dnzjk/NCt9ZiciUaQAiuVmXB/pRibhwdnuCX6lDCodPA7bUv
-	 pAyy57PeyMV/OUbR6ofnZa1zntYRj/I+txpZ2hfK06TsrY6iPGnOXF5DQeGOnJmgjG
-	 16VPSdYJohdl/xM3pO0jRkkf1QVRMAFc2s73jlT+WQi1p05UH+4gYOPtgPo2O0clUU
-	 8YPHw29nHBXnQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260705172325.118926-3-krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] ASoC: renesas: adg: Drop redundant NULL check on
- clk_get and clk_register_fixed_rate
-Message-Id: <178369992206.82617.16738196828533126762.b4-ty@b4>
-Date: Fri, 10 Jul 2026 17:12:02 +0100
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="JDtGbDz7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=qZnmUvqzpN2gHADFKM5g69S4CeLVnbNH9BYWBAmZFX4=; t=1783746896;
+	x=1784351696; b=JDtGbDz74laZssaCfcwuctmFrNb0+ETawVXz5cyByidS6SGOn2KhyQozFCMNk
+	+vmNMo76imRdqjBl5LKaoR27A4/SlJ/SWU1LxpGmRfd0Wl8L0E9Ov//NHvU87iJA8qXXrH7W/mD9h
+	l9iBlbPJ3shtnjRA2eM2arB0Ve/K98TOeogV6/Kk0+dyaVYSVFt9ibZr8j2jy7uaZRJBKfJubkKab
+	xNNnD0NYAyV1ZZFdi9B/4dwLhsJwyd7QJIBTgr4rXgOIJo8B1uq9wXdgrs4rMVDL8YDpA8LNHws1y
+	UOzuO/qvM5SGrOYcYJ8ESqBPy/yEO/0l6fZJRAsOmKM6Wo87FQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.99)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1wiQ37-00000000UQT-3Xlb; Sat, 11 Jul 2026 07:14:49 +0200
+Received: from p57ae56b9.dip0.t-ipconnect.de ([87.174.86.185] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.99)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1wiQ37-00000002du0-2WUp; Sat, 11 Jul 2026 07:14:49 +0200
+Message-ID: <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2 0/5] rsk7203: switch to using static device property,
+ drop legacy gpio API
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Linus Walleij <linusw@kernel.org>, Dmitry Torokhov
+	 <dmitry.torokhov@gmail.com>
+Cc: Rich Felker <dalias@libc.org>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>, Bartosz Golaszewski <brgl@kernel.org>, Andy
+ Shevchenko	 <andriy.shevchenko@linux.intel.com>, Arnd Bergmann
+ <arnd@kernel.org>, 	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Sat, 11 Jul 2026 07:14:48 +0200
+In-Reply-To: <CAD++jL=Wx=mHORGDU_=PgGrOCdTSVes63jgSL2xQX+rCE2uaMw@mail.gmail.com>
+References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
+	 <akyJOW79W0xvI-P9@google.com>
+	 <CAD++jL=Wx=mHORGDU_=PgGrOCdTSVes63jgSL2xQX+rCE2uaMw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.2 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1309; i=broonie@kernel.org;
- h=from:subject:message-id; bh=bJl5fQPl/8SCiPA7HP6kJnaSwYgVGISoszxcNL4MMmc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqUXBZ+rZGW2WKc9HLptVS1mb7yESq5dqGgoQvR
- sBlAoMRvLGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCalFwWQAKCRAk1otyXVSH
- 0PB7B/45UpBS6WA7tvCTfKnhJgxO+JY52/cun8iMdLzjHUSETkn1u+0tCsMdzTaYEjdSPCo7Twp
- ngHnUD7kt+IXhfkqclWk7MVHUMMWePDiGIUu3xziyRw0MpLnzJlNQ5xxHzUeA41sgaqPzUA41Ub
- wv8J8hkAs6Cfluc6yQfVtGjzgnQZpSjSDGrEmTB28sWmuC/BASDgLpson7bns8XWMTgdwVl8Dy9
- bXNWPPCdwIPjMnFv5JFOQibAgfNNCmT5TNHs2jsHNLfBK8+xMaVXbnFACTbvH55bjlhPZTXXG6X
- wiJWOvYqS9+ZqSEaTFNHwJL2uyMzNZfkICSp0beA8vvqAqL0
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Sun, 05 Jul 2026 19:23:26 +0200, Krzysztof Kozlowski wrote:
-> ASoC: renesas: adg: Drop redundant NULL check on clk_get and clk_register_fixed_rate
+Hello Linus,
 
-Applied to
+On Fri, 2026-07-10 at 21:05 +0200, Linus Walleij wrote:
+> On Tue, Jul 7, 2026 at 7:08=E2=80=AFAM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+>=20
+> > Gentle ping on this series... It still applies cleanly and we need this
+> > to be able top drop legacy gpio interfaces from gpio-keys (and
+> > eventually from the kernel).
+>=20
+> I lost my patience and queued it to the pinctrl tree on an immutable
+> branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/=
+log/?h=3Dib-rsk7204
+>=20
+> Then I merged this for v7.3.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
+I'm sorry, but I wasn't aware that this was an urgent patch. I'm doing this
+as a hobbyist and I'm working on my own pace as I cannot always spend time
+working on kernel maintenance.
 
-Thanks!
+I'm usually collecting patches from patchwork [1] for review and then merge
+them in batches if they're fine.
 
-[1/2] ASoC: renesas: adg: Drop redundant NULL check on clk_get and clk_register_fixed_rate
-      https://git.kernel.org/broonie/sound/c/af58a647f9c9
-[2/2] ASoC: codecs: es9356: Constify regmap_sdw_mbq_cfg
-      https://git.kernel.org/broonie/sound/c/6ef98181eac3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+What I don't understand, why did you choose to use an immutable tree? Is th=
+ere
+really a need for such an escalation? I find that a bit rude. The v2 patch =
+series
+was sent first in May, so I didn't think this was already a long time.
 
 Thanks,
-Mark
+Adrian
 
+> [1] https://patchwork.kernel.org/project/linux-sh/list/
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
