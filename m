@@ -1,106 +1,79 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F93E0725
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 09:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E9A377559
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783934419; cv=none; b=Qx3tZtuyzlpPic3Dvo3BEt4norofu3kmVsCtW49nqRdE5XX9h6+KMguaSWg+hexGWNKgtpW6cztXHP7mYQ9EfTTHqrvUJree+poU6qOTcjokY2yfsL8QWT8W/Bb8oRBNJ1aApqDzcJiaEi3zpuGy3E4e0Bn8joLZUcOuZVntZRk=
+	t=1783936000; cv=none; b=TkOZKV3gVLtQ4NCgPtEnIS2Lp6buHknnAHV51Oh4WPXNMad3VWB0MFLOlJ/pLcFM+LBbKTLA05o6aqEQ+xVyT/WpOM1e7Zqez0DNXM5gYP5vWUa0Ip8Qe+DE7pWaoHjcqYHl/27cpz3WKADtZ6J2RapOf39/qs77WK73JLiHDUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783934419; c=relaxed/simple;
-	bh=zgIM9UCa3XkWmd6kqFFWou+UXKAbWYBBdjA28fRvpGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VTwCoBQuHgQKG1sN5qg7bISW3VJIq8nOik3XkHHKpl0PaPEOgMyoHemhoM8ymDEbWCHEBPWHtrbTacQWPDc14fo/qlBnjEq7+kFNd6RisRDAw5OIDNVDwgfppBpJFJ2Ga7NuDC2G6q9P12Z/riSUBFDhF9CuQ1dTsCbA2aGlH0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5bdc6c65e90so1670426e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 02:20:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783934414; x=1784539214;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=FudjopChxRShNl2EKXmfpQ4D5dQDLukS5DHJwD71hIo=;
-        b=DaM0rU/ZgTWVy+/wcyrPArsrJSWcp3T7H52pOw/P21stROLd6VduUFuD/ORRF0ghPf
-         z21VNAI3JmUhmATCx+4Q2g46P7+B/Qhaj20hzBc2Q3bd6HBvmEW4A6HfRgnJpLERm7Qc
-         hc9kC116HfBrGLN8hRiB5pNg6Zzh80b4spn9DZgThixHPlOXUY1y8iml+TSxC+qr+2BE
-         UQifiV3mENNcEFDMF92tiCrz43v/T88x2f4FNdl6NwPWTTwFBeMOuA3ApVbDd3DvO9Uk
-         7ifZXEw03f2hJNB4PNmxv73Im9/OP92yXDD8w+VVNlSnslLOK6k4jA2WWDopgCUV1G/3
-         q4dg==
-X-Gm-Message-State: AOJu0YyMKMEYvsB3HaYqBOmNAe/BSZKFE9eyKfCnotodIATyh5NmHjmf
-	GdnzaDL2Jj5dbenPw/k5VIdVQzltt8afOL9VWlC2zg4HSzQ1wN22UnVpXyAK2HX0
-X-Gm-Gg: AfdE7clSw0GwbwS0/RL0S+YRodM8fqemPjRIFIMI5clMwiWfymQkp6rAqVDpeMmv1jQ
-	R0msqqjA6F01hM9Yz1sFxE9cyO/pmhTnpG2Gn3WIRP7H3pDME8NkP2hncxGitOpecmipIYm1UH/
-	WMWkTBhkuoWMduwyk1a/AoQ/syhIlqvfxgnFXWTcbNg+vojaKwtoVUS2dPOCzGYxqvmX/qtJebE
-	10VBIi6LKzS5NNI2hkNV/Xsh3rh0k4wjgPUcU4E2eS2fLct1HHE6vHUAkeXUZDUf8uDtYMQeHj5
-	OxprnzAWcx92UhAsITDaRG+z0/mK1lsp4gmxkQojoBUoaV5cNH9JzV80LIyrEs83XaX5DeMW8yx
-	thZKekdD2pT66c2Pt2Cbh8albUhC8xWiL76P0KNJqG+bQCPWYvDARgh4CtbyIh02vApwEOg376R
-	FsCwVK6b+0OT40gQT+K2j6eAiaTXh8fQ8UWCQSumdODt4SMtyLiRJ6ydpJtlW4
-X-Received: by 2002:a05:6102:5a9a:b0:727:fb8:f269 with SMTP id ada2fe7eead31-74533e17c26mr5384644137.22.1783934414451;
-        Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96ed25847e5sm7429866241.2.2026.07.13.02.20.14
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-7396940aebcso2208372137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
-X-Received: by 2002:a05:6102:5a88:b0:737:8ff4:147f with SMTP id
- ada2fe7eead31-74533d96437mr5149659137.17.1783934414002; Mon, 13 Jul 2026
- 02:20:14 -0700 (PDT)
+	s=arc-20240116; t=1783936000; c=relaxed/simple;
+	bh=S1Jswu4gF0raqkyqNHhNG97xtcffgBXN4C7u+pxab5w=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bb9d2VvBCa43zbWLrO+2x9Kp5eCRQpFB28CTMpPozD4ySkubKbYU2n941lsoYVUop7PzjjCAY9ytZtVlXka9YLGt7X/JIdvPsS+qUl4bKWIbMBbpWBNAD909aP5gDrvC4YCLL2yYk2JJTkRpnsIhnjfaouhiRTvgusTgmro2iXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhaQSBeb; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhaQSBeb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD211F00A3D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 09:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783935998;
+	bh=S1Jswu4gF0raqkyqNHhNG97xtcffgBXN4C7u+pxab5w=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=JhaQSBebJHsv88m59on73a78tG5oq7wc+mnZOZz5DbBtAJyhEsF4DmYkbBD199iJp
+	 EjX1S9Q6LEIkwO34VXtSO4s14YKJGCToUoQebcDlVkYcU0CGCjtuNJeEXLlFRdTeVJ
+	 eUQgAmd0YjDyJVkbz7Etthpep3cPo+cnadVRUfqfZ8kQRafS2M8uKMt7FNqQTy2u34
+	 JxTaFxXLPuy3ogX6ctrE7j12bcfHNpV5HkCm+Sdk4IwdxRfsKtQ9WgDF6ifd4U1MX+
+	 qk5V2a+oi2NNe8FbKZJZQmeDJmULhLVFjXIJ5Z+QXGB+aqLwX5t7nQ2illmfWrrOe8
+	 lZCAoW0ZcVdig==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-39b3931e259so27337901fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 02:46:38 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzUkCHrhQ8lVBQ8IxzouYbTkfhTLD3JEgs7PFaa6QDWxpA4EJnQ
+	ei5RDZkB0U9okRNlqXZkgRo9madriEv1gRuofTQ2siDtVNFfs+9ve+0MMX7SSf86EhQdGZOx470
+	aBpEufHwCXP7jTFR1tO/HP6zM2xhgciN7Qtfkf6ATkA==
+X-Received: by 2002:a05:651c:19ac:b0:39c:f58e:5c8a with SMTP id
+ 38308e7fff4ca-39cf58e6a1bmr15845141fa.21.1783935996856; Mon, 13 Jul 2026
+ 02:46:36 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 02:46:35 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 02:46:35 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Jul 2026 11:20:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
-X-Gm-Features: AUfX_mzy589jps_1O1AtmCocHbl-UiTW35zpb0NKjYk3J02kC89IR38oMnQCTrQ
-Message-ID: <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
+References: <20260712093148.21446-2-wsa+renesas@sang-engineering.com> <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
+Date: Mon, 13 Jul 2026 02:46:35 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
+X-Gm-Features: AVVi8Cc0kqodj6tQl0eUIgkxrp0sz9RxCfHf8zbwTLuRtnTtrzGWp2JAJGQrxYo
+Message-ID: <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
 Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: add a comment explaining the
  buffer init
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-renesas-soc@vger.kernel.org, Abdun Nihaal <nihaal@cse.iitm.ac.in>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Wolfram,
-
-Thanks for your patch!
-
-On Sun, 12 Jul 2026 at 11:32, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> To avoid more false positive reports of "leaking memory" when
-> fops_buf_size_set() returns an error.
-
-But who is freeing priv->blob.data when fops_buf_size_set() succeeds?
-
+On Mon, 13 Jul 2026 11:20:02 +0200, Geert Uytterhoeven
+<geert@linux-m68k.org> said:
+> Hi Wolfram,
 >
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-> --- a/drivers/gpio/gpio-sloppy-logic-analyzer.c
-> +++ b/drivers/gpio/gpio-sloppy-logic-analyzer.c
-> @@ -237,6 +237,7 @@ static int gpio_la_poll_probe(struct platform_device *pdev)
->         if (ret)
->                 return ret;
+> Thanks for your patch!
 >
-> +       /* Initially allocate a buffer. It currently is NULL */
->         fops_buf_size_set(priv, GPIO_LA_DEFAULT_BUF_SIZE);
+> On Sun, 12 Jul 2026 at 11:32, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>> To avoid more false positive reports of "leaking memory" when
+>> fops_buf_size_set() returns an error.
 >
->         priv->descs = devm_gpiod_get_array(dev, "probe", GPIOD_IN);
+> But who is freeing priv->blob.data when fops_buf_size_set() succeeds?
+>
 
-Gr{oetje,eeting}s,
+In case I was too eager picking it up, let me drop it from my tree before I
+pushed it out and wait for Wolfram's response.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bart
