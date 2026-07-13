@@ -1,78 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69186345CC0;
-	Mon, 13 Jul 2026 17:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB1578F3A;
+	Mon, 13 Jul 2026 21:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783965243; cv=none; b=cqKWspL1aCtimJrOACjtJqfBEIvNSXxiMlo4EBvswXf6OFVsp8gkOOvvkr0xud9cbp//K88lHikwuj9GybDPAbZIoJEYwqDWXWNYziOJ84CKUjdzd1y4EAXKftxQC/QgX1/pUq37/Qhwta7y21atQ5Gn4LtJd3t8tTJudUjaK4s=
+	t=1783976812; cv=none; b=EZoqOg1AT88MUIf4ZB+D4fC3DIDbpaZDNWKQ9lsq5agVlzrMYbk3I4U3kFjAkPnp5O/b+3h76apBbmYLWJ7M2WGtZmJvy2DIkMGmy+bRgptud6+wQ6zPtBZeXKFS4mncj2mpw989TPmvYusSAco/Z3XLxXveJNdRWQEUHBcCS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783965243; c=relaxed/simple;
-	bh=xpgHPT/JcnkDhaTFjmE+nZeO4XbztrxHgTdL/5lej04=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bvFKrK/iUnOoZfuo38UDYN8bppZsJV1470aZO5mhtoat7QAh7USzrfCwIsq8/ZjPxcnfzdF2nyHJMidyjUJtehios45Y1LWjwqlwQQVkBKOyTnSqjduomgAlOSdlNGrkAwSicbtN5pAXkAYk+9XQzWEBlpvD3Qw9QDg8FFzO6oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIFnMeAW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783976812; c=relaxed/simple;
+	bh=MVa1wRBJRU6+fCy+2HEUjLBXLS095SdQAspyYiCbT3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c58QtTDnRMSeIjBlW9rfPRWXxx4zkARJv6AatfWRzNvLr4Z/k2b0sAMpGLxRyg7YJF2K/Sl47PafTPygtCuwuzfRJaBnpuKvKpRlCha1FayYxJpdtlmeQduZ6BNGr0oOZaeeb07LJuPCoGjbh8j/1in1kVk+nfs2T9TVXf9HOWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com; spf=pass smtp.mailfrom=Igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MEtLxz+Q; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIFnMeAW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10EB1F000E9;
-	Mon, 13 Jul 2026 17:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783965242;
-	bh=5hmDkoykXyuPCNX5o4VG9nAOn2vOS+ZzIkyEv+1eQgQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To;
-	b=QIFnMeAWfUu5xUX6zoFQeRz6/U1yN51/WVkbP9f8XVzRUvQVcT1PnbYX012sRdGsu
-	 Yyal/hZB1vTsCmmRZ1bfV9/nK3hfKtCLBdKy6S/lOLRz1Oi6xaTlUo0xAJH3y5yvxM
-	 LF+DBgK79KTe3L40BkSYfaO9GEaxv0EosnBX1cz3wVSzqIt6k4wZKpttVTk6Blf79y
-	 l5DQy8Qg/eQRV85kTfyR1ZXpHugtN7H2fv/jsSbItz9sx+XylYKfvyjHwM9kZFH0Ov
-	 dqRv/ToS+zowvCFe6dUK0hqlP3fS9gS7EEOwmUmNOJYpLQmrIqhxrlv50iR7bml+nK
-	 mIwHXEWzlrz2w==
-Date: Mon, 13 Jul 2026 12:54:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Marc Zyngier <maz@kernel.org>, linux-pci@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar-gen4: Inline GIC_TRANSLATER offset macro
-Message-ID: <20260713175400.GA1258926@bhelgaas>
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MEtLxz+Q"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xQrScTMErwGvqTbe4/xRXxRntlCADJUSrD0i3fE7pTU=; b=MEtLxz+QaBvAuYqwlzpVK9DTMK
+	2vEikTmQdo/d7diC4pmJnjScn04vhjDtET+9wHUXgiQHEmu0BIMMxxhxshP4pVaYWrXatPaYZ9UqU
+	mc7YRYAqKwsAHGUmizXgKPSxzM/lR3Gk1SW1YMdgGr1ylDHKsHYyNGACbJzqA8tE7ufKdKb5y0ko8
+	BAS0RWViFgPHrjDdIEE4xm0VgTh5XjXn4fV/TRBbRBTN928yOaf1tbGjAI8++zHNBrx68UpXzoWbo
+	fKemjPL6WqzUQzwwWLoDWB+nc2P+XC3EtFfudlRWuulA7M+RJqiCW7gImoyIrJRQ0COXpx48MLmcI
+	59Z0HZjA==;
+Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1wjNr8-00Eg7T-Rb; Mon, 13 Jul 2026 23:06:27 +0200
+Message-ID: <220b89a8-348e-4021-a11a-cfd73610c688@Igalia.com>
+Date: Mon, 13 Jul 2026 14:06:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2cb03029-0957-4ed8-98bd-9b3e0e0bce2d@mailbox.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/9] drm/managed: implement managed versions of
+ kzalloc_obj/objs()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20260612-wb-drop-encoder-v6-0-9f3a54f81310@oss.qualcomm.com>
+ <20260612-wb-drop-encoder-v6-1-9f3a54f81310@oss.qualcomm.com>
+Content-Language: en-GB
+From: John Harrison <John.Harrison@Igalia.com>
+In-Reply-To: <20260612-wb-drop-encoder-v6-1-9f3a54f81310@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 10, 2026 at 03:35:10PM +0200, Marek Vasut wrote:
-> On 7/10/26 10:30 AM, Marc Zyngier wrote:
-> > On Thu, 09 Jul 2026 21:10:03 +0100,
-> > Marek Vasut <marek.vasut+renesas@mailbox.org> wrote:
-> > > 
-> > > Instead of pulling in the whole linux/irqchip/arm-gic-v3.h ,
-> > > copy the one GITS_TRANSLATER register offset macro directly into
-> > > the driver.  This repairs the ability to build the driver on
-> > > non-ARM non-GIC targets the way it was possible until now, which
-> > > retains good build test coverage.
-> ...
+On 6/12/26 11:30, Dmitry Baryshkov wrote:
+> The kzalloc_obj() and kzalloc_objs() functions proven to be useful and
+> widely used for the reset of the kernel. Implement a drm_device-managed
+> versions of those macros to mix the nice interface with the automatic
+> freeing of the pointers.
+>
+> Note: the original macros accept optional GFP_foo arguments. They are
+> skipped for now, making all allocations use GFP_KERNEL. If necessary,
+> support for overriding the GFP type can be introduced later.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   include/drm/drm_managed.h | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+>
+> diff --git a/include/drm/drm_managed.h b/include/drm/drm_managed.h
+> index 72d0d68be226..79049bec277d 100644
+> --- a/include/drm/drm_managed.h
+> +++ b/include/drm/drm_managed.h
+> @@ -105,6 +105,28 @@ static inline void *drmm_kcalloc(struct drm_device *dev,
+>   	return drmm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+>   }
+>   
+> +/**
+> + * drmm_kzalloc_objs - &drm_device-managed kzalloc_objs()
+> + * @dev: DRM device
+> + * @p: Variable or type to allocate an array of
+> + * @count: How many elements in the array
+> + *
+> + * Returns: newly allocated pointer to the zeroed array of @P on success, or
+There is a mix of p and P going on here. With this made more consistent:
+Reviewed-by: John Harrison <John.Harrison@Igalia.com>
 
-> So in the end, it is either this patch or limit the build to
-> arm/arm64 . At least this patch still allows building this driver
-> with more compilers on the various build bots, so I would opt for
-> this patch here.
+> + * NULL on failure.
+> + */
+> +#define drmm_kzalloc_objs(dev, p, count) \
+> +	drmm_kcalloc(dev, count, sizeof(typeof(p)), GFP_KERNEL)
+> +
+> +/**
+> + * drmm_kzalloc_obj - &drm_device-managed kzalloc_obj()
+> + * @dev: DRM device
+> + * @p: Variable or type to allocate
+> + *
+> + * Returns: newly allocated pointer to a @p on success, or NULL on failure.
+> + */
+> +#define drmm_kzalloc_obj(dev, P) \
+> +	drmm_kzalloc_objs(dev, P, 1)
+> +
+>   char *drmm_kstrdup(struct drm_device *dev, const char *s, gfp_t gfp);
+>   
+>   void drmm_kfree(struct drm_device *dev, void *data);
+>
 
-I like the build coverage, but duplicating the #define doesn't really
-seem good to me.  It makes readability worse because cscope/tags now
-sees two definitions without an obvious reason.
