@@ -1,70 +1,71 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF4D305679
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 15:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B7F2236F7
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 16:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783958052; cv=none; b=lWbX3U2+baNLlo369+rjC5hSNA8qOm6WUgFbQ0RkT+kWiwUmQXu5hE+Lqw5c8rT9H2ePRp2YchYPRaxXsIY2N7LDD5B+sRuBSahhAN+5NUT5C+p+IukMoUrXw9ABmH4XsQFts4bVknibRvV9cJIvi3C2It+DptQhEZSyao9FFKs=
+	t=1783958451; cv=none; b=q1OLVhgJr7Fs1S2ZlupjAWGB54kHid/ZVmvu8j44aSXvQadNcFBpTo90WYsaYwcD6jVECjShcBQ0B7YaF0etQFnN5/BMYZm5Zkioc24dp1IhhIQvPjmcHf6NOWfIri5BSFV16TatjupPL8zqlVJ0M5TS7ED9yl64XoaEeL3JU90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783958052; c=relaxed/simple;
-	bh=m2bCXYj8AWrMF/1laWCVCT5bKqmKjFJ215Tf8K6H5u0=;
+	s=arc-20240116; t=1783958451; c=relaxed/simple;
+	bh=SsOh1enJoELJHzfIclkKXerzvf46Ll/w8xxgwM0UOnc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rIbXYOuHdohzmv2mEPT/eKi9a6gxN9oXyugDOOYeSPBu8lMjtVMQJfx7wAZpVjAj8DJiTEsXutC8CZhpfq+0A1243PyA/0sTF2A9VjqKkb9cYZZCviUOpFwJUbOcZcA2ei0O07dGHAcbvN6vder8nf32rj+FI0w9YKmvb10NFwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+	 To:Cc:Content-Type; b=EosQ6FGzIf0KPpb+G5tuu9sVh4rWtUOpHNmj5lMP8xn2OEDq9hyBZpGniSQNjAiLuwV7gjweXu9PcErxFL064tt5XFjLmV44kvA/BQu/M7BatBkgiDZk5Dzchp0vL5RaynKQ+v3ZnqiqXBJE/rzZsSu7/f2YsFpWv1WE8svJ2nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-9674d727c0aso10489241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 08:54:10 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-736eec08c43so30535137.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 09:00:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783958049; x=1784562849;
+        d=1e100.net; s=20251104; t=1783958449; x=1784563249;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=qzEerLqOaw9Z3GkpXKkc+Ohu/zTEKX/5jHpFuADj7Ho=;
-        b=HBk5IuR3UU7c27m24xxRrG11JldV/YZVwGyyTqIKvtGo0rt+Sve7ALmtOlNpD21qjT
-         MmOT2l9E3I7u8Tn5CmEsjI0PzBcTWPsR8gUffi+6NxnXp6vASeSaQCjtM/r7TbrEBzPt
-         0mMD9/1klF96tjsaYwTgC5PsBJdm97nA9FOuESx+ACdc+aQizlc3+KJ5UzQAPvsKQlhy
-         xLjWXJxnQt9kOi2q8oyNOxs/mko+rfetr/Un9YmXUEmmskpKmYxwiZnneCnrxgVAleph
-         0u3c2IiaBwy+zQxdyw5qw+g/Yj/MA+2w8UBGNRkE+80iQDsvTGZa345nmu+9eReG1vM4
-         Veag==
-X-Forwarded-Encrypted: i=1; AHgh+Rr8x1xK57AwmK0rBP8QYkmk61RetP/Bji5UF8MG726RU52CU/goR1VoRexSda05v6BicznskrtSZ+LJ8Pfr7NMHMw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvjBBHl0I2a86XCt/5Ehue68xWTXl6jULzRqajjpYhgR8PbpPm
-	WNLxnj3MVmryVbCl2/3GnGLy+rZu9qzwecm1LwYi1Gv2XxTtZs89LMp8Ij1LdqNPJ0c=
-X-Gm-Gg: AfdE7cmHod8k0LEAFcJ631KXd2rM2Fj2iEZ6gcTT4gKFMF4EEEdNDk0wH+w7lVXDevO
-	PiMi3vMD3FJeEzwthCnzPXjlJ9NJQJo2Jb2/4A2H1AhIzDgGm5n4NphPqqktIsggpDIktz96F/j
-	k5X7s7pbnadvPVC3ONyMuZ/5O9OiY5Mwutv0dFSulzqrmGqnVb5bgysd+pOcRIkFg9tbqEP76wJ
-	dPiXWqorMbMZTVTP2vqW5YEX9EEuu7qupGwaWpWruvNlGhNzdiU+1uOtshZzYeJ7pQ+99vW6K04
-	t2/Ey+kDqVMvBw8vTWzO02CSS57/9AxzrvL4wvLNICqFBEUB7D9guxgK43sVwxETTgwnNPTjdxF
-	iAv1G5E35QpaLz/Y7FL5d8Bxwdp+mlyLm6CGW442f+PLAkIFLe8o0zCWzan2u+dts4rdLHYCFrK
-	+f4yL5Mi7NEtLTo2mnaT5A30qGGz5XRfOuAUdqFBMi31IMpicVlVpssOo4F6Oo
-X-Received: by 2002:a05:6102:f12:b0:740:2664:800b with SMTP id ada2fe7eead31-745368d809fmr5160737137.10.1783958049352;
-        Mon, 13 Jul 2026 08:54:09 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6e38e25sm8995926137.11.2026.07.13.08.54.08
+        bh=674QbDTihSeDJzkwbUpD4t11m/0pIrH8HDq4q33BUPk=;
+        b=hYdhPdZTeONQRfvbmrlnCt5uy1ue6M2vjmQgLegfXZWLShhS4p/oSGRjL6RMTdKv5n
+         ogKqC7OphaN+5EL4KjJ9GksIT6VIsog6/jqB02GGheOIOwe28xJQemq0v5NfsZR/i9oK
+         awDydJ4nvPqsr1t9gex3ILkmEHlCA0CQliSCL0nb1RfUOH1U6UzB1N7nYHbDlQ6GDgJ9
+         aWJhMmBKlZjuQ5XQ4kRG83AowNIsYbehhJLlgYEjsf1DpHCIIFgmd5xHfMCPXFt8UBow
+         i/gxMvso0N7/LRZZ5gGhlzxD/aNN2CMVinpZhCRIltvADoqAfsHSnOs8fjbCeeKOMobF
+         ya7g==
+X-Forwarded-Encrypted: i=1; AHgh+RqVviqRePYFg1Kx0EueuLkILNmMIW5wGxh+t+N38SoHKXOWISAh9pEd2YXHa78HhQz2sl43OO16upstWmciH1YdFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzdr6OUIf/R25OKnptE+3J6ewWL/pIlELhRerxUQLhMdu25Tve
+	kTpfenXuctYZzVefSa9ZftdzlFLr/3EYtp3+TElmV3Ih5DdCwuUksUGMnSuaxF0Jgys=
+X-Gm-Gg: AfdE7cmj5rNvtC2GvDb7bzK826TdWJjdfFVQa80KOu5MFlInHcttxAyttZULozE4YYr
+	l3PHfJblHE4XFHvDbJsijbrr5rEoxKxOfNQCpYaEE0s7uhBLlMZis92b41WZuc0nWl16M9DXCsj
+	6b+Os/FjUHc1Ej/qymTiKeVzYDZrG5UNrDYvGvSBtXQ/QgleWmx1G1A93bNXTubig7zrv+7355y
+	n7uB3cWTNloBX6BskWJDARKVlqzxPRwHzdzerQcklbAzm7g0CTQHxLv4OGf/R8yVMh7+C+/nePw
+	wFEw2sIkSRpXq6XiQVNrSIi/3uEwiE8FB1RmNt7zg5djST02euFwi3mLhrZfYDWkxMXMEWnKonv
+	HXMaWvZ99+bk/2Zc02G/OjcUmotRRgotL+MAiH8F1Fw2bGsglHnk65bGscVwTmWXRHJ0AS6uYsS
+	b+g2tLUYw10zRwo2A8+AlM4jBg3a7XZ5CiCecOzBXBypzUWvkectSP+w==
+X-Received: by 2002:a67:ebc5:0:b0:744:e49e:df75 with SMTP id ada2fe7eead31-7450cbb8ed9mr5489711137.21.1783958448663;
+        Mon, 13 Jul 2026 09:00:48 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6a3eb8esm8893231137.3.2026.07.13.09.00.47
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2026 08:54:09 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-736eec08c43so23464137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 08:54:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RogqFopioz7xY6gja6C9r6S0VmWUgH+VlaCs9AS5+eGTAGA2BPzgoKVvDSTvS3iSem+eINBUK6nCf49txD+Tw67YA==@vger.kernel.org
-X-Received: by 2002:a05:6102:610f:20b0:738:8b5c:a41a with SMTP id
- ada2fe7eead31-7450cb34f7dmr6282037137.18.1783958048566; Mon, 13 Jul 2026
- 08:54:08 -0700 (PDT)
+        Mon, 13 Jul 2026 09:00:47 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5bfbbe5220dso12812e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 09:00:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqWN6GlIl+k5gqTFJNFJ3TDG9sDn8bgZQhx0QZeryiltJ2CD0B/ip2HGlhiFnSHLOxa7/lYUFpOe4WLk6JOyQHQdg==@vger.kernel.org
+X-Received: by 2002:a05:6122:6310:b0:5bd:a2dd:60ee with SMTP id
+ 71dfb90a1353d-5bfa470c003mr6470720e0c.3.1783958447155; Mon, 13 Jul 2026
+ 09:00:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260702123112.161160-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260702123112.161160-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Jul 2026 17:53:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdViSFTZZMe0SsC_aYmyZqTHCFNN0NxPVoNx5OBfwi4MLw@mail.gmail.com>
-X-Gm-Features: AUfX_mxFOjb_ZRaEJnQ5ujkHKlta3EMpWEatCZQZcSke1bOSWzSUjDpkmkvLviw
-Message-ID: <CAMuHMdViSFTZZMe0SsC_aYmyZqTHCFNN0NxPVoNx5OBfwi4MLw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 2/9] clk: renesas: r9a09g077: Add SYSC regmap support
+Date: Mon, 13 Jul 2026 18:00:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
+X-Gm-Features: AUfX_myKEIDnT9gmvoSHxK3o8Be_bh5PlIka-qGq00orZWkHqkcXT9vOA0tXJpw
+Message-ID: <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 0/9] Add System Controller support for RZ/T2H and
+ RZ/N2H SoCs
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
@@ -83,117 +84,54 @@ Hi Prabhakar,
 
 On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> This series adds support for the System Controller (SYSC) blocks found on
+> the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical low-power
+> management and access control functions.
 >
-> Add System Controller (SYSC) regmap support for the RZ/T2H SoC.
+> Hardware Architecture & Dependency Challenges:
+> ----------------------------------------------
+> The SYSC in these SoCs is a multi-functional block responsible for:
+>     - Clock & Reset Control
+>     - Low Power Management
+>     - Clock Monitor (CLMA)
+>     - Access Control
 >
-> The RZ/T2H SoC features two System Controller (SYSC) blocks that handle
-> low-power management and access control. These blocks are defined as child
-> nodes within the Clock Pulse Generator (CPG) address space in the device
-> tree. Implement support for creating regmaps for these SYSC blocks.
+> A key architectural detail is that these SYSC blocks are physically located
+> within the CPG/MSSR (Clock Pulse Generator / Module Standby Software Reset)
+> address space. While the CPG/MSSR driver is already implemented and
+> functional for these SoCs, the integration of SYSC adds a layer of
+> complexity due to a cyclic dependency:
+>     - SYSC requires CPG: The system controller needs a clock to operate.
+>     - CPG requires SYSC: Access control registers within the SYSC contain
+>       bits necessary to control the PLLs managed by the CPG.
 >
-> Register the regmap using of_syscon_register_regmap() against the CPG
-> device node so that consumers can access SYSC registers via the existing
-> syscon phandle.
+> If implemented as a completely separate top-level system controller node, we
+> would face a cyclic dependency between the CPG and SYSC drivers during the
+> boot process.
 >
-> Add a sysc_init() callback to the CPG/MSSR core to allow SoC-specific
-> initialization of the SYSC regmap.
+> Proposed Implementation
+> ----------------------------
+> To resolve this, the SYSC blocks are represented as child nodes of the
+> CPG/MSSR controller in the device tree. The SYSC regmap is registered
+> directly against the CPG device node. This hierarchy correctly models the
+> hardware address space while allowing the drivers to share resources
+> without deadlock.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
-> - Made use of for_each_child_of_node_scoped
-> - Moved sysc_init() to the end of the probe function
+> I am sending this as an RFC specifically to get feedback on the
+> implementation of the SYSC as child nodes of the CPG to resolve the
+> dependency cycle.
 
-Thanks for the update!
+Personally, I am not a big fan of subnodes.  I assume you are using
+subnodes because you can register only a single regmap per syscon node?
+Would it be possible to just extend the existing clock-controller
+node with two more reg entries, and expose them through a single
+combined regmap?
 
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-
-> +static bool rzt2h_writeable_readable_sysc0(struct device *dev, unsigned int reg)
-> +{
-> +       switch (reg) {
-> +       case 0x0000 ... 0x0008:
-> +       case 0x1000 ... 0x1164:
-> +       case 0x2000 ... 0x2024:
-> +       case 0x2030 ... 0x2054:
-> +       case 0x2060:
-> +       case 0x3000 ... 0x300C:
-> +       case 0x3100 ... 0x310C:
-> +       case 0x4100:
-> +       case 0x4200:
-> +               return true;
-> +
-> +       default:
-> +               return false;
-> +       }
-> +}
-> +
-> +static bool rzt2h_writeable_readable_sysc1(struct device *dev, unsigned int reg)
-> +{
-> +       switch (reg) {
-> +       case 0x000C:
-> +       case 0x0034 ... 0x0038:
-> +       case 0x0048 ... 0x007C:
-> +       case 0x0100 ... 0x017C:
-> +       case 0x0200 ... 0x027C:
-> +       case 0x0308 ... 0x030C:
-> +       case 0x0320 ... 0x037C:
-> +       case 0x0480 ... 0x0484:
-> +       case 0x0580 ... 0x0584:
-> +       case 0x0680 ... 0x0684:
-> +       case 0x0780 ... 0x0784:
-> +       case 0x0880:
-> +       case 0x0980 ... 0x098C:
-> +       case 0x1100 ... 0x1118:
-> +       case 0x1200 ... 0x1204:
-> +       case 0x1400 ... 0x1484:
-> +       case 0x1500 ... 0x1584:
-> +       case 0x1600 ... 0x1680:
-> +       case 0x1700 ... 0x1780:
-> +       case 0x1800 ... 0x1884:
-> +       case 0x1900 ... 0x1984:
-> +       case 0x1A00 ... 0x1A84:
-> +       case 0x1B00 ... 0x1B8C:
-> +       case 0x1C00 ... 0x1C8C:
-> +       case 0x1D00 ... 0x1D8C:
-> +       case 0x3000:
-> +       case 0x3010:
-> +       case 0x3020:
-> +       case 0x3030:
-> +       case 0x4000:
-> +       case 0x5008 ... 0x500C:
-> +       case 0x5020 ... 0x503C:
-> +       case 0x5100 ... 0x5114:
-> +       case 0x6000:
-> +               return true;
-> +
-> +       default:
-> +               return false;
-> +       }
-> +}
-
-This exposes a lot of dangerous registers.  Aren't they also exported
-to userspace through drivers/base/regmap/regmap-debugfs.c?
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -178,6 +178,7 @@ struct cpg_mssr_info {
->
->         /* Callbacks */
->         int (*init)(struct device *dev);
-> +       int (*sysc_init)(struct device *dev);
-
-I would rather call it "late_init" or "post_init", as it might become
-useful for other purposes, too.
-
->         struct clk *(*cpg_clk_register)(struct device *dev,
->                                         const struct cpg_core_clk *core,
->                                         const struct cpg_mssr_info *info,
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
