@@ -1,125 +1,154 @@
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB1578F3A;
-	Mon, 13 Jul 2026 21:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8C630E84D;
+	Mon, 13 Jul 2026 23:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783976812; cv=none; b=EZoqOg1AT88MUIf4ZB+D4fC3DIDbpaZDNWKQ9lsq5agVlzrMYbk3I4U3kFjAkPnp5O/b+3h76apBbmYLWJ7M2WGtZmJvy2DIkMGmy+bRgptud6+wQ6zPtBZeXKFS4mncj2mpw989TPmvYusSAco/Z3XLxXveJNdRWQEUHBcCS/g=
+	t=1783984088; cv=none; b=daLM22dIIab8D6V4QT2x6VTH3+IE9OlJ5Jmq9frkuXHARwAdXKcOo6a8+2JZDTCRZE5SmCJGs8FZLLt0ayo1y6pgn+p5NbLuyTh4OSQ3zabY2OT3Duu+mqF8FqatPOKnTuDXqnMAWt7ypxtz7l6q9UfHYk3PdWjlGy7ou8epV2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783976812; c=relaxed/simple;
-	bh=MVa1wRBJRU6+fCy+2HEUjLBXLS095SdQAspyYiCbT3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c58QtTDnRMSeIjBlW9rfPRWXxx4zkARJv6AatfWRzNvLr4Z/k2b0sAMpGLxRyg7YJF2K/Sl47PafTPygtCuwuzfRJaBnpuKvKpRlCha1FayYxJpdtlmeQduZ6BNGr0oOZaeeb07LJuPCoGjbh8j/1in1kVk+nfs2T9TVXf9HOWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com; spf=pass smtp.mailfrom=Igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MEtLxz+Q; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1783984088; c=relaxed/simple;
+	bh=4S0nxDg+IDtdWsMxJX/1PkNi8wcslVvw+S4WTF74nAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aCv6dK2NwMBX96HhfwvR6IOpYR9CI6yI05agLOVo57mR1reb8siEewv+7JND3O+pnJUKsm71AatreoxOLWmf9jwDeEJsEq7s2ZTMbRh+SkyWNt220JIW9I4HS7xOvnw1xf9Lf7KKOU48zjHjYSyGR4+dr7QwWeupYAvhxs9NYP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com; spf=pass smtp.mailfrom=Igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DmlLwH/6; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MEtLxz+Q"
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DmlLwH/6"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xQrScTMErwGvqTbe4/xRXxRntlCADJUSrD0i3fE7pTU=; b=MEtLxz+QaBvAuYqwlzpVK9DTMK
-	2vEikTmQdo/d7diC4pmJnjScn04vhjDtET+9wHUXgiQHEmu0BIMMxxhxshP4pVaYWrXatPaYZ9UqU
-	mc7YRYAqKwsAHGUmizXgKPSxzM/lR3Gk1SW1YMdgGr1ylDHKsHYyNGACbJzqA8tE7ufKdKb5y0ko8
-	BAS0RWViFgPHrjDdIEE4xm0VgTh5XjXn4fV/TRBbRBTN928yOaf1tbGjAI8++zHNBrx68UpXzoWbo
-	fKemjPL6WqzUQzwwWLoDWB+nc2P+XC3EtFfudlRWuulA7M+RJqiCW7gImoyIrJRQ0COXpx48MLmcI
-	59Z0HZjA==;
-Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oshCRkuTSc7HxbPUpUr4GjCt+a0l1+09+Fh6sX4fpLk=; b=DmlLwH/6NutqCUyxeNF/F1+a/v
+	bUV+IJzG28pvrTIYoYlgp0HQlfJjfamy9+jQh8BToWUqmEjDeV4P2lNe3cJIX36z9rAi6eAFzaCGA
+	wnkSZdTp2mgFeyx4vNqQqWeGCogW1QJI0yct7Rb+C3/MZAlTiExZ+h/H1spXbbMOFzf5vfFz1v/jZ
+	muLHFECSTfZNaUSzrkRTHddXFTOaR4I4WzK5nvf4wEdAt9lG5zIeNSW1DROXUZpHjAOndoTk+hljb
+	ZIwq+DM23AAhQvuueCEWyId6gSwFa6sYuEpDl1Wu+PreDHn8gfQzB953Br97QsPOkX7u1bpHl5w//
+	lDY2rkvQ==;
+Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1wjNr8-00Eg7T-Rb; Mon, 13 Jul 2026 23:06:27 +0200
-Message-ID: <220b89a8-348e-4021-a11a-cfd73610c688@Igalia.com>
-Date: Mon, 13 Jul 2026 14:06:18 -0700
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1wjPkj-00EiHA-Vu; Tue, 14 Jul 2026 01:07:58 +0200
+From: John Harrison <John.Harrison@Igalia.com>
+To: intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org
+Cc: kernel-dev@igalia.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v7 0/9] v7 drm: writeback: clean up writeback connector initialization
+Date: Mon, 13 Jul 2026 16:07:16 -0700
+Message-ID: <20260713230726.3738290-1-John.Harrison@Igalia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/9] drm/managed: implement managed versions of
- kzalloc_obj/objs()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20260612-wb-drop-encoder-v6-0-9f3a54f81310@oss.qualcomm.com>
- <20260612-wb-drop-encoder-v6-1-9f3a54f81310@oss.qualcomm.com>
-Content-Language: en-GB
-From: John Harrison <John.Harrison@Igalia.com>
-In-Reply-To: <20260612-wb-drop-encoder-v6-1-9f3a54f81310@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 6/12/26 11:30, Dmitry Baryshkov wrote:
-> The kzalloc_obj() and kzalloc_objs() functions proven to be useful and
-> widely used for the reset of the kernel. Implement a drm_device-managed
-> versions of those macros to mix the nice interface with the automatic
-> freeing of the pointers.
->
-> Note: the original macros accept optional GFP_foo arguments. They are
-> skipped for now, making all allocations use GFP_KERNEL. If necessary,
-> support for overriding the GFP type can be introduced later.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   include/drm/drm_managed.h | 22 ++++++++++++++++++++++
->   1 file changed, 22 insertions(+)
->
-> diff --git a/include/drm/drm_managed.h b/include/drm/drm_managed.h
-> index 72d0d68be226..79049bec277d 100644
-> --- a/include/drm/drm_managed.h
-> +++ b/include/drm/drm_managed.h
-> @@ -105,6 +105,28 @@ static inline void *drmm_kcalloc(struct drm_device *dev,
->   	return drmm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
->   }
->   
-> +/**
-> + * drmm_kzalloc_objs - &drm_device-managed kzalloc_objs()
-> + * @dev: DRM device
-> + * @p: Variable or type to allocate an array of
-> + * @count: How many elements in the array
-> + *
-> + * Returns: newly allocated pointer to the zeroed array of @P on success, or
-There is a mix of p and P going on here. With this made more consistent:
-Reviewed-by: John Harrison <John.Harrison@Igalia.com>
+Drivers using drm_writeback_connector_init() / _with_encoder() don't
+perform cleanup in a manner similar to drmm_writeback_connector_init()
+(see drm_writeback_connector_cleanup()). Migrate all existing drivers
+to use drmm_writeback_connector_init(), drop
+drm_writeback_connector_init() and drm_writeback_connector::encoder
+(it's unused afterwards).
 
-> + * NULL on failure.
-> + */
-> +#define drmm_kzalloc_objs(dev, p, count) \
-> +	drmm_kcalloc(dev, count, sizeof(typeof(p)), GFP_KERNEL)
-> +
-> +/**
-> + * drmm_kzalloc_obj - &drm_device-managed kzalloc_obj()
-> + * @dev: DRM device
-> + * @p: Variable or type to allocate
-> + *
-> + * Returns: newly allocated pointer to a @p on success, or NULL on failure.
-> + */
-> +#define drmm_kzalloc_obj(dev, P) \
-> +	drmm_kzalloc_objs(dev, P, 1)
-> +
->   char *drmm_kstrdup(struct drm_device *dev, const char *s, gfp_t gfp);
->   
->   void drmm_kfree(struct drm_device *dev, void *data);
->
+This series leaves former drm_writeback_connector_init_with_encoder()
+(renamed to drm_writeback_connector_init as a non-managed counterpart
+for drmm_writeback_connector_init()). It is supposed to be used by
+drivers which can not use drmm functions (like Intel). However I think
+it would be better to drop it completely.
+
+NB: Patch set written by Dmitry B but taken over by John H at v7 due to
+time pressures.
+
+---
+Changes in v7 (by John Harrison):
+- Fix missing parameter in drmm_kfree
+- Fix leaking error paths
+- Fix kernel docs
+- Add typecast to drmm_zalloc_obj(s)
+- Drop extra obsolete cleanup call in vc4
+
+Changes in v6:
+- Dropped applied patch
+- Implemented suggestion by Alex to use drmm allocation for the
+  writeback connector.
+- Link to v5: https://patch.msgid.link/20260505-wb-drop-encoder-v5-0-42567b7c7af2@oss.qualcomm.com
+
+Changes in v5:
+- Rebased on top of drm-misc-next
+- Expanded commit message for msm patch, describing devm vs drmm issues (Laurent)
+- Expanded commit messages, describing why the drivers are converted to
+  drmm_writeback_connector_init() (Laurent)
+- Link to v4: https://lore.kernel.org/r/20251228-wb-drop-encoder-v4-0-58d28e668901@oss.qualcomm.com
+
+Changes in v4:
+- Rebase on top of drm-misc-next, dropping applied patch.
+- Added a note regarding memory leak in the AMDGPU driver.
+- Fixed a devm vs drmm issue in the msm/dpu driver.
+- Link to v3: https://lore.kernel.org/r/20250819-wb-drop-encoder-v3-0-b48a6af7903b@oss.qualcomm.com
+
+Changes in v3:
+- Fixed subject prefix for the rcar-du patch (Jessica Zhang)
+- Link to v2: https://lore.kernel.org/r/20250816-wb-drop-encoder-v2-0-f951de04f4f9@oss.qualcomm.com
+
+Changes in v2:
+- Switched to drm_crtc_mask() where applicable (Louis Chauvet)
+- Link to v1: https://lore.kernel.org/r/20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com
+
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Harry Wentland <harry.wentland@amd.com>
+To: Leo Li <sunpeng.li@amd.com>
+To: Rodrigo Siqueira <siqueira@igalia.com>
+To: Alex Deucher <alexander.deucher@amd.com>
+To: Christian König <christian.koenig@amd.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+To: Maíra Canal <mcanal@igalia.com>
+To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: amd-gfx@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+
+Dmitry Baryshkov (9):
+  drm/managed: implement managed versions of kzalloc_obj/objs()
+  drm/amd/display: use drmm allocation for writeback connector
+  drm/amd/display: use drmm_writeback_connector_init()
+  drm/komeda: use drmm_writeback_connector_init()
+  drm/mali: use drmm_writeback_connector_init()
+  drm: renesas: rcar-du: use drmm_writeback_connector_init()
+  drm/vc4: use drmm_writeback_connector_init()
+  drm: writeback: drop excess connector initialization functions
+  drm: writeback: rename drm_writeback_connector_init_with_encoder()
+
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  7 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  | 18 +++--
+ .../arm/display/komeda/komeda_wb_connector.c  | 37 ++++++----
+ drivers/gpu/drm/arm/malidp_mw.c               | 26 ++++---
+ drivers/gpu/drm/drm_writeback.c               | 71 +++----------------
+ .../drm/renesas/rcar-du/rcar_du_writeback.c   | 22 ++++--
+ drivers/gpu/drm/vc4/vc4_txp.c                 | 18 ++---
+ include/drm/drm_managed.h                     | 23 ++++++
+ include/drm/drm_writeback.h                   | 22 +-----
+ 9 files changed, 106 insertions(+), 138 deletions(-)
+
+-- 
+2.43.0
 
