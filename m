@@ -1,217 +1,303 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010051.outbound.protection.outlook.com [52.101.228.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1E5346ADE;
-	Mon, 13 Jul 2026 17:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783963582; cv=fail; b=PI61kh+AgNctEkdWinUhYIrVV5ca+xsgDDmu7jYxrvNmzbcv0VZzNWyz9ZbyWRjglVz4Oz3cf7OnSr3yRzrAAqA54XF7CUeWPDUzUa+EYBuj/Ngngxz7P/BxSQCceQXjVWa8uESDCfXEti6njcHlozMFj4uk8QsJ5IIkMxN53uo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783963582; c=relaxed/simple;
-	bh=QY9HzFtq/F3BXQ31KLqq/sF3XgQMyThLa3mz0e+5uwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=biNdl0i8ZPoq9zPELg3XkRa8xJ838Tn8YVELUPnhcr4eQFPyB04PwgB7ZX+ujKiG+2grYnf4a7e8XDuYV10/Cjiv2duMIfTw6RuIb1BM8FE/Wc19Avaizf1gZE+oNCr3jvnCJ9tg4AtB912rmvBDJM/U1alBehViVlGVP1vbpig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=PHr2I2ce; arc=fail smtp.client-ip=52.101.228.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D2834CFC5
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 17:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783965127; cv=none; b=KNf1AxLgpaib1JnTYCMXVvFYpDxc6OHWZQ7siw83n4VTVnH4/uBDt5tucLn/UP4ZYOFKq50AAlc1GHrMfG9YycTxkynVDKIjmrHvcYiJwTs4yAraIdh/pLa2Ac6sWzE3UjU0cQth+L0V3iYs4u/u3ZGGDfCCcsyBYCs0Qh5L3OU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783965127; c=relaxed/simple;
+	bh=JAiqAxkcwnnqDSaNuZpYNFoN5e4I5rBW7k+/R1zI/wU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NgoGnhLWkEtObdb2GS3BjtKmpkS3K8M3P6r83D+4W3wtieTkil6hcZQfUdFupWLzsFXemVrReDGEYGQ3VKv5LC7um5e7+Z6Xa9NG8hAiJo2rldjhvGWgmS7xvoL3Y0EPaUJIV9BVqkhMfQwlzzxiVgivj1kiUHm1nnuG8OXYrcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhZso2GH; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="PHr2I2ce"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EFTqB1Q3K/akpT0cSYWiDSnklgU7rS29wzHnFYG4joz6fII3MERqqOGwgpRMRYfuickwSdV6LQ0zshEQNpD3fkqyOnQj+eAudf9SiOHLq8AD8YkwnzIu92mPl0Wj0tr03sS8w2DRkTDscF74D5ZLX17MV36Itw5qBYjndmvQzGvEaAL9mcjFOpcKdB6jTiCf4Lx77Lchx7U4PyxPy4+9yD1Lzq9y4Ib2TDrnv8GHEywel+yRBcmLrgWnfPh5uLd6Hv46ErFdefeYrpTlSZ3RbyNl2QNyYVMdEmkFp9P3EDY/GL5+dMPc0DPoAmWCYaC/POiLhuO/iJQ++NU1fSTQJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=trC6GHm3Elzrgi2Afw482SX7coFh+iAeuf4AVeYmgm0=;
- b=GkUFYBq7fgc60DCq3dnY7EQl2p/bZu4m03eN9XWGhk9zvHmTfP1IUHA7DUC8tT31wE2d+aSLuyWIcxwKJYOO36vAbas3dNr+Nzp+3bPulxPQU75A5Jm+jddZQQuMgiMZZ6ZFSd4uChQgSecJpt4M+G3ysVGZyJRcF7gTHf/63j90GLYPq8MbBcifhU03Chwj+dY5gpEr2RnQD9Tw46Dv+XCbNnd9i/Y8INGjm7iVq9B+Wz7hw5/lZfyUPOkFWeAYMgHNZFXh7CPQPBVWR2IQc5xKJ/BJvBi9vNKp3oReUqVGViHWr3wKupZYTeouMxnbRdPMUzs1cNNagbBslYQ8Ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=trC6GHm3Elzrgi2Afw482SX7coFh+iAeuf4AVeYmgm0=;
- b=PHr2I2cep4u51O+5SOZ0On/GIODnYY5MfbH8QFyjM5kiZfzmIOu9j98Xzl6H5o/8xdPtA74DiScAWqFM0rDf4H/2JsMzgFZgmH53BQh0MKwKr/z+tl3RI+e/x7giQxiRUB9MqDqwdnigfU+0AUdrpejDUryMkmaYdoECP20cmfM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYCPR01MB18075.jpnprd01.prod.outlook.com (2603:1096:405:391::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Mon, 13 Jul
- 2026 17:26:17 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0202.014; Mon, 13 Jul 2026
- 17:26:16 +0000
-Date: Mon, 13 Jul 2026 19:26:02 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: wsa+renesas@sang-engineering.com, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, p.zabel@pengutronix.de,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhZso2GH"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4798bea72f9so1864175f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 10:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783965124; x=1784569924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6XgOLzsrb24W2iBPumJJf1NiQ0JSKLBfdmOgsqRSs9Q=;
+        b=RhZso2GHYAPDR/Q+xb33d3g5y8PA6X8iH5CoDlVHjya6INtaytMZnuB5Ma5DJqNaoa
+         RiVnznZo3t8uSB8bZBBV0fgiZJ/7iHmML0R6mpYjCkcsNOhg58FjCxcrRnlwKa1SM7zs
+         yxtdNRf0cUxj6ufWfxpJJD/Kj3NrZfdcHTHctg/7z07mBraBkNx1SRs5haIhILDvfRGf
+         d8XFyNz1vE+P0HdVez+aauMPh0dk1coS8LfPnxDuVwBZyr2f40GHesAy+leGOEKBLYli
+         JFrBNvo3MPMtgmnhEVvUvWXUSqAmB5/epJ2sKptgwQYpX4OV75VvoGrC5ZNGWknjvZXJ
+         CaMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783965124; x=1784569924;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6XgOLzsrb24W2iBPumJJf1NiQ0JSKLBfdmOgsqRSs9Q=;
+        b=WXI1UeL+PIsU3f02UX/ET8bMmlS1r2IyGLXULCDo4Aorx+tceAi+Q2rmsMSiiRVqND
+         /dAKNyy0n18xjvlZRZ4/81ohQt7/1NS/MGI6V5vTedbgHlBznQFQ3ZFEazmtg2zRwqeJ
+         LJfr9HjaHbuaiSBTfW+2+MvvyjCB2kRRc3ZnWxvBDgjRhiqANutkGXfBOkfkpXzPgNBQ
+         fWnSm6TOCGFxeYBCUYNi91pkYQtupLggDDGLVu4qN3uNKW/7hSTC3/+0FrMYz5tact46
+         zUWqiiPRdEArrTdvn5Gr1KJMqYut9BxkD2YUWecaBH8e/L8VEFXFJ3X9XSHeXAdiumv5
+         6cJw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpo42lUrzxu4Qlpw2HwJSco9OsKkcf6sEzt+teJQSfVy5FUlJeZeADclpOiF+8WZP4J09nPvAJAo69SGdgM22jTdw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNOKN5YoczZie1XsXtitNzwnm+5uH2LBPBKKXkNW2gIsing5EG
+	WXFnEEFI/9BUbeyxqsa/I/V5wDNFZyg77fsbtS/gzlum3rr9h8EPzKxw
+X-Gm-Gg: AfdE7cmzZo9vScNT7VgGuhX1ZIFkdbLt+i7urGUeCbAvVK35QKx48u7BMO0y4eKei/1
+	SOFXy9xFboqK4L6TrJ5CktCZXKSuxGXFQDbvM5JKjDH5JffdJipqcOhjxuhC97gBJuqynR+1VFR
+	dNlJIIds6bwDiOInxm6VC5bBIN9M+HkmxQ0lfU5ZczD+ZyGOb36rBYFzWtNb+H6gitbIvbYaSn+
+	k271qJSlmDVuzdLsA96iHqRKIxux2fRaSnfp/CUf+1wQ7rdNN+PmX/cNF84FnlM+wVaZFTv0ifI
+	ZUde7/0h3OAad9GqIj+PtSKsyBRh4SskiaNXXPNBw2xjGeeQ8cK7FgN5QyqpeSB1TnM7CdSM9JA
+	293Cw2N9hyv6cqvX1oAw6JbB9BZUrgVCwlnMt3vdo4ipHvmNygeZ3tkW8ZfqnBE7tTPyLw7HYJY
+	fwTWYrPifBzV3hfmikGzq4OD52/rOH+nTck8QvSQ==
+X-Received: by 2002:a5d:5f83:0:b0:475:cb71:a344 with SMTP id ffacd0b85a97d-47f2dcc63aamr10574540f8f.37.1783965123536;
+        Mon, 13 Jul 2026 10:52:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:c899:4fec:2bdb:b719])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f464d6fa7sm1011037f8f.37.2026.07.13.10.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2026 10:52:03 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Ulf Hansson <ulfh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 00/17] i3c: renesas: Suspend to RAM with power loss
- and runtime PM
-Message-ID: <alUfewDdZ8cmGszy@tom-desktop>
-References: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
-X-ClientProxiedBy: FR0P281CA0114.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a8::16) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v20 01/12] dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+Date: Mon, 13 Jul 2026 18:51:42 +0100
+Message-ID: <20260713175159.138334-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
+References: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYCPR01MB18075:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3943f25-9830-4c00-aeff-08dee103d828
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|366016|52116014|376014|6133799003|56012099006|11063799006|38350700014|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	xXVWBM8CTRl71YBMv19+k7H84B3Virbl/CajVIrhh9BmLfwBCS0d1kprqvkooA8cCX7DRF4p37l8swqrfhF1p4udqXeD1KM/ZODS0cCKWyDQkNnCLXgO124hepxCFTIjvLgiYvorRojl9PZLrs2OEilwQ+vaqZMPcbmzdy53mh70GhZdg5vfvmO7Fsf+9OymjmKS2ArbHh688Gfd9JuPOFv5JzkhS0Xq1jiLy0xkHmTPaafFnaiev7Jh56f7oqgGSdDRhoE3EvjfWXyTjRraW/F9B9OInj6nTt0c45JVpAP0JbF52u/4HvzaicG4eacJ+OBHyiK0hpLuqo2G98ztfw0K/eoTthXzPmSJwQu68nGlN4E0eOhFIkJYwC2adrqKYeK3QwTgBUDbKPxC96CH4SlF97dnpnq3n4ThjHoD0Y99MmVk24PfDNNXtHRd8SQpd58SajqPscysWN7GIXd38jsL495vZilUQpoQciyu6OE5nXPjPGQQUBxFgXbq5ST+SbUg1C/nB0d5nOKkpUfZIhe3kaDvdGtKXuYiWydCM2jOkIrbH8U5tP7VNqz5J4GN2ZT0aetrk+Ybvd8S5MJRklyHD5uoytZGcmaioc7ipiGNVF7ndtHzMnKTz7TzzJ6dje1NtaOzPoLemR/ynze0a2ktyitCVcWEHlquMWufDP8yopkUbSdVH2dKOuKLwfmCghCpqSU4u1a6r36/a/0jRbv0PkrhBeitjlvm9GCp0Ik=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(52116014)(376014)(6133799003)(56012099006)(11063799006)(38350700014)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WJbmMk15qxXEleEsuy5+JzcMJ2eHZGz87SCB+jrOzGf4MDwJEGYhK/yhEFUh?=
- =?us-ascii?Q?Yrd2RHHjFZG5fp7MQVJZ1j5agZC/evIKw62obZOsc9ghJYkv3ZAM2PkvEr3e?=
- =?us-ascii?Q?+oOAWXc5JdCua/TnOFfoeLtsgS9oZjEElOxjmngnRWOscdOwNtwQAHb9umUs?=
- =?us-ascii?Q?E5Bwpn/MN/FrL+NNyfOUXn9alunOq8SVfe1CL5oga6nIDcdxyIElsfehrpDm?=
- =?us-ascii?Q?TXz6qwXsTUOAuCAc/xicrpkKN1vv8CKnX+P76RYOFZsmeZtB8ONQkw7twiKv?=
- =?us-ascii?Q?lWhMebU4Db/S7zE63ogDT72ykdsp2ox8/b66hxmiz7X+BApesw3IDsrJdFVU?=
- =?us-ascii?Q?Hw4jJu60QOcGbEWUNFkkB5ammbjYqD2mEtFrxeu9L+v5bkn6FY68WvGcLEiG?=
- =?us-ascii?Q?+TmbeqJxUt0N6WIWlZ2Jm7JJMos2LSpCoTik9aYsYh4ZzIgPdusS0j25aiEV?=
- =?us-ascii?Q?8CfD1H3HeqLYELzPNHqH8DHzRBwYrrwqp5qJIuQE/KnXi3x78PO6ZXJSkUua?=
- =?us-ascii?Q?sEc0hcPcFq/GbMb+snTs1RdXoR0OF/BzLiJlTDiKWlKXpcFrd1lYT2d/dY7f?=
- =?us-ascii?Q?yB94sBqzrzjju+a4lBHfdwU13mxDDbpuCKJKgyFy8QydIPYDS9qye5/tAPpI?=
- =?us-ascii?Q?kv42toQnCxPm73i0L50qAoyCzG882zHqocq/QrJ/KPxYuIJeZn3bhlmJ13y3?=
- =?us-ascii?Q?2qL0voBSq4llT22oPozP7ayLzSs7pk1mVPsZPhLaFmV6cfFp/DUE1Qliajz8?=
- =?us-ascii?Q?F0l6dIo10djttlOua1JU7lAxXsnK4GmA+wI0WC7wnLDV4/3WA9pfiBg+dkXn?=
- =?us-ascii?Q?+Cbc8npviZb9e/MDan+JN16w2hpI1kZnpdz3lo723V/oN72OTnp3+xGlmhMT?=
- =?us-ascii?Q?W1z453XGCXTK1Qp+pNDeMkw+RTTcBwkcVIajyG70+ECz0yyP0NfUO5fmH1uC?=
- =?us-ascii?Q?Z3O8egIsufE6lAZ+IR20uKjn1dRjifsDa3HlW3tqeEsBf8ELu0gMNtKgfmc2?=
- =?us-ascii?Q?nNCkWX8Gz7h30ZUeM1YUgOpUsdyBP/NBuxdjPo6hCE5qeft0AhIlQT802dWq?=
- =?us-ascii?Q?AkZXcPLXoZLyp9qtpUyJZDAwerKmf9w5j6FdtsjiTTn6hsQad3iY/pzjfoFF?=
- =?us-ascii?Q?SPqkse3aF8wleI5l2tVhepztYljZ4FVAy8Iyq/7FD6WfwxOj0HMAQ1UNL04k?=
- =?us-ascii?Q?w2CxM7RCLp78ckfEoPDNxumGZHeIZE5i4jOR+hiSZMynnX5Ref4LNds5OpqE?=
- =?us-ascii?Q?FsLzGZFkTn0uRMqAihH1f1XEO7xAHXNaAYdZGrYwAoby8RUCH88DNs5Uu45f?=
- =?us-ascii?Q?6x+uKDCPVm3g7mKzMuWOK6zgleNPlWpO3gjYSeKzwZrRu4QGT95LflY2FXqx?=
- =?us-ascii?Q?mUNCUHghggHNrRqfMO18wjP10ka2jkrLepKcg8D6kspFh3HQuofxt6cdWcz5?=
- =?us-ascii?Q?l3jK04kULENuBPOa11X5WKCDHLZHw/RrrlLSTGQ0zarQfmwRKLV8lkaI6feU?=
- =?us-ascii?Q?q6Z8857OEQxAiQvXPgdsO6zx+poHqVcPamEiJbLbZX+TG8+ioX/pmdFuOmHp?=
- =?us-ascii?Q?gCj3x1x5s9H/APyLu5anRRZwhFGPlhlJOQHf8t4H6dnOVuVnfvq824vv6ki5?=
- =?us-ascii?Q?S9W+jc2J4Ok4rR8mvM98LYvwnrp7LUuWY7utiE1LjL97THMfUyUFHZl7PVR8?=
- =?us-ascii?Q?SlAT692BLl88ry4YkYFwbI0BZvihYanzi6n4rA4WiCqWpFEOw+4J31Q2dWf2?=
- =?us-ascii?Q?OwsNiVpVJ+UxPWAF1wA/sn47gTJQwERH9xY3moBwtnBF9v9ygNEN?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3943f25-9830-4c00-aeff-08dee103d828
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2026 17:26:16.4675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XtRR4L5p1RqVut37idgVvkYKNrweWn4+kIemLSXuqFR1cDalbZG3CWWQ/vHkRRJ0DsO/CiRK2yczR44u/E9UleUaaiDPZs2TanMXFpNYNpOJeTUzLW7AeX7L0hsf9okX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB18075
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
-Thanks for your patch.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Mon, Jul 13, 2026 at 04:05:28PM +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Hi,
-> 
-> This series adjusts the suspend to RAM code to handle cases where power
-> to the connected devices is lost during suspend to RAM. The fixes
-> included in this series are required for that support.
-> 
-> Along with suspend to RAM support, runtime PM support is also added.
-> Cleanup patches were included to prepare for clean runtime PM support.
-> 
-> Thank you,
-> Claudiu
-> 
-> Changes in v5:
-> - in patch 1 introduced renesas_i3c_irqs_mask_and_clear_locked()
->   similar to what was present in v4 in patch
->   "i3c: renesas: Add runtime PM support" but without locking; use the
->   same function to mask all the interrupts and cleanup the status
->   flag in case interrupts are triggered after the transfer completion
->   timed out
-> - introduce patch "i3c: renesas: Fix out-of-bounds access for newdevs mask"
->   to avoid failures when there are no I3C devices connected on the
->   bus at probe
-> - patch "i3c: renesas: Perform Dynamic Address Assignment on resume"
->   was restored to the v1 variant; kept it simple to fix the
->   suspend/resume for the moment
+Document the RZ/G3L (r9a08g046) SDHI controller. The RZ/G3L SDHI
+controller is similar to RZ/G2L but has five clocks (core, clkh,
+cd, aclkm, aclks) and three resets (rst, axim, axis), so update the
+clocks/clock-names maximum to 5 and resets/reset-names maximum to 3.
+It has an internal divider for all modes except HS400, and a 2048-bit
+divider compared to 512 on others.
 
-Tested on RZ/G3E SMARC CARRIER II + RZ SMARC BREAKOUT board with one
-P3T1085UK-ARD board connected.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v19->v20:
+ * No change.
+v18->v19:
+ * Updated commit description
+ * Updated clock and reset description with AXI master and AXI slave
+ * Added else condition for reset and reset-names.
+ * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
+ * Retained the tag as the changes are trivial.
+v17->v18:
+ * No change.
+v1->v17:
+ * Collected tag.
+---
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 +++++++++++++-----
+ 1 file changed, 81 insertions(+), 27 deletions(-)
 
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 4d66966ce290..6d229a41a4b5 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -18,6 +18,7 @@ properties:
+           - renesas,sdhi-r7s9210 # SH-Mobile AG5
+           - renesas,sdhi-r8a73a4 # R-Mobile APE6
+           - renesas,sdhi-r8a7740 # R-Mobile A1
++          - renesas,sdhi-r9a08g046 # RZ/G3L
+           - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+           - renesas,sdhi-sh73a0  # R-Mobile APE6
+       - items:
+@@ -86,11 +87,11 @@ properties:
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
+ 
+   clock-names:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
+ 
+   dmas:
+     minItems: 4
+@@ -116,7 +117,12 @@ properties:
+     maxItems: 1
+ 
+   resets:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
++
++  reset-names:
++    minItems: 1
++    maxItems: 3
+ 
+   pinctrl-0:
+     minItems: 1
+@@ -155,60 +161,106 @@ allOf:
+         properties:
+           compatible:
+             contains:
+-              enum:
+-                - renesas,sdhi-r9a09g057
+-                - renesas,rzg2l-sdhi
++              const: renesas,sdhi-r9a08g046
+       then:
+         properties:
+           clocks:
+             items:
+               - description: IMCLK, SDHI channel main clock1.
+               - description: CLK_HS, SDHI channel High speed clock which operates
+-                             4 times that of SDHI channel main clock1.
++                             2 times that of SDHI channel main clock1.
+               - description: IMCLK2, SDHI channel main clock2. When this clock is
+                              turned off, external SD card detection cannot be
+                              detected.
+-              - description: ACLK, SDHI channel bus clock.
++              - description: IACLKM, SDHI channel AXI master bus clock.
++              - description: IACLKS, SDHI channel AXI slave bus clock.
+           clock-names:
+             items:
+               - const: core
+               - const: clkh
+               - const: cd
+-              - const: aclk
++              - const: aclkm
++              - const: aclks
++          resets:
++            items:
++              - description: rst, Core reset.
++              - description: axim, SDHI channel AXI master bus reset.
++              - description: axis, SDHI channel AXI slave bus reset.
++          reset-names:
++            items:
++              - const: rst
++              - const: axim
++              - const: axis
+         required:
+           - clock-names
+           - resets
++          - reset-names
+       else:
++        properties:
++          resets:
++            maxItems: 1
++          reset-names:
++            maxItems: 1
+         if:
+           properties:
+             compatible:
+               contains:
+                 enum:
+-                  - renesas,rcar-gen2-sdhi
+-                  - renesas,rcar-gen3-sdhi
+-                  - renesas,rcar-gen4-sdhi
++                  - renesas,sdhi-r9a09g057
++                  - renesas,rzg2l-sdhi
+         then:
+           properties:
+             clocks:
+-              minItems: 1
+-              maxItems: 3
+-            clock-names:
+-              minItems: 1
+-              uniqueItems: true
+               items:
+-                - const: core
+-                - enum: [ clkh, cd ]
+-                - const: cd
+-        else:
+-          properties:
+-            clocks:
+-              minItems: 1
+-              maxItems: 2
++                - description: IMCLK, SDHI channel main clock1.
++                - description: CLK_HS, SDHI channel High speed clock which operates
++                               4 times that of SDHI channel main clock1.
++                - description: IMCLK2, SDHI channel main clock2. When this clock is
++                               turned off, external SD card detection cannot be
++                               detected.
++                - description: ACLK, SDHI channel bus clock.
+             clock-names:
+-              minItems: 1
+               items:
+                 - const: core
++                - const: clkh
+                 - const: cd
++                - const: aclk
++            resets:
++              maxItems: 1
++          required:
++            - clock-names
++            - resets
++        else:
++          if:
++            properties:
++              compatible:
++                contains:
++                  enum:
++                    - renesas,rcar-gen2-sdhi
++                    - renesas,rcar-gen3-sdhi
++                    - renesas,rcar-gen4-sdhi
++          then:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 3
++              clock-names:
++                minItems: 1
++                uniqueItems: true
++                items:
++                  - const: core
++                  - enum: [ clkh, cd ]
++                  - const: cd
++          else:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 2
++              clock-names:
++                minItems: 1
++                items:
++                  - const: core
++                  - const: cd
+ 
+   - if:
+       properties:
+@@ -247,7 +299,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: renesas,sdhi-r9a09g057
++            enum:
++              - renesas,sdhi-r9a08g046
++              - renesas,sdhi-r9a09g057
+     then:
+       properties:
+         vqmmc-regulator:
+-- 
+2.43.0
 
-
-Kind Regards,
-Tommaso
-
-
-> 
-> Changes in v4:
-> - dropped patch "i3c: renesas: Do not attach devices if xfer failed"
-> - fixed the swap in renesas_i3c_group_devs_in_slots() for i3c->addr[]
->   renesas_i3c_irqs_mask_and_clear();
-> - in patch 16/16 renamed renesas_i3c_abort_xfer() from v3 to
-> 	
-> Changes in v3:
-> - re-based on top of series [1] to be able to use
->   i3c_master_reattach_i3c_dev_locked()
-> - used i3c_master_reattach_i3c_dev_locked() on patch
->   "i3c: renesas: Perform Dynamic Address Assignment on resume" along with
->   grouping the I2C and I3C devices in the driver slot
-> - collected tags
-> 
-> Changes in v2:
-> - dropped patch "i3c: renesas: Use the divider 128"
-> - adjusted the patches title and description where requested in the
->   review process
-> - adjusted the DAA procedure after resume to still properly re-configure
->   the controller in case the bus was full before a suspend
-> - added patch "i3c: renesas: Do not attach devices if xfer failed"
-> - collected tags
-> 
-> Claudiu Beznea (17):
->   i3c: renesas: Check that the transfer is valid before accessing it
->   i3c: renesas: Restore STDBR and EXTBR registers on resume
->   i3c: renesas: Follow the reset deassert order used in probe
->   i3c: renesas: Reconfigure the DATBAS register on re-attach
->   i3c: renesas: Reset the controller on resume
->   i3c: renesas: Perform Dynamic Address Assignment on resume
->   i3c: renesas: Clean DATBAS register on detach
->   i3c: renesas: Fix out-of-bounds access for newdevs mask
->   i3c: renesas: Use reset_control_bulk_{assert, deassert}()
->   i3c: renesas: Return immediately if there is no transfer
->   i3c: renesas: Follow a unified pattern for transfer and command
->     initialization
->   i3c: renesas: Drop the explicit memset() call
->   i3c: renesas: Update HW registers after SW computations are done
->   i3c: renesas: Organize structures to avoid unnecessary padding
->   i3c: renesas: Use the "dev_name:irq_name" format for the interrupt
->     name
->   i3c: renesas: Drop unnecessary tab
->   i3c: renesas: Add runtime PM support
-> 
->  drivers/i3c/master/renesas-i3c.c | 375 +++++++++++++++++++++----------
->  1 file changed, 261 insertions(+), 114 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
