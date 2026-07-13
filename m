@@ -1,63 +1,64 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAC1417360
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 13:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A967E4189AA
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 13:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783947960; cv=none; b=gZFwzJ9P4eGuUQIvBiG6MW+0+/F3BQoGSSR2LYUPW68Gn91ieWkw9pCtO3bjF8YgtMAI7815aawxA6J/UTTuZhAATpB4wAKNQ3po40hhbxVvxr80Hp86pWUe+V/IzBK6hwAK6MYlQus5U5QySmFmCZRynLAUZm6E5AhSx7noQl0=
+	t=1783947961; cv=none; b=Bsxb6nAMkcISLlz/3+90FYnDhSAXV+oYnipkKiAkIZnLXJzGMBBTXcrHdI/WGT4uffPHLiEuU4OLjow4LIR+xURhBlaY6IwH/MaCzJpgd2cluyZ9FyF0MrMvAJOgKRrOdYbwXoenluCzBEpNSg2ZhRX2XxLTU/oSjps+Awypxfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783947960; c=relaxed/simple;
-	bh=FJSjIhSdTIDlboDC85YK/17wAGiKxAM9/NtAhKhzYOw=;
+	s=arc-20240116; t=1783947961; c=relaxed/simple;
+	bh=P6aF/BzzUSeDLiv0rHRqB287uvz592GL/Gcl7iDIHpE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cinsuk8psxnIedzxHnKliBfIpRh58YIFsHCEOpzs69iCaFgtmJdC/yUnZKIyAqPnmT886PcuboL3AP8tgjxAAknQsdOPIeeOcZAn6AZeIYjuEbUS8SA2vWLc+LEJ6aM8yGUGZQ+FA5IxRH0s8yMfZFBW+zFSU3y22Je85daY2Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PoAMaJiA; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version; b=HFx8/J/OsltAK5SKZKH3tW4gdpoueGeLqjocpL4IBKFbJTkrEan8NBHl8rXE9YBGfoRxJWLTFi0MbfwA7ZLvw2Xp6K6muuY85jzlDf44XmQpEYDxAsJMFXFHBVCKISOKAJPpFqTHpgYw3iYtEcJ08qTneV3TLbtiBwpnOEAIeeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EM5whsZz; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PoAMaJiA"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-493e8d4f4dcso24852705e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 06:05:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EM5whsZz"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-474560436c3so2393849f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 06:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1783947956; x=1784552756; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1783947958; x=1784552758; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=hSMCQsQ7LVIlHm1OHZIZQGorFPeOXnJuXX7KCA2GxmU=;
-        b=PoAMaJiAaMEVZ5sGtDrDBGdTzXFOfQjetj+8ZKYc024V1joDJeiWyKI3Rk6jcm867m
-         YYchtMJQnk4UJ94YlmvhC3GeVyJNzBl2tyxsxmpYIbuk+f6gVjlex+PO+DUKTGdJSDKk
-         CS1Vs36rVSMqsLzlmWIf6rQEmOY1ozL4w7OCQj3DStXN0uo+4KLqdMt1SsdYsMwl8DIS
-         20zjKXBTXRrRCDN4X9LrNzL6/jbvGKYzfTuNHPC28v5Jp6FnihvJToXSkY+iZDlQowlY
-         y62ssLDBwjF7Ojew1HazrfN0oXDpjQKyJcYM8w2ld6NrmUaKZcD8Gad9ObotqJpV0zye
-         ragw==
+        bh=OAq3iUlWeKBxi9BzVp2LKHNg5+ivMc/cKZSPqbSeCas=;
+        b=EM5whsZz3dG6kBBlgx903lUYLl7DcMbcZFFI39sBBEfqx+ZfK3WxpRhDaxcxF50CfZ
+         aOTDATVfViHvCMQOv50h2B3f7hIJjFqlpm5jtl1XJMgYtAN1RH+dPALmsCStkTvdGnAq
+         g1GnIXahKJNQwx4h9iukgzcJB9DLpKqs76UKg5PNr9ssQl+1PZwwy6Mo2Hc7414r+jtN
+         UFiPZzku2zIJX1A35ka51OUPVNN0uY/yCdpg6ybdk6Nk1PvxlMPY86X4doK8PbGb9z5r
+         IgoOSgxt1GAYw8pyJ6aLUbBoI/dZgkx0Gu/2HtvCsfNEGE6HSc/6b7Kahri5CurKs0tK
+         AOTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783947956; x=1784552756;
+        d=1e100.net; s=20251104; t=1783947958; x=1784552758;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hSMCQsQ7LVIlHm1OHZIZQGorFPeOXnJuXX7KCA2GxmU=;
-        b=iY4+3l2cgSZnDv2JIMvMe02r/SvobCKsE/L3BbdORZ3UCP6Fnhw12UILWT2V/wgSRG
-         qn4kapwzsnGwt7te9iXXSk6/wZq0tRoPg/PpDf+rWZtSrJN15kgDSmADfys8bYXWnEmP
-         LgrvitCT45afVsPXuZvwQx9Fawf0V0Zlv8cqwh8hH4tRKzirdGaamlJqbCOx1c6W6x3z
-         /F6eeKdurYyaaHQXeIAja6BQW7uh0styyVC7rZr3TtCDOjn0/rCblEPJuJYe6cs/YV5w
-         M3Q5UgMcQvnfU/c0vCJ5sqeVDNZ0vkFGZw1QvX5xstUCMn8/EOE6hiPV7b794OKolmSS
-         n4Dw==
-X-Forwarded-Encrypted: i=1; AHgh+RrcxUBLXet0ipzVUahh2aH2M5rha60znrmRlHi2Boxm4o0tDqsMJ59266xFqhAAPQmLlpeIBLaCfFk+hd4fDQju9A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrLinX8fy9M6/Pk2T6d7ypeztSzbE6XsNmqS+Kv4NhDfg6XFIu
-	tCkPtC/TXH9mSbbUveLivHj6ehd9UHWGtYqN+Eg3z3gH3+a5rs9B7+YlDj6odNDzDYc=
-X-Gm-Gg: AfdE7ckHDJnjNDoINrWWqunbgJ3n7FbTQoDPpEIWnysH8bIJQ0NNUKfLj7V9SthkwcO
-	rPaIrJnD8IqzwYnqup2zmTprbaTL2KG3SA+Jb3MhGZr3w/VMpwTtzFET95RV/w30KGFmuPyEUNg
-	K7q8SBalGQBVGS/L7Zj5kynev5buaUDXcpDi4fo8t2heM/MZkj6G9/VloS+8X0370MJMDzWZ7d7
-	heqcyNletnZzOQTmmo76e+HMKiJPZZRctKias/Z/fNTsqBqTgkM87ukjgZCqxy9TAWN3XihK5ac
-	j+vzVInsBwU8C1CAKpBRclNnITc7el3fXBL2jOrBFNRrL5iZamTjC8RpHtxyy4+dZVfv9xNwxOO
-	KepA4wYNt10S1lceyfM1HzGmJPukInFazTrr9HS/Mp2lZVj03nsG+9I7eA+p/FEbS6rYx5Bm6wC
-	pkHFVw+sJFA1/QEGsa5lAdP96b5OewTEkD1mCcf5ASlu7Fhl9QTgQfP3n38DiNM9q1LyZ7mWo=
-X-Received: by 2002:a05:600c:1d06:b0:494:6baa:ccef with SMTP id 5b1f17b1804b1-4946baacd33mr10753825e9.11.1783947956381;
-        Mon, 13 Jul 2026 06:05:56 -0700 (PDT)
+        bh=OAq3iUlWeKBxi9BzVp2LKHNg5+ivMc/cKZSPqbSeCas=;
+        b=ngEjNtvhc/fp75zZhevuHg+FEQQDfuPCQS+dGvosqcrne5xj8EV/3C7inQ8eEak/mx
+         s8cDobd7WghZQEQy+87yRffWk3rxluymXrk7XPHdZ6zwkPfoF5QREDXX5weJ/GCpC9gG
+         3BKbkZp3mM81iDusmR/Oe654zNlK4FVEIePTEf+ax6WL2jQHKvMoWrv7fLTA015iU//6
+         44rzaenNrInAdS/2Ok77/LYFlrRbej8nMxc4i0RHObQj+193wASaRSxYVMuzzAFlQFSU
+         dGm9KAEDeYAEqIWnLiuMxU8S2QLTfEPO3zEM9SnjJCb4NzAuBo6/YGc0XsWWxOAtKIIZ
+         K7vw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpgr+Ugk58Rm4I/unUddRYvuSwlDgi6KjKEgi4vob22rKMbqp4P5dv7jNWa94QBrScI67kwh0vodighXc89vOfTfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV1vCtG5U8QEL20rOJ4qY1u524ISOku6WWNQ5EvsdXVsn0WrlW
+	6SiPx1vBzCH7TMG/65Wf9fVlzIHIAI4AVBrtbQykCcX9SchoBdfgDa2oPdWpb+1gk3E=
+X-Gm-Gg: AfdE7cmiXuZ1WDd9MbSEzhvXu61jYt9tYtCm+734PPYKgfcJ83amfh3i6QvWT0VnF8p
+	sv7a6vtMRwOcvnirChgeBYRKnUu2VYP6mUfgy8zzvr12woU6/PvUocgW3GAsrVuhuJtYJdpw/Zp
+	neRFJTLEEHDhdI4b20rLijceVlDRhTWXJ1BfcrmOMX9vPXhIOtPspIf6W8dzfVf+UiET5OsPMmQ
+	jb1EIYc3l8QDOfh8Puao5qqQWxD8cf6MY+9tfwTURqVVydjMBeVzJB8x+GpF3W7Y+V8IbLwY6jH
+	rK2PdKs2RHIozczyYLpXMYSVknGvh6pu8AsYo6XxdbAVfY3O7aIW7YrCRRj6Vf6dRH0qYa20oDM
+	U8fkSi9jt4pGC8twY6Z2Vo/NrF2SjTt5a0DQe6soiA15zpbYMAqcPwcJ02ixkhijNQTp2zS36dc
+	4lX3S9cJLWp0qf/JwRtyEWglSB3W+wvTul2EA5KdXeOVuR3FjN3Lu32vO+/FSqJiuIJoypsDNgz
+	UYo0R7I0A==
+X-Received: by 2002:a05:6000:2510:b0:473:1ccc:15c9 with SMTP id ffacd0b85a97d-47f2dd04861mr10170497f8f.40.1783947958166;
+        Mon, 13 Jul 2026 06:05:58 -0700 (PDT)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6402:500:e91e:fe5e:857b:d0c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f273195d9sm25321609f8f.3.2026.07.13.06.05.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f273195d9sm25321609f8f.3.2026.07.13.06.05.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 06:05:55 -0700 (PDT)
+        Mon, 13 Jul 2026 06:05:57 -0700 (PDT)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 To: wsa+renesas@sang-engineering.com,
@@ -71,9 +72,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-renesas-soc@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
 	stable@vger.kernel.org
-Subject: [PATCH v5 04/17] i3c: renesas: Reconfigure the DATBAS register on re-attach
-Date: Mon, 13 Jul 2026 16:05:32 +0300
-Message-ID: <20260713130545.568657-5-claudiu.beznea+renesas@tuxon.dev>
+Subject: [PATCH v5 05/17] i3c: renesas: Reset the controller on resume
+Date: Mon, 13 Jul 2026 16:05:33 +0300
+Message-ID: <20260713130545.568657-6-claudiu.beznea+renesas@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
 References: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
@@ -87,14 +88,14 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-During re-attach, the device may change its position in the i3c->addrs[]
-array. As a result, it may use a different Device Address Table Basic
-Register (DATBAS), which needs to be reconfigured.
+Reset the controller on resume after enabling the clocks to follow the
+same sequence as in probe and avoid potential ordering related failures.
 
-Reconfigure the DATBAS register on re-attach. Along with it update
-software caches.
+With it, renesas_i3c_reset() was updated to use read_poll_timeout_atomic(),
+as the driver's resume callback is executed during the noirq phase of
+resume, where interrupts are disabled.
 
-Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+Fixes: e7218986319b ("i3c: renesas: Add suspend/resume support")
 Cc: stable@vger.kernel.org
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -104,52 +105,57 @@ Changes in v5:
 - none
 
 Changes in v4:
-- use "data->index > pos" condition
+- none
 
 Changes in v3:
 - collected tags
 
 Changes in v2:
-- dropped the "if (pos < 0)" check in renesas_i3c_reattach_i3c_dev() to allow
-  re-attaching in case of a full bus; along with it the condition to update
-  the DATBAS register and software caches was updated to
-  if (data->index != pos && pos >= 0)
-- adjusted the patch title
+- replaced the read_poll_timeout() in renesas_i3c_reset() with
+  read_poll_timeout_atomic() as the renesas_i3c_reset() is called
+  in noirq phase of the suspend/resume; updated the patch description
+  to reflect that
+- collected Frank's tag. Frank, please let me know if this should be
+  dropped. Thanks!
 
- drivers/i3c/master/renesas-i3c.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/i3c/master/renesas-i3c.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
-index ccf55afcdedc..517ac2df9bd4 100644
+index 517ac2df9bd4..6590da962592 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -907,10 +907,26 @@ static int renesas_i3c_reattach_i3c_dev(struct i3c_dev_desc *dev,
- 	struct i3c_master_controller *m = i3c_dev_get_master(dev);
- 	struct renesas_i3c *i3c = to_renesas_i3c(m);
- 	struct renesas_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
-+	int pos;
-+
-+	pos = renesas_i3c_get_free_pos(i3c);
-+
-+	if (data->index > pos && pos >= 0) {
-+		renesas_writel(i3c->regs, DATBAS(data->index), 0);
-+		i3c->addrs[data->index] = 0;
-+		i3c->free_pos |= BIT(data->index);
-+
-+		data->index = pos;
-+		i3c->free_pos &= ~BIT(data->index);
-+	}
+@@ -495,8 +495,8 @@ static int renesas_i3c_reset(struct renesas_i3c *i3c)
+ 	renesas_writel(i3c->regs, BCTL, 0);
+ 	renesas_set_bit(i3c->regs, RSTCTL, RSTCTL_RI3CRST);
  
- 	i3c->addrs[data->index] = dev->info.dyn_addr ? dev->info.dyn_addr :
- 							dev->info.static_addr;
- 
-+	renesas_writel(i3c->regs, DATBAS(data->index),
-+		       DATBAS_DVSTAD(dev->info.static_addr) |
-+		       datbas_dvdyad_with_parity(i3c->addrs[data->index]));
-+
- 	return 0;
+-	return read_poll_timeout(renesas_readl, val, !(val & RSTCTL_RI3CRST),
+-				 0, 1000, false, i3c->regs, RSTCTL);
++	return read_poll_timeout_atomic(renesas_readl, val, !(val & RSTCTL_RI3CRST),
++					0, 1000, false, i3c->regs, RSTCTL);
  }
  
+ static void renesas_i3c_hw_init(struct renesas_i3c *i3c)
+@@ -1483,6 +1483,10 @@ static int renesas_i3c_resume_noirq(struct device *dev)
+ 	if (ret)
+ 		goto err_presetn;
+ 
++	ret = renesas_i3c_reset(i3c);
++	if (ret)
++		goto err_clks_disable;
++
+ 	/* Re-store I3C registers value. */
+ 	renesas_writel(i3c->regs, STDBR, i3c->i3c_STDBR);
+ 	renesas_writel(i3c->regs, EXTBR, i3c->extbr);
+@@ -1502,6 +1506,8 @@ static int renesas_i3c_resume_noirq(struct device *dev)
+ 
+ 	return 0;
+ 
++err_clks_disable:
++	clk_bulk_disable(i3c->num_clks, i3c->clks);
+ err_presetn:
+ 	reset_control_assert(i3c->presetn);
+ err_tresetn:
 -- 
 2.43.0
 
