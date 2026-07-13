@@ -1,82 +1,80 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A93434C990
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 17:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9D34CFD0
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 17:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783965127; cv=none; b=aWuqrzzQJpAxJTEQnrRP/XqIN1VrpzSYWz2S2FYv8bzRG9nDTxhamZgmALL/k8gsf7JvDgaQ5YcpbLEkL8ccpODCsMUtQlgLWU3OlCEX61fubQBto5tOG8KgQE3IQBn3TRiTGcXgDYGb2NgeulO9Jngkxo5K2Afr2XDqzqgFAUE=
+	t=1783965127; cv=none; b=bm2E/+O7BIS1sDLi7U55w51dWQ1rf4jBhimdndEb1DBmq7dmHxOGXrJG7OR4/+nWiPy16WS8AWfpcO/BGHSIqmJQaptIGbRIriyDEvefzw1rBQ+bmF8iF4Ith9WHwLK63ksW8rvC313apip1Kb6MH5OCg0tgBQLKmukSBWo2wUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783965127; c=relaxed/simple;
-	bh=tqFTum8xzoiTwzEIEq11HF/yCjbkDK04uQ9G8LptZfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uYaiXWL8FYelLcpk6wVjw9y1C4yfdGVY8fzUjABIT/DGuN6sRfOJIER9Yi3l7BU9185AZ1vatYiEPjfLswvZw9TxghLqk41eHRgPRJo8wdGmEpFzy/FXIxLJc3pkq6d8xdVA7qBXFhmIzcyiKzCNF6G68GzErAaKQ23ZqDCOoiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBF+qj9g; arc=none smtp.client-ip=209.85.221.49
+	bh=/FGwBoak+K1dZ3DgCaKeto6pzKCz+zzDgtJUpzrYq3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qCMEI4J0GkRuRK8Syc5EdZ5KLnCVrFyk2XIWMeKgXA/pqTEM6VCIHS8ziZqUUDfHXK413A2v63cxf1MDuENuBJ/IIE56kGV2Yl8QjldFpYWCj2v2WnGI/WzgF8IthgnRFDPoFkbpsh8EKtxe3WJLEEXiKGL8WKrKQUiVK/DbLH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKHSLgPF; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBF+qj9g"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-472326ca506so2810182f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 10:52:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKHSLgPF"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-474560436c3so100193f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 10:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783965123; x=1784569923; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pAOIXtxwq93qyBcSiXjj47sdRqztMqiVwZYz/1dkMGk=;
-        b=KBF+qj9gyEsEzMPO1zfCme4Ao6+6LyyL5XcDxpva+3Ax72ZhHGQTWG56R37UpV1Tmc
-         mKyP0A9Y6l4MBHKievJUYhaDsM86wWKjqg1k9f4hwEGfXiKHbyoIxifQ7qBhstpFx5Bs
-         quWPYlR0ovkeUzZBctiOIRZEFPYK/b1ryNlyk3oJ25tk0hJR8fEl3BT9UTevbanLeQiL
-         v34Mhz6mJwSDQ7pCMjtnTpQZSGLb13i1xnZHuRmTSmEkQTQ0GDM86S9YMyK41YSj+Brb
-         7SHmrc5X/mBJGGEcJ1r2o6Lmkbn6r4Gc6iFI7LyjxnnKnm7B4ZctaAKdIIy43TxFcnZA
-         uEsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783965123; x=1784569923;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1783965124; x=1784569924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=pAOIXtxwq93qyBcSiXjj47sdRqztMqiVwZYz/1dkMGk=;
-        b=FQzRj30JLzxsgb04wRxuer5JmWTHO+4JBNmU5byJ2RfmF5+QN3npoWSl4gAOWME+HF
-         UZ5Sl9bAOP8VKKwFFJ5pxF83pGaQML18cKT/Xl6mb6ZHHZL8PpSIKuZ/gZGe/QeEHrpn
-         lOJd4G2ZB3TEnuBeHYCH0Era5Yd0anKBNL77HoWdoc/Vs1uTuf/9f3SZDoTHeD36vel+
-         U5DCZ4wKQBlP4uGh61rYKqswxdW9DMYige8j7b6/TMMY9H7pzRpOnyc3MRl+kb06lMXy
-         z6oWc7x1vg9eF/g7d3mxol3APDDE+X6OZvJUyYxAYjHwkyFtXn21DS9Sa+ixSwdgJGQh
-         v2/g==
-X-Forwarded-Encrypted: i=1; AHgh+Rqy+QlIUHdu02AhuqSZLReJsiI9RUnv24DKx0Z5U9EEuHHEQsJ/6fFth+HyYdKu1gXfsE/6XscGDJq4zbnu2urANg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ74GFgYcJga7Fdjdb4U45g/MZGNQMVYzAJroMvVwWAws2qHHD
-	qGcWH1mtry+t3q8xPDXKhfe4ha9/WC59DI7TzEXZG2u+mF0Hr4UaXGlz
-X-Gm-Gg: AfdE7cleAREPcrZEg/pzySKawJMYKYrNCg0fcgnxUf+SWAg5zv6e/fmhx0a0FJhng74
-	rwilUvfKUcDfFIO6jia/YsRBCEnuWDdWx6z+zYmndb/Y+I1pFlstWDfyYvEo2qSfNYyiFJSl0kA
-	6E82891DgvqyAa4ovN2ECpRHvE/dyCuMSxdlC9C26vf/Do+3QV7aLzYEDBs4Kbt8AMWhVlGDtoW
-	PZxV39uFWN+CHR6CHhoWsckrWTnWKJA4hEwlOj6QokLBeg8roXrJirPes/p/38UEQsZHoEJPlsr
-	lX0D+tryTJQ4WN/oqkWJgtdkZlY9Qogw+y/O7knItA2BDs9IW89cBIYF6VnSyrHhCUb5hnrVkwf
-	y50aUwjNlpVY0L5Vq2CCfiEQCBfjF6L7SxsgZv9BUP0Y1E5hr6k0kbL3Eks+go9iS2PqKRmfmo9
-	RruOk5MnfeToGQrYbKbBT4cA88gff8gT6rFyulMg==
-X-Received: by 2002:adf:f74c:0:b0:46d:d5db:98 with SMTP id ffacd0b85a97d-47f46386edcmr630296f8f.44.1783965122623;
-        Mon, 13 Jul 2026 10:52:02 -0700 (PDT)
+        bh=iyfVj+1fDts4apxcCqosk3edydtohs7g/ZwBDxQKGmY=;
+        b=fKHSLgPF+C4FAkP7zFEJNT4LfRo/pSZE5V0RsdpEFUNl8oVF6FVs//SrTweBAn4CvW
+         ltbotEN6JO3gFSmuL9eKmfjDs5aNLsnKH+m418GpJqVB4l7mEseSdnd8BT0S9vJC1RCG
+         aZZWDqkBo06nkVrPsZ4qTJNWWhI4512KFjGxGaJZ4uoW+5OTF6dUzOPUzOAjpC7/K1xm
+         dSy4dhhjvOVnd2ErwJGGOhB+atHES5WkICkLv9ighOskAujutbaK9l57vbs0kvDqaSFl
+         jYBPtOM9koPnYRbZXH/SYWR/eYxW5WDqfVk80+3KTqf9TW0aY86wK7xNNpVMGbJF12Ta
+         5WQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783965124; x=1784569924;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=iyfVj+1fDts4apxcCqosk3edydtohs7g/ZwBDxQKGmY=;
+        b=Y8919phKrfSJ5pZ/HZjenGI6F7+OQl3E71OkoSCy7rcCah7j792GOONnsA4aIGfExZ
+         SEDecO4f+3l6K1IlGcFTVemJFIZ607N+v7iXsbNAE6m+ALOVqOTWSdF8NAT6FNHhsuS/
+         aVnaXzzhVqoZL1GYr9HNaIAbTrl7XW85v6r6yTxcHrgu+7MJXwaSFpbPlsEdx7DjOR4z
+         bxSKAthQkUcLmLCjoi+ssMikjLRhmJDPSXy5wnu7zJJFQyUXUyqVxEpzjTrcqvkQ1qp2
+         3yclIfpG/z2ivOwK3sR1wxAaP5PvipZM8NeOslxpHgS9UiRuFWEVnmayErfwrxnwJXrC
+         UyVA==
+X-Forwarded-Encrypted: i=1; AHgh+RqzA+tjLp7UHBDI5w/yAbaLJ3zRUux6RfhyDESDSY13YttcS0Ua5oBxyCKp5O6SdXKprSZ6Ow+rsegDeokQmZqQTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya+kKKhCBU6dJfIPcvItbeICt119bHSpHxKzIkPKZfFJbCV5pp
+	YHC3jGyzuI3+dJLBM26PsOUgXxFm0psgNPRuVWh7cJm7I2mvhPp6hscs
+X-Gm-Gg: AfdE7cnlcP52YyyOUnMzmT1jilAGBuzjIosVkMwo2+l/MszQjxW65pqxQK1A+wlj1I2
+	YqK0AJ/jGHhMo+4ZHloGd1QpUiAYeHSVOH+z+Q8D1xa8WqBTZkgZAijUCmSf6oiNEhvsTn/ACk7
+	pdArUoWH/Som3PBNPVJACyiMsLohsknPhm+Z6aJTtNYmzBiIczclw5+wbgmx4ueWxmYdVCWGqMA
+	YFAbAtszRaPaO3wiUhAkTxsXwy5eRaZlVmXgtVOEG033YcXFsoTarYdA7FF3XossbCyK2FkiGHW
+	oQPgm8ck4ibqJkpTmGfA9fzWPZbCxShze0QdBAYWfOGEZtUr8s0EmAjYqeGtTM9PY42qp0ZkeMn
+	FXUtY543zBnKm2aK+mxG0X632VSpLxwhbY8fpM+x1Tolr0jfNUthT5v4ky5fliTl5xv5moQH88W
+	EkGhDNssSXtOCmcfuI0mfXl8EO/b84D3frwZ4TiQ==
+X-Received: by 2002:a05:6000:1a88:b0:47e:81aa:def0 with SMTP id ffacd0b85a97d-47f2dd215c1mr11680288f8f.61.1783965124369;
+        Mon, 13 Jul 2026 10:52:04 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:c899:4fec:2bdb:b719])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f464d6fa7sm1011037f8f.37.2026.07.13.10.52.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f464d6fa7sm1011037f8f.37.2026.07.13.10.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 10:52:02 -0700 (PDT)
+        Mon, 13 Jul 2026 10:52:04 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Ulf Hansson <ulfh@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulfh@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v20 00/12] Add Renesas RZ/G3L SD/eMMC support
-Date: Mon, 13 Jul 2026 18:51:41 +0100
-Message-ID: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v20 02/12] mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
+Date: Mon, 13 Jul 2026 18:51:43 +0100
+Message-ID: <20260713175159.138334-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
+References: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,100 +85,95 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi All,
+Clean up coding style inconsistencies across the Renesas SDHI host driver
+files. Remove redundant internal spacing in the struct definitions and
+static initializers to enforce a single space separator or uniform tabs,
+aligning the code with standard kernel formatting guidelines.
 
-RZ/G3L SoC has:
+While at it, add a "Sentinel." comment block to the empty terminating
+entries of the Open Firmware (OF) device matching tables to improve
+code readability and explicitly mark the table boundaries.
 
-Channel 0 supports SD and eMMC (including HS400/HS400ES).
-Channel 1 supports SD and eMMC (except for HS400).
-Channel 2 supports SD.
-
-The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
-not support IOVS and PWEN in the SDHI register (no internal regulator),
-unlike SD1 and SD2. It has an internal divider for all modes except HS400.
-It also has a 2048-bit divider compared to 512 on others. Moreover
-RZ/G3L supports HS400 enhanced strobe mode.
-
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v19->v20:
- * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
-   the code after assignment of variable mmd, this ensures assigning
-   the default values for non-DT platforms and DT platforms with no
-   device data.
- * Replaced the check mmd->max_divider with mmc_data->max_divider and
-   moved the code after assignment of variable mmd, this ensures
-   assigning the default values for non-DT platforms and DT platforms with
-   no device data.
- * Fixed the ordering of resets in suspend/resume paths.
- * Added bitfield.h header file.
- * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
-   case and the 32-bit register write.
- * Updated resume() with scoped PM runtime call.
- * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
-   register.
+ * No change.
 v18->v19:
- * Updated commit description for patch#1,#2,#6,#8,#11 and #12
- * Updated clock and reset description with AXI master and AXI slave
- * Added else condition for reset and reset-names.
- * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
- * Retained the tag got binding patch as the changes are trivial.
- * Fixed the clk_mask for non-DT platforms.
- * Fixed max-divider setting for non-DT platforms.
- * Replaced the magic number '9' with ilog2 function in
-   renesas_sdhi_clk_enable().
- * Dropped divider variable from struct renesas_sdhi.
- * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
-   and non HS400 mode(uses 1/2 internal divider).
- * Updated handling for clk divider.
- * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
-   hardware tuning delays
- * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
- * Updated suspend/resume with scoped runtime calls in suspend.
- * Fixed extra space in HS400MODE2 comment block.
- * Updated the comment HS400mode2->HS400MODE2.
- * Dropped the updation of clk handling as it is taken care in
-   previous patches.
- * HS400ES support is enabled based on of_data.
- * Fixed the space in HS400ES comment block.
-
+ * Updated commit description.
 v17->v18:
- * Collected tag
- * Merged patch #4 and #5 and updated commit description
- * Annotated the empty sentinel entries in the OF match tables with a
+ * Merged patch#4 and #5
+ * Updated commit description
+ * Annotate the empty sentinel entries in the OF match tables with a
    "Sentinel." comment for clarity.
- * Retained the tag as it is a trivial cleanup.
- * New patches drop struct renesas_sdhi_hw_info, instead using
-   renesas_sdhi_of_data and tmio_mmc_data.
- * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
-   will send later.
+ * Retained the tag as it is trivial cleanups.
 v1->v17:
- * Collected tag for binding patch.
- * Resending the series as there is an issue with patch threading from
-   patch #14.
+ * No change.
+---
+ drivers/mmc/host/renesas_sdhi.h               | 2 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 6 +++---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Biju Das (12):
-  dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
-  mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
-  mmc: renesas_sdhi: Add clk_mask field to support flexible clock
-    divider widths
-  mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
-    ranges
-  mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
-  mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
-  mmc: renesas_sdhi: Add optional axis/axim reset controls
-  mmc: renesas_sdhi: Add RZ/G3L SDHI support
-  mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
-  mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
-  mmc: renesas_sdhi: Add RZ/G3L HS400 support
-  mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
-
- .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 +++++--
- drivers/mmc/host/renesas_sdhi.h               |  11 +-
- drivers/mmc/host/renesas_sdhi_core.c          | 274 ++++++++++++++----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  73 ++++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  12 +-
- include/linux/platform_data/tmio.h            |  18 ++
- 6 files changed, 408 insertions(+), 88 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index afc36a407c2c..09bf9b24a8c3 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -25,7 +25,7 @@ struct renesas_sdhi_scc {
+ 
+ struct renesas_sdhi_of_data {
+ 	unsigned long tmio_flags;
+-	u32	      tmio_ocr_mask;
++	u32 tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 0c3967f758c2..b3f4a5f8dec0 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -271,8 +271,8 @@ static const struct renesas_sdhi_of_data_with_quirks of_rcar_gen3_nohs400_compat
+ };
+ 
+ static const struct renesas_sdhi_of_data_with_quirks of_rza2_compatible = {
+-	.of_data	= &of_data_rza2,
+-	.quirks		= &sdhi_quirks_fixed_addr,
++	.of_data = &of_data_rza2,
++	.quirks = &sdhi_quirks_fixed_addr,
+ };
+ 
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+@@ -293,7 +293,7 @@ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+ 	{ .compatible = "renesas,rzg2l-sdhi", .data = &of_rzg2l_compatible, },
+ 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,rcar-gen4-sdhi", .data = &of_rcar_gen3_compatible, },
+-	{},
++	{ /* Sentinel. */ }
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
+ 
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 426308b73b49..7ae488e5c1e0 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -27,7 +27,7 @@
+ #define TMIO_MMC_MIN_DMA_LEN 8
+ 
+ static const struct renesas_sdhi_of_data of_default_cfg = {
+-	.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT,
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rz_compatible = {
+@@ -89,7 +89,7 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
+ 	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-shmobile" },
+-	{},
++	{ /* Sentinel. */ }
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+ 
 -- 
 2.43.0
 
