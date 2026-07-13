@@ -1,126 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C4C30EF77;
-	Mon, 13 Jul 2026 15:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2446A26F29C
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 15:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783955939; cv=none; b=R6YM64IAJkXDbh+ghGHlNL7VXazTk5PDZnGMIaf/9tXIgbtbwAQUTkw4pwnORzWdoPLzup1aVmzbh1K50wsJkKhnLmWjous8UyItTd3z1mp6LWMvg+Fvt2cM5d/tP0NMLXqyBAIgEKzoMbsUTiaU7VCj58ZrYySpksGpWmj44CE=
+	t=1783957806; cv=none; b=BTzrat3bYGs6+N7RvnxqXjLmH6wO4/WfUELp4eKZUT697pFWLB5iBhkUtng87QwnJ7ASzLuweDo3qeF+B8ZixBhX2wEwTXV6W86bVaYOsqqSnA5f0eZuUUKStDic2CqJ9rOhx/ToWCU7dgRCQeACez51RsaK72zi/fykwIywhTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783955939; c=relaxed/simple;
-	bh=Q92+vm/2vUfD7BvMv6itjSyYoLq4GSIt9f0Z3LqR9/A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IV3q1LSpEiCvMamMXZZzEPMZ71Zy5elVcnkEJ+Rkb+M8zqNMYJeaqwyRCjTDRu70cbAby/GsHy+97E7HMQ+SS4qWhVMIDcNJx+7wuJ0KsiPgJITorkMb+EdmruFfr5YdhJBlu+j36P3B1+WeCNDRF2XMIeE2GvDy7Qd5h1rBLz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjkyuPnQ; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjkyuPnQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E321F000E9;
-	Mon, 13 Jul 2026 15:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783955938;
-	bh=ciq/I2+BL5j+uB+AABX0XLHmc/WSjoaA1RcZmJWFnaQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=DjkyuPnQfstUUzWkidFDDVxGMprS4Et5vhWSDhkPCeRuWSjmhG6Km5kARaCsw/Y+v
-	 EQqZ6DGLbRd3fKpYjPw1huYb83BENbYrx8bs2WT4QditMiCeAJo2ZKD8gwwtzEiO7l
-	 rw/TH4KEOVL10wu4/aeXCa3uRo4kqr0TKxyZb5wSjWCjv8yHaIhPTpEBN/fBC/dLO5
-	 VtkmH49gPUkWjn/EiCa5HfU4GAPRwuJHtQ/ohoCLpDXqvquhmP0ipQHZFCeHXmiMuV
-	 O4F7670dgEeQMnimChpI4eux+NbII+5b7Fa+BK9vRxEnMg7ufPCknKLIsoiAoYSTlr
-	 vD8xxud9rr3Lg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1wjIQq-00000004Xo1-1iIy;
-	Mon, 13 Jul 2026 15:18:56 +0000
-Date: Mon, 13 Jul 2026 16:20:45 +0100
-Message-ID: <87fr1m6hma.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: linux-pci@vger.kernel.org,	kernel test robot <lkp@intel.com>,	Krzysztof
- =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Catalin Marinas <catalin.marinas@arm.com>,	Conor
- Dooley <conor+dt@kernel.org>,	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Lorenzo Pieralisi
- <lpieralisi@kernel.org>,	Manivannan Sadhasivam <mani@kernel.org>,	Rob
- Herring <robh@kernel.org>,	Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>,	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar-gen4: Inline GIC_TRANSLATER offset macro
-In-Reply-To: <2cb03029-0957-4ed8-98bd-9b3e0e0bce2d@mailbox.org>
-References: <20260709201103.90162-1-marek.vasut+renesas@mailbox.org>
-	<87qzlb5jsl.wl-maz@kernel.org>
-	<2cb03029-0957-4ed8-98bd-9b3e0e0bce2d@mailbox.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1783957806; c=relaxed/simple;
+	bh=SJLknyw1I7ZFIFDDTxB/kCFRzM1gjizB92r2iOvY5U4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DIkx/W+XIZVUYz/MGe5CnFl4usGYugzdl0Kte0CA3n4J4nPAGPpXIXNk41rcNTlwDXxO4swD+Sm3czq/I6RxhL23pcaKlEqqBiKk0XIBw9H2ZP4ooVuMnQvu3bHC2gp8NIiHpxQ1gDh1HaJGzWpIYJFJ2iBUeClnj3eVCMlivhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-59cd803792aso2005866e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 08:50:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783957803; x=1784562603;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=KSAbD3g9v/Qpert4xOPXdfLiWxHZNX0hf2rnp4eCCEU=;
+        b=cyQjwR8qeT5IqBuL467EjYXgBEB+fxtyXA6wdROpoMXfzTmaYWd5LM3jcEtXs687T9
+         tmd7L9/wjF2Et67hW2QJxEHuHABpXb762hKbouJXqNiY+btCAyPC2eB7m+Rcq42jf5V+
+         N1Ghyopto9JPDcv15/PsRhNzlAXjYR/LmODs7coMVdlBQM3C29JRPlIZ0uSMZqx5KbW+
+         +XiTLF8x7YBIh5tv1fiuzIQzn34EKbv68PBq0tNiqhSKzkezWJU2T+eg9wAYpmTo3Yta
+         Y6tqSaqA+1qIp7hDnGB77Z9lDkW82/uG7bZbjCK69S8S9Rf+GWaVFejUkRGaBgaQaEWB
+         EKaQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrHerjfipYTRw7iz24N49GC/iDAm58rqZvvgN8oKZgMzdjh7UZGkpXtaWO4TyJxsl7/BV96DJ9KYUUnNokXBoj9wA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY+4iViccTyRBZ4CWSSCB4rc7Dy5fW8nD7fr6CPHHCtIVuhJvY
+	np0kuHP2auWDAz6ioBGrDh22AkqDafPPwZxMsOoNSlgVxxKjEcBd90ux0o1e+0Q0Lzk=
+X-Gm-Gg: AfdE7ckRCBOrt9mcpLI4A/P1x3r/MZg/n5xwVnLXx/s0/C/IQrUMrjA1gj/+OoZwDPY
+	zNdwl+yIvAiR/xQkLF4lIP/tdMYn/NE+GCivk7aJsqDRJKl38ijLV9+4BlWqxcK8kBM1XPdNnWG
+	ER6L0J2ea+xCdbfhS+24lB4vmw3HxSvVmmnRHmgMkIQ1qah5HS8tEM+10PGKKZA5roFVIn4jvPs
+	nVpxelywNuELpfPW4gfbqa/K5fZYOSI+EFvoUIoaOBL3462cf23r6oCIKWl/UvRGSOH+eIyKqYr
+	EhKM4og77dZCj8YdOK8fY7WmKtlFJ/aZl6vghz+RVRun6Slkij5NvbHy6JDFzaaIPQBwcjEmmG1
+	xhhocX1riSYTSByF8M5Yub40hvneh2CRDriwK3AHNtReoFpj3T3s5gDjjFg02WOyoHsLltf2eRs
+	f4zv0ps3u7LUYwruCVrwZ3cU+Qv6DY4iVVKdoNCSHGFW+RnFSFhI6ayPqihIsg
+X-Received: by 2002:a05:6122:1816:b0:5bd:71cf:e97e with SMTP id 71dfb90a1353d-5bfbf10eacdmr5464829e0c.5.1783957802967;
+        Mon, 13 Jul 2026 08:50:02 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f66eb74sm9256739e0c.7.2026.07.13.08.50.00
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 08:50:00 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-73b909fbb6bso2109158137.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2026 08:50:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqDoKTGoydQtDZRkhcPw8GPHmvDe9WIE3Y1fDj8IvcV+/82iuyg6PT5XoeeV64tt0Njv3aAnMV/qPsXSQds4QA7hg==@vger.kernel.org
+X-Received: by 2002:a05:6102:5605:b0:737:bfe6:3b03 with SMTP id
+ ada2fe7eead31-74533bc9032mr5400397137.7.1783957799562; Mon, 13 Jul 2026
+ 08:49:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: marek.vasut@mailbox.org, linux-pci@vger.kernel.org, lkp@intel.com, kwilczynski@kernel.org, bhelgaas@google.com, catalin.marinas@arm.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lpieralisi@kernel.org, mani@kernel.org, robh@kernel.org, yoshihiro.shimoda.uh@renesas.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260702123112.161160-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260702123112.161160-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jul 2026 17:49:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU62updtKeBBk-vO3YP+qaWTGqHQnzKvFJbrz4J5eEPMQ@mail.gmail.com>
+X-Gm-Features: AUfX_mzILeHyjNiTkrmAQtVDJZX8rJj_P5qd9dfYE_6VlS_CSrZ4h4vly_PscUA
+Message-ID: <CAMuHMdU62updtKeBBk-vO3YP+qaWTGqHQnzKvFJbrz4J5eEPMQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/9] dt-bindings: clock: renesas,cpg-mssr: Support
+ RZ/T2H system controllers
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 10 Jul 2026 14:35:10 +0100,
-Marek Vasut <marek.vasut@mailbox.org> wrote:
->=20
-> On 7/10/26 10:30 AM, Marc Zyngier wrote:
-> > On Thu, 09 Jul 2026 21:10:03 +0100,
-> > Marek Vasut <marek.vasut+renesas@mailbox.org> wrote:
-> >>=20
-> >> Instead of pulling in the whole linux/irqchip/arm-gic-v3.h , copy the
-> >> one GITS_TRANSLATER register offset macro directly into the driver.
-> >> This repairs the ability to build the driver on non-ARM non-GIC targets
-> >> the way it was possible until now, which retains good build test cover=
-age.
-> >>=20
-> >> Reported-by: kernel test robot <lkp@intel.com>
-> >> Closes: https://lore.kernel.org/oe-kbuild-all/202607100310.iQw5m9Uo-lk=
-p@intel.com/
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> >> ---
-> >> Cc: "Krzysztof Wilczy=C5=84ski" <kwilczynski@kernel.org>
-> >> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >> Cc: Conor Dooley <conor+dt@kernel.org>
-> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> >> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> >> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> >> Cc: Marc Zyngier <maz@kernel.org>
-> >> Cc: Rob Herring <robh@kernel.org>
-> >> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> >> Cc: devicetree@vger.kernel.org
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: linux-doc@vger.kernel.org
-> >> Cc: linux-kernel@vger.kernel.org
-> >> Cc: linux-pci@vger.kernel.org
-> >> Cc: linux-renesas-soc@vger.kernel.org
-> >> ---
-> >> Note: The alternative I could think of would be ifdeffery which
-> >>        is not nice and thwarts the build coverage, or limit the
-> >>        driver to ARM/ARM64 in Kconfig which also thwarts the build
-> >>        coverage. I could also split off the register macros in
-> >>        linux/irqchip/arm-gic-v3.h into some separate header
-> >>        linux/irqchip/arm-gic-v3-regs.h and include that which
-> >>        might be OKish and avoids duplication. Thoughts ?
-> >=20
-> > No, I'm not hacking something that is purely architecture specific for
-> > the purpose of a bizarre integration quirk that should be handled by
-> > the boot firmware, and not Linux.
->=20
-> The PCIe controller is fully controlled by Linux.
+Hi Prabhakar,
 
-And it shouldn't. Why can't your favourite boot-loader use it, like on
-any reasonable machine?
+On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The RZ/T2H and RZ/N2H SoCs features system controller blocks for low-power
+> management and access control that reside within the CPG/MSSR address
+> space. To properly represent these hardware modules, allow them to be
+> defined as child nodes of the CPG/MSSR controller.
+>
+> Update the CPG/MSSR binding to support child nodes by adding
+> system-controller child nodes using a patternProperty, requiring a reg
+> property and a renesas,sys-block property to identify the controller
+> instance.
+>
+> Restrict these new properties to the RZ/T2H and RZ/N2H SoCs to ensure
+> existing bindings for other Renesas SoCs remain unaffected.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Updated commit message.
 
-	M.
+Thanks for the update!
 
---=20
-Jazz isn't dead. It just smells funny.
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -99,6 +99,41 @@ properties:
+>        the datasheet.
+>      const: 1
+>
+> +  '#address-cells':
+> +    description:
+> +      Required for the RZ/T2H SoC to define the address space for child
+> +      system-controller nodes.
+> +    const: 2
+> +
+> +  '#size-cells':
+> +    description:
+> +      Required for the RZ/T2H SoC to define the size of the register
+> +      blocks for child system-controller nodes.
+> +    const: 2
+> +
+> +  ranges:
+> +    description:
+> +      Required for the RZ/T2H SoC to provide 1:1 address translation
+> +      from the child system-controller nodes to the CPU address space.
+> +
+> +patternProperties:
+> +  "^system-controller@[0-9a-f]+$":
+> +    type: object
+> +    description:
+> +      System controller child nodes representing sub-blocks for
+> +      Low Power Management (LPM) and Access Control.
+
+According to the documentation for the PRCi bit in Section 11.3.1
+("PRCRN : Non_Safety Area Protect Register"), the low power consumption
+bits are in the xx28_xxxx blocks?
+
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +      renesas,sys-block:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: Index of the system controller instance.
+> +        enum: [0, 1]
+
+I am not so fond of such "index" properties.
+And of subnodes ;-)
+
+> +    required:
+> +      - reg
+> +      - renesas,sys-block
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -126,6 +161,10 @@ allOf:
+>        properties:
+>          reg:
+>            maxItems: 1
+> +        '#address-cells': false
+> +        '#size-cells': false
+> +      patternProperties:
+> +        "^system-controller@[0-9a-f]+$": false
+>    - if:
+>        not:
+>          properties:
+
+As RZ/T2H and RZ/N2H are rather different than the other (mostly
+R-Car) variants, perhaps it makes sense to spin them off to a separate
+bindings document?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
