@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6163E2DC321
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Jul 2026 02:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A0B3749FA
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Jul 2026 02:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783994408; cv=none; b=OL4D8aipynoUuAj6bv/a/wTXN0eXVkhsaFNB3Kh4VhsYS+9nYr0PGHcxYEYohRxzs5rEd9Pohz09S0KHD+6XkQIz8+T0Ep/3gnXF8b0Kwnu+PVCIgktZohZobZOC9RH2A8eeS62+4aUhfqv3jzjeloRtKpYDDQ/6jjdz/bQJHMQ=
+	t=1783994536; cv=none; b=ZAFbuIs5OqyWO4DUZon5H1fRUOojxlEu56pDCBsz3Oh5sjqNpvBl0lZhFu+/9odICkH+adoyCvYt/Kc1p3/3reZYQjCKjDakcn5HiZ5tVJAO84QC6LW+EqBEYaCVSuQht4ZH1CkaT0Wc7EYXA2DZ5xg2ilTBwPLR2lJy7A95xFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783994408; c=relaxed/simple;
-	bh=37/OT9LKI+BYDSnOxliSwg2aaWqAfmpb9XtcN2qDu2M=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Q7DYKPso9/mxuAypAKmeynJbpROal47xNN+kUOBvGfJcEdLT7BF0TSq9CtVlDWsEgAx2H15G+P4vXwZZrmH4girbhG+5YzAiQ1S3lGE1izHPzIE0bOpnFYyLMxWO6yxZU8/NK9a1bOBkGuGC4c9irZ/xRXZZLiODmHV0TNY8G+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWKxHzm0; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1783994536; c=relaxed/simple;
+	bh=7BU+af0ql7dHre5/wIPSX0Cx1baovyHvs9OSGQyRVzY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=lrn+uAYeLmr+oEUR+oJW+RWAOzR0uEQwtn901M+UpXz1V/94ujvcVFfiRswP6JzWCWD1yc5WtWt0ED/N1H+B0r0Y0lXv9Q0TFXZ7OxVcgm51s1hFoTJJtYe7W7IDQ2S7d/JGLJrcFvwIKiF3LFx+kkHzjkRSHH9rEq9LKp1+qRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SyC1qHQv; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWKxHzm0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SyC1qHQv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1783994406; x=1815530406;
+  t=1783994533; x=1815530533;
   h=date:from:to:cc:subject:message-id;
-  bh=37/OT9LKI+BYDSnOxliSwg2aaWqAfmpb9XtcN2qDu2M=;
-  b=nWKxHzm0FSYIAKS7nmNOVRSlCvzgIT3UTWjPCFrG4MVz2KlWpaGdvOEI
-   lw8bQ8xZN8BE9pn6gfQGF/lv0tVPLHJePtgD8JM5fiYaK0fimXR0nzTHH
-   cEo0wsMuFjnBZbg8RUHcfsy54ND0t+xDmP9Se2z+wssYPec9A9krFgWQ5
-   ILugEXQGr6z7PekB4xnI/HPt60qmzleROb0N/hZuNOrsagXZtlEY+q6O2
-   3O/F95G+Z1rtab/FMsgxolwQTQT1ZyjBr6uRdVkzrulPVNCJbtsvT8P/D
-   iajAkRqqpK3fLCbpzh9R6fKZTkghz2afMTrXBFpSB2yAP6VPkOGfUUNxd
+  bh=7BU+af0ql7dHre5/wIPSX0Cx1baovyHvs9OSGQyRVzY=;
+  b=SyC1qHQvc+K7QF0Mp6E9+Y0aS1kWYu2zDpP6e1U2HzLUfSl7MMSErnX6
+   E8Cpc4fOffdQzOe39o4UkKrj6DdgEewqYYCu7LaDQ175zg6e6TbtaeTRq
+   /RiLlIYAazrZoQWBXj6jysSsgcYVwa+8Mo36y21LwjIOUBsNiALPaeck8
+   y3EzSgjm6N4MDBmf5PYP/mBItBynXEHOU12+fdHlxj+l1Pu0qgwxX4Umy
+   ugIWa8qxcrCPyKep8Ud+xkDSf+zGOWAnpIUG8bzddSh1opbZVwjEQlXxX
+   lBsZLgR+h/YxFVfaIFtPXNR+8BRR0dB9vzxXuWc98yscy2e4hGE8kuJaP
    w==;
-X-CSE-ConnectionGUID: q+Kxd9NRSrCkmJHwLcrJFA==
-X-CSE-MsgGUID: 2c91oudeSAiNyjcjGRVS/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84804317"
+X-CSE-ConnectionGUID: R1mCQH8zS5OO8ZHEl3sxTw==
+X-CSE-MsgGUID: zxpNk6toRmKFmUW9VXHebw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="110157101"
 X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="84804317"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2026 19:00:06 -0700
-X-CSE-ConnectionGUID: abD+HPL7RgKXx1tZwWx38Q==
-X-CSE-MsgGUID: OopOdnj7QzCxifwA7jMW8w==
+   d="scan'208";a="110157101"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2026 19:02:11 -0700
+X-CSE-ConnectionGUID: 2K/nigASREyRsgwM2t5WcA==
+X-CSE-MsgGUID: tUdeNJCsTPqvUrgPEokt/A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="255220569"
+   d="scan'208";a="253975484"
 Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 13 Jul 2026 19:00:05 -0700
+  by orviesa006.jf.intel.com with ESMTP; 13 Jul 2026 19:02:10 -0700
 Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wjSRG-00000000MGX-0uZf;
-	Tue, 14 Jul 2026 02:00:02 +0000
-Date: Tue, 14 Jul 2026 09:59:37 +0800
+	id 1wjSTH-00000000MGj-1oEt;
+	Tue, 14 Jul 2026 02:02:07 +0000
+Date: Tue, 14 Jul 2026 10:01:34 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v7.3] BUILD SUCCESS
- fa62b8547f29160394942959c7217252b6fac043
-Message-ID: <202607140926.zKKjbF6S-lkp@intel.com>
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 927bf386e151616a0954f1b197e370b677d0175d
+Message-ID: <202607141005.6y7OpfXe-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,13 +59,13 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v7.3
-branch HEAD: fa62b8547f29160394942959c7217252b6fac043  arm64: dts: renesas: r9a09g047: Fix PCIe dma-ranges memory space code
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 927bf386e151616a0954f1b197e370b677d0175d  Merge branch 'renesas-next', tag 'v7.2-rc3' into renesas-devel
 
-elapsed time: 731m
+elapsed time: 734m
 
-configs tested: 222
-configs skipped: 172
+configs tested: 220
+configs skipped: 10
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -85,7 +85,6 @@ arc                   randconfig-002-20260713    gcc-8.5.0
 arc                   randconfig-002-20260714    clang-23
 arm                               allnoconfig    gcc-16.1.0
 arm                              allyesconfig    clang-23
-arm                              allyesconfig    gcc-16.1.0
 arm                                 defconfig    gcc-16.1.0
 arm                          ixp4xx_defconfig    gcc-16.1.0
 arm                   randconfig-001-20260713    gcc-8.5.0
@@ -99,17 +98,13 @@ arm                   randconfig-004-20260714    clang-23
 arm64                            allmodconfig    clang-23
 arm64                             allnoconfig    gcc-16.1.0
 arm64                               defconfig    gcc-16.1.0
-arm64                 randconfig-001-20260713    gcc-11.5.0
 arm64                 randconfig-001-20260713    gcc-13.4.0
 arm64                 randconfig-001-20260714    gcc-16.1.0
-arm64                 randconfig-002-20260713    clang-23
 arm64                 randconfig-002-20260713    gcc-13.4.0
 arm64                 randconfig-002-20260714    gcc-16.1.0
-arm64                 randconfig-003-20260713    gcc-11.5.0
 arm64                 randconfig-003-20260713    gcc-13.4.0
 arm64                 randconfig-003-20260714    gcc-16.1.0
 arm64                 randconfig-004-20260713    gcc-13.4.0
-arm64                 randconfig-004-20260713    gcc-8.5.0
 arm64                 randconfig-004-20260714    gcc-16.1.0
 csky                             allmodconfig    gcc-16.1.0
 csky                              allnoconfig    gcc-16.1.0
@@ -175,11 +170,13 @@ mips                             allmodconfig    gcc-16.1.0
 mips                              allnoconfig    gcc-16.1.0
 mips                             allyesconfig    gcc-16.1.0
 nios2                            allmodconfig    clang-20
+nios2                            allmodconfig    gcc-11.5.0
 nios2                             allnoconfig    clang-23
 nios2                               defconfig    clang-23
 nios2                 randconfig-001-20260714    gcc-16.1.0
 nios2                 randconfig-002-20260714    gcc-16.1.0
 openrisc                         allmodconfig    clang-20
+openrisc                         allmodconfig    gcc-16.1.0
 openrisc                          allnoconfig    clang-23
 openrisc                            defconfig    gcc-16.1.0
 parisc                           allmodconfig    gcc-16.1.0
@@ -291,6 +288,7 @@ x86_64                           rhel-9.4-ltp    gcc-14
 x86_64                          rhel-9.4-rust    clang-22
 xtensa                            allnoconfig    clang-23
 xtensa                           allyesconfig    clang-20
+xtensa                           allyesconfig    gcc-16.1.0
 xtensa                randconfig-001-20260714    gcc-8.5.0
 xtensa                randconfig-002-20260714    gcc-8.5.0
 
