@@ -1,50 +1,53 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3BC466B4C;
-	Tue, 14 Jul 2026 13:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5474B46AF02;
+	Tue, 14 Jul 2026 13:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784034231; cv=none; b=DaJgo2uQeOharRe5mI4GAp5Nin0U+zSmMFX+NuzrVvwOc7lQzmh4MEgkyKIbZFzQn4YUycNyewhpl5GMgEwBAwK9o1Q65nTONIQ2Chkt15LoVeZ08bJQtGjSp0EVnib7AUw5Pl6Zv6VTvb0A8GYAKS6bD3xVgEsUII3tl4QrsrM=
+	t=1784034233; cv=none; b=dS6FovTUls7H3FN2Zyj8V8L7C5m2mnTSja4uxQxSITpazgFWaAAmJAQlxLf1STJzhriiHvVG8OSd8IJt9da125BkJdmq03SPI5mi3TerlFbQJv+FyixgEO/3Ew72fsZ/1PRFWGJA5K7yPSawprOdxb9LWB4SJxJv5EXyDWVWCCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784034231; c=relaxed/simple;
-	bh=r7/DFFOiBZZ6Q3DeSuI8G+Veljz9pPAyCisILMx3k6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnNTRYfPG/1Hvfb1F9zpr6AlWq7gzVWTy36DHM0xlQQBoqXFgZcckV1OJb5AWl4HjXbUErO+x8gS+sWTt2BZudDNSDJGURbSIDzKgf/gRbdaic/Ai4xFrmKy5CT+RS+mzNqGsvSGDel7TlRnVfoO6Zo8fDrt2OnsHyZzNPbwBQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MZxc/I/q; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FGCVV2uO; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1784034233; c=relaxed/simple;
+	bh=fip8VgCDcHZ/37oCo7mvBsYLi7s5LcYhqK8ZjlwdsY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kWjkaLdIFoFiRxhJm0zjzWoGQUEAjExTdUzk3AhF1bzksSjQ29VAaDwhoLTxE+58/eq4jLGczq7xJjQq+RdXXZH1I2NJHOk6Rrz1R7Kj9xpIOF97+h6cnnCujwos2RT3p1UDj1uI0Cht7mT2HDFH2xKO4qJSegK0qpli70nBVMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qsdQJtWQ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nWg6s7KM; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MZxc/I/q";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FGCVV2uO"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qsdQJtWQ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nWg6s7KM"
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gzzyL4By7zMlG1;
-	Tue, 14 Jul 2026 15:03:38 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gzzyP1NkKzKw4l;
+	Tue, 14 Jul 2026 15:03:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1784034218;
+	t=1784034221;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eg2J22pv0EeOUfxPi9LM1hfuqMseecX+7PDPMI1icGM=;
-	b=MZxc/I/q6RkWmunmFE2cVidS53qzIS32iszUHWGuSBi7TaGlGanbU88UqzGj0qTjxAuKlM
-	kB6DuFJHZiou3G/erRT1JO5BzrMjbPnr7ycCeSvfUB0h/GrINSki1VX8ZCLmPBpgUj9ssF
-	rEPoV36YtsEBSbQAQQqYLcueql45gjTKtBv80Y6+ijJuCFDns0RzT97YdF2VTMiYvG2xC9
-	MKWax2hbU+V18+sAtAUF0nY6GxVNSDymxVrJzK/qWtllEcM132A0OYa1E4aO0T+2F1fkWy
-	kDJvK7IXmjsc9DvyC9+JyoLnmZaTryDn1N8ncsz+yCEmfLid6paA1rql2qw6jQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6QiLzIZX0BYLiz73cVxR+m2oxNcIlhqb4JWhtNdrz7g=;
+	b=qsdQJtWQb+d2QU7wO5SgqY3MeVj9rb+NSxQVuLbV3d5dCSJSJa+jF5LcwnOpGQ0kAw0Evw
+	BEfSw8eDPl+Tx7rHWVNtTBvIawdw/i/wZFc+rPJR62F/nLY0Zn2DQtkkcm0X8dU7eA4uoj
+	ZkG3dHR6zBlvr1ma4Ll8wBdF3nyx2045CXu/Y2HotnyVUMc4C1q6Lc2kbCAFMnCVBJ7ZqY
+	FftJyKBHIKJvzt33h4OGUpDCQg2CDAf/BCeuxKf0//nnp/3ndwxy53fgz2AKEISGMJv67V
+	0T3zcGs0li8Y8s9Ahw8pFpzoRumCveyeM5RltgE5Nc5/7KsXyEi8iTwQzj/0ww==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1784034216;
+	t=1784034219;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eg2J22pv0EeOUfxPi9LM1hfuqMseecX+7PDPMI1icGM=;
-	b=FGCVV2uOKO9+4IEYjxdVIDOqbyVsUbTb0wdkS2RYrz73606aw2tvTmdSRvQuanYemn78Sb
-	SGsA2X4NimVcabcS85+LjKq8nUgtL+u+4AQ5vUkO0EtjITy6hft2BUyT4d2XVxWOE3FAgB
-	lwMOIq0MwpkW76wbTDUvNU2J4+8nihgGeShKKB/40tJ4DgC+GmCo23jzcSGsYERD7OXFT9
-	wY8Pb9C6we5IQPRwE8EHS8mknKJS06yJGTYgCAr0OFi39CdNbU8krf0n8KlNgKops+W+UW
-	ISeNDRjEnhKHW3TG6UEOJ4tn2hvbnvTQmm58+zH051Gc4cYR1JuKq5g2pJBoSw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6QiLzIZX0BYLiz73cVxR+m2oxNcIlhqb4JWhtNdrz7g=;
+	b=nWg6s7KMB9MqZBhGSHGUOJykW0o8o23Ar0UnJP3IOxY7GOV9KKCu4veTe7Xq8bq6Cyi61r
+	dDVBLrzQiLtn4kVrozrgDyZQxjhUVGfXM5F6OhlFz8DvOLfO7x7oeo7WPAxncWUN/nR4kt
+	QmnrW1Dgkb2k2b1VMy1BXJa9/c03SlJNmoYHfKLtcSbt1oCY2oHKHyXz4IcF0INICDTGo/
+	DSB8yTxJysf1ct6o8dhqERlkz5+Y/Vy7oJhoJyCYvIaxcAv+P3kRW1v4Uph5T0xDaXHUTz
+	zvnLlMo5RcByOCCxW1lPZrwwVA4AouEF/y9cYmTRx/JwJ7SEXBqD5E8R/QW1Rg==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -54,9 +57,11 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] arm: dts: renesas: gr-peach: Specify ethernet PHY reset timings
-Date: Tue, 14 Jul 2026 15:03:01 +0200
-Message-ID: <20260714130325.11080-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 2/2] arm: dts: renesas: armadillo800eva: Specify ethernet PHY reset timings
+Date: Tue, 14 Jul 2026 15:03:02 +0200
+Message-ID: <20260714130325.11080-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260714130325.11080-1-marek.vasut+renesas@mailbox.org>
+References: <20260714130325.11080-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -64,8 +69,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 07c814e049ccf7dfdf7
-X-MBO-RS-META: uzejgmi3ro9qn95mmhsacqxn1fyed6im
+X-MBO-RS-ID: 877d854e8eaeff3eff3
+X-MBO-RS-META: ue93fxosbyq8r1y5c563e3rwmo5wqa49
 
 The LAN8710Ai reference manual [1] DS00002164C page 61 FIGURE 5-3:
 POWER-ON NRST & CONFIGURATION STRAP TIMING does not indicate how
@@ -94,23 +99,27 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 2 ++
+ arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-index 23ddec2176857..2477db9e5aaca 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-@@ -128,8 +128,10 @@ phy0: ethernet-phy@0 {
- 		compatible = "ethernet-phy-id0007.c0f0",
+diff --git a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+index 1d56bdef54539..eb65a54d0e511 100644
+--- a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+@@ -194,12 +194,14 @@ &ether {
+ 
+ 	phy0: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-id0007.c0f1",
  			     "ethernet-phy-ieee802.3-c22";
  		reg = <0>;
- 
- 		reset-gpios = <&port4 2 GPIO_ACTIVE_LOW>;
- 		reset-delay-us = <5>;
+ 		reset-gpios = <&pfc 18 GPIO_ACTIVE_LOW>;
 +		reset-assert-us = <25000>;
 +		reset-deassert-us = <300>;
  	};
+ };
+ 
+ &extal1_clk {
+ 	clock-frequency = <24000000>;
  };
 -- 
 2.53.0
