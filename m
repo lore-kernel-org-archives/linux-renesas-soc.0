@@ -1,92 +1,84 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEA5443E2B
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 18:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049E8311C35
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 21:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784139108; cv=none; b=KtWyf3KXZH/w7fB67blId5EszN11Y14MPrm8NPBUKLSWzCkutvduWR1iYpwkmm5ZshW8v4CbjGA2HOZwApQiwEvG0J4l65Cu1/FPFPKw+yOgOVtPT6EWb/4t3iEOj+e9apjQGn5SmAN+OYZtEzcMF8Np8uXsxPmUVijCc1C8GrA=
+	t=1784151653; cv=none; b=SFUMvSsn25TauGZhNWHZbqm4DiCAL7O26zW04tfvgKj92ndPbVAs767YiNafoIkqjfvkhTGxmyNM0kWdIn3DPmUWSgNOV0ugpMSA2/q9W3wJSeJgS0oTWM03d5jpUWfDcM/wya9TLAQdapp0TZQWJhCJwj25F59nLvAWB3f2y5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784139108; c=relaxed/simple;
-	bh=iF5GZkiz2K9L9RPtRHO98UAmRQG3zvWaAtuv9eQrlEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kG1Kb1eTbkgJF2bo2VO1+hAZr/dvQvMQdCakieHVej200D/vwUe42uJ76ky6yrivzJdFZpjZleqVnTojsvSABbzaZNfz66hD+gS7zyA4jZG0qad6HjUr3dPcQG9clPMHJQyJlX54XH4RSbGeDgAWFl0bHpJPSyqx2Nd8yeCqZkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U58LChdN; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1784151653; c=relaxed/simple;
+	bh=tkhVVefCPqJ5tScp1KbZWc7Atmy844FNxHFY1z/LQQo=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=tJ2L94XfgLGYIxZypnXwu1msWCkbPSfZiZLH6Sgehi3q9ghiPTFHvJ25yxG7hLQKoZDYFp7ckvZqXgpjzp39xY4ODsQnKSiJHIEVvXYxn95iLXtwvR9Yp+kxtVHCqlbJ+HJhf0An5cqKjf9Wx4Dq/tXDXgpwigKNOehV9tXLokk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gif009dd; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U58LChdN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=iF5G
-	Zkiz2K9L9RPtRHO98UAmRQG3zvWaAtuv9eQrlEw=; b=U58LChdNHK6QyaMceBlt
-	F17XScMZuCuTfd2tnH0zZ8Q5EyE6ujxg49YOrf4icN1qAdsPkBfDuwHxPF0dXAR6
-	xejtfevHlP95V5qpM0vfnODjTOn8w9pK0GaPjy5EDAg19QVr6s4oj90z7ERG2Jx4
-	+2yil5jvDDSb5LzkGf/z4t/DkneUozPM30v7/r6sfdcG44W/l8K7BvgxRrUJchm5
-	9OXFaRwG85CL/8K/OoKSks8nUmHvnZOcmcFFeJecdwCmhgXYGxy3vm7yXPC7vhIp
-	U8kCS9CAwakPAUiCZLCmCAIXDaNBRAp15I12yWjfhY6i0VnD5J490fTbOcVrJ/CD
-	fg==
-Received: (qmail 777209 invoked from network); 15 Jul 2026 20:11:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Jul 2026 20:11:41 +0200
-X-UD-Smtp-Session: l3s3148p1@Q7xOQapWVohe276h
-Date: Wed, 15 Jul 2026 20:11:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable GPIOs
- on CN12
-Message-ID: <alfNV-_Cb3WlqiHB@shikoro>
-References: <20260715122341.47838-2-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gif009dd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784151651; x=1815687651;
+  h=date:from:to:cc:subject:message-id;
+  bh=tkhVVefCPqJ5tScp1KbZWc7Atmy844FNxHFY1z/LQQo=;
+  b=gif009ddRA3uWkzhLbqwbIKPpNp50nRsLic7wOnYLWwtrVUGvVyljKjG
+   SfWi4m3q+wDEQ4ngnjgyzZi0jPVTFoQw7N5/b/VfGQJn4mUOwcCKVZ4Jj
+   zqAo96upv7Za/rBjxIZFHp1m0mNqoZYqa93YRzFzm6pA+y5krbG7uO09l
+   LgEyVR9xJYRfhiM3bZn5BR4NkTjlSbQuGghLepDM34uCCdARgtWLNOhgt
+   pgluSSWJHw5vt1FDm0CRRYr69Q27plD5j+5qP4rbtvJlM6USF1t1Cv74V
+   8obc+JS96OtMawpUmnJ2oEBHE8kddD2CqyFNDuye6kYGJO1z2sahMFiEK
+   A==;
+X-CSE-ConnectionGUID: +KtsuVIFS067+i26nT2gjA==
+X-CSE-MsgGUID: 34ZcqrchTT6mbhgT/eCrRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="96319748"
+X-IronPort-AV: E=Sophos;i="6.25,166,1779174000"; 
+   d="scan'208";a="96319748"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 14:40:51 -0700
+X-CSE-ConnectionGUID: Wk053MJBSWOGnCaBWRbNLA==
+X-CSE-MsgGUID: dIyV8pXQS4SlbnZ9TQa8Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,166,1779174000"; 
+   d="scan'208";a="294528595"
+Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 15 Jul 2026 14:40:48 -0700
+Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wk7LS-00000000O1W-1S9i;
+	Wed, 15 Jul 2026 21:40:46 +0000
+Date: Thu, 16 Jul 2026 05:40:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [geert-renesas-drivers:master 4646/4880] Warning:
+ drivers/scsi/ibmvscsi/ibmvfc-core.c:4942 function parameter 'protocol' not
+ described in 'ibmvfc_alloc_target'
+Message-ID: <202607160546.9qT6UbFy-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jqYPwWAJhEHCrDOt"
-Content-Disposition: inline
-In-Reply-To: <20260715122341.47838-2-wsa+renesas@sang-engineering.com>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+head:   cbf4a77e77ce7c4a2907a798c7f624dfaf65da57
+commit: 275460787107280d4e1f7946d6d17ea070780cef [4646/4880] scsi: ibmvfc: Allocate targets based on protocol
+config: powerpc64-randconfig-002-20260715 (https://download.01.org/0day-ci/archive/20260716/202607160546.9qT6UbFy-lkp@intel.com/config)
+compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project b3e6e6dabdc02153552a64fc74ff5c7532447eed)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260716/202607160546.9qT6UbFy-lkp@intel.com/reproduce)
 
---jqYPwWAJhEHCrDOt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202607160546.9qT6UbFy-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
 
-> The snps,dw-apb-gpio driver iterates over its port subnodes (like gpio2b)
-> to register gpio_chip interfaces, but it doesn't appear to register these
-> subnodes as independent platform devices.
->=20
-> Because the driver core only applies pinctrl-0 properties automatically
-> during probe for fully initialized device instances, this configuration
-> might be silently ignored by the kernel.
+>> Warning: drivers/scsi/ibmvscsi/ibmvfc-core.c:4942 function parameter 'protocol' not described in 'ibmvfc_alloc_target'
+>> Warning: drivers/scsi/ibmvscsi/ibmvfc-core.c:4942 function parameter 'protocol' not described in 'ibmvfc_alloc_target'
 
-True. Will rework.
-
-
---jqYPwWAJhEHCrDOt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpXzVcACgkQFA3kzBSg
-KbZBPBAAhIUej7DtDgk3O/WdyjSq7CVnI57qzhPLhfmY3oRm7+e2bU90V7pbRziu
-jJUhL4eFDArC85u8mvZi1n0cKWCGnpgd3ms5YEfkDDi0YVTZ2CZ3EbVKAGwVF92A
-iJGA+uZVawLilCzBacDACfJRzTscLFL01SScD8EEFv56zt4ljQ+H3MPIukHYeXl/
-73ZgLiqlSx7nwZsLbyQDtL/j5r50p2Uc0WwiWiw7YSAnOf1X0XjPnaHbJ6ElzW4N
-bdKyAocR0Br+5V79d3BljnrVyBnw59BDrgyLwMe9qdSis9AIY6TDaWXslDt9JFCa
-nt/DRRiYEDjzchDBZpbpVLzwSHxa21P8uDtCaFurcF50D7w3fqY+xFIQBSEJ07nn
-fJnbf+yPmz8Mo5ihMDe7Z3R1CY236XPUHc/GK1lw+UhZrTRQpVQ2J8qAQtygyuac
-1IaRpUFGyUlpd/IB7V2S4XvODv8TdOlcIWB5lX89W5CPektVT7KF34VOaG6SuyCH
-d5sQtp7FU3UI4Ih+GJy6T+iqB/Pv5xphYtcXt6U8arpJsBXkfE9r6nVISQQv5Ncs
-p4lMQiUCORXQBR+L/Z8UcvebY6oB2F0cd1Xqg9djovBXqCAv8BtfT5xC0mLxvIE0
-2CO3pbjygW/wBC342NbM5KIbZzWl2KZ+a5PBBRKQomMDnW7IH58=
-=IsHr
------END PGP SIGNATURE-----
-
---jqYPwWAJhEHCrDOt--
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
