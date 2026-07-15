@@ -1,63 +1,63 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1724E3D4114
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7554E3D4116
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784154266; cv=none; b=ofr6EdJIpd1wlXloImigACmTQciBwHFBRgxqJS7Z9sis5MlwAr45d9BFSO2Z/4aj9a1EmJtn2OcwcVbO0bvgMpFUF28uDYXdLEveBkLdp8AWyE1sQfk5FZ+5Uk4EiZH9nDvUgGxDG4R8yx839CXJ225YketreXkW82L0y5V21qs=
+	t=1784154267; cv=none; b=InpfY8asNwv1leHFCDx4o6KZmEEZ/RIWPzRRIAO7UHDLsO2+zSTq9Er+P+TuldPdXPsg2vDUbnI78njlcSZ2VxtpfsFToOo3CYL530TIqtUJOoI7y4xQlshHCERCPoeT0eNwmfp06qZZuZjHTKNM8ehXYz989gVu3rGIEnNImsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784154266; c=relaxed/simple;
-	bh=xf98bmANgzyLY7d0vN8PC/XFmQgSnyrCVMnzTAoeOLc=;
+	s=arc-20240116; t=1784154267; c=relaxed/simple;
+	bh=uwqN8ydh2yWuiSaCkv//cC0Jf+pSP4PQ94Q3elX3Tjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=plLDCUSkOvH2OW5h9wPDtw7kKgGSGx3b34ixaIVQYB5cpKswjBCGqRNVoH0jx4wjEzGcl4BoXXug2Xk20oS62RzdxllGrKRP+YtLBxpIFOI5c/IV1SWBvRSZUFVkqoqfmgNjc2nRa1OaK9H2VRhKdvIBTtyXnbokeRooNcAbb+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJt6Gx3d; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=p4BWxbR3aeEIFS6zD2ZnbF+JUVv9C8sKpYmXQVgcBscILJtDETRbhv8flkR8Ntpht2C6NSMw6v+cblqpYvQrwA3TF11YnAcY4gEWeI+VST49O75z8syvUXxtQr6NF5fowjNdKncxePPRDaWqLafKcsrTR7pM3Y0ovxJl/eLNNec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CzLAb8nC; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJt6Gx3d"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47de008b020so1385122f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:24:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzLAb8nC"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493f0ae9572so24514875e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:24:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154263; x=1784759063; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784154264; x=1784759064; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=x19+TAQDChfRjtz7x9GYQXd2WO2WRgrIM4Fdlb0t5zQ=;
-        b=XJt6Gx3dxKdpiGFr9YB3gZFf17X/CDRrZU9of3eq/4EwHXaLjXQBpVMpzXw6uSztmf
-         Wn3uxx5O+YxUlFr8+xZJR5ip+p89WtalvryJ1YTGIE4rBJAsWi4HzvJl8js8Ca2rTqud
-         pvzFTSg4k1qLHPqVFYjGqPagTQfq4Tks80uSw6XGSSSw2ERQulxHSCfcrAI/8hPhjdOs
-         1DmNxsOAIB3WoQWI2fHsb7iaCTDrkHYZrnN/p9XX20hEStgt2C1lo233nG+A8ogNJmha
-         NqKuuj6mwiJWqQoL/h3pjjh7vbD8pfw1rNlzChP96l8PpwV0lN77al7vRhyE/SUjEq9r
-         SnAQ==
+        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
+        b=CzLAb8nC9/pJJZLt9pRVHDhYDCqfff+rAB66/hoKfd3MlyDLuTuX4CbWHNTOnQD000
+         hfRswV278jk+SHRnfpZWBdGdiouhILr1/TSqza0Lye6vy546rS6j7TQbq+FADfg6Kjmj
+         JTrx65mVVfVFd1SYky1AinOUxHgtXYoLKVirfkM0NM/5sUN+l+aIV07kpP5pd8irOqvM
+         +AqTtc5sfD8HYTw0ZC1yTugf/VDlps39+M4pmMYDgP8hhhMiBqHDXlcGfiBacJuW6zVN
+         IJX+wXDNt1EnMH2S68kEH7Xuq67Srp8H2gvIF6qeAJMRgTbxBOebj4sOgQ7Cfmwb46QQ
+         +shA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154263; x=1784759063;
+        d=1e100.net; s=20251104; t=1784154264; x=1784759064;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=x19+TAQDChfRjtz7x9GYQXd2WO2WRgrIM4Fdlb0t5zQ=;
-        b=HJsxzgp/pxgbJNOlLRnf6dN1cToqd3Z31iN+Xbmb/+Md4H06FJbIGr5DYqj2aB4y38
-         xWPJ2x2G8+4iEOMa8BSo0gjC7HMvlKc3HpXn0+Mxb948fJSkHBHtlTEtCV+BxsskWceU
-         CEXWEWX6nET9i9JsnKOqh9owsf3jMAOFs+mMhhRfAFTh3nGy3Y0I+aVwcpyZ241r6pY7
-         qCmnkEbidDExENPIzuuIc+fBzOUm0pN3f/MEGzCgbORyt6bdy7q2N3a8xAzDhU+jearJ
-         s8M6d/ICW8Pe4E1BvgVGzXknRS4HFak9XSMsArs5C1mLhJceYOLWN3P6WERuKD6unjbV
-         7mOg==
-X-Gm-Message-State: AOJu0YxrPWBHrpdNO0phf6wp/vr7yIYQQXzQ7QVawR4DziOq/2/0s9C3
-	GUTRrOj1LFzSBycP1FAb7HEE0XBq3NN/E44P6H18Pl8qxFBypxpxUCXY
-X-Gm-Gg: AfdE7cnhh+9lPBETI86J1Sg0HR8I3vCAvDMrLe9JoGcVwNHJQxaTgmA/FpYBv9dQ2DS
-	gJiUPCWrGXNkldUILIpLBbKIaZm6ZwDhYly31SmnggOXL9kX3cbdcdr7mcQ98LJrwJJb7eU2Oab
-	VsjZF1BhWGoi0PPjb7efY9n4p9bY3VxZ/z9ZlA+Ke/FjDe4BcyUAxctPH63EGmyOg7omVxu3UKv
-	YY6D8lhkG/ExPTgJUx6TI2oWQ3ATbm0Z+mQKEZFVmZv34zkh8TYZVi+cTCDo5aFo/lT0tbhIpBz
-	980zfvzwI0lS0ptJzIVnu+jKXwBtWt5mZ2kMKJRmOgkvpqavY8uDkNVp9ih9RJyE5zvLGIOZ3Ws
-	xLLrGav9PcjaLW9HHdJGbqGexGBSG7gocX8i1Mx84jnT+D3+wbadtPd9buRrTmZJyGIv0ouVuOT
-	56abPzi4WeWer67H7qQ4Td7ok1EQhMMjhg3QKkDyfQJpt06FQeLap4N+benbt8kfRr440f62QuW
-	OIgdGQsERoHr/Yx
-X-Received: by 2002:a05:6000:2407:b0:475:f0c2:75b2 with SMTP id ffacd0b85a97d-47f5a53f2afmr5353f8f.29.1784154263155;
+        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
+        b=cBJS9geNFLTIquzuOgvwXHVIaEdwamL0zmJDAu9wKNuu3KEaXDi2VW0mTMELBSP5rL
+         LpkFVQtcnj9Ijny6ktaFeZnr8OaVWsZAb0MquLUaYZtZxDqJyjXFMonsbRmNMvgZRBn9
+         330R2KnwUMC8Ek8cyscbrLdZFDFLZLadHvCPO4r1oJTtBT/HvTfHTWt5TsuGWfpHUFJx
+         1NHmyHmP66DpxNcBTeD7E1eZsrEeSSfK44rPIBd6ILXwW5T4HGkpnbL5eKCkn6EURyyx
+         dHD/DcM3TRmarmPJ06VYGlLanVLPXYifsU0KL2M1K6FihVeHM2+xvl5zLX7dXDdsGRNq
+         qb0A==
+X-Gm-Message-State: AOJu0YwFM85BPfn4qticBlw7TzOeQC042CvBvKPdXoaN4PTssNWPUQwY
+	8rRu4s8yMiBjA/FX6a120IaQxEP7CIH79TpDC9FIYURikxkn4LLHNUf5
+X-Gm-Gg: AfdE7cmtD/RPyWg30h2yQ15eWMSNUmCoq+U8SP4G1Q7ij3khwhzkmCO9TZRvZJYlDnQ
+	vHHzqfskT0A7wXahHgijKiQE/o2zWj3nIW0NbIg7mRISn7XoXTfzgoseqYqIQkhQ38BlQnuFiz1
+	kGDtMEvMFD7hFLlumBmx3qN+ltIRHajNQzhmYO8I6XISFY8UKQQiOWar1iXh73OoenS2jLvnkzM
+	x8k8YYxk1tW0Dl24Lfkta9joFJVo7xqnnY2tPtdcRiJoCNC8ezPuzhO/kxYPsic5RkOH5QZWPFa
+	FErdC0BmquYbXi3Wa3xWOpVUEIKYs5ZBYMuG2kO3sySZB1QsNOzuMMwH7Bu/KrLIPxk/pYKdzqH
+	qpn/KOWupZ6uLBF8ryYITHevUQyCRqhNAmjBBmo4ktBzNP42kud7h7Za/io8KDS12kWVaZHiWQQ
+	w8NVVuztvEHApxrLoSe4V/VefzcQyAdiOiCvYH0DQ/i4PJPdc3APbziWVYIy4exxpzS9QS1OHKr
+	nqqwT1f5MnW7Q4Z
+X-Received: by 2002:a05:600c:8b6b:b0:493:f6f7:299e with SMTP id 5b1f17b1804b1-4953c273d48mr49140665e9.20.1784154263651;
         Wed, 15 Jul 2026 15:24:23 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:6d4f:b160:7aea:9d1b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4634e036sm22337783f8f.5.2026.07.15.15.24.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4634e036sm22337783f8f.5.2026.07.15.15.24.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:24:22 -0700 (PDT)
+        Wed, 15 Jul 2026 15:24:23 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
@@ -70,9 +70,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/7] memory: renesas-rpc-if: Move static bridge configurations out of dirmap hot paths
-Date: Wed, 15 Jul 2026 23:24:12 +0100
-Message-ID: <20260715222417.2997712-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/7] memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in write path
+Date: Wed, 15 Jul 2026 23:24:13 +0100
+Message-ID: <20260715222417.2997712-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -86,75 +86,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Move the initialization of the xSPI Bridge Control Register 0
-(XSPI_BMCTL0) and Bridge Configuration Register (XSPI_BMCFG) from the
-dirmap read and write implementations into the hardware initialization
-function.
+Program the XSPI_CDTBUF0 TRTYPE, DATASIZE and ADDSIZE fields with a
+single regmap_update_bits() call in the RPCIF_DATA_OUT transfer path.
 
-The bridge configuration values remain unchanged across sequential dirmap
-transfers. Keeping these regmap_update_bits() calls inside the hot paths
-(xspi_dirmap_read_impl and xspi_dirmap_write) introduces significant
-software overhead and redundant register locking cycles.
-
-Statically setting CS0ACC to 0x3 during xspi_hw_init_impl() permanently
-enables the memory area for both read and write operations.
+The existing code updates these fields through three separate
+read-modify-write operations even though all values are known before the
+transfer request is issued. Combine the updates into a single register
+access to reduce overhead and simplify the configuration sequence.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/memory/renesas-rpc-if.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 104c28532c20..50294e5d2bf5 100644
+index 50294e5d2bf5..e406afc42616 100644
 --- a/drivers/memory/renesas-rpc-if.c
 +++ b/drivers/memory/renesas-rpc-if.c
-@@ -312,6 +312,14 @@ static int xspi_hw_init_impl(struct rpcif_priv *xspi, bool hyperflash)
- 	regmap_update_bits(xspi->regmap, XSPI_INTE, XSPI_INTE_CMDCMPE,
- 			   XSPI_INTE_CMDCMPE);
+@@ -660,17 +660,12 @@ static int xspi_manual_xfer_impl(struct rpcif_priv *xspi)
+ 			u32 bytes_left = xspi->xferlen - pos;
+ 			u32 nbytes, data[2], *p = data;
  
-+	regmap_update_bits(xspi->regmap, XSPI_BMCTL0,
-+			   XSPI_BMCTL0_CS0ACC(0xff), XSPI_BMCTL0_CS0ACC(0x03));
-+
-+	regmap_update_bits(xspi->regmap, XSPI_BMCFG,
-+			   XSPI_BMCFG_WRMD | XSPI_BMCFG_MWRCOMB |
-+			   XSPI_BMCFG_MWRSIZE(0xff) | XSPI_BMCFG_PREEN,
-+			   0 | XSPI_BMCFG_MWRCOMB | XSPI_BMCFG_MWRSIZE(0x0f) |
-+			   XSPI_BMCFG_PREEN);
- 	return 0;
- }
- 
-@@ -869,15 +877,6 @@ static size_t xspi_dirmap_read_impl(struct rpcif_priv *xspi, u64 offs,
- 			   XSPI_CMCFG1_RDCMD_UPPER_BYTE(xspi->command) |
- 			   XSPI_CMCFG1_RDLATE(xspi->dummy));
- 
--	regmap_update_bits(xspi->regmap, XSPI_BMCTL0, XSPI_BMCTL0_CS0ACC(0xff),
--			   XSPI_BMCTL0_CS0ACC(0x01));
+-			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
+-					   XSPI_CDTBUF_TRTYPE, XSPI_CDTBUF_TRTYPE);
 -
--	regmap_update_bits(xspi->regmap, XSPI_BMCFG,
--			   XSPI_BMCFG_WRMD | XSPI_BMCFG_MWRCOMB |
--			   XSPI_BMCFG_MWRSIZE(0xff) | XSPI_BMCFG_PREEN,
--			   0 | XSPI_BMCFG_MWRCOMB | XSPI_BMCFG_MWRSIZE(0x0f) |
--			   XSPI_BMCFG_PREEN);
--
- 	regmap_update_bits(xspi->regmap, XSPI_LIOCFGCS0, XSPI_LIOCFG_PRTMD(0x3ff),
- 			   XSPI_LIOCFG_PRTMD(xspi->proto));
+ 			nbytes = bytes_left >= max ? max : bytes_left;
  
-@@ -945,15 +944,6 @@ ssize_t xspi_dirmap_write(struct device *dev, u64 offs, size_t len, const void *
- 			   XSPI_CMCFG2_WRCMD_UPPER(xspi->command) |
- 			   XSPI_CMCFG2_WRLATE(xspi->dummy));
- 
--	regmap_update_bits(xspi->regmap, XSPI_BMCTL0,
--			   XSPI_BMCTL0_CS0ACC(0xff), XSPI_BMCTL0_CS0ACC(0x03));
+ 			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
+-					   XSPI_CDTBUF_DATASIZE(0xf),
+-					   XSPI_CDTBUF_DATASIZE(nbytes));
 -
--	regmap_update_bits(xspi->regmap, XSPI_BMCFG,
--			   XSPI_BMCFG_WRMD | XSPI_BMCFG_MWRCOMB |
--			   XSPI_BMCFG_MWRSIZE(0xff) | XSPI_BMCFG_PREEN,
--			   0 | XSPI_BMCFG_MWRCOMB | XSPI_BMCFG_MWRSIZE(0x0f) |
--			   XSPI_BMCFG_PREEN);
--
- 	regmap_update_bits(xspi->regmap, XSPI_LIOCFGCS0, XSPI_LIOCFG_PRTMD(0x3ff),
- 			   XSPI_LIOCFG_PRTMD(xspi->proto));
+-			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
++					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(0xf) |
+ 					   XSPI_CDTBUF_ADDSIZE(0x7),
++					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(nbytes) |
+ 					   XSPI_CDTBUF_ADDSIZE(xspi->addr_nbytes));
  
+ 			memcpy(data, xspi->buffer + pos, nbytes);
 -- 
 2.54.0
 
