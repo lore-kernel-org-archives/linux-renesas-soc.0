@@ -1,81 +1,81 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4F73D4125
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7837DDF76
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784154272; cv=none; b=Iz+A45Ked3jvjVZJSrVF8XbVGynbZQ7Z8b4PmBlxczgWtJQEw41HmgWJvPIjE9ps3K/JymNjBHXjskAy8daraQlvdSm4Uh/lrWI3W7ZFp9JGii8z5gH9G93tBBfolUT4LAb9W2mXYbmIvqsew4o8Iu+jfxAqPPs0siGjiAQNooQ=
+	t=1784154626; cv=none; b=VId9sq9Sc8iruhZTa2rGlB5LK6foT7McDYiUmwUWahMVVcPacPsvzDh+wctamRlgCcIB8ktRqRQGhh3XjcBzRiLsw/NMpKgyxTctZSQX3DRcuD94X2KOvbYEcVoV5BwkHkMekVWyhcVvoSQydc4ZlZ8ClW45jO59CJjoD0mSuyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784154272; c=relaxed/simple;
-	bh=GwvIfQQOrtYqb2e9SFlGdBcFEhVLyfBCXNbe2vV18SA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ml6FyJSns+vs8J+7sJLHaQmQ3u+rH2wRFlWVNjfEcykapitya2qLzoO0aYRScSrKFzBXG5lu4VOWEPwjDbRHLZS9t+bCNAARupBF1uz4E1Kyy1gsSmJQ00XiCXHe67O0CHDokSyt6ln2Nk38XOWLaWqx3FP+3eNbQXL0wZmmCx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2y4n89I; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1784154626; c=relaxed/simple;
+	bh=tCqeoUjIEmuNaZaCOjtlZstXuwQpR3itJpuFpnBF3DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WoAdSt05rFcnuWjjA0fySFDh7oTtgpjfNIkF3J++emWXZSgkKzVQNPX/lVlk4yKAWaCBCSPaMmCfiKkuBRpYtEuZ42aiWxcpNOS/ivYAYhEz6t6DyLp+PfMJbR/4g5OhjLcYXMBIeZSOOW4maKIwyAd3OuIpkqev/BGmyhlo1Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlr2PrwV; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2y4n89I"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-475881b9a4bso2374223f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:24:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlr2PrwV"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-493f6de72faso14888705e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154267; x=1784759067; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=UIFF0wVe3GbIM2L28J8/WMckrWts7TIeIoXTCBUHvQY=;
-        b=Y2y4n89IKfNyrV8HuwlMG2VYaFma5biAdvdKkjY7GG6Do17u4oaPquxCwGdnoUbImf
-         8zmWXMHAwH34wq/4sNJ+pZ1zhLScp8/AiMB+p45jUZ7vWjqXM1+q1oQXzIvKnT15cRfh
-         u+h8ECA6X4Ha4SkEAgYoTdYXmuEPIJNdEwmmDibTxuLwtWiMjfFl6sZYgBwDjP17rm/l
-         sQiWhTwJ3YiR7lMl0fNzxxQM3tvhoxz/jP3s8DGTUMygzf86tpRj7erVB19ldXM4y2Ij
-         WIz7gOPeoVCMRPuyjo0e/+xYfScR7JOEPDC8JR8haF2U1x5Z3FJQ7jHvZG3hhT9ZDYNw
-         w4TA==
+        d=gmail.com; s=20251104; t=1784154624; x=1784759424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=dSh/ujj5LmUNHgERdW2VAUYTMg6YwowRxyWVq6xpoKA=;
+        b=jlr2PrwVTq2TLI8cEY8Z9ZG1Apvbf4YR17WqhLlbrKh8hhsbSj+1BFtxyqbKQGlxP1
+         XytrsYln8wshUFlhn/b8JOeB4/aZ6aeVp7PkT6SNMqKvHODIq1n7tqTvNnVX7sulI23U
+         37zg/10s3wTTG/dwEGqFKLIwHe7rpbZ34kdke+hxwabq0aX4JwmtopZsCmv3HHpruL9K
+         5nz3DNRkPpl6GL42T7IPE02ohps70Mq0epbMu/WDUOp/PiSEv/XOGYpx5VcXCGzm2sBw
+         WVvkJhv82fgLaP+b1wSvRG86nFwQ8Eosx0SyBwEHNRurNwK5vEIiadVBHPR0w1Hqn5bF
+         JEog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154267; x=1784759067;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=UIFF0wVe3GbIM2L28J8/WMckrWts7TIeIoXTCBUHvQY=;
-        b=Ca/BymafbGvuekMTv9wyg6IU8ytAOJtSvGruCLzCACCIVOZxPA3U1fljtav3tX2hMZ
-         8K4dBlBhKFDgjYQ3GH8kKK3rahAx7g5pJhYa0R3jOoQF7JNssj5nf5HeF1j8XPIAdQEU
-         YK7HamkRin7gBoUisdzXJRDM/Q48XTPUTZbs2pd5Yqq7zrMAxM87xaY2eQxC63aOWCKo
-         JAqhZ7LcThviIyDB0aNLj8wVzldU3V4UKRwubV4PWe/njGdwDMkR3o+CSKuLjvfunLdV
-         sIanG8BYGzlRsQg7NSHKTMzBfdOmPTVZ9DWg6oerA86msg84fbrHClWrkCP9ChZ2UdMU
-         Zajg==
-X-Gm-Message-State: AOJu0YwRJUazl/xJzWy3jCsZ70gHWslzAd7rNBMvIt/JsZXo/uNWW4HS
-	KL4ZCqQmLU8TEsiP7R6Mdu1E1d3zJa4kEY+o1SDZjZFAZIIqJ5hQ5UTw
-X-Gm-Gg: AfdE7clqY7vw9aZoCK/yTIDZ5st3rnrHSYvelvt5I50DQBuUx62gsjQOqT5ByQNxhIk
-	xKCJkTFkEojQKwXmFe1sjUljq2jk2tV9dWsR2mi9ZzxxcO4YbSA6eL66arZ3+ue16GCXd46pl+A
-	B8jDJoJkgy/9GEznPJnVqcB/XVMJ7EFm9QP0JP2Evpeb6UHgn55di/0DXuXqXVUyqjpbHhgmNfz
-	VXly+XEO2wTMGRrpPXCdqP8UzUhnMjaOVpP914su7MW+pZ/hO9BTGs5yutaHnZ6FKAapbDmnR26
-	QY+vydWZorTiCFsLsmREXPiMFdyx3NvIB+wyRp7JIuyVQ8qd/XNJK6rxcKhl+tprfnG14npAYPG
-	B4BzZZjSnpTWhXkIty5Su8eODJNXT8rQ6f+9GUtrhAZV5emx+Mv9QoyIBuCs7K5q+s5auDvAhpY
-	nvuZFTBCAcOxnMzLsKFHacUYCqPSPEwXXGyfz1vDkXKWV7h9KH7qvO+nq3IlLsJuXeRnz9IS5VQ
-	QY6X7Et4Vxlzs63
-X-Received: by 2002:a05:6000:4b01:b0:475:f100:35fa with SMTP id ffacd0b85a97d-47f2dd439ebmr22245618f8f.55.1784154266978;
-        Wed, 15 Jul 2026 15:24:26 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784154624; x=1784759424;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=dSh/ujj5LmUNHgERdW2VAUYTMg6YwowRxyWVq6xpoKA=;
+        b=c/D6oxtcqLuCPDr1zzO5zwSdFbLG50EUcwz37U4B8PBNPazbRTNd65/S+5OrCsPEM5
+         Hr8/kYTG0gZX+fgaOY85Mg221+maIVhsi4Bomifqs8CxZphikxkFDoTtTGIU9LXy7Cty
+         dFnWPBnK7nYn6gK3cux2O0qtYXO0h4TOQv9qu/kjcAwxFYuvltULNmrglUV81qS14WF7
+         +xP4nlj3QnaKAZx0WpMsktAQQqjOeAsVBl3Z3LJvuvj0UR+19Fb3gHpg6BDyJW/00PxV
+         ZEVitlsfrT3ig5hl1oduxbIn1GgogxoCA/3CC392nMqmvFhb26TWyUsIwPbg34ggL+5l
+         3PFw==
+X-Forwarded-Encrypted: i=1; AHgh+Rri/xC5+P5hrqJPbAX956WHVd26EKK9cryzOVFY53ZYbJKai70rMEpRfuTkUzvoXS8aYlXDrQ+MIRlXNJyO2TfcPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQxFu+W+mY2t6cFVh1gZZRMXbfJk94t09eQ9d9M/QyLwiV3+nr
+	JHW9T+TD/0FcUxJ4Gzi4hkazcQXy4h9SXal/bLv4RNpXJ1x4Thown+/qWBeNJ67v5qk=
+X-Gm-Gg: AfdE7cn50WYQyQYgM+3gyZXDG2TnpYrpSHmvJvRwRvzx+xq23v3iYQdr9BaqAqwhYVG
+	yXn3U4FbslLsm4sxSi4ao4iGkbFqxFlS8hRIPxY7U5bNK33/AGBKa18bSBs4rgIRvY7nOLAncS1
+	bg5w3KJjc11YRV7BkT6BFFquBYNd2uJdQBXIOYqcnX7tqBtUjEjU0YqACCUrHCOk2ik2ZbH9rjS
+	Hs1qTCWgQkOfRObolJTTRI7yDOfSGXhoDVmmth9EG+vf2fWY0YuNa1EGlmBpjOSWE+6pXovpGaU
+	GwbR/gjBOBi3711wk8xY9tuSizUyIxFHh35C+tCI/VrYcrx7bNEYLgi6pXYtWnTjAIJ8Dbibw+q
+	PNHlzRaDmsiQZXCxKQbFlX02SGfjflz1YHXXU95G9jnht+p9AblnbzTJhrDB++vGSrASjK9M/4S
+	iOJ4eLqMIfEmGsM412N0HzsX3RAf0cQumkYg62nREx/9K7s4KH0vtbzqfBjMEl0AbQccYxYD1L6
+	4uZ8u7oJ05Mcd7sbFIzuiCY8U0=
+X-Received: by 2002:a05:600c:4e05:b0:493:ecf5:89fd with SMTP id 5b1f17b1804b1-4954288e23emr206635e9.17.1784154623568;
+        Wed, 15 Jul 2026 15:30:23 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:6d4f:b160:7aea:9d1b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4634e036sm22337783f8f.5.2026.07.15.15.24.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49541e9ee07sm14791025e9.15.2026.07.15.15.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:24:26 -0700 (PDT)
+        Wed, 15 Jul 2026 15:30:23 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-spi@vger.kernel.org,
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 7/7] memory: renesas-rpc-if: Use runtime PM autosuspend after transfers
-Date: Wed, 15 Jul 2026 23:24:17 +0100
-Message-ID: <20260715222417.2997712-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/3] PCI: rzg3s: Fix issues in cleanup paths
+Date: Wed, 15 Jul 2026 23:30:16 +0100
+Message-ID: <20260715223019.3002237-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -86,55 +86,37 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Replace pm_runtime_put() with pm_runtime_put_autosuspend() after manual
-transfers and direct memory-mapped read/write operations.
+Hi all,
 
-Flash page programming may be performed as a sequence of closely spaced
-transfer operations. Calling pm_runtime_put() after each operation allows
-the runtime PM core to suspend the controller between successive
-transfers, introducing unnecessary suspend/resume cycles and potentially
-interrupting multi-step transfer sequences.
+This series fixes a few issues in the cleanup paths of the Renesas RZ/G3S
+PCIe host controller driver. The fixes include:
+- Disabling the PCIe reference clock on probe failure.
+- Propagating the original error code from platform_get_irq_byname() to
+allow probe deferral.
+- Unwinding chained handler registration on error in
+rzg3s_pcie_init_irqdomain() and clearing chained handlers in
+rzg3s_pcie_teardown_irqdomain() to avoid leaving stale handler and data
+pointers attached to the parent interrupts.
 
-Use pm_runtime_put_autosuspend() instead so the controller remains
-active while transfers continue, allowing it to suspend only after an
-idle period.
+Note:
+- This patch applies on top of pci-next (commit - 5d9f1dd3b3e7).
+- There is a patch [0] inflight for this driver which doesn't apply
+  on pci-next. As there is a conflict between the two, the patch [0]
+  will be rebased on top of this series and v3 will be sent out for review.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/memory/renesas-rpc-if.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[0] https://lore.kernel.org/all/20260630141720.3938514-1-john.madieu.xa@bp.renesas.com/
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index d98991266887..ec901a5a99aa 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -776,7 +776,7 @@ int rpcif_manual_xfer(struct device *dev)
- 
- 	ret = rpc->info->impl->manual_xfer(rpc);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
- }
-@@ -891,7 +891,7 @@ ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
- 
- 	read = rpc->info->impl->dirmap_read(rpc, offs, len, buf);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return read;
- }
-@@ -948,7 +948,7 @@ ssize_t xspi_dirmap_write(struct device *dev, u64 offs, size_t len, const void *
- 		regmap_update_bits(xspi->regmap, XSPI_BMCTL1,
- 				   XSPI_BMCTL1_MWRPUSH, XSPI_BMCTL1_MWRPUSH);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return writebytes;
- }
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  PCI: rzg3s: Disable refclk on probe failure
+  PCI: rzg3s: Propagate platform_get_irq_byname() errors
+  PCI: rzg3s: Fix IRQ domain initialization error handling
+
+ drivers/pci/controller/pcie-rzg3s-host.c | 38 +++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 10 deletions(-)
+
 -- 
 2.54.0
 
