@@ -1,64 +1,64 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2DB3BFAF2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22AD3D523F
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784154627; cv=none; b=SU7zUSKF4cdozmOHityVubEmAyeGwYRF/7XWIaMJn11Ul+JrmxOFD5Jh0nsX2jqy4vI7JFCz7ey5IZC/fzbP+kpUqyULdPw9ENU3NrA+7yO0K8k+1SthisuAFeiYlgHb5ygnw5zigBYieVi1Vz5LwbvUAudZgvhkhplnTC6UB/c=
+	t=1784154628; cv=none; b=kdEW+u2AMrED6VP5vRQxrHi4NyVMmtFdUT8BvcBUznIx0BMdEhV0+06MD7swQD576nf51j6ESPNw6Yjr7UlhfwMG2lOB4DSjduWcbbG+78Ml5fjCZN+LKnA1c+VpekMxhT4tHf4CVYZXu9ZXmWnWxyoEagIiQkvqZfBn1uHpIiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784154627; c=relaxed/simple;
-	bh=hR7PWAXiXwEEwFIet49TpDy0cQALd3XIah84ihqGwyo=;
+	s=arc-20240116; t=1784154628; c=relaxed/simple;
+	bh=EgzVoeiVIyluF+6tG2YQ8PKK7ioQwBY/YfGkht25UGU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZUP//q/oF3+iR0aW3PPzqDgSF6mlLOQ+bzayOtbWGyXsvJKz7F5bmgaUHjjgzY02oSXcuiieqoXKWWRLNTCxVVes94XwifOUcZP8IgpKWDifYKzrCbHMh/LR6B6PPGammc6OmcfUq8SrzcOWXnxahQt32VsZMJJ4hy6/EuVun8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMOVTl/s; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=M0aZXus9P4E5Auy46YPOLejZQzHcXb+Y3mMtohPckAcOCoBCJQpgJy7n/V7lCI047j3xegsGk/9Ry/PMmVsIIgGZXi6JcDq0xCG/uMZG+o23XlKU3/gobwDdtNUi/IBYTGSN/eIv6v8W0l5Cy6R/zdEJ1mKy932BpPmQ90Mxa4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4qqFVo9; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMOVTl/s"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4728c12ba97so2801473f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:30:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4qqFVo9"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493ce08a75bso24405835e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:30:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154624; x=1784759424; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784154625; x=1784759425; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=G4ripfAJqWHIXdYXUM5+uu7AjPtdQOgQwww925KypIE=;
-        b=hMOVTl/s1GCb1jmAoqpSGG1IP95cd2y4F+1Srj+2Zz57cayLKBmMkL3y/VbvuT/yGQ
-         9vd3E4YqOyVw/ZRkTG7tefZWlAFzG5H+wRkdl0amvJPrD+YWTpcK9CZr42ERipetzVgO
-         YXAQMdo1H2nTIRDu11xSL60ynNmKla3ss11Kz+9Vmv4iszaYqeaRysJHN15s/iwDccYl
-         ts8g/WaIPHfu4SGY6fueTLRybmzrwrscGy4rSgMREO59TI3LSe01Tvmb5DASpOPUJmWE
-         olCohkhTDVHwnQDLHCHpDpQuFZn9T7xQbkboP925/ZxfQ9yJ+GFo7AloRaa5mhbVIOYM
-         UPAg==
+        bh=cEtteLgNckAc3Sa7DEqz8fG/qXrLZDXlp2czTWgh+CU=;
+        b=O4qqFVo93xk9Ja+6Q64ES1sd9MaEQ4U+pGCi6MevCYQkGgZlEsp4xTsV35DPB/Alzf
+         o3AK0DLCNYU+1NrB1hwi8izUPrJrdhMny+h+6yE3RKHpwRdOlStw9yjcBdV2woWbyrsv
+         dZPpjMhAoMkZNUV79OzuH3pd87QQ+M8QzFzcc76BG/W7J9rfKfNziaafsmKshLaolCjV
+         4UCAQ0LD+BuNiK4vVsRyKeMznPKT0iclSF98xp6qhocNfts5vhTAL8QxWnfKTfV0UX3x
+         sIzNCZ9TCkgs1fBGvT3XRS90i5XAlpC5Na3FqR7dTwlU6MjAMb56FGv8q8Th2CQgqAW/
+         D2VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154624; x=1784759424;
+        d=1e100.net; s=20251104; t=1784154625; x=1784759425;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=G4ripfAJqWHIXdYXUM5+uu7AjPtdQOgQwww925KypIE=;
-        b=iQD4g1HVnjklLd3xGg/77EODjOV6Evbh8IRF2Ez27wj/jUbIHyMzUKc6mtGSyZY1UL
-         uUNF1GqtvlNXYlxd9rvvOhNoHJAf13Fupm5W/hL/LeVMTx05+qheInKs3BLRK0ce5FP6
-         /WxB6P0aBoITtgv9LprZdNI7ccGd+SXjQgedyWT0Q2OIcjfHmmsrRrLTQK3Jl1WVPro1
-         Gfmp1goedgc7DRY5PTJL/ejbYiqa52HNwK+Zs5aspur554kc7dSnNeohPP+K+5LwbMmf
-         0aPgYFuuAJJc3vqCE3Rlv+HnKYg00DjDQb+2tcPuRRVqzd0exh2fRdAdmv26isdcjF6A
-         Ruww==
-X-Forwarded-Encrypted: i=1; AHgh+RrpoOe0UkFbcgH8YKHOVE9+O83fr7IMQjuUGANLYddL0XodZZu6xCqDOcwKhzF0hDpmGZ/Al3a9M5b+HKPydq3grQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdSbaB/tIBr8415QGp1JUVNLW0HLe6ni78yjpNCR8KrOY/d+DP
-	7aicrTTBqqM4eLfrxGQu56yf9Uocq1Y37SMYBVNyYMJLeMjohya2X8Kw
-X-Gm-Gg: AfdE7ckrH/WO3MssK9gbXOJXozmZUFUQ/ooz6kR3eE70TPgWUDUC8nImqfDIp4iVjzz
-	Hor27lqjDLI0oNU/Vfm1v1rVKmkHEVxeYjg7GTDSmmq+2gSuU9f096DyccjLf5loxSrzXN9ya6n
-	bRiX3gG5wQgHWA6BemkBSOCC3ROmlgnXXAkU0tNwrsjpOb38DwF/In1HY53qFlgCYwl2QlzsbIc
-	8he7g90ikuVLX/QSp1WtDBRXH3jwNqsAimXRR55A7v7F+ilfO1dq83NIrVFOhGxgu1Pp1RWS2jt
-	HLwTxDgEpntXAAhRfL1QvG7Aj2oL1Vd5Og6A0K2jFOxO6Gxo8pvx8tkdZEq6MtOi9v0hHvCWOfl
-	LYoPRxsfwiVTZThdGSAM6z18ZKZFZGoVGJKve+t7/0apaheTMeZh0i87C1Gwq58crNRZQs1ABx7
-	hGoAdF0kIJPA3cIDM16IHc9QADNkrPIv59pVi7mEbyuiDMvgN7xk1GmlolUEkFcxZDHwk/8Smxb
-	B4V/q0XfB7ng9XLc7IufDbekpE=
-X-Received: by 2002:a7b:c38b:0:b0:493:c4e1:40a6 with SMTP id 5b1f17b1804b1-4953c28b6bdmr37737615e9.32.1784154624276;
-        Wed, 15 Jul 2026 15:30:24 -0700 (PDT)
+        bh=cEtteLgNckAc3Sa7DEqz8fG/qXrLZDXlp2czTWgh+CU=;
+        b=mBzGi7/ERhSKn2gG+6dVLdFq41OBXvUFQkO3uNR0Ck8v2Y3Dgb+PGjy50Ho5yCUcOi
+         qH+SxI8Luei9gNiBfN5DCayqutYG4C58kKILgm5Z5FY9pPuyBiR8Acw2K8+syJlNN250
+         7bv5B1v2m+idm47cU/Etf9KyjRin7BQi+Fqs+oM0RzZQskuz8JSHpGL5tngi5tVSXvYV
+         Yy48fGmDzRl9accOUJsMr5NOj6i057kmtM3kVtY1XmLyrRzWVUdWQtikxXgdZK4kOeX1
+         FAqaJBSAzdNatCtaAXbovrkkjUrKGE3xiH9lJEBjhRCSE3HVIXy59D8dpg9R3a5ymb+O
+         9RoQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrp+9/JHdJ1ODvjElPOr2lpwzwmB60taiegc8FSjYp0hsnF1E4NWEFqfdk5xJTnBjdkCliRjy6ADsrHpe/ImoBELw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb54awNcopzjB9TkXtd7n9oQbHUljCX/MQmV+UcLRkE7ZuvEZ/
+	716VjBn0gPDmzzgVkcP2MPSiXV1O/53dDDMK8VsQu47OrxZiDx2+SNN7
+X-Gm-Gg: AfdE7cn7JcBIqFpv060RSzvWjIUPovLOlDWJe68ZlZEDxYI604jm+C63MwSzV0v3vXG
+	OXas9FvMNStTvFnPC6yTxnkDPLkRcf6MrFaBjs+fcvN081LorfPO8fady7o0yT/senA/MdIRNyj
+	1TsH5+k29MwMjRFwvPHFN0IcKiGGoGVEoq7aJzB1/V3GxqZZtt4I7sG2Er4hD2+IKRPY/Bn5/hw
+	EmmMGMNUk50GA0msiyps6f6B4BQrcXmduhJ0PrsfARpIOAMPOp+pGiGQXaMa7OWbjtvpdXkaW1R
+	D5ypQNQRf2OuQIBa1GR6cL9gVx3C2qubixCS29dTaJVuvNpA2UD6NT1IP0sYA9UQbDik9DEiRgn
+	Xnx6jqVDIu7umkDQwxEqQdIevvf5p8R6+tm3WCgT0w/pA22i9GIrSUQDV9F5oMtdbWjAaMDMnxV
+	bO48BJnv5wlnDiVpHorUqAH4huNTcLULhtDtwsYw6Ds1iOEa0wOs4yUcaCX8ew2wQq56geVY1Vv
+	Mdnoa18WiNr6nLS
+X-Received: by 2002:a05:600c:4e53:b0:494:282:106c with SMTP id 5b1f17b1804b1-495158db293mr109153435e9.16.1784154625107;
+        Wed, 15 Jul 2026 15:30:25 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:6d4f:b160:7aea:9d1b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49541e9ee07sm14791025e9.15.2026.07.15.15.30.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49541e9ee07sm14791025e9.15.2026.07.15.15.30.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:30:23 -0700 (PDT)
+        Wed, 15 Jul 2026 15:30:24 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
@@ -75,9 +75,9 @@ Cc: linux-pci@vger.kernel.org,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	stable@vger.kernel.org
-Subject: [PATCH 1/3] PCI: rzg3s: Disable refclk on probe failure
-Date: Wed, 15 Jul 2026 23:30:17 +0100
-Message-ID: <20260715223019.3002237-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/3] PCI: rzg3s: Propagate platform_get_irq_byname() errors
+Date: Wed, 15 Jul 2026 23:30:18 +0100
+Message-ID: <20260715223019.3002237-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260715223019.3002237-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260715223019.3002237-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -91,34 +91,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-rzg3s_pcie_host_init_port() enables the PCIe reference clock using
-clk_prepare_enable(), but if rzg3s_pcie_probe() subsequently fails, for
-example because pci_host_probe() returns an error, the probe error path
-only releases the clock handle with clk_put().
+platform_get_irq_byname() may return specific error codes such as
+-EPROBE_DEFER, but rzg3s_pcie_init_irqdomain() replaces all failures
+with -EINVAL.
 
-Balance clk_prepare_enable() by calling clk_disable_unprepare() in the
-probe cleanup path before releasing the clock, ensuring the reference
-clock is properly disabled on probe failure.
+This breaks probe deferral by preventing the driver core from retrying
+probe once the interrupt provider becomes available.
+
+Propagate the original error code instead.
 
 Fixes: 7ef502fb35b28 ("PCI: Add Renesas RZ/G3S host controller driver")
 Cc: stable@vger.kernel.org
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rzg3s-host.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/pcie-rzg3s-host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index a1a78bdb7af1..01488660ab08 100644
+index 01488660ab08..f51b5d7c1998 100644
 --- a/drivers/pci/controller/pcie-rzg3s-host.c
 +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -1897,6 +1897,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
- 	return 0;
+@@ -1019,7 +1019,7 @@ static int rzg3s_pcie_init_irqdomain(struct rzg3s_pcie_host *host)
  
- host_probe_teardown:
-+	clk_disable_unprepare(host->port.refclk);
- 	rzg3s_pcie_teardown_irqdomain(host);
- 	host->data->config_deinit(host);
- rpm_put:
+ 		irq = platform_get_irq_byname(pdev, irq_name);
+ 		if (irq < 0)
+-			return dev_err_probe(dev, -EINVAL,
++			return dev_err_probe(dev, irq,
+ 					     "Failed to parse and map INT%c IRQ\n",
+ 					     'A' + i);
+ 
 -- 
 2.54.0
 
