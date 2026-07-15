@@ -1,197 +1,341 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013062.outbound.protection.outlook.com [52.101.83.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDF4282F25;
-	Wed, 15 Jul 2026 16:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784134486; cv=fail; b=e/LrWzt2J5bYnW6hJzOjnTqakXvMO86kLx2P+AAncXyjRNkibuWVTrTq9bH35TarBNfxRcsWPTEEgMAoRER5lqAIBoKMazzdPGSLKSPpz466amluog4Zz9c020zkVpZuFY5auf9G0eJv0Xzis1nA9DwHAngc84OeYO2QRyPluaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784134486; c=relaxed/simple;
-	bh=D9EMq1VqfYKij3K2tfvF3rKQI7BHLMuilpkYYgVGud8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Gk/aCCfdWjLOJY399+p8duz0VX4SCmUHLnaTttQLjOKzrNRRbXlhsJOX94Gqr1kE31ih6eLyVlzxDdkDVxNkxm2a4iO71z7zQutSLFTS4vZ0+Mrml4TnLqzpLB6/pCQGGlYY65ROxslMHiCoAOfm5oBhCnm2Wvz9AvODFz6+lTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=kLlH55Dm; arc=fail smtp.client-ip=52.101.83.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CA53B42C1
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 16:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784134568; cv=none; b=VG97XobVf/7+rK3HDWfUxK+uThv09b8SOr/Lq9kCAdsTKt++KPfGUGa/qZNd/4E133xIiOwrTHMn61bFnQu+OmXh6oWBpb6bCOMXb2UYHxkgblFIYm4rxv7CPmpa+/AXPvoDourAdkc/TbMs3MpcRNOfEkLSj0YnAT1hH99on7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784134568; c=relaxed/simple;
+	bh=IWUCunGUaTCNiIjJZFExRrEmVa81OfH9Xay6Y9Sp9+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pazNEfsqaCdxWh4jSHoRGEP3EWssPCPLSQ66tnsGn7oRwoksaLvTHn7iTxrrqYyBdxhY92OmCPEyxm/QirtDrXCBYGbj3DesL0q7bYC1kf49SqAMkOH6gz8/4IHf1Ugfcv/ugSQHbsUv/vpVHydViHXgTBDY2lhxeu3F6Ae9bgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Sk8E7JgZ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="kLlH55Dm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jcf/t1nAIpANs8+JmyJwAG0DqcT+VMHrz67W2sTIl0WbsTEx2yMuNz/f/ojduIwA57ws2MBVbHNHSxXacr+EOs3dSiz4UDfbCZjuybg7Neem8NWuRPaQhLLO4sHpSUgV3zMEbUpDqgWZo56BfhC8bWpmPESp1kM0/j+9iLcMDV04wouDo4balUf3bmNOCEKFuzz0TegaJyYxbteDmdf5602qmDU6pJueV25NI/Ys1DsfRStFSrzB7nGp83Yd44NpFvYaiXmJ+bRM3BRU0qHuq5mbW11HPPoIKtSJfuCo9CUQofEvIYCf7JmbjQuD3Pn32CmJbU3fiPK+Pq/ndwHRgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Eoa8MkDPp8ssx13FiVVkWSS1PweQhxGXHFbD/yoq83w=;
- b=bdptgWz860wG+ZxjvPzqQzpAp5ykdcOZ/tBDD9lLHNc8ACRljvG3x/Q+HPUrm/aUteUrWAd+iX1WMHc3qXRSjVQE6hOvmVgRnbKXZNJJKeS0F7u+7lkU4M7hyCrsivwy2ojQ7f1kXQNZy0Lm5ZjJHac+HaTn7auhTqLswnSGF+Knh4gHqbMFtNKn1nlSpSScnaSNUYXedbcORv1XKG2HKZbsZYiYppQA4atZfA8GziCSygqyzllu2FwIuO5eb561F5fxh+LVbQSu7+bDBxSMb115uJyhhXI9KX54jN/ssmGaOgkKCnrTQM2esFcSEzWGCqmXH1J3+tJyQhExdTjTbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eoa8MkDPp8ssx13FiVVkWSS1PweQhxGXHFbD/yoq83w=;
- b=kLlH55Dm/4BiNZcAguZf6zmEhQq9vkEG0hRM+68VFIPdRHXVXIpp5Iz1PHVSGQXcJ7r8QMHNsRrOyLdHcz5+VzmDRvQfJxUs3LohO7PdbD76E4Y7C7OWaV+W5N6NnfHxdRY4ezWE8/xa/hoGPMMKhR0Ri4xJtw+j0/FSKW6WRaj9bUp2Oil5hEKw+DZC8LEsgMbjBZK0CoIWL3bsCJMjdLfpD5km5RxHpG+c6krxCm2rSWrvAVtl4ths/0nw4yB07UtjZ/ME02d9sSSWsBkm3FV7EKwBzUwKfX077KsWrGVqBzW1IdQcGPdnzYLS5SKMJgOMZnoRjEn84ooQXoxu/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AS1PR04MB9479.eurprd04.prod.outlook.com (2603:10a6:20b:4d7::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.9; Wed, 15 Jul
- 2026 16:54:41 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0202.018; Wed, 15 Jul 2026
- 16:54:41 +0000
-Date: Wed, 15 Jul 2026 12:54:33 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
-	alexandre.belloni@bootlin.com, Frank.Li@nxp.com,
-	p.zabel@pengutronix.de, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 17/17] i3c: renesas: Add runtime PM support
-Message-ID: <ale7SS4VZ8aIwhJ3@lizhi-Precision-Tower-5810>
-References: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
- <20260713130545.568657-18-claudiu.beznea+renesas@tuxon.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260713130545.568657-18-claudiu.beznea+renesas@tuxon.dev>
-X-ClientProxiedBy: SN7PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:806:f2::16) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Sk8E7JgZ"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so40925005e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 09:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1784134563; x=1784739363; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=dc9Aopu2Z728JKtTIyYoYTkFBGcLajEY2h1IaXFOYK4=;
+        b=Sk8E7JgZ9QqHvLIBBkfBmNVNpje85Pf9Cww9Mu2irimAnE2tVv/LJJYsOY3Hez12p8
+         tTWmpcnZUKVyj7+Mq5IavtVMvpcbe/2VvwONESmnH5wtAePUCJ9kCGOWAswVSVD6TgnJ
+         ps335RqHyORIHjXX6j3IBiY3c9wWfprB0n1IYjp7VCqb+KjzWEW21YRI12qA0dbYqmZh
+         sSZ6Rp+iIyUYfrMxRpvm8ZWsAlpnOENDZqinnBOP/75tAs3+35Nco1NhPudZR30M5odE
+         uciZmblCIzAMlj2Pe1Dl2hzH7V9ti/O1VDeP0EnDVPLeFWRbbj+gSvf3Z6vAlkPQHtz0
+         wY7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784134563; x=1784739363;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=dc9Aopu2Z728JKtTIyYoYTkFBGcLajEY2h1IaXFOYK4=;
+        b=HzLMJQ06OK2VI+hbn+OElRiboyDWiGtleBSPy7uXG9cGvzdZ5qF9eK+TCkT8PQepsQ
+         t9c626toljBccGZwJRoPxGzxVN5VggTTB2DuEiwKtl1EUfix+PkD15ERAxFkoUJjjJQg
+         Q5mZ55AAUaFy8RN5slqrfNMP1Bmc+6iCaCN0dpkTj8Bh4Y4mPvuorSQxhRy+QnvdIKsE
+         w5FhlYcPEosd48F2pwNLfVjhhrURY5CKn5zVgPlTC8vXUklzpYvONRA+q1y5bElabWHs
+         wtvJYFm1BSirjWF0qMDdAjTOn1S/cD+70XVk1z47JJKWxbhqTNeGwI9WehfAge04LYY5
+         b0Vw==
+X-Forwarded-Encrypted: i=1; AHgh+RrUseWpA48bM3PbHHLvLClAbWketvQRQBkaZrd/ugZ8tDjt+fZ3IU5Iqy5hK/kWEz8HNELNDWAdGhK73Sd3F/PmNQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ8xFbmPxFGSRPQmn4pFn5yuI6mnCHUshJILv0aCtgfaC/B/V8
+	3Gpe1IQzXoSCBaSFm6FC0yb0lnQQRL388UDdtiJ3Azo+zneI9DB4LV7sjE2wIpQYO8Q=
+X-Gm-Gg: AfdE7ck/eI5RhFqjqfx+fWqvWGwWTELbqJvlwNbwf6A5n0hw65rATQCsQhSNtgoiSxh
+	E6ac21YhGZq1byqN7TVLHIiBhDvYL4cUIHw8yFn3ZLQPJ4rSWfbNuTdQYqtHaQ/JiyGL1/a98YM
+	3Wij271nQ1+aW4XnUAteX6uLQ15HsDDmgXmWOXaJioNxEZ57x6HZOuLAa0hWwhWli1Xv6gXTtz4
+	5FmMCOARKqMY1on968YpSbEHfbATN7e04YHjDIwRLEiTHYA4KZgjIVVy5ZJv/Kdb77ujrpKK6D1
+	eaNzCqAnLNXxUmPk/yOW6CJN4wVY4NtH7rS5Ss3mQV6HqGZpeVY04LUYxkEdhPSggGqZkyMItAd
+	1rlMhgoYjd2kVI5+528qZelQN7hVeTDiBgsx/x3W9odB5I3pILPwpzrf4OJx0rFP/e7X6oryRR1
+	eRCiXfFg+cTOPciCmg7LPNu3kzqXW+FUci7Isc6HclkJdy89stizDMn/XEQi0G4MQMKJA6HjETN
+	Kw=
+X-Received: by 2002:a05:600c:350a:b0:493:bb23:152a with SMTP id 5b1f17b1804b1-4953c28868emr41628395e9.34.1784134563454;
+        Wed, 15 Jul 2026 09:56:03 -0700 (PDT)
+Received: from localhost (p200300f65f47db04249e031dea91a10d.dip0.t-ipconnect.de. [2003:f6:5f47:db04:249e:31d:ea91:a10d])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4953c6ff429sm47318815e9.1.2026.07.15.09.56.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2026 09:56:02 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Imre Kaloz <kaloz@openwrt.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>,
+	virtualization@lists.linux.dev,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Alban Bedel <albeu@free.fr>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Matt Redfearn <matt.redfearn@blaize.com>,
+	Neil Jones <neil.jones@blaize.com>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Keerthy <j-keerthy@ti.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	=?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+	Bamvor Jian Zhang <bamv2005@gmail.com>,
+	=?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-aspeed@lists.ozlabs.org,
+	asahi@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-unisoc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Michael Buesch <m@bues.ch>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v2 00/21] gpio: Improvements around device-id arrays
+Date: Wed, 15 Jul 2026 18:55:05 +0200
+Message-ID: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS1PR04MB9479:EE_
-X-MS-Office365-Filtering-Correlation-Id: 103f712b-bc32-4ac9-f59e-08dee291c377
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|19092799006|56012099006|11063799006|4143699003|10067099003|6133799003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	TfJV1ObkXrVgwJn4pYw0LJm1O+PEnPSiWd+5Fmb+gMlrCoioXCnSeVWAn8Ut6fPlq+whGlIsBEvxziZbkIgX5G/T23eYSw0ehtezvltG6ODU9FdcYVnRmc+05JBRRGMYsd9ufdNjunHcvKYDgDFakpsM/btXpxME6DT7esR+on7rsRIr1frVH0dQO1SSUMHnjT6kOZa247WdmxHbxMil+O0ucH/BCt/L2rsp7qZ8F3Y0EdwRTYRUJlmix8IKgujIVq1NvnIOqMuUjR8OCAEAeekXRzyHqFS3hfYPnMVlgqZktJog/Vq6wl4WZzXoSDp3ABa2R/oNjKcO9S/NgwemUwlyqLTHCg+cbQbGiEjYnV2+tNhOLIAQYYLrVGHuMAxVUObPNHysgHRk8kKiVeqoqWfSZuHnUoj5aWrRGB7HErF6ayOA8QnfryCn/VqXqHK3FpGlu+0Mv8IPzWKqi+cFNK0Wy1iF7tTnfwHJvWcSNgZKGIOzzWPdfJXrgBvCZwr/T/aFAFfxz4PDN9qQl+K1mViQ/cDCehsKOGm+sKGcZOJwz/cOodm+Duwi7HyshrNKuNmwsiHxxK9VClDFu21enHbaxjXyYW9n6BABAissnLl4po/E+Ndg0A7uNV1Jc/Ib9xXNP4lJHbmNLTwuJAtM4mK61QQnl+9juWCn3+QufS0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(19092799006)(56012099006)(11063799006)(4143699003)(10067099003)(6133799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K32GT+W7DhmFW3+5vEWM6n3BQcu4nRwnGs9tJdaBYMxfTmv5W8LDEGIloXop?=
- =?us-ascii?Q?8GuSo0954xt6BNlEY7/m6Wdo1nVvZ/LuaSJlPrEMmFnaYMCoDD2ebbGWRFfp?=
- =?us-ascii?Q?WrxpC0g+As5Y7+lhvSzbE/QbGi5Z71GuTC+CkeEWnQkPJS1Ivb38RDqLhVw8?=
- =?us-ascii?Q?Yje+jwAaazQKWKA2XZw/6X4a/lissQ/02KIgbi6naU/2P0Bp0jIp0qMimCEy?=
- =?us-ascii?Q?LroyseJNkw77TzX1K5sbgCLSkenDeojFblY8K200pJo31/e/8fpZeJXpeAr1?=
- =?us-ascii?Q?yFMEr02JLYy5VAKX3ygcA/otkzf2ytrVwGB785/TZU+2bz6q9WfoSEVYdUXP?=
- =?us-ascii?Q?tolxRzSnJRIK4+jTCRQCu5Cz+cCKA3JZeGxhPliqumNLiNJLDTZq4sKVsZrF?=
- =?us-ascii?Q?0timFqbjC8Oaq8BkmMVkb+xSqyVzyGK1wd/UG5PRxlY0KWGhpom2+dT91rQY?=
- =?us-ascii?Q?709NrHu16q1PdHwtsoKTe/zYnQJRITf0dfoajqeZylB1XaDzOMz5y7aC7Z0O?=
- =?us-ascii?Q?S87elst1OGHus3AbTJ5T+XujO19/xCz+OyO+HfLaAJtd7CeGGyOSSGjPAfHz?=
- =?us-ascii?Q?ktkjSj5wvfee2UdE/hamMdFHfry6lGLt4Slg+sUQBdZOGRE2vbtWMPAkgjCV?=
- =?us-ascii?Q?T8o4BP8igPlZXnvUCO4JDNmdZvCHogLLNvkuInRUMEqkPgtvX+TLJSVfZALe?=
- =?us-ascii?Q?F6h4QanCphafNSSosTJfF7sWXmNN0UMzH6/uZBussmnjyn5hMchcs9HUvd0M?=
- =?us-ascii?Q?5PrfuhuuC5hzIvK98zo6dZPaN9KnKahs/wvV22fueqFy6IBMvuC1441PaP3u?=
- =?us-ascii?Q?eK6c1OgDLaXla/U6CQUVYK4ARW24A9ckCIFaafAKjk0eSDqNx3PQfqreHRKr?=
- =?us-ascii?Q?hQDcOdr9/P5M8uEro4eSgg37m6DaCKSWVyHY1+s7sz1XdxvD7egSXYvZn0Bh?=
- =?us-ascii?Q?yPNSjl7B0zbcl5ypfp1+OlAqtLy7wzoOQnLXTllutegjKWSFYfHq6n+dHAPP?=
- =?us-ascii?Q?+5Lc7gu31S13a1tUhhSaPPt0QJj4kSVg+vVoieP9y9wrgkWaDUbP3HZdxxsp?=
- =?us-ascii?Q?29fb9gOoHt2wog56a84Du27NzaV0RiUphbEPT63CRJY5AA/OgPZGpmkT/Gr8?=
- =?us-ascii?Q?PI7I36vJiNOryFrVMblG7A8Z7PE1bBjj5c+6MAhDUEBMhdDsMF9X9slVayFT?=
- =?us-ascii?Q?eSg7ackO77UsJYS/WtZDGHqY7fqr2MbI/4trXv9RziyfNgpwvvuEyEvufQGH?=
- =?us-ascii?Q?68OzrxAHSQwaceZjKjajQIStTPuxi8ybmVKj3hwzLVXso2bcuN0+AMn7d0q1?=
- =?us-ascii?Q?3rgSdVJTSktQfI8smfxBdloqfNqRjxcTepsKIVqaUXh7zZIY7EbjShcdtbcM?=
- =?us-ascii?Q?cJ2w5hTjgX1L9pkT5dV7jV2kPWctsIkweF+gNPzDyNbuHKkB5DU2kq/HzcSs?=
- =?us-ascii?Q?o0O/adS2Z16Ah/tP17qk5vwW3gyvS5KUx2pcp4rdi7G1cddejj+3Jw9uXNOG?=
- =?us-ascii?Q?+RmbXMcolwPN7BoMyhAy98WvVDC2Sj3NyjN1xVyr2oFdYzWessred5EgFIlD?=
- =?us-ascii?Q?UH0q2eEPWQpg9wTl0L8HAxGYdqo79GQwdVqOcerOrZe2RBPldrsOuL5vX5BL?=
- =?us-ascii?Q?DU4Z2kpa6nuHFfnqw/2hLeqhzVtsy8wPZtWpKKgzG39irTuY3EvNCv0792/S?=
- =?us-ascii?Q?qorrdNFducGoVNFDgmpZteMZcwEJ+W+HJCMiWn0vlUCGlkL6UznOnpAvJqkH?=
- =?us-ascii?Q?wYuvQ+f5NbayPI0KL3uIz6gF8nKes/gLOd2rDkgwoxEIjC2q3HMS?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 103f712b-bc32-4ac9-f59e-08dee291c377
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2026 16:54:41.2908
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D4h2hwZcoOfRfRBz4GXkc8XyXTHzYKPbamFew8JUP/AQqT1oUqQg4V98A03s1Xvss4+9HC4kLLRh7LqzPPmOo94TuxOAPZr2m3eA0BHWVKzm3EbGkCXOIQVVsR0nG0zQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9479
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8054; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=IWUCunGUaTCNiIjJZFExRrEmVa81OfH9Xay6Y9Sp9+8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqV7tpcWa4IDqdHE07WRN6KbaBUpPQqFeHKz38l NPYom/XImOJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCale7aQAKCRCPgPtYfRL+ TtTaB/wMHdo4jeTAu8TDocMrZIkg854g5QFjcfbVE54N17jnr4AIRFzaeHw5Ef3dkM+guUxSwmj F5MR8eG3l1tF9YtUNmlhbx/vfxy40WhQn9DtmnjtWzwMlcrq2Bx1Qy3dAIUKRmWu8OBHmQoLETO JQ4Z0G/Aungdh91TZCoSgDUdjGBT9AqikXKikNh82DMEMiG8tx14PL5vabsoJ+RX+kgTyt3svCn U25sKCqazurzcIFFDvuLBrl46NkLy88JS0XSCIhIpvTjh0oHlkKksNl1o0uzGB+W2A9BEDa799A SZq7t3HXFBTrZVb4r5+uP0V69VjegzndPUWsZzWqJxaovWlm
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 13, 2026 at 04:05:45PM +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> On the SoCs where the Renesas I3C driver is enabled (RZ/G3S and RZ/G3E),
-> the clocks of the IP are managed through a clock PM domain. To keep the
-> I3C code simpler, the explicit clock handling was dropped along with the
-> addition of runtime PM support, in favor of the runtime PM APIs. Only the
-> code for getting tclk was preserved, as it is necessary to compute the
-> I3C clock rate.
->
-> All the APIs provided to the I3C subsystem through struct
-> i3c_master_controller_ops are guarded with runtime PM APIs to
-> enable/disable the controller at runtime.
->
-> As the Renesas I3C driver implements an asynchronous transmit model by
-> preparing a transfer and waiting for its completion through the ISR,
-> renesas_i3c_abort_xfer() was added to disable interrupts and clear any
-> pending IRQ status bits when there is no completion in the defined
-> timeout. Along with this, renesas_i3c_wait_xfer() return type was changed
-> to unsigned long.
->
-> Add runtime PM support for the Renesas I3C driver.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v5:
-> - updated renesas_i3c_irqs_mask_and_clear() to use the
->   renesas_i3c_irqs_mask_and_clear_locked() introduced in patch 1 from
->   this series
->
-> Changes in v4:
-> - renamed renesas_i3c_abort_xfer() from v3 to
->   renesas_i3c_irqs_mask_and_clear(); along with it renamed local varibles
->   abort_xfer to xfer_failed
->
-> Changes in v3:
-> - dropped the RPM resume/suspend in renesas_i3c_suspend() to read the
->   DATBASn registers as the DATBASn register are not used on suspend/resume
->   path anymore in this version
->
-> Changes in v2:
-> - dropped the runtime suspend/resume functions as for now, there will be
->   no pinctrl sleep state described in DT
-> - do not synchronize the IRQs in renesas_i3c_abort_xfer() as some handlers
->   may re-enable interrupts; instead just disable the interrupts and clean
->   any status bits that the IRQ handlers are touching; with this the
->   struct renesas_i3c::{irqs, num_irqs} and the associated code was removed
-> - dropped the renesas_i3c_dont_use_autosuspend() along with the
->   devm_add_action_or_reset() call to set it since the same operation is
->   done by the devres cleanup helper of devm_pm_runtime_enable()
-> - adjusted the renesas_i3c_suspend() with RPM calls to save the DATBAS
->   registers
-> - use pm_runtime_resume_and_get() in renesas_i3c_resume() to avoid
->   mixing gotos with cleanup helpers
-> - adjusted the patch description to reflect these changes
->
-...
->
-> @@ -1384,12 +1458,16 @@ static int renesas_i3c_probe(struct platform_device *pdev)
->  	if (IS_ERR(i3c->regs))
->  		return PTR_ERR(i3c->regs);
->
-> -	ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &i3c->clks);
-> -	if (ret <= RENESAS_I3C_TCLK_IDX)
-> -		return dev_err_probe(&pdev->dev, ret < 0 ? ret : -EINVAL,
-> -				     "Failed to get clocks (need > %d, got %d)\n",
-> -				     RENESAS_I3C_TCLK_IDX, ret);
-> -	i3c->num_clks = ret;
-> +	i3c->tclk = devm_clk_get(&pdev->dev, "tclk");
+Hello,
 
-only one tclk? you remove devm_clk_bulk_get_all_enabled()
+as with v1 the original motivation for this series are the patches that
+convert the arrays to use named initializers, see
+https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
+for the idea behind it. Then by not closing the eyes for small issues
+spotted while working on that, this series grew a bit.
 
-Frank
+Changes since v1 (available at
+https://lore.kernel.org/linux-kernel/cover.1784013063.git.u.kleine-koenig@baylibre.com):
+
+ - Trivially rebase to today's next/master
+ - The first two patches are new. My script didn't match on device-id
+   arrays that are marked with __maybe_unused, so the drivers touched in
+   these two patches are adapted further down, too.
+ - Fixed capitalisation of PCI (Andy), did the same for ACPI
+ - Sort the ACPI device-id arrays by .id in the "unify" patch (only one
+   instance in gpio-dwapb.c was unsorted), suggested by Andy.
+ - Found a few other inconsistent device_id arrays that my script didn't
+   match (due to .driver_data not being a single expression or a comment
+   in the terminator or more than one array in a single file)
+ - Fixed cast expressions in drivers/gpio/gpio-mvebu.c to please
+   checkpatch
+ - Dropped the dmi MODULE_DEVICE_TABLE patch
+ - Added review tags from v1
+
+Checkpatch only reports two undocumented device-tree compatibles. I felt
+free to ignore these as this is a pre-existing issue and out-of-context
+for this series.
+
+Best regards
+Uwe
+
+Uwe Kleine-König (The Capable Hub) (21):
+  gpio: Remove __maybe_unused annotations from acpi_device_id arrays
+  gpio: fxl6408: Remove __maybe_unused annotations from of_device_id
+    array
+  gpio: Drop unused assignment of acpi_device_id driver data
+  gpio: max7301: Drop unused assignment of spi_device_id driver data
+  gpio: mmio: Drop unused assignment of platform_device_id driver data
+  gpio: ljca: Drop unused assignment of auxiliary_device_id driver data
+  gpio: Add missing ACPI module annotations
+  gpio: sodaville: Add missing PCI module annotations
+  gpio: Add missing OF module annotations
+  gpio: pxa: Add missing platform module annotations
+  gpio: pl061: Use empty initializer for amba_id terminator
+  gpio: Use named initializers for acpi_device_id array
+  gpio: Use named initializers for spi_device_id array
+  gpio: virtio: Use a named initializer for virtio_device_id array
+  gpio: pcf857x: Use named initializers for of_device_id array
+  gpio: Unify style of acpi_device_id arrays
+  gpio: Unify style of of_device_id arrays
+  gpio: max77620: Unify style of platform_device_id arrays
+  gpio: Unify style of spi_device_id arrays
+  gpio: Unify style of pci_device_id arrays
+  gpio: Unify style of various *_device_id arrays
+
+ drivers/gpio/gpio-74x164.c          |  4 ++--
+ drivers/gpio/gpio-adnp.c            |  4 ++--
+ drivers/gpio/gpio-aggregator.c      |  2 +-
+ drivers/gpio/gpio-altera-a10sr.c    |  2 +-
+ drivers/gpio/gpio-altera.c          |  4 ++--
+ drivers/gpio/gpio-amd8111.c         |  2 +-
+ drivers/gpio/gpio-amdpt.c           |  8 ++++----
+ drivers/gpio/gpio-aspeed-sgpio.c    | 10 +++++-----
+ drivers/gpio/gpio-aspeed.c          | 10 +++++-----
+ drivers/gpio/gpio-ath79.c           |  2 +-
+ drivers/gpio/gpio-bcm-kona.c        |  1 +
+ drivers/gpio/gpio-blzp1600.c        |  4 ++--
+ drivers/gpio/gpio-brcmstb.c         |  2 +-
+ drivers/gpio/gpio-bt8xx.c           |  2 +-
+ drivers/gpio/gpio-cadence.c         |  6 +++---
+ drivers/gpio/gpio-creg-snps.c       |  5 +++--
+ drivers/gpio/gpio-davinci.c         |  8 ++++----
+ drivers/gpio/gpio-dwapb.c           | 14 +++++++-------
+ drivers/gpio/gpio-em.c              |  4 ++--
+ drivers/gpio/gpio-ep93xx.c          |  1 +
+ drivers/gpio/gpio-ftgpio010.c       |  3 ++-
+ drivers/gpio/gpio-fxl6408.c         |  2 +-
+ drivers/gpio/gpio-graniterapids.c   |  4 ++--
+ drivers/gpio/gpio-grgpio.c          |  2 +-
+ drivers/gpio/gpio-gw-pld.c          |  4 ++--
+ drivers/gpio/gpio-hisi.c            |  6 +++---
+ drivers/gpio/gpio-hlwd.c            |  4 ++--
+ drivers/gpio/gpio-imx-scu.c         |  1 +
+ drivers/gpio/gpio-ixp4xx.c          |  4 ++--
+ drivers/gpio/gpio-ljca.c            |  4 ++--
+ drivers/gpio/gpio-loongson-64bit.c  |  4 ++--
+ drivers/gpio/gpio-lp3943.c          |  2 +-
+ drivers/gpio/gpio-lpc32xx.c         |  4 ++--
+ drivers/gpio/gpio-macsmc.c          |  4 ++--
+ drivers/gpio/gpio-max3191x.c        | 12 ++++++------
+ drivers/gpio/gpio-max7301.c         |  2 +-
+ drivers/gpio/gpio-max7360.c         |  8 ++++----
+ drivers/gpio/gpio-max77620.c        |  4 ++--
+ drivers/gpio/gpio-max77759.c        |  2 +-
+ drivers/gpio/gpio-mb86s7x.c         |  2 +-
+ drivers/gpio/gpio-ml-ioh.c          |  2 +-
+ drivers/gpio/gpio-mlxbf.c           |  6 +++---
+ drivers/gpio/gpio-mlxbf2.c          |  6 +++---
+ drivers/gpio/gpio-mlxbf3.c          |  4 ++--
+ drivers/gpio/gpio-mm-lantiq.c       |  2 +-
+ drivers/gpio/gpio-mmio.c            |  3 +--
+ drivers/gpio/gpio-mockup.c          |  4 ++--
+ drivers/gpio/gpio-moxtet.c          |  4 ++--
+ drivers/gpio/gpio-mpc5200.c         |  9 +++++----
+ drivers/gpio/gpio-mpc8xxx.c         | 25 +++++++++++++------------
+ drivers/gpio/gpio-mpfs.c            |  1 +
+ drivers/gpio/gpio-mpsse.c           |  3 +--
+ drivers/gpio/gpio-msc313.c          |  1 +
+ drivers/gpio/gpio-mt7621.c          |  2 +-
+ drivers/gpio/gpio-mvebu.c           | 13 +++++++------
+ drivers/gpio/gpio-mxc.c             |  2 +-
+ drivers/gpio/gpio-mxs.c             |  4 ++--
+ drivers/gpio/gpio-nomadik.c         |  7 ++++---
+ drivers/gpio/gpio-novalake-events.c |  4 ++--
+ drivers/gpio/gpio-npcm-sgpio.c      |  6 +++---
+ drivers/gpio/gpio-octeon.c          |  2 +-
+ drivers/gpio/gpio-omap.c            |  2 +-
+ drivers/gpio/gpio-palmas.c          | 10 +++++-----
+ drivers/gpio/gpio-pca953x.c         |  4 ++--
+ drivers/gpio/gpio-pca9570.c         |  2 +-
+ drivers/gpio/gpio-pcf857x.c         | 26 +++++++++++++-------------
+ drivers/gpio/gpio-pci-idio-16.c     |  3 ++-
+ drivers/gpio/gpio-pcie-idio-24.c    |  8 +++++---
+ drivers/gpio/gpio-pisosr.c          |  4 ++--
+ drivers/gpio/gpio-pl061.c           |  2 +-
+ drivers/gpio/gpio-pmic-eic-sprd.c   |  2 +-
+ drivers/gpio/gpio-pxa.c             | 20 +++++++++++---------
+ drivers/gpio/gpio-qixis-fpga.c      |  3 +--
+ drivers/gpio/gpio-rcar.c            |  2 +-
+ drivers/gpio/gpio-rda.c             |  2 +-
+ drivers/gpio/gpio-realtek-otto.c    |  2 +-
+ drivers/gpio/gpio-rockchip.c        |  4 ++--
+ drivers/gpio/gpio-sama5d2-piobu.c   |  2 +-
+ drivers/gpio/gpio-sifive.c          |  2 +-
+ drivers/gpio/gpio-sl28cpld.c        |  2 +-
+ drivers/gpio/gpio-sodaville.c       |  3 ++-
+ drivers/gpio/gpio-spear-spics.c     |  3 ++-
+ drivers/gpio/gpio-sprd.c            |  2 +-
+ drivers/gpio/gpio-stmpe.c           |  2 +-
+ drivers/gpio/gpio-stp-xway.c        |  2 +-
+ drivers/gpio/gpio-tegra.c           |  6 +++---
+ drivers/gpio/gpio-tegra186.c        | 26 +++++++++++++-------------
+ drivers/gpio/gpio-thunderx.c        |  3 +--
+ drivers/gpio/gpio-tps65218.c        |  2 +-
+ drivers/gpio/gpio-ts4800.c          |  4 ++--
+ drivers/gpio/gpio-ts4900.c          |  2 +-
+ drivers/gpio/gpio-twl4030.c         |  4 ++--
+ drivers/gpio/gpio-usbio.c           | 13 +++++++------
+ drivers/gpio/gpio-vf610.c           |  4 ++--
+ drivers/gpio/gpio-virtio.c          |  4 ++--
+ drivers/gpio/gpio-visconti.c        |  2 +-
+ drivers/gpio/gpio-waveshare-dsi.c   |  2 +-
+ drivers/gpio/gpio-xgene-sb.c        |  6 +++---
+ drivers/gpio/gpio-xgene.c           | 10 ++++++----
+ drivers/gpio/gpio-xgs-iproc.c       |  2 +-
+ drivers/gpio/gpio-xilinx.c          |  4 ++--
+ drivers/gpio/gpio-xlp.c             |  6 +++---
+ drivers/gpio/gpio-xra1403.c         |  6 +++---
+ drivers/gpio/gpio-zevio.c           |  5 +++--
+ drivers/gpio/gpio-zynqmp-modepin.c  |  2 +-
+ drivers/gpio/gpiolib-acpi-quirks.c  |  2 +-
+ 106 files changed, 265 insertions(+), 247 deletions(-)
+
+
+base-commit: b8809969e1d7a591e0f49dd464a5d04b3cf02ab1
+-- 
+2.55.0.11.g153666a7d9bb
+
