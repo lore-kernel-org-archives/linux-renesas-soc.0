@@ -1,196 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013009.outbound.protection.outlook.com [52.101.72.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9920947CC96;
-	Wed, 15 Jul 2026 14:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784126177; cv=none; b=KEigJF0d/0oyD20g8M1Dtb4UMPyMla+88AA79J6mwHUvhdOVQz0kPoiOn4n/CZ/Kp1Q3lf7/ZoOFJc26D9YhSS+bmy17iIfYs6ExW744a95dZOfiZZM2W2mPOKJHlxlntmb/XJzIHF98Yz0EHCzasKS7Em+kqVAB1+hkOkjE9A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784126177; c=relaxed/simple;
-	bh=77XOxyDYDjEyLwe07YaqSDYbq4HFjvL3XqxATZqnX/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnUmI4fVjZ9EcvUIIGnOh1FBRnQHHNZQp9+OfPTrETXf4oJpAHH3cnENDBOE9wN/+3157kyFbHRuRDs2ZCNhmmBr4f2UlrcqFbCk1u/flAiO6bdqLl5Z0nLvz99WVw4PDK4Y3Gu4fHemPSHFzkeL8JC+GDTwOCmv+Lb4H8+ydw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqe6SMdp; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B78C3B634E;
+	Wed, 15 Jul 2026 16:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784134139; cv=fail; b=B8iniuqdPfKSztjHfBTdnu8dH+s3MVlQJPRLj0a85WeTWWFmoHxl3J8aoYEz3AiLHSLEsLT6OgK45G/fYOTXF2v+eRjIampcluJERnFu/STIMhPF0bSCrHSck9ZfBYVZCrrxOpqMV0ObHvhZZP9BE899a+wq44vGjQ0es879F/Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784134139; c=relaxed/simple;
+	bh=5flc/Lr4IFjB2sREGj86ilPHqgB5azC8tDZT2ObdvvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tr37m/h+EsPO13eCtZKkaWdgtMWQFf4m25011ul0bxyhPG7fGlZsSsZ2popVn50vE89UXyg3dt012hDHfuWeY+FaF8MG8QFeRY7/heZEgbIZUAfqBSahG5XzOW0QjuSiFdGQMAF3K82KadaQP9IvrAlEEvUEscSM34SKMHLceVA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=cTSwxSTp; arc=fail smtp.client-ip=52.101.72.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqe6SMdp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CF21F000E9;
-	Wed, 15 Jul 2026 14:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784126175;
-	bh=3JnfyHzBdaTsit2m6V8M0Hw8/jfJz/4wuqPOncLtSVQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iqe6SMdpmxlxxdjxuCrUI2lTZgZmf4/X9u75gQcO4a1cxmIy0QLFVIdh6u4uV0zpe
-	 Hx4ZyHX8CgA3zFH/cLGlouKG8oVuQzENhgfDGyYAD1hKltrxdY7Ho44YSV401Jai7y
-	 B5pQjhugTnpXwpTz3dPr9RR/2eLt5qIakYEhJqXbrM/6wGFRIOiKMd/MoLM+8pSuJv
-	 wluZyaa5wzztTmS8oPZbOX0Zsj65BluBVvSXDBNA2P8Ft2ujrCfuBDsxXbYrxw5ntr
-	 3youB74XMGuZe159cbIXB8BkxRcPCPv+Jahj4DwYdIUXad/ZLpkjrukzSMfGeJ40Es
-	 70srItUZKxtpw==
-Date: Wed, 15 Jul 2026 16:36:07 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 4/5] PCI: dwc: rcar-gen4: Handle PERST via reset subsystem
-Message-ID: <ceimnmpsyfmrkuvrrsgkjg3fk2yf7fj7z5ie3cj6vfyighatag@hyb3vr2nclpm>
-References: <20260704202748.355708-1-marek.vasut+renesas@mailbox.org>
- <20260704202748.355708-5-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="cTSwxSTp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vD5rgtsasFETruBpRGT6pQzA5rxX48TCP1c35yHZMffEtGNcqs2eBbaUfm/dP0EX2QpkfK9MvZ8c6Y3I/Vuy50kTActDks2iFssAvlLDTDf36TIqq0udfyB6kGAk/2PjhmUYgbpXOAHR+iMSm8ZtpFSuN0ta1f4fkeKAKX8ajtvE9XJH6EoIVKxYz+6lXCYYKbapmmNVklu+4OAJUrwu0y0cVHMuwUQ4hEc3s5WAkA8rkek59fahpNmnXNgC5/QLlX4xcUS+4VrnkI9JAXk/ZDraReELCTp2u+xNtOdvQTy5hQoiAGBmxCJa1zGF09Ohtm1IprF/A0Q7kvi38gFXvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mgkflE/hXjOeqtMwl3gtmzWsRxWZXU5voZpMXE1RgIk=;
+ b=UzKHzB8cWGMQSC2Zh5EuIKXAZgsbmGkwFukugob5ILRRAqAYm+9IzSLFdqjW/RYK5bMgJ813EGOpMosCd4B+JHH2YKrXzE5P9HhS/d0uTLW3DSP9/8BjrQ7A53cvn6NYTan8RweK4/9ini9YkdInT2IX2SN1S7pYLj3l1zeerXwZhxIMiH090lvA5Z2FWBEhMsPTHb8dsAvPMjsN/qnBvjRDWc1nSg8O26T6FJ/5oRKehKMA9LFy9sD2UKVwYPwfS1do0/3AzxG1p7F7cwvMQwZQ8eZOhG0fIn/QpQI6NyUTbmDSTAJAJwxAQYXf2i7JpPluLq0nKONjakX/bXfBuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mgkflE/hXjOeqtMwl3gtmzWsRxWZXU5voZpMXE1RgIk=;
+ b=cTSwxSTpR84DwAZgv+GgUXYeCiFpY6/NsSDFJyY6K7OpBcswUzbC1U8MFm1Vk70dVprAAAvUvSi/hjguNwKa+aUvBJHw3VLl9y+zQgoMoVnyJQiHeRnGDPUmWbDbZYYfGiB2Y5U/uhoSM+aZ8WDFpYBkgwASvuO2dzSjTyqVVCNnuBqhhhQRdNwCQusMa1VjZ6fnzUiK7C+6snL+LjpEtRofyVPXfmcomqI/UBp0oszxtDuHBzsrc/XEbS5QS5AIMbVyFq4q3/bBl12CcopaeMc1W5E33sGROLTDWFp5Vf0IsbFbScHHw/pSitHgK5yFXVYeaQ3UJDZkYgRIjPPQJA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by PA1PR04MB10322.eurprd04.prod.outlook.com (2603:10a6:102:446::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.11; Wed, 15 Jul
+ 2026 16:48:55 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0202.018; Wed, 15 Jul 2026
+ 16:48:55 +0000
+Date: Wed, 15 Jul 2026 12:48:48 -0400
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
+	alexandre.belloni@bootlin.com, Frank.Li@nxp.com,
+	p.zabel@pengutronix.de, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5 10/17] i3c: renesas: Return immediately if there is no
+ transfer
+Message-ID: <ale58FTuW7NWoI3I@lizhi-Precision-Tower-5810>
+References: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260713130545.568657-11-claudiu.beznea+renesas@tuxon.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260713130545.568657-11-claudiu.beznea+renesas@tuxon.dev>
+X-ClientProxiedBy: SA0PR12CA0018.namprd12.prod.outlook.com
+ (2603:10b6:806:6f::23) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260704202748.355708-5-marek.vasut+renesas@mailbox.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|PA1PR04MB10322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f587457-c836-4a45-3892-08dee290f524
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|19092799006|18002099003|22082099003|11063799006|56012099006|10067099003|4143699003;
+X-Microsoft-Antispam-Message-Info:
+	w18KUSZqD8l8+ZOLRWIr1p1HTq36QpO1YPodK1GgmuUUdBpdKgfoajoWjepmnGzSqH+qsMFpDJXInyTPqBjtKZr4prfTbfMvYD/oUcdqibDNp3BNvAnEsa1Rqnx6T4HF9HNyWywAfdTgo6C3I+orxxSI+lcTfkR79hMSmAUs9LGz0fSoVu92Pv+jHeUkveb0PvXUeD37J5p+oj7vS37lr6HBEDXv55dIQtYGT+MOMUN5xRlCzT1Ps1x8/F3N/uW9ZBpIU3ohNgv7iG5NvMRbIMUn5fSOQmAwQZdi0UxcVWj1KIpDYYJRFIbMNZAbgIbWWx10LK5Klf0R+6NirfoFzAT8oaxkacjWDGIwGBohHkHh3AnxahtKjG4NUNgIItAdzusBmnZQrC7GXEs3mcUUhB3znuTxdqKCMqc72vDWhjPa+rF7QRRlxsbaYBk46VjcU8vl7lIhm//GaQMDWWZ5yGDNwKk+Ka2iCmLNzgLRqmOi0NOETgcZ2N70OUlm++lmZtTUI8Bbw2E6sgLu0htiDfAaPb3l+8SDp9KhiOMkYW8h8D0fUm+MlCVwhQ4RpVa+bp4VK/zYWc7PR1CSylFDq8mdjOz9ymIVbOVkI1q2Q/72jW0USgGqO8z5jh4m8j6Ba9IiPkQ6MUpDALe8uPT8nQ5TmrcYCq9xLzICCK+Eo2A=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(19092799006)(18002099003)(22082099003)(11063799006)(56012099006)(10067099003)(4143699003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CJlWcc+E6bvg1yO8pcDGOlgMtYefURsiAdGKobReMhwQZQhZqPhlhBaGisvl?=
+ =?us-ascii?Q?zvOyI7+MflYZQnFfCXcc5BBGd3tTupIUQtogPGPNPsTAOrpfTWPqQCp8ULXD?=
+ =?us-ascii?Q?JUr8GJWVtIn690r3KmgEt4w1ja8aOryaFggWGUuFYu2WzlYzhFEWL1S5+A73?=
+ =?us-ascii?Q?k1P2gYK45/EACczgaaKkUg+tBcWSZOzXjhLI80LLrNYch46GfjnMiIcfIwc5?=
+ =?us-ascii?Q?pDWd+Sx8qsIpYWDv68y6lqsGNX1ChKEFiJDZcVX4CCMqY1P6aDTny4Ysrd2I?=
+ =?us-ascii?Q?BCQV4qOc2IDRDlwpQjwm12nXuionbCCet+bfvpmqHnJCKIyVcXHxXgUKc0qA?=
+ =?us-ascii?Q?zSaXIX9mmgaVBtF0Ssq/DXcECew2Md9CQXRgsACK6M2tcEYO+1gEo1dBxAD2?=
+ =?us-ascii?Q?f8OXefCh+2fW7E4LFtKb1S8aBWGFbVLSwvD+qUH7HeeuSXeHhQsxkLa4+o0H?=
+ =?us-ascii?Q?1sNguAbnMOmtZKzg/KrkYXyrlvbCyvb7FbzsdNiqXEJ0ZCa4Z03Q6+v2TlHx?=
+ =?us-ascii?Q?8CKkO+4WDv8PQXh0ldO0LT0GdTy6OFrVjyZVnAe0pUXAJh9+flSwQQKhsz+B?=
+ =?us-ascii?Q?ti0KodhL9HfJAdSYl6rR6wjsn6vqvDr78Yci2x/Ex0RPk3xYoxLG9tEdeu5D?=
+ =?us-ascii?Q?HXv38Orb7bH4BqY/JvGMXg3qpuOxdrd9+iRpu3W4+kbMg34o/LpqfNvR/s+1?=
+ =?us-ascii?Q?cpxd4RqHeT/+dqTTGyhrmIMD8PqxE49x89BipDykjQZRnfAxwYHyMuyfEna7?=
+ =?us-ascii?Q?e4sRPliuU+AmUq+d0sBcvyu1G1CDid0gnsFR5TxifDhyqmzGz+ZNUhyzyXGt?=
+ =?us-ascii?Q?EvjDTeqW0Qxs9Sznwqk7TEB6z07lBlCbpCNRgTJLPf1BGW5ZxGMoyRDLHKQH?=
+ =?us-ascii?Q?JkmDYoliTaFFFha9JCC36pZ1RRJOs1X8b7lmLhVZYlUB5q6eOiR+FWwoogS4?=
+ =?us-ascii?Q?qNNI1jn+0ZtfQbFXCBqtxVL+hU7Q3+Kz8cMsVptReeWZBubID9KcZy6uoJie?=
+ =?us-ascii?Q?0paI/2bypgN9O9v4nW1NXmMe/7lJyK7T3q23ChNaRKxWd22IA43oam95UESX?=
+ =?us-ascii?Q?cPOVqf1+hSdEwNuPCQvNN8IsrYzLZt1hVD3BGcgeTlBmE14D+dTbEKnXOObu?=
+ =?us-ascii?Q?8TmkddC2x2Y1u7b3GQmNftjOP6CnNZ5UrhOj+rdiBqAZkX1nbGCtZ67T3QDM?=
+ =?us-ascii?Q?s5wYEeyrd836fbXONwa8WRe5y1t1WuB2Llo8Cb2EL19NQk6lPceHsh7y6k8A?=
+ =?us-ascii?Q?ypOYsKSgPiFrNr9+LetZ9qdTH+7xVtrdkfeNKlPRLy1LXKvxa/taY8GPX5BV?=
+ =?us-ascii?Q?5RoCMZntpU2fNf2bj4SXfI2ki57vP3TBvo6jrbnIIrftkFiTgYwF7pedrVBF?=
+ =?us-ascii?Q?Iq8r6D4v9WyImkMDZcQwQOrmkfRBElIlUKj6Hf8+2iBjuMadxERYzUQ3O6BV?=
+ =?us-ascii?Q?5LLuDHnnqa3CbJtQPHhhm1IAeQtGp1YQMfD6Uf1h1krGfhvHfsWIaR0d4HfU?=
+ =?us-ascii?Q?pwrrl2dSXogU5/GkNK8Pniw7Pnv2VVzaofYlqWSXCNa2e2U5oNRXF846qZ+d?=
+ =?us-ascii?Q?WuafWPZ3hd8JDA/qwOjhc2lGVh0PuImAtQN2jG46eozrQki5wlT4I5ZGU/ss?=
+ =?us-ascii?Q?e/bpt2iyBabMyNRZssz3vaFtsWQdhst4msDKJIvyl8JpYJntw9V83Mm//Ox8?=
+ =?us-ascii?Q?HwahKCGVhHy3SvJomEiYI9JYoep/MqBDUpjkaiBvr+MVDAZTp3z96GNv4UNu?=
+ =?us-ascii?Q?CALlmzKcnCGf823qemBWKlsr245IJzZOo+TsSz4f2VPP10fhh8W5?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f587457-c836-4a45-3892-08dee290f524
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2026 16:48:55.2019
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: beD2iWZhlJMaq6Xxs52bkNbo798sAHrv5WBO7Ko63TSASAjRUCD+Q+gzutAfv3k4dbHTb7tkpEJQYYUbjlqUq+475kiI0MI2IShDScKu4wV6/Bmvoqtcm8AayTuXl8J0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10322
 
-On Sat, Jul 04, 2026 at 10:25:03PM +0200, Marek Vasut wrote:
-> Handle PERST via both GPIO and reset subsystem. On R-Car Gen4, the
-> PERST signal is operated as a GPIO, on R-Car Gen5 it might only be
-> accessible via SCMI reset via reset subsystem. Support both options.
-> This is a preparatory patch for R-Car Gen5 support.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On Mon, Jul 13, 2026 at 04:05:38PM +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> There is no need to allocate a transfer structure when i2c_nxfers is zero.
+> Return immediately instead of unnecessarily allocating memory.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
-> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c | 42 +++++++++++++++++++--
->  1 file changed, 39 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> index 05c22cc648135..186eedb33c27d 100644
-> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> @@ -98,6 +98,7 @@ struct rcar_gen4_pcie {
->  	void __iomem *base;
->  	void __iomem *phy_base;
->  	struct platform_device *pdev;
-> +	struct reset_control *perst;
->  	const struct rcar_gen4_pcie_drvdata *drvdata;
->  };
->  #define to_rcar_gen4_pcie(_dw)	container_of(_dw, struct rcar_gen4_pcie, dw)
-> @@ -299,10 +300,27 @@ static void rcar_gen4_pcie_unprepare(struct rcar_gen4_pcie *rcar)
->  
->  static int rcar_gen4_pcie_get_resources(struct rcar_gen4_pcie *rcar)
->  {
-> +	struct device *dev = rcar->dw.dev;
-> +	struct reset_control *perst;
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+>
+> Changes in v5:
+> - none
+>
+> Changes in v4:
+> - none
+>
+> Changes in v3:
+> - none
+>
+> Changes in v2:
+> - updated patch title
+>
+>  drivers/i3c/master/renesas-i3c.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+> index 915090d0ad37..9a3613220034 100644
+> --- a/drivers/i3c/master/renesas-i3c.c
+> +++ b/drivers/i3c/master/renesas-i3c.c
+> @@ -957,13 +957,13 @@ static int renesas_i3c_i2c_xfers(struct i2c_dev_desc *dev,
+>  	u8 start_bit = CNDCTL_STCND;
+>  	int i;
+>
+> +	if (!i2c_nxfers)
+> +		return 0;
 > +
->  	rcar->phy_base = devm_platform_ioremap_resource_byname(rcar->pdev, "phy");
->  	if (IS_ERR(rcar->phy_base))
->  		return PTR_ERR(rcar->phy_base);
->  
-> +	rcar->perst = NULL;
-> +	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
-> +		perst = of_reset_control_get(of_port, "perst");
-> +		if (IS_ERR(perst)) {
-> +			if (PTR_ERR(perst) != -EPROBE_DEFER)
-> +				dev_err(dev, "Failed to get PERST#\n");
-> +			return PTR_ERR(perst);
-
-return dev_err_probe(dev, PTR_ERR(perst), "Failed to get PERST#\n")?
-
-> +		}
-> +
-> +		/* There is only one root port. */
-> +		rcar->perst = perst;
-> +		break;
-
-It feels weird to see for_each_available_child_of_node_scoped() and then
-breaking with first node. Maybe you can just use of_get_next_available_child().
-
-> +	}
-> +
->  	/* Renesas-specific registers */
->  	rcar->base = devm_platform_ioremap_resource_byname(rcar->pdev, "app");
->  
-> @@ -425,6 +443,22 @@ static int rcar_gen4_pcie_host_msi_init(struct dw_pcie_rp *pp)
->  	return ret;
->  }
->  
-> +static void rcar_gen4_pcie_host_perst(struct dw_pcie_rp *pp, int enable)
-> +{
-
-rcar_gen4_pcie_host_perst_assert(struct dw_pcie_rp *pp, bool assert)
-
-> +	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
-> +	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-> +
-> +	gpiod_set_value_cansleep(dw->pe_rst, enable);
-> +
-> +	if (!rcar->perst)
-> +		return;
-> +
-> +	if (enable)
-> +		reset_control_assert(rcar->perst);
-> +	else
-> +		reset_control_deassert(rcar->perst);
-> +}
-> +
->  /* Host mode */
->  static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
->  {
-> @@ -432,7 +466,7 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
->  	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
->  	int ret;
->  
-> -	gpiod_set_value_cansleep(dw->pe_rst, 1);
-> +	rcar_gen4_pcie_host_perst(pp, 1);
->  
->  	ret = rcar_gen4_pcie_common_init(rcar);
->  	if (ret)
-> @@ -453,7 +487,7 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
->  
->  	msleep(PCIE_T_PVPERL_MS);	/* pe_rst requires 100msec delay */
->  
-> -	gpiod_set_value_cansleep(dw->pe_rst, 0);
-> +	rcar_gen4_pcie_host_perst(pp, 0);
-
-rcar_gen4_pcie_host_perst_assert(pp, false)
-
->  
->  	return 0;
->  
-> @@ -467,7 +501,7 @@ static void rcar_gen4_pcie_host_deinit(struct dw_pcie_rp *pp)
->  	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
->  	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
->  
-> -	gpiod_set_value_cansleep(dw->pe_rst, 1);
-> +	rcar_gen4_pcie_host_perst(pp, 1);
-
-rcar_gen4_pcie_host_perst_assert(pp, true)
-
->  	rcar_gen4_pcie_common_deinit(rcar);
->  }
->  
-> @@ -671,6 +705,8 @@ static void rcar_gen4_pcie_remove(struct platform_device *pdev)
->  
->  	rcar_gen4_remove_dw_pcie(rcar);
->  	rcar_gen4_pcie_unprepare(rcar);
-> +	if (rcar->perst)
-> +		reset_control_put(rcar->perst);
-
-I don't see reset_control_put() in any error paths of probe().
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+>  	struct renesas_i3c_xfer *xfer __free(kfree) = renesas_i3c_alloc_xfer(i3c, 1);
+>  	if (!xfer)
+>  		return -ENOMEM;
+>
+> -	if (!i2c_nxfers)
+> -		return 0;
+> -
+>  	renesas_i3c_bus_enable(m, false);
+>
+>  	init_completion(&xfer->comp);
+> --
+> 2.43.0
+>
