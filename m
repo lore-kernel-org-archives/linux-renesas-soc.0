@@ -1,166 +1,273 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B543EAC9A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 09:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB5F3909A3
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 09:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784106188; cv=none; b=AAH4g23uwDCk+Efc9wwPBtUrC0akcFimCM+euHOo4ay3xHn7SzoDw16IfNm8Dxh4P85HhofXeBbCz8CCuXRaGi5+WEnQS7b8Ja/JATu/SH+u0zU0Xb52bOjaKX//yvbtjRgeXm3Epc55+RBQ1VjhibUnAHW0BCFXxubJ56pf1yA=
+	t=1784107047; cv=none; b=A6iI/tCe/+qXtWl6V8gl4oAUtHh/8N2Hnk0YtNd3Lf7DYClfQCCULMAkoA9fniYWSrVRMgBp0FDpzx54DmzIg3oLB1OzbYdaxojd+/I+CaoQvkCX1Og3HBPH8+MQNUK1VHIbV2+W5YzcR1zlPeaMufNH6DWlqfWI2/MndK/xwuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784106188; c=relaxed/simple;
-	bh=UpStxGVYslbxooun+2Y901dqVJN3H5rYG1yY1FSZ/gc=;
+	s=arc-20240116; t=1784107047; c=relaxed/simple;
+	bh=b9PpOJcb8DxhkXY45jY4YE04g6Om+Wyc4fpqhjZ75nM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r8ZCnJM82/iHCDDYG3EQwfL1SH0JKxFq3ewSMJO8sypqGv18cTEhQWe7DKbkb+4U1SJx+iHoYZS+Bu0sxbu0It8kvjZ0jo6D18AuJNb4kGFCEeNm7irCDTfs7GkvyLscnqMA4LFA15JcKSeODBBMmbjyrtxjju0YMQYJdKbDtnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+	 To:Cc:Content-Type; b=OeOw+TfFt53xN6UbGvHM4MaGMq84uqmzcIfWPTlV0NFQbKrMnfi4MBlI3p6YymAdLkOIayVMvO3tqcKFFTtH2yifLsdGrHv9olGdaGYTEXX8zqW1eRR5FimxW4wo/yC9e2hlMsuZO17/Pn1ZlhsTmkFOTVuXCozgZz2Ijqx+c5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-848595b338cso6092658b3a.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 02:03:00 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-74019ed06aeso4071509137.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 02:17:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784106175; x=1784710975;
+        d=1e100.net; s=20251104; t=1784107040; x=1784711840;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=KIyweZY2e0/6Tej8S0XE9Agd9YDC5DXPE+LxKJOtIuM=;
-        b=BvYYAmJ+uQ1DtEN4wtfPXN61ZaXHndsM8vhvMx0zvJOnDH2fBAILOTSm2Gn4Xo5gTs
-         SwQU2Rlfj9d8PVPosdaHHr/YBpqT7uaUziNB2qRCI+NwDfPbxX6yUtZmzjLJ9s5CxOJY
-         /W+i5tZHcbnO/TFiXWKm4yoVASR9HAkmKHlhksQbHcHfh9MFcKpM6l0r7JRU+wdeyDnU
-         jy63GuoABJIsLI7iE4+WyzHACrUcul5jGsy27aXV5DdGjxbxO2W7EJZAw83X5V3A01eM
-         2KeW6ku27UuLutwhB0R6v936mMXxeLyg80/eVJoIb737KPL3zTT0cmwXOi6QEYDC88PA
-         ywmA==
-X-Forwarded-Encrypted: i=1; AHgh+RoxQUQ5lEGfc5RCvLOgzLPbntVeCC3ADI7dLR1+fsjG4Iv6eyhPCCTUPCumDe1fA2loxAxhCQao5TSRPQY4xO8pbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YysjQeOTIAgUeVYB+zQAcKCHvbLqwltY/LrbOnurxUjANrFhA3a
-	MXCbNoj90kpKvzsWKw4akk2VgjDAu4pj83e450wDmocyhay3N4GWZriHnc9rW9iw55w=
-X-Gm-Gg: AfdE7cmeCmFVI/N362e0/DrlmOBt/2BZnNMJRDrYPnoLN0840pXGK8CLvUHHxXw/9wq
-	+S75GOJw0axKjnWm0EZhEcMCHgbNxs3ApfELS5uzWi5fq4xZtZsKyLx2pFVw4rk/kmAu7W+gXi3
-	+e3wMOUr7bZ6YbQvHHkn4mazO7isaeu+wuZyD8W3qFJHIO3MdN+h+49pKLajh31W9q1aocvkbbk
-	uzwn/Sx1epXB9lvrTRzOtN5vZnbfaoxJzlS2Tq5GXed+awUNovH331MXiSZGDUEgXdfCU3CtbqL
-	28CRlU08nUu4wwRUWnQzJUuD3ZB6Txi+mgqFE3IUwgYDOTetDzpu8MVNDQzbRGcedaqdNpkWXX8
-	7oB1H2H6YgjubrlUEIGHh4e04ipD12IV3B65UwD5k8p/8xGXe+v0oxuKyJQPoDnGINr12rBHB9C
-	TjKbQv7gKkx8RwDKwi7YaY1Jv4HsqBSvd7n3p2xiimqkTVj8m47RFZ2w==
-X-Received: by 2002:a05:6a00:b55:b0:845:e8f3:bdd0 with SMTP id d2e1a72fcca58-84a557595b2mr5701553b3a.33.1784106174499;
-        Wed, 15 Jul 2026 02:02:54 -0700 (PDT)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com. [209.85.210.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f2778acsm2810326b3a.20.2026.07.15.02.02.53
+        bh=XLTXQ+jfU88JSGv7Lh/A+xkjnHoYFHk+Tdqt/10T0QY=;
+        b=fvhU1aKNxLCag0MCyE4TaniSxe8XIXdt8GwJ+QWvKIu+fJuCiudWNmXohmt2YDOEWX
+         2/fPXI/kYi1Ho+ouFcjsjJpKgKMikowlgjTU+X/mkfdLEpX5RHG1TjcXsbtTgmdXkAoN
+         Jkc3At0CG5njuEK25kB9Lo28cyLAPt3yXTHS0sOHDnddBf1rOLd0t5w6XsMBqD2SaOhg
+         BdvXdyDnPZGvArPGmSNPgcSsLV66+276GbBBEpZ8342G3dzNbu8Hg/OvM6JCHZWp1RX5
+         NMqv3xrRpMzYr9+SbGaadla4Qglk1ajOIX+mDmglwkc5SQPot0hAUlvyruymegpPH2dh
+         QnBw==
+X-Forwarded-Encrypted: i=1; AHgh+Rrb+aL+M9QfprsJW2yik7W4+eiQzXIFYy92Rw9/uBJ3GntHpbH3kok6B6CApZSdW3zd+gC0EkQp7LFpv8T9Q0WKkg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMOklJU3SVc5Z58sEeC/V2rKQLQMeErgZJfn6sKYs6DHvYNwfn
+	fMPY1wJATbH790sBqqfKEIYKp/xi637xllsDvhwEypSB87X8FC3AvpY3oGnC5CaXwBA=
+X-Gm-Gg: AfdE7cm9ATkY3MZLeazmRXyX4+jfyTm55q7n5wuVNsEe5qp1y85RXIjKgIZKm+Um9sA
+	bkVvGQSMJDmSSCwjpHmpKy37/sFNiu9FuxtZZ5f/eeIo8xPZ19Njucn8ZnPLCXP4oHWhKCuti3t
+	b27KwSH7wldj2kv5RgHbzS3tRaZI7RJyV+ixiWoiwIDdR6bUfhugvPwmcK79C8W7BI6EE3NwAOe
+	s2B8wky6ToWx50wBkS3+xB12FdInd6RoUnHO/JFBfc+m363N5Ha6NABf9TxtWtaCtYHIlUIyedT
+	ZjyNaSNKwtzmGYkXnqGMN8MTjlVjlAWPUFCN0S+t8UPUsbJfadlqg8V+s+B4Pxr72aFp/Iw5g28
+	a6w8Digj2xvBih3aYA5XSzfvl6xM2coFjcAUnmjJSfMU4RfDvfEBWIiGko93RtquRYhfGJtXXDH
+	BYe5rL3TV+Hf88sOm6oOyJ0pBgauHucfeKN9RTrDTTAWU35Vgqq09bQg==
+X-Received: by 2002:a05:6102:548a:b0:6ef:db57:d472 with SMTP id ada2fe7eead31-7459a0f54ecmr1282336137.27.1784107039982;
+        Wed, 15 Jul 2026 02:17:19 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6deb2a3sm11932378137.8.2026.07.15.02.17.19
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2026 02:02:54 -0700 (PDT)
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-84862b0d5aeso5538898b3a.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 02:02:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rpcbd9JfRlhQWur5/zsu5BaxCaRk+a/6Fa3Dt45EHjgnRzW+ZsGACLRX5D226EBwXMEGAsO1UzFpNiURgv+aJO7zw==@vger.kernel.org
-X-Received: by 2002:a05:6102:1499:b0:737:ba2e:8a26 with SMTP id
- ada2fe7eead31-745875931d5mr3323342137.27.1784105797210; Wed, 15 Jul 2026
- 01:56:37 -0700 (PDT)
+        Wed, 15 Jul 2026 02:17:19 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bfc5b77c02so3609482e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 02:17:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro1Uxmp+jweQp+bOOHKkRyL8uWFJwCCjL050rACO0tpvSDd/E4wQPdsKwP1XltxrbZ1Y+Ts6Cm0OWsoHykJT66X3g==@vger.kernel.org
+X-Received: by 2002:a05:6102:4425:b0:738:2a8c:736b with SMTP id
+ ada2fe7eead31-7459a045858mr1258510137.20.1784106657725; Wed, 15 Jul 2026
+ 02:10:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
- <CA+V-a8uUxfDx2Xnb3uFg2=R+eYnzVmAv4PoEYeXGwAbANxG5Bg@mail.gmail.com> <CA+V-a8utJuuwVNy8o2zM5jHf9qXx36S79uKGtYr5O=sASh_wpg@mail.gmail.com>
-In-Reply-To: <CA+V-a8utJuuwVNy8o2zM5jHf9qXx36S79uKGtYr5O=sASh_wpg@mail.gmail.com>
+References: <cover.1783505142.git.geert+renesas@glider.be> <23f979b0903ca11513ac339ab8b6dd40435603c5.1783505142.git.geert+renesas@glider.be>
+ <CAPx+jO-=LF9CvYDrC3O_GBtfHU6GYvq524OLmTG8R1-u27oyKw@mail.gmail.com>
+In-Reply-To: <CAPx+jO-=LF9CvYDrC3O_GBtfHU6GYvq524OLmTG8R1-u27oyKw@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 15 Jul 2026 10:56:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVT-wWtJaB1bHR3CjfjEGhVfWWKrs6YyZbahOTFSFK4Kw@mail.gmail.com>
-X-Gm-Features: AUfX_mwT5leJvJcjodDPFjgFmedyheuuombdI-qCHkgNmnfgE8I_sxJbNtJF5DY
-Message-ID: <CAMuHMdVT-wWtJaB1bHR3CjfjEGhVfWWKrs6YyZbahOTFSFK4Kw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/9] Add System Controller support for RZ/T2H and
- RZ/N2H SoCs
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed, 15 Jul 2026 11:10:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
+X-Gm-Features: AUfX_myLu6xhapX4cEw1JPlcU_GnqjYP1lw1RxK8SjV_xKv0JfjeAPhzRG7BCHM
+Message-ID: <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+Hi Ulf,
 
-On Tue, 14 Jul 2026 at 18:51, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Tue, Jul 14, 2026 at 2:27=E2=80=AFPM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Mon, Jul 13, 2026 at 5:00=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > This series adds support for the System Controller (SYSC) blocks fo=
-und on
-> > > > the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical lo=
-w-power
-> > > > management and access control functions.
-> > > >
-> > > > Hardware Architecture & Dependency Challenges:
-> > > > ----------------------------------------------
-> > > > The SYSC in these SoCs is a multi-functional block responsible for:
-> > > >     - Clock & Reset Control
-> > > >     - Low Power Management
-> > > >     - Clock Monitor (CLMA)
-> > > >     - Access Control
-> > > >
-> > > > A key architectural detail is that these SYSC blocks are physically=
- located
-> > > > within the CPG/MSSR (Clock Pulse Generator / Module Standby Softwar=
-e Reset)
-> > > > address space. While the CPG/MSSR driver is already implemented and
-> > > > functional for these SoCs, the integration of SYSC adds a layer of
-> > > > complexity due to a cyclic dependency:
-> > > >     - SYSC requires CPG: The system controller needs a clock to ope=
-rate.
-> > > >     - CPG requires SYSC: Access control registers within the SYSC c=
-ontain
-> > > >       bits necessary to control the PLLs managed by the CPG.
-> > > >
-> > > > If implemented as a completely separate top-level system controller=
- node, we
-> > > > would face a cyclic dependency between the CPG and SYSC drivers dur=
-ing the
-> > > > boot process.
-> > > >
-> > > > Proposed Implementation
-> > > > ----------------------------
-> > > > To resolve this, the SYSC blocks are represented as child nodes of =
-the
-> > > > CPG/MSSR controller in the device tree. The SYSC regmap is register=
-ed
-> > > > directly against the CPG device node. This hierarchy correctly mode=
-ls the
-> > > > hardware address space while allowing the drivers to share resource=
+On Tue, 14 Jul 2026 at 14:04, Ulf Hansson <ulf.hansson@oss.qualcomm.com> wr=
+ote:
+> On Wed, Jul 8, 2026 at 12:15=E2=80=AFPM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> >
+> > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC=
+.
+> > For now this just supports the always-on power domains, and dummy clock=
 s
-> > > > without deadlock.
-> > > >
-> > > > I am sending this as an RFC specifically to get feedback on the
-> > > > implementation of the SYSC as child nodes of the CPG to resolve the
-> > > > dependency cycle.
-> > >
-> > > Personally, I am not a big fan of subnodes.  I assume you are using
-> > > subnodes because you can register only a single regmap per syscon nod=
-e?
-> > Yes so that the consumers don't have to specify it by indexing.
+> > and resets for the serial console (which is enabled by the boot loader)=
+.
 > >
-> > > Would it be possible to just extend the existing clock-controller
-> > > node with two more reg entries, and expose them through a single
-> > > combined regmap?
-> > >
-> > That should be possible. Or would you prefer just to extend the sizes
-> > and create a single regmap for it?
-> >
-> >                cpg: clock-controller@80280000 {
-> I wonder wether we rename this to `sysc: system-controller` but the
-> compatiable string has "*cpg-mssr" postfix.
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I think the current name is fine, as clock control is the main function.
+> > --- /dev/null
+> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+
+> > +static struct generic_pm_domain *r8a78000_genpd_xlate(
+> > +                       const struct of_phandle_args *spec, void *data)
+> > +{
+> > +       struct r8a78000_mdlc_priv *priv =3D container_of(data,
+> > +                                       struct r8a78000_mdlc_priv, genp=
+d_data);
+> > +       struct device *dev =3D priv->dev;
+> > +       u32 id;
+> > +
+> > +       if (spec->args_count !=3D 2)
+> > +               return ERR_PTR(-EINVAL);
+> > +
+> > +       id =3D spec->args[0];
+> > +
+> > +       if (id >=3D R8A78000_MDLC_PD_AON) {
+> > +               dev_dbg(dev,
+> > +                       "Mapping HW power domain 0x%x to always-on doma=
+in\n",
+> > +                       id);
+> > +               return r8a78000_genpd_always_on;
+>
+> This looks odd, but perhaps it's just a temporary mapping that you
+> intend to change later, no?
+
+The hardware has multiple always-on domains, but on the software side,
+using only one is sufficient.  When needed, it can be changed later.
+Other domains will be added later, in the else branch.
+
+> > +       }
+> > +
+> > +       dev_err(dev, "Unknown power domain 0x%x\n", id);
+> > +       return ERR_PTR(-ENOENT);
+> > +}
+
+> > +static int r8a78000_genpd_always_on_singleton(struct device *dev)
+> > +{
+> > +       struct generic_pm_domain *genpd;
+> > +       int ret;
+> > +
+> > +       guard(mutex)(&r8a78000_mdlc_lock);
+> > +
+> > +       if (r8a78000_genpd_always_on)
+> > +               return 0;
+> > +
+>
+> I guess the mutex is used to protect the global
+> r8a78000_genpd_always_on, but it looks like that isn't really needed
+> based upon how things are being called during the probe.
+
+Why would it not be needed? There are multiple instances of the MDLC
+device, but only one instance of the always-on domain.
+
+> > +       genpd =3D kzalloc_obj(*genpd);
+> > +       if (!genpd)
+> > +               return -ENOMEM;
+> > +
+> > +       genpd->name =3D "always-on";
+> > +       genpd->attach_dev =3D r8a78000_mdlc_attach_dev;
+> > +
+> > +       ret =3D pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+> > +       if (ret) {
+> > +               kfree(genpd);
+> > +               return dev_err_probe(dev, ret,
+> > +                                    "Failed to create always-on domain=
+\n");
+> > +       }
+> > +
+> > +       r8a78000_genpd_always_on =3D genpd;
+> > +       return 0;
+> > +}
+> > +
+> > +static int r8a78000_mdlc_probe(struct platform_device *pdev)
+> > +{
+> > +       struct device *dev =3D &pdev->dev;
+> > +       struct device_node *np =3D dev->of_node;
+> > +       struct r8a78000_mdlc_priv *priv;
+> > +       const struct mdlc_info *info;
+> > +       struct resource *res;
+> > +       int ret;
+> > +
+> > +       ret =3D r8a78000_genpd_always_on_singleton(dev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       info =3D of_device_get_match_data(dev);
+> > +       if (!info)
+> > +               return -ENODEV;
+> > +
+> > +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +       if (!priv)
+> > +               return -ENOMEM;
+> > +
+> > +       priv->dev =3D dev;
+> > +       priv->np =3D np;
+> > +
+> > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       if (!res)
+> > +               return -ENODEV;
+> > +
+> > +       for (; info->base; info++) {
+> > +               if (info->base =3D=3D res->start)
+> > +                       break;
+> > +       }
+> > +
+> > +       if (!info->base) {
+> > +               dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res-=
+>start);
+> > +               return -ENODEV;
+> > +       }
+> > +
+> > +       priv->mod_map =3D info->mod_map;
+> > +
+> > +       scoped_guard(mutex, &r8a78000_mdlc_lock) {
+> > +               hlist_add_head(&priv->link, &r8a78000_mdlc_list);
+> > +       }
+> > +
+> > +       ret =3D devm_add_action_or_reset(dev, r8a78000_mdlc_unlink, pri=
+v);
+> > +       if (ret)
+> > +               return dev_err_probe(dev, ret, "failed to add action\n"=
+);
+> > +
+> > +       /* Note that no actual domains are registered, just need transl=
+ation */
+> > +       priv->genpd_data.xlate =3D r8a78000_genpd_xlate;
+> > +       ret =3D of_genpd_add_provider_onecell(np, &priv->genpd_data);
+> > +       if (ret)
+> > +               return dev_err_probe(dev, ret,
+> > +                                    "Failed to register genpd provider=
+\n");
+> > +
+> > +       ret =3D devm_add_action_or_reset(dev, r8a78000_genpd_del_provid=
+er, np);
+> > +       if (ret)
+> > +               return dev_err_probe(dev, ret,
+> > +                                    "failed to add unregister action\n=
+");
+> > +
+> > +       priv->rcdev.ops =3D &r8a78000_mdlc_reset_ops;
+> > +       priv->rcdev.of_node =3D np;
+> > +       priv->rcdev.of_reset_n_cells =3D 1;
+> > +       priv->rcdev.of_xlate =3D r8a78000_mdlc_reset_xlate;
+> > +
+> > +       ret =3D devm_reset_controller_register(dev, &priv->rcdev);
+> > +       if (ret)
+> > +               return dev_err_probe(dev, ret,
+> > +                                    "Failed to register reset controll=
+er\n");
+> > +
+>
+> In some of the error paths above it looks like we end up leaking the
+> data allocated for r8a78000_genpd_always_on. Perhaps clean up that
+> somewhere here.
+
+That is intentional: the always-on domain is shared by all MDLC
+instances.  If one MDLC fails to probe, the MDLC instances that did
+succeed still need the always-on domain.
+
+>
+> > +       return 0;
+> > +}
+>
+> [...]
+>
+> In regards to the merge strategy, I intend to pick patch 2 (shared via
+> the immutable dt branch) and $subject patch. Please let me know if
+> there are any issues with that.
+
+That is fine, thanks!
 
 Gr{oetje,eeting}s,
 
