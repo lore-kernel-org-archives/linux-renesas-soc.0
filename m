@@ -1,63 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C463D5652
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4F73D4125
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 22:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784154272; cv=none; b=Yesj+brgKZLUG9sxFb5BMhSyXznrArkIQb5B9cfTwD6PjPvNCbkrSu2udZ1NgcCgfWItaD9JGJ3etZc/xpQ4B6C5EBTzom5jYxhcf3WKkVe0B/h2D7xXEGAnUOvY8uwW4d88C4lpXCQ0Nwrm3v5yVNNaas033Lg8RlBMdzNsxG8=
+	t=1784154272; cv=none; b=Iz+A45Ked3jvjVZJSrVF8XbVGynbZQ7Z8b4PmBlxczgWtJQEw41HmgWJvPIjE9ps3K/JymNjBHXjskAy8daraQlvdSm4Uh/lrWI3W7ZFp9JGii8z5gH9G93tBBfolUT4LAb9W2mXYbmIvqsew4o8Iu+jfxAqPPs0siGjiAQNooQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784154272; c=relaxed/simple;
-	bh=jog5MXQybWdXqzVnDLuVVb/skFCi0MzNrRevHYB5vSY=;
+	bh=GwvIfQQOrtYqb2e9SFlGdBcFEhVLyfBCXNbe2vV18SA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e+ywofGV9XGvfsVw7Y+Y1oGP7/c2AGgBK8pAnUSxpC4iKumqBVqiWrCJNr6b7jmxxAo9pss2TaWJroM/txW64CRM3qHVHAM2CMLpNmbmfXp1Et71VX5E67yXZrknOV03ST7vBZJuQUP52sPkdReg/8pj/b6eMqIbJCdmBBAkmhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eo1AA0R4; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=Ml6FyJSns+vs8J+7sJLHaQmQ3u+rH2wRFlWVNjfEcykapitya2qLzoO0aYRScSrKFzBXG5lu4VOWEPwjDbRHLZS9t+bCNAARupBF1uz4E1Kyy1gsSmJQ00XiCXHe67O0CHDokSyt6ln2Nk38XOWLaWqx3FP+3eNbQXL0wZmmCx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2y4n89I; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eo1AA0R4"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493e497643fso12631075e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:24:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2y4n89I"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-475881b9a4bso2374223f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2026 15:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154266; x=1784759066; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784154267; x=1784759067; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Ta8FA5VKvlFsiauvuV52bLsb+4AF4pGxGi5+gcMb8JI=;
-        b=eo1AA0R4DvmdisXvNnUT8KvodHyCO444NY1ufRbDbemKFdDc+XmTqCKCMEbmc1rHuQ
-         zJ/xhi2x3nIF2ixAIpvY30Lemc3bu96E94aXu4GnhMHr3RH9R0k8vFvr3XcGlOq62wsW
-         fWUBiB6ItSYrDG+prveLJdn1CysRobSLnrmWpZ8eiy80Dlfjn+ZxUrmpp0eZZUbzXYlo
-         bWiuA2+VFBw/fVolXJiAUYyeyqviVs0QSWXfBIHhUs+9dyOayCyuoSMq/qDjynMzY6Da
-         U5jMT7IwhJr6ci0ef6U1jNw/hp9L+zDcRWSa1CdWIupcR4IZI1KTBbh2art31dZzF+ll
-         uIMw==
+        bh=UIFF0wVe3GbIM2L28J8/WMckrWts7TIeIoXTCBUHvQY=;
+        b=Y2y4n89IKfNyrV8HuwlMG2VYaFma5biAdvdKkjY7GG6Do17u4oaPquxCwGdnoUbImf
+         8zmWXMHAwH34wq/4sNJ+pZ1zhLScp8/AiMB+p45jUZ7vWjqXM1+q1oQXzIvKnT15cRfh
+         u+h8ECA6X4Ha4SkEAgYoTdYXmuEPIJNdEwmmDibTxuLwtWiMjfFl6sZYgBwDjP17rm/l
+         sQiWhTwJ3YiR7lMl0fNzxxQM3tvhoxz/jP3s8DGTUMygzf86tpRj7erVB19ldXM4y2Ij
+         WIz7gOPeoVCMRPuyjo0e/+xYfScR7JOEPDC8JR8haF2U1x5Z3FJQ7jHvZG3hhT9ZDYNw
+         w4TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154266; x=1784759066;
+        d=1e100.net; s=20251104; t=1784154267; x=1784759067;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Ta8FA5VKvlFsiauvuV52bLsb+4AF4pGxGi5+gcMb8JI=;
-        b=TIAwKBtk75UgDHUxPw8L4Mo/+dENkxmD1NzMLu14E3BNc5Lr0WxHvJbMMt5rv1m75n
-         COckcCzpBEO8LGKkJYA6kwlPFhH0S6sjiRKy60CYz6+yXWoymJ+t+f8KCKk0HV9399FB
-         zv/4s48r4IFcnWvSU5S5x7iXPAA8a0T2d1SVYvLkHjAaj/6n4X/nTdYS1sT3nMnkGjj4
-         y13QLXdLnEj7d6neL3Xb0sgBDn2bEfW+2MfKfFnD4JZ1cdDiVjFBDDbE4RrznjDmKysS
-         oPKBmtApCQKyyJ91ZIFFuHJscn59q3SoGvN5vgNOpD1jZTp0iuyLKWZiza6eZ0/Ay3fc
-         5CXQ==
-X-Gm-Message-State: AOJu0YxYXI9AYjImsKeb3jtoITB6OKEfJ5OAdSioTL15sXXAa3URhN4e
-	rVOwKil9rV0+ZIeJsNpntLtGhO4sxi+/sLUjLnvhx/b6a14YyiAnI4kk
-X-Gm-Gg: AfdE7cnCUBycipRoEQE6HHRpAhiEiKRoxLjqCV6rPpufJ34djQaW14giNVuIG+wCNKe
-	DdqCnqsaCnLvIpT2iBOSr7fNHmmvrolDqYFj3qswylSEJeChBglEFMtAFicnm9weoD3Vd6aVCGu
-	kxS0yMy3Hxwf2ANvrKAPkoiIn7KgatWU6Fpqi2/eIAs2dIQmn8tNkWcNDm8qOPUDk8wDbxSYfQP
-	zaytdhZGZvq3X2vbe7gUCR1xLDd/mUyltznUHZS6KPlLFjs9y/qljUg0qjekzgq2YWDR7VIiYY3
-	0Muz+8Nykw847ED41VUXbfZu7LY7sD0xk2E+hGOAt5cGyri5G5sI/F3aQ5g/fX+WDXHcSKQKzkA
-	7Fuzx+LtxqYKp2yLi9KCoZsueqRTDhewAhmxzzjmOpWmZ2i/0CmrZFBA79QGbuD6qmIzh0RngiO
-	Zaoj4UmJfywD5JCUDsucImoGwvVNlcxqoYzgwWnSsNR6srr0Bt1ABxTVAQxl4ulU9FUWTe5Nts4
-	dD/6xyVjcA/Zttx
-X-Received: by 2002:a05:600c:674a:b0:490:c6c2:52 with SMTP id 5b1f17b1804b1-493f87d8bf5mr199394305e9.3.1784154266138;
+        bh=UIFF0wVe3GbIM2L28J8/WMckrWts7TIeIoXTCBUHvQY=;
+        b=Ca/BymafbGvuekMTv9wyg6IU8ytAOJtSvGruCLzCACCIVOZxPA3U1fljtav3tX2hMZ
+         8K4dBlBhKFDgjYQ3GH8kKK3rahAx7g5pJhYa0R3jOoQF7JNssj5nf5HeF1j8XPIAdQEU
+         YK7HamkRin7gBoUisdzXJRDM/Q48XTPUTZbs2pd5Yqq7zrMAxM87xaY2eQxC63aOWCKo
+         JAqhZ7LcThviIyDB0aNLj8wVzldU3V4UKRwubV4PWe/njGdwDMkR3o+CSKuLjvfunLdV
+         sIanG8BYGzlRsQg7NSHKTMzBfdOmPTVZ9DWg6oerA86msg84fbrHClWrkCP9ChZ2UdMU
+         Zajg==
+X-Gm-Message-State: AOJu0YwRJUazl/xJzWy3jCsZ70gHWslzAd7rNBMvIt/JsZXo/uNWW4HS
+	KL4ZCqQmLU8TEsiP7R6Mdu1E1d3zJa4kEY+o1SDZjZFAZIIqJ5hQ5UTw
+X-Gm-Gg: AfdE7clqY7vw9aZoCK/yTIDZ5st3rnrHSYvelvt5I50DQBuUx62gsjQOqT5ByQNxhIk
+	xKCJkTFkEojQKwXmFe1sjUljq2jk2tV9dWsR2mi9ZzxxcO4YbSA6eL66arZ3+ue16GCXd46pl+A
+	B8jDJoJkgy/9GEznPJnVqcB/XVMJ7EFm9QP0JP2Evpeb6UHgn55di/0DXuXqXVUyqjpbHhgmNfz
+	VXly+XEO2wTMGRrpPXCdqP8UzUhnMjaOVpP914su7MW+pZ/hO9BTGs5yutaHnZ6FKAapbDmnR26
+	QY+vydWZorTiCFsLsmREXPiMFdyx3NvIB+wyRp7JIuyVQ8qd/XNJK6rxcKhl+tprfnG14npAYPG
+	B4BzZZjSnpTWhXkIty5Su8eODJNXT8rQ6f+9GUtrhAZV5emx+Mv9QoyIBuCs7K5q+s5auDvAhpY
+	nvuZFTBCAcOxnMzLsKFHacUYCqPSPEwXXGyfz1vDkXKWV7h9KH7qvO+nq3IlLsJuXeRnz9IS5VQ
+	QY6X7Et4Vxlzs63
+X-Received: by 2002:a05:6000:4b01:b0:475:f100:35fa with SMTP id ffacd0b85a97d-47f2dd439ebmr22245618f8f.55.1784154266978;
         Wed, 15 Jul 2026 15:24:26 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:6d4f:b160:7aea:9d1b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4634e036sm22337783f8f.5.2026.07.15.15.24.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4634e036sm22337783f8f.5.2026.07.15.15.24.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:24:25 -0700 (PDT)
+        Wed, 15 Jul 2026 15:24:26 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
@@ -70,9 +70,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6/7] spi: spi-rpc-if: Implement 200ms runtime PM autosuspend delay
-Date: Wed, 15 Jul 2026 23:24:16 +0100
-Message-ID: <20260715222417.2997712-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 7/7] memory: renesas-rpc-if: Use runtime PM autosuspend after transfers
+Date: Wed, 15 Jul 2026 23:24:17 +0100
+Message-ID: <20260715222417.2997712-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -86,56 +86,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Enable and configure the runtime PM autosuspend infrastructure during
-the controller probe sequence to safeguard chunked flash operations.
+Replace pm_runtime_put() with pm_runtime_put_autosuspend() after manual
+transfers and direct memory-mapped read/write operations.
 
-The underlying hardware controller handles memory-mapped page programming
-by dividing data transfers into an automated sequence of consecutive
-64-byte chunks. To prevent the power management framework from
-aggressively gating the interface between these individual chunk frames
-or during immediate out-of-band status checks, an explicit 200ms delay
-window is required.
+Flash page programming may be performed as a sequence of closely spaced
+transfer operations. Calling pm_runtime_put() after each operation allows
+the runtime PM core to suspend the controller between successive
+transfers, introducing unnecessary suspend/resume cycles and potentially
+interrupting multi-step transfer sequences.
 
-Configure this temporal cushion using pm_runtime_set_autosuspend_delay()
-and pm_runtime_use_autosuspend() at probe time, ensuring proper cleanup
-via pm_runtime_dont_use_autosuspend() in error and driver removal
-pathways. This guarantees interface continuity across the full lifecycle
-of a multi-chunk write operation.
+Use pm_runtime_put_autosuspend() instead so the controller remains
+active while transfers continue, allowing it to suspend only after an
+idle period.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/spi/spi-rpc-if.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/memory/renesas-rpc-if.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
-index b63c7856e758..9a740342d0f7 100644
---- a/drivers/spi/spi-rpc-if.c
-+++ b/drivers/spi/spi-rpc-if.c
-@@ -161,6 +161,8 @@ static int rpcif_spi_probe(struct platform_device *pdev)
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index d98991266887..ec901a5a99aa 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -776,7 +776,7 @@ int rpcif_manual_xfer(struct device *dev)
  
- 	ctlr->dev.of_node = parent->of_node;
+ 	ret = rpc->info->impl->manual_xfer(rpc);
  
-+	pm_runtime_set_autosuspend_delay(rpc->dev, 200);
-+	pm_runtime_use_autosuspend(rpc->dev);
- 	pm_runtime_enable(rpc->dev);
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
  
- 	ctlr->num_chipselect = 1;
-@@ -183,6 +185,7 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 	return 0;
- 
- out_disable_rpm:
-+	pm_runtime_dont_use_autosuspend(rpc->dev);
- 	pm_runtime_disable(rpc->dev);
- 	return error;
+ 	return ret;
  }
-@@ -193,6 +196,7 @@ static void rpcif_spi_remove(struct platform_device *pdev)
- 	struct rpcif *rpc = spi_controller_get_devdata(ctlr);
+@@ -891,7 +891,7 @@ ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
  
- 	spi_unregister_controller(ctlr);
-+	pm_runtime_dont_use_autosuspend(rpc->dev);
- 	pm_runtime_disable(rpc->dev);
+ 	read = rpc->info->impl->dirmap_read(rpc, offs, len, buf);
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
+ 
+ 	return read;
  }
+@@ -948,7 +948,7 @@ ssize_t xspi_dirmap_write(struct device *dev, u64 offs, size_t len, const void *
+ 		regmap_update_bits(xspi->regmap, XSPI_BMCTL1,
+ 				   XSPI_BMCTL1_MWRPUSH, XSPI_BMCTL1_MWRPUSH);
  
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
+ 
+ 	return writebytes;
+ }
 -- 
 2.54.0
 
