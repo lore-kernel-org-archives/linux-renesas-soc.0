@@ -1,88 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3042E7368;
-	Thu, 16 Jul 2026 12:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C9427732
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 12:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784203504; cv=none; b=dQUYlarU2/kHPtIh4xnHRVdzXF+v6b0d9+YMn7mqBAqNSGs0NMwqQjSRMyfEfARpdqEIjem1FgAnQ8EwTlAQHvg2Wu1DBvIr+EIFtLz+w/qYP2jF+PqFhsby61tG7mMmFpsvCFK3Wbur9TWBNX1p5uxHygqvSeaT0dTcAadiC88=
+	t=1784205285; cv=none; b=SWZunQx2A5wGzc++gN9SmbwjaCfq4Fdl7ZDr4MFdi3lPP+yyEiJ5HkTMYYAlohBmdCjcgeU20iL91Jp15CLKWK9IvJm1rLPj4E9zMmH/sLociDjkOMdBAgW6LD3qY1qySGDLulkgSzwcxA+Im8rRa/uPI2EUmUAbq+NxGPO29Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784203504; c=relaxed/simple;
-	bh=zhZnhUzgL40A0difOjRNend+Fb6KE2RX/RbELk4F2qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDggRA9iLvB1FosgjvhnVKaOgJ7l+JL3vJtWS4qz2I/LuTZgNqLNycqOOe6bsPl3LdZAw3EPtCblFa873OWQ9R3dcu2bSAB+49MtQZ+aC6jZHZWPzl0A4M6+cFHSY4D3cferRa8L1oXnTFMu8ZOTDmU9zOdggP14Ee+WF2Kbk14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 420D81F000E9;
-	Thu, 16 Jul 2026 12:04:58 +0000 (UTC)
-Message-ID: <80e9582c-9441-4d5a-9931-b77b3c359eea@tuxon.dev>
-Date: Thu, 16 Jul 2026 15:04:56 +0300
+	s=arc-20240116; t=1784205285; c=relaxed/simple;
+	bh=pNG4dt1MuDjJS2FfJJY5eOAN0jDemnvGolZRu57PMXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FlvXCQIriaSTdbLu4DasLLMuefTJVaBNwhzMOtvoto+H7/pPf55RNMSbK9SYJbK4y1xujq8Klzy71c04TQdsDYW91jpZ0gtDkuHEybd+GPLv0NtuoObOBlHotgbpy6Wuj5cb47wNhnV8IMGfnsqmMD4QM4+40erTQutwzgnXxYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awBjLE8z; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awBjLE8z"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-493ae59eca6so17236765e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 05:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784205282; x=1784810082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ABw2degQi5xUj2ybacHY09V1CX8wIMU9fYlZ9atLanU=;
+        b=awBjLE8zMVDvEu2pyl2e0dDH3EVisLp+Wg13MSE8GnJRWj32EQtWzI4zn4F0z2xEru
+         Lh3287pA6+FVcjYoHgvSSgeO2DxA5/F5DQjL0FcajsdLKLymSQQFHz4sfYHQrTXIFltw
+         jM05oTiAa7jF5NNVW4UfUboX5/YDp7NgMqAQJ3dhWzgT/dUfCOrqmw9r59AzqE6Uu0yL
+         BfmjrM0w7Pff9QdrPm/DGMoR8/s8t3YCCndcHWJo1QGG1CvkvoV9e8v2Yd32Bnui8m75
+         HfRO10FjblC8sEZFJtPBx4EWlqCTI1Rxo6x7TpQ4ILPKusDUl/p94k/15mmTcGyL5hlT
+         G9aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784205282; x=1784810082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ABw2degQi5xUj2ybacHY09V1CX8wIMU9fYlZ9atLanU=;
+        b=Lc7w5KWCva2PtPf19SdtabBpv/l1Tnf8HH1UkIgAKcQsWxX6+JqMtwjEHq03WQ90Hj
+         331qjqqf88D+s3belRyOpmrJNiV71HID77UYk3fDDvYHGTDIM8NTXKYBRQW+XQWWCvyB
+         IB6uMN0L6BAsyhs/FkaT6v+nqkETKuLALnCRTvMz7akplOBjfi/w1SuDoNKFeAqyoZ0m
+         sy69np2z7vYcjYUSOxrJZom5EjAieF5NiZx2K4hXlNELBiCcgDR5ibWGNlSKEkWjc7cx
+         1x3TxHi8xFXhTnp170TeLzgsug1nB0bIeKdoshQfOLvfbgMbp4IWHNESnbt0anS03gNJ
+         O37A==
+X-Gm-Message-State: AOJu0Ywrm64D20fwehanL3ts0/ycnIqedZkirGG+ihoK3SeYtFIEDDds
+	mLTkCw5/vLQl3KmtOs5kzNpTqIFFcRj6COK+Z0mcKUTgPtvUgsoWZnGZ
+X-Gm-Gg: AfdE7ckHieEGRBoq3riK/5Agf6fHZA6lG6xtuCaKqKbLq3ZjE6wwcFp+m1sBM2RmQFL
+	CYMf0P1W42lggFKiqIySkRCWAMImJEVOVqj6j/BGSVKKxvAGNyWltI7yWadK7krbHc3qu1PxMv6
+	l7Z5wiLPfadiJN5hJ3C7HEgZKhSEpVL7iv+Ub+9uCxlNAI3lLefSvKvgK9VMf5vvtFKr7rMTkNN
+	WM9LEie8Wa+ZM4ymVE0MnpPqJe33EAnRUFkjskUpKxTvVcmSZY5rZX7PUyHIhR1rradMn6awa+p
+	sz2+qxbzPZBBFUfHxBSs9uAOrHHytJ+EsCgV6yki12rOJn/uxbj3gTAVFFrGF7bXbTB+kU2lGOK
+	wBxMeg4spNIagIaxWMoWpiEjHpnuFUSRZVBn+72Rp1o37pFzslyWl3AJJYR0jan+fzw+IJa2ihG
+	jmTGavLni9o2Ypk7HlPke6my01wteKhqkSJuxgKLHmOfsK4aRZZT9QaOeM6rYdtxQK4UcPha7Oq
+	mUmrBWtGIR+nPtvrRAQzzP7C3s=
+X-Received: by 2002:a05:600d:8444:10b0:493:bd2a:93bb with SMTP id 5b1f17b1804b1-493f87d7eefmr180396215e9.3.1784205281874;
+        Thu, 16 Jul 2026 05:34:41 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:4150:a2d7:2b6b:840e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49541e83d05sm48582645e9.6.2026.07.16.05.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 05:34:41 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/8] Add syscon support for Renesas RZ/T2H & RZ/N2H in CPG/MSSR driver
+Date: Thu, 16 Jul 2026 13:34:26 +0100
+Message-ID: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PCI: rzg3s-host: Re-enumerate the bus on PCIe
- link-state changes
-To: Manivannan Sadhasivam <mani@kernel.org>,
- John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
- kwilczynski@kernel.org, bhelgaas@google.com, robh@kernel.org,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, john.madieu@gmail.com,
- biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com
-References: <20260630141720.3938514-1-john.madieu.xa@bp.renesas.com>
- <aifual6ttxnrbi3o3lrnprwinmhvkysmebzrscoxhyhxbaqkz5@l66w7bdechqz>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <aifual6ttxnrbi3o3lrnprwinmhvkysmebzrscoxhyhxbaqkz5@l66w7bdechqz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Mani,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 7/14/26 19:58, Manivannan Sadhasivam wrote:
-> On Tue, Jun 30, 2026 at 02:17:20PM +0000, John Madieu wrote:
->> The RZ/G3E PCIe controller does not expose the standard PCIe Slot
->> Capability registers, so the generic pciehp driver cannot be used. The
->> only link-state signal the hardware provides is the DL_UpDown bit in the
->> PEIS0 event status register, which is raised on every Data Link layer
->> up/down transition.
->>
->> Enable DL_UpDown in PEIE0 and hook up an interrupt handler so the driver
->> can react to link-state changes: a device that trains after boot gets
->> enumerated, and a device that disappears on link loss is removed. This
->> provides hotplug-like behaviour without the PCI hotplug core, which is
->> unavailable for the reason above.
->>
->> On a DL_UpDown event the handler acks the W1C status bit and schedules a
->> worker that inspects PCSTAT1.DL_DOWN_STS:
->>
->>    - link up: re-run max link speed negotiation, wait for the link to
->>      settle and pci_rescan_bus() the root bus;
->>    - link down: walk the bus in reverse and
->>      pci_stop_and_remove_bus_device() each child.
->>
->> Both paths take pci_lock_rescan_remove() to serialise against the PCI
->> core.
->>
->> Link events are only acted upon once the controller is fully
->> initialised. A DL_UpDown latched while the registers are not configured,
->> for example when the event IRQ is used as a system wakeup source during
->> resume, is acknowledged but does not schedule a rescan.
-> This is not correct. I don't see the patch configuring 'event IRQ' as a wakeup
-> source.
-> 
-> Rest of the patch LGTM. If you confirm above, I can reword while applying.
+Hi All,
 
-John is not with Renesas anymore so I confirm on his behalf it is OK for you to 
-amend it while applying.
+This series adds syscon support for the Renesas RZ/T2H and RZ/N2H SoCs
+in the CPG/MSSR driver. The CPG/MSSR block on these SoCs is a
+multi-function block that integrates several system-level features beyond
+clock and reset control, including clock monitoring, write protection,
+and peripheral configuration registers.
 
-However, I checked if this patch applies on top of next-20260715 or v7.2-rc1 and 
-it doesn't on neither of these two HEADs.
+For the other IP blocks to be configured a syscon support is provided in
+the CPG/MSSR driver. This allows other drivers to access the CPG/MSSR
+registers via a regmap interface.
 
-I can re-base and re-send. Please let me know otherwise.
+Note:
+- Patches have been rebased on top of next-20260715.
+- The WDT driver patches apply on top of series [0].
 
-Thank you,
-Claudiu
+[0] https://lore.kernel.org/all/20260715133922.2129340-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+v2->v3:
+- Switched to non-RFC patches for the series.
+- Added new patch to split out the RZ/T2H CPG binding from the generic
+  Renesas CPG/MSSR binding.
+- Dropped WDT driver refactor changes from this series. These has be
+  submitted in a separate series which makes use of regmap.
+- Dropped registers from writeable_readable list.
+- Renamed sysc_init to post_init and updated signature to take
+  cpg_mssr_pub struct.
+- Created a single regmap covering both SYSC register regions
+  instead of two separate regmaps.
+- Updated commit messages
+
+v1->v2:
+https://lore.kernel.org/all/20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+- Updated commit message for patch #1
+- Made use of for_each_child_of_node_scoped
+- Moved sysc_init() to the end of the probe function
+
+v1: https://lore.kernel.org/all/20260511185058.1926869-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (8):
+  dt-bindings: clock: renesas: Split out RZ/T2H CPG binding
+  clk: renesas: r9a09g077: Register SYSC regmap
+  arm64: dts: renesas: r9a09g077: Adjust CPG register region sizes
+  arm64: dts: renesas: r9a09g087: Adjust CPG register region sizes
+  dt-bindings: watchdog: renesas,r9a09g057-wdt: Add CPG/MSSR syscon
+    support
+  watchdog: rzv2h: Add syscon support for WDTDCR
+  arm64: dts: renesas: r9a09g077: Use CPG/MSSR syscon for WDTDCR access
+  arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
+
+ .../bindings/clock/renesas,cpg-mssr.yaml      |  27 +---
+ .../clock/renesas,rzt2h-cpg-mssr.yaml         |  87 ++++++++++++
+ .../watchdog/renesas,r9a09g057-wdt.yaml       |  29 +++-
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  28 ++--
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  28 ++--
+ drivers/clk/renesas/Kconfig                   |   2 +
+ drivers/clk/renesas/r9a09g077-cpg.c           | 130 ++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  18 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.h        |   5 +
+ drivers/watchdog/Kconfig                      |   1 +
+ drivers/watchdog/rzv2h_wdt.c                  |  56 ++++++--
+ 11 files changed, 342 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg-mssr.yaml
+
+-- 
+2.54.0
+
