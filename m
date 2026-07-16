@@ -1,612 +1,255 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFEE331EA3;
-	Thu, 16 Jul 2026 18:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43BA3644C6;
+	Thu, 16 Jul 2026 20:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784226776; cv=none; b=jTQJ35r5XUVRqePG63qNc/pZYm8od+861RxGpCWo4nohbMEaNs7ptVgEUfsNgh+TQDQprdrPemRinZqrREg/rg1oB7JuhTc8IydhpRqVUaCj8dpb98AYlMhIAc7EaRAB/oFrL3/fdjHd8rYVRJVfP4TePHLD17YyoXqEqw9hdQQ=
+	t=1784234146; cv=none; b=fO8a228XSm8U/wXqSPx8uv9rGWizMXkVRZQRnjxV2rYJzm+g7PNx0QBn5pLGaJT0+wbfzalIWRqi8seOiRkqX3D/T/nLbNEW1hlCXykksOjLpJRPKOAHN9crojNRPWfHob6D3hv2wS+t8itUGdgwVTVFZPTUfTnjffhWVWF0WF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784226776; c=relaxed/simple;
-	bh=82jgGwW2z4x7wbUsKHlU7XKDmoZ71a7k9JVZI45VFT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pGa4adlUaxkgH9JC2j/TpcAIuNuPI/ta+DNiziRHwDvpI8c1o6tt4dF3E5/KUvtdprDJ4s+7vQtNUOKTyZx1Dgfz+R8nEXzb/TH8Y2s7xgtRhij5wEYA0WJwfHx6XK9wmiThFtpsUA0n2nTnZDF4yeG242U+aOeDSw3x7wJbm70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C021F000E9;
-	Thu, 16 Jul 2026 18:32:49 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-To: yoshihiro.shimoda.uh@renesas.com,
-	vkoul@kernel.org,
-	neil.armstrong@linaro.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org,
-	Pavel Machek <pavel@nabladev.com>,
-	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: [PATCH v5] phy: renesas: rcar-gen3-usb2: Avoid long delay in atomic context
-Date: Thu, 16 Jul 2026 21:32:46 +0300
-Message-ID: <20260716183246.3183877-1-claudiu.beznea+renesas@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1784234146; c=relaxed/simple;
+	bh=jj0np0QtMlyIQ6kXlCqS8Kdd2b5pTK+Gljh7O9vjYHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmZgtkszA4o8Uo1htrsAv36bKzF1Bec6bOAbOnzauYyRJzmxM1n0z1RmYsQjKRvHM3H1IpcbTEXtFWWJup0BCQ5rS3+4TiwdV9f+wjNT4CswobDtL8ih4dNUxq0q1DbrHZqipCQQ7NRAz8S/u/Dx8T3UzpbHZZLWz2nrIIj3MCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=IxxvbIgC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RWuboJiI; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="IxxvbIgC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RWuboJiI"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8091B1400058;
+	Thu, 16 Jul 2026 16:35:42 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Thu, 16 Jul 2026 16:35:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1784234142;
+	 x=1784320542; bh=70ee6iMesh7z1UVWrQ0so5yKYpt+/QuMK+4/CN0rL4U=; b=
+	IxxvbIgCrYWSXMv6H5Jny9x1bU21lrZqLV3cvHcmw7Xs6HoUp+ftSVTSmZwFurCm
+	i1pWi3l1HbYtMf9BzsLEMUIGzMfyXpREJ8H2ziW0ppzYO+ubEfrMWwaME9tWX8IZ
+	Z7kxTgb+ZpTQR31ZzfL8YxzE0GS0B0NImP63+wpH4wKjd3QCjIE7NNP58oqwbtVj
+	1tzLhpnWtYY6w9M0BDWLLUUtLrCgs3GKCDO6zjL0vnuXcUMWuIMkPuHr2CvWEml2
+	ctjqJbH4pGrb7rYG/0p0zpxhrEVnyuiVXHKahFslhIoUUgpOb5bn0Tt+K2y7HNu4
+	xp2/yBmGwVlWb2oaA+4j9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784234142; x=
+	1784320542; bh=70ee6iMesh7z1UVWrQ0so5yKYpt+/QuMK+4/CN0rL4U=; b=R
+	WuboJiI5dczic1JR1yJ8aQkDaRjBHU63oaXm5BMHSOagJRbBVLiabh1QQC66DJru
+	BEEAOh/6sd+L1SWQwOsTEmudGGENMrI5yiCmETBP4lX+pnt2Y7MBjI5CtVVbSR2k
+	5yYc59rPYq4Fhi/DXh63pEiB8KoDxHE1xX3Pf6qV7Xbfsra/aGDQlQznFVDO+Xrx
+	kkQ/VKQrbU7iIpvHCtXMC+wbtHsqjdTHjV5wjvMso9czs5M40179TY8qQ5VnVHes
+	XWHFVICyCFbr8shMGtGkoJu6R+3gSAzpLWyFprPivaege3Z7hJRDT3VZMaL8y/nm
+	Hrf6Ev3Ujz/eJUGwcL4aw==
+X-ME-Sender: <xms:nUBZai829ZSeF9iaHV_zNScm9zeMDhMvvMmI2lD_NkerDs_ljM1aKg>
+    <xme:nUBZahOK8E_evjHlEizjBVuQr7mq4svNPHNPvNvrIwA-JNGddFMQYMli91CDfZ3fE
+    q05X3kPKVsSsERQIHDPePO2CphwsXKH2yKPMjBNlkS5tzrubRiaMw>
+X-ME-Received: <xmr:nUBZau33916es_Yaq5iDCVHDY3sN44P_xxqKQrwHmqKdTcxwQgw5wNl6VdzuURQEN7LFg4noGNzodieCIREJv6XK8nfsTjs>
+X-ME-Proxy-Cause: dmFkZTGv8aoSwGG63X9SFS8XoBJfewcwNinENxG8gtapi20Kuv6CwpQ9gNQeImuA1INHuE
+    QUhaKjOagaYuSxBlr0wYzcrS7XV1bu5KkIYs291Ky+B8sSM/zsyEA6NW1EaakGR6bvZdtK
+    CU92VXkAmLXeQX6kMKN/iVGCwMdC0/ff49XBQjmob9f7Nty6pm7V8nuBUi6kTFa4vqrhgp
+    Fcf1/QEidh4tNOiWFEUO8nK3eteQt4TstCBxxPfT+Z0nwX1ZxeMAkqxuzUQ9CXFpSV/Oqd
+    HMLGksnq0puQUYwql5rB+vs9h79Rs9UnNMTdSl992BeujeW9FfQHRlSdIddon+ZV3BBoXu
+    Tj70Nx5yGze9GbZv9ycTvK6DHYo16CwmFnwqyld4nzKEQZ/EzfnsCb1LzGC0AjgvrQL37l
+    dFgs5m4hk3XDUEm/plkkJfSYOaEYPYw70wIC9mCv1EnBkyAGIYPkbm3nl2NT1XVh1nuRTO
+    C/0bO+t02wpQ0QXfQpDzpyRvO4IgaUSqakEI1u3eVMBr4jlfaCG0rMcnsOnqaLYy+PIcdA
+    OiD2v0pQrPm5K3CfyCLIfsUJinbAPjbHjJrIrI4LKR5ULgxBd709YuiGthGwHMBkA8PqNb
+    TNg+Ts+PTb239AWV+7bcWdWIFT9EdRpFYjZVK4bee6E8znV1IsXjDLHWcWdw
+X-ME-Proxy: <xmx:nUBZaqfJNR5b6P4t6zZVeGjnd0LmXTswcKLwkm-uh3u0sxRGm7YDxw>
+    <xmx:nUBZavYjBriTjZWTZG9Pi2KhXHVMH-y08nJJ1ALJzLxbpNSYNhVUYA>
+    <xmx:nUBZavXR7JV_Aas3BkNxudf_fj0-YCmKDvTGHywd_8vvhrTlzOJvOA>
+    <xmx:nUBZaiSJAH2zyTo7Xk-ZRUDjnYW7hmZmf2ctpDGURWsqZFV_VH9tfg>
+    <xmx:nkBZalEPafyH24qmvolwh57SuKckv3z9U4qmmBqD-8e5sQZRW8M0l8JQ>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Jul 2026 16:35:41 -0400 (EDT)
+Date: Thu, 16 Jul 2026 22:35:38 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"DavidS. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v4 2/3] ptp: Add driver for R-Car Gen4
+Message-ID: <20260716203538.GD1593320@ragnatech.se>
+References: <20260702125525.2230427-1-niklas.soderlund+renesas@ragnatech.se>
+ <20260702125525.2230427-3-niklas.soderlund+renesas@ragnatech.se>
+ <21d2e632-5307-4b48-be7b-1269b55f70fe@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <21d2e632-5307-4b48-be7b-1269b55f70fe@linux.dev>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Vadim,
 
-The OTG PHY initialization sequence needs to wait for 20 ms at a specific
-step, as described in commit 72c0339c115b ("phy: renesas:
-rcar-gen3-usb2: follow the hardware manual procedure").
+Thanks for your feedback.
 
-Commit 55a387ebb921 ("phy: renesas: rcar-gen3-usb2: Lock around hardware
-registers and driver data") tried to address various problems in the
-rcar-gen3-usb2 driver and converted the mutex protecting HW register
-accesses to a spin lock, leaving, however, a long delay in the critical
-section protected by the spin lock. This may become a problem,
-especially on RT kernels.
+On 2026-07-02 15:39:25 +0100, Vadim Fedorenko wrote:
+> On 02/07/2026 13:55, Niklas SÃ¶derlund wrote:
+> > Add driver for the gPTP timer found on R-Car Gen4 devices. The timer is
+> > system-wide and shared by different Ethernet devices on each Gen4
+> > platform. The operation of the timer is however not completely in
+> > depended of the systems Ethernet devices.
+> > 
+> >    - On R-Car S4 is gated by the RSWITCH Ethernet module clock.
+> > 
+> >    - On R-Car V4H is gated by the RTSN Ethernet module clock.
+> > 
+> >    - On R-Car V4M is gated by its own module clock, the system have
+> >      neither RTSN or RSWITCH device. But the module clock is the same as
+> >      RTSN on V4H and the documentation referees to it as tsn (EtherTSN).
+> > 
+> > The gPTP device do have its own register space on all three platforms.
+> > But on S4 and V4H it will share its clock and reset property with
+> > RSWITCH or RTSN, respectively.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> > * Changes since v3
+> > - Clamp increment calculated to register limitations.
+> > - Check return value of clk_get_rate().
+> > - Disable PM if ptp_clock_register() fails.
+> > ---
+> 
+> [...]
+> 
+> > +struct ptp_rcar_gen4_priv {
+> > +	void __iomem *base;
+> > +	struct clk *clk;
+> > +
+> > +	struct ptp_clock *clock;
+> > +	struct ptp_clock_info info;
+> > +
+> > +	spinlock_t lock;	/* Registers access. */
+> > +	s64 default_addend;
+> > +};
+> > +
+> > +#define ptp_to_priv(ptp) container_of(ptp, struct ptp_rcar_gen4_priv, info)
+> > +
+> > +static int ptp_rcar_gen4_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
+> > +{
+> > +	struct ptp_rcar_gen4_priv *priv = ptp_to_priv(ptp);
+> > +	s64 addend = priv->default_addend;
+> > +	bool neg_adj = scaled_ppm < 0;
+> > +	unsigned long flags;
+> > +	s64 diff;
+> > +
+> > +	if (neg_adj)
+> > +		scaled_ppm = -scaled_ppm;
+> > +	diff = div_s64(addend * scaled_ppm_to_ppb(scaled_ppm), NSEC_PER_SEC);
+> > +	addend = neg_adj ? addend - diff : addend + diff;
+> > +
+> > +	/* Clamp value to register limits, defined as in nanoseconds.
+> > +	 * bit[31:27] - integer
+> > +	 * bit[26:0]  - decimal
+> > +	 */
+> > +	addend = clamp_val(addend, 0, UINT_MAX);
+> 
+> is it always positive number?
 
-To address this, release the spin lock before sleeping for 20 ms as
-required by the HW manual and reacquire it afterwards. To avoid other
-threads entering the critical section and configuring the HW while the
-software is waiting for the OTG initialization to complete, introduce the
-otg_initializing variable alongside the otg_init_done wait queue. Any
-other thread trying to configure the HW while the OTG PHY initialization
-is in progress waits for the wait queue instead of immediately returning
-errors to PHY users. The IRQs were also disabled while waiting for the OTG
-PHY initialization to complete, as the interrupt handler may also apply HW
-settings.
+Yes.
 
-The OTG can only be initialized once. It is initialized by the first PHY
-that calls struct phy_ops::rcar_gen3_phy_usb2_init().
+The value written to the PTPTIVC0_REG register is the timer increment in 
+ns per clock pulse. The PTP is clocked by different rates on different 
+SoC. 200Mhz on V4H and 320Mhz on S4. On each pulse the PTP timer is 
+incremented by this value. For example,
 
-To avoid failures when multiple PHYs call struct
-phy_ops::rcar_gen3_phy_usb2_init() simultaneously, and the PHY responsible
-for initializing the OTG either fails or deinit quiqly and another PHY
-takes over the PHY init role), the code waiting for the
-channel->otg_init_done wait queue retries up to NUM_OF_PHYS times.
+If clock frequency is 50 MHz, 100Mhz, 200Mhz, 320MHz or 400MHz,
+it should be respectively set to a value around 0xA0000000, 0x50000000, 
+0x28000000, 0x19000000 or 0x14000000.
 
-Fixes: 55a387ebb921 ("phy: renesas: rcar-gen3-usb2: Lock around hardware registers and driver data")
-Cc: stable@vger.kernel.org
-Reported-by: Pavel Machek <pavel@nabladev.com>
-Closes: https://lore.kernel.org/all/afhkX2Ys2BG1gnqy@duo.ucw.cz
-Reported-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Closes: https://lore.kernel.org/all/afhkX2Ys2BG1gnqy@duo.ucw.cz
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+> 
+> > +
+> > +	spin_lock_irqsave(&priv->lock, flags);
+> > +	iowrite32(addend, priv->base + PTPTIVC0_REG);
+> > +	spin_unlock_irqrestore(&priv->lock, flags);
+> > +
+> > +	return 0;
+> > +}
+> 
+> [...]
+> 
+> > +static struct ptp_clock_info ptp_rcar_gen4_info = {
+> > +	.owner = THIS_MODULE,
+> > +	.name = "R-Car Gen4 gPTP",
+> > +	.max_adj = 50000000,
+> 
+> even though clamping addend may work, I would suggest adjusting
+> ".max_adj" value to the one which will not make addend overflow.
+> And as a reminder, .max_adj is the absolute value in ppb that can be set
+> for a single call of .adjfine - the value is checked against
+> [-(.max_adj),.max_adj] range.
 
-Changes in v5:
-- replaced completion with wait_queue
-- on the threads waiting for OTG initialization, checked again the
-  channel->otg_initializing and return with -EBUSY if it's true; atherwise
-  reinitialize the ret variable and continue
-- used proper register to set obint_enable_bits in
-  rcar_gen3_phy_usb2_irqs_mask_all()
+Thanks for the reminder, but is this not then correct and prevents any 
+overflow? From the calculations above.
 
-Changes in v4:
-- increase the timeout to 120 ms and added a macro for it USB2_OTG_INIT_TIMEOUT
-- add retry mechanism when waiting for otg_init_done completion
-- read the status registers in rcar_gen3_phy_usb2_irq() before returning,
-  in case an unexpected IRQ is received while waiting for OTG init
-- mask channel->phy_data->obint_enable_bits in rcar_gen3_phy_usb2_irqs_mask_all()
-- updated the patch description
+(a)     s64 addend = priv->default_addend;
+	...
+(b)     if (neg_adj)
+(b)                scaled_ppm = -scaled_ppm;
+(c)     diff = div_s64(addend * scaled_ppm_to_ppb(scaled_ppm), NSEC_PER_SEC);
+(d)     addend = neg_adj ? addend - diff : addend + diff;
 
-Changes in v3:
-- initialize ret value in role_store()
-- jump to exit label in role_store() to have the same exit path
-- dropped scoped_guard() in rcar_gen3_phy_usb2_irq() to avoid mixing
-  goto statements with scoped_guard()
-- take into account USB2_INT_ENABLE_UCOM_INTEN when masking/unmasking IRQs
-- increase the completion timeout to 40ms
-- in rcar_gen3_phy_usb2_power_on() disable regulator on failure path
+Section (a) copies the default addend value. This value is calculated at 
+probe time as a function of the PTP module clock (50 MHz, 100Mhz, 
+200Mhz, 320MHz or 400MHz) to a known value. The max value being 
+0xA0000000 for a 50Mhz module clock.
 
-Changes in v2:
-- dropped the rcar_gen3_phy_wait_otg_init() and used inline the code; with it
-  the comment that was previously in rcar_gen3_phy_wait_otg_init() was added
-  in struct rcar_gen3_chan for above the org_initializing variable
-- dropped READ_ONCE()/WRITE_ONCE() arround struct rcar_gen3_chan::otg_initializing
-- checked for struct rcar_gen3_chan::otg_initializing before checking for
-  rcar_gen3_is_any_otg_rphy_initialized() in all code places
-- added rcar_gen3_phy_usb2_irqs_mask_all() and rcar_gen3_phy_usb2_irqs_unmask()
-  to mask/unmask only the interrupts at the controller level since the line is
-  shared
-- along with it dropped disable_irq_nosync()/enable_irq() from v1 along with
-  struct rcar_gen3_chan::irq
-- increased the completion timeout to 30 ms
+Sections (b) and (d) deals with the value we add at each clock tick is 
+in fact based on the PTP module clock itself.
 
+So the one place we could overflow is in section (c). Lets look at the 
+worse case scenario.
 
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 310 +++++++++++++++++++----
- 1 file changed, 265 insertions(+), 45 deletions(-)
+addend = priv->default_addend = <from PTP clock worse case 50 MHz> = 0xA0000000
+scaled_ppm_to_ppb(scaled_ppm) = .max_adj = 50000000
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 9a45d840efeb..ceaac691ec89 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -27,6 +27,7 @@
- #include <linux/reset.h>
- #include <linux/string.h>
- #include <linux/usb/of.h>
-+#include <linux/wait.h>
- #include <linux/workqueue.h>
- 
- /******* USB2.0 Host registers (original offset is +0x200) *******/
-@@ -106,6 +107,13 @@
- /*  RZ/G2L specific */
- #define USB2_LINECTRL1_USB2_IDMON	BIT(0)
- 
-+/*
-+ * The OTG initialization is expected to finish in 20ms. Choose a large enough
-+ * timeout to avoid waiters exit prematurely the waiting section under heavy
-+ * CPU load.
-+ */
-+#define USB2_OTG_INIT_TIMEOUT		msecs_to_jiffies(120)
-+
- #define NUM_OF_PHYS			4
- enum rcar_gen3_phy_index {
- 	PHY_INDEX_BOTH_HC,
-@@ -138,12 +146,20 @@ struct rcar_gen3_chan {
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
-+	wait_queue_head_t otg_init_done;
- 	spinlock_t lock;	/* protects access to hardware and driver data structure. */
- 	enum usb_dr_mode dr_mode;
- 	bool extcon_host;
- 	bool is_otg_channel;
- 	bool uses_otg_pins;
- 	bool otg_internal_reg;
-+	/*
-+	 * The OTG can be initialized only once and needs to release the spinlock
-+	 * and wait for 20 ms due to hardware constraints. If a thread executes
-+	 * PHY configuration code while the OTG PHY is waiting for the 20 ms, the
-+	 * thread will have to wait for the OTG PHY initialization to complete.
-+	 */
-+	bool otg_initializing;
- };
- 
- struct rcar_gen3_phy_drv_data {
-@@ -392,26 +408,58 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
- 	bool is_b_device;
- 	enum phy_mode cur_mode, new_mode;
-+	int retries = NUM_OF_PHYS;
-+	unsigned long flags;
-+	int ret = -EIO;
- 
--	guard(spinlock_irqsave)(&ch->lock);
-+	spin_lock_irqsave(&ch->lock, flags);
- 
--	if (!ch->is_otg_channel || !rcar_gen3_is_any_otg_rphy_initialized(ch))
--		return -EIO;
-+	if (!ch->is_otg_channel)
-+		goto unlock;
-+
-+	while (retries-- && ch->otg_initializing) {
-+		spin_unlock_irqrestore(&ch->lock, flags);
-+
-+		ret = wait_event_timeout(ch->otg_init_done, !ch->otg_initializing,
-+					 USB2_OTG_INIT_TIMEOUT);
-+		ret = ret ? 0 : -ETIMEDOUT;
-+		if (ret && !retries)
-+			goto exit;
-+
-+		spin_lock_irqsave(&ch->lock, flags);
-+	}
-+
-+	/* If another thread started a new initialization just return -EBUSY. */
-+	if (ch->otg_initializing) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	if (!rcar_gen3_is_any_otg_rphy_initialized(ch)) {
-+		ret = -EIO;
-+		goto unlock;
-+	}
- 
--	if (sysfs_streq(buf, "host"))
-+	if (sysfs_streq(buf, "host")) {
- 		new_mode = PHY_MODE_USB_HOST;
--	else if (sysfs_streq(buf, "peripheral"))
-+	} else if (sysfs_streq(buf, "peripheral")) {
- 		new_mode = PHY_MODE_USB_DEVICE;
--	else
--		return -EINVAL;
-+	} else {
-+		ret = -EINVAL;
-+		goto unlock;
-+	}
- 
- 	/* is_b_device: true is B-Device. false is A-Device. */
- 	is_b_device = rcar_gen3_check_id(ch);
- 	cur_mode = rcar_gen3_get_phy_mode(ch);
- 
- 	/* If current and new mode is the same, this returns the error */
--	if (cur_mode == new_mode)
--		return -EINVAL;
-+	if (cur_mode == new_mode) {
-+		ret = -EINVAL;
-+		goto unlock;
-+	}
- 
- 	if (new_mode == PHY_MODE_USB_HOST) { /* And is_host must be false */
- 		if (!is_b_device)	/* A-Peripheral */
-@@ -425,7 +473,10 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 			rcar_gen3_init_for_peri(ch);
- 	}
- 
--	return count;
-+unlock:
-+	spin_unlock_irqrestore(&ch->lock, flags);
-+exit:
-+	return ret ?: count;
- }
- 
- static ssize_t role_show(struct device *dev, struct device_attribute *attr,
-@@ -441,14 +492,11 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- }
- static DEVICE_ATTR_RW(role);
- 
--static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
-+static void rcar_gen3_init_otg_phase0(struct rcar_gen3_chan *ch)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val;
- 
--	if (!ch->is_otg_channel || rcar_gen3_is_any_otg_rphy_initialized(ch))
--		return;
--
- 	/* Should not use functions of read-modify-write a register */
- 	val = readl(usb2_base + USB2_LINECTRL1);
- 	val = (val & ~USB2_LINECTRL1_DP_RPD) | USB2_LINECTRL1_DPRPD_EN |
-@@ -471,7 +519,11 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- 			writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
- 		}
- 	}
--	mdelay(20);
-+}
-+
-+static void rcar_gen3_init_otg_phase1(struct rcar_gen3_chan *ch)
-+{
-+	void __iomem *usb2_base = ch->base;
- 
- 	writel(0xffffffff, usb2_base + USB2_OBINTSTA);
- 	writel(ch->phy_data->obint_enable_bits, usb2_base + USB2_OBINTEN);
-@@ -502,6 +554,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- 	void __iomem *usb2_base = ch->base;
- 	struct device *dev = ch->dev;
- 	irqreturn_t ret = IRQ_NONE;
-+	unsigned long flags;
- 	u32 status;
- 
- 	pm_runtime_get_noresume(dev);
-@@ -509,33 +562,102 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- 	if (pm_runtime_suspended(dev))
- 		goto rpm_put;
- 
--	scoped_guard(spinlock, &ch->lock) {
--		status = readl(usb2_base + USB2_OBINTSTA);
--		if (status & ch->phy_data->obint_enable_bits) {
--			dev_vdbg(dev, "%s: %08x\n", __func__, status);
--			if (ch->phy_data->vblvl_ctrl)
--				writel(USB2_OBINTSTA_CLEAR, usb2_base + USB2_OBINTSTA);
--			else
--				writel(ch->phy_data->obint_enable_bits, usb2_base + USB2_OBINTSTA);
--			rcar_gen3_device_recognition(ch);
--			rcar_gen3_configure_vblvl_ctrl(ch);
--			ret = IRQ_HANDLED;
--		}
-+	spin_lock_irqsave(&ch->lock, flags);
-+
-+	status = readl(usb2_base + USB2_OBINTSTA);
-+	if (status & ch->phy_data->obint_enable_bits) {
-+		dev_vdbg(dev, "%s: %08x\n", __func__, status);
-+		if (ch->phy_data->vblvl_ctrl)
-+			writel(USB2_OBINTSTA_CLEAR, usb2_base + USB2_OBINTSTA);
-+		else
-+			writel(ch->phy_data->obint_enable_bits, usb2_base + USB2_OBINTSTA);
-+
-+		ret = IRQ_HANDLED;
-+
-+		/* This should not happen! */
-+		if (ch->otg_initializing)
-+			goto unlock;
-+
-+		rcar_gen3_device_recognition(ch);
-+		rcar_gen3_configure_vblvl_ctrl(ch);
- 	}
- 
-+unlock:
-+	spin_unlock_irqrestore(&ch->lock, flags);
- rpm_put:
- 	pm_runtime_put_noidle(dev);
- 	return ret;
- }
- 
-+static void rcar_gen3_phy_usb2_irqs_mask_all(struct rcar_gen3_chan *channel,
-+					     u32 *masked_irqs_bits)
-+{
-+	u32 val, bitmask = USB2_INT_ENABLE_UCOM_INTEN;
-+	void __iomem *usb2_base = channel->base;
-+
-+	for (unsigned int i = 0; i < NUM_OF_PHYS; i++)
-+		bitmask |= channel->rphys[i].int_enable_bits;
-+
-+	val = readl(usb2_base + USB2_INT_ENABLE);
-+	*masked_irqs_bits = val & bitmask;
-+	val &= ~bitmask;
-+	writel(val, usb2_base + USB2_INT_ENABLE);
-+
-+	/*
-+	 * Don't report channel->phy_data->obint_enable_bits IRQs. These are
-+	 * unmasked anyway in rcar_gen3_init_otg_phase1().
-+	 */
-+	val = readl(usb2_base + USB2_OBINTEN);
-+	val &= ~channel->phy_data->obint_enable_bits;
-+	writel(val, usb2_base + USB2_OBINTEN);
-+}
-+
-+static void rcar_gen3_phy_usb2_irqs_unmask(struct rcar_gen3_chan *channel,
-+					   u32 irqs_bits)
-+{
-+	u32 val, bitmask = USB2_INT_ENABLE_UCOM_INTEN;
-+	void __iomem *usb2_base = channel->base;
-+
-+	for (unsigned int i = 0; i < NUM_OF_PHYS; i++)
-+		bitmask |= channel->rphys[i].int_enable_bits;
-+
-+	val = readl(usb2_base + USB2_INT_ENABLE);
-+	val &= ~bitmask;
-+	val |= irqs_bits;
-+	writel(val, usb2_base + USB2_INT_ENABLE);
-+}
-+
- static int rcar_gen3_phy_usb2_init(struct phy *p)
- {
- 	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
-+	int retries = NUM_OF_PHYS;
-+	unsigned long flags;
- 	u32 val;
-+	int ret;
-+
-+	spin_lock_irqsave(&channel->lock, flags);
- 
--	guard(spinlock_irqsave)(&channel->lock);
-+	while (retries-- && channel->otg_initializing) {
-+		spin_unlock_irqrestore(&channel->lock, flags);
-+
-+		ret = wait_event_timeout(channel->otg_init_done, !channel->otg_initializing,
-+					 USB2_OTG_INIT_TIMEOUT);
-+		ret = ret ? 0 : -ETIMEDOUT;
-+		if (ret && !retries)
-+			return ret;
-+
-+		spin_lock_irqsave(&channel->lock, flags);
-+	}
-+
-+	/* If another thread started a new initialization just return -EBUSY. */
-+	if (channel->otg_initializing) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	} else {
-+		ret = 0;
-+	}
- 
- 	/* Initialize USB2 part */
- 	val = readl(usb2_base + USB2_INT_ENABLE);
-@@ -548,8 +670,23 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 	}
- 
- 	/* Initialize otg part (only if we initialize a PHY with IRQs). */
--	if (rphy->int_enable_bits)
--		rcar_gen3_init_otg(channel);
-+	if (rphy->int_enable_bits && channel->is_otg_channel &&
-+	    !rcar_gen3_is_any_otg_rphy_initialized(channel)) {
-+		u32 masked_irq_bits = 0;
-+
-+		rcar_gen3_init_otg_phase0(channel);
-+		rcar_gen3_phy_usb2_irqs_mask_all(channel, &masked_irq_bits);
-+		channel->otg_initializing = true;
-+		spin_unlock_irqrestore(&channel->lock, flags);
-+
-+		fsleep(20000);
-+
-+		spin_lock_irqsave(&channel->lock, flags);
-+		rcar_gen3_phy_usb2_irqs_unmask(channel, masked_irq_bits);
-+		rcar_gen3_init_otg_phase1(channel);
-+		channel->otg_initializing = false;
-+		wake_up_all(&channel->otg_init_done);
-+	}
- 
- 	if (channel->phy_data->vblvl_ctrl) {
- 		/* SIDDQ mode release */
-@@ -568,7 +705,10 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 
- 	rphy->initialized = true;
- 
--	return 0;
-+unlock:
-+	spin_unlock_irqrestore(&channel->lock, flags);
-+
-+	return ret;
- }
- 
- static int rcar_gen3_phy_usb2_exit(struct phy *p)
-@@ -576,9 +716,32 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
- 	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
-+	int retries = NUM_OF_PHYS;
-+	unsigned long flags;
- 	u32 val;
-+	int ret;
-+
-+	spin_lock_irqsave(&channel->lock, flags);
-+
-+	while (retries-- && channel->otg_initializing) {
-+		spin_unlock_irqrestore(&channel->lock, flags);
-+
-+		ret = wait_event_timeout(channel->otg_init_done, !channel->otg_initializing,
-+					 USB2_OTG_INIT_TIMEOUT);
-+		ret = ret ? 0 : -ETIMEDOUT;
-+		if (ret && !retries)
-+			return ret;
-+
-+		spin_lock_irqsave(&channel->lock, flags);
-+	}
- 
--	guard(spinlock_irqsave)(&channel->lock);
-+	/* If another thread started a new initialization just return -EBUSY. */
-+	if (channel->otg_initializing) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	} else {
-+		ret = 0;
-+	}
- 
- 	rphy->initialized = false;
- 
-@@ -588,7 +751,9 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
- 		val &= ~USB2_INT_ENABLE_UCOM_INTEN;
- 	writel(val, usb2_base + USB2_INT_ENABLE);
- 
--	return 0;
-+unlock:
-+	spin_unlock_irqrestore(&channel->lock, flags);
-+	return ret;
- }
- 
- static int rcar_gen3_phy_usb2_power_on(struct phy *p)
-@@ -596,8 +761,10 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
-+	int retries = NUM_OF_PHYS;
-+	unsigned long flags;
- 	u32 val;
--	int ret = 0;
-+	int ret;
- 
- 	if (channel->vbus && !channel->otg_internal_reg) {
- 		ret = regulator_enable(channel->vbus);
-@@ -605,7 +772,27 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 			return ret;
- 	}
- 
--	guard(spinlock_irqsave)(&channel->lock);
-+	spin_lock_irqsave(&channel->lock, flags);
-+
-+	while (retries-- && channel->otg_initializing) {
-+		spin_unlock_irqrestore(&channel->lock, flags);
-+
-+		ret = wait_event_timeout(channel->otg_init_done, !channel->otg_initializing,
-+					 USB2_OTG_INIT_TIMEOUT);
-+		ret = ret ? 0 : -ETIMEDOUT;
-+		if (ret && !retries)
-+			goto disable_regulator;
-+
-+		spin_lock_irqsave(&channel->lock, flags);
-+	}
-+
-+	/* If another thread started a new initialization just return -EBUSY. */
-+	if (channel->otg_initializing) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	} else {
-+		ret = 0;
-+	}
- 
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
- 		goto out;
-@@ -620,27 +807,59 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	/* The powered flag should be set for any other phys anyway */
- 	rphy->powered = true;
- 
--	return 0;
-+unlock:
-+	spin_unlock_irqrestore(&channel->lock, flags);
-+
-+disable_regulator:
-+	if (ret && channel->vbus && !channel->otg_internal_reg)
-+		regulator_disable(channel->vbus);
-+
-+	return ret;
- }
- 
- static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- {
- 	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
- 	struct rcar_gen3_chan *channel = rphy->ch;
--	int ret = 0;
-+	int retries = NUM_OF_PHYS;
-+	unsigned long flags;
-+	int ret;
- 
--	scoped_guard(spinlock_irqsave, &channel->lock) {
--		rphy->powered = false;
-+	spin_lock_irqsave(&channel->lock, flags);
- 
--		if (rcar_gen3_are_all_rphys_power_off(channel)) {
--			u32 val = readl(channel->base + USB2_USBCTR);
-+	while (retries-- && channel->otg_initializing) {
-+		spin_unlock_irqrestore(&channel->lock, flags);
- 
--			val |= USB2_USBCTR_PLL_RST;
--			writel(val, channel->base + USB2_USBCTR);
--		}
-+		ret = wait_event_timeout(channel->otg_init_done, !channel->otg_initializing,
-+					 USB2_OTG_INIT_TIMEOUT);
-+		ret = ret ? 0 : -ETIMEDOUT;
-+		if (ret && !retries)
-+			return ret;
-+
-+		spin_lock_irqsave(&channel->lock, flags);
-+	}
-+
-+	/* If another thread started a new initialization just return -EBUSY. */
-+	if (channel->otg_initializing) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	rphy->powered = false;
-+
-+	if (rcar_gen3_are_all_rphys_power_off(channel)) {
-+		u32 val = readl(channel->base + USB2_USBCTR);
-+
-+		val |= USB2_USBCTR_PLL_RST;
-+		writel(val, channel->base + USB2_USBCTR);
- 	}
- 
--	if (channel->vbus && !channel->otg_internal_reg)
-+unlock:
-+	spin_unlock_irqrestore(&channel->lock, flags);
-+
-+	if (!ret && channel->vbus && !channel->otg_internal_reg)
- 		ret = regulator_disable(channel->vbus);
- 
- 	return ret;
-@@ -1007,6 +1226,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	spin_lock_init(&channel->lock);
-+	init_waitqueue_head(&channel->otg_init_done);
- 	for (i = 0; i < NUM_OF_PHYS; i++) {
- 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
- 							channel->phy_data->phy_usb2_ops);
+    addend * scaled_ppm_to_ppb(scaled_ppm)
+        = 0xA0000000 * 50000000
+            = 0x1DCD65000000000
+
+That is OK and fits inside a s64.
+
+    div_s64(0x1DCD65000000000, NSEC_PER_SEC)
+        = div_s64(0x1DCD65000000000, 1000000000L)
+            = 0x8000000
+
+That is OK and does not overflow.
+
+But I agree it's not very clear and depends on knowing from the 
+datasheet that the possible PTP clock rates are.
+
+How can I best move forward here? Drop the clamp added and depend on the 
+.max_adj value to prevent the overflow with the implicit knowledge of 
+the clock rates? I can extend the comment in the probe function of how 
+priv->default_addend is computed, but for somebody looking at the 
+calculation that might not help much.
+
+> 
+> > +	.adjfine = ptp_rcar_gen4_adjfine,
+> > +	.adjtime = ptp_rcar_gen4_adjtime,
+> > +	.gettime64 = ptp_rcar_gen4_gettime,
+> > +	.settime64 = ptp_rcar_gen4_settime,
+> > +};
+
 -- 
-2.43.0
-
+Kind Regards,
+Niklas Söderlund
