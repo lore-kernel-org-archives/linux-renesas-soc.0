@@ -1,269 +1,363 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC6141D4F3
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 11:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574D30BF67
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784202473; cv=pass; b=Odb8Im47ITHbcEYrU5YHCu5hMZ56C3Vpw5kYtyO65pAFOI2l4aRADmf7qAH8ArPdtJ7L1j5Xv9omJ+9g6T6YU/cSzkaEQWEiub/vxN9Hfoo1B1gXQ5w6VuOB+zwrIzre73WcdM4pXHlTKGF8FsV7Qg33W1DxrJ2qo4B/saEZxMQ=
+	t=1784202933; cv=pass; b=qbJtWcqJ9ik0KG+sGqEsXTFRWoqspMBw/e9C+TY/tnwvCbiFFChmMyc+PS4LMBWef/7uVh+vs0FIjVmco6pQIIVLpqIfqDmJ/0BQRoIjVfBZFFpDyhbjtzJqWIlTelLwewSeZG9d2dUqMD9FEiQy9fiicf8S+g91nk44319Mg98=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784202473; c=relaxed/simple;
-	bh=WFGxEqj5teLAtdm6TUJPPXIunLCbSK9EmD6oiIoa/6Q=;
+	s=arc-20240116; t=1784202933; c=relaxed/simple;
+	bh=C96NzncbsQ/25PKJxsR427vDtbfGh0/AwS/xdfMx8Xg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxVnDpuPMFd44btUmksy1lHpjHlMSw09B8kQoxMSi0ltLTpSk/B9E4LAKra0F90Vcq6E1qGWImP8eFv+MN7Iui/z2lLeCGycw7Nzy92eDsXg4yb27XRE787l3+8qxHZ8YenZdrHgWRWE328kZ77mC/QUPiakZHPZExnZqM9/47c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K1ltrENi; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jGfeJLmp; arc=pass smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 To:Cc:Content-Type; b=HjyR5wOs5l/vcV0EETdqOsHiMTgioZEcv+Yv8FInywOT60wrnTP9Zf0McaMtkJUT3myfRTBMocj5DKuWIqEvftAlqOnNAXXvLBSIczb9Ca+mD0hC6mvK1sz/dMiEEHgIocgtDyLo1PXePMOqKRXDWIUGCpT6xPT0NcyXcHC+ppM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YiudG+I2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Cpk51K3h; arc=pass smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K1ltrENi";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jGfeJLmp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784202470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UAIX8vflpEyEoElDzYTggPPmyd+hUNgJkFp1xG3W/a0=;
-	b=K1ltrENi5kDUlSCZlwaz+nD16cj12kkLkqWrOpIYJ7BXPxF89xjYmRhEDfg3Uknh4/L+5t
-	7k4TBGkYd29RpKQhC/AO6ZoPRoB53hgIFb5uWNJALEZTHvX/y/1gbQCEsXnQMc4+YHnGFg
-	/4gFQxIy5Qmt/kHTqKKPi9vMayomi9k=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-Y_bzTiCRMxuaHAESfW56Ag-1; Thu, 16 Jul 2026 07:47:49 -0400
-X-MC-Unique: Y_bzTiCRMxuaHAESfW56Ag-1
-X-Mimecast-MFC-AGG-ID: Y_bzTiCRMxuaHAESfW56Ag_1784202469
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-81aea53d559so19424907b3.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 04:47:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784202468; cv=none;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YiudG+I2";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Cpk51K3h"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66GBiN6H2678267
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 11:55:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HkI07VOyyD1qjY3yy4oGy1PR0IC6S/eabYgXTFOgS+g=; b=YiudG+I2F1ZQxgZx
+	4N6qfruU4OF2hA2wyVxhqfkKGvoLahO1KV2unqq18ca4FbN3VGsj3H26W7oPmV/r
+	ntAgChfzQk8iH5qx5Il3dsmmMpD7n8bfyUw+XS/wCDAG7+xex4m6iVcoswaK3G1w
+	gfaxppW5UM9uxEM0IMir5GZjLaH6hyYlrbspV/+fBLCzZtGqhlXJY1eG54nDCY7m
+	AXCPgby3moriOiMOcF7ijZIKXpMMhEmPnSKlBNIfku2dWVJJKnvjTJPp4ijQ7f+n
+	r/RnCcHfZY/MWXhgHHO8pkBzZ2qYiliIZFbaMBgfbIjmVkP9uBas28d//K25ES5l
+	PFavxw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4feve1rq6a-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 11:55:31 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51ebdfceddcso28896481cf.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 04:55:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784202931; cv=none;
         d=google.com; s=arc-20260327;
-        b=q/d214ALSxCwswwprXdH0mYocIrqVcSWe/BzJhNcVwez55RNKRwZgii0BTwpT4ei5M
-         svjajpYBMhsoOf0wvTrptuf34OlBdzi4DD/CetF4ELByXvpXUR26NYnfHp9ItMA/6Zcn
-         4FlyKkq+UoKt6RCQtFtsHK3N6KHHTIwx6WCsM1w0edpLthIXNAdFfG1wO5bFCsowq4yj
-         t74nVSMS0cHQsqUuny6XiDWAiSBI3k3f3c3vCmxnY2mP2tc4oevRpbQfMSuLncdTiuD4
-         ANylwy59vdkmw9d/glxA6vGH/dRmX84moC+xu1WqWYkqKf/FgxC9zF6dvL2F4yP7uUcY
-         94HA==
+        b=AG/QSiqe4ZkrzOQ5RNDmFuNA+Y1isEi/eJxo1g/iGKfWxO3oRaKzFodMMjgbLrfylq
+         ClXdXTsh9P76DBY/n5ui3lTyPzqlLGXEh1iiChg2rpn4oDhCi7tMlKIGc5CSvqHbYR+e
+         RNsJ8HRrLGr+icPPiSV65+Vi+fSlW4rupWvdGnRUWm3Ef0t5yeW+XzgShHbldvGZ7NyM
+         xoqrIyZ6o7S7ZOJfHqqRAnQjggGQdlZlezf3S49rjAWXv/YecP/RpzVd4iw3M/LPdU6W
+         j39RZnsRyeIWd+QASdrg35MC6zEjFG07XQMFOilQtegSxQXbm0MpIBO56aHhik3aU86s
+         iBRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=UAIX8vflpEyEoElDzYTggPPmyd+hUNgJkFp1xG3W/a0=;
-        fh=vAzaOjhSgQl4l9MA2PstvP2DR8mkJU0qu38NmGFruz8=;
-        b=bR0lwDaU/Nt9+cnHLMckDr0cksNhFBCEZAQbIRtXRp6h3CxJYytCCbtv2RpHydP8qD
-         VuCiUeWKgmXFTX+avK9Knz00ZVthhXpM6Q0SUZWZ1Npc0YoJCRyp1pbuktxGh9iE1Cbj
-         U0xWlAcEbHsSVSDKltmsvckXhODFNWO7pVHu0rw2UPctyT+GwLICHF7tZ5eWN6/UKJfs
-         UECQigVzrr2Nz8KNo5v0LVGfU6c1du+OWnVgQd1wrMeona2xTHvG0s3q2nHO8RFexg2P
-         YBVWbPMUNdtSUzp+VpzjaSJQf/K8ThAs6ly3yjNkE1YZYgdbnbiiKGT6djXO5+xa6cR4
-         OFpA==;
+        bh=HkI07VOyyD1qjY3yy4oGy1PR0IC6S/eabYgXTFOgS+g=;
+        fh=zxTRFQ16YYWUQVlDehkEnREQtFFO02FFUXKaV+DuDuk=;
+        b=Z548BMNsJuVojxn/mpXv8iHePwnWHO6d71LOHG+6fCOgNBh1DxhcUv8f9PeXbF9njK
+         QfCNISEQ/I0m3w7dW20VtlEZhWlad0lpykesfnHPMwesVYrHe6MFaZbwIQ2N/4HXhOFu
+         pz54PUhWwCS/wOtsW1DuW0KJ7z+IMOvRdz3bIr8qixtn0w1MBXGhEJ699w2qmK3Us5vl
+         akrf9K1G7krMAjIBbn9T54VtVih6PdOdMwAwaYitT/NjcqhXg48surm5X+GFl7vEWSCq
+         DGFe5TDkwwC5dmSCEnLiDz7g5ho2+Xcd2PMRVpKNHUYiniT0c8vh/+CfWruLALNSx616
+         MKhg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784202468; x=1784807268; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1784202931; x=1784807731; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=UAIX8vflpEyEoElDzYTggPPmyd+hUNgJkFp1xG3W/a0=;
-        b=jGfeJLmphzJnXqHz973BRdbnZGwq4b9EieJyHVJgo8QPKa3YtC0IGfPU7B0duIBJno
-         mCqU1eMsUONdzKGA181QnDckY1i4JpQgfCeG5a/HTAvdAONvCn0+OrcW+d1E+HZuPW8W
-         BARpvcLj8IpQ3o5AGd6aPXxspli94EYytRlWkjou7vN3f2Fv9JZLKA6Kwh7uqZR1HYnp
-         lCu/u5dlFsBgTsF/wr0ezNxZA2addlDqbJ1WQFPeLb6D7vI+O0RrBVWJx27gyZkSyxqW
-         1GV2JCHoxPy5AE0q/X5o2AAFfZXCWV2fhDeMQCnpn82excAlmCx11sbI7e5IuLnpVwWd
-         a4mA==
+        bh=HkI07VOyyD1qjY3yy4oGy1PR0IC6S/eabYgXTFOgS+g=;
+        b=Cpk51K3h6p9c13ZzNBF3eleyD8ltF4LKIO2g2GoQEDaTE4el6EMFoZ26YyVreg45sH
+         acBDJaphcWU41sDGfIw7wrNWSXIvq8GYPh99gR0HiTMDAjM3L3n/af5uCJF6YedLXI/K
+         zF9EdAAPc6utv53UH21fULRrMo4wbcDtBh6QOsVt4ceR2yYEQCIKaTl+RaK3QgcC67cZ
+         kisK3cp+qlh519tdwatAr3StHiBKVNvztRTbfscHXAn4BSfVU93LLqG1PbTDAlTSpRyt
+         /gj7DpmDNU0BVg9XIgjQZ8szsyfIAK/1lfew3MW3HjsPaaTAN8uNAPpP6upXsbQfXkMt
+         sPSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784202468; x=1784807268;
+        d=1e100.net; s=20251104; t=1784202931; x=1784807731;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UAIX8vflpEyEoElDzYTggPPmyd+hUNgJkFp1xG3W/a0=;
-        b=S0/nfnzJIuIK3rva2B9RvWXczS/QgOMiWpQq9kSyjbyuzbFRmWtlxUdaxWsISXNo0Q
-         NLlaLrmGVKyNtJMwFuRYL2zbiKoNBj6Fnj39GyHEixu/+VTg0ZpVm8wporp4CZaIxYkE
-         +LyqejtuvUvDhexU6ccUSECzCpP11Yd9u7B5cXJLf9MjPSHGvkbvYwEoDwM1DP7uU2Fo
-         eS0MlVU6YUpRVZV+SYsxgN51KE+K4GNEZLeHIobdoMEHwVUV4fhRPNaBK/E4PnkHCBzZ
-         N5kUU7iYoi/Df6dWduBUXAvpLsTYmfrljtVeu7RPaHaPAiUAibTra4gzI/eK+q266QDP
-         47eg==
-X-Forwarded-Encrypted: i=1; AHgh+RoCtGz0IhOvJLjxBh4KL9ATA7eKAUbVxiCTnIfHYAPZRcHPNagvM1/z+5aSkDn/GObxFDUqONnRWjBFx9HEV3BihQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTSlVdxkY2Q9lBPNXv+Ika7edUPkMgE1nNm0tKjSh1o0D1/OYv
-	JOL3lPZ2GVRhCCciQmF4P5eoNNCaRUULlpsKtx53g7EYwgA24ngwYQMU+bb33CuIskySfJWsRF3
-	bJ6LVurEB7ieQOEAUv9zoGmSyTu4QioyTJpZqiceeke9QQKdknVdrAW04VoaW/LiOmqjO2QGdFh
-	Y6ptyjdrfwJ/t+PMgEQ0Yk9aYNuzrp/P1tEo1Wcv0zcaezUv8=
-X-Gm-Gg: AfdE7cn98txUGYiNX0fQQ+zkAsn1UTmAfmJ/lpSG/Ym6CITQTSeka0v8kiQjbZuaGzg
-	2Za3H6hY4OHURltDM2RJnBqt3b0KJhbtXbTUB3D0CAvWhu6vaQ5q20K8rHyOleJNz5tAnxVkg5q
-	/BS3s8+pzOKuCSX6I3Cc1sJF1HVEiy+ZoSt3qcw/FagXnfJF5HKiyYE5gc
-X-Received: by 2002:a05:690c:6a89:b0:81e:c898:bc51 with SMTP id 00721157ae682-81ecfb77678mr53197197b3.70.1784202468574;
-        Thu, 16 Jul 2026 04:47:48 -0700 (PDT)
-X-Received: by 2002:a05:690c:6a89:b0:81e:c898:bc51 with SMTP id
- 00721157ae682-81ecfb77678mr53196867b3.70.1784202468141; Thu, 16 Jul 2026
- 04:47:48 -0700 (PDT)
+        bh=HkI07VOyyD1qjY3yy4oGy1PR0IC6S/eabYgXTFOgS+g=;
+        b=J4Ti+EeSxXCWNOxzPkEyxiUnriwc0kSIcxUkkjW5glRLxdBWaXuOswbuI7I4GpThXR
+         6dIoTMuzrnjNs8MAuEUIlWxSoNwcgtQAnBPOfQPOFlr7BN0WAK4ZrA0NPCepHgvCkDiu
+         yz6+m/SRQvympG8y9DzfXawV+SMeQqcAcgJKKFMHS0pFTW90vXRaDNMKpiy0D/78LMOh
+         y5X7gO4VLPP309pLhah7ZuPmJ/CDtmcYQP79HrrfSPR/Aci7iVX2AKCabxjTA2EDtdQG
+         sg2+swHbGZNy6shyy4K3Ua3lrGNHods85J9UUqTzsQYbCxR0SFMG8UnIMjBMh7bOpBFa
+         7ebA==
+X-Forwarded-Encrypted: i=1; AHgh+RqId35ctN0D8FaiVS85lDo95fmGYDO0W38xMEQdQz5YyiJzjhpKetk+wp25NpQ78F80RBtp2X46H49twI3aOPpFqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy313uBFTygVbfOXcpm4h1scXPKQBbAQiWqudR9jf9V0e7O5xBu
+	MY9kENRChNlwIsw02AxACcNQ9dXouPQacpOYMF7M3+wLDx7NXNgz9brbVMzeHlQ5BGx7Iyvt9XK
+	3KC3VNZEi3CKjc/S+4w/N+qF+UrNjSeGLzRiS04FWHK+IxOy4NK3tTTO7NQ2F3d2fQCS3lnkw4l
+	SuO5N+gfQbRzO/rUTMsSo0EfW2m2CpU2YtFZMHUL+YkMuJbXxZ
+X-Gm-Gg: AfdE7cm5h7e29dDyBeVjOhTAQc7KqUwKAacZid4Sj47m42RIL3IjsXxjo7/OScPhwOd
+	w5OyQirpFrL8ncQPEvFmyvnou1LxIwS8vQWbnIBkygntgQq54G+53Vl2rGEP3jVxV9Hj7sp3sBP
+	hkqNgmngHgCtD+cTYI9Aarxl6xsOWM9JNbHvM16DaI7V3ajDlzbpbpmtlE8Q==
+X-Received: by 2002:ac8:7d0b:0:b0:51c:b900:5136 with SMTP id d75a77b69052e-51e4ecca047mr71644351cf.0.1784202930446;
+        Thu, 16 Jul 2026 04:55:30 -0700 (PDT)
+X-Received: by 2002:ac8:7d0b:0:b0:51c:b900:5136 with SMTP id
+ d75a77b69052e-51e4ecca047mr71644011cf.0.1784202929904; Thu, 16 Jul 2026
+ 04:55:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com>
- <20260713-drm_refcount_wiring-v2-3-d3bb61f4bd4d@redhat.com> <hm3gW14-QtmZmT6DKePecw@nvidia.com>
-In-Reply-To: <hm3gW14-QtmZmT6DKePecw@nvidia.com>
-From: Albert Esteve <aesteve@redhat.com>
-Date: Thu, 16 Jul 2026 13:47:37 +0200
-X-Gm-Features: AUfX_mzB2JkO-VIACloxhbX7HbPpRRw8TGetupyA1jCWwziSfKUaXthnbS4hOYU
-Message-ID: <CADSE00Lsr9gsW6HEFrrc6Aq+ecN5mN9Kev_mf5XKjKjAk44-GA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] drm/panel: of_drm_find_panel() return a counted reference
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
-	Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
+References: <cover.1783505142.git.geert+renesas@glider.be> <23f979b0903ca11513ac339ab8b6dd40435603c5.1783505142.git.geert+renesas@glider.be>
+ <CAPx+jO-=LF9CvYDrC3O_GBtfHU6GYvq524OLmTG8R1-u27oyKw@mail.gmail.com> <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
+In-Reply-To: <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Thu, 16 Jul 2026 13:55:18 +0200
+X-Gm-Features: AUfX_mwNMY8bmSOOoE3tn-LA0Fojd6Jz_KE9ZsYKsw02nHYdKrjLLMH4z5Iwnas
+Message-ID: <CAPx+jO9aajD9eFTEUdAFOO-wC5NduaYhbDmYw5DHeFj92Fmd9A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Marek Vasut <marek.vasut+renesas@mailbox.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE2MDEyMyBTYWx0ZWRfX8af4RzjThkFa
+ NMPyA2msCAb/QlrIs5036esrrONetxZz6bjGPsAqqm6p4QadbJ8cqvmavRG063g2qWqozRjKqR7
+ Dz1jvjR6X0Q8pJV0uCccIjoieXNlge4qXMmF7QXXOCwbkKxhrE/i1+9bRpcFvwD8R7p7RAZeUUJ
+ TT3rI9pXwMSBPGEYcx3cVGr1s+uLB7FC3Hh9pDVjNJzW75fLVzaAB03qmXaQsbV9XwIYUwrhaSo
+ kjnXrgsuIX4dNxkYfZlXCnAItfxIdQhndjU5cVR82xGtZkAd/v4fTBMqbsytz9rELXDahzmW+OL
+ eB0Q4zApZ8dZyuTyMCoy6T/i94kGpHUbhR4CJrN/AO4uoiWWj1+STWwcSubRgvr/nJMLy81dcEl
+ hSiuVEDJRf5DxTAetpQwHzTWxfzTEmMiOKvYDE8YBqUh+gjy4h62gEAaBKtdaC2FQoHZp4/vEi2
+ NuoGYiF2dWiqGC+A+xA==
+X-Authority-Analysis: v=2.4 cv=DvpmPm/+ c=1 sm=1 tr=0 ts=6a58c6b3 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=gowsoOTTUOVcmtlkKump:22 a=tBb2bbeoAAAA:8 a=EUspDBNiAAAA:8
+ a=AEl4uQJCqG-skdcfchQA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=Oj-tNtZlA1e06AYgeCfH:22
+X-Proofpoint-GUID: pRHuXCtHvOAFo51dPF2MfqEVtIpGlPyS
+X-Proofpoint-ORIG-GUID: pRHuXCtHvOAFo51dPF2MfqEVtIpGlPyS
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE2MDEyMyBTYWx0ZWRfXzIaUofLJH9dt
+ YfB9mlzMPHvxkrudsprIzCAAJ9geGt/1SPbbY91Q92IUaP9xcE5StZxwzBphMEBRimMPL+Uw8Fa
+ DrW0AeonSyUR0rNaLK4JVxg6/jqMc3M=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-16_04,2026-07-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607160123
 
-On Wed, Jul 15, 2026 at 9:14=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.=
-com> wrote:
+On Wed, Jul 15, 2026 at 11:11=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 >
-> On Monday, July 13, 2026 8:53=E2=80=AFPM Albert Esteve wrote:
-> > Callers of of_drm_find_panel() receive a pointer with no reference
-> > held, creating a window where the panel device can be unregistered
-> > and freed between the lookup and first use (e.g., drm_panel_prepare()).
-> >
-> > Fix the lookup function by acquiring a reference with drm_panel_get()
-> > before returning, under panel_lock. Callers are now responsible for
-> > calling drm_panel_put() when they no longer need the pointer.
-> >
-> > For bridge drivers that immediately wrap the panel in a panel_bridge
-> > (which acquires its own reference), release the lookup reference right
-> > after the bridge creation call.
-> >
-> > For analogix-anx6345, which stores the panel for direct use, release
-> > the reference in the i2c remove path.
-> >
-> > For platform drivers using analogix_dp_core with a component lifecycle
-> > (exynos_dp, rockchip analogix_dp), release the lookup reference in the
-> > platform remove() function. The panel_bridge created during bind() hold=
-s
-> > a separate reference that devm cleanup releases after remove() returns.
-> >
-> > Also fix devm_drm_of_get_bridge() and drmm_of_get_bridge() in
-> > bridge/panel.c itself: both call drm_of_find_panel_or_bridge() and
-> > then pass the panel to devm/drmm_panel_bridge_add(), which acquires
-> > its own reference via drm_panel_bridge_add_typed(). The lookup
-> > reference was never released; add drm_panel_put() after each bridge
-> > creation call.
-> >
-> > Assisted-by: Claude:claude-opus-4-6
-> > Signed-off-by: Albert Esteve <aesteve@redhat.com>
-> > ---
-> >  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  3 +++
-> >  drivers/gpu/drm/bridge/panel.c                     |  8 ++++++--
-> >  drivers/gpu/drm/drm_of.c                           |  3 ++-
-> >  drivers/gpu/drm/drm_panel.c                        | 12 ++++++++----
-> >  drivers/gpu/drm/exynos/exynos_dp.c                 | 10 ++++++++++
-> >  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  3 +++
-> >  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          | 18 ++++++++++++++=
-++++
-> >  drivers/gpu/drm/logicvc/logicvc_interface.c        | 12 ++++++++++++
-> >  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 11 +++++++++++
-> >  drivers/gpu/drm/sti/sti_dvo.c                      |  3 +++
-> >  drivers/gpu/drm/stm/lvds.c                         |  3 +++
-> >  drivers/gpu/drm/sun4i/sun4i_lvds.c                 | 13 +++++++++++++
-> >  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 13 +++++++++++++
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |  2 ++
-> >  drivers/gpu/drm/tegra/dsi.c                        |  1 +
-> >  drivers/gpu/drm/tegra/output.c                     |  3 +++
-> >  16 files changed, 111 insertions(+), 7 deletions(-)
-> >
-> > ...
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 7f25c50621c94..57a016f47434d 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -1516,6 +1516,7 @@ static int tegra_dsi_host_detach(struct mipi_dsi_=
-host *host,
-> >       struct tegra_output *output =3D &dsi->output;
-> >
-> >       if (output->panel && &device->dev =3D=3D output->panel->dev) {
-> > +             drm_panel_put(output->panel);
-> >               output->panel =3D NULL;
-> >
-> >               if (output->connector.dev)
-> > diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/out=
-put.c
-> > index 49e4f63a5550d..90db39dbdd332 100644
-> > --- a/drivers/gpu/drm/tegra/output.c
-> > +++ b/drivers/gpu/drm/tegra/output.c
-> > @@ -195,6 +195,9 @@ int tegra_output_probe(struct tegra_output *output)
-> >
-> >  void tegra_output_remove(struct tegra_output *output)
-> >  {
-> > +     if (output->panel)
-> > +             drm_panel_put(output->panel);
-> > +
-> >       if (output->hpd_gpio)
-> >               free_irq(output->hpd_irq, output);
-> >
-> >
+> Hi Ulf,
 >
-> tegra_output_probe's error cleanup paths need to be updated to clean up
-> the refcount. Also, it can technically call drm_of_find_panel_or_bridge
-> and then overwrite that value with of_drm_find_panel. While there's
-> already a WARN_ON for that case, I think it would be good to fix the
-> refcounting there as well for consistency.
+> On Tue, 14 Jul 2026 at 14:04, Ulf Hansson <ulf.hansson@oss.qualcomm.com> =
+wrote:
+> > On Wed, Jul 8, 2026 at 12:15=E2=80=AFPM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > >
+> > > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) S=
+oC.
+> > > For now this just supports the always-on power domains, and dummy clo=
+cks
+> > > and resets for the serial console (which is enabled by the boot loade=
+r).
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > > --- /dev/null
+> > > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+>
+> > > +static struct generic_pm_domain *r8a78000_genpd_xlate(
+> > > +                       const struct of_phandle_args *spec, void *dat=
+a)
+> > > +{
+> > > +       struct r8a78000_mdlc_priv *priv =3D container_of(data,
+> > > +                                       struct r8a78000_mdlc_priv, ge=
+npd_data);
+> > > +       struct device *dev =3D priv->dev;
+> > > +       u32 id;
+> > > +
+> > > +       if (spec->args_count !=3D 2)
+> > > +               return ERR_PTR(-EINVAL);
+> > > +
+> > > +       id =3D spec->args[0];
+> > > +
+> > > +       if (id >=3D R8A78000_MDLC_PD_AON) {
+> > > +               dev_dbg(dev,
+> > > +                       "Mapping HW power domain 0x%x to always-on do=
+main\n",
+> > > +                       id);
+> > > +               return r8a78000_genpd_always_on;
+> >
+> > This looks odd, but perhaps it's just a temporary mapping that you
+> > intend to change later, no?
+>
+> The hardware has multiple always-on domains, but on the software side,
+> using only one is sufficient.  When needed, it can be changed later.
+> Other domains will be added later, in the else branch.
 
-Agreed. I really missed those. I am doing another general check in
-case I missed similar cases.
+I see, perhaps add a comment about this in the code, to make this more clea=
+r?
 
 >
-> As a note, the tegra-dsi code also uses tegra_output and can overwrite
-> the panel field with its own -- but in those cases tegra_output should
-> never populate the panel and we've been talking about removing that
-> code path anyway, so the dsi code can continue to assume that
-> tegra_output_probe doesn't populate a panel.
-
-Thanks. I will add a note before of_drm_find_panel() in tegra/dsi.c to clar=
-ify.
-
-BR,
-Albert
-
+> > > +       }
+> > > +
+> > > +       dev_err(dev, "Unknown power domain 0x%x\n", id);
+> > > +       return ERR_PTR(-ENOENT);
+> > > +}
 >
-> Cheers
-> Mikko
->
-> > --
-> > 2.54.0
+> > > +static int r8a78000_genpd_always_on_singleton(struct device *dev)
+> > > +{
+> > > +       struct generic_pm_domain *genpd;
+> > > +       int ret;
+> > > +
+> > > +       guard(mutex)(&r8a78000_mdlc_lock);
+> > > +
+> > > +       if (r8a78000_genpd_always_on)
+> > > +               return 0;
+> > > +
 > >
-> >
+> > I guess the mutex is used to protect the global
+> > r8a78000_genpd_always_on, but it looks like that isn't really needed
+> > based upon how things are being called during the probe.
 >
->
->
->
+> Why would it not be needed? There are multiple instances of the MDLC
+> device, but only one instance of the always-on domain.
 
+Aha, I see. Thanks for clarifying!
+
+>
+> > > +       genpd =3D kzalloc_obj(*genpd);
+> > > +       if (!genpd)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       genpd->name =3D "always-on";
+> > > +       genpd->attach_dev =3D r8a78000_mdlc_attach_dev;
+> > > +
+> > > +       ret =3D pm_genpd_init(genpd, &pm_domain_always_on_gov, false)=
+;
+> > > +       if (ret) {
+> > > +               kfree(genpd);
+> > > +               return dev_err_probe(dev, ret,
+> > > +                                    "Failed to create always-on doma=
+in\n");
+> > > +       }
+> > > +
+> > > +       r8a78000_genpd_always_on =3D genpd;
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int r8a78000_mdlc_probe(struct platform_device *pdev)
+> > > +{
+> > > +       struct device *dev =3D &pdev->dev;
+> > > +       struct device_node *np =3D dev->of_node;
+> > > +       struct r8a78000_mdlc_priv *priv;
+> > > +       const struct mdlc_info *info;
+> > > +       struct resource *res;
+> > > +       int ret;
+> > > +
+> > > +       ret =3D r8a78000_genpd_always_on_singleton(dev);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       info =3D of_device_get_match_data(dev);
+> > > +       if (!info)
+> > > +               return -ENODEV;
+> > > +
+> > > +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > +       if (!priv)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       priv->dev =3D dev;
+> > > +       priv->np =3D np;
+> > > +
+> > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +       if (!res)
+> > > +               return -ENODEV;
+> > > +
+> > > +       for (; info->base; info++) {
+> > > +               if (info->base =3D=3D res->start)
+> > > +                       break;
+> > > +       }
+> > > +
+> > > +       if (!info->base) {
+> > > +               dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &re=
+s->start);
+> > > +               return -ENODEV;
+> > > +       }
+> > > +
+> > > +       priv->mod_map =3D info->mod_map;
+> > > +
+> > > +       scoped_guard(mutex, &r8a78000_mdlc_lock) {
+> > > +               hlist_add_head(&priv->link, &r8a78000_mdlc_list);
+> > > +       }
+> > > +
+> > > +       ret =3D devm_add_action_or_reset(dev, r8a78000_mdlc_unlink, p=
+riv);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "failed to add action\=
+n");
+> > > +
+> > > +       /* Note that no actual domains are registered, just need tran=
+slation */
+> > > +       priv->genpd_data.xlate =3D r8a78000_genpd_xlate;
+> > > +       ret =3D of_genpd_add_provider_onecell(np, &priv->genpd_data);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret,
+> > > +                                    "Failed to register genpd provid=
+er\n");
+> > > +
+> > > +       ret =3D devm_add_action_or_reset(dev, r8a78000_genpd_del_prov=
+ider, np);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret,
+> > > +                                    "failed to add unregister action=
+\n");
+> > > +
+> > > +       priv->rcdev.ops =3D &r8a78000_mdlc_reset_ops;
+> > > +       priv->rcdev.of_node =3D np;
+> > > +       priv->rcdev.of_reset_n_cells =3D 1;
+> > > +       priv->rcdev.of_xlate =3D r8a78000_mdlc_reset_xlate;
+> > > +
+> > > +       ret =3D devm_reset_controller_register(dev, &priv->rcdev);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret,
+> > > +                                    "Failed to register reset contro=
+ller\n");
+> > > +
+> >
+> > In some of the error paths above it looks like we end up leaking the
+> > data allocated for r8a78000_genpd_always_on. Perhaps clean up that
+> > somewhere here.
+>
+> That is intentional: the always-on domain is shared by all MDLC
+> instances.  If one MDLC fails to probe, the MDLC instances that did
+> succeed still need the always-on domain.
+
+Okay, so perhaps we should add a reference counting of it, to make
+sure we don't leak the data?
+
+>
+> >
+> > > +       return 0;
+> > > +}
+> >
+> > [...]
+> >
+> > In regards to the merge strategy, I intend to pick patch 2 (shared via
+> > the immutable dt branch) and $subject patch. Please let me know if
+> > there are any issues with that.
+>
+> That is fine, thanks!
+
+Great, thanks!
+
+Kind regards
+Uffe
