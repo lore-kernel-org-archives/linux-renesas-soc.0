@@ -1,18 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364BA3438BA;
-	Thu, 16 Jul 2026 10:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6F53F23D9;
+	Thu, 16 Jul 2026 10:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784196231; cv=none; b=Rmi1GBbx3Z0kccdskC57t0qwCsXMLgtUS5APNmkDhkUolO1LblQ2UA40NbveOgyCbKNaF/TYROdlVkZhjBqM3seck7hzNNsZCu/dJpCc7DLWo9Fxj7gY9nDOrv36fI3HLznJw7JMcpAxL82r4dHjhpBJwC3wxfmsi5PDynpQrw0=
+	t=1784196234; cv=none; b=e/zzLe4pg/AauPrcNrDWuTOaEcfA4UsQtfIQmcuR1YOt6XzwvtN3WSGG2B5LIYfbxvoaWzfIwcrX0ZCpuZQXN6/YxO+5kV5wgBOELOSO4RhlkScJuZUBaljGGlvJexqXL5VbrFruMwfxrtVD7ysJ1FGXAJoV+rkX0XwDNm4Ff1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784196231; c=relaxed/simple;
-	bh=OULebcKWDelmhWZp4d6S/v2tI/igj2V4U0kjeufB/+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h00aRWuGcuznEpcvAkv4Wr5dmSeOxdJrUgcD45ljSI3CZSS4xvT1/VVAvvt6/GW7hbKGHtuctmtLCQkcqlu63GlNxs2jg703yXuS7e9GhYBjupfSBXhwnFfDKaLaj3r1MdbhYUzxROQ8sIj6iZHGoBkm9lthZPFrZGm+BHSeGmY=
+	s=arc-20240116; t=1784196234; c=relaxed/simple;
+	bh=hbqYmLWvhDJ0LlTjn+wBQLKnfvgKuMd8ZesZCtaDwxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=l55pEDDeZ+0rQN17zJ4lqeHWtYfnTsQqRdOOrxjEfiqKGc6LQpPpyvZQN0Ugng/ikbgD+qfUtX5dWb2WwmhDt6SYPxc/CjHx5QigKKoGI0gaMOLjMz7rbfLomKaPQ7IZsC6/6uAFZVsGYtOUzdYDJzuJxaRXqG6xumIz++77le8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C381F00A3A;
-	Thu, 16 Jul 2026 10:03:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806D71F00A3D;
+	Thu, 16 Jul 2026 10:03:50 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev,
 	soc <soc@kernel.org>
@@ -20,10 +21,12 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/3] Renesas SoC updates for v7.3
-Date: Thu, 16 Jul 2026 12:03:40 +0200
-Message-ID: <cover.1784194401.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/3] Renesas ARM SoC updates for v7.3
+Date: Thu, 16 Jul 2026 12:03:41 +0200
+Message-ID: <cover.1784194403.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1784194401.git.geert+renesas@glider.be>
+References: <cover.1784194401.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -32,48 +35,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi SoC folks,
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v7.3.
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
-It consists of 3 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/3] Renesas ARM SoC updates for v7.3
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-soc-for-v7.3-tag1
 
-    - Use the of_machine_compatible_match() helper.
+for you to fetch changes up to c902a6887eaadf56e6da79f68f8843cbe45cc808:
 
-  [GIT PULL 2/3] Renesas driver updates for v7.3
+  ARM: shmobile: rcar-gen2: Use of_machine_compatible_match() helper (2026-06-29 11:18:03 +0200)
 
-    - Drop duplicate default for ARCH_R8A78000.
+----------------------------------------------------------------
+Renesas ARM SoC updates for v7.3
 
-  [GIT PULL 3/3] Renesas DTS updates for v7.3
-
-    - Add sound support for the RZ/G3E SoC and the RZ/G3E SMARC EVK board,
-    - Add more serial and SPI support for the RZ/G3L SoC and the RZ/G3L
-      SMARC EVK board,
-    - Add SMP support (32x Cortex-A720AE) for the R-Car X5H SoC,
-    - Add hwspinlock and mailbox (MFIS) support for the R-Car V4H SoC,
-    - Add GPU support for R-Car M3-N-based Salvator-X(S) and ULCB
-      development boards,
-    - Add SPI and FRAM support for the RZ/N1D SoC and the RZN1D Expansion
-      Board,
-    - Add PCIe support for the RZ/V2H SoC and the RZ/V2H EVK development
-      board,
-    - Miscellaneous fixes and improvements.
-
-Note that the third PR is based on renesas-fixes-for-v7.2-tag1, for
-which I have just sent a PR.
+  - Use the of_machine_compatible_match() helper.
 
 Thanks for pulling!
 
-Gr{oetje,eeting}s,
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      ARM: shmobile: rcar-gen2: Use of_machine_compatible_match() helper
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 10 +++++-----
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |  9 +++++----
+ 2 files changed, 10 insertions(+), 9 deletions(-)
