@@ -1,99 +1,115 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEF336A356;
-	Thu, 16 Jul 2026 03:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820B73DBD6F
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 08:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784173288; cv=none; b=Qbly/ZIXLreE/dQk2anCAqfuMXAViGuG1jhOVAKbUlkmYrFn230e0i1uL6e6U/mJRyIiagC/xdaN09Gn9dpfUtYHeJvsGpFzzhSczHLa+NfbxOf/KeLawYbCZU4RTHg2qbWNsV/K8t1RowcgaVfhHTve671koJiEjY5Yq7nAbng=
+	t=1784190304; cv=none; b=PhLgXyMdnsnQq/p+w0/XSrdqJYYSaa+epbYzTItyYsV0r92YZp5tMEHb34AWKbAHm9YF3kqo+UOSGaT8/pVBvG0kzXSTlNY6somu7x7eZAVck2PDImtrgid9ZVPIRIGA2suYGP1hM6I0sAODNV6mstiW3tNzP0uRHdJJzskZZIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784173288; c=relaxed/simple;
-	bh=kT4pawudicouAWRFhpr4j7YF16tPZHnXROuSpfuzbDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sq1y/rrWQJxEDgjmFwNUUH6SCFLe0YdfwBLLiD8W7ThP2D1HTzB1JQI6jhcRNwIoyk16fxD36lbFM+PDzzwKp0ZnCYUU+8gpr4zLvxmPvPJHrsg4D00bPdm9Wd6PUT1KotQmkpngJtxLeDwUHXZ2gVVwjiIgZ7VXBrxLy6GBDrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 35bb14f080c811f1aa26b74ffac11d73-20260716
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED
-	SA_UNFAMILIAR, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:2a5791ce-17b4-4627-89e2-9684be8d1097,IP:10,
-	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-15
-X-CID-INFO: VERSION:1.3.12,REQID:2a5791ce-17b4-4627-89e2-9684be8d1097,IP:10,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-15
-X-CID-META: VersionHash:e7bac3a,CLOUDID:7bf9cc0a01e823d24d2a605480e0cda5,BulkI
-	D:2607161141216LG0E4QN,BulkQuantity:0,Recheck:0,SF:10|66|78|102|127|136|85
-	0|865|898,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:n
-	il,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BR
-	E:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 35bb14f080c811f1aa26b74ffac11d73-20260716
-X-User: lilinmao@kylinos.cn
-Received: from localhost.localdomain [(112.64.161.44)] by mailgw.kylinos.cn
-	(envelope-from <lilinmao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2085523666; Thu, 16 Jul 2026 11:41:20 +0800
-From: Linmao Li <lilinmao@kylinos.cn>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linmao Li <lilinmao@kylinos.cn>
-Subject: [PATCH] media: renesas: vsp1: Propagate runtime PM resume errors
-Date: Thu, 16 Jul 2026 11:41:13 +0800
-Message-Id: <20260716034113.81187-1-lilinmao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1784190304; c=relaxed/simple;
+	bh=s9CuyhlzHYaOIObOvl7RYKjdhHvVMr2Qp8TS9dl5Mak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwaiYnxP3S+/i2s1MWb40ifXesKaQYmE5u+icgfYM1rEwe2nHaKN3nGElXPGhnMd32+uPZyWUfMFJfgf6ctNDjqFYNW0/G1Uoc9f7StYneCggcXN3Saje1hH/KibQGUcuEz4z63xyH/p509YSZUiCkXIGwvlPs0HzzjLmlSz3Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bh4re1UI; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bh4re1UI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=m+IG
+	cg8S2PNbdHOMlD4HmdwJVgpvkudUdaSBUvH0Fhs=; b=bh4re1UIs3wXZGuIY1Mp
+	U0huKFwzWzdJypH/Pe+WU9YSMLhqZDVNO+DewqRUzQ6eGXAJgjauyM+XkVzUla+f
+	WQKrxhSrSdGGFav+EzdujmllAKxeoKgu38jxf5NguTpE/AEKOe1uXY9KUkuXSB/B
+	xd6P5clnXW4ZZJsBJtX8k/qlqNx/FrNqKJmO0X+VarzHN9lH7yeTL7tIdtHwqSSG
+	O+V7xPktBSzwR1xKFaaJbadfEcT6f6UBS0JbloTlflBJUrdFYAGVJleLX9pzzZQc
+	lT2N5Oj/MBzrpfVRqXCtm6aF+CXzONLyW7461iHKlSiwhpQIQVi9hX3f9XQdJf6z
+	Qg==
+Received: (qmail 979495 invoked from network); 16 Jul 2026 10:24:55 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Jul 2026 10:24:55 +0200
+X-UD-Smtp-Session: l3s3148p1@crW9LLZWDpsujntt
+Date: Thu, 16 Jul 2026 10:24:54 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org, sashiko-reviews@lists.linux.dev
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable GPIOs
+ on CN12
+Message-ID: <aliVVqnokN4s856T@ninjato>
+References: <20260715122341.47838-2-wsa+renesas@sang-engineering.com>
+ <alfNV-_Cb3WlqiHB@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8BQGfmeULC7Ogh7f"
+Content-Disposition: inline
+In-Reply-To: <alfNV-_Cb3WlqiHB@shikoro>
 
-vsp1_pm_runtime_resume() can fail while deasserting reset, initializing
-the device, or enabling the FCP. However, vsp1_pm_resume() ignores the
-return value from pm_runtime_force_resume() and restarts video pipelines
-even if the device failed to resume. This can access hardware that is
-still unavailable while reporting a successful system resume.
 
-Propagate the error and skip the pipeline restart when the device could
-not be resumed.
+--8BQGfmeULC7Ogh7f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 1e6af546ee66 ("[media] v4l: vsp1: Implement runtime PM support")
-Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
----
- drivers/media/platform/renesas/vsp1/vsp1_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-index 627b5046fa80..2a9f9f114575 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-@@ -641,8 +641,11 @@ static int vsp1_pm_suspend(struct device *dev)
- static int vsp1_pm_resume(struct device *dev)
- {
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
-+	int ret;
- 
--	pm_runtime_force_resume(vsp1->dev);
-+	ret = pm_runtime_force_resume(vsp1->dev);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * When used as part of a display pipeline, the VSP is stopped and
+> > The snps,dw-apb-gpio driver iterates over its port subnodes (like gpio2b)
+> > to register gpio_chip interfaces, but it doesn't appear to register these
+> > subnodes as independent platform devices.
+> >
+> > Because the driver core only applies pinctrl-0 properties automatically
+> > during probe for fully initialized device instances, this configuration
+> > might be silently ignored by the kernel.
+>
+> True. Will rework.
+
+After some more research: not true
+
+gpiolib handles this, check this comment:
+
+5351 /*
+5352  * The DT node of some GPIO chips have a "compatible" property, but
+5353  * never have a struct device added and probed by a driver to register
+5354  * the GPIO chip with gpiolib. In such cases, fw_devlink=on will cause
+5355  * the consumers of the GPIO chip to get probe deferred forever because
+5356  * they will be waiting for a device associated with the GPIO chip
+5357  * firmware node to get added and bound to a driver.
+5358  *
+5359  * To allow these consumers to probe, we associate the struct
+5360  * gpio_device of the GPIO chip with the firmware node and then simply
+5361  * bind it to this stub driver.
+5362  */
+
+Further proof, 'pinmux-pins' in debugfs shows that these pins are tied
+to the gpiochip with this patch. It doesn't without this patch.
+
+I think it is okay as-is. But I need to make another update anyhow, so I
+will send a v2 nonetheless.
+
+
+--8BQGfmeULC7Ogh7f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpYlVIACgkQFA3kzBSg
+KbbkPhAAi0TEZA7foWQWPRdzjz6wKn+SqHwPsiScZj/fmC0C9yBo2rmXnFo+4EC6
+YiofFpn0y1oDjR5Y6zpxaJ7xkYTFryIyQSg74raot/OOL2LwRpPNXesjFz85fnNz
+IuoLTeO+JAUjVfZLxDmqCUKnvxvVgqgd62102hhIxWRFT0k9Bprr53LlnhRyia6+
+9OVIrKULthTzSNqIW5x0HkEd3BszjUJf/ZaziZMYAp58QNIMp5vR6qRUf9wSxEaa
+yINgQUMVq0h2gtxl5JYweAEzaHvD9ik8vQTUVj+zj+/pK6Zd01GQxmb/TrXJL2dr
+eYltyipNs6JJZLGY+BSdnKid/Qte0dORdhtEho5SkTrVuCddYZSnmJyLX68hJsh2
+SUGSO45V2SCgyiKtStjHL/0Fm+OaV+5Ots38kKpL/oPG1F6y0hzGLRRNWTc+bfng
+UoFJU1ggCjHkFTzU9gLcbbAKb8isYyOd83XAmLgciMPWOkYge3CSOmtMLfWNlL2q
+ZaFLF7SQDLUYYhI4+jpbavpq8rbjnRk92cdSLQXcAwkuFFldnJYjNBUt4hfEYBGW
+S6BJKLpgjhjZ8Tty2z5HZQE6ynOtlT0Z+qzDI10U56kcGZkIRF3IAIicSBemzdDQ
+Z2tqW1UyBUZwWqi90nJ0MshKfCKw148by/sWK+xprObdIc67YKo=
+=6KMV
+-----END PGP SIGNATURE-----
+
+--8BQGfmeULC7Ogh7f--
