@@ -1,54 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599F13128B8;
-	Thu, 16 Jul 2026 20:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679CB37E5F6;
+	Thu, 16 Jul 2026 21:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784234643; cv=none; b=FmRpYDv1Diz6a3W9aBbDlYBuQdcBmPTFyuqB3W7uluhL8fEAm6o3QCKpQAfdrGqJSut/l+qbL+RnfdO4xldbvd/7r22Oib6dyyInsJpibb2b7L1ecujIrD3s72LYhN18Pgi7XoogxEcE/SkaNNUFPT+FgOEUUIIafHWJz/Xfs9U=
+	t=1784238566; cv=none; b=aLeZWPzpwxxL7EnBFiyZTq0nw3PulC6A69XSgnkwXNBGoLy2pkSleLGCBaoNLCBorNNG/bpqdpKOzH2Szrv087GGdj3Fv3jUJj+mhcMO9F8Q5zj1R+xfYMkEofKe6ZCRYL2OiCBvnEwllkxpfejvrcvxpf3G+nRafFWiNps5Tmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784234643; c=relaxed/simple;
-	bh=mUftzrWBK5bHIAIlg6Om3EBbYQ3fakGuxSLufZa82go=;
+	s=arc-20240116; t=1784238566; c=relaxed/simple;
+	bh=LBMbmOs0P0G7nxvJZmumNqWf0/JfAYN9hCv/hs38PhY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yb9esQJaiZfvLh2K+xptfC+n0U+1mwb6tZ38tgqXeKD0Q3k9TZZOKRWG9V1hWR/fDx9rQzStCRSUXiArkfuY4RRPnnDTY6teiE6zYLh+fgu7DL3oV+bHSgIWgxpaOKzdnztzR0e2heJJKIFDATtGGecpwKD8huen4dyOP6C7lBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zco0BAv7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPd9CIhOqy9RjJwFNfbGKZD7qLEabAqo5TIVIYu9dhSCdXIc9Dk2bu4vYDHZBlM4aQTkyjVhuJyPqZWgdEZKA5EXR200wmUTkuuga6IPa84HVPzsXK9IDVr0c2UbyslKtIJuyQGCaFZmPVA4hYxnrdSNCNkFR4v91M8AQ96JlDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFA2RyZw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zco0BAv7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19C81F000E9;
-	Thu, 16 Jul 2026 20:44:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFA2RyZw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2030C1F000E9;
+	Thu, 16 Jul 2026 21:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784234641;
-	bh=ndiUnTv+f5gzNuW74iwaWREcbUrCZddvl6t+J/D2k5A=;
+	s=k20260515; t=1784238565;
+	bh=eOISDNQWs3+70L2z0Z/sRRYhHltwdBHFBDQdmATJlRU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Zco0BAv7DEDZe/+tNjWKWcuitAbYkU1Skvu3LNjUkaD8HJVt+7Sh6T712y4OB1jwT
-	 tj+H9/MQU6ZnkHt4TOSkSv0kh0XlzlkRSb46MvG0/S/BfNGKTm8TOMHF7fe7zU4QyG
-	 a1YvISgEOIg/OmXHxBlGbEDfzxVyf1YcKOneBKRNrz0M1KevXaGd57YZ77p2dVd7vf
-	 AcVkm59gJHAPNO7YTiWwsRzqSjbZYv7VMTxp/PpFUGJSIuNA1wlNPzqVcldjLkqCdH
-	 SNdVQEMR+XAoLgBhJDMC7jQQVtg4e+gyOOhO3q3tPzxo77tm4GInYeGxRTe7hMdFRk
-	 IqfdNIX3BtTFg==
-Date: Thu, 16 Jul 2026 15:44:01 -0500
+	b=nFA2RyZwvaxjwYUaBF3M0hVJbc/cCntzN4Rkn0dY4KzIkKk/dQa7lNM+h1EoeyW+u
+	 RpxJkG2WudhcGwtak8jbY2zB1Yyf4lx6fivlQJMKsBuhQifRrEpcIJek174FxExSr9
+	 kwbMTf2Nn/PCeS8iEn1tBpdtiUBaKlJwEQ2aISPTZo+VCqkC45i3bpkNLgiHPGnmS8
+	 Cr0ZrjOVwzt89sKbPEtCbeYjV8DXKUrzKMvYJAOREsAM8wnLQ7UVX+arefRXySS8ZD
+	 powCgSjKH2/ZfbzCxB++g81cDgnGnLxCkFh9fFHXdcPBz3qZPFB2TbWCEWaVXd74V7
+	 LiTLGOu3mAZNA==
+Date: Thu, 16 Jul 2026 16:49:24 -0500
 From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow
- hardcoding EDID
-Message-ID: <20260716204401.GA1209579-robh@kernel.org>
-References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
- <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
+	Saravana Kannan <saravanak@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
+ firmware property
+Message-ID: <20260716214924.GA1477674-robh@kernel.org>
+References: <cover.1783505329.git.geert+renesas@glider.be>
+ <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+ <20260710-adventurous-burgundy-chimera-b2fff9@quoll>
+ <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -57,28 +67,50 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
 
-On Mon, Jul 06, 2026 at 12:35:39AM +0300, Laurent Pinchart wrote:
-> Since DDC version 2, introduced in 1996, VGA monitors have exposed EDID
-> data over an I2C bus. The bus is also used to detect the presence of a
-> connected monitor by trying to read the EDID data.
+On Fri, Jul 10, 2026 at 01:02:39PM +0200, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
 > 
-> Some devices where the VGA display is integrated in the device and
-> always connected do not connect the DDC pins. Some development boards,
-> such as the Renesas M3N Salvator-XS, also do not connect the DDC pins.
-> 
-> To support those, add the ability to provide hardcoded EDID data in the
-> device tree. This is mutually exclusive with specifying a DDC bus, and
-> can only be done when the VGA display is guaranteed to be always
-> connected.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  .../bindings/display/connector/vga-connector.yaml | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> On Fri, 10 Jul 2026 at 12:21, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On Wed, Jul 08, 2026 at 12:16:23PM +0200, Geert Uytterhoeven wrote:
+> > > Add a firmware property, for systems where SCMI must be used instead of
+> > > direct hardware access.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > v2:
+> > >   - Spin off from "dt-bindings: clock: Document Renesas R-Car X5H Clock
+> > >     Pulse Generator".
+> > > ---
+> > >  .../devicetree/bindings/clock/renesas,r8a78000-cpg.yaml    | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > index 4e23bba334382346..fc499e7cf52e4f0c 100644
+> > > --- a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > @@ -35,6 +35,12 @@ properties:
+> > >        <dt-bindings/clock/renesas,r8a78000-cpg.h>.
+> > >      const: 1
+> > >
+> > > +  firmware:
+> >
+> > RPi is doing similar, but I have doubts. It looks way too close to
+> > generic "syscon" which is disallowed.
+> >
+> > I think this should be vendor+purpose specific, e.g.:
+> > "renesas,scmi-transport" or "renesas,scmi-firmware"
 
-There's already 2 (.txt) bindings with the same property, so no issue 
-with adding it.
+If you can tell me the resource that a 'firmware' provider provides then 
+it is fine, but you can't.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> The disadvantage of a vendor-specific property is that there are more
+> cases to handle for fw_devlink, cfr. "[PATCH v2 02/10] of: property:
+> fw_devlink: Add support for firmware"[1].
+
+If vendor specific phandle properties are a problem for fw_devlink, then 
+we already have that problem to solve and 1 more doesn't matter.
+
+Rob
