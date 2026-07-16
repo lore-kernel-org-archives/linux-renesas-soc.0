@@ -1,143 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9707B3AA9D8;
-	Thu, 16 Jul 2026 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F9D3F7898
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jul 2026 09:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784194436; cv=none; b=BftJBhN9IYlIOhghW0DeNLhy3+22lT9CwfQc12YJ2JIo4k04HZVS/slsey05Or1y+Hs9INi5zufhiZsEW8C5m9kXtrKtp6Sb50ddGL4kW9wV7/hc0RzCiMUKGLz/a2EAOgdw5MPzQZar2ScGhfg/LmsDBYx5ngAvf+5NDETqaJo=
+	t=1784195996; cv=none; b=O8U2bS51mJxD5ydYSRRZd47NfGXPWOjGwUvBwxYH/fhwrgUdQX6StQn4tpA0yzPODs+2E9bhNAi3G2QoayhsisqdbgA71HzwQg+QxoVsGxQsifzGIsjx9h1U0ZV0IaoSt49cvpFNvtyC03HJInoGQM497ZGLZcWvZrzu0D2czpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784194436; c=relaxed/simple;
-	bh=yRHxXtAZQYQoy2fcTRsItZ7f0eFPqEaCCEm3Sue8wpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kk1eznRUQSTbHOwnwUhQzZKNNI9jV7BfVoWpVHN1s0lCeZB60SR9L77Oa1rcdQDeeJctG30ceoGSONINl/FV4x5txnWpZ0t4birX0jNVtadtr2hGeqU2ZTN8R91tggaFp1/908IyTBox/kS/6qAzA67k4u3H55ZI77FivIGl8nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00D81F000E9;
-	Thu, 16 Jul 2026 09:33:47 +0000 (UTC)
-Message-ID: <9d300b0b-7241-4e6c-a665-6b86b176473d@tuxon.dev>
-Date: Thu, 16 Jul 2026 12:33:45 +0300
+	s=arc-20240116; t=1784195996; c=relaxed/simple;
+	bh=twpT/OwCU+OowmS9PEONsKDlHF48POldZ1WKQl/uj48=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X4/iD5My/pFXF82SGsRW0eWkxf9dt3NuOEvZPJfYYvdtuFRHciaby9hJSRAsQqvMZ5w6ZarEJuhVvv2NLfLaMg7yGYW2CLJxlJ0t0O3IuYVAenYwMQkzkJ5wL7gyjRNDhPTtyZXYG4OBiWB5KULzIvvl9JSPjD4V9hV+WVpXm5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cEHb1q3c; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cEHb1q3c"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=lVUZbXASnjcpm4wohNCRP5nYazJ7BhxCfAU2tgaBTIA=; b=cEHb1q
+	3cc02AgQVxPexJKoe9W8bt0COFPhe0tJkeinyd72ntrEHmStgedFKhRksO4i31nl
+	cKUmCA9rawSd2DPebYn9rJmn/sSK4WjFqB1jYAo5YQd9hdQSz/vglZDnGEP7/bNP
+	AAK47GNcggB+gTaXg/1wgXADoTSojQPiotHtge/NDazkJk5eNEUALu80ItOAkRGb
+	KW8pucFef70jP9wsgm+mUwUPtX6UEHS50KLmG8m4zG0fYcJGdJx7Bcr/SL0xSDt4
+	dQx4SYsPFBD0NeioZCqMPvZYZhltDPPUjBsvsfPSWUfOCTkw2lyaErPtTU1wUupA
+	RKu1Vs92i0DoMNGw==
+Received: (qmail 1006394 invoked from network); 16 Jul 2026 11:59:47 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Jul 2026 11:59:47 +0200
+X-UD-Smtp-Session: l3s3148p1@oroBgLdWdrgujntt
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable GPIOs on CN12
+Date: Thu, 16 Jul 2026 11:59:37 +0200
+Message-ID: <20260716095935.13329-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260716095935.13329-4-wsa+renesas@sang-engineering.com>
+References: <20260716095935.13329-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/17] i3c: renesas: Add runtime PM support
-To: Frank Li <Frank.li@oss.nxp.com>
-Cc: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
- alexandre.belloni@bootlin.com, Frank.Li@nxp.com, p.zabel@pengutronix.de,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20260713130545.568657-1-claudiu.beznea+renesas@tuxon.dev>
- <20260713130545.568657-18-claudiu.beznea+renesas@tuxon.dev>
- <ale7SS4VZ8aIwhJ3@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ale7SS4VZ8aIwhJ3@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+CN12 offers some GPIOs independently of switch settings. Add the nodes.
 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On 7/15/26 19:54, Frank Li wrote:
-> On Mon, Jul 13, 2026 at 04:05:45PM +0300, Claudiu Beznea wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> On the SoCs where the Renesas I3C driver is enabled (RZ/G3S and RZ/G3E),
->> the clocks of the IP are managed through a clock PM domain. To keep the
->> I3C code simpler, the explicit clock handling was dropped along with the
->> addition of runtime PM support, in favor of the runtime PM APIs. Only the
->> code for getting tclk was preserved, as it is necessary to compute the
->> I3C clock rate.
->>
->> All the APIs provided to the I3C subsystem through struct
->> i3c_master_controller_ops are guarded with runtime PM APIs to
->> enable/disable the controller at runtime.
->>
->> As the Renesas I3C driver implements an asynchronous transmit model by
->> preparing a transfer and waiting for its completion through the ISR,
->> renesas_i3c_abort_xfer() was added to disable interrupts and clear any
->> pending IRQ status bits when there is no completion in the defined
->> timeout. Along with this, renesas_i3c_wait_xfer() return type was changed
->> to unsigned long.
->>
->> Add runtime PM support for the Renesas I3C driver.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v5:
->> - updated renesas_i3c_irqs_mask_and_clear() to use the
->>    renesas_i3c_irqs_mask_and_clear_locked() introduced in patch 1 from
->>    this series
->>
->> Changes in v4:
->> - renamed renesas_i3c_abort_xfer() from v3 to
->>    renesas_i3c_irqs_mask_and_clear(); along with it renamed local varibles
->>    abort_xfer to xfer_failed
->>
->> Changes in v3:
->> - dropped the RPM resume/suspend in renesas_i3c_suspend() to read the
->>    DATBASn registers as the DATBASn register are not used on suspend/resume
->>    path anymore in this version
->>
->> Changes in v2:
->> - dropped the runtime suspend/resume functions as for now, there will be
->>    no pinctrl sleep state described in DT
->> - do not synchronize the IRQs in renesas_i3c_abort_xfer() as some handlers
->>    may re-enable interrupts; instead just disable the interrupts and clean
->>    any status bits that the IRQ handlers are touching; with this the
->>    struct renesas_i3c::{irqs, num_irqs} and the associated code was removed
->> - dropped the renesas_i3c_dont_use_autosuspend() along with the
->>    devm_add_action_or_reset() call to set it since the same operation is
->>    done by the devres cleanup helper of devm_pm_runtime_enable()
->> - adjusted the renesas_i3c_suspend() with RPM calls to save the DATBAS
->>    registers
->> - use pm_runtime_resume_and_get() in renesas_i3c_resume() to avoid
->>    mixing gotos with cleanup helpers
->> - adjusted the patch description to reflect these changes
->>
-> ...
->>
->> @@ -1384,12 +1458,16 @@ static int renesas_i3c_probe(struct platform_device *pdev)
->>   	if (IS_ERR(i3c->regs))
->>   		return PTR_ERR(i3c->regs);
->>
->> -	ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &i3c->clks);
->> -	if (ret <= RENESAS_I3C_TCLK_IDX)
->> -		return dev_err_probe(&pdev->dev, ret < 0 ? ret : -EINVAL,
->> -				     "Failed to get clocks (need > %d, got %d)\n",
->> -				     RENESAS_I3C_TCLK_IDX, ret);
->> -	i3c->num_clks = ret;
->> +	i3c->tclk = devm_clk_get(&pdev->dev, "tclk");
-> 
-> only one tclk? you remove devm_clk_bulk_get_all_enabled()
-On all the SoCs where this driver is used the clocks are managed through clock 
-PM domains. The clock PM domain registration is done though the drivers at [1] 
-or [2].
+Changes since v1:
+* dropped setting 'status' to 'okay'
 
-The genpd registered by those drivers are passing GENPD_FLAG_PM_CLK flag to the
-pm_genpd_init(). In that case the start/stop APIs of the genpd are
-pm_clk_suspend/pm_clk_resume [3].
+ .../boot/dts/renesas/r9a06g032-rzn1d400-eb.dts   | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Thus, we can make use of runtime PM APIs to request, enable, disable the clocks 
-using generic runtime PM APIs.
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+index 303b5926d8d1..e6c064bc49c8 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
++++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+@@ -53,6 +53,11 @@ led@1 {
+ 	};
+ };
+ 
++&gpio2b {
++	pinctrl-0 = <&pins_gpio2b>;
++	pinctrl-names = "default";
++};
++
+ &i2c2 {
+ 	/* Sensors are different across revisions. All are LM75B compatible */
+ 	sensor@49 {
+@@ -132,6 +137,17 @@ pins_eth2: pins-eth2 {
+ 		bias-disable;
+ 	};
+ 
++	pins_gpio2b: pins-gpio2b {
++		pinmux = <RZN1_PINMUX(164, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(165, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(166, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(167, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(168, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(169, RZN1_FUNC_GPIO)>;
++		drive-strength = <6>;
++		bias-disable;
++	};
++
+ 	pins_mdio0: pins-mdio0 {
+ 		pinmux = <RZN1_PINMUX(150, RZN1_FUNC_MDIO0_GMAC0)>,
+ 			 <RZN1_PINMUX(151, RZN1_FUNC_MDIO0_GMAC0)>;
+-- 
+2.47.3
 
-Every time this driver calls runtime suspend/resume APIs this goes down to the 
-IP clocks and clk_disable()/clk_enable() them.
-
-Since we are relying on clock PM domains there is no need to implement runtime 
-suspend/resume ops for this driver that does just only 
-clock_disable()/clk_enable(), thus, the final code is simpler. We only request 
-the tclk as we need to compute the bus rate based on it.
-
-Thank you,
-Claudiu
-
-[1]
-https://elixir.bootlin.com/linux/v7.1-rc3/source/drivers/clk/renesas/rzg2l-cpg.c#L2013
-[2]
-https://elixir.bootlin.com/linux/v7.1-rc3/source/drivers/clk/renesas/rzv2h-cpg.c#L1549
-[3] https://elixir.bootlin.com/linux/v7.1-rc3/source/drivers/pmdomain/core.c#L2439
