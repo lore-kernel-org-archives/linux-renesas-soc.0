@@ -1,32 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C693F54AC;
-	Thu, 16 Jul 2026 10:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7885A25B0B8;
+	Thu, 16 Jul 2026 10:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784196236; cv=none; b=OC4Tb/Z01d7JNGfUzBele6jhQbROCfELptOO8G0gnfpQmhO96pAvLRKX5r13ryF2gRFVkPOwSjIgM4KEjwf9lEXZFrVlJ0o7s19SOuulez/pCs7jeKFtpf1a2HYmYyH5kT2Ii8LSh829EEb0ZcDoPeguTMRYT855osXvqD0XN0g=
+	t=1784196256; cv=none; b=T5PC95nZg59bJgg9tvEQJuh5awGXczZsyAiD6jx6r2+qFLWx6sGycUqzao0DNi1nC3WzQb1WK4fnsDSiuyRQZt3ZSnwETKjHINhu+hh1MDwzna84z7GUfOWtxmPs2qDnBvw3F8Er9pSnfE+OVcKpofafVnUs3wxAG8geGoaW4KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784196236; c=relaxed/simple;
-	bh=eDM1Bys+i+Eqimvxb8Tdec20C7wxLXU5KD1/ptliuKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YtycxClMjIpVKFCeXB3EXotrJZFCWVZb8aHJgz7BXEyzWqfBkFmakBGAJOfG834T4UOkOqcCJYN0dR9iPc2P6QcsvgGBtjcQI6NQsnLNFOvi/mN+Nw+Dm150A/ZZnMdGsn8sfZIBSogp4uIR9yVipEGEVR2rK6kK0IwgHMRxxq8=
+	s=arc-20240116; t=1784196256; c=relaxed/simple;
+	bh=1iJVcRAClwn4Uv+8h3Or9E90rYJW0QzhW4c+NhPKWOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qo+DMB0XaChdWMpk9I8AixBtDeSL/AFU2zIaQuRS+TW46UkFsmu9Bi3CImnZtql4WOsI34dkDFvvsEkbBRfSRzPOTOKtDjI18JO8c5MY4DmwgJrMFse9ik9cBXYWEOQFZFX30QuNp8vO8iTnOkBwZx4cyebQQK1jwGHceCnAhQ0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BBA1F00AC4;
-	Thu, 16 Jul 2026 10:03:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC0A11F000E9;
+	Thu, 16 Jul 2026 10:04:13 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: soc@lists.linux.dev,
-	soc <soc@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 3/3] Renesas DTS updates for v7.3
-Date: Thu, 16 Jul 2026 12:03:43 +0200
-Message-ID: <cover.1784194406.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v7.3
+Date: Thu, 16 Jul 2026 12:04:10 +0200
+Message-ID: <cover.1784195202.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1784194401.git.geert+renesas@glider.be>
-References: <cover.1784194401.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,106 +31,90 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 6fa6ee724d8dadf392139e242ac936b5da730c4b:
+	Hi Mike, Stephen,
 
-  arm64: dts: renesas: ironhide: Describe inline ECC carveouts (2026-07-14 10:34:32 +0200)
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v7.3-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.3-tag1
 
-for you to fetch changes up to 24afcb87e6aca1ff3face276223eeea0012f8e2b:
+for you to fetch changes up to 2df26b8663b6f315d0e9364927c8503280fe3dd3:
 
-  arm64: dts: renesas: r9a09g047: Fix PCIe dma-ranges memory space code (2026-07-14 10:36:37 +0200)
+  clk: r9a08g045: Add clocks and resets for CAN-FD (2026-07-13 13:58:01 +0200)
 
 ----------------------------------------------------------------
-Renesas DTS updates for v7.3
+clk: renesas: Updates for v7.3
 
-  - Add sound support for the RZ/G3E SoC and the RZ/G3E SMARC EVK board,
-  - Add more serial and SPI support for the RZ/G3L SoC and the RZ/G3L
-    SMARC EVK board,
-  - Add SMP support (32x Cortex-A720AE) for the R-Car X5H SoC,
-  - Add hwspinlock and mailbox (MFIS) support for the R-Car V4H SoC,
-  - Add GPU support for R-Car M3-N-based Salvator-X(S) and ULCB
-    development boards,
-  - Add SPI and FRAM support for the RZ/N1D SoC and the RZN1D Expansion
-    Board,
-  - Add PCIe support for the RZ/V2H SoC and the RZ/V2H EVK development
-    board,
+  - Add RTC and display clocks on RZ/T2H and RZ/N2H,
+  - Add audio and display clocks and resets on RZ/G3E,
+  - Add SDHI, GPU, and USB2.0 clocks and resets on RZ/G3L,
+  - Update the maintainer for the VersaClock 7 driver,
+  - Add CAN-FD clocks and resets for RZ/G3S.
   - Miscellaneous fixes and improvements.
 
-Note that this PR is based on renesas-fixes-for-v7.2-tag1, for which I
-have just sent a PR.
+Note that this includes DT binding definition updates for the RZ/T2H and
+RZ/N2H SoCs, which are shared by the clock subsystem and DT source
+files.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Biju Das (5):
-      arm64: dts: renesas: r9a08g046l48-smarc: Enable rsci{1,2,3} nodes
-      arm64: dts: renesas: r9a08g046: Add RSPI{0..2} nodes
-      arm64: dts: renesas: r9a08g046l48-smarc: Enable RSPI2
-      arm64: dts: renesas: r9a09g047e57-smarc: Drop SW_SER0_PMOD condition for rsci4
-      arm64: dts: renesas: r9a09g047: Add max-frequency to SDHI nodes
+Biju Das (4):
+      clk: renesas: r9a08g046: Add clock and reset entries for SDHI
+      clk: renesas: r9a08g046: Add clock and reset entries for GE3D
+      clk: renesas: r9a08g046: Add USB2.0 clock and reset entries
+      dt-bindings: clock: renesas,versaclock7: Update maintainer
 
-John Madieu (6):
-      arm64: dts: renesas: rzv2h: Add audio clock inputs
-      arm64: dts: renesas: rzg3e-smarc-som: Add I2C1 support
-      arm64: dts: renesas: r9a09g047: Add RZ/G3E Sound support
-      arm64: dts: renesas: rzg3e-smarc-som: Add Versa3 clock generator
-      arm64: dts: renesas: rzg3e-smarc-som: Add audio pinmux definitions
-      arm64: dts: renesas: r9a09g047e57-smarc: Add DA7212 audio codec support
+Claudiu Beznea (1):
+      clk: r9a08g045: Add clocks and resets for CAN-FD
 
-Lad Prabhakar (8):
-      arm64: dts: renesas: rzt2h-n2h-evk: Remove unused MII/GMII pins
-      arm64: dts: renesas: rzt2h-n2h-evk: Configure ETH pins
-      arm64: dts: renesas: rzt2h-n2h-evk: Configure SCI0 pins
-      arm64: dts: renesas: rzt2h-n2h-evk-common: Add memory nodes
-      arm64: dts: renesas: r9a09g057: Add PCIe nodes
-      arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable PCIe
-      arm64: dts: renesas: r9a09g056: Fix PCIe dma-ranges memory space code
-      arm64: dts: renesas: r9a09g047: Fix PCIe dma-ranges memory space code
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag7' into renesas-clk-for-v7.3
 
-Marek Vasut (5):
-      arm64: dts: renesas: r8a78000: Enable application CPU cores via PSCI
-      arm64: dts: renesas: r8a77965-salvator-x: Enable GPU support
-      arm64: dts: renesas: r8a77965-salvator-xs: Enable GPU support
-      arm64: dts: renesas: r8a77965-ulcb: Enable GPU support
-      arm64: dts: renesas: Add soc: labels to soc nodes
+John Madieu (2):
+      dt-bindings: clock: renesas: Add audio clock inputs for RZ/V2H family
+      clk: renesas: r9a09g047: Add audio clock and reset support
 
-Wolfram Sang (3):
-      arm64: dts: renesas: r8a779g0: Add MFIS node
-      ARM: dts: renesas: r9a06g032: Describe SPI controllers
-      ARM: dts: renesas: r9a06g032-rzn1d400-eb: Enable SPI-FRAM
+Lad Prabhakar (7):
+      dt-bindings: clock: renesas,r9a09g077/87: Add LCDC_CLKD clock ID
+      dt-bindings: clock: renesas,r9a09g077/87: Add PCLKRTC clock ID
+      clk: renesas: cpg-mssr: Implement dedicated MSTP delay logic for RZ/T2H LCDC and RTC
+      clk: renesas: r9a09g077: Add RTC clocks
+      clk: renesas: rzv2h-cpg: Use per-SoC PLL reference frequency for calculations
+      clk: renesas: rzv2h-cpg: Extract PLL calculation helpers into shared library
+      clk: renesas: r9a09g077: Add LCDC and PLL3 clock support for RZ/T2H display pipeline
 
-bui duc phuc (1):
-      ARM: dts: renesas: r8a7740: Add FSI clocks
+Tommaso Merciai (1):
+      clk: renesas: r9a09g047: Add LVDS clocks and resets
 
- arch/arm/boot/dts/renesas/r8a7740.dtsi             |  12 +-
- .../arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts |  25 +
- arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  84 ++++
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a77960.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a77961.dtsi          |   2 +-
- .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |   4 +
- .../boot/dts/renesas/r8a77965-salvator-xs.dts      |   4 +
- arch/arm64/boot/dts/renesas/r8a77965-ulcb.dts      |   4 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          |   2 +-
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi          |  17 +
- arch/arm64/boot/dts/renesas/r8a78000.dtsi          |  32 ++
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi         |  69 +++
- arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts |  78 +++
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi         | 525 ++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 114 ++++-
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi         |  22 +-
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi         | 160 ++++++-
- .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  18 +
- .../boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 144 ++++--
- .../boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 144 ++++--
- arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi   |  44 ++
- .../boot/dts/renesas/rzt2h-n2h-evk-common.dtsi     |  14 +
- 28 files changed, 1420 insertions(+), 112 deletions(-)
+ .../bindings/clock/renesas,rzv2h-cpg.yaml          |   6 +
+ .../bindings/clock/renesas,versaclock7.yaml        |   2 +-
+ MAINTAINERS                                        |   6 +-
+ drivers/clk/renesas/Kconfig                        |   6 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r9a08g045-cpg.c                |   9 +
+ drivers/clk/renesas/r9a08g046-cpg.c                | 130 +++++++
+ drivers/clk/renesas/r9a09g047-cpg.c                | 123 ++++++-
+ drivers/clk/renesas/r9a09g077-cpg.c                | 375 ++++++++++++++++++++-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  20 +-
+ drivers/clk/renesas/rzv2h-cpg-lib.c                | 217 ++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c                    | 203 -----------
+ .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |   2 +
+ .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |   2 +
+ include/linux/clk/renesas.h                        |  34 +-
+ 15 files changed, 913 insertions(+), 223 deletions(-)
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg-lib.c
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
