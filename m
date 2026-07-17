@@ -1,111 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29A8331230;
-	Fri, 17 Jul 2026 08:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304A2331A43
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 09:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784278577; cv=none; b=FYMlqCfyD1GTBr6xCuo8TgjsK9nFdKhsFukI176ZHshJDpsUaUoFIIdAxNuOrQRCbsyp4LdL4Ptu41DPSH0WGlmdZl/EEUI3HbIC7LJ24xT3VM3P9ou5rbYWLqiTb+uYcXJPmr45bsV95I9kpshpkiHWEYNZcNdwxfL1RFsL/IQ=
+	t=1784282229; cv=none; b=jwxM6FGmrhhg+L/9BjgrHCTJjNUaCotdg9HLNZClzZ+2cC3MsRZPl7KYDqsJe3DX0VqhJaL5FMFk+jFa2Hgpg3DrPvza7IwerPRLSV4HNz290ruZpiCPp6gaskk1TnNXmLjBeg3UPnz7x/fvfjMqw/zz9NNJLjOHantbPkZha/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784278577; c=relaxed/simple;
-	bh=ji3c6tV6Fmp8AGbsQNiKpqBvm3f3bp6x+PZi89E38Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOErf6rp+707je/JtXSUdN9HqiivX1Hah1A35WoRhMr0+RQD8UVQpRioRyi27J4htgdhLW8skVumWurPGF7kuVTB1tG5jiwBGZukxtNGl7+WwykyHbSXtbWPkPEsCjX2GOP9EOMSd+D8+0WhqFqhpYBitnbbOJRTSdbwfZrYfZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azQXBRay; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784282229; c=relaxed/simple;
+	bh=U6CMa3lM7Ap7B4TS5y39YAIZO59I87442jKHh4c82hs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s+8b4XHywks62eMp3akeaXvVsBBe/UANORmk7l5zix2ANkzFv72VDFEpcPQGzLQP3JLVBB5Z8s54PG5wBzfnbzoktZDKHziMJiYVgxalCUMEfOlFVkivmd9D1kai0vHg4epu40dqGF6RTerDiofL+pTi+yfJLHW8utkZzG5Utik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hSyWmcc9; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azQXBRay"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26DA1F000E9;
-	Fri, 17 Jul 2026 08:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784278576;
-	bh=ji3c6tV6Fmp8AGbsQNiKpqBvm3f3bp6x+PZi89E38Fw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=azQXBRayBGKG9pZTOOKyiIEsoNwnMAmRP2b6noY4+hF+zV4UYPa6VBdyla5JYzZOk
-	 a8/dBQSHkr2xljG88tIdsWYefyzsjUCjRBn17l0DFjkl1P/mOoRt4AhHpWg1wn8GSM
-	 rSCQkI7VymlKqdtau9Wsf6D//kpZYNrbzxA/F82/wGBOYzxcOvKT8r0OVngOfl676E
-	 Ib/pcUa3NemJl9NSHznrEK3JGBPgeOEJ2x8j8Rm80G/vGH61lJmU3F+VZXFbmF/vkK
-	 QsELya1yQgedwMoE39mMnmOBswZgzZgUdEVZ19IdgXP/Y/jUH/Wv6SZeMwvW6guXbV
-	 1K/5VnQN9oDGQ==
-Date: Fri, 17 Jul 2026 10:56:13 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Albert Esteve <aesteve@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, 
-	Stefan Agner <stefan@agner.ch>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] drm: release panel reference after panel bridge
- creation
-Message-ID: <20260717-heavenly-peach-guan-82f0f1@houat>
-References: <20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com>
- <20260713-drm_refcount_wiring-v2-5-d3bb61f4bd4d@redhat.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hSyWmcc9"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 9D01C4E40E15;
+	Fri, 17 Jul 2026 09:57:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 645C260361;
+	Fri, 17 Jul 2026 09:57:04 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BFDC211BD03DD;
+	Fri, 17 Jul 2026 11:56:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784282223; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ee26/0llGySjo91ifY2zVma5IW0cIkD+f0iUkfsjaBM=;
+	b=hSyWmcc9aVfNH3FLMx1vHqtDGoK7fj0hr3HIxWBnbrpauu7Hyj10YmGP6zF8WLVpcfUn4F
+	Dn4SwtVywuvaQnpr1D+EpSdbzIU854dFZDS7Xt7+YYsILmD8KqK55Kn8WXwUz6mZCWap/P
+	c5wGwdhkUBLVC/VrE8+RRpcADM4J3ID+TH2QS4J/L4jvSGYm+PZWRBYvE5bqn8sEH+8VvE
+	Dymy3DeQaf4V3Olb4nm1nqvz1bPQSN3WL/5mzGAbjMrcWpjNPZYf94cfUFkoMM/yEq9yHm
+	1Jy705rR/jxikqkkP0+Re72mmrktssrdpx5rwTMpkaysDSjITb9nc/Dg2kETcA==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v3 0/4] timers: Add support for RZ/N1 SoCs timers
+Date: Fri, 17 Jul 2026 11:55:45 +0200
+Message-ID: <20260717095552.767475-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ro3acbddzcmn32hn"
-Content-Disposition: inline
-In-Reply-To: <20260713-drm_refcount_wiring-v2-5-d3bb61f4bd4d@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+The Renesas RZ/N1 SoCs family has two timers block controller
+available.
 
---ro3acbddzcmn32hn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 5/5] drm: release panel reference after panel bridge
- creation
-MIME-Version: 1.0
+Each controller is charge of 8 timers (six 16-bit timers + two 32-bit
+timers).
 
-On Mon, Jul 13, 2026 at 01:53:08PM +0200, Albert Esteve wrote:
-> Update a second batch of drivers calling of_drm_find_panel() or
-> drm_of_find_panel_or_bridge() to release the lookup reference after
-> wrapping the panel in a bridge.
+Each timer has its own interrupt, its own prescaler that can be used to
+device the clock by 25 (timers block are fed with a 25 MHz clock) and
+all timers can work in either one-shot or periodic mode.
 
-I would have expected this to be squashed of patch 3, any reason it's in
-a separate patch?
+This series adds support for those timers blocks.
 
-> Also handle the cases where a panel is found but cannot be used,
-> dropping the reference immediately in those paths.
+Best regards,
+Hervé
 
---ro3acbddzcmn32hn
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes v2 -> v3
+  v2: https://lore.kernel.org/all/20260429115054.158160-1-herve.codina@bootlin.com/
 
------BEGIN PGP SIGNATURE-----
+  Rebase on top of v7.2-rc1.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCalnuLQAKCRAnX84Zoj2+
-dnDUAX9DfbJ62T1vU+k0YXnFv3yX2k5iyF6uwKqBc3NkgP2wwaiGh0wcxI9im29e
-ExLXo6wBegLo1kQnSSETZqi/cXakkCkkrHe5mEI5hPp0fWmM5IDcQSmHJGJhLvnd
-3v05b7my6w==
-=EsoI
------END PGP SIGNATURE-----
+  Patch 1, 3 and 4:
+    - Add 'Reviewed-by: Geert Uytterhoeven'
 
---ro3acbddzcmn32hn--
+  Patch 2:
+    - Fix typos in commit log.
+    - Split Kconfig 'depends on' in 2 lines.
+    - Fix indentation, space and alignment in code.
+    - Fix dev_err_probe() conversion format.
+    - Introduce rzn1_timer_setup_timers() and rzn1_timer_register_clkevt()
+      to avoid code duplication in rzn1_timer_probe_{first,other}()
+    - Add '.suppress_bind_attrs = true'.
+
+Changes v1 -> v2
+  v1: https://lore.kernel.org/all/20260331152616.197031-1-herve.codina@bootlin.com/
+
+  Rebase on top of v7.1-rc1.
+
+  Patch 1:
+    - Drop minItems related to interrupts property
+    - Add 'Reviewed-by: Krzysztof Kozlowski'
+
+  Patches 2, 3 and 4:
+    No changes
+
+Herve Codina (Schneider Electric) (4):
+  dt-bindings: timer: Add the Renesas RZ/N1 timer
+  clocksource/drivers: Add support for the Renesas RZ/N1 timers
+  ARM: dts: r9a06g032: Add support for timers
+  MAINTAINERS: Add the Renesas RZ/N1 timers driver entry
+
+ .../bindings/timer/renesas,rzn1-timer.yaml    |  74 +++
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi      |  34 ++
+ drivers/clocksource/Kconfig                   |  11 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-rzn1.c              | 455 ++++++++++++++++++
+ 6 files changed, 582 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
+ create mode 100644 drivers/clocksource/timer-rzn1.c
+
+-- 
+2.55.0
+
