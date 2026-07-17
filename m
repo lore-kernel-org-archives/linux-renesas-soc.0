@@ -1,181 +1,91 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D88305676
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAC742A179;
+	Fri, 17 Jul 2026 15:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784297027; cv=none; b=desU4qeJNw2lY/iDUDShyuu9GLFCIJH7Rut62A7JPG+GqMdUU70r48hRJhlKAI5HPi+EqO3Q4LR2X31urgTDHmE/oofpntrGqmcc0KcrDieLEb5adv1VkCWeO1bIymQhi6fvlX7cAvILaOiB0xNVWl9SbleoL8sOwTKGDwduduw=
+	t=1784300633; cv=none; b=tbjdAqkjkx24UunfBxD6GuuXj7JGe/ascGGfvZSyLDG+iFRgXJ+WJTmh0uQ5XC2w1DFPwTjBWGqDE99JDuBqkzX5lwDqxA+keLNwRDi1iQH7kJKERaojy/nRQz/iaC2uplCgx9spL7m1J8e7/YGQe4TdOfr4U2dMAWkzvIxEnms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784297027; c=relaxed/simple;
-	bh=ex8HZdHS1q/bkU1HItgMEr14uQTiGY8DQ0yP+8KWPg4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dCpd+uTvK5E7saI6VOUDlF9UAxM/UlaI9+V1/RmMGnQNSRHpglwd50F7t4Fb+f0xjY2Yt2ah+JqUefDzrDBCQoVzI/bpVmmLePVP5/JeyQDHx+PPDH93CO8aD9NJG/frtDpHXx3gQ271Y9rwP1jSwRZmEJIZms87NmEtPaY0f9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UzpwuAI9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1784300633; c=relaxed/simple;
+	bh=3Awj/mEyGq9TWE6CwNyBbCQP11JZYyMs3Nh7V5pd+xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQs3en2qLvL1CC0erNYRvDszLywF4n9nJ0HBFd2W1eeNA4KX2bGYiLmWb6QIyvk1FGscnRKdrlMZWeGl8ztJJ4rWRLyn97uw6r3e0NbDgJHao97Mddw9v5fng7qu7ze96oStcHX5XNsqv4R3wfoizDK97Pig1ZCOEk98+fRt27I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaccoDxo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UzpwuAI9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784297025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SaIYeA/Jygw7ChE2lz/n+i9CMUk9dImhyfQVRWidUS0=;
-	b=UzpwuAI9iNOqir1H+h/Zx5l9oVbNvrG0R5WWFH7pYjU3x+9pZZktJZjOh5UPFDmpb+VwHy
-	QoC2+xHtBu3CSX+MLrq++s6WNFjPYAS7BzKeWlORCLZjqs4Bh/MsoFNCkg+nbN00Yj53sL
-	avsOLitjIuNEEsmBEHehWuxBECUoML8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-Bfn509VpOhywaQGT298pQw-1; Fri,
- 17 Jul 2026 10:03:40 -0400
-X-MC-Unique: Bfn509VpOhywaQGT298pQw-1
-X-Mimecast-MFC-AGG-ID: Bfn509VpOhywaQGT298pQw_1784297018
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C3B5F18007EF;
-	Fri, 17 Jul 2026 14:03:37 +0000 (UTC)
-Received: from [192.168.1.153] (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5682B18005B3;
-	Fri, 17 Jul 2026 14:03:24 +0000 (UTC)
-From: Albert Esteve <aesteve@redhat.com>
-Date: Fri, 17 Jul 2026 16:02:07 +0200
-Subject: [PATCH v3 4/4] drm/panel: find_panel_by_fwnode() return a counted
- reference
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaccoDxo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8801F000E9;
+	Fri, 17 Jul 2026 15:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784300632;
+	bh=yksjHE8eEsyu5iTXNXXdmShnpRuHBDVAl4ajHQZo3CA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ZaccoDxoOH2lcgSvu8LXxFsftHKUMQrkC0nmExHOdwO5j8SdzihKbS4RobczbJ4JZ
+	 uvhEPXaHr5uaQtI+xDgID3j5Z3hMwMSu6CHIE+eqP5j9SZOrxR0vp36y79n7cr02fe
+	 2Qr+8MsdMNhTPSMEa4LAZjuuPx2aN8bpCFfs42t+KQjuSM9KryVpc9IkxeqAHP6ww6
+	 EmPRYPD8nn9N5i6F1MSRMBcZsMDvZeRuLrtBMJnlPp6sSPR+wZwXMfHvfMzfLJ+gFY
+	 2YIg6dsjszqc+x/e98s+liB8gUlW4LmMCxXI1F0xOOW4+l2l6apPts9MowDGpizFCt
+	 YoQ/ScN7NGLfw==
+Received: from johan by xi.lan with local (Exim 4.99.4)
+	(envelope-from <johan@kernel.org>)
+	id 1wkk6P-00000007cuh-3tow;
+	Fri, 17 Jul 2026 17:03:49 +0200
+Date: Fri, 17 Jul 2026 17:03:49 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/bridge: display-connector: Fix I2C adapter
+ resource leak
+Message-ID: <alpEVeVmH5oiqmaj@hovoldconsulting.com>
+References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20260705213542.28987-3-laurent.pinchart+renesas@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260717-drm_refcount_wiring-v3-4-023900c32e01@redhat.com>
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
-In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
- Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, 
- Stefan Agner <stefan@agner.ch>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
- Jyri Sarha <jyri.sarha@iki.fi>, Jingoo Han <jingoohan1@gmail.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Albert Esteve <aesteve@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784296938; l=2362;
- i=aesteve@redhat.com; s=20260303; h=from:subject:message-id;
- bh=ex8HZdHS1q/bkU1HItgMEr14uQTiGY8DQ0yP+8KWPg4=;
- b=Wcce0+dlDbxIuiF5oRxS8RYLj+33umEtxbC6TZM1cuTwUBliy7161daQ/+tCXoUYL4W3a37d/
- 0s6+jw8bH9ICEbkzQuS6NDHRpePGlnBJV0pWJFJJycLYHlBwtjWs2V+
-X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
- pk=YSFz6sOHd2L45+Fr8DIvHTi6lSIjhLZ5T+rkxspJt1s=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260705213542.28987-3-laurent.pinchart+renesas@ideasonboard.com>
 
-find_panel_by_fwnode() is the fwnode-based counterpart to
-of_drm_find_panel(), used internally by drm_panel_add_follower().
-Like of_drm_find_panel(), it returned an unrefcounted pointer,
-leaving a window where the panel could be freed between the lookup
-and first use.
+On Mon, Jul 06, 2026 at 12:35:40AM +0300, Laurent Pinchart wrote:
+> If the probe function returns an error after getting the I2C adapter for
+> DDC, the reference to the adapter is never released. Fix it by releasing
+> it in the bridge .destroy() handler.
+> 
+> There is no need to test the ddc pointer with !IS_ERR(), as
+> of_get_i2c_adapter_by_node() returns NULL on error.
 
-drm_panel_add_follower() worked around the missing panel kref by
-calling get_device() on the panel's underlying struct device.
-However, get_device() only prevents the device kobject from being freed.
-It does not prevent the panel's kzalloc()'d container memory from being
-released when the kref reaches zero.
+I stumbled over this this morning as well and posted a fix here (which
+releases the adapter on driver unbind as is currently done):
 
-Apply the same fix: call drm_panel_get() under panel_lock before
-returning. Since find_panel_by_fwnode() now transfers a counted
-reference to drm_panel_add_follower(), drm_panel_remove_follower()
-must balance it with a matching drm_panel_put().
+	https://lore.kernel.org/lkml/20260717085716.1619275-1-johan@kernel.org/
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Albert Esteve <aesteve@redhat.com>
----
- drivers/gpu/drm/drm_panel.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> Fixes: 6de79dd3a920 ("drm/bridge: display-connector: add ddc-en gpio support")
 
-diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index 72cf86253c0cd..a00ae98ed0956 100644
---- a/drivers/gpu/drm/drm_panel.c
-+++ b/drivers/gpu/drm/drm_panel.c
-@@ -542,7 +542,13 @@ int of_drm_get_panel_orientation(const struct device_node *np,
- EXPORT_SYMBOL(of_drm_get_panel_orientation);
- #endif
- 
--/* Find panel by fwnode. This should be identical to of_drm_find_panel(). */
-+/*
-+ * Find panel by fwnode, returning a counted reference.
-+ *
-+ * Behaves identically to of_drm_find_panel(). On success the returned
-+ * pointer has been passed through drm_panel_get(); the caller must call
-+ * drm_panel_put() when done with it.
-+ */
- static struct drm_panel *find_panel_by_fwnode(const struct fwnode_handle *fwnode)
- {
- 	struct drm_panel *panel;
-@@ -554,6 +560,7 @@ static struct drm_panel *find_panel_by_fwnode(const struct fwnode_handle *fwnode
- 
- 	list_for_each_entry(panel, &panel_list, list) {
- 		if (dev_fwnode(panel->dev) == fwnode) {
-+			drm_panel_get(panel);
- 			mutex_unlock(&panel_lock);
- 			return panel;
- 		}
-@@ -690,6 +697,7 @@ void drm_panel_remove_follower(struct drm_panel_follower *follower)
- 	mutex_unlock(&panel->follower_lock);
- 
- 	put_device(panel->dev);
-+	drm_panel_put(panel);
- }
- EXPORT_SYMBOL(drm_panel_remove_follower);
- 
+I believe this issue was first introduced by commit 2e2bf3a5584d
+("drm/bridge: display-connector: add DP support") a few releases
+earlier.
 
--- 
-2.55.0
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+Reviewed-by: Johan Hovold <johan@kernel.org>
+
+Johan
