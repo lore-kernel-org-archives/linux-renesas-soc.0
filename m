@@ -1,158 +1,117 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE131E83A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 05:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45F83CF694
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 07:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784264422; cv=none; b=lKbgwu4Ys8bi+LzHWP4pK74wmER5+ixpcDv6ujCIX+dMp94mgPq/sliWtaweiZOXZ784WFEeOr2ejV2bWhUbfmliGyu713ZF22+22UydqAF5FpnD4j5Tt329vxO9BoHVMB1fsOGWfLUh7k6zj8A62QwDFzRBVHDtmtELZGqOBEw=
+	t=1784273862; cv=none; b=ujhNRW90E+inBwvyDq1RaS7uhKTjtaqxEoYmzRj8ZVbH5/eO21xJ3VlywWY0RWRyivhpvjQDu37lgMER39e+083VhI8nwMOR97eIY81jnppfc3a5scp0Mbgj8qiRZdmJ5TlwZAvuI8jG6PbhCFAeh1ovMEA8yH4q3Ob8bqXr578=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784264422; c=relaxed/simple;
-	bh=WyLeuxbzem/qXJm2mbofiNCs6iAnXOzePEef+JkmAlw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=hZFiSW6WlXFkc9dI8//77bOsOObMH5BorHJyg/ptcgP8mkCSajyIqG+VdixwSHYv/mJr4KL2cZ7M2FGaPIEXGEimijzT2uI2pkgl80Fc/2blOo+qeEa2nr3jL75xZV47PaMbCY5cKhXLq2emntPilX72KU8cgSN5Bk0YMLKQ+/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xj8hfxwC; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1784273862; c=relaxed/simple;
+	bh=qZkQOIOG8Kl3936adbYcP2Yh8w6XNbgYkOrvcA3q2GM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VeWuNj7wprPjj3PKWDNdREXJQtXHynnpBpQ1l1ilj1E/RW5ZZ56nmjuSOfYtfxUAs+0+euj+dqpbMiVNvO4NZXd3fsqlGmzu+zTTf4elY4WU/dDel5Ye/Flk1gFrDWzM1ecKywcLG2tSPzxL1mcpzLbcwBpj/Rg0I2xcTVyIPl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kon2YfH/; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xj8hfxwC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784264421; x=1815800421;
-  h=date:from:to:cc:subject:message-id;
-  bh=WyLeuxbzem/qXJm2mbofiNCs6iAnXOzePEef+JkmAlw=;
-  b=Xj8hfxwCJ8h7P7z159pyPQ3qhm7SLHr8uZ0Rvba3yVExjaBXqG8O5cxE
-   8GoN4ljdt+2sB9FvgtK/n5rJlZHbqcRTrm/Zy3J0k3/6BoDrAHnC7G86S
-   Sfm5pXKKQiVpznhSy9sG71Pu6LfRsLjLSYXjSwkx0ti79zkGNpg5m1ijV
-   pLqXqGQWN/B+xRhpAheGvYO+DK7YIq17eq+5qt7XSPwOXmjuat+3e1Gb/
-   O0ua8FxrlB0JoaU36wGt9xAM6zloMcZRvDD/Ed7G1v39udtLWrHBKFym7
-   d3gvz3i2/FytDxYjEUxLt8YsdPpgkZ6RNiCZae4y1nVGwwDgCPb/fnhWS
-   g==;
-X-CSE-ConnectionGUID: VaoFyKJ5TuuE0XWg4Sjv9w==
-X-CSE-MsgGUID: Gz5pRiZkSCemgM4/WjX7iw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="84889274"
-X-IronPort-AV: E=Sophos;i="6.25,168,1779174000"; 
-   d="scan'208";a="84889274"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 22:00:21 -0700
-X-CSE-ConnectionGUID: dounz5cjR220u6UMF1v5qA==
-X-CSE-MsgGUID: GIO7IWeWTpifIavrgIaWNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,168,1779174000"; 
-   d="scan'208";a="256141740"
-Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 16 Jul 2026 22:00:19 -0700
-Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wkagF-00000000SRQ-0eNL;
-	Fri, 17 Jul 2026 05:00:12 +0000
-Date: Fri, 17 Jul 2026 12:59:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- f9592c355314cb76e76078dfc58ea747e382ea15
-Message-ID: <202607171205.GEiZFY7A-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kon2YfH/"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id DD43E4E40E16;
+	Fri, 17 Jul 2026 07:37:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 943D660361;
+	Fri, 17 Jul 2026 07:37:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC0A611BD3D44;
+	Fri, 17 Jul 2026 09:37:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784273852; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Cdb0RCCdG1Y5r/It8CwrJzVJ0JbWRfQ0sD99bdj9c+M=;
+	b=kon2YfH/dOK4tDt53OBaDo5FFMl+LDNwDVUop5ds1NRI/Wg1uSfOdRPoX//xppPkYw4F4k
+	i7WIsxXBl1un2FVxbtH0z+MNg/Pxf/kDZFkkmQMF7GWX2KDvfCGfcNPlsGE/XeWd6UWU5+
+	GU0KvK2Qz5NhcKTqLYeMaoODnDSsLW8zaf8j7HAZsl2HX2a+q1UNwnNfj8/t2YSHY0CoOJ
+	iuHvYWwy+oF8TF5SvX8WUIAoCWzZZkD3fHymApMwuHuo/Ci0SwMn3oduihoRjpk8TrJJuw
+	dKfxpFRA4xRbQoh0VoLeExcl0443IzDaZd45c4NSu8UobUALaKN9EhlqiiNUTA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Pan Chuang <panchuang@vivo.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,  Daniel Lezcano
+ <daniel.lezcano@kernel.org>,  Zhang Rui <rui.zhang@intel.com>,  Lukasz
+ Luba <lukasz.luba@arm.com>,  Markus Mayer <mmayer@broadcom.com>,  Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+  Florian Fainelli <florian.fainelli@broadcom.com>,  Frank Li
+ <Frank.Li@nxp.com>,  Sascha Hauer <s.hauer@pengutronix.de>,  Pengutronix
+ Kernel Team <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
+  zhanghongchen <zhanghongchen@loongson.cn>,  Yinbo Zhu
+ <zhuyinbo@loongson.cn>,  Amit Kucheria <amitk@kernel.org>,  Thara Gopinath
+ <thara.gopinath@gmail.com>,  Niklas =?utf-8?Q?S=C3=B6derlund?=
+ <niklas.soderlund@ragnatech.se>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>,  John
+ Madieu <john.madieu.xa@bp.renesas.com>,  Heiko Stuebner <heiko@sntech.de>,
+  Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,  Krzysztof Kozlowski
+ <krzk@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>,  Alim Akhtar
+ <alim.akhtar@samsung.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Thierry Reding
+ <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
+  Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Srinivas Pandruvada
+ <srinivas.pandruvada@linux.intel.com>,  Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Laura Nao <laura.nao@collabora.com>,
+  Fei Shao <fshao@chromium.org>,  Chen-Yu Tsai <wenst@chromium.org>,
+  Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,  Frank Wunderlich
+ <frank-w@public-files.de>,  Mikko Perttunen <mperttunen@nvidia.com>,
+  Svyatoslav Ryhel <clamor95@gmail.com>,  linux-pm@vger.kernel.org (open
+ list:THERMAL),  linux-kernel@vger.kernel.org (open list),
+  linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM
+ ARCHITECTURE),  imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE),  linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM
+ MAILING LIST),  linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR
+ THERMAL DRIVERS),  linux-rockchip@lists.infradead.org (open
+ list:ARM/Rockchip SoC support),  linux-samsung-soc@vger.kernel.org (open
+ list:SAMSUNG THERMAL DRIVER),  linux-stm32@st-md-mailman.stormreply.com
+ (moderated list:ARM/STM32 ARCHITECTURE),  linux-tegra@vger.kernel.org
+ (open list:TEGRA ARCHITECTURE SUPPORT),
+  linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+ support:Keyword:mediatek),  Niklas S?derlund
+ <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2] thermal/drivers: Remove redundant error messages on
+ IRQ request failure
+In-Reply-To: <20260717024733.374913-1-panchuang@vivo.com> (Pan Chuang's
+	message of "Fri, 17 Jul 2026 10:47:10 +0800")
+References: <20260717024733.374913-1-panchuang@vivo.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 17 Jul 2026 09:37:18 +0200
+Message-ID: <87v7aekqxd.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: f9592c355314cb76e76078dfc58ea747e382ea15  Merge branches 'renesas-arm-soc-for-v7.3', 'renesas-drivers-for-v7.3' and 'renesas-dts-for-v7.3' into renesas-next
+On 17/07/2026 at 10:47:10 +08, Pan Chuang <panchuang@vivo.com> wrote:
 
-elapsed time: 745m
+> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
+> devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq()
+> automatically log detailed error messages on failure. Remove the
+> now-redundant driver-specific dev_err() and dev_err_probe() calls.
+>
+> Signed-off-by: Pan Chuang <panchuang@vivo.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
 
-configs tested: 81
-configs skipped: 3
+                       ^
+There is an encoding issue here
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+>  drivers/thermal/armada_thermal.c                          | 5 +----
 
-tested configs:
-alpha                            allnoconfig    gcc-16.1.0
-alpha                           allyesconfig    gcc-16.1.0
-alpha                              defconfig    gcc-16.1.0
-arc                             allmodconfig    gcc-16.1.0
-arc                             allyesconfig    gcc-16.1.0
-arc                  randconfig-001-20260717    gcc-11.5.0
-arc                  randconfig-002-20260717    gcc-11.5.0
-arm                  randconfig-001-20260717    gcc-11.5.0
-arm                  randconfig-002-20260717    gcc-11.5.0
-arm                  randconfig-003-20260717    gcc-11.5.0
-arm                  randconfig-004-20260717    gcc-11.5.0
-arm64                randconfig-001-20260717    gcc-13.4.0
-arm64                randconfig-002-20260717    gcc-13.4.0
-arm64                randconfig-003-20260717    gcc-13.4.0
-arm64                randconfig-004-20260717    gcc-13.4.0
-csky                            allmodconfig    gcc-16.1.0
-csky                 randconfig-001-20260717    gcc-13.4.0
-csky                 randconfig-002-20260717    gcc-13.4.0
-hexagon              randconfig-001-20260717    gcc-16.1.0
-hexagon              randconfig-002-20260717    gcc-16.1.0
-i386                            allmodconfig    gcc-14
-i386       buildonly-randconfig-001-20260717    gcc-14
-i386       buildonly-randconfig-002-20260717    gcc-14
-i386       buildonly-randconfig-003-20260717    gcc-14
-i386       buildonly-randconfig-004-20260717    gcc-14
-i386       buildonly-randconfig-005-20260717    gcc-14
-i386       buildonly-randconfig-006-20260717    gcc-14
-loongarch                          defconfig    clang-24
-loongarch            randconfig-001-20260717    gcc-16.1.0
-loongarch            randconfig-002-20260717    gcc-16.1.0
-m68k                       mvme147_defconfig    gcc-16.1.0
-nios2                           allmodconfig    gcc-11.5.0
-nios2                            allnoconfig    gcc-11.5.0
-nios2                randconfig-001-20260717    gcc-16.1.0
-nios2                randconfig-002-20260717    gcc-16.1.0
-parisc                          allmodconfig    gcc-16.1.0
-parisc                          allyesconfig    gcc-16.1.0
-parisc                             defconfig    gcc-16.1.0
-parisc               randconfig-001-20260717    gcc-11.5.0
-parisc               randconfig-002-20260717    gcc-11.5.0
-powerpc              randconfig-001-20260717    gcc-11.5.0
-powerpc              randconfig-002-20260717    gcc-11.5.0
-powerpc64            randconfig-001-20260717    gcc-11.5.0
-powerpc64            randconfig-002-20260717    gcc-11.5.0
-riscv                randconfig-001-20260717    clang-24
-riscv                randconfig-002-20260717    clang-24
-s390                 randconfig-001-20260717    clang-24
-s390                 randconfig-002-20260717    clang-24
-sh                                 defconfig    gcc-16.1.0
-sh                   randconfig-001-20260717    clang-24
-sh                   randconfig-002-20260717    clang-24
-sparc                randconfig-001-20260717    gcc-8.5.0
-sparc                randconfig-002-20260717    gcc-8.5.0
-sparc64              randconfig-001-20260717    gcc-8.5.0
-sparc64              randconfig-002-20260717    gcc-8.5.0
-um                   randconfig-001-20260717    gcc-8.5.0
-um                   randconfig-002-20260717    gcc-8.5.0
-x86_64     buildonly-randconfig-001-20260717    gcc-14
-x86_64     buildonly-randconfig-002-20260717    gcc-14
-x86_64     buildonly-randconfig-003-20260717    gcc-14
-x86_64     buildonly-randconfig-004-20260717    gcc-14
-x86_64               randconfig-001-20260717    gcc-14
-x86_64               randconfig-002-20260717    gcc-14
-x86_64               randconfig-003-20260717    gcc-14
-x86_64               randconfig-004-20260717    gcc-14
-x86_64               randconfig-005-20260717    gcc-14
-x86_64               randconfig-006-20260717    gcc-14
-x86_64               randconfig-011-20260717    gcc-12
-x86_64               randconfig-012-20260717    gcc-12
-x86_64               randconfig-013-20260717    gcc-12
-x86_64               randconfig-014-20260717    gcc-12
-x86_64               randconfig-015-20260717    gcc-12
-x86_64               randconfig-016-20260717    gcc-12
-x86_64               randconfig-071-20260717    clang-22
-x86_64               randconfig-072-20260717    clang-22
-x86_64               randconfig-073-20260717    clang-22
-x86_64               randconfig-074-20260717    clang-22
-x86_64               randconfig-075-20260717    clang-22
-x86_64               randconfig-076-20260717    clang-22
-xtensa               randconfig-001-20260717    gcc-8.5.0
-xtensa               randconfig-002-20260717    gcc-8.5.0
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Miqu=C3=A8l
+
