@@ -1,270 +1,551 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011030.outbound.protection.outlook.com [52.101.125.30])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013054.outbound.protection.outlook.com [52.101.127.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5531ADC83;
-	Fri, 17 Jul 2026 08:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CB643F0B5;
+	Fri, 17 Jul 2026 08:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784276473; cv=fail; b=sRLpPEYCl36QWDSrhCCiDSUaOA5FBWtu0EDqgHj3hMRrVZI4FYuXg8zkiJFbZwSFb+SXt8tNI7LGh8V+xOtn20Lq3SFCYynrTq4K5mIpf5EH6blT1k3ORjjsbbzacx5AJPc9vho7jFjmDHQj9AKOoYZjneNzcgQoq0Vo5o4MvUM=
+	t=1784277059; cv=fail; b=pYFXVn/U4V2azLDf+KrX65hMZFCceKucInNnlBinQO3Gu5FLy8c61npaKGI9VSuFQ9I8rv9RZxoxriUxs+Dwew3xAOeG8lSvttdNNCfJkcYfZWLrBTQU3Vr6ICHNeSSdzsl3PdwvCyPjAwY1s07JzxcbHecIGK+w4LWP5ijLtb0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784276473; c=relaxed/simple;
-	bh=hT7weDvz8qOjYaW88xZKWjhkbyTEoaIjEr8PccZ5Rno=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=M5dWl/7C0i3nbDssPNAsy+xPPIZEaQOfdO+MRUNZSffATaL7LgdVa2IEEMKEVMdfQkQxe6sY3r25zScyVI5q6laBjEN8QjODwLJHvGGg0W9o7/Eo3Ho6Qc7cghpeWvTFHJmmllAmc82orZ9gDniwseC6cnuMWH/5BPKHLw20iAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Uvu6vl3v; arc=fail smtp.client-ip=52.101.125.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1784277059; c=relaxed/simple;
+	bh=FOH93tVwHfTCpkerTVS/4rODGKl2KkXhIbsYyI6OFLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HYD9EfmXtUje3S2h2WlHpS7qURZfVhiHtkZlYJpgSJyT+WM6u4BGG1DD78Z92XbuYpDMhnFl1ELIHYiDEUnxtC0oMc4fadDevkvyeuWKDrti4QVwT/QdqlaT4EleFTUj5KZLHNucB7+jtck40LFiwGMVHRaZZbNTTeHQIH6zkhA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bG4h4N2G; arc=fail smtp.client-ip=52.101.127.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Uvu6vl3v"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bG4h4N2G"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KCNpjRkpZ0E/CwOIYYGefZpgCPX+ajj7Ou84+VZUA/HwPu/I4ajkiPkgs5BowrFRSTWmWSNImjOl486Mu593F4Mmd+W94Dal9C3E7p0BUO2XFwQ5ybkCd32ayLVRDSH/xvtbP5a/Wx6LFr8VuTO1Y4waRaUQ6oFOT1bZrhjltzaeI0QHhbxDjFz/6Vkv4r6XDS3yuzCalITXYZNJUqf4H2ZsSGwWyl0bxqSg32HLNtEA0Qqe0TZGbwyx+iYUaN8IIxd3S+zsoz/kI0OjU5bn/5EOHgRO25PVzQmX9w6+tAmDIZliKP6xnDnSfx1jf5U1DhXQEdMGCB2BF4a22YPFOA==
+ b=pzMx+hJFANi2R0SVKuWhUhrj+cfhEshR3PdJYxFdtrsl77ktitGtuiK5SRFI+tY+7BuS7E8ewPg56h8styTB0lLZ6yC7pKcvcFmdSbIGMoGp+kxpH67GBO7adtsa6CfwpNk3X61Fpcu6UuI92XTmi73t1vj7+YMyQHALFqcp28URHBvBOdABG2XX7UD3QRVyBt5P1IOcp1pfo87ww+Xae+IXDnZEpD9COPVTBMCj76oBAYJD7VfLO2L8X+pMICGMgyf4xhPz2y90lVsR3P63P8ExP3ObbiYa48aKZ2OxXHygNLU+vFc4ItETz4vb6a1XAWJC23l4uc0uEUm1RjAXxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Qif4mMlWaDAije5zFfeWl3zW8jxTCHtqgM3P8LdH9M=;
- b=HzRxw+kkHZ6vmMeVS6aSLcOMpx3Qi8IgidqaYfO5YCrHINCgvb7q7ADPuQkD1FQm/wgswZtXwx05cp0WJaKqYcn4hdF4btKYXm8gClYvqwM2C+eK6YQZYASVnfAyAP7sjZQojRhx9tG1K10ZL3PMCXvHlYgPzYCoLHsWWTnvw2jgal34gmPZPzMtx2NlFbclvT43dNAbdyCrcIVNaZET+SvUHS4LBQvVua0iw/qNMx2yXM2fHnJs4Vu7fk0sYt0VlWwXlQk3PRCUdJrXmWKgK2s8X4QOhMfdMs2ITVCYEcxOluwMmMzn1ItALJwkclr+YcMc5nIvQTZPbTFWoYn0GQ==
+ bh=5gYkx7EcHWV3shf17a1q/Ed29QWSLOKCmlQYwRO2qMk=;
+ b=CvRryfis3Hkf0b6uGdO7D2RsG8tXeS9nKIGcIb0s/uJkwQ/I/KB+Bo9Im1V/c25P2t9i1flKlddgEppegHyH8sfU46VKjkai7wIgNWXhF2sdCcPAprL3k0byq5zfkmbuMIpfb0mKs1h2IoGDOCCT7cFEHcsbDqlexapxJBoEYE3DqUp6usx5VYyGJtUN+oA/Vlx/Hcph3SYNlPDH+XZE2vyBoki38nGWZWFFbzRZMrRkKhzODh3jrwSylGKTJeZGm4wZ1dv05GQlHDP5GkxAyEfQ/JKLrkCoka6ZVpJwJtSaAHZ3TDiOdbcyfP5B2In+1iH2M3CAsdW9kQ926PzrlQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Qif4mMlWaDAije5zFfeWl3zW8jxTCHtqgM3P8LdH9M=;
- b=Uvu6vl3v/8bKlofWfI5zos4NlT5PO/F1SEGbcutpWc5lUH+YDqEaCyzw/uIDEd0EbeQrNcrLpa3RMb31GuGz8aZEB+WPSVFEKJntBWFupNktDXeYWUeeZ3+0ynhSLrYmHX43OtJUzl4WBfmFheshHLMzUMVFeZrbW66hA+klV/0=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYRPR01MB16381.jpnprd01.prod.outlook.com (2603:1096:405:13f::5) with
+ bh=5gYkx7EcHWV3shf17a1q/Ed29QWSLOKCmlQYwRO2qMk=;
+ b=bG4h4N2GelSSVTPJ2vL+RRWkXXQIu4Jr0zLPmMJqYJA8DOGmS2NGFLrK/9ywF4gxcLq+/04tmXmd+4z1fjhk0feDw7IcwMFPEWXdS/GkZ8pkf6EX4vfkPipGOoNg/vRGQOIPcveY9KeEhevcyhX6A0ByIyvGVqST9JJNmfo8pNu43It3s5HaFInlqqtT1Ef2PcIsIG1vBP8MJ9iYB+HznrzFdIbOugR4Z1XIV5Xfzrf+qEhxdEF+sS7KMFrOGKgaWTEjZyMtm8ycUdPzIStxu7z88YpWPemoiBqUQU3NEhB1vR7N9G+CHEd9as1TDzFRDNCxVn0X6lumAvzqf6oUEQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5832.apcprd06.prod.outlook.com (2603:1096:101:c8::12)
+ by SEZPR06MB7240.apcprd06.prod.outlook.com (2603:1096:101:22b::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Fri, 17 Jul
- 2026 08:21:07 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0223.011; Fri, 17 Jul 2026
- 08:20:59 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: biju.das.au <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>, magnus.damm <magnus.damm@gmail.com>
-CC: wsa+renesas <wsa+renesas@sang-engineering.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
-	<biju.das.au@gmail.com>
-Subject: RE: [PATCH v20 00/12] Add Renesas RZ/G3L SD/eMMC support
-Thread-Topic: [PATCH v20 00/12] Add Renesas RZ/G3L SD/eMMC support
-Thread-Index: AQHdEvBTpm2/T6tVwkGyyxXNgqGP6bZxY+gw
-Date: Fri, 17 Jul 2026 08:20:59 +0000
-Message-ID:
- <TY3PR01MB11346742C360354F9442B784E86C62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260713175159.138334-1-biju.das.jz@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYRPR01MB16381:EE_
-x-ms-office365-filtering-correlation-id: fdc717ec-ea1f-4881-6dbe-08dee3dc5536
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|7416014|376014|366016|1800799024|38070700021|10067099003|22082099003|56012099006|18002099003|11063799006;
-x-microsoft-antispam-message-info:
- 25TA0DvSLHWyy/2577hRkB/PsJ3ystgpz14J/sR+Iaoy5LKc4FES9h/Wy+wSL+74/L+7msjdG6AU2p6zDXPpIzWaklSlc14vQZEs8UxS3Uw+zRkP86saSAQEA7nsjD3w7Oz5GiMj9AXEPPHEKLSlQDGDRenaMy3jn9w4t+9M3YAYUsMXQ2KeMf5awKcyXGGVrtFEsJV1gR8sfXZwby/KI6YSTnsdb5tYWlp+DF8lPkjAhSGCOwcal1qFW3ugcPmsZGlT1ZYl3eui5aNIrhgIfX9gg0Xk3a9KIxnTze8mzWHrPSNHbGe2I15IQ+GzkCvX8qPAH6Wlz1FYMdIOuG9I4dyc9APSWnf5Lbm5uN3JxqeMt3D9Ehv/7OzTR5nc5cnxUmYycXTokuq+sJC7cmB+ZWn/FmeJlPDBAsar3u4c05Pd4agmUW8xpNn2aDa2+042eFjBfAWj6ifg1L0hvn1LxsIRwBsNIQWnPV4ZrQBFWV0B2lc35h9h7l3j1RbMgrCRehxi3HygF2vinhlLgAQayZgpkEUNs44qiZPEP1ffHhqhW6hC2kZz8/Mr5gRM16l32a8jSIiZ5pE/4siZnmQNgKjJJyh6kMEOV+NNMx5Hhm4oG4Zr62tYLqOlNBZLIRyF7Oyd54JWB/3EMf5029RKnrQXRSyDaECEPpfy+WMoK5lT/85rDixzLcqZrKtsSefHndGPFC6h/anszkOsrpw+mcsuhkUhoorIM3XlmR3b4uY=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(366016)(1800799024)(38070700021)(10067099003)(22082099003)(56012099006)(18002099003)(11063799006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-7?Q?MgNdcEOmNFvFU2fbXkNqIjJxU5mzh+EdZSQRR8Fob8tlxUbx5ZfF7On5iw?=
- =?iso-8859-7?Q?CPtgsYozYGPZflOeedq8vUSkNv7yrW98EoEly2vTAJS8aV0xq8XAs9u4Cm?=
- =?iso-8859-7?Q?6WBXt3PTtS3B4g1/NrOUEMZV5uEJkDpmaWu2CQ8W0YClbwqiZgRRA90IO7?=
- =?iso-8859-7?Q?zNvib1735e9FaBvRLdyC0uhaTsYTV/NTcIUmoIAvlTvecpTmP5PenKTPvx?=
- =?iso-8859-7?Q?4GNOQSyHtbxrQnobyZl5oAn8fqvICGVKC3SWPPIY4udC79CrewCv2wIcPW?=
- =?iso-8859-7?Q?v3jOnDmYiJ38WtOq+HVsXJ8XFDjXHFhEzcGjxG3F8Gpj0nqbBGuvy2U3zn?=
- =?iso-8859-7?Q?lm27wsrtVc4ySdLjOHjkRdDD6MR1rbPmVz+Iy61YZco8OmYCPvOEVVqNth?=
- =?iso-8859-7?Q?p+/qOnFUKjljbno4SF/8iNR31+9SGK+nAMThSykeeQF8fFLIWJOillkQF0?=
- =?iso-8859-7?Q?+/8C0A2OhjHILsGPX95XV7Run4O9t1ogVzNfsLQXHsW7DlzaCXepf8Ys8o?=
- =?iso-8859-7?Q?+ldSqZ8MQY3Uc43wdmIk1kmN67PHk4/NrOV+Fkgrq8JUrb7VC5A6AcHtC2?=
- =?iso-8859-7?Q?oMNZhdb9GF6UNHULuIAPbDjsKKY+MvxeEkNHQ1gUsGscxIhXMdHDvia9oE?=
- =?iso-8859-7?Q?geUBHcBxuWIgD3jQVp9U/spiKskNk4SRp5a3KAbsIVaAp5TKsk/qtHUQbK?=
- =?iso-8859-7?Q?V4KcYkbVl9FG0ElTchJvgy2cg/MFapXN2SnQsO7w4mKaPT2Aq5ZqmwkZ0I?=
- =?iso-8859-7?Q?n0Q+x/89gpMLIePgHvA8XHBw4kV1I9ZKcbuHyz5T0nhYDERWwQJypHJelr?=
- =?iso-8859-7?Q?BxkeF/c6vMRyIEmz6qNWmB7Ecx1pEeeWuIMtkXjbiU4Lo74xllxas0DtLf?=
- =?iso-8859-7?Q?6ceYn7220dvculwCv/k2HlAB2GG3cjXGmQlyByBU7tJbrfnAT+B6CE5n1q?=
- =?iso-8859-7?Q?yOfOoq4LykrzzZqZkzmL5ZfAJwkeuYoi5XKuMezuMNRfGuOVvVxhCNTx0X?=
- =?iso-8859-7?Q?8Sn6asi8+lAtTLweH1+0iA4szdy6PoQt4ZHtv1tH9w2/jlpcjMfyoWIsUV?=
- =?iso-8859-7?Q?/5aI6/t/yVeYVoFP8zEh9DOlcE7CwDRkDNw6YqzHPjnpJPiQXFABTWG42j?=
- =?iso-8859-7?Q?dzn8vHMDNfYY+UEEK+JiCBipFQ2R+kX3ds7qvjdJpw5nqa0WUmeM5SrEko?=
- =?iso-8859-7?Q?eimLNVgFxEqHJ5XRy7wZvQl0iqkB3oD5DcRwYzMesKiTRzrQ/TaW6aUbzg?=
- =?iso-8859-7?Q?umjnX/EScp4m06phQ60bhL/Ntw069kfWbnvJY0B4DabaBA08mKTFbojg1V?=
- =?iso-8859-7?Q?7NKC1HBduClAuC54EyJbFkTKRgn97UiNikx6FipZmjO4Wo7VksfuzghLlH?=
- =?iso-8859-7?Q?RQbte7Szrtve75wEvGxOG44CCIPac7FKFgeQ7oxhss+qcCNsFuCpBMo20i?=
- =?iso-8859-7?Q?gW6eVvK07zF/wWjt7CTQzzob+moYLyPKHouWXZIHev7iLY2qY65S4ZoCLm?=
- =?iso-8859-7?Q?02Wv6lelKJcrv6jVE9l0e4WalhqK4rFiYV2Y+IuqXDNi/KnHhb2Bm3IRRS?=
- =?iso-8859-7?Q?JPmaQ+4FWTA/6ODleJ4hg/3qcInm6cBtw8+3uiz7G/7zG/25vBzraBk0op?=
- =?iso-8859-7?Q?KgTnrNY97w3uMgxNzz7aFi8x2CKEeb4JpdpxDarnWIRVR92/CmZ9uvx4m9?=
- =?iso-8859-7?Q?UFyOCgItpf9BiWVrvhoa25Rddo8plPCSBG8NOQP3M5A1k3OVAQtVwln7Zk?=
- =?iso-8859-7?Q?s0ou1VRv2Va8QG+6/zsgUfxeD1VcKmZIyFCupUsRN+vIHhCjNITH0Hfo/G?=
- =?iso-8859-7?Q?KcOoqC/2Mw=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-7"
-Content-Transfer-Encoding: quoted-printable
+ 2026 08:30:50 +0000
+Received: from SEZPR06MB5832.apcprd06.prod.outlook.com
+ ([fe80::f98:5e32:4ccb:d07b]) by SEZPR06MB5832.apcprd06.prod.outlook.com
+ ([fe80::f98:5e32:4ccb:d07b%6]) with mapi id 15.21.0223.011; Fri, 17 Jul 2026
+ 08:30:50 +0000
+From: Pan Chuang <panchuang@vivo.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Ming Yu <tmyu0@nuvoton.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Yixun Lan <dlan@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE),
+	linux-renesas-soc@vger.kernel.org (open list:ARM/RISC-V/RENESAS ARCHITECTURE),
+	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
+	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support),
+	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE)
+Cc: Pan Chuang <panchuang@vivo.com>
+Subject: [PATCH] gpio: Remove redundant dev_err()/dev_err_probe()
+Date: Fri, 17 Jul 2026 16:30:33 +0800
+Message-Id: <20260717083037.284134-1-panchuang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4P286CA0051.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36e::7) To SEZPR06MB5832.apcprd06.prod.outlook.com
+ (2603:1096:101:c8::12)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5832:EE_|SEZPR06MB7240:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5238d98-d069-4617-5fdf-08dee3ddb4a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|23010399003|1800799024|366016|38350700014|921020|6133799003|11063799006|18002099003|10067099003|56012099006|41080700001;
+X-Microsoft-Antispam-Message-Info:
+	onldSdV5h3YoqawMTcDYBORVYGHYhZJrtmN71JxPbWoHsZ87XA7rGHIutNfvyBeFvTvpACrxBteOX014V/kl2TP3qpOZDML9he93X4sKqUQ7XA/fDIMyPnoCyYSXQUXVtPhWQ03qcugVGef7FMynTV3eUWgSu0MunWtkP6Inwr17M+VLBUxfJfxvtIEc14tlIaVl1HvAyAzrd1tZd/i7AO7OSDSCLs/97IhanhoLdHDjzExZIW/gpyhm6494rVLgH4IVRKHLo0H5CMOMnZ1pGdA5O8GI9q5f3ydNeIXRRO/mdKUYZmzRwey6q4OIwYUk4nEg4y/366TcJgx789D46lBACPsRZd1mAyZ4VmH16XYMBWhhnURVGBHWelK+QGlt/FfkVI048V7rnCc5k1FfEZ1HXuoqOL2FpoeHoQ+Cpx1OL52hX73dJQWNBrh65l2byLcxRaEhgfE2Tuv28Gj37l0VK0XW7n0XJR6HdjVVj9eX6YY/kx6NmusD97VLLSgzTX8bmcjr49ugx5kvZbm8lF0coUZQiOeyPNh4tD1yF+o04giZEyoVF2kjM36FgGhm4sIUUNIY9GsIngg6G4Ewo6uxwRrv4NObwbRir0wSRcqowfhVqWyJuMDYoEVY+m6F+pcc1vZgKsXcZK9VqpC07Yr/U6r5k8kTWuxu5H1ScsFnwQfVadT8PrgdMB+Lmvu1RMMYN/LPKiXMic+76tu59WfcZs7ZCIT5Hr7QEh8tvxE7XkV20LFwuOGPcJntXx/rOqEhTz0MRViAJdEwLamFgw==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5832.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(23010399003)(1800799024)(366016)(38350700014)(921020)(6133799003)(11063799006)(18002099003)(10067099003)(56012099006)(41080700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XOe2i9ObZH0ObXuGG632TEq1xGWczIcXtstlK1M/k29zg3WfNjJd+WUoB/rO?=
+ =?us-ascii?Q?nrxogckjsC2khNWVGxWWGTvTDIGVHX6Pz1X/a9CQq8LIQ0IXTPVYNCyTjQWx?=
+ =?us-ascii?Q?4MAFiwHA/4NC7mp6MdZMizTT/W4+F/tY4htMzER7b2ITfKXYCQQ3+GgWgbCE?=
+ =?us-ascii?Q?bMi+XOLPGDgqPYaZLKR6ZwW0yXvi+ozBJMiNoYDXj6fArT1/p4KNSKoL6xBe?=
+ =?us-ascii?Q?u9rgwBIhIpt1gW80rPhrNDyP2dtYqMxqyY7qScSbRFBCjImfKlaciwNBQMBn?=
+ =?us-ascii?Q?MTe2r+JsFNsbhfH5FEJs2cfHjn+AaO85HiRGCc14Bni2DvaGNUyRosejCHym?=
+ =?us-ascii?Q?FEYffqSIZtdF2yR5mI1oJi+Y0X/rTFE+NAZ18Rr4926jvZkkq6B/qwxpPlgi?=
+ =?us-ascii?Q?PdcUdyo0bWHR7x4sl/80Y1CggwaZZtS1JShRi7BYUUeA/Le08BFBqVYBsxEi?=
+ =?us-ascii?Q?U0rzqaButK0X2cBz9Xp8Hmuzkl5xqFw0EjcRAY3bbdXc36RGhD1t/g4Q1fwR?=
+ =?us-ascii?Q?7NE53RWaL+WM6XNOYBpDKfuODTkFMb7o5T8GXmH8mVn5WWXj/09nSDChzodT?=
+ =?us-ascii?Q?oqbYLTJ8b7DCUtZBcchDDMV9p579nUYRE3vgt7LqeQgbWumgtIoy5SWCCQuw?=
+ =?us-ascii?Q?IfX9p5tMo9qQOdjXx/AGCG9ixD0ftzoSs6hZKHB3s2t37qdfN8hkgxePaqqn?=
+ =?us-ascii?Q?VY6bBzuLrxFh7PqjcGAkO2aKbiG8DyNXAW+jF4ai/5WY6HxtnJXTw+yZR3wz?=
+ =?us-ascii?Q?/4zwKltPdGdfdCm53HgdXMSnHAwtRIaVflsEyH0oWaeesGG/MjwUTLUwWS6G?=
+ =?us-ascii?Q?hw6MIDmOrJmvpWoU702KnuKIOPDaeCbkeiZhuR5u6tifIFlnfmYSNILxx98W?=
+ =?us-ascii?Q?HH/Y5Y7SOmsS6zaxzK+5SSj/bEg2tsiAFTBQpH/xuAa8T1jTcdsU7PziHabv?=
+ =?us-ascii?Q?NIxFIYJgffIdxXXVhDZuD3K5XHOcg+VHPedqPVl9ufMTLgofo2Qmcs8jQo9L?=
+ =?us-ascii?Q?kFBAnbfrjOF6iLk8Vt5LZhqmbcqSVEXudHZBiloERjArIFqew75ELXFJyRYH?=
+ =?us-ascii?Q?GkrbPwBqku2kYXPj7QqD4Qr26GLIC0ChgUclWBga+CArpSxDlcSRLTUrSmWb?=
+ =?us-ascii?Q?OZ0zoSVr62QzrhPf6fMsLyuXK97KctKJKhY9tvpNmf79vdj5q7eWTVj6/RKH?=
+ =?us-ascii?Q?4u+QarN08WEHoBrod3u4LKhUe7YODFaEzQ09PsZuDaCrCiulvwhCBgb8LoLt?=
+ =?us-ascii?Q?PcFbsEW49sm7GNVG0vXe6LJ1wJAyr6Zj34K3FxWuO+yFbQMn4VohvRXSy/2T?=
+ =?us-ascii?Q?jOgWK++mX9kIDocNb3IO2bIvFhcdqmokMQY0bT0XtxNPDMD+AosZQnfjYsVE?=
+ =?us-ascii?Q?cHd+Mo2mNdSu2Z8S2hXyIh+EhdXxiT9dyPmKWmIM90LU7dl11CGRVJY1diMu?=
+ =?us-ascii?Q?JcYltr5VntftklFD34XIPIwPEni2i9lP3RK52kUcXIg5XirTPYGIpY6O/FEW?=
+ =?us-ascii?Q?bx9fM9PwNxZzHERJ9yHtRm8uPRVeTeByO/mdxVhJe0CauPc9SD5Itd44fC8I?=
+ =?us-ascii?Q?BhChgvcaJj1qq6L9VsJkho9NPebg9AnSEY4zxTKr2xALIuSxRQBoTX7ZCEmn?=
+ =?us-ascii?Q?wL/km4Vb1eFMxhVor2y2l1OqiR8XGl/iXzfi6bWAHhKkuOzi0zjzhTuwq6Oc?=
+ =?us-ascii?Q?y9w5bHUXp9LEACrIeBgwfR8YdV+5zRthR8dfwNK+Ys4wrwAGV/lwsOCzJ31o?=
+ =?us-ascii?Q?S17eg8p/xA=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5238d98-d069-4617-5fdf-08dee3ddb4a4
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5832.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdc717ec-ea1f-4881-6dbe-08dee3dc5536
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2026 08:20:59.4921
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 08:30:49.3732
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gf0ETE2yy70dCud/nTKx2yC9ssicgS0qpmw/Jd8tIPo1L2trnx8XH9uoIX1LvuMlVEB1AG74WSSRZFfEtzV+Dpi1cg4qBN1cQhxWkQm2tGY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB16381
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ESOUNe/aRPoYfXJxOuvgT8L76GAiig5qXFQQFDPxuXHK2kSxKE28Z3mHiVTPXAdbflOGBFoI8xmcnUMgjNy/Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7240
 
+Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
+devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq()
+automatically log detailed error messages on failure. Remove the
+now-redundant driver-specific dev_err() and dev_err_probe() calls.
 
-Hi All,
+Signed-off-by: Pan Chuang <panchuang@vivo.com>
+---
+ drivers/gpio/gpio-adnp.c          | 5 +----
+ drivers/gpio/gpio-brcmstb.c       | 4 +---
+ drivers/gpio/gpio-dwapb.c         | 4 +---
+ drivers/gpio/gpio-ep93xx.c        | 2 +-
+ drivers/gpio/gpio-graniterapids.c | 2 +-
+ drivers/gpio/gpio-kempld.c        | 4 +---
+ drivers/gpio/gpio-max732x.c       | 5 +----
+ drivers/gpio/gpio-max77620.c      | 4 +---
+ drivers/gpio/gpio-max77759.c      | 3 +--
+ drivers/gpio/gpio-ml-ioh.c        | 4 +---
+ drivers/gpio/gpio-mlxbf2.c        | 2 +-
+ drivers/gpio/gpio-mlxbf3.c        | 2 +-
+ drivers/gpio/gpio-nct6694.c       | 4 +---
+ drivers/gpio/gpio-nomadik.c       | 4 +---
+ drivers/gpio/gpio-pca953x.c       | 2 +-
+ drivers/gpio/gpio-pch.c           | 2 +-
+ drivers/gpio/gpio-pmic-eic-sprd.c | 4 +---
+ drivers/gpio/gpio-pxa.c           | 9 ---------
+ drivers/gpio/gpio-rcar.c          | 4 +---
+ drivers/gpio/gpio-spacemit-k1.c   | 2 +-
+ drivers/gpio/gpio-stmpe.c         | 2 +-
+ drivers/gpio/gpio-tc3589x.c       | 4 +---
+ drivers/gpio/gpio-wcove.c         | 4 +---
+ drivers/gpio/gpio-xgs-iproc.c     | 4 +---
+ 24 files changed, 23 insertions(+), 63 deletions(-)
 
-I got an update from hardware team for CLK divider bits for HS400 mode.
-This change will incorporate in next version of hardware manual.
-
-
-For HS400 mode:
-
-00 0000 0000b: (SDx=F6/2)/2
-
-Other settings are prohibited.
-
-Cheers,
-Biju
-
-> -----Original Message-----
-> From: Biju <biju.das.au@gmail.com>
-> Sent: 13 July 2026 18:52
-> To: Ulf Hansson <ulfh@kernel.org>; Rob Herring <robh@kernel.org>; Krzyszt=
-of Kozlowski
-> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Geert Uytterhoe=
-ven <geert+renesas@glider.be>;
-> Philipp Zabel <p.zabel@pengutronix.de>; magnus.damm <magnus.damm@gmail.co=
-m>
-> Cc: Biju Das <biju.das.jz@bp.renesas.com>; wsa+renesas <wsa+renesas@sang-=
-engineering.com>; linux-
-> mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel=
-.org; linux-renesas-
-> soc@vger.kernel.org; Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.r=
-enesas.com>; biju.das.au
-> <biju.das.au@gmail.com>
-> Subject: [PATCH v20 00/12] Add Renesas RZ/G3L SD/eMMC support
->=20
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Hi All,
->=20
-> RZ/G3L SoC has:
->=20
-> Channel 0 supports SD and eMMC (including HS400/HS400ES).
-> Channel 1 supports SD and eMMC (except for HS400).
-> Channel 2 supports SD.
->=20
-> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does n=
-ot support IOVS and PWEN in the
-> SDHI register (no internal regulator), unlike SD1 and SD2. It has an inte=
-rnal divider for all modes
-> except HS400.
-> It also has a 2048-bit divider compared to 512 on others. Moreover RZ/G3L=
- supports HS400 enhanced strobe
-> mode.
->=20
-> v19->v20:
->  * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
->    the code after assignment of variable mmd, this ensures assigning
->    the default values for non-DT platforms and DT platforms with no
->    device data.
->  * Replaced the check mmd->max_divider with mmc_data->max_divider and
->    moved the code after assignment of variable mmd, this ensures
->    assigning the default values for non-DT platforms and DT platforms wit=
-h
->    no device data.
->  * Fixed the ordering of resets in suspend/resume paths.
->  * Added bitfield.h header file.
->  * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
->    case and the 32-bit register write.
->  * Updated resume() with scoped PM runtime call.
->  * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
->    register.
-> v18->v19:
->  * Updated commit description for patch#1,#2,#6,#8,#11 and #12
->  * Updated clock and reset description with AXI master and AXI slave
->  * Added else condition for reset and reset-names.
->  * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
->  * Retained the tag got binding patch as the changes are trivial.
->  * Fixed the clk_mask for non-DT platforms.
->  * Fixed max-divider setting for non-DT platforms.
->  * Replaced the magic number '9' with ilog2 function in
->    renesas_sdhi_clk_enable().
->  * Dropped divider variable from struct renesas_sdhi.
->  * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
->    and non HS400 mode(uses 1/2 internal divider).
->  * Updated handling for clk divider.
->  * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
->    hardware tuning delays
->  * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
->  * Updated suspend/resume with scoped runtime calls in suspend.
->  * Fixed extra space in HS400MODE2 comment block.
->  * Updated the comment HS400mode2->HS400MODE2.
->  * Dropped the updation of clk handling as it is taken care in
->    previous patches.
->  * HS400ES support is enabled based on of_data.
->  * Fixed the space in HS400ES comment block.
->=20
-> v17->v18:
->  * Collected tag
->  * Merged patch #4 and #5 and updated commit description
->  * Annotated the empty sentinel entries in the OF match tables with a
->    "Sentinel." comment for clarity.
->  * Retained the tag as it is a trivial cleanup.
->  * New patches drop struct renesas_sdhi_hw_info, instead using
->    renesas_sdhi_of_data and tmio_mmc_data.
->  * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
->    will send later.
-> v1->v17:
->  * Collected tag for binding patch.
->  * Resending the series as there is an issue with patch threading from
->    patch #14.
->=20
-> Biju Das (12):
->   dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
->   mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
->   mmc: renesas_sdhi: Add clk_mask field to support flexible clock
->     divider widths
->   mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
->     ranges
->   mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
->   mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
->   mmc: renesas_sdhi: Add optional axis/axim reset controls
->   mmc: renesas_sdhi: Add RZ/G3L SDHI support
->   mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
->   mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
->   mmc: renesas_sdhi: Add RZ/G3L HS400 support
->   mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
->=20
->  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 +++++--
->  drivers/mmc/host/renesas_sdhi.h               |  11 +-
->  drivers/mmc/host/renesas_sdhi_core.c          | 274 ++++++++++++++----
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c |  73 ++++-
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  12 +-
->  include/linux/platform_data/tmio.h            |  18 ++
->  6 files changed, 408 insertions(+), 88 deletions(-)
->=20
-> --
-> 2.43.0
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index 0410e3adbf54..95dbb774dfc4 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -411,11 +411,8 @@ static int adnp_irq_setup(struct adnp *adnp)
+ 					NULL, adnp_irq,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+ 					dev_name(chip->parent), adnp);
+-	if (err != 0) {
+-		dev_err(chip->parent, "can't request IRQ#%d: %d\n",
+-			adnp->client->irq, err);
++	if (err != 0)
+ 		return err;
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 44ca798cf832..d0e76bb08eda 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -489,10 +489,8 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 					       IRQF_SHARED,
+ 					       "brcmstb-gpio-wake", priv);
+ 
+-			if (err < 0) {
+-				dev_err(dev, "Couldn't request wake IRQ");
++			if (err < 0)
+ 				goto out_free_domain;
+-			}
+ 		}
+ 		priv->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+ 	}
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index aa7c08e60707..0b187adc7262 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -505,10 +505,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		err = devm_request_irq(gpio->dev, pp->irq[0],
+ 				       dwapb_irq_handler_mfd,
+ 				       IRQF_SHARED, DWAPB_DRIVER_NAME, gpio);
+-		if (err) {
+-			dev_err(gpio->dev, "error requesting IRQ\n");
++		if (err)
+ 			goto err_kfree_pirq;
+-		}
+ 	} else {
+ 		girq->num_parents = pirq->nr_irqs;
+ 		girq->parents = pirq->irq;
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 8784e433e1ff..778cd48af8ac 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -305,7 +305,7 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 		ret = devm_request_irq(dev, irq, ep93xx_ab_irq_handler,
+ 				       IRQF_SHARED, gc->label, gc);
+ 		if (ret)
+-			return dev_err_probe(dev, ret, "requesting IRQ: %d\n", irq);
++			return ret;
+ 
+ 		girq->parents[0] = irq;
+ 	} else { /* F irqchip */
+diff --git a/drivers/gpio/gpio-graniterapids.c b/drivers/gpio/gpio-graniterapids.c
+index 2d0fe3abd5e0..660140198dd9 100644
+--- a/drivers/gpio/gpio-graniterapids.c
++++ b/drivers/gpio/gpio-graniterapids.c
+@@ -341,7 +341,7 @@ static int gnr_gpio_probe(struct platform_device *pdev)
+ 	ret = devm_request_irq(dev, irq, gnr_gpio_irq, IRQF_SHARED | IRQF_NO_THREAD,
+ 			       dev_name(dev), priv);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to request interrupt\n");
++		return ret;
+ 
+ 	gnr_gpio_init_pin_ro_bits(dev, priv->reg_base + GNR_CFG_LOCK_OFFSET,
+ 				  priv->ro_bitmap);
+diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
+index 5a63df3ea5fa..1d80994ca44e 100644
+--- a/drivers/gpio/gpio-kempld.c
++++ b/drivers/gpio/gpio-kempld.c
+@@ -373,10 +373,8 @@ static int kempld_gpio_irq_init(struct device *dev,
+ 					NULL, kempld_gpio_irq_handler,
+ 					IRQF_ONESHOT, chip->label,
+ 					gpio);
+-	if (ret) {
+-		dev_err(dev, "failed to request irq %d\n", irq);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+index 24c67c912954..7713937ea3fe 100644
+--- a/drivers/gpio/gpio-max732x.c
++++ b/drivers/gpio/gpio-max732x.c
+@@ -515,11 +515,8 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+ 				NULL, max732x_irq_handler, IRQF_ONESHOT |
+ 				IRQF_TRIGGER_FALLING | IRQF_SHARED,
+ 				dev_name(&client->dev), chip);
+-		if (ret) {
+-			dev_err(&client->dev, "failed to request irq %d\n",
+-				client->irq);
++		if (ret)
+ 			return ret;
+-		}
+ 
+ 		girq = &chip->gpio_chip.irq;
+ 		gpio_irq_chip_set_chip(girq, &max732x_irq_chip);
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 2bf3b55a61b5..eb479e1b48aa 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -356,10 +356,8 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
+ 					max77620_gpio_irqhandler, IRQF_ONESHOT,
+ 					"max77620-gpio", mgpio);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpio-max77759.c b/drivers/gpio/gpio-max77759.c
+index da3c77dd574e..c8761e825e16 100644
+--- a/drivers/gpio/gpio-max77759.c
++++ b/drivers/gpio/gpio-max77759.c
+@@ -488,8 +488,7 @@ static int max77759_gpio_probe(struct platform_device *pdev)
+ 					IRQF_ONESHOT | IRQF_SHARED,
+ 					dev_name(&pdev->dev), chip);
+ 	if (ret < 0)
+-		return dev_err_probe(&pdev->dev, ret,
+-				     "Failed to request IRQ\n");
++		return ret;
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 6576e5dcb0ee..c77b6e6abf08 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -469,10 +469,8 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 	chip = chip_save;
+ 	ret = devm_request_irq(dev, pdev->irq, ioh_gpio_handler,
+ 			       IRQF_SHARED, KBUILD_MODNAME, chip);
+-	if (ret != 0) {
+-		dev_err(dev, "%s request_irq failed\n", __func__);
++	if (ret != 0)
+ 		return ret;
+-	}
+ 
+ 	pci_set_drvdata(pdev, chip);
+ 
+diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
+index 4e2f3381d82b..f7b6a260e93f 100644
+--- a/drivers/gpio/gpio-mlxbf2.c
++++ b/drivers/gpio/gpio-mlxbf2.c
+@@ -411,7 +411,7 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(dev, irq, mlxbf2_gpio_irq_handler,
+ 				       IRQF_SHARED, name, gs);
+ 		if (ret)
+-			return dev_err_probe(dev, ret, "failed to request IRQ");
++			return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gs);
+diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
+index 566326644a2c..369c34d34b9e 100644
+--- a/drivers/gpio/gpio-mlxbf3.c
++++ b/drivers/gpio/gpio-mlxbf3.c
+@@ -248,7 +248,7 @@ static int mlxbf3_gpio_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(dev, irq, mlxbf3_gpio_irq_handler,
+ 				       IRQF_SHARED, dev_name(dev), gs);
+ 		if (ret)
+-			return dev_err_probe(dev, ret, "failed to request IRQ");
++			return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gs);
+diff --git a/drivers/gpio/gpio-nct6694.c b/drivers/gpio/gpio-nct6694.c
+index a8607f0d9915..6cbfa90e723d 100644
+--- a/drivers/gpio/gpio-nct6694.c
++++ b/drivers/gpio/gpio-nct6694.c
+@@ -476,10 +476,8 @@ static int nct6694_gpio_probe(struct platform_device *pdev)
+ 	ret = devm_request_threaded_irq(dev, data->irq, NULL, nct6694_irq_handler,
+ 					IRQF_ONESHOT | IRQF_SHARED,
+ 					"gpio-nct6694", data);
+-	if (ret) {
+-		dev_err_probe(dev, ret, "Failed to request irq\n");
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	return devm_gpiochip_add_data(dev, &data->gpio, data);
+ }
+diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
+index 208fed631975..faf9ceb9a323 100644
+--- a/drivers/gpio/gpio-nomadik.c
++++ b/drivers/gpio/gpio-nomadik.c
+@@ -694,10 +694,8 @@ static int nmk_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_request_irq(dev, irq, nmk_gpio_irq_handler, IRQF_SHARED,
+ 			       dev_name(dev), nmk_chip);
+-	if (ret) {
+-		dev_err_probe(dev, ret, "failed requesting IRQ\n");
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	if (!nmk_chip->is_mobileye_soc) {
+ 		clk_enable(nmk_chip->clk);
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index f6b870b7b352..703f09e6ba6e 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1094,7 +1094,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 					IRQF_ONESHOT | IRQF_SHARED, dev_name(dev),
+ 					chip);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to request irq\n");
++		return ret;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 4ffa0955a9e3..96bbaf7c23a9 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -397,7 +397,7 @@ static int pch_gpio_probe(struct pci_dev *pdev,
+ 	ret = devm_request_irq(dev, pdev->irq, pch_gpio_handler,
+ 			       IRQF_SHARED, KBUILD_MODNAME, chip);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to request IRQ\n");
++		return ret;
+ 
+ 	return pch_gpio_alloc_generic_chip(chip, irq_base, gpio_pins[chip->ioh]);
+ }
+diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+index cb015fb5c946..16851647a918 100644
+--- a/drivers/gpio/gpio-pmic-eic-sprd.c
++++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+@@ -332,10 +332,8 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
+ 					sprd_pmic_eic_irq_handler,
+ 					IRQF_ONESHOT | IRQF_NO_SUSPEND,
+ 					dev_name(&pdev->dev), pmic_eic);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to request PMIC EIC IRQ.\n");
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	pmic_eic->chip.label = dev_name(&pdev->dev);
+ 	pmic_eic->chip.ngpio = SPRD_PMIC_EIC_NR;
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 5d61053e0596..d0a6f93a63c1 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -683,24 +683,15 @@ static int pxa_gpio_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(&pdev->dev,
+ 				       irq0, pxa_gpio_direct_handler, 0,
+ 				       "gpio-0", pchip);
+-		if (ret)
+-			dev_err(&pdev->dev, "request of gpio0 irq failed: %d\n",
+-				ret);
+ 	}
+ 	if (irq1 > 0) {
+ 		ret = devm_request_irq(&pdev->dev,
+ 				       irq1, pxa_gpio_direct_handler, 0,
+ 				       "gpio-1", pchip);
+-		if (ret)
+-			dev_err(&pdev->dev, "request of gpio1 irq failed: %d\n",
+-				ret);
+ 	}
+ 	ret = devm_request_irq(&pdev->dev,
+ 			       irq_mux, pxa_gpio_demux_handler, 0,
+ 				       "gpio-mux", pchip);
+-	if (ret)
+-		dev_err(&pdev->dev, "request of gpio-mux irq failed: %d\n",
+-				ret);
+ 
+ 	pxa_gpio_chip = pchip;
+ 
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 09bebde5c426..428c010eff40 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -560,10 +560,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	irq_domain_set_pm_device(gpio_chip->irq.domain, dev);
+ 	ret = devm_request_irq(dev, p->irq_parent, gpio_rcar_irq_handler,
+ 			       IRQF_SHARED, name, p);
+-	if (ret) {
+-		dev_err(dev, "failed to request IRQ\n");
++	if (ret)
+ 		goto err1;
+-	}
+ 
+ 	if (p->info.has_inen) {
+ 		pm_runtime_get_sync(dev);
+diff --git a/drivers/gpio/gpio-spacemit-k1.c b/drivers/gpio/gpio-spacemit-k1.c
+index 5fe813b7f9bb..d73d1b71ee61 100644
+--- a/drivers/gpio/gpio-spacemit-k1.c
++++ b/drivers/gpio/gpio-spacemit-k1.c
+@@ -254,7 +254,7 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+ 					IRQF_ONESHOT | IRQF_SHARED,
+ 					gb->chip.gc.label, gb);
+ 	if (ret < 0)
+-		return dev_err_probe(dev, ret, "failed to register IRQ\n");
++		return ret;
+ 
+ 	ret = devm_gpiochip_add_data(dev, gc, gb);
+ 	if (ret)
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 6faf30347a36..090f91590fb0 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -515,7 +515,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 		ret = devm_request_threaded_irq(dev, irq, NULL, stmpe_gpio_irq,
+ 						IRQF_ONESHOT, "stmpe-gpio", stmpe_gpio);
+ 		if (ret)
+-			return dev_err_probe(dev, ret, "unable to register IRQ handler\n");
++			return ret;
+ 
+ 		girq = &stmpe_gpio->chip.irq;
+ 		gpio_irq_chip_set_chip(girq, &stmpe_gpio_irq_chip);
+diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
+index 90d048f9da08..5cb85649dc36 100644
+--- a/drivers/gpio/gpio-tc3589x.c
++++ b/drivers/gpio/gpio-tc3589x.c
+@@ -358,10 +358,8 @@ static int tc3589x_gpio_probe(struct platform_device *pdev)
+ 					irq, NULL, tc3589x_gpio_irq,
+ 					IRQF_ONESHOT, "tc3589x-gpio",
+ 					tc3589x_gpio);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to get irq: %d\n", ret);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	return devm_gpiochip_add_data(&pdev->dev, &tc3589x_gpio->chip, tc3589x_gpio);
+ }
+diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
+index 4a5e20e936a9..d538cc0d5d9a 100644
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -467,10 +467,8 @@ static int wcove_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_request_threaded_irq(dev, virq, NULL, wcove_gpio_irq_handler,
+ 					IRQF_ONESHOT, pdev->name, wg);
+-	if (ret) {
+-		dev_err(dev, "Failed to request irq %d\n", virq);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	ret = devm_gpiochip_add_data(dev, &wg->chip, wg);
+ 	if (ret) {
+diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
+index 77eb29dcc217..5f147d3bb0ee 100644
+--- a/drivers/gpio/gpio-xgs-iproc.c
++++ b/drivers/gpio/gpio-xgs-iproc.c
+@@ -271,10 +271,8 @@ static int iproc_gpio_probe(struct platform_device *pdev)
+ 		 */
+ 		ret = devm_request_irq(dev, irq, iproc_gpio_irq_handler,
+ 				       IRQF_SHARED, chip->gen_gc.gc.label, &chip->gen_gc.gc);
+-		if (ret) {
+-			dev_err(dev, "Fail to request IRQ%d: %d\n", irq, ret);
++		if (ret)
+ 			return ret;
+-		}
+ 
+ 		girq = &chip->gen_gc.gc.irq;
+ 		gpio_irq_chip_set_chip(girq, &iproc_gpio_irq_chip);
+-- 
+2.34.1
 
