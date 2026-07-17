@@ -1,162 +1,233 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134E0175A6C;
-	Fri, 17 Jul 2026 12:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7A627FD43
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 14:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784291135; cv=none; b=g7TqRjTiWLH9akEKXqKUxeBpu6ke2Y8cYMMSyngp+c9APwpdFZG+SNMwxrFCvXcz+PrKOueV6g2SE8GiIR/mEGPI48EoRXjGmIZ9x8YQAvWa7OyiMpuOQT9NNTTJo6g8lvUtJNM8LSAojDW1Ae8MduK45z4I8iOsfYXSO1oDblY=
+	t=1784296970; cv=none; b=AeeqpY2LvcHAGjn3fm1RRQ8vNtbhTEwSjfzn5ldzvWvW2dcMhIYcrY4hknpQUnUGBpLw36ZZi8Q4pnTnveqzmQ68v1RiUpa6n7TdA2YJIhZ9+2OgG21Qs5JDmfNWsaDXyywQchRIWqz3c42AWHwteaYhxZiE8VSGwX32maqKEyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784291135; c=relaxed/simple;
-	bh=LIrveOCfC/Nm2xJTklxOIDfpSLD9jwkNtd1XzE9uHnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHYDL3Ga7gnIoA//0OXu/qPSiR1ylxr7HQ38DQ+ytx43QyvCQZcROpV1z4yQlEv20RprsHY7aG9YOk+WSxwzjXvRaD2aMNTJ9Al/zqhwrmYkHdtErT2H7eiXlUf23r1aVSYh/O+1sang2IE1rZaAHq4VRAfqKg9obfthTRpEGAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fUUzWve9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1784296970; c=relaxed/simple;
+	bh=CBR1Ph2kUJjjkYaGrdkvqaa4iWlYMfiXDLEZXyTQZ1o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hhc1Pi/8ujnimAgKb/1nzAjhCf2YlVdTgQN5fJf0qiBJZAEQ90XjGwkNEtsrf3KG39Y1/5J/GDqaRWy+yZAOPrlCGnVzHH82dyYdL4vo7glaXjxStghXKPmJJ6Erd1vwo+aNvTPH+2IBnaSZRFEBr6p4U9Tp2z3Blq/v7qfi4Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O3gTq6Kt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fUUzWve9"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 299B5192C;
-	Fri, 17 Jul 2026 14:24:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1784291075;
-	bh=LIrveOCfC/Nm2xJTklxOIDfpSLD9jwkNtd1XzE9uHnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fUUzWve9M6ijhuqHco2oiiamtGr16UN66GYsD4wsoE6ZUuICZGnrrOsuY5ORgwwrn
-	 1/LN6VAO2Z8g2+R8JNX5RgzffNCi4svhKJLQyW9nJOlG8OIM3MKFfqCxsMpvbdVbiH
-	 +XUx40XMcM8J65RHuLMDh3hZPw6AdyvsXqlvVmcE=
-Date: Fri, 17 Jul 2026 15:25:30 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow
- hardcoding EDID
-Message-ID: <20260717122530.GA1955120@killaraus.ideasonboard.com>
-References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
- <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
- <20260706-capable-beaver-of-excellence-a3cf10@houat>
- <20260706094522.GA42740@killaraus.ideasonboard.com>
- <20260706-fancy-perch-of-satiation-0c220e@houat>
- <20260706160243.GB106045@killaraus.ideasonboard.com>
- <20260707-meaty-chocolate-lemming-fa9ead@houat>
- <20260707080143.GA211515@killaraus.ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O3gTq6Kt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784296968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KXAKRwDTnzEg9ZBBk/oAwaIuZZpboPYGh9kDsncZq0U=;
+	b=O3gTq6KtdvGL4BNqq5DgXzoWiTDNuudqPlcwBA7a6Xd/I3DbqyoPanLVB++7yswd1KQmrA
+	89wZ+RgFvqmO5AZ8EOqMqwk44w6+O3e++FnUQZP5+L7FBPBCesuJrA9/BjqyxfVgLtyxqe
+	ghrDQ2C1r1B51fRdF1vA6g7JyOz5O0k=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-439-Yb86uWQwMq65dWAFJOh-cw-1; Fri,
+ 17 Jul 2026 10:02:43 -0400
+X-MC-Unique: Yb86uWQwMq65dWAFJOh-cw-1
+X-Mimecast-MFC-AGG-ID: Yb86uWQwMq65dWAFJOh-cw_1784296960
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2D201955EA8;
+	Fri, 17 Jul 2026 14:02:38 +0000 (UTC)
+Received: from [192.168.1.153] (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 342F318005B3;
+	Fri, 17 Jul 2026 14:02:18 +0000 (UTC)
+From: Albert Esteve <aesteve@redhat.com>
+Subject: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
+Date: Fri, 17 Jul 2026 16:02:03 +0200
+Message-Id: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260707080143.GA211515@killaraus.ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOyw6CMBAF0F8hXVvTF2105X8YQ/oYoAuKabFqC
+ P9uwYUx0eWdzD0zM0oQPSR0rGYUIfvkx1AC31XI9jp0gL0rGTHCJKkpxy4OTYTWjrcwNXcffei
+ wgBpUreBAhEKleS0L/rGp50vJvU/TGJ/bkUzX6duTTP70MsUEW6upVoYbB+0pguv1tLfjgFYws
+ w+i/jyVWUEcN0bSVhgn3BeyLMsLlq5UcPwAAAA=
+X-Change-ID: 20260513-drm_refcount_wiring-4e5e757e9047
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, 
+ Stefan Agner <stefan@agner.ch>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+ Jyri Sarha <jyri.sarha@iki.fi>, Jingoo Han <jingoohan1@gmail.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Albert Esteve <aesteve@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784296938; l=6089;
+ i=aesteve@redhat.com; s=20260303; h=from:subject:message-id;
+ bh=CBR1Ph2kUJjjkYaGrdkvqaa4iWlYMfiXDLEZXyTQZ1o=;
+ b=wkA63uP1ZKoAa4h64tde85ydj2YqROznD17VIE6GUQVqeRP94Romw2NP7XiRctsK48Czd8IKA
+ egJVcLgipY8AlirQeQbG5HkLYCJmhqolZb8CsYQG+KwOXgQPNcCRePK
+X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
+ pk=YSFz6sOHd2L45+Fr8DIvHTi6lSIjhLZ5T+rkxspJt1s=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hi Maxime,
+The drm_panel subsystem provides kref-based reference counting [1]
+(drm_panel_get/put) but almost nothing in the tree actually uses it.
+This results in a systemic use-after-free pattern throughout the codebase.
 
-On Tue, Jul 07, 2026 at 11:01:43AM +0300, Laurent Pinchart wrote:
-> On Tue, Jul 07, 2026 at 09:46:52AM +0200, Maxime Ripard wrote:
-> > On Mon, Jul 06, 2026 at 07:02:43PM +0300, Laurent Pinchart wrote:
-> > > On Mon, Jul 06, 2026 at 05:40:30PM +0200, Maxime Ripard wrote:
-> > > > On Mon, Jul 06, 2026 at 12:45:22PM +0300, Laurent Pinchart wrote:
-> > > > > On Mon, Jul 06, 2026 at 10:52:32AM +0200, Maxime Ripard wrote:
-> > > > > > On Mon, Jul 06, 2026 at 12:35:39AM +0300, Laurent Pinchart wrote:
-> > > > > > > Since DDC version 2, introduced in 1996, VGA monitors have exposed EDID
-> > > > > > > data over an I2C bus. The bus is also used to detect the presence of a
-> > > > > > > connected monitor by trying to read the EDID data.
-> > > > > > > 
-> > > > > > > Some devices where the VGA display is integrated in the device and
-> > > > > > > always connected do not connect the DDC pins. Some development boards,
-> > > > > > > such as the Renesas M3N Salvator-XS, also do not connect the DDC pins.
-> > > > > > > 
-> > > > > > > To support those, add the ability to provide hardcoded EDID data in the
-> > > > > > > device tree. This is mutually exclusive with specifying a DDC bus, and
-> > > > > > > can only be done when the VGA display is guaranteed to be always
-> > > > > > > connected.
-> > > > > > > 
-> > > > > > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > > > > 
-> > > > > > This feels redundant with the EDID firmware loading mechanism we have in
-> > > > > > KMS already. It should at least be mentioned why we would need to set it
-> > > > > > in the device tree at all.
-> > > > > 
-> > > > > Very good question.
-> > > > > 
-> > > > > I assume you're talking about CONFIG_DRM_LOAD_EDID_FIRMWARE, as the
-> > > > > debugfs override_edid feature isn't meant for production. If there are
-> > > > > other relevant mechanisms I'm not aware of, please let me know.
-> > > > 
-> > > > No, that's indeed what I meant.
-> > > > 
-> > > > > In the use case at hand, the VGA display is an integral part of the
-> > > > > device, the same way an LVDS or DSI panel would be. Using
-> > > > > CONFIG_DRM_LOAD_EDID_FIRMWARE, the manufacturer would need to set the
-> > > > > drm.edid_firmware command line parameter, and provide EDID as a file in
-> > > > > /lib/firmware/ (possibly in an initramfs). Beside the complexity, and
-> > > > > the fact it won't be very friendly to people who run a different
-> > > > > userspace on the device, I think EDID counts in this case as system
-> > > > > description, the same way we support specifying panel timings in device
-> > > > > tree.
-> > > > 
-> > > > It's *some* hardware description, but you have no idea whether it's
-> > > > actually the hardware you're running from. What would be in that EDID
-> > > > anyway?
-> > > 
-> > > It would be the EDID corresponding to the connected display :-) I see it
-> > > as identical to how a user of the simple panel driver is responsible for
-> > > listing the timings corresponding to the hardware in the device tree.
-> > 
-> > What's the expected user-experience for someone with that board
-> > unplugging a display and plugging another then? Update the device tree,
-> > rebuild it, rebuild the firmware and / or resign it and reboot?
-> 
-> The whole point is that they can't easily unplug the display. This patch
-> series is meant to support devices where the display is an integral part
-> of the device. The user experience is expected to be the same as for a
-> user who will take a phone, remove the display panel, and plug a
-> different one. It's certainly possible, and they would have to update
-> the DT indeed.
-> 
-> > That doesn't sound very practical, and even impossible in some cases.
-> > 
-> > > > There's another alternative we've used several times already, in
-> > > > simple-bridge for example: just register any VESA mode up to a given
-> > > > resolution:
-> > > > https://elixir.bootlin.com/linux/v7.1.2/source/drivers/gpu/drm/bridge/simple-bridge.c#L66
-> > > 
-> > > I don't see how that would help. The goal is to provide the kernel with
-> > > the data corresponding to the display integrated in the device.
-> > 
-> > How is that not helping? Your problem is that you have a display you
-> > can't get the supported resolutions from. What I'm suggesting allows you
-> > to create all the possible resolutions for that display, allowing the
-> > user to use the display, which is what we did for multiple drivers with
-> > the same problem.
-> 
-> How would the possible resolutions be provided to the kernel ? Isn't it
-> the whole point of EDID ?
-> 
-> > You seem to be set on providing the EDID to the kernel, but it's a
-> > terrible idea to begin with, so I'd rather discuss alternatives.
-> 
-> Could you elaborate on why it is a terrible idea ?
+This series aims to close all those issues.
 
-I'd be happy to continue this discussion when you'll have time.
+Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+a counted reference for the list entry. drm_panel_bridge_add_typed()
+now holds a counted reference for the lifetime of the panel_bridge.
 
+Patch 3: change the semantics of of_drm_find_panel(). It now acquires
+a reference before returning, under panel_lock. All in-tree callers
+of of_drm_find_panel() and drm_of_find_panel_or_bridge() are updated.
+Two patterns are common in these fixes:
+
+- Bridge-wrapping: the panel is passed to devm_drm_panel_bridge_add()
+  or equivalent, which acquires its own reference. The caller (including
+  devm_drm_of_get_bridge() and drmm_of_get_bridge()) releases its lookup
+  reference immediately after.
+- Store-and-use: the panel pointer is kept in a driver struct and
+  used directly for the device lifetime. The reference is released in the
+  remove/unbind path, or via devm_add_action_or_reset() where no explicit
+  teardown function exists.
+
+Patch 4: extend the same fix to find_panel_by_fwnode(), a static helper
+used internally by drm_panel_add_follower(). Since it has no external
+callers, the fix is self-contained: drm_panel_remove_follower() is
+updated to call drm_panel_put() to balance the reference.
+
+In order to catch all places in the tree that required releasing the
+reference, the search was assisted by an AI model. Specifically, a
+Coccinelle script was designed by the agent to address the trivial changes
+(not included in the series). Although a few required manual fixes, with goto
+labels or bracket additions. Additionally, the model helped to discern implicit
+teardown paths that were addressed with devm_add_action_or_reset() calls.
+Thus, these commits have the Assisted-by label following the project guidelines.
+
+No functional change is intended for any driver. The reference
+counting only affects object lifetime; panel operations are unaffected.
+
+[1] https://lore.kernel.org/all/20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com/
+
+Signed-off-by: Albert Esteve <aesteve@redhat.com>
+---
+Changes in v3:
+- Squashed patches 3 and 5
+- Fix probe failure paths that leaked reference
+- Fix UAF and other smaller issues found by Sashiko
+- Add comment in tegra-dsi explaining why panel is always
+  NULL in that path and so no early drm_panel_put() is required
+- Link to v2: https://lore.kernel.org/r/20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com
+
+Changes in v2:
+- Squash of_drm_find_panel() API change with its caller fixes
+- Split find_panel_by_fwnode() into its own commit
+- Update kernel-doc for drm_of_find_panel_or_bridge()
+- Link to v1: https://lore.kernel.org/r/20260626-drm_refcount_wiring-v1-0-cca1a7b3bdef@redhat.com
+
+---
+Albert Esteve (4):
+      drm/panel: have drm_panel_add/remove manage a list reference
+      drm/bridge/panel: hold a reference to the wrapped panel
+      drm/panel: of_drm_find_panel() return a counted reference
+      drm/panel: find_panel_by_fwnode() return a counted reference
+
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 12 +++++++++++
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  1 +
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |  1 +
+ drivers/gpu/drm/bridge/lvds-codec.c                |  1 +
+ drivers/gpu/drm/bridge/panel.c                     | 20 ++++++++++++++----
+ drivers/gpu/drm/bridge/samsung-dsim.c              |  1 +
+ drivers/gpu/drm/bridge/ssd2825.c                   |  1 +
+ drivers/gpu/drm/bridge/tc358767.c                  |  2 ++
+ drivers/gpu/drm/bridge/tc358768.c                  |  1 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c             |  1 +
+ drivers/gpu/drm/drm_of.c                           |  3 ++-
+ drivers/gpu/drm/drm_panel.c                        | 24 +++++++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_dp.c                 | 19 ++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  3 +++
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          | 18 ++++++++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c                |  3 +++
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  4 +++-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        | 12 +++++++++++
+ drivers/gpu/drm/mcde/mcde_drv.c                    |  1 +
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |  1 +
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  1 +
+ drivers/gpu/drm/omapdrm/dss/output.c               |  1 +
+ drivers/gpu/drm/pl111/pl111_drv.c                  |  1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c  |  1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  1 +
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c   |  1 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 11 ++++++++++
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |  4 ++++
+ drivers/gpu/drm/rockchip/rockchip_rgb.c            |  3 +++
+ drivers/gpu/drm/sti/sti_dvo.c                      |  3 +++
+ drivers/gpu/drm/stm/ltdc.c                         |  1 +
+ drivers/gpu/drm/stm/lvds.c                         | 12 ++++++++---
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 | 13 ++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 13 ++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  2 ++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |  6 +++++-
+ drivers/gpu/drm/tegra/dsi.c                        |  5 +++++
+ drivers/gpu/drm/tegra/output.c                     | 24 +++++++++++++++++++---
+ drivers/gpu/drm/tidss/tidss_kms.c                  | 16 ++++++++++-----
+ drivers/gpu/drm/tve200/tve200_drv.c                |  1 +
+ 40 files changed, 225 insertions(+), 24 deletions(-)
+---
+base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
+change-id: 20260513-drm_refcount_wiring-4e5e757e9047
+
+Best regards,
 -- 
-Regards,
+Albert Esteve <aesteve@redhat.com>
 
-Laurent Pinchart
