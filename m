@@ -1,96 +1,153 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF542DCF57;
-	Fri, 17 Jul 2026 09:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EFF3D25A6;
+	Fri, 17 Jul 2026 10:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784282236; cv=none; b=ZU0jI7cD5deXQDTDWne504v6sdMJF1bb/vvhQP/HDdfo/5mTA2V4M9HgUvI/TS4Bnf//5WBkC7LQsPOEcyR9I6aKxQUyVuU09tJf7Y3LgOwX2mm/xG6T7tLOz1At87o27lbyRC8/9uKCD5DMCLob6ROAJM+IR5AoHtekG02+e+o=
+	t=1784283823; cv=none; b=WpVi3LX72TUO0GNdEIgu4Lo5S2NEqBD5k8j9W1bJmlZgb5mDwMrqWCVyODQTY3RmBmiK7P0x05S38iXPc7pN+hK8rDXatOiizX9qbui+vDSb8ODkLiV4G6ZfEX5yLuFT8RknbJ3zC9LFtvWzi52/jgAIGC4LFmGjllF6rEWckQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784282236; c=relaxed/simple;
-	bh=53cQQbHnKYTUlIp1/Oe1lnHotiqeGBENPlrWHZNDVy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jk0wVFNAdDoKwzUYV1wxXb/n/Ka5a7dFkOG4eNtUp4KZ0SDL44LwaufYN/VsewKCYaJKWz3aigOqiST1GLIVe9twc6i6MP754j9mYOvqzGlBTSkPfp9iCLpI3F5BvxGCGZP6y2sTV5mu7eBG6ycjymEVEM1mDEPQ32+y89bhXAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1n4OiNv+; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784283823; c=relaxed/simple;
+	bh=tGvidDqf6jtkfzTcLaP8DnYMHTXgmGClLCAu67eKaQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfQ25/7hgeTqr1u5WbGncskB2GHKMfaIBIC446lMfc4iZK6L+I9Ed8UN1gNqQgmYq53j98HYsvH/EYyLOqyrKczfmj2OS078TxeZYYDjXg2oXqy7OFxmt/56YEflJLMdBzdCsyl10OxHvrY1cWcalpu7CXL279xbOa4JdXsFprg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwjeFEh+; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1n4OiNv+"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1F1754E40E15;
-	Fri, 17 Jul 2026 09:57:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DF2C260361;
-	Fri, 17 Jul 2026 09:57:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E4D8F11BD0424;
-	Fri, 17 Jul 2026 11:57:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784282233; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=m09xP2eVOvf/ABP75jSTVRTHgDA66h9ZeoreFZaMOj8=;
-	b=1n4OiNv+55sW1TOx8XiPJQYrs86vnE0BroLgDJM1t+vv/Llxdm2c0O+Wapz1RGKBPIKOO3
-	KrXV1paMgENiPiMw8eJizB/GVXALQQqIFJoAxm5NCt38mL8uImFTAtQeWl7AeluhD8DpBE
-	XXQRjD7SopQYlI0WBqbloVnK8L8Jn2y7wMQ8eao4dP2bpc0HYg5HJLAEggXnekGYB1Xbux
-	IHFJxB+KOLMV/LepegEWTMgz20ihZqckblAdsREBDadsv3OAuStSidApe2j7rZsYpBEA0X
-	7eFhVu9JL/QJQtUGK07U1nQG+hmf+ljL7xKmWvIFxLJHaDWoBN9OP01ZWVCqFw==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwjeFEh+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784283822; x=1815819822;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tGvidDqf6jtkfzTcLaP8DnYMHTXgmGClLCAu67eKaQY=;
+  b=dwjeFEh+1V7ytPYzCuiqX4FWeqbfCx8D9cw46bZ6+Qh9xsLtM8Lfir0R
+   e2PVqEzEcsZKE7J42hwccsKu94Sj/GUWlAHW6jPRNYGbRPxWRz7vo5rIo
+   jUK/RFHL3tsNDeJ9TUg7qQkqGgDDq1RsMiyh5dw8tcbHLMGWVTDw31n31
+   5uYlI7GPdt0Xb3sPYQsbKp/gxNd+PiQAsfbLKVwsp9BmdFhyVGsd+dKch
+   WGB+2egtENWIKA44Evr23UwC6vWbdyc+765A1T8NIr1h8J23K44L+5djv
+   cCnkHgIfhMveiTEvA6c6UQ5JWvfSW8H5Tqcoc6zr5nmQMCsrJ3lvR+zSk
+   w==;
+X-CSE-ConnectionGUID: yFeYlnnQS0yHPK+BL7dpmA==
+X-CSE-MsgGUID: MubOQTJSSm+DPSbMvzavJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="95555312"
+X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; 
+   d="scan'208";a="95555312"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:23:41 -0700
+X-CSE-ConnectionGUID: HwnTdJuoTTmMif+Zc0HdWA==
+X-CSE-MsgGUID: Bz+8y56PT0i4xLSMqjGqew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; 
+   d="scan'208";a="258745095"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.143])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:23:35 -0700
+Date: Fri, 17 Jul 2026 13:23:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Pan Chuang <panchuang@vivo.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Ming Yu <tmyu0@nuvoton.com>, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v3 4/4] MAINTAINERS: Add the Renesas RZ/N1 timers driver entry
-Date: Fri, 17 Jul 2026 11:55:49 +0200
-Message-ID: <20260717095552.767475-5-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260717095552.767475-1-herve.codina@bootlin.com>
-References: <20260717095552.767475-1-herve.codina@bootlin.com>
+	Magnus Damm <magnus.damm@gmail.com>, Yixun Lan <dlan@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH] gpio: Remove redundant dev_err()/dev_err_probe()
+Message-ID: <aloCpCgDYjps9yQu@ashevche-desk.local>
+References: <20260717083037.284134-1-panchuang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260717083037.284134-1-panchuang@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-After contributing the driver, add myself as the maintainer for the
-Renesas RZ/N1 timers driver.
+On Fri, Jul 17, 2026 at 04:30:33PM +0800, Pan Chuang wrote:
+> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
+> devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq()
+> automatically log detailed error messages on failure. Remove the
+> now-redundant driver-specific dev_err() and dev_err_probe() calls.
 
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 15011f5752a9..17fd5f749344 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23025,6 +23025,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
- F:	drivers/rtc/rtc-rzn1.c
- 
-+RENESAS RZ/N1 TIMERS DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
-+F:	drivers/clocksource/timer-rzn1.c
-+
- RENESAS RZ/N1 USBF CONTROLLER DRIVER
- M:	Herve Codina <herve.codina@bootlin.com>
- L:	linux-renesas-soc@vger.kernel.org
+...
+
+> -	if (err != 0) {
+> -		dev_err(chip->parent, "can't request IRQ#%d: %d\n",
+> -			adnp->client->irq, err);
+> +	if (err != 0)
+
+This style is discouraged, so while at it, please replace with
+
+	if (err)
+
+>  		return err;
+> -	}
+>  
+>  	return 0;
+
+...
+
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -489,10 +489,8 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+>  					       IRQF_SHARED,
+>  					       "brcmstb-gpio-wake", priv);
+>  
+> -			if (err < 0) {
+> -				dev_err(dev, "Couldn't request wake IRQ");
+> +			if (err < 0)
+
+This style might be okay, but has no sense, we know that there is no positive
+out from this function, so, please also replace with
+
+			if (err)
+
+>  				goto out_free_domain;
+> -			}
+>  		}
+>  		priv->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+>  	}
+
+...
+
+> +++ b/drivers/gpio/gpio-max77620.c
+> @@ -356,10 +356,8 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+>  	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
+>  					max77620_gpio_irqhandler, IRQF_ONESHOT,
+>  					"max77620-gpio", mgpio);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
+> +	if (ret < 0)
+>  		return ret;
+> -	}
+
+Ditto. And so on...
+
 -- 
-2.55.0
+With Best Regards,
+Andy Shevchenko
+
 
