@@ -1,80 +1,48 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835A6392C25
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Jul 2026 13:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F073370E4
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Jul 2026 16:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784381936; cv=none; b=azxgz+vgK15X0fCP/kkkjmbuuxE3qkpoeMtHxw7Kj4Yyg1kqpMGUfBG/f8gpHgHr6RCepPoWon2ro5qaZetaoWTosChnQ48H9iD+q/TNJXQV+YPUsyQPxpoWQU5FnU2409gtCcmpfaOKeUq9Rb1MWjcrWtnex1A+56QX2mxMkp8=
+	t=1784392243; cv=none; b=GSctKDEQcZed+SaM/33B7dDUWfgtmEq3/7aS4V7bftMbaRYEpggRxcM69o4EWxlzEvhPsupCRmFcIP9DDh0JVo7bjh/wGrvez4FLC2E3UhIMNCWfhIfy+wpyHa0d/dGV411LcKQl7WZyGwJLkKSy7k/IX6BCs/RPziXfog4ZXDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784381936; c=relaxed/simple;
-	bh=r4OwAIC4pwtuAWoujK6KGRQbHrxuQ4AOKYTwXfLTIKs=;
+	s=arc-20240116; t=1784392243; c=relaxed/simple;
+	bh=zXY4szWNyycp/26dnbAw14LSmLq1Nm84Mt8Mi+rNwzk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XqBPBsPmG1Vi7eV1VVjgGNtAMYqp6bMr65CAwN5+AsAWJ4M/fOG6/y+e7maPnO5D5QgP8T6pD6u5/N0uVH/Ab8TQKQyVCbi8+g3uFzyOErgr/LQMy8Zasol40qWU51KTobHpHRWw/EJiNwZxwwr+VU0n6S5//XZn8zDxKtVdDNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hy2KXPbW; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version; b=LSWqOv5WNYmnWmKZbqjtu7mO4A13sSeI5dd9ZWYrWUXYcTl63ZuF4LhPdEtdOF7LYJ72CDlKv4fz7x3zRPDPjSFGDBV9XKPcg6bwo72uiJUdqldXcPwL0R/kWUD5AeVoT6fzLWu02lLZlzdDc0aQnftzL5ElBvgew1WOGUvS/UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U6M4NuqJ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hy2KXPbW"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso21588835e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Jul 2026 06:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784381933; x=1784986733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=boJC/mFBlFSXo/jLmZqFUYkmGNz8ETJlTQzeYbwz3N0=;
-        b=hy2KXPbWCeaPmD5+/UbX6tPcYrULwyvTEBQ2q/x4ormhw20A78llqBmfkWLyPTQPKL
-         mhRTUKq2FCFk3JvaHgxnJB0nr/t56uHxK7r62xnOvu8S/Pj1Tb1WtnWGT5h1lK/MFfV7
-         SA2OR5KQiPhfEGlDXyDK5nFLw3qi7W4hZ8Vh9OAJc2i5r6DksqxSej2dkcjm6bQc5E9I
-         1DNPtVg7m/0vA0gq7XyFESVUZ+fKaCPtG2Dr8pEQQ7vYNVjQDobWW4prmtZblnE/jJM4
-         uBuwBDcZgYTKv3jBVIZuBW7eeAvYg94HBipUaoMmAfrbuBTUJxClYUjhrytzIFMzdZ/c
-         LQxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784381933; x=1784986733;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=boJC/mFBlFSXo/jLmZqFUYkmGNz8ETJlTQzeYbwz3N0=;
-        b=im5rhhWz3POGa7AJbo0y1pT6E0C1ke+lF6jJ8sfgl2KjWk4mAXGLStjqp/Xyg22fMp
-         diXCcWIjEWO6C0WUEWidBDGvNByueYXgZhbvEZ8z7Kf4bKEnIPreAWy0KeKmjBrpaK/E
-         +6DGrtMDU0Cmd8HREFtMo5cBHXGjfVi2HT3oPiQ6YfSm7iT7HqUaJBasjYEr6BXOL/jx
-         QyajR2S8cP/aMRblj/LyVrxUcvSXotxUTktThooeGpCXdSS6OghqtHwo1JU5dwa8T8vZ
-         AV3o/a5yKr9z5PkU720WSE4gDcheG1pJReJT9ShqGUI4oA5ppbtIz4leD30tTDAXDZX+
-         7Pyw==
-X-Forwarded-Encrypted: i=1; AHgh+RrGXl5GvD/A4eX41iMNZ4x0FOkfDRjVpJbB/mverg9UJnFliL1Jt4EWAcxvsjXlC5rZ/I48RrGeehe3Mh4nqpvFAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YymtBM0LSpxzT8/be30ZxOwIm/UTJ1gsVLv1kF65A+CVQ3OWE2u
-	7DvvRv5qaYI0+867+D5jNbNjO6gI8qJbKKP4bjZNb6SIxAJzwdnP/Lrx
-X-Gm-Gg: AfdE7ck8CPKtM80XR9ApVyBRo9uKZOtNa48b0TcDsqwv8Gj1xTPqk8HzC2+9xKl7cAD
-	5mJklxyyNCjSRVJrOWG+NpShrxGAqxZ3RjeShz5sJ/4IFjr0T2E/yFWOzFZOe4wQlmbGRmwyJU/
-	VUp33NBOvCA+XBp727BFAxF0IuMNIqWqrJUMyWG0TMkSi3Bi8VyQdHFGcR6cBKMh80u1f5nHPxW
-	1j5SoOHNYTWWWkO/TEtFj1+vCuhXYp4IopBNF5DWSSpnnKMizNnr2CBTn8htj4es9vGGx84uLVS
-	hqJt99FZgXkcDjUa/s4TLCjCKrwdxCfpNhCoZcc3fVgcRl69ptwpNQuSWGgG2Pp0V9p79x/5PUZ
-	kur5dikzzV4EEEKgTNeJWPqJnP5bwRxB2vFEcFKkoE6Ri1SHu+/JYNbBZ41/fvPl1wnr8o8d4H+
-	ME4M66EtROq9J/h6EUysuoJaLIRNA=
-X-Received: by 2002:a05:600c:63d4:b0:493:d21f:8f98 with SMTP id 5b1f17b1804b1-4954a4136bcmr54059975e9.36.1784381932593;
-        Sat, 18 Jul 2026 06:38:52 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:c53f:e1cf:6009:4c03])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49549c96ff7sm121717845e9.10.2026.07.18.06.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jul 2026 06:38:52 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulfh@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U6M4NuqJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=XvVPYIu5IJBFa4YggBlNpJtLCUcLtdHOITJmUpwWG5Q=; b=U6M4Nu
+	qJ7lzwZSAK2a6/X3LAE0QMwoH2G9aPxTdBcNkNMIkxRB3RSksC6PhlYdyLzZwCHR
+	0oPVk3tlHCXjvyHuo0drYbg5CriA/KJxr1Vrx4BJMnpTgQEsR8IoL5HOrA0wIUKL
+	R6ZsmQ6v7ANHIGq6S/U0KzHg+VsJtgq46Amo8O5ln28wPu2hwNnkTz0zl4L7q82e
+	uhZQXl/EabGbHT7rKHz2ic/aYy1muKjxvc2/Sa6LN/3wXj2hNb9UqPtMeTru8QxD
+	4fT6Em8fJgJIuWyRbT0MdvR6yGFNLonfUpso7vDz6jixcPiXvQqphjpxDg9D4EVx
+	Lkv6Qf4L2CvwiCmA==
+Received: (qmail 1799917 invoked from network); 18 Jul 2026 18:30:31 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2026 18:30:31 +0200
+X-UD-Smtp-Session: l3s3148p1@MU4VMeVWZ2htKXE8
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Matthew Wilcox <willy@infradead.org>,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v21 12/12] mmc: renesas_sdhi: Add RZ/G3L HS400 support
-Date: Sat, 18 Jul 2026 14:38:32 +0100
-Message-ID: <20260718133838.152905-13-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260718133838.152905-1-biju.das.jz@bp.renesas.com>
-References: <20260718133838.152905-1-biju.das.jz@bp.renesas.com>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v4 1/3] hwspinlock: Convert to XArray
+Date: Sat, 18 Jul 2026 18:30:21 +0200
+Message-ID: <20260718163024.1726-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
+References: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,157 +51,327 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Add HS400 support for the RZ/G3L SoC.
+The radix tree is deprecated.  The XArray uses the same data structure
+with a nicer interface.  The hwspinlock_tree_lock is not needed as the
+spinlock built into the XArray is sufficient for all these cases after
+we split a larger critical section in hwspin_lock_request_specific()
+into two smaller ones.
 
-The RZ/G3L requires a dedicated HS400 enable register (SDm_SCC_HS400MODE2
-at offset 0x020) in addition to the existing TMPPORT2 path used by R-Car.
-Introduce a TMIO_MMC_HS400MODE2 flag (bit 16) to identify controllers
-that require this second register.
-
-When this flag is set, renesas_sdhi_hs400_complete() additionally sets
-HS400EN2 in HS400MODE2, and renesas_sdhi_reset_hs400_mode() clears it on
-exit. During tuning, when both TMIO_MMC_TUNING_DELAY and
-TMIO_MMC_HS400MODE2 are set, the lower 16 bits of TMPPORT2 (TMPOUT) are
-masked off while preserving the upper bits, replacing the previous
-unconditional write of zero.
-
-Enable the TMIO_MMC_HS400MODE2 flag in of_data_rzg3l to complete HS400
-support for the RZ/G3L SoC.
-
-The RZ/G3L SoC also supports only a single clock divider value in HS400
-mode; all other divider values are prohibited. Update
-renesas_sdhi_set_clock() so that, for controllers using a non-default
-max_divider, the divider is forced to this single allowed value whenever
-the current timing mode is HS400.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Co-developed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v20->v21:
- * Updated renesas_sdhi_set_clock() for RZ/G3L HS400 clock handling as
-   it supports only single clk divider value and other values are
-   prohibited.
- * Updated commit description.
-v19->v20:
- * No change.
-v18->v19:
- * Updated commit description.
- * Fixed extra space in HS400MODE2 comment block.
- * Updated the comment HS400mode2->HS400MODE2.
- * Dropped the updation of clk handling as it is taken care in
-   previous patches.
-v18:
- * New patch.
----
- drivers/mmc/host/renesas_sdhi_core.c          | 29 +++++++++++++++++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
- include/linux/platform_data/tmio.h            |  3 ++
- 3 files changed, 32 insertions(+), 3 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c | 160 +++++++++++----------------
+ 1 file changed, 65 insertions(+), 95 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index e44751647982..ec42f490d6cf 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -236,6 +236,14 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 			clk &= ~0xff;
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index a509b73da190..e2b7a2271de6 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mutex.h>
+@@ -27,35 +27,21 @@
+ /* retry delay used in atomic context */
+ #define HWSPINLOCK_RETRY_DELAY_US	100
+ 
+-/* radix tree tags */
+-#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
++/* XArray search mark */
++#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
+ 
+ /*
+- * A radix tree is used to maintain the available hwspinlock instances.
++ * An XArray is used to maintain the available hwspinlock instances.
+  * The tree associates hwspinlock pointers with their integer key id,
+  * and provides easy-to-use API which makes the hwspinlock core code simple
+  * and easy to read.
+  *
+- * Radix trees are quick on lookups, and reasonably efficient in terms of
++ * XArrays are quick on lookups, and reasonably efficient in terms of
+  * storage, especially with high density usages such as this framework
+  * requires (a continuous range of integer keys, beginning with zero, is
+- * used as the ID's of the hwspinlock instances).
+- *
+- * The radix tree API supports tagging items in the tree, which this
+- * framework uses to mark unused hwspinlock instances (see the
+- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
+- * tree, looking for an unused hwspinlock instance, is now reduced to a
+- * single radix tree API call.
+- */
+-static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
+-
+-/*
+- * Synchronization of access to the tree is achieved using this mutex,
+- * as the radix-tree API requires that users provide all synchronisation.
+- * A mutex is needed because we're using non-atomic radix tree allocations.
++ * used as the ID of the hwspinlock instances).
+  */
+-static DEFINE_MUTEX(hwspinlock_tree_lock);
+-
++static DEFINE_XARRAY(hwspinlocks);
+ 
+ /**
+  * __hwspin_trylock() - attempt to lock a specific hwspinlock
+@@ -369,10 +355,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
+  */
+ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct of_phandle_args args;
+ 	struct hwspinlock *hwlock;
+-	struct radix_tree_iter iter;
+-	void **slot;
+ 	int id;
+ 	int ret;
+ 
+@@ -389,15 +374,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	/* Find the hwspinlock device: we need its base_id */
+ 	ret = -EPROBE_DEFER;
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
+-		hwlock = radix_tree_deref_slot(slot);
+-		if (unlikely(!hwlock))
+-			continue;
+-		if (radix_tree_deref_retry(hwlock)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, hwlock, ULONG_MAX) {
++		if (xas_retry(&xas, hwlock))
+ 			continue;
+-		}
+-
+ 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
+ 			ret = 0;
+ 			break;
+@@ -452,51 +431,50 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
+ 
+ static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
+ {
+-	struct hwspinlock *tmp;
++	XA_STATE(xas, &hwspinlocks, id);
++	struct hwspinlock *existing;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
+-
+-	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
+-	if (ret) {
+-		if (ret == -EEXIST)
++	do {
++		xas_lock(&xas);
++		existing = xas_load(&xas);
++		if (existing) {
+ 			pr_err("hwspinlock id %d already exists!\n", id);
+-		goto out;
+-	}
+-
+-	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
++			xas_set_err(&xas, -EBUSY);
++		}
++		xas_store(&xas, hwlock);
+ 
+-	/* self-sanity check which should never fail */
+-	WARN_ON(tmp != hwlock);
++		/* mark this hwspinlock as available */
++		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
++		ret = xas_error(&xas);
++		xas_unlock(&xas);
++	} while (xas_nomem(&xas, GFP_KERNEL));
+ 
+-out:
+-	mutex_unlock(&hwspinlock_tree_lock);
+ 	return ret;
+ }
+ 
+ static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock = NULL;
+-	int ret;
++	bool unused;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
++	xas_load(&xas);
+ 
+-	/* make sure the hwspinlock is not in use (tag is set) */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+-	if (ret == 0) {
++	/* make sure the hwspinlock is not in use (mark is set) */
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (!unused) {
+ 		pr_err("hwspinlock %d still in use (or not present)\n", id);
+ 		goto out;
  	}
  
-+	/*
-+	 * RZ/G3L SoC HS400 mode has only 1 divider value.
-+	 * Other divider values are prohibited
-+	 */
-+	if (host->pdata->max_divider != SDHI_MAX_DIVIDER_DEFAULT &&
-+	    host->mmc->ios.timing == MMC_TIMING_MMC_HS400)
-+		clk = 0;
+-	hwlock = radix_tree_delete(&hwspinlock_tree, id);
+-	if (!hwlock) {
+-		pr_err("failed to delete hwspinlock %d\n", id);
+-		goto out;
+-	}
++	hwlock = xas_store(&xas, NULL);
++	if (!hwlock)
++		pr_err("hwspinlock %d already deleted\n", id);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ 
+@@ -666,20 +644,18 @@ int devm_hwspin_lock_register(struct device *dev,
+ EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
+ 
+ /**
+- * __hwspin_lock_request() - tag an hwspinlock as used and power it up
++ * hwspin_lock_prepare() - prepare a hwspinlock
+  * @hwlock: the target hwspinlock
+  *
+  * This is an internal function that prepares an hwspinlock instance
+- * before it is given to the user. The function assumes that
+- * hwspinlock_tree_lock is taken.
++ * before it is given to the user.
+  *
+  * Returns: %0 or positive to indicate success, and a negative value to
+  * indicate an error (with the appropriate error code)
+  */
+-static int __hwspin_lock_request(struct hwspinlock *hwlock)
++static int hwspin_lock_prepare(struct hwspinlock *hwlock)
+ {
+ 	struct device *dev = hwlock->bank->dev;
+-	struct hwspinlock *tmp;
+ 	int ret;
+ 
+ 	/* prevent underlying implementation from being removed */
+@@ -697,16 +673,7 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+ 		return ret;
+ 	}
+ 
+-	ret = 0;
+-
+-	/* mark hwspinlock as used, should not fail */
+-	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* self-sanity check that should never fail */
+-	WARN_ON(tmp != hwlock);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+@@ -724,13 +691,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+  */
+ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock;
++	bool unused;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
+ 
+-	/* make sure this hwspinlock exists */
+-	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
++	hwlock = xas_load(&xas);
+ 	if (!hwlock) {
+ 		pr_warn("hwspinlock %u does not exist\n", id);
+ 		goto out;
+@@ -739,21 +707,25 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ 	/* sanity check (this shouldn't happen) */
+ 	WARN_ON(hwlock_to_id(hwlock) != id);
+ 
+-	/* make sure this hwspinlock is unused */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+-	if (ret == 0) {
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (!unused) {
+ 		pr_warn("hwspinlock %u is already in use\n", id);
+ 		hwlock = NULL;
+ 		goto out;
+ 	}
+ 
+-	/* mark as used and power up */
+-	ret = __hwspin_lock_request(hwlock);
+-	if (ret < 0)
+-		hwlock = NULL;
++	xas_clear_mark(&xas, HWSPINLOCK_UNUSED);
++	xas_unlock(&xas);
+ 
++	ret = hwspin_lock_prepare(hwlock);
 +
- 	clock = clk & host->pdata->clk_div_mask;
- 	if (clock != CLK_CTL_DIV_MASK)
- 		host->mmc->actual_clock /= (1 << (ffs(clock) + 1));
-@@ -292,6 +300,7 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- #define SH_MOBILE_SDHI_SCC_TMPPORT5	0x018
- #define SH_MOBILE_SDHI_SCC_TMPPORT6	0x01A
- #define SH_MOBILE_SDHI_SCC_TMPPORT7	0x01C
-+#define RZG3L_SDHI_SCC_HS400MODE2	0x020
- #define RZG3L_SDHI_SCC_HWADJ4		0x022
- 
- #define SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN		BIT(0)
-@@ -324,6 +333,7 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- #define SH_MOBILE_SDHI_SCC_TMPPORT_DISABLE_WP_CODE	0xa5000000
- #define SH_MOBILE_SDHI_SCC_TMPPORT_CALIB_CODE_MASK	0x1f
- #define SH_MOBILE_SDHI_SCC_TMPPORT_MANUAL_MODE		BIT(7)
-+#define RZG3L_SDHI_SCC_HS400MODE2_HS400EN2		BIT(0)
- 
- static inline u32 sd_scc_read32(struct tmio_mmc_host *host,
- 				struct renesas_sdhi *priv, int addr)
-@@ -459,6 +469,10 @@ static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
- 			host->pdata->osel_tmpout) |
- 			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
- 
-+	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
-+		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2,
-+			       RZG3L_SDHI_SCC_HS400MODE2_HS400EN2);
-+
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
- 		       SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
- 		       sd_scc_read32(host, priv,
-@@ -600,6 +614,9 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
- 			 host->pdata->osel_tmpout) &
- 			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
- 
-+	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
-+		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2, 0x0);
-+
- 	if (sdhi_has_quirk(priv, hs400_calib_table) || sdhi_has_quirk(priv, hs400_bad_taps))
- 		renesas_sdhi_adjust_hs400_mode_disable(host);
- 
-@@ -757,8 +774,16 @@ static int renesas_sdhi_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	if (!priv->tap_num)
- 		return 0; /* Tuning is not supported */
- 
--	if ((host->pdata->flags & TMIO_MMC_TUNING_DELAY) && priv->tap_num == 8)
--		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0);
-+	if ((host->pdata->flags & TMIO_MMC_TUNING_DELAY) && priv->tap_num == 8) {
-+		u32 val = 0;
-+
-+		if (host->pdata->flags & TMIO_MMC_HS400MODE2) {
-+			val = sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2);
-+			val &= ~GENMASK(15, 0); /* TMPOUT MASK */
-+		}
-+
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, val);
++	xas_lock(&xas);
++	if (ret < 0) {
++		hwlock = NULL;
++		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
 +	}
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+@@ -772,9 +744,10 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+  */
+ int hwspin_lock_free(struct hwspinlock *hwlock)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct device *dev;
+-	struct hwspinlock *tmp;
+-	int ret;
++	bool unused;
++	int ret = 0;
  
- 	if (priv->tap_num * 2 >= sizeof(priv->taps) * BITS_PER_BYTE) {
- 		dev_err(&host->pdev->dev,
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index b1146dca94ca..8cd3ced88b81 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -178,7 +178,8 @@ static const struct renesas_sdhi_of_data of_data_rzg3l = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
- 			  TMIO_MMC_64BIT_DATA_PORT | TMIO_MMC_TUNING_DELAY |
--			  TMIO_MMC_INTERNAL_DIVIDER | TMIO_MMC_HWADJ,
-+			  TMIO_MMC_INTERNAL_DIVIDER | TMIO_MMC_HWADJ |
-+			  TMIO_MMC_HS400MODE2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
-diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
-index 501ca4355c34..81a37d6baefc 100644
---- a/include/linux/platform_data/tmio.h
-+++ b/include/linux/platform_data/tmio.h
-@@ -59,6 +59,9 @@
- /* Some controllers have hw adjustment delay */
- #define TMIO_MMC_HWADJ			BIT(15)
+ 	if (!hwlock) {
+ 		pr_err("invalid hwlock\n");
+@@ -782,12 +755,13 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	}
  
-+/* Some controllers have HS400MODE2 */
-+#define TMIO_MMC_HS400MODE2		BIT(16)
-+
- struct tmio_mmc_data {
- 	void				*chan_priv_tx;
- 	void				*chan_priv_rx;
+ 	dev = hwlock->bank->dev;
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
++	xas_set(&xas, hwlock_to_id(hwlock));
++	xas_load(&xas);
+ 
+ 	/* make sure the hwspinlock is used */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-	if (ret == 1) {
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (unused) {
+ 		dev_err(dev, "%s: hwlock is already free\n", __func__);
+ 		dump_stack();
+ 		ret = -EINVAL;
+@@ -798,16 +772,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	pm_runtime_put(dev);
+ 
+ 	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* sanity check (this shouldn't happen) */
+-	WARN_ON(tmp != hwlock);
++	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
+ 
+ 	module_put(dev->driver->owner);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_free);
 -- 
-2.43.0
+2.51.0
 
