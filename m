@@ -1,124 +1,86 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34BB3191D3
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2026 20:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C163370E4;
+	Sat, 18 Jul 2026 13:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784318825; cv=none; b=TSGldn/DgkDX0nJr/rk5agp9E0/ZSZ14NTOlzbayWTTWrliLezpw4BSNNrTeErVGO+4Tl2Fgxsz4b5DBqpyDqLnlASpKT3Na+kbsidts14Wqvo9r5nvzYdPE99ypeOfvl1NJhkuX7all+DgFMArQSueoS1tUqd4ejJEUCMBKLU8=
+	t=1784380474; cv=none; b=R9+YZGeQSPk5gS1Sa+SQPXguzhhgTR459yvN+eoc4DEzKaI39l0YWJdOiiXAvM4eNXMQU8URwNgixTvA/JbQI2+ZgfPiLMnCiSKVgWPvkdCbS2C/cxItDR0kU1DexeE0pziSntB8CrvFEaVFhBKL66un+w2rb7B/PywgS61E+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784318825; c=relaxed/simple;
-	bh=br3g/jn93/A6r1rtTmdcPDMQBjgLOan9oDik4UbE+4c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=cPmGwmmOLHxxA5VEBuDe2xupVyL4SNChDYQ6nUxjHYSt+iHYagn1xcHH0l4x8r+2yJndcTC9qqavc2BNVh+Rae3rddUeJW1JLfTVdm5PRyU6jn6OJDSSWj5zpaksCGNspnipN9/Kw6zA/5CBGqeHnIZH9hruZYtC9RXsFGwqoXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xNB33+mz; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784380474; c=relaxed/simple;
+	bh=slnQgl5Xul+RTPVcvZe7eiZ7QKk3Hvvsmn1VJpmKpsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A61BqnzrhypiOCTX8BVk81PesOmPssYmiI+HoWtBWfac1p04cLMZIjdpt8+mSgyZSyCCmUBZbt71alOsS7iDwNjaRRYE6Y9ii2dSvsr4yT/m9gbv0QfLayyujHXp7/SIffwLygpCn0Nly7XW5KJqkDKioDaKQi4fWj8PA14slAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrclbbNu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xNB33+mz"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 04BEF1A1077;
-	Fri, 17 Jul 2026 20:07:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CAB6160361;
-	Fri, 17 Jul 2026 20:07:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F35BF11BD013E;
-	Fri, 17 Jul 2026 22:06:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784318819; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Wi6BQXLKQhiTifAq9gxYfAkWMFRwEzXZVKdz6vQCO6g=;
-	b=xNB33+mzXBMshQjizeo3TN2jPxVuCW1lwKEfonhroQzwgjcCtDDv7/UuW2b8jugzJ7uOWP
-	FzSwAUYWASfPIZMpSVfd1cvemr5Nh6YKswabLkTNhweI7+JXBN+417vk3IfTs1zeT6GUxV
-	E1mmsmgi0vbm3YxX3lXHWSGufVZEjC5QWO9tOmBW1zkWls9mOcRMJT5+gFiiWjleACZF3S
-	5gniqFIMkuMg+Xh6kEETLedAEZOomBXxcfwsSXg9ZJ2/3mRIrRzn9Cu4GQl5XOMk7zw819
-	NAg3aKj9k1ZBa8+zwm0BW/yJTJKtQ/NwHm70Ns+Wger32LngZJhaC4EC+yXNIw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrclbbNu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F401F000E9;
+	Sat, 18 Jul 2026 13:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784380473;
+	bh=slnQgl5Xul+RTPVcvZe7eiZ7QKk3Hvvsmn1VJpmKpsg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RrclbbNuxhTiy2tgHoH0egQz+3MxDgO3m1LPBD3V8taEumVXzcbYXIGobV58LWCzw
+	 v6HKuYFHcr/kUxkQGISUtl8MriSoWwf1+r09q7V//w2HOFBf0re3Bp94GjP5bfCvjk
+	 6/5ARQ2JCHlkCujr8B/ccGV6aPixV20alkW2xv82qG01RMYh2ASR2z8mFiw8qYXrPQ
+	 SBio7a7YBAZ+d/Rr0ceAJuVrjCEK+2dGbMMrOEUCVbnMfW5Hk3qae8FXYnZh8KKJjJ
+	 DQcKQ+wiAxCnvISaxsiZXPciK2gdXDSJUAUaEhipkzOB7NUPaZgPFuBUolPnMIqXbC
+	 gUrZWxz5Rrv1A==
+Date: Sat, 18 Jul 2026 14:14:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 6/7] spi: spi-rpc-if: Implement 200ms runtime PM
+ autosuspend delay
+Message-ID: <2a5439f1-11e3-4194-a1b8-f00d0a8333b5@sirena.org.uk>
+References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260715222417.2997712-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sGBW2ufYMjVtgMpf"
+Content-Disposition: inline
+In-Reply-To: <20260715222417.2997712-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Cookie: Do not pick the flowers.
+
+
+--sGBW2ufYMjVtgMpf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Jul 2026 22:06:51 +0200
-Message-Id: <DK148A1HSGJ4.1GZXWYTWPOZ6F@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 2/4] drm/bridge: display-connector: Fix I2C adapter
- resource leak
-Cc: "Johan Hovold" <johan@kernel.org>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, "Thuan Nguyen"
- <thuan.nguyen-hong@banvien.com.vn>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Magnus Damm" <magnus.damm@gmail.com>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- <linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>
-To: "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.21.0
-References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com> <20260705213542.28987-3-laurent.pinchart+renesas@ideasonboard.com> <alpEVeVmH5oiqmaj@hovoldconsulting.com> <DK0Y5JTE66EA.111RUXTL6W8FA@bootlin.com> <20260717182802.GD1889304@killaraus.ideasonboard.com>
-In-Reply-To: <20260717182802.GD1889304@killaraus.ideasonboard.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Laurent,
+On Wed, Jul 15, 2026 at 11:24:16PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Enable and configure the runtime PM autosuspend infrastructure during
+> the controller probe sequence to safeguard chunked flash operations.
 
-On Fri Jul 17, 2026 at 8:28 PM CEST, Laurent Pinchart wrote:
-> On Fri, Jul 17, 2026 at 05:21:11PM +0200, Luca Ceresoli wrote:
->> On Fri Jul 17, 2026 at 5:03 PM CEST, Johan Hovold wrote:
->> > On Mon, Jul 06, 2026 at 12:35:40AM +0300, Laurent Pinchart wrote:
->> >> If the probe function returns an error after getting the I2C adapter =
-for
->> >> DDC, the reference to the adapter is never released. Fix it by releas=
-ing
->> >> it in the bridge .destroy() handler.
->> >>
->> >> There is no need to test the ddc pointer with !IS_ERR(), as
->> >> of_get_i2c_adapter_by_node() returns NULL on error.
->> >
->> > I stumbled over this this morning as well and posted a fix here (which
->> > releases the adapter on driver unbind as is currently done):
->> >
->> > 	https://lore.kernel.org/lkml/20260717085716.1619275-1-johan@kernel.or=
-g/
->> >
->> >> Fixes: 6de79dd3a920 ("drm/bridge: display-connector: add ddc-en gpio =
-support")
->> >
->> > I believe this issue was first introduced by commit 2e2bf3a5584d
->> > ("drm/bridge: display-connector: add DP support") a few releases
->> > earlier.
->> >
->> >> Cc: stable@vger.kernel.org
->> >> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboar=
-d.com>
->> >
->> > Reviewed-by: Johan Hovold <johan@kernel.org>
->>
->> While Johan's patch has the benefit of putting the i2c adapter at remove
->> time (as opposed to destroy time, which is potentially a long time later=
-),
->> it is also more complex. So I'd say this patch is fine.
->
-> In this case putting the I2C adapter early is probably fine, but in
-> general I really prefer reference-counting and releasing references at
-> destroy time. This ensures that the resources stay available if they
-> need to be accessed between .remove() and destruction (for instance in a
-> .release() handler following a close() or munmap() from userspace). I
-> think late release should be the default, as it's safer, and early
-> release should be carefully reviewed when it's required.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Makes sense indeed.
+--sGBW2ufYMjVtgMpf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for the clarification.
+-----BEGIN PGP SIGNATURE-----
 
-Luca
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpbfDMACgkQJNaLcl1U
+h9AjNAf/WylOq05BOCIC/tng7hAQyeB+fuEMkg1QBvsIOQZAzyrz8SkX1P314DVF
+0iqwQgHCbXjAp3/tlc5KTjchNTB7qdoFw8HLlV4RzrU3uhDQ5paO1Lj3teozxH+T
+IzvIrjkB8FP1y52ZfTewzEE7hg7CH9hoC9ZHK3m/CdEETkTf1op+u6MXNnlyV7eo
+cMGZ6sgNyPGW1Y7v+bbqBPUBQvCOgG4/5pZ6waIFIo63aVxLP3O342Dxhd0ZI+ZI
+2VbB5Tx8raPu75U4/bs21IvrfmWiZ41/EwlPqdjqtXEDCMDZbKzY4yXGzj+HzIeN
+v6x9Notm9n75dYijzitxl3i2iELGEA==
+=uyBU
+-----END PGP SIGNATURE-----
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--sGBW2ufYMjVtgMpf--
