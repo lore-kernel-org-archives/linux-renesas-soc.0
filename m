@@ -1,140 +1,125 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FF3F9A1B
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 11:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52DD400967
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 11:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784547805; cv=pass; b=XaS6C39r6BbDnP2XabB93JM04u7UUSTdf3hJ6LhdsZtT6uFGUBa+maXgumhk7+ag0k1OuyhUjrp2JhG/8aQD+5hxtOo4bHv3ikTWAOjNNc09z9pbDZGhf9HtPAt8GhKNLlaS2rNkmU1xwoMdzStYTutK4ymYm+9u9Xu884USHDM=
+	t=1784547960; cv=pass; b=Bbm7iGA5y2SI8SpFJWYjYXijwdTGsgGxXvWR369yhrRTaLiF0YjrBjfbvHhYDA3AJug6Mmar/64JDBmeIYQ062z3061PfAuZelm6t4wLNVKGsBb2WZiiEVWDC0vsUwrw4aCM4U8QrYw8OAKSVZ0vTrKmnJVrqjq6ZU1jqpTIp5E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784547805; c=relaxed/simple;
-	bh=fdtWv+prESztRJE+/K3wcrpe+upv+fIpI0YZYMbpZeg=;
+	s=arc-20240116; t=1784547960; c=relaxed/simple;
+	bh=O7GkuCmMPHFQEK9+vFlexZsM1aV7dbx4/uIBOAgzkVQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UQH9gEk+fTmpCprBGx7CGds0rfrFPlShJNqIrIhZyy4iquPsV7y7MYuAPZlmXBQ5C7nVH4P9kT27zvdYvlVwk3ChnfPFsAS5XxjEnRx8yV2AAZ/f9V223h605vRHPu0YbWH5Ms4pRdnOLxH0LPHEZt5hcBGgRj9mWtf4edvtvQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipvHfziF; arc=pass smtp.client-ip=209.85.128.47
+	 To:Cc:Content-Type; b=bEW/Ps6yqMDg4/+54rcs7OL1uDyZR9gwU5r/ZCWB1sH0jd0apIdAj8acs/WnIrGXbW97FieqBV6Kb93dO37atGlE2DGjI1/KSPsivI3duQABw+MjkXDMYsZDVfvKyTlEweYFnJswatD5XMq12yf9zdqF3MANIbAJNOlMivExhe8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQCnKn/Z; arc=pass smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipvHfziF"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so13572895e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 04:43:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784547800; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQCnKn/Z"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-472326ca506so7712016f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 04:45:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784547955; cv=none;
         d=google.com; s=arc-20260327;
-        b=Rr7qT09IBqPFI5ne3HiNF9YFIBf+Wd67IN5lQvxW77OeqF1i7Fqju4EKbaMqYaLrVv
-         NPoRGXMpvsnd0SMYXtVfI5+URFpMlhCf6Xi79zl+tEC9WoJckhZBDiG8kfPPk21EqVdu
-         ya1g37IGsX+7GBy9yh7QBZKB7ohSb0S/Nqy1PfpqWOrG3V13MWxNSXQrGzRnky7hiNpn
-         MbbxzJn1D9z0hpnHLdvEYHsfExcBF5GdY6CUxeLpK8pkl5rTrCIXd5Kaz4tnOT9VfJqV
-         uaOMTCMVFz/GjtXe08lLwTeTaF+ogXhWvdtjBhmAOhIeBrOW6LXull+D5oTPHI05R187
-         rd1A==
+        b=kd+2SqAQU09EEC422Q/5n5cOw1goz9u7XcSq8bO2QwFmhYczfmrPg8MJnLngES0y19
+         SU3VxohcQtujLOCI4iEqwnIpCYhRd8tdTP7DUmAiZAVviVc38gC5m4JyLytYo/aIx4j3
+         pgsTFnW2MlVK5pfyKessYBlQw4OcmBf1n3Ho/kn1e00I4oh24utDY81j753c4GbU7V+W
+         jxCgAwcl6sRyqzo055iONzNtOhZ7NsOxMQj41WMuFT1zTcCysU8EQqFzhg1mN4dXvchE
+         c7+CwZaJWKonknJFShLCCMoqdMysLuOh/i9dQ2xPEYxIzAz2k5xVDuMXL1KeOda7qzda
+         Us4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=fdtWv+prESztRJE+/K3wcrpe+upv+fIpI0YZYMbpZeg=;
-        fh=K0w2zw732XyFbcSd8lgIjK8ionHUMXDUkbe21y9BiWM=;
-        b=kv63yGqzuTb4k8N8onPmy3KlaSVYdkfisrblLMKKyizkxdpok+q2Hqd/2fr+iArMLT
-         2krSUFBsVMoEm6NLDGCWKLjsSdczbCYci14UEwrFsEhYAqFd7pUt6RT9Lh0gfeMa6fSp
-         6GNHYrHS57HMMJsgoFGr+XQSZqlSdim7+Wxpj71KDloAoE8bG/76VzZMT6B158vBPaKo
-         fSUr8a2EZl2HvRWT4rDZx/y2726bxQfGdyiQnYqPD4NxUhNmTttQ1fX//3/3zzmq62A0
-         VcpjtUXxNSAtsxawP8/NezdpKdLd20VKRi0d9pEFH1D+QLPTSM4Gwt1Aj2ODYX5eiFtv
-         81hQ==;
+        bh=O7GkuCmMPHFQEK9+vFlexZsM1aV7dbx4/uIBOAgzkVQ=;
+        fh=vB8suIwBfPw6zh/3QGv6tj2U2QucX7tc8UEdmb/Lvy4=;
+        b=oG7EWdIDkxMP+spwDtfPyrxAvd1qy5C4pbSCWlwdhSijkGJaM29P6s7dL9HmEQpBNr
+         J+ZjBcst/sSoXtw3/cAjIRnCiL37h9qX9L14RZH7DkOkFTcBmB8vrWb8lviroQIdm+0v
+         3BQYxZeGuso1vBV+pGMe4n3xzFf37XrKPD2YtPjv+5T+qsKIyn57ojHPcSh30dcrLqJu
+         Qv1Mowuth8vrYq5JLZUu7R7IFPwwOr5ubz6/cfx47pUdKMuotacFLiBJPXfdkJKOvPhD
+         u+4pVIQ8iAEcAWITFnHi9f1BcO/QGHhz8qBxneU/oMcjYnZbskiGJ6Uw6zhdEQbvckSI
+         ermw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784547800; x=1785152600; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784547955; x=1785152755; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=fdtWv+prESztRJE+/K3wcrpe+upv+fIpI0YZYMbpZeg=;
-        b=ipvHfziFb88BeNwLCAorVsFn0dU/ZRgXpR9MPnpyblN5Tl4iu1SMIXoAw7/qDQy4Pv
-         ZmB2nLONVeAr/OPMJHLw7tBbK+THtvzfN8y79OHvtRWCLi4uyH4wNk40ePx6qw8ZyMfw
-         60tX7+OIKd6XbS4yQO+ElGERRqdjX5IAbyuNQLpOSm9BJTMbAQ2GoSAnlY1FuMkLBQXI
-         6jIBuKfHXlRh+p7FX8niwZ/kZHE84yKTfx+vWmVIVJSqTzxrjdRpOx/96ihUFG1xaZpL
-         0PFF7B7NvhoRpE1OuZu4vuwQk4UzQ2dWx23QeTf4rInyoqBfKqKCuodJFRzKG6VEclPb
-         /4SQ==
+        bh=O7GkuCmMPHFQEK9+vFlexZsM1aV7dbx4/uIBOAgzkVQ=;
+        b=IQCnKn/ZUMiaoiw7n2A3OQ0zL9Oi8UGNmcOlHjdVNZuIjzGsrMRjFID8v9lmKsNLzc
+         Kz8ROHOTPSC9F3OgLDtexAVxGPJEjJy468C9I7xfltEG/qT8wH2LnL3QJn7O7YPDnm63
+         54nZz9zlpcwvuxnJz2y0aPvLOdy/gr7YdSOseHIw5fMy6wIEEXwd7UXWMhN+ikMIn3hq
+         OuptsuCsSbbScdqTOBW1YYFkXIjwNpON14+vQt3d5y/6cwkwKcqW1fiYAAUx3IIFj6TB
+         aHi2L7s+VLPysLEr66dq5nA7Matf8QVQVknnpTxD+onqXlutwiQkqkvAvy2hwLJSNROl
+         tagQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784547800; x=1785152600;
+        d=1e100.net; s=20251104; t=1784547955; x=1785152755;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=fdtWv+prESztRJE+/K3wcrpe+upv+fIpI0YZYMbpZeg=;
-        b=GdyIcZS2VSqM2yBz2rhveXj8DrwjTwzv/gv95fHclCWP1PUwgEBGkLSbJLXKL3namB
-         Lc6QtEbkNqS0lJEUC0UgR9JzU+GnEwg9tEyLwkCa0FtcHWqI8qVg00cvyGDaUklVnurX
-         aRO0wms6NdFfqAS58Yad1o4yqaU0Y0hIuHrPSchFnqaw9eCMZhZoj1dNx9o4d5AXk+LV
-         raDMAmBSDrQOiBb9j8fL6Po083lnMMHExWiV1TzjLjU224vuG/2olJyb9zoygMri9GGp
-         HOtWclSXnNc80EFWYxqgOR0Fn8HzHAMx/l2L8ktnivDPrrwW8zPAwlNV8gUfCQjic/EN
-         k/dw==
-X-Forwarded-Encrypted: i=1; AHgh+RrwzZiDwdj2LKSQ3anwR3pNVr/c6LU4Q4yqPoAl/yAIFZsYZObp9JrrJg60IRY3rClU/owEOFMcZDeC2pXChFd9BA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywch54kluuwPR1ao03+Udwp47eQRPPMfVcLa0iCPyi3xKQyj6jW
-	gNG+ZTHF1VSwiGD1JREri0VVr2XUpU1qma+LUPK5LANTqTV/EbQepLFjFWM/gMQm11HIUoQ6Csz
-	TMrMMdLisftuELHp/hpovzPyfbsnr1XE=
-X-Gm-Gg: AfdE7ckiUCeW/nvoUFZ+03Az0uvTlMk1BWwwQ12xcs7GC68K5b5ak7R+vUaqH5octDy
-	YcprgcmBoMDcWL5qdwgKfW7yl+S1R0vlamNaP6I1wYHzWH5mFdZLgz6AgfUOrcTQ4QXl3Y09M2g
-	Kapddp16RpxNyaNxJMFSeyqM/LSatpS4CEteY8xeRHCj4kaBZ3HMjc6hyX7oUOZSdYly1/coXiI
-	nboK38HwqAJG8CIjdehmg5krpu6kuzK3emKYU1+TMS7uqEnPpYkkxhkmZdJayttm8DucPrfJ62X
-	NaTXQlrBBkUm8wpykupTmXpdSE8m1JgAki5y/Zqt8Z4tnPXY/dLDS8C4sg==
-X-Received: by 2002:a05:600c:3485:b0:495:6193:c6c0 with SMTP id
- 5b1f17b1804b1-49561a30bb3mr23882765e9.18.1784547800422; Mon, 20 Jul 2026
- 04:43:20 -0700 (PDT)
+        bh=O7GkuCmMPHFQEK9+vFlexZsM1aV7dbx4/uIBOAgzkVQ=;
+        b=dpbWbPSnsFFaECPxyUqvNI+SI+g1CsiroR5yAqw8ooghEC69If61TVDgfI5VQa45yC
+         u8lg56Mv4XEj12RQYWF/Za4ntTIprKuKo2jaPCQs/WHSAwdQ6/OC2a91eM5hlLT408ZV
+         BOIbYJd1XzNfXPgDux+/j+uaMU4tprgc2qslT9e5R3x5gz+VobVSJ/V/XLWIrAiyyaIJ
+         NO2zpJ6klBocG9JEx/pDHRpxXV65hQWxMBlHGeykMJ+r+4Ew5pj8snuT2kCXk4+HbE42
+         0BeGi+OUIUtnslTJAiueFe75BPK5hy/ppN/eh+RNE6oAiVlndBgwumKt5F+/FyeAvM31
+         fuRQ==
+X-Forwarded-Encrypted: i=1; AHgh+Ro9qND+kdTSMGench73R7mCsiewONraxYLcczg9RxuHmAFxWzDGD5ECGGghelbD6mKUjgkKMGxCNrNEc1Ogh70raQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxepoVHAdW7UyBMT6e1D+iRCs6NcRiZqhWimCr8m38njsCL/y4
+	B2oStPMza7BYYcIbQ9EohmPiQfR+lSBQqlrbK48hJsuYjbtOjb5/FNeQtvlxnf9Di4WGVxozz7a
+	/CeI8qAZ6hz4DYntzUoyzsaZ8QLy6RtI=
+X-Gm-Gg: AR+sD12+I0fN1csq42RBjVeNYlc33EX+GwQU2ZezptcTX9qQKuVA9J8s25YN4+l8vvl
+	ppUWKuJrhr9/8/ywraD/5OOcnAqCwJGrpgnf8HPnrB0ptlEAiEQ71YPWKQTz2eJlYYVr+KE/Jen
+	wBUyamhDyeoPUFWPtdrX2o/EPQkAZMIWawpc/BAvDOn+JplB7xTmhZEg6eodDqbhnO3pFuEDs7v
+	HSfDLeOWmsXre3U+MBrPzoVt5O6HfI7SG/6kYUl+c+qW306VbmAm82gBR76+zwrHXVwvDYHITEL
+	MoQwm3g1y90KzT9TbR80vx0cEoGvmcVFPlRkVxRptrjoKLE=
+X-Received: by 2002:a5d:5d82:0:b0:47e:9f16:c0bf with SMTP id
+ ffacd0b85a97d-47f62326f0bmr15817313f8f.30.1784547955341; Mon, 20 Jul 2026
+ 04:45:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <d2213a9b-9a12-4ebd-beee-9385ee4e77e7@kernel.org>
-In-Reply-To: <d2213a9b-9a12-4ebd-beee-9385ee4e77e7@kernel.org>
+References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260715222417.2997712-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <2a5439f1-11e3-4194-a1b8-f00d0a8333b5@sirena.org.uk>
+In-Reply-To: <2a5439f1-11e3-4194-a1b8-f00d0a8333b5@sirena.org.uk>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 20 Jul 2026 12:42:54 +0100
-X-Gm-Features: AUfX_mzY7bY49TGWSRlukzBkDBBtD47hjKyYIuJbD-DXbsbN1rg6kSUis-qm_Hk
-Message-ID: <CA+V-a8taF4U7QD7N4gQZWAOC+vSuTpxgk9OJhqd28NtN9SmDLQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] memory: renesas-rpc-if: Optimize transfer overhead
- and implement runtime PM autosuspend
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
+Date: Mon, 20 Jul 2026 12:45:29 +0100
+X-Gm-Features: AUfX_my1Bz6eT87w37fWrzlXt1YHwrR0JFt9wOo0WteIhJRrlaxYxVnCyVuhPH4
+Message-ID: <CA+V-a8vdrhnZs+1WyVxWJ7Vr+2A2_3zsw1z6bNUqvGi4OGHH0g@mail.gmail.com>
+Subject: Re: [PATCH 6/7] spi: spi-rpc-if: Implement 200ms runtime PM
+ autosuspend delay
+To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Mark,
 
-On Sun, Jul 19, 2026 at 3:42=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Thank you for the review.
+
+On Sat, Jul 18, 2026 at 2:14=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
 >
-> On 16/07/2026 00:24, Prabhakar wrote:
+> On Wed, Jul 15, 2026 at 11:24:16PM +0100, Prabhakar wrote:
 > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Hi all,
-> >
-> > This patch series optimizes the Renesas RPC-IF driver by significantly
-> > reducing software overhead in both the direct memory-mapped (dirmap) an=
-d
-> > manual transfer paths, maximizing transaction throughput, and introduci=
-ng
-> > runtime PM autosuspend to prevent aggressive power gating during
-> > consecutive flash operations.
+> > Enable and configure the runtime PM autosuspend infrastructure during
+> > the controller probe sequence to safeguard chunked flash operations.
 >
-> Why is spi patch in the middle of the set without any explanation of
-> merging dependencies/order?
+> Acked-by: Mark Brown <broonie@kernel.org>
 >
-The rpc-if core driver acts as the low-level controller wrapper used
-by spi-rpc-if. In this series, autosuspend is enabled in the SPI
-driver, while the corresponding pm_runtime_put_autosuspend() calls are
-added in the core wrapper driver.
+Since there is no strict dependency between the rpc-if core driver and
+spi-rpc-if patches, Krzysztof asked about the patch order/routing.
 
-Apologies for missing this explanation in the cover letter. Since
-these changes do not break build or runtime bisectability if applied
-independently, the rpc-if and spi-rpc-if patches can safely go through
-separate maintainer trees.
-
-Mark has already Acked the SPI patch. I will check if he is OK with
-the SPI driver changes going via the memory tree. If not, I will
-update the cover letter and split the patches up to send them
-separately in v2.
+Is it OK with you if this SPI patch goes via the memory subsystem tree
+along with the rest of the series?
 
 Cheers,
 Prabhakar
