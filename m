@@ -1,120 +1,141 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3654A3BBA0F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 14:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784559482; cv=none; b=nFfStVhVLlxV0ctm6kefn0IPdx8n1vwqgMcXhJgoAILtxDP+HUX02GBnNMb+dBV1tQhQbc0XnVd+vn79vV0bebPCoXB1sE5UgZhqLahCh6JD7LBbEGeK4h3TgNtJrVJYs1fSD6rcJMyvRL2hUKtCMrEM0tbWcUAe8mBdJFOxz6E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784559482; c=relaxed/simple;
-	bh=ofC8nsZtMAjtWZq7JsW9Woxvhtpsc/5etfnOqSlsAX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/wKdBhO7aD6nAgwM8yUZP5MdcUL4IGyh3ah7nOR62G1BP1ItiGmQA1YcUhOI9JxNoqMJsbPSHSFqQUAOq1ZKzuDEH0vxgwh2l9T7r2HA+Ydv0EHeSuG0yT8UYNJVC9c+HpvolUVF4SsO1g5TAhMQ+kRa8+XnqxizAVNxD0euTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=st69cswQ; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0CE2D5C7A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 15:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784560530; cv=pass; b=qMx4WmvbUZlD5iwlL8YF34P+ddn+Ara1RChWPhQMFqIkHX7+UA7ocKNux7vAR3mhhl6U54feMtw6z81B1yS3BaW9SfEi8/Et4x3JAene2T5kZauy5EC8jc8BQ9Wc22lszMuezpEw8fD+ipMyb1TJYL6Jb+vkCxDchliJOjUOdrs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784560530; c=relaxed/simple;
+	bh=6GA5/FZ0UEBjIo3jsFJRPrVNv7cnVsaH+IUEN70k1s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K+cF+Pxux/mzlrTu3EDEws1M8dopwGd8bR58Cy4VphtVTEDp/N2udVgJ3y/KNqJO24RSwylH/BAb7qdWXWTy8ywZ7W5jB/7HunwozD/ryjBfweqczJemmFdHxmay4D2pXqLzgFqwHdTv2qxgBwU9ujcEStD5bvUDx6f9KFEreY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qa0titk7; arc=pass smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="st69cswQ"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2cc7ef7ec27so111017445ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 07:58:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qa0titk7"
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-451fd21113cso3047121fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 08:15:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784560527; cv=none;
+        d=google.com; s=arc-20260327;
+        b=YNte12kFtRNZH7ItTvEayULEM69JrnVuLQtKeAhgyRfx4gCTNfObuaC7w6PCjSHu77
+         0sfBlf6t+e1QGbenHJyxlm7RFaYfusqD2zZzh2R32bEzOoQVD2Dg4et+Jey3xyddWT/D
+         LUjAnCtaDSZO3igJRgi1NZ8ugfPblLPHWMcmmbNz5cWWmS3PVC0Fc+tGyL1BQ38m3oLZ
+         tEo+bB+v7z0QyW1QSPL7dpzCW/Gfp6h+Uqr2Vu1X22x3iUzaK0LvjrEeFEQAqxxGrbca
+         Lu/efjCEVC4NX9vfWFJ4tQ3OBl2lv6sgeIeHcJr38F+xHrsj21ajTjv74bGlPaqBci6r
+         P9Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=6GA5/FZ0UEBjIo3jsFJRPrVNv7cnVsaH+IUEN70k1s4=;
+        fh=Xm7VR7xnuPApfjxjHpV61MBaWN8JsmXFAY/xWlxFBZ8=;
+        b=K+JoHqwWAvxBorDcpwlraQuqNKjYxYVt7vdF5KLLAMmRbS/eQChi425iXOnDdW7H6w
+         0MAtKY8giFFr3dciVBp9o2kEMBbcY7ApI2v3bTw60CiMoTT24XIF7xllXGeMQWRr2knP
+         d06TRJG0aCKDUurHOadyKsplAVolM+DLbHbggyzcNy2s8qoHkhnB9KGrbph4djGxgt60
+         vgBq5wq/t59uqz0RC6+fN8U65ROkEvT1wm7OEyUJzySAdN3E318V90UngROmqUsSHUOj
+         8b4U1oZA86rANBSx9XItTDK3t5Tua/0bHCQB7O3NDhvbHo2u/b3QWzNkgD9haYoySMN2
+         a21Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784559480; x=1785164280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2Im12ZLLd9bcOvQfTP/toQA7Db0tJk/hh7uBO5HAZ8Y=;
-        b=st69cswQb+ZOYW0JtdZmgd+ia8XQWRtq0RIWiFGNey+FlfSKedBgi81nF3Gb1hgUsg
-         oYa0bVEumcMBlSRqubf2J0aCFdw0JpxOjNdLMA+tq7z4+mdZENXzBct8g5WaIWu+FAPi
-         D1PzoMs2jsqu1XLF8DFRGUF0oXkGLZJRX4OgeIozTMUEaHhJUZhi/LskXoVPGp9L684c
-         pHpW6gxr9hi6DLicC3b1TgYPGiBU/waXkz4w7aFBUqFp6MdP9vYT6ShlmTB1Y656dup0
-         BBNyUT//OleleO2ZSF+Ldn/lPgauM0EFFOO2TCXURz0HiiRz3Br778yrrpCu5c9kcOJD
-         cStA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784559480; x=1785164280;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784560527; x=1785165327; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2Im12ZLLd9bcOvQfTP/toQA7Db0tJk/hh7uBO5HAZ8Y=;
-        b=XdZqMVoyCJ1Zxum/csanel6qP+Am2B3lJzX2hietfLMQzF8n8iNc+EMFROl7CyqyTP
-         8lDTzZTYS7bDTsvuOJSKDu6KuUOYEQhUPmaZVh4Iz5BmxoRaCF450o3txD7s6uF+874j
-         db4TWnS93L4RLTMxkpPTFbe7PJlKEgFa/WaI7dkIAGgjarFHsvej+Nn1gLdM/gdKLyr0
-         VMSeZrUhkiO2/DwxnieRYMDl3OOlih6+Qm5dBRc18oFRTpXpb/R11HysHIq4WaEoApyW
-         6+QCXajfl83XZEhX80cGbo6/FuLvGEMqGYNE2hkcnz5zIOkjiWjCDHmjbC1naX0Jk9+h
-         HmOQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpVV8EfLb5HjdyIe0yKJiEuNnXo4iiuWXeCErKQlB6GH0+tz62i1+zNf/1A6v3WRmyprjZ3EZFaYOPnnmcdGXJ2OQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSoj9owc6Yw0mU8/sVJb0u4OS/BWD4A2C7b+i4VcBHOjja5WKk
-	I0ChDBL3DZxvEljfyOrfsN/eR3fo2qY295+r+QGRvJypkhI0ZyAUMfl9
-X-Gm-Gg: AR+sD10zZaylgTFgkk7js77FlhvCVElb+FtTyVDmgYecW+zDtk5qSav5aYAmUxlTSRW
-	Wl5Ohp159gcPE8NAuuoaqIKB0T0wv52DNqy5sowGCMuyStviw8IB8KOY9tErdSrY7EgaK9zZSfY
-	Y1YyxAJtsg2dtzjIKj+P9hq88KpriyM1BYewGwWNKozxcJtcbGRcD3pmnhJN+N8SiL3FdxD5viL
-	RB/S9g65G4oDq0a6MnibWUvWCgvCTR1UVPJTuEjOc9AuG+oU6iM+lL9wVrnc5b2l+QqU8reXi3k
-	C5f/P//kS0Bp9rWbHk3k+ByEsxn/IyHVv3K2dpyz12LUV63O6pRhNXE8KZBefYoI50PizqT0Jqc
-	9d7GQe/Xmjqo+B2Y19zbYD8GeKVuXpSsFwfMkkRR+KX4CaByj6FyDy6dc8cX50U59pWI5diRRMT
-	RjVqzaV9KQsITYHMw=
-X-Received: by 2002:a17:902:ce87:b0:2cc:f4d4:299f with SMTP id d9443c01a7336-2cf34962042mr157078285ad.27.1784559480464;
-        Mon, 20 Jul 2026 07:58:00 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31429f9bb62sm36002789eec.2.2026.07.20.07.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 07:57:59 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 20 Jul 2026 07:57:58 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 2/2] watchdog: rzv2h: Drop WDTRCR_RSTIRQS macro
-Message-ID: <cf85d5b6-7d9d-46a6-9ec5-ab0a17c9515f@roeck-us.net>
-References: <20260715133922.2129340-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260715133922.2129340-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=6GA5/FZ0UEBjIo3jsFJRPrVNv7cnVsaH+IUEN70k1s4=;
+        b=Qa0titk7cfg9viilFM7aeV6rGktWqe7x27okTN8DPh4jDXARUYMWgxFqxEmt8YHFW+
+         +Dy3mi/GxA2kDbvpK4sXRTXDMIx5qZMoh1bmYVVQnnXM7jzGCCq237bpKk0kli6zUIwC
+         RgrZZlqITt9lVBKOzUieGKvb1HV/BfWBY/b/Rd9Rz1cAQ7x8FjzLslZp0N2vNpZmfJ4M
+         kEbCbg6fooOpLtFBl7cVMWXd6yY/4Hm7nVfgRd7zX22de0JrbPTmGMj/gm0BRTPniOZP
+         xv/19X3ArFMOQLOzuBwpydTPmof4NiCVAQjsRUDqg9jUJNUcr08+k2jKVpsfpLEJpR35
+         selA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784560527; x=1785165327;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=6GA5/FZ0UEBjIo3jsFJRPrVNv7cnVsaH+IUEN70k1s4=;
+        b=mCn+/K1Uv7FsTPXv7qsOaOLZtu6qvRvmlGBnCJ1iRCDN8CYbUgM6e+OZK499lbQG+g
+         yTwQp3p0xJ9TPjy6508gB6bAcPfqmVZIa7mmVDdErb7SuhWjg/oPF8meflqWWHe3MV5q
+         Zt+HD2NPjST/gb9tzswuffEgGlfHHdWfC+Q+B4L4XRpxI16BS8A8FXAlTEuagaa4o7O7
+         3leJgGU1qRH467zJJLeK5GJCG1DseFTaZYzZd6yWrS4QWsRO175aDErgX/ouHIgPOAC+
+         TJWutnKiakP8mU2kbiqLJxyMZP2+25bge1XneymPTPF28e5Uk0taxiaJlJpu4Sph1HH5
+         sRzw==
+X-Forwarded-Encrypted: i=1; AHgh+Rr+lbZHINodEP1NljBlm6g8tmx4RYOWrO6EfQfTGayZYTu/xmQioyf1/cK1IFQmj+5bhi6QkuufEzQoyXCWFY76qA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIFx0HCq68BMsunTG2j3VIM7aM7UMYy/b5L0JlHV3UREo0+yee
+	kmeuuYSu+5Dwi0sDxKXxn524oqXI97Cn57ulKHKd/gr/MEuUa00Ug23foKmdlJDH5NYDuDVLKpu
+	TYECM4zcq5Z58nvSDiMHx13bM8hUDIRg=
+X-Gm-Gg: AfdE7cmann5yjuDg/2NwJk3Y22rVbu5LJ4ZtqnQsxr82Cc+UCXrJUdgN5XVJSvLrX5T
+	4UgrIRtQzm+6fwnA0mkpEPYPKp+Tf8gE+RRLK87085kC91covLCwKASNSyo3xo/o7n7cCArEQUm
+	pNPCuMu2osYbyJQEIQ9fR/UV/yeisJfo+V92EVC6JXBfdXKgepXOqAxWPH0dCOzQBuFqO62NNGr
+	xATvzViu5KAZVp89oevZaS07jL81TqTpQOdlN1YR7mvZJMcdORVm1TbP9U5M3Sf99wl2Yk1NcZP
+	hv4pGzgWJoUfqBfo8ujB7qkOYTU=
+X-Received: by 2002:a05:687c:260d:b0:435:bfb7:695d with SMTP id
+ 586e51a60fabf-45661144d55mr7411947fac.27.1784560527422; Mon, 20 Jul 2026
+ 08:15:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260715133922.2129340-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
+ <20260719-drm_simple_encoder_init-v1-1-a78c509e3062@gmail.com> <4af254a4-beb7-4f77-830f-42d5bacb10a4@suse.de>
+In-Reply-To: <4af254a4-beb7-4f77-830f-42d5bacb10a4@suse.de>
+From: Diogo Silva <diogompaissilva@gmail.com>
+Date: Mon, 20 Jul 2026 17:15:13 +0200
+X-Gm-Features: AUfX_mw73hUQoweWxVmRQ0kaDeRwypjcxis2alI1xmtq6INWQD6CfuNjqz3kn5o
+Message-ID: <CAJpoHp73S2_cavgV3aVwC5PS8H1GRqTdDV-Xu8n6nXavBnV2=g@mail.gmail.com>
+Subject: Re: [PATCH 01/15] drm/exynos: remove dependency on DRM simple helpers
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, David Airlie <airlied@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Xinliang Liu <xinliang.liu@linaro.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
+	John Stultz <jstultz@google.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	virtualization@lists.linux.dev, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 15, 2026 at 02:39:22PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> WDTRCR_RSTIRQS macro is unused so drop it.
+Hey,
 
-Nit: This is a define, not a macro.
+> Again, you rather want drm_err() with drm_dev here.
+>
+> I've briefly looked over the series and many patches seem affected.
+> Please prefer drm_ logging functions and DRM devices over the plain
+> device equivalents.
 
-Thanks,
-Guenter
+Thanks. I will submit a v2 with consistent usage of drm_err().
 
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
-> - No changes.
-> ---
->  drivers/watchdog/rzv2h_wdt.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-> index 0f951219caf8..3c8739902ec4 100644
-> --- a/drivers/watchdog/rzv2h_wdt.c
-> +++ b/drivers/watchdog/rzv2h_wdt.c
-> @@ -40,8 +40,6 @@
->  #define WDTCR_RPSS_25		0x00
->  #define WDTCR_RPSS_100		0x3000
->  
-> -#define WDTRCR_RSTIRQS		BIT(7)
-> -
->  #define WDTDCR_WDTSTOPCTRL	BIT(0)
->  
->  #define WDT_DEFAULT_TIMEOUT	60U
+Also, is there any ongoing task or would it be useful to submit patches
+changing the usage of DRM_DEV_* functions with drm_* equivalents?
+Or from dev_* to drm_* when possible ?
+
+BR,
+Diogo
