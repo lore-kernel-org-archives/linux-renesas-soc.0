@@ -1,171 +1,272 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EA2414A0C;
-	Mon, 20 Jul 2026 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B77431A55
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 14:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784553235; cv=none; b=asC9FtQ9LOFx8SPfMovdnIHjUMzbkvClHfSPH9Py4pHx3xxcDRjpcKEHM3J4uTfEpgT7rGTthnUy+6pg1ksTczteOwRxRg/5FN0r0niJZ6ipmIXkUq/n0P2/j44+LdCT30Pp2e7emw4IAp7Zpe2Dp7KXhy9lrQ5AoeziOmyvX5g=
+	t=1784559395; cv=none; b=BZ49XDIKNuu5SFGSB8u8ItIpvSJeExm5wGmiStp21wuGvTe8UH0A7Ad+Ce9+3BAClkk9sG2WtA/emefuhanEZzB+48os1Ze+Jn1uGmgxlJKav0FfJliw+qT54KOzY4t8b1iBzXSQfYVWNqvrbGdDZFBcD7P+U7ZcUtp4gAtcfc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784553235; c=relaxed/simple;
-	bh=9BsZpJnlPg2HSDlbLy4ov0+Xr9dxks9E1gmOwgz7Cng=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=TpEhLlSJbPRBn+1nUmPrxCa7Lsh07Xoc5y3pU6bxFjMcnZi28miqI1mgyKfUAEtLYgjb/Z3eeRCdTVfUeFGSVa+BHbtT2ja8MZ4U+S35TReuLGIa6BUltVKWd/mNuqkMY5EI/cxfhXnbxiC+cSF8VF6KNr9CIlfUSVGWo+xnRsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0lIAXfW6; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784559395; c=relaxed/simple;
+	bh=CzUkV1yWdw/cErC5nc9nd/oqrh/M2z9aTs8L/aar04M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHlQQ7qlEnqe3CqEGqT08NlEA+AgmccQFX9s88zqV4Kzv7aUz5VnSGEdBbNfHg+tAEI4rj1pE3+db9o19VUwry6isRdK4/WSGoz+DQLUom6aKwNNIgZW+W+t8Ze0wwADngyib3TVp3pb7vdebcGilgqscHBDM8CqwIdDBT1DaEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iu9IRVFm; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0lIAXfW6"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EB3A74E40E75;
-	Mon, 20 Jul 2026 13:13:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BFA2E60360;
-	Mon, 20 Jul 2026 13:13:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9AF1D11BD14B3;
-	Mon, 20 Jul 2026 15:13:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784553228; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lB7WXUeDy7/vdkEKe1OOBE05FF1zuq4aESv2R41btZY=;
-	b=0lIAXfW6SBEjFIbgS53IC0goRA2iHo2+WqOIKxAIkpMCF5A9llJT8IVLG8gMZunsWx2Jpk
-	fBGDgRtlWCT0DXkGGMaYVyYsPemx1KV9MyCuNgTj6mqsRLddDen3VfR6HZAxfcQcSHaHrI
-	KIXXK8vBzpdzJ9eDtXPsJToqXGGCQvVfyevHqYIIiVV2VIZSdlshtS6bmCkqbitWkxgPNS
-	zX1qzsTd/ZIJCJvBvEEvlT6uK52ZTK/97iAqrtVF9OmF96ofFMpeAJrxerQ39Hg2s4tML0
-	xMrIrW1fnoyCYr4ON5TN3PP6PoznMwK+eIKWaqp0ugbwgWJYA2t7T8GKGMbhQQ==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iu9IRVFm"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-848882fdb18so7445627b3a.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 07:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784559393; x=1785164193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=R1PkSh+baSnNLGTsjAnxNBp1u03aHJ383HYMyDZwWTI=;
+        b=iu9IRVFmDdaZl4J1mXlvqGTfm1PyCggVqottxL2ccZu2IHYt/XMh6Szp2VEGsQhsbc
+         nSj8vfTe2aSX0Zso3YNeEZqyuWUkEmD7f7bJ3OHPPPm7HIBPnqZSPyozU/k04rPU/4QN
+         2eYbcSUP+4WKjNynyJjjX3Hczi1jFmFDZ+wOJykVDC2W0G2GMblHDvvgT/SQ9c0IGJNV
+         jcyGD6ye+yvYGh76PcOYjrqMaB4RVRwpC1TKY47FGQH+50/6ydFJH0EHkksALWCfFOmb
+         5q1GMLxdr8NIzDHf62QwvdEVqXCyjxCMparPOJ6oX2D/KARHQBCZonuwdoCSFx0BZyDp
+         lz8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784559393; x=1785164193;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=R1PkSh+baSnNLGTsjAnxNBp1u03aHJ383HYMyDZwWTI=;
+        b=IAjO+u/8AnFSJG0dV3POMvi6s4IZUwnRABu85n7wbFmMyx5NRfrAom5m0jmYx6nqHM
+         vWusVf2QqOl8OWjj1eBMyjk/VMIep/QRzhVl1yIih+lRaYcu3tgptdFRmZQ32NzBYN19
+         Si8yeWlZYlFqWfeowo5l3qkx/aOqWepToU6gbhc5h00NPGek57aMC/2h9S0SQglTgFZW
+         QnXlMHi95+NEQkd9ESZ81v2UKqA0vK7dKfHBSuxJk760D6PfEYqPnaat6Whaezac70dy
+         myvzONUmHOIl7BzjM4NZHFZ+TfLila1Na922ZzHzI3K3qptXlS4Ym9NrNZ6TQv12/RsY
+         TBBg==
+X-Forwarded-Encrypted: i=1; AHgh+RpFhy0H6hqTdru+dzfmnS2WqQhsteeCfVjLs5Jsha7p0BK7Bwgks18e/Y/Ha907fYTdy2OKBf7U4OhmkP9wCh+Z5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrTW4mS6AvkklOFh0yjwoeTHKlx2/x34JrUwIt2HItTVWaaMRP
+	TR2CSsDmOk0nd5vIuBj/r4jo0QzRdvz8FHozriLP1XSLyMNfoVQFXLFW
+X-Gm-Gg: AfdE7cm1ad3LGRzXvEkkt5st9eF97gfjiKkqWMXxprglBAWh+84D+YVXBmF8eP/MUHX
+	jYz74iiJBl+vH7NqvOCdlrYCuUcWaX1Dy8e/QWEXMGOVywjFp4MQ5m28vndMvLpML0wQktAi7gj
+	BB9gwKRtN8Ldjx6JVf2/wIKN8R3hql8J/sUxjo5/wnuhUIShV5lTt+Zp80X7oXFIwRs0o0xod+i
+	V3zZw6zPEYaU3leetmI0+AbOCcbLjE2vZKn1J4LVp0f1k619KrML1ji1bH+Jp0X6OwyeS98749d
+	tuxvzIRfuUMV7LxhrVtYTBZIz/1C1CWnuKPaHWmqeqslM01x/FV+EMDucrJRX/rJGOy+63Zbjhy
+	cPZR4jJYkkNQQ6EIadljFODmSqmWXgMeM7wemJCQwqiVNjcdgPUdySbtj8Mm21QTBfBpfrxZ1ze
+	mBThTu0jyfEAD/IZE=
+X-Received: by 2002:a05:6a20:cc0b:b0:3c3:9a7f:7307 with SMTP id adf61e73a8af0-3c3ad7ec489mr16674248637.24.1784559392522;
+        Mon, 20 Jul 2026 07:56:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a02b7f2sm36893149eec.13.2026.07.20.07.56.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 07:56:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 20 Jul 2026 07:56:29 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/2] watchdog: rzv2h: Convert WDTDCR handling to regmap
+Message-ID: <0eb41a71-a013-4686-bd9a-4f4df5acaa3a@roeck-us.net>
+References: <20260715133922.2129340-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260715133922.2129340-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Jul 2026 15:13:28 +0200
-Message-Id: <DK3FBE5UDRGW.3S7UJ25VWHKNK@bootlin.com>
-Subject: Re: [PATCH v3 4/4] drm/panel: find_panel_by_fwnode() return a
- counted reference
-Cc: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-mips@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
- <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-To: "Albert Esteve" <aesteve@redhat.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Jessica Zhang" <jesszhan0024@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "Robert Foss" <rfoss@kernel.org>,
- "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca
- Ceresoli" <luca.ceresoli@bootlin.com>, "Inki Dae" <inki.dae@samsung.com>,
- "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Laurentiu Palcu"
- <laurentiu.palcu@oss.nxp.com>, "Lucas Stach" <l.stach@pengutronix.de>,
- "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Paul Cercueil" <paul@crapouillou.net>, "Linus
- Walleij" <linusw@kernel.org>, "Marek Vasut" <marex@denx.de>, "Stefan Agner"
- <stefan@agner.ch>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
- "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Kieran
- Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
- Das" <biju.das.jz@bp.renesas.com>, "Sandy Huang" <hjc@rock-chips.com>,
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
- <andy.yan@rock-chips.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>,
- "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Philippe Cornu"
- <philippe.cornu@foss.st.com>, "Maxime Coquelin"
- <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>, "Chen-Yu Tsai" <wens@kernel.org>, "Samuel
- Holland" <samuel@sholland.org>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Jingoo
- Han" <jingoohan1@gmail.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>,
- "Kyungmin Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>,
- "Paul Kocialkowski" <paulk@sys-base.io>, "Alain Volmat"
- <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>,
- "Thierry Reding" <thierry.reding@kernel.org>, "Mikko Perttunen"
- <mperttunen@nvidia.com>, "Jonathan Hunter" <jonathanh@nvidia.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.21.0
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
- <20260717-drm_refcount_wiring-v3-4-023900c32e01@redhat.com>
-In-Reply-To: <20260717-drm_refcount_wiring-v3-4-023900c32e01@redhat.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260715133922.2129340-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hello Albert,
+On Wed, Jul 15, 2026 at 02:39:21PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Convert the WDTDCR register access from raw readl/writel variants over to
+> the regmap framework using devm_regmap_init_mmio().
+> 
+> This conversion serves as a preparatory refactoring step. It allows the
+> driver to subsequently support syscon-based system controllers natively
+> by passing along alternative regmap handles without forcing messy
+> architectural branching at runtime.
+> 
 
-On Fri Jul 17, 2026 at 4:02 PM CEST, Albert Esteve wrote:
-> find_panel_by_fwnode() is the fwnode-based counterpart to
-> of_drm_find_panel(), used internally by drm_panel_add_follower().
-> Like of_drm_find_panel(), it returned an unrefcounted pointer,
-> leaving a window where the panel could be freed between the lookup
-> and first use.
->
-> drm_panel_add_follower() worked around the missing panel kref by
-> calling get_device() on the panel's underlying struct device.
-> However, get_device() only prevents the device kobject from being freed.
-> It does not prevent the panel's kzalloc()'d container memory from being
-> released when the kref reaches zero.
->
-> Apply the same fix: call drm_panel_get() under panel_lock before
-> returning. Since find_panel_by_fwnode() now transfers a counted
-> reference to drm_panel_add_follower(), drm_panel_remove_follower()
-> must balance it with a matching drm_panel_put().
->
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Albert Esteve <aesteve@redhat.com>
+This patch does a bit more than just converting the driver to use regmap.
+It also modifies both reset control handling and runtime pm handling in
+the start, stop, and restart function error handlers. Those changes need
+to be implemented in separate patches and explained. When doing that,
+please address Sashiko's feedback or explain why the issues it reported
+are of no concern.
+
+Thanks,
+Guenter
+
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/gpu/drm/drm_panel.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index 72cf86253c0cd..a00ae98ed0956 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -542,7 +542,13 @@ int of_drm_get_panel_orientation(const struct device=
-_node *np,
->  EXPORT_SYMBOL(of_drm_get_panel_orientation);
->  #endif
->
-> -/* Find panel by fwnode. This should be identical to of_drm_find_panel()=
-. */
-> +/*
-> + * Find panel by fwnode, returning a counted reference.
-> + *
-> + * Behaves identically to of_drm_find_panel(). On success the returned
-> + * pointer has been passed through drm_panel_get(); the caller must call
-> + * drm_panel_put() when done with it.
-> + */
->  static struct drm_panel *find_panel_by_fwnode(const struct fwnode_handle=
- *fwnode)
+> v1->v2:
+> - Switched to use regmap_set/clear_bits()
+> ---
+>  drivers/watchdog/rzv2h_wdt.c | 75 ++++++++++++++++++++++++++----------
+>  1 file changed, 54 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
+> index 3b6abb66a1da..0f951219caf8 100644
+> --- a/drivers/watchdog/rzv2h_wdt.c
+> +++ b/drivers/watchdog/rzv2h_wdt.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+>  #include <linux/reset.h>
+>  #include <linux/units.h>
+>  #include <linux/watchdog.h>
+> @@ -67,7 +68,7 @@ struct rzv2h_of_data {
+>  
+>  struct rzv2h_wdt_priv {
+>  	void __iomem *base;
+> -	void __iomem *wdtdcr;
+> +	struct regmap *wdtdcr_regmap;
+>  	struct clk *pclk;
+>  	struct clk *oscclk;
+>  	struct reset_control *rstc;
+> @@ -89,18 +90,14 @@ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+>  	return 0;
+>  }
+>  
+> -static void rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
+> +static int rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
 >  {
->  	struct drm_panel *panel;
-> @@ -554,6 +560,7 @@ static struct drm_panel *find_panel_by_fwnode(const s=
-truct fwnode_handle *fwnode
->
->  	list_for_each_entry(panel, &panel_list, list) {
->  		if (dev_fwnode(panel->dev) =3D=3D fwnode) {
-> +			drm_panel_get(panel);
->  			mutex_unlock(&panel_lock);
->  			return panel;
->  		}
-> @@ -690,6 +697,7 @@ void drm_panel_remove_follower(struct drm_panel_follo=
-wer *follower)
->  	mutex_unlock(&panel->follower_lock);
->
->  	put_device(panel->dev);
-> +	drm_panel_put(panel);
-
-Based on your description, can we drop the get_device/put_device() now?
-
-That can be done as a future cleanup, so:
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> -	u32 reg = readl(priv->wdtdcr + WDTDCR);
+> -
+> -	writel(reg | WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
+> +	return regmap_set_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTSTOPCTRL);
+>  }
+>  
+> -static void rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
+> +static int rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
+>  {
+> -	u32 reg = readl(priv->wdtdcr + WDTDCR);
+> -
+> -	writel(reg & ~WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
+> +	return regmap_clear_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTSTOPCTRL);
+>  }
+>  
+>  static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+> @@ -150,8 +147,14 @@ static int rzv2h_wdt_start(struct watchdog_device *wdev)
+>  	rzv2h_wdt_setup(wdev, of_data->cks_max | WDTCR_RPSS_100 |
+>  			WDTCR_RPES_0 | of_data->tops);
+>  
+> -	if (priv->of_data->wdtdcr)
+> -		rzt2h_wdt_wdtdcr_count_start(priv);
+> +	if (priv->of_data->wdtdcr) {
+> +		ret = rzt2h_wdt_wdtdcr_count_start(priv);
+> +		if (ret) {
+> +			reset_control_assert(priv->rstc);
+> +			pm_runtime_put(wdev->parent);
+> +			return ret;
+> +		}
+> +	}
+>  
+>  	/*
+>  	 * Down counting starts after writing the sequence 00h -> FFh to the
+> @@ -171,8 +174,13 @@ static int rzv2h_wdt_stop(struct watchdog_device *wdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (priv->of_data->wdtdcr)
+> -		rzt2h_wdt_wdtdcr_count_stop(priv);
+> +	if (priv->of_data->wdtdcr) {
+> +		ret = rzt2h_wdt_wdtdcr_count_stop(priv);
+> +		if (ret) {
+> +			reset_control_deassert(priv->rstc);
+> +			return ret;
+> +		}
+> +	}
+>  
+>  	pm_runtime_put(wdev->parent);
+>  
+> @@ -188,9 +196,10 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+>  			     unsigned long action, void *data)
+>  {
+>  	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
+> +	bool active = watchdog_active(wdev);
+>  	int ret;
+>  
+> -	if (!watchdog_active(wdev)) {
+> +	if (!active) {
+>  		ret = clk_enable(priv->pclk);
+>  		if (ret)
+>  			return ret;
+> @@ -234,8 +243,17 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+>  	rzv2h_wdt_setup(wdev, priv->of_data->cks_min | WDTCR_RPSS_25 |
+>  			WDTCR_RPES_75 | WDTCR_TOPS_1024);
+>  
+> -	if (priv->of_data->wdtdcr)
+> -		rzt2h_wdt_wdtdcr_count_start(priv);
+> +	if (priv->of_data->wdtdcr) {
+> +		ret = rzt2h_wdt_wdtdcr_count_start(priv);
+> +		if (ret) {
+> +			if (!active) {
+> +				reset_control_assert(priv->rstc);
+> +				clk_disable(priv->oscclk);
+> +				clk_disable(priv->pclk);
+> +			}
+> +			return ret;
+> +		}
+> +	}
+>  
+>  	rzv2h_wdt_ping(wdev);
+>  
+> @@ -253,24 +271,39 @@ static const struct watchdog_ops rzv2h_wdt_ops = {
+>  	.restart = rzv2h_wdt_restart,
+>  };
+>  
+> +static const struct regmap_config rzv2h_wdtdcr_regmap_config = {
+> +	.name = "wdtdcr",
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.max_register = WDTDCR,
+> +	.fast_io = true,
+> +};
+> +
+>  static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
+>  				 struct rzv2h_wdt_priv *priv)
+>  {
+> +	void __iomem *wdtdcr;
+>  	int ret;
+>  
+> -	priv->wdtdcr = devm_platform_ioremap_resource(pdev, 1);
+> -	if (IS_ERR(priv->wdtdcr))
+> -		return PTR_ERR(priv->wdtdcr);
+> +	wdtdcr = devm_platform_ioremap_resource(pdev, 1);
+> +	if (IS_ERR(wdtdcr))
+> +		return PTR_ERR(wdtdcr);
+> +
+> +	priv->wdtdcr_regmap = devm_regmap_init_mmio(&pdev->dev, wdtdcr,
+> +						    &rzv2h_wdtdcr_regmap_config);
+> +	if (IS_ERR(priv->wdtdcr_regmap))
+> +		return PTR_ERR(priv->wdtdcr_regmap);
+>  
+>  	ret = pm_runtime_resume_and_get(&pdev->dev);
+>  	if (ret)
+>  		return ret;
+>  
+> -	rzt2h_wdt_wdtdcr_count_stop(priv);
+> +	ret = rzt2h_wdt_wdtdcr_count_stop(priv);
+>  
+>  	pm_runtime_put(&pdev->dev);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int rzv2h_wdt_probe(struct platform_device *pdev)
