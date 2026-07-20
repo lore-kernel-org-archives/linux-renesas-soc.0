@@ -1,140 +1,108 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454A7368264;
-	Tue, 21 Jul 2026 13:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5E6373C10;
+	Tue, 21 Jul 2026 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784640657; cv=none; b=lIVLKjiYgeN55cAxSC36rkQR6BUZWQVgSyPDDb/7oC90FxUEDmYi3uFpetycWw0E/Bvk9a7A1P/x6kdEgIvS5EWyhod0W/Yk4j/nbCH6ZkRMs9aJgzcDUVrIP00TUCw19JvXIguC/L67CHdYYlhuEW49JbUxOhcMRYOqEsNZbYo=
+	t=1784642086; cv=none; b=qkuOoAJNxF+2tT5/paFexZTtHB9P08B+LfwGkzfOW5Tn86kUy8o0hKHVvmCpT8nN3ocm5Yb/5w7O0/uv/0RZ7BsY5acWOU0X6DqdsPy5cmPHSvC0boN/lhy6h62s3ODjFP3oJQFj79R2xcnFS5QBEsk4nZJHjkOsla1xuY6XfoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784640657; c=relaxed/simple;
-	bh=PpoJ8mSDeO5J500ag0sun37EeE6AvIqeZEsWDfHGEXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s4r2fmZBJZXLR+4MAedboJcXicGk+0wBHqnA4WChp+/tqSeY/6a6cJRbW0as768EVAvsnooxWPPz0oPIpKQEOhjJd2GNVcXJp7Z+bgQ10e7ju1XeYY5d4cMXkDCTCmtwRkk8DfrVVOOITA3B8CdvdUniwRykS+8/rUW6wSRAHMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=eYDWfoPQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y4bG8ymx; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1784642086; c=relaxed/simple;
+	bh=ucM/8aLNkU6vHK0y9Z9NzD0923i+XMCxDNWORwdAAbk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gOp/x9Se1WiCFQf4KmYAhuMAt2oCYyv2CxVbsOy3H0e6CqwQh7T2DEa44x7+UQLeTdPf7j1Vz16CysTJerMcIT0piM3fGmc+iHslgo7JRh4Mvm2oewLaMB0LTTBGfb8JaKmIZ+tNZ12lK7aSKM5y6FmhHG1KEIfQSSE0Ftn3aGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afGA6/qD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="eYDWfoPQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y4bG8ymx"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5B3641400159;
-	Tue, 21 Jul 2026 09:30:55 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 21 Jul 2026 09:30:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784640655;
-	 x=1784727055; bh=sLmOrxWgSzKesbLl24YL8N9oK1UdIQD9gnT9tarZDw8=; b=
-	eYDWfoPQh9R3Kibc06J7RGhh/IoxSBUWqh0k8XX5EvTvsJEIXPe6sfqcrr7Par2/
-	JuzlX/O0d1p6Uu8eR2Vs0UtTSVuYmMW2j8RaLvTtIDxPiauWV+DL4tNrtj0NEIee
-	LManzSnd/0vu0i0nTqLyjhKY8rABBByBidBGYB2/sKZ1raevWuF2ZsEFkyId9LRI
-	OMzQ9QdYJB5a84rvC1cdkrzxoQkQheARzj4MBL92asGS2D3MuvAtbyVk3gpm8xr9
-	LOhcPlV3Nz7d5Qou4PjMCIM2NDCeHQ1l6xb2Ra3E6Rvtld/BuQ/wiIaMug3w7hmJ
-	4ChDP1tsyYrifzyJwvjE1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784640655; x=
-	1784727055; bh=sLmOrxWgSzKesbLl24YL8N9oK1UdIQD9gnT9tarZDw8=; b=Y
-	4bG8ymxUVuDF3gD/cpLCsBo6gce8jJ0Ch9Y1+kPP9pFdj+y86xRCnjC3WWDhxbnA
-	ssqCvs2vGpxJu/azdYNhM/JBzOzPUXjrhp+MGmUoh1zXQcxiUX2A1nS3phBLcKSW
-	DAvHPRXHByEDV6vR5KROgUgU8E/YDvQ1cjpwF4xUCeANYu9vXI3mfdOkARUCMK8i
-	En5EXfIMYuSoPzk+TA1RfLhjdqLlU61gZJ7IScz3hio/8zJS6Xb65Me2dlekEz+b
-	8oK0vpOSgSies6Cg01XzfaCJ51+Orge7FNS7Uhv34FQsXpCi7hPU/ILgP2wKd6My
-	bs5WGAsri8D1P6N8zJnnQ==
-X-ME-Sender: <xms:j3Rfah7j3P3DNvPorYjKrsAb7fhv-P58_wmS85i-Jsh6zGxJCEGbXQ>
-    <xme:j3RfarNxQ5wbTim4iqqG2JdQAPugB4TRnH68zeGny0oePbFwCjugabqhdgsN6cuUd
-    fHHOecyNpOovUcByHHw-Wws-Xfw7c6iwGd3ElpeQuU-OHOvKura1lk>
-X-ME-Received: <xmr:j3RfaqHd1-UBbKFJbjtbo7P7BxTdZvzI90MYvKO_j4NElD2L9DQNwD_0txMAN9ptM9njeefn45Y51b2DWXU5R5R9PNTZ5mw>
-X-ME-Proxy-Cause: dmFkZTErwjElEy8690l1ycSe3BvSXuBXSR0Jg1HpWthT0P2RPmGLUJJni6PIk9RkTYSob6
-    G91jjkTE2CSoFyKQK/b6DxQl0FA/SSSzTqZad3ZyC45OwiOumHjl/bWEJCM1isvpNRN/jY
-    dovoY0jrlxkD/9i41qhlwKYMplntd2LQWiwi8wfXVm/OuBrBhY7CIUnKIYxPi+ICcEuDS0
-    LsH4PxP7uCIBRudSa+aIYl2ComCj/meCak5H/XXeOTop2i9TSM1aGRDpjvPerYIIIAt5L/
-    qfqQ6FGW7FhxDVq1M28/hpcY1fdPyWUpeiDu1kuxoiJyffvHKnW9Wf11GZ+nZYOfDh89O3
-    ODCbG36c9UxPTzHxbfOqmPQxs6fGt3nWeyAJoPDgyBImRscLHb8OFHPkXh92PzuTDBymTC
-    SiCA7xWxX9keKHfh1qkeUtSTTWc9ihIAR/WPh9sMRQPf1kcoxjitABu1ra13fjlvti4TX5
-    ALzmZ1FfwC7nrj3YWXGSO6Pr28vjHP/xRUwt6rYp/bgsMZM0vgqvvU3eSH3zzjFix3rzR6
-    lDhXI2PjtHSn3P/yEyNFrbI9v+ctbCX7zmM/I2Gr0UmIpPF5DCvsCiIzePikUKL62vVwTd
-    YIC0OjeiWhUPpk0TVWoNRTvh/MGXtBuBz4Fc5QBHwYSwRS/JNr3Ga5nrvgPw
-X-ME-Proxy: <xmx:j3RfanTCuAUqzQT-yEbNUhtzm94D4XDERL_8eGH10qEPwJjhOrIH4w>
-    <xmx:j3RfaqSfMAwZ0KPeejr9zS9JVMHVgudvjM39q02KKOJ9TtsezFek2Q>
-    <xmx:j3Rfaqcp92U5wWrKVx4L51OQGFcXsZAmuGdu6DGnzIWi-kY_jsrb8Q>
-    <xmx:j3Rfaud4XL66cBQy8i2F17jF7wbZu575WOAuGZVpLHsiGq7zQIVaPg>
-    <xmx:j3Rfai4SYzkInyS4oyz2GM6lrlwE-2MWnidbqRI17ypbFJnl_Ry_IaMc>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Jul 2026 09:30:54 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"DavidS. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH net-next v5 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-Date: Tue, 21 Jul 2026 15:29:36 +0200
-Message-ID: <20260721132936.1331318-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260721132936.1331318-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20260721132936.1331318-1-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afGA6/qD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C48751F00A3D;
+	Tue, 21 Jul 2026 13:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784642085;
+	bh=FI+AsYiNeSzQrDIATIKSDIkf2UISz2OwCoqHg53Ubc8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=afGA6/qDpM44mtCv62IP1Vj7TWWUrN5CKqzoybaRZN3n80ErExxOsIiREtEYJ9/fo
+	 oPlG/DfNWLyqnJxpTyFJGeXM9zyQ3zy7TV5HWSqBzcjOpmHUtZhgD8rgeAuFNpUKjU
+	 h1WVnwmKrYc1NlINQkDi62MjxM5E5frANUHHpz73ubtRhAv/Zzt+8kjtuxqto7Ugu3
+	 WbZTVsgyme/4jdOGZRBBaSxYtzFfLoLCjo5mbVdl6WzHnnJWFk7OzHv6tUuK6GEPT0
+	 +FOMdd4liTldoSRH621CPjs5ma4Xj+sol8sFiat35iwwSugNlrlO8b8rx1sSXJpZi6
+	 aDvVLYlLzxUJA==
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: (subset) [PATCH 0/7] memory: renesas-rpc-if: Optimize transfer
+ overhead and implement runtime PM autosuspend
+Message-Id: <178455380089.8049.17726957653779366428.b4-ty@b4>
+Date: Mon, 20 Jul 2026 14:23:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1588; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ucM/8aLNkU6vHK0y9Z9NzD0923i+XMCxDNWORwdAAbk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqX3oiVbKSM1PkDXaMEIgPgtzm3QDk+BFWvJP45
+ NTu8Z8L2PyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCal96IgAKCRAk1otyXVSH
+ 0LOtCACGexykDD32VPZqtS7/ow4yhZX7lUG0df3DuL8OUcgqhJSqlPabRSKzk3r1dWKXyb56Y4U
+ 79cBuk61tu5CIrkyPgUUhW05P3olqBucpOieTniWFDhpO4fxmQb3La/c1CcAyNj3ZJTBkmscXfX
+ +qkqGuzhjNQ9Is4QRv7DrS2aqN1tkyHaKoIQzCuW3fWwwWgLFiamZFbCC2gg0dErrBqHsSO/LUX
+ Q3IdmJhC90Q+tqL8CFUI6qAAeqHtrrY2/m5CRtD7eAbTY7UhVAUhqhfYdqgRqUGKqzLsbyVi6ZL
+ c43yyyhcMGwLKmhBDrDRbJdStaiCYzfdvjztSyLt2wB2oo4M
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-the SoC.
+On Wed, 15 Jul 2026 23:24:10 +0100, Prabhakar wrote:
+> memory: renesas-rpc-if: Optimize transfer overhead and implement runtime PM autosuspend
+> 
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Hi all,
+> 
+> This patch series optimizes the Renesas RPC-IF driver by significantly
+> reducing software overhead in both the direct memory-mapped (dirmap) and
+> manual transfer paths, maximizing transaction throughput, and introducing
+> runtime PM autosuspend to prevent aggressive power gating during
+> consecutive flash operations.
+> 
+> [...]
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-* Changes since v2
-- Preserve sort order by unit-address.
+Applied to
 
-* Changes since v1
-- Rename node ptp.
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.3
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 82a7278836e5..b9b860ef7035 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -589,6 +589,15 @@ tmu4: timer@ffc00000 {
- 			status = "disabled";
- 		};
- 
-+		gptp: ptp@e6449000 {
-+			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-+			reg = <0 0xe6449000 0 0x500>;
-+			clocks = <&cpg CPG_MOD 2723>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 2723>;
-+			status = "disabled";
-+		};
-+
- 		tsn0: ethernet@e6460000 {
- 			compatible = "renesas,r8a779g0-ethertsn", "renesas,rcar-gen4-ethertsn";
- 			reg = <0 0xe6460000 0 0x7000>,
--- 
-2.55.0
+Thanks!
+
+[6/7] spi: spi-rpc-if: Implement 200ms runtime PM autosuspend delay
+      https://git.kernel.org/broonie/spi/c/af4b98e33d56
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
