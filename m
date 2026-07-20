@@ -1,158 +1,127 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510B443846E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 15:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E96434E36;
+	Mon, 20 Jul 2026 15:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784562107; cv=none; b=CKKaHepoAH8puW5gy4+5MPFGxlBgdUxK6PFslgkaV2VSq8CCd6jQohtN9vuyguHmRJ91Hccz33CkOWZ/6LQKpt0Qvat8SBqeSV7WZSccz+wMBOETOkSbdu64fx1QaXXsjUzArjTGJE2hFuQRSs0ZPajaMALHxTWSSX17Es826Vs=
+	t=1784562514; cv=none; b=NpBezRBdgZO0O7C2V4Kcz3bQhplFDFrQZ0Acc5SDhZIkvGBjh693d3Ku+Z++NnUuqM+E6eKbherkfgRJzrg1p4wLQ4GkfvvG/bl0bLyOfu3HB4WwI59dkqjWW0wzkeglb2dFKB8cND4Ja7IX33w6fiHCAaFuOQ+Pq+gV/PAxBsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784562107; c=relaxed/simple;
-	bh=EhmF3j+M4AduWGCg7EqLVWPIxAwmTTCxT2Gz0yXqaxA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=scvsGOFWCsRUDu/gD+tllTspY5Zhs4BG6k4hXzAz3DQMoHdIZmW83DMAuUQmACkCfgaGlPARKhAdUmknzUNEtpGFFTGOsYAhyZt2bOyhJR1ox6SmutqFDJX2tFyMCmlXwmQ81rI5Is1oxxBXa8Fr6ynsspPrZHyIsQRAy07v7wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3D/Gzzg; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784562514; c=relaxed/simple;
+	bh=CAhMSRdVQsu/O4ZNYpTI8yq0RFAJM9sQStU/01864fc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Ms02HwBNCTz++wdfJGWHcnft+DFDooaiOYiiky0Sf1jR84G8JujwQ7qHeHjt5lNV1i35VmRH1YssRF6ANHBIWquYEXDYKZAkMMeDlRDOMMjrcelsuM3NtB3X408ACj1T/nInpPVKfoinyeB4qXE0tn+lbKyTf5rpOasx7b2iirM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=oDT0WCuU; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3D/Gzzg"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-471eeac43bfso9603421f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 08:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784562104; x=1785166904; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=77r3PWO7yo5+W5LQS9FlqiYUpbSGXMMaR8d5GZmSOF4=;
-        b=K3D/Gzzg+DgwpeE6nhV/L26cQNnwefMDgGkbnZCmXDGSVz+9rlelZDlGwMPzQF5hX9
-         rSVwXNeY6uGISdebBs6PlCjJVMmvyKLdIldiNa71ZVMO3fBxJypUhLgtcI9znFEZRgfL
-         GcxsINcNRGbsrMxuK80iPk+SRQ/lIYOlQL/UuJ3nycyVD1uIduQiSAZbboa1WDM10QBk
-         PBAY1E5mPpzyUBJVAwbAjB0Ex8SLkcGUMQaArIO/oYeTftJOMvub99ypqdJq5On4B5MY
-         zdO+gKaiz1CjwH9JXA1r/HHu5NNslcxgQvQqo9XRBxKoyNavg+zi1ld8Tns104hF8dpc
-         9TsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784562104; x=1785166904;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=77r3PWO7yo5+W5LQS9FlqiYUpbSGXMMaR8d5GZmSOF4=;
-        b=tRTLpfD4HyHNEMC8lC7NgOt2VPcrzUnTw3Bftzh1LNvb/7cBq6EC6om3/1/1TZ1G5d
-         CfxxucSsfaAE3Z3UQY1JhIKcgn+BE9uKZu7LJ66Y3gL40pThlrLZtzG7geSdDT7Xz9HD
-         d2jS6+sO2ovwpLJLZ51yuAwpK0/c6XFj5vS0+oUSVU4ni2zcv5XhNjI9MsOI9W0Ms/3i
-         VGk4D9e+sMuvyBymF2AEcE+UBf06JOs8g+FAE0CuBEfMva+SnoxGMph1sevfKLg+q/SH
-         VlzPx8QJS3cmv6HnSWbIqm+ZK6oZ1qpRu6Ucl30wqfSiDhQ2bgwOdXN4luBIfArUV2CG
-         AguQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp0kb+ObFK+aV4Msg/tL/2xHZ+v+meQ2bKR31IYuyJ3+WiUWmQckxlkcifFxk9oMbSyZs/dOwmiQusBMmIM3OCiyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsEupvpGFJeRDHS7Zngm9ZPCtg2KPVVq8Apd3jWpfBy68BLjo0
-	QgHuwMhotYkaSbm+Jnba8KTT3JFkieLoYaLNdXWBF6ideDDZxJ5dTkVH
-X-Gm-Gg: AR+sD13p5tYA+6qLS7gfK+cii1op9zE4RE1MCp9YHopqZHUIujfl3P8qwomvjmjcmRY
-	Q+aWsyE7I4GDTHAUpg2yB3IJWCeUj7K3Qt7mLFurPBVrgimy+yNap21AISl2IBwBQKq9CUZHqNd
-	aexailLH5ji/At6+jWex44678t1exCeSI7320XWW7gUclwhYhdBNUWrx3OO6yeW0ip/KWZlRhgv
-	MoFwc6ExIsE38RNUPTA80yx1dugmrVAHDkszcd2ZcppI43JNmru+Qdo3soavzM9itOzwZPoeNxA
-	A1eymUqavsuCBvUG+zGXkpl7s2Rb2nlXnsepbPMYOv6blYRz6T5OboUmWQ742OYSm++sUmfpiUU
-	+akR7i3GbestzuLypg+eDzqxwywb+7cIm+Bu8aLG7yMnK/dNK/6uZW5Myr792Qm08IPHJswI4LK
-	7P/m1ZABkKOg==
-X-Received: by 2002:a5d:584f:0:b0:47f:6d57:5a93 with SMTP id ffacd0b85a97d-47f6d575ccbmr10955450f8f.38.1784562103442;
-        Mon, 20 Jul 2026 08:41:43 -0700 (PDT)
-Received: from [127.0.0.2] ([2a01:14:111:ccf0:e9c1:2f80:10a9:c708])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f67466e09sm32667936f8f.21.2026.07.20.08.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 08:41:42 -0700 (PDT)
-From: Diogo Silva <diogompaissilva@gmail.com>
-Date: Mon, 20 Jul 2026 17:40:47 +0200
-Subject: [PATCH v2 15/15] Documentation/gpu: remove completed
- drm_simple_encoder_init() todo
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="oDT0WCuU"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=default; h=Content-Transfer-Encoding:Mime-Version:Message-Id:Subject:Cc:
+	To:From:Date:subject:date:message-id:reply-to;
+	bh=cPgnGTrVquqF75emqExWO0AgcYGPQLGqwHZ2HaypURw=; b=oDT0WCuUbBRh+l2FJQo0z8o+Dd
+	14CH/GflUjGavoQDFSCDJXXoY6CXhp3ET7VZX4m3UuIVydfxhvC+1dG7HCcyY6wgzGA6nAtXbtMAA
+	HES5RfbTE0VhWs6FPtOWUN4hsBGKs79q4cPbKmfq1sitixJzljyDz2jjhXLFwQ7k9ERo=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61] helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.98.2)
+	(envelope-from <hugo@hugovil.com>)
+	id 1wlqEH-000000001cV-2XRe;
+	Mon, 20 Jul 2026 11:48:29 -0400
+Date: Mon, 20 Jul 2026 11:48:29 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Hugo Villeneuve <hugo@hugovil.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, "biju.das.au" <biju.das.au@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Prabhakar Mahadev Lad
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Thierry Bultel
+ <thierry.bultel.yh@bp.renesas.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+ <linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] serial: sh-sci: Drop check for zero baud rate
+ from uart_get_baud_rate()
+Message-Id: <20260720114829.14dee9de11975bb46f3126cc@hugovil.com>
+In-Reply-To: <20260422100538.25c6a279ec46defecd8d9a4f@hugovil.com>
+References: <20260420140426.237865-1-biju.das.jz@bp.renesas.com>
+	<20260420140426.237865-3-biju.das.jz@bp.renesas.com>
+	<CAMuHMdXQi7eSZg71=01dYjpmgHRXS+L9hXZMN_dR-mtM6sLKNw@mail.gmail.com>
+	<TY3PR01MB113464AE43A23A0B69BCC5675862D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	<CAMuHMdUfGY6VwW09zQX8T3_JkRHwKGRUyNGRXvQaD4e58OV8qA@mail.gmail.com>
+	<20260422100538.25c6a279ec46defecd8d9a4f@hugovil.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260720-drm_simple_encoder_init-v2-15-5020b630668a@gmail.com>
-References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
-In-Reply-To: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
-To: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Michal Simek <michal.simek@amd.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, 
- Alison Wang <alison.wang@nxp.com>, 
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
- Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
- Gurchetan Singh <gurchetansingh@chromium.org>, 
- Chia-I Wu <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
- Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Xinliang Liu <xinliang.liu@linaro.org>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
- Liviu Dudau <liviu.dudau@arm.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-doc@vger.kernel.org, Diogo Silva <diogompaissilva@gmail.com>
-X-Mailer: b4 0.15.2
+X-Spam_score: -2.0
+X-Spam_bar: --
 
-All drm_simple_encoder_init() users have been removed, so drop the
-completed todo item.
+On Wed, 22 Apr 2026 10:05:38 -0400
+Hugo Villeneuve <hugo@hugovil.com> wrote:
 
-Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
----
- Documentation/gpu/todo.rst | 15 ---------------
- 1 file changed, 15 deletions(-)
+> Hi,
+> 
+> On Wed, 22 Apr 2026 10:59:23 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+> > Hi Biju,
+> > 
+> > On Wed, 22 Apr 2026 at 09:26, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > On Mon, 20 Apr 2026 at 16:04, Biju <biju.das.au@gmail.com> wrote:
+> > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > >
+> > > > > On DT systems, a zero baud rate from uart_get_baud_rate() is not
+> 
+> The fact that uart_get_baud_rate() cannot return zero is not related
+> to the system using DT or not, so I would drop this "On DT systems, "
+> from the commit message.
+> 
+> > > > > possible even earlycon derives its bit rate from chosen/stdout-path.
+> > > > > The zero baud guard and its associated done label are therefore dead code. So remove it.
+> > > > >
+> > > > > Also drop the unused done label from rsci_set_termios().
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > >
+> > > > > --- a/drivers/tty/serial/sh-sci.c
+> > > > > +++ b/drivers/tty/serial/sh-sci.c
+> > > > > @@ -2719,8 +2719,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+> > > > >                 max_freq = max(max_freq, s->clk_rates[i]);
+> > > > >
+> > > > >         baud = uart_get_baud_rate(port, termios, old, 0, max_freq / min_sr(s));
+> > > > > -       if (!baud)
+> > > > > -               goto done;
+> > > > >
+> > > > >         /*
+> > > > >          * There can be multiple sources for the sampling clock.  Find
+> > > > > the one
+> > > >
+> > > > I am afraid you are missing that sh-sci is also used on SH, without DT?
+> > >
+> > > Ok, please share your thoughts to handle divide_by_zero fault for
+> > > SH platforms on the code path after done label??
+> > 
+> > Someone has to check on an SH platform (or qemu rts7751r2d) if
+> > this can happen. It might have been broken along the road, as people
+> > only use earlyprintk when debugging a problem that requires it.
+> 
+> Geert: this "goto done" is not related to the earlyprintk block, which
+> is untouched by this patch?
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index 14cf37590fc7..b7351467dc74 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -29,21 +29,6 @@ refactorings already and are an expert in the specific area
- Subsystem-wide refactorings
- ===========================
- 
--Open-code drm_simple_encoder_init()
-------------------------------------
--
--The helper drm_simple_encoder_init() was supposed to simplify encoder
--initialization. Instead it only added an intermediate layer between atomic
--modesetting and the DRM driver.
--
--The task here is to remove drm_simple_encoder_init(). Search for a driver
--that calls drm_simple_encoder_init() and inline the helper. The driver will
--also need its own instance of drm_encoder_funcs.
--
--Contact: Thomas Zimmermann, respective driver maintainer
--
--Level: Easy
--
- Replace struct drm_simple_display_pipe with regular atomic helpers
- ------------------------------------------------------------------
- 
+Hi Biju,
+I cannot see any follow-up for these patches. My series for "serial:
+core: improve safety of uart_get_baud_rate()" has been accepted and
+integrated, so now the renesas sh-sci and rsci are the only drivers
+still checking (for nothing) the zero return value of
+uart_get_baud_rate().
 
--- 
-2.54.0
+I plan on sending two patches to address only that for sh-sci and rsci,
+unless you are preparing a new serie that includes it?
 
+Hugo.
