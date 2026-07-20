@@ -1,141 +1,173 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98981401483
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 11:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784548683; cv=pass; b=o4dr8rnv7pfvRAV4ofX6pOFU6EEKn88lmEmLg7GTX6eZrQ4hp99MSNXzsh/KME/RqnkjqE6crJTGT4/kcGY5qh/P8yLaI/Apr80qqsBA3HgaxOGLl4QXpzyO8DNdjoLFxTJ1ve1w62WJM2qHLX+EwXfIO2+AvaFMoGSy4XKbTkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784548683; c=relaxed/simple;
-	bh=U3MDi5hJMY6ca1k0390hq0Y/jmz8ekEa4Ii9/SfAqSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZRKZtwYsT/makgslhtPf+yC+6GCm8uMfflWQ8d3WhGgkI0kXBcmTOfkw0HvCeiDvNVU0WyYGi1Onglu7wPRXJSpuZJae4140jz6TVet7M85zyQWaQ6lGxCpEKTA/YsZnDIN2rjxFRskiJBpdOUrPQLclDy2Tp7JPBDzD99QSAe8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJQ4dr34; arc=pass smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711EC422536
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784552990; cv=none; b=b3erzXMBWES2AYpjjiWOYad4Mz4HYxf1/q7hanmn3+Mq6czMUqf3WW5NqlLTMITpVZQDB9YwS+oUo0vWtNvgPuaEZOmCcIGhrW9ei4SPsp3M7cfElZjnJ6Ro9VLEnYmNJNJpLOLwE3P9dfkaEVRDl63DQTHygCZm58wbkHIoV54=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784552990; c=relaxed/simple;
+	bh=NibdtCwpxrzNYlWG3qc/r04EtocLChhxPuanrYhvQf0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fW2kcJJ0831RP+Cga29jdzBEzHamslhtsSq0wIajK6NOMRnt7RRCalcGeNxxVvTSYCGhAy3F98v2nr8H6a4vUqlj49cpu7rwHo6lElrt4lPux1FVBqqKkX6mDeOWhrOmzwCb9Rdr3MKHEHGYjM+rMG7ppAB9uc158j8bPcbTDZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHv6x7WZ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJQ4dr34"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4799b3f7c83so7288415f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 04:57:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784548677; cv=none;
-        d=google.com; s=arc-20260327;
-        b=dF+SD80lWSfi+eK/DuQmdJfGiDSp8tSysevey8sY9oNUiqsrXxrAWg+FstJ7SpdJiH
-         Thay7hyRmQrG67O8XbkqlM4vhUkUGLp/v5qIzoxmfbalPav8RF1qUDk2M9NyhS3j2ZsA
-         HL741CcBn0fAL6rvnSM/f3ZbWK2BYTnz85UnNS/yTuIwwAzhWa/ePu4kUzatH3paXev2
-         20XGaxgUnn0vmPvIboN/iJ8qtJ5ys09uGkYCzNthsiO4n+YbCrQ1jUOdSeSgM+WXPAcx
-         T+Uq+kwSBE3P3UqaXH2KLhs6Yf9/BAtWlEW7cBQUvJeJW3BHAAwuDZJ0WYJM8qZV0ZH2
-         zS8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=U3MDi5hJMY6ca1k0390hq0Y/jmz8ekEa4Ii9/SfAqSE=;
-        fh=eQm5zKmUJqicL1tMaz5iqDifxOnxe+m9bStm13g9/fQ=;
-        b=C4TCHLTcnp1y9SJum/wISY2Y+08axC/Npznw/TynHODy8YjlM8vujMY5RqrGnBRPHG
-         Q7FIrULbjjbDKUMqBOfJGc0yt6Bvx9Uetb67M5at4xQn9csG6RLILdtx2CxiucPZXBWa
-         56LfcDVsIjZfdtJ4miz96NvrSEhEvBU6d2Fo+kXWSapGhRlEJ993kBDteFCY5US+W8pV
-         qfggSGDgQvkowu67c+gJuNMiWM6bN/Ca9pyBoZxkCZfhkYMvkrCIxsKgiGL91+GwpK9j
-         3QXIwmeBh1BeZCO3ovGtg57iaFgfI/MPeXJUhkpeVsivxIk7I/+WQNxJ1YHVgC1qUYnP
-         7vtg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHv6x7WZ"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4728c12ba97so5028921f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jul 2026 06:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784548677; x=1785153477; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=linaro.org; s=google; t=1784552987; x=1785157787; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=U3MDi5hJMY6ca1k0390hq0Y/jmz8ekEa4Ii9/SfAqSE=;
-        b=nJQ4dr34PzaYP8GBe2B31BqvIATjvjUKZaTPb7C35cNrTZpdq7SAbLJ4NCKZmNntbR
-         XdTF23GnVsZVCjpa72RZSuAqyceabRqS2mUaOcTvlnTcXMQFsdw3zmB70/uQ/eX0FlEo
-         sZydQs0EoxOhDr6uZjn0TPO9Tois1sTD17hk4lzyEBeApJLaxCSsUMU+WZwCSaahDMQF
-         +KScP5B5uf/+rJLbVuxMBuGhEy4Uyr7E9ZSfWiAZdcEsyXMDX4JSVjerahSnIMJqEy1b
-         ucHtfvCjV7WT7F3PXZEBEjEP4RsxrmzEHBg2vWlR/LLV5Uv2t4JFfgWFGKs21emXCdtM
-         y05A==
+        bh=E8mYPhXUmZpNbn2oVo3k+YKafzsgCsS1GE9LMv7AFBw=;
+        b=wHv6x7WZ/IV6ZYym8nQcXPLFMwS9lgllAo7xOYbOuwSQqsR0aQMfCZIOU7ib/S90Vo
+         +5bMjMfpbKfVjE+1V39fstmHz9V+OuCkorKzJqFqqQbCyQwnq7UkjmN/AQzYUmnV2+L9
+         vV4NvhyQZpA+DzH48IfXwHg7cP2d0UzVKiMctwOETCPrykdlruLxK6sakRFkaK+vlhoY
+         w3fFquvx/0OgmNsQWlvAZBnljgWum8YJkZKIGmaLhPDL9Hi6NQCxq+QwEn36BbCUv6mE
+         uCrUHi6b6iOTOY76BZ/sfWGYnf4G1DYmKIPvm1vkvBLNG3PzDYq+6KAra4CBDgLEB5dr
+         0HuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784548677; x=1785153477;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1784552987; x=1785157787;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=U3MDi5hJMY6ca1k0390hq0Y/jmz8ekEa4Ii9/SfAqSE=;
-        b=Jxrv8WOCV5JtM9vVXBIbn/kbMPoBMy0hrDoDaGpqtYZQaDkN6itPeHYRE+cWTGNaED
-         OLhzziXDixYBcFrRFUgTkkibYyeinQg7B07/onQLzoFmi+slQd88+JL2MZHdqCSuL5qp
-         zKjhOXgPTQ0vTa67u5tlzVCnZjoTiXNci734k5YDvZQ/s8bmgaMukVV2+yZ34gqfUnhu
-         6ubRewzkVmtTQJwfFrJciQineFDPh52mPsN+BQrFwxGXwLKZQNOYJyrfeZ7cYdn7GSgA
-         GbLygsrhx9Fbyfu06wTloBhiFxyALRmrEUxVq6+jNZmoXRRzB7gMBj7M6MVKRxtnGCZg
-         ERZA==
-X-Forwarded-Encrypted: i=1; AHgh+RqLlnNDPBaLqCXC7XwlT9QFX3msYO7K6NIDBA886pHud8NaX4EWtRj3KSiWn5eTeps1FpokZ7JgI3D0PwLACk5+hg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygyO680h6m8aRZAHg4+cpXabGYS8FypbdfaSus2tw8CYV0Vn8g
-	ubRXOgkhrGR1qfOOB78SdWqGL0wIXZh7jHVB/VJRHj1bxVfJ/JDcQmoxYGA0UrYi98A+Y84Kesb
-	7MUh7WCEpoZCMZ9uBh/r8cG1MpZzTtAtqAsP7BpU=
-X-Gm-Gg: AR+sD10PLVuke1Z44uavh9mmRjjOkkoP8IFPaqgZNI7JO0e8in8h4GzcuCfmmT7p+f0
-	ictdX1R/A+AGR6tP5/G5VfY5m06Ppw2Sqe+J40a7p7f50kFih4YbDU9kQfQnOG3yzFhkaeoBSOQ
-	DIz1UStfY7lwvLQ8wgySFVAuYuBxngp9628GEldX4Onr9+dQS19FxjKu2TNvsxqQs2ECUPxgJnM
-	QFm83zb4nw6WUMZ/7bgJUrOKxNn8kzc14dP4IvOHwcwSMXw/ipl+lbftqxolJ6DDvT2+HrkmwGi
-	gPpgHEj6Kxj6D4SF/yQ7YjdbVMRTUgE4v2Bdu+CwsVaOAFjBziPMKWZb2g==
-X-Received: by 2002:adf:e010:0:10b0:474:cd60:1154 with SMTP id
- ffacd0b85a97d-47f6232c9c2mr11371166f8f.41.1784548676698; Mon, 20 Jul 2026
- 04:57:56 -0700 (PDT)
+        bh=E8mYPhXUmZpNbn2oVo3k+YKafzsgCsS1GE9LMv7AFBw=;
+        b=EFPr/qfH0OHxAMAC68q00wyKbKPHV+xUVNg9TGsNjlKltwkLrnkjZVM+qerPp2BRp7
+         lzZN9o6siMHHHJI5K5cUTzcb8Vmbynh9V2U28U/u3NfWF6DJbTS7f9hhEdffPp4HMeFh
+         YxOgZSTid+orYeAFyoHJlpBVEIZu5780jVHUYytbTiBYYElw8mj51jIfswq8TyfVKgF/
+         30G6Xgjvqi/cEHjq40W2uzxgqthVNwQRetVaGby4apmEa5+GHnz4eGaLUiEM4mAn98fX
+         wGbZNstEpegFcjy49YXwJ2ICDwFfTz67CDOx+1m6Dq1wyT0xnpESZu5YMfQIVYWrkQKw
+         pLLA==
+X-Forwarded-Encrypted: i=1; AHgh+RqRRD3is0qpoDoB752VTKADOIv3l8LWJ9iyEScNFSzszqjOYQ/+ftmYPVblzxvkrtLTwUaZSXe6GVtmVgb1ku3I9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAjAhIRd0EoHzCZXA/SDS+LYx67DKYJW7+6yFz0WzbCiJyrz+j
+	6wTsdEjefrOl9IMBiVnUhGGTgfmCVngG6Z/r32njz2PpbZXDbwfns/KaNmj7/HUNcD4=
+X-Gm-Gg: AR+sD118PCQLvA0aSn3CUM9lOmoqx+9r+rUksR/M5Bmc1nknZqEmssWfRo9hVKDLPC4
+	b0SB2SKmrc0vOrdwczk4stVM4gKq6yYjc8uqhuv9F2j5/XELeu0+h8CNpCj4TPgGgLrroV3Xz2z
+	UY0YK3lrPuFF1WvMm75MTRc1VtehCiq4glzFDlZtRNODZB0moJf2otLwutie1CWJYFdPfWXCypZ
+	Q+GuCh4yqw9TGNputG57VJOeq1oGGabK1QkAXuEemtDS4zYCxR1w88vgnl22o7nkjqpAWukzPsG
+	RI6UzP4DykdCF/rUWM9J5/H3NtKmjJvcQctEGWs4nUUFLI25yTpr2mX/fhBjINd346pnXT63yZd
+	CQgj+Z4BvCNz/ETpHCyQX90PnAR+UdSfOCGr+GEqVdjVtafpFVAgFAbxWAZGJOdOj7y2RTeYSB5
+	7bzJ9AQK1iBnekBxkl8Joy+ZI=
+X-Received: by 2002:a05:6000:25fe:b0:46e:c978:7ddc with SMTP id ffacd0b85a97d-47f62316b85mr16082343f8f.24.1784552986541;
+        Mon, 20 Jul 2026 06:09:46 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63ec7ea1sm30767434f8f.24.2026.07.20.06.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 06:09:46 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Alison Wang <alison.wang@nxp.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Albert Esteve <aesteve@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
+Date: Mon, 20 Jul 2026 15:09:38 +0200
+Message-Id: <178455228150.789946.15332957012612566281.b4-ty@b4>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260715222417.2997712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260715222417.2997712-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <2a5439f1-11e3-4194-a1b8-f00d0a8333b5@sirena.org.uk> <CA+V-a8vdrhnZs+1WyVxWJ7Vr+2A2_3zsw1z6bNUqvGi4OGHH0g@mail.gmail.com>
- <0c5248e0-4141-498a-ba01-e6c4225b28ac@sirena.org.uk>
-In-Reply-To: <0c5248e0-4141-498a-ba01-e6c4225b28ac@sirena.org.uk>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 20 Jul 2026 12:57:30 +0100
-X-Gm-Features: AUfX_mwFG40CBE6m7kuvfozDrhqMm7gmP9rkxoPyUwFPflVTPvbFZFy_oEFc730
-Message-ID: <CA+V-a8u+Pjgvqprt6kupDc-A4ewMS=B3SqSQ85jwg7EYV4hGQg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] spi: spi-rpc-if: Implement 200ms runtime PM
- autosuspend delay
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Mark,
+Hi,
 
-On Mon, Jul 20, 2026 at 12:51=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> On Mon, Jul 20, 2026 at 12:45:29PM +0100, Lad, Prabhakar wrote:
-> > On Sat, Jul 18, 2026 at 2:14=E2=80=AFPM Mark Brown <broonie@kernel.org>=
- wrote:
->
-> > > On Wed, Jul 15, 2026 at 11:24:16PM +0100, Prabhakar wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> > > > Enable and configure the runtime PM autosuspend infrastructure duri=
-ng
-> > > > the controller probe sequence to safeguard chunked flash operations=
-.
->
-> > > Acked-by: Mark Brown <broonie@kernel.org>
->
-> > Since there is no strict dependency between the rpc-if core driver and
-> > spi-rpc-if patches, Krzysztof asked about the patch order/routing.
->
-> > Is it OK with you if this SPI patch goes via the memory subsystem tree
-> > along with the rest of the series?
->
-> That's what an ack menas, though if there's no actual dependency I could
-> just take it.
->
-Got it, thanks!
+On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
+> The drm_panel subsystem provides kref-based reference counting [1]
+> (drm_panel_get/put) but almost nothing in the tree actually uses it.
+> This results in a systemic use-after-free pattern throughout the codebase.
+> 
+> This series aims to close all those issues.
+> 
+> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+> a counted reference for the list entry. drm_panel_bridge_add_typed()
+> now holds a counted reference for the lifetime of the panel_bridge.
+> 
+> [...]
 
-Please go ahead and take this SPI patch through the SPI tree. I'll
-split the series for v2 and send the remaining core rpc-if patches
-through the memory tree via Krzysztof.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Cheers,
-Prabhakar
+[1/4] drm/panel: have drm_panel_add/remove manage a list reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b619d9d2af33db01ea237e3546e9d55595e94ea0
+[2/4] drm/bridge/panel: hold a reference to the wrapped panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/34069e04d338a333561b64a2da055bd16bfba39b
+[3/4] drm/panel: of_drm_find_panel() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/738ff709f7cf82a41cbd9f6b8f9b1f236ce26610
+[4/4] drm/panel: find_panel_by_fwnode() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d857b8ce04a7ed4b36a11db16968ab1652ed702a
+
+-- 
+Neil
