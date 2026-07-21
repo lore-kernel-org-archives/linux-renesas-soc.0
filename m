@@ -1,38 +1,38 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278E3BBFC7;
-	Tue, 21 Jul 2026 08:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265913BC687
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Jul 2026 08:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784622616; cv=none; b=ReInswohXxtVreCA1R+p4SyQ575TXujtteRf8q/ubgiww+Ztd1yE/OG+N9fOl/Km8ujWKccxkEtRoEHqz3Jx1805UFMIGIDRDEm5Tlp2YXj5AtHzrm+gD6o7RnkJn+kWj/YJTMBx1o+nT9jjIfe5hdyWgBk553JMPvEHWvOZPZ4=
+	t=1784622617; cv=none; b=PmwrL6Udrrj/Gfka3Wr3fGZR+HmvkfJ4mTA5yLFR7Ti5k2ufPOo3sqNGAVh8FsfmdwZOI5rcbYz3zyRt8YAm0H4zJNg9JcJEBDe36ZQevClAFwktNmyG/F73ATmmgjqwiPdOAZk4CDGg5G//cbkji49WFK1PJoBnKyPp/9JXn34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784622616; c=relaxed/simple;
-	bh=Tu1iuFcAp3aJPFLWz/z9yil9rnyPlTSwjxZ7lwpSqqg=;
+	s=arc-20240116; t=1784622617; c=relaxed/simple;
+	bh=HbS4Rpeus8z+CqMlKn9XdXXf2qR3h2VDL55W31Dy2+g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kkqrO2AUC3vTrg1Z51S/3kg9wgp9LmZkAEWqD8jO/Iw8nQiejxNOPIF2gfz5XcK83/tvAt9aHUXjEXiM3H38GaJ0N4Jne3u49HhlsMDoOsRlPbTlN81pvqWHiS7mC9Lf2evfcLfFfu9hZqOxkPR/q7t5mj280mY8up/oSATpqFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LZvQq7Zz; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version; b=LidsgxOFJWRVtCYUwz51zH9OjYplyoAW4dvVyRdNQIaKzbzofevNRknBg0yxxRz25BXxA0C42+9vpDWMouiWwdzbOiebUcbhCIwvpikzm83wPDe5HDQxBmbOpIQYXKgIT8eewLqr/zUFjePz4dObIwOOoQG8wcg96APXsHNCYvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jti7Yaem; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LZvQq7Zz"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jti7Yaem"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 69B081A112F;
-	Tue, 21 Jul 2026 08:30:11 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 805B84E40E98;
+	Tue, 21 Jul 2026 08:30:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 370E660368;
-	Tue, 21 Jul 2026 08:30:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9383811BD2234;
-	Tue, 21 Jul 2026 10:30:08 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 554C960368;
+	Tue, 21 Jul 2026 08:30:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC4AE11BD1290;
+	Tue, 21 Jul 2026 10:30:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784622610; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1784622612; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=3RqZriyESepDN2Pj+icpBn8W098LgY3frk3eNygfy2c=;
-	b=LZvQq7ZzZ7gDbK/BPGUFi9NMm5OsXdmA29+TvJwjUnfoVllGXxHmjlPHrUyX5p5Iq/0vAy
-	BBMhlMeNfkw8FT03jg475HUIaU5/vHRWSxeZde/KVQJBKKbpsI0mW2pNtH0FOMpTN2p54q
-	bnXsWI4uqnHGBG36JqutpY5B58d6finZ9dHj7uLEssuGmYKAv5MzoWkerzZ5VZopA8kSTa
-	Piu7NZVAJFDU8mmBax+AnXseU2EvvmifeNAI1++7yuk7a2PbJ6FNsdAWPUz1WwSfEv+3Qq
-	toM5y45k0h87wzN1ZgZgAaxBY3l07gEnDEvHE7VxkMU6ZuqU7jUbF8oxUPamOg==
+	bh=KC1yk5fADdsigOxHDO3fqt916xnPRpJY0Omipd3mb/I=;
+	b=Jti7YaemgJTuccjnv4HQqQmLRR3gejszd9mYFHkdQ2zUFIZx1YAArvY2jvi4rM6K/fa/YB
+	f3gnk/I5KgCzWyIFTQS+p5CnNcN8FUBiH+lvMb01SPSQRuJ+odIV9uWYg9xWTnCEMunNVe
+	uhwvpmTSwtJMzgfqPi5CxUj4us9BMels2rmLWTDAn5BT+/vtLemzbdG4dMIbYiO4DUC05N
+	Xob/V6JdWgRDHQOPnq2tj3/Rnx9zSkhbOTLkPxV8EVEAiX5tYJqedPTM8LSjm+uzZHi8WU
+	cHHdf3kBF4NqfuKy35gu/WDDIvj4/XKhOzBGXHDAdRG+1gE5COCvd6LFvSZh5w==
 From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Herve Codina <herve.codina@bootlin.com>,
@@ -49,9 +49,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Pascal Eberhard <pascal.eberhard@se.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 2/4] clocksource/drivers: Add support for the Renesas RZ/N1 timers
-Date: Tue, 21 Jul 2026 10:29:48 +0200
-Message-ID: <20260721082952.215691-3-herve.codina@bootlin.com>
+Subject: [PATCH v4 3/4] ARM: dts: r9a06g032: Add support for timers
+Date: Tue, 21 Jul 2026 10:29:49 +0200
+Message-ID: <20260721082952.215691-4-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260721082952.215691-1-herve.codina@bootlin.com>
 References: <20260721082952.215691-1-herve.codina@bootlin.com>
@@ -64,549 +64,66 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The Renesas RZ/N1 timer block controller is the controller in charge of
-timers available in the Renesas RZ/N1 SoCs family.
+In the Renesas RZ/N1 SoCs family, two timers block are available.
 
-This controller handles 8 timers:
-  - 6 16-bit timers
-  - 2 32-bit timers
+Each block contains 8 timers composed of 6 16-bits timers and 2 32-bits
+timers.
 
-Each timer has its own interrupt, its own prescaler that can be used to
-divide the clock by 25 and all of them can work in either one-shot or
-periodic mode.
+Each timer has its own interrupt line.
+
+Describe those timers blocks.
 
 Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clocksource/Kconfig      |  11 +
- drivers/clocksource/Makefile     |   1 +
- drivers/clocksource/timer-rzn1.c | 487 +++++++++++++++++++++++++++++++
- 3 files changed, 499 insertions(+)
- create mode 100644 drivers/clocksource/timer-rzn1.c
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi | 34 ++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index d9c76dd443f8..da83483296d5 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -152,6 +152,17 @@ config REALTEK_OTTO_TIMER
- 	  RT8391, RTL8392, RTL8393 and RTL8396 and chips of the RTL930x series
- 	  such as RTL9301, RTL9302 or RTL9303.
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+index 442ea26b40f5..ba3f011e8c17 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+@@ -722,6 +722,40 @@ gpioirqmux: interrupt-controller@51000480 {
+ 			status = "disabled";
+ 		};
  
-+config RZN1_TIMER
-+	bool "Renesas RZ/N1 Timer"
-+	depends on HAS_IOMEM && COMMON_CLK
-+	depends on ARCH_RZN1 || COMPILE_TEST
-+	help
-+	  Enables support for RZ/N1 SoC timers.
-+	  A timers block in RZ/N1 SoCs is composed of 8 timers
-+	    - 6 16-bit timers
-+	    - 2 32-bit timers
-+	  Two timers blocks are available in RZ/N1 SoCs.
-+
- config SUN4I_TIMER
- 	bool "Sun4i timer driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index b46376af6b49..464ec6690ab6 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_EP93XX_TIMER)		+= timer-ep93xx.o
- obj-$(CONFIG_RALINK_TIMER)		+= timer-ralink.o
- obj-$(CONFIG_NXP_STM_TIMER)		+= timer-nxp-stm.o
- obj-$(CONFIG_RTK_SYSTIMER)		+= timer-realtek.o
-+obj-$(CONFIG_RZN1_TIMER)		+= timer-rzn1.o
-diff --git a/drivers/clocksource/timer-rzn1.c b/drivers/clocksource/timer-rzn1.c
-new file mode 100644
-index 000000000000..f6c4dd4b3469
---- /dev/null
-+++ b/drivers/clocksource/timer-rzn1.c
-@@ -0,0 +1,487 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1 timers driver
-+ *
-+ * Copyright (C) 2026 Schneider-Electric
-+ *
-+ * Author: Herve Codina <herve.codina@bootlin.com>
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/clockchips.h>
-+#include <linux/clocksource.h>
-+#include <linux/cpuhotplug.h>
-+#include <linux/interrupt.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sched_clock.h>
-+
-+/* Per-timer register offsets */
-+#define RZN1_TIMER_LOAD_COUNT_REG	0x00
-+#define RZN1_TIMER_CURRENT_COUNT_REG	0x04
-+#define RZN1_TIMER_CONTROL_REG		0x08
-+#define   RZN1_TIMER_CONTROL_INT_UNMASK		BIT(3)
-+#define   RZN1_TIMER_CONTROL_ENABLE		BIT(2)
-+#define   RZN1_TIMER_CONTROL_AUTORELOAD		BIT(1)
-+#define   RZN1_TIMER_CONTROL_PRESCALER_DIV25	BIT(0)
-+#define RZN1_TIMER_CLEAR_INT_REG	0x0c
-+#define RZN1_TIMER_STATUS_INT0_REG	0x10
-+#define RZN1_TIMER_STATUS_INT1_REG	0x14
-+
-+/*
-+ * 8 timers are available. Among those 8 timers, the first 6 timers are 16-bit
-+ * timers and the last two ones are 32-bit timers.
-+ */
-+#define RZN1_TIMER_BASE_INDEX_16BIT_TIMERS	0
-+#define RZN1_TIMER_NB_16BIT_TIMERS		6
-+#define RZN1_TIMER_LAST_INDEX_16BIT_TIMERS	(RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + \
-+						 RZN1_TIMER_NB_16BIT_TIMERS - 1)
-+
-+#define RZN1_TIMER_BASE_INDEX_32BIT_TIMERS	6
-+#define RZN1_TIMER_NB_32BIT_TIMERS		2
-+#define RZN1_TIMER_LAST_INDEX_32BIT_TIMERS	(RZN1_TIMER_BASE_INDEX_32BIT_TIMERS + \
-+						 RZN1_TIMER_NB_32BIT_TIMERS - 1)
-+
-+#define RZN1_TIMER_IS_16BIT_TIMER(_i) ((_i) < RZN1_TIMER_BASE_INDEX_32BIT_TIMERS)
-+
-+/* Total numbers of timers */
-+#define RZN1_TIMER_NB_TIMERS	(RZN1_TIMER_NB_16BIT_TIMERS + \
-+				 RZN1_TIMER_NB_32BIT_TIMERS)
-+
-+/* Offset of registers related to the timer number _i in the timers regs area */
-+#define RZN1_TIMER_REGS_OFFSET(_i) (0x20 * (_i))
-+
-+struct rzn1_timer {
-+	void __iomem *base;
-+	unsigned int width;
-+	unsigned long rate;
-+	unsigned long hz_period;
-+	struct clock_event_device ced;
-+};
-+
-+static int rzn1_timer_config(struct rzn1_timer *timer, u32 period, bool is_periodic)
-+{
-+	u32 ctrl;
-+
-+	ctrl = readl(timer->base + RZN1_TIMER_CONTROL_REG);
-+
-+	/* Disable the timer */
-+	writel(ctrl & ~RZN1_TIMER_CONTROL_ENABLE,
-+	       timer->base + RZN1_TIMER_CONTROL_REG);
-+
-+	/* Set the new period */
-+	writel(period, timer->base + RZN1_TIMER_LOAD_COUNT_REG);
-+
-+	/* Prepare the timer mode */
-+	if (is_periodic)
-+		ctrl |= RZN1_TIMER_CONTROL_AUTORELOAD;
-+	else
-+		ctrl &= ~RZN1_TIMER_CONTROL_AUTORELOAD;
-+
-+	/*
-+	 * Enable the timer.
-+	 *
-+	 * This automatically resets the CURRENT_COUNT register.
-+	 */
-+	ctrl |= RZN1_TIMER_CONTROL_ENABLE;
-+	writel(ctrl, timer->base + RZN1_TIMER_CONTROL_REG);
-+
-+	return 0;
-+}
-+
-+static void rzn1_timer_disable(struct rzn1_timer *timer)
-+{
-+	u32 ctrl;
-+
-+	ctrl = readl(timer->base + RZN1_TIMER_CONTROL_REG);
-+	ctrl &= ~RZN1_TIMER_CONTROL_ENABLE;
-+	writel(ctrl, timer->base + RZN1_TIMER_CONTROL_REG);
-+}
-+
-+static void rzn1_timer_int_enable(struct rzn1_timer *timer)
-+{
-+	u32 ctrl;
-+
-+	ctrl = readl(timer->base + RZN1_TIMER_CONTROL_REG);
-+	ctrl |= RZN1_TIMER_CONTROL_INT_UNMASK;
-+	writel(ctrl, timer->base + RZN1_TIMER_CONTROL_REG);
-+}
-+
-+static irqreturn_t rzn1_timer_interrupt(int irq, void *dev_id)
-+{
-+	struct rzn1_timer *timer = dev_id;
-+
-+	/* Ack the interrupt */
-+	readl(timer->base + RZN1_TIMER_CLEAR_INT_REG);
-+
-+	timer->ced.event_handler(&timer->ced);
-+	return IRQ_HANDLED;
-+}
-+
-+static int rzn1_clkevt_set_next_event(unsigned long cycles,
-+				      struct clock_event_device *evt)
-+{
-+	struct rzn1_timer *timer = container_of(evt, struct rzn1_timer, ced);
-+
-+	return rzn1_timer_config(timer, cycles, false);
-+}
-+
-+static int rzn1_clkevt_shutdown(struct clock_event_device *evt)
-+{
-+	struct rzn1_timer *timer = container_of(evt, struct rzn1_timer, ced);
-+
-+	rzn1_timer_disable(timer);
-+	return 0;
-+}
-+
-+static int rzn1_clkevt_set_periodic(struct clock_event_device *evt)
-+{
-+	struct rzn1_timer *timer = container_of(evt, struct rzn1_timer, ced);
-+
-+	rzn1_timer_config(timer, timer->hz_period, true);
-+	return 0;
-+}
-+
-+/*
-+ * This global lock is used to prevent race conditions during global timers
-+ * test and set operation in case the driver is using the async probe option.
-+ */
-+static DEFINE_MUTEX(rzn1_global_timers_lock);
-+
-+static int rzn1_timer_instance;
-+
-+/* scheduler and clocksource */
-+static struct rzn1_timer *rzn1_sched_clock;
-+
-+static u64 notrace rzn1_sched_read(void)
-+{
-+	return readl_relaxed(rzn1_sched_clock->base + RZN1_TIMER_CURRENT_COUNT_REG);
-+}
-+
-+static u64 rzn1_clksrc_read(struct clocksource *cs)
-+{
-+	return readl_relaxed(rzn1_sched_clock->base + RZN1_TIMER_CURRENT_COUNT_REG);
-+}
-+
-+static struct clocksource rzn1_clocksource = {
-+	.name = "rzn1_timer_clocksource",
-+	.rating = 200,
-+	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
-+	.read = rzn1_clksrc_read,
-+};
-+
-+/* Timers table where 32-bit timers will be assigned per-cpu */
-+static struct rzn1_timer *rzn1_tab_timers;
-+
-+static int rzn1_local_timer_starting_cpu(unsigned int cpu)
-+{
-+	struct rzn1_timer *timer;
-+
-+	if (cpu >= RZN1_TIMER_NB_32BIT_TIMERS)
-+		return 0;
-+
-+	timer = &rzn1_tab_timers[cpu + RZN1_TIMER_BASE_INDEX_32BIT_TIMERS];
-+
-+	timer->ced.cpumask = cpumask_of(cpu);
-+	irq_force_affinity(timer->ced.irq, cpumask_of(cpu));
-+	enable_irq(timer->ced.irq);
-+
-+	clockevents_config_and_register(&timer->ced, timer->rate, 1,
-+					GENMASK(timer->width - 1, 0));
-+
-+	return 0;
-+}
-+
-+static int rzn1_local_timer_dying_cpu(unsigned int cpu)
-+{
-+	struct rzn1_timer *timer;
-+
-+	if (cpu >= RZN1_TIMER_NB_32BIT_TIMERS)
-+		return 0;
-+
-+	timer = &rzn1_tab_timers[cpu + RZN1_TIMER_BASE_INDEX_32BIT_TIMERS];
-+
-+	rzn1_timer_disable(timer);
-+	disable_irq_nosync(timer->ced.irq);
-+	return 0;
-+}
-+
-+static void rzn1_timer_init(struct rzn1_timer *timer, unsigned int index,
-+			    void __iomem *timers_base, unsigned long clock_rate)
-+{
-+	timer->base = timers_base + RZN1_TIMER_REGS_OFFSET(index);
-+
-+	/* Disable the timer */
-+	writel(0, timer->base + RZN1_TIMER_CONTROL_REG);
-+
-+	/* Clear potential interrupts */
-+	readl(timer->base + RZN1_TIMER_CLEAR_INT_REG);
-+
-+	if (RZN1_TIMER_IS_16BIT_TIMER(index)) {
-+		timer->width = 16;
-+		/*
-+		 * Enable pre-scaler for 16-bit timers.
-+		 *
-+		 * Timers are fed by a 25MHz clock. With this pre-scaler (1/25)
-+		 * enabled, the 16-bit timers resolution is 1 microsecond.
-+		 */
-+		writel(RZN1_TIMER_CONTROL_PRESCALER_DIV25,
-+		       timer->base + RZN1_TIMER_CONTROL_REG);
-+		timer->rate = clock_rate / 25;
-+	} else {
-+		timer->width = 32;
-+		timer->rate = clock_rate;
-+	}
-+	timer->hz_period = DIV_ROUND_UP(timer->rate, HZ);
-+}
-+
-+static void rzn1_timer_clkevt_init_ced(struct rzn1_timer *timer, const char *name,
-+				       int irq)
-+{
-+	timer->ced.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
-+	timer->ced.set_next_event = rzn1_clkevt_set_next_event;
-+	timer->ced.set_state_shutdown = rzn1_clkevt_shutdown;
-+	timer->ced.set_state_periodic = rzn1_clkevt_set_periodic;
-+	timer->ced.cpumask = cpu_possible_mask;
-+
-+	/*
-+	 * 32-bit timers are fed with a 25 MHz clock directly derived from the
-+	 * main PLL (1 GHz). The arch timer, ARMv7 CP15 in RZ/N1 SoCs, is fed
-+	 * with to a 6.25 MHz clock.
-+	 *
-+	 * The clock of the RZ/N1 timers block is a stable one and the RZ/N1
-+	 * timers have a higher resolution than the ARM CP15 one.
-+	 *
-+	 * Also those 32-bit RZ/N1 timers are assigned per-cpu.
-+	 *
-+	 * Use a high rating for the 32-bit RZ/N1 timers in order to have them
-+	 * chosen by the system.
-+	 */
-+	timer->ced.rating = timer->width == 16 ? 200 : 460;
-+	timer->ced.owner = THIS_MODULE;
-+	timer->ced.name = name;
-+	timer->ced.irq = irq;
-+}
-+
-+static int rzn1_timer_setup_timers(struct platform_device *pdev,
-+				   struct rzn1_timer *tab_timers,
-+				   unsigned int first_timer_index,
-+				   unsigned int last_timer_index,
-+				   void __iomem *base, unsigned long clock_rate,
-+				   bool irq_disabled)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rzn1_timer *timer;
-+	unsigned int i;
-+	char *name;
-+	int irq;
-+	int ret;
-+
-+	for (i = first_timer_index; i <= last_timer_index; i++) {
-+		timer = &tab_timers[i];
-+
-+		rzn1_timer_init(timer, i, base, clock_rate);
-+
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			return irq;
-+
-+		name = devm_kasprintf(dev, GFP_KERNEL, "%s-%u", dev_name(dev), i);
-+		if (!name)
-+			return -ENOMEM;
-+
-+		rzn1_timer_clkevt_init_ced(timer, name, irq);
-+
-+		if (irq_disabled)
-+			irq_set_status_flags(timer->ced.irq, IRQ_NOAUTOEN);
-+
-+		ret = devm_request_irq(dev, timer->ced.irq, rzn1_timer_interrupt,
-+				       IRQF_TIMER, timer->ced.name, timer);
-+		if (ret < 0)
-+			return dev_err_probe(dev, ret, "timer%u: Failed to request IRQ\n", i);
-+
-+		rzn1_timer_int_enable(timer);
-+	}
-+	return 0;
-+}
-+
-+static void rzn1_timer_register_clkevt(struct rzn1_timer *tab_timers,
-+				       unsigned int first_timer_index,
-+				       unsigned int last_timer_index)
-+{
-+	struct rzn1_timer *timer;
-+	unsigned int i;
-+
-+	for (i = first_timer_index; i <= last_timer_index; i++) {
-+		timer = &tab_timers[i];
-+		clockevents_config_and_register(&timer->ced, timer->rate,
-+						1, GENMASK(timer->width - 1, 0));
-+	}
-+}
-+
-+static int rzn1_timer_probe_first(struct platform_device *pdev,
-+				  struct rzn1_timer *tab_timers,
-+				  void __iomem *base, unsigned long clock_rate)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rzn1_timer *timer;
-+	int ret;
-+
-+	/*
-+	 * Probe the first instance. In that case, timers are assigned as
-+	 * follow:
-+	 *   - First 16-bit timer: clocksource and sched_clock
-+	 *   - Other 16-bit timers: clock events for all possible CPUs
-+	 *   - 32-bit timers: clock events per CPU
-+	 *
-+	 * First step, perform all operation that could fail without calling
-+	 * clockevents_config_and_register(), sched_clock_register() nor
-+	 * cpuhp_setup_state(). Those operation don't have unregister nor
-+	 * teardown counterparts and so, once called, we cannot remove the
-+	 * related resource.
-+	 */
-+
-+	/*
-+	 * First step for 16-bit timers except the first one and all 32-bit
-+	 * timers.
-+	 */
-+	ret = rzn1_timer_setup_timers(pdev, tab_timers,
-+				      RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1,
-+				      RZN1_TIMER_LAST_INDEX_16BIT_TIMERS,
-+				      base, clock_rate, false);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Do not enable IRQs on 32-bit timers. Those related IRQ will be
-+	 * enabled/disabled by CPU hotplug callbacks
-+	 */
-+	ret = rzn1_timer_setup_timers(pdev, tab_timers,
-+				      RZN1_TIMER_BASE_INDEX_32BIT_TIMERS,
-+				      RZN1_TIMER_LAST_INDEX_32BIT_TIMERS,
-+				      base, clock_rate, true);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Second step, almost all operations that can fail have been called.
-+	 * Timers are ready to work. Start with the last operation that can fail,
-+	 * installing and invoking hotplug callbacks
-+	 */
-+	rzn1_tab_timers = tab_timers;
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+				"clockevents/rzn1/global_timer:starting",
-+				rzn1_local_timer_starting_cpu,
-+				rzn1_local_timer_dying_cpu);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Setup CPU hotplug state failed\n");
-+
-+	/*
-+	 * At this point, no more operations can fail. Perform remaining
-+	 * operations. Starting by handling the first 16-bit timer
-+	 */
-+	timer = &tab_timers[RZN1_TIMER_BASE_INDEX_16BIT_TIMERS];
-+
-+	rzn1_timer_init(timer, RZN1_TIMER_BASE_INDEX_16BIT_TIMERS, base, clock_rate);
-+	rzn1_timer_config(timer, GENMASK(timer->width - 1, 0), true);
-+
-+	rzn1_sched_clock = timer;
-+
-+	sched_clock_register(rzn1_sched_read, rzn1_sched_clock->width, rzn1_sched_clock->rate);
-+
-+	rzn1_clocksource.mask = CLOCKSOURCE_MASK(rzn1_sched_clock->width);
-+	clocksource_register_hz(&rzn1_clocksource, rzn1_sched_clock->rate);
-+
-+	/*
-+	 * Register clockevents only for 16-bit timers. 32-bit timers clockevents
-+	 * are registered by CPU hotplug startup function set previously by the
-+	 * cpuhp_setup_state() call.
-+	 */
-+	rzn1_timer_register_clkevt(tab_timers,
-+				   RZN1_TIMER_BASE_INDEX_16BIT_TIMERS + 1,
-+				   RZN1_TIMER_LAST_INDEX_16BIT_TIMERS);
-+
-+	return 0;
-+}
-+
-+static int rzn1_timer_probe_other(struct platform_device *pdev,
-+				  struct rzn1_timer *tab_timers,
-+				  void __iomem *base, unsigned long clock_rate)
-+{
-+	int ret;
-+
-+	/*
-+	 * Probe other instance(s), i.e. not the first one. In that case,
-+	 * all timers are used as clock events and available for all possible
-+	 * CPUs
-+	 *
-+	 * First step, perform all operation that could fail without calling
-+	 * clockevents_config_and_register(). Unregister counterpart does not
-+	 * exist and so, once called, we cannot remove the related resource.
-+	 */
-+	ret = rzn1_timer_setup_timers(pdev, tab_timers,
-+				      RZN1_TIMER_BASE_INDEX_16BIT_TIMERS,
-+				      RZN1_TIMER_LAST_INDEX_32BIT_TIMERS,
-+				      base, clock_rate, false);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Second step, all operation that can fail have been called. We can
-+	 * register our timers.
-+	 */
-+	rzn1_timer_register_clkevt(tab_timers,
-+				   RZN1_TIMER_BASE_INDEX_16BIT_TIMERS,
-+				   RZN1_TIMER_LAST_INDEX_32BIT_TIMERS);
-+	return 0;
-+}
-+
-+static int rzn1_timer_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rzn1_timer *tab_timers;
-+	unsigned long clock_rate;
-+	void __iomem *base;
-+	struct clk *clk;
-+	int ret;
-+
-+	tab_timers = devm_kcalloc(dev, RZN1_TIMER_NB_TIMERS, sizeof(*tab_timers),
-+				  GFP_KERNEL);
-+	if (!tab_timers)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	clk = devm_clk_get_enabled(dev, "pclk");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk), "Failed to get pclk\n");
-+
-+	clock_rate = clk_get_rate(clk);
-+
-+	scoped_guard(mutex, &rzn1_global_timers_lock) {
-+		ret = !rzn1_timer_instance ?
-+			rzn1_timer_probe_first(pdev, tab_timers, base, clock_rate) :
-+			rzn1_timer_probe_other(pdev, tab_timers, base, clock_rate);
-+		if (!ret)
-+			rzn1_timer_instance++;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id rzn1_timer_of_match[] = {
-+	{ .compatible = "renesas,rzn1-timer", },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver rzn1_timer_driver = {
-+	.driver = {
-+		.name = "rzn1_timer",
-+		.of_match_table = rzn1_timer_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(rzn1_timer_driver, rzn1_timer_probe);
++		timer0: timer@51001000 {
++			compatible = "renesas,r9a06g032-timer", "renesas,rzn1-timer";
++			reg = <0x51001000 0x400>;
++			clocks = <&sysctrl R9A06G032_HCLK_TIMER0>;
++			clock-names = "pclk";
++			power-domains = <&sysctrl>;
++			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		timer1: timer@51002000 {
++			compatible = "renesas,r9a06g032-timer", "renesas,rzn1-timer";
++			reg = <0x51002000 0x400>;
++			clocks = <&sysctrl R9A06G032_HCLK_TIMER1>;
++			clock-names = "pclk";
++			power-domains = <&sysctrl>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
+ 		can0: can@52104000 {
+ 			compatible = "renesas,r9a06g032-sja1000", "renesas,rzn1-sja1000";
+ 			reg = <0x52104000 0x800>;
 -- 
 2.55.0
 
