@@ -1,36 +1,38 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831B03B5318;
-	Tue, 21 Jul 2026 08:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917183BB9F3;
+	Tue, 21 Jul 2026 08:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784622612; cv=none; b=j+4XYn+2ahBlTGiqJ1RN3ZM8ZfgzUouw5dBDoAk85EFrAv9bvMVQdVoL/WyprIxq4lBW3QMtqHywbib62YQ9MX2YRZ9j9MuwQkAGMUXhmECsxfmYwT/uLcJ+aepDzYvIZNVSxxfn1derZbFggEMDYaiYmPmNtE9cU2P7ryBwKXs=
+	t=1784622613; cv=none; b=SY4f7LAG+AfthckfwGYNhgdTWcHaNeLxhAtPrlHsdIo+0Zab0LKctekCUR9hYKG9ywFnelm1GhcnUEBgd4JA+4qPw6KesBgM9EFA5ELcpDdQ1Sy38afHapNQO12SFFZ/L37/4aDCFjZHuaIvOK+AZcsPL9Lq6kP7Co7fHzBvn8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784622612; c=relaxed/simple;
-	bh=DxNIKm8bLWAW8LKD1H0iz+gpSp6UFtaOuDodGegDPR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8zOikQDJ2bzDu2wIkI9K0LCQApr6bDZeRU9BZzDPuqxwCiCgAncNyoToRyxerQqz2CARk/IzjZzmr+Ve+7BqKN+xpW6SWKNZJJksBS6UCFCVhtdb3vemEPydaTyOFIzi++iw8mhpBWqHfCVnNYi11GeugO8DTyFrBpLmyf3WFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uDmgPIa3; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1784622613; c=relaxed/simple;
+	bh=ONBGJZifkZfXtPV90cegqCkmHy/uHZ5pp8nMBX1oGEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YwTBaPy9FqQNIGELGOyxmKXYdZck9+5CkFPaZt14GyNHYwAUb2qeq45JdDEDrRAJeg6TmH7ZO2J8+w9uj/6uezvH8CUan1ojcae3GRqo7URSsW11MmmMI3rvD/AQB8D+4qWMDwohyfoSB442igZlxl0aB70uOzSPKdREke60p30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GbFdWXRF; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uDmgPIa3"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GbFdWXRF"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7957E4E40E98;
-	Tue, 21 Jul 2026 08:30:06 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 158AB4E40E99;
+	Tue, 21 Jul 2026 08:30:09 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3C31860368;
-	Tue, 21 Jul 2026 08:30:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1F47A11BD1290;
-	Tue, 21 Jul 2026 10:30:01 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D717C60368;
+	Tue, 21 Jul 2026 08:30:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5CF211BD0D07;
+	Tue, 21 Jul 2026 10:30:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784622605; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=XRzxxs//+IBSkR9M7GepoCQ0geVUsXiXtarl9/rGVAk=;
-	b=uDmgPIa3i7K+ctjpdZdVUXWH5uPmIeaIBjU5VSm+E9E7xxWTOpNaavqAQWO6I4+EQ3+vnU
-	CXLymmEgJt0hRuBxr/Rs//WLruud4IEye0QQ1lZxvQztuejXlVPk80AOS2TUeMT3tjeg7z
-	mhfRHYiHxvEARsyaE/AAu3vYX4g/vAamirxhjv4z5MIIQSOdpNcqDQrqDDBV+ezREuWmWZ
-	Ia2Z2y/EWn7FkVQV9Gj6lcGA1tDFQFRVoLQ+fqvOixvNgFK/netKzsoEq7ERBEA301kExH
-	itfhXFnWmOCh+pWpKlSNa0SaQq8vYsikmmLvzhSFzrVujHBhOr+CbDA1Z0K46A==
+	t=1784622607; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=IFgJQi8MuNjeZluVZ229O7LKeTgM6ORkynTZgqDFdHA=;
+	b=GbFdWXRFTGyRGe0K6uEqP81WMIjbsGjZQAOYLMGhzS1UEUXi3iAWAmQOpOelkKQE6SnHuk
+	ojuWRO5pOHJBZm4Lr1I+oSAW7ZUKIT5ZOOB+Evfr8O0gfQC7c5dEamn+pkbk36sy5f3ZBR
+	i8LHGoDBGoKag21Y21FWnS3ypk1J4C+ksQ8pZD3FlHlQsuuj1TCT8hzToRbqor9mAlkJpa
+	j1dSkwrL5l5YHHUdnSMXaLmUhouiaCxKJKr098Xywn2di242JowF1KuzkrgDddL2anLZml
+	uskOV7zkuEsmYbJ185+LW3eyUku8xMVHLXf6HrmVhBYzR7J4MUOmjJUyYZNS3A==
 From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Herve Codina <herve.codina@bootlin.com>,
@@ -46,98 +48,118 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Pascal Eberhard <pascal.eberhard@se.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 0/4] timers: Add support for RZ/N1 SoCs timers
-Date: Tue, 21 Jul 2026 10:29:46 +0200
-Message-ID: <20260721082952.215691-1-herve.codina@bootlin.com>
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v4 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
+Date: Tue, 21 Jul 2026 10:29:47 +0200
+Message-ID: <20260721082952.215691-2-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260721082952.215691-1-herve.codina@bootlin.com>
+References: <20260721082952.215691-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The Renesas RZ/N1 SoCs family has two timers block controller
-available.
+The Renesas RZ/N1 timer block controller is the controller in charge of
+timers available in the Renesas RZ/N1 SoCs family.
 
-Each controller is charge of 8 timers (six 16-bit timers + two 32-bit
-timers).
+This controller handles 8 timers:
+ - 6 16-bit timers
+ - 2 32-bit timers
 
-Each timer has its own interrupt, its own prescaler that can be used to
-device the clock by 25 (timers block are fed with a 25 MHz clock) and
-all timers can work in either one-shot or periodic mode.
-
-This series adds support for those timers blocks.
-
-Best regards,
-Hervé
-
-Changes v3 -> v4
-  v3: https://lore.kernel.org/all/20260717095552.767475-1-herve.codina@bootlin.com/
-
-  Patches 1, 3 and 4:
-   No changes.
-
-  Patch 2:
-   Took into account Shashiko's feedback
-    - Remove CLOCK_SOURCE_SUSPEND_NONSTOP flag
-    - Fix CPU ids checks against number of 32-bit timers (avoid
-      out-of-bound accesses)
-    - Enable IRQ in CPU hotpluig startup function
-    - Add CPU hotplug teardown function and disable IRQ in this
-      function.
-    - Adapt probe() to avoid IRQ handled by CPU hotplug startup/teardown
-      been enabled by default.
-
-Changes v2 -> v3
-  v2: https://lore.kernel.org/all/20260429115054.158160-1-herve.codina@bootlin.com/
-
-  Rebase on top of v7.2-rc1.
-
-  Patch 1, 3 and 4:
-    - Add 'Reviewed-by: Geert Uytterhoeven'
-
-  Patch 2:
-    - Fix typos in commit log.
-    - Split Kconfig 'depends on' in 2 lines.
-    - Fix indentation, space and alignment in code.
-    - Fix dev_err_probe() conversion format.
-    - Introduce rzn1_timer_setup_timers() and rzn1_timer_register_clkevt()
-      to avoid code duplication in rzn1_timer_probe_{first,other}()
-    - Add '.suppress_bind_attrs = true'.
-
-Changes v1 -> v2
-  v1: https://lore.kernel.org/all/20260331152616.197031-1-herve.codina@bootlin.com/
-
-  Rebase on top of v7.1-rc1.
-
-  Patch 1:
-    - Drop minItems related to interrupts property
-    - Add 'Reviewed-by: Krzysztof Kozlowski'
-
-  Patches 2, 3 and 4:
-    No changes
-
-Herve Codina (Schneider Electric) (4):
-  dt-bindings: timer: Add the Renesas RZ/N1 timer
-  clocksource/drivers: Add support for the Renesas RZ/N1 timers
-  ARM: dts: r9a06g032: Add support for timers
-  MAINTAINERS: Add the Renesas RZ/N1 timers driver entry
-
- .../bindings/timer/renesas,rzn1-timer.yaml    |  74 +++
- MAINTAINERS                                   |   7 +
- arch/arm/boot/dts/renesas/r9a06g032.dtsi      |  34 ++
- drivers/clocksource/Kconfig                   |  11 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-rzn1.c              | 487 ++++++++++++++++++
- 6 files changed, 614 insertions(+)
+Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../bindings/timer/renesas,rzn1-timer.yaml    | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
- create mode 100644 drivers/clocksource/timer-rzn1.c
 
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml b/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
+new file mode 100644
+index 000000000000..f00ad941f8cc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/renesas,rzn1-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 timers
++
++maintainers:
++  - Herve Codina <herve.codina@bootlin.com>
++
++description: |
++  The Renesas RZ/N1 SoCs timers block controller is composed of 8 independent
++  timers.
++    - 6 are 16-bit timers
++    - 2 are 32-bit timers
++
++  Each timer has its own interrupt line and can work in either one-shot or
++  periodic mode.
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r9a06g032-timer   # RZ/N1D
++      - const: renesas,rzn1-timer
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB internal bus clock
++
++  clock-names:
++    items:
++      - const: pclk
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 8
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    timer@51001000 {
++        compatible = "renesas,r9a06g032-timer", "renesas,rzn1-timer";
++        reg = <0x51001000 0x400>;
++        clocks = <&sysctrl R9A06G032_HCLK_TIMER0>;
++        clock-names = "pclk";
++        power-domains = <&sysctrl>;
++        interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++    };
++...
 -- 
 2.55.0
 
