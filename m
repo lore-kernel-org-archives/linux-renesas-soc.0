@@ -1,279 +1,173 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazhn15010016.outbound.protection.outlook.com [52.102.171.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9AC492504;
-	Wed, 22 Jul 2026 08:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.171.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784710511; cv=fail; b=Y1V1mZ1Ju9ELjlrQEMi7PnrX3uNQ7oCDbvngQINuXetcDCYumIpBEZafzUFQu0Gzc53kB2022pyQbrwRaClv6/WyEo1ZRwhjGN3EJMKPR5ws8m4mJB7nAagyGplhIvZrkwQzLAfS5DU2pq6wIxhAWEDpMseuqvz67heGZrv5Rg0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784710511; c=relaxed/simple;
-	bh=Q5Zb15Clk6p0GgilqTveuOcpoKGAFn9bbuQK7eWPM5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VxAjbiZOq1XjGd+iNbJlrV32qysuRIFVS+kTmT4AB9D/4tT0o5NOhYi3Nkq/HdOkN7h+6MbqSG1woHdjhx5cp6uvoq0erMkbEAReZ0Uky+k5JTZzBBOnYz2sRiqWn5GKzFfqpKiyYyasQHX8Jiq7RXYYOKU+RqAmnMQHnwcDBt4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=JQ4nvbrV; arc=fail smtp.client-ip=52.102.171.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580FD29D260
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2026 12:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784722538; cv=none; b=TJTQLawHsCcRxNSiLnId2T4VNSCI2alSOR3eHyMNmSU1zMsi2NYTv1SINRfsofh3RXjhO7PQPH82CgM7WtjdscriWjoy0RWc0VerYLj11CQy8YnsEJUKtPucZSgGhjZyrS6ndfu85RcENrH3PkBFw1GDYISNhOsK80ssQ94gAPc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784722538; c=relaxed/simple;
+	bh=95InElf/4mMVvsvkCeBo9ZBGIRSOpJ7fiMvMn4rFSdE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bk4gzEdFSTcgSJM36UJC+feCWWnQAVUFnZwimgGDQ/aOPH7TyEA1FNRdHDZYomtSO4gCCiNM6gLG7mMqxzPfKNsFnx/rJZkiogsbBUTjv2zfPv+LbzvfDZ7t/tVicqABJxKridLMvUoDUg1CV0+1SSinhrUkujeI1bBr4L/Z9kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XZuU/xqo; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="JQ4nvbrV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=USyZ6XuvQxniTtvNQnpeCMMw1RM4fv82ueiAHDAM2dHu9r+mXtL8WcTfszyuq9w5XAGHNVyIXtTkH3hvpNT2a71Mn4Lqx2A4q3z7KjNmTv0yEq8eSFtClkZr1FPqjsF+4Ldc/9DoAUoef+HxbqssyDNcaFhAXuZftHVSrezuFPmRciaGE1NDyfn5OD+FiiobcdM64HhLO02/pt+DStGenuiB2fn5BDDAxFmBqu/Su/yy1YELsPu6IXeutZewdMkd26i8UxrPAdafbV6DxGF34h4JzkJlShSfwBLymzikvFvF7IUYO60uLfbaEUYgamIKyGE4+vTLC5J7BRkU7Pk14w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7LCJKLISUthrTrjW2EjBZ8/mdG8fLTbJZyCMTcFYlGg=;
- b=JBmoob5M7gZ/biypGba8njHAmmAUfAcaTU183IrXltif/jJbLKP2A6I+zXpwcwzUOZfBB3JLQf73eZd62+FXCoME2NJUWmPBdIH6xX1lntn2QAtYUg+W6DKlnM8uTgyJYdQ9DCDAVIztF3bLg7X+oiaWAmDJtrS17u1isIPGvU/h47pPHlt5WyL4TYQ1Mw0S8kgBK/mQ/Bz7lbRGql8iGly3AlGWjKUT2hgVVP0btER8KaNkMXppmMBwyt3NVllQlKXfsBBGohi4vqzOSoBdK6gdfkpM4qJoFxf2N9vxt8rK3mpLxW77vN6sFRkYxtrlSypSCGqMRCcFQS4JmuF+jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7LCJKLISUthrTrjW2EjBZ8/mdG8fLTbJZyCMTcFYlGg=;
- b=JQ4nvbrVaFpr3C1Rp/XSix7fLYo+EvlnCqvhbnODBJ4towZ+lNEusQlHbWVxB6PSkFn5SMrysIxfBEU0nm+rSeRyCwS0ZdQhSxiE4PUs7tN/FlMZ/adeDN1yI6W7F9+HIJBrCGMw3QP0N3+YLBWgHEJie2xGrWipprtcXquqPcg=
-Received: from TYCP286CA0060.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2b5::15)
- by TY3PR01MB11307.jpnprd01.prod.outlook.com (2603:1096:400:36f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Wed, 22 Jul
- 2026 08:55:05 +0000
-Received: from TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b5:cafe::49) by TYCP286CA0060.outlook.office365.com
- (2603:1096:400:2b5::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.10 via Frontend Transport; Wed,
- 22 Jul 2026 08:55:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF0000BAD9.mail.protection.outlook.com (10.167.240.38) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.5
- via Frontend Transport; Wed, 22 Jul 2026 08:55:05 +0000
-Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.34])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 426C930007EE;
-	Wed, 22 Jul 2026 17:54:59 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZuU/xqo"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f64ca1c2dso1143440f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2026 05:15:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1784722534; x=1785327334; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
+        b=XZuU/xqokm2tkI47ojr/7+A5d+NGo1RsSCBPA56Q1TxWC3YDYuqZQ5gbbjinxGzAJK
+         3cneB2gbFaTqBbdgHVQmgmg9wI7lqQrNJHl9uofiQ/psAaeDXHPzsxrdWbXemfImI6XC
+         7BTulj52mNuWGrIuetfzQUWe5hjGMQZAslCOx9hZoOy+qnzKh/0NDoyQbwJBkJ5DkjZ6
+         wKNZrZpwkC70AFFA4JWf/HMVaZMpJ1xpKHHjsz4fDVZ+xsOJuFFfkiENnvkmkwMA0Dyc
+         W64gd0jeV4AjxgFleo7EjwF1lGSeuQzhmyvDLtn4lPCN3hcPJuFGrH9wbQMgbOG7s5EE
+         YsGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784722534; x=1785327334;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
+        b=r2mRaItfDVlwDounxO4sK6q3tLkkYyj7VbiB4UTTWKex5rVczPN1ny3KlXFtLcVXhp
+         lkf4x3sv/p0EECsi5pqD3DYNr5TE1pxplRILDGgtmVO/2Do2bXWxV3DcjqvQOT7TTk/T
+         K9zPOk7+ovwRDCeYT+KSfFwNrT/Uey+AVtlCFP3+9d5/uMPv8lkuVTZp/fLhqtu76+dV
+         Z3RhpvsC2krv0x4Herf1rDKe4meF25jpTLOvwGlt2siUc2/dBw4FNo32H0Wnf8KlQSpo
+         49CfYItb9SW09JuXMpS5eX3uaDXcEJ1HOKTucdQJXtQBbGjF4e8s4rnfgyrfngVJbSZi
+         MCLA==
+X-Forwarded-Encrypted: i=1; AHgh+RplqKpetjEPrLbykBSk2xRVPHYl/faD4a7Rayb++f+F/uls291ymUlS0SVYAe/QiCV6N+5DrbgTTUPUaiK3hW+aaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzjfCx+Lwxj9IRcfYoJbeDYpe8Qp1UEPognjtpAJrYkkPheSGm
+	cA6gQsUcAz9V4RZ1UJi+0LYbxZwfCuJ+bYcWajkG50HMpOnjRe9mn6W6XLABc2k6CBo=
+X-Gm-Gg: AR+sD12p5VfmaAj+VOvV2491CPqY9fDg9X8LaFw90M0RNg1qV0jURuPgR+rZUgKhhZz
+	833qVF8n85OSAfYJ1nV9GViQ0QTOSGi+GC86sSgbTzBWSV4qjUeQlB5NfsYp3J/KmZLU79S5hcZ
+	JgW6KWAhMx9CC71mJQNqrwE56QLX4lq7Jioe+joDI3Swr1y86DD2v9I60XXRWuTVTq+ZXcbcA/l
+	dpbpOZYbmhm4RzSK7a0M94acsDQFk5513dA0SkZ3KZvbJfr86N/e2AQ4+tNw2lH7Q2MinMFMJDN
+	aGDZqLAHKyc/FCO9NufAU+ZailQOTPV5Me1+orTqryDO7DRuCcwGAVFcYc5/dWMQd89AYtveV8a
+	SUQHXvnfRrKpZSSs7Jksud8TvwnxgV80fcLo2XKJxFVU9vu+R4nq4VD9Kf6VsbJKUAXQG3TePef
+	9iYhuQ0SUyfxUVZDMcuuk7bus=
+X-Received: by 2002:a05:6000:46cd:b0:47f:70f4:7c5 with SMTP id ffacd0b85a97d-47f70f40972mr13998165f8f.53.1784722534372;
+        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f8635c8d7sm4379093f8f.21.2026.07.22.05.15.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Alison Wang <alison.wang@nxp.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Albert Esteve <aesteve@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: r9a09g078: Switch GBETH TX queue scheduling to WRR
-Date: Wed, 22 Jul 2026 08:53:53 +0000
-Message-ID: <20260722085353.136986-6-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
-References: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
+Date: Wed, 22 Jul 2026 14:15:11 +0200
+Message-Id: <178472247762.1745070.2847290153778032256.b4-ty@b4>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF0000BAD9:EE_|TY3PR01MB11307:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: e1900336-8f28-4c78-98ea-08dee7ceec9e
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|82310400026|36860700016|376014|34020700016|56012099006|11063799006|10067099003|22082099003|18002099003|6133799003|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	45Aamko0KktbdsYpNoZor5HWdk04Ug2BTaFa3VO9pMLadvPspYR/mYOtSD0IQfJEkh5UKix0sukii2xSZBpDgNkg1QdtXrBjiEaua3aoazUNagvZ9IHB66FTaIUHoHUQSrVEdiX9tfwk5LLAtL73MZpUOdnS6Sy1NdPHM5ND8PoH5V1gWtZzu7FDOGrDCjD33xFjbUdKXtcIivDfEEUnj1SA8PQelasvgoAyYKaqkFFaBtIoGtThq0cH0Qi55/AgkOOeD7jBFIUnMvp29sHVVSxHDl0hwRCS+Uv3isc88HRJULQh5fbzBIy9auu6zh6dR+MXFd+Lk9a7jg+H8Y6br27t3lvytaZhaFGWm1z7VRYHVNQUeywkp20wJN+gpBjivtp9Q6edW/ye1SLu8tIHLock6cl5kd7ULwdkFKIoDOATDEIY3AOCq1vgaMBEbypppV1iMXA3A8FhuXINUOMQuVxRvTPVfdkt6MqhGebxPampOjsX8FY4SURMiraQKj3m4Ds2xDeIO5bEsPtBzyna1gCfZtY0YizAY9TvvCUpRcSaTWg1/05bbcS5ePgeBcrBew0cD3M7JOEYoWRvcEzWtiLDxXgCjBIi9IDU0u0mPLW6/yZHS2McWq6CHajVHNHQWzV9XqcbTYQIUGtq8l/SDHjSa1Z1aifXsASs1fZOPVkaNJPS6fQR3XrPuE/yX+m5xWGZ16yiC2J9gWmgZ3WCmg==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(82310400026)(36860700016)(376014)(34020700016)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003)(6133799003)(12100799066);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	bK7SfdW6IVV4VygcHv4hlZyAPKFFoOjksoNqaq7m6hgl3jvYQReysRtmCec6y5r7a3wY0u43c5cvAPjmCfnBCiz/1+29MP2THkfukih8WhgU8iYKVOh3EefcPi7tPWCFQ96Vx7PMjpiAVSy3qcp6Hhf2HhT6suGBMsE9HViOxsy8wZlwjEvhxG16Ef670gUG2yLmjb3RmDCrCkKDtsjGXISRQXWbD/tlhoTEUGGlag2+49VVQOd2UkAi4lS07h8QKxZcQLJidUDaEwq7QLYO+4BVfLNB92SyvN2+N0d0pmVCBOEcxnEZgt4w6RoueNeha84lfWfIZ4aVQvneV8rOIjKRfx9bnKUbH2Hf5VZdJ3llqj5arovQzVTEpyUabqGs02mlZAWsywh6nJzUZgPiMMcMdOre2FrhsVwpxm3OoIi4Hn4P3nm+z8Lxlg1dEScu
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2026 08:55:05.1771
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1900336-8f28-4c78-98ea-08dee7ceec9e
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11307
 
-The GBETH ethernet nodes don't specify a TX scheduling policy, so stmmac
-falls back to Strict Priority. In this configuration the queue with the
-highest priority gets all the traffic, starving the others under load.
+Hi,
 
-Under sustained UDP TX load with multiple data streams, this starvation
-triggers spurious adapter resets due to TX queue timeouts:
+On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
+> The drm_panel subsystem provides kref-based reference counting [1]
+> (drm_panel_get/put) but almost nothing in the tree actually uses it.
+> This results in a systemic use-after-free pattern throughout the codebase.
+> 
+> This series aims to close all those issues.
+> 
+> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+> a counted reference for the list entry. drm_panel_bridge_add_typed()
+> now holds a counted reference for the lifetime of the panel_bridge.
+> 
+> [...]
 
-  iperf3 -c <ip> -i0 -t60 --bind-dev end0 -u -b0 -P4
-  end0: NETDEV WATCHDOG: CPU: 1: transmit queue 1 timed out 5228 ms
-  end0: Reset adapter.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Investigation shows that only the highest priority queue is advancing
-while the others stall for more than 5 seconds, causing a netdev watchdog
-reset.
+[1/4] drm/panel: have drm_panel_add/remove manage a list reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff40cded27168e53406e0120ad66e114
+[2/4] drm/bridge/panel: hold a reference to the wrapped panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea8950fd825e0d6ecd713705a42f06417
+[3/4] drm/panel: of_drm_find_panel() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d319cae2acd9df1b297cc948c58bc7
+[4/4] drm/panel: find_panel_by_fwnode() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883dab989178dd4186090d6bcf52b8d55
 
-Switch the TX scheduling policy to Weighted-Round-Robin (WRR) so that
-traffic is processed across all queues, eliminating the stalls.
-
-Fixes: c4698a34993b ("arm64: dts: renesas: r9a09g087: Add GMAC nodes")
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index e8d4f76949cc..03b976d93e10 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -643,36 +643,45 @@ queue7 {
- 
- 			mtl_tx_setup0: tx-queues-config {
- 				snps,tx-queues-to-use = <8>;
-+				snps,tx-sched-wrr;
- 
- 				queue0 {
-+					snps,weight = <0x10>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue1 {
-+					snps,weight = <0x11>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue2 {
-+					snps,weight = <0x12>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue3 {
-+					snps,weight = <0x13>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue4 {
-+					snps,weight = <0x14>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue5 {
-+					snps,weight = <0x15>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue6 {
-+					snps,weight = <0x16>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue7 {
-+					snps,weight = <0x17>;
- 					snps,dcb-algorithm;
- 				};
- 			};
-@@ -790,36 +799,45 @@ queue7 {
- 
- 			mtl_tx_setup1: tx-queues-config {
- 				snps,tx-queues-to-use = <8>;
-+				snps,tx-sched-wrr;
- 
- 				queue0 {
-+					snps,weight = <0x10>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue1 {
-+					snps,weight = <0x11>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue2 {
-+					snps,weight = <0x12>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue3 {
-+					snps,weight = <0x13>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue4 {
-+					snps,weight = <0x14>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue5 {
-+					snps,weight = <0x15>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue6 {
-+					snps,weight = <0x16>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue7 {
-+					snps,weight = <0x17>;
- 					snps,dcb-algorithm;
- 				};
- 			};
-@@ -937,36 +955,45 @@ queue7 {
- 
- 			mtl_tx_setup2: tx-queues-config {
- 				snps,tx-queues-to-use = <8>;
-+				snps,tx-sched-wrr;
- 
- 				queue0 {
-+					snps,weight = <0x10>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue1 {
-+					snps,weight = <0x11>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue2 {
-+					snps,weight = <0x12>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue3 {
-+					snps,weight = <0x13>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue4 {
-+					snps,weight = <0x14>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue5 {
-+					snps,weight = <0x15>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue6 {
-+					snps,weight = <0x16>;
- 					snps,dcb-algorithm;
- 				};
- 
- 				queue7 {
-+					snps,weight = <0x17>;
- 					snps,dcb-algorithm;
- 				};
- 			};
 -- 
-2.34.1
-
+Neil
