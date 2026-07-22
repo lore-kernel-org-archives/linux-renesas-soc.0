@@ -1,173 +1,127 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580FD29D260
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2026 12:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8D230C37C;
+	Wed, 22 Jul 2026 14:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784722538; cv=none; b=TJTQLawHsCcRxNSiLnId2T4VNSCI2alSOR3eHyMNmSU1zMsi2NYTv1SINRfsofh3RXjhO7PQPH82CgM7WtjdscriWjoy0RWc0VerYLj11CQy8YnsEJUKtPucZSgGhjZyrS6ndfu85RcENrH3PkBFw1GDYISNhOsK80ssQ94gAPc=
+	t=1784730113; cv=none; b=EB5BndYxiXn+LZWVIZZGGtVdOl7ByyFd7Q3f5EiRHWNCnBcCR7VygKQYEEczaGKIoIcq1USVfK2ZKOe8szcreCYuLueoE9Kjgyx0dbA9JXa2HX82tNqeR9Az0eY/iJr8el6xrVDYlE1aPnxJyY7XRhnuqF8JgI0Pt5x98UikCog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784722538; c=relaxed/simple;
-	bh=95InElf/4mMVvsvkCeBo9ZBGIRSOpJ7fiMvMn4rFSdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bk4gzEdFSTcgSJM36UJC+feCWWnQAVUFnZwimgGDQ/aOPH7TyEA1FNRdHDZYomtSO4gCCiNM6gLG7mMqxzPfKNsFnx/rJZkiogsbBUTjv2zfPv+LbzvfDZ7t/tVicqABJxKridLMvUoDUg1CV0+1SSinhrUkujeI1bBr4L/Z9kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XZuU/xqo; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1784730113; c=relaxed/simple;
+	bh=DQPaqMbtextPLIv0+G7aRPIOBIout8MSabxv0GtPI8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMuNx5c4f6BJjm2AzJd9Iu7/ui1/V5Jg5HUXxg1RfobXm5NIy9Swol5kOsDrNd0F/CAOpII19z2K3k66xA3YHcsWZdIbOEfWJWOwNJ7cd0P530HkOjFcQegjF9nUpk0VKq39NHmfgptiPi1xnPB+C0f6v/FL67ZjxwkCGSvHGlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=q9U+aIf/; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZuU/xqo"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f64ca1c2dso1143440f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2026 05:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784722534; x=1785327334; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
-        b=XZuU/xqokm2tkI47ojr/7+A5d+NGo1RsSCBPA56Q1TxWC3YDYuqZQ5gbbjinxGzAJK
-         3cneB2gbFaTqBbdgHVQmgmg9wI7lqQrNJHl9uofiQ/psAaeDXHPzsxrdWbXemfImI6XC
-         7BTulj52mNuWGrIuetfzQUWe5hjGMQZAslCOx9hZoOy+qnzKh/0NDoyQbwJBkJ5DkjZ6
-         wKNZrZpwkC70AFFA4JWf/HMVaZMpJ1xpKHHjsz4fDVZ+xsOJuFFfkiENnvkmkwMA0Dyc
-         W64gd0jeV4AjxgFleo7EjwF1lGSeuQzhmyvDLtn4lPCN3hcPJuFGrH9wbQMgbOG7s5EE
-         YsGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784722534; x=1785327334;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
-        b=r2mRaItfDVlwDounxO4sK6q3tLkkYyj7VbiB4UTTWKex5rVczPN1ny3KlXFtLcVXhp
-         lkf4x3sv/p0EECsi5pqD3DYNr5TE1pxplRILDGgtmVO/2Do2bXWxV3DcjqvQOT7TTk/T
-         K9zPOk7+ovwRDCeYT+KSfFwNrT/Uey+AVtlCFP3+9d5/uMPv8lkuVTZp/fLhqtu76+dV
-         Z3RhpvsC2krv0x4Herf1rDKe4meF25jpTLOvwGlt2siUc2/dBw4FNo32H0Wnf8KlQSpo
-         49CfYItb9SW09JuXMpS5eX3uaDXcEJ1HOKTucdQJXtQBbGjF4e8s4rnfgyrfngVJbSZi
-         MCLA==
-X-Forwarded-Encrypted: i=1; AHgh+RplqKpetjEPrLbykBSk2xRVPHYl/faD4a7Rayb++f+F/uls291ymUlS0SVYAe/QiCV6N+5DrbgTTUPUaiK3hW+aaQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzjfCx+Lwxj9IRcfYoJbeDYpe8Qp1UEPognjtpAJrYkkPheSGm
-	cA6gQsUcAz9V4RZ1UJi+0LYbxZwfCuJ+bYcWajkG50HMpOnjRe9mn6W6XLABc2k6CBo=
-X-Gm-Gg: AR+sD12p5VfmaAj+VOvV2491CPqY9fDg9X8LaFw90M0RNg1qV0jURuPgR+rZUgKhhZz
-	833qVF8n85OSAfYJ1nV9GViQ0QTOSGi+GC86sSgbTzBWSV4qjUeQlB5NfsYp3J/KmZLU79S5hcZ
-	JgW6KWAhMx9CC71mJQNqrwE56QLX4lq7Jioe+joDI3Swr1y86DD2v9I60XXRWuTVTq+ZXcbcA/l
-	dpbpOZYbmhm4RzSK7a0M94acsDQFk5513dA0SkZ3KZvbJfr86N/e2AQ4+tNw2lH7Q2MinMFMJDN
-	aGDZqLAHKyc/FCO9NufAU+ZailQOTPV5Me1+orTqryDO7DRuCcwGAVFcYc5/dWMQd89AYtveV8a
-	SUQHXvnfRrKpZSSs7Jksud8TvwnxgV80fcLo2XKJxFVU9vu+R4nq4VD9Kf6VsbJKUAXQG3TePef
-	9iYhuQ0SUyfxUVZDMcuuk7bus=
-X-Received: by 2002:a05:6000:46cd:b0:47f:70f4:7c5 with SMTP id ffacd0b85a97d-47f70f40972mr13998165f8f.53.1784722534372;
-        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f8635c8d7sm4379093f8f.21.2026.07.22.05.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Linus Walleij <linusw@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="q9U+aIf/"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 464DA4E40ED4;
+	Wed, 22 Jul 2026 14:21:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F0DFD60388;
+	Wed, 22 Jul 2026 14:21:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD5B311BD3A22;
+	Wed, 22 Jul 2026 16:21:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784730106; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=j5WRfwe5s7CD4n1/aXk/GuB0uSEMmPxIt38DrP+sT9s=;
+	b=q9U+aIf/4yDREUm1HYpEzUsh0wIcz3rw2jHYkX5xMjcB7JLX50HQtTMbtSUvrI+VGae9vu
+	YVn7SJP2PnfWlPRMHtkm3ieV2/EjSyukXuPY/zb3qRlGRCpIZ93uyHhkEhfaMIJ2itr58P
+	m4fuxIAyPKu+js9RoCTwmMzZWdiIB/E61TY1nRJ6h2SCwjls1890/wwN/Eo++VVj9Jg7hv
+	cBSEzLVgL3MVo8OtY7lK0sul9jXiSg3JI59jlM0m+npiflq+X01XX8jTtz3s71A//I9284
+	mrnjhne27BDlfP8nEzrkqxzU4wCNDZfNqiT8QqIpKoQG8aQDG8j/BAWR9cmDJg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Jan Petrous <jan.petrous@oss.nxp.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Yao Zi <me@ziyao.cc>,
+	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Alison Wang <alison.wang@nxp.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Albert Esteve <aesteve@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
+	thomas.petazzoni@bootlin.com,
 	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-rockchip@lists.infradead.org,
 	linux-mips@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
-Date: Wed, 22 Jul 2026 14:15:11 +0200
-Message-Id: <178472247762.1745070.2847290153778032256.b4-ty@b4>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+	linux-riscv@lists.infradead.org,
+	s32@nxp.com
+Subject: [PATCH net] MAINTAINERS: Add myself for stmmac ethernet driver maintainance
+Date: Wed, 22 Jul 2026 16:21:24 +0200
+Message-ID: <20260722142125.1767689-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+The stmmac driver based on Synopsys' dwmac IP is used in a very wide
+variety of SoCs and is currently very actively used and contributed to.
 
-On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
-> The drm_panel subsystem provides kref-based reference counting [1]
-> (drm_panel_get/put) but almost nothing in the tree actually uses it.
-> This results in a systemic use-after-free pattern throughout the codebase.
-> 
-> This series aims to close all those issues.
-> 
-> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
-> a counted reference for the list entry. drm_panel_bridge_add_typed()
-> now holds a counted reference for the lifetime of the panel_bridge.
-> 
-> [...]
+It has been orphaned in January 2025 after the previous maintainers
+became inactive, but Russell King was providing very valuable reviews
+and fixes for the driver at that point.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+Now we're seeing more and more activity on the driver, but are lacking
+people to test and review contributions to both glue drivers as well as
+core stmmac code.
 
-[1/4] drm/panel: have drm_panel_add/remove manage a list reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff40cded27168e53406e0120ad66e114
-[2/4] drm/bridge/panel: hold a reference to the wrapped panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea8950fd825e0d6ecd713705a42f06417
-[3/4] drm/panel: of_drm_find_panel() return a counted reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d319cae2acd9df1b297cc948c58bc7
-[4/4] drm/panel: find_panel_by_fwnode() return a counted reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883dab989178dd4186090d6bcf52b8d55
+I have access to some variety of stmmac-based platforms such as socfpga
+CycloneV, imx8mp, some Allwinner SoCs and stm32mp1xx boards that I can
+run regression tests on, and I'm offering to step-up as a maintainer for
+driver, for the time being at least.
 
+Let's hope other people will eventually join this effort.
+
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+
+Sorry for the huge CC list, I tried to include all stmmac glue
+maintainers and associated lists.
+
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a674e36529f7..bea104a7e522 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25972,8 +25972,9 @@ F:	Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
+ F:	drivers/phy/st/phy-stm32-combophy.c
+ 
+ STMMAC ETHERNET DRIVER
++M:	Maxime Chevallier <maxime.chevallier@bootlin.com>
+ L:	netdev@vger.kernel.org
+-S:	Orphan
++S:	Maintained
+ F:	Documentation/networking/device_drivers/ethernet/stmicro/
+ F:	drivers/net/ethernet/stmicro/stmmac/
+ 
 -- 
-Neil
+2.55.0
+
