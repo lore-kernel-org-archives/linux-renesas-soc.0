@@ -1,127 +1,107 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8D230C37C;
-	Wed, 22 Jul 2026 14:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88CA296BCD;
+	Wed, 22 Jul 2026 17:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784730113; cv=none; b=EB5BndYxiXn+LZWVIZZGGtVdOl7ByyFd7Q3f5EiRHWNCnBcCR7VygKQYEEczaGKIoIcq1USVfK2ZKOe8szcreCYuLueoE9Kjgyx0dbA9JXa2HX82tNqeR9Az0eY/iJr8el6xrVDYlE1aPnxJyY7XRhnuqF8JgI0Pt5x98UikCog=
+	t=1784740333; cv=none; b=PEvu/4Awih4QLAZK9ATWZapTvGVoPJKVO2qx75lxGez8tphp/lzHmDBvgEBrCypG6Q6PFWah0c1cjVMHET3T3lV5vFVzMsTyHGU8etm64dgSzOuvzkxymHvSWinBJwHprpexnuzhPFSBaak1xvYue4ygLIQXC8dDT9+uQN/sl/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784730113; c=relaxed/simple;
-	bh=DQPaqMbtextPLIv0+G7aRPIOBIout8MSabxv0GtPI8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMuNx5c4f6BJjm2AzJd9Iu7/ui1/V5Jg5HUXxg1RfobXm5NIy9Swol5kOsDrNd0F/CAOpII19z2K3k66xA3YHcsWZdIbOEfWJWOwNJ7cd0P530HkOjFcQegjF9nUpk0VKq39NHmfgptiPi1xnPB+C0f6v/FL67ZjxwkCGSvHGlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=q9U+aIf/; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784740333; c=relaxed/simple;
+	bh=pOw0Sd4aBstlJHr1VKDj8Bt76erT2FtxOFbS4NCugME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tos8t9AtjvLmsduj29VA0zGrHlvBbJ+MCSl2rwXZA+lXc9JrLT0UogJjCjOZpNu8s8W6fNvwk+BGM7Cnq0l76ThFZoNFS7omXMPUdqtmFmRBkVMgx0f73IPxUlNTcnhOH/VxZGdiQoFTN4504wwT9VU8gkfd/Hofo9f+fU+uzpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZf1kXQo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="q9U+aIf/"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 464DA4E40ED4;
-	Wed, 22 Jul 2026 14:21:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F0DFD60388;
-	Wed, 22 Jul 2026 14:21:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD5B311BD3A22;
-	Wed, 22 Jul 2026 16:21:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784730106; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=j5WRfwe5s7CD4n1/aXk/GuB0uSEMmPxIt38DrP+sT9s=;
-	b=q9U+aIf/4yDREUm1HYpEzUsh0wIcz3rw2jHYkX5xMjcB7JLX50HQtTMbtSUvrI+VGae9vu
-	YVn7SJP2PnfWlPRMHtkm3ieV2/EjSyukXuPY/zb3qRlGRCpIZ93uyHhkEhfaMIJ2itr58P
-	m4fuxIAyPKu+js9RoCTwmMzZWdiIB/E61TY1nRJ6h2SCwjls1890/wwN/Eo++VVj9Jg7hv
-	cBSEzLVgL3MVo8OtY7lK0sul9jXiSg3JI59jlM0m+npiflq+X01XX8jTtz3s71A//I9284
-	mrnjhne27BDlfP8nEzrkqxzU4wCNDZfNqiT8QqIpKoQG8aQDG8j/BAWR9cmDJg==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Jan Petrous <jan.petrous@oss.nxp.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Yao Zi <me@ziyao.cc>,
-	Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-rockchip@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	s32@nxp.com
-Subject: [PATCH net] MAINTAINERS: Add myself for stmmac ethernet driver maintainance
-Date: Wed, 22 Jul 2026 16:21:24 +0200
-Message-ID: <20260722142125.1767689-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZf1kXQo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E09B1F000E9;
+	Wed, 22 Jul 2026 17:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784740326;
+	bh=7mD+4FUWhob78Mb44V3gtlplEwc4ek5DfjC69DadIpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bZf1kXQo4xHv80f0Pz5JipUico6acxDE74mN4GdiEczhr/dx65ciuaVg4r8bAEEcs
+	 g8p3n8IX94S/0xWbA4zB89DDMhTKQTnkV2L/Z3NU/JS3ruAdusq+9L4HeuSfEStQcH
+	 Y7DVFEogTtuW8IovLFTWOIYoBVbSG6mj923ABW1pZrGmQa6vxfSdKOhKADlVOdVYhn
+	 WYIBqfh0w3VNaXxKQy1Fux3hXJ2kSLGBQPtlGX8G5YZmlkGeL9Qb20Z1soM/qQ5FLB
+	 8kVpxX5d027Yr+2QZ7RI9pYf/OwQ7BcgCUQK2cQUvNhPuOKeGp66LjZg4d3bkfTHjE
+	 NEmeE6vRcIPsQ==
+Date: Wed, 22 Jul 2026 12:12:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: biju.das.jz@bp.renesas.com, linux-can@vger.kernel.org,
+	mturquette@baylibre.com, claudiu.beznea@tuxon.dev,
+	devicetree@vger.kernel.org, conor+dt@kernel.org,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	fabrizio.castro.jz@renesas.com, linux-kernel@vger.kernel.org,
+	magnus.damm@gmail.com, bmasney@redhat.com, mailhol@kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	mkl@pengutronix.de, geert+renesas@glider.be, krzk+dt@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v3 2/8] dt-bindings: can: renesas,rcar-canfd: Document
+ RZ/G3S SoC
+Message-ID: <178474032283.1138528.11209003528871074463.robh@kernel.org>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260714173315.1981708-3-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260714173315.1981708-3-claudiu.beznea+renesas@tuxon.dev>
 
-The stmmac driver based on Synopsys' dwmac IP is used in a very wide
-variety of SoCs and is currently very actively used and contributed to.
 
-It has been orphaned in January 2025 after the previous maintainers
-became inactive, but Russell King was providing very valuable reviews
-and fixes for the driver at that point.
+On Tue, 14 Jul 2026 20:33:09 +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The CAN FD controller found on the Renesas RZ/G3S SoC is largely compatible
+> with the variant present on the RZ/G3E SoC. The main differences are:
+> - the RZ/G3S provides only two CAN FD channels
+> - the RZ/G3S supports only CAN FD operation; the Channel n CAN FD
+>   Configuration Register does not implement the bits used to select
+>   classical CAN-only mode (bit 30) or CAN FD-only mode (bit 28);
+>   consequently, bit 31 (CAN FD Frame Distinction Enable) of the same
+>   register is also not implemented
+> - some bits in several registers (mainly reserved or status bits) are
+>   read-write on the RZ/G3S but read-only on the RZ/G3E; their behavior is
+>   otherwise identical: the bits read back as 0 on both SoCs and software
+>   is allowed to write only 0 to them on the RZ/G3S
+> - the RZ/G3S provides 256 acceptance filters, compared to 768 on the
+>   RZ/G3E
+> - the RZ/G3S can use PCLK clock as the CAN FD clock source through an
+>   internal clock divider, while also supporting an external CAN FD clock
+>   source
+> 
+> Since:
+> - the SoC clock generator provides to the CAN IP only the peripheral and
+>   the RAM clocks
+> - when sourced from the peripheral clock, the CAN-FD clock is obtained
+>   inside the IP itself by dividing the peripheral clock
+> - the assigned-clocks and assigned-clock-rates properties are specific to
+>   the CAN-FD clock
+> the assigned-clocks and assigned-clock-rates properties were dropped from
+> the required properties list of the Renesas RZ/G3S SoC.
+> 
+> Add documentation for the Renesas RZ/G3S SoC.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - updated the patch description to reflect RZ/G3S has 256 acceptance
+>   filters and RZ/G3E has 768 acceptance filters
+> - kept compatibles alphanumerically sorted
+> 
+> Changes in v2:
+> - forbid renesas,no-can-fd and renesas,fd-only since the IP supports
+>   only CAN-FD; for this didn't collect Biju's tag
+> 
+>  .../bindings/net/can/renesas,rcar-canfd.yaml  | 20 +++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
 
-Now we're seeing more and more activity on the driver, but are lacking
-people to test and review contributions to both glue drivers as well as
-core stmmac code.
-
-I have access to some variety of stmmac-based platforms such as socfpga
-CycloneV, imx8mp, some Allwinner SoCs and stm32mp1xx boards that I can
-run regression tests on, and I'm offering to step-up as a maintainer for
-driver, for the time being at least.
-
-Let's hope other people will eventually join this effort.
-
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-
-Sorry for the huge CC list, I tried to include all stmmac glue
-maintainers and associated lists.
-
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a674e36529f7..bea104a7e522 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25972,8 +25972,9 @@ F:	Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
- F:	drivers/phy/st/phy-stm32-combophy.c
- 
- STMMAC ETHERNET DRIVER
-+M:	Maxime Chevallier <maxime.chevallier@bootlin.com>
- L:	netdev@vger.kernel.org
--S:	Orphan
-+S:	Maintained
- F:	Documentation/networking/device_drivers/ethernet/stmicro/
- F:	drivers/net/ethernet/stmicro/stmmac/
- 
--- 
-2.55.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
