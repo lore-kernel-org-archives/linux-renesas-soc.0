@@ -1,63 +1,63 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BDF4D2EF6
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BECC4570D7
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784819453; cv=none; b=SJEGxEjltqIMrzqWAIv0BeBiga77F3T1rFZhErMBSPyw+WhPt39owFxiFkdmUbBw0ahJv+az0pMELUEnIVJ1rgTg4J1eHSpRBjuBrMoKKSc0XDjzoPJF0rkFufhX85T3Ofs7pdD4tPdpcEAPzztMy20owdhiTeKcYLT4mnJqb0g=
+	t=1784819454; cv=none; b=ODWcB68Hh9nkT/82SjUtUzTR70M0cWxgCJb3p5mJOrSk8f7eSd+GnWjo0RcoHkGWr9Zcd3ccNR3CHYXIiZ78wpx3SylvMLE/fugxyJ8a8PNYYkaaYjW/ITcEN+6JeAJGVum2HxBm019CeWaTbYcAQZWqZ7iaF2e2BVh12r8QYT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784819453; c=relaxed/simple;
-	bh=cK/G8S2azxBI4vAih/emWqAkXBCBhzTVKsGWfxd4pX4=;
+	s=arc-20240116; t=1784819454; c=relaxed/simple;
+	bh=AyAyY54zBoSivQOEiGp3ASyCdtZpU1hjqqqjen323BE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KzjsDYMwx6pyqvrgU5lxYLgiESVp7paVz4HVhpx/EkW/BDI2Iwcsj6u4Vcbm3miP/TImBqjBQfJdZuP/+So/rIbYhxZ2kRnoeow1k8B0aOJwH2BJG6GzuJ6yKR28ejZl1PiRcHh35pAEavZSgoITcWi0WHZmz4z8Xg0YoInzkL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNVidpvK; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=Xo+96ClCltyxoa22TAAMMNe/ApQ8QPzvMG3UpjFmF7dloaBLy5vrJuSzo70bsGZBZTpA0p3MNouqzglO4L0qc33pAooJr+j1+ASry1Xgwz4aC6ad5g2LLbO/AWcHpP6CPSqlTaiT5Q2KeAw3ViI4L+2cXnWc1vR5mCk4AuamOz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+QBPiD+; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNVidpvK"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-495635a85d2so7010845e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+QBPiD+"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47f7854678bso298997f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784819433; x=1785424233; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784819437; x=1785424237; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=4P1ClV4sPills+Hp4c70chBzdHsizWxt+ax3LPmn9P8=;
-        b=jNVidpvKBwdGRwC+GJn4XGNW9u4Gh/8m+2/B7EZ413oKn0RuCnENYVQHcULuFxUrS2
-         +QaY+7sVPKA9dGJWREGbhAVC3aIaieSv5MJSGtS1qis0CNLj3m/03n2DANJj4wPuO9xN
-         8URWehjMScrpoQGyC+I/rxO11Eztong9ZM5KLEBqG6jeVvw0iM95ZJ984vJbMeyEJ6ch
-         f7bMQOZTS8GPT4eEsA+fyEn7fjKaY8HUxvYZEYscKdaaqAwSpbNMm2snPt8Pq1HBylmn
-         ioLI3BOihweDmrEEm1txYPlvNoGwgctOcMvyn0UPck6SlMNh74zCqSEdfloHpq16j2eo
-         zOuw==
+        bh=WVeQmlhXu6vwdJqyFXFnrCGqyIeQoByrr/pflj+7TA8=;
+        b=E+QBPiD+c/AP+GbH/1PyJQAJsFaul2XuOUr3vAZA2mY59GLtpn5kpwQ+c0kvwWcl1X
+         Udv/GE0Kcb+D7wINGoE2Y8WLbYckxYjP0IfDx0amRzLbFRnW9Gvz0mZ2eoJLwu7C2fLF
+         ioV4eNP8sOvU+QciaH/F79HVPhtdVe0aTN1IQF0TyZz8CQIz4TLymRo6GxaPruD9n+Yi
+         CZ24mabHfb5dMW9PJgiWAyTQeAK3cGTmYCdtRuMXpZUGfS4Cdsyz6crLPnt2u7b6wpEL
+         iZMlOWkp/xW+69jevcZ65A84Lcli8hrwQa/Lt2pXS9jgrFwJG6a0JKvRJssJ+o4ugq4m
+         lbJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784819433; x=1785424233;
+        d=1e100.net; s=20251104; t=1784819437; x=1785424237;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4P1ClV4sPills+Hp4c70chBzdHsizWxt+ax3LPmn9P8=;
-        b=ax3zoaNcjzBrGWte8dm5a4umXegPycES3iHJcCbzl02Yp2af1V88HlNxJpZPKDUJ8C
-         hjPSg9BdU1cRdgiCFloACdz9gnkDyUa7YN+5fB6glFaOAJlONKt0leOifnwQZ2XfdfT4
-         byh9UF+F50vhQtb7fHRKBD/mh5HK/Tgq2RYa1+9fk0KkL01iep4oEVmW82+hDpp93Ten
-         RMUkhp1jIgrl/bwyrvR5bX27ghimlPmvHaq38iJhmBA7phWxKQg/U6JvK4O104jYGBIz
-         LZgu1l5Fl+QKn/6+BQ8lUyJo0NZAwbVIAGZlE+LbjIjg15eAvl+AqPbmhSIYBvssUZ1X
-         PMhA==
-X-Forwarded-Encrypted: i=1; AHgh+RpnZ+2vrX2ZnCN7Qt6xGmbTBM0Ax7X76BRVbXrfRbOkfMMEwkvKxnuYcO4EXy/Nl/t5n4QLJ68iwFHVo9DALIdbfQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/ADJWC0ALhO/KUW08vZw2YvRJ26Zcr9/lm/QXpexhnqF0WYSx
-	NmpygT/3XqtYkLamcPysYFZRDFIuEGrFsHChXE4sUJNEjPZS6SHflNel
-X-Gm-Gg: AR+sD12xupKsBqX8KMlABgvr/Bqbqpq3xlpwPDGnRaHEi/gYNJXwlaIBz6JKQKvHYyB
-	PuVABmjP9PgVK0DO7TRhDHmtTYACk3StZ+vI2AfFoVF9/4E9l6bPLsbLxVXX5MbqNK8RTC/AHMD
-	7qNKF/7jVENEeBtfRibYWfayxKfvG9Prt/HUsqJtIWwQvVydhe6p4INJr0G+BSn3hDu04Ybyyf9
-	gQjmIuT1WvIJXquKftNPYpL1swTg8aYGGJ/EVh8000wUJll8lSggQNSeCRQD6E/G4hy3KkytvXv
-	LXieyro6pmTJqUlORpcHELGW05RP6baLkQImimwxTb6Zaj0LAGMeEeflyzCgk3BXjMUpB2g6EJA
-	+kvR5FPnjR52DzgveMzvklaC6anl2gt1kX1/L9JBy3V1878xXBOztS1ko+QnImws5kvwRjgoyJN
-	DmdWsfchaj+NLpDowO8l1b5uPAm0Y=
-X-Received: by 2002:a05:600c:1d0d:b0:495:6b8a:5227 with SMTP id 5b1f17b1804b1-49573cfd6d1mr38925455e9.23.1784819432602;
-        Thu, 23 Jul 2026 08:10:32 -0700 (PDT)
+        bh=WVeQmlhXu6vwdJqyFXFnrCGqyIeQoByrr/pflj+7TA8=;
+        b=hlhFeschbCLbuQqqBy38JxJPOHYaG4hs7fEjhqgu9y5Tfc+y3DLGa/PqTZEoVrpZPy
+         QeVdRl4ltjYPu4hd/qsc9334tkiY14gMbrokCF/hmT2cBAYFa/w6rdy6V5FsOYIqcd9n
+         QLebCzU2g4Yd5/ZBssvvYBAshvmv8VcWaG2Z0RAH/c2pwEww9fkEmIV6zzO9FNn9vfPF
+         sGzWtRWYmRpZt582V0FYArWtQU7maVSxybAomUnkeSDrtCi5hEVs3V1kc9MLvlr3o5OW
+         akZWE3Ag7Uf+EsMLknYqq/+Dx2J80KU8+IsW1YoDVQJhxI6Qcs1MWichoAauuvOLu1jG
+         SexQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpUa+pPhg6Ji9pYfTAWeH8fQCNG9MX0QnXuPhlMFy2JVF7kq/EkIpbwvkaPVejfiFukAZwZgJetXCY2iXsFAtcjyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf69gQDqUBi4nWTFQaVhMmXrhXhbYTsu9VSfvmv3jIl8fo3M4x
+	9aAuRUw36txXJLIi4yBDGpCMtxTdea4LyhPXuRLzgeSxLQNVd9+J6K+c
+X-Gm-Gg: AR+sD10m/NVZlU/CuKrz7DDonVfPiQC13X8oip2rkXcGs8ptoHRHRQFaTdZUGws4Faw
+	4TjmNAxetHzO9xurZR704qpwL0scxjgr4v2jdg6M2i/uxm/I5v89OgKuBN9s/MLUChhtIEsVmfT
+	FuLr/dRmPyRMVn2OJbK2T7lBPVEaTdEH0qfc51uzyUPddCtQdSthxuDMPDofGE+0fKviBwU1NQX
+	9m1zbe/re+8xRXMXkFEGGmHTjGApiG2AbaSAZzFj+DZDJuWmi+gfk0SHl0yhir7A08FuZoDnyRJ
+	e5TpiGxZUHPh1dr40OcN/xFslai+6zC8wRm60p61iz/AWzbXfeCJRAA/v2lV0gRut/XOLy1kUpZ
+	/Z1bR6mkFvmZrNArwuEGbXlUr1tMEZKbesxCmOZwtdkBe063vMO8njwub1VengvStZXSbTW9L3w
+	HcGKMEZlLYZ7PEms6635qw6ZiJ9NE=
+X-Received: by 2002:a05:6000:2993:20b0:47f:8e50:93e0 with SMTP id ffacd0b85a97d-47f8e50956emr3651284f8f.39.1784819436709;
+        Thu, 23 Jul 2026 08:10:36 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:10:32 -0700 (PDT)
+        Thu, 23 Jul 2026 08:10:35 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -69,9 +69,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v22 06/13] mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
-Date: Thu, 23 Jul 2026 16:10:10 +0100
-Message-ID: <20260723151024.318918-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v22 10/13] mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
+Date: Thu, 23 Jul 2026 16:10:14 +0100
+Message-ID: <20260723151024.318918-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
 References: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
@@ -85,214 +85,92 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-RZ/G2L and later SoCs need a hardware adjustment delay written to
-SCC_TMPPORT2 on signal-voltage switch during tuning: 0x1 for 1.8V,
-0x0 for 3.3V.
+The SD_STATUS register, specifically the IOVS (I/O Voltage Switch) bit, is
+not automatically restored after a suspend/resume cycle, causing the
+regulator to report an incorrect voltage on resume.
 
-Add a TMIO_MMC_TUNING_DELAY flag and
-renesas_sdhi_set_hw_adjustment_delay(), called from
-renesas_sdhi_start_signal_voltage_switch() after the regulator is
-set, and reset SCC_TMPPORT2 to 0 at the start of
-renesas_sdhi_execute_tuning() when the flag is set and tap_num == 8.
-
-Add a dedicated of_data_rz_g2l descriptor with this flag and switch
-of_rzg2l_compatible to use it instead of the generic R-Car Gen3
-descriptor.
+Fix this by caching the CTL_SD_STATUS register value in the renesas_sdhi
+private struct at suspend time and writing it back during resume. The
+save/restore is only performed when a regulator device (rdev) is present,
+as the IOVS bit is only relevant in that context.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v21->v22:
- * Updated commit description.
- * Added a renesas_sdhi_set_hw_adjustment_delay() call to
-   renesas_sdhi_init_tuning().
+ * No change.
 v20->v21:
- * Added clk_div_mask to RZ/G2L of_data.
+ * No change.
 v19->v20:
- * No change.
+ * Updated resume() with scoped PM runtime call.
 v18->v19:
+ * Updated suspend/resume with scoped runtime calls in suspend.
+v17->v18:
  * No change.
-v18:
- * New patch.
+v1->v17:
+ * No change.
 ---
- drivers/mmc/host/renesas_sdhi_core.c          | 88 ++++++++++++-------
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 22 ++++-
- include/linux/platform_data/tmio.h            |  3 +
- 3 files changed, 78 insertions(+), 35 deletions(-)
+ drivers/mmc/host/renesas_sdhi.h      |  2 ++
+ drivers/mmc/host/renesas_sdhi_core.c | 26 +++++++++++++++++++++++++-
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index a085a4cb2e38..e2c26917b884 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -105,6 +105,8 @@ struct renesas_sdhi {
+ 	struct reset_control *rstc_axim;
+ 	struct tmio_mmc_host *host;
+ 	struct regulator_dev *rdev;
++
++	u32 cache_sd_status;
+ };
+ 
+ #define host_to_priv(host) \
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 44d9f5da0b4b..9c6a3c5fbc8d 100644
+index be7720305d32..70ebe5902f6c 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -256,40 +256,6 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- 		 TMIO_STAT_DAT0);
- }
+@@ -1424,6 +1424,15 @@ int renesas_sdhi_suspend(struct device *dev)
+ 	};
+ 	int ret;
  
--static int renesas_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
--						    struct mmc_ios *ios)
--{
--	struct tmio_mmc_host *host = mmc_priv(mmc);
--	struct renesas_sdhi *priv = host_to_priv(host);
--	struct pinctrl_state *pin_state;
--	int ret;
--
--	switch (ios->signal_voltage) {
--	case MMC_SIGNAL_VOLTAGE_330:
--		pin_state = priv->pins_default;
--		break;
--	case MMC_SIGNAL_VOLTAGE_180:
--		pin_state = priv->pins_uhs;
--		break;
--	default:
--		return -EINVAL;
--	}
--
--	/*
--	 * If anything is missing, assume signal voltage is fixed at
--	 * 3.3V and succeed/fail accordingly.
--	 */
--	if (IS_ERR(priv->pinctrl) || IS_ERR(pin_state))
--		return ios->signal_voltage ==
--			MMC_SIGNAL_VOLTAGE_330 ? 0 : -EINVAL;
--
--	ret = mmc_regulator_set_vqmmc(host->mmc, ios);
--	if (ret < 0)
--		return ret;
--
--	return pinctrl_select_state(priv->pinctrl, pin_state);
--}
--
- /* SCC registers */
- #define SH_MOBILE_SDHI_SCC_DTCNTL	0x000
- #define SH_MOBILE_SDHI_SCC_TAPSET	0x002
-@@ -350,6 +316,55 @@ static inline void sd_scc_write32(struct tmio_mmc_host *host,
- 	writel(val, priv->scc_ctl + (addr << host->bus_shift));
- }
- 
-+static void renesas_sdhi_set_hw_adjustment_delay(struct tmio_mmc_host *host)
-+{
-+	struct renesas_sdhi *priv = host_to_priv(host);
++	if (priv->rdev) {
++		PM_RUNTIME_ACQUIRE_IF_ENABLED(dev, pm);
++		ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
++		if (ret < 0)
++			return ret;
 +
-+	if (!(host->pdata->flags & TMIO_MMC_TUNING_DELAY))
-+		return;
-+
-+	if (host->mmc->ios.signal_voltage == MMC_SIGNAL_VOLTAGE_330)
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x0);
-+	else
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x1);
-+}
-+
-+static int renesas_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
-+						    struct mmc_ios *ios)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+	struct pinctrl_state *pin_state;
-+	int ret;
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		pin_state = priv->pins_default;
-+		break;
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		pin_state = priv->pins_uhs;
-+		break;
-+	default:
-+		return -EINVAL;
++		priv->cache_sd_status = sd_ctrl_read32(host, CTL_SD_STATUS);
 +	}
 +
-+	/*
-+	 * If anything is missing, assume signal voltage is fixed at
-+	 * 3.3V and succeed/fail accordingly.
-+	 */
-+	if (IS_ERR(priv->pinctrl) || IS_ERR(pin_state))
-+		return ios->signal_voltage ==
-+			MMC_SIGNAL_VOLTAGE_330 ? 0 : -EINVAL;
-+
-+	ret = mmc_regulator_set_vqmmc(host->mmc, ios);
-+	if (ret < 0)
-+		return ret;
-+
-+	renesas_sdhi_set_hw_adjustment_delay(host);
-+
-+	return pinctrl_select_state(priv->pinctrl, pin_state);
-+}
-+
- static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv;
-@@ -377,6 +392,8 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
+ 	ret = pm_runtime_force_suspend(dev);
+ 	if (ret)
+ 		return ret;
+@@ -1453,8 +1462,23 @@ int renesas_sdhi_resume(struct device *dev)
  
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
- 
-+	renesas_sdhi_set_hw_adjustment_delay(host);
+ 	ret = pm_runtime_force_resume(dev);
+ 	if (ret)
+-		reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
++		goto err_assert;
 +
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 
-@@ -709,6 +726,9 @@ static int renesas_sdhi_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	if (!priv->tap_num)
- 		return 0; /* Tuning is not supported */
- 
-+	if ((host->pdata->flags & TMIO_MMC_TUNING_DELAY) && priv->tap_num == 8)
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0);
++	if (priv->rdev) {
++		PM_RUNTIME_ACQUIRE_IF_ENABLED(dev, pm);
++		ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
++		if (ret < 0)
++			goto err_pm;
 +
- 	if (priv->tap_num * 2 >= sizeof(priv->taps) * BITS_PER_BYTE) {
- 		dev_err(&host->pdev->dev,
- 			"Too many taps, please update 'taps' in tmio_mmc_host!\n");
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 9bf7aa9bd867..1799c6106102 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -145,6 +145,26 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
- 	.clk_div_mask	= GENMASK(7, 0),
- };
- 
-+static const struct renesas_sdhi_of_data of_data_rz_g2l = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
-+			  TMIO_MMC_64BIT_DATA_PORT | TMIO_MMC_TUNING_DELAY,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-+			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
-+	.bus_shift	= 2,
-+	.scc_offset	= 0x1000,
-+	.taps		= rcar_gen3_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
-+	/* DMAC can handle 32bit blk count but only 1 segment */
-+	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
-+	.max_segs	= 1,
-+	.sdhi_flags	= SDHI_FLAG_NEED_CLKH_FALLBACK,
-+	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
-+	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
-+};
++		sd_ctrl_write32(host, CTL_SD_STATUS, priv->cache_sd_status);
++	}
 +
- static const u8 r8a7796_es13_calib_table[2][SDHI_CALIB_TABLE_MAX] = {
- 	{ 3,  3,  3,  3,  3,  3,  3,  4,  4,  5,  6,  7,  8,  9, 10, 15,
- 	 16, 16, 16, 16, 16, 16, 17, 18, 18, 19, 20, 21, 22, 23, 24, 25 },
-@@ -266,7 +286,7 @@ static const struct renesas_sdhi_of_data_with_quirks of_r8a77990_compatible = {
- };
++	return 0;
  
- static const struct renesas_sdhi_of_data_with_quirks of_rzg2l_compatible = {
--	.of_data = &of_data_rcar_gen3,
-+	.of_data = &of_data_rz_g2l,
- 	.quirks = &sdhi_quirks_rzg2l,
- };
- 
-diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
-index f684f4087a8f..77d3dc91c828 100644
---- a/include/linux/platform_data/tmio.h
-+++ b/include/linux/platform_data/tmio.h
-@@ -50,6 +50,9 @@
- /* Some controllers have a 64-bit wide data port register */
- #define TMIO_MMC_64BIT_DATA_PORT	BIT(12)
- 
-+/* Some controllers have tuning delay */
-+#define TMIO_MMC_TUNING_DELAY		BIT(13)
-+
- struct tmio_mmc_data {
- 	void				*chan_priv_tx;
- 	void				*chan_priv_rx;
++err_pm:
++	pm_runtime_force_suspend(dev);
++err_assert:
++	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(renesas_sdhi_resume);
 -- 
 2.43.0
 
