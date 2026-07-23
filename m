@@ -1,96 +1,96 @@
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CCD3E49E6;
-	Thu, 23 Jul 2026 20:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B4372B27;
+	Thu, 23 Jul 2026 20:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784838264; cv=none; b=kCsI/mUe87Yf6KJe5yOQ2C1WYE6nCMlV2QaDdyOBdSsil79HhCRXAN9Wa+phbWvEObgREMkqmqGSNDbfT7cZndAwCngkaCvgXIHpd3e6P0YlQ4wUl/IjW/u6Tl798iBfI3jzdUsNXBHOmkz5sttC1cKcSGcLnnd+DdOUAp3D3Po=
+	t=1784838383; cv=none; b=mwfgMk5fudXgdjmec0ktKO1H7VxlzgfS+UnhYHBe/iLT8xe3YUdCzpfUer7Hez5pgAgZWL/BbvIPXXr7Z+4myJnchnVaPWWrJT4rgIAFEF3Oido5yOMHGql88K3HoxNfYaRhPKRMuePv75qV69pRF0vdK8d51LUbZihCqXvBBmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784838264; c=relaxed/simple;
-	bh=g2neCyLoLFNVrcLtSsHWhdIyxaxfjyUesBtMnhvXhuU=;
+	s=arc-20240116; t=1784838383; c=relaxed/simple;
+	bh=5iG8Fb/wE2D83EOlwWwa80p3yf8ydNzzDHEtgWXwQ+M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpjuRo763YqiIkdlMwoJaKI8IIN1w45gQ2qgmnZVZSJYTm/+PSwaRO7nJJlt+JKELNoT+7bwKwh3Pwq1zyAydPjIXJ2vS8CmDMpXjF+pNeDLX/YpWddkB2HuM4tcMPFo+/q8IldiIucC4cPAMF5P+JfQzawVqQyCg/3eEjbRWM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=vdPj8v66; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O5B6/Eqi; arc=none smtp.client-ip=202.12.124.152
+	 Content-Type:Content-Disposition:In-Reply-To; b=qT/Zk6vfYI950RT6rVMn37N60Cvueinuq1dywE2zKP/p0BEdMZJrltfZnx3BT04eBCqC5nTs2x+is9lZoLOK2fs7dEGiFEYJefsYj7pjtbn1LUnD06LlejfKwj7BnVM3r3yyuPVU9V/nxbjbeFWk1gMyCOuHzBJJzUOJeK3IoN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=TXfg5ubM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eoV4KXT3; arc=none smtp.client-ip=202.12.124.143
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="vdPj8v66";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O5B6/Eqi"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DB9897A0220;
-	Thu, 23 Jul 2026 16:24:20 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="TXfg5ubM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eoV4KXT3"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id 67ABA13005AB;
+	Thu, 23 Jul 2026 16:26:19 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 23 Jul 2026 16:24:21 -0400
+  by phl-compute-04.internal (MEProxy); Thu, 23 Jul 2026 16:26:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784838260;
-	 x=1784924660; bh=6aFnQXEm9TrsdDTj1E/xgPwhwGan4/+djoVhNQoCfeE=; b=
-	vdPj8v66IarCaLm0M5cXK9WpWEpg4H9SFCrUYzdZmfm50UEw58NqGV0k5JJRHNeN
-	c0xuspmiimWHO0XysN7+4iq8pBT06mwfbGbPoBiy2ks1j/0OMVzuodx8IbDfZz5R
-	zSIU8vjsHTck+KL0EuHSvQ2M0P3pyC3rvmP0ysvvd/4/jzRuOs1UcU6c7z5vNjC5
-	RtAKUkjF1cef02+XVtf8fVULBmizxW10TYQK+hxXp33/PC8iUCvvTy0vfId0YsaD
-	IN2FjnOvoVmx7WyPSAwT8bzMfXd65QmR8rVbDrEGxZLK0o0jELIByHZvXQngIci7
-	88wNZzARpYPZnie4K6C6PQ==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1784838379;
+	 x=1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=
+	TXfg5ubMGpI7NH2+Kilra5KFHoKlpaz8cZfxh6VS0Y8aco6ACn5bHVXXNhuqfdNz
+	AHnuDiorIp9DgwlNO+v7fnyXJSh0ch6JmJRwJLqkU/D8t1IP5h99QfouIP4tukaP
+	BlRyW5EIlO5Fc1xoDsDwGE1DuTLfLfRGXr9hsDkbq6c0qdfbgZu0iewm5r/wbtIg
+	pccyjlUmfHVcp/JCc1IfzmJfclrUNq4zJxVHycV+85mfTCkb1c2xe78MuNoJZBE2
+	YFMiJZ+wKgNOq/FhrVkn4C5ayCoN+4A6akEA03CiW88iEIipAQ6LFbwbMwU3cPe3
+	enFj9VY8Px/AydESmr18PA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784838260; x=
-	1784924660; bh=6aFnQXEm9TrsdDTj1E/xgPwhwGan4/+djoVhNQoCfeE=; b=O
-	5B6/Eqi8AK1cSOlaVkxefKvXX00HWpBp2wGXXn+rtn35KsD50zK684s8IeWcXnZY
-	wcQdQxdBz0kc8cN/9Mh1Je8NBoqybhJkuNXX6N1jNtvGK1NlitD+QiioQWg7mZju
-	8D5gFBvqbv7UJN9eqZvF10ms5OTFNc0RxbhkYlD3K0mVtcOC1lRYXW+DAXbRJwgi
-	HbeBWR8tz42oqcG/mA5qtHNkmYOZvDpCl0uD7kMH9Cg+VZc31cQr3Zzk4RYLnNV9
-	p3EzjuIq74MYRWKnaNaIyoJMP3w69fyGLENx5kawdQGttkcU+76dzb2gF2kVnqfs
-	I9vojI4xXmqKoMPG7/FAA==
-X-ME-Sender: <xms:c3hiam342YGxZhdWLPJ7zpUVuDFw5YtVxXXYwbDKyaG8XkMpVOyRLQ>
-    <xme:c3hiagJL2GmU-8-BwhNiiibVfyhMseOhwbj5_3MwZ17cM6QkFxWT1SaOKJwrd2P3q
-    Q8GcHovkF5J05NQCoPDp30OAzy0ybeXnz9nfM7-7s-LgyZPlUo>
-X-ME-Received: <xmr:c3hiamndHVBET1X4u6SyitEjOwSnGiep7FvBF86jdKeFmFdAi4lR49e8L26hYK9pAswSYkJSpTVQQbSrQhfrK0rR6BF1cnI>
-X-ME-Proxy-Cause: dmFkZTGGMEev6dKv4UlCPj6XliuA/xQS1IWIXC6IlxAZ+QnJEaoji/7RoCIeC01ofKpxth
-    ohf8Nv+dO5poKFdV4crp0Gr2/tqJtucOlqVWHiFd1a8QjMJVqrlokVXUXIpmig454d2Qo+
-    vvmBOz7L7O/QeaMgWDD4JIZ9UyejEPJ4apV7ZEqnQm4E9HSPXbH9Jklc/2Gi6tGLIgQ8CB
-    zZG/Zuh2+YzEnhTnumOd//3hHX8puHAQmVpt1mz7x9Lwss76ekv4bgs6plE3vK4w4Z3IEp
-    /vM/EESSO7PBegwXKhXAYhh+idjD834+4Q4Ab70bRPVknovFAQYIEudIMzFB5gR3Fzn0PB
-    OXSSSutlBs2XxKk8nwGhMF0wZgJXHTe3TCVv7jFXNd5sflKc5ghq5UWFndPYWbcmnqypjf
-    oPRKnVgJKqLYzs0g0wH3iTejoLyZ/9GYJlyxLhmhVdbijsXh5C1pYfrX8So+OKUE24W2AS
-    DYoJKhIhN3i1TvvjG0uff/YI3iMfh8/TSrjSASgrCBz2I6wukQ8HQ6VesoRdgrfJ4cCD9B
-    FX4xFbGHsGX1JIPxJ0aZKPEd/KHAxX9FXNY4d3JoR+fv19acR6gRTPIzFLMtn+rjuDldjB
-    sn+f5iuWDcq8NUmTTxQMYI6J1WMLsWtexP0oMDtr/v5gYUlXTV8/TUwohnLw
-X-ME-Proxy: <xmx:c3hiauNPfuY0oppbemzAp3CORNwZMGXN3N1U0lDNPl01Z-2sX6PCTg>
-    <xmx:c3hialwDjJ1lb9PpOt07VeBUnrYcXykGjKuHLsPtKihqh9wxE4dEiA>
-    <xmx:c3hiamnHQ175QGVLQOmcKLn_fmx3lMrUDzZSIiXPa4GfxjfEifIPpg>
-    <xmx:c3hiaj9C_4WYsev1fBgHUeC6Wi3TnmwHAipTXhExdFmwHYYKn2cfSQ>
-    <xmx:dHhials9WoqpaRiRD7Qay-2oaZx60AJnFVa3cGsRbRp0Y5Mo6NVaqp8->
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784838379; x=
+	1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=e
+	oV4KXT3Ym/YV5GkF2QRCa4+pOlI/zY8q4hcvjJ3LxL9gvXQU6dggg4Kx4JHeElJC
+	9IM6iw8nO/pEEwu2ZxZc40FBfz/CNw7/4q11pncrryEXvDEfI50yEbSOTjXWvB6c
+	P6riHQKso/WbIn20eXxFtKjaVHL19mCYnPU/hv9Zw6sa4UbpVCoZ7Z5ZzySoCYxC
+	rsD6zwlNXs2pymTpfxtlUvJOPfoEPTdVzhqLwqxI88o9iHMtbamqeT28J5rgypVy
+	xx/io/NKkJpvLEVPWaoqxyiz/DA16RAdOQNHHUPdj90X3sysR6zA1a4OM2vafVby
+	9vlzKc58AmpQ/K+BZW37Q==
+X-ME-Sender: <xms:6nhiaq0GCCJ3UjZ1Tl2tjNSSOnLYa4n_DvEcQxwQC9GuOs_D83Mzog>
+    <xme:6nhiaqScHvfaZ8a3YA8X-XOWjv0Qdvpj2dus8nerwH4i6u3xSe-ZOxZ6idILJxXim
+    y1KXEIpiY7SW9YeE_uONa8KUBeR7Q5D2gjX1lMoCNkek2ZgELFkeA>
+X-ME-Received: <xmr:6nhianaCq0-8aK30F5jYwZGN-zCrvAD2Sd6SGgBH9Eu3eu1y9EjCtytpO_M1R6a-kZg2BJEbUUYPYJms-lGCWOBvUA9tEM8>
+X-ME-Proxy-Cause: dmFkZTGtHfvCGLFNFtcVRq1cHrKjv7HYmoxFw1SEsPfggLpPF3+EigNttIIi46yncFHb8w
+    RNhYQ07T1sllTu+sciGyBlKNcqXi+ymeT8cw3/9uVWtj/55kw2wskM5if1ZNL/3AIR5RA7
+    JKSkKWovXVlh7x77H2TM7Fwa4ev5Ev2uAIZzQMb9G24Gxj0uSSfHKfofOICsmDLLuGJSqQ
+    arq+kkHAqnBsywojtxH84aBy8syhUvWsWbGXXq4laZV35SkdUVXHQX8BaFHGaJFjYDX/ty
+    4nfo9ODP4B4TvmLO5jB3ku72GvF+yhV8RnLjRs4UWFh7UVF90OGDAER6ybUj5upM1dXNGZ
+    F03sjgtZ4n7EW2/LRPbX33fsmxdTQZM4Vw5QGKeQRTtYxEOchEyqIxRBu4LbkRDn73kWsj
+    LxYHgAovK+XVj0yrC2GlG4PIwCuhaVZl4PNrkMgjuuHaVnpbrMOazhWf+XHy5e4/kzdEPK
+    ESIrNm8TOPUo7esJ9Bowy13hBURoivHoZBN+d4ZkKnSoXGR5vuSaTyzTxQ+Hzaay0E7Lfr
+    xq6M32C+odLuFXo74tayix0UXXCfsRftO/iWF6RnjQkHlRCv1V8SQ1MYK7N3gRXqdouc8l
+    jyXZqRQAN02lAaHt2bHhaQRmnjivyIfZ3NUs7hofb60faFpc5bKWXMeqNoIw
+X-ME-Proxy: <xmx:6nhiaoCXzbGIALywOyKdXlCmgNNav7K7UV8hqKi_9N-GTFvh7oRdGw>
+    <xmx:6nhiauBmaHuLQ1nKqA7wC38CXfEeYaFqFWIRA7sNALBbywVskdn7Lw>
+    <xmx:6nhiakG0cjRTw4Z4znK2C-2aTt_TaksxSzeagr3CTWcsXG4N-rNvpA>
+    <xmx:6nhiahnCr7pm_ynLAL8AGOG2tvn6-_tx8d1jY7ys3gGWLrP5zNJxoA>
+    <xmx:63hianEYvSz2qubeSY6ig3NYWooFgtsXupJs-9XDOyc4f82FAicO-1U8>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Jul 2026 16:24:19 -0400 (EDT)
-Date: Thu, 23 Jul 2026 22:24:16 +0200
+ 23 Jul 2026 16:26:17 -0400 (EDT)
+Date: Thu, 23 Jul 2026 22:26:16 +0200
 From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Arthur Kiyanovski <akiyano@amazon.com>,
-	David Arinzon <darinzon@amazon.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sukhdeep Singh <sukhdeeps@marvell.com>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Rahul Verma <rahulv@marvell.com>,
-	Shahed Shaikh <shshaikh@marvell.com>,
-	Sabrina Dubroca <sd@queasysnail.net>, cocci@inria.fr,
-	GR-Linux-NIC-Dev@marvell.com, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 07/36] net: ethernet: remove conditional return with no
- effect
-Message-ID: <20260723202416.GD2273555@ragnatech.se>
+Cc: Julia.Lawall@inria.fr, Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Eugen Hristev <ehristev@kernel.org>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Bryan O'Donoghue <bod@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Michael Krufky <mkrufky@linuxtv.org>,
+	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
+Message-ID: <20260723202616.GE2273555@ragnatech.se>
 References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-8-ekffu200098@gmail.com>
+ <20260723184538.3888637-13-ekffu200098@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -100,13 +100,13 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260723184538.3888637-8-ekffu200098@gmail.com>
+In-Reply-To: <20260723184538.3888637-13-ekffu200098@gmail.com>
 
-Hello Sang-Heon,
+Hi Sang-Heon,
 
 Thanks for your work.
 
-On 2026-07-24 03:45:09 +0900, Sang-Heon Jeon wrote:
+On 2026-07-24 03:45:14 +0900, Sang-Heon Jeon wrote:
 > Both branches of the check return the same value, so the check has
 > no effect. Remove it and return the value directly.
 > 
@@ -115,155 +115,194 @@ On 2026-07-24 03:45:09 +0900, Sang-Heon Jeon wrote:
 > 
 > Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
 > ---
->  drivers/net/ethernet/amazon/ena/ena_netdev.c          | 6 +-----
->  drivers/net/ethernet/aquantia/atlantic/aq_macsec.c    | 6 +-----
->  drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c   | 6 +-----
->  drivers/net/ethernet/freescale/gianfar.c              | 6 +-----
->  drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c    | 7 +------
->  drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 6 +-----
->  drivers/net/ethernet/renesas/rtsn.c                   | 7 +------
+>  drivers/media/i2c/mt9p031.c                          |  6 +-----
+>  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
+>  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
+>  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
+>  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
 
-For rtsn.c,
+For rcar-csi2.c,
 
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
->  7 files changed, 7 insertions(+), 37 deletions(-)
+>  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
+>  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
+>  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
+>  8 files changed, 9 insertions(+), 49 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> index 5d05020a6d05..ea89619039d8 100644
-> --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> @@ -2303,11 +2303,7 @@ static int ena_open(struct net_device *netdev)
->  		return rc;
+> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
+> index d21510caf45a..2b09e8315c8e 100644
+> --- a/drivers/media/i2c/mt9p031.c
+> +++ b/drivers/media/i2c/mt9p031.c
+> @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
+>  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
+>  	if (ret < 0)
+>  		return ret;
+> -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ret;
+> +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
+>  }
+>  
+>  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
+> diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
+> index b0302dfc3278..7383341ec51d 100644
+> --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
+> +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
+> @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
+>  static int __maybe_unused xisc_runtime_resume(struct device *dev)
+>  {
+>  	struct isc_device *isc = dev_get_drvdata(dev);
+> -	int ret;
+> -
+> -	ret = clk_prepare_enable(isc->hclock);
+> -	if (ret)
+> -		return ret;
+>  
+> -	return ret;
+> +	return clk_prepare_enable(isc->hclock);
+>  }
+>  
+>  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
+> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
+> index 773f6548370a..872bd09656b1 100644
+> --- a/drivers/media/platform/qcom/iris/iris_resources.c
+> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
+> @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = pm_runtime_get_sync(pd_dev);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ret;
+> +	return pm_runtime_get_sync(pd_dev);
+>  }
+>  
+>  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
+> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+> index be1cbd5cfe84..e88e66be4f6d 100644
+> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+> @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
+>  	unsigned long max_freq = ULONG_MAX;
+>  	struct device *dev = core->dev;
+>  	struct dev_pm_opp *opp;
+> -	int ret = 0;
+>  
+>  	if (legacy_binding) {
+>  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
+> @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
 >  	}
 >  
-> -	rc = ena_up(adapter);
-> -	if (rc)
-> -		return rc;
-> -
-> -	return rc;
-> +	return ena_up(adapter);
->  }
->  
->  /* ena_close - Disables a network interface
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c b/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
-> index 3ca072360ec7..fd4ee6212234 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
-> @@ -735,11 +735,7 @@ static int aq_set_rxsc(struct aq_nic_s *nic, const u32 rxsc_idx)
->  	sc_record.valid = 1;
->  	sc_record.fresh = 1;
->  
-> -	ret = aq_mss_set_ingress_sc_record(hw, &sc_record, hw_sc_idx);
+>  done:
+> -	ret = hfi_session_set_property(inst, ptype, &cu);
 > -	if (ret)
 > -		return ret;
 > -
 > -	return ret;
-> +	return aq_mss_set_ingress_sc_record(hw, &sc_record, hw_sc_idx);
+> +	return hfi_session_set_property(inst, ptype, &cu);
 >  }
 >  
->  static int aq_mdo_add_rxsc(struct macsec_context *ctx)
-> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> index 33e7a99d3e49..79d4a77f72bd 100644
-> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> @@ -3935,11 +3935,7 @@ static int dpaa2_switch_port_init(struct ethsw_port_priv *port_priv, u16 port)
->  	if (err)
->  		return err;
+>  static int acquire_core(struct venus_inst *inst)
+> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
+> index 7305cc4a04cb..6635f5782175 100644
+> --- a/drivers/media/platform/renesas/rcar-csi2.c
+> +++ b/drivers/media/platform/renesas/rcar-csi2.c
+> @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
+>  			return ret;
+>  	}
 >  
-> -	err = dpaa2_switch_port_trap_mac_addr(port_priv, ll_mac, ll_mask);
-> -	if (err)
-> -		return err;
-> -
-> -	return err;
-> +	return dpaa2_switch_port_trap_mac_addr(port_priv, ll_mac, ll_mask);
->  }
->  
->  static void dpaa2_switch_ctrl_if_teardown(struct ethsw_core *ethsw)
-> diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-> index 89215e1ddc2d..cf636fc5aafa 100644
-> --- a/drivers/net/ethernet/freescale/gianfar.c
-> +++ b/drivers/net/ethernet/freescale/gianfar.c
-> @@ -2877,11 +2877,7 @@ static int gfar_enet_open(struct net_device *dev)
->  	if (err)
->  		return err;
->  
-> -	err = startup_gfar(dev);
-> -	if (err)
-> -		return err;
-> -
-> -	return err;
-> +	return startup_gfar(dev);
->  }
->  
->  /* Stops the kernel queue, and halts the controller */
-> diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-> index fff8dc84212d..e96a268067f2 100644
-> --- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-> +++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-> @@ -2478,7 +2478,6 @@ static int netxen_parse_md_template(struct netxen_adapter *adapter)
->  static int
->  netxen_collect_minidump(struct netxen_adapter *adapter)
->  {
-> -	int ret = 0;
->  	struct netxen_minidump_template_hdr *hdr;
->  	hdr = (struct netxen_minidump_template_hdr *)
->  				adapter->mdump.md_template;
-> @@ -2486,11 +2485,7 @@ netxen_collect_minidump(struct netxen_adapter *adapter)
->  	hdr->driver_timestamp = ktime_get_seconds();
->  	hdr->driver_info_word2 = adapter->fw_version;
->  	hdr->driver_info_word3 = NXRD32(adapter, CRB_DRIVER_VERSION);
-> -	ret = netxen_parse_md_template(adapter);
+> -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
 > -	if (ret)
 > -		return ret;
 > -
 > -	return ret;
-> +	return netxen_parse_md_template(adapter);
+> +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
 >  }
 >  
->  
-> diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-> index 45ed8705c7ca..47cd9ec665ee 100644
-> --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-> +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-> @@ -1618,11 +1618,7 @@ static int qlcnic_83xx_check_hw_status(struct qlcnic_adapter *p_dev)
->  	if (err)
->  		return err;
->  
-> -	err = qlcnic_83xx_check_heartbeat(p_dev);
-> -	if (err)
-> -		return err;
-> -
-> -	return err;
-> +	return qlcnic_83xx_check_heartbeat(p_dev);
->  }
->  
->  static int qlcnic_83xx_poll_reg(struct qlcnic_adapter *p_dev, u32 addr,
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
-> index ee8381b60b8d..f7beeb73eb16 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -685,7 +685,6 @@ static void rtsn_set_rate(struct rtsn_private *priv)
->  static int rtsn_rmac_init(struct rtsn_private *priv)
->  {
->  	const u8 *mac_addr = priv->ndev->dev_addr;
+>  /* -----------------------------------------------------------------------------
+> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+> index 14eedd1ceb27..bb06847f3a63 100644
+> --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
+> +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+> @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
+>  	struct media_device *md = &camif->media_dev;
+>  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
+>  	unsigned int ip_rev = camif->variant->ip_revision;
 > -	int ret;
 >  
->  	/* Set MAC address */
->  	rtsn_write(priv, MRMAC0, (mac_addr[0] << 8) | mac_addr[1]);
-> @@ -702,11 +701,7 @@ static int rtsn_rmac_init(struct rtsn_private *priv)
+>  	memset(md, 0, sizeof(*md));
+>  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
+> @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
 >  
->  	/* Link verification */
->  	rtsn_modify(priv, MLVC, MLVC_PLV, MLVC_PLV);
-> -	ret = rtsn_reg_wait(priv, MLVC, MLVC_PLV, 0);
-> -	if (ret)
+>  	media_device_init(md);
+>  
+> -	ret = v4l2_device_register(camif->dev, v4l2_dev);
+> -	if (ret < 0)
 > -		return ret;
 > -
 > -	return ret;
-> +	return rtsn_reg_wait(priv, MLVC, MLVC_PLV, 0);
+> +	return v4l2_device_register(camif->dev, v4l2_dev);
 >  }
 >  
->  static int rtsn_hw_init(struct rtsn_private *priv)
+>  static void camif_clk_put(struct camif_dev *camif)
+> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+> index 870ac3c8b085..6404eb74db32 100644
+> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+> @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ret;
+> +	return mxl111sf_lg2160_frontend_attach(adap, 2);
+>  }
+>  
+>  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
+> @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ret;
+> +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
+>  }
+>  
+>  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
+> diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
+> index a408fcc3a060..4988fbf5005e 100644
+> --- a/drivers/media/usb/gspca/jl2005bcd.c
+> +++ b/drivers/media/usb/gspca/jl2005bcd.c
+> @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
+>  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
+>  						    unsigned char value)
+>  {
+> -	int retval;
+>  	u8 instruction[2];
+>  
+>  	instruction[0] = reg;
+>  	instruction[1] = value;
+>  
+> -	retval = jl2005c_write2(gspca_dev, instruction);
+> -	if (retval < 0)
+> -			return retval;
+> -
+> -	return retval;
+> +	return jl2005c_write2(gspca_dev, instruction);
+>  }
+>  
+>  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
 > -- 
 > 2.43.0
 > 
