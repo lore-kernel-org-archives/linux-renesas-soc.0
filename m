@@ -1,124 +1,289 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E38472795
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398014DA526
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784821324; cv=none; b=TSRe0HHhrviAerjtnGdtM+92MRoF0T5GHYGZ0O3i5WBeIUVFFjkyN0pSAier01WG073I0rWl9kV9MZ/EQVdXx19jASZj5FYFAQaSfhUMGK1MYD00bxzieXDeUIyaUfiJ0Nu1V6AUt/1KO4qN7p1AV3db3B5p71vE9iqbt0qs8iE=
+	t=1784821326; cv=none; b=n5PT5WFbsAf8DZcSZ7CkDNzrFidnHsl0UXLbJ/jhnbh9TOPO9sppI8AxuHvG6dtNo0XlQqHPlHlN1lWy0WpY3Kem5p43GGGDmQ05VIz8HplfN1Wh6p9K9Dm73rQ5+JxEowsBXMYUZONk/N6PFgTqSpPWItCNITVEd16jPuGQiKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784821324; c=relaxed/simple;
-	bh=Uxpyi86QWWWez51vf9h7G/S/w9n6MkT4D426+4rpJH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qgZPexuWu1jMbK0hzwxwECwTjb54VxHjtHZ9YOTvfqSW3TwGs5LTffvOX5N9q4XNPoF2rP+1kIukRKVcRnPFaLCQ4O0SAOhGGj3uJ1Y9Ua140Q6Ys6Vm8FaP2zWhp285sLW2c3l6ZQkGoaP4pVhsMu6GPpS1kxMwBMiGpRqcstU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rzIOaUsv; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1784821326; c=relaxed/simple;
+	bh=wTk4QHODwZeY9MQQaVLlgC4Op5rF1hCiiCZMN1je3qI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q52nyMhPdYTW27VGjVMkRdzllKUHCEdHdjlRwor/9r09AiDitVmyCljzrffSChKp9rY9u7fCWmy+3J1Go1qDXUcFHailPlFN+qT3z2ZPcjxw4TUab4SUWxFgaQewRQuU9DBDKRe9xhTrAI3JAWTNj4XX1YKvBo1EXcg0eObhVUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XErxknKQ; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rzIOaUsv"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4955484387cso6532665e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:41:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XErxknKQ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so8833225e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:42:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784821317; x=1785426117; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hcx+fOflZhetg37fsdgPkibtdUAllraHzQaa5Oytmww=;
-        b=rzIOaUsvEWaERn/tDq7djqpVnpwI/l3GT24GyroBX64CCwkSkZ9vkZMF96LXyCHBrw
-         nWysjIoYmWnQMhDwZHfOj/Vw9aPAcre32bj59AKZDHgojllXZdd76LXNH95YwSFoqgLt
-         fYpCL0cYA5foX9JalgY/oHHb/yQo/MmYmCqLFXcMXJCFRNaCZd04TZShVjfCDIS6uMl+
-         Lc/EpS/M2s4WaAjDbhk5QEN80fugbU00B7Wg8rbPzH14ob5JdOWLliXqU+ObbjkNMHwn
-         vifr3/+C5sIPuZYP9ZRrKOuIxhd5Sq8MhVzKITUYN5pfpTe7P89ThUsJ0NNr8eoEYcTr
-         aaqQ==
+        d=gmail.com; s=20251104; t=1784821318; x=1785426118; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tVn9L0uT9WqpFCGvSzpUHM6nyoCAGrX5lOFtWk19oXk=;
+        b=XErxknKQxQ4gB+tH/CPcsaWlCQ4epWIHzlsmIbzPbSV9/HvKCpJn8PkxW2dYP3fJqR
+         Ph6zUuGtVZ+D080GvDD/jwVDzR/qPkqWaY1PfyxLLeYkphgDC+t61dNwvURkqRJqfPdy
+         FuIdmuogvNnHHy+WIFxfl8ijF4Q7FsPVUtScUJtzNxESMJwg7dXZTixBoMsoQPRkiawG
+         619xTKDQqekkXsvgGyXTeWfESw0+ljC/DlqOIRS7sDKCSpfMyki/s4foC1fiwMq1wmL2
+         ZVMjzyUdeG/3oWYSkgmJaep5wK8fmQKjlVu8yGS8YNRMa9fYJQCfnzKttcqbHhLyWRxb
+         EBig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784821317; x=1785426117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=hcx+fOflZhetg37fsdgPkibtdUAllraHzQaa5Oytmww=;
-        b=GkZViaOxPWC252NgUlka00Pr+Oh4rNJLfjpgzhF3fvHalp+A8s3n0v+M8x6hcDOYtC
-         6CwFLA7k+N7WeTIJ6MjU5ad4NHS9iO1nGpW0Ny6bqAGIbfNK3TM1FzAn/O/PF4CEtovQ
-         iHpxNqQmTupOSnPkbzJluegftBrUgWNQ8HbqYbmliQDX0Kp+60pC2EKoX918WPFTv9JJ
-         KsR2dHFwexi049IeV83W4hNwyzePb8W6H8DATOA8070h/RPGqvxPRyknywNBxXx9FFb3
-         HJjxJ4aAZZ3TlNnnv21LUtPiCrnf+CNLKY7QCWTrqjJb7eiT6ytSMZmG6eck2hjLvp9R
-         0xYw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqcys2BKrY4wutJfrDgGlEYBSem6r64F4iJpzMps86x4vLcyUeS0JNUJWG7jMP/Uditd+3WSWUzP1dMao7J6cMdZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9f2vchTFCQBWztCRZ99jz+Iz1zy6YCU5MvyWqhxip6i/T9sHE
-	XTEpeREHMa9XwNqsYHEjW79I0xPlFGqMj0gH2GLLPfvIqafQSSDnpdK9
-X-Gm-Gg: AR+sD10uGeAst7fnRlDlUbBkMjHP3eWB4LtlCNPJCVr0Jeul85/4nXTFCWCvqULXsox
-	IBYsg9XHp40p9y8TncIQbc5Re5ea+2RXLrwFMh/QJiDhCFKn9UBxfjKfqA24dIlcVykxJtJ5Tvn
-	3kxkofbe+KRgN1W+0vLUDpDU7p6hzxWmQGlc/kdS6fHj/hpjE+ZV08yP6d2oELbRBIV21Ydx1OC
-	5ANIYMXEGpHO30xNo5aOOy8uQ20HxGF0nZ2DDGO1gcOFiNVy2uVPmJKqKeEs351SvQPUnQRScld
-	LakPRsV6lzfNwRFiEQpGP//ov7Ocuh5dAyOmxD30yrCWo6N9dyFWRvi0bR4lye8kf35oh26gyZd
-	TMYIqQCsUVYYA+hckGbZe1iSNjL/fBlwQrALHy5IIXMdD1LV9HY5DGAYBFDum1HrEdi73oKTdsT
-	awE1PnX+usFKjQblkYbs9VK2+tiPw4sqRGIEhkwA==
-X-Received: by 2002:a05:600c:474a:b0:495:5a91:8027 with SMTP id 5b1f17b1804b1-49573c8d444mr42787565e9.5.1784821317042;
+        d=1e100.net; s=20251104; t=1784821318; x=1785426118;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tVn9L0uT9WqpFCGvSzpUHM6nyoCAGrX5lOFtWk19oXk=;
+        b=ObdBKNwmxAHh/LB8YGMrA37/aWB/6CN0AWUiY49GcW1HTkiYbvit2AdSlTMt4eQmoh
+         go47kj7g0TdSf98x2KxTd7SjmzLEUvYvWBiQKtHjOsOJxUHCKE6nNAzadFcVe4DqGgBN
+         Kwh/NXVPSnfcwYP/LR6VjCSkVnl0sPqjO7i++R9MODHVxiHx+VBWdigKYGCSqEqN9Px+
+         rxqwFY+i3COGZ0KWiKzn9kgKRdXWTCFML6AjkdKNnjb1Ew4L0REBrktuJwovUZVnHMDW
+         KNopgJEwxYGbPsd4jfcvuEKjPHaBjfdpJ/GD0O5ucqFXnVAoco2XckBy05a3wFoHhMLl
+         tKHg==
+X-Forwarded-Encrypted: i=1; AHgh+RoeuPaEuMUKZJqZpVFuQ88Aac7MVyHMM1o8JgvxoY+cN5j7+d/xwFWmBkXnfwN9RUyxwBwhL8K56LTvkt+OhVE+yg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWGVc1kp6TWNiRen9GDyAYMa8tvCDn5oyKR0NdeZVBgSb1NIOT
+	P/AcCWIpfZWaecQoiBQlp5xjYpwti4c42FIuaV+6n7QM+RbPTtfIIrY+
+X-Gm-Gg: AR+sD10oyt/71QvL07cLIiVBwhONpcipUqAaxEi14R18miZFDoqsdTA+EuOBgw2LVBK
+	4LBtPWqBwiUGCLAV0kke/P39B1YeGe71jOQCFjeuIxiBG8m8jdXOJvohXWDGawD26d+bExay1Dy
+	kaSYqhD4xcZHfgZRvwu505kH+MmerVqGuho8nhMcwPlmiV3t2SODKC2vHEhauz1KdzbVaGwdHkS
+	CNUyfY4ZsTJfVII9CC+KVnqnuP2UpcD0Xms3Df0dW4Q+ZxHLXHFhTXt/0Lfu7D5BSMS6a8WhLGi
+	srUnltMsKTDxxLlAriCAOPX4ryM04f0pPqn+spcfh24ds+br24GYUwTdethvk2zcpQdWAlO8rhX
+	/7kEWbvveIT4lHv6gonqGMHc+gtjCm9l7LPJm5VO5EOK4gecOPVeNCR0hn1MT49El7XZbMCG/XL
+	yh8P+zxLeRpNgMPS1DDf7f66H3aTM=
+X-Received: by 2002:a05:600c:e549:20b0:493:f7c8:eae2 with SMTP id 5b1f17b1804b1-49573cd3b43mr27865705e9.15.1784821317705;
         Thu, 23 Jul 2026 08:41:57 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af5d3c2sm3411345e9.1.2026.07.23.08.41.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af5d3c2sm3411345e9.1.2026.07.23.08.41.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:41:56 -0700 (PDT)
+        Thu, 23 Jul 2026 08:41:57 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Linus Walleij <linusw@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v19 0/4] Add SDHI support for RZ/G3L SoC
-Date: Thu, 23 Jul 2026 16:41:46 +0100
-Message-ID: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v19 1/4] pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
+Date: Thu, 23 Jul 2026 16:41:47 +0100
+Message-ID: <20260723154154.319674-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
+References: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This series adds pin control and device tree support for the three
-SDHI (SD/MMC host interface) controllers on the Renesas RZ/G3L SoC
-(r9a08g046), and enables them on the RZ/G3L SMARC EVK platform.
+Add power-on control (POC) support for SD channels 1 and 2 on the RZ/G3L
+SoC (r9a08g046).
 
-This patch series depend on [1]
-[1] https://lore.kernel.org/all/20260723151024.318918-1-biju.das.jz@bp.renesas.com/
+Introduce PIN_CFG_IO_VMC_SD2 capability flag (bit 22) and SD_CH2_POC
+register offset (0x3024). Extend rzg2l_caps_to_pwr_reg() to return
+SD_CH2_POC when PIN_CFG_IO_VMC_SD2 is set.
 
+Replace RZG3L_MPXED_PIN_FUNCS() with RZG2L_MPXED_COMMON_PIN_FUNCS() for
+port PG and PH pins, dropping PIN_CFG_SOFT_PS which is inappropriate for
+SD pins, and annotate them with PIN_CFG_IO_VMC_SD1 and PIN_CFG_IO_VMC_SD2
+respectively.
+
+Annotate all RZ/G3L SD0 dedicated pins (CLK, CMD, RST#, DS, DAT0–DAT7)
+with PIN_CFG_IO_VMC_SD0 so that power-source register lookups work
+correctly for those pins.
+
+Add sd_ch2 field to rzg2l_register_offsets and rzg2l_pinctrl_reg_cache to
+save and restore the SD_CH2_POC register across suspend/resume cycles.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v18->v19:
- * Renamed aclk->aclks as it is AXI bus slave clock.
- * Rearranged AXI bus master and slave clocks as per binding.
- * Split SD0_CLK and SD0_CMD separate as input enable not available for
-   SD0_CLK.
- * Added bias_pull_down, input enable, default drive strength for SD0_DS.
- * Added input enable for SD0_CMD and SD0_DAT*
- * Added default drive-strength for all SD0 pins except cd.
-v18:
- * Split from patch series [2]
+ * No change.
+v17->v18:
  * Moved sd_ch2 variable near to sd_ch[].
+v1->v17:
+ * No change.
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 74 +++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index be52d47d77ae..e3e24ce917c9 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -69,6 +69,7 @@
+ #define PIN_CFG_PVDD1833_OTH_AWO_POC	BIT(19) /* known on RZ/G3L only */
+ #define PIN_CFG_PVDD1833_OTH_ISO_POC	BIT(20) /* known on RZ/G3L only */
+ #define PIN_CFG_WDTOVF_N_POC		BIT(21) /* known on RZ/G3L only */
++#define PIN_CFG_IO_VMC_SD2		BIT(22) /* known on RZ/G3L only */
  
-[2] https://lore.kernel.org/all/20260603065731.93243-1-biju.das.jz@bp.renesas.com/
-
-Biju Das (4):
-  pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
-  arm64: dts: renesas: r9a08g046: Add SDHI nodes for RZ/G3L SoC and
-    SDHI1 pincontrol on SMARC EVK
-  arm64: dts: renesas: rzg3l-smarc-som: Enable SD/eMMC on SDHI0
-  arm64: dts: renesas: rzg3l-smarc-som: Enable SDHI2
-
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  73 +++++-
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  89 +++++++
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 233 ++++++++++++++++++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  74 ++++--
- 4 files changed, 444 insertions(+), 25 deletions(-)
-
+ #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
+ #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
+@@ -254,6 +255,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
+  * struct rzg2l_register_offsets - specific register offsets
+  * @pwpr: PWPR register offset
+  * @sd_ch: SD_CH register offset
++ * @sd_ch2: SD_CH2_POC register offset
+  * @eth_poc: ETH_POC register offset
+  * @oen: OEN register offset
+  * @qspi: QSPI register offset
+@@ -262,6 +264,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
+ struct rzg2l_register_offsets {
+ 	u16 pwpr;
+ 	u16 sd_ch;
++	u16 sd_ch2;
+ 	u16 eth_poc;
+ 	u16 oen;
+ 	u16 qspi;
+@@ -368,6 +371,7 @@ struct rzg2l_pinctrl_pin_settings {
+  * @nod: NOD registers cache
+  * @clone: Clone register cache
+  * @sd_ch: SD_CH registers cache
++ * @sd_ch2: SD_CH2_POC registers cache
+  * @eth_poc: ET_POC registers cache
+  * @oen: Output Enable register cache
+  * @other_poc: OTHER_POC register cache
+@@ -386,6 +390,7 @@ struct rzg2l_pinctrl_reg_cache {
+ 	u32	*nod[2];
+ 	u32	clone;
+ 	u8	sd_ch[2];
++	u8	sd_ch2;
+ 	u8	eth_poc[2];
+ 	u8	oen;
+ 	u8	other_poc;
+@@ -474,20 +479,32 @@ static const u64 r9a08g046_variable_pin_cfg[] = {
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 5, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 6, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 7, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 0, RZG3L_MPXED_PIN_FUNCS(B)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 1, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 2, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 3, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 4, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 5, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 3, RZG2L_MPXED_COMMON_PIN_FUNCS(B) | PIN_CFG_IEN |
++				    PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 6, RZG3L_MPXED_PIN_FUNCS_POC(B, ISO)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 7, RZG3L_MPXED_PIN_FUNCS_POC(B, ISO)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 0, RZG3L_MPXED_PIN_FUNCS(B)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 1, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 2, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 3, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 4, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 5, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 3, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 0, RZG3L_MPXED_PIN_FUNCS(A) | PIN_CFG_IEN),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 1, RZG3L_MPXED_PIN_FUNCS(A)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 2, RZG3L_MPXED_PIN_FUNCS(A)),
+@@ -1053,6 +1070,8 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
+ 		return SD_CH(regs->sd_ch, 0);
+ 	if (caps & PIN_CFG_IO_VMC_SD1)
+ 		return SD_CH(regs->sd_ch, 1);
++	if (caps & PIN_CFG_IO_VMC_SD2)
++		return regs->sd_ch2;
+ 	if (caps & PIN_CFG_IO_VMC_ETH0)
+ 		return ETH_POC(regs->eth_poc, 0);
+ 	if (caps & PIN_CFG_IO_VMC_ETH1)
+@@ -2677,28 +2696,28 @@ static const struct rzg2l_dedicated_configs rzg3l_dedicated_pins[] = {
+ 	  (PIN_CFG_IOLH_A | PIN_CFG_PUPD | PIN_CFG_PVDD1833_OTH_AWO_POC)) },
+ 	{ "SCIF0_TXD", RZG2L_SINGLE_PIN_PACK(0x6, 1,
+ 	  (PIN_CFG_IOLH_A | PIN_CFG_PUPD | PIN_CFG_PVDD1833_OTH_AWO_POC)) },
+-	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x9, 0, PIN_CFG_IOLH_B) },
++	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x9, 0, PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0) },
+ 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x9, 1,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
+-	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x9, 2, PIN_CFG_IOLH_B) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
++	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x9, 2, PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0) },
+ 	{ "SD0_DS", RZG2L_SINGLE_PIN_PACK(0x9, 5,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT0", RZG2L_SINGLE_PIN_PACK(0x0a, 0,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT1", RZG2L_SINGLE_PIN_PACK(0x0a, 1,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT2", RZG2L_SINGLE_PIN_PACK(0x0a, 2,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT3", RZG2L_SINGLE_PIN_PACK(0x0a, 3,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT4", RZG2L_SINGLE_PIN_PACK(0x0a, 4,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT5", RZG2L_SINGLE_PIN_PACK(0x0a, 5,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT6", RZG2L_SINGLE_PIN_PACK(0x0a, 6,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT7", RZG2L_SINGLE_PIN_PACK(0x0a, 7,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ };
+ 
+ static const u32 r9a08g046_clone_channel_data[] = {
+@@ -3672,6 +3691,9 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
+ 			cache->eth_poc[i] = readb(pctrl->base + ETH_POC(regs->eth_poc, i));
+ 	}
+ 
++	if (regs->sd_ch2)
++		cache->sd_ch2 = readb(pctrl->base + regs->sd_ch2);
++
+ 	if (regs->qspi)
+ 		cache->qspi = readb(pctrl->base + regs->qspi);
+ 	cache->oen = readb(pctrl->base + pctrl->data->hwcfg->regs.oen);
+@@ -3724,6 +3746,9 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
+ 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
++	if (regs->sd_ch2)
++		writeb(cache->sd_ch2, pctrl->base + regs->sd_ch2);
++
+ 	for (u8 i = 0; i < 2; i++) {
+ 		if (regs->sd_ch)
+ 			writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
+@@ -3791,6 +3816,7 @@ static const struct rzg2l_hwcfg rzg3l_hwcfg = {
+ 	.regs = {
+ 		.pwpr = 0x3000,
+ 		.sd_ch = 0x3004,
++		.sd_ch2 = 0x3024,
+ 		.eth_poc = 0x3010,
+ 		.oen = 0x3018,
+ 		.other_poc = OTHER_POC,
 -- 
 2.43.0
 
