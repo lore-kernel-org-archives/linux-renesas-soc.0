@@ -1,223 +1,133 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994094756D4
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF044C77CA
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 17:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784821328; cv=none; b=UbgGDAslFLMLXyxrcpRstDzktB37QkSkwDMQqMLqCuCzHZzvVfuNlp6/kETCWCsm7d8x6MXMN71saRHB2io96Cqo2TP32LrhK1IkEprOvTRaAd78Iz0h9kULgCab0+xvd9tqL37+lcWDoRaUsRbQnU/2huNaOUN0lRljhMe2Wog=
+	t=1784826273; cv=none; b=AFUccxCTb8rUmAql43iRUvvoSWIniCLEyLTjXdsOMTC0rNURH6AvhpQrDc1yUaPm3muPop2AIJtx2pe/G4PaOM1l+XwpKRAscyAXdQRSLt9JLW8pWVMDlg9DgjUAyiK3Of2vdqt9g4rANcGgOUp2x7cGd1UVUgsLeTN13sYnEs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784821328; c=relaxed/simple;
-	bh=Qf7U+CktOt8qPEB9VZhxQBL7FnArz26dYzJ+RlLXJOk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RKKUHOtA3AxyorzKemJmMlv6su21cSQ8jvmH+YzJYu4HPmawbeXaFJ109ehSkOmwHamVwJ5rRCuCbfQxgjBYFpusdCRMdw5ZafTBtDjbf32dErQkHgHyBbuW4k61v82woNtdlohpy1yE3LCKJrv7RYuB0Ko359VP7vghRkVUgXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4qgnHd0; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784826273; c=relaxed/simple;
+	bh=o9VVTo6S42mbOL5YNHeNddQl83IMRvNt9iVw7Ax1zcs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i1tiV3C8w90LUN1/1W4MapNdP9FnZuGW9QOF+CZD4HQgRC0n7+c5/m/2s0j8Ob+R6PxX/l1Iv/+T8AtMyb1V7VhIkQGsv4ZeNAb8IiQj7m6uDazaMzPjbYUScozPxc4IeGoP5hEi7s8fs43JpWfotYF6SRJ6aBy6HVmpdn5gXqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BGcn2pm9; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4qgnHd0"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4954a32cf1eso4656685e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:42:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BGcn2pm9"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47f7854678cso496154f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 10:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784821320; x=1785426120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=BcUp08KQxUC8fv+hxf9KBsCGFyHuJnxRKTqTBNjKNM0=;
-        b=i4qgnHd0Ob29WedPr4HoDlLthxtELrpINiZ54/PtIztMT9gdbrgHqisv2C53QUaBRJ
-         alj6fYUe66A7xbbmj9qfG7xkUicCZsITHaT68E4BJdabUI+j5/5KzzljoD0yaPBgjKKI
-         Xn3jXl7woiZ+2dkXvLYtYmFJBmOxfm17baAVaz4IyKBQ9sMHExmuHoq9yMmanaisXihR
-         xMpArV6SU01s63XdCaveCepob2Fn+Gf5L7aDuT1O7P4lu6kvEAcCuY/08SNJFi52A1yJ
-         lsceJVjJvoH69Er87odFCL6U/+CfbwSzt2zmolm5DpjzoarZr3/fbruaoip545/32YE3
-         2gjA==
+        d=baylibre.com; s=google; t=1784826265; x=1785431065; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=BGcn2pm9WvAug4PR8l3FANDWOZnBQ4XdbW21YipeI3nJ4ukRiQBaauWySLaXoEROPo
+         KYl4XqRUVJoStP/ov8Y2R4cynD3Uei8U7U/JNr1wxh6PHKu9iPfp+JkqsyRtiimnKIID
+         u94WFQQfdiv8izgm05vPzHzcdo4Vk9kdWiKwzBpidPHKXf02aR/YRfXhapIB5D6i9zKP
+         WecHCnnam4b7nQqsbx9VwAiQrqFyK840l+UkKI084tMkH5P2Ps9pXnEzoplZF157Wy1F
+         bGraUumSEdCftfBBfBiVnH6T0G4KawEtzV9NMJ1YpeeG0ryczMqalGAvviv62T3ZbI9e
+         2ixA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784821320; x=1785426120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=BcUp08KQxUC8fv+hxf9KBsCGFyHuJnxRKTqTBNjKNM0=;
-        b=crG+uPdehAhNOL4jiBHoHx+ZKgmy0JQrCPlWBW5yZ1Xo6x6tbcmVSiU/iZppETlwQH
-         odsiH2BNR7vXZpetu2A1HOAwaYlsv4hNhz4jKWpKwbuobVCnxhEjZvkrHpXmRijTKFRS
-         xW198HKwXv9cIki6WX1mrPSeT5y3OqYq4eu3IpOb+dq+jL3CkY9eJZVX8TwiJ9rKMbma
-         qAHUHGZrG8sUj5IYfC4reL530LvOHjzNrV+fvx7jEgyGlTZooJSgwhn3XFb1gb/9oYeO
-         LNvuF2In2TdHscOoz0yXCrg66J5stdE3bmj0U4rUJyhcXsGVkj3dT8PGAHSwxCzqJOU5
-         DAxA==
-X-Forwarded-Encrypted: i=1; AHgh+RrQNlueuW3rEM8JrU9X498qI0IPzkTgsVZNRuOJs27RMpLbT9Fog2S58q4+g9AozEGss6HHE56cfNop+CMK/daglQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+bnCiImFTQ5GMW/LfHOfHXQZpiJAEQg0Dkv+ZyfNBIbna2QIn
-	aP39ygdXkmxv8P7YgSTE4sq+IlMVsdkXEEXcNTzB4eRo+PcZjOqe5umv6dkd5A==
-X-Gm-Gg: AR+sD12DYstRv60NoyMLOoh1ZaUWsyJ1AQ6vrzKrJlXVCPdOWGUhS9hpV0X00oephsx
-	4kbQ3DHa0Txf+j9N77exaVbgNkQTLwXWr7wbspvDbBnFU8kDreY2VQ2aaTLiebZWaMVhD6UU87e
-	CVCFgh0BQ4aoVF7xK9LY99Fw7krSpAbOxFTdJdcS0y+EWde7Q4WWmdxEB/GPWNS3yA4RciS049k
-	t88hbUSt8Atz4itZNDcRKS1xgBbPNpL/ibkSPbqcFGvLu8fAyJNf1XCGM1UVtk+YSiI/1t82VC2
-	vYhMCxFkLEL8JUbefQ2N9Wz1BNZPbSDz9QDMe+2PWtbmzflJJlPcsKVi/nGfxaD8k8bpQeYhcAP
-	pMxEVETmFCi58cUCdJCOPoSmj28qChipTTQrg4uP9ps/Ask+uGMk+NF2PtJJvinBjSYpW+7hJLx
-	j5X09By/G6KwhFykUOa1rfgb4l/Ag=
-X-Received: by 2002:a05:600c:6303:b0:495:4730:15b2 with SMTP id 5b1f17b1804b1-49573d088b0mr39590235e9.31.1784821320219;
-        Thu, 23 Jul 2026 08:42:00 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af5d3c2sm3411345e9.1.2026.07.23.08.41.59
+        d=1e100.net; s=20251104; t=1784826265; x=1785431065;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=lh38gesrdokckjg2uQ8fZpR1ND6Jhipsr3S6uS8GhoS6j5kKZTEwnPT0lD/FxpWFx3
+         GPhRTgX/c0DqrNMClE/hjDwzaCJ5GX8K+9QchyJy2Pitpuzo6UhwAB5KhLOtNIxH7AWM
+         acXKx/Jkoyz1dlIKC1pNp7UMFrEYHVIN/UEhL70KE3XVAdPbb/Yb/j0tX0SRHp5axPE8
+         iPo+mxf0RKqzaFcBMAXQE0gnF/+kC28yRuEY8sQq3eoIK9yWwDvyUzmjXZON//eEB22H
+         XaMYycrncQxfgml1wgM0y93TZgUuj3DclKETX48Pvc7rpKL/D0am1b7lAc4bFidmw8b9
+         om1w==
+X-Forwarded-Encrypted: i=1; AHgh+RqzviJbXrWuqq/C1mdp2XF2X8lJ6qNb6996Tjdkxlmo1sX7e2woCawTGgc0RAfssgpF6RQ+YNck9B659MxrKZaLDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXYDl1St+IMF5IjtgrJKEgNUPBDGpRe4Nyxrci8d8LT3hsI/95
+	W4EDqSS0cPfSCgt/TjnoRUnC+llIymHgc7aLzOE51PcEChcD59W3AggT3lUnPc1pjG0=
+X-Gm-Gg: AR+sD102moXiYwwQNCnUaZuCKxJ7Z56/gidbGg/QhzA4OFyBY1qAEFApOoosXkA21fd
+	eWiYFQdvpzwi1Wj3ClVdxkzCuWbunJcM10ZK68nMXUrhg3ccpr6f4Q/xyWU8d6Tf6ysvwQg2Tt0
+	tCbvZCOjS+cGh0Qe4qv/+xh2imb+NICcJsyzvTvgtiKcdCOAB13AZXdt+a1ztHk6m2cNST9j12V
+	5mz2Fg6DAgtVfrs/8bJw7oAdXBYPaDTG5AWs0rPP0yRD+dOqcvtxYvDFCKFVssLSl+mkMeMyChN
+	4EOhI8g1Ddc2UMH+0FCQtUMDVOzUKeEaiZPGJT+G+Zv5a77HF4DekA6WyUYuyMKlANrSwE5Mr/I
+	rdz9+coaguIb0L2laVGZr6LJEWXclKSSewenRZJn4XbX3+7iif0Au4wPDVRiHGrVEzcGjWDEs2w
+	R/
+X-Received: by 2002:a05:6000:230a:b0:47f:8aba:8a9a with SMTP id ffacd0b85a97d-47f8d71c7eamr5497660f8f.18.1784826265170;
+        Thu, 23 Jul 2026 10:04:25 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5f98:8c28:3e2c:1c72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c67339sm17937986f8f.31.2026.07.23.10.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:41:59 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v19 4/4] arm64: dts: renesas: rzg3l-smarc-som: Enable SDHI2
-Date: Thu, 23 Jul 2026 16:41:50 +0100
-Message-ID: <20260723154154.319674-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
-References: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
+        Thu, 23 Jul 2026 10:04:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Bjorn
+ Andersson <andersson@kernel.org>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Heiko Stuebner <heiko@sntech.de>,  Prashant
+ Gaikwad <pgaikwad@nvidia.com>,  Thierry Reding
+ <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
+  Tero Kristo <kristo@kernel.org>,  linux-arm-kernel@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-msm@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
+  linux-rockchip@lists.infradead.org,  linux-tegra@vger.kernel.org,
+  linux-omap@vger.kernel.org
+Subject: Re: [PATCH] clk: clean-up simple provider misuse of the consumer API
+In-Reply-To: <amImP6sFlv-sNhMh@redhat.com> (Brian Masney's message of "Thu, 23
+	Jul 2026 10:33:35 -0400")
+References: <20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com>
+	<amImP6sFlv-sNhMh@redhat.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 23 Jul 2026 19:04:08 +0200
+Message-ID: <1j5x25d4dz.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On jeu. 23 juil. 2026 at 10:33, Brian Masney <bmasney@redhat.com> wrote:
 
-Enable SDHI2 on the RZ/G3L SMARC EVK platform using the internal
-voltage regulator for voltage switching. SDHI2 signals are muxed
-with I2S0; the selection is controlled by the SW_SD2_EN macro in
-the board DTS, which must match the position of switch SYS.4 on
-the SoM. By default, I2S0 is enabled.
+> On Thu, Jul 23, 2026 at 03:20:59PM +0200, Jerome Brunet wrote:
+>> Clock provider should not be using the consumer interface.
+>> In other words, a provider should not be dealing with struct clk.
+>> 
+>> This change targets occurrences for which the provider uses the
+>> consumer interface and corresponding clk_hw interface exist:
+>> * __clk_get_name() -> clk_hw_get_name()
+>> * __clk_is_enabled() -> clk_hw_is_enabled()
+>> * clk_get_rate() -> clk_hw_get_rate()
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>> The change being very simple, I did not think it was necessary
+>> to split it into multiple changes. If you prefer it to be split,
+>> just let me know how.
+>> ---
+>>  drivers/clk/mvebu/clk-cpu.c            |  2 +-
+>>  drivers/clk/qcom/clk-hfpll.c           |  4 ++--
+>>  drivers/clk/qcom/clk-krait.c           |  2 +-
+>>  drivers/clk/qcom/clk-rcg.c             |  4 ++--
+>>  drivers/clk/qcom/clk-rcg2.c            |  2 +-
+>>  drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
+>>  drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
+>>  drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
+>>  drivers/clk/tegra/clk-tegra210.c       |  2 +-
+>>  drivers/clk/ti/clockdomain.c           |  2 +-
+>>  10 files changed, 32 insertions(+), 32 deletions(-)
+>
+> This looks good to me however can you split this up by clk subsystem at
+> the very least so that the various submaintainers can pick up these up?
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v18->v19:
- * No change.
-v17->v18:
- * No change.
-v1->v17:
- * No change.
----
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 88 +++++++++++++++++++
- 1 file changed, 88 insertions(+)
+Will do
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-index c365b8087520..1b72c310830e 100644
---- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
-@@ -42,6 +42,7 @@ aliases {
- 		ethernet1 = &eth1;
- 		i2c0 = &i2c0;
- 		mmc0 = &sdhi0;
-+		mmc2 = &sdhi2;
- 	};
- 
- 	memory@48000000 {
-@@ -330,6 +331,74 @@ sd0-data {
- 			power-source = <1800>;
- 		};
- 	};
-+
-+	sdhi2_pins: sd2 {
-+		sd2-cd {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 0, 1)>; /* SD2_CD */
-+		};
-+
-+		sd2-clk {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 0, 1)>; /* SD2_CLK */
-+			power-source = <3300>;
-+		};
-+
-+		sd2-cmd {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 1, 1)>; /* SD2_CMD */
-+			input-enable;
-+			power-source = <3300>;
-+		};
-+
-+		sd2-data {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 2, 1)>, /* SD2_DAT0 */
-+				 <RZG3L_PORT_PINMUX(H, 3, 1)>, /* SD2_DAT1 */
-+				 <RZG3L_PORT_PINMUX(H, 4, 1)>, /* SD2_DAT2 */
-+				 <RZG3L_PORT_PINMUX(H, 5, 1)>; /* SD2_DAT3 */
-+			input-enable;
-+			power-source = <3300>;
-+		};
-+
-+		sd2-iovs {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 1, 1)>; /* SD2_IOVS */
-+		};
-+
-+		sd2-pwen {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 2, 1)>; /* SD2_PWEN */
-+		};
-+	};
-+
-+	sdhi2_pins_uhs: sd2-uhs {
-+		sd2-cd {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 0, 1)>; /* SD2_CD */
-+		};
-+
-+		sd2-clk {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 0, 1)>; /* SD2_CLK */
-+			power-source = <1800>;
-+		};
-+
-+		sd2-cmd {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 1, 1)>; /* SD2_CMD */
-+			input-enable;
-+			power-source = <1800>;
-+		};
-+
-+		sd2-data {
-+			pinmux = <RZG3L_PORT_PINMUX(H, 2, 1)>, /* SD2_DAT0 */
-+				 <RZG3L_PORT_PINMUX(H, 3, 1)>, /* SD2_DAT1 */
-+				 <RZG3L_PORT_PINMUX(H, 4, 1)>, /* SD2_DAT2 */
-+				 <RZG3L_PORT_PINMUX(H, 5, 1)>; /* SD2_DAT3 */
-+			input-enable;
-+			power-source = <1800>;
-+		};
-+
-+		sd2-iovs {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 1, 1)>; /* SD2_IOVS */
-+		};
-+
-+		sd2-pwen {
-+			pinmux = <RZG3L_PORT_PINMUX(K, 2, 1)>; /* SD2_PWEN */
-+		};
-+	};
- };
- 
- #if (SW_SD0_DEV_SEL)
-@@ -363,6 +432,25 @@ &sdhi0 {
- };
- #endif
- 
-+#if SW_SD2_EN
-+&sdhi2 {
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&sdhi2_vqmmc>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&sdhi2_vqmmc {
-+	status = "okay";
-+};
-+#endif
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+>
+> With that:
+>
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+
 -- 
-2.43.0
-
+Jerome
