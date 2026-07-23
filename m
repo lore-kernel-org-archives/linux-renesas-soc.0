@@ -1,63 +1,63 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E06F4570EE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B314570F2
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784819446; cv=none; b=DN4vZDyyovcrrLEfwlwX4tMRqmsjyNVxeq61peRCl8+AkWDtYT57TQxC5EYPEiXuFhDtxDh00eXB7kuvwyFdn8vqZr2uF7HQB3L3HlP86aK0/KH6M4isl/hISgPY1Ibu+V9lEUxCiM4Yx1p+Dac5S9/szJX5exfty4ywikD/Rxg=
+	t=1784819448; cv=none; b=L+z8Sk3TuDIYL1zR1oHRKh+gudErE0NdGPbPa5Nx1RXn+OkGDnRg5Z9QZRdV2I3Dw6QiOBJmCvrzIkDq+2sToUwXu8Mb/h7V+Mxl1eRU7XNFqDgVMP4OrzZJSbtsQFdHiaucxXsSS+iwLcZo2s6rF3NzVJIS6oR/7PQbu+hiyyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784819446; c=relaxed/simple;
-	bh=/drmPq2OtGuJ63hWkuzu7zOYwDMeaWuBEN8oOYDUFSY=;
+	s=arc-20240116; t=1784819448; c=relaxed/simple;
+	bh=gCLmpPjyQxDvAqOddjjCDGlY7eKVOVjUHsO52YGmmRE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b1yoA2N6DOC1LSZPnYgPWFjEpz99HZg0IXUYSH96wY8v93WAkKygcKROfQuml6iLN18OFm/CK5znmy/GwDeY9XlwF2AhP+uIgyAjfMX/jd4cCoBCzILMf8lhKHy2SRRn3HogQd6sOobN/jg3HuziByuRzx+rnYDtHM1ha/1ezdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xwura6UT; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=G5gq3sgW1c41AXYwo2xfg+qLLHBdJ28NT+xrMFhM29STtrVEPURL4F8NInLN3ffqRQxdxW4o3jhb+svrEwad+tNiVnJveb8fVn2trhe94+CqT9gEn/lq9R6qtx4lZq67wTNWmhJhm5HKV5byECDqD6EL/MTb8YqNTVrg5IeyokE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXbA6Lo9; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xwura6UT"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49571fea44eso4820195e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXbA6Lo9"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493f6de72faso5130705e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784819432; x=1785424232; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784819430; x=1785424230; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=e9VKapQXfx3nIS2LE46Zr0giHXXbo6NVsI+nJ0uBG1w=;
-        b=Xwura6UTTJXhG1TnpaChBBkUu/UHHoBtu+JDBs8CtRRx3dzCRIb0GhvxGPLv7VmY2z
-         IQ1/qVJ14OlYxCBKKIWXFStLIyqQxBT/VAApiyASxThwZUh66SyGvBFQp7Ehc2yRg7gn
-         O4wYsin2GLrpxRPnm42XB1pPQjDToQBVmalbnI9oVyMN6LvIpzvXs73dVwOvRpAqgMvm
-         VAEbfg+d3UYa5X5kZG8WvaEsIwkCwic3HrJeH8Ds4P+BfmN6reqb4Dfkmq+B1GFlktax
-         vEOGKXhgt+qVqw8pQyWHR4ISb1J+8/RDT2BES1FngyzSTUIPvF1fLdehw34cKAKOxG83
-         M1yQ==
+        bh=bCddQzmghaE15HZkMbuyaacL5FIxyVYwt3e+Aex3zBY=;
+        b=VXbA6Lo9HwoSJL2JC15ASwhMEK59n5FN4OJx53sgoGvV1ViuAgShAgWlkRqw3iiWcY
+         DEobOO3HMJ8OdwIo3l7IDcVYOBsWRE/QtxA5nmEsGo7cyI5Nrcm89pvMsElY5Iowd3hF
+         ++YI5Zz2gx1esriHcpZIsACeo4Z5hh8mq4xbYkf3/Pmlp+ixZpV/VO1iSwVVkLYIM+Jj
+         HvBIxE7T7Fs0IwWuJzFw3MreVEiQCbvB+LIRLSXN8hCR1/CksVNUReTYygjtkOxcwRqi
+         pl5S85M86OSUgpqX1WdyEf6gNgrQ8s94R97zONl7qn0+gFexT+ndolCSJi3xbx8mc9w5
+         GzNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784819432; x=1785424232;
+        d=1e100.net; s=20251104; t=1784819430; x=1785424230;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=e9VKapQXfx3nIS2LE46Zr0giHXXbo6NVsI+nJ0uBG1w=;
-        b=qYv7QtmdVoweKRCJUq9CiuaQ/+v45csbCfrLlNWuPedGhgzxqDBfqA1ge+XZBKnQfe
-         d9XuFfR+CXyrJAAYgiWgdJTrM4H6W0R/wAWmB9Tj4OcN8whZKZA44/nN9vWwNGhywFpn
-         GMikWpfcqLqD6pHhnUSYiraFGYIKNPyTAvXx2lkLw4o2UKCkkQY+2UrDJnx4VriYRmzd
-         F+jxgJb2iMQYirDVJybxwd8OxgtZYuTwdECgXjsKD63GqzFeFuq4K7w5QEXfh8RetiMW
-         nvSJ/Gs4S7MaiepAZ/MO1NSyFBWT2DwI6rv7SJrKjCqragLPhBHLLD80TSl0LEAihBbs
-         NVgQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqrYyqialcuFE+NJhmPZBZCkGCn8xO9K0i71DD6NksdSb7xAIVB/x6K/xQbvY8F3dgQr+8J4BaZeygCYCG2XADF8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz1405MT/tHerKE+8xfDW4JLqt0U/5kJx8D0uqM0OE5+X4k6Gw
-	n9zeQtfbmSDjIc+xzNaoafay6gkUdH2Hd5rkMo97j56Z4tQOriP0t4VK
-X-Gm-Gg: AR+sD13myBi0t5/KPo3r9Q/R5TSx9wgzsajc+9qa46TzCGF1mrLq1lsp4QBjNaweuFx
-	Pk0ePlWDl7TzPFM934YmYT22nbPUFlUjsBfs3EF679iUxrszcy68qHEiCfbvT14IrSkzucv7UU/
-	Gsk8rAscy7pOEwROsh4bUowlSZTE+eRD3dGOLCiEnA1SbDkYnFRvoSrvSj/ZjnDi0zIqx4mhi0g
-	foG5BekysNY5SunByWq5wGwEK5Wy5MCFTEFSeB6aS54f3HibpgUnxtl7nhCPIG18OmSwu73RetZ
-	4mkrBqqhWr5rN2Jky08bhBZ1qjxnbrqpPCYtmSLj4LVdeS0rGTXFZVyx6P1k7f6uM8v7vzHjz+g
-	0fvPfFH+SXyfS/O0kHQ+ELc6lreRHYZxQ88/LNbrx/nft+1y3VIE2blPSmzkglvs9R1PS9zsj0c
-	VFwiHyC8By3tfkTZejS2OXruYf+uU=
-X-Received: by 2002:a05:600c:4f84:b0:495:78ea:2687 with SMTP id 5b1f17b1804b1-49578ea26a9mr10387665e9.29.1784819431761;
-        Thu, 23 Jul 2026 08:10:31 -0700 (PDT)
+        bh=bCddQzmghaE15HZkMbuyaacL5FIxyVYwt3e+Aex3zBY=;
+        b=mBEl2uqQEr2H4/qEsWxx63ftm1Dp69q0v7DBTPLC8C/sSCGMun7NuySuVJsaby10aV
+         JN8tMYkW/5HbmJdqdRCsjGyzb6tWWqNcnEJstFMUMW0sGZfFeV67CiC2gNXgercbStcc
+         uQbErSR1LMYT6i0uCNxaGpiCcdf/Ju/0RILxipe3SftKIpnFJmMrztcjcXWxEsIWUFZc
+         x/UG6RUNBXj/vL/7Xe23MSJWon63+kW1H6luE4sOq+J8uINs0dzBUYbnfXMOVXomD2yj
+         gdkLTXlXZw7aUvbDUssZ28ppJ596l8ZSdRVafMVRzAdQQnawxDrovkdtAjMAifUJ1aEJ
+         4Bpw==
+X-Forwarded-Encrypted: i=1; AHgh+RqLBQFYnToJ2BvvmDN0jyFa9tIWz/rMkpLpdBiJ/BES+TaF3Hg5K8u5Kie2Xf+MVLuwfMi7KIgoPoOBtbBMNA+8TQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDo+p8tlfuFwOTYej/pV3D5sCGs5EK+BAEsrMvak51055z6xg4
+	a7+/tYHeml2yMYIydPcmfvcNNTeFbsLFrHfOcldvxoNg7LcfvTJZu0w1
+X-Gm-Gg: AR+sD12Oiaj+IrH4aP7OKTlGK1rB23OVbkl5a5JhcGKfe9+C6qzRQXWi+cVEd2z/zAx
+	BumqyJHC42PJsFXb4254gAsxQvrYKDpbv4IWNMOfZ/XNJ1ounVwApDPGSxQ0kBL0k4Q7cR3bwdf
+	FcOQsIhvqTEEHEPzP+so4v8rbburexn3VjyUCE45StfFIW8WVw4q9p714ZjCD4RVeuCWB83MdYw
+	gEI16XcxswNqmfs/5skDktx0hDRMC7acQw4HGmVpnlh/Qae2tEO3IA/kamM8U1rtedaEnyqdg7M
+	DUk/tqrvw/Ngdyn2kPME9XXRdqoQk5GQ/r9eUs0TjvU0zGlIPg9IvXRwIJjGarTJy5Uwnfqhgi9
+	tIVFGxPDE3PrQQNRTlqeukJOyBto7RMzbmIrLJN5A7BmjflAZ7Hy0bJHuWl9UnLuFI4P0GdS4+S
+	4/j/S4yhEOY8EdwUYq2jFzVC25kDp/epYAwS0LZw==
+X-Received: by 2002:a05:600c:c172:b0:495:3bc6:d381 with SMTP id 5b1f17b1804b1-49574581089mr34138615e9.2.1784819430075;
+        Thu, 23 Jul 2026 08:10:30 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:10:31 -0700 (PDT)
+        Thu, 23 Jul 2026 08:10:29 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -69,9 +69,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v22 05/13] mmc: renesas_sdhi: Make clock divider mask configurable
-Date: Thu, 23 Jul 2026 16:10:09 +0100
-Message-ID: <20260723151024.318918-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v22 03/13] mmc: renesas_sdhi: Add clk_mask field to support flexible clock divider widths
+Date: Thu, 23 Jul 2026 16:10:07 +0100
+Message-ID: <20260723151024.318918-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
 References: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
@@ -85,138 +85,183 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add a clk_div_mask field to renesas_sdhi_of_data and tmio_mmc_data
-so each SoC can specify its own divider mask instead of the
-hardcoded CLK_CTL_DIV_MASK used in renesas_sdhi_set_clock().
+The clock divider on the RZ/G3L SoC features an 11-bit width,
+requiring a wider clock mask (0x200000200) in renesas_sdhi_set_clock()
+than the historically hardcoded 32-bit value (0x80000080).
 
-Default to GENMASK(7, 0) at probe time when unset, and populate all
-existing internal/sys DMAC of_data tables with this value to keep
-current SoCs unaffected. This lets RZ/G3L, which has a wider
-divider field, reuse the same clock-setting code.
+To accommodate SoC variants with wider clock divider masks, expand
+the internal clock control variables (clk and clock) from u32 to
+u64. Introduce a clk_mask field to both struct renesas_sdhi_of_data
+and struct tmio_mmc_data to allow platform configuration data to
+supply SoC-specific mask properties.
+
+Update renesas_sdhi_set_clock() to read the dynamic mask from
+platform data. During the probe phase, assign a default mask
+fallback of SDHI_CLK_MASK_DEFAULT (0x80000080) if no specific mask
+is specified, ensuring backward compatibility with existing
+hardware variants.
+
+Finally, explicitly populate clk_mask with the default value across
+all current internal and system DMAC configuration profiles, in
+preparation for the upcoming RZ/G3L clock customization.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v21->v22:
- * Updated commit description.
- * Added clk_div_mask to of_default_cfg and of_rcar_gen2_compatible.
-v21:
- * New patch.
+ * No change.
+v20->v21:
+ * No change.
+v19->v20:
+ * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
+   the code after assignment of variable mmd, this ensures assigning
+   the default values for non-DT platforms and DT platforms with no
+   device data.
+v18->v19:
+ * Fixed the clk_mask for non-DT platforms.
+v18:
+ * New patch dropping struct renesas_sdhi_hw_info instead using
+   renesas_sdhi_of_data and tmio_mmc_data.
 ---
- drivers/mmc/host/renesas_sdhi.h               | 1 +
- drivers/mmc/host/renesas_sdhi_core.c          | 5 ++++-
+ drivers/mmc/host/renesas_sdhi.h               | 2 ++
+ drivers/mmc/host/renesas_sdhi_core.c          | 8 ++++++--
  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 +++
  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 4 ++++
  include/linux/platform_data/tmio.h            | 1 +
- 5 files changed, 13 insertions(+), 1 deletion(-)
+ 5 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 438b2a7afe76..db147af9068c 100644
+index 09bf9b24a8c3..f926a36f213c 100644
 --- a/drivers/mmc/host/renesas_sdhi.h
 +++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -41,6 +41,7 @@ struct renesas_sdhi_of_data {
+@@ -22,6 +22,7 @@ struct renesas_sdhi_scc {
+ };
+ 
+ #define SDHI_FLAG_NEED_CLKH_FALLBACK	BIT(0)
++#define SDHI_CLK_MASK_DEFAULT		0x80000080
+ 
+ struct renesas_sdhi_of_data {
+ 	unsigned long tmio_flags;
+@@ -37,6 +38,7 @@ struct renesas_sdhi_of_data {
+ 	unsigned int max_blk_count;
+ 	unsigned short max_segs;
  	unsigned long sdhi_flags;
- 	u64 clk_mask;
- 	unsigned int max_divider;
-+	u16 clk_div_mask;
++	u64 clk_mask;
  };
  
  #define SDHI_CALIB_TABLE_MAX 32
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index d893a263e770..44d9f5da0b4b 100644
+index f9ec78d699f4..604d886e483c 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -224,7 +224,7 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 			clk &= ~0xff;
- 	}
+@@ -194,7 +194,7 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock)
+ {
+ 	unsigned int clk_margin;
+-	u32 clk = 0, clock;
++	u64 clk = 0, clock;
  
--	clock = clk & CLK_CTL_DIV_MASK;
-+	clock = clk & host->pdata->clk_div_mask;
- 	if (clock != CLK_CTL_DIV_MASK)
- 		host->mmc->actual_clock /= (1 << (ffs(clock) + 1));
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+@@ -213,7 +213,7 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	 * provided for actual_clock in renesas_sdhi_clk_update().
+ 	 */
+ 	clk_margin = new_clock >> 10;
+-	for (clk = 0x80000080; new_clock + clk_margin >= (clock << 1); clk >>= 1)
++	for (clk = host->pdata->clk_mask; new_clock + clk_margin >= (clock << 1); clk >>= 1)
+ 		clock <<= 1;
  
-@@ -1186,6 +1186,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (!mmc_data->max_divider)
- 		mmc_data->max_divider = SDHI_MAX_DIVIDER_DEFAULT;
+ 	/* 1/1 clock is option */
+@@ -1136,6 +1136,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
+ 		mmc_data->max_blk_count = of_data->max_blk_count;
+ 		mmc_data->max_segs = of_data->max_segs;
++		mmc_data->clk_mask = of_data->clk_mask;
+ 		dma_priv->dma_buswidth = of_data->dma_buswidth;
+ 		host->bus_shift = of_data->bus_shift;
+ 		/* Fallback for old DTs */
+@@ -1178,6 +1179,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (mmd)
+ 		*mmc_data = *mmd;
  
-+	if (!mmc_data->clk_div_mask)
-+		mmc_data->clk_div_mask = GENMASK(7, 0);
++	if (!mmc_data->clk_mask)
++		mmc_data->clk_mask = SDHI_CLK_MASK_DEFAULT;
 +
  	dma_priv->filter = shdma_chan_filter;
  	dma_priv->enable = renesas_sdhi_enable_dma;
  
 diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 2bf354331b2d..9bf7aa9bd867 100644
+index b3f4a5f8dec0..c6db0418de15 100644
 --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
 +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -103,6 +103,7 @@ static const struct renesas_sdhi_of_data of_data_rza2 = {
+@@ -101,6 +101,7 @@ static const struct renesas_sdhi_of_data of_data_rza2 = {
+ 	/* DMAC can handle 32bit blk count but only 1 segment */
+ 	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
  	.max_segs	= 1,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const struct renesas_sdhi_of_data of_data_rcar_gen3 = {
-@@ -122,6 +123,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3 = {
+@@ -118,6 +119,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3 = {
+ 	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
+ 	.max_segs	= 1,
  	.sdhi_flags	= SDHI_FLAG_NEED_CLKH_FALLBACK,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
-@@ -140,6 +142,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
+@@ -134,6 +136,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
+ 	/* DMAC can handle 32bit blk count but only 1 segment */
+ 	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
  	.max_segs	= 1,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const u8 r8a7796_es13_calib_table[2][SDHI_CALIB_TABLE_MAX] = {
 diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index bb66ff7de065..90e3bc6b954f 100644
+index 7ae488e5c1e0..fcd2edfa69db 100644
 --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
 +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -30,6 +30,7 @@ static const struct renesas_sdhi_of_data of_default_cfg = {
+@@ -28,6 +28,7 @@
+ 
+ static const struct renesas_sdhi_of_data of_default_cfg = {
  	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const struct renesas_sdhi_of_data of_rz_compatible = {
-@@ -40,6 +41,7 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
+@@ -36,6 +37,7 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
+ 	.tmio_ocr_mask	= MMC_VDD_32_33,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
  			  MMC_CAP_WAIT_WHILE_BUSY,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
-@@ -49,6 +51,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
+@@ -43,6 +45,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_WAIT_WHILE_BUSY,
  	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  /* Definitions for sampling clocks */
-@@ -78,6 +81,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+@@ -70,6 +73,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.taps		= rcar_gen2_scc_taps,
+ 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
  	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
- 	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
- 	.max_divider	= SDHI_MAX_DIVIDER_DEFAULT,
-+	.clk_div_mask	= GENMASK(7, 0),
++	.clk_mask	= SDHI_CLK_MASK_DEFAULT,
  };
  
  static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
 diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
-index 27ea21c00419..f684f4087a8f 100644
+index 426291713b83..76056d49f5e0 100644
 --- a/include/linux/platform_data/tmio.h
 +++ b/include/linux/platform_data/tmio.h
-@@ -63,5 +63,6 @@ struct tmio_mmc_data {
+@@ -61,5 +61,6 @@ struct tmio_mmc_data {
+ 	dma_addr_t			dma_rx_offset;
+ 	unsigned int			max_blk_count;
  	unsigned short			max_segs;
- 	u64				clk_mask;
- 	unsigned int			max_divider;
-+	u16				clk_div_mask;
++	u64				clk_mask;
  };
  #endif
 -- 
