@@ -1,152 +1,250 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011019.outbound.protection.outlook.com [40.107.130.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F74D43BDD1;
-	Thu, 23 Jul 2026 18:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784830750; cv=fail; b=PgjzJCAtAHweS6LGNIJZlPuh8QS2o/wzibN3Na5eNZlgdXED4cjkJR2FSkKu8weQTlnrjPNf0TOHuhLX/fqE1kXTIfZHbuEBWD49/++c+bun18+l4LvlTANni5oZQU/Fmi5ZlsUu3YwufmMlVEyECFw2RQwVWg1dm5G6sta1fXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784830750; c=relaxed/simple;
-	bh=I0FBxaKRoQyCFT/dDSa8xVBQWR+kHmmxp9eRub+xCDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EvPS37xQl8F2lFVCrv4pAuMsgbDlXp03v9avAb83pZekclrk70ii5p39b3tY3nGqZHwWPbJd6txp0ZxPobnOPKBRgRMAR9XoyrPf/mtZw7qC3DjcasjDTUZp//gqVzQ9JCo021knOpRRqLh13UPK4boHKgOWgBmipwmjhAXP5nI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=tUdtA4az; arc=fail smtp.client-ip=40.107.130.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB2474243
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 18:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784832382; cv=none; b=n95mgGAX5A5yWqZe+CllQYIYFe7e4kdBrz+EYcvm8yvCPwYqTCCXwd3wCK17adqT/KypZxfX9iH45lHYZsdaZ74UNwKZCYR6Hnse/afQw3V1Y0+C+cBkWtSRyySs8B3ixejlVY3y0uaIAbS3yvEiGff09WB2npNO/HTvAKnZqCU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784832382; c=relaxed/simple;
+	bh=4nPOOxQQdsH8s+vHIqe3mHFKEUuR7Q7OhqCIYNGa1DY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R1m/KjyInBRIBV7oOwwGTTAUKrTVRQ4HFo/VCdyHfOmdaTzfF7dIMnWahLCwnFadEfaK1rKyxSP1QYOxvEcQNZeHYM4xydYSmTCnx7cbe6VtagSXOYFOW5JM4ZDxt9U4/nh4Qc+ellnnKsSMeK1e/+lgASVAuod8URjFrDAhhbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKMrNrjE; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="tUdtA4az"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HdXh6Y8ntHfIsNPf9vez4Vo8t76W6TMXYZY2EmkISZIEwjBg/lzfNKsVe+x9r2MTWXI1Zbv8ZBc8JwFk3BlSdpDntIstSehmDPt3n5IytbqvKZIThAr+kKJtVN8oL2BQtBM/AvxDpBvnt0BTVzc4R1NbUuVmJutGxRlVMcaNtGpnk098Av3gZmRItl0znZWveLi6w9miqrThn4Us8kjw6KdaAb8Q42mxjDiChr+ub7yrGlrreCLFklz1GckhHTkd5yGgOKWTAzpEPk3omaLBK3GPt+bnzsJuD4f2vsTSyiGyNzPjc5aJpvrIgedLHJQYP7rbAVTdYgBqwUGf32LCzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hA3+bTVbPR5h18MH/pcz6clZerKVsoHdGdL9+kYmD+Q=;
- b=b8vI0NrlKIIVhD+T2k4BhNb5gCJ49TD9kEWbpOK9cmE9mLAlm9z1WH7lL7t93KdcSyaIv8KfMgj3cNcSAlbYbklnxhHcqRMKySr3i503jmQJndeMgWbAZ4Gm8NugWfTyZ0qH/YRYa5yOnDnJO9FJlpE2Eqn8wX189DnaeT0tSfDhmjGuWRWeekbarNK2c5Oia4W05ls12d48bn8an5dE/hTmWkrE1vHLLcoen9dO6++WAjCnj8Hh5N/fif/mPO108OVH8C3tQfuXfGH6ENEdxhdng8T5J/SIohTP3Qo+O84uYdjv7AjJkPmV6BXfic/DICEJNEgvJ5dUJR/+Vcr4tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hA3+bTVbPR5h18MH/pcz6clZerKVsoHdGdL9+kYmD+Q=;
- b=tUdtA4azuR7CwDyIw/JUz1cIHxPtGtcshX387ELy2mASJnDnbO14O6NVfkzylAdP3SW0CdgAHXKkleCYrZTTaeCAX1d5b+61zXZtqc8dlzWz7luHb3CblTBNnL+hSobVrl/THm+uck4KJBaDc/B9H/QyWcj9VdvtyfSItSZ6O6wu7y3zvkL45UXugFyEzjaiO01/0VqTm+PyHaAho3YCjxdmIohYswCgmDxD2IaTuEINROV6xm9IngFqRpstA/whIUixqeLdLcFRaAwyVgue17PVXpBrAxey5HX1re50Co5KLMaQ2yrBvEsaaMbeYOtQ2dY8ouKETlgGIiMyDHdmNA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AS1PR04MB9333.eurprd04.prod.outlook.com (2603:10a6:20b:4df::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.11; Thu, 23 Jul
- 2026 18:19:00 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0245.010; Thu, 23 Jul 2026
- 18:19:00 +0000
-Date: Thu, 23 Jul 2026 14:18:52 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
-	alexandre.belloni@bootlin.com, Frank.Li@nxp.com,
-	claudiu.beznea@tuxon.dev, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2] i3c: renesas: Drop unused structure member 'resuming'
-Message-ID: <amJbDGJ5sOzyq6jJ@lizhi-Precision-Tower-5810>
-References: <20260721191618.1850795-1-claudiu.beznea+renesas@tuxon.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260721191618.1850795-1-claudiu.beznea+renesas@tuxon.dev>
-X-ClientProxiedBy: SN7P222CA0015.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:124::29) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKMrNrjE"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-38175907a56so634853a91.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 11:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784832376; x=1785437176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QiNsXajlQRLTmIS3RzF6Ciae3Ovg515LecRLWPQA57w=;
+        b=NKMrNrjEwXAFWbuy2PddaHTBcfdK/dVgCS7gJHlI68vW0sNh+mEwvX+PLrt50C/56+
+         XTPZmnY87ObbFBOXdGf6f13lLHVyoIuFljuzgzvJD2+fdRsCmUJ29Z4ZQ1mQbNnWGWW0
+         3xeYTp0ZeEWJ4py6WKaDOnwmcD3S5u5WghPQGRzUuJH5jEZajbagajXfJ7EGnvRj4Ypv
+         aN4kYZ54UYglFHhKtFzA+t0JAM7t6e84Ja/T+sC4M2TjQ8lIw2JFUS0H4cx5/jVZSghQ
+         J5QvL3RSZpdL91GoXPk+6RJeVUuZSvGiMZooW1WKKl3OUK0j9/7Co1WE/aoCD4ZZO1VR
+         Y+Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784832376; x=1785437176;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QiNsXajlQRLTmIS3RzF6Ciae3Ovg515LecRLWPQA57w=;
+        b=s5cPbf1DZxm/Y2peEQ7f0t1kmREtOOx0nAdCs2aLVDhJNusLjQ1+zuXX4idHlKSbb/
+         U77/zET60GaxHRF1rWeTdiR2n10cTlDgdJykeS5vMM5iPpEojLCMsI9hEqHgwNJdd6I3
+         qfDxn0d/D91RXTD5xtNA6KeGhHmoYoHeAGY7FZnDVfk2ZZipWyU32M3mqhNOdCZ/1RDT
+         GG5qoQtwUx6xw0tviN48ES+dCLbbvHfwpWMwN730ofBhOYNrRzCOQPtyzVN4QnEHAAQE
+         Hw9PJaP8pypRdFzLMMNO1Corc6pc2pydjueKObqYVrGd8tmA7r34beM6fhu80kCgiXdP
+         Csyg==
+X-Forwarded-Encrypted: i=1; AHgh+RpmVEg/2mP4A9m2/zH0yMpceFCAUFn7DVpZw+XbqCPnRTtIpr7I4nJV7fmq+lqgk19bddnNqMlYGPDucrb2Pd60Xg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9q5hp68os6scFNUwU38sn/cyqvS33M3yICTZthLZVbgrzQN2C
+	OMcFIGWACXA2RRwNauQxttwNzVKwUPtGszl/GIr2EPXJ0C5BMQT40lCT
+X-Gm-Gg: AR+sD10rqS/+e3moRZ757hd/MhWO/iwLy6TsA3zOojoBblvPSMl31eIS1x4+ISKnHaY
+	UJcY0So0npzhFQCv8SAR7ALIba2RFY343Qi/anRdtNWYtcuB67SqjXnDF6q7qgFZK4IoiawMfkA
+	Lfm3U+kUtm8eXtEcdGhT7OttWRGigoIXPJrn+/rFqTwrRcAPCJ/dYf2V3Oq5RlK4Vvp8dVg4mHE
+	EZw63YWFeiwUq16HyyUxLRYzhoS4RFxW5g8B+4oiMyjlgWnVDmLxf71bmZrNNZ9Gv3PJCcxCpLl
+	BNAzz3zqPPqHnZhhK09xUXH+4bBQ9gJb5wg1RyAq/ndYFVKmLRX0+X5/5n3PutrrOQ/U8p0gG7i
+	DeDrVAH+ouhdvdQqGT7lSZGClAc49+HkYUH3fH7musNE57f4UGoOWzGkVB+aAuAqIGZ0SmqIi
+X-Received: by 2002:a17:90b:4d83:b0:38e:4f42:d0d6 with SMTP id 98e67ed59e1d1-38ec8461966mr2882664a91.12.1784832375589;
+        Thu, 23 Jul 2026 11:46:15 -0700 (PDT)
+Received: from ubuntu.. ([110.9.142.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f03af8a45sm308155a91.10.2026.07.23.11.46.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 11:46:15 -0700 (PDT)
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+To: Julia.Lawall@inria.fr,
+	Arthur Kiyanovski <akiyano@amazon.com>,
+	David Arinzon <darinzon@amazon.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sukhdeep Singh <sukhdeeps@marvell.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Rahul Verma <rahulv@marvell.com>,
+	Shahed Shaikh <shshaikh@marvell.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Sabrina Dubroca <sd@queasysnail.net>
+Cc: cocci@inria.fr,
+	GR-Linux-NIC-Dev@marvell.com,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 07/36] net: ethernet: remove conditional return with no effect
+Date: Fri, 24 Jul 2026 03:45:09 +0900
+Message-ID: <20260723184538.3888637-8-ekffu200098@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260723184538.3888637-1-ekffu200098@gmail.com>
+References: <20260723184538.3888637-1-ekffu200098@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS1PR04MB9333:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9f137cc-5d9a-4862-4369-08dee8e6ddea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|19092799006|366016|376014|1800799024|56012099006|10067099003|11063799006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	WRLsHEu4ifYHnPKFnYE+N24jtYm+OOVNrlC/TEC6/un1Wwe1vhvQ1KjLx374+7JPE4jiImQDTJ4hglFM+u7Aj/pFHSCTqWRqrmS+YRvHCxmClVsnBZ7MJtmThST1DgJUtIpkP/UQGg5r8gN9g7uQWmxqcDjWPJYzpLb561ISCIvMiPYkff6DilQI8LGKrXWsghBeaddAMqqzxCgX4Jg3k8Z4PvA1ZxjOJ2Xgjh7dtd5LyARL/IGa6R+wT8k8vpMOAO6gzTqT4bHjA6n0M0QUud3cvZeZyeCow46H0Khs7nSS1hpY4JIQSs/tJrtstJrwdA/L0IueoqCmxBh3ufm3vlDcZTWCWtGGilhaRz4j799hlBOq/f0giru4LJkU2/AV4iNWN3P1wx6MssWslLEuSWxGyX4wa+cxA8735zKbMDpVjQrZwDsL42qgdE9adQS5d9R59QAUKjj6SKFnlqv9GTG62+/Su/VCudAQWCauDy0MK5n/qcYIRnVeg9TB1CDBrg2/C0AD01AddnrploWFofmM3vXJChQ3VDdwqFWxR43fs5e3pVBREvKb4q9tGrzggOsEUNS7ycntZQYL1/pCfY+Dk7IAJFGFKdEdDXB2morHTwBu4F3ZZJco18p/P/1LwCyVBJpjhBXL58kgvCbZt7hhblQ4OWbb3PIPGZ+3wP8=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(19092799006)(366016)(376014)(1800799024)(56012099006)(10067099003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?k1eY1LownstX+PHANpaaCzyEordq3SGBFwOsEBw9Qdmx1a1xmmG7YKh49Hql?=
- =?us-ascii?Q?uYKWGOz3upOizAUFx0vt2f8zMwWv7TwPnsVoBO7bLFdR8PboHL99xFbRit3x?=
- =?us-ascii?Q?Ywqu17UfqpbKwXIH4oN+B6/bLYglqw0WiqDgUNt+VX6IAjSsFL3agguzt7rK?=
- =?us-ascii?Q?Fwmz93+LBhBexjZpD3lGA20N43cgDH3p0PKMtNa7hFUWlWuF4fXIVPOAjm7Z?=
- =?us-ascii?Q?c7VjPemMuk0zgicH1MrHv3CSUFhV5ccR+7nR1tkidy6u+MhEpTqqvSiuofFc?=
- =?us-ascii?Q?vZVbBduguIU0rMRXGXPcg1WTmPrqezN7jpBO0hOzfs+jvEqc7zlpMOPFq33H?=
- =?us-ascii?Q?tRASTivvQggnJV4FEzkhAEJycxTqeqaHgR9YxnyFpUngfDSpbW/A9/a1PdlV?=
- =?us-ascii?Q?6qvCy/kOxrQUgHIbLjJREiEQ90mlS7b8XMpWXqcFoAczGBseevpZEcukfKf4?=
- =?us-ascii?Q?U9ZNv3FfCleUlbgOH4oEQdIgKFdBPZnp9y3rFOWbgkbdPEmbzp/cWd/sQMWP?=
- =?us-ascii?Q?XsKSh93uHRcUa+BtwZNJVEYFP/Pz3mj7d6I0jEqL83f7JmE9/QvtTdAtmoty?=
- =?us-ascii?Q?hjKePwG6GvGwnGqiGhjXS+eWNdVv82uudzErBeyoSsRvZX9tFA80vrOz/sj1?=
- =?us-ascii?Q?Ukk7um/TjwHK473epN/0dcVfjezWpWTXTnbiqg1a5i+G0jPW8fkCJ7wBOy89?=
- =?us-ascii?Q?Ue3Q9tmsv+jzYwpXgNh0sx9lrGZ+3tCY+RL10foC32rT+6rbh9y2qh10xvLe?=
- =?us-ascii?Q?Bmkb4KujdFGwxAGN4gb2zsmKq0RmkFyZSPGIhjPLyPNj3Eitet/JvVUwHTh+?=
- =?us-ascii?Q?oeHgZ+spHmxfIguvOncYHqnwpL77wfftbUGSY/2JO3RojO46zF9DGyDPNhPy?=
- =?us-ascii?Q?oJTKZlGoHjJyjCvwhLDeuRd4ssMAO2lGsWoNdD5g0cFBqCoMKfmt2ynciqZd?=
- =?us-ascii?Q?Pd2EZkReI8IemoNs4dtsNQggDiuOj4yY74IMDxtJiLcklT0fLo7tiIDo7Q4E?=
- =?us-ascii?Q?l2Ev3/4RHS0wyboWBzhu7MCn7XTctdMGzI1fI8lKT16FfRUlOutJCeCYcIO2?=
- =?us-ascii?Q?Gv3W3dVfjQn03IoWxoZgimFf6KwPvj5rs7Fuxv96lNpNBLtsULuP/IA8cQZa?=
- =?us-ascii?Q?XTwPkPBBthgUkyRAs0LE+VRulsDrnGz1TUYy+ArmuriTdJ54Irt3cEG02p1z?=
- =?us-ascii?Q?+zvwCXY027eMOUVYwcrCJ0NN9vMcFUngYmI7JmFMnw8yC69XxmCyc/+7+Jm5?=
- =?us-ascii?Q?+tcB6T+jNKgaSmRYidCP/p5ZSHIGDV+CjQK8OQzP5aCauQKbEz4dv8ApFdjf?=
- =?us-ascii?Q?wyMB0FqxI73ip0nASQQDECmvRPJxgduppSIlxMIKrKvf+EZen4Uon4zrayWp?=
- =?us-ascii?Q?Ff6gcLdSoxUARWZFCHRp6bHKOnvx84z8+DAZiWPpvIiGNnJIX8C4D2nCKEMD?=
- =?us-ascii?Q?sBeudPEaeZ+vyYC/MnSQPQ3P/ntuSDYLHsPLbFoMPK4r/vcRUt8KdMBjRzwx?=
- =?us-ascii?Q?JnJN/G1MTfa6Of+8xurH9WAt8Gfd7aH9xwpb9vE62jL9SzI2cz88JlITT36s?=
- =?us-ascii?Q?40Rs8eXdz7kwWpxbImehz0KluMHUU739WAPFG9pbiMRkanL5GLPTnMdels/E?=
- =?us-ascii?Q?dBaB9zdpKnQ/UUMFS+fuaSLCj0WI6x8xHlr3w5ytvz52FI1KguCRwvcEZlBV?=
- =?us-ascii?Q?5D+6j6Q88itoXRc4oZKKJ/oglTOmpdcsW0O5cIj9sU1xMGsYv6BAton51hdF?=
- =?us-ascii?Q?+xsJLL4227hcbshn/vNnh7bvsJBfmtqtifXjWCjBwaVf0T2wr5wS?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9f137cc-5d9a-4862-4369-08dee8e6ddea
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 18:18:59.9292
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8DlIZhUZuIYFOLF978uqyJZT7OXorBmsvcDDXWxO0MYvE/vw9FrIROqMCqoOVOr7vEiYlc1lDe+8x3fdbqKCnGMawCu6JPU7y2q9EZHuWvQ71FZlJmRworHWXdscgMaK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9333
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 21, 2026 at 10:16:18PM +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The struct renesas_i3c::resuming is a leftover from a rebase. It is not
-> used anywhere within the driver. Drop it.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+Both branches of the check return the same value, so the check has
+no effect. Remove it and return the value directly.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This is the result of running the Coccinelle script from
+scripts/coccinelle/misc/cond_return_no_effect.cocci.
 
->
->  drivers/i3c/master/renesas-i3c.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
-> index 2b501f31e874..ff1a243a802e 100644
-> --- a/drivers/i3c/master/renesas-i3c.c
-> +++ b/drivers/i3c/master/renesas-i3c.c
-> @@ -262,7 +262,6 @@ struct renesas_i3c {
->  	u8 addrs[RENESAS_I3C_MAX_DEVS];
->  	unsigned long rate;
->  	enum i3c_internal_state internal_state;
-> -	bool resuming;
->  	u32 free_pos;
->  	u32 dyn_addr;
->  	u32 i2c_STDBR;
-> --
-> 2.43.0
->
+Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c          | 6 +-----
+ drivers/net/ethernet/aquantia/atlantic/aq_macsec.c    | 6 +-----
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c   | 6 +-----
+ drivers/net/ethernet/freescale/gianfar.c              | 6 +-----
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c    | 7 +------
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 6 +-----
+ drivers/net/ethernet/renesas/rtsn.c                   | 7 +------
+ 7 files changed, 7 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 5d05020a6d05..ea89619039d8 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2303,11 +2303,7 @@ static int ena_open(struct net_device *netdev)
+ 		return rc;
+ 	}
+ 
+-	rc = ena_up(adapter);
+-	if (rc)
+-		return rc;
+-
+-	return rc;
++	return ena_up(adapter);
+ }
+ 
+ /* ena_close - Disables a network interface
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c b/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
+index 3ca072360ec7..fd4ee6212234 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_macsec.c
+@@ -735,11 +735,7 @@ static int aq_set_rxsc(struct aq_nic_s *nic, const u32 rxsc_idx)
+ 	sc_record.valid = 1;
+ 	sc_record.fresh = 1;
+ 
+-	ret = aq_mss_set_ingress_sc_record(hw, &sc_record, hw_sc_idx);
+-	if (ret)
+-		return ret;
+-
+-	return ret;
++	return aq_mss_set_ingress_sc_record(hw, &sc_record, hw_sc_idx);
+ }
+ 
+ static int aq_mdo_add_rxsc(struct macsec_context *ctx)
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+index 33e7a99d3e49..79d4a77f72bd 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+@@ -3935,11 +3935,7 @@ static int dpaa2_switch_port_init(struct ethsw_port_priv *port_priv, u16 port)
+ 	if (err)
+ 		return err;
+ 
+-	err = dpaa2_switch_port_trap_mac_addr(port_priv, ll_mac, ll_mask);
+-	if (err)
+-		return err;
+-
+-	return err;
++	return dpaa2_switch_port_trap_mac_addr(port_priv, ll_mac, ll_mask);
+ }
+ 
+ static void dpaa2_switch_ctrl_if_teardown(struct ethsw_core *ethsw)
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 89215e1ddc2d..cf636fc5aafa 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2877,11 +2877,7 @@ static int gfar_enet_open(struct net_device *dev)
+ 	if (err)
+ 		return err;
+ 
+-	err = startup_gfar(dev);
+-	if (err)
+-		return err;
+-
+-	return err;
++	return startup_gfar(dev);
+ }
+ 
+ /* Stops the kernel queue, and halts the controller */
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+index fff8dc84212d..e96a268067f2 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+@@ -2478,7 +2478,6 @@ static int netxen_parse_md_template(struct netxen_adapter *adapter)
+ static int
+ netxen_collect_minidump(struct netxen_adapter *adapter)
+ {
+-	int ret = 0;
+ 	struct netxen_minidump_template_hdr *hdr;
+ 	hdr = (struct netxen_minidump_template_hdr *)
+ 				adapter->mdump.md_template;
+@@ -2486,11 +2485,7 @@ netxen_collect_minidump(struct netxen_adapter *adapter)
+ 	hdr->driver_timestamp = ktime_get_seconds();
+ 	hdr->driver_info_word2 = adapter->fw_version;
+ 	hdr->driver_info_word3 = NXRD32(adapter, CRB_DRIVER_VERSION);
+-	ret = netxen_parse_md_template(adapter);
+-	if (ret)
+-		return ret;
+-
+-	return ret;
++	return netxen_parse_md_template(adapter);
+ }
+ 
+ 
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
+index 45ed8705c7ca..47cd9ec665ee 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
+@@ -1618,11 +1618,7 @@ static int qlcnic_83xx_check_hw_status(struct qlcnic_adapter *p_dev)
+ 	if (err)
+ 		return err;
+ 
+-	err = qlcnic_83xx_check_heartbeat(p_dev);
+-	if (err)
+-		return err;
+-
+-	return err;
++	return qlcnic_83xx_check_heartbeat(p_dev);
+ }
+ 
+ static int qlcnic_83xx_poll_reg(struct qlcnic_adapter *p_dev, u32 addr,
+diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
+index ee8381b60b8d..f7beeb73eb16 100644
+--- a/drivers/net/ethernet/renesas/rtsn.c
++++ b/drivers/net/ethernet/renesas/rtsn.c
+@@ -685,7 +685,6 @@ static void rtsn_set_rate(struct rtsn_private *priv)
+ static int rtsn_rmac_init(struct rtsn_private *priv)
+ {
+ 	const u8 *mac_addr = priv->ndev->dev_addr;
+-	int ret;
+ 
+ 	/* Set MAC address */
+ 	rtsn_write(priv, MRMAC0, (mac_addr[0] << 8) | mac_addr[1]);
+@@ -702,11 +701,7 @@ static int rtsn_rmac_init(struct rtsn_private *priv)
+ 
+ 	/* Link verification */
+ 	rtsn_modify(priv, MLVC, MLVC_PLV, MLVC_PLV);
+-	ret = rtsn_reg_wait(priv, MLVC, MLVC_PLV, 0);
+-	if (ret)
+-		return ret;
+-
+-	return ret;
++	return rtsn_reg_wait(priv, MLVC, MLVC_PLV, 0);
+ }
+ 
+ static int rtsn_hw_init(struct rtsn_private *priv)
+-- 
+2.43.0
+
