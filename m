@@ -1,78 +1,83 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C839C4570FB
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC02730C178
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784819442; cv=none; b=qnTdgM1nzS/VXNXJbgkZwDX2UX1MB3XdPairPfBjKiya9Tf0j6nMui3gpIrp9udGtN6mCYH1K775X8LbaiqYtq9gHYayazkUcLL/cgT3oouVDwU+yMCJGyqTW1LYwypwCLOxTEmdeyXH1XoNuWn0xgLq5gT39fzMHEFDD4F5gQQ=
+	t=1784819442; cv=none; b=KfgoYRYclxtwse9zXub91QCz3ypAg1i5jYUAxNtOqG9pW1LPAKTgQLNuwVM0nPCddp4qBqQRe8daDEakwKWy8Ft0t0dXsW7lZ7c5ISZt/Pm8xJqq5uDHCj7YprsA23oG9xUHZOEq0w7sNK7qhjRIkzjkM70Iohdt68IP11Ammrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784819442; c=relaxed/simple;
-	bh=TDnNhsZCsOjMY2p9gRI5oZYVtNC+ieEcnjl+s0uQiZ8=;
+	bh=DmAQa6jVopsSgv8FwjCUVSyo/XOfR9BkMBMnko+gHVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=By9dvoZiIyuZ1eDCSQNqebFYQjIq2umogcSlkhVebf42ZMzjL3Mwh5KhDx4wyPmLPEijJlQJV+NZPTIykxYkTFTwnO9dulxo1fL2JwUOHOnE/PBdm82SQefYPVbI8jd3hT7VF1LNzeuqwc0TnS16brU+ztplBmEGh6rLRc5LVpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edCeUIjK; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=UFYeba+1f+OQA8dnX+8A1+ytacTjoVf2df2L6LZjR5U4zFY9ubrAkwFH+JCbwthb5Bak4L14Rh368qoZsqKWwsOs6Tg9lCQMk70498IGDwYCZqdqKzzDqrm4Mfl6SBzFZyta9Fc69VwGZgmIB//TbwTaz4P9QuicvSql7lV7PLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L8i7bmlr; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edCeUIjK"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-472326ca506so562215f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L8i7bmlr"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-47f878135e0so480834f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784819434; x=1785424234; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784819429; x=1785424229; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Yd4EqDzsPzJqXPT51e5I52t0lUhvJ2cMaJqJVuffjUQ=;
-        b=edCeUIjKz7IriNqdVw1rLBayjEBQ5RWKK3ELGiuQSmoQLtkKDME8oI/hi13wfp9BO9
-         f4W4Wa7TqEyszXNnZEeeQHEXGkwv8q4y15nDkdbK+11XjpGiJXN0bvIzoKZYnqb6jb6M
-         Rq3A1yIp62rbRPjwEVPKMQtu6dH6MoQ3705sPdR3BBKfzZXTcrpatMFMmD47ANU46Y9M
-         FUqdnEiack1EjG7y4/RD/IZ4lZd/oplxEUt0h/g21qLTbfSYzZMfg/SeI4UVOphznYNb
-         eMI8hOMT8iloH5VcObGZkTcqjgjznjTWGT9c+StqZX0M+Y9E8VW3ZHVvU2+m1qtMdncR
-         4hMA==
+        bh=IsGs35imj8ebfj4dF1xnVwR1Agd4gub6i/D54J8Ypdg=;
+        b=L8i7bmlrzzwGGOTl3Z1XKu2R3+sSfnR26SGdWszhJTFcY/96dyAEvQ7Z+TRZEN3qzG
+         JxJ2VGtk+yoyV4PrRMtu5b76J/xau22Br2ZFPEh0vuvY7ZUkN1C4nxkoON08OF2+nxHU
+         teIUZCoFDZmPhzA0MzNuWb3zxhDjC/IWdMTnaeQo2J7AF974Lxh05uG9VcPMZBUoQjSy
+         RwYTFaK1PCljuaKQnnOtftWzhIZcIMdJAqP2V2TvhFFQvefuFf4tCGRxz2gAMyTrRB6r
+         NTidNerLHmUFfdiHMJ1P1Qt8q7atT678bDUP7qDu5yqeQN6RE6drxW8lS/vQ3K8SUxEN
+         CMYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784819434; x=1785424234;
+        d=1e100.net; s=20251104; t=1784819429; x=1785424229;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Yd4EqDzsPzJqXPT51e5I52t0lUhvJ2cMaJqJVuffjUQ=;
-        b=Sea0BZNtccVD5aCNEdRXPf9BHqQEsonXCilMdRxGBCnnM0Axq4BILhVEDom0dDKRKp
-         rgBfvF1bDeN2/UKKy+l20I9Ec03FYeSoGxmyUGSE9TAwRGSXneR7nkQqrciU51yAVP2b
-         +Oicwgstf3u7h4a3v2tXbtY3P3cIS4HL2mY/h9u+6n3nLkMMl/wXxHG21ainU8TVsvY8
-         V/V893JRLV+JKlY3bAN5/TT1BlWBbcvjbQkLUA1crHcazxqGGyc+0nVDwIZmFNeecA+7
-         fd15oKdzg/k1dGmKJcrOws7uCE+tTjtFGZQAZJtUrbiAGbUL0Ot4rL5974nmWTLaAx8D
-         /+xA==
-X-Forwarded-Encrypted: i=1; AHgh+Rok7bdfFv9ZX16Hjb2VxazmX95b0nm4khJbB5oX7jJEsnOMgA3PUqO3ak3H8YEUVZt/MMM6nS/F6YKprhCtlA+VgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwkNE23SLBd3bx7gJaiO3FwFcvwmW04Z50rrS7Dwq76lvJ6Ndw
-	6XdGnliMhiB0V2zmDQGTuXQbD10pooHtxPaEJvOkJhJ9KTCwFVVaeU5W
-X-Gm-Gg: AR+sD13IoypONvMS5i9bOr/iGpyEyfmmjw4jhBAPHAUiR15/14/czaO4xQuqAQwHo7K
-	wjKj8Tf13qXnBnjIzXDmAD8Agx8oevIvoryPR1QJjMC3KkyF0QJ52zA4fngu39/Anh/asKasodR
-	OP+qjOO1nM/PwJiMbxkoL6DcQ9tbUxiUMOa5QMO7FdsUJD92BC4Vc2YbTpKSB7cBqCSOaVMbd0c
-	jJeV8c/Pr4ClTLvoM0G4Qy1GAuPP2hJEk0sHxOx2EZJUjZttrm+wN1OewbV1JVEjE+AescY+nP6
-	gW5kXVvBEV4rb8eVnrhRxPKUmZm4x1VMy8TtNeuxmlvwCjmia1BrXMGd3tAxBJ/e6qKAR7MYrAs
-	ryy6EHDX6+cOaTdcTWhBHBYeayZBdGAer1TbndOY+vy0UlE+juRnZ+/Xk8ZXDhoDBOFdQeIIbzV
-	5EemuY97wluZ8bDOnsoi9icofgDEfJeKcGPNcg1Q==
-X-Received: by 2002:a5d:64e6:0:b0:47f:80d1:be1d with SMTP id ffacd0b85a97d-47f8d4b8c3cmr4868180f8f.0.1784819434240;
-        Thu, 23 Jul 2026 08:10:34 -0700 (PDT)
+        bh=IsGs35imj8ebfj4dF1xnVwR1Agd4gub6i/D54J8Ypdg=;
+        b=ipXbzeHmCZIsMR4AfinuOBO1D5QujVDFWc5S6xpOrT57qOr566/VZnLyJPCh808DRG
+         5OjbILiA7Pycc5NsxY5FNLxzTqyRJnB5j4X8EYWn2RJFxHQjmck0uU5JZuLxhtJa9o61
+         BwkpcPjEmcuSYgyuoNL9/wntvRttoLdIsJgdsv6SrvaMfr4OYIkEKROqOulpWz7Cvg+P
+         Dta2mlU2JcfdixlXCZWgo/FisO35rJtZlWv9WNOA7PDzyYMS+FoaHMdB9cIgwGKcninf
+         mkoWFmpSUGhj8xfa4AKh+C/+phjM52p/H/htQeC32gtllaRZtPoPrsXgjgUS5fEb4vtU
+         pZtg==
+X-Forwarded-Encrypted: i=1; AHgh+RrygqVHPMnqfpx6kNHRDRaI3HKfnjc3qVMGFFnxf0Sazzl7heVtKHlD3390av4YmO2h4L0HUo11MDBeTdb4g/EBCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3uBLIj9RnUgPbH5b3SxdCjLB/FzW9HD2XYY3WwePJL0jiKd4k
+	nBn6Q49kyYKk9ZcKIJCnScxBxMlsT5dXdeU/z6SOlVaVK+4tPvEYfr0P
+X-Gm-Gg: AR+sD11By5g+DNNyEGOTR129dY5oUL0tgjvgZjWQraRX0UaDemMa+F1LRN8JEX90+lL
+	htcOLsAbjUfXg4YVNK2e/tESx4kq6a2c4pPKF77Dv+ZaLaDmRvHJPBeRZDebQWoE1Go4o+IoFJ2
+	aqniuxe+yCtN4EpXFCHNUSoIk8yCtN1VjJfL9KMSY+vHkP5jG6ziXyMdKS06Cs715Dvp53cX5tn
+	LsLaMgiXowwhyC9tq2i98EaPJiqw+51RkUDahNFJn6EPe06vaX+MJClLG+Z/UJpCL7s2iDrYRIa
+	/OsbpCCW/wfCBbxAiPLR72eGrnWmK5YkUOT9k0sJpUiNvINNfwJNIIC2HxvYAkT2LpFfOmqP7tZ
+	6nmiBdP8Lo+Ru7QbRN3UmSJPVA7WAPTRqjBuRvdiPKcbk3ZEMENqYNO19ssHh3p3hq52+8ds3pa
+	NKRmchscwRRA1LHcCiZLV54nKycww=
+X-Received: by 2002:a05:6000:4609:b0:47f:48d4:3f0a with SMTP id ffacd0b85a97d-47f8dca50cfmr3984489f8f.45.1784819428563;
+        Thu, 23 Jul 2026 08:10:28 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bb81dcsm15886823f8f.12.2026.07.23.08.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:10:33 -0700 (PDT)
+        Thu, 23 Jul 2026 08:10:28 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+To: Ulf Hansson <ulfh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v22 08/13] mmc: renesas_sdhi: Add optional axis/axim reset controls
-Date: Thu, 23 Jul 2026 16:10:12 +0100
-Message-ID: <20260723151024.318918-9-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v22 01/13] dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+Date: Thu, 23 Jul 2026 16:10:05 +0100
+Message-ID: <20260723151024.318918-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
 References: <20260723151024.318918-1-biju.das.jz@bp.renesas.com>
@@ -86,21 +91,14 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The RZ/G3L SoC has axis/axim resets compared to other SoCs.
+Document the RZ/G3L (r9a08g046) SDHI controller. The RZ/G3L SDHI
+controller is similar to RZ/G2L but has five clocks (core, clkh,
+cd, aclkm, aclks) and three resets (rst, axim, axis), so update the
+clocks/clock-names maximum to 5 and resets/reset-names maximum to 3.
+It has an internal divider for all modes except HS400, and a 2048-bit
+divider compared to 512 on others.
 
-Add two optional reset controls, rstc_axis and rstc_axim, to the
-renesas_sdhi struct. Both are acquired at probe time using
-devm_reset_control_get_optional_exclusive_deasserted() with the
-"axis" and "axim" reset names respectively.
-
-Include them alongside the existing rstc in bulk reset/assert/deassert
-operations: triggered together in renesas_sdhi_reset(), and managed
-via reset_control_bulk_assert/deassert() in the suspend and resume
-paths, replacing the previous single-control calls.
-
-Being optional, these resets are a no-op on platforms that do not
-provide them, so existing behaviour is preserved.
-
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v21->v22:
@@ -108,102 +106,202 @@ v21->v22:
 v20->v21:
  * No change.
 v19->v20:
- * Fixed the ordering of resets in suspend/resume paths.
-V18->v19:
  * No change.
+v18->v19:
+ * Updated commit description
+ * Updated clock and reset description with AXI master and AXI slave
+ * Added else condition for reset and reset-names.
+ * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
+ * Retained the tag as the changes are trivial.
 v17->v18:
- * Fixed ordering of reset in renesas_sdhi_reset().
-v1->v17:
  * No change.
+v1->v17:
+ * Collected tag.
 ---
- drivers/mmc/host/renesas_sdhi.h      |  2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 26 +++++++++++++++++++++++---
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 +++++++++++++-----
+ 1 file changed, 81 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index db147af9068c..a085a4cb2e38 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -101,6 +101,8 @@ struct renesas_sdhi {
- 	unsigned int tap_set;
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 4d66966ce290..6d229a41a4b5 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -18,6 +18,7 @@ properties:
+           - renesas,sdhi-r7s9210 # SH-Mobile AG5
+           - renesas,sdhi-r8a73a4 # R-Mobile APE6
+           - renesas,sdhi-r8a7740 # R-Mobile A1
++          - renesas,sdhi-r9a08g046 # RZ/G3L
+           - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+           - renesas,sdhi-sh73a0  # R-Mobile APE6
+       - items:
+@@ -86,11 +87,11 @@ properties:
  
- 	struct reset_control *rstc;
-+	struct reset_control *rstc_axis;
-+	struct reset_control *rstc_axim;
- 	struct tmio_mmc_host *host;
- 	struct regulator_dev *rdev;
- };
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 638bbc990096..6d8f32e2fc38 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -641,6 +641,8 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
- 				sd_status = sd_ctrl_read32(host, CTL_SD_STATUS);
+   clocks:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
  
- 			reset_control_reset(priv->rstc);
-+			reset_control_reset(priv->rstc_axim);
-+			reset_control_reset(priv->rstc_axis);
- 			/* Unknown why but without polling reset status, it will hang */
- 			read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
- 					  false, priv->rstc);
-@@ -1155,6 +1157,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (IS_ERR(priv->rstc))
- 		return PTR_ERR(priv->rstc);
+   clock-names:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
  
-+	priv->rstc_axim = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, "axim");
-+	if (IS_ERR(priv->rstc_axim))
-+		return PTR_ERR(priv->rstc_axim);
+   dmas:
+     minItems: 4
+@@ -116,7 +117,12 @@ properties:
+     maxItems: 1
+ 
+   resets:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
 +
-+	priv->rstc_axis = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, "axis");
-+	if (IS_ERR(priv->rstc_axis))
-+		return PTR_ERR(priv->rstc_axis);
-+
- 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
- 	if (!IS_ERR(priv->pinctrl)) {
- 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
-@@ -1384,13 +1394,18 @@ int renesas_sdhi_suspend(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = priv->rstc_axis },
-+		{ .rstc = priv->rstc_axim },
-+		{ .rstc = priv->rstc },
-+	};
- 	int ret;
++  reset-names:
++    minItems: 1
++    maxItems: 3
  
- 	ret = pm_runtime_force_suspend(dev);
- 	if (ret)
- 		return ret;
+   pinctrl-0:
+     minItems: 1
+@@ -155,60 +161,106 @@ allOf:
+         properties:
+           compatible:
+             contains:
+-              enum:
+-                - renesas,sdhi-r9a09g057
+-                - renesas,rzg2l-sdhi
++              const: renesas,sdhi-r9a08g046
+       then:
+         properties:
+           clocks:
+             items:
+               - description: IMCLK, SDHI channel main clock1.
+               - description: CLK_HS, SDHI channel High speed clock which operates
+-                             4 times that of SDHI channel main clock1.
++                             2 times that of SDHI channel main clock1.
+               - description: IMCLK2, SDHI channel main clock2. When this clock is
+                              turned off, external SD card detection cannot be
+                              detected.
+-              - description: ACLK, SDHI channel bus clock.
++              - description: IACLKM, SDHI channel AXI master bus clock.
++              - description: IACLKS, SDHI channel AXI slave bus clock.
+           clock-names:
+             items:
+               - const: core
+               - const: clkh
+               - const: cd
+-              - const: aclk
++              - const: aclkm
++              - const: aclks
++          resets:
++            items:
++              - description: rst, Core reset.
++              - description: axim, SDHI channel AXI master bus reset.
++              - description: axis, SDHI channel AXI slave bus reset.
++          reset-names:
++            items:
++              - const: rst
++              - const: axim
++              - const: axis
+         required:
+           - clock-names
+           - resets
++          - reset-names
+       else:
++        properties:
++          resets:
++            maxItems: 1
++          reset-names:
++            maxItems: 1
+         if:
+           properties:
+             compatible:
+               contains:
+                 enum:
+-                  - renesas,rcar-gen2-sdhi
+-                  - renesas,rcar-gen3-sdhi
+-                  - renesas,rcar-gen4-sdhi
++                  - renesas,sdhi-r9a09g057
++                  - renesas,rzg2l-sdhi
+         then:
+           properties:
+             clocks:
+-              minItems: 1
+-              maxItems: 3
+-            clock-names:
+-              minItems: 1
+-              uniqueItems: true
+               items:
+-                - const: core
+-                - enum: [ clkh, cd ]
+-                - const: cd
+-        else:
+-          properties:
+-            clocks:
+-              minItems: 1
+-              maxItems: 2
++                - description: IMCLK, SDHI channel main clock1.
++                - description: CLK_HS, SDHI channel High speed clock which operates
++                               4 times that of SDHI channel main clock1.
++                - description: IMCLK2, SDHI channel main clock2. When this clock is
++                               turned off, external SD card detection cannot be
++                               detected.
++                - description: ACLK, SDHI channel bus clock.
+             clock-names:
+-              minItems: 1
+               items:
+                 - const: core
++                - const: clkh
+                 - const: cd
++                - const: aclk
++            resets:
++              maxItems: 1
++          required:
++            - clock-names
++            - resets
++        else:
++          if:
++            properties:
++              compatible:
++                contains:
++                  enum:
++                    - renesas,rcar-gen2-sdhi
++                    - renesas,rcar-gen3-sdhi
++                    - renesas,rcar-gen4-sdhi
++          then:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 3
++              clock-names:
++                minItems: 1
++                uniqueItems: true
++                items:
++                  - const: core
++                  - enum: [ clkh, cd ]
++                  - const: cd
++          else:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 2
++              clock-names:
++                minItems: 1
++                items:
++                  - const: core
++                  - const: cd
  
--	ret = reset_control_assert(priv->rstc);
-+	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
- 	if (ret)
- 		pm_runtime_force_resume(dev);
- 
-@@ -1402,15 +1417,20 @@ int renesas_sdhi_resume(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = priv->rstc_axis },
-+		{ .rstc = priv->rstc_axim },
-+		{ .rstc = priv->rstc },
-+	};
- 	int ret;
- 
--	ret = reset_control_deassert(priv->rstc);
-+	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
- 	if (ret)
- 		return ret;
- 
- 	ret = pm_runtime_force_resume(dev);
- 	if (ret)
--		reset_control_assert(priv->rstc);
-+		reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
- 
- 	return ret;
- }
+   - if:
+       properties:
+@@ -247,7 +299,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: renesas,sdhi-r9a09g057
++            enum:
++              - renesas,sdhi-r9a08g046
++              - renesas,sdhi-r9a09g057
+     then:
+       properties:
+         vqmmc-regulator:
 -- 
 2.43.0
 
