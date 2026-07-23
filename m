@@ -1,312 +1,212 @@
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B4372B27;
-	Thu, 23 Jul 2026 20:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784838383; cv=none; b=mwfgMk5fudXgdjmec0ktKO1H7VxlzgfS+UnhYHBe/iLT8xe3YUdCzpfUer7Hez5pgAgZWL/BbvIPXXr7Z+4myJnchnVaPWWrJT4rgIAFEF3Oido5yOMHGql88K3HoxNfYaRhPKRMuePv75qV69pRF0vdK8d51LUbZihCqXvBBmc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784838383; c=relaxed/simple;
-	bh=5iG8Fb/wE2D83EOlwWwa80p3yf8ydNzzDHEtgWXwQ+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qT/Zk6vfYI950RT6rVMn37N60Cvueinuq1dywE2zKP/p0BEdMZJrltfZnx3BT04eBCqC5nTs2x+is9lZoLOK2fs7dEGiFEYJefsYj7pjtbn1LUnD06LlejfKwj7BnVM3r3yyuPVU9V/nxbjbeFWk1gMyCOuHzBJJzUOJeK3IoN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=TXfg5ubM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eoV4KXT3; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C139B41A4E4;
+	Thu, 23 Jul 2026 20:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.42.203.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784838974; cv=fail; b=kOb6oOGQcJDtt+AdvPp8Fj5XEhqkgPkpfssZBXf5IDVyyPhJNG2+jM3d1jbp+UuRWyPNDx0ZTut0zCxdL/cFN6a+OeGTI2ygZ0AuKifeYvhDTPCErpQiJgTe4IqY38Mwd/1xihFcy/dHAXz3jlbXEFDKBZzQjaJ19PkMtpKDQRU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784838974; c=relaxed/simple;
+	bh=lqyMy6wFoJyB6ZsQUF5OUlCeuukP1CpKuPzy7REX2CY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uHrXOAvbuMNqSsF0fypu07oqo0hv0YpTuR9uwcVn1yX0d7dStVS8CqNLW2dtQ7K7a3CHb7iG/1AUP4Qbs/H2XAC35FUFpvYGtq16fUi4j3Z4mbU1RfYrbqvbocL1b6YCLCcXCZPf3YMaMbmBbPC09xPlFTwoFdL7tcdZ4Xr+YYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=s05DvboF; arc=fail smtp.client-ip=52.42.203.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="TXfg5ubM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eoV4KXT3"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 67ABA13005AB;
-	Thu, 23 Jul 2026 16:26:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 23 Jul 2026 16:26:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784838379;
-	 x=1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=
-	TXfg5ubMGpI7NH2+Kilra5KFHoKlpaz8cZfxh6VS0Y8aco6ACn5bHVXXNhuqfdNz
-	AHnuDiorIp9DgwlNO+v7fnyXJSh0ch6JmJRwJLqkU/D8t1IP5h99QfouIP4tukaP
-	BlRyW5EIlO5Fc1xoDsDwGE1DuTLfLfRGXr9hsDkbq6c0qdfbgZu0iewm5r/wbtIg
-	pccyjlUmfHVcp/JCc1IfzmJfclrUNq4zJxVHycV+85mfTCkb1c2xe78MuNoJZBE2
-	YFMiJZ+wKgNOq/FhrVkn4C5ayCoN+4A6akEA03CiW88iEIipAQ6LFbwbMwU3cPe3
-	enFj9VY8Px/AydESmr18PA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784838379; x=
-	1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=e
-	oV4KXT3Ym/YV5GkF2QRCa4+pOlI/zY8q4hcvjJ3LxL9gvXQU6dggg4Kx4JHeElJC
-	9IM6iw8nO/pEEwu2ZxZc40FBfz/CNw7/4q11pncrryEXvDEfI50yEbSOTjXWvB6c
-	P6riHQKso/WbIn20eXxFtKjaVHL19mCYnPU/hv9Zw6sa4UbpVCoZ7Z5ZzySoCYxC
-	rsD6zwlNXs2pymTpfxtlUvJOPfoEPTdVzhqLwqxI88o9iHMtbamqeT28J5rgypVy
-	xx/io/NKkJpvLEVPWaoqxyiz/DA16RAdOQNHHUPdj90X3sysR6zA1a4OM2vafVby
-	9vlzKc58AmpQ/K+BZW37Q==
-X-ME-Sender: <xms:6nhiaq0GCCJ3UjZ1Tl2tjNSSOnLYa4n_DvEcQxwQC9GuOs_D83Mzog>
-    <xme:6nhiaqScHvfaZ8a3YA8X-XOWjv0Qdvpj2dus8nerwH4i6u3xSe-ZOxZ6idILJxXim
-    y1KXEIpiY7SW9YeE_uONa8KUBeR7Q5D2gjX1lMoCNkek2ZgELFkeA>
-X-ME-Received: <xmr:6nhianaCq0-8aK30F5jYwZGN-zCrvAD2Sd6SGgBH9Eu3eu1y9EjCtytpO_M1R6a-kZg2BJEbUUYPYJms-lGCWOBvUA9tEM8>
-X-ME-Proxy-Cause: dmFkZTGtHfvCGLFNFtcVRq1cHrKjv7HYmoxFw1SEsPfggLpPF3+EigNttIIi46yncFHb8w
-    RNhYQ07T1sllTu+sciGyBlKNcqXi+ymeT8cw3/9uVWtj/55kw2wskM5if1ZNL/3AIR5RA7
-    JKSkKWovXVlh7x77H2TM7Fwa4ev5Ev2uAIZzQMb9G24Gxj0uSSfHKfofOICsmDLLuGJSqQ
-    arq+kkHAqnBsywojtxH84aBy8syhUvWsWbGXXq4laZV35SkdUVXHQX8BaFHGaJFjYDX/ty
-    4nfo9ODP4B4TvmLO5jB3ku72GvF+yhV8RnLjRs4UWFh7UVF90OGDAER6ybUj5upM1dXNGZ
-    F03sjgtZ4n7EW2/LRPbX33fsmxdTQZM4Vw5QGKeQRTtYxEOchEyqIxRBu4LbkRDn73kWsj
-    LxYHgAovK+XVj0yrC2GlG4PIwCuhaVZl4PNrkMgjuuHaVnpbrMOazhWf+XHy5e4/kzdEPK
-    ESIrNm8TOPUo7esJ9Bowy13hBURoivHoZBN+d4ZkKnSoXGR5vuSaTyzTxQ+Hzaay0E7Lfr
-    xq6M32C+odLuFXo74tayix0UXXCfsRftO/iWF6RnjQkHlRCv1V8SQ1MYK7N3gRXqdouc8l
-    jyXZqRQAN02lAaHt2bHhaQRmnjivyIfZ3NUs7hofb60faFpc5bKWXMeqNoIw
-X-ME-Proxy: <xmx:6nhiaoCXzbGIALywOyKdXlCmgNNav7K7UV8hqKi_9N-GTFvh7oRdGw>
-    <xmx:6nhiauBmaHuLQ1nKqA7wC38CXfEeYaFqFWIRA7sNALBbywVskdn7Lw>
-    <xmx:6nhiakG0cjRTw4Z4znK2C-2aTt_TaksxSzeagr3CTWcsXG4N-rNvpA>
-    <xmx:6nhiahnCr7pm_ynLAL8AGOG2tvn6-_tx8d1jY7ys3gGWLrP5zNJxoA>
-    <xmx:63hianEYvSz2qubeSY6ig3NYWooFgtsXupJs-9XDOyc4f82FAicO-1U8>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Jul 2026 16:26:17 -0400 (EDT)
-Date: Thu, 23 Jul 2026 22:26:16 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Michael Krufky <mkrufky@linuxtv.org>,
-	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-Message-ID: <20260723202616.GE2273555@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="s05DvboF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1784838968; x=1816374968;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=F8mhpmEDshmhrnJzOm0SjRPxlbbTONvQUQTaAO3cAYY=;
+  b=s05DvboF8aoKyYbmINhO4XTYXupu2n2RpTfisPTangSg+sZ25/3VnctK
+   7azP0LJddaO9DkZW8QBb/UOLRfvJccmJxt2Cj1kpjpu/x4/UOCAsWsC1Y
+   cE3GFfccCKmZszYGUeuwL0BhK1jIeMRFIklLXaXjJyji5B/FizHK2ADj0
+   U+tSL1z+P9yz7e/MOhOE6oTTWJ7rVIIIF7O147BqmXZ9j/Lzex33h8sNS
+   1do2u7RUXBr0/25RYdL/OJj+AQ5K2YAe9fke7Bxedgq1yBXJm6BXiSeU+
+   Iwqo5Dyrk7zkvHYLtEa7kfYgMp8NLYI1aXlN/w+g31AP1WS2v0yYJtG/S
+   Q==;
+X-CSE-ConnectionGUID: Af+hxQb8S2aFeNd8/1eKOw==
+X-CSE-MsgGUID: /hq+x+LYSc2guX7TX7KC9Q==
+X-IronPort-AV: E=Sophos;i="6.25,181,1779148800"; 
+   d="scan'208";a="24278323"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2026 20:36:00 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.51:23741]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.115:2525] with esmtp (Farcaster)
+ id 6ff998d2-62e3-453f-ab91-d57202915d59; Thu, 23 Jul 2026 20:36:00 +0000 (UTC)
+X-Farcaster-Flow-ID: 6ff998d2-62e3-453f-ab91-d57202915d59
+Received: from EX19EXOUWC001.ant.amazon.com (10.250.64.135) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
+ Thu, 23 Jul 2026 20:35:59 +0000
+Received: from EX19EXOUWA002.ant.amazon.com (10.250.64.216) by
+ EX19EXOUWC001.ant.amazon.com (10.250.64.135) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
+ Thu, 23 Jul 2026 20:35:56 +0000
+Received: from CY3PR08CU001.outbound.protection.outlook.com (10.250.64.206) by
+ EX19EXOUWA002.ant.amazon.com (10.250.64.216) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43
+ via Frontend Transport; Thu, 23 Jul 2026 20:35:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tBInXKrVgWWNU0oS6qtdC9HZVw5LZr+02FEc3TE3m7hq3Kp8VJJhAjja85ehPcpYH3HyzhgHH05feJ/p1JRLcbEZsrnHI+eabbYyLcSHJuqLtF7CT2YPHx0z8OXAY0wTf8RhctWhxWr22b/VPDctGCLFXc7b6QeTesqGqF6n+TDq33OdlE22rdv3b4ViRmcQwUMQbQNYA6CEss286rNbDjYfjbO1sg5W5dwiPXbMN5E1o4ri2GjNVHbEmFl/XVjXK4slKldk8Jl84HyTGpSGZFak6TcjdOiv1lJ7YGFBrRwY7dytyFfDnIzKLXWN/z7MyO1yFyzCUX/wXBAq4vJr5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F8mhpmEDshmhrnJzOm0SjRPxlbbTONvQUQTaAO3cAYY=;
+ b=BZqlPKncAHuSjAMY25Qmf8MVhBsdvqg6FOYrMftig0wOzmFaCylkwRoFvl7K2iwRqT+/ZBJ6tfTJwjszX3E5h97OpX/LfEIS5bdEu3uwu8QnUPe0o7BLrUA8jnREfaLhKgHwXvdNH6L0Bsbw7APvw85fiEflxGI3SPqQkhS/NFZXx7T8u2yqgSYCWcXec4t7+FKWkRCJTlHKgfSx37wgcjNiqzGcsh/Sxp/QzoQZQZLTL/lgFgopJHzLDLC6oM6T+63HX1aSgMXEVPeG0oKnikuCm4YkBIyf+2CcKt/B9Jskw1ANJPWNaIzGIQtkTXygJ93UW0CjB8T9wOjqQopR3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amazon.com; dmarc=pass action=none header.from=amazon.com;
+ dkim=pass header.d=amazon.com; arc=none
+Received: from SA1PR18MB4664.namprd18.prod.outlook.com (2603:10b6:806:1d7::5)
+ by PH7PR18MB5703.namprd18.prod.outlook.com (2603:10b6:510:300::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.11; Thu, 23 Jul
+ 2026 20:35:48 +0000
+Received: from SA1PR18MB4664.namprd18.prod.outlook.com
+ ([fe80::972c:f0e:7126:9112]) by SA1PR18MB4664.namprd18.prod.outlook.com
+ ([fe80::972c:f0e:7126:9112%6]) with mapi id 15.21.0245.010; Thu, 23 Jul 2026
+ 20:35:48 +0000
+From: "Kiyanovski, Arthur" <akiyano@amazon.com>
+To: Sang-Heon Jeon <ekffu200098@gmail.com>, "Julia.Lawall@inria.fr"
+	<Julia.Lawall@inria.fr>, "Arinzon, David" <darinzon@amazon.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Sukhdeep Singh <sukhdeeps@marvell.com>, Ioana Ciornei
+	<ioana.ciornei@nxp.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, "Manish
+ Chopra" <manishc@marvell.com>, Rahul Verma <rahulv@marvell.com>, "Shahed
+ Shaikh" <shshaikh@marvell.com>, =?iso-8859-1?Q?Niklas_S=F6derlund?=
+	<niklas.soderlund@ragnatech.se>, Sabrina Dubroca <sd@queasysnail.net>
+CC: "cocci@inria.fr" <cocci@inria.fr>, "GR-Linux-NIC-Dev@marvell.com"
+	<GR-Linux-NIC-Dev@marvell.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+Subject: RE: [PATCH 07/36] net: ethernet: remove conditional return with no
+ effect
+Thread-Topic: [PATCH 07/36] net: ethernet: remove conditional return with no
+ effect
+Thread-Index: AQHdGuLDHMLwqSGC80SEy6rJKdftmA==
+Date: Thu, 23 Jul 2026 20:35:20 +0000
+Deferred-Delivery: Thu, 23 Jul 2026 20:34:27 +0000
+Message-ID: <SA1PR18MB4664DA66B9EA117823E78D9AD9C02@SA1PR18MB4664.namprd18.prod.outlook.com>
 References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
+ <20260723184538.3888637-8-ekffu200098@gmail.com>
+In-Reply-To: <20260723184538.3888637-8-ekffu200098@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amazon.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR18MB4664:EE_|PH7PR18MB5703:EE_
+x-ms-office365-filtering-correlation-id: 02fb406f-9a5a-48ae-a82d-08dee8f9fade
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|23010399003|1800799024|376014|7416014|366016|38070700021|56012099006|10067099003|921020|18002099003|22082099003|4143699003|11063799006;
+x-microsoft-antispam-message-info: 9mWKdtAmZRJiJeemqgQAmQdY+59Ms6Wg0cuwd1cTiU2LrTyn/ssn867XIuE9ork94RaVCbhFl2MC4yx9HT3oLeNI5B0zL+4KcS2gsDTRexUzaO13bmTASxe0v/jj/QJ4V2etb2v/yUBDaWmP4yH7Fg6oJWexAQjYcaEomgCfOUerBAGGlLwtbCL9SWt53niYDLNAsEQLVwZgoT11tXMTGDzpqXDFRNSuC4QE7154DlnhfNLyRQ2GWY/Nio/De3hOXUDbAZ5nc0ul6DZOH8OM+4MMjG71RduxQBODbug8uCzaTUD7mdygYByrt3EXqIcPDr6zKjQ7t5kDAWdNlmsBW4xLtVwTatiuokqcTmM+N74Awsil0IwjS9lLqLFmW0r+DGawvypV7l58OPv9T23rNvOVb/PYRxnMNnsUWPFI47cGNLxUDNKUoXLDth5ApjGHrpyO7/CZRWrR/zQi/eb2a91F4j6xW/nUGb0405hMxgaHXoqDkdi19zVGcs0mi/t6egvHy1b2eE3mLO+OQmZcTSczt/+krvvBELbZQv5xoGeCE1LvLJTDNHnLC6Nr+AbfU8RdcDqnY4bTpp8H5FP1Pk9ULjRr8X9VyOxF1TZXyK7xDq8fsp0ZmRP4lmGU1LSFnaOm+BUumuphOBwK9yHb0XYDQvEeE2JhucQlYwI4YQE5ISVmfxO0basYtYq/r0cKwMGtNEpvWKYCo24T9hHovCQKH9qN8DrolKDxLSzNAPQ=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR18MB4664.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(7416014)(366016)(38070700021)(56012099006)(10067099003)(921020)(18002099003)(22082099003)(4143699003)(11063799006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?JPSd5Ib6I/widKRAKgu3iQnmvLP3XeH5ZJUOiCmp8UgroS9N8njdNbKkH3?=
+ =?iso-8859-1?Q?5Hn5W3IlK+TDkNcJLz6dGxWYN6/NPjuAj48k1hl0NmUaFOeAsbqM6JLeqJ?=
+ =?iso-8859-1?Q?K153ug0GFo6sZs+olxwXddkLUnz36ZzuecIJEHA6TreTyUPsS8nHdovLMQ?=
+ =?iso-8859-1?Q?N2sukNUP0vDsIJq7yQKNMtTL8sd55jEXB/05VowKKvS9uELAvgnVNN/eKi?=
+ =?iso-8859-1?Q?rnMqJkJ0hIr0jkHkYLxFj9Ia9/bzLfMD0Em8Dnb8RFmarmXeVFBdXV3RwU?=
+ =?iso-8859-1?Q?RqbOKOI98mMIsPpgM15Vm1jpiTXwo6ManweGewhgmoFqUu1a5OUEWL7f/8?=
+ =?iso-8859-1?Q?MYZrya1fYuGuuUwnOC8Pz4Y9Bnt99thDHxdR2Vtjo4sf7Q9AOtiDf6p/6D?=
+ =?iso-8859-1?Q?ATLOHp31dOIpB/WxhTxtW+cQiQr2RU407jLqmpHVm8hMijI/9ct/GQoqe/?=
+ =?iso-8859-1?Q?bjS6tmmhgK6kdHGVthdGS0GYmYG8iCyX7rsHdgb+jNMz4WZxIHESwl7HHT?=
+ =?iso-8859-1?Q?JBjipeYPML0jiVjQXUe+oW3HnAW1Y+lj9hbf4KOw+LZzvoiff5UNQRHOSo?=
+ =?iso-8859-1?Q?iX+gMdhzRmzLz/SQZPL775DZnduOtFm1KWDk0TOCdGRTm4JaSLCZ1YdfFF?=
+ =?iso-8859-1?Q?mfzJZwuk3/r7R3sKvcoAYD5t5c19TJXx1dkIqEvXeKo/pGqGhXdjQKrhy1?=
+ =?iso-8859-1?Q?T+Dh4G/Ufs6zZUkrmcnTuLqnxd9YqNQwAp/SWXSu0I8TDdidPAJPBvCWsD?=
+ =?iso-8859-1?Q?NTQcSwRVAzlxrvjV3KhDDf7VO/V7PJ7mYaXf09WdfZXpCEeWS67X3qLkvI?=
+ =?iso-8859-1?Q?hueSlLhP2Eyf0mufwLXV1NGZTbXSHQGFU9OF6HtWMW53z1qtKgXn01gaI1?=
+ =?iso-8859-1?Q?TD03Qmu0UP1lLehTLzEVjpHLXbpgJRcTuOI83eJNjW0g/PYsnMMleGk3Qv?=
+ =?iso-8859-1?Q?RLFUc5A2MJzmaJCDw3oVozlzd7a7YmCj7Y+04s4JPNRlIvxYvbsU4rJ/R5?=
+ =?iso-8859-1?Q?C4fGfLe9BM7yfEvc4J3Ahm4nlEHR1l0TrDM0H9iHg3ozFVQcsjUmi8pAof?=
+ =?iso-8859-1?Q?moYkPi3uwwYFGLVloQNCLj54dM7MT8QAiUF/95Cse1chiSnyxVNxoc01Ra?=
+ =?iso-8859-1?Q?vGgwzhwxVNpmtmHfGRyge81oe5G9tj3pB3cCMFuKVH0bGGxQHZKNAtgX48?=
+ =?iso-8859-1?Q?le06l481azEe/p9f9sf1DI5+nnl2HaYMA4sTeWaqo0Twysw/HrqSEyxE4m?=
+ =?iso-8859-1?Q?sYdvni7c/+7paKIouSPBLmvr6HWbfwTj+2tF5ypRAjZ1WIZ/FwFtnydUWa?=
+ =?iso-8859-1?Q?Dl1JWcS7TvAAENqus4KEddUC9P5iAxSphhw6x+OkcRhlJghydl33VHmg75?=
+ =?iso-8859-1?Q?Kp+89QlrtXsGpn3BmxL90viZi+JssM7L3r91xlM2l9bsKjixuBkOwRmLSb?=
+ =?iso-8859-1?Q?NzMFuHGzapGfuaVDPl1oyat4H2O9Ife5hgClrndEJvDDfYXe05rWozRPWD?=
+ =?iso-8859-1?Q?7MmKKC2KuT3FAZhTANJGSvVnsLXJAE+22fOkkWhaBjCGv6cYsrqj9KLry0?=
+ =?iso-8859-1?Q?S9r3Scp/gVAftNe9SRtE+Lgo6J5zUutOXTchdsb20KH8md8xovnXygjrdo?=
+ =?iso-8859-1?Q?lZAeNFcbYEhMoqRziqcKDoA1WGnJSNOr3gEUfOIDr8tasKrEZHYXAwPRbo?=
+ =?iso-8859-1?Q?fJwBLlQD5z+J9fM/ar3l5fToTeu4hp16jkkWYui04TYepk5SLyWjwFZhwp?=
+ =?iso-8859-1?Q?ORafyrKV5OkEV+ex9zwL0ti0nRYEkyQoEGfdSKG9esWyXs?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260723184538.3888637-13-ekffu200098@gmail.com>
+X-Exchange-RoutingPolicyChecked: cxuaMegXaN3UXXlgEg2Nd06jphUR5hY0WzHxC6HSTTIn1VHIy4fLIqmMWiWSyNOwBMGZLLX/ZSGQ4XlrQqfAi+7Je8n9hWTFXZjWigIgOfTEz4mGTmOB/N6Fvc5AabmrdnoqT2lwnpXgCsT1dKYodvo18I/T8S25KKcow9QktW5vrmQWD1A0gj+MrFynwFdU/SpZznixI9ab7VbA9Y1miqMD3Bny/3xm3gBF2c1B9OLze/PQ3c3NQDcvrGNF6UMdsGY2egvkSDZja9fG632W9HWBeEoaYeZ6LnNpYlofM3vyWvs8N3xRIQBklU//ynGdSBgMawoUJj8avTWO6HHheA==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR18MB4664.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02fb406f-9a5a-48ae-a82d-08dee8f9fade
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2026 20:35:48.6263
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5280104a-472d-4538-9ccf-1e1d0efe8b1b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r8uMfMxZVKhZtGVUrp8AhyX8yRlBX505MRQB7UyWSh9rLqr4cYpuDUld8gDc3Tf7LpLacYAQzkwIMiQKvp7Jag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5703
+X-OriginatorOrg: amazon.com
 
-Hi Sang-Heon,
 
-Thanks for your work.
 
-On 2026-07-24 03:45:14 +0900, Sang-Heon Jeon wrote:
-> Both branches of the check return the same value, so the check has
-> no effect. Remove it and return the value directly.
-> 
+> -----Original Message-----
+> Subject: [EXTERNAL] [PATCH 07/36] net: ethernet: remove conditional retur=
+n
+> with no effect
+>=20
+> Both branches of the check return the same value, so the check has no eff=
+ect.
+> Remove it and return the value directly.
+>=20
 > This is the result of running the Coccinelle script from
 > scripts/coccinelle/misc/cond_return_no_effect.cocci.
-> 
+>=20
 > Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
 > ---
->  drivers/media/i2c/mt9p031.c                          |  6 +-----
->  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
->  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
->  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
->  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
+>  drivers/net/ethernet/amazon/ena/ena_netdev.c          | 6 +-----
+>  drivers/net/ethernet/aquantia/atlantic/aq_macsec.c    | 6 +-----
+>  drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c   | 6 +-----
+>  drivers/net/ethernet/freescale/gianfar.c              | 6 +-----
+>  drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c    | 7 +------
+>  drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 6 +-----
+>  drivers/net/ethernet/renesas/rtsn.c                   | 7 +------
+>  7 files changed, 7 insertions(+), 37 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> index 5d05020a6d05..ea89619039d8 100644
+> --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> @@ -2303,11 +2303,7 @@ static int ena_open(struct net_device *netdev)
+>                 return rc;
+>         }
+>=20
+> -       rc =3D ena_up(adapter);
+> -       if (rc)
+> -               return rc;
+> -
+> -       return rc;
+> +       return ena_up(adapter);
+>  }
+>=20
+>  /* ena_close - Disables a network interface diff --git
 
-For rcar-csi2.c,
+Thank you for this patch.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
->  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
->  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
->  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
->  8 files changed, 9 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index d21510caf45a..2b09e8315c8e 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
->  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
->  	if (ret < 0)
->  		return ret;
-> -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
->  }
->  
->  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> index b0302dfc3278..7383341ec51d 100644
-> --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
->  static int __maybe_unused xisc_runtime_resume(struct device *dev)
->  {
->  	struct isc_device *isc = dev_get_drvdata(dev);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(isc->hclock);
-> -	if (ret)
-> -		return ret;
->  
-> -	return ret;
-> +	return clk_prepare_enable(isc->hclock);
->  }
->  
->  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> index 773f6548370a..872bd09656b1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
->  	if (ret)
->  		return ret;
->  
-> -	ret = pm_runtime_get_sync(pd_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return pm_runtime_get_sync(pd_dev);
->  }
->  
->  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
-> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> index be1cbd5cfe84..e88e66be4f6d 100644
-> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
->  	unsigned long max_freq = ULONG_MAX;
->  	struct device *dev = core->dev;
->  	struct dev_pm_opp *opp;
-> -	int ret = 0;
->  
->  	if (legacy_binding) {
->  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
-> @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
->  	}
->  
->  done:
-> -	ret = hfi_session_set_property(inst, ptype, &cu);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return hfi_session_set_property(inst, ptype, &cu);
->  }
->  
->  static int acquire_core(struct venus_inst *inst)
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 7305cc4a04cb..6635f5782175 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
->  			return ret;
->  	}
->  
-> -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
->  }
->  
->  /* -----------------------------------------------------------------------------
-> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> index 14eedd1ceb27..bb06847f3a63 100644
-> --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  	struct media_device *md = &camif->media_dev;
->  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
->  	unsigned int ip_rev = camif->variant->ip_revision;
-> -	int ret;
->  
->  	memset(md, 0, sizeof(*md));
->  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
-> @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  
->  	media_device_init(md);
->  
-> -	ret = v4l2_device_register(camif->dev, v4l2_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return v4l2_device_register(camif->dev, v4l2_dev);
->  }
->  
->  static void camif_clk_put(struct camif_dev *camif)
-> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> index 870ac3c8b085..6404eb74db32 100644
-> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2160_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
-> diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-> index a408fcc3a060..4988fbf5005e 100644
-> --- a/drivers/media/usb/gspca/jl2005bcd.c
-> +++ b/drivers/media/usb/gspca/jl2005bcd.c
-> @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
->  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
->  						    unsigned char value)
->  {
-> -	int retval;
->  	u8 instruction[2];
->  
->  	instruction[0] = reg;
->  	instruction[1] = value;
->  
-> -	retval = jl2005c_write2(gspca_dev, instruction);
-> -	if (retval < 0)
-> -			return retval;
-> -
-> -	return retval;
-> +	return jl2005c_write2(gspca_dev, instruction);
->  }
->  
->  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
-> -- 
-> 2.43.0
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+For ena_netdev.c:
+Reviewed-by: Arthur Kiyanovski <akiyano@amazon.com>
