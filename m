@@ -1,78 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430A8361950
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Jul 2026 21:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D77474250;
+	Fri, 24 Jul 2026 22:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784930340; cv=none; b=nBUg7sIIZqRz3SQPAtY6l3NG8vvj211BFCkLv9YSs8vRX0SlmpHFVD1MBXBcVWpOoZpD9g7NNPD4gaP99xG/lT7Ll/cv0LM7oIm0qnlhEUFNz/j2VNPBMnyxQYg4qG81SUpmM4sPWhh5sPoxXOrz458ZtUQh6Hg02+Avs9hb59I=
+	t=1784933166; cv=none; b=aDWiun7La8ORsztu+fP9L5kzqggsaUqV2Je0NTnZUPaX6h8AoG8MTOBNgOTGF4XpkvE9hcfnMh5RhUywn3bLEHmJD30meQQQS9EI+WzSzaVj/WPglobfJnAT4hG50g/+3KtrI9+kKdAyWqibwYh5fVyOeWe24CTKXysLo+f5Me8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784930340; c=relaxed/simple;
-	bh=jbduD0uqiKJjVviHpSJJPcgJv6I182OMv/2oKylqz4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WFvZzLHJKdNsbvLYV8HKPuctKynOQBwbQFpoyKoDc4VegiRHANOPxR5hqUa5g+Rur7lXdemzkwcLKSaPozps6nIPNFcha6IdR1GHDsrKdDetdBUXpPFWvrTuyRC9u99gPiZiQUHNeGeib6uBLH4FQRXMLJVBuV8EJAuFi52IXIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2UZ3jR3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784933166; c=relaxed/simple;
+	bh=e4Q33RAXNj4uJS5ISuZOeLCNZsLtSpbzoOGnqL3oT+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZjzU32uJFAqnHdZs6rxpxCnAOc3PsyvvqkRTK9cC3i5I4B4B3VntR4c2PZKDZ+MgtGNfLmCoki81i6KGOp+ZjUj2ijeR23BnJAFRZpmyuC1yVxx6IF+fTzArbkyP+9QcHvc30UGHSjP2tVneaJyJ56+itNiYja8GdMM6C30NcXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezEc5WAt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2UZ3jR3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 429CD1F00A3A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Jul 2026 21:58:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezEc5WAt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE7801F000E9;
+	Fri, 24 Jul 2026 22:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784930337;
-	bh=1SXGDGlq+o5WbMBzt39h8l+fqR+D5O7ucdIdNMzs8Mw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=b2UZ3jR30oeLq6HiZiLSeirV1WGzxJHkpXqUvEDTVI61ZoWYNiocnvBHn4qryF5rh
-	 vFjwITLvWcVX1I8IiFic2jCeCnsNxOyeFeM2Hk9+WcnB4CXuj6TngIryyax8xqW94z
-	 hN8+qGnRhMBc1SDSVX55lvV9rpDUFzRULpaE9gOmX6YJfpCV1Ki6fb6GDsuSm4huD4
-	 RPGEkpkUvO5PQCvMHeF1WCaYlxaQw2odqhz5FggEVUoxITKgi05CyDzcUcegXcKuST
-	 jnFmxWDF+eXU0mYiuA2nMmqPRcZEw4LzWPP7zcZ4qCNtWg6c5KPWImdK5z9FDQOcko
-	 isEO+oEx4SJSg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b013084dc2so712509e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Jul 2026 14:58:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoNZhjziOmjxS1Uip7zK97lH3V02FEqu3tpArh6wGLkMx8BU80YShQdv93W0Ze3gfq3s9flhvJpM4TF/YzdjzuLrw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAxW2hjNXm08cjFUfjLIC7ILQaT/lhavS/31SVpr3XZVOT3bX/
-	hLXXyxmFxHQhs3jIISRr+MaNB4kzH3CpgNQGe+Bj+cVEmuzzNSe5s44YGuznhDoJq0INLCOy1kh
-	az1eBLvJ6WW3IHSQM9N3/LyH5yV9YrUw=
-X-Received: by 2002:a19:5201:0:b0:5ae:a9ec:bb31 with SMTP id
- 2adb3069b0e04-5b2b2f761c3mr1347641e87.57.1784930336046; Fri, 24 Jul 2026
- 14:58:56 -0700 (PDT)
+	s=k20260515; t=1784933155;
+	bh=+Js/I4/QcWnb0zbX3gJ/7hcd5ufvSHyxR3nJSzCYliA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ezEc5WAtQmjF1QNZEepG+PeGNUSM1i0ETfgxrcmRp2dFbxVSIBg5Ug2rt2jfXSA/J
+	 /BJ8Q7Q8fJGb/Fy06yCqKiRQD6fukqeCaNl+KEz+xTWvMe74o/PDAZ1cOPXC2klD1l
+	 CdT2J1YMHvMXMZovWR/n65Im1ZcZLRVhAL52YiF55A8NElc5hGew7qh1bcT/QdhDYC
+	 8JConp1P0raofTTt2KatNTEbDBNoUctVg2yhjzeIDngIzInOwIGh7DAleTGovW1TFH
+	 VWi+Ae3CHAb/7wh4nSQnZkyyC4s2uq4Zv0pO0d6folIFc8CXTpntfDy+CznQO/i3SV
+	 k/19l+KNqw3Jg==
+From: Jakub Kicinski <kuba@kernel.org>
+To: bartosz.golaszewski@oss.qualcomm.com
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	vkoul@kernel.org,
+	peppe.cavallaro@st.com,
+	wens@kernel.org,
+	jernej.skrabec@gmail.com,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	shawnguo@kernel.org,
+	festevam@gmail.com,
+	jan.petrous@oss.nxp.com,
+	s32@nxp.com,
+	mohd.anwar@oss.qualcomm.com,
+	romain.gantois@bootlin.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mripard@kernel.org,
+	christophe.roullier@foss.st.com,
+	brgl@kernel.org,
+	radu@rendec.net,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	dfustini@tenstorrent.com,
+	linux-sunxi@lists.linux.dev,
+	linux-amlogic@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	bartosz.golaszewski@linaro.org
+Subject: Re: [PATCH net-next v13 02/10] dt-bindings: phy: document the serdes PHY on sa8255p
+Date: Fri, 24 Jul 2026 15:45:48 -0700
+Message-ID: <20260724224548.1648931-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260713-qcom-sa8255p-emac-v13-2-119f8699ef8e@oss.qualcomm.com>
+References: <20260713-qcom-sa8255p-emac-v13-2-119f8699ef8e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1784195346.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1784195346.git.geert+renesas@glider.be>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 24 Jul 2026 23:58:44 +0200
-X-Gmail-Original-Message-ID: <CAD++jLndokmpURBR7tnQNnfUk47jNxAALtPw+7xwPE02x8i2sg@mail.gmail.com>
-X-Gm-Features: AUfX_mzT0qoQKMWkUg0R280sa8lLo01CVEccx8noSN5rxau2wEI656wHzd0SaWY
-Message-ID: <CAD++jLndokmpURBR7tnQNnfUk47jNxAALtPw+7xwPE02x8i2sg@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v7.3
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 16, 2026 at 12:04=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+This is an AI-generated review of your patch. The human sending this
+email has considered the AI review valid, or at least plausible.
+---
+dt-bindings: phy: document the serdes PHY on sa8255p
 
-> The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
-82:
->
->   Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-pinctrl-for-v7.3-tag1
->
-> for you to fetch changes up to 5a653cedec948423fc8a0180c90b8d05c2239d9d:
->
->   pinctrl: renesas: rza2: Embed pins in the priv struct (2026-06-30 12:03=
-:56 +0200)
+This patch adds a YAML binding describing the SGMII/SerDes PHY present on
+Qualcomm sa8255p platforms, where the same hardware as on sa8775p rev3 is
+managed by firmware over SCMI.
 
-Pulled in!
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgmii-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgmii-phy.yaml
+> new file mode 100644
+> index 000000000000..9e846e381555
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sa8255p-dwmac-sgmii-phy.yaml
+> @@ -0,0 +1,50 @@
 
-Yours,
-Linus Walleij
+[ ... ]
+
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  power-domain-names:
+> +    maxItems: 1
+
+[Low]
+This isn't a bug, but would it be worth tightening the power-domain-names
+schema to constrain the actual string value, along the lines of:
+
+  power-domain-names:
+    items:
+      - const: serdes
+
+As written, only the number of entries is constrained and any arbitrary
+string would pass validation, whereas the example uses "serdes":
+
+    power-domains = <&scmi7_dvfs 0>;
+    power-domain-names = "serdes";
+
+Would matching the example with a const also help keep naming consistent
+across DTs using this binding?
+
+[ ... ]
+-- 
+pw-bot: cr
