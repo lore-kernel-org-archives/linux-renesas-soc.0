@@ -1,106 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829683E49E0
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2CA3EAC8D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Jul 2026 09:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784843475; cv=none; b=KFmveSshIMW/mpJfaNHtq/qeY4DQkblL73mYo1zLd++PrcFm9Iof8t5B7uUzNIVgEjLBVWvoGUeQ/5HKpZNy6oEvxNThPyg9gdOn6VN1xOAklE0bOmhaCm8N0LMdcIIwBzdFR2zJOLw3YmaZ3ltEmyEcKeS/qVky7a0gb31Pes8=
+	t=1784883856; cv=none; b=RSh8eZZ+rQOlcNoEXOmAhh0SaTuKoVrMFmK80pF0vQu2RrifdLoB3QEXj4cXZk44DW1UYUV2f5/uYHiMkSeQ8PMcSGnmk0mtwH+Q4B4n+AnnhvL9ZZMUi9NvAwoTx0T/Mz9DfkQsysb6FTkMnx6R8hYzoYa+rx67UDuCiKldIWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784843475; c=relaxed/simple;
-	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rT4s0pDjsL73XCkGsk3aw8DCvCOUKmTA6QvCQqG7hSxHERR//bb92WM50EIKEm3Yd0MrSBdxDBPsjHcU7XrcGIuDgMl7x5MBDnNtOiVa5Hd35waBjS/65ZiVEj/IhP40JqPpmejYpdZtywHphMVxImBpROVh8gADp1+4FPpcKLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS73xx6g; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784883856; c=relaxed/simple;
+	bh=ngZbu7qrPPUnt3qz5v/OxI6wrSNHJGvbM+okq4uzzqA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dmKSRc951tEN7dGavPpYKe6jTT6a8xPHE14toZGw3eK0PL6+CIIyPxYovLpz+zdMYRTnnVy9Sg1FjThZ3iFy+SgmJUu4qtqn97tP3XsT66UI3jaNTiU7oQZhwELFGz4phGvIE9C4PCv8FIZ8AtF02CufGVG0wkNFhayeb3fhIms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=k4pSPGX/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS73xx6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C451F00ACF
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784843474;
-	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PS73xx6grw1a1ccZiB7M0JW4YjHIFkESGRljs8NtMG2djGErIx/5mvP/xSo1f8CC6
-	 lxzjRoO1yRby/r00gNR0TKtaLe2KidkY509VHt1m9GL8YNJO65vl+7yow15J+wcbkn
-	 LyLkNvwJ2Yo7sxENJtQzNdA0tT35xFXiklXzQwMqailG6ulIZ7rFXrh7yPZXjfwcTq
-	 w/lM1/RrMgIrXi3JJoA84lHqxmFiXlx/JnONMnfwThTVhbrPub38+APIGIfbeZGwlD
-	 uE8T+RJB3q3l9KJpPJBpj8/k6hgX2XdGiMLPRIuH4TOI2D9h3HZEl50idyw5+nN/Hn
-	 dUklT+Iyl4lMw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b15dcaca31so1210894e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jul 2026 14:51:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrL4nCd0TQ98cJdeiWZDQ0sD3QymSoSYvISHKX1Wi2JMspfidvpdguJFmxY92AzLScI6ZOTGx0A6eZopI5iXT7nIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2/J2MN9uC7OkARkSl1MKU+BEYrWJXXKNV0uzvu+rgeTftjwv3
-	1n5403No0cnUjp+nEXQyL7azYa/OUIYn67TIbe6w8PCrh2EMldm57whoI5HQ5rp8//2ozHqGkKc
-	V5tuYPnn20WVi/dZySEpZ81fvwQPgx4E=
-X-Received: by 2002:ac2:44cc:0:b0:5b0:bc3:dc11 with SMTP id
- 2adb3069b0e04-5b2b2e59e63mr664600e87.22.1784843472973; Thu, 23 Jul 2026
- 14:51:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="k4pSPGX/"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-495590dde14so2527515e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Jul 2026 02:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1784883851; x=1785488651; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=Q/Jg1vL6WCoKWmNIVSdaiN+VbT2b9Zn9L0z1UYJ+buU=;
+        b=k4pSPGX/obxj3O9ZiFfQsR60IbBTGOAHi5mRPxyWMZWLU77g/TK2nb3BirBJbOKJLw
+         q7jGhqSIdS7I23L2rPBztLr+XlLT6fGy8kCai+jM3f4//CS7SANpG38bevXnKsSCAVrY
+         1Fcp/lUfNwjpLR84R6Z6JUQOIV/AMGbf7YhnBVZBYl8Mj5+97RUTtENgyo0mUNdcQQzc
+         YLujdHuJ6WYyPWqkqbRHiHP26MDEKMIlUGj17EuglJwSSnhUQ3HAEto8z9iJ3EqvoiCo
+         00snIpKl5CYIsIr+pCY17LHCoZjJDZVCwldK4WhpQ1ScHwAOTGeGz0pba3H5eE2EvZAL
+         J5rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784883851; x=1785488651;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Q/Jg1vL6WCoKWmNIVSdaiN+VbT2b9Zn9L0z1UYJ+buU=;
+        b=gyiktBlAYqeFq+RMMNNzI6MyZfky7LKN5gRp2GBA/JjDwaIUWw7p4L3PsoDnJt9lYn
+         ozCsLw9B4mP42wJpSrT9v/n9vudo9hQI7GX/stwRnS1y9EXEHc7gn9Izpbgo0ShmmkZI
+         NmsVMqaBsTn+glVfBwzOMJJDcOoH5x1vMlNF1sPD2JNfcfbgDkBkec4F++7EI1EMLiT4
+         buzoDQl848szTjFmzlQTFTyqerXktegz/OgvpVHTOdHtNg4xsHI9JK5YX7m5ylSKrJV0
+         o2K9bxP/a/Y74yQmWm7+4PVWaMbJrwY+/HrPhzACXYgIh3R8Bp4xnwo2s8cfA4HwVrXV
+         VymQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rro0jCbExP4IJA71Q5bMd4Bi2mC9H65Rj6uiyJa3pNGif1Xn+6J1jpDHAwtijTyH0UT8wP87oqjsw2lZPfAxYyTlA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzagV9VfonCcD9pxHJYVASOs4iO+yN2qG9+ybjeqlwpO7mtLOFb
+	XwyEMD6++0TwtQVs+2B8VSf7yREKszzpQ9dm6TQQw2SA/t0fdD/JsFAbe58Nz0bEkRk=
+X-Gm-Gg: AR+sD127FtcmNpRQR6riCOeaXf4Bw5JX0O9BNHqN28OUg98NifDV0/R9nNPI9ZCOUnq
+	ISbVbaPHu4GGHKBADEpYhuwfs1EW1aEBcWXBD+GRS1Idt/Hb71FZgEVl9ef94HQtwZlfQAeLKae
+	6fZ9sf6sfRCPcSsx66kJ0tKRwWEdP8Rjq8aWSP0m4wz9E6ZfQUP6vplr0o/fHWchk6gPcSbeq2/
+	uqOgYxwLdBcKNg4hPEdYmR2TOmypZqGVQc0CuKEa/ZaC+ctbp31JFb+E/YKvjURWlouTh1PNLUW
+	Edt/wzScTmsuggNN05wXbBVFpizKSiI9sAuohV6TkSzr1FvDKhq2hGxeonH4BkLiRUglSc+hY+Y
+	1AQ9YznYEQH+ibjvi+ISP+U6rx7ZRRM7uDWHR8HHYVc138aw/G2VJY3hwEAVtq0Pzfm3NCwBeJP
+	n2BzYqH7hzTKU=
+X-Received: by 2002:a05:600c:6d04:b0:495:52dc:73a9 with SMTP id 5b1f17b1804b1-49573cc6d0emr50329905e9.11.1784883850753;
+        Fri, 24 Jul 2026 02:04:10 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e584:93af:f3aa:2c19])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4957af78a02sm52350385e9.7.2026.07.24.02.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2026 02:04:10 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2 0/7] clk: clean-up simple provider misuse of the
+ consumer API
+Date: Fri, 24 Jul 2026 11:03:51 +0200
+Message-Id: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
- <akyJOW79W0xvI-P9@google.com> <CAD++jL=Wx=mHORGDU_=PgGrOCdTSVes63jgSL2xQX+rCE2uaMw@mail.gmail.com>
- <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
-In-Reply-To: <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 23 Jul 2026 23:51:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
-X-Gm-Features: AUfX_mw7o27tts3KuJc2fCs-iddo5AVh_y2fbuI1x_FFI7tnJrpKdy_91LnZLqw
-Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] rsk7203: switch to using static device property,
- drop legacy gpio API
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rich Felker <dalias@libc.org>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHcqY2oC/42NQQ6CMBBFr0K6dkypWJCV9zAsyjDKKFDSYiMh3
+ N2CF3D5fv7/bxGeHJMXZbIIR4E92yGCOiQCWzM8CLiJLJRUWubqBNi9YHQ2cEMOPPdjRzEjM4A
+ pmjMiZoRKirgfHd35s3/fqh/7d/0knLbDrdGyn6ybd3lIt94/npBCChIvWhcqk5nOr7WZO64dH
+ dH2olrX9Qs5b7Ao1wAAAA==
+X-Change-ID: 20260723-clk-provider-simple-clean-a8d5ccc4ec20
+To: Andrew Lunn <andrew@lunn.ch>, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Heiko Stuebner <heiko@sntech.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2761; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=ngZbu7qrPPUnt3qz5v/OxI6wrSNHJGvbM+okq4uzzqA=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBqYyp6PPnWrA0DSJ4UJ6CstsYSqMPhVc8i6ZcbD
+ Bp8my0uaVqJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCamMqegAKCRDm/A8cN/La
+ hYzUEACbbA9uvxujp8Cmfa3PzoTZ5cGEuPTX8RpG+NIB9lOpZWMoa1fR+25/AnbklP6EnRNPt+u
+ mo8vWsoNfpYFAb8+oigyEE+UnaDdY2RNM2IpaXdUHdlmUXX36sAkdpuw9PlrKiuWdJALla4BjfA
+ vpi9rQ+FceaCxa6CVs5+w+RXlougTYlBPouzG+njfSj1WEYb5/rpTwD2c48q0A0SjiOXbL/3T1s
+ uDYBpb2rN7LYB2YvxshiaLkaEOpb+5QGIRDHwHyoHwrn8E1hIvyrIo1HDtT8C+fm1rbtfce0iEH
+ 2q1UNJD27j9cnfxi+9ShMnnkhlIRhbpMG8V5eNDlp9zxpdzl/J31H1H0FUDK2kg9Pe/hZRt88y6
+ xDgnulPPOR3YwraARkMAe0tmhYidPptJsBhVv59yAiZkZTgzX49HLrHFNazof0ZS250Sj5AtsT7
+ yHIwPN8P+O7YLcwV5nqpad5lXpDi3YOJSqhJRlB36fglCpGY7+MMJap5EsulmSGu323+2LqsIXk
+ b4vgUzy99hr4oRBEh/cmQjNPnN4/4l4TQZaFmeNm1ysWPv/eQ9PXyFexmj6AZwzC1ue6qALz4vA
+ qsjEHdWeIoMJKf6sFWEIgUm42wjc0Q3Dr8dWMkUFSCdFPc09zJkJXNtt20TC8kc3Qg9Z/vEkbiH
+ rEW8+SG6UGURodA==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Sat, Jul 11, 2026 at 7:15=E2=80=AFAM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
+Clock provider should not be using the consumer interface.
+In other words, a provider should not be dealing with struct clk.
 
-> I'm sorry, but I wasn't aware that this was an urgent patch. I'm doing th=
-is
-> as a hobbyist and I'm working on my own pace as I cannot always spend tim=
-e
-> working on kernel maintenance.
+This change targets occurrences for which the provider uses the
+consumer interface and corresponding clk_hw interface exist:
+* __clk_get_name() -> clk_hw_get_name()
+* __clk_is_enabled() -> clk_hw_is_enabled()
+* clk_get_rate() -> clk_hw_get_rate()
 
-That's OK, I'm helping out by rerviewing and at times like this
-also merging code.
+---
+Changes in v2:
+- Change split by platform for the different maitainers to pick it up
+- Link to v1: https://patch.msgid.link/20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com
 
-> What I don't understand, why did you choose to use an immutable tree? Is =
-there
-> really a need for such an escalation? I find that a bit rude.
+To: Andrew Lunn <andrew@lunn.ch>
+To: Gregory Clement <gregory.clement@bootlin.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+To: Jonathan Hunter <jonathanh@nvidia.com>
+To: Tero Kristo <kristo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-I think you don't understand what an immutable branch is.
+---
+Jerome Brunet (7):
+      clk: mvebu: clean-up simple provider misuse of the consumer API
+      clk: qcom: clean-up simple provider misuse of the consumer API
+      clk: renesas: clean-up simple provider misuse of the consumer API
+      clk: rockchip: clean-up simple provider misuse of the consumer API
+      clk: st: clean-up simple provider misuse of the consumer API
+      clk: tegra: clean-up simple provider misuse of the consumer API
+      clk: ti: clean-up simple provider misuse of the consumer API
 
-An immutable branch is something offerered to other maintainers
-so they can pull it to their trees so the patches will share the same
-commit chain and SHA checksum in both trees. In this case, this
-is offered to the Super-H maintainer, I guess you?
+ drivers/clk/mvebu/clk-cpu.c            |  2 +-
+ drivers/clk/qcom/clk-hfpll.c           |  4 ++--
+ drivers/clk/qcom/clk-krait.c           |  2 +-
+ drivers/clk/qcom/clk-rcg.c             |  4 ++--
+ drivers/clk/qcom/clk-rcg2.c            |  2 +-
+ drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
+ drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
+ drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
+ drivers/clk/tegra/clk-tegra210.c       |  2 +-
+ drivers/clk/ti/clockdomain.c           |  2 +-
+ 10 files changed, 32 insertions(+), 32 deletions(-)
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260723-clk-provider-simple-clean-a8d5ccc4ec20
 
-In this case the patches touches both sh and pinctrl and the two
-subsystems should ideally use an immutable branch to share
-the commits.
+Best regards,
+--  
+Jerome
 
-The word "immutable" in immutable branch does not mean it can't
-be dropped or reverted...
-
-If you see a technical problem with the code or really want to queue
-it *only* in the sh tree I can revert it (or maybe just drop it) from the
-pinctrl tree.
-
-If not, you can git pull it in to get the same patches that are
-already in the pinctrl tree, this is customary, we do it all the time.
-
-git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl=
-.git
-ib-rsk7204
-
-Yours,
-Linus Walleij
