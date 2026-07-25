@@ -1,61 +1,63 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF1C233937
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 12:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2823395D
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 12:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784982879; cv=none; b=ovVkn5ZsAjP/UI607Hv4VrBgTxIOm8/pxj6EL6Wck2XeEgov9RPQnN0j4bG6GidrxVhEZECRgXvRPRUMzVs3K+xRvoa2W7Td0bRPycTkx7c8nEoEqMnvkpgtv6btHsy0/wMTmlqCPMP/GOkMZa/MzChEZ7r7nAM7mV/8PfKeZpk=
+	t=1784982880; cv=none; b=aKEqYWqbD6ygExtaFw/ajUlqsjcAhUo9xfBQag9+m9g2i+osqtjuzij7musChM/sw6mI1BnftMluIOx4BgiAl9j+7/RxgXiMe89q8Xwt/2rMqL4hjUsL8NhhMb9rTE4Q/dDmnTgQoi5jCurXahSb3sNQTiFM0OFu7tQaSTt7n+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784982879; c=relaxed/simple;
-	bh=yIpki0hQpowpOhTXpYq5RL//PKIQdGZb7mZ4CBOQZhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KK81HCiSltlraytROqH0LABmmKR+v+po9kP2Q+aqfMu6IfpjnHinHLbB73ZELTwtE5uefbkRK24vDjhX50GtnWaoYRFQWYnfRI4QrpCBLlVWLXXmQlpikYslNOE8adAmgEyuM2kRS8NZs3u3HgzJkmWILBEcPHbhAHIIJb729Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rYtVJAWt; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1784982880; c=relaxed/simple;
+	bh=McVAKu6mFbuD3dEGTUIM/YOHJb7QWjMpAqBZOK4Ie/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ff1uk7dh9dX0PiFjJJeJLPlLoN78MhTHEKQNIx8wK/2HUyL2xe7AwB2PFGYIRS8m60TlPxIIbs8kEm3zwVLQQ7zBQHIRSAzWFZw4TYJ7FAYH6x11IGGxtcEjSss+s55j7jWHQRF5SZN1IRMFydmoHa8upQVZG01oxqlob6ednSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRSVefEW; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rYtVJAWt"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-495635a85d2so10871805e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 05:34:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRSVefEW"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49550ec592cso14846545e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 05:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784982876; x=1785587676; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9yh7k6NAJzwLtBw+kNy6gQ7yMKMbL+s8UKzMqMWiOlQ=;
-        b=rYtVJAWtBeFZYXOybzbs+f3C0jFRsnxZy6HRNGy8+rVLQv6aRAl7mggZIu6RHhxKCx
-         a0cDAA4A/GIOC4UOFFqs1TGTBIb8rqjyWl6MR3F9uiMDnghTtP+VgofR4IdZ7fXLuym7
-         +51yYCnAUDWrJ+Ccx6vcWnMods2qjvI0eXQjkeGW1FAX7l2SwITgfpml6w+sPV8Q25bQ
-         i7TjOWDPskCmCSpHDgBN90BHRIdLBDPp6Xw5K4EJNPfAFs9Nln2NuaGPHcIJZ2MtbN3K
-         9KFczspzzDxbmUPBv4B2nQ/EXgBzzVg2dJ2wn+B8W8SF4WeVCSJFtEYvv328x0cJWrq4
-         +/Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784982876; x=1785587676;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1784982877; x=1785587677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9yh7k6NAJzwLtBw+kNy6gQ7yMKMbL+s8UKzMqMWiOlQ=;
-        b=p2pc9XDUHVz9Ov8SSlMeQjcnBhwJlr7Ut8xPTPmX/jWrVNnnuzTHgTeGpDb6GYtuLq
-         dCNh5g9YZvPJhh20XCAlk81puKPLvGYL0jdXJ/q/9H9JHwgTsl4en180X9OLRwSha5kQ
-         QL6ccj5ICchRJ5VE5TLTI4+deoLrByYX8b6Gp8EZlVqXrco1IyOmkoVHG7TpkBPJRqjH
-         IJH6nh1W++SNCLKgAWm9fQ1kZ47pamdJ0rMTz3yDDTYcuj+i0rfiUAT3PRPF11qzjFo/
-         za2dMu1840q/BikcYrKETaPWlTzraPGBvxeCsDYXn+BPxRGV4pEUft5mtwc5nb0L201Q
-         LaJg==
-X-Forwarded-Encrypted: i=1; AHgh+Rq/Zpg7lcoBWavlOwr7Ek/joknYBTnzUpWtTXm0KQYXu2Y2gk7pw3TbZpoXvWKqiUnvJQhCiLBRX76BkcR2G3gjLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMnZp7rcTzh/nf6q8hVAn+4i5hDJ8keak5rvU7dm503YiSNRlm
-	ckPAFhA93vyHXCwJmv5xyQncnX7vd9IlCN/rX0j0L/8JtyiGyoNWzG/U
-X-Gm-Gg: AR+sD10TulZ9B7FmP2TY0iitLQAhct9w3uD8Ojt0haipgBrwoo+6QF0iobZXhbTHD2w
-	6gY3wNeitXY9q0gjqeaMhqH4ZxojFAt2rIQecxLRYlpcHc35BSre6AcQu7y4pgXqgcyLReuccfA
-	tqvvW5YcQc+P8L/ykl+6XQKcL4ltD4ZaAPh2GLOPbNKb0W0px3FNMDdPLOT/i+TP/1mtyk5Tw2W
-	iyAEoKovWYAbNXelY/IgGmTMBUcYycLF7k+c1tD5qJWgICDd3pp9LlaTQB2wydRX9le3XD1DA5a
-	v8K39VouYBsNXYnS996QibVN0qg4WR1G88S5UZ1V82JrZAtpRiW4t+xoHV+Wfwg9BM0G3otXRNZ
-	bXhpwffWSk4rSKs/ftXkZZgcECIxW7StiAUBef7usIqq9MC3r4nW1l9fkUZOnaqxqR/chKNpJXV
-	W/C/CwGrLPx0+MQ3F8je164MCE0h0=
-X-Received: by 2002:a05:600c:4683:b0:495:6274:56c2 with SMTP id 5b1f17b1804b1-496b56bbc9dmr26029325e9.2.1784982875693;
-        Sat, 25 Jul 2026 05:34:35 -0700 (PDT)
+        bh=AsAnK5DezEs/ebRFMp93c7IyPTY5467fpvAwog8Ua7U=;
+        b=BRSVefEWvitm2u+duTSeYQ36g3eZyMlqg55C5rQDDilKjkNgR3zYjwTyWlaviZdERm
+         F/vqA3lOiQ9YJo6SuqaGa7nLdYlLwF5eieELKigZrnxt6PWvlzNHKIrs5JBaM7vkLZEn
+         rYxeiaNh9+yaMmBs4DaJ05qN2Jvkhqq5sU5UrmV7D8flk9gJTh+4meYNleF0N6WI4aHa
+         AWTB1u8mpBZE8bXUaIObTJdogo8HGc/O21gcsNKNnC0+AQVtmBfBas5Abju1tac5FTcA
+         ymLeHPdvdwyJijOkcO3IdOpIJawPPUkISOt92WPPKIfwrhpi7bMa4jS3XxoTJCTR2e6H
+         cP3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784982877; x=1785587677;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AsAnK5DezEs/ebRFMp93c7IyPTY5467fpvAwog8Ua7U=;
+        b=EYOd5LOO8xpzmENtmtU7rBB3QXhGWdgvkNxbAPJ8HjtVLRsxhXHpDlquEIWPXpvs/9
+         NiKoUBJtB52QerKEp8B0c5sSQwGFig0DgWaiZCxadzi1LMPHUIQdlM/k5lgzZXkTnFpH
+         uxvAVPhyZ4z/su8JvUm8p72V6isEivDPzYjgnwd2toP/9e4Ckmtk9dwKG+epg/CeZNk9
+         XhR2AYnxmaWCIaA4ZzrnInLqaQXEvNlMTQl5fd4eCMLr/udsSPENnZmeyytAt7YnRcwK
+         5oOU8oKGgRhR/20IarHM3ipHeEi4HRO/ElLoXD7YBHhnFr3wT9IkzzYRt//irLDvOXmO
+         Uv1g==
+X-Forwarded-Encrypted: i=1; AHgh+RoM6l6DzvH7GAWlfpd6YpliecIDpktFrZoP4GZDg7vWOGV/K8byq9qQ3/BwuMu/6jGR/HJfou94V3Tjgw9lrUomrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkpKAYPFi3kItawzGtGGXEdLY9HGxKgmgC/vC0b57egaws4pKY
+	jhuwfugS5iKOshuh71tL4z1vpn6WDsfhEMQ4/U5LexHTYzb8xcQ5xeSR
+X-Gm-Gg: AR+sD13WRi95TjgeQjIc4wESJcQfspIyi/UIntB71kmRj1AsKbENA/CUQ+TPY8Lrn4f
+	UbMnh35mAWfGaKR3sr2EDiKNSNrZ1xhPJJokQG1fqhC2+vk/X7oFZbL0amOpvRttTUekbJX6dYw
+	0opPSqqsdabtwapUFRvdAcRL4LILD5P+cJ+QSeE/us/N3sx0xUseDRaczqkiG1u1ZMf68WCPb5b
+	CnzSuNoC4qpB683TW3mHe31v+SMFXRVrD0jqwn11wX2rsPzM6q3vCFlksUTb+MPfqqQItqkBDPz
+	MrisSsPHw1ffkWF4SBO7g4HQRFoJ/1ulgXhNw9VhSUUDywL7SloYlCwjaW47W8ySxG3EuOv+0CK
+	SgUIdd4Kp/mwsGOWkp598bQsGKN6qdz7o+yNzQ54iJ4iEIRDeagoDLLoRX0vICXTGJvunsxAc0g
+	niaPGAGdzM9CjFpIt+86v26IhBYRn54JIcxEyhAw==
+X-Received: by 2002:a05:600c:1f94:b0:493:b698:9247 with SMTP id 5b1f17b1804b1-496b5c7d3d4mr27270215e9.14.1784982876598;
+        Sat, 25 Jul 2026 05:34:36 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:222f:1bcc:b186:8220])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-496b4858e86sm44563295e9.1.2026.07.25.05.34.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-496b4858e86sm44563295e9.1.2026.07.25.05.34.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jul 2026 05:34:35 -0700 (PDT)
+        Sat, 25 Jul 2026 05:34:36 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -69,13 +71,14 @@ To: Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/3] soc: renesas: rz-sysc: Add RZ/G3L PWRRDY power sequencing support
-Date: Sat, 25 Jul 2026 13:34:27 +0100
-Message-ID: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/3] soc: renesas: rz-sysc: Register auxiliary device for PWRRDY power sequencer
+Date: Sat, 25 Jul 2026 13:34:28 +0100
+Message-ID: <20260725123433.162348-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
+References: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -86,55 +89,119 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi all,
+Some RZ SoCs (e.g. RZ/G3L) have a PWRRDY register that is controlled
+through a power sequencer rather than directly by the SYSC driver.
 
-Some RZ SoCs (e.g. RZ/G3L) have a PWRRDY register that signals power
-readiness for various IPs (USB, DSI, CSI, etc.) to their respective
-controllers. This register is part of the SYSC IP. Add a dedicated
-power sequencing driver to handle these signals.
+Add a pwrrdy_pwrseq flag to struct rz_sysc_soc_id_init_data to mark
+SoCs with this property, and set it for RZ/G3L. When set,
+rz_sysc_probe() registers a "pwrseq-pwrrdy" auxiliary device so a
+dedicated driver can handle the PWRRDY sequencing, with automatic
+teardown via devm_add_action_or_reset().
 
-This series adds that support:
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/soc/renesas/r9a08g046-sysc.c |  1 +
+ drivers/soc/renesas/rz-sysc.c        | 40 ++++++++++++++++++++++++++++
+ drivers/soc/renesas/rz-sysc.h        |  2 ++
+ 3 files changed, 43 insertions(+)
 
-- Patch 1 adds a pwrrdy_pwrseq flag to struct rz_sysc_soc_id_init_data,
-  sets it for RZ/G3L, and has the SYSC driver register a
-  "pwrseq-pwrrdy" auxiliary device when the flag is set, so a
-  dedicated driver can bind to it and handle the sequencing.
-
-- Patch 2 adds that dedicated driver, pwrseq-renesas-pwrrdy, which
-  binds to the auxiliary device exposed by patch 1 and exposes
-  usb-pwrrdy, dsi-pwrrdy, and csi-pwrrdy pwrseq targets, toggling the
-  appropriate bits in the SYS_PWRRDY_N register via the parent SYSC
-  driver's regmap.
-
-- Patch 3 selects POWER_SEQUENCING_RENESAS_PWRRDY from
-  SYSC_R9A08G046 so the new driver is built whenever RZ/G3L SYSC
-  support is enabled.
-  
-This series is based on proposal for power sequence driver [1]
-for USB PWRRDY signal and DSI PWRRDY signal[2].
-
-I will send USB/DSI/CSI driver patches based on this series soon.
+diff --git a/drivers/soc/renesas/r9a08g046-sysc.c b/drivers/soc/renesas/r9a08g046-sysc.c
+index 90db9d383539..cd129c727461 100644
+--- a/drivers/soc/renesas/r9a08g046-sysc.c
++++ b/drivers/soc/renesas/r9a08g046-sysc.c
+@@ -76,6 +76,7 @@ static const struct rz_sysc_soc_id_init_data rzg3l_sysc_soc_id_init_data __initc
+ 	.devid_offset = 0xa04,
+ 	.revision_mask = GENMASK(31, 28),
+ 	.specific_id_mask = GENMASK(27, 0),
++	.pwrrdy_pwrseq = true,
+ };
  
- [1] https://lore.kernel.org/all/CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com/ 
- [2] https://lore.kernel.org/all/20260704093433.273672-1-biju.das.jz@bp.renesas.com/T/#mb6f18d8fa9a194fc0a15db5f4938df420da7b6b5
-
-Biju Das (3):
-  soc: renesas: rz-sysc: Register auxiliary device for PWRRDY power
-    sequencer
-  power: sequencing: Add Renesas RZ/G3L Power Ready driver
-  soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for
-    R9A08G046
-
- drivers/power/sequencing/Kconfig              |   8 +
- drivers/power/sequencing/Makefile             |   1 +
- .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 141 ++++++++++++++++++
- drivers/soc/renesas/Kconfig                   |   1 +
- drivers/soc/renesas/r9a08g046-sysc.c          |   1 +
- drivers/soc/renesas/rz-sysc.c                 |  40 +++++
- drivers/soc/renesas/rz-sysc.h                 |   2 +
- 7 files changed, 194 insertions(+)
- create mode 100644 drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-
+ const struct rz_sysc_init_data rzg3l_sysc_init_data __initconst = {
+diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+index 161e8c38eea6..ea49ca51e740 100644
+--- a/drivers/soc/renesas/rz-sysc.c
++++ b/drivers/soc/renesas/rz-sysc.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2024 Renesas Electronics Corp.
+  */
+ 
++#include <linux/auxiliary_bus.h>
+ #include <linux/bitfield.h>
+ #include <linux/cleanup.h>
+ #include <linux/io.h>
+@@ -84,6 +85,41 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
+ 	return 0;
+ }
+ 
++static void rz_sysc_pwrrdy_pwrseq_unregister_adev(void *adev)
++{
++	auxiliary_device_delete(adev);
++	auxiliary_device_uninit(adev);
++}
++
++static int rz_sysc_pwrrdy_pwrseq_init(struct device *dev, const struct rz_sysc_init_data *data)
++{
++	const struct rz_sysc_soc_id_init_data *soc_data = data->soc_id_init_data;
++	struct auxiliary_device *adev;
++	int ret;
++
++	if (!soc_data->pwrrdy_pwrseq)
++		return 0;
++
++	adev = devm_kzalloc(dev, sizeof(*adev), GFP_KERNEL);
++	if (!adev)
++		return -ENOMEM;
++
++	adev->name = "pwrseq-pwrrdy";
++	adev->dev.parent = dev;
++
++	ret = auxiliary_device_init(adev);
++	if (ret)
++		return ret;
++
++	ret = auxiliary_device_add(adev);
++	if (ret) {
++		auxiliary_device_uninit(adev);
++		return ret;
++	}
++
++	return devm_add_action_or_reset(dev, rz_sysc_pwrrdy_pwrseq_unregister_adev, adev);
++}
++
+ static const struct of_device_id rz_sysc_match[] = {
+ #ifdef CONFIG_SYSC_R9A08G045
+ 	{ .compatible = "renesas,r9a08g045-sysc", .data = &rzg3s_sysc_init_data },
+@@ -149,6 +185,10 @@ static int rz_sysc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
++	ret = rz_sysc_pwrrdy_pwrseq_init(dev, match->data);
++	if (ret)
++		return ret;
++
+ 	return of_syscon_register_regmap(dev->of_node, regmap);
+ }
+ 
+diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
+index 921ee0d26c47..e55f3258d703 100644
+--- a/drivers/soc/renesas/rz-sysc.h
++++ b/drivers/soc/renesas/rz-sysc.h
+@@ -20,6 +20,7 @@
+  * @revision_mask: SYSC SoC ID revision mask
+  * @specific_id_mask: SYSC SoC ID specific ID mask
+  * @print_id: print SoC-specific extended device identification
++ * @pwrrdy_pwrseq: has pwrrdy register controlled through power sequencer
+  */
+ struct rz_sysc_soc_id_init_data {
+ 	const char * const family;
+@@ -29,6 +30,7 @@ struct rz_sysc_soc_id_init_data {
+ 	u32 specific_id_mask;
+ 	void (*print_id)(struct device *dev, void __iomem *sysc_base,
+ 			 struct soc_device_attribute *soc_dev_attr);
++	bool pwrrdy_pwrseq;
+ };
+ 
+ /**
 -- 
 2.43.0
 
