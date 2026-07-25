@@ -1,86 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67664746A3;
-	Fri, 24 Jul 2026 22:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF1C233937
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 12:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784933181; cv=none; b=HxO16wRuO/tFhEDsJd2YQllqAXS8/IJ0CgOB+d3zn73X74QxBZeX3a4XLoSw0JdFssDf4tF7XDWbtHrlzBeZhlNFsUPszcn72W5iCvi1kF5PiFLwEHqKZtK2uuskD6o8AaKSLW2bZXgIPy+MGuc2CtxQiJZSZw0NCKiWRdh+SjE=
+	t=1784982879; cv=none; b=ovVkn5ZsAjP/UI607Hv4VrBgTxIOm8/pxj6EL6Wck2XeEgov9RPQnN0j4bG6GidrxVhEZECRgXvRPRUMzVs3K+xRvoa2W7Td0bRPycTkx7c8nEoEqMnvkpgtv6btHsy0/wMTmlqCPMP/GOkMZa/MzChEZ7r7nAM7mV/8PfKeZpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784933181; c=relaxed/simple;
-	bh=5h3/hVOTJiRIciAZzBSRPdsrEV/CPJS70Btcat84KYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lhugCXhDuV/r1NTLFYNoIz0ujOQz+sp8Ul8Q+zhwIerGEBJ1QAxCf+WSv91KdeXI2IJ5CtmhuO1xSwXc0qI4gqWxDCFZ/CqsH4UVDxLnSfpHTvQRliAmd3Q2fHZGBUMy5aK3r8X5MdVWhsAWL81R3vFDst0VnnNdV4B+Xq/WFiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNutic3y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784982879; c=relaxed/simple;
+	bh=yIpki0hQpowpOhTXpYq5RL//PKIQdGZb7mZ4CBOQZhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KK81HCiSltlraytROqH0LABmmKR+v+po9kP2Q+aqfMu6IfpjnHinHLbB73ZELTwtE5uefbkRK24vDjhX50GtnWaoYRFQWYnfRI4QrpCBLlVWLXXmQlpikYslNOE8adAmgEyuM2kRS8NZs3u3HgzJkmWILBEcPHbhAHIIJb729Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rYtVJAWt; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNutic3y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7F21F00AC4;
-	Fri, 24 Jul 2026 22:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784933164;
-	bh=K125TY74W87vhbOlzJ/FpCa02u74B+oM2H9sVUMeeOo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DNutic3y4iV6+eyYcy4rwQNwLeQzrjFdAqTJiqrBOyOEWptY1tUjsPrZCB7a+2Rce
-	 7WKRN2fpfQ1BH4OSNlv8Ygz7piMxGyuqiTFOB8siO1bB/P+YFJYYg/dEVTSiGcUTE8
-	 vnkofqb9758AL8BRwmY7SqDav0yzD69GE//A7v8wrhXIdBukMFDnjNUXOlaQv8a7bg
-	 IIDvyg+zxVPf1kHcdIsUIza3Z+0MpbDf5Hv1uMxPb9oZ07wF+23iVfKnQBx42N2MsD
-	 63lPpGj83DQB5USxWPX/mQEXEEV6YfJSeeDPKCHeiIPK+rS8ur8iXo7sySJCthZoVE
-	 H0eTUUDBYX25Q==
-From: Jakub Kicinski <kuba@kernel.org>
-To: bartosz.golaszewski@oss.qualcomm.com
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	vkoul@kernel.org,
-	peppe.cavallaro@st.com,
-	wens@kernel.org,
-	jernej.skrabec@gmail.com,
-	neil.armstrong@linaro.org,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	shawnguo@kernel.org,
-	festevam@gmail.com,
-	jan.petrous@oss.nxp.com,
-	s32@nxp.com,
-	mohd.anwar@oss.qualcomm.com,
-	romain.gantois@bootlin.com,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mripard@kernel.org,
-	christophe.roullier@foss.st.com,
-	brgl@kernel.org,
-	radu@rendec.net,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	dfustini@tenstorrent.com,
-	linux-sunxi@lists.linux.dev,
-	linux-amlogic@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	imx@lists.linux.dev,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rYtVJAWt"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-495635a85d2so10871805e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Jul 2026 05:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784982876; x=1785587676; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=9yh7k6NAJzwLtBw+kNy6gQ7yMKMbL+s8UKzMqMWiOlQ=;
+        b=rYtVJAWtBeFZYXOybzbs+f3C0jFRsnxZy6HRNGy8+rVLQv6aRAl7mggZIu6RHhxKCx
+         a0cDAA4A/GIOC4UOFFqs1TGTBIb8rqjyWl6MR3F9uiMDnghTtP+VgofR4IdZ7fXLuym7
+         +51yYCnAUDWrJ+Ccx6vcWnMods2qjvI0eXQjkeGW1FAX7l2SwITgfpml6w+sPV8Q25bQ
+         i7TjOWDPskCmCSpHDgBN90BHRIdLBDPp6Xw5K4EJNPfAFs9Nln2NuaGPHcIJZ2MtbN3K
+         9KFczspzzDxbmUPBv4B2nQ/EXgBzzVg2dJ2wn+B8W8SF4WeVCSJFtEYvv328x0cJWrq4
+         +/Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784982876; x=1785587676;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9yh7k6NAJzwLtBw+kNy6gQ7yMKMbL+s8UKzMqMWiOlQ=;
+        b=p2pc9XDUHVz9Ov8SSlMeQjcnBhwJlr7Ut8xPTPmX/jWrVNnnuzTHgTeGpDb6GYtuLq
+         dCNh5g9YZvPJhh20XCAlk81puKPLvGYL0jdXJ/q/9H9JHwgTsl4en180X9OLRwSha5kQ
+         QL6ccj5ICchRJ5VE5TLTI4+deoLrByYX8b6Gp8EZlVqXrco1IyOmkoVHG7TpkBPJRqjH
+         IJH6nh1W++SNCLKgAWm9fQ1kZ47pamdJ0rMTz3yDDTYcuj+i0rfiUAT3PRPF11qzjFo/
+         za2dMu1840q/BikcYrKETaPWlTzraPGBvxeCsDYXn+BPxRGV4pEUft5mtwc5nb0L201Q
+         LaJg==
+X-Forwarded-Encrypted: i=1; AHgh+Rq/Zpg7lcoBWavlOwr7Ek/joknYBTnzUpWtTXm0KQYXu2Y2gk7pw3TbZpoXvWKqiUnvJQhCiLBRX76BkcR2G3gjLA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMnZp7rcTzh/nf6q8hVAn+4i5hDJ8keak5rvU7dm503YiSNRlm
+	ckPAFhA93vyHXCwJmv5xyQncnX7vd9IlCN/rX0j0L/8JtyiGyoNWzG/U
+X-Gm-Gg: AR+sD10TulZ9B7FmP2TY0iitLQAhct9w3uD8Ojt0haipgBrwoo+6QF0iobZXhbTHD2w
+	6gY3wNeitXY9q0gjqeaMhqH4ZxojFAt2rIQecxLRYlpcHc35BSre6AcQu7y4pgXqgcyLReuccfA
+	tqvvW5YcQc+P8L/ykl+6XQKcL4ltD4ZaAPh2GLOPbNKb0W0px3FNMDdPLOT/i+TP/1mtyk5Tw2W
+	iyAEoKovWYAbNXelY/IgGmTMBUcYycLF7k+c1tD5qJWgICDd3pp9LlaTQB2wydRX9le3XD1DA5a
+	v8K39VouYBsNXYnS996QibVN0qg4WR1G88S5UZ1V82JrZAtpRiW4t+xoHV+Wfwg9BM0G3otXRNZ
+	bXhpwffWSk4rSKs/ftXkZZgcECIxW7StiAUBef7usIqq9MC3r4nW1l9fkUZOnaqxqR/chKNpJXV
+	W/C/CwGrLPx0+MQ3F8je164MCE0h0=
+X-Received: by 2002:a05:600c:4683:b0:495:6274:56c2 with SMTP id 5b1f17b1804b1-496b56bbc9dmr26029325e9.2.1784982875693;
+        Sat, 25 Jul 2026 05:34:35 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:222f:1bcc:b186:8220])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-496b4858e86sm44563295e9.1.2026.07.25.05.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Jul 2026 05:34:35 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	bartosz.golaszewski@linaro.org
-Subject: Re: [PATCH net-next v13 09/10] net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
-Date: Fri, 24 Jul 2026 15:46:02 -0700
-Message-ID: <20260724224602.1650002-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260713-qcom-sa8255p-emac-v13-9-119f8699ef8e@oss.qualcomm.com>
-References: <20260713-qcom-sa8255p-emac-v13-9-119f8699ef8e@oss.qualcomm.com>
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/3] soc: renesas: rz-sysc: Add RZ/G3L PWRRDY power sequencing support
+Date: Sat, 25 Jul 2026 13:34:27 +0100
+Message-ID: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -89,73 +84,57 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is an AI-generated review of your patch. The human sending this
-email has considered the AI review valid, or at least plausible.
----
-net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This refactor extends ethqos_emac_driver_data with a setup() callback,
-implements it for the existing models, and moves operations not required
-in SCMI mode into it, in preparation for firmware-controlled EMAC
-variants.
+Hi all,
 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> index 43384960278b..3af1608fc21c 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> @@ -5,6 +5,7 @@
->  #include <linux/of.h>
->  #include <linux/of_net.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/phy.h>
->  #include <linux/phy/phy.h>
+Some RZ SoCs (e.g. RZ/G3L) have a PWRRDY register that signals power
+readiness for various IPs (USB, DSI, CSI, etc.) to their respective
+controllers. This register is part of the SYSC IP. Add a dedicated
+power sequencing driver to handle these signals.
 
-[Low]
-Is there a reason linux/pm_domain.h is added here?  Looking through
-this commit, no pm_domain symbols (pm_genpd_*, dev_pm_domain_*,
-PD_FLAG_*, etc.) appear to be referenced.
+This series adds that support:
 
-The header seems to belong with the follow-up patch that introduces
-devm_pm_domain_attach_list() and struct dev_pm_domain_list usage.
+- Patch 1 adds a pwrrdy_pwrseq flag to struct rz_sysc_soc_id_init_data,
+  sets it for RZ/G3L, and has the SYSC driver register a
+  "pwrseq-pwrrdy" auxiliary device when the flag is set, so a
+  dedicated driver can bind to it and handle the sequencing.
 
-Would it be preferable to move this include into the patch that
-actually needs it, so each patch remains self-contained?
+- Patch 2 adds that dedicated driver, pwrseq-renesas-pwrrdy, which
+  binds to the auxiliary device exposed by patch 1 and exposes
+  usb-pwrrdy, dsi-pwrrdy, and csi-pwrrdy pwrseq targets, toggling the
+  appropriate bits in the SYS_PWRRDY_N register via the parent SYSC
+  driver's regmap.
 
-[ ... ]
+- Patch 3 selects POWER_SEQUENCING_RENESAS_PWRRDY from
+  SYSC_R9A08G046 so the new driver is built whenever RZ/G3L SYSC
+  support is enabled.
+  
+This series is based on proposal for power sequence driver [1]
+for USB PWRRDY signal and DSI PWRRDY signal[2].
 
-> @@ -765,21 +815,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(ethqos->serdes_phy),
->  				     "Failed to get serdes phy\n");
->  
-> -	ethqos_set_clk_tx_rate(ethqos, NULL, plat_dat->phy_interface,
-> -			       SPEED_1000);
-> -
-> -	qcom_ethqos_set_sgmii_loopback(ethqos, true);
-> -	ethqos_set_func_clk_en(ethqos);
-> -
-> -	/* The clocks are controlled by firmware, so we don't know for certain
-> -	 * what clock rate is being used. Hardware documentation mentions that
-> -	 * the AHB slave clock will be in the range of 50 to 100MHz, which
-> -	 * equates to a MDC between 1.19 and 2.38MHz.
-> -	 */
->  	plat_dat->clk_csr = STMMAC_CSR_60_100M;
->  	plat_dat->bsp_priv = ethqos;
-> -	plat_dat->set_clk_tx_rate = ethqos_set_clk_tx_rate;
-> -	plat_dat->dump_debug_regs = rgmii_dump;
->  	plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
->  	plat_dat->core_type = DWMAC_CORE_GMAC4;
->  	if (data->has_emac_ge_3)
+I will send USB/DSI/CSI driver patches based on this series soon.
+ 
+ [1] https://lore.kernel.org/all/CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com/ 
+ [2] https://lore.kernel.org/all/20260704093433.273672-1-biju.das.jz@bp.renesas.com/T/#mb6f18d8fa9a194fc0a15db5f4938df420da7b6b5
 
-[Low]
-Was the comment above plat_dat->clk_csr = STMMAC_CSR_60_100M; intended
-to be dropped?
+Biju Das (3):
+  soc: renesas: rz-sysc: Register auxiliary device for PWRRDY power
+    sequencer
+  power: sequencing: Add Renesas RZ/G3L Power Ready driver
+  soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for
+    R9A08G046
 
-The assignment itself is preserved, but the rationale for choosing
-STMMAC_CSR_60_100M (firmware-controlled AHB clock in the 50-100MHz
-range yielding an MDC between 1.19 and 2.38MHz) is now gone.
+ drivers/power/sequencing/Kconfig              |   8 +
+ drivers/power/sequencing/Makefile             |   1 +
+ .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 141 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   1 +
+ drivers/soc/renesas/r9a08g046-sysc.c          |   1 +
+ drivers/soc/renesas/rz-sysc.c                 |  40 +++++
+ drivers/soc/renesas/rz-sysc.h                 |   2 +
+ 7 files changed, 194 insertions(+)
+ create mode 100644 drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
 
-The commit message describes a mechanical refactor and does not
-mention removing this rationale.  Should the comment be kept next to
-the assignment, or moved into ethqos_hlos_setup() where the
-surrounding clock setup now lives?
+-- 
+2.43.0
+
