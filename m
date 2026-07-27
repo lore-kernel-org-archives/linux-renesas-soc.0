@@ -1,32 +1,32 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2779C3F4108;
-	Mon, 27 Jul 2026 09:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478F43F410F;
+	Mon, 27 Jul 2026 09:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785145843; cv=none; b=uCa/nwkxzEu0fpK3+5zv7/4OlU1yVpf2bJXOuC02OZecef0Z3Mo15YwVMmOitlXF0pNLRjDUcZTrMq+wqAb4Qlkudlqino2xHjIpzJpt5nDlfegFcCTB+EhQ28YbUG2cLj4C0H2/UddRQSQrBKLMXbmOefK8eccLRAW6THRN6X4=
+	t=1785146127; cv=none; b=b3fPZNBnqwJ/Id/3jbP2X50MweLF4KaMHcT0zRgvtXX0Xljc3NG+S/U7g0PTcp0DI0fZ7hPcBAlppA9rx2fJaacSdnQG8CYQWoIJeLf0BdJn7BinC+bkWmJQWN04yI3JP4mg/xMzPEXoaSqzt1gn/5/MDkMevFQparGLo0eB75s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785145843; c=relaxed/simple;
-	bh=1WyrhrgV3xwvejZXPISR/E+XOfLV/V8A0jvsI6uQXh8=;
+	s=arc-20240116; t=1785146127; c=relaxed/simple;
+	bh=tsRwJW6w/B108uEMUfCudRh+Icb9w89s/jzMYG1ftAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZR2XBc1s5w8y/O4WB5R33muo1fOoSCCZZMjiquurWrVudpF6SBtkKGyj6esobZWFtmGpNfeTH0nzxp96p40OWOIM5iSvyNeq1VHYkCaOTC2rS+c7zgKyXAoSi400OdQ1I2bRT4ySREmhNPuawJLjq7nPM5gooUp8hBOAnVeJstk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qXWlaTgL; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1fpd1IlcqLOLagDMKpdFlTiZ5oDeocD2iPcgud2W7mBR1wWfo/YVCMFtVAQcTdOFnAI1wGRsHYThUcGvAjb9mxKctLUktNERol7007Qy1/MYUKLGkm5/3hi9wYENr7M5XFHwIcinDe4URIOybMtqhPWonke7ydX8ucfvtcq5O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lmHuxc6U; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qXWlaTgL"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lmHuxc6U"
 Received: from ideasonboard.com (mob-5-90-50-102.net.vodafone.it [5.90.50.102])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 095293A4;
-	Mon, 27 Jul 2026 11:49:31 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0EC293A4;
+	Mon, 27 Jul 2026 11:54:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1785145772;
-	bh=1WyrhrgV3xwvejZXPISR/E+XOfLV/V8A0jvsI6uQXh8=;
+	s=mail; t=1785146058;
+	bh=tsRwJW6w/B108uEMUfCudRh+Icb9w89s/jzMYG1ftAI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qXWlaTgLzQmvh6tdLegMzKGG5M7VXtCbCywmMIpUeN7Dnh1u96LeztKpCtWn5X/Rj
-	 3q4OHIu2sc6runFw6aL0hgtIoUznq3T+8lfrJWuzXzWCcP/V5OtW+kCq7PNOT1dQmk
-	 7bBpomhO/ur2ur23NZQtAQipAag6v80fOROzKoW8=
-Date: Mon, 27 Jul 2026 11:50:32 +0200
+	b=lmHuxc6Up0KQbbqNqui6q0wjXLjwTgVbih+bg4yQ+zX3sTJk41HaKw5KggwcEtPSd
+	 ae3Zvmk6FRZtRCIEOs3fTTZ6yrfJz12oHJUt5BU6LsbgKzUkSQfwz5CqbYTRqt1jlM
+	 nDvw6b1ScKOT6KYWmUbU9h/nPpkun4ZlDxtJLrXI=
+Date: Mon, 27 Jul 2026 11:55:17 +0200
 From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
@@ -34,10 +34,11 @@ Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
 	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] media: rzg2l-cru: Add device_link from CRU to CSI-2
-Message-ID: <amcplAwJQbx2Tjuy@zed>
+Subject: Re: [PATCH 3/9] media: rzg2l-cru: Use bulk reset API in
+ rzg2l_cru_start_streaming_vq()
+Message-ID: <amcqq4dJxdpdbnzc@zed>
 References: <20260616170542.447804-1-tommaso.merciai.xr@bp.renesas.com>
- <20260616170542.447804-2-tommaso.merciai.xr@bp.renesas.com>
+ <20260616170542.447804-4-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -46,57 +47,89 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260616170542.447804-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20260616170542.447804-4-tommaso.merciai.xr@bp.renesas.com>
 
 Hi Tommaso
- one more thing
 
-On Tue, Jun 16, 2026 at 07:05:31PM +0200, Tommaso Merciai wrote:
-> The CRU device depends on CSI-2 to operate. Without an explicit
-> device_link the PM core has no knowledge of this dependency and may
-> suspend CSI-2 while CRU is still active, or resume CRU before CSI-2
-> is ready.
+On Tue, Jun 16, 2026 at 07:05:33PM +0200, Tommaso Merciai wrote:
+> Replace individual reset_control_deassert() calls for aresetn and presetn
+> with reset_control_bulk_deassert(), and consolidate the error path labels
+> into a single err_assert_resets using reset_control_bulk_assert().
 >
-> Add a DL_FLAG_STATELESS device_link from the CRU to CSI-2 when the
-> CSI-2 subdev binds. This instructs the PM core to suspend CRU before
-> CSI-2 and to resume CSI-2 before CRU. The link is deleted on unbind.
+> No functional changes intended.
 >
 > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 23 ++++++++-----------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
 >
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> index 3c5fbd857371..1b12d91eaec9 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> @@ -101,6 +101,7 @@ static void rzg2l_cru_group_notify_unbind(struct v4l2_async_notifier *notifier,
->  	mutex_lock(&cru->mdev_lock);
-
-What is the mutex protecting here ?
-
-(yes, unrelated to this patch, I know, just wondering if you should
-take the occasion to remove the guards from bind/unbind)
-
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 5185a547461d..bf61a74f8f74 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -672,6 +672,10 @@ irqreturn_t rzg3e_cru_irq(int irq, void *data)
+>  static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count)
+>  {
+>  	struct rzg2l_cru_dev *cru = vb2_get_drv_priv(vq);
+> +	struct reset_control_bulk_data resets[] = {
+> +		{ .rstc = cru->aresetn },
+> +		{ .rstc = cru->presetn },
+> +	};
+>  	int ret;
 >
->  	if (cru->csi.asd == asd) {
-> +		device_link_remove(cru->dev, subdev->dev);
->  		cru->csi.subdev = NULL;
->  		dev_dbg(cru->dev, "Unbind CSI-2 %s\n", subdev->name);
->  	}
-> @@ -118,6 +119,12 @@ static int rzg2l_cru_group_notify_bound(struct v4l2_async_notifier *notifier,
+>  	ret = pm_runtime_resume_and_get(cru->dev);
+> @@ -683,19 +687,12 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
+>  		goto err_pm_put;
 >
->  	if (cru->csi.asd == asd) {
->  		cru->csi.subdev = subdev;
-> +		if (!device_link_add(cru->dev, subdev->dev, DL_FLAG_STATELESS)) {
-> +			dev_err(cru->dev, "Failed to create device link to CSI-2 %s\n",
-> +				subdev->name);
-> +			mutex_unlock(&cru->mdev_lock);
-> +			return -EINVAL;
-> +		}
->  		dev_dbg(cru->dev, "Bound CSI-2 %s\n", subdev->name);
+>  	/* Release reset state */
+> -	ret = reset_control_deassert(cru->aresetn);
+> +	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
+>  	if (ret) {
+> -		dev_err(cru->dev, "failed to deassert aresetn\n");
+> +		dev_err(cru->dev, "failed to deassert resets\n");
+>  		goto err_vclk_disable;
 >  	}
 >
+> -	ret = reset_control_deassert(cru->presetn);
+> -	if (ret) {
+> -		reset_control_assert(cru->aresetn);
+> -		dev_err(cru->dev, "failed to deassert presetn\n");
+> -		goto assert_aresetn;
+> -	}
+> -
+
+Is there any ordering requirement in the reset signal de-assertion ?
+
+>  	/* Allocate scratch buffer */
+>  	cru->scratch = dma_alloc_coherent(cru->dev, cru->format.sizeimage,
+>  					  &cru->scratch_phys, GFP_KERNEL);
+> @@ -703,7 +700,7 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
+>  		rzg2l_cru_return_buffers(cru, VB2_BUF_STATE_QUEUED);
+>  		dev_err(cru->dev, "Failed to allocate scratch buffer\n");
+>  		ret = -ENOMEM;
+> -		goto assert_presetn;
+> +		goto err_assert_resets;
+>  	}
+>
+>  	cru->active_slot = 0;
+> @@ -722,11 +719,9 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
+>  	if (ret)
+>  		dma_free_coherent(cru->dev, cru->format.sizeimage, cru->scratch,
+>  				  cru->scratch_phys);
+> -assert_presetn:
+> -	reset_control_assert(cru->presetn);
+>
+> -assert_aresetn:
+> -	reset_control_assert(cru->aresetn);
+> +err_assert_resets:
+> +	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+>
+
+Do you happen to know why rzg2l_cru_stop_streaming_vq() only assert
+'presetn' and not 'aresetn' ?
+
+>  err_vclk_disable:
+>  	clk_disable_unprepare(cru->vclk);
 > --
 > 2.54.0
 >
