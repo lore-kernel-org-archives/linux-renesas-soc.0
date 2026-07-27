@@ -1,75 +1,253 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4963E1681
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 08:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785139398; cv=none; b=P9u/rxCY3RQmo0w37INmicSUX0gjJaenvATeSmj2rZ5C789QaFgRZLBOxW0pujIxrTXiFuvGErw5QFW21enkkFSCDbJZuj9somDf5diEO9wrsNC24HMJeh/oSBwF/Hv0tqhusCBPJC2A+4mrnVKH0WYGq3mJ9DnTws2DGabPpmA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785139398; c=relaxed/simple;
-	bh=t5kaYCeu1Ezzn4lCug++xzUb8zc7ByA/ieLJ5lUmBCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h33Hx2q73UksTm6rk8ocMOuHhtI9ap1OpdYVLoVZIio7ev9g+jDGh6PAyFSeTQeEMnNOgMTce4k1KiCqfFG9aFvUW44tMIkKn/6FEj4QpikKBVhSdbghxDABpJXT0MPsRG/h+kfUuHLwiqTaeSlL5aRze2TbT+UM0+oWzfeKXu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XhoghJI5; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B683E7173
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 09:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785143367; cv=pass; b=j6EkwspOn1mrZ2cVxrKrcgxx9xFVY7eB5OE1AlSJqSQ2s9F3BeRADCve7lmQNb/c0wvNUyl2aWB587rg6mpqQcjfKgx0/fKmjf+tmooguPfyB1uk/Ilgq79arU+UFafBYGjGx+PgZgeW9R/Z/6+Mh5hg5t83fRyAHI07Qj9BoTc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785143367; c=relaxed/simple;
+	bh=9LtrwgiQSccbGGnkUIOdGQuhSzPaFLy9gcsyZ6YsSvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mbkvz4cs9t2nEWcdgU11mKFKCuXYdhPdHNxa5My4WPFp8dNcaE99OQfDWFpASVtYRlhw7dTMDS6AohTUWDP2k9xH5G66Eydyqh6GOrqfVON5EJoEk+YfcKETDwwi6zm9jQGCfUkvsTWVU5l8crcfllwPFpRypBzwFE1BGLGJYpY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLvy3ztB; arc=pass smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XhoghJI5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=+H93
-	fKZkBTV6FWeCjYIDQCHvIzMcOAZvw+Btc/3nxgk=; b=XhoghJI5/gP0bUUiqodq
-	w9H2Xe4EK0z5qxUC8AG8bBpBEdE7RFWx/z5RjNgaPgdtJasRXXp9CG8CvmDmrrhI
-	I9neb9/QF11Rcrxm6tLGpROlIpXrAzGci1SiTLXnw9hGLHZEeIMUEkzvYyXV9oeC
-	M+RFXuU5m6rdB7eBEZolSGHJR8K9yut9mabQdeP3ccgZqY4mcPY92XHMFPPbWhLX
-	j2FcDeOdGK3uNgCMXk1hEVqr01gjTMWWgA1uXO8kRVhghYIrwwfg6CGxSGTIUpgx
-	fP+CnHlyymIIHk9nSr9Rt0ffWjysUMdog+T3yJESrgtLonxTx0JH5z+7ipPSnj/D
-	bw==
-Received: (qmail 527372 invoked from network); 27 Jul 2026 10:03:11 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jul 2026 10:03:11 +0200
-X-UD-Smtp-Session: l3s3148p1@Zs5EJ5NXTpQujnuy
-Date: Mon, 27 Jul 2026 10:03:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] hwspinlock: add low level debug capabilities
-Message-ID: <amcQvjpxQHzUNrIx@ninjato>
-References: <20260726214219.17703-5-wsa+renesas@sang-engineering.com>
- <20260726214219.17703-8-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLvy3ztB"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47f703a9d05so1513747f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 02:09:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785143364; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OjlUx1XaKGzVbySdWVtYqRu6wQCedJmgUGrqaPRe11jdh/fm1p8CQEUXhJNHFERV0x
+         ujBIj4JemH4lPk6UjhdA5bHpEsUO4zCZNdYxNgKdXhcZjfDX8xaYbTNAbamMajfMb3OF
+         E4sU5avHfVmF1v8665RrckJUiJRN1cSMFi/f779tTtnKDAxC02Bn5VXzuVHOoV69O5O4
+         QuXhfKpJWCMruvidCLy1K9XCCOPQqyZaAvjCa0ZMDUJo2/BiDzCI8gQscnnbhOcjISfL
+         fJSAzp5XnQeLSb1yYz5j/QfNjVLJFoXBuiiACRxEsqdBpmPADLOLdr00NH7X4e9SK2+q
+         Zbxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=JdhVvMZN12mkLgsjdr2GJaRkJT3E6icWbbcpnxvBnOw=;
+        fh=WQwTusb+TnAyQPbakq/ovWG1DNpTqs5CS30p8FNRWSA=;
+        b=EMGbbyXe6HQo5OoM+uW56wot3DiEnB+L/UUs5uEPOYFLBvfjJhOjF5/brkqMDjfbuP
+         Ed02ziRFnLhV2NV9ePWdEIUhsYNi3UTsafQeHyjkjqeoFeRSSTOUYidp0LJ3i9ZYok7Z
+         tD/EVhMW2J9UJ7lAllpX7h4qu8pdRa3oHOejksgIYDy3YurUSubqmMl6oGuSFACDa+AS
+         eRskIzixD3oqqcMiVFuI5UsMGGWRTsNPkzIjCd1vIN8Joq6HfePC/9cUmdj12tgKMpqa
+         vnGueAMp7Fy0RZX+WkKQuthVUWzdBQbWyc+8kp1x51n1r2q4TQp7pDAlvrcHQ6m52oyE
+         K/dA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785143364; x=1785748164; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=JdhVvMZN12mkLgsjdr2GJaRkJT3E6icWbbcpnxvBnOw=;
+        b=ZLvy3ztBDLJYUMJZoBAWXU7yIkBd7evo5aGro2Dvr6E4ML9X52d5sxSP1QONpZif1I
+         Yo6INJS3cMp8Dw2YPgTYwNLH532Kmee2FehhYUuxYeIHpUG6yGd6GJ8/vsdhGCT5UATt
+         y41lD0ZmZ/4cFDKTNtN5DfWmwQJ1HA8I/KvHeiUX3quuKbrSyX2beoJkNUNvh9jPsGld
+         VvwGhdZU9KCT2GOZ+/z/2XIp7B24wsKEKRn4M4+0fjZvDOwM+uzuv378WNiW4me5/tTF
+         O/ZjPxFFZ6SJPx3lWdIPRoGecHxvQwXFrBixkx69vGn+epoxLUS1i/SpsLXQNFmZClE+
+         MwoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785143364; x=1785748164;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=JdhVvMZN12mkLgsjdr2GJaRkJT3E6icWbbcpnxvBnOw=;
+        b=geUVOKNGvVYK8Yy5WbuRs85w4n8cOQypZt8/smvs2bDyp+BV9oCOcvxmWCDhzEddEf
+         5/B8V9NzfmyXPzwXOtD+UTApjUy1dU6qeDzx8saiboRKmCI6vO1rsLYwgxNvBmj4clMY
+         vIGL53FRf1s6nSKUPrHkEQ+qCLEwxYPEWEzKXhd2L8RgLj4FKFLShw1E8+chVrP2xbt7
+         KTSGfFlqfpdeK7btWHVlzRSvNOqEwn1QzoGj+etKYzLbY3hQ+2SKqBSQ0C1wu5uo1A7V
+         KtMYN/rmCu+vj7EzEjY3BO3TJsgX++9wAJ0Mprpt6Tnc5+VxUMTNNm2qw08HmsKTO1RU
+         savA==
+X-Forwarded-Encrypted: i=1; AHgh+RqHKX6NqhMqZYkLCKYn2HEA8EkK4qz0A8h/4u63ztfxryczGHMq8exXCzT2TgvgwQwdSCQ567HnXJBO9n2tMWnhQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFpO2JgRtWZNtPeFRLZD/sZUZW2ZO0bZ8JNFifdGsS10EnFpia
+	wqsI5sSFbDXlojv1yO5s7vzlmiXpOUcyQoN5LPjgOz7AmeVAskIhCSt+iLdxulK2436Vf8ltMzI
+	oNatzgvMaDSSXdqUdvX+JKbxyKpWNLSU=
+X-Gm-Gg: AR+sD12dyVv3zbGuuDFjyj598MZKL5HcFbEb9iNxDeTF0hsyq8N1oRHnmEHPYwyToEH
+	LeYErM3i5HE0P6Ag771nGzjzMyLGPo7Lxtfl+kMh2IkDgJ2P/kGbJpq7BbMQA7Elq5LYL5nu3AZ
+	VGlBv4H5/gyPXbv+PGBr6wDugMIbVtclB/fbK/nepn3u9lDS4hJSXdM8Jo5B7fJ1IjKAn/+/6YV
+	HAZ0f/XwuaN+j4CPDsbueTRDk1pamciBEITmFMvi2sSb7h98EJEUOhVQrHR9UJxnoiqML0AbMwO
+	aeGMokgU1HqFoCD64+cTXC3wT96Yrhn2UmEGmpjfDvzg4GRJ5G/3iT6Cwm5rL91ZyXPoJklvqqK
+	dyRPq
+X-Received: by 2002:a05:6000:2c07:b0:47f:7030:bfbd with SMTP id
+ ffacd0b85a97d-47f9fea7d1amr9501388f8f.48.1785143363292; Mon, 27 Jul 2026
+ 02:09:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260726214219.17703-8-wsa+renesas@sang-engineering.com>
+References: <20260715223019.3002237-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260715223019.3002237-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <97f207cb-4ae5-4a48-a5da-fb4167f8d0d4@tuxon.dev>
+In-Reply-To: <97f207cb-4ae5-4a48-a5da-fb4167f8d0d4@tuxon.dev>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 27 Jul 2026 10:08:55 +0100
+X-Gm-Features: AUfX_mw0NWK-edxNp2T0-GT5xa6oAmVVbb0LklmBjLsIb83Q7oOJjRpihR_TXic
+Message-ID: <CA+V-a8sG_tQo5vKSLGkjUnu8=Nf95TgJXFZmN5vJAVzBZDezsg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] PCI: rzg3s: Fix IRQ domain initialization error handling
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Claudiu,
 
-> However, hwspin_lock_request_specific() takes an unsigned int, which
-> will truncate the value.
+Thank you for the review.
 
-True. XArray uses ulong, but hwspinlocks are actually uint. I'll replace
-the ULONG_MAX with UINT_MAX.
+On Thu, Jul 23, 2026 at 6:11=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+>
+> Hi, Prabhakar,
+>
+> On 7/16/26 01:30, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > rzg3s_pcie_init_irqdomain() installs chained handlers for the INTx
+> > parent interrupts before creating the INTx irqdomain and initializing
+> > MSI support.
+> >
+> > If any subsequent step fails, such as obtaining an INTx IRQ,
+> > creating the irqdomain, or initializing MSI, the error path returns
+> > without removing any chained handlers that were already installed.
+> > This leaves stale handler and data pointers attached to the parent
+> > interrupts.
+> >
+> > Fix the error path by unwinding the chained handler registration before
+> > returning. Also clear the chained handlers during
+> > rzg3s_pcie_teardown_irqdomain() so that teardown fully mirrors the
+> > initialization sequence.
+> >
+> > Fixes: 7ef502fb35b28 ("PCI: Add Renesas RZ/G3S host controller driver")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >   drivers/pci/controller/pcie-rzg3s-host.c | 37 +++++++++++++++++------=
+-
+> >   1 file changed, 27 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/con=
+troller/pcie-rzg3s-host.c
+> > index f51b5d7c1998..5aeb030d43c8 100644
+> > --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> > +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> > @@ -1006,22 +1006,30 @@ static const struct irq_domain_ops rzg3s_pcie_i=
+ntx_domain_ops =3D {
+> >       .xlate =3D irq_domain_xlate_onetwocell,
+> >   };
+> >
+> > +static void rzg3s_pcie_clear_intx_handlers(struct rzg3s_pcie_host *hos=
+t, int count)
+> > +{
+> > +     while (--count >=3D 0)
+> > +             irq_set_chained_handler_and_data(host->intx_irqs[count], =
+NULL, NULL);
+> > +}
+>
+> On PCI subsystem lines are still wrapped at 80 chars length. Could you pl=
+ease
+> update it, adding also {} around multi-line blocks as the rest of the cod=
+e in
+> this file is doing, e.g.:
+>
+> static void rzg3s_pcie_clear_intx_handlers(struct rzg3s_pcie_host *host,
+>                                            int count)
+> {
+>         while (--count >=3D 0) {
+>                 irq_set_chained_handler_and_data(host->intx_irqs[count], =
+NULL,
+>                                                  NULL);
+>         }
+> }
+>
+Ok.
 
-> > +		ret = hwspin_trylock(hwlock);
-> > +		if (ret != -EBUSY) {
-> 
-> [Severity: Medium]
-> Does this actually test the hardware lock exclusion?
-> 
-> hwspin_trylock() internally invokes spin_trylock() to acquire a local CPU
-> software lock. On the second call, the local software spinlock will fail and
-> immediately return -EBUSY without ever testing the actual hardware lock
-> operations (like hwlock->bank->ops->trylock()).
+> > +
+> >   static int rzg3s_pcie_init_irqdomain(struct rzg3s_pcie_host *host)
+> >   {
+> >       struct device *dev =3D host->dev;
+> >       struct platform_device *pdev =3D to_platform_device(dev);
+> > +     int i, ret;
+> >
+> > -     for (int i =3D 0; i < PCI_NUM_INTX; i++) {
+> > +     for (i =3D 0; i < PCI_NUM_INTX; i++) {
+> >               char irq_name[5] =3D {0};
+> >               int irq;
+> >
+> >               scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + =
+i);
+> >
+> >               irq =3D platform_get_irq_byname(pdev, irq_name);
+> > -             if (irq < 0)
+> > -                     return dev_err_probe(dev, irq,
+> > -                                          "Failed to parse and map INT=
+%c IRQ\n",
+> > -                                          'A' + i);
+> > +             if (irq < 0) {
+> > +                     ret =3D irq;
+> > +                     dev_err_probe(dev, ret, "Failed to parse and map =
+INT%c IRQ\n", 'A' + i);
+> > +                     goto err_cleanup_intx;
+> > +             }
+> >
+> >               host->intx_irqs[i] =3D irq;
+> >               irq_set_chained_handler_and_data(irq,
+> > @@ -1033,21 +1041,28 @@ static int rzg3s_pcie_init_irqdomain(struct rzg=
+3s_pcie_host *host)
+> >                                                    PCI_NUM_INTX,
+> >                                                    &rzg3s_pcie_intx_dom=
+ain_ops,
+> >                                                    host);
+> > -     if (!host->intx_domain)
+> > -             return dev_err_probe(dev, -EINVAL,
+> > -                                  "Failed to add irq domain for INTx I=
+RQs\n");
+> > +     if (!host->intx_domain) {
+> > +             ret =3D -EINVAL;
+> > +             dev_err_probe(dev, ret, "Failed to add irq domain for INT=
+x IRQs\n");
+> > +             goto err_cleanup_intx;
+> > +     }
+> >       irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
+> >
+> >       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > -             int ret =3D rzg3s_pcie_init_msi(host);
+> > +             ret =3D rzg3s_pcie_init_msi(host);
+> >
+> >               if (ret) {
+> >                       irq_domain_remove(host->intx_domain);
+>
+> Could you please drop this ^ from here and (see below)...
+>
+> > -                     return ret;
+> > +                     goto err_cleanup_intx;
+> >               }
+> >       }
+> >
+> >       return 0;
+> > +
+> > +err_cleanup_intx:
+>
+> Add it here? To have everything grouped together. I am also working on fi=
+xing
+> the hotplug support and having it like this would be useful. I can do it =
+myself
+> in a separate patch, but I think, logically, it belongs to this patch.
+>
+Ok, In that case I will need to add a check for host->intx_domain !=3D
+NULL before calling irq_domain_remove().
 
-Bummer, I was quite sure to have used hwspin_trylock_raw already here.
-Seems to have fallen through the cracks.
-
-v6 on the way...
-
+Cheers,
+Prabhakar
