@@ -1,64 +1,64 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C83BFE26
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B235E943
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785148504; cv=none; b=VdtkQB4t5CF6kAX2beD5D+98W2wzt5crAw9On4ACS6ZUfhi+U6fOsOVYzGEz6GwKUhJEw41SRKiM5yG/kdY6n2HQD8VUAcD01VzkDlrqDzECLs8TLAB9/76EJSJLsj5GljSj5LCMt4alAz9GGL+icX6sZE784petfR9h3apNibI=
+	t=1785148507; cv=none; b=m5f+VaO7NH42ri0TrZFgitvuQg5fmj2epNl+/m10JnWH71o8A+09smHtzhaUTJQEV1U6OknNvd3HW7YEAJhmOGzubJ9xS+1ezZ+9mzMMpMvB1thTgIl7COlX9gHT52Xktpj/Hz33eVE4THBdcBfjlx0MU8sZ8jiytxRE3xbJ3LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785148504; c=relaxed/simple;
-	bh=uwqN8ydh2yWuiSaCkv//cC0Jf+pSP4PQ94Q3elX3Tjs=;
+	s=arc-20240116; t=1785148507; c=relaxed/simple;
+	bh=BGj47h7YGQr8NjlIW/jQ7NFJvykn49npgWeaDdpOqCo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mbK0iqOYvzchAQUB/F6dB648F0yWWHl3L5bhuCaEddRD7IopUnJcw6QUwyCphYnTm/Pq2VeIpTp4iyxJ5w2cHAEApg/KKCplphwP39hrDFj+3XHgVlklLySzZ/GWAkWNiKQy2ZKSJlGGSn/G2lItmxNlD6SA8OxX/ftZH737lpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuNbUY+J; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=HOqw3nfa7INmxaQRcDVx79Nv6iNkVOsbpNjHTBVfsjw+OQqZ6z/6k6c5HZJ93PVf2oOYAA2WwCqQiS/3W+5xmP8J6gvSCwS5Ndk8bQEriEx3B7tOf/EPSMSMZ2iNw0Eww6jJOXipx1nRXPH+Lergi8F5LeqrbIP7vOeaPen5770=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ii0NNbOK; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuNbUY+J"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4720f3bf164so2070381f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 03:34:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii0NNbOK"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-47ddf7b09e5so2610657f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 03:35:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785148496; x=1785753296; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785148498; x=1785753298; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
-        b=BuNbUY+JDlDoyDr2tF9Ygbe1NAgFtyRT/dMfMVASI2YpqifvI1H/YtH9jxDNEpmvwr
-         eeqXxyogU2+BxbdRDebtdMO7XHKYaJ82qifKCcbi7NGqvKkYkWxXx5UjJLSuAc61/8mv
-         YU8OGp1uDWpeGFy1Rjj9n5FbOqXHI7IpQKEiVV57f5IFC4aDXd7DylkeG3r6SrlUuY/c
-         f+5CJdrrJxCylcEhifCLJECYq1f8lJESCBy/jVOyhNkUotm9zNr+3oJGrUAHP8RJ4oxU
-         J19y03GwteVfiU6ZQ0XBThPiH0Sf2ziFBOBsf2WKPN80U6Ok8BSdHmqzCEQbzUN1G59S
-         Ncjw==
+        bh=a7T+3vNzRFNnPkYd62tVbnoXfYNl0fby6njEWI8ot6g=;
+        b=ii0NNbOKB863lu4Vyq/lHerSnaf68xOswb3rpMec05Lma7AZwUPTHdrrueihIHheAl
+         oVS7ayQHl0yEXX2EsUk5lmxjAP7+ysCev8Ar7LhItpYnAfeZwPaUR6ymr3MPt6FgIXlS
+         pKkThomLya55qF9WJDxpA0QfeB/w0WihLw5WbQhDoAZ2S9ADTRj/8L6A4hsYrw/WPSmm
+         8vl63enjFKOaSGaUF9KOTd5nV74PIqKwMslywZWc93qJ7iIjBpuXWJPKb3R/4b+rl0+Q
+         QFV5DkZY3tNIVfIMd1l+iMD+D9tY4GgCoJ0l3KadImxVK0Lhz8QW8IsC5GjigkA17o5l
+         lPkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785148496; x=1785753296;
+        d=1e100.net; s=20251104; t=1785148498; x=1785753298;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
-        b=qfXxxwFrdHrArVy/ez5Q6CEhWdrBoELznMzk9jZQDPU117zjq5G52cc7uiQ9w2sutD
-         SETyEac0U9tcoWR7TUO978kUmG+7R6oG7F5q6dM32gzEcMYv7PDNVvTjJ2i5bXpnei8R
-         eSfd6TQq8Keg1zfik2ktWU3pjCqa9iNJGf9/wFFyx1hQpwvNIAuv2V+HvksM2Ggakqyw
-         ulhy4Kl6fWF010Vmqet3V3yiJjcHXKm4K5cjcQEOpL0xVI0pPge1L3WM0DnApI6EvLMU
-         t1A11qE/BrMtv8wfsiFeXao1NueCLpYa8bT0luFi0dzTPKHdbcanT45MhdoKY1jRLyYj
-         Xhvw==
-X-Forwarded-Encrypted: i=1; AHgh+RpK0JqkqXuNIgvqax4oxXx6/xay2WCTdkde2WNjv4gRB8SKQEZ5B4m/ERmFlpgF9ip/GsUD1Wu/cRoH1sorcSOuhA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZnmwv4f57pieL3l3hrULAqRKG5WnSICZbkbIEmiN5+FaMZyJI
-	wlknfFZJoVIHHBwQMc7vRIxRLZN763NkoJXgoI78zVOMOV0Z2EnAnmNN
-X-Gm-Gg: AR+sD100La60XY6k0Mzk5fOpvfqOHzTBYS4eERYcHtsBldJgE5wFCVTq+rQv8Cq1AGP
-	i9IK48oPriIaBBXiuFrBCIrfhxeNEX8nYXIzMO+Hobs/ngQU4LybTx8MWPxm5qjBmThj2f3tHeT
-	g5SBkUPX2QPNEwB+1ONShTKsawvc/G09dzON8QsFzASm00CWpsQRAAff5LH5gOtPVY2B6dPp6O8
-	n2qPJ32JL0oVznMt/c8TwTZ3ORoe5yVREMCtfFSXE8XpgwmnvQRJSz0ZB46ofLO/ei7xJVPpxoi
-	Spj4Y1Vlr3z4OdjjSjf3d/FUTGBjLGD/qcYjCgHfvve23skJLuSObnU0s3ulrOQjgikAjyGwSiu
-	33Ib/llWPu6dgerlPS6I+jP/xU8FzyqYbjkPi89aIkB9YdInp3HwwXmRxSbcE9rQak8Mtv2DAYS
-	1RK3/kaZdQSOYP6LZbMvVxb+rrUnIuTlMIrEiM08oDe5sNHz07YPE23C0ERTGJBIB0IHVAUod8t
-	Rpw/dIlo55EtQxu
-X-Received: by 2002:a05:6000:288e:b0:47f:8abb:1fd2 with SMTP id ffacd0b85a97d-47f9cdaf515mr15514070f8f.3.1785148496248;
-        Mon, 27 Jul 2026 03:34:56 -0700 (PDT)
+        bh=a7T+3vNzRFNnPkYd62tVbnoXfYNl0fby6njEWI8ot6g=;
+        b=Yu7dQZICICM0+UvJDiqE7KMLQ3duZM+zrohLy/SkhTegQIVulQaCVAw/gzTthwtKVS
+         SsKpwDFbxwyS8ipnooeM4epFlV5SGcX4vFmBPKN9Ry63ErXaGdo1OFZ9uhvhBK5m5vKU
+         ZDa86FGcw+h6rNEsSMnTlureKa/lQYQjv1BK7YQd/6wmNzuep25CxUzITAtP/jOZrxc9
+         BVU03LAiiBPLev6j9VPyfWXJALNvTx775U+LxKg/2NgUt8VHSIAKq1GBddJzxGvMSgf0
+         kdPTcsYiVLf2o8+beQ6IIcgeC5kzl55jknBF5VrxAB3Kv0Y3+Fu7m7PW0j2b80wVVcg3
+         5Ctg==
+X-Forwarded-Encrypted: i=1; AHgh+RqgZ0Dxzw9R0tBBJjOEBba2/HEo++NvFNSHIXvuap/f/UTlY42KmiZq4Nqe9cz2DYAGsQSTR+7eQbX3jm6kMts1Hw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuSAapWhSnDY7If+HjsSNiD2XvK0oP/rx5mrVHGMWc6zAHPajw
+	3InpDQnipiMgggf7EPcFEPpLXDKoKt2zVEq24i0ihE0kRwF3cepeaXCi
+X-Gm-Gg: AR+sD13JAkxSVPHn2X3h4hVTKVZXRQPXywxnOvWENDHKo/HnNRFnpg7s9jjeALh7edR
+	VpKLBA2X6ZXdTPervBvV4Eiy0+A3RjmEhJXMsGnGUTtDhwky+b+SZ7avDVrKxmiRapy9EwTR3AC
+	5MSUkEP+0ld/h3CLWIaDJAfVjQFxjhV82aSG4fCwRdJfaX0jfrMl7QH4qTiYS+iGBFhii7GPDl/
+	gQNpTL5gOJPQcBSTJkWhWKjp4OjgmLdV0/6OyrH3Fikh/ym8hsaLdcfCzjwGWHpZBmavwVgNAIk
+	X1bPAPBBeoosORmvCkvDIfhcqQUfwpe3FD+0WiTnTOV2LGxyrHdArgtZhA+oUZhB7oHIUV5pksu
+	x5SFYkOIItgTRzP5ZV+fMSReeFDIcvtZO2RjAT9nWD8bPC32C9HCYZaUpc1A0FeAeiUPhlymJ+u
+	i2+BxXQViFmz9uL1KQVbKvE44TCrJtB94CwGbRlyIeuf7vOUchZSosNORmgSrF9INUptU1dNsOr
+	Z4iUS6kqWOHYeUy
+X-Received: by 2002:a05:6000:2282:b0:46e:1815:6a83 with SMTP id ffacd0b85a97d-47f9fe93092mr10277770f8f.29.1785148498023;
+        Mon, 27 Jul 2026 03:34:58 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:8281:5343:33a3:cac0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bd77a9sm45245173f8f.14.2026.07.27.03.34.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bd77a9sm45245173f8f.14.2026.07.27.03.34.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 03:34:56 -0700 (PDT)
+        Mon, 27 Jul 2026 03:34:57 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -68,9 +68,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/6] memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in write path
-Date: Mon, 27 Jul 2026 11:34:46 +0100
-Message-ID: <20260727103449.3188105-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 6/6] memory: renesas-rpc-if: Use runtime PM autosuspend after transfers
+Date: Mon, 27 Jul 2026 11:34:49 +0100
+Message-ID: <20260727103449.3188105-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -84,43 +84,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Program the XSPI_CDTBUF0 TRTYPE, DATASIZE and ADDSIZE fields with a
-single regmap_update_bits() call in the RPCIF_DATA_OUT transfer path.
+Replace pm_runtime_put() with pm_runtime_put_autosuspend() after manual
+transfers and direct memory-mapped read/write operations.
 
-The existing code updates these fields through three separate
-read-modify-write operations even though all values are known before the
-transfer request is issued. Combine the updates into a single register
-access to reduce overhead and simplify the configuration sequence.
+Flash page programming may be performed as a sequence of closely spaced
+transfer operations. Calling pm_runtime_put() after each operation allows
+the runtime PM core to suspend the controller between successive
+transfers, introducing unnecessary suspend/resume cycles and potentially
+interrupting multi-step transfer sequences.
+
+Use pm_runtime_put_autosuspend() instead so the controller remains
+active while transfers continue, allowing it to suspend only after an
+idle period.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Note corresponding pm_runtime_set_autosuspend_delay()/pm_runtime_use_autosuspend()
+calls are already present in SPI driver.
+---
+ drivers/memory/renesas-rpc-if.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 50294e5d2bf5..e406afc42616 100644
+index d98991266887..ec901a5a99aa 100644
 --- a/drivers/memory/renesas-rpc-if.c
 +++ b/drivers/memory/renesas-rpc-if.c
-@@ -660,17 +660,12 @@ static int xspi_manual_xfer_impl(struct rpcif_priv *xspi)
- 			u32 bytes_left = xspi->xferlen - pos;
- 			u32 nbytes, data[2], *p = data;
+@@ -776,7 +776,7 @@ int rpcif_manual_xfer(struct device *dev)
  
--			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
--					   XSPI_CDTBUF_TRTYPE, XSPI_CDTBUF_TRTYPE);
--
- 			nbytes = bytes_left >= max ? max : bytes_left;
+ 	ret = rpc->info->impl->manual_xfer(rpc);
  
- 			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
--					   XSPI_CDTBUF_DATASIZE(0xf),
--					   XSPI_CDTBUF_DATASIZE(nbytes));
--
--			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
-+					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(0xf) |
- 					   XSPI_CDTBUF_ADDSIZE(0x7),
-+					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(nbytes) |
- 					   XSPI_CDTBUF_ADDSIZE(xspi->addr_nbytes));
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
  
- 			memcpy(data, xspi->buffer + pos, nbytes);
+ 	return ret;
+ }
+@@ -891,7 +891,7 @@ ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
+ 
+ 	read = rpc->info->impl->dirmap_read(rpc, offs, len, buf);
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
+ 
+ 	return read;
+ }
+@@ -948,7 +948,7 @@ ssize_t xspi_dirmap_write(struct device *dev, u64 offs, size_t len, const void *
+ 		regmap_update_bits(xspi->regmap, XSPI_BMCTL1,
+ 				   XSPI_BMCTL1_MWRPUSH, XSPI_BMCTL1_MWRPUSH);
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_autosuspend(dev);
+ 
+ 	return writebytes;
+ }
 -- 
 2.54.0
 
