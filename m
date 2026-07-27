@@ -1,62 +1,64 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303973F6C30
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C83BFE26
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785148505; cv=none; b=JxKDkcBvA+HyJfSzxgEPr2+7E/4r788pGz1vZuHa7oToag2Bh0fKpciRWc3EchjkiexqRjGPLwTIZFYrMiQ03a44zQddCWfOpRJXDMk2YAp+X35cYUx58zxcnjFRG0YYZL9Mk6W2XEgtmp/gm6vvRKbDSqvcp4qFE+xjdAsMEUc=
+	t=1785148504; cv=none; b=VdtkQB4t5CF6kAX2beD5D+98W2wzt5crAw9On4ACS6ZUfhi+U6fOsOVYzGEz6GwKUhJEw41SRKiM5yG/kdY6n2HQD8VUAcD01VzkDlrqDzECLs8TLAB9/76EJSJLsj5GljSj5LCMt4alAz9GGL+icX6sZE784petfR9h3apNibI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785148505; c=relaxed/simple;
-	bh=3R5AIvL+ZfTu4uuHLxnGEQus2mYWcwAuozqWqP7sW00=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AMcMBwQpGS5eDyQLuJxq9TwNSr9yDWKM21HRjrk+vGRtLnS8fNVnbG87hkXDGxPVpTTKYSGF4c4u511IWl4QgmIg8WuePYgGzYubC9eVnom3JiEvAkJAbGKHSv+ClKYQSDssch+5uW+sToHh2x8yXvnxhA1YhAUeZHd40tuGeAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPhkGNS9; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1785148504; c=relaxed/simple;
+	bh=uwqN8ydh2yWuiSaCkv//cC0Jf+pSP4PQ94Q3elX3Tjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mbK0iqOYvzchAQUB/F6dB648F0yWWHl3L5bhuCaEddRD7IopUnJcw6QUwyCphYnTm/Pq2VeIpTp4iyxJ5w2cHAEApg/KKCplphwP39hrDFj+3XHgVlklLySzZ/GWAkWNiKQy2ZKSJlGGSn/G2lItmxNlD6SA8OxX/ftZH737lpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuNbUY+J; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPhkGNS9"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49556f97a9dso17251445e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 03:34:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuNbUY+J"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4720f3bf164so2070381f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 03:34:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785148494; x=1785753294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pRER5FwP1JKPedFbvlxT/T9pBcmgydoAphG777g9sE4=;
-        b=iPhkGNS9qfXwWhca4Zbt9q6N3zDg+iE8H4tQU0jVBPNMHuLz1xxNLEL3DtT5oX49C3
-         uw0rT6sJrJez9LTzKtW0UNip9dfvevSEDXL8rmJE/jT2LssA1nZ7rxFwo5bv9Gbf6UXe
-         b/G8rhhX2fv/ww5QWQ1OmDJa8b4epOc5Vj/ckPEXvO7V90zm1mdM+lyZEl8ODuiX0T3Z
-         ZURXT/L+ws6FEdW/qEXfZ6QnhuTh/rehg1e5is9VSijI7eLl0OvQTU1Cyh7aytnKvf0s
-         HShxBlcs9chGttMp9coBnVYE4wbSn+N3m9tlBXb275V26/7jppm+UcFj9mCZe/XoNC0Y
-         qllQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785148494; x=1785753294;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1785148496; x=1785753296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=pRER5FwP1JKPedFbvlxT/T9pBcmgydoAphG777g9sE4=;
-        b=fcv6hetF6YBHnySiFrvpmpfTInmVuhNB4bKn9+JuuECGpW1wXCf24UpNz8OKmqHIZL
-         TKR10EEg0P+PuRKTvOnhBoJ4MKz39U34GmbqP0lmMtsKX6TDTHM6jlpmP0DkVz/wzesV
-         nlpsacYp2rLiaN7y1uWca1G/fc2NOpk2wJkGg+8DoVmKcc69fb82dKTk0RhW8ntzJxfZ
-         9LGou2Y7inrq7aLUqOWm9S20ea36oX8cdq21a362DyS8jeTiFM101WAPXROM8HU1YDod
-         9F9DZPXG31VUbjH2U9QJId3pd4w+5mXWbMUXj8x6VeMusBbXOhyk4/skwrG77LP/QBN7
-         vJFg==
-X-Forwarded-Encrypted: i=1; AHgh+Rre6DawVFpBuHjnSOKu1fJD/BbFru8LKvrlFWoRl6ckzCPOgd+/8zVyD1aULQUgLFnjOgKBkvw/tjJsSYWSKF8yyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi0c63G0UeRnSaRIhSJ2oGaBd1dOgEYDtEzMLg/TZXRy3Rg0N+
-	CVAqe+0dgMXe8OPe4+wG793MlZmtN3+VDCkSnZNOZVXSk/gE374OoGupC2YItgit
-X-Gm-Gg: AR+sD13ZjkmiY/a8nPwPBzCuTTzWrv1yPwjLxQl9HKT6Jya1mwwmxIkdZbqwb2GCmGG
-	iEouZKi5L8jnFRk4Nk38YUEnvF+2BOHqovNO23nFzf3YpALmLx4fCmfRDh5vEd53AhY3sqkr3WS
-	NKbbG7xb1yTxxyAEREnW8VlgPN0r9LTC76nMf3nupRB7iSqKZdaJW/h/pROaRY3c9zhhdi8/gHS
-	JvMpu6KCQeqLUMxgH6L6QvrCL9TtboWA2iRJa636ay0rF6pQ7XBOQThxrMAnYrljKq4iojd6CP8
-	l3HBNl57k6pAqb/QSKIn0qOjBOU2JXB1XvXN1R92MZYVTXPwxeUxB+h4IxpZ/zQ3gviJPeJmPhR
-	XBTwS7QVk6jlIWbMuvJByhYnrsLBOOC6/sd/vshwhh+urWu+DTAkyloNTnmsxAmt3ResursVgmA
-	31LWlsLqdcW0fP9xCu4QqEeA6QDeHmOTSwR9JsRB6T6VcFgQO9xpJThD12OKJ57hNlh+/PyQsjY
-	NluIn5kML8QhHKH
-X-Received: by 2002:a05:600c:4452:b0:493:cc25:9c0e with SMTP id 5b1f17b1804b1-496b56ed012mr86327905e9.14.1785148494370;
-        Mon, 27 Jul 2026 03:34:54 -0700 (PDT)
+        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
+        b=BuNbUY+JDlDoyDr2tF9Ygbe1NAgFtyRT/dMfMVASI2YpqifvI1H/YtH9jxDNEpmvwr
+         eeqXxyogU2+BxbdRDebtdMO7XHKYaJ82qifKCcbi7NGqvKkYkWxXx5UjJLSuAc61/8mv
+         YU8OGp1uDWpeGFy1Rjj9n5FbOqXHI7IpQKEiVV57f5IFC4aDXd7DylkeG3r6SrlUuY/c
+         f+5CJdrrJxCylcEhifCLJECYq1f8lJESCBy/jVOyhNkUotm9zNr+3oJGrUAHP8RJ4oxU
+         J19y03GwteVfiU6ZQ0XBThPiH0Sf2ziFBOBsf2WKPN80U6Ok8BSdHmqzCEQbzUN1G59S
+         Ncjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785148496; x=1785753296;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Rx6OgR/abZgnW2Cg5Szzka1rX315tDSAtj7sx/+ljSs=;
+        b=qfXxxwFrdHrArVy/ez5Q6CEhWdrBoELznMzk9jZQDPU117zjq5G52cc7uiQ9w2sutD
+         SETyEac0U9tcoWR7TUO978kUmG+7R6oG7F5q6dM32gzEcMYv7PDNVvTjJ2i5bXpnei8R
+         eSfd6TQq8Keg1zfik2ktWU3pjCqa9iNJGf9/wFFyx1hQpwvNIAuv2V+HvksM2Ggakqyw
+         ulhy4Kl6fWF010Vmqet3V3yiJjcHXKm4K5cjcQEOpL0xVI0pPge1L3WM0DnApI6EvLMU
+         t1A11qE/BrMtv8wfsiFeXao1NueCLpYa8bT0luFi0dzTPKHdbcanT45MhdoKY1jRLyYj
+         Xhvw==
+X-Forwarded-Encrypted: i=1; AHgh+RpK0JqkqXuNIgvqax4oxXx6/xay2WCTdkde2WNjv4gRB8SKQEZ5B4m/ERmFlpgF9ip/GsUD1Wu/cRoH1sorcSOuhA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZnmwv4f57pieL3l3hrULAqRKG5WnSICZbkbIEmiN5+FaMZyJI
+	wlknfFZJoVIHHBwQMc7vRIxRLZN763NkoJXgoI78zVOMOV0Z2EnAnmNN
+X-Gm-Gg: AR+sD100La60XY6k0Mzk5fOpvfqOHzTBYS4eERYcHtsBldJgE5wFCVTq+rQv8Cq1AGP
+	i9IK48oPriIaBBXiuFrBCIrfhxeNEX8nYXIzMO+Hobs/ngQU4LybTx8MWPxm5qjBmThj2f3tHeT
+	g5SBkUPX2QPNEwB+1ONShTKsawvc/G09dzON8QsFzASm00CWpsQRAAff5LH5gOtPVY2B6dPp6O8
+	n2qPJ32JL0oVznMt/c8TwTZ3ORoe5yVREMCtfFSXE8XpgwmnvQRJSz0ZB46ofLO/ei7xJVPpxoi
+	Spj4Y1Vlr3z4OdjjSjf3d/FUTGBjLGD/qcYjCgHfvve23skJLuSObnU0s3ulrOQjgikAjyGwSiu
+	33Ib/llWPu6dgerlPS6I+jP/xU8FzyqYbjkPi89aIkB9YdInp3HwwXmRxSbcE9rQak8Mtv2DAYS
+	1RK3/kaZdQSOYP6LZbMvVxb+rrUnIuTlMIrEiM08oDe5sNHz07YPE23C0ERTGJBIB0IHVAUod8t
+	Rpw/dIlo55EtQxu
+X-Received: by 2002:a05:6000:288e:b0:47f:8abb:1fd2 with SMTP id ffacd0b85a97d-47f9cdaf515mr15514070f8f.3.1785148496248;
+        Mon, 27 Jul 2026 03:34:56 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:8281:5343:33a3:cac0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bd77a9sm45245173f8f.14.2026.07.27.03.34.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bd77a9sm45245173f8f.14.2026.07.27.03.34.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 03:34:54 -0700 (PDT)
+        Mon, 27 Jul 2026 03:34:56 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -66,10 +68,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/6] memory: renesas-rpc-if: Optimize transfer overhead and implement runtime PM autosuspend
-Date: Mon, 27 Jul 2026 11:34:43 +0100
-Message-ID: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 3/6] memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in write path
+Date: Mon, 27 Jul 2026 11:34:46 +0100
+Message-ID: <20260727103449.3188105-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -80,52 +84,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi all,
+Program the XSPI_CDTBUF0 TRTYPE, DATASIZE and ADDSIZE fields with a
+single regmap_update_bits() call in the RPCIF_DATA_OUT transfer path.
 
-This patch series optimizes the Renesas RPC-IF driver by significantly
-reducing software overhead in both the direct memory-mapped (dirmap) and
-manual transfer paths, maximizing transaction throughput, and introducing
-runtime PM autosuspend to prevent aggressive power gating during
-consecutive flash operations.
+The existing code updates these fields through three separate
+read-modify-write operations even though all values are known before the
+transfer request is issued. Combine the updates into a single register
+access to reduce overhead and simplify the configuration sequence.
 
-v1->v2:
-- Dropped `spi: spi-rpc-if: Implement 200ms runtime PM autosuspend delay`
-  patch as this has been merged via SPI subsystem.
-
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Performance Results:
+ drivers/memory/renesas-rpc-if.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-These changes were benchmarked using flash_speed on the RZ/T2H EVK with
-xSPI0/1 interfaces operating in 1S-1S-1S mode for write operations:
-
-xSPI0(MX25LW51245G):
-                 Without        With Fixes
-  Write Speed:  806 KiB/s       942 KiB/s
-  Read Speed:   5333 KiB/s      5361 KiB/s
-
-xSPI1(AT25SF128A):
-  Write Speed:  467 KiB/s       501 KiB/s
-  Read Speed:   17964 KiB/s     18285 KiB/s
-
-
-Note:
-- Patches have been rebased on top of next-20260726.
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (6):
-  memory: renesas-rpc-if: Mark XSPI_CDD1BUF0 as volatile
-  memory: renesas-rpc-if: Move static bridge configurations out of
-    dirmap hot paths
-  memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in write path
-  memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in read path
-  memory: renesas-rpc-if: Consolidate command setup register programming
-  memory: renesas-rpc-if: Use runtime PM autosuspend after transfers
-
- drivers/memory/renesas-rpc-if.c | 87 ++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 51 deletions(-)
-
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 50294e5d2bf5..e406afc42616 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -660,17 +660,12 @@ static int xspi_manual_xfer_impl(struct rpcif_priv *xspi)
+ 			u32 bytes_left = xspi->xferlen - pos;
+ 			u32 nbytes, data[2], *p = data;
+ 
+-			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
+-					   XSPI_CDTBUF_TRTYPE, XSPI_CDTBUF_TRTYPE);
+-
+ 			nbytes = bytes_left >= max ? max : bytes_left;
+ 
+ 			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
+-					   XSPI_CDTBUF_DATASIZE(0xf),
+-					   XSPI_CDTBUF_DATASIZE(nbytes));
+-
+-			regmap_update_bits(xspi->regmap, XSPI_CDTBUF0,
++					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(0xf) |
+ 					   XSPI_CDTBUF_ADDSIZE(0x7),
++					   XSPI_CDTBUF_TRTYPE | XSPI_CDTBUF_DATASIZE(nbytes) |
+ 					   XSPI_CDTBUF_ADDSIZE(xspi->addr_nbytes));
+ 
+ 			memcpy(data, xspi->buffer + pos, nbytes);
 -- 
 2.54.0
 
