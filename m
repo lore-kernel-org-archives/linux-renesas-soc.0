@@ -1,197 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9072F446BE8
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 13:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5A9470E88;
+	Wed, 29 Jul 2026 13:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785330552; cv=none; b=gSkDWGOCfHXqen2RACBRi4T80onfhgZVHszFssaCfwQUGcokZGCtIVGt5pGGrQEPOUa+fXCSDYNf5QFZ7LpsKqDbMLGpfgroL3YlzLZYhZ7zVw/hrgeEwbel+8Vid2FBEB6veEkgY3Yolzm+7yqdxbNQGYQRgHaRrOgM3ib5O3E=
+	t=1785331938; cv=none; b=KDTmyeYmnuO2Qe2p9jmBsIyVcCkmvYgg5Mvr07UejC6Y/gqcabTZfxX836EWNrnj8IFt4vQuj1dOjP5zoi9k4iTlH6oUHyxOWicePHlW2XqQwx3ZqUsJq+npwa+gTwCfT1orUm57pML/UpSMWwkaM+JP7w3i2LUoTKtxuFv04LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785330552; c=relaxed/simple;
-	bh=hPGVYBghCJkgcN3tZrevoVo9gaB35gByq1m7eKQMIiQ=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=btiEc3/koq0RTS+iY4fO8YA9tIouvDlZQzyAAMC6JCZqYZBopAJJLfSc58ER5SXUeTpFt4NX+oVSxwJw9f6R0Q0UBtrQ7p6rAyXYseA0H7/zTckcpzGAgkKJt9IrosWSrz2/8ijluNMsAGAVXR3f1FQKqW+NYOaYV9kp9+q+ynY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItNABVh+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785331938; c=relaxed/simple;
+	bh=U0oMIU8K8WmgeLPAyFV6bjpgnTi8C1w/LC1AdtgPXpw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=l+C3oZZYxuBYTW1T8E956nWwO2QFVT/D6PNOgEPrpM/FtbEyZxu7oBhQ93BFp61+8LEhpaPqQ26FrgKSz1lmWC7NJCV3E9tKEkBURlRFmrXX02wDJNwxJwg8HG3eEBWCHTfHjINLuComTi/d3tYDcYbjzg+XatYvjU+gbMVLiUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhSnNi23; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItNABVh+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBFD1F000E9
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 13:09:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhSnNi23"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928501F000E9;
+	Wed, 29 Jul 2026 13:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785330547;
-	bh=ASFXsn4nXOD/mK641M4jZwzrrOlFUU+ziD5PtdpkWzw=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=ItNABVh+cfLWgv73RiFJkCwmQEUBhVv2sAXeVggmW8sKX6bWwx3atLLD3gdRMVCBb
-	 QFDs6oOcSvv1c0VovBWzK2PWrSrOAvvwYGrqXGgfi98P0q77S9RniaRbuETreCTpI1
-	 mfseWrDpO73hBEzU4rbdcCyEgSu4xHJzsWbj+IppAht687G75fpC4NbD0rk7eHp5CF
-	 dYXEp6n03VMiqHPJVnSzlkiLuWWggtMC9+1W95te21hbAo1QIThxSG3u0kQmwFrMFe
-	 r0ExQWTltCJTS8U0P0avlbpap5ZG2L/IIHxM01U0dzQ6SVP6hN5AybMm26Ee9tr+2M
-	 DleiwQTarQ56Q==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39ca300db70so8086511fa.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 06:09:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rrcnk09o1wO/vl1qutk/8N07GARIH9H1TF2VDYCXLaXVcz8lpYU0f0Edq2olr5PNGO8tD+mGRt3MQrxEezuvXfNZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiMRHCKJ5i16wFAr1HA1ZxuzGTNh97M07MUfcdB6ahcIA4eRk9
-	fVnuQhVfzdXINN9RRjasjgqL8SinWyJtnzfFvtErRrsGKptPJntUuWo2z6K0b2nmEKiqCkTMHir
-	uAss4KvwDDuRjFXCo2TIZeVJv2aQmX/PTIsWIfcgf+g==
-X-Received: by 2002:a05:6512:6181:b0:5ae:a9eb:c5c6 with SMTP id
- 2adb3069b0e04-5b2d0261512mr1133725e87.64.1785330546089; Wed, 29 Jul 2026
- 06:09:06 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 29 Jul 2026 09:09:04 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 29 Jul 2026 09:09:04 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <TY3PR01MB113462C8DE3B70428F113ABF386CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=k20260515; t=1785331923;
+	bh=yyFIEb9z3mB2PIPDau5MQ7dpD90tXnalh+HmIBwM0Nk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=QhSnNi23aTMVPnBHd3PPmBrhLSc19heT9KYS0ZHTsC3ONVxgLBei98oe3pPj2dRHq
+	 2WVqe8B2JnPib4yRNsudUB/8/Wpekohz78IYCFU5vCylzyxT7VOsiWrQeBr3XHbovi
+	 xmfJUb/j8ai29LfxDihIR4MoVqA2XcfJc7OCImcuGqbA8/egFgOL13ap6IyeDuS7Sz
+	 cHquFS6CTfKI3TD0LHARonOrS9MT22QkmDkBaf9iUm+L/spe7XGNIguuQZ77w4EP/P
+	 HJf6wFNOEAw+GLcx5oYeEGYxOVt8roPGXi8bNGds3D9iCxAPb7rWaFsYysVWAqrXJL
+	 LkDjMjAvfO6oA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Syed Saba Kareem <Syed.SabaKareem@amd.com>, 
+ Aaron Ma <aaron.ma@canonical.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+ Hasun Park <hasunpark@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Kees Cook <kees@kernel.org>, Cezary Rojewski <cezary.rojewski@intel.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ James Ogletree <jogletre@opensource.cirrus.com>, 
+ Fred Treven <fred.treven@cirrus.com>, Ben Bright <ben.bright@cirrus.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Maciej Strozek <mstrozek@opensource.cirrus.com>, 
+ Mac Chiang <mac.chiang@intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ patches@opensource.cirrus.com, Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ =?utf-8?q?Amadeusz_S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>, 
+ linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ imx@lists.linux.dev
+In-Reply-To: <cover.1784528081.git.u.kleine-koenig@baylibre.com>
+References: <cover.1784528081.git.u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v2 0/6] ASoC: Use named initializers for
+ platform_device_id arrays
+Message-Id: <178519395804.552178.14635881416240705752.b4-ty@b4>
+Date: Tue, 28 Jul 2026 00:12:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
- <20260725123433.162348-3-biju.das.jz@bp.renesas.com> <CAMRc=Mf_oNCQK3o5-s4u8zejkVWM4WN_R9YO+NA4od0qqtGjow@mail.gmail.com>
- <TYCPR01MB11332A50145F29D93157A58BC86CB2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <CAMRc=MdU12B-+vQxCuFVuoJLLza_51-bv1o1T9VYEHbkiZF1EA@mail.gmail.com>
- <TY3PR01MB1134633BC06738344A740654786CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMRc=MfOk=+dQvdEAY1ah=G1JNM=p7J6=+Tz_uCYDQGBMxXHqA@mail.gmail.com> <TY3PR01MB113462C8DE3B70428F113ABF386CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Date: Wed, 29 Jul 2026 09:09:04 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MeybezmErzs9+jYaBgXr+ufsTv5_V5sZjhP6ynuQk+W2Q@mail.gmail.com>
-X-Gm-Features: AUfX_mwmatqgN8qkrJFJEW5yCcx-5JS7pmFqF_UHjRuELIIi5AWfSahrMeY1x0Y
-Message-ID: <CAMRc=MeybezmErzs9+jYaBgXr+ufsTv5_V5sZjhP6ynuQk+W2Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"magnus.damm" <magnus.damm@gmail.com>, "biju.das.au" <biju.das.au@gmail.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2070; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=U0oMIU8K8WmgeLPAyFV6bjpgnTi8C1w/LC1AdtgPXpw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqagDJWXeDjd5kHwd16ukfCKKPN0qkrdOoGH0my
+ SlAtyFDD2+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCamoAyQAKCRAk1otyXVSH
+ 0CfkB/9FMb5uul97pj4GpuHcasO2XkfONSN4R0UJo6cou6C2FFmI8xWge1nLM+AqKOSumscn/Vn
+ Au2qfeSLhjcaKupnNJ75pHeM0y38rT7suCWzSLpXeQnFml/R5whX5H9mHp2V4htcPgRK1YFNak6
+ wYmqDa9+JWv+I97lnNIDba0EcUOfHzKtw5fpjvstHtZISkKTTX7rMRnUdgwAV3YPUaVH49Y7G/8
+ RKad+Se7bFLSn4vl1oXqboKS4pbWXZ8Vg1YSEOgTHEAAmX5tB49vzlkmGF83RwZrRldfTrzGkdS
+ rGzce5naN625a9ZxpW5A+2jRZ+WX6wGhL19C6+xi8sgQLUGN
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, 28 Jul 2026 16:38:00 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
-> Hi Bartosz Golaszewski,
->
-> Thanks for the feedback.
->
->> -----Original Message-----
->> From: Bartosz Golaszewski <brgl@kernel.org>
->> Sent: 28 July 2026 15:22
->> Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
->>
->> On Tue, 28 Jul 2026 13:55:22 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
->> > Hi Bartosz Golaszewski,
->> >
->> >> -----Original Message-----
->> >> From: Bartosz Golaszewski <brgl@kernel.org>
->> >> Sent: 28 July 2026 12:35
->> >> Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power
->> >> Ready driver
->> >>
->> >> On Tue, 28 Jul 2026 11:17:58 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
->> >> > Hi Bartosz Golaszewski,
->> >> >
->> >> > Thanks for the feedback.
->> >> >
->> >>
->> >> ...
->> >>
->> >> >> > +
->> >> >> > +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
->> >> >> > +				     struct device *dev)
->> >> >> > +{
->> >> >> > +	return PWRSEQ_MATCH_OK;
->> >> >>
->> >> >> When I see an always-tru match() callback, it always raises an alarm bell.
->> >> >> Typically, I'd expect there to be some validation of the consumer happening.
->> >> >>
->> >> >> Please at least provide an explanation of why it's ok.
->> >> >
->> >> > Without the match function the driver is not probing.
->> >> >
->> >>
->> >> Yes, that's expected.
->> >>
->> >> > sysc(driver) ->powerseq(driver) ->{DSI,CSI,USB}(driver) there is no
->> >> > property that I can match here as the resource is a register on the
->> >> > SYSC IP and powerseq driver is instantiated by the SYSC driver.
->> >> >
->> >> > Maybe I can provide a comment here saying that??
->> >> > "No DT property to match here, so it is OK always"
->> >> >
->> >>
->> >> So the sysc is the parent of the pwrseq provider and the CSI, DSI and
->> >> USB drivers are the consumers of the pwrseq descriptor? The latter
->> >> are children of the platform bus, am I getting this right? Can you point me to the device tree that
->> describes it?
->> >
->> > Yes,
->> >
->> > Please see [1], [2], [3]
->> >
->> > [1] sysc node
->> >
->> > [2] phyrst node (I planned to remove renesas,sysc-pwrrdy in the next
->> > version as it is going to use pwrseq)
->> >
->> > [3] dsi node (I planned to remove renesas,sysc-pwrrdy in the next
->> > version as it is going to use pwrseq)
->> >
->> > [1]
->> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr
->> > ee/arch/arm64/boot/dts/renesas/r9a08g046.dtsi?h=next-20260727#n609
->> >
->> > [2]
->> > https://lore.kernel.org/all/TY3PR01MB11346FA21EFADC8A3D53D81BE86CF2@TY
->> > 3PR01MB11346.jpnprd01.prod.outlook.com/T/#mf24ae1363925a97c840b275c108
->> > a9b72942c40bc
->> >
->> > [3]
->> > https://lore.kernel.org/all/20260704093433.273672-1-biju.das.jz@bp.ren
->> > esas.com/T/#m31c6711b5403c5a387b22467bb88371df73ae2b1
->> >
->> >
->> > Cheers,
->> > Biju
->> >
->>
+On Mon, 20 Jul 2026 08:23:44 +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> ASoC: Use named initializers for platform_device_id arrays
+> 
+> Hello,
+> 
+> the objective of this series is still to prepare making struct
+> platform_device_id::driver_data an anonymous union. See
+> https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
+> for the details about that.
+> 
+> [...]
 
-Please wrap your emails at 80 characters as per the mailing list etiquette.
+Applied to
 
->> Then it seems you have a phandle from the DSI node to the sysc node:
->>
->> renesas,sysc-pwrrdy = <&sysc 0xd70 0x2>;
->
-> But this is no more required after modelling the pwrrdy signal as powerseq driver.
->
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
 
-So can you show me what the actual DT nodes and connections look like?
+Thanks!
 
->>
->> In match() you can check if that phandle leads to the sysc device who's the parent of the power sequencer
->> device and return MATCH_OK if it is.
->
-> As per the DT maintainer Krzysztof Kozlowski, we should not use random phandles for pwrrdy signal.
->
-> Also, I confirm that this property is unnecessary if we model it as Power sequencer.
->
-> From ABI, point now only matters is the pwrseq_target_data.name in the power sequence driver and
-> consumers.
->
-> dsi->pwrseq = devm_pwrseq_get(dsi->dev, "dsi-pwrrdy");
-> priv->pwrseq = devm_pwrseq_get(dev, "usb-pwrrdy");
->
-> From the experience, I don't think, DT maintainers will allow
-> to define a vendor property just for the driver match.
->
+[1/6] ASoC: codecs: mt6357: Drop unused assignment of platform_device_id driver data
+      https://git.kernel.org/broonie/sound/c/c7a6909de856
+[2/6] ASoC: renesas: fsi: Drop platform probing metadata
+      https://git.kernel.org/broonie/sound/c/0ca8f65516a9
+[3/6] ASoC: amd: acp: Use named initializers for platform_device_id arrays
+      https://git.kernel.org/broonie/sound/c/2b26d06fd3d8
+[4/6] ASoC: amd: acp: Unify code style for platform_device_id array
+      https://git.kernel.org/broonie/sound/c/4bed1074db1e
+[5/6] ASoC: Use named initializers for platform_device_id arrays
+      https://git.kernel.org/broonie/sound/c/232725a0e386
+[6/6] ASOC: Unify code style for platform_device_id arrays
+      https://git.kernel.org/broonie/sound/c/e4dc03df1f71
 
-You pointed me to the node so I assumed this is what it will look like. I don't
-have the full context in my head.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-I still prefer there to be some connection and validation of the pwrseq
-consumer so I'm inquiring about the architecture.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Please respond with the relevant DT nodes' final form.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Bart
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
