@@ -1,128 +1,129 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B36363094;
-	Mon, 27 Jul 2026 18:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B860A27BF79
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 18:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785177990; cv=none; b=kAqhgomocEr9rveH2NHCm1n42UE/598OeBj/Sq3e7mFNFXj3Yt93Byc74Isl/xTWbbaIgXumMgDt5AFgRKff5CuQ83r+GPVnM3Y97csHEbwADc7xY1ckRsv+V2YvKEl2p01JMKDTicSkZTgyUjCB3nL1xyRclPH0IgZ9tXLfHuA=
+	t=1785178143; cv=none; b=ktlXk5j+LG0OZNKM4XpZ+XQ0oMsKrF3X12rwO3XT/0lO97toDYx868lwQlb1rdfqdcbm0/SdvrPwjDMiRIuI7pLcNTRpA03QuZaPQLh9EgVPkCIpYXCC2sk4so14vP5QU772y5cxJbO8juWOBkrqglEOdpcVkU3UVQ8tNIIPTa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785177990; c=relaxed/simple;
-	bh=Z/5pwo4klH/G5J4/WGhzTofwYGUJUpFmG7OVLRoY6CY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=daCTePm0EWTlluLDfRMbDapDJ/rUrdzKcecUKD/ykzKVXXYh9+x2k5l+90g8p9J/9tNaFjusyNVmFKiUUbYhRO98uRi6Pj4E2PEMR/siAuw/6T5k3pAuBnNi/FsoUHX40P4K5SWyTyK1JyuhWlVJ5JG7ofM63nOrmXpeRVccP6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Pstfw6IK; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1785178143; c=relaxed/simple;
+	bh=mEMioOeArUOwcyQK+i4sJyvWP61cn0vi1h5orQSnP4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hHDPFsFAUl2tFnoXQbciBpFoMSycb4AXn30LijEDgLh5rvPrl5LutwDdiIYCMQqgcf3dprl9eGS7X/1/QGnrnU2ULHckSI9boJ/uS9upQkOoxYnSILR3gOUFV/KJ14dmnuHBi6JWcA6pHxo13vcwHTMlHXnmWZjxnCo4TXrjKXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/40ZXe+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Pstfw6IK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/40ZXe+"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ceae1ed204so33175265ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 11:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785178141; x=1785782941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EfiZ6IJDTy0yxZ7QXla7+zVZ2XbqWwJrwRsgjOcldtw=;
+        b=A/40ZXe+eFcIqvswvH2BrKgoy3Hhl8aqfxUzq1nU5uOduD3HfwCGgKWjNsyls5IXw7
+         06nJ5MOyqUzEHomeiAFQYr7VdkZcYNYPLftu1LwwsmBckAMUd/AKudPPqsBtioOYNmSl
+         pYBagWABzVzBbQP0K6CIZnuAXSfb1R6W4Kyl/fjoour6ZuxC6SPZXe8QZ+I6Nz73tadW
+         Mpxh1a0CHRDDYvh86Uv8D4fyEf7Jd3yYKWn9oHPx/zn0WPAnvlRnFl/tqpNEKQp+HVKZ
+         aBU/xgvopk7ho6VEFdkDcDR0BSovJ4XzbZMKLAfjZ9jCKYXGd0YFBjMMZWsu1KsfZsYA
+         MWfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785178141; x=1785782941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EfiZ6IJDTy0yxZ7QXla7+zVZ2XbqWwJrwRsgjOcldtw=;
+        b=J+vKKIda/jk6c13o1lbJQzZ2QQC5rrHhjgz2r3a+zKjT1lJ4cdZ3MyMNZbE/EOrAtW
+         LsVDsuNciE/CmpGo/NP4O3G5Yji41MW09LPxV8UwB4/CRhmPSFD5/h8JuPx+vEnzI4Ia
+         z/BDiF6BzrLFY/ZUGutSwTu2y82dEG6GxZtgB+IpIHaImzWJj4RYN3w1kJVqQfHRsdVv
+         9GshfinWAcOH8WtbEH/re1JUANEzi7uWPqRNFtI8HlsHjRB/vj1eOnxQ4GO8r/XzCsgc
+         U8IgcWLdyf6VGQmX0Qqc0GPAmeYxPjcHmxdcq3GMdoPkuRarieb7GONuEm4mUhahyUX/
+         KKew==
+X-Forwarded-Encrypted: i=1; AHgh+Rp/t+93yrfP+l2/ZQx+SiNOwXZcSKRbGU2fdTWeoG8p5uWHYa3z/VRbgyyGsqjBp3Yt+o9nVjsvKYItPdxU2DsAjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWfUgyqjEdCEet9PcqxQskdU8z3LPjXIZaPIXYIpbXTrUlbAW2
+	b15SCF1Mcs35LYpEdAfA2tZwdVFC13gH1x/NKRh8CX4mvY4FV7AtW+2q
+X-Gm-Gg: AR+sD13DOUialvPQGuL4bi5HJr1dsDfU5eBn6wY86GpEW92DEdG4hp5fAMRZxE9TG2J
+	dOODXObHLvOoIx8PKqdmlTfBvE2GrjW5YC3+pKhRdc66/RfU3E65Fnk1BVnGWP38sQmjRSLJ0kc
+	s7gawz5n5rSMtrh4POTzR3IBhhKLF7bv4FH6e1QhzzvjSSPgXsdFRuerD/q2lWZJ+frGeGMrsK2
+	fBD3X9TCCCxuiNk1RjXLQYtlg2jrI4etXSNqExvORYGVsMTK+EoUcVlM/9MqpRpqP1NdW8WG7wi
+	3oR65F6atNo5EpNs381alGxjyuo4XOie9wezyil8iPWSr9bVFUvEIcAziPv5BWqaJ+6bCkzl4bD
+	0MIIVHit/NwnQ13sReYZSLACSUujAmg5IUWp5Ru/gVewNJ2riLfUrTvu5i/ara78JKb2UjSP8py
+	WvUmjV91c=
+X-Received: by 2002:a17:903:26cf:b0:2ca:4cfd:a6df with SMTP id d9443c01a7336-2cfde8887dbmr93495685ad.43.1785178140809;
+        Mon, 27 Jul 2026 11:49:00 -0700 (PDT)
+Received: from ubuntu.. ([110.9.142.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cfde7d7b87sm40186245ad.57.2026.07.27.11.48.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 11:49:00 -0700 (PDT)
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Brian Masney <masneyb@onstation.org>,
+	David Lechner <dlechner@baylibre.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+Subject: [PATCH 0/9] iio: fix write_raw() return values and remove pm helpers
+Date: Tue, 28 Jul 2026 03:47:37 +0900
+Message-ID: <20260727184755.2055414-1-ekffu200098@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1785177974;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s0wH+ySFfCBVmnBojBZaXIoCALe+k/ClNs6fjt/QIh0=;
-	b=Pstfw6IK644jlNnRGZZRzPiUJEWtkwg3bh22GraX3/i7mt3gP1kE9IC1GsrEiZtN9HwtV0
-	MbmNO1kYDW2KbxEiOr9P49jzr3JFdam9Nv4GjjD4EnyoxMaeGntAA6aDHk6vcsi6R0udzB
-	+qL9WEAdvH37Xa/JrZBO5IRJVCi2wuT6cT0F3vO1i/01J0QVy6duT66k2KWM33tHsZvYjQ
-	IdWTyvdQr7nYV4CBGvN1dS+L/UTx/sY/MqpIXlJweYMZ4jPVhCOdsVHOTVktRuhWKjSlzx
-	xk9gIo5Z9YB9UXA4kdjs/bbuTUWyR74sGlTMCREYyq4Bzestgaw3iD+MdtjkZw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Jul 2026 20:45:58 +0200
-Message-Id: <DK9KRSOWRHY0.H7SC0R3BIIUZ@cknow-tech.com>
-To: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
- <jesszhan0024@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca
- Ceresoli" <luca.ceresoli@bootlin.com>, "Inki Dae" <inki.dae@samsung.com>,
- "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Laurentiu Palcu"
- <laurentiu.palcu@oss.nxp.com>, "Lucas Stach" <l.stach@pengutronix.de>,
- "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Paul Cercueil" <paul@crapouillou.net>, "Linus
- Walleij" <linusw@kernel.org>, "Marek Vasut" <marex@denx.de>, "Stefan Agner"
- <stefan@agner.ch>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
- "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Kieran
- Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
- Das" <biju.das.jz@bp.renesas.com>, "Sandy Huang" <hjc@rock-chips.com>,
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
- <andy.yan@rock-chips.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>,
- "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Philippe Cornu"
- <philippe.cornu@foss.st.com>, "Maxime Coquelin"
- <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>, "Chen-Yu Tsai" <wens@kernel.org>, "Samuel
- Holland" <samuel@sholland.org>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Jingoo
- Han" <jingoohan1@gmail.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>,
- "Kyungmin Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>,
- "Paul Kocialkowski" <paulk@sys-base.io>, "Alain Volmat"
- <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>,
- "Thierry Reding" <thierry.reding@kernel.org>, "Mikko Perttunen"
- <mperttunen@nvidia.com>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Albert
- Esteve" <aesteve@redhat.com>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-mips@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
- <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and
- references
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
- <178472247762.1745070.2847290153778032256.b4-ty@b4>
-In-Reply-To: <178472247762.1745070.2847290153778032256.b4-ty@b4>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jul 22, 2026 at 2:15 PM CEST, Neil Armstrong wrote:
-> On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
->> The drm_panel subsystem provides kref-based reference counting [1]
->> (drm_panel_get/put) but almost nothing in the tree actually uses it.
->> This results in a systemic use-after-free pattern throughout the codebas=
-e.
->>=20
->> This series aims to close all those issues.
->>=20
->> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
->> a counted reference for the list entry. drm_panel_bridge_add_typed()
->> now holds a counted reference for the lifetime of the panel_bridge.
->>=20
->> [...]
->
-> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (dr=
-m-misc-next)
->
-> [1/4] drm/panel: have drm_panel_add/remove manage a list reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff4=
-0cded27168e53406e0120ad66e114
-> [2/4] drm/bridge/panel: hold a reference to the wrapped panel
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea89=
-50fd825e0d6ecd713705a42f06417
-> [3/4] drm/panel: of_drm_find_panel() return a counted reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d=
-319cae2acd9df1b297cc948c58bc7
-> [4/4] drm/panel: find_panel_by_fwnode() return a counted reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883d=
-ab989178dd4186090d6bcf52b8d55
+Hello,
 
-That last commit resulted in an extra ``drm_panel.c.orig`` file which=20
-wasn't part of the patch and seems incorrect?
+This series fixes write_raw() return values and removes pm runtime
+helpers in iio drivers, as Jonathan suggested when reviewing the
+original iio patch [1].
 
-Cheers,
-  Diederik
+Patches 1-2 fix write_raw() in isl29028 and tsl2583 to always return
+zero on success. write_raw() returns the value of
+pm_runtime_put_autosuspend(), which is 1 if the device is already
+runtime suspended. In that case write() on the sysfs attribute returns
+1 instead of the number of bytes written.
+
+Patches 3-7 remove the pm runtime helpers in isl29028, tsl2583,
+vcnl4035, vcnl4000 and rcar-gyroadc. Each helper just calls
+pm_runtime_resume_and_get() or pm_runtime_put_autosuspend() depending
+on its bool argument and adds no value.
+
+Patches 8-9 are the remaining conditional return cleanups from the
+original patch, generated by the Coccinelle script.
+
+[1] https://lore.kernel.org/all/20260723184538.3888637-16-ekffu200098@gmail.com/
+
+---
+
+Sang-Heon Jeon (9):
+  iio: light: isl29028: return zero in write_raw() on success
+  iio: light: tsl2583: return zero in write_raw() on success
+  iio: light: isl29028: remove isl29028_set_pm_runtime_busy() helper
+  iio: light: tsl2583: remove tsl2583_set_pm_runtime_busy() helper
+  iio: light: vcnl4035: remove vcnl4035_set_pm_runtime_state() helper
+  iio: light: vcnl4000: remove vcnl4000_set_pm_runtime_state() helper
+  iio: adc: rcar-gyroadc: remove rcar_gyroadc_set_power() helper
+  iio: light: tsl2583: remove conditional return with no effect
+  iio: magnetometer: ak8974: remove conditional return with no effect
+
+ drivers/iio/adc/rcar-gyroadc.c    | 14 ++------------
+ drivers/iio/light/isl29028.c      | 22 ++++++---------------
+ drivers/iio/light/tsl2583.c       | 32 ++++++++++---------------------
+ drivers/iio/light/vcnl4000.c      | 14 ++------------
+ drivers/iio/light/vcnl4035.c      | 18 ++++-------------
+ drivers/iio/magnetometer/ak8974.c |  6 +-----
+ 6 files changed, 25 insertions(+), 81 deletions(-)
+
+-- 
+2.43.0
+
