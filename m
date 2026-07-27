@@ -1,131 +1,128 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F833B3894
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 17:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785175152; cv=pass; b=QmzYvforP32LHD1L9L/Xx7lhB2c/8n4Wh0YvDb/pdRDvu9vHaXO0RwFcQSwkvZXIYnlXbRPMmEUn1Dz4vYD6Er8qe5reoCwEyOfaIwfCfGQqAbUrY1BJm4xrXRTjANGZzI+Yws9hoqZL/CIvsB/s9uKpojCLcUZvZenuCFCv5+4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785175152; c=relaxed/simple;
-	bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEN2iDkwv0wA/+jCbmpY5B2sv7HmNCsNR4gOKEphceayy8rS2NSrXN/cGXSd6j+Usdb0q8JuqsTkISr1XAhJ/1AGwdRSHzJGHt6HLTP8dJzNXShFghFYTpUlVnJXZUlVB8Lc9JpM/pwkmvyKWvWvaHWaQNvYVJGzTRh4y3lAUd8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVoa4UHI; arc=pass smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B36363094;
+	Mon, 27 Jul 2026 18:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785177990; cv=none; b=kAqhgomocEr9rveH2NHCm1n42UE/598OeBj/Sq3e7mFNFXj3Yt93Byc74Isl/xTWbbaIgXumMgDt5AFgRKff5CuQ83r+GPVnM3Y97csHEbwADc7xY1ckRsv+V2YvKEl2p01JMKDTicSkZTgyUjCB3nL1xyRclPH0IgZ9tXLfHuA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785177990; c=relaxed/simple;
+	bh=Z/5pwo4klH/G5J4/WGhzTofwYGUJUpFmG7OVLRoY6CY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=daCTePm0EWTlluLDfRMbDapDJ/rUrdzKcecUKD/ykzKVXXYh9+x2k5l+90g8p9J/9tNaFjusyNVmFKiUUbYhRO98uRi6Pj4E2PEMR/siAuw/6T5k3pAuBnNi/FsoUHX40P4K5SWyTyK1JyuhWlVJ5JG7ofM63nOrmXpeRVccP6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Pstfw6IK; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVoa4UHI"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4728c12ba97so1828838f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:59:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785175149; cv=none;
-        d=google.com; s=arc-20260327;
-        b=dryVN/N0dgeB//9TprXM3XEHg7NkRUPQUS7+tskRJHjWDecXufdVVnJtTnXgDvA7mm
-         UGAOapeZp2RWusF63BoehPVEw+zfI4A+1NhFMoxsE6t8t4iXnLx85VDO6fUErvGZpKfW
-         p1xAaIEXlKy2NDctcCTwIkofeBdI9KxdzD4Gm2pCKbHwcCJoQ05Ake6t5Mmw2DSk9e5J
-         Oe/ECo1xPlTLK8jXRzWnhoaNiV4kEUiAcWpbZ5bkVkOgM6k5lSU7242MOZG2RsmM/Cvz
-         Sh0LDWSc6dMYntrX1I8oSKeUiVQavnOQBBlyIO02x0dWT+tBWUl6PJjZXZyGt0FnsNEj
-         kFLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
-        fh=IjZNWgzVcF4dveyJh+2FS7bJJGrTuJSPZMV6bJlEYM8=;
-        b=BJVYpXRKRnzvxK4HIefiL6eijKRyUTxQIvIF1W3X7yy2yC08vUL85INST+YQUyP55n
-         XSKaWQ44vtjC9jCN8du+41PLWDk9QtyDen7fzgxmlsxE8FTbVXA2MX5hLeIwS7GL2ELU
-         YJLlrI9vGrgb0Yspjo9DZoQFYHmAvm8PLX+g5ij857e+DB+0cE/dDSfSkrLMIvmm+A58
-         8Ko0i9lAnRykOcfvzMXGbw4MrN/dNKpkM3LWsCvBcA2wnNNRamzYh4r4QFjiiM3Zf23O
-         2MWn7H/XVC0Is1Lc9xVE5wQ5VARVr8GUxXlOb/wI6qQAb7qRdPWV1FFDS9j0xCosNr/I
-         jZtg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785175149; x=1785779949; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
-        b=hVoa4UHIlSiGM7c914yRJk7A52Y2qilbXJBbOPnQQBTXlJzDSW5/zBNhu4YM7OrMDv
-         wLmyX3fOTa2mNupCPKEc8LhI4I96K02t7LWFNqfRIyZyz2uUieES9HVDSexvTDSA7Kxs
-         8IcscuPuNvEz5sMj5jcbCYm2XKBIui8XEvQc3kDV4RyuKgvF4S/QOSJA2uUJNnpmOHHD
-         rstzat6PlF+5BGxvtTQd2zK1d7/XhIeF6TLPDSWw6wn3nad/hXw2CKwp2CNEvg/xZRbP
-         fdAbaef1YcwWzy1Un2D26XH9yD5hEci2awXZt2nCOF1uMO2ow065+tzdjOennUWVt1lg
-         Zk8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785175149; x=1785779949;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
-        b=CX+BNmi5EFuA95RvWCmfDvzonthxdiU9lOFYv5x+zWCtzXYIYyfBBlQaugUw7kBV19
-         KXW3hWuKjN7sTAo3NDtcjjsXodqcbnIxdRPdUeOeK7QdPb4PLS/6KVIMsgDZNtvf9YkM
-         E21SOAp8oE2HsYejMe3w1lPNXR40Uia7l4p5ME0Bl7OAj7fjyxe0M0UDz7QJz0TmvmbU
-         7yFQSXIWHdaAhzaT8II80aeKMEZ/rJqjRuq3urzjDnjZHD5eqYPGfCeSTa1B+bDn8+8k
-         S+DroiCn3KipyNoPEagKUDRrT/lnTZrAnM+VjWUUm9Djd10OQuMyGnU4aXyrbqkLSoP3
-         rMYg==
-X-Forwarded-Encrypted: i=1; AHgh+RoHzJQE3gwVkrwXFtGOnpoJC0C0qAjxP8qcW4I76EkyLHKwMAX5mwEXvyAjpNMBVf8787Ih4rd8X3cUGPLC9XcOCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyqDHvKJiJ8hHRun2p1Ihf9iQaYmA+QVsriop471t31Ay7inuA
-	LGyJBf7js6JEVU0DSsxTh8V5RXTRxr/4hLsh752pIlKLtUc9/tGBlOFef0XUYwHVnIc34UIp8GF
-	pFsTdB+VYcgxECxgPg11c0RVlOVdoHnA=
-X-Gm-Gg: AR+sD13wIsO1z9+7cvAMKK0YTAEQxY+zZ0ensm1ByE1LAc7xNPQyVbqgOtDQe11oxYO
-	GnG5MzpCA2eHCKq6RX9nKmBrGzBRPK0jR6ZyGkaVXDPXlay2HYB7mNx7wL4LYDZw5mvTdwNHFrx
-	0aO1otdLTRXAMnODkJS1c928RVYM0Dz9KZegzTLV2MakaMBkmUMuLb8wIUGlVkn/C6YePtG/HMy
-	P3+6PKQooKixZ7tB+AGzbrWWfu4kEpkIf6Us5+k03ATmpWgRk0Fdqox9guoSPzxYx1iCD1lz+Ar
-	h9tMsW1psRKF5hGEDOgqNdrzQMSUKN+10cL0IQX/oX4fal4iX4trTE6X/sqXKxMTzAusQa9geTn
-	bssyRBAiOv6zemNg=
-X-Received: by 2002:a05:6000:220e:b0:47a:e342:373e with SMTP id
- ffacd0b85a97d-47fafa8d34fmr158129f8f.58.1785175149382; Mon, 27 Jul 2026
- 10:59:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Pstfw6IK"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <amd-llbKq1t42NJY@ninjato>
-In-Reply-To: <amd-llbKq1t42NJY@ninjato>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 27 Jul 2026 18:58:42 +0100
-X-Gm-Features: AUfX_myESa_MFxqRB0QW75viHOy-SwrQdFWdL-wB5p8gk_xS459_sX-DcTtUq9U
-Message-ID: <CA+V-a8vTjYKeGAt+FdRz3qsyyJLZxUFD1MDvSHsJv7=P+FHTfA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] memory: renesas-rpc-if: Optimize transfer overhead
- and implement runtime PM autosuspend
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1785177974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s0wH+ySFfCBVmnBojBZaXIoCALe+k/ClNs6fjt/QIh0=;
+	b=Pstfw6IK644jlNnRGZZRzPiUJEWtkwg3bh22GraX3/i7mt3gP1kE9IC1GsrEiZtN9HwtV0
+	MbmNO1kYDW2KbxEiOr9P49jzr3JFdam9Nv4GjjD4EnyoxMaeGntAA6aDHk6vcsi6R0udzB
+	+qL9WEAdvH37Xa/JrZBO5IRJVCi2wuT6cT0F3vO1i/01J0QVy6duT66k2KWM33tHsZvYjQ
+	IdWTyvdQr7nYV4CBGvN1dS+L/UTx/sY/MqpIXlJweYMZ4jPVhCOdsVHOTVktRuhWKjSlzx
+	xk9gIo5Z9YB9UXA4kdjs/bbuTUWyR74sGlTMCREYyq4Bzestgaw3iD+MdtjkZw==
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 27 Jul 2026 20:45:58 +0200
+Message-Id: <DK9KRSOWRHY0.H7SC0R3BIIUZ@cknow-tech.com>
+To: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca
+ Ceresoli" <luca.ceresoli@bootlin.com>, "Inki Dae" <inki.dae@samsung.com>,
+ "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Laurentiu Palcu"
+ <laurentiu.palcu@oss.nxp.com>, "Lucas Stach" <l.stach@pengutronix.de>,
+ "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Paul Cercueil" <paul@crapouillou.net>, "Linus
+ Walleij" <linusw@kernel.org>, "Marek Vasut" <marex@denx.de>, "Stefan Agner"
+ <stefan@agner.ch>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Kieran
+ Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Sandy Huang" <hjc@rock-chips.com>,
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>,
+ "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Philippe Cornu"
+ <philippe.cornu@foss.st.com>, "Maxime Coquelin"
+ <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
+ <alexandre.torgue@foss.st.com>, "Chen-Yu Tsai" <wens@kernel.org>, "Samuel
+ Holland" <samuel@sholland.org>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Jingoo
+ Han" <jingoohan1@gmail.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>,
+ "Kyungmin Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>,
+ "Paul Kocialkowski" <paulk@sys-base.io>, "Alain Volmat"
+ <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>,
+ "Thierry Reding" <thierry.reding@kernel.org>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Albert
+ Esteve" <aesteve@redhat.com>
+Cc: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mips@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and
+ references
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+ <178472247762.1745070.2847290153778032256.b4-ty@b4>
+In-Reply-To: <178472247762.1745070.2847290153778032256.b4-ty@b4>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Wolfram,
+On Wed Jul 22, 2026 at 2:15 PM CEST, Neil Armstrong wrote:
+> On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
+>> The drm_panel subsystem provides kref-based reference counting [1]
+>> (drm_panel_get/put) but almost nothing in the tree actually uses it.
+>> This results in a systemic use-after-free pattern throughout the codebas=
+e.
+>>=20
+>> This series aims to close all those issues.
+>>=20
+>> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+>> a counted reference for the list entry. drm_panel_bridge_add_typed()
+>> now holds a counted reference for the lifetime of the panel_bridge.
+>>=20
+>> [...]
+>
+> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (dr=
+m-misc-next)
+>
+> [1/4] drm/panel: have drm_panel_add/remove manage a list reference
+>       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff4=
+0cded27168e53406e0120ad66e114
+> [2/4] drm/bridge/panel: hold a reference to the wrapped panel
+>       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea89=
+50fd825e0d6ecd713705a42f06417
+> [3/4] drm/panel: of_drm_find_panel() return a counted reference
+>       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d=
+319cae2acd9df1b297cc948c58bc7
+> [4/4] drm/panel: find_panel_by_fwnode() return a counted reference
+>       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883d=
+ab989178dd4186090d6bcf52b8d55
 
-On Mon, Jul 27, 2026 at 4:51=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi Prabhakar,
->
-> > This patch series optimizes the Renesas RPC-IF driver by significantly
-> > reducing software overhead in both the direct memory-mapped (dirmap) an=
-d
-> > manual transfer paths, maximizing transaction throughput, and introduci=
-ng
-> > runtime PM autosuspend to prevent aggressive power gating during
-> > consecutive flash operations.
->
-> Sounds great. I want to test it on R-Car V4H SparrowHawk.
->
-Thank you.
-
-> > These changes were benchmarked using flash_speed on the RZ/T2H EVK with
-> > xSPI0/1 interfaces operating in 1S-1S-1S mode for write operations:
->
-> 'flash_speed' from mtd-utils, I assume. Did you use other options than
-> '-d' for testing writes?
->
-Apart from the -d option I used `-c 256` option too.
+That last commit resulted in an extra ``drm_panel.c.orig`` file which=20
+wasn't part of the patch and seems incorrect?
 
 Cheers,
-Prabhakar
+  Diederik
