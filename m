@@ -1,102 +1,131 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244CB3AA187
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 15:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785167519; cv=none; b=dpdu4kaAXSxIh0vKVivfl1Is2gnMHB1mLVasbGYPZv7hJ29Vvbyj4x2cFtHcPSN2hSRRaoNH1Lm3OkpA296zCSx3T6I1ZldOG+dqgllkX+0KUxZtOC03c74hZf1lb3aiH0KyFCCwOJMzolUnENUuMM5XC5YIOTLXaEg4TSLCJQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785167519; c=relaxed/simple;
-	bh=4VRjDPXpUz5nr/ONs3h8eN0cltUxM/zj2dhOBv9VUvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUzVIyfuAhv+Q18kIwwOybm7Lc3iPSw6rwS4t68+gaZb51YrvxERswjH6hR8XnVMyjpQfz43peDMCNZK6/DS1RJzSMK5Oy9HhxvdQGmuseVhSSWeq2fvnxia4CvWd7ujnZOt81hI4arFzqIh62a+v0ExGR+udSBXh49Fa5T6j0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=i5639RbD; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F833B3894
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 17:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785175152; cv=pass; b=QmzYvforP32LHD1L9L/Xx7lhB2c/8n4Wh0YvDb/pdRDvu9vHaXO0RwFcQSwkvZXIYnlXbRPMmEUn1Dz4vYD6Er8qe5reoCwEyOfaIwfCfGQqAbUrY1BJm4xrXRTjANGZzI+Yws9hoqZL/CIvsB/s9uKpojCLcUZvZenuCFCv5+4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785175152; c=relaxed/simple;
+	bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UEN2iDkwv0wA/+jCbmpY5B2sv7HmNCsNR4gOKEphceayy8rS2NSrXN/cGXSd6j+Usdb0q8JuqsTkISr1XAhJ/1AGwdRSHzJGHt6HLTP8dJzNXShFghFYTpUlVnJXZUlVB8Lc9JpM/pwkmvyKWvWvaHWaQNvYVJGzTRh4y3lAUd8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVoa4UHI; arc=pass smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="i5639RbD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=1y+3
-	WjlCp0prLe2Yyy5mqGad4x2ebeed3gFXOHwXGXw=; b=i5639RbDF2Cm+vHhKkpe
-	mXxKBGYZTFeLCE4CJIhyO4AOog5vBZHVawChK4s8y5eZeOLUkscW0icRRzYBN+He
-	RwJ3gK48qqwzBeTiuRVsDoKwifZtT2hYDGN3clhbboUukacMsfWJqd/rXfGWT1yz
-	wT7OZr66Q29HDHethMY/5goeWl69b+Q0erkmJIqYRUAXjRpH+UHN7g1VkDCrqt9P
-	lA0LzhI4oDIcTI6sHmgvBrcIjUiRxSEVQ88LYW7Hf0shfuJGypB5QazC6/B2m6g/
-	KfhrAIUDyXsq+b/TBv3yysA3vTuuuaZ53gu3jB4JdkR0M/ha9c1MlzPJH9hT1lHG
-	fQ==
-Received: (qmail 655990 invoked from network); 27 Jul 2026 17:51:51 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jul 2026 17:51:51 +0200
-X-UD-Smtp-Session: l3s3148p1@UXxcs5lX3L4ujnuy
-Date: Mon, 27 Jul 2026 17:51:50 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/6] memory: renesas-rpc-if: Optimize transfer
- overhead and implement runtime PM autosuspend
-Message-ID: <amd-llbKq1t42NJY@ninjato>
-References: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVoa4UHI"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4728c12ba97so1828838f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jul 2026 10:59:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785175149; cv=none;
+        d=google.com; s=arc-20260327;
+        b=dryVN/N0dgeB//9TprXM3XEHg7NkRUPQUS7+tskRJHjWDecXufdVVnJtTnXgDvA7mm
+         UGAOapeZp2RWusF63BoehPVEw+zfI4A+1NhFMoxsE6t8t4iXnLx85VDO6fUErvGZpKfW
+         p1xAaIEXlKy2NDctcCTwIkofeBdI9KxdzD4Gm2pCKbHwcCJoQ05Ake6t5Mmw2DSk9e5J
+         Oe/ECo1xPlTLK8jXRzWnhoaNiV4kEUiAcWpbZ5bkVkOgM6k5lSU7242MOZG2RsmM/Cvz
+         Sh0LDWSc6dMYntrX1I8oSKeUiVQavnOQBBlyIO02x0dWT+tBWUl6PJjZXZyGt0FnsNEj
+         kFLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
+        fh=IjZNWgzVcF4dveyJh+2FS7bJJGrTuJSPZMV6bJlEYM8=;
+        b=BJVYpXRKRnzvxK4HIefiL6eijKRyUTxQIvIF1W3X7yy2yC08vUL85INST+YQUyP55n
+         XSKaWQ44vtjC9jCN8du+41PLWDk9QtyDen7fzgxmlsxE8FTbVXA2MX5hLeIwS7GL2ELU
+         YJLlrI9vGrgb0Yspjo9DZoQFYHmAvm8PLX+g5ij857e+DB+0cE/dDSfSkrLMIvmm+A58
+         8Ko0i9lAnRykOcfvzMXGbw4MrN/dNKpkM3LWsCvBcA2wnNNRamzYh4r4QFjiiM3Zf23O
+         2MWn7H/XVC0Is1Lc9xVE5wQ5VARVr8GUxXlOb/wI6qQAb7qRdPWV1FFDS9j0xCosNr/I
+         jZtg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785175149; x=1785779949; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
+        b=hVoa4UHIlSiGM7c914yRJk7A52Y2qilbXJBbOPnQQBTXlJzDSW5/zBNhu4YM7OrMDv
+         wLmyX3fOTa2mNupCPKEc8LhI4I96K02t7LWFNqfRIyZyz2uUieES9HVDSexvTDSA7Kxs
+         8IcscuPuNvEz5sMj5jcbCYm2XKBIui8XEvQc3kDV4RyuKgvF4S/QOSJA2uUJNnpmOHHD
+         rstzat6PlF+5BGxvtTQd2zK1d7/XhIeF6TLPDSWw6wn3nad/hXw2CKwp2CNEvg/xZRbP
+         fdAbaef1YcwWzy1Un2D26XH9yD5hEci2awXZt2nCOF1uMO2ow065+tzdjOennUWVt1lg
+         Zk8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785175149; x=1785779949;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=IlMPunhOQoKRntZmtNY4UqQ2ccSCTkYXSC3AepsSrEw=;
+        b=CX+BNmi5EFuA95RvWCmfDvzonthxdiU9lOFYv5x+zWCtzXYIYyfBBlQaugUw7kBV19
+         KXW3hWuKjN7sTAo3NDtcjjsXodqcbnIxdRPdUeOeK7QdPb4PLS/6KVIMsgDZNtvf9YkM
+         E21SOAp8oE2HsYejMe3w1lPNXR40Uia7l4p5ME0Bl7OAj7fjyxe0M0UDz7QJz0TmvmbU
+         7yFQSXIWHdaAhzaT8II80aeKMEZ/rJqjRuq3urzjDnjZHD5eqYPGfCeSTa1B+bDn8+8k
+         S+DroiCn3KipyNoPEagKUDRrT/lnTZrAnM+VjWUUm9Djd10OQuMyGnU4aXyrbqkLSoP3
+         rMYg==
+X-Forwarded-Encrypted: i=1; AHgh+RoHzJQE3gwVkrwXFtGOnpoJC0C0qAjxP8qcW4I76EkyLHKwMAX5mwEXvyAjpNMBVf8787Ih4rd8X3cUGPLC9XcOCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyqDHvKJiJ8hHRun2p1Ihf9iQaYmA+QVsriop471t31Ay7inuA
+	LGyJBf7js6JEVU0DSsxTh8V5RXTRxr/4hLsh752pIlKLtUc9/tGBlOFef0XUYwHVnIc34UIp8GF
+	pFsTdB+VYcgxECxgPg11c0RVlOVdoHnA=
+X-Gm-Gg: AR+sD13wIsO1z9+7cvAMKK0YTAEQxY+zZ0ensm1ByE1LAc7xNPQyVbqgOtDQe11oxYO
+	GnG5MzpCA2eHCKq6RX9nKmBrGzBRPK0jR6ZyGkaVXDPXlay2HYB7mNx7wL4LYDZw5mvTdwNHFrx
+	0aO1otdLTRXAMnODkJS1c928RVYM0Dz9KZegzTLV2MakaMBkmUMuLb8wIUGlVkn/C6YePtG/HMy
+	P3+6PKQooKixZ7tB+AGzbrWWfu4kEpkIf6Us5+k03ATmpWgRk0Fdqox9guoSPzxYx1iCD1lz+Ar
+	h9tMsW1psRKF5hGEDOgqNdrzQMSUKN+10cL0IQX/oX4fal4iX4trTE6X/sqXKxMTzAusQa9geTn
+	bssyRBAiOv6zemNg=
+X-Received: by 2002:a05:6000:220e:b0:47a:e342:373e with SMTP id
+ ffacd0b85a97d-47fafa8d34fmr158129f8f.58.1785175149382; Mon, 27 Jul 2026
+ 10:59:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uDbJRkIltbee1v1K"
-Content-Disposition: inline
-In-Reply-To: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260727103449.3188105-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <amd-llbKq1t42NJY@ninjato>
+In-Reply-To: <amd-llbKq1t42NJY@ninjato>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 27 Jul 2026 18:58:42 +0100
+X-Gm-Features: AUfX_myESa_MFxqRB0QW75viHOy-SwrQdFWdL-wB5p8gk_xS459_sX-DcTtUq9U
+Message-ID: <CA+V-a8vTjYKeGAt+FdRz3qsyyJLZxUFD1MDvSHsJv7=P+FHTfA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] memory: renesas-rpc-if: Optimize transfer overhead
+ and implement runtime PM autosuspend
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Wolfram,
 
---uDbJRkIltbee1v1K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Jul 27, 2026 at 4:51=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Prabhakar,
+>
+> > This patch series optimizes the Renesas RPC-IF driver by significantly
+> > reducing software overhead in both the direct memory-mapped (dirmap) an=
+d
+> > manual transfer paths, maximizing transaction throughput, and introduci=
+ng
+> > runtime PM autosuspend to prevent aggressive power gating during
+> > consecutive flash operations.
+>
+> Sounds great. I want to test it on R-Car V4H SparrowHawk.
+>
+Thank you.
 
-Hi Prabhakar,
+> > These changes were benchmarked using flash_speed on the RZ/T2H EVK with
+> > xSPI0/1 interfaces operating in 1S-1S-1S mode for write operations:
+>
+> 'flash_speed' from mtd-utils, I assume. Did you use other options than
+> '-d' for testing writes?
+>
+Apart from the -d option I used `-c 256` option too.
 
-> This patch series optimizes the Renesas RPC-IF driver by significantly
-> reducing software overhead in both the direct memory-mapped (dirmap) and
-> manual transfer paths, maximizing transaction throughput, and introducing
-> runtime PM autosuspend to prevent aggressive power gating during
-> consecutive flash operations.
-
-Sounds great. I want to test it on R-Car V4H SparrowHawk.
-
-> These changes were benchmarked using flash_speed on the RZ/T2H EVK with
-> xSPI0/1 interfaces operating in 1S-1S-1S mode for write operations:
-
-'flash_speed' from mtd-utils, I assume. Did you use other options than
-'-d' for testing writes?
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
---uDbJRkIltbee1v1K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpnfpIACgkQFA3kzBSg
-KbbzCQ//X4/9osMEcycirXaHwkXJ3rlsCQ4d5hB8yW/SVU4W1ptYD2xzO4FPOxof
-l+qjIWOEIyl2ykn/S6wUC6Wdazxe2RzOhS5RBk4om96IHyGZH/TJAPZogB9PMrRt
-VisG3oUw8hCqKq+NywW0HzlCJagmPS7baSoqZrbztHg+3EKNwke/GpPMVf+Qn0kc
-9SYrPLuB1gQsjRm/ZAURJ5w6omuubjcvNSawHFv4oJxfomPBmCC30vZ5c7s/wURs
-sQRf4frGL6mXAu7f3dMw3mAYRbH4N3QZQSy7Ogie1L6Ix7NNb2Zm4U0inYFH+ag3
-isW/pzS91C6/dEoifYURCcQNTLEazqAu6EMSAfK4fRpGIw9YMYq/10YrffN/5GmB
-vgIrg61GtCb9WXfHGIOXrkBW4QhFxH3vVMdjZZUSTYVwLM7OnZv3jZymhcMHNgXD
-KctFS+1h2zyCsMIJLkju7bSRbwsffiHFJC9B48aB1YnzebAaVmDmRYAQoqDRmqW2
-MDXFYnJFdyj7Lh9CHNA+qu2rFFQf+ezrMU/GHugaIazb2vkeBoLNEjt9XYhzECV0
-FHci3ghF5VxXkZsUu6HCphynZEQ+jM9mFzgq3WJy3VR3D6slJ40ZpLTj+xkNGTlP
-EnnQnasjIogww6ONeqTNZsslLL8eL2iYgMqrBCPKdgMear0kR1c=
-=1RD9
------END PGP SIGNATURE-----
-
---uDbJRkIltbee1v1K--
+Cheers,
+Prabhakar
