@@ -1,345 +1,210 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mx0a-0002e601.pphosted.com (mx0a-0002e601.pphosted.com [148.163.150.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893F5309F08;
-	Tue, 28 Jul 2026 01:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785202425; cv=none; b=kr9UrBuIcjN5F3BFZgeKFA/g4Wp3Uz9YGyG/1y7qxmYNkaw+56ukPqHftt3XY+poKIMSoF/PB+bsVUVztUcYNIed3OW4bEYO69ik2aai+E7EapmiQRylqLn6qGF8Rln1DVNCh8kEvzulvf6IW+4I0DJ9kQjQVadFpQugv1G6LvM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785202425; c=relaxed/simple;
-	bh=Eb9llJMtmz2qcQq8vuCE3o+si7lmoyR7oZPqFd4tABo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CDWiX8QOAs31LM4eCKLcHoO87AGlEsYkI7X2uXicweoYU/O0OqoCxUXBlfksrg4MBf3hKuZwcFLQUWF9QdzVzcNsCiMc+5kpH1oOuEJnPjsXmzblY2z4VQsjEg95WUqLb93G5vRxG4T7FI9HGeAlxC156lCYGnpGaTLig4Z8E84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xjxF9vz8; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=j1SnxuFc; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DF2311597;
+	Tue, 28 Jul 2026 05:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.150.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785215246; cv=fail; b=Tmvixrm0KLk84uRsXxNb1/xQIl7BomrtQjJUPdw7oBnLQ1XUVPeoQvt9785q2U3HereZBS6QLxzCgs8WDSndGtPJNGINpLfx7MfuwvtZ4Nmb+yN4+wJCEooWCI39A9Ku09gcM/qVLDBOgqx9ul0fwD5J29kaOJi6GTZfH1rFafk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785215246; c=relaxed/simple;
+	bh=JTUVqHPmBMcEyW1A4HXLgw+icgYHuKUmwhc3pLRqaJY=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FU7RqfEsqg1rJVNx3kjWvs5OZnaTiyVEnql56NsltWd1IklRtgJ025YSM5q5AUHexINCaUj5O9ur+orPh/AZDdIuR47Vt4PK0mdMHKtQLZONFmfbNrVsSE4hHSUdTSpISFS2EIUT0tkbSDaRRtiOJm78dIXdYhaJCYV5O0jr4Nw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=naffeZxS; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d9Otb+dW; arc=fail smtp.client-ip=148.163.150.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xjxF9vz8";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="j1SnxuFc"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4h8Hzn3B5xz8vBB;
-	Tue, 28 Jul 2026 03:33:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1785202421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nYA/9LlwqU2E+vBAE4IOmMISeUuH/BPmUSzuqRVq1d4=;
-	b=xjxF9vz8Nt9gRRIfJUMlpt1PSbcc0VR+bwkOKucsBU7WWvV+c8A0kn88G9ceiXYLUZNPCO
-	4aNmBzqB8fsPtrtLZVj2IFLLEQizZ7/gvtL5innSTrackMTSQE1jBKHHqNMk9p9W5s8qvG
-	nElOB6818Xwk8grK4xPuwgNAz/XhhF/h/cmxdwPGxTBa88O+u0haqJUWjvv/qn9VFvCb+Q
-	OnRMzvv5+Nb8IgCs/G66AfdlTcd50ynq+/zcBCA8ZMMPLRseFNvYYZFImRoxpb+trdqVrt
-	KVacPqOGNld5wr9H2Elfeks5ekR4NDrAaXFZhp9jPXrdrOTynojm4b8SgssK9g==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=j1SnxuFc;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1785202419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nYA/9LlwqU2E+vBAE4IOmMISeUuH/BPmUSzuqRVq1d4=;
-	b=j1SnxuFcvhyjS/a47xWVKRKfjVBtDk+qbwHXJrHlzyJjvgPK7ZgMgElxeBdG1yc8o8jYG8
-	Fmaky2v3pAqluCp+1IuUIAZwigyQncshhLodmbzwxItNDNw5UbBXMc2kegnkgCzaHaIW6Z
-	Vws1dVkSW1k1RNVDZZoM3f2YIi2CCDdOrNuaxZMIpRtnULBrd4gnwp4FZaf0vqr4nSXu7+
-	iJDAVBJOYlU3jO5M2QP0OABqTtGBmpxasSoVvVHPDejUA565synWSkQWI2/mxvSyTB7DxO
-	Wg7K4BndB153kU+yA9eJ0q3Uf2Ra+iym/XbjBuoZ5Do9SW/sBBK9/kOF9l/ciQ==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 6/6] PCI: dwc: rcar-gen4: Add support for R-Car X5H PCIe4
-Date: Tue, 28 Jul 2026 03:32:39 +0200
-Message-ID: <20260728013311.466242-7-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260728013311.466242-1-marek.vasut+renesas@mailbox.org>
-References: <20260728013311.466242-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="naffeZxS";
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d9Otb+dW"
+Received: from pps.filterd (m0384305.ppops.net [127.0.0.1])
+	by m0384305.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 66S48ZtY243823;
+	Tue, 28 Jul 2026 00:06:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	proofpoint-05-2026; bh=CkiAQeVAKkH7hUVTEUjybYX20/aLiCXNaVwrlNfpc
+	WE=; b=naffeZxS/CNWc72NBuwnRkuSFTkx2owZvYVPqtEzaaTAohGuWbGgiiXqw
+	qW7fIn5hYGlT73FK9YBjjII2WXgJk99zRLShaWmJHU/iD7NO1OCZhUnvuWONLrdG
+	48Ma1qjORTrqB5kVh7CoJq+fCM9avnnw9shalgX1lpeTbJFnmodShNUqHJWuVtfB
+	3AvEhRPUY6wUvdCnzX3sMeq9Ds/4WPVThJm3rtVO2WbJiRiaDouGt0bEm8hRDC1s
+	8zAUhru49NXVxWIOYYaHZAMvbbt4RQf+xAWbsPK3zuIJ58XZyl/KsXUXtkEQAQMd
+	/0SANyX05ZJAi9ilMFlDoqjVdW19g==
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012062.outbound.protection.outlook.com [52.101.43.62])
+	by m0384305.ppops.net (PPS) with ESMTPS id 4fpn4rg9jy-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 Jul 2026 00:06:31 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U/2hqaHQoKWULtU26BiGYXd3fVWnHcc91iFpbbk1+Ia8oBSdX3vnLidRDRbaD/2LJffZeA10PtKjEtIjXpxD141bPUpQCSJqQJtuDhSA3oHoGRwe5mf4wN425KVm6OczG3XGFfyQR0L6IH8VuFR9d37FzD/mURNTW8JZEjZp3cxkkXBOkfPKeyinmdAeXA05avI50iZJPbpUllN04/96WbsyQq5ZNcI4sS6VNonxV188ptP2E0NENoqEiBKDY7oAqhmAe5ULYuGWBQ1IyNssYyxQuxVQJPngZ4H8WjaXlfLDnqQvdTbwc70ePucp6q5vPQ05Eh+LFE1zHFW3qlY8kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CkiAQeVAKkH7hUVTEUjybYX20/aLiCXNaVwrlNfpcWE=;
+ b=GrXdtB59xeuAGFRWj9HP+goHNud34qrfD+sxC81IeVvzwEokornTvZ43qPmGlLaDX9TzPYQzP/w5Ehr3xBcqZ8Jf+cg3T6tLg7dpoux9suXt3+t9gvPSaFkDgtI0RnKV3c6VNZrJiu4QG6V0AHiI6pRkS8dm0Foqxzxx0QXKYSylj7ZCjnIDS1b4Gk1cTHhyYD0YILgb4G5S8EKz/WEMWhXbdNteOflBv5KZvqghJeFZlSlEvCZrwGBonq8zOXSIYryCvq0EjkfIG+KADRRWhNHFcs4lbWsirxvtGNRCYhfTyfh88ytZzuhcslSza6vH1jivn7p7xAYFEcm1DZBzWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CkiAQeVAKkH7hUVTEUjybYX20/aLiCXNaVwrlNfpcWE=;
+ b=d9Otb+dWg9pHLmOaFjKsSdG9/N2p5X26KzcopocVpc5MxCaNxKzwbVqSwBDR824OnkiwVLpAqq0GvBxULDmWolAQlqdGUN6VI9fCooxahKfhhN7TaV8wFe9UyTt82eUqlFY8kxPddi7IzUOlOKF8lpebUCSxeGO20PeHmH/UIec=
+Received: from SJ0PR13CA0156.namprd13.prod.outlook.com (2603:10b6:a03:2c7::11)
+ by LV8PR10MB7966.namprd10.prod.outlook.com (2603:10b6:408:202::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.12; Tue, 28 Jul
+ 2026 05:06:28 +0000
+Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c7:cafe::13) by SJ0PR13CA0156.outlook.office365.com
+ (2603:10b6:a03:2c7::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.270.12 via Frontend Transport; Tue,
+ 28 Jul 2026 05:06:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.270.5 via Frontend Transport; Tue, 28 Jul 2026 05:06:26 +0000
+Received: from DFLE207.ent.ti.com (10.64.6.65) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Tue, 28 Jul
+ 2026 00:05:46 -0500
+Received: from DFLE212.ent.ti.com (10.64.6.70) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Tue, 28 Jul
+ 2026 00:05:46 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE212.ent.ti.com
+ (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
+ Transport; Tue, 28 Jul 2026 00:05:46 -0500
+Received: from [10.24.68.110] (uda0492258.dhcp.ti.com [10.24.68.110])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 66S55bJ81950176;
+	Tue, 28 Jul 2026 00:05:38 -0500
+Message-ID: <6d12ce30-28fa-426e-9688-4c2900e63d14@ti.com>
+Date: Tue, 28 Jul 2026 10:39:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: qpyes9ggfhpjftdif8eiqbce158p1hrb
-X-MBO-RS-ID: b8034412e0936703ad5
-X-Rspamd-Queue-Id: 4h8Hzn3B5xz8vBB
+User-Agent: Mozilla Thunderbird
+CC: <linux-pci@vger.kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kwilczynski@kernel.org>,
+        Anand Moon <linux.amoon@gmail.com>,
+        Bjorn Helgaas
+	<bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jesper Nilsson
+	<jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>, Koichiro Den
+	<den@valinux.co.jp>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Magnus Damm
+	<magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        "Minghuan
+ Lian" <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "Nicolas
+ Frattaroli" <nicolas.frattaroli@collabora.com>,
+        Niklas Cassel
+	<cassel@kernel.org>,
+        Qianfeng Rong <rongqianfeng@vivo.com>,
+        Qiang Yu
+	<qiang.yu@oss.qualcomm.com>, Rob Herring <robh@kernel.org>,
+        Roy Zang
+	<roy.zang@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Srikanth Thokala
+	<srikanth.thokala@intel.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yuho Choi
+	<dbgh9129@gmail.com>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>, <s-vadapalli@ti.com>
+Subject: Re: [PATCH 1/2] PCI: dwc: Handle return value from endpoint .init
+ callback
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+References: <20260728012548.465139-1-marek.vasut+renesas@mailbox.org>
+ <20260728012548.465139-2-marek.vasut+renesas@mailbox.org>
+Content-Language: en-US
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+In-Reply-To: <20260728012548.465139-2-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|LV8PR10MB7966:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3516af2f-126a-4d67-2bfe-08deec65fa3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|23010399003|36860700016|376014|7416014|22082099003|18002099003|10067099003|4143699003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	wR7blJv1l+z04szw72sO59iL4tY+fZYqnMXurI4a2JZfsQTs/JesYhbzDif+QIy4z2DOypH3LQ0Y0klHazK0jFrjXFZ3/8eBvVhPQSXjrx/Q/WaeLdha3X6HGrua/tNVAkkPScu5YzigvbaBa2y+5w3flwN+X2rUb03k6sDA7Vi5fybpo9qMwWfhqxmelPvjS/aw2CXf/NEPR+8eTGrO8+LM3BtK4da3vYZSRhYNPA35MzFkwrFn9kQwuvz7SeBNc14xsk1SHQD2bNKnG03OEsA+QviCNjgMO90yHeCTFM4HDdcY69eVSUAQHBlaMaMWI1p+cmUY1T46NdjokhU6OxLJLd5Pt85E16fCp3hCUvY7BfdOPIwkNYsSKkt0px4GT7r929uWtUoKA5+2BalI5e/BpHy7nht2UZtOwSNjmfDu7145/u3nc7mPwmnw7c2c3FTCe12bMQdmFsToqN3b8pgvhDEc+20/AMXpx5kHAhYqZXSRMqPDHiMhqhw9BmFw5PmH/qBPRB5pA354ZK1kdeRCmTkNukJZvuPuQjzYqam2iWvhb7BVncQc5vcAeeuJn5Pf4rBtaWS5f7Vaq77VrkrlVP8eCd8yajTlfLZz/vb4Nmbcd6t6HEEdUNtcLFQAdWKgW3PSjP3jsgtVPB/q/8QXI4nD05/i0ZszZkSSGDIxU4AOq3fik3pPHEC2+uZnkqPME56eO1ssatsfpeq73Q==
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(23010399003)(36860700016)(376014)(7416014)(22082099003)(18002099003)(10067099003)(4143699003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	O0pJsjVx+g7HTcZr3jK+xTHbjFX05DiEOLUTOhy72c3gBgoTTzKTytVQWJWV8if2ut+BcvuinfZwvgrLEu+aG8+iapCdndSjuw3Lz6a2LNE4PVdyq/GZlNzIFOF5B/JSmIz4n4UBRZzDnSWbPREHg7eJfrF2+HAyh7PZclCGunfl+1cpJu1O7Gz5MYU4wsIQV7AfKqvixLLNGTVrGd0ePAN9xlji2MtM8/BpvVlvMCQppW6TuNwtzZ34hrbX/VDXWhnrYDo7ztoSWfF5hDo0bQeJTDP0wLKuAX3reI1OdFwlPpr3tZ+xv1XEWThCpXMYLuvjz7SZSaJDulTjP3jcjZX4RekwEuveEmF6rOH+WjfWanDPPYt+TKdJR1d4UGOxQ3Oe1uy4Bf1q+qqH6e6O2/tO3B/uivQ+BDzDDLXsh/o623db3QlGYSPwYWzK1oeL
+X-Exchange-RoutingPolicyChecked:
+	ZybAsea4fORB2R1r1EVkb2wB6qSpRWdqwWe+ab/pwjqOIkMu3v2TmckUenU/GkiXeQrnquTyo1517lst/x36MD/BG6EHDca8+iRkRut3QJhIlFP9sqlEjofNspnhekG+H9REDgWWwvToF8yA8VomO9ZEnep868kty42RJLwX1mSPTYSFP9wil58j/znfiZ/w4qGSBNrBMV7oJL/10X3kIBjFHIMFlFE+d4Z7a4bg8H6XG9qQucwZ7rURsB/zsZ5ifoWG9DnIcWbd5T9uVIS2jj8rq/DHN9tUG3mgbFozxA8kROT7lpbTjEf0LQFwusvzTtmq3D55FBsk0vhfJJ87sA==
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 05:06:26.6336
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3516af2f-126a-4d67-2bfe-08deec65fa3c
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066ED.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7966
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI4MDA0NCBTYWx0ZWRfX3U1Bh6rje52z
+ u+H1WrFAQIHP43bfpWmzZQAnIasqN4OG5Z2ShrIV3KYxJS1s+a7YNoGeFvCqMuvIqMI1En2D0o4
+ ymkplv7oucER38mHFd3goWUWp2MZ1M+91CELTQhajRDxZjxHFrXpU7o9j0DjrgwW3W5RRpJ0Xz4
+ X90bfgwjxuqpZxr9ex+3xHWvcd818qosd+Iwu7VdlCIl8PWC913NfwkBTlXLREcxjLXOVLn6jJx
+ YfiJ/fjEDEj+yPivCKib7mcQCjS66XRcr2TFGLNDQd/YXCUIWtlRtd0ftm2cAZ3V3aQaUc/5vw2
+ h6/qyw6JDA9btee2rKu9U+cc10a7LbFjBp6lnwZf/diQO9B0uj8KgDD6qix6bZHwR+Mn4nYVCXi
+ e1Kg1Uc7ehWDmNOcu4DJ1v6oXYYcGtqIjYuJimVxxJ5V4kUMdjZ5AFAkKO6pAi3NZBxloPmVpzb
+ HW6mchf/vyI6BVwIwOw==
+X-Authority-Analysis: v=2.4 cv=GfsnWwXL c=1 sm=1 tr=0 ts=6a6838d7 cx=c_pps
+ a=qMfGPIaByV4ZnHoTJsbowg==:117 a=tJyPKKxUohctrY4NYmUjkA==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
+ a=V5UXEbMT0ywA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22
+ a=taLDd7a_hP9WKsMzeGRc:22 a=b3CbU_ItAAAA:8 a=sozttTNsAAAA:8
+ a=5ldtadBcu8Fm5Uq-hBcA:9 a=QEXdDO2ut3YA:10 a=Rh4KQ1K2KoEA:10
+ a=Rv2g8BkzVjQTVhhssdqe:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI4MDA0NCBTYWx0ZWRfX4ebUiNrBeXuM
+ AEr3GDC16wQXbHnsCK/ZNxdgzGPI5Z4UR4lieBTTXjpofQoxhvyon5V910l1+AEGHj68C9G1Qx5
+ +j50ubt0oTEp/WARJ61BKWR1nCz3aAQ=
+X-Proofpoint-GUID: xQGyWoxoUnnwaxkoaAuouPW4TP1fMDHC
+X-Proofpoint-ORIG-GUID: xQGyWoxoUnnwaxkoaAuouPW4TP1fMDHC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-28_01,2026-07-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1011 impostorscore=0 adultscore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607280044
 
-Add support for R8A78000 (R-Car X5H) PCIe4.
+On 28/07/26 06:54, Marek Vasut wrote:
+> Add return value handling for struct dw_pcie_ep_ops .init callback.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-This driver previously supported R-Car Gen4 S4/V4H/V4M. PCIe features
-of R-Car X5H PCIe4 are almost all the same.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-The controller initialization sequence is slightly different and is
-factored out into controller specific callbacks, in a manner similar
-to previous R-Car Gen4 handling.
-
-The controller does have a PHY attached to it, but the PHY is operated
-by a separate PHY driver, the PHY driver instance binding is handled
-in rcar_gen4_pcie_get_resources() and controlled in the aforementioned
-controller specific callbacks.
-
-The controller driver is deliberately using "renesas,rcar-gen5-pcie4"
-DT compatible string to discern R-Car X5H PCIe4 controller supported
-by this driver, from R-Car X5H PCIe6 controller which will most likely
-use a separate driver.
-
-The R-Car X5H PCIe4 controller embeds HDMA instead of EDMA embedded
-in the R-Car Gen4 PCIe controller, "dw-edma" driver supports both
-DMA variants.
-
-Endpoint mode is currently not implemented for R-Car Gen5 PCIe4.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: No change
-V3: - Disable clock in case of PHY init failure in rcar_gen5_pcie_init()
-    - Add .deinit callback and tear down Gen5 PHY in it
-    - Use 16bit accessors on LNKCTL register
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 128 +++++++++++++++++++-
- 1 file changed, 126 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 30b024a620410..cfabb16402db4 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -19,6 +19,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/pci.h>
-+#include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-@@ -36,6 +37,7 @@
- 
- /* MSI Capability */
- #define MSICAP0			0x0050
-+#define MSICAP0_MMESCAP_MASK	GENMASK(19, 17)
- #define MSICAP0_MSIE		BIT(16)
- 
- /* PCIe Interrupt Status 0 */
-@@ -74,6 +76,11 @@
- #define PCIEPWRMNGCTRL		0x0070
- #define APP_CLK_REQ_N		BIT(11)
- #define APP_CLK_PM_EN		BIT(10)
-+#define APP_READY_ENTR_L23	BIT(6)
-+#define APP_REQ_ENTR_L1		BIT(5)
-+
-+/* PCI Express capability */
-+#define EXPCAP(x)		(0x0070 + (x))
- 
- #define RCAR_NUM_SPEED_CHANGE_RETRIES	10
- #define RCAR_MAX_LINK_SPEED		4
-@@ -98,6 +105,7 @@ struct rcar_gen4_pcie {
- 	struct dw_pcie dw;
- 	void __iomem *base;
- 	void __iomem *phy_base;
-+	struct phy *phy;
- 	struct platform_device *pdev;
- 	struct reset_control *perst;
- 	const struct rcar_gen4_pcie_drvdata *drvdata;
-@@ -170,6 +178,35 @@ static int rcar_gen4_pcie_speed_control(struct rcar_gen4_pcie *rcar)
- 	return 0;
- }
- 
-+static int rcar_gen5_pcie_speed_control(struct rcar_gen4_pcie *rcar)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+	u32 lnkcap = dw_pcie_readl_dbi(dw, EXPCAP(PCI_EXP_LNKCAP));
-+	u32 lnksta = dw_pcie_readw_dbi(dw, EXPCAP(PCI_EXP_LNKSTA));
-+	u32 val, retries;
-+
-+	if ((lnksta & PCI_EXP_LNKSTA_CLS) == (lnkcap & PCI_EXP_LNKCAP_SLS))
-+		return 0;
-+
-+	/* Retrain link */
-+	val = dw_pcie_readw_dbi(dw, EXPCAP(PCI_EXP_LNKCTL));
-+	val |= PCI_EXP_LNKCTL_RL;
-+	dw_pcie_writew_dbi(dw, EXPCAP(PCI_EXP_LNKCTL), val);
-+
-+	/* Wait for link retrain */
-+	for (retries = 0; retries <= 10; retries++) {
-+		lnksta = dw_pcie_readw_dbi(dw, EXPCAP(PCI_EXP_LNKSTA));
-+
-+		/* Check retrain flag */
-+		if (!(lnksta & PCI_EXP_LNKSTA_LT))
-+			break;
-+
-+		usleep_range(1000, 1100);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Enable LTSSM of this controller and manually initiate the speed change.
-  * Always return 0.
-@@ -285,6 +322,49 @@ static int rcar_gen4_v4h_v4m_pcie_init(struct rcar_gen4_pcie *rcar)
- 	return 0;
- }
- 
-+static int rcar_gen5_pcie_init(struct rcar_gen4_pcie *rcar)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+	int ret;
-+	u32 val;
-+
-+	/* R-Car Gen4 and Gen5 common initialization. */
-+	ret = rcar_gen4_pcie_common_init(rcar);
-+	if (ret)
-+		return ret;
-+
-+	/* R-Car Gen5 specific additional initialization. */
-+	ret = phy_init(rcar->phy);
-+	if (ret)
-+		goto err_unprepare;
-+
-+	dw_pcie_dbi_ro_wr_en(dw);
-+
-+	val = dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW);
-+	val &= ~PORT_LANE_SKEW_INSERT_MASK;
-+	if (dw->num_lanes < 8)
-+		val |= BIT(6);
-+	dw_pcie_writel_dbi(dw, PCIE_PORT_LANE_SKEW, val);
-+
-+	val = dw_pcie_readl_dbi(dw, MSICAP0);
-+	FIELD_MODIFY(MSICAP0_MMESCAP_MASK, &val, 4);
-+	dw_pcie_writel_dbi(dw, MSICAP0, val);
-+
-+	dw_pcie_dbi_ro_wr_dis(dw);
-+
-+	val = readl(rcar->base + PCIEPWRMNGCTRL);
-+	val |= APP_CLK_REQ_N | APP_CLK_PM_EN |
-+	       APP_READY_ENTR_L23 | APP_REQ_ENTR_L1;
-+	writel(val, rcar->base + PCIEPWRMNGCTRL);
-+
-+	return 0;
-+
-+err_unprepare:
-+	clk_bulk_disable_unprepare(DW_PCIE_NUM_CORE_CLKS, dw->core_clks);
-+
-+	return ret;
-+}
-+
- static void rcar_gen4_pcie_common_deinit(struct rcar_gen4_pcie *rcar)
- {
- 	struct dw_pcie *dw = &rcar->dw;
-@@ -293,6 +373,12 @@ static void rcar_gen4_pcie_common_deinit(struct rcar_gen4_pcie *rcar)
- 	clk_bulk_disable_unprepare(DW_PCIE_NUM_CORE_CLKS, dw->core_clks);
- }
- 
-+static void rcar_gen5_pcie_deinit(struct rcar_gen4_pcie *rcar)
-+{
-+	phy_exit(rcar->phy);
-+	rcar_gen4_pcie_common_deinit(rcar);
-+}
-+
- static int rcar_gen4_pcie_prepare(struct rcar_gen4_pcie *rcar)
- {
- 	struct device *dev = rcar->dw.dev;
-@@ -322,8 +408,12 @@ static int rcar_gen4_pcie_get_resources(struct rcar_gen4_pcie *rcar)
- 	struct device_node *root_port;
- 
- 	rcar->phy_base = devm_platform_ioremap_resource_byname(rcar->pdev, "phy");
--	if (IS_ERR(rcar->phy_base))
--		return PTR_ERR(rcar->phy_base);
-+	if (IS_ERR(rcar->phy_base)) {
-+		rcar->phy_base = NULL;
-+		rcar->phy = devm_phy_get(dev, NULL);
-+		if (IS_ERR(rcar->phy))
-+			return PTR_ERR(rcar->phy);
-+	}
- 
- 	root_port = of_get_next_available_child(dev->of_node, NULL);
- 	if (root_port) {
-@@ -751,6 +841,28 @@ static int r8a779f0_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable)
- 	return 0;
- }
- 
-+static int rcar_gen5_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable)
-+{
-+	u32 val;
-+
-+	val = readl(rcar->base + PCIERSTCTRL1);
-+	if (enable) {
-+		val |= APP_LTSSM_ENABLE;
-+		val &= ~APP_HOLD_PHY_RST;
-+	} else {
-+		val &= ~APP_LTSSM_ENABLE;
-+		val |= APP_HOLD_PHY_RST;
-+	}
-+	writel(val, rcar->base + PCIERSTCTRL1);
-+
-+	if (enable)
-+		phy_power_on(rcar->phy);
-+	else
-+		phy_power_off(rcar->phy);
-+
-+	return 0;
-+}
-+
- static void rcar_gen4_pcie_phy_reg_update_bits(struct rcar_gen4_pcie *rcar,
- 					       u32 offset, u32 mask, u32 val)
- {
-@@ -933,6 +1045,14 @@ static struct rcar_gen4_pcie_drvdata drvdata_rcar_gen4_pcie_ep = {
- 	.mode = DW_PCIE_EP_TYPE,
- };
- 
-+static struct rcar_gen4_pcie_drvdata drvdata_rcar_gen5_pcie = {
-+	.init = rcar_gen5_pcie_init,
-+	.deinit = rcar_gen5_pcie_deinit,
-+	.ltssm_control = rcar_gen5_pcie_ltssm_control,
-+	.speed_control = rcar_gen5_pcie_speed_control,
-+	.mode = DW_PCIE_RC_TYPE,
-+};
-+
- static const struct of_device_id rcar_gen4_pcie_of_match[] = {
- 	{
- 		.compatible = "renesas,r8a779f0-pcie",
-@@ -950,6 +1070,10 @@ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
- 		.compatible = "renesas,rcar-gen4-pcie-ep",
- 		.data = &drvdata_rcar_gen4_pcie_ep,
- 	},
-+	{
-+		.compatible = "renesas,rcar-gen5-pcie4",
-+		.data = &drvdata_rcar_gen5_pcie,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
--- 
-2.53.0
-
+Regards,
+Siddharth.
