@@ -1,171 +1,282 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010044.outbound.protection.outlook.com [52.101.229.44])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7713F4107;
-	Tue, 28 Jul 2026 07:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785224623; cv=fail; b=HB1VGoww+0zbD8g8Jb97y6wgMEw7VTZPoiFMPioATbrn0MtUzXPJiot97O8pr6HO3KxvRs36emRPv3vo/F8KxG6MEBLr6Sg+SICjS58b1lyeWM3b5NS5mYQSA/0CHCf6zT4f6ikpuIKHGmpdnD5GDM8xQ1JCrAZnTBY24dIRbfo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785224623; c=relaxed/simple;
-	bh=4uu9TsqIIL3ykR4Y+2YjlJypz9cNihsJtTO5oQ0jQP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Mtmav47y/O5npkFJBnvO/P8ijJN6DyS3h8JtoO480TMTcF2vbp04UUTUcTapKYAtCM154Pz0DzQk5MVOArHjLOXYgm7C00hFQmUX1PwZZfkaRn0Iady2cXVEs5INT98+cz/0eJLZcUnKtK0vcQm68GNvzmjSyiepjEMToTPBGWc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=JK125+Ym; arc=fail smtp.client-ip=52.101.229.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ED040DB32
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 08:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785228314; cv=none; b=Dtr+D6qYOLqiDpe0I6dbt4IaJxkK3bFN4c3tZf8jJv6ihrXPb9eWdqVwbNGOL7xHge92fYxprYwOuZ8G1AQqnEpl/x53zYm8/Oor7VZKEwCBtWX05g0OFYgAoSE5ZAcgl3CPIEeAGRtAD/Gb40JfE1Ie8n4irV9a+STqTtrXDl8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785228314; c=relaxed/simple;
+	bh=d98ko6GW4nNVHZNTReRBulpKIT/3cDqdTo7mLtF/Ovg=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pPVjvbR36fHa//bnu9wVoVHdI0nSIHvm8INGZQPiBgrQepktmRYbie16GIY/zLLBXF9DpeCss15FpB/4gwnm60oAJZpPFJ5XGoqn3brS37lrRQZ0xY/A14rvEj11e9ar9UlKBrjB8Uv3TGnvaaeq9zhP4/h++2HuhrdlDL7it9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJ/+GREL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="JK125+Ym"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W40m105LEAyfloA5l9GqLjDbk3WCHQFimzqABI9eN7QYQaygj5CRaGwM3vQjR2W5xtu+uaU5sFS4AVdCgcihyLOy7VXD69cxP4JjFsFy3VTIWmp6mX1ml2IWEWIr5SWCnEYCGTxfspdK46rs6d1IV7laYiMtp9SO6s1rIYH4bLWUpN0wF6p0nupMusbFSa0sffgoNfC0NmDE3KCsCcMU+8hxXugMsu8hOIfpHIrqYro84kMU/y0GuYe6KUghLWDeKdZvlaL38CzV2DPLMGCen6711gPK+o4VL5+B6DKn2nWsHPacWV6NvlYYlT4ru8/ts9nXj7QH2xJZaWkolgB0SA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f1R3hkLyJ76bers5vhaHnJRxyd9E9OaJ42Bv9ul9784=;
- b=s4L49/x8gT7Cu4t1tO07PAF54xMa4ZKwItOdR9o8pb6VRdcvikUozvF8GW6jrzwZ+HKKLh78NOcQpVrELFC/Ps4XRMC1GNTnO7whWSs+HKynNJUP1kSD1eLu8sqbrfKx+Uh4pGcLFcFPB50Vh9MsOU3yn3uuVOHaIgePYyOgLCTM8ePOI0XAjMpJvqVlxmBUCQpy3upu9KAZYWdFSpyhYT/hmmdqe+c2RVX2IZ/t5qDpaXebIvh5dgT7HhwYgmIYnRP5hpQlaMtjGjnJk4kXRCLWynCB8+vd4/VR7nSbJkDmryX+pMSbDm4a6EZBsdVdo/ZTRlKYIhJyAzUxugbXLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f1R3hkLyJ76bers5vhaHnJRxyd9E9OaJ42Bv9ul9784=;
- b=JK125+YmLs0xwzsKYCmvJhMRrny9SJrJcCo3ROt3D6IrX7uNYf7pEMifL0kGLBTH0qM9Fak9JZMU5p3NgqerRBilDSNttxpYpMiJpyk2OToTAY+m5yTrFZ3ji3M8G3l0I8u5dD65xuzA0CmVc4ruCEmXrOxD7vR9iNJ5/YTijDQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYRPR01MB16127.jpnprd01.prod.outlook.com (2603:1096:405:2eb::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Tue, 28 Jul
- 2026 07:43:37 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0245.012; Tue, 28 Jul 2026
- 07:43:37 +0000
-Date: Tue, 28 Jul 2026 09:43:21 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/9] media: rzg2l-cru: Use bulk reset API in
- rzg2l_cru_start_streaming_vq()
-Message-ID: <amhdmQEK38xg22vD@tom-desktop>
-References: <20260616170542.447804-1-tommaso.merciai.xr@bp.renesas.com>
- <20260616170542.447804-4-tommaso.merciai.xr@bp.renesas.com>
- <5ab83f63a1c5c62cf90f7cb15590c3e4cfc18436.camel@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ab83f63a1c5c62cf90f7cb15590c3e4cfc18436.camel@pengutronix.de>
-X-ClientProxiedBy: MI3PEPF00004E9C.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:298:1::458) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJ/+GREL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9876E1F00A3F
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 08:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785228311;
+	bh=mgwGnw1LeMBzci1Stejigw1agDkrzH3L3vKTklQqu0Q=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=lJ/+GRELN5p5BIXZGWxhOP+2RkpOhJv24Wk+BSpH++uFx2hzWtuNDV/5Gk1pozYUU
+	 vdI4eU9mu5E6cO6qBH00CkTk3hnHrqHSbTimTN2gssEGhpcyA55JMBWz2rZwnq3hFF
+	 9+7PvP2EHlrOYX1cECCf1pKiVpV9tjmNgf9fbtZDUiCKxAWYbRT2fTtmYujixtSyzW
+	 Oh/9vBCZ4+ZtI6K7HKuGiRuzMuQd3EqzmM+U3p/92620qZyVW0jF5N5rAdOkbJ2AVF
+	 w84R8b9Qitxkp6TSXQe0gxj7kTSb+lGr7GdkBwwtyswo058OEMLgWUjLzCtvuxWWTb
+	 BlV262DBlv+Jw==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-39c7ac9b8c3so33903771fa.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 01:45:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoLozfFiw6jhqUYJxsOEr7KhLrZLWtIrKZZBb4JF4sIWSvNBgFqOxtoGAx/k4yMPokj1XLJovs/2/0m1vm2dXi/ZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpxxB353WgmSfbURz6OzO43B3gt4cMjsQWeXiSC8zKyxqOz84k
+	xWv7ZEAIBTll3OJyynMNH35hp6NrQiJ15zZwpLzclP/Yooy256+kHIEBCB+EgeeZ4cvLzeYYbPV
+	m/l71/NouxpHppfcaCyOWWeZWgQ9/fVW5JhfGHaF+jg==
+X-Received: by 2002:a05:6512:238b:b0:5b2:aaa2:1d8d with SMTP id
+ 2adb3069b0e04-5b2d0106076mr317721e87.2.1785228310309; Tue, 28 Jul 2026
+ 01:45:10 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 28 Jul 2026 08:45:09 +0000
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 28 Jul 2026 08:45:09 +0000
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260725123433.162348-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYRPR01MB16127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ea9d366-52e6-42c4-146e-08deec7bef4d
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|23010399003|1800799024|38350700014|22082099003|18002099003|4143699003|11063799006|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	vJ2BvWnwyIwHy/d1TIJwtA27bIQmQA/Cro2lGHiag6+lKw5QiMQ0ch3n0SSlwKLotlUw5FcLkRjgYvK1zEvZlEBWfVGzMCLv+o2V0ZkUforr4QHahwhgfobOixDT1fIC230s7Q5Lhiz/4WGQRgxdg+W8YekjQbr/zIDqrDM8KRywFs/AlAo0RcUWx63kzVFjTclWQSJH3byFUu7jXsejIbvJ8S+OueBT202zp/Oxva5F036hbTbaTORvHbMzx6dvaFtT8bRV+pszZ5ht4LDxpF5Vq386GLGQWwwWkS1KXkrxf+DN+8SfnHB18SBPnaBH2+jJe+jxA3ri3EswWhKI3nHcjhxiK+SSoPa7uGFf6Gp9tS+cKnIcp11uuSHFBhPPFhevK+ND80afM+xrpsoTLzr66fihjbL9Oeeb1CwSccKpkck0Kbgg2HhN0aICRHGwW4Jp2iNy+NLivziSU6Bcmjynx2p/FntVNabRT9/9L2nnaXtEKbn/unD1cNX836VvjWqG3MlWWH+jd/UhypxxnqsFJKjBSzsrSvfSKSP79Qc5RUHmty1rqnxwlFySazyTIOr2fmNI/e1ugRJWhiwlaoo75szgxqD6cliMwW65xVcmwNUPmdD6fE7yMXndN7XpLK0NNmu6yg1zNA7BEWAPDbe/p3i9hQ4J5lSOgySUnRBbwgh7icI1shalz4Hpga0tbAdT8ileOtvu3qKy4iIGRA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(23010399003)(1800799024)(38350700014)(22082099003)(18002099003)(4143699003)(11063799006)(56012099006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?z4kfxAVinyubEnL6QhpkX+XNOqDS4ePRltcoUOlm2feDQjt69a0JQJFImKBb?=
- =?us-ascii?Q?elbuB1iAnD5PmgzV9RtKkFbtKBTaUYCWy7YMSd3wWOlQc0jmg4RMk72xo0oF?=
- =?us-ascii?Q?QX0bPLKHsDUqYU31SMpVv6TiJJyE4fx8nRpzwxWwfhbXjhFgcGGB4IJXmQyD?=
- =?us-ascii?Q?AGH++Nl9+SrZamX7QzwXi/nP/GclJg0I36GF4YrDQ8Pd+v7Qc9im0wMEoWrF?=
- =?us-ascii?Q?h9Erx6MS2EvfZlAlNZ84L+APweZmYsVSaQfzZJjB09BggfLG0BCnrxd3Oyoz?=
- =?us-ascii?Q?2FerV86eJ7yBEcmHZ9lDYcOS+F+ZgyXJB6OphId2PhCVI/x7hNjkxEk7y2Rm?=
- =?us-ascii?Q?TWmTcXyCJH8teeA1zbvPEEqKhdtJL6OIf/j55qHxuebpAE3xla8FsjyNAYmC?=
- =?us-ascii?Q?je5+NeP0CTUc2InHbEJ4nGNHR8sWr2Uk3ZWS4RHJWY1LCGL/h/DPD8SCKKdA?=
- =?us-ascii?Q?Cwg0ZSXqYj4HGAttKA+tRMni6sZrZzl2fJQd++b22uAxQZK6iNjucn+QT8xS?=
- =?us-ascii?Q?jEh6ZHBi1KgS+6phvyOykH4VkGNM4rp8CNToijrYcTr7Orb48BbqcAH7ewq6?=
- =?us-ascii?Q?Vv38EgwuhWRonJ7XZsyxyf/BvbamZkbseICWpBDIkv+N+ZW/UI0EjA5NL7+c?=
- =?us-ascii?Q?JuSRNNLCCPiIhOZp1ylN6JbvD1nWIX+xw124YaZ7EFjGhOvlcS1P1ZO+0Gr/?=
- =?us-ascii?Q?Y20aRlkCMgMIRoSv2On4Q7pQDPkjvbDkjUoGTBheaMxQyvgvaXZlEFBlMyAH?=
- =?us-ascii?Q?1gG19AvTCWLOaZFJ8Gf3tusoKXYGgAuoLNwIIDga3pJB6UM61Ee0Jqd/6xzV?=
- =?us-ascii?Q?4VEVyW/1Fvnn3++nr/5xAJOwCfehG/6KwVWFFdB5MgcAQG6S3QXYS+qWVoJQ?=
- =?us-ascii?Q?NMqqzgmXDZmyJQRiZNY4mANsxHwz4qVGJSO4t53+KDyNQZEbfmUGt7wPBrCj?=
- =?us-ascii?Q?7UyPm9NYclPkwCVITqrzP/2x0ChNXFTlsJgQcexyod4kV9/j/u5EifJ/rMyB?=
- =?us-ascii?Q?SgtUK9s2yG7sp+juCIOBlvxj1kRn0RtwZBERbXAB31x/sib/hUfRenaYnliA?=
- =?us-ascii?Q?a7MAZJ1FcSt1SDnQ/eFQ6HUQThqwTiOx+0X343l/GTpF6LW9qOFyp3sHPVK3?=
- =?us-ascii?Q?yZtxuZ29j+un3LfgCnVbtS9yqaqEW6gpFr6nqrqrfEi0fDvmuOdiPTTu7GdY?=
- =?us-ascii?Q?a24M1Hnjkuc1JQUmlddoH1uv7V0xHlFNxDZJ/ticSMWNF2gFTpqdAHfllm9f?=
- =?us-ascii?Q?Hlu/hCP9gB+jp7BBjOQ3PW4Y64MByhN8RM+BWcDN2L/5XTF3g8dZarl0QPUf?=
- =?us-ascii?Q?/dhJtsn0GwxgIXU+dM72B6m9yB9KMkHSMdMHqx6VGbMuETmmYQqQbMUcXAvX?=
- =?us-ascii?Q?+laT4jAWJVyWeY33ETQyVpIrpERWBT6HJ9jvm9z9j1GZdrjrlY9j4iZ5dn15?=
- =?us-ascii?Q?swqy9nBxN3qF7EEBjqhORCnn6yBejbEPj8jbFKOD/bLxE2DdkGD3xoDXmWJz?=
- =?us-ascii?Q?QsZBwwOBQpzxeMtR1wJkkO6vGJtQxw7ROLN/7T8me+xBNSowIDQdIKgCg4tv?=
- =?us-ascii?Q?fl8UPW9Jx9PP3k0t6ZRw6ckHUbylaSDqx2BgSnQIMdM17mrNi1jvkm/pBYKF?=
- =?us-ascii?Q?NiJmMpKgzcwG1nILyo//7VmxcLLkXG5QamAQNTzU4nlsL8pdDkoVx4LTS2iz?=
- =?us-ascii?Q?fcg/vTsaSX8UCyd34DCGxdumI79xsQc5IIDe80GrOyTiJO2ZIIYA+kKwghPG?=
- =?us-ascii?Q?EiyZaR+ABkwk1w9jN6+vFIwnhP3ITh4XdCnIflRJUCiDOuk0pOfo?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ea9d366-52e6-42c4-146e-08deec7bef4d
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 07:43:37.7677
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B+ZSF5B9GdB89n/fEHkg5r1+3EeyOV7QRM1JAm5JRAkuBljROvSWxnSiwx65DBsgQysvZ16eURFZlm22jVC+RPVdoLGlJa54k0wasJ8DFheivnW81O2ZZVd1zjOsfUe4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB16127
+References: <20260725123433.162348-1-biju.das.jz@bp.renesas.com> <20260725123433.162348-3-biju.das.jz@bp.renesas.com>
+Date: Tue, 28 Jul 2026 08:45:09 +0000
+X-Gmail-Original-Message-ID: <CAMRc=Mf_oNCQK3o5-s4u8zejkVWM4WN_R9YO+NA4od0qqtGjow@mail.gmail.com>
+X-Gm-Features: AUfX_mzgkXgviY5xRYVFcqN9ouUjg2z7AvPic1BafteY-WRWusmm3WJ1keIqbkM
+Message-ID: <CAMRc=Mf_oNCQK3o5-s4u8zejkVWM4WN_R9YO+NA4od0qqtGjow@mail.gmail.com>
+Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
+To: Biju <biju.das.au@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Philipp,
-Thanks for your review.
+On Sat, 25 Jul 2026 14:34:29 +0200, Biju <biju.das.au@gmail.com> said:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
+> which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
+> SoC. The driver binds as an auxiliary device to the parent SYSC driver,
+> using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
+> {usb,dsi,csi}-pwrrdy pwrseq targets.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  drivers/power/sequencing/Kconfig              |   8 +
+>  drivers/power/sequencing/Makefile             |   1 +
+>  .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 141 ++++++++++++++++++
+>  3 files changed, 150 insertions(+)
+>  create mode 100644 drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+>
+> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+> index 1c5f5820f5b7..245961cc8123 100644
+> --- a/drivers/power/sequencing/Kconfig
+> +++ b/drivers/power/sequencing/Kconfig
+> @@ -27,6 +27,14 @@ config POWER_SEQUENCING_QCOM_WCN
+>  	  this driver is needed for correct power control or else we'd risk not
+>  	  respecting the required delays between enabling Bluetooth and WLAN.
+>
+> +config POWER_SEQUENCING_RENESAS_PWRRDY
+> +	tristate "Renesas Power Ready sequencing driver"
+> +	depends on SYSC_RZ || COMPILE_TEST
+> +	help
+> +	  Say Y here to enable the power sequencing driver for the Renesas
+> +	  Power Ready signals. This driver handles the power ready signals
+> +	  required to power on the various IP's on RZ/G3L platform.
+> +
+>  config POWER_SEQUENCING_TH1520_GPU
+>  	tristate "T-HEAD TH1520 GPU power sequencing driver"
+>  	depends on (ARCH_THEAD && AUXILIARY_BUS) || COMPILE_TEST
+> diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
+> index 0911d4618298..b33d08d82f43 100644
+> --- a/drivers/power/sequencing/Makefile
+> +++ b/drivers/power/sequencing/Makefile
+> @@ -4,5 +4,6 @@ obj-$(CONFIG_POWER_SEQUENCING)		+= pwrseq-core.o
+>  pwrseq-core-y				:= core.o
+>
+>  obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)	+= pwrseq-qcom-wcn.o
+> +obj-$(CONFIG_POWER_SEQUENCING_RENESAS_PWRRDY) += pwrseq-renesas-pwrrdy.o
+>  obj-$(CONFIG_POWER_SEQUENCING_TH1520_GPU) += pwrseq-thead-gpu.o
+>  obj-$(CONFIG_POWER_SEQUENCING_PCIE_M2)	+= pwrseq-pcie-m2.o
+> diff --git a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+> new file mode 100644
+> index 000000000000..a3d187dd3247
+> --- /dev/null
+> +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/G3L Power Ready driver
+> + *
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/module.h>
+> +#include <linux/pwrseq/provider.h>
+> +#include <linux/regmap.h>
+> +
+> +#define SYS_PWRRDY_N		0xd70
+> +#define SYS_PWRRDY_N_USB_MASK	BIT(0)
+> +#define SYS_PWRRDY_N_DSI_MASK	BIT(1)
+> +#define SYS_PWRRDY_N_CSI_MASK	BIT(2)
+> +
+> +static int pwrseq_rzg3l_set_pwrrdy(struct pwrseq_device *pwrseq, u32 mask, u32 val)
+> +{
+> +	struct regmap *regmap = pwrseq_device_get_drvdata(pwrseq);
+> +
+> +	return regmap_update_bits(regmap, SYS_PWRRDY_N, mask, val);
+> +}
+> +
+> +static int pwrseq_rzg3l_usb_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_USB_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_usb_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_USB_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_usb_pwrrdy_unit = {
+> +	.name = "usb-pwrrdy-power-sequence",
+> +	.enable = pwrseq_rzg3l_usb_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_usb_pwrrdy_disable,
+> +};
+> +
+> +static int pwrseq_rzg3l_dsi_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_DSI_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_dsi_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_DSI_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_dsi_pwrrdy_unit = {
+> +	.name = "dsi-pwrrdy-sequence",
+> +	.enable = pwrseq_rzg3l_dsi_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_dsi_pwrrdy_disable,
+> +};
+> +
+> +static int pwrseq_rzg3l_csi_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_CSI_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_csi_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_CSI_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_csi_pwrrdy_unit = {
+> +	.name = "csi-pwrrdy-power-sequence",
+> +	.enable = pwrseq_rzg3l_csi_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_csi_pwrrdy_disable,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_usb_pwrrdy_target = {
+> +	.name = "usb-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_usb_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_dsi_pwrrdy_target = {
+> +	.name = "dsi-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_dsi_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_csi_pwrrdy_target = {
+> +	.name = "csi-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_csi_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data *pwrseq_rzg3l_pwrrdy_targets[] = {
+> +	&pwrseq_rzg3l_usb_pwrrdy_target,
+> +	&pwrseq_rzg3l_dsi_pwrrdy_target,
+> +	&pwrseq_rzg3l_csi_pwrrdy_target,
+> +	NULL
+> +};
+> +
+> +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
+> +				     struct device *dev)
+> +{
+> +	return PWRSEQ_MATCH_OK;
 
-On Tue, Jul 28, 2026 at 08:59:07AM +0200, Philipp Zabel wrote:
-> On Di, 2026-06-16 at 19:05 +0200, Tommaso Merciai wrote:
-> > Replace individual reset_control_deassert() calls for aresetn and presetn
-> > with reset_control_bulk_deassert(), and consolidate the error path labels
-> > into a single err_assert_resets using reset_control_bulk_assert().
-> > 
-> > No functional changes intended.
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 23 ++++++++-----------
-> >  1 file changed, 9 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index 5185a547461d..bf61a74f8f74 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -672,6 +672,10 @@ irqreturn_t rzg3e_cru_irq(int irq, void *data)
-> >  static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count)
-> >  {
-> >  	struct rzg2l_cru_dev *cru = vb2_get_drv_priv(vq);
-> > +	struct reset_control_bulk_data resets[] = {
-> > +		{ .rstc = cru->aresetn },
-> > +		{ .rstc = cru->presetn },
-> > +	};
-> 
-> Why doesn't this also request the resets in bulk?
+When I see an always-tru match() callback, it always raises an alarm bell.
+Typically, I'd expect there to be some validation of the consumer happening.
 
-presetn -> is shared with csi2 ip
-aresetn -> is exclusive
+Please at least provide an explanation of why it's ok.
 
-This is why IMHO we can't request the resets in bulk.
+> +}
+> +
+> +static int pwrseq_rzg3l_pwrrdy_probe(struct auxiliary_device *adev,
+> +				     const struct auxiliary_device_id *id)
+> +{
+> +	struct device *dev = &adev->dev;
+> +	struct pwrseq_config config = {};
+> +	struct pwrseq_device *pwrseq;
+> +	struct regmap *regmap;
+> +
+> +	regmap = dev_get_regmap(adev->dev.parent, NULL);
+> +	if (!regmap)
+> +		return dev_err_probe(dev, -ENODEV, "Failed to retrieve parent regmap\n");
+> +
+> +	config.parent = dev;
+> +	config.owner = THIS_MODULE;
+> +	config.drvdata = regmap;
+> +	config.match = pwrseq_rzg3l_pwrrdy_match;
+> +	config.targets = pwrseq_rzg3l_pwrrdy_targets;
 
-Kind Regards,
-Tommaso
+Add newline here.
 
+It wouldn't also hurt to use a compound literal like so:
 
-> 
-> regards
-> Philipp
+	config = (struct pwrseq_config){
+		.parent = dev,
+		...
+	};
+
+> +	pwrseq = devm_pwrseq_device_register(dev, &config);
+> +	if (IS_ERR(pwrseq))
+> +		return dev_err_probe(dev, PTR_ERR(pwrseq), "Failed to register power sequencer\n");
+> +
+
+I'd just return devm_pwrseq_device_register() here.
+
+> +	return 0;
+> +}
+> +
+> +static const struct auxiliary_device_id pwrseq_rzg3l_pwrrdy_id_table[] = {
+> +	{ .name = "rz_sysc.pwrseq-pwrrdy" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, pwrseq_rzg3l_pwrrdy_id_table);
+> +
+> +static struct auxiliary_driver pwrseq_rzg3l_pwrrdy_driver = {
+> +	.driver = {
+> +		.name = "pwrseq-rzg3l-pwrrdy",
+> +	},
+> +	.probe = pwrseq_rzg3l_pwrrdy_probe,
+> +	.id_table = pwrseq_rzg3l_pwrrdy_id_table,
+> +};
+> +module_auxiliary_driver(pwrseq_rzg3l_pwrrdy_driver);
+> +
+> +MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
+> +MODULE_DESCRIPTION("Renesas RZ/G3L Power Ready Driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.43.0
+>
+>
