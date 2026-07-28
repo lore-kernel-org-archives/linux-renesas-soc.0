@@ -1,350 +1,537 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010006.outbound.protection.outlook.com [52.101.69.6])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FE432E68D;
-	Tue, 28 Jul 2026 15:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785253576; cv=fail; b=E4rwZoGpCpYPY70X+k2OF9bsNsc0SrU6zYXGrLlgnANYBW4UVO+fmRMSunDjN0Sq79AlT4uGDfWMlgPjU2SMjuDsjTGFQ8XcGuP6Ag9lgfB8LmylQVDeMCYKYn4xQSQgpzBCoVjqS4gaQh5stt8DYFdl2PZr18x0CttfLqAuA7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785253576; c=relaxed/simple;
-	bh=ls6pGo4wRSaURCWPhWp0SWifHTdWwXix11lLItUn/Wk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z4iGk5V5gAYwmWtDiv6JjVDEmc3VVrIxa3rRd/qFdLLgXgrcpQx4nXJrzjeABEJI+6II1bqlHWDV6RHlC7BaZyhkfzGTevMKdsmqAdidB0REG0d0sS3pEF7ym3aK7EpemY6SyGh3SPe5dDpJofbqctWsfurKAEL+rqGunHxdioI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EZ/b9VpO; arc=fail smtp.client-ip=52.101.69.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548C7355048;
+	Tue, 28 Jul 2026 16:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785255294; cv=none; b=FwmNRCbJEBhH3xjWLzSSQLlFueuxqlnWmTlhyaMyKMwo3Ch3K2SsmUsRhlyBsXlO24c5TdkjP0L//kb/Vi4XFQbXfr5VOllL9Xhn4Vqc1axNhmSS1e1Ys0mTYh0zWw08tIXnpjRgYwpVV72lMtufRJkxBiNXmpZVTpSDFsN9ncg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785255294; c=relaxed/simple;
+	bh=TpIwCN3fwwG2IGM+SH6AaUaHQ+tuRC2qvnZXgH9PHBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEFflrA8UEX3dalOcBXEaABRBG7/zriAJGdiIplY2yaaijeqVeDBLhvIytdsPxSJpsazmjsOQ94YRJggyizHedTIm90N7Cpkua6JIUWh7f5AXVPyPEN+txXNqjlsFcr2Bfp7KIvYZvHbuemAVF/mciPEJhqD3RJ1LuliiDEeN30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tTvQnWPR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EZ/b9VpO"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qX7e4jCZ5r4wYy1OvrNK0qfQKKtVZUmIZkwgCNjxCQaT/vl1LWqCW51oof7cm5DOYxw5Lun//vShRpikJZQw8WuwqKSjzGutUBhEYMMVBE2CHVZQj/PoVacZeP9+VLFC5J8eP1suxS0q9/OjMJQBHw3UCeoLDXlXhcBoC7TWvYQATHuCc1n0LsDhpJ2FgLwCkdp32ctAi1L1bd5zBI4bCRKHHBbf6y0Rw3O+ahA2t8gYlqJfFy4iotn8W20iifjV3Z0WxkbSIFRFCahehvtPDfEjLTJiBcxT41oDHui0HHJM0xQq4QaeqliS2bg1QiWocHTAPJcUMpL8kg/1wnCk8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8USN2EAdhzUnyadoOi9BOR5JNUPmHylFl+PgtR+m4J8=;
- b=Jn42I1tmTVyDxFp6lB7o5i5pzlPYfzkKg/i3ZrGRu1h+FenlCszyMOyNQHXvWRS5ca1rrqihcGaIQYHqeNbBZ/HlrKH7lsaRi9mHIK8Ha8ygoVu9dpnsrUyrQaT1D/p4b5n1hrUIyxlCv9ch2I9cE9rQsAw8f9zybDolMO538NfStHGv2DPCOUQ3mgQ4IXimfjQ3f0S9UWfPAL6M+kmtiyOppgyDMvoFQANWoRomt/GKju6oDqQbPwNm5MV2P2zQAJ4i0ux9Rag9Fz704lBvCXwrnp99mzUBhRBPZz+zpIhp7bCVn0UgvIpWOSuE6PhLnutIf5ZZikKEg3dvm2HyKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8USN2EAdhzUnyadoOi9BOR5JNUPmHylFl+PgtR+m4J8=;
- b=EZ/b9VpOzLvG6tEy+/rjmM9jEaRlyZBHq83NlBAfw3rF3NGZkOT01e0jFmTTDqFRoT0KGoDMwTzF3TLVkk/5BzlcsbQf07aECZ0Cb960her/oaWpLGWdAzchpKwO6IH3H1ghCy5vCgYD5tImwBp272rTV6vG9HNorUS1Imd6TnUS4MRnSLJIVDwFHxk1mAQC9VjwVn/WyQ+H7SNOEDGXWZkVqXVmo4DiXHEaust/GSOunt9gCbq/bwj1R90zn7p8dMatNeHvt4M6FNT3QZ19ks+wD8GilK4nh2/2n2HJMT0+vX1rz/mWeaI18e3bh00xJRRMMLjY6PKnGBGnjDNo5w==
-Received: from GV2PR04MB12560.eurprd04.prod.outlook.com (2603:10a6:150:367::9)
- by BESPR04MB12561.eurprd04.prod.outlook.com (2603:10a6:b10:fe::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.12; Tue, 28 Jul
- 2026 15:46:08 +0000
-Received: from GV2PR04MB12560.eurprd04.prod.outlook.com
- ([fe80::c418:3929:9d71:9257]) by GV2PR04MB12560.eurprd04.prod.outlook.com
- ([fe80::c418:3929:9d71:9257%4]) with mapi id 15.21.0245.012; Tue, 28 Jul 2026
- 15:46:08 +0000
-From: Roy Zang <roy.zang@nxp.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>
-CC: =?utf-8?B?S3J6eXN6dG9mIFdpbGN6ecWEc2tp?= <kwilczynski@kernel.org>, Anand
- Moon <linux.amoon@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Frank Li
-	<frank.li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Heiko
- Stuebner <heiko@sntech.de>, Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo
- Han <jingoohan1@gmail.com>, Koichiro Den <den@valinux.co.jp>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, Minghuan Lian
-	<minghuan.lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>, Nicolas Frattaroli
-	<nicolas.frattaroli@collabora.com>, Niklas Cassel <cassel@kernel.org>,
-	Qianfeng Rong <rongqianfeng@vivo.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Srikanth Thokala
-	<srikanth.thokala@intel.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Yuho Choi
-	<dbgh9129@gmail.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>
-Subject: RE: [PATCH 1/2] PCI: dwc: Handle return value from endpoint .init
- callback
-Thread-Topic: [PATCH 1/2] PCI: dwc: Handle return value from endpoint .init
- callback
-Thread-Index: AQHdHjAaU0BRkBm8q0yhDiIT+kMijraDE6wg
-Date: Tue, 28 Jul 2026 15:46:08 +0000
-Message-ID:
- <GV2PR04MB12560070A62D9DC359FA165118BCB2@GV2PR04MB12560.eurprd04.prod.outlook.com>
-References: <20260728012548.465139-1-marek.vasut+renesas@mailbox.org>
- <20260728012548.465139-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260728012548.465139-2-marek.vasut+renesas@mailbox.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV2PR04MB12560:EE_|BESPR04MB12561:EE_
-x-ms-office365-filtering-correlation-id: d0ea8e28-c022-4dd5-88d6-08deecbf57b7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|6049299003|19092799006|366016|7416014|376014|1800799024|38070700021|4053099003|4143699003|56012099006|10067099003|11063799006|22082099003|18002099003;
-x-microsoft-antispam-message-info:
- t7BWG9csU+OdPWToW2FX9pzhLYkhmUsbJYq7BDyP/+fFV1JtOcGWK7OM6ibyDJcrZnEcWvz4wBUhitC01xWgewbRAs2r6jNOn0wolgw1eJ62cMF5wD0yW1lst7iBoBLeeI3jvsTgaZRVuLGNYDDFEmYcfs544rnLZQDsLap4EANOAhMecq3Q183+4MmVHhYBukET7ZWIqVpWT/nH5xt1gHxgtWe8PQG1bOSsL2S2kBJH3crZjbVEaXTR5kmIz0V5j1PA84cATSVOpFwB7oScrXyFTHCGCF6dDVVrjdLHxkFbhdQL7E1pFWXFLaWlUl3MdbibC/iMz8ryUa/W+PLviCU6cSvhAMajiFBGuyQKU25W3bs04r4kLR0drNA5KhQdDv3dcglI3BAwa5LeOVc36kb2tbp0fPX+bmvKiheIy9sVF4l8BvGaYjDSJqR4u+ZLmJKoschQRZBwXl3VuBFasQhsT730NOuUh6TaLj64cJWnhcuePwjCPkBViKunT0PcojIwbUSm5r2PnA0vb3jnhABN26aroq17v9Vl3sFYwL0d9Zsn6KmvYv0pXlfje0PILgZ1le+LhWzcnSIU23epll0Uo8W4yAYQFkkff9QTLcAyQHmjQoBMEKiS75C3sxdJ76pIpW3XdwOyZTvlzq9U2RH7iD4AWscZRojkJTuZAQTznlDZDsQoRDT/+puCNBXK4KdTiBhgGJXywik5ql2crK0O65SZZAlXcD7VSff7z6U=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12560.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(6049299003)(19092799006)(366016)(7416014)(376014)(1800799024)(38070700021)(4053099003)(4143699003)(56012099006)(10067099003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?a3dGWHNnLzVjbkNLaFdWb1BHNkNxblBqbHhDeDhqUHQrTWkxN1ZOV1FQbE81?=
- =?utf-8?B?OExpbVl3Wit0N1FuTjBVbUhCbUdZNnJod2hYQ1Y5alBzeTNnZDZaWkZ0N2Fu?=
- =?utf-8?B?MkllUnNzZFdoNmdiYWdNOHJLUUJFbk1lWlNkVzRhTmFwalhQaThOTkdDNmZH?=
- =?utf-8?B?UTA4ai9kWnZrTXdrN3NGcHBVQkFJdDVxN01VOXBrYXZDWVZnRUNuaEs2cmEv?=
- =?utf-8?B?UWhNSmpEQ0dRMjF0MHdCakptTGhmOXlrdWVmY0NvZFRqRG93Q282dkxJTmV6?=
- =?utf-8?B?K2VsaHYweEhuQi9vVndDclp2SHRwWHRwZ1BiMy9LM3BMaWtjUHVBMmJra0FL?=
- =?utf-8?B?TXVRYXQ5VVh2eVpWaHF5KzZETUxoR0Z4UHVHWCs2LzFFclJMcGNHNm4zQi9L?=
- =?utf-8?B?dktMaXE4TmIxa3Y1YVJmdXZCMHF3czZjV2tUZDJkakdLMFZNT253K3hhNzFw?=
- =?utf-8?B?R3M4NGQ4a1FIYTRqbW05WDdOU0ZoanNsSHhkVGlFeDVyaGFhc0xmMFRWQkxk?=
- =?utf-8?B?dGJidGFTRXMrOEo1OEQySmt5Rnl0RkR6QUhPemJuaU1YU1N0WnIxOUtPSE13?=
- =?utf-8?B?aXBkVnBiSk5GTDRzaDZyYXlvQ1djVWtYVXB5OVkvd1JZVmpSK1BDQTJWRXF1?=
- =?utf-8?B?anVXU1MyL0c0c2ZWWXExSHFISkVEaHNrRm1RL1BOOU00dXFpSVZGMXg0VHA1?=
- =?utf-8?B?UjVVd21VeXV0UUlCQkFCRmxrZUFBdHNFSDd6OHRQZGJ3UzBSODdacnpEaXZ1?=
- =?utf-8?B?NDJxeW1ZNUJkamZuYUNzdkppZHZxa3p4KzlnM0poNUpDSkxWVElBK3RackFa?=
- =?utf-8?B?QW9SMUNMSGZaUVU2V3N2YUIwY3ZsRHZzTEY1d0lkTkQ5eEdIaFd4ZFE0dWVu?=
- =?utf-8?B?c3N2VmdadmZZWEJvYXZUdzBYK1V0Ti9GbzViMVRtSmNScXR4NU5ZN0NTQldm?=
- =?utf-8?B?WnVsUzd1V2JSbGxrbVZlOFZlRzF2dDUyNStWdGVPUUhEa08xK3FqcEl4NmQy?=
- =?utf-8?B?UjQ1aExhUUp4YUtxckllRitEY1dlMVlFNEkwSCtUdTVTYUdtTWROQ0JHSUtW?=
- =?utf-8?B?Uk05aUJYdVgramt3amF0UGVNdDlkMkxGNXJrNGtrSHUvVXBrVmxzRGdxRk91?=
- =?utf-8?B?bU8zTjJmck9YM1RGM2xQeHNocHk2cXhKTzN4Wkx0SXQxWVlrNkhXOGVZN0FE?=
- =?utf-8?B?eXFIWHNlaGZwTHlONkFyd3VrMktKQzZvOFh3Z2RCWW1wWk1WV0pXSFNPS3hH?=
- =?utf-8?B?UC9NcVdlYTBrbUYrY0RITTVRYlNDcGJZbE9TZnN1ZmtSMmU0Rk5mblVzT1c5?=
- =?utf-8?B?LzROMlNkeUxWRGlFOENtT3E1eitRTWxyd0JYSTAyeVR3MHFCdXNzK2ZsNDVJ?=
- =?utf-8?B?aXFNTDBpOEx1MFJCc0EyY3lKTWd2TU1kUEd4azVSK2hpL2RPUDBNM1BCMGJR?=
- =?utf-8?B?THVmemRSWmJ5aW4vTnNzRXNCVzBJMkk3RTJiMVhuenV2Y2g4ZTRhb1ZXeXlv?=
- =?utf-8?B?RDBiL2VMelpacU56dUxsQzU0TGp0aXYydFdtNER4SHA4VHhDTVErMVRsdGVU?=
- =?utf-8?B?SE9aOEYwejVOU1NxR0VORnY2d0ZXQ1lSWHI4WlFORTF2YlA0c0ZjMW9uUEZo?=
- =?utf-8?B?cEVKNVRpMi9wbnRzMU5ZSXQrd0U1NGMxd1BNNTd0T1lveDRUeW9OY3VJNmtM?=
- =?utf-8?B?c1VwbTVMVDdJTWJCY0VuT3BLNkcyN0wzQ3Y0QkRrUUg0Z3ordmdZdlVFNENs?=
- =?utf-8?B?QjBlbnBuZEFMTFg4NE9OMlBaWGg0NFVuaHZhQno2bmZUWEE1cm9FM1BwOUg4?=
- =?utf-8?B?akc0UlhqdVV3UlNOLy90anQwOWZadUJGNnBOOVJ4QW1ZLyttVkk5S2E5MGtV?=
- =?utf-8?B?ZUtCUngwSm4rM09MVUppT0EydG5zL0NycHptS0YvUGRTMTE4dmJoME5YekR6?=
- =?utf-8?B?cHZRRG16ZXNuM1QyeEtyRWJJc2tZQTRCOFQ2QVRpMUVHSzIrSUk5S21VdHM0?=
- =?utf-8?B?cmw2RDRyUHZFNVh2cUhFaEEzNjhUUzU4WjBRb0VTUmdmR1FJTWYzU0tHQkdq?=
- =?utf-8?B?ZFpud0hCbHdhdnpuT2EvVmRkTTBoU1VqTmFyNHYrUUhzYzQ0WDl6Q2VIRWtV?=
- =?utf-8?B?bSsrVTVtbmdQSHFDMDd1bk1CQTBGekFIUTJPa2JIaHVFM0lYb0tENmlzNTFh?=
- =?utf-8?B?QlNDdWNyR3dncHYrQ1JZQnd5NUhqOVNvM2dCQXU2V1Z5T0dHV092VGYvaU94?=
- =?utf-8?B?TEZFRzZTQVV3Y3diS0dYYklXanRTNS80NVpkTkR0TEtiSHJaWFROSEJpYk5N?=
- =?utf-8?Q?EhJY0dDoexD8k6OohJ?=
-Content-Type: multipart/signed;
-	protocol="application/x-pkcs7-signature";
-	micalg=SHA1;
-	boundary="----=_NextPart_000_005A_01DD1E7E.4B3A2FC0"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tTvQnWPR"
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 263642F8;
+	Tue, 28 Jul 2026 18:13:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1785255224;
+	bh=TpIwCN3fwwG2IGM+SH6AaUaHQ+tuRC2qvnZXgH9PHBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tTvQnWPRn5tRQ0+LHLUOImW4GYJlYu/q9ak317nBqkHpG2vdXuDW7m0oBx/m3/V7n
+	 mYqPoBZcdBDAo2Zks0XDyvygyuBiB61+7PfEiJCy+a47eqqPEhT9p0aDqADe5PyORK
+	 6Tn60FtUt0HLxoDrekvTzYHYM8g9WmZ+q+p7e3pM=
+Date: Tue, 28 Jul 2026 18:14:45 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: Re: [PATCH v10 12/13] media: rppx1: ga: Add support for gamma out
+ correction
+Message-ID: <amjQiV04a5u372MU@zed>
+References: <20260611204148.1423192-1-niklas.soderlund+renesas@ragnatech.se>
+ <20260611204148.1423192-13-niklas.soderlund+renesas@ragnatech.se>
+ <amjM5n2eYqnrpJfb@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12560.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0ea8e28-c022-4dd5-88d6-08deecbf57b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2026 15:46:08.7652
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MLovhbeHd5tw6A15FlItblGuYplgsERtEUpcvp9Yesj4P5pEtxuzgF2pXwXCILBcRRPgtbyZX7JE9Kn+Xir37g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BESPR04MB12561
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <amjM5n2eYqnrpJfb@valkosipuli.retiisi.eu>
 
-------=_NextPart_000_005A_01DD1E7E.4B3A2FC0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Hi Sakari
 
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> 
-> Add return value handling for struct dw_pcie_ep_ops .init callback.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Acked-by: Roy Zang <Roy.Zang@nxp.com>
-Roy
+On Tue, Jul 28, 2026 at 06:38:14PM +0300, Sakari Ailus wrote:
+> Hejssan,
+>
+> On Thu, Jun 11, 2026 at 10:41:47PM +0200, Niklas Söderlund wrote:
+> > +/**
+> > + * struct rppx1_ga_params - Gamma Out Correction configuration
+> > + *
+> > + * The Gamma Out Correction module is available on the Human Vision Output
+> > + * Pipe (HV) and the Machine Vision Output Pipe (MV). Userspace selects
+> > + * which pipe to operate by setting the @header.type field to
+> > + * RPPX1_PARAMS_BLOCK_TYPE_GA_HV or RPPX1_PARAMS_BLOCK_TYPE_GA_MV.
+> > + *
+> > + * The module allows to apply a @gamma_y gamma correction curve to RGB data
+> > + * represented as a table of 16 entries. The 16 input sampling points can be
+> > + * equidistant or segmented using a logarithmic scale according to the value of
+> > + * @mode.
+> > + *
+> > + * The gamma curve values are 12 bits on the HV output pipe and 24 bits on the
+> > + * MV output pipe. Userspace is expected to provide the curve values with a
+> > + * bit-depth matching the one of pipe in use.
+> > + *
+> > + * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_GA_HV or
+> > + *	    type = RPPX1_PARAMS_BLOCK_TYPE_GA_MV)
+> > + * @mode: gamma curve input segmentation mode (see rppx1_ga_seg_mode)
+> > + * @gamma_y: gamma out curve y-axis values
+> > + */
+> > +struct rppx1_ga_params {
+> > +	struct v4l2_isp_params_block_header header;
+> > +	__u8 mode;
+>
+> Please use reserved fields to avoid holes in structs!
+>
 
-------=_NextPart_000_005A_01DD1E7E.4B3A2FC0
-Content-Type: application/pkcs7-signature;
-	name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
-	filename="smime.p7s"
+You're right.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIhUTCCBaIw
-ggOKoAMCAQICCE4Rpu+H69FRMA0GCSqGSIb3DQEBCwUAMGUxIjAgBgNVBAMMGU5YUCBJbnRlcm5h
-bCBQb2xpY3kgQ0EgRzIxCzAJBgNVBAsMAklUMREwDwYDVQQKDAhOWFAgQi5WLjESMBAGA1UEBwwJ
-RWluZGhvdmVuMQswCQYDVQQGEwJOTDAeFw0yMzA0MjEwNjQzNDVaFw0yODA0MTkwNjQzNDVaMIG2
-MRwwGgYDVQQDDBNOWFAgRW50ZXJwcmlzZSBDQSA1MQswCQYDVQQLDAJJVDERMA8GA1UECgwITlhQ
-IEIuVi4xEjAQBgNVBAcMCUVpbmRob3ZlbjEWMBQGA1UECAwNTm9vcmQtQnJhYmFudDETMBEGCgmS
-JomT8ixkARkWA3diaTETMBEGCgmSJomT8ixkARkWA254cDETMBEGCgmSJomT8ixkARkWA2NvbTEL
-MAkGA1UEBhMCTkwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDAWrnSkYP60A8wj4AO
-kATDjnbdgLv6waFfyXE/hvatdWz2YYtb1YSRi5/wXW+Pz8rsTmSj7iusI+FcLP8WEaMVLn4sEIQY
-NI8KJUCz21tsIArYs0hMKEUFeCq3mxTJfPqzdj9CExJBlZ5vWS4er8eJI8U8kZrt4CoY7De0FdJh
-35Pi5QGzUFmFuaLgXfV1N5yukTzEhqz36kODoSRw+eDHH9YqbzefzEHK9d93TNiLaVlln42O0qaI
-MmxK1aNcZx+nQkFsF/VrV9M9iLGA+Qb/MFmR20MJAU5kRGkJ2/QzgVQM3Nlmp/bF/3HWOJ2j2mpg
-axvzxHNN+5rSNvkG2vSpAgMBAAGjggECMIH/MFIGCCsGAQUFBwEBBEYwRDBCBggrBgEFBQcwAoY2
-aHR0cDovL253dy5wa2kubnhwLmNvbS9jZXJ0cy9OWFBJbnRlcm5hbFBvbGljeUNBRzIuY2VyMB0G
-A1UdDgQWBBRYlWDuTnTvZSKqve0ZqSt6jhedBzASBgNVHRMBAf8ECDAGAQH/AgEAMEUGA1UdHwQ+
-MDwwOqA4oDaGNGh0dHA6Ly9ud3cucGtpLm54cC5jb20vY3JsL05YUEludGVybmFsUG9saWN5Q0FH
-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
-NKAgBgorBgEEAYI3FAIDoBIMEHJveS56YW5nQG54cC5jb22BEHJveS56YW5nQG54cC5jb20wHQYD
-VR0OBBYEFEC91Mn4uGDypbHxsXGxHS5+PZUYMB8GA1UdIwQYMBaAFFiVYO5OdO9lIqq97RmpK3qO
-F50HMIIBRgYDVR0fBIIBPTCCATkwggE1oIIBMaCCAS2GgchsZGFwOi8vL0NOPU5YUCUyMEVudGVy
-cHJpc2UlMjBDQSUyMDUsQ049bmxhbXNwa2kwMDA1LENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBT
-ZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXdiaSxEQz1ueHAsREM9Y29t
-P2NlcnRpZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRp
-b25Qb2ludIYvaHR0cDovL253dy5wa2kubnhwLmNvbS9jcmwvTlhQRW50ZXJwcmlzZUNBNS5jcmyG
-L2h0dHA6Ly93d3cucGtpLm54cC5jb20vY3JsL05YUEVudGVycHJpc2VDQTUuY3JsMIIBEAYIKwYB
-BQUHAQEEggECMIH/MIG7BggrBgEFBQcwAoaBrmxkYXA6Ly8vQ049TlhQJTIwRW50ZXJwcmlzZSUy
-MENBJTIwNSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049
-Q29uZmlndXJhdGlvbixEQz13YmksREM9bnhwLERDPWNvbT9jQUNlcnRpZmljYXRlP2Jhc2U/b2Jq
-ZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTA/BggrBgEFBQcwAoYzaHR0cDovL253dy5w
-a2kubnhwLmNvbS9jZXJ0cy9OWFAtRW50ZXJwcmlzZS1DQTUuY2VyMA0GCSqGSIb3DQEBCwUAA4IB
-AQAwtQRH8aMHz4PyCyfPAqbyOd/zkoILJe2NiFqCaNOWLQWUfVuiasVjGqIRJQ/HIJV2ooHktl7S
-MMp/cR8QCETODLCsujJQtELvH+XrjBUX7xAiqTtVrckTRbO1xaZotFW3CN02IqSPo/AB+9ojr202
-nHzvELJgOPayKk1lulbWmNqz8qMSuWGj8Sc30gzkCd6OyLciATwDLQYUXS42dX1lKZSdgOURMQP8
-KIO0SG/WRo+ZUE51xajEZpgo5WKYrckiZxQCfcGAn0WVCiOZ5hRnr8Q7pavFszxFrWwowicwbd0S
-0wIWAnBs6eqAZjN/K9bu/QTdY1jSJgfViagMg470MIIIOjCCByKgAwIBAgITLQAMpBb3zugcBVYH
-WgABAAykFjANBgkqhkiG9w0BAQsFADCBtjEcMBoGA1UEAwwTTlhQIEVudGVycHJpc2UgQ0EgNTEL
-MAkGA1UECwwCSVQxETAPBgNVBAoMCE5YUCBCLlYuMRIwEAYDVQQHDAlFaW5kaG92ZW4xFjAUBgNV
-BAgMDU5vb3JkLUJyYWJhbnQxEzARBgoJkiaJk/IsZAEZFgN3YmkxEzARBgoJkiaJk/IsZAEZFgNu
-eHAxEzARBgoJkiaJk/IsZAEZFgNjb20xCzAJBgNVBAYTAk5MMB4XDTI0MDgwNzE5MzgxMVoXDTI2
-MDgwNzE5MzgxMVowgZoxEzARBgoJkiaJk/IsZAEZFgNjb20xEzARBgoJkiaJk/IsZAEZFgNueHAx
-EzARBgoJkiaJk/IsZAEZFgN3YmkxDDAKBgNVBAsTA05YUDELMAkGA1UECxMCVVMxFjAUBgNVBAsT
-DU1hbmFnZWQgVXNlcnMxEzARBgNVBAsTCkRldmVsb3BlcnMxETAPBgNVBAMTCG54YTIxNzAxMIIB
-IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA55YyjGM+ltxo8NcfzL4FYuNVxTSHoMXQdjHo
-ddnsJO77cR5GnfdlRXEOdJUysAKlGhpMxYekUrKBGfuoTXlXthcH/51P1apcmQBioE9kjwMf3qYM
-wroBH1wWfKervMVKyVoULgWuN74/CeY7lN0zttUp9x3g1jMKVgKGap9Q2lDVbxFCMzWDieiPRMEM
-G8FRcrGUSOKSkQl5j/X7n+VqAvXWZlqvhyzsOyXBFrXJvslOQGCXAAavQXNfrIDRRKy4PS+MSd26
-6sEakJlhbOAsIeUcDyP1Rq7tbfuZ+BFrq2w5x0SifHa5ugFi3Z7LBTREB+lsvUtoaFnZX1tQ44v7
-ZQIDAQABo4IEWTCCBFUwPAYJKwYBBAGCNxUHBC8wLQYlKwYBBAGCNxUIhYLAfoGO9FWG7YU4guuZ
-S5qSVj+F5opuhLXhfgIBZAIBQTATBgNVHSUEDDAKBggrBgEFBQcDBDAOBgNVHQ8BAf8EBAMCBSAw
-DAYDVR0TAQH/BAIwADAbBgkrBgEEAYI3FQoEDjAMMAoGCCsGAQUFBwMEMIGUBgkqhkiG9w0BCQ8E
-gYYwgYMwCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBLTALBglghkgBZQMEARYwCwYJYIZIAWUDBAEZ
-MAsGCWCGSAFlAwQBAjALBglghkgBZQMEAQUwCgYIKoZIhvcNAwcwBwYFKw4DAgcwDgYIKoZIhvcN
-AwICAgCAMA4GCCqGSIb3DQMEAgICADAdBgNVHQ4EFgQUa9VvfI2adDKzdXh2zk0AoaavdmIwHwYD
-VR0jBBgwFoAUWJVg7k5072Uiqr3tGakreo4XnQcwggFGBgNVHR8EggE9MIIBOTCCATWgggExoIIB
-LYaByGxkYXA6Ly8vQ049TlhQJTIwRW50ZXJwcmlzZSUyMENBJTIwNSxDTj1ubGFtc3BraTAwMDUs
-Q049Q0RQLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3Vy
-YXRpb24sREM9d2JpLERDPW54cCxEQz1jb20/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNl
-P29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50hi9odHRwOi8vbnd3LnBraS5ueHAuY29t
-L2NybC9OWFBFbnRlcnByaXNlQ0E1LmNybIYvaHR0cDovL3d3dy5wa2kubnhwLmNvbS9jcmwvTlhQ
-RW50ZXJwcmlzZUNBNS5jcmwwggEQBggrBgEFBQcBAQSCAQIwgf8wgbsGCCsGAQUFBzAChoGubGRh
-cDovLy9DTj1OWFAlMjBFbnRlcnByaXNlJTIwQ0ElMjA1LENOPUFJQSxDTj1QdWJsaWMlMjBLZXkl
-MjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXdiaSxEQz1ueHAsREM9
-Y29tP2NBQ2VydGlmaWNhdGU/YmFzZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5
-MD8GCCsGAQUFBzAChjNodHRwOi8vbnd3LnBraS5ueHAuY29tL2NlcnRzL05YUC1FbnRlcnByaXNl
-LUNBNS5jZXIwPQYDVR0RBDYwNKAgBgorBgEEAYI3FAIDoBIMEHJveS56YW5nQG54cC5jb22BEHJv
-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
+As I've recently learned with mali, while on ARMv8 unaligned access is
+not a real problem in practice, it might confuse tools and create
+unecessary churn.
 
-------=_NextPart_000_005A_01DD1E7E.4B3A2FC0--
+So yes, align whenever possible.
+
+I've run all the types in the header though pahole and this is the
+result (with the proposed fix)
+
+The guidlines are: no holes and no implicit padding
+
+-------------------------------------------------------------------------------
+struct rppx1_window {
+	__u16                      h_offs;               /*     0     2 */
+	__u16                      v_offs;               /*     2     2 */
+	__u16                      h_size;               /*     4     2 */
+	__u16                      v_size;               /*     6     2 */
+
+	/* size: 8, cachelines: 1, members: 4 */
+	/* last cacheline: 8 bytes */
+};
+
+this one is ok
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_wbmeas_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+	__u8                       ymax_cmp;             /*     9     1 */
+	struct rppx1_window        wnd;                  /*    10     8 */
+	__u8                       frames;               /*    18     1 */
+
+	/* XXX 1 byte hole, try to pack */
+
+	__u32                      ref_cr_max_r;         /*    20     4 */
+	__u32                      ref_cb_max_b;         /*    24     4 */
+	__u32                      min_y_max_g;          /*    28     4 */
+	__u32                      max_y;                /*    32     4 */
+	__u32                      max_csum;             /*    36     4 */
+	__u32                      min_c;                /*    40     4 */
+	__u16                      ccor_coeff[3][3];     /*    44    18 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	__u32                      ccor_offs[3];         /*    64    12 */
+
+	/* size: 80, cachelines: 2, members: 13 */
+	/* sum members: 73, holes: 2, sum holes: 3 */
+	/* padding: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+
+This one might benefit from re-arranging the first 4 members and
+insert one padding byte after "frames", 2 bytes after "ccor_coeff" and
+2 bytes after "ccor_offs" to avoid the compiler insert padding there
+
+struct rppx1_wbmeas_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	struct rppx1_window        wnd;                  /*     8     8 */
+	__u8                       mode;                 /*    16     1 */
+	__u8                       ymax_cmp;             /*    17     1 */
+	__u8                       frames;               /*    18     1 */
+	__u8                       reserved;             /*    19     1 */
+	__u32                      ref_cr_max_r;         /*    20     4 */
+	__u32                      ref_cb_max_b;         /*    24     4 */
+	__u32                      min_y_max_g;          /*    28     4 */
+	__u32                      max_y;                /*    32     4 */
+	__u32                      max_csum;             /*    36     4 */
+	__u32                      min_c;                /*    40     4 */
+	__u16                      ccor_coeff[3][3];     /*    44    18 */
+	__u16                      reserved2;            /*    62     2 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	__u32                      ccor_offs[3];         /*    64    12 */
+	__u32                      reserved3;            /*    76     4 */
+
+	/* size: 80, cachelines: 2, members: 16 */
+	/* forced alignments: 1 */
+	/* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_awbg_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      gain_red;             /*     8     4 */
+	__u32                      gain_green_r;         /*    12     4 */
+	__u32                      gain_blue;            /*    16     4 */
+	__u32                      gain_green_b;         /*    20     4 */
+
+	/* size: 24, cachelines: 1, members: 5 */
+	/* forced alignments: 1 */
+	/* last cacheline: 24 bytes */
+} __attribute__((__aligned__(8)));
+
+this one is ok
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_exm_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      mode;                 /*     8     4 */
+	__u8                       channel_sel;          /*    12     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	__u32                      last_line;            /*    16     4 */
+	struct rppx1_window        wnd;                  /*    20     8 */
+	__u8                       coeff_r;              /*    28     1 */
+	__u8                       coeff_g_gr;           /*    29     1 */
+	__u8                       coeff_b;              /*    30     1 */
+	__u8                       coeff_gb;             /*    31     1 */
+
+	/* size: 32, cachelines: 1, members: 9 */
+	/* sum members: 29, holes: 1, sum holes: 3 */
+	/* forced alignments: 1 */
+	/* last cacheline: 32 bytes */
+} __attribute__((__aligned__(8)));
+
+Re-arranging the first members and inserting 3 padding bytes at the
+end should make things better
+
+struct rppx1_exm_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	struct rppx1_window        wnd;                  /*     8     8 */
+	__u32                      mode;                 /*    16     4 */
+	__u32                      last_line;            /*    20     4 */
+	__u8                       channel_sel;          /*    24     1 */
+	__u8                       coeff_r;              /*    25     1 */
+	__u8                       coeff_g_gr;           /*    26     1 */
+	__u8                       coeff_b;              /*    27     1 */
+	__u8                       coeff_gb;             /*    28     1 */
+	__u8                       reserved[3];          /*    29     3 */
+
+	/* size: 32, cachelines: 1, members: 10 */
+	/* forced alignments: 1 */
+	/* last cacheline: 32 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_hist_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+	__u8                       channel_sel;          /*     9     1 */
+	struct rppx1_window        wnd;                  /*    10     8 */
+	__u8                       weights[25];          /*    18    25 */
+
+	/* XXX 1 byte hole, try to pack */
+
+	__u32                      last_line;            /*    44     4 */
+	__u32                      v_stepsize;           /*    48     4 */
+	__u32                      h_step_inc;           /*    52     4 */
+	__u8                       coeff[3];             /*    56     3 */
+
+	/* XXX 1 byte hole, try to pack */
+
+	__u32                      sample_offs;          /*    60     4 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	__u8                       sample_shift;         /*    64     1 */
+
+	/* size: 72, cachelines: 2, members: 11 */
+	/* sum members: 63, holes: 2, sum holes: 2 */
+	/* padding: 7 */
+	/* forced alignments: 1 */
+	/* last cacheline: 8 bytes */
+} __attribute__((__aligned__(8)));
+
+This requires a bit more work but could become
+
+struct rppx1_hist_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	struct rppx1_window        wnd;                  /*     8     8 */
+	__u8                       mode;                 /*    16     1 */
+	__u8                       channel_sel;          /*    17     1 */
+	__u8                       weights[25];          /*    18    25 */
+	__u8                       reserved;             /*    43     1 */
+	__u32                      last_line;            /*    44     4 */
+	__u32                      v_stepsize;           /*    48     4 */
+	__u32                      h_step_inc;           /*    52     4 */
+	__u8                       coeff[3];             /*    56     3 */
+	__u8                       reserved2;            /*    59     1 */
+	__u32                      sample_offs;          /*    60     4 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	__u8                       sample_shift;         /*    64     1 */
+	__u8                       reserved3[7];         /*    65     7 */
+
+	/* size: 72, cachelines: 2, members: 14 */
+	/* forced alignments: 1 */
+	/* last cacheline: 8 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_bls_fixed {
+	__u32                      a;                    /*     0     4 */
+	__u32                      b;                    /*     4     4 */
+	__u32                      c;                    /*     8     4 */
+	__u32                      d;                    /*    12     4 */
+
+	/* size: 16, cachelines: 1, members: 4 */
+	/* last cacheline: 16 bytes */
+};
+
+this one is ok
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_bls_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+	__u8                       en_windows;           /*     9     1 */
+	__u8                       samples;              /*    10     1 */
+
+	/* XXX 1 byte hole, try to pack */
+
+	struct rppx1_window        window1;              /*    12     8 */
+	struct rppx1_window        window2;              /*    20     8 */
+	struct rppx1_bls_fixed     fixed;                /*    28    16 */
+
+	/* size: 48, cachelines: 1, members: 7 */
+	/* sum members: 43, holes: 1, sum holes: 1 */
+	/* padding: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 48 bytes */
+} __attribute__((__aligned__(8)));
+
+This one needs one reserved byte and 4 padding bytes at
+
+struct rppx1_bls_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+	__u8                       en_windows;           /*     9     1 */
+	__u8                       samples;              /*    10     1 */
+	__u8                       reserved;             /*    11     1 */
+	struct rppx1_window        window1;              /*    12     8 */
+	struct rppx1_window        window2;              /*    20     8 */
+	struct rppx1_bls_fixed     fixed;                /*    28    16 */
+	__u32                      reserved2;            /*    44     4 */
+
+	/* size: 48, cachelines: 1, members: 9 */
+	/* forced alignments: 1 */
+	/* last cacheline: 48 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_ccor_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u16                      coeff[3][3];          /*     8    18 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	__u32                      offset[3];            /*    28    12 */
+
+	/* size: 40, cachelines: 1, members: 3 */
+	/* sum members: 38, holes: 1, sum holes: 2 */
+	/* forced alignments: 1 */
+	/* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+
+2 padding bytes are enough for this
+
+struct rppx1_ccor_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u16                      coeff[3][3];          /*     8    18 */
+	__u16                      reserved;             /*    26     2 */
+	__u32                      offset[3];            /*    28    12 */
+
+	/* size: 40, cachelines: 1, members: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_lsc_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u16                      r_data[17][17];       /*     8   578 */
+	/* --- cacheline 9 boundary (576 bytes) was 10 bytes ago --- */
+	__u16                      gr_data[17][17];      /*   586   578 */
+	/* --- cacheline 18 boundary (1152 bytes) was 12 bytes ago --- */
+	__u16                      gb_data[17][17];      /*  1164   578 */
+	/* --- cacheline 27 boundary (1728 bytes) was 14 bytes ago --- */
+	__u16                      b_data[17][17];       /*  1742   578 */
+	/* --- cacheline 36 boundary (2304 bytes) was 16 bytes ago --- */
+	__u16                      x_grad[16];           /*  2320    32 */
+	__u16                      y_grad[16];           /*  2352    32 */
+	/* --- cacheline 37 boundary (2368 bytes) was 16 bytes ago --- */
+	__u16                      x_sect_size[16];      /*  2384    32 */
+	__u16                      y_sect_size[16];      /*  2416    32 */
+
+	/* size: 2448, cachelines: 39, members: 9 */
+	/* forced alignments: 1 */
+	/* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+
+this one is ok
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_ga_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	__u32                      gamma_y[17];          /*    12    68 */
+
+	/* size: 80, cachelines: 2, members: 3 */
+	/* sum members: 77, holes: 1, sum holes: 3 */
+	/* forced alignments: 1 */
+	/* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+
+3 padding bytes for this one
+
+struct rppx1_ga_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u8                       mode;                 /*     8     1 */
+	__u8                       reserved[3];          /*     9     3 */
+	__u32                      gamma_y[17];          /*    12    68 */
+
+	/* size: 80, cachelines: 2, members: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_lin_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      curve_r[17];          /*     8    68 */
+	/* --- cacheline 1 boundary (64 bytes) was 12 bytes ago --- */
+	__u32                      curve_g[17];          /*    76    68 */
+	/* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
+	__u32                      curve_b[17];          /*   144    68 */
+	/* --- cacheline 3 boundary (192 bytes) was 20 bytes ago --- */
+	__u8                       dx[16];               /*   212    16 */
+
+	/* size: 232, cachelines: 4, members: 5 */
+	/* padding: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+
+Just 4 padding bytes at the end
+
+struct rppx1_lin_params {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      curve_r[17];          /*     8    68 */
+	/* --- cacheline 1 boundary (64 bytes) was 12 bytes ago --- */
+	__u32                      curve_g[17];          /*    76    68 */
+	/* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
+	__u32                      curve_b[17];          /*   144    68 */
+	/* --- cacheline 3 boundary (192 bytes) was 20 bytes ago --- */
+	__u8                       dx[16];               /*   212    16 */
+	__u32                      reserved;             /*   228     4 */
+
+	/* size: 232, cachelines: 4, members: 6 */
+	/* forced alignments: 1 */
+	/* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_wbmeas_stats {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      cnt;                  /*     8     4 */
+	__u32                      mean_y_or_g;          /*    12     4 */
+	__u32                      mean_cb_or_b;         /*    16     4 */
+	__u32                      mean_cr_or_r;         /*    20     4 */
+
+	/* size: 24, cachelines: 1, members: 5 */
+	/* forced alignments: 1 */
+	/* last cacheline: 24 bytes */
+} __attribute__((__aligned__(8)));
+
+This one is ok
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_exm_stats {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      exp_mean[25];         /*     8   100 */
+
+	/* size: 112, cachelines: 2, members: 2 */
+	/* padding: 4 */
+	/* forced alignments: 1 */
+	/* last cacheline: 48 bytes */
+} __attribute__((__aligned__(8)));
+
+4 padding bytes at the end
+
+struct rppx1_exm_stats {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      exp_mean[25];         /*     8   100 */
+	/* --- cacheline 1 boundary (64 bytes) was 44 bytes ago --- */
+	__u32                      reserved;             /*   108     4 */
+
+	/* size: 112, cachelines: 2, members: 3 */
+	/* forced alignments: 1 */
+	/* last cacheline: 48 bytes */
+} __attribute__((__aligned__(8)));
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+struct rppx1_hist_stats {
+	struct v4l2_isp_block_header header __attribute__((__aligned__(8))); /*     0     8 */
+	__u32                      hist_bins[32];        /*     8   128 */
+
+	/* size: 136, cachelines: 3, members: 2 */
+	/* forced alignments: 1 */
+	/* last cacheline: 8 bytes */
+} __attribute__((__aligned__(8)));
+
+this one is ok
+-------------------------------------------------------------------------------
+
+I can follow up quickly with a patch, it would be bad to miss this
+merge window!
+
+
+> > +	__u32 gamma_y[RPPX1_GA_MAX_SAMPLES];
+> > +};
+> > +
+> >  /**
+> >   * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
+> >   *
+> > @@ -516,7 +565,9 @@ struct rppx1_lsc_params {
+> >  	sizeof(struct rppx1_bls_params)				+	\
+> >  	sizeof(struct rppx1_ccor_params)			+	\
+> >  	sizeof(struct rppx1_lsc_params)				+	\
+> > -	sizeof(struct rppx1_lsc_params))
+> > +	sizeof(struct rppx1_lsc_params)				+	\
+> > +	sizeof(struct rppx1_ga_params)				+	\
+> > +	sizeof(struct rppx1_ga_params))
+> >
+> >  /* ---------------------------------------------------------------------------
+> >   * Statistics Structures
+>
+> --
+> Regards,
+>
+> Sakari Ailus
