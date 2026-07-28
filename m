@@ -1,164 +1,122 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE35378D70
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 16:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785255793; cv=none; b=QDrlX4LkqfmiDcK1noDReIVADqvs9AWv3Bj/xLHKKPb3fLkzSzC9JV2vqGY7y6iGa4ZFUd9/tx2EWqxZ4Nhw3M60jc67DLsWoHd5CR3aqk+ViHif0Q1lQ67IHqU942IFX3Y03GB60sDDQFg55gHNj9iyIDxCLrxrSFHjdrOJjus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785255793; c=relaxed/simple;
-	bh=MuoYv/trvB+apkFilFU7ge8EmIYL0Cz7Mp4H5bYBY04=;
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C494E2DAFAF;
+	Tue, 28 Jul 2026 16:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785257409; cv=pass; b=LXhC4KGdf8xcEpUgWdGvGhG8qOLW3k9btTZYzwMnGaW9k/SV3/3YBrMQj2qQrfiMyhX/bmXDN7zhu0rgdWkwUKPApf+oZCD3/+M23tua3ocml7XYp1PGmtpbY43/gdo2hnVckpEsJyRrcCa3gF9Wp+Ko8KKHvgR4EaJceknVP2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785257409; c=relaxed/simple;
+	bh=9zG8OvAimWiFIqtu0X7RePmyYyRRUy0I/smnQsTf6uo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaDX4vm4HDyPOrKJOoA66cM/4S7NSPElqYWiJLJdxrSUarkYipB3Mf048C1H5xs0mlIOYXZJP3y+pVw3PaQlDKXxHn/Q41pu/oE2+1nNUn3n6m/IrdGhBmyeX1RnHDNSmCwiDfcEDkWtJ6ZodBH8DnVizDb2tpSsja5r6gI+1/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Bdx3XlI0; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=U0TK8p//2rLMbJmHbtD4qIfel+cUW6sSQ5UjpMnv843qVDY1/J6hGf0SOoEey8axu9XVVkWa3Y87vvFbDTmD9kY2qt0Rc1G47/veU3Ut36pFWXh2d3M5nvwuociIrEMSQapGj2ITCO+U8LQNccdx3zs//dDhfWPNFJxbHjfhuzM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=dzg6Ftq3; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Bdx3XlI0"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEA8A169E
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 09:23:06 -0700 (PDT)
-Received: from [10.2.11.34] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AFC5B3F763
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jul 2026 09:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1785255790; bh=MuoYv/trvB+apkFilFU7ge8EmIYL0Cz7Mp4H5bYBY04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bdx3XlI0i8xaEKp63r/Vx0Xv9RdmagLUmglyPy87En3WipYQkWiMvr+yHzCByTAqn
-	 aIuRc4mjMH9nh2vwiQoZiemJfyhicx5fbXFekDQln1Xi1eoJHBW+0bCop2o/ktEjzs
-	 FqNxKdqKktSABaOqbo36mkT2Ap7Q6R+JCp7nb8Qw=
-Date: Tue, 28 Jul 2026 17:21:58 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Diogo Silva <diogompaissilva@gmail.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="dzg6Ftq3"
+Received: from hillosipuli.retiisi.eu (n18ws8cotq5gnfn8-1.v6.elisa-laajakaista.fi [IPv6:2001:99a:0:19f:4ce7:0:938c:d2f4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4h8hK35N0DzyTf;
+	Tue, 28 Jul 2026 19:49:59 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1785257400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6rKWhEhh16ybEXgtAp/xi+Dr3GT34zvZDmrCLwVg+WI=;
+	b=dzg6Ftq3sHPklLDr3mjUcwR6FGqH4WnNYCM7BRZ5x2d0CVLO5wUBbMksfuxIu0Ew1AC9Zz
+	jFKp2DY7Of63w57ygdEk713csxfbMaagGVHbTsDTrU87gPGnLLG6RnE30ub6VJZjVJkq+T
+	PtsGq9CMu/4tEdWB2F2kagH4FB8ycho=
+ARC-Seal: i=1; a=rsa-sha256; d=iki.fi; s=meesny; cv=none; t=1785257400;
+	b=OpBZ5LFK8uDKfULJYokz0ij7Treyt9O9z0IY5+d+arOafIb5SJJqo43y7vFIOkKrho0DSR
+	wJ5imoliiiwsQQjpdYevE3gRyoBnMrzmkpWuJ9T+sFgGQA5dzzCt75n+xx/oyV8DcpfRTA
+	vZM5U9m4IWddjm5S03v8aTSqUVRgPBc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1785257400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6rKWhEhh16ybEXgtAp/xi+Dr3GT34zvZDmrCLwVg+WI=;
+	b=csiBzfAh5JhdnPQZpNfwvEzoatnRbDoEp61P5pVox7Yj/Wm/EM20EOCjZsm96/6X5x4DUx
+	gS7vGCaZTWeh8pQypLdq4jao9Ij2sdIftUdExQGcmm5Eo/Z6V0UVDPv3mg9Pjn691ye24v
+	L2rT5cUpkmAmoy/enU4lyB6LKsWcMhA=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 05BAF634C5F;
+	Tue, 28 Jul 2026 19:49:59 +0300 (EEST)
+Date: Tue, 28 Jul 2026 19:49:58 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
-	Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Xinliang Liu <xinliang.liu@linaro.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Yongqin Liu <yongqin.liu@linaro.org>,
-	John Stultz <jstultz@google.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
-	imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 12/15] drm/arm/komeda: remove dependency on DRM simple
- helpers
-Message-ID: <amjXJrbgka00CQX2@e142607>
-References: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
- <20260719-drm_simple_encoder_init-v1-12-a78c509e3062@gmail.com>
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: Re: [PATCH v10 12/13] media: rppx1: ga: Add support for gamma out
+ correction
+Message-ID: <amjdtsd7N65pyN76@valkosipuli.retiisi.eu>
+References: <20260611204148.1423192-1-niklas.soderlund+renesas@ragnatech.se>
+ <20260611204148.1423192-13-niklas.soderlund+renesas@ragnatech.se>
+ <amjM5n2eYqnrpJfb@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260719-drm_simple_encoder_init-v1-12-a78c509e3062@gmail.com>
+In-Reply-To: <amjM5n2eYqnrpJfb@valkosipuli.retiisi.eu>
 
-On Sun, Jul 19, 2026 at 01:35:43AM +0200, Diogo Silva wrote:
-> The simple KMS helpers are deprecated because they only add an
-> intermediate layer between drivers and atomic modesetting.
+On Tue, Jul 28, 2026 at 06:38:14PM +0300, Sakari Ailus wrote:
+> Hejssan,
 > 
-> Open-code drm_simple_encoder_init() by calling drm_encoder_init()
-> directly and providing driver-local drm_encoder_funcs.
+> On Thu, Jun 11, 2026 at 10:41:47PM +0200, Niklas S�derlund wrote:
+> > +/**
+> > + * struct rppx1_ga_params - Gamma Out Correction configuration
+> > + *
+> > + * The Gamma Out Correction module is available on the Human Vision Output
+> > + * Pipe (HV) and the Machine Vision Output Pipe (MV). Userspace selects
+> > + * which pipe to operate by setting the @header.type field to
+> > + * RPPX1_PARAMS_BLOCK_TYPE_GA_HV or RPPX1_PARAMS_BLOCK_TYPE_GA_MV.
+> > + *
+> > + * The module allows to apply a @gamma_y gamma correction curve to RGB data
+> > + * represented as a table of 16 entries. The 16 input sampling points can be
+> > + * equidistant or segmented using a logarithmic scale according to the value of
+> > + * @mode.
+> > + *
+> > + * The gamma curve values are 12 bits on the HV output pipe and 24 bits on the
+> > + * MV output pipe. Userspace is expected to provide the curve values with a
+> > + * bit-depth matching the one of pipe in use.
+> > + *
+> > + * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_GA_HV or
+> > + *	    type = RPPX1_PARAMS_BLOCK_TYPE_GA_MV)
+> > + * @mode: gamma curve input segmentation mode (see rppx1_ga_seg_mode)
+> > + * @gamma_y: gamma out curve y-axis values
+> > + */
+> > +struct rppx1_ga_params {
+> > +	struct v4l2_isp_params_block_header header;
+> > +	__u8 mode;
 > 
-> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+> Please use reserved fields to avoid holes in structs!
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> index e8cb782a6f8e..719568d9f7c2 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> @@ -11,9 +11,9 @@
->  
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_encoder.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_vblank.h>
-> -#include <drm/drm_simple_kms_helper.h>
->  #include <drm/drm_bridge.h>
->  
->  #include "komeda_dev.h"
-> @@ -635,6 +635,10 @@ static int komeda_attach_bridge(struct device *dev,
->  	return err;
->  }
->  
-> +static const struct drm_encoder_funcs komeda_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->  static int komeda_crtc_add(struct komeda_kms_dev *kms,
->  			   struct komeda_crtc *kcrtc)
->  {
-> @@ -658,7 +662,8 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
->  	 * bridge
->  	 */
->  	kcrtc->encoder.possible_crtcs = drm_crtc_mask(crtc);
-> -	err = drm_simple_encoder_init(base, encoder, DRM_MODE_ENCODER_TMDS);
-> +	err = drm_encoder_init(base, encoder, &komeda_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
->  	if (err)
->  		return err;
->  
-> 
-> -- 
-> 2.54.0
-> 
+The same appears to apply to the rest of the UAPI patches, too.
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Sakari Ailus
