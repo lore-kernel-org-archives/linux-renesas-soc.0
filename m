@@ -1,174 +1,194 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010071.outbound.protection.outlook.com [52.101.228.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2ED4772A0;
-	Wed, 29 Jul 2026 10:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785322623; cv=fail; b=hXxNxKs3MtheswfsJceUgVqvz643YwuazBjs8Bl596BxuZ67kBnUU/eF0CqshKCKNARic4YckPP3DYIviRnutfdUjNU+vpN/VRB0cplHx+n7HVIx3PNkYtJVg8xNmrKZUMM9g+fIPFxo3ZtsdupaymTudJzqFN9SPTPB2OYP5e4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785322623; c=relaxed/simple;
-	bh=IKqYO8tR81I6UwBYsXjdSYQvcJOUSEdU+KcVxruIRlQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941ED47A0C4
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 11:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785325830; cv=none; b=n0X2I9R2OOaRUn8oUZG+PrF+n/KZmFhzYONwx95TYxN5RWlx9k85IFdKfpVmpda8FrBNAFGTreWcdb2vlEXNKyYRsgkUE6Er5OYhIOjodCXQFA+p3GY/2sz/P1dWv5JlISQZ/HUB2c8t+WtBYKE1m3fZA+OvieUAnjHytBIplUE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785325830; c=relaxed/simple;
+	bh=EALMkIJX+FtiylFJKXqIYty50L4VW11qd2GpFjZlBJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KU7BuoUXucYztpv6JUWMV8rz5MBGLGFoDQjTcr1l6oSzqZEZtxUVq1GgfKDwnYvWJPeVKsGD63XIU4Iefh48vBc/ZQS5xaIvQbYt9d3r0NGlP4DxkHiAEdIKClFbmljZyK+rhO8YXxWbloTefdg36kH9+GXQgNOlxtRBhsiuEuQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=dCrNoBK1; arc=fail smtp.client-ip=52.101.228.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	 MIME-Version; b=T5GdBkadEqDkncI/rFByQW9BCBYQEHnM0cGIGgN9JFg40iBjit4ih6piqvrVI32YzX9E7wxuMRf83TI4fsHPp0lQZzFTTY84oW28dOxbEKkQVzqk58CVIeQHJaOvSwenXrwXgB01YFdfv7XjWNMKbgAynFYmUal0Lf0Qg0/C+u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D00YG9Fh; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="dCrNoBK1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fm/3Gx3NoV3ubaGXn5hNBmAQygrmE7PNTjBzfNWBxOrSbhjotVfRM/1H8jIeRDfghhyjSUkZYx45Es0ZHDlGK4Hul2oL41AibCuz3S3HNSBeMexNzdbPGNDI4Tp0vwCZXJxhqmk8nFwsndn4w/eSPSjYRAEVFYS9P4TVJQTt7hE+Wutr6UoIODe7M3GqFE1udW41kBlRx7VIWr3keoLbnUN19jF3Xr/yz2IO8e8uCyRiO4FBvs7T3xEOQ7A6Vxh6ChcZVrQeST68l1V+xlDD/obD0awayi1jz1GgmTjTamiQkuFYOeCGTFsaAugIyQxrcpRgL/So0UoKX6SIqX4Xlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RezP2EqGBAvCWTdESmexARvrv08dVx6SX4COZqJ/V9Y=;
- b=EfBEwshUfCtck08so5EU8i4uxhhYU+RRa+fnHx/s8dLNGOehlgRNUOwCUHaGZKi9+hisWqp6vPpIYVGxCdppIKw6qiAyh6mcSun57w6cIItxzkTO2aBkUSZPkyIRsbIc7qt03sZPur88S0nPnemsa4YD5GxdrXIcf3AYMIkjYapxc6ADgBX4Nxkh3DsXYCkrqV2th6p7D2C+BtOgO4AUo/1194l3+K3wdVlMks3p219As8bEKxTU/ccObqiLavCk9BriPJNubEwuGxZRUzFQ/MNk8sxMJla0jzWp6suiXzqQuS7X9YWScoo9VRGs345pZfm4jT9VJgUgmxjiDfw9NQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RezP2EqGBAvCWTdESmexARvrv08dVx6SX4COZqJ/V9Y=;
- b=dCrNoBK1vXe9M1dVzKVDTka5rbYumsicVagGucbb4MOzZ044qaX6jv+P94S+fstFoN5AiskbL2X8+3YCQ5w20/6z53kvbcR99oCom1xAavD7rWPx/skciWfjFYOj5vXPGtVu5p2DBW/tFoiBYIfJ62VvunrmId2iRLxMxDhkdrk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYWPR01MB10274.jpnprd01.prod.outlook.com (2603:1096:400:1e2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.12; Wed, 29 Jul
- 2026 10:56:58 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0270.009; Wed, 29 Jul 2026
- 10:56:58 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	=?UTF-8?q?Sven=20P=C3=BCschel?= <s.pueschel@pengutronix.de>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Isaac Scott <isaac.scott@ideasonboard.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/5] media: rzg2l-cru: Use v4l2_fill_pixfmt_aligned() for stride alignment
-Date: Wed, 29 Jul 2026 12:55:50 +0200
-Message-ID: <20260729105603.1160966-6-tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260729105603.1160966-1-tommaso.merciai.xr@bp.renesas.com>
-References: <20260729105603.1160966-1-tommaso.merciai.xr@bp.renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR3P281CA0207.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a5::12) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D00YG9Fh"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so7803495e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 04:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785325827; x=1785930627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rgr7gNQL8mdrSoNtvu8z6IaQylCJ0U9bM4MFw5PnMyo=;
+        b=D00YG9FhHgtZ7VCL6jVrIcDpHXaT/mJ2OerkD+TX3QpZJV8amOMAV6VJ7E+bbi5zus
+         OEasf/T38ix8/dpvxhDcbCIEEMAkYMIWEJiOHGYcbq781yrOrbTwzCBWDX2rRkkJqiAi
+         o+PnPdfEF+JfPUEa8Ce3RtIjFeIWtdUBLJO3GQKbTJjsjpWqDu1sErwwVNPHiQQao6jD
+         HCQtytuX8GObcXe24jz1WTWokkkEZBsxXscZQAVICNa3ZwVU9291TA5eTVdyYAFyAiUj
+         wsmwW7jio/tBBRs/lJutHTphJR8fEIhOMzNPmoiWEJAqLDN3om+7o17I2PhtOJxfLkQR
+         ER5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785325827; x=1785930627;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=rgr7gNQL8mdrSoNtvu8z6IaQylCJ0U9bM4MFw5PnMyo=;
+        b=bvBFC4HwsX2oSYwbbky7JKgHxNPCAedp8AhovC+gJiX+yytcITZKCO9RV59VGJCDV8
+         6HRtovnxtZs1pOE3rLSw3zb8DgLrAyPPkh0v5gXEulKG3NmZCZEmam2jQMw9e0nl14P9
+         uce9QXi6PAdoiicyGwhagMLL+mFVn/MVR6VFlnkh9K5eE67AUyH7ku+mqhZ9VUflEzYh
+         UrLwQeMYuTe5j78B++Tcbqz/jxtvZ+9s0TRocaNUtQ9KdcoQhBKfNZ4skuhqAi+fovHx
+         O+2CFS/wj0TqGcGHaBoK3nlxGKUg7BDs33AugnykxcmraFgMIOf5ztsOSmZf6UN+qEED
+         XqBA==
+X-Forwarded-Encrypted: i=1; AHgh+RpdMHiW9g9+fMsdhLYL3dICX6N0PqXjzV4pST7+Xgpls/965RRsbum1fbu6YqdIohdyZet1xP/J0zuxueNZyNgkRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3tEhnwl4JZIf/UrWR6f/WH7pUSjzJzsSedUI0qByuiya3ilXK
+	AX140BZHoWu5C1h2OO0FkLSofPqD6Mn+kCUsMB2JSEVP5Q96UBL0lQuZ
+X-Gm-Gg: AR+sD11Qx5vGAfdM4HSJVl5nCycZWCJdX0Q65yPY+0uDNkfCK/CQqFf/ii/bl11nSma
+	E7oinyksJjJmchD5PiWhI3GL+R+UkUNjH6k34gaPVp56J2I3y5h20PCKNv7EUX41+bbZe6ELLfo
+	B90fkXHzDaU34IVkcHXsi0ADR+1u8HWAA5ue5arg1bL2TGPrJZkOrkfkfiX8Xo9AIi4nEe1gGeM
+	Z/PRrOQQJ+7kbIbXe1enjbKizAs6zeUKc4eeG9+ukiK8o7ssgKFlCkaEMluatQ+fkg0/JshqBE4
+	00IGTxf1ywCW5PTKCeqXGXJNTyPg6LyN1jwMCuS/FnL9ZQcwUm51xoieSyZib8XXmpJaISwKIST
+	RhT1Nr4cW+BoN7t2YemEghB5DgnE/R/WqhPQv2KDuZPaLPyCV1wa5HFQ3fkiwo85UdnYwTJFGPe
+	cCP6dFi2HRjHkl4NTspwhBrVWOAFg9+CDd/aE6HhOUyYoU5y2rnpE+UytKme9/szhD/7K89Fy5d
+	MXcL4QPFdMfvg==
+X-Received: by 2002:a05:600c:4fc3:b0:490:9782:3eb8 with SMTP id 5b1f17b1804b1-496c657dcf2mr66551915e9.25.1785325826582;
+        Wed, 29 Jul 2026 04:50:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:10b8:4461:ee04:15e2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957bfc2ff2sm326144165e9.4.2026.07.29.04.50.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jul 2026 04:50:26 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v5 2/9] reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+Date: Wed, 29 Jul 2026 12:50:10 +0100
+Message-ID: <20260729115022.222340-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260729115022.222340-1-biju.das.jz@bp.renesas.com>
+References: <20260729115022.222340-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYWPR01MB10274:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06438690-5ff2-4142-dac3-08deed601cab
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|7416014|52116014|38350700014|56012099006|11063799006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
- xutDDifGYIaSNU0hBPd9O7EOXF1JexJMlk4sYSxvjbPZOCxy9mAoCz9D67psZ+QukV7/d9Ih9a/EoZgpdYNpO2cpZpTvsj5Z4OPnSo9FiZW7RMFseMKlU7erYZkHwjtJidTMAQGzQzRn5v7+t0jCuLYMlA/I/OAI4iXS8tOzVxfrtPUbdbWlCfn/04iNSIRHSSTPGlGH4WQv9tfHx8airrBNUIPTQmfc+NPdKHckBPMgSobB2lY8K35ody9X8IwcCHu04o+RC4/+qws9vmK3vV5txQe4miYcpJMJQSJH/CA1sIj98IqRyGXBqeZuapkEtXV/tXbTtos1rjFFtKLGZaFN1gerS5Hbp2Z+2njCN/UDiFDd0LuSxOOgeQFFfR72rp+rmIVC874j2bcblhT1fqJVbuSecPYuAlb9uK8g56I/eztbXPVl3WntAx2WYhxB67r6tMUT8BIf6XUiSSl2XDQjMYxG4GBZ9GCZM9hPvhwr3ncVA1o6poA59D3mIovJnfB21BPA4jBTuplKicPaSV15LDHhpfQX4ITNFfYFQVKMTFkd1ycwFfQT5isyZOs+ehQ+5B5d9rsVI1uk2bAjLgWsJHddCdMdrtf33qLAqtNas0IhItt2eBBXf4iS4v1mk+0sryrWUwWn08HWMD9v5FusWrrKv7rdWq+58UVmMkn7W49rDUVBSy2fKr5oz6Yo/Sq+Lgp6LNGqswTpPhlrzXGHLLzJ3v2PfF2Y8g/6CwA=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(7416014)(52116014)(38350700014)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?6lyo6IU39SLOnm7i0nNQHMxOn+c+jTCt88ok+y0Tw/7SRGBFF1OhJMn6cCMz?=
- =?us-ascii?Q?07+7CQ/R3R71hVBESXqwfKq9gKcw6dTP+dvgiwRwIKglxtjqb2wL7BBwmm3o?=
- =?us-ascii?Q?gfhE1siRmfxTg53seynK/djAj0KrWteRloJib0dCWkzYt9Vj/6T8Rh6aWqBR?=
- =?us-ascii?Q?fN86HR7u6Cvgx2e2HIJXolDhH3RRnkPqosRzVc+WryzvLOjF0t1Fbd8Iaam/?=
- =?us-ascii?Q?4qZvj6Cdt9mjSa25ipPBXvnE4lHj5zz6UYyBrSnuB8OkmaXE+Q5SdaDoJSaP?=
- =?us-ascii?Q?B1OT1ASTvFfWmrf+UlR7goBBjqK56ZZRxXEuMO1IybumG4XZvYrX6DB8KYhM?=
- =?us-ascii?Q?3/arzyG3oyx3vyPrBpGxD81pS89k5skuot7/7G8cUxourmrKHM7wI61F7DOo?=
- =?us-ascii?Q?S3j2Iqr2Tx4+MiRIQBt8+pqOR5xJ7Uay608eS+3ip7yBSz4tg6NAkAsIR/Sa?=
- =?us-ascii?Q?nsfcdv9s/E0INt86BEhX/zRyeQ74wHW4HyEicPXkIgw1byng+/t/6Zgp6Ycf?=
- =?us-ascii?Q?3Jrp0TYeknKqAX0yyCkPoZiOagmxlMFqAzFB696oqTa1jSk35af3kHqbAGxL?=
- =?us-ascii?Q?MQg+obUDXIYyFkMDY3/h1ej2g4SGEcGzfYsSBRrKr421zJXiTWHcCXyLPApg?=
- =?us-ascii?Q?66Q0cO9t2mJXprpnMcjQkqkU3XpWVOODnzunPwYZKhCM+ZN8K0AzT7177w3W?=
- =?us-ascii?Q?go4EL0zzZLuRs3PPstCDQB6POWFY/pHvZDWS+CmEx6xgUbP50rmiPzIztIsD?=
- =?us-ascii?Q?p3Vyn4oSi/gXM+3pET3Ay2k5TvA0TfUuiKV1jWdlhnE4xfpvxfdX1cWT/W5n?=
- =?us-ascii?Q?bQCS4HUe332+oErBDZpVAZP3/O/U/wPyFmlVuOl6N/N5vhO+OdzQ2gVFXYC2?=
- =?us-ascii?Q?Hyn2qBUIAVEqPRRaavqidpnotpLrKlAQvgM46A6hyr5xwbZYFS5KJvrWvqPa?=
- =?us-ascii?Q?kbatZJX+OA409mdBkoT6wmUr+tF4Z3ujCoaCJnn1fJcUrZsYjl9wPFlJYa2d?=
- =?us-ascii?Q?dN5SggFbiny5yt+ByIr0R0W2jbtWQ5oY8Qo8RZEz5/6gdC/5pGqsCriGeZbV?=
- =?us-ascii?Q?VTarSRYNUXXAi4Tvr0vzMlB0EmHDBDDPy31IJCKBOHruO9gHFaCaPO31p1mg?=
- =?us-ascii?Q?sW7JaSuRTjwkH1mx7hwzevIz64KJtFhTgMAUQp4onXJ0+vdBF7XvXJSPDu5m?=
- =?us-ascii?Q?u9VEwPzGpghBglwaYkeKGrjgiC3MeC+ig18yJL5F1vYbqWPZcA1951lZGLQV?=
- =?us-ascii?Q?0W704ngWFaWanXIbpKWUXjkHk8AbtPANonVXJDOVIfz+WxwlGmj1VnGHeOL3?=
- =?us-ascii?Q?tpgxNIxSvWzKyBOkVFAoM8u4dskKu+8aJ0cMH4i8D2KzLGHDAQBsA8xyq9um?=
- =?us-ascii?Q?gKFuBfLldk5UbAsQI68W6AsYStige8znUUeWiBgCiPB01PfONf/cd9yORAFh?=
- =?us-ascii?Q?caUHNCYQjD4R/FsNkYE9EerQsrjeBOzHcrdg0RODSAHt2O36lZloVjjx3oip?=
- =?us-ascii?Q?fSsR5R5Mg78FFy9FqMaysR9b7/zUx+V6oFq5eW0xVCPlhe0alNZcri/GxjOi?=
- =?us-ascii?Q?78hbpsCV8Ux06ycoTz3sNBG/xs8DmV3Im+rPe0q+yUSxQpH6RrKxNPkMbSay?=
- =?us-ascii?Q?R/EQl2AJYGFrGlXqXpNDceup5OuIvatRSJ9XjD4KweTf6SMB/fXz+8g8fAez?=
- =?us-ascii?Q?tafTCHk/Rv80QeFMy937+9iScgcr/mcmyqU8pG5P7Gz9M4B8aBdOVaUjXDj4?=
- =?us-ascii?Q?LhJvlBpiAeL09HofmOIoO7zrFcnGUHSe1extLqTEvrZ2Kds8VB+Q?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06438690-5ff2-4142-dac3-08deed601cab
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2026 10:56:58.8002
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7yB6Xz19MQ6aCJIRp7F9pfERQ8faP+d/mYEEEpCbZxZkvq0qMZhAoo2mAOPVOaqi4XB5CNoAk/6V4IBAqBf6rjAFX5w4gV3NKPBLvCa1VQuQVkeXNkt+GDEya5eprPE+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10274
+Content-Transfer-Encoding: 8bit
 
-Replace the open-coded bytesperline/sizeimage rounding with the newly
-added v4l2_fill_pixfmt_aligned().
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-No functional change intended.
+Replace the integer flag RZG2L_USBPHY_CTRL_PWRRDY with a structured
+rzg2l_usbphy_ctrl_info type to hold per-compatible configuration data.
+The new struct currently carries a pwrrdy boolean. The probe function
+now retrieves this struct via device_get_match_data() and
+conditionally calls rzg2l_usbphy_ctrl_pwrrdy_init() based on the
+pwrrdy flag, removing the previous integer cast approach.
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+This refactoring prepares the driver for RZ/G3L (r9a08g046) support,
+which requires a different regulator configuration with two per-port
+VBUS regulators.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v4->v5:
- - Split the fix so it no longer depends on v4l2_fill_pixfmt_aligned()
-   and moved it first in the series, so it can be backported to stable
-   on its own (This the old v4 PATCH 4/4).
+ * No change.
+v3->v4:
+ * Updated the commit description.
+ * Moved the handling of regulator_driver_name to patch #3
+   in preparation for id_table match.
+v2->v3:
+ * No change.
+v1->v2:
+ * Updated commit description.
+---
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 32 ++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index 91eda5034248..27a35ef2a6df 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -849,12 +849,8 @@ static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
- 	v4l_bound_align_image(&pix->width, 320, info->max_width, 1,
- 			      &pix->height, 240, info->max_height, 2, 0);
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+index f003b360629c..40e28d033a93 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -41,6 +41,10 @@ struct rzg2l_usbphy_ctrl_priv {
+ 	spinlock_t lock;
+ };
  
--	v4l2_fill_pixfmt(pix, pix->pixelformat, pix->width, pix->height);
++struct rzg2l_usbphy_ctrl_info {
++	bool pwrrdy;
++};
++
+ #define rcdev_to_priv(x)	container_of(x, struct rzg2l_usbphy_ctrl_priv, rcdev)
+ 
+ static int rzg2l_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
+@@ -106,14 +110,15 @@ static void rzg2l_usbphy_ctrl_init(struct rzg2l_usbphy_ctrl_priv *priv)
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ }
+ 
+-#define RZG2L_USBPHY_CTRL_PWRRDY	1
++static const struct rzg2l_usbphy_ctrl_info rzg2l_info = {};
++
++static const struct rzg2l_usbphy_ctrl_info rzg3s_info = {
++	.pwrrdy = true,
++};
+ 
+ static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
+-	{ .compatible = "renesas,rzg2l-usbphy-ctrl" },
+-	{
+-		.compatible = "renesas,r9a08g045-usbphy-ctrl",
+-		.data = (void *)RZG2L_USBPHY_CTRL_PWRRDY
+-	},
++	{ .compatible = "renesas,rzg2l-usbphy-ctrl", .data = &rzg2l_info },
++	{ .compatible = "renesas,r9a08g045-usbphy-ctrl", .data = &rzg3s_info },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzg2l_usbphy_ctrl_match_table);
+@@ -153,14 +158,9 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
+ {
+ 	struct reg_field field;
+ 	struct regmap *regmap;
+-	const int *data;
+ 	u32 args[2];
+ 	int ret;
+ 
+-	data = device_get_match_data(dev);
+-	if ((uintptr_t)data != RZG2L_USBPHY_CTRL_PWRRDY)
+-		return 0;
 -
--	if (info->has_stride) {
--		pix->bytesperline = ALIGN(pix->bytesperline, RZG2L_CRU_STRIDE_ALIGN);
--		pix->sizeimage = pix->bytesperline * pix->height;
--	}
-+	v4l2_fill_pixfmt_aligned(pix, pix->pixelformat, pix->width, pix->height,
-+				 info->has_stride ? RZG2L_CRU_STRIDE_ALIGN : 1);
+ 	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
+ 						      "renesas,sysc-pwrrdy",
+ 						      ARRAY_SIZE(args), args);
+@@ -188,6 +188,7 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
  
- 	dev_dbg(cru->dev, "Format %ux%u bpl: %u size: %u\n",
- 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ {
++	const struct rzg2l_usbphy_ctrl_info *info;
+ 	struct device *dev = &pdev->dev;
+ 	struct rzg2l_usbphy_ctrl_priv *priv;
+ 	struct platform_device *vdev;
+@@ -206,9 +207,12 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	error = rzg2l_usbphy_ctrl_pwrrdy_init(dev, priv);
+-	if (error)
+-		return error;
++	info = device_get_match_data(dev);
++	if (info->pwrrdy) {
++		error = rzg2l_usbphy_ctrl_pwrrdy_init(dev, priv);
++		if (error)
++			return error;
++	}
+ 
+ 	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(priv->rstc))
 -- 
-2.54.0
+2.43.0
 
