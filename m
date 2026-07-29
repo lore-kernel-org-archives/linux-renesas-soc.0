@@ -1,237 +1,197 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BDE430CCB
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 12:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9072F446BE8
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 13:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785329772; cv=none; b=lX6xKA6owUKiJVo7R2sGvqDY8qlUe2jIYMnNr9cCeocdf3B70d7PIIb+MQR5PTI5ar6RoVcCDBslGd9vrY/jLhz0ZkWinKCSxx7ENcriMG2HSGJTswGGmyB4mpBZRCElGRoA6HXSZnCAROkWRKaKD7u2fILe3vDvG/NMxGALkqs=
+	t=1785330552; cv=none; b=gSkDWGOCfHXqen2RACBRi4T80onfhgZVHszFssaCfwQUGcokZGCtIVGt5pGGrQEPOUa+fXCSDYNf5QFZ7LpsKqDbMLGpfgroL3YlzLZYhZ7zVw/hrgeEwbel+8Vid2FBEB6veEkgY3Yolzm+7yqdxbNQGYQRgHaRrOgM3ib5O3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785329772; c=relaxed/simple;
-	bh=VkvGp/rTRuPjIx2ipVtb5348qNMxB6ZgaiUGVEKCpMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nltzZwOd1krwz7VcZpgfPvqx5UZ0gkz5gFvht4Gx3yKsWPn4DxRQHF0cLBr+6B03Xh2kkecXGuQ0ao4SuPtVAx1P+y9sUpeRQG/9CdGDNgDqANdL1RnSBvPTKkuUqiJb8Xoa1Qk3yLU93/Q0avf2bmBq3MInBWGeM2VrOxIVq6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pGZksjUJ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785330552; c=relaxed/simple;
+	bh=hPGVYBghCJkgcN3tZrevoVo9gaB35gByq1m7eKQMIiQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=btiEc3/koq0RTS+iY4fO8YA9tIouvDlZQzyAAMC6JCZqYZBopAJJLfSc58ER5SXUeTpFt4NX+oVSxwJw9f6R0Q0UBtrQ7p6rAyXYseA0H7/zTckcpzGAgkKJt9IrosWSrz2/8ijluNMsAGAVXR3f1FQKqW+NYOaYV9kp9+q+ynY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItNABVh+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pGZksjUJ"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-47362928f65so815752f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 05:55:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785329752; x=1785934552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=pinADpOKzHPTga4WMKKeUJ9erRfZf6ZG2bVQBoFuWYQ=;
-        b=pGZksjUJIiup+vFj9e3fHAeIiaeJrKkzj3dDgC786yQOcgXQOeUt3fSF6fCFYEs7BY
-         JVrdGpkiIaJo8E4xYNYLJPbvOtx5EYR4pGn8V6DZLLiw5KW8WTmh8JGnrFP6oyfgeHkf
-         qioMFTk9LupDVgOcLA6VazWt4DLwqAw6NmoNMbDDbg2J2lm8eajNwjEgiKHsnsKCsc+V
-         DuzEQclhWJc5oGgneLHwzaB67ArlTRJ/PN0ZO+mY5lj6DLffJ0LmW5WjUEXYnMBoBa+3
-         AW16TMjFYIFHk1c4gEhjOkejLWH9ldIMjuhhpO4P4T5/UOGi9SxRdvuXaU28rSpW+EDS
-         kT7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785329752; x=1785934552;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pinADpOKzHPTga4WMKKeUJ9erRfZf6ZG2bVQBoFuWYQ=;
-        b=DOh19g2qZRD503bwQKLjGWDRAOerzfJILy6V6oFvl4kDAyiBzvzr2FkLc23SZMa/nl
-         zmd7xaYn3QNdc50+y6s90tHPbpgtU6wfpLqmWV2mM+/1VqZd1Rj3E4N52MohZ2usOCbQ
-         RE1btH6b+1XhG8WLfmo0RziSUrWIN8tKj01ow8EMeKgFb1W5sQJr4oEv8YOlTRMIFqZw
-         Fkd6QhIq/JHP3QVv5F+Zi2oCydYx6wUh/xh/zJfO+7wP57Lt/ZA8pJL6Zc9mVnZ7qPFs
-         D5c7SIEfLEZJf3xZceVVkbglMjZmK2nv24gBqHqTmC21HJBqrDRlspdWPd0vjeGCrO3Q
-         KD+A==
-X-Forwarded-Encrypted: i=1; AHgh+RodW9wCb7SgBYp2xKNWstIPE5VMcVS1lxbnkaH1eS4C66ZXoEo39LRfI8oOaA8ZN+Cjdl1g76X5MpIcSAeSebsVEg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ62Hvv+Rx4WYXwrt5U9FNER9n5yvf9gTzIEUlW9m1UX+ICf0g
-	3n4yUqLZx4AHGwCa7AqhUsUeA1F33Zq50dFdq4xj7xGP2866rcGZfos+
-X-Gm-Gg: AR+sD12Q7/9oh90o1dqqSfDvVL525UGdYJwppGyrn/m1Ij3UF9Y0XT7czgZ58ccTMDu
-	rwVkinKdNVg6Mv3cfK0YUw5R0cvIYS5uja22rYxqd1rr42Sh1uzJ8vmlVV45QPi4gpilj5T7SK+
-	MdEv1bdyy+5Li9r0yFXHb/BKdedtY0dcKbN517BO0meBJHRMNR6/7SfVUBsOjBj5sSwmP3NwDFz
-	kihbRcp3k0lhaI2JLDd/pB07xyR+5HSuUTDJkHP/oHPkuduLJur1N4HIeEnjfEy3R8+QOaGmjww
-	eZK38rrA1iAfFbkQbzq0aLPwNnxjCm68an4Bujx37QSgseV4p9RhEadtp+XEon6kjwu+rHCpQ/s
-	tW29cvr7l434cCd4dCU1vH4vh8plpixk96esDM0pSOibNwUyJ9VdZiAeUtCZxMTn7p0G+7zBCd7
-	InH2ZX+H7WDdtpEJuGVelojwnmukEsCirfV26U3I0C02cjLUfq+WpGgSuXo0kxOc5nxl310iYg/
-	GNJAzpneTauj5OuzILZxBFf
-X-Received: by 2002:a05:6000:310f:b0:47f:776f:3845 with SMTP id ffacd0b85a97d-47fb1ec814bmr7941751f8f.7.1785329751598;
-        Wed, 29 Jul 2026 05:55:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:10b8:4461:ee04:15e2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fb6b189e5sm9264645f8f.27.2026.07.29.05.55.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2026 05:55:49 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 16/16] arm64: dts: renesas: Add LVDS overlay for RZ/G3L SMARC EVK with ITE6263
-Date: Wed, 29 Jul 2026 13:55:08 +0100
-Message-ID: <20260729125516.230757-17-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
-References: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItNABVh+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBFD1F000E9
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 13:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785330547;
+	bh=ASFXsn4nXOD/mK641M4jZwzrrOlFUU+ziD5PtdpkWzw=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=ItNABVh+cfLWgv73RiFJkCwmQEUBhVv2sAXeVggmW8sKX6bWwx3atLLD3gdRMVCBb
+	 QFDs6oOcSvv1c0VovBWzK2PWrSrOAvvwYGrqXGgfi98P0q77S9RniaRbuETreCTpI1
+	 mfseWrDpO73hBEzU4rbdcCyEgSu4xHJzsWbj+IppAht687G75fpC4NbD0rk7eHp5CF
+	 dYXEp6n03VMiqHPJVnSzlkiLuWWggtMC9+1W95te21hbAo1QIThxSG3u0kQmwFrMFe
+	 r0ExQWTltCJTS8U0P0avlbpap5ZG2L/IIHxM01U0dzQ6SVP6hN5AybMm26Ee9tr+2M
+	 DleiwQTarQ56Q==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39ca300db70so8086511fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 06:09:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rrcnk09o1wO/vl1qutk/8N07GARIH9H1TF2VDYCXLaXVcz8lpYU0f0Edq2olr5PNGO8tD+mGRt3MQrxEezuvXfNZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiMRHCKJ5i16wFAr1HA1ZxuzGTNh97M07MUfcdB6ahcIA4eRk9
+	fVnuQhVfzdXINN9RRjasjgqL8SinWyJtnzfFvtErRrsGKptPJntUuWo2z6K0b2nmEKiqCkTMHir
+	uAss4KvwDDuRjFXCo2TIZeVJv2aQmX/PTIsWIfcgf+g==
+X-Received: by 2002:a05:6512:6181:b0:5ae:a9eb:c5c6 with SMTP id
+ 2adb3069b0e04-5b2d0261512mr1133725e87.64.1785330546089; Wed, 29 Jul 2026
+ 06:09:06 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Jul 2026 09:09:04 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Jul 2026 09:09:04 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <TY3PR01MB113462C8DE3B70428F113ABF386CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260725123433.162348-1-biju.das.jz@bp.renesas.com>
+ <20260725123433.162348-3-biju.das.jz@bp.renesas.com> <CAMRc=Mf_oNCQK3o5-s4u8zejkVWM4WN_R9YO+NA4od0qqtGjow@mail.gmail.com>
+ <TYCPR01MB11332A50145F29D93157A58BC86CB2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <CAMRc=MdU12B-+vQxCuFVuoJLLza_51-bv1o1T9VYEHbkiZF1EA@mail.gmail.com>
+ <TY3PR01MB1134633BC06738344A740654786CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CAMRc=MfOk=+dQvdEAY1ah=G1JNM=p7J6=+Tz_uCYDQGBMxXHqA@mail.gmail.com> <TY3PR01MB113462C8DE3B70428F113ABF386CB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Date: Wed, 29 Jul 2026 09:09:04 -0400
+X-Gmail-Original-Message-ID: <CAMRc=MeybezmErzs9+jYaBgXr+ufsTv5_V5sZjhP6ynuQk+W2Q@mail.gmail.com>
+X-Gm-Features: AUfX_mwmatqgN8qkrJFJEW5yCcx-5JS7pmFqF_UHjRuELIIi5AWfSahrMeY1x0Y
+Message-ID: <CAMRc=MeybezmErzs9+jYaBgXr+ufsTv5_V5sZjhP6ynuQk+W2Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"magnus.damm" <magnus.damm@gmail.com>, "biju.das.au" <biju.das.au@gmail.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Tue, 28 Jul 2026 16:38:00 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
+> Hi Bartosz Golaszewski,
+>
+> Thanks for the feedback.
+>
+>> -----Original Message-----
+>> From: Bartosz Golaszewski <brgl@kernel.org>
+>> Sent: 28 July 2026 15:22
+>> Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
+>>
+>> On Tue, 28 Jul 2026 13:55:22 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
+>> > Hi Bartosz Golaszewski,
+>> >
+>> >> -----Original Message-----
+>> >> From: Bartosz Golaszewski <brgl@kernel.org>
+>> >> Sent: 28 July 2026 12:35
+>> >> Subject: Re: [PATCH 2/3] power: sequencing: Add Renesas RZ/G3L Power
+>> >> Ready driver
+>> >>
+>> >> On Tue, 28 Jul 2026 11:17:58 +0200, Biju Das <biju.das.jz@bp.renesas.com> said:
+>> >> > Hi Bartosz Golaszewski,
+>> >> >
+>> >> > Thanks for the feedback.
+>> >> >
+>> >>
+>> >> ...
+>> >>
+>> >> >> > +
+>> >> >> > +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
+>> >> >> > +				     struct device *dev)
+>> >> >> > +{
+>> >> >> > +	return PWRSEQ_MATCH_OK;
+>> >> >>
+>> >> >> When I see an always-tru match() callback, it always raises an alarm bell.
+>> >> >> Typically, I'd expect there to be some validation of the consumer happening.
+>> >> >>
+>> >> >> Please at least provide an explanation of why it's ok.
+>> >> >
+>> >> > Without the match function the driver is not probing.
+>> >> >
+>> >>
+>> >> Yes, that's expected.
+>> >>
+>> >> > sysc(driver) ->powerseq(driver) ->{DSI,CSI,USB}(driver) there is no
+>> >> > property that I can match here as the resource is a register on the
+>> >> > SYSC IP and powerseq driver is instantiated by the SYSC driver.
+>> >> >
+>> >> > Maybe I can provide a comment here saying that??
+>> >> > "No DT property to match here, so it is OK always"
+>> >> >
+>> >>
+>> >> So the sysc is the parent of the pwrseq provider and the CSI, DSI and
+>> >> USB drivers are the consumers of the pwrseq descriptor? The latter
+>> >> are children of the platform bus, am I getting this right? Can you point me to the device tree that
+>> describes it?
+>> >
+>> > Yes,
+>> >
+>> > Please see [1], [2], [3]
+>> >
+>> > [1] sysc node
+>> >
+>> > [2] phyrst node (I planned to remove renesas,sysc-pwrrdy in the next
+>> > version as it is going to use pwrseq)
+>> >
+>> > [3] dsi node (I planned to remove renesas,sysc-pwrrdy in the next
+>> > version as it is going to use pwrseq)
+>> >
+>> > [1]
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr
+>> > ee/arch/arm64/boot/dts/renesas/r9a08g046.dtsi?h=next-20260727#n609
+>> >
+>> > [2]
+>> > https://lore.kernel.org/all/TY3PR01MB11346FA21EFADC8A3D53D81BE86CF2@TY
+>> > 3PR01MB11346.jpnprd01.prod.outlook.com/T/#mf24ae1363925a97c840b275c108
+>> > a9b72942c40bc
+>> >
+>> > [3]
+>> > https://lore.kernel.org/all/20260704093433.273672-1-biju.das.jz@bp.ren
+>> > esas.com/T/#m31c6711b5403c5a387b22467bb88371df73ae2b1
+>> >
+>> >
+>> > Cheers,
+>> > Biju
+>> >
+>>
 
-Add a Device Tree overlay (r9a08g046l48-smarc-lvds-ite6263.dtso) for the
-RZ/G3L (R9A08G046) SMARC EVK board to support LVDS-to-HDMI output via the
-ITE 6263 HDMI transmitter.
+Please wrap your emails at 80 characters as per the mailing list etiquette.
 
-The overlay enables the LVDS controller and the display unit (DU/LCDC),
-and configures the ITE6263 on I2C2.
+>> Then it seems you have a phandle from the DSI node to the sysc node:
+>>
+>> renesas,sysc-pwrrdy = <&sysc 0xd70 0x2>;
+>
+> But this is no more required after modelling the pwrrdy signal as powerseq driver.
+>
 
-Update the Makefile to build the overlay as both a standalone .dtbo and
-a composite .dtb (base DTB + overlay).
+So can you show me what the actual DT nodes and connections look like?
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change.
----
- arch/arm64/boot/dts/renesas/Makefile          |   3 +
- .../r9a08g046l48-smarc-lvds-ite6263.dtso      | 104 ++++++++++++++++++
- 2 files changed, 107 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
+>>
+>> In match() you can check if that phandle leads to the sysc device who's the parent of the power sequencer
+>> device and return MATCH_OK if it is.
+>
+> As per the DT maintainer Krzysztof Kozlowski, we should not use random phandles for pwrrdy signal.
+>
+> Also, I confirm that this property is unnecessary if we model it as Power sequencer.
+>
+> From ABI, point now only matters is the pwrseq_target_data.name in the power sequence driver and
+> consumers.
+>
+> dsi->pwrseq = devm_pwrseq_get(dsi->dev, "dsi-pwrrdy");
+> priv->pwrseq = devm_pwrseq_get(dev, "usb-pwrrdy");
+>
+> From the experience, I don't think, DT maintainers will allow
+> to define a vendor property just for the driver match.
+>
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8c6a44890715..3cecc40204e9 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -190,6 +190,9 @@ dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc.dtb
- dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-dsi-adv7535.dtbo
- r9a08g046l48-smarc-dsi-adv7535-dtbs := r9a08g046l48-smarc.dtb r9a08g046l48-smarc-dsi-adv7535.dtbo
- dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-dsi-adv7535.dtb
-+dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-lvds-ite6263.dtbo
-+r9a08g046l48-smarc-lvds-ite6263-dtbs := r9a08g046l48-smarc.dtb r9a08g046l48-smarc-lvds-ite6263.dtbo
-+dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-lvds-ite6263.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
-new file mode 100644
-index 000000000000..95e1f411fa04
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree overlay for the RZ/G3L SMARC EVK with ITE6263
-+ * connected to LVDS and LCDC enabled.
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h>
-+
-+&{/} {
-+	lvds-to-hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		port {
-+			lvds_to_hdmi_con_out: endpoint {
-+				remote-endpoint = <&it6263_out>;
-+			};
-+		};
-+	};
-+
-+	reg_1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	it6263: it6263@4c {
-+		compatible = "ite,it6263";
-+		reg = <0x4c>;
-+		data-mapping = "vesa-24";
-+		ivdd-supply = <&reg_1v8>;
-+		ovdd-supply = <&reg_3v3>;
-+		txavcc18-supply = <&reg_1v8>;
-+		txavcc33-supply = <&reg_3v3>;
-+		pvcc1-supply = <&reg_1v8>;
-+		pvcc2-supply = <&reg_1v8>;
-+		avcc-supply = <&reg_3v3>;
-+		anvdd-supply = <&reg_1v8>;
-+		apvdd-supply = <&reg_1v8>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				bridge_in: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				it6263_out: endpoint {
-+					remote-endpoint = <&lvds_to_hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&lvds {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+			lvds_out: endpoint {
-+				remote-endpoint = <&bridge_in>;
-+			};
-+		};
-+	};
-+};
--- 
-2.43.0
+You pointed me to the node so I assumed this is what it will look like. I don't
+have the full context in my head.
 
+I still prefer there to be some connection and validation of the pwrseq
+consumer so I'm inquiring about the architecture.
+
+Please respond with the relevant DT nodes' final form.
+
+Bart
