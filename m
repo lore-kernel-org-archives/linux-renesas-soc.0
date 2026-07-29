@@ -1,64 +1,64 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEEF48664D
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 12:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B4D486BA2
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 12:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785329736; cv=none; b=nP8JefgnsN/IdEnI4JFsdQWh99sjjp6Y82HkQo7s2GEMrtEDHUCuOPnZRGNxUol91x9YzeCjl7gXKW5C9VEj3Xf86o6RmPmTlkT8dFCW7vNdZbxVgy1FSob+wZFAsG68M3/x2w73wC9sWI4Fx1DggdBdL+wMIBLZeU614wAvEvU=
+	t=1785329740; cv=none; b=gLpuV4KsiK7Hhkw6w7uPdGYc2Cd0HvEQ39uYyFd9GyhTpnJ/PTN75NIU5kyz8JO32eVzTUH28d9yBFT42GEEAoMop1gUAJzMf4DiQ2rp3DKtTvx4foZ5q71WsLXVIrlW3wd6YK42RikjKUe+VHaEkuGb61XPoP5lXudq8ip+kBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785329736; c=relaxed/simple;
-	bh=nFDTokdTzSnk3dYxC8vXcYNmgr6mL9ha1YNjZgIPwa4=;
+	s=arc-20240116; t=1785329740; c=relaxed/simple;
+	bh=/ML+cVssWUYPC4D/1JQz5EaDgS7FPAwXMH20yMY8x44=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JyJx4maq9SGvPVDdlzO9O7jaclRkvAKwlNqKDmjmWt3AVCNdqAUA6dlXu1LzOOO2YmaeR/MwvllP9V5OpiyNYTAs44lJRwLY5M+onF5g4arUtW7JyxDiTr9GiGXawG40qVaTaABt4x691MhZoXqAZu9JYaODLE+adnCh6gmkTCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnfSAxp9; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=J8+HxcJRtnLqgRX1tDL+gHoZPgEYir2h0YMwV7pyJRnmbp1xfnr1XOa8Iz8OEOHyl6VWUOxH9nIsXI0JhVIVsyafzELrlkqoSwRvdNmvSolZmwwLMEOrZVY4J31AJCUbu96Fx4NCIOvvBfyelcwbAYGQa9TAdpT3g1jy2rmy+SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rGHtrCFG; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnfSAxp9"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4954aff6088so8750765e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 05:55:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGHtrCFG"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47de0093c42so738750f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jul 2026 05:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785329729; x=1785934529; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785329732; x=1785934532; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=zYVvwq9bkcr7dWFtqsKXO/Zg4w8BPgRwuOwPLtEELtU=;
-        b=AnfSAxp9cSsC4HnceE36V6+5pXKoFC8dWDEqaQH1ozKQqQRf2q5Wf5d8hQ1s2OK6aX
-         UgcA3jmwW891jnynrxJPqq8akfBCFFqEi6RHdvMB3uDQM2ofZ66BQkvi3unz4nQLELKT
-         GO8PfsLNDbIaboiVMr7+K7kfOCaTxwPR0i4iPJ2oZzkOAgzeGG25SRf5iadFDVNVKN1U
-         xyRBe9ZU+/wEj90rVmxON/4+PD2oKVCMpUSDSDBD1nJiuregRShle1/83DChAHcaikcm
-         2JLQ+Nd83TVYAknMCgpYxWwNrl5y8ATfE4JaELV1rSgtFNl/x2qtR62AooKhPkGUNSVt
-         w7UQ==
+        bh=Hhzzyg0xbZvJC/hGyaob+lgTLTfoRj2Ty2Bq5ZjXfF0=;
+        b=rGHtrCFGIhc1wDljWUoScRKxsQU50B/JSs0pb4IaVjKrmDJUfDM20g/ifheMQnRzRs
+         KSiew8GcWGUwizerdI44E0eiYei0Bmva70oXkKght/NrBifCJQhTM2rcwjopO/OrueDt
+         RJW6hpg2qioUxngaYZs4Lfsk2X/7CxJiF9YNuIWZn120vg/gNpp3FnphWIPkibhkO9xp
+         UUGLMm0s55d0v/PKEDAU9G9O7n99/uRCo8UheiUnjHWSfq9eRYZ9Be5PdfnQ09pErIMh
+         puWOIMcI4oKcQivyyazxl7q1H5kNqEfKSL/YdrRplkP3UiBM7mKbqrukowPTO5L979QB
+         8K+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785329729; x=1785934529;
+        d=1e100.net; s=20251104; t=1785329732; x=1785934532;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zYVvwq9bkcr7dWFtqsKXO/Zg4w8BPgRwuOwPLtEELtU=;
-        b=U6ipXhK1Yr1K3ZbSwk2dI7Q/vLpYSnHCA+T2L5oc88Pt3Di53xebrSHp2iGlfzGOU8
-         pEOhh+1uRHXrMMPelDkH3m/VsFHfkjY0aMZe0jJNN5xOWXFe55hV91bsYj993GwL3WVg
-         le+7Vbc8bq9VJQ5/18Imj1E3dlJ8U543WJncBXDlbZ43kV1fEETDKEXkgTNVxrNgsgKn
-         0A0dBYY2aaNKNICM+yQNO5NNgHFxXTT+X2CIusIYVq3PVW6DEDq6PhXn5KnI9xx/8dF5
-         mIJCVXdjAWPXpxvhbc/bN++hzFT1oxKInwjrv0gGKi4jornCcpu6dYO/12eQu/HdXv8E
-         7jXA==
-X-Forwarded-Encrypted: i=1; AHgh+RqBbV/d6z9yxB41yVakPkgitONp7Vs4jCO/EgG4s6RG6v7j//cwcGec9k6TmjY8qpZ0tjOfnSsLGBoO3rcAbLF6AA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCmKERWUyc4CSeEvOnjijS71Rg/LQVRNtBuA0SQ3Tio0TUVpfH
-	arOfCVrpIJUHXfvWoAUoMIvr91DwXdLPfdyFOub0uZfgL/L/HQFjLLKO
-X-Gm-Gg: AR+sD12Klfgjr3biCzv74iYB22c8XVHBcOGKI3wHnSQG4RdOdcXMgRzKpipiHRvBEEy
-	Pd9ZcYpdK/vhAuS3x+RIUdy9iN6OW2wy7ZQGupewyY9YKvucF0ANnI5cWSnpTbiqBbWTmlYhRte
-	VL7umE5jRAaZ77C4MrA9+XtE/12N6c9ufvepX1OGgHtOGcH9kxdXfu/EeT8KIXh4EumSDTbXH3n
-	hmEGjSVhqEUP9aBpXutocKzt+P/uIsQQWZHnX4UxR4cKad33n8Veb9KYcnyrI9sLQsw66yP4Snj
-	ch1bVU6BDcz5lvUMZp2w0bv2ztBCClDFSKBjB5HbJYKE1qBr+PDZ5pS8//sTpNbQro6Qjg7jIOP
-	0g4c7sPxcpvTo/v6IPzWfc9Kt21veY3skzP9Q2ngt44eHNGYiftjSZARsWoM4O3pWn14sVhxCyH
-	g05WWOi/h93rqmuCt0AZFp7751lo+Lk78voqOfRNqJttMMMcXfX3sxKbNeLa5zgJgUp4/EtN9D9
-	Xsey+eI4qivnw==
-X-Received: by 2002:a05:600c:6992:b0:495:5022:71b9 with SMTP id 5b1f17b1804b1-496c658efc7mr69801845e9.33.1785329729219;
-        Wed, 29 Jul 2026 05:55:29 -0700 (PDT)
+        bh=Hhzzyg0xbZvJC/hGyaob+lgTLTfoRj2Ty2Bq5ZjXfF0=;
+        b=q6aGsnriL1dsakJOGMPtP0w8410Poote96+8aaauVqQ4otTL0ZEEhmOVCvxHS+HoGO
+         exhBGMIUArsx7iiT0KE/FfVHunphVABk7+LvFBCLF3/6Up61foJGIvjWRV4hyeR53EcF
+         Y2kkoo/Fsu0AWBN2KvDSCQbbJLovZKQgwJdvM4yl1VhIxNhGMMOtAWUucGiM5ki2Sd8P
+         p3KsbK7GYVVRuFpw2c/PmuU0+L7sUZCeRXYf8sWSMwipcjwfYA6W0Jpm2R4MfPoAGmz2
+         GZAA6sgljDWN4t1uYSUazXTlVmmmGbcNlpBeEh0TIz7605yuzuQCK4J4noImPVD35Mo4
+         dMsw==
+X-Forwarded-Encrypted: i=1; AHgh+RpNxc/HvLaGXsBT/CAVOVP7vlxneax9lYoSehK5i7AEaC9zVJv4qMn4NE4VW4U8fg9g1TIobfpPgLnzkeRZ/9FECw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxXJIuUlKxXm5Ihlyu9LyW9EQDJszOQ/g7jz53HMreAd3jlEAJ
+	pMIirNZ4j8zUMQdE1NwSzgL/S+9dHOaFSmhMxWZZkG1jK/Sd2PdmQLn2
+X-Gm-Gg: AR+sD11vO8dQSGBUYSYgocej3TvVM80Ac3dcyIt40tDkYUPXd9UrmhQ2bjDeKHmiQ6x
+	mawUl/bx588iCdbKDbZlI00gLPhGy1Ehg32RMHEUvIcte99/lvPz2Z+at7uIQD1Fc8Yzq8fIQlc
+	5yPio+jhXxikmTFJYGMiU8b4Zc0DHTqbMsyxluKG5U8sQeaixmX+UKQob2m0CsWhzFdgXQWdxCh
+	2dmNIa3a48VTp9fHM6CLxYwq9ARLdWw5/0nweD/jNP/YWzaq4s/ubhy1SQC8nuzysQQMKeGqdSC
+	Q3XhDiYaPVUsCFxkbhxJnsJ3QXJw+glt6CqLzk3NCzVKaoE43Oi0n9Yf0utSxNzN7eO1EFx4sV8
+	x3ubXF8uCLGp3QykH/dadM+3+jYgl8Vhd7uLUm/c9sDnYES5770SMqXJRGwVErK1xxns8dvbfRA
+	eTgPDGKUM39pI9vDvn9F5ihL2MiVl8I+BCAbg+1JDGuqqMutGX+4x/ioARr1eTKO+IavRbzKOg1
+	WfxW8VMMS30dI1cHGKFdcObig==
+X-Received: by 2002:a05:6000:4025:b0:47f:9108:59d5 with SMTP id ffacd0b85a97d-47fb1eab2e6mr8075833f8f.42.1785329732474;
+        Wed, 29 Jul 2026 05:55:32 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:10b8:4461:ee04:15e2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fb6b189e5sm9264645f8f.27.2026.07.29.05.55.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fb6b189e5sm9264645f8f.27.2026.07.29.05.55.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2026 05:55:28 -0700 (PDT)
+        Wed, 29 Jul 2026 05:55:31 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -66,16 +66,17 @@ To: Biju Das <biju.das.jz@bp.renesas.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+	Simona Vetter <simona@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: dri-devel@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 04/16] drm: renesas: rzg2l_mipi_dsi: Move global timings into hardware info struct
-Date: Wed, 29 Jul 2026 13:54:56 +0100
-Message-ID: <20260729125516.230757-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 06/16] drm: renesas: rzg2l_mipi_dsi: Add RZ/G3L MIPI DSI support
+Date: Wed, 29 Jul 2026 13:54:58 +0100
+Message-ID: <20260729125516.230757-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
 References: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
@@ -89,62 +90,176 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Move rzg2l_mipi_dsi_global_timings and its array size out of the hardcoded
-ARRAY_SIZE reference in rzg2l_mipi_dsi_dphy_init() and into the struct
-rzg2l_mipi_dsi_hw_info. This allows future hardware variants to supply
-their own timing tables rather than sharing a single global array, making
-the driver more extensible without code duplication.
+Add support for the MIPI DSI controller found on the Renesas RZ/G3L
+(R9A08G046) SoC. The D-PHY global timing table of RZ/G3L SoC different
+compared to the other SoCs. Introduce a dedicated D-PHY global timing
+table rzg3l_mipi_dsi_global_timings and wire it up via a new
+rzg3l_mipi_dsi_info hw_info variant for RZ/G3L SoC.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * No change.
+ * Replaced syscon_field->pwrrdy in struct rzg3l_mipi_dsi_info.
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 123 +++++++++++++++++-
+ 1 file changed, 122 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 1538eeece2b5..180384c10264 100644
+index 7fdcee98450b..4759842a4d78 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -54,6 +54,8 @@ struct rzg2l_mipi_dsi_hw_info {
- 		const u8 *table;
- 		const u8 table_size;
- 	} cpg_plldsi;
-+	const struct rzg2l_mipi_dsi_timings *dsi_global_timings;
-+	unsigned int num_dsi_global_timings;
- 	u32 phy_reg_offset;
- 	u32 link_reg_offset;
- 	u32 dphyctrl0_init_val;
-@@ -488,8 +490,8 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
- 	u32 dphytim3;
+@@ -226,6 +226,107 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 	},
+ };
  
- 	/* All DSI global operation timings are set with recommended setting */
--	for (i = 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
--		dphy_timings = &rzg2l_mipi_dsi_global_timings[i];
-+	for (i = 0; i < dsi->info->num_dsi_global_timings; ++i) {
-+		dphy_timings = &dsi->info->dsi_global_timings[i];
- 		if (hsfreq <= dphy_timings->hsfreq_max)
- 			break;
- 	}
-@@ -1519,6 +1521,8 @@ static const struct rzg2l_mipi_dsi_hw_info rzv2h_mipi_dsi_info = {
- 	.cpg_plldsi.limits = rzv2h_plldsi_limits,
- 	.cpg_plldsi.table = rzv2h_cpg_div_table,
- 	.cpg_plldsi.table_size = ARRAY_SIZE(rzv2h_cpg_div_table),
-+	.dsi_global_timings = rzg2l_mipi_dsi_global_timings,
-+	.num_dsi_global_timings = ARRAY_SIZE(rzg2l_mipi_dsi_global_timings),
- 	.phy_reg_offset = 0x10000,
- 	.link_reg_offset = 0,
- 	.min_dclk = 5440,
-@@ -1530,6 +1534,8 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
- 	.dphy_init = rzg2l_mipi_dsi_dphy_init,
- 	.dphy_exit = rzg2l_mipi_dsi_dphy_exit,
- 	.dphy_conf_clks = rzg2l_dphy_conf_clks,
-+	.dsi_global_timings = rzg2l_mipi_dsi_global_timings,
-+	.num_dsi_global_timings = ARRAY_SIZE(rzg2l_mipi_dsi_global_timings),
- 	.link_reg_offset = 0x10000,
- 	.dphyctrl0_init_val = DSIDPHYCTRL0_CAL_EN_HSRX_OFS | DSIDPHYCTRL0_CMN_MASTER_EN |
- 			      DSIDPHYCTRL0_RE_VDD_DETVCCQLV18 | DSIDPHYCTRL0_EN_BGR,
++static const struct rzg2l_mipi_dsi_timings rzg3l_mipi_dsi_global_timings[] = {
++	{
++		.hsfreq_max = 100000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 18,
++		.tclk_zero = 35,
++		.tclk_pre = 13,
++		.tclk_post = 94,
++		.tclk_trail = 10,
++		.ths_zero = 16,
++		.ths_trail = 22,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 150000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 16,
++		.tclk_zero = 35,
++		.tclk_pre = 13,
++		.tclk_post = 94,
++		.tclk_trail = 10,
++		.ths_zero = 16,
++		.ths_trail = 15,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 250000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 13,
++		.tclk_zero = 35,
++		.tclk_pre = 13,
++		.tclk_post = 58,
++		.tclk_trail = 8,
++		.ths_zero = 16,
++		.ths_trail = 10,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 400000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 12,
++		.tclk_zero = 35,
++		.tclk_pre = 4,
++		.tclk_post = 58,
++		.tclk_trail = 7,
++		.ths_zero = 16,
++		.ths_trail = 9,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 600000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 11,
++		.tclk_zero = 35,
++		.tclk_pre = 4,
++		.tclk_post = 35,
++		.tclk_trail = 5,
++		.ths_zero = 16,
++		.ths_trail = 6,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 1000000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 11,
++		.tclk_zero = 35,
++		.tclk_pre = 4,
++		.tclk_post = 35,
++		.tclk_trail = 5,
++		.ths_zero = 16,
++		.ths_trail = 6,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++	{
++		.hsfreq_max = 1500000000,
++		.t_init = 79801,
++		.tclk_prepare = 10,
++		.ths_prepare = 11,
++		.tclk_zero = 35,
++		.tclk_pre = 4,
++		.tclk_post = 35,
++		.tclk_trail = 4,
++		.ths_zero = 16,
++		.ths_trail = 5,
++		.ths_exit = 15,
++		.tlpx = 9,
++	},
++};
++
+ /**
+  * struct rzv2h_mipi_dsi_timings - Timing parameter table structure
+  *
+@@ -1131,6 +1232,7 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 				      struct mipi_dsi_device *device)
+ {
+ 	struct rzg2l_mipi_dsi *dsi = host_to_rzg2l_mipi_dsi(host);
++	struct clk *clk_parent;
+ 	int bpp;
+ 	int ret;
+ 
+@@ -1185,7 +1287,10 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 	 */
+ 	rzg2l_cpg_dsi_div_set_divider(bpp * 2 / dsi->lanes, PLL5_TARGET_DSI);
+ 
+-	return 0;
++	/* DSI has symmetric 50% duty cycle */
++	clk_parent = clk_get_parent(dsi->vclk);
++
++	return clk_set_duty_cycle(clk_parent, 1, 2);
+ }
+ 
+ static int rzg2l_mipi_dsi_host_detach(struct mipi_dsi_host *host,
+@@ -1582,7 +1687,23 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
+ 	.activation_dly = 1000,
+ };
+ 
++static const struct rzg2l_mipi_dsi_hw_info rzg3l_mipi_dsi_info = {
++	.dphy_init = rzg2l_mipi_dsi_dphy_init,
++	.dphy_exit = rzg2l_mipi_dsi_dphy_exit,
++	.dphy_conf_clks = rzg2l_dphy_conf_clks,
++	.dsi_global_timings = rzg3l_mipi_dsi_global_timings,
++	.num_dsi_global_timings = ARRAY_SIZE(rzg3l_mipi_dsi_global_timings),
++	.link_reg_offset = 0x10000,
++	.dphyctrl0_init_val = DSIDPHYCTRL0_CMN_MASTER_EN | DSIDPHYCTRL0_EN_BGR,
++	.min_dclk = 5440,
++	.max_dclk = 187500,
++	.activation_dly = 100,
++	.features = RZ_MIPI_DSI_FEATURE_16BPP,
++	.pwrrdy = true,
++};
++
+ static const struct of_device_id rzg2l_mipi_dsi_of_table[] = {
++	{ .compatible = "renesas,r9a08g046-mipi-dsi", .data = &rzg3l_mipi_dsi_info, },
+ 	{ .compatible = "renesas,r9a09g057-mipi-dsi", .data = &rzv2h_mipi_dsi_info, },
+ 	{ .compatible = "renesas,rzg2l-mipi-dsi", .data = &rzg2l_mipi_dsi_info, },
+ 	{ /* sentinel */ }
 -- 
 2.43.0
 
