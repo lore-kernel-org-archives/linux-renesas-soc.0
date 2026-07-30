@@ -1,316 +1,148 @@
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3625244C657;
-	Thu, 30 Jul 2026 17:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8C837F8DD;
+	Thu, 30 Jul 2026 19:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785431639; cv=none; b=j7hQ5P/JgrOwIDrATzvn5CWVlll08A8cUva2RyaLchP/RoNQKshNaWkO2PJwMhTwzGb2JuFQQuQgZIiNYe919ugV1kpT/vPgtw8UQZyWs2zyxTcapf+GH+z8UtO5xprXye+68OZn6xupbyw2PR8KRJBP9+w2rTxzNNrCBYyKsCY=
+	t=1785441042; cv=none; b=QzcfH+HNGfnQHvh7uKNtgofv/+2atzmia7G+PVbP910PB/3s1637HvYQ/XROe0CBKV8yqBzWd1do6QKTkHvCB2I6vjG80xbNUeAVBwZTqmRO1cmjA6BKYuUYEHV0tIl6mZi37utOaKBigfOLqllCjpQbfgG1QxHnCFSXZ8yPaLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785431639; c=relaxed/simple;
-	bh=oGB8b1i8NBS5/44J2LLVU/jxjvYVCoQUDeFy9qMl6WI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XU7b3D0RnxFbJd8dXgnwF4oEvgXGBugyRH9KvHSprJ17a6+Uyy3BDuLnHoOj/HMwPngKMLcTBz27Wq78N2QNpC3HMI/DCKBSCTael5lC+tW/8hv4adurp+z1a75YzYR1V6a4eYrs00lh0AC6FovoZCQs9xYWBh2gYIyFwaoqbwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=gG0Ogy3l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=I+OiQZow; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1785441042; c=relaxed/simple;
+	bh=CDQzi7qK+MGW0I1FpfLD8J+mu4Mp6f9WgIwDKn4MXI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzQ6LH9mBhaD48sYvm8sit8boYnXHAZ3Ts+Ziz36haKZA0Y3rvKMnOTjtY7BnmMwexfg7gLQjvO3jwUCAUfkyV7qPvIJKN5d3Otqb0ZkY8kIjKwR45EBc3ZReS1RTliDoBIpn+7jtVhyMa0gTUQij3MQieqJs5y5BHalPTKW6qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XQbaMcYg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="gG0Ogy3l";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="I+OiQZow"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 384AE140011C;
-	Thu, 30 Jul 2026 13:13:56 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 30 Jul 2026 13:13:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1785431636;
-	 x=1785518036; bh=tNgFtR5qWLdk7y3Dcmn/acWHsekLuFUGqT4VFN1EwRc=; b=
-	gG0Ogy3lhKfHPE8FbcinDekyVeusUItMT0a9QL/jIRBHw/LCZkhW+G2AZWDgNHnv
-	BmTQWjCTRrYur9evXjw+gBMx0Hig6V/9QcvLOe0EA18VkSt8wLPEZBBofTkLc5PB
-	3P6jn11gzU14UsIVV/hg4pqeGQs8UNi0DR5FcgsIxUe2N5cFX0mjvFFCVgqFdvhK
-	tuJ87XhAyxLAkhgIpZ3hgyfuHEY8EzOgbXq00Y/MDsqbqVTf+iMXXxZNsRD+FbZ6
-	OtpfPIw4UrPp2STSsoavZQlH+QxrEx9gByDELbCqm1EsZGSRhv4WAhu4A6pmya1H
-	ut06+sIIZGIun8SrxdIJAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1785431636; x=
-	1785518036; bh=tNgFtR5qWLdk7y3Dcmn/acWHsekLuFUGqT4VFN1EwRc=; b=I
-	+OiQZown2gjb8CDMarjoCfyTxQcVWWrTe0MNpeHexKugQfdsSpdqgAWoeCWw2/UF
-	9/WSXpQdz4wCM0gZTi1fm3nZ4y7BbVeHEdjSS3iyaYlox+eekXBQWUfQcCYWxoz6
-	MwNBouEzvLqClvtZyLTG+rLTUoxiQPTtqY/eZoCZb49UkBTzqTI5Q+IyCzsjDQLA
-	tn7iVCdRF69bt0SWe5AmiLlH99OGmycjAL7/ktfa8MRHTCsud6MxG0h3zgiSGQTD
-	1RwA1efvX6wS9n6y6fB5Zs/T8IMGSNp6fmajvsn406jF9FO5bbmJsalwp7yuUfZV
-	SZjf/6tlldKbzYnbyCebQ==
-X-ME-Sender: <xms:VIZrahKLNqLV4ooIMbSAK7YgamOhInry3OVh_OLM-NK-R5yZfK40nQ>
-    <xme:VIZrapA1qNl9Pki-xGhcg3MjrduJLhgYffdz7_aV-hrdcHPZ_OOrIMVoodsBds1yc
-    ke8poCbO31J5hdAbl0MWyqwhP-y2ZmjZ6b4M0CjSNOGIHHnIs2vBVMm>
-X-ME-Received: <xmr:VIZramtJSd0Z1Lf7lQJkWPqni99TDFGK-0D8NdDYg2_2H3feXeBnEvEsWMbyaRFtbzsFSB2MqrR-fP8n1XC0vTHpxghFdzU>
-X-ME-Proxy-Cause: dmFkZTF07znR1cOvOBQn+EZER5ns3tmiMy5NUHQvdd5Z0fNrdMM9h7MbP7+GksfPtS7/1U
-    pbvEAtzOYwe/VUfXgLXiTlfU5t/R1iCU6ZJEOsty3ubB5ehJqcum9OE7oGRRQDL9xfDRIK
-    IJPzjqxA4ZdkREQiPshBlbxzbL60DrO4L2/LXxHcX43hG02n/xFutuZwyrFoUVQAOk2lSb
-    UbuqpyeNpEtK89wcsLj4NzSX6CKqzD/RVhTRJVxLQiHW/zEDjblEQ73f+/OqAP/iQrvQhs
-    4FsCqFhhBY6AH14Nv6+K2625maneF7QxlMpmX5gX9dknU7Q7/gZ7JLfYbad0TmjRWiCjhL
-    YDIu6FIJCdeT52WjoZoxYEj/sVEVBgIU1Kh/Wm299xQrqC99ksyh8VtioI50DCOWPguvte
-    pw0bdOSGqcdIE3208+I7TuSbClrKGWvJpnxv2PMkNAGZwK2VQJZpjI9Ux745YPwYzSv0ZH
-    jnNqk3awdatCLbZkLruwgK2AVXOcD/XDMX6zQQpUL715n7cW6aNj8DQ1cbbGlBYJdPB1PJ
-    /iQ+Jia7S2GCd6Pj8SYCXfq+CddvwEOzjAj9cI7Peh9wumUIQKI8o4KMnW4Dz3uoH4trvb
-    ON+vKrjZ7b8g1j2/p+Sbz1/Dyu8ql1o9iHMFWMjjAmKPgO+SZ9YyKWs8jNAQ
-X-ME-Proxy: <xmx:VIZranTP_0XwJLsJO2UJoTNQht6jZmJM6DOsZcmC9AdjMjRn4sDiDw>
-    <xmx:VIZratLFjkERjtoFga7MtHMna1vy7JVJCxU5h9AESvVPoxINE4D-kA>
-    <xmx:VIZraqsjy9vKt5tSwpGOaoH8o7pC1W3FZV8C5WA8mC_4kbJQf9L8ww>
-    <xmx:VIZrak9ouIlE5vFUoCY889hDgDfT8xglsSfgAXuDE4UDzNkYq63iAw>
-    <xmx:VIZrakkEW7PfrA0NEIdeVml9vfRrZy4BImB9SfQi5naGFk0KWfcKzwad>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Jul 2026 13:13:55 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@iki.fi>,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 13/13] media: rppx1: lin: Add support for gamma sensor linearization
-Date: Thu, 30 Jul 2026 19:12:41 +0200
-Message-ID: <20260730171241.483870-14-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260730171241.483870-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20260730171241.483870-1-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XQbaMcYg"
+Received: from ideasonboard.com (mob-109-113-25-35.net.vodafone.it [109.113.25.35])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 340718F;
+	Thu, 30 Jul 2026 21:49:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1785440972;
+	bh=CDQzi7qK+MGW0I1FpfLD8J+mu4Mp6f9WgIwDKn4MXI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQbaMcYgJfwU6YiaA0kY6vAJfqx6LfP2QtHQbz2wCnQcDuocIvKN2003ZTORXl7ZO
+	 NWJakq+2vEK4LJ0h/jSkFJ1Ngwp1nLOutsRVwFYFlaFJwpZwOwAaeNRh8GBftqdgwj
+	 uU//gBpJi/N2O0yzEMxlDu2UmnzhlaEJVKfzBciM=
+Date: Thu, 30 Jul 2026 21:50:35 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil+cisco@kernel.org>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Sven =?utf-8?Q?P=C3=BCschel?= <s.pueschel@pengutronix.de>, Nas Chung <nas.chung@chipsnmedia.com>, 
+	Mehdi Djait <mehdi.djait@linux.intel.com>, Isaac Scott <isaac.scott@ideasonboard.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] media: rzg2l-cru: Align bytesperline to hardware
+ DMA stride requirement
+Message-ID: <amun-AzHShKFnA7W@zed>
+References: <20260729105603.1160966-1-tommaso.merciai.xr@bp.renesas.com>
+ <20260729105603.1160966-2-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260729105603.1160966-2-tommaso.merciai.xr@bp.renesas.com>
 
-From: Jai Luthra <jai.luthra@ideasonboard.com>
+Hi Tommaso
 
-Extend the RPPX1 driver to allow setting the gamma sensor linearization
-configuration parameters. It uses the RPPX1 framework for parameters and
-its writer abstraction to allow the user to control how, and when,
-configuration is applied to the RPPX1.
+On Wed, Jul 29, 2026 at 12:55:46PM +0200, Tommaso Merciai wrote:
+> The RZ/G3E CRU programs the line stride via the AMnIS register, whose
+> IS field encodes the value in units of 128 bytes. If bytesperline is
+> not a multiple of 128, the division truncates and the hardware uses a
+> wrong stride, causing horizontal banding.
+>
+> Commit ace92ccef0c9 ("media: platform: rzg2l-cru: Use v4l2_fill_pixfmt()")
+> replaced the open-coded aligned calculation with v4l2_fill_pixfmt(),
+> which sets no alignment, reintroducing the issue.
+>
+> Round bytesperline up to RZG2L_CRU_STRIDE_ALIGN and recompute
+> sizeimage when info->has_stride is set. RZ/G2L has no AMnIS register
+> and keeps the values from v4l2_fill_pixfmt() unchanged.
+>
+> Fixes: ace92ccef0c9 ("media: platform: rzg2l-cru: Use v4l2_fill_pixfmt()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+> v4->v5:
+>  - New patch.
+>
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 5185a547461d..91eda5034248 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -851,6 +851,11 @@ static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
+>
+>  	v4l2_fill_pixfmt(pix, pix->pixelformat, pix->width, pix->height);
+>
+> +	if (info->has_stride) {
+> +		pix->bytesperline = ALIGN(pix->bytesperline, RZG2L_CRU_STRIDE_ALIGN);
+> +		pix->sizeimage = pix->bytesperline * pix->height;
+> +	}
+> +
 
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Ack! I think this does what is expected for the single planar formats
+the CRU supports!
+
+I think after this cycle you could send a patch to replace the above
+back-portable change with the usage of v4l2_fill_pixfmt_aligned().
+
+When you do so, could you consider, replacing "has_stride" with a per
+struct rzg2l_cru_info .stride field ?
+
+I think it would look nicer as you could here unconditionally align
+(assuming the new .stride will be set to 1 for G2L which currently has
+.has_stride = 0).
+
+Also, RZG2L_CRU_STRIDE_ALIGN is a bit of a mis-nomer, as only G3E and
+V2H has a AMnIS register and alignments constraints as far as I see.
+
+The only other user of 'has_stride' I see is:
+
+ rzg2l_cru_initialize_axi()
+
+	if (info->has_stride) {
+		u32 stride = cru->format.bytesperline;
+		u32 amnis;
+
+		stride /= RZG2L_CRU_STRIDE_ALIGN;
+		amnis = rzg2l_cru_read(cru, AMnIS) & ~AMnIS_IS_MASK;
+		rzg2l_cru_write(cru, AMnIS, amnis | AMnIS_IS(stride));
+	}
+
+the G2L has no register AMnIS, so we can't write it unconditionally
+but rather replace the check with:
+
+        if (info->stride > 1)
+
+As a bonus, if any other variant will get a different stride, it will
+be automatically supported.
+
+What do you think ?
+
+In the meantime for this patch
 Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
-* Changes since v10
-- No holes and no implicit padding in UAPI structures. Work by Jacopo,
-  big thanks!
 
-* Changes since v8
-- Drop unneeded check of V4L2_ISP_PARAMS_FL_BLOCK_ENABLE
+Thanks
+  j
 
-* Changes since v8
-- Move declaration of dx_lo and dx_hi to top of function.
----
- .../platform/dreamchip/rppx1/rpp_module.h     |  1 +
- .../platform/dreamchip/rppx1/rpp_params.c     |  5 ++
- .../platform/dreamchip/rppx1/rppx1_lin.c      | 53 +++++++++++++++++++
- .../uapi/linux/media/dreamchip/rppx1-config.h | 50 ++++++++++++++++-
- 4 files changed, 108 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_module.h b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-index 948e26d7361d..072309d8662d 100644
---- a/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-+++ b/drivers/media/platform/dreamchip/rppx1/rpp_module.h
-@@ -48,6 +48,7 @@ void rpp_module_clrset(struct rpp_module *mod, u32 offset, u32 mask, u32 value);
- union rppx1_params_block {
- 	struct v4l2_isp_block_header header;
- 	struct rppx1_bls_params bls;
-+	struct rppx1_lin_params lin;
- 	struct rppx1_lsc_params lsc;
- 	struct rppx1_awbg_params awbg;
- 	struct rppx1_ccor_params ccor;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index 86d445b52504..a75a27a8afd0 100644
---- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -19,6 +19,8 @@ static const struct v4l2_isp_params_block_type_info
- rppx1_ext_params_blocks_info[] = {
- 	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE1, bls),
- 	RPPX1_PARAMS_BLOCK_INFO(BLS_PRE2, bls),
-+	RPPX1_PARAMS_BLOCK_INFO(LIN_PRE1, lin),
-+	RPPX1_PARAMS_BLOCK_INFO(LIN_PRE2, lin),
- 	RPPX1_PARAMS_BLOCK_INFO(LSC_PRE1, lsc),
- 	RPPX1_PARAMS_BLOCK_INFO(LSC_PRE2, lsc),
- 	RPPX1_PARAMS_BLOCK_INFO(AWBG_PRE1, awbg),
-@@ -68,6 +70,9 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb, size_t max_size,
- 		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1:
- 			module = &rpp->pre1.bls;
- 			break;
-+		case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1:
-+			module = &rpp->pre1.lin;
-+			break;
- 		case RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE1:
- 			module = &rpp->pre1.lsc;
- 			break;
-diff --git a/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c b/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
-index 0a0e7ab2d1d6..b389778f9383 100644
---- a/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
-+++ b/drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
-@@ -25,6 +25,11 @@
- #define LIN_B_Y_REG_NUM				17
- #define LIN_B_Y_REG(n)				(0x0098 + (4 * (n)))
- 
-+#define LIN_PRE1_DEGAMMA_CURVE_MASK		GENMASK(23, 0)
-+#define LIN_PRE1_SAMPLE_POINTS_MASK		GENMASK(3, 0)
-+#define LIN_PRE2_DEGAMMA_CURVE_MASK		GENMASK(11, 0)
-+#define LIN_PRE2_SAMPLE_POINTS_MASK		GENMASK(2, 0)
-+
- static int rppx1_lin_probe(struct rpp_module *mod)
- {
- 	/* Version check. */
-@@ -53,7 +58,55 @@ static int rppx1_lin_start(struct rpp_module *mod,
- 	return 0;
- }
- 
-+static int rppx1_lin_fill_params(struct rpp_module *mod,
-+				 const union rppx1_params_block *block,
-+				 rppx1_reg_write write, void *priv)
-+{
-+	const struct rppx1_lin_params *cfg = &block->lin;
-+	u8 sample_mask;
-+	u32 dx_lo = 0;
-+	u32 dx_hi = 0;
-+	u32 mask;
-+
-+	if (cfg->header.flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) {
-+		write(priv, mod->base + LIN_ENABLE_REG, 0);
-+		return 0;
-+	}
-+
-+	switch (cfg->header.type) {
-+	case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1:
-+		mask = LIN_PRE1_DEGAMMA_CURVE_MASK;
-+		sample_mask = LIN_PRE1_SAMPLE_POINTS_MASK;
-+		break;
-+	case RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2:
-+		mask = LIN_PRE2_DEGAMMA_CURVE_MASK;
-+		sample_mask = LIN_PRE2_SAMPLE_POINTS_MASK;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (unsigned int i = 0; i < 8; ++i) {
-+		dx_lo |= (cfg->dx[i] & sample_mask) << 4 * i;
-+		dx_hi |= (cfg->dx[i + 8] & sample_mask) << 4 * i;
-+	}
-+
-+	write(priv, mod->base + LIN_DX_LO_REG, dx_lo);
-+	write(priv, mod->base + LIN_DX_HI_REG, dx_hi);
-+
-+	for (unsigned int i = 0; i < RPPX1_LIN_DEGAMMA_CURVE_NUM; i++) {
-+		write(priv, mod->base + LIN_R_Y_REG(i), cfg->curve_r[i] & mask);
-+		write(priv, mod->base + LIN_G_Y_REG(i), cfg->curve_g[i] & mask);
-+		write(priv, mod->base + LIN_B_Y_REG(i), cfg->curve_b[i] & mask);
-+	}
-+
-+	write(priv, mod->base + LIN_ENABLE_REG, LIN_ENABLE_GAMMA_IN_EN);
-+
-+	return 0;
-+}
-+
- const struct rpp_module_ops rppx1_lin_ops = {
- 	.probe = rppx1_lin_probe,
- 	.start = rppx1_lin_start,
-+	.fill_params = rppx1_lin_fill_params,
- };
-diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
-index aa8a078493af..3507a9ab03df 100644
---- a/include/uapi/linux/media/dreamchip/rppx1-config.h
-+++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
-@@ -92,6 +92,8 @@ enum rppx1_meas_chan {
-  * @RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2: PRE2 pipe Lens Shading Correction
-  * @RPPX1_PARAMS_BLOCK_TYPE_GA_HV: Human Vision Pipe Gamma Out Correction
-  * @RPPX1_PARAMS_BLOCK_TYPE_GA_MV: Machine Vision Gamma Out Correction
-+ * @RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1: PRE1 pipe Linearization (Sensor De-gamma)
-+ * @RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2: PRE2 pipe Linearization (Sensor De-gamma)
-  */
- enum rppx1_params_block_type {
- 	RPPX1_PARAMS_BLOCK_TYPE_WBMEAS_POST,
-@@ -110,6 +112,8 @@ enum rppx1_params_block_type {
- 	RPPX1_PARAMS_BLOCK_TYPE_LSC_PRE2,
- 	RPPX1_PARAMS_BLOCK_TYPE_GA_HV,
- 	RPPX1_PARAMS_BLOCK_TYPE_GA_MV,
-+	RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1,
-+	RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2,
- };
- 
- /**
-@@ -561,6 +565,48 @@ struct rppx1_ga_params {
- 	__u8 reserved[3];
- };
- 
-+/* Linearization (Sensor De-gamma) */
-+#define RPPX1_LIN_SAMPLE_POINTS_NUM 16
-+#define RPPX1_LIN_DEGAMMA_CURVE_NUM 17
-+
-+/**
-+ * struct rppx1_lin_params - Linearization (Sensor De-gamma) configuration
-+ *
-+ * The RPP-X1 linearization module is available on the PRE1 and PRE2 pre-fusion
-+ * pipes. Userspace selects which pipe to operate by setting the @header.type
-+ * field to RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1 or
-+ * RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2.
-+ *
-+ * The LIN module applies the per-color channel de-gamma linearization curves
-+ * @curve_r, @curve_g and @curve_b defined on the input sampling points @dx.
-+ *
-+ * For the PRE1 pipe the de-gamma curves values are 24-bits, for the PRE2 pipe
-+ * the de-gamma curve values are 12-bits.
-+ *
-+ * For the PRE1 pipe de-gamma module sampling points @dx values are in the range
-+ * [0, 15] (4 bits). For the PRE2 pipe de-gamma module sampling points values
-+ * are in the range [0, 7] (3 bits).
-+ *
-+ * Userspace is expected to provide the curve values and sampling points with a
-+ * bit-depth matching the one of pipe in use.
-+ *
-+ * @header: block header (type = RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE1 or
-+ *	    RPPX1_PARAMS_BLOCK_TYPE_LIN_PRE2)
-+ * @curve_r: de-gamma linearization curve for red channel
-+ * @curve_g: de-gamma linearization curve for green channel
-+ * @curve_b: de-gamma linearization curve for blue channel
-+ * @dx: input sampling points
-+ * @reserved: padding
-+ */
-+struct rppx1_lin_params {
-+	struct v4l2_isp_params_block_header header;
-+	__u32 curve_r[RPPX1_LIN_DEGAMMA_CURVE_NUM];
-+	__u32 curve_g[RPPX1_LIN_DEGAMMA_CURVE_NUM];
-+	__u32 curve_b[RPPX1_LIN_DEGAMMA_CURVE_NUM];
-+	__u8 dx[RPPX1_LIN_SAMPLE_POINTS_NUM];
-+	__u32 reserved;
-+};
-+
- /**
-  * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
-  *
-@@ -583,7 +629,9 @@ struct rppx1_ga_params {
- 	sizeof(struct rppx1_lsc_params)				+	\
- 	sizeof(struct rppx1_lsc_params)				+	\
- 	sizeof(struct rppx1_ga_params)				+	\
--	sizeof(struct rppx1_ga_params))
-+	sizeof(struct rppx1_ga_params)				+	\
-+	sizeof(struct rppx1_lin_params)				+	\
-+	sizeof(struct rppx1_lin_params))
- 
- /* ---------------------------------------------------------------------------
-  * Statistics Structures
--- 
-2.55.0
-
+>  	dev_dbg(cru->dev, "Format %ux%u bpl: %u size: %u\n",
+>  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+>  }
+> --
+> 2.54.0
+>
+>
