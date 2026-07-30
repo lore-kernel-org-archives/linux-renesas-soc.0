@@ -1,62 +1,64 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B51415F37
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 11:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9FE416115
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 11:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785411129; cv=none; b=XdOVWgUL9y2mO9i5WMQqrdxlNzoJLZ5eXIpcz32WkNjxroeANfcLqIpA5vtyCXLYm0QWmM1RLyQE3pgvn0+wepOibW1sm9BA8xJc2mxcLlN0L2bS8pveya36yoqex2YkUhAgkVd2v16p/c20SD38glLLz/g4/trKwlo/GhT9/go=
+	t=1785411129; cv=none; b=W7e5ebzAdy8TdaDmDjmhpG5iACmaXxHz9Ut775VhT4Ldi/t+hxUEMRSbTc1xAauXH7bCiEk9VBH171BaxBKmaqZS+hOMIeDJAHGQS6wWfAUVdTVUL7d6pN5w0pKL3v3BNWCCt4rocpUiARIWPl6ax+rLBV1amrD9ZT978cyV9ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785411129; c=relaxed/simple;
-	bh=ztojtsJcgm/HN1h3twmpiuxbRjK1HrCwlx+0aoQ69AM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QcFoXW8mMRi3lldbN5ZaPIxvGfS75flKjTwc4FFl98hGRrx7kOeF5iLVYuyHwZnScCPzDQaQuauccVAVZesJOlBRCpk0tMGY/4syzDCXKQ+DdM31NtI7975KhNr3m2bWdIe9iljaPRUcAgNAkwEII2mBmpLYEbDV1uoys3y9O0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLR6d+s4; arc=none smtp.client-ip=209.85.221.48
+	bh=bTPNo1SR+nhOnCnJHbNOjSLy+khNwaBbBdJIzIBawf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GlVRptI2MpVWGvX3i1EYy1eFqzrg/PaJA9yZCIawSM25OfoqN3YyDsv7MvO1ZwKy5pa1cCp3yHK6gCthLzXIg7xcWm2jX7lu5EkQA7tDxEuqOEYoTj04qDB+Ya6bpt820Nc9Gs9YUQHpSWmLj60dKIKJa9k1ByToTiRRVEIqRkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbMF4LNN; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLR6d+s4"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47c6e9a694bso1318351f8f.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbMF4LNN"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-47f92e3c14bso1759893f8f.0
         for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 04:32:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785411124; x=1786015924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=yjmBegB3RiqLoHhBho8LH0LOARZI5UYSPYaZVtCSLIw=;
-        b=DLR6d+s43YKKaNabVRU5SCi9C+j5j9Vi0OKbl66bbpw2A5Ah6idWAW/ssbXIWt/u7W
-         O5VfwxhieaVMsVmV+KNgi0B6A9JaIrHnNijacMuDBzytbroo/rShRAp0YWcFIDL9r4sc
-         AUmM3PkI9Cr5gIT3L25RAVv4RvGfm2PcT0DwcAY3O9GuoptlTsgdvC4ImGkaTsp8p6AD
-         sx7qh1KLqqZDSjz1/YQTq1/KBuvrSsFSpceesYcSbAvBxQke3t3cPRxY9EJJT549okjV
-         RaY9Xftg1XVwc8Nx04OZIKikqk8VKTIEiBkY+xWk5K+pQ6Ef7lSCNQKmlW9MaS/S4OT2
-         BSCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785411124; x=1786015924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1785411125; x=1786015925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=yjmBegB3RiqLoHhBho8LH0LOARZI5UYSPYaZVtCSLIw=;
-        b=AKwP7ZoN1QChg8pEpLnjuG8QVj/vHRFMHde49HbUELLmrn/qKByLdWXFbCV5T6BOjD
-         BGasiSvdlFQgLgEtINfKtvcOg2fnvxpzAFJofOsl+3fLRf+VEIS1fKyoH5nYTkBk3nJm
-         5ikQWz4os9rlGUEFX2rna00EWqblDLmB5G5RzK9Tc7jPL5a3jGxBgaGy8TtZnxV6pMZY
-         b6pYyCmVZRKRbnL5oUzc9wRzzM5s94DXqwqugPg66T3DlG47PThriAsqJt3Ms3AgYQed
-         +WOCyx26ilXby2on4Yf83zCPoY/PG73u1xbZuWl2fVR6eFgPI5TaFRp69HUw36PYZ/+A
-         VBCQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpx9OmnAfwi3dToojHE8bSdgdGwyU35ZFVUdxYYhyYGhzczANKexH2jioZiTkb93jijV1rPPDwHmjq0zfVVShgUzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq4e0fh3rMPoDWzopqXiKTl9hhLiKYSb4dKL/2rayX7JOr/iv9
-	GrwMeP/CkwUclb30uAMLkogft0wZjCTb207YWCtmdx+3Z95D8v8jGuR4
-X-Gm-Gg: AR+sD11YLjWSdMk99Je5qnLc3VS/t2vX88qNSSN4bMGkfa+irx31pQFhT9Nn0cAPvNe
-	G3K5ED8PNmcLdDmESyrzbDylQV4HLCKcSJNfXFDZT8RzjQVTiMKnvBI/0Xb5cPvIhCou24TWGa9
-	0kIm6YNDSWhk/RO9bGB/gliSZ95R/QqAzswFHw+DimHudRhsntHZu3lg5H+YyUFxFdShiUGIloU
-	vv3iabHOMkLc8yOtLI39BY0EJNlDJNT6klE55vLWQZfQrR4ZWA/h16Wes3bFEeUqyg/s382e1tF
-	7XrfJbGTcZw/XupoDKp8+eLzCuIzp70l3AF1n2C0qUg0B23hKWIvw2hyx7CpgJffLpJwgIwRnoK
-	QL9+2/HUaJgckrFN/a3at4PbI9YiIMxei+oh1xsqT6pJ0qlB3i7sIGOyVlzYhQsv9zuWDWBMkal
-	Qdcxq6854kc3ADlH8g6IVcZ760fsBLTCw9r8Upt3W3CJOrrJxxzT6GFk1XR5iVwVX5ibdY7riE/
-	rI4LXn+6oCuLg==
-X-Received: by 2002:a05:6000:250d:b0:47f:9464:86c3 with SMTP id ffacd0b85a97d-47fc8215decmr3145913f8f.57.1785411124315;
-        Thu, 30 Jul 2026 04:32:04 -0700 (PDT)
+        bh=4IeXk6omACrDle7Hcp2lL0AruC9LDPwvUKRrtnE5fVc=;
+        b=ZbMF4LNNVzFDWBDLuiZom00ajEStF8UTnr8xgfZ+0ubf+gxNViXVIJoP+vMO8oJd3/
+         /JIgVdv8FqFWCwrlx0QYKNmKrzxgDd6VHzVqKelbE3JsayiRwPquOPsc0fSC4kgp8qOh
+         dZnZ72siRQ6UA0ftyihHCH5HI8iT3WBFXT2yeri4AIQ742yF4Kck8u7yymPXcKuZk9w7
+         bcQehwAv3wVnCh/XVQ3nLmS9dBz1YxQnlwMabI68d/jdbtkuOXVn0WWemNYZKjUNr37Q
+         4yhLIb4MjaqYS2YD6pCakzrJb3A4kR3fc7u7XdxKDPe31jT4DQE11sWw5hfc5DHBPPRF
+         +Yvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785411125; x=1786015925;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4IeXk6omACrDle7Hcp2lL0AruC9LDPwvUKRrtnE5fVc=;
+        b=sZ7Nep9gRSeFMcZdJKH2tD9ZMZdIJlxaecTzlj2SfuqJm2C2n/X8F/+cz2bX57vwmF
+         FNeDT58RrkEjYYny1O2ePfcmbR7elnh2PUPumc/4ElzWuCgHyM2UFO9aYrZRbHPN0WIe
+         ikoIrYimvRt1XatO1ZWU07RpEF03drK3R7mhV1BbfSAc2pRqhRZJ+m/jrdKq9aaOpnW9
+         AIV1r/g9JOYTTxDAKvuac6MfaImWaMPxOu+fo26KipZv6786X45JiZzVgq20uteva4fc
+         4n8416tkZ0T7UeBLmqWsLpP2hca4W1cxzTobyjW3HfCsGDm9Y5EPorcH5/at+NnBSJy6
+         QsdQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoAKvXtgkeefFTMDaSiWIxUldfRfIhubzta5e+gJsdffk2duq1JZa/HtJMkjq9uGpr7qGXOULdJgMt6sqHDZTgfNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh0W4odP9IOln9DZwVjOGUKdIrkDqYnFq0+NyAtr2cug7I4rCR
+	5O8Xs8N/1VQJHAtT2bYeg/RD5M8iV+1CCsxADbm4cqJ/NojZSOUlDF2W
+X-Gm-Gg: AR+sD11oGaOJ2+6OdwOZLu+JCOouseHIKY7RHvbS0nqBZGQyLGLyg/Hj6KRCLhujTts
+	6Ftn9m18mYeWQZcAEJe0Di9oGHj2SsWxpAL9NaJ/3GXUDLeCSpdIbcNZQN9MweRFfGSdUmHhVka
+	oE9FsjGXMzCpFRK49WlwL1Zj90BLAN0RMIp/KkyxOoLrTPtMpbiQ3fNWU8EBrzVb0AcztLCvyfY
+	YjSbzYPhXgOc4ihPw7s/Ae8GYc22rd2eZlIEo/J/whWJ3zzix382PoWKZJj6gX5ubz0nz9AQUoG
+	PVQfZ5wYehlIqeoAYIUZiT2PsOKL7/cAnEL34IERNRD8u0U2ri/pt/83wQb8p9LT32mBW3MV+Yn
+	JgLXI5fwuXQ0aENhxtv1sL4lFeLqngliQyiUoGQe0V5JAjdw/GUDyJW0YB+xrq1bZg4sVpRDK+5
+	EBR40mN7Z0FjKdGqysHLLwIir5CpPhiO0KTt2OquN3oCzrLkjXEiju2OXMGUNVSEvkT3KoOQtLt
+	ghqLaw4gK6h+DFngizNtW20
+X-Received: by 2002:a05:6000:1a8c:b0:47f:c3ea:83c0 with SMTP id ffacd0b85a97d-47fc8330142mr3160438f8f.48.1785411125107;
+        Thu, 30 Jul 2026 04:32:05 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:eabf:a623:1e7d:c359])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fc89351e3sm5737947f8f.29.2026.07.30.04.32.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fc89351e3sm5737947f8f.29.2026.07.30.04.32.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 04:32:03 -0700 (PDT)
+        Thu, 30 Jul 2026 04:32:04 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Ulf Hansson <ulfh@kernel.org>,
@@ -64,7 +66,6 @@ To: Ulf Hansson <ulfh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -73,11 +74,14 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v23 00/14] Add Renesas RZ/G3L SD/eMMC support
-Date: Thu, 30 Jul 2026 12:31:38 +0100
-Message-ID: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v23 01/14] dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+Date: Thu, 30 Jul 2026 12:31:39 +0100
+Message-ID: <20260730113200.36456-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
+References: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -88,340 +92,219 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi All,
+Document the RZ/G3L (r9a08g046) SDHI controller. The RZ/G3L SDHI
+controller is similar to RZ/G2L but has five clocks (core, clkh,
+cd, aclkm, aclks) and three resets (rst, axim, axis), so update the
+clocks/clock-names maximum to 5 and resets/reset-names maximum to 3.
+It has an internal divider for all modes except HS400, and a 2048-bit
+divider compared to 512 on others.
 
-The Renesas RZ/G3L SoC has:
-
-Channel 0 supports SD and eMMC (including HS400/HS400ES).
-Channel 1 supports SD and eMMC (except for HS400).
-Channel 2 supports SD.
-
-The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
-not support IOVS and PWEN in the SDHI register (no internal regulator),
-unlike SD1 and SD2. It has an internal divider for all modes except HS400.
-It also has a 2048-bit divider compared to 512 on others. Moreover
-RZ/G3L supports HS400 enhanced strobe mode.
-
-This patch series support all modes. Please see the test logs for
-smarc-rzg3l[1]
-
-This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
-rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
-
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v22->v23:
- * Added write32hook function for hardware idle synchronization for
-   CTL_SD_CARD_CLK_CTL writes.
- * Changed the data type of max_divider from unsigned int to signed int.
- * Assigned of_data->clk_div_mask in renesas_sdhi_probe().
- * Updated commit description for patch#7.
- * Updated tmio_mmc_reset() to handle 32 bit divider register in RZ/G3L.
+ * No change.
 v21->v22:
- * Added HS400 ES mode after fixing inode corruption when eMMC is
-   mounted as rootfs.
- * Updated commit descriptions for patches #4, #5, #6, #7, #9, #12,
-   and #13.
- * Added clk_div_mask to of_default_cfg and of_rcar_gen2_compatible.
- * Added a renesas_sdhi_set_hw_adjustment_delay() call to
-   renesas_sdhi_init_tuning().
- * Added renesas_sdhi_is_internal_divider_enabled() and
-   renesas_sdhi_clk_get_rate() to simplify the clock rate logic.
- * Added `clock &= ~GENMASK(9, 8)` to clear the divider mask bits in
-   the register value.
- * Added a renesas_sdhi_set_tmpport() helper to set delay values.
- * Added a check in renesas_sdhi_is_internal_divider_enabled() to
-   return disabled status when in HS400 mode.
- * renesas_sdhi_reset() now restores data strobe register values
-   after reset.
+ * No change.
 v20->v21:
- * Dropped HS400 ES support due to file system corruption, will add this
-   mode later after investigation.
- * Added support for make clock divider mask configurable
- * Added clk_div_mask to RZ/G2L of_data.
- * Added clk_div_mask to RZ/G3L of_data.
- * Restored actual_clk calculation in renesas_sdhi_set_clock().
- * Updated renesas_sdhi_set_clock() for RZ/G3L HS400 clock handling as
-   it supports only single clk divider value and other values are
-   prohibited.
- * Updated commit description for patch#12.
+ * No change.
 v19->v20:
- * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
-   the code after assignment of variable mmd, this ensures assigning
-   the default values for non-DT platforms and DT platforms with no
-   device data.
- * Replaced the check mmd->max_divider with mmc_data->max_divider and
-   moved the code after assignment of variable mmd, this ensures
-   assigning the default values for non-DT platforms and DT platforms with
-   no device data.
- * Fixed the ordering of resets in suspend/resume paths.
- * Added bitfield.h header file.
- * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
-   case and the 32-bit register write.
- * Updated resume() with scoped PM runtime call.
- * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
-   register.
+ * No change.
 v18->v19:
- * Updated commit description for patch#1,#2,#6,#8,#11 and #12
+ * Updated commit description
  * Updated clock and reset description with AXI master and AXI slave
  * Added else condition for reset and reset-names.
  * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
- * Retained the tag got binding patch as the changes are trivial.
- * Fixed the clk_mask for non-DT platforms.
- * Fixed max-divider setting for non-DT platforms.
- * Replaced the magic number '9' with ilog2 function in
-   renesas_sdhi_clk_enable().
- * Dropped divider variable from struct renesas_sdhi.
- * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
-   and non HS400 mode(uses 1/2 internal divider).
- * Updated handling for clk divider.
- * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
-   hardware tuning delays
- * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
- * Updated suspend/resume with scoped runtime calls in suspend.
- * Fixed extra space in HS400MODE2 comment block.
- * Updated the comment HS400mode2->HS400MODE2.
- * Dropped the updation of clk handling as it is taken care in
-   previous patches.
- * HS400ES support is enabled based on of_data.
- * Fixed the space in HS400ES comment block.
-
+ * Retained the tag as the changes are trivial.
 v17->v18:
- * Collected tag
- * Merged patch #4 and #5 and updated commit description
- * Annotated the empty sentinel entries in the OF match tables with a
-   "Sentinel." comment for clarity.
- * Retained the tag as it is a trivial cleanup.
- * New patches drop struct renesas_sdhi_hw_info, instead using
-   renesas_sdhi_of_data and tmio_mmc_data.
- * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
-   will send later.
+ * No change.
 v1->v17:
- * Collected tag for binding patch.
- * Resending the series as there is an issue with patch threading from
-   patch #14.
+ * Collected tag.
+---
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 +++++++++++++-----
+ 1 file changed, 81 insertions(+), 27 deletions(-)
 
-[1]
-Logs:
-HS200:(With internal divider)
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    9 (mmc HS200)
-signal voltage: 1 (1.80 V)
-driver type:    1 (driver type A)
-
-SDR104:(With internal divider)
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      2 (4 bits)
-timing spec:    6 (sd uhs SDR104)
-signal voltage: 1 (1.80 V)
-driver type:    0 (driver type B)
-
-HS400: (Without internal divider)
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    10 (mmc HS400)
-signal voltage: 1 (1.80 V)
-driver type:    1 (driver type A)
-
-HS400 ES: (Without internal divider)
-root@smarc-rzg3l:~# cat /proc/cmdline
-rw rootwait earlycon root=/dev/mmcblk0p2 net.ifnames=0
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    10 (mmc HS400 enhanced strobe)
-signal voltage: 1 (1.80 V)
-driver type:    1 (driver type A)
-
-s2ram:
-root@smarc-rzg3l:~# echo mem > /sys/power/state
-[   72.838238] PM: suspend entry (deep)
-[   72.864225] Filesystems sync: 0.021 seconds
-[   72.875166] Freezing user space processes
-[   72.883030] Freezing user space processes completed (elapsed 0.003 seconds)
-[   72.890237] OOM killer disabled.
-[   72.893612] Freezing remaining freezable tasks
-[   72.900038] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[   72.907677] printk: Suspending console(s) (use no_console_suspend to debug)
-NOTICE:  BL2: v2.10.5(release):2.10.5/rzg3l_1.0.1_rc2
-NOTICE:  BL2: Built : 11:18:41, Jul 15 2026
-INFO:    BL2: Doing platform setup
-INFO:    Configuring TrustZone Controller
-INFO:    Total 3 regions set.
-INFO:    Configuring TrustZone Controller
-INFO:    Total 1 regions set.
-INFO:    Configuring TrustZone Controller
-INFO:    Total 1 regions set.
-INFO:    eMMC boot from partition 1
-INFO:    Loading image id=39 at address 0x44428
-INFO:    emmcdrv_block_len: len: 0x00001000
-INFO:    Load dst=0x44428 src=(p:1)0x260000(4864) len=0x1000(8)
-INFO:    Image id=39 loaded: 0x44428 - 0x45428
-INFO:    DDR: Retention Exit (Rev. 02.05)
-NOTICE:  BL2: SYS_LSI_MODE: 0x12051
-NOTICE:  BL2: SYS_LSI_DEVID: 0x87d9447
-INFO:    BL2: Skip loading image id 3
-INFO:    BL2: Skip loading image id 5
-NOTICE:  BL2: Booting BL31
-INFO:    Entry point address = 0x44000000
-INFO:    SPSR = 0x3cd
-[   72.951851] renesas-gbeth 11c30000.ethernet eth0: Link is Down
-[   72.955613] Disabling non-boot CPUs ...
-[   72.957320] psci: CPU3 killed (polled 4 ms)
-[   72.961085] psci: CPU2 killed (polled 0 ms)
-[   72.964897] psci: CPU1 killed (polled 0 ms)
-[   72.966874] Enabling non-boot CPUs ...
-[   72.967144] Detected VIPT I-cache on CPU1
-[   72.967202] GICv3: CPU1: found redistributor 100 region 0:0x0000000012460000
-[   72.967250] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
-[   72.968284] CPU1 is up
-[   72.968428] Detected VIPT I-cache on CPU2
-[   72.968462] GICv3: CPU2: found redistributor 200 region 0:0x0000000012480000
-[   72.968493] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
-[   72.969465] CPU2 is up
-[   72.969633] Detected VIPT I-cache on CPU3
-[   72.969673] GICv3: CPU3: found redistributor 300 region 0:0x00000000124a0000
-[   72.969714] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
-[   72.970760] CPU3 is up
-[   72.989187] dwmac4: Master AXI performs fixed burst length
-[   72.989231] renesas-gbeth 11c30000.ethernet eth0: No Safety Features support found
-[   72.989275] renesas-gbeth 11c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
-[   72.990364] renesas-gbeth 11c30000.ethernet eth0: configuring for phy/rgmii-id link mode
-[   73.005175] dwmac4: Master AXI performs fixed burst length
-[   73.005205] renesas-gbeth 11c40000.ethernet eth1: No Safety Features support found
-[   73.005236] renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advanced Timestamp supported
-[   73.006314] renesas-gbeth 11c40000.ethernet eth1: configuring for phy/rgmii-id link mode
-[   73.177702] OOM killer enabled.
-[   73.180837] Restarting tasks: Starting
-[   73.186007] Restarting tasks: Done
-[   73.189570] random: crng reseeded on system resumption
-[   73.195001] PM: suspend exit
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios[   75.705532] renesas-gbeth 11c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    10 (mmc HS400 enhanced strobe)
-signal voltage: 1 (1.80 V)
-driver type:    1 (driver type A)
-root@smarc-rzg3l:~#
-
-s2idle:
-root@smarc-rzg3l:~# echo freeze > /sys/power/state
-[   97.634564] PM: suspend entry (s2idle)
-[   97.655343] Filesystems sync: 0.016 seconds
-[   97.662352] Freezing user space processes
-[   97.666531] Freezing user space processes completed (elapsed 0.004 seconds)
-[   97.676132] OOM killer disabled.
-[   97.679743] Freezing remaining freezable tasks
-[   97.687107] Freezing remaining freezable tasks completed (elapsed 0.002 seconds)
-[   97.695071] printk: Suspending console(s) (use no_console_suspend to debug)
-[   97.744129] renesas-gbeth 11c30000.ethernet eth0: Link is Down
-[  100.135760] dwmac4: Master AXI performs fixed burst length
-[  100.135805] renesas-gbeth 11c30000.ethernet eth0: No Safety Features support found
-[  100.135848] renesas-gbeth 11c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
-[  100.137950] renesas-gbeth 11c30000.ethernet eth0: configuring for phy/rgmii-id link mode
-[  100.154860] dwmac4: Master AXI performs fixed burst length
-[  100.154890] renesas-gbeth 11c40000.ethernet eth1: No Safety Features support found
-[  100.154919] renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advanced Timestamp supported
-[  100.154984] renesas-gbeth 11c40000.ethernet eth1: configuring for phy/rgmii-id link mode
-[  100.246688] OOM killer enabled.
-[  100.249851] Restarting tasks: Starting
-[  100.254395] Restarting tasks: Done
-[  100.258012] random: crng reseeded on system resumption
-[  100.263468] PM: suspend exit
-root@smarc-rzg3l:~#
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios[  102.690106] renesas-gbeth 11c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-
-clock:          150000000 Hz
-actual clock:   150000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    10 (mmc HS400 enhanced strobe)
-signal voltage: 1 (1.80 V)
-driver type:    1 (driver type A)
-root@smarc-rzg3l:~#
-
-SDIO testing:
-root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
-clock:          100000000 Hz
-actual clock:   100000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      2 (4 bits)
-timing spec:    5 (sd uhs SDR50)
-signal voltage: 1 (1.80 V)
-driver type:    0 (driver type B)
-root@smarc-rzg3l:~#
-root@smarc-rzg3l:~# ping google.com
-PING google.com (142.250.151.139): 56 data bytes
-64 bytes from 142.250.151.139: seq=0 ttl=112 time=7.679 ms
-64 bytes from 142.250.151.139: seq=1 ttl=112 time=12.283 ms
-^C
-google.com ping statistic
-packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max = 7.679/9.981/12.283 ms
-
-Biju Das (14):
-  dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
-  mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
-  mmc: renesas_sdhi: Add clk_mask field to support flexible clock
-    divider widths
-  mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
-    ranges
-  mmc: renesas_sdhi: Make clock divider mask configurable
-  mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
-  mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
-  mmc: renesas_sdhi: Add optional axis/axim reset controls
-  mmc: renesas_sdhi: Add write32_hook for CTL_SD_CARD_CLK_CTL register
-    writes
-  mmc: renesas_sdhi: Add RZ/G3L SDHI support
-  mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
-  mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
-  mmc: renesas_sdhi: Add RZ/G3L HS400 support
-  mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
-
- .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 ++++--
- drivers/mmc/host/renesas_sdhi.h               |  12 +-
- drivers/mmc/host/renesas_sdhi_core.c          | 337 +++++++++++++++---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  78 +++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  16 +-
- drivers/mmc/host/tmio_mmc.h                   |   7 +
- drivers/mmc/host/tmio_mmc_core.c              |  13 +-
- include/linux/platform_data/tmio.h            |  19 +
- 8 files changed, 499 insertions(+), 91 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 4d66966ce290..6d229a41a4b5 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -18,6 +18,7 @@ properties:
+           - renesas,sdhi-r7s9210 # SH-Mobile AG5
+           - renesas,sdhi-r8a73a4 # R-Mobile APE6
+           - renesas,sdhi-r8a7740 # R-Mobile A1
++          - renesas,sdhi-r9a08g046 # RZ/G3L
+           - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+           - renesas,sdhi-sh73a0  # R-Mobile APE6
+       - items:
+@@ -86,11 +87,11 @@ properties:
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
+ 
+   clock-names:
+     minItems: 1
+-    maxItems: 4
++    maxItems: 5
+ 
+   dmas:
+     minItems: 4
+@@ -116,7 +117,12 @@ properties:
+     maxItems: 1
+ 
+   resets:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
++
++  reset-names:
++    minItems: 1
++    maxItems: 3
+ 
+   pinctrl-0:
+     minItems: 1
+@@ -155,60 +161,106 @@ allOf:
+         properties:
+           compatible:
+             contains:
+-              enum:
+-                - renesas,sdhi-r9a09g057
+-                - renesas,rzg2l-sdhi
++              const: renesas,sdhi-r9a08g046
+       then:
+         properties:
+           clocks:
+             items:
+               - description: IMCLK, SDHI channel main clock1.
+               - description: CLK_HS, SDHI channel High speed clock which operates
+-                             4 times that of SDHI channel main clock1.
++                             2 times that of SDHI channel main clock1.
+               - description: IMCLK2, SDHI channel main clock2. When this clock is
+                              turned off, external SD card detection cannot be
+                              detected.
+-              - description: ACLK, SDHI channel bus clock.
++              - description: IACLKM, SDHI channel AXI master bus clock.
++              - description: IACLKS, SDHI channel AXI slave bus clock.
+           clock-names:
+             items:
+               - const: core
+               - const: clkh
+               - const: cd
+-              - const: aclk
++              - const: aclkm
++              - const: aclks
++          resets:
++            items:
++              - description: rst, Core reset.
++              - description: axim, SDHI channel AXI master bus reset.
++              - description: axis, SDHI channel AXI slave bus reset.
++          reset-names:
++            items:
++              - const: rst
++              - const: axim
++              - const: axis
+         required:
+           - clock-names
+           - resets
++          - reset-names
+       else:
++        properties:
++          resets:
++            maxItems: 1
++          reset-names:
++            maxItems: 1
+         if:
+           properties:
+             compatible:
+               contains:
+                 enum:
+-                  - renesas,rcar-gen2-sdhi
+-                  - renesas,rcar-gen3-sdhi
+-                  - renesas,rcar-gen4-sdhi
++                  - renesas,sdhi-r9a09g057
++                  - renesas,rzg2l-sdhi
+         then:
+           properties:
+             clocks:
+-              minItems: 1
+-              maxItems: 3
+-            clock-names:
+-              minItems: 1
+-              uniqueItems: true
+               items:
+-                - const: core
+-                - enum: [ clkh, cd ]
+-                - const: cd
+-        else:
+-          properties:
+-            clocks:
+-              minItems: 1
+-              maxItems: 2
++                - description: IMCLK, SDHI channel main clock1.
++                - description: CLK_HS, SDHI channel High speed clock which operates
++                               4 times that of SDHI channel main clock1.
++                - description: IMCLK2, SDHI channel main clock2. When this clock is
++                               turned off, external SD card detection cannot be
++                               detected.
++                - description: ACLK, SDHI channel bus clock.
+             clock-names:
+-              minItems: 1
+               items:
+                 - const: core
++                - const: clkh
+                 - const: cd
++                - const: aclk
++            resets:
++              maxItems: 1
++          required:
++            - clock-names
++            - resets
++        else:
++          if:
++            properties:
++              compatible:
++                contains:
++                  enum:
++                    - renesas,rcar-gen2-sdhi
++                    - renesas,rcar-gen3-sdhi
++                    - renesas,rcar-gen4-sdhi
++          then:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 3
++              clock-names:
++                minItems: 1
++                uniqueItems: true
++                items:
++                  - const: core
++                  - enum: [ clkh, cd ]
++                  - const: cd
++          else:
++            properties:
++              clocks:
++                minItems: 1
++                maxItems: 2
++              clock-names:
++                minItems: 1
++                items:
++                  - const: core
++                  - const: cd
+ 
+   - if:
+       properties:
+@@ -247,7 +299,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: renesas,sdhi-r9a09g057
++            enum:
++              - renesas,sdhi-r9a08g046
++              - renesas,sdhi-r9a09g057
+     then:
+       properties:
+         vqmmc-regulator:
 -- 
 2.43.0
 
