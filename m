@@ -1,69 +1,68 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C572641B8F7
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 11:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982EF416103
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 11:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785411136; cv=none; b=rw+sW0iqJimuN5OQt/GON1hZH5xHFDbY/lGUC53AdTGXpTIFKhQSX2/ccxwiZppA/qw+jXTQKWgB76hr5SBgwTY8MkJR79F18z27OykY+NQefFuCztKUkKle55MzDJZpbryOL8oaujXH1WHBbwXF5+f9RjirjO3gE84D3YwCcvc=
+	t=1785411137; cv=none; b=FnIKbfJ05Al8H4hjNwxtByXPsFPksSztICdFPWUUV44GMM4TduSRKTlVPS737/UJ7oevEp6reRK5H/TpmDPFYJ1li1LT5Ms6Ivd/VZ7ZnALHWlPxvMqz53CEt10iEmGDrR6lXTewvFHtmlebs4wMJpHsYmoNdMjIXy1/jHERwkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785411136; c=relaxed/simple;
-	bh=/xNA7EXIhSCo9lgOB39JI/P9JaSZ0VgwLpK+Ez57y10=;
+	s=arc-20240116; t=1785411137; c=relaxed/simple;
+	bh=HTajqE9xViNaYOICQgF7NmLo4d/h4of+vEamjcy1SP0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ln0vhVzri3F6154Lims+dkegnSwdDXkewccQFfiLxOs8vnQNbb2/6x5qPQC3jYixLgAhthD1dH13RWBmhycbpSogWW3VkxJT9M29bJjbQsjXUic+/ZrGAsrQtRLoxAR9Lk9bz6Jie7gJUBM332DImkR24d8SuLzkUQ3/TOTuyZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcuqIyuA; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=BQOp3mgkJakEpPqRAYmzKZCTOmzyRKURNI5/rDbuVsq5yS5AMTEZWZJUtoQR8qJ1vIj7EiRmFpf0hupGj1g52m72AJcNGCkJ26jE89cspMQ6XHCL6idwjiTSw7QcjEyV01JhpQ514cjjGmeQydidHi8gZgtb7xzsSjzwTrRWWig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH/0JPao; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcuqIyuA"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-47de0093c42so1532570f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 04:32:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH/0JPao"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4956242332dso17333595e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 04:32:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785411132; x=1786015932; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785411133; x=1786015933; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=NRvcrtcqnhGgSFkrIS2JSbPQJdicpHVDNdLVJkGZfMY=;
-        b=XcuqIyuAMmNsb12gz7jPU637SXlZhOx8OQVNkPJzzCCeF51HR0Y4QecSh+zFT1o8SD
-         umAec9zg8CjeczB5Dk+0uo8wP6PyzUNMnCS61wh03fooWA756zSkwxV7s61PugaW+ocB
-         pvHEuRo6fUcQ9jrwVE7SZVlm/XmVonIGWWZjFpPU4uhZ5gUL3pYF9M26qyCr4pSw0kt1
-         /sSS7OXBm8mCGYfc5HYFNtkBG7uuoOCY6vAqrIKFvx9WGFmVi7SdlDbrofGRu0/ykgFY
-         zW33vmPvSyiTnJCW+YHHCkdhbCy+H8SdAtpcy8/4HYi4SC+drrf2afoRaJbVMPelOGWH
-         W6yg==
+        bh=YtZcN7GpDkBg195cOKfiOZQx7Z7+r/eMmI5spAnLmcE=;
+        b=mH/0JPao2NQjKNQt9vAg0sV/ibQdgJ3/KymSewZJ3tm1h71FPhwZZh51md4MdvNsUw
+         CZA2TgqgdgokEpJbA4j7SKMSPwM1zS2X5XGLZJNU6Pd5dMG4vxmAzG0ZPMZBbNk5Ovmh
+         CQrpSU17rw/1Ih2cXQ/JU+jOsyVbjLvjXoYXAw5IFNx7KYMJuu1MoO3Zgw5z7YoP1TRT
+         gtFnPIyCp7VYygaD5Hemxg1SlRjoi7bRiMerKxVoYVYC7vx+aCH+pZMZBbPXimL6fjNY
+         WHh6TA+/vBxUQRg6PEJmLrKSp/BvjYLrn7VWm2npik48MQ+UGoMqtGxX/6eXw2VhPVS8
+         wqTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785411132; x=1786015932;
+        d=1e100.net; s=20251104; t=1785411133; x=1786015933;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=NRvcrtcqnhGgSFkrIS2JSbPQJdicpHVDNdLVJkGZfMY=;
-        b=jxbEyZPtderuNjx4yykKn3iOtLqi+L7Z83tu2AsBOv/vrAxTVeMzzQ4LY2r4h/pH0a
-         NEVbjzQsvJqhRw/90sbHGMreWNi/UuGSb9Nu3rOF9FnvKnO0UpgezoSYz5FqZ7Z8t7c/
-         i4MQmVpd/SatktCAAynzX1SblwHaGn36auMLTIOOI/cp/Lj6MawbH7pAYgwx5+Srsla7
-         qHGNyG2i+jgs9ki8yS8+1v7Vnnp4KDAMMyi5noQ3aD5bF52hAZev5GFR+/+4Qekr2sA5
-         ZcmsPfGJE82xhddqxkoxmpbwJzTavu6V9O/9wIF94lARwNRCSEJcTqaQPbOoF60V3M6i
-         /d4w==
-X-Forwarded-Encrypted: i=1; AHgh+RqOKgP2OOMf8MTvB+adrXXlU+AUO8DuJCQPnpjT1U311Yc2gjq7kgQZeIFYM+p532xZXgQP8ZzLJRE5GDTopz+7eA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAc5DV1Xv/8leqnCitanZfkdY7g4Kqu+kJx/Vg/kQhi/fLo8G5
-	hqu7eR7FKzpGZB/CznmUrsW05RWX4hAJL8Dh1n7VBdr7rY60doh8cgKK45Sl2g==
-X-Gm-Gg: AR+sD11FfBRp3uKAhG0Hnc42KGz//bgrC8YAOZIVOTiQjFEAfolEdWmpCwihL9gArLO
-	ETL91zB2+kLeOvHEYI4Do9BVa6VBjJ4SaoXVr4W638rcNFBwGxwpPyprCKHJMLNF1lcKLHfOGEh
-	7fQea3STo4iu2hcIlZsXcbqMegPHCo7grio0gQPnnjDnnqShT8gtROGvW4IT3e6ORGEp2nheMZD
-	Jxijr1J5EvJC+2iCa5SH3lAA3T92EvVZUxFyyZWJ0lcX41hkVc+4a/VJpxv4uAVFcR4PKtbm0io
-	bqiM/Q/1Pmg6KiNWqhfh4dU31qu0LWvqPGDIvJAnTqBbNK7J94THYIHI89H99tlGpWa4N0hZV3g
-	Tkg54JCvjmC2+0qa4oLy1WdaBLJLJtUo4zRlsqunEnpp9c2pwYnUXJdQqFhQ/0Qq9ehgdAJ/lJC
-	h9OFLwDpmfPdiFCbgGtgtSydDs04cu6ZjTOJkMYRh3oTMJi1FQaccLQRCWKfaksbFQO56QoEp2M
-	Vz8TVNXhGlfRw==
-X-Received: by 2002:a05:6000:2308:b0:47f:c648:e265 with SMTP id ffacd0b85a97d-47fc81f53afmr2967908f8f.17.1785411131644;
-        Thu, 30 Jul 2026 04:32:11 -0700 (PDT)
+        bh=YtZcN7GpDkBg195cOKfiOZQx7Z7+r/eMmI5spAnLmcE=;
+        b=k+hwlldIobBnlO72Yg1j/r6MEVQV9SaO1xPaAjPcfPgDfasGyCwjctrqMm54TXO6V9
+         3LxZrOqUlmXqplqMx80+27oQd+LbJEuUDLfPTDSbRb2GtxA5oHRWqYjkXxcWSo8I+Go8
+         U2j3oRl9qyUTChQWfKiSGO0gRJs4CJytoy4NTAX6jWZdKcERyiT0i7ASKRgq74v21VhI
+         CfRPFadFETJVm9e6ga4noRzzRDYsv8/k4GJIDzG0vLj2q8Ny9lkKDgehLGpz/rDl/yr+
+         vql6K2osby6FBf+rE2AvshqSFxC8rQa22kkNu6Wtag+ZPW2m81Jb0g9W1DLxgIY1VA54
+         r2Jw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpj93VLdx+5BOeOURvujKmk0RzB2txqoqMuUzt0/TyHNefeJZVRH4zPA8Wxg+hd+Mlr8sC6CU6hx01JA2rWlfRF+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVia9UGVWA+eFrBiNi9XxYfhW8r1bwnXg6F5NQ8F9DKfNCgMY9
+	Yn+x8A2QnaXcdzrMDukzof07d7bcClotuNz7+fZH7qdgkFhacP93W5/F
+X-Gm-Gg: AR+sD10li3Lxylrl9A8MdPH/closzAx82xVZWo4RRTINp436KUzLPMkVJdODCsY7bI8
+	EJYJqRGC80Cnslfc11lIEZI3XCq/J8jq2VpcSXsM6EkgI/7XNYkxEWBZRVdi0d5egHsvBty7Y/z
+	xqEBRjkgUE2Q0/2NZ5mAP2w+aD13kl0hlUZKsBTSuFYJcqk3kp82HvXSWm5NRz9PlKiwqjSILor
+	T6xwTNO/vozCK2o23N4VMYogYAglCTWdL/wDcj3GiXW9Af353pM6mPx7SpOLEFLM3Q92Tc0eNEo
+	CAMB4xmijhMALIiDyq9T0gev/qz9gOFzwTGwNXSYoOzvQ9B4WBt4vkbaYYid+fsfbGbTIzl43FK
+	Trr79mdctHKO5v5NbluaWj16ufKOZH52Ryj5YeBcFo7WW61oE1gtFLLgrZGdlhV//S0SdOGC5qI
+	i81pAPLyGNTKDVebNKki16dYaU3jDJ87Dksx1+5k1wPNwGedLtThnXvTqLCH3SfBjrSK9iDqE/5
+	CDTRrNmDVKcVA==
+X-Received: by 2002:a05:600c:a0d:b0:492:6f6f:fa42 with SMTP id 5b1f17b1804b1-49800ecf287mr28802595e9.37.1785411132466;
+        Thu, 30 Jul 2026 04:32:12 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:eabf:a623:1e7d:c359])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fc89351e3sm5737947f8f.29.2026.07.30.04.32.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fc89351e3sm5737947f8f.29.2026.07.30.04.32.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 04:32:11 -0700 (PDT)
+        Thu, 30 Jul 2026 04:32:12 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
+	Ulf Hansson <ulfh@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
@@ -71,9 +70,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v23 08/14] mmc: renesas_sdhi: Add optional axis/axim reset controls
-Date: Thu, 30 Jul 2026 12:31:46 +0100
-Message-ID: <20260730113200.36456-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v23 09/14] mmc: renesas_sdhi: Add write32_hook for CTL_SD_CARD_CLK_CTL register writes
+Date: Thu, 30 Jul 2026 12:31:47 +0100
+Message-ID: <20260730113200.36456-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
 References: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
@@ -87,126 +86,77 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The RZ/G3L SoC has axis/axim resets compared to other SoCs.
+Add a write32_hook, analogous to the existing write16_hook, so that
+sd_ctrl_write32() can wait for the SD bus to become idle before
+certain 32-bit register writes.
 
-Add two optional reset controls, rstc_axis and rstc_axim, to the
-renesas_sdhi struct. Both are acquired at probe time using
-devm_reset_control_get_optional_exclusive_deasserted() with the
-"axis" and "axim" reset names respectively.
-
-Include them alongside the existing rstc in bulk reset/assert/deassert
-operations: triggered together in renesas_sdhi_reset(), and managed
-via reset_control_bulk_assert/deassert() in the suspend and resume
-paths, replacing the previous single-control calls.
-
-Being optional, these resets are a no-op on platforms that do not
-provide them, so existing behaviour is preserved.
+renesas_sdhi_write32_hook() checks whether the target register is
+CTL_SD_CARD_CLK_CTL and, if so, waits for TMIO_STAT_SCLKDIVEN via
+renesas_sdhi_wait_idle() before the write proceeds. Other registers
+are unaffected. As with write16_hook, the write is skipped if the
+hook returns a non-zero error.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v22->v23:
- * No change.
-v21->v22:
- * No change.
-v20->v21:
- * No change.
-v19->v20:
- * Fixed the ordering of resets in suspend/resume paths.
-V18->v19:
- * No change.
-v17->v18:
- * Fixed ordering of reset in renesas_sdhi_reset().
-v1->v17:
- * No change.
+v23:
+ * New patch.
 ---
- drivers/mmc/host/renesas_sdhi.h      |  2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 26 +++++++++++++++++++++++---
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 9 +++++++++
+ drivers/mmc/host/tmio_mmc.h          | 7 +++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 9c72eb78e31e..3b140cd4ee0c 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -101,6 +101,8 @@ struct renesas_sdhi {
- 	unsigned int tap_set;
- 
- 	struct reset_control *rstc;
-+	struct reset_control *rstc_axis;
-+	struct reset_control *rstc_axim;
- 	struct tmio_mmc_host *host;
- 	struct regulator_dev *rdev;
- };
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 655f0920c015..ebbce7f010be 100644
+index ebbce7f010be..ba109a15b47b 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -641,6 +641,8 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
- 				sd_status = sd_ctrl_read32(host, CTL_SD_STATUS);
- 
- 			reset_control_reset(priv->rstc);
-+			reset_control_reset(priv->rstc_axim);
-+			reset_control_reset(priv->rstc_axis);
- 			/* Unknown why but without polling reset status, it will hang */
- 			read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
- 					  false, priv->rstc);
-@@ -1155,6 +1157,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (IS_ERR(priv->rstc))
- 		return PTR_ERR(priv->rstc);
- 
-+	priv->rstc_axim = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, "axim");
-+	if (IS_ERR(priv->rstc_axim))
-+		return PTR_ERR(priv->rstc_axim);
-+
-+	priv->rstc_axis = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, "axis");
-+	if (IS_ERR(priv->rstc_axis))
-+		return PTR_ERR(priv->rstc_axis);
-+
- 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
- 	if (!IS_ERR(priv->pinctrl)) {
- 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
-@@ -1385,13 +1395,18 @@ int renesas_sdhi_suspend(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = priv->rstc_axis },
-+		{ .rstc = priv->rstc_axim },
-+		{ .rstc = priv->rstc },
-+	};
- 	int ret;
- 
- 	ret = pm_runtime_force_suspend(dev);
- 	if (ret)
- 		return ret;
- 
--	ret = reset_control_assert(priv->rstc);
-+	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
- 	if (ret)
- 		pm_runtime_force_resume(dev);
- 
-@@ -1403,15 +1418,20 @@ int renesas_sdhi_resume(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = priv->rstc_axis },
-+		{ .rstc = priv->rstc_axim },
-+		{ .rstc = priv->rstc },
-+	};
- 	int ret;
- 
--	ret = reset_control_deassert(priv->rstc);
-+	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
- 	if (ret)
- 		return ret;
- 
- 	ret = pm_runtime_force_resume(dev);
- 	if (ret)
--		reset_control_assert(priv->rstc);
-+		reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
- 
- 	return ret;
+@@ -969,6 +969,14 @@ static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
+ 	return 0;
  }
+ 
++static int renesas_sdhi_write32_hook(struct tmio_mmc_host *host, int addr)
++{
++	if (addr == CTL_SD_CARD_CLK_CTL)
++		return renesas_sdhi_wait_idle(host, TMIO_STAT_SCLKDIVEN);
++
++	return 0;
++}
++
+ static int renesas_sdhi_multi_io_quirk(struct mmc_card *card,
+ 				       unsigned int direction, int blk_size)
+ {
+@@ -1203,6 +1211,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	host->write16_hook = renesas_sdhi_write16_hook;
++	host->write32_hook = renesas_sdhi_write32_hook;
+ 	host->clk_enable = renesas_sdhi_clk_enable;
+ 	host->clk_disable = renesas_sdhi_clk_disable;
+ 	host->set_clock = renesas_sdhi_set_clock;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index b9de03325c58..8d6d65a51be7 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -190,6 +190,7 @@ struct tmio_mmc_host {
+ 	int (*multi_io_quirk)(struct mmc_card *card,
+ 			      unsigned int direction, int blk_size);
+ 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
++	int (*write32_hook)(struct tmio_mmc_host *host, int addr);
+ 	void (*reset)(struct tmio_mmc_host *host, bool preserve);
+ 	bool (*check_retune)(struct tmio_mmc_host *host, struct mmc_request *mrq);
+ 	void (*fixup_request)(struct tmio_mmc_host *host, struct mmc_request *mrq);
+@@ -284,6 +285,12 @@ static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
+ 
+ static inline void sd_ctrl_write32(struct tmio_mmc_host *host, int addr, u32 val)
+ {
++	/* If there is a hook and it returns non-zero then there
++	 * is an error and the write should be skipped
++	 */
++	if (host->write32_hook && host->write32_hook(host, addr))
++		return;
++
+ 	iowrite32(val, host->ctl + (addr << host->bus_shift));
+ }
+ 
 -- 
 2.43.0
 
