@@ -1,73 +1,73 @@
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C83443E4AC;
-	Thu, 30 Jul 2026 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B85435A9D;
+	Thu, 30 Jul 2026 17:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785431617; cv=none; b=XPrT0FYakTuTAp2QAZuZY4tKKPqf0q/KOaoujBadQCPwE24uLP/y7Qa/dNyn8C1d3iWOo14SrsFNP4VPEql+0yfoy5aJnN2vQwDXaJqCPmfLcu2jzuKvpTIGLP4o7RTpta8dLi/AIPhWWxPjJy2pDf34PoPDcuY0MnUZJ8VXKYU=
+	t=1785431617; cv=none; b=NbCExkdlUh2RulWwJfMa/4AHReK6QlgKfkgPaBvTFEq0nb/oUtYLbn9mTfMfwYuVNTMxFY1HNr6+4gCpEc9BzI9VkktAnzhSaCoxqFjri5acNrQw15z9Dxfjwal42N7qNepaT7t55f7/ju/Q/I7VR4Y4M15Y9WES4t0GtD/S3kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785431617; c=relaxed/simple;
-	bh=tF9JPAwVTzcDnEBmsOKzWa6C8Afsw2RrGKJ/EyZ60DQ=;
+	bh=96BXf4Pv/kVHveUTp+aWLfXKP5a48IvNbVnlVnEB1A4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pg4Fjs/3tOxwvtMMzUnkyhkbp5Smi5/KHCKbd/DFBkqcz7xZDs6z3whLEGW9XBvM34Rd8AN2Mhfy3Igy+Cvqut90msRUD+WSrcdEKrt89DKvwIFRM6Q8lNSY1zxp+LAuRsWohk8tUI7pUXWIMkTxK1r1lbjZh18kQFpp8aap0e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=lXzNZPin; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C6ddLNkS; arc=none smtp.client-ip=103.168.172.147
+	 MIME-Version:Content-Type; b=LO8FvEvlo6MvVe7l7tI8YRNr9ngXqm6kFZ1FZfNv3bJclNuxUAUPkMyPAMT7mqIcHHXzDuGdknlbkC2VRNO1ZuKHh7am9+MnzsBO08svKEPGbOY509ipYIVDhUaKScZg/zeJ0abopSCgZVHIByKJQY5P96wz9n0bNsD0bbFNyXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=4seIBOlH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gWmQKnkc; arc=none smtp.client-ip=103.168.172.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="lXzNZPin";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C6ddLNkS"
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 08181EC01C0;
-	Thu, 30 Jul 2026 13:13:29 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Thu, 30 Jul 2026 13:13:29 -0400
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="4seIBOlH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gWmQKnkc"
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3C423140011B;
+	Thu, 30 Jul 2026 13:13:31 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Thu, 30 Jul 2026 13:13:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1785431609;
-	 x=1785518009; bh=xZIvkKoHxfgr9Jno0TGIhBjlWoDHulIkKZzB5FBfZJ8=; b=
-	lXzNZPinh8kGRzLh5ISZI0iO4crk8D4XF+VwRF6Smt54plbqfUoNFkRtXwAq4k0I
-	vGCPTTN+QuaTK8ehSFWcuJy9g4gV1yNPYvbpRpD8bAhb9NZ+MAMO0F45Z44wUwxO
-	hiW3I+ooihf3g5z+ueXySO97gl5oyge7QZxc+2v95jAy3feInUPb/ZkPawPDLY4F
-	4vhDOKxBrHYQSY1IvrJ9/hgC2cQwZtmGHhi36L3qavSvw/OFgD2BOxA/82DYLZKK
-	3Ytkowf2KpralS/lhwOlR+fFEbxkfBHm1r+itLDpGyanEhg08WL2T7Np4QHeSkPz
-	SHIGI2OdlXekmo0u6Z+fAA==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1785431611;
+	 x=1785518011; bh=qFVl3t8Au+yEUaMhkq44FDPNQYRW02T/EXa3KaWafXc=; b=
+	4seIBOlHtsldWFRi2L8/OkipvXM5L3/OY9D08dCUN2uxS8PSJMPuv8S539eH1lAh
+	Q68pCbNcH2V+vfI59CBAV85Bf2uKTiGj2sA0K8x8pmnKy4j4ANMCBkMeg6xP3+aD
+	PpgEkv44xxWSi+hXZecVfNH2Y5q/ZO7kFJTpFfFcXXYoVMYzPXrNZVlxkqFadhqI
+	ACn5wws+ZwYPX+S7ourU8USlPSVrP0Hyg/JAoLJRe3cX+PetyU2rPh/PWLnz+d9I
+	rKxRUGfKkecbJNR5WXcwGW64478f1WncAcclpD/DLHyAAbOJDOJBZtK8aVBVS2ag
+	E9mFM9mg1QWAKIQFHZGI6A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1785431609; x=
-	1785518009; bh=xZIvkKoHxfgr9Jno0TGIhBjlWoDHulIkKZzB5FBfZJ8=; b=C
-	6ddLNkSnlr4Ras3t5EEKYTL/Lo+EfhGzAoWGrWdUbnbZW8PfAC9QaUr8xTuIb+YU
-	ExQmoiy6bz9RAGi0UsnxGvpob5yy+F55Ow5wGqIgvbZdKOS26JtBh7fYmv6RQZbz
-	ejMhR8rcc0H5BQ7wtSmrT1ZAbvgjIkWA26NXV22bsWBRxsTVcxvTYvEx74lC1WD0
-	jRRfTY/wXYj3JOyn7GsuFYTsUYv8Rk9Kszr3gZWS2RjIFUYDuSOcDKMZKnrISSse
-	5TJ4i/4QL0rC6jmhN3b7yfFISPw9gZh4bJnufnVVzQXqvlMrwOTuwVrzFZyZHsnI
-	z/v5ZqqaGPYFEG+G7pIvg==
-X-ME-Sender: <xms:OIZram9rBHHPzaw7nAo7Tpuj1z-LSaEvt1iAFn0iikNIsqkzz2MVkg>
-    <xme:OIZrasvvvTyP1QjMS0YTXeJqpovHSacymRR10kyoPc-FMy4hnipaOx0sobZ2WeQM-
-    Afa3VhFJGpNxscpSr_54MpHwj72sNv-YS496_ahhrm_xvupnEcmUZ2w>
-X-ME-Received: <xmr:OIZram3kMy9cHmxZpwkrxxnMDvNGPYlVN0cH2EyqHFW0cz2Wn6BrT568CXOPz5og9RHefQpJScTcSQi2YfP93_fUUuXCJSE>
-X-ME-Proxy-Cause: dmFkZTF07znR1cOvOBQn+EZER5ns3tmiMy5NUHQvdd5Z0fNrdMM9h7MbP7+GksfPtS7/1U
-    pbvEAtzOYwe/VUfXgLXiTlfU5t/R1iCU6ZJEOsty3ubB5ehJqcum9OE7oGRRQDL9xfDRIK
-    IJPzjqxA4ZdkREQiPshBlbxzbL60DrO4L2/LXxHcX43hG02n/xFutuZwyrFoUVQAOk2lSb
-    UbuqpyeNpEtK89wcsLj4NzSX6CKqzD/RVhTRJVxLQiHW/zEDjblEQ73f+/OqAP/iQrvQhs
-    4FsCqFhhBY6AH14Nv6+K2625maneF7QxlMpmX5gX9dknU7Q7/gZ7JLfYbad0TmjRWiCjGa
-    xBabwcGqg1D6UZvtBFc7FMpTjTuUAnIpIkRXq6Vx3ydokkfXskzns9EEepTB9uDmc45Gnf
-    DrE2XUEZ6wDkoIHgerRTAfcpE1UnoooSsZtOsTXmiffosXJs6JfEuXXi35LYJckQTGxCKN
-    Z14qr4D8MUb7VvjbtqqKSq34CBFtWDKsEv38GlComcgL95hkZRkVKfrfFj9jrqDPE2jNgC
-    nkF/i6ZEE+3gQgsXIxL8sdL2MFIkOYrz0eXec6N9Gl8P3kXRwgNqiwHSZAx6M47B7d/kry
-    QGJDEuMETc2oEN2KiiGkHukgLXFD04jV+uhKspRaRo7i2q1rNU5xoDQo28vA
-X-ME-Proxy: <xmx:OIZrahRBQJUcWEBqF1AQcQGGq0CMY_yA3wr9RoHH7Mqt9MYMiPzKeg>
-    <xmx:OIZraqdvvibF1zjEpsjaCWZGCQnbuofBShRrUMeF22VYNavqw7z2qw>
-    <xmx:OIZraica0rlr9lpBsi_MzfTwD1is8yXCESPo59wxe_1vlGZ51CN0pA>
-    <xmx:OIZrak1wNscNk0wNHNDGRFcw4atR0SMjuQVWX6tGXTbi3zpEIdGy3Q>
-    <xmx:OYZrappme3PURP4hhX7x5RAC0btaGZGNv0Bita8_Yj4_QD7v4_tCdtfl>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1785431611; x=
+	1785518011; bh=qFVl3t8Au+yEUaMhkq44FDPNQYRW02T/EXa3KaWafXc=; b=g
+	WmQKnkcIGbB0+efciibwJkLQwz8fKzEpyRKMSJaDn7tng8zCmXql6FB+MjavHTxw
+	8tVNdbcwS4DgX5SLVoOsioFelq3b9zrEvlk+LLEfUBvB2W5Lyhr8XIN97kdnu81z
+	Dbudc2O5gJWE6lVc8hFz1FgAGXsZBh/BRdTmetqu4UbnM5kalOeMJ56VN1BkTZWU
+	Vwf7cDzuAkhhhyjYziV0FNnrvboojFo3gbeCQhAlim7g9ZQDrbHpy3wqqzuTy4tV
+	PmvSEfeHdsbEE+Vll4TrjPJ3tTzgZCZobWR6RyQjbi07n7UCL8sjZqPYyrurpOlP
+	M/wNhvwLcTMRqsSKo75qw==
+X-ME-Sender: <xms:OoZratMNjpd-iFWGscQkjtvZVtOKK_jWeOgUXAhQU3fAg2AtV_3xFg>
+    <xme:OoZrar1HUNeqEO6B-sh2Hud8yU8x-lJEI5DigjIdcFArmKx6IUk4FBrE3DqR3rBKb
+    d7c84Bh1iYEeZBDPuYrOJtSYS-CssfouNwZ4oKSxQBI09NSnwZ1Zvw>
+X-ME-Received: <xmr:OoZrapR0qaVEz9MQoPsgbH_OAVuv7ThWP_L0IK2Voe8EX-GgJJlGo1Z10HTyIMViWrCu7s9MZo3aV6m4FZcG-PJAfW13be4>
+X-ME-Proxy-Cause: dmFkZTEp17bnltZ0BqVQuE2TjGZ913lmgoEZowDgYVfEF0bmk+Nf4bVQU2UbYwROKQhrn/
+    qcIe040zDcfvVSwy1oVNygs2AACIeBIJd78xMxQZZvRWl1wbWpY4RYjLJX18fxwA3+qGqe
+    t3X+SD6D/6CFj+JrVJDWRB4UqNr/IwgpgjI9zKe/HW5YjgaEwvOqobkV9OFZUH/dTvVSA2
+    6NX2iVtB/K7FLHLE0Oau2LbkgZAeJS3xgh02VerIdxk1rNKmKGPKg+DHxR8xBql4aZcnJG
+    neyHcG0wstkqwtqtOMnG8cQmBQFyzEmZ3FNoYsu+SqsyoB/8KywxMXAXlxwXUnD6zJxrc1
+    RPeJWdZ8cNM4gsUSh6YZzKWiwnq6tXdOMlxj++Xom0teJkgzhOTqMtXLnJjwRa9DzicMOB
+    1lTrVRIdJhoB7gYDfTWbjZEcqxUVkIEeqFnXqiGTXnus0PNLztGL4qRqAjvCy0qeLzGucv
+    zanehr+BBfvujwOhLwsjXytCi4W1M2Ox6UCyrText0ro9La8jxy4RGQV7H8GETLmwSsC+t
+    4ezWi6k7GuXtsJHLq5ZN6DkherTX7anWlieOr7Sso90Chpe3KHY/sim77xJBGngpmnqTUi
+    ibWVV8EIpNYY1lyV+yWgCqjQWVWwjfm8PE7SumcQ3eiorMe4SohzfiMXJ6Lg
+X-ME-Proxy: <xmx:O4ZraukFhVUKBbpXftnThIuyHu-Mt0RHEzZIxw8R6UOVs-FS7PLBsA>
+    <xmx:O4ZraqMTEDb_V9FsTbUU_NkhpJ6gunzliJG2xdHZO_MBNjsQnvw-8A>
+    <xmx:O4ZraqgLbx1Yw5l_fubcRJTu_qwIChivDk6d9RH4LWpQRuqH29eRAA>
+    <xmx:O4Zragh9KwKuNqeVfRqj3jo5I2BgM9_7hxhiZ9cKHq4QSTP2Z3eHWg>
+    <xmx:O4Zrag6sWRzG-nenU6QsPSMNPKARCoFQQQzS22Lamc10DJfqFU0M7Api>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Jul 2026 13:13:28 -0400 (EDT)
+ 30 Jul 2026 13:13:30 -0400 (EDT)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
@@ -78,10 +78,11 @@ To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	linux-media@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 01/13] media: Add RPPX1_PARAMS and RPPX1_STATS meta formats
-Date: Thu, 30 Jul 2026 19:12:29 +0200
-Message-ID: <20260730171241.483870-2-niklas.soderlund+renesas@ragnatech.se>
+Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 02/13] media: uapi: Add extensible param and stats blocks for RPPX1
+Date: Thu, 30 Jul 2026 19:12:30 +0200
+Message-ID: <20260730171241.483870-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260730171241.483870-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20260730171241.483870-1-niklas.soderlund+renesas@ragnatech.se>
@@ -94,54 +95,103 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
+From: Jai Luthra <jai.luthra@ideasonboard.com>
 
-Register V4L2 metadata fourcc codes for the Dreamchip RPP-X1 ISP
-parameters and statistics buffers. These formats are used by the driver
-to exchange ISP configuration and 3A statistics with userspace through
-the extensible parameters framework.
+Add the scaffolding for the parameters and statistics buffers for
+Dreamchip RPPX1. The parameters for each ISP function block will be
+added together with the logic for it.
 
-Signed-off-by: Jai Luthra <jai.luthra+renesas@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+In addition to the scaffolding add a common struct that describes the
+measurement window. This struct is not specific to any block and will
+used by many of them.
+
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+[Niklas: Commit message]
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 ---
-* Changes since v10
-- s/V4L2_META_FMT_RPP_X1/V4L2_META_FMT_RPPX1/ change done by Jacopo,
-  thanks!
+* Changes since v9
+- Drop linux/types.h include.
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
- include/uapi/linux/videodev2.h       | 4 ++++
- 2 files changed, 6 insertions(+)
+ .../uapi/linux/media/dreamchip/rppx1-config.h | 69 +++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 include/uapi/linux/media/dreamchip/rppx1-config.h
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index a2b650f4ec3c..17ba1ae70735 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1471,6 +1471,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
- 	case V4L2_META_FMT_MALI_C55_PARAMS:	descr = "ARM Mali-C55 ISP Parameters"; break;
- 	case V4L2_META_FMT_MALI_C55_STATS:	descr = "ARM Mali-C55 ISP 3A Statistics"; break;
-+	case V4L2_META_FMT_RPPX1_PARAMS:	descr = "Dreamchip RPP-X1 ISP Parameters"; break;
-+	case V4L2_META_FMT_RPPX1_STATS:	descr = "Dreamchip RPP-X1 ISP Statistics"; break;
- 	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
- 	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
- 	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index eda4492e40dc..5373dba640fa 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -889,6 +889,10 @@ struct v4l2_pix_format {
- #define V4L2_META_FMT_MALI_C55_PARAMS	v4l2_fourcc('C', '5', '5', 'P') /* ARM Mali-C55 Parameters */
- #define V4L2_META_FMT_MALI_C55_STATS	v4l2_fourcc('C', '5', '5', 'S') /* ARM Mali-C55 3A Statistics */
- 
-+/* Vendor specific - used for Dreamchip RPP-X1 ISP */
-+#define V4L2_META_FMT_RPPX1_PARAMS	v4l2_fourcc('D', 'R', '1', 'P') /* Dreamchip RPP-X1 Parameters */
-+#define V4L2_META_FMT_RPPX1_STATS	v4l2_fourcc('D', 'R', '1', 'S') /* Dreamchip RPP-X1 Statistics */
+diff --git a/include/uapi/linux/media/dreamchip/rppx1-config.h b/include/uapi/linux/media/dreamchip/rppx1-config.h
+new file mode 100644
+index 000000000000..1f2548db73ad
+--- /dev/null
++++ b/include/uapi/linux/media/dreamchip/rppx1-config.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Dreamchip RPP-X1 ISP Driver - Userspace API
++ *
++ * Copyright (C) 2026 Renesas Electronics Corp.
++ * Copyright (C) 2026 Ideas on Board Oy
++ * Copyright (C) 2026 Ragnatech AB
++ */
 +
- #ifdef __KERNEL__
- /*
-  * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
++#ifndef __UAPI_RPP_X1_CONFIG_H
++#define __UAPI_RPP_X1_CONFIG_H
++
++#include <linux/media/v4l2-isp.h>
++
++/**
++ * struct rppx1_window - Measurement window
++ *
++ * RPP-X1 measurement window. Different blocks use a window or multiple
++ * windows for measurement purposes. This defines a common type for all of
++ * them. The number of relevant bits depends on the block where the window is
++ * used and is specified in the per-block description
++ *
++ * @h_offs: horizontal offset from the left of the frame in pixels
++ * @v_offs: vertical offset from the top of the frame in pixels
++ * @h_size: horizontal size of the window in pixels
++ * @v_size: vertical size of the window in pixels
++ */
++struct rppx1_window {
++	__u16 h_offs;
++	__u16 v_offs;
++	__u16 h_size;
++	__u16 v_size;
++};
++
++/* ---------------------------------------------------------------------------
++ * Parameter Structures
++ *
++ * The same ISP block might be instantiated in multiple pipeliness and operate
++ * on a different bitdepth/precision. For fields of varying length among
++ * different instances of the same block, use a data type that can accommodate
++ * the larger bitdepth/precision.
++ */
++
++/**
++ * RPPX1_PARAMS_MAX_SIZE - Maximum size of all RPP-X1 parameter blocks
++ *
++ * Some types are reported twice as the same block might be instantiated in
++ * multiple pipes.
++ */
++#define RPPX1_PARAMS_MAX_SIZE 0
++
++/* ---------------------------------------------------------------------------
++ * Statistics Structures
++ *
++ * The same ISP block might be instantiated in multiple pipeliness and operate
++ * on a different bitdepth/precision. For fields of varying length among
++ * different instances of the same block, use a data type that can accommodate
++ * the larger bitdepth/precision.
++ */
++
++/**
++ * RPPX1_STATS_MAX_SIZE - Maximum size of all RPP-X1 statistics
++ *
++ * Some types are reported twice as the same block might be instantiated in
++ * multiple pipes.
++ */
++#define RPPX1_STATS_MAX_SIZE 0
++
++#endif /* __UAPI_RPP_X1_CONFIG_H */
 -- 
 2.55.0
 
