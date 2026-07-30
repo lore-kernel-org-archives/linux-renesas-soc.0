@@ -1,284 +1,70 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0955424654
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 11:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF62411671;
+	Thu, 30 Jul 2026 14:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785411141; cv=none; b=aNKGiviApivxd3dkbP1dHWqcIeZGIybsdMMya4pzNoPPe9OjaV0jCZBtoqkgwxaqFV01TUPMQ2mjGK1dqM0w4gzxSC1okxqx++aiM/qFjizac1jc/OPJZ9zbcT9wOBEJy6hjdZtOm3i89j7p5QDNpnQuY872oXi1f1v3ctWf6mA=
+	t=1785422856; cv=none; b=iLZ6yiIe496HXtn+eVIVLOTPdMydyM0+vMIZwghlPmcQn5eUPqvB1FiS34DRzzUtC5ojsQNCq6D3sAxT/fIhJAumKGMsvQt1SwLVZYKhi3i4JLB4he1eKFVY8QJelahIxdeGtlJeJL9NYLtfOMObkcjqGByFAvY8qmUkCEZN4g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785411141; c=relaxed/simple;
-	bh=54AeD9UVboIFR9RAvPnTQZgsWVXH9dvBpU6e2OuqAvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aq43ZENfp46Hame/4Lllm3ESw38VoiYGPpYFNlf34vQePhuXiwxbb62aN9N9ySfmw8v0R2XLMOt6cCRtNyymOTbUtFPUf0Y3WRerRZXZWPM6nZcQ8Wk0nGMtn7mPvRKJrB/XB1FdltOub8U5uuo7NvQPY7+gGcXIJc49/LILkCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnOA5RSo; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785422856; c=relaxed/simple;
+	bh=tF9syoPj01wxfV2dCZf+pDyRUqjGAAuFc/JEa9X/5+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=px2vPw4knHOdbISzSQFNvVMR8WYc7M0N0caAgWJJIh4QcYVJZ5ihqhfDW5L8UFb5QurnHgLxdELtBKCnqXMZkr4zSUg6aUA75ZXeER7BHvG1l/hzCowMUk50LGhRqKEvoZIsrAdGjmcFQLE65FKDdPQG8To21X0kB9cUyN7mQYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jIqslaIn; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnOA5RSo"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4720f3bf164so410937f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jul 2026 04:32:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785411137; x=1786015937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=cdhL68ME/QxWT+L220rx1ETDJ/c+scGCOnZ8aJiBNBA=;
-        b=lnOA5RSo04eCgADlk/6cMXMoGw7rTgLmU127gWdR3VwHVNazjWRm7kLUVfLZwucbNv
-         RpJRQ0pmLm35lZanfuNOk1JU2EpkZY7ApRwcoJIFZXQ6djQNmcNGrnNWJ7R1Ae0ficeX
-         kzizO0FziS6e79bJ813ckjuMVpMKw8szygiarSPJ8BQ92xzELg28X10JmawtjTOCws0H
-         GPEzNSMe5JXiFovjhhZ2PbKLr85bUjuPjCchLKB1PddrB9QHToPfKJbAtqvvXc4lu7td
-         OBy5d3vz387I0Hfu5EzcHIJyfxzqKDOXDS8XgV5ByFf64q2Oixro+DftM7J4pda9VQwR
-         ygeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785411137; x=1786015937;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=cdhL68ME/QxWT+L220rx1ETDJ/c+scGCOnZ8aJiBNBA=;
-        b=aPe4WIMrG/fMXu6iYhkTfVYNLbJ/ui4iXe3P7OLqD74u+b/jQ05vE96TZIBTyemtAZ
-         weWk0nwWKBa2jfF1+URSTPqB2LwW+cb8k3vszaKQ6XeVvsX2XWe+rnix6VBd5p32UDYc
-         uaCOLFQ5DVmnQDmom5KLkk1SJfJYOqae7WFpCALNFzCgjVEmJnQbboNuvjHxw6+vTkNO
-         Gs6dkhIqno2G2N7SN40UHm/xpBeJWPtg4q9hZBYmhFtA4nt5TSnoos+8rIUPz10OsSSE
-         a5mHf/9Sr8JxcVOhtRap8NIuJxRg3kE/ftJxSVB+vV+BOjJH3iS+oEBUsJClqgeI55Jt
-         ll2A==
-X-Forwarded-Encrypted: i=1; AHgh+RpGhMUE34pNwME8cdlR4f7vlopj18nXugOMdOHrM5wMPOFjgosmhE2+3jXUgW92zPenwMX1MYlk2J+aW99i7Q1XXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9SzDFknPCUjJ7m8W6w3DHoObPf1lKqQHK7dFoHlV0bNxjHro0
-	JoLwer2iXJDlxrT5m/PGjzXGr/UqJKqWd83KVI2amU4jXukBHz5YBpNR
-X-Gm-Gg: AR+sD11m/3Bgi4AltVmfOMHnggH22LQaCYcb5cdFJSTr1yxXAYzCRb7gk7+e1FWbsYb
-	kGFtl7cCJ9Cgz2ShshTwaitXiXxIbIrkTEcNl3Sg22bLp+hUsY2+fsXDaA/O2pauOjDekj4RUAt
-	F2TY6OhvDGzCLn2nRxYDflhdDb1RGEVnQyy+1nHSin9dSCAVWXfI6QSiI6sOMqIS4R5hsQX7BAY
-	FIS2vcNCHn6CU3p70fexRJqK1e27w9f2cNGxs9LJ/Zttpv7rEUomDz4oTIItfD/DBCn9mudE6mA
-	ZmnEFMPwJrJzsfXivDis2EgvIwExkXm1igxG9+XvA56MDjyHV6bAhSiOq8aOrb6J8KW6QPDs+Zj
-	1OYerAsWBJcKMnM78mKHzc+lOMpPz3E7S2Uabg0Xz11W5VU3FrkM3MvJU2z2/Hxcj3r4HU2YdW9
-	Cf0CrgjR3J+afVmkp0zlYPyyhp8GlDkYe2vjCFs6RAk/qp4Vuto8U+61RyEGoRvu8VdmYSbgCEX
-	g5to2xA2u0uZQ==
-X-Received: by 2002:a05:6000:250a:b0:46b:70db:2113 with SMTP id ffacd0b85a97d-47fcbc24929mr40120f8f.0.1785411136461;
-        Thu, 30 Jul 2026 04:32:16 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:eabf:a623:1e7d:c359])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fc89351e3sm5737947f8f.29.2026.07.30.04.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 04:32:16 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulfh@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v23 14/14] mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
-Date: Thu, 30 Jul 2026 12:31:52 +0100
-Message-ID: <20260730113200.36456-15-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
-References: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jIqslaIn"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9B6841A1323;
+	Thu, 30 Jul 2026 14:47:33 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6E035602B8;
+	Thu, 30 Jul 2026 14:47:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E22B11C15D1D;
+	Thu, 30 Jul 2026 16:47:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1785422848; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=feo9Jm3yXHIvrDKdw9TVOwnY48iBlHT3LyvIl0cmFHs=;
+	b=jIqslaInDWAKhi+AQIcTTOUrtzN3b7rVfdOvEHSerw9G1op2Myk24dQ15aIPy/5uv3s0ZA
+	mqqDSB7IKincE+fTwIk9eC/9o7E6Jz2Gid8wz18VLbaoXsywjLGKDKQZNaTO/6lfjidKk1
+	0i1dgdPjzv1GAcpzXKY4h3/FWHZQ3AiT8uhBt0F4YE8mID+PwBPhlgn/7lG3cvprb45Lsx
+	k+lGrM/z3C6oCOPdXz5AKGOr8vIrQkpUvpmgKKzrIJ/amo7YOWEIRGU6rzD1x7o/uD8+6l
+	915Za/OqryNNTeokikDUHUFA2kJ0YEU1nkgj94KmW7mcJeEGGSxkf9w9qVjMGQ==
+Date: Thu, 30 Jul 2026 16:47:26 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
+	Frank.Li@nxp.com, Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: claudiu.beznea@tuxon.dev, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2] i3c: renesas: Drop unused structure member 'resuming'
+Message-ID: <178542283972.1795404.2499723599356198654.b4-ty@b4>
+References: <20260721191618.1850795-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260721191618.1850795-1-claudiu.beznea+renesas@tuxon.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Tue, 21 Jul 2026 22:16:18 +0300, Claudiu Beznea wrote:
+> The struct renesas_i3c::resuming is a leftover from a rebase. It is not
+> used anywhere within the driver. Drop it.
 
-RZ/G3L's HS400 enhanced strobe mode needs extra SCC register
-programming beyond the standard HS400 path. Add a TMIO_MMC_HS400ES
-flag (bit 17) for controllers that support it.
+Applied, thanks!
 
-Add renesas_sdhi_hs400_enhanced_strobe(), registered as
-host->ops.hs400_enhanced_strobe when the flag is set. On enable, it
-clears DTSEL and TAPEN, programs TMPPORT3 and HWADJ2, sets the HS400
-interface bit in SDIF_MODE, sets HS400EN2 in HS400MODE2, and sets
-HS400EN plus the new HS400MODE1_ENHANCED_STROBE bit in TMPPORT2. On
-disable, only the enhanced-strobe-related bits are cleared.
+[1/1] i3c: renesas: Drop unused structure member 'resuming'
+      https://git.kernel.org/i3c/c/279a9de1bb1b
 
-Also mask off HS400MODE1_ENHANCED_STROBE in
-renesas_sdhi_reset_hs400_mode() when TMIO_MMC_HS400ES is set, for a
-clean reset on mode exit.
+Best regards,
 
-Since a controller reset clears these SCC registers,
-renesas_sdhi_reset() now re-invokes
-renesas_sdhi_hs400_enhanced_strobe() after reset whenever
-TMIO_MMC_HS400ES is set and the controller is currently in HS400
-with enhanced strobe active, restoring the enhanced-strobe state
-instead of losing it across a reset.
-
-Enable TMIO_MMC_HS400ES in of_data_rzg3l to finalize RZ/G3L HS400
-support.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v22->v23:
- * No change.
-v21->v22:
- * Updated commit description.
- * Restored the patch after fixing inode corruption.
- * renesas_sdhi_reset() now restores data strobe register values
-   after reset.
-v20->v21:
- * Dropped the patch due to inode corruption during boot.
-v19->v20:
- * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
-   register.
-v18->v19:
- * Updated commit description.
- * HS400ES support is enabled based on of_data.
- * Fixed the space in HS400ES comment block.
-v18:
- * New patch.
----
- drivers/mmc/host/renesas_sdhi_core.c          | 68 +++++++++++++++++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  2 +-
- include/linux/platform_data/tmio.h            |  3 +
- 3 files changed, 68 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index b68567c93fef..13c24c42f0ec 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -337,7 +337,8 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- #define SH_MOBILE_SDHI_SCC_SMPCMP_CMD_REQUP	BIT(24)
- #define SH_MOBILE_SDHI_SCC_SMPCMP_CMD_ERR	(BIT(8) | BIT(24))
- 
--#define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN	BIT(31)
-+#define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN		BIT(31)
-+#define SH_MOBILE_SDHI_SCC_HS400MODE1_ENHANCED_STROBE	BIT(30)
- 
- /* Definitions for values the SH_MOBILE_SDHI_SCC_TMPPORT4 register */
- #define SH_MOBILE_SDHI_SCC_TMPPORT4_DLL_ACC_START	BIT(0)
-@@ -635,6 +636,8 @@ static void renesas_sdhi_adjust_hs400_mode_disable(struct tmio_mmc_host *host)
- static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
- 					  struct renesas_sdhi *priv)
- {
-+	u32 val = ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN | host->pdata->osel_tmpout);
-+
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 
-@@ -644,10 +647,11 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
- 
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
- 
-+	if (host->pdata->flags & TMIO_MMC_HS400ES)
-+		val &= ~SH_MOBILE_SDHI_SCC_HS400MODE1_ENHANCED_STROBE;
-+
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
--		       ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
--			 host->pdata->osel_tmpout) &
--			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
-+		       val & sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
- 
- 	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
- 		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2, 0x0);
-@@ -678,6 +682,53 @@ static void renesas_sdhi_scc_reset(struct tmio_mmc_host *host, struct renesas_sd
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
- }
- 
-+static void renesas_sdhi_hs400_enhanced_strobe(struct mmc_host *mmc,
-+					       struct mmc_ios *ios)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+	u32 val = sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2);
-+
-+	if (!(host->pdata->flags & TMIO_MMC_HS400ES))
-+		return;
-+
-+	if (ios->enhanced_strobe) {
-+		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
-+			       ~SH_MOBILE_SDHI_SCC_CKSEL_DTSEL &
-+			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL));
-+
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-+			       ~SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN &
-+			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL));
-+
-+		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+				sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT3, BIT(8) | BIT(9));
-+		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HWADJ2, 0xFF);
-+		sd_ctrl_write16(host, CTL_SDIF_MODE, SDIF_MODE_HS400 |
-+				sd_ctrl_read16(host, CTL_SDIF_MODE));
-+		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2,
-+			       RZG3L_SDHI_SCC_HS400MODE2_HS400EN2);
-+
-+		val |= SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
-+		       SH_MOBILE_SDHI_SCC_HS400MODE1_ENHANCED_STROBE;
-+	} else {
-+		val &= ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
-+			 SH_MOBILE_SDHI_SCC_HS400MODE1_ENHANCED_STROBE);
-+
-+		sd_ctrl_write16(host, CTL_SDIF_MODE, ~SDIF_MODE_HS400 &
-+				sd_ctrl_read16(host, CTL_SDIF_MODE));
-+
-+		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2, 0);
-+	}
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, val);
-+}
-+
- /* only populated for TMIO_MMC_MIN_RCAR2 */
- static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
- {
-@@ -702,6 +753,13 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
- 			/* Unknown why but without polling reset status, it will hang */
- 			read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
- 					  false, priv->rstc);
-+
-+			/* Restore data strobe registers */
-+			if ((host->pdata->flags & TMIO_MMC_HS400ES) &&
-+			    host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
-+			    host->mmc->ios.enhanced_strobe)
-+				renesas_sdhi_hs400_enhanced_strobe(host->mmc, &host->mmc->ios);
-+
- 			/* At least SDHI_VER_GEN2_SDR50 needs manual release of reset */
- 			sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
- 			if (priv->rdev)
-@@ -1409,6 +1467,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		host->ops.prepare_hs400_tuning = renesas_sdhi_prepare_hs400_tuning;
- 		host->ops.hs400_downgrade = renesas_sdhi_disable_scc;
- 		host->ops.hs400_complete = renesas_sdhi_hs400_complete;
-+		if (host->pdata->flags & TMIO_MMC_HS400ES)
-+			host->ops.hs400_enhanced_strobe = renesas_sdhi_hs400_enhanced_strobe;
- 	}
- 
- 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask_all);
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 8cd3ced88b81..a47f17e9bf81 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -179,7 +179,7 @@ static const struct renesas_sdhi_of_data of_data_rzg3l = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
- 			  TMIO_MMC_64BIT_DATA_PORT | TMIO_MMC_TUNING_DELAY |
- 			  TMIO_MMC_INTERNAL_DIVIDER | TMIO_MMC_HWADJ |
--			  TMIO_MMC_HS400MODE2,
-+			  TMIO_MMC_HS400MODE2 | TMIO_MMC_HS400ES,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
-diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
-index 88a3744f965a..ca1435441628 100644
---- a/include/linux/platform_data/tmio.h
-+++ b/include/linux/platform_data/tmio.h
-@@ -62,6 +62,9 @@
- /* Some controllers have HS400MODE2 */
- #define TMIO_MMC_HS400MODE2		BIT(16)
- 
-+/* Some controllers have HS400ES */
-+#define TMIO_MMC_HS400ES		BIT(17)
-+
- struct tmio_mmc_data {
- 	void				*chan_priv_tx;
- 	void				*chan_priv_rx;
 -- 
-2.43.0
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
