@@ -1,102 +1,200 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54D57260D;
-	Fri, 31 Jul 2026 15:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E068444709;
+	Fri, 31 Jul 2026 16:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785510433; cv=none; b=LgGb+eDzm+nKNgUEeFI6r1dEYtTLskx8aktvk4+E0IEebfSgo6r0ivqqrW2duUwimv3XdlwyV7nh94oqHgMNFLZzTFYH6AMZGFuRTtl/H8lIRnUu+Xgc21eUNoAOQPcicVPeHbJPkOF7ZvAA/MqmFCL6sCmVKAojtzPjTexQDTs=
+	t=1785513736; cv=none; b=p1WaSkiS+ISk65NJ9bdT5du70b0SP+b+z+FlAOCXbDAS0S7rvewrhpwdM4usF5eGesCykALkgv2dTfSNxvQ5Xr9fltobwHH7JvL3OY1y5tg7Ka2y8ovOWArREqw3Mb5uHZ+3HPHaL8TznGSDwSRi7HgZRERXCgtSGlnPEKmGQcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785510433; c=relaxed/simple;
-	bh=j3jXh9cSKOE726BNMKAFaxe6KGIWbRG91UtITrbacO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7B7yiiDRs5XsVrfJQkLuOLWBtXed2EzXoUqobRKHtE5KeaSnmOXyWhy4ZmlwatF0IU+Xymg+KkYH7Ook/3w6Sq3Cj+Q329Q2M6v0eB1mFNcJdFGnobfQy7FFo2fvZ6UHwUeYtAEuDG2i9GQPrBTDDPoxh6k0oFOxAvc6lngNbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=logFW5aE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="logFW5aE"
-Received: from ideasonboard.com (mob-109-113-25-35.net.vodafone.it [109.113.25.35])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0C0D5E91;
-	Fri, 31 Jul 2026 17:06:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1785510362;
-	bh=j3jXh9cSKOE726BNMKAFaxe6KGIWbRG91UtITrbacO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=logFW5aEJ0FsHuPiiBEpQgFAdjPVvvjAB7fVlAsJOnejqEFJcEXZa3BfZDtpM1NE0
-	 yfpK602x8sh3u65YXK37knkxJrPedL2lfUPWT4FlL8zdHHTyepfJbuK1QVybQbeoaz
-	 xfUwS7ouYNyvBeuZd1BUv1bFjRl9LZej8JVySJe0=
-Date: Fri, 31 Jul 2026 17:07:06 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sven =?utf-8?Q?P=C3=BCschel?= <s.pueschel@pengutronix.de>, Nas Chung <nas.chung@chipsnmedia.com>, 
-	Mehdi Djait <mehdi.djait@linux.intel.com>, Isaac Scott <isaac.scott@ideasonboard.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] media: rzg2l-cru: Use v4l2_fill_pixfmt_aligned()
- for stride alignment
-Message-ID: <amy559iChdLrrMTj@zed>
-References: <20260729105603.1160966-1-tommaso.merciai.xr@bp.renesas.com>
- <20260729105603.1160966-6-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1785513736; c=relaxed/simple;
+	bh=aUrsj6hOs7zgVK4qJTB8J6079mkyoSTCyi7JwIAKk58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dt2Fus0moINS5fwDk9L9WaIaxBUkoEPvpm0h55iIszQ+/CFAphwZbPqniM29kADwneWJAUjEcqArYKWiq9MF0XxkXbKzypsya4FUPZzr2aehnZL4x1KAeWFAAC7Cg1TlJxXZNIsFdpk45egvT3aF+JWTJPou8XMGhADtZ8hpBxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E541F00AC4;
+	Fri, 31 Jul 2026 16:02:10 +0000 (UTC)
+Message-ID: <d1a5c1c4-4a9f-4dc7-b709-4f89a25ad4c9@tuxon.dev>
+Date: Fri, 31 Jul 2026 19:02:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260729105603.1160966-6-tommaso.merciai.xr@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] PCI: rzg3s: Fix IRQ domain initialization error
+ handling
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ stable@vger.kernel.org
+References: <20260727095843.116950-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260727095843.116950-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260727095843.116950-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tommaso
+Hi, Prabhakar,
 
-On Wed, Jul 29, 2026 at 12:55:50PM +0200, Tommaso Merciai wrote:
-> Replace the open-coded bytesperline/sizeimage rounding with the newly
-> added v4l2_fill_pixfmt_aligned().
->
-> No functional change intended.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On 7/27/26 12:58, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> rzg3s_pcie_init_irqdomain() installs chained handlers for the INTx
+> parent interrupts before creating the INTx irqdomain and initializing
+> MSI support.
+> 
+> If any subsequent step fails, such as obtaining an INTx IRQ,
+> creating the irqdomain, or initializing MSI, the error path returns
+> without removing any chained handlers that were already installed.
+> This leaves stale handler and data pointers attached to the parent
+> interrupts.
+> 
+> Fix the error path by unwinding the chained handler registration before
+> returning. Also clear the chained handlers during
+> rzg3s_pcie_teardown_irqdomain() so that teardown fully mirrors the
+> initialization sequence.
+> 
+> Fixes: 7ef502fb35b28 ("PCI: Add Renesas RZ/G3S host controller driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> v4->v5:
->  - Split the fix so it no longer depends on v4l2_fill_pixfmt_aligned()
->    and moved it first in the series, so it can be backported to stable
->    on its own (This the old v4 PATCH 4/4).
->
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index 91eda5034248..27a35ef2a6df 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -849,12 +849,8 @@ static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
->  	v4l_bound_align_image(&pix->width, 320, info->max_width, 1,
->  			      &pix->height, 240, info->max_height, 2, 0);
->
-> -	v4l2_fill_pixfmt(pix, pix->pixelformat, pix->width, pix->height);
-> -
-> -	if (info->has_stride) {
-> -		pix->bytesperline = ALIGN(pix->bytesperline, RZG2L_CRU_STRIDE_ALIGN);
-> -		pix->sizeimage = pix->bytesperline * pix->height;
-> -	}
-> +	v4l2_fill_pixfmt_aligned(pix, pix->pixelformat, pix->width, pix->height,
-> +				 info->has_stride ? RZG2L_CRU_STRIDE_ALIGN : 1);
+> v1->v2:
+> - Restricted the code to max 80 columns.
+> - Moved calling irq_domain_remove() under err_cleanup_intx label.
+> ---
+>   drivers/pci/controller/pcie-rzg3s-host.c | 49 +++++++++++++++++-------
+>   1 file changed, 36 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> index f51b5d7c1998..70f1faf7e422 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -1006,22 +1006,35 @@ static const struct irq_domain_ops rzg3s_pcie_intx_domain_ops = {
+>   	.xlate = irq_domain_xlate_onetwocell,
+>   };
+>   
+> +static void rzg3s_pcie_clear_intx_handlers(struct rzg3s_pcie_host *host,
+> +					   int count)
+> +{
+> +	while (--count >= 0) {
+> +		irq_set_chained_handler_and_data(host->intx_irqs[count], NULL,
+> +						 NULL);
+> +	}
+> +}
+> +
+>   static int rzg3s_pcie_init_irqdomain(struct rzg3s_pcie_host *host)
+>   {
+>   	struct device *dev = host->dev;
+>   	struct platform_device *pdev = to_platform_device(dev);
+> +	int i, ret;
+>   
+> -	for (int i = 0; i < PCI_NUM_INTX; i++) {
+> +	for (i = 0; i < PCI_NUM_INTX; i++) {
+>   		char irq_name[5] = {0};
+>   		int irq;
+>   
+>   		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
+>   
+>   		irq = platform_get_irq_byname(pdev, irq_name);
+> -		if (irq < 0)
+> -			return dev_err_probe(dev, irq,
+> -					     "Failed to parse and map INT%c IRQ\n",
+> -					     'A' + i);
+> +		if (irq < 0) {
+> +			ret = irq;
+> +			dev_err_probe(dev, ret,
+> +				      "Failed to parse and map INT%c IRQ\n",
+> +				      'A' + i);
+> +			goto err_cleanup_intx;
+> +		}
+>   
+>   		host->intx_irqs[i] = irq;
+>   		irq_set_chained_handler_and_data(irq,
+> @@ -1033,21 +1046,29 @@ static int rzg3s_pcie_init_irqdomain(struct rzg3s_pcie_host *host)
+>   						     PCI_NUM_INTX,
+>   						     &rzg3s_pcie_intx_domain_ops,
+>   						     host);
+> -	if (!host->intx_domain)
+> -		return dev_err_probe(dev, -EINVAL,
+> -				     "Failed to add irq domain for INTx IRQs\n");
+> +	if (!host->intx_domain) {
+> +		ret = -EINVAL;
+> +		dev_err_probe(dev, ret,
+> +			      "Failed to add irq domain for INTx IRQs\n");
+> +		goto err_cleanup_intx;
+> +	}
+>   	irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
+>   
+>   	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> -		int ret = rzg3s_pcie_init_msi(host);
+> +		ret = rzg3s_pcie_init_msi(host);
+>   
+> -		if (ret) {
+> -			irq_domain_remove(host->intx_domain);
+> -			return ret;
+> -		}
+> +		if (ret)
+> +			goto err_cleanup_intx;
+>   	}
+>   
+>   	return 0;
+> +
+> +err_cleanup_intx:
+> +	if (host->intx_domain)
+> +		irq_domain_remove(host->intx_domain);
+> +	rzg3s_pcie_clear_intx_handlers(host, i);
 
-this will look very nice with info->stride.
+If you have it like this it worth squashing these lines in the same function, e.g.:
 
-In the meantime
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+	rzg3s_pcie_teardown_intx(host, i);
 
-Sorry for having missed it yesterday
->
->  	dev_dbg(cru->dev, "Format %ux%u bpl: %u size: %u\n",
->  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> --
-> 2.54.0
->
+defined something like:
+
+void rzg3s_pcie_teardown_intx(struct rzg3s_pcie_host *host, int count)
+{
+	if (host->intx_domain)
+		irq_domain_remove(host->intx_domain);	
+
+
+	while (--count >= 0) {
+		irq_set_chained_handler_and_data(host->intx_irqs[count], NULL,
+						 NULL);
+	}
+}
+
+> +
+> +	return ret;
+>   }
+>   
+>   static void rzg3s_pcie_teardown_irqdomain(struct rzg3s_pcie_host *host)
+> @@ -1055,6 +1076,8 @@ static void rzg3s_pcie_teardown_irqdomain(struct rzg3s_pcie_host *host)
+>   	if (IS_ENABLED(CONFIG_PCI_MSI))
+>   		rzg3s_pcie_teardown_msi(host);
+>   
+> +	rzg3s_pcie_clear_intx_handlers(host, PCI_NUM_INTX);
+> +
+>   	irq_domain_remove(host->intx_domain);
+
+And use the same function here, replacing:
+
+-	rzg3s_pcie_clear_intx_handlers(host, PCI_NUM_INTX);
+-
+-   	irq_domain_remove(host->intx_domain);
++	rzg3s_pcie_teardown_intx(host, PCI_NUM_INTX);
+
+Btw, the order b/w rzg3s_pcie_clear_intx_heandlers() and irq_domain_remove() was 
+revered here compared with the order from rzg3s_pcie_init_irqdomain().
+Thank you,
+Claudiu
