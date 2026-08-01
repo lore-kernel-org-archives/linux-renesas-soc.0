@@ -1,138 +1,162 @@
-Received: from mail-pj2-f11.google.com (mail-pj2-f11.google.com [74.125.227.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93838357CE9
-	for <linux-renesas-soc@vger.kernel.org>; Sat,  1 Aug 2026 14:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053E4271456;
+	Sat,  1 Aug 2026 16:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785594273; cv=none; b=Fnb2SspaukGwtvTeCgPmo79V+K5RykjYfoADwvXVduejyBBQsH0ASvXtNmvTNcRzGmt8hAbofRYZ6JBFBRORFUZM11+lHXeb1wn86DbLou/7FU8qh913ie00RuHsgxsdOTRP0WPLuKrHEijXWnScXcma0DRFU5k4MpJOlwYCWEc=
+	t=1785601730; cv=none; b=gb8kRJ9oPNU7JJhoG56E51ueIwAt6O7vcC1JLveinx1sAjLgL+eFuQsVIQPUUJ/KS0R7FKqxMPExx3MCuyHwsCPYiMo56VzP3Ou87exQZbR5PkrX4LBEumlgOdFiNSSyOEiJMLYBE/he/SUU98TMDim47Is8l5TdKlYRMQNGsnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785594273; c=relaxed/simple;
-	bh=ekhQayFdhTwRrW5sTrt8sRRbZApqgEdJGIrgdXRA6io=;
+	s=arc-20240116; t=1785601730; c=relaxed/simple;
+	bh=IkVjWSBBiuOLsbPEFfnehNUTyZsRPGGxxctkNh5DZAU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EZeWYjXuk3d/HQmzIXZLUysh1J3fniLX40Nfy6LUGS0KFK+NVFWW6GxMyQR+2g3tB0+xtvKe+/ZBBCvTAIdczb7sYY11SieLuF5TRpmfPe+nKmuICMv5eNpHC3BJiS0yb28thzlAxdrSf+Cz5il8i6DqHM0ys0Ea9kHB5FINVbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UlbUe3dw; arc=none smtp.client-ip=74.125.227.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version:Content-Type; b=Ttnz6mCExjYd5BE8upRGfqDNOQzAPMrMUGzVmGi+Oghk3teRC0oog+eDAAD2w3XrXNUhzKVqCxd8+RGjwgYC6oPj4q6DayyUHkOifRO2ePT/NFRhr0QFs+cdFAr1wT3S7CA5lOn4tmsBp93yDr7feHGD0hFpD6fI01mtFcCp7zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=GkspQDxI; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UlbUe3dw"
-Received: by mail-pj2-f11.google.com with SMTP id d9443c01a7336-2ceb5a39c48so6118975ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Aug 2026 07:24:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785594262; x=1786199062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=q83Sos7xhYVmpTWu/ghFNGUmMBURB6KpF38DP5+YZjg=;
-        b=UlbUe3dwqkpzWG1CxMDtYmOmrqjbxvyR3c20U9beftkwsHsEgVCkRf6ZwcBOZPUjLO
-         4v58Bk0ax4qQ2/EDKMc9HZWnM8CBo93mZbZ8kU8JVhb1Eg88l1aakU82+N/EDJVe3bZw
-         KZa/RiMYJSELmfgNC9lczJCth7+DcGeW+g9enYDKcKS+wZlw3+iKmTO9jd4xH/NzcQc3
-         UCw9kkMvLweDeKBjvGtP7PZWk4r4rTVjmDRWZKt2zqMG4exk6X6e6peoRavWiSz4L5Hq
-         g5gMqCKJ+i0Dzo0oSDFUaWb67sJTXDAUWL9e9NSV4pkPHsMnIwUcP0Ikf9zbgQARu0T2
-         ze2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785594262; x=1786199062;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=q83Sos7xhYVmpTWu/ghFNGUmMBURB6KpF38DP5+YZjg=;
-        b=tGk3GlE0VYXY3JhizgETO3l4Hu4W4DpJTXW/iJuRiLM16nhzDB0Ar/w9584Ccr5nME
-         3ASmrZad+VbQ1bUVcczFEw2m4LbjaWsLfODS4Wc29T77zQJqSVi3dRjaGA1OvGkzNnk6
-         iL7vqkHeGBBgIJNoIklKmUxEA0rQMW12YsgHkx7iMWr2NtGgRkXeCZ53M5E6Cav/Joba
-         UTQ2EIWzT7bmFUj8lRGpAY4ZYK5ywMQmLi1me79ViACZ1wsVf8L0c7+yD6/8z13cLLQY
-         RUnyZdbQCafht58rXii2k+M7YBWuoy7cWTOtzYcI13Es0yhWwutL41ZHxVnpi38voF8u
-         ToUg==
-X-Forwarded-Encrypted: i=1; AHgh+RrI1R3ibbI/EpfBzghD9Lwuc0elkGbRyIQR7ZX5RcfvbF33fpNA2C+maGN45GfJ4P7SV5ojyUljVUeYtlsQPRz8EA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVAirO7smxwq4ohdUrCE4A6O36IfvWh0MHVbUT7hwVRVI+aVfg
-	emJ7gmyHggBV5aSml3thaxgsI6gFSO/Pr3u/p9j6Gy3FHt6jhSw5gU7V
-X-Gm-Gg: AR+sD12oShUbFuQKWNpaALQWG/AGJDH/Fa4X0d4lniPBwI95xgkqz0Rq4k6Z/zi6GLJ
-	lnQzsxmBJEkzjo2gOQGHClDxPEJFuARgTpG4o7HZfL8RhHVxuD3dozWdjt1DRqUstkmhbhueeIL
-	o3nsai2rweIe/hLKth9FOVB26/2/YFsDRPZApE8nV9ZK5oHHZ1CaRcqjY8HEiQni+/BlQ0LNZVo
-	KZMz3DKUm43nn/Wpw9j5IhDEiyh9HLiC8y0dGcZs1UaBsd8qImZHWrL4kWnZIcYCc3PH95kPjQz
-	xD9h7dZRn/rfVQOIqxqU/Ch82a5vGHwDRmr+7jxhQxXNl8eEbY+33j2vH2ycMehn5JyeqYtruDm
-	wr0B6jPWeolPBERK+pkr2eAuSMFLT6p2WsHLtwvrTGmkESOuvH5tgFUKG7J1bV4eBBjExx/pxOz
-	6TGQq5SYZrHvg5uTtAOcoZZbyHWATRGBma2vCt39TZa2oi8/IX70FgvII=
-X-Received: by 2002:a17:903:234b:b0:2c7:f12d:5d37 with SMTP id d9443c01a7336-2d0521b8488mr34096625ad.17.1785594261862;
-        Sat, 01 Aug 2026 07:24:21 -0700 (PDT)
-Received: from server.lan ([103.213.4.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d04ae5ac3dsm18043845ad.23.2026.08.01.07.24.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 07:24:20 -0700 (PDT)
-From: Coia Prant <coiaprant@gmail.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="GkspQDxI"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=V06eygovF9pqY3vHyXKEpDH3PhLpNuC5Yjsi32fVPNY=; b=GkspQDxIH8XQuNGEPi3OaHsWVb
+	MWqmQLy8kUKXVbYdQCn+ie/STVzV3V1s7aPOK5PK5RjrA5Wiyz8hXdbdIEgc6WcPFfAa21KBC40+n
+	tiyw0Mn+j6oxgkEwMCeuve4BVeBfqLtB2EPeZ7wTyUU4mSmU1sLPii9wSHsjQ5BuPbhAuQtRTEjA5
+	n8pZMtkAH/FxaT++U1I8L6londMFmfOBCEtEEp2HcNsc6P3S1esk+oUHFDqac/TtiB/qTngEgeWVx
+	vxh6+0AgQRrVMtC7TkoRzlWwcomWycXXPeveXnhe6HMtGaMMJNgHU/uwXIYS2D1qggPlKOWmYdUmd
+	HqiZeHug==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Coia Prant <coiaprant@gmail.com>
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Coia Prant <coiaprant@gmail.com>,
+ Coia Prant <coiaprant@gmail.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	David Heidelberg <david@ixit.cz>,
-	netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 10/10] MAINTAINERS: add entry for Rockchip XPCS driver
-Date: Sat,  1 Aug 2026 22:22:34 +0800
-Message-ID: <20260801142244.679437-12-coiaprant@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260801142244.679437-2-coiaprant@gmail.com>
-References: <20260801142244.679437-2-coiaprant@gmail.com>
+ Russell King <linux@armlinux.org.uk>, Shawn Lin <shawn.lin@rock-chips.com>,
+ David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-renesas-soc@vger.kernel.org
+Subject:
+ Re: [PATCH v2 05/10] arm64: dts: rockchip: rk3568: add XPCS and fixed-clock
+ nodes
+Date: Sat, 01 Aug 2026 18:28:11 +0200
+Message-ID: <2847036.GUH7pLUipS@diego>
+In-Reply-To: <20260801142244.679437-7-coiaprant@gmail.com>
+References:
+ <20260801142244.679437-2-coiaprant@gmail.com>
+ <20260801142244.679437-7-coiaprant@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Add a MAINTAINERS entry for the Rockchip RK3568 XPCS platform driver
-and its device tree binding.
+Am Samstag, 1. August 2026, 16:22:29 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Coia Prant:
+> The RK3568 SoC integrates a Synopsys DesignWare XPCS that provides
+> the Physical Coding Sublayer for 1000BASE-X, SGMII, and QSGMII
+> interfaces via its four MII ports.  Add the XPCS device node and
+> its pcs-mii sub-nodes to the SoC device tree.
+>=20
+> The XPCS device is accessed via the APB3 bus at 0xfda00000 and
+> requires the CSR clock (PCLK_XPCS) for register access and the EEE
+> clock (CLK_XPCS_EEE) for Energy Efficient Ethernet operation.  The
+> PD_PIPE power domain must be enabled before any register access.
+>=20
+> Also add two fixed-clock nodes (xpcs_gmac0_clk and xpcs_gmac1_clk)
+> providing the 125 MHz reference clock for the GMACs when operating
+> with XPCS.  These clocks are used as the assigned-clock-parents
+> for the respective GMAC nodes in board-level device trees.
+>=20
+> The XPCS node and its pcs-mii sub-nodes are disabled by default and
+> must be enabled at the board level when 1000BASE-X/SGMII/QSGMII is
+> in use.  The fixed-clock nodes are always present and do not have a
+> status property, as they are static clock sources.
+>=20
+> The XPCS node also requires a reference to the appropriate Naneng
+> Combo PHY via the phys property at the board level.
+>=20
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3568.dtsi | 45 ++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk3568.dtsi
+> index 3bc653f027f1f..989e164c0eb39 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> @@ -110,6 +110,51 @@ sata0: sata@fc000000 {
+>  		status =3D "disabled";
+>  	};
+> =20
+> +	xpcs: pcs@fda00000 {
+> +		compatible =3D "rockchip,rk3568-xpcs";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		reg =3D <0x0 0xfda00000 0x0 0x200000>;
+> +		clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+> +		clock-names =3D "csr", "eee";
+> +		power-domains =3D <&power RK3568_PD_PIPE>;
+> +		status =3D "disabled";
+> +
+> +		xpcs_mii0: pcs-mii@0 {
+> +			reg =3D <0>;
+> +			status =3D "disabled";
+> +		};
+> +
+> +		xpcs_mii1: pcs-mii@1 {
+> +			reg =3D <1>;
+> +			status =3D "disabled";
+> +		};
+> +
+> +		xpcs_mii2: pcs-mii@2 {
+> +			reg =3D <2>;
+> +			status =3D "disabled";
+> +		};
+> +
+> +		xpcs_mii3: pcs-mii@3 {
+> +			reg =3D <3>;
+> +			status =3D "disabled";
+> +		};
+> +	};
+> +
+> +	xpcs_gmac0_clk: xpcs-gmac0-clock {
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <125000000>;
+> +		clock-output-names =3D "clk_gmac0_xpcs_mii";
+> +		#clock-cells =3D <0>;
+> +	};
+> +
+> +	xpcs_gmac1_clk: xpcs-gmac1-clock {
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <125000000>;
+> +		clock-output-names =3D "clk_gmac1_xpcs_mii";
+> +		#clock-cells =3D <0>;
+> +	};
 
-Include the relevant mailing lists (netdev and linux-rockchip) so that
-future patches are properly distributed.
+I don't fully believe those clocks are "just there" inside the SoC.
+Instead I _assume_ they are generated by some oscillator on the
+individual boards?
 
-Signed-off-by: Coia Prant <coiaprant@gmail.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Because as described there, they would be just magically be there.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5114e6db7307d..cd5ffae6afd34 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23468,6 +23468,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/sound/rockchip,rk3576-sai.yaml
- F:	sound/soc/rockchip/rockchip_sai.*
- 
-+ROCKCHIP XPCS DRIVER
-+M:	Coia Prant <coiaprant@gmail.com>
-+L:	netdev@vger.kernel.org
-+L:	linux-rockchip@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-+F:	drivers/net/pcs/pcs-xpcs-rk.c
-+F:	include/linux/pcs/pcs-xpcs-rk.h
-+
- ROCKER DRIVER
- M:	Jiri Pirko <jiri@resnulli.us>
- L:	netdev@vger.kernel.org
--- 
-2.47.3
+So please aim for a real clock description (likely on a board-level)
+
+
+Heiko
+
+
 
