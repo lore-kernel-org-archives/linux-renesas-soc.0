@@ -1,96 +1,89 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122AD357D05;
-	Fri, 31 Jul 2026 22:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816E329408;
+	Sat,  1 Aug 2026 00:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785537718; cv=none; b=PObQcX6nzVPlCn6mjajH5qjHJr92Dkip7Q/pXE2etgQLSqil9PbxRxDo3+raA+87WOPAm5OOygVQ+PGp5SRibVtEg1NbukrWy04gCNY7Ia3ycHA/LN5U8zMXw6gCJjH9GaI1uPJIl+xPVAYRRiDkbZQJfncUaDiA7h2MWfOzj+M=
+	t=1785542852; cv=none; b=XC9iTLZCDLf4sQ8qmeppLfCowaiOGuQZdSpbBjH/t2di3xXG3u0J08gGiijrIyUBVW4MmwFrMgj5ZgyjVwc3G3xnPP+mGuEYHFVOsCjmc3tuvImlUn1rfcUeVaVzNAXrlpLglj/Us8ZCgIo6kCVOPFmybISgWOSkRVlBHOZZk5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785537718; c=relaxed/simple;
-	bh=Eq4+LvgoR7rpMQDzEWXVcrc6/NUq47RqVqosnWPlrvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pnyPAwHHP8CKIgJ/AGs3DCryZMOzCdAbXEr2vVx5huJeP0nxXb/l1gh8Vcarm9sX4M/18k/9XY/PEWa9qvUogZqxZBji2uUGMYi0Z6mBwutBSrfRpmSAX2TNAssHVIbDL3Z6ctT3LqLHkVyFZUYQRjOf222Uhyw9hWgGVb2NSlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0KKjty0d; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1785542852; c=relaxed/simple;
+	bh=dtBLcvebt7+AMSIrmX/C9+e1pmg8hKfA+BeXh0Esni4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=McSpXpL0ZQSGygib77E/azGdsYBLw6WzmZ1zkHLXwDKU/YIZP1isk6ueXYs+pYbDaSBOQgTRE0nwwwZLYWeVZsQEsAbFKqcy86Pm0TtZYZTR+Dm39enNXTGlgk0Kt2OU9nXCvrdvwTCie9Xl8I46nbdLe+j+90VD7OeOxWVsOyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaddJwsa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0KKjty0d"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 568CF1A136E;
-	Fri, 31 Jul 2026 22:41:53 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 28C286039A;
-	Fri, 31 Jul 2026 22:41:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7D8111C16E1E;
-	Sat,  1 Aug 2026 00:41:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1785537711; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=4O9p1HgfmCPNuO8NrFXNLQh/x3qwmv7rnJHjHYwKXww=;
-	b=0KKjty0dM7ebLLjGiCJKPaCQjGBzRbPIr9XjLPmQ+bpL4q8cu7H+1zyFd243pIJXOUxI0w
-	qnBF5o7cj1TrnAd/fVBsJHnH/ld2r57x/y5hLhI55HrSEiYfyCz6wQHxAsvWWD96Ccy2/b
-	Swtkbry9la+J/VJCnTZENyD2ySfmF+XqxORC72KxAKuQiuIpe6dDmyqnUWF5OjqDr9blqk
-	JN+kWNzw9s+jr483d76Abh8yTTefuISnO8INgZunCszadmPo46Wwo4uVcMo91k9QD59Scj
-	a49XNG8fcD9K5/8kB6wR1lcsE0TG+2ziyLzOobChCWqCEmgkseaNvn9VjG9R5g==
-Date: Sat, 1 Aug 2026 00:41:43 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joel Stanley
- <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Neal Liu
- <neal_liu@aspeedtech.com>, Cristian Birsan <cristian.birsan@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter
- <jonathanh@nvidia.com>, linux-usb@vger.kernel.org (open list:USB
- SUBSYSTEM), linux-arm-kernel@lists.infradead.org (moderated list:ARM/ASPEED
- MACHINE SUPPORT), linux-aspeed@lists.ozlabs.org (moderated list:ARM/ASPEED
- MACHINE SUPPORT), linux-kernel@vger.kernel.org (open list),
- linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 USBF CONTROLLER
- DRIVER), linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: Re: [PATCH 05/11] usb: gadget: Remove redundant dev_err()
-Message-ID: <20260801004143.1b0d864d@bootlin.com>
-In-Reply-To: <20260731035448.252289-6-panchuang@vivo.com>
-References: <20260731035448.252289-1-panchuang@vivo.com>
-	<20260731035448.252289-6-panchuang@vivo.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaddJwsa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F221F00AC4;
+	Sat,  1 Aug 2026 00:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785542851;
+	bh=dtBLcvebt7+AMSIrmX/C9+e1pmg8hKfA+BeXh0Esni4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NaddJwsaCaNclRKwsA5xHHSv0rJWpcI2XL+fqA+hCwfgFUPD+zrv03rDkjULv6e0x
+	 GJ3pWWcJ8RcUpOucX1MJqQhSyK5/WbWQme4PeyruF4TM7PvZkUkmsQAJxBFXr9lDEi
+	 jT0lb9d5VD3H3Hl4GjOHLOngklqN5llAF1bWlRCoZyuK4hDexdCB8w0w56Y74IVUCe
+	 /iymo465PYFgzpHycDzQ78ZS4C3ZDzCn5V7OFNibzYqaseESsbQiRLZCOYaJmhoAFD
+	 8g8wFcUN9IjxgbBx5udbggo1IRXcNH1J0wd/uMQKKSRzgl03so2DTZ4pYts/xMdHLk
+	 NeopselyNGl6w==
+Date: Sat, 1 Aug 2026 01:07:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: phucduc.bui@gmail.com
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/11] ASoC: renesas: fsi: Fix system hang by adding
+ SPU clock
+Message-ID: <d5ebcd52-580b-40bc-81dc-0a9b403e8392@sirena.org.uk>
+References: <20260609013107.5995-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kun40GI+jRDZGgy7"
+Content-Disposition: inline
+In-Reply-To: <20260609013107.5995-1-phucduc.bui@gmail.com>
+X-Cookie: No shirt, no shoes, no service.
 
-Hi Pan,
 
-On Fri, 31 Jul 2026 11:54:39 +0800
-Pan Chuang <panchuang@vivo.com> wrote:
+--kun40GI+jRDZGgy7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-> devm_request_*_irq()"),
-> devm_request_irq() and devm_request_threaded_irq() automatically log
-> detailed error messages on failure. Remove the now-redundant
-> driver-specific dev_err() calls.
-> 
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
-> ---
->  drivers/usb/gadget/udc/aspeed-vhub/core.c | 4 +---
->  drivers/usb/gadget/udc/aspeed_udc.c       | 4 +---
->  drivers/usb/gadget/udc/atmel_usba_udc.c   | 5 +----
->  drivers/usb/gadget/udc/r8a66597-udc.c     | 4 +---
->  drivers/usb/gadget/udc/renesas_usbf.c     | 8 ++------
->  drivers/usb/gadget/udc/snps_udc_plat.c    | 4 +---
->  drivers/usb/gadget/udc/tegra-xudc.c       | 5 +----
->  7 files changed, 8 insertions(+), 26 deletions(-)
-> 
+On Tue, Jun 09, 2026 at 08:30:56AM +0700, phucduc.bui@gmail.com wrote:
+> From: bui duc phuc <phucduc.bui@gmail.com>
+>=20
+> Hi all,
+>=20
+> The FSI on r8a7740 requires the SPU clock to be enabled before accessing
+> its internal registers. Without it, register accesses may hang the system
+> even when the FSI functional clock is enabled.
 
-LGTM for renesas_usbf.c.
+This doesn't apply against current code, please check and resend.
 
-Reviewed-by: Herve Codina <herve.codina@bootlin.com> # renesas_usbf.c
+--kun40GI+jRDZGgy7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Hervé
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmptOL0ACgkQJNaLcl1U
+h9D9Bgf+LSzbL0bMrGV4kHVEn7DlDlKRGVm+E99HOeaOP8wfSRd1NLvgG84P+wca
+WDR7Bu5czBeeos2M1XTOOVmhOZ0J58umVudaPLH+XsdHymE7nDVlIfJ9s1GQlKxg
+RTY61Yzc1oVGKDtrbn7+wKYFhUIMcysqMk1CIdtM/pneu+mJRDDzBpgua/mAp0+5
+3jRpRiesXcWBtE9sPik6vZvFzXsHBeO93CsWs/w5G20bWDuI2n/pmlDKVBcGO7Sx
+mIgl2knudaJI6EytkurgUq2lk/9MvzYl7gSCKipoJwUHi/KRbu3O1qBXal5s0CFs
+l1bwfytVWUVxEb8x7E94/N6FcVYRxw==
+=Do9N
+-----END PGP SIGNATURE-----
+
+--kun40GI+jRDZGgy7--
