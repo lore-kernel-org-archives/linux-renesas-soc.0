@@ -1,92 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A4E397E96;
-	Sat,  1 Aug 2026 01:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12EB38B14F
+	for <linux-renesas-soc@vger.kernel.org>; Sat,  1 Aug 2026 01:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785546031; cv=none; b=r3hzLBYSAmMbqGtLY2QZLpkR2UQM/fEN0NySvlQQ77OW/VewT340F1q0bCJLrivRvBZM4T9yXcMfdySCe+O++m5ngc7ZksFIUf04cwU8DScSRBastnk2sZRXsI6SJuVe5xEzGPqNZ3uNOy5nkkQtgJeao2V/eVXfrZPr3cFCvjk=
+	t=1785549421; cv=none; b=JqrHZSJSkJIwsWz4bTlbYXZ5VzcFAuztTM8LhVIvkJUBDNwqcD6wQOk0YhsE1NSFGZdPcTRlpQrBxRWouOa8Eu0V86M0QsGyduUNW1w3soGQZPlA0hjrvizpxG03T58dODsDMv7C13vScP18vfcz7xjNjWG1B9JsGNV3U+f/I9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785546031; c=relaxed/simple;
-	bh=oEK6W2wIWcCphBUCG5YJ73654TA9eU7SZ5d0xV8V240=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHb0U704+Km45yaFGbUBDiJbFnh0SB25hy0X8WtNUuQXyX1Yf3fRuKsswhCZwPS+bv47dP7MBWjLuP+YXbKICTS8YcnLiIW01WHjhYUF5F/88UfRtV/P87JyHmeAJPUd0f+3IlNzQvgEB/5Dz8aPrf5lDvhGhEKe0uOaBJifqZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ey5Z/jlp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785549421; c=relaxed/simple;
+	bh=5nI1YV9oEDjrGDp7uwFQzuXVVhrxiw62jmY6XY6BHkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t4a8lk63y+QETKed+xKixkiQoaysjb3uPixytCQpeVeOg5PR9tN6wu8/9Y3ztEoir9iBS55E5VvVZx3X+cIFuElBLoVc3mbFjAsoE7DIYoNal9hq8OK9SRBbSyz8AkmK0ZZpjMOfWdJJsvbQfnC5l9PHpRWTbGmogoeEGUWVcfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r5OV2WxL; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ey5Z/jlp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 863A41F00AC4;
-	Sat,  1 Aug 2026 01:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785546030;
-	bh=oEK6W2wIWcCphBUCG5YJ73654TA9eU7SZ5d0xV8V240=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ey5Z/jlpZYXaTxnXHhM7O+eGIP+ow94ajLzTucA6avtoKi7UTvYwTSYp55o2RDc9Y
-	 c5HrNI+NritjtB+8oOCYcdsvqjgMpYOvrYU1yaE1t3hRBXqKLid9EN+LH0lbur687X
-	 sD1tbHZ3ga4ChEPGw2CMw4/ir6iT7BoXzgH309WOdHEUuay3mit3zcTH3wzYVGX4d1
-	 fs3bOgEehFbeIwoKx+WrNBACplFtmwQdtaVofioVZEHN3UhH8punzWwxs1thJaYr90
-	 vsPfFnemGuYuXUVupftLI+Xk0uFp2ZYYeXWQe5+LtIhT3NGbmzs2l3DpTFYdSzGNgu
-	 wUVOiYOFXtsVg==
-Date: Sat, 1 Aug 2026 02:00:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bui Duc Phuc <phucduc.bui@gmail.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/11] ASoC: renesas: fsi: Fix system hang by adding
- SPU clock
-Message-ID: <02e862d1-7e58-4667-b0c6-5e9745014676@sirena.org.uk>
-References: <20260609013107.5995-1-phucduc.bui@gmail.com>
- <d5ebcd52-580b-40bc-81dc-0a9b403e8392@sirena.org.uk>
- <CAABR9nEKCtmkt1H+qe5UAf42MncOpEqX+pZ-AySTSBQ5Q3URTg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r5OV2WxL"
+Message-ID: <4f8e09bb-b6b0-4036-af0c-89306b48493d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1785549407;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOynNBRjq+0PgzyR7DZJL2Mfr0E7TAHDO2EaMZcNWUc=;
+	b=r5OV2WxL4CgbwooswczjvgJ55IrmxVPc0HrEKma6rpOV8LpqyeNxxslo/smi3C7RFvp97k
+	CKgfr3Db1s23lRXb7xnhAtdBhsqWNxVC+Yb4Bi1skOooHSGoka6WV0EzBCRU39Zwc2IrR+
+	mlmM0UtlFRrEyIgmnN51OA7BvZTEzhs=
+Date: Sat, 1 Aug 2026 09:56:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xAM+31mrShMlZYZk"
-Content-Disposition: inline
-In-Reply-To: <CAABR9nEKCtmkt1H+qe5UAf42MncOpEqX+pZ-AySTSBQ5Q3URTg@mail.gmail.com>
-X-Cookie: No shirt, no shoes, no service.
+Subject: Re: [PATCH net v1] net: ravb: fix use-after-free in ravb_get_ts_info
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ paul@pbarker.dev, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, masaru.nagai.vx@renesas.com,
+ sergei.shtylyov@cogentembedded.com, Xuanqiang Luo <luoxuanqiang@kylinos.cn>,
+ stable@vger.kernel.org
+References: <20260731063254.71260-1-xuanqiang.luo@linux.dev>
+ <20260731182550.GA3091634@ragnatech.se>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: luoxuanqiang <xuanqiang.luo@linux.dev>
+In-Reply-To: <20260731182550.GA3091634@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---xAM+31mrShMlZYZk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+在 2026/8/1 02:25, Niklas Söderlund 写道:
+> Hello Xuanqiang,
+>
+> Thanks for your work.
+>
+> On 2026-07-31 14:32:54 +0800, xuanqiang.luo@linux.dev wrote:
+>> From: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
+>>
+>> The PHC is registered by ravb_open() and unregistered by ravb_close().
+>> However, ravb_ptp_stop() leaves priv->ptp.clock pointing at the freed
+>> clock. Since the netdev remains registered after ndo_stop, get_ts_info
+>> can still pass the dangling pointer to ptp_clock_index(), resulting in a
+>> use-after-free.
+>>
+>> Clear the pointer after unregistering the clock and only query the index
+>> while a clock is registered.
+>>
+>> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
+>> ---
+>> I don't have access to RAVB hardware to reproduce the issue. To aid
+>> review, see the similar PHC lifetime fix merged as commit 8da13e6d63c1
+>> ("net: macb: fix use-after-free access to PTP clock").
+>>
+>>   drivers/net/ethernet/renesas/ravb_main.c | 3 ++-
+>>   drivers/net/ethernet/renesas/ravb_ptp.c  | 5 ++++-
+>>   2 files changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index 5f88733094d0f..3a9d9f8718216 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -1779,7 +1779,8 @@ static int ravb_get_ts_info(struct net_device *ndev,
+>>   			(1 << HWTSTAMP_FILTER_NONE) |
+>>   			(1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT) |
+>>   			(1 << HWTSTAMP_FILTER_ALL);
+>> -		info->phc_index = ptp_clock_index(priv->ptp.clock);
+>> +		if (priv->ptp.clock)
+>> +			info->phc_index = ptp_clock_index(priv->ptp.clock);
+> While this avoids the lifetime issue, the fix is incomplete. The info
+> structure will still report HW clock support but there is no PTP clock
+> index.
+>
+> I have a pending series which cleans up most, if not all, of this issue.
+> Could you check [1] and see if that covers your concern? I will post a
+> new version of that series as soon as vacation time is over and the Gen4
+> PTP driver itself is merged.
+>
+> 1.  https://lore.kernel.org/all/20260610102432.3538432-1-niklas.soderlund+renesas@ragnatech.se/
+>
+Hello Niklas,
 
-On Sat, Aug 01, 2026 at 07:53:09AM +0700, Bui Duc Phuc wrote:
+Thanks for taking the time to reply while on vacation.
 
-> > This doesn't apply against current code, please check and resend.
+You are right that my current patch is incomplete: it fills in the
+hardware timestamping capabilities before checking priv->ptp.clock.
 
-> Oh, I think I already sent a v6,
+This should be straightforward to fix:
+@@
+-    if (hw_info->gptp || hw_info->ccc_gac) {
++    if ((hw_info->gptp || hw_info->ccc_gac) &&
++        priv->ptp.clock) {
+          ...
+-        if (priv->ptp.clock)
+-            info->phc_index = ptp_clock_index(priv->ptp.clock);
++        info->phc_index = ptp_clock_index(priv->ptp.clock);
+      }
 
-> https://lore.kernel.org/all/20260609113836.45079-1-phucduc.bui@gmail.com/
+I also checked patch 7/9 of your series. In the currently posted
+version, ravb_ptp_stop() still does not clear priv->ptp.clock after
+unregistering the PHC, while ravb_gen2_ptp_clock_index() calls
+ptp_clock_index(priv->ptp.clock) unconditionally. Therefore, as
+currently posted, the series does not appear to fully cover the UAF for
+the Gen2/Gen3 paths.
 
-> and most of the series has already been applied for 7.2:
+As this issue predates the Gen4 work, if you agree that a small
+standalone patch would be useful for fixing the UAF in stable kernels,
+I would be happy to send a v2 including the change above.
 
-Ah, I was actually trying to upgrade to v6 but it wasn't in my inbox any
-more.
+Enjoy your vacation!
 
---xAM+31mrShMlZYZk
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+Xuanqiang
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmptRSgACgkQJNaLcl1U
-h9AZIgf+I2VvIvetrhsSLnHXp9g3WcHL+Wsjy9AcG+YkN1+Za3p4O6ciWzgB/6Qw
-7PbbJTdo/oMz4qHpXJoa9gGLa2rXnPLGCLjwDc+S2gyrDVFlhQeJCOGEsnT1SRMj
-zgIn/p7JFwM90SYIyTU0X+we8Rshu8Q/ejCtvrjIdqfk10/3nQrmxVTQiIEgDYfq
-JC+feKyQu8Q4OKEx2AHGMrvAH1gjCxC2hHCYF+VWRlPurwwC/40GQ6FI++DnjVLW
-4dq+2DonuvGS5HbXCBazSBVZFMa/WHgYCyzpfo4pctjSx4IWfnzY0gu9TpsGaaop
-MObGbMOYBnrliTQPAwa0uIpgXzZqaQ==
-=eXpo
------END PGP SIGNATURE-----
-
---xAM+31mrShMlZYZk--
