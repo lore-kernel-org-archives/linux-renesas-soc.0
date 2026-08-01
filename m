@@ -1,98 +1,89 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9103C819D
-	for <linux-renesas-soc@vger.kernel.org>; Sat,  1 Aug 2026 20:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E197145B11;
+	Sat,  1 Aug 2026 20:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785615581; cv=none; b=RSJfp2EDvAEmy6HD0kfnqu+jucqErUHbfCBJogPE75+v9flh2XhS0wy9DsO3XUtPRnkiBFnz4p3Wh5PQ2I5s8qTJ4rTWvfeJCKef2tpZ9xM5N7sMqGGylYEn6qAD8tfhGSfrHwx3jPle6w82HOpk7UTlnfEDTgLEFdHdS8WID5w=
+	t=1785617949; cv=none; b=nG4Y22srN2ARjf4CeEWY5egoeozGRukAHi6i9q8AOCG/ofuhk85CTCL3tYlrfmw+yZyfEVrXz95XarkRQl+RV3iAUNiOH4oMTokQYogOA5OO74o7TAMabb+MH1M4lM1HqOi8NoGILXR43tUmok8v/bM8RXcnrvf3M+VkjaiNzHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785615581; c=relaxed/simple;
-	bh=ufJhGf4bzE78fJteVY/YmfmjF2gWypbQ0412ziJnxxo=;
+	s=arc-20240116; t=1785617949; c=relaxed/simple;
+	bh=XguoDNauWy0D7G85//Wbhk3WM9XZjBuSVI+T4ztMu3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sfjP9LCUehla3YAOpS9pBEpOWQ9/r2GKO4id3m9vX3ytWpYw8QwimY83w4VP5p2ZFkaDu49TRUnnyzxjaXAzkt+Tda2OEhj9Rst5A4N9toqvERtCOzo8A67+7TJB0TLk3rOHg7i+eThsf5C1nd4w2aSYpRWW6VtVacDLMf01cXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O8llACol; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ReDpdlE9YTVX3tz9ftPfxKEA7+Y4dEKQdnSAXr6YZt1d0TtYFIJeNnAIzD2vp+oX4IUumuJYIJquGct3IGKzYaA2VW/2EWMRgey+6BXwpGg9cj4HRKW6IKvccZjk+xRv5ZKNufIV5j6K1nbQqNbGi7eGzBmSg3b5rw/n0bM0WlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cQmZ48EP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O8llACol"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ufJh
-	Gf4bzE78fJteVY/YmfmjF2gWypbQ0412ziJnxxo=; b=O8llAColra+iJTI+CBs3
-	qcDf8OoXqMCI3cts+Ijv4amcbMn2VwRg67UjgqZB4JtZE5X1nDHhCw72rj4MGVLH
-	uhxOZBuY8qvpu0YJOHARaefVSwpR/ae4D1JNmVnPzpvJfUrWMWjBMMEUYSbnqZfz
-	bg3ZzraOmYPgLdFY3pxWnjVyTqfnkG9Hba3lKl6w4yiVVx+2GiIwNAkRfNRiGtlL
-	7XSjTqXAezeqLi0aWkfK0N3CIZC7vAW0KoLaOKESpMAClJx/Uzgl/MMiV1q9FIJB
-	GN6Qdd3ytRT1Q6oTCGnoEkA1Y3bq4XS+VzVpmL2T1kdjJ+U9wRRJZp9RuxwW25mR
-	Rw==
-Received: (qmail 2488103 invoked from network); 1 Aug 2026 22:19:28 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Aug 2026 22:19:28 +0200
-X-UD-Smtp-Session: l3s3148p1@cmmdBQJYoJYujnt8
-Date: Sat, 1 Aug 2026 22:19:27 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: [PATCH 7/9] iio: adc: rcar-gyroadc: remove
- rcar_gyroadc_set_power() helper
-Message-ID: <am5Uz3RS_EEoqDIC@ninjato>
-References: <20260727184755.2055414-1-ekffu200098@gmail.com>
- <20260727184755.2055414-8-ekffu200098@gmail.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cQmZ48EP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=cZuc4JfzKuG/55z+yA9PYJfiUrL8fDWjW2wegwlHAM0=; b=cQmZ48EPkSZ0QTdYvDVqBI/uQ5
+	F/8TgqYqXXyVhtpYlxJ4MbOZ6twF0anleKi67Vbe/PSpU3AVcVnacvaEDEEDEemFXfwUV05531Qb8
+	/C4Y0ac+s/YLGd7KpPuVoXTDwAuV0JtpmZxgJ6F90/nBCVLq2FehLsw6tkuDrxg7M2w8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wqGn1-00FQCq-K1; Sat, 01 Aug 2026 22:58:39 +0200
+Date: Sat, 1 Aug 2026 22:58:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Coia Prant <coiaprant@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] phy: rockchip: naneng-combphy: add SGMII MAC
+ selection for RK3568
+Message-ID: <0cf1f734-69d4-471f-aa22-e1a2e7d0341b@lunn.ch>
+References: <20260801142244.679437-2-coiaprant@gmail.com>
+ <20260801142244.679437-5-coiaprant@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="53BZ5I70pynewSYY"
-Content-Disposition: inline
-In-Reply-To: <20260727184755.2055414-8-ekffu200098@gmail.com>
-
-
---53BZ5I70pynewSYY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260801142244.679437-5-coiaprant@gmail.com>
 
-On Tue, Jul 28, 2026 at 03:47:44AM +0900, Sang-Heon Jeon wrote:
-> rcar_gyroadc_set_power() just calls pm_runtime_resume_and_get() or
-> pm_runtime_put_autosuspend() depending on its bool argument. Call them
-> directly and remove the helper.
->=20
-> No functional change.
->=20
-> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+On Sat, Aug 01, 2026 at 10:22:27PM +0800, Coia Prant wrote:
+> On RK3568, the SGMII interface can be routed to either GMAC0 or
+> GMAC1 via the GRF register pipe_sgmii_mac_sel.
+> 
+> Add support for this selection by introducing
+> the "rockchip,sgmii-mac-sel" DT property.
+> 
+> The hardware reset value is GMAC1 (1). If the property is set to 0,
+> the driver routes SGMII to GMAC0; if set to 1 (or omitted), it
+> remains at GMAC1.
+> 
+> This is necessary for boards such as the Ariaboard Photonicat, which
+> uses the SGMII interface connected to GMAC0.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+If SGMII is not selected, what MII is used? RGMII?
 
+Can this setting be implied from phy-mode?
 
---53BZ5I70pynewSYY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpuVMsACgkQFA3kzBSg
-KbYhBg//dlFffYypLTPLVX5lgNtJxYOn9LOe/Asj9fxF19DBBvPXJYh30aXPF3SW
-v8Mn0mQLwb3eFIDex86VTjIRgNm+xU9Mi4ZjPrY5VzHBTecHdgoaGYoipCVl7fNw
-h0ct9nTv28xtEEPMBCDrVe5fLvf2tclicyhx0HbWZZrClA4jkFfjIG9E4spQjjo2
-uVvySF5VbH9mb6zmf1VU7vcYlfYCd+JzYxxNDDioHQWcuO49XhHPWReU6J8C7ycP
-28O8d9Eh8vubQBYZRl94Rxti5oy7Om2Id6A4DlbJh5h0ZNYU8282N7UzNHkTBEOP
-WfzlLQ1QNh5sWkR8/zwFIpkQJQTRaxlov45r07kkkIUkO8g/Gz9Av7uWfFAXeWxC
-cHuo6pCyvPBI+jgrrlM2sdvu6w3k+Kiuq5042hJte7gGKRu5vKx8ovOXG8wyf6Tc
-No/7TRMeGfTjFMU91e6/McHHdt5ouPBINWKe1hQU3ePDdV5BrC611gk6cfreY8Ld
-59KGZ+XaISEA2PMm9gF5fbteaRBBvaPF+iin3V0IiOKkDiHQkCNM8iWozywxMSkE
-l7wkqP2GawjXy3e6iUWAQqKjCIdUinWTnO0wTfwozroZy7h9HhOb9Japk9K6mM8Z
-OwGsIU5dyyQI92zvoC+P2ISmAph/5O6MKQ7DIabcZQo3Jr2E9UI=
-=h90p
------END PGP SIGNATURE-----
-
---53BZ5I70pynewSYY--
+	Andrew
