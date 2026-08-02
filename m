@@ -1,102 +1,103 @@
 Received: from mail-ej2-f1.google.com (mail-ej2-f1.google.com [74.125.228.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA8B175A86
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  2 Aug 2026 03:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03E6285C8B
+	for <linux-renesas-soc@vger.kernel.org>; Sun,  2 Aug 2026 03:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.129
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785640837; cv=pass; b=SGwNhWcsVzCNClJyH195rrlYA5KmatJ9I9mveGenKaAdVIIaRy/tTMdE4empy9dQnbpe9FuMFtnmPOYddIq/V5TUVykpb4lYHAwontlG52gHS4j2Yv0zSFT124Jg9L0wkj+LnxvJLJCwMETdGo8+H6ZjSM3vVWsMp7zIIy0GDVw=
+	t=1785641302; cv=pass; b=dSX6XcPdiln2cHeuHTWJRy8jYjl9s3AGxlc4FxpLsG0Ymqrfdh4EugU4+trE4Xz9bx5fFFIXkJJPsYrfQ5EkYWbwzlGBTjGCzFoDtsKSOASFfqolKXfph6dbOgrZJ4Vr3vDN87EAOoiAb/pwKyrby5g3r760TPAO4Bmcz+LOJIQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785640837; c=relaxed/simple;
-	bh=37d6zNcTsy1RXjb9J/nKzOHniDYn2k4MTPlFufKuap8=;
+	s=arc-20240116; t=1785641302; c=relaxed/simple;
+	bh=/0w0YO134zBV85YwnHp+km6pCsaY5x0vppPkNuKA2EU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZUBDTcP93JnR7j4HN4pX9dXdDbvcMjnOl9WFD20dOgzp4umd7nPByEEKhWt9EPj2rWDmLlEgGVIbNhPM9TNFgPnYzi7IjXFY4LG7+spZ2HuDJECMjjTrQuY+MS/fXa8uNQpwzmEJgcF8dPE2qbTnWmak97cXS2Ay4utkgQzql+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnNAYU/q; arc=pass smtp.client-ip=74.125.228.129
+	 To:Cc:Content-Type; b=HGto3HB01V7dZ0KCQM5IgMkR3nsBpO144j7tu3AH5ExrdqnZMbb3x+VzJqa/XLwitcdm5OW4PLxULJAuwcj6cOwCM4PfNt20/Dauunj+QnotVJWJvwzBuj7UAqeTwuQc08GtebiGSx8KCTSvctAuKjvsZj0X5jaMdCBmvCorQrg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYwSs4f4; arc=pass smtp.client-ip=74.125.228.129
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnNAYU/q"
-Received: by mail-ej2-f1.google.com with SMTP id a640c23a62f3a-c15e0279316so85374166b.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Aug 2026 20:20:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785640834; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYwSs4f4"
+Received: by mail-ej2-f1.google.com with SMTP id a640c23a62f3a-c1971f5efc3so109439066b.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Aug 2026 20:28:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785641299; cv=none;
         d=google.com; s=arc-20260327;
-        b=EneoeSrKKe5uL1uZ6/ASMkEbx2O5IHxsxDRcpi6/ktom8B6fVkCXk3WRmZjd1k0TrL
-         WhnsnjWZ1MKkKKuYoM203NVNeiHZp88X04ZR2RIxEjJcSQPQblq+FFydlqiWRoI0vVqf
-         4i8P39/ApgRL1URO/s0ZOpwl+wcafnr/CLBm8RZ+eIGu6BYhy8/l8fjahyxUSwi6qPTm
-         UOgk4X2u3xpVfSqDgU2U+jx8LMjYvV+ZYbV0Nhmch53zX2/eXrFsUR8S8UkJMCthqV/u
-         hOsC9HlXvoNHxTgj6xS7Id8VC5P2T4sgF1ibFUclR8HZ+1pZqUhS/M1EY3FudmWqt09f
-         MJag==
+        b=DtriUgbtu394sZEY2CyXy0M40mlR+R21Uu1h5bcaZt0BJq2Wt80zMQixpvPILJsUUW
+         ZifkG6IANy8V5IGe06yMB7nqWiD5s6hEcrThxO8dLaQDK5Wna9BknCveMQketuWzP0tw
+         lIprAdSl8+flFTezv4GSCem/9cN3S4CVths1Rq1i20s2i4goRLpeMwy3osp2VJoZy0wl
+         H3d0lvVnPhZV3LkQ2kn3VRk9cRZzxGqH+lZsUP8PmxoyhkifM+znfRBea9tZReC4PkJc
+         jbkfyv5JNgECREeNrZk4QH7QWpmg2oFLit/kE/GyIffzeAWla9JZl93yAKwoLC+1GOUn
+         UtiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=dokjfNwvvyjCQVfo5U9weDVNiEMz1GgnQwdVbTp72Qk=;
-        fh=bxF5OONx9yNQg8VQJqmA7dke5trhHz0e2WEcDDkcBZk=;
-        b=NeNfL5zvs8bfrLp5GYk9suAc6iWxK/8ICL/joQnaWqUayNC7RZV3b9+A3vf5JN6/qP
-         GyoQNNOJBA5L8UPhbMY1AXRhbU2OKSl4bnY6/szmia4YrUpNieRH72vOgtRcl6v674MO
-         Fa2RdmSF2jamqo/kizlcb0q/KsR7pEjM+hnWNx5/lz6WJEqu0sQFXTocLPZfETSzD4MO
-         oqz/qOQOUojiooGFoKM2qqyGjgnCa6TzdQQA0G165+GJ9VYsvpmS9H2WjyfjvtXAQc0r
-         SMfSbVxsPPAhtUpDxBHt6Lg0Pq6ut3R6udb+kEoFPCMvnZ9XYf+UzSaIeQzAelJBvDt3
-         laNA==;
+        bh=/0w0YO134zBV85YwnHp+km6pCsaY5x0vppPkNuKA2EU=;
+        fh=plm8Z5W/ZWiNdCjNPHmGh7QJMYzNvgg9ue9qbkKRZWU=;
+        b=Vut1LCV8+SqfptNaEtxrt7YlBrz+6ZJDo1u6WpPjZeXgWN38zoEEy6jUtr3PFk2xOI
+         d+FqI3hwv75ntPCSYtlqXBWHJolKYxR8VrZJlmJZlw9cE7q4gTylonhO1kLWBM8P0vpv
+         A0IbWJzI4bOzx4X1fs8Ww4qNJPrm3wnzxG83zyb+oPOKT1stkn+4+pZtBDG4wGIXKJuG
+         Bp92USi323XlobKjRw5jWL2g/BIB2zhjWPNbBMo1nB1oVz9m4hWDxKXDAzt86sCWFzE7
+         EfpfrF6hqvYC9YZl/IiwWB/rgPY3xZwjcnJxP80GdLI5z2j5/vZmzcThN6NjCM3ni8eO
+         mglg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785640834; x=1786245634; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785641299; x=1786246099; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=dokjfNwvvyjCQVfo5U9weDVNiEMz1GgnQwdVbTp72Qk=;
-        b=hnNAYU/qFKRWgbc9r02o1IF6tYDO/BO1e8m64CwVS5kBQHjdRuKCYgVYhf74i0R5BH
-         cGBdQ6JZ4UrXdC3oF18WgNUtl7nHGplbFFhcronjm4KpbYbkD1gYJyqZwJXF15Euno57
-         KHz4kcSZBKRcULimuOdOXV6sNcshQ0MDZPDy9rYa4IAkMkmfq5ShyO7ctrq1lTy4StuZ
-         Q/KONhpR44pETAqPulATKeBDmn7LQ7XpNoayV4MeWo+c/0j1xTHkQCMaeNnO06o1jHjV
-         wXwst5kPVLgCbzWT0YyLE0V7SrPk4dewcY285s76FaTIMjsI4wm7C9qImApL7c0XubIx
-         ESCA==
+        bh=/0w0YO134zBV85YwnHp+km6pCsaY5x0vppPkNuKA2EU=;
+        b=lYwSs4f4QRVNApHpA5Fbhp2sxug4AuEXuNJXpblaWPsau5ckLJuoebcgMXgilkYW6r
+         01VJi1tWXpw8fCCm0U5/qoWHZ9dZuZPRS9HL3Q9H86+0fowVsyTI00+HtBWXcwKehzho
+         q/NwpTsDxXOa1KFvNVcBx79ISSJN3Sv9ChmFnHZa3cof4Mnugoe08/U7K7zjMaXZoHSe
+         MxFR1aD/W5nbtsYvsT24JSkTbzXzXWXf+5x8GgEYVzzHWfpANXJhvZ5IsKl3c4+/kW0D
+         xNkdiyAQAaQGUYpPwUTHsEhGkTjAogV7+wPIinPeZgmsQ7vyaMyQJPgLVLLzBvR/GHaP
+         SOfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785640834; x=1786245634;
+        d=1e100.net; s=20251104; t=1785641299; x=1786246099;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=dokjfNwvvyjCQVfo5U9weDVNiEMz1GgnQwdVbTp72Qk=;
-        b=FVX7qKr1uf/2SSbnRDqLP7tfmf3aW9mjWmLKweogsDXjxg51W3AwubronR/KUbGsBH
-         1hb2VsFLpbGood/Ksj1FAdePIj5bActYFVES7+Indy6MHfFk5UIUKVz5Ixj2AnbZuNLr
-         6Zzxjvucj/5mUAL8WHJ/5N6pUgH63+DBUHHRx2HTtLmH1VORvMY/jnQaZ5JLy1pqZhW+
-         YA55U/XwSiOy/Vs1XOA7T8QTakl5kPPYg7R16fJTbflLUdLQyNpAQ11IwVcrlqxGNg1x
-         MEWQJwYHKEBfnySlAPlIqW0rWd1fESFECC8O/uyfsFNtwSuJWe6dwhcn1D038/Z/mAo/
-         IQ3A==
-X-Forwarded-Encrypted: i=1; AHgh+RqMIJrs9QzbxoavjOAPh5C+c871PkvmPaHBCBV4KkSqUbTzFxixzJS9ScvDvhvO7ugr/hnJblCH+1Hwjs+WDoJmyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTSP2WoGf4w1pfdS32kUJDZHpshhXCTo/uPswHowpKem1OLDuK
-	Z8Ysq11jqOqG6tsb40FLDgNXMnESuocPek0tqWCWXYCaCXUq+PRz7jSzMw4rpCxzpzZsrN4vbz1
-	Vs+vvEXFr3NaIpaxz7PSKBrHM46kgKEM=
-X-Gm-Gg: AR+sD13kCMkMIo5Iz1Pr9PMcinIx2OZg5f9Difm7O0Hij/XjqLGZhpzqVWq3JG6DM+X
-	72wZCF2CVRGT2zk6WZP20GRUNbnvYeKvOkc3MCqPaaShUzTWouEZMYJO4fQwi2Ipsi6EZ6IIMgt
-	0kKkRd/2oiWKmOvA1huJCVKaw8OnrlK2z2i/G7j8VTogUU3iKsV7pGmJtcj5nG+SLmdYaKRAbPk
-	6yGe5DkI3lICjVN3jXyeWvCO119Rtof19iZWfn8DHJdfelFQDho7eVnDMTE53FhdeVPnKX4tT8d
-	MmAFndtfTiRR5WsD9F5eyDyZZDhRLdeIZcLE0XQ3tFrxGT6r876KKqAiTKWqNYNSeP26Qw==
-X-Received: by 2002:a17:906:d8c3:b0:c12:b227:614b with SMTP id
- a640c23a62f3a-c1fe80d4099mr321593066b.27.1785640833516; Sat, 01 Aug 2026
- 20:20:33 -0700 (PDT)
+        bh=/0w0YO134zBV85YwnHp+km6pCsaY5x0vppPkNuKA2EU=;
+        b=Xg01wyoLkzzQ2WcH4EVpauNcabjSG5FpJk+vCsPc3wu8X16XegfTGpDKH4znpZyoDG
+         gPgEZ2srCnpG05MrQxJ626A/S79yjUn9h/x31m3db2gfDLOaEEcQb/FoMHI7wB7dD0NO
+         Ys8adkwaEcpvz4wAVBKMMOVbsyA/TKiWwYut1Rf/2teEkkVSxr+/yGzcH0QjJkWsOn5S
+         7ZPh+5Z3qLkd0ufDHxCfSAbJT8RhvBmi/amYFbrQK807HKjfj0NWSjd9yM89r2v9SdL3
+         mMr024jofh7hKk1/B/M9Len7/wf3pbckZjqRdPjYi+5z2Ve8zE40UTDxZJQjgQbzQUJH
+         g2ZA==
+X-Forwarded-Encrypted: i=1; AHgh+Ro5b0uoAmB+mSxGCZE5s+xQ07Znl9CzOIfES9QTJ68I+YKslcVZpguc0YXom2GCMLtrsAzar4c7kA58iCGE8/oKRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/khXguJ+283WcUD3HeJC8lxdESYdI/JM1Zw4kWSqWSBalKPcn
+	pXXFNs6h3h6Qg0KlyNjy9hqLchKmXhgIIUXAF+a5SlKYrWSgKDI1j4hsrPI5lCkCyO9UPv0H6Al
+	sr7FThAotfXkL4bvsB2+/0ffE07PEsxE=
+X-Gm-Gg: AR+sD11r4L6J1GOFHQ6XswaL8QfvzCRqMh2Qan+8ULVkRne5e1zeTuavkO+d6If25vk
+	iY9IY3IMqbBrt18wFwcvZPFEHBLrvrX1vxj64f2Is3m73+H2TtsQChmN3wEVyTWy/AjkfxJ0dl/
+	6/M5S3NRTurbh3fTAuf2XC31RKRhmCNWx5puS6bDkQUFPWDAra3oUy9R6+LHrkTqpUd1ROEf/HK
+	yWRdsy5mLZkC89Cr+s0deQO7Ar4rdQCoPq6GwWbOnxyRDcJUf4z6xcR7p6nUuGIR/iFM67KWGF8
+	jFrq/KdbvqqIxXAPmNmhoeoETRKziBcP8OeIh/Ur1xIhp94KEmQjN+dxznA=
+X-Received: by 2002:a17:907:7b9e:b0:c20:768:af62 with SMTP id
+ a640c23a62f3a-c200768b973mr9148266b.22.1785641298865; Sat, 01 Aug 2026
+ 20:28:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260801142244.679437-2-coiaprant@gmail.com> <20260801142244.679437-9-coiaprant@gmail.com>
- <23d8e994-8552-466f-98e6-c47d5783525b@lunn.ch>
-In-Reply-To: <23d8e994-8552-466f-98e6-c47d5783525b@lunn.ch>
+References: <20260801142244.679437-2-coiaprant@gmail.com> <20260801142244.679437-7-coiaprant@gmail.com>
+ <2847036.GUH7pLUipS@diego> <CALj3r0gqvFZPb2SKRMPwf9chCx076rwCnXEoOMFch_V-fOKV6w@mail.gmail.com>
+ <0e9d16df-7332-446b-9321-ce3de3111ffa@lunn.ch>
+In-Reply-To: <0e9d16df-7332-446b-9321-ce3de3111ffa@lunn.ch>
 From: Coia Prant <coiaprant@gmail.com>
-Date: Sun, 2 Aug 2026 11:20:27 +0800
-X-Gm-Features: AUfX_mxFPztNas3fSYA9l7Pdws6J-Z60lqG9o0kXKtJ3uRladP8seNb6Ax7e_y4
-Message-ID: <CALj3r0i5yVcJY8V75y0Hm5xjtZSBpH0DXSAWKsAUqguChVcxYA@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] net: pcs: xpcs: add Rockchip RK3568 platform
- glue driver
+Date: Sun, 2 Aug 2026 11:28:12 +0800
+X-Gm-Features: AUfX_mx4aMsgyN6RI3IxSSP4ztvHebSR5krnQ6YdL4RSbunpB8OT85Rvkz3cx3w
+Message-ID: <CALj3r0guMmNRN4EBbKz7stPNMSqkLBvms643YXBEDMzqHHM=FA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] arm64: dts: rockchip: rk3568: add XPCS and
+ fixed-clock nodes
 To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
 	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
 	Romain Gantois <romain.gantois@bootlin.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
 	Neil Armstrong <neil.armstrong@linaro.org>, Russell King <linux@armlinux.org.uk>, 
@@ -107,80 +108,43 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-> On Sat, Aug 01, 2026 at 10:22:31PM +0800, Coia Prant wrote:
-> > The XPCS block contains four MII ports (0..3), each of which can be
-> > routed to GMAC0 or GMAC1 via the pcs-handle property in the MAC node.
-> > The hardware maps these ports to different MMDs:
-> >   - port 0: MMD 7 (ROCKCHIP_MMD_MII)
-> >   - port 1: MMD 2 (ROCKCHIP_MMD_MII1)
-> >   - port 2: MMD 3 (ROCKCHIP_MMD_MII2)
-> >   - port 3: MMD 4 (ROCKCHIP_MMD_MII3)
->
-> Why is port 0 called ROCKCHIP_MMD_MII not ROCKCHIP_MMD_MII0 ?
-
 Hi Andrew,
 
-The naming follows the Rockchip TRM. The hardware documentation refers to
-the MMD for the first port as simply "MII" without a numeric suffix, while
-the other ports are named "MII1", "MII2", "MII3". I kept the naming
-consistent with the TRM to make it easier to cross-reference.
+Thanks for the detailed questions. I've looked into the clock tree
+more carefully.
 
-As I understand it, this is probably because the MII controls not only
-Port 0, but
-also the entire PCS (these registers are read-only in Ports 1-3 and reflected
-back to the MII).
+> Do you have documentation for these Combo PHYs?
 
-If you prefer, I can rename it to ROCKCHIP_MMD_MII0 for consistency. Let me
-know and I'll update it in v3.
+Yes, the information is available in the Rockchip RK3568 TRM
+(Technical Reference Manual).
+The relevant clock tree details are also mentioned in upstream
+discussions and patches.
 
->
-> > +static int xpcs_rk_read_c22(struct mii_bus *bus, int addr, int reg)
-> > +{
-> > +     struct dw_xpcs_rk *pxpcs = bus->priv;
-> > +     int dev;
-> > +
-> > +     if (!xpcs_rk_mdio_addr_validate(addr))
-> > +             return -ENODEV;
-> > +
-> > +     dev = xpcs_rk_mdio_read_remapping(addr, MDIO_MMD_VEND2, reg);
->
-> Does this mean C22 registers are mapped into the first 32 of C45
-> MDIO_MMD_VEND2?
+> Can these clocks be enabled/disabled?
 
-Yes, exactly. The C22 register space (reg 0-31) is mapped into the first
-32 registers of the VEND2 MMD (MMD 7). This is how the hardware is designed
-and matches the standard C22 to C45 address mapping.
+The 100 MHz input clock to the Combo PHY is a prerequisite for its operation.
+It is generated by the SoC's internal PPLL and fed to the PHY through
+a fixed divider.
+It is not a gate that can be individually enabled or disabled by
+software; it is part of the
+PHY's fundamental operating conditions.
 
->
-> > +static int xpcs_rk_read_c45(struct mii_bus *bus, int addr, int dev, int reg)
-> > +{
-> > +     struct dw_xpcs_rk *pxpcs = bus->priv;
-> > +
-> > +     if (!xpcs_rk_mdio_addr_validate(addr))
-> > +             return -ENODEV;
-> > +
-> > +     dev = xpcs_rk_mdio_read_remapping(addr, dev, reg);
->
-> Should it be returning an error for dev == MDIO_MMD_VEND2? Or at least
-> if reg < 32?
+> And how is the Combo PHY fed with a clock? Does it have an external oscillator/crystal?
 
-No, we cannot simply return an error here. The generic xpcs driver uses
-C45 reads to access the VEND2 MMD for various operations, including reading
-the device ID (xpcs_read_id). If we returned an error for VEND2 or blocked
-reg < 32, the xpcs core driver would fail to identify the device and the
-PCS would not work.
+The Combo PHY is fed by an internal 100 MHz clock derived from the PPLL.
+Specifically, the PPLL runs at 200 MHz, and this is divided by 2 to provide the
+ 100 MHz clock input to the Combo PHY.
+So, it does not use an external oscillator or crystal for its main
+reference clock;
+it's generated internally by the SoC.
 
-The VEND2 MMD is fully accessible on this hardware and contains the
-standard C22 registers (0-31) as well as vendor-specific registers.
-The remapping function maps the C45 address space to the correct
-hardware MMD, and then the read/write functions handle the actual access.
-This design matches how other xpcs platform drivers (e.g., pcs-xpcs-plat.c)
-handle similar hardware.
+To summarize:
+- The 125 MHz clocks (xpcs_gmac0_clk / xpcs_gmac1_clk) are outputs
+from the Combo PHY.
+- The Combo PHY itself is clocked by an internal 100 MHz clock from the PPLL.
+- This is all internal to the SoC and does not involve a board-level oscillator.
 
-For invalid MMIDs (e.g., MDIO_MMD_PCS, MDIO_MMD_VEND1, etc.), the
-xpcs_rk_mdio_read_remapping() function returns -ENXIO, which is then
-returned as 0xffff (meaning "no link" / "unavailable"). This is the
-standard MDIO behavior for unimplemented registers.
+I hope this clarifies the clock architecture.
 
 Thanks,
 Coia
