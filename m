@@ -1,145 +1,131 @@
-Received: from mail-pj2-f1.google.com (mail-pj2-f1.google.com [74.125.227.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEFD2DEA95
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  2 Aug 2026 03:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D1D2264C7;
+	Sun,  2 Aug 2026 03:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785641306; cv=none; b=hgaqK93U0tVNGEETwB4AIwcMtjzaab6G0ndtNkqCoAS4zWyJJOPbjjl/feAEUUV4asLILq5xtGK1ANTYr+B8+wovqWXUjUHfkHcPjJ5CJog4NhqJDATj1iNGUf4dk9v3vJnotUY2zh60QBRTQBZPTTbE/58zDYqcYejZqYY6G8A=
+	t=1785641728; cv=none; b=PXnLpCSfkr9X+D1ZfFTjxkxEOJhqW4QK6TJ+w/32gSEE0e5HjnSEKZoS3A2h+WWxvwb5sELjw8yo2PCQuFrpjjmnIsvZl7ynaoAS7gvkj6khKmWSxM6RAlf2Oe/lb7fonNuuxjw/6JV3bn7tvS+q+gYYCRUyoO8mWwF13iSzPCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785641306; c=relaxed/simple;
-	bh=zVW9y8ku2uvDPevPqPFRUhCMmyFyJ7Yqdg2TMwGw9u4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=uOL4S1/KwVRVMiCLQQeNpYwSlMLUqRPxXKQs89zWhvvSxLRqQG89SyDiBbtdkduhzlAln8p0lbeSqNifXXK/mBHb3q9ATw3unQUkhoeOw8QZ3U9kIaMkbB/DN57RO8hdmwhFcuifXOgbIraMZjuBYv269h6lh860/3HvVo4TRps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPm/Qn/+; arc=none smtp.client-ip=74.125.227.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785641728; c=relaxed/simple;
+	bh=e2Ih7/pLbIQa1dZnAmhodAgPWbgowpTJcib0y3Z9m0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AEjWwDJIY5nQjryXj2zWyNS7Pz9AatO05ULJFT6JPKNQd08FtCxOTzTDyX3+FfbiHIXWS2P14chgLVZzFj959DZsaaBhujXglV/PxZE3Jt4RUHKOQgtTWOZwxAh8lM8vNbw7dK/9fOC394mX70OT/4AM06imIGp/kMXC7p8zvUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rubFXbbu; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=USfeQc3o; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPm/Qn/+"
-Received: by mail-pj2-f1.google.com with SMTP id d9443c01a7336-2cb3f5bb19aso6575385ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Aug 2026 20:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785641305; x=1786246105; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id
-         :references:in-reply-to:user-agent:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=TpANIRIXCFEaCO+NoYgeEquheHUazRAsrSjmXdnDLkw=;
-        b=GPm/Qn/+ajQIxPFAcut+9aW2WJFPy70NDWjQ/dx3sk/AK35IYp12HwPJyfX1gPK5B9
-         Wsm8ez83eBCOq7BcICvdJRH63dveQ/r9xqBuAKhbazHKYUEzcA6Pa1wk6U4aCAvegjFZ
-         DmpDb8HVWCG5Ju/KCwiY5s0RtbI57fFvuykIu7q/xFXaSKOIMwPaKctox2/SG7AMyidk
-         NbCjl6YrvDyNh4DQTE2Kc5TckoB2ew46GAtfsWeURi9bgs2nAV8TvRBUVgxGprgm7PDN
-         +GBpeE+xfR2un2ZW703FB20+gXIhCmSv/wVKZvDRxcO1BmPMAjn2gIe8o3JDyScnk6r0
-         lTfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785641305; x=1786246105;
-        h=content-transfer-encoding:content-type:mime-version:message-id
-         :references:in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TpANIRIXCFEaCO+NoYgeEquheHUazRAsrSjmXdnDLkw=;
-        b=hsSU+9cpFu6cKNN5oEwoUC0oOA2o7Vpz6Ce71p8Z3mgnT8QuMsociciOutk4kcQ+Bd
-         Jyb59xFR1H6uFAIAkf4aRj50Gbhc6irf5bohSa0UNhrQ5uKsJlYRxyXt5EYkV/rrRvJU
-         XWzTRKN8cgaMCe69nhcYQ9hZPwYWWXf/yufTyI/kiojDpWFl/ej3/8BJlPxymEDTKb/b
-         /2OUg0wmyrF+WIWBpxfqjrYQlCf2joHiHpeF8i7CnDE8HJZjm1grzxLvVmbhUslNdR/P
-         XjiWXQnTsHqkzeIvvfTUQjGTU/6u5UlesVn7qass6p/WqHYeruK0rFZqT7bNgyFaKxP/
-         ncgw==
-X-Forwarded-Encrypted: i=1; AHgh+RpjUZRV6XuKO0DXeA0seoPOiiUDjyCfhJhNV3HRoMyp5MczTJUadRMmP94WClYYtDHUVocT92fn6mytZmn9THF6aA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Jc66Bgxs6m3emUdTw89pHgFHDH5KizQzO86zTjYqPEjxi1eH
-	1/j8XSEU6M07TVrmYqjOQyQnagx9f8uEtlxMdM2BT9lJOMWj9bnTjI9c
-X-Gm-Gg: AR+sD13q8TUQ+jIjf4yXJNluyDW4EFusrnVhek8G5lMHwJI8tVqL+8XhOxi/DekSI8U
-	AxaW4C2IDpe3dW+wBp0NnKjEx6JEZqFkl9lvW6H+brCtmzoxZ/SEHzLGJ1uYoUVv1RMY4gnOJyk
-	EBnKT2eNiZOU2/2oPxBi2UvV0KclsHAoOurFsELQwAW/qU1TL6qnxQ3q31JE8UKB3gWjsiuKRg3
-	35c8sFXUThNcmdvdgLrodxuvFbWxNbpkpmiFkyQHOpNJ31eKyM6ldasd+UrEzJkr+QFD7uA/zaR
-	2OWTqi6QkhrWeQ9Lqh1NLdMQBNIuTZc+BpcmNqEsTkuM2dYKNTujYTUO65+Dgk+1Fn0yuMgH/7Y
-	ntuL37TcXO+pNyz0Upn/aRnDrnxrz6QBXXXd18g68ew/bHBK4TzUOjm7RqsomL8yi7iCxA/Annw
-	6By2yA1ERA1MIOXdK1i4fP9Dow3eSHLD3EAwXpPnJiKxMpoKc8gctrGLX0pFL0j7RTc9Y=
-X-Received: by 2002:a17:902:ea0c:b0:2cf:6f7f:55d8 with SMTP id d9443c01a7336-2d0523f76edmr54404665ad.37.1785641304908;
-        Sat, 01 Aug 2026 20:28:24 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([103.213.4.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d04ae19ba5sm23124875ad.17.2026.08.01.20.28.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Aug 2026 20:28:24 -0700 (PDT)
-Date: Sun, 02 Aug 2026 10:51:37 +0800
-From: Coia Prant <coiaprant@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Russell King <linux@armlinux.org.uk>, Shawn Lin <shawn.lin@rock-chips.com>,
- David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-renesas-soc@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_03/10=5D_phy=3A_rockchip=3A_naneng-?=
- =?US-ASCII?Q?combphy=3A_add_SGMII_MAC_selection_for_RK3568?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <0cf1f734-69d4-471f-aa22-e1a2e7d0341b@lunn.ch>
-References: <20260801142244.679437-2-coiaprant@gmail.com> <20260801142244.679437-5-coiaprant@gmail.com> <0cf1f734-69d4-471f-aa22-e1a2e7d0341b@lunn.ch>
-Message-ID: <7F609DE6-F3C6-487E-9113-449F5BE05D94@gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rubFXbbu";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="USfeQc3o"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hCQRv0bWRz8v0l;
+	Sun, 02 Aug 2026 05:35:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785641723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lVPeKhaHWKeMLtse7Q5iobdF9p3FH5JM+sg86VV22fM=;
+	b=rubFXbbulXs0seI5f5oy2kYBvHVM13YDVZDRyY5LPQZax3jSN3kPEyw/1wF1kwP0X1ROMG
+	9KdBIu9ALUoLorhPLjZWksswPsW6+AivPot9xW5XzCkLwWORbwN5F4WpnlviSQmN7xoJ8G
+	1oYxEDwZclRyTsBRsf1q5bxEr3WbKtIF1/3ZOXnfYx3tWXGS3i/hYBCoEdA7ZI199Lgbys
+	ZDVM23hrPKSiLHn0Nr4Rh94RZ0D0DUdh2TIBX4rr3EIJduatAP/PoSH4BOfhc/m+K1oZSQ
+	yZ0MhRp7l7HBaNfcBtrED4ZfhMwgvgZWPp7G7JoEu9CzRqOndnmLV6jR6TV1lQ==
+Message-ID: <5caff653-3681-4025-9be0-946778d33f8e@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785641721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lVPeKhaHWKeMLtse7Q5iobdF9p3FH5JM+sg86VV22fM=;
+	b=USfeQc3oj4IbfmamuGW1sbZaK6z1gRzvh3gWyNZN0WXZ/BAhBwRm6U56RKns6jJoKLY9Hy
+	gotEyfAg4+WFDo0z1BEUxENhkTvg6V3aIt/AqUq0eN2z2qoILyPYtWMseagAQdCECkBcOY
+	jYhkqP2XIe7+xRei1ExKlRmFGIn9i/NXyMhax4N+8z8jLH6nMolTcjC7AX3l05zHgxMT0k
+	N1kD6SMdrWuUFffW7nHeFV3ULS9dK0+jD4reyfHIcsS23gWU6bC1qp/osDhfmABTvk2vIS
+	UF2MzjPK6l9V5J3Syr+2vamsPeVZCUFl/n1unjGAF6e+TVazahG148sTDc7Ymg==
+Date: Sun, 2 Aug 2026 04:20:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] PCI: rcar: Release temporary device tree node
+ reference
+To: Yuho Choi <dbgh9129@gmail.com>, marek.vasut+renesas@mailbox.org,
+ yoshihiro.shimoda.uh@renesas.com, lpieralisi@kernel.org,
+ kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com,
+ geert+renesas@glider.be, magnus.damm@gmail.com
+Cc: robh@kernel.org, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260801233841.469826-1-dbgh9129@gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260801233841.469826-1-dbgh9129@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: s3nfjg4dd1z3jhk9ozg8rg9p6r1mpky1
+X-MBO-RS-ID: ade40aeb752d7899818
 
-On August 2, 2026 4:58:39 AM GMT+08:00, Andrew Lunn <andrew@lunn=2Ech> wrot=
-e:
->On Sat, Aug 01, 2026 at 10:22:27PM +0800, Coia Prant wrote:
->> On RK3568, the SGMII interface can be routed to either GMAC0 or
->> GMAC1 via the GRF register pipe_sgmii_mac_sel=2E
->>=20
->> Add support for this selection by introducing
->> the "rockchip,sgmii-mac-sel" DT property=2E
->>=20
->> The hardware reset value is GMAC1 (1)=2E If the property is set to 0,
->> the driver routes SGMII to GMAC0; if set to 1 (or omitted), it
->> remains at GMAC1=2E
->>=20
->> This is necessary for boards such as the Ariaboard Photonicat, which
->> uses the SGMII interface connected to GMAC0=2E
->
->If SGMII is not selected, what MII is used? RGMII?
->
->Can this setting be implied from phy-mode?
->
->	Andrew
+On 8/2/26 1:38 AM, Yuho Choi wrote:
+> of_find_matching_node() returns a referenced node even when it is used
+> only as a boolean test. Keep the result in a scoped cleanup variable
+> so the reference is released after the match check.
+> 
+> Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
+> Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+> ---
+>   drivers/pci/controller/pcie-rcar-host.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+> index cd9171eebc28..7ed1bc0732ce 100644
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -1122,7 +1122,10 @@ static const struct of_device_id rcar_pcie_abort_handler_of_match[] __initconst
+>   
+>   static int __init rcar_pcie_init(void)
+>   {
+> -	if (of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match)) {
+> +	struct device_node *np __free(device_node) =
+> +		of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match);
+> +
+> +	if (np) {
+>   #ifdef CONFIG_ARM_LPAE
+>   		hook_fault_code(17, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
+>   				"asynchronous external abort");
 
-Hi Andrew,
+How about this simpler version:
 
-If phy-mode is not "sgmii" (e=2Eg=2E, "rgmii" or "rmii"), the GMAC works i=
-n
-the corresponding mode and this register is not touched=2E The reset
-default (GMAC1) remains, but it has no effect in non-SGMII modes because
-the register only controls SGMII signal routing=2E
+"
+diff --git a/drivers/pci/controller/pcie-rcar-host.c 
+b/drivers/pci/controller/pcie-rcar-host.c
+index 213028052aa58..a4a42e435947f 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -1123,7 +1123,9 @@ static const struct of_device_id 
+rcar_pcie_abort_handler_of_match[] __initconst
 
-Regarding inference from phy-mode: phy-mode =3D "sgmii" only tells the MAC
-driver that the interface is SGMII=2E It does not specify whether the
-SGMII signals are physically routed to GMAC0 or GMAC1 on the board=2E
-That routing is a board-level decision and cannot be derived from any
-other DT property=2E
+  static int __init rcar_pcie_init(void)
+  {
+-       if (of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match)) {
++       struct device_node *np = of_find_matching_node(NULL, 
+rcar_pcie_abort_handler_of_match);
++       if (np) {
++               of_node_put(np);
+  #ifdef CONFIG_ARM_LPAE
+                 hook_fault_code(17, rcar_pcie_aarch32_abort_handler, 
+SIGBUS, 0,
+                                 "asynchronous external abort");
+"
 
-Also, the PHY (Naneng Combo PHY) is initialized by the XPCS glue driver
-(pcs-xpcs-rk), not by the GMAC driver=2E The PHY driver has no way to know
-which GMAC is using it=2E Making the PHY aware of the MAC ID would require
-significant changes to the PHY layer, which is out of scope
-for this series=2E
-
-Therefore, an explicit DT property is the cleanest and most maintainable
-way to describe this hardware routing=2E
-
-Thanks,
-Coia
+Also, and this is more of a question for DT maintainers, would it make 
+sense to introduce of_find_matching_node_and_match() variant called e.g. 
+of_test_matching_node_exists() which would return boolean and would NOT 
+call of_node_get() on the matched node in the first place, and then use 
+it here ?
