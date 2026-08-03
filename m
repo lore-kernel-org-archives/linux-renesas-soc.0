@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8404637FF75;
-	Mon,  3 Aug 2026 13:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823DB40DB4E;
+	Mon,  3 Aug 2026 13:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785763993; cv=none; b=sFl/hZJLApjdcRAINBjsh+lPwjDkro7D1UlcMv8scVcp0FAmR5b3XK3W5OxfurWY3p0s0CetRMqkAwG2kAihC0xxe9ajbrtJhiJLXUzB80Bj00qlcvuRAGwSG21xQ/rX0PYDm8VYFdTmlns2xI3F+StgkMeSumAY/FIIXraDOME=
+	t=1785764038; cv=none; b=nKcNEHp1mCvW9KRzUMnfRM5jjzhUBR5ITKSwQUceU9rGaia9UuOEpz/mASYk4ykf/GJqm4rpF2JVdj6j8cbYWCr9kAdPSL5Zp0BYUVF1CFhxyaXsS0BL3X1kYT24qyiqikZy37N0mHFM1VKPSyufcg278GgiYEnC8UJwOrS22Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785763993; c=relaxed/simple;
-	bh=/+Gc3fYteHKPdIe1Aav7IEPYvVv8ysgiEZOBC0ngumU=;
+	s=arc-20240116; t=1785764038; c=relaxed/simple;
+	bh=SSPS/0GvF1HpO45yqUI1VuEvvE7rTZ96TVoEgODPEz4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLWunkDNAtgMZFx2Gopu0M6u+W6V4Z/PfhzicVmagGogO0db9Jed+IDGDndOOp/7sgfgzmzTbcay3ILorawxRcZ0K+7yuNOu/YewnuAqH37d++n1IV5T61Zs4Nd9cDR1stXDzu3t7vSlpU6XRPjIF6O3n/mUkridgtGxGei6F8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAKK9ViU; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=hSQriK+684Vjl9vNH0TuV7qNPrCxrgQN+Kk4UBhuh2Hbz1UeyXjNwHYLOI6OzqdhKFWXPA50yPGha/EJ7vZLtOjq/dXRzQcL9Jv5ScmtS5wUqhCMZsNV8PQPx/12eJqNHdpKOFFJN9hytl4d3AK94wRKEijMDYaTRAKfRLmgQlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFiqBHSL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAKK9ViU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C65D1F000E9;
-	Mon,  3 Aug 2026 13:32:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFiqBHSL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273071F00A3D;
+	Mon,  3 Aug 2026 13:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785763977;
-	bh=Vy+yqpVlahG7DoH2FumrtEL3aXL69/bq2N8CfeaIoq8=;
+	s=k20260515; t=1785764028;
+	bh=aP8OTh7RM2/1prRgeuP1/LmALJBqKeEdgZgUVMPUXKI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=KAKK9ViUs1a0P+9Ne9GByTTRTNVbo3iHGGbTBa3xkXTeImFVLMF8HA3GXukhchbEB
-	 Xn8mOHe7OvjJL0FyDmwgwWwRbN9g9xXI+5CLFjE5m+bIFP6S35Q85AzPTTAVGCLxwO
-	 y74NmSsJ4i82RlAf6+rO7Gsv60gKvb+kncv53Zw67uXWzj4ev8Z0XDOerKFrAL8nmm
-	 MnHiF1vGXKqk7dWhCC5gmS5zEuLL2O4XTWkqDUlhJjP9l/XT2y96qu0Yma/x5HITdJ
-	 TfaSI4AkVH6IKO5slRg8wPlczEk4ndUZ1wE2f625aAs6JtiWnv788fYwFpZb7yubY5
-	 saXERGUGUWmOA==
-Message-ID: <44c150f6-b04e-4515-ba71-63780c56c38d@kernel.org>
-Date: Mon, 3 Aug 2026 15:32:48 +0200
+	b=hFiqBHSL+pDf3PMKxUb/1dqpC6hzFWhABCWiXRmJLXJxRdXxH7TZiiwf6OGw1Ylwq
+	 XNPLbfptG39BZ4qpEaV/a0HqwzyIUEyCzhgRmGwtwNxvzAsY1xcd0uLMjtUFQEAukX
+	 ud34T1m/3kzPn3QMQYruTcMqpD6wDkuZ6oTfwv4bPRMXpUlfE08vA5VnSYSzMhm0fC
+	 QC1U0nBhV7Pya4Sr2ifMP4lA748DKSwiEPNLHPY7ol4UidC8NE3ugyfhQ+F9X+l5NX
+	 xp8bH4EqBeKrnZW1rAnzkbfcASKQn07LgIgUPl06zv3hAxYrogPajg59Jj3RvoxiC2
+	 35aIMJi6renrw==
+Message-ID: <a724bb82-f21b-4d9e-8a11-9817f6c97af7@kernel.org>
+Date: Mon, 3 Aug 2026 15:33:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: renesas,r9a09g047-sound: Document
- audio_clkout clock-frequency
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r9a09g047: Add missing I2C
+ clock-frequency
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
  tomm.merciai@gmail.com
 Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
@@ -49,7 +49,7 @@ Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
  John Madieu <john.madieu.xa@bp.renesas.com>, linux-sound@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com>
- <20260803132828.3249424-2-tommaso.merciai.xr@bp.renesas.com>
+ <20260803132828.3249424-3-tommaso.merciai.xr@bp.renesas.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,42 +95,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260803132828.3249424-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20260803132828.3249424-3-tommaso.merciai.xr@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/08/2026 15:28, Tommaso Merciai wrote:
-> r9a09g047e57-smarc.dts set clock-frequency for the audio_clkout output,
-> but the binding never declared it, so dtbs_check fails:
+> clock-frequency is a required property of the renesas,riic binding, but
+> it is not set in any of the I2C nodes, so dtbs_check fails on boards
+> that enable an I2C controller without providing a rate:
 > 
->   sound@13c00000 (renesas,r9a09g047-sound): Unevaluated properties
->   are not allowed ('clock-frequency' was unexpected)
-
-Maybe the DTS is wrong, because property was rejected? Did you check
-this? You cannot document ABI post-factum if it was rejected.
-
-
+>   r9a09g047e57-smarc.dtb: i2c@14400800 (renesas,riic-r9a09g047):
+>   'clock-frequency' is a required property
 > 
-> clock-cells is fixed to 0, so only a single audio_clkout applies.
-> 
-> Fixes: a86fd3c20218 ("ASoC: dt-bindings: sound: Add DT binding for RZ/G3E sound")
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  .../devicetree/bindings/sound/renesas,r9a09g047-sound.yaml     | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> index d7fa16554698..6e2b2c93b4b7 100644
-> --- a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> @@ -42,6 +42,9 @@ properties:
->    "#clock-cells":
->      const: 0
->  
-> +  clock-frequency:
-> +    description: for audio_clkout
+> Add the standard mode rate (100 kHz) to all I2C nodes. Boards that
+> need a faster bus can still override it.
 
-Incomplete, missing type/ref, constraints.
+Why? Binding looks wrong. It clearly says that property can be missing
+and is required.
+
 
 Best regards,
 Krzysztof
