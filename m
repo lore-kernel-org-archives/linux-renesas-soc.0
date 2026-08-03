@@ -1,118 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823DB40DB4E;
-	Mon,  3 Aug 2026 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC8440683F;
+	Mon,  3 Aug 2026 13:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785764038; cv=none; b=nKcNEHp1mCvW9KRzUMnfRM5jjzhUBR5ITKSwQUceU9rGaia9UuOEpz/mASYk4ykf/GJqm4rpF2JVdj6j8cbYWCr9kAdPSL5Zp0BYUVF1CFhxyaXsS0BL3X1kYT24qyiqikZy37N0mHFM1VKPSyufcg278GgiYEnC8UJwOrS22Eg=
+	t=1785764608; cv=none; b=UPcSU82Mtb+z/o64F8ibJBeIQLY7+M/kaxlWxzSaj/CcYA86GitTel5YiLLe++rpIqtEtZmtpDUcyE/hokEta44WnLOsnDEJk/ZjnIOya1qYha+pUryhCyLaiuzjMPaAbVJtfoocdqYIVnJFw+PGSqUxwzWBgqL1P/Vg6tYX1UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785764038; c=relaxed/simple;
-	bh=SSPS/0GvF1HpO45yqUI1VuEvvE7rTZ96TVoEgODPEz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hSQriK+684Vjl9vNH0TuV7qNPrCxrgQN+Kk4UBhuh2Hbz1UeyXjNwHYLOI6OzqdhKFWXPA50yPGha/EJ7vZLtOjq/dXRzQcL9Jv5ScmtS5wUqhCMZsNV8PQPx/12eJqNHdpKOFFJN9hytl4d3AK94wRKEijMDYaTRAKfRLmgQlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFiqBHSL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785764608; c=relaxed/simple;
+	bh=44VryXcwMut+EQEo1vI353ME29GH2UkgG5Pdas4t4w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZLNDWFZ3FLqRUEqvPriNbL+HNS9iyPazroV2jRh5RjqwMzbZ7hKnegCZcAZILE/7yRGkip2aymaiMTIpeqbNn9we5IBFjk08unrd2b25umcPC0BVo9cGzd3uOf6b2wV56x+pgPpKyc4omlGKSXN2FOQfe50HkH2wqeXVSb38P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cnKxEc3g; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFiqBHSL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273071F00A3D;
-	Mon,  3 Aug 2026 13:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785764028;
-	bh=aP8OTh7RM2/1prRgeuP1/LmALJBqKeEdgZgUVMPUXKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hFiqBHSL+pDf3PMKxUb/1dqpC6hzFWhABCWiXRmJLXJxRdXxH7TZiiwf6OGw1Ylwq
-	 XNPLbfptG39BZ4qpEaV/a0HqwzyIUEyCzhgRmGwtwNxvzAsY1xcd0uLMjtUFQEAukX
-	 ud34T1m/3kzPn3QMQYruTcMqpD6wDkuZ6oTfwv4bPRMXpUlfE08vA5VnSYSzMhm0fC
-	 QC1U0nBhV7Pya4Sr2ifMP4lA748DKSwiEPNLHPY7ol4UidC8NE3ugyfhQ+F9X+l5NX
-	 xp8bH4EqBeKrnZW1rAnzkbfcASKQn07LgIgUPl06zv3hAxYrogPajg59Jj3RvoxiC2
-	 35aIMJi6renrw==
-Message-ID: <a724bb82-f21b-4d9e-8a11-9817f6c97af7@kernel.org>
-Date: Mon, 3 Aug 2026 15:33:40 +0200
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cnKxEc3g"
+Received: from ideasonboard.com (mob-109-113-25-35.net.vodafone.it [109.113.25.35])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7CE3E512;
+	Mon,  3 Aug 2026 15:42:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1785764535;
+	bh=44VryXcwMut+EQEo1vI353ME29GH2UkgG5Pdas4t4w8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cnKxEc3gZA1irgLK+bcNUMvpATv0N562WOxGOHC/4eMk2SMDQW7SBZLmeE0Bfi4j1
+	 337o1Frm9/NT+1byaohJQlipnXY0my50UxdYTrlRO1nfb/mk8MFiYw1mkTvshbtS4D
+	 fFcDyc1Kwmi8x37MX59HTut2SbGBH4N153POUJJ0=
+Date: Mon, 3 Aug 2026 15:43:21 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Linmao Li <lilinmao@kylinos.cn>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: rcar-isp: Fix VSPX reference leaks
+Message-ID: <anCZxVjPo_zfFcEq@zed>
+References: <20260803090553.4082161-1-lilinmao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r9a09g047: Add missing I2C
- clock-frequency
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- John Madieu <john.madieu.xa@bp.renesas.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com>
- <20260803132828.3249424-3-tommaso.merciai.xr@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
- /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
- s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
- EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
- rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
- DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
- IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
- vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
- oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
- sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
- vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
- Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
- BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
- 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
- f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
- WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
- XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
- IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
- YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
- p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
- GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
- YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
- vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
- ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
- QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
- +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
- wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
- c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
- K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
- n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
- qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260803132828.3249424-3-tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260803090553.4082161-1-lilinmao@kylinos.cn>
 
-On 03/08/2026 15:28, Tommaso Merciai wrote:
-> clock-frequency is a required property of the renesas,riic binding, but
-> it is not set in any of the I2C nodes, so dtbs_check fails on boards
-> that enable an I2C controller without providing a rate:
-> 
->   r9a09g047e57-smarc.dtb: i2c@14400800 (renesas,riic-r9a09g047):
->   'clock-frequency' is a required property
-> 
-> Add the standard mode rate (100 kHz) to all I2C nodes. Boards that
-> need a faster bus can still override it.
+Hello Linmao Li
 
-Why? Binding looks wrong. It clearly says that property can be missing
-and is required.
+On Mon, Aug 03, 2026 at 05:05:52PM +0800, Linmao Li wrote:
+> of_parse_phandle() and of_find_device_by_node() both acquire references,
+> but the ISPCORE probe never releases them. The device node reference is
+> leaked immediately, and the VSPX device reference is leaked on probe
+> failures and on driver removal.
+>
+> Drop the node reference once the platform device has been looked up and
+> release the device reference with a devm action.
+>
+> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+> Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
+> ---
+>  drivers/media/platform/renesas/rcar-isp/core.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
+> index f3dc52c136120..8dafffdd8de68 100644
+> --- a/drivers/media/platform/renesas/rcar-isp/core.c
+> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
+> @@ -781,6 +781,13 @@ int risp_core_registered(struct rcar_isp_core *core, struct v4l2_subdev *sd)
+>  	return 0;
+>  }
+>
+> +static void risp_core_put_device(void *data)
+> +{
+> +	struct device *dev = data;
+> +
+> +	put_device(dev);
+> +}
+> +
+>  static int risp_core_probe_resources(struct rcar_isp_core *core,
+>  				     struct platform_device *pdev)
+>  {
+> @@ -820,9 +827,15 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
+>  		return -ENODEV;
+>
+>  	vspx = of_find_device_by_node(of_vspx);
+> +	of_node_put(of_vspx);
+
+I was about to suggest to declared of_vspx as:
+
+	struct device_node *of_vspx = __free(device_node) = NULL;
+
+But maybe it is not necessary since there's a single call place for
+of_node_put().
 
 
-Best regards,
-Krzysztof
+>  	if (!vspx)
+>  		return -ENODEV;
+>
+> +	ret = devm_add_action_or_reset(&pdev->dev, risp_core_put_device,
+> +				       &vspx->dev);
+> +	if (ret)
+> +		return ret;
+> +
+
+For my education: what are the drawbacks of using
+devm_add_action_or_reset() instead of releasing core->vspx on probe
+failures and _remove() ?
+
+Thanks
+  j
+
+>  	/* Attach to VSP-X */
+>  	core->vspx.dev = &vspx->dev;
+>
+>
+> base-commit: 31152f5b0f8719f92063b8c6196cd5e34106c73d
+> --
+> 2.25.1
+>
+>
