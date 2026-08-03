@@ -1,86 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F87330E82B;
-	Mon,  3 Aug 2026 03:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3B52F8EB3;
+	Mon,  3 Aug 2026 06:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785727463; cv=none; b=YHo9G+8XiaAHp4hynFuS9u4vMAe0UykaOde8JzVx5jP8uoaZxs4c/zjr3VOu8XQAMKFut/dEfHHra5JwDeqZ50WQVoO/cZ33+/7EROBEnqLN71+R8WPy4KqY5Tqe26ioLQ8SQZG7TEguLaDkqPKjLkthj4XZYzXEpVny+GLb62M=
+	t=1785739768; cv=none; b=Ast7q+BzYYDItGcE4ZqUutS3/wsum7tnzRs2IzJlvrl48Rw6Tuy5u9/R19lzodmzfBV2T2yrD/6pucaLFgbYMywNc5T/6fVO6mXxggJjkS/HXdOb+Llk0xsIeWrhSBBkH9aOZOBmaz7Gv3bmSedQyDaxYSfk7GX3CNBlgaVgcdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785727463; c=relaxed/simple;
-	bh=ELiRrWC0aGY/YuKTYb6/9jhQa1rBp705Yvy4UFzgSpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rc0C5o3QE/fq45wC+8TvHEoynRoFSqLaB+tmPycWKmpB3xN5QovdyqneFmiu2m/kr0xxzCxcH4awmNah0VQEBkNl66DWlgo0DWEu27yGpIH6qYyXyiBMNkFWHojJnKm1XsYBVmsN4t/WlMzV7CHiMPaKG19mXrwkU334lIvTDu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/SGy//2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785739768; c=relaxed/simple;
+	bh=n7W1/CR2fnqvRQ1Me7jxh9E9/huwjhD6a8dCIrKmWQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgJE4sliAE+qABxYfgHQRX84VBANlXabizEgQPcU0x89HOqF19GhalVjkyBqLKts2b3giO8yenTFNcFWOR/ecEApNXSAecd26roG5ey6S1Fio7IecZcnbqc+byihilmErwRK3n4tc1M9ZKgfcT/nMrXi4ohMMorm2qHV2tU2E80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHPwSwhr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/SGy//2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 596AD1F00A3A;
-	Mon,  3 Aug 2026 03:24:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHPwSwhr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1E31F000E9;
+	Mon,  3 Aug 2026 06:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785727461;
-	bh=1VF3rSJQm12kqGGHiDeGNuTAOGjDmvP08pZJHw58mJY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=V/SGy//29lzafn44QnvWv0AfUr95ec4GVuf3r7r4CeL4arb6a62DZJOwJF/Gl2tlr
-	 UamD9ImnOcSydXNxsMHoAVPAG2/Fwc6sCafHYQVjBhazCc9/LR6qLsX9bpEm7N67tQ
-	 dNr23j0aDMcmVrjGv/GWVCJqbWZjj8M88qr59HlzrY5zGp6M/5IlD5kOhItdI8NY8j
-	 NsPgNvO2aSShJg9fE1Z+LRLkwOkCsYf6gCYNep/ZWk46mN7otrVs0dwjwjmuNKIpVt
-	 3AIC1h5/UNfLp0UrMzhRizirBSsDyufhR4hp+PgnRjtFVnZL/B2mEj370AEB/T9Jl3
-	 m+MlScpmZUzBQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/7] clk: clean-up simple provider misuse of the consumer API
-Date: Sun,  2 Aug 2026 22:23:59 -0500
-Message-ID: <178572744545.408250.6189990473373785394.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
-References: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
+	s=k20260515; t=1785739767;
+	bh=JPTDrdjixJ8M01ykdTWBJ/WbejRC3iM9Zy6wkUYIJw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oHPwSwhrC3By/P1n7JX4mUc/ARiE+Ebh6/sf/5IUjy3dO5WrjIa8unyo7BQvJTGrD
+	 Oxl3igQYFz/u03OTFpqyy4F0w+T58YP9lLCoqdXKnTGfvT4i9Gm18GZv9UdK9Q/UvM
+	 CV1xX4bmGo5a91yTAPCb1LldEOx/48qZcuzhOSRrYgw6QC/Bg9IFgHMCm02HUzwq5J
+	 hTp1zRC44BhbajlRWgaCfn4bHOyoZyGNLexU+4mJXiwZQM29+hDKe9qDttoR3KsM9z
+	 5jPOanplVvQ8nbscml7QVcgGf24V2mn7u2ek+ptWcRptwEVwjgU9cC2zBDfnypGapW
+	 FhjWJ9btpWEaQ==
+Date: Mon, 3 Aug 2026 08:49:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] dt-bindings: usb: cypress,hx3: make peer-hub
+ property optional
+Message-ID: <20260803-real-shrewd-bee-ad6cba@quoll>
+References: <20260730-rzg2-sr-boards-v4-0-08bc459578dc@solid-run.com>
+ <20260730-rzg2-sr-boards-v4-2-08bc459578dc@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260730-rzg2-sr-boards-v4-2-08bc459578dc@solid-run.com>
 
-
-On Fri, 24 Jul 2026 11:03:51 +0200, Jerome Brunet wrote:
-> Clock provider should not be using the consumer interface.
-> In other words, a provider should not be dealing with struct clk.
+On Thu, Jul 30, 2026 at 01:38:33PM +0300, Josua Mayer wrote:
+> Cypress HX3 Hubs are combined USB-2.0 and USB-3.0 devices, and should be
+> described by one node per speed and linked by peer-hub property.
 > 
-> This change targets occurrences for which the provider uses the
-> consumer interface and corresponding clk_hw interface exist:
-> * __clk_get_name() -> clk_hw_get_name()
-> * __clk_is_enabled() -> clk_hw_is_enabled()
-> * clk_get_rate() -> clk_hw_get_rate()
+> It is however possible to install this Hub to a USB-2.0-only host, in
+> which case the USB-3.0 peer has no place in device-tree.
 > 
-> [...]
+> Remove peer-hub from required properties.
+> 
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> ---
+>  Documentation/devicetree/bindings/usb/cypress,hx3.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 
-Applied, thanks!
-
-[2/7] clk: qcom: clean-up simple provider misuse of the consumer API
-      commit: 470bd66370ecbf22c2dc27249315b9d39914c479
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Krzysztof
+
