@@ -1,140 +1,141 @@
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADC1372B5E;
-	Mon,  3 Aug 2026 09:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE960364925
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Aug 2026 12:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785750777; cv=none; b=hfYsHq0u6VZ1K9ogULBa5PpP7RrOaOYMu/wZzEhIwGsDZ5fhriOx+JRZXSwb6q6oLbm09+knABlTsFPZy8AmZU17TPxBHbe5EmoI2DB1BF0jSnLsMkydJhzc0y+VwYLnEmgbOLDJNYuHbO6Ez42m03Px/b2WK4OwPL3q2+/7o/s=
+	t=1785758496; cv=none; b=MfU6OR1dIBqggRFqavCKYl+/zrpIT3hPKvgB49gVngW8Y36t0ycFpnfyxUeUCotHsjG/WoBKRRGHeqmv83D96rq8NKcFSx2G2xKSISBdoPyh80KMqkNh0cLNAegMtzlVFrOUzn1soaT/SgUMXzRCCYHmDH7A5r4lM1EDpmv1AOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785750777; c=relaxed/simple;
-	bh=PpoJ8mSDeO5J500ag0sun37EeE6AvIqeZEsWDfHGEXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OxK0Yiu42EAdLzURC6yUl1Pw2OIpkmqbZdxGgYDe2y241kNTmRRlfZAU6C9XCHDC0lDmi/hxhajl4t4WQNVnIPWsucw8DtnlAT3W10arg/9WvbumHBZglngm0vF/H8RwBfdot6WW/YOGARGHgcCurRWfDJ8kzJnRJqL2pyzhIrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Obns7FDw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TkKRScf4; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Obns7FDw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TkKRScf4"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id ECBAFEC010E;
-	Mon,  3 Aug 2026 05:52:54 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 03 Aug 2026 05:52:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1785750774;
-	 x=1785837174; bh=sLmOrxWgSzKesbLl24YL8N9oK1UdIQD9gnT9tarZDw8=; b=
-	Obns7FDwMh3/0IkS1sdALZiAVY6yIOgARv4ntkPVHWg/cl/Poiah6uvHVMnFIzD/
-	YRUIWlWKncd7R+Ey1xAsFQBNzMBl63+PzFcWhuM2SA66u+SnsBvUfGG9aXSHK3cx
-	3tr3nxcWM2rcCdE4UtZVFjD//nVC28kWsSxXQ4mh1Pd9jahWjo5ImoECKTC8Lv8i
-	4RR86uan4peBzwlc4Q3LQNI6LMcqgQD+B9SL+ojLfiKX1l/1+hWxCZMkFxss9HE4
-	LJYw9rCedtrfIVUzIqqZwvPSwt/WDaM++qAZVIeHvycW0y0i1d8RRyMQZjffwe8t
-	6qA3imeAGuyNT/jjghxP+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785750774; x=
-	1785837174; bh=sLmOrxWgSzKesbLl24YL8N9oK1UdIQD9gnT9tarZDw8=; b=T
-	kKRScf4zHv4weOG59WM4syRTdzb4v+Lv/mxDMtVgmggwIhxkZ3xqKv+34gPiCkfy
-	sV4/rvsEj74Rw6Ra9a2/7va3vc9yXKhfnSYoBul+v0Vz4EqYYmHPuz5/iuuLLzW9
-	Dcm9XZBxxWXkAHbb79gdM/vFeQFuWYe9qK3AnCwo0wIGzelMnx6GYWKLV8Cag2bZ
-	oe6wxdNQmZi4jFNw+QC/oa4IIPUOLIh/om27bpywlBLBn8wPvcrtPcMCOhXnMdci
-	Off7DBS4VXIeb0Bw7H060NZwTcIJGhQedgC/sI3kbULcLy3UrRoWrncWM0vQsJRp
-	qK1d0vf8+YODc4JKJGw4Q==
-X-ME-Sender: <xms:9mRwalmx_jDMR5CimbNSL-sOWjrngjOzUa1A9xQBGiifGI2sJ2lNLQ>
-    <xme:9mRwatJCVQkP_f0x46A8eIqDHKqqEgMI0UCwkcDv5B6OZpjsAKxvlUtF1JucdqH2b
-    O2gBZjVmv_AjyOwyqGg9gsZN7V5SqL8TVch34C3JTbVkMxPmy_hU04>
-X-ME-Received: <xmr:9mRwatTB4wJ6TZ4bkwFgPOcS2zVeGDeAtxHcbsqEXmotV_mkEJ57YRF9065OCizxlkSt9BCwbGS_0S3Xa34CXB_mZMRYig4>
-X-ME-Proxy-Cause: dmFkZTEMQcaLM4G7F8T469MzRDySTwXwtTZysuNZjG7d4SEShkbR55q6QEQYGLZAOfR0W3
-    qX+c43CkoJp43hQ6+MsVG2ar/Ag2yll4kAu+tgP92WQPNQ+ICX5OXWzmzry25XoTaeiSSi
-    CRjCq71qJmyfPzHorRZG1zDyJX1MflxVa1L17BL0wT55CnSW9YxMJVsOR2/ZWIUl1F1IYB
-    8IMFcEhITOkAmbFKlMiGhr5SqBJjG4WwvcHbtmNVPr/LrVQLolB9g6Zjr6kj/s/NP+Hk9P
-    niawvdbMWrOfV9MASYvkC7mreMxSiwzbYiAz99WaGHhhnNasGaXyhRz74r6qR2jaCKmlf1
-    XkaGQ19jXyCwOuEdQoFGoVM0FFrRwl6lbhITtRyqfdCuBiBwmQZGzSW3eu6t2eXqKoXeck
-    QKB2jjmMR90gsZFejg7AItDdb5rfsYtgiz04mcLEWghxpKXVNOXxNl0YQOTcbO+U22BBUU
-    Xu/TegfRUV15xJaFHQ4tHvLmNRmp2OBKlTr2qBlUyiBcENsG1ZpM5H+vxI65VwUafR2gUE
-    TwpgkJoB3xDdIqdZEYN7XZbhJvHk6yYiaNQ12XDNwgZSiEmdYGB+I3Xe1sL8oqZ7WWQXYM
-    fNBt3gsR3nzrDBPuF5WQ9XE9s1aLoI3vBt2xc7SyUS0k9Xuk1pcCEdshk2fQ
-X-ME-Proxy: <xmx:9mRwaiu-0qvUODy_IuM3_Tg0IZ5iMcSnsc-9m6VddpcDVdeR6Uz2rQ>
-    <xmx:9mRwao82G9w97DhRn2MoMcm73cW7IxI103Stv2ofucffveECauhc0g>
-    <xmx:9mRwaraNFJsdi1926bMAR7I3-hQJ1HykLxl06H6op_uyw95Qxuvldw>
-    <xmx:9mRwakqNmQOkWKTr4arIhR3F9MyG6HWQNaA3DgGIvRTFwkRJFCFppg>
-    <xmx:9mRwao0yJJSbuSkQ3jrNpfO7FYKM5ao36tbhidDx8Is-6Og2K8DMZqzV>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Aug 2026 05:52:54 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"DavidS. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH net-next v6 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-Date: Mon,  3 Aug 2026 11:52:32 +0200
-Message-ID: <20260803095232.3527111-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260803095232.3527111-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20260803095232.3527111-1-niklas.soderlund+renesas@ragnatech.se>
+	s=arc-20240116; t=1785758496; c=relaxed/simple;
+	bh=okWIOwpaAfBMcyH50oSVfKzplqlhnVTdVosRYGHHdGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U7FuvAemnyEEAn9lHWcQCmR0t7AOTNyuNcCkhApt592eYKVlaFb1LP/kQKZPxEnqHW6JcCAkxaK7qjlRDgSqtN6e2mz655CN9m25FLxf2l758PUDyHZrHMOvBG0j7snI0T+pMqMHYK5OBJmaIMnK/5E4IUsNsmS5IwEsaiKbQsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5bf95ade656so1282352e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Aug 2026 05:01:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785758494; x=1786363294;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/3F2htAaSgkkxvZ/5MPPccMC2gln25kjMNeYIdiRBb0=;
+        b=fiPBqcEjEKksduTkRyoFStIwnkYO7NFF5UvghV+I2ETufv76+ZC98S8WcS0pwgePVZ
+         zsaqAKyCqVjA4PWijgt7SkhY6WMl1IwIoZMJuzpsvrgmSbCuLOqU6hISsrYkS8NtZSmH
+         8sEoxE2EHOT1oLoSg3yKnogb8lGnwCTa4cSlWV5sTdbvYRX9zaQmQ5uMTMhzmZulrxb5
+         S1Sx5GCft38mWxLck+VP3C/xOEDlsUoL6/hYfso5NJVVY+tx1/mprjlLXMNTLYPtQnCN
+         dRH0tuYeYWilqAm43O86+QMDWQ+S33wtX+h+zYT/Lvf8uL+49YZ42zNaLreUxNCOBdya
+         TlTg==
+X-Forwarded-Encrypted: i=1; AHgh+Rrdel7Bvp9k0ah1v9Qo39tiD8tngwE7CqupbsTdAwinBV6TzxYTg4nOkIiXU2Yo09Lxm5c06eC5UyyPM/a9jKVRGQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwoV8L95hUHGuDnex1XwuzoQ6nhyB9qj+d0wRpjAWsKEeEnJqh
+	FKDL+TyuCSRxK7ZjPH1BmaBSmw0ZST9s5WSteKALPsjmwd1uMisQ/zqwygPH/DPf
+X-Gm-Gg: AR+sD11cn3WmboCRki7Uy4KdzdYQAlvRNMjoUDWUj+MTE7Tqj544zpppvFhvhwGZqNz
+	3NoM3h5gcpkGUyZbDm4eXXgUl5LHCAt77w/jmJpj6vkAnuieUF0C3oDiRKrrv/kihzi4CqdMg3t
+	2D4+DE9enDM4lIqqRkS3oFlk2ATWBq6yX9Mrp2PTZKMcW+1MRsOVyJvNqXlrk5NGxtU4xICukLh
+	i+qMDoTs4vi4RobtyCu6Fx6YxeYJaZCXZxjBman2D2YCvK7aA0lhdI/733YVdS0zu8pP2SjhXkr
+	7WAXn1ABlzWA24vSFC1JQgYJYA7kFeVmSB3svr/rPuctMBxOzt02/lHloF2vM3RAbojBMltX2ZN
+	lURj7qJww1ZBpOzPaqbPmif6f0AD/TYZyMCWJ50gwpH7IjmCHVquWkYsM3BzBi5C9v9araeLX/7
+	T7vyIpZTx/h9lSvUuHVWQwR/xzmgi5ypUlewaMYY+JSbs38kP1y6dOrIxUztWdqPbrCdlcGX8ci
+	/VK0NUzB24X8tFn2F709Hzs+sobVe3LOt2xKaYp6g==
+X-Received: by 2002:a05:6122:4890:b0:5bf:a6dc:e631 with SMTP id 71dfb90a1353d-5c38787e0a8mr2816017e0c.14.1785758492262;
+        Mon, 03 Aug 2026 05:01:32 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c37ed7ab9esm8317218e0c.9.2026.08.03.05.01.30
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Aug 2026 05:01:31 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5bf9466867cso944077e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Aug 2026 05:01:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpCNUNdqVz2kr5GdG9osVPoNFee5m+mmIbYy46xweyIqc7U/21/XYi0wXYrQQq4txSWWMQmowGbFtxnakIUr8vKxQ==@vger.kernel.org
+X-Received: by 2002:a05:6122:c94:b0:5a0:370:f12c with SMTP id
+ 71dfb90a1353d-5c3877ee9a2mr2551587e0c.11.1785758489767; Mon, 03 Aug 2026
+ 05:01:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1783505329.git.geert+renesas@glider.be> <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+ <20260710-adventurous-burgundy-chimera-b2fff9@quoll> <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
+ <20260716214924.GA1477674-robh@kernel.org>
+In-Reply-To: <20260716214924.GA1477674-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Aug 2026 14:01:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0ss6wUEdjC+OYa3iQS439aJ8b_d9M2ws7Ayn4_kOyMQ@mail.gmail.com>
+X-Gm-Features: AUfX_mxcGqdlDliYxmfdCYiKuiCZlBR4i5y6ZczTyLGv0wHHqfKRM8R7C8jMMeU
+Message-ID: <CAMuHMdU0ss6wUEdjC+OYa3iQS439aJ8b_d9M2ws7Ayn4_kOyMQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
+ firmware property
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-the SoC.
+Hi Rob,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-* Changes since v2
-- Preserve sort order by unit-address.
+On Thu, 16 Jul 2026 at 23:49, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Jul 10, 2026 at 01:02:39PM +0200, Geert Uytterhoeven wrote:
+> > On Fri, 10 Jul 2026 at 12:21, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > On Wed, Jul 08, 2026 at 12:16:23PM +0200, Geert Uytterhoeven wrote:
+> > > > Add a firmware property, for systems where SCMI must be used instead of
+> > > > direct hardware access.
+> > > >
+> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > ---
+> > > > v2:
+> > > >   - Spin off from "dt-bindings: clock: Document Renesas R-Car X5H Clock
+> > > >     Pulse Generator".
+> > > > ---
+> > > >  .../devicetree/bindings/clock/renesas,r8a78000-cpg.yaml    | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > index 4e23bba334382346..fc499e7cf52e4f0c 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > +++ b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > @@ -35,6 +35,12 @@ properties:
+> > > >        <dt-bindings/clock/renesas,r8a78000-cpg.h>.
+> > > >      const: 1
+> > > >
+> > > > +  firmware:
+> > >
+> > > RPi is doing similar, but I have doubts. It looks way too close to
+> > > generic "syscon" which is disallowed.
+> > >
+> > > I think this should be vendor+purpose specific, e.g.:
+> > > "renesas,scmi-transport" or "renesas,scmi-firmware"
+>
+> If you can tell me the resource that a 'firmware' provider provides then
+> it is fine, but you can't.
 
-* Changes since v1
-- Rename node ptp.
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+It provides a firmware API, which is not available until the firmware
+provider is initialized.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 82a7278836e5..b9b860ef7035 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -589,6 +589,15 @@ tmu4: timer@ffc00000 {
- 			status = "disabled";
- 		};
- 
-+		gptp: ptp@e6449000 {
-+			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-+			reg = <0 0xe6449000 0 0x500>;
-+			clocks = <&cpg CPG_MOD 2723>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 2723>;
-+			status = "disabled";
-+		};
-+
- 		tsn0: ethernet@e6460000 {
- 			compatible = "renesas,r8a779g0-ethertsn", "renesas,rcar-gen4-ethertsn";
- 			reg = <0 0xe6460000 0 0x7000>,
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.55.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
