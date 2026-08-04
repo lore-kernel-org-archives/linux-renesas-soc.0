@@ -1,35 +1,35 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ED120DD51
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 20:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3F73B4432
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 20:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785875453; cv=none; b=Beh9H4uOuJmlYWvO1kyN5BVzFZ/6luqmiiKHxZq0PATKBKtuXeyOe49R4gGISgYTL+iIJNfO0VmuqmjgLOiqdDJO3C2ZdGb1QcPIQ3BC5Bc8k3aSa/2dZWDH6Bu8sEzRV1mCD4FLkbnrPF1odqeSoURF9kyBInJwatiwAok61Is=
+	t=1785875464; cv=none; b=ONJfUcteLs2xeDVL8gu7ZulRwbVwI1tWzPxlCJGnZ+3QxwhQPCkp0ziFxUOXpkaGwkAM/VxE5C+s22jnEZguB472WmWmei8Fo9E1yOCs17uc/73YbV7Eu4U4hUeXWzd46W8bepMLIrbNRehVG+Lw4+zm83knjHFvSNm0PEs1HSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785875453; c=relaxed/simple;
-	bh=I/KROJ6W1p3ukcHx9q7nR+jw1dZYN3XjY8PzDF93NpY=;
+	s=arc-20240116; t=1785875464; c=relaxed/simple;
+	bh=FEVcsLwCi13+tQSy5pOPAi3kFTUi4iMbxrJ6/313e+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iguLly5P+xulcN8lek7n8Strrg8TRXvM4rVPA0wl2gKR79RTwGAG9e9qTuExQ4tUVr0/SzSslrQsT3ZgKWQkW96Q2YCuoXt6QHWRWhKzvd83VWukfNd2ppPcZGrqakoT5RnIbzw87IylC+d2X1aHiU9f2SrPTaGvtmwBkWwhBO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Knf5FeeO; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQHsIlrTUTGAl8J4BD2Pyfq2pTqvG7bu3nrBi4nTfmuQjJE8T8qdGbE+zzj16OYjR/v5z6R/ZcjPHBU0HUM7s129pLDnnOpmGN4kP3LQ6VmmWSHP3BAF2wd3CyEE6xWP5LJY3va3ye0wTh/TlK+cPjoetYsA0+tmzY0ILJO8l8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FmOEo6mC; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Knf5FeeO"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FmOEo6mC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=xbF3
-	O0GLiwFRICGBmn1o8JilNeiutX/EuZsrLXHxG8U=; b=Knf5FeeO/15X6M4LuAAb
-	goyYPuA4gv55ZTsLXln/MfuEI3gHEfyR4FUW3RM+m0oP6L6BOHsSVC6+yIQH7PU0
-	b1HUeAP/P82quo27q2YW9W/jpq4aUM3Lp2odK1zeCy6b6DI8F9+9/31F4G9RjvoG
-	oNk65ig11EGkxfuaiXDe8eTr/yu/MY5FEkj77xpQe9sDMkS7dN+f9GD+2kLZq+Xi
-	/UZZwF5B0Mzwllprax0i2zweJ0wQSlRXbDsKkeZdKRI9wAW6c+2VarLGQXYoA3nL
-	hMNx5RaVi1//9HO3cSI8vvoAzstz2xT2fV8JNgq1dB3byNU2lIYDep2WIZMamEKt
-	8A==
-Received: (qmail 3520160 invoked from network); 4 Aug 2026 22:30:48 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2026 22:30:48 +0200
-X-UD-Smtp-Session: l3s3148p1@DpWthz5YYqEujnsQ
-Date: Tue, 4 Aug 2026 22:30:47 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=FEVc
+	sLwCi13+tQSy5pOPAi3kFTUi4iMbxrJ6/313e+k=; b=FmOEo6mCQ3DcbiVSTcLZ
+	AYrIaxf/L/NI6wCVFBdVPJsPK55pOWaYF5PSKF91DefbWUzuShhHr1hrhFNBGHmS
+	AhmP8hoXig5Ja+gOvaXkyCp+lIJ6wj/teXDtU7hNcE2ySAX7MKw4iwIGEEQLspLH
+	L9u/cGFtzMxv9ohjl0IvfyNipxskcXgi1eu+sVGZMzxNz1hQFP1ufOUKe27C1PvO
+	ysrl6CWDo+Vc8UHRb/WhbO0pcAXuWOJX2KOau+qALlQ0oQ8h1FGLYrfDerrE69TA
+	AuvJRj5VE+RsgvgvSaU5/zrKo7lk0TlDfwZgk2Tab3SyQMnqK7d4KNGD80glOMvG
+	6g==
+Received: (qmail 3520273 invoked from network); 4 Aug 2026 22:30:59 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2026 22:30:59 +0200
+X-UD-Smtp-Session: l3s3148p1@8VRgiD5YVMsujnsQ
+Date: Tue, 4 Aug 2026 22:30:59 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
@@ -43,11 +43,10 @@ Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
 	Pascal Eberhard <pascal.eberhard@se.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 2/4] clocksource/drivers: Add support for the Renesas
- RZ/N1 timers
-Message-ID: <anJL96XqyzlQVb9d@ninjato>
+Subject: Re: [PATCH v4 3/4] ARM: dts: r9a06g032: Add support for timers
+Message-ID: <anJMAwn-ke2CnUx8@ninjato>
 References: <20260721082952.215691-1-herve.codina@bootlin.com>
- <20260721082952.215691-3-herve.codina@bootlin.com>
+ <20260721082952.215691-4-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -55,57 +54,59 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pV0yin9mZAw4oQrG"
+	protocol="application/pgp-signature"; boundary="aoFCxAs525i516L1"
 Content-Disposition: inline
-In-Reply-To: <20260721082952.215691-3-herve.codina@bootlin.com>
+In-Reply-To: <20260721082952.215691-4-herve.codina@bootlin.com>
 
 
---pV0yin9mZAw4oQrG
+--aoFCxAs525i516L1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 21, 2026 at 10:29:48AM +0200, Herve Codina (Schneider Electric)=
+On Tue, Jul 21, 2026 at 10:29:49AM +0200, Herve Codina (Schneider Electric)=
  wrote:
-> The Renesas RZ/N1 timer block controller is the controller in charge of
-> timers available in the Renesas RZ/N1 SoCs family.
+> In the Renesas RZ/N1 SoCs family, two timers block are available.
 >=20
-> This controller handles 8 timers:
->   - 6 16-bit timers
->   - 2 32-bit timers
+> Each block contains 8 timers composed of 6 16-bits timers and 2 32-bits
+> timers.
 >=20
-> Each timer has its own interrupt, its own prescaler that can be used to
-> divide the clock by 25 and all of them can work in either one-shot or
-> periodic mode.
+> Each timer has its own interrupt line.
 >=20
+> Describe those timers blocks.
+>=20
+
+Nits: Maybe delete the empty lines and write all this in one paragraph?
+
 > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
 m>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Dunno how much this helps, but I successfully ran 'inconsistency-check',
-'nanosleep', and 'clocksource-switch' from the kernel selftest on my N1D
-board.
-
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Same testing as in patch 2, same comment about 0x400 reg-size as in
+patch 1.
 
---pV0yin9mZAw4oQrG
+
+--aoFCxAs525i516L1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpyS/MACgkQFA3kzBSg
-KbYG7Q/9GR7b28yQC0ny+ZFY3WtMlhWKPoOvjOFZ5GjiCbaNgc4fYoDmEXpgaLya
-3vX5Z7/F5okVIlk5VqsvzIood8yL1Jo6baOZlW5YZVt5WtVLeW7pnmxAEvgrKBiM
-p55UX1qDXPaLpVux4jT5GWEwgrcJTKgEm+ry/Ami4DRg+i3Aah2gn7Nj67Zu1c2Z
-JVGtcBZwLEBRj6Tunr+62fDXpSKgtefGWGbIMA8o7kfeIvdjz/oaAcrx0/eNB1wN
-jnf8ob7HuzWq1qHVAUhUufNU6qLpYU5miCop2saTIeA1L7/mkh68OIZk+RJ/2m2T
-MTOP9xbKkM3Inpq8YfL0KRMCZs6KidghbmAypccrAKKZj/BXAKtASm0nRsot+V1V
-IDgeqTtGmGcK3ovwlWE5Z86IboOFbOUxJJcfLhFLJ1Sg9Hjnmbr+wJ0+e3eJr7ZA
-kEXrI2JZXAdzwKiHsNHc4aF3opfK11EYO2WeKIpN26SnfGXZyyp0nYtteQZEKKVf
-DUkpUWmXD5BEQjmciCSCy1cAz/YhWbdTiDItE7v8w0wyYfiaFnhh5gKr6aP6sWE0
-wDN4xbabh8rPv3ucJSme/DtnecrBKs/5smDWm2LnNLUgw4p3mUe4CNTl0KnOUW91
-h2lYwiGp1yxLtwvwVJtATrbwB2VzV2VBDC56sBTjq3/Fvi1mV+8=
-=03fo
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpyTAMACgkQFA3kzBSg
+KbaSUBAAoCiV7bvLt69Riujk0VxlkiX/AXRHP0Mog7A18gBhB+qoUgcZFE5spHln
+05Xh9POGu6HS0vsY+8GlBkg+68J30753gmJ/I4zWA3KBrtHZ6Fz50SUsX8ZWJzfH
+0sOAStzCn+PsRJjJ5BwAL/SIq6hPpc3CZEKzaduzwZQ3VSFuxAjO2W5GH6I9+5qN
+iNgfF0kCUEhd5mfatzaYvimVLGdgrW4fTrCw6zRmpU8edCas/61Hdzw4oDLjEc2q
+nKGfuw1qo5VzW2F/gYo5ZeJQ5YYKx5P6P60U56LSmimgQcpAQqpwUFqectpf2ZwW
+14sdEblb3hWTtSMThPqDfJBKNCDNPWO/TVGCrf4iqUeNC8ZKFP3BfuLZryM1Ln3C
+HDU3NrXzUIJtjxJSA0DPZonywCVJHKEEzFPjGJvtA7h8+NJJnwZSDFaM35nF9NJw
+vA/S3Cat6rmDZidW+p7rcGOJJM0uO2iOjHx7RHvI4QXsS7++zUekSUKUY9oSeqvk
+Ykr2DA5/lEhZpO3i3h2jAwRX25F1IckOY3yEsiaCEeUISVeXzjDAB+vLOEeKHrYV
+JptdI9Ppnhy4kuJMTSSJoYI5lkYf0/vtQDWU2Si96uRFNckNOQHrubovL/hmCphO
+4uWwvVROYwPOZr+GAANdUALR1tK5uP+0MgFm5h+QpB5Q+a/KlaI=
+=+F3g
 -----END PGP SIGNATURE-----
 
---pV0yin9mZAw4oQrG--
+--aoFCxAs525i516L1--
