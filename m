@@ -1,69 +1,34 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF657466AF1
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 15:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513633BCD3C;
+	Tue,  4 Aug 2026 19:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785857080; cv=none; b=RWkb+Fep7Uno42ZQYPnHB/LSjsExEH4OQmR9xMq+ArDPqpVGnwT5Z3fiXdIxYctTmwAiqkYPeaGVgaSw5OCfp4vXneqBAEAVapM1t4rVC4BqbNlPjKl/ulas7hCV2UEeRN7sgAndyjz1dLzitS/2c5L7u6cCRej7KRa4HV2oTuQ=
+	t=1785872629; cv=none; b=GeStt3tZr4wBOP7q4/nO7lWjiiGRnxi31WV7m/Mo1g2Hka+MVsoga/OcgruPmyoMAkyn5r/RzCE6laLML5KFuv/BL8mgnZJ3Q8dGcd0s2nMOQRgrNEA5eokbXUZJEjmvFL/E/rwV/qq98UsewKIUfOwYxD2IT0kCvjo0+s6TDpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785857080; c=relaxed/simple;
-	bh=8N1KfRu3c/EnqBJdu7xl5UdInSkm8t3S/TsB4emkZQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DjwdmYlMi8bXBgEG/GAjRDYFmYF3CfZq9PLERaX0S5Yph6SOxJoAlvV4anLnZ/xwXnuFTDRR24X/UFc/CAo/SbpE4zqMdabr7smSkiQ8umNBYFMHlNXSyQl5DlEdesyGljG5v3uNnfHrp4F8zgyiu33aXW4IXL5uQxaBw16kdMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct/HiA0k; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785872629; c=relaxed/simple;
+	bh=VpQc8qfp9veoR00W6ImThqn1v33YFOWVIw8lQ9hq2es=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T2fGP7vaoRjgnHpNj5dlNXwNDbzO0+qVgFqo+m+y9UMBoNmUhFCJyzdz9oQYSWpqWH40QCD/TYHc7MsH296N5FI5kBD0vxjisYuJ+w51HwKrQwS8/qBFV2zz1crVK4sIuPnwOxrWgFSKQyAZk6Mb2I8QuJpr2+VXJQle9vi/CHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MKVMA+GJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct/HiA0k"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-848643382fcso4153979b3a.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Aug 2026 08:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785857078; x=1786461878; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sbVRLeDoCCW2STTQ73SaS5bPQTwsTGlS1LT09DSg3jg=;
-        b=ct/HiA0k9oow8xg1Jub9wlcsEE4IRmeLRh+yovITJp2JIXCYTELgTOmughJB93uBgr
-         H/jC8KOPKnQVHJnMOFK14hUbICBQ2m7rhv9NXDwJpIKXai5UhYar73y0CJs/L3HBfZwE
-         2cnOTOuMNdZVLnqrj2f+G0MSvlnFy3gFkzW/SWsE1BqY9uFyHbcv2NprVAdzHz6LV8tp
-         nGl/dYFVpw1YcEk9dpWPyXPDA47vlxj4b9FgyQ+dWJ3fwv9EwOpBt2LDsZgIUXpcdHlK
-         9SdX+ak3fAUaohR1Q7PaOwKR8WFrYnOmywIr6RlGQx5t8bjRbzXl2H3KQkPLQ22nQ5pK
-         Nfhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785857078; x=1786461878;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sbVRLeDoCCW2STTQ73SaS5bPQTwsTGlS1LT09DSg3jg=;
-        b=QREa4Plw5DVUYapTxT/g/1sWP+oC9sWMXwFwwcS8jXVZKQ5GxzWTWCocMvehAhgTFY
-         1YqTHkMM+g9P5YERpLwMLgcOpkQgZbAmLGiceHwJDkQtftaQHotcAlNIcGJP62INxX0b
-         oEYXUX+Kl7Zi4X7fhsX3z30AZY6b7Hdc/sTQLSHfrjozUXaxdndJ6OILZ0EEWK59h5Zy
-         Wgh7sqyq60l1hvfILckYij0+zTEuOvNd21TRWYS1nz0TUhe8s/b4Yq+A6jYAcvS+UCV0
-         5km0TsGc+mUVzjeXu5XHv0mg/OTcF9keoPIFyV1LBbch/Kba/ZKn2LigSRGixLMwdB/x
-         K95Q==
-X-Forwarded-Encrypted: i=1; AHgh+RrmVtxfTnzhPmGHE+c7x27lM5k5WaOmam2K4LQXX8kDLFDCHdaMDshyLscoK9/uQw+7RiHgjNZf5a00iTcI+PLI+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2BBmsp8DUhX74wkpXZPQJwvAViWU3CtOWKi1/pviSNQd7uuwk
-	iUnrMSy2Uk8TdfOkYQyqLiBghMyAzL1rLij1FXxXp60RNXgBjqRLfjRz
-X-Gm-Gg: AR+sD13LrPebZBXygYF2exSbP7U9aXn+Gn8Bnvhpucb0pGF7I2AgrxpDnIhmcQ8O22a
-	vwQyq+F4KLzC80/ilgiS5IEmq1G9wEI55CA8aS5Gua3HqgW+SEzbQKq3g9M3jcjVgNiCrF9/WVW
-	8DNGBCXRtwaPAkwupG/Dj4Q/JRKILtuclof/JGOv5WOikII5HgKZhZs9hCm3tOVWqu1129zUfQv
-	87kUhw4aoM+ZdP/7TwZtnJfiiFIgKY8KsNAlw3nirzUE5ewy718JCJyBG9pIbgskkBmeQFMkG3Q
-	j0UDu2F1ShbiBPePi0j+ihBCDEPDdsFFA5gJAtGtOcrmGEomuoB5/sARJeg5tWTte82f06NntLl
-	IhtOBEbQcgE+8L9aqR47+tPHZFyRuqRly4eqVbRHCgjf2rJfnixVHccLCpH6Jz3Ilb06TSl5ItS
-	uqSJrSgXBimNzlVRsUxg0jKYjKrxi0JDip1iGUCQPUhiS6P7GaqXHn8E6XObobENv5j7WRdzaF4
-	AwJcBxoztH3v0fv03Cf09D6gnBgT6G9ABtBrA==
-X-Received: by 2002:a05:6a00:cc6:b0:848:5f4f:2899 with SMTP id d2e1a72fcca58-84ee478fd67mr14141258b3a.16.1785857077965;
-        Tue, 04 Aug 2026 08:24:37 -0700 (PDT)
-Received: from [127.0.0.1] ([103.17.98.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84edbe564b3sm5586778b3a.14.2026.08.04.08.24.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 08:24:37 -0700 (PDT)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Tue, 04 Aug 2026 23:24:19 +0800
-Subject: [PATCH v2 3/3] phy: renesas: rcar-gen2: Use dev_err_probe() in
- probe
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MKVMA+GJ"
+Received: from [192.168.0.240] (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9D6291E2A;
+	Tue,  4 Aug 2026 21:42:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1785872551;
+	bh=VpQc8qfp9veoR00W6ImThqn1v33YFOWVIw8lQ9hq2es=;
+	h=From:Subject:Date:To:Cc:From;
+	b=MKVMA+GJ07Jfu1h8DOsXnqE30i8Mbkv5+7ii3cohjJ/3ncETcrhWtwxFEVHirSBH7
+	 MlKHkpXDHeq1kkXnx8lqPr+RI6NhqgrsNBt71W1xKREe3G49X3sKsqFmhYC0JyKMNp
+	 mssr57BWKwJrieJ116EgQxLrgeUhYmMTxpBIXf4k=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 0/7] dt-bindings: Orientation defines
+Date: Tue, 04 Aug 2026 20:43:27 +0100
+Message-Id: <20260804-kbingham-orientation-v4-0-336998dd63b4@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -72,104 +37,145 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-rcar-gen2-v2-3-829cb84112ca@gmail.com>
-References: <20260804-rcar-gen2-v2-0-829cb84112ca@gmail.com>
-In-Reply-To: <20260804-rcar-gen2-v2-0-829cb84112ca@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22NQQ6CMBBFr0JmbU2d1BZceQ/DooUBJoaWtIRoS
+ O9uJS5dvp+893dIFJkS3KodIm2cOPgC6lRBN1k/kuC+MKBELbWsxdOxHyc7i1A8v9q1CAKlHTo
+ 5ON1cDRR1iTTw68g+2sITpzXE9/Gy4Xf9BVH/D24opFDmYmpHDRqn7tyTTcG7YGN/7sIMbc75A
+ 73Xr1W/AAAA
+X-Change-ID: 20260608-kbingham-orientation-20afc0fb6957
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+ Matthias Fend <matthias.fend@emfend.at>, 
+ Mikhail Rudenko <mike.rudenko@gmail.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Paul Elder <paul.elder@ideasonboard.com>, 
+ Martin Kepplinger <martin.kepplinger@puri.sm>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Tommaso Merciai <tomm.merciai@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, 
+ Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
  Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785857060; l=2645;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=8N1KfRu3c/EnqBJdu7xl5UdInSkm8t3S/TsB4emkZQ4=;
- b=Rve/4xIJsDxKCs7TWRvKkUJiFC7y7Q8VnWFhUj6ehAGQibpGsY4JLqD9UGNLM96kyh7Z8XXPi
- OsJjqtds8o+B9P0N4r4GburlQvqrsUW3aaYQaJ/7fjSfZoHw1IAGVI6
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-tegra@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ David Heidelberg <david@ixit.cz>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785872619; l=4772;
+ i=kieran.bingham@ideasonboard.com; s=20260204; h=from:subject:message-id;
+ bh=VpQc8qfp9veoR00W6ImThqn1v33YFOWVIw8lQ9hq2es=;
+ b=7SZI39Py8ffrjnJh1y+hbhPXUnOWY+ZaEQ9KftTGB56v0gDSekjQfN+0f3X93k5+YJyrHR9/v
+ 6RTih1fHC9hD9EvsNdHgSXZpfBshb35aOAVlwCQ6l78f3XdO0TqxsmD
+X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
+ pk=IOxS2C6nWHNjLfkDR71Iesk904i6wJDfEERqV7hDBdY=
 
-Convert the error paths in rcar_gen2_phy_probe() to dev_err_probe().
+Add a new dt-bindings/media/video-interface-devices.h header that
+initially supports the Orientation types and convert existing users
+throughout the code base.
 
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+v3 collects tags, and fixes the typo, but drops all hunks that do not
+apply on the media-next tree so that these changes can be merged. Once
+the core feature is accepted a second sweep will convert remaining (new)
+additions of the orientation field.
+
+v2:
+ - Now expands from the original v1 "dt-bindings: media: Add macros for
+   video interface devices" to update
+   Documentation/devicetree/bindings/media/video-interface-devices.yaml
+   and extend to actually change all users to the new types.
+ - Link to v2: https://lore.kernel.org/r/20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com
+
+v3:
+ - Fix the arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+   MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
+   - Though this patch is dropped from this series to post the main
+     integration through the media tree.
+ - Drop (temporarily) changes to:
+    - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+    - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+ - Non applying changes will be re-posted after the core feature
+   lands in linux-next, or after those changes appear in media-next.
+
+-v4:
+ - Rebased media-committers/next (v7.2-rc1)
+ - Reintroduced updates to:
+   - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+   - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
+   - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+   - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+ - Squash header introduction and bindings updates
+
 ---
- drivers/phy/renesas/phy-rcar-gen2.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+Kieran Bingham (7):
+      dt-bindings: media: Add macros for video interface devices
+      dt-bindings: media: i2c: Utilise video-interface-devices enums
+      arm64: dts: freescale: Convert to new media orientation definitions
+      arm64: dts: qcom: Convert to new media orientation definitions
+      arm64: dts: renesas: Convert to new media orientation definitions
+      arm64: dts: rockchip: Convert to new media orientation definitions
+      ARM: tegra: Convert to new media orientation definitions
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
-index b18727ed41a1..581f6768e2bb 100644
---- a/drivers/phy/renesas/phy-rcar-gen2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen2.c
-@@ -342,17 +342,13 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 	const struct rcar_gen2_phy_data *data;
- 	int i = 0;
- 
--	if (!dev->of_node) {
--		dev_err(dev,
--			"This driver is required to be instantiated from device tree\n");
--		return -EINVAL;
--	}
-+	if (!dev->of_node)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "This driver is required to be instantiated from device tree\n");
- 
- 	clk = devm_clk_get(dev, "usbhs");
--	if (IS_ERR(clk)) {
--		dev_err(dev, "Can't get USBHS clock\n");
--		return PTR_ERR(clk);
--	}
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk), "Can't get USBHS clock\n");
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
-@@ -388,10 +384,9 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 		channel->selected_phy = -1;
- 
- 		error = of_property_read_u32(np, "reg", &channel_num);
--		if (error || channel_num >= data->num_channels) {
--			dev_err(dev, "Invalid \"reg\" property\n");
--			return error ?: -EINVAL;
--		}
-+		if (error || channel_num >= data->num_channels)
-+			return dev_err_probe(dev, error ?: -EINVAL,
-+					     "Invalid \"reg\" property\n");
- 		channel->select_mask = select_mask[channel_num];
- 
- 		for (n = 0; n < PHYS_PER_CHANNEL; n++) {
-@@ -403,10 +398,9 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 
- 			phy->phy = devm_phy_create(dev, NULL,
- 						   data->gen2_phy_ops);
--			if (IS_ERR(phy->phy)) {
--				dev_err(dev, "Failed to create PHY\n");
--				return PTR_ERR(phy->phy);
--			}
-+			if (IS_ERR(phy->phy))
-+				return dev_err_probe(dev, PTR_ERR(phy->phy),
-+						     "Failed to create PHY\n");
- 			phy_set_drvdata(phy->phy, phy);
- 		}
- 
-@@ -414,10 +408,9 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 	}
- 
- 	provider = devm_of_phy_provider_register(dev, rcar_gen2_phy_xlate);
--	if (IS_ERR(provider)) {
--		dev_err(dev, "Failed to register PHY provider\n");
--		return PTR_ERR(provider);
--	}
-+	if (IS_ERR(provider))
-+		return dev_err_probe(dev, PTR_ERR(provider),
-+				     "Failed to register PHY provider\n");
- 
- 	dev_set_drvdata(dev, drv);
- 
+ .../devicetree/bindings/media/i2c/hynix,hi846.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov08d10.yaml     |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov4689.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov5675.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov5693.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov64a40.yaml     |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx111.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx355.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx415.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/st,vd55g1.yaml        |  3 ++-
+ .../devicetree/bindings/media/i2c/st,vd56g3.yaml        |  3 ++-
+ .../devicetree/bindings/media/i2c/thine,thp7312.yaml    |  3 ++-
+ .../bindings/media/video-interface-devices.yaml         | 17 +++++++++++------
+ .../dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi  |  3 ++-
+ .../dts/nvidia/tegra30-asus-transformer-common.dtsi     |  3 ++-
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts            |  4 +++-
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi             |  3 ++-
+ .../imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso          |  3 ++-
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi       |  3 ++-
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts      |  3 ++-
+ .../boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |  3 ++-
+ arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi      |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso |  3 ++-
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi           |  3 ++-
+ .../dts/rockchip/px30-ringneck-haikou-video-demo.dtso   |  3 ++-
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts   |  5 +++--
+ .../rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso  |  3 ++-
+ .../rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso  |  3 ++-
+ include/dt-bindings/media/video-interface-devices.h     | 13 +++++++++++++
+ 32 files changed, 86 insertions(+), 37 deletions(-)
+---
+base-commit: 31152f5b0f8719f92063b8c6196cd5e34106c73d
+change-id: 20260608-kbingham-orientation-20afc0fb6957
 
+Best regards,
 -- 
-2.43.0
+Kieran Bingham <kieran.bingham@ideasonboard.com>
 
