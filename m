@@ -1,186 +1,166 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011070.outbound.protection.outlook.com [40.107.74.70])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2F4421242;
-	Mon,  3 Aug 2026 17:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785777609; cv=fail; b=U7g0X400em5bnTg5zwJxcCnXQw7NkrIJamnnNWte8ukaI/emV3F22NCno3hCtIVapJfRBmmJ8QIy84neOSU5fiCyOyJ1hN+uVvNmu7UiPKAhAooucll/5zu9oxw+025zEU+Pi4a4RLx0GxkcvxONIvnTqwSWzKnJ+TfbNmKCAko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785777609; c=relaxed/simple;
-	bh=8Fk9OghUClbAc0KKEiieKVffYyCDqAPNSp9shg2wmlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pvqglquhDZ5bl2T2Sxt6GjjM6lExxwZMyLMUDS7Ajg62tKEqeohQfRvSvT/rKGOx4L+M4BeuhXo3b9JevGjLfJVa47/Jq0PvzyM5rwCfoFIxerihjyF9XzwkgZSTOI895yE1cl2PNnKh738325aYrHch+1AE3/DzYviYuV2NZt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=cPVIn+5I; arc=fail smtp.client-ip=40.107.74.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="cPVIn+5I"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wlGKvRaE+Xd6srTborL3vB0RsuFET7ItQo3HngD3TVcl660cDAO+f9eOAtmNS8QRqBSKi9wctECbXn8UNGxg96m1B86g/qqmOq6wbBwfDyM9hY8FzN1BfFrY4CVn1R10yif0H692ZWIrJjwbqmbAdd7CXPx2A/L+JA9+Rlxew0Ub6uLAGCQOmTSW1BTpKghmNRaCaQJd3vfA5n1LfVFNNBegzfeXf7Y1EqczPoAxa1bkklD1Wd8z6pAPU978i1oi2MKVVYyWzp0s1sdjtYOG2zWEkPtKvlEkCVeK9MUkxp3NYA8BEpxOWJQw3dNBnWILOXexC/GY8R1I/H/JsWUwtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VUCJcuEVM7ZYrn9JbsuiiSkNnzuXnHaeFLC44ASEQP4=;
- b=UMeBKsjk9DQ6NwJQ5rEPzKzFGjhuMBow1sYABv/NDH/qVcEsCb00Mr6vu8vXSkSH6iZAI0rXtgWpGDPQVs4OQnpEWHA3xUzXMyiSLPUIByyDkpO2DY3YZCpoal3DtPVqE+gZuaQhOpRymHDYH1wYkN4K52NtIbPAyEaA1y5maHOsAQF+3jHqh0rPS5AWJAVnDVRFWJVIXfw+T54+sm6QHDQq8B1d6EWxMTo+qVrgps5LfUSQb1oQtUHlzINkkEGvWziwQZ9+f/Iqanl9TVXM5MTlqUUCn9NCQ8eTztg71ihmhx1PdWQrJr4OO8qEt8HejonlYab1psB6OY8hYCucGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VUCJcuEVM7ZYrn9JbsuiiSkNnzuXnHaeFLC44ASEQP4=;
- b=cPVIn+5I8fQpgferZ0XLJpZNn4qkJ6MmogdB4i/XVxYlcYajjnmLfHB8ky8LHFMkwPJTpurx0jrXDgl2pdb7jAI1NGrMhFhnW+0jPav1j+DGAIik9O1hd9JcZBVF1Qgb5xEhs0XRhIcqN19yuQyHRIuEGjIak23nfVqK5k5M7as=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYCPR01MB18583.jpnprd01.prod.outlook.com (2603:1096:405:3f1::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Mon, 3 Aug
- 2026 17:20:03 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0270.016; Mon, 3 Aug 2026
- 17:20:03 +0000
-Date: Mon, 3 Aug 2026 19:19:50 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: renesas,r9a09g047-sound: Document
- audio_clkout clock-frequency
-Message-ID: <anDNtrL-eL6VUD94@tom-desktop>
-References: <20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com>
- <20260803132828.3249424-2-tommaso.merciai.xr@bp.renesas.com>
- <44c150f6-b04e-4515-ba71-63780c56c38d@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44c150f6-b04e-4515-ba71-63780c56c38d@kernel.org>
-X-ClientProxiedBy: FR5P281CA0020.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f1::19) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26D23EA968;
+	Tue,  4 Aug 2026 02:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785809119; cv=none; b=rOEuLvCrC+v7HUKcQ3jNclZMzt/E0+1RqUsnDrA3b4oB9oBCYgdysDWWp1AwmC6fjTEkCbvPhaeqwbMFueIxvGWIVAeVD47jOh8O/6/FBJ9tl6k8nf2IGT+ix2yS0CQ5gyS4JK9sZ4EhodR2GZst73JOhAKhljDDg9Z5fRdriZ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785809119; c=relaxed/simple;
+	bh=8fiD8nWiUVwd/x+SyaQpaIs+hRgIbpyvOrHtfFN/TCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sx/ktUNmz7Tf5EkXi7//iQX0eITZOvZlfxzi7SKf5lV7fqZ2/FO1ouyln/QGXcaKVv8VFaIxlDHfElzzgfAqUjFDIQrKsKPw069trBWEu2OurgSS80BPWxM3qChurQwuOIJeFy+VKmETWgGjEA6Dv5xIN/4GNUnbuOwdK0qGcb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: e9a57b248fa811f1aa26b74ffac11d73-20260804
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:dd7ecca3-b7e9-45c0-bb37-b3d54beaefda,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:e7bac3a,CLOUDID:c29357f5de0ac24fcdbfb197eb598461,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|865|898,TC:nil,Content:0
+	|15|52,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,O
+	SI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: e9a57b248fa811f1aa26b74ffac11d73-20260804
+X-User: lilinmao@kylinos.cn
+Received: from [10.0.2.15] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <lilinmao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1602212097; Tue, 04 Aug 2026 10:05:06 +0800
+Message-ID: <aa2c46b4-4fc9-416f-8855-ae6ba61eeb8b@kylinos.cn>
+Date: Tue, 4 Aug 2026 10:05:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYCPR01MB18583:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f188bb9-4240-406e-7d34-08def18374b2
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|7416014|52116014|1800799024|366016|38350700014|4143699003|56012099006|11063799006|3023799007|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	lhiJx3xWuoJjMqYAxdKk1lKK/tnQyhhWAGegF4eZBaSLNKbGELLgc7AUjxWLpBcZWNqlzA/pfNGxZcXTCv8zKYmIVzOvXkCjNULCnus6buHN7W3rlHUZeUIuoRY5RrmRlZTmgPvQbkGfJaZKy8CyzL6fMzAyeyU10a4VIVBN5Nj9jU0B5K7DVFldGunQKwnLGi62Ga9PYjxv9+Gg/funIRzYjsNHxM8LN4Jw2B0F14NeoxyUzxyOPuAq4iYPL8rj6FOcXXfCx1s0EM6xKs0wy942jP06EPrdTolyDd0INbpTyprtCxHjORMGuZyqxqN1bD6wZ0Q6NJ3LgVdwGB4fA0Doa0ipG44CMpPXjRdD3wmXuuCOGe0aJFEJwUpuSxQDqWRSkzTHew20OyXK+ApjmgvAdOLo3ZABvALt9i3bbFrmA4GMtQQD29YNUrU+1Kn5qKHMdNklIzYyc6fze3UMg9BPSQULxp+LfxFyzkGbKqstPknYgkIpUYrtNP79bhfIYsj1gTMLmnWAUmSdcx5KrxeeANY9wR+7xeY9hpV+vLMOdN+xzKkZE+O8dtdAjT/dgUl2T75BhM9b+txniJpAeQ4EdQoDHN/Vr56drfGIPDwHy/u1E0JRC6yV+yR2ssiVwStbT40IaAH6Iz1arhIRa2Vgp1GJxW3eOmdsx2yIIno=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014)(4143699003)(56012099006)(11063799006)(3023799007)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S1PXNfEjGj4730qChvpob83OKEcZNIM4oVrX8dxTpl5sEErhPNyzENCyoVHL?=
- =?us-ascii?Q?Tox0inprS+jqIDVUMqK8Z1PyCuHUW48LZ2I9yF72okMXilTmYGhCXUl+mN0u?=
- =?us-ascii?Q?oddiCCYF/wDL8NKPsCVU9zZADIX6Qly7YD4QjgTw6kJNK+xAGmB8fCDScGa9?=
- =?us-ascii?Q?pPOFdpRTP7ZkVkOTWxFivZppxBpB3XRw62GStEmbBQEqLQPN1WDsoJx8RVpR?=
- =?us-ascii?Q?WsgR86oToiNHQILjgzML36/Z4u/dL5F9HcT04OZE9Am0Dp+EUhTPikhL2gd6?=
- =?us-ascii?Q?e5hf0I+z4UDEf5bwMXBQy0/lRKTq0TDi+vYXh3fJwSiB/Fg/YtvxxZRSU9xH?=
- =?us-ascii?Q?ihmHplJofcTu2WSXBk6qA/n/LfUJ/L3RmFrqEsIfyuqgYsiaSxMhE4iGnyKC?=
- =?us-ascii?Q?3jrTR2AwsvoqhQzB1zc6OSN0RxuICp0HJFgh21DQTyDTLc6/wIqzUDRfnoAI?=
- =?us-ascii?Q?LUkcFnuZ/5ZkNYej2TklA2P3mqeCo03UwECTD7W0UsPZVV1WrY8vJCvEblyn?=
- =?us-ascii?Q?3LlUNE+7J34caj/mJQvuWxGFeGQ5XYvKrr0V+EzMFeIlH0KR+j20YCyV+TBq?=
- =?us-ascii?Q?dap9cKFMMG5BQgYFx+u+aP6jHKzoEdXnwyVO2bnLmEWG5xyT9DVp4ayYDUSr?=
- =?us-ascii?Q?gqc4CwFSJY21QzDCzKOESftOgHjdRyHMq3uosfGkdAr39ZFgk7Q7sQBkuVO4?=
- =?us-ascii?Q?AI/j6h+boSY78x0yl6mlf1N8/QNo96eOYXxtO6wZdfimSZsGk6msrcd18hrs?=
- =?us-ascii?Q?IHkgl1shalbTR4Yt0HpkOCk1Zp8gaxw9MYcFEwjql1rWIgjM33FN0j1pI58C?=
- =?us-ascii?Q?22YdQfzyaF0yEiM/Xfx/KcTjnEu3hz84WowkVQYxZTeUZ8RO/bByTDb038N0?=
- =?us-ascii?Q?iFs4qJt9vO278a0629QpYUe1WFeQ8eqI4xrzJHB3zCQO3+ZdeWwWNEOr0TIG?=
- =?us-ascii?Q?7eWgiTzmJLqiy5bBEhkseVBFA4U6i2UMRDWO0ErY43FD2UHWVEvAT7BqZP4b?=
- =?us-ascii?Q?Y2T/GQByRONDjNBRMkIXDq7H+wj5VVMw/G7Tx87qpsw+2FdexqkuuMclV/8R?=
- =?us-ascii?Q?U8fA7aGcXPW5kmKFH1L8QF7SLSd+MxuQGY23c/Y2PSSJM3DFJ7CGG1eTIy1a?=
- =?us-ascii?Q?eqvW6bpXyX/wHqH7pKOS/795tePFMJ99BqEIaP3hftKOJv2X0z7b8M8Yist0?=
- =?us-ascii?Q?Wz02x6wSlglPOjH3djev6XLahtb6mN4IcnTsTLvKtUkxb5EYMcYokwG2Ku1N?=
- =?us-ascii?Q?LJwHk522bMHbUBuFzdjwsm+S1CjaeNV89mbIHw9OKH34BPagYqLmjBZzOWzZ?=
- =?us-ascii?Q?v+1KHdiSWf4H92yINNwvY+PVnCI+r+M47DWdIOcp+jyLqph04izGp91ncsp0?=
- =?us-ascii?Q?HXu+b2aYA7jKLqITplSQQyfE88UtTJnm47UYtCRAJShxtgqzoxRH3x3uGGje?=
- =?us-ascii?Q?RKsfDBra9X98RFN6ORxhNdUvs8VhlEVU6njVhSnEWeiJMPACDqFTEEh2tNPN?=
- =?us-ascii?Q?SJjZdzvvDZCtRFr/HxmoyraIRj2zU3IlEkHp4Z8MULfStVkUIIPMSQAwlQID?=
- =?us-ascii?Q?+t32BM799dVbpTejJbFP/VMTyDljd/ztOYPY3kEN8o9bttvSO7CeWMX7HK4a?=
- =?us-ascii?Q?/Mge0jbULDFl/glibuGk8i8Wk3AMtsh0Mk3BlIsyQULexQfIwNf6DC5YQ8MP?=
- =?us-ascii?Q?FTOQi6YX8pB4IFWZUiEVypYvRPUK/UK1V3aMoXG+UHAWZ6vnB0UmB7zcLOAB?=
- =?us-ascii?Q?T0XUUSA8gVnQHDhFCX+iz/GIjwyJbL+LTyd1bLxKk6CHxpZ5T4cw?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f188bb9-4240-406e-7d34-08def18374b2
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2026 17:20:03.5890
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WB5GhyZ/bDVZpyq/9mRknszvf4yXrMWZElPLEhGHCNco7c5qMo+LjXr6wHOkpeJXDSzMHF6qVI6l0xnNK6D2GZJn3slRaXWnlf7DZlPcBklIE8h0pZ8D/KQ5Ak24l4ia
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB18583
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: rcar-isp: Fix VSPX reference leaks
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260803090553.4082161-1-lilinmao@kylinos.cn>
+ <anCZxVjPo_zfFcEq@zed>
+From: Linmao Li <lilinmao@kylinos.cn>
+In-Reply-To: <anCZxVjPo_zfFcEq@zed>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
-Thanks for your review.
+Hi Jacopo,
 
-On Mon, Aug 03, 2026 at 03:32:48PM +0200, Krzysztof Kozlowski wrote:
-> On 03/08/2026 15:28, Tommaso Merciai wrote:
-> > r9a09g047e57-smarc.dts set clock-frequency for the audio_clkout output,
-> > but the binding never declared it, so dtbs_check fails:
-> > 
-> >   sound@13c00000 (renesas,r9a09g047-sound): Unevaluated properties
-> >   are not allowed ('clock-frequency' was unexpected)
-> 
-> Maybe the DTS is wrong, because property was rejected? Did you check
-> this? You cannot document ABI post-factum if it was rejected.
-> 
-> 
-> > 
-> > clock-cells is fixed to 0, so only a single audio_clkout applies.
-> > 
-> > Fixes: a86fd3c20218 ("ASoC: dt-bindings: sound: Add DT binding for RZ/G3E sound")
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> >  .../devicetree/bindings/sound/renesas,r9a09g047-sound.yaml     | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> > index d7fa16554698..6e2b2c93b4b7 100644
-> > --- a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> > +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> > @@ -42,6 +42,9 @@ properties:
-> >    "#clock-cells":
-> >      const: 0
-> >  
-> > +  clock-frequency:
-> > +    description: for audio_clkout
-> 
-> Incomplete, missing type/ref, constraints.
+在 2026/8/3 21:43, Jacopo Mondi 写道:
+> Hello Linmao Li
+>
+> On Mon, Aug 03, 2026 at 05:05:52PM +0800, Linmao Li wrote:
+>> of_parse_phandle() and of_find_device_by_node() both acquire references,
+>> but the ISPCORE probe never releases them. The device node reference is
+>> leaked immediately, and the VSPX device reference is leaked on probe
+>> failures and on driver removal.
+>>
+>> Drop the node reference once the platform device has been looked up and
+>> release the device reference with a devm action.
+>>
+>> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+>> Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
+>> ---
+>>   drivers/media/platform/renesas/rcar-isp/core.c | 13 +++++++++++++
+>>   1 file changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
+>> index f3dc52c136120..8dafffdd8de68 100644
+>> --- a/drivers/media/platform/renesas/rcar-isp/core.c
+>> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
+>> @@ -781,6 +781,13 @@ int risp_core_registered(struct rcar_isp_core *core, struct v4l2_subdev *sd)
+>>   	return 0;
+>>   }
+>>
+>> +static void risp_core_put_device(void *data)
+>> +{
+>> +	struct device *dev = data;
+>> +
+>> +	put_device(dev);
+>> +}
+>> +
+>>   static int risp_core_probe_resources(struct rcar_isp_core *core,
+>>   				     struct platform_device *pdev)
+>>   {
+>> @@ -820,9 +827,15 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
+>>   		return -ENODEV;
+>>
+>>   	vspx = of_find_device_by_node(of_vspx);
+>> +	of_node_put(of_vspx);
+> I was about to suggest to declared of_vspx as:
+>
+> 	struct device_node *of_vspx = __free(device_node) = NULL;
+>
+> But maybe it is not necessary since there's a single call place for
+> of_node_put().
+Agreed. The node is only used to look up the platform device and its
+reference is dropped immediately afterwards, so I kept the explicit
+of_node_put() to make the lifetime obvious.
+>
+>
+>>   	if (!vspx)
+>>   		return -ENODEV;
+>>
+>> +	ret = devm_add_action_or_reset(&pdev->dev, risp_core_put_device,
+>> +				       &vspx->dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+> For my education: what are the drawbacks of using
+> devm_add_action_or_reset() instead of releasing core->vspx on probe
+> failures and _remove() ?
+Explicit cleanup would work as well. I used a devm action to avoid
+duplicating the put_device() across the probe error paths and the
+remove path.
 
-renesas,r9a09g047-sound is handled by sound/soc/renesas/rcar/core.c [1],
-and "clock-frequency" is read by rsnd_adg_get_clkout() [2]. The same
-property is already documented for R-Car in
-Documentation/devicetree/bindings/sound/renesas,rsnd.yaml [3].
+After the VSPX reference has been acquired, risp_core_probe_resources()
+can still fail in vsp1_isp_init(), clk_prepare_enable() or
+rppx1_create(). risp_core_probe() clears core->base on those failures,
+so risp_core_remove() returns early without performing any cleanup. An
+explicit implementation would therefore need a common error path in
+addition to the put_device() in remove.
 
-Please correct me if I'm missing somenthing.
+The drawbacks of the devm action are the additional devres allocation
+and the less explicit release ordering. There is also a longer
+reference lifetime in the optional-ISPCORE case: if rppx1_create()
+fails with -ENODEV, the parent driver treats the ISP core as absent and
+continues probing successfully, so the action is not unwound and the
+VSPX reference is retained until the parent device is removed. This is
+harmless, but explicit cleanup would release it earlier.
 
-[1] https://elixir.bootlin.com/linux/v7.2-rc5/source/sound/soc/renesas/rcar/core.c#L109
-[2] https://elixir.bootlin.com/linux/v7.2-rc5/source/sound/soc/renesas/rcar/adg.c#L690
-[3] https://elixir.bootlin.com/linux/v7.2-rc5/source/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml#L89
+The action is registered after the reset, clock and IRQ devres, so its
+put_device() runs before those are released due to the LIFO ordering.
+There is no dependency between them.
 
-Kind regards,
-Tommaso
+I chose devm to keep the cleanup centralized, but I can switch to an
+explicit error path if you prefer.
 
-> 
-> Best regards,
-> Krzysztof
+Thanks,
+Linmao
+>
+> Thanks
+>    j
+>
+>>   	/* Attach to VSP-X */
+>>   	core->vspx.dev = &vspx->dev;
+>>
+>>
+>> base-commit: 31152f5b0f8719f92063b8c6196cd5e34106c73d
+>> --
+>> 2.25.1
+>>
+>>
