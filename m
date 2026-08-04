@@ -1,74 +1,74 @@
 Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598CD31355B;
-	Tue,  4 Aug 2026 08:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7094939CCF3;
+	Tue,  4 Aug 2026 08:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785833491; cv=none; b=iSe4QevK5U+mL/MNgmoplna2I/qSqAkhCi50PEOWQEavEWWPCD9DJ02qkDKtL2R/t9RxSZhUSXfCOx1bVxEIgWyub8o93S5bC4ShPanR4u7+TAjplcMlxMSDM6uoGd7Jux1ZVWj5V1DuH9OeTRHc5cXRVVR+WdYfg17shTgxzgA=
+	t=1785833655; cv=none; b=GHI8PDq2OF5z+GqYmitOljWF415ACQ/hUcmFRWQ0p8br7n9BP7EMU0u4nYQYqYoc4MVlqfIQJAicTGlI57WNqSJv/wwPh5JvxwwLM3Z2ey8JIS3aphnPGefpGqaVvAdy552xFIRrmD23eybCmgwiD9ifm7kKzkcEA3K3ta+TEYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785833491; c=relaxed/simple;
-	bh=va8CjpTOy3HgA1PpwHbTPIDwGz4topH79dZtyO+QiYU=;
+	s=arc-20240116; t=1785833655; c=relaxed/simple;
+	bh=KL/AJCAoRGBAqAS32u8WLZ5PCwGlE5U4j266pFaFTjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TfBs3PaZfhwfvtoIpA4eZsAQpKvDXeXuSJLhHWfdYLOrSIdl/ncexipdZ9pqHIh86N3hgHl4ze3V9bOnfNfp+uU/CPhWjpRopF9GINN0Ow/1CGtQ5zFjEDx114lBh7EsJUXCHSybRYIph3b7GusaCsvDeGZ5CcE9VY1bNmnsOcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=DU4E2JB3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D8LcisU+; arc=none smtp.client-ip=202.12.124.144
+	 Content-Type:Content-Disposition:In-Reply-To; b=CizA8CWxjLeocdoybf5YZZfulrQV300E7B/xey6unU4/tYfQ49lTwWernlc+tsShXg4NofQESt5kN/LWUvurUKiOZesGFStXGytsgjGVhZKvWTzF9Lz/yxfBReLEmvCco/OqYn+ptQ47hLGWfEuUNu7OG8q5tMBPGK/jQvJnAsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ayU2Jt+O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lxESpT9O; arc=none smtp.client-ip=202.12.124.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="DU4E2JB3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D8LcisU+"
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ayU2Jt+O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lxESpT9O"
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 156031D00165;
-	Tue,  4 Aug 2026 04:51:28 -0400 (EDT)
+	by mailfout.stl.internal (Postfix) with ESMTP id 891A51D001AA;
+	Tue,  4 Aug 2026 04:54:12 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 04 Aug 2026 04:51:28 -0400
+  by phl-compute-06.internal (MEProxy); Tue, 04 Aug 2026 04:54:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1785833487;
-	 x=1785919887; bh=5Q69Gz9TI7+952M3VbP600X7ndLmR9JmvY3lqrKEmVo=; b=
-	DU4E2JB339XwzqM+u3gM/CqHzAqfhKgcKJFBcnHjEsSEMKjax2cjHnnbm4xchC0C
-	AOlIAocrIdK4xD4E7ZdC9n09t/gMkLIRjLYAtA+YYHpL8wH3X/+wvYhrMR9oTywD
-	eAeGbztAmuPe5DdoanPK3zqkBA6ZrTVJ61DAPrW9odsd+PKrqu9NlYZtDdhyvdfQ
-	n/0ZxvaV1cZ5i0vCsur8M9Xp67YG3RvnqCGfBxSiwmZxQ2xPbB7AkPUMVQ39jd06
-	4bjuT46Xax3e5NIPBdasiBevcmqyzXb3ziX5+4Hg6XBnJpJq7/6d9oIjT5AOAIeG
-	aqWT6gx8PieFbgO8gOz3zw==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1785833652;
+	 x=1785920052; bh=MtWSN2ULMFqVASyfNFljZCa7nYlxiR8NPoVl8egIGr0=; b=
+	ayU2Jt+Ory0zIfazyvV4WqTZh/aBGu7HMx10xIn20R3rYvxOw9DviI6H88oAlYj6
+	A2jViVZSumqktMhoLtVIJdXMiddxWzHWW8GZnH9i1wT43BijfA+Mpbr0Qq97ZKT+
+	IysT1guXcV2RQO1Okajj7hOMBQX4GIU7CiLr/6Ccna9bbG21q9rExbch2fsUIANE
+	QsJn8S1snGdaqKJvzxU3raqjyHj8h2JgMyHd/+I8X6HLqR6qsl4fZMCt9j8vW9wi
+	gOKLr/LB5NNbTw2qdUIcWQFcx7E98YTwwFDGmtBTwA7uWBnK3bPhhHF6hyGbENOI
+	T70i2hPJzrsR59qR/a+8PQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785833487; x=
-	1785919887; bh=5Q69Gz9TI7+952M3VbP600X7ndLmR9JmvY3lqrKEmVo=; b=D
-	8LcisU+7Wb3e3dJ13YiOb2tlojCQj2QqyylMPfy730uQQrDYccexiqMaY4TUibTy
-	laSaNQlFitY7XQwE12z3LREZeEssiPzKMEq+g8sFuAMa1UQ61z1t3B5wWB2XrWDg
-	4H0H7NnRWQCeZub/tu247t6DxKiv6on3ZvbRi7s2naBPXKDx+kOHJTB66lhr0gdM
-	W8bCao+8Tm+bbDx37KrPFKLj/osk4ERXEcxEVwJHfSgZ7YQU4znnk7q/HHMUNvwl
-	KsB8SuCa1OeDglIGFPuPy9Di3PAg/gjVav82qBvnFxka+JXlD5VYzUvkIacerZIY
-	mUjC+UB5f8N3mty5JFu9g==
-X-ME-Sender: <xms:D6hxapLcZ8WdvKS_0wXPKHqDVO5r0TK9q_pxjBTn8hBj_NjvbDBkFQ>
-    <xme:D6hxatUmbhIBMkt917eSkhigMBlWPsb1UQSxIiKD4Eto5U0CI5v1lfrCx6_oearb_
-    3RxUSDvKpBXcdrRzb_5ygnk8EBlZCpdOEjWrnKaza01yLi5z9NirWYg>
-X-ME-Received: <xmr:D6hxatSooNtD4mjIYobnrVVT9ZTrjIjsivEicduJir-FOFYL0QbdxCPaC1xHjB5vItW0pNuPoSCWQY8wGrYVuFh7yynOJ8Y>
-X-ME-Proxy-Cause: dmFkZTELmEkETjdma4aOjsoFfNKBrnce7fmGLe5z/boizL7hYPONqwDZEffhcUZw9alYTd
-    G9M/QDUB+fnIGOJ/zYHwhBOUSilu3PoYJbylJ/25qyX0Kh32TrLZDk5wxBVPNjjubOXjaG
-    xkcsAZgvvd/5EFCAFllsdP6cqbb1F0BInxSKu2PPoASYBRq5YPFttHiIOwaQxx9rxH32q2
-    Z+j/+Uwr465jMOhSztvB2FeuVlQv9UPF2vAYZBQZUXexxWnxg+X4TFc6//ycVuZMqcnA3z
-    ZygianzWtGlpwJ1IosBo7FBz28K0LlN55GbqmYSNOLikMUZlYtsplu91H+9qIGrJNKsTE+
-    dJ3bNlwEYYL+4Fec496U4prOfuXjL6TvcAYsRERCgUjSFvDcd3axHtRpzrJEAFBUjzNBp4
-    ZNM6wTOWfQDPp7hPXlGstADicOUK50qWj5/SGjypP1xwDDXQYfFjYuLlAufRuB4IcwOqPo
-    loZ9XjGBcRdopY/Xzovv4em43XAhjwQ/6On2D4KY112JwCIWUauYcd044c3f4dBf4LqZ41
-    /e5qzJu9mtRVK36tBKil2Z02bYpldVep8ag57+3bJK6QheIT7UC+l5fAbKfYPzexPOBx6D
-    WgWB57j+bxSFnhi8D8mPAwX4NbMilc0/H+60XlqbPHw5parkB4FEO60kZCrQ
-X-ME-Proxy: <xmx:D6hxalDg_rgOwf5YosCWU5BbP2IoIHvEdIf90oXrfz7fT25cwukLeg>
-    <xmx:D6hxasKlG-N8hvFtIVS5hnioRPLPlMBNSWbBdae5IaJFq6-1HMFx5w>
-    <xmx:D6hxaoCybotLTEwAjZDRqIxAnU014Dpgo1QHOgxwEOUqKdwqiRtwdg>
-    <xmx:D6hxapsbTDApiTLQ8UAB9d6_w11vwxWpI30yC-hFN63aX2yo0Mqbnw>
-    <xmx:D6hxajITricAKy4io3Q0nn4UqQItOOE8PN062FE2xZT81VH78zhZz1F7>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785833652; x=
+	1785920052; bh=MtWSN2ULMFqVASyfNFljZCa7nYlxiR8NPoVl8egIGr0=; b=l
+	xESpT9OU+rFTV2luw51iw92KZmCdk5B2FD5Nca+CjYbHPMnymIRfUC9jW9ETUnqk
+	ru9VQJNqSPvr+GundcLWYu5iMKb3S7pIBg9rzg9bLKNkisq0EPIZHWDrCPSYJxoY
+	f1H47drjW6SwR43UQqAFYtWuh1TnO7YGyU80h9QXPq07oRU321fRA7p/KKFcjKtz
+	LrOyjUCaW6hvYD8Q47+NK5nLutt5I2mez4OIEdmBnKddyy12T2OnEttOmKqpj0OM
+	lgxvB/xBo6h461nhuiJAekuGu1FaE6I7mxTSVqqGS12YhMOiCyr4y0ijy3vC0fVV
+	9ntiIbvFZBMzEBQ2V4j0g==
+X-ME-Sender: <xms:tKhxau2g4W_Sl-YkMrgtJM9x_RXHd7bxBEqN9IEI0ScBTr_lP3qDyg>
+    <xme:tKhxapSDlPyV1kFA7TWBIGb1R-e1AsCJIYmZ3A3EAU1SOid9BPDf6oz1zK7nHbdp5
+    s-vQzzqEB7vkXss7EHRfWo9l0L-GGcMire2QDmiikC69NzjRaUxeX0B>
+X-ME-Received: <xmr:tKhxaifAXScHdRngXAdAmv7hverIijXxMCwnNb2KSGR3PK3IC9as723kKjUuuGW9Ch_N2GO7zuC2khhoctWdjfpCmH9eL94>
+X-ME-Proxy-Cause: dmFkZTGtDJDbk3dJ4jSgaiPaiqFxjZ9xUlm755D0tCYs66gUhi/dsSDVQB23tDpwP+FICD
+    SByx11lNbrsf8g1dUwuu9V2aQX+lpe7VPJokoqhiQWKmb0QJt9FMZtVz4DTAA3pxyesYFs
+    a8SkQJHd4oJGQI1qKTNG0fKGTJ16JOCYuON4KUuMQgVGB0tDFcYgU8zb8hEZ4tYberCAQ/
+    A8KljdhE2EKPnu9q9HbvBsl1lhp56HJgopEUD2ZGLsspwvjRxCXx3JNQde4QRFXi2huZHZ
+    2uM9OLI7kE1IhVHloz0kWvS6BE4efXfkbj0ROqxsKKOliF1Tm3Ka5TeZDwTvCPonW5HUkj
+    aTmPq2S6386iLT+CXU2mr1a814SiqXUzjHamr0Mixp8kn5KoNjMmHEFgteSLYvn6slJYCO
+    VL8lgD4VzhjXijYMEN9UIUHFvWNgJEn7XWvr+rxAY2G8UAUtXF1yM5/yOn4tXrN+JXUg/z
+    X6aN2+ErxkZ/K7+kK6Cu+sflwddtkbw2rwM5TcR0ItrfxsKlsEUyN8KDkhyicsJiatD5Wv
+    qszD3g0L68O/UiTeB60UjSa48BW+D0HmxIkWuxurk5S965niiI3MfAIzMT+MDWH5uzkvXY
+    Fxq0U9RLbpe8zHCUyGl5Y9DaX89DYwOkEiJIUNdrEbpNspVjgX82UDPhV3dw
+X-ME-Proxy: <xmx:tKhxaqdg-lXSFmt7siGtgccZ1sDLQLVvL9VuVEcw93-owNbG1EYbbw>
+    <xmx:tKhxas10s3EptHHgx05XGcWSwVMLQ0D5R5Sfcxm-E_DJKzGLaq23fQ>
+    <xmx:tKhxai-8OQ5yGq6cTq9nRRXfDivB8NWBBX75hx-6GVTwOZJERm7leA>
+    <xmx:tKhxah51xvpLzl4D_DDm8eRW2782CK6Ahqu5r3d2I87EWrkze-DayQ>
+    <xmx:tKhxar6SdidIPm-LqDncVQ0k5V66Fo1a49egf-3dfG2RDw-eg8dnMnqz>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Aug 2026 04:51:26 -0400 (EDT)
-Date: Tue, 4 Aug 2026 10:51:24 +0200
+ 4 Aug 2026 04:54:11 -0400 (EDT)
+Date: Tue, 4 Aug 2026 10:54:10 +0200
 From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 To: Linmao Li <lilinmao@kylinos.cn>
 Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
@@ -79,11 +79,12 @@ Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: rcar-isp: Fix VSPX reference leaks
-Message-ID: <20260804085124.GB346309@ragnatech.se>
+Subject: Re: [PATCH 2/2] media: rcar-isp: Release ISPCORE resources
+Message-ID: <20260804085410.GC346309@ragnatech.se>
 References: <20260803090553.4082161-1-lilinmao@kylinos.cn>
- <anCZxVjPo_zfFcEq@zed>
- <aa2c46b4-4fc9-416f-8855-ae6ba61eeb8b@kylinos.cn>
+ <20260803090553.4082161-2-lilinmao@kylinos.cn>
+ <anChUtV090GkJ6VI@zed>
+ <9a3881ad-0da6-4a47-b408-a2106f5a2f14@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -93,120 +94,106 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa2c46b4-4fc9-416f-8855-ae6ba61eeb8b@kylinos.cn>
+In-Reply-To: <9a3881ad-0da6-4a47-b408-a2106f5a2f14@kylinos.cn>
 
-Hello Linmao,
+Hello,
 
-Thanks for your work.
-
-On 2026-08-04 10:05:03 +0800, Linmao Li wrote:
+On 2026-08-04 10:25:35 +0800, Linmao Li wrote:
 > Hi Jacopo,
 > 
-> 在 2026/8/3 21:43, Jacopo Mondi 写道:
-> > Hello Linmao Li
+> 在 2026/8/3 22:17, Jacopo Mondi 写道:
+> > Hi Linmao Li
 > > 
-> > On Mon, Aug 03, 2026 at 05:05:52PM +0800, Linmao Li wrote:
-> > > of_parse_phandle() and of_find_device_by_node() both acquire references,
-> > > but the ISPCORE probe never releases them. The device node reference is
-> > > leaked immediately, and the VSPX device reference is leaked on probe
-> > > failures and on driver removal.
+> > On Mon, Aug 03, 2026 at 05:05:53PM +0800, Linmao Li wrote:
+> > > v4l2_device_register() takes a reference to the parent device, but the
+> > > ISPCORE remove path never calls v4l2_device_unregister(). The reference
+> > > is therefore leaked whenever an ISPCORE is removed.
 > > > 
-> > > Drop the node reference once the platform device has been looked up and
-> > > release the device reference with a devm action.
+> > > Probe failures after rppx1_create() also return without destroying the
+> > > RPPX1 object.
+> > > 
+> > > Unregister the V4L2 device and destroy the RPPX1 object on the
+> > > corresponding error paths, and unregister the V4L2 device during removal.
+> > > v4l2_device_unregister() also unregisters all attached subdevices, so it
+> > > replaces the narrower subdevice-only cleanup.
 > > > 
 > > > Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-> > > Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
-> > > ---
-> > >   drivers/media/platform/renesas/rcar-isp/core.c | 13 +++++++++++++
-> > >   1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-> > > index f3dc52c136120..8dafffdd8de68 100644
-> > > --- a/drivers/media/platform/renesas/rcar-isp/core.c
-> > > +++ b/drivers/media/platform/renesas/rcar-isp/core.c
-> > > @@ -781,6 +781,13 @@ int risp_core_registered(struct rcar_isp_core *core, struct v4l2_subdev *sd)
-> > >   	return 0;
-> > >   }
-> > > 
-> > > +static void risp_core_put_device(void *data)
-> > > +{
-> > > +	struct device *dev = data;
-> > > +
-> > > +	put_device(dev);
-> > > +}
-> > > +
-> > >   static int risp_core_probe_resources(struct rcar_isp_core *core,
-> > >   				     struct platform_device *pdev)
-> > >   {
-> > > @@ -820,9 +827,15 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
-> > >   		return -ENODEV;
-> > > 
-> > >   	vspx = of_find_device_by_node(of_vspx);
-> > > +	of_node_put(of_vspx);
-> > I was about to suggest to declared of_vspx as:
+> > The driver has not landed in any Linux release, but it has just been
+> > collected for the next merge window.
 > > 
-> > 	struct device_node *of_vspx = __free(device_node) = NULL;
-> > 
-> > But maybe it is not necessary since there's a single call place for
-> > of_node_put().
-> Agreed. The node is only used to look up the platform device and its
-> reference is dropped immediately afterwards, so I kept the explicit
-> of_node_put() to make the lifetime obvious.
-> > 
-> > 
-> > >   	if (!vspx)
-> > >   		return -ENODEV;
-> > > 
-> > > +	ret = devm_add_action_or_reset(&pdev->dev, risp_core_put_device,
-> > > +				       &vspx->dev);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > For my education: what are the drawbacks of using
-> > devm_add_action_or_reset() instead of releasing core->vspx on probe
-> > failures and _remove() ?
-> Explicit cleanup would work as well. I used a devm action to avoid
-> duplicating the put_device() across the probe error paths and the
-> remove path.
+> > If your patches get collected as part of the same cycle, I don't think
+> > there's any need for a Fixes tag ?
 > 
-> After the VSPX reference has been acquired, risp_core_probe_resources()
-> can still fail in vsp1_isp_init(), clk_prepare_enable() or
-> rppx1_create(). risp_core_probe() clears core->base on those failures,
-> so risp_core_remove() returns early without performing any cleanup. An
-> explicit implementation would therefore need a common error path in
-> addition to the put_device() in remove.
-> 
-> The drawbacks of the devm action are the additional devres allocation
-> and the less explicit release ordering. There is also a longer
-> reference lifetime in the optional-ISPCORE case: if rppx1_create()
-> fails with -ENODEV, the parent driver treats the ISP core as absent and
-> continues probing successfully, so the action is not unwound and the
-> VSPX reference is retained until the parent device is removed. This is
-> harmless, but explicit cleanup would release it earlier.
-> 
-> The action is registered after the reset, clock and IRQ devres, so its
-> put_device() runs before those are released due to the LIFO ordering.
-> There is no dependency between them.
-> 
-> I chose devm to keep the cleanup centralized, but I can switch to an
-> explicit error path if you prefer.
+> Agreed. I will drop the Fixes tags from both patches when respinning the
+> series.
 
-I thin I would prefers an explicit error path. Specially as you point 
-out, the driver can work with or without an ISPCORE and having the error 
-path explicit will make things more robust IMHO.
+With Jacopo's concern addressed,
 
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
 > 
 > Thanks,
 > Linmao
+> 
 > > 
-> > Thanks
-> >    j
+> > > Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
+> > > ---
+> > >   drivers/media/platform/renesas/rcar-isp/core.c | 12 +++++++++---
+> > >   1 file changed, 9 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
+> > > index 8dafffdd8de68..923970fd7841f 100644
+> > > --- a/drivers/media/platform/renesas/rcar-isp/core.c
+> > > +++ b/drivers/media/platform/renesas/rcar-isp/core.c
+> > > @@ -883,17 +883,23 @@ int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
+> > > 
+> > >   	ret = v4l2_device_register(core->dev, &core->v4l2_dev);
+> > >   	if (ret)
+> > > -		return ret;
+> > > +		goto err_destroy_rpp;
+> > > 
+> > >   	ret = risp_core_create_subdev(core);
+> > >   	if (ret)
+> > > -		return ret;
+> > > +		goto err_unregister_v4l2;
+> > > 
+> > >   	mutex_init(&core->io_lock);
+> > >   	spin_lock_init(&core->lock);
+> > >   	INIT_LIST_HEAD(&core->risp_jobs);
+> > > 
+> > >   	return 0;
+> > > +
+> > > +err_unregister_v4l2:
+> > > +	v4l2_device_unregister(&core->v4l2_dev);
+> > > +err_destroy_rpp:
+> > > +	rppx1_destroy(core->rpp);
+> > > +	return ret;
+> > >   }
+> > > 
+> > >   void risp_core_remove(struct rcar_isp_core *core)
+> > > @@ -907,7 +913,7 @@ void risp_core_remove(struct rcar_isp_core *core)
+> > >   	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
+> > >   		risp_core_io_destroy(&core->io[i]);
+> > > 
+> > > -	v4l2_device_unregister_subdev(&core->subdev);
+> > > +	v4l2_device_unregister(&core->v4l2_dev);
+> > As v4l2_device_unregister() unregister all subdevs of core->v4l2_dev,
+> > this seems correct to me.
 > > 
-> > >   	/* Attach to VSP-X */
-> > >   	core->vspx.dev = &vspx->dev;
-> > > 
-> > > 
-> > > base-commit: 31152f5b0f8719f92063b8c6196cd5e34106c73d
+> > R-Car ISP is a little complicated, in the sense that the core->subdev
+> > gets registered by risp_cs_registered() which is the handler of the
+> > channel selector subdev .registered() callback, and to properly
+> > balance we should unregister it in the (not implemented)
+> > .unregistered() handler.
+> > 
+> > However, as this is called as part of the driver's remove handler, and
+> > that's what we have at the moment, I guess this is ok
+> > 
+> > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > 
+> > >   	mutex_destroy(&core->io_lock);
+> > >   	rppx1_destroy(core->rpp);
 > > > --
 > > > 2.25.1
 > > > 
