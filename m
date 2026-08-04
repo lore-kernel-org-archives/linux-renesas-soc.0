@@ -1,24 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D403E1208
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 13:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3168946A60C;
+	Tue,  4 Aug 2026 14:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785849711; cv=none; b=cMCC4ZhJnQSBcVTeNfUQrp9ai7nRT57bKk7L+22sTZ6FxMNrw+wptn3kw9rXkhfPdAv1fVGqJBxiNEjRELi8A8l/yY5tC6zPl58OYwzHUdpVrb9P90IkBQnf60ioZkmB6b9ini6LebFXu7vVv23auJdg2fqSPD8ihnUsBVEkqzc=
+	t=1785852053; cv=none; b=qV2wqQeKk+fefS2cBobWzXerVkHGR0lUG+lNJMH20DDgpaR6bmPqtofVr//JrOfKwCb3P/H4XXxKFKPcoslYVgkso4bOvFGAu/UQaAEwQ/gTRWXigkYGJbs+Eh/9ZK7VlAt2z0uFBuWPxLBiYOShZjtfzQMAJ5IRFSa3gWZW/tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785849711; c=relaxed/simple;
-	bh=mVfhGOrc5iMF8zLeSSoh7ZnhqWvgbEMT3+OM4jXa7wA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WcjPD9Nxn95RnkLTsIdtFQTtPC4XJ2YufiJ4UI/Winj+TdkVaTdboFnsXv0WvsJXaUsxSDv6WeSOmGHD9v9jxVPCv+rB4wkLYt/W83YKmH4pQJLFqQyzM5goqgOvEiog1VGw8l+uEvED5RJFs2GphaduVtYXPns1EEZU6En4FJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D1E1F000E9
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 13:21:48 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2026-08-04-v7.2-rc6
-Date: Tue,  4 Aug 2026 15:21:47 +0200
-Message-ID: <20260804132147.2216549-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1785852053; c=relaxed/simple;
+	bh=uM/UdUi8q3sC15aMJedNdNGZ/OGqixdV7byD6nqWDH4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=qNDiQQZHUaO93tIRJCaBKrNXL9O7kXl+l+Kz2yWp0RJGVPxTQgsu1SwIeKM8XqmwiL/wC36zopjELkNZEVI7M4pgyyuuXGr7ZYigZYrdS1TkAO3tCenuMnF1yUca1IfLedhIdFs9OdQdmgVsxIgL/Nr1e2mdHR+Cb89PQ4i426A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx+ViW51; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx+ViW51"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFA771F000E9;
+	Tue,  4 Aug 2026 14:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785852051;
+	bh=mpyTqBdevw99iwwMtLPxyoNC08nRFEMHQTer9pjaR+0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=Sx+ViW51f7Y1cfpviGJ1Vy53xrX4yX8YHp6Wrp2FczgCJaeVr5OnKbstW4lZc5es9
+	 RfKTV7vlriQYcCi32RvpfUArRXV7SHIG+PF56R0MSsigwyDo2CsvS2X4bfyExN2415
+	 KkKqnyj2mKqDHNYKJl8w7M8ur7KIZyjjr+s8+dL6KmXxyZaMjn1b8wpZBHBfbgvcK5
+	 JtwUkZ2Iuc03EdHkpYZd0xez2udCza/wh9FJBNR7mTmRkMj7FK67RUnjpAEFisfzJz
+	 jk0u70rhivNHGB3cTxIkcSfc8516wGaBgYET839orkeWeDW0VNxsr90dU5m7iz4gdT
+	 PMf5RuqfoARvg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93ABE39253CB;
+	Tue,  4 Aug 2026 14:00:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -26,93 +37,50 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] dt-bindings: net: Correct white-space style
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <178585201216.3168424.15227977507793041541.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Aug 2026 14:00:12 +0000
+References: <20260801195505.235099-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260801195505.235099-2-krzysztof.kozlowski@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Steen.Hegelund@microchip.com,
+ daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com,
+ geert+renesas@glider.be, magnus.damm@gmail.com, j.ne@posteo.net,
+ horatiu.vultur@microchip.com, lars.povlsen@microchip.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2026-08-04-v7.2-rc6 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hello:
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
-for-next branches of various subsystem trees and (b) branches with
-driver code submitted or planned for submission to maintainers into the
-master branch of my renesas-devel.git tree.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Today's version is based on renesas-devel-2026-08-03-v7.2-rc6.
+On Sat,  1 Aug 2026 21:55:06 +0200 you wrote:
+> Correct a few white-space issues, like double space after '=' or before
+> bracket '{' characters, which will be flagged by dt-check-style.  No
+> functional changes.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/net/fsl,gianfar.yaml    | 2 +-
+>  .../devicetree/bindings/net/microchip,lan966x-switch.yaml | 4 ++--
+>  .../devicetree/bindings/net/microchip,sparx5-switch.yaml  | 6 +++---
+>  .../devicetree/bindings/net/renesas,rzv2h-gbeth.yaml      | 8 ++++----
+>  4 files changed, 10 insertions(+), 10 deletions(-)
 
-Included branches with driver code:
-  - renesas-clk-for-v7.3
-  - renesas-pinctrl-for-v7.3
-  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v2
+Here is the summary with links:
+  - [net-next] dt-bindings: net: Correct white-space style
+    https://git.kernel.org/netdev/net-next/c/828c4a5a9518
 
-Included fixes:
-  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
-  - ARM: shmobile: defconfig: Update for renesas-drivers
-  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
-  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git#i3c/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#watchdog-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
-  - https://git.pengutronix.de/git/pza/linux#reset/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
-  - https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
