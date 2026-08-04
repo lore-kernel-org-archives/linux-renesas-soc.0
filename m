@@ -1,191 +1,114 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B816413D62;
-	Tue,  4 Aug 2026 19:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0B3F12C8
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 20:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785872647; cv=none; b=YhwjqfizCYiorTb7NI5Qa5UZlKUhcVHySPnOOTxs2xd1n8aJ1NfWld0adIlvEZwN2KuIoIIZxyL3Fe1lDNclrL1H19IY1SN2/sYrQPBtSwIoCRUAqWiPXuvOPbhW+TmUwwvNrNu3BynbAHJOlcZ63AqIFaPBmlOAV83Kx6hOdys=
+	t=1785873990; cv=none; b=Fg87S2umm3Lwo098p7UG4GK2gzVqk93cQgx4excIX4US7xZyDynGhs7HgsekxMpr3TK25wrnzNDmG4y+/0SY3oZmVoE8VeA0FqI1kEYQp14Ydj9d3ymnMtZX8GnUebeZ4hnxupGP/FwS28gCGRONg9bs+FevEk6vMPvysmAIMDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785872647; c=relaxed/simple;
-	bh=2roZo+O9bfs5wZlzfHNuSLLrkhZGgewmjPJGmYrBLQQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EO0B5iwS1NwcCM0dvix3Eoc+HRvD7QzQ9hOKbgURx6UXGattqYVMHmbOLHjA81H6zsK4zIK4Qg8T3AAPsG/hiaD2kokpiVU3RqiiSenPHngPSCujUjZHmESUu+RbUG1ocjnUYKmVu1sqidE9pmg1nqInug/uOUEs4iqrT94Kqvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SypZ/tnY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1785873990; c=relaxed/simple;
+	bh=gD1MfLnCAaFRcWetE3NiZig5k758kytS/smQILHwkGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXK7NYOZBC22KW88A1XF4wAashoEWzb5GROPacnQNso14ZdWl4e7pxARm8dUCRdvt377AurTQA4Wys66JF9bkN7BJD8wTet/xYPXB0LSAEX+4GzlKiokoRXxsE+/bbP1zmDDI/is6K+z2bvWPAncYJUS5yDA6s4tapuUt7p61lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WiIjDqU0; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SypZ/tnY"
-Received: from [192.168.0.240] (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 50F6435D3;
-	Tue,  4 Aug 2026 21:42:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1785872562;
-	bh=2roZo+O9bfs5wZlzfHNuSLLrkhZGgewmjPJGmYrBLQQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SypZ/tnYmbmu60E75c5h9lWc+VFo0GGga35RYTuYVtWqKli0OFFMjM4ic4/7WwlJy
-	 tb4A63WnBm93R8JToyuWk7C3ddj548UeEDQHFYzsglHx//eoiVY8EujwxdeY0hjPWm
-	 uNP4+Ekj5Xvp9xkPGeD3lbotXlRoEl0GyKeK7n0M=
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Date: Tue, 04 Aug 2026 20:43:34 +0100
-Subject: [PATCH v4 7/7] ARM: tegra: Convert to new media orientation
- definitions
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WiIjDqU0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=wr7q
+	ld4CYOnNrQHlbO9S3jk20nz81d8l7qEVsAvo6So=; b=WiIjDqU0OSJi6rAWvewk
+	ZwxPwNtbYKXnpmQBIn23GQBYqz+FlwdESEodfvc8t/iuW0wP+e0gvpfL1yJIdPtC
+	bPNLXJT8Y6titQhxfi4t+9FqbDkKTN3yQLJN7EBmXL6zgIQUfwBHELHnWhujzBF4
+	erp2RF0ng7khbrg3I9hhd8W6dNRe3K9/SVRpnsnoOjVZjVSqGNGjFmMiEPCnyTDy
+	jUAhmV2Or3qsb8Pkw1/SmncDtFqGApe9ldENlYquED2VKzGrjUciU2ls7G+aWIBt
+	zlyjeowcnbXJItqsbcc3I11DuxpuqGbkCSptQbsaIqHhhlql6igyMFSXdAOsYQqg
+	bQ==
+Received: (qmail 3515143 invoked from network); 4 Aug 2026 22:06:16 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2026 22:06:16 +0200
+X-UD-Smtp-Session: l3s3148p1@0iryLz5Y1JsujnsQ
+Date: Tue, 4 Aug 2026 22:06:15 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
+Message-ID: <anJGNyNxcSAwylK8@ninjato>
+References: <20260721082952.215691-1-herve.codina@bootlin.com>
+ <20260721082952.215691-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-kbingham-orientation-v4-7-336998dd63b4@ideasonboard.com>
-References: <20260804-kbingham-orientation-v4-0-336998dd63b4@ideasonboard.com>
-In-Reply-To: <20260804-kbingham-orientation-v4-0-336998dd63b4@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
- Matthias Fend <matthias.fend@emfend.at>, 
- Mikhail Rudenko <mike.rudenko@gmail.com>, 
- Daniel Scally <dan.scally@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Paul Elder <paul.elder@ideasonboard.com>, 
- Martin Kepplinger <martin.kepplinger@puri.sm>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- Tommaso Merciai <tomm.merciai@gmail.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785872619; l=4365;
- i=kieran.bingham@ideasonboard.com; s=20260204; h=from:subject:message-id;
- bh=2roZo+O9bfs5wZlzfHNuSLLrkhZGgewmjPJGmYrBLQQ=;
- b=gTMLXiSXouOoSUS3up6VvewOqXEBidSSHEnOFsVDz0zJLC5W9GJm3Qbh0rvX6jfGMPOJ88GfQ
- 9CUVycukXTfC+X9JVbgIj+SzOhpZoU3W6T4duCH4nYOZVuKp3fypOq/
-X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
- pk=IOxS2C6nWHNjLfkDR71Iesk904i6wJDfEERqV7hDBdY=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="K3YzAXkCWFXIec1c"
+Content-Disposition: inline
+In-Reply-To: <20260721082952.215691-2-herve.codina@bootlin.com>
 
-The orientation property for video interface devices now has definitions
-to prevent hardcoded integer values for the enum options.
 
-Update the users throughout the nvidia device trees to use the new
-definitions.
+--K3YzAXkCWFXIec1c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
-v2:
- - Fix MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
----
- arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi | 3 ++-
- arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi    | 3 ++-
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts                     | 4 +++-
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi                      | 3 ++-
- 4 files changed, 9 insertions(+), 4 deletions(-)
+On Tue, Jul 21, 2026 at 10:29:47AM +0200, Herve Codina (Schneider Electric)=
+ wrote:
+> The Renesas RZ/N1 timer block controller is the controller in charge of
+> timers available in the Renesas RZ/N1 SoCs family.
+>=20
+> This controller handles 8 timers:
+>  - 6 16-bit timers
+>  - 2 32-bit timers
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-index 892d718294dd105fcfbf290c38de74fc3f93ed6b..a7fdd194300c035317ae237dec7d45533246a3cd 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/power/summit,smb347-charger.h>
- #include <dt-bindings/thermal/thermal.h>
- 
-@@ -991,7 +992,7 @@ front-camera@48 {
- 			vdd-supply = <&vddio_cam>;
- 			vaa-supply = <&avdd_cam1>;
- 
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
- 
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-index bf1c3a31d406240f62ca13ed351c5ba3a42c83ec..76286e15684c289e648cf75c207cd454176b4689 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/thermal/thermal.h>
- 
- #include "tegra30.dtsi"
-@@ -1262,7 +1263,7 @@ front-camera@48 {
- 			vdd-supply = <&vdd_1v8_cam>;
- 			vaa-supply = <&avdd_2v85_fcam>;
- 
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
- 
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-index 896639599c12600a1225610af0ec78f5286a8000..28680063bcc05bb2c1c69effe9ad7235c81c536a 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/media/video-interface-devices.h>
-+
- #include "tegra30-lg-x3.dtsi"
- 
- / {
-@@ -132,7 +134,7 @@ front-camera@48 {
- 			vdd-supply = <&vt_1v8_front>;
- 			vaa-supply = <&vt_2v8_front>;
- 
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
- 
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 60e8a19aa70ecadb7d7a0d251ee3b12cf9ca01dc..77cab695d3da94ab5b8c46698fd6e94e03430bf0 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/mfd/max77620.h>
- #include <dt-bindings/thermal/thermal.h>
- 
-@@ -1216,7 +1217,7 @@ rear-camera@10 {
- 			dvdd-supply = <&vdd_1v2_rear>;
- 			avdd-supply = <&vdd_2v7_rear>;
- 
--			orientation = <1>; /* Rear camera */
-+			orientation = <MEDIA_ORIENTATION_BACK>;
- 			rotation = <90>;
- 
- 			nvmem = <&m24c08>;
+In general:
 
--- 
-2.53.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+One nit:
+
+> +        reg =3D <0x51001000 0x400>;
+
+Isn't 0x400 a bit excessive? The last documented register in my docs is
+0x114, so maybe 0x200 will do above?
+
+
+--K3YzAXkCWFXIec1c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpyRjcACgkQFA3kzBSg
+KbblfRAAp6Zw/Q5+g6+t0gQ6a1Ir0bRwdsP3ZOHD/Xdz/uXcxyOroVwP6+U86jrO
+1UK5H3qTw7Ah07iWEKp9GXk3czVrvrMcAua0G/DhLBXU6E9lu2npWQoVeb4zaSEA
+LOtzNATycySMssxdU08cEWg97/+LMTsGoshphhzkwdLHruD6lwFp4Pd5HKzW6JB/
+phz4mgovybDKS6vl2kIluFpTjKM4JJvwZYSSIIuyGevSHjgcUb1JESUnvT2Qf+23
+jmY9DMMQiKunWeDuS1i1iFXGT8Va8ah2HCqFO/CEAeF64dZ/AAigXbxMcfRMcvLK
+abKi4Y/n1UD1JD9r3JL4MLLVLHiZ5ALsYFSjMI/pIUMLy04O48kdPdcINl/Ims3G
+IFjQxxSqjpIu6S9fc2EUmb06lai4WtHkHryBlltNJd8uKhg4pEPJnwJqoQEFYPqc
+cPXWtsNDPdb3LD4HEYJsAzj0IgRoeG4AQ2BfmhErJuyMWFBlVJZkqbLCRiR0a5CR
+maPdD4OdPxENbV+UBbZCsb1gJxP3uN0oL73Y7Frkm45hWXTkelO7cYR/XKWG9TgE
+bkYM7LR9JLukMahPEm/MAeTT/Ew8ctGRw5YHqDZ225deETZx4VEwNP/bza773KZZ
+Z24UFLUGxF22qp/V6PoVpHJQPbQCnyqaA55436URZD5fvak2zr8=
+=i0mk
+-----END PGP SIGNATURE-----
+
+--K3YzAXkCWFXIec1c--
