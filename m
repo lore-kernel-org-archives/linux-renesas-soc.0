@@ -1,67 +1,69 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BA03CB57D
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 15:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17E146AF08
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2026 15:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785857066; cv=none; b=otabrJ5AwBlEQ48EVfzXpYsaSgZmT23cyTah0yaFCeF6EZyaVOFqiHrpRoqXv4yAuM1NKLeZ7w+UkKXoLgfFfWWxGrHk39wrutB8Bd9Hv8bJwT7UbkeO/wRe1PrH5IpqBgrVgcLGM04rozuIoA+7eq8D5eFXDLsbghUJT/h2loM=
+	t=1785857070; cv=none; b=qzmTBnnKK6Uv3BsSFgKcUVqCeXQB7+2/03zLJFkYp5JbQBLJmiQ6+8MO3Bg6etvKN4olApGDubRxPsaQ/8ZU84C9fixLMxgUdJpFpFI/cSU43bCC+4j4u2DZzZQLz1ugmgPqKjea3udo38llYrFsEU9uGGhClL/AevzJu6IVQyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785857066; c=relaxed/simple;
-	bh=QeUfwmPFisGgEcaqkK4QXIM7RLtOZ+2jGfU6f8lmOwQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cnoYLxgXGfLjpzUs78Gm4YcsuvPuYDVAyFzdBHJksq0aTEwV6NJaALCVBAIf0iXSI3kRaJzBut+Bu660bMdnxJKOsdmaexZGDM7Q/9/qji1WHombTGrhPmozUeI4ryWPH/BhO1/FX2LwguP9eK+RLjCyZRavlPsp82DHzdSIiwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oV1Ig7oR; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1785857070; c=relaxed/simple;
+	bh=f3dBut9WSJ6O3srcSvXsdGYa6Ngpl9cC3b61R3xBFnU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=s3AcnsWYHTpYnvepYCrVU9E2Rk2uyGnnxPl0uD2DL6vCGz3omBhPahwIi0FAEEaTY5a62fJQCXgFqZunhFj0ZcAdsI98pD+USdRnsTWUFY/XWJ6JZ6V137yRpp3iGE2Er/JDtCekB5Fwq+8U76F2gfOLjttuH3OwMDGCBSdZ+kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h32Yhpw+; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oV1Ig7oR"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-84862b0d5aeso5682029b3a.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Aug 2026 08:24:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h32Yhpw+"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-84e04df8c46so4320882b3a.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Aug 2026 08:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785857064; x=1786461864; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=A4CE+0Ei35NseJ0byCDc5G+3dRXiUaVlVqIokKqyYps=;
-        b=oV1Ig7oR8lnWJ9nDtyLwPrS9wNCZXhm9RtUaf/HBjwH5pjm9equ/zbIVflxK3yJE0N
-         3mapLT7ReWYYxlXiJJ0mVKZ1V8xTr3Z6gFwIJUiplPbgAs2zrVAfLGtWVHXMwaG37WRi
-         ygyXpIq/LeQzbbh49lOhkWXIEayEK0PLftg3c12jNvpKWIuoTZPmzrTOdUu34x1j3o1Y
-         8nbPuc9f1au54vEquze7dfLHEaz2iY5tQVfIEiYDcah93Vy+I5gAw8gleUpfQwrkKwMb
-         5EEOHk8zmd/9CQNoa5bBFRa1as9Tu8stJU3P1Q0Q10lUXkgrlQQJnkZnDHmICLyrL9sH
-         Bh1A==
+        d=gmail.com; s=20251104; t=1785857068; x=1786461868; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TjMEIKou8AZx5p3jNLvJo9ap4iKsldeOQJzsD8DXaLs=;
+        b=h32Yhpw+NQ5PhmmPgQNTfdAvfartX4hjGOTtVA4KYmn1mBqRxO9P5IcAZzja7MK4Ur
+         VNB4SoCU2xYBvq4FWdeDwTMgC56Df6uyst5Se+E5wgjnnTm62Tz7OJZ7cgjHblXgNQaX
+         ZMJsHhaS1dnGtUDAOxna4MPud4wYqZLXNh/m+YmehZDABDI0KH6gWnc7Kq4utQymBlFp
+         53Bpf38ospgO7Ydraxi7Nd+K2lAgA2NLqE4gc+hJGzt+W1Rf6vrPNwO9FNoFdbHGCLgs
+         gIoCL+FENTZnlzSJacF1+YShl/ybziq3vCUlMVks3jRhdae3haV/FlHTd1YTxkZZUy/C
+         qqoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785857064; x=1786461864;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=A4CE+0Ei35NseJ0byCDc5G+3dRXiUaVlVqIokKqyYps=;
-        b=bWeuib8IjvfPU/frgrsjbLJcU18GtVu3XNdeavFLgmIuWNleeVwcjh1tY8MIR8FJCU
-         9VIv6bU/bpy+cKFBjZaZjfM1j4FreIhb757qOymqJSGZyfQ6cRQM8bl3LWebSQVlFTYL
-         5DqLB+6CLppLNxeJx/6Q4OIscWxOyBldyglmOP4abjexo+kFi1jafrQBgMvaaMCQ/djv
-         ZHrmTz9E8BimjbgWTq+/5V9YizaAVxZ6Ndk1XjaUUBKMObwxFMUPHn5BQhHPmbFGRoWz
-         4kiWMndnk+50PSnwe+RevSYD3Xw/hRSxIgvKQgG0FuUal6oycNRjkE2WvokXJpDLWNsg
-         Rr8w==
-X-Forwarded-Encrypted: i=1; AHgh+RrO3Vi3Cbl6enpimzePlycUQRt9Nbg4T7j/dmvtKAyhJYXIj2/KnOzbfBnDuy4JH7KMHuohUEis/hZMj9Qd+nYslg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Sk0QWGchjryl2WVpD2HaxAShFAVMZtBJlMK6NGXTzpxOlXfa
-	CwbSDDpHDmTRktWaI5lmzMN7MQFaoHmnh30BiWFVWsJJONlcLSSQ2Zso
-X-Gm-Gg: AR+sD11wgZXLh175hf3cOFwwaK4+CJmjNV+fLcZ50gSgI/KXhFPkCsySoQXhd6AWm8a
-	loNWaNfZjvXEFHTI1n71iJLb9fkEPvq6raTw75jkVoElsbWcUIoXa3bDa/dE+sDrJr3c4X3a4wm
-	DXc/JkBUV545b2v8mEc2nD+nYte+T+WI1J64wNjRyRYb4+Dy6wF0kT4I0aaVfjPwRP0A8dTh+7P
-	PBpVVdVALdiOPWVoV06XaGHDgHA1V0d3oSWTJxfdF3DsX9oEnpu/bINzAMvX897XIs4Ql+UOeBB
-	9Ejqpyc3LGq9FOxkVms4Xdlq1OuJUQNRD9Z/BllIutaOvg0S+qbvM8oN4l02htnBcDcDBr/7/Ai
-	VG7eYKSCMX+hCz3ROA+YoCo9oVsYcOs6RsVlDwOoxYrPAbMoTmd+hMrjlivuFQ9r5XN2fcoIBr9
-	e5xCWiosqvtGl26veap8pWwpvCkTpH0gqyuqMlAmn6VIroQl8Onripibc8SbK33nWmvLAr1qjYY
-	Q/ePUJzYnKGHbEiAHb4o9xh8w0uO5RZJuUryA==
-X-Received: by 2002:aa7:88c2:0:b0:848:60d5:9526 with SMTP id d2e1a72fcca58-84ee489a429mr12656420b3a.43.1785857064238;
-        Tue, 04 Aug 2026 08:24:24 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1785857068; x=1786461868;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TjMEIKou8AZx5p3jNLvJo9ap4iKsldeOQJzsD8DXaLs=;
+        b=ba9nRxRKDmuFaiMtxsY9kdZJzs+XSQzsORtAKaJloNSLR5JfMOtbv+Ns/+5aHZ/Q6m
+         ZRPsP56ZXwbJ12EKEacMlLFvp09ziGJUUE7LKYq5TeAVV0hc6a22stKKwjO22L/hjtfy
+         0jjb4B+rvatx4Ov3AGTPUe2ln4QqLEl+P61RYSYzLdKyAuYYuNDso3458DBMftn8DYJ9
+         m0AVg+CvLAl5+0ZkWZ3n/3GhUzh5n0cQMTpCy/BVQeN3z38SI8A5ZYq008Q+grQJY5z9
+         FJuaSdgInxXzZXQUmI3mHq23jBOxVHE2NQhuLesbDFJyMy9chlVqnqUopOSVzlJ0EVF0
+         SWYA==
+X-Forwarded-Encrypted: i=1; AHgh+RqfDRM00TN9XzHUjV4Mg6q39qYCCzP/3eVzm5h7l9cbKt7r++huqp74qwT8b/xaCGB4mdbhPOWSMYschCd/7yzqxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqzBj9LFR/bINDyeVGE/c/5JT+khG2U7pIjxA3unBcfw9U53Nc
+	Lk5YtkcK2axhxIl1iCgCzMCG3FJ8947vI8Dk0l5ztKYTn8h0dOukODfN
+X-Gm-Gg: AR+sD132eVJTxfhrQPwEGJ45AeZXjcpvY+KKANC9kIkeDWXPt+31Q3V8IyxJDGCgSlR
+	cUMv9M0UkeY1YXyKGEFKpcpvrC0023YkQDiY1ktAEvyRND2D6F1yWtyDMOG1DR6v0ARBz8bpcGP
+	m3xUsE/JIIyCVkowqBwYZfuBp3NARLiIDisIsBcP9fSFXIAhuTv5/9x/8OR1k7+TG754AId2JJF
+	Ea7HKfYipxuqSBRVbve3DwYWBaSAPDMNbLPnwPKS5kGzyxcXyvfDHY5X1LMpbxHCAuoB8S3oR9u
+	1Whzh/Xa0+3EzzW5mYow39zvXQbPTO8XjMznZMIrIiv8ZOT+xYeU1EjA5KcpwaVLeQjDQX9Yto/
+	32ODy/prDMROUW5NLM2J5bAPuXyMu0dm2wASrSlBBA552JQxgTjD4xWBPqUYdvbPKEDj2gdCvC5
+	PmMn2+S6LhJKgfp7Z/r/Ad/s9wXH8t++Z3XRJkzb5Cv60ibjTo2103PlhbZb9qkZUu7loOgWweX
+	lAbUV00x2OMvts0lqEMCz2Q4o55uB97/Mz6oA==
+X-Received: by 2002:a05:6a00:12ca:b0:848:4424:2b8e with SMTP id d2e1a72fcca58-84ee47e39cfmr13869162b3a.3.1785857068002;
+        Tue, 04 Aug 2026 08:24:28 -0700 (PDT)
 Received: from [127.0.0.1] ([103.17.98.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84edbe564b3sm5586778b3a.14.2026.08.04.08.24.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84edbe564b3sm5586778b3a.14.2026.08.04.08.24.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 08:24:23 -0700 (PDT)
+        Tue, 04 Aug 2026 08:24:27 -0700 (PDT)
 From: Felix Gu <ustc.gu@gmail.com>
-Subject: [PATCH v2 0/3] phy: renesas: rcar-gen2: three cleanups
-Date: Tue, 04 Aug 2026 23:24:16 +0800
-Message-Id: <20260804-rcar-gen2-v2-0-829cb84112ca@gmail.com>
+Date: Tue, 04 Aug 2026 23:24:17 +0800
+Subject: [PATCH v2 1/3] phy: renesas: rcar-gen2: Fix double of_node_put on
+ phy creation failure
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -70,11 +72,9 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACAEcmoC/22NSw6CMBQAr0Le2pr+BGTlPQyL2j7gGQHTYqMhv
- bsFty4nmcysENATBmiKFTxGCjRPGeShADuYqUdGLjNILktec8W8NZ71OEkmNO+40NapWkP2nx4
- 7eu+ta/vj8Lrd0S5bYDMGCsvsP/ssis37142CCXY2Rp2sKl3lqks/Gnoc7TxCm1L6AiBG75W0A
- AAA
-X-Change-ID: 20260803-rcar-gen2-140f014cd384
+Message-Id: <20260804-rcar-gen2-v2-1-829cb84112ca@gmail.com>
+References: <20260804-rcar-gen2-v2-0-829cb84112ca@gmail.com>
+In-Reply-To: <20260804-rcar-gen2-v2-0-829cb84112ca@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>, 
  Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -85,46 +85,40 @@ To: Vinod Koul <vkoul@kernel.org>,
 Cc: linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785857060; l=1287;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785857060; l=1051;
  i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=QeUfwmPFisGgEcaqkK4QXIM7RLtOZ+2jGfU6f8lmOwQ=;
- b=slXwm7nOmlEjrB8NV6wNLOHCgZIBl6R6ANzhFgTjUA6ZY+LNutefmrFEWTeeOAKbm9zmQ8Xnz
- x+x747Z5FjxD+Bp3TMD3zf2mDYDxHTX3pkdBt/e/l8YOWfS9QCGME1L
+ bh=f3dBut9WSJ6O3srcSvXsdGYa6Ngpl9cC3b61R3xBFnU=;
+ b=gLup/i0APDsOHIFwtl+FN3WpFHapDtHlYLsmr8oH1S5EVBCSC7MGJ7idmHzl3X3W4/ya968LP
+ 6WC7TgGO/jyCsczkUgS0s2PIUTZyfRacwyMWkXw5eP9cG7cqew1hMDY
 X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
  pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
+for_each_child_of_node_scoped() releases the node reference on scope
+exit, so the explicit of_node_put(np) in the devm_phy_create() error
+path drops it twice.
+
+Drop the redundant of_node_put() and let the scoped cleanup handle it.
+
+Fixes: b64b32791fb5 ("phy: renesas: rcar-gen2: Simplify with scoped for each OF child loop")
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Felix Gu <ustc.gu@gmail.com>
 ---
-Changes in v2:
-- Merge patch 1 and patch 2 into one series.
-- Collect Krzysztof's reviewed-by for patch 1.
-- Add patch 3 to use dev_err_probe() in probe function.
-- Link to v1: https://patch.msgid.link/20260803-rcar-gen2-v1-1-9aa35c36d7d7@gmail.com
+ drivers/phy/renesas/phy-rcar-gen2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-To: Vinod Koul <vkoul@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-To: Kishon Vijay Abraham I <kishon@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-phy@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
+index 6c671254c625..5a272e25e051 100644
+--- a/drivers/phy/renesas/phy-rcar-gen2.c
++++ b/drivers/phy/renesas/phy-rcar-gen2.c
+@@ -405,7 +405,6 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+ 						   data->gen2_phy_ops);
+ 			if (IS_ERR(phy->phy)) {
+ 				dev_err(dev, "Failed to create PHY\n");
+-				of_node_put(np);
+ 				return PTR_ERR(phy->phy);
+ 			}
+ 			phy_set_drvdata(phy->phy, phy);
 
----
-Felix Gu (3):
-      phy: renesas: rcar-gen2: Fix double of_node_put on phy creation failure
-      phy: renesas: rcar-gen2: Return -EINVAL for out-of-range channel reg
-      phy: renesas: rcar-gen2: Use dev_err_probe() in probe
-
- drivers/phy/renesas/phy-rcar-gen2.c | 36 ++++++++++++++----------------------
- 1 file changed, 14 insertions(+), 22 deletions(-)
----
-base-commit: 415606a7be939835db9b0d6b711887586646346d
-change-id: 20260803-rcar-gen2-140f014cd384
-
-Best regards,
---  
-Felix Gu <ustc.gu@gmail.com>
+-- 
+2.43.0
 
