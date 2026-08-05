@@ -1,183 +1,149 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010034.outbound.protection.outlook.com [52.101.229.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C1844E64F;
-	Wed,  5 Aug 2026 15:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785942146; cv=fail; b=nSDSoYQIj+5Ra1Bl2n5LA0/nBtnGBZ30/Vk6lCOAFZlvO6taHGhg/dRAFAw4q5VZWoqE7VUXuwwPHNEpSt4GoPoLaV5ntcgvUQlxdvM64FoNWYAItkoX+tHUOxM2qejagGuvhtCJGjPAgqxe3Rv94dlHm4Ywdb3MCvs3FP9GcTQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785942146; c=relaxed/simple;
-	bh=VVd+GnkBjj5iwEGSzfGn7uDmy8ADwT0DL1aTRPtrTzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VWB3Cp0o0vzsRxZEuWQ7fUytIgDTkfC+FUT3nUOs3FduYkh0SIdomqYTaxHR8121ikwUVRpgenDc/dO41e+qOowcd+ig6+RSnfKmj/eUMHMw+QRcAHV6NIimOZ5cnhChdldt7eKW3HCK+O8RCxeH2VAwwvndTf8TKVGYYW4edFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=O9z2LW3a; arc=fail smtp.client-ip=52.101.229.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="O9z2LW3a"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mLUgKFOBsOc3AXIn7oqEMugbojajkp9e67kapus5pK3jiX3KvkXYoruKFGWmbZs82yhVEXWGhcsrBkz8mG4eAN9eOulB6tuY6PAIkbtPwu1cZWUwtMxfPRY7c4rnkvIRvr5JUID5CJ+7T47hVOU12sGvodktwWCs0PBrAjeqhUaalNVeeGfudBHLbo576q7vIf43qdmvd0bDwGA79iOcIyRqrcITgpIeZ13MN3L9Ps03fcO/n9Gji3BtdnDKyVxlzcjwELq5Pm4pFcOLsASX62ArkVohCL0TmFyn/ScXRFhGScIWhNu2jSytA84womGovfPPR4S+f8fCUBTAuLHFtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JlSq7st24iN1HeCztkbkCdAHFcRT8MaS60Kgpsmhw1k=;
- b=iS6Uq2oCWYGaUdlrxX6Rhuon0FVdM4vDRAdBfYCfv5NItSOmpi4D4d+f7HY9vb5fPfDU0HDXWDTLcN5iAEHdiUvM2+okHd8Mei/g0+GOTV0oNHPOcjPN8F4NZbPxMzyOYd6mFGlh7fDQykvPBqMgs2uvOugWI5X/+ldmDGkJEEdkCWkjGUKt7Oih/2uCAMz3PEbNYzat9n4EEoeN7LHMLdQSw2m5iPZypPdKCPU9Ags61m5/f5gFxnorWR1QrZet+v0kjn1XYAmkSvvXTZsqm9cxigl5cEi5afubaqVq/H/dIoX/wAWGHSjFrO5ACYUlNVoGlV7xqIqQQgrwpjaXow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JlSq7st24iN1HeCztkbkCdAHFcRT8MaS60Kgpsmhw1k=;
- b=O9z2LW3ayQv2fQKn4+MA9d4MQPmA88AV0Ii7HqYRVad6wGOBnxLcIqbV+1LCzBB5Tnd5HHs+kVeWNQnqoVBEIp1ItMHMJFtA69gRnFpDxD6pjuWeBHuGF6bcCYuCWn/zFE7PsjbrKduyUNfNPIOlzu9KeY3nKmTqsPPeE2+V2DM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by OSCPR01MB14837.jpnprd01.prod.outlook.com (2603:1096:604:3b0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
- 2026 15:02:22 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
- 15:02:22 +0000
-Date: Wed, 5 Aug 2026 17:02:10 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B481ACED5;
+	Wed,  5 Aug 2026 15:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785943266; cv=none; b=k/WLwi7jOXO5LH3Mp0/bbd8atct1BjGQn0HJrIG3NQKCwPIGAisTwDN0aY4rWhZ3oW7tLIjlRy9Zo9sf3M/1oU5OHusU3jloyzYlM/Wbo+bM0MOEV93CTR3M+w0jgIrEYA4dLv/keGGAg3LPWvmHLAij0Bzfi7NNB3Y+5kO2mAw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785943266; c=relaxed/simple;
+	bh=Ny5Kx9wXzwxNDJ9xElZ0YlC6exLF+nb2wacloxIZTs4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9kjaC9YVWECffozgHnlDZt6T4KO9qcHfPXYQqDiTMZbjDGK0G1TmrdXYobmJPLpszAGDPKzHmjtUIC78K6+70S6UYRs6O0j+zPEeF3eFJr4QgAOpxi4wThk3hO9zFRfsmT1+5ma22vufBFOFqFpKrLqmsOI3hREpomjiS23aCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3A91F000E9;
+	Wed,  5 Aug 2026 15:21:00 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 03/16] drm: renesas: rzg2l_mipi_dsi: Add
- activation_dly to hw_info
-Message-ID: <anNQco6rT9GZkeKi@tom-desktop>
-References: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
- <20260729125516.230757-4-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260729125516.230757-4-biju.das.jz@bp.renesas.com>
-X-ClientProxiedBy: FR5P281CA0047.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f0::10) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/6] R-Car X5H CPG/MDLC support
+Date: Wed,  5 Aug 2026 17:20:48 +0200
+Message-ID: <cover.1785941595.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|OSCPR01MB14837:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8936e370-d913-43fb-a40d-08def3028d51
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|23010399003|366016|1800799024|38350700014|10067099003|11063799006|56012099006|4143699003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	QKl+D3LCyZiwJFJWfMufd1Y/PNR8mY2GKoc5tnuKz5gdXKXoeh0DdsmVV2qC8INhH0nUgQCAjYVy3DDLK+MarhQ7pyfoA7hDrps1c0ko1EcRdOWjNDXdurLGA2jjVu1j6hOBVOS8cwi+Jn+MTRuVV8mZb0CFxpVkF6s+/wfGV1ruudAtpRA7Tn05ynyDy44Or2KbVkA5tWo1FfLu2Fa8yn4Uoy2niD6W0aQbIYdBR/vid+2lYdgiOZLpjGj3kuHZvnkyv/PRe5DxzAjsNT/NF/15KiSA0kvDdVzADke7wjnNNRIllX4p0gLqS1e3+47QL6te35Q0cG0RjJTgIMMWieu1yG0/KUXx14kfs/jpNQHw+oD4LGfQaWFN4eF3iaCm4tdHdRJlO6LGdXai7mYV/ZJWXywwxN7wPTo5S6GCiiW0DCUjJ2CGawxs3J0KrXqISvwOuoirN30zIjV/7TbiuIIa6HbP7TfmH9wCeAJfRC2RyavP3St3QF2qyCSl5qbU3ILuvykbanTypM76TGgkjizxYQ9btNGOmgOvy1j+tBs3vgAA0yd9DHGzaxbJ8XOl/z4vvkEE9BEjCVXydoZecautAQbrr+7ttyWumuaX4KA/WlldMhScjcdSg7+edUWmz8Mmo4cuRoD+kSeE3wXxhpndeblhzRNy73Qih0Zhsa6/ZHlU0D/1oMw87vdGSGAab61vtPpNZg0amY14aiDSlA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(23010399003)(366016)(1800799024)(38350700014)(10067099003)(11063799006)(56012099006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?m7gC9PstCBlyh8377KKLQs++51HXYNN/u7lo9GWcOP5r3rzr9ZLwqjqLmzSW?=
- =?us-ascii?Q?jKmyDTkzMZxhvJ+1fAEXSzIm5dmsa+rbTO2Xctl2dE8W/yugetMyEsBSvm89?=
- =?us-ascii?Q?Im9F7pXBbBwXMaG8jn066vN1VIfATMeZ2eibdu302qkTMSANUUKfVGug9g/X?=
- =?us-ascii?Q?MgoF2Xl1vZQFviUOx6paMMOY+f4DAleTb3hJLPnudNAJNpKUYhWZ0QXedLGH?=
- =?us-ascii?Q?W4P8gEGHRploHBFjikcyPg00TjInHa95brDf34li5GYcmhXhV4UyGZi7DcZm?=
- =?us-ascii?Q?zyLkom7etHw4cS02EQ3eSdVMf7hpTOEGSXHOzqmCIpBnctvpBaIalogT8cH0?=
- =?us-ascii?Q?FBobBJcngKKbo2F5yxtNc15z8oQPN+OzwLQ6CW0xaeSO19ghtrvgHs3JgH3J?=
- =?us-ascii?Q?rvTqQWmo+VblUgJVzd7FW5sluazAyWS2YR2TGhliV5fDlVWtuDJvZ+cKr3g/?=
- =?us-ascii?Q?0mY58dF9Eb2JwddC0mYkMoEvBrGaKLNYoO4iHPoWTdXV0p1nvWpr6fAqitUw?=
- =?us-ascii?Q?QhuONP5KTI1TgbH8V7COcJYdCCFCiQCqOyiSfpXAFFW+LDeM2mL3E29KgUsl?=
- =?us-ascii?Q?CBs4E0Rc7dzdpcakYqJl4PZOFcphO6osWRM5wK0/DlefladqFurjnFOfKXjw?=
- =?us-ascii?Q?qW4moeb+K3ENlAP7QJ/ZPDc7EOEs1CvBjsYoh23OmOW8f8LAkh8cG8HDGlUT?=
- =?us-ascii?Q?Gi03Ew5/MUO8r3Pn1zc7KImlIsLIvR1dDxSvaHtt5V+wddAWlJSYDCGSsESJ?=
- =?us-ascii?Q?JbYrzD/XFj0wAXjWl8+A38sHLzokdxOBvW8j0x1yGqceEQZso20s5MAw0Wp3?=
- =?us-ascii?Q?CaDQ6LJsGV0d3Ef/HIB9ZteZHoAIFgcG5tzAJ/jeaKwo4QdqlECc6ZlRZwea?=
- =?us-ascii?Q?ROSP0ZmQJ0YGw75BXWe1rpcV1VWaKTSstAsF4Zu1R9qvurR8/UB6yw37k3Zs?=
- =?us-ascii?Q?SAK8OltvB68TwJ7DTd+Yx1Dg62SmmwW7m07ab4qN0AhfFJVFJ/w7WBx41Vhc?=
- =?us-ascii?Q?RlphtUgHgZzadnWo0bO0dFcXekdA/9bciOxPAUbgdhrIJTtmhEIZ39xcqtTU?=
- =?us-ascii?Q?h5n8I9k5B2noO5+iR6Wyv4oEBXyVTAvljyX1P7r7S1f1WvqjkKtLI9MqdU1E?=
- =?us-ascii?Q?vLl4ELpxdhvuCw32RXmDUePWnt9WEaQBGyKinsMpRj2JhqfnTiM52CDiyV5/?=
- =?us-ascii?Q?a1PuWUSeXSja7LmDZK2W7qJtfbgcrhlg7E7s5uvkL1PxrrBuJfnozbpit2w9?=
- =?us-ascii?Q?rwLOzb8dhyCY4x206Gw3jt7QotoNlQx+5kNYHJku+bqlFaHmVQJCw1UGjMHI?=
- =?us-ascii?Q?FiZ2muguA8MSloBdJ0Y27+z+wCrFCX1CTzwCBBG01acCKrE/9aGA9zoqaU1A?=
- =?us-ascii?Q?fBJ6n+6KxRDoAxetjlx5VuARindRBwCbkG7I5G5AjKAWtuaIiMuQkY3ctkx/?=
- =?us-ascii?Q?h2eqyk5CTLPu3qOrscs73jqFo3AaAi95COsR5jBp71TCDDnYan+mP+lXS+Sh?=
- =?us-ascii?Q?qtx8zG+rHRuR4ief5+shppwEu1vdpu9AFVaEVWxN+2bnkNyEYtFK7B/x9t/n?=
- =?us-ascii?Q?eL3ps7MkRkkItIE9NgShAT4sXlyPCLN1F/udCJlWwvi8aj17L3fPwOajK7M8?=
- =?us-ascii?Q?quB0KXI7nD4+jjuSq8k3bC5eh2pOXD38/ZPS11qGg+F/tnxKuRpqmSY0pi5q?=
- =?us-ascii?Q?FIvd6xS02KugGD3HIIjakeBqbsgvTRzDGs/2R55ajYWHTTz7Cklyf5dXlcB5?=
- =?us-ascii?Q?XQFk7DVbnarmlfiLyA2kwTetx4DTti3XdaUm9FPDC0C1f0CBsEKx?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8936e370-d913-43fb-a40d-08def3028d51
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 15:02:22.4061
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Oqc8rKjhKHgHKJ6UV9j2aQnRCtChS71iRSYq/yEcKIoxI9z1+t7dGvIXHdN7IsXe8djMcBlPxZWlFzwBQ2QNCPgWSxykgKSq81cDo1qVmY93EnthiRVYhcw4X3vVDP/Z
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14837
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 29, 2026 at 01:54:55PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Move the post-reset activation delay into the hw_info structure as
-> activation_dly, allowing SoC-specific values to be defined per
-> compatible. This prepares the driver for supporting SoCs that require a
-> different delay after reset deassertion.
-> 
+	Hi all,
 
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+This patch series adds minimal support for the Renesas R-Car X5H Clock
+Pulse Generator (CPG) and Module Controller (MDLC), to aim for replacing
+the dummy clocks in r8a78000.dtsi with proper hardware description.
+These two components are closely related, in the sense that they are
+both supposed to be accessed through the ARM System Control and
+Management Interface (SCMI) on the Ironhide development board.
 
-Kind Regards,
-Tommaso
+This series consists of three parts:
+  1. Patches 1-2 add DT bindings and DT binding definitions,
+  2. Patches 3-4 add minimal CPG and MDLC drivers,
+  3. Patches 5-6 update the DTS.
+Note that this series depends on v7.2-rc2, due to the use of
+<linux/device-id/of.h>.
 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * No change.
-> ---
->  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index 2128fd16ebc9..1538eeece2b5 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -59,6 +59,7 @@ struct rzg2l_mipi_dsi_hw_info {
->  	u32 dphyctrl0_init_val;
->  	unsigned long min_dclk;
->  	unsigned long max_dclk;
-> +	u16 activation_dly;
->  	u8 features;
->  };
->  
-> @@ -806,7 +807,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
->  		if (ret < 0)
->  			goto err_phy;
->  
-> -		fsleep(1000);
-> +		fsleep(dsi->info->activation_dly);
->  	}
->  
->  	return 0;
-> @@ -1534,6 +1535,7 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
->  			      DSIDPHYCTRL0_RE_VDD_DETVCCQLV18 | DSIDPHYCTRL0_EN_BGR,
->  	.min_dclk = 5803,
->  	.max_dclk = 148500,
-> +	.activation_dly = 1000,
->  };
->  
->  static const struct of_device_id rzg2l_mipi_dsi_of_table[] = {
-> -- 
-> 2.43.0
-> 
+Changes compared to v2[1]:
+  - Add Acked-by, Reviewed-by,
+  - Add fixed-rate clocks to kerneldoc of r8a78000_cpg_priv.map,
+  - Use devm_clk_hw_register_fixed_rate(), drop unregister_fixed_clks(),
+  - Drop fill_clk_map(), as it is not really needed until SCMI remapping
+    support is added later,
+  - Replace <linux/mod_devicetable.h> by more specific
+    <linux/device-id/of.h> in v7.2-rc2,
+  - Add a comment to document only always-on domains are supported,
+  - Consistently use /* sentinel */ for zero sentinels,
+  - Drop trailing commas from sentinels,
+  - Sort MDLC nodes (alphabetically, by label).
+
+Major changes compared to v1[2] (more detail in the individual patches):
+  - Add default support not using SCMI,
+  - Drop everything related to SCMI.
+
+Note that this series does not use or rely on SCMI in any way.
+SCMI remapping support will be added in a subsequent series (old version
+at [3]).
+Full hardware support without using SCMI could be added, too, if anyone
+would care about that use case.
+
+For testing, I have pushed this series plus additional work (including
+a rebased and updated version of [3]) to [4].
+
+While I know it is getting late in the cycle, this work (especially the
+DT bindings) are a dependency for about any R-Car X5H progress, so it
+would be good to have it included in v7.3.
+Hence I plan to queue the clock patches (1, 3) in renesas-clk for v7.3
+(Stephen still hasn't merged my earlier PR for v7.3 anyway).
+Ulf: It would be great if you could take the pmdomain patches (2, 4).
+The DTS changes (5-6) can wait for v7.4; they have a hard dependency on
+the presence of both drivers anyway.
+
+Thanks for your comments!
+
+[1] "[PATCH v2 0/6] R-Car X5H CPG/MDLC support"
+    https://lore.kernel.org/cover.1783505142.git.geert+renesas@glider.be
+[2] "[PATCH/RFC 00/14] R-Car X5H Ironhide SCMI CPG/MDLC remapping"
+    https://lore.kernel.org/cover.1776793163.git.geert+renesas@glider.be
+[3] "[PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping support"
+    https://lore.kernel.org/cover.1783505329.git.geert+renesas@glider.be
+[4] topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3-wip branch of
+    https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+Geert Uytterhoeven (6):
+  dt-bindings: clock: Document Renesas R-Car X5H Clock Pulse Generator
+  dt-bindings: power: Document Renesas R-Car X5H Module Controller
+  clk: renesas: Add R-Car X5H CPG driver
+  pmdomain: renesas: Add R-Car X5H MDLC driver
+  arm64: dts: renesas: r8a78000: Add CPG node
+  arm64: dts: renesas: r8a78000: Add MDLC nodes
+
+ .../bindings/clock/renesas,r8a78000-cpg.yaml  |  55 +++
+ .../bindings/power/renesas,r8a78000-mdlc.yaml |  61 ++++
+ arch/arm64/boot/dts/renesas/r8a78000.dtsi     | 300 ++++++++++++++--
+ drivers/clk/renesas/Kconfig                   |   4 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r8a78000-cpg.c            | 166 +++++++++
+ drivers/pmdomain/renesas/Kconfig              |   4 +
+ drivers/pmdomain/renesas/Makefile             |   1 +
+ drivers/pmdomain/renesas/r8a78000-mdlc.c      | 330 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   1 +
+ .../dt-bindings/clock/renesas,r8a78000-cpg.h  |  14 +
+ .../dt-bindings/power/renesas,r8a78000-mdlc.h |  15 +
+ 12 files changed, 927 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
+ create mode 100644 drivers/clk/renesas/r8a78000-cpg.c
+ create mode 100644 drivers/pmdomain/renesas/r8a78000-mdlc.c
+ create mode 100644 include/dt-bindings/clock/renesas,r8a78000-cpg.h
+ create mode 100644 include/dt-bindings/power/renesas,r8a78000-mdlc.h
+
+-- 
+2.43.0
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
