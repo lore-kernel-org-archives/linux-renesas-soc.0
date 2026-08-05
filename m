@@ -1,211 +1,426 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010027.outbound.protection.outlook.com [52.101.228.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f2.google.com (mail-ej2-f2.google.com [74.125.228.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCA93BD643;
-	Wed,  5 Aug 2026 16:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407D43CF026
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Aug 2026 17:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.130
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785947495; cv=fail; b=sAj60qN/uNyZNNPp/Ru9PhUMCR5nBZQhz/fUvwdn0CeuOCEaQvOWoJcoX5ZJtXAVZxu7NIiT7A7PWAVaLHVZtjhf+8O+6VkJzHDil9oNjnFjS8UQztcxlxzvt5SnBNCBjeuKxQCROYz6Gz8lEBeKoKAbzNlnlk17uUIQ1B8FEGc=
+	t=1785950417; cv=pass; b=jcFOcSgav94bgzWrvfjQgcENvjOAI744h6sCuVsmTP2JvzGJXu+oItt8p/q6QWxmBD1HCok/jSBLiWiHCk3gxi4x6NreTQKZp8N5Iw+mSZKsISf8uDRLg52JnELUumhCWQ9tZdUoYJ6BLiTRHUuS7xBbCM6SIVr6yZi6uaz8BBM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785947495; c=relaxed/simple;
-	bh=4MH9g7e4Rxxc1t0I9HtvLCxVg7nWsH4vFs0WQbGrOIw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G66r1giaH9QIfPXjR0XMK3r7MvFAEGYIUJ7FQa9+Sfe5R/+CmXofE71Jm6rAl0zR/kOBrKx6O98RwKe1F8eZH+uapClsSzv8wFgT+JEsw9HoPXei73V5KkXNXgGnwAAjzGhmuPXcYeV5eag/G5NnriaURxc2ZKMzimmRYSkD0fs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=fQAdgoXV; arc=fail smtp.client-ip=52.101.228.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1785950417; c=relaxed/simple;
+	bh=aKGwayxXZJAIgpMYypKzK/z3u4U/f9BptutZNU+jbA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCEhRG2CB8NpW+k9dPEJP/dKBKAU2Pbi6XYO69VNE3UGQyS3RPrAFNFYMi0ebV2fURIwqMTJtFRE7mzDt5IHSwkc79CNTcceiKr+tzQ1wr90EjPcMDKZoAxVcMYQXPlhlA/YFzXgd3yftvt46gPKx/p3rxZmAoVcbgavhKOj+jM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8Oet//Y; arc=pass smtp.client-ip=74.125.228.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="fQAdgoXV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j3iu1xA9GGzgG8bKRp2BHhg7w0bQlY1FSzTvPDiJd+qoVuQJEPrRjP8gYFymmqR0mC7GuxtV55UreSI7hcdvjiOpnT566QmqN8na1Qw12N4DjvodV/7LhtiU+SgVNOZ4fv7xB+B+qcn8uaSvtF5bJZY07gFgWnSuQOKxQ2a4sptooy3wH696w4C7lA8QZoL59x9xCL9eulLA58+t4HC+6hiVH7tk6SrYvYGxR5dL06fBqlulh9l+0VhJWSU14QOu+hKeX1/xmLO23WTbj7bmtFRQgjNYLA2jdHjw6EL5U6kIYfEhR22pmHDlda4lF69V87kjTJxZPMRsS5jjyzbtvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WrFBRk3enj4Ks4ulj0tTV07zJssKMbngfAmUC5zbG4o=;
- b=halAAGPttckodorwN4Ov+ZWY7C76CYjp4RrdJEdQ1QUHI7vXRw/le8l7HYMY/48wGBxOsMfll1BQqC9RjKJowXmlSTB+Yajf9Bgzi8OSeaqOb3ZXPZgBHlt3qes87qMwmAbckXLuw7OSN8Ip76Dm3c1Drqb66uwEbi0tV4BYdjalUK3KK3Hg0IpDFdFefkRP0YohR2NegiWeLOX5owJbXn5ozp0YOR7T6pKSyJbl3H8pifMOtKAlczJ0KAUJlQlsClaK8ozdEeG0CDFWNFOxl3slcA/w9zJ1iEsqZNlY5XPwdwObhVFMUuPdKqAKf3PEOo1b9Owwfx8/q/bnkrIDdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WrFBRk3enj4Ks4ulj0tTV07zJssKMbngfAmUC5zbG4o=;
- b=fQAdgoXV7qwSF0fGtisRa0QObRTi8GuZUJXJYEaFxyv7ul1s7IEjBSpG6GIfexebaBr81upx2OVRLzmRGq7iVJRAmzRwh+YZG/FD3it1qrsRMUMS/SMugy7fub9JeCq9G5Q2K3U4eOH73TsoQWJD4Y0HI/rMZu0a7Mr3Ra8xU28=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYRPR01MB12222.jpnprd01.prod.outlook.com (2603:1096:405:fe::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
- 2026 16:31:29 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
- 16:31:29 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, "biju.das.au"
-	<biju.das.au@gmail.com>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 04/16] drm: renesas: rzg2l_mipi_dsi: Move global
- timings into hardware info struct
-Thread-Topic: [PATCH v2 04/16] drm: renesas: rzg2l_mipi_dsi: Move global
- timings into hardware info struct
-Thread-Index: AQHdH1mLJKf0Z0NDr0GajVkKBalI+raPn7UAgAAQ2SA=
-Date: Wed, 5 Aug 2026 16:31:28 +0000
-Message-ID:
- <TY3PR01MB11346A058699BA02106191D9386D32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
- <20260729125516.230757-5-biju.das.jz@bp.renesas.com>
- <anNW2IVJilS11XuE@tom-desktop>
-In-Reply-To: <anNW2IVJilS11XuE@tom-desktop>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYRPR01MB12222:EE_
-x-ms-office365-filtering-correlation-id: 5f204a8b-1ec1-41d5-7839-08def30f004e
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|23010399003|22082099003|18002099003|4143699003|11063799006|56012099006|38070700021|10067099003;
-x-microsoft-antispam-message-info:
- FEM3M40EZDdBY0uY23y/SNYy5Zg8+jXZHq0BN0awRu+1HiL1jvsd2H5Sto+qgvQvO5ryvAOgQo5xNBPonHSmKMHO980E4jsXkjAXwMxH42otcMWEhhaNHfdzmVbWtOLl3V77SY3w/2QiOOnXlEW9q53ZlYHQ+l0S3XYCRgmgddVCeE2QeCL5eBQxIbERhgYp7xzHOR8/Ox1L0diquvBNqLeHMcN11xdwjre3ygzCmO3ttnySnK6M4jt873KWTwdoYxOIcdOhmWks0X3hUCEpT3JEeOoH8Lghx3wYtpikNM/u4rQuGJwYqtyGoG8mQ6dB10UZ51FJwFxAYEXHUc+33A49qA/O8K/IHMgU3pZDjOLd03s8HEsuxFXri4+Z0hz3m1AELCXdiuHn5aX1UL486QNE23c60hNv+N/6nvmS7q8jcnEFqD8A5hxce6AvcQc1XZLHVyTmrFWMKV08lsBz8z+YS8aTV3jg6XXLe6AObAIhdv8Wd7/Q9/Ni5pZROsjR/aORCCDcb1xJhueB6jVL8BnBVkaNQXfJWbLo6v39HfBpD7sx/4bLaJUljZGQ5pfrYMyb+iIkr6Cy5KlzKK9VRGVJjodTx90g0AdvmleUhHN8jVhTcm43fIq/XeNJLWzVe4skOUwkAfVBntLIfCe6Qd16dm9qI7sv1LClJcWvojTWKHpejITvce8y3V9BIhCyA1yeF8toYkwYVN64e7t6oesCdstijqaQH0cO9/VHGAU=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(23010399003)(22082099003)(18002099003)(4143699003)(11063799006)(56012099006)(38070700021)(10067099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?oxmo1nyYLTICBac3kHtvLtK+tIn0tVhxQM84Gat6p77BLUieccIZ9a/6Lp0T?=
- =?us-ascii?Q?0lgt8HnO6WhvjPyk9X5wKbG4JcNkGMoafSM7LZd0veVkR7ZnkRoId8UQBaLA?=
- =?us-ascii?Q?8xaug2diBrsKU75Trvlmzk6MrBifmOkfD8bEo71EUraApXwhPLvW2Ig3Gyn2?=
- =?us-ascii?Q?Dfzy2FU/j4NJIQeVADxiC9w/nVWFUelqyF38fNvxGWJdVQuAu70FPWVOLCIP?=
- =?us-ascii?Q?1hseYqZpNHjVgzxh53moaPhjlhjT0wJUcdZGbk+fPHnv6Jh54k1dKNZZjAB0?=
- =?us-ascii?Q?baeZfOkp1fJUGCp1Mro9JPvONJfh7opD6HEZ/d2zqaFPWyzbZN2e4kqEB7XA?=
- =?us-ascii?Q?cWR2G8KkXN8FCbP5zEiFGouNaOkzmJTqL0NG4GPGRjrxy1D7910kC/gXi49N?=
- =?us-ascii?Q?uNWEgdCUjjaZdYrCPL1vzhntKGY7zo7z4DyefA54rKTHGfc2PhzQpLLcr1ye?=
- =?us-ascii?Q?PXG2zmO2P1aBBDqgj/7CR2cFt5B9TLLsceZdeAgXJCTyvJ2U52xBe/1tnEr7?=
- =?us-ascii?Q?gz/kMbxDgO7mw0m61GCfTqQqPJbUai2mS0c4jqRRExkkJtYSG0SKuRikv7OU?=
- =?us-ascii?Q?4mpP9GCDvxHUFdOycmkPdHHGomOtWnopjQSydWK/ZE4MPFSMdGtDMdlomd/x?=
- =?us-ascii?Q?nG5bi+DvsrrWsShwJ0q8OAPRa0+5uPo1AWD4V7cIBCmUY2hF+Em1mw1Xlc2m?=
- =?us-ascii?Q?HSU4oHzTi+BoknvE/pWBghqlPUEhmdTn7jH4zcaJuGi5wSu5RhZMxbZ8gPRM?=
- =?us-ascii?Q?7mp6hhB+D69BvOQj50Eqr/lR0SYkPZwCWnwafhSn1/wUiO5VNr6aVTBz5Tk/?=
- =?us-ascii?Q?sfp7SiweiS7V39r1GM4EgHD76385IefKPsTEVTdR22CqrEvSgNEXp6+9Jggy?=
- =?us-ascii?Q?cSf1jcBGt4ZgP/XQtqWL9nuVOzkh0dR7jwRJsGM9UMfhjUBOe/LmL+hhGRJ4?=
- =?us-ascii?Q?nZ1B1chhVAvyPcNkGzseIHiPtIqbFxnQx+PzsSYGRapdlmAop8LUz9N3eoJB?=
- =?us-ascii?Q?fOBAMFe//zJEsY9SSwNbGtDQplxPvVkK1ddBPBF8InYaa3hqQ6aep+iAvifr?=
- =?us-ascii?Q?kjkVmDCmj8J6Aw+sSKYvedcs5Q+9NAHp3G0TOY5xaftIg9iBqmJs2zQj9aGR?=
- =?us-ascii?Q?i1cp+hBJVeLo9CcWS8N4AEF40ftnqqGPs6ceNxmnaYLzdV4hoZ9FbaCOXmC7?=
- =?us-ascii?Q?tmlP4WKBAhtwvwSqFJRhWk482gx/WXcqEm1Io4IwA/Mx2nTL/AOria+/w+tT?=
- =?us-ascii?Q?EQ0Frs9ktPUPUjDg/Ij3sWhNFqDbWZIA3w5UrEJSULgzedU7QwY8LbDFQEJt?=
- =?us-ascii?Q?b2X3i947AewrM6Zub0jGpIDz65L2lzu9tDspEEMLDcI8fKX6LkzGFOvMPd/9?=
- =?us-ascii?Q?/2VRg8nwXYi22RC57sLbrDtQsOkLN/V4I/opf//OXmDH+CMU7+UhsIlw/54w?=
- =?us-ascii?Q?4fZrm6sOUqQ5OHZpufr6UZYBCb3dEM+WCuf981q5l6ihx9J8fHX9oKIeGQZ1?=
- =?us-ascii?Q?WNZSXVmEdfPTVqdqPLZoNhENfkJGxKXKYmFATPJUOO2Hf6qmYbz83dyqjc4G?=
- =?us-ascii?Q?sfuFhEquq9ZPjf/7QeAKoBgiiaubdEoW4vkWSsxE05clowNDeLQj9TPkAW5l?=
- =?us-ascii?Q?klU559RCI/pALWWe5iokwwhVvLpxHO4KsoZ2No2tifT8dTWwq8+WnopAevu8?=
- =?us-ascii?Q?VBcnl/6vXKHsNZApwMH7t3lSM7QFJrzX4evxJfTZX9hg/rIyu8NKetRe6g6Z?=
- =?us-ascii?Q?cJnEC7vEng=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8Oet//Y"
+Received: by mail-ej2-f2.google.com with SMTP id a640c23a62f3a-c15f8dd6f18so71950366b.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Aug 2026 10:20:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785950413; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Lh34mcE5WUkHQag+3+I+9hPpD+tMyGozjo5TLea57+ch6335EJ1xGmcee0W7wiRVi4
+         aKfJd7Acy1PpvsnQNSYIBsQAPANGHlB07l8XsKMWZ3nhbSIeikbEX6MvsvyQQO7EHgj7
+         TdYnMZHDLwVkRrlHeBV7+vjEYIiN3vKvcMKFamuE7kAqizdQpkd9KtdG1gDrO3PudQzo
+         VQQPWSbuOZxTMz2K4+nwE1hlpgz1KOZ/hYnMsBYAxYyRKfA4jb/IfRzUjbdT2DL218YN
+         KKOoBW/mV8S3bFBxr9pknnCMoVoyb/kDVeKk15B+Si+Z0q34dJDNRptJ7RTaBJ2wRuoL
+         RQMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
+        fh=5fFuxBVaXT+9Fk1P1vpPym4N4cvymAYXDLpxHMxA0lc=;
+        b=nKxgZL7ZPRbthvy3nhQhHRvB22MaRA2ucLgUM+lFBF176SeY1tDO4puCWCatqltTUc
+         lU7aOCrzSGKIpYR9Bx2SSbGBy0ATZ+qLpyPseV+XO3oxsGrQZ2PV+XQyCj/CS7ndTZ7/
+         aI23CWjBLzw0kzFeHNwyS+HzYkhEtsQ02hcnSU9C+rOfrTS6Cd1itY2hDrFmYbBPNhKT
+         H88tTIcttdu8FHx9uG11nBsMxEv+ZhIq+EPsElKINLOcHkzc1EE2LeMf1uFRemfmSezG
+         VjDCc0wpxy0X7O5SbYTSo+TgGjqZtDAxYEGUdFZIiaRZ4faF7qq7MX7iHprCVSj9QS9l
+         JifQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785950413; x=1786555213; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
+        b=C8Oet//Y1gY+HJznZtY2c6htUddXGZAUVXXAUfyvQ/UNVePODdfCn3oV+fk7Y0MdJB
+         EdbkEIVOvkC+LdyJ5tNYA/VkFkFZ5N4f3Z8xJ7Ab5HBXvg55EEZZZ5xCq9CPANsTPU8H
+         PRTYzH2VLFz5dvPdyJMFPYNeWVh88GE+EBLCTBMmBGMXJDSBbQcL9M6h7/SLyxLPPcF6
+         wyx0PRvULKOJwC1WvozTySxvOlYQZKTTSApNOGHNX5JA9PbGUFLztj8au3mGQYiv+1RX
+         Mij4wv0c9EjraSi6+wUEv+wop6EQ01Sxp5pysPUNO6VFTkIHVbFeBcU43YDU0oTP01tj
+         F1PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785950413; x=1786555213;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
+        b=lJhMaRXuiBV78F4VLfXum6npB8pqiRSQTM36xP+sPj+3MHhYBk9njNx7QQe1WZ3rI4
+         oY2hL8EpLlSMsc1q/PA7r0Vd43kRi3M+Ky9LbG1XzAeJRq9LzMcBLbbX/bwAPV3Kij+X
+         eyqTfMQZ+t/CLjfOZcizaOpaRvSgppXAbfJT/35WsEO5qBKoqVHhF2TSJaTnIUfvcV0I
+         5auD9cR++ryXbV+xwYhl3hSU+bq+XqfW6CAi9ytDhfvgQx7bgTjsJ1+abvbWOFq628SP
+         GeEVqbIDwxcVA9t9snUnd+PHPxmamD8CtUEJGKHMma9TjOfLEsZ3VVbrQBqKlSU0J8eY
+         GRzA==
+X-Forwarded-Encrypted: i=1; AHgh+RpSV0dprkINN2xfD6jyqRWO7fi2WMd5PgoDKCPY1UK0cNFnesTfEPczFnAKX4HNqyD06Aj6qUnTJljUqfzbu5JIpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHKBLBlFMDQJxrLp8eigv6YAq9oA1iaiT7AZqjWhxe7OrSI9kY
+	lckJLNJWA1EnZElzF63n+J3AUCIk8NCdHU9o8EQ/ZCScG953brh/HgjavJ9QFMRr87nQJ59lVPp
+	t3VNGkfmxxiX7NmVOjJfmySmRDU1LCJg=
+X-Gm-Gg: AR+sD13rI53qf3kxngwvvlnz5qp0uKw9KYj4OEbtUScsz3ilLMubGPZS/f4SCAbE6Ad
+	CVdatlU4e8lXLjR9V9rDHGElKwKLWh4b9WxC6LlIoUaZS7jmMrjryyafOvHt1jpoLVjjvJdpZqE
+	J34tjuMR5XJhZT7hLMU83CLwLRRxZSxIoIeGq7hgLgDZK7rDSekU9EKcGgesu6e7otqa/6AUUZC
+	6JvJS06xLAkj2UhA0PISQH6uMgoF0/TSwKszasIFeN0VWU9W4UEVJRiQ8fFb4x0z/nXzW9GoCya
+	RDc0zwr7ChQu1pgx+NAgOPhCeb7MGFg2WOi/aReupIi1t01QG3p0PMjK4TQHCbjpq2oVoxI=
+X-Received: by 2002:a17:906:7315:b0:c16:b87:de64 with SMTP id
+ a640c23a62f3a-c2039c22d1fmr433223466b.15.1785950412968; Wed, 05 Aug 2026
+ 10:20:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f204a8b-1ec1-41d5-7839-08def30f004e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2026 16:31:28.8103
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1iD95ACqnMFKvdxD9eGs0RuaufGGPoML3CO8K3OiLVQOgy4fuOwUyN5lVtJRs70zMlv6sIpHST4zQum2lumJX/O1jdoXt6Q3s1RQmjYv34U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12222
+References: <20260801142244.679437-2-coiaprant@gmail.com> <20260801142244.679437-6-coiaprant@gmail.com>
+ <20260805-stirring-wondrous-mule-faf37d@quoll>
+In-Reply-To: <20260805-stirring-wondrous-mule-faf37d@quoll>
+From: Coia Prant <coiaprant@gmail.com>
+Date: Thu, 6 Aug 2026 01:20:09 +0800
+X-Gm-Features: AUfX_mx8UFnbdlOwigeC8DoFtEekRCvwbvHBwVKJJj31ufe5iJU09i8ffEdEzOM
+Message-ID: <CALj3r0hbp-zS7Sv-6T3uBOCq2ZO4XZHKvkD4dTZ3gXRS=90JUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] dt-bindings: net: pcs: add rockchip,rk3568-xpcs binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Romain Gantois <romain.gantois@bootlin.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Russell King <linux@armlinux.org.uk>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tommaso Merciai,
+Hi Krzysztof,
 
-Thanks for the feedback.
+Thanks for the detailed review. Here's my response to each point:
 
-> -----Original Message-----
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Sent: 05 August 2026 16:29
-> Subject: Re: [PATCH v2 04/16] drm: renesas: rzg2l_mipi_dsi: Move global t=
-imings into hardware info struct
->=20
-> Hi Biju,
-> Thanks for your patch.
->=20
-> On Wed, Jul 29, 2026 at 01:54:56PM +0100, Biju wrote:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > +title: Rockchip RK3568 Synopsys DesignWare Ethernet PCS
+> > +
+> > +maintainers:
+> > +  - Coia Prant <coiaprant@gmail.com>
+> > +
+> > +description: |
+> > +  Rockchip RK3568 SoC integrates a Synopsys DesignWare Ethernet Physic=
+al
+> > +  Coding Sublayer (XPCS).
+> > +  The PCS provides an interface between the Media Access Control (MAC)
+> > +  and the Physical Medium Attachment (PMA) sublayer through a Media
+> > +  Independent Interface (GMII).
+> > +
+> > +  The XPCS is accessed over the APB3 bus and internally connected to a
+> > +  Naneng Combo SerDes PHY.
+> > +  It supports 1000BASE-X, SGMII and QSGMII modes.
+> > +
+> > +  The block contains four MII ports (pcs-mii@0..3) that can be
+> > +  individually enabled and routed to one of the Ethernet GMAC controll=
+ers
+> > +  via the pcs-handle property in the MAC device tree node.
+
+1. Commit message: I'll drop the redundant description paragraph and keep
+   only the essential information.
+
+2. Subject: I'll drop the redundant "binding" word.
+
+> +properties:
+> +  compatible:
+> +    const: rockchip,rk3568-xpcs
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+
+3. reg order: I'll move reg to the second property (after compatible).
+
+4. Quotes: I'll use consistent quoting style throughout.
+
+> +  reg:
+> +    description: |
+> +      Base address and size of the XPCS register space mapped over the
+> +      APB3 bus.
+
+5. reg description: I'll drop it as redundant.
+
+> +  clocks:
+> +    description: |
+> +      Clock sources for the XPCS:
+> +      - csr: APB3 bus interface clock (clk_csr_i), required for register
+> +        access.
+> +      - eee: EEE clock (clk_eee_i), required for Energy Efficient
+> +        Ethernet (EEE) operation.
+> +    minItems: 2
+> +    maxItems: 2
+
+6. clocks: I'll change to items with descriptions instead of min/maxItems.
+
+> +  clock-names:
+> +    items:
+> +      - const: csr
+> +      - const: eee
+> +
+> +  phys:
+> +    description: |
+
+7. description formatting: I'll remove unnecessary '|' where not needed.
+
+> +  power-domains:
+> +    description: |
+> +      Power domain for the XPCS.
+
+8. power-domains description: I'll drop the redundant part.
+
+> +patternProperties:
+> +  "^pcs-mii@[0-3]$":
+
+9. pcs-mii naming: I used "pcs-mii" because the Rockchip TRM refers to
+   these as "MII ports" and they are functionally PCS instances. I do see
+   a similar pattern in the Renesas RZN1 MIIC binding (renesas,rzn1-miic.ya=
+ml),
+   which uses "mii-conv@[0-5]$" for its ports. So the idea of having
+   child nodes per port is not new.
+
+   If you prefer a different name (e.g., "port@0"-"port@3" or "pcs@0"-"pcs@=
+3"),
+   I'm happy to change it. Please let me know what naming you'd recommend.
+
+> +    properties:
+> +      reg:
+> +        minimum: 0
+> +        maximum: 3
+
+10. reg constraints: I'll fix the min/max constraint to use items (or drop
+    it since the node name regex already enforces the range).
+
+> +      status: true
+
+11. status property: I'll remove it, as it's a generic property and
+    doesn't need explicit declaration.
+
+Thanks,
+Coia
+
+Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2026=E5=B9=B48=E6=9C=885=E6=
+=97=A5=E5=91=A8=E4=B8=89 15:29=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, Aug 01, 2026 at 10:22:28PM +0800, Coia Prant wrote:
+> > Add device tree binding documentation for the Synopsys DesignWare
+> > XPCS integrated on the Rockchip RK3568 SoC.
 > >
-> > Move rzg2l_mipi_dsi_global_timings and its array size out of the
-> > hardcoded ARRAY_SIZE reference in rzg2l_mipi_dsi_dphy_init() and into
-> > the struct rzg2l_mipi_dsi_hw_info. This allows future hardware
-> > variants to supply their own timing tables rather than sharing a
-> > single global array, making the driver more extensible without code dup=
-lication.
+> > The XPCS is accessed over the APB3 bus and internally connected to
+> > a Naneng Combo SerDes PHY.  It supports 1000BASE-X, SGMII, and
+> > QSGMII modes, with four MII ports.
 > >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > The binding describes:
+> > - Required properties: compatible, reg, clocks, clock-names
+> > - Optional properties: phys, phy-names, power-domains
+> > - pcs-mii sub-nodes for each MII port (reg 0..3)
+>
+> Irrelevant paragraph. We can read the diff. Drop.
+>
+> A nit, subject: drop second/last, redundant "binding". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree=
+/bindings/submitting-patches.rst#L23
+>
+> >
+> > Signed-off-by: Coia Prant <coiaprant@gmail.com>
 > > ---
-> > v1->v2:
-> >  * No change.
-> > ---
-> >  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >  .../bindings/net/pcs/rockchip-dwxpcs.yaml     | 127 ++++++++++++++++++
+> >  1 file changed, 127 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/pcs/rockchip-=
+dwxpcs.yaml
 > >
-> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > index 1538eeece2b5..180384c10264 100644
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > @@ -54,6 +54,8 @@ struct rzg2l_mipi_dsi_hw_info {
-> >  		const u8 *table;
-> >  		const u8 table_size;
-> >  	} cpg_plldsi;
-> > +	const struct rzg2l_mipi_dsi_timings *dsi_global_timings;
-> > +	unsigned int num_dsi_global_timings;
-> >  	u32 phy_reg_offset;
-> >  	u32 link_reg_offset;
-> >  	u32 dphyctrl0_init_val;
-> > @@ -488,8 +490,8 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mi=
-pi_dsi *dsi,
-> >  	u32 dphytim3;
+> > diff --git a/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.=
+yaml b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
+> > new file mode 100644
+> > index 0000000000000..3e3f3a388d822
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
+> > @@ -0,0 +1,127 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/pcs/rockchip-dwxpcs.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Rockchip RK3568 Synopsys DesignWare Ethernet PCS
+> > +
+> > +maintainers:
+> > +  - Coia Prant <coiaprant@gmail.com>
+> > +
+> > +description: |
+> > +  Rockchip RK3568 SoC integrates a Synopsys DesignWare Ethernet Physic=
+al
+> > +  Coding Sublayer (XPCS).
+> > +  The PCS provides an interface between the Media Access Control (MAC)
+> > +  and the Physical Medium Attachment (PMA) sublayer through a Media
+> > +  Independent Interface (GMII).
+> > +
+> > +  The XPCS is accessed over the APB3 bus and internally connected to a
+> > +  Naneng Combo SerDes PHY.
+> > +  It supports 1000BASE-X, SGMII and QSGMII modes.
+> > +
+> > +  The block contains four MII ports (pcs-mii@0..3) that can be
+> > +  individually enabled and routed to one of the Ethernet GMAC controll=
+ers
+> > +  via the pcs-handle property in the MAC device tree node.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: rockchip,rk3568-xpcs
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+>
+> reg is always the second property.
+>
+> Also, use consistent style of quotes.
+>
+> > +
+> > +  reg:
+> > +    description: |
+> > +      Base address and size of the XPCS register space mapped over the
+> > +      APB3 bus.
+>
+> Drop description, redundant.
+>
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    description: |
+> > +      Clock sources for the XPCS:
+> > +      - csr: APB3 bus interface clock (clk_csr_i), required for regist=
+er
+> > +        access.
+> > +      - eee: EEE clock (clk_eee_i), required for Energy Efficient
+> > +        Ethernet (EEE) operation.
+> > +    minItems: 2
+> > +    maxItems: 2
+>
+> No, instead list items with description.
+>
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: csr
+> > +      - const: eee
+> > +
+> > +  phys:
+> > +    description: |
+>
+> Do not need '|' unless you need to preserve formatting.
+>
+> > +      The phandle of SerDes PHY (Naneng Combo PHY) that provides
+> > +      the serial lanes for 1000BASE-X / SGMII / QSGMII.
+> > +      The SerDes must be powered on and initialised before any XPCS
+> > +      register access.
+> > +    maxItems: 1
+> > +
+> > +  phy-names:
+> > +    const: serdes
+> > +
+> > +  power-domains:
+> > +    description: |
+> > +      Power domain for the XPCS.
+>
+> Drop sentence and |
+>
+> > +      On RK3568 this is typically the PD_PIPE power domain, which also
+> > +      supplies the SerDes PHY.
+> > +    maxItems: 1
+> > +
+> > +patternProperties:
+> > +  "^pcs-mii@[0-3]$":
+>
+> Why `git grep pcs-mii@` gives me no results? Are you doing this
+> similarly to existing devices or is this quite different device than
+> every other hardware?
+>
+> > +    type: object
+> > +    description: |
+>
+> Same here
+>
+> > +      One of the four MII ports of the XPCS.
+> > +      The port number is specified by the reg property (0..3).
+>
+> Drop sentence, redundant. Schema tells that.
+>
+> > +      The port is linked to an Ethernet MAC controller via the
+> > +      pcs-handle property in the MAC's device tree node.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        minimum: 0
+> > +        maximum: 3
+> > +        description: |
+>
+> As well
+>
+> > +          MII port number of PCS.
+> > +
+> > +      status: true
+>
+> Nope, do you see anywhere code like this?
+>
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +    additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/rk3568-cru.h>
+> > +    #include <dt-bindings/power/rk3568-power.h>
+> > +    #include <dt-bindings/phy/phy.h>
+> > +
+> > +    pcs@fda00000 {
+> > +      compatible =3D "rockchip,rk3568-xpcs";
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <0>;
+> > +      reg =3D <0xfda00000 0x200000>;
+> > +      clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+> > +      clock-names =3D "csr", "eee";
+> > +      phys =3D <&combphy2 PHY_TYPE_SGMII>;
+> > +      phy-names =3D "serdes";
+> > +      power-domains =3D <&power RK3568_PD_PIPE>;
+> > +
+> > +      pcs-mii@0 {
+> > +        reg =3D <0>;
+> > +      };
+> > +    };
+> > --
+> > 2.47.3
 > >
-> >  	/* All DSI global operation timings are set with recommended setting =
-*/
-> > -	for (i =3D 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
-> > -		dphy_timings =3D &rzg2l_mipi_dsi_global_timings[i];
-> > +	for (i =3D 0; i < dsi->info->num_dsi_global_timings; ++i) {
-> > +		dphy_timings =3D &dsi->info->dsi_global_timings[i];
-> >  		if (hsfreq <=3D dphy_timings->hsfreq_max)
-> >  			break;
-> >  	}
-> > @@ -1519,6 +1521,8 @@ static const struct rzg2l_mipi_dsi_hw_info rzv2h_=
-mipi_dsi_info =3D {
-> >  	.cpg_plldsi.limits =3D rzv2h_plldsi_limits,
-> >  	.cpg_plldsi.table =3D rzv2h_cpg_div_table,
-> >  	.cpg_plldsi.table_size =3D ARRAY_SIZE(rzv2h_cpg_div_table),
->=20
-> > +	.dsi_global_timings =3D rzg2l_mipi_dsi_global_timings,
-> > +	.num_dsi_global_timings =3D ARRAY_SIZE(rzg2l_mipi_dsi_global_timings)=
-,
->=20
-> Are we sure that rzv2h use these new entries:
-
-Good catch. Will remove these entries for RZ/V2H as it uses different phy_i=
-nit that uses
-It's own parameter.
-
-Cheers,
-Biju
