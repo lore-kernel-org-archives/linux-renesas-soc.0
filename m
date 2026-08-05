@@ -1,244 +1,165 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010066.outbound.protection.outlook.com [52.101.229.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C896C3F7A94;
-	Wed,  5 Aug 2026 13:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785935918; cv=fail; b=LUrjkrwCxM0U3a/RHGj278E10rBvkzUTEMGg9dL8OHkx6cma8VH5aR3yqhGnzPnyogWTE+21TSJAItRVY2Qh+KdZYP4lPbgrFLxxqHrlh4DNZvS4S//rhQwvrUR31eZQhefVFDmnZvVYHBsLedY9vrV8tj4k/mYJdkZbqEJFG6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785935918; c=relaxed/simple;
-	bh=KApZSZOvKN911su4wwF7oUc/TcTptG3wPnFfL0RyrlI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uqhRwyRjvG7ssIsNY+T9dIB7ZLd/MmTUQDa5Wjfxmf7vGpT/7RMmrK5PD9Ni3X4FT0nl3Dmr//ISJl/FcspNhCiUkC66cp4o8Mg/ZiFUUhp++krwW96CkOrGtatPzq8XTeiMOb/yQsxwDLNTg12POmf3lij3SIMNQVmuwZGDEfo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iVoJ+dXD; arc=fail smtp.client-ip=52.101.229.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A40471245;
+	Wed,  5 Aug 2026 13:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785935967; cv=none; b=Mtc3RoRjCbtHXH/YRfsduiILphGrDE/N0gxzRxaE34NZZsLs8yICOTpc63bSqStETi8S6ohTfvrTUltkCmnQhmwI2Rz+MpcrNsEF4ee9zueQI8cZDu2sNGgDCMZG4jIRm4XPpEWwS85GEfCQc2BKw4vBGNy1QKtA+2/MzBNGLhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785935967; c=relaxed/simple;
+	bh=wcDRFhX6p9sTcMPpf2L1yfRlxQ+TJBjurNsyrszL3pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nk9XtPlPJNyHlTqeLZqygSeOXjEE6vnc2vv7LDux0KA6oZ+E+yO+ueakErQI5dkhPuDR0PuiIcAKiflq+YzLy61vpUzcWKTrW1f+XPyNVwqNsvkmG0wHnyYNTD8xT7PlY1ivor6whsZlGBkxG9cafKP8pwXSox3/UIy25PKRLBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jq1wh9tZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iVoJ+dXD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xTf6OJCQfFbzg5X3nh8UGvhtVcEqPReHW55hZzvfL2QgdtxqiTb0cKk9ObIEMctdV8o8kxlhZ6gViHzI2KCoTZIxzfTRnpM1LXDCKd2UydtmyzFb+3S6CUGnfYECkI58dr73jNHnWZiQdE3G/cVVts8nnSfrZrjN9mxUYJEyZcm6tv7f7p+zD/SKGaAlBK0b0fn7SJwm+cPyC1SAyuBLRKGXucy5DwxVDm39kv2UzSfqnAG5dE0lW1F3v5z1fTALOKK5Cw+/26VDQRYclBeUDoEOn4ay6KZ5oscCUAk8nU6FONlMGi8i4ieO5w+aML+VXGqcdH/kYitMaoC0Ail7kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j9ygr63OeNBIGsuc2MUV/muTG5KslaTQCBC4CT83Hyw=;
- b=omO2HpIOB8x2EqmOsiqTArxYOoxBykcFgMkL1kJkNWlQuGFJ52R0Gxz4um8rJ7O5XlRYehNeuulCeDgmdSxJhoTQkS4xfQaljPeYeVRkgZ/nlBJUCVwFHY9ykKRp4CF1qSO3KEbrTLPh1GNuWaG7nkL+dyTnnsqY0tTw5Vlm2plAZIb0RWYZ/0s0B0TAYlfvmUfo/v4FSuSo3KNW3V9MT6wOIyKR34wUwKZZY3HWjZMEm3OxgVLgi9d6WkGkxUqqwNpB996B+Znb3jSJYS5wuUxHuSDXtvdN1W4736ys4giBM4eMi2UFuvQ7Oq5TZi5xvYMopCduohDbbMyhucV/QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j9ygr63OeNBIGsuc2MUV/muTG5KslaTQCBC4CT83Hyw=;
- b=iVoJ+dXDgEl1nHlTtQD8W8XSX3MPifTcdRn/AdoLZALPoC8r6pEb0kLWKsvVKJ+cvkYo5ixWaG5kCS651lsrnQlGmyVsN9+2bKB5NDt7W3BMKgIU9UB94jatBd1MWeAfvAVFpHg9TRrrTtEkz5/iALf4NFfjBxu16SGOWwqKE5k=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB10297.jpnprd01.prod.outlook.com (2603:1096:604:1df::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
- 2026 13:18:33 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
- 13:18:33 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "biju.das.au" <biju.das.au@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, "magnus.damm" <magnus.damm@gmail.com>
-CC: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "biju.das.au"
-	<biju.das.au@gmail.com>
-Subject: RE: [PATCH v2 07/16] dt-bindings: display: renesas,rzg2l-du: Document
- RZ/G3L SoC
-Thread-Topic: [PATCH v2 07/16] dt-bindings: display: renesas,rzg2l-du:
- Document RZ/G3L SoC
-Thread-Index: AQHdH1mNwVD0Tyo6gkuWde9zVfhMjLaPet2Q
-Date: Wed, 5 Aug 2026 13:18:33 +0000
-Message-ID:
- <TY3PR01MB113468E6106F8042EA703C85D86D32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260729125516.230757-1-biju.das.jz@bp.renesas.com>
- <20260729125516.230757-8-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260729125516.230757-8-biju.das.jz@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB10297:EE_
-x-ms-office365-filtering-correlation-id: 31d03ec0-4609-4074-b682-08def2f40cf4
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|23010399003|366016|1800799024|38070700021|921020|10067099003|11063799006|56012099006|4143699003|18002099003|22082099003|3023799007;
-x-microsoft-antispam-message-info:
- OxMgYLCByJhbvFbWjhNLEUetkv6uJD/lYcC4dkFQFFcoIVNxuYrPqxoV2oSpkelkwP/ha9aDnKpPYaiLObxs6hlSlP8Lhl1BO/flBQ4qogiqCYHBLHQ3SE17rO/j2xN4znswlYEA8g3jKlVgcZOGCuflpaqd6jULPoS2iZmPnpOz+NDxv1WM4STziVTCbCUIw00wYdsbbWc9+1vvInsLhv4U7MH5cpe5fHRT5YSbz+UdfqJbs/pvGD7VizIMhRGqwETNjCAmTci9jpD5t2ioxbfakEROucCVpPlS9qGPd3xWPhME18+viPeRzarPSgr3EPhCmAtsDHS04XSS74oSYIW80mQ2Jw5AUUymgjg1x3YhyJPjQYC0gCV1PkM0+s3K4dmCInsgLm8sa/q9O6nrjUKQQm5sz1XPzEmGtP+9X0y6M1/VKC62ttQ1GAPMFoDgE8Y7WJqJyV4z6Yf9hwZSgTAkmAD2uTPlNYxgOSv4qAPqT0EwwFMGwVrw58tBzM8W2N5ImKusK25wCsLkdS3+b3R15RNeBfyWZiXKaJOURyNhEWLI1FyoSNN+MhAdPCR2hrZEK8/k494jnivr05M/+ciAgfEtopa5Sngqn/DVfvRqnjXqJ6G2UEvkbCBw1tM7mx9AOZC4ywRG0yto1MnndslGDlHj915E7eJtnsoXHFyO6tqYxPHsHg8U13yY5uCcn1eCyEvLBfLtnQG2TJtYQcV2xjbKQXq+Jlh3a+CC+kCJXS8y1uND3tc/qlRFVCMB
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(23010399003)(366016)(1800799024)(38070700021)(921020)(10067099003)(11063799006)(56012099006)(4143699003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?aoGxrihvSBNxX5lZuKSD3huPaH2q1/QN+R41iMlAQoiB6MwQy4vJNxyXNkx0?=
- =?us-ascii?Q?9eJb2HtfTE0czR6Suww/g4MFW8tbYAf5Scw+UHHxa26MkfIdFNh1HpwHWRh/?=
- =?us-ascii?Q?6ZkAg8lj1YQGfg1VhN1YyjuuteZR0KZG9qqXmR2VQPR/aa7zr/xl6DOAH9Q5?=
- =?us-ascii?Q?/ur/V8BhR0NM4i/yPEAkL3cEO8nwyVUvvyM5BoEBebJ+RB1g7gKzITp9l06Q?=
- =?us-ascii?Q?xUZc3ym35wZlU5EyQEsa5bSmJv6YzLUqh7zT+NQni0yLEE7gds5gFkYiRvVS?=
- =?us-ascii?Q?WlYnMZyolCKZnH5eP5IdSJti9wJm5hRGXAi+RQsMEGjvKQF1hjUoYlrumtCG?=
- =?us-ascii?Q?QKuKmDdqx3Iw//Fk0lct4YlRyd9AQIPxVQx24gI4jQ9hS8Yfhctk2V/kPKCO?=
- =?us-ascii?Q?EZPmu9OE51Pa7DWZVlUbvNwulQn8dXtyx0h0vjhT8xBhUjo7YZG0Y+HKYB3p?=
- =?us-ascii?Q?mLsz2Xrc5XRG7JRJfZlsIi1g20Dvil0yaaJhq8Ry+/99O7fYAMbo2W1rEjfg?=
- =?us-ascii?Q?zl7LawcAHtZb5Q5tYPdHudaDFr5L3zS2osfGjOPHCDigBYclnklLlZ7x2b70?=
- =?us-ascii?Q?siZ3L3j2iIQ1IjJKBSSeI45AISdOrU4wNhw7Om1HMDzll8qChSuq76O5LJh/?=
- =?us-ascii?Q?RGkCAPrACKXmVwDKvP4QVPYglbRlQTeG+LoxttncUT6RtTge68MOZatuJAl3?=
- =?us-ascii?Q?WW0X6IS5wkJT0ZEpJEPTSdyDCKbgt226mmJPB3xy+NGUFvnOW0VPc7mYfqeb?=
- =?us-ascii?Q?ITrFbaDyKaM6OhO8Jrur5wAyubvtpSXeMutPLWr3tnirWw+PuDdYITkKKSK0?=
- =?us-ascii?Q?l5Thq9undba6422NAORolrJmeC+YxMMZ8VMPYJ2rev9mUexc7iTT76gZqA57?=
- =?us-ascii?Q?Sc9Zf3P1Mwn8dAzNwqgbNvShWLpHYLXbKeflXvt+dK3Aqm8/tsnSpmo5NgFh?=
- =?us-ascii?Q?/eD2lzr+QSpM2nR9SIs+cKu4vktNOnXyRD3PXMVNrkfCLpJviHkJnJEw0E+D?=
- =?us-ascii?Q?PkAHKqV95ZHh5zEmPmBoFVOAM6Svr6f5/eUNe+fKmnLVPET4T8IJIUXIR/eY?=
- =?us-ascii?Q?DFKaUn0XbtbROR0BX+PGM0oWBdwPAhdPqDHvmfwx8vtR0NE/X6+NZ3VSj4bW?=
- =?us-ascii?Q?/V002O6XOJGJBghiGgq2+dQd/k4+2W1XSzDTWz1vnmTKAEwHeKOzrVuHbkGD?=
- =?us-ascii?Q?+Y6MXnUP0+1nGuosjgSeYMDg5wHFt5RMdA15cgO+O1nuZLV3IlMRSnmWpQN9?=
- =?us-ascii?Q?fUQp4U/jOdHNaFV0mVgX7wCxM2kIWQcvm7aDTWRHQTCuAxcNlmL7tQZAhKwn?=
- =?us-ascii?Q?MGe4y8FYlfFiR5JeIYiylOGd6wjLHORfQUO1SAztP7x2QFI8xRtEX8mebQSP?=
- =?us-ascii?Q?QP6lT2zD3VbBXXcHTZyTVnTCWP9DUICGfibVLYgNlwTmhoBMsYV3cqnA5H2F?=
- =?us-ascii?Q?fn1rF1aTJP8ZTaeNyE33IwLXhO1L9NGv4Nvkdk0f5aUqUagL9kFCNo4SmsiN?=
- =?us-ascii?Q?cFiDjbpho+8oBHwvsEpxNbR12f42VXhGx+4anVmoekVDkpoUKYaRIHBn2862?=
- =?us-ascii?Q?dyGx/PelrDIWI7uTWspCrSZG1tOe94M1lq9xGvONo1nXrCiqDs2Ao0CYQDdm?=
- =?us-ascii?Q?vB2lF0bAa6imOGegmgugLCScsYGIYW8MERCZy28KA6vyfbcEgXUKSz/PCuhu?=
- =?us-ascii?Q?ZgNI/cAQ/va7QuoxrW39TR72oTZNoK33x4VgJD/xQAruD/6cX4BlsTU07FTe?=
- =?us-ascii?Q?RH/VECLQSQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jq1wh9tZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 906781F000E9;
+	Wed,  5 Aug 2026 13:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785935966;
+	bh=1ZSN6QgvXCspbM25E88HHl0wC6DU4FtUp0PqYtpD/04=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Jq1wh9tZS/nfn7XV8OOKplJ+QiXEwb5TEtHp2C6ImTe+liIQvqYOhf2LHRg/5PRti
+	 yWStdwFNZ46wxR8BIC9VO+C94R8YPHj1SghNWI6fxF0yc0wL2BTP5bMV1WVNFcEs+g
+	 DaLOwsKwEzhKdHTj0vRs0WFSy0ugNLCdofnQogQ14pAgk4PMIm6NjnNUx1/SuHB69V
+	 kQOAPpv0c7j3BHkkeDdklnwADKcOYxV3e/PeD7PgtxjZ1li9YlEZ3JAyc/IVXB0rTQ
+	 yeiNOA6Ucxa1eqxdruR5OR3TDQW+pgipA4Xy0fhT4KANUzFY34Dj/wDmDatBQn7JER
+	 i6CuK1a0McPig==
+Message-ID: <368eb87a-bb12-4943-85f9-cda8a7835317@kernel.org>
+Date: Wed, 5 Aug 2026 15:19:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31d03ec0-4609-4074-b682-08def2f40cf4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2026 13:18:33.6410
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UeBD85ouaIQCFqeX55cqGiXBua/mNzHIpOKGQY0WCqwXAd+Q2J/yoyU5zB9t8KqjpFZTLygaETsFRPiDS0loKEC3kHJxUCNC/McUb6ltR8k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10297
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: renesas,r9a09g047-sound: Document
+ audio_clkout clock-frequency
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+ biju.das.jz@bp.renesas.com, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ John Madieu <john.madieu.xa@bp.renesas.com>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com>
+ <20260803132828.3249424-2-tommaso.merciai.xr@bp.renesas.com>
+ <44c150f6-b04e-4515-ba71-63780c56c38d@kernel.org>
+ <anDNtrL-eL6VUD94@tom-desktop>
+ <8c5f0e53-2515-4744-ac6a-a4c94f2ae2b8@kernel.org>
+ <anMkwfGAW5fBSAEf@tom-desktop>
+ <CAMuHMdVzvnz-XrgJ2+UrAA-Gj6XjAnz9Q0HqrNCuVQF3+v9X-g@mail.gmail.com>
+ <anM1KUoFC1ltRsje@tom-desktop>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <anM1KUoFC1ltRsje@tom-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 05/08/2026 15:05, Tommaso Merciai wrote:
+>>>>>>> +  clock-frequency:
+>>>>>>> +    description: for audio_clkout
+>>>>>>
+>>>>>> Incomplete, missing type/ref, constraints.
+>>>>>
+>>>>> renesas,r9a09g047-sound is handled by sound/soc/renesas/rcar/core.c [1],
+>>>>> and "clock-frequency" is read by rsnd_adg_get_clkout() [2]. The same
+>>>>> property is already documented for R-Car in
+>>>>> Documentation/devicetree/bindings/sound/renesas,rsnd.yaml [3].
+>>>>
+>>>> But was the property rejected? I am repeating myself...
+>>>
+>>> Looking into this further, I found that you already asked to drop this
+>>> property during the v5 review [1].
 
-> -----Original Message-----
-> From: Biju <biju.das.au@gmail.com>
-> Sent: 29 July 2026 13:55
-> Subject: [PATCH v2 07/16] dt-bindings: display: renesas,rzg2l-du: Documen=
-t RZ/G3L SoC
->=20
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> The DU block on the RZ/G3L SoC is identical to the one found on the RZ/G2=
-L SoC. However, it supports the
-> DSI, DPI, and LVDS interfaces, while the RZ/G2L supports only the DSI and=
- DPI interfaces.
->=20
-> Due to this difference, a SoC-specific compatible string, 'renesas,r9a08g=
-046-du', is added for the RZ/G3L
-> SoC.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Restored ports.
->  * Replaced endpoint with port in ports node.
-> ---
->  .../bindings/display/renesas,rzg2l-du.yaml    | 26 ++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.y=
-aml
-> b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> index 7c84a9ecc7a7..5c9b15a09dee 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> @@ -20,6 +20,7 @@ properties:
->        - enum:
->            - renesas,r9a07g043u-du # RZ/G2UL
->            - renesas,r9a07g044-du # RZ/G2{L,LC}
-> +          - renesas,r9a08g046-du # RZ/G3L
->            - renesas,r9a09g057-du # RZ/V2H(P)
->            - renesas,r9a09g077-du # RZ/T2H
->        - items:
-> @@ -65,7 +66,7 @@ properties:
->        model-dependent. Each port shall have a single endpoint.
->=20
->      patternProperties:
-> -      "^port@[0-1]$":
-> +      "^port@[0-2]$":
->          $ref: /schemas/graph.yaml#/properties/port
->          unevaluatedProperties: false
->=20
-> @@ -108,6 +109,7 @@ allOf:
->              port@0:
->                description: DPI
->              port@1: false
-> +            port@2: false
->=20
->            required:
->              - port@0
-> @@ -124,10 +126,31 @@ allOf:
->                description: DSI
->              port@1:
->                description: DPI
-> +            port@2: false
->=20
->            required:
->              - port@0
->              - port@1
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a08g046-du
-> +    then:
-> +      properties:
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DSI
-> +            port@1:
-> +              description: DPI
-> +            port@2:
-> +              description: LVDS
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
->    - if:
->        properties:
->          compatible:
-> @@ -140,6 +163,7 @@ allOf:
->              port@0:
->                description: DSI
->              port@1: false
-> +            port@2: false
->=20
->            required:
->              - port@0
-> --
-> 2.43.0
+So my review was applied to the bindings only and undocumented ABI came
+in? Great, cannot stress how happy I am.
 
-Applied to DRM-MISC/next.
 
-Cheers,
-Biju
+>>>
+>>> Thanks for pointing it out.
+>>>
+>>> For context: the sound module contains an audio clock generator (ADG) which
+>>> generates an output clock from the external audio clocks and outputs it in
+>>> to the AUDIO_CLKOUT pin, that mostly supply master clock to codec.
+>>>
+>>> "clock-frequency" is array of the possible rates provided by
+>>> AUDIO_CLKOUT to the codec master clock.
+>>> Based on the playback rate it will request either 44.1kHz or 48kHz.
+>>>
+>>> I will drop "clock-frequency" property from r9a09g047e57-smarc.dts, where
+>>> AUDIO_CLKOUT output pin is not wired.
+>>>
+>>> But for boards that populates AUDIO_CLKOUT we need this property,
+>>> Could you suggest how to model this properly?
+>>
+>> Isn't this output the single clock output of the sound module's clock
+>> provider (#clocks-cells = <0>)? Hence can't the consumer driver set
+>> the clock rate?
+> 
+> Yes you are correct.
+> 
+>>
+>> If the consumer driver cannot set the clock rate, but depends on a
+>> fixed clock rate, it can configure this in DT using assigned-clocks
+>> and assigned-clock-rates, right?
+> 
+> The clock driven on the AUDIO_CLKOUT pin does not have a fixed rate.
+> Depending on the playback rate it is a multiple of either 44.1 kHz or
+> 48 kHz.
 
+So the playback rate of 44.1 sets one frequency and playback rate of 48
+sets other. Feels pretty dynamic so job for the drivers? I miss the
+point why drivers cannot request proper rate.
+
+
+Best regards,
+Krzysztof
