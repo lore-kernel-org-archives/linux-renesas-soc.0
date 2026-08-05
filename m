@@ -1,506 +1,297 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011064.outbound.protection.outlook.com [52.101.125.64])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011014.outbound.protection.outlook.com [40.107.74.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1187F46DFF4;
-	Wed,  5 Aug 2026 12:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D8D3E8326;
+	Wed,  5 Aug 2026 13:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785934618; cv=fail; b=NX2t1upFk3pzhp1MoC5Uh5ENr3Cd3EiYzPtVRu1W8ppGPPtwqhrdS/lO3lu1ELClhsCF109Ym8G51J21iBn7t37hufaedjx++5pCU4WbV1sC8Md0fleDDewlEYHT6V+8krB1kqPrbIdh22AntCAML7QtqQoga3dE8GY+AtFO118=
+	t=1785935223; cv=fail; b=Lqces4Ukq79BNBgV/7uUXlDGy5B25YhILIvxrtHkcXM2x4XTYnCbp+Eu6TVmr3+qPFQeovJMCIPMhG39K9UrUUETnh+BNhwm88h9tiAksv4eeBkFOhsqW/kNMrHl7ZNTGOj/1TZKSKX5CjnfWoFcchNTMalAm6tfrsLV0wrvfSM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785934618; c=relaxed/simple;
-	bh=YjBpOvcvNzJapWTlgauFLmv7JRMepF9ZFX2xGLLyJf4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NDeFjyKIcJBwZfCBldKQLT47AVnsci8sE7M5JVG2gTmcS7YJmymuSyRFZGu5plopM/5iaPWeOyQgFAz4HDbUUyuhR7W5k8iAzP4fvIBs56ObEcEb0nNB/sbjJLIwPv2kNLoCMml00S6T4hw8H0kpiXQCzHiS0Wh2kcuhdmIhveg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=V4NcuaE5; arc=fail smtp.client-ip=52.101.125.64
+	s=arc-20240116; t=1785935223; c=relaxed/simple;
+	bh=9xpMPi13OUa9tXLsZF00PliRqmVU8yLthoGhg1Humpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GJwKIxW19UIqKmZS+jgi7gbxMLEZqyO6cMVJ382JnmAcnzjHPBYEmKyTZqdmmtu6lQmkPUx+38hFJNQQqQcau7B/HeFsvtssB7I59gvXBfH2/oYLmjlnCb1Bv7g5Q7p6QjYH6o9PF1Rv+LpdLR068hzUB8McCGY9uq9Ph3AbVsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=MqYyMdn2; arc=fail smtp.client-ip=40.107.74.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="V4NcuaE5"
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="MqYyMdn2"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EkecbTJkWSNzGqWRWeNrZ2yi4Zbv1nc/24GcNk6PqeFHeP5pDVvWbPPsHOppbIfOLssxm4PuFJPP6oku7FMS+LNVLLAFZJnwKTghU0blJXCfJ1vhGwJ9Zpj6vuu85/CK/Cg6kRj/7MFLDeGvfk1ipgkve0oDTMy4EEd5LFTpaZYE+MjEyVIEsrw8EYYKEUQCnSIlN2jAlzk+3INmafsO7YWKbCCa5y1VvxsuO5Qm/1SUyh9MWDsGPetLH0GSLDn7vMdIBW/lQ3PbEoO7lkk81QIi+ta/ZsA2ecV8GmHibpbZPxNKKri90FWx/p4Vszs6auF1ZVEyTyuDggPW8+SIiQ==
+ b=Dcr0fVVLpmwhOp+j4xi3TK2O4oDG40l/EgjxhxedeLiF+0Ynf10vIIYY4snNkYYbkSezwmxzpMB9a+K/aIY1TNeEZviTcZJPWA80zioezxwZOrRAPXwpHdYI1THPPsT7xy/Ro7aQfMOlLppmhCnfr8U+yH9qUcVOaCfnHGaUsXr/NlFB9aF6dw5N5ZjCAndfCPEOXs6UED114oi6rnYvCVOVP625EkVuwdTxTI34imbZHz/ciCPKK2Z52hwI0i2Kb9Fr4zU0ZsXYFoJ8QnIz36BYB7ldyn6Z4bHdIiQ2K9Cqzl42maUnnoPJTXKMvBkL5xBicA/g+1eod3O1qfACXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oTviZ6Y9esEpyRhY/oLUgvbLvkDO9+0t5OJrObfmvvo=;
- b=lB7zbkqNZ1paECnvc6pJRMWjOUfv+jjrfsfGAECp7l5+rykKrIcxeBPSYgiU2VWoAKzRxHlkuBJ9GAsExBSuenLSKu6U0Nzpw53BrgXuM7lVRFNj8CnaSTD5LoCMUrA4It7XC7cO0o8FnpyUAuOo+3nsN+aigROQGy7pTXRVhlRTjp4xPs3DVZu8yueG+XursUCQQbA9oeMxp4ef0hDucRkaXXr4tZFlnTyR8YFOZXcRmW4At6WBxW3KKwpnHTt/+LQX+e1I64l/VMnCOtAz9xJuoy1HH3MhuYCrrj9mo4L6cAwJ2MRrU4JNNwJ5oKX9pvbgypwc7XfubFvViNuybg==
+ bh=eNVPDQR+WLozExBYL4FQ9CWEyWkuXBcNBDjTGMrVm4A=;
+ b=myysb8ons6nQ6aKEcUIRdWlqVSpi4ZMTlUf+ogPLXZogbVLJg6/lbojNNbrN0ye5e2YijLPm7vNrhTZXWXwhf90pdQ7X9VJmZrhFuJsI6IdnufSFMQn+stc51dvdLlIzByF7hv0nvq7SPIGlxwfVe2f14K9b3U31GDTcZuMR/f0CpGkLGxyRhChx/sgvoitleYHqcn2zP+67GA2IGrKYhqGfLa4n4Kvmw3j4V8HAb507FV5XtlOhcaDH1svbZDsmGcVzAt3/5fE6ms6sEyYEFafh4s75aycVy/bW+BOGhFCTvvNHD9eX9A6U7bNx92Dx5YbKNtgvQXmjVAjq2t4Zbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oTviZ6Y9esEpyRhY/oLUgvbLvkDO9+0t5OJrObfmvvo=;
- b=V4NcuaE50NBc0VzNOvP0eH4yEZ6Ah8xDlppVwFEUbtEXhWrzKz7KvjKA9PMTP/X1lohIvxxLu8/2Rq8LWEr8BT4sfAAD/PJ3Nj8NO/2r25/+xlrk8AnwEx5XJQXBchbXWb/aiiZDHiFH9CWCZFMxjW71q8mEmOQ/4gPxmddGMe4=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB14996.jpnprd01.prod.outlook.com (2603:1096:604:3ab::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
- 2026 12:56:50 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
- 12:56:50 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "biju.das.au" <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>, "magnus.damm" <magnus.damm@gmail.com>
-CC: wsa+renesas <wsa+renesas@sang-engineering.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"biju.das.au" <biju.das.au@gmail.com>
-Subject: RE: [PATCH v23 00/14] Add Renesas RZ/G3L SD/eMMC support
-Thread-Topic: [PATCH v23 00/14] Add Renesas RZ/G3L SD/eMMC support
-Thread-Index: AQHdIBcQqTRcf7MR9EyBG43WB7r4QLaPc24w
-Date: Wed, 5 Aug 2026 12:56:50 +0000
-Message-ID:
- <TY3PR01MB113463AADCC6D60F6995E36C486D32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260730113200.36456-1-biju.das.jz@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
+ bh=eNVPDQR+WLozExBYL4FQ9CWEyWkuXBcNBDjTGMrVm4A=;
+ b=MqYyMdn2eez8UrmLcnUa2vLjbk7AZc5duJVH8R2FFTUxjq6MUJzK8wUpaMKl/wZ/JereckKkeJBJ8gE8ZzwSQu88BpF6cfu1iTOcZgZf2rdSAdeexFEpOYv9Px18A0yMVb7smv8ssc9yGXEZLObrCqxQiLV6tuaNz9b4T4HIU4U=
+Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB14996:EE_
-x-ms-office365-filtering-correlation-id: ca2f2402-f856-47f9-ea32-08def2f10429
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|23010399003|7416014|366016|6133799003|22082099003|18002099003|11063799006|56012099006|10067099003|38070700021;
-x-microsoft-antispam-message-info:
- P2oe6r8YgF4w23vdxZAmUEY5TeZ6KGpHlGu2vTsQGiiEpuDfZCfQxg+Zy5+1jZ516+wSwaD1glSDTak0+hZDnRG+hTuTF1iWI/JdOq+Akes19rdMsbB1xkE4TSdFP7u8l9+LdWjQeG59ZW/9od91/WO9aizFf0YZNK1woZekrTuh6DGoevnll/TX5+mn1cGCkJZ5hnUES9nQpQ3ae3EwSdXZ7V6ObBcEDkEcorXxVILGWEUn8Zfzu1tRgzKSt05piYdXRNvXUbxBwXbJevW6WNwwb8ESv7231vnOZ4/pOnudllxaHBAiPy6x4exl5IplbjcPtP7Kqttiq3bg2YhDpux2IuOOmp13WY7yTNgStxEZklp7Iq/rfaTUCuFYGxO5BuhI+o99WCyJECHD6F9waaDfhbCBqtK1DhW5MR1az3ZoH3twMGE3VtlnQDum42hqvjGezgyxwIOLJoVbKwOtExgRDELkh7NLu8lWHbdFcZpL0kXwWqM6S9vfBTkr3RwpWooP5t9SKRvR9mpYEVPB5Da48gc1K9Nbf2XntvBLAJpKs0SgfeI+QhRilxGBAqI07spCd7WodX3jIID4DAez3GgUASHeYGAH6dgZ8aMFFcuKJSfWH21R9wnWaEeRElK/VEv/MusS7xUmTZK2XroCQuw8zPMt+Uph9NYvsuRB8dQqwDOTNWpVYIfu280YjNCWqT+0WkS/OBVDKbFqH7djCA==
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(7416014)(366016)(6133799003)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?AO+eYDOzpOjNDIHic8GHes0JapnKnhDxOZ3ZlxGsYSYGEHse9QLVPX4N6s+I?=
- =?us-ascii?Q?wjOgrAwNQlXPhA49KTHeZ5RX8/BFX5tbRpHrv5xCCBg/iLZdjWVy90B/eQla?=
- =?us-ascii?Q?ebdtdjexfLXJr5IppTgWkAFbIBW2Jdp+NYID0qWfvXrdQpn7O8PT0e2r0j+9?=
- =?us-ascii?Q?TE6HQgFaxnPkbLUj1717XKz4e1xjzNPDnRAXGyROwtFUblqn8zjS0QRBoSHl?=
- =?us-ascii?Q?8ZaaZ/ANxeFXZfsJd+CvmqHA6QIObsWGTULtAROK/6O1B8P7qbpx2g0gixFf?=
- =?us-ascii?Q?KaWSekmNngkRlk+5c69M6N4JL0Y/VMMqd7kmLeSeM6s7g40/6SeY2FF70Skx?=
- =?us-ascii?Q?UdkUF/o+bnjIcrp4BiMr9MV56CLm4y8Tbv7WCx1uZKkK+wENG9Uyu+DehBfS?=
- =?us-ascii?Q?GAeUuqCadTryViTe9R6Y/RyXNBPEPKF6wG90+P/S5gUzLCZ6xb9TvmLXmhwE?=
- =?us-ascii?Q?dsgsJdiS4TwbFbhtauWQssQuTzKGrITwglCLW4RxEwFBrQL3hue/e3oZ+gg1?=
- =?us-ascii?Q?rIW6KPXFIvI/HtiqR2TiL4rF9oAGR9edvwCXWiJK8+0c8/4uuFq/yc75/QmM?=
- =?us-ascii?Q?DJNn2synILBfaXSldhCdwbcZ+kjrTVb9veUFB0n15LmOUFyWo1lygZRj/+SX?=
- =?us-ascii?Q?OpA3BcWJqYDzXqjg+mLEhDChe8YjZ/Bs/juscWD5NJo1gAz7RVdVSZRUdP2j?=
- =?us-ascii?Q?EE0rw2Nq3iTFnBPhL322DslsBzZPNuaE9X3GvM9+AURfH7fiNP7WKpe6szZy?=
- =?us-ascii?Q?BNtTTosRud9VLLb2WNnEi6D1U7NfEnogrwjLe/uN/LUlycRTmyE+LDEVkmRJ?=
- =?us-ascii?Q?UHgMI+nAxTrA71/PMDRATdOIP+mFSp6gVuryGQ5vlG7TLjQn+3wlLrDjgLN3?=
- =?us-ascii?Q?3yR6qve5lWOIA7KG4ax2XeiKejNqH52chzIMRMHTJ5ktnRhhhVrIog/E5ejV?=
- =?us-ascii?Q?Fxk2EjFrNR8/jI7yJ6ljnnHorSAi+hMkJppyXGTFQYmcxAdEWGPqZri8mSlV?=
- =?us-ascii?Q?UrsGwpjY0IlvomMdTre998BR6CnPhqdChOHqC/ySUpP3QnwBFSR0jYDvWykD?=
- =?us-ascii?Q?/PJyKRKvwQHq5LxxvcJaNBE2gPZRa8SJ8WU7S2be4I3C7gvojTT57zxlqC4b?=
- =?us-ascii?Q?g+jx0/MI/278kdYPkP6ZUdHIXMvEoUI2Rp7qxG8YLYjhrrHNOpmGwRQ9+U/Y?=
- =?us-ascii?Q?PRuuMFKa4BdTlEWAPly0sPOZX64wHP6gWdwosH/1LzQNXaTlYzEe7R+N5QDq?=
- =?us-ascii?Q?lZo+UkPDjUa499upAILU99uq6PPzDuzbQLs8kMbiqJqQ1FTyd4PBVKGF4Ifj?=
- =?us-ascii?Q?m8e2XshdrQKE/pGJkTyOO8odEBW6FYU1b1q0HznZIIS/bYZ7qA0oAI1VLP0D?=
- =?us-ascii?Q?15xuXxpw+dERtVdPOBEn2IQKGCc+sZ7JVir42xwpN3IU+zds70rLgLSW9UlU?=
- =?us-ascii?Q?+1zR+va59jectCWm17lxuX020YDUaJ6k+Qx95WVw+HgC+u989/qwg0lIlrGK?=
- =?us-ascii?Q?J8eGaa1k9Nvhreq1B6JGWbY36QTYy9WMhhHA/webTxIN4bD7bCK6cH4CDPpd?=
- =?us-ascii?Q?arG+/DLGnzldVs96qmvyKs8JD9DQhC75tRU3r119uwNNXEcwKC+3Nu6I/pCv?=
- =?us-ascii?Q?J5z8rfr/6Ardp7Ch6McaVc8FVE8nuWvz+S6kay8Um4vJbPG7KlfUXw8sbZJz?=
- =?us-ascii?Q?UtxepE8uCIwShZjUfFcf+uX3D/q8MEUT8Ni6J3Y5rOC8wf6Nho/fyXLfrOKW?=
- =?us-ascii?Q?W/PPcdmz3Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from OS7PR01MB13601.jpnprd01.prod.outlook.com
+ (2603:1096:604:35d::12) by TYYPR01MB16362.jpnprd01.prod.outlook.com
+ (2603:1096:405:14b::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Wed, 5 Aug
+ 2026 13:06:57 +0000
+Received: from OS7PR01MB13601.jpnprd01.prod.outlook.com
+ ([fe80::35e3:29ad:b9cf:a3d8]) by OS7PR01MB13601.jpnprd01.prod.outlook.com
+ ([fe80::35e3:29ad:b9cf:a3d8%7]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
+ 13:06:51 +0000
+Date: Wed, 5 Aug 2026 15:05:45 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, tomm.merciai@gmail.com,
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	John Madieu <john.madieu.xa@bp.renesas.com>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: renesas,r9a09g047-sound: Document
+ audio_clkout clock-frequency
+Message-ID: <anM1KUoFC1ltRsje@tom-desktop>
+References: <20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com>
+ <20260803132828.3249424-2-tommaso.merciai.xr@bp.renesas.com>
+ <44c150f6-b04e-4515-ba71-63780c56c38d@kernel.org>
+ <anDNtrL-eL6VUD94@tom-desktop>
+ <8c5f0e53-2515-4744-ac6a-a4c94f2ae2b8@kernel.org>
+ <anMkwfGAW5fBSAEf@tom-desktop>
+ <CAMuHMdVzvnz-XrgJ2+UrAA-Gj6XjAnz9Q0HqrNCuVQF3+v9X-g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVzvnz-XrgJ2+UrAA-Gj6XjAnz9Q0HqrNCuVQF3+v9X-g@mail.gmail.com>
+X-ClientProxiedBy: FR0P281CA0138.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:96::7) To TYRPR01MB13588.jpnprd01.prod.outlook.com
+ (2603:1096:405:18d::7)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS7PR01MB13601:EE_|TYYPR01MB16362:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25cee82f-14f6-4416-72bb-08def2f261ee
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|23010399003|56012099006|4143699003|3023799007|5023799004|11063799006|22082099003|18002099003|10067099003|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	y91DhR2EJoctTnXVU7m2PkITlYBSD3QytMcobuT+WM8ggTALOJMrqwi9jJNvVNZYOPR1rDz/QCniP3/WWutxQJnUe6U8LkmrRgTkyA4zq0tXIflpe0JeBMTsxifrYSVYDg31lbZo4qAX8gbbbgIiOJo8JcLhAyB87kNlEStD7feGdbXr8cDOJS50g6PHZXRgoUAdCMYDh44Crrh0CG9uYYp6enLA2oL1prv/LW1ne2FaeWmKOutnZS99x+bzqdsjoHFzlrBuaCK8Cw39iZO3MZTozebYfrV8XAhR1glwZ3VTmNNYUf9kX/uXuHNUyrFs5d5xIPwmOYOByQcoNhdwIjsbS10NJtV77epMUr4Dts87WJJ4b5/XACl4yWB8uimPW+eoWmohJqBu7Kv6LqeOXb4Wo+KTABhW6XqiW5hr+eW+o5K7C5vMargzStLP/MJLn4FU7z5nNbZarLcTKTXWhCDGMuBGB8Me8i1vmEDQd8I1UjWXWef8MYkZ8pkJd5Xe/2Hre4uBa/ek8UKhEwG/yxzwpca1hLhY+BfuSFbpgB39MIh73jU+wjQ29fQldBObGjyRbYIddnR4OT+99fCFbUEiHItZL2wejCJdF4PREetklKwBbfcRQdbwfMC3wYgBuaRhRHpQT1tDnA6eE/7J/VPB7ywZMsJ5N5GgE2y9Ymg0o3bdfI8xlsVX05KFFhTTiBFHJVwL+1qYbuSdl2Iis/++/R4ChUAUg/qmKL/BMBo=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS7PR01MB13601.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(23010399003)(56012099006)(4143699003)(3023799007)(5023799004)(11063799006)(22082099003)(18002099003)(10067099003)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5IPgXAjQp3Bskfr46S6HYwYoJ9Tu/4RW9uS/xgYaX74KkYDM9aYPLroMts7s?=
+ =?us-ascii?Q?LvdEZ0X/O1MpYX9E/nn/XPkeDxn4JuhJAYdfU/6T/qULnpZqgFaVA7RPqavK?=
+ =?us-ascii?Q?wS+5aTmCyyF5ozMFujZcNNiZGdiJUATI2tBmLrthWMrK+oxFMdurQWb6QAlv?=
+ =?us-ascii?Q?Y6ESixXWSVFxjfq41d6BTSmXjRJDgwniHOQlLlgN1w4OREWkWajEVXK4NSHj?=
+ =?us-ascii?Q?aHdWajRea9UJ4q2W896DcwHDGh+ieZhG59Na79csQBw3Nklbu7PUlNgfHJpM?=
+ =?us-ascii?Q?xFQbFpMR8EEUfmiNZu1a22J72kDYlX2eYKPn4bAwvYYevH0vMOF9jr3ichVl?=
+ =?us-ascii?Q?TIyG5keD2dP6qN7aB8UD0Kh9ncuFjeKprU3bv45hZECDIx0MSV2vfpLnVWhN?=
+ =?us-ascii?Q?bf36oCsSNfNO3fThfSmjeemCAIKlR0rK3rrYhv9v+aD14bzoIbJXM3ZZdelS?=
+ =?us-ascii?Q?dgTbnDbz8Uh9dQmwbm7nnj8N2wX9e7kWVg37H8jPGZ+x3O+5J6g7rKT7ucY9?=
+ =?us-ascii?Q?JYDYqEfsguJza8rxQtj8YlryUg6N2AsVODXgs/FjM2md9UGK6BmqcUSSFA8z?=
+ =?us-ascii?Q?NTbWVArysf/N4xuq47xSVfkn5p3y+k6NeQRqIUdWYs8dmkrcbFTpcdxYgMGc?=
+ =?us-ascii?Q?81kaweXk3HItaxvhwpdwpUOKzXfYjF/qbDH/99G7KZ7E2lrOhZ2DM6Vi6AkK?=
+ =?us-ascii?Q?suXUb2+L3EBJnrddFjtRPr4UWJztVEOqBjIkgGUbRD5jfPjUP6YHSI8f2wk0?=
+ =?us-ascii?Q?V0wE6xi7nVB3bEwsjaT89A6gfzRFy9u3G0x+H/qepqniKeQppAtafmwYxr2u?=
+ =?us-ascii?Q?nlc/nhJjpzG9ZLySfkdVJZh2XePSL/x//ALifqFWMjeoOvd90ThpQZhew6V3?=
+ =?us-ascii?Q?azSgZXuzwubrxWQfs5PLjH9xX8I7+bD8PVmcHWyF9sA9HcWLlY/jNF8Lo5kH?=
+ =?us-ascii?Q?Y5cOdX6Ndpm30ekouV+qWLnEAnYa0IYwcZHmP/26iPb6Goth7XH1sGjHFJB9?=
+ =?us-ascii?Q?wkd8LVntxVgGqAvL7HAC/V+4zfqTabAgefybp/BAXsBkxwsiWrRKYLHYUTnh?=
+ =?us-ascii?Q?WCyrfFa79HnaOF3J/WoQvQyY2uLcbc8KowXY0/gOP5N/YwP/44Dj5zhusODv?=
+ =?us-ascii?Q?kU9+D6Jdl3+WLg31+3Ej20+P0d+0W+t3R5Kv9YN1iTHao9+WpxbvXAQBlD3c?=
+ =?us-ascii?Q?zKBF4cGjwvejJ1EVfU5yXY4L2uz13u1J3tDEHJewJRQSa7z6YCe+TTqfHyzN?=
+ =?us-ascii?Q?6taCeN0162WLbu+T5b2O25e0g8dzU5kvGH7joyDKSvYNcl2vEVflyFHONJT3?=
+ =?us-ascii?Q?fQ3r+cuyWxN6ORXhOeMJiujy575wiZOm59f7YW/9lCFpYkvc897fx9bz2lsJ?=
+ =?us-ascii?Q?Pclc+Huwu7qCA++xJbUZQz0Zn4AD6kDo3eCqru4iyyjhTy+UiGKYFXCD/uuK?=
+ =?us-ascii?Q?wuvDC3Z53e5tCcv1E1Cx2Bu8nwVbMEJz14RUkOzphcT9ZYAfjJbGUGmYu3e+?=
+ =?us-ascii?Q?T7s1KTJy1Mrh+jO5ilbv5YJZocopxzOd6JB78MDWWKXYMLM0JNuULlyH0CVg?=
+ =?us-ascii?Q?5WLcni+NKrFzPxYyL8WXSaWVrY/iboO275ryn3GuD4KxLe5f+4KrypEYtwRL?=
+ =?us-ascii?Q?3yM2pmJ5qBkZK34HzGtyXEOtJaN0VhHw1tRoBHEUvkjJyjXrDnhLHWaXIovN?=
+ =?us-ascii?Q?qKr4z2jlLVDc9bNq5oH9ybmmhWo+NQ4Lzm2Rw1qB7uTi0JK/W1jBM/bf+d3N?=
+ =?us-ascii?Q?rDKRtVis83g2KxMxFxW1BQcedyGUFUDHCecSzkUJOmkxqD2tObjS?=
 X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25cee82f-14f6-4416-72bb-08def2f261ee
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca2f2402-f856-47f9-ea32-08def2f10429
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2026 12:56:50.3649
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 13:06:50.8388
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mzjF7QXbSlJG2A8f5jVxxihz3OrFgA/zsdxtFfH+pJQBgTLMzBbKAfgNRlUS9d3pn4BDfnzx3G5QOTY21SwxXzKSiVRSq8C2/QobuJ3GhRI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14996
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MjXCqQqw9rXTTyObDK/yuPTu1+FKpr2B9v6KbD84lE0f4/OnB6axZ3iz/b6lIUjh3CDQPpQO+s0tVph+7uyM7gRoYpww2r4xPhgf73G2/C2nMQk84GdUHHCArjN0BVhb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB16362
 
-Hi All,
+Hi Geert,
 
-> -----Original Message-----
-> From: Biju <biju.das.au@gmail.com>
-> Sent: 30 July 2026 12:32
-> Subject: [PATCH v23 00/14] Add Renesas RZ/G3L SD/eMMC support
->=20
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Hi All,
->=20
-> The Renesas RZ/G3L SoC has:
->=20
-> Channel 0 supports SD and eMMC (including HS400/HS400ES).
-> Channel 1 supports SD and eMMC (except for HS400).
-> Channel 2 supports SD.
->=20
-> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does n=
-ot support IOVS and PWEN in the
-> SDHI register (no internal regulator), unlike SD1 and SD2. It has an inte=
-rnal divider for all modes
-> except HS400.
-> It also has a 2048-bit divider compared to 512 on others. Moreover RZ/G3L=
- supports HS400 enhanced strobe
-> mode.
->=20
-> This patch series support all modes. Please see the test logs for smarc-r=
-zg3l[1]
->=20
-> This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
-> rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
->=20
-> v22->v23:
->  * Added write32hook function for hardware idle synchronization for
->    CTL_SD_CARD_CLK_CTL writes.
->  * Changed the data type of max_divider from unsigned int to signed int.
->  * Assigned of_data->clk_div_mask in renesas_sdhi_probe().
->  * Updated commit description for patch#7.
->  * Updated tmio_mmc_reset() to handle 32 bit divider register in RZ/G3L.
-> v21->v22:
->  * Added HS400 ES mode after fixing inode corruption when eMMC is
->    mounted as rootfs.
->  * Updated commit descriptions for patches #4, #5, #6, #7, #9, #12,
->    and #13.
->  * Added clk_div_mask to of_default_cfg and of_rcar_gen2_compatible.
->  * Added a renesas_sdhi_set_hw_adjustment_delay() call to
->    renesas_sdhi_init_tuning().
->  * Added renesas_sdhi_is_internal_divider_enabled() and
->    renesas_sdhi_clk_get_rate() to simplify the clock rate logic.
->  * Added `clock &=3D ~GENMASK(9, 8)` to clear the divider mask bits in
->    the register value.
->  * Added a renesas_sdhi_set_tmpport() helper to set delay values.
->  * Added a check in renesas_sdhi_is_internal_divider_enabled() to
->    return disabled status when in HS400 mode.
->  * renesas_sdhi_reset() now restores data strobe register values
->    after reset.
-> v20->v21:
->  * Dropped HS400 ES support due to file system corruption, will add this
->    mode later after investigation.
->  * Added support for make clock divider mask configurable
->  * Added clk_div_mask to RZ/G2L of_data.
->  * Added clk_div_mask to RZ/G3L of_data.
->  * Restored actual_clk calculation in renesas_sdhi_set_clock().
->  * Updated renesas_sdhi_set_clock() for RZ/G3L HS400 clock handling as
->    it supports only single clk divider value and other values are
->    prohibited.
->  * Updated commit description for patch#12.
-> v19->v20:
->  * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
->    the code after assignment of variable mmd, this ensures assigning
->    the default values for non-DT platforms and DT platforms with no
->    device data.
->  * Replaced the check mmd->max_divider with mmc_data->max_divider and
->    moved the code after assignment of variable mmd, this ensures
->    assigning the default values for non-DT platforms and DT platforms wit=
-h
->    no device data.
->  * Fixed the ordering of resets in suspend/resume paths.
->  * Added bitfield.h header file.
->  * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
->    case and the 32-bit register write.
->  * Updated resume() with scoped PM runtime call.
->  * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
->    register.
-> v18->v19:
->  * Updated commit description for patch#1,#2,#6,#8,#11 and #12
->  * Updated clock and reset description with AXI master and AXI slave
->  * Added else condition for reset and reset-names.
->  * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
->  * Retained the tag got binding patch as the changes are trivial.
->  * Fixed the clk_mask for non-DT platforms.
->  * Fixed max-divider setting for non-DT platforms.
->  * Replaced the magic number '9' with ilog2 function in
->    renesas_sdhi_clk_enable().
->  * Dropped divider variable from struct renesas_sdhi.
->  * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
->    and non HS400 mode(uses 1/2 internal divider).
->  * Updated handling for clk divider.
->  * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
->    hardware tuning delays
->  * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
->  * Updated suspend/resume with scoped runtime calls in suspend.
->  * Fixed extra space in HS400MODE2 comment block.
->  * Updated the comment HS400mode2->HS400MODE2.
->  * Dropped the updation of clk handling as it is taken care in
->    previous patches.
->  * HS400ES support is enabled based on of_data.
->  * Fixed the space in HS400ES comment block.
->=20
-> v17->v18:
->  * Collected tag
->  * Merged patch #4 and #5 and updated commit description
->  * Annotated the empty sentinel entries in the OF match tables with a
->    "Sentinel." comment for clarity.
->  * Retained the tag as it is a trivial cleanup.
->  * New patches drop struct renesas_sdhi_hw_info, instead using
->    renesas_sdhi_of_data and tmio_mmc_data.
->  * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
->    will send later.
-> v1->v17:
->  * Collected tag for binding patch.
->  * Resending the series as there is an issue with patch threading from
->    patch #14.
->=20
-> [1]
-> Logs:
-> HS200:(With internal divider)
-> root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    9 (mmc HS200)
-> signal voltage: 1 (1.80 V)
-> driver type:    1 (driver type A)
->=20
-> SDR104:(With internal divider)
-> root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      2 (4 bits)
-> timing spec:    6 (sd uhs SDR104)
-> signal voltage: 1 (1.80 V)
-> driver type:    0 (driver type B)
->=20
-> HS400: (Without internal divider)
-> root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    10 (mmc HS400)
-> signal voltage: 1 (1.80 V)
-> driver type:    1 (driver type A)
->=20
-> HS400 ES: (Without internal divider)
-> root@smarc-rzg3l:~# cat /proc/cmdline
-> rw rootwait earlycon root=3D/dev/mmcblk0p2 net.ifnames=3D0 root@smarc-rzg=
-3l:~# cat /sys/kernel/debug/mmc0/ios
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    10 (mmc HS400 enhanced strobe)
-> signal voltage: 1 (1.80 V)
-> driver type:    1 (driver type A)
->=20
-> s2ram:
-> root@smarc-rzg3l:~# echo mem > /sys/power/state
-> [   72.838238] PM: suspend entry (deep)
-> [   72.864225] Filesystems sync: 0.021 seconds
-> [   72.875166] Freezing user space processes
-> [   72.883030] Freezing user space processes completed (elapsed 0.003 sec=
-onds)
-> [   72.890237] OOM killer disabled.
-> [   72.893612] Freezing remaining freezable tasks
-> [   72.900038] Freezing remaining freezable tasks completed (elapsed 0.00=
-1 seconds)
-> [   72.907677] printk: Suspending console(s) (use no_console_suspend to d=
-ebug)
-> NOTICE:  BL2: v2.10.5(release):2.10.5/rzg3l_1.0.1_rc2
-> NOTICE:  BL2: Built : 11:18:41, Jul 15 2026
-> INFO:    BL2: Doing platform setup
-> INFO:    Configuring TrustZone Controller
-> INFO:    Total 3 regions set.
-> INFO:    Configuring TrustZone Controller
-> INFO:    Total 1 regions set.
-> INFO:    Configuring TrustZone Controller
-> INFO:    Total 1 regions set.
-> INFO:    eMMC boot from partition 1
-> INFO:    Loading image id=3D39 at address 0x44428
-> INFO:    emmcdrv_block_len: len: 0x00001000
-> INFO:    Load dst=3D0x44428 src=3D(p:1)0x260000(4864) len=3D0x1000(8)
-> INFO:    Image id=3D39 loaded: 0x44428 - 0x45428
-> INFO:    DDR: Retention Exit (Rev. 02.05)
-> NOTICE:  BL2: SYS_LSI_MODE: 0x12051
-> NOTICE:  BL2: SYS_LSI_DEVID: 0x87d9447
-> INFO:    BL2: Skip loading image id 3
-> INFO:    BL2: Skip loading image id 5
-> NOTICE:  BL2: Booting BL31
-> INFO:    Entry point address =3D 0x44000000
-> INFO:    SPSR =3D 0x3cd
-> [   72.951851] renesas-gbeth 11c30000.ethernet eth0: Link is Down
-> [   72.955613] Disabling non-boot CPUs ...
-> [   72.957320] psci: CPU3 killed (polled 4 ms)
-> [   72.961085] psci: CPU2 killed (polled 0 ms)
-> [   72.964897] psci: CPU1 killed (polled 0 ms)
-> [   72.966874] Enabling non-boot CPUs ...
-> [   72.967144] Detected VIPT I-cache on CPU1
-> [   72.967202] GICv3: CPU1: found redistributor 100 region 0:0x0000000012=
-460000
-> [   72.967250] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
-> [   72.968284] CPU1 is up
-> [   72.968428] Detected VIPT I-cache on CPU2
-> [   72.968462] GICv3: CPU2: found redistributor 200 region 0:0x0000000012=
-480000
-> [   72.968493] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
-> [   72.969465] CPU2 is up
-> [   72.969633] Detected VIPT I-cache on CPU3
-> [   72.969673] GICv3: CPU3: found redistributor 300 region 0:0x0000000012=
-4a0000
-> [   72.969714] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
-> [   72.970760] CPU3 is up
-> [   72.989187] dwmac4: Master AXI performs fixed burst length
-> [   72.989231] renesas-gbeth 11c30000.ethernet eth0: No Safety Features s=
-upport found
-> [   72.989275] renesas-gbeth 11c30000.ethernet eth0: IEEE 1588-2008 Advan=
-ced Timestamp supported
-> [   72.990364] renesas-gbeth 11c30000.ethernet eth0: configuring for phy/=
-rgmii-id link mode
-> [   73.005175] dwmac4: Master AXI performs fixed burst length
-> [   73.005205] renesas-gbeth 11c40000.ethernet eth1: No Safety Features s=
-upport found
-> [   73.005236] renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advan=
-ced Timestamp supported
-> [   73.006314] renesas-gbeth 11c40000.ethernet eth1: configuring for phy/=
-rgmii-id link mode
-> [   73.177702] OOM killer enabled.
-> [   73.180837] Restarting tasks: Starting
-> [   73.186007] Restarting tasks: Done
-> [   73.189570] random: crng reseeded on system resumption
-> [   73.195001] PM: suspend exit
-> root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios[   75.705532] renesas-=
-gbeth 11c30000.ethernet eth0:
-> Link is Up - 1Gbps/Full - flow control rx/tx
->=20
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    10 (mmc HS400 enhanced strobe)
-> signal voltage: 1 (1.80 V)
-> driver type:    1 (driver type A)
-> root@smarc-rzg3l:~#
->=20
-> s2idle:
-> root@smarc-rzg3l:~# echo freeze > /sys/power/state
-> [   97.634564] PM: suspend entry (s2idle)
-> [   97.655343] Filesystems sync: 0.016 seconds
-> [   97.662352] Freezing user space processes
-> [   97.666531] Freezing user space processes completed (elapsed 0.004 sec=
-onds)
-> [   97.676132] OOM killer disabled.
-> [   97.679743] Freezing remaining freezable tasks
-> [   97.687107] Freezing remaining freezable tasks completed (elapsed 0.00=
-2 seconds)
-> [   97.695071] printk: Suspending console(s) (use no_console_suspend to d=
-ebug)
-> [   97.744129] renesas-gbeth 11c30000.ethernet eth0: Link is Down
-> [  100.135760] dwmac4: Master AXI performs fixed burst length [  100.1358=
-05] renesas-gbeth
-> 11c30000.ethernet eth0: No Safety Features support found [  100.135848] r=
-enesas-gbeth 11c30000.ethernet
-> eth0: IEEE 1588-2008 Advanced Timestamp supported [  100.137950] renesas-=
-gbeth 11c30000.ethernet eth0:
-> configuring for phy/rgmii-id link mode [  100.154860] dwmac4: Master AXI =
-performs fixed burst length
-> [  100.154890] renesas-gbeth 11c40000.ethernet eth1: No Safety Features s=
-upport found [  100.154919]
-> renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advanced Timestamp s=
-upported [  100.154984] renesas-
-> gbeth 11c40000.ethernet eth1: configuring for phy/rgmii-id link mode [  1=
-00.246688] OOM killer enabled.
-> [  100.249851] Restarting tasks: Starting [  100.254395] Restarting tasks=
-: Done [  100.258012] random:
-> crng reseeded on system resumption [  100.263468] PM: suspend exit root@s=
-marc-rzg3l:~# root@smarc-
-> rzg3l:~# cat /sys/kernel/debug/mmc0/ios[  102.690106] renesas-gbeth 11c30=
-000.ethernet eth0: Link is Up -
-> 1Gbps/Full - flow control rx/tx
->=20
-> clock:          150000000 Hz
-> actual clock:   150000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    10 (mmc HS400 enhanced strobe)
-> signal voltage: 1 (1.80 V)
-> driver type:    1 (driver type A)
-> root@smarc-rzg3l:~#
->=20
-> SDIO testing:
-> root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
-> clock:          100000000 Hz
-> actual clock:   100000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      2 (4 bits)
-> timing spec:    5 (sd uhs SDR50)
-> signal voltage: 1 (1.80 V)
-> driver type:    0 (driver type B)
-> root@smarc-rzg3l:~#
-> root@smarc-rzg3l:~# ping google.com
-> PING google.com (142.250.151.139): 56 data bytes
-> 64 bytes from 142.250.151.139: seq=3D0 ttl=3D112 time=3D7.679 ms
-> 64 bytes from 142.250.151.139: seq=3D1 ttl=3D112 time=3D12.283 ms ^C goog=
-le.com ping statistic packets
-> transmitted, 2 packets received, 0% packet loss round-trip min/avg/max =
-=3D 7.679/9.981/12.283 ms
->=20
-> Biju Das (14):
->   dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
->   mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
->   mmc: renesas_sdhi: Add clk_mask field to support flexible clock
->     divider widths
->   mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
->     ranges
->   mmc: renesas_sdhi: Make clock divider mask configurable
->   mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
->   mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
->   mmc: renesas_sdhi: Add optional axis/axim reset controls
->   mmc: renesas_sdhi: Add write32_hook for CTL_SD_CARD_CLK_CTL register
->     writes
->   mmc: renesas_sdhi: Add RZ/G3L SDHI support
->   mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
->   mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
->   mmc: renesas_sdhi: Add RZ/G3L HS400 support
->   mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
->=20
->  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 ++++--
->  drivers/mmc/host/renesas_sdhi.h               |  12 +-
->  drivers/mmc/host/renesas_sdhi_core.c          | 337 +++++++++++++++---
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c |  78 +++-
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  16 +-
->  drivers/mmc/host/tmio_mmc.h                   |   7 +
->  drivers/mmc/host/tmio_mmc_core.c              |  13 +-
->  include/linux/platform_data/tmio.h            |  19 +
->  8 files changed, 499 insertions(+), 91 deletions(-)
->=20
+On Wed, Aug 05, 2026 at 02:02:42PM +0200, Geert Uytterhoeven wrote:
+> Hi Tommaso,
+> 
+> On Wed, 5 Aug 2026 at 13:56, Tommaso Merciai
+> <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > On Tue, Aug 04, 2026 at 08:20:29AM +0200, Krzysztof Kozlowski wrote:
+> > > On 03/08/2026 19:19, Tommaso Merciai wrote:
+> > > > Hi Krzysztof,
+> > > > Thanks for your review.
+> > > >
+> > > > On Mon, Aug 03, 2026 at 03:32:48PM +0200, Krzysztof Kozlowski wrote:
+> > > >> On 03/08/2026 15:28, Tommaso Merciai wrote:
+> > > >>> r9a09g047e57-smarc.dts set clock-frequency for the audio_clkout output,
+> > > >>> but the binding never declared it, so dtbs_check fails:
+> > > >>>
+> > > >>>   sound@13c00000 (renesas,r9a09g047-sound): Unevaluated properties
+> > > >>>   are not allowed ('clock-frequency' was unexpected)
+> > > >>
+> > > >> Maybe the DTS is wrong, because property was rejected? Did you check
+> > > >> this? You cannot document ABI post-factum if it was rejected.
+> > > >>
+> > > >>
+> > > >>>
+> > > >>> clock-cells is fixed to 0, so only a single audio_clkout applies.
+> > > >>>
+> > > >>> Fixes: a86fd3c20218 ("ASoC: dt-bindings: sound: Add DT binding for RZ/G3E sound")
+> > > >>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > >>> ---
+> > > >>>  .../devicetree/bindings/sound/renesas,r9a09g047-sound.yaml     | 3 +++
+> > > >>>  1 file changed, 3 insertions(+)
+> > > >>>
+> > > >>> diff --git a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> > > >>> index d7fa16554698..6e2b2c93b4b7 100644
+> > > >>> --- a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> > > >>> +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> > > >>> @@ -42,6 +42,9 @@ properties:
+> > > >>>    "#clock-cells":
+> > > >>>      const: 0
+> > > >>>
+> > > >>> +  clock-frequency:
+> > > >>> +    description: for audio_clkout
+> > > >>
+> > > >> Incomplete, missing type/ref, constraints.
+> > > >
+> > > > renesas,r9a09g047-sound is handled by sound/soc/renesas/rcar/core.c [1],
+> > > > and "clock-frequency" is read by rsnd_adg_get_clkout() [2]. The same
+> > > > property is already documented for R-Car in
+> > > > Documentation/devicetree/bindings/sound/renesas,rsnd.yaml [3].
+> > >
+> > > But was the property rejected? I am repeating myself...
+> >
+> > Looking into this further, I found that you already asked to drop this
+> > property during the v5 review [1].
+> >
+> > Thanks for pointing it out.
+> >
+> > For context: the sound module contains an audio clock generator (ADG) which
+> > generates an output clock from the external audio clocks and outputs it in
+> > to the AUDIO_CLKOUT pin, that mostly supply master clock to codec.
+> >
+> > "clock-frequency" is array of the possible rates provided by
+> > AUDIO_CLKOUT to the codec master clock.
+> > Based on the playback rate it will request either 44.1kHz or 48kHz.
+> >
+> > I will drop "clock-frequency" property from r9a09g047e57-smarc.dts, where
+> > AUDIO_CLKOUT output pin is not wired.
+> >
+> > But for boards that populates AUDIO_CLKOUT we need this property,
+> > Could you suggest how to model this properly?
+> 
+> Isn't this output the single clock output of the sound module's clock
+> provider (#clocks-cells = <0>)? Hence can't the consumer driver set
+> the clock rate?
 
-Gentle Ping.
+Yes you are correct.
 
-Cheers,
-Biju
+> 
+> If the consumer driver cannot set the clock rate, but depends on a
+> fixed clock rate, it can configure this in DT using assigned-clocks
+> and assigned-clock-rates, right?
+
+The clock driven on the AUDIO_CLKOUT pin does not have a fixed rate.
+Depending on the playback rate it is a multiple of either 44.1 kHz or
+48 kHz.
+
+Below is an example from arch/arm64/boot/dts/renesas/ulcb.dtsi. There
+audio_clk_a is 22579200, a multiple of 44.1 kHz, and the audio_clk_b input
+comes from the cs2000, which is set to 24576000, a multiple of 48 kHz.
+
+The codec consuming AUDIO_CLKOUT needs 11289600 for the 44.1 kHz family
+and 12288000 for the 48 kHz one, which is what clock-frequency describes.
+
+Hence it is not a fixed rate clock.
+
+
+From arch/arm64/boot/dts/renesas/ulcb.dtsi:
+---
+&audio_clk_a {
+	clock-frequency = <22579200>;
+};
+
+cs2000: clock-controller@4f {
+	clocks = <&audio_clkout>, <&x12_clk>;
+	clock-names = "clk_in", "ref_clk";
+
+	assigned-clocks = <&cs2000>;
+	assigned-clock-rates = <24576000>;
+};
+
+ak4613: codec@10 {
+	clocks = <&rcar_sound 3>;
+};
+
+&rcar_sound {
+	pinctrl-0 = <&sound_pins>, <&sound_clk_pins>;
+	pinctrl-names = "default";
+
+	/* audio_clkout0/1/2/3 */
+	#clock-cells = <1>;
+	clock-frequency = <12288000 11289600>;
+
+	status = "okay";
+
+	/* update <audio_clk_b> to <cs2000> */
+	clocks = <&cpg CPG_MOD 1005>,
+		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+		 <&audio_clk_a>, <&cs2000>,
+		 <&audio_clk_c>,
+		 <&cpg CPG_MOD 922>;
+};
+
+
+Kind regards,
+Tommaso
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
