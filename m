@@ -1,426 +1,171 @@
-Received: from mail-ej2-f2.google.com (mail-ej2-f2.google.com [74.125.228.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013002.outbound.protection.outlook.com [52.101.83.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407D43CF026
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Aug 2026 17:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6163D75AD;
+	Wed,  5 Aug 2026 20:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.2
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785950417; cv=pass; b=jcFOcSgav94bgzWrvfjQgcENvjOAI744h6sCuVsmTP2JvzGJXu+oItt8p/q6QWxmBD1HCok/jSBLiWiHCk3gxi4x6NreTQKZp8N5Iw+mSZKsISf8uDRLg52JnELUumhCWQ9tZdUoYJ6BLiTRHUuS7xBbCM6SIVr6yZi6uaz8BBM=
+	t=1785961708; cv=fail; b=u0tIdfv6eQKElRNC8m4rjm2klMOYHuPX+vBGnamY5IqwpunPd34FO3QjW3nZNnsFCbISObSNCwANbbiGZ2bChVWKafibhNrEEMWKjEpXcTyfJgZ3StVEcAFpCm9iTae4HyYBONSAR2yLhFgSwPzFU2S0M2/azioD79xOkSiv20Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785950417; c=relaxed/simple;
-	bh=aKGwayxXZJAIgpMYypKzK/z3u4U/f9BptutZNU+jbA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCEhRG2CB8NpW+k9dPEJP/dKBKAU2Pbi6XYO69VNE3UGQyS3RPrAFNFYMi0ebV2fURIwqMTJtFRE7mzDt5IHSwkc79CNTcceiKr+tzQ1wr90EjPcMDKZoAxVcMYQXPlhlA/YFzXgd3yftvt46gPKx/p3rxZmAoVcbgavhKOj+jM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8Oet//Y; arc=pass smtp.client-ip=74.125.228.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785961708; c=relaxed/simple;
+	bh=5I7np4tFED+usBTJsvjrpJ04IVZAyJwtomF4ytsnbQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=F7EL+ga1KMZkpaac5ho4AUciCi8UjsbNL785xc5hr+Vk+wevuvX3Vc5gJ375t4T2AYbYYcm/8vYTDxJjXlSZLXXJKvQ6FZ5jLl4ur51HzWjWwmDlKyzGo2/0EqXTrbdnBqusurUL8+d5Xcq85/G2P9cWtj6oyMt1oXMABiQwkXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=NqDoZOrs; arc=fail smtp.client-ip=52.101.83.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8Oet//Y"
-Received: by mail-ej2-f2.google.com with SMTP id a640c23a62f3a-c15f8dd6f18so71950366b.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Aug 2026 10:20:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785950413; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Lh34mcE5WUkHQag+3+I+9hPpD+tMyGozjo5TLea57+ch6335EJ1xGmcee0W7wiRVi4
-         aKfJd7Acy1PpvsnQNSYIBsQAPANGHlB07l8XsKMWZ3nhbSIeikbEX6MvsvyQQO7EHgj7
-         TdYnMZHDLwVkRrlHeBV7+vjEYIiN3vKvcMKFamuE7kAqizdQpkd9KtdG1gDrO3PudQzo
-         VQQPWSbuOZxTMz2K4+nwE1hlpgz1KOZ/hYnMsBYAxYyRKfA4jb/IfRzUjbdT2DL218YN
-         KKOoBW/mV8S3bFBxr9pknnCMoVoyb/kDVeKk15B+Si+Z0q34dJDNRptJ7RTaBJ2wRuoL
-         RQMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
-        fh=5fFuxBVaXT+9Fk1P1vpPym4N4cvymAYXDLpxHMxA0lc=;
-        b=nKxgZL7ZPRbthvy3nhQhHRvB22MaRA2ucLgUM+lFBF176SeY1tDO4puCWCatqltTUc
-         lU7aOCrzSGKIpYR9Bx2SSbGBy0ATZ+qLpyPseV+XO3oxsGrQZ2PV+XQyCj/CS7ndTZ7/
-         aI23CWjBLzw0kzFeHNwyS+HzYkhEtsQ02hcnSU9C+rOfrTS6Cd1itY2hDrFmYbBPNhKT
-         H88tTIcttdu8FHx9uG11nBsMxEv+ZhIq+EPsElKINLOcHkzc1EE2LeMf1uFRemfmSezG
-         VjDCc0wpxy0X7O5SbYTSo+TgGjqZtDAxYEGUdFZIiaRZ4faF7qq7MX7iHprCVSj9QS9l
-         JifQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785950413; x=1786555213; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
-        b=C8Oet//Y1gY+HJznZtY2c6htUddXGZAUVXXAUfyvQ/UNVePODdfCn3oV+fk7Y0MdJB
-         EdbkEIVOvkC+LdyJ5tNYA/VkFkFZ5N4f3Z8xJ7Ab5HBXvg55EEZZZ5xCq9CPANsTPU8H
-         PRTYzH2VLFz5dvPdyJMFPYNeWVh88GE+EBLCTBMmBGMXJDSBbQcL9M6h7/SLyxLPPcF6
-         wyx0PRvULKOJwC1WvozTySxvOlYQZKTTSApNOGHNX5JA9PbGUFLztj8au3mGQYiv+1RX
-         Mij4wv0c9EjraSi6+wUEv+wop6EQ01Sxp5pysPUNO6VFTkIHVbFeBcU43YDU0oTP01tj
-         F1PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785950413; x=1786555213;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Ed7d3IIv5/1/YcqJUTH/1nOy3fvwpEdX0Td4yCp6N7Q=;
-        b=lJhMaRXuiBV78F4VLfXum6npB8pqiRSQTM36xP+sPj+3MHhYBk9njNx7QQe1WZ3rI4
-         oY2hL8EpLlSMsc1q/PA7r0Vd43kRi3M+Ky9LbG1XzAeJRq9LzMcBLbbX/bwAPV3Kij+X
-         eyqTfMQZ+t/CLjfOZcizaOpaRvSgppXAbfJT/35WsEO5qBKoqVHhF2TSJaTnIUfvcV0I
-         5auD9cR++ryXbV+xwYhl3hSU+bq+XqfW6CAi9ytDhfvgQx7bgTjsJ1+abvbWOFq628SP
-         GeEVqbIDwxcVA9t9snUnd+PHPxmamD8CtUEJGKHMma9TjOfLEsZ3VVbrQBqKlSU0J8eY
-         GRzA==
-X-Forwarded-Encrypted: i=1; AHgh+RpSV0dprkINN2xfD6jyqRWO7fi2WMd5PgoDKCPY1UK0cNFnesTfEPczFnAKX4HNqyD06Aj6qUnTJljUqfzbu5JIpA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHKBLBlFMDQJxrLp8eigv6YAq9oA1iaiT7AZqjWhxe7OrSI9kY
-	lckJLNJWA1EnZElzF63n+J3AUCIk8NCdHU9o8EQ/ZCScG953brh/HgjavJ9QFMRr87nQJ59lVPp
-	t3VNGkfmxxiX7NmVOjJfmySmRDU1LCJg=
-X-Gm-Gg: AR+sD13rI53qf3kxngwvvlnz5qp0uKw9KYj4OEbtUScsz3ilLMubGPZS/f4SCAbE6Ad
-	CVdatlU4e8lXLjR9V9rDHGElKwKLWh4b9WxC6LlIoUaZS7jmMrjryyafOvHt1jpoLVjjvJdpZqE
-	J34tjuMR5XJhZT7hLMU83CLwLRRxZSxIoIeGq7hgLgDZK7rDSekU9EKcGgesu6e7otqa/6AUUZC
-	6JvJS06xLAkj2UhA0PISQH6uMgoF0/TSwKszasIFeN0VWU9W4UEVJRiQ8fFb4x0z/nXzW9GoCya
-	RDc0zwr7ChQu1pgx+NAgOPhCeb7MGFg2WOi/aReupIi1t01QG3p0PMjK4TQHCbjpq2oVoxI=
-X-Received: by 2002:a17:906:7315:b0:c16:b87:de64 with SMTP id
- a640c23a62f3a-c2039c22d1fmr433223466b.15.1785950412968; Wed, 05 Aug 2026
- 10:20:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="NqDoZOrs"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wpLsm8RvyFOQ0uPS3SrmGA+L62kzC4yjBmebrkp1VPLNmT80qdmMaKW/1H0WbePMbsJdJ9qBzE0+I7beJBjIA+fEX4nIXjzsExA6Oo6RDAgzRjT4cyy2tTP8NLqLZfxOEBqrhUCS46MlTwszcn4ZD4WJDlk8RrJCDeeexH3ynxrkqPzvz8vL/z1M2QAwhPc0+YDPAiyL8PeiKeL9cFXsDgpR43rUGZoVfjxClPvpU1OXuqpfMi1of+1ZIk2j+py2zcpPWkSKw/XSZNN2FW3GskKVNW7rAfPXI7Z7SbZ0RBefWvwOhZTkolKtKDcXZPEc/NPU2Kb9LOZ9F84gMvXOWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=stUgiC85gqrbUb8lQasfeGNZ+RUvTLd6O99g0AJOsM4=;
+ b=p8mxqr9+XL7RQCSixXnrBlNDGf3zMKpaqEUBmumVBdamqIv6K7MNSLcqNr7UMc7SkeRy95bTeda28lfp/uVHblZjSg6mr8Z7j9JyVRw1XvDcRishGQbplfCEPCLuwdenNkn0rgWMWwqGlGM/pxtGPJ0z5uf2Yb1bg2bJHGGuWMQBv0AHKnVUXZmejphjcaQTjVxYeTxYX2od0Ev9CTxHOf86HogIwsLouE5wAGnQiPQQruEuQV4kgJGzxs90bBhm2zPOwsHUhSTXARDBvzY72QC8At9wq4wmTiNoznblY/DSQTbUpCLgerhNF74YBAY3hZjBPY3jRl91j8GVpak73Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=stUgiC85gqrbUb8lQasfeGNZ+RUvTLd6O99g0AJOsM4=;
+ b=NqDoZOrsT7CVkFN0uIdghR9bbXGidC3Z5VLqK+hcupExJ1lHKHdO0HnSa9HKXI5bYm6iStNmH5m2CWPNQYNemFr50xJih4YbBQkEJSsOPTxqXFMJFtqsjCq2MdvNKVmIG1NSHVdwD/u7kzfkn0J92WuoJZi/jdNhiOm7Op7Gb1/adsuzamSYhyi04G8pb557cu6o/Eb9QjGjZ1HRfB79bT54kAb/vRnGeCBHeavhG79asoWmJAAD4ttj136WEknLYsrxxJd7hw5xUxKDfyRRwA2Uop2M+zf+xR4gzVdrTxJDNq6vWkr0n35oY102MsIxPVl3KSwGwq+P2RiPgAPHWg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by VI1PR04MB10052.eurprd04.prod.outlook.com (2603:10a6:800:1db::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
+ 2026 20:28:23 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
+ 20:28:23 +0000
+Date: Wed, 5 Aug 2026 16:28:15 -0400
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	claudiu.beznea.uj@bp.renesas.com, biju.das.jz@bp.renesas.com,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: renesas: Don't register devices when ENTDAA times
+ out
+Message-ID: <anOc3-M-ItT4mcPg@lizhi-Precision-Tower-5810>
+References: <20260731070150.2519825-1-tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260731070150.2519825-1-tommaso.merciai.xr@bp.renesas.com>
+X-ClientProxiedBy: PH7P220CA0146.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:327::32) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260801142244.679437-2-coiaprant@gmail.com> <20260801142244.679437-6-coiaprant@gmail.com>
- <20260805-stirring-wondrous-mule-faf37d@quoll>
-In-Reply-To: <20260805-stirring-wondrous-mule-faf37d@quoll>
-From: Coia Prant <coiaprant@gmail.com>
-Date: Thu, 6 Aug 2026 01:20:09 +0800
-X-Gm-Features: AUfX_mx8UFnbdlOwigeC8DoFtEekRCvwbvHBwVKJJj31ufe5iJU09i8ffEdEzOM
-Message-ID: <CALj3r0hbp-zS7Sv-6T3uBOCq2ZO4XZHKvkD4dTZ3gXRS=90JUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/10] dt-bindings: net: pcs: add rockchip,rk3568-xpcs binding
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Romain Gantois <romain.gantois@bootlin.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Russell King <linux@armlinux.org.uk>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI1PR04MB10052:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8409ee3-0dbd-4825-b10c-08def33018b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|19092799006|376014|366016|1800799024|10067099003|11063799006|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	O2cMHr4p1ITWXqof9lV4VO3C3/4fMBcxQXCuO+jDShRDZrypQJdtfW9yJauXuK8r/BAuUu+k8l+SeAMWbXzAAVGlxdgTXx73mXWKykZX5plHGTSxOW6Xe4KNWuPcQ3BQFe7uYj7STXVVZEI6fp3cPcsHl2HerzYI/iL2jwjj1o8kxokvBQ8yWpOiNsRYgAlShc0ttV8mpK2ugbooMjm8nHPohV9HpD/a6IRndbcF+U4EQ07fV2/TQV7nqgBrCLOqqURolnWukGGxzdzoFUjYZxGe4914o79Lmv5ppnAWaMf7rtkHhjaoBj3b7REueDtOJzF2etT/1HSWrHQohdliqjkp6MdMcYxppp/4Glr9RCeTqyAvyyrGan29tBiQW+biGDLplxjEScmVx+RGOdgzrzo1ogTnYHc/2iYfK5hxIl/F0r2ACJ7ZSdlYuUPqGAsa/s6GI4zo7Aon9UnCfSE04WP/X/Kfq1gApxa8Y46X9SmeRgGPszSl+esWmZkLKZ/a7GbbnHZy9wK+QwS/DHUDf8bTWrMsBLWlirlmNGlDlyZbUpgCZTBqzExwTYtaxGaG28egfPu7xuZb37gV8KUmma/vXvULZ/TJGGnNWEZ/+Hvt63shl/qmxBiBxbIMbwdX8CjMnHhUNqAEaovPnSyPfipXTvzNQp8a+niugHxxaIE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(19092799006)(376014)(366016)(1800799024)(10067099003)(11063799006)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vzMCpZcZ4/ODUXmMIGvjz+0KHFIVpMUBuANVxh7tykRQCILbPntPRXbn41pR?=
+ =?us-ascii?Q?BcIARK9zAzFqX38m4FQL4GEcPcDFJGNvgSU3v+8zW0na15bn24sZ0htEDRkD?=
+ =?us-ascii?Q?1lu0REyaRA4Lf+gZxsdmMvAvmuO49n9w7MKYZR0z5vOWuXSckVMQc6+byAS8?=
+ =?us-ascii?Q?Ym8RgvNSHhzZxbqrVzbJKXtIBnVkPOXf3hQTqSXbNx6Q2O3iEaZdCtWIeOyn?=
+ =?us-ascii?Q?i1YYCMdMNpZPVfkZ0XoPCTRq2iLnocEzMa2c23DQY9QsbVv4UQRIngIvJ10t?=
+ =?us-ascii?Q?0BK6lvOw6fnCquKXpHQ51Wo+++PDcDqbkbM4NuhkRPaIK/Jn0nKVXfzWCGce?=
+ =?us-ascii?Q?LCdFOThDKiLZujQp0fyS5eEWYHh0wjP7e23vIoclyZCFVFCIy0OTfGsRWpC+?=
+ =?us-ascii?Q?+9bbQG7pBqqewz2EmjvpteUyO9wojT8qUUsS+KoHddXlDm6Fv75WdvMw3PAG?=
+ =?us-ascii?Q?pZZ/MeZRw1XqSOp0hy67pSKSukI9Lbt3nD16ZxeOyMlV6g5dBlqx/ZMu9zuS?=
+ =?us-ascii?Q?/Fnjmaue58JoyJGvCg13LCd9BImTIHr6+h1s67fgsHvDbhoM0MzbEGYxj+XL?=
+ =?us-ascii?Q?DXmQbxs8Fx/Tpha4KhLdtASflZYOpn2ZXKbeuw/5Ceo4Acds4evAY8LJYOw+?=
+ =?us-ascii?Q?dsXQSVVjcSfjlg3B0v44woZROhreOduQoP4SO2Ire9WVbXXo4mh+Q8pI3KHQ?=
+ =?us-ascii?Q?W+hawmdE/7htXoXmOU6b9trwk0NniSnNMRRZN5wajWXlTPhNY+ME77KzKbNv?=
+ =?us-ascii?Q?uvGO5MEUedw4YLT6rsZ2uwTcHw399tbb2W/U3oZ6pmSiE6o2ZYNsbH588z46?=
+ =?us-ascii?Q?bWRc92IW7949QyKaJv4Tm6TxdHCOupmlwDkKfsbWjaXWWHvMaVKFNo0YmO/f?=
+ =?us-ascii?Q?zduUvzEFsP6z24W9t9nllncvlUIgSTg/2Mdzd8s2+tzlf9i5HZOr61D5j2by?=
+ =?us-ascii?Q?Pq7I3uMTjGSr6k9fefPtWoYt6I3wIg054q8DWwDZnUp+gyIR2FDVsOAPKavy?=
+ =?us-ascii?Q?vY5ds7IJYt+MgGukTdUcfsxo5lHGAzdxDalD/gvCY9qQ/NacRmTMXA/Vz4BA?=
+ =?us-ascii?Q?7G5nqHeq2vhrMktRHIBW/CT/NmgG2Pd7yKOHd3vgArm+qdHb4aiVk0VFL1tr?=
+ =?us-ascii?Q?NuoNTAV/uSTso+rg0lMT9yado4NgOjBri7NRnbiono4h+0EvmfC9NHbVl4oQ?=
+ =?us-ascii?Q?TtrBw4jr8DsYV/DHdqWNEvAzw66QGzSsZ9/f3P40jljkWTbjw/9ifwZuN8SO?=
+ =?us-ascii?Q?U1+fBBplDz2JLSET8ZcM5PTF96OAS6UX2ozEi6+gfiUOYgXQDgIBDJ7TFkfR?=
+ =?us-ascii?Q?WM84H5EePZ1twPI0dvDrIp8mvY1hXVHNJexb0d/Jkqx+AbiGLVPQb3p/rF4r?=
+ =?us-ascii?Q?Qed/h1EedWZy67typ9tZcqx8gGakrAFKyRSB2M6pEbCrfWi5Qm7wPBh1CK3p?=
+ =?us-ascii?Q?B7NejjzJdZ2kI6Kkn4KNjEMH0Xq7wkyhXhDTtnYEysKXtl3Mq79StUG5F4qv?=
+ =?us-ascii?Q?lF4k74AqHFGEnY0ZzvrXifjt4uoD5kVQ8IeHmXHB5YYBvc9WAmgTaxfoQmdU?=
+ =?us-ascii?Q?4NirgzJ3YhwYHbTJ/+GUcMUMuertIVL95JPppOUorczwswSv6GkurDRl4iCf?=
+ =?us-ascii?Q?zjuQYdGQJnulVAjxKpH1vnY1Uay73T+563VYmmXIDnRF62ukRs5W8oqVsUS9?=
+ =?us-ascii?Q?qlpceStIYMuncZqfbBbtgVPpSubF8fEScEDzQ7OApUJNUQNFwCHbM1EeR50B?=
+ =?us-ascii?Q?m+roa635+Jwy5nuwozIrDVGGAJvQY45DYOkkEFpEB6HCv09SnImS?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8409ee3-0dbd-4825-b10c-08def33018b0
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 20:28:23.3264
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mq2H4QF2QOIfcRYyt1wU3T++kBDYbU7ZZ6kMpv25i6Ik+sQjkjUjW+c77u4JjO0G6X7f2n4zioBPlmd19qb/jkX51+BPOMjIjsThoJTEYvJGqtCE6zCpaYgUsrw2wOgp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10052
 
-Hi Krzysztof,
+On Fri, Jul 31, 2026 at 09:01:46AM +0200, Tommaso Merciai wrote:
+> renesas_i3c_daa() derives the number of newly assigned dynamic addresses
+> from cmd->rx_count, which the response ISR sets to the number of address
+> slots ENTDAA left unassigned. It starts out as zero, which already means
+> "every address was assigned", so a timed out transfer leaves that value
+> in place and it gets used as a result.
+>
+> On a bus with no target connected the ENTDAA times out and the driver
+> registers RENESAS_I3C_MAX_DEVS devices that are not there, each costing
+> the core two seconds on a GETPID that can only time out:
+>
+>   i3c i3c-0: Failed to add I3C device at address 9, error -110
+>   ...
+>   i3c i3c-0: Failed to add I3C device at address 16, error -110
+>
+> Start from maxdevs instead: no address is assigned before ENTDAA runs,
+> and the existing rx_count >= maxdevs check then reports an empty bus.
+>
+> Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
 
-Thanks for the detailed review. Here's my response to each point:
+Does https://lore.kernel.org/linux-i3c/alUZ_N9VdxkhcpqM@lizhi-Precision-Tower-5810/
 
-> > +title: Rockchip RK3568 Synopsys DesignWare Ethernet PCS
-> > +
-> > +maintainers:
-> > +  - Coia Prant <coiaprant@gmail.com>
-> > +
-> > +description: |
-> > +  Rockchip RK3568 SoC integrates a Synopsys DesignWare Ethernet Physic=
-al
-> > +  Coding Sublayer (XPCS).
-> > +  The PCS provides an interface between the Media Access Control (MAC)
-> > +  and the Physical Medium Attachment (PMA) sublayer through a Media
-> > +  Independent Interface (GMII).
-> > +
-> > +  The XPCS is accessed over the APB3 bus and internally connected to a
-> > +  Naneng Combo SerDes PHY.
-> > +  It supports 1000BASE-X, SGMII and QSGMII modes.
-> > +
-> > +  The block contains four MII ports (pcs-mii@0..3) that can be
-> > +  individually enabled and routed to one of the Ethernet GMAC controll=
-ers
-> > +  via the pcs-handle property in the MAC device tree node.
+fix the same problem?
 
-1. Commit message: I'll drop the redundant description paragraph and keep
-   only the essential information.
+Frank
 
-2. Subject: I'll drop the redundant "binding" word.
-
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3568-xpcs
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-
-3. reg order: I'll move reg to the second property (after compatible).
-
-4. Quotes: I'll use consistent quoting style throughout.
-
-> +  reg:
-> +    description: |
-> +      Base address and size of the XPCS register space mapped over the
-> +      APB3 bus.
-
-5. reg description: I'll drop it as redundant.
-
-> +  clocks:
-> +    description: |
-> +      Clock sources for the XPCS:
-> +      - csr: APB3 bus interface clock (clk_csr_i), required for register
-> +        access.
-> +      - eee: EEE clock (clk_eee_i), required for Energy Efficient
-> +        Ethernet (EEE) operation.
-> +    minItems: 2
-> +    maxItems: 2
-
-6. clocks: I'll change to items with descriptions instead of min/maxItems.
-
-> +  clock-names:
-> +    items:
-> +      - const: csr
-> +      - const: eee
-> +
-> +  phys:
-> +    description: |
-
-7. description formatting: I'll remove unnecessary '|' where not needed.
-
-> +  power-domains:
-> +    description: |
-> +      Power domain for the XPCS.
-
-8. power-domains description: I'll drop the redundant part.
-
-> +patternProperties:
-> +  "^pcs-mii@[0-3]$":
-
-9. pcs-mii naming: I used "pcs-mii" because the Rockchip TRM refers to
-   these as "MII ports" and they are functionally PCS instances. I do see
-   a similar pattern in the Renesas RZN1 MIIC binding (renesas,rzn1-miic.ya=
-ml),
-   which uses "mii-conv@[0-5]$" for its ports. So the idea of having
-   child nodes per port is not new.
-
-   If you prefer a different name (e.g., "port@0"-"port@3" or "pcs@0"-"pcs@=
-3"),
-   I'm happy to change it. Please let me know what naming you'd recommend.
-
-> +    properties:
-> +      reg:
-> +        minimum: 0
-> +        maximum: 3
-
-10. reg constraints: I'll fix the min/max constraint to use items (or drop
-    it since the node name regex already enforces the range).
-
-> +      status: true
-
-11. status property: I'll remove it, as it's a generic property and
-    doesn't need explicit declaration.
-
-Thanks,
-Coia
-
-Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2026=E5=B9=B48=E6=9C=885=E6=
-=97=A5=E5=91=A8=E4=B8=89 15:29=E5=86=99=E9=81=93=EF=BC=9A
+>  drivers/i3c/master/renesas-i3c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> On Sat, Aug 01, 2026 at 10:22:28PM +0800, Coia Prant wrote:
-> > Add device tree binding documentation for the Synopsys DesignWare
-> > XPCS integrated on the Rockchip RK3568 SoC.
-> >
-> > The XPCS is accessed over the APB3 bus and internally connected to
-> > a Naneng Combo SerDes PHY.  It supports 1000BASE-X, SGMII, and
-> > QSGMII modes, with four MII ports.
-> >
-> > The binding describes:
-> > - Required properties: compatible, reg, clocks, clock-names
-> > - Optional properties: phys, phy-names, power-domains
-> > - pcs-mii sub-nodes for each MII port (reg 0..3)
+> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+> index 2b501f31e874..f4d9608978a9 100644
+> --- a/drivers/i3c/master/renesas-i3c.c
+> +++ b/drivers/i3c/master/renesas-i3c.c
+> @@ -685,7 +685,7 @@ static int renesas_i3c_daa(struct i3c_master_controller *m)
 >
-> Irrelevant paragraph. We can read the diff. Drop.
+>  	init_completion(&xfer->comp);
+>  	cmd = xfer->cmds;
+> -	cmd->rx_count = 0;
+> +	cmd->rx_count = i3c->maxdevs;
 >
-> A nit, subject: drop second/last, redundant "binding". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree=
-/bindings/submitting-patches.rst#L23
+>  	PM_RUNTIME_ACQUIRE_IF_ENABLED_AUTOSUSPEND(i3c->dev, pm);
+>  	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
+> --
+> 2.54.0
 >
-> >
-> > Signed-off-by: Coia Prant <coiaprant@gmail.com>
-> > ---
-> >  .../bindings/net/pcs/rockchip-dwxpcs.yaml     | 127 ++++++++++++++++++
-> >  1 file changed, 127 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/net/pcs/rockchip-=
-dwxpcs.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.=
-yaml b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-> > new file mode 100644
-> > index 0000000000000..3e3f3a388d822
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-> > @@ -0,0 +1,127 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/pcs/rockchip-dwxpcs.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip RK3568 Synopsys DesignWare Ethernet PCS
-> > +
-> > +maintainers:
-> > +  - Coia Prant <coiaprant@gmail.com>
-> > +
-> > +description: |
-> > +  Rockchip RK3568 SoC integrates a Synopsys DesignWare Ethernet Physic=
-al
-> > +  Coding Sublayer (XPCS).
-> > +  The PCS provides an interface between the Media Access Control (MAC)
-> > +  and the Physical Medium Attachment (PMA) sublayer through a Media
-> > +  Independent Interface (GMII).
-> > +
-> > +  The XPCS is accessed over the APB3 bus and internally connected to a
-> > +  Naneng Combo SerDes PHY.
-> > +  It supports 1000BASE-X, SGMII and QSGMII modes.
-> > +
-> > +  The block contains four MII ports (pcs-mii@0..3) that can be
-> > +  individually enabled and routed to one of the Ethernet GMAC controll=
-ers
-> > +  via the pcs-handle property in the MAC device tree node.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: rockchip,rk3568-xpcs
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
->
-> reg is always the second property.
->
-> Also, use consistent style of quotes.
->
-> > +
-> > +  reg:
-> > +    description: |
-> > +      Base address and size of the XPCS register space mapped over the
-> > +      APB3 bus.
->
-> Drop description, redundant.
->
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    description: |
-> > +      Clock sources for the XPCS:
-> > +      - csr: APB3 bus interface clock (clk_csr_i), required for regist=
-er
-> > +        access.
-> > +      - eee: EEE clock (clk_eee_i), required for Energy Efficient
-> > +        Ethernet (EEE) operation.
-> > +    minItems: 2
-> > +    maxItems: 2
->
-> No, instead list items with description.
->
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: csr
-> > +      - const: eee
-> > +
-> > +  phys:
-> > +    description: |
->
-> Do not need '|' unless you need to preserve formatting.
->
-> > +      The phandle of SerDes PHY (Naneng Combo PHY) that provides
-> > +      the serial lanes for 1000BASE-X / SGMII / QSGMII.
-> > +      The SerDes must be powered on and initialised before any XPCS
-> > +      register access.
-> > +    maxItems: 1
-> > +
-> > +  phy-names:
-> > +    const: serdes
-> > +
-> > +  power-domains:
-> > +    description: |
-> > +      Power domain for the XPCS.
->
-> Drop sentence and |
->
-> > +      On RK3568 this is typically the PD_PIPE power domain, which also
-> > +      supplies the SerDes PHY.
-> > +    maxItems: 1
-> > +
-> > +patternProperties:
-> > +  "^pcs-mii@[0-3]$":
->
-> Why `git grep pcs-mii@` gives me no results? Are you doing this
-> similarly to existing devices or is this quite different device than
-> every other hardware?
->
-> > +    type: object
-> > +    description: |
->
-> Same here
->
-> > +      One of the four MII ports of the XPCS.
-> > +      The port number is specified by the reg property (0..3).
->
-> Drop sentence, redundant. Schema tells that.
->
-> > +      The port is linked to an Ethernet MAC controller via the
-> > +      pcs-handle property in the MAC's device tree node.
-> > +
-> > +    properties:
-> > +      reg:
-> > +        minimum: 0
-> > +        maximum: 3
-> > +        description: |
->
-> As well
->
-> > +          MII port number of PCS.
-> > +
-> > +      status: true
->
-> Nope, do you see anywhere code like this?
->
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +    additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/rk3568-cru.h>
-> > +    #include <dt-bindings/power/rk3568-power.h>
-> > +    #include <dt-bindings/phy/phy.h>
-> > +
-> > +    pcs@fda00000 {
-> > +      compatible =3D "rockchip,rk3568-xpcs";
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <0>;
-> > +      reg =3D <0xfda00000 0x200000>;
-> > +      clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
-> > +      clock-names =3D "csr", "eee";
-> > +      phys =3D <&combphy2 PHY_TYPE_SGMII>;
-> > +      phy-names =3D "serdes";
-> > +      power-domains =3D <&power RK3568_PD_PIPE>;
-> > +
-> > +      pcs-mii@0 {
-> > +        reg =3D <0>;
-> > +      };
-> > +    };
-> > --
-> > 2.47.3
-> >
