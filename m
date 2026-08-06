@@ -1,60 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0433CAA2F;
-	Wed,  5 Aug 2026 23:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECF233DEF7;
+	Thu,  6 Aug 2026 03:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785972610; cv=none; b=D5QIrWUC+WbYvx1dgf2AAkVLWdfmwHePItfjgCnDVofxM8VOl12QnPbhrf+FmFFK9GDhCa2wQaSZxRGOxYvpf76B3TMnqno5N4O3OrvwwDAWu07l38A5n9Qey5O1B7J7eweGsRngusCIsni4lrHgcHKswU9+2LvWku1FBTUPZ0U=
+	t=1785987730; cv=none; b=MXNRNpM5y6sOOb+vsrYKofmPwFbGuVPM8FZKUHhO90bMs7x8Mx610dakat9x1k2nc2NLeopyiKmwXJHQlw7spXddGsV1RWwc34ntjrt2MtZHnHIXFx8iOsdkqx3KN7C7PtUpPwhHMjWn6FEgfiv4W85uvoa3t/7XDQr9qFft994=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785972610; c=relaxed/simple;
-	bh=0SifzQTHOOehF4S/kzTpYZvq7Zhk6Cz7LbL2xIBuE30=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ckeVQ4k9IID9x41D6ap0onOkhZLZ/6QZzr74Tyox6P/ICrYXZn3cRVmLbaWwxGciRJJs5h7eP5ZX0p17rko2pFmDFj7rzGurwBW5mSxYD1uxulPScGjOcFPieCH53469MlLaQgEg8GUg0tY6f2jmRgA+heYT8U6/H+ckn/tThFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jei+ibwU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785987730; c=relaxed/simple;
+	bh=7voE2p0GTZdinhQpsehaZGzrFZydYdAiqblkzWe2HnU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SZ/hb0ytTkXfjX/BF8/4sDiCI6kB/lvQcAX/TOYYdON4IeZadgC1GbtH0hw/YQKwsa8ZFCGrqKpXGOgZw5WWEsE79JLKZLkheUCeK1L8GyBFeKdXiQ67dqEY/jlv/ivRq6Y1H5inNoQQoXH/6eq+t2YyaFaMQBwKi+ILLuRu8aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=dt32KFLZ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=A67Gh8xb; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jei+ibwU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB12B1F000E9;
-	Wed,  5 Aug 2026 23:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785972609;
-	bh=0SifzQTHOOehF4S/kzTpYZvq7Zhk6Cz7LbL2xIBuE30=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=jei+ibwUbxw43WhI0yNZT5k6oVJ7NyUtIuDuC9d3ch99ebHyW2ELUEV5KP6UOP1qp
-	 oRqTEWV/tfII8hVvdsWsuq+WwzauCHsIeiPrvIBBMcNH+q+bgvwEHJwyBSCY7Q+vnt
-	 q8pvvfLEghXn+PIZCb/iayX8SwekBM0dP8EGP6VQ2/U3xfrh9w5tFQB3rxFVSF/eyZ
-	 YufwGJU5cvQd2wsgzh5FKftaLlOvpqyHUkTJgf6oDtWW/k4y1sV2L8EfzXxdJQGTNZ
-	 rldh21w7rRPFGUbhTYQ4CnME4v/QHK7FrHoAiPme8kdZ+iiRAUkTqTQDKilAi2y51Z
-	 gdXgYZE8kWT0A==
-Date: Wed, 5 Aug 2026 16:30:08 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund@ragnatech.se>
-Cc: xuanqiang.luo@linux.dev, linux-renesas-soc@vger.kernel.org,
- netdev@vger.kernel.org, paul@pbarker.dev, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- richardcochran@gmail.com, masaru.nagai.vx@renesas.com,
- sergei.shtylyov@cogentembedded.com, luoxuanqiang@kylinos.cn,
- stable@vger.kernel.org
-Subject: Re: [PATCH net v2] net: ravb: fix use-after-free in
- ravb_get_ts_info
-Message-ID: <20260805163008.5ce3ec9b@kernel.org>
-In-Reply-To: <20260805083652.GE346309@ragnatech.se>
-References: <20260802090750.116215-1-xuanqiang.luo@linux.dev>
-	<20260805010620.4093075-1-kuba@kernel.org>
-	<20260805083652.GE346309@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="dt32KFLZ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="A67Gh8xb"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hFtPm5kp8z8v12;
+	Thu, 06 Aug 2026 05:42:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785987724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=60Wx4RH2DcNw+gmwLmaL7VBzhkcqR8QF2SDd5x9NEhw=;
+	b=dt32KFLZjqZF6ckC6UBwUS9d+/e1xL8JAIhu/wwBAzhpBsj9KvtXr6xUJkhoNYPXzXceVq
+	JNKEvDhsPWj+91/eSoQ4TgbT1nDY3oQzXll/5bv/XXWdx1/RmBlmoQiL33PsVndlQfuors
+	G+u1TA1b2SDWLkCQVKicVWgs4vs4VPpaEj+acIfi0OK/D6PN4DmnbifLfNnaBti0O9ogcN
+	6BzRfU4g4ZVTAHarF4v4q3DP+hKGyNkrVuL7zSQnOSwiurRgYa+Uigv4Oxn/TzLtjjAVxe
+	NgUZRK44bHrCtuLlk6lP0jjmqcFfjSvmMP4P0S04iQypYo+Ypj/Nnw/UOa+r4Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=A67Gh8xb;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <52e2964c-8b26-4312-a935-6455a7ad4750@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1785987723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=60Wx4RH2DcNw+gmwLmaL7VBzhkcqR8QF2SDd5x9NEhw=;
+	b=A67Gh8xb7edtDNia1m11PzmcokrUNsptre3oQsNcfJEcCRLqZ9mQBiHHEgtsOCVK+ZKM2z
+	EgqBO0vgr2W6L9YVydqQRe1FwuKkiHRUm1ttBlFKrZICFt4JoOmEv/jX83BTvrWiX12CST
+	9/widq05XFbMIyRtP6DiZ/TeU8Dv396Ds6eSy5i5cTVuAw/PViiUrQU9lD5byoojt4SRXo
+	AlEDDDR0Ai3fOTqAvrxK8u8AvoXCEl2KBrheoXpS2/3vGMQmAvlzDn9DRZsvDGpnYjTlXZ
+	yOLAOPHIsc9GciBvekpBzFOfIAvuOYnXSwspDTP1rPttrqQs4zsgSy0AG9t0XA==
+Date: Thu, 6 Aug 2026 05:41:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 2/2] usb: dwc3: Add Renesas R-Car Gen5 DWC3 xHCI USB
+ controller glue
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Thanh Quan <thanh.quan.xn@renesas.com>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+References: <20260728011656.465040-1-marek.vasut+renesas@mailbox.org>
+ <20260728011656.465040-2-marek.vasut+renesas@mailbox.org>
+ <anJ6HkPgDb7I4xeL@vbox>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <anJ6HkPgDb7I4xeL@vbox>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 4gt7rfopkx8on66n5tbkm67yn379tmbt
+X-MBO-RS-ID: ca329d717fb030c81a6
+X-Rspamd-Queue-Id: 4hFtPm5kp8z8v12
 
-On Wed, 5 Aug 2026 10:36:52 +0200 Niklas S=C3=B6derlund wrote:
-> Some of the issues pointed out in this review are addressed in the RAVB=20
-> PTP rework series [1]. I will respin it as soon as the PTP clock for=20
-> R-Car Gen4 is merged [2].
+On 8/5/26 2:48 AM, Thinh Nguyen wrote:
 
-Let's fix the bugs correctly and then worry about -next
-I dropped the series you linked.
+Hello Thinh,
+
+[...]
+
+>> +static int dwc3_rcar_gen5_init(struct dwc3_rcar_gen5_priv *priv)
+>> +{
+>> +	/*
+>> +	 * The datasheet describes initialization procedure without full
+>> +	 * information about the registers. Therefore, the source code is
+>> +	 * based on the bare metal code shared by the board team.
+>> +	 */
+>> +	writew(0x211, priv->base + 0x26);
+>> +
+>> +	/* USB3 does not need additional register programming. */
+>> +	if (priv->use_usb3_flow)
+>> +		return 0;
+>> +
+>> +	writew(0x11, priv->base + 0x81c);
+>> +	writew(0x0, priv->base + 0x81a);
+>> +	writew(0x1, priv->base + 0x802);
+>> +
+>> +	usleep_range(10000, 20000);
+>> +
+>> +	writew(0x0, priv->base + 0x802);
+>> +	writew(0x1, priv->base + 0x2a);
+>> +	writew(0x1, priv->base + 0x81a);
+> 
+> Use macros for these magic numbers.
+
+Please see the comment above, this is some magic register poking init code.
+
+>> +
+>> +	usleep_range(10000, 20000);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int dwc3_rcar_gen5_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *subnode;
+>> +	struct reset_control *reset;
+>> +	const char *maximum_speed;
+>> +	struct dwc3_rcar_gen5_priv *priv;
+>> +	int ret;
+>> +
+>> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +
+>> +	platform_set_drvdata(pdev, priv);
+>> +
+>> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(priv->base))
+>> +		return dev_err_probe(dev, PTR_ERR(priv->base), "Failed to map registers\n");
+>> +
+>> +	reset = devm_reset_control_get(dev, NULL);
+> 
+> Where is the "reset" being used? How is this reset asserted/deasserted?
+
+This is going to be fixed in V2 using 
+devm_reset_control_get_exclusive_deasserted().
+
+>> +	if (IS_ERR(reset))
+>> +		return dev_err_probe(dev, PTR_ERR(reset), "Failed to get reset control\n");
+>> +
+>> +	priv->clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(priv->clk))
+>> +		return dev_err_probe(dev, PTR_ERR(priv->clk), "Failed to get clock control\n");
+>> +
+>> +	subnode = of_get_compatible_child(dev->of_node, "synopsys,dwc3");
+>> +	if (!subnode)
+>> +		return dev_err_probe(dev, -ENODEV, "Failed to find DWC3 subnode node\n");
+>> +
+>> +	ret = of_property_read_string(subnode, "maximum-speed", &maximum_speed);
+>> +	of_node_put(subnode);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, -ENODEV, "Failed to determine maximum speed\n");
+> 
+> Why is maximum-speed a hard requirement? It should be optional.
+
+Because we need to know whether or not the magic init code (please see 
+dwc3_rcar_gen5_init() if (priv->use_usb3_flow) above) should be 
+programmed into the glue registers.
+
+>> +	priv->use_usb3_flow = !strcmp(maximum_speed, "super-speed-plus") ||
+>> +			      !strcmp(maximum_speed, "super-speed");
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+> 
+> Do you really want this to be a hard error?
+
+I think so -- why would it be beneficial if this wasn't an error ?
+
+[...]
+
+> Please use the new flatten glue model. The logic for this glue looks
+> simple.
+
+It is very simple -- enable clock, power domain, deassert reset, program 
+the magic into glue registers and it is done and ready.
+
+> Can you review and evaluate if we can enhance and whether we
+> should use the dwc3-generic-plat glue driver for this?
+
+Let me give this a try, I think this should be doable. Thanks !
+
+-- 
+Best regards,
+Marek Vasut
