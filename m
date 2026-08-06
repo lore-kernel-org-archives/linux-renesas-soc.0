@@ -1,172 +1,176 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8553CF678
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Aug 2026 15:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786029688; cv=pass; b=lzJ8b45nwpU5E4xl/8e5jInQpde/JKtkXQtzt329zh5AGMj/IzLOhXfSVA5mnneORxCaXLSFI8S6CjI+zzZo4N0sxuOPjLU7flfLQbWOSdPmeP2YiTnFQIU/AzFyyax7fQ+crKneE50Aaj2id/vn7M+oPXBeTL30iUaLM96/K3o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786029688; c=relaxed/simple;
-	bh=wxB1rMiJGb+XlFDizZq+nVcQgjT28U31QAZRBujViJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQ+rp7V5U+G4iSf9V85pz6U8tjOqwkEy0Ba7KUpEqrj3JHxiZ4PYuf2NaBsA70k9ZjecN9Zr4RH1PHeas7VHnOcFs/32djJdHY+94vfumvq4L437IqQqQJ82EKhfabX+fVHkGwVnkK4EtOihnUpHXaSCbdGkGgV2hCe5rfDl0nk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAgUN9Xo; arc=pass smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E493B5E19
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Aug 2026 15:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786030147; cv=none; b=kQvRAJJQJUiqK4ZSDdWf+R5a5FQGgrialzi0Je3FaTiBafNcCpzAtRnMHPPApZAvJEZVUiMXttzo/hYzuyuGDPQKZ/2D2DORjxxU7uo30VuFhn3QV13qsNuJhQzJc/zicWH5dVwxx9ONBI4GPj808lT8tDWcKOf/CfFJv6vWJWo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786030147; c=relaxed/simple;
+	bh=Hh6XzUY/iDiGIEAijdEnsDpks3VJjKJdUvH8wlwXeGA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=WS1SymzXAINnDbKceUexYO+AluChcOZiJfuPPvMI4Q0ONFZKBtHWx0xLYf0esPlzTA6E9peWUP+a8pKYDMkS0mvUjTIGSve9vVr9hc2Gtv+i5tKVTbI70RcQBsMw1U8yVR6V2Khk0sIjYopvzMhPF7CNr9E2gC8103xwoci9kLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I8Kpe7Lc; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAgUN9Xo"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-47f3b39f2a1so1761760f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Aug 2026 08:21:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786029684; cv=none;
-        d=google.com; s=arc-20260327;
-        b=sJuVlTMA4DjRstHrJDhBSRylyTqXwoC3RU7WXUu96ZpYbi5nAf79wFC1w0pVYt8Sg+
-         jP1ev9X97Sy1ZwAP9vFktMsGIBf31EWzDlxT6wx/5+yXwoTk7ZvUMuG6d1aj4EaQbePK
-         SumEBLkxWxXXAkN0kAMHI27IGc5pL1mXVLYlugg7NfyxyaRA7QXtm5dU2JF2VtS8yAJ/
-         Dqhvr2JK44b3F52b/wKAGbi2snIbAfZAYxN/LzZfDQWhvxkxrBfPjT5BCx0/dlXWo3zi
-         mJq805fdf7KfHej0kCVzpsJXjwczvKaMFAvdj9vFXlJrCCPtwEbbY1rZQf2PTZrg4v94
-         0p3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=yD/Z63MkIsQALc17vKMiWHYyP+h2/DD43hjnFmHZM5E=;
-        fh=o/4B/J6Qm00vp9WngDLjeBB8/zVHk3Hz8LDrDXkUfao=;
-        b=oXpkoibOw6HxUM5beLDafJ//wfoRp0csRipFchcHX5OicRaPphpfF+1F1lwyBB8SVC
-         mCKaCmreichTUM3MhZMYYXDrNHHnWn/Og3EbT0bUDFfgeaUMp3nDNrRz0itybPr6k6Nk
-         ijpUwbnTsYElIs6g1pEY5gudByOXCG5dcrmy4N1rCXsD3K3d7V2kDEMDZu70h9Ydevke
-         Ja5NpxnmKkztgup2TPQWxJZ/pNNyBMw8DWag6WTgMgdXxMUMjJSQd3apIL2WaUn2uWl1
-         AZFN77u71Dm894O1w5r5myEOLkUSCg3NqEA9frYyE2s1hYvtURMCaJytY6UOeYlmZWmn
-         JCKg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786029684; x=1786634484; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=yD/Z63MkIsQALc17vKMiWHYyP+h2/DD43hjnFmHZM5E=;
-        b=NAgUN9XoA6qlinDP2aztvB+pbih4zWigwt1MH1tKaYp3jFpHGuVUyJVGLUyJMqXmVc
-         IY+OoDrArY72rplD6YNvvqxSPGOrfEn107q+ew2dSZS/zvvFGmP9tOp/GfYz5aE+854+
-         oPeMcGonBhmVThpTGWeDEXnuOCFXr91WePYMBBCuQjiXQN8IjlVu2sZ44bk7TpVLBZRq
-         ThtNuK7IGiNZ78VNZqH40KxpUVbWDl1ydBHPOPmuNGkbErhBG8edQWYSsWRzrXldvDAZ
-         YWJUjvHx+ylyvWcfsnoLnP9IQBsff7oEGE3xA+8p7BcknG8MbBGs5YpEfM5MVHNdKynW
-         sG8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786029684; x=1786634484;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yD/Z63MkIsQALc17vKMiWHYyP+h2/DD43hjnFmHZM5E=;
-        b=CXDb1mk5SjDOho0nZCHZjoFQfdbDqJiTBEYXUv07m2C1Jec0gemzf8z8uAeKYiaSSx
-         7DXNU+lOIafaSjN2mwL9lkkzwL67anh7q/dXwTBfcVf2KVTHH4eM0IDqBV7Gi4UwLaKn
-         ckGSr5gmmLG9HdGUlYZAyshNb1N6eoFUTnrmgLRfxz2GI/dF95EQD+uBK0mEj7xHaLKk
-         DAVGjZbkP3OfMUKrmxWdn/IMP9ARpvJglkyJ2Qc4U9FmWWiXBOrLsNbDr1nFeCERBfkq
-         Mas8z/kB1J3SMhNTIyKYG5ZoddI6AEu6y+Kq1pBd0dztm9vn541LAye9Jm88xHKtzJXm
-         f5WQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrXQnkhPigtnzJFb15qrL7DDXtZfFVlHlxdd3i6JRCFM8ykge0nYrhLLTPDSi3Wp77XsZ0ZMbDuQFzCMZPerGDfYQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz90ah4TlZo+v9InY3eSWYTZQpbuXIKYVwf9RGvCiRXZyFKwe/u
-	SfzJh3HZuqWXnCsArC6u+xfy4RbV7Y9pnBaAi0LOAygf/yqJDQ23yib6OL6N4jA0aUM7Q29QcBL
-	PqGXGkq+HS+i42JWq5HyKr7KgAD1Q1jc=
-X-Gm-Gg: AR+sD10uraodtAYs+y2OM9WFt20vtuw+tJQ1Eyno5ZvQskofY65mSPcNGHhzCN+gDbn
-	fRZr5WMOA9wJh/Zoyor4gfBLVxmXMZhOZytDPHAOaoIRmVJs2KTVQEdpVCh+HtIp5NsJi66ZUzT
-	wOfQ+N9h/Kki822DzzbU3bPDRk4+qbRN/0ZuRI4gIrqO/UR+apNavmdEKA0kzwxxyoELq2/JLNU
-	KeM2+xOvFQpEOMZcAc5vFWEBB54WoQXHV8hmih2Nvr15OW7ddw+3Vg6qnOebcuYT+ykdmaG3KXY
-	qfjqoHlrfOEmsDmrxJC6oZ4PVIhT0i4l0evB4U7qzgdjF2nqaEDLaN1os4dR4jQ9pPyITjX2sm9
-	uc3HCxn17uEPC6o4bTlQWlQaBd+mQx5V5
-X-Received: by 2002:adf:fe0f:0:b0:47f:eb37:fb7f with SMTP id
- ffacd0b85a97d-47fec51952emr20652797f8f.16.1786029683487; Thu, 06 Aug 2026
- 08:21:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I8Kpe7Lc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786030144; x=1817566144;
+  h=date:from:to:cc:subject:message-id;
+  bh=Hh6XzUY/iDiGIEAijdEnsDpks3VJjKJdUvH8wlwXeGA=;
+  b=I8Kpe7Lcz/eeZ4HqE/LU6PjSJS3Hc3L4Pcrr0sx59FiRYyfZ+cfYjM+J
+   7f9q/IgA+1yOcXtEphkbhz94MMRfPLp/A5qU/378R7b7jjnL048bAhUZI
+   sYoeDlJ2dg9wXSw15JyX7FOVohKTzoh+w4Sgb/mXkgMJdVeypsFQs21dz
+   rZJH5dT6lWr9ZJoEcU3bIl1+Z3dTaMbrOq0mW9KTGrJHBkeYAEh7c7OyW
+   xUvgQCCQn5Kab1lqjagPsvt3BhjwFuXWYaNKXAy7YuUWajb+eWZdsNY9p
+   3jCzIcOf03ACxAnmNbtlvSAoRjAzhN3AephMFWp7sNMC6PLBQTqkK6zjn
+   g==;
+X-CSE-ConnectionGUID: cT4DUkqxQ8+6w8I/WiviDQ==
+X-CSE-MsgGUID: np7KaTcnT8aLwoFtsppCMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="104163221"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; 
+   d="scan'208";a="104163221"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 08:29:03 -0700
+X-CSE-ConnectionGUID: /sTmWaYQQri4zpjKpii84Q==
+X-CSE-MsgGUID: iPn78QACRM2Irk3fJqE1uA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; 
+   d="scan'208";a="259518748"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 06 Aug 2026 08:29:03 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1ws01k-00000000FUP-1y5K;
+	Thu, 06 Aug 2026 15:29:00 +0000
+Date: Thu, 06 Aug 2026 23:28:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ e17ae2ae6c5e0089e46bba46537d09e24b7119f0
+Message-ID: <202608062344.nMwWle2Y-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1784109616.git.tommaso.merciai.xr@bp.renesas.com> <fd55d955abff917123a33842076550dab931b548.1784109616.git.tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <fd55d955abff917123a33842076550dab931b548.1784109616.git.tommaso.merciai.xr@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 6 Aug 2026 16:20:55 +0100
-X-Gm-Features: AUfX_mw4r8HPUvhFNWfzBe-QL0Bj-jhWO3_COwMvVVhYlGm-HI72ckTzEAHnAsQ
-Message-ID: <CA+V-a8tR=eeLwGgnEXnw6teyHYeUapcd94xZNATSmuKUgJK_fw@mail.gmail.com>
-Subject: Re: [PATCH v12 1/1] mux: Add driver for Renesas RZ/V2H USB VBENCTL
- VBUS_SEL mux
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, peda@lysator.liu.se, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, peda@axentia.se, 
-	p.zabel@pengutronix.de, ulf.hansson@linaro.org, 
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	Ulf Hansson <ulfh@kernel.org>, Josua Mayer <josua@solid-run.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 15, 2026 at 11:19=E2=80=AFAM Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
->
-> As per the RZ/V2H(P) HW manual, VBUSEN can be controlled by the VBUS_SEL
-> bit of the VBENCTL Control Register. This register is mapped in the
-> reset framework. The reset driver expose this register as mux-controller
-> and instantiates this driver. The consumer will use the mux API to
-> control the VBUS_SEL bit.
->
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> v11->v12
->  - No changes, just rebased on top of next-20260714
->
-> v10->v11:
->  - No changes.
->
-> v9->v10:
->  - No changes.
->
-> v8->v9:
->  - Fixed driver comment year (2025 -> 2026)
->  - Switch from devm_regmap_init_mmio() to dev_get_regmap().
->  - Drop unnecessasry include bitops.h, of.h, property.h and
->    drivers/reset/reset-rzv2h-usb2phy.h headers, driver is now based on re=
-gmap.
->  - Collected PZabel tag.
->
-> v7->v8:
->  - No changes.
->
-> v6->v7:
->  - No changes.
->
-> v5->v6:
->  - No changes.
->
-> v4->v5:
->  - Changed file name to rzv2h-usb-vbenctl.c and Fixed
->    Makefile, Kconfig, function names accordingly.
->  - Changed driver .name to "vbenctl" and fix auxiliary_device_id name.
->  - Updated commit msg.
->
-> v3->v4:
->  - Removed mux_chip->dev.of_node not needed.
->
-> v2->v3:
->  - Added mux_chip->dev.of_node =3D dev->of_node->child as the mux-control=
-ler
->    is an internal node.
->  - Fixed auxiliary_device_id name.
->  - Get rdev using from platform_data.
->  - Drop struct auxiliary_device adev from reset_rzv2h_usb2phy_adev
->    as it is needed.
->  - Drop to_reset_rzv2h_usb2phy_adev() as it is not needed.
->
-> v1->v2:
->  - New patch
->
->  drivers/mux/Kconfig             | 11 +++++
->  drivers/mux/Makefile            |  2 +
->  drivers/mux/rzv2h-usb-vbenctl.c | 85 +++++++++++++++++++++++++++++++++
->  3 files changed, 98 insertions(+)
->  create mode 100644 drivers/mux/rzv2h-usb-vbenctl.c
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: e17ae2ae6c5e0089e46bba46537d09e24b7119f0  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
-Cheers,
-Prabhakar
+elapsed time: 2919m
+
+configs tested: 99
+configs skipped: 1
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allnoconfig    gcc-16.1.0
+alpha                           allyesconfig    gcc-16.1.0
+alpha                              defconfig    gcc-16.1.0
+arc                             allmodconfig    gcc-16.1.0
+arc                             allyesconfig    gcc-16.1.0
+arc                  randconfig-001-20260805    gcc-12.5.0
+arc                  randconfig-002-20260805    gcc-12.5.0
+arm                  randconfig-001-20260805    gcc-12.5.0
+arm                  randconfig-002-20260805    gcc-12.5.0
+arm                  randconfig-003-20260805    gcc-12.5.0
+arm                  randconfig-004-20260805    gcc-12.5.0
+arm                      spear13xx_defconfig    gcc-16.1.0
+arm64                randconfig-001-20260805    gcc-10.5.0
+arm64                randconfig-002-20260805    gcc-10.5.0
+arm64                randconfig-003-20260805    gcc-10.5.0
+arm64                randconfig-004-20260805    gcc-10.5.0
+csky                            allmodconfig    gcc-16.1.0
+csky                 randconfig-001-20260805    gcc-10.5.0
+csky                 randconfig-002-20260805    gcc-10.5.0
+hexagon              randconfig-001-20260805    clang-18
+hexagon              randconfig-002-20260805    clang-18
+i386                            allmodconfig    gcc-14
+i386       buildonly-randconfig-001-20260805    clang-22
+i386       buildonly-randconfig-002-20260805    clang-22
+i386       buildonly-randconfig-003-20260805    clang-22
+i386       buildonly-randconfig-004-20260805    clang-22
+i386       buildonly-randconfig-005-20260805    clang-22
+i386       buildonly-randconfig-006-20260805    clang-22
+i386                 randconfig-001-20260805    gcc-13
+i386                 randconfig-002-20260805    gcc-13
+i386                 randconfig-003-20260805    gcc-13
+i386                 randconfig-004-20260805    gcc-13
+i386                 randconfig-005-20260805    gcc-13
+i386                 randconfig-006-20260805    gcc-13
+i386                 randconfig-007-20260805    gcc-13
+i386                 randconfig-011-20260805    gcc-14
+i386                 randconfig-012-20260805    gcc-14
+i386                 randconfig-013-20260805    gcc-14
+i386                 randconfig-014-20260805    gcc-14
+i386                 randconfig-015-20260805    gcc-14
+i386                 randconfig-016-20260805    gcc-14
+i386                 randconfig-017-20260805    gcc-14
+loongarch                          defconfig    clang-24
+loongarch            randconfig-001-20260805    clang-18
+loongarch            randconfig-002-20260805    clang-18
+nios2                           allmodconfig    gcc-11.5.0
+nios2                            allnoconfig    gcc-11.5.0
+nios2                randconfig-001-20260805    clang-18
+nios2                randconfig-002-20260805    clang-18
+parisc                          allmodconfig    gcc-16.1.0
+parisc                          allyesconfig    gcc-16.1.0
+parisc                             defconfig    gcc-16.1.0
+parisc               randconfig-001-20260805    gcc-9.5.0
+parisc               randconfig-002-20260805    gcc-9.5.0
+powerpc              randconfig-001-20260805    gcc-9.5.0
+powerpc              randconfig-002-20260805    gcc-9.5.0
+powerpc64            randconfig-001-20260805    gcc-9.5.0
+powerpc64            randconfig-002-20260805    gcc-9.5.0
+riscv                randconfig-001-20260805    gcc-8.5.0
+riscv                randconfig-002-20260805    gcc-8.5.0
+s390                            alldefconfig    gcc-16.1.0
+s390                 randconfig-001-20260805    gcc-8.5.0
+s390                 randconfig-002-20260805    gcc-8.5.0
+sh                                 defconfig    gcc-16.1.0
+sh                   randconfig-001-20260805    gcc-8.5.0
+sh                   randconfig-002-20260805    gcc-8.5.0
+sparc                randconfig-001-20260805    gcc-11.5.0
+sparc                randconfig-002-20260805    gcc-11.5.0
+sparc64              randconfig-001-20260805    gcc-11.5.0
+sparc64              randconfig-002-20260805    gcc-11.5.0
+um                   randconfig-001-20260805    gcc-11.5.0
+um                   randconfig-002-20260805    gcc-11.5.0
+x86_64     buildonly-randconfig-001-20260805    gcc-14
+x86_64     buildonly-randconfig-002-20260805    gcc-14
+x86_64     buildonly-randconfig-003-20260805    gcc-14
+x86_64     buildonly-randconfig-004-20260805    gcc-14
+x86_64     buildonly-randconfig-005-20260805    gcc-14
+x86_64     buildonly-randconfig-006-20260805    gcc-14
+x86_64                                 kexec    clang-22
+x86_64               randconfig-001-20260805    gcc-14
+x86_64               randconfig-002-20260805    gcc-14
+x86_64               randconfig-003-20260805    gcc-14
+x86_64               randconfig-004-20260805    gcc-14
+x86_64               randconfig-005-20260805    gcc-14
+x86_64               randconfig-006-20260805    gcc-14
+x86_64               randconfig-011-20260805    gcc-14
+x86_64               randconfig-012-20260805    gcc-14
+x86_64               randconfig-013-20260805    gcc-14
+x86_64               randconfig-014-20260805    gcc-14
+x86_64               randconfig-015-20260805    gcc-14
+x86_64               randconfig-016-20260805    gcc-14
+x86_64               randconfig-071-20260805    clang-22
+x86_64               randconfig-072-20260805    clang-22
+x86_64               randconfig-073-20260805    clang-22
+x86_64               randconfig-074-20260805    clang-22
+x86_64               randconfig-075-20260805    clang-22
+x86_64               randconfig-076-20260805    clang-22
+x86_64                          rhel-9.4-bpf    gcc-14
+xtensa               randconfig-001-20260805    gcc-11.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
