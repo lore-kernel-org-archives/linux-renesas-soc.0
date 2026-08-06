@@ -1,52 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628B827BF93;
-	Thu,  6 Aug 2026 16:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DB4485CC7;
+	Thu,  6 Aug 2026 16:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786033575; cv=none; b=OVMFIKSat/GVJNGd1vlhzbojHb4MbMEVNlh0AWQ0yzniNnlWO6gSC6X9LOBdtWAWJ3J8Ln6zrHAL/03MYYwQcv1FMm4nZ2zB3TwhNhYlkDJxEc4fn24vePVhtwU4A7L2GmjQSd6d7uWMggGcUhpUJrSqhHmXP3NIHR/VEYamwos=
+	t=1786033586; cv=none; b=bK3LLFJEH/36Y6+Du/8o1Q64eOUzrf0AbCPIwdZjh+JWVhQxi6IobEASFVIfgnBbdmXqn5DjlkP9rN3JKuz9LXWnfEGIIrwBYiA3yF3WOmPvCWzCcVAHhrMfttk2NfJTUFeQElTshdYSGvvQVHGtkggU1T6iT7N5Fhn7h7lpyJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786033575; c=relaxed/simple;
-	bh=vp3HeyBsKm5QM4/gsd7Sj5jvC9ezIp8qQvyYAsqqfX4=;
+	s=arc-20240116; t=1786033586; c=relaxed/simple;
+	bh=XW4F/eZRyawKMqXn527ROSaXIwWGoXxh5eMtuv25sRU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TTw63OPfXtGqjuGRgmFf8A2wRsXOnOKXyufDTUnbBna05wcRw3wiATZ8BLPqyiTZxB4UBRNhf/O9anF2ZeYxpID6l9/tPvJMQcxsRXyfCjIWSE6xJhQMXQNieHE6fTeimYe3gGOi6/alQcIDRr8Uks6D1QYbvYjrFMu7bjSbyTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yo1YvEtl; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=r/aekDGkjtOTbgwj5v2KPme+j0RrMwjhsKwzDbo7nbFDscwKhkQq91WnwGYdFYbxUJCcRVtGfsRvpq+YpY2ACtQ1ZqxWQ1DTDqH/oOE59ngCWYuv7TiQlXFqBfgeVjzrSIqI/VuSMrasfoNXcP/46kICvbA29GW0VZkh1BNv9z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLqJ87rK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yo1YvEtl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D0C1F000E9;
-	Thu,  6 Aug 2026 16:26:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLqJ87rK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA6881F00A3A;
+	Thu,  6 Aug 2026 16:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786033573;
-	bh=FKkPZaVYoltg/L8op3kBjttnUeSwREqYX0CaIydI8ow=;
+	s=k20260515; t=1786033585;
+	bh=hhiYScBrKlTTcqBuDww6OOpw5eUnNsDP/4rsblKpdrA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Yo1YvEtlsSycfv4PyQF/qZI7okNOuWjDJ4W4tB3NbkJALUqICb3yHIaoxuxpo3ZEU
-	 DiPf8Kk9ydFEK5BRVNVo3c4hKYCKIcuZUr4jnZQTp7mBo0NxCSnl++Tfnl0cnxeLfI
-	 /CHdZ4c5LGB/UNEvZHM5ALOHiqzLdY/W7JrWJpVL2jc6QMYRSbHHvj3jrPD8LSzuaE
-	 a54ehei8mxy/pLchdt5QJbqQQW22uWWpo8JdR56ldN5yWolP5hRvtNlSQqtsdBGp4k
-	 Qzqu8TbWgdoZxZYbX41RBlxg/QP3knQhX/45Mw3UpNG3HiCGVN5InNKk6l/f6oPiSi
-	 sHmciL2c0GLwA==
+	b=mLqJ87rK9BZBPb51BmliB0sCFymD9X7a92ABxsTTGgePTP07ch5O8KWhR9iCo4YPl
+	 3TLsnC8QsU8EgYIThWKyEHJiE9gGmi7rcIssNd6OR2LkzBczlq93nnc0z8OW9cS2kc
+	 HgKB4O1TN1gtRkSFh16P68xRSAM0ssOjITDcrZJh3l3c/hCS/aJPj/S3/shDeEh6Sn
+	 1xDNiSLghMnkIE7ryZBffth5T6AKxQHYU0caZXsnzFS1WzmJFXv9gE2YH4zWtJlaDB
+	 awFOlvWsKtzXfoumz/nB6Wz4XcrGEgh4a8L2LeoTrNIjEwjtn2Xi69+CMA+NttJ6/E
+	 hd8pNwC5mooQw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Bartosz Golaszewski <brgl@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260806102236.149159-1-biju.das.jz@bp.renesas.com>
-References: <20260806102236.149159-1-biju.das.jz@bp.renesas.com>
-Subject: Re: (subset) [PATCH v6 00/10] Add RZ/G3L USB2.0 host support
-Message-Id: <178603356779.674490.693458204654739135.b4-ty@kernel.org>
-Date: Thu, 06 Aug 2026 21:56:07 +0530
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Felix Gu <ustc.gu@gmail.com>
+Cc: linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260803-rcar-gen2-v1-1-9aa35c36d7d7@gmail.com>
+References: <20260803-rcar-gen2-v1-1-9aa35c36d7d7@gmail.com>
+Subject: Re: [PATCH] phy: renesas: rcar-gen2: Fix double of_node_put on phy
+ creation failure
+Message-Id: <178603358234.674490.1366685578663811310.b4-ty@kernel.org>
+Date: Thu, 06 Aug 2026 21:56:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -58,29 +51,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 06 Aug 2026 11:22:19 +0100, Biju wrote:
-> This patch series aims to add USB2.0 host support for the RZ/G3L SMARC
-> EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
-> has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
-> port 1. This series migrates regulator driver to use id-table so there
-> is hard dependency between reset driver and regulator driver.
+On Mon, 03 Aug 2026 20:43:24 +0800, Felix Gu wrote:
+> for_each_child_of_node_scoped() releases the node reference on scope
+> exit, so the explicit of_node_put(np) in the devm_phy_create() error
+> path drops it twice.
 > 
-> Merge strategy:
->   An Ack/Rb tag from Regulator Maintainer for patch#1 and #5.
->   Patch #1,#2,#3,#4,#5 - Reset subsystem
->   Patch #5,#6,#7 - PHY subsystem
->   Patch #8,#9 - Renesas SoC
+> Drop the redundant of_node_put() and let the scoped cleanup handle it.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[06/10] dt-bindings: phy: renesas,usb2-phy: Document RZ/G3L PHY bindings
-        commit: e6c3be558da06062a6a6fcbb8d33986832db3d60
-[07/10] phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
-        commit: 881f6b6f4ccdbdd6b856a574445694bb1f56d79e
-[08/10] phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for disabled VBUS regulator
-        commit: 49c9b71b45081e5e5eeb507a2d6edb80d332dc59
+[1/1] phy: renesas: rcar-gen2: Fix double of_node_put on phy creation failure
+      commit: b780b8929c759cfa7a892d58625a5ad46cb1cbd2
 
 Best regards,
 -- 
