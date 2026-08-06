@@ -1,41 +1,35 @@
 Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D30637CD40;
-	Thu,  6 Aug 2026 08:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5810734E75D;
+	Thu,  6 Aug 2026 08:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786004005; cv=none; b=IfriH2aaA95KvEia3+doi8BQgh1+G0cnqJ5JfZMBFIPNS0m+f5NQj58uTzLUvcozGag1SxQKZk7N9D47fU2ADsa1G1ssGjk6ce9QxoSXC3UAq4PqFr7VWiNDh182Uacn6SRGBet3E7Eri1nkE5aMe2ZRER0PtCRBOouHJDznwFI=
+	t=1786004331; cv=none; b=npsoiQd4Y0AZIV8LuF6pZT7f1/IJr6MF31TTCz7uuG24dyQiFXzjJY3vcOmjnV+TH1SZfxzV2LniBZl7OxzK47lAIJcHr1zb6YAAN/RkdhpJ21kVGY7YIxnzRXbstv1ZQpLFChJJ5UKTnU9WIuBHq2GQok7WVShsy4QZ/lh5REI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786004005; c=relaxed/simple;
-	bh=m+ixxoAKX9ofTb0vud6B0UlDpsMUUasBvg0zQYoPk34=;
+	s=arc-20240116; t=1786004331; c=relaxed/simple;
+	bh=Qp/vDuU7em1+nwqfUZSmp1WQ2VXqEyXV+78Due81s/g=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LHkSzpH+4iBSSD3V+fbgN18+Wk5EipoUx5KKVtfhyZYGWtfQt+AWaMETee/mvr12cnPNAKYp+7andyt3vAY/rBLQOT40RFhnoUGuSzu75AK3s4NjtvYEPs8vlwNmGhYQOCX4zEaEZ5v7xhVXpZ2997+yUzaJPchwgNF/SSt17DE=
+	 Content-Type:MIME-Version; b=ONPmFNECD96ruGE+ccv/otp7Z2nK/34qVC06tpt7xM09tSmO8gWR+MyhiSqo9xKfwSpqm8R6JGqTn2GAw6ukedW+mQuc8A82gSxR3rUcAdTc8/BF4f9TduXu+R+JTBdyt6Rlu/K09QbCVJMQC8vsar+ohPfMXdG/42V/LAUHOdk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
 	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 424B0201EE8;
-	Thu, 06 Aug 2026 10:13:19 +0200 (CEST)
-Message-ID: <7c30baacac8c75037f32c0ac3099a6107cbec38b.camel@pengutronix.de>
-Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 4C93420194D;
+	Thu, 06 Aug 2026 10:18:46 +0200 (CEST)
+Message-ID: <80a94424da18d5003265c5e8bf5ecb5a90499b59.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] i2c: rcar: add R-Car Gen5 support
 From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette	 <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney	 <bmasney@redhat.com>, Ulf
- Hansson <ulfh@kernel.org>, Wolfram Sang	
- <wsa+renesas@sang-engineering.com>, Marek Vasut	
- <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto	
- <kuninori.morimoto.gx@renesas.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 06 Aug 2026 10:13:19 +0200
-In-Reply-To: <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
-References: <cover.1785941595.git.geert+renesas@glider.be>
-	 <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang
+	 <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
+ Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org
+Date: Thu, 06 Aug 2026 10:18:46 +0200
+In-Reply-To: <CAMuHMdVAgjguscFMKd7u1XPuZEkB7mH9-G-Y8nYfXqbzJ2hH9Q@mail.gmail.com>
+References: <20260727122546.4232-4-wsa+renesas@sang-engineering.com>
+	 <20260727122546.4232-6-wsa+renesas@sang-engineering.com>
+	 <CAMuHMdVAgjguscFMKd7u1XPuZEkB7mH9-G-Y8nYfXqbzJ2hH9Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -46,69 +40,51 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mi, 2026-08-05 at 17:20 +0200, Geert Uytterhoeven wrote:
-> Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC.
-> For now this just supports the always-on power domains, and dummy module
-> clocks and resets for the serial console (which is enabled by the boot
-> loader).
+On Mo, 2026-08-03 at 15:14 +0200, Geert Uytterhoeven wrote:
+> Hi Wolfram,
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Replace <linux/mod_devicetable.h> by more specific
->     <linux/device-id/of.h> in v7.2-rc2,
->   - Add a comment to document only always-on domains are supported,
->   - Consistently use /* sentinel */ for zero sentinels,
->   - Drop trailing commas from sentinels,
+> On Mon, 27 Jul 2026 at 14:26, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > To support the next generation of R-Car SoCs, we need to skip polling
+> > the reset status. SCMI doesn't support it and the firmware must take
+> > care of this anyhow. Other than that, the driver works fine as-is.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >=20
-> v2:
->   - Spin off from "pmdomain: renesas: Add R-Car X5H MDLC SCMI remapping
->     driver",
->   - Add default support not using SCMI,
->   - Drop all SCMI remapping support,
->   - Document use of -1 as a sentinel,
->   - Rename struct r8a78000_mdlc_info to mdlc_info,
->   - Print HW IDs in hexadecimal,
->   - Reduce log level for unsupported MDLC instances from warn to dbg,
-> ---
->  drivers/pmdomain/renesas/Kconfig         |   4 +
->  drivers/pmdomain/renesas/Makefile        |   1 +
->  drivers/pmdomain/renesas/r8a78000-mdlc.c | 330 +++++++++++++++++++++++
->  drivers/soc/renesas/Kconfig              |   1 +
->  4 files changed, 336 insertions(+)
->  create mode 100644 drivers/pmdomain/renesas/r8a78000-mdlc.c
+> Thanks for your patch, which is now commit 87e713f200481106 ("i2c:
+> rcar: add R-Car Gen5 support") in i2c/i2c/i2c-next.
 >=20
-> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/=
-renesas/r8a78000-mdlc.c
-> new file mode 100644
-> index 0000000000000000..5c8acead7cff9bdd
-> --- /dev/null
-> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> @@ -0,0 +1,330 @@
-[...]
-> +#define DEFINE_MDLC_RESET_WRAPPER(op)					    \
-> +	static int r8a78000_mdlc_ ## op(struct reset_controller_dev *rcdev, \
-> +					unsigned long id)		    \
-> +	{								    \
-> +		struct r8a78000_mdlc_priv *priv =3D rcdev_to_priv(rcdev);	    \
-> +									    \
-> +		dev_dbg(priv->dev, "%s: Ignoring\n", __func__);		    \
-> +		return 0;						    \
-> +	}
-> +
-> +DEFINE_MDLC_RESET_WRAPPER(reset)
-> +DEFINE_MDLC_RESET_WRAPPER(assert)
-> +DEFINE_MDLC_RESET_WRAPPER(deassert)
-> +DEFINE_MDLC_RESET_WRAPPER(status)
-> +
-> +static const struct reset_control_ops r8a78000_mdlc_reset_ops =3D {
-> +	.reset =3D r8a78000_mdlc_reset,
-> +	.assert =3D r8a78000_mdlc_assert,
-> +	.deassert =3D r8a78000_mdlc_deassert,
-> +	.status =3D r8a78000_mdlc_status,
+> > --- a/drivers/i2c/busses/i2c-rcar.c
+> > +++ b/drivers/i2c/busses/i2c-rcar.c
+>=20
+> > @@ -900,8 +901,12 @@ static int rcar_i2c_do_reset(struct rcar_i2c_priv =
+*priv)
+> >         if (ret)
+> >                 return ret;
+> >=20
+> > -       return read_poll_timeout_atomic(reset_control_status, ret, ret =
+=3D=3D 0, 1,
+> > -                                       100, false, priv->rstc);
+> > +       /* SCMI based resets don't need to poll for success */
+> > +       if (priv->devtype < I2C_RCAR_GEN5)
+> > +               return read_poll_timeout_atomic(reset_control_status, r=
+et, ret =3D=3D 0,
+> > +                                               1, 100, false, priv->rs=
+tc);
+>=20
+> How to differentiate between using SCMI and running on bare metal?
+> The latter still needs polling.
+>=20
+> I think you should call reset_control_status() first, and check for
+> -ENOTSUPP, which would indicate that reset status is not available.
 
-Are .reset and .status needed by any consumers?
-I'd leave them -ENOTSUPP otherwise.
+Ah, I suppose this driver is what you need .reset and .status for in
+the R-Car X5H MDLC driver?
+
+Seeing this, I wonder: could the status poll be moved into the reset
+controller driver(s)? That would leave this driver with a simple,
+unconditional reset_control_reset().
 
 regards
 Philipp
+>=20
