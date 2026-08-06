@@ -1,139 +1,200 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011063.outbound.protection.outlook.com [52.101.125.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB71427FBC
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Aug 2026 09:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786007387; cv=none; b=lkOeyLiFshVYMvS4J0PI0ITbGqLWWDJdCg8Rc5BKEksdnfuG0ifLlruPsgZnT6t1oKGxBm5MUHgxMjhMOzwm/HfTxjkezyK8NCzCplxV7/aRpFkZj9KalncYpposFjF56wnTNq6Nkq2gjROHze0o0cEtrXd5gjZLIQjokLO1Ia8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786007387; c=relaxed/simple;
-	bh=yRsqTV1QL2Bf6HopHK3fdF0m7nRaOON7jOnBK7A+mx8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gza4eyZSXny38x5QO8Kpyk2611pFKSLpGWrz4yehv0Oq05mfLXS7YbNKetZ3ocwYNAq6reF8DnjPxXnaoK/kfXOhPJQLw+/GVgznwMYJ0tLf64F1RqsRMEX3DTQaQbOoiTj7Bx4qfvvzJYHeF6GmcldSs86lSH0UjjMeX34AWkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5bf9466867cso563256e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Aug 2026 02:09:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786007384; x=1786612184;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2FUetJXqO1p3tmVv7CkN5c0Zpu+ozO7iF0g+MEobkvw=;
-        b=aAx8Ia/QhsxAwLJZ/oAwcP3nwqz+6BbAnYYL5SJTWIiw+BoCM4iTqkkLiA5TglA095
-         SvdPgkg8EYs4kCITAY9DfVJhOWEl2w/XrS/bR/Po8lobqMvsEeTyt4rxQhS6rEL+ikyp
-         bb5HFwDrXEBrvRduJKoWvDNGpS3VAsadj3KfCC3NYamIOXDkbUamrrJmxvMMj7S+SUIN
-         4BnMn2TB6LrPFQ+h+bC6paHXRXV4T6uu1MiyCkytBCa1Z8ZFwDk/Acn26sWmUcbRx6GV
-         Y4lU4vOpqiK++/zyN56xFoFLAWe3cj8rmQp1YBvLVzi1CBtaJ4qqvFUpxJuT1cGRKJxu
-         e/xA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr1wyELAN7/a1C4NVbVRORKR8tYjgejD5jirpKuJLrYpBwodn1VSe5KFNNfP3zwXcz4EozDq2RJVqbrZ2qbgLnZ1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd0sIUFgpCTwwQl0u1X+7cumOTJTNPBYe3aDwdm3BZh7Q9pxJR
-	VCGRqpyEOGpCw9zcyyL5V/DaSETpSBRG2oDcfXTBLHv87qJanv79xRVF2BfT2WI1
-X-Gm-Gg: AR+sD12fyU4Mp0JJPEqWLOyomEM4Xat9KR89j54TlzxFjcLByVaM69kvpGihtt363BW
-	hBO/r8ZNOp9ZdxkHxAepzozdNnrIFiwjxodyIZKZUbk8C3Fyit/0Amj6+KGDo9SooLxkLh/UuLg
-	dFGZ2SVAf6OrCzFT4SPA/l4gZsDQC4VnzYS3TLhE9bfBrgvVzx4ro2W6apvLSSvmDUy9z2Ik8OI
-	hevbKjktNWkFCdJc+hgu7K+AtsI0RD21WGxNXMssYnGj+2zn+LTMxZ9/gbfEa6yJD7EWv480Rvi
-	PGShl/C8WPV+Tyd3iA6Zgy5CMgWTRX1oBYaG4x2e27CGlcVCGtFCvCBeJzzZjS5eEcXi9pO/fc2
-	kqwBW1ZG6O29fm9uywD9eL0S4vBv/n08yhTIK0a7tNiDeiwYa9pZwCmx79OM2jO27TzZm4SXuTw
-	yTT8HxgXgdc5tQ8d7NZMfRAgfzP1Xb1h9fYDcJ890IQJeQvPECUK5sb0Cy+VcxPYi0A8vzyWAGB
-	mQFuaKRr1iePQK68V7Xjqantw==
-X-Received: by 2002:a05:6122:3b86:b0:5bf:5c31:fe5d with SMTP id 71dfb90a1353d-5c3d918f5acmr1653362e0c.8.1786007384332;
-        Thu, 06 Aug 2026 02:09:44 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c3d0552c76sm2932673e0c.5.2026.08.06.02.09.43
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2026 02:09:43 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-9618b8bdc51so572843241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Aug 2026 02:09:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoqRrKvXi2L8qxS4HdzEnEwYVvfCGEdN1SmWayZFxo0H6GetBNqbLgcnzmUzltEnOpBbtCE2+QcLYqlax10XI10pg==@vger.kernel.org
-X-Received: by 2002:a05:6102:3e8d:b0:737:783d:1916 with SMTP id
- ada2fe7eead31-760ec96060fmr3082364137.11.1786007383268; Thu, 06 Aug 2026
- 02:09:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569693EAC75;
+	Thu,  6 Aug 2026 09:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786008673; cv=fail; b=t6OBqhNN/FydaDuv6ZIRQfQO8d0H6CYceBBvI5OObldzcIBO/5cHCVFFyKLBzcL8i+NalGykdx5VTeOD3wUfvXsnsT6NSQtCNfhU7gQlPlnyy9TyD4QvWzS9kfXdgJ9vnS8Hogy+Ci5nHA9RnnLhUuARy3XL3Z7nvCNNUtM9hMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786008673; c=relaxed/simple;
+	bh=FoVnFKOyPeicEzN5dvYWoh9ri0rGkrbnpUs+oao3Ans=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kO+8ferx1i+WERZUpdH6Eltybab2EbkY36xr7OiK7oBW2qcQfp0B7OJqklQm8JXxm15ziA+E/CF8vfAvWdZz9ES6wE9sYE8CWpuPYBg4QXNmGyYf1jkUwHAxaJXYmAGjh+Utj+icOmfGauSxL91kMhb2N5VRcvDsphnEfDir8QI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=OzclBUZr; arc=fail smtp.client-ip=52.101.125.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="OzclBUZr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KdEw8ARJYUVOP3dmSBA6VYR5wISjd6hEp4z5SISZzcNstjb5gw6UA91HAnziWrg5Y4svt9hHfC2TLZ0AczcW6qxxHPM/UleeE65RF//OQPnzcIJWXYWVXyDQsi5S3mNGjM3n4eTD1381wVNCBkRrHynerO6+ze3HNd/qS5ukmiZYSSssCXX4e1Vt4KGbdHXu1qf2h/i23KtERIyopQjUDVw5n/f3VG+w9na6XHa7HBQnBCyaLXdQjyU/c6Qdrj/3CXSGHNG9bZPJroAfx4sMaPvuE9SzNVk/wsQis4vLQZ7Kj9sfZYrPE2L9leHHd/EGpPT3s/V3iRKRm7dlp8ca5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VOKUnUDvEUsO023aSbdNPQ0z5VXsEQazmX7ZTnajP6I=;
+ b=WSXPhCtCtixbT9a2O/+QGsNLMUirb3+1purl1ZHF4U9MHe34vcwk6OsfCWyW4/GMXdIW00VniRAbEJ8VHof6WW8IlzkgpaiDRVV1T/KqtqxaM/Urb7zLJj0tKCUDv0XeM0+T3IOm86Ais11QmR9L6tfQuPTvDGWrtudWsHB2lB4//gV1LagqQL2dEQlvXoie9bm8h5mLgOTB0GQQtcSuW6aCYNxzd06quj1sZEWhlYUZSEfcOgQwpZMfBQXmaFpWskQOy3Q/lxiHjOOZYNMXNp7YqZcvs22zX+5NCkpA3+4QbqG8chSZCs7Y7r+t59wXpdKKS6ShVNBaXUclxxe0cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VOKUnUDvEUsO023aSbdNPQ0z5VXsEQazmX7ZTnajP6I=;
+ b=OzclBUZriZ41ar+4JTIljVQfv82wfzzdiMUHGOX1NhmxctAvczgDxBJTbxGFSCfUtQ4x1SaH5+Gepp/J69pWrdveIzqydmWbSXH/RFmLDkGLb5Y7kisIZGP6cedvEf/y9sEhyliv5LPgOf+Tcff+turNoVKMXitzE+DkfhV7b50=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
+ by TYYPR01MB14133.jpnprd01.prod.outlook.com (2603:1096:405:19f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Thu, 6 Aug
+ 2026 09:31:07 +0000
+Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
+ ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
+ ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0292.018; Thu, 6 Aug 2026
+ 09:31:07 +0000
+Date: Thu, 6 Aug 2026 11:30:53 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	claudiu.beznea.uj@bp.renesas.com, biju.das.jz@bp.renesas.com,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: renesas: Don't register devices when ENTDAA times
+ out
+Message-ID: <anRUTcyZ0EZuctiR@tom-desktop>
+References: <20260731070150.2519825-1-tommaso.merciai.xr@bp.renesas.com>
+ <anOc3-M-ItT4mcPg@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <anOc3-M-ItT4mcPg@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: FR4P281CA0383.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f7::6) To TYRPR01MB13588.jpnprd01.prod.outlook.com
+ (2603:1096:405:18d::7)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727122546.4232-4-wsa+renesas@sang-engineering.com>
- <20260727122546.4232-6-wsa+renesas@sang-engineering.com> <CAMuHMdVAgjguscFMKd7u1XPuZEkB7mH9-G-Y8nYfXqbzJ2hH9Q@mail.gmail.com>
- <80a94424da18d5003265c5e8bf5ecb5a90499b59.camel@pengutronix.de>
-In-Reply-To: <80a94424da18d5003265c5e8bf5ecb5a90499b59.camel@pengutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Aug 2026 11:09:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWVtfizYD4vKzsQrVpzr4ekmFQRtDZ4QpOhVHMh6K7JjQ@mail.gmail.com>
-X-Gm-Features: AUfX_mx9R642ojyV8nVvuxrlu7BuXMyh8-3ZSJ2-Ejt5syD2K45GL-3-zFxCdxM
-Message-ID: <CAMuHMdWVtfizYD4vKzsQrVpzr4ekmFQRtDZ4QpOhVHMh6K7JjQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: rcar: add R-Car Gen5 support
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
-	Andi Shyti <andi.shyti@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYYPR01MB14133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a55567f-0ef2-449a-fa22-08def39d711a
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|52116014|366016|1800799024|13003099007|38350700014|10067099003|11063799006|56012099006|4143699003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	5eDR6UAx7QKDA+t2bh54jyg87RAVYVarZajHYyJ3dry6UO+KA9+k4JQ1nkVlefJB7nH/QYJgFIuUHe1SjgxavvnWLg8fJpXHyFVAgEDGCLPdOEFwq6iMVZ0G9q1bP6xVBOBjp9BS0TAgw2HRGeZZt4kwm5wF1pBqs/IoGfMwbeaoG1P4O0JkUtEkmLCiI1qFF9P78Y0RIrWxQfXVc837LtcOcPjxhBbgxopADRRZHsghOB/LB1dcbm4Ic/rOBDt/aZElXy+b3CVCBxl7GcryXE+dLtJMkMXaBN50VA20vDQdSDgES1AyofeWqYbEMLu/5w6Hhxy8Urh+3gyLxT/2xPnzWgBoaeNKiZkglmBv965f3oHtvIaRHDiQWwHabcv8AHWrHiMVwVf/wWTFvajld7C+e4TP1HwcV1Q2ok0aQk/j8BygAFXGZAVV3sT8b3R52hn6ysj4mOpCEkrcxBHtMB/shmGRQfXWTOsMjmf0BTrZI/OalAU9sf/w52SRGEFC6oZIFHKgYx8bT3S5Ot6NWX9SsKdroRejbMiXOypvXFRAeQzNTiM6QxlvDfx13v7jzTN7ML5P2LnPXt07biAH+5Ko2ud7nupt7SYsGPpONus+shTdTnxqKVruG0CnMNHTmEhe//FikZXsKqzri97VPfkp1Jxj59HZeFXqcpI80kFw18IoRV51vHg1peYJx4KzDaLrcxHOz9V6uzUmaCJVHwRsMW6wT19GfhYF1BLUBa0=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(52116014)(366016)(1800799024)(13003099007)(38350700014)(10067099003)(11063799006)(56012099006)(4143699003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+D63pCwAEPgewHR9KLx3FNmyLc74cAUaXK66Xxs2S1RX7hZBebUT6Xs2ukde?=
+ =?us-ascii?Q?p6nX21tIIOgygDKPjeFr5RYBX4uBEVJFy2QO6F0KPvk2xRad7/gK8Rl0qLJy?=
+ =?us-ascii?Q?B5X5tIzo0Oze7GjxZnm81yNm08sOk4MS4WMOW1j49ucKKMmb7L9rtSPWNG9x?=
+ =?us-ascii?Q?ff5kOx4XCIZoUDN1Tqi4sCgymHXLadL8l3vaOrb2HM25QlxvpZL6hxWYo9fl?=
+ =?us-ascii?Q?z/pD3dU/4q5NLi6IZk4+Mj1t2KjlyHUVSVI+5B0UraBjmiw7TpqRFgsTxdT7?=
+ =?us-ascii?Q?02Xnmv7829qo24LVa1ZJ/CjXZCoPaLHRyWMNKwtt9TL//LEIm0S3tKMT8Lv8?=
+ =?us-ascii?Q?Rb9JadRxmMcJs4zOOWZvJchr/7nyY+R6V3vfClLDoTF2fR5csqgR2XPrcKbv?=
+ =?us-ascii?Q?LCAmBw17WD3PEfVtFBEnR7+XQ2Gfwn1piH203Ze10K3RHH69JPWsSuUIuF2x?=
+ =?us-ascii?Q?2xXerqqU6IC4Tw5akncX9mjKq6TSDJf6RNFjWt8XnUs+/drrA9UQyvnIB+y9?=
+ =?us-ascii?Q?B4IGxw/eWMdfABn5+Qx1zsEf6CU7UvJwdUc05hyttTtzL4T9niE2YFnKPy0U?=
+ =?us-ascii?Q?exRZe1UbH5srghneBfUwjCcrIHq7jAKAuaBJ5Ahn68FiGR2hZRffTgaNiPUj?=
+ =?us-ascii?Q?amCZZXwa0FMdauOf6CQ1+Vmy9Aln3OUjcA53KAwKGfba4HePwGea768rw6O+?=
+ =?us-ascii?Q?kGE9WoX4ksi3+PeZjL5oDhEKtPnUVBIvb2ljAwcGm4+ZIfwk5cq6SDAi80fw?=
+ =?us-ascii?Q?/Ol+M2V/qcelgvpBV7fum/zM0FZuj7sdIxroo28s8MVBPshGJOwf7MTknsks?=
+ =?us-ascii?Q?MgujexquPu1wEqqOyfiLC6be5WtbhfzcAL+M0FzyWFKR4gjLi6PeWLu6S+16?=
+ =?us-ascii?Q?8kgH2kLVinWLgAtXy3PtzEIJY5Dpv9hSghK/A0CAtjKiPQunnj7dXqcSxc4x?=
+ =?us-ascii?Q?+RX7TBWgOD/H5T9GmshpgkY0KSdUU15SYDufxMaIPTA4GmFGECY7GqJ5meDG?=
+ =?us-ascii?Q?8y0jxawQOHENurffAT5zJP4OZXmL+rKzq15z2KJV4oIHUEE+OpUXlE3IQOHs?=
+ =?us-ascii?Q?ViUKFtFoJVpSC8pLodCkptzFnQjaiCSz3tQwEt2gplEHJvwSf+EDi+snbN12?=
+ =?us-ascii?Q?yQkt8Jf6RAJKaES16SCVs0As/w0afJN/g1PQJrw39cw8zpy+p+ewQ4cBm1ii?=
+ =?us-ascii?Q?/Uo/owQgNM/WhKxTLTgi4fqnsjF3goF498v3HvA9T2en2OmN6xfgq9szlB+p?=
+ =?us-ascii?Q?9yyPzCmj+CJOvkURojQaEy4iP947NC4qUpjfo3x7J72M1cNJQTlceqDUaL5j?=
+ =?us-ascii?Q?yVEV9G7TI9Z9On7+/AUCCc1dDoQJ49aVL1qv5U1AWDOqQ9Pm9y+nL0DL6js1?=
+ =?us-ascii?Q?ZAtIH7b3Kg6Jwg9ZsJFzFlkKzo/w46vNB/yiPHJNGv4lS1tRgIxhzIOrlJPb?=
+ =?us-ascii?Q?Umchbg+D4wTUjJsK1nMwxvNEbfeXREvBCYQAhsr/yawTNLGiYwhMOIJYMtkW?=
+ =?us-ascii?Q?6IJvXoKuM+2VPh/qocYQrOScNE9G648SMHW2N5Flk9vRXMhrLHI8SJHwxdPz?=
+ =?us-ascii?Q?HJk/0n/H2gQZNM7iTu+O3XEwV1Ajp/dVAuLUsCsi/Ex/pJ9D/B8PCk4GeVfR?=
+ =?us-ascii?Q?2cAG6dl4iaZOZhtSVaO/UZ8PMTvdVdUK9dtR2BpAa1KOHJ3Yo0oLjYE4Whbs?=
+ =?us-ascii?Q?xUP8/7B1oftrKFeViV8Y8Es+vXAtG6A9NRweJW9X16h2pe1A12xu/boN/Je/?=
+ =?us-ascii?Q?IyBgSrj7XgLdo7lq/ynJmXuOpK88gJrrAcfD8zlpSw1CrTgWHBaP?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a55567f-0ef2-449a-fa22-08def39d711a
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 09:31:06.9733
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lWrgnq40OmGTEnppACo2nN8yxHoJHVYKge2zRUc8KOtjZ3Y7Xy5HSrJFlMIv+RHJpC/E2rBajsY6SpBYr/l4kpoor5QqH+xBQ7ve8yVksV1K1LHOTIiXOWjy9iuKSM1a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB14133
 
-Hi Philipp,
+Hi Frank,
+Thanks for your review.
 
-On Thu, 6 Aug 2026 at 10:18, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Mo, 2026-08-03 at 15:14 +0200, Geert Uytterhoeven wrote:
-> > On Mon, 27 Jul 2026 at 14:26, Wolfram Sang
-> > <wsa+renesas@sang-engineering.com> wrote:
-> > > To support the next generation of R-Car SoCs, we need to skip polling
-> > > the reset status. SCMI doesn't support it and the firmware must take
-> > > care of this anyhow. Other than that, the driver works fine as-is.
-> > >
-> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Aug 05, 2026 at 04:28:15PM -0400, Frank Li wrote:
+> On Fri, Jul 31, 2026 at 09:01:46AM +0200, Tommaso Merciai wrote:
+> > renesas_i3c_daa() derives the number of newly assigned dynamic addresses
+> > from cmd->rx_count, which the response ISR sets to the number of address
+> > slots ENTDAA left unassigned. It starts out as zero, which already means
+> > "every address was assigned", so a timed out transfer leaves that value
+> > in place and it gets used as a result.
 > >
-> > Thanks for your patch, which is now commit 87e713f200481106 ("i2c:
-> > rcar: add R-Car Gen5 support") in i2c/i2c/i2c-next.
+> > On a bus with no target connected the ENTDAA times out and the driver
+> > registers RENESAS_I3C_MAX_DEVS devices that are not there, each costing
+> > the core two seconds on a GETPID that can only time out:
 > >
-> > > --- a/drivers/i2c/busses/i2c-rcar.c
-> > > +++ b/drivers/i2c/busses/i2c-rcar.c
+> >   i3c i3c-0: Failed to add I3C device at address 9, error -110
+> >   ...
+> >   i3c i3c-0: Failed to add I3C device at address 16, error -110
 > >
-> > > @@ -900,8 +901,12 @@ static int rcar_i2c_do_reset(struct rcar_i2c_priv *priv)
-> > >         if (ret)
-> > >                 return ret;
-> > >
-> > > -       return read_poll_timeout_atomic(reset_control_status, ret, ret == 0, 1,
-> > > -                                       100, false, priv->rstc);
-> > > +       /* SCMI based resets don't need to poll for success */
-> > > +       if (priv->devtype < I2C_RCAR_GEN5)
-> > > +               return read_poll_timeout_atomic(reset_control_status, ret, ret == 0,
-> > > +                                               1, 100, false, priv->rstc);
+> > Start from maxdevs instead: no address is assigned before ENTDAA runs,
+> > and the existing rx_count >= maxdevs check then reports an empty bus.
 > >
-> > How to differentiate between using SCMI and running on bare metal?
-> > The latter still needs polling.
+> > Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > ---
+> 
+> Does https://lore.kernel.org/linux-i3c/alUZ_N9VdxkhcpqM@lizhi-Precision-Tower-5810/
+> 
+> fix the same problem?
+
+[1] cover the case when ENTDAA completes and reports
+rx_count == data_len == maxdevs,. 
+This is what an empty bus looks like in the response descriptor.
+
+This patch cover the case when ENTDAA never completes.
+renesas_i3c_resp_isr() never run then cmd->rx_count = 0
+
+then we will have:
+
+	GENMASK(maxdevs - 0 - 1, 0)
+	GENMASK(8 - 0 - 1, 0) = 0xff
+
+This marks every free slot as newly assigned.
+
+IMHO I think we are seeing the same issues but having different
+causes.
+
+[1] https://lore.kernel.org/linux-i3c/alUZ_N9VdxkhcpqM@lizhi-Precision-Tower-5810/
+
+Kind regards,
+Tommaso
+
+> 
+> Frank
+> 
+> >  drivers/i3c/master/renesas-i3c.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > I think you should call reset_control_status() first, and check for
-> > -ENOTSUPP, which would indicate that reset status is not available.
->
-> Ah, I suppose this driver is what you need .reset and .status for in
-> the R-Car X5H MDLC driver?
->
-> Seeing this, I wonder: could the status poll be moved into the reset
-> controller driver(s)? That would leave this driver with a simple,
-> unconditional reset_control_reset().
-
-This could indeed be moved into the reset driver. However, that
-means the reset driver needs to become aware of the peculiarities
-of the various target devices on the various SoCs.  We already have
-something similar for module stop delays on RZ/V2H, though.
-And it means more dependencies to track when adding driver support.
-
-Then there's still the user in the PCIe driver[2], which can't be
-handled like that.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=renesas-clk-for-v7.3-tag1&id=0a6643b1a5ee72f76ed0c606c1b34c7cf632cbfb
-[2] https://elixir.bootlin.com/linux/v7.1.5/source/drivers/pci/controller/dwc/pcie-rcar-gen4.c#L185
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+> > index 2b501f31e874..f4d9608978a9 100644
+> > --- a/drivers/i3c/master/renesas-i3c.c
+> > +++ b/drivers/i3c/master/renesas-i3c.c
+> > @@ -685,7 +685,7 @@ static int renesas_i3c_daa(struct i3c_master_controller *m)
+> >
+> >  	init_completion(&xfer->comp);
+> >  	cmd = xfer->cmds;
+> > -	cmd->rx_count = 0;
+> > +	cmd->rx_count = i3c->maxdevs;
+> >
+> >  	PM_RUNTIME_ACQUIRE_IF_ENABLED_AUTOSUSPEND(i3c->dev, pm);
+> >  	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
+> > --
+> > 2.54.0
+> >
