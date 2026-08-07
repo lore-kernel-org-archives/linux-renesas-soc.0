@@ -1,223 +1,248 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010048.outbound.protection.outlook.com [52.101.229.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35F846D57D;
-	Fri,  7 Aug 2026 15:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786116464; cv=fail; b=KeArkcDJjBBiNAEqm2O8Rq1eKdgAScj7VhzdF5vjX5ELY49ZLH1B5NZY6JutL2v9p6PiIE6soMzBdgsVrbC7Xn2epiauOyWsisznjlWr4rni86yRy/iDGoKru/3ZZLUzfnI03sDLzMHOeKlR5RaOaOGJ1KFNLkfxNDd0Ihkk4CY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786116464; c=relaxed/simple;
-	bh=0PT2AfeL5aOGc8knUX28x8J5EN8sLoTgT2TsITIjLNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nbXJwoplShtJTIOSAYBC9l9PZEdP46XXT11uQ9TLaE7HtcISPrt/jxwHESZexeAgJFA+B2pzl9vR5cF2dse+GCYxiyOTfH1t4NbODO+oirW4vyzJ4rcvwo1Z78tjdVf5oHOlQEGdS5jSHb7EIi9TGW16xgol1KIoHW1oOdcirM8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=WbAjLde3; arc=fail smtp.client-ip=52.101.229.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="WbAjLde3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cLVvgrEkr4IvGF1D4KMl1umFTtvr8BvUprgErX746KYPi5tl2J9uwzWs1FJFhy4hjYiW2NZ0RM1DGVyyOZkfybsnFT6vxa3Clwknzh+I9e/Nyln6j9XjpP6B5aEddOeZvCdQpEmU7WYI+SgmYOIYCCuXBcs734DiA7BX+gq8GoYXmDEubKzz1NeUJdruMSVAEDdvcljqD/0T4ovcU18xt/ZEFeccIpDJ7ja27kuTpjIjyO5NajJtZV9jTpCzHwEBoWnKkt7qui6/3Tgnu8i5duee6kqs0NdtGlooRbnER5405f6htMBfPNG7KpBPuD1XHMHFGVuoO7ACKWDcaVpqIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GYjl6V6ewpXl90783F0/5fqaAbS4biqexNAjHpTIoec=;
- b=hDdx7yEW3xoFmXttvJtf/K4olSsr83qQLtc18edawUz28ck0fIOKHjY4Ltc/dFTp/BEkpB785i8RB6cx0zwwXMMcJi59J1fZf+uhFdFhEv4y+2GbYO83eSOfFKufWm7MVl35lQXRuIDuvZ4z51azJtbe4fbIOyLFzdZ7wOwB75yEtYjahinLqO/4zWBFJBQgKMZS0qCLqHaNwJhu0VdPIIi3z0fQoGolv47rs+zgMc1ao/wk2qh06rJXG026BsIBTIol8Z0+/5yK/9zcp1b0bYiiNvLgmvMsfHHeAFaxPWwIJUda1bsLnvjfisYZgx7se0LVed4IgYlZpAN3CC2Cew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GYjl6V6ewpXl90783F0/5fqaAbS4biqexNAjHpTIoec=;
- b=WbAjLde3wk2duY5HZY5ZDw3kUBQjrW68yVK+McqdMV1D87JQnerRH9g8JErsRPIKR6FO2iempMau1+cn7pF4b0yKKod+Cn1ecK5EyzcHZZPGwhKhYp9TY1ahsYqt7N3a1yI8ZunAjIUuBDyGzzgQZlBAh8BgafCpAZ7dEC+bjXs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TY1PR01MB10672.jpnprd01.prod.outlook.com (2603:1096:400:320::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.24; Fri, 7 Aug
- 2026 15:27:39 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0292.022; Fri, 7 Aug 2026
- 15:27:28 +0000
-Date: Fri, 7 Aug 2026 17:27:12 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r9a09g047: Switch GBETH TX
- queue scheduling to WRR
-Message-ID: <anX5UAtB_PtITkxq@tom-desktop>
-References: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
- <20260722085353.136986-4-ovidiu.panait.rb@renesas.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260722085353.136986-4-ovidiu.panait.rb@renesas.com>
-X-ClientProxiedBy: FR3P281CA0117.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a3::8) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739D13955FA
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2026 16:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786121847; cv=none; b=aucqQazO+rhy1ttCnDVBuZO346W6a2lzasIdMp1A3wFAGrOvJeoPrLWFstxnWEIPpr9b+V8zobSMV2y0e8iP3hxp2urYiPpH6NvrZmA88VAujGJfIIhNhr+dfyVFmoLZTie3ZV7nHLjfI5Te2lUrpEskWGqsX/O5VJWNPjx8MEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786121847; c=relaxed/simple;
+	bh=vPc6vf6UpiLlXJoEYCa/uwMx3ESspZKnGUeVSaDznCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUB9JiuCTIiQiveNiW230OD0fPfcprIHzJ4PuSzhHomDPJxnN5h4z4HslH9efb2iFdfjmxO74J95IbNJGY3+vOOeVW70HkLeoH2Fyra/TFIy9JQNinVC+AwiV96z1IKqyrepdxzUC/etG4w8PSt2r1O8u/cqG5m5YLGNud4pOYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-69fc9f25118so3826387a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 09:57:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786121841; x=1786726641;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=zddzVVYS9F5PpJp+klwF/9jEg03r8YZTMRZfUZl45Bg=;
+        b=dmylzAmT0Jcp3I6ea5ngBp6hq2qJCGPnFaTmxdhmejmJB3K4pJxL472oPwMRVlkIL5
+         Cm0Uzo1/GzTqlaXRG+YkwXATSzIp0ivDlqCj7Jh7ZW5ldhCJKpY0Nnphe047SJzx/LuG
+         5vvizq1cpsudn3S8WBjUU7EuuEm8PKEviXxHi4M4jDEdrWClcGClZUwT8qSuWXK+Ln7/
+         +78DstoYw/qn6jRNiu+XQGcRwerHhucLjWL4s8dGYHubmWAonM3pI2XsKIhB0fs2xEAY
+         pInBgXWyYFujVH+GExhuo3xbhT/u3zf54Wgmq0ncEZcoLljBxdHlCkq7lezo7wxTlSjt
+         mZ3w==
+X-Forwarded-Encrypted: i=1; AHgh+RrGXw/MwM8oQj4vdLYcpnhU+48Bqwp22PcXVD1rbZ/b0v+LvlL5/FBi0CzxdfPUn969TnQw7qaG/Bj3Egoe8t4d9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaTFv/BdlUQIWQeWfUU1JmAkFhku9Zh0OcwHtq/FwFj5/Ot9m8
+	UaRhOwWlxKjWqSuYXImyKmwkasOpq5ALEmLKShMrUaXY9OXCDtYrQAesfnztI8D+a7E=
+X-Gm-Gg: AR+sD13wGqGSUjB+OPArPte8RhNiKakcFN55lH64j8QfbA3BcJyyaf0ooD9LmN9bg3M
+	sFlffiQdvG6p7a3r0F7LNNXaOJQr5XR00pUnoofw3fXk6QPmAtbdVI6/aupNNEAetbAHztahpoz
+	SiqOxkULbPXczXKtH/VPQOPbYBnFxIP/W9gBEzHCPFwKjbyZY17dthFefh7nNyPT1u0MDXzj3of
+	5t7s9gH+SvQBGWQ+hay7d1aAqvTuFERwpiJZs5kCYDWxZB/hrNOudWfipslJ+Hv18Z5LZjcEAsP
+	lwR4HJboPr8VgiWh+laWghMLpUKyuwcbTiWhrsZ8Sf6NrPPNhFRoyvZVstEVRFRsvHYkXzzDwW0
+	+6ckPhgGiaZgwnMblBS2OmStXDozEaIRxnYqFpuM2Owx+aDUygKpJUV+zs5bOz8u6tetuZEdYAL
+	t8V7RzRj4Abb0oS7U10GpXyOqhkX4jWFtbUrxminiC5H+gW0uFjsC9DlFDoIhz5r3pRVsSJkWP0
+	lxDKf43qEHycPeLZyz9o4kSCg==
+X-Received: by 2002:a17:907:3f96:b0:c1f:9cdb:9965 with SMTP id a640c23a62f3a-c20731a96c5mr581973566b.2.1786121840807;
+        Fri, 07 Aug 2026 09:57:20 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2080cf75c2sm72626466b.59.2026.08.07.09.57.19
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Aug 2026 09:57:19 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6a1a546a6bbso2926775a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 09:57:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpOQAUnZCe9Sja2DSc4z6IkeD3kOtMPhSrrUNx4huR7I9e6arpDGJ7WIu+NtIAWATP0Sx+h/vTM/rbRcZhoId1WHg==@vger.kernel.org
+X-Received: by 2002:a05:6402:444a:b0:6a0:a4ce:1b8e with SMTP id
+ 4fb4d7f45d1cf-6a1b49ea41emr5538936a12.0.1786121839381; Fri, 07 Aug 2026
+ 09:57:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TY1PR01MB10672:EE_
-X-MS-Office365-Filtering-Correlation-Id: 050079e5-8af2-4af7-c8ec-08def49863a1
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|52116014|376014|10067099003|56012099006|11063799006|4143699003|6133799003|22082099003|18002099003|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	3nQxPabVUTSX3N4cMWvtdrCKO4t+HpCjaHqqzrq6C5GpIJ3Au6d5ynAqMSRhjDa13pPUlehgCraje56EECsgesfziHbEwyDXeGtv0Dn0acNPTUdwQWs+dNgqrVZC/CDR3CCHMXkvYFC1zPGQHiZSgA1bA2vJtvlyeveSx/SGXOaHRMMwvQoAGPI4UTmY/Y29PWEjArmUN17YWhlgFDwdEUH2yGuHp9tjcTfzGVAQnVLFjM5ITWFoj46sv5YJLZizFGeBoB3sqtubR8cKIsidVI2CihKlrf5t5LZ1UNpzwEVnRR8gPQlnAOb8bd1XEPy8TfmZMna3wul+BfIUHdMGAps4QRZIBlAVEW3XntDapna+IRR2fl2PCENgLikzC+QiDCj1unnbGlLkyqanKm7h7ScIuUxsIKO7OSZ1vPikze8L8Esdz42geLkav5azi5dENjuOrrwfvZ+enLWLQLVJdoYmMFWLr5Okwse7EG0mPzMwRiqFEcmWVzigzA2SZTBUT6AHCcey/yu7QD+4YF6agFGZ4c6AXiJBo1lg9lvq6VbY0kUCZ6EDARFT9Ye22tzg+5rdwOVM2pc4tuUMPyAMYywo7HCkZqvVpCXeWULRTrwx5tWc3c3gZ0aKrKoBQT74Rf8/+yN8Dmkdo7H11/8IUMvueChOwo4rr3BZMARdd2dXhqMeJ81fbBIXssb1WdifEu8umKGoXywvUDfjzg+U6qiwRW5I7Gl3YAiyunKjeM0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(52116014)(376014)(10067099003)(56012099006)(11063799006)(4143699003)(6133799003)(22082099003)(18002099003)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?moFDHvW+SfuqpkP0jtdwrrnpnR38XcHI1XT7gxWgo5F3Aa6WPvSvUa/edEo4?=
- =?us-ascii?Q?xVrZjC86CQRIIcLbNU1IS9nhMBJX1nr8q6PXcvC0ySi0xy96X/o2uWK8XQoo?=
- =?us-ascii?Q?9w5mOjxRMoTvTr5+MefWrz3JhQz4sh092TxyNtqvX/7kM7GkK3hcFCpOLaNS?=
- =?us-ascii?Q?ASQLPupgrNQIZy6AaABvMv+qSsGcRw6oej7Xj4FOBouioWigvvVU/5lqExpI?=
- =?us-ascii?Q?CGqr0VTlSD/arVI3gh3PT4htLsGmwOHp4fOTlnTb//P854Z0vgMwsUiedxOU?=
- =?us-ascii?Q?vmQJvaobu4ea519VONe3c0pGmM/ytSkKWT3+8rDd3m7nL31VkHBRPwxjFW12?=
- =?us-ascii?Q?YtUh6GIQl76SbMbCVsI7QXwNbdDX8nfLxzNPHdiGqyApPrxrNaZFTBNeTcKa?=
- =?us-ascii?Q?PsGDz0+fVAM5AXNmv37HRiDe+7RMo6Bg0MlX7QsSHfaKtlzOPtWpyPOJhNyk?=
- =?us-ascii?Q?maJ6+3K2Q1dqFXLdVQxx4b3daLbIfgIny4IfT3xer46GscLAfpTg3yOcQQio?=
- =?us-ascii?Q?LKWBTT9PQMDH0um9B9nmp30KYyVrMUCAsM/J88FFXidsoKUpj862KpHJpRXR?=
- =?us-ascii?Q?QKlCSdgZ4qLSqXCZtMZ+fYk2iuD5qIWMQU4Kki6eZFGbXmhPv3tDUgI9OXGN?=
- =?us-ascii?Q?Ssn5SFom+U4QJAiR9ZsEu4vutedcNeHOlEp+QVTrFGHdyculaA1Aqv/zqy4I?=
- =?us-ascii?Q?AxP9jwKxh0qQOppsdwY2XHo7tlALlQtvFYdJ1nr3XrLDijvbhoTISNBqyAmC?=
- =?us-ascii?Q?fxyuckNZahRxsPD2G9Lb8+JsMeg1cEyjoIpoztla5BLKYtXW3BtYYIemaN9v?=
- =?us-ascii?Q?l73/y3LBfSiz+NFfrL+O08/BdaZUELhWTnpZZEDZOUXst07sUSkVIjwvlQh6?=
- =?us-ascii?Q?x08+R5wMtjGPjyvrHk8giPj7KCCYxrq+PEFv8652H+H2TiLMFE+Nk/7dBBqW?=
- =?us-ascii?Q?HZi6CqOhPApTGHzFaOKlqeRxAR1kT3XCv+gEUHaFNrxgebb43GOyJPHR7iA9?=
- =?us-ascii?Q?UehxApeM7JjQv7vWR4TtYRhCBkEhbS3MRvvBfzkccfUJYi8y+WdQhwSijDcr?=
- =?us-ascii?Q?vM0v/SXc4gbAGKK2tjYFhUrEpIMDGInSS/PBHKzooBJBlQ4rdVrfuVT0Clmx?=
- =?us-ascii?Q?0GC+Xl4+icwLGIIPx7RGKtK+FCESRxuH8fY+lRguG1q53dedyAuc+l92gxJq?=
- =?us-ascii?Q?g/zfKE6mR890mpqIQfnrb+4P47AzkwsDyp7j7IdAa5rK6zMnKF1DN5ehwVvC?=
- =?us-ascii?Q?BBRddJ6in2gBAhiK7F9H778sE7XYGLePku/V4uDsGr/EIxxTkavQ/+fojW2E?=
- =?us-ascii?Q?9MZ8Sa1lP5yywEPrK1Sn/Dc9XTM34ejjPu16w1q7VcXqUuNoyiWskYQbFVjb?=
- =?us-ascii?Q?zcfwpDVZPB4DzHPVa9vhd7di9yNKNotFcbi4QCQg83MdKdBHkD/TM6aMGRTe?=
- =?us-ascii?Q?y0EA9evVcUDHxfTr/gZikJBoPUvwOC1IuNzlkwkgcPkIMTTbPWy1LeBX5Zk/?=
- =?us-ascii?Q?FAHvxvpTqxZWQz9w+FzKYc7NeWPqBkLuVvz8VbRkAy2SLM/t6Zyt+HwDcAAJ?=
- =?us-ascii?Q?oM85LTdR5NLV5kfPtOfKOrIE5QlPBycqBKCpeUDwdAi0jPUmUybPBJGVTQcL?=
- =?us-ascii?Q?sj48v2SRCvMiBb7XU2VeF2Z9FWrNYXADG07luulT96y3W06DU8+baaIGDKg3?=
- =?us-ascii?Q?IDXOXHWOsZtRQKgBouqx+i2d5mTpxhFx5/bY2/p2hir3lLOSXFrB2dO+dJU2?=
- =?us-ascii?Q?lBCmLyL5v4jizJ8TtkZ/kp3Z6Xq3ruswnohzggWh2J/4KUZjaM9P?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 050079e5-8af2-4af7-c8ec-08def49863a1
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2026 15:27:28.0999
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y2euM1v0z2gAOHnWVo2KXk4PBNTDo7ifVnhtDRdH92gttUxkMFnQ5/Yrd8R42e2eXepJp65N6zRbdvwmwo5E7bnFTBK+Qh+fA7dfZKsRb8j7o8rymdr57eB6RfjFepaw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10672
+References: <cover.1783505329.git.geert+renesas@glider.be> <20260715-greedy-ocelot-of-feminism-5be3bf@sudeepholla>
+In-Reply-To: <20260715-greedy-ocelot-of-feminism-5be3bf@sudeepholla>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Aug 2026 18:57:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXD5eMuLBJWqLAt93M=8pSooBOFQ-H9jBM98N8HUwbRTA@mail.gmail.com>
+X-Gm-Features: AUfX_mwo4EKqALTJkUcOqfKJfKUYp7ByWT2RwJWKEGja2YdKTdPuto8-gpxkDXo
+Message-ID: <CAMuHMdXD5eMuLBJWqLAt93M=8pSooBOFQ-H9jBM98N8HUwbRTA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
+To: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 22, 2026 at 08:53:51AM +0000, Ovidiu Panait wrote:
-> The GBETH ethernet nodes don't specify a TX scheduling policy, so stmmac
-> falls back to Strict Priority. In this configuration the queue with the
-> highest priority gets all the traffic, starving the others under load.
-> 
-> Under sustained UDP TX load with multiple data streams, this starvation
-> triggers spurious adapter resets due to TX queue timeouts:
-> 
->   iperf3 -c <ip> -i0 -t60 --bind-dev end0 -u -b0 -P4
->   end0: NETDEV WATCHDOG: CPU: 1: transmit queue 1 timed out 5228 ms
->   end0: Reset adapter.
-> 
-> Investigation shows that only the highest priority queue is advancing
-> while the others stall for more than 5 seconds, causing a netdev watchdog
-> reset.
-> 
-> Switch the TX scheduling policy to Weighted-Round-Robin (WRR) so that
-> traffic is processed across all queues, eliminating the stalls.
+Hi Sudeep,
+
+On Fri, 17 Jul 2026 at 10:05, Sudeep Holla <sudeep.holla@kernel.org> wrote:
+> On Wed, Jul 08, 2026 at 12:16:18PM +0200, Geert Uytterhoeven wrote:
+> > TL;DR:
+> >
+> >     Describe hardware in DT, and perform the mapping to SCMI in Linux.
+> >
+> > The Renesas R-Car X5H-based Ironhide board is the first Renesas
+> > SoC/board combination that implements the ARM System Control and
+> > Management Interface (SCMI).
+> >
+> > This means Linux can no longer perform various system operations (e.g.
+> > clock, power domain, and reset control) by accessing the hardware
+> > directly.  Instead, these operations are abstracted according to various
+> > SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
+> > firmware running on a System Control Processor (SCP).
+> > More specifically, the R-Car X5H SCP FW SCMI controls access to:
+> >   1. Core clocks and module clocks,
+> >   2. Module resets,
+> >   3. Power domains,
+> >   4. System power.
+> > The latter is not relevant for this discussion.
+> >
+> > Using SCMI also has an impact on the board DTS: besides the addition of
+> > a firmware/scmi node with protocol-specific subnodes, devices using
+> > SCMI-abstracted system resources now have to refer to these resources
+> > using resource specifiers containing phandles to the SCMI protocol
+> > subnodes, and firmware-specific object IDs[1].
+> >
+> > Unfortunately we encountered several issues with this:
+> >   - The clock, reset, and power domain IDs are not stable by design,
+> >     causing DT incompatibilities.
+> >     SCMI requires that the ID space exposed to an agent (i.e. Linux)
+> >     starts at zero and is contiguous.  Hence any change in system
+> >     partitioning (Application CPU core vs. Realtime CPU core,
+> >     virtualization, ...) may mean a renumbering of all SCMI IDs,
+> >     implying a massive change to the DT.
 >
+> Yes it is well known fact. But where this is a feature or limitation
+> is debatable. Why would SCP firmware churn and re-number or re-assign
+> a differ domain ID everytime it is updated is questionable to me.
 
-Tested on RZ/G3E evk:
+For an actual product, I tend to agree. But even then there might be
+a need to reconsider partitioning during the long (e.g. automotive ;-)
+lifetime, e.g. to counter a new attack vector.
 
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+For a development platform, the situation is different: the same board
+will be used for various use cases, with different partitioning of
+responsibilities, and will run various firmware versions.
 
-Kind Regards,
-Tommaso
+> >   - There may be different SCP firmware lineages, e.g. proprietary and
+> >     certified variants, and FLOSS variants,
+>
+> No sure if I understand the issue here.
 
-> Fixes: 41ffbb1c42d3 ("arm64: dts: renesas: r9a09g047: Add GBETH nodes")
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> ---
->  arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> index 73757e8e2197..060405d4a2dd 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> @@ -1913,23 +1913,28 @@ queue3 {
->  
->  			mtl_tx_setup0: tx-queues-config {
->  				snps,tx-queues-to-use = <4>;
-> +				snps,tx-sched-wrr;
->  
->  				queue0 {
-> +					snps,weight = <0x10>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x1>;
->  				};
->  
->  				queue1 {
-> +					snps,weight = <0x12>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x2>;
->  				};
->  
->  				queue2 {
-> +					snps,weight = <0x14>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x4>;
->  				};
->  
->  				queue3 {
-> +					snps,weight = <0x18>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x8>;
->  				};
-> @@ -2013,23 +2018,28 @@ queue3 {
->  
->  			mtl_tx_setup1: tx-queues-config {
->  				snps,tx-queues-to-use = <4>;
-> +				snps,tx-sched-wrr;
->  
->  				queue0 {
-> +					snps,weight = <0x10>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x1>;
->  				};
->  
->  				queue1 {
-> +					snps,weight = <0x12>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x2>;
->  				};
->  
->  				queue2 {
-> +					snps,weight = <0x14>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x4>;
->  				};
->  
->  				queue3 {
-> +					snps,weight = <0x18>;
->  					snps,dcb-algorithm;
->  					snps,priority = <0x8>;
->  				};
-> -- 
-> 2.34.1
-> 
+Safety-critical products may require certified firmware, which may
+be completely different from what is generally available.
+
+> >   - SCMI features may differ across firmware versions,
+>
+> Again, features must be discoverable that is the advantage of DT vs this
+> firmware interface, so not sure what is the issue in this matter.
+>
+> >   - SCMI may abstract the hardware in a different way, requiring changes
+> >     in (possibly existing) DT bindings and drivers to support the same
+> >     hardware with and without SCMI:
+> >       - E.g. the number of SCMI clocks inputs to a hardware block may
+> >       differ from the actual hardware,
+> >       - E.g. hardware clock inputs may be abstracted as SCMI power
+> >       domains (or vice versa), like on Qualcomm SA8255P[2].
+>
+> True, the moment SCMI like interface is used in OSPM, the firmware
+> description hides real h/w details and provide what firmware thinks
+> OSPM must view hardware as(how VMMs virtualise things for VMs, firmware
+> can have similar effect with such interfaces).
+
+So you end up with multiple compatible values for the same hardware
+blocks, depending on direct hardware access or SCMI, and on the
+actual firmware.
+What is the policy for naming such compatible values?  How many
+different DT bindings are we willing to support for the same hardware?
+What about driver changes? Maintenance of all these drivers?
+
+> >     Experience has taught that not describing the hardware in DT may
+> >     lead to major issues later.
+
+E.g. one may miss one internal clock input when describing a device in
+DT, where control of the clock turns out to be critical for a specific
+hardware feature?
+
+> OK, that's interesting. But the whole point with these interfaces is to
+> hide those, so just don't use such abstraction interface if you want the
+> hardware to be described as is to the OSPM.
+
+How do you fix it when everything is hidden, e.g. behind a single
+virtual clock?
+
+> >   - SCMI does not support the concept of a clock domain, so existing
+> >     drivers can no longer rely on Runtime PM, but need to be changed to
+> >     manage functional clocks explicitly,
+>
+> Not sure what that means, you mean clock protocol is not good enough to
+> model the h/w clock domains on your platform ? If so, you are welcome to
+> improve the specification.
+
+It is common on embedded SoCs (e.g. TI, Rockchip, Renesas) to not only
+have power domains that can be powered down, but also a clock domain:
+a clock controller provides a common way to put a hardware module into
+standby mode by gating its clock inputs.
+
+In Linux PM Domains, the following callbacks are used:
+  - generic_pm_domain.power_{on,off}(), to power a power domain on/off,
+  - generic_pm_domain.dev_ops.{start,stop}(), to start/stop a device
+    inside a power domain.
+Both are handled automatically through Runtime PM
+(pm_runtime_{resume_and_get,put}(dev)), so drivers don't need to care
+about the intricate details.
+
+However, for this to work, the PM Domain needs to know which clocks are
+meant for module standby.  Without this knowledge, individual drivers
+must control these module clocks explicitly.  During the last two
+decades, lots of drivers have been converted from explicit module clock
+control to Runtime PM, and reversing this would IMHO be a step backward.
+
+I already posted patches before [1] to add support for clock domains
+using a quirk.  Without a quirk, the SCMI clock protocol should be
+extended to advertize whether a clock is intended for power-management
+of a hardware module.  One way to handle this, the SCMI CLOCK_ATTRIBUTES
+could be extended with a new flag in the returned attributes as I
+pointed out in the cover letter of that series.
+
+> >   - U-Boot IPL (Initial Program Loader) needs a proper hardware
+> >     description in DT, not using SCMI.
+>
+> I am going to ignore that.
+
+And of course we like the DT used by U-Boot (IPL or not) to be as close
+as possible to the DT used by Linux.
+
+Thanks, and have a nice weekend!
+
+[1] Series "[PATCH/RFC 0/9] R-Car X5H Ironhide pure SCMI proof-of-concept"
+  - "[PATCH/RFC 4/9] firmware: arm_scmi: Add a flag for power-management clocks"
+  - "[PATCH/RFC 5/9] clk: scmi: Add scmi_clk_is_pm_clk()"
+  - "[PATCH/RFC 6/9] dt-bindings: firmware: arm,scmi: Document arm,clock-domain"
+  - "[PATCH/RFC 7/9] pmdomain: arm: scmi: Add clock domain support"
+  - "[PATCH/RFC 8/9] firmware: arm_scmi: quirk: Handle power
+management clocks on R-Car X5H"
+https://lore.kernel.org/all/cover.1781171705.git.geert+renesas@glider.be/
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
