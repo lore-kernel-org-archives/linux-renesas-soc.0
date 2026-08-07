@@ -1,122 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8982469850;
-	Fri,  7 Aug 2026 07:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABBE343D85;
+	Fri,  7 Aug 2026 08:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786089156; cv=none; b=jYbKepwT2zNACncqHfek41SkoQfUqUrcCO0FKlKOFm0t4Crhqp+skZ2Lbho+Na9MIcYwItYUmN9BQO+6rqZLuz77Zl4U/1fgDxqYhc6ZdruMd34yu1v3zMxP4E1Fyj34Qj+o29YSCKuAlVb3UXImZ6oUfwjaO6opN1nk0/aMkcw=
+	t=1786090807; cv=none; b=q9CeI/Jo1lJ/jfEkZXPRBJbxg3uu2kqLEDedgnZ4aUMNhuTYzaINNPAT0kd00J9lzC99sW9QzIIdmmvnmlAfKwEZwyMoHGDaRKpHOq1yrO+i9rcwiRmisWWtKr/U1kWcJt82hQ4YUJQZXNwbvd7rkgpTypaffo0tX4rnLRLElgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786089156; c=relaxed/simple;
-	bh=7YpJjSbdNTPbV+ppRNF+1sB3n1c0aJopWbX5CabLZ+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUKzMihBfR2wkyuII6Ql+ymJJmDIhgOX5GFIh5GDL2CfeHfoBE0AZYWUWja4IEzB5/la/iynY1di2vGBfWEbesCszypA9DxtnKrddE3TxgbAiGFm8S1cMZ64IQ8v+MDvP++dxsZW30v7nFWwzerYNVIraZMHylz8EsJvnNF8hvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqZaDjWi; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqZaDjWi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529391F000E9;
-	Fri,  7 Aug 2026 07:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786089153;
-	bh=ZDOdXiVF/xf41VWsCiqG4/1i+sm5JmjMqfQEkuoApZs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=mqZaDjWieyB7BDMXelmyJRvbRl5Y3Q82hzQqnL05M0hOg4wlUvvOwt/THUtTzbmX5
-	 LP9L0I/rz7PGSMX7rJDLiHLoOgqQ+Mq6yiMHZLfghRq+NbyKZgK0lbsap/j5w2ATdB
-	 A1/H5rFRv8sJj5+kaR3gNJ/9O9NzAgd1MOD2gyqeQCeq2Nu5S0YSD8LDMFFpab610n
-	 fDWrm4oJMXCX2s+lhNVgK/VxMMGqS0gwJWbBDwepJs1DvidLBVkLY732q3T6LgYSUK
-	 wmkxirfykgdUBLZ0WvRGyfUid+mC0hNgf8I2soBkAdxIOWJFJrQqRr4m/lEybeplE4
-	 0EuyfSpQ/7NXw==
-Message-ID: <2284aa9b-9299-4c43-8af9-d5cfd84452d6@kernel.org>
-Date: Fri, 7 Aug 2026 10:52:26 +0300
+	s=arc-20240116; t=1786090807; c=relaxed/simple;
+	bh=XvXENDu/xGCRP45/ovc+feIcWAm0Mf6b84FHxt/pDKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p9FsZJ79yBPyCInKc8Tmu900L+1x+IQQ1x4NA3hcgyaWA0iiSAoCfG8a0g4Z0eiNoQCg1uq0/OoqeBYrnVsOMaNqaOdI2SQyjq7/8ctKzgI8rQC0+zYoHMjD9e1CttaQmQ8vNoFERgrIEl+qB9pk9tOpOxIn9ugg2+CmgDfOnGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205F31F000E9;
+	Fri,  7 Aug 2026 08:20:04 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v7.3 (take two)
+Date: Fri,  7 Aug 2026 10:19:54 +0200
+Message-ID: <cover.1786090463.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-To: Sang-Heon Jeon <ekffu200098@gmail.com>, Julia.Lawall@inria.fr,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Bryan O'Donoghue <bod@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Michael Krufky <mkrufky@linuxtv.org>, Hans Verkuil <hverkuil@kernel.org>
-Cc: cocci@inria.fr, Abhinav Kumar <abhinav.kumar@linux.dev>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
-From: Eugen Hristev <ehristev@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20260723184538.3888637-13-ekffu200098@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/23/26 21:45, Sang-Heon Jeon wrote:
-> Both branches of the check return the same value, so the check has
-> no effect. Remove it and return the value directly.
-> 
-> This is the result of running the Coccinelle script from
-> scripts/coccinelle/misc/cond_return_no_effect.cocci.
-> 
-> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-> ---
->  drivers/media/i2c/mt9p031.c                          |  6 +-----
->  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
->  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
->  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
->  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
->  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
->  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
->  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
->  8 files changed, 9 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index d21510caf45a..2b09e8315c8e 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
->  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
->  	if (ret < 0)
->  		return ret;
-> -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
->  }
->  
->  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> index b0302dfc3278..7383341ec51d 100644
-> --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
->  static int __maybe_unused xisc_runtime_resume(struct device *dev)
->  {
->  	struct isc_device *isc = dev_get_drvdata(dev);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(isc->hclock);
-> -	if (ret)
-> -		return ret;
->  
-> -	return ret;
-> +	return clk_prepare_enable(isc->hclock);
->  }
->  
+	Hi Mike, Stephen,
 
-For microchip isc,
+The following changes since commit 2df26b8663b6f315d0e9364927c8503280fe3dd3:
 
-Reviewed-by: Eugen Hristev <ehristev@kernel.org>
+  clk: r9a08g045: Add clocks and resets for CAN-FD (2026-07-13 13:58:01 +0200)
 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.3-tag2
+
+for you to fetch changes up to 0fb9083a6e56f688aeeccfc7ef7eeba586e57dc6:
+
+  clk: renesas: Add R-Car X5H CPG driver (2026-08-06 10:00:14 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v7.3 (take two)
+
+  - Add initial support for the R-Car X5H (R8A78000) SoC.
+
+Notes:
+  - This is based on my previous PR for v7.3, which you haven't pulled
+    yet, and on v7.2-rc2 (for <linux/device-id/of.h>), which
+    clk/clk-next is already based on,
+  - This includes DT bindings and binding definitions for the R-Car X5H
+    SoC, which are shared by the clock subsystem and DT source files.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (3):
+      dt-bindings: clock: Document Renesas R-Car X5H Clock Pulse Generator
+      Merge tag 'renesas-r8a78000-dt-binding-defs-tag2' into renesas-clk-for-v7.3
+      clk: renesas: Add R-Car X5H CPG driver
+
+ .../bindings/clock/renesas,r8a78000-cpg.yaml       |  55 +++++++
+ drivers/clk/renesas/Kconfig                        |   4 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a78000-cpg.c                 | 166 +++++++++++++++++++++
+ include/dt-bindings/clock/renesas,r8a78000-cpg.h   |  14 ++
+ 5 files changed, 240 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r8a78000-cpg.c
+ create mode 100644 include/dt-bindings/clock/renesas,r8a78000-cpg.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
