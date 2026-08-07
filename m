@@ -1,141 +1,139 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FFD42FCD9
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2026 11:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786100704; cv=pass; b=tBsEdQN/I0IQatacFxzb9F1i7H7XGxspE5Xvu+9tW20bbxubhflAvcYt4py0rlgOLyqavaIlNUi8hxGq/iErEUQ0dznwYMkPLOHebOH5+SL55T6L3ALugJDvfgmrTxnhbNiD1l4fzPXyAZFHi8zj3sJ8YCpwl0BhTmsE/mz0HZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786100704; c=relaxed/simple;
-	bh=7KhMblWPk9Mxjw0VSwSuCZtpex2QSzhBO4rxVqclDig=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A905466AE6
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2026 12:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786105179; cv=none; b=HrF4zAkc8kDwGsS4mIJ8TjqKq+Ui7ATL5Gr2fn6yTYGSz6ogzwoH05j/mv/+juKcpgb5JeYJrHtka8SK5ZGvFhFq7XJ7AUshf/lgmMWutSX5dvCyUAersrrscgl+BTImjpxHukSSOnxOs0V68/R3+aJc6azAjokvVnZozFEZceQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786105179; c=relaxed/simple;
+	bh=5pGKnmoICNLpXe4M7LHt8EGcgiSmeRq0818OzQw8gG0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t5ew2fjapwNkyp1Kol613+8pvslEZDU70gnNd0lLIRA9ds79YB2L7mjRlFLRmFgEmOL6XRa7yXvNtljdzkz+jVwX5SjFgRHcwSxufgYgsoXFPaZZa0iXeagLqw4fhPsN6feNOpH6Hz8h34+9ub0l03xlefJ45ODvf2YTvb9W2nI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pjxPWYnv; arc=pass smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=qscD04j+JyMjxfSvQUWAjEk8BYr9NkPfzASEH9uhBdpSytrWm1Dzdw7d8szxDAMHebVTUDZHfk5evgJTLKYEbUeF8XI+A4yP0kf0BQKGfJvjPeY/7BUA+4s4C4HOOBQ72rsXSyZIhI/kQL8PbIRyWQEuki8Ag3iJGxhaDlNlin8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pjxPWYnv"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-ca00f126b7eso2277158a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 04:05:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786100700; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UcCwbZrwm8OFtXTMRT3Nny5OyAp22c/LoPvKWtdtmKo/ffJLmVraBZ3g1dRgT9qp+p
-         K6zEfjn0NNAcjV/S2TWI8DRxqF30J/4KkwIyX3BftzngPAaOHNHS8gE1oisRb+WKeeoS
-         tzGoKWKytW6PyfFUrfEQAIalNu2icBZLMN0j0z/0hPZir3WdEohdUIp2OVYtduXArisz
-         9fXRAL4CNXDtMJFnuACSAvFJpK4XdGBvVdBNAgtULA1CzXqpoSkhXziIYuDRt8xS+nZ/
-         doMWgkFW1EMPwaLHCqrOCzee7xxFbhMhY7+HxNvLeosPt1s1/7srTlBjcMQIA2gwCAnp
-         1Ilw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=lIbXpFTj/4jIXWlkQ6czPnMrtaq4DBoRJvyvQNnOL8U=;
-        fh=vOA6iAhgJvEvQQJjwrldlyH2kcoK3pigGkIcN93B7Gc=;
-        b=NpZYQeRQ4pr3kTwHhIANlmxy2Q1HFAGYdlyslLysErZNpRFfAbJJeijp55TkbifccP
-         mfjHhvpnShXs6/WtsCQcU5Ziku3WRCQrm84gSSaG2MmurfJWLThailieNBNHkddHAfsF
-         COnRL3ZLW4Rvn07Waazdfly6PuKT/DGPJ3grY6P/fOYKnTJKHHmbt+BTwc+1WV/vsi46
-         TNuRSoHrFWMQVk2ewviP8wKvsHLIE1w0J+oVzaAogk4yt70C1mJ2/lV7YtL9iLtsvKgy
-         O4fpBBpuWBizrwptqVyXxV/fG2A/wPC/AEpS2PxILDYZ04b/TG4Dp70p6CCl0a7qb/Rj
-         wUAw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786100700; x=1786705500; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=lIbXpFTj/4jIXWlkQ6czPnMrtaq4DBoRJvyvQNnOL8U=;
-        b=pjxPWYnvqtTgD9d6wWVRFzczQ0HU90bmwUNzz6V3qoHFdWhvDNqdIcqt4aumV7a+Vz
-         ynvSJCrn9m84x6zFJZyvhogftq7+phyM95OuvpEtU2qkpKj7kPEih3S/+RYnfFGj3BU1
-         W/nWHypHtGRi0DTYWBgICZTpnoeL16vWpvXyM9TuRVEx0bpiOQYIK5ivaCFomfsyb0fi
-         UfS8Rg1DhD8emqjRIzTCVsREqyixDPcIP7Wsnv1v8cSePGDsjCfHW6U3EAcRzRuAep+y
-         UFiJq119tIqdMpckQmV6ZnWkiPDlg6u9wP5hIv+gu+igMzzDIiu/clVD0koLGw9Q2mti
-         RbXw==
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-9674d727c0aso1416053241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 05:19:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786100700; x=1786705500;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lIbXpFTj/4jIXWlkQ6czPnMrtaq4DBoRJvyvQNnOL8U=;
-        b=R1ht+wHsxDRU+DzArqorW0k7iKpGJ/pF/lLxEszhPhTJebbDBUr9lIWAaGlgdM9Buu
-         DBPvKw9GbTFi9AmDoyA6SWU8pOooASNqD8oXHBEmE5ULRM9YjZP+7w6Vhws7OdURa4iH
-         Xh3CTfTsg3BXNcEHP+8EnGxrajyNUgq5DkeYERXAWVEYvZRvdIlL1BIfejIRkpNjbTra
-         MhvCgHH9b13/oy47YH3+OQmmqyG90TUgFzepORSa19+QdB1dR/j15ZrTx3LjgiHqtxvd
-         B4kBkpkfct5AJod0r5gXGXAHQlUKxpAgvuZkKFw55MR5nfhmpm3VgLoCIdbdLQbr3XoX
-         l+Tw==
-X-Forwarded-Encrypted: i=1; AHgh+RoLW+p4BLelveW6D+v9N+sweK0ZFFVyMvo1KG9ItA782ZRcoeyP1UeUrwKXtIGbj0dowPOLJThr0hhWyYYF4vcNeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzuFVCQp7xgsxoKp8vT2SiRu6sg5GSKaVGQ++wFwuOrQryTLMS
-	9cKwC8qxKxs3qhFATp58Uc2MhsAfRJRKIQabQd+e92CiQt2dDF9o5cFtrptEE7YmuAuB+i47jt3
-	pLUwLW004HZvZHNAzWxjMT1KbhrLlaSM=
-X-Gm-Gg: AR+sD12krLhnUh9l6U+KdigGFSXWG4GEVtZ4SLJOodg2ui1gcMqUtlujG1KQjt7Hbjj
-	cBkFeV/TZ5vpf1GT0EHs9Y1l3w9g6eWzaQrfq1g6iiKOlnT8aUGxzF8Bg2cz3tq/p1ZtJR2lM+e
-	oHMyTz/rwvyovByYdQAAiZzuIyk2OWY+qhrEecMDNvhc8epnfdzns08zoFXhj7pdZ2limat2FME
-	mpo5QYb2ptTWNEKK5ryqOiPqIHiSeejGNi8PXo/FKJgYn5eQBWnRuGuSAyql4jSVUemlezMTIab
-	PRep8t70BINJx9sh8D9OF2soyzYjB8VlZdXf2crgX8XqZFSixA/kzxA3W567locSvR+4zDobqjN
-	L36XIlEAXjOR3YSC3nmvFAzJoFtDWQ3pb7JAvdpC3dK9bt2Q5NmRSvus5
-X-Received: by 2002:a05:6300:670b:b0:3c0:ac0f:6558 with SMTP id
- adf61e73a8af0-3cb85e99259mr26552578637.2.1786100700044; Fri, 07 Aug 2026
- 04:05:00 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786105168; x=1786709968;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=DYxpa8lmyse0NqXbYFiTDGZv5gvprqKNCKipSvH+Cko=;
+        b=SC7vI/JfFiFWfp7/85/qefPmL9wsUsx0O/VnbtXEfU7DVCd21/I2QWkXLaQMhqrw8P
+         rAq8JuDoVGE0yOAoT2E/Sr5BaWLsUZdBXFeulgBpI7qmZMhD/S3+pPqz3+8CueRPuAP2
+         ZOz5eK7Xi9jKm88cItX0oBQF9tbORLuAe3qypcORHaolQaKFFdv8x4/eNnlSAeDtUcwZ
+         rKJpGv4QG0ojhlIaG1T0mEk3H0y4jIK683T1JX+kFRzOu7wz+HJLWa/AZnin2dJzpiMY
+         pahSBgr85Hv8k4kkXcc9IIeQcQfFLqN6HBVI1zUo6YINu3P7s3/36i14EkXtrb1+JfLy
+         qhrg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp2LSD3j5IpiY1DpfaqSe2K1W8nT4mhAmvNkamb/6lvy2hr3CvxpkauIPyack34DuHIpuGRnkpgqvRr0q4pT28iag==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy70ptr/1bIk0idBb+Df45TxDcGmJ2w5Ft5/pvxQlH4kkEzZx1J
+	otsLvnZwHQ7fxrU6WMBm6ILr1Et/PbuivUHKeeHsxjX872ShnqzbQ1fiRwYaf90i
+X-Gm-Gg: AR+sD12pGwRMQ7nGhY3IVsXSGWXm041cF9ovmZvUjWf5AuGbhaato05+YibaLTDJl64
+	IGfTFAbWZxSJRDQwSGT2Tay4c97Zl2xZGWtjzxHRdJ/DJBgxeI9JKeWqEGm32atCc33Zprq91Nl
+	pp9GV0PP77tmVHYf1SxjNSp11rZp7IihRb1NjZSzS4TNUzjPLJ/D0SHhw/koErbYrIIjdLTQqx1
+	XUO1FCdILwHeHdAtXwxL9aDubNlnJsx17mMf2CVqgBSqevsY1JXZJtLjuD0KHlyMQ8evzF0xTtP
+	Gd2PhUnTSTdiyq9ObUUQOS6eadf3AGfrJWP5GkDPbvlJJw4VIwokJKBDHc+s4dDxfS3RdKdeYbe
+	gOgA2yscxTfc6UcNiG6yCSlmyBjmQg54N+YcaYCW5jSTzNASurr1Swo97Wi4zhdtWHT5K9KPMUB
+	AJpaZrJ4UKV/+BXFBeDLzZvvN34hDMiu3UGQ2rD5lAN/dZqBDRnG8XfvyPPMIsf736C4CMWpU4O
+	1ww1DJuw4hzMUGOnqg/xsa9L+s2NxgYCekz
+X-Received: by 2002:a05:6102:3a08:b0:745:8031:8293 with SMTP id ada2fe7eead31-762ae3737cemr1620067137.1.1786105168611;
+        Fri, 07 Aug 2026 05:19:28 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-76400dfe036sm743736137.8.2026.08.07.05.19.25
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Aug 2026 05:19:27 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-74ae4c75b20so1211919137.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 05:19:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqKQky7NT+XaDBixgN+6ZfbY1vEv+JoP9IsafQp5CV/kD2HCjFv4aG4Cqjd+LSnwFZQhyQ/6o8adWkFb5ViQFs9Ig==@vger.kernel.org
+X-Received: by 2002:a05:6102:36c8:b0:744:e685:d7b0 with SMTP id
+ ada2fe7eead31-7623c68ece0mr1223701137.8.1786105165460; Fri, 07 Aug 2026
+ 05:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260807093058.42840-1-phucduc.bui@gmail.com> <CAMuHMdWJ3W2JKmxaKaa-A-Zk633cf4UwbESi+F1_h4tX1AhRng@mail.gmail.com>
- <CAABR9nF7sAT4C+W_qE8GVKhrtTjdm=DcpJH548RzFaYLuED+3A@mail.gmail.com> <20260807103645.GE1316230@ragnatech.se>
-In-Reply-To: <20260807103645.GE1316230@ragnatech.se>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Fri, 7 Aug 2026 18:04:48 +0700
-X-Gm-Features: AUfX_myqnP9cM0o7YKZHIMOZ9idGY0mI36nu52n1v9bZ-QIC3TPihkA-_6FUpl4
-Message-ID: <CAABR9nGAY6BjA2mRsv+2hkB1kv0QDJX6osXyEMw6jsjE+j2+vQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] thermal/drivers/rcar_gen3: Handle -ENXIO from
- optional IRQ lookup
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Markus Mayer <mmayer@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, rafael@kernel.org, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260807100320.121108-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260807100320.121108-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Aug 2026 14:19:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVGfR58UodRRjr1=vzsxLBiNsNkiwu8A7FNi-dXVSMH+Q@mail.gmail.com>
+X-Gm-Features: AUfX_mw1-JjmSggQSkFoEu3CKaZTE6znw8ZDrIHmcv8xsq03LStv5_YQM6l8QUg
+Message-ID: <CAMuHMdVGfR58UodRRjr1=vzsxLBiNsNkiwu8A7FNi-dXVSMH+Q@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: Convert to seq_buf
+To: Biju <biju.das.au@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Niklas S=C3=B6derlund,
+Hi Biju,
 
-Thank you for your feedback .
-
-> > Regarding the caller, I only found rcar_gen3_thermal_request_irqs()
-> > being called here:
-> > https://elixir.bootlin.com/linux/v7.2-rc6/source/drivers/thermal/renesa=
-s/rcar_gen3_thermal.c#L530
-> > It does not appear to handle the error return there, so I don't think
-> > the caller currently handles these failures explicitly.
+On Fri, 7 Aug 2026 at 12:03, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Yes it does. If it can't get the optional interrupts the driver does not
-> support setting trip-points in hardware. No?
+> The devfreq transition table sysfs attribute (trans_stat_show()) builds
+> its output using manual sysfs_emit_at() calls with hand-rolled length
+> tracking and PAGE_SIZE bounds checks scattered throughout the loops.
 >
+> On SoCs with large frequency tables, such as Renesas RZ/G3L, the
+> resulting table can exceed PAGE_SIZE. In that case the function bails
+> out entirely and returns -EFBIG, logging:
+>
+>   devfreq transition table exceeds PAGE_SIZE. Disabling
+>
+> which makes the attribute completely unusable on affected platforms.
+>
+> Convert trans_stat_show() to use struct seq_buf instead. seq_buf_printf()
+> tracks the buffer position and handles overflow internally, removing the
+> need for manual length checks before every write. If the table still
+> overflows PAGE_SIZE, truncate the output to PAGE_SIZE - 1, NUL-terminate
+> it, and log a rate-limited warning rather than failing the read outright,
+> so the attribute still returns a usable (if truncated) table instead of
+> nothing.
+>
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Yes, for -ENXIO, you're right.
-The caller treats it as the absence of optional IRQs and disables
-hardware trip-point support.
-However, this also means that -EPROBE_DEFER, -EINVAL, and other errors
-are currently treated the same way.
-The caller does not distinguish these errors from -ENXIO, so the probe
-continues instead of propagating the actual error.
+Thanks for your patch!
 
-I think the caller should distinguish -ENXIO from other errors:
-keep the current behavior for -ENXIO, but propagate -EPROBE_DEFER,
--EINVAL, and other errors.
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
 
-ret =3D rcar_gen3_thermal_request_irqs(priv, pdev);
-if (ret =3D=3D -ENXIO) {
-        priv->ops.set_trips =3D NULL;
-} else if (ret) {
-        return ret;
-}
+> @@ -1661,9 +1662,10 @@ static ssize_t trans_stat_show(struct device *dev,
 
-Best regards,
-Phuc
+> +       /*
+> +        * If an overflow occurs, seq_buf_used() can return a value greater
+> +        * than PAGE_SIZE. Clamp the return length to PAGE_SIZE - 1 and
+> +        * ensure a null-terminator is written to prevent the sysfs
+> +        * "bad count" or out-of-bounds warning.
+> +        */
+> +       if (seq_buf_has_overflowed(&s)) {
+> +               pr_warn_ratelimited("devfreq transition table truncated due to PAGE_SIZE limit\n");
+> +               len = PAGE_SIZE - 1;
+> +               buf[len] = '\0';
+
+So shouldn't you use seq_file instead of seq_buf, to lift this limitation?
+devfreq_summary_show() already uses that.
+
+>         }
+>
+>         return len;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
