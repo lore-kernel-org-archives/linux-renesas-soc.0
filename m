@@ -1,148 +1,135 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-qk2-f4.google.com (mail-qk2-f4.google.com [74.125.230.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F59377EC3
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2026 13:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9383476CE7
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2026 13:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786109309; cv=none; b=FYzOcBfIN2+q4kX9eSD5seLYBblDnpcGwzMmjXPmhQXISVzLhu2HzfgACh0r6qeZtcivCIIhi8Wb2lEhz5l2Gy7D77fdf4w0Y4Vro+kAhfgNMPqZpIaMDDLjLL0lFK9Qm3oYAoncekUXAxfbBDqjGIBI+FfclsIkcYr5IQadvqA=
+	t=1786109433; cv=none; b=nC3IkYaGRIhMjlQGZ/icaTjBPQ3GrE/noL72AboyLZenv4dvy/KOSoHaZzKRLyoDW4m54zBUq4OONQ2e4TFmJpD3uJZcio8M8n2YAQMwfrdhUuaj1O0sQfz+Wnz86kG5q19ONmHabdmzBEbuhOqUiNbdIykWicOYZUi0f8dwszg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786109309; c=relaxed/simple;
-	bh=iGEucwuv0cDETFySrvCtSDoMSdRLS4yfZWG/9BrZsOg=;
+	s=arc-20240116; t=1786109433; c=relaxed/simple;
+	bh=lNRMCMZWJrIGh1fhRbztqbQIc9J7TxN7ZrtNGrtgNXo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I5lZQkPvostSupop+fhj8KMZHT+Y2nJ1U5NJ70Y4TTFYJiaPuqNlC2a7/k4bqf4dcvWBnRCDaL247hOHRN+W2JeudRIwJzRzInqTpID2sNSY2iXImH6YtE7kS7LU2ceN/3rEEVuWWf219kNFLNYN/SKPukCxaCi0+19FMIsUilA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.169
+	 To:Cc:Content-Type; b=eAntADJtLi2rXETl2SzaWKCs0TW52s23tUbJCqY4Q0irbztVLXzCRio+3if//EGu30F7CHoN/ZKV8ayDBqyyDp6e1tupALc3Neq5iNH2c6fIu3TorMMlH3tRekgPP3K/dUTKKecWOMsYuAjDGlZdl3JpNTlBnPX8W56i4eKCYWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.230.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-527e352a167so22587241cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 06:28:23 -0700 (PDT)
+Received: by mail-qk2-f4.google.com with SMTP id d75a77b69052e-51c26eb5e81so9265911cf.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 06:30:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786109302; x=1786714102;
+        d=1e100.net; s=20251104; t=1786109425; x=1786714225;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ihkRYHxMD45hBtXtL0ryyoy4S8BR0bYvAoTcaodyV1g=;
-        b=qPm1Pd7aEJSwAszWaNCbl5ccOFpmhgNAU/ZRdkhX4gglHYWIsOzzqOZyu9N2W48RQW
-         15VAcJAm6b3KmGwyEVFww4kg+i17JGWTRK7vmHu8UXLmW54oJkQ1eiSg8exsTrfCpssn
-         rh+hosK4nh44n9lcVtH94B6+qu+8UvKJ33fXDeDKWLmRfNMGcB7EbTVqBpMjJb2cSv7o
-         s7NGZstdR2CcwsvzJ702MuWyI3aHTUV+qjvJqaDA/VE2ByIvftFgwA5FHpnFBLkqE3AK
-         /eDcR5YdTwhMtNIxrU9PAnTyC9r+i7ov5VW5y9Ydy2nunF1CWuxj7h9cqhNapYC2UqDo
-         bnvA==
-X-Forwarded-Encrypted: i=1; AHgh+RqCJKZIY4HJRWboBXG0jhFnQi2yAD2NBGQruGBAhGf9TMCgneZTD/nV5+93XVH6+GObj9GdkJHB+d24PNi8+L3vWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy48FfqmL+BLvKg4Qjd3l8qD5Zy4x7I0wdvwFh4rfwrt+/lP29T
-	l2ZIe1DEIrkTb7X252dpuFW6ZS1Z+P/YYSmb9qOXVQgAqs2qrql05pxN+T/+Btfn
-X-Gm-Gg: AR+sD12XepdqiydghsesaNvjSwQyEKwt/irqj9yiMMCSg27OCTZ9zMDjLsThoxMShoz
-	Yy7pXUGfaSmWoFo20VqjnQEnMFnX7QZz5mKhvmbvdJ6k3RcewO6HZM3e+fGcxQgghPnNf9khGs5
-	vJPYQpqCsOfxw1KL5JxgRsC9p2nUXlhNaACYy/0PEmtxWnElKpEsqRKzbGbRUWGaRUnzUDPtSTo
-	hKNO17aissKslfdw+QHuUgiD7H7RJMRy43Efv2oYngNdcMYHu0bhEwCuSshFlsi/SmbSeP9Y5ZD
-	8M3NrwlLldcynx2+Aam23sHVjt+KFO38GM4XBsVMaXbdp9W/35zeUo9ec2W1QB4SX9W0TJufeih
-	0vB0AE3/3FONqmfFmocdvDCZ9ykUUTbBkwtnmp5A74ipHrFS5gbTJT3Tx1syFf/MmdK92HPt3pm
-	k6zP30JgcfG6L6ZxWaHcxW2R76F1Vg9MRkAkkHUIi0KwkQnlR8kQU0gf0nXnP90zkgujvXRkKqS
-	X/+UbDgK4pz4e/7Ja2fue45Fw==
-X-Received: by 2002:a05:622a:4cd:b0:528:15e:d1cc with SMTP id d75a77b69052e-52ce5fc293amr207737431cf.13.1786109301685;
-        Fri, 07 Aug 2026 06:28:21 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52d165e9353sm11760071cf.23.2026.08.07.06.28.20
+        bh=U/AAuSUTI9BlhHsMbAPbLkKHE3Mv88lOoxgJOEPTw6U=;
+        b=qLTTvHhFHD8TDVj21z9emGpyjV9HdSJMVg4ho7TqasJuvkCuCj+hoJwlHfRq/Yr3iI
+         K74xVGoL82onzAzG9zta5Nu382C6OOelAa8IaXWLJMPQB6Ja9PR5WQRyoOJiFlymfRho
+         n7rcSIR3LAvGQbG6eF6ban08MXw98/oFWjfffHnj2Hf70yIMLyXmE+gr8YoAikSHfjBR
+         XBgFH0EEdC1a91WmvJr5Vx5Y/PJvfvoD4ndOiVmK/d+rL6cMg6DzX7ZdOfx4lLnd8CeC
+         cB/0nZm8jxf51nSQhTBeYAVnR2IUHbCw/Xzfh53bNCnAPNH0MiVOW2z5t0fy/whS3Rqt
+         kCsA==
+X-Forwarded-Encrypted: i=1; AHgh+RruZgmVNSNt1o7PqW0TuwvYxWenAkZ3Mrg+hp4RpBpqa1PcgWwlAvpXkGafiWY0RjiXuDuu7lBTLX8x8Sxu8GC+CQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvSWx7rMDavmPNRuQJwjxue2PGT6dlCBRQT2KXyYqAD8p0WrBC
+	M9KdJ/vIbzrP6ouXBDTZAfhzhzIvFIKEdbxEZ1YFUOBY7UfYSCUNarymdN6+cDL/d7c=
+X-Gm-Gg: AR+sD11YSg2Sb6jDgLMBO4Rgc/Sm2Cu/LUTHM3dXGmVi/509GzkyH3XX6nOyCyWjPiZ
+	1e6cto2qTpW0qAsVg/+9UuBmbvKyc3oISDbieNB/OgI/qFQArJorAgGzG014BtHyq0ddqv25i+m
+	vHnAqi4jLUg4kAm1WbJSprcEUjRBtb6LRBgHPbaLlBKKOVpKLSBOnryoO/h8r6a+iAAkzLErlML
+	bngYXvhdC1yi0JNfeeJDHVzUcv083l6Br/WHhZts+9JOY0e62bZ0XPyDp5erNqMb1x6KivrTb/Q
+	Inr0vk0y+Cu1QfASXgH4FWZGOrhSbyN6EKu/L/n1r73hfSsWfWkMHnjd5rtM0E3Km0PGlGNS2Rd
+	1w+EZQMWAQLuZURTzPQ8WRQDC6ZIi6UlpSZ0Zi/t6vvbnnwhJKV8Zb7gz/x1FK1gf/QxIeW70ap
+	Iz/q7Swi8Q4HA9jAxJ7VvIQpO+wbegmShAac92a6c0c8487iWmMebwZyFd5uUXLT6TTgBNzs5fM
+	PJPZBzqLnvA3GwgPr8DWggg9Q==
+X-Received: by 2002:a05:6214:21cc:b0:908:23fd:813e with SMTP id 6a1803df08f44-9088125edbbmr264825786d6.18.1786109424584;
+        Fri, 07 Aug 2026 06:30:24 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-908a918dc65sm8881236d6.6.2026.08.07.06.30.22
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Aug 2026 06:28:20 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-9773c6ea885so959221241.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 06:28:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrwnYnYy0LJ4BLOPH/e24DeZ6mMFYgTteZMhxFjXrbL7YuHmRg5bJ8+NWmpDpItTZ5t6QKxLTQQgI+UC4NUjzDZhQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:4bc2:b0:738:84c:6b3 with SMTP id
- ada2fe7eead31-760e6ed510fmr5729903137.3.1786109299935; Fri, 07 Aug 2026
- 06:28:19 -0700 (PDT)
+        Fri, 07 Aug 2026 06:30:23 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-977bbf2eb1dso1426923241.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2026 06:30:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpLuZNw/ysCiI6nsaAy8kITTM5LeeURPgnalBorUuev6JvZTZHUmnYTVQX8r28wCzV19gQphtqtOsKRJjkmuJ46ug==@vger.kernel.org
+X-Received: by 2002:a05:6102:1491:b0:740:2d40:a234 with SMTP id
+ ada2fe7eead31-760e934083fmr7749766137.9.1786109422395; Fri, 07 Aug 2026
+ 06:30:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260730113200.36456-1-biju.das.jz@bp.renesas.com> <20260730113200.36456-11-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260730113200.36456-11-biju.das.jz@bp.renesas.com>
+References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260716123434.2576253-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260720-fractal-prodigious-spoonbill-86f534@quoll> <CA+V-a8tfCL58j2TvoO1VhhDAZf=8LB89R4O0SycLghYGf7Rr4w@mail.gmail.com>
+ <2323f9bd-0b1e-41be-8c8d-6906b66b625f@kernel.org> <CA+V-a8sHbc9WSqmzrONjWbLY1+SSEhK3kGOjL9zmVmhSttD31g@mail.gmail.com>
+In-Reply-To: <CA+V-a8sHbc9WSqmzrONjWbLY1+SSEhK3kGOjL9zmVmhSttD31g@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Aug 2026 15:28:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVd-PQBPvoof650UjXfSZqg2kGN=9kOnVUDgZvnGUOLcQ@mail.gmail.com>
-X-Gm-Features: AUfX_mzIOXg0IiwN3D9gDKa8uwjJk9QQ4Yu2cWICJeqOqyAGpD8yG0bvdP7SOQ0
-Message-ID: <CAMuHMdVd-PQBPvoof650UjXfSZqg2kGN=9kOnVUDgZvnGUOLcQ@mail.gmail.com>
-Subject: Re: [PATCH v23 10/14] mmc: renesas_sdhi: Add RZ/G3L SDHI support
-To: Biju <biju.das.au@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Fri, 7 Aug 2026 15:30:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUwPdPwKV++3GBvm_yEY0pqvT-KxBr==g8LQFRvZkBnjw@mail.gmail.com>
+X-Gm-Features: AUfX_mxDi0guSe9Khaez7xiSfow3Ijch9zm2XE5dr_dyKyhIvomQpIBNYO4wzk8
+Message-ID: <CAMuHMdUwPdPwKV++3GBvm_yEY0pqvT-KxBr==g8LQFRvZkBnjw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: renesas: Split out RZ/T2H CPG binding
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Biju,
+Hi Prabhakar,
 
-On Thu, 30 Jul 2026 at 13:32, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> RZ/G3L (r9a08g046) has an SDHI controller that differs from existing
-> platforms in clock divider width, a second HW adjustment register,
-> and an extra tuning register.
->
-> Add TMIO_MMC_HWADJ to mark controllers with a second HWADJ2 register
-> (offset 0x010), programmed by renesas_sdhi_set_hw_adjustment_delay()
-> alongside TMPPORT2 (0x3FFF at 3.3V, 0xFF at 1.8V). Clear the new
-> HWADJ4 register (0x022) at tuning start when TMIO_MMC_INTERNAL_DIVIDER
-> is set.
->
-> Update renesas_sdhi_set_clock() to write the clock control register
-> with a 32-bit access when max_divider isn't the default, moving bits
-> [9:8] of the clock value into bits [17:16] of the register =E2=80=94 need=
-ed
-> to drive RZ/G3L's wider 11-bit divider field via the max_divider/
-> clk_div_mask support added earlier in this series.
->
-> Add SDHI_VER_RZ_G3L_SDMMC (0xce10) and handle it in
-> renesas_sdhi_sdbuf_width(). Add of_data_rzg3l with RZ/G3L's wider
-> clk_mask, an 11-bit max_divider of 2048, a dedicated tap table, and
-> the relevant flags including TMIO_MMC_INTERNAL_DIVIDER and
-> TMIO_MMC_HWADJ. Wire it up via of_rzg3l_compatible (fixed_addr_mode
-> quirk) and register the "renesas,sdhi-r9a08g046" compatible string.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v22->v23:
->  * Updated tmio_mmc_reset() to handle 32 bit divider register in RZ/G3L.
-> v21->v22:
->  * Updated commit description.
->  * Added `clock &=3D ~GENMASK(9, 8)` to clear the divider mask bits in
->    the register value.
+On Mon, 20 Jul 2026 at 13:14, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Jul 20, 2026 at 11:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> > On 20/07/2026 12:50, Lad, Prabhakar wrote:
+> > > On Mon, Jul 20, 2026 at 6:55=E2=80=AFAM Krzysztof Kozlowski <krzk@ker=
+nel.org> wrote:
+> > >> On Thu, Jul 16, 2026 at 01:34:27PM +0100, Prabhakar wrote:
+> > >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >>>
+> > >>> Move the RZ/T2H and RZ/N2H clock controller bindings from the gener=
+ic
+> > >>> renesas,cpg-mssr.yaml schema into a dedicated binding.
+> > >>>
+> > >>> Unlike the traditional Renesas CPG/MSSR block, the RZ/T2H and RZ/N2=
+H
+> > >>> system controller integrates additional functionality beyond clock =
+and
+> > >>> module-stop control, including reset control, clock monitor support=
+,
+> > >>> write-protection registers and other system management features.
+> > >>
+> > >> Nothing of above differences got reflected in the code, so I do not
+> > >> understand this reasoning. Binding is exactly the same as the old on=
+e.
+> > >>
+> > > A syscon regmap is implemented [0] as part of the RZ/T2H CPG driver.
+> > > Since the RZ/T2H clock driver uses this syscon wrapper, a function
+> > > pointer is implemented to handle the RZ/T2H-specific configuration.
+> > >
+> > > Also, as the initial implementation used separate device tree nodes,
+> > > Geert suggested splitting this binding schema off into a dedicated
+> > > file [1].
+> > >
+> >
+> > I still miss the difference. Can you point me (can be short diff) to
+> > actual difference in this binding?
+> >
+> Fair enough! You're right that the schema text itself doesn't differ.
+> I'll drop this patch in v4 and leave the bindings in
+> renesas,cpg-mssr.yaml (unless Geert has a different opinion).
 
-Thanks for the update!
-
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-
-> @@ -253,7 +256,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_h=
-ost *host,
->         if (clock !=3D CLK_CTL_DIV_MASK)
->                 host->mmc->actual_clock /=3D (1 << (ffs(clock) + 1));
->
-> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clock);
-> +       if (host->pdata->max_divider !=3D SDHI_MAX_DIVIDER_DEFAULT) {
-> +               u64 tmp;
-> +
-> +               tmp =3D FIELD_GET(GENMASK(9, 8), clk);
-> +               clock |=3D FIELD_PREP(GENMASK(17, 16), tmp);
-> +               clock &=3D ~GENMASK(9, 8);
-
-Add #defines for the magic bits?
-We already have CLK_CTL_SCLKEN for BIT(8).
-
-> +               sd_ctrl_write32(host, CTL_SD_CARD_CLK_CTL, clock);
-> +       } else {
-> +               sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clock);
-> +       }
-> +
->         if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
->                 usleep_range(10000, 11000);
->
+Given you no longer add a bunch of RZ/T2H-specific properties
+and subnodes, I no longer see a reason for the split.
 
 Gr{oetje,eeting}s,
 
