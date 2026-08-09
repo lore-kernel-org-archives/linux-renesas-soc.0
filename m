@@ -1,122 +1,174 @@
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C042FFF8B
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  9 Aug 2026 10:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D03931F9A4;
+	Sun,  9 Aug 2026 20:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786271429; cv=none; b=CX0we/ND6kGUro5BnDEFyozROdEo2KLr7tOXUs5i6e01dIZYSmaoZG1s1DeZ7d4bPKkSR3Xqsgx3/jKI2+GiWGX7PDuGgfYj4sWwnZFdP2tO2wf21Y+fDD8Vu1YSrXzf0/Mn3X45CSy97clh9GLh14uVsXPeamn2ee9KJ0xJvfU=
+	t=1786305696; cv=none; b=BOF0XD92qeOnwokeHfFqIQaIIdWZwhbGrmAwMvVMTSfpsUyfPY8MqZYPM+1MWNQaGvm968XvM2Q3CN7BThIpoVTXUcotd4/CJ+3ONV853zYAttIqL/iuRfxFGsPVUQzaNGZvDgP2xSv0lAENwFRl1DqQ86WNphqQWBYOnmmo3f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786271429; c=relaxed/simple;
-	bh=XUedt+T1jlGvnrpmIfOPOICblL6JhKywl5vM8hu+dLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hi1Nq2PhXENBMxuqyKrG4zHY1mODUCIT+qlraj6XkdcCea10VIv6Rpeczd2FKL6meZPhcT34vtePpEkP28vc/IbxJrSX4SLqSQfs2sG4SfsdLVV73GnhBdaxCwTNiDUPvB6iKKE45WusbEgw0oifQP8WT0nG3ixOu+Y8TU/iCZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rf4Ao4Km; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1786305696; c=relaxed/simple;
+	bh=hPqlDroh8esNBvwJ+JBWNfGBo7NjASRvt5TDRLF0N2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=agQgeIXAe1mj7/8mMh71CCUhRQpc5Psg5Hlv81S5wLELsCWP5vW1rTaCgfdFjaGYQMCjMM8KAmWFs5K4fXs5IS36fZo56wn2QDuih/QX+1KIg1PXHhWc9Ulz8D3I5zwA1cGqDXpARpEUDaIYWKTPGD153MNAyCONAbX0OW8IODI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FH6fVflX; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bLKWRklc; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rf4Ao4Km"
-Message-ID: <b623478e-bb46-4691-8471-a3d5de644045@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1786271415;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FH6fVflX";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bLKWRklc"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hJ80P08sHzMlLw;
+	Sun, 09 Aug 2026 22:01:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1786305685;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yx3t6hKLPSY50kBJdyb66Bn05RX95g2e325VKJF5xU8=;
-	b=rf4Ao4Kmb7yK4zwkKMxywbsCgAgj1zlxIGGG+h8mmdpbBtWvqxo6IgDI/BNPMq7qt2qoyG
-	D5fZySRMorB3etLd3mKsPDyGEDkOT1Rt61C30xV8qTS6w/ZT74H/n/XQp1rezHAUewnHv8
-	Sk93gCbV3Ma4nGHBBx1ivHElnaFEAUw=
-Date: Sun, 9 Aug 2026 18:29:55 +0800
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3/aJNXd5iDqqUVOKcqvYAIw9gUc8jDzB8J6Vs26BoSk=;
+	b=FH6fVflXoiKVMDU3Wd/7cH/DhvOhZ3xvNIC3c98Ag9ZCZ0KZ6ZspUYuGWFnKSYis0jTG+G
+	sRabeijQSMmkWNSfWUDBQdWzUilncHoZ1XIzC7PymXIqr9HRBEkZTf+uSjd0kelbnMC/qV
+	6iyZ3eF9BsDeYGT05o62XxHfUomiT/g1D8AnSmxH1Gw4YK4yYxxpX/61V/mivmKBpMMT1H
+	cJgs1WbdFq0OBKh1M7XfgOQWjYPxzm6ajZQQHBh3F61UrWDaj3rkMfNKbRw/HnN1EigLoN
+	ZqSxP+ldJl7dB0LqfUNG1HKA5HPIcoVynLCVWc3RSwaYoo2xST7rm8IY5RQJ8w==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1786305682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3/aJNXd5iDqqUVOKcqvYAIw9gUc8jDzB8J6Vs26BoSk=;
+	b=bLKWRklclBd8qGNWZnRG7ysp/AXyzosTxeEYQUDpwQGXFqkqHgzoDU0NFP4scYRvS6N6Pw
+	J46t/CU9EVktvCKL4aVk0L5s0JdMkOF4tgM9uAXB+pc2Ldk7/GVtf7HExNka2GujRtHM+V
+	kLLtgHk6GrwrDdjsFw818yyouusEdM8OOyCFaFbDAo+rzoJ88sT/Xh62sPcp2bSd2zhyD0
+	K4bbeyiCVwMM6rQpkpT4VnOQ1WDJxhDOGTuJqRIXk3EdQUbDnfOLNBMe9VVwngRGak0iHO
+	kIrQv/eW67QwRNO93C8KuiThyueRddxsuBZ78aRXSSvi2wRZ9sgHkQw5SzEzQA==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: display: panel: Document 10" Raspberry Pi Touch Display 2
+Date: Sun,  9 Aug 2026 21:58:50 +0200
+Message-ID: <20260809200107.842945-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v3 2/2] net: ravb: serialize PTP clock teardown
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: paul@pbarker.dev, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, richardcochran@gmail.com,
- masaru.nagai.vx@renesas.com, sergei.shtylyov@cogentembedded.com,
- luoxuanqiang@kylinos.cn, stable@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- niklas.soderlund@ragnatech.se, kuba@kernel.org
-References: <20260806095126.57803-1-xuanqiang.luo@linux.dev>
- <20260806095126.57803-3-xuanqiang.luo@linux.dev>
- <cdc07462-5997-44f5-8659-5e7862f418ac@linux.dev>
- <dbc8c1a5-e2f3-4e14-864d-ce8f939039e0@linux.dev>
- <66bb2d66-63ea-4331-b835-4a559ea47fe3@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: luoxuanqiang <xuanqiang.luo@linux.dev>
-In-Reply-To: <66bb2d66-63ea-4331-b835-4a559ea47fe3@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MBO-RS-META: bcdshhh6iepxtnuym8nqaznyoitcnpj4
+X-MBO-RS-ID: e4fbaba2bfd9eafd12a
 
-Hi Vadim,
+Document the 10" Raspberry Pi Touch Display 2 MIPI-DSI TFT LCD panel.
+The panel is based on the Ilitek ILI79600A controller.
 
-在 2026/8/7 22:51, Vadim Fedorenko 写道:
-> On 07/08/2026 11:14, luoxuanqiang wrote:
->> Hi Vadim,
->>
->> 在 2026/8/7 06:34, Vadim Fedorenko 写道:
->>> On 06/08/2026 10:51, xuanqiang.luo@linux.dev wrote:
->>>> From: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
->>>>
->>>> ravb_get_ts_info() can run without RTNL while ravb_ptp_stop() 
->>>> unregisters
->>>> the PHC. The PTP interrupt handler can race with the same teardown, 
->>>> so both
->>>> paths may access the clock while it is being freed.
->>>>
->>>> Protect the clock pointer with priv->lock, clear it before 
->>>> unregistering
->>>> the PHC, and unregister the detached clock outside the lock.
->>>
->>> I think adding spinlock here is a bit of overkill. For
->>> ravb_get_ts_info() you can simply extend struct ravb_ptp to store clock
->>> index on init and reset it to -1 on ptp stop.
->>>
->> Thanks! That is a good suggestion.
->>
->> I will do this in the next version.
->>
->>> For interrupt race I think ravb_ptp_stop() can be split into disable
->>> interrupt function (like ravb_ptp_disable()) and actual clock free. In
->>> this case ravb_ptp_disable() can be run before synchronize_irq() with
->>> ptp_clock_unregister() afterwards in teardown callbacks, like it's
->>> already done for ring allocations.
->>>
->> I see the approach you described. I assume you are referring to the
->> handling in ravb_set_ringparam().
->>
->> One detail I would like to clarify is which IRQs need to be 
->> synchronized.
->> When err_mgmt_irqs is set, ravb_multi_interrupt() is registered for dia,
->> err_a and mgmt_a, while only dia is stored in ndev->irq. Each handler
->> checks ISS and may call ravb_ptp_interrupt().
->>
->> Is there a hardware routing guarantee that gPTP interrupts are only
->> delivered through dia, making synchronize_irq(ndev->irq) sufficient?
->> Otherwise, it seems that the driver needs to retain the err_a and mgmt_a
->> IRQ numbers and synchronize all three before unregistering the clock.
->
-> I don't have access to the datasheet, so I cannot be sure, but from 
-> the quick look at the handler, there are 3 types of interrupt-handling
-> functions, and 3 different interrupt vectors...
->
-> But it's still better to ask people who have access to datasheet, and
-> implement things in correct way rather than throwing spinlocks in the
-> code.
->
-> btw, do you have a HW to reproduce the issue and check the fix?
->
->
-Unfortunately, I do not have the hardware. While fixing the clear issue
-in patch 1, Jakub forwarded a Sashiko report that flagged this race, which
-I have only verified through static code review.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Jessica Zhang <jesszhan0024@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: devicetree@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ .../display/panel/ilitek,ili79600a.yaml       | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili79600a.yaml
 
-Thanks,
-Xuanqiang
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili79600a.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili79600a.yaml
+new file mode 100644
+index 0000000000000..0a3baffef293e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili79600a.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/ilitek,ili79600a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ilitek ILI79600A based MIPI-DSI panels
++
++maintainers:
++  - Dave Stevenson <dave.stevenson@raspberrypi.com>
++  - Marek Vasut <marek.vasut+renesas@mailbox.org>
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - raspberrypi,dsi-10inch
++      - const: ilitek,ili79600a
++
++  reg:
++    maxItems: 1
++    description: DSI virtual channel used by the panel
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO specifier for the enable pin
++
++  avdd-supply:
++    description: Positive analog voltage supply (AVDD)
++
++  avee-supply:
++    description: Negative analog voltage supply (AVEE)
++
++  pp1800-supply:
++    description: 1.8V logic voltage supply
++
++  pp3300-supply:
++    description: 3.3V logic voltage supply
++
++  backlight: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    dsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "raspberrypi,dsi-10inch", "ilitek,ili79600a";
++            reg = <0>;
++            avdd-supply = <&reg_display>;
++            backlight = <&pwm_bl>;
++        };
++    };
+-- 
+2.53.0
 
