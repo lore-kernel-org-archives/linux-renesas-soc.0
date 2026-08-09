@@ -1,202 +1,215 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009E134887B;
-	Sun,  9 Aug 2026 20:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A160E31F9A4;
+	Sun,  9 Aug 2026 20:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786305884; cv=none; b=Y+Vsgyh0ezPPHlkAZwGGJ4YOUbF4ZDh1WyiPL0BW0wup0hOoAYOCic+387bdJqt8fMFwRCIfhz+fAqiMHqsDtgG2DCI0PeQYms9JRC3Hy9pl9yRrRqIuOm/osIfTCq++VMhOJLCBJ9N7wyW+cUZa7oN56ha0MKHMisEFUdbgX3E=
+	t=1786305949; cv=none; b=nw9J+I1tkCTJxn2EaDIEYewuOMuU5qvpDv29/sc9Gog/eyYZ4BsORZxixNupZdOvxuXd75/fS1QHDSRal68WLrtrfmgMjNi0vJ3IhcjlrvDYVkzgD99WQCVXFqQ2xjnEG61k9Z5gOIksgRMtY1jf6lZ1H0+s77Y8mjExCAvk7wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786305884; c=relaxed/simple;
-	bh=B32I2jC2YoNZzrMUSuNEKwPuDw9B8MxYkRgONyYOcEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o06pT6LO/ooqr+YHVEYjH0W3wqzMkAhiVawVB9pVwK1EoBHxA0F2B5sTKzFrh37Bfi90zZgd4XRf/prnf3hqx2wGa7SgS1c8LAIQNju2jkfk8jWKvq8Mk6VLLXgBuXs+pQCN7CxcMqibhLSA7bAEIvn1hAkuvO7X4MXBJQN8/ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=a2+CVD9L; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=se4mBIMA; arc=none smtp.client-ip=80.241.56.152
+	s=arc-20240116; t=1786305949; c=relaxed/simple;
+	bh=UcEm6pCQHhzdE6laoNh3rGzhXCRrVch+BEDpIC4a5Yw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u4IR68nQ6araEYcdG3mHc4A1ae15suCjfwoN1yrGUiFEqaBvwbNQI2HLFV7n3qxobtEqH27r1BXTyLBb+W3HI6vvnJ/VCV7aF/usZtNbBpJd8VggFVd4+xhlHc55cCrF1ssEFCI9EATSfMITQ0XzY5w8NvoeBHFPH96qZstN45Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cO068ybS; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qGvkZcwA; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="a2+CVD9L";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="se4mBIMA"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cO068ybS";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qGvkZcwA"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hJ8490swSzKvtw;
-	Sun, 09 Aug 2026 22:04:41 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hJ7xB5sxvz8v05;
+	Sun, 09 Aug 2026 21:58:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1786305881;
+	t=1786305518;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=Z93uE4/r1UQkwFumvu0mkUNxJAMlPsUl9RAgdSah1oQ=;
-	b=a2+CVD9LvOFjq6ld5g6/dYnu+lx57YFoGwPCawVTeKQYKG1RfLmZicGy9kHCSMM8KZvN4p
-	iTCcRbs+c3fJcyZlAvOk8ZKh93ONVPWYUOiHp4K58ujYoC0XOdvBkd/PL6Ye6dRnllw1wN
-	HGuAmql8nS4gChpRe7/rC/yjJdKYq/B3z/o1GiLTD3fglYTSLziSX313MG1ptUaWdvQdgl
-	VPxMHZbNZePVqiCjBF9tcFqphXobxx6k7LtXejnInrmG7RnhpE76KbMaZovOow1YDaV13f
-	EsozPhEgP6u/SAb51smrzCHTyy+Z168bdMBKmBkAlDdnnAZE1g8go/+NJNnYOw==
+	bh=dYZ3oDU/XfSEn16rDkLYoq3IW5P2xX4KakGGecDGTgM=;
+	b=cO068ybSh3T1kOr9bvIG0KkVDMmjmEka0nNrMKuNQXn4FuwpsXSXhWHkviA6FNodr3uB9k
+	Q1UkdLumo6W6xLNhNfbtMKS9iPGLbJhWCD6jO+5MD+njA3MqCq3Sqg0x9RC6exuRN3EC0E
+	1+SyrGiAsVMk74pUxQ2IFv5CI4mA66SOD9S76nn7g3g9G2h3DTO3BbryejjPc9Vk/1/wCm
+	Mp4rK7q8GagChjzXRg2TZVA2Lp+2rWTZcuhACL8B85Ip9KTTTvdhOTAOOuE9aQxby4l5fn
+	H0g1A35H5Cm70sWvjxDqeowQwUBxXK88FFgt8xz62ESY2orQ6SlwP7dYS9oKPQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=qGvkZcwA;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1786305878;
+	t=1786305517;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=Z93uE4/r1UQkwFumvu0mkUNxJAMlPsUl9RAgdSah1oQ=;
-	b=se4mBIMAVxkevZPSBkxdkyBpnZpgek38D8uUunZBL77VOdeQ8nre5fXr7HlcCLifyxHhEl
-	ndkG3fZ3VMwb1lSAf0gv9v+ZwYiTQAcmvExmLOQn2GwQJ2+ZVefTMHix8helub7YjCjmCC
-	rveaXZKnFAD8QlBzEk2ItL20qM3F9AS/MRsgVzvw8KUgihZxlSEWGeSqUTWgn5LRIsfYv0
-	VTlbdXB4/CnuFl83mCVoTLhm7x99nHRRTG7C4cRKVWCLxOFOKX60voSOo42YbrjNQr6BtK
-	GIJRvP59RTdPCesJCTuTKvQuPu9c4sA+imWKagPRM/OURCNvuIHpN6glPaquqQ==
-To: linux-arm-kernel@lists.infradead.org
+	bh=dYZ3oDU/XfSEn16rDkLYoq3IW5P2xX4KakGGecDGTgM=;
+	b=qGvkZcwA2kZzcjAV8LgK8Ryth00jv21+l3Egded4gKhmLNFPHk7DsLmPlOhSwRPqJAfsS2
+	76EK7/s7fwFsKJZVtZ0oc9Rz5La6OOlG0zxbQ/RPwg9jqh3YPhTrmDFFDFYKc6kzGxQ7dM
+	y+rA/+ZYNccEAfQO43/OBUtUVLndFnlrds7GbX7fePNOHSod2jzawGPeyM90LGUo4Uc0xW
+	5wj/jfcFay/k03eOfpUFfQC2hdnTXwJlB6fwMe9+uzgdUIiCb2D7eLRBD2vC3EdXA/i1Pl
+	TBPcgkUUZ3Dqvjpf5KOqn3cfarWKSH+BWF1HFl32mSD8sXj55aBXScYVS1ltng==
+To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
 	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5] arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes
-Date: Sun,  9 Aug 2026 22:03:12 +0200
-Message-ID: <20260809200429.843212-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH] drm/rcar-du: dsi: Implement DSI command TX using AXI memory access
+Date: Sun,  9 Aug 2026 21:58:06 +0200
+Message-ID: <20260809195831.842907-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 64ff6ec87305477dde9
-X-MBO-RS-META: c7cjzmhzmepqoji4ioca17k4ik4ouxto
+X-MBO-RS-META: ob1gw3moqdbhkyqi61u88a7wt6oakxhx
+X-MBO-RS-ID: 6b5b9a330ba6ff7d48f
+X-Rspamd-Queue-Id: 4hJ7xB5sxvz8v05
 
-This SoC implements GIC600 with GICv3 ITS and PCIe host mode on this
-SoC can use it. Add GIC ITS node into GIC node, update interrupt-map
-and add msi-map into PCIe controller node.
+Currently, the driver supports register access mode for DSI command
+transfer, which limits both TX and RX to only 16 Bytes long packets.
+Implement support for DSI command TX using AXI memory access mode,
+which extends the packet transfer length up to 128 Bytes long in LP
+and 1024 Bytes long in HS. Support for DSI command RX using the AXI
+access mode is not implemented due to missing test hardware.
 
-The GIC ITS does have master interface to issue transactions to RAM.
-The interface does support cacheable transactions, however, it does
-not support shareable attribute, because the AXI port signals are tied
-to inactive in this implementation. Therefore, add "dma-noncoherent"
-DT property into the GIC ITS subnode.
+The implementation allocates a DMAble 4k page. In case the command
+transfer is longer than 16 Bytes, the payload is copied into the
+page and sent out using the AXI access mode, otherwise the register
+access mode is used.
 
-The GIC redistributor does not have cacheable/shareable, therefore
-add "dma-noncoherent" DT property into the GIC node.
-
-Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
-NOTE: This would not be possible without prior work from Shimoda-san
-      https://lore.kernel.org/all/20240214052144.1966569-1-yoshihiro.shimoda.uh@renesas.com/
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
-V2: No change
-V3: Add Co-developed-by to credit Shimoda-san
-V4: No change
-V5: Rebase on current next-20260807
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 31 ++++++++++++++++-------
- 1 file changed, 22 insertions(+), 9 deletions(-)
+ .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   | 42 +++++++++++++++----
+ 1 file changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index c25642a620db8..dba46499b5e9c 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -809,6 +809,7 @@ pciec0: pcie@e65d0000 {
- 			resets = <&cpg 624>;
- 			reset-names = "pwr";
- 			max-link-speed = <4>;
-+			msi-parent = <&its>;
- 			num-lanes = <2>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
-@@ -819,10 +820,10 @@ pciec0: pcie@e65d0000 {
- 			dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 7>;
--			interrupt-map = <0 0 0 1 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 2 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 3 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 4 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &gic 0 0 GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &gic 0 0 GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &gic 0 0 GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>;
- 			snps,enable-cdm-check;
- 			status = "disabled";
- 
-@@ -856,6 +857,7 @@ pciec1: pcie@e65d8000 {
- 			resets = <&cpg 625>;
- 			reset-names = "pwr";
- 			max-link-speed = <4>;
-+			msi-parent = <&its>;
- 			num-lanes = <2>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
-@@ -866,10 +868,10 @@ pciec1: pcie@e65d8000 {
- 			dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 7>;
--			interrupt-map = <0 0 0 1 &gic GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 2 &gic GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 3 &gic GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
--					<0 0 0 4 &gic GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &gic 0 0 GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &gic 0 0 GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &gic 0 0 GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
- 			snps,enable-cdm-check;
- 			status = "disabled";
- 
-@@ -2148,11 +2150,22 @@ ipmmu_mm: iommu@eefc0000 {
- 		gic: interrupt-controller@f1000000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
--			#address-cells = <0>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
- 			interrupt-controller;
- 			reg = <0x0 0xf1000000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x110000>;
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-noncoherent;
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+index 6e46d6d99f3c0..c25218ca4320a 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+@@ -8,6 +8,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/dma-mapping.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/math64.h>
+@@ -75,6 +76,9 @@ struct rcar_mipi_dsi {
+ 	unsigned long mode_flags;
+ 	unsigned int num_data_lanes;
+ 	unsigned int lanes;
 +
-+			ranges = <0x0 0x0 0x0 0xf1000000 0x0 0x200000>;
-+
-+			its: msi-controller@40000 {
-+				compatible = "arm,gic-v3-its";
-+				reg = <0x0 0x40000 0x0 0x20000>;
-+				dma-noncoherent;
-+				msi-controller;
-+			};
- 		};
++	void *cmd_axi_cpu;
++	dma_addr_t cmd_axi_dma;
+ };
  
- 		gpu: gpu@fd000000 {
+ struct dsi_setup_info {
+@@ -977,6 +981,7 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
+ 					      bool is_rx_xfer)
+ {
+ 	const bool is_tx_long = mipi_dsi_packet_format_is_long(msg->type);
++	const bool is_tx_axi = !is_rx_xfer && is_tx_long && (msg->tx_len > 16);
+ 	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
+ 	struct mipi_dsi_packet packet;
+ 	u8 payload[16] = { 0 };
+@@ -987,9 +992,14 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Configure LP or HS command transfer. */
+-	rcar_mipi_dsi_write(dsi, TXCMSETR, (msg->flags & MIPI_DSI_MSG_USE_LPM) ?
+-					   TXCMSETR_SPDTYP : 0);
++	/* Configure LP or HS and register or AXI command transfer. */
++	rcar_mipi_dsi_write(dsi, TXCMSETR, ((msg->flags & MIPI_DSI_MSG_USE_LPM) ?
++					    TXCMSETR_SPDTYP : 0) |
++					   (is_tx_axi ? TXCMSETR_LPPDACC : 0));
++
++	/* Configure DMA source address for AXI command transfer. */
++	if (is_tx_axi)
++		rcar_mipi_dsi_write(dsi, TXCMADDRSET0R, dsi->cmd_axi_dma);
+ 
+ 	/* Register access mode for RX transfer. */
+ 	if (is_rx_xfer)
+@@ -1011,7 +1021,10 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
+ 			    TXCMPHDR_DATA1(packet.header[2]) |
+ 			    TXCMPHDR_DATA0(packet.header[1]));
+ 
+-	if (is_tx_long) {
++	if (is_tx_axi) {
++		memcpy(dsi->cmd_axi_cpu, packet.payload,
++		       min(msg->tx_len, 128));
++	} else if (is_tx_long) {
+ 		memcpy(payload, packet.payload,
+ 		       min(msg->tx_len, sizeof(payload)));
+ 
+@@ -1162,10 +1175,16 @@ static ssize_t rcar_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
+ 	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
+ 	int ret;
+ 
+-	if (msg->tx_len > 16 || msg->rx_len > 16) {
+-		/* ToDo: Implement Memory on AXI bus command mode. */
++	if (msg->tx_len > 1024 || msg->rx_len > 16) {
++		/* ToDo: Implement Memory on AXI bus RX command mode. */
+ 		dev_warn(dsi->dev,
+-			 "Register-based command mode supports only up to 16 Bytes long payload\n");
++			 "Command mode supports only up to 1024B long TX and 16B long RX payload\n");
++		return -EOPNOTSUPP;
++	}
++
++	if ((msg->flags & MIPI_DSI_MSG_USE_LPM) && msg->tx_len > 128) {
++		dev_warn(dsi->dev,
++			 "Command mode in LP supports only up to 128B long TX payload\n");
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+@@ -1276,6 +1295,13 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
+ 	dsi->dev = &pdev->dev;
+ 	dsi->info = of_device_get_match_data(&pdev->dev);
+ 
++	dsi->cmd_axi_cpu = dma_alloc_coherent(&pdev->dev, SZ_4K, &dsi->cmd_axi_dma,
++					      GFP_KERNEL | GFP_DMA32);
++	if (!dsi->cmd_axi_cpu) {
++		return dev_err_probe(&pdev->dev, -ENOMEM,
++				     "Failed to allocate DSI AXI Access command buffer\n");
++	}
++
+ 	ret = rcar_mipi_dsi_parse_dt(dsi);
+ 	if (ret < 0)
+ 		return ret;
+@@ -1309,6 +1335,8 @@ static void rcar_mipi_dsi_remove(struct platform_device *pdev)
+ {
+ 	struct rcar_mipi_dsi *dsi = platform_get_drvdata(pdev);
+ 
++	dma_free_coherent(&pdev->dev, SZ_4K, dsi->cmd_axi_cpu, dsi->cmd_axi_dma);
++
+ 	mipi_dsi_host_unregister(&dsi->host);
+ }
+ 
 -- 
 2.53.0
 
