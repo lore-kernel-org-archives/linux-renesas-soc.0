@@ -1,208 +1,131 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B323ADB89;
-	Mon, 10 Aug 2026 10:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1A73C0603
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 11:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786356297; cv=none; b=RITcuPz+uvDefHCjMqspsjh7Ogv2cFhlz2U8zt9BblIk9et52Eqp3D1Gp350N+om26r8lUMuiPoyyEY/2HI5KRFg+phR/m0GX5HFWNGznEgf4jK3HlsOyCg6TwFgiCNVkjbQV1701DHB8SLV3DuhIlSMqQvrDMY5SUjqb8b7c4s=
+	t=1786360752; cv=none; b=Hn71HoRMmMnYHiAQBqagJErb7Ad+Pu9yH5Hp47ue7A0CQ7dD5a11xPpcobjQwT+kMiIEgPr26uTaUhLurS4gfT7jEWXxII+1b3Z37qrM8zAm3roNM9sqxZWGgX+kU7nMs02RuQA05/R+YAl9IrAxO9lHmvgPgBRPzUV49gDWLcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786356297; c=relaxed/simple;
-	bh=yQdZe9RRs+ShJ14GMJhSuql7BtFumMXPm4coSH46p30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VrVswIcz+ui2YA6SQT3m+F4VCQDTLpe4QEbYNzeGC9HMXNoOtKcFkXXUq8Tb9fmEU/MMFON6LaYDIAjpZm6j3fO7R90pKgqduteTocb1LJ9N7VM1j6lzyVc8BFI1tQkytPgAWtGBvZQ30VmGy+foJYD0kKCMYmZE8vRa1O7aLS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fkWBatPn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1786360752; c=relaxed/simple;
+	bh=SRH7gmJxvEJfhL73w40/jCAW29CpNndY32IxKI+wJWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xcsd6LAX6iWpjJ3jMbhFp0VyWf8OpVBxzZaFBgVZQrA+HjannLkUwF+60WOG85MAn+QJPU0IRF4RazoY06VtlXwR0HeNBeqHpYmhMhJEdIbHsEVtn4TWibSWz8cd0QGtiOgXW3JBzcio0GEzHfEoeY6p0NKmFTMeeowh8nKJdNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhakDFjR; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fkWBatPn"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9C7BA5E;
-	Mon, 10 Aug 2026 12:03:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1786356218;
-	bh=yQdZe9RRs+ShJ14GMJhSuql7BtFumMXPm4coSH46p30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fkWBatPndikYhSLylGsv/qWu0j9wax0c1zQlOKbCOTDnZfZKXRzji5+Ij6WaE9+t9
-	 JbT1YjlYQS6YBtRmFw+F6tawXwSXXJccq5X6uQmaLQfqgZwwcu+vj1iJxy++jE5UQe
-	 +W7t5gqZP3tAfdZJmLILpCy09uqRrfLefB9tdYuY=
-Date: Mon, 10 Aug 2026 13:04:51 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhakDFjR"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-384930ca5e2so1814901a91.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 04:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786360748; x=1786965548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LDnTUkrh6OVBnHI+PdScQLYsi9xVJCaX4SXJUY886NQ=;
+        b=KhakDFjRBeeY6sjyxMpIZ7lrnZeUXcwWWzDZ+jeLZi1bnP3CC7xTy9nRHAO22p5VP6
+         fb+J90QfBq3ajImJWwPj3roV/0ALqXziybUGfZ9y1uQjqpHz51+V1jIfXk0hJ4IbZdfZ
+         0lzexmekqCOt6570dT8HD60aUGVAhZ+zyZ57jbUckYMYBfTHjMLwuqX/XKeW2IJCvupr
+         UcjRr4PmcW5SKKjsPjNnEbjyQ39Qd5iKjHshSQVuRInVLTy6IvFUd3FwRbYX4ETwa798
+         QJL72Ad7+EemiMM8L9KvrSA0jZXjNrG9Q9GWNv+r62+ih9pi+JFAGXKanxDL4XZpSAlv
+         xa5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786360748; x=1786965548;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=LDnTUkrh6OVBnHI+PdScQLYsi9xVJCaX4SXJUY886NQ=;
+        b=q/2L/6GNNh4fSi7e8bLOfD0xJ5R1653z8S/Ks9HwtPm9aRoYX3ba65f4+pt7rP3NKK
+         U2HjyK+1gca41WEsz0eKrJ7MUlF78cYKa3EaCYu2cgBpP+eiTyH6WuEl6T4DphEZXBI/
+         CQLsV27RlAuPKl4BR/qw9gYltDEoWsXLywrd/QUKt+HWe4Jhktiagb2VBidCfFmCeZzs
+         C1tpvUcDuWfc8s62dRE/h4tyQORq5Bt4LXxGWtFpl4hBknIsZH3+q6LZM9BcQ7d5DxDw
+         6tIuctcjWTLwv3/5ud8PeBtlZkrjhIIQrm9Fdc3/2aDiw0KIsYdD00/+r7sUrbjACZWR
+         2HOA==
+X-Forwarded-Encrypted: i=1; AHgh+RpmFf0Q2jd7TXXyw/hHhYK7+n9zECXduYfYVBRSrgiM178+4IT9R1XeGZnQ29mQWcc9d4/syjaa5sl7R24qnJrPQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqdIwJjWOsDfmKkC/uG6QagE9107WdWsEVLJlRgx4DvNPVFMOV
+	vw5thQR+9HV8BkgANXredO2RSLzHAshDSGTJzg7MJx9XJQOz9UM3ExaG
+X-Gm-Gg: AR+sD13fP3+gaOJF/vOY6jUVWPUjMsENp028JQONVMJuxd/WCTn3HCoFNTX/BddlqE/
+	T+PMxBoVPHBBQmloQ32RRn9lNEKbiUi9cNtymM7ekAadGIxyd9ODFThHEVna4QOr0ZcPPLFaskK
+	GjYDmMZ4xaFjnrBOQDaUPLNM+NHeJf7h+LAiHpqyRkXBZ5eVWwl0pPY+U5x+grS1YeLjRRDxMMY
+	E9Nl7aflE/vH7dx9j5YmkhG2vd6UP8hm9DBJBbJ74/12yjJ24A0bj5zORs1GPvANSmnbzf6EHMS
+	qbjD3GDlleaTy/CSykU/cO/MyopSnUlgarfeOwYfVabUmYYnElhk+zwiX7nWjAGmskz9LkZv3Is
+	9kjIYscEnKc9bH0ajDabO6CYnmiu2zpHjzn0RdZ72GJb4aGfrC5hsuQsi41Lb/oyQaiO1tjyvFm
+	4SLTKG/3KBp0nlW+Oxa5104Nig/EZ4FOdOBqS9hRECPvc73PBTdN7LgvDrC+OgDdgDa72GnBqQM
+	Uzib4WPttyfr6mSntZBG35PWQtialbzGK9H8BHAQTbLejeWwDRSuTTdjYkyzw+3097CfVT94lfV
+	sMGZ
+X-Received: by 2002:a17:90a:e705:b0:381:9028:5945 with SMTP id 98e67ed59e1d1-392cca1f44dmr579534a91.14.1786360748511;
+        Mon, 10 Aug 2026 04:19:08 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39085c393d5sm14798046a91.0.2026.08.10.04.19.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2026 04:19:08 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	rafael@kernel.org,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	niklas.soderlund@ragnatech.se,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: dsi: Implement DSI command TX using AXI
- memory access
-Message-ID: <20260810100451.GA2940644@killaraus.ideasonboard.com>
-References: <20260809195831.842907-1-marek.vasut+renesas@mailbox.org>
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH v2 1/2] thermal/drivers/rcar_gen3: Handle -ENXIO from optional IRQ lookup
+Date: Mon, 10 Aug 2026 18:18:40 +0700
+Message-ID: <20260810111841.77898-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260809195831.842907-1-marek.vasut+renesas@mailbox.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Marek,
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-Thank you for the patch.
+rcar_gen3_thermal_request_irqs() may return -ENXIO when no optional
+IRQ is available. The caller currently treats all negative return values
+the same way, disabling hardware trip-point support and continuing probe.
 
-On Sun, Aug 09, 2026 at 09:58:06PM +0200, Marek Vasut wrote:
-> Currently, the driver supports register access mode for DSI command
-> transfer, which limits both TX and RX to only 16 Bytes long packets.
-> Implement support for DSI command TX using AXI memory access mode,
-> which extends the packet transfer length up to 128 Bytes long in LP
-> and 1024 Bytes long in HS. Support for DSI command RX using the AXI
-> access mode is not implemented due to missing test hardware.
-> 
-> The implementation allocates a DMAble 4k page. In case the command
-> transfer is longer than 16 Bytes, the payload is copied into the
-> page and sent out using the AXI access mode, otherwise the register
-> access mode is used.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   | 42 +++++++++++++++----
->  1 file changed, 35 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index 6e46d6d99f3c0..c25218ca4320a 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -8,6 +8,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/dma-mapping.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
->  #include <linux/math64.h>
-> @@ -75,6 +76,9 @@ struct rcar_mipi_dsi {
->  	unsigned long mode_flags;
->  	unsigned int num_data_lanes;
->  	unsigned int lanes;
-> +
-> +	void *cmd_axi_cpu;
-> +	dma_addr_t cmd_axi_dma;
->  };
->  
->  struct dsi_setup_info {
-> @@ -977,6 +981,7 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
->  					      bool is_rx_xfer)
->  {
->  	const bool is_tx_long = mipi_dsi_packet_format_is_long(msg->type);
-> +	const bool is_tx_axi = !is_rx_xfer && is_tx_long && (msg->tx_len > 16);
->  	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
->  	struct mipi_dsi_packet packet;
->  	u8 payload[16] = { 0 };
-> @@ -987,9 +992,14 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
->  	if (ret)
->  		return ret;
->  
-> -	/* Configure LP or HS command transfer. */
-> -	rcar_mipi_dsi_write(dsi, TXCMSETR, (msg->flags & MIPI_DSI_MSG_USE_LPM) ?
-> -					   TXCMSETR_SPDTYP : 0);
-> +	/* Configure LP or HS and register or AXI command transfer. */
-> +	rcar_mipi_dsi_write(dsi, TXCMSETR, ((msg->flags & MIPI_DSI_MSG_USE_LPM) ?
-> +					    TXCMSETR_SPDTYP : 0) |
-> +					   (is_tx_axi ? TXCMSETR_LPPDACC : 0));
-> +
-> +	/* Configure DMA source address for AXI command transfer. */
-> +	if (is_tx_axi)
-> +		rcar_mipi_dsi_write(dsi, TXCMADDRSET0R, dsi->cmd_axi_dma);
->  
->  	/* Register access mode for RX transfer. */
->  	if (is_rx_xfer)
-> @@ -1011,7 +1021,10 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
->  			    TXCMPHDR_DATA1(packet.header[2]) |
->  			    TXCMPHDR_DATA0(packet.header[1]));
->  
-> -	if (is_tx_long) {
-> +	if (is_tx_axi) {
-> +		memcpy(dsi->cmd_axi_cpu, packet.payload,
-> +		       min(msg->tx_len, 128));
-> +	} else if (is_tx_long) {
->  		memcpy(payload, packet.payload,
->  		       min(msg->tx_len, sizeof(payload)));
->  
-> @@ -1162,10 +1175,16 @@ static ssize_t rcar_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
->  	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
->  	int ret;
->  
-> -	if (msg->tx_len > 16 || msg->rx_len > 16) {
-> -		/* ToDo: Implement Memory on AXI bus command mode. */
-> +	if (msg->tx_len > 1024 || msg->rx_len > 16) {
-> +		/* ToDo: Implement Memory on AXI bus RX command mode. */
->  		dev_warn(dsi->dev,
-> -			 "Register-based command mode supports only up to 16 Bytes long payload\n");
-> +			 "Command mode supports only up to 1024B long TX and 16B long RX payload\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	if ((msg->flags & MIPI_DSI_MSG_USE_LPM) && msg->tx_len > 128) {
-> +		dev_warn(dsi->dev,
-> +			 "Command mode in LP supports only up to 128B long TX payload\n");
->  		return -EOPNOTSUPP;
->  	}
->  
-> @@ -1276,6 +1295,13 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
->  	dsi->dev = &pdev->dev;
->  	dsi->info = of_device_get_match_data(&pdev->dev);
->  
-> +	dsi->cmd_axi_cpu = dma_alloc_coherent(&pdev->dev, SZ_4K, &dsi->cmd_axi_dma,
-> +					      GFP_KERNEL | GFP_DMA32);
+Distinguish -ENXIO from other errors so that the existing behavior is
+preserved when the optional IRQ is absent, while errors such as
+-EPROBE_DEFER, -EINVAL, and other failures are propagated to the
+caller.
 
-I think setting the DMA mask for the device is preferred over using
-GFP_DMA32.
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
 
-> +	if (!dsi->cmd_axi_cpu) {
-> +		return dev_err_probe(&pdev->dev, -ENOMEM,
-> +				     "Failed to allocate DSI AXI Access command buffer\n");
-> +	}
+Link v1 : 
+https://lore.kernel.org/all/20260807093058.42840-1-phucduc.bui@gmail.com/
+Changes in v2: 
+ - Update the commit message.
+ - Move error handling to the caller.
 
-No need for curly braces.
+ drivers/thermal/renesas/rcar_gen3_thermal.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> +
->  	ret = rcar_mipi_dsi_parse_dt(dsi);
-
-The allocated memory is leaking in error paths.
-
->  	if (ret < 0)
->  		return ret;
-> @@ -1309,6 +1335,8 @@ static void rcar_mipi_dsi_remove(struct platform_device *pdev)
->  {
->  	struct rcar_mipi_dsi *dsi = platform_get_drvdata(pdev);
->  
-> +	dma_free_coherent(&pdev->dev, SZ_4K, dsi->cmd_axi_cpu, dsi->cmd_axi_dma);
-> +
->  	mipi_dsi_host_unregister(&dsi->host);
->  }
->  
-
+diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
+index 94804816e9e1..04a57ff724f4 100644
+--- a/drivers/thermal/renesas/rcar_gen3_thermal.c
++++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
+@@ -527,8 +527,11 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	priv->info = of_device_get_match_data(dev);
+ 	platform_set_drvdata(pdev, priv);
+ 
+-	if (rcar_gen3_thermal_request_irqs(priv, pdev))
++	ret = rcar_gen3_thermal_request_irqs(priv, pdev);
++	if (ret == -ENXIO)
+ 		priv->ops.set_trips = NULL;
++	else if (ret)
++		return ret;
+ 
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
