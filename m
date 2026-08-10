@@ -1,307 +1,161 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E716D374E5A;
-	Mon, 10 Aug 2026 09:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB0F37E2E2
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786354897; cv=none; b=APCjf7IwPpDgnmGEH3f2MwZrmTy2LLNsnq0mWQE3g7ekdjOBo+2kllP3RPVskmy/QbFnF49nIQ2u/ggxYCgU82dEYA3INsBszZ69OTS/5HVJib2HKenrn22DFmdKQKUs2D2Ct4cUOaStP04sE08ZAvFXlbaEgxAEL4lwLH4eOHc=
+	t=1786355132; cv=none; b=rH9zYmzoNo8160tNuM8vChOBBMLPOQrAbHRctsTjZRF+K8nQA/OWR9FJbTCGhiDcybCdXv2YE3kM0hDRBMmFdhyeccqGxgIHpoTkpNOsPSvf/of47XmwxKtm+9qD/tMLXJINK2U2/2+5XuaT418+ahn9+uhDmqlidwUNhVvJx+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786354897; c=relaxed/simple;
-	bh=cOREWmnPykCUZDl8mbww0QbQDYHQ97pWPJwBTHheYnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhSfa7wLyKxY/M4IdoAm9d6OeQ5pxSpDJiRwqPGpjXy9xeGVgudq9Jc8kkMAK2ChfFbfIicn/PlYfS9y7UA64MPDwbOYzF2+jsuADLMb+bmb28Npt5dUoLF02Vb8899S4yBzkN5zMaLpLBsAD6/AVXfR4I3ylbY3sPUWCXREYFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RrwXAIBB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1786355132; c=relaxed/simple;
+	bh=gxcas0bqgHomtZULAw4OXEt+7h8gY3FlT9ou+7GepIA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DkICMDYLhqIaO6k+guana6eu0tDVIlSCGpfDdImHldy54xXXYTfV2auhUqhgNSvC8KYkXiC20XKFM7B2hvxZYFaG4P1tKVRtoI21TSlvatJ4aZ4+z+mZzrJl78CbAd3UIKxy82VPDLSUS+pEKg8maY/lodtU154wBTi0WaTifD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k0mdxM8G; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RrwXAIBB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786354895; x=1817890895;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cOREWmnPykCUZDl8mbww0QbQDYHQ97pWPJwBTHheYnY=;
-  b=RrwXAIBBkT+UVQBEJ3CDe1VCsjZPqybGPW20aDQryNUpeRvL+2yzTvDm
-   C5dV9IU6jewo3h6h0NNiFP1dKGbNwHE9N7y1tRLb/DwuV/FGp+g0QUJAQ
-   IJzyWJdFdlI5DKtFpTskd3FOp6pA6htaR/SGvgDofpJBsyNxF3RxYp3gt
-   2mTYFI3dq6nwYqcWuuaBnwDfBwB86uEyxDOShHyFC8plqm2gNfPaUobEp
-   DavFP5fvdVsquZjcUVOdUYy2tLuZjyj2SYzVAd14wJg/HceCbdxS04vDr
-   luJYfwuWmMSFDdG2TqTxDPJnzH9pOg1tBeugRR2ZUehfLzGoL9UnA+JsZ
-   A==;
-X-CSE-ConnectionGUID: pGZpT2EMQQOk0K1jBDwn6g==
-X-CSE-MsgGUID: Zf3CcnZbQ4yvpxJs+GgKdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11870"; a="89387736"
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="89387736"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:41:34 -0700
-X-CSE-ConnectionGUID: KR5OuCjVQT+N3NNT/q2FfQ==
-X-CSE-MsgGUID: 8GqWIe1WQnyFLae702V6Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="263607423"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.127])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:41:28 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 21C8C11FA5C;
-	Mon, 10 Aug 2026 12:41:27 +0300 (EEST)
-Date: Mon, 10 Aug 2026 12:41:27 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sang-Heon Jeon <ekffu200098@gmail.com>, Julia.Lawall@inria.fr,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Michael Krufky <mkrufky@linuxtv.org>,
-	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-Message-ID: <anmcxzxwQSzPfXEr@kekkonen.localdomain>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
- <20260807122825.GJ2201016@killaraus.ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k0mdxM8G"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4799b3f7c83so1046553f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 02:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1786355129; x=1786959929; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EyEgdVp7O6CUMToSIq4Pkng5Jk2xx180zJ29o453drU=;
+        b=k0mdxM8GpN8v9aEsBACesPx9Gf+cxCH0avXSUFeBDLV5SX0QO3RF302wMhTs/WYpz9
+         R5/o5ZogOHaIru5TnieFytH0qZGF7YMMeO56iMsTUTgmFYC4AiNhWMjYEC9suS7JMvJ4
+         U6xXFFrptbOlmg82OMUrWo+uRX7+BYtJPJJeoQw2Di2Mad5Fz83ceQIVS6rSD6oJ0G9J
+         m6wDbCqcxKmsFA2ouxbdj0+HUeVon626/5XdEIatRYUWBsZQ3bWdQiDTsu9WXh8BVtwv
+         ZEEMwYNreK9GJKHFvvEhUSfz/iCEEd/49BwVmY/9/qGP2ARqitUVYLfsUb2UeVqSm8Hc
+         W05Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786355129; x=1786959929;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EyEgdVp7O6CUMToSIq4Pkng5Jk2xx180zJ29o453drU=;
+        b=IVRKPKgXJ+9lQ0blcBYouF6t4ylXFXsXaACGOLOhR2GN9Pdy1kfXZ4uCpE3WTV4i1W
+         8Gu7NXfnek5c+XDfYR+LAEaJ0xuwm4TdZNAfYHvOKgY4ADKyfC4EDB1KmNUAHzWcuxdq
+         LM1gj0ypmSBkON4iO2ozXEG4w/LzSpv05T+CsqiH+EBrQVfwhny4Cj4OtkfOR7DuLQIY
+         WRQJ43eWYjDYBfAbSCyJM84PMZ2UBLfpmIQLHdp//5md/ei+HIIf2m6ojWhBChe0aS6r
+         3RD5IBLgm+tmKQ+UrjNdbaLj67+shvJE6jaZCgWCYJYLbDtrVwCwrV7In06YFWe9b10n
+         Z1gQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrYjEgq2IK2xAXHnkWuDsnvZfhcsMZVQQkyHgHSTrZjxtpB27c7Ks3nkZvvxYiedQEitxGI/IN+Xb8X5lwnNzT68g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySdKtHftJyEpnGMM90GIAuO29G1jifF87eXSPtWyZEUxphaQ4+
+	/T4AcGMCv/92DZH683GaLPZWxFfRhmMjyxbiTkWPuSMZoFmR0Jz3RQ8js+D9+fxuZa8=
+X-Gm-Gg: AR+sD10XVcKPzDxloesie5AqhWSWRwZNbgwcGaxV+U8cFB0F8CXE43BhoqD7M5ZXxWl
+	7ENj6pHVzarzmEn8L5TBYmrVjv5hbMon7DJ+gscHt2Hi8nHXrzHAZPjosM0CNy4W5NkE5t9o/2p
+	MvGjg6zShPPHNMmiuzSVrsApbAwmZYZx63bKfl5ZDblRSuOWKEjpyeGnXL0udPsEAyiLEUYG3qV
+	pXvk9KX8S7w3C1Y4m294XOHlnm0hWrmIQfy/E90ka2MbmS2mCsiQkIPSJajsgee4FuXWbS8jtfa
+	G+vY3X/mKDr0l5cH0zaboWVmYD9mzCRLXNZQZKB+efRvKDP/HX+eRUkyJ6SSc8Bo4RUumaZO+J5
+	fQGgvTZaMTRNfvmhwX0JAlJUBOC1wvrZIvtTYemUEvjPIOCoSAu8JYe51xKd1UKDqgGsB9kpnpQ
+	4dVlEpfO1RTwE2ZLKAqrKhccRpIw+obzA23QYTBz2GqAvR8JQqlxoUEirtoSqmpAClOEC4LUawY
+	nPxodX9voJ7y7hpVhzbyvsVfy8+tGKgxq0VCXa2SOqIdH6MCtYF
+X-Received: by 2002:a05:6000:4305:b0:47f:4fa9:ae42 with SMTP id ffacd0b85a97d-481455f8844mr733292f8f.11.1786355129252;
+        Mon, 10 Aug 2026 02:45:29 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:106d:1080:eb7f:37e4:e8c9:f32? ([2a01:e0a:106d:1080:eb7f:37e4:e8c9:f32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4800215078asm32050521f8f.12.2026.08.10.02.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Aug 2026 02:45:28 -0700 (PDT)
+Message-ID: <d0c1f707-4d44-4d0c-a45b-5a78c94f286a@linaro.org>
+Date: Mon, 10 Aug 2026 11:45:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260807122825.GJ2201016@killaraus.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 3/4] drm/panel: ilitek-ili9882t: Set prepare_prev_first
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ David Airlie <airlied@gmail.com>, Jessica Zhang <jesszhan0024@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260809200107.842945-1-marek.vasut+renesas@mailbox.org>
+ <20260809200107.842945-3-marek.vasut+renesas@mailbox.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20260809200107.842945-3-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent, Sang-Heon,
+On 8/9/26 21:58, Marek Vasut wrote:
+> Sending DSI commands from the prepare() callback requires DSI link to be
+> up at that point. For DSI hosts is guaranteed only if the panel driver
+> sets the .prepare_prev_first flag. Set it to let these panels work with
+> the DSI hosts which don't power on the link in their .mode_set callback.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Jessica Zhang <jesszhan0024@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>   drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> index 219d048cb883f..24e72ad0d29a1 100644
+> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> @@ -808,6 +808,7 @@ static int ili9882t_add(struct ili9882t *ili)
+>   
+>   	ili->base.funcs = &ili9882t_funcs;
+>   	ili->base.dev = &ili->dsi->dev;
+> +	ili->base.prepare_prev_first = true;
+>   
+>   	drm_panel_add(&ili->base);
+>   
 
-On Fri, Aug 07, 2026 at 03:28:25PM +0300, Laurent Pinchart wrote:
-> On Fri, Jul 24, 2026 at 03:45:14AM +0900, Sang-Heon Jeon wrote:
-> > Both branches of the check return the same value, so the check has
-> > no effect. Remove it and return the value directly.
-> > 
-> > This is the result of running the Coccinelle script from
-> > scripts/coccinelle/misc/cond_return_no_effect.cocci.
-> > 
-> > Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-> > ---
-> >  drivers/media/i2c/mt9p031.c                          |  6 +-----
-> >  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
-> >  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
-> >  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
-> >  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
-> >  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
-> >  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
-> >  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
-> >  8 files changed, 9 insertions(+), 49 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> > index d21510caf45a..2b09e8315c8e 100644
-> > --- a/drivers/media/i2c/mt9p031.c
-> > +++ b/drivers/media/i2c/mt9p031.c
-> > @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
-> >  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
-> >  	if (ret < 0)
-> >  		return ret;
-> > -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> 
-> I would have just replaced the last line with a
-> 
-> 	return 0;
-> 
-> as I find it easier to read code that has multiple error paths when all
-> the error paths look the same. It's a small personal preference though
-> (and ths best option would be to convert this driver to the CCI
-> helpers), so I'm OK with this change as-is.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-I wouldn't make an exception here, but obviously CCI is the way to go.
-
-> 
-> > +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> >  }
-> >  
-> >  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> > diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > index b0302dfc3278..7383341ec51d 100644
-> > --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
-> >  static int __maybe_unused xisc_runtime_resume(struct device *dev)
-> >  {
-> >  	struct isc_device *isc = dev_get_drvdata(dev);
-> > -	int ret;
-> > -
-> > -	ret = clk_prepare_enable(isc->hclock);
-> > -	if (ret)
-> > -		return ret;
-> >  
-> > -	return ret;
-> > +	return clk_prepare_enable(isc->hclock);
-> 
-> Here the change looks good, there's a single error paths so a direct
-> return is fine.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> >  }
-> >  
-> >  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
-> > diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> > index 773f6548370a..872bd09656b1 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> > @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	ret = pm_runtime_get_sync(pd_dev);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return pm_runtime_get_sync(pd_dev);
-
-The patch no longer applies after commit
-f87d7eda07fca21efe4b96169ae59007db46e60e .
-
-> >  }
-> >  
-> >  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
-> > diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > index be1cbd5cfe84..e88e66be4f6d 100644
-> > --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> > +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
-> >  	unsigned long max_freq = ULONG_MAX;
-> >  	struct device *dev = core->dev;
-> >  	struct dev_pm_opp *opp;
-> > -	int ret = 0;
-> >  
-> >  	if (legacy_binding) {
-> >  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
-> > @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
-> >  	}
-> >  
-> >  done:
-> > -	ret = hfi_session_set_property(inst, ptype, &cu);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return hfi_session_set_property(inst, ptype, &cu);
-> >  }
-> >  
-> >  static int acquire_core(struct venus_inst *inst)
-> > diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> > index 7305cc4a04cb..6635f5782175 100644
-> > --- a/drivers/media/platform/renesas/rcar-csi2.c
-> > +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> > @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
-> >  			return ret;
-> >  	}
-> >  
-> > -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> >  }
-> >  
-> >  /* -----------------------------------------------------------------------------
-> > diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > index 14eedd1ceb27..bb06847f3a63 100644
-> > --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
-> >  	struct media_device *md = &camif->media_dev;
-> >  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
-> >  	unsigned int ip_rev = camif->variant->ip_revision;
-> > -	int ret;
-> >  
-> >  	memset(md, 0, sizeof(*md));
-> >  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
-> > @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
-> >  
-> >  	media_device_init(md);
-> >  
-> > -	ret = v4l2_device_register(camif->dev, v4l2_dev);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return v4l2_device_register(camif->dev, v4l2_dev);
-> >  }
-> >  
-> >  static void camif_clk_put(struct camif_dev *camif)
-> > diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > index 870ac3c8b085..6404eb74db32 100644
-> > --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return mxl111sf_lg2160_frontend_attach(adap, 2);
-> >  }
-> >  
-> >  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> > @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> >  }
-> >  
-> >  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
-> > diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-> > index a408fcc3a060..4988fbf5005e 100644
-> > --- a/drivers/media/usb/gspca/jl2005bcd.c
-> > +++ b/drivers/media/usb/gspca/jl2005bcd.c
-> > @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
-> >  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
-> >  						    unsigned char value)
-> >  {
-> > -	int retval;
-> >  	u8 instruction[2];
-> >  
-> >  	instruction[0] = reg;
-> >  	instruction[1] = value;
-> >  
-> > -	retval = jl2005c_write2(gspca_dev, instruction);
-> > -	if (retval < 0)
-> > -			return retval;
-> > -
-> > -	return retval;
-> > +	return jl2005c_write2(gspca_dev, instruction);
-> >  }
-> >  
-> >  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
-> 
-
--- 
-Regards,
-
-Sakari Ailus
+Thanks,
+Neil
