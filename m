@@ -1,100 +1,100 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DEF3F329C
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 14:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8046C3E1CE8
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 14:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786372812; cv=none; b=DVC7PzJTBtXyVtbgGrJDHkUDOS/AeQdg0Iw1QXzKhaiqdTvQGLUY9e/xhrEAPrNBSQrCaKrBT9Mcvhe4WJ4Yu0T0kvifz0rlJNgaOd/vPGtue9otiw6t1zW+xicVQShduzxTiYmKk6S6fX9x3bcgIobzKcIqyQoayZZH86mmBhA=
+	t=1786372912; cv=none; b=osamV4viEKtTlFFfTV5+VKePIqArgmnx11zdGcYisEMPuT8OkCYqlAMLviIm1Ec2h1zuTWbcN9anhVnCSsZhrp4xL2yFvJWUvwiCRrio+FySyl2Orkic973zQG1cmdGZ+2h8hLLpb/KwEcAD83QJxfIGrV3wbRQDa3tOcE5dS6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786372812; c=relaxed/simple;
-	bh=uB/V/Xhwg31kLJGNDAMpcVbvCMFk1PoC6Tb+YOPqJRs=;
+	s=arc-20240116; t=1786372912; c=relaxed/simple;
+	bh=NlxQLUaP5Chjm4OrN1FpLC3mO3bI3kH8vyHo6dVucAo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nmoLUDXmugDT2cPWFpsExTqGHC0lp+01Kn1Pm9nuIoT6fesH1dH39k88gnRHwj3oQkFEucj9fhFgWkxLZbQVpaS7PLyUDLhQXO0qSf0Lu+3J/uaOTEhHbWaq0liVg7rHM22yT8Q9CtQURNvyvn/LLWUHxlERgDxt3MaUlODnj9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+	 To:Cc:Content-Type; b=fUmI+2DevveL81793K80Fmj+0QnlaOTPwizqfqgIhlYorVRJjtF9TN3VODxNyynRduzCNGx+0ZW3J4qr1vZqGPXqfec6CTlApb+cPh+hHBWl/+1oG8wHAuDKLDAi5Kg7df3nrnH+ElpjJUm0iYcKTtKqX88YoCJPCrHTfkdlNU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-9770e900464so1560379241.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:40:10 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c2c46a428eso1308045e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:41:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786372810; x=1786977610;
+        d=1e100.net; s=20251104; t=1786372910; x=1786977710;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=kzNCXQCO04CqdRN4JU2RpTNoOwr4IYw/G6qWE0jJmAY=;
-        b=MGXoKKpooNUOtq/Ti8qJXSBwM22A9LVUxefWMtoSR54+E65JbgvV4m10eEVkyr5xqS
-         708ml2IkZPsJQFjwHD7dOiw7LJPBXAPp1cQ5JTFQSjMicw5eNpQIIz/jbJ9l8Wx9Hnso
-         O9x03Ck8ctyZpxYRTvh8/6Fr6uMWRhJ2jugEZ5g/xwcY84OETFV16Vx7l4OCIEYPMbOh
-         KmkfHs0vAXAUDUWkqNmDV6grAwJyuUBJUGxXtBCATsmVjAiQvzEp9B2luKcg9cY1mK2I
-         FTjtZrIAx3kb1ortUfn0GPXlBMpuHwAvzviEn3FDu6CHtzt5p80FnJhrR7l0Za986dXR
-         S9Bg==
-X-Forwarded-Encrypted: i=1; AHgh+RrpxLuJ4aTZh8YkYT1aNuab9yOZXZAROmR3NtZF53sYGdy57q/d4OoVAEy9RdEhji4iB7vKM5jq9ednCqrDb7yuGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk3GSyjneuXJxvhm29T96uzntlCI/e6OlerdIuBuTDzy1CiSPf
-	vdCV03eUtQj7Ajp2K+QtrBtdvQiXJnaAyYLJBPE8lHp8qavnlAEB6Y/HmJWkRhp+
-X-Gm-Gg: AR+sD11zOIBX6ykjBVVdPmjRTY8DhcDeR48w1v2P9KFXVOKh60LqJaF6r9yGbgYlVq7
-	1oY9C/ku55nvpgbRIy3FQO0uqIfh7FGq8+hG2lHlzj1IBDAcPg+1bynBo287lvmuTzH3xsXmcmH
-	GRVvZZq5QlIsql9gRvW6w0h94+DEyNHurrEsqD6CtV/L6MR4RfEH8O+GqnuE1h2qTZM5DwXJJN/
-	9wG2AmWd0arxExRl8DWJQD3yh7TDO3mY1RXjkHLp8G/AaWFaerlDdAc4AmAwz5hXVhMwwRIzjZP
-	Lm+FzC5NOqWQM4ApIb4E9uwksjth5HhyQz7KPqKIEsy7Cf1l2Z73VRYvDQ1D9ZqvCvLlgTAXe+9
-	ZfVy456t61YfXpOLNkds3e1jWUKZEuXRv+Kk1kR3FFhWMoy6LJIEMUUg+lsw8t4ZMcZqw4HmlQz
-	2mfR0/DvCvAUlncFKt6LErT6GXcL023rMkz/ZTMP3t4UBbYgeViDmMu05iAo/V8qQE+s5wO0sQS
-	CVzSMVecinUVdbXep96RorIbw==
-X-Received: by 2002:a05:6102:4415:b0:745:53b2:d651 with SMTP id ada2fe7eead31-76521ef6576mr2187592137.12.1786372809656;
-        Mon, 10 Aug 2026 07:40:09 -0700 (PDT)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-979f303b72bsm3422948241.8.2026.08.10.07.40.09
+        bh=giEldGY175WVS3peHWMV7A1WyTzZJJHYTsaFpkbRHpk=;
+        b=YDd5X/ps3sSEDFiPN9yM7perk3jJSKrht+g5A3gXegsNn7EnRQAQwhOFpoa66L57e7
+         eUdhs2nJ6Pj99wKXtsMa4tWjJ3MT74VuxjLD/w4sNyhVQ08xMy+BI8e9XwImbZcM1bkV
+         Rx4uurVw0r9KNGmY5fH92WAM9wkbWt6vuT4czZiOiqGNTD9BRz3LGWG5SK1jNtPo5gVM
+         cfI05GwlSi/+tW8ZbJjm1CLy7Bv9BGYMFurmsSJ5UG5Y/omNVWYXPQarxzkZkCq643Rg
+         Rf6QYL2bWjHvbqvSM+uFJ53LXlidcKUPNNw6vtvaf9vg1+ci2VT+31kC90Zpm6P/umfx
+         1WVQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp1KDg+vA23lH28aYU8TdVsR5hSmEWD8+QhSxAdi5IaVurCYx4NXgBcdAEoDqxpnxv1NN9HcsuZ32XPPsYOAQ9AWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcz0XuD/o/Rlpmvx9sCjRkvflXc7zimMOCPzgPRNd2PNkshcdx
+	kZ96g6xADhAvKZReY+YFkvxAmC6OFXhu2Ebx4Fc3lynHtmei1hQbPRJEW28w/LIk
+X-Gm-Gg: AR+sD13sunzRBzcVzAlEOl9hFOhJb2qoDUgmKgKIZhKDy93Tw+308ilg+WdmQlc+4v1
+	SF9L5Ky//T8tt4aN+i1mHf5M467+OuP6bchXkq0IfN04lDgvx+I+YGc/x1Dkms8WszHWLR+hjpY
+	+rxUFia+3DXBdtVfEWUuLII56ipnR36t0CtfDBXBhEe4xnxftdJYKYZDOVeSS3JxfcXd67WcK2M
+	wQGPhRyXeE49zIlUNg59ezf20N4PmGeMr9dXMCtUUg6fSgxZl6lRMIJk/ye2a7OXnruB3ahq8hG
+	zpgDqi/VtGbEpw2gDapcghd258t4DVjqC3AMty1PUzKVHXshirM3ts1Ag5U31aljTXnDzWi0NWV
+	DOMvmJlAoxSYsExnGgYaYA2IVlLBkAup/2gooE4HpUKnESmxNSphMSyhm8/KCFpMThMBu35mZy3
+	L7HaYeWD8oCuTcYuO0+wizLIXXoCI0dsKyG7HjV5MlTuHTa7Bg5FZOe+d/d0FieJpu4+S9LYK8r
+	ep6q599SWvkO3Mgp83Kx18PYA==
+X-Received: by 2002:a05:6122:44a:b0:5c4:1a0a:b52e with SMTP id 71dfb90a1353d-5c41a0ac416mr1318731e0c.9.1786372910328;
+        Mon, 10 Aug 2026 07:41:50 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c40ae6a5e4sm4420987e0c.2.2026.08.10.07.41.49
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2026 07:40:09 -0700 (PDT)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-9770e900464so1560364241.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:40:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqaFp+0Q9xsPiZMuNSDZ32Mme1lpCc/yFaV9M3WPMoHTj5QYQIBPaUD3VAoU0Fz5Cqt0SX3RcSVgaksvBkygNWiBQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:a157:b0:744:e49e:df75 with SMTP id
- ada2fe7eead31-76522a3542bmr1213203137.21.1786372809208; Mon, 10 Aug 2026
- 07:40:09 -0700 (PDT)
+        Mon, 10 Aug 2026 07:41:49 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-966d70b9e1cso1089855241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:41:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrHeyc3nPESLHWvYS1AeMYi1fdzA8VBEMVkjm37iXuUO+OstF2JNofjmUEBRbPKxZ0oCH0h9Ca6UmhukLral01NJw==@vger.kernel.org
+X-Received: by 2002:a05:6102:6448:b0:737:783d:1912 with SMTP id
+ ada2fe7eead31-764e7be8d9fmr5541460137.12.1786372909447; Mon, 10 Aug 2026
+ 07:41:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714130429.11214-1-marek.vasut+renesas@mailbox.org> <20260714130429.11214-9-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260714130429.11214-9-marek.vasut+renesas@mailbox.org>
+References: <20260714130539.11287-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260714130539.11287-1-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Aug 2026 16:39:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWKVWFutMzBUVd=sQjRUzbRdJ_mGc0-x+o7WsOjo+-ZzQ@mail.gmail.com>
-X-Gm-Features: AUfX_mwN7lvLitZDlPNYWEclA-T-vCWyRoc3tq1Uu1GaHP9xVqafEpWVwj9VsLg
-Message-ID: <CAMuHMdWKVWFutMzBUVd=sQjRUzbRdJ_mGc0-x+o7WsOjo+-ZzQ@mail.gmail.com>
-Subject: Re: [PATCH 9/9] arm: dts: renesas: sk-rzg1e: Specify ethernet PHY
- reset timings
+Date: Mon, 10 Aug 2026 16:41:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWP4O9O4hQ30mz8dL1iw_AgEPuqqZqRQiM=qNGqb2bQvg@mail.gmail.com>
+X-Gm-Features: AUfX_mzwLbC_augmoVM0gc4_01wytzxMg7NdumAxkIRznv81wSo99Vl4iox5wsk
+Message-ID: <CAMuHMdWP4O9O4hQ30mz8dL1iw_AgEPuqqZqRQiM=qNGqb2bQvg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: beacon: Specify ethernet PHY reset timings
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 14 Jul 2026 at 15:04, Marek Vasut
+On Tue, 14 Jul 2026 at 15:05, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> The KSZ8041RNL reference manual [1] DS00002245C page 47 TABLE 7-10:
-> POWER-UP/RESET TIMING PARAMETERS does not indicate how long should
-> the system wait after deassertion of the PHY reset and before start
-> of communication with the PHY via MDIO. Opt for the same value as
-> used for KSZ9031RNX, which is 300 us.
+> The KSZ9131RNX reference manual [1] DS00002841D page 131 FIGURE 6-2:
+> POWER SEQUENCE TIMING INTERNAL REGULATORS does not indicate how long
+> should the system wait after deassertion of the PHY reset and before
+> starting communication with the PHY via MDIO. Opt for the same value
+> as used for KSZ9031RNX, which is 300 us.
 >
-> The KSZ8041RNL reference manual [1] DS00002245C page 47 TABLE 7-10:
-> POWER-UP/RESET TIMING PARAMETERS row tSR Stable supply voltages to
-> reset high is at minimum 10 ms. Set the DT property reset-assert-us
-> to 10ms because the KSZ8041RNL RM does not explicitly spell out how
-> long the reset has to be asserted, but this at least covers the worst
-> case scenario.
+> The KSZ9131RNX reference manual [1] DS00002841D page 131 FIGURE 6-2:
+> POWER SEQUENCE TIMING INTERNAL REGULATORS row tSR Stable supply
+> voltages to de-assertion of reset is at minimum 10 ms. Set DT
+> property reset-assert-us to 10ms because the KSZ9131RNX RM does
+> not explicitly spell out how long the reset has to be asserted,
+> but this at least covers the worst case scenario.
 >
 > [1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/00002841D.pdf
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4, with the URL corrected.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.4.
 Gr{oetje,eeting}s,
 
                         Geert
