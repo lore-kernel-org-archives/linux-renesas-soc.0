@@ -1,173 +1,300 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630FA37F313
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 06:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE345374E5A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 06:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786342966; cv=pass; b=Eh3aHjtfUCcRutluVhwWdWFKP00D7cstaSA6iDWOOUc69Xzfhk2Fo4G+5lZ49oaJpMjPFLOAoe+jmHDopToIdOkP+8KGH9hBDLFXo4ogaEa/doypj4yvIT7hOEY/js1XSWCzEYbInk4+SmrenCGdeOjwBwOSrwk2seBq5zl5gLE=
+	t=1786343522; cv=pass; b=hQ83EmMdHnkGafqgDbtsUNvLH1qZntcoHMWzRwBcHp/JVsR4S5bUtC//Ml0shlwY0VQYk+L3LxL5Yjom4ezGbXGNDcd+hIBtD41By5zg0I4fzYUDocARpYRaG70OFKB3woX1LwDW72UiRc5gzERCUY6KDJ822rshqLB4pcYMlRI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786342966; c=relaxed/simple;
-	bh=MUobYcbQly6mopnF21QUxNVxVjihkFRst1rGeXeYpHs=;
+	s=arc-20240116; t=1786343522; c=relaxed/simple;
+	bh=Glv+D9dOgkTlvAE3SHxcWgORV7c52cnKk4e/SQGvejo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X+9cGR1+mOwfGRjFzJENbrDo9JsDKlFMPqIUST1rjab1b+hth+743Hzz7N+1o/L3mEbeX0Vy4Gtv49OYtDfzmqTsAQU/i2x6aSmskxTFac7fMeLl03AHJvUjGyZbr89fH36f/sLNNj5X5cLTDgExB2YLRrSBOngLfW8kVY5t+g0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaBZotDr; arc=pass smtp.client-ip=209.85.221.43
+	 To:Cc:Content-Type; b=hKgru36RvhkuLTckBboIaM/PWWcDk3SPxXrCEhSURBxU14jIyKd/B4Bqjg1opER/pe/eBW1J30jxyXww9rjwL+o30MAFgKS+GLgkaOa1PchyqpdrlhIWxELq1pGGWs4IptzulneMFDl230+pmbGnLYvSoFkQy9XUMjcowpP4i7g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChJ0lHdV; arc=pass smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaBZotDr"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-47fecbb7000so666256f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 09 Aug 2026 23:22:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786342962; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChJ0lHdV"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-493b966dd74so9125885e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 09 Aug 2026 23:32:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786343519; cv=none;
         d=google.com; s=arc-20260327;
-        b=sXs1gT1GZQZuMVPTiBje4LBNeN1idUhWZxAopBQyn8Bd2e9MmJ+E7CMkrK42ubshDn
-         lSJt5bcO0lET0n6eWvQ4MREY6La+1i8SPyyIZnK0LBk/+IBp10WmfuL3p6E+1Lp/jCYI
-         6+83fL5gDOGkapZ4SenB+7NKU3th8hEkeLwQjnzaIFurZcaSeDbH7iScmgcBuKGCw1rf
-         36pcMkhVv+eJ4q5Ui1X5/AmWycdpS+MkSIqslSUOZYmqI6wK/jXGLyzZuw2JCHyZQdeJ
-         YyNIvNre1OUqx/+hM3cX4EueIfUiRozc7OvKpU8K6hJP59u68dCPSZ4yTxEgJpKLXi1Q
-         iTwg==
+        b=OyupDwxQJeaIR1cS/6WMl2LizeZi+pMLrsWYpQ20uTM2B5v1epYqPlyBMQEVNGMOj1
+         3WjIRoK2Fi3aE934jDPTcUHZEWJdVNPay8/pBIoKl58dIQw4dU20Qnh/IAdZqb1hDkt7
+         remk58GYU1Zn0NoQ5RqJqj/xcH1tZ9/JLrrIXcnmu8o86NUZ5TxU1I2I/f2F/KlYjbO/
+         YqD+yXtipDHobcH1laN2QfgL37VVzV0RC+kZwnWscy7lfLRcoC+zExfBFZOPqmfZeQf/
+         dihQMJO5xQ3HIhEZ0TyUAtuX7h8kz1TqAZSUxBzOS3vSbD8bJCWt0pG5NhmKaRtnl4wL
+         tVgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=2nCaqUvlzQuEmT1eloU+mJpWPGgkn9RpO4cKrG5dYAU=;
-        fh=N3OLuNXPm9MwcX3ghG4MZ+4WUWExSjCnAhNP4yCgLGs=;
-        b=MQnQH+B16K8vHfIb3nfEPwqOhqMiHvOfpTPJlZLlMA4AHQOlaYsJ80kfmF2JiJguxa
-         V3OHsWD1tOrEZWgT/Qt91FI5Lz/3uQz8Xag5iJMEEtvt1KE+7vKZbVXMZziHLWbJ30sF
-         JLw/94z5UqBNb08H2/pmsotm01Fp1XK70wytqwT3FgOsrryjWuiXNKe7/OzcSC+PE/la
-         CENkr92NmkYhaxNpNl61RFJgPe55Em1eKbYXKr/wn85djb8B1+ZMLeQCRx2AvDqai/OI
-         ycKZFHkBdjmhua87yAEfj3KSoFc3Zz4IQt9Q5gmlTHgW5JSovYXcRkYMgOhzlqjbrzlU
-         mKaQ==;
+        bh=3SjLv82lPKci1T9o7jRU252gydE3KzV/t6uQyPNLwxs=;
+        fh=sdapCqId8MwKQ8sWjri/Euz5CJB9VuNo/OYx7swb3tE=;
+        b=THsq1EHwy1AeCzj+ucUwiNsiez9GIpPVg/MJnv4i4s4bkraxb2wOBmdIh0fLe/xzV8
+         y0Dd0dcuhWkUENlDTRozVLGuUTy3WOIYDBh7wye7UMsOSvUBPq7kAr0dPAIs7NS08lYT
+         FfpIaAZLM4KpxrMY2jr7WkiMCA8tzRrZ9/dS1/A/UfU7JR28+RKFbrL01eia1n/p0q0E
+         /3RyP0qobeC7kVFXcPYGAAOq4l7ygFuxqzIwCqd+efd2VE1ijY/E/cFsWPJjetIKm0IG
+         uyOoyIddDCL5YikGn7L55AcAZ9fnpiMPg2fWTHVQrhtbX1o5YTHrfGcQfuxYUs3iosuf
+         EY9w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786342962; x=1786947762; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786343519; x=1786948319; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=2nCaqUvlzQuEmT1eloU+mJpWPGgkn9RpO4cKrG5dYAU=;
-        b=DaBZotDremJkJQLdkxrT6PqyUcad6Dxg/fM4I+QsoMy4nlZBc37sBYqP0WDJA37y6B
-         gKX9jx8dU3ACz/Qp/bCdJepChO7EOR8zTb+Q2S/kXGm6wpwacZRDBa8oAjJoCcijTMJv
-         rvmQs0dYUOoQULZoea2LRYiZgddo4KD2ejg+SEHeDDC1B3IwZ/IECYslOXRPFll2/uDW
-         zKRS7opngUdIFkdVtyw+/M9JjQgXZdl7f9QX1VQWfmVqym/tJBMlF7KWg3i9pc3YfnD6
-         HhRKotN2jqQxYfntQ6OfeXbi73DbWBsX5baqwvFSJeEbKuTGS6kVVuNplybau9dF5ueN
-         fEyQ==
+        bh=3SjLv82lPKci1T9o7jRU252gydE3KzV/t6uQyPNLwxs=;
+        b=ChJ0lHdVZCMAgx+GeMzYotT+NmeFPeY4xMkfbo7YfSYtOGRfYr8Tr9NJD9SzPvdRXm
+         tMUBV066w6UUxCp+CHSP/FpaqkGNdB3NBbo3H7rNoAvGw3x05CSymEAs9PEVUtZxtE+R
+         1aNWHHg6Z7Fl2vIprhVjpN+7CzIjC+BgNhNZg8UP+xKxSg8DOmcxowzLXH9QWeX1j3mk
+         f6xhQdkHrq18yTSnxyAE5jWlfMgiC49r9WLdAORAvKYm73heG/X8KbAVhc3x7OE0pVq4
+         OH7EPdtrY/vb1nI3yFtM1e3hlidqyuNth1C9+2X+EtVo5uPcR8ZnX/eJbqKL7rvFOpHF
+         NJDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786342962; x=1786947762;
+        d=1e100.net; s=20251104; t=1786343519; x=1786948319;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2nCaqUvlzQuEmT1eloU+mJpWPGgkn9RpO4cKrG5dYAU=;
-        b=llUX2s8jeDOFgL/g05qShamzyyQcdn05Khe7N3Moz5RW8/+rWZOMfQm30gWXPcTc/W
-         f9eZ0rmmxhy00x75sqJLBTN4LV8Xx7y6fpEM5vKOICv/OR03rA0J+DTmnNuqg909wa/u
-         ArUAv1ZA4Hqsp/gFxEf+y37dsBbIKJOKda9f0rqpzvSpdkTXyLqdM2usNLcAIta7er/R
-         MQGiAtjzQD4385jvUxqpvfu6Sbxs5oeRIrvm2aqmmkrmXF5U/t19ZFLZ1sRe/KDoOa5d
-         mzUjXkG8bQDuWz89/kZlcV2xtwB4TLsRANT/rEaqv+JcEO3QOtLFZN6TQXZpQeZFShsJ
-         bmoQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoZ6x4/us8IjvxIpgyh2kDCKQzcQCGWSYX0UcieriHTJA131+4QFjMoIRfnySfv26wQBtzfOshCnH9qWhJoCmzLfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz44D/M/hgrWnov0NCWBXgnJWZuJsKWnKL8ndhpbjoPH5L8mim1
-	SIcOS4Y54c6pkqEMqx8tobmZM5U8qbgfnrIsLlbWym5a/taCMJEEfMSUwYB88Dgjto/KGaheo3I
-	+vsmmIqEgz/D9Vh/T/QWUeXMdCsTJpkg=
-X-Gm-Gg: AR+sD12KtPp/21d7/2f8g1zizJS6z1+rlG03t3UiUrEwz+fqIQn0kXj8vrer+Bf5Hul
-	0kbTStvkr9t2pKxFcCUSRQ/auBi/a6vhyn7s5oqSTj9j5ChKTr/87jDxV7KZ1kzP94uVTA4hx2L
-	Kny34iO/QYpGR5Uin5rfmjBpTfHPXsKTb83zVMh38Ox1cf0QQwxPk/ivnXLEGsoqyPSxisoMJQL
-	jJUoFnan+WKXaxCa5dRe4xZzH2+MleM8B3X2BHkBJu1m5mqesyynw6pqQ3u3xYsnKYft/fEC2kM
-	MKwDYpRKQgxQ6odr5LnfsAIznt42p4FS6tf/0NmjdtZkVn+jHuFrRvzdA7E3J+2/7wjNVNh26To
-	jI1d+Kx77/1K/jf2+nH8xSWEWhEcyAv8FtSDtQd9fvEbN9QY6vR13/Px3d3IfDK3/
-X-Received: by 2002:a05:6000:46d8:b0:47f:776f:3838 with SMTP id
- ffacd0b85a97d-48130e7e741mr17424077f8f.6.1786342962462; Sun, 09 Aug 2026
- 23:22:42 -0700 (PDT)
+        bh=3SjLv82lPKci1T9o7jRU252gydE3KzV/t6uQyPNLwxs=;
+        b=suhoLccU0ygG4xxzCs6d89C3YpgrMa6YHwixOMWaEvM7ZG1Q0iIsHsRHI9eo3zaUzl
+         +oA989idcqzHKZhgJgyGm4ww7YTBMoFW5Yb563rz1YI9Uy5j2N533QusxfRg8m9zlWNV
+         zICqyDznYJkyrs2HNWEr6Lq27ZKfa9TZWd7VKNS9wyqLFiURhydMUXnjAuLJNwSodnbE
+         NBBiiSl/7jrxt8m05VHDZuCWMBB1RvcbZTUgy0WEOvh1kXjr3F6Cq6499Zzgntb7JIEW
+         uH64QtouJvpuuM2KoDgPavtU40TqzfRFccoPhDpjyH8V1XFie2UQcmXhW36ENzhCv4b9
+         asdQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrM4m5naqoZcfp6/17/ypQadDV7Gle4+EXAY+7A8OW8GkGAnPCbSmUuzY8w5xW7M6GFGHDA5qaL/9Y4ICpiEKyHOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK59HbW3qv1zJXQEczQu1G4dgX6pI9xKJdjm3hLZRnbOlFJp0M
+	vVHmA9LvjNlEctrrDrNKJwOm9BNMJxQFAb54XM6tnr3dh6O8NCPqFM76rr4AhvZt36b7a0R84yu
+	c05mkpRCys0PCWbnsfg9ZjhKcvqAeXSc=
+X-Gm-Gg: AR+sD12w9wEjueT4Nve7mkmr7aQCkZngorQpJ6YXG8knWeqFLnjMOflbCSS21DtjsNd
+	bjFqNMHnTp87GYiHvVktHa+Y7jf/XYpPKiQzlonM3/D4vc8jBmTNivgNDQN0cEeS+YACudGJMuG
+	hctsY8U8FIsbH18D1cAE2YN4BviuRyYBFTrY5jDcServZivVU0svf88FfBFAljIYtIN9axW3HMc
+	04y/6P4608af481PSFiRAojeXG7CkJibvaTMULepZViiNTkc2BTJqG6iY7MJ4O2kNZlCth1qAtU
+	VC+WjpPLZxaprCmKq7Ag6Q0ZURzRYeO0SJ7/HsvAVMXy0Z1RPorJr02H2A2shz3kAMv8x/KX+4n
+	9NigUP7iTI7Bdxiu/LAIzix4IOzYwuDOUCCOwmJws4ahMwT4DqNoNskvBnFpUDLaTTNTx1PHIw9
+	4=
+X-Received: by 2002:a05:600c:a20b:b0:495:737a:7afe with SMTP id
+ 5b1f17b1804b1-4994e7d5b82mr387146075e9.15.1786343518782; Sun, 09 Aug 2026
+ 23:31:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702125855.3157253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260702125855.3157253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260727095843.116950-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260727095843.116950-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <d1a5c1c4-4a9f-4dc7-b709-4f89a25ad4c9@tuxon.dev>
+In-Reply-To: <d1a5c1c4-4a9f-4dc7-b709-4f89a25ad4c9@tuxon.dev>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 10 Aug 2026 07:22:14 +0100
-X-Gm-Features: AUfX_mw6Z0PAxG9axT9YlVKos6xjgmhuOdB1JydRIr01ODIxx6ZgWLrLZdvGGNo
-Message-ID: <CA+V-a8sG6uT2an8R0T6Jy4ytwGeNTfMCp_CMGdQtUyU0JKetdw@mail.gmail.com>
-Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Ignore missing VBUS regulator
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+Date: Mon, 10 Aug 2026 07:31:32 +0100
+X-Gm-Features: AUfX_mynmOOcMxUkeHfpvOzO_beN0LAWdFmV1ZYmmpijFA_DJ37tQAh5BAIv5NA
+Message-ID: <CA+V-a8ujEokYydnADu3uxLxb0StKpB3sjsKPZqv=m4YF6Za6pA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] PCI: rzg3s: Fix IRQ domain initialization error handling
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 2, 2026 at 1:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
+Hi Claudiu,
+
+Thank you for the review.
+
+On Fri, Jul 31, 2026 at 5:02=E2=80=AFPM Claudiu Beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
 >
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Hi, Prabhakar,
 >
-> Commit b6d7dd157763 ("phy: renesas: rcar-gen3-usb2: Add regulator for
-> OTG VBUS control") introduced support for controlling OTG VBUS through
-> the regulator framework.
+> On 7/27/26 12:58, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > rzg3s_pcie_init_irqdomain() installs chained handlers for the INTx
+> > parent interrupts before creating the INTx irqdomain and initializing
+> > MSI support.
+> >
+> > If any subsequent step fails, such as obtaining an INTx IRQ,
+> > creating the irqdomain, or initializing MSI, the error path returns
+> > without removing any chained handlers that were already installed.
+> > This leaves stale handler and data pointers attached to the parent
+> > interrupts.
+> >
+> > Fix the error path by unwinding the chained handler registration before
+> > returning. Also clear the chained handlers during
+> > rzg3s_pcie_teardown_irqdomain() so that teardown fully mirrors the
+> > initialization sequence.
+> >
+> > Fixes: 7ef502fb35b28 ("PCI: Add Renesas RZ/G3S host controller driver")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2:
+> > - Restricted the code to max 80 columns.
+> > - Moved calling irq_domain_remove() under err_cleanup_intx label.
+> > ---
+> >   drivers/pci/controller/pcie-rzg3s-host.c | 49 +++++++++++++++++------=
+-
+> >   1 file changed, 36 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/con=
+troller/pcie-rzg3s-host.c
+> > index f51b5d7c1998..70f1faf7e422 100644
+> > --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> > +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> > @@ -1006,22 +1006,35 @@ static const struct irq_domain_ops rzg3s_pcie_i=
+ntx_domain_ops =3D {
+> >       .xlate =3D irq_domain_xlate_onetwocell,
+> >   };
+> >
+> > +static void rzg3s_pcie_clear_intx_handlers(struct rzg3s_pcie_host *hos=
+t,
+> > +                                        int count)
+> > +{
+> > +     while (--count >=3D 0) {
+> > +             irq_set_chained_handler_and_data(host->intx_irqs[count], =
+NULL,
+> > +                                              NULL);
+> > +     }
+> > +}
+> > +
+> >   static int rzg3s_pcie_init_irqdomain(struct rzg3s_pcie_host *host)
+> >   {
+> >       struct device *dev =3D host->dev;
+> >       struct platform_device *pdev =3D to_platform_device(dev);
+> > +     int i, ret;
+> >
+> > -     for (int i =3D 0; i < PCI_NUM_INTX; i++) {
+> > +     for (i =3D 0; i < PCI_NUM_INTX; i++) {
+> >               char irq_name[5] =3D {0};
+> >               int irq;
+> >
+> >               scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + =
+i);
+> >
+> >               irq =3D platform_get_irq_byname(pdev, irq_name);
+> > -             if (irq < 0)
+> > -                     return dev_err_probe(dev, irq,
+> > -                                          "Failed to parse and map INT=
+%c IRQ\n",
+> > -                                          'A' + i);
+> > +             if (irq < 0) {
+> > +                     ret =3D irq;
+> > +                     dev_err_probe(dev, ret,
+> > +                                   "Failed to parse and map INT%c IRQ\=
+n",
+> > +                                   'A' + i);
+> > +                     goto err_cleanup_intx;
+> > +             }
+> >
+> >               host->intx_irqs[i] =3D irq;
+> >               irq_set_chained_handler_and_data(irq,
+> > @@ -1033,21 +1046,29 @@ static int rzg3s_pcie_init_irqdomain(struct rzg=
+3s_pcie_host *host)
+> >                                                    PCI_NUM_INTX,
+> >                                                    &rzg3s_pcie_intx_dom=
+ain_ops,
+> >                                                    host);
+> > -     if (!host->intx_domain)
+> > -             return dev_err_probe(dev, -EINVAL,
+> > -                                  "Failed to add irq domain for INTx I=
+RQs\n");
+> > +     if (!host->intx_domain) {
+> > +             ret =3D -EINVAL;
+> > +             dev_err_probe(dev, ret,
+> > +                           "Failed to add irq domain for INTx IRQs\n")=
+;
+> > +             goto err_cleanup_intx;
+> > +     }
+> >       irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
+> >
+> >       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > -             int ret =3D rzg3s_pcie_init_msi(host);
+> > +             ret =3D rzg3s_pcie_init_msi(host);
+> >
+> > -             if (ret) {
+> > -                     irq_domain_remove(host->intx_domain);
+> > -                     return ret;
+> > -             }
+> > +             if (ret)
+> > +                     goto err_cleanup_intx;
+> >       }
+> >
+> >       return 0;
+> > +
+> > +err_cleanup_intx:
+> > +     if (host->intx_domain)
+> > +             irq_domain_remove(host->intx_domain);
+> > +     rzg3s_pcie_clear_intx_handlers(host, i);
 >
-> As part of this change, the driver started requesting an exclusive "vbus"
-> regulator for OTG-capable PHYs with no_adp_ctrl set. The lookup failure
-> was propagated unconditionally, causing probe to fail on platforms where
-> no VBUS regulator is described.
+> If you have it like this it worth squashing these lines in the same funct=
+ion, e.g.:
 >
-> On RZ/V2H and RZ/V2N, which do not use a VBUS regulator, this results
-> in the following error:
+>         rzg3s_pcie_teardown_intx(host, i);
 >
->     phy_rcar_gen3_usb2 15800200.usb-phy:
->     dummy supplies not allowed for exclusive requests (id=3Dvbus)
+> defined something like:
+Ok.
+
 >
-> This failure completely prevents the USB 2.0 interface from initializing.
+> void rzg3s_pcie_teardown_intx(struct rzg3s_pcie_host *host, int count)
+> {
+>         if (host->intx_domain)
+>                 irq_domain_remove(host->intx_domain);
 >
-> Fix this by allowing the probe to continue if an external VBUS regulator
-> is missing. Only propagate the error if the internal vbus-regulator node
-> is explicitly present, or if the lookup returns -EPROBE_DEFER. For all
-> other missing regulator errors, gracefully assume no external VBUS
-> regulator is available and return 0.
+This needs to be done after the handler has been set to NULL as the
+handler does use intx_domain (pointed by Sashiko).
+
 >
-> Fixes: b6d7dd157763 ("phy: renesas: rcar-gen3-usb2: Add regulator for OTG=
- VBUS control")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+>         while (--count >=3D 0) {
+>                 irq_set_chained_handler_and_data(host->intx_irqs[count], =
+NULL,
+>                                                  NULL);
+>         }
+> }
 >
-Gentle ping.
+> > +
+> > +     return ret;
+> >   }
+> >
+> >   static void rzg3s_pcie_teardown_irqdomain(struct rzg3s_pcie_host *hos=
+t)
+> > @@ -1055,6 +1076,8 @@ static void rzg3s_pcie_teardown_irqdomain(struct =
+rzg3s_pcie_host *host)
+> >       if (IS_ENABLED(CONFIG_PCI_MSI))
+> >               rzg3s_pcie_teardown_msi(host);
+> >
+> > +     rzg3s_pcie_clear_intx_handlers(host, PCI_NUM_INTX);
+> > +
+> >       irq_domain_remove(host->intx_domain);
+>
+> And use the same function here, replacing:
+>
+> -       rzg3s_pcie_clear_intx_handlers(host, PCI_NUM_INTX);
+> -
+> -       irq_domain_remove(host->intx_domain);
+> +       rzg3s_pcie_teardown_intx(host, PCI_NUM_INTX);
+>
+> Btw, the order b/w rzg3s_pcie_clear_intx_heandlers() and irq_domain_remov=
+e() was
+> revered here compared with the order from rzg3s_pcie_init_irqdomain().
+I will do the below:
+
+static void rzg3s_pcie_teardown_intx(struct rzg3s_pcie_host *host,
+                     int count)
+{
+    while (--count >=3D 0) {
+        irq_set_chained_handler_and_data(host->intx_irqs[count], NULL,
+                         NULL);
+    }
+
+    if (host->intx_domain)
+        irq_domain_remove(host->intx_domain);
+}
 
 Cheers,
 Prabhakar
-
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-> index ef38c3b365d4..9ae9975d3255 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -902,8 +902,17 @@ static int rcar_gen3_phy_usb2_vbus_regulator_get_exc=
-lusive_enable(struct rcar_ge
->         int ret;
->
->         channel->vbus =3D devm_regulator_get_exclusive(dev, "vbus");
-> -       if (IS_ERR(channel->vbus))
-> -               return PTR_ERR(channel->vbus);
-> +       if (IS_ERR(channel->vbus)) {
-> +               ret =3D PTR_ERR(channel->vbus);
-> +               /* If vbus-regulator node was present vbus regulator shou=
-ld be available */
-> +               if (channel->otg_internal_reg)
-> +                       return ret;
-> +
-> +               if (ret =3D=3D -EPROBE_DEFER)
-> +                       return ret;
-> +
-> +               return 0;
-> +       }
->
->         if (enable) {
->                 ret =3D regulator_enable(channel->vbus);
-> --
-> 2.54.0
->
