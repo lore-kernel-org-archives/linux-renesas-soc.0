@@ -1,102 +1,167 @@
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E723FE67B
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 14:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B6D405C5C
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 14:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786373140; cv=none; b=pH99d9zZ3A7xY40NkFOaTZEFibR1i2FU/MSweegYxkmZXy3Y6kwiCf3ihIaIjV6jZJicHX7FbpO4OY6lrQLpXb7aFCzKkPG4pl2D6rbhWhjwvY9mxyT+ydZjaQ/48RGcFZn6mPAoX3XFnbUow66nDn36QC4aO1lWlW1tESwgXzs=
+	t=1786373435; cv=none; b=Dw381IXsKy6an0cxcS3Y2F2BZO26ZbErXF4qWEKpHxmqnRkyoZVZVbyrJ6SMMYzzVs0hiGusQ4hk6qw/U8ynoYNdli98THBO0enF7kD92F5IkMAFO5ngB/rpgMaCo1Pxbcq6A42Zj0NORkN/6ih/zmWo8pjMPuhMCO+HhfNm0Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786373140; c=relaxed/simple;
-	bh=Bnwp9jqVKIAfs/y0mpNAldN8/vl6K6VBqOAFBG6md/I=;
+	s=arc-20240116; t=1786373435; c=relaxed/simple;
+	bh=n5rMYOLB08GVMHx1R8PCKx0D3UZSKzHrcfaS81rxPSs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iL9dJFvmA9wKQXoBZbO+6gmULn8oZh5b8UNNoOLrEnr6lLoDIlQ/byBF/O2NXufxP1+WrFbKyryVGbS8YVxadzmXaaKrmdpwuyey1Mt5HZlv0pyT7YkLCiUhCvWrWhmIeFuM0/TaeXhTrcY6PkNGmmveDnAFdaRqeNEHb6bInZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+	 To:Cc:Content-Type; b=vCg851q0gBRCOwMEf41GechUX2OYItxcsH3/VRT7N5d2zD1AZe1lg4h9FU2jHaNdAH8tmQGjNyEs5h6SuGsx26xUfjLIjj+VAXyjuUfAfWQS4Be095cFRmrhAiKPiti+hYhN6i0OcD6bVBeJtxA9HQKchHPjIZXN7ZM7TxWkC2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-977fca41f52so682364241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:45:38 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bfc54558d5so1700545e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:50:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786373138; x=1786977938;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=c/J6pjqX1tkN7ol9r0yPzfB+nnpzebdTRaebsQQSoZo=;
-        b=k6D0Y7QrVhG/wZBZIVOXuOgQSCKN5ydpETCnEVuc/FtF9uwTdMl5Gg8xLSu6EEjz6Y
-         PQE3DH9OINqT/JS/9TEFLRziRVVYG5Ua6/XJHbnAUb1RhC55TrbvFLAYA9M997xQyhYE
-         DNPjG7QBSNDm7jP6KEV6SZfCDUSsJCwxxQNyfOvBwjs4JvdlKSSfpfuRFTb5Q/QlmcEy
-         UmVVXkOp/hFXNIFcB/jtcJ+Qz4TYeGX8Wyk1h5/8qtUdgci95PBdavjZpqlqf8aaOKt8
-         3A+6XofighPbW928NpUNJXwamUH/Xx5AEtVCKAj0U2t72DEZZmyFUBdoM545xk3kiSAd
-         ItbA==
-X-Forwarded-Encrypted: i=1; AHgh+Royg0/CO9pYyFF5SGMEKc+FyTOtsZmyW2p/JAhGoR2Y6VFm8nwpjb8v2q4kS0cCWapUGFIVOJ9COYKWEBzDG3AZZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl3QInPQHEft3R88fx5XNDGx4cMG6Xz4BwGtMiVhYHfU0Ws0Aa
-	gRarM6wpl1qLUnM//wGS5/pGtHakZHRTHuIv4qWAEvyb0Ky8W5lT1FyOpscoMG1K
-X-Gm-Gg: AR+sD111DyU+RLP07lhKLhhsOV9VeeZ6C7JgAZz2DqMIH3NnyZRcActPGwI2yeTsBIU
-	SiGHl/OoBratZksdlA2zzK1rvMQbLqnLQeSGCJgvLUiOnHp8YSDhsgedQ0MwAyI09JJv+E7hZTB
-	GK9cF4GFlql0NFcmNUi6fVZOLNiR6G6j54Px7raQVw1r4/L8cG6ee/JyJA+BALVp5q1zL8pdgtP
-	4wWUYPYvop2k2J7R+uFN5QhR8dpzEuCm08y3xi3GuJqtZVZfayPRmbqxNe/pcskR4juhVdvrnOC
-	yXxc3D/FWfk9b8ZTUKE11SrihpjpurI+yW7mh9g/G4vU9ZBAIZISaIxR0MqolXRfB6bUuWQVwtC
-	fR3+0shP8homiHWz4WcrciXg8xEpw4r0/ljuszPWYB2JuSzOXgjzJorD9zSOh77akP3926Ky2IG
-	Z1XG8GWhHSj7TyTRGWFzIJEp/ZsumzpENyuc0QM1odnJfRJHYcnYGIrl4T6ie6C7TtJ2+oSRYi6
-	FAbBK6AY9tVMAtKpCGPCmFloQ==
-X-Received: by 2002:a05:6102:3594:b0:631:7781:fe91 with SMTP id ada2fe7eead31-764e72c3161mr5670478137.9.1786373137646;
-        Mon, 10 Aug 2026 07:45:37 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-763fe4daa5csm4719287137.1.2026.08.10.07.45.35
+        d=1e100.net; s=20251104; t=1786373432; x=1786978232;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LDUVqF9bGKPqsW39iH6LzgBQf6STHLl+9ztnXalCrFc=;
+        b=kJuGBLU0jEBNymb6CfAU/FGyNghWL53q/67K7FjEGkpPQ85E4HQcw0Rim9aOyVgyg4
+         yBBEwPHyghkBp14wiEKI3AVRfUjLGnH7e3Bw/oxT234FVKecQ9xHNU35Hcwwy8gLWIKc
+         228ZYxl3ju9ZfkdtnXkzLIybk97lLy6zwryDqreGU4uZorEMhDIeOq42cXeJFbS7L7Vq
+         YhmITaELqAsWCAv/uBW2CP8/GOJhquua8V2zTLeD/wUGuTQKUKQbnDnMxh3RTozaGrlZ
+         BUoXhDEw1KTInReq+oCorceGR2Xa2QxfKuc4+t7bmCVSZtnIfo9PRX44yCoiYkUXbm6e
+         vKPg==
+X-Forwarded-Encrypted: i=1; AHgh+RoDqF1VZV1cJUyP+WvBigzm+uXVxkvsMQx790AV0hsW0wyE8EcDqxBcoSqUfYRhktXdsX3gZRQ44IP3EMft+zQbrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YztXXVUbX1recXp4fF2Nh0flZan+yhaQ7HdbtWTBg/KFnbJcaxO
+	85dMPjnjp7dqUGz/KLKgOYvcKL+SYJfP4Ny+qtmmXVwcLnQcH55qH2YlFSwCd2si
+X-Gm-Gg: AR+sD12tqZZqmMjukUp10T1Fsr1Gngrae3TxvCh2UrzVXSgaf+a3C0wLcOCbEkrDU1t
+	5zieimtisGrxpA4b3exUvHhgYaMhUTMcd0qPzZ1JLVN3fGep12ZDM/KTUshy4+PxO9Ra+hH1vjx
+	UmevOcegOh01G7IbymHJE6NuQ93ckg7Ngzkk6yyBBn554ytyeTCuUFt8A7feGlUeUoypyWxiEEs
+	OpyaF4gpswb+tpOxSxgrT8Z88zwPQoTc+rsNvb4UIF9cTfId3cJmVuJArBop6rYy6iigC67a36U
+	aCBS4aLnTkxFM3YNN6y2Io4igss7C60IAaePP9lUefE9vkLiVZberz3dEZJPk1Y/HEYaeEf8CP7
+	v5DtRkAP0Y/WovvjWuIySFC6dYxeRTb0JEiRUlNY8eSEG+tcXLBbY8vyCZte28RsS8kVhJ+wNE3
+	Zg/+w0J0bUOmIbin00GaS2CJix8Y35m+R9oVxf2GBER0ZQRyds9VjfZD9gImpSqqhuC3+bggoHs
+	ipaMTNmOjxFh3nN841nOyDTnB/vdmJyaOgJ
+X-Received: by 2002:a05:6122:4a45:20b0:5bd:b47d:1865 with SMTP id 71dfb90a1353d-5c41535b761mr1597557e0c.5.1786373432422;
+        Mon, 10 Aug 2026 07:50:32 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c40b20d380sm4418390e0c.15.2026.08.10.07.50.31
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2026 07:45:36 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-754acc61e10so830705137.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:45:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoLs2rhvWgixzIYUoRf2RIN/HXCop5xiL99pD72HTjfco43iOo/i/CmzAydW/dek/hTz7smi3TjAeF8nJ0ArcYoXA==@vger.kernel.org
-X-Received: by 2002:a05:6102:1490:b0:650:94b2:b209 with SMTP id
- ada2fe7eead31-764e5a4e354mr5957977137.4.1786373135792; Mon, 10 Aug 2026
- 07:45:35 -0700 (PDT)
+        Mon, 10 Aug 2026 07:50:31 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-977ba4d3b49so1516167241.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Aug 2026 07:50:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpFZyeTbbbELi5OR0PHXSgQWuG0G+nPAGY9M3Cp74VvnD1geYv8Sjrjftw1n6llxbP/GdjDqJSC0edcfurQScpR/A==@vger.kernel.org
+X-Received: by 2002:a05:6102:2082:b0:74d:5456:b6fb with SMTP id
+ ada2fe7eead31-7652241d10cmr1596982137.16.1786373431244; Mon, 10 Aug 2026
+ 07:50:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714130515.11262-1-marek.vasut+renesas@mailbox.org> <20260714130515.11262-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260714130515.11262-2-marek.vasut+renesas@mailbox.org>
+References: <cover.1785941595.git.geert+renesas@glider.be> <CAPx+jO87d7H92KSR7R7ObR05sM2JcHBCo+YuUf_1gE-KwhR7CQ@mail.gmail.com>
+In-Reply-To: <CAPx+jO87d7H92KSR7R7ObR05sM2JcHBCo+YuUf_1gE-KwhR7CQ@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Aug 2026 16:45:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZcy_kA-R=bjdDJQmPp--=NMuyaJB7NV-+uZ=zyFZ30Q@mail.gmail.com>
-X-Gm-Features: AUfX_mzpflf907Mv9hDTB-ODXObAaiTjsgKM8flRS-o-ZchQdmzFsvncjRXxvD0
-Message-ID: <CAMuHMdVZcy_kA-R=bjdDJQmPp--=NMuyaJB7NV-+uZ=zyFZ30Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: hihope-rzg2-ex: Specify ethernet
- PHY reset timings
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
+Date: Mon, 10 Aug 2026 16:50:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW78wFHKP8n2P_MEVASO3MFHCjXkEWSFXfE3-mCjkhsgA@mail.gmail.com>
+X-Gm-Features: AUfX_mzSDh0l0A6CyrHddRhefJg-h_HSruJEAkSrbmndCIqd_rMaLktXcM1WovQ
+Message-ID: <CAMuHMdW78wFHKP8n2P_MEVASO3MFHCjXkEWSFXfE3-mCjkhsgA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] R-Car X5H CPG/MDLC support
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Jul 2026 at 15:05, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> The RTL8211E reference manual [1] page 38 chapter 7.16. PHY Reset
-> (Hardware Reset) states that the PHYRSTB pin must be asserted low
-> for at least 10ms (Tgap in Figure 10) and the system must wait at
-> minimum 30ms (for internal circuits settle time) before accessing
-> the PHY registers. Use 15ms and 35ms respectively to provide some
-> additional margin.
->
-> [1] https://files.pine64.org/doc/datasheet/pine64/rtl8211e%28g%29-vb%28vl%29-cg_datasheet_1.6.pdf
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Hi Ulf,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
+On Mon, 10 Aug 2026 at 16:18, Ulf Hansson <ulf.hansson@oss.qualcomm.com> wr=
+ote:
+> On Wed, Aug 5, 2026 at 5:21=E2=80=AFPM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > This patch series adds minimal support for the Renesas R-Car X5H Clock
+> > Pulse Generator (CPG) and Module Controller (MDLC), to aim for replacin=
+g
+> > the dummy clocks in r8a78000.dtsi with proper hardware description.
+> > These two components are closely related, in the sense that they are
+> > both supposed to be accessed through the ARM System Control and
+> > Management Interface (SCMI) on the Ironhide development board.
+> >
+> > This series consists of three parts:
+> >   1. Patches 1-2 add DT bindings and DT binding definitions,
+> >   2. Patches 3-4 add minimal CPG and MDLC drivers,
+> >   3. Patches 5-6 update the DTS.
+> > Note that this series depends on v7.2-rc2, due to the use of
+> > <linux/device-id/of.h>.
+> >
+> > Changes compared to v2[1]:
+> >   - Add Acked-by, Reviewed-by,
+> >   - Add fixed-rate clocks to kerneldoc of r8a78000_cpg_priv.map,
+> >   - Use devm_clk_hw_register_fixed_rate(), drop unregister_fixed_clks()=
+,
+> >   - Drop fill_clk_map(), as it is not really needed until SCMI remappin=
+g
+> >     support is added later,
+> >   - Replace <linux/mod_devicetable.h> by more specific
+> >     <linux/device-id/of.h> in v7.2-rc2,
+> >   - Add a comment to document only always-on domains are supported,
+> >   - Consistently use /* sentinel */ for zero sentinels,
+> >   - Drop trailing commas from sentinels,
+> >   - Sort MDLC nodes (alphabetically, by label).
+> >
+> > Major changes compared to v1[2] (more detail in the individual patches)=
+:
+> >   - Add default support not using SCMI,
+> >   - Drop everything related to SCMI.
+> >
+> > Note that this series does not use or rely on SCMI in any way.
+> > SCMI remapping support will be added in a subsequent series (old versio=
+n
+> > at [3]).
+> > Full hardware support without using SCMI could be added, too, if anyone
+> > would care about that use case.
+> >
+> > For testing, I have pushed this series plus additional work (including
+> > a rebased and updated version of [3]) to [4].
+> >
+> > While I know it is getting late in the cycle, this work (especially the
+> > DT bindings) are a dependency for about any R-Car X5H progress, so it
+> > would be good to have it included in v7.3.
+> > Hence I plan to queue the clock patches (1, 3) in renesas-clk for v7.3
+> > (Stephen still hasn't merged my earlier PR for v7.3 anyway).
+> > Ulf: It would be great if you could take the pmdomain patches (2, 4).
+>
+> Patch 2 applied for next, but I left patch4 for now as it didn't apply
+
+Thank you!
+
+> cleanly (drivers/soc/renesas/Kconfig had a conflict), thanks!
+
+I guess your tree still has the duplicate "default ARCH_RENESAS"?
+Patch 4 just adds a single line there, and the conflict should be easy
+to fix.
+
+If you want to send me a new patch, please let me know.
+
+Thanks again!
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
                                 -- Linus Torvalds
