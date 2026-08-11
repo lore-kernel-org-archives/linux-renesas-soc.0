@@ -1,82 +1,28 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D25384CDA
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 18:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8988D2DB795;
+	Tue, 11 Aug 2026 19:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786472864; cv=none; b=RgvFAdaNDs2A7AM+l+PUT8ZycN24YxCJ4BzMdg7WHKb3IJP4vAe4sx1WUzGXvEumC3bTb+9laFJFpTNilakrkxLUV0G/7mcAoP60VeCWpi4BTbEIkzvQBuWrDOr7VR8EAfvQWFFm5tAsDqM6ViOQqiQATboEA59MBZKG0jOObpg=
+	t=1786475091; cv=none; b=LaGX+5nEXya738Mp0lFbarjYYutMrSXkv9+ZYvAJmgTvy6n7v0cIMKgBOMgDsBZWeVSwSq32dC691dckh0uxQ8mX/unugkg54EA41xriIxmfmfSBlDsHST8obLykzwm+CoYIjuXrTnMfqLB8/sjSWw5lA27LFxaj4mFP1r88XNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786472864; c=relaxed/simple;
-	bh=KqOrvF0Ngr2YHJvCxNMWfSlQ1XC20shxMBAkR/0xrFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c2b6rr/T+S6J6TbsGlLS3eCyYI/XZCURahcStzZytbfR2mvob+xuxywdJyaoD586mTDRVOxmgWLV/X0fWoi2X8uy660sAle+KfULyg8XG0Ox1oGJVOpDrbdPQcNbILeN4HCUz+5pW7PKKIuAHHXAn74f30pBzzvwMvtwcj0LABE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pq9bORNX; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pq9bORNX"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4957eefd361so702565e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 11:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786472860; x=1787077660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=K5Ct9lgEPKcweahYIxO09gEuDKprw03jCz4J9g4FiMM=;
-        b=pq9bORNXRQgEEuyCood874aQ3z65JPxTS8ByG7w+c4I/LqZ1Yaam255vw7lPo7VdLG
-         OTqj0BQgAsLVZ6OITs5J5P5xosfVMkQgM/P7rebH0PSNQKOq8VS9ADu0LzfU1xwqFe21
-         rp+0T3pJxHSumRZ23YCgmUyzTGWAAios5Yf5TYL6sooWXVX4XcyzhPYens7eDlNiY2GU
-         CWy/wkw3fJMvhZLY66BA7puZB+5D8SgIZpdyZeZZjNF3PkRA5x9R2Motk5m39dQ2Bt28
-         Xvf4ZBzXCRKdlptJ4s4XVyxEo6R2G2g1PU8h2qcwjjojf0hzgc4A1T7cPhJ0PF7RYzas
-         jRcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786472860; x=1787077660;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=K5Ct9lgEPKcweahYIxO09gEuDKprw03jCz4J9g4FiMM=;
-        b=n6lXBAtLuPsrFGZys7bIF8ZNG6D/mMac6MZxhbMdKHLt9xII8dz/i9+ggg3oGk8W23
-         hdpcnYqPVytaVSWGNTZIbbw/b1t+nhzy9s3DjC2Bsh3srRA3uPdCT6VsHKN+n2HpQ4BR
-         KDPfenNpwec2AdQG6hW+dg8axMOnqCOQEERJJW8FtB9mQb4rTOwfEYc9MsvIZXhrDak/
-         uYEjogCH9XY+uqZBbBbmIg8Kol9XKMi9Pdcfau5zQGeXjEuYXpz4KsDO6DUkSVxsJhbs
-         mEVwENNvvmWGdxiTkUdfZpuHmuTZEUVL/rLlX+HI4EJqAmKborHAMV9jmf8nau92zCz9
-         /GNA==
-X-Forwarded-Encrypted: i=1; AHgh+RruPOxZ6pQaE6BcPSQRee1ifyGsR+Z2+yno07nKlKJVPuVGTd/nxBPetjg/qNipIVKAMq39UJ/bbxgLyaHIkG969g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoSQYmMRYBV1m/YCgu1Pn9vRDsZfEtPONJ+Da4fdetPOQ8xRzS
-	27AaVMdlLxGNpWF9aaiCJAevXFXJW8LricjecqxhTzK3smo1MkclW1XehlvHhA==
-X-Gm-Gg: AR+sD13puob95Z2Vm+8QxqNwkrMOPzg+Hp9gHg6z4CUmdGy2UVFZ4LRDanpPOrco5mP
-	hX4jqMWjCf8fOVt7Y5NrJcswj6fE02v+auA1gI6wzT0/3+ytJj5U68tBQZHceF/ug3+ph4m8jZL
-	Z4IQ4tKh6hetXbDK1krhHdJo4Wl8l9+fZiUWKK6qEfjAiB+ADCumK7YEXz+xPuTRStckXevzHAn
-	Kf4HbGAU0zKOtqCoUmvGjPDe/sUzmVKHvL/xIFSbJ0gCBSB8qD/MzVCmdkiMKV+zw4N9Mj9Ui82
-	scgagmx+Ms/erdjo46xb3JFJycUiX71CvoEPekcQdLrGxalMVUinDC6X+ANVsetCGe1Z8JbTTkC
-	+tl16lryXOq9FXLnwJoIv4cUo4elpOaAbr8XTiog9mJF6tfsWZ0EQpNTFqWmEjE1rq2m1RqGMEu
-	NbKpyXCWp0KHv2i+5iSP+eIbeIJVtIXGvKbTfY9p89k2TE4wLg+0pkxoC5c7aKAP4I3Xxv+rvyf
-	wbZo2EgW0cT
-X-Received: by 2002:a05:600c:4693:b0:495:3da3:beb with SMTP id 5b1f17b1804b1-49978468befmr57738645e9.10.1786472860294;
-        Tue, 11 Aug 2026 11:27:40 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:935c:3ee:d543:9da1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997aac8c47sm12499385e9.15.2026.08.11.11.27.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2026 11:27:40 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Brian Masney <bmasney@redhat.com>,
+	s=arc-20240116; t=1786475091; c=relaxed/simple;
+	bh=amM7TpULw25EoKw+DbiXgeO7QhPE+rkSQLVrHhc0nds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WfZofwaZjAmIiIo6hIQHD1zjOlvMRt28cJEhGgDVAa0wVDshtv2pfdI7H1lNIGjDeEoWyi9Mx10kRzPYDIXRy8btz+YewP4lbHkeItrkrgETcLg2BBznx/kmdVV/aE6hFbX0sBvQk6CAO3Bk0xyQWBTmC0KigVR6EyPDOb6Z3CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D507F1F000E9;
+	Tue, 11 Aug 2026 19:04:47 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Ulf Hansson <ulfh@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 9/9] clk: renesas: r9a08g046: Add clock and reset entries for LVDS
-Date: Tue, 11 Aug 2026 19:27:22 +0100
-Message-ID: <20260811182729.360959-10-biju.das.jz@bp.renesas.com>
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5] pmdomain: renesas: Add R-Car X5H MDLC driver
+Date: Tue, 11 Aug 2026 21:04:44 +0200
+Message-ID: <ca49000fa84275242b10b8ba1f00e7d6d2bec654.1786474830.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260811182729.360959-1-biju.das.jz@bp.renesas.com>
-References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -85,42 +31,416 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC.
+For now this just supports the always-on power domains, and dummy module
+clocks and resets for the serial console (which is enabled by the boot
+loader).
 
-Add clock and reset entries for LVDS.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v1->v2:
- * Collected the tag.
----
- drivers/clk/renesas/r9a08g046-cpg.c | 5 +++++
- 1 file changed, 5 insertions(+)
+v5:
+  - Drop redundant pd_spec.args_count check in
+    r8a78000_mdlc_attach_dev(),
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index bd3ae08e626b..5878423db151 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -574,6 +574,10 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_MCPU3, BIT(11))),
- 	DEF_MOD("rsci3_tclk",		R9A08G046_RSCI3_TCLK, R9A08G046_CLK_P16, 0x618, 11,
- 					MSTOP(BUS_MCPU3, BIT(12))),
-+	DEF_MOD("lvds_pllclk",		R9A08G046_LVDS_PLLCLK, R9A08G046_CLK_M2, 0x61c, 0,
-+					MSTOP(BUS_PERI_VIDEO, BIT(11))),
-+	DEF_MOD("lvds_clk_dot0",	R9A08G046_LVDS_CLK_DOT0, R9A08G046_CLK_M3, 0x61c, 1,
-+					MSTOP(BUS_PERI_VIDEO, BIT(11))),
- };
+v4:
+  - Extract from series "[PATCH v3 0/6] R-Car X5H CPG/MDLC support"[1],
+  - Rebase on top of pmdomain/next,
+
+v3:
+  - Replace <linux/mod_devicetable.h> by more specific
+    <linux/device-id/of.h> in v7.2-rc2,
+  - Add a comment to document only always-on domains are supported,
+  - Consistently use /* sentinel */ for zero sentinels,
+  - Drop trailing commas from sentinels,
+
+v2:
+  - Spin off from "pmdomain: renesas: Add R-Car X5H MDLC SCMI remapping
+    driver",
+  - Add default support not using SCMI,
+  - Drop all SCMI remapping support,
+  - Document use of -1 as a sentinel,
+  - Rename struct r8a78000_mdlc_info to mdlc_info,
+  - Print HW IDs in hexadecimal,
+  - Reduce log level for unsupported MDLC instances from warn to dbg,
+
+[1] https://lore.kernel.org/all/cover.1785941595.git.geert+renesas@glider.be
+---
+ drivers/pmdomain/renesas/Kconfig         |   4 +
+ drivers/pmdomain/renesas/Makefile        |   1 +
+ drivers/pmdomain/renesas/r8a78000-mdlc.c | 325 +++++++++++++++++++++++
+ drivers/soc/renesas/Kconfig              |   1 +
+ 4 files changed, 331 insertions(+)
+ create mode 100644 drivers/pmdomain/renesas/r8a78000-mdlc.c
+
+diff --git a/drivers/pmdomain/renesas/Kconfig b/drivers/pmdomain/renesas/Kconfig
+index b507c3e0d723efc6..f2f52d3c29a083f1 100644
+--- a/drivers/pmdomain/renesas/Kconfig
++++ b/drivers/pmdomain/renesas/Kconfig
+@@ -13,6 +13,10 @@ config SYSC_RMOBILE
+ 	bool "System Controller support for R-Mobile" if COMPILE_TEST
  
- static const struct rzg2l_reset r9a08g046_resets[] = {
-@@ -637,6 +641,7 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_RSCI1_TRESETN, 0x918, 9),
- 	DEF_RST(R9A08G046_RSCI2_TRESETN, 0x918, 10),
- 	DEF_RST(R9A08G046_RSCI3_TRESETN, 0x918, 11),
-+	DEF_RST(R9A08G046_LVDS_RESET_N, 0x91c, 0),
- };
+ # SoC
++config MDLC_R8A78000
++	bool "Module Controller support for R8A78000 (R-Car X5H)" if COMPILE_TEST
++	select RESET_CONTROLLER
++
+ config SYSC_R8A7742
+ 	bool "System Controller support for R8A7742 (RZ/G1H)" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/pmdomain/renesas/Makefile b/drivers/pmdomain/renesas/Makefile
+index 0391e6e67440a786..17849aad37a5ac4f 100644
+--- a/drivers/pmdomain/renesas/Makefile
++++ b/drivers/pmdomain/renesas/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # SoC
++obj-$(CONFIG_MDLC_R8A78000)	+= r8a78000-mdlc.o
+ obj-$(CONFIG_SYSC_R8A7742)	+= r8a7742-sysc.o
+ obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
+ obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
+diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+new file mode 100644
+index 0000000000000000..2668fc2ac9cbd388
+--- /dev/null
++++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+@@ -0,0 +1,325 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * R-Car X5H Module Controller
++ *
++ * Copyright (C) 2026 Glider bv
++ */
++
++#include <linux/dev_printk.h>
++#include <linux/device-id/of.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/power/renesas,r8a78000-mdlc.h>
++
++struct mod_map {
++	int hw_id;		/* Hardware module ID or -1 sentinel */
++};
++
++struct mdlc_info {
++	u32 base;
++	const struct mod_map *mod_map;
++};
++
++/**
++ * struct r8a78000_mdlc_priv - Module Controller Private Data
++ *
++ * @link: Link into list of MDLC instances
++ * @genpd_data: PM domain provider data
++ * @rcdev: Reset controller entity
++ * @dev: MDLC device
++ * @np: Device node in DT representing the MDLC
++ * @mod_map: Mapping from hardware module IDs
++ */
++struct r8a78000_mdlc_priv {
++	struct hlist_node link;
++	struct genpd_onecell_data genpd_data;
++	struct reset_controller_dev rcdev;
++	struct device *dev;
++	struct device_node *np;
++	const struct mod_map *mod_map;
++};
++
++static struct generic_pm_domain *r8a78000_genpd_always_on;
++static HLIST_HEAD(r8a78000_mdlc_list);
++static DEFINE_MUTEX(r8a78000_mdlc_lock);	/* protects the two above */
++
++static struct generic_pm_domain *r8a78000_genpd_xlate(
++			const struct of_phandle_args *spec, void *data)
++{
++	struct r8a78000_mdlc_priv *priv = container_of(data,
++					struct r8a78000_mdlc_priv, genpd_data);
++	struct device *dev = priv->dev;
++	u32 id;
++
++	if (spec->args_count != 2)
++		return ERR_PTR(-EINVAL);
++
++	id = spec->args[0];
++
++	if (id >= R8A78000_MDLC_PD_AON) {
++		dev_dbg(dev,
++			"Mapping HW power domain 0x%x to always-on domain\n",
++			id);
++		return r8a78000_genpd_always_on;
++	}
++
++	/* For now only always-on domains are supported */
++	dev_err(dev, "Unknown power domain 0x%x\n", id);
++	return ERR_PTR(-ENOENT);
++}
++
++#define rcdev_to_priv(_rcdev)	\
++	container_of(_rcdev, struct r8a78000_mdlc_priv, rcdev)
++
++static const struct mod_map *mod_map_find(const struct mod_map *map, u32 id)
++{
++	if (!map)
++		return NULL;
++
++	for (; map->hw_id >= 0; map++) {
++		if (map->hw_id == id)
++			return map;
++	}
++
++	return NULL;
++}
++
++static int r8a78000_mdlc_reset_xlate(struct reset_controller_dev *rcdev,
++				     const struct of_phandle_args *spec)
++{
++	struct r8a78000_mdlc_priv *priv = rcdev_to_priv(rcdev);
++	struct device *dev = priv->dev;
++	const struct mod_map *map;
++	u32 id;
++
++	if (spec->args_count != 1)
++		return -EINVAL;
++
++	id = spec->args[0];
++
++	map = mod_map_find(priv->mod_map, id);
++	if (!map) {
++		dev_err(dev, "Unknown reset 0x%x\n", id);
++		return -ENOENT;
++	}
++
++	dev_dbg(dev, "Ignoring HW reset 0x%x\n", id);
++	return id;
++}
++
++#define DEFINE_MDLC_RESET_WRAPPER(op)					    \
++	static int r8a78000_mdlc_ ## op(struct reset_controller_dev *rcdev, \
++					unsigned long id)		    \
++	{								    \
++		struct r8a78000_mdlc_priv *priv = rcdev_to_priv(rcdev);	    \
++									    \
++		dev_dbg(priv->dev, "%s: Ignoring\n", __func__);		    \
++		return 0;						    \
++	}
++
++DEFINE_MDLC_RESET_WRAPPER(reset)
++DEFINE_MDLC_RESET_WRAPPER(assert)
++DEFINE_MDLC_RESET_WRAPPER(deassert)
++DEFINE_MDLC_RESET_WRAPPER(status)
++
++static const struct reset_control_ops r8a78000_mdlc_reset_ops = {
++	.reset = r8a78000_mdlc_reset,
++	.assert = r8a78000_mdlc_assert,
++	.deassert = r8a78000_mdlc_deassert,
++	.status = r8a78000_mdlc_status,
++};
++
++static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
++				    struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	struct r8a78000_mdlc_priv *priv;
++	struct of_phandle_args pd_spec;
++	const struct mod_map *map;
++	unsigned int id;
++	int ret;
++
++	ret = of_parse_phandle_with_args(np, "power-domains",
++					 "#power-domain-cells", 0, &pd_spec);
++	if (ret < 0)
++		return ret;
++
++	scoped_guard(mutex, &r8a78000_mdlc_lock) {
++		hlist_for_each_entry(priv, &r8a78000_mdlc_list, link) {
++			if (priv->np == pd_spec.np)
++				break;
++		}
++	}
++
++	if (!priv) {
++		dev_err(dev, "%s: MDLC %pOF not found\n", __func__, pd_spec.np);
++		of_node_put(pd_spec.np);
++		return -ENODEV;
++	}
++
++	id = pd_spec.args[1];
++	of_node_put(pd_spec.np);
++
++	map = mod_map_find(priv->mod_map, id);
++	if (!map) {
++		dev_err(dev, "Unknown module 0x%x\n", id);
++		return -ENOENT;
++	}
++
++	dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
++	return 0;
++}
++
++static void r8a78000_mdlc_unlink(void *data)
++{
++	struct r8a78000_mdlc_priv *priv = data;
++
++	scoped_guard(mutex, &r8a78000_mdlc_lock) {
++		hlist_del(&priv->link);
++	}
++}
++
++static void r8a78000_genpd_del_provider(void *data)
++{
++	of_genpd_del_provider(data);
++}
++
++static int r8a78000_genpd_always_on_singleton(struct device *dev)
++{
++	struct generic_pm_domain *genpd;
++	int ret;
++
++	guard(mutex)(&r8a78000_mdlc_lock);
++
++	if (r8a78000_genpd_always_on)
++		return 0;
++
++	genpd = kzalloc_obj(*genpd);
++	if (!genpd)
++		return -ENOMEM;
++
++	genpd->name = "always-on";
++	genpd->attach_dev = r8a78000_mdlc_attach_dev;
++
++	ret = pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
++	if (ret) {
++		kfree(genpd);
++		return dev_err_probe(dev, ret,
++				     "Failed to create always-on domain\n");
++	}
++
++	r8a78000_genpd_always_on = genpd;
++	return 0;
++}
++
++static int r8a78000_mdlc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct r8a78000_mdlc_priv *priv;
++	const struct mdlc_info *info;
++	struct resource *res;
++	int ret;
++
++	ret = r8a78000_genpd_always_on_singleton(dev);
++	if (ret)
++		return ret;
++
++	info = of_device_get_match_data(dev);
++	if (!info)
++		return -ENODEV;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	priv->np = np;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -ENODEV;
++
++	for (; info->base; info++) {
++		if (info->base == res->start)
++			break;
++	}
++
++	if (!info->base) {
++		dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res->start);
++		return -ENODEV;
++	}
++
++	priv->mod_map = info->mod_map;
++
++	scoped_guard(mutex, &r8a78000_mdlc_lock) {
++		hlist_add_head(&priv->link, &r8a78000_mdlc_list);
++	}
++
++	ret = devm_add_action_or_reset(dev, r8a78000_mdlc_unlink, priv);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add action\n");
++
++	/* Note that no actual domains are registered, just need translation */
++	priv->genpd_data.xlate = r8a78000_genpd_xlate;
++	ret = of_genpd_add_provider_onecell(np, &priv->genpd_data);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to register genpd provider\n");
++
++	ret = devm_add_action_or_reset(dev, r8a78000_genpd_del_provider, np);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to add unregister action\n");
++
++	priv->rcdev.ops = &r8a78000_mdlc_reset_ops;
++	priv->rcdev.of_node = np;
++	priv->rcdev.of_reset_n_cells = 1;
++	priv->rcdev.of_xlate = r8a78000_mdlc_reset_xlate;
++
++	ret = devm_reset_controller_register(dev, &priv->rcdev);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to register reset controller\n");
++
++	return 0;
++}
++
++static const struct mod_map r8a78000_mdlc_perw_mod_default[] = {
++	{ 0x54 },	/* HSCIF0 */
++	{ -1 }
++};
++
++static const struct mdlc_info r8a78000_mdlc_default[] = {
++	{
++		.base = 0xc05d0000 /* mdlc_perw */,
++		.mod_map = r8a78000_mdlc_perw_mod_default,
++	},
++	{ /* sentinel */ }
++};
++
++static const struct of_device_id r8a78000_mdlc_match[] = {
++	{
++		.compatible = "renesas,r8a78000-mdlc",
++		.data = &r8a78000_mdlc_default,
++	},
++	{ /* sentinel */ }
++};
++
++static struct platform_driver r8a78000_mdlc_driver = {
++	.probe = r8a78000_mdlc_probe,
++	.driver = {
++		.name = "r8a78000-mdlc",
++		.of_match_table = r8a78000_mdlc_match,
++		.suppress_bind_attrs = true,
++	},
++};
++
++builtin_platform_driver(r8a78000_mdlc_driver)
++
++MODULE_DESCRIPTION("R-Car X5H MDLC Driver");
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 2ab150d04bb1f1ef..d4055250de72f1fe 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -358,6 +358,7 @@ config ARCH_R8A78000
+ 	default y if ARCH_RENESAS
+ 	default ARCH_RENESAS
+ 	select ARCH_RCAR_GEN5
++	select MDLC_R8A78000
+ 	help
+ 	  This enables support for the Renesas R-Car X5H SoC.
  
- static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
 -- 
 2.43.0
 
