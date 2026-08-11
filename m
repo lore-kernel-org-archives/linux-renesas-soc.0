@@ -1,126 +1,157 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A023AE1BC
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 07:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D233399360
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 07:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786433009; cv=none; b=Io0UO/1WJm5V0EeyziyUtJDIGU8V/NtDpeiHfVr0hWna5AJdGbXn5JwXUHYnDkr/IFLi9tw0de6G1J0bO4yNwa4mxfZ+fBurUvohdmsf1xMT8aaCjfdFHgah9u17/ZSkpobWqZNDVslDPf/m/LGLvWAfGY/EhFUr1y7AEYGiAWY=
+	t=1786433318; cv=none; b=c6avwL4/Ic9B1JA2dL91p7Goc9BYiGL/pj/1MF/DAAQoyCsadabyJjUIY69SHvD3o+yZt7PsTEaMNd0ErkHHwq0qG7DhO/FFCrgbzVPjB/C8Wg3zkJ5/ZfRDw2Ln0slZ2TkItuJkrjVwt1Ifx4rARGMpJyvd2H65752XCzbPm3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786433009; c=relaxed/simple;
-	bh=lc4HrNegAVn+cVHVfRGJNvIzktb87HMbTgygZ+nGNxE=;
+	s=arc-20240116; t=1786433318; c=relaxed/simple;
+	bh=v2/j0Oj6p53ESVa3PLPBywwI9wRtN5XU+zJPWA/4EVk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eju5LGRJcVCFfutuAoGv5IqeN5rAyDt5Ux66cO0BlM1hE8yO1b3cc3K5VXntvQeUR7YrKF2ZLDgKZhsJAYvSd7oN2+la9/sTeLPc8YxsLJ/V+xBN9lgOjfIU6356s08pBdo1ZLtGcvWGEoQGwS8JUXdG1Bk2ocKHGMwToS9Paqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+	 To:Cc:Content-Type; b=B/c8QVAjeXbWB2uJ1scxfN6L9CNfLc5TvzNziT9nLvZrn0uNc6JgFGACGR0IYZHRexkZpWHicB0LewcWQCW7/IxnIM0dGkShW2rFRf3bYnM2OMsMxCegJG8BNH35En7uiZmQUVZM9Py5g0N41HDJb2NE7NUMPjLz+qTr72jKtqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5c39cb2115cso465312e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 00:23:28 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bfa4c51c2aso784388e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 00:28:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786433007; x=1787037807;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NnjcaaPzjsobxbYAFHFZobbcb9vJTJhmtn4W0to+5XQ=;
-        b=f5lsnJP9rxgF9rCuBBXui/kCz8sOsnKV/Hqsop+niGDAeX9ykKnr3Zmuwf0kgOqTIT
-         uC5kfpVAYL8XEglWKDASnsl/ulve8m6mH+wbayl8v3cd/VisdK5xQzvXWDZh3qboq+Ps
-         1qG+19dbVQ10xF+BT7qriIf1XlPNlEQ1dVIGmlpG1c5WazxuqGgqdkyBnKkaDddTHgUO
-         ERb/Xwg29veAOjwMv2nApDurgc+q0iDDID/A5Jakwx/x4WZtFf0ZLkpLj7+dKWU/BYnc
-         8Hy/drAeu7CjvGADtH8gWaMMkbCVFd0BiEwzjmO6mC4Ms0HwODEJCNFEO4ZfJ7Tqv/oo
-         unPg==
-X-Gm-Message-State: AOJu0YwDVjYHzvrhdDEQ7tY6rXTc+LO6cQEc2Eb3nMh/BpXOm+5+mwf4
-	CKIBYWsbe9E04lsqv9WFOHm2KcKack5MKleA+bc8Orn3MYJXwzLkrOODHWFWcOxb
-X-Gm-Gg: AR+sD124PSRETewpy5sdqwFQ0S4DtPESHjMGCUeGom0GL2e/ovhUwMgP+9lRa5DP0wn
-	OX03gbkbCnjSjmsqQD5z/ezBuXiEeKLhbIKnqWc/kiKMkiR8KPUKAwgJyApdgmFuLKCnGH/zgt2
-	xcBeppXsLAitb7r/V/dyBreuBjAD5CbRNA6ifbopHjRvoo3QcwAirv9FDEjORDqwJPuml+Maj/t
-	DD/EF4aBjmlXrj4oQp+g7NquFBBtxqIYy41RMW23yHx/pRUbZuEpQB8lP78nGmAUQryRi/y0OAi
-	i3lP+EN0pP+UzqQd9jTXZiIxN1Xhmpp8eNHETswUl/O70DTPvUL7Z6hzWfdDKWiN5ykDmjpyLS9
-	YFber8aJCZWJ/YFsmjZ3XZvV0TAYCQGeKaLa8Rbl/W/sCc0ANC68gw3A/NfEANaPiaJ2zu4BuJQ
-	Z2KTgrmk9o/plUYtbxy6mixLcmqFccRG+xYMmvvcFtd/SWbLZAcqx9vsHMW04/ff0sgQT8Wz0j/
-	yHb+H0tu++sNxGaMu5UeT+t3Q==
-X-Received: by 2002:a05:6122:d18:b0:5bd:8dd8:146e with SMTP id 71dfb90a1353d-5c4524bac41mr127363e0c.4.1786433007105;
-        Tue, 11 Aug 2026 00:23:27 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c451df917bsm139363e0c.11.2026.08.11.00.23.26
+        d=1e100.net; s=20251104; t=1786433315; x=1787038115;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bbDA2HJhRK7uccW2i/9tvYlKy7xqWbKNdvfK5Qlf1as=;
+        b=n4oIBluBNC2wNVb0v9aIlfe4B37NbWuCerQFBZxjhFD0IUWwnJnwpGMh0YDk7NRu7V
+         TkQUJ4sS5yaT8WWBeYWMKqeIYoJpwOCqHkHERMDmjvJKICrnjADHjxFlAiayCTH4Iiuy
+         9pGtRbVi+RwAcwE2nGyv28Dd3mZg8Li7EYx6PsFo7wOewvUsK+cK1zYfEfB4TDJI+BLB
+         j0vbXfvHLMSH90GO6ge2Gi6n9IQIGXG6aOAdWz8LR27yOmk08jJ06gjD2mkI2Ejs0KRt
+         GnQ2W/iudj79AgY1dcnRqx7H7uoSZKGOYzEMkleHjBqRTvKLzBrdik1+qOTF7r9aBv/9
+         HSPQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpIioCKvgbGXvpmst+k7OxJ9ufIF5A6vTHhFlxtuT1bqCzWAqqyrwM2jnfh3LvBw/8lNFQ+GensuyViRwCZdDGfVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV/z2UHtpdBH2CjvWV8TKjc00Y5ZZJscBk2uZwFjHrCoEaqPAi
+	x7hgHP8rkKXiMI0fd/QsXJSZt3FQUjjpvAtiOEDy0LV6/9SyAZSVidYFriAkr3vn
+X-Gm-Gg: AR+sD11H6T/9/idcJ3ljVwpFauDC876BMHKmybI5xIw3f1TayKQpUF1kc4Mdq/LSbQd
+	Fdk5es6KpFPMBakJBh3ioHinhMqdZGj5SJ+P2YStt2DiGED71mX55Q0pQn8hdLYsolCap/BHw9a
+	Xyl6gwgdVoHxR40lnKDIBdzGu2FgsuiSGB/eLzgeKm5JO8JUDpOnVXBSQV9K06P3nStHVyUXosE
+	57HhcvduFG7CbBXH8jVhLumL0cIH8AIaS0waELUg8SwfDciOtmm20vbEsRNJ4gS6KIyXuCXbhb3
+	J0AgKWT5VRMChiA1yZxc+jBZN9NWQ0Apqf4kDjxiTE3WRfE3VQmPsle55EYn5/L1VLtd6/Qnkyu
+	wB9cED5dimCoXZVXj3m01UOyMPSNz83WZvPuG9n0Z94oO6SrtDhxcWr/+PQAJFRUl0XKXBoEGmO
+	pf6MI+9Vdgt7kgnXmhcTQiFYVMqA1J7LkkH2ETMpQXldvR/LzA8bvnqtOFQSI19pwGI8LYEEaEt
+	LRKBuEWVYs+WmMuqNfMXhe7Sg==
+X-Received: by 2002:a05:6102:8008:b0:6f0:3ba3:7d84 with SMTP id ada2fe7eead31-76b55980f77mr309991137.5.1786433315298;
+        Tue, 11 Aug 2026 00:28:35 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-76b655b8285sm212707137.9.2026.08.11.00.28.34
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2026 00:23:26 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-75609e844faso417877137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 00:23:26 -0700 (PDT)
-X-Received: by 2002:a05:6102:6b87:b0:6cb:b3db:c31c with SMTP id
- ada2fe7eead31-76b6fdba80cmr74412137.0.1786433005986; Tue, 11 Aug 2026
- 00:23:25 -0700 (PDT)
+        Tue, 11 Aug 2026 00:28:34 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-977cf5cae50so482885241.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 00:28:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rpqy2WKFYpyPZ9tGwwJJswuszvZU5zZCTjUEkBeFG2vPL6Uwrq4mQH9SYpGiI2ERd0noIp4FIaM6HGwE8LxR+MKpQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:4187:b0:75f:e517:ec96 with SMTP id
+ ada2fe7eead31-76b51b25220mr340921137.0.1786433314033; Tue, 11 Aug 2026
+ 00:28:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260716095935.13329-4-wsa+renesas@sang-engineering.com>
- <20260716095935.13329-6-wsa+renesas@sang-engineering.com> <CAMuHMdWCWvfFqBAQ40E+czhYHSG_ZuCqMobku6B2iEA8ezF5Cg@mail.gmail.com>
- <anqAKtaFCxADeLqM@shikoro>
-In-Reply-To: <anqAKtaFCxADeLqM@shikoro>
+References: <20260810111841.77898-1-phucduc.bui@gmail.com> <20260810121914.GA2757863@ragnatech.se>
+ <CAABR9nFkFyhzQO7UGsaiSDcZ8km9=nv-2+4xWo40EG6c555Lbg@mail.gmail.com>
+In-Reply-To: <CAABR9nFkFyhzQO7UGsaiSDcZ8km9=nv-2+4xWo40EG6c555Lbg@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Aug 2026 09:23:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXU4MDX3uqJDR+nXp8zuWZxwvNVM1EN6QSNSY8_BJ8hMw@mail.gmail.com>
-X-Gm-Features: AUfX_mx_SQQwb9gvkl5UrpTLcwsLbWwtX-NcZ8tSPCGwe-lGYUP1629cOEsPzrA
-Message-ID: <CAMuHMdXU4MDX3uqJDR+nXp8zuWZxwvNVM1EN6QSNSY8_BJ8hMw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable
- GPIOs on CN12
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org
+Date: Tue, 11 Aug 2026 09:28:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXXR1GH7-nPmYv5i7ooB3kpqjOvY3A3vR36vYLVnv99Og@mail.gmail.com>
+X-Gm-Features: AUfX_myuDTBVQLkzG41xoEKKZVf2OG_s5XczCeosvzRfItD6qUWkIcj6z1Z8K0g
+Message-ID: <CAMuHMdXXR1GH7-nPmYv5i7ooB3kpqjOvY3A3vR36vYLVnv99Og@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] thermal/drivers/rcar_gen3: Handle -ENXIO from
+ optional IRQ lookup
+To: Bui Duc Phuc <phucduc.bui@gmail.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Markus Mayer <mmayer@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, rafael@kernel.org, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+Hi Phuc,
 
-On Tue, 11 Aug 2026 at 03:51, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > > +       pins_gpio2b: pins-gpio2b {
+On Tue, 11 Aug 2026 at 04:02, Bui Duc Phuc <phucduc.bui@gmail.com> wrote:
+> > > -     if (rcar_gen3_thermal_request_irqs(priv, pdev))
+> > > +     ret = rcar_gen3_thermal_request_irqs(priv, pdev);
+> > > +     if (ret == -ENXIO)
+> > >               priv->ops.set_trips = NULL;
+> > > +     else if (ret)
+> > > +             return ret;
 > >
-> > pins-cn12?
->
-> Okay.
->
-> > > +               pinmux =3D <RZN1_PINMUX(164, RZN1_FUNC_GPIO)>,
-> > > +                        <RZN1_PINMUX(165, RZN1_FUNC_GPIO)>,
-> > > +                        <RZN1_PINMUX(166, RZN1_FUNC_GPIO)>,
-> > > +                        <RZN1_PINMUX(167, RZN1_FUNC_GPIO)>,
-> > > +                        <RZN1_PINMUX(168, RZN1_FUNC_GPIO)>,
-> > > +                        <RZN1_PINMUX(169, RZN1_FUNC_GPIO)>;
-> > > +               drive-strength =3D <6>;
-> > > +               bias-disable;
+> > I'm not sure I like this.
 > >
-> > These pins don't have any external pull-ups, so disabling bias will
-> > make them pick-up random EM noise when left unconnected.
+> > The old behavior is that for any reason we can't get the optional IRQ
+> > the driver still works, but without hardware trip points.
 >
-> Can fix, but is this bad? I'd assume the connected pins will handle it.
-> And if not, the DT needs to be adapted to that use case. Otherwise, a
-> default pull-up needs to be disabled for another use case.
+> Regarding the old behavior, it was handled like this:
+> ------------------------------
+> irq = platform_get_irq_optional(pdev, i);
+>         if (irq < 0)
+>                 return irq;
+> ------------------------------
+> As I understand it, this is essentially the behavior of
+> platform_get_irq() itself:
+>
+> https://elixir.bootlin.com/linux/v7.2-rc6/source/drivers/base/platform.c#L301
 
-Currently, nothing is connected to these pins. Unconnected CMOS
-inputs must never be left floating, as that can cause oscillations
-and increased power consumption.
+Except that platform_get_irq() prints an error message, too, which
+we want to suppress.
 
-Default I/O configuration is "2=E2=80=99b01: Pull up (default value)" for b=
-ias.
+> This could be understood as rcar-gen3 not actually supporting an optional IRQ.
+> If you still want to keep the old behavior, then I think we should switch to
+> platform_get_irq() instead of platform_get_irq_optional(), since using
+> the latter
+> could give a misleading impression that rcar-gen3 supports an optional IRQ.
+>
+> Incidentally, I also don't quite understand why rcar-gen2 supports an
+> optional IRQ
+> while rcar-gen3 does not. Is there a hardware limitation on rcar-gen3
+> that requires
+> the IRQ to be present, or is this just a difference in the driver
+> implementation?
 
-While at it, why did you lower drive strength from the "2=E2=80=99b10: 8 mA
-(default value)" 6 mA?
+On R-Car Gen3, thermal has an interrupt.
+On R-Car Gen4, thermal does not have an interrupt, but routes this
+signal to the ECM.
+
+> Regarding the benefit of the new behavior:
+>
+> If rcar-gen3 actually supports an optional IRQ, I think the benefit is
+> that it reflects
+> the actual state of the system. It allows the developer to know that
+> something went
+> wrong and investigate or fix the underlying issue. In the case of
+> `-EPROBE_DEFER`,
+> the benefit is even clearer, as it allows the kernel to defer the
+> probe and retry it later
+> when the dependency becomes available.
+>
+> If we silently ignore the error as we do currently, the driver may
+> still be able to provide
+> thermal information as you mentioned. However, can we still guarantee
+> the correctness
+> and safety of the system?
+
+-EPROBE_DEFER should indeed be handled correctly.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
