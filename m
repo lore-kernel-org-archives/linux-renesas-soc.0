@@ -1,187 +1,187 @@
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFDE42DA5D
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 10:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1A631E842
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 11:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786444753; cv=none; b=jscXYE1C5THhWk+8Xc4aQ1ESE1fjUApQCxq4JhCU64hNu8MHlbS4eHtUebcvzYQtUtbGkiCZq7/9ySfUa3vZjru4IZTRuK2xr59oqpplxyHcoJW9r1RUBNyeCkklV8CQjSp6yQ+8TkF5hT5KWK0yUKgtNdYBbEKVy4wulBP40os=
+	t=1786449127; cv=none; b=iJpdrY1dZvngdFmkHLKXqS9a+CUOaySwanl7VpyXyW6zDHsObbrUqVbREIxFTj9iPANxTWpF4qCeke0Dxlh2OYmqLtxk9SJfQ0WoUEbdxxcapAJWXxnpiS+y7jQAxVmLJ/w29XvkFBYz2X2UymfY5RAF2FeKgJSC8/3bynB6CXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786444753; c=relaxed/simple;
-	bh=2ZHwp6+DisNJlZr/Ej+2cYjgEhwlm8PU0xfq5F2VDjM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ufN/Ev0U6H7OnrixF+4z+eLs2C+E8hjajIEZXN2DG+UuKdGx+3v7Pc5R5/++1xEg3FnklWG2DEHSQX5taOTh4Gs7afTm6nNfDcP9cLXJZvJ1AoaJY9hgZfef287ORqRaMBEO3m1+4x5BNZil/y3uN2RGVT6yGFpOubF/hkdR4dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rkeAkIcp; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rkeAkIcp"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1786444749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iZf/htlsFgNcS+35IOEXNe4Ql4XRBRXaDRHFFsmjgFk=;
-	b=rkeAkIcpG7i6F6Da1VVGpMnMNEA1FMzDR5zLIJdOeYNrbe9x7Si6Fe+VZj9Ci2r9FLNRL4
-	rgFxtJsuz2M65j898+hhxlWamS+i4MVySM5+orZ2YNxezU2rw41XWLHLRGW3rTgGbChcbc
-	OaqxjqkWMkKPqb7AMc0AjxAKi00XMgo=
-From: Xuanqiang Luo <xuanqiang.luo@linux.dev>
-To: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	niklas.soderlund@ragnatech.se,
-	kuba@kernel.org,
-	vadim.fedorenko@linux.dev
-Cc: paul@pbarker.dev,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	richardcochran@gmail.com,
-	masaru.nagai.vx@renesas.com,
-	luoxuanqiang@kylinos.cn,
-	stable@vger.kernel.org
-Subject: [PATCH net v4 2/2] net: ravb: serialize PTP clock teardown
-Date: Tue, 11 Aug 2026 18:37:33 +0800
-Message-ID: <20260811103733.62599-3-xuanqiang.luo@linux.dev>
-In-Reply-To: <20260811103733.62599-1-xuanqiang.luo@linux.dev>
-References: <20260811103733.62599-1-xuanqiang.luo@linux.dev>
+	s=arc-20240116; t=1786449127; c=relaxed/simple;
+	bh=W8lxYDaSFvG2LENuVgumDI2Us0ijdNp1IfWuToF3Sc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pm8+/fc/lBlLkIjzA1FJgznfBSVAMj5g3qyQG+MQyTSlWlDTWZVgJV0F2fPdaCVy9hVe3jRUyl1li2kEwgxtiT0N0kNfLbXAzsAXpokfn/AfeFdJASrVV5Nx3PfchWIDMhKzFPY5hh938+mg+cZKEIFgThXA0uzxgj0wp7xVY2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-969524c1a63so1904266241.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 04:52:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786449124; x=1787053924;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Gw6+OutRgMyTdQq2RnO8+b25hOPJIM1JAzCBiUaxv5A=;
+        b=kvq8iSHEGLPDPndxhkRFr6RILhsntMdN2TvCsxC9nJN5xG+nf7BCqAtqxTflpF6sjC
+         p0ZCm3S1ve5xsmtALWsypV4mlMvZeJxDVcNn+WSBWrtRLyeAg3GdcQe+uw2oVduNst1M
+         gVISIMK0GRH4Rhf4PZ1RoF9HNqqSDPvrzoOO6/nLXoLYbUAMuIVhLMF+59M4skzwfqJj
+         d5BB8rOpDM68xPbLMvLWDEs5XLgq8ftJ4DfZiY+tLpW8bh2Rqt/Xn1Zbrm2nToJX/xvH
+         CvDpDAPGRo+5Z80KdpgkbdMG5oBwFgZY6cHZ/AG8XtHAX2QgVw5etW2baROifPRqTDGy
+         5h8w==
+X-Forwarded-Encrypted: i=1; AHgh+RpSWmJXlIA7mn6XXEJvIK75DITtsEG3JoUhLzM0nMDNrMyr9HbhFX4KQHBeYbzwO6uE/VsmtHLWbA9x+XZ3+OMfVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyskd5FQE2GkUtLhn+HGz2PN8mcgGJfk0kF36NmApALd7zY6Lea
+	JivbFdDNsuP07EkFGhqMNaRRsdkUIBd+k+RnR1l7JCaXfbvQalsewDFM4PmLRLhy
+X-Gm-Gg: AR+sD12gbiazu7jruyvMU1fILwCz78/yFdSwxaiqqwPyWXVcSF9AoIqzVMphB5utH9e
+	wrkwBjp49CTaat1JdUB1AlIZFSgv+aGVBjHaGL9J8GR/51byCPvmm2g/YF53MrxPJt/RC+pbqbI
+	54fSWSU7ijBwVz12AezFqHKI/mi+Z5tibmyQeLZdnBdrf2rGgu0kMOe1m6rs7ylnGy+CwN2/4iW
+	bgvsd7gCisoo2xcPlHPBlbN1W4uw3P1xsw9sB7xgMy5A76t8W6q72KA1+i6d/SCIT4Daht0n67Z
+	GbHqoPo7aPS5xrVoa1hqLc2wd6ys6Kx3HP3J3khrw9x3j6C511zstcFN/To07yPzPCxdMfuNXQH
+	cu7ll7p6jR5KLNQn0avMFrCwoUzAXOngIXLpIJpu+R002bBIOg4d38z6BaILKAASCT/eCARQvo7
+	7E2ZFcbGUJDVFTzmhuE6anPFGyefYlfaaANu5rq7yqixsHaD9dGu5Er9mD30SRfXvIFQHRzjdYx
+	hrZmCXCDu4KQru8jbs/WXW9Pg==
+X-Received: by 2002:a05:6102:5128:b0:744:d1a6:b11d with SMTP id ada2fe7eead31-76b54f7c0ecmr827111137.3.1786449124471;
+        Tue, 11 Aug 2026 04:52:04 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97a36631fbasm347703241.6.2026.08.11.04.52.01
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2026 04:52:01 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-966e7380109so2015453241.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 04:52:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp6mZ4U/vY/xM59D5FsOTEhkYFez9C1khX/T/qZBtCqD4WPbt3znn1BD1DXM8IvOWI630YxDDe1VjX4+/qQMb1iPw==@vger.kernel.org
+X-Received: by 2002:a05:6102:5128:b0:744:d1a6:b11d with SMTP id
+ ada2fe7eead31-76b54f7c0ecmr827022137.3.1786449121269; Tue, 11 Aug 2026
+ 04:52:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <d4bd0cc7f26c1bcdc260edb994b4971cb5dd3a10.1786438424.git.geert+renesas@glider.be>
+ <CAPx+jO-uXbNpFPzbAbDkBQh2-xf4r1NXk2PdQvOh9ZOfEQ71gQ@mail.gmail.com>
+In-Reply-To: <CAPx+jO-uXbNpFPzbAbDkBQh2-xf4r1NXk2PdQvOh9ZOfEQ71gQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 11 Aug 2026 13:51:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXLsMfGEz5s9s3voZGbQL90hRYCxsfC==xsGs315XOHWA@mail.gmail.com>
+X-Gm-Features: AUfX_mxYFb3a8-KjLfsf-hDUGSX7q2XivFMj5SQAYvLQGp9PIzS7OsTLrsDrS6c
+Message-ID: <CAMuHMdXLsMfGEz5s9s3voZGbQL90hRYCxsfC==xsGs315XOHWA@mail.gmail.com>
+Subject: Re: [PATCH v4] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
+Hi Ulf,
 
-ravb_ptp_interrupt() can race with ravb_ptp_stop() and pass the clock to
-ptp_clock_event() while ptp_clock_unregister() is freeing it. This can
-lead to a use-after-free.
+On Tue, 11 Aug 2026 at 12:16, Ulf Hansson <ulf.hansson@oss.qualcomm.com> wr=
+ote:
+> On Tue, Aug 11, 2026 at 10:58=E2=80=AFAM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC=
+.
+> > For now this just supports the always-on power domains, and dummy modul=
+e
+> > clocks and resets for the serial console (which is enabled by the boot
+> > loader).
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I had a closer look at the attach part and there is few questions,
+> please see below.
 
-Use READ_ONCE() and WRITE_ONCE() for lockless access to the clock pointer.
-Atomically detach it with xchg() before disabling PTP interrupts, then
-synchronize all IRQs which can invoke ravb_ptp_interrupt() before
-unregistering the detached clock.
+Thanks for your comments!
 
-A handler which read the old pointer completes before the clock is
-unregistered, while later handlers read NULL and skip the event.
+> > --- /dev/null
+> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
 
-Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
----
- drivers/net/ethernet/renesas/ravb.h      |  2 ++
- drivers/net/ethernet/renesas/ravb_main.c |  6 ++--
- drivers/net/ethernet/renesas/ravb_ptp.c  | 37 +++++++++++++++++++-----
- 3 files changed, 35 insertions(+), 10 deletions(-)
+> > +static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
+> > +                                   struct device *dev)
+> > +{
+> > +       struct device_node *np =3D dev->of_node;
+> > +       struct r8a78000_mdlc_priv *priv;
+> > +       struct of_phandle_args pd_spec;
+> > +       const struct mod_map *map;
+> > +       unsigned int id;
+> > +       int ret;
+> > +
+> > +       ret =3D of_parse_phandle_with_args(np, "power-domains",
+> > +                                        "#power-domain-cells", 0, &pd_=
+spec);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       if (pd_spec.args_count !=3D 2) {
+> > +               of_node_put(pd_spec.np);
+> > +               return -EINVAL;
+> > +       }
+>
+> Is the above check really needed?
+>
+> Assuming r8a78000_genpd_xlate() is used for attaching, then the
+> args_count must always be 2, otherwise we return an error code when
+> trying to attach the device to its genpd, right?
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 2a4fcb12a63cb..3ee4c61081890 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1124,6 +1124,8 @@ struct ravb_private {
- 	int msg_enable;
- 	int speed;
- 	int emac_irq;
-+	int err_irq;
-+	int mgmt_irq;
- 
- 	unsigned no_avb_link:1;
- 	unsigned avb_link_active_low:1;
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index db0229e008494..ea1c7e536791e 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2885,11 +2885,13 @@ static int ravb_setup_irqs(struct ravb_private *priv)
- 		return error;
- 
- 	if (info->err_mgmt_irqs) {
--		error = ravb_setup_irq(priv, "err_a", "err_a", NULL, ravb_multi_interrupt);
-+		error = ravb_setup_irq(priv, "err_a", "err_a", &priv->err_irq,
-+				       ravb_multi_interrupt);
- 		if (error)
- 			return error;
- 
--		error = ravb_setup_irq(priv, "mgmt_a", "mgmt_a", NULL, ravb_multi_interrupt);
-+		error = ravb_setup_irq(priv, "mgmt_a", "mgmt_a", &priv->mgmt_irq,
-+				       ravb_multi_interrupt);
- 		if (error)
- 			return error;
- 	}
-diff --git a/drivers/net/ethernet/renesas/ravb_ptp.c b/drivers/net/ethernet/renesas/ravb_ptp.c
-index cbec7c057d715..43218bc15b151 100644
---- a/drivers/net/ethernet/renesas/ravb_ptp.c
-+++ b/drivers/net/ethernet/renesas/ravb_ptp.c
-@@ -289,16 +289,17 @@ static const struct ptp_clock_info ravb_ptp_info = {
- void ravb_ptp_interrupt(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	struct ptp_clock *clock = READ_ONCE(priv->ptp.clock);
- 	u32 gis = ravb_read(ndev, GIS);
- 
- 	gis &= ravb_read(ndev, GIC);
--	if (gis & GIS_PTCF) {
-+	if ((gis & GIS_PTCF) && clock) {
- 		struct ptp_clock_event event;
- 
- 		event.type = PTP_CLOCK_EXTTS;
- 		event.index = 0;
- 		event.timestamp = ravb_read(ndev, GCPT);
--		ptp_clock_event(priv->ptp.clock, &event);
-+		ptp_clock_event(clock, &event);
- 	}
- 	if (gis & GIS_PTMF) {
- 		struct ravb_ptp_perout *perout = priv->ptp.perout;
-@@ -334,19 +335,39 @@ void ravb_ptp_init(struct net_device *ndev, struct platform_device *pdev)
- 		clock = NULL;
- 	}
- 
--	priv->ptp.clock = clock;
-+	WRITE_ONCE(priv->ptp.clock, clock);
- 	if (clock)
- 		WRITE_ONCE(priv->ptp.phc_index, ptp_clock_index(clock));
- }
- 
--void ravb_ptp_stop(struct net_device *ndev)
-+static void ravb_ptp_disable(struct net_device *ndev)
- {
--	struct ravb_private *priv = netdev_priv(ndev);
--
- 	ravb_write(ndev, 0, GIC);
- 	ravb_write(ndev, 0, GIS);
-+}
-+
-+static void ravb_ptp_sync_irqs(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+
-+	synchronize_irq(ndev->irq);
-+	if (priv->info->err_mgmt_irqs) {
-+		synchronize_irq(priv->err_irq);
-+		synchronize_irq(priv->mgmt_irq);
-+	}
-+}
-+
-+void ravb_ptp_stop(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	struct ptp_clock *clock;
- 
- 	WRITE_ONCE(priv->ptp.phc_index, -1);
--	if (priv->ptp.clock)
--		ptp_clock_unregister(priv->ptp.clock);
-+	clock = xchg(&priv->ptp.clock, NULL);
-+
-+	ravb_ptp_disable(ndev);
-+	ravb_ptp_sync_irqs(ndev);
-+
-+	if (clock)
-+		ptp_clock_unregister(clock);
- }
--- 
-2.43.0
+That is indeed true if power-domains contains a single entry pointing
+to an MDLC domain.
+This check also protects against the (currently unlikely) case where
+there are multiple entries. But for that to work well, it should indeed
+validate pd_spec.np, too.
 
+Is this good enough for now, or do you want me to drop the check?
+
+> > +
+> > +       scoped_guard(mutex, &r8a78000_mdlc_lock) {
+> > +               hlist_for_each_entry(priv, &r8a78000_mdlc_list, link) {
+> > +                       if (priv->np =3D=3D pd_spec.np)
+> > +                               break;
+> > +               }
+> > +       }
+> > +
+> > +       if (!priv) {
+> > +               dev_err(dev, "%s: MDLC %pOF not found\n", __func__, pd_=
+spec.np);
+> > +               of_node_put(pd_spec.np);
+> > +               return -ENODEV;
+> > +       }
+> > +
+> > +       id =3D pd_spec.args[1];
+> > +       of_node_put(pd_spec.np);
+> > +
+> > +       map =3D mod_map_find(priv->mod_map, id);
+> > +       if (!map) {
+> > +               dev_err(dev, "Unknown module 0x%x\n", id);
+> > +               return -ENOENT;
+> > +       }
+>
+> Would it not be better (if possible) to do the above verification as a
+> part of the r8a78000_genpd_xlate() instead?
+
+In the current minimal driver, the verification could indeed be done
+in the .xlate() callback.
+However, subsequent patches will add actual data to the retrieved map
+entry.  As the .xlate() callback cannot pass data for later use by the
+.attach_dev() callback, the latter has to call mod_map_find() anyway.
+
+> > +
+> > +       dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
+> > +       return 0;
+> > +}
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
