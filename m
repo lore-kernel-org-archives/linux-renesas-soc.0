@@ -1,154 +1,228 @@
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5FB32A3EC
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 14:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C65744C4FB;
+	Tue, 11 Aug 2026 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786457091; cv=none; b=oxnCcyLQImdiHk6ULDTJHfHeTGYSJ6BxLxSWt5scC8TS417EStMhSYFB+Ft520gBCQyzyHXUGpkmewvQwCJsPsTciUhGb5scJmxWO8VnoYgqcJ7Ra/1bOsxrBtKXyHdlG9TLVxTDtnuC9AQWG/zKqu+gWzqT46xI0F8b50RhyUM=
+	t=1786460089; cv=none; b=IURklqiRTMXcN1j+YNLZmxQCq9x65T1Lf5VhL2D8OICr/OoqhrR+1ugbcRL1bxKiz11/xRt4UjspwFnsu1qJGwsv9D9bWyk1LBnHU384qVqWhfhaNZQ2uylS1AlwGN5/BdgECJtCQmDMwpcQeH0QRKjjsvtoCFbbZ3W+DUn+Gao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786457091; c=relaxed/simple;
-	bh=IDkl6vkZoeWYKZ/5wbwdWG0Gu0/ixXA1xpsExfJyeoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSC6sm4+cKujK3Ljv+zdIjx42yDMx+57aWJjzmlyXcELDCFr4JS9ilfOJMLt0PYOzwPGkYg7Xzde4xwSgJg9X8dAJ4MnuvaUnunxX/WCntA9unET1huIGA0gfoGpV3Y06jeGuzDW28llgfTLz6Wz/eib6y+kJz3tvfhLJkzXvlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-97727c2064fso1959817241.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 07:04:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786457088; x=1787061888;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=t25xdaJP403QlmjguUiNsQy5PNTk/hl8/kCapiHtVCQ=;
-        b=NlZ1HFO+XYX6A2W5/LeokOWjbLI4RbT/K1xgc5l3vjo7vKdE+ALw85wjI16RY99l+7
-         Bvbas899NNcAvmOaymOX2vYVudewIfyvgjQ60PN/Y+HXBVCdGDUTAffhpCW0flu9Ktnz
-         J/T+wMvUfgYOjRcx7dQ2+azg3m7eQ3BzelWO/vq9CkY3mFbSC7EQdwmrfbPjsI7r+FjI
-         7vhAWN/CMOeM+hrlR/xb4v+jppHCS40RKQ0zrWZwLHbfete7ALfmDu6X57o4ZhHi0T6x
-         A6Dp7eRIYnYTbCsSum9YpEYf/Qy8rEl9Vq6ZQ+DSlzmZa+197HAjn0VXMwZbkfmTgXa9
-         zFvw==
-X-Gm-Message-State: AOJu0YyXsKB4Eyv8YCns95PiphDxdypXVNxsVHgHgv3o73HCrPAxQ4iI
-	rLql+wUJAK0CX3opGQnTNcgDEPvVm3A9JNfx10xf/7lVrdvS5DQ/tVFL5Gujo1HF
-X-Gm-Gg: AR+sD10CNl0mK6aMAE79i8TUZq5aElqAY448Sq5BMWYn9weA4AS3vnLdcVpdxIstfMM
-	Y2MBZ4loMhcEIs2QKYfAaTFFumdq1XJe6TV5ZoSZ22JIkHlsAwUfl73ucpJbTE8FmbyHNMISyLi
-	kgYZtl0Gqi+VzsJUliRNUNnR0/z+SadQeY0SXBJoHm/IOSKxMyBnftJABeB3Przo2S/sWtIAsx+
-	DuBW+O2axmFsSolGMRQXtFKp3hhF4bThza12HgVpYCVOWRFCFm/y0L56xGC3h9doIPAHGqQe2jL
-	AE90qVzQosSmuLM4tYUuQHW/VbVctPsXZ0srdLBP3k/vFPm/jWMZTRdtY6/oCd/U187x3Z6UqPe
-	IYJA4btvIzvjSIneVkJDqOuk/Y/Blwo4Uh8JKSJs2YItpwJb2JhvMcrP3nt7AYWg2qFbSmXK0Yf
-	TgV7y5AN+533yo4+IfmTLjVh5hbIQtjRGZy1wxNLwGWc9XevejQhCK252xo0sIXA0DQ+dBMoYwq
-	MQKR3VLWfIKm8vCG/n/hYRVVA==
-X-Received: by 2002:a05:6102:d8a:b0:738:6994:eb8 with SMTP id ada2fe7eead31-76b51e2f7edmr1051140137.0.1786457087677;
-        Tue, 11 Aug 2026 07:04:47 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97a3c138a9esm6648241.3.2026.08.11.07.04.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2026 07:04:47 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-74d55dac06eso1539781137.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 07:04:45 -0700 (PDT)
-X-Received: by 2002:a05:6102:1588:b0:739:5cfb:50f6 with SMTP id
- ada2fe7eead31-76b570bd5demr1074532137.11.1786457085103; Tue, 11 Aug 2026
- 07:04:45 -0700 (PDT)
+	s=arc-20240116; t=1786460089; c=relaxed/simple;
+	bh=mJCYBk04d7QN2ruzGE52+bwVYK0VfiWCVXL0oXJimGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prENC2aF+getrxQ39iVy4dM0IE0IVq1gplsSJCMZejWhMCxPLjVsSmJx5dENnUJL4qZ3qEIr2tE7KzvZikCWhh5TFNev7c8LR9Zq6qSS+ABRDeZY1yi3ThdL0m6gx1COaAknoa1oie8oW7AaCW22J1/LtST6uir8IZ8+TWyoaQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIgpNoyD; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIgpNoyD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC5C1F00A3A;
+	Tue, 11 Aug 2026 14:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786460081;
+	bh=mJCYBk04d7QN2ruzGE52+bwVYK0VfiWCVXL0oXJimGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=QIgpNoyDN+uPPxkPJtkUqTbnbpkZG7p5wB0UyJ3yf1+gmao3KZgxvPgAzI8e6+ncr
+	 AgGjPvaZpLfPq8IutfeFeBA2k8PGesJH7L2phfNjcr3Mn235qD2ge66n0wgivX8nJg
+	 ffvlcIIgFexSjfnzzcKE+VclfDh66bl9jO9mEedrLu0kVYncc95/eAgRnNXoJJwXev
+	 0x4T2u1ZPeTpZ3Bcw30vkoopDzH1RmHCnziB3aCnvgUwVOVXbz59i3bCaWxozzC93U
+	 IQhkljhtFGMdxV54UPr9QzhkhVpZ4SOhg6IjFQSYG9NkTgn9Z812LNdx/4Yt+pw3iU
+	 bcVfedxIRnsOg==
+Date: Tue, 11 Aug 2026 16:54:38 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	Thuan Nguyen <thuan.nguyen-hong@banvien.com.vn>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow
+ hardcoding EDID
+Message-ID: <20260811-quantum-strange-hound-0f81f2@houat>
+References: <20260705213542.28987-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20260705213542.28987-2-laurent.pinchart+renesas@ideasonboard.com>
+ <20260706-capable-beaver-of-excellence-a3cf10@houat>
+ <20260706094522.GA42740@killaraus.ideasonboard.com>
+ <20260706-fancy-perch-of-satiation-0c220e@houat>
+ <20260706160243.GB106045@killaraus.ideasonboard.com>
+ <20260707-meaty-chocolate-lemming-fa9ead@houat>
+ <20260707080143.GA211515@killaraus.ideasonboard.com>
+ <20260717122530.GA1955120@killaraus.ideasonboard.com>
+ <20260810095657.GA2954498@killaraus.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718182355.50045-1-wsa+renesas@sang-engineering.com> <20260718182355.50045-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260718182355.50045-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Aug 2026 16:04:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVUv4JOPkm+2n_sC8_sQNrK_38WtW6_9fjmiByRTCi2vQ@mail.gmail.com>
-X-Gm-Features: AUfX_myO1pUucKlAnrAnyjwaRxNmBxc39PeoKlPOgZ9G9aqDuugHqrrftbeyXFY
-Message-ID: <CAMuHMdVUv4JOPkm+2n_sC8_sQNrK_38WtW6_9fjmiByRTCi2vQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] soc: renesas: rcar-mfis: add hwspinlock support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="6wrixx3ampr44ixr"
+Content-Disposition: inline
+In-Reply-To: <20260810095657.GA2954498@killaraus.ideasonboard.com>
 
-Hi Wolfram,
 
-Thanks for your patch!
+--6wrixx3ampr44ixr
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/4] dt-bindings: display: vga-connector: Allow
+ hardcoding EDID
+MIME-Version: 1.0
 
-Any specific reason this is not CCed to the hwspinlock maintainers/list?
+Hi,
 
-On Sat, 18 Jul 2026 at 20:24, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Every MFIS instance has a block of hardware spinlocks. Add support for
-> them. Gen4 has only one instance, so the base_id is always 0. Gen5 has
-> multiple instances, so the base_id has to be encoded in the info
-> description. Also being a provider, a hwspinlock-private header needs
-> to be included. Work to refactor the headers is on-going, but will need
-> many preparational steps. Until then, we need to live with the special
-> include.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Aug 10, 2026 at 12:56:57PM +0300, Laurent Pinchart wrote:
+> On Fri, Jul 17, 2026 at 03:25:30PM +0300, Laurent Pinchart wrote:
+> > On Tue, Jul 07, 2026 at 11:01:43AM +0300, Laurent Pinchart wrote:
+> > > On Tue, Jul 07, 2026 at 09:46:52AM +0200, Maxime Ripard wrote:
+> > > > On Mon, Jul 06, 2026 at 07:02:43PM +0300, Laurent Pinchart wrote:
+> > > > > On Mon, Jul 06, 2026 at 05:40:30PM +0200, Maxime Ripard wrote:
+> > > > > > On Mon, Jul 06, 2026 at 12:45:22PM +0300, Laurent Pinchart wrot=
+e:
+> > > > > > > On Mon, Jul 06, 2026 at 10:52:32AM +0200, Maxime Ripard wrote:
+> > > > > > > > On Mon, Jul 06, 2026 at 12:35:39AM +0300, Laurent Pinchart =
+wrote:
+> > > > > > > > > Since DDC version 2, introduced in 1996, VGA monitors hav=
+e exposed EDID
+> > > > > > > > > data over an I2C bus. The bus is also used to detect the =
+presence of a
+> > > > > > > > > connected monitor by trying to read the EDID data.
+> > > > > > > > >=20
+> > > > > > > > > Some devices where the VGA display is integrated in the d=
+evice and
+> > > > > > > > > always connected do not connect the DDC pins. Some develo=
+pment boards,
+> > > > > > > > > such as the Renesas M3N Salvator-XS, also do not connect =
+the DDC pins.
+> > > > > > > > >=20
+> > > > > > > > > To support those, add the ability to provide hardcoded ED=
+ID data in the
+> > > > > > > > > device tree. This is mutually exclusive with specifying a=
+ DDC bus, and
+> > > > > > > > > can only be done when the VGA display is guaranteed to be=
+ always
+> > > > > > > > > connected.
+> > > > > > > > >=20
+> > > > > > > > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas=
+@ideasonboard.com>
+> > > > > > > >=20
+> > > > > > > > This feels redundant with the EDID firmware loading mechani=
+sm we have in
+> > > > > > > > KMS already. It should at least be mentioned why we would n=
+eed to set it
+> > > > > > > > in the device tree at all.
+> > > > > > >=20
+> > > > > > > Very good question.
+> > > > > > >=20
+> > > > > > > I assume you're talking about CONFIG_DRM_LOAD_EDID_FIRMWARE, =
+as the
+> > > > > > > debugfs override_edid feature isn't meant for production. If =
+there are
+> > > > > > > other relevant mechanisms I'm not aware of, please let me kno=
+w.
+> > > > > >=20
+> > > > > > No, that's indeed what I meant.
+> > > > > >=20
+> > > > > > > In the use case at hand, the VGA display is an integral part =
+of the
+> > > > > > > device, the same way an LVDS or DSI panel would be. Using
+> > > > > > > CONFIG_DRM_LOAD_EDID_FIRMWARE, the manufacturer would need to=
+ set the
+> > > > > > > drm.edid_firmware command line parameter, and provide EDID as=
+ a file in
+> > > > > > > /lib/firmware/ (possibly in an initramfs). Beside the complex=
+ity, and
+> > > > > > > the fact it won't be very friendly to people who run a differ=
+ent
+> > > > > > > userspace on the device, I think EDID counts in this case as =
+system
+> > > > > > > description, the same way we support specifying panel timings=
+ in device
+> > > > > > > tree.
+> > > > > >=20
+> > > > > > It's *some* hardware description, but you have no idea whether =
+it's
+> > > > > > actually the hardware you're running from. What would be in tha=
+t EDID
+> > > > > > anyway?
+> > > > >=20
+> > > > > It would be the EDID corresponding to the connected display :-) I=
+ see it
+> > > > > as identical to how a user of the simple panel driver is responsi=
+ble for
+> > > > > listing the timings corresponding to the hardware in the device t=
+ree.
+> > > >=20
+> > > > What's the expected user-experience for someone with that board
+> > > > unplugging a display and plugging another then? Update the device t=
+ree,
+> > > > rebuild it, rebuild the firmware and / or resign it and reboot?
+> > >=20
+> > > The whole point is that they can't easily unplug the display. This pa=
+tch
+> > > series is meant to support devices where the display is an integral p=
+art
+> > > of the device. The user experience is expected to be the same as for a
+> > > user who will take a phone, remove the display panel, and plug a
+> > > different one. It's certainly possible, and they would have to update
+> > > the DT indeed.
+> > >=20
+> > > > That doesn't sound very practical, and even impossible in some case=
+s.
+> > > >=20
+> > > > > > There's another alternative we've used several times already, in
+> > > > > > simple-bridge for example: just register any VESA mode up to a =
+given
+> > > > > > resolution:
+> > > > > > https://elixir.bootlin.com/linux/v7.1.2/source/drivers/gpu/drm/=
+bridge/simple-bridge.c#L66
+> > > > >=20
+> > > > > I don't see how that would help. The goal is to provide the kerne=
+l with
+> > > > > the data corresponding to the display integrated in the device.
+> > > >=20
+> > > > How is that not helping? Your problem is that you have a display you
+> > > > can't get the supported resolutions from. What I'm suggesting allow=
+s you
+> > > > to create all the possible resolutions for that display, allowing t=
+he
+> > > > user to use the display, which is what we did for multiple drivers =
+with
+> > > > the same problem.
+> > >=20
+> > > How would the possible resolutions be provided to the kernel ? Isn't =
+it
+> > > the whole point of EDID ?
 
-> --- a/drivers/soc/renesas/rcar-mfis.c
-> +++ b/drivers/soc/renesas/rcar-mfis.c
-> @@ -59,6 +67,9 @@ struct mfis_priv {
->         /* mailbox private data */
->         struct mbox_controller mbox;
->         struct mfis_chan_priv *chan_privs;
-> +
-> +       /* hwspinlock private data */
-> +       struct hwspinlock_device bank;
+We have multiple way to provide EDIDs to the kernel. In this thread
+alone, we discussed EDIDs (from DDC or the firmware loading mechanism)
+and drm_add_modes_noedid. And then you have panel-style fixed modes.
 
-Please document this member must be last, as it contains a flexible
-array, which is not obvious to the casual reader.
+> > > > You seem to be set on providing the EDID to the kernel, but it's a
+> > > > terrible idea to begin with, so I'd rather discuss alternatives.
+> > >=20
+> > > Could you elaborate on why it is a terrible idea ?
+> >=20
+> > I'd be happy to continue this discussion when you'll have time.
 
->  };
->
->  static u32 mfis_read(struct mfis_reg *mreg, unsigned int reg)
-> @@ -86,6 +97,39 @@ static void mfis_write(struct mfis_reg *mreg, u32 reg, u32 val)
->         raw_spin_unlock_irqrestore(&priv->unprotect_lock, flags);
->  }
->
-> +/********************************************************
-> + *                     HW Spinlocks                    *
-> + ********************************************************/
-> +
-> +#define MFISLCKR8_CH_OFS (MFISLCKR8 - 8 * sizeof(u32))
-> +#define hwlock_to_local_id(hwlock) ((hwlock) - &(hwlock)->bank->lock[0])
+Because I've yet to see a *good* EDID in the wild. They will need to be
+updated, and possibly changed by the users, which might or might not be
+possible depending on the system the user would use.
 
-Perhaps move this to drivers/hwspinlock/hwspinlock_internal.h
-for general use, and use it in the existing hwlock_to_id()?
+Maxime
 
-Or else, open-code "hwlock_to_id(lock) - hwlock->bank->base_id" below?
+--6wrixx3ampr44ixr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +static int rcar_mfis_hwsp_trylock(struct hwspinlock *lock)
-> +{
-> +       struct mfis_priv *priv = lock->priv;
-> +       int id = hwlock_to_local_id(lock);
-> +       u32 val, reg;
-> +
-> +       reg = id * sizeof(u32) + (id < 8 ? MFISLCKR0 : MFISLCKR8_CH_OFS);
-> +       val = mfis_read(&priv->common_reg, reg);
-> +       return !val;
-> +}
-> +
-> +static void rcar_mfis_hwsp_unlock(struct hwspinlock *lock)
-> +{
-> +       struct mfis_priv *priv = lock->priv;
-> +       int id = hwlock_to_local_id(lock);
-> +       u32 reg;
-> +
-> +       reg = id * sizeof(u32) + (id < 8 ? MFISLCKR0 : MFISLCKR8_CH_OFS);
-> +       mfis_write(&priv->common_reg, reg, 0);
-> +}
+-----BEGIN PGP SIGNATURE-----
 
-The rest LGTM.
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCans3rgAKCRAnX84Zoj2+
+dnySAYD+LbBqa7P/JKb7PUGmFKFt/9iY7tbB9mvpvX7IC1i5vyBhdNUxtwWBjUgR
+PDM3x/IBgPQ0xp9zj5FdXSP9RfbeYkL7AdHnGPG/y6XBeb3qKebEcLzvXXOAaCaB
+rdTzKOyidg==
+=8KXB
+-----END PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--6wrixx3ampr44ixr--
