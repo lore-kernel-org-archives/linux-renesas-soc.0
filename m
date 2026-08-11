@@ -1,187 +1,107 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1A631E842
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 11:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51191442FD4
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 12:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786449127; cv=none; b=iJpdrY1dZvngdFmkHLKXqS9a+CUOaySwanl7VpyXyW6zDHsObbrUqVbREIxFTj9iPANxTWpF4qCeke0Dxlh2OYmqLtxk9SJfQ0WoUEbdxxcapAJWXxnpiS+y7jQAxVmLJ/w29XvkFBYz2X2UymfY5RAF2FeKgJSC8/3bynB6CXY=
+	t=1786450187; cv=none; b=s6/FcmQhayM60Q+AIF/XXOa5hcJRdkrjcu9/g/R2N1RvSPnD4b32HtjJOY8ysweztA6k7cyekjIFFIOwr+o9DeKSkIxOpemaBYdzDlBYD//8Cn5szG9sHnjuEFekEJNbtzC5IMTLKzutRjta/UWXzxNjiH9o8FHYGNr+zWGFRNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786449127; c=relaxed/simple;
-	bh=W8lxYDaSFvG2LENuVgumDI2Us0ijdNp1IfWuToF3Sc8=;
+	s=arc-20240116; t=1786450187; c=relaxed/simple;
+	bh=jOz8/RKCdao82EWzssvpPQu6MldBuHaOzLydpj3dJ68=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pm8+/fc/lBlLkIjzA1FJgznfBSVAMj5g3qyQG+MQyTSlWlDTWZVgJV0F2fPdaCVy9hVe3jRUyl1li2kEwgxtiT0N0kNfLbXAzsAXpokfn/AfeFdJASrVV5Nx3PfchWIDMhKzFPY5hh938+mg+cZKEIFgThXA0uzxgj0wp7xVY2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+	 To:Cc:Content-Type; b=ZomMg2o7OFfzj7eCIHyGLNHt9WraXvixtbOg5a2nyWQlFmubzFWZrZ4LDN/6/3QgjUGZE/F3J13/+Kuft2zB0zctWq05UJIB9hgJ9tL0ZKuNIwVLnlgaEkbgaDYYdw/0gMxdx30uM5g5m6Va71FSiNTPeSt2ohX2ojIwRUYMRJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-969524c1a63so1904266241.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 04:52:05 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-977cf5cae50so524554241.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 05:09:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786449124; x=1787053924;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Gw6+OutRgMyTdQq2RnO8+b25hOPJIM1JAzCBiUaxv5A=;
-        b=kvq8iSHEGLPDPndxhkRFr6RILhsntMdN2TvCsxC9nJN5xG+nf7BCqAtqxTflpF6sjC
-         p0ZCm3S1ve5xsmtALWsypV4mlMvZeJxDVcNn+WSBWrtRLyeAg3GdcQe+uw2oVduNst1M
-         gVISIMK0GRH4Rhf4PZ1RoF9HNqqSDPvrzoOO6/nLXoLYbUAMuIVhLMF+59M4skzwfqJj
-         d5BB8rOpDM68xPbLMvLWDEs5XLgq8ftJ4DfZiY+tLpW8bh2Rqt/Xn1Zbrm2nToJX/xvH
-         CvDpDAPGRo+5Z80KdpgkbdMG5oBwFgZY6cHZ/AG8XtHAX2QgVw5etW2baROifPRqTDGy
-         5h8w==
-X-Forwarded-Encrypted: i=1; AHgh+RpSWmJXlIA7mn6XXEJvIK75DITtsEG3JoUhLzM0nMDNrMyr9HbhFX4KQHBeYbzwO6uE/VsmtHLWbA9x+XZ3+OMfVw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyskd5FQE2GkUtLhn+HGz2PN8mcgGJfk0kF36NmApALd7zY6Lea
-	JivbFdDNsuP07EkFGhqMNaRRsdkUIBd+k+RnR1l7JCaXfbvQalsewDFM4PmLRLhy
-X-Gm-Gg: AR+sD12gbiazu7jruyvMU1fILwCz78/yFdSwxaiqqwPyWXVcSF9AoIqzVMphB5utH9e
-	wrkwBjp49CTaat1JdUB1AlIZFSgv+aGVBjHaGL9J8GR/51byCPvmm2g/YF53MrxPJt/RC+pbqbI
-	54fSWSU7ijBwVz12AezFqHKI/mi+Z5tibmyQeLZdnBdrf2rGgu0kMOe1m6rs7ylnGy+CwN2/4iW
-	bgvsd7gCisoo2xcPlHPBlbN1W4uw3P1xsw9sB7xgMy5A76t8W6q72KA1+i6d/SCIT4Daht0n67Z
-	GbHqoPo7aPS5xrVoa1hqLc2wd6ys6Kx3HP3J3khrw9x3j6C511zstcFN/To07yPzPCxdMfuNXQH
-	cu7ll7p6jR5KLNQn0avMFrCwoUzAXOngIXLpIJpu+R002bBIOg4d38z6BaILKAASCT/eCARQvo7
-	7E2ZFcbGUJDVFTzmhuE6anPFGyefYlfaaANu5rq7yqixsHaD9dGu5Er9mD30SRfXvIFQHRzjdYx
-	hrZmCXCDu4KQru8jbs/WXW9Pg==
-X-Received: by 2002:a05:6102:5128:b0:744:d1a6:b11d with SMTP id ada2fe7eead31-76b54f7c0ecmr827111137.3.1786449124471;
-        Tue, 11 Aug 2026 04:52:04 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97a36631fbasm347703241.6.2026.08.11.04.52.01
+        d=1e100.net; s=20251104; t=1786450181; x=1787054981;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=uoVTJmbd8yKwYcWWlgS08ZgHIJGke3bvkQlHT1fmSY4=;
+        b=XbjxWy/kMVa9nybCEYytMDzycelNieBuXQjeSa1gkQD2fPpeP7+ImXAUEKzYY+HM36
+         P9ttVqbyYdCRRMZnGlOV0tZUYYTKZUClgDqhcZrssYg9nLUN1dM5YPpHO+neC4A41rYD
+         IB4ijVBOVjchP5hdEEluM3CrGKmnOg/aQHql4EA2xx290sy7mBeJeaqblvHj5U0AUU7j
+         Ac8EhrceAi8klAtT4otMosF2rUN1wQxsCzkGwZvxXWZivp5EdUZQJ9bEkCuErGhEFWhS
+         Zc7bLfIxB1ySWxwOeOy0KUY+x2kjDz8dnX9FWm6k8QtWQQiAZ9Nfq3fPbjY3G5292gpF
+         pKDg==
+X-Forwarded-Encrypted: i=1; AHgh+RqSgOrwM+hDNmK3Es4Qa1jQ8MIb3U6qlEJd0oTQYEreQgn0ObQFz8+Xmxx5qtynilA6Zdb3O3KjWe31p5vipPvUmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXU0xhBwpsjSH2Q8kgCURfadeimpqjZ1RMIMVac1UbEQVXuMsM
+	esKncSGAstcH2AxCTUoqDG1DeEhXiKrNSHClbAdpw8HFiTGJGcwxNIKUp/Mo/Mlu
+X-Gm-Gg: AR+sD10sesuPGii8ZhxFd3T3aWBPb9rIijTe0fvw4wu36bhffsXf5QckEW0EK8Acxzj
+	rJVu70z413ggpIPPEqA9A7GxP1wf/3p2BGGT2nuGmL5KZj4XQxxUp37C2VdSQoli4U1gyE3wXbQ
+	VNMVO1k2BKMP2rgU9uuYNAFu5CJfLnPgfRPSLSVk75AKcbFuUM/hB6baHMAxtb+Anwu/lQInAx4
+	Cl8sKpVvErbVfUOXyiqSdkW5r/kATaslvqmokXiUI0aD8/KeSsHpRwgtQeozmvcit/OdhSvJQ1q
+	Tvz9C+RP6vQXGSrbO3FyHWD9xT2+eCqwi1wd8LLVXJB1yczlKWsYgLctYAB4dFR+Py0ztJDU5Ke
+	L/lX40QFhdSawuHLQ3GFuoYquKpNrA+ZtcxnZBR2K5CEJzWSypEmYxwoDIREAMkhvgQXluNZvWP
+	8pJOQo1yy6itx+3tdP7bWLYnTKnHvZ7bA8ys7p8yAyRUsBFN+yNzELrWGOapAjhOjw9pNuzqKUB
+	0hewngtlsRUKyDxoCYQerjl/rO+sgfIQ4uCm+H0
+X-Received: by 2002:a05:6102:5789:b0:74a:be82:73a6 with SMTP id ada2fe7eead31-76b560a071cmr576809137.8.1786450180795;
+        Tue, 11 Aug 2026 05:09:40 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-76b655b9ed6sm369891137.7.2026.08.11.05.09.35
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2026 04:52:01 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-966e7380109so2015453241.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 04:52:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rp6mZ4U/vY/xM59D5FsOTEhkYFez9C1khX/T/qZBtCqD4WPbt3znn1BD1DXM8IvOWI630YxDDe1VjX4+/qQMb1iPw==@vger.kernel.org
-X-Received: by 2002:a05:6102:5128:b0:744:d1a6:b11d with SMTP id
- ada2fe7eead31-76b54f7c0ecmr827022137.3.1786449121269; Tue, 11 Aug 2026
- 04:52:01 -0700 (PDT)
+        Tue, 11 Aug 2026 05:09:36 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-59b074ec7ceso1275547e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Aug 2026 05:09:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpTB92EC9uINNa4QcclhfrFCq6y1ack5RsiibUy2G6zIDkqDe4uzpBAsHx/3cj5noZ4DUBC2sXsBivPO4u5kOgung==@vger.kernel.org
+X-Received: by 2002:a05:6102:15a3:b0:738:cdc6:f59a with SMTP id
+ ada2fe7eead31-76b573b9e9amr650405137.9.1786450174738; Tue, 11 Aug 2026
+ 05:09:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d4bd0cc7f26c1bcdc260edb994b4971cb5dd3a10.1786438424.git.geert+renesas@glider.be>
- <CAPx+jO-uXbNpFPzbAbDkBQh2-xf4r1NXk2PdQvOh9ZOfEQ71gQ@mail.gmail.com>
-In-Reply-To: <CAPx+jO-uXbNpFPzbAbDkBQh2-xf4r1NXk2PdQvOh9ZOfEQ71gQ@mail.gmail.com>
+References: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
+ <20260724-clk-provider-simple-clean-v2-3-56f306156d25@baylibre.com>
+In-Reply-To: <20260724-clk-provider-simple-clean-v2-3-56f306156d25@baylibre.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Aug 2026 13:51:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXLsMfGEz5s9s3voZGbQL90hRYCxsfC==xsGs315XOHWA@mail.gmail.com>
-X-Gm-Features: AUfX_mxYFb3a8-KjLfsf-hDUGSX7q2XivFMj5SQAYvLQGp9PIzS7OsTLrsDrS6c
-Message-ID: <CAMuHMdXLsMfGEz5s9s3voZGbQL90hRYCxsfC==xsGs315XOHWA@mail.gmail.com>
-Subject: Re: [PATCH v4] pmdomain: renesas: Add R-Car X5H MDLC driver
-To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Date: Tue, 11 Aug 2026 14:09:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW15QrpUhbra1Jg1_8rQWf8CE5TQiE5SUAsqvz5YmEwpQ@mail.gmail.com>
+X-Gm-Features: AUfX_mxAADqzKHeccKVpUAgUM-G2gOwUTpW15Dago95Bl-ey6AOZpFlGkzHgs7Y
+Message-ID: <CAMuHMdW15QrpUhbra1Jg1_8rQWf8CE5TQiE5SUAsqvz5YmEwpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] clk: renesas: clean-up simple provider misuse of
+ the consumer API
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-omap@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ulf,
-
-On Tue, 11 Aug 2026 at 12:16, Ulf Hansson <ulf.hansson@oss.qualcomm.com> wr=
-ote:
-> On Tue, Aug 11, 2026 at 10:58=E2=80=AFAM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC=
-.
-> > For now this just supports the always-on power domains, and dummy modul=
-e
-> > clocks and resets for the serial console (which is enabled by the boot
-> > loader).
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, 24 Jul 2026 at 11:04, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> Clock provider should not be using the consumer interface.
+> In other words, a provider should not be dealing with struct clk.
 >
-> I had a closer look at the attach part and there is few questions,
-> please see below.
-
-Thanks for your comments!
-
-> > --- /dev/null
-> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-
-> > +static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
-> > +                                   struct device *dev)
-> > +{
-> > +       struct device_node *np =3D dev->of_node;
-> > +       struct r8a78000_mdlc_priv *priv;
-> > +       struct of_phandle_args pd_spec;
-> > +       const struct mod_map *map;
-> > +       unsigned int id;
-> > +       int ret;
-> > +
-> > +       ret =3D of_parse_phandle_with_args(np, "power-domains",
-> > +                                        "#power-domain-cells", 0, &pd_=
-spec);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       if (pd_spec.args_count !=3D 2) {
-> > +               of_node_put(pd_spec.np);
-> > +               return -EINVAL;
-> > +       }
+> This change targets occurrences for which the provider uses the
+> consumer interface and corresponding clk_hw interface exist.
 >
-> Is the above check really needed?
->
-> Assuming r8a78000_genpd_xlate() is used for attaching, then the
-> args_count must always be 2, otherwise we return an error code when
-> trying to attach the device to its genpd, right?
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-That is indeed true if power-domains contains a single entry pointing
-to an MDLC domain.
-This check also protects against the (currently unlikely) case where
-there are multiple entries. But for that to work well, it should indeed
-validate pd_spec.np, too.
-
-Is this good enough for now, or do you want me to drop the check?
-
-> > +
-> > +       scoped_guard(mutex, &r8a78000_mdlc_lock) {
-> > +               hlist_for_each_entry(priv, &r8a78000_mdlc_list, link) {
-> > +                       if (priv->np =3D=3D pd_spec.np)
-> > +                               break;
-> > +               }
-> > +       }
-> > +
-> > +       if (!priv) {
-> > +               dev_err(dev, "%s: MDLC %pOF not found\n", __func__, pd_=
-spec.np);
-> > +               of_node_put(pd_spec.np);
-> > +               return -ENODEV;
-> > +       }
-> > +
-> > +       id =3D pd_spec.args[1];
-> > +       of_node_put(pd_spec.np);
-> > +
-> > +       map =3D mod_map_find(priv->mod_map, id);
-> > +       if (!map) {
-> > +               dev_err(dev, "Unknown module 0x%x\n", id);
-> > +               return -ENOENT;
-> > +       }
->
-> Would it not be better (if possible) to do the above verification as a
-> part of the r8a78000_genpd_xlate() instead?
-
-In the current minimal driver, the verification could indeed be done
-in the .xlate() callback.
-However, subsequent patches will add actual data to the retrieved map
-entry.  As the .xlate() callback cannot pass data for later use by the
-.attach_dev() callback, the latter has to call mod_map_find() anyway.
-
-> > +
-> > +       dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
-> > +       return 0;
-> > +}
-
-Thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.4.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
