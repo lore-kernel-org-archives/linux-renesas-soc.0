@@ -1,83 +1,34 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4463446AEF0
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2026 14:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D7D35AC12
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2026 14:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786544403; cv=none; b=IbtCOsD2a2FlIDm/eVZ/BaBwzNpEGxTEf0n2Wv711tCaJxHgxOshxYnyYlNIB4tJk0oeJ/EHBDftJtABmE+/buwEMGl1P7xYk55XUah9K0E7rg3tA3jtB7xCF8tf6lJWCePgvg6wWsN8+GDyYzPTwi6rKM76i65hGNrHopP1DCo=
+	t=1786546266; cv=none; b=q/NRtlfB9WToBJMJ49tCKcJLCThaBm8lSB5oxVNdw3Zd4stUJlbT9PbaZ7BxcW+HxUZvIppXyGNuY8kfJ7b0TzUqw0JZz8J5zfBiUfbZtLf3gMXSYdElQBx6vS2XxpzVpoLBkjPgUUc4unrE8NSwKVOYftppyYAo037VVc2rVPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786544403; c=relaxed/simple;
-	bh=FzQdI41LsYXGgDVc9k9yPu0jzMl08cpB4+kHkxb+1DM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e7fyl+UxOtyQ5mmllJqprYMzVUA3W1HMo0tbSyWEvg2U6cnjY/G5cM3yQVSNsW4HWETCS0giSX5cXyJWZldwJfgxbMhN/5nNh5bJGfvojtfJIAds2rOS7wOOb9UmFYZ4e4B7OuzC5kfTpmSj1yjSXi1aDorOw2k5zsrhVMrmB18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsWHbuPT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786546266; c=relaxed/simple;
+	bh=H8wkrYollu56HJf8xnMVkT/nfn2p1kydXY9Oy9K3atU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=Z6Smqbyl1+q5guSfW5Eiw1hMAiy4+WksT0DduvklI6b+VCFr8lBpnm58x7XEdTAbsgyzkF6X80nbo19YFUjSRrrJPBxzMajn4ZLnmfsnbM5oG/UcndSCB9OkBCl+pCXHPC0zCgEaXZZPm5Aq1b2cy9THjB9RTfMvkNwa5vbTm2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+7sChbX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsWHbuPT"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4996f1ee4a4so6565915e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2026 07:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786544400; x=1787149200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=EMZSBq3TM9KrtGynI6DWaERDoo3umOgfLHwY8OUCPPY=;
-        b=CsWHbuPTa/dyYRbT1qJTjSFxna/V9sFQgdM1Kw6CxhUy/gukEZMi8m0TK9nDUPUJEg
-         kqVW2234ADCV1uTXh07Na4Jl/u2dnwURhALy6lxlz7z/K+VfGo9gk5VTHPZAhmQjXrUx
-         oP6SrBGgbb4cbdLWcv3CKFPfUdsEhIritzSXRKB/j5S0Ak6iXrLC9miIT/h7K9V4abBH
-         fHx5vK58iuIDIxw00NIPZFKYecv4QS/TPMkDRTKfdGCE6DW8nnAK5TbGbZgP6j5AgLXO
-         FmAUCeTxmEOsrImhefT3QPaXRlvbsrd56TGYVCMZsD74YEacRqNQ5rO8iGTomURTZ6jU
-         L9pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786544400; x=1787149200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EMZSBq3TM9KrtGynI6DWaERDoo3umOgfLHwY8OUCPPY=;
-        b=CltcZKfa1eAo9o0MAiSZTr8+muLILuFhd2Ptx3ByLjOVd8YvSzxeFjozJPhdjlJ/7E
-         REhNX9v5FsXc1zWmT6gOHdwxCv26o0W6d/up0lwCpCBdRdyzrIuJbCdAVACxTKxjzYmW
-         jhaM2peU0rV+ML/NlrAohHUF1TKbYp/mg7NbWXmOtRJc2vKARMpMuCeVecc0/o7upZlc
-         iYjob6whThI6RCGSbO9zhf/2HoAOseQFlC0T7hygTwKg2QjbG6RTarPjaPxspqyI7gBq
-         EJJV2LufNCJ+UfFxCQv1QjohAai37z6I2lDRXFx7XH1vQOwoENBLmtToHgb+AOSh7OBO
-         l+GQ==
-X-Forwarded-Encrypted: i=1; AHgh+Ro9jDxX1X0x0X0S23SAbM35XJW7xI8Dzu9XKDJNjb2CV0y+fMciFbpQss5rF1sI6XNkuFpHpXz/SjDmQrEWV3qf6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNQNbm+IP5etbQPT1ANw7ccs9h45ILhypf6NET3Jq/xD8BXmIB
-	bTrwvHnEuSEBJZJO7nxvE9DfYjYRRomIQjFaQO4kOdw9XGPWvJl2hrz4
-X-Gm-Gg: AR+sD11z1SmEgiQvYhLsLtVy2Je1r2ZwCqJR0AqKMo1FPKGeMaa1w+3GgBBPH2v5G4U
-	EZ7t/uyL7Gvcg6+YNOJp+Fglz8472/ns32rpVWNTNxq0VmKUQab8M8q3rVzuJQyfpMnap9gMmVL
-	YeXS+2XCrwjWNaU/aIuXBOzn9g4UtlaYUijc/VVDIpAANb7om/IcRj8PpeTAlfgHfuwVD4ATBW0
-	DCCWvsbln3NOvW18uaS1f4zVGDmXF6mdUYYsr1zUTZcEikR4p7qqkSvHqMCMEx24CVovlERF68P
-	37GsT6xcmpo/TXhm3LbBUauD3/7YyPu13VjKgamL8hCxHVyEhaVweyBABcmf7opJoN/Lr65EC5y
-	KZT+TuRtw+hp1tXwoNbVgLV6ts8QJAlRc443s9I2SedqFx1B9gC6/bz1GGpi4NWfH4eMvWODO5y
-	ZW+eWMimA5DVqn8g8yqj01N0JSiEvrTWeCcEI3jLcupr5Tjy9/s4UFqsSYyzheVOpJ3i+Q3R8IL
-	eYYK01/r5FgAw==
-X-Received: by 2002:a05:600c:c4b7:b0:499:4d4a:4990 with SMTP id 5b1f17b1804b1-4997c0e398fmr55410285e9.3.1786544400258;
-        Wed, 12 Aug 2026 07:20:00 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:94c0:1825:d248:50ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997ad78f2fsm47352235e9.1.2026.08.12.07.19.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 07:19:58 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v7 9/9] arm64: dts: renesas: r9a08g046l48-smarc: Enable USB2.0 function support
-Date: Wed, 12 Aug 2026 15:19:27 +0100
-Message-ID: <20260812141940.246223-10-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260812141940.246223-1-biju.das.jz@bp.renesas.com>
-References: <20260812141940.246223-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+7sChbX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F791F000E9
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2026 14:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786546264;
+	bh=O/5p5GtgJsSIua50HU8WOd9HA3wRe2siQz/CAx6wM2k=;
+	h=Subject:From:Date:To;
+	b=h+7sChbX4cQpxb8u2fCBowKY0p+o904rhFEbIk8B9MaJmJX00iJm7Ja57e2fcHuge
+	 lMUy+X3i6t4Nw5AwZK2aejr3qiYMaziQt0S0aDGd/9y+LKTQKh4BKxQypBNtpYarFp
+	 AFyrjU7FsmVlP29VuE0GPS9h6g2Ze8DoQml32IFK1m7vZEsgAXUiQf3Mdx8HXdrQ0x
+	 /iJH/uw35zpf0c9BEJY3qM8w3DpsLluazc2yg2S+VK46mUetTxKyxlX8Xxd/i6jPgr
+	 o92Lqt1jw7+OjU1Rb+SmVByaIy5oNb+j5AfEsznbkqhV4Qzld3qaLXSP6/W2Z9A9RO
+	 jI7U23EEywEwA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id D342E380AA60
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2026 14:50:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -85,61 +36,114 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From: patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: 
+ <178654621933.1517176.14772668363850287584.git-patchwork-summary@kernel.org>
+Date: Wed, 12 Aug 2026 14:50:19 +0000
+To: linux-renesas-soc@vger.kernel.org
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hello:
 
-Switch ehci0 and ohci0 from dr_mode = "host" to "otg", and enable
-the hsusb0 USB2.0 function controller node with dr_mode = "otg" and
-status = "okay", so USB2.0 device/OTG mode is supported on the
-RZ/G3L SMARC (r9a08g046l48) board.
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v7:
- * Moved the patch from [1]
- * Updated commit description
- * Updated dr_mode = "host" to "otg" in {e,o}hci0 device nodes.
- * Retained the tag as change is trivial.
- [1] https://lore.kernel.org/all/20260707145135.247565-4-biju.das.jz@bp.renesas.com/
----
- arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Series: [1/9] arm: dts: renesas: lager: Specify ethernet PHY reset timings
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1127437
+  Lore link: https://lore.kernel.org/r/20260714130429.11214-1-marek.vasut+renesas@mailbox.org
+    Patches: [1/9] arm: dts: renesas: lager: Specify ethernet PHY reset timings
+             [2/9] arm: dts: renesas: stout: Specify ethernet PHY reset timings
+             [3/9] arm: dts: renesas: koelsch: Specify ethernet PHY reset timings
+             [4/9] arm: dts: renesas: porter: Specify ethernet PHY reset timings
+             [5/9] arm: dts: renesas: gose: Specify ethernet PHY reset timings
+             [6/9] arm: dts: renesas: alt: Specify ethernet PHY reset timings
+             [7/9] arm: dts: renesas: silk: Specify ethernet PHY reset timings
+             [8/9] arm: dts: renesas: sk-rzg1m: Specify ethernet PHY reset timings
+             [9/9] arm: dts: renesas: sk-rzg1e: Specify ethernet PHY reset timings
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-index 522cfde4b66a..a3c491778aba 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-@@ -88,7 +88,7 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- };
- 
- &ehci0 {
--	dr_mode = "host";
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -97,6 +97,11 @@ &ehci1 {
- 	status = "okay";
- };
- 
-+&hsusb0 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
-@@ -149,7 +154,7 @@ &keys {
- };
- 
- &ohci0 {
--	dr_mode = "host";
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
+Patch: arm64: dts: renesas: beacon: Specify ethernet PHY reset timings
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1127439
+  Lore link: https://lore.kernel.org/r/20260714130539.11287-1-marek.vasut+renesas@mailbox.org
+
+Patch: soc: renesas: Expand MFIS acronym in RCAR_MFIS help description
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1120506
+  Lore link: https://lore.kernel.org/r/b92a4b39a18aec7cdffdfdfbc75de4ecadb0395d.1782998764.git.geert+renesas@glider.be
+
+Series: ARM: dts: renesas: lager: corrections for the i2cexio0 bus
+  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1128071
+  Lore link: https://lore.kernel.org/r/20260715105306.25147-4-wsa+renesas@sang-engineering.com
+    Patches: [1/2] ARM: dts: renesas: lager: specify correct connector for i2cexio0 bus
+             [2/2] ARM: dts: renesas: lager: use inclusive wording
+
+Series: [1/2] arm: dts: renesas: gr-peach: Specify ethernet PHY reset timings
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1127436
+  Lore link: https://lore.kernel.org/r/20260714130325.11080-1-marek.vasut+renesas@mailbox.org
+    Patches: [1/2] arm: dts: renesas: gr-peach: Specify ethernet PHY reset timings
+             [2/2] arm: dts: renesas: armadillo800eva: Specify ethernet PHY reset timings
+
+Series: RZ/G3E: Fix dtbs_check failures
+  Submitter: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1139413
+  Lore link: https://lore.kernel.org/r/20260803132828.3249424-1-tommaso.merciai.xr@bp.renesas.com
+    Patches: [1/3] ASoC: dt-bindings: renesas,r9a09g047-sound: Document audio_clkout clock-frequency
+             [3/3] arm64: dts: renesas: r9a09g047e57-smarc: Set I2C1 clock frequency to 1 MHz
+
+Patch: ARM: dts: renesas: r9a06g032: don't set status to the default value
+  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1128719
+  Lore link: https://lore.kernel.org/r/20260716101030.15252-2-wsa+renesas@sang-engineering.com
+
+Series: [1/2] arm64: dts: renesas: cat875: Specify ethernet PHY reset timings
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1127438
+  Lore link: https://lore.kernel.org/r/20260714130515.11262-1-marek.vasut+renesas@mailbox.org
+    Patches: [1/2] arm64: dts: renesas: cat875: Specify ethernet PHY reset timings
+             [2/2] arm64: dts: renesas: hihope-rzg2-ex: Specify ethernet PHY reset timings
+
+Series: ARM: dts: renesas: r9a06g032-rzn1d400: GPIO updates
+  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1128703
+  Lore link: https://lore.kernel.org/r/20260716095935.13329-4-wsa+renesas@sang-engineering.com
+    Patches: [v2,1/2] ARM: dts: renesas: r9a06g032-rzn1d400: don't enable gpiochips which are always on
+
+Patch: arm64: dts: renesas: sparrow-hawk: Always enable edge connector I2C busses
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1121780
+  Lore link: https://lore.kernel.org/r/20260705125324.13519-1-marek.vasut+renesas@mailbox.org
+
+Patch: [PATCH/LOCAL/RFC] arm64: renesas: defconfig: Enable basic SCMI support
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1120504
+  Lore link: https://lore.kernel.org/r/fbc22f38ff46ce2d662b4ae7fef3cda538198ca9.1782998043.git.geert+renesas@glider.be
+
+Series: [1/2] ARM: dts: renesas: Correct white-space style
+  Submitter: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1138754
+  Lore link: https://lore.kernel.org/r/20260801210321.383773-3-krzysztof.kozlowski@oss.qualcomm.com
+    Patches: [1/2] ARM: dts: renesas: Correct white-space style
+             [2/2] arm64: dts: renesas: Correct white-space style
+
+
+Total patches: 25
+
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
