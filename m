@@ -1,128 +1,97 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56877396D2C;
-	Thu, 13 Aug 2026 09:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2265E2BCF4C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 09:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786612779; cv=none; b=ZKxqio8NyXZhv3Hiam56ddMmUInH9dVlzevqpktJbRnIf+nmbtWrXQ+4P+ZQC8x9lSUIDDFQqer/PUbg6+pGpTQNnCnPkpv2HBK0na1p51iaPj2uSHl4b1DOpNZ3GLMnRIO2aRuz3gL8SV28i3U0fZKphCskmfy3oQRhHKQTbnM=
+	t=1786613091; cv=none; b=XG2pXmd43q/m2a1swvG0WgBYCokjcIFDmhQb7eDMrFUMMBJbOa6uBjinmHD47TB3vmx/VggX1dVU37VLTBhlCQKafaE/VNFfXnFYFPuDmwm3+qaYbNE3ekvHu0osRoIfxTeEspItbA7hNn6RV+AroXe7ikGVl1jqAFMWCVq1XJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786612779; c=relaxed/simple;
-	bh=xUmHSXWF3IF+WspwitWwK7tWZgLoivVgyiD05OWn6zw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W1ftBo5OYxZbFOj0EtERj0zP9JuCrkqptGVu2bdapx9G2hA2A1kh21YkrgXuR/67/klFfEoGXZDuKzCnOaKtoA0kAIhZTV3xU5SMlhe4N/bomd0AXbgnlVdZ3swvHl0Nr7F7evVRWnK9mBckJWranQcSuLC9Q0Cddc9IKkNkGuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OnkPdBef; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NiRREdyY; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OnkPdBef";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NiRREdyY"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hLKYy4c24zKvtL;
-	Thu, 13 Aug 2026 11:19:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1786612774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lJ3GNxPWasdsRHWKiRTbRAsEizox1JwvfRTBpK+mnAk=;
-	b=OnkPdBefiQMMysZMm/om1oi2KYBv1lL6fGXX/TRUDgiKaG5AjjRqD29TVkWB7KTEqoMBl8
-	1TMDDNO+lgWN9je9bCpFeB4eud0sxNIarJ3t/E4JvaoZmrqZQrNRMTAagQeHG2N4QXQT7q
-	Ogjpxea4w/PAspqyOGOmLH/lmge1sqrhCPVzDgqqXudh62yO6N9cDPIJmPj3M8/Kge3BL0
-	NDmV/bAyZAXXwPWujU9X22hmnNBkN6A7tSC4onvshqmUMelNpvKxJ9A6aK/Tgg9nKK62+g
-	VmAw7wYlEiNj4BGfjQRnoc6VWo+rLL+i92S6gEc24Ois6BD9WR+Z+EsD+ot9Uw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=NiRREdyY;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1786612773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lJ3GNxPWasdsRHWKiRTbRAsEizox1JwvfRTBpK+mnAk=;
-	b=NiRREdyYbI500fRKfz4vHIJg0hb/mgjoi74JLseAl3iWKVcjAz2fc9SAJaP66JVfdMjXvZ
-	kBeWymxgA9k1AI3+EIn0AzxRvtdQX37U8qwbkeRrR2i0zT/YTE2/NVdWP83yMXmITa5feo
-	4Cq5kUOpHxePKjMYy8s0+lezn36YxaXX6KBWqMEIv5LsO6hlmCtL/dTQwtWNTjW0dMb4NI
-	F84GUi1E5oyRhmip3yS4e6/GUchRXTDaVOKryV1fJ5BpUWMyf1B1SXCawhxzniKW2SyuOi
-	c+hyeV3RrSRO+EXPncznITO+C+AomXH7NMyoHAz1VmhPc3I3g6Y50N8qRQHxDQ==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <den@valinux.co.jp>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: dwc: rcar-gen4: Fix potential unclocked access in rcar_gen4_pcie_ep_deinit()
-Date: Thu, 13 Aug 2026 11:18:22 +0200
-Message-ID: <20260813091925.71363-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1786613091; c=relaxed/simple;
+	bh=jd48x0JDaMadZvGCtOW40fgYj3SqSfl6jVqR/YltFCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nxwoqCWAZ+7A1f9Bw4gjLM7nZphFfUulWXZ+M/XEpSdJIPOwL+DooE7aJOjlK9KOcVUaZEza3NPmzHldFTylEtMBoum+EV4bDK2chQ27TR4VbBZTc/e83s0PdIDoBpnPIFIDK0+O06lzbX5zJtlUmbcd1o5AyhVwGYAOuGlU/tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-979fd43810dso484268241.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 02:24:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786613089; x=1787217889;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=pTzoQkw/EdhxE8XX/iXjCk7UuKhM31vDtUCV7Bto21I=;
+        b=Cuz3AsywUEofjuLFlCnoVtm2YeJA2qTsv29CDWOseye7YtEaq1A7YPvIEXZ1luIUMj
+         XEZeMeRm3H5QH662by8LDcvjHlfCZJ7UfCYVq7w3FSLX7ikewhgbqKeqoWjJr0a9d8gZ
+         DA9mDMJ0fjmYFp/Q+btKF3ve2IyR7npTFI7v25brWn1LB8ElApsf9Nqu5h1FQCr3Mc4C
+         +VodEpZ0OBVzAOuTcqXdlu6Jow6WVTXIGjNa7JF7d3O5jxLTTQ5d4exxEfrE1jNTzPVv
+         EnC0Kst4dhnBRxxDyrt8YayhP5k771DA8l9LCIl1o2Ag6EmhYRoPIqcz+8bAUUEZfB2x
+         I7CQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrWpdNuolS5L3MnTDawf+X1EnpxbsZTMwxsFjUJjekz/gqkCMUiHo9GsrV/mfBbBXVWkf7D87ZzZRl1IIv9+2KakA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGFqCmtEzpjfRcbiMcUFqmSNSiP3L9sqLnYv+FTLOh5pfUOs66
+	0i2baS7eh/VALYfjuVyizEizfTLOt0OD/djAmW0b/E7MrrjUhqbMEiSdtXiLW0A4
+X-Gm-Gg: AR+sD10WLX74cvAb4SRn0xuLpcR00R9jsh6+aOkFJcjQfphLgEOWDYrAV6pUMeRxrZw
+	zXrhUu99hgeWFvuf0rJWd5sDVGtm3AF22Z2vfqbPDHyce6SnQyQCmpy1Qn9++xGBcu8u6HgE+XO
+	i9lyd2j9k9F1806HdpiMdCeOZP0Uox9LdTwSbP03WjY5L1N5b2dMSLRdM113yI9EvLwzT27I74g
+	dmVPTxoSepXGonNdF8CQXD4hytc8/Vtk+AxsnSWc5Z31arLKPXIJFcqfMKgHT/yvd1qnzv4Z1QV
+	fDBF9hbe59QcRRTTkAYUr1VbrEsu6yl62+WmIKdbCk6asfDSLdb5rWTtX6FBynxe0BzSzaxLvr1
+	hCkq1AgT/90ISRqYWAW131OQo3/RhmFRSsaQ4gyodJ1z00G3FxyQPAJk/rKfi38XnKtXpIyM+YA
+	32XwK/PIJKe/nDetKj0Bf9ouSOQMfsnLOF56u3NT0k6vCWkF54HSaddSJ6W5vyV7Iy+GwUozXr6
+	tVJqMbs6aG+ki/AXt6yw9BoTDdDD3A=
+X-Received: by 2002:a05:6102:8090:b0:744:cb59:d6e0 with SMTP id ada2fe7eead31-76db1f5d38amr1092261137.0.1786613088798;
+        Thu, 13 Aug 2026 02:24:48 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97becc5f312sm617688241.9.2026.08.13.02.24.47
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2026 02:24:48 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-765c077b5c1so548795137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 02:24:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rq3ZnRmjwi464v8iKfMMIMAaFQjB8bfRiRzICR2e6OfaEug+FB8tPKX+xunzEnBf0gqJY9Uy4f6/SWvLNonqoH8rA==@vger.kernel.org
+X-Received: by 2002:a05:6102:1485:b0:737:783d:1916 with SMTP id
+ ada2fe7eead31-76db7b91137mr1053786137.11.1786613087765; Thu, 13 Aug 2026
+ 02:24:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: f4c87077c89a59d5b39
-X-MBO-RS-META: xkquoubrhhj97cxrbqi9zkuuk8tajb3b
-X-Rspamd-Queue-Id: 4hLKYy4c24zKvtL
+References: <20260615115455.1412098-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260615115455.1412098-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260615115455.1412098-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Aug 2026 11:24:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUQKmDQz=V6oa-7HC6NNUTzYUddOrCmHMaRXvHSBrF9pQ@mail.gmail.com>
+X-Gm-Features: AUfX_mxIUL2dSfgpmaEW9n5O8N-uwqoJgDk0_CZpOV-32gxYiS60Hp8O10qmVn4
+Message-ID: <CAMuHMdUQKmDQz=V6oa-7HC6NNUTzYUddOrCmHMaRXvHSBrF9pQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: renesas: r9a09g077: Add VSPD and FCPVD nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Initialize PCIEDMAINTSTSEN in rcar_gen4_pcie_ep_pre_init() to 0,
-and in case rcar_gen4_pcie_common_init() fails and the result
-propagates to dw_pcie_ep_init(), the invoke common deinit instead
-of endpoint deinit, because we are certain the PCIEDMAINTSTSEN
-register is already 0 and the common deinit does not do any register
-accesses.
+On Mon, 15 Jun 2026 at 13:55, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add VSPD and FCPVD nodes to RZ/T2H SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.4.
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index fbe465a29068f..b47281b30db96 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -487,6 +487,8 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
- 	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
- 	int ret;
- 
-+	writel(0, rcar->base + PCIEDMAINTSTSEN);
-+
- 	ret = rcar_gen4_pcie_common_init(rcar);
- 	if (ret)
- 		return ret;
-@@ -571,7 +573,7 @@ static int rcar_gen4_add_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
- 
- 	ret = dw_pcie_ep_init(ep);
- 	if (ret) {
--		rcar_gen4_pcie_ep_deinit(rcar);
-+		rcar_gen4_pcie_common_deinit(rcar);
- 		return ret;
- 	}
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
