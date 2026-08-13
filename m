@@ -1,101 +1,132 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7882A42A792
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 15:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEB548D872
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 16:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786636147; cv=none; b=Ak72g/lrCTEJ27xxHXW8jJawrnaTvEirV2JTXYZ3TeOQkr8gjwg/HLHeBnyeIk5lSrui9z9shvG6WGxDCx0yAkqHu3ym6L3JoykqbSDy9cprLtUXjEivpc4eb7d7cTGU9Y1l/14Nv7sErSPfnI0p5uSqx6HWRDwn/XfNWz0QmTA=
+	t=1786639726; cv=none; b=ajONK03zcWhjTZAEgs7i+wR3rD4Jj1R26BpWS9+L29kbKu8+7OAgIyLjkK018DjQjdJ4E6PlvMEPP65KhSlNm1TB4YXyoO7SYjSRjUfLYV+d43wvb2vT7uxZZjWQNuV5Wn9kJVkI42DN6KB1bZJlHv2kwrGUgtFYx0Ht9bIS7m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786636147; c=relaxed/simple;
-	bh=GsMvELF4opNDWlGTEpj8mpTFySqFsau7fk/PwQYpXII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ig2BHzGATyo3ngZBSqf3/77LBSMOu0tkbrLCFrEGOk18LDTi1b3fyPinCTcrxa6VFChqFR5vOz2P8sGf3PpKQblu5QdH61y2+aCa5H0GLHc1SarnrM6gZOyThvfIxj0KSYwh/lZgz2kKobLiNi4r7zNUXgj+2GGU/G2Xdd90yE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1786639726; c=relaxed/simple;
+	bh=qwDUj4+15bXny3vE81t4xJfojfrxR4IYhJWK2NNHuME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mywPs7kutDIbPAvYcd/fFpfNMDVh8aGleMcECZ2uGHdmUi/QhZpPZVB9zA7wDv0zXvllmwpjQPOr+ttFJAbf9VBGYjaRUsfQIqYuj5aQo5cwgnkgNEoTNyKPC4O3i8kovjLsHgPxOqB/2khBHxsDmgCKFc3iWMH08UTUl+gcMrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSLcCmtv; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-69fc9f25118so2603457a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 08:49:02 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSLcCmtv"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so1164885e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 09:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786639723; x=1787244523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LxXBkcey+corwbU4RFHxVYgs/fXIM/bb/etjoRIzs8I=;
+        b=CSLcCmtvuPSe+K941+fIeyzOvy8szMDKSdVzo8faJiHw/6DEbSakwrJa6wjqosedfh
+         4wgWm1hUCOprXlrwbszFhnPlqIkX1ziZoxcFfvWgoXdSKe8SG7yXQBioZ5SVEHwPs+71
+         xVx2wTl7DzAPxA9GwgkxyeZncVChi6zc8PNDOGH1+vCJDAMSATIIZIl0KlAyvWMXiy2q
+         CYCPP+3g5rsWheTgRDGmjmPbZMBN4YwjHtXiB8ZEsLt6emPZPx1cQmd5/WFgToZYHB8x
+         S61WvZeXWM9IAP4LW0dXe+y+rfTC/gu+gBzfKgVMsIXgG/U36ZsWVP2XsBcxFRz3Guqx
+         C3Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786636139; x=1787240939;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uBt/Jg+qpyyE8AdxLGWQ3O9/mbvgjD10TBEWdEpAJOw=;
-        b=p3K2H8ZrumVRDAhDyH6VLAusrnryR5FFXJbSVzXpSGKOPJ/9Y5KIYiVxIIWoTqkeV9
-         HVV0RHSB8fedSxEXZMV4ZFr6gKrBUWA5iSa5rVh3Tgn52pqjXQ92mRKuPUs0cFQbHipb
-         Oc9URJmUPAkQXGzsdM6zIx/t6C1oO4LRLSYixw/YQoL/igrST/8JiToJpaiOY7ZbU6+L
-         cgePiXh0jaZU9jno466en0HfureZ5RO01pdefkZ7hS0KDtH/KHd1rHtBbXzOKjqhUu0t
-         MaEyQCltqfoJetT/0QOb7dkneyb18ThX6dj7FHjqO5e9X7QOzD1Yzg8UkOS+KVwYOKRc
-         VewA==
-X-Forwarded-Encrypted: i=1; AHgh+RpOk4IRRfGvFm7iJWlVPhM47c4BJQ6WzlVlWB2AlA80cLK/afqIv62hCWKkABv8Ys4nqeEO4l8UGzk+ndR5PtScww==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXxZuWjxjnjO5eOv4eM2xDObUT8xcFExsyQAqhyjll7dc6waya
-	3EUjXX5bMBy9OfA9lI6Vxtp6mQv8gwUOQx1FP8Y2JkT+mpqVBnWjqqwEWXm9BJOqrtI=
-X-Gm-Gg: AR+sD10621zKioXd+ZaS7To4oxlzePmbsjq9tRBexpfJNJNATzeV1c2lSY/Om+PyLU+
-	WKcVgjsfVaONcvQvl9OrHdb40Q/h2eks4pl6yItSul7pSvMxDjfVqvOuSyX/iUUdrNDXjbnDI+c
-	G5W3CHE7NNVS9Pv3vl1BnymtrC7FWDCuwKzyo42u03mQvfr9mxZB/hvoVWk2qpDIMOHzqV5FpDx
-	Apm9rjT/PS+90Ml+okQG9KQc8ygVYMz5WBlEjkwBb1ay59Tizc7BGpkh58gvQv09Pai1bb/OXRx
-	Hdwq5IC5/jnh4e1XYdOkLyZMrttk7nqNUr4AskDYJ9qLvdKLWiNiDubT7hFtSJr6HVrCiM1TkF+
-	elHd+pqFfF7ks5Pxt0Acnncz7L5/jCt4KS82PZEWxxq1S9N2Y69RQgeJE+0T19MDh8Y9y6HDCP4
-	K7GPaeemo9xeaVBCfUuC4ofoYbuTOY+cjvEF1zTcwbKgVd/d7Ik3+gRd7Wq16xpw9Ia5fpAH3Eb
-	bC00y48bjiOePgo4vIvikoZTA==
-X-Received: by 2002:a05:6402:2552:b0:6a1:2400:baea with SMTP id 4fb4d7f45d1cf-6a3806228dfmr2361107a12.10.1786636139532;
-        Thu, 13 Aug 2026 08:48:59 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a37f8cbc83sm1106346a12.25.2026.08.13.08.48.56
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2026 08:48:56 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso3500626a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 08:48:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoKZIIQNPFfLqLICjtmRUUT1Z+yv3PGUlR/6yzy+twspUEgRIFkPlr2YBUUMNWis/AbhjMeaTDIFf6DFI/xGZcKPA==@vger.kernel.org
-X-Received: by 2002:a05:6402:20db:b0:6a1:2863:ad84 with SMTP id
- 4fb4d7f45d1cf-6a38062323dmr2974868a12.11.1786636136389; Thu, 13 Aug 2026
- 08:48:56 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786639723; x=1787244523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=LxXBkcey+corwbU4RFHxVYgs/fXIM/bb/etjoRIzs8I=;
+        b=MLhM5RrEsjg6KQuvL0Z8YRfXFDpgcBTlFQ3zXhERkR2DeWa3XOkxAmzf7H8POwRQok
+         BON86pIYqjHzCEXmkn7jfIv3/HgnDM22f3DV8D2i2yoZBWlfwZ/I4VneqjTjcZ648GRG
+         r5r/+ZXwDqezYxxzNhjCd140gDMxPHZGH4JiSCyL8vLD4sBfgEP6htbRdzJAE+qnZMIo
+         zo/q2b/BsYQtivC8edd7wWYxYSjX5GOMkBh5IUbGz4Yqk22TvxnrWaTeU7PMxVeW7lRb
+         XUVJKnUf8J9ctAYv6O6Nw9wq2m/EE/PCdPfbzPcbDgw7le5JEn6J2CdTk+s9YQVZ9oHd
+         NtXA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq4GWk+31Jas2z3iQrdZlpyHxmmz7GSaRpoAW53MRFWCZ+pS/JicMjzqjrYeyTvUOKT7MSFuVWipC5III6cpyiu+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaRBr9BR9ryzxwlBdB7whvO8jUtXZcaYyXU04oI/yvKknS9dyy
+	99Zi36F7NEKiKl61lxW2bbGFwwBEjbViR8bRlKQp3VaYDK3OcjBh/fjR
+X-Gm-Gg: AR+sD135zz/+8ROt03FKDTHksx+bNjJpSuScQQRFwOUm88mjb3Piy8d6gYETM8gp2gW
+	tDDsDlqduRdCZW0LdEMtmajXZkR1cnlsGxEhg24ETK0F0/o8+4huQG+iOoBFiNq3fcVPmK83SNv
+	gpo6kT/lMtCSVCrmGE3iGobOUu0vlqSndnMz6O4c/Rx2CId7goGpY5ejjXupAnZ6BviCcj2xkmj
+	9XTYUHTeEJSzVvfyOjrZ5Hiz/b85vvbnYD/ouxluunp1hwWlpGodT9lK8uZDYYqeJcfg5ZfAGy3
+	hpSiIRm1esOGlxYtR5gqnMwNAQ10qh42tQFhxCAjyqXhGvGApDuZwtu0fe7KSuPwKTsFx6CTj7N
+	NpO/q9gqMT69ML/LeHlOn98F5tjyg0qjaD4JnKcF7nlvWRznLoTm/xQIokonA7uW5ny3ErfjABF
+	QLzk0ilvbSoPM4oBs5ZvOnYSD96hGX/JhFWnoX3aL7zSvUePk2iZPSF4cOvUcEUKbBx3co9YigG
+	XZHNhH/q8aDAA==
+X-Received: by 2002:a05:600c:3f05:b0:499:858e:de42 with SMTP id 5b1f17b1804b1-499858edec0mr45227115e9.6.1786639722571;
+        Thu, 13 Aug 2026 09:48:42 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:15c5:4b13:a9a3:1fda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4815f20058fsm721259f8f.4.2026.08.13.09.48.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2026 09:48:42 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Thomas Gleixner <tglx@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Radu Rendec <radu@rendec.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] irqchip/renesas-rzg2l: Fix loss of interrupt
+Date: Thu, 13 Aug 2026 17:48:09 +0100
+Message-ID: <20260813164839.129777-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev> <20260710113637.1328000-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260710113637.1328000-6-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Aug 2026 17:48:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWznqK2oeyX1WmtryYCz2wBH8wZ5c2H2_ShMDvrfO+C8w@mail.gmail.com>
-X-Gm-Features: AUfX_mzi3GOWB6cpfoDeWmlHrS4hYhgS8E2rVsGg-6r06p1J_56QOvXSHTzn4Fc
-Message-ID: <CAMuHMdWznqK2oeyX1WmtryYCz2wBH8wZ5c2H2_ShMDvrfO+C8w@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 10 Jul 2026 at 13:37, Claudiu Beznea
-<claudiu.beznea+renesas@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
-> Enable I3C.
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
+Read modify write on rzg2l_clear_{tint,irq}_int() is causing loss of
+interrupts when multiple interrupts are triggered, for example with:
 
-Gr{oetje,eeting}s,
+  gpioset -c gpiochip0 355=0 353=0 328=0 352=0
 
-                        Geert
+The ISCR/TSCR status registers are write-1-to-clear per bit, so any
+bit written as 0 is left unchanged by hardware. The current code
+reads the register, clears only the handled bit in software, and
+writes back the whole value. If another interrupt's status bit gets
+set between the read and the write, that set bit is written back as
+1, clearing an interrupt that hasn't been serviced yet, so it gets
+lost.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Fix this by writing back only the bit being cleared (all other bits
+as 0) instead of read-modify-writing the whole register, so that
+concurrently-set status bits for other interrupts are left intact.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/irqchip/irq-renesas-rzg2l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index f6b2e69a2f4e..b3774f82855a 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -161,7 +161,7 @@ static void rzg2l_clear_irq_int(struct rzg2l_irqc_priv *priv, unsigned int hwirq
+ 	 * falling/rising-edge.
+ 	 */
+ 	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq))) {
+-		writel_relaxed(iscr & ~bit, priv->base + ISCR);
++		writel_relaxed(~bit, priv->base + ISCR);
+ 		/*
+ 		 * Enforce that the posted write is flushed to prevent that the
+ 		 * just handled interrupt is raised again.
+@@ -177,7 +177,7 @@ static void rzg2l_clear_tint_int(struct rzg2l_irqc_priv *priv, unsigned int hwir
+ 
+ 	reg = readl_relaxed(priv->base + TSCR);
+ 	if (reg & bit) {
+-		writel_relaxed(reg & ~bit, priv->base + TSCR);
++		writel_relaxed(~bit, priv->base + TSCR);
+ 		/*
+ 		 * Enforce that the posted write is flushed to prevent that the
+ 		 * just handled interrupt is raised again.
+-- 
+2.43.0
+
