@@ -1,199 +1,293 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326F839FCB1
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 13:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2D8480972
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 13:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786627604; cv=none; b=O39f05NCoe+v6KqQC4yKnriKLh0PQnY5AQ7gp/JJMgz082Q2EMokXOd30T5H+hsI1YE3XPJZ99hh2BpEuVAlrswENl8S80agU/gSufvCf27cBnqy8BsV3ZtnPLe8/0EOS4y6LIK9TGL71AnsqCLvaMDiIceeCEr+pWomgh9O2V0=
+	t=1786629024; cv=none; b=eYxivu9buUoq6NcKhqPG+QehC+AiVUNl69sJGzr+RuU5MADpFheFBODeTOuGh+g/1Rd+1ZKmxWrGVD157WOWjAi3tWEP3QXkYotDdfn9HqQ5DwFxq8e6XZlPv+NE+c+Fou4sG1KIocB608c7pGVVmD8ZT9jD2vJsoumtTQRWI8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786627604; c=relaxed/simple;
-	bh=m0glXaJmdKQNkPodJBheA6Ja1+5WWr1uWzxve9NRR40=;
+	s=arc-20240116; t=1786629024; c=relaxed/simple;
+	bh=jtT+bJnq8ZSja0HD3NFV6/xujMDltjzrjhyWVL+255I=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JzQO9PUDKbwW/hcPSFJ8Vf21iUcGQuVH2rdLKNaWQDz7kO37KC8n9ZW3Y1tQCmcwPc8Vzxx8KIgt9cHAGQ+tnZpAFh1SfXAhl0fG8DrwJ+ftVlGQwzGlg6PTR+2PGJF4uhvlJ/4XsbKPoGdUR+qUgjEgy9Dw2qap//hbRpIaTKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLJ88V0S; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=BEB7iqem5RThvpsi3bt55jWcJviRfie1xQehag41w9SgRBorCYZKUtBn2kwNNoPs/VzRIC2g8lCH3QL9yco9R0bXZ0DrlJytroBwk+ZYfiDjdH+r9NC7BspbaQYTxCiY3n4nVre7YjgTCzzrdvoN2ruoT5CH0cC/yrrfIExIdUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYAbdnB3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLJ88V0S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46A81F00A3A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 13:26:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYAbdnB3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9522B1F00ACA
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 13:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786627602;
-	bh=+nCeRbry9tgAPcOQkZXNT1tLEYJdbEYFIpt8gONT42Q=;
+	s=k20260515; t=1786629022;
+	bh=51G8SAV3RFtwWC/nx+kTTThhMuclvLczvqYy+E9IdVo=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=FLJ88V0SoNJtoPehkyqsNzCcON1vRHpIVd5wiFVRMeXgSXws5i8ocHbEy346etJi7
-	 /meWPKrSTps+6XxPMMOg05VuT206pRzI3CPdcCsvylyAqhQzllCObc6TGtJjYhMqmb
-	 2cKEl3lnA+fTTJHNG3FxtSL7lVKB/GhtlK3A5SbFWVrtg3bi5mwgkJmTwQMxDi344s
-	 7ir07hfi5I3/yMlur4I/D42I5bGmdRIFP9CocoIOSuEu2bNsTQ6ji0Yh9hLgsDUKuO
-	 YlQBWx82VTdB5IefgiuYg/PIzbOCQKxRjohZXOuI18pq7WT8kSujSvCN25NpO6vm7T
-	 +VD7QqjOOJeeQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39c7ce122c7so16865661fa.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 06:26:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqADkyaUOmSqKN+aLsPAfQMtw7KuRNskvgoUQGbJmcaNy6nbjqvgxvd0vT0N9Ag8ePlKXhJhBQrmumKC9fROywFoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw2I3+fPgjOqlOa0fCAFq3n5N5w+572pB0YnbnJuSBcVaLiA3t
-	xPKI+l1aDvUDaR/69eLHlM7UWKxL2a2RMRNYqCjXi6vfJQwGrrDGvM6G4s3hSZCBR40oTcKQUEt
-	F2dwSqLhPAbRk4SImQaH4sl/TjCJBZ+S4+OCLJ/66CA==
-X-Received: by 2002:a2e:be22:0:b0:3a1:1198:d196 with SMTP id
- 38308e7fff4ca-3a129e730cfmr2462491fa.1.1786627601626; Thu, 13 Aug 2026
- 06:26:41 -0700 (PDT)
+	b=EYAbdnB3aEdIJTLxjoQtOa0EBrdV6jTxzxRaafKyd+kSzaVDz8m6LZ4ps1cLCiHZh
+	 a4t09xC3GoMVjUvvvuVDIznbFTHiPjO0bfOOvrP5otJliJhRbEQe+IRSaqXHPnj7hE
+	 vp1hmZmkd5u/Z8EktEGJfoF/Y03mCzIou9df5k76/3AZ2k6W6qc0zRKEjfh+hEBJUi
+	 snyKgtpBe6j6yJW5EPgKumNCtoJ+Gkzrmfc0KYJ0PzJAlFijqlJ7JHtI7n+l0jOkbe
+	 BH1PqprVl3BIk7IdRmECFf8CWLASlZxaCm5Z1Io15bOEiw0zwxSFwCV9yXdYQhQE41
+	 8Owfb8cs+fMtQ==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39ca300db70so5654071fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Aug 2026 06:50:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RptoYJvn9yWqrwqsW/Yf2AmvXz/iXzbLO2cl/biLF6HQ4SUgwj3nx8vMqmoGViSdy5mkvftPU7lC8O3z6rORrmfUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwA2qrRB4fjolkMYL4q8F9p5NINH8Dc7RjR6g0s7bsSM3nVKHa
+	FbUcz3UAbMgmUVFVQeVNejAsZvxd84q31f6ibLPJYDYullIhmeeBpxFXjJAP96ZnXaYHiQPEjnZ
+	ceNZV8LqC2vDkLCZ+jvSfkif+4Xb1Y+tCmHINmArUsQ==
+X-Received: by 2002:a2e:be87:0:b0:39f:bc94:eba5 with SMTP id
+ 38308e7fff4ca-3a11a776fa2mr7639151fa.16.1786629021252; Thu, 13 Aug 2026
+ 06:50:21 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Aug 2026 08:26:40 -0500
+ HTTPREST; Thu, 13 Aug 2026 13:50:19 +0000
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Aug 2026 08:26:40 -0500
+ HTTPREST; Thu, 13 Aug 2026 13:50:19 +0000
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260812115010.108322-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260812115010.108322-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260812115010.108322-1-biju.das.jz@bp.renesas.com> <20260812115010.108322-2-biju.das.jz@bp.renesas.com>
-Date: Thu, 13 Aug 2026 08:26:40 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MeSC2KTdFSX7dNJN_1zUH9+N3A3ctHgHuweW=e7yAV-JA@mail.gmail.com>
-X-Gm-Features: AUfX_mxovvcYsXQ8nLS_x90AAHjZoxfbJEGCiYCQuJmQ-QkUQUKysAcAMxHDgwY
-Message-ID: <CAMRc=MeSC2KTdFSX7dNJN_1zUH9+N3A3ctHgHuweW=e7yAV-JA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] soc: renesas: rz-sysc: Register auxiliary device
- for PWRRDY power sequencer
+References: <20260812115010.108322-1-biju.das.jz@bp.renesas.com> <20260812115010.108322-3-biju.das.jz@bp.renesas.com>
+Date: Thu, 13 Aug 2026 13:50:19 +0000
+X-Gmail-Original-Message-ID: <CAMRc=McW-ot+KAjBtCt6EXdshQTVLX4-LZE87O-hgVqv5htvQw@mail.gmail.com>
+X-Gm-Features: AUfX_mzKxZZb7yqbxIulxQryd1Dq-XAm0tGQIjPolYOrCJCNI8riEStDg1JAPlM
+Message-ID: <CAMRc=McW-ot+KAjBtCt6EXdshQTVLX4-LZE87O-hgVqv5htvQw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
 To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
+	Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 12 Aug 2026 13:50:03 +0200, Biju <biju.das.au@gmail.com> said:
+On Wed, 12 Aug 2026 13:50:04 +0200, Biju <biju.das.au@gmail.com> said:
 > From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Some RZ SoCs (e.g. RZ/G3L) have a PWRRDY register that is controlled
-> through a power sequencer rather than directly by the SYSC driver.
->
-> Add a pwrrdy_pwrseq flag to struct rz_sysc_soc_id_init_data to mark
-> SoCs with this property, and set it for RZ/G3L. When set,
-> rz_sysc_probe() registers a "pwrseq-pwrrdy" auxiliary device so a
-> dedicated driver can handle the PWRRDY sequencing.
+> Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
+> which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
+> SoC. The driver binds as an auxiliary device to the parent SYSC driver,
+> using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
+> {usb,dsi,csi}-pwrrdy pwrseq targets.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
 > v2->v3:
->  * Updated commit description by dropping devm_add_action_or_reset().
->  * Config now selects AUXILIARY_BUS to avoid compilation issues.
->  * Dropped the cast in devm_auxiliary_device_create().
+>  * Kconfig selects AUXILIARY_BUS to avoid compilation issues.
+>  * Added match for consumer device and added of_device.h header file.
+>  * Replaced regmap_update_bits()->regmap_assign_bits() and updated
+>    the function parameter of pwrseq_rzg3l_set_pwrrdy().
+>  * Simpilfied probe() return with PTR_ERR_OR_ZERO macro.
 > v1->v2:
->  * Switched to devm_auxiliary_device_create().
->  * Added regmap parameter to rz_sysc_pwrrdy_pwrseq_init(),so that regmap
->    can be passed as platform data.
+>  * Added a comment in pwrseq_rzg3l_pwrrdy_match().
+>  * Dropped dev_get_regmap() from probe as regmap is now part of platform
+>    data.
+>  * Added a blank line before devm_pwrseq_device_register() in probe.
+>  * Dropped the error message devm_pwrseq_device_register() as probe prints
+>    failure message.
+>  * Dropped local variables dev and regmap from probe().
 > ---
->  drivers/soc/renesas/Kconfig          |  1 +
->  drivers/soc/renesas/r9a08g046-sysc.c |  1 +
->  drivers/soc/renesas/rz-sysc.c        | 21 +++++++++++++++++++++
->  drivers/soc/renesas/rz-sysc.h        |  2 ++
->  4 files changed, 25 insertions(+)
+>  drivers/power/sequencing/Kconfig              |   9 ++
+>  drivers/power/sequencing/Makefile             |   1 +
+>  .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 147 ++++++++++++++++++
+>  3 files changed, 157 insertions(+)
+>  create mode 100644 drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
 >
-> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> index fdf18ed2dfc2..ab1c25fc2656 100644
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -485,6 +485,7 @@ config RZN1_IRQMUX
->  config SYSC_RZ
->  	bool "System controller for RZ SoCs" if COMPILE_TEST
->  	select MFD_SYSCON
+> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+> index 1c5f5820f5b7..286d4e300845 100644
+> --- a/drivers/power/sequencing/Kconfig
+> +++ b/drivers/power/sequencing/Kconfig
+> @@ -27,6 +27,15 @@ config POWER_SEQUENCING_QCOM_WCN
+>  	  this driver is needed for correct power control or else we'd risk not
+>  	  respecting the required delays between enabling Bluetooth and WLAN.
+>
+> +config POWER_SEQUENCING_RENESAS_PWRRDY
+> +	tristate "Renesas Power Ready sequencing driver"
+> +	depends on SYSC_RZ || COMPILE_TEST
 > +	select AUXILIARY_BUS
+> +	help
+> +	  Say Y here to enable the power sequencing driver for the Renesas
+> +	  Power Ready signals. This driver handles the power ready signals
+> +	  required to power on the various IP's on RZ/G3L platform.
+> +
+>  config POWER_SEQUENCING_TH1520_GPU
+>  	tristate "T-HEAD TH1520 GPU power sequencing driver"
+>  	depends on (ARCH_THEAD && AUXILIARY_BUS) || COMPILE_TEST
+> diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
+> index 0911d4618298..b33d08d82f43 100644
+> --- a/drivers/power/sequencing/Makefile
+> +++ b/drivers/power/sequencing/Makefile
+> @@ -4,5 +4,6 @@ obj-$(CONFIG_POWER_SEQUENCING)		+= pwrseq-core.o
+>  pwrseq-core-y				:= core.o
 >
->  config SYSC_R9A08G045
->  	bool "Renesas System controller support for R9A08G045 (RZ/G3S)" if COMPILE_TEST
-> diff --git a/drivers/soc/renesas/r9a08g046-sysc.c b/drivers/soc/renesas/r9a08g046-sysc.c
-> index 90db9d383539..cd129c727461 100644
-> --- a/drivers/soc/renesas/r9a08g046-sysc.c
-> +++ b/drivers/soc/renesas/r9a08g046-sysc.c
-> @@ -76,6 +76,7 @@ static const struct rz_sysc_soc_id_init_data rzg3l_sysc_soc_id_init_data __initc
->  	.devid_offset = 0xa04,
->  	.revision_mask = GENMASK(31, 28),
->  	.specific_id_mask = GENMASK(27, 0),
-> +	.pwrrdy_pwrseq = true,
->  };
->
->  const struct rz_sysc_init_data rzg3l_sysc_init_data __initconst = {
-> diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-> index 161e8c38eea6..79c6af934721 100644
-> --- a/drivers/soc/renesas/rz-sysc.c
-> +++ b/drivers/soc/renesas/rz-sysc.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2024 Renesas Electronics Corp.
->   */
->
+>  obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)	+= pwrseq-qcom-wcn.o
+> +obj-$(CONFIG_POWER_SEQUENCING_RENESAS_PWRRDY) += pwrseq-renesas-pwrrdy.o
+>  obj-$(CONFIG_POWER_SEQUENCING_TH1520_GPU) += pwrseq-thead-gpu.o
+>  obj-$(CONFIG_POWER_SEQUENCING_PCIE_M2)	+= pwrseq-pcie-m2.o
+> diff --git a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+> new file mode 100644
+> index 000000000000..8dfc65034a1c
+> --- /dev/null
+> +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+> @@ -0,0 +1,147 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/G3L Power Ready driver
+> + *
+> + */
+> +
 > +#include <linux/auxiliary_bus.h>
->  #include <linux/bitfield.h>
->  #include <linux/cleanup.h>
->  #include <linux/io.h>
-> @@ -84,6 +85,22 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
->  	return 0;
->  }
->
-> +static int rz_sysc_pwrrdy_pwrseq_init(struct device *dev, struct regmap *regmap,
-> +				      const struct rz_sysc_init_data *data)
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pwrseq/provider.h>
+> +#include <linux/regmap.h>
+> +
+> +#define SYS_PWRRDY_N		0xd70
+> +#define SYS_PWRRDY_N_USB_MASK	BIT(0)
+> +#define SYS_PWRRDY_N_DSI_MASK	BIT(1)
+> +#define SYS_PWRRDY_N_CSI_MASK	BIT(2)
+> +
+> +static int pwrseq_rzg3l_set_pwrrdy(struct pwrseq_device *pwrseq, u32 mask,
+> +				   bool val)
 > +{
-> +	const struct rz_sysc_soc_id_init_data *soc_data = data->soc_id_init_data;
-> +	struct auxiliary_device *adev;
+> +	struct regmap *regmap = pwrseq_device_get_drvdata(pwrseq);
 > +
-> +	if (!soc_data->pwrrdy_pwrseq)
-> +		return 0;
-> +
-> +	adev = devm_auxiliary_device_create(dev, "pwrseq-pwrrdy", regmap);
-> +	if (!adev)
-> +		return -ENODEV;
-> +
-> +	return 0;
+> +	return regmap_assign_bits(regmap, SYS_PWRRDY_N, mask, val);
 > +}
 > +
->  static const struct of_device_id rz_sysc_match[] = {
->  #ifdef CONFIG_SYSC_R9A08G045
->  	{ .compatible = "renesas,r9a08g045-sysc", .data = &rzg3s_sysc_init_data },
-> @@ -149,6 +166,10 @@ static int rz_sysc_probe(struct platform_device *pdev)
->  	if (IS_ERR(regmap))
->  		return PTR_ERR(regmap);
->
-> +	ret = rz_sysc_pwrrdy_pwrseq_init(dev, regmap, match->data);
-> +	if (ret)
-> +		return ret;
+> +static int pwrseq_rzg3l_usb_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_USB_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_usb_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_USB_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_usb_pwrrdy_unit = {
+> +	.name = "usb-pwrrdy-power-sequence",
+> +	.enable = pwrseq_rzg3l_usb_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_usb_pwrrdy_disable,
+> +};
+> +
+> +static int pwrseq_rzg3l_dsi_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_DSI_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_dsi_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_DSI_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_dsi_pwrrdy_unit = {
+> +	.name = "dsi-pwrrdy-sequence",
+> +	.enable = pwrseq_rzg3l_dsi_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_dsi_pwrrdy_disable,
+> +};
+> +
+> +static int pwrseq_rzg3l_csi_pwrrdy_enable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_CSI_MASK, 0);
+> +}
+> +
+> +static int pwrseq_rzg3l_csi_pwrrdy_disable(struct pwrseq_device *pwrseq)
+> +{
+> +	return pwrseq_rzg3l_set_pwrrdy(pwrseq, SYS_PWRRDY_N_CSI_MASK, 1);
+> +}
+> +
+> +static const struct pwrseq_unit_data pwrseq_rzg3l_csi_pwrrdy_unit = {
+> +	.name = "csi-pwrrdy-power-sequence",
+> +	.enable = pwrseq_rzg3l_csi_pwrrdy_enable,
+> +	.disable = pwrseq_rzg3l_csi_pwrrdy_disable,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_usb_pwrrdy_target = {
+> +	.name = "usb-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_usb_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_dsi_pwrrdy_target = {
+> +	.name = "dsi-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_dsi_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data pwrseq_rzg3l_csi_pwrrdy_target = {
+> +	.name = "csi-pwrrdy",
+> +	.unit = &pwrseq_rzg3l_csi_pwrrdy_unit,
+> +};
+> +
+> +static const struct pwrseq_target_data *pwrseq_rzg3l_pwrrdy_targets[] = {
+> +	&pwrseq_rzg3l_usb_pwrrdy_target,
+> +	&pwrseq_rzg3l_dsi_pwrrdy_target,
+> +	&pwrseq_rzg3l_csi_pwrrdy_target,
+> +	NULL
+> +};
+> +
+> +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
+> +				     struct device *dev)
+> +{
+> +	static const struct of_device_id pwrseq_rzg3l_consumer_match[] = {
+> +		{ .compatible = "renesas,r9a08g046-mipi-dsi" },
+> +		{ .compatible = "renesas,r9a08g046-usbphy-ctrl" },
+> +		{ /* sentinel */ }
+> +	};
+> +	const struct of_device_id *match;
+> +
+> +	match = of_match_device(pwrseq_rzg3l_consumer_match, dev);
+> +	if (!match)
+> +		return PWRSEQ_NO_MATCH;
+> +
 
-Honestly I don't think this is worth a separate function, could have as well
-been:
+What about the common parent of sysc and the consumers? Is there any reason we
+can't verify it?
 
-	if (match->data->soc_data->pwrrdy_pwrseq) {
-		adev = ...
-	}
+> +	return PWRSEQ_MATCH_OK;
+> +}
+> +
+> +static int pwrseq_rzg3l_pwrrdy_probe(struct auxiliary_device *adev,
+> +				     const struct auxiliary_device_id *id)
+> +{
+> +	struct pwrseq_device *pwrseq;
+> +	struct pwrseq_config config = {
+> +		.parent = &adev->dev,
+> +		.owner = THIS_MODULE,
+> +		.drvdata = adev->dev.platform_data,
+> +		.match = pwrseq_rzg3l_pwrrdy_match,
+> +		.targets = pwrseq_rzg3l_pwrrdy_targets,
+> +	};
+> +
+> +	pwrseq = devm_pwrseq_device_register(&adev->dev, &config);
+> +
+> +	return PTR_ERR_OR_ZERO(pwrseq);
 
-But I won't die on that hill.
+Just do return PTR_ERR_OR_ZERO(devm_pwrseq_...
 
 Bart
 
+> +}
 > +
->  	return of_syscon_register_regmap(dev->of_node, regmap);
->  }
->
-> diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-> index 921ee0d26c47..e55f3258d703 100644
-> --- a/drivers/soc/renesas/rz-sysc.h
-> +++ b/drivers/soc/renesas/rz-sysc.h
-> @@ -20,6 +20,7 @@
->   * @revision_mask: SYSC SoC ID revision mask
->   * @specific_id_mask: SYSC SoC ID specific ID mask
->   * @print_id: print SoC-specific extended device identification
-> + * @pwrrdy_pwrseq: has pwrrdy register controlled through power sequencer
->   */
->  struct rz_sysc_soc_id_init_data {
->  	const char * const family;
-> @@ -29,6 +30,7 @@ struct rz_sysc_soc_id_init_data {
->  	u32 specific_id_mask;
->  	void (*print_id)(struct device *dev, void __iomem *sysc_base,
->  			 struct soc_device_attribute *soc_dev_attr);
-> +	bool pwrrdy_pwrseq;
->  };
->
->  /**
+> +static const struct auxiliary_device_id pwrseq_rzg3l_pwrrdy_id_table[] = {
+> +	{ .name = "rz_sysc.pwrseq-pwrrdy" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, pwrseq_rzg3l_pwrrdy_id_table);
+> +
+> +static struct auxiliary_driver pwrseq_rzg3l_pwrrdy_driver = {
+> +	.driver = {
+> +		.name = "pwrseq-rzg3l-pwrrdy",
+> +	},
+> +	.probe = pwrseq_rzg3l_pwrrdy_probe,
+> +	.id_table = pwrseq_rzg3l_pwrrdy_id_table,
+> +};
+> +module_auxiliary_driver(pwrseq_rzg3l_pwrrdy_driver);
+> +
+> +MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
+> +MODULE_DESCRIPTION("Renesas RZ/G3L Power Ready Driver");
+> +MODULE_LICENSE("GPL");
 > --
 > 2.43.0
 >
