@@ -1,151 +1,121 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC521ABD7
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 13:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E570F46EF6A
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786714434; cv=none; b=slYgs5NyQGBWImi8cC1YWtqE+Zci00TPIq/VCC+qtfqEdObfcE4AQgBq0gpLifkKkmnqFA996KRCXFAvIs8a4qTZK60qMIcAKhLhXNcDiezW4eMGAs2zB9NM4cD+QUFy4jt1VnMsgoeleF+3vMYnA/KK1rF5yQgePbe8PqnU2P0=
+	t=1786714905; cv=none; b=H9LSTF9yIG/nbQsgyxSXoGkCxh+w/96BBlKPVkM8YqfKu4RL4nRhCfHAnrjVxmSt8H3QmKKwUp73Xbx+SIS5InRhZPcQzBUcchFHqVF3Ebr/3Nezj7sbOJ7n3G/8rBLzcxTKrqvIYwMHFNTBlfI6QJKg6qEeG9v/ViYi/I/fSQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786714434; c=relaxed/simple;
-	bh=xkgFJCp/Zk/sqzv4xyN/NJ242EfBE169OBRzxFIrK7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G413FdRMukWO4wzakQH80qCJQswGvWTuZY4I248IaLYCLKnbHXrSRtEgXutiM09lo0WxhALyGNHewz5sEBPMXKRyVfD7EMCaVz3uUeUFQAbsOT2GXKcQzjSDzX7/iF5EzCSTCjAIRf41m+tjIN3iDDKg479vrB+YBnm9pzaFGXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1786714905; c=relaxed/simple;
+	bh=gFgCDtaDhkHUy5zlzen5RjHhMrQ/5qm6YfwQtHm+KaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cpRep08+y6WIIq5TGnRHzagkgaL9dwqkjCoaa5HDQnHXdqTaoNEANos8cesUVVWkZnQ+JdxRkwiEUz79/UQjCloE36bVxzxuh5qpKRdjIBkmUvfF/YbmEIVlSFNYG3o4tiBXW4U0jB/RxSE/snkDfu+T/YSmj2I5EkeoLKETr/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r5f7i46n; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c1c26d7e951so167426566b.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 06:33:52 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r5f7i46n"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ce87c7e3bbso13045475ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 06:41:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786714903; x=1787319703; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AW/kAhpxk6iwgmshFSjwEkP45x3FFpydZgKHFvSyQTQ=;
+        b=r5f7i46ngDcdZiNETABSXzFfZwTfRROE5Nv2iIOw3tOMZ+6x4A4N5Xf9DUdqFIAxkY
+         b9ONMZcrSfkZmI1eb4w04SAYaKFiluv99bJ+3LSD3tyMZf0At/LtXNww1wxv+jybLywE
+         cSamRgB01lrVWWm60MOq6+5PY0Thds/+fYrZx2A8osAPKkkqCACQtTl97VPEYrwE0YX/
+         fdCgDC9KCSdIUa9OmS2Kbh/d+lx2SuBjdxWVRILpfGmDpuvlZLGGCxyO3JM8v1HgWlyG
+         GH68BK25zHGXnUY1pyNt9SBmhNwFWY4i9oKl/JCTRr4Q4xTFzPx/sqfvVoWTeQZj4QF7
+         jizw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786714431; x=1787319231;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=NBTxHEUUi4J2ttd+XtUaUBMmZySWV/hj2+fFGqKDlJM=;
-        b=cPhhCEDkKnsfef9UtvEFHb6PH5imgtiQMV5OXKz0qX8TRSLjS++ZscrDcO1rRGPY3D
-         ah3/rq1oy97nQuLj/wOY78OOem9qm5pu7rjUl1rA2/Q5wPqEnjr6zKABsD7x4Lc2yjP9
-         cqfK2VC1URK0O1EGPKy+h9znQV1cs4GSqXGewknDMjwmZv+NXuez7d1UyBtbwQNJ7XEP
-         EQTzlSZSX5m5xrV1p8YmBJD/i0DC2WJnHUvk7zTZZ3H3U23rU3kxP1lT+eEh757hX1Nz
-         yIPyCDPDuDgljf/AM6sO54t+lrk12jbVeCLz1lTJHOmWKQYbVGX2lNMWWtq2YZQOVF8T
-         tORQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rqb8xo1Sh3jTtGO0H7Su2bUSSV52AJ2jqlspwdmuyz3HfWkQfrBGDnDRdCx9QXnaTJH+D1HmaRVGPIxGBTAKAO++A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU3bV6bjlBl7F6IU7Vtz3uOOaOcyFAW71/PwXapLE9MLEED6VS
-	0wCRsY0j1hkas04FSN8BZ4bf4x1O5ZC+K1ce6W/9eyZiDFEGHs1BQ2bnLqbx74jpEPU=
-X-Gm-Gg: AR+sD12bIXCq/bKFG71hxsqfxMNGMlG3wk+wgNRTWkUCBa54gS+bGYlZBWzhLuRHoJD
-	dKRgEzsP54aKiQ5nKxSDT7Dcd9RGimvxdmFBHAFiSQuPd2OrJYQMoEkaX+mdqnmEFZA9T+woh5G
-	Iz6JcjwUz5kE3ugVdkSVgLKoWq3oL4mya5ZNFpnx1GqFpV8HpadY4HjIAwoZ2V1SGrQK4naJr7l
-	GMe3b8Zpg0fCs0HwdauhGdkDPgpXurxXE7qd6M7Tu2l0WPuRCaNDdwKaBl8WENlVxdnpR971vNs
-	4644jytAwzojMFumRzPsNjIICyjG2GH2dW3ITibAxup+MsXvJpAKuarlijs7aYBJ3jZd1ccI+QK
-	nbMwOG65YuJiGFieM3zTuLSiF3QVvbhZriAyKuViUfZ0PehFp5uYrBfGvQhBLLm0iEV88nySCaf
-	YpvksGhFDLTttr89eEb+fk+QwDDEWF6zhRQhNmurO3/40VnwOEROazNnsy7iKKnwP3ghZ6jCO8C
-	Mbti1Z+DNxFDdQn3+aeMkVvLA==
-X-Received: by 2002:a17:907:7b93:b0:c20:ff26:336e with SMTP id a640c23a62f3a-c212a25389bmr277719166b.14.1786714430949;
-        Fri, 14 Aug 2026 06:33:50 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c212378d7f7sm103080066b.35.2026.08.14.06.33.50
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Aug 2026 06:33:50 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6a17211b9ecso1844775a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 06:33:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro0SUOTgwWi/NPlaEUKyQQro+MhOFLoB3FRIQrsWhHVKdH703xFXiXpn/FPMMN+nO4jY6ENiM2qQS3fOHsNyOKJJQ==@vger.kernel.org
-X-Received: by 2002:a05:6402:1cd0:b0:6a0:a644:355e with SMTP id
- 4fb4d7f45d1cf-6a38a8bedf4mr2981067a12.2.1786714430006; Fri, 14 Aug 2026
- 06:33:50 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786714903; x=1787319703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AW/kAhpxk6iwgmshFSjwEkP45x3FFpydZgKHFvSyQTQ=;
+        b=qoYqnf54cGIIAQoQujMVQYJgoXjO13OgPqjcctD2As1lWJgw4fJRCwNUidND7Lj04Y
+         EkqawwK5pYC3wFEc1Tx3zhhFA8/r2Jf45B65gldQElm7L4jK88RSt6lI8UX2xq09MSCu
+         Vy3+n6gn1fp+WdUCULaklMiM3wfO25+gQ+QTLiaFziaosBjxnYU7wOIRf8YeU0ilriEc
+         qAnBOS1G4cS+KkD+RXnKRtKnylakidrqEDiXMzMJTz+f5or1tF5i/umglr0kJJbWVvlf
+         avwk3IcpGscV8TBIVn1oY8oh3t83pUFXavrQSmG9FtVKnhgGWARKOkVxoYs+Uk3xkRbu
+         pubg==
+X-Forwarded-Encrypted: i=1; AHgh+RotBrmp1YVoLkJTM2WJUU32qv4bUwctlJ524oH5t5ADEicjIqRicsC9eXDdjAUjoxb799OA1Oll4RVpYGSmgenl5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMdELLuUZ3TEMQ2QoTpX7b/ueCqQ+hfG0JHx8Vg6oZnBkdgOzQ
+	QX8yeaFcoRlD6W+nfpltXS2eHMw3zkyq9ITMmllgLqLX6OoJFjh1+vzb
+X-Gm-Gg: AR+sD10YCo0z17+z+SU7dxkGt8A5Ow8lJFzZl0dEuOag7qMR0JQ4jBWNFf0dY8ITx92
+	/c67vQArVfZ26LAhuBQ8P7AsH3Jlbi5ucMKdEpltaE2W7l92HmK4yWNC6+Y0xVdrL5Tr0bDlD+u
+	Iu1whbx1EwuYyyJE7NZ+M5U3WrpUxLpWegazX25jKzq94KIz3YXICbXbeuoxYosA/HUO3DVDwHs
+	Fxd8jkZ+aJ5wb3hUjtDOK3d/tBZlCId+1PmQS2cLqYBAgwFUcekqL1vy7jtiL+X9SCaXlrGaeSJ
+	7H0I2v4Xfgd7ThohXMXx2CiNRK1hQgC866kpzIl/v4bGUzvrTvPKjYSiCqeW39KP/+A5p1WPVI3
+	84kfz+kzJbRytfUBRJX3vncf6d24yfuRxN/mawwcedHJ2dUtd2AMO8Srd+CwnhG9k0MtF4izgtI
+	j255AaKXgyKolp1cyPTXfzjFkss5+Xu9fUR8qboHewwBlkNRulLVr75UiHvoQeclimMkgUZmwYA
+	DlzqDwi
+X-Received: by 2002:a17:903:37c7:b0:2c7:f2c6:89e0 with SMTP id d9443c01a7336-2d3b08053b6mr72682355ad.4.1786714903174;
+        Fri, 14 Aug 2026 06:41:43 -0700 (PDT)
+Received: from haichao.tail057a43.ts.net ([2001:da8:e000:1206:e9af:7c0e:be31:2c3f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d3ae7c067asm10269255ad.28.2026.08.14.06.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 06:41:42 -0700 (PDT)
+From: Ruoyu Wang <ruoyuw560@gmail.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ruoyu Wang <ruoyuw560@gmail.com>
+Subject: [PATCH] counter: rz-mtu3-cnt: Balance runtime PM on enable failure
+Date: Fri, 14 Aug 2026 21:41:38 +0800
+Message-ID: <20260814134138.1388045-1-ruoyuw560@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813-rzn1-miic-fix-array-v1-1-b58cafcc917e@reliablecontrols.com>
- <CAMuHMdWUrabJOWLAiSrSm=r7KbuZn4CrVZiswJsf96U3STaNTw@mail.gmail.com> <c933264e-151f-455e-81ee-6c16a5f11d84@lunn.ch>
-In-Reply-To: <c933264e-151f-455e-81ee-6c16a5f11d84@lunn.ch>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Aug 2026 15:33:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUqeVfmsOYQJMPwF1Kui59dEY38OAKWMr42DtEThpKSwA@mail.gmail.com>
-X-Gm-Features: AUfX_mz_hQ0TBj7ICikSgGrzarOlKuc0im7GCeWn2gWIWPpQ5K6KidfPNAk4oAg
-Message-ID: <CAMuHMdUqeVfmsOYQJMPwF1Kui59dEY38OAKWMr42DtEThpKSwA@mail.gmail.com>
-Subject: Re: [PATCH] net: pcs: rzn1-miic: Fix config array initialization
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: khendry@reliablecontrols.com, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+rz_mtu3_count_enable_write() used pm_runtime_get_sync() without checking
+its return value before initializing a counter.  A failed runtime resume
+was therefore ignored and the callback continued with the device
+unavailable.
 
-On Fri, 14 Aug 2026 at 15:14, Andrew Lunn <andrew@lunn.ch> wrote:
-> On Fri, Aug 14, 2026 at 10:11:28AM +0200, Geert Uytterhoeven wrote:
-> > On Thu, 13 Aug 2026 at 20:09, Kyle Hendry via B4 Relay
-> > <devnull+khendry.reliablecontrols.com@kernel.org> wrote:
-> > > From: Kyle Hendry <khendry@reliablecontrols.com>
-> > >
-> > > Fix memset parameters to initialize the entire DT value array
-> > >
-> > > Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
-> >
-> > Fixes: f39e968dc168a7bd ("net: pcs: rzn1-miic: Move configuration data
-> > to SoC-specific struct")
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > > --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> > > +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> > > @@ -683,7 +683,7 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
-> > >         if (!dt_val)
-> > >                 return -ENOMEM;
-> > >
-> > > -       memset(dt_val, MIIC_MODCTRL_CONF_NONE, sizeof(*dt_val));
-> > > +       memset(dt_val, MIIC_MODCTRL_CONF_NONE, miic->of_data->conf_conv_count);
->
-> Sorry for hijacking your reply, i already deleted the original email.
+Use pm_runtime_resume_and_get() and return a failed resume to the Counter
+core.  Keep the matching put when shared-channel initialization fails after
+a successful resume, and leave the cached enable state unchanged.
 
-Np ;-)
+This issue was found by a static analysis checker and confirmed by manual
+source review.
 
-> This is correct, but could maybe be better. dt_val is allocated with.
->
->      kmalloc_objs(*dt_val, miic->of_data->conf_conv_count)
->
-> This allocates objects. It just happens your objects are s8, so size
-> of 1. But the memset() would be "more correct" with:
->
-> memset(dt_val, MIIC_MODCTRL_CONF_NONE, sizeof(*dt_val) * miic->of_data->conf_conv_count);
+Fixes: 0be8907359df ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
+---
+ drivers/counter/rz-mtu3-cnt.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-That would indeed be more correct.
-
-Note that there is an opportunity for a buffer overflow below:
-
-        for_each_available_child_of_node(np, conv) {
-                if (of_property_read_u32(conv, "reg", &port))
-                        continue;
-
-                [...]
-
-                /* Adjust for 0 based index */
-                dt_val[port + !miic->of_data->miic_port_start] = conf;
-
-                [...]
-
-What if "port" is out-of-range?
-Do we just rely on dtbs_check to catch this?
-
-        }
-
-> And i checked, there is no memset_objs().
-
-The *_objs() APIs are still rather new and limited.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+index 7bfb6979193ce..a8ba8ebed236d 100644
+--- a/drivers/counter/rz-mtu3-cnt.c
++++ b/drivers/counter/rz-mtu3-cnt.c
+@@ -504,9 +504,14 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
+ 		goto exit;
+ 
+ 	if (enable) {
+-		pm_runtime_get_sync(counter->parent);
++		ret = pm_runtime_resume_and_get(counter->parent);
++		if (ret < 0)
++			goto exit;
++
+ 		ret = rz_mtu3_initialize_counter(counter, count->id);
+-		if (ret == 0)
++		if (ret)
++			pm_runtime_put(counter->parent);
++		else
+ 			priv->count_is_enabled[count->id] = true;
+ 	} else {
+ 		rz_mtu3_terminate_counter(counter, count->id);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
