@@ -1,381 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC583C3456
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913DD495047
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 19:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786719591; cv=none; b=pnDd+XKfaZm2mdP5BRyxnoqPQQ7Sh5qTN3pyfNVOZhlJoMvcTtNce6PzaRJMwTiiJAY7pHTPlPdc7zWtiTFUok0+v/snV/+cJdvwqA5kXTl+aMaLljTZCQgDmXgVC2ksfwHNPqhkJhStQDgEiMOG2jzSL/L31Tl1WPnt6eYKbkc=
+	t=1786734283; cv=none; b=koYBIETzy8TJTP289Jktkyt9iiAClMOQc4/GS+Uku2JM9fKPJjiSQ2RwG7KKDmGHTp36ZqNMcZK8rGeK5ryapJ6MCstQvWYmvJEHotLCKNd7IxC2dnzo6036aOv0RDUP0u78ITh64Sae+ZQ3//l2tqbuBJB7m68QdYRYr4tshaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786719591; c=relaxed/simple;
-	bh=lFb0/r5T37LtcZ/fZlU32akwUACaoc0XZlKURDhjlM8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wt1Q8Dy1TqnSk0kUoTqhswnfrgg9McGW7Qy3hvdko31M/z6tjY4/5nY0g0fIO1fz3R7pyZVCmfkko9pumkn/3dC7ABJea//+dteAxaFaeh7t4r10OnADjf5fGbcgzQ9N3ueegHT/KF0KLfhy9n+51NqbZRQrJSsONnTYoMs8Gc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiM437FB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786734283; c=relaxed/simple;
+	bh=Pw0NZaYpiHcJ6LnUczkxjh53XdpFkgJeSJbVi1h9dsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYib13csPOsr5UAindb18w7BbG/dD+YVbMdxqLErGQldNEIMJsEBMGkWVc24FN9vOGNKZtWS1lYPbOAqj2q4uEm16d+eDlH8GwfHyNNFlm/bZfZzB+Ql8JT7Bq0i1ZYMCwWpfNbgL3VpdiDmckPcKcy+KI4osCwD47CMbhDDzIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=goHqpxBt; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiM437FB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C4A1F00A3A;
-	Fri, 14 Aug 2026 14:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786719590;
-	bh=7Ls+NvHNklb+Bsu/U28EvAEbavqoLs1ZOqSz3mrEaN8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=iiM437FBRyasBK//56rPgaRV2HV2M9vOpZjERtFJTJmlTF0HZu3jQrb3r6yWy9JCy
-	 HntuDr0AiYEcYK8Pk/Em+mqdqix71XZreVhuX8PVUbY2jb/B72jOsOqxDJjLSwlXnB
-	 ynR//qAQTXBnMhGfeL1Gxnsh/8/ayYXVvasHw4iooUfQ4pIxFKsgK1flcnnCJdYm2Z
-	 xBsDqXnA0RTKfJ2Xey40CL2r1CwcraIfNUo/2j/CJBaE/kczyOlTyaARc2CmleI+6O
-	 e/j0UgXnCPzBfpbFaEo6bACJUtkIRlpPbWWmtBomBIaP7koM6lUfUBF3jpREuyj4vf
-	 PORMj47nD6Jhg==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Fri, 14 Aug 2026 16:57:44 +0200
-Subject: [PATCH v2 55/61] drm/shmobile: Convert to atomic_create_state
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goHqpxBt"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-381b831d535so2131733a91.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 12:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786734282; x=1787339082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=WKJuMY/9Z2qQ1nJiebk6zH8BqGVpVFHJzd3jEHA9B+4=;
+        b=goHqpxBtML0Hd5R/s3QPhKzDLtTfWQGXxtEDCwRmoUzZq8yZ1/sK6OMkizPM0yVvYA
+         fRACJiPV80hTDTfEShUgccW8DAg5zadLHujwfwSw9XeXkgagpuVUe8a1gS6i9fnueEhn
+         SfaGlfPhrp0CYGi+lePlSJN3/fJFgW+Do712cY8ZYCbyAAvH49CJJFB6nPhhGQK26mzq
+         EFPOp3YjaF5AhU4pzuTqQIf4dm0SpB8jFYcEeyse22H7EpAlANqDS32LDDzDkVeRnpWa
+         +QeyJ9VY1Bx6AKbXzJxCoFvR12G+En7xTSs1pfD+ikh7riUXIHJvIO48G+LrpVvgR4za
+         ONQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786734282; x=1787339082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=WKJuMY/9Z2qQ1nJiebk6zH8BqGVpVFHJzd3jEHA9B+4=;
+        b=UovBM1QScQicf3B71kza4r6Wkg0DYVBqMi+Tm2Mij40e/ZIBvW+gy0g0eHnRmPCaEW
+         2DF2twJYGNY5KBD/1t8GKqJhak6bAhosD4nGrpRPr5gzTmgNECB4PmnrjMH9MQzxhDsh
+         ExGoSEaslylK3muhdGcoJ4ZfxvRP29cVCRCYgri35dgUaTgJMArppe3NW/faKs0Ce2eG
+         PaNWfMjrYn1HvHLbOCSl5tefHcMtt1QEiGFigyeZTNVJiL+aYWWnEWuCbmKyr38IcTz5
+         p9UdzmCJURYJaIcHIZN611NmW29d9QCPu8ZZJ/hbKf9eZNL/fyFhlFdgYODOKI3/jSuM
+         iSIQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqPQAVAG26f9jdo8S3w5TscDLnN2J7Qd3Hp5YLTdsjgmFubCKqGxR/QwndB4ZnIsnAaySiVLi1/goYzn3SJGZTbPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4rwy7P1WftlHYBnQank/UWxADz35spWSizXll0sg/IxQCrcW2
+	jZ5isQoT44XOHPwobIydoiqCoZarKS55+XRTyCh1Ij8t8BKUt6EiA6t0
+X-Gm-Gg: AR+sD12JYTwtCxnDIH/JaipK5X31gG4vSPYC97mKtQxBo/mlvzHUAlqESet+OVoKwrb
+	6ISADWXcucbUHvv0q2PA8547kL3eDGjBT8KW9MnMbDzjCEBZsIxODnI8ZJf4nabL6T88gW6TBS9
+	3dtoKU2iL498eQcYaCmekLez1m1RbEp578sZH2+xjARQLlfd5AHBnwkmtYG2wqIZY+bz4iuD2BX
+	ZOgsvjyLjUIdAuXzZwhS+sPdL/THVMScAuGT6Cth6AbuCGfx2IogO+t6lKZJiAw1NIfr9WDGc3z
+	dP2JN55ugoQthEClmBhwbIHLL3iFl/CHXcgVAaVbmIJJ2gKUrDE6AErX6OXKVtxdY4gjVDjibgZ
+	+dWnAOYfbJf3xEUHqOcSVuFaiKGlYC2gmo/PlcBp7DbWXWTTI+nKIaA+O7XrFr3PegdXVIxONIu
+	umJbHp+fvHUBZbxs932iMiBnnOI+r85eLsndn5vChqlIJfYVzpBlYqdFOwZlvZTwJf9ViTVdWYw
+	XhkbmnGZMxet37QViftEZVR/0wFIJkNIZ4ZsKLCYdc3CZgjXIOMPstCwX2P0oGypQ5RiyNiL0mN
+	K+4mOi3LiiYG
+X-Received: by 2002:a17:90b:2b8e:b0:38e:4f41:83df with SMTP id 98e67ed59e1d1-3933b8aa611mr9883133a91.15.1786734281764;
+        Fri, 14 Aug 2026 12:04:41 -0700 (PDT)
+Received: from localhost.localdomain ([2406:7400:94:ab62:887d:e555:df21:3318])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-141388b2554sm16952785c88.14.2026.08.14.12.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 12:04:41 -0700 (PDT)
+From: manushprajwal <manushprajwal555@gmail.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Manush Prajwal <manushprajwal555@gmail.com>
+Subject: [PATCH v2] net: ethernet: renesas: rswitch: fix device_node refcount leak in rswitch_get_port_node()
+Date: Sat, 15 Aug 2026 00:34:23 +0530
+Message-ID: <20260814190423.933-1-manushprajwal555@gmail.com>
+X-Mailer: git-send-email 2.46.2.windows.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260814-drm-no-more-plane-reset-v2-55-82d2963dd134@kernel.org>
-References: <20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org>
-In-Reply-To: <20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6989; i=mripard@kernel.org;
- h=from:subject:message-id; bh=lFb0/r5T37LtcZ/fZlU32akwUACaoc0XZlKURDhjlM8=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFn1OneE5uqJdl+b2pwfPONGTWW86ezHbdPF2n9wz2r6G
- HFgQvGkjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjARtumMtXIbmmTWL69palsl
- vrdXuainhW/2xjfBE41E5Lc91IhWrI3ZFuUvn9B7at5sgW0TDsQ/YWy4laP46nD0p7awBevFgma
- f+bImSLPd+dvzqbltMRIJwdlKzWct+uJeT+5VXWBxOurl9/UA
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
 
-The plane reset implementation creates a custom state
-subclass, but only initializes a pristine state without resetting any
-hardware. This is equivalent to what atomic_create_state expects.
-Convert to it.
+From: Manush Prajwal <manushprajwal555@gmail.com>
 
-The conversion was done using the following Coccinelle semantic patch:
+On an of_property_read_u32() failure, rswitch_get_port_node() set port
+to NULL and jumped to the out label before releasing the reference the
+for_each_available_child_of_node() iterator was holding on it. Once
+port was overwritten with NULL, that reference could never be
+released since out: only put "ports", the parent node.
 
-@@
-identifier funcs;
-symbol drm_atomic_helper_plane_reset;
-symbol drm_atomic_helper_plane_create_state;
-@@
+Rework the function around for_each_available_child_of_node_scoped()
+instead of adding a manual of_node_put(), so the iterator's reference
+is dropped automatically on every exit path. Since port is the
+function's return value, take an explicit reference with of_node_get()
+on the match before breaking out of the loop.
 
-struct drm_plane_funcs funcs = {
-  ...,
-- .reset = drm_atomic_helper_plane_reset,
-+ .atomic_create_state = drm_atomic_helper_plane_create_state,
-  ...,
-};
-
-@match_struct_reset@
-identifier funcs, reset_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .reset = reset_func,
-    ...,
-};
-
-@reset_uses_helpers depends on match_struct_reset@
-identifier match_struct_reset.reset_func;
-@@
-
- void reset_func(...)
- {
- 	<+...
-(
- 	__drm_atomic_helper_plane_reset(...);
-|
-	__drm_gem_reset_shadow_plane(...);
-)
- 	...+>
- }
-
-@match_struct_destroy@
-identifier funcs, destroy_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .atomic_destroy_state = destroy_func,
-    ...,
-};
-
-@script:python renamed_func@
-old_name << match_struct_reset.reset_func;
-new_name;
-@@
-if old_name.endswith("_reset"):
-    coccinelle.new_name = old_name.replace("_reset", "_create_state")
-else:
-    coccinelle.new_name = old_name
-
-@update_struct depends on match_struct_reset && reset_uses_helpers@
-identifier match_struct_reset.funcs, match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
--   .reset = reset_func,
-+   .atomic_create_state = new_name,
-    ...,
-};
-
-@drop_destroy depends on update_struct && match_struct_destroy@
-identifier match_struct_reset.reset_func;
-identifier match_struct_destroy.destroy_func;
-identifier container_func;
-identifier P;
-symbol drm_atomic_helper_plane_destroy_state;
-symbol __drm_atomic_helper_plane_destroy_state;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	...
-(
--	if (P->state) {
-- 		<+...
-(
--		drm_atomic_helper_plane_destroy_state(P, P->state);
-|
--		__drm_atomic_helper_plane_destroy_state(P->state);
-|
--		P->funcs->atomic_destroy_state(P, P->state);
-|
--		destroy_func(P, P->state);
-)
-- 		...+>
-- 	}
-|
--	drm_WARN_ON_ONCE(P->dev, P->state);
-|
--	WARN_ON(P->state);
-)
- 	...
-(
--	kfree(P->state);
-|
--	kfree(container_func(P->state));
-|
- 	// kfree is optional
-)
-(
--	P->state = NULL;
-|
- 	// plane->state clearing is optional
-)
- 	...
- }
-
-@drop_destroy_mtk depends on update_struct@
-identifier P;
-symbol __drm_atomic_helper_plane_destroy_state;
-symbol to_mtk_plane_state;
-@@
-
- void mtk_plane_reset(struct drm_plane *P)
- {
- 	...
--	if (P->state) {
--		__drm_atomic_helper_plane_destroy_state(P->state);
--		...
--	} else {
- 		...
--	}
- 	...
- }
-
-@transform_nv50_wndw depends on update_struct@
-identifier S;
-@@
-
- void nv50_wndw_reset(...)
- {
- 	...
--	if (WARN_ON(!(S = kzalloc_obj(*S))))
-+	S = kzalloc_obj(*S);
-+	if (WARN_ON(!S))
- 		return;
- 	...
- }
-
-@transform_kzalloc depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier P, S;
-statement ST;
-statement list STL;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	<...
- 	S = kzalloc_obj(*S);
-(
--	if (S)
--	{
--		STL
--	}
-+	if (!S) return;
-+
-+	STL
-|
--	if (S) ST
-+	if (!S) return;
-+
-+	ST
-)
-	...>
- }
-
-@transform_body depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier S, P;
-expression PS;
-@@
-- void reset_func(struct drm_plane *P)
-+ struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	S = kzalloc_obj(*S);
-	...
-(
- 	if (!S) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (WARN_ON(!S)) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (S == NULL) {
- 		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-)
-	...
-(
--	__drm_atomic_helper_plane_reset(P, PS);
-+	__drm_atomic_helper_plane_state_init(PS, P);
-|
--	__drm_gem_reset_shadow_plane(P, PS);
-+	__drm_gem_shadow_plane_state_init(P, PS);
-)
-	...
-}
-
-@update_early_return depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	<+...
--	return;
-+	return ERR_PTR(-EINVAL);
-	...+>
-}
-
-@update_return_plane depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_atomic_helper_plane_state_init(PS, P);
-	...
-+
-+	return PS;
-}
-
-@update_return_shadow depends on update_struct@
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_gem_shadow_plane_state_init(P, PS);
-	...
-+
-+	return &PS->base;
-}
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Manush Prajwal <manushprajwal555@gmail.com>
 ---
-Cc: geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+v2: Rework using for_each_available_child_of_node_scoped() instead of
+    a manual of_node_put(), per Andrew Lunn's review.
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index 148de34af785..4dec4d2c941e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -249,24 +249,21 @@ static void shmob_drm_plane_atomic_destroy_state(struct drm_plane *plane,
+ drivers/net/ethernet/renesas/rswitch_main.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
+index 6fe9648163..ffdc42f430 100644
+--- a/drivers/net/ethernet/renesas/rswitch_main.c
++++ b/drivers/net/ethernet/renesas/rswitch_main.c
+@@ -1303,8 +1303,8 @@
+ /* Call of_node_put(port) after done */
+ static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
  {
- 	__drm_atomic_helper_plane_destroy_state(state);
- 	kfree(to_shmob_plane_state(state));
- }
- 
--static void shmob_drm_plane_reset(struct drm_plane *plane)
-+static struct drm_plane_state *shmob_drm_plane_create_state(struct drm_plane *plane)
- {
- 	struct shmob_drm_plane_state *state;
- 
--	if (plane->state) {
--		shmob_drm_plane_atomic_destroy_state(plane, plane->state);
--		plane->state = NULL;
--	}
--
- 	state = kzalloc_obj(*state);
- 	if (state == NULL)
--		return;
-+		return ERR_PTR(-ENOMEM);
- 
--	__drm_atomic_helper_plane_reset(plane, &state->base);
-+	__drm_atomic_helper_plane_state_init(&state->base, plane);
-+
-+	return &state->base;
- }
- 
- static const struct drm_plane_helper_funcs shmob_drm_plane_helper_funcs = {
- 	.atomic_check = shmob_drm_plane_atomic_check,
- 	.atomic_update = shmob_drm_plane_atomic_update,
-@@ -281,11 +278,11 @@ static const struct drm_plane_helper_funcs shmob_drm_primary_plane_helper_funcs
- };
- 
- static const struct drm_plane_funcs shmob_drm_plane_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
--	.reset = shmob_drm_plane_reset,
-+	.atomic_create_state = shmob_drm_plane_create_state,
- 	.atomic_duplicate_state = shmob_drm_plane_atomic_duplicate_state,
- 	.atomic_destroy_state = shmob_drm_plane_atomic_destroy_state,
- };
- 
- static const uint32_t formats[] = {
+-	struct device_node *ports, *port;
+-	int err = 0;
++	struct device_node *ports;
++	struct device_node *port = NULL;
+ 	u32 index;
 
--- 
-2.55.0
+ 	ports = of_get_child_by_name(rdev->ndev->dev.parent->of_node,
+@@ -1312,17 +1312,15 @@ static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
+ 	if (!ports)
+ 		return NULL;
 
+-	for_each_available_child_of_node(ports, port) {
+-		err = of_property_read_u32(port, "reg", &index);
+-		if (err < 0) {
+-			port = NULL;
+-			goto out;
+-		}
+-		if (index == rdev->etha->index)
++	for_each_available_child_of_node_scoped(ports, child) {
++		if (of_property_read_u32(child, "reg", &index))
++			break;
++		if (index == rdev->etha->index) {
++			port = of_node_get(child);
+ 			break;
++		}
+ 	}
+
+-out:
+ 	of_node_put(ports);
+
+ 	return port;
+--
+2.46.2.windows.1
