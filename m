@@ -1,148 +1,93 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CC73515ED
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 14:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840063BF68D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786716723; cv=none; b=pcWUhdyt+QGHjeAYwoSDXmE+aiUw0a3/2o5M228ABSv0yOkte/C07MKpzb9UvvBlpRaIAcev/eIls315pKp9TbwgvRLiitbv6hlU6xi7wE6rJM4AxIB6xcAYuJ30t4+uGLcAsTvJM30j87f2dcQTnEOk+FEuS78W/uM2f0V0kyA=
+	t=1786716762; cv=none; b=jf1Pgp2QL9+hktbcxkTRa+W45HUb1MZ8IntSy3I+YNICpb6xaohXs17Jp7A2ky2Hh4Yr8PHbGfRGS7WecX9LCVH2TlbhWl6dad0BxZd9m2Gk0tZygjriuCL/JggqtYV/uaqcBR/ZdpmjKdmkPu32i62KSbxUe/DJBrtahfIHBGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786716723; c=relaxed/simple;
-	bh=JsIUcnldQ1u3QtCScnnx1TV/XRtH7R6vMqus1di2IQE=;
+	s=arc-20240116; t=1786716762; c=relaxed/simple;
+	bh=NugjXLzwOtZ1nf9/QwO5U9XElx8ikylWyGp468AuBbY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=flQ1NOXzFGX0U7GIAEEB9mEb7PNtV4xBKs0tAzr0DA5o6v6NHm5YysYkT7NNykB15WABBYB3DefvvRCvY1SGemGSB9AH/PMfVLwX6QCwNzLjYXsLESGDch4wsUYTyDplYAlMx4gaMtzLBeIMAenxVI50V3q0pSZfdHfB4IRJZm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+	 To:Cc:Content-Type; b=e9Ukqh8XscXv6eOoJuoGlNgxjQSGlBs9iU5eTgJRG1k5bX3mbugaqklTOVZPZKcoOkKuZAReRBmCvCvp4pEO72pbErb4ljAo/29lKhTjPhAlxbzhQrJE+FjKXlNeMZy6azZl2LDqqPABSo/998hfucwzqRdBuum/gKhX6IlY3jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5bf94664327so439538e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 07:11:55 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5bfb3347ce0so300033e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 07:12:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786716713; x=1787321513;
+        d=1e100.net; s=20251104; t=1786716753; x=1787321553;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=bgWXOyN3bHTLW1HwfNjCBRVaO5dCtEdU8VDYMKoBjsk=;
-        b=ZPuVlxsU30ccVk0ff1hkydfTv7lD7X0rA9c2aRabZiDpf/+OTsVrJVoXCsof3+NeEz
-         c9/LEL2zREktHKtmzm/9Y2tgr0y7uph64jCQlsQ6xYw3eL2Lu2MxG5QDjUDeqIlyjygR
-         Y8arGAIBX9hXyL0AvNUSIFkwZi6XWDTsd/edw3QNEzQS0ZUd00a3R7gmkoYKLRcbwSvW
-         3LyCjFFQeE9X0zXyo1z/jq823P7V9uto5UA/osUShNawnBtpfZRS5cdELsipWcGYPedd
-         YBO1e6JEZvOQoNrT19SG+QvLrIlzY0uYj0/8AHL5lkGOv+JsG43TB1DYJinf4rznpY3l
-         79Dg==
-X-Forwarded-Encrypted: i=1; AHgh+RruBOMFJcq0UVZdnbvItDMlhy+FFKQjJRjnQqzuNS221ofAEE0tFXTHkCxfSGXXjBdd9ZdVga2XNbYL5FuPLW5Oxg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJXxt1okkGjqumhJMkpRA1w+HcvJPdM06Up90yV9hiNtqE2QP6
-	StNKQMOXdqGJCq6P+2QPhquMekOk6YLaSg0ABu5dQSAsZvIbUrbdauVlfT5VhpIlwk0=
-X-Gm-Gg: AR+sD11Lg0Fm+WuixaQHIEAYsjXyjk7uK8Ga7CIJk6VAAF49a/mtFQzMcexoTKiWfGT
-	SSN7R+YUzUtfsAzKkyK7RdkNf0jz2/tg2Y1nqiUZLoiOBqGPuD1FnZ2vJ0cwdpdNjxmhRI4tY3N
-	SlwxL7hVoPSarDOP0VYYsTGhEUixhvHtzcWkwL49jnOD5btFJmsOlfHiTB6y7i34HNpnxR8wZzy
-	esEr5Ba8kbdQpgf4zREbchgeSVugwtCRoZbqMsNEeVfltvDV0WJ2WNvnMU7ANKRJEb/Bi7cLLLI
-	DD0Nj7ugjkEKYuBf8YiER1SaBeFpcenodbf/dqY+DujDC5xpNKpYAJjUVQr9EH+CorPqbaD83Yu
-	Y81MeHcpGEmye7ysGWwEINdvqAvx2qbFioeberPoapjjb4r/wK+w9fJGCvC1JQm6UTc+m1K0zFY
-	hAwH9C0fJagA8L4yhANSWyEYsnd0OoK16CvxzxvDuxslfuXCgDT15noP5Rp+ifFV1bVXhQ44eM/
-	Tw5Dc9YcErrX7r/bfcESd2VMXclFls=
-X-Received: by 2002:a05:6122:f89:b0:5bd:af82:fd9e with SMTP id 71dfb90a1353d-5c591d53d5emr1059702e0c.8.1786716713534;
-        Fri, 14 Aug 2026 07:11:53 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97bfbd8aa7bsm869592241.8.2026.08.14.07.11.51
+        bh=Wtbu+SyUZkqlYLbujFQ6GXH40pd+ttBBONZTj3TDFrY=;
+        b=cUA0F43Y0Tj+nZfTrPr5Aq0iV2BIsVRfUWNqQiqLeQSJ/CuxwxARpD7XX28ilThKef
+         VhscD1auWQvOGVHHM10a1mt/5utNW2If5P0t9AP8sTeoIPaMewYnebMxKXWJVGuoHFTF
+         TavO5/5ZFbZNrFL+w11CoytleMbUAMOtZ6lxtA0MRYdcBmzPeVX8e0TP0WuGtJkbzFX1
+         uvDNTRI+fSXd9fFFUP3sWfDdkICLxPqVbjIPV21MHvr88x3bkkzxUu4nygqWuOi20IzV
+         GrIpCk5bu9IWBXyeWdkSogwXXoWnofV8nsAuihjSfm1zQu6cPACgniQRnY/N1UlZh7qC
+         j1wg==
+X-Forwarded-Encrypted: i=1; AHgh+Rq6UUnXi7DgTXSib1GgluJ6guJnobxzpvzk3kWQ30EYBnG4kT0EdyZ+SSG8GMT2UwBBMpdAfCxhDGl51zhIjT50/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySzS+dwOqHDcSwf0bCgbB3LsmglfXa3ZOngEi6hB6n5jEX17Jd
+	DWYSm2DKnc5c1Mn+TbrTjVAMkDKLLQWqro0R5rlZ+qE7xvCZVwVokmYCp9jSr+Ntcp4=
+X-Gm-Gg: AR+sD12uLIZI1NxKlaN9uUzZLNFJTiXNWbUV6G3hnStUK+7/tWvDPgHdj9oKI8AQynp
+	xSJ6If6ab9bQamNAU3O3QIrGyas3/0LQb3Z2xekYGfvsa7v4pfXtPu09Lu/zb0WApCGcCayu5DI
+	/orvDyv24j1YR6n3BVswsgj0lIJxbq12UJ3SvLcAfFh3Z0tvf4fl/yyJqtNKN04c9wbeQYNVd3U
+	KMilP6HzZkqKy13AkjIaRdHjtn4Xs/AaJzGe1TglbiNRVMNLsl9atkfe5OXjHPybGZgjpy34AtO
+	Al5/KG1pTeAvf8kiaYGu14OJt2AF0mF/QDO9DRdzeeIArHiTe+70hgpKgmQJeGdxawcIfSCkdUT
+	1K9rd29ueBOwQEdVsHtNCMdv7Q9qebq1laXCXvkT96CFVr+J/eo451GzjO7wwjylhjTHdPTOMWP
+	IQEybcZWvQX31onR6Nv6C9asDRwY7vrDKcNxmLta0pSQjb4Dcpej9aCwTwreTNIeGv1CC4fx5mg
+	i6mAiWrzZiDe8haDxtBpz0K/RR9IA==
+X-Received: by 2002:a05:6122:e247:b0:5c2:8ba1:1c2 with SMTP id 71dfb90a1353d-5c591eda68dmr1021404e0c.10.1786716752926;
+        Fri, 14 Aug 2026 07:12:32 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97bfbdbe8c1sm875435241.13.2026.08.14.07.12.31
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Aug 2026 07:11:52 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5bf94664327so439509e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 07:11:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpgxS6NATC2HOw0i+TTIov/634bpzCq7BK6fKgcvuxDd4zfATbRZdIaTe+H7JkU1iyw27sdPKZ+1O9f8v3ZCSpJYA==@vger.kernel.org
-X-Received: by 2002:a05:6122:1d10:b0:59c:b1f7:4df3 with SMTP id
- 71dfb90a1353d-5c591f5e797mr1003893e0c.12.1786716711327; Fri, 14 Aug 2026
- 07:11:51 -0700 (PDT)
+        Fri, 14 Aug 2026 07:12:31 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5c2c0df0b45so339424e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 07:12:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrBmYvj/C8J026v4jIxVgoY6vDS/KWasdvdHlQyZh1N3GDkgg3u9RRNup6n4YW4OJBjkkeHwJfSRU+tM7ovGnOM9Q==@vger.kernel.org
+X-Received: by 2002:a05:6122:4f83:b0:5bf:8955:a8ce with SMTP id
+ 71dfb90a1353d-5c591c5d861mr1055714e0c.1.1786716751169; Fri, 14 Aug 2026
+ 07:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260812115010.108322-1-biju.das.jz@bp.renesas.com> <20260812115010.108322-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260812115010.108322-3-biju.das.jz@bp.renesas.com>
+References: <20260812115010.108322-1-biju.das.jz@bp.renesas.com> <20260812115010.108322-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260812115010.108322-4-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Aug 2026 16:11:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+asd-YNYx_supbAvYWcEJYQrFKqBVv-emeN0Jy8ME8g@mail.gmail.com>
-X-Gm-Features: AcwNN1UShNX_oTiWicJgMTaw8xcuLUMGl3dXuc-syfChFLEr-XWrgdZtyk_0koA
-Message-ID: <CAMuHMdU+asd-YNYx_supbAvYWcEJYQrFKqBVv-emeN0Jy8ME8g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready driver
+Date: Fri, 14 Aug 2026 16:12:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVA_PaOjox5_h8obGrhFw-Y6HjJ+cHraad1FNhmha1+Cw@mail.gmail.com>
+X-Gm-Features: AcwNN1W2zEZOvyjzzcJTZb1io8WyuqeKBzea6HUdyFaW-EkhAXUHwqLrotgIBuM
+Message-ID: <CAMuHMdVA_PaOjox5_h8obGrhFw-Y6HjJ+cHraad1FNhmha1+Cw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY
+ for R9A08G046
 To: Biju <biju.das.au@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>, 
 	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-
-Hi Biju,
 
 On Wed, 12 Aug 2026 at 13:50, Biju <biju.das.au@gmail.com> wrote:
 > From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
-> which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
-> SoC. The driver binds as an auxiliary device to the parent SYSC driver,
-> using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
-> {usb,dsi,csi}-pwrrdy pwrseq targets.
+> The RZ/G3L SYSC driver registers a "pwrseq-pwrrdy" auxiliary device to
+> handle the PWRRDY power sequencing, which requires the
+> pwrseq-renesas-pwrrdy driver to bind to it. Select
+> POWER_SEQUENCING_RENESAS_PWRRDY from SYSC_R9A08G046 so it's built
+> whenever RZ/G3L SYSC support is enabled.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/power/sequencing/Kconfig
-> +++ b/drivers/power/sequencing/Kconfig
-> @@ -27,6 +27,15 @@ config POWER_SEQUENCING_QCOM_WCN
->           this driver is needed for correct power control or else we'd risk not
->           respecting the required delays between enabling Bluetooth and WLAN.
->
-> +config POWER_SEQUENCING_RENESAS_PWRRDY
-> +       tristate "Renesas Power Ready sequencing driver"
-> +       depends on SYSC_RZ || COMPILE_TEST
-> +       select AUXILIARY_BUS
-
-Could this cause circular dependency problems with ...
-
-> +       help
-> +         Say Y here to enable the power sequencing driver for the Renesas
-> +         Power Ready signals. This driver handles the power ready signals
-> +         required to power on the various IP's on RZ/G3L platform.
-> +
->  config POWER_SEQUENCING_TH1520_GPU
->         tristate "T-HEAD TH1520 GPU power sequencing driver"
->         depends on (ARCH_THEAD && AUXILIARY_BUS) || COMPILE_TEST
-
-... e.g. this, due to a mix of (a lot of) selects and (only three)
-depends?
-
-> --- /dev/null
-> +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-
-> +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
-> +                                    struct device *dev)
-> +{
-> +       static const struct of_device_id pwrseq_rzg3l_consumer_match[] = {
-> +               { .compatible = "renesas,r9a08g046-mipi-dsi" },
-> +               { .compatible = "renesas,r9a08g046-usbphy-ctrl" },
-> +               { /* sentinel */ }
-> +       };
-> +       const struct of_device_id *match;
-> +
-> +       match = of_match_device(pwrseq_rzg3l_consumer_match, dev);
-
-As you don't use the actual match entries, replacing the rather large
-of_device_id structures by C strings, and using of_device_is_compatible()
-would reduce kernel size.
-
-However, you might need the match entries (actually their match data)
-when adding support for future SoCs that might use different registers
-and bits?
-
-> +       if (!match)
-> +               return PWRSEQ_NO_MATCH;
-> +
-> +       return PWRSEQ_MATCH_OK;
-> +}
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
