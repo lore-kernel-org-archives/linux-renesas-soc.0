@@ -1,71 +1,72 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24E144BC87
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 12:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB75445FFDF
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 12:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786710740; cv=none; b=gmtzgzH19aMlhoHbSbdLbe6HgYXBclAHgQ8EJZPXqKFMBD6xyRzYjbrZgIiXpi2KdCPsSZg9PrcOrl4kQ89nCutmPzZzku9xvIYuby322TokPheR+dzKBU/mpPXYF079ALUc4sGPjWn/bKZIYtvHbevycXPDeKS3KyZFarY+hgw=
+	t=1786710774; cv=none; b=o/P3JN090Elyubj8kOmJBTuSOn1r0pusUrOzwAR3MTfPKAsPJP9jhWhC1mzpbJHObudt9vl5CMSFLE3fOKLIWTD37vGNMt29UkwS5nBUZif6zsM3Tzi14cQLCtjSRZ1NxYXBH4rPrUqCZE5+ZRj2ud55NJ4g1aM3nQGYenVRZ4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786710740; c=relaxed/simple;
-	bh=sxaBBBN0zEuMV865K0dBZi/0kgS7VdceuSbNoNUPIq4=;
+	s=arc-20240116; t=1786710774; c=relaxed/simple;
+	bh=Gm7XpMTBI9C6os8izblCzRmv3EKOG46D4FOgROjtKdk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itYpETTwul36hHl14obyQz++1qUgbjF6Xsl2bRIyp4VdFduZTr+gZIhFcuTLAMvMbTlfeT4PbeIXvf3vOKiT8JbNR7cCfvJhLlUAFWYVcgvYGcOOpZBfWsrLTwa9GvvTusnB8egp+A5zaLvAuknF1j1xPoeutHD8W6R7rr0/TDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+	 To:Cc:Content-Type; b=LF6FnpzvtHBEY4+9Y+uQWqdqfSVnUzjk+Hd1YU2bB6swhTzEtSu/H6lam+tyy10mmKt9oyUjtPuTuc/LDmWb7arQkn+7Cv4YjvgrKo7fcl99lTG86ohST0FLGkZ/ssKE4FBVc6E7bDJGR/nsm/nLkVG0oZTrtvl/kk5Ulc0DdG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c1c50c1e29bso139576666b.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:17 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c20fb91ed0fso163131766b.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786710736; x=1787315536;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=MwFvu+QAfOdqUmiQz3HyTrV8yaD0qjlQFuANuOajKio=;
-        b=CIHQsAHtFbhur4PeLhkuL4tvbjBvKf/2jomh0S48Wo+zGBj+6UwpHzknAf3NgtMZRu
-         C/O11qmLgXwwSshhXJLH6lRTZnBAFv2hFouFIoSRf6G6IgaG6Z/frzHG+bj5vOkDDI2i
-         yTCGVge5mJU5YjF0LaK8XZNfgx70xsSg2EeugC8PYTbkV4+QfkyBLeAQKR4b6XKPDmcf
-         yAoqHuMqkhqecD9c5lz+S4Cl187IVlbsU56O8WyPoNm+4xlBAOlCBqDn+1DNO5luI2f6
-         LYhysyNiCKaUGK6oGwJJLoVQ6gwATpS82R9AYas4feAKBh4i2ljMCaWrXTTBIiz8rlHE
-         tCbQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrL0QyVTbDEvEc49l/Mv4xx4P6tfxW7I9OWKvmqlWX0uht8uJN3dab7Xr09EPgkLc3cKZAiudiacA2yCgq14sVOvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlgq46Vj+4gtDY1igce53bmUfMoeu8fFzB1yGW3Mja6EHy5M2T
-	68FrcYW+gLrjh5JpFw5jO9s/KMIyY91DTk4z3U4dWF6ofEQVKogwPzybvSIu/YfG1as=
-X-Gm-Gg: AR+sD10QPF7gSgxI7JfcHO6+bJRU9iwy56iyju5mZXl+YRYLRkdwy/u+mb5rRYsTRBo
-	yZx7NwtGg7LkUqJq1/TW+dpCKn5DPu1PP1E6ZHhyUX3ak61qr5NZdAKhntMrLmLpVnMV/qvWSwd
-	S9EFhh1BYwijBGA8w2yFsFFgWfWbRUh3UxbasPov5jpirWgbPglrpAWd1Ad53eMoh7Uy81y0Wjh
-	egrLVcKMKQhU3VNocnrR6KQdbK/76DV/7vX3MHvlJf2DMkomZX/R/423QUJY1bvttJInFSbGZfT
-	pptTo9qvfwEeRMBvZYGRrCavBIIjFl2gP3cxLBHgDAy8SQQWx+1Lthszf9My7QorHZ577A5w5Dh
-	cAMo11Tn1yID995+5g4tEryeNPHynYy8Q5CIqw7QbzAygE9zZ0MALeD/OQhCvjZX/Sbq0D3bk1e
-	8Ahy7cm4jbQzF3TBaRj+nfl9jhGLLwHaDafr80GyzbmURQUfs5COS0ynpexhtKVwjfolelHF0ru
-	Fl0rurd1C/K/WGNKlFb3140rkEUHPs=
-X-Received: by 2002:a17:906:6290:b0:c20:3733:a8c5 with SMTP id a640c23a62f3a-c212a0ea0a2mr252027466b.8.1786710735691;
-        Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21238443adsm96862366b.59.2026.08.14.05.32.15
+        d=1e100.net; s=20251104; t=1786710771; x=1787315571;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qQwQJ7BuSB9LR6pXE971+6A950GIyy9ZUcXBGdW2QIc=;
+        b=hmvjj+lZ/sHYtkG2oFlWQqkvDlkN670/aY6ajgtwJt+Paz7k7mTxVTwfTDlrH331ae
+         UI8ql7nFtXUItfB1yGuVxZ7akXIA2eGOZ3h4v44Wkt16jWzWxRVZ5RbcZAA+0J014P/I
+         xQOdE9BBLVusi19IL/SlBY2rcN0eAN0mQ1oFn/IH0dJkoUTisBd8tkIh3qE7xYKb9q/L
+         /EC+nwxktflYMf38jz/nJzFxPr9qE9EeOPGda/NlPLeKQZsZ0Q0nqIPrGHf1QL9jCT9k
+         ZOX2pGmmtjYb6lypf1ivI5+/g8OBTeBr7hoay2pa5LxFKjxnOtH9aZ13wanUCbiKUNmj
+         f6wA==
+X-Forwarded-Encrypted: i=1; AHgh+RoOO0qBYYISBSSHqeAZxgiPRGspesOmdihFYl9NeOAeZVEoc+nCGEBOlzDNAFTIqfgA6gF2/Ya0DmHwfm2DnszxIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjtRuqLQWyNnR1vF/pu0dEyFYmViYsYiB5pZp+VjtvJbuvTIzP
+	h/swZ1q8YJQCQreG3FJBI2MsQ2BVoBGIkl/NwIUExtOvgCPsS7BpezdkdF6z+Hjrixo=
+X-Gm-Gg: AR+sD10HWncPMLQ69JpURovygKnuqXRZtPEIizJ8TWnzFhwZy8XqT3SPk7NlCfnSODI
+	00W3gu36gmKN3OSc8YfUwQDGxLT9qqoRnJE2Ww7SRKMWS5G5qihcaeq4vdRuQAAu1G9fOlkZp/x
+	JrQAI//95Pn7J8voxctJB+LIAx7JauTZNmF7KUokc4WCCqyioSIkG5e4mE1xtrr8/0VJfoXXW+t
+	gZQSDX+U55JnFnqPnO53F94x1LbPitCWcYKnjlXVm39Mwc6Gor04xwIx4gceNj7yGai9/7EQ9cF
+	+tEosGASukhN7GjnJQryvWckF3Mwg3wvgtlhQ05lw5cS9EV6Nt/YQMRfiu46gOgKA08bwR74Bhf
+	/OmtMPSW0GgMy+2IJw+oMmP55A5zghOP5Fp2Wu/okn7OAs/IiVmQYLOwcg063JmKdJg36QVbbBF
+	WLSnTmLhKwOWYxaBKGfCBVkh0jgVrFfeHlmhM1BWg9s+eEpoOCykxyDJFmeWBEIvf9h2XV9pqqZ
+	S51MgzOa2oeWnzUaIIdKt2Lqw==
+X-Received: by 2002:a17:907:e1d4:10b0:c20:1e97:dd28 with SMTP id a640c23a62f3a-c212a18c64amr182588166b.2.1786710770788;
+        Fri, 14 Aug 2026 05:32:50 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21237e4d26sm99168266b.45.2026.08.14.05.32.48
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-69c600f76ccso1374096a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rr3Y4RQBN5FTcoAqgz30NjjF4bHmAhsNGq1qgur40dvn64p2CYHbXcrJn5JOm2Y9roaP1sfp8j2nhrIqzEWzgjL9A==@vger.kernel.org
-X-Received: by 2002:a05:6402:2352:b0:6a1:e8f4:8236 with SMTP id
- 4fb4d7f45d1cf-6a38a9b342dmr2549519a12.21.1786710734920; Fri, 14 Aug 2026
- 05:32:14 -0700 (PDT)
+        Fri, 14 Aug 2026 05:32:48 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a17211b9ecso1688919a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoBlGhrHdtofv9Ibm57XhBZ28tJ2di1WFRstyWismG/QN4xSLdfzczyblaeUeWS0Ko5uk5aSNf5JkBGI/Cqzk1R/Q==@vger.kernel.org
+X-Received: by 2002:a05:6402:4513:b0:6a0:926e:f907 with SMTP id
+ 4fb4d7f45d1cf-6a38a8bea9fmr2749183a12.1.1786710768303; Fri, 14 Aug 2026
+ 05:32:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com> <20260811182729.360959-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260811182729.360959-2-biju.das.jz@bp.renesas.com>
+References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com> <20260811182729.360959-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260811182729.360959-3-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Aug 2026 14:32:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdViJB2qvzbOkX7exqpq7gF4tbBcNYMHmCmEXHSh6AYfew@mail.gmail.com>
-X-Gm-Features: AUfX_myLNki-Fq81a3NfDSUS9sVpJd6vtqPz5Vj64H1v1xbp8C0TezxjP2g5L3I
-Message-ID: <CAMuHMdViJB2qvzbOkX7exqpq7gF4tbBcNYMHmCmEXHSh6AYfew@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] clk: renesas: rzg2l: Add DSI divider clock support
+Date: Fri, 14 Aug 2026 14:32:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUiEQw94rf7ZP_8PV8EQo3K03ioFpsxG1sh=HLJOgzQpg@mail.gmail.com>
+X-Gm-Features: AUfX_mx58STpckVp6kMwxfOPKFC2_LGNIJFgER7roj-40A3WGKTSPesm0sP_dCM
+Message-ID: <CAMuHMdUiEQw94rf7ZP_8PV8EQo3K03ioFpsxG1sh=HLJOgzQpg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] clk: renesas: rzg2l: Add PLL7 DSI clock support
  for RZ/G3L
 To: Biju <biju.das.au@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -74,106 +75,70 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	linux-kernel@vger.kernel.org, 
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-
-Hi Biju,
+Content-Transfer-Encoding: quoted-printable
 
 On Tue, 11 Aug 2026 at 20:27, Biju <biju.das.au@gmail.com> wrote:
 > From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Add a new DSI divider clock type (CLK_TYPE_G3L_PLLDSI_DIV) for the RZ/G3L
-> SoC, which requires a different divider implementation than the existing
-> RZ/G2L DSI divider clock.
+> Add a new fractional PLL clock type (CLK_TYPE_G3L_PLLDSI) for the RZ/G3L
+> SoC's PLL7, which drives the DSI interface and requires a dedicated
+> parameter calculation and programming sequence distinct from other PLLs i=
+n
+> the RZ/G2L family.
 >
-> The RZ/G3L DSI divider uses two cascaded dividers, DIV_DSI_A and
-> DIV_DSI_B, where the effective divider is:
+> PLL7 output frequency is determined by the formula:
 >
->   rate = parent_rate / ((1 << div_a) * (div_b + 1))
+>   Ffdco =3D (NIR + NFR / 4096) * (Fosc / MR)
+>   Ffout =3D Ffdco / (1 << PR)
 >
-> DIV_DSI_A is a power-of-two divider with values in the range [0, 5],
-> and DIV_DSI_B is a linear divider with values in the range [1, 16].
+> where:
+>   - Fosc =3D 24 MHz (oscillator input)
+>   - PR in [0, 4]   (post divider, power-of-two)
+>   - MR in [1, 12]  (input pre-divider)
+>   - NIR in [56, 375], NFR in [0, 4095] (integer and fractional parts)
 >
-> Introduce the g3l_dsi_div_hw_data structure, rzg3l_cpg_dsi_div_ops, and
-> rzg3l_cpg_dsi_div_clk_register() to implement the new clock type, and add
-> the DEF_G3L_PLLDSI_DIV() macro for use in clock table definitions.
+> The FDCO must fall within one of two valid ranges: 900=E2=80=932000 MHz
+> (rangesel=3D0) or 2000=E2=80=933000 MHz (rangesel=3D1).
+>
+> The parameter search in rzg3l_dsi_get_pll_parameters_values() iterates
+> over all valid (MR, PR) combinations, filtering by the required FPFD rang=
+e
+> of 8=E2=80=9316 MHz, then delegates to rzg3l_dsi_compute_pll_parameters()=
+ to find
+> the NIR/NFR pair that best approximates the requested rate. An exact matc=
+h
+> returns immediately; otherwise the combination with the smallest absolute
+> frequency error is used.
+>
+> Computed parameters are cached in pll7_dsi_params within pll_clk to
+> avoid redundant recalculation in determine_rate() when the requested
+> rate has not changed.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
 > v1->v2:
->  * Introduced the macro DIV_DSI_{A,B}_SET and used inside
->    rzg3l_cpg_dsi_div_recalc_rate() and rzg3l_cpg_dsi_div_set_rate()
->  * Simplified the divider to "(div_b + 1) << div_a" in
->    rzg3l_cpg_dsi_div_recalc_rate().
->  * Replaced the data type u32->unsigned int for the variable divider in
->    rzg3l_cpg_dsi_div_determine_rate()
->  * Moved the declarations of the loop counters inside the for()-statements
->  * Updated the comment sections in rzg3l_cpg_dsi_div_determine_rate().
->  * Updated loop logic in rzg3l_cpg_dsi_div_determine_rate().
-
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-
-> +static int rzg3l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
-> +                                           struct clk_rate_request *req)
-> +{
-> +       struct g3l_dsi_div_hw_data *dsi_div = to_g3l_dsi_div_hw_data(hw);
-> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
-> +       unsigned int divider = dsi_div_ab_desired;
-> +       bool divider_found = false;
-> +
-> +       if (dsi_div_target) {
-> +               /* Calculate DIV_DSI_A and DIV_DSI_B */
-> +               for (unsigned int div_a = 0; div_a <= 5 && !divider_found; div_a++) {
-> +                       unsigned int div_a_tmp = 5 - div_a;
-
-So div_a_tmp is the actual value of div_a... That is confusing, so I'll do
-s/div_a/i/ and s/div_a_tmp/div_a/ while applying.
-
-> +
-> +                       for (unsigned int div_b = 0; div_b < 16; div_b++) {
-> +                               divider = (div_b + 1) << div_a_tmp;
-> +                               if (divider == dsi_div_ab_desired) {
-> +                                       dsi_div->div_a = div_a_tmp;
-> +                                       dsi_div->div_b = div_b;
-> +                                       divider_found = true;
-> +                                       break;
-> +                               }
-> +                       }
-> +               }
-> +       } else {
-> +               dsi_div->div_b = 0;
-> +               /* Calculate DIV_DSI_A */
-> +               for (unsigned int div_a = 0; div_a <= 5 && !divider_found; div_a++) {
-> +                       unsigned int div_a_tmp = 5 - div_a;
-> +
-> +                       divider = 1 << div_a_tmp;
-> +                       if (divider == dsi_div_ab_desired) {
-> +                               dsi_div->div_a = div_a_tmp;
-> +                               divider_found = true;
-> +                               break;
-> +                       }
-> +               }
-
-This is basically the same code as in the other branch, just looping
-over a single value of div_b:
-
-    unsigned int div_b_max = dsi_div_target ? 15 : 0;
-
-    for (unsigned int div_b = 0; div_b <= div_b_max; div_b++)
-
-> +       }
+>  * Dropped the macro CPG_PLL_CLK1_VAL and instead using FIELD_PREP
+>    at all callsites.
+>  * output_nir updated with mul_u32_u32((p->nir + 1) * MILLI, fpfd) as
+>    p->nir is small.
+>  * output_nfr_range updated with mul_u32_u32(fpfd, MILLI)
+>  * nfr updated with div_s64  as div64_s64 is overkill
+>  * mul_u32_u32(p->nir + 1, 4096) computation reused in fdco and output.
+>  * Open-coded 64-by-32 division replaced with div_u64()
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.4, with the above fixed.
+i.e. will queue in renesas-clk for v7.4.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
                                 -- Linus Torvalds
