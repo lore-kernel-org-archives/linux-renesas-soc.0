@@ -1,170 +1,94 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211662C21F0
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 19:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786735081; cv=pass; b=lbRKA5xxF5RWHJH8/h7kG1CxFXmWgyvqa4i88n6ob2FEwlUNoH1/vYrqTO98xaAuFUaAVBzSOzqmHbbMRFKYjbD30yqApXjSJ5v3sEUMQ/YBrBeICW8bPKYIHUsl4Wp6ZZ2FQ8sB3w0cO7Bq3K7fYbuvXT+to/sPIDrITrI5LJQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786735081; c=relaxed/simple;
-	bh=gGGqgyM1WQNtb4vbREG86MXa9sEfI8krzxGiO31xHEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9HjbskMuCNvLXa6gwX07mjmbtkDp+c/Ag3D/aV37qfRWVmGcHOdp4hzCYRn+/cpmKrgyZvlQAHZ3J+AFFrKsqnQPmuc1iE1lvLYgiImE+O4YAJX0w4HeeR1wLzMmqmufzCnpOQlaInVEtb3j16UGgIKi41iqxNB9fP5qeL8Tpw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+eWTaZF; arc=pass smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80437363C63;
+	Fri, 14 Aug 2026 20:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786737950; cv=none; b=IItBHUzjJFYBciWgiqBK8WYCfh2t47OPCm7dIuk+9Pl21lt65xVsouumpF1ghEKoiQf3PEjX9I1LdJsIEVhekJeFRXuu9oMSDJJDWjg8t8RH79zlBtVh6+G9xHze6kNtb4mizxBLOUZ3IgMPhpURBYRyLTrrGI8Ar+EfwOq8VVA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786737950; c=relaxed/simple;
+	bh=DfRmGwwhWA+PDT9H2T5WgzBgB2msEY0/Noq1YWZ8rY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNGiSMQB3Z72kHvmAxhMt5myoSwqCrnRelgmr6F0RI/zQ6Jc/cDnxVJ81GLwD1HrVkex+7YGiR1POu5u+sCpnKpLIT3ruabGYUhSd7oXbfC0/D493KjTEJIE+rrahHeFWiEerAoJGGqsTwE8R6dL5/LQNTGA9MKlRkR0g3RPswE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pxW+mPWd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+eWTaZF"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-480001972b8so558920f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 12:17:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786735076; cv=none;
-        d=google.com; s=arc-20260327;
-        b=q36cQxZzDMe8s7iipgzHuUxIJSL0rMIPQco4zfAXDSC3ATRZHdPLATLVAN+i7bWK/t
-         JD7sFSFU9fHSoEOmpAURBQYcxTBVgYPqzln7I9RuLKsq9XfXwk4vBWa8A6pC+hZoVTll
-         1Tda4KbNtL1FjsDswlTdgUHpVzY8NWTp7atVeCOCIKgVS4JVFvTS+6Ech9U3jx7AiT4r
-         vrAl/IWCpDsn1VNhoE8m/e+WqxzsWEGw7qx+/35tyoufS6exZKzLGWq4C62577jKqMLy
-         EWAv8XW6tFtIBBH19Uixxwb664KteswZnBPsOglSkVcgB+qF7znZd09t3MJhvLs5/Ab4
-         tpNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=gGGqgyM1WQNtb4vbREG86MXa9sEfI8krzxGiO31xHEQ=;
-        fh=Mi/Ti+KS4jMCK8rTB4uqRhfu4dSXJ8IZ0iYm1Xr1BEI=;
-        b=npkuyqpPzWgNgmXzYqfqv2cG3AIr+RITDp8me+u2PQ81gTEeETn7TfdrILS/ae9W0k
-         c1oUFoh9Z6Ds0P4TsQznNiXhwPGce/lxwBv+Jo/nG/ED198vq7mu0i7vnC83ejj01VBd
-         4hcZo3fV+EGJunkKefjy5hZnpS0eW6E86WDFDPqvXUVA2wHRfYD9x3WbVWXFtxX/8Als
-         N4bqnbwbeW603OIJ56kooPz7xWY2KjFfiUuMwZ8lDKKlGDa2GY7s2fdMymZp/Py02qo4
-         5lUQYQTaDJH2o3LHFnyQKfQH1GL7kBAZDiZmbiQntDrEdUEzlZcYjcZgxgTqlMpLjF/3
-         AbUg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786735076; x=1787339876; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=gGGqgyM1WQNtb4vbREG86MXa9sEfI8krzxGiO31xHEQ=;
-        b=b+eWTaZFA7BFexx/TG/Aglvr2O0kTT+XkojjJFp0hnC3Na8a2kg2hcdRuI1hhAxG6f
-         +Ydr9izSrds4TaJ1WLajVhkXBI/yD1sT5ay24GJZs1Z22w2f7cYWeeo8O01XUIhhX2cU
-         rntyLj7w8ZMTm5JP/Bu4AM6+O/EuE6rA6lcJQjI8MLfxL+AR9L7oDq6Ktpmb6dCWeLNa
-         SzUQC0fg8hUK4DjLHBbfEEUfrkuEjCfR53YxSo7NqnsQ/CBPmG9xjxoBk48tNQhJgw9w
-         m003zFdmdrnxMkNnzTPO69+A4TfEBkYnknzcjsMXLTDZ5RjVvZTMJfS7c6djuTF/I2V1
-         FJUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786735076; x=1787339876;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gGGqgyM1WQNtb4vbREG86MXa9sEfI8krzxGiO31xHEQ=;
-        b=kCIymvIKgPwwMT91/XQ0BYV6EZ5KNZHVYS8g7E5w8q4uhZre5Ger3Y2o1OXs5OU4Ov
-         FbUXn5RPkZtOJcRlR7TOyttp8bTo/NfU0d21PUcY1Ti/R+Ixc9mPrynWc1UWgZiAaUWc
-         J6zu0vb6ho1ugdeMSAIsQaljpqcKk1HHKuweTGmWpVAYqwuY4ZTBBQj/BTzNQWs8H8qF
-         QTOROb/QDchu5zb7n436ROujz02JtTpujAkkLe+9s91SnRJJFqEspYfBajY+W1RANNO9
-         jdwDiKoHu60N8RyKbhXMDBCeMjae86C6pc/Wt9f4C86JRQMj2TVaFdWuDtm5AV9rdEHM
-         sm2Q==
-X-Forwarded-Encrypted: i=1; AHgh+RpwQoPmSadEbCOyCHnJlUFxyWTyqdTUgIVfGqLT6Yhkl6uEn8wNdWNgHn/VhnG+Iu8laO0QvJ0xVssP4Ju134EE0g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4VK4q76hGSwAXkyBxarRaWVM4WDW3VcWrqoOdsJL0Yf0o8mSI
-	I2GkF69fM95JY2ComxjrtTvToKxg4YYX1of+wzIkII0q7Y7qdZfKxwRVHs9VkOGiHgyFhbUWJUv
-	c4eZlBGjqc8bR0S+ymjCLy/1MuhLra0s=
-X-Gm-Gg: AR+sD12PTTv5W/fRRJXrbpG/CzgbETPPW8Qaspa9RDd+WI8GfGfXDzLASHyoy4ikSqp
-	2qIvkEfW1A4LiDdm+s9mvQUMHP3b9rj6ex5RPYJ2vG9sunC6kSnnqzuyeLfqXcb2YIOCG7TdAYv
-	9kwmDTY6LsQ817Foy5UJPZHrHoNRgjyzwM4BIW82/sqYjEGsLzBo85+ykWiNNHEoFl4FvddSaIh
-	OI4/AIt4NHTZVX+CyEpFyWhK38Ohfb+VUm3iTWFvG/1E5G/sTTT/Ue5RKQzRi/98luQJoxV7Vdz
-	Fr7LPDf7RJtrPl6MjfiKm8SUt748+IPM2OeJBqqCaShYoCwyeXXblJXkqTeVSX0dSmm1lrJwqc+
-	pN1Y0l1d5tNgkOzXabSTy2IK6evj8xnJIWS7ILW7NfgFwuOaXXIKMh36C4cPx5MB92XUnw1icdA
-	==
-X-Received: by 2002:adf:e38a:0:b0:47f:7b75:9dfe with SMTP id
- ffacd0b85a97d-481607a6b59mr10253177f8f.8.1786735075598; Fri, 14 Aug 2026
- 12:17:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pxW+mPWd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=R0Z7G9sdQmKFAKT8myKnZjHkurnu+Xzu3iiP/oFOmb4=; b=pxW+mPWdxyEONJEWwQgJUDpdt4
+	UvWMOe4XgtGTGp5dCJcn/nnRzrkaT8g0/9yd4vYcLBvrid4r6q0U8WkJ4B96JOmbNwoQMbmT1hwcD
+	ETkYWQf3fvzUWWsAEWmXjIKApphiJ0LAVGDcdnOn35/M44LVUCZ037QfM0lRDuiGFI+c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wuy9n-0002U8-BV; Fri, 14 Aug 2026 22:05:35 +0200
+Date: Fri, 14 Aug 2026 22:05:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: manushprajwal <manushprajwal555@gmail.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Message-ID: <bf97ed42-5a1c-4c90-93dc-808f43b4be06@lunn.ch>
+References: <20260814190423.933-1-manushprajwal555@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260716123434.2576253-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260720-fractal-prodigious-spoonbill-86f534@quoll> <CA+V-a8tfCL58j2TvoO1VhhDAZf=8LB89R4O0SycLghYGf7Rr4w@mail.gmail.com>
- <2323f9bd-0b1e-41be-8c8d-6906b66b625f@kernel.org> <CA+V-a8sHbc9WSqmzrONjWbLY1+SSEhK3kGOjL9zmVmhSttD31g@mail.gmail.com>
- <CAMuHMdUwPdPwKV++3GBvm_yEY0pqvT-KxBr==g8LQFRvZkBnjw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUwPdPwKV++3GBvm_yEY0pqvT-KxBr==g8LQFRvZkBnjw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 14 Aug 2026 20:17:28 +0100
-X-Gm-Features: AcwNN1U9V05nG8F5x6qoNhExsv1FilBMcJ6qkSKN_Tj9If7A8je8R5Sw1SnfcC8
-Message-ID: <CA+V-a8v=jH3vtUUR-c9AEUJU5+YJrO8H7xC_S9LA3EvHMBEyWA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: renesas: Split out RZ/T2H CPG binding
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260814190423.933-1-manushprajwal555@gmail.com>
 
-Hi Geer,
+On Sat, Aug 15, 2026 at 12:34:23AM +0530, manushprajwal wrote:
+> From: Manush Prajwal <manushprajwal555@gmail.com>
+> 
+> On an of_property_read_u32() failure, rswitch_get_port_node() set port
+> to NULL and jumped to the out label before releasing the reference the
+> for_each_available_child_of_node() iterator was holding on it. Once
+> port was overwritten with NULL, that reference could never be
+> released since out: only put "ports", the parent node.
+> 
+> Rework the function around for_each_available_child_of_node_scoped()
+> instead of adding a manual of_node_put(), so the iterator's reference
+> is dropped automatically on every exit path. Since port is the
+> function's return value, take an explicit reference with of_node_get()
+> on the match before breaking out of the loop.
+> 
+> Signed-off-by: Manush Prajwal <manushprajwal555@gmail.com>
+> ---
+> v2: Rework using for_each_available_child_of_node_scoped() instead of
+>     a manual of_node_put(), per Andrew Lunn's review.
+> 
+>  drivers/net/ethernet/renesas/rswitch_main.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
+> index 6fe9648163..ffdc42f430 100644
+> --- a/drivers/net/ethernet/renesas/rswitch_main.c
+> +++ b/drivers/net/ethernet/renesas/rswitch_main.c
+> @@ -1303,8 +1303,8 @@
+>  /* Call of_node_put(port) after done */
+>  static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
+>  {
+> -	struct device_node *ports, *port;
+> -	int err = 0;
+> +	struct device_node *ports;
+> +	struct device_node *port = NULL;
+>  	u32 index;
 
-On Fri, Aug 7, 2026 at 2:30=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 20 Jul 2026 at 13:14, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
- wrote:
-> > On Mon, Jul 20, 2026 at 11:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> > > On 20/07/2026 12:50, Lad, Prabhakar wrote:
-> > > > On Mon, Jul 20, 2026 at 6:55=E2=80=AFAM Krzysztof Kozlowski <krzk@k=
-ernel.org> wrote:
-> > > >> On Thu, Jul 16, 2026 at 01:34:27PM +0100, Prabhakar wrote:
-> > > >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >>>
-> > > >>> Move the RZ/T2H and RZ/N2H clock controller bindings from the gen=
-eric
-> > > >>> renesas,cpg-mssr.yaml schema into a dedicated binding.
-> > > >>>
-> > > >>> Unlike the traditional Renesas CPG/MSSR block, the RZ/T2H and RZ/=
-N2H
-> > > >>> system controller integrates additional functionality beyond cloc=
-k and
-> > > >>> module-stop control, including reset control, clock monitor suppo=
-rt,
-> > > >>> write-protection registers and other system management features.
-> > > >>
-> > > >> Nothing of above differences got reflected in the code, so I do no=
-t
-> > > >> understand this reasoning. Binding is exactly the same as the old =
-one.
-> > > >>
-> > > > A syscon regmap is implemented [0] as part of the RZ/T2H CPG driver=
-.
-> > > > Since the RZ/T2H clock driver uses this syscon wrapper, a function
-> > > > pointer is implemented to handle the RZ/T2H-specific configuration.
-> > > >
-> > > > Also, as the initial implementation used separate device tree nodes=
-,
-> > > > Geert suggested splitting this binding schema off into a dedicated
-> > > > file [1].
-> > > >
-> > >
-> > > I still miss the difference. Can you point me (can be short diff) to
-> > > actual difference in this binding?
-> > >
-> > Fair enough! You're right that the schema text itself doesn't differ.
-> > I'll drop this patch in v4 and leave the bindings in
-> > renesas,cpg-mssr.yaml (unless Geert has a different opinion).
->
-> Given you no longer add a bunch of RZ/T2H-specific properties
-> and subnodes, I no longer see a reason for the split.
->
-Ok, I will drop this change in the nxt version.
+Reverse Christmas tree.
 
-Cheers,
-Prabhakar
+    Andrew
+
+---
+pw-bot: cr
