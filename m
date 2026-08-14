@@ -1,159 +1,179 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011011.outbound.protection.outlook.com [52.101.125.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA34305670;
-	Fri, 14 Aug 2026 09:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786698031; cv=fail; b=VlukLTXQk4SQzaDsToku2OAtBuMH3gIRGm+XTCP2Dz2JX6hB1WTNB4ylfL36L3AIyuZLt/kO+Hd+0oETH0FFXi2Ws4GreJCeveEZIkELTohzIwPDaybIAgSNIVvlwcf6skimQMK90B4tFtqfkREAMlyqU39gN/CZFcbrMUwIArM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786698031; c=relaxed/simple;
-	bh=hDqWAG5UrpVWI1pDijk/qTI5LpL2Do70KycTer/c6CQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WnU7VzzQ+5aXSYzxAtrfuSt5o2H90t4MEGeScjDe1erZbnkawN25uaQ5V8vuYZSvUj76vlk6MGtMBRvuMqrqwv49/9jpBsfvuwt7tViwy5HI5KKyibdqPK5QOgtLmyNQXQ01bVEOjRLS86d5SUpfbLILGfc27zytz7+uXJBC7dE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=j91L2oA5; arc=fail smtp.client-ip=52.101.125.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="j91L2oA5"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tXPuARuKFx0HONqEbcR65TCN9MDTuOL6UL/LXB70nQNBDm+1lPU12YsqPCO0owNVO6xfhTBb5hbH0stSy7KhD2ylop5SFwcR2IeymS6Llnsb7WElPNhq9T013d3fvl7ImqIIhXTwe8PZw74LDwC4D02+bj3XGrxKiz8Npus9o3bvCvt1zjRU8Mn3Skekr8IRzZv76LV/uUzlh+Kwl7AALsFgMhlac6uFdarKV8ndqpfNiknNykrQu7eYa4vrEv1h4o7JGPUt0zg7dDd/Ff7BurjpUcrGONwf4yPEm49TfVLN8dY+DEbthjinkUO+UuM0QCHAyaHq28lXHjbaNP6zLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2xnin8bgkDf8zMM3XQOA+ABYNFDhGCDcL5BjUe4yUFs=;
- b=LhJ3QMuGJXOWmyS8s7WUKh5oPUNrxk9yboWxAAl5EBATdNn63nb8mC5pEfNG13IXSVjU4gqn/oCIb8WZE5jRvkgzWKBs/ilnALcpteSO5qQ99XPDVX1Xpl0EapWOAqaSwDFbxWOf011fL/VEGhpJWNz2PCc70YTUjDPuhHmhG4HPPHlgrNypvmoKswyGGGjz+p6+Xew8eXb4dHVFq+pQCasaQgeN/jwdQDrWz2Vi3DvD58SNLNDcgZvoalBNtib4ouoyPvWkcKG5IqVtsGcWfXqtxVMyJkBtjNKuSjfdIi/a4CSOaK6gekHpzJNPzxtcI9MOdwWpenR1KD95vR1Cvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2xnin8bgkDf8zMM3XQOA+ABYNFDhGCDcL5BjUe4yUFs=;
- b=j91L2oA5FoN5sEBdF4ndnPpoWSeKpSdml8HPahxQlKoeJVfaClPXRuvD59jZ+tOeYWluX9wmFWoJvWB9YzanI+lXjHmIskHzIsH4GIa35HsM6JIyariMO/kl1QDIZ8T7libBveo5dWbbtUj8IUaP54XJap7Rx/YXDNFVYufHwYQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TY4PR01MB12615.jpnprd01.prod.outlook.com (2603:1096:405:1e2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Fri, 14 Aug
- 2026 09:00:26 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0315.014; Fri, 14 Aug 2026
- 09:00:25 +0000
-Date: Fri, 14 Aug 2026 11:00:10 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Peter Rosin <peda@lysator.liu.se>
-Cc: tomm.merciai@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	p.zabel@pengutronix.de, ulf.hansson@linaro.org,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	Ulf Hansson <ulfh@kernel.org>,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin.sipraga@analog.com>,
-	Josua Mayer <josua@solid-run.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 0/1] Add USB2.0 VBUS mux driver for RZ/G3E
-Message-ID: <an7ZGtf04lmtGZQU@tom-desktop>
-References: <cover.1786347402.git.tommaso.merciai.xr@bp.renesas.com>
- <39f7e422-a629-4ac8-922d-ec47eb7d838e@lysator.liu.se>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39f7e422-a629-4ac8-922d-ec47eb7d838e@lysator.liu.se>
-X-ClientProxiedBy: FR3P281CA0190.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a4::8) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24E144BC87
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 12:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786710740; cv=none; b=gmtzgzH19aMlhoHbSbdLbe6HgYXBclAHgQ8EJZPXqKFMBD6xyRzYjbrZgIiXpi2KdCPsSZg9PrcOrl4kQ89nCutmPzZzku9xvIYuby322TokPheR+dzKBU/mpPXYF079ALUc4sGPjWn/bKZIYtvHbevycXPDeKS3KyZFarY+hgw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786710740; c=relaxed/simple;
+	bh=sxaBBBN0zEuMV865K0dBZi/0kgS7VdceuSbNoNUPIq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=itYpETTwul36hHl14obyQz++1qUgbjF6Xsl2bRIyp4VdFduZTr+gZIhFcuTLAMvMbTlfeT4PbeIXvf3vOKiT8JbNR7cCfvJhLlUAFWYVcgvYGcOOpZBfWsrLTwa9GvvTusnB8egp+A5zaLvAuknF1j1xPoeutHD8W6R7rr0/TDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c1c50c1e29bso139576666b.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786710736; x=1787315536;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=MwFvu+QAfOdqUmiQz3HyTrV8yaD0qjlQFuANuOajKio=;
+        b=CIHQsAHtFbhur4PeLhkuL4tvbjBvKf/2jomh0S48Wo+zGBj+6UwpHzknAf3NgtMZRu
+         C/O11qmLgXwwSshhXJLH6lRTZnBAFv2hFouFIoSRf6G6IgaG6Z/frzHG+bj5vOkDDI2i
+         yTCGVge5mJU5YjF0LaK8XZNfgx70xsSg2EeugC8PYTbkV4+QfkyBLeAQKR4b6XKPDmcf
+         yAoqHuMqkhqecD9c5lz+S4Cl187IVlbsU56O8WyPoNm+4xlBAOlCBqDn+1DNO5luI2f6
+         LYhysyNiCKaUGK6oGwJJLoVQ6gwATpS82R9AYas4feAKBh4i2ljMCaWrXTTBIiz8rlHE
+         tCbQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrL0QyVTbDEvEc49l/Mv4xx4P6tfxW7I9OWKvmqlWX0uht8uJN3dab7Xr09EPgkLc3cKZAiudiacA2yCgq14sVOvQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlgq46Vj+4gtDY1igce53bmUfMoeu8fFzB1yGW3Mja6EHy5M2T
+	68FrcYW+gLrjh5JpFw5jO9s/KMIyY91DTk4z3U4dWF6ofEQVKogwPzybvSIu/YfG1as=
+X-Gm-Gg: AR+sD10QPF7gSgxI7JfcHO6+bJRU9iwy56iyju5mZXl+YRYLRkdwy/u+mb5rRYsTRBo
+	yZx7NwtGg7LkUqJq1/TW+dpCKn5DPu1PP1E6ZHhyUX3ak61qr5NZdAKhntMrLmLpVnMV/qvWSwd
+	S9EFhh1BYwijBGA8w2yFsFFgWfWbRUh3UxbasPov5jpirWgbPglrpAWd1Ad53eMoh7Uy81y0Wjh
+	egrLVcKMKQhU3VNocnrR6KQdbK/76DV/7vX3MHvlJf2DMkomZX/R/423QUJY1bvttJInFSbGZfT
+	pptTo9qvfwEeRMBvZYGRrCavBIIjFl2gP3cxLBHgDAy8SQQWx+1Lthszf9My7QorHZ577A5w5Dh
+	cAMo11Tn1yID995+5g4tEryeNPHynYy8Q5CIqw7QbzAygE9zZ0MALeD/OQhCvjZX/Sbq0D3bk1e
+	8Ahy7cm4jbQzF3TBaRj+nfl9jhGLLwHaDafr80GyzbmURQUfs5COS0ynpexhtKVwjfolelHF0ru
+	Fl0rurd1C/K/WGNKlFb3140rkEUHPs=
+X-Received: by 2002:a17:906:6290:b0:c20:3733:a8c5 with SMTP id a640c23a62f3a-c212a0ea0a2mr252027466b.8.1786710735691;
+        Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21238443adsm96862366b.59.2026.08.14.05.32.15
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-69c600f76ccso1374096a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Aug 2026 05:32:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rr3Y4RQBN5FTcoAqgz30NjjF4bHmAhsNGq1qgur40dvn64p2CYHbXcrJn5JOm2Y9roaP1sfp8j2nhrIqzEWzgjL9A==@vger.kernel.org
+X-Received: by 2002:a05:6402:2352:b0:6a1:e8f4:8236 with SMTP id
+ 4fb4d7f45d1cf-6a38a9b342dmr2549519a12.21.1786710734920; Fri, 14 Aug 2026
+ 05:32:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TY4PR01MB12615:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46600f70-a0ab-4dd7-c60f-08def9e27b1e
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|23010399003|366016|22082099003|18002099003|38350700014|56012099006|10067099003|11063799006|4143699003;
-X-Microsoft-Antispam-Message-Info:
-	bf3Xtvfh1XGsDlmqCiFSixGIQwqGCjDhYJk+dJDlr6d/aurTgEnua1Bu8Vl7Fikb3QpHylI8J/BNX6T4McIJcl+FDGj3Db07sOw13PYj4UkTkdIk1yGGbZ+ECH8QXmcV2K1ztXr68/H4Ce9tGbTZEms6cRzvFe2+M4pm+hH2wOISOwuZdDRPBdidOZRWdjA+mzk3QNlW3Q7vaBdFRw0lbJ1THU719c4urXCPGnGMnFMltYesP3ru4+uV+ZyZsBCbZ3PGkyR9fLnFXecU7si5ztX4X/bmovdZdxMctQAQwDzCM9jgtTpGWr95xQjyJqPci4DpxXhdW/5jar4LQKUPbF1kGZdhALRxtXVVN2N4J/q7w5j1P0OfdDvd2EvUGK4Ye5J3cuQwnAVvu+DZ/19vTDfj2Jw0OitzeqnFekBMMImdziH+J1QbHAD2OkwDCFfDS3gTWaRXf5JLV7yrUJOS37YyjuHa+cJpSQLt6mMNzNaHxeEYTYZMUl1v4j2Qc2zZyhN47Vv49dXyDovJApgJqo/d8nfpCZhCILDsdvGyUzWYWQUsb/SqdtX3RKYyhym7hc23x76YbFWj3Pw4VY+NgU3q03+J2oHia1U92O8WsgZ03EMWuAQ2EkrGGLr56HGJnh7wYzb0Xv81/mL0/LsONyfkmCDu6mP7lDP+K460SFPd1yF6RaWilJFsjDRrS9B9FbJxBUy81ouF4EkHRRzf2ZlcxHRUbMR9nSLtJquC+XY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(23010399003)(366016)(22082099003)(18002099003)(38350700014)(56012099006)(10067099003)(11063799006)(4143699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kr2pk1FqptI6gqQIoildVuj4xIGftNdoiPopsIBoh5He4cSTOcFYN+CPGenq?=
- =?us-ascii?Q?Q9xpKGM9g8aaxWcES79IGrEWobIOQDiZmTLef4tGeIgFxxGEF+gyBcvnlTxu?=
- =?us-ascii?Q?V9680kSusacenADYDxoM2Np4g94gj0JUHNS0ctFSGmapTIaAMefqjr0zOaRf?=
- =?us-ascii?Q?Pb/hKUNqPLqKMRZvPV7Q3lQRQWGTKFRL0OW5MUw4EfNElEGDqkP2uRKrv6O0?=
- =?us-ascii?Q?DXT5VgucP0Ph02u4iwhlwSfECvNQUteZrEeN75M6Moy0ItdyNBgMi3IFxeoq?=
- =?us-ascii?Q?Gp/GxkghZtTAc8bqdQA+6FOvqjFOqQPPv1lM+iyDCartHsIPY7ZnwwLUdXM2?=
- =?us-ascii?Q?iuWjzRs8IMg26WZgw0lD2fe/zIkuJwr9Zghb7LGJ14Nv7CEryEOkUQ8kwP3m?=
- =?us-ascii?Q?P8n2yQjqvF+6Xl661kbdPvX/l2ihxGaERtXsjR6AdxCRX24mn3t7439iqUqu?=
- =?us-ascii?Q?7mswSHWzeMqa4LfMi5wsL/8mzPDfL2pu3cRuqlNDv5nD5+X2avydGQFV5oaW?=
- =?us-ascii?Q?HEtDLayKL1DPDN5d1wm+k552Oz69Txh2qvp69MedPY+AIOYWrnplyT0crBPR?=
- =?us-ascii?Q?ppjAdAIeYwI2cZddOR7yEny1eZE7bvVVxpQvJaVb58xv5rs9h5VIS3fxCaEO?=
- =?us-ascii?Q?6QztFATuyfhTOsDvl+w6QScAJ9HbiRbml6QEu1bu6JPGYwIjBOW0D19Fhuwe?=
- =?us-ascii?Q?HBv1gx6VUgLZWo4TGz6bsYMjEVW+8PaiEaS3ZpIipfTRnMqwYSDiaAjREm36?=
- =?us-ascii?Q?2ncB6i1Kaf+0slPG43jjr0aN3gft+yNRrfoXPJF3G7X2ZaqHEuGrYeirHChb?=
- =?us-ascii?Q?qKt4J+rXFS9cnsGo5B7u+qSChF6SFxojhxaj5IeCg552dNRDrlHebNK7x70B?=
- =?us-ascii?Q?jpsJNUgLM3vpH9efbWK3XgMos1A3DVoCl8BwvFRSyxrAqsb5gAyMTno7iiMI?=
- =?us-ascii?Q?Z8/iWBF9i/bppOleuuvZ0+69McZ9Vr0XGd43KsBkN3V/vQ8O+GJFV6HEh+yk?=
- =?us-ascii?Q?WlBxlt/4Mde0p4XirFwI6v//zsHYIQeXj4a0H+i6gcByKr5eHesBfltpzruZ?=
- =?us-ascii?Q?VokNRarExSOzhCkfIxc0pyoF+O5VBFsVXVIwr3hOqiocq21sbtKZiQXYywtl?=
- =?us-ascii?Q?OMi+2PPhBenv+2t1Rxpvp7lITWu0K/OLaF89k9l6OlUwA3yd+7J/r31cg59B?=
- =?us-ascii?Q?X73/K6q8+zx7ZNlY/MoNRCKCCM4XubBSk0ek8gFYeZDeRMbxyjZyjBcaBJfc?=
- =?us-ascii?Q?m+i50PtVe0U1p0OM/8x/k2wLg2ThlIpzQmmpADKmSKjsJ8+byVVsr6OYa+re?=
- =?us-ascii?Q?6idAUi7/Urigo14HPd4k8VkUkXjdhkmopXcNnvRi6R1X2HMSk1S4N2IIyHjU?=
- =?us-ascii?Q?10nWL+7hfN4Xy+ZWv4vfVBra2Pf7JioSf+vheo3iCPnRKm5OPzoTkVgnIEFO?=
- =?us-ascii?Q?OXK13nMXeC4KQsribDHkFcEG27PQMks9TvH/NraQmOxIamAzieA7q75WS9nP?=
- =?us-ascii?Q?6ZnhJUBujN9QWqra6MmUJvqxTGwG8Rr+vuza0dfVYAHcgnCyg8uR7ONBm+au?=
- =?us-ascii?Q?0zn6xZqK8v9T7YBM8Cum7wtacoXuRxFKzkRYSlzUj3FBS1IuYBg9malpbHqI?=
- =?us-ascii?Q?jJKt4dEICluqKX+HfbxPsryVLyxZF9Nk0chiOZ9KyAyDqaC5jpTbk1oozB+B?=
- =?us-ascii?Q?XW0hFT8Oq7kfKumSGrOVPibkt6JkwXZGe755XxQFBDrDxrEyoiT2oQ6mOtlT?=
- =?us-ascii?Q?uBb/2s9kvbBb3WcjSfCsbZaTZ2eCEIeAHH+3dYetw5+tn3EjmQE4?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46600f70-a0ab-4dd7-c60f-08def9e27b1e
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2026 09:00:25.8558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SVxRh52nYFD84zQsYzCEXoql8qIwizTNFokWfJZBLpXDkV+5pnmd4NU13jjm2tYJcjZTIWJ66O/kK3FnsSdr2Wn7fpv2xkYbiSC1Qqx0/xp3E3PIij7pnwE47HBsliNp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB12615
+References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com> <20260811182729.360959-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260811182729.360959-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Aug 2026 14:32:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdViJB2qvzbOkX7exqpq7gF4tbBcNYMHmCmEXHSh6AYfew@mail.gmail.com>
+X-Gm-Features: AUfX_myLNki-Fq81a3NfDSUS9sVpJd6vtqPz5Vj64H1v1xbp8C0TezxjP2g5L3I
+Message-ID: <CAMuHMdViJB2qvzbOkX7exqpq7gF4tbBcNYMHmCmEXHSh6AYfew@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] clk: renesas: rzg2l: Add DSI divider clock support
+ for RZ/G3L
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Peter,
+Hi Biju,
 
-On Thu, Aug 13, 2026 at 12:38:06PM +0200, Peter Rosin wrote:
-> On 2026-08-10 09:51, Tommaso Merciai wrote:
-> > Dear All,
-> > 
-> > This patch adds a new mux driver for RZ/V2H USB VBENCTL VBUS_SEL.
-> > 
-> > All patches in the original series ([0]) have been merged except this one,
-> > so this is just a follow-up patch to add the mux driver.
-> > 
-> > [0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/cover.1775047175.git.tommaso.merciai.xr@bp.renesas.com/
-> > 
-> > Thanks & Regards,
-> > Tommaso
-> Thanks for your patience, I have added the patch to the mux for-next
-> branch [1] and it should show up in linux-next when next is regenerated
-> (usually within a day or two).
-> 
-> However, it is now too late for the patch to actually hit the 7.3
-> merge window. I will feed it to Greg in time for the 7.4 merge window
-> instead.
+On Tue, 11 Aug 2026 at 20:27, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add a new DSI divider clock type (CLK_TYPE_G3L_PLLDSI_DIV) for the RZ/G3L
+> SoC, which requires a different divider implementation than the existing
+> RZ/G2L DSI divider clock.
+>
+> The RZ/G3L DSI divider uses two cascaded dividers, DIV_DSI_A and
+> DIV_DSI_B, where the effective divider is:
+>
+>   rate = parent_rate / ((1 << div_a) * (div_b + 1))
+>
+> DIV_DSI_A is a power-of-two divider with values in the range [0, 5],
+> and DIV_DSI_B is a linear divider with values in the range [1, 16].
+>
+> Introduce the g3l_dsi_div_hw_data structure, rzg3l_cpg_dsi_div_ops, and
+> rzg3l_cpg_dsi_div_clk_register() to implement the new clock type, and add
+> the DEF_G3L_PLLDSI_DIV() macro for use in clock table definitions.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Introduced the macro DIV_DSI_{A,B}_SET and used inside
+>    rzg3l_cpg_dsi_div_recalc_rate() and rzg3l_cpg_dsi_div_set_rate()
+>  * Simplified the divider to "(div_b + 1) << div_a" in
+>    rzg3l_cpg_dsi_div_recalc_rate().
+>  * Replaced the data type u32->unsigned int for the variable divider in
+>    rzg3l_cpg_dsi_div_determine_rate()
+>  * Moved the declarations of the loop counters inside the for()-statements
+>  * Updated the comment sections in rzg3l_cpg_dsi_div_determine_rate().
+>  * Updated loop logic in rzg3l_cpg_dsi_div_determine_rate().
 
-Thanks for sharing.
+Thanks for the update!
 
-Kind regards,
-Tommaso
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
 
-> 
-> Cheers,
-> Peter
-> 
-> [1] https://gitlab.com/peda-linux/mux
-> 
+> +static int rzg3l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
+> +                                           struct clk_rate_request *req)
+> +{
+> +       struct g3l_dsi_div_hw_data *dsi_div = to_g3l_dsi_div_hw_data(hw);
+> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> +       unsigned int divider = dsi_div_ab_desired;
+> +       bool divider_found = false;
+> +
+> +       if (dsi_div_target) {
+> +               /* Calculate DIV_DSI_A and DIV_DSI_B */
+> +               for (unsigned int div_a = 0; div_a <= 5 && !divider_found; div_a++) {
+> +                       unsigned int div_a_tmp = 5 - div_a;
+
+So div_a_tmp is the actual value of div_a... That is confusing, so I'll do
+s/div_a/i/ and s/div_a_tmp/div_a/ while applying.
+
+> +
+> +                       for (unsigned int div_b = 0; div_b < 16; div_b++) {
+> +                               divider = (div_b + 1) << div_a_tmp;
+> +                               if (divider == dsi_div_ab_desired) {
+> +                                       dsi_div->div_a = div_a_tmp;
+> +                                       dsi_div->div_b = div_b;
+> +                                       divider_found = true;
+> +                                       break;
+> +                               }
+> +                       }
+> +               }
+> +       } else {
+> +               dsi_div->div_b = 0;
+> +               /* Calculate DIV_DSI_A */
+> +               for (unsigned int div_a = 0; div_a <= 5 && !divider_found; div_a++) {
+> +                       unsigned int div_a_tmp = 5 - div_a;
+> +
+> +                       divider = 1 << div_a_tmp;
+> +                       if (divider == dsi_div_ab_desired) {
+> +                               dsi_div->div_a = div_a_tmp;
+> +                               divider_found = true;
+> +                               break;
+> +                       }
+> +               }
+
+This is basically the same code as in the other branch, just looping
+over a single value of div_b:
+
+    unsigned int div_b_max = dsi_div_target ? 15 : 0;
+
+    for (unsigned int div_b = 0; div_b <= div_b_max; div_b++)
+
+> +       }
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.4, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
