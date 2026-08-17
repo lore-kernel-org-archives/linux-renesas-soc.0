@@ -1,192 +1,230 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011046.outbound.protection.outlook.com [40.107.74.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE8D41D116;
-	Mon, 17 Aug 2026 12:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786970474; cv=none; b=WZ2Jpvwfk2vVyqnMwGwiLUrRXHVTA+t5rGUbzOrHQMtJx+WTRR+8npkfFS7eCK8Jw0T27wbg3S6RGy1EWgtTqWgCLuW0fVQJsX6lquikrO3cK7Md6jXZZ+pU7ASH4/Od0C480RxDggAVvvFlL8dAJGljrBF4Wadr7JbCFaxlQhI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786970474; c=relaxed/simple;
-	bh=7X4st2dfy1l8lT+fjQAQC0tAfIF/QQdIXAwtTks4e/k=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CPMPSitB42OLM42uVW9v+5+VmQ5NPqZq1EEsNyStM6KWBwkAQYdDbQZsTitUEIY1v/GA2MCB6slUzAyZrEJqkm3D+R5w0Ix9Fpg7mA4+Qel3w8dDRzzg5AVS9QSZvsOeX5O9f1rZoAa48mijIR9W7xQcx5D+08rrgIJN2gzL74A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aoCANBg2; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2586942586C;
+	Mon, 17 Aug 2026 13:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786972328; cv=fail; b=ReyxL7s1DyGtIaBbpjLSIRtkE40AZlZV3xyEI3d3KGB0bJdegN0goouYk38eq/mOBlkMqv3P6uy7GHlerwAU6F5K3YN2EehTsgLJQjCpqZX1aIAdM2EJG+VLlMWkLMLF0Ey7MGp4CG2FuPT1VkjFeRtgihPszuDdKSGWmqyJDJ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786972328; c=relaxed/simple;
+	bh=WnAezTYn1gyGWhTyNruwNgnu6gWVSpO3Xj00AWzecfE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ude5c0q6TLgC/bn9BK766OJmO0VoEkX9jT5HT7wZZC932UikfzotLFwi4qt0I9i7bA/fT2i1QaEZNVYHdYt9cqSV2oYufW8Vo8ddpCyBW+9vO+7LNXlsINa9/LY75scTvXFIWlxGUvYa052f9j8G1RexjqGSdvizcxN4oFmcDJs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=W50yYGRN; arc=fail smtp.client-ip=40.107.74.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aoCANBg2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786970471; x=1818506471;
-  h=from:to:subject:in-reply-to:references:date:message-id:
-   mime-version;
-  bh=7X4st2dfy1l8lT+fjQAQC0tAfIF/QQdIXAwtTks4e/k=;
-  b=aoCANBg23f6hM++EUWX5525byy5v5c6zWGrwg/KiAVFSp/WghxX3Ar3m
-   /6zwcHjA/VxbxfPx6xfEoGl3eis8ImmuA7sz7utu+t6IpCOXy8InG0CSM
-   T0yqDPiqXnCnC9nLrr0cBEA/RTaiVY3IaPbr+FUpghBU+ZYyUvP+RgkQV
-   4f/ei+2e4YH7ftlpbzZyPf5UyU7PYOiwv8OmQB8sWtKxDOw8auU2eWZi5
-   6k9ow65XPdSkFxNrWZWEGerJkJjZC1VxXb2x3V2wRpN9VzK6hqYS+uzoz
-   UpG0wwIKwRWP9tDRzfv1i+flskA5/w0Pm/gjeLH8rxGStuKtc/dZnLe9f
-   Q==;
-X-CSE-ConnectionGUID: nqskxE+2STilEaTWKs8ZOw==
-X-CSE-MsgGUID: v6Fq7FuYQFqJWjjSJzZMMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="98598084"
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
-   d="scan'208";a="98598084"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 05:41:10 -0700
-X-CSE-ConnectionGUID: kO9/n7EERguTo2l7wfOCtw==
-X-CSE-MsgGUID: 7ox5dl61Tw6To4e/rrOiGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
-   d="scan'208";a="266887598"
-Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.110])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 05:41:05 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-mediatek@lists.infradead.org, intel-gfx@lists.freedesktop.org,
- linux-aspeed@lists.ozlabs.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-mips@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- imx@lists.linux.dev
-Subject: Re: [PATCH 0/5] drm/vblank: Enforce all-or-nothing vblank support
-In-Reply-To: <20260814203542.1405135-1-lyude@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
-References: <20260814203542.1405135-1-lyude@redhat.com>
-Date: Mon, 17 Aug 2026 15:41:02 +0300
-Message-ID: <5f06e91a5ff0e5bb887b72e4ff9077c45cd9216e@intel.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="W50yYGRN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gRpI1634N1BAgLv7i4xqS9rvSSUepycYwpBtdhLJ26Xd4Gf2H8pDqXLbT22rnaJSVD1V/vSqhhoBU++5mf7/IF32ftHcW9Vv2OYxX+qISpXwk7e0sQvgD4PgI4rDrYgXDQdS0IEFXqbkga2ejxIn6d+vswtkWuP3qCJPXZR2yCNARLUk3yV3q6ci1lwJN9aunuBHjVabvKoy6HY9Jklq9e/OD5NbhL3G1NeFbjZdoQ8Z1lsy7DITMOzYjTWliM/Tvt8DpDa6R8RB8byW0yomJWKD4WD//GVdXwuxqpVmtVljdc88Usbw+x+yblzJYBEk/6EGbNNONGnCX4zx6t7z7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NLuNjWV8U3U7+9vYms8WHzoSFiKghqueKkWzZBYH7LA=;
+ b=sZzvA/h4Kuf0H0oZFlD/COVSsYH1FW4HN+w622GjikRuTcA2XjidV/Ig9uO0G1MZTWbd6LPBaJvTBuYs3Rl/sj/bJ1gD8x+KYV9zHgA6/Yzru8rrNYKumpkBGgeKib8O0q2wFpRRKR2cu46uyrLthmGX52K6oFfwHQzt3V+LthGTQmI/nP7DHAVnV9C4vMhvWrr3bU2TvguVuMLgB5+z8PaZYoydy4DTnWj/NBVU82rjmHWJu5wxP5BKR4EuRoxd6q/uJlkyTUlvlYk2Zc+xmQ+WF9T5N8w1NagmMfnMVLMD44b1XWk1arOt3MuZdrH0RTNb7/vOWZQOhBxnADwlrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NLuNjWV8U3U7+9vYms8WHzoSFiKghqueKkWzZBYH7LA=;
+ b=W50yYGRNXPGCQqVn+sciOl3E3KxS17kaZqUHKFh8Sdzo/4PfM5f1Lb8KmcK60Mi5OZJxeOXhU8PZkIBt5Orh+EbzxT2nR2OfUkLbGLsr+OJwfAndpnRaMHzl9wWc4TIAHWehmpBXgUGiPVk/nUkbzJlHAYd0TgAp+Za8t3d7fS8=
+Received: from TY4PR01MB14282.jpnprd01.prod.outlook.com (2603:1096:405:20d::9)
+ by TYCPR01MB10199.jpnprd01.prod.outlook.com (2603:1096:400:1ef::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Mon, 17 Aug
+ 2026 13:12:01 +0000
+Received: from TY4PR01MB14282.jpnprd01.prod.outlook.com
+ ([fe80::655d:9c47:4499:eb3a]) by TY4PR01MB14282.jpnprd01.prod.outlook.com
+ ([fe80::655d:9c47:4499:eb3a%5]) with mapi id 15.21.0315.016; Mon, 17 Aug 2026
+ 13:12:01 +0000
+From: Michael Dege <michael.dege@renesas.com>
+To: manushprajwal <manushprajwal555@gmail.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Thread-Topic: [PATCH v2] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Thread-Index: AQHdLCAiwvsD/tMOfESV4bKJu79G6LaiOb6w
+Date: Mon, 17 Aug 2026 13:12:01 +0000
+Message-ID:
+ <TY4PR01MB14282E65E2588C32576740C5582A72@TY4PR01MB14282.jpnprd01.prod.outlook.com>
+References: <20260814190423.933-1-manushprajwal555@gmail.com>
+In-Reply-To: <20260814190423.933-1-manushprajwal555@gmail.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY4PR01MB14282:EE_|TYCPR01MB10199:EE_
+x-ms-office365-filtering-correlation-id: 5216616e-3e25-4827-1dbc-08defc612026
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|18002099003|22082099003|56012099006|38070700021|11063799006|10067099003;
+x-microsoft-antispam-message-info:
+ hw/34zw+atjPJNDhwqSm5uVAT8//HAaUkm0gccCp8+Yjdm3jHwQ0UVKQOmebV7QRmHvb2rEkg+zs4A8UutOStVLcuT/jT7WHs4CNzfKtIFmcoa1ZhsbenyEPmYZqnBOO9KNSqvxOeoih+FktO8gW9rl9HU3HCo7lYpCIzcCrnbspzzhjUaGitxx5O+SS+jdcgPsZGxwuIZFvhOv/eB2TrS8fF8hevp2/t/JelS4s9APyAU81ZSnv2mX9mFby+OZoKJzfAUlv74CShqJMLMu991xr0mkFJ5pUo8GDlOHZqrIeeOpJh0Xvf12M+h3iVEDKqnSp2hKE7gUMlhCx9SwiaDD9AG2PYih5fwXttiUYJJlokVROdwyFgVlfh/WZhlN1+CbwzR37z6EWZYc1fHkCAUSiMZFPTl0hpfgCO8PPJuK0piyyIPr59WmpjhgfA+hP11fCcfN1A//0a2hcLXmymvigPD8aUqKFocnPIZ2Ke3udV9K14LDEr4yJtJ36GmNVozvgnxxPf9Su1DgHNIJHYsBbazBhtsOktL/2jw7Qjj5LZppAdGGDQuHI5/Oq810bAvdQPP/bDnv73zemfSXNCYjgKj/HjH0E5ouGwuB5i7vIsMOLm4ipePJNch1ip0Evj0AFR0ZNkMi9TlZIEJU2ZbeZCyZvXdZ55nUvzP/G/vAzPvbAenogJ5i5o53lwZ2VMMcuq0Vq3JWf+yE3ur0PLA==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY4PR01MB14282.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(18002099003)(22082099003)(56012099006)(38070700021)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?1SrxQbohVgfOmQH5O4KQAJFhqcbKsMMqp9BCa98EeOupq6qNHh+j2o2SPq7B?=
+ =?us-ascii?Q?ZC4yUAm4zF7kGvzFfWzIhcMj+44uassBdV19Vgx4uoCMDOQ4gfy63OEjwFVF?=
+ =?us-ascii?Q?b0uPfqcgyEyoVi0ZD5YPYqKZNBraKTDtloW18p6M1cd+D8dlxdrOsx5mphPf?=
+ =?us-ascii?Q?YD/V8h2h2irEXpY7gYZ3ehBL8a/BHdMfOXh0uwuzy4yrUDeWUWsBfgu9i67F?=
+ =?us-ascii?Q?0dER+3nXKTU7Z817whQUe1aITynkKMyMoLQmqYQsqzOgQAI7NGGa6Mwu+gQ4?=
+ =?us-ascii?Q?eIEj9YUtICJnEl3gWKoaKeu35rJla0hM+5Q2+nQ7hbaX4d6piGbXWBE/lm3v?=
+ =?us-ascii?Q?0G/TPbWkx93rwFOTglzdTWwBnit6Vs3p1kudIjFGQ+p5eQ4C+0EeUZUo0NhT?=
+ =?us-ascii?Q?pTkfsJdsuEbHwVi+8mYW4zGtVrMqhrlywGxvlvRv+W1Djg6O2WcWRmU+XATp?=
+ =?us-ascii?Q?d0RrE8rXp9Zcsnno9MC42FkAVn62Hw7shIpTv/MvaRstZ2lD4B48XcYyvr+D?=
+ =?us-ascii?Q?/wJ9H1FZ0MiYMQO/QUe9W1qML0p1CcoIf8eDjVrmLnbHwQvbH5UBrcb1vm+z?=
+ =?us-ascii?Q?oSh+1Vxl0eStkJ/ysaIx7DvyF/xOcQa7i/Muo3FkjNZ47dO0UICvxbzV0Mq9?=
+ =?us-ascii?Q?XWDdPjgB/zZBHIWO2qHI0ImIFmNN76bM5rBgAMfT+NZO3PZ3bazc2gdAoeAs?=
+ =?us-ascii?Q?0hvHb7UBzTuOP36GOS8FvSkUicBw+tizdcvrIMyE50gAWYW7iXRhdLnoLfx8?=
+ =?us-ascii?Q?I40gky7ntjMpesYfbMeMirtb2Xyi7jYhzFKZST6qSJet0Nq8oNY2BojnMaal?=
+ =?us-ascii?Q?1d8v44MiTMO5OvzNpwE/zUByugQexywkwVYW1sq2Vv/bSOsSJlZuAJiCJ833?=
+ =?us-ascii?Q?PhSJdcehwxUVQuZOgFtzn7gaJzUErYLluwXR1oaLthBFrCZzE+oXhXBAhVzI?=
+ =?us-ascii?Q?Ol2k9M1BSFp0ketR9UkrG5FY+9PWzkqt+ro8gT719/RIwXWikRluRa1dFtCc?=
+ =?us-ascii?Q?mTthDSNGNBfQZHrNUOgLEm+NiXb2uEPlNw7ckqsSjZEX1HGiJK3aMgzCM2r9?=
+ =?us-ascii?Q?2csMB4+ViGUQWQ/MXkZ6Dm3q8DSgeq/M62YxAukTQ0aG8jvl5EVXM37yeYEn?=
+ =?us-ascii?Q?w1Hd9g9pXLJAbtR+zas+9qM/LjWHqD/UFtyeJ3Dwwev1GkEBgyrUd/MG5FLL?=
+ =?us-ascii?Q?C2GdHbWmH0dtLB1oJ71iA/42v9m5ggMbp/+DdsQrea32ZDwHyqBaHV/feVPW?=
+ =?us-ascii?Q?ubvmSA72MkDOXu3B4EObQJj3WU/0e8cdmr0mvpcFYdPT4rEBp67fWYw6XkTk?=
+ =?us-ascii?Q?7ZfY1yRrnKJuvhIvtFVR8z7gZZM3DLps/hxan+juKHlLzB4ZA3P377b/fRw+?=
+ =?us-ascii?Q?Yic5PU4PMgMLiltrNlaaAYTemot0NNeE4EKAFoD7KEl+Wa7wqK0ZraJqFtqH?=
+ =?us-ascii?Q?pfioe+/bMK4rJrGy9XXo8ixP2t8TtbgwjCH/Cx75NjDz8y9ZgGjVA2gZO0TN?=
+ =?us-ascii?Q?qZZ+zau1RjNTNapWRgC9PUjGCRxB64uUMsg94sDT8TZdT0fzGO45g7OAP5wB?=
+ =?us-ascii?Q?5ON5uO/Bi5pRwWm1dX4GYlFrjBswg7wqRAbhdkOKyX4kcS2IwnNYe/wlDcWP?=
+ =?us-ascii?Q?KP14/fDONvFzIIYnkYYlieSqbBimZN53DRMsem9HRHLE1kVJC3r4UtWyqHvL?=
+ =?us-ascii?Q?qy8DReDsWwYQ5wkGPMjatGPxQS1CVIklnpb6U1aUUygXmLLiiYI0PKT+wrBo?=
+ =?us-ascii?Q?ObL9IJ2P3w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY4PR01MB14282.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5216616e-3e25-4827-1dbc-08defc612026
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2026 13:12:01.4208
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zk2jAXPyDRAbrtOij32suTjqcLOR57hpXlDP5w/it2Ty9GbR48klnaHct7FwxdF4P0WA+kZGWQkyb4xsLTn9W0KseSV7SiPlTIs3wzO3wWg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10199
 
-On Fri, 14 Aug 2026, Lyude Paul <lyude@redhat.com> wrote:
-> One of the oddities with DRM that is leftover from the old days is how
-> vblank support is implemented by drivers. This has caused some minor
-> issues for the rust bindings for KMS which could be worked around.
-> However, it seems like a much better idea to fix this on the C side.
-> Those oddities are mainly:
->
-> * There's nothing in the vblank core that actually ensures that all
->   CRTCs implement vblank support if one of them do. On Rust's side, we
->   can't have this and have to ensure either the whole device has vblank
->   support or not - otherwise it would be quite painful ensuring we don't
->   expose vblank methods to drivers that can't use them.
->   This additionally means such a situation would lead to UB.
-> * There is a second variable for keeping track of the number of CRTCs
->   and it's kind of broken and confusing. Even worse, we currently allow
->   the vblank API to allow a driver to specify a different number of
->   CRTCs then it actually has.
->
-> So, let's just go ahead and fix this across the whole tree, and enforce
-> that a driver must either implement hardware vblank support for all
-> CRTCs or no CRTCs.
+Hello Manush,
 
-For i915, the relevant init order is currently:
+Besides the problem mentioned previously. The links on the interfaces do no=
+t come up.
 
-- drm_vblank_init()
-- drm_mode_config_init()
-- drm_crtc_init_with_planes() for each CRTC
+> -----Original Message-----
+> From: manushprajwal <manushprajwal555@gmail.com>
+> Sent: Friday, August 14, 2026 9:04 PM
+> To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>; davem@davemloft.net; Eric Dumaze=
+t <edumazet@google.com>;
+> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; netdev=
+@vger.kernel.org; linux-
+> renesas-soc@vger.kernel.org; Manush Prajwal <manushprajwal555@gmail.com>
+> Subject: [PATCH v2] net: ethernet: renesas: rswitch: fix device_node refc=
+ount leak in
+> rswitch_get_port_node()
+>=20
+> From: Manush Prajwal <manushprajwal555@gmail.com>
+>=20
+> On an of_property_read_u32() failure, rswitch_get_port_node() set port to=
+ NULL and jumped to the out
+> label before releasing the reference the
+> for_each_available_child_of_node() iterator was holding on it. Once port =
+was overwritten with NULL,
+> that reference could never be released since out: only put "ports", the p=
+arent node.
+>=20
+> Rework the function around for_each_available_child_of_node_scoped()
+> instead of adding a manual of_node_put(), so the iterator's reference is =
+dropped automatically on
+> every exit path. Since port is the function's return value, take an expli=
+cit reference with
+> of_node_get() on the match before breaking out of the loop.
+>=20
+> Signed-off-by: Manush Prajwal <manushprajwal555@gmail.com>
+> ---
+> v2: Rework using for_each_available_child_of_node_scoped() instead of
+>     a manual of_node_put(), per Andrew Lunn's review.
+>=20
+>  drivers/net/ethernet/renesas/rswitch_main.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/et=
+hernet/renesas/rswitch_main.c
+> index 6fe9648163..ffdc42f430 100644
+> --- a/drivers/net/ethernet/renesas/rswitch_main.c
+> +++ b/drivers/net/ethernet/renesas/rswitch_main.c
+> @@ -1303,8 +1303,8 @@
+>  /* Call of_node_put(port) after done */  static struct device_node *rswi=
+tch_get_port_node(struct
+> rswitch_device *rdev)  {
+> -	struct device_node *ports, *port;
+> -	int err =3D 0;
+> +	struct device_node *ports;
+> +	struct device_node *port =3D NULL;
 
-For the patch series to work, drm_vblank_init() would have to happen
-after mode config and CRTC init. Off-hand, I couldn't say if there are
-dependencies that make this change difficult.
+Here you declare "port"
+>  	u32 index;
+>=20
+>  	ports =3D of_get_child_by_name(rdev->ndev->dev.parent->of_node,
+> @@ -1312,17 +1312,15 @@ static struct device_node *rswitch_get_port_node(=
+struct rswitch_device *rdev)
+>  	if (!ports)
+>  		return NULL;
+>=20
+> -	for_each_available_child_of_node(ports, port) {
+> -		err =3D of_property_read_u32(port, "reg", &index);
+> -		if (err < 0) {
+> -			port =3D NULL;
+> -			goto out;
+> -		}
+> -		if (index =3D=3D rdev->etha->index)
+> +	for_each_available_child_of_node_scoped(ports, child) {
+But here you  use child.
 
-I'd be surprised if i915 were the only driver like this.
+> +		if (of_property_read_u32(child, "reg", &index))
 
+Same as above
 
-BR,
-Jani.
+> +			break;
+> +		if (index =3D=3D rdev->etha->index) {
+> +			port =3D of_node_get(child);
 
->
-> Lyude Paul (5):
->   drm/vblank: Add drm_device.has_hw_vblank
->   drm/vblank: Remove drm->num_crtcs
->   drm/vblank: Remove num_crtcs argument from drm_vblank_init()
->   drm/vblank: Use drm_for_each_crtc() in drm_vblank_init()
->   drm/vblank: Require all CRTCs implement vblank support in
->     drm_vblank_init()
->
->  drivers/gpu/drm/adp/adp_drv.c                 |  2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c      |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c        |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c         |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c         |  2 +-
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  2 +-
->  .../gpu/drm/arm/display/komeda/komeda_kms.c   |  2 +-
->  drivers/gpu/drm/arm/hdlcd_drv.c               |  2 +-
->  drivers/gpu/drm/arm/malidp_drv.c              |  2 +-
->  drivers/gpu/drm/armada/armada_drv.c           |  2 +-
->  drivers/gpu/drm/aspeed/aspeed_gfx_drv.c       |  2 +-
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  |  2 +-
->  drivers/gpu/drm/drm_vblank.c                  | 60 ++++++++++++-------
->  drivers/gpu/drm/exynos/exynos_drm_drv.c       |  2 +-
->  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c     |  2 +-
->  drivers/gpu/drm/gma500/psb_drv.c              |  2 +-
->  drivers/gpu/drm/gma500/psb_irq.c              |  4 +-
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  2 +-
->  .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   |  2 +-
->  drivers/gpu/drm/hyperv/hyperv_drm_modeset.c   |  2 +-
->  .../drm/i915/display/intel_display_driver.c   |  3 +-
->  drivers/gpu/drm/imx/dc/dc-kms.c               |  2 +-
->  drivers/gpu/drm/imx/dcss/dcss-kms.c           |  2 +-
->  drivers/gpu/drm/imx/ipuv3/imx-drm-core.c      |  2 +-
->  drivers/gpu/drm/imx/lcdc/imx-lcdc.c           |  2 +-
->  drivers/gpu/drm/ingenic/ingenic-drm-drv.c     |  2 +-
->  drivers/gpu/drm/kmb/kmb_drv.c                 |  2 +-
->  drivers/gpu/drm/logicvc/logicvc_mode.c        |  2 +-
->  drivers/gpu/drm/loongson/lsdc_drv.c           |  2 +-
->  drivers/gpu/drm/mcde/mcde_drv.c               |  2 +-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  2 +-
->  drivers/gpu/drm/meson/meson_drv.c             |  2 +-
->  drivers/gpu/drm/msm/msm_kms.c                 |  2 +-
->  drivers/gpu/drm/mxsfb/lcdif_drv.c             |  2 +-
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c             |  2 +-
->  drivers/gpu/drm/nouveau/nouveau_display.c     |  2 +-
->  drivers/gpu/drm/omapdrm/omap_drv.c            |  2 +-
->  drivers/gpu/drm/pl111/pl111_drv.c             |  2 +-
->  drivers/gpu/drm/qxl/qxl_display.c             |  2 +-
->  drivers/gpu/drm/radeon/atombios_crtc.c        |  4 +-
->  drivers/gpu/drm/radeon/radeon_irq_kms.c       |  2 +-
->  drivers/gpu/drm/radeon/radeon_legacy_crtc.c   |  4 +-
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c |  2 +-
->  drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |  2 +-
->  .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  2 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  2 +-
->  drivers/gpu/drm/sprd/sprd_drm.c               |  2 +-
->  drivers/gpu/drm/sti/sti_compositor.c          |  2 +-
->  drivers/gpu/drm/stm/ltdc.c                    |  2 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.c             |  2 +-
->  drivers/gpu/drm/tegra/drm.c                   |  2 +-
->  drivers/gpu/drm/tidss/tidss_kms.c             |  2 +-
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c           |  2 +-
->  drivers/gpu/drm/tiny/bochs.c                  |  2 +-
->  drivers/gpu/drm/tiny/cirrus-qemu.c            |  2 +-
->  drivers/gpu/drm/tve200/tve200_drv.c           |  2 +-
->  drivers/gpu/drm/vc4/vc4_kms.c                 |  6 +-
->  drivers/gpu/drm/verisilicon/vs_drm.c          |  2 +-
->  drivers/gpu/drm/virtio/virtgpu_display.c      |  2 +-
->  drivers/gpu/drm/vkms/vkms_drv.c               |  3 +-
->  drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c          |  2 +-
->  drivers/gpu/drm/xlnx/zynqmp_kms.c             |  2 +-
->  include/drm/drm_device.h                      | 10 +++-
->  include/drm/drm_vblank.h                      |  2 +-
->  64 files changed, 114 insertions(+), 92 deletions(-)
->
->
-> base-commit: 568d4cb5dcc5ec4e22975699b6ea67a30806884c
+Here too.
 
--- 
-Jani Nikula, Intel
+Best regards,
+
+Michael
+
+>  			break;
+> +		}
+>  	}
+>=20
+> -out:
+>  	of_node_put(ports);
+>=20
+>  	return port;
+> --
+> 2.46.2.windows.1
+
