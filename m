@@ -1,127 +1,60 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C2F3C2B92
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 08:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5069C3BB126
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 09:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786955466; cv=none; b=CvnIb7ChR3DMKYphjHU9gJsdlTa/mzfbK8thnRRtVrzHTtyKkot9T3ONN2QfufEG+y9NsTneFF9RhNpLZjTdLbcX9W0Nm+9xrknlJY0Z+UZ3zcpiB7YfWiPa9/CjCRCy4NvTpyzWJ6Qw2dSoAtgoB7EcI6LyChlaA0NTPWtQetY=
+	t=1786957388; cv=none; b=SSJQyUJ2htkhZs4TApzjB9tZqX5hFpr/xb/2wq6bMqZWUFg8j0HbdMbVFSm55t70qhy1BcX1RL/0hrn/ET3TEiL7UIs2/74yD8t0LcNgmpyiMuSE9lahmGtOuifX3SyiWQLoriHb8xPzFVJ4cln3Wh4Wbz36sTQlNJR8LDxnVlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786955466; c=relaxed/simple;
-	bh=LbEwa3z7r5tm8VeysrxRioGAFNdFYhPV3TOfC5buAFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UJ/9z3V8e3tZVehwRitsXHanqlbT+Yt7DXIdfWiT0ua2TK1BBEY/K+Z3uQPOzUvOdbTyHe9Lj/mqWUws3Si0CwAlXE03JXrK9rsg0BCezzHfm4TFP6GY3Re+/5gh3z8Ek1e50XN3HERfVZTdcgU70Js44CivhllOdjYKPUM/FOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hMuxaMJp; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1786957388; c=relaxed/simple;
+	bh=Ctm073Bj7e2ZLjn3SSoFUwpRQr+8cC9o7LCyjPJVWhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X68B/TVwuPHQGv5b2g23/GIgou5RIYZfikgFailFiQ/pfB9SMEuw/Xav4uyAaf/Jk1AUUBj/JpYTklBzAAkNL3WO8H+qt/SUlwWg56U/r7++jp8HbZ71S+778yzAbx4E137owPav9kUPgfMNjy+3Buci4TuhTcpUVjldgTC7mmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DTt/QPWI; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hMuxaMJp"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DTt/QPWI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=fAcBFOcxc3nHiQ
-	rjC9A//y2CuUhmSjMl2E6N4VvLwJY=; b=hMuxaMJpLsZMQuf4fYFM+YG1+/oRr4
-	0JxFcIsfHg5I5ntBkIH3IiONUCjlpZiuZslbViQgrWP6/gdpKMtv3W/dl0ML5zwg
-	HT977phX/TPQuepgZvKKPyV8VZ7amGGZOFjOT14HEvHKFFFy2Xm0LL0wh44oXLjR
-	45ftzwkcagdh192btYbb/98rF2FmgHb75os+IGlExPpYfunH9TYe0NOm7zzioiJi
-	iupJGHhJ4fq1Pg/5TAaWVEYWz1P7lHh8iqYNEdKJ/bgm1VuLkPomaeS+Ilc8UdFf
-	vD4n2uS15C6g7k5sA2MtIwLD9vcLKTzfIomO6JkDYCQWGT2LSYrlN4aw==
-Received: (qmail 3386364 invoked from network); 17 Aug 2026 10:30:59 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 10:30:59 +0200
-X-UD-Smtp-Session: l3s3148p1@G1Vl/TlZXLEujnve
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Ctm0
+	73Bj7e2ZLjn3SSoFUwpRQr+8cC9o7LCyjPJVWhE=; b=DTt/QPWIhPSB3YihO9GB
+	0O5kcPgYoiKvE/qgOX36RrKgLnT2IF41Um/T3IKDxHQRYwHZqt4cmWPHIZiiQGqU
+	TLYFN7uV+NuK73f6YxEeZhUJz2yTaxR0UsM5xwDMQ2aB8GFki59Ltv87MgjHp/lk
+	tD/s+LDkrHiO93r0sHA7z6mRw87IrQf+y12/UA76QsWQiOERd0xv+8CH980kebje
+	s5o+/U2FTmPpwXWDwFWnP9nXUdr6mEMwF7rX1lnL5Jp3bGpKeHHsoUjU7vnzB5Pn
+	GFtnhOZgUvLhkodruP76X0dzJ1xaWfYtXLsC+vwLxLwx46fBmcXE30RhevJY9bc0
+	wQ==
+Received: (qmail 3396681 invoked from network); 17 Aug 2026 11:03:03 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 11:03:03 +0200
+X-UD-Smtp-Session: l3s3148p1@zt4KcDpZ2Owujnve
+Date: Mon, 17 Aug 2026 11:03:02 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: rcar: fix reset handling for Gen5
-Date: Mon, 17 Aug 2026 10:26:45 +0200
-Message-ID: <20260817083046.11935-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.3
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] hwspinlock: convert to XArray and add debug
+ capabilities
+Message-ID: <aoLORmmx8OOSQwlZ@ninjato>
+References: <20260727100559.3119-5-wsa+renesas@sang-engineering.com>
+ <amc0jR2yH3ia6ZgZ@ninjato>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amc0jR2yH3ia6ZgZ@ninjato>
 
-Missing reset_control_status() support is not Gen5 specific. It depends
-on the firmware used, if any. Refactor the code to handle missing
-reset_control_status() more generically.
 
-Fixes: 87e713f20048 ("i2c: rcar: add R-Car Gen5 support")
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> From my side, this series is good to go. Looking forward to other
+> comments, of course!
 
-Based on this discussion[1]. Tested on a Ironhide board (R-Car X5H) and
-a SparrowHawk (R-Car V4H) for regression testing.
-
-[1] https://lore.kernel.org/r/CAMuHMdVAgjguscFMKd7u1XPuZEkB7mH9-G-Y8nYfXqbzJ2hH9Q@mail.gmail.com
-
- drivers/i2c/busses/i2c-rcar.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 46508176712c..755064804cb2 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -123,12 +123,13 @@
- #define ID_NACK			BIT(4)
- #define ID_EPROTO		BIT(5)
- /* persistent flags */
-+#define ID_P_NO_RST_STAT	BIT(26)
- #define ID_P_FMPLUS		BIT(27)
- #define ID_P_NOT_ATOMIC		BIT(28)
- #define ID_P_HOST_NOTIFY	BIT(29)
- #define ID_P_NO_RXDMA		BIT(30) /* HW forbids RXDMA sometimes */
- #define ID_P_PM_BLOCKED		BIT(31)
--#define ID_P_MASK		GENMASK(31, 27)
-+#define ID_P_MASK		GENMASK(31, 26)
- 
- #define ID_SLAVE_NACK		BIT(0)
- 
-@@ -901,12 +902,11 @@ static int rcar_i2c_do_reset(struct rcar_i2c_priv *priv)
- 	if (ret)
- 		return ret;
- 
--	/* SCMI based resets don't need to poll for success */
--	if (priv->devtype < I2C_RCAR_GEN5)
--		return read_poll_timeout_atomic(reset_control_status, ret, ret == 0,
--						1, 100, false, priv->rstc);
-+	if (priv->flags & ID_P_NO_RST_STAT)
-+		return 0;
- 
--	return 0;
-+	return read_poll_timeout_atomic(reset_control_status, ret, ret == 0,
-+					1, 100, false, priv->rstc);
- }
- 
- static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
-@@ -1200,15 +1200,12 @@ static int rcar_i2c_probe(struct platform_device *pdev)
- 			goto out_pm_put;
- 		}
- 
--		/*
--		 * Gen5+ uses SCMI based reset which cannot report status.
--		 * Firmware has to ensure proper reset
--		 */
--		if (priv->devtype < I2C_RCAR_GEN5) {
--			ret = reset_control_status(priv->rstc);
--			if (ret < 0)
--				goto out_pm_put;
--		}
-+		ret = reset_control_status(priv->rstc);
-+		/* Some SCMI firmware does not support reading reset status */
-+		if (ret == -ENOTSUPP)
-+			priv->flags |= ID_P_NO_RST_STAT;
-+		else if (ret < 0)
-+			goto out_pm_put;
- 
- 		/* hard reset disturbs HostNotify local target, so disable it */
- 		priv->flags &= ~ID_P_HOST_NOTIFY;
--- 
-2.47.3
+So, it seems this didn't make it into the 7.3 merge window. Anything
+this series needs?
 
