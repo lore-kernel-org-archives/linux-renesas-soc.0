@@ -1,42 +1,44 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5165D3F44D6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 09:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1BD3B2FFC
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 10:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786960552; cv=none; b=HclKVGGtLTjjtSTWymKgmPZUbzVWS7dqRhd/vwn6tmt3CYD1+cJ84x7KDonT2AhMvfmz9CYwyFi5nVRbzr93Xr8+fcKNN3fU1jYgXyYwRMcCnUnfpjWRwYR7/TJ//hioozNqniv+0MEFghWWSRgQQQcUsygSNusBA9AnYgPTp+g=
+	t=1786962793; cv=none; b=lTnGxzqbLz6MQ4GSwzLaHtg5sQ6SPQ8UsMXRMEqxelyRSRfad5+3cBqSCcpCxJPymIDZ+y5HmjaQseACrnHigqUpNMSUcThwPh9xVOtSaGVDWjNb1DgzMDBii5mul5zV6Q96YVe6SDpHCpAnwzJuYIzPqnrG3uruyPWZhvzEWkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786960552; c=relaxed/simple;
-	bh=i33aTdaZMQvhqoiXnxXVes7/99yAVvqlYJVswUj7kDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Khsckj/4tbwuUWey+qj4jm9PKRQ4c6VMGYRLSTMILrfRUZqEOxFe1b175MeM2ZJmnL9l8BqCkhl6zi9uWL8UxkrG1BeeqVgBvpINIC4LpLnF5533Nx95qMbmkXv0j2geGDwBdfk7e4CRSB0anOkzJN0Vgf7E+lW/KOJaDLHES48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=crFyiwuh; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1786962793; c=relaxed/simple;
+	bh=3rNfovr5pupfVULO6YYnsFxMI5Lw1eUwZXiNstFY2Uc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUyqzOtteouWZO/sPbOS/mZMalvaNT/MukiQ4mUZ+Wt74khz5Yzehje6JEanPYjzMbRseHtf/wItX5LluyY5pYQyMrrnLhju2eKjbpYSWecNN81+d5SPRmujBcxyc7Iow9YAr009P27N3lBHwCBLR55lTCDbOSXj1GObjLOQw+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Y/j/QQkl; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="crFyiwuh"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Y/j/QQkl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=lH2thzjc+pR3sO
-	cZ2NskyWITZX4hRVVOGZcMtKGhOxQ=; b=crFyiwuhKwCs9ddPtRIGuvk5kxTIxq
-	cJ7ozXbQpC/hj+OMrz3gZB7umwkwJ09P3IX7k1dBuagCZGoscUL6oEl0s+jsInVl
-	2mcp+0aAJOi+Kd6FApEiRqHeIOQ1dhoNhBzaqsWdKxifz5dWxSX05eOPXHcrhwrz
-	CX7CSm2g15otT05q1cLBh0Wu1CWOX5NpyXAEPBlghIWHWN+cfElbQR+IzVN4s5sN
-	+IMklk61N/v7nEhbI65uvmEAXWU53Ogm9r/vcw2PQ3Cla8gc5aRmF+FJDv7KUIiF
-	uHwqRbmiXwpUhScwDX+VVoR3CV6+ST01fbfuSrFbwFnuoKjWhNFWeqYw==
-Received: (qmail 3413344 invoked from network); 17 Aug 2026 11:55:47 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 11:55:47 +0200
-X-UD-Smtp-Session: l3s3148p1@B5GsLDtZ0IQujnve
+	:mime-version:content-transfer-encoding; s=k1; bh=ilNVJ5Md0l9XhX
+	m/UHssEnmTTeO9Le/v9Ji+rHHM2Z0=; b=Y/j/QQkly8rA4rGmRuVEHDhvqBckpt
+	Lew3JgOurhpte03u8fkHtJokbCn5mfPC9rqcwxdB5s5jPE742R2Qyi0ntcuXAFhY
+	9306xTCORE044THo0VMEpTbHPc9CFzLl5n2Xi5WOA6vY1/Rw2YLVRahhDakLi3sP
+	cW7cKI+wt5F/YbpZogYwU6HCOO0PHlVqcfVH7+NBectogP44is0KVlUMiER+X/72
+	jDIM2UoPWdDvEadguitSvsTGIse0mHqn+l7QSOGPsxMt5mGEOdQZUunLAQEBG9FF
+	2Ayf3ZKhOTZ3PoGDV/pBq5BE+Y7PmrP9pa/ldBi16VaBeIHIi/0JsDwg==
+Received: (qmail 3424423 invoked from network); 17 Aug 2026 12:33:06 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 12:33:06 +0200
+X-UD-Smtp-Session: l3s3148p1@mw0fsjtZsugujnve
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-remoteproc@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v3] soc: renesas: rcar-mfis: add hwspinlock support
-Date: Mon, 17 Aug 2026 11:53:34 +0200
-Message-ID: <20260817095447.34693-3-wsa+renesas@sang-engineering.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable GPIOs on CN12
+Date: Mon, 17 Aug 2026 12:30:28 +0200
+Message-ID: <20260817103255.49565-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -46,159 +48,51 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Every MFIS instance has a block of hardware spinlocks. Add support for
-them. Gen4 has only one instance, so the base_id is always 0. Gen5 has
-multiple instances, so the base_id has to be encoded in the info
-description. Also being a provider, a hwspinlock-private header needs
-to be included. Work to refactor the headers is on-going, but will need
-many preparational steps. Until then, we need to live with the special
-include.
+CN12 offers some GPIOs independently of switch settings. Add the nodes.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 
 Changes since v2:
 * dropped patch 1 because Geert already queued it
-* add comment that flex array must be last (Geert)
-* calc local_id in a less scary way (Geert)
+* renamed pin node to 'cn12'
+* rely on default pin-bias and drive-strength
 
- drivers/soc/renesas/Kconfig     |  2 +-
- drivers/soc/renesas/rcar-mfis.c | 54 ++++++++++++++++++++++++++++++++-
- 2 files changed, 54 insertions(+), 2 deletions(-)
+ .../arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index eb8ac0d47d9d..59f441f528bf 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -468,7 +468,7 @@ endif # RISCV
- config RCAR_MFIS
- 	tristate "Renesas R-Car MFIS driver"
- 	depends on ARCH_RENESAS || COMPILE_TEST
--	depends on MAILBOX
-+	depends on MAILBOX && HWSPINLOCK
- 	help
- 	  Select this option to enable the Renesas R-Car MFIS core driver for
- 	  the MFIS device found on SoCs like R-Car. On families like Gen5, this
-diff --git a/drivers/soc/renesas/rcar-mfis.c b/drivers/soc/renesas/rcar-mfis.c
-index c327a60789d0..d5bbc3077373 100644
---- a/drivers/soc/renesas/rcar-mfis.c
-+++ b/drivers/soc/renesas/rcar-mfis.c
-@@ -8,6 +8,7 @@
-  */
- #include <dt-bindings/soc/renesas,r8a78000-mfis.h>
- #include <linux/device.h>
-+#include <linux/hwspinlock.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-@@ -19,12 +20,18 @@
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
- 
-+/* FIXME: hwspinlock core refactoring to not need internal header is on-going */
-+#include "../../hwspinlock/hwspinlock_internal.h"
-+
-+#define MFISLCKR0	0xc0
-+#define MFISLCKR8	0x0724
- #define MFISWPCNTR	0x0900
- #define MFISWACNTR	0x0904
- 
- #define MFIS_X5H_IICR(i) ((i) * 0x1000 + 0x00)
- #define MFIS_X5H_EICR(i) ((i) * 0x1000 + 0x04)
- 
-+#define MFIS_NUM_LOCKS 64
- #define MFIS_UNPROTECT_KEY 0xACCE0000
- 
- struct mfis_priv;
-@@ -42,6 +49,7 @@ struct mfis_info {
- 	unsigned int mb_tx_uses_eicr:1;
- 	unsigned int mb_channels_are_unidir:1;
- 	u32 (*mb_calc_reg)(u32 chan_num, bool tx_uses_eicr, bool is_only_rx);
-+	int hwsp_base_id;
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+index 303b5926d8d1..eb7295504715 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
++++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+@@ -53,6 +53,11 @@ led@1 {
+ 	};
  };
  
- struct mfis_chan_priv {
-@@ -59,6 +67,9 @@ struct mfis_priv {
- 	/* mailbox private data */
- 	struct mbox_controller mbox;
- 	struct mfis_chan_priv *chan_privs;
-+
-+	/* hwspinlock private data */
-+	struct hwspinlock_device bank; /* flex array inside, must be last! */
- };
- 
- static u32 mfis_read(struct mfis_reg *mreg, unsigned int reg)
-@@ -86,6 +97,38 @@ static void mfis_write(struct mfis_reg *mreg, u32 reg, u32 val)
- 	raw_spin_unlock_irqrestore(&priv->unprotect_lock, flags);
- }
- 
-+/********************************************************
-+ *			HW Spinlocks			*
-+ ********************************************************/
-+
-+#define MFISLCKR8_CH_OFS (MFISLCKR8 - 8 * sizeof(u32))
-+
-+static int rcar_mfis_hwsp_trylock(struct hwspinlock *lock)
-+{
-+	struct mfis_priv *priv = lock->priv;
-+	int id = hwlock_to_id(lock) - lock->bank->base_id;
-+	u32 val, reg;
-+
-+	reg = id * sizeof(u32) + (id < 8 ? MFISLCKR0 : MFISLCKR8_CH_OFS);
-+	val = mfis_read(&priv->common_reg, reg);
-+	return !val;
-+}
-+
-+static void rcar_mfis_hwsp_unlock(struct hwspinlock *lock)
-+{
-+	struct mfis_priv *priv = lock->priv;
-+	int id = hwlock_to_id(lock) - lock->bank->base_id;
-+	u32 reg;
-+
-+	reg = id * sizeof(u32) + (id < 8 ? MFISLCKR0 : MFISLCKR8_CH_OFS);
-+	mfis_write(&priv->common_reg, reg, 0);
-+}
-+
-+static const struct hwspinlock_ops rcar_mfis_hwsp_ops = {
-+	.trylock	= rcar_mfis_hwsp_trylock,
-+	.unlock		= rcar_mfis_hwsp_unlock,
++&gpio2b {
++	pinctrl-0 = <&pins_cn12>;
++	pinctrl-names = "default";
 +};
 +
- /********************************************************
-  *			Mailbox				*
-  ********************************************************/
-@@ -314,7 +357,7 @@ static int mfis_probe(struct platform_device *pdev)
- 	struct mfis_priv *priv;
- 	int ret;
- 
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	priv = devm_kzalloc(dev, struct_size(priv, bank.lock, MFIS_NUM_LOCKS), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-@@ -333,6 +376,14 @@ static int mfis_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	for (unsigned int ch = 0; ch < MFIS_NUM_LOCKS; ch++)
-+		priv->bank.lock[ch].priv = priv;
-+
-+	ret = devm_hwspin_lock_register(dev, &priv->bank, &rcar_mfis_hwsp_ops,
-+					priv->info->hwsp_base_id, MFIS_NUM_LOCKS);
-+	if (ret)
-+		return ret;
-+
- 	return mfis_mb_probe(priv);
- }
- 
-@@ -357,6 +408,7 @@ static const struct mfis_info mfis_info_r8a78000_scp = {
- 	.mb_tx_uses_eicr = true,
- 	.mb_channels_are_unidir = true,
- 	.mb_calc_reg = mfis_mb_r8a78000_calc_reg,
-+	.hwsp_base_id = MFIS_NUM_LOCKS,
+ &i2c2 {
+ 	/* Sensors are different across revisions. All are LM75B compatible */
+ 	sensor@49 {
+@@ -81,6 +86,15 @@ &pci_usb {
  };
  
- static const struct of_device_id mfis_mfd_of_match[] = {
+ &pinctrl {
++	pins_cn12: pins-cn12 {
++		pinmux = <RZN1_PINMUX(164, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(165, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(166, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(167, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(168, RZN1_FUNC_GPIO)>,
++			 <RZN1_PINMUX(169, RZN1_FUNC_GPIO)>;
++	};
++
+ 	pins_eth0: pins-eth0 {
+ 		pinmux = <RZN1_PINMUX(0, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+ 			 <RZN1_PINMUX(1, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
 -- 
 2.47.3
 
