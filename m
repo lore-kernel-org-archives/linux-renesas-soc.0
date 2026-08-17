@@ -1,159 +1,144 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E3374170
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Aug 2026 19:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276043B0ADB;
+	Mon, 17 Aug 2026 07:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786821132; cv=none; b=UTcHuxBOaxgqsOA0GUpcPplSaCICsfpWzO1yLYODQpCmvS+gGfoCkpA2pE/nMBEPahWFC5dSJlE198sgi/di6stvdiCYM3Snb8bknoEypv0VLJ4fiTOtopw0k2AGa7C5IGO92t8d2Dd/rDCqIOzDJ1XlewtqHO9Z628DbD/Cg2E=
+	t=1786950015; cv=none; b=D03M2FWyaqubKBLitJIDnnBNoPz8lnznZh23i4nbEROQExvpkuSPQ6iHkWyfXpz8zuoC8QT0oXKl3T4oqQ83ICCAfbb0JobHZWwqAW1+YqC4Oj599hlSZdKTlAGKIkL42+QOgIVz6a48yoYfX+UQ0e+t4vQVcuzgX1VZvpjelmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786821132; c=relaxed/simple;
-	bh=5RkMUJ1444X2cAUbWcMBKjhTBMhgCS7gOIBcS9lYMPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GmYH1Yv1kv+b/QzbPf8jEQF6kEhvgwL8KoVCCmoTNouAnhNHBljpuniolOw5coCGxoqDbgcnpLWo9wbKQ3opxBJlyAZEOZVWKw6DnjVLsUZtQI1rDKAU4AGiZ5shGSul+7lUeg6aJrgsoiC4woISJJsLVKlp0G2V7EstTOe+YJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGvpzoKv; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786950015; c=relaxed/simple;
+	bh=WcIwkuuIli0DzdxzuxE8u6k9nw6hopwTqA6UCL6GOQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSiejG5T/DYDKjjLfEEL1EhiRee5kfdcwQ9GWLGNBqluaJVQDiPwKWi5p1REEyflYgVt41cKXjRi3ooMIKgLf7v0+OxLa6iPsQaU8dElrG2jEgwC+1i+761n/sjtFESVt8tI5yv4juHQNpQQ3b5exzUxq+eM4v1GHxnO9bI62fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ntkh+860; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGvpzoKv"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c214321dc32so207612666b.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Aug 2026 12:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786821128; x=1787425928; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=88izO+QaB/O00yTBhu9wQoygITPFWyCSorKc++U3zBY=;
-        b=OGvpzoKvC/8HTbmaFB/nErXD6qnlhk/zmsXYD1OoN7t5w35IW4M0y+EYsAKrhWKfyR
-         ufdqcKHJCBbLpLj1obAkoaZkYYY1zrjg8byCGapnQDz/fViPHjZ8ihPMv2Rl3rk1Urou
-         MWX5hktfymmp3wuZlZXPITJfxQA1nVgtyU2O5Bom3kdZh9kDedUJuFfrdwceIOJSqeTu
-         hzpQE9FPQktvXr2EhyD53G57Kbe3eG6BkXbu5Sm/MjTJo2emI50CU60khHg4ZyHZ4w29
-         NlWfVs+GMpGmmVsoKZO45DrVYz+IuNGsk0HjiL6lrnjbwuF7ZWpdYvvOQZRMWm13Oic4
-         g0sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786821128; x=1787425928;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=88izO+QaB/O00yTBhu9wQoygITPFWyCSorKc++U3zBY=;
-        b=KAQxQEq0AqQAg7nD/iqXH6NwO6xnshPMEG2StKBeXIeLj5+N5iY0wL/kZ93aJ0x4JG
-         IuMqRqs6jZOmd1HWTPb67UW2OKbioXPBhmoS8osODhKFOSee/Ly1AVPfTgFHRAJlbozt
-         biadV/ZHnLxU4uGHKgLJVjAH+lNe+7u6cc6zzP7/1Wut8XgSetMeLlDouU4jWjM9HEhx
-         VJ1bAkfGijEuJXz94N8YXLE6uFcK16q9mxtjElNyhuXb3+bKGsQ8BAcWgHqiXBqWczf9
-         e32mgIIbBxbgOUM3KGY1VcPsPlmBKLMr9R7+kOfOKCezU+cvB96E5z35jam8vnCwlp0T
-         TglA==
-X-Forwarded-Encrypted: i=1; AHgh+RpX2nNS/PEFoJ1jJBSKDyy/IjlTUtrC+OhREli55e1OzJ1pnsKVHBj7JHv8xaVYm8josGdipJnrrMsQxGM+qYu30Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJpfrbxtkmLDK7KDrcNDOIAblfmSSeALWQdkkt5YzM6MKvSndm
-	PGKDXteCDY8p6Tyol/m1pEvqdeszCqMWvQDOYh7qu/9BuL8gfw6i/zJs
-X-Gm-Gg: AR+sD13wO2AUmQgsB/9YfZ2Vk7Xz/kGkwAdCh7mYzMC0FdECGQFTV8+pHYagXRrZIbr
-	B+uNcExsNNSEfwTvn6h/vuj9SvD0wQD3ndCYUrfH3CYt5xekOPM4QQSE2KQwsTNyOxbpx68OOwJ
-	yzjcVkCt4Ah79+Xyj0TgQkBPO5N3TyLjAynH2QLVcRZbeAfb2w0cm3qPja/NmyCZL+fVY24E+AZ
-	fdoYd9ELjtG91mISMPkczc7ILeUd9gMGURKLpB3kGEB6WYFIP3eMU/aPijZ16vsQOqOAOwkM0mo
-	9kcdH7kyQ4y1wTBjqJ+LaP+4iKLN2kCfqu+xLvgXsD643p2dFlTVdD1uE1kSCtNfBQb6/nS369g
-	MpN83S4FsxPYPXeTw4ffPgnn2TE1DSaR+WGoURiWdWn2jGLBIg1YPEjP7H5Q5PpajtuUT4bKnhp
-	wdXD2Hpuc//+hTCWPXH75xO89D4JRoeEGhPbZB/pVBabvVGgDllYzlyXa4RagzHg+oy81SiBQ34
-	eprOeE0Enqqy5N2Jq8L5qC67gdDuWh0l0ojQMda1w==
-X-Received: by 2002:a17:906:eeca:b0:c1a:5d49:f99d with SMTP id a640c23a62f3a-c2129ab6c24mr672768166b.7.1786821127686;
-        Sat, 15 Aug 2026 12:12:07 -0700 (PDT)
-Received: from ?IPV6:2a00:1fa0:28f:426f:2aa1:8f7:f8a6:4f89? ([2a00:1fa0:28f:426f:2aa1:8f7:f8a6:4f89])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c212339f744sm252129866b.10.2026.08.15.12.12.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Aug 2026 12:12:06 -0700 (PDT)
-Message-ID: <f140a168-0f92-4507-bf07-f5297ad92159@gmail.com>
-Date: Sat, 15 Aug 2026 22:12:03 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ntkh+860"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B411F000E9;
+	Mon, 17 Aug 2026 07:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786950013;
+	bh=W0Mi9bUNtPO+CJJgczTsGSqnp1P24sokh/3X+v65g+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ntkh+860Nk7dcOLhNdisBMPbKsPY+jbKCuRjNLS+vKI/HsQ+mg2QqdVC/Rx0Mj5Vx
+	 ZSmZ0Ty+/116deaYB7PdTS+AJ5Fj31d3yQLzd/btU88s6MH7WDq6wMYcnn18zNM3us
+	 QJI2oQuT6JvqgRAs3DckpAy+CUraMrG6Qoq2xuhWbD691z+80/2gyCVTJmawod4vmQ
+	 mCM9JWso0ThievXtLf1Cjp7TFna5mM2m6mp+Ia7cpnxzS7JfhhZhw6f3oVuUiL7h3q
+	 xQ/v92cKk/GrEObaDBVA06WqbByxazx35IvKxp3rnBCw8fYlCheqUwYfJNoOt2i4ST
+	 umBvcbjpoaG2A==
+Date: Mon, 17 Aug 2026 09:00:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-usb@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car
+ Gen5 DWC3 xHCI USB controller
+Message-ID: <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
+References: <20260811051016.1655887-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 10/10] net: ethernet: ravb: Add gPTP support
- for Gen4
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "DavidS. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20260811160200.2049987-1-niklas.soderlund+renesas@ragnatech.se>
- <20260811160200.2049987-11-niklas.soderlund+renesas@ragnatech.se>
-Content-Language: en-US
-From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
-In-Reply-To: <20260811160200.2049987-11-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260811051016.1655887-1-marek.vasut+renesas@mailbox.org>
 
-On 8/11/26 7:02 PM, Niklas Söderlund wrote:
-
-> While driver advertises gPTP support on Gen4 platforms it is in fact
-> completely broken. On R-Car Gen4 devices the RAVB module have no
-> internal gPTP clock as generations before it. Instead it utilizes a
-> system-wide gPTP clock.
+On Tue, Aug 11, 2026 at 07:09:33AM +0200, Marek Vasut wrote:
+> The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
+> controller with glue logic wrapper around them. Document the glue
+> logic and DWC3 controller.
 > 
-> This change utilizes the refactoring of the RAVB gPTP code to add
-> support for a system-wide clock and stops the Gen4 devices trying to use
-> the non-existing internal gPTP clock.
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> ---
+> V2: Rework to use flat bindings for generic plat driver
+> V3: - Support one or two PHYs to correctly describe the hardware
+>     - Make maximum-speed optional
+> ---
+>  .../bindings/usb/renesas,rcar-gen5-dwc3.yaml  | 81 +++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
 > 
-> To remain backward compatible the ptp-timer property is optional.If not
-> present, or not enabled, the RAVB driver will no longer advertise gPTP
-> support to user-space.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Sergey Shtylyov <sergei.shtylyov@gmail.com>
-[...]
-
-> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-> index b4df5cab0e5c..4c8dc02022e2 100644
-> --- a/drivers/net/ethernet/renesas/ravb.h
-> +++ b/drivers/net/ethernet/renesas/ravb.h
-> @@ -249,6 +249,8 @@ enum APSR_BIT {
->  	APSR_RDM	= 0x00002000,
->  	APSR_TDM	= 0x00004000,
->  	APSR_MIISELECT	= 0x01000000,	/* R-Car V4M only */
-> +	APSR_GPTPTIMER_SOURCE = BIT(25), /* Gen4 */
-> +	APSR_GPTPCLOCK	= BIT(29),	/* Gen4 */
-
-   Again, I don't quite like that you switched to using BIT() all of a sudden...
-
-[...]> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 12877a8488ed..30170e92d3d7 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2752,6 +2752,59 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
->  	.magic_pkt = 1,
->  };
->  
-> +static int ravb_gen4_ptp_probe(struct net_device *ndev)
-> +{
-> +	struct ravb_private *priv = netdev_priv(ndev);
+> diff --git a/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
+> new file mode 100644
+> index 0000000000000..37944a7d5be04
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/renesas,rcar-gen5-dwc3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	priv->of_gptp =
-> +		of_parse_phandle(priv->pdev->dev.of_node, "ptp-timer", 0);
-
-   You now have full 100 columns, no need to break that line... :-)
-
-> +	if (!priv->of_gptp)
-> +		return 0;
+> +title: Renesas R-Car Gen5 DWC3 xHCI USB controller
 > +
-> +	if (!of_device_is_available(priv->of_gptp)) {
-> +		of_node_put(priv->of_gptp);
-> +		priv->of_gptp = NULL;
-> +		return 0;
-
-   This *return* seems superfluous...
-
-> +	}
+> +maintainers:
+> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
 > +
-> +	return 0;
-> +}[...]
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,r8a78000-dwc3
+> +      - const: renesas,rcar-gen5-dwc3
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dwc3
+> +      - const: glue
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  dr_mode:
 
-MBR, Sergey
+We don't accept properties with underscores, unless this is coming from
+existing schema but I do not see snps,dwc referenced in the binding.
+
+> +    enum: [ host, otg, peripheral ]
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  maximum-speed:
+
+Again, where is the property defined?
+
+> +    enum: [ super-speed-plus, super-speed, high-speed ]
+> +
+> +  phys:
+> +    minItems: 1
+> +    maxItems: 2
+
+Why is this flexible?
+
+> +
+> +  phy-names:
+> +    minItems: 1
+> +    items:
+> +      - const: usb2-phy
+
+phy is redundant. Are you implementing completely new bindings which
+have nothing in common with all others?
+
+Best regards,
+Krzysztof
 
