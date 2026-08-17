@@ -1,108 +1,125 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00373A984F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 07:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A5282F34;
+	Mon, 17 Aug 2026 07:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786950386; cv=none; b=ITWH6o6dYxgZzIKyKfSGwZLDtG1+qiaM3hxAcC9AzFWJ4n/G23t+xeXoZKgugjHw+5JfVpulO/2z5JD8UXS9yBG/wbQb0VNzM2QLFQZbqugHs//NHYse97fhbH637Wq3ZjM5XYxVvyA0qdKaNrt0tP/jKLB8Ph7NTrjKyhN1Lt8=
+	t=1786950803; cv=none; b=OOsxBkO60C5FUH26KC9RB8WfBvjESzPejipDT5ftvcjFwbd212yw40uoL08wZtFmrlf6eDez6XL3S+ZZScLg1wIhJx4dMlyP4NjfhgWkY435T/HqZf908fakkCefclmL+bbczbBi5nIACq/J5oy2hsmMaLQCrdZMx0piSgKu6do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786950386; c=relaxed/simple;
-	bh=fbgeOiEO9EGT2c+GeyD/KoGXlrNibomcWQO6vEICVc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oBxdzc6sSbAevdtYTNPWIwLpgtBHsJOc6MNYlZhDELiNNSD9UewKN6MYDdITZWukkIImvLSggR9Cgghe5AfM6+olyFBXxGrcczX3IrUKQaoDqw2IF7cmXomNmVUx2TSqY6FFiqb1HtWBTR/VojIi/Kn8nkGYJAvfoUNrL3GOuZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c5ac25089bso505051e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 00:06:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786950383; x=1787555183;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kzZAObXBTvlF5qEmNlbVBhJCzf1NZELy+LTZ2/1S03Y=;
-        b=bG37HemPCY4Pz3blqAClDzE4avIi9dwuq0QqgsL2eNY207dbmzlBX9tNzVEvGWtrNl
-         dxqZNbBVJqnTWVRhzHfXBnbT/m7afbwnSsl6AS4jZAPFDYO0YtY/2g+aeJZNEm+Ne+q9
-         /Z51NWTn29+phAN6DViPTpD/q1tC0BFStPMoHvz/EBGbs3+fA/oh4H575mVZvngdIp8E
-         JDhWhmY4jdjlPmRM0ZJB8XVXR/uqzHIMC0+XNEj9+kXyz9/Xg6S1a6Vm57Tx6BQg3V4x
-         H/t6YRup0SRyBi6HYbzm4+XYZaDNz8CV7d7Km3vuzNXk1m8X0ReYfg4T9Q6DL8VE3eA0
-         zMXA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr6j3nKuw7pZgsPCHQQO8KXUurNkvCktYWk7MhCerUC6E55xvRNXmgCql67t4+eI3bkuAifFPcEc0O/0Smzckv7OQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9SV0MNufmjrhcl9KQClY5UxNlYwJ6N+dGDrPrP8o/TO4rEuqt
-	9dARE6lwkgktzdtW0FHswipUbtCDWF7EBJz0pD6BznnHNAWkTKk9WADXfw9JFwA6
-X-Gm-Gg: AR+sD12JaalGFEQmauTFzxJpKcHg56R1fE82dHkUU3szyUhKFDIb/PJjF9cMAPY9/Ja
-	GE4Rj9KI1457yqYzYPu/MySwWmlJifG4SCxLGHPHpju5GwVhEOpbpP9kcob2kQIIuDf/ImVm/fR
-	7dMgj/mzMO2WRRkFPVHFx/C8neUg8TTsvZPnk2DnyjVtTgIUMNJO7INnBO55EaX7cA2nte6yV6c
-	ptZjdN12wFgJYtDPUsy5EeDANJKuLaM1CXW/+yRJGF62kxpd7OZ6DvjGpSffvW33SlSxjuWYHgF
-	AvDtfYDVgwWUwKiajYBhqAJO2zd5h3CWGTn0pDrqfYK8ZuC3u2c4FS90tEyzO1zHBUwUL03/cJ9
-	bPFjG3kAeHIaEEb2WB3i6gL94cKXz9B4kSFAS91H1Myn3LmR71HHkIMHu2Kf+zaKTMY/4dzCZwc
-	/TMnKGqqdwwRI7H8+fVShdlXI7Y7fFexGng5oh6/7sHKS1F1+3AAp2E5sP238GS15H8rgJtn1R+
-	Xjfe0csxMeN0r3r9osBfV9W996C0Q==
-X-Received: by 2002:a05:6122:20a0:b0:5bf:ab99:ea89 with SMTP id 71dfb90a1353d-5c591f13ef5mr3510906e0c.12.1786950383552;
-        Mon, 17 Aug 2026 00:06:23 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5c7909a49sm377976e0c.17.2026.08.17.00.06.22
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 00:06:23 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c5ac25089bso505040e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 00:06:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq4FHE+iEDytI9J5Q/Img+745gxF60KdUv+bUb3WTD3BqFW6VoQrwA0C0KFYynFCZ1MFqBbrCJATqUqK7dUB/N+8w==@vger.kernel.org
-X-Received: by 2002:a05:6122:3d4c:b0:5c0:fb8d:9993 with SMTP id
- 71dfb90a1353d-5c591984b16mr3773578e0c.0.1786950382154; Mon, 17 Aug 2026
- 00:06:22 -0700 (PDT)
+	s=arc-20240116; t=1786950803; c=relaxed/simple;
+	bh=CuDMSjILBooHAbswi6D25Is5mfpufM6t6pZic0QGP5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lBj4un8LNpVCnT5IpjUYFGbajIKoWe5NTv+meOKBpsoSaZbVqVCe10qA4V1g4UjS+y6Y8Icck9owKQEgfjpp9GbO4Ve/Sc22dkR1fUmTpDU0YjK3vGWldXNdIMlbAG0+kE23BjGuceEb8vQVNvlAwcbnOvP+ZwfMYf8ZrytcWVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nchVkzt7; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nchVkzt7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA241F000E9;
+	Mon, 17 Aug 2026 07:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786950801;
+	bh=H/t2thtyqCv2kiESP+whdnlUNHP7f/OGlGkn1NUoBMU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=nchVkzt7VQ3uuhao50qAbHHI8oC82cb3b8qn/5/dpb3/K3TG5mjm/Hb7MzLDkORzd
+	 8M3ijT5Y9AjGf+kI9cHIu7BgYguWUEK7/JU5YuO4fJ4yWmHAkBhsMbAtHY3U2p1LcU
+	 +GCoYY+bbzYKwGTTgtJ9zRlCyK5XSb4B2DvEmr/QamUb64WvUi5/ICqGbCP0houBEu
+	 b9dPs0rpp3sRrd5SrHD4FE0RXI4blvfQyiMB6A3N2kUZA0VcyQ1X1qi38hBaSo7hdD
+	 TV5TfbC9MclWep5Expl7DbrbcCzbZNsyjCB0mnhwI+6bx8txTuhQuUx+HtM0uqNRyG
+	 gNkMf/wQZY50g==
+Message-ID: <c8fea13c-5b67-4ef5-beff-b10f3b3772e2@kernel.org>
+Date: Mon, 17 Aug 2026 09:13:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811051016.1655887-1-marek.vasut+renesas@mailbox.org> <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
-In-Reply-To: <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Aug 2026 09:06:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXU0Z_VP7H3=KX1g7wowG1ZDi__nDgWRmquYxhLHKvd7A@mail.gmail.com>
-X-Gm-Features: AcwNN1VnMyJzYsnp7zPKVxOcOJLiN424gLCFqLRF4e6JW2UrjUiX7AMCPRyQHkI
-Message-ID: <CAMuHMdXU0Z_VP7H3=KX1g7wowG1ZDi__nDgWRmquYxhLHKvd7A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car
  Gen5 DWC3 xHCI USB controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-usb@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-usb@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260811051016.1655887-1-marek.vasut+renesas@mailbox.org>
+ <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
+ <CAMuHMdXU0Z_VP7H3=KX1g7wowG1ZDi__nDgWRmquYxhLHKvd7A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CAMuHMdXU0Z_VP7H3=KX1g7wowG1ZDi__nDgWRmquYxhLHKvd7A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Aug 2026 at 09:01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Aug 11, 2026 at 07:09:33AM +0200, Marek Vasut wrote:
-> > The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
-> > controller with glue logic wrapper around them. Document the glue
-> > logic and DWC3 controller.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On 17/08/2026 09:06, Geert Uytterhoeven wrote:
+> On Mon, 17 Aug 2026 at 09:01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Tue, Aug 11, 2026 at 07:09:33AM +0200, Marek Vasut wrote:
+>>> The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
+>>> controller with glue logic wrapper around them. Document the glue
+>>> logic and DWC3 controller.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
+> 
+>>> +  dr_mode:
+>>
+>> We don't accept properties with underscores, unless this is coming from
+>> existing schema but I do not see snps,dwc referenced in the binding.
+>>
+>>> +    enum: [ host, otg, peripheral ]
+> 
+> Probably this should just reference usb/usb-drd.yaml instead of
+> defining it itselves.
+If this is DWC, why isn't it referencing snps,dwc-common?
 
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
 
-> > +  dr_mode:
->
-> We don't accept properties with underscores, unless this is coming from
-> existing schema but I do not see snps,dwc referenced in the binding.
->
-> > +    enum: [ host, otg, peripheral ]
-
-Probably this should just reference usb/usb-drd.yaml instead of
-defining it itselves.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
