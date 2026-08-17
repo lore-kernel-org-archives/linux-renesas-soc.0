@@ -1,192 +1,91 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FB143CED7
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 14:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786978692; cv=pass; b=k9GwcWe3jHJd0aLKaKy7vJA4kI4HY8WIa0uYtyAus31+HSGm7xjek0NuS/yaLzCTzbTn8eLK5TbZxyMHpyYHb0Qx+JEaig/HxrnRhgVAnzUkvwvX/sxbshS+aRGkSXBRI4UY5qD93Kui9DULAoLTsonHRMLTmkCbX4ZMwkWbakE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786978692; c=relaxed/simple;
-	bh=gIi+I19Q7XnPhr3NypbxThTLH682pcRQjzGXRDJm87Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gN8dkEgJPD47nglutFSx+l7eyI+KQicrsqhDP8XQKv2E5RcHB2AoMR50Z1A93+F+4EMGg3IvbWfvBX076Stilsu5diS2zBX8sJfAJpN7kMC8czAeNRr2gZgwOGAye1Q2BtPmPvJTZmTat+wNy9xb8dNkDxvn4qaNKYFN1MWs+xg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np0TILjm; arc=pass smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np0TILjm"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49954b88fffso39987365e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 07:58:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786978689; cv=none;
-        d=google.com; s=arc-20260327;
-        b=X0mnzOvTGXk/1/5QjJfwR2XR0qKNxQUQQZwQbd7apjjGTkwHr7O84w/YPYHFoLGVFa
-         sopLI1jalVDk2dS6gnabIjG2Q5RRLkUh2+qcep2I+d81Jm6PId+5Kn8Yr1vI/tqIVNH6
-         xsRQGGrvqYbNGunFQNWSI3MkfO25+esfv/rCsD/315eIgakhGzcHIlOUqZO1ktJGXxGj
-         nLjPAr4dSiAsz4sCMwyDlE9IjfqVUw+gxtD18DeZuIcrUb66CXiO4QbjAaynw2zCTR/5
-         re20bhegLX6BautvLSRUHKy0FjM7ZeTSfctFbD0iXhS5yjE044CJH6N+rUYZvVFGuBp9
-         2AIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=yg844Qi5SZrdGikIefqLd2LapEU10ih29HLHILYEwIM=;
-        fh=Mrz4KXJx+26janTiifl0cBITdEdPc3wzTj/pHvHz3rw=;
-        b=l5IPvQ8OvpnjZWJYX2mt119iszeXehkLtrNSvdAGC3hhEPvc/Ozhmvuw+D2l2ewTkO
-         tOg/xLiBtVnZuYkDpMOt2k9NPHVfqyEmDi3MJDhaizisNHmkLjLPFT/zrOIoREy9n4vI
-         k2hbDzdh+C6ah8MYbKon13SIAJonO95ZDpdRJs0bPoavAyV+k0PpgndyI962+tju5MSi
-         LvJD+5kuLEfxPe04VZowikJUNxrTpRl0YAGQPuXcr7YJr+oSI6jB5l2dA6jNlegHMb3b
-         ASGSlm/m7KXISqnP/2K+7EldWKkdno/cwCLsHQOqZ89kJKAq0FRRrmq9KezTW9XExzXe
-         zqAQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786978689; x=1787583489; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=yg844Qi5SZrdGikIefqLd2LapEU10ih29HLHILYEwIM=;
-        b=Np0TILjm50tJQ2QuLvbdcOBxS+9qO9LaueKKKurxu+/yPGBSN8ubmmD7NxH32RgpKV
-         CLYk1zUatYr2q0fplDYhIO1cLQ2aHzJkSAbYkvwbdGmXvp6Jr8MA5zWa/QoEbdUfR14l
-         XMRuounhRFFWZyVb1YBov8G3PrWo62/jkbWwoY7fNp5VDJqSgiECQzdfUqr6h3BKubT1
-         ThrZ71iJUHz6zfE1LmuzIiB3Qd4KOzq9HnJAe2EqavwLlzAJ4zOokrs2c+i3Lsso+v8O
-         KlFu0P5TGLnV2bx9KAIScmSw3i7fo1bUePx9nzUNyEPpKo8m7d0aEb2VMnWumSS435Xh
-         5mEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786978689; x=1787583489;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yg844Qi5SZrdGikIefqLd2LapEU10ih29HLHILYEwIM=;
-        b=NsIHg0IJyQ4uhPmRt6/UT8jw+qB081s1xm8YyCbPbQwysbmul3kvMkVHnsuRXFmNVW
-         +CUNFSd0MdMSA2KAtfEV8yGuc2blaqhwOp9HpY9k9HGkpy2uBspbkiinQP08y4MZu7j/
-         H348R8r7EMevKgADxpmkm/nr45LrD5nq/52nkOtRJ21wtXPTVFVDXMoKrn9L9y9jsqkE
-         aGdyKxtlrBcIXjBQHwPOOhnZELFLibln7PZDn5fb4w6EEWiwZaefZL9JXlsmOnwRAaGW
-         Gjkkt+en/N04m/Nl6GBxKLH232HWJ3UHUwu6j0dSz8Q6pgxDqGg9P27KP0IZpalIf1ws
-         DhiQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpACZfAF8jzx/f3Ai0UYrzFMWtu8RXG+ZZAARm6pFY20D3NdskFq6lWS0aKpLYX3tvj9FfMmtM1kmm/JDYPn6VxBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8qHNVYAK+rnS56AuYgJm7mCXckCZfEsf6XHKQfGwOp2V9N/l/
-	tIb1tNLgMztdE0b1xOYfpWJIzAwbnkRBjA+fqh/vQ1CsOdoEF3tL4fuUb4lOvPWfaaTsdqNsPs9
-	EwifBhxNYf+BGyKieSnm0yDDNtyxcxUGHMVlT
-X-Gm-Gg: AR+sD10VQUIoFuisoPzlyLo/OonBTCv4KCZLIgz23PfQ+gtpQWhnpZSxc0NnKA2GzxM
-	EMMgacZQLapu6Pf3VyU1wPeDu5opVBWwtPmCC6kfgJ88KTz3BJALJg7ueGpqgprS9V9kYWme8U6
-	sQi5XmNPxdwryh0PtWD+JzWvTdTRtPv0pT9RN6EYZLw0gSlDXl+eBc9Hj/BiyRpgnTtKliD4KZf
-	jXBzUV75zOglZOvT6mRvdFI3nokn6/W4L0jsvX5t9tiHdO9dUMTHQox9NEqRgpLg9NpYGsGFfYb
-	G7K3PGAOT+iKjN0tpZOzLrQLyJGFGVX1YJRo5Fqzrvx0SZXU9cM5H4CNrMCIp/HZaUrGXKmw/wJ
-	dohqVe8VX7aIXPnWXgKBmX0XGZDO12wS873r393k8wd4Gx/QpgSJJ+xQFuSjMGIFM
-X-Received: by 2002:a05:600c:c165:b0:499:4892:d022 with SMTP id
- 5b1f17b1804b1-4998795bca6mr451259735e9.8.1786978688439; Mon, 17 Aug 2026
- 07:58:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D7739EF05;
+	Mon, 17 Aug 2026 16:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786985957; cv=none; b=QkZA1RAlbh7NVMiPAdKXmBXsmHcbk81W92DBQWRxaP+9Wy95212bogH38WdFfTzltOtOYqavWrJ73dat8tR0Z0MaaD3ke+JlX+vFY4VBoA3ZxH0Jr6aGyqHeVpyubjn7OIb605a984l71Hc9sgRphs8q4h9lm2ntm53slqmpJhc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786985957; c=relaxed/simple;
+	bh=v3znBcnWZS9ZdOO9gQ8LP4UTTT5x8wBVI5adKyp2OhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSbmgeZz0ssNIM9swsgoJQIQU1vp3mdXhDwV0uVDay+GPKN4fxuM90QTA+/8uIjNnF69IOTCrrXoMe9mYELFZhFzjD8O6p0hHT4udgt7ETjBdkqcKjDBMGiVFEv9FXc6pvE63dzVR8CztmD4UNAG9DF941tEzAYouDGWcwn+XjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id B51AD2009FB;
+	Mon, 17 Aug 2026 18:59:07 +0200 (CEST)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ww0fz-001zD9-24;
+	Mon, 17 Aug 2026 18:59:07 +0200
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4A599584EB0;
+	Mon, 17 Aug 2026 16:59:07 +0000 (UTC)
+Date: Mon, 17 Aug 2026 18:59:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>, mailhol@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Message-ID: <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
+ <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260814191415.2110732-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260814191415.2110732-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVKy1QOh6vBGf8xFGTw0c_htgF8JYA-VnDH=muL1G03EA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVKy1QOh6vBGf8xFGTw0c_htgF8JYA-VnDH=muL1G03EA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 17 Aug 2026 15:57:41 +0100
-X-Gm-Features: AcwNN1XxcpNUj11e1rVVokPqDeZDP7fjvNUGfNBKKU3O8MMkJSpQ_tZbFi19yCE
-Message-ID: <CA+V-a8uBo=A40LRYgO47OMwaiT-U9EUXaEbHRxw_hgW+wn1E9w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] watchdog: rzv2h_wdt: Propagate WDTDCR access errors
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-watchdog@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rj4diajalgdch7zj"
+Content-Disposition: inline
+In-Reply-To: <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
+
+
+--rj4diajalgdch7zj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+MIME-Version: 1.0
 
-Hi Geert,
+On 10.08.2026 16:00:16, Claudiu Beznea wrote:
+> Gentle ping on this series.
 
-On Mon, Aug 17, 2026 at 10:46=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, 14 Aug 2026 at 21:15, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The WDTDCR helpers currently access the register directly using
-> > `readl()`/`writel()` and therefore cannot report failures to their call=
-ers.
-> > WDTDCR is located in a shared syscon region and will be accessed throug=
-h
-> > regmap in a subsequent change, where register accesses can fail.
-> >
-> > Make `rzt2h_wdt_wdtdcr_count_start()` and `rzt2h_wdt_wdtdcr_count_stop(=
-)`
-> > return an error so their callers can propagate failures.
-> >
-> > Handle these errors in the watchdog start, stop and restart paths and
-> > unwind resources acquired before the WDTDCR access. In particular, rest=
-ore
-> > the reset and clock state and release the runtime PM reference as
-> > appropriate when an access fails.
-> >
-> > The helpers still return zero with the current `readl()`/`writel()`
-> > implementation, so this change does not alter the driver's behaviour by
-> > itself. It prepares the error handling required for the subsequent regm=
-ap
-> > conversion of WDTDCR access.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3:
-> > - New patch, split from v2 patch #1 to make thing easier to review.
->
-> Thanks for the update!
->
-> > --- a/drivers/watchdog/rzv2h_wdt.c
-> > +++ b/drivers/watchdog/rzv2h_wdt.c
->
-> > @@ -234,8 +250,19 @@ static int rzv2h_wdt_restart(struct watchdog_devic=
-e *wdev,
-> >         rzv2h_wdt_setup(wdev, priv->of_data->cks_min | WDTCR_RPSS_25 |
-> >                         WDTCR_RPES_75 | WDTCR_TOPS_1024);
-> >
-> > -       if (priv->of_data->wdtdcr)
-> > -               rzt2h_wdt_wdtdcr_count_start(priv);
-> > +       if (priv->of_data->wdtdcr) {
-> > +               ret =3D rzt2h_wdt_wdtdcr_count_start(priv);
-> > +               if (ret) {
-> > +                       if (!active) {
-> > +                               reset_control_assert(priv->rstc);
-> > +                               clk_disable(priv->oscclk);
-> > +                               clk_disable(priv->pclk);
-> > +                       } else {
-> > +                               reset_control_reset(priv->rstc);
-> > +                       }
->
-> FTR, this else-branch is also new in v3.
->
-Thanks for pointing that out.
+Who takes the DT changes?
 
-Cheers,
-Prabhakar
+regards,
+Marc
 
-> > +                       return ret;
-> > +               }
-> > +       }
-> >
-> >         rzv2h_wdt_ping(wdev);
-> >
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--rj4diajalgdch7zj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCaoM92AAKCRDMOmT6rpmt
+0lK7AP9+oMyj6ytfdM7z67yrn9wesk0ufamxJGMDNGikBzwafAD+O+VfZ1iehxlN
+oS9IMQQ4PpRSF1EcIwYkk7FOReUh3AA=
+=Bil9
+-----END PGP SIGNATURE-----
+
+--rj4diajalgdch7zj--
