@@ -1,92 +1,89 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0723D34D3BE
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 14:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE08F3126C2
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787063311; cv=none; b=YEjAIP0KiKzXnjOdUhaIt3ub/J8kVDm9l9LBI1MlBbBMwqh++FMKmnyPB5AC3bKHg114REZfwt1p90dx4NDdfNZDMizyNMX+60iREsE1hMXFcEbKapmrFDktOog2QvNl6Xm06BFKSNXozy8gWwFv23FV5xGGhyK+IJGarOqGDaU=
+	t=1787063341; cv=none; b=mF/GJ1s3Nwf+7j9IxF2Ili2CTlF8zdtzWy7CWc5FyzfHH71lSxPN5IrbXm4WhWDdhZ6gdmeLJngAnNgzdE6PUeLJvQziAjLIJbbA/d4auSoV3DSc4OqdGzSSUY5RrPYc7TO7xXyvrmX11yVmhLk7ifr6iAe/T7wgPoqsAwBLE3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787063311; c=relaxed/simple;
-	bh=baHwBqrRku0dVBgM9HHXZGHdWlLRvvfzCWPsKKs9a9c=;
+	s=arc-20240116; t=1787063341; c=relaxed/simple;
+	bh=mie0nTDpXVpzdLJv114Gdf8KQXJnlkj43PK47MND8r8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ryHCaqT8eM0ml9SW9FLmeWToqXkumuOw7zwc7kbl61I8SOKUdFufeGO1b3JSp2GvPlTG/mzKqqQlqwPtfevD1kkq1KYncigqiKI3Zv3IBP8G1vnGZVRQFos317mU1IglxMZxjMoA/bU3h0Xlb2wQI0BYaHXLTWt8xpQk4O4Nfbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+	 To:Cc:Content-Type; b=IGsun0B3e7kxhD85WevchEVeMR27y/VRSF7YY7R6SlwAyYtUYNhlTx9JCP5CzL0lzWIqwwRsx8ofoDHctPqHye1v38jLPwJGM4+mdRefKuxxgzSW8h568zNv5ZcTI2H7g9R5a64WEwhwG62P3b5XRZhdleuVREGNAZTZlji9MHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c2022323c37so597197266b.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 07:28:29 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c20fb91ed0fso725692966b.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 07:28:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787063308; x=1787668108;
+        d=1e100.net; s=20251104; t=1787063338; x=1787668138;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ZLIjthuIrGXlcqthi795B+F5PspdtZv0oAeSQHVFTME=;
-        b=K3kmebRq58pB97ni+7Nz5ySXuT98LMuejr2osnVT3klQXKO3Bz7aK4l8zHMVWn01wd
-         pjfkNE7ol+sDSN59ujFdK2zxuv3Ucp8KEy8S6pwMNjMkHwA/b6B5yFtSOt9Q3AD73lPD
-         n0JnNKWYgtfcMBma6IYqUUPQQXFk3GdTLuXY2wU/k/0gaG4RcqstV2OmId+dlGFapCVN
-         KYeuGcy813Mz0b3HTdKVH9kK5+p0yTobedH+SsknjMEkeSx+w+cLBQlC23UMYponFZWc
-         BF9PMoRWrZr4U+7PNQ89GtBGMjhDaJHfHRoERvekcVdWBDcfgC1WpKGaZdD26CqeaiOz
-         zF1w==
-X-Forwarded-Encrypted: i=1; AHgh+Rq6y84ROfX/CNFFdCg8DT0Dz9uxsDtLvdG5WosJ5x21qZkZxY8VYqfoYi9C7nX0E++/jrxhxOoXIYTy6ATKSE4OyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsGW0X8gZpiPE2dLSVMxseClwyjZNH5YycU8QkNyCdbZ1ouQpo
-	OEDmWgcCig96Dj46fdKRNF0qom7romQDepCjtUBLRSH8h9+W4EXLAOgUfdYLu2Rb4YQ=
-X-Gm-Gg: AR+sD12Tr59Xhj9r1ikBppuX49kq7yG4Y3M/J21SwCdjkqCj2FMEsb0F/+8SpbK1V2X
-	XrOYpSSXHgSljepIpSoel3XLQkfnty+Vjvqq43EGWdomy+Q/FKJRNRNYGYNsd3sf6qZFav0cQ7o
-	sb/DT/ScfTN873KpHVBhoAd3xr7AaSe9ZpQPctcwqyQdt4L+9qZvL9SLEPYP8WlHIVD7MDaT2Zr
-	/pwmZkH0vuSXyilwj3Bq1ow/d+2pFmoEY0M7L/CpLjznPy6mVn+d5JL78+1w61eSGb7LrYCjGvf
-	PJmq1Zf5PU6BQnHv9Roqai3D151L9UbSSfukixVE26n8OFY1ayfAkmSVb3ptlSIAn5U1GM/q/Rf
-	kL65CfFm5FGkOMTKZmaJ6Bn2U+Nd7RKdTRfuZOzbWjfoHifrwYrs+FnqfH1/I1fB+wRUQ+zvTpd
-	4Pn7QvwcqOIBWfPLCJeLMnjvQimv6cKojCans+vXUsAVdo9Mm6BxZZ16jVbsj1JD/AfRWrCAw6J
-	+DwEhk1SdrMBP5Utqi0J1Tkng==
-X-Received: by 2002:a17:906:f759:b0:c21:9b4b:2690 with SMTP id a640c23a62f3a-c219b4b52ecmr112711366b.17.1787063307883;
-        Tue, 18 Aug 2026 07:28:27 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c217fe69cf4sm200822666b.3.2026.08.18.07.28.26
+        bh=Thf+EPoHrsWTegx4PKx5P1+Bl2bUkRvVPDASspkr+Vc=;
+        b=kri8eoHviM5i/rcJP8B939kTlYQ725pOF2So5oKvSpj9cNgYj5BOwXHtlWStnsA1Hu
+         IZYTkWw5rq9CXJWClsS7jLj2DWMvem4sEwM7asO1jgMfWWcQd7PPqZdbxS3kl3y5UPH5
+         cBDoyOrT1Obbo8/JjbENTs6sCtTswN27C+qsWo7nL0PwvJLmRsR8j1mm1ozTfx7SyaOq
+         ShGhS3uleWiTaIPs+itlwwULeK4fDMTrh9dubAHgvxEAX3Wv1bdNmHTUWhodg8TOFmoG
+         n7HMZ13khNaKraT/pZvyfBoycO7+mzZlbDhWP0qSQWRThCeUoKn99TmfUIIaLDiDjWbO
+         Hh+g==
+X-Forwarded-Encrypted: i=1; AHgh+RqxKX6H3IEQ48rnF60TWabHmLaLqZJWkeo1XdVBMVTlqcjcUugEjk1Rjt+0pfivnJdlZB/3TdQ3dk/Dp+QOWgsUtg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBFAQCMWEfozq+YCOErHel0FeHZaEeVG9gIHw5rTcRZlqIIiIl
+	7LBwWnbt5AFPyggk9RHrH/cUlUuMMO0G+lcEOlZyQyLTZFLxpAua9HdBsHEF1q2+usc=
+X-Gm-Gg: AR+sD10sY/DTJdccbU1WqyyBw7v9tgM7lZsxETDz+V3xap7vhK4RbdBylvariXroH2e
+	wsg/ysSgai/q1RKIR9PKkqyTf67SGhJsekpa5k1IWLw0d/Rokuea+c6oO76jf1NvhQk3qkQ36Z0
+	c+fs8lXekPUfrsUoa6AQhFPfo1zq/lPeoc4LBXoG5xxN7mfIbPIFz3EH1EDPGTzAJ1CeyvQtzuB
+	UDT6j+BD3c3fipkfUDi4Q1hORcAOG4OTtXGwCUEfuBZA8tsX5iNHfzBzAyHZ0XKkfocpGgDm9vE
+	2QXYC4DojggBmsokvT6cZ6af2gDTEQRplTDhP8Pto96TTqWsqb8En9sHC4QHDGsYV9RYUvNSpi6
+	3tctF7KNlqJ9nqoB4lKO9OIUE6TLN5qGfnP7V26m0hIPCGBGP7Na+6YXitbRrvOsuqqYKmHzynj
+	GDfvZoBC7X5dEqn4Yedt4TKYOsq1BvTqg0rWg+jp8nOCKHdI/zNsXtdhmvzhyng/xKFL55L8RMN
+	Tayk+I7HHgE73DAa5OCZ2483Q==
+X-Received: by 2002:a17:907:d48c:b0:c15:f65a:43a8 with SMTP id a640c23a62f3a-c21885d7227mr560134066b.12.1787063337993;
+        Tue, 18 Aug 2026 07:28:57 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3f8545570sm84850a12.1.2026.08.18.07.28.57
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2026 07:28:26 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-69fc9f25118so4655075a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 07:28:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq8KMrFoB3EuA0/c5RzaOQ/S0vutaahlyK9u6fsgyTx7u9gmY93tZmK7wg3VSkGl6WiV4Qxq8nobq33kgBYmpaVdg==@vger.kernel.org
-X-Received: by 2002:a05:6402:4608:b0:6a3:6b8f:94c4 with SMTP id
- 4fb4d7f45d1cf-6a38a9bf8ffmr14480778a12.16.1787063305828; Tue, 18 Aug 2026
- 07:28:25 -0700 (PDT)
+        Tue, 18 Aug 2026 07:28:57 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a38098734bso6819498a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 07:28:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoK9FyGyVnNF9izW1rU1vxwynO2vXG/ip+Dr1MjtA2vSg0FX9LZW9mvX1Mexf+o2haq+dAfwmMZel/R5zBAwgIBng==@vger.kernel.org
+X-Received: by 2002:a05:6402:e85:b0:6a3:edb6:2228 with SMTP id
+ 4fb4d7f45d1cf-6a3edb6285cmr3102580a12.17.1787063337203; Tue, 18 Aug 2026
+ 07:28:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_64AA3EA1C81C724ED7D0A90390E677BC5205@qq.com>
-In-Reply-To: <tencent_64AA3EA1C81C724ED7D0A90390E677BC5205@qq.com>
+References: <tencent_A4A9EBA18AE8212574B59C8001217FC12A09@qq.com>
+In-Reply-To: <tencent_A4A9EBA18AE8212574B59C8001217FC12A09@qq.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Aug 2026 16:28:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXKCnC3RODV0sUyn=011pM68iQDFjC2-AB-OG-F5kw8rQ@mail.gmail.com>
-X-Gm-Features: AcwNN1V1hV47wV6X-u_mwvW55lLkp61RRBplSHKa4nvu94V8GF4oXbguLAe_tb8
-Message-ID: <CAMuHMdXKCnC3RODV0sUyn=011pM68iQDFjC2-AB-OG-F5kw8rQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: rcar-thermal: fix runtime PM cleanup
+Date: Tue, 18 Aug 2026 16:28:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUSpmZuDPDzfCzvKbts+=a=savqD_mpf82TS6XyZkZu=g@mail.gmail.com>
+X-Gm-Features: AcwNN1VFrPk04Bohn1UQSujmmF4EIHRApBL1V6XFH-gGP58HhymsZ-nEzcsLZu8
+Message-ID: <CAMuHMdUSpmZuDPDzfCzvKbts+=a=savqD_mpf82TS6XyZkZu=g@mail.gmail.com>
+Subject: Re: [PATCH] i2c: i2c-rzv2m: fix runtime PM cleanup
 To: Jiawen Liu <1298662399@qq.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Jiawen,
 
 Thanks for your patch!
 
-On Tue, 18 Aug 2026 at 15:16, Jiawen Liu <1298662399@qq.com> wrote:
-> Update rcar_thermal_probe() for the confirmed driver lifecycle defect.
+On Tue, 18 Aug 2026 at 15:21, Jiawen Liu <1298662399@qq.com> wrote:
+> Update rzv2m_i2c_probe() for the confirmed driver lifecycle defect.
 >
 > Keep the change limited to the concrete operation shown in the final
 > patch.
 
 Please write a better patch description.
 
->
 > Signed-off-by: jiawen <1298662399@qq.com>
 
 Gr{oetje,eeting}s,
