@@ -1,145 +1,70 @@
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C132D9484
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Aug 2026 06:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE363368A7;
+	Tue, 18 Aug 2026 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787036291; cv=none; b=two6fR5UNrW0poxEgdrHObd4QX3NYxqhOpAKd3Rym4gAUKGuodLqWXZT8+0vbx7frIPfO+z6BeNLBUDXZppS2iq49mTODctI5ZkxCdry1kTfxxGd1aq8Np2WLcRpossQn4wdvPNNGgcPmAjUhhrGfcukit1xx1ueoI2qbcsHsRI=
+	t=1787037935; cv=none; b=MHYwvTYtSpgM5PMBLzoZHeOCx1a8pDOROSyaPCgM+S+wNsdaV3FjCQ1eWPTl5zQ2fyLt4lIHdIZ3dq7Pl8TGpWjpIiRFEhRDbo9DMoP7f5hDbWXsOeu+hJ+H87VVP8XAxcaXAhA6yzDDwTIVDGryjEVF1wyh6QkG0KV9quWUXEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787036291; c=relaxed/simple;
-	bh=b4NZfzsXInAfqDzBfnXs78PKv4Oy3tSAAU8GhHt2f3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjdGXSvoZBiw7wx7C8EgZ6aJfqvFx8YqLrAzugIWL3tpFC5tztc+i79dpvUyh1i78mqdaMr1gyvvkCLpaeuGaaZrmeBOXy4DWZgLFt+yoE38FV+NP1hsgAZNcDEt2WppJOs6CpuL/6DtYkzrJpnR8O8cAdKyMXEimHzALUdFZqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-74748e3a4d1so2131389137.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 23:58:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787036289; x=1787641089;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ELu0AhEyCl7g57UsYbLgfglrPLTlAwPkVEKgX34T5NE=;
-        b=i6mPDgXMstEtEPWR6xj+PLEMtmKetYGwXBQZ84ZCYsTNrxVHH56egJ6w9Qbr4071z5
-         0rQkvDkjPoDKUkQRINg4gxpWLyjVWoDqOszjcSTUSxaioIFMyxHDiZTv+bdVj5ed/ilo
-         xOVF3gcqEiPwCvYk6tsbs2kW2aZyCl1vXBZPVmtZGNfGRtOZqzH4xMuD9QoMpHxoyL8O
-         iPVAOCRamHXI0Y8IbFfGziwEGy6MGuUQiJJQlBBUnmxDr7BB0h9Da+XQLWq7Fzj1f9K/
-         C4u/NLP+0YLzNhHJAiQOmRNEAYQFTlrE9fTxn/BdK/1KdzcHQWB0Xn63dw8KqFWUWOI+
-         8BPA==
-X-Forwarded-Encrypted: i=1; AHgh+RpMNeOtk65Xk3tQAxa1Zyu8ojqCPUS+KGUpF3Wl4MvhYTITR7e5C+xaQOM4fRaNHaAG5Hb932Mg0KYbLvVD4JjG7w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+5FRKxNfqbyEtZ0SaLwJj8SlbBznYmE91LI07d4gp5RT7iag
-	zrfYHZfERZHLXh2yd2aqjJou6U9hIK/3XTp6OkiplmOTBpcGppgJ0crFy9Eqbv4b
-X-Gm-Gg: AR+sD11msOW0XFZaW/Oh8H0y2Z7sv2FrTvULodxr2i2IREFbMsqE7PxkPEI4C/WqIPG
-	VXe/9Co4EOQ++Zvb+ILUl81DslITMDByC5UmE88sH9djRvC4Hmhe3RvCXfWy0tllE9deqzZypy0
-	gD0ETiuyF9E9fxuSRQ1hR+3L2LzX08PhQ4iSEK9qeDVDUy5nxt1L45opFH8m+FtjBew6XK9Op5E
-	7mxY2Q8sqSElc7OPT7/v06LGKxPqMWOW+5yTTdDh1U78r/Ut1sR2DST5b5iqyu1MrnBQraofKz7
-	T6lfqhCuw6tXD3ysuGq/0WhwRw9NczAhvN1s42urtE+PRw2arWqfMurPr0N+95BxXgzueBLmLDq
-	1ZZYnA8e3TEl3RYZ4qJYH0JEvKBZvLZkINRUUKrXxhU2neqKfcbqs9cZ39MlPLlFFQuUhFSLjcV
-	4N9NjOYjTzm0Bo4HerU1aK1xcKEl7ZauKx4su6kuWDeDlPVVHoOVvF69Utj2FfhZ55gcNNMTjIZ
-	CHnlux5Fw1sDA3f8uIclBpvAg==
-X-Received: by 2002:a05:6102:3354:b0:745:1c72:cf72 with SMTP id ada2fe7eead31-76f2ebb0c2cmr7197458137.13.1787036288970;
-        Mon, 17 Aug 2026 23:58:08 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-773c508ab92sm2701076137.7.2026.08.17.23.58.07
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 23:58:07 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-73791ee3612so2447038137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Aug 2026 23:58:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrWjuiRlFOIBWscI87EGrk48TuQgAyPxqfrqNcdtDTFk8MmUBUEDEpZcJamNB3xYjKsDmJt7ol76gQt1gDwv44SQQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:1496:b0:738:9c30:2b7c with SMTP id
- ada2fe7eead31-76f2c541b8bmr7363952137.6.1787036286929; Mon, 17 Aug 2026
- 23:58:06 -0700 (PDT)
+	s=arc-20240116; t=1787037935; c=relaxed/simple;
+	bh=G5fXO6UhdWB47PVefK3sRa+KaVSi7i7B4RGf+b8CIoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFASHQgTksL2fbT79ngpA10Z/Y4FuI1/MChIk2VwQ3d1EmAEBzwQk9/SrxylhBEaXWS+XIIK9p7DrpCsgFGV673ztgUnYvhC9lkkCmd4OATBWEnPoNlxf199XGoYpk4Qoh01RK2AfIJilUAyH1b0mso1thOlM8LLIWYlc769Vao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mi3iv7+l; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mi3iv7+l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1001F000E9;
+	Tue, 18 Aug 2026 07:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787037933;
+	bh=sx7TnEaFDx+iHUmN9tF8zbgo4+wmdCMA2XY7O+hG+Xg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Mi3iv7+lmjJtRI8gKaNc/5xKjqOs5uVfUa51Kd6gj5NwB4ehc6R2bLlLwPL2MNs7f
+	 8f0m2mbwkuXoFC7QN+9q7KMpOTTjXhUJZj1IQelLHcP+OQCbN9309PpVSwM0G2+jO3
+	 mCSLR24ekmNUJU//KowXGYqyivCkr5R80B2YOR5zOEH94TfC/UUaqLaWrcCyt4Rjl7
+	 HiPiz/9NrIggXVvMdczJjLliXKJjAHa0tM9o7n2E/mD+FmL4BQC8xiPNYqRfV1LS1Z
+	 QNzoBVvaLvMXfHorc9K3wZIuQUkKq3hcWMtzb68AFDGG9FZ5G9OJBoVSbwp4oQX7Go
+	 UngtPWkwt4wTA==
+Date: Tue, 18 Aug 2026 09:25:29 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v7 2/9] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl:
+ Document RZ/G3L support
+Message-ID: <20260818-radical-stereotyped-guan-ce55ed@quoll>
+References: <20260812141940.246223-1-biju.das.jz@bp.renesas.com>
+ <20260812141940.246223-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813091925.71363-1-marek.vasut+renesas@mailbox.org> <h43onk4priskfkvdrheml4ttx2b7udavnulxvftj45midvcs3c@lec5rx7mrgys>
-In-Reply-To: <h43onk4priskfkvdrheml4ttx2b7udavnulxvftj45midvcs3c@lec5rx7mrgys>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Aug 2026 08:57:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUAph2fbR94k8RDaAeVH=OTKWAWe1dJne9D-YbQQrYHsA@mail.gmail.com>
-X-Gm-Features: AcwNN1V_vBBvui0ICUc760n-rTYHtfhaEcvZ01hKtas0lQM66m-P4QIf_6RReAo
-Message-ID: <CAMuHMdUAph2fbR94k8RDaAeVH=OTKWAWe1dJne9D-YbQQrYHsA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: dwc: rcar-gen4: Fix potential unclocked access in rcar_gen4_pcie_ep_deinit()
-To: Koichiro Den <den@valinux.co.jp>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260812141940.246223-3-biju.das.jz@bp.renesas.com>
 
-Hi Den-san,
+On Wed, Aug 12, 2026 at 03:19:20PM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Document Renesas RZ/G3L (r9a08g046) USB PHY controller bindings.
+> The RZ/G3L USB PHY block is similar to RZ/G3S but differs in that each
+> port has its own OTG controller, whereas RZ/G3S only has one on port 1.
+> To reflect this, RZ/G3L uses a regulators sub-node with per-port vbus0
+> and vbus1 entries instead of the single regulator-vbus property used
+> by other compatible SoCs.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v6->v7:
 
-On Tue, 18 Aug 2026 at 07:55, Koichiro Den <den@valinux.co.jp> wrote:
-> On Thu, Aug 13, 2026 at 11:18:22AM +0200, Marek Vasut wrote:
-> > Initialize PCIEDMAINTSTSEN in rcar_gen4_pcie_ep_pre_init() to 0,
-> > and in case rcar_gen4_pcie_common_init() fails and the result
-> > propagates to dw_pcie_ep_init(), the invoke common deinit instead
-> > of endpoint deinit, because we are certain the PCIEDMAINTSTSEN
-> > register is already 0 and the common deinit does not do any register
-> > accesses.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-> > --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> > +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> > @@ -487,6 +487,8 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
-> >       struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-> >       int ret;
-> >
-> > +     writel(0, rcar->base + PCIEDMAINTSTSEN);
-> > +
->
-> 1. The new writel(0, PCIEDMAINTSTSEN) runs before clk_bulk_prepare_enable().
->    Is MSTP024 expected to be already released at this point? I added the quick
->    check like below on Spider, and confirmed that the clock was already enabled.
->
->    --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
->    +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
->    @@ -9,6 +9,7 @@
->      */
->
->     #include <linux/delay.h>
->    +#include <linux/clk-provider.h>
->     #include <linux/firmware.h>
->     #include <linux/interrupt.h>
->     #include <linux/io.h>
->    @@ -487,6 +488,10 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
->            struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
->            int ret;
->
->    +       if (__clk_is_enabled(dw->core_clks[DW_PCIE_CORE_CLK].clk))
->    +               dev_info(dw->dev,
->    +                        "PCIEC module clock was already enabled\n");
->    +
->            writel(0, rcar->base + PCIEDMAINTSTSEN);
->
->            ret = rcar_gen4_pcie_common_init(rcar);
->
->    If that is not guaranteed, wouldn't this write rely on firmware or some
->    earlier user leaving the module clock enabled?
+Best regards,
+Krzysztof
 
-The module clock is enabled through Runtime PM:
-
-    rcar_gen4_pcie_probe
-    -> rcar_gen4_pcie_prepare
-            -> pm_runtime_resume_and_get
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
