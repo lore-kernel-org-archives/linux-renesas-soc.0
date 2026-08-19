@@ -1,35 +1,35 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A12302CD5
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 13:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DCA31F983
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 13:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787144906; cv=none; b=EsP7acxf4krD6EcJIbyhM7YGVWiIOxzwqJUBb/4ACTmLs0KVPOVus/+Q2qN4Lm/F8m2hztsgb1Ca/7iDyorjz2RkPRJBHWAVjpjAU1T0May1UByutY30aPAuBUDsnvVkHbEDjWuHO7PAwa7dDTWFNy4thA6EinKhfbuMI1lh7os=
+	t=1787145179; cv=none; b=UKIUDobrE8Ti1bQJY67ypghi3a8s87+Tsi5xfouY7GAlcoxe2rO80U2Tp7PPRCrjqHfNloxA+X8IYmVHrQikISQrDwVHmI+SSHv/gcN47rmkK59DxTw6qtP6O7vS6pTwsvJiiL2fq9Q4VUlL5/WCUpQhZfvYKZsvGW8ccngyoYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787144906; c=relaxed/simple;
-	bh=LooAY+tiug92LWFRq/Z2SSzFK+58y0Nao2k1mleT3Es=;
+	s=arc-20240116; t=1787145179; c=relaxed/simple;
+	bh=zBO09ja5ojw+0/BB4HZADtBxbp4XR49QZ7n+t+qGU/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbzQPvBwabS0MDM7fFg78Rg6M9t6x8GvY5QXHlY+HWsi6jxrJFEPdUJjCgKL4f4IAC/NLveVoqXjDA8/9kriA2GZ8j+3dgMNPb/cnNJhx1qwGvSNlOkGzHVoUup9fjXueiQS0CXcHDPtYRD2RXTFtomKUIeBm2J89LN+wM6us2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dqEa340w; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=DCOhmyCuC+enu/CLkHYYc2oeHe8xWHn5HBr5aNHk4NgcQOJWp2zOaVlithtI9Hq0Vc8fpqOhNHYy3y+jbl2yfwQxkZUqq9Z0ZYncBBNz6XZlgJ5BSxrTj3K2mEYCxBudfislY0EDIHf/7xa9ceg8tIOovVkZM8DWSwQm1IcsE1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Vth673st; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dqEa340w"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Vth673st"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=LooA
-	Y+tiug92LWFRq/Z2SSzFK+58y0Nao2k1mleT3Es=; b=dqEa340woZrifUKLGOnx
-	IJ0eeF6EzbV25Xe5Lr+ICpXZTnfcuJsi41//p9i3dNVC9RazrM9ffNX7j48hvtp1
-	DuSYNtEh0XHVST0tT/jYm5nZ+LU2B3FJqkEm7ELJW80/D9k2m2FXFMzj8/6+3VIi
-	lGfE8r6EM0ub6us3FnEDyupNG65an9p16GaJJNN1aKfHWq/U/qbo4qDUgGmkodGx
-	9F2CEIEKzUw/ucoSijy+QFToKU/nAAKfPurLdrAV/IzdasI8I2S2rWYKqkDL4c1Q
-	qwXC0lPopuDdhK7Gb2VukPD/uPCwqtH//dAmVIX4OMg3wDHTaOcQvqivVQKP3evq
-	lQ==
-Received: (qmail 4148198 invoked from network); 19 Aug 2026 15:08:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Aug 2026 15:08:22 +0200
-X-UD-Smtp-Session: l3s3148p1@6Y8LGWZZbFFtKXGR
-Date: Wed, 19 Aug 2026 15:08:21 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Uoy3
+	OiIdEzXy8+bmZF4l6dH7C+zvU2mAql0vSxLh1pw=; b=Vth673st7sFLchf1r/kI
+	iJvoPlUVUWqk+2QNGice1L2vFS2eeH96Zk+3150sqlqulvyDHyt9pqIT6xsHA1pM
+	Rao7u5B46QW1mE9oG0ZFxlMYmEMYo098lMOiphY/hoXUKTfafaawf3rJjEZmrDrC
+	SEVZQFjpwY2/cC23frDR9vaEWii8xeDlTUr8FWzrTE+YYwBe+h1tV7U0QUPPWlQo
+	KsTDUXIEzvLfKWt7cmepDsMzMZTzAK5v+Ed3vHCh5SsHl/KOc+ZnS/8kZqpL0kII
+	P9f65P9Ha29gApGcdgnbmK3iDo4DBWnkCCnNBk/cAg0Hi1oA1JSeDMnqYslGScYu
+	DA==
+Received: (qmail 4149665 invoked from network); 19 Aug 2026 15:12:54 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Aug 2026 15:12:54 +0200
+X-UD-Smtp-Session: l3s3148p1@2cpEKWZZe2BtKXGR
+Date: Wed, 19 Aug 2026 15:12:50 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -45,11 +45,11 @@ Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v4 09/15] rtc: rzn1: Dynamically calculate
- synchronization delay based on clock rate
-Message-ID: <aoWqxdIpvTP8zoOX@shikoro>
+Subject: Re: [PATCH v4 13/15] rtc: rzn1: Add OF match data to gate SUBU
+ register access
+Message-ID: <aoWr0gfN6sQmgUie@shikoro>
 References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260819103926.2136712-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -57,57 +57,48 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F4CNzuRzY1Lt3BIp"
+	protocol="application/pgp-signature"; boundary="y7rejlSe7J7ljgsj"
 Content-Disposition: inline
-In-Reply-To: <20260819103926.2136712-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
---F4CNzuRzY1Lt3BIp
+--y7rejlSe7J7ljgsj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 19, 2026 at 11:39:20AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Replace the hardcoded hardware synchronization delays with a calculated
-> time window derived from the operating sub-clock frequency.
->=20
-> The driver currently hardcodes microsecond ranges assuming a fixed
-> sub-clock frequency of 32.768 kHz. Newer SoC variants, such as the
-> RZ/T2H, drive this hardware block using a much faster clock rate
-> (~195.3 kHz). Hardcoding these wait windows forces faster blocks to
-> over-sleep, introducing unnecessary delays during clock initialization
-> and register configuration.
->=20
-> Calculate the duration of the required clock cycles in microseconds based
-> on the runtime clock rate, and store this value in the driver private
-> structure to adjust the usleep_range() and readl_poll_timeout() boundaries
-> dynamically.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---F4CNzuRzY1Lt3BIp
+> +	if (!scmp_val && !data->has_subu)
+> +		return -EOPNOTSUPP;
+
+I'd think here a helpful comment for the user is justified. Maybe "No
+valid XTAL provided and SUBU mode not supported"?
+
+> +static const struct rzn1_rtc_data rzn1_data = {
+> +	.has_subu = true,
+> +};
+
+'rzn1_data' is maybe too generic? rzn1_rtc_rzn1_data? Yeah, looks a bit
+weird but I personally still like it better.
+
+
+--y7rejlSe7J7ljgsj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqFqsUACgkQFA3kzBSg
-KbZOhQ/+OY9Bs8UorEFJzw5Frq4e5XZAk7OR/yVPNLRp80JPXpnP2Y5dbFCRG+5j
-aGiwliOSbJkxJb1XITplfEUXcYOL6E5buEyUBGiG9jWo2RY7gfq9Lda2sIW/0Pwx
-ygEpuGauclElmjGkDCHYO8iVw+K5+Iew68zYJ/5AECmVVVfHroVcgH8LyLnLvNsN
-V3Qgbr/WZeKC1LnwEBpvGUPebEQlgvitz08ZF1adhssRInAwT2NtYKjZl1Ltsp8d
-EkHlSwEY1NuhF3bltnmClEYIFqd8wA+Ci0ueAAxz1g6+W7nQ5vvg7JAZ36uhCuh5
-y8BD2K3V6nTGffqpZI+oP10mb7VQiHpzZ4Jv2CM2HBmgZ+U6JDPpahvXdxytoDbD
-tIyj1hBFlYZ37/gaN798El0BOX0b0OPsYCppcQ7i3tHPgdXlCSLfXgoW0sLKLn2S
-hc6PBGkk7Ek9+2UZwe4Xl3QEPX/b7+w/6Gk1G/JSzSUPNUhs2regTMsZbRDLgirZ
-zWlR2M+dQWw8cMNDEiFKCPvnvShOAZTA3cOazpSY8THY2yIg1LT2dUEru9KuZBE6
-nsCoOzNT5fCfictfeW+zqwyvvHAf6n1VSXaZa40NZeyxGZc5LaYwAGenTh4RChTU
-deBtPtshL1xp0xw5RoJk8vW4HvyoX3bkKFUWrwWJYLRvGSFaCRk=
-=orpP
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqFq9IACgkQFA3kzBSg
+KbZhww/+MkTEc0GXAV79EUfSKg5XX/h2Vl3oSR2e6ZrzKyz1YhimDE1/Yb0qycSg
+kxzTH3TiCeOgT8wCeJk0+5O8PcOqhDa0cNTjMU01N+ivodqtv2ofAfg0XOy+VsQx
+cAEBpKcfrmbsQdvfLyfSCjJ2hJ+7EGFsdfp3DVwYxtNDeaE2an8AzA8TLs1g04Hf
+OuBTCPtM9O7ntHGn7QbCh1+s1AeL97WC5/hHalhfiQ35m3lMl5vRtJEK2XKioyEa
+uwriBMACkAsbhYj3ZoPcwRsSMszBXmmgOh5sFbmg9UNLtXa45p8cGdtcoaUypYGR
+QBMaS245vaUqEb4hURgD0nJydexcIQbXCoDwrpMEAtRDP+l8G7IcQHnbwg0wGRI/
+9/O9p1Cs06gVG58qEwrTZPpCEcBGJl8QuB0sVtcgqtLtdL9Y+4rwUngiXZwoYBRV
+asjM3T6+JOtSwfW7why5QU+uEes8iydyARj67sWWE6BpiHqUd8D1NfMP6LeSEHaT
+Haj9EqPz1DXWWw2WJOdi0lYedT1wiMoMqwgS1CgB3hOR/0p0LDzXASgBWg56tg7X
+vrftz2ROdcgpfe4ABf1yhxDrDysQIiLcFTC16EnHzXTyz9ETXBwDzyOa3OKnrWQW
+yrvp8Yvs0vjyfFa7VqnpGURPD9RXA1Hn9m/TTj3RlfpwXgWtsk8=
+=TyNs
 -----END PGP SIGNATURE-----
 
---F4CNzuRzY1Lt3BIp--
+--y7rejlSe7J7ljgsj--
