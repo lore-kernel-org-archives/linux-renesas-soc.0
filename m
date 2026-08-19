@@ -1,84 +1,81 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BB43CF97F
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 18:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8D44078F0
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 19:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787164743; cv=none; b=sYfnF0wFbBWwxLhbt7q1W2oZnQc5x3bg+xoiic10z35x0g9zlgo5e6c1sCdFjWdOHjqegzVTmJkO+vHD0xFlC80PHm7HYhO9NXJ1ihAWLDUZFEwtqv2d3MbIm1Mp8arTdLaSoRt3Pv3a2isQXj766AQ/jqZr/A2QrurFIfypKuU=
+	t=1787166814; cv=none; b=r4XghjkcKzUMKfMPC2lsF0tnf37FS/Y33Eq7CmeEQnm8H6z9BAe15sk8X9vGzREuUlxbJ63PsKvJ7VkfpRZ2SdJohmxTlwYYVWwGW9Jl/euTS7B2j/BL3QoqgIPERkFUinNBsGMBAHIJcopWED6DwATjyET/GnS131dyG4Nnt0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787164743; c=relaxed/simple;
-	bh=V2dPCaRU+hd7fSjS8oDY0q0LfBq5U5E8U2B7hmZAJo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aBM+ZwFxcrOzYh/DH8Ze+2CjZmISBeXm7Mx3yMOcNMRpODb8cInPPvVz/axTUpKFpFjkavvFiDvIF+TYKsr+qIPS5ay/UlqD4NhrJdDQYkpR0yj7RfGDa/HG4XPxDJ9+82IV+vMSwWk2/E5EltHuYinplAShzikpaqR0OwRVH/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDkMK0vJ; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1787166814; c=relaxed/simple;
+	bh=qcmjD640uwftv+pkhaEtJ2oGth7+CawUN9CiaQ28ork=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lry4oIDb88cRrWz24H7jylVJyPsDgYV+qexX5wMQquj9Oj1vomUN55uoGqqmTqD1gH5EKmi9IqGjluzjkdVPwSLgO01WV6I6jnREr25Y2R2eA2GwJ/p8chRULFs/vrwqqcjWS51oCXhLMp/yOQJxRcwHEt8UM1Vw/bgB3fKMPHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKtEaq3F; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDkMK0vJ"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c9cf07d2df6so766924a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 11:39:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKtEaq3F"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-480033bdcf4so804807f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 12:13:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787164741; x=1787769541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5ZcTRLAfLTr9e/jEr10T1e+kHbQ9jqkTcrRchtkL5X0=;
-        b=SDkMK0vJZOrI2DqFmOsaKhdSTqbQNSXU+BZo/Q5E4em2PMy6bSG4d5jNRM2pXkIfgR
-         uIYEzE1EIAPV7pfMw5KHgzP9fmnKAKw/HBxQP44rWOIuP/2le/svAecNsG7zkJrlq2lA
-         RF2OwxN99ryit6ZtN0L+7e9Q6gdUcFlnBGedgrslRo23GYYSwFtO1N84/Ti0TzYq8CkU
-         /fDduOEoDmIvEH5Yxas+157DL9b8hUmNkxNGjxwbL+ApG9XPxu68/jUphRFr1dU4KHDh
-         veBG11L/XiGEexO6z7I17wtC9xbJsMgHm7Hk7w4hihHtiDn65cS8Je0Ns4NQlWDjrG/D
-         trgw==
+        d=gmail.com; s=20251104; t=1787166809; x=1787771609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yP6MN524JLMFiJo4TvqPgz9O1+vEC2UrRKt6aF5ISr4=;
+        b=DKtEaq3FMk6QA452zB5bjNIqPprVi5vnbzr8TG/Ubo3w+U710bHSoJNUV+fRK+EEYH
+         B/2SM0h0wy/+yy/0hYaZF5ifGLMeBNvIhfvoUOFZ1VYbOxJxkfabLMu/9MtHHu37DpTx
+         hF9/IEVC5hYGCbFEFrUOPLbl/VYcwSRQsNBU5vDgiDXhyfR1n5j2suZjEAGAuj3cdwcY
+         DHd04uyRB4jFTZCc8GZlZEr1XEx14h2ywS2tX0dJ/NovkdRWaTRrAyAH5hSIWS8vjRXp
+         a/e8lQNJO/GdEh/D/Qqmz6aYJkI2o1G8iWQNbtT0vq96gwFgsCjwDxrFoNJxlbZyPJzm
+         KF1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787164741; x=1787769541;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5ZcTRLAfLTr9e/jEr10T1e+kHbQ9jqkTcrRchtkL5X0=;
-        b=fiKfw6xFYOXpR3tmSDzY87rwNMvfb3tUs7Pqdv9H7vY9ClRYXcQ/FXNdctDpxxSh23
-         4AaglgtjKXikGTklOkg52PggeFAT1BDR4O4rZndirlyfPU6J6bieeNo/7BnN9FQO4ZF8
-         OLjCY6QxNm2dhs/I7u0iLVZYw0YHr8P2umunWYjdfSqcYwadpT8GJ30KmxFbLuPGG6Ar
-         Aw2Z8rELIpUoqnnPPVrq3dzOcXJ0heoywPSdAKPCw+GbJ80Mc/wBGKVPLTR0BC1YZxMi
-         w0Cu+4+u4zVvufKUpvsMUoyru1PZQaxr7YUI6a3A89O4kcDWHB56eE5eMuFEhmxR0/r0
-         CEdA==
-X-Gm-Message-State: AOJu0YyUGonnNmopbZCDwWyh/SwIuvj22nwpzzz/EAZO3znoL4FpSels
-	2whRcsx82HJTzmOm1MK1VPqdFY4eaPlkDzxyhe1B+vM4deOd4QWeNvbh
-X-Gm-Gg: AR+sD10Y37UIzKnv660Jc5LvzMtVqHTBiW81KNOYiY1JpXDsTr/QEBK8a9fuM3uVpPr
-	V0+QBSQY7qHN7mfccXMYsR4XSvktJ0igRfcyfnsW7mF8+tS0cFVwrr9Ae9tOIlH4/dxoGyUSape
-	ihCs6dreXtMbKQOEmYU1RTlrkAv2I2B9xpY0J4v82gTxpcVyfJGiifhdUpzjr09Ue+Sp2TJCuoE
-	ogp+NUH5tPJ+e1QukxMsWS2Ss61S5ia/RqP30ytZBkuPQCZV6Dr9gWwgLGmReEaw5aYrmk21nLp
-	7mP0nyZ365PonuLeom7sGcp9oTj8W2SaTTxPdBnzL/fQvgbTrHg6r/GyAkAeO5stsPGQIrl/Jkd
-	lfBLZ1HobSMjpF11UoR6qx+nA6xeUS6epIR4hQJ4p98PkxGrsP6SJCBGI/K4EDokDlgQFNkzvSp
-	tiBZ8TvwFhFQnZVHzqPFzkcZngoEP0rB9Ymq5Y9vZCF1tJiw6wlWphBiBn81+ggWdBd//31/JH6
-	ryOdnqwUO0aNx+pToXNrwpt0ilsg5JMsIG4LR5RWrM/1Y8zntLURFBLn6WF4/5jaYvRkPUJd4dl
-	dvLKF8kxjEb2SFJyfQcj
-X-Received: by 2002:a05:6a21:398:b0:3cc:3d08:da2b with SMTP id adf61e73a8af0-3cd01295943mr14796519637.15.1787164740457;
-        Wed, 19 Aug 2026 11:39:00 -0700 (PDT)
-Received: from iku.example.org ([2401:4900:1c07:efb3:a897:a9b5:e171:c935])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327cb5a9831sm1759393eec.21.2026.08.19.11.38.55
+        d=1e100.net; s=20251104; t=1787166809; x=1787771609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yP6MN524JLMFiJo4TvqPgz9O1+vEC2UrRKt6aF5ISr4=;
+        b=ndKhA1K9Ss+EdMAo6rf5cYRrraq9qgL/mzZerz1lrYe4aKtzLiJva68W+RDixobIog
+         BemkBr6lovSJTwYnEk8De+sReCec+CIX1nn6xB263DcMTweicCpIQjhY5YT2KN3O4iL8
+         7kyFbFkxxbG6r6J1GCMNazmlwkiPRzZ2U0tV7gWYwUnJWyum9Slnr7kf7+Q6klFwpOlX
+         IXnrbFlbwKFWvjzHFQrRwACw7uAugt3fs7oVl8Ef+CAuSDhVLsW04TkEEXEs3XRfI1F2
+         V1hl8Tezjs1J3AxkNwZhj0plTEhDqR/aJbq6kuhgt98o/aB5EDthl4QsO4RVVIS24uEB
+         0raw==
+X-Forwarded-Encrypted: i=1; AHgh+RqyjXmm+Guz6NG/dZgjXkE8jBbPWBQrF+eGjQxCh63ENKS7q+cYMQP5KtMJyrz2BfLofhihWxrmEK5gR3dwOnHB/w==@vger.kernel.org
+X-Gm-Message-State: AFuF++kskOr1cpAKCK0XgSCtNRwHNsIUVmLCcRiNGkOVnH6VL/K2E969
+	Kh4/wm0OHpK8apyKsNYd18MlGYBOZSJhGnvZUxMll/j8lPQ6PEiiylyh
+X-Gm-Gg: AR+sD131bYqTfaZ514AQamI1EQyVv6qni2mwD3ybYDVVqIU2XjnZ1BD4FDpGLEsp5Ie
+	bDPu+v9GLiRIhxwsTlzR2YvOjvUbkm/b1zNZuNkg8gDNKtJS+o+eS7J1IVB5mj0hewTHcwyKcG+
+	4fPJ+zUKIH3C3qYStdFlRZhVht6iSTkuafkemeoJBsTsdyqXcqKMp+yTg2ldsTWZwOy+DCWx0fs
+	cScCv6dog7S+10q3XkL3oIxqWfbN9ydRwoOaovhg3XWLTjE9R5Zj4gWrf2DPtVC3fPaUI17NXVS
+	39dV8BBfEDSL5kNc0zv4syRrB53/yX/tyM3JDt+eJX4Q5KT8lj5sEEd6qShND5D3vcExn1nex7h
+	iRkjmJulgW8hBejEHPUH2f5QOQt9FOmFtb7p1Vh0p9CuLjv+XQmY6BzYchf1lQwBdmLnrfehNOs
+	F4N9opeTCrm2koFCUf6v2yDuiSbUTqE+P9l8JJsSJZx+4/hel7Fau4IoV1Y470AOmivPFq
+X-Received: by 2002:a05:6000:2405:b0:45e:e1a4:c4c3 with SMTP id ffacd0b85a97d-482b1fd970fmr10191823f8f.15.1787166808625;
+        Wed, 19 Aug 2026 12:13:28 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a702:d301:c7e0:8c9b:65f0:4aef])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482b14c338dsm6153398f8f.25.2026.08.19.12.13.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2026 11:38:59 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Wed, 19 Aug 2026 12:13:28 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 2/2] arm64: dts: renesas: Add LCDC overlays for RZ/T2H and RZ/N2H EVKs
-Date: Wed, 19 Aug 2026 19:38:29 +0100
-Message-ID: <20260819183829.3953529-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	linux-pm@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v4 0/4] Add RZ/G3L PWRRDY power sequencing support
+Date: Wed, 19 Aug 2026 20:13:17 +0100
+Message-ID: <20260819191325.217809-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260819183829.3953529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260819183829.3953529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,324 +84,73 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add DT overlay support for enabling the DU/LCDC pipeline on the RZ/T2H
-and RZ/N2H evaluation kits when fitted with an ADV7513 HDMI transmitter
-on CN15/CN20.
+Hi All,
 
-Share the common ADV7513 and LCDC pin configuration between the two
-overlays. Disable board functions whose pins are reassigned to LCDC,
-including the affected LEDs, SDHI0 on the RZ/T2H EVK, and I2C0 on the
-RZ/N2H EVK.
+Some RZ SoCs (e.g. RZ/G3L) have a PWRRDY register that signals power
+readiness for various IPs (USB, DSI, CSI, etc.) to their respective
+controllers. This register is part of the SYSC IP. Add a dedicated
+power sequencing driver to handle these signals.
 
-Move the LED8 and LED9 preprocessor conditionals inside the node
-definitions so that the nodes remain present in the base DTS. This
-allows the LCDC overlays to reference and disable the LEDs when their
-pins are reassigned to display functions.
+This series is based on proposal for power sequence driver [1]
+for USB PWRRDY signal and DSI PWRRDY signal[2].
 
-Configure the LCDC data and clock pins with slew-rate setting 1 as
-recommended by the hardware manual. Use slew-rate setting 0 for the
-HSYNC, VSYNC and DE pins, as testing with the ADV7513 showed unstable
-display output and visible flicker when these synchronization signals
-were configured for fast slew rate.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
+v3->v4:
+ * Dropped rz_sysc_pwrrdy_pwrseq_init()
+ * Collected tags.
+ * Fix build issue with COMPILE_TEST for POWER_SEQUENCING_TH1520_GPU
+ * Replace the large of_device_id structures by C strings, and
+   using of_device_is_compatible() will reduce kernel size.
+ * Replaced of_device.h -> of.h
+ * Dropped local variable pwrseq from pwrseq_rzg3l_pwrrdy_probe().
 v2->v3:
-- Renamed HEADER_IRQ8 to IRQ8
-- Added irq support for the ADV7513 in the overlays
-- Corrected the DIP switch settings for I2C_SDA1/I2C_SCL1
-- Added missing DIP switch settings for LCDC_DATG3
-- MOved the header include at the end
-- Added a comment for i2c0 as to why it is disabled in the overlay
-- Split up the du_pinctrl into a group of pins as only sync/de pins
-  needed to set slew-rate=0, the rest of the pins can use slew-rate=1
-- Updated commit message
-
+ * Updated commit description by dropping devm_add_action_or_reset().
+ * Config now selects AUXILIARY_BUS to avoid compilation issues.
+ * Dropped the cast in devm_auxiliary_device_create().
+ * SYSC_RZ and POWER_SEQUENCING_RENESAS_PWRRDY config selects
+   AUXILIARY_BUS to avoid compilation issues.
+ * Added match for consumer device and added of_device.h header file.
+ * Replaced regmap_update_bits()->regmap_assign_bits() and updated
+   the function parameter of pwrseq_rzg3l_set_pwrrdy().
+ * Simpilfied probe() return with PTR_ERR_OR_ZERO macro.
+ * SYSC_R9A08G046 config selects POWER_SEQUENCING as 
+   POWER_SEQUENCING_RENESAS_PWRRDY is defined inside an if
+   POWER_SEQUENCING block in drivers/power/sequencing/Kconfig.
 v1->v2:
-- Fixed typo in makefile for CONFIG_ARCH_R9A09G087
-- Explicitly disabled the led7 and key-1 in the overlay
-- Dropped comment about DSW5[3]
-- Updated commit message
----
- arch/arm64/boot/dts/renesas/Makefile          |  6 ++
- .../renesas/r9a09g077m44-evk-cn15-lcdc.dtso   | 53 ++++++++++++++
- .../renesas/r9a09g087m44-evk-cn20-lcdc.dtso   | 63 ++++++++++++++++
- .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 12 ++--
- .../dts/renesas/rzt2h-n2h-evk-du-adv7513.dtsi | 72 +++++++++++++++++++
- 5 files changed, 202 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g077m44-evk-cn15-lcdc.dtso
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g087m44-evk-cn20-lcdc.dtso
- create mode 100644 arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-du-adv7513.dtsi
+ * Switched to devm_auxiliary_device_create().
+ * Added regmap parameter to rz_sysc_pwrrdy_pwrseq_init(),so that regmap
+   can be passed as platform data.
+ * Added a comment in pwrseq_rzg3l_pwrrdy_match().
+ * Dropped dev_get_regmap() from probe as regmap is now part of platform
+   data.
+ * Added a blank line before devm_pwrseq_device_register() in probe.
+ * Dropped the error message devm_pwrseq_device_register() as probe prints
+   failure message.
+ * Dropped local variables dev and regmap from probe().
+ 
+ [1] https://lore.kernel.org/all/c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de/#t
+ [2] https://lore.kernel.org/all/20260704093433.273672-1-biju.das.jz@bp.renesas.com/T/#mb6f18d8fa9a194fc0a15db5f4938df420da7b6b5
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8bf155badd11..e4a7d7ab5b0e 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -216,8 +216,14 @@ r9a09g057h48-kakip-pixpaper-dtbs := r9a09g057h48-kakip.dtb r9a09g057h48-kakip-pi
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h48-kakip-pixpaper.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G077) += r9a09g077m44-rzt2h-evk.dtb
-+dtb-$(CONFIG_ARCH_R9A09G077) += r9a09g077m44-evk-cn15-lcdc.dtbo
-+r9a09g077m44-rzt2h-evk-cn15-lcdc-dtbs := r9a09g077m44-rzt2h-evk.dtb r9a09g077m44-evk-cn15-lcdc.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G077) += r9a09g077m44-rzt2h-evk-cn15-lcdc.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G087) += r9a09g087m44-rzn2h-evk.dtb
-+dtb-$(CONFIG_ARCH_R9A09G087) += r9a09g087m44-evk-cn20-lcdc.dtbo
-+r9a09g087m44-rzn2h-evk-cn20-lcdc-dtbs := r9a09g087m44-rzn2h-evk.dtb r9a09g087m44-evk-cn20-lcdc.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G087) += r9a09g087m44-rzn2h-evk-cn20-lcdc.dtb
- 
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += salvator-panel-aa104xd12.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-evk-cn15-lcdc.dtso b/arch/arm64/boot/dts/renesas/r9a09g077m44-evk-cn15-lcdc.dtso
-new file mode 100644
-index 000000000000..aaddfc1154d5
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-evk-cn15-lcdc.dtso
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * DT overlay for the RZ/T2H EVK with ADV7513 transmitter
-+ * connected to DU enabled.
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+#define RZT2H_IRQ8	24
-+
-+/*
-+ * RZ/T2H LCDC configuration:
-+ * ----------------------------------------------------------
-+ * Function        Pin     SW Setting
-+ * ----------------------------------------------------------
-+ * LCDC_DATG0     P11_0, SW6[3]: OFF, SW6[4]: ON, SW6[5]: OFF
-+ * LCDC_DATB1     P18_0, SW8[3]: OFF, SW8[4]: ON
-+ * LCDC_DATB2     P18_1, SW8[1]: OFF, SW8[2]: ON
-+ * IRQ8           P22_6, SW2[1]: ON, SW2[2]: OFF
-+ */
-+
-+&{/leds/led-4} {
-+	/* P18_0 is used for DU function LCDC_DATB1. */
-+	status = "disabled";
-+};
-+
-+&{/leds/led-5} {
-+	/* P18_1 is used for DU function LCDC_DATB2. */
-+	status = "disabled";
-+};
-+
-+/*
-+ * Disable SDHI0 as SW2 settings for eMMC/SD card conflict with DU pin
-+ * settings.
-+ */
-+&sdhi0 {
-+	status = "disabled";
-+};
-+
-+#include "rzt2h-n2h-evk-du-adv7513.dtsi"
-+
-+&adv7513 {
-+	interrupts-extended = <&icu RZT2H_IRQ8 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&adv7513_irq_pins {
-+	pinmux = <RZT2H_PORT_PINMUX(22, 6, 0x0)>; /* IRQ8 */
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-evk-cn20-lcdc.dtso b/arch/arm64/boot/dts/renesas/r9a09g087m44-evk-cn20-lcdc.dtso
-new file mode 100644
-index 000000000000..9c9e4fc80363
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-evk-cn20-lcdc.dtso
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * DT overlay for the RZ/N2H EVK with ADV7513 transmitter
-+ * connected to DU enabled.
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+#define RZN2H_IRQ5	21
-+
-+/*
-+ * RZ/N2H LCDC configuration:
-+ * ----------------------------------------------------------
-+ * Function        Pin     SW Setting
-+ * ----------------------------------------------------------
-+ * LCDC_DATG0     P11_0, DSW12[3]: ON, DSW12[4]: OFF
-+ * LCDC_DATG3     P14_3, DSW18[5]: OFF, DSW18[6]: ON, DSW19[3]: OFF, DSW19[4]: ON
-+ * LCDC_DATG6     P14_6, DSW15[8]: ON, DSW15[9]: OFF, DSW15[10]: OFF
-+ * LCDC_DATB2     P18_1, DSW18[9]: OFF, DSW18[10]: ON
-+ * I2C_SCL1       P03_3, DSW7[1]: ON, DSW7[2]: OFF
-+ * I2C_SDA1       P03_4, DSW7[3]: ON, DSW7[4]: OFF
-+ * ------------------------------------------------
-+ */
-+
-+&{/keys/key-1} {
-+	/* P18_2 is used for DU function LCDC_DATB3. */
-+	status = "disabled";
-+};
-+
-+&{/leds/led-4} {
-+	/* P18_1 is used for DU function LCDC_DATB2. */
-+	status = "disabled";
-+};
-+
-+&{/leds/led-7} {
-+	/* P14_3 is used for DU function LCDC_DATG3. */
-+	status = "disabled";
-+};
-+
-+&{/leds/led-8} {
-+	/* P14_6 is used for DU function LCDC_DATG6. */
-+	status = "disabled";
-+};
-+
-+&i2c0 {
-+	/* P14_6 is used for DU function LCDC_DATG6. */
-+	status = "disabled";
-+};
-+
-+#include "rzt2h-n2h-evk-du-adv7513.dtsi"
-+
-+&adv7513 {
-+	interrupts-extended = <&icu RZN2H_IRQ5 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&adv7513_irq_pins {
-+	pinmux = <RZT2H_PORT_PINMUX(14, 0, 0x0)>; /* IRQ5 */
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-index 76e30a6ecb8b..9d54e7650957 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-@@ -162,8 +162,8 @@ led-7 {
- 			function-enumerator = <8>;
- 		};
- 
--#if LED8
- 		led-8 {
-+#if LED8
- 			/*
- 			 * USER_LED0
- 			 * DSW15[8]: OFF, DSW15[9]: OFF, DSW15[10]: ON
-@@ -172,11 +172,13 @@ led-8 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DEBUG;
- 			function-enumerator = <0>;
--		};
-+#else
-+			status = "disabled";
- #endif
-+		};
- 
--#if LED9
- 		led-9 {
-+#if LED9
- 			/*
- 			 * USER_LED1
- 			 * DSW15[5]: OFF, DSW15[6]: ON
-@@ -185,8 +187,10 @@ led-9 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DEBUG;
- 			function-enumerator = <1>;
--		};
-+#else
-+			status = "disabled";
- #endif
-+		};
- 
- 		led-10 {
- 			/*
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-du-adv7513.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-du-adv7513.dtsi
-new file mode 100644
-index 000000000000..d0242dc55161
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-du-adv7513.dtsi
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * DT overlay common parts for the RZ/{T2H/N2H} EVKs with ADV7513
-+ * transmitter connected to DU enabled.
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-+
-+#define ADV7513_PARENT_I2C i2c1
-+#include "rz-smarc-du-adv7513.dtsi"
-+
-+&pinctrl {
-+	du_pins: du-group {
-+		du-data-pins {
-+			pinmux = <RZT2H_PORT_PINMUX(10, 0, 0x28)>, /* LCDC_DATR0 */
-+				 <RZT2H_PORT_PINMUX(10, 1, 0x28)>, /* LCDC_DATR1 */
-+				 <RZT2H_PORT_PINMUX(10, 2, 0x28)>, /* LCDC_DATR2 */
-+				 <RZT2H_PORT_PINMUX(10, 3, 0x28)>, /* LCDC_DATR3 */
-+				 <RZT2H_PORT_PINMUX(10, 4, 0x28)>, /* LCDC_DATR4 */
-+				 <RZT2H_PORT_PINMUX(10, 5, 0x28)>, /* LCDC_DATR5 */
-+				 <RZT2H_PORT_PINMUX(10, 6, 0x28)>, /* LCDC_DATR6 */
-+				 <RZT2H_PORT_PINMUX(10, 7, 0x28)>, /* LCDC_DATR7 */
-+				 <RZT2H_PORT_PINMUX(11, 0, 0x28)>, /* LCDC_DATG0 */
-+				 <RZT2H_PORT_PINMUX(14, 1, 0x28)>, /* LCDC_DATG1 */
-+				 <RZT2H_PORT_PINMUX(14, 2, 0x28)>, /* LCDC_DATG2 */
-+				 <RZT2H_PORT_PINMUX(14, 3, 0x28)>, /* LCDC_DATG3 */
-+				 <RZT2H_PORT_PINMUX(14, 4, 0x28)>, /* LCDC_DATG4 */
-+				 <RZT2H_PORT_PINMUX(14, 5, 0x28)>, /* LCDC_DATG5 */
-+				 <RZT2H_PORT_PINMUX(14, 6, 0x28)>, /* LCDC_DATG6 */
-+				 <RZT2H_PORT_PINMUX(17, 6, 0x28)>, /* LCDC_DATG7 */
-+				 <RZT2H_PORT_PINMUX(17, 7, 0x28)>, /* LCDC_DATB0 */
-+				 <RZT2H_PORT_PINMUX(18, 0, 0x28)>, /* LCDC_DATB1 */
-+				 <RZT2H_PORT_PINMUX(18, 1, 0x28)>, /* LCDC_DATB2 */
-+				 <RZT2H_PORT_PINMUX(18, 2, 0x28)>, /* LCDC_DATB3 */
-+				 <RZT2H_PORT_PINMUX(18, 3, 0x28)>, /* LCDC_DATB4 */
-+				 <RZT2H_PORT_PINMUX(18, 4, 0x28)>, /* LCDC_DATB5 */
-+				 <RZT2H_PORT_PINMUX(18, 5, 0x28)>, /* LCDC_DATB6 */
-+				 <RZT2H_PORT_PINMUX(18, 6, 0x28)>; /* LCDC_DATB7 */
-+			drive-strength-microamp = <11800>;
-+			slew-rate = <1>;
-+		};
-+
-+		du-clk-pins {
-+			pinmux = <RZT2H_PORT_PINMUX(9, 4, 0x28)>; /* LCDC_CLK */
-+			drive-strength-microamp = <11800>;
-+			slew-rate = <1>;
-+		};
-+
-+		du-sync-pins {
-+			pinmux = <RZT2H_PORT_PINMUX(9, 5, 0x28)>, /* LCDC_HSYNC */
-+				 <RZT2H_PORT_PINMUX(9, 6, 0x28)>; /* LCDC_VSYNC */
-+			drive-strength-microamp = <11800>;
-+			slew-rate = <0>;
-+		};
-+
-+		du-de-pins {
-+			pinmux = <RZT2H_PORT_PINMUX(9, 7, 0x28)>; /* LCDC_DE */
-+			drive-strength-microamp = <11800>;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	adv7513_irq_pins: adv7513-irq-pins {
-+	};
-+};
-+
-+&adv7513 {
-+	pinctrl-0 = <&adv7513_irq_pins>;
-+	pinctrl-names = "default";
-+};
+
+Biju Das (4):
+  soc: renesas: rz-sysc: Register auxiliary device for PWRRDY power
+    sequencer
+  power: sequencing: Fix build issue with COMPILE_TEST
+  power: sequencing: Add Renesas RZ/G3L Power Ready driver
+  soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for
+    R9A08G046
+
+ drivers/power/sequencing/Kconfig              |  12 +-
+ drivers/power/sequencing/Makefile             |   1 +
+ .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 137 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   3 +
+ drivers/soc/renesas/r9a08g046-sysc.c          |   1 +
+ drivers/soc/renesas/rz-sysc.c                 |   5 +
+ drivers/soc/renesas/rz-sysc.h                 |   2 +
+ 7 files changed, 160 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
+
 -- 
 2.43.0
 
