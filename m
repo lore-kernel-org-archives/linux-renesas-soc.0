@@ -1,216 +1,134 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B31353A98
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 14:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BAE3A0E8A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 14:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787149755; cv=none; b=mvoi1tdTVEtH63DlGWr0bMnGUXbpj+CgRLFXquTwF1bPQbUxu4EkyQgPad5mcq1ZKvpzxfPAMSjSKiSDLpcXkobP1RmKq62Xy8gPHnci8/aO3X9KgUDcvN8StVhkWMZgAMctJfNdIj/XsyFxYIxjEqly+xz1OtxzCXBULScSOYk=
+	t=1787150188; cv=none; b=SmrA56bLGM8dLRlVI69qaczn4cqWQfogEf4nDGJIc10mPibKziGPFlFFpv7dphhB8G4Otw6t6qLebs4hczaU4Y+DDP2Aw95Y0krUxptUimiHcp2hiAE40Gnm2DEpE3f5XBW9LeNX36fJqAtCZFRFA7OGhYTZcMLnNiNyvP40/to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787149755; c=relaxed/simple;
-	bh=B+7fFX4ZydD+DRYhZDZhVaEGfxT3f9qC91YcXod3wh8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=W4oCGDzr0w1JH9t00zDvbhuKdPF6tCMca+16VdXFrBDJvXUdduFNaF6/rjMnI7oTwcLdHt3NDnHkBjR1L2CMAi3P4rddEApRtDYxBbfqAxydvNJBibfUm2ZzWGbCgPvF7BSXlv+J0ijlvyHJtvMZfArJfrv3u8Yv+9qevZrEg/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TSmk8Jnl; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1787150188; c=relaxed/simple;
+	bh=z3m6fox0VDL5+p4WGInn9Me43qPCmqPICFvZd8M5Azk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBri9XFifKNUlgfkCAkcSPFYhsfZ4vi0R1UeK3MKMMVBTQGiO1Op42iGDc+Dq6lkhGf3+YapgDmih0pBdtvRpA7i+GvCqNNLJa7ElkJhWvH2Qrh2qAjOU2TLCnFMY6sMuPdpOODAt0OvU3wQEVJYS1cWZid3XyV2M7jwRhDDpYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gsrE5JKX; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TSmk8Jnl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787149745; x=1818685745;
-  h=date:from:to:cc:subject:message-id;
-  bh=B+7fFX4ZydD+DRYhZDZhVaEGfxT3f9qC91YcXod3wh8=;
-  b=TSmk8Jnl2O3Y7JP5eSD8MlQxZX6OY9PfqjRVwB2KJbfXMBeUXw17VmTH
-   X8VdAFK5abOs/M0Ys4sD3iKlNvBWDUVwUONda3zggQD69OYLynlvoMUJn
-   Xl2Idx2M4LrBvB1xVNLlGyagFzlTLQ7m0F2UDWiJi/DzfbWWBPVMri9mS
-   +a3bNwqVWKE5KzWK+bDmlmMwSD80p/WjGMKEjSR8PZQ1zujMCOXwDsySA
-   6JUR7M0AU06wlTm4mpdxEO/rT+h0tVBCSAbDj8gBbUMZZDo44Q3pQKp6g
-   aymYDpPJ7iAmWj0lQxETcSHtIM2ogu8/2vXhVEBjUYhFd9W1W4T/hhfgx
-   A==;
-X-CSE-ConnectionGUID: Y1yu+f0uTnaMN8VuegiD8Q==
-X-CSE-MsgGUID: I/c2wkuwSoyR4AhVO0I1NA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11880"; a="87786501"
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="87786501"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 07:29:02 -0700
-X-CSE-ConnectionGUID: B8Hy0+/FRvKtlyBgn5LU+A==
-X-CSE-MsgGUID: r/DUpqweROakI3kySHanaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="295479064"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 19 Aug 2026 07:29:01 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wwhHl-00000000fSk-3U9S;
-	Wed, 19 Aug 2026 14:28:57 +0000
-Date: Wed, 19 Aug 2026 22:28:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Airlie <airlied@redhat.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [geert-renesas-drivers:master 13/55]
- drivers/gpu/drm/xe/xe_device.c:51:10: fatal error: 'xe_log.h' file not found
-Message-ID: <202608192230.6MHdCZJS-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gsrE5JKX"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-498028b3d5eso12659015e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 07:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1787150185; x=1787754985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=G5yTeyQ1vVAKMn0PJztOwFpeHkqkgo3sW/fF3NuHvjQ=;
+        b=gsrE5JKXPw2lxpRjyJEiaxyPUd1pU8t/0ubzf9j7L/CUXujQi2zmOalOUYsPisha21
+         xFBDX6pAskz6fnYtntzd292CL9DQ3B2cQELsoSgfapRrO1jQxgl5JRpb41ZNu1ZX91cX
+         hsCT31B7STR8s9pHP+Yag3IkC63FWzB56NC2syPIJ6KOi91BKZHKbncBq8fk2zJrSN98
+         ApzAv+ePK07FFh1dgw+fv0zq374G46QmTTRUKi14ljzdSkNU4AcEoPT4kTm6t8jdBoLL
+         44cG5K7TytVkTr5tzekrxNo9DLY1Ii+TjvJfzr67K8Db1DT7ZkUdzIxxR9SU+JwuFpd0
+         DF2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787150185; x=1787754985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=G5yTeyQ1vVAKMn0PJztOwFpeHkqkgo3sW/fF3NuHvjQ=;
+        b=kYCecgGdmnketqVYvIE4EuySJxH6ui7UgYht9tvZD5JESde3YnzqQRmnyuL+VESTMO
+         phj4Fe7exykdmDWF++Cb5bPjPOwBXDjyanPE3zMDSRh9PX+dpytN0TAIbjVurakqkVMf
+         AidHMDAubCN1Q0nlBWg7tpYW2/QCIGDO/DLGNsBaMkbbcBF47jJmRqHQC7wFzk6acBzq
+         xiFi1TBCR6e4GKzwDuhfENi87fOwSHyhIOvsW+VVmGb7QwxY/ooSQ8awM0cLUBIfXRM5
+         OR81s0e8A/GX/F/ufSRb9d6ZpPSc8PzaYgju8lmexwImFIoFcZEnR9rAaDggKe+YvmqP
+         6whw==
+X-Forwarded-Encrypted: i=1; AHgh+RoNNJdUgQfURyLf2Xbx8S7M1lOSUrkTMl1j9DSwnyZy0vcfLb/Rd5b/KEBBl6C7AQ8z0CfgEJJhxvJwvZAMsQessg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz15ft8SANHC+N32vo43GMx5JuNcO1AMFJsSCdw2spMCJKk3dry
+	8H/ehF/6q/2ZGCdmKMky+LFGGzUk4nZ4T+e8jnHxI5Ee5POeJ/U84t+DExoQneLMO48GxGmV0EK
+	duW1a
+X-Gm-Gg: AR+sD13VYxRG/julp3GfpYHlDtjyeb0nZnjFuqRwkFaPgZiPKj/S1ybuvZihBoADo/u
+	a7sD0SP80OL4p7zA1VaK9iFKHMlyWWBDEK1pCCpGUEOVdlxWCdZhYbKECoPYTpov/KdRj/vvnwB
+	nPp5zbgM98QdkHuda8xcwYeyf0TnprJ8WY0i4pjNnAsQdVPR+qazi/HlVPuITavsNrz220XGQCy
+	KYuB/oxRWI6QHMdUVA2rEK6PhJzTMllxD75G45Bgba7FBz7io/Onl1gbeyAPvWFCEqv6BlVo16u
+	mNUVrZP/f5HjoWyA1DX5Dr1IgWBkG1CUeiRRjkjuStOI2Lt6b2fnyLiZC14z67K+8wqFPyTW5lM
+	8Ef81OTAhEnH37RW9Gj995jipq+/ZwbuQh4aFgWjzviJt+n6p/lMaw5P5uqBNJzRWYHFtbsxrTc
+	0K96AOT2dktK2bS7HWzzJM/cDGAINaRW935BOHGld5V1CiXEj2XEuRR4s3N/LsN9Wt//xeszBtS
+	MoDefT8EN3Y74LqSH8lUHLZM0aE8PkybPRcMFgU4TkHsfM+8C5qZMgOkg8w
+X-Received: by 2002:a05:600c:4eca:b0:496:c1f3:e8f8 with SMTP id 5b1f17b1804b1-499aa1a7a53mr81886955e9.7.1787150185026;
+        Wed, 19 Aug 2026 07:36:25 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6400:1700:e978:dd1f:393f:9962])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499a9e37284sm32671235e9.4.2026.08.19.07.36.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 07:36:24 -0700 (PDT)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+To: geert+renesas@glider.be,
+	linusw@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5 0/5]  pinctrl: renesas: rzg2l: Add support for RZ/G3S I3C
+Date: Wed, 19 Aug 2026 17:35:48 +0300
+Message-ID: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
-head:   03fb6a6169e563cfc4ad01bac2578fa412a343d3
-commit: 20a18e2d8ff4fe20a2620818fba2a8fca44d7b25 [13/55] Merge remote-tracking branch 'drm/drm-next' into renesas-drivers
-config: x86_64-randconfig-003-20260819 (https://download.01.org/0day-ci/archive/20260819/202608192230.6MHdCZJS-lkp@intel.com/config)
-compiler: clang version 22.1.3 (https://github.com/llvm/llvm-project e9846648fd6183ee6d8cbdb4502213fcf902a211)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260819/202608192230.6MHdCZJS-lkp@intel.com/reproduce)
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202608192230.6MHdCZJS-lkp@intel.com/
+Hi,
 
-All errors (new ones prefixed by >>):
+Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
+clean I3C support, cleanup patches for the pinctrl driver were also
+included.
 
->> drivers/gpu/drm/xe/xe_pci.c:28:10: fatal error: 'xe_log.h' file not found
-      28 | #include "xe_log.h"
-         |          ^~~~~~~~~~
-   1 error generated.
---
->> drivers/gpu/drm/xe/xe_device.c:51:10: fatal error: 'xe_log.h' file not found
-      51 | #include "xe_log.h"
-         |          ^~~~~~~~~~
-   1 error generated.
---
->> drivers/gpu/drm/xe/xe_guc_submit.c:844:12: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     844 |                         q->guc->multi_queue.re_register = true;
-         |                         ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:846:12: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     846 |                         q->guc->multi_queue.re_update = true;
-         |                         ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:862:11: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     862 |                 q->guc->multi_queue.registering_cgp = true;
-         |                 ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:863:11: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     863 |                 q->guc->multi_queue.updating_cgp = false;
-         |                 ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:865:11: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     865 |                 q->guc->multi_queue.updating_cgp = true;
-         |                 ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:866:11: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-     866 |                 q->guc->multi_queue.registering_cgp = false;
-         |                 ~~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
->> drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-     868 |         WRITE_ONCE(group->cgp_update_q, q);
-         |                    ~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2773:14: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-    2773 |         if (q->guc->multi_queue.re_register) {
-         |             ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2775:11: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-    2775 |                 q->guc->multi_queue.re_register = false;
-         |                 ~~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2788:29: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-    2788 |                 if (q == READ_ONCE(group->cgp_update_q) &&
-         |                                    ~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2788:29: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-    2788 |                 if (q == READ_ONCE(group->cgp_update_q) &&
-         |                                    ~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2788:29: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-    2788 |                 if (q == READ_ONCE(group->cgp_update_q) &&
-         |                                    ~~~~~  ^
-   drivers/gpu/drm/xe/xe_guc_submit.c:2788:29: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-    2788 |                 if (q == READ_ONCE(group->cgp_update_q) &&
-         |                                    ~~~~~  ^
-   fatal error: too many errors emitted, stopping now [-ferror-limit=]
-   20 errors generated.
+Thank you,
+Claudiu
 
+Changes in v5:
+- collected tags
+- addressed the improvements review comments
+- added patch "pinctrl: renesas: rzg2l: Unify the power source handling";
+  as a result, patch "  pinctrl: renesas: rzg2l: Add RZ/G3S support for
+  selecting the I3C power source" was changed
+- dropped device tree patch since it was already applied
 
-vim +51 drivers/gpu/drm/xe/xe_device.c
+Changes in v4:
+- dropped patch 1 from v3 as it was already applied
 
-    21	
-    22	#include "display/xe_display.h"
-    23	#include "instructions/xe_gpu_commands.h"
-    24	#include "regs/xe_gt_regs.h"
-    25	#include "regs/xe_regs.h"
-    26	#include "xe_bo.h"
-    27	#include "xe_bo_evict.h"
-    28	#include "xe_configfs.h"
-    29	#include "xe_debugfs.h"
-    30	#include "xe_defaults.h"
-    31	#include "xe_devcoredump.h"
-    32	#include "xe_device_sysfs.h"
-    33	#include "xe_dma_buf.h"
-    34	#include "xe_drm_client.h"
-    35	#include "xe_drv.h"
-    36	#include "xe_exec.h"
-    37	#include "xe_exec_queue.h"
-    38	#include "xe_force_wake.h"
-    39	#include "xe_ggtt.h"
-    40	#include "xe_gt.h"
-    41	#include "xe_gt_mcr.h"
-    42	#include "xe_gt_printk.h"
-    43	#include "xe_gt_sriov_vf.h"
-    44	#include "xe_guc.h"
-    45	#include "xe_guc_pc.h"
-    46	#include "xe_hw_engine_group.h"
-    47	#include "xe_hwmon.h"
-    48	#include "xe_i2c.h"
-    49	#include "xe_irq.h"
-    50	#include "xe_late_bind_fw.h"
-  > 51	#include "xe_log.h"
-    52	#include "xe_mmio.h"
-    53	#include "xe_module.h"
-    54	#include "xe_nvm.h"
-    55	#include "xe_oa.h"
-    56	#include "xe_observation.h"
-    57	#include "xe_pagefault.h"
-    58	#include "xe_pat.h"
-    59	#include "xe_pcode.h"
-    60	#include "xe_pm.h"
-    61	#include "xe_pmu.h"
-    62	#include "xe_psmi.h"
-    63	#include "xe_pxp.h"
-    64	#include "xe_query.h"
-    65	#include "xe_ras.h"
-    66	#include "xe_shrinker.h"
-    67	#include "xe_soc_remapper.h"
-    68	#include "xe_survivability_mode.h"
-    69	#include "xe_sriov.h"
-    70	#include "xe_svm.h"
-    71	#include "xe_sysctrl.h"
-    72	#include "xe_tile.h"
-    73	#include "xe_ttm_stolen_mgr.h"
-    74	#include "xe_ttm_sys_mgr.h"
-    75	#include "xe_vm.h"
-    76	#include "xe_vm_madvise.h"
-    77	#include "xe_vram.h"
-    78	#include "xe_vram_types.h"
-    79	#include "xe_vsec.h"
-    80	#include "xe_wait_user_fence.h"
-    81	#include "xe_wa.h"
-    82	
+Changes in v3:
+- collected tags
+- added a fixes patch (patch 1/6)
+- dropped already applied patches
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Changes in v2:
+- collected tags
+- dropped patches for configuring I3C standby
+
+Claudiu Beznea (5):
+  pinctrl: renesas: rzg2l: Generalize the power source code
+  pinctrl: renesas: rzg2l: Drop defines present in struct rzg2l_hwcfg
+  pinctrl: renesas: rzg2l: Unify the power source handling
+  dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the missing I3C
+    power source option
+  pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting the I3C
+    power source
+
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 313 ++++++++++++------
+ 2 files changed, 216 insertions(+), 99 deletions(-)
+
+-- 
+2.43.0
+
