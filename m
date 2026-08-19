@@ -1,57 +1,57 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754F4282F26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FA02E888A
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 02:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787105224; cv=none; b=X6kpnIx3OW/C0AFTTeVR4hcJ1LY8uWOkXp34ZIqrX6myIUK60H6JsnkqKJ/U+jHZY5z8pEcjhpoK6+/wWLha99rbsh2grV9nZZdZ73cB4LT1bYhQB0EbVfNDTUbACzd6CZ5iA4vumaFnMTigjMexE1QOZIAgNiDuIbQlaDA3+i0=
+	t=1787105225; cv=none; b=Alt7lZ6rH1s1PagXb/M87PDiEHWd2k6bIgyHSwmK8Pptz4LRQo8ZOxLOrgi/UIz9UFa7asJSuDXb6plggt9A/mfdIQiDkJ2xds2of9ceNBtgcm74QnmEaOIUx5seJAdBNl5Nve2hg0mRsOlg20EGkff+olhG1ZNjLBPcCrNr+C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787105224; c=relaxed/simple;
-	bh=Bp9ZvkyK8UGciQ3tRbIynMIS8mppHboDP7PIJjGIT/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rMqvI1KNjg6+2rWxalcjAN3bl0zLcX2idJ3HrwoJ8NyvHIkZGln8Ph2voV+sNCH+dOaMG8Bh3UJhJ19JSGxHnJAN3lwcES61R2fApLl0lPkLi6siL9KQ5LOjoUiMsgpfDWHVoQBRtq8paxUNiUhEq+digp5QtlM1D7lHKwNYw7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n55MCb0Z; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1787105225; c=relaxed/simple;
+	bh=0s478C/R8FSwHKuMpFR2mxrzsoKDeGyO3JzZWVdlhAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=KU5WGALX/g1K5Wzx1U+1YT0Ou8yXyE63EM0RVoTiTmEoCcCpk7AK+jIQD4/AhQTEyyjIZWeWDyXTjCLZbO4I4qq1Muoq6i5X7TUyp90vygKQQs0GPOsVWecBHV8Yg80mp34Rh1IFDaZwCKUpoverSfmIFG0HwufJCwzNvzgCvZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WS18rYUL; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n55MCb0Z"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WS18rYUL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787105223; x=1818641223;
+  t=1787105222; x=1818641222;
   h=date:from:to:cc:subject:message-id;
-  bh=Bp9ZvkyK8UGciQ3tRbIynMIS8mppHboDP7PIJjGIT/Q=;
-  b=n55MCb0ZiaATKaFSXKPtnW6IN3xddUzT8gGbTF4HefnKN9VDjfR4AQr4
-   Z/ASYMUzZ38Z8WgU5gZeRkINrd6vEcNwbbQvOLChP6OYbWQ/3HoixKf6s
-   r71weG3mrJjzqYpOprzePBdHjqjb2V1z43eBFepMOFyN7Rq8I1EfNPUTd
-   dS+wwwv8e9z3D75QMsLeEOl7b+76GzSIunkLqW/CkFJEmk0uH54omwKLq
-   M4uKu7QZWGj0hqwiNtCC30HnV6NNukOoGoQfnasAWjDIU7/Cy7mQ6E5LQ
-   Q62YXGynx8bZZcvATvfwfSiVZafNyMleNVCykGlyTeGjI2F/BiWzp9nsK
-   g==;
-X-CSE-ConnectionGUID: ov3XZkLqQ+ibnflpA0o5GA==
-X-CSE-MsgGUID: rz7jEFoITnWmPsRQ+w0xnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="110393207"
+  bh=0s478C/R8FSwHKuMpFR2mxrzsoKDeGyO3JzZWVdlhAQ=;
+  b=WS18rYULEaTKYcOe0pQJOmxrsLl8A5e1Gf5XU7vXpgx2+7MJB7iQW+t2
+   qyExi335AcenPlimYSLnZd/qwdR9rhTf/yyNo/g8hs4vy9d5IvCXscu1z
+   /P0Tdr7kv0qJNQDOsHBtSiLgwHyDqpbGs2PveSNVntMIQybecSy9gr8CD
+   mZ/VFgqTS1oTyrcQ7iC5HYzc18mZxeiJ06JWvLs5Nqh9cRcp2m0OA9s1K
+   LHhTAKMBszROHiaQEV4aeFlaAS4RHFiCWSSJb9hqYng65cW5+nwTXN1rl
+   nKhPaI6DZC/y4PcINgzQAv5pjbVO+SKlrj+aQ+SmbpsMiTTwPuYKwX75L
+   w==;
+X-CSE-ConnectionGUID: ul+HGJQeQJKteqLpVOJ8iQ==
+X-CSE-MsgGUID: Xs0Ev07CTFu5Xcqzhn8pOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="110393205"
 X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
-   d="scan'208";a="110393207"
+   d="scan'208";a="110393205"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 19:06:59 -0700
-X-CSE-ConnectionGUID: k9DxKwFWSTy7PstS2B8PDQ==
-X-CSE-MsgGUID: 7ZDayEwvSR6OmntMlpFglg==
+X-CSE-ConnectionGUID: nYpCS9BmTSmLeuhX0/Qetw==
+X-CSE-MsgGUID: tzUERlp9Ra2A8MuBHVgEsQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
-   d="scan'208";a="259213300"
+   d="scan'208";a="259213297"
 Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
   by fmviesa009.fm.intel.com with ESMTP; 18 Aug 2026 19:06:57 -0700
 Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wwVhe-00000000eo6-2x6A;
+	id 1wwVhe-00000000eo2-26Z7;
 	Wed, 19 Aug 2026 02:06:54 +0000
-Date: Wed, 19 Aug 2026 10:06:35 +0800
+Date: Wed, 19 Aug 2026 10:06:19 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-pinctrl-for-v7.4] BUILD
- SUCCESS e318d77387b30c46c8a81dcc3310f754c46e9c24
-Message-ID: <202608191023.i8ZSlHMY-lkp@intel.com>
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 1f348bf770d2e7b7f094bfb51de338bbeac5837b
+Message-ID: <202608191005.UL0lZTF7-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,10 +59,10 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v7.4
-branch HEAD: e318d77387b30c46c8a81dcc3310f754c46e9c24  pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 1f348bf770d2e7b7f094bfb51de338bbeac5837b  Merge branches 'renesas-drivers-for-v7.4' and 'renesas-dts-for-v7.4' into renesas-devel
 
-elapsed time: 1733m
+elapsed time: 1734m
 
 configs tested: 125
 configs skipped: 6
