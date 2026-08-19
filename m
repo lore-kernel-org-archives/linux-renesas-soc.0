@@ -1,65 +1,65 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B706443E39
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5F337E5D0
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 10:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787136052; cv=none; b=YctOTAI/pAbiRDqdWl+Q9HyEik3IVUIJErxRVpOxokVTbhGfJUkANJ9YLWemRmIkJc38RW1pppufzVsIuFFFo002DaZKMQYeitO6gucpcN1i7i6T5wOMXRJCdca4ppj3xS4oYcO/n4IwYzWEBmSwwaeqmH0DuCJ8qJotAm+F5aE=
+	t=1787136061; cv=none; b=luvW2W4hp59RmmsPF6jni5DLxt7sLHOVNrujt8YT6GnoEEsVlQ/Bu0VjgKof65C95woCdcwCxh4bNHC6VfL5GfBDzWR9dB/4bwhZyHCJahMG6Z35HTtYKG9tdWijOGmUIIhIcoB94y9u/ioEN6yQAv8swFffmNZZrTJMlDxDsRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787136052; c=relaxed/simple;
-	bh=pVdKmvMJrg0xfyZCRZm5q3uorX98aPSMinpzfHA7cPM=;
+	s=arc-20240116; t=1787136061; c=relaxed/simple;
+	bh=6VygO8fJq97cv2/LDT6K/RY5WR4BNmBEN9fDoyhwQUA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IShJwosIagvgF6Snu5E5wIeW3qbe2oSuaeQPoQYpuadb5MKubreAM91jBYw3rxG3uCgqZ32ADuG65olVuhcZeYomUtwE5orQin1gBJ9wai7JeAgh0tkQr5Mf+Vg1K9JMLPGm/tTnBtl7+dRPnbF4VnxDDwg0NP1wkW4i36eKEvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmmLqDGY; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=oF6igHP0r1ZoYYnweAIfQplOdiDokqoE3VPfgiAtJz+yRbzoAWPBx79iysmke2867iObbuCWBnLNgzbkUfcuETpvoFy6XIkYh6DCfJNQvBI2j9fuDj0tC46qmOuivd249Broq13Sy8Ex7LsoBQyLUIcwz7UJLiXkbGcg/MtmKUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvRnzely; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmmLqDGY"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso8939275ad.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 03:40:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvRnzely"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2ce87c7e3bbso9706765ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 03:40:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787136051; x=1787740851; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787136057; x=1787740857; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=vBZzFA3dzWnnOqa8IAFyQP010uCKcQ78Q06wXjSSio8=;
-        b=HmmLqDGYXvu5HtOW14ZX/aB4mD7TjFnkiUhTcCyC9qVmcOSVoAqYuaUoRXxWJZoeyT
-         A3MozKoueIcssO2c9hr/67Vl3OdbyplMhYIGPXJ76GxZk+I/vEa5ysj5rH9hMCg7Na7A
-         aX9Yn6mkbj6JSJMNHne1gvHOePfm5blCmQr8zYqPBBnYbpdOvIpXo330PFbGxmTgQtqY
-         elDQ+4Kd5gbwQUn1hctXm6zHAyz567t5HNa7XbEIJv5L5elQzKp6kCFbz+ICjgSBfBSg
-         K0o7H/4vUpcnfLCpNLSNp4x2vzWOdgGlOuGxVLQzly3odb+y4/urBYOyED+yD9M9Pfsr
-         /HbA==
+        bh=BGNWO1eqT3R5Th3PNhdxmu4ZmPk2gjulxaMorpXLcZA=;
+        b=HvRnzely38dTiK+3hNCLddjbcd0Vp+OpOopUkScqRaJk2H2jiw4IV7UQNGgU0szn0V
+         b64WllxRGzeQWHauHOi6wrQ6A88xgD1kGqcxt8MjxozbnsIIeJ6Bxyx5sSe2nL3lUwnk
+         cZI/V8bwsdWapp+qMjSBQhm3IqJNz9lqgzzrM67BL+moVyGmACtR8jZJYnDwLYTmE2zU
+         6InDJ3/1/mhR4KGTHjbj3a+uddWpnzg86rxhXDZTaWILC7qPkDyoIwlLHeA/IGzKVVgh
+         dArFs5K2folg6NQuiBKVJt8AVNgof9nulk55SD+0cwBmRelFYjcTbY1OcJ9hp0pztzit
+         8V+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787136051; x=1787740851;
+        d=1e100.net; s=20251104; t=1787136057; x=1787740857;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vBZzFA3dzWnnOqa8IAFyQP010uCKcQ78Q06wXjSSio8=;
-        b=N/Y1alSn7n4BAy4IMRQdkYQUndz/l7lSDknoKI23syeVlFq7/YPV3UrmKdbRuBvJd9
-         aCJwvpzgbagtv8htZokoKb6ILxX/3g7R3iRRaThobPvOMpystWdne06BwCA3HQ6IOhMI
-         gb6JyMlB/E6wOtmNQ655cqHB4RkuHZRBp6XceQlryw25RZLcvp9nh0tEHwg3bsBNyM/V
-         NDsZqx9EYADvnTz4n1wk02awRRA1k2EZAX3uGefaMH9tCCnXH6JUZx4Pe7XzmuCpfKhI
-         zWO5DN/nLYYjIf1DQyzBn6dGbpeWVvtChloXcIJYZL1AlD1JXCXisyxrm6UMehdW4sRi
-         gS1Q==
-X-Forwarded-Encrypted: i=1; AHgh+RpUZh0Q7k/r1jHhbn8FQtk1aA6qDeD7DQ+01ZqWosWojCFt6AJYrNofDwIGZrXk2H3+z0zAqRRacWXH13OkpnNKxQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lZ1LEa9ogEju4XHFJGhAhP+ADx3UUT+8s/K64137XjtknzjbC/
-	FKV2i7JNA0eMYJXJHVyAzFrXbJUit/2AqwXx7zE5QS7n10qyfMxJRy9S
-X-Gm-Gg: AR+sD13PZOgruQrD4rkk9gA6HUzdk0WwFwl5BCPhpYpnL6Ar4DbZCdMPYPwp5N7edKu
-	mwf5/Oj0yRH6kkXBF+biv1Lu+Aqzjmpf5VyzZ6pEGuUzMCNQ4gHks0Zn/6SKnD5FcNb81J9Jr0q
-	PlbNVEddrIwyD4B6qlFY/lD0HJiyN3A4KcWzt9rVBeE9AD/tDcKbSgpyWx8lGKCPSA5NFPwZpOg
-	6BW2A6bDSedZY3A+XeXcWNT+bcOH9E6ruRrp+XnRQHe1UJcYg2H3I+qlzb0Vw9v8mIDGJdpXPhk
-	ZDYBs+XMmFTrthrrs/VdGj005sCf/nf24FzF4DJdwJMNpeQQVtE1pkGa71QIbzPORigpawXQ84i
-	08P2PFOmg5g43clt2O2IuWoXeIM94EwwMbTePBT7I1ovSYydxn3dDASyA1Lqu6+Dxt1PqrUeKZ0
-	VQqwfORRUYX7VTrJJ/G1lk8wJQKJMtUPOpIr/EmO7o7Z5pNfQ4bKRFsada13ioYe7vniPbqacdO
-	zFTIdLII4jgjHqXF8yXYxpVbZH7SQloGFZFd3ika5tPNMKlgOtdKwKjOCfquagsGbS2ClJ3fIDM
-	iDS88RwGFb6CtyrqfHxN
-X-Received: by 2002:a17:902:fd8e:b0:2ca:f21a:a6c5 with SMTP id d9443c01a7336-2d5fd644437mr71597595ad.1.1787136050651;
-        Wed, 19 Aug 2026 03:40:50 -0700 (PDT)
+        bh=BGNWO1eqT3R5Th3PNhdxmu4ZmPk2gjulxaMorpXLcZA=;
+        b=H1otiphQFbZ7nflrCZ3+iHJ+azR3btgDBBlau9FioqOze5EKmhbXgOPCYxyRigJtiN
+         tzB8r0SNJwBByAyybggv6P3FwIlm6MngGJio/fzc2/lXGjh7iXaMqG/iVHw/hygsuw79
+         tgLJgUi+VVWkOtXOyaOrYHZcFqsH+19VwSIEjw7j0lbMz+v2oJmgHsX6HNLVULM5pu2R
+         baemoxpsbZ0iMW2y5+VY9DcyobZyg1KvnNn0vL4wBDki2zCSrye9O4FuxOJlAF6T8z+r
+         GZt0S96IdfDlMhFuSyvi9vbRfrvBFFLU3i2wDXqpyhnhFsP1MibfW/GzEosorgc1P0K0
+         L82A==
+X-Forwarded-Encrypted: i=1; AHgh+RpjxfRJ4HTxZRb1GeZLJ5/l6+6rGpKKl9CswHmC6ocYy1i2xrs6NdwOxe+GJ9g4n904sFBEjxtumNXWCcPemq1Eew==@vger.kernel.org
+X-Gm-Message-State: AFuF++lKFswyC7ERgY6EiLMV9xVOYou5fNc34dYxKulNkHbW9u4Dr8u7
+	TC9eWfrGPINh8chLdNtwkMfoSU0bltGl767BpWmygCvSaciVXGTYEvq+
+X-Gm-Gg: AR+sD10cDivaWwWEa5O3kg4GbyT4jexpVYl/5SJBlWn1o2o10njI9gnWr+wHwwGv9Ct
+	NCq6FrYTwMiaT3NL47isVdMGrnkrdVmlfWeZ9lnx21e5nTmQVV9tQEcV5+fOvI92LqcwJ9QNlvm
+	4sP3+HbTxHfA7qIzqC98nzFb/dagzt7+WB7dStc3hhueSy2O1ZRwXSngvOjGSVG1h2eRcAr2Po9
+	WFV61OBZBSC3G+WIcyQ1m2nRwpWTm2wdfdnhJCI6FMm/pXD3L2XXjYtBZH817C2++r/C9GdF5Z4
+	O5CeMQwC1fsKd2NwuLay/xbMPkSZStJVcNY5t3rsnkPp+Q7H08qgRHdgR3rvRbfX1dZR2AMcT7m
+	OwNEDfaSdt7CJDjc260ZC+7MXA9+FszWCUkmwLChH5ftZdowyAV3W+tn0BFJhi6fKvd/Jw0w9ZI
+	11461Yjsd8JNxWB3Cu9DU3Y9vHS+dwjliSmOa3nmgaUG8M/ILDRQN3uh32dm3x5CDJ16J4WT0S/
+	KxnA8+PsWeYzp2RJbqnjU/oEPbOj8ImSS4l7UE4c2S2yNWNETzB1lr+aC1fgMimv9ueyYer8nBs
+	7brKvXw9MA==
+X-Received: by 2002:a17:902:ef43:b0:2d5:e9d5:8ae with SMTP id d9443c01a7336-2d5fd62ae4fmr69464095ad.5.1787136057289;
+        Wed, 19 Aug 2026 03:40:57 -0700 (PDT)
 Received: from iku.example.org ([2401:4900:1c07:efb3:a897:a9b5:e171:c935])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327bef77fc0sm11169630eec.8.2026.08.19.03.40.44
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327bef77fc0sm11169630eec.8.2026.08.19.03.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2026 03:40:50 -0700 (PDT)
+        Wed, 19 Aug 2026 03:40:56 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -78,9 +78,9 @@ Cc: linux-rtc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 10/15] rtc: rzn1: Use temporary variable for struct device
-Date: Wed, 19 Aug 2026 11:39:21 +0100
-Message-ID: <20260819103926.2136712-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 11/15] rtc: rzn1: Consistently use dev_err_probe()
+Date: Wed, 19 Aug 2026 11:39:22 +0100
+Message-ID: <20260819103926.2136712-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -94,10 +94,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Use a temporary variable for the struct device pointers to avoid
-dereferencing.
+Use dev_err_probe() in the IRQ request error path to make error handling
+consistent with the rest of rzn1_rtc_probe().
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 v3->v4:
@@ -107,98 +108,28 @@ v2->v3:
 - No changes.
 
 v1->v2:
-- Added Reviewed-by tag.
+- Added Reviewed-by tags.
 ---
- drivers/rtc/rtc-rzn1.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/rtc/rtc-rzn1.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-index 9eceeed14486..e67bc8831cb7 100644
+index e67bc8831cb7..7e2177f46313 100644
 --- a/drivers/rtc/rtc-rzn1.c
 +++ b/drivers/rtc/rtc-rzn1.c
-@@ -385,13 +385,14 @@ static void rzn1_rtc_disable_hardware(void *data)
- 
- static int rzn1_rtc_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	unsigned long rate = 32768;
- 	struct rzn1_rtc *rtc;
- 	u32 val, scmp_val = 0;
- 	struct clk *xtal;
- 	int irq, ret;
- 
--	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-+	rtc = devm_kzalloc(dev, sizeof(*rtc), GFP_KERNEL);
- 	if (!rtc)
- 		return -ENOMEM;
- 
-@@ -399,13 +400,13 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 
- 	rtc->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rtc->base))
--		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n");
-+		return dev_err_probe(dev, PTR_ERR(rtc->base), "Missing reg\n");
- 
- 	irq = platform_get_irq_byname(pdev, "alarm");
- 	if (irq < 0)
- 		return irq;
- 
--	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
-+	rtc->rtcdev = devm_rtc_allocate_device(dev);
- 	if (IS_ERR(rtc->rtcdev))
- 		return PTR_ERR(rtc->rtcdev);
- 
-@@ -413,19 +414,19 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	rtc->rtcdev->range_max = RTC_TIMESTAMP_END_2099;
- 	rtc->rtcdev->alarm_offset_max = 7 * 86400;
- 
--	ret = devm_pm_runtime_enable(&pdev->dev);
-+	ret = devm_pm_runtime_enable(dev);
- 	if (ret < 0)
- 		return ret;
--	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0)
- 		return ret;
- 
--	ret = devm_add_action_or_reset(&pdev->dev, rzn1_rtc_disable_hardware, &pdev->dev);
-+	ret = devm_add_action_or_reset(dev, rzn1_rtc_disable_hardware, dev);
- 	if (ret)
- 		return ret;
- 
- 	/* Only switch to scmp if we have an xtal clock with a valid rate and != 32768 */
--	xtal = devm_clk_get_optional(&pdev->dev, "xtal");
-+	xtal = devm_clk_get_optional(dev, "xtal");
- 	if (IS_ERR(xtal)) {
- 		return PTR_ERR(xtal);
- 	} else if (xtal) {
-@@ -469,9 +470,9 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 
+@@ -471,10 +471,8 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
  	spin_lock_init(&rtc->ctl1_access_lock);
  
--	ret = devm_request_irq(&pdev->dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
-+	ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
- 	if (ret) {
--		dev_err(&pdev->dev, "RTC alarm interrupt not available\n");
-+		dev_err(dev, "RTC alarm interrupt not available\n");
- 		return ret;
- 	}
+ 	ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
+-	if (ret) {
+-		dev_err(dev, "RTC alarm interrupt not available\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret, "RTC alarm interrupt not available\n");
  
-@@ -479,12 +480,12 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 	irq = platform_get_irq_byname_optional(pdev, "pps");
  	if (irq == -EPROBE_DEFER)
- 		return irq;
- 	if (irq >= 0)
--		ret = devm_request_irq(&pdev->dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
-+		ret = devm_request_irq(dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
- 
- 	if (irq < 0 || ret) {
- 		set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
- 		clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
--		dev_warn(&pdev->dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
-+		dev_warn(dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
- 	}
- 
- 	return devm_rtc_register_device(rtc->rtcdev);
 -- 
 2.43.0
 
