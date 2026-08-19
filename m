@@ -1,203 +1,337 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010070.outbound.protection.outlook.com [52.101.228.70])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11021125.outbound.protection.outlook.com [52.101.125.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFD8244692;
-	Wed, 19 Aug 2026 08:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713E8426EB8;
+	Wed, 19 Aug 2026 08:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.125
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787129204; cv=fail; b=pUvTu6ZIkDB1e9aAPGQCV0KpA5WJo7XCD/YyUtRAzz6GsIIitlAiGAmYh7wumhOGNktWkQ6P4RPvu3YC6iKLAMivgSPkXIC2px9t382+HzRaPxX9CNX2i7poaXISwFdgoj1G9xextg1r1zx3BE0aitOdewmJ6ec5rodqU/DParQ=
+	t=1787129329; cv=fail; b=vFhLGkeoi9EwZ1Zpjnb5d2hHyC5pcxV/VcidtE8eKngMYMKad2LIvmM8Ns5piOvIJtgsRyCL0UnrLki/Cc5iYSmjcBFPqoA1qYY0KP0AtnjRmAzzXUC7H8cDOFFup4pPGnG4BOyZ5U4iHFf/EB30KPn8qh1n6geRU9NxxGPX1Q4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787129204; c=relaxed/simple;
-	bh=nimAgccNKgZD4wPtjULMkSEgORLwvlVw9vFZoQ1O3a0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G8C20Nor0kt9j0WDfvTDpVTAh9pNUm5NI9QupJHpR2Ud4DEJJWcc+kDTyUuFbH2Pw7XapPyBoKAmJerimmok6NZKu1g01Iud3oWUnFAMLJW6s5vXV7x9oW7vic8fnOaI6bmwjZVZ+i+MPDxSMmQP6PYUsBrx77qk8H7+Vlpqw9A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=lgyImeCn; arc=fail smtp.client-ip=52.101.228.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1787129329; c=relaxed/simple;
+	bh=9FjYnGW/KA58vmp2EUKGqCVT+3emcQN8h0cFIEqlomk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=T+z9fHLaQDqpkruyjmvh1xCIIkQ6FDTyUoC2+0Zqk3yEjoUZb4gGxlYXb22ZgULx7AspMNbme9Gu9y1XyqxGIpS8B/pSs1VQTcQf+Z+J82wcni46BaawhBzDNCtpzTZpNfdJCViOhc87vhAWJfTOVBEbUoW/lEKTu5LiGCANcT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=cM4+Biqj; arc=fail smtp.client-ip=52.101.125.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="lgyImeCn"
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="cM4+Biqj"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y7oKNQXuUL73cOPkeyAGdopP2IInhYGci2IZMYEm4BWaoGxgIVkwkeMBFY73l1/+LFiCaRbJC0XsbWNlqgZgxgc1UmkcmxJ3XaQpR9Ks/h0JKRUblDrUcwLaIsGh4wEFqq3X/O44pp9yEOzee+Y047CT+mbVYnpPvbiC0PFL0V6chObuoTDmwaTYLSce8zh2oaq9bHkNEDxIaotZBfDmvH5RIcmBZoGuURmItVm2mAehsAo0OKKEqW+6vwrDxPok4tFh7zn5P6hShFa65snS4xEliX1InmkJCo7WbP0zxx4xGvMR7Vs7dd+1HnVPiSemyZel6LfKjohorZ+5TVoV2Q==
+ b=wIy8xCkOq61AEo7aGXqcuXbkTLNTRPd6hn0Kc7ciMEeMv6O21QK5nbQ5cEpuIS7ydVRKwId9v1wrRGw/ri32ohn4/cInfgJk5zjE+hjxDL/aLRG8F7nZiQkI5s8NQAD7JMyooyYKp49k5bwEFqIshNbhCSGaxTzwVjue/ZYAHLa87V2xS+n1Q9GTCRp7W5iUhxIdO0Hj4R8eSK1fX1tjuJ/1Zp09skE7EnV5xCeXVBwPn1lbmmSTdxXYVigHGvd9vgm4C058Z/+WJ+WtIqnUkg6NRCSxz6nfRTiUd79du+QCA+EkFCTuktAhjM6Ll87K+glsUp1/GTvUDiV8rb2xqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nimAgccNKgZD4wPtjULMkSEgORLwvlVw9vFZoQ1O3a0=;
- b=ZW9oqVa1KBwvPSudCoWIqD78re0ApFI7yIo4gNXvx9T7Fm7p+bIlLjQNz82EHRBFpdWR3SoUxOmLBLgSvn6db7gbb9+6vCRRV/VmhVLwM5hEjtCBFbquVwP1bqI29IjcvpBQR/4zU8Zh1ZI9F2Q2LqLTlNxo4hjXHSymIo3e/Ox9AQnsOa2xqf3S5Kl8hiMbCVsUMnxpjfq7vnOLdthNGekSJm2JULN6wOy51hyX1zCImFqBaETayo9ikVbOeiN87QQM4F9IrtKfiadsnKS+l6+gzzrlNW1sv/NNAWzyEGcs0n+ARLWuPHuqV6cTw9WFMPlGEKV7mjeWcJL8RfAujg==
+ bh=8P2Utu0lVhKbaW19bD2A5wVf/p1zPUIo8fhUmbEyXto=;
+ b=FeH/OmclHTY0WcgvvCM1VOxlEcC7rHYB7R8zK38tb4SbX3YS6z/FKtAPvDSPnSLd2S859V4IvwS+DKFucExvV4zG4hexzdhM1RJBGEQbeJxcJUiE5yC1PcI3AtuhIKDjbQpuCkB7zppsfLP4RBTjvaSP0zqb6piM8cUKYFyZqtiNRtS9lBNEIoZ3zwg7BogZZXEIGJxl7CHpzD7mxwnCACMD9gUPAcobYTSgWzRUsw+Q0Ctp8A6nBsJ/zEW/j/hhouCg/GegK2/5rMt+CJjPtROcVqTKb+iNDl4kLNizCjKFqRZIlCOEHGXawTANX5hH16+A3/YoSfSEh4LCodGEUQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nimAgccNKgZD4wPtjULMkSEgORLwvlVw9vFZoQ1O3a0=;
- b=lgyImeCnSEm1vL8kE+WQRFZVxk3OIc5gvGmxqMlCYe39/HgvUUmVxmvZiLekuG/8sMFYx6iRHVpqxpKouToSXFGEv+fLQG5r7Addmi7iHiVQAa3KBGOxtPsf7iZYvD3YbdN2Wy7zwMSjgcr2nrVoIb+2zCYgWhafQRh6c7YyV3g=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB8490.jpnprd01.prod.outlook.com (2603:1096:604:196::13) with
+ bh=8P2Utu0lVhKbaW19bD2A5wVf/p1zPUIo8fhUmbEyXto=;
+ b=cM4+BiqjH6pz0OPfft5Ocr0hJAq1I8Uzc9RJUCmquhzw1eUgmS3c7aJxNQVlT+zl+QeyaWU0ZrvFR5JU5/+3Kgf/xJYVOoJ2sIIKb/nvOWhjwsnJpr8TKLPUUFJX4qgxzJ2WM90YWGfklBoxNojWfP8Ppp5v2z5y5liQROfGdOA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:38f::10)
+ by OS9P286MB7384.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:451::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Wed, 19 Aug
- 2026 08:46:39 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0339.007; Wed, 19 Aug 2026
- 08:46:38 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: geert <geert@linux-m68k.org>
-CC: "biju.das.au" <biju.das.au@gmail.com>, Bartosz Golaszewski
-	<brgl@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "laurent.pinchart"
-	<laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	"magnus.damm" <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready
- driver
-Thread-Topic: [PATCH v3 2/3] power: sequencing: Add Renesas RZ/G3L Power Ready
- driver
-Thread-Index: AQHdKlDBTVfG4E7tk0C0Oq35AhSxEbadmQUAgAd2NzCAAAlJAIAAAPGw
-Date: Wed, 19 Aug 2026 08:46:37 +0000
-Message-ID:
- <TY3PR01MB11346FEB6E2C2D06B625FF0CB86A52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260812115010.108322-1-biju.das.jz@bp.renesas.com>
- <20260812115010.108322-3-biju.das.jz@bp.renesas.com>
- <CAMuHMdU+asd-YNYx_supbAvYWcEJYQrFKqBVv-emeN0Jy8ME8g@mail.gmail.com>
- <TY3PR01MB113464399E7C6C5D6B72A423B86A52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdU2tP-V9H0QthQ8=orDMxXSsLmzv=krkpn7YgYXCR7+Tw@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdU2tP-V9H0QthQ8=orDMxXSsLmzv=krkpn7YgYXCR7+Tw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB8490:EE_
-x-ms-office365-filtering-correlation-id: 0085f286-ceab-4aea-8029-08defdce61dc
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|23010399003|376014|7416014|366016|18002099003|22082099003|56012099006|38070700021|6133799003|4143699003|10067099003|11063799006;
-x-microsoft-antispam-message-info:
- anGOHRH+4r3so5WWfxETxFxTr7+z+CI4i1GhGPciBUH8g3fIAdHsrtpWfLPKt9C3KXmlRD4ulXdCHW99kedP6zs58dgwCZIT46RxkeY9NCCGofOvkAJ3TY5Aaw38bWozG8PyA8yk3wDlIWg191nXWmjkv9RfL6NtYF1kwUulnoEGQNy8JizYXkt4mdYsTVcVaG8qHCgNS/y1pQdmHC/IKv60pBc31P9rPxS3Z2uYRAVMp2u+p34nI/Tx+1w697dAHy5UEMqKWokifYmJptvk8AqiQGZFTDJYUPBzYp7fsg3Fjb5M46hSOmthi+LDLB/94Rpp24Mj+0ggOBoICcVwKs3NslIZNA1ruYvnYB0mdiO1+VToKEHz4B8ppLnLz6VqIzOzRcy5yo+41hb4pFRZvP2Jh7kzmaceOuUtQxdV4ohSuJ4H3fGQ66X44uq+AfpCa5mGGVboFe5FOmPnq51PvEPYqZs24kKpPTz/bOYl4EmZqskGrou8bqrgIwpwvPOxEZYfQuu6yJIqZHu7rdGOrMZv5KW3rAFJXV4eRlxYduwuILFN7aFl5aCXwRGqa40Vm9dXTPrA6Et2oe6Ah2oJ8foj5x7ebNs1qI6Y5/eTasOJOmfJNYqqq4aEdvz9hiiNsMQRZkYo+LNmb54G1khawgUTylcJYbUQcvKeuup7TFHO8bcfxuPPE5ZP/M/Rc37C+frGhzJBzEvsKSR4dPDdew5WKi+UhThdcnsIVkAavjI=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(7416014)(366016)(18002099003)(22082099003)(56012099006)(38070700021)(6133799003)(4143699003)(10067099003)(11063799006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MHlHRzJXNlJRbm8raG1paVErbHdYb3d0TitaNkRpT1owRDE0UnBOZjI5ajVz?=
- =?utf-8?B?Nm80emVuWmdYQ3ZKRitCY0k1TVhxMGM1cmQ1eFl3MnhTbWRva2tnSnJuVUR6?=
- =?utf-8?B?NEk1Wmc1d3ZKT2FmRWtCWWhPMWJONTg1VHRSOGpMWnB2d24yeGV6QWVGak5R?=
- =?utf-8?B?R0NibjBhdC9LQUdESEFHVUFwdU1KcG00MVRqd293T1F4QTZ0eU8xakdHcERT?=
- =?utf-8?B?Y05YcjFQa3NBSEkyNHVmN012RVRUVWdJM2IySEhmT1pYY1JVTkhqeENScCtT?=
- =?utf-8?B?aWRpQ3E3a1lPTFRUME53dFRORHB4YlJMUThmSVF6QjFtc2NRcGQ5U0t0S2VM?=
- =?utf-8?B?UnZXOGJLTFdoTm05bng5dWFCS0hmTmhUT0Z0WXd5eC9ZemxxTHJDT0pqMjVa?=
- =?utf-8?B?UnlFa1Zsa25WUTZVbFp6eGNQSS9mV004LzcxeTdSS2dGRVZGZEI1Rkp2MTYx?=
- =?utf-8?B?dUVvejJ3MFQ3RmtNK0h6RGVEdGI5VE1jYjhSL0d3eXorQnJNNU04L2phZEo0?=
- =?utf-8?B?MmV2eU1nVkoyaks4TXRUcEZMcnRXVEcyT0Zmb2VnMW1EcGR2b1NRak12a3d5?=
- =?utf-8?B?UGg2UEpSQkdUZlB1MFJjRng2Y1kvQzdKam1saitxU044VktmYTNFSGl2ZC9P?=
- =?utf-8?B?V2N6ZjdVcUNNM1NZRGhvS0YxSTRKcVZXZFN3aDZWdUw5S3QxQ1Q2MTl2ZVU1?=
- =?utf-8?B?aTlqTkpaNjZrdEJyZituWUdnVFRLNkJHMFJ6WGZvSWNQSjNTVmhDTDVRdnFo?=
- =?utf-8?B?RzhnTlA3azZRUUs1Um1EMXNsWkRkV2lKdnRmNjIySUxoS1RNZjA4QnMyM2d6?=
- =?utf-8?B?d3ROOUUzR1VqU2wxdnlwbG1IUkovZjJjeHdGYlo5a2RIUzdGd0hPY3hpUWIr?=
- =?utf-8?B?cHNndDFSclp6RGszZURwTEwyZlhheVFwUDVFM2s0cjcxTHlESXlHRUFVMUMy?=
- =?utf-8?B?bWl3cy9JYkhvdGk2Zlk3T1Bwd3dKVk5ZMldZMm1MMTBTYXVHSEhBMUFsRjN5?=
- =?utf-8?B?YmJkZjdHTnEvNmE3Rk5zY3FueXlEallITlBLTUMyUlBwZkRCb0toZFhtRldj?=
- =?utf-8?B?R0FuM3kzTVpyd1NQQm5pTGtOeTY4Y1hnUHYxR0xQK1VISG5iL3BUazFIWHE5?=
- =?utf-8?B?Qzc5MWpRYTBvVVRwSFN1TUZMdlE5aDJzUnk2bks1ejNWMUNnQmVyYmExaTZ4?=
- =?utf-8?B?ZUNFNHJsakx3TDZFQnc1c1Q5M1VkTU1vSC9YRW00RkJjQ25nbGhkZTNxazd4?=
- =?utf-8?B?Z1RtWGlCRG1CTlp1NEVYNDQyYWJKNEV5L1VIM0xNUDl5NmFPcmdrc3VxS25z?=
- =?utf-8?B?bUlmYzNBb3A5MmZIOXc0dUVLcTJLNDZBU1JibDhTeUZrWXF6dy9tN0N1anVG?=
- =?utf-8?B?QitRMkRWQ3BjRkxJeGc1UmRhRFFhUk13alVodmd0STdDT250bUpmRWNVSjZU?=
- =?utf-8?B?Qk9lall0TDI5ejhhaVM2Z0RmclhPMERGdGNZN0luVHZqUXBwNmhPd24xMFFR?=
- =?utf-8?B?T0hRMmRYcnNEbUhmTDIwdUZxdnltOHRucGJFc0V0VnFnaVFhaTRPTTdYSkky?=
- =?utf-8?B?enl2di9saHBoSDNGcmJyN1ZoWXRrTVd6NldXNlB2SzEvUElIV0swdFNQb0lR?=
- =?utf-8?B?NTkzTi9ESVluMXh4Vkl4S3poanNGOWdUeXB2N283RUdtazRKbExnVjFFczlQ?=
- =?utf-8?B?UUhROFV6MkFYNUFrclF0ZmNhNUtweWdLYmlXZWRMckd4ZlJSWkJtdlRCbm9l?=
- =?utf-8?B?WVJrMVZiRloyYkFEZys2RU9CMXY0QUxvMkg4SGRjeG9jUG1SS0l5UnYzMjJX?=
- =?utf-8?B?OElPNFNSek9Zb1lrVjE3OHFSTXRDMEVEd2pySjJwOWNRZ0orT2xyc1hTeVFv?=
- =?utf-8?B?QzdEOVlRMDlpQ3ArUENLdC8yU2FkWDN4U2pucTdjNU56WlRXeCswMDZHdllC?=
- =?utf-8?B?VlNvMGsyKzIyLy9STUFIbUNVbk1kS0xzSmEwQ09kLy8vZmxIWi9XUy80a28y?=
- =?utf-8?B?UG9CNFUxenJ5azU5dHFjUWw0VHpDTGpHOGRaNEhleStWZjE2Y1lzWHBaMWdB?=
- =?utf-8?B?anVvcURqdUFIejVCTTA1Z0pEVXFLS2hucVFuY1hQNDVpSWxiVmR2WDgyY05X?=
- =?utf-8?B?dThRb09ybDVGVGhuc0RkK1ZxQW84ZnpWc3VNT0pCdyswdGhBd0k0dFU3eTlR?=
- =?utf-8?B?SHFoMXBIQThuUXhoR28yeTZGOXoyNzB2WXNsZW5qYnk2cGFEc0YrUUxJYVJD?=
- =?utf-8?B?cWxxeUdZN3hPRGQzR1ljVk9YbXpHZk8zeEh5OGt2SHB1c1JGSXQ3WWRRV3Bh?=
- =?utf-8?B?UUFVSUVleit0K3NRNmVnQ0J3YzZWOSthYXJ0RWZMcytyZndrZDJiUT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 2026 08:48:42 +0000
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32]) by TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32%3]) with mapi id 15.21.0315.016; Wed, 19 Aug 2026
+ 08:48:42 +0000
+Date: Wed, 19 Aug 2026 17:48:40 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: rcar-gen4: Fix potential unclocked access in
+ rcar_gen4_pcie_ep_deinit()
+Message-ID: <gnv6rbodtisekx7hvlwdmdzj5r3hdutbeexqde4gw3jodadwoj@rnukrhteykir>
+References: <20260813091925.71363-1-marek.vasut+renesas@mailbox.org>
+ <h43onk4priskfkvdrheml4ttx2b7udavnulxvftj45midvcs3c@lec5rx7mrgys>
+ <CAMuHMdUAph2fbR94k8RDaAeVH=OTKWAWe1dJne9D-YbQQrYHsA@mail.gmail.com>
+ <zi6an774rs4zsvz4rgvskvchlcz3ontuih7ztime673pw55axf@updaznhtexix>
+ <0e5dae39-3ded-4b24-b3aa-7707983ec243@mailbox.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e5dae39-3ded-4b24-b3aa-7707983ec243@mailbox.org>
+X-ClientProxiedBy: TY4PR01CA0114.jpnprd01.prod.outlook.com
+ (2603:1096:405:379::11) To TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:38f::10)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY7P286MB7722:EE_|OS9P286MB7384:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21377af2-ec35-4bf9-24a5-08defdceabc4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|7416014|376014|1800799024|366016|23010399003|18002099003|22082099003|56012099006|6133799003|5023799004|4143699003|10067099003|27256017;
+X-Microsoft-Antispam-Message-Info:
+	F5jVU1BhLxVp3UJqRnVyEcXsA0RdogFnpZGeS+tcSb8xqUn5xDKN1gh4ypa857adyb0xCIp0NOremb0RXoiWN/A7vrFy0Fnzf1zcskuGh7ab2kB5cO2PlaOsn1thyfeoyhYuFGuv8kbFeiY0p2g38EgGl3dr2PN1I5obKZRDmLkkYHkqniNZ8gCE4B1/sAHMLikQVc+Rv+SX9HkpzGnDXNeE2inzGp2RHZPNbqe7NMh0E+KwasuA4HkSd4pP0LdQ0Jlbl4P2hxVpXYhAioyOpoo5hTkELRUbSVu53292yy17aHirib1pxwFizoc22mOCzvjXyh8vu3206dnngHHOI45L8u/iJotLGVEdSFRKMai0AeMxjaBQigOKc3tqR4GJFJE88IWqncktd/xAYsmRz2Di7fxUb5q//2quwn3F/6sgxHd6KjlA1731yJE7ZuylHGgLWmISke/GGlk2yp2VdTRX4GgTytr9+SYhWt0KI78OKjfdyAhCLXQeEx5KGvL2+HovxjOY96rGE+qTtmhknMRKxk/aTr4Wfp0wMxOJRaSgU4Qny7OlEHTtpoc74qtk6uyf+oShKxwVBTQj8bExh1vRJYqYfbg6gvqhryay6dZOy0vjacUPjKSE4d8zHJI6XQ6fAfv/h86m7SunnksHPa9xjPDKmORmKMX/WrjVi8ulYHGQ5B7n2nVFuU6Sqo8an8gwyhnUPoPcuZkOKZKR3Q==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(1800799024)(366016)(23010399003)(18002099003)(22082099003)(56012099006)(6133799003)(5023799004)(4143699003)(10067099003)(27256017);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rxVbwvsCx/ERipjgvKue7wWcqLyq96iSMyhdpuJaqMHVw9zH3lMK8N0ZhQW0?=
+ =?us-ascii?Q?yQL53Qyv6jQync03tMEnWbECRXdsS/wLWiLkWKl5d0uwcm4pio8yaU8wC4Vk?=
+ =?us-ascii?Q?t/Ed94/+AuJHh50unFUBZuZ5osZOVvv3UtWIKbBzpxWbJRhV/CtFFgwYy2e3?=
+ =?us-ascii?Q?qbd3V8hMyMizz0M1i5C9m+etnLWZGLUNE6/+wrJ2a0Hwxovm2xG7mRrmSGdc?=
+ =?us-ascii?Q?DiCqV6zR05K0Z2kKqIrXIzkYuzfBl+vzUFyhJkP/v/L1FNw/vAEkn4PM6B0K?=
+ =?us-ascii?Q?jhQbYneMmeSO0Tvsddt74RYO07daVww8NJX/l6zBC/Seiags5yGoPm/jI8x0?=
+ =?us-ascii?Q?js5PTDOKTGvcVTvuA6Gzf3Z9lqNeN2TIKRNCvk/Nuxr+VXzuA/95XJaiegtM?=
+ =?us-ascii?Q?0V4e30nRrJCfFliWyFEQdtEPzBWGaaOZnGA3Ji+zoQUYql+RqRmCvIPP3eq2?=
+ =?us-ascii?Q?QfmQXXNcewIsoV6ZEneMfBbXKY+lI/PvZn2IJ6zl05GxjDPE+5SySuBEe5le?=
+ =?us-ascii?Q?EYTjXL3mVWq1L3MVOYGSQOmPQc1ALAMhpPzhwxhM7th9ZzgOOxAQwBwArJFH?=
+ =?us-ascii?Q?YI8y65PTN60/0MuqoL8cUSWngnplNHIu3mZMsk2XOWqwC3l34zovNtWvekLV?=
+ =?us-ascii?Q?ZGvt7uKPxHeFxdGxNRfQDYuwcvTxOuUwNhf+h1K4Dr7Nw89KyK6n6Ei5Cces?=
+ =?us-ascii?Q?dvNE76WrhsSHnq52syCwkkwpb0QvXNCrQcSXy5BPKu7qKjgbJx2QzHlNbwhM?=
+ =?us-ascii?Q?p3zNWvGUsx9O/rDjP2G8uBCgKU8NuwVImaKarCb6CVHi7ceIhm70gPw//LQO?=
+ =?us-ascii?Q?cWm3AZTMJ5rl3LdgU+o1WR3hHZNfOHsSWvkwJeQwP+ErIxcX0zIzkJtxWh8/?=
+ =?us-ascii?Q?sC33O/bd/YYZZ0zIByp6LvqfFlyuNLLdg1DowR0gi5GEvQJEMa+ysIg8LKd/?=
+ =?us-ascii?Q?BR8TiR1fdYaOiNWRxZ2FXdjYStORD1MQefzmwQGqXAhZGX2hN8vM2Z3mkwh6?=
+ =?us-ascii?Q?XHOgjBZ3ZZVR+J3SNKlk1V2gFmT5R3SWPgOJPLfBYBmfyORM7sPEsWClbnif?=
+ =?us-ascii?Q?ocMJ8mNc+Q3nxh9v5+huV1BzgsldA7nA5VgVprzDXrnJkDadCky7b2VIza22?=
+ =?us-ascii?Q?z+gA0vSLqImomXt5BkHJXEcW1ydjqiziw/2Krdhw5fx8OTna2Zrbat5vCcju?=
+ =?us-ascii?Q?QwL1HxfcxK5mAPDPKZTs9uYuEr8H5P+ZxBIhQ+I3rOa+TzFBAXj0exodl9Sf?=
+ =?us-ascii?Q?CCuXYZ86WhiiZ/8d5H2Voxl4hVSJwYb/IyLqLt/d7PQpAKspzVCFfW5+hiFF?=
+ =?us-ascii?Q?5xhZ7mSWwzivTa/yfiQqrOS8d8MQ3AneRplkmguhDaR0GLrVrR/M9gib79c4?=
+ =?us-ascii?Q?4BOYsDG3nIQ/c9YK2r83d0SS5h/CSr44F623nU1iY63HeDtSVU/OkRGiT1ux?=
+ =?us-ascii?Q?cGnApFV9tetKWb7BsHwKzFjj7mmbPDFAPOUO01jTOP4912bgXKrEEaA+XFqa?=
+ =?us-ascii?Q?AnM9cs7n9B23yr2/3BoSFXCAgu6Y5vWfv+7LhyxMony0LjtMFtN9w88ihnL/?=
+ =?us-ascii?Q?18K7xe6jRbO7E+Fatu/1bzlT+LZehwRagVgt7xMD6RuV/HoO+tF6al4b+Z8j?=
+ =?us-ascii?Q?Ow5gqIZVjtrBmcEfJ8jhWgscJDfP2jOgz3x6OEWakjVJcBNxEsi7ry0JUbSQ?=
+ =?us-ascii?Q?XH+46L39IZ8ewWkvqUYmGRp2XOLRjX8h6XjRiXAV7WhjBIhD3Fbv9c+R8uAL?=
+ =?us-ascii?Q?pzJ2Fx/vkmnWJrtGVkAEdx0ejF8QVjWXigy9sBd9Bc5oOSGDNcSF?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21377af2-ec35-4bf9-24a5-08defdceabc4
+X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0085f286-ceab-4aea-8029-08defdce61dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2026 08:46:37.9584
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2026 08:48:42.1520
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Lk8cre2soucMT/ORK/7de+tGre4xBjOXaVwdUo+BOpcSMD+WfmVR8IF7Ru0l1H7R89Qig0hdw/411GD1f2f0IzMWivGN0meKfcbLTy1dzoI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8490
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xCgpnrZ+yJzHyEasxOg9JioJgr41a6K+VwzB1GxthRbn7wXYb8bUeCRpGVBZ6x7z/oD8MktkvrjHbDA+dcR6Iw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9P286MB7384
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgZmVlZGJhY2suDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
-YWdlLS0tLS0NCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9y
-Zz4NCj4gU2VudDogMTkgQXVndXN0IDIwMjYgMDk6NDINCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2
-MyAyLzNdIHBvd2VyOiBzZXF1ZW5jaW5nOiBBZGQgUmVuZXNhcyBSWi9HM0wgUG93ZXIgUmVhZHkg
-ZHJpdmVyDQo+IA0KPiBIaSBCaWp1LA0KPiANCj4gT24gV2VkLCAxOSBBdWcgMjAyNiBhdCAxMDox
-OCwgQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZy
-b206IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+IE9uIFdlZCwgMTIg
-QXVnIDIwMjYNCj4gPiA+IGF0IDEzOjUwLCBCaWp1IDxiaWp1LmRhcy5hdUBnbWFpbC5jb20+IHdy
-b3RlOg0KPiA+ID4gPiBGcm9tOiBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+
-DQo+ID4gPiA+DQo+ID4gPiA+IEFkZCBhIHBvd2VyIHNlcXVlbmNpbmcgZHJpdmVyIGZvciB0aGUg
-UmVuZXNhcyBSWi9HM0wgUFdSUkRZDQo+ID4gPiA+IG1vZHVsZSwgd2hpY2ggc2lnbmFscyBwb3dl
-ciByZWFkaW5lc3MgZm9yIHZhcmlvdXMgSVBzIChVU0IsIERTSSwNCj4gPiA+ID4gQ1NJIGV0Yy4p
-IG9uIHRoZSBTb0MuIFRoZSBkcml2ZXIgYmluZHMgYXMgYW4gYXV4aWxpYXJ5IGRldmljZSB0bw0K
-PiA+ID4gPiB0aGUgcGFyZW50IFNZU0MgZHJpdmVyLCB1c2luZyBpdHMgcmVnbWFwIHRvIHRvZ2ds
-ZSB0aGUNCj4gPiA+ID4gU1lTX1BXUlJEWV9OIHJlZ2lzdGVyIGJpdHMsIGFuZCBleHBvc2VzIHt1
-c2IsZHNpLGNzaX0tcHdycmR5IHB3cnNlcSB0YXJnZXRzLg0KPiA+ID4gPg0KPiA+ID4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+ID4gPg0K
-PiA+ID4gPiAtLS0gYS9kcml2ZXJzL3Bvd2VyL3NlcXVlbmNpbmcvS2NvbmZpZw0KPiA+ID4gPiAr
-KysgYi9kcml2ZXJzL3Bvd2VyL3NlcXVlbmNpbmcvS2NvbmZpZw0KPiA+ID4gPiBAQCAtMjcsNiAr
-MjcsMTUgQEAgY29uZmlnIFBPV0VSX1NFUVVFTkNJTkdfUUNPTV9XQ04NCj4gPiA+ID4gICAgICAg
-ICAgIHRoaXMgZHJpdmVyIGlzIG5lZWRlZCBmb3IgY29ycmVjdCBwb3dlciBjb250cm9sIG9yIGVs
-c2Ugd2UnZCByaXNrIG5vdA0KPiA+ID4gPiAgICAgICAgICAgcmVzcGVjdGluZyB0aGUgcmVxdWly
-ZWQgZGVsYXlzIGJldHdlZW4gZW5hYmxpbmcgQmx1ZXRvb3RoIGFuZCBXTEFOLg0KPiA+ID4gPg0K
-PiA+ID4gPiArY29uZmlnIFBPV0VSX1NFUVVFTkNJTkdfUkVORVNBU19QV1JSRFkNCj4gPiA+ID4g
-KyAgICAgICB0cmlzdGF0ZSAiUmVuZXNhcyBQb3dlciBSZWFkeSBzZXF1ZW5jaW5nIGRyaXZlciIN
-Cj4gPiA+ID4gKyAgICAgICBkZXBlbmRzIG9uIFNZU0NfUlogfHwgQ09NUElMRV9URVNUDQo+ID4g
-PiA+ICsgICAgICAgc2VsZWN0IEFVWElMSUFSWV9CVVMNCj4gPiA+DQo+ID4gPiBDb3VsZCB0aGlz
-IGNhdXNlIGNpcmN1bGFyIGRlcGVuZGVuY3kgcHJvYmxlbXMgd2l0aCAuLi4NCj4gPg0KPiA+IFlv
-dSBtZWFuIHRoaXMgdG8gYmUgZml4ZWQgYXM/Pw0KPiA+DQo+ID4gZGVwZW5kcyBvbiBTWVNDX1Ja
-IHx8IChDT01QSUxFX1RFU1QgJiYgQVVYSUxJQVJZX0JVUykNCj4gPg0KPiA+IFNvIHRoYXQgdGhl
-cmUgd29uJ3QgYmUgYW55IGJ1aWxkIGlzc3VlIHdpdGggQ09NUElMRV9URVNUIGZvciBBdXhpbGlh
-cnkNCj4gPiBidXMgQVBJJ3MNCj4gDQo+IFNvcnJ5IGZvciBiZWluZyB1bmNsZWFyOiBwcm9iYWJs
-eSB0aGUgdGhyZWUgZXhpc2l0aW5nICJkZXBlbmRzIG9uIEFVWElMSUFSWV9CVVMiIHNob3VsZCBi
-ZSBjaGFuZ2VkIHRvDQo+ICJzZWxlY3QgQVVYSUxJQVJZX0JVUyIuDQoNCkdvdCBpdC4NCg0KV2ls
-bCBmaXggaXQgaW4gbmV4dCB2ZXJzaW9uLg0KDQpDaGVlcnMsDQpCaWp1DQoNCj4gDQo+ID4gPiA+
-ICsgICAgICAgaGVscA0KPiA+ID4gPiArICAgICAgICAgU2F5IFkgaGVyZSB0byBlbmFibGUgdGhl
-IHBvd2VyIHNlcXVlbmNpbmcgZHJpdmVyIGZvciB0aGUgUmVuZXNhcw0KPiA+ID4gPiArICAgICAg
-ICAgUG93ZXIgUmVhZHkgc2lnbmFscy4gVGhpcyBkcml2ZXIgaGFuZGxlcyB0aGUgcG93ZXIgcmVh
-ZHkgc2lnbmFscw0KPiA+ID4gPiArICAgICAgICAgcmVxdWlyZWQgdG8gcG93ZXIgb24gdGhlIHZh
-cmlvdXMgSVAncyBvbiBSWi9HM0wgcGxhdGZvcm0uDQo+ID4gPiA+ICsNCj4gPiA+ID4gIGNvbmZp
-ZyBQT1dFUl9TRVFVRU5DSU5HX1RIMTUyMF9HUFUNCj4gPiA+ID4gICAgICAgICB0cmlzdGF0ZSAi
-VC1IRUFEIFRIMTUyMCBHUFUgcG93ZXIgc2VxdWVuY2luZyBkcml2ZXIiDQo+ID4gPiA+ICAgICAg
-ICAgZGVwZW5kcyBvbiAoQVJDSF9USEVBRCAmJiBBVVhJTElBUllfQlVTKSB8fCBDT01QSUxFX1RF
-U1QNCj4gPiA+DQo+ID4gPiAuLi4gZS5nLiB0aGlzLCBkdWUgdG8gYSBtaXggb2YgKGEgbG90IG9m
-KSBzZWxlY3RzIGFuZCAob25seSB0aHJlZSkgZGVwZW5kcz8NCj4gPg0KPiA+IEkgYmVsaWV2ZSB0
-aGlzIHNob3VsZCBnaXZlIGJ1aWxkIGVycm9yIGlmIENPTVBJTEVfVEVTVCBlbmFibGVkIGZvcg0K
-PiA+IHRoaXMgZHJpdmVyIFdpdGhvdXQgQVVYSUxJQVJZX0JVUyBlbmFibGVkPz8NCj4gDQo+IFBv
-c3NpYmx5LCBhcyB0aGUgYXV4aWxpYXJ5IGJ1cyBkb2Vzbid0IHNlZW0gdG8gZGVmaW5lIGR1bW1p
-ZXMgaW4gY2FzZSBBVVhJTElBUllfQlVTIGlzIG5vdCBlbmFibGVkLg0KPiANCj4gR3J7b2V0amUs
-ZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0N
-Cj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEz
-MiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9u
-cyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dCB3aGVu
-IEknbSB0YWxraW5nIHRvDQo+IGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9y
-IHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-LS0gTGludXMgVG9ydmFsZHMNCg==
+On Wed, Aug 19, 2026 at 08:28:39AM +0200, Marek Vasut wrote:
+> On 8/18/26 5:09 PM, Koichiro Den wrote:
+> 
+> Hello Den-san,
+> 
+> > I see, CPG_MOD 624. Thanks! Then I am not sure the original writel() is actually
+> > unclocked. It runs before pm_runtime_put(), so runtime PM still keeps that clock
+> > enabled. If "unclocked" means ref clock instead, the new writel() also runs
+> > before clk_bulk_prepare_enable(). Probably I'm missing something again. I would
+> > appreciate it if you could shed light on this.
+> 
+> This is clearly my error, the commit message is poorly written.
+> 
+> The rcar_gen4_add_dw_pcie_ep() contains two calls which can fail,
+> dw_pcie_ep_init() and dw_pcie_ep_init_registers().
+> 
+> The first one, dw_pcie_ep_init(), internally calls .pre_init callback, which
+> is implemented in rcar_gen4_pcie_ep_pre_init() on R-Car Gen4 .
+> 
+> The rcar_gen4_pcie_ep_pre_init() internally calls
+> rcar_gen4_pcie_common_init(), which may succeed or fail. At this point, two
+> possibilities can happen, the fail one is of interest:
+> - If rcar_gen4_pcie_common_init() succeeds , then clk_bulk_prepare_enable()
+> in rcar_gen4_pcie_common_init() did enable all dw->core_clks and those clock
+> are kept enabled on exit from rcar_gen4_pcie_common_init() . The return
+> value from rcar_gen4_pcie_common_init() is 0. OK.
+> - If rcar_gen4_pcie_common_init() failed, then clk_bulk_disable_unprepare()
+> is called in rcar_gen4_pcie_common_init() fail path and dw->core_clks clock
+> are disabled. Return value from rcar_gen4_pcie_common_init() is non-zero.
+> NG.
+> 
+> Back in rcar_gen4_pcie_ep_pre_init():
+> - If rcar_gen4_pcie_ep_pre_init() succeeded , then write PCIEDMAINTSTSEN and
+> enable edma_int , and exit with return value 0, OK.
+> - If rcar_gen4_pcie_common_init() failed, then immediately exit with return
+> value non-zero. Do not write PCIEDMAINTSTSEN and do not enable the
+> edma_interrupts, do depend on previously set content of PCIEDMAINTSTSEN
+> register, which was zeroed out at the beginning of this function instead.
+> NG.
+> 
+> Finally, back in rcar_gen4_add_dw_pcie_ep():
+> - If dw_pcie_ep_init() failed, then dw->core_clks have to be disabled at
+> this point (*), and PCIEDMAINTSTSEN register is 0, therefore, do not call
+> rcar_gen4_pcie_ep_deinit() which writes PCIEDMAINTSTSEN register to 0
+> (again) and calls rcar_gen4_pcie_common_deinit(), directly call
+> rcar_gen4_pcie_common_deinit() (**).
+> 
+> But as I wrote this part, I realized the (*) is not true, and
+> rcar_gen4_pcie_common_deinit() is not the correct function to call in case
+> dw_pcie_ep_init() fails.
+> 
+> I think we might need this kind of a patch:
+> 
+> "
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index de8ee3db43601..a5801a74dec67 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -1553,7 +1553,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>                                ep->page_size);
+>         if (ret < 0) {
+>                 dev_err(dev, "Failed to initialize address space\n");
+> -               return ret;
+> +               goto err_deinit;
+>         }
+> 
+>         ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
+> @@ -1568,6 +1568,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+> 
+>  err_exit_epc_mem:
+>         pci_epc_mem_exit(epc);
+> +err_deinit:
+> +       if (ep->ops->pre_deinit)
+> +               ep->ops->pre_deinit(ep);
+> 
+>         return ret;
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h
+> b/drivers/pci/controller/dwc/pcie-designware.h
+> index 0735ae9409240..733d8b6ad6d2b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -475,6 +475,7 @@ struct dw_pcie_rp {
+> 
+>  struct dw_pcie_ep_ops {
+>         int     (*pre_init)(struct dw_pcie_ep *ep);
+> +       void    (*pre_deinit)(struct dw_pcie_ep *ep);
+>         int     (*init)(struct dw_pcie_ep *ep);
+>         int     (*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
+>                              unsigned int type, u16 interrupt_num);
+> "
+> 
+> Then implement .pre_deinit callback for R-Car Gen4 such, that it would
+> assert reset and stop the dw->core_clks by calling
+> rcar_gen4_pcie_common_deinit(). Then we are sure (*) is true.
+> 
+> Finally, if dw_pcie_ep_init() call in rcar_gen4_add_dw_pcie_ep() fails, then
+> with the aforementioned deinit implementation, I think it will be possible
+> to simply do the following to cover (**).
+> 
+> ret = dw_pcie_ep_init(ep);
+> if (ret)
+>   return ret;
+> 
+> (I am also attaching the entire example as a diff, compile tested only thus
+> far)
+> 
+> What do you think ?
+
+Hi Marek,
+
+Thanks for sharing your thoughts.
+
+I think the callback idea is much cleaner. I wonder if .post_deinit might
+describe its role more clearly.
+
+
+P.S. I took a quick look through the related call paths, and it made me wonder
+if we could take this a little further. Perhaps dw_pcie_ep_deinit() could call
+the same hook at the end (I use .post_deinit as a tentative name below):
+
+  dw_pcie_ep_init()
+    -> .pre_init()
+    -> generic intialization
+    error:
+      -> generic unwind
+      -> .post_deinit()
+
+  dw_pcie_ep_deinit()
+    -> generic teardown
+    -> .post_deinit()
+
+Then would let the generic init/deinit pair own both hooks, and the
+pcie-rcar-gen4 driver would no longer need to call rcar_gen4_pcie_ep_deinit()
+separately. After dropping those explicit calls, the function could naturally be
+renamed rcar_gen4_pcie_ep_post_deinit() and be used only as the hook.
+
+This might be too much for this small fix. Even without this wider change,
+however, I think rcar_gen4_pcie_ep_pre_deinit() should do the same operations as
+rcar_gen4_pcie_ep_deinit(), rather than only calling common_deinit(). For
+example, if pci_epc_mem_init() fails after .pre_init() succeeds, PCIEDMAINTSTSEN
+is already 0xffff, and common_deinit() does not clear it.
+
+Best regards,
+Koichiro
+
+> 
+> > P.S. I also ran two error injection experiments on an S4 Spider. This is also
+> > related to question #2 in my previous comment.
+> > 
+> > - When I injected a failure inside common_init(), its error path unwound the
+> >    bulk clocks itself. Calling common_deinit() afterwards triggered "already
+> >    disabled/unprepared" warnings.
+> 
+> I think this ought to be addressed by the pre_deinit above.
+> 
+> > - When I injected a failure after pre_init() had succeeded, PCIEDMAINTSTSEN read
+> >    back as 0xffff both before and after common_deinit().
+> 
+> I think that with the aforementioned pre_deinit implementation, in case
+> pre_init succeeded and a failure occurred in dw_pcie_ep_init_registers()
+> instead, the PCIEDMAINTSTSEN will be cleared in rcar_gen4_pcie_ep_deinit()
+> correctly.
+> 
+> Does that cover this concern or is there another fail path which I missed ?
+> 
+> > So I think clean-up needs to know whether pre_init() completed, rather than
+> > always calling common_deinit(). Something like this (field declaration omitted):
+> > 
+> > --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> > +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> > @@ -487,17 +487,24 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
+> >          struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
+> >          int ret;
+> > 
+> >          ret = rcar_gen4_pcie_common_init(rcar);
+> >          if (ret)
+> >                  return ret;
+> > 
+> >          writel(PCIEDMAINTSTSEN_INIT, rcar->base + PCIEDMAINTSTSEN);
+> > +       rcar->ep_pre_init_done = true;
+> > 
+> >          return 0;
+> >   }
+> > 
+> >   static void rcar_gen4_pcie_ep_deinit(struct rcar_gen4_pcie *rcar)
+> >   {
+> > +       if (!rcar->ep_pre_init_done)
+> > +               return;
+> > +
+> > +       rcar->ep_pre_init_done = false;
+> >          writel(0, rcar->base + PCIEDMAINTSTSEN);
+> >          rcar_gen4_pcie_common_deinit(rcar);
+> >   }
+> > 
+> > I may be missing something again, so please just take it with a pinch of salt.
+> Thank you for your feedback, it allowed me to find an error in my train of
+> thoughts, it is very much appreciated. I hope we can also find a good
+> solution.
+> 
+> Thank you for your help !
+> 
+> -- 
+> Best regards,
+> Marek Vasut
+
+
