@@ -1,57 +1,57 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A65282F26
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 02:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754F4282F26
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 02:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787105222; cv=none; b=oaMjgcCKC1yHpnYGjSIBXFGnn+gJRVPDMKbQD/+9lxurEcDXgiQdQQToTz9seWWZ5ogxkOYZgLa0I7tWdiun1TOZGQaPtWBqr7rFyxZUOEN/lZaDH/hFJu84mFQRdy/2k3IEdLqDZzvq/hDVqdcfbVfuADJly1NzzX/8JZ3yXk8=
+	t=1787105224; cv=none; b=X6kpnIx3OW/C0AFTTeVR4hcJ1LY8uWOkXp34ZIqrX6myIUK60H6JsnkqKJ/U+jHZY5z8pEcjhpoK6+/wWLha99rbsh2grV9nZZdZ73cB4LT1bYhQB0EbVfNDTUbACzd6CZ5iA4vumaFnMTigjMexE1QOZIAgNiDuIbQlaDA3+i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787105222; c=relaxed/simple;
-	bh=wAmjadR4jPLBXCuLIOUuhtcetGKEVtApUX7orDD64E4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=cuFTfGTSPvz9saxY8TMTyPXnWrI9OVVWvcgV+Z3QWIn2X5OYxW6HeuZ06bgUzzLV0umV+TiTLqaXbRJJ5KtAEHV7E+wsycnrJUBQ6wnKV+TgjGhtsoB1OlbQTGOESsZ6tK/8lE6y5NnJrTM/c4+PQa/6sG3VRUhc1+Yp0TTgzrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dOLdTMem; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1787105224; c=relaxed/simple;
+	bh=Bp9ZvkyK8UGciQ3tRbIynMIS8mppHboDP7PIJjGIT/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=rMqvI1KNjg6+2rWxalcjAN3bl0zLcX2idJ3HrwoJ8NyvHIkZGln8Ph2voV+sNCH+dOaMG8Bh3UJhJ19JSGxHnJAN3lwcES61R2fApLl0lPkLi6siL9KQ5LOjoUiMsgpfDWHVoQBRtq8paxUNiUhEq+digp5QtlM1D7lHKwNYw7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n55MCb0Z; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dOLdTMem"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n55MCb0Z"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787105219; x=1818641219;
+  t=1787105223; x=1818641223;
   h=date:from:to:cc:subject:message-id;
-  bh=wAmjadR4jPLBXCuLIOUuhtcetGKEVtApUX7orDD64E4=;
-  b=dOLdTMemhP1y2Xu1AX7MOywkKE6S3z87wbGA2T8b8UzKcVYOmxl2RYjw
-   cyUDpYDNX8+gnnxZcDqXa8UlMpZ846hpBATqf+a7tlgRyPxOSu/RdIW9N
-   ReAJvx9p3UUEXIVBN/D/KV0miB9e9+xCwiB7uz4bsFSKkbzkR3geiqoOI
-   M7MfIfCBeCkH/+n7IoxJM0Epsh1DxI30kcqEFb+b1ycuU7cV6Mdbor7pi
-   hM3yP6fI10I6G++fAkOhkbSvRzS9SOALtzoXHCZSaq29yNRA2DeqNEVS6
-   5cMRfOIaReDiWZR8DkFHBrzCX/c/rl/jczy9flAZcapzmMemfcKv4gy6I
+  bh=Bp9ZvkyK8UGciQ3tRbIynMIS8mppHboDP7PIJjGIT/Q=;
+  b=n55MCb0ZiaATKaFSXKPtnW6IN3xddUzT8gGbTF4HefnKN9VDjfR4AQr4
+   Z/ASYMUzZ38Z8WgU5gZeRkINrd6vEcNwbbQvOLChP6OYbWQ/3HoixKf6s
+   r71weG3mrJjzqYpOprzePBdHjqjb2V1z43eBFepMOFyN7Rq8I1EfNPUTd
+   dS+wwwv8e9z3D75QMsLeEOl7b+76GzSIunkLqW/CkFJEmk0uH54omwKLq
+   M4uKu7QZWGj0hqwiNtCC30HnV6NNukOoGoQfnasAWjDIU7/Cy7mQ6E5LQ
+   Q62YXGynx8bZZcvATvfwfSiVZafNyMleNVCykGlyTeGjI2F/BiWzp9nsK
    g==;
-X-CSE-ConnectionGUID: t/tlgLhPSYaEDT0W6X0MFw==
-X-CSE-MsgGUID: y3NwLtClRpG4I43kyyzGvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="110393202"
+X-CSE-ConnectionGUID: ov3XZkLqQ+ibnflpA0o5GA==
+X-CSE-MsgGUID: rz7jEFoITnWmPsRQ+w0xnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="110393207"
 X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
-   d="scan'208";a="110393202"
+   d="scan'208";a="110393207"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 19:06:59 -0700
-X-CSE-ConnectionGUID: BeQqyyP3SkOq3lv3qmP+6g==
-X-CSE-MsgGUID: /OT87KMcTsC9v8+rv/SPPw==
+X-CSE-ConnectionGUID: k9DxKwFWSTy7PstS2B8PDQ==
+X-CSE-MsgGUID: 7ZDayEwvSR6OmntMlpFglg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
-   d="scan'208";a="259213294"
+   d="scan'208";a="259213300"
 Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
   by fmviesa009.fm.intel.com with ESMTP; 18 Aug 2026 19:06:57 -0700
 Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wwVhe-00000000eo4-2Z6L;
+	id 1wwVhe-00000000eo6-2x6A;
 	Wed, 19 Aug 2026 02:06:54 +0000
-Date: Wed, 19 Aug 2026 10:06:51 +0800
+Date: Wed, 19 Aug 2026 10:06:35 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-drivers-for-v7.4] BUILD SUCCESS
- 27da2966d4683a35b48259719a109c10147699b7
-Message-ID: <202608191040.kEAR6FHj-lkp@intel.com>
+Subject: [geert-renesas-drivers:renesas-pinctrl-for-v7.4] BUILD
+ SUCCESS e318d77387b30c46c8a81dcc3310f754c46e9c24
+Message-ID: <202608191023.i8ZSlHMY-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,12 +59,12 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v7.4
-branch HEAD: 27da2966d4683a35b48259719a109c10147699b7  soc: renesas: rcar-mfis: Convert spinlock to raw_spinlock
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v7.4
+branch HEAD: e318d77387b30c46c8a81dcc3310f754c46e9c24  pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
 
-elapsed time: 1734m
+elapsed time: 1733m
 
-configs tested: 126
+configs tested: 125
 configs skipped: 6
 
 The following configs have been built successfully.
@@ -151,7 +151,6 @@ s390                 randconfig-001-20260818    clang-18
 s390                 randconfig-002-20260818    clang-18
 sh                                 defconfig    gcc-16.1.0
 sh                kfr2r09-romimage_defconfig    gcc-16.1.0
-sh                         r7780mp_defconfig    gcc-16.1.0
 sh                   randconfig-001-20260818    clang-18
 sh                   randconfig-002-20260818    clang-18
 sh                          se7619_defconfig    gcc-16.1.0
