@@ -1,110 +1,203 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6BF47ACD5;
-	Tue, 18 Aug 2026 16:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A65282F26
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 02:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787068987; cv=none; b=Y7wQt2NSluU3eRB4v+B31FADzIR5eM1b0Uo3+Cq9fjZns43JZka4wt0VE8kJhVcMrY1QMPhLltSdI75m/PYyzwpzjS5fh9X6Ixj5JNQRfshvj29F5WwFCngGJL1dqm8gytxGggn18antft8i0SLhEAIDG7dvN+SWZcogdjrk8mM=
+	t=1787105222; cv=none; b=oaMjgcCKC1yHpnYGjSIBXFGnn+gJRVPDMKbQD/+9lxurEcDXgiQdQQToTz9seWWZ5ogxkOYZgLa0I7tWdiun1TOZGQaPtWBqr7rFyxZUOEN/lZaDH/hFJu84mFQRdy/2k3IEdLqDZzvq/hDVqdcfbVfuADJly1NzzX/8JZ3yXk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787068987; c=relaxed/simple;
-	bh=dXTg3sH2mPYTL0FKzf9A4H+CpuwD2Qm8ZyBQvziGWEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bepZxgRm1jXh0Ue3Zk3L+Ju1wRlDITcOBnPX0U/0ex6zSlq4cDPSIBHl4NPhFrPX6g5TlcGXjtofMo9EXpStceikYMxvZXuYChepfZTcDQiX2ffYQff+gdFz8zI4d3+qqndn//ixV9bau02OCIsrnU++bQBHIZX84uhSgqXxprc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DsUHDfqp; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1787105222; c=relaxed/simple;
+	bh=wAmjadR4jPLBXCuLIOUuhtcetGKEVtApUX7orDD64E4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cuFTfGTSPvz9saxY8TMTyPXnWrI9OVVWvcgV+Z3QWIn2X5OYxW6HeuZ06bgUzzLV0umV+TiTLqaXbRJJ5KtAEHV7E+wsycnrJUBQ6wnKV+TgjGhtsoB1OlbQTGOESsZ6tK/8lE6y5NnJrTM/c4+PQa/6sG3VRUhc1+Yp0TTgzrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dOLdTMem; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DsUHDfqp"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hPZH91R3ZzMlMw;
-	Tue, 18 Aug 2026 18:03:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787068981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMLEEusw3LBmYpCXCPyWTSqKB1/JwCcMpxn2G77wcIE=;
-	b=DsUHDfqpLYsU6J1rJICx5xMO1JhN5FMNxvsl8N7SPbj4TTio/d4phYOeXWfG8LT+4CK46e
-	1Arw/ggh1SLct6z5Ov9+kFUgKy5OXM3ZAb7Y7y1lu44h/y7LjCwKVx6Hrsa2dGspgX7el+
-	UQU60nhevdqy8U5yIbndc3l6Yln5hjXgmO8/Zp//AUqp1mA7wy7VX9KmzhojuGyMHCw2XM
-	VL5UuywNDsYNiXye5320b2rzO1isHOWlBbMSjcRl+VNEnqf/Wu9yZ3bwwJYpdIDWky/6Wa
-	J4N2uuzSISLGnzj84xgv9cZHF0r7AkozFPoFfaevFbJaFOkR5UazG1f/+r1G0A==
-Message-ID: <ae9bbbb7-0baa-4431-8a81-0b38a6228f10@mailbox.org>
-Date: Tue, 18 Aug 2026 18:02:57 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dOLdTMem"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1787105219; x=1818641219;
+  h=date:from:to:cc:subject:message-id;
+  bh=wAmjadR4jPLBXCuLIOUuhtcetGKEVtApUX7orDD64E4=;
+  b=dOLdTMemhP1y2Xu1AX7MOywkKE6S3z87wbGA2T8b8UzKcVYOmxl2RYjw
+   cyUDpYDNX8+gnnxZcDqXa8UlMpZ846hpBATqf+a7tlgRyPxOSu/RdIW9N
+   ReAJvx9p3UUEXIVBN/D/KV0miB9e9+xCwiB7uz4bsFSKkbzkR3geiqoOI
+   M7MfIfCBeCkH/+n7IoxJM0Epsh1DxI30kcqEFb+b1ycuU7cV6Mdbor7pi
+   hM3yP6fI10I6G++fAkOhkbSvRzS9SOALtzoXHCZSaq29yNRA2DeqNEVS6
+   5cMRfOIaReDiWZR8DkFHBrzCX/c/rl/jczy9flAZcapzmMemfcKv4gy6I
+   g==;
+X-CSE-ConnectionGUID: t/tlgLhPSYaEDT0W6X0MFw==
+X-CSE-MsgGUID: y3NwLtClRpG4I43kyyzGvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="110393202"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
+   d="scan'208";a="110393202"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 19:06:59 -0700
+X-CSE-ConnectionGUID: BeQqyyP3SkOq3lv3qmP+6g==
+X-CSE-MsgGUID: /OT87KMcTsC9v8+rv/SPPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; 
+   d="scan'208";a="259213294"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 18 Aug 2026 19:06:57 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wwVhe-00000000eo4-2Z6L;
+	Wed, 19 Aug 2026 02:06:54 +0000
+Date: Wed, 19 Aug 2026 10:06:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-drivers-for-v7.4] BUILD SUCCESS
+ 27da2966d4683a35b48259719a109c10147699b7
+Message-ID: <202608191040.kEAR6FHj-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car
- Gen5 DWC3 xHCI USB controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-usb@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260811051016.1655887-1-marek.vasut+renesas@mailbox.org>
- <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20260817-uakari-of-mysterious-nirvana-a1d0da@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: huo58cjhr1mmu4hzneg6u5zbzt6gn11x
-X-MBO-RS-ID: 07779ba3cd8c170a504
 
-On 8/17/26 9:00 AM, Krzysztof Kozlowski wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v7.4
+branch HEAD: 27da2966d4683a35b48259719a109c10147699b7  soc: renesas: rcar-mfis: Convert spinlock to raw_spinlock
 
-[...]
+elapsed time: 1734m
 
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  dr_mode:
-> 
-> We don't accept properties with underscores, unless this is coming from
-> existing schema but I do not see snps,dwc referenced in the binding.
+configs tested: 126
+configs skipped: 6
 
-As suggested later in this thread, ref: snps,dwc3-common.yaml makes this 
-whole thing go away, so fixed in V4, thanks .
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
->> +    enum: [ host, otg, peripheral ]
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  maximum-speed:
-> 
-> Again, where is the property defined?
+tested configs:
+alpha                            allnoconfig    gcc-16.1.0
+alpha                           allyesconfig    gcc-16.1.0
+alpha                              defconfig    gcc-16.1.0
+arc                             allmodconfig    gcc-16.1.0
+arc                             allyesconfig    gcc-16.1.0
+arc                           randconfig-001    gcc-10.5.0
+arc                  randconfig-001-20260818    gcc-10.5.0
+arc                  randconfig-001-20260819    gcc-11.5.0
+arc                  randconfig-002-20260818    gcc-10.5.0
+arc                  randconfig-002-20260819    gcc-11.5.0
+arm                        at91_dt_defconfig    clang-17
+arm                  randconfig-001-20260818    gcc-10.5.0
+arm                  randconfig-001-20260819    gcc-11.5.0
+arm                  randconfig-002-20260818    gcc-10.5.0
+arm                  randconfig-002-20260819    gcc-11.5.0
+arm                  randconfig-003-20260818    gcc-10.5.0
+arm                  randconfig-003-20260819    gcc-11.5.0
+arm                  randconfig-004-20260818    gcc-10.5.0
+arm                  randconfig-004-20260819    gcc-11.5.0
+arm64                         randconfig-001    gcc-14.3.0
+arm64                randconfig-001-20260818    gcc-12.5.0
+arm64                randconfig-001-20260818    gcc-14.3.0
+arm64                randconfig-002-20260818    gcc-12.5.0
+arm64                randconfig-002-20260818    gcc-14.3.0
+arm64                randconfig-003-20260818    gcc-12.5.0
+arm64                randconfig-003-20260818    gcc-14.3.0
+arm64                randconfig-004-20260818    gcc-12.5.0
+arm64                randconfig-004-20260818    gcc-14.3.0
+csky                            allmodconfig    gcc-16.1.0
+csky                 randconfig-001-20260818    gcc-12.5.0
+csky                 randconfig-001-20260818    gcc-14.3.0
+csky                 randconfig-002-20260818    gcc-12.5.0
+csky                 randconfig-002-20260818    gcc-14.3.0
+hexagon              randconfig-001-20260818    gcc-10.5.0
+hexagon              randconfig-002-20260818    gcc-10.5.0
+i386                            allmodconfig    gcc-14
+i386       buildonly-randconfig-001-20260818    clang-22
+i386       buildonly-randconfig-002-20260818    clang-22
+i386       buildonly-randconfig-003-20260818    clang-22
+i386       buildonly-randconfig-004-20260818    clang-22
+i386       buildonly-randconfig-005-20260818    clang-22
+i386       buildonly-randconfig-006-20260818    clang-22
+i386                 randconfig-001-20260818    clang-22
+i386                 randconfig-002-20260818    clang-22
+i386                 randconfig-003-20260818    clang-22
+i386                 randconfig-004-20260818    clang-22
+i386                 randconfig-005-20260818    clang-22
+i386                 randconfig-006-20260818    clang-22
+i386                 randconfig-007-20260818    clang-22
+i386                 randconfig-011-20260818    gcc-12
+i386                 randconfig-012-20260818    gcc-12
+i386                 randconfig-013-20260818    gcc-12
+i386                 randconfig-014-20260818    gcc-12
+i386                 randconfig-015-20260818    gcc-12
+i386                 randconfig-016-20260818    gcc-12
+i386                 randconfig-017-20260818    gcc-12
+loongarch                          defconfig    clang-24
+loongarch            randconfig-001-20260818    gcc-10.5.0
+loongarch            randconfig-002-20260818    gcc-10.5.0
+nios2                           allmodconfig    gcc-11.5.0
+nios2                            allnoconfig    gcc-11.5.0
+nios2                randconfig-001-20260818    gcc-10.5.0
+nios2                randconfig-002-20260818    gcc-10.5.0
+parisc                          allmodconfig    gcc-16.1.0
+parisc                          allyesconfig    gcc-16.1.0
+parisc                             defconfig    gcc-16.1.0
+parisc               randconfig-001-20260818    clang-24
+parisc               randconfig-002-20260818    clang-24
+powerpc                        ps3_defconfig    gcc-16.1.0
+powerpc              randconfig-001-20260818    clang-24
+powerpc              randconfig-002-20260818    clang-24
+powerpc64            randconfig-001-20260818    clang-24
+powerpc64            randconfig-002-20260818    clang-24
+riscv                         randconfig-001    clang-18
+riscv                randconfig-001-20260818    clang-18
+riscv                randconfig-002-20260818    clang-18
+s390                 randconfig-001-20260818    clang-18
+s390                 randconfig-002-20260818    clang-18
+sh                                 defconfig    gcc-16.1.0
+sh                kfr2r09-romimage_defconfig    gcc-16.1.0
+sh                         r7780mp_defconfig    gcc-16.1.0
+sh                   randconfig-001-20260818    clang-18
+sh                   randconfig-002-20260818    clang-18
+sh                          se7619_defconfig    gcc-16.1.0
+sparc                randconfig-001-20260818    gcc-11.5.0
+sparc                randconfig-002-20260818    gcc-11.5.0
+sparc64              randconfig-001-20260818    gcc-11.5.0
+sparc64              randconfig-002-20260818    gcc-11.5.0
+um                   randconfig-001-20260818    gcc-11.5.0
+um                   randconfig-002-20260818    gcc-11.5.0
+x86_64     buildonly-randconfig-001-20260818    clang-22
+x86_64     buildonly-randconfig-001-20260819    gcc-14
+x86_64     buildonly-randconfig-002-20260818    clang-22
+x86_64     buildonly-randconfig-002-20260819    gcc-14
+x86_64     buildonly-randconfig-003-20260818    clang-22
+x86_64     buildonly-randconfig-003-20260819    gcc-14
+x86_64     buildonly-randconfig-004-20260818    clang-22
+x86_64     buildonly-randconfig-004-20260819    gcc-14
+x86_64     buildonly-randconfig-005-20260818    clang-22
+x86_64     buildonly-randconfig-005-20260819    gcc-14
+x86_64     buildonly-randconfig-006-20260818    clang-22
+x86_64     buildonly-randconfig-006-20260819    gcc-14
+x86_64                                 kexec    clang-22
+x86_64               randconfig-001-20260818    clang-22
+x86_64               randconfig-002-20260818    clang-22
+x86_64               randconfig-003-20260818    clang-22
+x86_64               randconfig-004-20260818    clang-22
+x86_64               randconfig-005-20260818    clang-22
+x86_64               randconfig-006-20260818    clang-22
+x86_64                        randconfig-011    clang-22
+x86_64               randconfig-011-20260818    clang-22
+x86_64               randconfig-012-20260818    clang-22
+x86_64               randconfig-013-20260818    clang-22
+x86_64               randconfig-014-20260818    clang-22
+x86_64               randconfig-015-20260818    clang-22
+x86_64               randconfig-016-20260818    clang-22
+x86_64                        randconfig-071    gcc-13
+x86_64               randconfig-071-20260818    gcc-13
+x86_64               randconfig-072-20260818    gcc-13
+x86_64               randconfig-073-20260818    gcc-13
+x86_64               randconfig-074-20260818    gcc-13
+x86_64               randconfig-075-20260818    gcc-13
+x86_64               randconfig-076-20260818    gcc-13
+x86_64                          rhel-9.4-bpf    gcc-14
+xtensa               randconfig-001-20260818    gcc-11.5.0
+xtensa               randconfig-002-20260818    gcc-11.5.0
 
-usb.yaml , which is pulled in via snps,dwc3-common.yaml in V4 and this 
-is dropped.
-
->> +    enum: [ super-speed-plus, super-speed, high-speed ]
->> +
->> +  phys:
->> +    minItems: 1
->> +    maxItems: 2
-> 
-> Why is this flexible?
-
-The SoC has four controller instances, two instances only have USB 2.0 
-PHY connected to them, and two have both USB 2.0 and USB 3.2 PHYs .
-
->> +  phy-names:
->> +    minItems: 1
->> +    items:
->> +      - const: usb2-phy
-> 
-> phy is redundant. Are you implementing completely new bindings which
-> have nothing in common with all others?
-No, and both phys and phy-names is dropped by pulling in 
-snps,dwc3-common.yaml , thanks !
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
