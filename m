@@ -1,103 +1,106 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA123CA487
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 08:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5468D2EAD15;
+	Thu, 20 Aug 2026 09:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787216285; cv=none; b=RUx3a64AB7xBj4519v7i6S5M3st+64HSldmXAYRs/klAP5Q2vTAwcvJdOUT8ArMJ0ACchMYXMy8i6jSromD/dNLIANp7fPI/APXyTkqEPxZsM4o8PJ30+iD1jcOw5by72FfKj3dxJLsumydpAdu8R1iyzuvqOOOGQh6xR0+HO9Q=
+	t=1787217122; cv=none; b=uwRBNhKCZJUe+3lz5/Cjs2dkZpoHu/YP6aE+vcIML0lkDLC+U54h/uGhpSn3GPmu7NgSqffNpt9nc5RajJLAoUdODfvmS4WsWrs5x7sQNtQS+zEuJ9HnBkm2xOZGZN08PZDWr5z3tFHEz8O64FSyVxioh5ebOzV5awDUc/OtIlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787216285; c=relaxed/simple;
-	bh=+pwWH0Ylj+bA4kVRpKE+GiAnMFCJcAphE6wSuMx+Mx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecLWuykKI4vSWS0vlco8LqIh2IH3LzC9ChIG0ba8/ek2SVvekyHfvrBaumNC6yl4j3r3rVySm1c1ibtqLzSFCRL8xR1+CCac9LecLlwtS3WxgwxWWQZeASsPzMBDw7kcJoAfgDdYltwkrNE8KYcOB2NXoPsP14EeXwBEWzbgVYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-966eabad303so535390241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 01:58:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787216283; x=1787821083;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=lIyX8eZ4F6Ye0rQT1cY+3tveCKsiBumqw03xeQl53DY=;
-        b=XSwpEBcZDWpzQTFeTibk6yM7xz4b3iQroZJdxJ4Q/SWM8ewJ17fkjEyU1DWG86eivH
-         nLVcJEqmnaHzU94DDMQK2H+p3llQvkPa8JAx9/ML2fmDpaeu/pVWfgzouYV+p2hB747s
-         8FN+QNDFZlPgq0+e+kpWQnTtdu4k+/G0+VadoBr8ijepTHXNKRvIwrJ64gTXuKsWUNRi
-         K8jAO+aStd+syZEWBoZrA/+jIU/cBXA5AOx4cg+5xBNFhYw5vtNuStMkgZIDyG9fSsSH
-         z3lZBswtWKGrejfKb4vwhi801874m08e3Oe0DX638o8mfvAPcl2hY7+HuCAqxLgjC/uJ
-         hRPg==
-X-Gm-Message-State: AOJu0YxU087CuLneYAx7W/41jy8ghB+Exobq7acb+HIuVbP8d7gLun3u
-	EhAa2F+uaq6/y3vOK2HSpp5IjydtBDRufNgwZMg9V8pQd85FSdowbcbzpwkg58E+
-X-Gm-Gg: AR+sD10izmGQiMwB3KU3q/Bp7TkBVPrk3L0HKiw46522uv59EGwHhcLhdayuSGLJveR
-	XqHxhxs2znG27RkqqVkH+UnKogDbbsOnrdvWhN0UWaYHLFnr6L+6BfXCWobzANEHxQTAM9icLDD
-	VPpZm7hMa7Vj83K0Ws0yo1F7jrC4/hA9RWt5Iq35Hmw0X+O+2oHYnrRyz296lbmuzW0PsFm33Zi
-	Fjl+ULsiUF32VFFwMVlW0wlVCu8hVKZMepVbqJS6YEUuIP4hmKbpajQe/azKqV2LmiBLrr0Ay1O
-	tuJgcMRrmUrwtEQQGFX3EqvdhKKRBA0taGgW05luc4TEu+7c7P/cPgMBZ6Zq56v0Mb1gUCyjBu3
-	JzJC7INiman39GrvIINHqqerRqPG2kgliphjXM6JtUMLprfOjbNgwefQ2OFxIccEol/7wTCPAH3
-	rKeF30l+p+excFqKkwGkyDSnaXau2ol6BzjPC6djf3GeB6IXeelIKoVHjVtSvgrQXGr9zXi5DHI
-	Uxo+dTlaTutINE2c5cdCntgXA==
-X-Received: by 2002:a05:6102:54ab:b0:778:4c28:6725 with SMTP id ada2fe7eead31-7784c287e9emr3173966137.10.1787216282700;
-        Thu, 20 Aug 2026 01:58:02 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97c4e9459d3sm5315964241.12.2026.08.20.01.58.02
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 01:58:02 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-7777fa8f1ccso723791137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 01:58:02 -0700 (PDT)
-X-Received: by 2002:a05:6102:8555:20b0:778:459:f0cc with SMTP id
- ada2fe7eead31-7780459f1f7mr1814844137.4.1787216282002; Thu, 20 Aug 2026
- 01:58:02 -0700 (PDT)
+	s=arc-20240116; t=1787217122; c=relaxed/simple;
+	bh=P9+cjxBSdpK9Af3GW8lSX4aG0oX5hSql/4xGZNJOtDE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=q2Xe2as0G1kC3qtc9TNSCJmRf4zCux61I9fgXn/ugS2CDpaebMnp9eMnQmqk1V3xPFT4y91pwhcYxG+AB1WsWeEImwz2+LmxMRB8fCp6XfwkGcbdgjZqzwgaR2j32BT3/Sfbv7Cy/LvMy3742/ik6BibXejKsJ9G9ac0mSKs2qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Hm77un+C; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Hm77un+C"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hQd3w35zfzKnDW;
+	Thu, 20 Aug 2026 11:11:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1787217116;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0lWkYEElX6enLA1zCHDYCcVaPif+uQ4r6HEx/6jXHk0=;
+	b=Hm77un+CKOelP9d1yfoXhVwbpGNUUHDMoYQtkKfPyb7uyxriabX1akHHY5e8awJ6plol2F
+	zCaPQubQEEetMQnSsa1CHYwgQTT9FOGezV9EXXH1jWZMmZBUwT10D2OERtItCQaVSOO9vc
+	oUPlZ3CuAkhoHu5oE8mMhMGVARuNOYXpl/4Zx+TFTPopcoNGldtmIiiOWkB0nyPDFtyKSc
+	dhwP4CJq5P9faeJFP/qZhxg5ZZfALK9yEhWTzS7u8gLMJ2RruPOU+pjCWDsTlfJOTa05OM
+	d56tER372WzSV/0Qs/rrq0pWYbF7iywPKQy74CP2VoH3U6fuPtc6jnuL7N75rQ==
+Message-ID: <5be9b098-e183-4401-b1bb-44ce56e96e22@mailbox.org>
+Date: Thu, 20 Aug 2026 10:42:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817083046.11935-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260817083046.11935-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Aug 2026 10:57:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJq382F+aRrJLBHx9hBJ1cpzJkuwry=s8aBr+a_v_e3Q@mail.gmail.com>
-X-Gm-Features: AcwNN1UvQlkgAamNiFVHBaoN5yJQh83L7Pc2pSVec7awxDWPpdL2YKJFb3rej_s
-Message-ID: <CAMuHMdXJq382F+aRrJLBHx9hBJ1cpzJkuwry=s8aBr+a_v_e3Q@mail.gmail.com>
-Subject: Re: [PATCH] i2c: rcar: fix reset handling for Gen5
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: Marek Vasut <marek.vasut@mailbox.org>
+Subject: Re: [PATCH v2 2/2] PCI: dwc: rcar-gen4: Use .post_deinit to handle
+ dw_pcie_ep_init() failures
+To: Koichiro Den <den@valinux.co.jp>
+Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260820035944.163472-1-marek.vasut+renesas@mailbox.org>
+ <20260820035944.163472-2-marek.vasut+renesas@mailbox.org>
+ <ymct5mjms65qy3hzlgfopzbrhqwdxk473awdqsguaamltchcur@fydxwbqqe6fu>
+Content-Language: en-US
+In-Reply-To: <ymct5mjms65qy3hzlgfopzbrhqwdxk473awdqsguaamltchcur@fydxwbqqe6fu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: qx9s6cwwreaqrn5auikjbd9fj4tpzmwc
+X-MBO-RS-ID: 95f0680095bab10768c
 
-Hi Wolfram,
+On 8/20/26 10:11 AM, Koichiro Den wrote:
 
-On Mon, 17 Aug 2026 at 10:31, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Missing reset_control_status() support is not Gen5 specific. It depends
-> on the firmware used, if any. Refactor the code to handle missing
-> reset_control_status() more generically.
->
-> Fixes: 87e713f20048 ("i2c: rcar: add R-Car Gen5 support")
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello Den-san,
 
-Thanks for your patch!
+> On Thu, Aug 20, 2026 at 05:57:56AM +0200, Marek Vasut wrote:
+>> Implement .post_deinit() callback in R-Car Gen4 struct dw_pcie_ep_ops {}
+>> which asserts reset and stops the clock. This undoes start of clock and
+>> deassert of reset performed in .pre_init() in case dw_pcie_ep_init() fails
+>> after successful call of .pre_init() callback.
+>>
+>> The use of .post_deinit() callback correctly handles the clock and reset
+>> stop, unlike the call of rcar_gen4_pcie_ep_deinit() in dw_pcie_ep_init()
+>> which could not discern at which point the dw_pcie_ep_init() failed and
+>> might have attempted to stop clock and assert reset twice, remove it.
+>>
+>> Since dw_pcie_ep_deinit() also invokes the .post_deinit() callback, drop
+>> calls to rcar_gen4_pcie_ep_deinit() in both rcar_gen4_add_dw_pcie_ep()
+>> dw_pcie_ep_init_registers() fail path and rcar_gen4_remove_dw_pcie_ep()
+>> to avoid duplicate stop of clock and assert of reset, and drop no longer
+>> used rcar_gen4_pcie_ep_deinit() entirely.
+>>
+>> Initialize PCIEDMAINTSTSEN early in rcar_gen4_pcie_ep_pre_init() to 0,
+>> to make sure that edma_int bits will never be set in case of failure
+> 
+> I think s/will never be set/will never be left set/, because .pre_init() writes
+> 0xffff before later initialization can fail, and .post_deinit() then sets it
+> back to 0. Otherwise LGTM.
+> 
+> (Again, I did some quick tests on an S4 Spider, covering the normal path and
+> several injected failure paths. I don't have V4H hardware, though.)
+> Please feel free to pick either or both tags, if that helps.
+> 
+> Reviewed-by: Koichiro Den <den@valinux.co.jp>
+> Tested-by: Koichiro Den <den@valinux.co.jp>
 
-I reviewed this a few days ago, but wanted to postpone my
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-until I could add a
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-too.
+I have updated the commit message and collected the tags, thank you !
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Best regards,
+Marek Vasut
