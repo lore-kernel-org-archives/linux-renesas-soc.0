@@ -1,185 +1,436 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B6E47F77E
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 17:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF68347F2FA
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 17:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246146; cv=none; b=CUvSyOC4DY4zafh5QVCx0Gjz2TQULmCHoUkv4/Q6iVRnfXDE/WRPleyqIbtlUVBI+g+pdOSWK6Z2eJYOnSHZ8G4LMZlu4eI3BycOktmrss8t/GDkW0tC5bIeTsblV53rslA7fO8ejpIE58tIqC7H7BpkT27tFwTeFbtFxzUo6Gc=
+	t=1787246224; cv=none; b=Y0MyWSPy9WU9di0M2v7pZBCHwCkcoPpt93dN41i8rOVB2D/pyBvHBzrOycS4Bg7/JABQ4dvvkscWfHl/HBFwARYNEEMVgKzb3wuiWMkwoyyARABz1AzFF5bOsR/TukIfdI74+wsze1s9vKojLW+qY6+uQTPLR/2pQE28Q9Ldnhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246146; c=relaxed/simple;
-	bh=9tk8Sl/tU+k06lyjB+gI117CsAuIPPkNt46ArevX/WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJ0ONZNIvUH3HlgZUykGpvIUPU6SKjpzbP1H2m2Uod99kxZEyNa7DTpDJ0XzMkpBY2Lk/1ybTH4W+nVLMDv3rOZqwgs+YdT5+cGmfaKY0P0hYJgsh/pDSIhOACSdKCegWxtDn79SaVmHxDAAUSSXGEqAQm4mACjRLSO7ewbxEWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1gwD+sR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WYRy9Gkb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1787246224; c=relaxed/simple;
+	bh=QDhf9xlRpZAIbo6PqyU6a7ZltdWrZ4rqXY+qCHbn8W0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fgCzJcXMX1e/3PngKNSC58hL14T93Eywp7cb8FbsZor7AMYIK2tXMh1tox4gBQBqdbkv1mt+dpQSGuA7bN/E7lO/2nsUmJyBQVSpb4ar8VLjfPhSCHoc1WrQjJYE/KjA3RypIO9ms20O46VzxZ0NBZbsPvQUFlCpRel4AtB/U+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rOC6hPVb; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1gwD+sR";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WYRy9Gkb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1787246144;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EM5PkmngzWPW5YVaOcE4doFSUi3DdsSPp8p0edYyrwQ=;
-	b=D1gwD+sRZaYTghvGsT4EXwVi3RNJ2qL7tXeQnOYKK/pItTPGVnl0vVQAUCAxEZGwDJpipi
-	PPJqV1ovKWLvppF4boKj1aHQ0CH8Nqxw4/OaYj4m+uhHv6PNlZuKwdo0CBkUbcPlKkG82X
-	T9qcSm7ZBCknLKzsbkm5+0I15oGuGeE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-x9Kn1kbSNJyyuRj_WKjvzw-1; Thu, 20 Aug 2026 13:15:31 -0400
-X-MC-Unique: x9Kn1kbSNJyyuRj_WKjvzw-1
-X-Mimecast-MFC-AGG-ID: x9Kn1kbSNJyyuRj_WKjvzw_1787246130
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-49554715277so437215e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 10:15:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rOC6hPVb"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-493b966dd74so347465e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 10:17:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1787246130; x=1787850930; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=EM5PkmngzWPW5YVaOcE4doFSUi3DdsSPp8p0edYyrwQ=;
-        b=WYRy9Gkb1rjGQdmeEiCJfgTY1e93MBXxbD8jBmNBGWmP9btJUyY9cr9P11CMu8zJ2d
-         9cAcL4SbipaIgiFRWbX6Zpkmr/waNWWVYviq3jcv+4P2ixnL85ea1JG3+K4OgUe15BD8
-         6YATsaMHrRXyuIIYSOyx5GX7twQGXlz/te0WwX339foKU8MR9A+6q1vEltQW4UPVdcN+
-         x8I6uraitVE19u7fss1phx9n+q59ABq0qN1pHPdCst/2CKbX0JbhF9HWrfPZRzSPoOwp
-         vPAlNpqL10o6c//qFjogQ7YWQyqArMm9hl9fHDK34rEl4ird0a0bFpW0nG4bIiF+RR9N
-         Jy4g==
+        d=gmail.com; s=20251104; t=1787246220; x=1787851020; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=HO6KbWQbGI/vMp2lRvwlniRw9gPqYhEOaGmV0T1TQVc=;
+        b=rOC6hPVbiVCTwxwmwbBfBvuSTcxGrsH96PJTr4+cITREq+sdkTcmSzRmTZqs4o0JIn
+         iiqJuZHvOvb9ooDEH2v4alRaoMbMXtEDXdhS0vltdwEM3hP19q0neuQZc02G7n3NaOzD
+         xRiItNJwTacNsVTtI1rYq+P70T86o7ItGNhfvhjwliUO0OJBk9M2l3xbUjp/rna/Xn3a
+         H8CgL8xkRyioRXM9ax74HUrRle3HNfnobOG9QfR8auWSxviqTb3i3a9KF8IY9Ei+K5UL
+         mdlAaeaRu91VYId5KBp7+kjvEuapEvzo97kCnnekc69B+dnyd+fX5nqMhIhsdc1xHJK4
+         /j2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787246130; x=1787850930;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1787246220; x=1787851020;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=EM5PkmngzWPW5YVaOcE4doFSUi3DdsSPp8p0edYyrwQ=;
-        b=kD8KfiIBk6M+J9x13yf/HB+s6OULoDSHTLXVcMjtcpTDyp55vHcHGCwpcgBjIRubLs
-         lwnm8h8JbBtmO7HntlWKGD/VY/DorwPTVoRvrmWJXVNHUVp8vEjN4O/CoV69PS/vRwTW
-         TWN5xwuHhJBqgDSfe2jbk6APNTBhaj+k5PwqR4e0UoIyPZhT/W7EpjhXJsjwKYNnQN0l
-         VLIpzq0c3KDsDdPoJRKfHeiuTbHhFG+Kxt7plfw6RYut0Zna7As8H1RNGky2KGRktz+u
-         JRubG3/MqvCi/Gh7i57cxeCrPAacRUDTuXLdis57+MTNeXSyH8cqW4mzPoFB1fx50dd6
-         px6w==
-X-Forwarded-Encrypted: i=1; AHgh+RofVqG4ozar6URfGDf8nTUN83ar2f9nnesrbJAzbQdHQ3lzZKGSEunj/xi8tNZUbh7PpaWmGKDBHf4idHOnRUvxNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdhS2jqeUYbzrMePlc7hmkZAwc0Pp4pAlxZEA/kDkiqhPgZIDx
-	V961N/664umAykR8Xg77d0GWUj6rByfzplk/QC9epxnVf0TVkZPmpJvmXS7SCuABhYt3u1PSn5D
-	k7FO3LBSW/NIN6iqNQOmLJc3tx6EpBqIAHmY6V+hV7YGYhGZyElwJKx2bjYREjjndn9VMxpI2
-X-Gm-Gg: AR+sD11GPcJ3b7L3ii/kiboONU/NmMc2FyR4sJzLxbC/gcvi/xLQKhFD6UXRXNwYYZi
-	2NiL1k+Z3bRgGCMg1CYQNjwQzrhrtGnTVYrtKDQbb4lcswMjB36AQ85auvE3tcfaMNJ/JdQFtU5
-	vR8kq/ub4EAkmtPmjXLHrb3dxFmBydQ+7RkErJV67FFM9mp/D0P5JiS/w/18Z5oAAdOGZSCAYnm
-	mXUUnXNa2zfPdLzTwPt22q57Tza7SXgAMeWARw08vo3SCxvBR+PLA6NE1NHID7Ub4XrH8A87qd1
-	KiCOvCbT1wLFpGN9eZzR1Yx1Afqb11exkmZpjd+RAJP4b4/iq85NzADVXwMeTSsBGGxiBNO3vxC
-	VeVreN/RT6MjPQEM+MGQQdYSmamdiTMiGbjzH2WeAA1V2qQ==
-X-Received: by 2002:a05:600c:c493:b0:499:7aa7:eaa7 with SMTP id 5b1f17b1804b1-499b845c184mr6845885e9.15.1787246130471;
-        Thu, 20 Aug 2026 10:15:30 -0700 (PDT)
-X-Received: by 2002:a05:600c:c493:b0:499:7aa7:eaa7 with SMTP id 5b1f17b1804b1-499b845c184mr6843265e9.15.1787246129216;
-        Thu, 20 Aug 2026 10:15:29 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:11aa:87f0:935:4f8e:b423:64eb? ([2a01:e0a:11aa:87f0:935:4f8e:b423:64eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482b14514d5sm14505430f8f.10.2026.08.20.10.15.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 10:15:28 -0700 (PDT)
-Message-ID: <dd1da602-675f-4b63-ace3-a23e55ce549b@redhat.com>
-Date: Thu, 20 Aug 2026 19:15:24 +0200
+        bh=HO6KbWQbGI/vMp2lRvwlniRw9gPqYhEOaGmV0T1TQVc=;
+        b=iwIK5D0ecSrvng8/GoDsxtBhfBThzR+WkwbzBjtRdCHsUvZnGjy9pt2G3cSsxBeCn3
+         pVSd8opvZj/LBSGBXJdYQnTY6E+sEjZ3NzT56E9Sb2hBx1HuIhC16CQQp7KiCIfLoCpD
+         N5+CRQGhkeL+UN0+U/aUR3tU0c8HMd4YZPOyQIEc/WwY5teZi/NSRRQ0pNv934FDsvSM
+         qX69nfLEkhDYrqQbNuDuNGVrW2z+W0CJDVq6ciiRTHQUQ2w8Eit9d9Neml8Njn3XMGAh
+         1q+G5s7Asezjckkq28mB9DdUFJGT4jW8n13vNTAR0iZx/SZOa2bVRP/oP5zCM+YDFtk7
+         SePw==
+X-Forwarded-Encrypted: i=1; AHgh+Rrwo0AkULEXsluh+StEhYvVk9idhphOs1rFoq37V5ln+HZFo91YH+6SSWn+AaH+M7+mKDlCDTW0VCLfBcLZTpVzTA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/9z3cC3HWT7Fg2BH2LsWMquPpIFzM0cUEvLPao3yZtiG4M2Cu
+	prYnY6GpMC+G+buxVxFOejdQMKa7W6CVk5MfPfsr4j7vuRwCvjVOt8/o
+X-Gm-Gg: AR+sD13PuZjNLkdPo16JWQtmTg5pKNQ36d/OxgBBRWUb+acXlqaB/e2iJVNzc1a3UTs
+	nss8K/CzGLhyHMzRv9KFATDBFWA4XSfGGnHpH9X9H9fjg1vSV9PHEi5x5aqQ4AKGFycXVIjZy9a
+	9qW6iOSxR3IqJ9iL1MppDH6yJO9a6TI5tZUqEs8h3yZJ8XVZRuHv9H0u1xomYOfYhK4b/S55llk
+	CcxNM9qqpu5UPGSsnap4XFOTYGh0D/JelmgHZhMP83fEa2RmdNZ4+L9JpimrgCYtmHHaPdaW5fS
+	UvLs+PyMfOu/TEgIQuGjCxA8Hgp5AfuY1SjZRC3EMdWofLBBMuRdjMW8mD6WuHgFh7e/WjTAWGd
+	HmTJFHkspO63w86Ywv1QIcHIpLN4h+ISOidujogCrq7b38Sc5TbYGv1riHMmQHQ5z9z66WjFxgr
+	Vnk089A0ofjFacWXPRa7jxAopgG/iiOvtbuxRQO1ni/fwgOxnBUP6EJXLuoGki/SLRWluv4KC5w
+	pv5Tmo=
+X-Received: by 2002:a05:600c:4744:b0:499:93b3:91ea with SMTP id 5b1f17b1804b1-499b831c0b1mr7314365e9.15.1787246219840;
+        Thu, 20 Aug 2026 10:16:59 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a702:d301:eda0:8ef1:e1ab:c2b1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499aa0fd728sm219313495e9.3.2026.08.20.10.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 10:16:59 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Ulf Hansson <ulfh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v24 00/15] Add Renesas RZ/G3L SD/eMMC support
+Date: Thu, 20 Aug 2026 18:16:30 +0100
+Message-ID: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/12] drm/panic: Retry in dispatch function if panic
- output fails
-To: Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
- airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, virtualization@lists.linux.dev,
- sashiko-reviews@lists.linux.dev
-References: <20260818125012.468092-1-tzimmermann@suse.de>
- <20260818125012.468092-8-tzimmermann@suse.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20260818125012.468092-8-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/08/2026 14:28, Thomas Zimmermann wrote:
-> On failed output of QR codes and kmsg buffers, fall back to a user
-> message. QR-code output already did this internally, but now formally
-> support it in drm_panic_dispatch(). Streamlines the existing logic.
-> 
-> Also pass module parameter drm_panic_type as a parameter to
-> drm_panic_dispatch(). This simpifies the implementation. It will later
-> allow for moving the function into a helper library.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks, it looks good to me.
+Hi All,
 
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/drm_panic.c | 24 ++++++++++++------------
->   1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index 12c39217cbcb..0960750bfce2 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -746,9 +746,9 @@ static int drm_panic_get_qr_code(u8 **qr_image, unsigned int qr_version)
->   /*
->    * Draw the panic message at the center of the screen, with a QR Code
->    */
-> -static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb,
-> -				      u32 fg_color, u32 bg_color,
-> -				      unsigned int qr_version)
-> +static int draw_panic_screen_qr_code(struct drm_scanout_buffer *sb,
-> +				     u32 fg_color, u32 bg_color,
-> +				     unsigned int qr_version)
->   {
->   	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
->   	struct drm_rect r_screen, r_logo, r_msg, r_qr, r_qr_canvas;
-> @@ -816,15 +816,6 @@ static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb,
->   	drm_panic_blit(sb, &r_qr, qr_image, qr_pitch, scale, fg_color);
->   	return 0;
->   }
-> -
-> -static int draw_panic_screen_qr_code(struct drm_scanout_buffer *sb,
-> -				     u32 fg_color, u32 bg_color,
-> -				     unsigned int qr_version)
-> -{
-> -	if (_draw_panic_screen_qr_code(sb, fg_color, bg_color, qr_version))
-> -		draw_panic_screen_user(sb, fg_color, bg_color);
-> -	return 0;
-> -}
->   #else
->   static void drm_panic_qr_init(void) {};
->   static void drm_panic_qr_exit(void) {};
-> @@ -899,13 +890,22 @@ static int draw_panic_dispatch(struct drm_scanout_buffer *sb, enum drm_panic_typ
->   {
->   	int ret;
->   
-> +retry:
->   	switch (panic_type) {
->   	case DRM_PANIC_TYPE_KMSG:
->   		ret = draw_panic_screen_kmsg(sb, fg_color, bg_color);
-> +		if (ret) {
-> +			panic_type = DRM_PANIC_TYPE_USER;
-> +			goto retry;
-> +		}
->   		break;
->   #if IS_ENABLED(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
->   	case DRM_PANIC_TYPE_QR:
->   		ret = draw_panic_screen_qr_code(sb, fg_color, bg_color, qr_version);
-> +		if (ret) {
-> +			panic_type = DRM_PANIC_TYPE_USER;
-> +			goto retry;
-> +		}
->   		break;
->   #endif
->   	case DRM_PANIC_TYPE_USER:
+The Renesas RZ/G3L SoC has:
+
+Channel 0 supports SD and eMMC (including HS400/HS400ES).
+Channel 1 supports SD and eMMC (except for HS400).
+Channel 2 supports SD.
+
+The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
+not support IOVS and PWEN in the SDHI register (no internal regulator),
+unlike SD1 and SD2. It has an internal divider for all modes except HS400.
+It also has a 2048-bit divider compared to 512 on others. Moreover
+RZ/G3L supports HS400 enhanced strobe mode.
+
+This patch series support all modes. Please see the test logs for
+smarc-rzg3l[1]
+
+This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
+rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
+
+v23->v24:
+ * Added Add SDHI_SD_CLK_CTL_DIV1 macro for handling 1/1 option.
+ * Updated commit description for patch#6.
+ * Replaced GENMASK(7, 0) with CLK_CTL_DIV_MASK.
+ * Replaced magic bits GENMASK(9, 8) and GENMASK(17, 16) with
+   RZG3L_CLK_CTL_DIV9_DIV8 and RZG3L_CLK_CTL_DIV9_DIV8_SRC.
+ * Simplified renesas_sdhi_set_tmpport().
+ * Replaced GENMASK(15, 0) with RZG3L_SDHI_SCC_HS400MODE1_TMPOUT.
+v22->v23:
+ * Added write32hook function for hardware idle synchronization for
+   CTL_SD_CARD_CLK_CTL writes.
+ * Changed the data type of max_divider from unsigned int to signed int.
+ * Assigned of_data->clk_div_mask in renesas_sdhi_probe().
+ * Updated commit description for patch#7.
+ * Updated tmio_mmc_reset() to handle 32 bit divider register in RZ/G3L.
+v21->v22:
+ * Added HS400 ES mode after fixing inode corruption when eMMC is
+   mounted as rootfs.
+ * Updated commit descriptions for patches #4, #5, #6, #7, #9, #12,
+   and #13.
+ * Added clk_div_mask to of_default_cfg and of_rcar_gen2_compatible.
+ * Added a renesas_sdhi_set_hw_adjustment_delay() call to
+   renesas_sdhi_init_tuning().
+ * Added renesas_sdhi_is_internal_divider_enabled() and
+   renesas_sdhi_clk_get_rate() to simplify the clock rate logic.
+ * Added `clock &= ~GENMASK(9, 8)` to clear the divider mask bits in
+   the register value.
+ * Added a renesas_sdhi_set_tmpport() helper to set delay values.
+ * Added a check in renesas_sdhi_is_internal_divider_enabled() to
+   return disabled status when in HS400 mode.
+ * renesas_sdhi_reset() now restores data strobe register values
+   after reset.
+v20->v21:
+ * Dropped HS400 ES support due to file system corruption, will add this
+   mode later after investigation.
+ * Added support for make clock divider mask configurable
+ * Added clk_div_mask to RZ/G2L of_data.
+ * Added clk_div_mask to RZ/G3L of_data.
+ * Restored actual_clk calculation in renesas_sdhi_set_clock().
+ * Updated renesas_sdhi_set_clock() for RZ/G3L HS400 clock handling as
+   it supports only single clk divider value and other values are
+   prohibited.
+ * Updated commit description for patch#12.
+v19->v20:
+ * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
+   the code after assignment of variable mmd, this ensures assigning
+   the default values for non-DT platforms and DT platforms with no
+   device data.
+ * Replaced the check mmd->max_divider with mmc_data->max_divider and
+   moved the code after assignment of variable mmd, this ensures
+   assigning the default values for non-DT platforms and DT platforms with
+   no device data.
+ * Fixed the ordering of resets in suspend/resume paths.
+ * Added bitfield.h header file.
+ * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
+   case and the 32-bit register write.
+ * Updated resume() with scoped PM runtime call.
+ * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
+   register.
+v18->v19:
+ * Updated commit description for patch#1,#2,#6,#8,#11 and #12
+ * Updated clock and reset description with AXI master and AXI slave
+ * Added else condition for reset and reset-names.
+ * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
+ * Retained the tag got binding patch as the changes are trivial.
+ * Fixed the clk_mask for non-DT platforms.
+ * Fixed max-divider setting for non-DT platforms.
+ * Replaced the magic number '9' with ilog2 function in
+   renesas_sdhi_clk_enable().
+ * Dropped divider variable from struct renesas_sdhi.
+ * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
+   and non HS400 mode(uses 1/2 internal divider).
+ * Updated handling for clk divider.
+ * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
+   hardware tuning delays
+ * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
+ * Updated suspend/resume with scoped runtime calls in suspend.
+ * Fixed extra space in HS400MODE2 comment block.
+ * Updated the comment HS400mode2->HS400MODE2.
+ * Dropped the updation of clk handling as it is taken care in
+   previous patches.
+ * HS400ES support is enabled based on of_data.
+ * Fixed the space in HS400ES comment block.
+
+v17->v18:
+ * Collected tag
+ * Merged patch #4 and #5 and updated commit description
+ * Annotated the empty sentinel entries in the OF match tables with a
+   "Sentinel." comment for clarity.
+ * Retained the tag as it is a trivial cleanup.
+ * New patches drop struct renesas_sdhi_hw_info, instead using
+   renesas_sdhi_of_data and tmio_mmc_data.
+ * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
+   will send later.
+v1->v17:
+ * Collected tag for binding patch.
+ * Resending the series as there is an issue with patch threading from
+   patch #14.
+
+[1]
+Logs:
+HS200:(With internal divider)
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    9 (mmc HS200)
+signal voltage: 1 (1.80 V)
+driver type:    1 (driver type A)
+
+SDR104:(With internal divider)
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      2 (4 bits)
+timing spec:    6 (sd uhs SDR104)
+signal voltage: 1 (1.80 V)
+driver type:    0 (driver type B)
+
+HS400: (Without internal divider)
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    10 (mmc HS400)
+signal voltage: 1 (1.80 V)
+driver type:    1 (driver type A)
+
+HS400 ES: (Without internal divider)
+root@smarc-rzg3l:~# cat /proc/cmdline
+rw rootwait earlycon root=/dev/mmcblk0p2 net.ifnames=0
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    10 (mmc HS400 enhanced strobe)
+signal voltage: 1 (1.80 V)
+driver type:    1 (driver type A)
+
+s2ram:
+root@smarc-rzg3l:~# echo mem > /sys/power/state
+[   72.838238] PM: suspend entry (deep)
+[   72.864225] Filesystems sync: 0.021 seconds
+[   72.875166] Freezing user space processes
+[   72.883030] Freezing user space processes completed (elapsed 0.003 seconds)
+[   72.890237] OOM killer disabled.
+[   72.893612] Freezing remaining freezable tasks
+[   72.900038] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[   72.907677] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rzg3l_1.0.1_rc2
+NOTICE:  BL2: Built : 11:18:41, Jul 15 2026
+INFO:    BL2: Doing platform setup
+INFO:    Configuring TrustZone Controller
+INFO:    Total 3 regions set.
+INFO:    Configuring TrustZone Controller
+INFO:    Total 1 regions set.
+INFO:    Configuring TrustZone Controller
+INFO:    Total 1 regions set.
+INFO:    eMMC boot from partition 1
+INFO:    Loading image id=39 at address 0x44428
+INFO:    emmcdrv_block_len: len: 0x00001000
+INFO:    Load dst=0x44428 src=(p:1)0x260000(4864) len=0x1000(8)
+INFO:    Image id=39 loaded: 0x44428 - 0x45428
+INFO:    DDR: Retention Exit (Rev. 02.05)
+NOTICE:  BL2: SYS_LSI_MODE: 0x12051
+NOTICE:  BL2: SYS_LSI_DEVID: 0x87d9447
+INFO:    BL2: Skip loading image id 3
+INFO:    BL2: Skip loading image id 5
+NOTICE:  BL2: Booting BL31
+INFO:    Entry point address = 0x44000000
+INFO:    SPSR = 0x3cd
+[   72.951851] renesas-gbeth 11c30000.ethernet eth0: Link is Down
+[   72.955613] Disabling non-boot CPUs ...
+[   72.957320] psci: CPU3 killed (polled 4 ms)
+[   72.961085] psci: CPU2 killed (polled 0 ms)
+[   72.964897] psci: CPU1 killed (polled 0 ms)
+[   72.966874] Enabling non-boot CPUs ...
+[   72.967144] Detected VIPT I-cache on CPU1
+[   72.967202] GICv3: CPU1: found redistributor 100 region 0:0x0000000012460000
+[   72.967250] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[   72.968284] CPU1 is up
+[   72.968428] Detected VIPT I-cache on CPU2
+[   72.968462] GICv3: CPU2: found redistributor 200 region 0:0x0000000012480000
+[   72.968493] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[   72.969465] CPU2 is up
+[   72.969633] Detected VIPT I-cache on CPU3
+[   72.969673] GICv3: CPU3: found redistributor 300 region 0:0x00000000124a0000
+[   72.969714] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[   72.970760] CPU3 is up
+[   72.989187] dwmac4: Master AXI performs fixed burst length
+[   72.989231] renesas-gbeth 11c30000.ethernet eth0: No Safety Features support found
+[   72.989275] renesas-gbeth 11c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
+[   72.990364] renesas-gbeth 11c30000.ethernet eth0: configuring for phy/rgmii-id link mode
+[   73.005175] dwmac4: Master AXI performs fixed burst length
+[   73.005205] renesas-gbeth 11c40000.ethernet eth1: No Safety Features support found
+[   73.005236] renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advanced Timestamp supported
+[   73.006314] renesas-gbeth 11c40000.ethernet eth1: configuring for phy/rgmii-id link mode
+[   73.177702] OOM killer enabled.
+[   73.180837] Restarting tasks: Starting
+[   73.186007] Restarting tasks: Done
+[   73.189570] random: crng reseeded on system resumption
+[   73.195001] PM: suspend exit
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios[   75.705532] renesas-gbeth 11c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    10 (mmc HS400 enhanced strobe)
+signal voltage: 1 (1.80 V)
+driver type:    1 (driver type A)
+root@smarc-rzg3l:~#
+
+s2idle:
+root@smarc-rzg3l:~# echo freeze > /sys/power/state
+[   97.634564] PM: suspend entry (s2idle)
+[   97.655343] Filesystems sync: 0.016 seconds
+[   97.662352] Freezing user space processes
+[   97.666531] Freezing user space processes completed (elapsed 0.004 seconds)
+[   97.676132] OOM killer disabled.
+[   97.679743] Freezing remaining freezable tasks
+[   97.687107] Freezing remaining freezable tasks completed (elapsed 0.002 seconds)
+[   97.695071] printk: Suspending console(s) (use no_console_suspend to debug)
+[   97.744129] renesas-gbeth 11c30000.ethernet eth0: Link is Down
+[  100.135760] dwmac4: Master AXI performs fixed burst length
+[  100.135805] renesas-gbeth 11c30000.ethernet eth0: No Safety Features support found
+[  100.135848] renesas-gbeth 11c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
+[  100.137950] renesas-gbeth 11c30000.ethernet eth0: configuring for phy/rgmii-id link mode
+[  100.154860] dwmac4: Master AXI performs fixed burst length
+[  100.154890] renesas-gbeth 11c40000.ethernet eth1: No Safety Features support found
+[  100.154919] renesas-gbeth 11c40000.ethernet eth1: IEEE 1588-2008 Advanced Timestamp supported
+[  100.154984] renesas-gbeth 11c40000.ethernet eth1: configuring for phy/rgmii-id link mode
+[  100.246688] OOM killer enabled.
+[  100.249851] Restarting tasks: Starting
+[  100.254395] Restarting tasks: Done
+[  100.258012] random: crng reseeded on system resumption
+[  100.263468] PM: suspend exit
+root@smarc-rzg3l:~#
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc0/ios[  102.690106] renesas-gbeth 11c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+
+clock:          150000000 Hz
+actual clock:   150000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    10 (mmc HS400 enhanced strobe)
+signal voltage: 1 (1.80 V)
+driver type:    1 (driver type A)
+root@smarc-rzg3l:~#
+
+SDIO testing:
+root@smarc-rzg3l:~# cat /sys/kernel/debug/mmc1/ios
+clock:          100000000 Hz
+actual clock:   100000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      2 (4 bits)
+timing spec:    5 (sd uhs SDR50)
+signal voltage: 1 (1.80 V)
+driver type:    0 (driver type B)
+root@smarc-rzg3l:~#
+root@smarc-rzg3l:~# ping google.com
+PING google.com (142.250.151.139): 56 data bytes
+64 bytes from 142.250.151.139: seq=0 ttl=112 time=7.679 ms
+64 bytes from 142.250.151.139: seq=1 ttl=112 time=12.283 ms
+^C
+google.com ping statistic
+packets transmitted, 2 packets received, 0% packet loss
+round-trip min/avg/max = 7.679/9.981/12.283 ms
+
+Biju Das (15):
+  dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+  mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
+  mmc: renesas_sdhi: Add clk_mask field to support flexible clock
+    divider widths
+  mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock
+    ranges
+  mmc: renesas_sdhi: Add SDHI_SD_CLK_CTL_DIV1 macro for 1/1 option
+  mmc: renesas_sdhi: Make clock divider mask configurable
+  mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
+  mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
+  mmc: renesas_sdhi: Add optional axis/axim reset controls
+  mmc: renesas_sdhi: Add write32_hook for CTL_SD_CARD_CLK_CTL register
+    writes
+  mmc: renesas_sdhi: Add RZ/G3L SDHI support
+  mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
+  mmc: renesas_sdhi: Make HS400 OSEL bit configurable per SoC
+  mmc: renesas_sdhi: Add RZ/G3L HS400 support
+  mmc: renesas_sdhi: Add HS400 enhanced strobe support for RZ/G3L
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 108 ++++--
+ drivers/mmc/host/renesas_sdhi.h               |  13 +-
+ drivers/mmc/host/renesas_sdhi_core.c          | 344 +++++++++++++++---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  78 +++-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  16 +-
+ drivers/mmc/host/tmio_mmc.h                   |   7 +
+ drivers/mmc/host/tmio_mmc_core.c              |  13 +-
+ include/linux/platform_data/tmio.h            |  19 +
+ 8 files changed, 504 insertions(+), 94 deletions(-)
+
+-- 
+2.43.0
 
