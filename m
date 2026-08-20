@@ -1,289 +1,109 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mail.mindbit.ro (xs1.mindbit.ro [80.86.107.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770551F942
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 23:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEE1FF1DA;
+	Thu, 20 Aug 2026 01:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.86.107.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787180905; cv=none; b=kIRPvgf4EmK3UfruJ/UGSeKAQOiYS10vwRco8TSh/GjIsM4VACP9hcBEuK574/IkkytnKylQ7piYmqSUePncBJf2FUAkyhPb8jQqj1W65/9JEVpGVmnbzaA9ZMUJgCzRIrBFf0LAR5Vfa4k8Ed9zlq2XnEMXSCaJm4vkQWG5beQ=
+	t=1787188481; cv=none; b=hQnTAU+IFqW6meI5uUi5x5hlmwRBHQ56C9dqtFonDM2+pW03hOOl0y/mkrx1bvSqOxy6+gpCMgDHaB8Uw6d5RADkULaQ9tSWLXoh0sQaMuiFSJdDimW9b280EyC7kL1/4mK34L2vNRr9fg/0UZkljmOnwyAGrOTftkOWJuS+rxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787180905; c=relaxed/simple;
-	bh=dGwsFaCzHxvEmwi2AoLGVwQWfgYGHY4mP65plRTWh5k=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=nGn7szAkGR4x8+KxXhzB6vDF5dFOdFnnd9iYGH6UhxIOdQs4V4onkrTK9Jer0jqmIQBr/TG3iZiRRz0GICZzMQA+DwVk1pCVA3Y0gS4BRM+A1/cDreSH77Nhv4ISbwoapebHC2XEWNJwO/mArmJ8t/vWZgTqpDXNvk3ka5xtxJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wuj6krd2; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1787188481; c=relaxed/simple;
+	bh=YZIOLcg3lbGdEWhjUb8tlJcE4fAXnBy5MUryhub+57o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gg7P1nxTPJnjhJjeaiSB4zhIHGarCqkKY608TkqVinAwVb4yeQZQYOPTc/9va8I9UboOfZpaIDg6PTZwSTa0ulaw2fg0EhmNPx4mQdj13nFRrtQu4ilNCcU9u9J0EqqBQjFRodJkIGsgBFXw/34HMlXT73bYiLQRRL+WFaNR9p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rendec.net; spf=pass smtp.mailfrom=rendec.net; dkim=pass (2048-bit key) header.d=rendec.net header.i=@rendec.net header.b=CCpFde5P; arc=none smtp.client-ip=80.86.107.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rendec.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rendec.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wuj6krd2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787180903; x=1818716903;
-  h=date:from:to:cc:subject:message-id;
-  bh=dGwsFaCzHxvEmwi2AoLGVwQWfgYGHY4mP65plRTWh5k=;
-  b=Wuj6krd2WZDZpENYZWHt8gtoN2/odkSdZdXd4ZSCmbqKsDJDLQMSvrS6
-   au/n1Ak8Da8/2n7DtVi3hahvcFtOoLvvMgCgUyI21N5s0s0job1gGaRES
-   hOM3bQ09xIBnq2/bNIkaz62Lr2U+ie7GPjHHZltnjRVMT5JfU+e1oHahe
-   MgPSNMrhBGDCRUGZUrMTmYAfEXSUWbKJEBMZw8qlTMkXeoLW7l+YgHexg
-   kVFBA7IncuhlkSpk4fsLeMcm1O2jbfficlmEe/IkyEVlnW3xTyP5wZchG
-   nCiEf2l+wcegw13CRNTD5YzomLNmlNtfORRrifJFL53Ep61WeFZljxa4D
-   A==;
-X-CSE-ConnectionGUID: HEYGZOmaRIq52iyw8LgKuw==
-X-CSE-MsgGUID: uoYLiHr4SiC2B8fTx667aA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11880"; a="75240971"
-X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; 
-   d="scan'208";a="75240971"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 16:08:22 -0700
-X-CSE-ConnectionGUID: xjkXyB3GQBqZDVUD0v4efg==
-X-CSE-MsgGUID: GECICbewQNmjOSDu2nWZCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; 
-   d="scan'208";a="269987787"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 19 Aug 2026 16:08:21 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wwpOM-00000000gr7-3NCV;
-	Wed, 19 Aug 2026 23:08:18 +0000
-Date: Thu, 20 Aug 2026 07:07:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:master] BUILD REGRESSION
- 03fb6a6169e563cfc4ad01bac2578fa412a343d3
-Message-ID: <202608200732.FF0G0YsJ-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=rendec.net header.i=@rendec.net header.b="CCpFde5P"
+Received: from dog.kanata.rendec.net (pool-174-112-193-187.cpe.net.cable.rogers.com [174.112.193.187])
+	by mail.mindbit.ro (Postfix) with ESMTPSA id 3C535CC744;
+	Thu, 20 Aug 2026 04:14:28 +0300 (EEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.mindbit.ro 3C535CC744
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rendec.net;
+	s=default; t=1787188469;
+	bh=bq3Omu4gGZzFbD2DTaAAE+dSmKH2nlM4i13I4lWDbV8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=CCpFde5PW8JEuvJtt3jCpKGWS18oxxTCoE7sNRl2BhxcbPrI36TinJitq55nGDfOB
+	 An1mlBlFd6nkSglwjkPSiorvBfT7lj+M7vLLMWfA8UI2jwj21Y7AJhORwbIERJOi14
+	 zln8A8dcqNyhDM7VftlPqaA6EZTvuzdwi9ujJNWpWSDe1ypafvfLXLGrQdy8XpVVnf
+	 wd+bVg31PesqQauE6RLmjD2TpLkT4DZ4lISXyz0HOoZpBXCKrdIRVNBrdGkdWBJnQ5
+	 CcjhHpkvUUf1XmBML/waMnc96m9I/t1svcQdKNht98Dcqjuf8+EMyMnjCWuJxBBHRa
+	 tr2Oshwr/BHLg==
+Message-ID: <138761b9f38b027bd4bd872e3a353075a7b11efb.camel@rendec.net>
+Subject: Re: [PATCH v2] irqchip/renesas-rzg2l: Fix loss of interrupt
+From: Radu Rendec <radu@rendec.net>
+To: Biju <biju.das.au@gmail.com>, Thomas Gleixner <tglx@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, Lad Prabhakar	
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>, 
+	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+ 	linux-renesas-soc@vger.kernel.org
+Date: Wed, 19 Aug 2026 21:14:26 -0400
+In-Reply-To: <20260818110937.5816-1-biju.das.jz@bp.renesas.com>
+References: <20260818110937.5816-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
-branch HEAD: 03fb6a6169e563cfc4ad01bac2578fa412a343d3  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+On Tue, 2026-08-18 at 12:09 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> rzg2l_clear_irq_int() and rzg2l_clear_tint_int() perform a
+> read-modify-write on the ISCR/TSCR status registers to clear the bit
+> for the interrupt just handled. Since these registers are
+> write-0-to-clear per bit, this is racy: if another interrupt's status
+> bit gets set between the read and the write, that bit is written back
+> as 0 by the software-constructed value, clearing an interrupt that
+> hasn't been serviced yet and losing it. This can be reproduced by
+> triggering multiple interrupts at once, e.g.:
+>=20
+> =C2=A0 gpioset -c gpiochip0 355=3D0 353=3D0 328=3D0 352=3D0
+>=20
+> Fix this by writing back only the bit being cleared, with all other
+> bits set to 1, instead of read-modify-writing the whole register.
+> Since 1-bits are left unchanged by hardware, concurrently-set status
+> bits for other interrupts are preserved.
+>=20
+> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller drive=
+r")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+> =C2=A0* Updated the commit description.
+> ---
+> =C2=A0drivers/irqchip/irq-renesas-rzg2l.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
+nesas-rzg2l.c
+> index f6b2e69a2f4e..b3774f82855a 100644
+> --- a/drivers/irqchip/irq-renesas-rzg2l.c
+> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
+> @@ -161,7 +161,7 @@ static void rzg2l_clear_irq_int(struct rzg2l_irqc_pri=
+v *priv, unsigned int hwirq
+> =C2=A0	 * falling/rising-edge.
+> =C2=A0	 */
+> =C2=A0	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq))) {
+> -		writel_relaxed(iscr & ~bit, priv->base + ISCR);
+> +		writel_relaxed(~bit, priv->base + ISCR);
+> =C2=A0		/*
+> =C2=A0		 * Enforce that the posted write is flushed to prevent that the
+> =C2=A0		 * just handled interrupt is raised again.
+> @@ -177,7 +177,7 @@ static void rzg2l_clear_tint_int(struct rzg2l_irqc_pr=
+iv *priv, unsigned int hwir
+> =C2=A0
+> =C2=A0	reg =3D readl_relaxed(priv->base + TSCR);
+> =C2=A0	if (reg & bit) {
+> -		writel_relaxed(reg & ~bit, priv->base + TSCR);
+> +		writel_relaxed(~bit, priv->base + TSCR);
+> =C2=A0		/*
+> =C2=A0		 * Enforce that the posted write is flushed to prevent that the
+> =C2=A0		 * just handled interrupt is raised again.
 
-Error/Warning (recently discovered and may have been fixed):
-
-    https://lore.kernel.org/oe-kbuild-all/202608191120.4qS1lHiP-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202608192230.6MHdCZJS-lkp@intel.com
-
-    drivers/gpu/drm/xe/xe_device.c:51:10: fatal error: 'xe_log.h' file not found
-    drivers/gpu/drm/xe/xe_device.c:51:10: fatal error: xe_log.h: No such file or directory
-    drivers/gpu/drm/xe/xe_guc_submit.c:844:10: error: 'struct xe_guc_exec_queue' has no member named 'multi_queue'
-    drivers/gpu/drm/xe/xe_guc_submit.c:844:12: error: no member named 'multi_queue' in 'struct xe_guc_exec_queue'
-    drivers/gpu/drm/xe/xe_guc_submit.c:844:31: error: 'struct xe_guc_exec_queue' has no member named 'multi_queue'
-    drivers/gpu/drm/xe/xe_guc_submit.c:868:18: error: 'struct xe_exec_queue_group' has no member named 'cgp_update_q'
-    drivers/gpu/drm/xe/xe_guc_submit.c:868:20: error: no member named 'cgp_update_q' in 'struct xe_exec_queue_group'
-    drivers/gpu/drm/xe/xe_guc_submit.c:868:25: error: 'struct xe_exec_queue_group' has no member named 'cgp_update_q'
-    drivers/gpu/drm/xe/xe_pci.c:28:10: fatal error: 'xe_log.h' file not found
-    drivers/gpu/drm/xe/xe_pci.c:28:10: fatal error: xe_log.h: No such file or directory
-
-Error/Warning ids grouped by kconfigs:
-
-recent_errors
-|-- alpha-randconfig-r053-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- csky-randconfig-002-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-buildonly-randconfig-003-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-randconfig-001-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-randconfig-004-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-randconfig-006-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-randconfig-053-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- i386-randconfig-054-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- m68k-randconfig-r054-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- um-randconfig-002-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- um-randconfig-r051-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- x86_64-randconfig-003-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h-file-not-found
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:no-member-named-cgp_update_q-in-struct-xe_exec_queue_group
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:no-member-named-multi_queue-in-struct-xe_guc_exec_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h-file-not-found
-|-- x86_64-randconfig-005-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- x86_64-randconfig-014-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- x86_64-randconfig-071
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- x86_64-randconfig-073-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-|-- x86_64-randconfig-102-20260819
-|   |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-|   |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-|   `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-`-- x86_64-randconfig-r052-20260819
-    |-- drivers-gpu-drm-xe-xe_device.c:fatal-error:xe_log.h:No-such-file-or-directory
-    |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_exec_queue_group-has-no-member-named-cgp_update_q
-    |-- drivers-gpu-drm-xe-xe_guc_submit.c:error:struct-xe_guc_exec_queue-has-no-member-named-multi_queue
-    `-- drivers-gpu-drm-xe-xe_pci.c:fatal-error:xe_log.h:No-such-file-or-directory
-
-elapsed time: 1474m
-
-configs tested: 100
-configs skipped: 0
-
-tested configs:
-alpha                            allnoconfig    gcc-16.1.0
-alpha                           allyesconfig    gcc-16.1.0
-alpha                              defconfig    gcc-16.1.0
-arc                             allmodconfig    gcc-16.1.0
-arc                             allyesconfig    gcc-16.1.0
-arc                  randconfig-001-20260819    gcc-11.5.0
-arc                  randconfig-002-20260819    gcc-13.4.0
-arm                  randconfig-001-20260819    gcc-13.4.0
-arm                  randconfig-002-20260819    gcc-15.2.0
-arm                  randconfig-003-20260819    gcc-10.5.0
-arm                  randconfig-004-20260819    gcc-15.2.0
-arm                        vf610m4_defconfig    gcc-16.1.0
-arm64                randconfig-001-20260819    gcc-11.5.0
-arm64                randconfig-002-20260819    clang-17
-arm64                randconfig-003-20260819    clang-17
-arm64                randconfig-004-20260819    gcc-8.5.0
-csky                            allmodconfig    gcc-16.1.0
-csky                 randconfig-001-20260819    gcc-9.5.0
-csky                 randconfig-002-20260819    gcc-11.5.0
-hexagon              randconfig-001-20260819    clang-22
-hexagon              randconfig-002-20260819    clang-24
-i386                            allmodconfig    gcc-14
-i386       buildonly-randconfig-001-20260819    clang-22
-i386       buildonly-randconfig-002-20260819    gcc-14
-i386       buildonly-randconfig-003-20260819    gcc-14
-i386       buildonly-randconfig-004-20260819    gcc-14
-i386       buildonly-randconfig-005-20260819    gcc-14
-i386       buildonly-randconfig-006-20260819    gcc-12
-i386                          randconfig-001    clang-22
-i386                 randconfig-001-20260819    gcc-14
-i386                 randconfig-002-20260819    gcc-14
-i386                 randconfig-003-20260819    gcc-14
-i386                 randconfig-004-20260819    gcc-14
-i386                 randconfig-005-20260819    gcc-14
-i386                 randconfig-006-20260819    gcc-12
-i386                 randconfig-007-20260819    clang-22
-i386                 randconfig-011-20260819    gcc-13
-i386                 randconfig-012-20260819    gcc-14
-i386                 randconfig-013-20260819    gcc-14
-i386                 randconfig-014-20260819    clang-22
-i386                 randconfig-015-20260819    clang-22
-i386                 randconfig-016-20260819    clang-22
-i386                 randconfig-017-20260819    clang-22
-loongarch                          defconfig    clang-24
-loongarch            randconfig-001-20260819    clang-24
-loongarch            randconfig-002-20260819    gcc-16.1.0
-nios2                           allmodconfig    gcc-11.5.0
-nios2                            allnoconfig    gcc-11.5.0
-nios2                randconfig-001-20260819    gcc-11.5.0
-nios2                randconfig-002-20260819    gcc-8.5.0
-parisc                          allmodconfig    gcc-16.1.0
-parisc                          allyesconfig    gcc-16.1.0
-parisc                             defconfig    gcc-16.1.0
-parisc               randconfig-001-20260819    gcc-8.5.0
-parisc               randconfig-002-20260819    gcc-16.1.0
-powerpc              randconfig-001-20260819    clang-24
-powerpc              randconfig-002-20260819    gcc-8.5.0
-powerpc64            randconfig-001-20260819    clang-24
-powerpc64            randconfig-002-20260819    clang-21
-riscv                randconfig-001-20260819    gcc-8.5.0
-riscv                randconfig-002-20260819    gcc-9.5.0
-s390                 randconfig-001-20260819    gcc-14.3.0
-s390                 randconfig-002-20260819    clang-24
-sh                                 defconfig    gcc-16.1.0
-sh                   randconfig-001-20260819    gcc-16.1.0
-sh                   randconfig-002-20260819    gcc-11.5.0
-sparc                randconfig-001-20260819    gcc-12.5.0
-sparc                randconfig-002-20260819    gcc-8.5.0
-sparc64              randconfig-001-20260819    clang-20
-sparc64              randconfig-002-20260819    gcc-10.5.0
-um                   randconfig-001-20260819    gcc-14
-um                   randconfig-002-20260819    gcc-12
-x86_64     buildonly-randconfig-001-20260819    gcc-14
-x86_64     buildonly-randconfig-002-20260819    gcc-14
-x86_64     buildonly-randconfig-003-20260819    gcc-14
-x86_64     buildonly-randconfig-004-20260819    gcc-14
-x86_64     buildonly-randconfig-005-20260819    gcc-14
-x86_64     buildonly-randconfig-006-20260819    gcc-14
-x86_64               randconfig-001-20260819    clang-22
-x86_64               randconfig-002-20260819    clang-22
-x86_64               randconfig-003-20260819    clang-22
-x86_64               randconfig-004-20260819    clang-22
-x86_64               randconfig-005-20260819    gcc-14
-x86_64               randconfig-006-20260819    gcc-14
-x86_64                        randconfig-011    gcc-14
-x86_64               randconfig-011-20260819    gcc-14
-x86_64               randconfig-012-20260819    gcc-14
-x86_64               randconfig-013-20260819    gcc-14
-x86_64               randconfig-014-20260819    gcc-14
-x86_64               randconfig-015-20260819    clang-22
-x86_64               randconfig-016-20260819    gcc-12
-x86_64                        randconfig-071    gcc-14
-x86_64               randconfig-071-20260819    gcc-14
-x86_64               randconfig-072-20260819    gcc-14
-x86_64               randconfig-073-20260819    gcc-12
-x86_64               randconfig-074-20260819    clang-22
-x86_64               randconfig-075-20260819    gcc-14
-x86_64               randconfig-076-20260819    gcc-14
-xtensa               randconfig-001-20260819    gcc-16.1.0
-xtensa               randconfig-002-20260819    gcc-14.3.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Radu Rendec <radu@rendec.net>
