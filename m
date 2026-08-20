@@ -1,117 +1,123 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39EA36E46F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 10:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9134229BC
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 11:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787220833; cv=none; b=avu8dTLWoLzzib/j0C8iB58+Fs8lWrbHb7oHNDAsEWn7kMOYG5Pl8uEGdDEe8u7mrf5LVB+hmN1KOVWx0Wx+SrHb1sIzzMPoEANVCStOQeqF+r4Q/IH7Wa4X4fd+5nyhl8PsCyuFtzzPxmllDN6pzmUfWburfR1FWvrtqtf4doM=
+	t=1787224851; cv=none; b=srkNBgFyTmRc5+p8edQtx+Tz26oH4ITJN0MT01V6HoMUUU1wu/tkMrJAy+Ze00Duh1FVw29CFGNSwuXO6ubS/x/0JSrqOG/Uiub4SsOiwqD8l+/iJFF6Ml3xf+U0PNoaKvavrqOwxHNOPE/lhWxNlPHg5hHSSxeTHBZvshgUaGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787220833; c=relaxed/simple;
-	bh=J8SsCEbocsyTwxq3MZbYRuvps2cw72VJe49uJ1IGeUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VhnTTcpB8kGGwyXst9DRRKTL7bE68pXfNJEwCcf7QQBhz/wJCoQjvPX0IjYqpPjNq3PpcIcSgO31dMe8MAtcSzB0jqeHBQ/YkaorEZIud8ar/9X47e7ZNF8sgwHZ3t1OCCvZGcUerOaql992uzdm86wM5w1z0V5WRl2sIXxTApg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5bfb3347dc4so1473692e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 03:13:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787220825; x=1787825625;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=+W1h9goTHh77Au8749p4RyYvKYe3xrOhWg/p6R4W4WY=;
-        b=SWtqAKjDh75bVU78SLNirk3YSbJstG6GUu45l4HRPS9gg4jZ8+p0EhC2K3kFITcaVq
-         DVAgJRNDbp/Jgb8FjViFkfWyHO6gjHYd8ofVHF8OzGeBxUqdG0pGKSI2FQ6vggf3Y8Yg
-         71CtUeeIfd/c1Ut7mRXReR0z1CeI94ZpCtlNuLBhIB2XdtQbfaCOWMN3SAQ3AttI+nFq
-         q7ihtyl9eGKqicTNsqtU4uKextmMaoSCxSX5U7B3u9ls5wXP12hCjZFXNuwuHwATNTZW
-         kJwiT4UBdXdgVMzlLP9SRvPnBGPBrzWmvUQZadLq0yJkq2j24X+5FIvbiBPIEGGTMhVM
-         f6cQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoaaCeFYPy+EuGQdb58PusB1AT7s++xy+xxd98PKY9/N8RD7+HddmKB8YmWHKpaDiXyWpUoo2qP0yUjAIN+TysrNw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdTlFu/RAM1dawIpjJWNjmMnAziND6/p+7lyz8ee3ZFP6G7oeS
-	cgXp65QJvIDarPX9PMu75WoIg+81v4DGP1J/Sqybh1Cmyzrb9uB8SdKfsi1jaIE9
-X-Gm-Gg: AR+sD11Gv4CKF+wCcgCJWQ2WcDHOMgkNS31W+V+/mlew7A0buajiObjCOgJ9M4C0cnX
-	wKQrMd0+J/VA413Xq63LN4wTYVVsv8+hJRxzj1yd8J6R/gV8ThSMUCfe/iLyni6AdPVY3vHGZtw
-	CdKT/crfTYDT8ZrZ39V7KRg0aTmUzJuxu9bckgdpnS+jyJVj26GaRrRIoMfR1kQNziyXnL2QqTw
-	Ts5vjoLmTx6THltYIGzQnis8qbOyuhsgKMFUucwjTkdDlXAlu6vIf0egWcWbzcfIwRNDYAf1GBl
-	MfTfguQ0yRljgW9r/5edm/Yt0VG0XjpKv0ut32Qb2uVeFmQOv7XJG1+T5bHfQV/BXxvJs2NXwdS
-	fvqU2RZBz/qEQ7A7nvTv6DSLB9huVUvWdnpqxYvnlivTI01V5nzZsiKnFrOloXwzsRi9Xa3cmuE
-	c2qSXwYFc2bNLyJTY9ht6G5xwpvynw5vLQcFJZLIpQ0IPdPnN+Lx9dywiCZYBrX4MTHqHcLAy7K
-	0kAH+x9ZqCXYiFnz5R7DMeqTA==
-X-Received: by 2002:a05:6122:78a:b0:5bd:71cf:e97e with SMTP id 71dfb90a1353d-5c5e3d73b16mr4642999e0c.5.1787220825086;
-        Thu, 20 Aug 2026 03:13:45 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5e25e3464sm5369233e0c.2.2026.08.20.03.13.44
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 03:13:44 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-97c4fa7ba1bso881835241.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 03:13:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoFc3Dklr6M3HWZD0gw8soXhmBpInaSpmrYBjMxqi4i6AYChOzNLTJ9Fl8cwO4APS60jV6+rblhrEvgDNeKdD815w==@vger.kernel.org
-X-Received: by 2002:a05:6102:370f:b0:738:fd01:5b63 with SMTP id
- ada2fe7eead31-777f8f80ec7mr4599483137.4.1787220823887; Thu, 20 Aug 2026
- 03:13:43 -0700 (PDT)
+	s=arc-20240116; t=1787224851; c=relaxed/simple;
+	bh=rNIcni1lpx8sulgXqfDqfqazBSoFacL6NoG1fGR/mvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rzbum8mGG/aQJzxQ0xDp22PmB9XoAFS3URLeOy7SUJ3ai3cOigzithMerlP83ULpr6TU4TLUTgKTkDV/GW84E1Rl5a7jV3YhTW8/SbCk/QlhFJfnNhomtO7ZH5nKVScdA/mkqTJOrbY2B3SOGfkSxUE9sJmQe35Qk2MDp5sHBNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IFvCHdX1; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IFvCHdX1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Jspu
+	ba05LjL6CBKgMcIeeBbhf0TMfLnZJ0Fd2rSTpU8=; b=IFvCHdX1OIeh2lP84d8c
+	t4zJ5DgqfwoAOCO84BtxIr2ES/iDEmg4AslaFJp0hh8MhhSDB6NKGeYZnmSByfYl
+	m87oz8v69ug/eHstPr4BIj2P95ti+2EXGPvbT73mIQbSSzNPkWoHMEz/RPmLvTiv
+	sSlZgWYsXf68nggI4URuhRdL1k6zKoztXZxoibsAZEWxE808PsFGZIWzWMIND/qM
+	YXq1R9lZrHd0MlhnZXkPL2QmxN6qsdGmwAn+TuwK6OAso8rVFCyRobsuLeGPBOaD
+	oEBYMe5w2gZOGp1NYr+PKJezM2jirPAtX7OrZl0P7xGCOCfCNC4IrZ0eTcF3+e7+
+	mQ==
+Received: (qmail 277534 invoked from network); 20 Aug 2026 13:20:43 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Aug 2026 13:20:43 +0200
+X-UD-Smtp-Session: l3s3148p1@MnTitXhZQNIujnuE
+Date: Thu, 20 Aug 2026 13:20:42 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 13/15] rtc: rzn1: Add OF match data to gate SUBU
+ register access
+Message-ID: <aobjCr7ZtpLmL3VP@ninjato>
+References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260820095742.3094558-1-tommaso.merciai.xr@bp.renesas.com> <20260820095742.3094558-2-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20260820095742.3094558-2-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Aug 2026 12:13:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXUu8M4Xjb27XLcMWGYFk6NdKwKB6WO2ZQ_FCAvMTJshQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VNatSgn9Gu7wVYSsx8Z9RP9z3QZYhaLomWZy8kncfpOIt52cycw16PoQc
-Message-ID: <CAMuHMdXUu8M4Xjb27XLcMWGYFk6NdKwKB6WO2ZQ_FCAvMTJshQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: sound: renesas,r9a09g047-sound: Drop
- #clock-cells from required
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8FWAH1+rAwdn2nVp"
+Content-Disposition: inline
+In-Reply-To: <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Tommaso,
 
-On Thu, 20 Aug 2026 at 11:58, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> `#clock-cells` declares the node as a clock provider for AUDIO_CLKOUT,
-> which only makes sense on boards that route that pin.
->
-> Drop it from the required list so that boards which do not wire
-> AUDIO_CLKOUT can leave it out.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+--8FWAH1+rAwdn2nVp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+On Wed, Aug 19, 2026 at 11:39:24AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The RZ/N1 RTC driver selects SCMP mode only when an optional xtal clock
+> is provided at a valid rate other than 32768 Hz. Without an xtal clock,
+> or when it runs at 32768 Hz, the driver uses SUBU mode.
+>=20
+> However, the RTCA0SUBU register used by SUBU mode is not present on all
+> SoCs that integrate a similar variant of the RTC block. Allowing SUBU
+> mode on those variants would expose RTC offset operations that access a
+> non-existent register.
+>=20
+> Add OF match data to describe whether the RTC supports the SUBU register.
+> Reject probe with -EOPNOTSUPP when SUBU mode would be selected on a
+> variant without SUBU support.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> --- a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> @@ -298,7 +298,6 @@ required:
->    - reg
->    - reg-names
->    - "#sound-dai-cells"
-> -  - "#clock-cells"
->    - clocks
->    - clock-names
->    - resets
+Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I disagree: this is a property of the sound block, not of board wiring.
+I still think, this code needs a change:
 
-Gr{oetje,eeting}s,
+454                 if (rate !=3D 32768)
+455                         scmp_val =3D RZN1_RTC_CTL0_SLSB_SCMP;
 
-                        Geert
+	if (rate !=3D 32768 || !data->has_subu)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+otherwise having a xtal with 32768 on a SCMP-only device will not be
+accepted despite it should work.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Haven't checked if that could simplify your later has_subu-check or not.
+
+
+--8FWAH1+rAwdn2nVp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqG4wYACgkQFA3kzBSg
+KbbT3g//eDPd2vocikzCHllx9NDlhDYNBdNzSLAnbdJV+Fyazo96+R+WS5lQG13X
+Du2S1c+EWvJzzAwhM2shDnJBTsWAl1RLkRhDsP7XQ+CyRygbrVV8vvCxvtwZGQVG
+oIFHhZd0srm6lHKQJZvyHUz8su37Gib2rbuQMH6720GuVqU2b6sNuLnc1VoCgV2U
+n1v6ooNrVoEoHgccI7b6j/+DVcSHWWP0Qigj/R23yQ3Jzt5Jvz0aV828yRXk9KHX
+taiw1xHhIjDZnCwKNQ8ymTXk/lX92Cj0c1JUhy4LJMpeaB/7u5VQpcWkGFryR7bU
+iuUIEZFIpV+fhCYFQZqrDM/R10nX6Scnf1eIHPzz55GoAjP4YSUbIspOZuSeg2nS
+gOCO/uribzeQvTObAFpfr0AHWW1Q4p+Ki+/jY8NlJpc9u+cJmBL70d/0/3OhvrLs
+S9U6eBDZn6wnxrfG8MYYs1ZQh9tcFVpFdOXO9spdZD9Z80zC4Fk+/DtHdBF/jqgv
+SWdyHguq74w/SnSxKVkfv9VSU9CHFrBofWtRj4kwxKdOaZ+a+70DTMwIvFPzM/Ye
+tqfHWApbIfPykcm29F0X37ctaLL3jyZ02/gYgJytMUCXKX4RmHblE5vrQT7evice
+eBIwObAKldiHzKY6yZ7nAky/R0n26To/KTwy/IOTYqD+OgU+yeM=
+=Nnnz
+-----END PGP SIGNATURE-----
+
+--8FWAH1+rAwdn2nVp--
