@@ -1,126 +1,120 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02422D97BA
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 04:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787201980; cv=pass; b=Uz5sIUWzk7+RHPMq1CfHLXmkKhdZVUdTIYEABIjvx/Ttv4+0p39JiYGMKQNQ7eEnrTxs7UP7ev5s3jZS2f9xVd6B7enxkAudeM2HMdNMV4u3T5U5KhCjDV4DNXfvS9CTXTJEwLcg005iq0W2gurB31rz4yDzK/sobdZ+/2LF458=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787201980; c=relaxed/simple;
-	bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r+O75SZDhmmOYOTQl5g9WVq3z9pZYedTK61sHFN77GPZEHAEmpRyJNddZ2TE3doe8YceN5PfhVyDf2TxeMfKpcRqQ4IZCNuZ2CzZCoo1Osxb1siVuhOKCdZKfjDI5UXpQjBeB4RYkKje6rW5fXuMRyqVVaCXvRSfmKGTd1SKSqY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMB/tPJR; arc=pass smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A36346A0D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 05:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787203582; cv=none; b=V2PbuDOwWmTykS3O74Po7qnwErvY5v8Ot9B0tVKu5nuajshQrL9eDdqk+hTvZ4sMGXPfnaZsGpn3/AX/Qcymjjzp2N2bgVSbrK45OTmTUjzYzIIhCf98s7VJ4QeznmDRN5gFh3PHOXQjiYPV8i2VXWDe6I/M03Ggvl15OWkzLNA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787203582; c=relaxed/simple;
+	bh=g3+VErzrmJ1Q7QbqM7CpgNSO1hDsSL3qFerYtNpT1TA=;
+	h=Message-ID:MIME-Version:From:To:Cc:Date:Subject:Content-Type; b=qcnOy19SAxZ0VTFcFyHPFs8Fwa95ZNc5H6c4twulUOxwLOgxugNhCTCyL5ecbCvVVihQOP+DvbKLMZK3DD3H+b79Kb/jM+KA3lDvTmjqpL0ZAZ586fMz6NH2cqQTPEFCyiWPHAoV82ncVUECftLxK6iD6zTOpKHlnO7v1SuSqKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8Qzvbxf; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMB/tPJR"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-499b02fc590so5542325e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 21:59:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787201976; cv=none;
-        d=google.com; s=arc-20260327;
-        b=cIipUhexpQgvimqBO+VvpRRwIatihjvLV7S4wfOzOvsNlm5a5w/X9cgX9S25evj0fZ
-         zfrfZZpes8eyKrpvcn94hDASKWALIhGo4f6UhCFm9dLB7AkatCWIAL/hjZ+JdAwP20YY
-         R3RF76LYtrHS3HChCHBi+CHR9DJX0L0bHFMneKFdt3MQoVBHXiuMUrl1NgrE8f+Qkp18
-         vMyjiPsQkl8IgWdWdz0LIuj1RNmsKGHyIDSUDnG6usDcztJFmEU3fS1kS9WcgYKayCX/
-         ND5wIsoXQsrcaaEcj12nnGGjXpF/mc/3mE5DTTOktbfoXQeHmIZYgWEyELVOFc+IomN5
-         ldyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
-        fh=WDfXfP51RvDWdYoPuUzQ3Cz501Ve3itQM9wxuKvbsO8=;
-        b=JjtNWpSqjD65nESGQkZT+pqn80hz7JO+2XXFpfm3nO47c8oP8UJKcIkzaCAvCkxSVc
-         c9AhuPYxmUnnogd+wMDTU0sC+546OFLeqaH6enfUqgOXmcf0eoAzzgoL38OPIo2hidCR
-         F1xSf+N6vY054yt2SA8InGeOOTofqW74ZwOZu015gO2y0AZzpY7LEdbrAI/UfQxPVxhl
-         1pKP6Y4Ac4HHz/sJqxTYICdIDwWCOiNLf0AFIwOJNUUQRng8RYzxKARAdGkoeNVPLKjz
-         oxOag2CVHGmFSFsQNLS+VY0IcpYcv/TcvKBkrlqFIYPCK+LFI1R3vpWv6WYKJ1MgJJ/X
-         pEZg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8Qzvbxf"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2cacb8416a1so15625945ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 22:26:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787201976; x=1787806776; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
-        b=AMB/tPJRpP0yo/7wc/KwrSsoaov4t58vg5AVy7djDas6d/DZc/hwAAidTfhkEAbo9U
-         Z/an9Hf8qGkUe937AY5oQ7GcfdwDuUnUh+khKjvAPnqPdURYkYpEL536SJlQFfP1T62p
-         vpzxHkjxuCdu96pDXHnIhn88kyMG2dxMVDMQORxZzS7mcfg4fxuqc/NnX6acGNAdwf5s
-         OGkmWdqHCJE01m1GeCs/uiiKYoWxScKsv+1YSxXNFsglepdN5wT4FI+UShRdqk1F4CIZ
-         F8aCsb9cazwhngKGAH3W8IcaqLCOCSCekWWIg++mdDDaEfxCzDBsbD95PfbwfXmA1LII
-         a1wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787201976; x=1787806776;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1787203580; x=1787808380; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
-        b=cjOL7DqXikQqJNQsxiWrVWcg55twwof07DAHGE/Bk2m8ROBC2hI2znum/sffw6O1HG
-         7P8C4GwZpDfXKVb9+v0XK1vvZh1PvWvgE7CUcG6vyF2//ROhXlAU3Otckc4i+qd+gkgz
-         Atvozvpl0KuSRfsuvVB2V13lpFDPB1/id5mhjKQfaVOwQaazpNF6hED5TlWxdmis71RK
-         C9iprZm1So0XvY4Nr48RLVk8yb9PBdvU9Z8mNSclKsgbVp1c8+V/DDHd6KVpStyjNyWV
-         C5LFqm4bMDyL3fY35f/1q6MbfzbSw9rvKliAiENoD+VMnBDlHRvz2c1W3dzQh9OR9aQV
-         jibQ==
-X-Forwarded-Encrypted: i=1; AHgh+Ro3zrKZGSe67thZ0eUIUFsexuXmH8jGCehoMBFc83mNIlG895vKgITU3fUyKOxE91NdY76qk5Rxy6BUb91KJNt/5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcGXHwVe70hqS5+RuU1fy4HovcM4Y+MtDAtKZStZBjNPUbYcjx
-	Yl3p1ILHQOf7/fZ1GBnD2ssqasilCHJB3gHID7KT5rPylq1iqWSJcyCt3Rro5HWB7TUA3tCMIb8
-	gXfz3gykkhkhwgrKRVsIOPmAgPeELpHn7afhj
-X-Gm-Gg: AR+sD12BF4d90kCH6sCbS4WbDhOW7ZOj4v36smEr6gAQodCwYI0OjdsH1+WnTZRA7wU
-	d7+qBsNcqkBwBZKyWco3I0ZdH/PAKlCG6gSpzdAx86a3sLs6QLuLNO5aj/RrnlwcgWA4bZqUS6W
-	1Rr0X289H/EIG/bhvg0apGBqhi0PtvytWfd9Amxl05LaeygxGfY0gvPYNKfwBJT0Ss+m+B6RnMj
-	2V2mXrbDRrsgo2RhPhQgBgl1o+upG7Sj5SSg3wqXyT84V4okx+Kr38ydYaOrKViK+11+vM5Z8O+
-	OwkArBcs/xt6mm2PnJ1xhr8c1gdr1qxWpUkovAvdoRsE0iai9T+Y9iQC0nkOfOxcZ/32Pw7+eMJ
-	PpbMsXxZuog1YfQwNTDBzXQypapPG43k=
-X-Received: by 2002:a05:600c:4ec9:b0:495:4d5c:903e with SMTP id
- 5b1f17b1804b1-499aa167256mr164468515e9.7.1787201975975; Wed, 19 Aug 2026
- 21:59:35 -0700 (PDT)
+        bh=mHAUdvChFETP+1wGAbo+mta0XNMI5vFtvZjL1xhL7MI=;
+        b=I8Qzvbxf6DJfLJAlDV9CDCBiWLzjjg1pQCw8NHiiLDtXChEqqzLO6yBi/MbGXjY4jt
+         1nkc5lfuP3xBWZgWsSW6YDDT77ufrcraNgYOa07Yj545szdUodaaTE4yNJcqc6alXof3
+         qT6T4w55PbLbL5/YuvelZQoEO/s5p9KCd88Q7MDdZTG569ZZhg7oNA1Na+zl/UqNbzLK
+         25MRxHlem8VdpNGK/YqYkvT5WcgoYJxxAbYYIdODWO075In+F6StZ1rxgoy8NX8TXo9y
+         gZI4H2vy4YeBoAkU1eMK1NlP524/cXCIpObknmKyNT3kUP68sIc7Jzl40Jvma888pV5z
+         e2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787203580; x=1787808380;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=mHAUdvChFETP+1wGAbo+mta0XNMI5vFtvZjL1xhL7MI=;
+        b=SLb06kV7Yi4WX0CQeb469FAbWjoKbRF3eEJLp0aJ0PBrhBLeXoN+7KaGXaZJjVOYeA
+         /KVf51G9CemS6CaZkAttu/dtvmp1+oAVnWYvonVGHLbcgcJ3MhvLsB+tdalqUUB0MCoj
+         fP9rz8AaDvNy9sbZXW1ozW9C6VjjQNZXMorPeqHq7AUJ0xd6G+fl8VZDG7LTA5ajo2NH
+         aFCqxNn8oZ/i9v9J4Wm+M5sIi7m75boxpdOSiSXcQogF7OP3UkY0vnWdHYlUiDevd8LV
+         F7DfJTv6Bemgd4tR5rts/oyDmfNYuy3lnpHDzhONRduv6S23NE1PW6yUzp5/0b8q9MeX
+         2Yog==
+X-Forwarded-Encrypted: i=1; AHgh+RrJJSMV77JgXkXMl9SMmEV6nGFUgRbgxwf0W/C/sMhbRmDXeGIMJlDle6+XvVlrEW+cB4EELQgmGaQttULldrFrxA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mV3rqPe+WLKEfQPygA5rKNyuH1lh8Pse3VwiijYp4//FkDwkVg
+	bnXyOo3aEKBRWz98m+khneSKN0UoOp3XGXHW7ZrSFRS7BgyF8wzCSELX
+X-Gm-Gg: AR+sD132WK86XfzU6mel6YGORjsbbnqREYF5WAte+iR6bYGflW6j+x9vp2U88vrp9xN
+	bXZUFqAI22l0u8pC8OcON3fFeIjk4leUfTjmx+sNuOTAgZpRLHO4LjHm029w9aYido4iRi5a39g
+	W6S3vbfWQk6t+D0GvMwUhdmiDXUboz9gskPmwmnTIwDnwCRERexAyFC/wCFRAXWkStdC25kHaUu
+	EbggFRSZ7NJkX1RIm2K8J64qSFJFw+OEtOZwZ9eQ0Qxk1TqZYwNbQhNkVhKUuHGGiDSWpEnpy+5
+	NP3axKczCt0/y2sRLcZY7yTofy+5UC0ntXXPseIDS5YMDGZEXBFzVKTPDSQpu6CIXFrr5cutkPE
+	ad7cjhk7bQINt7uuO09Nt5pVdWy0YNx1+hOpByFqg+nN+dseU+amLIPpcBnldRKvW75iLfQj89R
+	fbLh7zd6N544WPGyhBc8hXKA+27Smdz523RX0P7+dsrejNw0tlt+W+t130hVlgQXUqt7nEgLbEc
+	E8lqTmzuCyC0jrQx/FTMu4jWb6xsvL/WrVSHhrCULj/WDU2K079y23z2A==
+X-Received: by 2002:a17:90b:3c47:b0:38f:1a2e:6e56 with SMTP id 98e67ed59e1d1-395813f4f3dmr19559280a91.9.1787203580000;
+        Wed, 19 Aug 2026 22:26:20 -0700 (PDT)
+Received: from manush ([2406:7400:94:f2e0:d835:beab:fb3c:3432])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1416ad53874sm20588987c88.4.2026.08.19.22.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 22:26:19 -0700 (PDT)
+Message-ID: <6a868ffb.2915925c.31ad32.38af@mx.google.com>
+X-Mailer: git-send-email-equivalent-ps1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aoWsgnsw5gC6TCj5@shikoro> <aoYIF8zAoPNyJxXM@ninjato>
-In-Reply-To: <aoYIF8zAoPNyJxXM@ninjato>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 20 Aug 2026 05:59:09 +0100
-X-Gm-Features: AcwNN1W7S4-c--YpoPqDr1HOqwCpIkde2HyjoAoIKaemmqpjbHFxtS1AgXlkzFE
-Message-ID: <CA+V-a8uuGAASraLTEk6PGWR-NrAn0xEAZBtY2_P6-6m5O9ihzA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/15] Add RTC support for Renesas RZ/T2H and RZ/N2H SoCs
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+From: "Manush Prajwal" <manushprajwal555@gmail.com>
+To: yoshihiro.shimoda.uh@renesas.com, michael.dege@renesas.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: 20 Aug 2026 10:56:19 +0530
+Subject: [PATCH v3] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On an of_property_read_u32() failure, rswitch_get_port_node() set=
+ port=0D=0Ato NULL and jumped to the out label before releasing t=
+he reference the=0D=0Afor_each_available_child_of_node() iterator=
+ was holding on it. Once=0D=0Aport was overwritten with NULL, tha=
+t reference could never be=0D=0Areleased since out: only put "por=
+ts", the parent node.=0D=0A=0D=0ARework the function around for_e=
+ach_available_child_of_node_scoped()=0D=0Ainstead of adding a man=
+ual of_node_put(), so the iterator's reference=0D=0Ais dropped au=
+tomatically on every exit path. Since port is the=0D=0Afunction's=
+ return value, take an explicit reference with of_node_get()=0D=0A=
+on the match before breaking out of the loop.=0D=0A=0D=0ASigned-o=
+ff-by: Manush Prajwal <manushprajwal555@gmail.com>=0D=0A---=0D=0A=
+v3: Reorder local variable declarations into reverse Christmas tr=
+ee=0D=0A    order, per Andrew Lunn's review.=0D=0Av2: Rework usin=
+g for_each_available_child_of_node_scoped() instead of=0D=0A    a=
+ manual of_node_put(), per Andrew Lunn's review.=0D=0A=0D=0A driv=
+ers/net/ethernet/renesas/rswitch_main.c | 20 +++++++++-----------=
+=0D=0A 1 file changed, 9 insertions(+), 11 deletions(-)=0D=0A=0D=0A=
+diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/driver=
+s/net/ethernet/renesas/rswitch_main.c=0D=0Aindex 6fe9648163..ffdc=
+42f430 100644=0D=0A--- a/drivers/net/ethernet/renesas/rswitch_mai=
+n.c=0D=0A+++ b/drivers/net/ethernet/renesas/rswitch_main.c=0D=0A@=
+@ -1303,8 +1303,8 @@=0D=0A /* Call of_node_put(port) after done *=
+/=0D=0A static struct device_node *rswitch_get_port_node(struct r=
+switch_device *rdev)=0D=0A {=0D=0A-	struct device_node *ports, *p=
+ort;=0D=0A-	int err =3D 0;=0D=0A+	struct device_node *port =3D NU=
+LL;=0D=0A+	struct device_node *ports;=0D=0A 	u32 index;=0D=0A=0D=0A=
+ 	ports =3D of_get_child_by_name(rdev->ndev->dev.parent->of_node,=
+=0D=0A@@ -1312,17 +1312,15 @@ static struct device_node *rswitch_=
+get_port_node(struct rswitch_device *rdev)=0D=0A 	if (!ports)=0D=0A=
+ 		return NULL;=0D=0A=0D=0A-	for_each_available_child_of_node(por=
+ts, port) {=0D=0A-		err =3D of_property_read_u32(port, "reg", &in=
+dex);=0D=0A-		if (err < 0) {=0D=0A-			port =3D NULL;=0D=0A-			got=
+o out;=0D=0A-		}=0D=0A-		if (index =3D=3D rdev->etha->index)=0D=0A=
++	for_each_available_child_of_node_scoped(ports, child) {=0D=0A+	=
+	if (of_property_read_u32(child, "reg", &index))=0D=0A+			break;=0D=0A=
++		if (index =3D=3D rdev->etha->index) {=0D=0A+			port =3D of_nod=
+e_get(child);=0D=0A 			break;=0D=0A+		}=0D=0A 	}=0D=0A=0D=0A-out:=
+=0D=0A 	of_node_put(ports);=0D=0A=0D=0A 	return port;=0D=0A--=0D=0A=
+2.46.2.windows.1
 
-On Wed, Aug 19, 2026 at 8:46=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
->
-> > Thanks for the quick update. I have done the review now, but still need
-> > to test it on my N1D board. I can do this maybe this evening, but surel=
-y
-> > tomorrow somewhen.
->
-> rtctest still runs fine on my N1D, so for the whole series:
->
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-Thank you for testing this on RZ/N1. I'll look at the remaining items
-and send a new version.
-
-Cheers,
-Prabhakar
