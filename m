@@ -1,120 +1,226 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11021096.outbound.protection.outlook.com [40.107.74.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A36346A0D
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 05:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787203582; cv=none; b=V2PbuDOwWmTykS3O74Po7qnwErvY5v8Ot9B0tVKu5nuajshQrL9eDdqk+hTvZ4sMGXPfnaZsGpn3/AX/Qcymjjzp2N2bgVSbrK45OTmTUjzYzIIhCf98s7VJ4QeznmDRN5gFh3PHOXQjiYPV8i2VXWDe6I/M03Ggvl15OWkzLNA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787203582; c=relaxed/simple;
-	bh=g3+VErzrmJ1Q7QbqM7CpgNSO1hDsSL3qFerYtNpT1TA=;
-	h=Message-ID:MIME-Version:From:To:Cc:Date:Subject:Content-Type; b=qcnOy19SAxZ0VTFcFyHPFs8Fwa95ZNc5H6c4twulUOxwLOgxugNhCTCyL5ecbCvVVihQOP+DvbKLMZK3DD3H+b79Kb/jM+KA3lDvTmjqpL0ZAZ586fMz6NH2cqQTPEFCyiWPHAoV82ncVUECftLxK6iD6zTOpKHlnO7v1SuSqKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8Qzvbxf; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC653D3337;
+	Thu, 20 Aug 2026 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787213372; cv=fail; b=cjZpPe55l+MPjOuQWoq5r1JovrO3V33AkCSwpq2A2bnF45nXR0ncBq/sdHDkKi0GgCeLl3BDt85OVMeOzeApfUD+JGCIImwnjTdJG9yH8+O0e8IBGpuM1NxvW2lFdWhHuEhR65MEvZQRm7p4haWq4N2kz8uSnHp0xpxEoGb3qFY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787213372; c=relaxed/simple;
+	bh=GRhZOI3Cq5jCkeCsTLUKsXEjwrHwb5z9YjJaSB2tnCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aP3t/39lddY7Wwkz9j5t48qkPQNc8m3vtvOqzW3i93ySaapLAweYy+lgq+uFCtRdtaP2Cq2+yVObuWWaXr49LBj9l1VljuqW9gmYHQ97p6uGHf+yhlDeSzTNS99/9G4cNVbKhUp9ob6K98f/mmbwvdsGwINRkjfc42CeQua6zgw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=BvWNymK1; arc=fail smtp.client-ip=40.107.74.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8Qzvbxf"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2cacb8416a1so15625945ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 22:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787203580; x=1787808380; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:subject:date:cc:to:from
-         :mime-version:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mHAUdvChFETP+1wGAbo+mta0XNMI5vFtvZjL1xhL7MI=;
-        b=I8Qzvbxf6DJfLJAlDV9CDCBiWLzjjg1pQCw8NHiiLDtXChEqqzLO6yBi/MbGXjY4jt
-         1nkc5lfuP3xBWZgWsSW6YDDT77ufrcraNgYOa07Yj545szdUodaaTE4yNJcqc6alXof3
-         qT6T4w55PbLbL5/YuvelZQoEO/s5p9KCd88Q7MDdZTG569ZZhg7oNA1Na+zl/UqNbzLK
-         25MRxHlem8VdpNGK/YqYkvT5WcgoYJxxAbYYIdODWO075In+F6StZ1rxgoy8NX8TXo9y
-         gZI4H2vy4YeBoAkU1eMK1NlP524/cXCIpObknmKyNT3kUP68sIc7Jzl40Jvma888pV5z
-         e2kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787203580; x=1787808380;
-        h=content-transfer-encoding:content-type:subject:date:cc:to:from
-         :mime-version:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=mHAUdvChFETP+1wGAbo+mta0XNMI5vFtvZjL1xhL7MI=;
-        b=SLb06kV7Yi4WX0CQeb469FAbWjoKbRF3eEJLp0aJ0PBrhBLeXoN+7KaGXaZJjVOYeA
-         /KVf51G9CemS6CaZkAttu/dtvmp1+oAVnWYvonVGHLbcgcJ3MhvLsB+tdalqUUB0MCoj
-         fP9rz8AaDvNy9sbZXW1ozW9C6VjjQNZXMorPeqHq7AUJ0xd6G+fl8VZDG7LTA5ajo2NH
-         aFCqxNn8oZ/i9v9J4Wm+M5sIi7m75boxpdOSiSXcQogF7OP3UkY0vnWdHYlUiDevd8LV
-         F7DfJTv6Bemgd4tR5rts/oyDmfNYuy3lnpHDzhONRduv6S23NE1PW6yUzp5/0b8q9MeX
-         2Yog==
-X-Forwarded-Encrypted: i=1; AHgh+RrJJSMV77JgXkXMl9SMmEV6nGFUgRbgxwf0W/C/sMhbRmDXeGIMJlDle6+XvVlrEW+cB4EELQgmGaQttULldrFrxA==@vger.kernel.org
-X-Gm-Message-State: AFuF++mV3rqPe+WLKEfQPygA5rKNyuH1lh8Pse3VwiijYp4//FkDwkVg
-	bnXyOo3aEKBRWz98m+khneSKN0UoOp3XGXHW7ZrSFRS7BgyF8wzCSELX
-X-Gm-Gg: AR+sD132WK86XfzU6mel6YGORjsbbnqREYF5WAte+iR6bYGflW6j+x9vp2U88vrp9xN
-	bXZUFqAI22l0u8pC8OcON3fFeIjk4leUfTjmx+sNuOTAgZpRLHO4LjHm029w9aYido4iRi5a39g
-	W6S3vbfWQk6t+D0GvMwUhdmiDXUboz9gskPmwmnTIwDnwCRERexAyFC/wCFRAXWkStdC25kHaUu
-	EbggFRSZ7NJkX1RIm2K8J64qSFJFw+OEtOZwZ9eQ0Qxk1TqZYwNbQhNkVhKUuHGGiDSWpEnpy+5
-	NP3axKczCt0/y2sRLcZY7yTofy+5UC0ntXXPseIDS5YMDGZEXBFzVKTPDSQpu6CIXFrr5cutkPE
-	ad7cjhk7bQINt7uuO09Nt5pVdWy0YNx1+hOpByFqg+nN+dseU+amLIPpcBnldRKvW75iLfQj89R
-	fbLh7zd6N544WPGyhBc8hXKA+27Smdz523RX0P7+dsrejNw0tlt+W+t130hVlgQXUqt7nEgLbEc
-	E8lqTmzuCyC0jrQx/FTMu4jWb6xsvL/WrVSHhrCULj/WDU2K079y23z2A==
-X-Received: by 2002:a17:90b:3c47:b0:38f:1a2e:6e56 with SMTP id 98e67ed59e1d1-395813f4f3dmr19559280a91.9.1787203580000;
-        Wed, 19 Aug 2026 22:26:20 -0700 (PDT)
-Received: from manush ([2406:7400:94:f2e0:d835:beab:fb3c:3432])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1416ad53874sm20588987c88.4.2026.08.19.22.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2026 22:26:19 -0700 (PDT)
-Message-ID: <6a868ffb.2915925c.31ad32.38af@mx.google.com>
-X-Mailer: git-send-email-equivalent-ps1
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="BvWNymK1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OAOtTdijfw7Iu9daOXmmuXYJ/IokpOooVm7FNXfXBthq7jmlYBNHIhCeE4R51aP2pn6VyiAO8LKDYBFZV9jz2KlfiXFgAxV/w28Jmi32kaRax/R0uUqwxfSsEoZPTFIQkxFpgTNm2Xi58D3QPikGBgKkS6n7Zivir+pszEQiDgCuSLBhtgrWO7UDENZsGQfgFg1RatFilZCbWxqnLSXKdA1AQFu46tRBUt80HYYpslokujjTfuUnQDeqRYrh85K9z3i0mw4DlhYCNiYBKS4fDx02DMYjNJ3JHPZzOpm0ILAix23schBhQBhHSzcZaMivl8bUgUCrT8mi8Y7izvz1UQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hNU5BiHe/2o6y1ibGyegqEG0L1TgSKSHb63kYYWM8GQ=;
+ b=Z+8eKYzgElw3vkNmOZU/zjxbNhtkaW4W1rOXHSUeUDbD+3e+xw6016SJmtnHXJB3r2fpvSfznQG2GZR1ZRRjgvKzagvZVTKz4ZKye0HIxAjXKxjqNvCnmKHepMcV2aM//TAtBhT+QIZh00z4j00AVN4nQG4YvVfTfSRCXvu8TM1Szbawmn/ffctus2o0ADHtBOZSiLTC3cSnu0tV+0bxUX1YwpWGW8o84NQ1LchAtg6bFksPce/IOWbUy1Eo86kyiPYWqzgbUNr0gz9j8YWLpk85g/CO23UMdwOhy0obLjhoYJiRZcuuHgisjbHGcAHjX1ajyuDLFlGCBh4vgR2JnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hNU5BiHe/2o6y1ibGyegqEG0L1TgSKSHb63kYYWM8GQ=;
+ b=BvWNymK1UgAYi4hPOxWbaQWL0++evcTZ6YyMmVmdCKSnfixUzb8iXcTY+3qM7K1SxurLV1xhRc92o23QrP7Zcp122LhrScw2Lju7HK8rGQha7fFzpLVvMavMmWl4p4M/RhdlNIjOGn5/gktAH4stMmwF/pMeW46Mmzp2ydC+ATA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:38f::10)
+ by TYCP286MB2847.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:306::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Thu, 20 Aug
+ 2026 08:09:26 +0000
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32]) by TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32%3]) with mapi id 15.21.0339.007; Thu, 20 Aug 2026
+ 08:09:26 +0000
+Date: Thu, 20 Aug 2026 17:09:25 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] PCI: dwc: Add .post_deinit counterpart to
+ endpoint .pre_init callback
+Message-ID: <5vjlarzjb2luxfzri4ykpjbkhevfbmufbefdvzafi2oo2q4j33@wwizukzejsys>
+References: <20260820035944.163472-1-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260820035944.163472-1-marek.vasut+renesas@mailbox.org>
+X-ClientProxiedBy: TYCPR01CA0156.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b1::16) To TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:38f::10)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Manush Prajwal" <manushprajwal555@gmail.com>
-To: yoshihiro.shimoda.uh@renesas.com, michael.dege@renesas.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Date: 20 Aug 2026 10:56:19 +0530
-Subject: [PATCH v3] net: ethernet: renesas: rswitch: fix device_node
- refcount leak in rswitch_get_port_node()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY7P286MB7722:EE_|TYCP286MB2847:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e80036a-230a-46ef-241d-08defe925a25
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|23010399003|366016|6133799003|56012099006|10067099003|5023799004|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	zYqzna6+MudnHgy6FB97p8imME/kJeYh0zbDhP48/tF60Qs6FBMAdCC6+DFWQHhHgR3t1xW/UCkfrGVU2HE9ydMKqjFamecx0DnhAj+1C0dhRzEjsuPHVMvo09NXc6yG8LjpLZ9v7ugNXois1HwhGErrzJOswQuxuYw5gdgePxEY608VyPr0rYkEK8IM6cFTg2B3354G6a7VoWdZv5PGbV0Z05TkufApvY7AKXxB4sRxl4o8YLTbVJnLKC8P7DtGcm4+x127FJllbiZtWF6wSvCU9UwRiIX77uxYITrFZ2OKnsEFV+6DkolhJxcBCIU66HuGCvikkOg32IW1ODktjjSiUDUT6bg8rQ37kU33KEOcWQqRrHbf8t2A0YghCWREyF6uygXngrx0HxiBQ54hydR7GRPNe2flSxQfKSqULuAi6vsBcDIDST1f0df54PCD9IQ8R9n2qd9zc0TOFbE2NO9/se83rNVTJQpusq9XEWNXYjVS7HGmLUNXw1QPPAVAktv1xQj9JiYq1UEwlHuBwaw4OH1k/7PALtJzjJpYXqafxR/a1PCHfRu+u4g2OjKtiz5QxpitN1JLAklNULyJBYYmCk/7o0EnoRTTddJ3Fb0WXdYiYENbmJC+l05aI3D0scAQsxneZmgwdkZfrg6Us6186PkjSOV8XS7xi4DBLWs=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(23010399003)(366016)(6133799003)(56012099006)(10067099003)(5023799004)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?azRSNW96bW0zdEJNUHpObi8wNVBOSVpvTk1vNHI0Q2xPUGZZVWFnMVc0VU9q?=
+ =?utf-8?B?RkNmQWdvNk9QRFg2djluNXFTNzN0cktMS2g4RkM0Y2VBekFmc2tHM09PQVZG?=
+ =?utf-8?B?UEE5VEFkM3dnamd5aDVnZGZyMkRWaVg4emk4NVNGbjFLcGdCc3cyL1cySU1R?=
+ =?utf-8?B?MFBOc3J1TEZjZG52N2ZqOGdFcmpMVk1ybFRvV1piOU8vSEV3RDQvazRoNzNr?=
+ =?utf-8?B?K1dHLzU3enJ6WHdQbTBRUnpRb0NCVjN5WE5ubmFYU2Z4OEpVWWxiSEVEaEU5?=
+ =?utf-8?B?TlNKVVRjQy9YN2VIanVTbVRxK1Y3UTg0YUVDR1kxbVR5aW0yeGl6NEFyZlNP?=
+ =?utf-8?B?NHdZZEtpLzZmd2FtbVZqQ3U3cDllUDYrdDMrWksxTmpuSVJpYUFMNEZQR05y?=
+ =?utf-8?B?czNJd0xMb3BFZWdFWnA0L09iMjNMY2thNWlyalYvSTZSY3dLckg2ckVJL25o?=
+ =?utf-8?B?aGNDWmxzcEo2dHVoZkNTZk0zU0xrK2o0R281Vm1aZlc1Uzk0aDNJWXYrZmRG?=
+ =?utf-8?B?SW1wSXcwMFBsZHZReFowUDZ0Zk5hUE4yUE9TbDE1SzAzeXJGR2FrblBEaXJ2?=
+ =?utf-8?B?TjB6MGdpa3JOckNjQk40Y0dBOEpzdnVyK0ZrazlzekR0YXlPeXNNZERaaXhz?=
+ =?utf-8?B?SGhKTEp6SnhTdVFIdzhVMXNWblhwLzEwWHBJWElTVlFTaGlvaVN3WS9yK3ZQ?=
+ =?utf-8?B?VkNVV1FMUThYR1BxWW5Pc0NRZ1dpc3owTFBlVlErek1ISWRnV3VzMDFjb0Mw?=
+ =?utf-8?B?M2p1UXRwRng5dGxDeldkK0VlSDJGRTFkUE9oU1VHWGxicTcwM2k0a1U5ZkdO?=
+ =?utf-8?B?Mkc5YWNWRXBjd0xOMXpSc3dpb3pGMzVSdTE2bVZLQXkyQ21QTVBlNVIzeUJ0?=
+ =?utf-8?B?dTZTRXdiNTlCRUhpRmh3TEdJdWdPMlcrNExVRFd2eUVqWVNJdGpEaVlqTXFt?=
+ =?utf-8?B?MkVCdkNwcURvZ2U4UHVCQmF0K2xoMjZrMis2bi81MHplZnZYNkhEYjFQczFy?=
+ =?utf-8?B?TWlXVHY3ZWJmTGYwckE4cERlQitBQk02ay9BMytuaUdJREc0cHVLT3YyZGJJ?=
+ =?utf-8?B?Z2xBNXh0UXdFU2JjT1VOSHZ0TnpJUmxVQ2hVQUxFSjFYTU9qYnptZ3BZSWZ2?=
+ =?utf-8?B?TTVDYUJjd0dXRWRiYmg0dkVxUW9keGFoWVR1TVJ2UzZSTGdqR3I3WHdNdkt1?=
+ =?utf-8?B?TUlxYVNLQzNBaFpCZGdiZk1BMTgxYmowdXJGeG9NcHRXanlLckZScWpreWM1?=
+ =?utf-8?B?Wi9rcE1ySjdDRjJMUmtvK01UVEphWDFxek53cExoZkZPbUxPRS9URGgyamZr?=
+ =?utf-8?B?R25pRmQrbnlwbjdoMjhnMjZjMXJ1SkJFWXBGTGt4RTZrZVJmTTZiZGdaTWJI?=
+ =?utf-8?B?VGlOY1RoNXZhaWRTTU5sYlE0TEczZzY2N1N0WGtqeVR3TlE4ZWVuTXZuRDlL?=
+ =?utf-8?B?aG5YMG41T2hSdjc2QmNBaE5rU1dGREJKNzAyUEZLZVRvbmF4RHpWN0VUNDNS?=
+ =?utf-8?B?UU5WcmdSaDBMTkpqQjhCYVpWMTArdllCQ2N4cXhXWTA4OTFtTlphTjdvSnBU?=
+ =?utf-8?B?bU0yV2RLaWF6QzAzQ0UrNTduNlFNRVZiREQ0eStXR0I0aDJMQVB1dHFPekYx?=
+ =?utf-8?B?T2swdHJFNWVSTHVNTjZ4L0toYURHbEZkemRHNVJsczFLRU9aREIwMk1qalVZ?=
+ =?utf-8?B?R08rUWFZM1F2TjVpeFJQaU05M3VmUVRuOE5JMXlsS1ZNZ28xdlJXUENoZnM1?=
+ =?utf-8?B?RXZ3aXVVa3BTdWhwakFUbUh0K3dmQ3JIMEJkNVBBSVhJODZuMmhjTzhoQWo3?=
+ =?utf-8?B?QWRjazJzTHBMWEI5TzcvMG81ekVxRFkzL2d1dVhIdlZhTFI4amQrb3FuaUpD?=
+ =?utf-8?B?bjg5THZaa0E5YzA2STRQUnJmZHBmZ1haTElaZE51NjgrUHQ3dXJCd1h1OGVS?=
+ =?utf-8?B?VERueURMVWxCNnFlazNrWS9qN1pHbWVlVWo2TlhuWEd6U21oNmZMNWhIN1BX?=
+ =?utf-8?B?UFMzMW9uT05YZlFZTXBKUll0Wlh4dldqd0Z2T1hJNHd2RER5T3FKNXFlQ29C?=
+ =?utf-8?B?RmxnZmlGWVZhaXhvT2YwcmphSUgwVVhSakJuMHNxbXgzcVVXSWIxQWhTeUcw?=
+ =?utf-8?B?dVNvWVYwbnNtZW84d2pSV1N6eGhNZkpQK3BXd0twRE4yNmlobjZ2OGV3T1Br?=
+ =?utf-8?B?MTRPQjU1TTRNVDVTZFVZRlJlbHdDeFVaVmdISVJGdEx1bW0wRy9yQlNTTnhv?=
+ =?utf-8?B?Y1BCc2hMQzJSbHlneG5FRkVrcUQyeks4UTZYVU9uQmsxV1FiN0FWM3J2ODhj?=
+ =?utf-8?B?OVN3T2RPUVJEMUVnbXBySUNhcXZ4cGJJbzN3KzU1NmcvdktjSHVlT0VadGJq?=
+ =?utf-8?Q?Nr43NoRgbuU6e1/tgt26EShyVmZzpuGjhdI5K?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e80036a-230a-46ef-241d-08defe925a25
+X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2026 08:09:26.5509
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vUFTsvm1IXAzw9korJZkIH4CAcrlkhsNZVu8ykl71OxCgOyOLEvp2/oHXfCeQoLKCNcULUiRbebWPvYNRUyOmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB2847
 
-On an of_property_read_u32() failure, rswitch_get_port_node() set=
- port=0D=0Ato NULL and jumped to the out label before releasing t=
-he reference the=0D=0Afor_each_available_child_of_node() iterator=
- was holding on it. Once=0D=0Aport was overwritten with NULL, tha=
-t reference could never be=0D=0Areleased since out: only put "por=
-ts", the parent node.=0D=0A=0D=0ARework the function around for_e=
-ach_available_child_of_node_scoped()=0D=0Ainstead of adding a man=
-ual of_node_put(), so the iterator's reference=0D=0Ais dropped au=
-tomatically on every exit path. Since port is the=0D=0Afunction's=
- return value, take an explicit reference with of_node_get()=0D=0A=
-on the match before breaking out of the loop.=0D=0A=0D=0ASigned-o=
-ff-by: Manush Prajwal <manushprajwal555@gmail.com>=0D=0A---=0D=0A=
-v3: Reorder local variable declarations into reverse Christmas tr=
-ee=0D=0A    order, per Andrew Lunn's review.=0D=0Av2: Rework usin=
-g for_each_available_child_of_node_scoped() instead of=0D=0A    a=
- manual of_node_put(), per Andrew Lunn's review.=0D=0A=0D=0A driv=
-ers/net/ethernet/renesas/rswitch_main.c | 20 +++++++++-----------=
-=0D=0A 1 file changed, 9 insertions(+), 11 deletions(-)=0D=0A=0D=0A=
-diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/driver=
-s/net/ethernet/renesas/rswitch_main.c=0D=0Aindex 6fe9648163..ffdc=
-42f430 100644=0D=0A--- a/drivers/net/ethernet/renesas/rswitch_mai=
-n.c=0D=0A+++ b/drivers/net/ethernet/renesas/rswitch_main.c=0D=0A@=
-@ -1303,8 +1303,8 @@=0D=0A /* Call of_node_put(port) after done *=
-/=0D=0A static struct device_node *rswitch_get_port_node(struct r=
-switch_device *rdev)=0D=0A {=0D=0A-	struct device_node *ports, *p=
-ort;=0D=0A-	int err =3D 0;=0D=0A+	struct device_node *port =3D NU=
-LL;=0D=0A+	struct device_node *ports;=0D=0A 	u32 index;=0D=0A=0D=0A=
- 	ports =3D of_get_child_by_name(rdev->ndev->dev.parent->of_node,=
-=0D=0A@@ -1312,17 +1312,15 @@ static struct device_node *rswitch_=
-get_port_node(struct rswitch_device *rdev)=0D=0A 	if (!ports)=0D=0A=
- 		return NULL;=0D=0A=0D=0A-	for_each_available_child_of_node(por=
-ts, port) {=0D=0A-		err =3D of_property_read_u32(port, "reg", &in=
-dex);=0D=0A-		if (err < 0) {=0D=0A-			port =3D NULL;=0D=0A-			got=
-o out;=0D=0A-		}=0D=0A-		if (index =3D=3D rdev->etha->index)=0D=0A=
-+	for_each_available_child_of_node_scoped(ports, child) {=0D=0A+	=
-	if (of_property_read_u32(child, "reg", &index))=0D=0A+			break;=0D=0A=
-+		if (index =3D=3D rdev->etha->index) {=0D=0A+			port =3D of_nod=
-e_get(child);=0D=0A 			break;=0D=0A+		}=0D=0A 	}=0D=0A=0D=0A-out:=
-=0D=0A 	of_node_put(ports);=0D=0A=0D=0A 	return port;=0D=0A--=0D=0A=
-2.46.2.windows.1
+On Thu, Aug 20, 2026 at 05:57:55AM +0200, Marek Vasut wrote:
+> In case the .pre_init() callback fails, it is mandatory to correctly
 
+I think this should be "If .pre_init() succeeds but subsequent initialization
+fails,". Otherwise LGTM.
+I did some quick tests on an S4 Spider, covering the normal path and several
+injected failure paths. I don't have V4H hardware, though.
+Please feel free to pick up either or both tags if that helps.
+
+Reviewed-by: Koichiro Den <den@valinux.co.jp>
+Tested-by: Koichiro Den <den@valinux.co.jp>
+
+Best regards,
+Koichiro
+
+> undo the hardware configuration which the .pre_init() callback did.
+> Intrododuce .post_deinit() callback to do exactly that, undo what
+> the .pre_init() callback did. Usually, that means stop the clock,
+> assert reset, and possibly program some registers to quiescense the
+> hardware. Invoke the .post_deinit() callback in dw_pcie_ep_deinit()
+> to retain functional symmetry.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Koichiro Den <den@valinux.co.jp>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: New patch
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 8 +++++++-
+>  drivers/pci/controller/dwc/pcie-designware.h    | 1 +
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index de8ee3db43601..1a3491b5003ec 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -1194,6 +1194,9 @@ void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
+>  			      epc->mem->window.page_size);
+>  
+>  	pci_epc_mem_exit(epc);
+> +
+> +	if (ep->ops->post_deinit)
+> +		ep->ops->post_deinit(ep);
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_ep_deinit);
+>  
+> @@ -1553,7 +1556,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  			       ep->page_size);
+>  	if (ret < 0) {
+>  		dev_err(dev, "Failed to initialize address space\n");
+> -		return ret;
+> +		goto err_deinit;
+>  	}
+>  
+>  	ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
+> @@ -1568,6 +1571,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  
+>  err_exit_epc_mem:
+>  	pci_epc_mem_exit(epc);
+> +err_deinit:
+> +	if (ep->ops->post_deinit)
+> +		ep->ops->post_deinit(ep);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 0735ae9409240..a53ac27cd2447 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -475,6 +475,7 @@ struct dw_pcie_rp {
+>  
+>  struct dw_pcie_ep_ops {
+>  	int	(*pre_init)(struct dw_pcie_ep *ep);
+> +	void	(*post_deinit)(struct dw_pcie_ep *ep);
+>  	int	(*init)(struct dw_pcie_ep *ep);
+>  	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
+>  			     unsigned int type, u16 interrupt_num);
+> -- 
+> 2.53.0
+> 
