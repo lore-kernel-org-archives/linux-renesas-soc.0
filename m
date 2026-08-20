@@ -1,88 +1,126 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DABA70830;
-	Thu, 20 Aug 2026 04:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787199004; cv=none; b=FZD4PPjJx+Fnp2KnvVoigTAK/X1DlF6M7y8unTfsvwfAUJGESfRcOr9Dh2o5bdvxwF24FA9hgokPdQPX1+XsIY4dQbeMoCpZQNHrtaUv9hSvRwOmXvXHljOsAW7Zyw/rB99+tJdnf3e7akN95s5sQTVgp7vhJW+uzgJffZVW/v4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787199004; c=relaxed/simple;
-	bh=S9h2LAaA3goM2LaXs8kQh43CyQ7elr0irBlwBquQi60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E9MZxU5180aZhtaqUuQbRqWp4Cby4LviERuoiIUUCtmjMkrAiugvMV/tnqg24OYvwgOcKhLxFO1N1ogZux+CtRorDs655MmqjTF4nricJ6M6muw35xz4hK6abqz3Y6Ofqk+w2N0Aik5oTu72BajK3v3rEol3luXiWAShrC9w6K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PLd0/ZiY; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02422D97BA
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Aug 2026 04:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787201980; cv=pass; b=Uz5sIUWzk7+RHPMq1CfHLXmkKhdZVUdTIYEABIjvx/Ttv4+0p39JiYGMKQNQ7eEnrTxs7UP7ev5s3jZS2f9xVd6B7enxkAudeM2HMdNMV4u3T5U5KhCjDV4DNXfvS9CTXTJEwLcg005iq0W2gurB31rz4yDzK/sobdZ+/2LF458=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787201980; c=relaxed/simple;
+	bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r+O75SZDhmmOYOTQl5g9WVq3z9pZYedTK61sHFN77GPZEHAEmpRyJNddZ2TE3doe8YceN5PfhVyDf2TxeMfKpcRqQ4IZCNuZ2CzZCoo1Osxb1siVuhOKCdZKfjDI5UXpQjBeB4RYkKje6rW5fXuMRyqVVaCXvRSfmKGTd1SKSqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMB/tPJR; arc=pass smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PLd0/ZiY"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hQVMQ0VsBzKmTN;
-	Thu, 20 Aug 2026 06:09:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787198994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w5q+QYpqVmLEV0D0dA1ade1zhGHYvvmOK4YtQ0IYvJk=;
-	b=PLd0/ZiYTwT/9jvrD9m3l9O2fvWz+ApCIcM11zx2wwiIXUCJlZMySYVoi8A/CsLMRR+AY8
-	l1ae06WppyFB0njq95F0kLZ8a7vmm7f/acMTn0YorGCx8c9BczALG2/DL+t7biIKEGhiOA
-	/GA9XrI+6J11rAp/5VrjRj7A2ihwx+O0bTFzmQp8pNog67rw836N8n18/pEjzlmgaF9SJX
-	9AG9eNZ/kOFORrBBKmf6JIOBcipqT4I0+x89gNhDqgsA3WY9+goST07J/rMLm2Eaifu9Nh
-	JnH5Q1xnPPZWVJLQESu8BapO+IRkhd/f4Fp2lseh7jpnZSA8oaACZ6PfGQmcCg==
-Message-ID: <6dfc406f-0dd1-44a6-8277-e89f43c2853a@mailbox.org>
-Date: Thu, 20 Aug 2026 06:09:50 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMB/tPJR"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-499b02fc590so5542325e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2026 21:59:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787201976; cv=none;
+        d=google.com; s=arc-20260327;
+        b=cIipUhexpQgvimqBO+VvpRRwIatihjvLV7S4wfOzOvsNlm5a5w/X9cgX9S25evj0fZ
+         zfrfZZpes8eyKrpvcn94hDASKWALIhGo4f6UhCFm9dLB7AkatCWIAL/hjZ+JdAwP20YY
+         R3RF76LYtrHS3HChCHBi+CHR9DJX0L0bHFMneKFdt3MQoVBHXiuMUrl1NgrE8f+Qkp18
+         vMyjiPsQkl8IgWdWdz0LIuj1RNmsKGHyIDSUDnG6usDcztJFmEU3fS1kS9WcgYKayCX/
+         ND5wIsoXQsrcaaEcj12nnGGjXpF/mc/3mE5DTTOktbfoXQeHmIZYgWEyELVOFc+IomN5
+         ldyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
+        fh=WDfXfP51RvDWdYoPuUzQ3Cz501Ve3itQM9wxuKvbsO8=;
+        b=JjtNWpSqjD65nESGQkZT+pqn80hz7JO+2XXFpfm3nO47c8oP8UJKcIkzaCAvCkxSVc
+         c9AhuPYxmUnnogd+wMDTU0sC+546OFLeqaH6enfUqgOXmcf0eoAzzgoL38OPIo2hidCR
+         F1xSf+N6vY054yt2SA8InGeOOTofqW74ZwOZu015gO2y0AZzpY7LEdbrAI/UfQxPVxhl
+         1pKP6Y4Ac4HHz/sJqxTYICdIDwWCOiNLf0AFIwOJNUUQRng8RYzxKARAdGkoeNVPLKjz
+         oxOag2CVHGmFSFsQNLS+VY0IcpYcv/TcvKBkrlqFIYPCK+LFI1R3vpWv6WYKJ1MgJJ/X
+         pEZg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787201976; x=1787806776; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
+        b=AMB/tPJRpP0yo/7wc/KwrSsoaov4t58vg5AVy7djDas6d/DZc/hwAAidTfhkEAbo9U
+         Z/an9Hf8qGkUe937AY5oQ7GcfdwDuUnUh+khKjvAPnqPdURYkYpEL536SJlQFfP1T62p
+         vpzxHkjxuCdu96pDXHnIhn88kyMG2dxMVDMQORxZzS7mcfg4fxuqc/NnX6acGNAdwf5s
+         OGkmWdqHCJE01m1GeCs/uiiKYoWxScKsv+1YSxXNFsglepdN5wT4FI+UShRdqk1F4CIZ
+         F8aCsb9cazwhngKGAH3W8IcaqLCOCSCekWWIg++mdDDaEfxCzDBsbD95PfbwfXmA1LII
+         a1wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787201976; x=1787806776;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zufc4WX0Sg8gho1/+Y5XWkaUuA6TVrZwSLGFlBgxd/I=;
+        b=cjOL7DqXikQqJNQsxiWrVWcg55twwof07DAHGE/Bk2m8ROBC2hI2znum/sffw6O1HG
+         7P8C4GwZpDfXKVb9+v0XK1vvZh1PvWvgE7CUcG6vyF2//ROhXlAU3Otckc4i+qd+gkgz
+         Atvozvpl0KuSRfsuvVB2V13lpFDPB1/id5mhjKQfaVOwQaazpNF6hED5TlWxdmis71RK
+         C9iprZm1So0XvY4Nr48RLVk8yb9PBdvU9Z8mNSclKsgbVp1c8+V/DDHd6KVpStyjNyWV
+         C5LFqm4bMDyL3fY35f/1q6MbfzbSw9rvKliAiENoD+VMnBDlHRvz2c1W3dzQh9OR9aQV
+         jibQ==
+X-Forwarded-Encrypted: i=1; AHgh+Ro3zrKZGSe67thZ0eUIUFsexuXmH8jGCehoMBFc83mNIlG895vKgITU3fUyKOxE91NdY76qk5Rxy6BUb91KJNt/5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcGXHwVe70hqS5+RuU1fy4HovcM4Y+MtDAtKZStZBjNPUbYcjx
+	Yl3p1ILHQOf7/fZ1GBnD2ssqasilCHJB3gHID7KT5rPylq1iqWSJcyCt3Rro5HWB7TUA3tCMIb8
+	gXfz3gykkhkhwgrKRVsIOPmAgPeELpHn7afhj
+X-Gm-Gg: AR+sD12BF4d90kCH6sCbS4WbDhOW7ZOj4v36smEr6gAQodCwYI0OjdsH1+WnTZRA7wU
+	d7+qBsNcqkBwBZKyWco3I0ZdH/PAKlCG6gSpzdAx86a3sLs6QLuLNO5aj/RrnlwcgWA4bZqUS6W
+	1Rr0X289H/EIG/bhvg0apGBqhi0PtvytWfd9Amxl05LaeygxGfY0gvPYNKfwBJT0Ss+m+B6RnMj
+	2V2mXrbDRrsgo2RhPhQgBgl1o+upG7Sj5SSg3wqXyT84V4okx+Kr38ydYaOrKViK+11+vM5Z8O+
+	OwkArBcs/xt6mm2PnJ1xhr8c1gdr1qxWpUkovAvdoRsE0iai9T+Y9iQC0nkOfOxcZ/32Pw7+eMJ
+	PpbMsXxZuog1YfQwNTDBzXQypapPG43k=
+X-Received: by 2002:a05:600c:4ec9:b0:495:4d5c:903e with SMTP id
+ 5b1f17b1804b1-499aa167256mr164468515e9.7.1787201975975; Wed, 19 Aug 2026
+ 21:59:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] PCI: dwc: rcar-gen4: Fix potential unclocked access in
- rcar_gen4_pcie_ep_deinit()
-To: Koichiro Den <den@valinux.co.jp>
-Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260813091925.71363-1-marek.vasut+renesas@mailbox.org>
- <h43onk4priskfkvdrheml4ttx2b7udavnulxvftj45midvcs3c@lec5rx7mrgys>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <h43onk4priskfkvdrheml4ttx2b7udavnulxvftj45midvcs3c@lec5rx7mrgys>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 5c9997c9d2627fa25ca
-X-MBO-RS-META: ahztides5xi3xwy7wc3e4qggam78esku
+References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aoWsgnsw5gC6TCj5@shikoro> <aoYIF8zAoPNyJxXM@ninjato>
+In-Reply-To: <aoYIF8zAoPNyJxXM@ninjato>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 20 Aug 2026 05:59:09 +0100
+X-Gm-Features: AcwNN1W7S4-c--YpoPqDr1HOqwCpIkde2HyjoAoIKaemmqpjbHFxtS1AgXlkzFE
+Message-ID: <CA+V-a8uuGAASraLTEk6PGWR-NrAn0xEAZBtY2_P6-6m5O9ihzA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] Add RTC support for Renesas RZ/T2H and RZ/N2H SoCs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/18/26 7:55 AM, Koichiro Den wrote:
+Hi Wolfram,
 
-Hello Den-san,
+On Wed, Aug 19, 2026 at 8:46=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+>
+> > Thanks for the quick update. I have done the review now, but still need
+> > to test it on my N1D board. I can do this maybe this evening, but surel=
+y
+> > tomorrow somewhen.
+>
+> rtctest still runs fine on my N1D, so for the whole series:
+>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+Thank you for testing this on RZ/N1. I'll look at the remaining items
+and send a new version.
 
-> 2. It seems to me dw_pcie_ep_init() can fail:
->     - before pre_init() has run,
->     - from inside common_init(), or
->     - after pre_init() has succeeded and written PCIEDMAINTSTSEN_INIT (e.g.
->       pci_epc_mem_init() fails)
-> 
->     The caller cannot tell which case returned the error. In the first case,
->     common_init() has not run, while in the last case PCIEDMAINTSTSEN is not 0.
->     So this seems to me different from what the commit message says. Is
->     common_deinit() intended to be safe in all three cases?
-
-I hope this is addressed by the introduction of .post_deinit() callback, 
-which makes the endpoint deinit safe in all cases.
-
-The commit message was poorly written, and is rewritten since.
-
--- 
-Best regards,
-Marek Vasut
+Cheers,
+Prabhakar
