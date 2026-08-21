@@ -1,65 +1,65 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FFC320A04
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 13:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE8C494803
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 13:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787320596; cv=none; b=kDoOD4/h0hRyH9BZ7axCLU+bulWd6x8crOWS62ZH3goE8fAWQQ0VMC8iu/VwMUwu/FEJPSiBn/4yiu4V913amJUAO48IY0Tx2925yewrLHH6jzjkgWvFXKFIGKn2JfVdwWgKNgirTgLboVO0V5vhPxxZ2Hf3we84eR3oSnpyuWI=
+	t=1787320603; cv=none; b=VcKQ3VxlXv9Tj1/8i8Bzd8y3vGZfAc15EM6N+POC2zXdB3M1ARn5IeVL0/dAQp1uAxyjm4MSlyHh9jmed4OXAiQWmt5/iR3BgbkEPCBTWDTIBdguw4ZaWgFJjKpYJs3wQnm5FiJlWGjqyylRazwYYb/0jfYRQKJY9axPgd45XUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787320596; c=relaxed/simple;
-	bh=cYr1RAs3gvAuqJZWfuQo+taemyMfp1Anvin255uabiA=;
+	s=arc-20240116; t=1787320603; c=relaxed/simple;
+	bh=uLWrx8VP0XvMS4lZzOPKXcGwF34UPrlN0NDYQcb++Vw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P4ZGZ3GcvOSQmqgtRhoh0kbaOuVuDkBt90DjMptIQmMMtE4AftC92QMzXNs83UnklFSHH7N1UngftQGns+AzYUfub2GR9mjSDryE2Y+iHXxbgmLGrN3OzFbEDntXh405HhuTBMR6A77RIr6E5KOhnWqHPvjrteuZEpum7JEgpJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZRrbRb8; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=plyNeaVi452o0wvXgWqDdQYR4yzdVPBpx1acUdOfgqKIhTEnCZFlxClbiQcFgay5Bpzldrf9+QPvZqUUvOi1Y9KT041RsnQacL1biapZF1zKCW3xV5suiIb7NRYquWgSWHXFXGxjYbe+vDK5Swle2BIlKO5JyUPQiXEXzWK7+AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+LLsdd+; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZRrbRb8"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2caced6038eso10009535ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 06:56:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+LLsdd+"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3900e39d935so922796a91.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 06:56:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787320595; x=1787925395; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787320602; x=1787925402; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=n3IQsf8wvtCdNJq/Wm/ZZ1xAHtNzc7iLcDZ8zTr7S5c=;
-        b=fZRrbRb8oJa5DZr73vvVRTwm9fpcMu74uGSlTIINOIgp6OtvGpuxIwGZnscMOlT5wa
-         VBjqE7lNgKU51TIjpnVNhVBKv7tMJ0rXYdON5uwNADjNAHs48B4H/WLH96TsqGgM1uSu
-         EqdHHRr7quaHPlU/4JlkvPXjVRC4XUtUOCT2GbZQ/xMfc+kWvkqno0l0caHQmvdYODpK
-         LYP7e5REYzR7vIfNtOwduKfwS0xUiMf0igCpUAz+cuW6PxMsB0vFMLozit+PH8Pvea6U
-         d1DY+YtdU1+WeP5oQ+HOQUeCqei2sF8EFcJa2v45SOXjndCkb7O6jYAzwyXD0jhmgWfm
-         Szmg==
+        bh=s4uKJIgLF3adY62zLAWtHXEgyUnOp/s/pf5/chMDvJU=;
+        b=M+LLsdd+5WcNN2CF9wFBWTm/GoK3oATdYy88DYbuELkZKTnLYEjEbcCcfl0XbET29h
+         1HjX5vmKyGKYcbyWZHFiwOqJtX5yCFQFNGZxK8IdNRoUt0JK7dS6AC2kWUaPzTeC1pGf
+         e4RQ1xXhTN78uXrAvW/9WXRhlbIB8nQafUwRZ9DDsXjZa054TPQ1pLoUHLOeAZrLGZDg
+         VBGLgXAE5oxyWi3jfaIYXVap6jI/e8gFe+TC8nA8Bp5a0oi5G378F1B11Tgou1qBIlw4
+         AUFqOaJ9yF8iPpcZgciMcCJPiN63Q3VplkKVnZEk2hi1Cv5y0gmcEekJv1HBOFupOt4W
+         V7lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787320595; x=1787925395;
+        d=1e100.net; s=20251104; t=1787320602; x=1787925402;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=n3IQsf8wvtCdNJq/Wm/ZZ1xAHtNzc7iLcDZ8zTr7S5c=;
-        b=U1yMZWwvMJLGx09Njf1FJHiInEC+6ruNcZDg3aiE5V/+997nwcAOOQBQCddEgaqmrM
-         jASIK9J5IeAulbMUiQEeFFpiCxnBR8/LuW7Ik0/s5p5MSpjSB82dr6WJqEOqFmD/cKU5
-         0btRjCLYwLHVtY64vqThDBO3H/QeXKNQ2gf8QpB43RpTc2PEa2hjQNZsPbDXo1NSwMav
-         9h4ooKZwTEHFhiYl0Djy1UR+bYOMsOYqERYqEatDherUJO7uY72lI24h9N/Un5mbjcJ9
-         vrw0znqglwA3rz82XHLhiTJxbWyySvt5WY8AL8DLIkFmdd9mNAe+iOggpM92jFSLJjAJ
-         9Z0g==
-X-Forwarded-Encrypted: i=1; AHgh+RrAlfWTS+g19+OshQACvQfRmTFvi6qO2rDPL27wieUrZ5wMgN1H3sXvui2+QmrPxZjUai/vjBuOFErgkb3wepbZjw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nZw/lo4ETdSmPeugW4XuA8i8CYlb2hBGR9wTp2uovdv96UID8P
-	fhXue2IQyvuAZfTiscSM/jkECbwGlixIoRRzL8cyCulW/xjx30bGrYG0
-X-Gm-Gg: AR+sD13wpsc7+wXokherM+5tqjXQIFlxouRf0AFm59ODdTdCv1Yb28D7YIzySw0q2cj
-	1Jau/GIb9h9IaHNe1rtjaCD3HEzpAv+tj4h7EnAxjBu0qLQOu5CWgEfjVeRXAiXILpNAx0s3V/C
-	KMxBiZpMjDh1B60+TKFC3flPgX4iqeJbn1BIOw3MIrlz0XSBiBPzuO5Ehi0z2goBUPCGagGGhTS
-	yhEyJGzbrJNLyyLjOVwpS2Fckk00DbBq1RgFvDPUTSXzDee62cu7g/eoSeUcWNc/eL2Icn7nQ3T
-	57VfH/iIq1Bn+5RlM2CXCH2QNWyK10cws7Jyaa3juGFm03d2XsTxzMKa105AUKJ6eykC4biHfpM
-	3KOxb7I28kfwPLWb9npLW2gC/ZRDrIcoHgEJ/Z/6ZTA/RgmbuPLmbunbdBdN9VjC9dQU8jOyTIj
-	o754t+d3vmk7tN+YmDy2fkBQJxo74ZVxs1aHCNsFQKXCp1kyuVKRE1dhVVdEybbhmKWZto0KjMS
-	DVxeZbcJFkBGWDbXClDTIktelp2pPjft80bBQKEx8FvAlocqck+Z/oPqBXBEYu7oY9+VhpFyGK2
-	XcmsXDZToA==
-X-Received: by 2002:a17:903:94c:b0:2c0:d94f:50c7 with SMTP id d9443c01a7336-2d61a0c9415mr190790765ad.7.1787320594915;
-        Fri, 21 Aug 2026 06:56:34 -0700 (PDT)
+        bh=s4uKJIgLF3adY62zLAWtHXEgyUnOp/s/pf5/chMDvJU=;
+        b=OeiWaLtuW3O2QsLYKO3McdXmBnBvxoD9jaXpCd3SPvJcqbZF5Jz5QXOmlhu+WG/dpd
+         c7X28ShJtyd5/qqLHpWp9f/k4yOUYYzZJbZBgAJpy7IOvEp6PPkuuYmWiQY/yygyDa9S
+         pf6x9oBJEUyh5Fsbslo8adBaOYM4Iz/KDtEQ1XjQcBlceIzaD2GxAOjNnfivk4+dng91
+         B5qWtbWB1sh7+6lFCpzyYRh/KfpICsrzx49vXsqQdjZuPQI4LjLPWsvIO6SGNPbJjC+q
+         EF5QcIGbWarWfT8nCtZ6tW0j8xwCVJ8fvlDrIjE7wMeC97vm+hnhRBR1AwzdD8qiqqR/
+         unVA==
+X-Forwarded-Encrypted: i=1; AHgh+RpFXmeFEgMvKTxrkMmsaP/G/EhVWz72CApG/MoKvkpmdbdIb2ECR7q3jQyWdBSsMGz9JTZ1yRx2GPFzH3FdpV+gRA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lLSY7T0GbEqyeXWh8+7YSqm1Z1btkal4CzVe7xKFiczgGGb3rT
+	2I7TW+/RHqE6xiEd/yYPY+fsA9vPQyvUxqA1JXKXRMcKGiDkJr3kHFQq
+X-Gm-Gg: AR+sD13ZuajBM7tYJHsayLSNP/AFjaNTKJZUopI3IfiS/e8Unq/0XZ02gT0WV2XXRDS
+	WP4WrLabHSiz/9rncbP4LNRN52Gc0+5/d33Q+ZwFFdncERsjljamb6I6q+8+Hr6+SRtHBJ/u4F/
+	PYgcEPpWg8Qjks9DaninaD/iKn4UfeXsLgN9P2yEaBigZDKOPeHeoWoz9Uyvpz/s0QzRs6ltlgg
+	XHwld3Wql7rtLCh5/53sm313JMEwKIuhLpbPAlo15NLInZWCYMo+pVifQtJzL0ivoOHs/FKuWWM
+	nlbV8g5Gh6xgnu733j5DUJWYd/2cFEnlmg/6/mTFw9pz0GlAWdOJ8dQu83E/k6RODOWu65jWn1W
+	uUYggP/iNwd5wiZc5H8ggpsvx86ZFwLslfuXIsOvAdP4ErUffo8wLwtsnluUutKhmAk/KOiDW9q
+	zx+kBTLsfVklTuqJbyES+kzQzxZ1oE0m2Pe6OoTfdb+CwykZim7UG7ppuum39cmE+HTLIojOq52
+	oJwkZ6UDXAdPOCuzW2CwcvJMti7CnmwO6JtO4gIVF1tVW2G2gzZTec165dnEVHH/zskemftcD+z
+	aF3Dhxa9IaWbizz19otHGQ==
+X-Received: by 2002:a17:90b:4c0a:b0:38f:de97:b06 with SMTP id 98e67ed59e1d1-395c351386amr11634937a91.5.1787320601681;
+        Fri, 21 Aug 2026 06:56:41 -0700 (PDT)
 Received: from iku.example.org ([2401:4900:1c07:efb3:773c:1c8c:24ea:eff6])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327d01ff056sm19972277eec.19.2026.08.21.06.56.28
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327d01ff056sm19972277eec.19.2026.08.21.06.56.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 06:56:34 -0700 (PDT)
+        Fri, 21 Aug 2026 06:56:41 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -78,10 +78,10 @@ Cc: linux-rtc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 01/17] dt-bindings: rtc: renesas,rzn1-rtc: Add RZ/T2H and RZ/N2H support
-Date: Fri, 21 Aug 2026 14:55:52 +0100
-Message-ID: <20260821135608.275233-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	stable@vger.kernel.org
+Subject: [PATCH v5 02/17] rtc: rzn1: Handle EPROBE_DEFER for optional pps interrupt
+Date: Fri, 21 Aug 2026 14:55:53 +0100
+Message-ID: <20260821135608.275233-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260821135608.275233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260821135608.275233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -95,97 +95,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add compatible strings for the RTC block found on the Renesas RZ/T2H
-(R9A09G077) and RZ/N2H (R9A09G087) SoCs.
+Check for -EPROBE_DEFER from platform_get_irq_byname_optional() and handle
+the deferred probe request properly.
 
-These SoCs integrate a closely related variant of the RZ/N1 RTC IP.
-Unlike RZ/N1, they do not implement the RTCA0SUBU register. This is
-not a limitation for Linux support, as these registers are not used
-when the RTC operates in "scmp" clock mode, which is required on
-RZ/T2H and RZ/N2H due to their 195.3 kHz input clock.
+Although the "pps" interrupt is optional, an error code of -EPROBE_DEFER
+indicates that the interrupt subsystem is not yet ready. Intercept this
+specific error condition, assign it to the return value, and jump to the
+dis_runtime_pm label to avoid ignoring a valid probe deferral.
 
-The RZ/T2H RTC variant also supports a 1Hz output signal on the
-RTCAT1HZ pin, controlled by the RTCA0CTL1[RTCA01HZE] bit. This bit is
-marked as reserved in the RZ/N1 hardware manual.
-
-Update the binding schema to require the additional clock inputs used by
-these SoCs.
-
+Fixes: eea7791e00f33 ("rtc: rzn1: implement one-second accuracy for alarms")
+Cc: stable@vger.kernel.org
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 v4->v5:
-- No changes.
+- Added Tested-by tag from Wolfram.
 
 v3->v4:
-- No changes.
+- Added Reviewed-by tag from Wolfram.
 
 v2->v3:
 - No changes
 
 v1->v2:
-- Updated commit message to drop reference about RTCA0TCR register.
-- Added Acked-by and Reviewed-by tags.
+- No changes
 ---
- .../bindings/rtc/renesas,rzn1-rtc.yaml        | 35 +++++++++++++++----
- 1 file changed, 28 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-rzn1.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-index 1860f0e4c31a..ea7b039a91e7 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -9,15 +9,19 @@ title: Renesas RZ/N1 SoCs Real-Time Clock
- maintainers:
-   - Miquel Raynal <miquel.raynal@bootlin.com>
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index 305f10a8a85b..aa27ad7f5941 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -464,6 +464,10 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 	}
  
--allOf:
--  - $ref: rtc.yaml#
--
- properties:
-   compatible:
--    items:
--      - enum:
--          - renesas,r9a06g032-rtc
--      - const: renesas,rzn1-rtc
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-rtc
-+          - const: renesas,rzn1-rtc
-+
-+      - const: renesas,r9a09g077-rtc
-+
-+      - items:
-+          - const: renesas,r9a09g087-rtc
-+          - const: renesas,r9a09g077-rtc
+ 	irq = platform_get_irq_byname_optional(pdev, "pps");
++	if (irq == -EPROBE_DEFER) {
++		ret = irq;
++		goto dis_runtime_pm;
++	}
+ 	if (irq >= 0)
+ 		ret = devm_request_irq(&pdev->dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
  
-   reg:
-     maxItems: 1
-@@ -54,6 +58,23 @@ required:
-   - clock-names
-   - power-domains
- 
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a09g077-rtc
-+              - renesas,r9a09g087-rtc
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+        clock-names:
-+          minItems: 2
-+
- unevaluatedProperties: false
- 
- examples:
 -- 
 2.43.0
 
