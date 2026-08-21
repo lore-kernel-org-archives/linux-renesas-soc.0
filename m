@@ -1,188 +1,133 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B791F099C;
-	Fri, 21 Aug 2026 12:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830C32C0F6D;
+	Fri, 21 Aug 2026 13:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787315311; cv=none; b=f/V1P+2Kk6Jeq/BL0m9KLS+3dMgvpu8lMv12w0J1ks6Yo1+U79kACHMcOcsEQcDyvlcH5cDfNYECEdityAfRaSo85CCVauPVsu7Q2cG5Fz5p8M0X9nz3NXn9PQT3gHlceUuZbIm4RJw2nqivlGP6t4dJzfgK2tZYSBpJzmpykUk=
+	t=1787319071; cv=none; b=YuD/0OrNh/i3J8xnKCT9jAa5rwg7Ax6CzK1AUMUK+ur4gsv+gXMalX+QLgr48gPpnwb9SnUE9+sLWnyNFeJS6n4IPbpJZ6ZAmMI73RE15CCii52kRAERXnUFoDhJJMEgvhOzxzdc6AUty5K01qfBjiziBWrGMKVU6jsoGnP/m3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787315311; c=relaxed/simple;
-	bh=FQpYfhwGaodFq9h530kJvDJeAPdWPaCx2PqR6L8SvzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fZtPt4IeADLxz5NQtnZvE8Tl3b7e3ELW4D8x9jcinNbs2D79dDX4dZlH5WnXffsuKpySwCQAu7lcawFZBubKl/l2JncPazKZPjtmi/hZZpBStQuH1Xni04WKM+zGarG25UqTLa0vLCcESYpl6Vd+Ecfd0WnNGXkadIyPl8pqS7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SwWq07Jz; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jCSV0ZBg; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1787319071; c=relaxed/simple;
+	bh=R5vL96ZPR0G0EN/GrmLL2WqnOuqx3OjeFrZbM2LmI1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RLURQ9K696AjeY/gSgAbMFSBk4uVJBK+8u/isJE8oAwh8/pFXSB2CxkgHziWZVRJ9HAWBc6Cw/T4hGVxDEt27zxuoIeC3t0EdlpGFR0dngRcISn2XrXfO9w0JPoLTR+m5BNbzJmT5RdjsLSaMzWksn5idDpcIhW9v63kHnc/ok0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwHm1tBF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SwWq07Jz";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jCSV0ZBg"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hRKN539NJzKw29;
-	Fri, 21 Aug 2026 14:28:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787315301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wF82VvkMBcPp6Kh3cyr0M7lo5IrVHWJoZoyzVE7bfYc=;
-	b=SwWq07Jzj5FSguELC8fth5c5yPDvGoOB6EaY06e4hPtQvwvPRmGJRmZxpnTP1mZODmpS6A
-	A2kNlATwaUUBrTJwI0uQM2XcVcvAk8RJ7D+4tGLGWo0rb6AOQJbcQsse7jK7BaLWbk/YXu
-	r1n3Ig7vEHcZVQ9QxFOc9Mj/G4L6qgwxzM7DKUDM3usuPBWLaYs5WLdn5lqhsuVyXegWS0
-	slW5sgdhdLbrBU+GMKPUuIHpm+Fh8FjXjbQDRgm3W0aEqXiB3/RfcJz8te2XmP9iIVSZ7R
-	jbkVyLubHSblKuMCVLkDg237MFojrj14TWsfUQCPa0IcEiRLnrwe6ppW5rU0ww==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787315300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wF82VvkMBcPp6Kh3cyr0M7lo5IrVHWJoZoyzVE7bfYc=;
-	b=jCSV0ZBgHtp2oaTOHpuU+SOVLOpweWSNxNa8W7ZMC/dj9Is+aNOK2iGvyRKOmxhKaTh5Ue
-	ytAakgY1NAA2KpFHQDHmLNhUokowEHctpRAlxa0/eY+ToFizw6XJWxJV/rXSOUs0rBR571
-	lpuyb+KkKeCKYzYw9O+d55AQwNdcG76B17LdFcLkLSlXQUqHRO9NQqv7Z+fFW5BqBfkxee
-	fbkA6FhghTbFsNEZTkhtRUh3T5Uh57FBDA2Sv9t3YuPj+YRUaLr/ijByoN1dsgcaYddWNR
-	I9rMagKxMFVNebvZ81BChuEh1fMSrZzsXtxAHyO9kd/q2MvdI/MsxCI7DlhWHw==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Koichiro Den <den@valinux.co.jp>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/2] PCI: dwc: rcar-gen4: Use .post_deinit to handle dw_pcie_ep_init() failures
-Date: Fri, 21 Aug 2026 14:27:50 +0200
-Message-ID: <20260821122808.238248-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260821122808.238248-1-marek.vasut+renesas@mailbox.org>
-References: <20260821122808.238248-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwHm1tBF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A77E1F00A3A;
+	Fri, 21 Aug 2026 13:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787319070;
+	bh=Uo/du0VNmVsqMTeIOJgXLNIRsqWuxBkETztHJiXKlH8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=QwHm1tBFzOeH4Q0RYUy0xNdqoFrvBjA9HTqq6VmrDUlCgzv+1nCQZ/2uv6cHX6ji8
+	 37U+QqRy5UX4cTix0OR322ZtM/qjLHwZvNVdGFWybpV5QKSQd5sQ3TDsLyyX7t22In
+	 nplaIC9Cmv5FUehFUuYwLIiVAxWv+IDdAh+zMD/QcRgAXlPEOMmsQf8JWG2rBlwNrV
+	 H3LWEJehc9NPBS3W4fPn5M405hnEr6shAga5JXiz6caYsYDqMGgZL8J1AHSmn2WeYU
+	 cGvX+q5cSLfWe61Cn842w15VfrXA+2O/Fr9+LgqtwG+YIKSPkGUxYp5BlYHNU1as8r
+	 0Lazhv1fc8TCg==
+Message-ID: <170920ea-e8d9-46a1-8415-659672bd8de4@kernel.org>
+Date: Fri, 21 Aug 2026 08:31:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: i37hwesgx5x1e6gd8se59j8obmxtiytj
-X-MBO-RS-ID: ec2a1b888ffddc70dac
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 32/45] clk: socfpga: Make sure clk_init_data is fully
+ initialized
+Content-Language: en-US
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Billy Tsai <billy_tsai@aspeedtech.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>, Linus Walleij <linusw@kernel.org>,
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Viresh Kumar <vireshk@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+ Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org, imx@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <2d38d78f8d59583e29778bebc65eaab911d8a120.1787239813.git.geert+renesas@glider.be>
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <2d38d78f8d59583e29778bebc65eaab911d8a120.1787239813.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Implement .post_deinit() callback in R-Car Gen4 struct dw_pcie_ep_ops {}
-which asserts reset and stops the clock. This undoes start of clock and
-deassert of reset performed in .pre_init() in case dw_pcie_ep_init() fails
-after successful call of .pre_init() callback.
 
-The use of .post_deinit() callback correctly handles the clock and reset
-stop, unlike the call of rcar_gen4_pcie_ep_deinit() in dw_pcie_ep_init()
-which could not discern at which point the dw_pcie_ep_init() failed and
-might have attempted to stop clock and assert reset twice, remove it.
 
-Since dw_pcie_ep_deinit() also invokes the .post_deinit() callback, drop
-calls to rcar_gen4_pcie_ep_deinit() in both rcar_gen4_add_dw_pcie_ep()
-dw_pcie_ep_init_registers() fail path and rcar_gen4_remove_dw_pcie_ep()
-to avoid duplicate stop of clock and assert of reset, and drop no longer
-used rcar_gen4_pcie_ep_deinit() entirely.
+On 8/21/26 03:53, Geert Uytterhoeven wrote:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Compile-tested only.
+> ---
+>   drivers/clk/socfpga/clk-gate-a10.c   | 2 +-
+>   drivers/clk/socfpga/clk-gate-s10.c   | 6 +++---
+>   drivers/clk/socfpga/clk-gate.c       | 2 +-
+>   drivers/clk/socfpga/clk-periph-a10.c | 2 +-
+>   drivers/clk/socfpga/clk-periph-s10.c | 8 ++++----
+>   drivers/clk/socfpga/clk-periph.c     | 2 +-
+>   drivers/clk/socfpga/clk-pll-a10.c    | 2 +-
+>   drivers/clk/socfpga/clk-pll-s10.c    | 8 ++++----
+>   drivers/clk/socfpga/clk-pll.c        | 2 +-
+>   9 files changed, 17 insertions(+), 17 deletions(-)
+> 
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
 
-Initialize PCIEDMAINTSTSEN early in rcar_gen4_pcie_ep_pre_init() to 0,
-to make sure that edma_int bits will never be left set in case of
-failure of dw_pcie_ep_init(), and will only be set in case
-dw_pcie_ep_init() succeeds.
-
-Reviewed-by: Koichiro Den <den@valinux.co.jp>
-Tested-by: Koichiro Den <den@valinux.co.jp>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: This is reworked version of
-    PCI: dwc: rcar-gen4: Fix potential unclocked access in rcar_gen4_pcie_ep_deinit()
-V3: - Update commit message slightly
-    - Add RB/TB from Den-san
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index fbe465a29068f..157e33c4089b9 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -487,6 +487,8 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
- 	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
- 	int ret;
- 
-+	writel(0, rcar->base + PCIEDMAINTSTSEN);
-+
- 	ret = rcar_gen4_pcie_common_init(rcar);
- 	if (ret)
- 		return ret;
-@@ -496,8 +498,11 @@ static int rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
- 	return 0;
- }
- 
--static void rcar_gen4_pcie_ep_deinit(struct rcar_gen4_pcie *rcar)
-+static void rcar_gen4_pcie_ep_post_deinit(struct dw_pcie_ep *ep)
- {
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+
- 	writel(0, rcar->base + PCIEDMAINTSTSEN);
- 	rcar_gen4_pcie_common_deinit(rcar);
- }
-@@ -552,6 +557,7 @@ static unsigned int rcar_gen4_pcie_ep_get_dbi2_offset(struct dw_pcie_ep *ep,
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
- 	.pre_init = rcar_gen4_pcie_ep_pre_init,
-+	.post_deinit = rcar_gen4_pcie_ep_post_deinit,
- 	.raise_irq = rcar_gen4_pcie_ep_raise_irq,
- 	.get_features = rcar_gen4_pcie_ep_get_features,
- 	.get_dbi_offset = rcar_gen4_pcie_ep_get_dbi_offset,
-@@ -570,16 +576,13 @@ static int rcar_gen4_add_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
- 	ep->ops = &pcie_ep_ops;
- 
- 	ret = dw_pcie_ep_init(ep);
--	if (ret) {
--		rcar_gen4_pcie_ep_deinit(rcar);
-+	if (ret)
- 		return ret;
--	}
- 
- 	ret = dw_pcie_ep_init_registers(ep);
- 	if (ret) {
- 		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
- 		dw_pcie_ep_deinit(ep);
--		rcar_gen4_pcie_ep_deinit(rcar);
- 	}
- 
- 	pci_epc_init_notify(ep->epc);
-@@ -590,7 +593,6 @@ static int rcar_gen4_add_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
- static void rcar_gen4_remove_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
- {
- 	dw_pcie_ep_deinit(&rcar->dw.ep);
--	rcar_gen4_pcie_ep_deinit(rcar);
- }
- 
- /* Common */
--- 
-2.53.0
-
+Thanks,
+Dinh
