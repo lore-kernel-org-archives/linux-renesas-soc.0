@@ -1,130 +1,162 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FC1450911
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787310390; cv=pass; b=DUqGyLsYet4y6lELVVlwvqEpwZFTbOF0nBs5rHYX6Q4mOhx+bHxYcOCSF6ovDT0tf+hQcm0/RtcHC904cEUxHk0gzXPs/27Uv5FfYC8lRCq2RwZjaEi5i9GnVmShisQ/wa3JOf8f0yA9wsajjVkBEh9Fp8AkhJa4nbASfiCe+x0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787310390; c=relaxed/simple;
-	bh=KrZ6HeRxc2ZB4KNjY9rusjhD8xWXy4q4jVkQHO73EgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kFEGxA8h1nzGU4Nx8GH6wiSogLh0nXVnKGYsDW7fFsGFgO99n+SUbQUqwi9uamGN5W2Mjr+j1noks9W6maDxmguuibR8G9oex6M3R6f6CNiKSCRrxJS2+++t3PrUue27sfitPZSDuGnehTyBIh5LUJVpzDp2X97q7Wjzra14Wks=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8m9tW3n; arc=pass smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F19B429014
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787311615; cv=none; b=t7Xq3OT9cSHkTZc3jdW06YqRfkjzMibI1DOpNeQbYKD4d1oXabkziXjr9ZK1CokvnbgQJBU8rWT6XyV7tRG8UebKPo3Dk905H1tG+EVi/ha4f45sewqrZ6Ri0eYjd64rYhydtEFI8F8Ck0/U19INB8CkJnjSM/LXlzwNYe2Q4io=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787311615; c=relaxed/simple;
+	bh=qAWvudYMdASPXPfSTaqms42rgycSdo6rtQ42Q6DlQlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPHjjYT9FJapXIl+VXLXywgaiENWPgFjxRuiwb1ztmMY8ZWYYdyK2HzQQs4Hpj34IGBVUxaH1ENAxin6QQMbyVe+H7DK97BJ8KVYv5ppjdS8/apc7H3wBK7Rd7PpAOeQHMWDJkOLjltU2BGMd4iyU5QAoICWJsfNqJDU/jh8hk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=DXfBaBze; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8m9tW3n"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-47f96c5b722so436808f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:06:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787310387; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Wa6dcM+Q3lJVlgleFO688CqXeCWCq7Wlt3Ype7qqs9mguadTUhK9PaxLckoxUDNDNN
-         ElZ1+0bRyHyJKPUwKTOoDkaKsJRLOKYrlBiDEVOE21kVEVDRXRQN+L7BdIaopennY3j+
-         wIOMKxIQIVgiJJLGGHVDcLdPusWLH6UxdzkSjzSwYnZUCOLrdicP61inF5bBx/+E4AjS
-         XMwgCGImACIOMhpcSAP4EPdJl6NhoeHfYBry8GJRrDJHkCLXtldhUYH9A/m3TD9946YQ
-         wQl4EigdiV80+qeubOZLMfFOaBQjmdRiAk/JLlqP1ls6Mr8GtHSXYsIZQXRfeHTOZfsP
-         ksFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
-        fh=nrY6feTWpGEdI8/11zQEIINYN9BUUaG8XDE8qrMppQ0=;
-        b=AWGfmCR0KvI+5SCC5sX3VJeTwy7OVuoAskHNK0gU6iEgzKNEbdkg60B5dlymcP4wis
-         a3SphRHNVYp/6w6DILi145nEq+fYJ9i2O9xMNgERaw5yAggoj9tEIYNo7R84EvSOLIrX
-         n9ngQSDHomppDcQ5lVpNKkc9VYcSGIrOAnz7R8dHpqbl7eAATkLL9w4Hh5HuQCtgO/BB
-         tJI+RkyjfEeMDG9i/5CYRgqpHKS7ilYAZmfCnAPt6iNtXRl5o6WZAlB55tyujAOamgnk
-         VEbxm66Wz1cLhf3VZjh6F9HByIfWAKR+2qN0q7qfCJHnmEfoXEu+bQDAFbocyQOIlS7O
-         9+RQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787310387; x=1787915187; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
-        b=d8m9tW3nM+Y1r60sS8EOkeQyEfpz8DPciym6BDPezegSU6e0mqaGGtRR2x6mo47JYk
-         H4lGR2kQ1TLKnj2Ky+2vB6Ni/DQ+JhAnzTrfaso/VJXOzFbqmug7IxBow8wVyqWfSA58
-         eKE25VmYC2wSUWbGWbsKIIxli/pUwCwjN+TM27hxE7KhDog61lgaX7Brt5qIAZ/BNBZB
-         vkQ1FoLxSskQcr+IwnQ1v9OYXTAyk4RjaAi7CA39LqoNDYfGB/+FdZHfQE9CZ4QdXIG1
-         VKNe5sagm1UUcoDJqYUfkDI5KfYkU1RGCRdbpRUaW8eDHg+HlmmBMwY9wjVag0kckKvy
-         p9bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787310387; x=1787915187;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
-        b=bDMEILrk4gwegM5kaXtenyAlQO4suP57bMo1wgHmIH5slhxtaqM7VmRD2i3NncL7z3
-         dFoB8+lyPxRcM98KbFoc0tlnJ2zSH+EPrPL2sh4o5P2vCfcdzLiryR2W8EsIp/Twuxmd
-         XhiecFNe1oMWoa390qWssExpFIaX6/z2OOHYDkJdlSdOrZb+jXqAJtd76fXt/LY5q5Zs
-         ki/F40nj0pwBUJKM8KfGRCmI5OiaTQWTW13eV+E2MoGv/sWalC5h9dFOwy0qNIsZPBca
-         v9Yz66s4a6uXhSFeiI+x0BvoGvLS4JA1Rkqn3n5MypYILGgJ8GLnUlPHObNgFPViERrY
-         gQsQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoUp8PSB2Ybv+ngYZonnjUmT6rf4vQiTt5kgt7jTWufOLxRCA01PeKtNHdW9wGTdamewIffth8KdiJGEFKgEscsRg==@vger.kernel.org
-X-Gm-Message-State: AFuF++kacj/FkcbvOaqCvwPU96JNvNVvUp9H6pABq2hwZtrAn/4fyBxA
-	ebLMKdkwiP1Sm9EN48zDb72NJ4+igLBYIiUbZgmpv+41mTbEmyefqpCniBpYCU8z9W6sjdkwylz
-	cojuLoh/5H0+wxPP+JG7MBC0yFveScVg=
-X-Gm-Gg: AR+sD139uVFyt5Qc+0zTnCABC1deHcwJH5iIw+pKfBaLXTfxih4vBkyWx7INK01SskE
-	eR+TYIsS5vs3MNTqMfYiF/sckD0h3d0P5o73HxK+5ZNWs9RIGXTWLRwPjIYAuifGmw45R5KRoQV
-	tD2iIJJySnEe4f/q1lHtpTcZGjbbLhzXb2HC/tib3tvj6d1OdQc+xeIdHZY9xi/RA6nmg0WedYs
-	yEUt29pKSnIbQ5igmIpQ4zM4yUYSVY29yZnUdNgCMsjGxcBsDLTaswBmGeWDAJ4YyNfQhTF7ij9
-	q0QW9bAIa9bp+I2I5jbm7iZJjWQr3BJX7YuA+aFiZlKsPFMh1mTkThHR88sDfS9fBSet9pjIzOQ
-	Jq7Y1u5J1IGO20c9LC/db+DIAso0QAkDhuHs=
-X-Received: by 2002:a05:6000:41e5:b0:47f:7b75:9dfe with SMTP id
- ffacd0b85a97d-482c0b5bf92mr8558786f8f.8.1787310386687; Fri, 21 Aug 2026
- 04:06:26 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="DXfBaBze"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 703F822D9
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:26:47 -0700 (PDT)
+Received: from [192.168.0.1] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 139343F763
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1787311611; bh=qAWvudYMdASPXPfSTaqms42rgycSdo6rtQ42Q6DlQlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DXfBaBzeWmrq0aj+CPRsgfs/yoiUPB4qNVwv7pyFwF2y2LlptKPjSgHcnb/PVZI5i
+	 avRO7zGtBvK5bF0yjBqxWdrfAt+LqMc4ROZzJdDuNHRVS99nQwfsOFZDF2lCdT5fYH
+	 JtyhBC0h9CSq9Z+OMGp2d62n+9+UOyjb3n5K3/fw=
+Date: Fri, 21 Aug 2026 12:25:30 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 05/45] clk: cdce925: Make sure clk_init_data is fully
+ initialized
+Message-ID: <aog1qljZkrxL3nYP@e142607>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <308a33a0e63241d94ee08a08a6de6cffa739556e.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aobjCr7ZtpLmL3VP@ninjato> <CA+V-a8tpo2Rc9xsvsj9LLqD2ZjoHzRAVsox=7xURAtwA-GYVEw@mail.gmail.com>
- <aogbk-moFmTTFkJ0@shikoro>
-In-Reply-To: <aogbk-moFmTTFkJ0@shikoro>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 21 Aug 2026 12:06:00 +0100
-X-Gm-Features: AcwNN1UGmz1uUQCIu-LKe-mxUq6Df2QcPbc9ZZ1iJn0ahM-r4uBoryBwB3wI0p4
-Message-ID: <CA+V-a8txC5U_VvXBYnMXctBg2Jz3a44NZjn-P39amUq5HihG+A@mail.gmail.com>
-Subject: Re: [PATCH v4 13/15] rtc: rzn1: Add OF match data to gate SUBU
- register access
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <308a33a0e63241d94ee08a08a6de6cffa739556e.1787239813.git.geert+renesas@glider.be>
 
-Hi Wolfram,
+On Fri, Aug 21, 2026 at 10:53:15AM +0200, Geert Uytterhoeven wrote:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Aug 21, 2026 at 10:34=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
->
-> > } else if (!data->has_subu) {
-> >         return dev_err_probe(dev, -EOPNOTSUPP,
-> >                              "No valid XTAL provided and SUBU mode not
->
-> Yeah, looks good to me. It is maybe a bit hidden that xtal =3D=3D NULL in
-> the above case. I wonder if adding a comment above the return command
->
->         /* xtal is NULL here */
->
-> will help understanding? But I'll leave it to you.
->
-Sure, I will add a comment.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-Cheers,
-Prabhakar
+Best regards,
+Liviu
+
+> ---
+> Compile-tested only.
+> ---
+>  drivers/clk/clk-cdce925.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+> index 30d0493c771818ff..4d49cc1659c07be2 100644
+> --- a/drivers/clk/clk-cdce925.c
+> +++ b/drivers/clk/clk-cdce925.c
+> @@ -620,7 +620,7 @@ static int cdce925_probe(struct i2c_client *client)
+>  	struct device_node *node = client->dev.of_node;
+>  	const char *parent_name;
+>  	const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
+> -	struct clk_init_data init;
+> +	struct clk_init_data init = {};
+>  	u32 value;
+>  	int i;
+>  	int err;
+> -- 
+> 2.43.0
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
