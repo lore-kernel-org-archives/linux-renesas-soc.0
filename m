@@ -1,183 +1,144 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CD442E41E;
-	Fri, 21 Aug 2026 16:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B46D37B003;
+	Fri, 21 Aug 2026 17:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787330467; cv=none; b=u6UrUsZvRwXQOg587FclTishnYLDWCcbp7rN+uU/W9SuMvHa9GVvsKP9WwWga8iLHXq6QRrvpIoap8WLLoEZTVjHDGL53umXq2H4Too4m8EvKhBxpv9z32VcpoGZ1bK21KSbuhtMKSosJYcGUokImx/5JKWeMBkHoLPaWrO96fk=
+	t=1787333009; cv=none; b=sCj8UrUR5OgcEGQogwUyVLDXQnudgxLphmvJCeazD7CnZ555J3NHBtzKNn3lW1gjcQJ7LaAUowosKZmeWeQoNu3olW4LImxrcgvvYTnszlsk1H+l41VF8PoVxrS9Uqjk2ZN7GARO8OXmsQSf12khpHV9Q8Y/wheYYl4zH5yMnNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787330467; c=relaxed/simple;
-	bh=PMvp+6K0nqJTmS+H8aATdAgw+H6mFSdRw9vbvGRG73g=;
+	s=arc-20240116; t=1787333009; c=relaxed/simple;
+	bh=bXjNUCVAadw0b0GXnnr1xng129Qv7WDG74zFnbmAuC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRZZHx/Z2O2O1Whj6laQujEx6B8yg0M7V3HGur7xXtW4n+l0spvodNBMCzUGL0zc5oeXPnGdjTrxkdhXrKXAanqXN0tWNh7GgtDVCosW1v5zTEFEkQOZH5CMwo9b9qJ0CyfX7emUhkEfDNe5bKVegULPPc7hYIVOgTCUwqK6c1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dZhGatd/; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=QGCgx9yUr865mrBpSrxIW4b5LUzjk8pglKOcXcAoUFozxyGxOkJQBNoZvKVtmJDwvwXk8i1KjGpRdyKNqEu/6SwAsRiKPz5fJkU0OABKauBE/ogadCGtgwdtzdL98DOFuz1PY+m7LYdE5+GfJeazbMUWpD1+Z+lT81fAnJdWj5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW0EItDg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dZhGatd/"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 81B484E4131D;
-	Fri, 21 Aug 2026 16:40:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 36F95604AA;
-	Fri, 21 Aug 2026 16:40:58 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DB16411C77441;
-	Fri, 21 Aug 2026 18:40:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1787330453; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=9w4aNObF1g63xs4aGcSnHDEyiVTWLLQJXVHzuhgeMq0=;
-	b=dZhGatd/Tk6ZLtQOj485wAETdgB49rOofHsXiHbPqV25qn6XdEvByWqa1Zrf2TcQaUiNFD
-	A555CPuBPmCycs+uZh4RWSCUKacB3GibaAhcxJANVCtG4MAf+vvqox933+6tD9EW6uZCPE
-	5dhc+Vx5CA9t31r99AjmWh/V1t6sQWMgDUXMKEzcFoYRQ3JuF/BL7Cq1hrcm2w+p5KVGf8
-	RIKsL+qbxvGyuVzDl3fT8c7/GpXKf3JPYS4JQUxOPDDTADUt/VwOb9xiuToDJc7Sw1MD4r
-	vyEhCMtN88RRrWt/b8Fr2Mh9zIu/+YL3Xm68+npN3g/oNbBgJ/g8GSrSWbMfag==
-Date: Fri, 21 Aug 2026 18:40:50 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW0EItDg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D8F1F000E9;
+	Fri, 21 Aug 2026 17:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787333008;
+	bh=YWUzwAz2gglOPhDQRZ+3MLEbMpUfiyg15km1lbgLClE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KW0EItDg/p2K/B1rbN/IC5VfFeikrMXLMG8LKHHGxgMBR41alZRlnd9N8i4yCSopc
+	 Kie9qLO3Avt9UTxiwhby0P0xq+HTL78U7anbXvLc9oZ/dRVSnoEMqTH5VKV6uC+a06
+	 yolEOo2QkGsOwLydFzPr5Os4ldXqWeSscMTtCp1ck9LSZ0I8CMP32CVU4E0YUK6yIP
+	 PqkEksuu2CFKuVi/IoZdQqJ5j5+T3OSE3pQ8QHrOhyuC4t9D1M7e+n8RFkkK1xBnYh
+	 UwZVcjEG5mSokn2BsRrg1TI+0l+kj6rZkPLOZF7KIJik2v2JieoRXONnFx79tOrd7T
+	 XbxLuD+e0KrDg==
+Date: Fri, 21 Aug 2026 18:23:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, Conor Dooley <conor+dt@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 15/17] rtc: rzn1: Add OF match data to gate SUBU
- register access
-Message-ID: <20260821164050abd3ceed@mail.local>
-References: <20260821135608.275233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260821135608.275233-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: Document 10"
+ Raspberry Pi Touch Display 2
+Message-ID: <20260821-naturist-eagle-f691527ae813@spud>
+References: <20260820185506.84448-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="P/iFS2tr70btybGJ"
+Content-Disposition: inline
+In-Reply-To: <20260820185506.84448-1-marek.vasut+renesas@mailbox.org>
+
+--P/iFS2tr70btybGJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260821135608.275233-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On 21/08/2026 14:56:06+0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The RZ/N1 RTC driver selects SCMP mode only when an optional xtal clock
-> is provided at a valid rate other than 32768 Hz. Without an xtal clock,
-> or when it runs at 32768 Hz, the driver uses SUBU mode.
-> 
-> However, the RTCA0SUBU register used by SUBU mode is not present on all
-> SoCs that integrate a similar variant of the RTC block. Allowing SUBU
-> mode on those variants would expose RTC offset operations that access a
-> non-existent register.
-> 
-> Add OF match data to describe whether the RTC supports the SUBU register.
-> Reject probe with -EOPNOTSUPP when SUBU mode would be selected on a
-> variant without SUBU support.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Aug 20, 2026 at 08:54:27PM +0200, Marek Vasut wrote:
+> Document the 10" Raspberry Pi Touch Display 2 MIPI-DSI TFT LCD panel.
+> The panel is based on the Ilitek ILI79600A controller.
+>=20
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
-> v4->v5:
-> - Renamed rzn1_data to rzn1_rtc_rzn1_data
-> - Added a print message to indicate that SUBU mode is not supported
->   on the variant.
-> - Added a comment to indicate that the xtal clock is NULL when SUBU
->   mode is not supported.
-> - Added Suggested-by tag from Wolfram.
-> 
-> v3->v4:
-> - New patch
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Jessica Zhang <jesszhan0024@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
->  drivers/rtc/rtc-rzn1.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
+> V2: Extend existing ilitek,il79900a.yaml document instead of introducing
+>     new one. Note that the il79900a should likely be il_i_79900a, but the
+>     binding document already shipped in Linux 6.19.y , so this can not be
+>     fixed anymore ?
 
-This doesn't apply cleanly, can you rebase on rtc-next? If you do so
-today, I'll include the series this merge window.
+Should it? Website says il79900a:
+https://www.ilitekholding.com/en/product/Mobile (ctrl + f)
 
-> diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-> index 8b68a5ad19c0..35770bff129f 100644
-> --- a/drivers/rtc/rtc-rzn1.c
-> +++ b/drivers/rtc/rtc-rzn1.c
-> @@ -18,6 +18,7 @@
->  #include <linux/init.h>
->  #include <linux/iopoll.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/rtc.h>
-> @@ -65,6 +66,10 @@
->  #define RZN1_RTC_TIMEC 0x68
->  #define RZN1_RTC_CALC 0x6c
->  
-> +struct rzn1_rtc_data {
-> +	bool has_subu;
-> +};
-> +
->  struct rzn1_rtc {
->  	struct rtc_device *rtcdev;
->  	void __iomem *base;
-> @@ -404,6 +409,7 @@ static void rzn1_rtc_disable_hardware(void *data)
->  
->  static int rzn1_rtc_probe(struct platform_device *pdev)
->  {
-> +	const struct rzn1_rtc_data *data;
->  	struct device *dev = &pdev->dev;
->  	unsigned long rate = 32768;
->  	struct rzn1_rtc *rtc;
-> @@ -411,6 +417,10 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
->  	struct clk *xtal;
->  	int irq, ret;
->  
-> +	data = of_device_get_match_data(dev);
-> +	if (!data)
-> +		return -ENODEV;
-> +
->  	rtc = devm_kzalloc(dev, sizeof(*rtc), GFP_KERNEL);
->  	if (!rtc)
->  		return -ENOMEM;
-> @@ -454,8 +464,12 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
->  		if (rate < 32000 || rate > BIT(22))
->  			return -EOPNOTSUPP;
->  
-> -		if (rate != 32768)
-> +		if (rate != 32768 || !data->has_subu)
->  			scmp_val = RZN1_RTC_CTL0_SLSB_SCMP;
-> +	} else if (!data->has_subu) {
-> +		/* xtal is NULL here */
-> +		return dev_err_probe(dev, -EOPNOTSUPP,
-> +				     "No valid XTAL provided and SUBU mode not supported\n");
->  	}
->  
->  	/* Calculate the duration of two RTC_PCLK clock cycles */
-> @@ -508,8 +522,12 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
->  	return devm_rtc_register_device(rtc->rtcdev);
->  }
->  
-> +static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
-> +	.has_subu = true,
-> +};
-> +
->  static const struct of_device_id rzn1_rtc_of_match[] = {
-> -	{ .compatible	= "renesas,rzn1-rtc" },
-> +	{ .compatible	= "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, rzn1_rtc_of_match);
-> -- 
-> 2.43.0
-> 
+Your new device also has no second I there.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
+
+Cheers,
+Conor.
+> ---
+>  .../bindings/display/panel/ilitek,il79900a.yaml     | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,il799=
+00a.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.=
+yaml
+> index 02f7fb1f16dc7..f8644e9a4478d 100644
+> --- a/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+> @@ -14,10 +14,15 @@ allOf:
+> =20
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - tianma,tl121bvms07-00
+> -      - const: ilitek,il79900a
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - raspberrypi,dsi-10inch
+> +          - const: ilitek,ili79600a
+> +      - items:
+> +          - enum:
+> +              - tianma,tl121bvms07-00
+> +          - const: ilitek,il79900a
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.53.0
+>=20
+
+--P/iFS2tr70btybGJ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaoiJigAKCRB4tDGHoIJi
+0nMeAP9lEw/ySMu5b7F8tSgGWV0PUvqqjkIrOhlKMp0LJvc1aQD8COjKK1tTBCyC
+msN5oMXiKpEgYQpp7zKg/ZQykN6NNwM=
+=04aB
+-----END PGP SIGNATURE-----
+
+--P/iFS2tr70btybGJ--
