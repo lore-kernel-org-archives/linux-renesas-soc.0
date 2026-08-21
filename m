@@ -1,124 +1,179 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EDC3290AA;
-	Fri, 21 Aug 2026 20:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787344826; cv=none; b=kt76PyGZ1ZT99xBM7epjtzuBb0rApx8s7AOkZVCEOxCIdA/HExSPT6OY+9UogOKQ9F085ufWdLLmvfIBESyk72Q3NHUFGLlJ7lKUbZeR6iCDDeJFiVu/7LnK0Xb2MgN3r1rtR+DZuc64CskPAjAaQMdFHVeSVul8HqhMIH3f8DY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787344826; c=relaxed/simple;
-	bh=N0mi1uhxvbxdUOmuq5vDgSLr+dix+DJ8ZktmZTxFgZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLQV2/3IEvcopvJ4hl1RWq8hoAmxsIKLkkBm2WOCt23RSwU/5n4eMpfyD06pYL62ZFY9m0fColRBqFbVip+i6Pj0wnECmFKcPu8xjILOxTCU8BuIgbWrwtO+6B+U5V5eA+CkuNdDnCXBvS5wCgUtmBRw6qUhREC5dbzpcMiyIH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=maz2Jp1f; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F233AAF56
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 20:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787345053; cv=pass; b=Bs+4qqXnm6So0DcYzVD9axYhkyK0hlCA84NzY/2RnEasASHOZFxB7EVDI+RoBLBnxzoudcHS4jmv5IgSwN+/MjIA2Rqrz7TSp9aTb+ptr/34b3VVcvRxJMbjGKd9yABR20RXblGhmPkSByx653t6Ahfz2n9PfJAnGtLyNwJPsIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787345053; c=relaxed/simple;
+	bh=pfqUIoW7PHPIYNNgFH4u6pCoFZSchCOkft0xZM8GW1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lHn7XUNUEVAEXGnuv9DntFcyZ50B7vc4uXo0uVbsiXfj1I6LT+HBgVHbOTeuxWHdRD/B3nPptNLWiXHRe4boTZVYf40G9c6747TssoKRucIt50kXiaiBcix/ypymCaZctzAIklzBU7FRYZIjkBXWsHEJbnr5Nimifkw8JPsB388=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4RUZzef; arc=pass smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="maz2Jp1f"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 870E14E4131C;
-	Fri, 21 Aug 2026 20:40:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 51983604AA;
-	Fri, 21 Aug 2026 20:40:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CDBAA11C77621;
-	Fri, 21 Aug 2026 22:40:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1787344817; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Du/OHwRRnpO7Kwc7OdFAk+NUHL3Ni7jIAm98ev/G3Qs=;
-	b=maz2Jp1fZpxdzBb/YbVmr6mH4USFLU2INuNwzoxM+tnNfJUdac0RlP1yUQysM6tnY3+DaF
-	dmn0ESZjwtF0v8KLdrLHPRzo42jrhunoZvShaK1S0v6POUKMGENFoF2pDUQv+myXSxTUKe
-	ahwy3xDFIEuH8V6u88Dvh9NZaKHHEucGRF1ZZ/tX5t+fRZeGz8i7vojf05GLzUEg2TURU4
-	zWcHZVORtWClMo+IAdTwBPmOupnVhPSzWNJ98jRzM62AXWEgt9Xd+w3SR7CWML8m09JFgi
-	HqOM9v4Xi2z41RC1uEIZAV2fhBMdEPBgtRWPNHFFC58twCXVCzdwSOdIwpca2Q==
-Date: Fri, 21 Aug 2026 22:40:14 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 15/17] rtc: rzn1: Add OF match data to gate SUBU
- register access
-Message-ID: <2026082120401422dffad9@mail.local>
-References: <20260821135608.275233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260821135608.275233-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260821164050abd3ceed@mail.local>
- <CA+V-a8tp8EEJw9NLRfpiM5pve8GBc41iL_s=5=MqZaSHssOzbg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4RUZzef"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-476a130c138so1453809f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 13:44:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787345049; cv=none;
+        d=google.com; s=arc-20260327;
+        b=YMkEBhKYboU10siTJfpBHKZQ5iSGSikNh9RxF6d924dlfaMmEAQTKa5VQ4ZhTdk5uN
+         +3ZU31Tu7wihT1Zzh/dyGxv71czanI8kmBG4YFEsOW/YniCk3KtXrMx6952Tlo43KRJc
+         XTmKNdsAndRpUlKMrhkBdEW7nSoHhZJqk+Geptcq7a6oelTNP2jsvUk+wk9wZE8FNB6N
+         jsmIVROc96XMQyFfW7y38njpDLX+7zkVaqjJ+XQ218xjIkCPqUpSqJ97ju3tsYIYaXKu
+         oGuC/NjtgfFK+5CgZx3lZWEb4Ms0twDekzzqBDYpWMoJdMvk+yYPkWS+1ax/jLUtVCdd
+         1Xjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+341h6DEBK5z4wanMXZy9KI3GcewBIrOEEjNnpvxUQE=;
+        fh=b4HA1j6+JZ8w31DQjpMtaLCZrfp/wCTQMfmQwiNbaMM=;
+        b=c20Lw+L12IbUkBalQVwiSeKScTBYoxSJXgBv5tw850W3O+OovmHTbmS8M+pNtRWId5
+         lam0AN8Ki4fq4Wr7f465s9YVQxU0hu0T+cnhvm7MnIXytBLkHobCuNA7UOcKpCQ+PG/t
+         eYi2QMGYccFdjnMmCrjQWUPmtytx/GrEj626e6l2LCWsS28cFzGI/tlNgG3uDSkj9/rm
+         Roc9XB15R8WtVyxjj72qPwZWXFfyWKxQjfFb9QWfdYsWpmAeIG3ERt1BzMEdi1OhfdUz
+         6BWMiigpYVMEpW/OGYXXQgZ5SBInn8EPy9RkOsnWg59ItdasuF3+7jDj2efO7l3U5AGL
+         ROpw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787345049; x=1787949849; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+341h6DEBK5z4wanMXZy9KI3GcewBIrOEEjNnpvxUQE=;
+        b=J4RUZzefrcYjBbdgV5g4UJmBLQK/FJeHaTUbMM5mP4bshfUBERauh8Qm179Csr7PM8
+         P+CfowNPWCI2fbsUAzzwjDoJfhMDd8kfAoSsQ/EC4IhKlT+OkZe8i+QfvKv1HX4fdZn/
+         OIuU8/BJ1QOgVvMgJu6Wp/k7xyrnQLhdmWQrpgdyoS0wU+A6yRCN00HQBmDhp1K/aplG
+         SJo7lh+gUJP7d5DRA5cGJOlIfuhNp1xsgSKbO53UIn9Aeh1l4GZd5fINfxnHzYBlmkj3
+         pkOGWiRMIdKjSnIwTqKs/bUdAgsmE5Z3ANpQiAaXbVJvtM7c0w66NVkDYs18rkk9W/v7
+         GIPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787345049; x=1787949849;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+341h6DEBK5z4wanMXZy9KI3GcewBIrOEEjNnpvxUQE=;
+        b=clyyNs3YflUG/BqG/07nmJBAknV7z+ChGfW3lJmeYz+p/0u9Pwr9H7jzToERvqrzs5
+         ds+oUOdjypJdIKNDLcP1AJQosZpr10RflKvpTeRrD1nP6k+gqdf6ldu6qKPuMROsMkM3
+         8+Tulj7YFfGhUMgfbsRD2XFSlK6NjP2MlaQQw4q9L6jnniOQInkyfKbPNQRVKD9/DCrr
+         EzfuezwLOgStZzjnB6JrlbjyuU7rdgcFa9sAuEqnSm7WRXaXyVoouYyE1v5TWeD+rj6Y
+         WooLjA5xYpl5IsToCfl5VT3h4ZpnpqziRL7sahVQI/V396e/fyIVyNpvqjZdWG2ozUZM
+         Jwzg==
+X-Forwarded-Encrypted: i=1; AHgh+RpLSCIpVTtA9WxUjv+DiTq1VQXFowmqLtfHSZ5GQwLV3qO9cWPz9OSA3jtl+qPq1pxpOFr+gEauQvE8/fcKGRvvdg==@vger.kernel.org
+X-Gm-Message-State: AFuF++ni9snClGL8I/8JPs38YVn/yHHfov1mVmvc+eJZxLb286Z16Fk3
+	m7d0Hh24aDPmtHXvKV9WHZDYb8ThUVYI8mhPLb0d7v29ip/huiuts16g1BYsPyuQY72vE03Zi1c
+	aLjDr03QoXQ91dNevpAJs1cpmIbV9rPU=
+X-Gm-Gg: AR+sD11hxVVrj1nW5aTwwmlsbroQgpYEbRa1dahEXv1ls0DVYQ3FKIVFp/Eq2lQU4Ql
+	dcYH5vPJwkv3nEEIMicbE0iu1DLZCO8Bn///cj/AZzMDt210RPmNyhb4wDkis+olZGunh/9lvzH
+	mipkzw3Uk1X6o8aNgneMnNyt75kCy6VmcjkBU5eQHVJhYCSGKFUP63MnPR6FytWLl5y7NAKbYaY
+	+6mceA9TRisKVgDnXVmKQ/6x1T4UcIqpDsecBNizKs1QtNYLlQtQKS0ZA+9+fQNvGdkQj9ZXd+S
+	I7COmM9JbD62Z8HFGuRmzbTUgcxh4B5GegtXOgU6kIFer4tDMEVBi3F1m6XzysLJyRLA4budyKd
+	bxOyPVIg9XieHrPpn1NvzVEY5Vp/isWi32XeSGRja7MifQw==
+X-Received: by 2002:a05:6000:4b16:b0:47f:f1ab:9075 with SMTP id
+ ffacd0b85a97d-482c0bb16f4mr14946126f8f.20.1787345049436; Fri, 21 Aug 2026
+ 13:44:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8tp8EEJw9NLRfpiM5pve8GBc41iL_s=5=MqZaSHssOzbg@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260821135608.275233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260821135608.275233-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <aohqChLVqwiTpICo@ninjato>
+In-Reply-To: <aohqChLVqwiTpICo@ninjato>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 21 Aug 2026 21:43:42 +0100
+X-Gm-Features: AcwNN1UV5kbjb7HhnjD6pQaN2t78NxQ2bOmzAO_X4_DwzDdyb74TPzJRrq4RttY
+Message-ID: <CA+V-a8tAUirxWKyCx9yvYgp0EkysxgkgK20-RArzFFKOXuHSvg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/17] rtc: rzn1: Handle unset alarm weekday in rzn1_rtc_read_alarm
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2026 21:37:43+0100, Lad, Prabhakar wrote:
-> Hi Alexandre,
-> 
-> On Fri, Aug 21, 2026 at 5:40 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> >
-> > Hello,
-> >
-> > On 21/08/2026 14:56:06+0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > The RZ/N1 RTC driver selects SCMP mode only when an optional xtal clock
-> > > is provided at a valid rate other than 32768 Hz. Without an xtal clock,
-> > > or when it runs at 32768 Hz, the driver uses SUBU mode.
-> > >
-> > > However, the RTCA0SUBU register used by SUBU mode is not present on all
-> > > SoCs that integrate a similar variant of the RTC block. Allowing SUBU
-> > > mode on those variants would expose RTC offset operations that access a
-> > > non-existent register.
-> > >
-> > > Add OF match data to describe whether the RTC supports the SUBU register.
-> > > Reject probe with -EOPNOTSUPP when SUBU mode would be selected on a
-> > > variant without SUBU support.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > ---
-> > > v4->v5:
-> > > - Renamed rzn1_data to rzn1_rtc_rzn1_data
-> > > - Added a print message to indicate that SUBU mode is not supported
-> > >   on the variant.
-> > > - Added a comment to indicate that the xtal clock is NULL when SUBU
-> > >   mode is not supported.
-> > > - Added Suggested-by tag from Wolfram.
-> > >
-> > > v3->v4:
-> > > - New patch
-> > > ---
-> > >  drivers/rtc/rtc-rzn1.c | 22 ++++++++++++++++++++--
-> > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > >
-> >
-> > This doesn't apply cleanly, can you rebase on rtc-next? If you do so
-> > today, I'll include the series this merge window.
-> >
-> Oouch, I'll do that right away. Hopefully Im not late.
+Hi Wolfram,
 
-Not late, don't forget the other comment about the sentinel from Wolfram.
+THank you for the review.
 
+On Fri, Aug 21, 2026 at 4:08=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> On Fri, Aug 21, 2026 at 02:55:55PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > RZN1_RTC_ALW is a weekday bitmask where bit N represents weekday N.
+> > When no alarm has been configured, the register has its power-on-reset
+> > value of zero.
+> >
+> > rzn1_rtc_read_alarm() uses fls() to convert the weekday bitmask into a
+> > weekday number. When RZN1_RTC_ALW is zero, fls(0) returns zero and
+> > fls(wday) - 1 evaluates to -1. This invalid weekday is then used to
+> > calculate the alarm date and can either leave tm_wday set to -1 or
+> > produce a fabricated alarm date.
+> >
+> > Treat a zero RZN1_RTC_ALW value as an unset alarm weekday and return
+> > without calculating the alarm date. Move reading RZN1_RTC_CTL1 before
+> > this check so that alrm->enabled is updated for both configured and
+> > unconfigured alarms.
+> >
+> > On a cold-booted board with no alarm configured, the following was
+> > observed before the fix:
+> >
+> >     root@rzn2h-evk:~# cat /proc/driver/rtc
+> >     rtc_time        : 00:00:19
+> >     rtc_date        : 2000-01-01
+> >     alrm_time       : 00:00:00
+> >     alrm_date       : 2000-01-07
+> >     alarm_IRQ       : no
+> >     alrm_pending    : no
+> >     update IRQ enabled      : no
+> >     periodic IRQ enabled    : no
+> >     periodic IRQ frequency  : 1
+> >     max user IRQ frequency  : 64
+> >     24hr            : yes
+> >
+> > After the fix:
+> >
+> >     root@rzn2h-evk:~# cat /proc/driver/rtc
+> >     rtc_time        : 00:00:25
+> >     rtc_date        : 2000-01-01
+> >     alrm_time       : 00:00:00
+> >     alrm_date       : 2000-01-01
+> >     alarm_IRQ       : no
+> >     alrm_pending    : no
+> >     update IRQ enabled      : no
+> >     periodic IRQ enabled    : no
+> >     periodic IRQ frequency  : 1
+> >     max user IRQ frequency  : 64
+> >     24hr            : yes
+>
+> The output of the tests could be dropped IMO, but I'll leave this for
+> the RTC maintainers.
+>
+I'll drop it.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers,
+Prabhakar
+
+> > Fixes: b5ad1bf00d2c4 ("rtc: rzn1: Add alarm support")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Other than that:
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
