@@ -1,171 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D8F3AEF50;
-	Fri, 21 Aug 2026 11:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787310271; cv=none; b=BpetEBc8QLJDQNLfGDOclHWOg0WZuzDzQED0Vs3MYnl67PGNXs9FtJHfwG3SQ0c13cukyDkzRjqM9ulO+2V/OgA683F3nV9BD1oG8fOKgRwk562jed7ZKIfj7AwK+qK3UXJbQvISac5/lYmtbMj/3KnYwQjd6PWkUnDTvM9jSBI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787310271; c=relaxed/simple;
-	bh=KOzmNDE1lpL4lV1ck8Z8R8PnuGa8QpdwYj4eXwJdVCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ksdIl8YFJrp/lmZA4r/uh8nv1NI/gj4O3EHUQ+7nsaO33lzDGXT5RrzgxqL3FQurw7nOx8cqsJlHt9GywO04kW49e/enygjDrpmXWoPerhBbj5nqJm92VGDhWwYrfGgL1rySHlIeOrIRhO4t+T9dLCsKmFpnGQHNshjqXJaN0q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWOd4Eyz; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FC1450911
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787310390; cv=pass; b=DUqGyLsYet4y6lELVVlwvqEpwZFTbOF0nBs5rHYX6Q4mOhx+bHxYcOCSF6ovDT0tf+hQcm0/RtcHC904cEUxHk0gzXPs/27Uv5FfYC8lRCq2RwZjaEi5i9GnVmShisQ/wa3JOf8f0yA9wsajjVkBEh9Fp8AkhJa4nbASfiCe+x0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787310390; c=relaxed/simple;
+	bh=KrZ6HeRxc2ZB4KNjY9rusjhD8xWXy4q4jVkQHO73EgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFEGxA8h1nzGU4Nx8GH6wiSogLh0nXVnKGYsDW7fFsGFgO99n+SUbQUqwi9uamGN5W2Mjr+j1noks9W6maDxmguuibR8G9oex6M3R6f6CNiKSCRrxJS2+++t3PrUue27sfitPZSDuGnehTyBIh5LUJVpzDp2X97q7Wjzra14Wks=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8m9tW3n; arc=pass smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWOd4Eyz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5448B1F000E9;
-	Fri, 21 Aug 2026 11:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787310270;
-	bh=A4lgO1iN3yscaFBPh7zpn7gtVNFTJggdaCR4xlDhTK0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=VWOd4EyzRUjzZHamWoQcU86SfiNIJMlJZ8dJ1HPQo78u8FV40WNtDGwzu03aS8xkW
-	 WiIxK4k+IkQIUfwNsy/Ls5qrfmvWxkzPoxYJTdzZQlTK+2hDniEdC6/iBKXzJhotaV
-	 aBrUbDC3eas9OBfBdNal7xcSGdYV/ZJedSmJ5CNc1NP8itFWBL/w1EFCOOlCP0Rq+8
-	 U8WWQ4tYuJfNjLOHfZxlaTA64EUWCKak73OuffuoPI5VZVNn/3S6/uptJbOHePzuHf
-	 dZEiUhfsooiQz2sASKOez+TJNcTKWYk+5GsVNUOvpCVNOyTrvboG88wH2hdLqCeChm
-	 sOyGkBekN1OsQ==
-Message-ID: <60a8d05a-76fa-43c3-a0f7-fb26a3b659b8@kernel.org>
-Date: Fri, 21 Aug 2026 13:04:01 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8m9tW3n"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-47f96c5b722so436808f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:06:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787310387; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Wa6dcM+Q3lJVlgleFO688CqXeCWCq7Wlt3Ype7qqs9mguadTUhK9PaxLckoxUDNDNN
+         ElZ1+0bRyHyJKPUwKTOoDkaKsJRLOKYrlBiDEVOE21kVEVDRXRQN+L7BdIaopennY3j+
+         wIOMKxIQIVgiJJLGGHVDcLdPusWLH6UxdzkSjzSwYnZUCOLrdicP61inF5bBx/+E4AjS
+         XMwgCGImACIOMhpcSAP4EPdJl6NhoeHfYBry8GJRrDJHkCLXtldhUYH9A/m3TD9946YQ
+         wQl4EigdiV80+qeubOZLMfFOaBQjmdRiAk/JLlqP1ls6Mr8GtHSXYsIZQXRfeHTOZfsP
+         ksFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
+        fh=nrY6feTWpGEdI8/11zQEIINYN9BUUaG8XDE8qrMppQ0=;
+        b=AWGfmCR0KvI+5SCC5sX3VJeTwy7OVuoAskHNK0gU6iEgzKNEbdkg60B5dlymcP4wis
+         a3SphRHNVYp/6w6DILi145nEq+fYJ9i2O9xMNgERaw5yAggoj9tEIYNo7R84EvSOLIrX
+         n9ngQSDHomppDcQ5lVpNKkc9VYcSGIrOAnz7R8dHpqbl7eAATkLL9w4Hh5HuQCtgO/BB
+         tJI+RkyjfEeMDG9i/5CYRgqpHKS7ilYAZmfCnAPt6iNtXRl5o6WZAlB55tyujAOamgnk
+         VEbxm66Wz1cLhf3VZjh6F9HByIfWAKR+2qN0q7qfCJHnmEfoXEu+bQDAFbocyQOIlS7O
+         9+RQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787310387; x=1787915187; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
+        b=d8m9tW3nM+Y1r60sS8EOkeQyEfpz8DPciym6BDPezegSU6e0mqaGGtRR2x6mo47JYk
+         H4lGR2kQ1TLKnj2Ky+2vB6Ni/DQ+JhAnzTrfaso/VJXOzFbqmug7IxBow8wVyqWfSA58
+         eKE25VmYC2wSUWbGWbsKIIxli/pUwCwjN+TM27hxE7KhDog61lgaX7Brt5qIAZ/BNBZB
+         vkQ1FoLxSskQcr+IwnQ1v9OYXTAyk4RjaAi7CA39LqoNDYfGB/+FdZHfQE9CZ4QdXIG1
+         VKNe5sagm1UUcoDJqYUfkDI5KfYkU1RGCRdbpRUaW8eDHg+HlmmBMwY9wjVag0kckKvy
+         p9bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787310387; x=1787915187;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=HoJf6c72cR7dmFL5Gn6KP1hZaz/7qfGbBe5YOvKHjgs=;
+        b=bDMEILrk4gwegM5kaXtenyAlQO4suP57bMo1wgHmIH5slhxtaqM7VmRD2i3NncL7z3
+         dFoB8+lyPxRcM98KbFoc0tlnJ2zSH+EPrPL2sh4o5P2vCfcdzLiryR2W8EsIp/Twuxmd
+         XhiecFNe1oMWoa390qWssExpFIaX6/z2OOHYDkJdlSdOrZb+jXqAJtd76fXt/LY5q5Zs
+         ki/F40nj0pwBUJKM8KfGRCmI5OiaTQWTW13eV+E2MoGv/sWalC5h9dFOwy0qNIsZPBca
+         v9Yz66s4a6uXhSFeiI+x0BvoGvLS4JA1Rkqn3n5MypYILGgJ8GLnUlPHObNgFPViERrY
+         gQsQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoUp8PSB2Ybv+ngYZonnjUmT6rf4vQiTt5kgt7jTWufOLxRCA01PeKtNHdW9wGTdamewIffth8KdiJGEFKgEscsRg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kacj/FkcbvOaqCvwPU96JNvNVvUp9H6pABq2hwZtrAn/4fyBxA
+	ebLMKdkwiP1Sm9EN48zDb72NJ4+igLBYIiUbZgmpv+41mTbEmyefqpCniBpYCU8z9W6sjdkwylz
+	cojuLoh/5H0+wxPP+JG7MBC0yFveScVg=
+X-Gm-Gg: AR+sD139uVFyt5Qc+0zTnCABC1deHcwJH5iIw+pKfBaLXTfxih4vBkyWx7INK01SskE
+	eR+TYIsS5vs3MNTqMfYiF/sckD0h3d0P5o73HxK+5ZNWs9RIGXTWLRwPjIYAuifGmw45R5KRoQV
+	tD2iIJJySnEe4f/q1lHtpTcZGjbbLhzXb2HC/tib3tvj6d1OdQc+xeIdHZY9xi/RA6nmg0WedYs
+	yEUt29pKSnIbQ5igmIpQ4zM4yUYSVY29yZnUdNgCMsjGxcBsDLTaswBmGeWDAJ4YyNfQhTF7ij9
+	q0QW9bAIa9bp+I2I5jbm7iZJjWQr3BJX7YuA+aFiZlKsPFMh1mTkThHR88sDfS9fBSet9pjIzOQ
+	Jq7Y1u5J1IGO20c9LC/db+DIAso0QAkDhuHs=
+X-Received: by 2002:a05:6000:41e5:b0:47f:7b75:9dfe with SMTP id
+ ffacd0b85a97d-482c0b5bf92mr8558786f8f.8.1787310386687; Fri, 21 Aug 2026
+ 04:06:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 29/45] clk: samsung: Make sure clk_init_data is fully
- initialized
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Billy Tsai <billy_tsai@aspeedtech.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>, Linus Walleij <linusw@kernel.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>,
- David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
- Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
- Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org, imx@lists.linux.dev,
- linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <cover.1787239813.git.geert+renesas@glider.be>
- <87b3e83137e1a987f3c69d214706e93ef3898cab.1787239813.git.geert+renesas@glider.be>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <87b3e83137e1a987f3c69d214706e93ef3898cab.1787239813.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aobjCr7ZtpLmL3VP@ninjato> <CA+V-a8tpo2Rc9xsvsj9LLqD2ZjoHzRAVsox=7xURAtwA-GYVEw@mail.gmail.com>
+ <aogbk-moFmTTFkJ0@shikoro>
+In-Reply-To: <aogbk-moFmTTFkJ0@shikoro>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 21 Aug 2026 12:06:00 +0100
+X-Gm-Features: AcwNN1UGmz1uUQCIu-LKe-mxUq6Df2QcPbc9ZZ1iJn0ahM-r4uBoryBwB3wI0p4
+Message-ID: <CA+V-a8txC5U_VvXBYnMXctBg2Jz3a44NZjn-P39amUq5HihG+A@mail.gmail.com>
+Subject: Re: [PATCH v4 13/15] rtc: rzn1: Add OF match data to gate SUBU
+ register access
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2026 10:53, Geert Uytterhoeven wrote:
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
-> 
-> Make sure all members are fully initialized, to avoid such bugs, and to
-> prevent future breakage when converting drivers to a different method
-> for specifying the parents.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Compile-tested only.
-> ---
->  drivers/clk/samsung/clk-cpu.c | 2 +-
->  drivers/clk/samsung/clk-pll.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+Hi Wolfram,
 
+On Fri, Aug 21, 2026 at 10:34=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+>
+> > } else if (!data->has_subu) {
+> >         return dev_err_probe(dev, -EOPNOTSUPP,
+> >                              "No valid XTAL provided and SUBU mode not
+>
+> Yeah, looks good to me. It is maybe a bit hidden that xtal =3D=3D NULL in
+> the above case. I wonder if adding a comment above the return command
+>
+>         /* xtal is NULL here */
+>
+> will help understanding? But I'll leave it to you.
+>
+Sure, I will add a comment.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Let me know if I should take it via Samsung SoC clock tree. I assume by
-default this will go directly via clock tree.
-
-Best regards,
-Krzysztof
+Cheers,
+Prabhakar
