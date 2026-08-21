@@ -1,241 +1,230 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5332E696;
-	Fri, 21 Aug 2026 02:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09C740F72E;
+	Fri, 21 Aug 2026 06:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787278008; cv=none; b=p8UVE/cKa/KfP5KWD3P1goboURDPk+853kft2Auzp3UrDVTvLibeCdShIlLr8ixVygBk5chqfQziFNd7fjWirffvg2xKqSwkCnVQqYT5jp36hekNchH9+EWSJ5mBP62+iI6MwZbjz4ripXTw4QzSJfnkLn74IPIFJ0RfZKl6G1U=
+	t=1787294378; cv=none; b=HkJvK5uoNWoRW5f0M4NKNYwvCzwfg9Ll6pekGsvGMQx2sFjlbxAMYRSGY1HPnJpf4ob0AUtXhRgOVIkxAhH5JGboo6NmtBk7jeU+W+gK4SmRdm9YgVF6SATH0BpWNIPiWZFDMa/T7ItRFyoVCkm/1QSkbzRibVSNWKWMate2wGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787278008; c=relaxed/simple;
-	bh=5IkXvg2mBCLPxuYvvJQh2wbLppn2C00GgAkHb7wnP9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IwzeFNAPNk3IoIh346h66zlk4/bQb8L2QJIc4nLeSP4yMiaKMTPOr0XjacrGBWkuMHKoAyAQ8938NCWUdPrPhQeM/x8evvnABNCaM5ORa9b7muRCPfZZh/WbxgZXNim4JaaRVgcZ5tfzTTawDC1i2AEgi0LY+AUBCUQg59vNCU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=kIp4YdPy; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=O2hePe7M; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1787294378; c=relaxed/simple;
+	bh=Q+P3w2dr2jKrwoP0NuqdHvJM0nrzfqOzaVZKW3DU1vM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a8p8WKAMFjIQeOkhwaFikB/tKwMimM0eRxp0GJZJD7J3dclhPt9RX/i2Gj0DGqtmcm68Q3uylIJlLM5ROFrCpqgbxsZfMXSWXRibedYXJOGMCgcwbu2slm1Pg2Q/b/ChQgyVyp65bNksr7Nnl/NLfbwjlLjh0FivLi8Jnov5KT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bwcBwS0+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6Z4vcbQC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mL9/9Iir; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xbk2DB96; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="kIp4YdPy";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="O2hePe7M"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bwcBwS0+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6Z4vcbQC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mL9/9Iir";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xbk2DB96"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hR3Zp6sPszMlDm;
-	Fri, 21 Aug 2026 04:06:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787278003;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=61xxDssEoMTgU4EO+itVPFOaaikfmZAy4Onv2p4eAu8=;
-	b=kIp4YdPy7mVImmb18MXH78kuuBiyZhG5wQF+wQKt2H0pM8pEzPfbtBYHVbfcXqw68uMlS/
-	ElD3GPBb/+7cACU5OLipG4bD6XbRmTWngG9h15ISnqGIAKCVdsJP7gqZEg7RhK2jPi58XZ
-	WjvvXxgjgIFjd1tYUfui0ARGZN54nWwOv1AtCNI+HgMS5w4oCzvdHUAUxYkjI0a2FwMDa6
-	GhcLWnwJ/j6csgheY9ddtFpWXBOgVrqoeds3/Spvw6vzsrcgwtrLF1eBKXCBc/+/rSpETe
-	CB3VvtXcYAiLNTxcn5X7eX3VrsnyVchZu1bkvAxcZhYDiPF/rdOQnmmOXLSKRg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=O2hePe7M;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1787278001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=61xxDssEoMTgU4EO+itVPFOaaikfmZAy4Onv2p4eAu8=;
-	b=O2hePe7MhF2P4QX4E3xQ8+cpibDhzL0lbdYjO3yblTIrGN7fMfHMgX7hMhGOgKBjPbrfJB
-	xZrheJ/p4UQ9nPQK2G6tkWPRXRS7RoPLUihhgEyxUGocdMpS/LJ/adA4ImOPbKX6iuJ+it
-	oFCI27UNJfChbSS3etZ8ceG7KCd6HSHea/2ZB4sXxBcaYjvuFG4bPGzHUaES4GXwpCg1Gk
-	HdpxwxU0OGWK54QMRApGUY4yBmELG/NW3M33YBzUsEe1zU/rKKM9Nf0phO7x3dI+RzVvvY
-	WSK1WPlXZSMisz55UMAsqBmAeHUSCxV7ZoTETlww526rGpQJuh2D5vnD4QZ1Og==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <den@valinux.co.jp>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3] PCI: rcar-gen4: Limit Max_Read_Request_Size and Max_Payload_Size to 256 Bytes
-Date: Fri, 21 Aug 2026 04:05:51 +0200
-Message-ID: <20260821020636.111719-1-marek.vasut+renesas@mailbox.org>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3284B3EAF;
+	Fri, 21 Aug 2026 06:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1787294328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IMECoYsWSShMDNVZ8JDbQREho5iWl1tF8HaXKW+o8bY=;
+	b=bwcBwS0+RC4EqtR9XE60Dr7YThswkD9m/wJHGl0tYz+b+jnsCbHokMe2hGq/Uqk4uzT50A
+	eo3102wp6SGIjVNcjni9XRheTPpNywHtnve3o/8JTxEV7f0KyAXhdofQzz/9ZLDSC0zYU4
+	Y6GN1+Rph/uZtJg+IxXU5IT21JaHaQE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1787294328;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IMECoYsWSShMDNVZ8JDbQREho5iWl1tF8HaXKW+o8bY=;
+	b=6Z4vcbQCxluqvDsyVW5JOdb+VetFkKQe/E/aiunFRyGnD0F+w7Vd66aAq33oo/wFBvKlfS
+	DD681hcQkd6gUCBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="mL9/9Iir";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=xbk2DB96
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1787294324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IMECoYsWSShMDNVZ8JDbQREho5iWl1tF8HaXKW+o8bY=;
+	b=mL9/9IirJ/hFuHoEJ9tqN6Gyj/BzCxbBnS8Vhpd9olYi8cAzb5Q7wleR0jkMWFnb6EQXj4
+	MbELBsuGxlTEhOXwdoUh5C2t3dHRphQ2taTyOQWKik5ErjYPYnJRZqA4MOEXeGdv8z+pmE
+	DnM6e+TO6hELLfr5XGJHojqd0ilrLZA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1787294324;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IMECoYsWSShMDNVZ8JDbQREho5iWl1tF8HaXKW+o8bY=;
+	b=xbk2DB96M/yt8An1/BaVXFIB/WVgjEWwzS3BFmfjzbloxDMaBSaA5lj+zU3stDKov/MLO3
+	gePOA+Nf5lkyeWCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBCDE3329;
+	Fri, 21 Aug 2026 06:38:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id us1oLHPyh2pUAgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 21 Aug 2026 06:38:43 +0000
+Message-ID: <3d0d14e6-05d2-4fc4-befe-e1d0cafc91db@suse.de>
+Date: Fri, 21 Aug 2026 08:38:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/12] drm/panic: Split into core and helpers
+To: Jocelyn Falempe <jfalempe@redhat.com>, javierm@redhat.com,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, virtualization@lists.linux.dev,
+ sashiko-reviews@lists.linux.dev
+References: <20260818125012.468092-1-tzimmermann@suse.de>
+ <e4da5ba4-9a02-4080-9a83-19d401017910@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <e4da5ba4-9a02-4080-9a83-19d401017910@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: wqjhkzf9uff7kay4k5kqk7p7bpxfc8nt
-X-MBO-RS-ID: 544535875d00c52fa02
-X-Rspamd-Queue-Id: 4hR3Zp6sPszMlDm
+X-Spam-Score: -4.51
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 3284B3EAF
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[redhat.com,gmail.com,ffwll.ch,linux.intel.com,kernel.org];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
 
-R-Car Gen4 PCIe controller has a hardware limitation of 256 Bytes
-Max_Payload_Size (MPS). PCIe specification indicates that the MPS
-must not exceed minimum MPS of any element along the packet path.
-Force limit Max_Payload_Size to at most 256 Bytes for each device
-connected to this PCIe controller.
+Hi Jocelyn
 
-R-Car Gen4 Reference Manual, chapter 104.4.8 Usage notes for
-MRRS (Max Read Request Size) states:
-  Please set "Max Read Request Size" to 128 bytes or 256 bytes.
-  If "Max Read Request Size" is set to anything other than the
-  above, the transferred data will not match the expected value.
-This limitation also seems the apply to devices issuing MRd TLP.
-This limitation can be triggered by using non-HMB NVMe SSD with
-Max_Read_Request_Size 512 Bytes, for example Crucial P5 Plus.
-Any write into the SSD (MRd TLP issued by the SSD) longer than
-256 Bytes wraps around at 256 Byte boundary, and the same data
-are written into the SSD starting at offset 0 and at 256 Bytes.
-Force limit Max_Read_Request_Size to at most 256 Bytes for each
-device connected to this PCIe controller to avoid this behavior.
+Am 20.08.26 um 19:49 schrieb Jocelyn Falempe:
+> On 18/08/2026 14:27, Thomas Zimmermann wrote:
+>> Split DRM's current panic handling into a core and a helper module.
+>> The core is still part of DRM's core library. The panic helpers are
+>> part of DRM's KMS helper module (for now).
+>>
+>> The motivation behind this series is to get panic handling's drawing
+>> code out of the DRM core. At some point it should share a single
+>> module with DRM's other drawing and format conversion.
+>>
+>> With the series applied, panic hanlding follows DRM's established
+>> design pattern of having a DRM core interface with an dedicated
+>> implementation in each driver. Drivers share common code in helper
+>> modules. For panic handling, the DRM core still contains the panic
+>> entry points, the parameters and the debugfs interface. All drawing
+>> is now located in the panic helpers.
+>>
+>> Patches 1 to 4 improve several issues in the current panic code. It
+>> makes sense to fix them before moving the core around.
+>>
+>> Patches 5 to 8 put handling of all panic state and locking into a
+>> single place, drm_panic_display_panic_screen(). It is maintained by
+>> panic handling's DRM core code. This also enables the test cases to
+>> work more independently from the kernel's configuration.
+>>
+>> Patches 9 to 11 split the panic-handling code into the core and panic
+>> helpers. The former maintain all state, locking and public interfaces.
+>> The latter handles drawing and details of the involved framebuffers.
+>>
+>> DRM devices that offer panic handling provide a single callback, struct
+>> drm_plane_funcs.display_panic_screen. A new initializer macro makes it
+>> point to the existing panic-drawing implementation. Hence there's no
+>> change in features or functionality. If panic handling is configured
+>> off, it all clears out to NULL.
+>>
+>> Patch 12 reworks the test cases slighly, so that they can be build as
+>> a separate module. Do 'modprobe drm_panic_helper_test' to run them.
+>>
+>> Tested under bochs with debugfs and test cases.
+>
+> Overall the series looks good to me, and I like the split between the 
+> helper and the core.
+> I would just drop the first two patches, as I don't see much 
+> difference between static allocation or kmalloc() at init, and I think 
+> that memset() the buffers to 0 is not useful in this case.
 
-An non-HMB (Host Memory Buffer) NVMe SSD can be identified using
-the following command. Affected SSD reports 'hmpre' field as 0:
-"
-$ nvme id-ctrl /dev/nvme0 | grep hmpre
-hmpre     : 0
-"
+Ok. Geert also expressed a dislike for these changes.
 
-The symptom is a read from the SSD which wraps around at 256 Byte
-boundary. The test for this symptom can be implemented by writing
-512 Byte of random data into the SSD and reading the data back. If
-the read back data repeat after 256 Bytes, the device is affected.
-"
-$ dd if=/dev/urandom of=/tmp/data.bin bs=256 count=2 ; \
-  dd if=/tmp/data.bin of=/dev/nvme0n1 bs=256 count=2 ; \
-  dd if=/dev/nvme0n1 bs=256 count=2 of=/tmp/readback.bin
-"
+I have a number of changes done from the Sashiko review and will post an 
+update to the series early next week.
 
-Expected data:
-"
-$ hexdump -vC /tmp/data.bin
-00000000  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca
-00000010  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b
-...
-00000100  7a ce 3c b2 e1 d5 d9 11  88 63 10 59 76 3c dc 32 <-- random
-00000110  72 32 2a 7d a3 e1 aa 13  7c da 58 a1 7b 21 11 50 <-- data
-"
+Thanks for reviewing.
 
-Faulty readback, collected without this change in place:
-"
-$ hexdump -vC /tmp/readback.bin
-00000000  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca <---.
-00000010  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b <-. |
-...                                                          | |
-00000100  97 81 b7 3b 0e 38 2b 4d  a7 d3 e0 47 ff c2 4b ca <-:-+- repeated
-00000110  c1 85 98 f0 4a ac 03 a0  3b ab f3 19 44 dd 06 8b <-+--- data
-     ^^^
-      |
-      '--- Repeat starts at offset 0x100 = 256 Bytes
-"
+Best regards
+Thomas
 
-Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Dispose of the reprogramming of MPS/MRRS altogether
-    - Dispose of the entire fixup quirk
-    - Replace both with bridge enable_device hook
-    - Limit MPS/MRRS along the entire packet path to follow
-      MRRS limitation requirement
-V3: - Set no_inc_mrrs to prevent periperhal drivers from increasing MRRS
-      over the limit set by this PCIe controller driver
-    - Warn on MPS > 256 Bytes
-    - Recheck updated documentation and update code comments to match
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 51 +++++++++++++++++++++
- 1 file changed, 51 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index fbe465a29068f..e38cde2257bb4 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -411,6 +411,54 @@ static int rcar_gen4_pcie_host_msi_init(struct dw_pcie_rp *pp)
- 	return ret;
- }
- 
-+static int rcar_gen4_pcie_enable_device(struct pci_host_bridge *bridge,
-+					struct pci_dev *dev)
-+{
-+	/*
-+	 * R-Car Gen4 PCIe controller has a hardware limitation of 256 Bytes
-+	 * Max_Payload_Size (MPS). PCIe specification indicates that the MPS
-+	 * must not exceed minimum MPS of any element along the packet path.
-+	 * The controller reports Max_Payload_Size_Supported (MPSS) 256 Bytes
-+	 * for header type 0 and 128 Bytes for header type 1. The PCIe core
-+	 * will not allow MPS to be set higher than MPSS, warn here in case
-+	 * something went very wrong in the core.
-+	 *
-+	 * For details, refer to chapter "104.1.1 Features" in either of:
-+	 * R-Car S4 R19UH0161EJ0140 Rev.1.40 Jul. 31, 2026 or
-+	 * R-Car V4H R19UH0186EJ0140 Rev.1.40 Aug. 7, 2026 or
-+	 * R-Car V4M R19UH0217EJ0110 Rev.1.10 Jun. 30, 2026.
-+	 */
-+	WARN_ON(pcie_get_mps(dev) > 256);
-+
-+	/*
-+	 * R-Car Gen4 Reference Manual, chapter 104.4.8 Usage notes for
-+	 * MRRS (Max Read Request Size) states:
-+	 *   Please set "Max Read Request Size" to 128 bytes or 256 bytes.
-+	 *   If "Max Read Request Size" is set to anything other than the
-+	 *   above, the transferred data will not match the expected value.
-+	 * This limitation also seems the apply to devices issuing MRd TLP.
-+	 * This limitation can be triggered by using non-HMB NVMe SSD with
-+	 * Max_Read_Request_Size 512 Bytes, for example Crucial P5 Plus.
-+	 * Any write into the SSD (MRd TLP issued by the SSD) longer than
-+	 * 256 Bytes wraps around at 256 Byte boundary, and the same data
-+	 * are written into the SSD starting at offset 0 and at 256 Bytes.
-+	 * Force limit Max_Read_Request_Size to at most 256 Bytes for each
-+	 * device connected to this PCIe controller to avoid this behavior.
-+	 *
-+	 * For details, refer to aforementioned chapter in either of:
-+	 * R-Car S4 R19UH0161EJ0140 Rev.1.40 Jul. 31, 2026 or
-+	 * R-Car V4H R19UH0186EJ0140 Rev.1.40 Aug. 7, 2026 or
-+	 * R-Car V4M R19UH0217EJ0110 Rev.1.10 Jun. 30, 2026.
-+	 */
-+	bridge->no_inc_mrrs = 1;
-+	if (pcie_get_readrq(dev) > 256) {
-+		pci_info(dev, "Limiting MRRS to 256 bytes\n");
-+		pcie_set_readrq(dev, 256);
-+	}
-+
-+	return 0;
-+}
-+
- /* Host mode */
- static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
- {
-@@ -418,6 +466,9 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
- 	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
- 	int ret;
- 
-+	if (pp->bridge)
-+		pp->bridge->enable_device = rcar_gen4_pcie_enable_device;
-+
- 	gpiod_set_value_cansleep(dw->pe_rst, 1);
- 
- 	ret = rcar_gen4_pcie_common_init(rcar);
+>
+> Best regards,
+>
+
 -- 
-2.53.0
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
+
 
