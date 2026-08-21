@@ -1,104 +1,123 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D36451986
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 09:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D7C4749FD
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787304866; cv=none; b=iC6XgysBOQYndcGtJS4NrBgZ4dVydkPFIRQwVh0RSjLv7wuvKWq4gX4IwgdSbnE7K60ryzvsui8YFLUVbGr0Co5zofD0AVX+Lea5zl+bJ2mjGgi06BR96FPC8q2KRJSwj0Ljps77icPURbRINmtXcZCehKwh5TChoOmeVjCHrCA=
+	t=1787306850; cv=none; b=SV/1FQBFkDtkVl8hAmsimjW4Ak9kjGp6ThItUa4895+XXoK0uO20WJCop9C5qRovv5w8+5K09AwIuggX+Aoj1ebi4y9+7z8MYYT+jE0SKjuev5WvnMPeJDND6MJ13lh+Ots4VWkvu1vdgL65fgTIYT+yRcLbqH7sP2VoeLMRgRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787304866; c=relaxed/simple;
-	bh=WdZLr1n+nWwhzHD5ms0FDl3HDufTPovn43dEUlSyeMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlfjOCsfHd85OUNb3VmEJsgAHXNiP1wplFAVCX/jGWErFH4YApjBaW+YTkPpHahku4gX1jJE2SgrPgcRKVCSwfSd/8poq88TPZ1UOzlcsi0cPJT5aO5eyo9QzFb6NtY4Svuy5duEwGBshgkLviNNnhjAIbcnZaB0tANmUjs7/EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HQbNKuAx; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1787306850; c=relaxed/simple;
+	bh=cw/OCEkB3hwDcu02UtKJzWSDrN45dWEQfiVPQMxIPpM=;
+	h=Message-ID:MIME-Version:From:To:Cc:Date:Subject:Content-Type; b=X9+8ThXyNikaaj7pUwL98nh8tzNVJZBz2mYN8lYqjdug1gvsAB/8uXi9NFl/JXnxqSu5zidBKmtVTbeqDaM/hFJYVMqp+zpOwqyolM5cBBHhyaI6WBNHKRmp/VYRl1XOye7FpBkU/oBArUutYOEsEkVkx21VIaxXTPiGs0FKWJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FBj6KidU; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HQbNKuAx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=lWsL
-	p4397NNo8UrAz6kD43LDVce8oF9NO46d/WYg4mA=; b=HQbNKuAxkA8YFlZuvH/n
-	a0pzNRX4f20YbYH7d66QH/G+ukEKVl8cpYZBxYCgU1tz1zAncF3E/iFYbOv6L9Id
-	ChSjHMS3rAIhq7IZDkamGbffz5MaA3O5ejxUrWFchu66hufkJ36Urw/dBaqWQdC5
-	WZlr0fBM/rpSeVR6WxvJ9n1B5D969lfHPP0wxd9/uNHRxIgD7LaWpdmDiXYdEZT5
-	IzFKJ+ZFydjTSKfMN8iCoNqisHFh74K2R5IVJz7SwZyAy9IuG1aCYu5zdQx/ifxW
-	MblxCFi3Oj2r4mhrLTyET12zgy6M9Iu4f8fD/c9NXgNZPwuI5YTIchoXpQzcmAa/
-	eA==
-Received: (qmail 605895 invoked from network); 21 Aug 2026 11:34:13 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Aug 2026 11:34:13 +0200
-X-UD-Smtp-Session: l3s3148p1@CbLbVotZJJwujnuu
-Date: Fri, 21 Aug 2026 11:34:11 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v4 13/15] rtc: rzn1: Add OF match data to gate SUBU
- register access
-Message-ID: <aogbk-moFmTTFkJ0@shikoro>
-References: <20260819103926.2136712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260819103926.2136712-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aobjCr7ZtpLmL3VP@ninjato>
- <CA+V-a8tpo2Rc9xsvsj9LLqD2ZjoHzRAVsox=7xURAtwA-GYVEw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FBj6KidU"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2cedda2ce6fso4806515ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 03:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787306835; x=1787911635; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xLC5C6Z8TsDY7KH1kpXySoBOtQKEhpRRnGXmV/Z0iK0=;
+        b=FBj6KidURIVYVqbnCBNQO/5xHz5/Cd3WdKDXT6STcrWmlOucV0cyIigHFsKZxbL+5k
+         0SdP9FURJK2HUxBwodJ8uSoQWbkgkT6o9PaJHwsjDiNWUivMKD5BBiSe6pqK3PpEjUHV
+         x1TM+NwT5NqHAUS4lnKItriEu5YkEH810wlUOZNhN9S638PTL1N/doXrB9rmE1eOuE70
+         CUy5/FpDiPAARMOThiQdIt/WWDGfurJwM6teoG+aL9e/0a1EsyQGeM3QQW87T8H6lWls
+         UDzP4Fjnd4yXDYgFAQyYA2QGG2g017oYfajJjL/VpUEoPmLGV1mbpN1bZqsK1RcnUTpe
+         RdRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787306835; x=1787911635;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=xLC5C6Z8TsDY7KH1kpXySoBOtQKEhpRRnGXmV/Z0iK0=;
+        b=e4LYC8Cy6o8UTBKeLT96WXEJ+RWtH440BRlVxE6WKHFStn53o2HrQPOEbpsIpTVhgy
+         mluQOEcgkM4GedSjQ0k6LL6pOU4INxt4FTlSiUrjTUMpHI4rxla/aefB8o0nQT2twtK3
+         SWlPprXHFDobwEv1cGInekhLc6eNasG9fH6tSV/v6sqQU0wsBJmkBIt9SIZj2qYbeP1x
+         j74ComzzAutnG1z7wpp9AoTGS/ajnGldjIBX0wUP5L31PppM2ZCLNSI8rhQEd+vag8n9
+         hOQk9JjIRYBE9C3rfAEj8VUrghVuL2o6IX0tXUE1qDfvPxnOMU7mb5pK+J2w1LHd1A4n
+         +Jyw==
+X-Forwarded-Encrypted: i=1; AHgh+RoHwgaddfxTCCLHu0OtJ0PX6R8sYaCv+4XoUXINea6YgTQ6zRTxSZ+qtrLCokSnmAeGmu1qSZoth+m+3hpqjdYS5g==@vger.kernel.org
+X-Gm-Message-State: AFuF++kK7rbtMicgFvyCnlByLLdcAU/srzfbY1fE3cAxWhOrIqFRlh4F
+	TQxP5o8C6Aly/K4lLauonHv12mrom5LK1DSeiKb/Od9MxplRHVEbxgeJ
+X-Gm-Gg: AR+sD12TEpjzzDoPzSYXazsD0eE8oIoEAXtrsRU7UkjbyiLunYkNCvgnzlMHRf/ksg/
+	X/lgh+k2O+H0Kg/Bojaq0Xr4hYgwvmdYB+8gY/PbJxRm2cBOuc/PAbpO/gl4GkRwBu28+F5MZgU
+	16MRDXFXLkbCfAO2/f7OXOjNGaQC6x/x5VGqAPFwqLOojBUVS9F2MP4CsdnK4j+SYkPjItu6gZ6
+	K85zym9m00ajRIaT8XuG0AtGSNxBfE2WIlo0B5vC60wYMfSqxJF8awNcdwOvTEzO2FtsEsz+xMe
+	FHLwT1A0TgBn3BsGT9qdataCRwdDhK7Fbplq3XEcQslbVWkEKHhLK8l1SeqSZ2SNGcGGjDjr+V8
+	fL1r8atlXkEfavdXyHa7MDGrFBHG7RUX5thbQXsylaRZu+uc9P+MzCEabpOaH6SLPNXVJUOG843
+	5CJ2NYxthDj4Oi7NxuY8w8EMDKDNKBMuI0iEFdpx3DIqS+jcHdnn+tHonEMoFlX2yU/TA+IMmwX
+	Sr8SRdOjcb9ivR3i6xvx7Q09k0HoST/8MMZzrKWOjjqldPYfy3+VCPm
+X-Received: by 2002:a17:90b:6cb:b0:366:3517:1aa2 with SMTP id 98e67ed59e1d1-395c2f13243mr10603400a91.0.1787306835011;
+        Fri, 21 Aug 2026 03:07:15 -0700 (PDT)
+Received: from manush ([2406:7400:94:f2e0:60f7:d7e:950f:50ce])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1416ad69638sm23110511c88.7.2026.08.21.03.07.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 03:07:14 -0700 (PDT)
+Message-ID: <6a882352.ee10049a.267d65.7a31@mx.google.com>
+X-Mailer: git-send-email-equivalent-ps1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ldgKrqKLs1cCm4Uc"
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8tpo2Rc9xsvsj9LLqD2ZjoHzRAVsox=7xURAtwA-GYVEw@mail.gmail.com>
+From: "Manush Prajwal" <manushprajwal555@gmail.com>
+To: yoshihiro.shimoda.uh@renesas.com, michael.dege@renesas.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: 21 Aug 2026 15:37:14 +0530
+Subject: [PATCH v4] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On an of_property_read_u32() failure, rswitch_get_port_node() set=
+ port=0D=0Ato NULL and jumped to the out label before releasing t=
+he reference the=0D=0Afor_each_available_child_of_node() iterator=
+ was holding on it. Once=0D=0Aport was overwritten with NULL, tha=
+t reference could never be=0D=0Areleased since out: only put "por=
+ts", the parent node.=0D=0A=0D=0ARework the function around for_e=
+ach_available_child_of_node_scoped()=0D=0Ainstead of adding a man=
+ual of_node_put(), so the iterator's reference=0D=0Ais dropped au=
+tomatically on every exit path. Since port is the=0D=0Afunction's=
+ return value, take an explicit reference with of_node_get()=0D=0A=
+on the match before breaking out of the loop.=0D=0A=0D=0ASigned-o=
+ff-by: Manush Prajwal <manushprajwal555@gmail.com>=0D=0A---=0D=0A=
+v4: Keep the err/if (err < 0) structure as-is instead of collapsi=
+ng=0D=0A    it into a single-line check, to keep the diff minimal=
+, per Andrew=0D=0A    Lunn's review.=0D=0Av3: Reorder local varia=
+ble declarations into reverse Christmas tree=0D=0A    order, per =
+Andrew Lunn's review.=0D=0Av2: Rework using for_each_available_ch=
+ild_of_node_scoped() instead of=0D=0A    a manual of_node_put(), =
+per Andrew Lunn's review.=0D=0A=0D=0A drivers/net/ethernet/renesa=
+s/rswitch_main.c | 20 +++++++++-----------=0D=0A 1 file changed, =
+10 insertions(+), 10 deletions(-)=0D=0A=0D=0Adiff --git a/drivers=
+/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renes=
+as/rswitch_main.c=0D=0Aindex 6fe9648163..1a2b3c4d5e 100644=0D=0A-=
+-- a/drivers/net/ethernet/renesas/rswitch_main.c=0D=0A+++ b/drive=
+rs/net/ethernet/renesas/rswitch_main.c=0D=0A@@ -1303,8 +1303,9 @@=
+=0D=0A /* Call of_node_put(port) after done */=0D=0A static struc=
+t device_node *rswitch_get_port_node(struct rswitch_device *rdev)=
+=0D=0A {=0D=0A-	struct device_node *ports, *port;=0D=0A-	int err =
+=3D 0;=0D=0A+	struct device_node *port =3D NULL;=0D=0A+	struct de=
+vice_node *ports;=0D=0A+	int err =3D 0;=0D=0A 	u32 index;=0D=0A=0D=0A=
+ 	ports =3D of_get_child_by_name(rdev->ndev->dev.parent->of_node,=
+=0D=0A@@ -1312,17 +1313,16 @@ static struct device_node *rswitch_=
+get_port_node(struct rswitch_device *rdev)=0D=0A 	if (!ports)=0D=0A=
+ 		return NULL;=0D=0A=0D=0A-	for_each_available_child_of_node(por=
+ts, port) {=0D=0A-		err =3D of_property_read_u32(port, "reg", &in=
+dex);=0D=0A-		if (err < 0) {=0D=0A-			port =3D NULL;=0D=0A-			got=
+o out;=0D=0A-		}=0D=0A-		if (index =3D=3D rdev->etha->index)=0D=0A=
++	for_each_available_child_of_node_scoped(ports, child) {=0D=0A+	=
+	err =3D of_property_read_u32(child, "reg", &index);=0D=0A+		if (=
+err < 0)=0D=0A 			break;=0D=0A+		if (index =3D=3D rdev->etha->ind=
+ex) {=0D=0A+			port =3D of_node_get(child);=0D=0A+			break;=0D=0A=
++		}=0D=0A 	}=0D=0A=0D=0A-out:=0D=0A 	of_node_put(ports);=0D=0A=0D=0A=
+ 	return port;=0D=0A--=0D=0A2.46.2.windows.1
 
---ldgKrqKLs1cCm4Uc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> } else if (!data->has_subu) {
->         return dev_err_probe(dev, -EOPNOTSUPP,
->                              "No valid XTAL provided and SUBU mode not
-
-Yeah, looks good to me. It is maybe a bit hidden that xtal == NULL in
-the above case. I wonder if adding a comment above the return command
-
-	/* xtal is NULL here */
-
-will help understanding? But I'll leave it to you.
-
-
---ldgKrqKLs1cCm4Uc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqIG48ACgkQFA3kzBSg
-KbY/zg/+Of59Tl+ksOh1ZjWKKHkcpR6EXcG0zxzOYsXFZ8cakdLFXeoLNV21EaGW
-cbxZETOsPY+pbEpvG5/bwmv+nI/xI2FEH8RpXbkLjIQZxR8SvqHU3l/7zoPn+1vv
-qXsl/vecQm2rL54bJnyiZ8h+pGnlJR7D0Ix0baajH9LGcV5TCH4R+hsSu4aDjhjE
-nVKmu1txp+zuUhjlzVzWonD/H/CeMxRO9BJx6Jy+bLc4XNJvp6cMHCF4qOrPjshw
-UbUJNH/6UVB6mOjg4CFPysiZzoXZb+iJ5Uhj5ns1UqIp66InIAEUM5CLdbhaZTqK
-jhUoKSKnywtBSc+N7Act5mCCvUPjke41253G+VtV5ogwfpVT2Vx9nN1EgI7VNhRU
-rCnshqJvppU0RRT1WlQBH0kRL/5yVY9d/YG9YjVoiQ+i3xIK+EkWCrxMJjMimj1G
-8hXy3E9OEV4R/VZmqhYV1LNro8fozptm77xOGkKa+p4AMOUpLiL2eenTcb7hA++Z
-p/wZi8NXPnsXHDbR3A1sxmxlrzOIMf5khDs0suACLo3WcUJMq/fFCdTEPRHTXwuH
-KrWm9H/fBl2SCBLWzOGic4fC11O+Z2dU+wo9hiGaJupeXyQofwR2nDGq3rW6a5Nd
-UY22bstARtMdWYCybjPB37gKSqoWosjhWvm2BULfNlbjJhhxxN8=
-=Eu7r
------END PGP SIGNATURE-----
-
---ldgKrqKLs1cCm4Uc--
