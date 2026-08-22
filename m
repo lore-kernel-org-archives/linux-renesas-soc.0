@@ -1,152 +1,155 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7521418340
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 21:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAD5376A19;
+	Sat, 22 Aug 2026 07:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787346766; cv=none; b=P568zPtpdDm396L54XoNB1YKivu2DuXL9dcnkEnmZUp6BHZYwbKo4IkF0bc2c16lHqAC3MxP+rByjMuVvOr0F6bHZGgeqx39F031EU3RxVc58LLl8coIOVTOxNnBaOp4AADkEXZD5As8Buf8CP1hbfYlYG6M+FoBrI3VUgzcNEk=
+	t=1787383797; cv=none; b=NmtTm5s73OZhSDw2QztAmfh3KIK0fOnqOmisQBdFSD+aw5DoQIwllw36bYEztMX8EOcPptM1KeMXCZ+liPkm20MlYosP0ipNGzxrgvQLPQKbmO4qqjuG+XtexlRYh4J0s+N3HPYY1/iFwYpUH0aOCKwrvS/PRDijNp6joaiOIfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787346766; c=relaxed/simple;
-	bh=A+v7mWu+wCAlwX2apMuc3TGMtMv4ggi9HrGbcDSLrQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JAadwaao9CbiL+Q7rbM55wq6mQ7UREiwU9RbXa3d3y8hKxZRcXrVk6kqFjyfaf51ZbwXblUKHBl3mZs82bbtnbUQxPjjTrl7eZK4hEGpAR95vQgRjioGoqthgy+2T0Q6IFXqYDAvcUbL1ou4Dk7lZHpEKIBUe4sQpM/3ABxMg5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+bsGhnt; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787383797; c=relaxed/simple;
+	bh=eLtbJyeOFCL8+ZJ05LuveDQaCku1Mqljqd6pBpX3Akc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/NngqNeSuoW2TrzPefXddsSlYZR2gTYX1EagsycBhmgLHaVzO9azGuo1q40uhTE6HNIcD/RQSl31dhHqL9H0mXHIpS3jzSh18D56cnYLpH1NJpZdX7hCiGR0QkSzuVyWpSJ4pNnf6Qb+DHbjL/ziVLYpJrcte9V5hZge5ejmCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUGjJrlO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+bsGhnt"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cc891373e0so17479665ad.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2026 14:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787346763; x=1787951563; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4l8YNQk41/fppyfIDksrLwHHQ57AKnk38Us5hixv6DA=;
-        b=G+bsGhnt7HVIcww9MuoR89rkzMxJbcgAtccPBw601hymCbaRQRh/KN5v+f9fGDvSjZ
-         FTgLuxIC8kWJdS5wyRHtCO+NY9oCNgoN8IOzEGKmokLT0dR6yjx6CcsfrqB0i6ze60DS
-         fcPxos/90zpHWD9VGW67r9tOZdYNHv59GOt6dDpm+2Y2QZeX7jc3DKrHcim3C0TJIMxO
-         Mlm4YUFgD6BLGeWXRCR9LCcZMomHRjOQfU4Tw2Dy47XUp+owI0P3ckmUlZVWjSGKxjZo
-         OYDrKasf9df7Rp8Hcgqm8G91YjoERtzyRupa+L8T3oahFcpoigsXYdD/LvkIeJLpeGmx
-         kiZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787346763; x=1787951563;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4l8YNQk41/fppyfIDksrLwHHQ57AKnk38Us5hixv6DA=;
-        b=W+2j4BXUD2CKQ3RjmpA5/wxoaA+hVXXha8ly2ngDxM7ER1Go50xHQ2gTP2MRE19wrp
-         7se3YskjJeycsPDd9ChKOFc46CUR3YvxzAdSDG9zFqSVjL2AmDlxMAKOZe3j+HfCfzzQ
-         JBnZf46FreWU3mkI42Cr3AGQ6UubmhMuktwrlBdTHFbSGL4SuecF4xrRSDo3Ckfw8nSV
-         o94TfL0rsRS3Z///GeO65wfkwfVEfsKuzoOqD5OJc0F8WsiN4UC+ao26iDZ/oxNRUZ6a
-         TJJoV0q0E6wl1rGzbziGYL4mUd0wCkNvSlwPxUtp36OsjzLFHQ7AmGt9K2fD/hIqixpm
-         FfQQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rq37zl33Zvhus1HZui/oWyyNLe81WBdiREa7RjkR51Vf0XPMla9MCAe0o8EVPSDTdEaL4MVqpcRkPIMjJdMRfvhqA==@vger.kernel.org
-X-Gm-Message-State: AFuF++liXL2G7xlkLjWwEZ6pB9YHJu7d5Lrg1bR3P8X9af8ttAqS2cuq
-	qEn1ga1jL9OqfXn/6ztEw8UoPiBMIF3wF4Wc43gJUqbWlpAMHz5qqy1j
-X-Gm-Gg: AR+sD10Fd5XiC61DtAGT9QNPh/Vmqc1p9RZfopC9eAcg+UXw8p+QjKBytz43WKJGK8r
-	NumfS4dm/evbTIv1eLAPZhsEF+4X2WNblqDyJmEWO3CVl0upyzcaNkQPQBvJ/MYgRJW41+2bmA1
-	wocf4c3xJKlxMImdWLHT5vO1Utm4eu5GRtfuCjlPrNWmMNKxQhWINYXlEN9t0IdRBDq1Gmt7tbE
-	06diTNP4FYfN82VP9VXyvB1zhJX7+Sd7yjGxvgT3Tv+pyZEmZZE9IEXfzAvYoFOwMJzz2PP+ae3
-	JWW2IW+PPs5H/hjs0R0D+SwCHiNSlQ1VYBQQ4WMBoO6KaFU67VzrWbZ5on9K33MRHuso7SqhJq+
-	TZKMUWEtjBaq3MeD1l9BFyE8qRAMZXefmZHC/pApRp8S5u00beSVRac0qhnMph6X7L61DW7tSrN
-	vI0BcnknKEDnZTnis20WcHcAd8ZuQsjG5EKr8hPd1HUeuYBqKd8xUP2MxGddAZ07T/oeobUOcnx
-	rsljBjZNEVep7E2INnqz43s+AX6QpF14InK0umw75TItlR0JJ2bNDn3Q/JN2boVq455WhxT
-X-Received: by 2002:a17:90b:3dc5:b0:37f:be6c:f3f2 with SMTP id 98e67ed59e1d1-395dee7e2dfmr2594815a91.2.1787346763290;
-        Fri, 21 Aug 2026 14:12:43 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c07:194c:dba4:ea1e:d7d1:affe])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327bf175399sm49755257eec.26.2026.08.21.14.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 14:12:42 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v6 17/17] rtc: rzn1: Add support for Renesas RZ/T2H and RZ/N2H SoCs
-Date: Fri, 21 Aug 2026 22:10:32 +0100
-Message-ID: <20260821211032.13554-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260821211032.13554-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260821211032.13554-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUGjJrlO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E492E1F000E9;
+	Sat, 22 Aug 2026 07:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787383796;
+	bh=SwjlM+iws+8CDXMH63ul3ZL8LMDDFMdt8lY+0ZAlkFM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=DUGjJrlO5cD7QPWN+Qx6swvpNtOkpJb9jVXYHlO3oaMkzsPnGtecPoA/ZGnpLcts+
+	 hW0pNZoj+/jDOyEXA7V2lxUT2FzrlCfFUmkk2mK8ERwRZqKZbfg/DKZUMeFET0rpAa
+	 f5OKryCb47llAG3OyVMfXnph3Lpq0i+CARiAgZF5W5Crhc29LTH8chekcT/UWT50yz
+	 t4rr3cMpIfWaIelSSbgkfKoGJ6ZRv5VszZOxpOS1qVhngyX/GDPiUriHa1h5Z+M9KF
+	 xdYlc6FioJzCs1z8uwm4Jdt6VE2r6ENWefFonrcTaqDJP3NAAqPbAFsTUtdy4GKecT
+	 mJtIU8bvTACkw==
+Message-ID: <b2f486b8-a391-41bc-8a7f-dc81c6752205@kernel.org>
+Date: Sat, 22 Aug 2026 09:29:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power domain
+ definitions
+To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
+ <20260821150408.73829-3-ayman.chaudhry.kc@renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260821150408.73829-3-ayman.chaudhry.kc@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 21/08/2026 17:03, Ayman Chaudhry wrote:
+> This patch adds power domain indices for the Renesas RZ/G2M v3.0
 
-Add support for the RTC block found on the Renesas RZ/T2H (R9A09G077)
-and RZ/N2H (R9A09G087) SoCs.
 
-These SoCs integrate a closely related variant of the RZ/N1 RTC IP, but
-do not implement the RTCA0SUBU register. Use variant-specific match data
-to disable SUBU support for these SoCs.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v5->v6:
-- No change
+> (a.k.a. R8A774A3) SoC.
+> 
+> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+> ---
+>  include/dt-bindings/power/r8a774a3-sysc.h | 30 +++++++++++++++++++++++
 
-v4->v5:
-- Renamed rzt2h_data to rzn1_rtc_rzt2h_data
-- Added Reviewed-by and Tested-by tag from Wolfram.
+Filename must match compatible.
 
-v3->v4:
-- Dropped RB tag from Wolfram.
-- Added OF rzt2h_data
-- Updated commit message.
 
-v2->v3:
-- No changes.
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 include/dt-bindings/power/r8a774a3-sysc.h
+> 
+> diff --git a/include/dt-bindings/power/r8a774a3-sysc.h b/include/dt-bindings/power/r8a774a3-sysc.h
+> new file mode 100644
+> index 000000000000..5694a422b771
+> --- /dev/null
+> +++ b/include/dt-bindings/power/r8a774a3-sysc.h
+> @@ -0,0 +1,30 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2026 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+> +#define __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+> +
+> +/*
+> + * These power domain indices match the numbers of the interrupt bits
 
-v1->v2:
-- Updated commit message to drop reference about RTCA0TCR register.
-- Added Reviewed-by tag.
----
- drivers/rtc/rtc-rzn1.c | 5 +++++
- 1 file changed, 5 insertions(+)
+No, that's not a binding then.
 
-diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-index 906d03c65df3..1e1676a7f3cc 100644
---- a/drivers/rtc/rtc-rzn1.c
-+++ b/drivers/rtc/rtc-rzn1.c
-@@ -523,11 +523,16 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	return devm_rtc_register_device(rtc->rtcdev);
- }
- 
-+static const struct rzn1_rtc_data rzn1_rtc_rzt2h_data = {
-+	.has_subu = false,
-+};
-+
- static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
- 	.has_subu = true,
- };
- 
- static const struct of_device_id rzn1_rtc_of_match[] = {
-+	{ .compatible	= "renesas,r9a09g077-rtc", .data = &rzn1_rtc_rzt2h_data },
- 	{ .compatible	= "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
- 	{ /* sentinel */ }
- };
--- 
-2.43.0
+Also, why is this sent separately from the binding?
 
+> + * representing the power areas in the various Interrupt Registers
+> + * (e.g. SYSCISR, Interrupt Status Register)
+> + */
+> +
+> +#define R8A774A3_PD_CA57_CPU0		 0
+> +#define R8A774A3_PD_CA57_CPU1		 1
+> +#define R8A774A3_PD_CA53_CPU0		 5
+
+No, value is 2. Or not a binding.
+
+Best regards,
+Krzysztof
