@@ -1,147 +1,185 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A8419E7F7
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 08:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF503A6F04;
+	Mon, 24 Aug 2026 08:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787558687; cv=none; b=bYtv1/dDX73341q6q5xQeMUgexSViZ+5DOXo0e0IoMOsd4r2/jthovHnkwMzNmj/IJhJuThJSGWeR18bciuEkO/jp0jKoufZIa9R2DEj4bQUmSUXUwpr/pkyIW2phBl2OMnYXRhwJPDnenyI7eFRHD68RAQ0nxaSKXKy47k0fQI=
+	t=1787559333; cv=none; b=ZtEK9JWaenjSZgHNo/8R8CDWrhk5YxFuhnw1kv61Ju3SSWmzMIXw1wQVwXdGfNfkAbwN6iEfoqmRq9flovF1kp/wdOVzKQ7GTRnsD3LLR1nDXpUwyrxgnuhtrUWYuoYt0m5jjJFApIQEFHNWy6qVw2id4+fgxv6bVPzZzsGVFjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787558687; c=relaxed/simple;
-	bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DicVgadoc6ynx857sxt/gKlWZn3QU1sfx83IKbMe/KCgMddmBBgF0WgwHIK77TDdixU1MOMSZB+KrOJACusMQwdKi9P9U/ET8OsLLf7NEErS1ESKhuuUt2qesusr6IS2BmYeEFWgneMSnfy+hnESiLtoMpS3FATN6CxCXvUmtMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=P8FuWRWA; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1787559333; c=relaxed/simple;
+	bh=wy7nh93XzmdOkki7VcWgIRXqpoW4vZH9A63Z5YxUwuA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=oCr+/XHB2zxSxeIFi2IROPXbSGE0k681ezBuZiasOHifiRz9y+VuwJiOdmnjOco+CqcpcXIcS0yholU22+/YnTeSI9b5Hvj21niWPm0AHCrDZSgTgTQyYv7EyMAesUbtwjM18/S9mY7Xo1zrjTX8K6E0ZUqdEuI2GCIpkPxBJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MNiT/gGp; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="P8FuWRWA"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a3fda88184so4858852a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 01:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1787558684; x=1788163484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
-        b=P8FuWRWAq2MHs3OI2eP9+Okl1+YHH4ViS6lJzRnnxTewsZ95u6aou5gQ4cb1eoD/v/
-         G5u/kaA3SRvTik/wXFWjJxY9eXb5F6oR8foWZMyLv9rF0kYtzBW94ESdhXALNNJtqABP
-         PBsWRchdV7cfhK0rswlBXwNKZ7/echGBOlJhdKUwfSogiFYkI+AITpEvPZ0TobsTw+oW
-         xJ5/SSbCWTbouT4KFJ7n3RCzuuM4X+LOgvuGxowts+pkmFkjyZ+Yq9F3uJ92wpE1yM4M
-         tiqp6Ti2fQJPtcZNBAEYUD8gjqMH1rLiAoG/vza6x38a00dMItANwlBGaCPSX+peDivN
-         3DBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787558684; x=1788163484;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
-        b=Sus7bC0gKwHIFjJTs0BA85G9YMiYQ5wWA86Vi3h120+E5RepJCyybAMDC3x0k5+/p5
-         7hVQDgpZTTL9h8Ylz6BEUWuTXVQTyjruoyHQWm6PPwG9e+NQYvwigZkfeVFwaW0dFa1Z
-         Z6SufY2hDBU099tdNeII6Zeo4NVfnQwuKvz4Hk6h2D4sl653+Zdr4jrG/5wc/J/6XUTb
-         rGDb0ePSot4Y2fsEpKqulybpx9rUKG0YVH9lJrbXp/3nPhklU5o7ePDFiRek9g1GRGHf
-         iwEXzUNzenQ80mZKjK+N2h7qWIhQLb1r63cYcqeip9b4xcdLFfxH8awpNvjPZVwyC+Rq
-         V7eQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpIKOkUc76E8TacOkc9aF5WSLdbrrxedKOTu2wxdFEZckAr0AmffEUH9fdgJAImXo9MiRQO1rTaHtq1wx83kC3Czg==@vger.kernel.org
-X-Gm-Message-State: AFuF++l4IScre7tgzqF0CmnH5JT8FvuE5ey7l8ku8etfeE8M446HoFJo
-	cnNVY4/LgwpCupk6Hxg1WZ7QvOBr432LaHJfOhLZSa7PG8PFGhleu42YGhYRkvD7tEM=
-X-Gm-Gg: AR+sD12gqBUa8oKnzMLnYOugLFgDhg1ZkMNlMue2SdEOLhVkxlYp+f2vnA9DQ0W/zUX
-	JQRziF6nTx8RI9AfK7n0otxhHexH12OehpXNE3zMX2QsvmPuhjoGCo59iGKTvo0Y0u9RBEHD9w7
-	1qCuSZKWUiPzo1nsc1HEOZRXKIgwnBd9jbs1LmOOQY1LqHu6bhO2IeNMTWYou6j/lfr23ZMjzBO
-	cVWX9FJ046F4EbgAbkCglXj0cHOKipttddLc+0X1VX9+mkzf+Hpb5OeBElsWpAe4XnRlSsN+u+0
-	ZXf8lkpfh3haWZ0MjMQ77kUjwaLwk0J2ktAizvktfMpFgupQuaXFIzj7sM1UfjVy2qWER14Ixul
-	y0xr9py+CaEdkrr8XdrKvwy6bRLaGhKaqXl8TktFztkpV+CKC3OnntffbdbpZ/lp9dYGgI4Ze0w
-	ULHZWTnIRsw3jl9jRoZgNo2UCpf1CLd23OKD+cvqnq+AZirEed3R0HvCbkyAZl8fQ3DwH/mP1AX
-	M3m/HnicTfg3HdpIhD6ewvFGZbLR0OTdIqMqIDTmPGSgkuRiAZG
-X-Received: by 2002:a17:907:6d15:b0:c24:4128:c19d with SMTP id a640c23a62f3a-c246a2e9378mr2551285366b.4.1787558684110;
-        Mon, 24 Aug 2026 01:04:44 -0700 (PDT)
-Received: from localhost (p200300f65f19a904efa8a94b704adaa2.dip0.t-ipconnect.de. [2003:f6:5f19:a904:efa8:a94b:704a:daa2])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-c249606b683sm1251855166b.5.2026.08.24.01.04.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 01:04:43 -0700 (PDT)
-Date: Mon, 24 Aug 2026 10:04:42 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "biju.das.au" <biju.das.au@gmail.com>, 
-	"sashiko-reviews@lists.linux.dev" <sashiko-reviews@lists.linux.dev>, "robh@kernel.org" <robh@kernel.org>, 
-	wsa+renesas <wsa+renesas@sang-engineering.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document
- renesas,poegs property
-Message-ID: <aov6v5dObK-zJfRj@monoceros>
-References: <20260604095647.108654-3-biju.das.jz@bp.renesas.com>
- <20260604100619.75EC51F00893@smtp.kernel.org>
- <aliM3iVA1LY7tW38@monoceros>
- <CADT+UeB-gV8QnuwpTUrHV-GvYPwebYg=RE68PcApZkACO4ENDw@mail.gmail.com>
- <TY3PR01MB11346EDD83D9CA3F3252D48F586A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MNiT/gGp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1787559319; x=1788164119; i=markus.elfring@web.de;
+	bh=wy7nh93XzmdOkki7VcWgIRXqpoW4vZH9A63Z5YxUwuA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MNiT/gGpprid9dQmbLsq/JixkQSElE8PHLaFdQYO8u4pJ3aFuQIgRbiMhRy10StT
+	 pTsBI8DmmEZgybSh8aPq/59Frl2Bl7YcRIaFm8yFONAAkWlGz22MCisskcKpqqnPH
+	 JS/tFh91jsg1QYuwZbhOyN6ibHMMLedsO1knqQtUZy7y4SzVkls0v+yya8uUn8meE
+	 2feN70+Ry7kWDKpVm1bpqcUwHsyhsOdmYwWXhdA4tbJ/6GY5j78M2JU5Dn9kOnMs3
+	 tUOTKhzB9TNn/AzS06IK942Ky3YCiJYHP7GBGyhnCAQrfAglqVRfbrOHe4HfmqQqm
+	 jkdgv25IdF5F2xjBjw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWzD3-1xQbq336AD-00L7lp; Mon, 24
+ Aug 2026 10:15:18 +0200
+Message-ID: <92de3894-3511-4f13-950f-60b3f6911504@web.de>
+Date: Mon, 24 Aug 2026 10:15:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yhelts2hapldhig7"
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346EDD83D9CA3F3252D48F586A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-
-
---yhelts2hapldhig7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: manushprajwal555@gmail.com, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Michael Dege <michael.dege@renesas.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <6a882352.ee10049a.267d65.7a31@mx.google.com>
+Subject: Re: [PATCH v4] net: ethernet: renesas: rswitch: fix device_node
+ refcount leak in rswitch_get_port_node()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <6a882352.ee10049a.267d65.7a31@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document
- renesas,poegs property
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:Ppxxs2Yj40wY+L7m8+0noB9MnLPixkj9NNDBSP8PaH205z3nvkD
+ 46gM6yluAaLinjAFVJbCxf7Kmp5BFhB+Xvc3nw9uQv/DCK6TcyWel0QS2UYMoUxb/EpCF64
+ 7QdNTVQ3t7XEa8U3K6uYx6eUlo4tHsJVXgGZvmCmBFXzC9PdloYFWmpRvCyyKYl297W00Cy
+ nKhAmUxCZsQqq/xWAWspg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:T63+d1ZiJe0=;dSH6EvUsc/9xJ7hlBo8eP57b809
+ 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
 
-Hello Biju,
+=E2=80=A6
+> Rework the function around for_each_available_child_of_node_scoped()
+> instead of adding a manual of_node_put(), so the iterator's reference
+> is dropped automatically on every exit path. Since port is the
+> function's return value, take an explicit reference with of_node_get()
+> on the match before breaking out of the loop.
 
-On Sat, Aug 22, 2026 at 07:54:26AM +0000, Biju Das wrote:
-> > -----Original Message-----
-> > From: Biju Das <biju.das.au@gmail.com>
-> > Sent: 10 August 2026 09:43
-> > Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document ren=
-esas,poegs property
-> >=20
-> > Hi Uwe,
-> >=20
-> > I have clarified the use case with Rob on [1], and he acked on [2] .
-> > See the details below
-> >=20
-> > [1]
-> > https://lore.kernel.org/all/OS0PR01MB5922756F1836AAABFF62C04786049@OS0P=
-R01MB5922.jpnprd01.prod.outlook.co
-> > m/
-> > [2] https://lore.kernel.org/all/20221215205843.4074504-3-biju.das.jz@bp=
-=2Erenesas.com/
->=20
-> Is it ok, if I drop the POEG support as few SoCs such as RZ/T2H and RZ/G3=
-L needs PWM
-> and this patch series is blocking them. Later I will send patch for POEG.
-> Please let me know.
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
 
-You can also reorder to have the important bits first in the series. I
-can also apply partially then if I'm happy with the base support and
-there are still questions for POEG.
+See also:
+* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv7.2#n145
+* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/stable-kernel-rules.rst?h=3Dv7.2#n34
 
-Best regards
-Uwe
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/dri=
+vers/net/ethernet/renesas/rswitch_main.c?h=3Dv7.2
 
---yhelts2hapldhig7
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/maintainer-netdev.rst?id=3Dv7.2#n3
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqL+xcACgkQj4D7WH0S
-/k5q7gf9EXjSbZmnkiK66pzWl5IRYULgilZsieiRyqDExXbIofVEhxYmfRjlv8Qk
-SNFUgIMRCOAK2BE+7iwPlJvCP3gMCnx/47ZEZmz3sykbgdgjyW96YPL12tsHpAC9
-wgtHAEdKLvn1WrkVQB4N0LCsnbs5zXoc1BdR+w5vOZLzW4RgdNRQuizJ80czjdQ7
-dV6vq981FKkyftinsY+e4bLH6Jlk+QaLLSc8gQ3CW4Zf2J1V1N4OFvAPryGKQ388
-TvYs6OWt5RRFAfUTYYomIvwA9H30Olp9uh8weGokQ+/wvCHFqQm7bddVNQIwq7YM
-x26KbVqXuLL5WSvfqVs02DuzCdv5yA==
-=b9qz
------END PGP SIGNATURE-----
-
---yhelts2hapldhig7--
+Regards,
+Markus
