@@ -1,83 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7447D384233;
-	Mon, 24 Aug 2026 19:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8951338E5DF
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 20:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787598666; cv=none; b=UBn4lweeXbsPAfGirAZQLcZJayV8+hpp1fy4Z6mq342L1pzJj9J4IPcS+AYTV2PQB/P4zJtxTUn3+15c9rJyoqRtt1T4uA0qWZl1NiAuJ27kvZYVyZwGzrTIHEhjcMO+h5ea8xQ1FYuUAQUN9acWdA8hI51nL2Tp6tLz2vIhW9o=
+	t=1787603981; cv=none; b=edDZW5TogEf7IjH9VnBgqG2ZF1RnrNtsa3PjTxZDvCG4pD03Uohy0vrfW2bbKw158gbo1rkgV4MgVSeASOPHN3BlMbufk3xT0nADcQ+51IDRwN3OsdEhDWnvxJz3ujyGGU5lgN2fi/UH7WwaJiv5zGWUN8HzruCitSu0NuKcHvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787598666; c=relaxed/simple;
-	bh=nYixrdxVJ2L8Nk58QVXXpIR3wu2xsLEfTPvayqwmgU4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=beqLNIQIczJPsbKJQaB+q0T1Cdd4RfMbklA0hXmvxKl61clpBTqKzlJ0ttp+2sCK++YSUEQfZi2m3KLlJ2KQB7o8BhiQkphnvQJR67iU6ML/Xw2DxuTxuonheyOu6kDbde9Kplnq43xk3OB4B/BZ9N+Ty/jmfzJNEZBlQhJfNB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U24c39yW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787603981; c=relaxed/simple;
+	bh=EVUwDkr+aRcYVofgEibvAtJX7CxRusSErPl1ti71pZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c1iycSu/lB7MK4CITxpXUmRoK1RqGPTgoAwZQRiaXEMAE5Xry/0Q5C8Kll1J1FkXHYfh+gQFqFrx7TZ2csKwZkN7DFVcEtvKdLFyMmBEHRfR91iM+oiOzd0kJIAUcMHlVIryDK5RvoKWDhVsL8SXBzvBcrDOhU2eIxygyAUb0us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=op1PqS0Z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U24c39yW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3841F1F00A3A;
-	Mon, 24 Aug 2026 19:11:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="op1PqS0Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F931F00A3A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 20:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787598665;
-	bh=dFDeIeIG8pYRr73lwTgzBmOcJDN2tRawXXttGEO4JLI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=U24c39yWOwKaTn+Xt8qLICHj3687FOwtMFOkbT8AaGuX4unk6XcRSBXCILzxsn368
-	 tzTeNyIbFYwkN2wLzwhwFERlhh2FxQtYqiQbGNmGCTiOOT9Mlwm65w2EQLSsIVVG8p
-	 JDrXzbUvvaMRdq0fW3bHSWYNntJMGZ56ITqdTjmbmRJH/8CwdQB7QxJrDRnwDu9E1l
-	 ouhuggqLTeTh+ydFFVnsk3vt35P04ydmOGr6gnD0/9QPaiy6E8UiAHlIZXehekv5eQ
-	 /5NkUMrkGnmb0d2DaODsTm5m9Y+qx5AJTc9rkGd1LWUfU3JtawFKSjP75AN96rrzoh
-	 L/sKVzxepKKsA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EA8093924A4C;
-	Mon, 24 Aug 2026 19:10:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20260515; t=1787603977;
+	bh=LEMIXlW7UB4hHdDf5XWpYKY9mKhf7DDvl0I5DYYVcWI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=op1PqS0ZcwJX9065pz+7n7Mhcirj6eX3k7xLqlZ+ppKs9SUQjaRYatOf7zFET/tfn
+	 ul80C8GWnGTALvbcy587qsJUwsDqASYiSFMYfHcPITUgCg3TZF48GkIuTKGWZKFR9M
+	 4KN8Sznl1jMlE46rBL1TjVyK3aAD3CngSTThQG0+P9d0RdhdZTKci8rg+oXU2+Knhy
+	 NbhSdxhVqpnJaSio1FP0K7pN0IwaOCStdR+sCf1wtsi2SseznQCBLMUxP19S9nO/9Q
+	 MUef/TEDW6ujepu5thZa0JHNFheaGU558HmIHS4lCPCIS/Hkxb7SN9fJwNlrWxn60U
+	 rLdy0en7BtOBg==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-45eddb6fdccso2196939fac.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 13:39:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp1lRMa0HIxHRzq/vHhX5dZW3GalnBRsHkFIl2fvar/pDvZjqUoxYBFoSF6yWbLNNEte/k0E2Oa5/JV1fUZcETmsA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lgkoa+PZYbWIQrXR1mC6YisS7RdI3/T0YvSQuLu4sgWe7UAvVd
+	WFtXFqWQXZoqF8LA+MHJyT7IY/tcg1oRIpjF7SrOwNt9UaoFIN3ogHE68FhqYqxClEfWWpqjDYQ
+	zp83ekNIg2xs/j/OZwBpmdzyiAVv4UHg=
+X-Received: by 2002:a05:6871:331c:b0:457:ed1a:9da3 with SMTP id
+ 586e51a60fabf-4644af0a69cmr1563335fac.17.1787603975698; Mon, 24 Aug 2026
+ 13:39:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] net: ethernet: renesas: rswitch: fix device_node
- refcount leak in rswitch_get_port_node()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <178759861288.3069565.17735518402578185304.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Aug 2026 19:10:12 +0000
-References: <6a882352.ee10049a.267d65.7a31@mx.google.com>
-In-Reply-To: <6a882352.ee10049a.267d65.7a31@mx.google.com>
-To: Manush Prajwal <manushprajwal555@gmail.com>
-Cc: yoshihiro.shimoda.uh@renesas.com, michael.dege@renesas.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
+References: <cover.1787239813.git.geert+renesas@glider.be> <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+In-Reply-To: <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 24 Aug 2026 22:39:20 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
+X-Gm-Features: AcwNN1XmhR7K3AKRJKXT4Sd3qYlnwrUuNbhbfYVIv-485OoNG4okiQZloSgYvOE
+Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
+Subject: Re: [PATCH 10/45] clk: gemini: Make sure clk_init_data is fully initialized
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Billy Tsai <billy_tsai@aspeedtech.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, 
+	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org, 
+	linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	arm-scmi@vger.kernel.org, imx@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Fri, Aug 21, 2026 at 10:53=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+>
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 21 Aug 2026 15:37:14 +0530 you wrote:
-> On an of_property_read_u32() failure, rswitch_get_port_node() set port
-> to NULL and jumped to the out label before releasing the reference the
-> for_each_available_child_of_node() iterator was holding on it. Once
-> port was overwritten with NULL, that reference could never be
-> released since out: only put "ports", the parent node.
-> 
-> Rework the function around for_each_available_child_of_node_scoped()
-> instead of adding a manual of_node_put(), so the iterator's reference
-> is dropped automatically on every exit path. Since port is the
-> function's return value, take an explicit reference with of_node_get()
-> on the match before breaking out of the loop.
-> 
-> [...]
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-Here is the summary with links:
-  - [v4] net: ethernet: renesas: rswitch: fix device_node refcount leak in rswitch_get_port_node()
-    https://git.kernel.org/netdev/net/c/5c07193ebe47
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yours,
+Linus Walleij
