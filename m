@@ -1,123 +1,147 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E57B3A7F50
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 08:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A8419E7F7
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 08:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787558413; cv=none; b=RmuMFkO1ReoOL+y0jgyMEAJzUoonLRLauiwCYARodD/DS70F1Szzs5nMwo/zFWAnwICVZMm9YIo6QPmcNFyOKjWibh8cTWVweGI2SRPgcW3LMKL4jvR5sH6zTL4b0pZiB/Pt/NbGCH3bVZLJZlKaspdj2Pr2lzj3rEQaGJkJfas=
+	t=1787558687; cv=none; b=bYtv1/dDX73341q6q5xQeMUgexSViZ+5DOXo0e0IoMOsd4r2/jthovHnkwMzNmj/IJhJuThJSGWeR18bciuEkO/jp0jKoufZIa9R2DEj4bQUmSUXUwpr/pkyIW2phBl2OMnYXRhwJPDnenyI7eFRHD68RAQ0nxaSKXKy47k0fQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787558413; c=relaxed/simple;
-	bh=ycS9iyHCfiySCdZ6el38VdkD++UrtsSYhhFfoX/jM2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z5VLtzwyAtXU8D6BulMnaReDszDLQTb4NeFuVp8z89J5vs/3U9oOuJTKmxYiJTbQpyssjxFxwckcfz+X5+nqjAqZlVRCyes+KkJi0DCZHsgpRX4XeaG8AE/p5d74f1oUCRYMGFyQ0cnkrw7XdOj8l0gi1ZMSsnI5hXIOOjGWSHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3oa7HUA; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787558687; c=relaxed/simple;
+	bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DicVgadoc6ynx857sxt/gKlWZn3QU1sfx83IKbMe/KCgMddmBBgF0WgwHIK77TDdixU1MOMSZB+KrOJACusMQwdKi9P9U/ET8OsLLf7NEErS1ESKhuuUt2qesusr6IS2BmYeEFWgneMSnfy+hnESiLtoMpS3FATN6CxCXvUmtMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=P8FuWRWA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3oa7HUA"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cc147d86bebso2605855a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 01:00:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="P8FuWRWA"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a3fda88184so4858852a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 01:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787558408; x=1788163208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=pnfIpiizNz+uh0Nm6+hx6fazu+VGaeVW2k9CDNJDFzo=;
-        b=T3oa7HUApnL6YQx2RdzGiqEUImvk70bciKiwbZPq43fG6sjtl9hFmVKjpUmU8yocDG
-         Lim90mnAPx+kCSjYq0k1E5zKdcZicEHBHBlahfFZoXw6H4p4nZeMjqcFE6tF7kvdMik4
-         ne7roHKiO2WgaVpp1qUhjvuR5eLnOoViwWjj29+OLz4uHUGkXhUDjXaOq6XmK5t31oJg
-         zFlsX1TX8U04zkiNkairXiUIQ49uQcG7Gzk4W+mc4QWfTLKX07+7q7N6aQztnCKMuFMY
-         zEaViT+UUVX/riNHGfqTA/KYbxFenZtvKY6GzhOTTZzzRgXU4fXna+2sIywlNP4UhXUa
-         2bew==
+        d=baylibre.com; s=google; t=1787558684; x=1788163484; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
+        b=P8FuWRWAq2MHs3OI2eP9+Okl1+YHH4ViS6lJzRnnxTewsZ95u6aou5gQ4cb1eoD/v/
+         G5u/kaA3SRvTik/wXFWjJxY9eXb5F6oR8foWZMyLv9rF0kYtzBW94ESdhXALNNJtqABP
+         PBsWRchdV7cfhK0rswlBXwNKZ7/echGBOlJhdKUwfSogiFYkI+AITpEvPZ0TobsTw+oW
+         xJ5/SSbCWTbouT4KFJ7n3RCzuuM4X+LOgvuGxowts+pkmFkjyZ+Yq9F3uJ92wpE1yM4M
+         tiqp6Ti2fQJPtcZNBAEYUD8gjqMH1rLiAoG/vza6x38a00dMItANwlBGaCPSX+peDivN
+         3DBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787558408; x=1788163208;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pnfIpiizNz+uh0Nm6+hx6fazu+VGaeVW2k9CDNJDFzo=;
-        b=S0DTLh/EoLZWBKjt9bV3eLZ1wBV30kCNn3MFiGc+H5WLNJYnHyT1Tdaesf2hgQcwCj
-         HNHXSQBRyJaVtJ7MTlc+WXbBkmyznFxhDzwE4vJJIB+5ota8XH6EGyN9QTiJXDeqgc5j
-         4cZVzMZKeO70V5ZfQeWjAuXGjKrxhnPQzk/3qxIlRLyCB59G9LIyiK/8UTtiAMdCxhil
-         02ZmRUdxhffQpzAsRCSIVxqTIidauq8e8uoubwsnlZVDgnFpek+AHLh57y2zX9+vC7Fm
-         HtyuPeN+kxIFKGqEj3C7p4EjIYwLzLwo8TzBQQizgNk8cPMxJoexxa9Y2mdoqQg5MTXB
-         jwpQ==
-X-Gm-Message-State: AFuF++lTq8zk9EWTL2i02BpipLH46TsNhNDEMPlIJJNeQZSyinMlnOzQ
-	gYL4nou3JSVo3/IWD84iMCoivL9bI3E8NOMBbTlRVX+JTwKbXitk5ZTy
-X-Gm-Gg: AR+sD13/SGCePXzyPL3FrozoCOhqH4WuDXhmz7llG1stwLTEUwx2yZN7ygt/+H+9vU8
-	1MNRPmu8mW0NlqWNSrZC0EEJX8PUIiTlknkNLv302YPkNGvyQnggaAJPufmM5tUWgdtzKQMURes
-	+iCsqVLNZGYReENLgf3AemSWE1s8rF2MRthtitBVWtaE8S4zCHSJPZpBYmpUwO+UiQ2rQDZAJ6l
-	K0jhEJ9Wz0eJG3VdxPxgW7wqmPkYuYsV3CvEJTW+8//o0haFlAv1zv7F0ipgrU0EnykR5WEvuTP
-	HDURISinNeif8+/GQ20BqYc5LPML3V1eflDVp5A++B5aRrQmgXHabg3gobQNuEzcEmjAJ+uYUrh
-	o1E0R3GvNgkcxbs69zYYgAj/6hUqSXQJCzmL1p2pWHQ7UeJXip5q01VpbQIot4IR01BI71dy+Jz
-	jLxs4E5Ur0EDWl0iMH6SrZcfrqiMKTQCi8Xe4Q/LiHmytTGOX2Re0pwa5pLDafoiV3SCV2mp0qq
-	Lmq5n6JUMxyVBISFeB5Ka8QFBxPHUAOctjRJkgz5i8Q+k8CKDR3xUH+ZC4+G33g1Qee/YmI
-X-Received: by 2002:a05:6372:a749:b0:3b4:6af4:bdd5 with SMTP id adf61e73a8af0-3cd14fb6375mr30393359637.15.1787558407725;
-        Mon, 24 Aug 2026 01:00:07 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c07:194c:fabc:2511:c0a8:be1e])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327f91d2d1esm24887994eec.17.2026.08.24.01.00.01
+        d=1e100.net; s=20251104; t=1787558684; x=1788163484;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XDNP9sGNVSgP4Ks+3cqzP4wb+3fLYzkvYqb7oZQQZuU=;
+        b=Sus7bC0gKwHIFjJTs0BA85G9YMiYQ5wWA86Vi3h120+E5RepJCyybAMDC3x0k5+/p5
+         7hVQDgpZTTL9h8Ylz6BEUWuTXVQTyjruoyHQWm6PPwG9e+NQYvwigZkfeVFwaW0dFa1Z
+         Z6SufY2hDBU099tdNeII6Zeo4NVfnQwuKvz4Hk6h2D4sl653+Zdr4jrG/5wc/J/6XUTb
+         rGDb0ePSot4Y2fsEpKqulybpx9rUKG0YVH9lJrbXp/3nPhklU5o7ePDFiRek9g1GRGHf
+         iwEXzUNzenQ80mZKjK+N2h7qWIhQLb1r63cYcqeip9b4xcdLFfxH8awpNvjPZVwyC+Rq
+         V7eQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpIKOkUc76E8TacOkc9aF5WSLdbrrxedKOTu2wxdFEZckAr0AmffEUH9fdgJAImXo9MiRQO1rTaHtq1wx83kC3Czg==@vger.kernel.org
+X-Gm-Message-State: AFuF++l4IScre7tgzqF0CmnH5JT8FvuE5ey7l8ku8etfeE8M446HoFJo
+	cnNVY4/LgwpCupk6Hxg1WZ7QvOBr432LaHJfOhLZSa7PG8PFGhleu42YGhYRkvD7tEM=
+X-Gm-Gg: AR+sD12gqBUa8oKnzMLnYOugLFgDhg1ZkMNlMue2SdEOLhVkxlYp+f2vnA9DQ0W/zUX
+	JQRziF6nTx8RI9AfK7n0otxhHexH12OehpXNE3zMX2QsvmPuhjoGCo59iGKTvo0Y0u9RBEHD9w7
+	1qCuSZKWUiPzo1nsc1HEOZRXKIgwnBd9jbs1LmOOQY1LqHu6bhO2IeNMTWYou6j/lfr23ZMjzBO
+	cVWX9FJ046F4EbgAbkCglXj0cHOKipttddLc+0X1VX9+mkzf+Hpb5OeBElsWpAe4XnRlSsN+u+0
+	ZXf8lkpfh3haWZ0MjMQ77kUjwaLwk0J2ktAizvktfMpFgupQuaXFIzj7sM1UfjVy2qWER14Ixul
+	y0xr9py+CaEdkrr8XdrKvwy6bRLaGhKaqXl8TktFztkpV+CKC3OnntffbdbpZ/lp9dYGgI4Ze0w
+	ULHZWTnIRsw3jl9jRoZgNo2UCpf1CLd23OKD+cvqnq+AZirEed3R0HvCbkyAZl8fQ3DwH/mP1AX
+	M3m/HnicTfg3HdpIhD6ewvFGZbLR0OTdIqMqIDTmPGSgkuRiAZG
+X-Received: by 2002:a17:907:6d15:b0:c24:4128:c19d with SMTP id a640c23a62f3a-c246a2e9378mr2551285366b.4.1787558684110;
+        Mon, 24 Aug 2026 01:04:44 -0700 (PDT)
+Received: from localhost (p200300f65f19a904efa8a94b704adaa2.dip0.t-ipconnect.de. [2003:f6:5f19:a904:efa8:a94b:704a:daa2])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-c249606b683sm1251855166b.5.2026.08.24.01.04.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 01:00:06 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/3] arm64: dts: renesas: rzt2h-n2h-evk: Enable RTC support
-Date: Mon, 24 Aug 2026 08:59:36 +0100
-Message-ID: <20260824075936.2904336-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260824075936.2904336-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260824075936.2904336-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 24 Aug 2026 01:04:43 -0700 (PDT)
+Date: Mon, 24 Aug 2026 10:04:42 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>, 
+	"sashiko-reviews@lists.linux.dev" <sashiko-reviews@lists.linux.dev>, "robh@kernel.org" <robh@kernel.org>, 
+	wsa+renesas <wsa+renesas@sang-engineering.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document
+ renesas,poegs property
+Message-ID: <aov6v5dObK-zJfRj@monoceros>
+References: <20260604095647.108654-3-biju.das.jz@bp.renesas.com>
+ <20260604100619.75EC51F00893@smtp.kernel.org>
+ <aliM3iVA1LY7tW38@monoceros>
+ <CADT+UeB-gV8QnuwpTUrHV-GvYPwebYg=RE68PcApZkACO4ENDw@mail.gmail.com>
+ <TY3PR01MB11346EDD83D9CA3F3252D48F586A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yhelts2hapldhig7"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346EDD83D9CA3F3252D48F586A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Enable RTC support on RZ/T2H and RZ/N2H EVKs.
+--yhelts2hapldhig7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document
+ renesas,poegs property
+MIME-Version: 1.0
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Hello Biju,
 
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-index ffcc0960903b..2a8414d6d632 100644
---- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-@@ -21,6 +21,7 @@ aliases {
- 		mmc0 = &sdhi0;
- 		mmc1 = &sdhi1;
- 		serial0 = &sci0;
-+		rtc0 = &rtc0;
- 		spi0 = &xspi0;
- 		spi1 = &xspi1;
- 	};
-@@ -514,6 +515,10 @@ xspi1_pins: xspi1-pins {
- 	};
- };
- 
-+&rtc0 {
-+	status = "okay";
-+};
-+
- &sci0 {
- 	pinctrl-0 = <&sci0_pins>;
- 	pinctrl-names = "default";
--- 
-2.43.0
+On Sat, Aug 22, 2026 at 07:54:26AM +0000, Biju Das wrote:
+> > -----Original Message-----
+> > From: Biju Das <biju.das.au@gmail.com>
+> > Sent: 10 August 2026 09:43
+> > Subject: Re: [PATCH v6 02/11] dt-bindings: pwm: rzg2l-gpt: Document ren=
+esas,poegs property
+> >=20
+> > Hi Uwe,
+> >=20
+> > I have clarified the use case with Rob on [1], and he acked on [2] .
+> > See the details below
+> >=20
+> > [1]
+> > https://lore.kernel.org/all/OS0PR01MB5922756F1836AAABFF62C04786049@OS0P=
+R01MB5922.jpnprd01.prod.outlook.co
+> > m/
+> > [2] https://lore.kernel.org/all/20221215205843.4074504-3-biju.das.jz@bp=
+=2Erenesas.com/
+>=20
+> Is it ok, if I drop the POEG support as few SoCs such as RZ/T2H and RZ/G3=
+L needs PWM
+> and this patch series is blocking them. Later I will send patch for POEG.
+> Please let me know.
 
+You can also reorder to have the important bits first in the series. I
+can also apply partially then if I'm happy with the base support and
+there are still questions for POEG.
+
+Best regards
+Uwe
+
+--yhelts2hapldhig7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqL+xcACgkQj4D7WH0S
+/k5q7gf9EXjSbZmnkiK66pzWl5IRYULgilZsieiRyqDExXbIofVEhxYmfRjlv8Qk
+SNFUgIMRCOAK2BE+7iwPlJvCP3gMCnx/47ZEZmz3sykbgdgjyW96YPL12tsHpAC9
+wgtHAEdKLvn1WrkVQB4N0LCsnbs5zXoc1BdR+w5vOZLzW4RgdNRQuizJ80czjdQ7
+dV6vq981FKkyftinsY+e4bLH6Jlk+QaLLSc8gQ3CW4Zf2J1V1N4OFvAPryGKQ388
+TvYs6OWt5RRFAfUTYYomIvwA9H30Olp9uh8weGokQ+/wvCHFqQm7bddVNQIwq7YM
+x26KbVqXuLL5WSvfqVs02DuzCdv5yA==
+=b9qz
+-----END PGP SIGNATURE-----
+
+--yhelts2hapldhig7--
