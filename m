@@ -1,127 +1,193 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6763D449995
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 14:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE90D368D5F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 15:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787582850; cv=none; b=myruEI2PcVDxioEI9uw5Iachc8KL/1syPdwqTrwHBkuB7EhNGT/2XZEICIT0BJOJ1X9oSao4K35NKcSrmxdhYA9PybAZhd+C3zWxAIuv2AuowovxQJKy2ODpa7za4hOZmyfTy8XVHq3Pm+OEGO0cje+yhkKTRhkx/rEj38w7sr0=
+	t=1787584463; cv=none; b=N97s2rR9s0wSQulWXg4d01penjDfo/H+A/RsSQht3ahGhzvF/OPVCWaDbMZgXsIE6xfnAYjDrHupQxWVkXQA/eHyrNtgCFxqXt+/JdNiwsnfYXdokLrMSCEaM1gUQjYwfQ+ztww42bpWXQhW3QQ495679IV2SvKZwYsdDR7o5HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787582850; c=relaxed/simple;
-	bh=lzVDByOMJRdqe9R5u+FUOskx17lzI8QGDBa2Yx0eM/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HIPzgj93lu/5K9h+CU6MV7GW+4m6Wod+UrcD9s1iw84K6s39fKIIkGbnZVq9VmIDMradvYiB5a1sOMVO8ZWGRDeAzGkhdAxr+aczvJ1TkVdgBkiBJ3n6NOMXlRgucbeke2PoZ424yL0vLaW1kGYsFxZSFyQf7PCJjIs4TUvUKQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5c3163a88a1so1102184e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 07:47:29 -0700 (PDT)
+	s=arc-20240116; t=1787584463; c=relaxed/simple;
+	bh=PMHzlusqnjEcUolJb6Rj0ihhVcm0EmxTzAkLKIuEEmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fjEUbvA5mRR0Sbq6IqGohvjAHWL4ZjEArBlWbvY45HktxaOXmaxl1RBDg5XJsRpWL4GVxwTvWbD/JF+yY5b2t5LC5LZ29Rt71O1EsjaZEtq+JBBhaqOYiib4y0ehq2XKc4QY4t4Ho6MW7pg38ZpPLKe1pO35J2dZ3CypqjNd4AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RQ1ywwYh; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=oF6MRzeN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RQ1ywwYh";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="oF6MRzeN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787584460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r9JEBxETCpjKOyzPxUj8DiK5Y8iV5A7DhykNYlgKppA=;
+	b=RQ1ywwYhBSzgemMFnvk2LOPOKEsN8G3U041gYQ1gub52vQQf5JXQmWNISH87NWSdr9U59b
+	5E96eDnCvOE61vPX7qcjGITu8btjfXfBDaYSloduwbM05tjtDJKEiQz3gJPU9ar9WEc5s6
+	6R1b5qs/zj7KBGmuE7LcEWdx0lUo6B4=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-ulkDRJcLNZ-6FCq8Z6rF-g-1; Mon, 24 Aug 2026 11:14:18 -0400
+X-MC-Unique: ulkDRJcLNZ-6FCq8Z6rF-g-1
+X-Mimecast-MFC-AGG-ID: ulkDRJcLNZ-6FCq8Z6rF-g_1787584458
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c0e702df8so48710821cf.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 08:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1787584458; x=1788189258; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=r9JEBxETCpjKOyzPxUj8DiK5Y8iV5A7DhykNYlgKppA=;
+        b=oF6MRzeN395dZjNy8pcRfe5CseOWW92MPrDY1ThpTRLMzvYYjy+3PRbvAawPZ1pjT7
+         nickfnFlfw7zqdwMreayuFSWA/BdXPnKQ5ur7Vt2LNdGqWec7csfG7C+KW5I5YTTbvnJ
+         wnsQo0brNyHpLtnN2NhkhmM7waHE0ALk+ph5o6+IMVKir/hWxQmyrJ3/EU5R/1ksogl/
+         zZRGmDxWcU0WEK3Djou89HObMtmnXGU44+jqUqTaYrd3kC9yiwIVlYYDFDIFiZiG5tc0
+         li6ZkXoL47J7oMQzXguZWOtZeQzuAKjO2opkYBLpMT+pIRP7RD+MXE0ZE1jZZCp2f/8x
+         sSJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787582848; x=1788187648;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=zpblJv2SEkmZc5HujuLgy2e4sDhnCcMQ0T+RP/YPytc=;
-        b=n7AGH/7WgnR3Xx26tG/L9wW39+P/0Ecy9uMmGz/yqRN5EW0UDD5ECnQLUVJOZKs+Vt
-         P0ugoo8kBz7fvFZRAr1aVH063w61MFqYcobSvp5a5whCZUjWMzyQtMgFmtYdxytTUhAb
-         NVSjoRQGk0jom75MWqN9HRH/FItPTa+jZCOOOvUJqZmiS39czzThsNuj39mfH+yVhhex
-         Mq6JIKEzDSyqZ7uKdtwbtqsTWRj/X4i7ufnrdGb3Apd1GsA8MT5ZO5TUGyXbkMy50CyJ
-         byweCPKYjK3L5aKv9eZwJ0xsUEfPSOCDIGp5aVJ6FaOHupL7Rmx1hsA30TipSB+5rk+d
-         U1Bg==
-X-Forwarded-Encrypted: i=1; AHgh+RqI9Et8vqViANbypf90r84ib6aCT1nE8UGwbn/T2I2m+9D4SapkYVsU00y7GO26A7TrTKJPGU9VeB28qzfgKW1ZfA==@vger.kernel.org
-X-Gm-Message-State: AFuF++nKbpxLtmDMBD5PI4BGLZecxSppJBit8rKBrjTnE7kwieQlXtjq
-	Abbzqk7MI7Fg9I9igEfYDLpy4pWq0eaQMS0brPNYAUdZRCQ/xA8YpQoU9zgufvgFbTs=
-X-Gm-Gg: AR+sD117u9kWlb1Dr3l5IZSLbK/6cEBdIgQyjxWecqSY2Ty7R1JF1ZqHna/GeNIXroZ
-	huzSYxcCLm5r4xB5x0dONeQNnHcjTQFZhAuevfn3LcTDkSn9OSjRtSKOhu9Oqut+k9qSLx1Jh89
-	ujXHSC+zE5XoWDK7AfquLKUa6DIzJNB6XsHLy/6Gd4k8wzXgbGElaxf+a3L1GJZCXYmvsW78RPq
-	CM7it/OeovLTfMvxteEw0/NVg40X7WZWDZNj1unjtaf7Wv9aq7+3TCSY7BJ5pGUlrDFOlyjL6dt
-	AptFkiLh3uWcktBFv4wxw3hop0w5T250MM/5vavdLjwKRuziVB8Zy4sIoYZ5A0qfzH45BDFcLvN
-	HdmY/76qLwFo5rqhYHfjD64AnHPrfg0wD6IPgQwhUVkEr2WtA2NLcibOTO918htUQYXmbCYLpY/
-	jYrmY5eq66W8WwAQBQRcUSPFYIYfemx+5ZA0ZKY5bK5Y0h8ofh4cWR/YUjai2JPqdtZaMzn/Lfq
-	jLktUfkRZBkjAwaj4f8K3N1nA==
-X-Received: by 2002:a05:6122:8b03:b0:5bd:af82:fd9e with SMTP id 71dfb90a1353d-5c60deb6161mr7350915e0c.8.1787582848072;
-        Mon, 24 Aug 2026 07:47:28 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c623d2fab6sm3672252e0c.5.2026.08.24.07.47.26
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2026 07:47:27 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-77e354fa83aso275947137.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 07:47:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq31J9YqMEN4GTLVetYkpsZ2jrXZ72UuyhBjrlDahDZIRO1SoUjksJ4f59FwOOOG0BGcJIlJaFAfS5/Q5JViIrmzg==@vger.kernel.org
-X-Received: by 2002:a05:6102:8092:b0:77f:2f7a:f07e with SMTP id
- ada2fe7eead31-77f2f7b3870mr1243665137.9.1787582846228; Mon, 24 Aug 2026
- 07:47:26 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787584458; x=1788189258;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=r9JEBxETCpjKOyzPxUj8DiK5Y8iV5A7DhykNYlgKppA=;
+        b=flqqRk7rxs4D7Uf3g2bf1ODpTRXRGSFwnIoUyhiP8ABnIusa0+HFoTJRhjY7CtPydV
+         zngshhRbc6KZZ6NzPPKnEeVu+q3Jj9LGmx4MQH/zXohGLWR4eUKTGLFZwKM1oczlATFm
+         GNRIiDpl0ldPxe5K14XOSkvlNt37Cz3uCmdcVboUHLiteGVRsfPDtELfkvo2hg1hrl+2
+         CUa27qUiKjCxz5YOXdmWbnSvGmyv506hLgY1ZLJ4vzeC3cpcooyagHmyRf3ZKveOKlds
+         ow5S1cU4mse4C9L6goG5TA5YudjKpVTfaKtlmNNpNxpO5vZZFi5xyBN7rH4HXEaiHk5D
+         KJhA==
+X-Forwarded-Encrypted: i=1; AHgh+RrX1/VpeTyjrwxXye3bfSmyt2rKEyxXbtkHuxTKShOKxtftQprHGsPQLHkytKM7SBQx1w3xDixWN1YyWsmeIz39Bg==@vger.kernel.org
+X-Gm-Message-State: AFuF++liixKvYIV00PJyYj8nHVCRBcSDERcByYxWG3da5uItc+XfzM21
+	pdMdn11ecFWacmBPZeSwB8UxdPt2Aj61Cv/UcjWdVM43muH1v9kniQniL2WFznGxjp/bHQMPMuS
+	TCPnlrbo1At3T9MelHEQzS0mq6+6MHeeIIO2NlhtruwBOlkb0I0pjBMcoZXR8AnSvn5+5GjzE
+X-Gm-Gg: AR+sD13Mj35/GgLJfzEBDEuIHuuCCd9LiLThPq/ymNidBjInE4WIO6jNhobd3/VYi8r
+	sThpj6pgi2ziookTWxv69UzhrwJ6dDPEDXrIy0EaHE3Augefpu9SymaxZSs38R4jb3QTKsLg/0r
+	DNFm/9wmh2qKLDqdQpnE0UEpWfshSRoe4xSaPEGJxDsVzunroy7K2JTt03xlPU7Og8Et+A7XVel
+	o3GNMpAFiHqzgalMCPKVzz6YLYMDKPuaLSGCVo+ChAeE31T3ZddoiDuHcrGsz9eTghgfiqhF8Cy
+	NEqQ2WqOx6+Rdk+ydlRTpLd4eWAcgsLd1cNbYBfTQQ6XoiCqqlvL1Uzh9zA9/UzqVsaTVa/WQvU
+	M2fVesOFAEsf+DKf/sInmEJ7XM5CS+20c/68=
+X-Received: by 2002:a05:6214:2a49:b0:8f1:440c:7f81 with SMTP id 6a1803df08f44-90c80942e22mr260846646d6.4.1787584457491;
+        Mon, 24 Aug 2026 08:14:17 -0700 (PDT)
+X-Received: by 2002:a05:6214:2a49:b0:8f1:440c:7f81 with SMTP id 6a1803df08f44-90c80942e22mr260845166d6.4.1787584456812;
+        Mon, 24 Aug 2026 08:14:16 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90c93a82554sm64013126d6.45.2026.08.24.08.14.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2026 08:14:15 -0700 (PDT)
+Date: Mon, 24 Aug 2026 11:14:11 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized
+ (part two)
+Message-ID: <aoxfwycOmEzLzhEU@redhat.com>
+References: <cover.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819191325.217809-1-biju.das.jz@bp.renesas.com> <20260819191325.217809-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260819191325.217809-4-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Aug 2026 16:47:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXCjiTOw0XqQvcUd1So9v0+8PO6KAqpqWTX5xk6r26GnQ@mail.gmail.com>
-X-Gm-Features: AcwNN1Vgxu0CvNeSEcZZhx_3TGW5jkUU2Jthh2_M3mMM3rK8o598dAhJnDmMzNQ
-Message-ID: <CAMuHMdXCjiTOw0XqQvcUd1So9v0+8PO6KAqpqWTX5xk6r26GnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] power: sequencing: Add Renesas RZ/G3L Power Ready driver
-To: Biju <biju.das.au@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Biju,
+On Fri, Aug 21, 2026 at 10:53:10AM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Hence this series aims to make sure all members are fully initialized,
+> to avoid such bugs, and to prevent future breakage when converting
+> drivers to a different method for specifying the parents.
+> 
+> Part One[1] fixed all cases that I identified to be real bugs, in
+> response to a crash I saw on BeagleBone Black.
+> 
+> This series is the clock subpart of Part Two, which fixes remaining
+> cases that are currently harmless.  These are still fragile, and may
+> cause future breakage when converting drivers to a different method for
+> specifying the parents.
+> 
+> Thanks for your comments!
+> 
+> [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
+>      initialized (part 1)"
+>     https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
 
-On Wed, 19 Aug 2026 at 21:13, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
-> which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
-> SoC. The driver binds as an auxiliary device to the parent SYSC driver,
-> using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
-> {usb,dsi,csi}-pwrrdy pwrseq targets.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v3->v4:
->  * Replace the large of_device_id structures by C strings, and
->    using of_device_is_compatible() will reduce kernel size.
->  * Replaced of_device.h -> of.h
->  * Dropped local variable pwrseq from pwrseq_rzg3l_pwrrdy_probe().
+Thanks for cleaning this all up! For the series:
 
-Thanks for the update!
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-> --- /dev/null
-> +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-
-> +static int pwrseq_rzg3l_pwrrdy_match(struct pwrseq_device *pwrseq,
-> +                                    struct device *dev)
-> +{
-> +       if (of_device_is_compatible(dev->of_node, "renesas,r9a08g046-usbphy-ctrl") ||
-> +           of_device_is_compatible(dev->of_node, "renesas,r9a08g046-mipi-dsi"))
-> +               return PWRSEQ_MATCH_OK;
-
-Nit: of_device_compatible_match() handled multiple entries.
-
-Sorry, my fault, I accidentally copied and paste the wrong function
-name in my review of v3.
-
-> +
-> +       return PWRSEQ_NO_MATCH;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
