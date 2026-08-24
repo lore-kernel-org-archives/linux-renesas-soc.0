@@ -1,35 +1,35 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FDD1DB13A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 09:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1E531715D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 09:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787563569; cv=none; b=u1nSelD+ZVF6N8wps9/BVfnZ1P0Yri0iZrxH0P4B5d2yH0/FdbYN4YUQ3rn4jwoaAKyOfkVloUIhxd2Si5FW5oJRQM8AlSv3f0CDQhGYMWouhpuk7fMJschKDXMt5IjJ568SguV+tDuzB+R5onvoh57Oaq11MatVIgK4SJkeYj0=
+	t=1787563855; cv=none; b=D0H00+/IHWxG6zgp8EkGmzVqz5Ph7A6CZzwKA9pC8sRkylwqLlYJIgxnHhTM/ru0G9gsryx6FuwCFvnW5YjrZpYkFO/m8kMPHYKjFrKVIkivxzf1NxKhbhYshQvq8zlIjZ7tizd3hJQ7YMHM8MdfvcvawHUMnNVrHiDlSkRP5Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787563569; c=relaxed/simple;
-	bh=l7CFb4xOZbPuJELvvFP7tm4tI+VCynPG/D3gOjFxKwM=;
+	s=arc-20240116; t=1787563855; c=relaxed/simple;
+	bh=HjH0PlsxO8s7oDDp68JIoh69aoxuIUMQkOj1o/rXnSg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dv1tBWifH0dI31WmtLlg9G7866iy+HNZP8rUtIUnQQeac5JfBZ2QRhmaB9oPLwCmlJ9ECPGtuWkx8Cemu6t76jaShJqcjNrFBPdgMuE3EMe/8F3BYjTyCAo08g3p71ifIUr9pHnYiv2z6SCCK6pA9z6vKI7hAJ5azQHzPzVQNKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LcOtntf6; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=joA9dAO7QMVVAp5Zy8rjO3GzcTpgSfiUmFqPOfUP0tMn0AQc/E3GbckhXi9yEmomg0HnM7wqvOOPLEy0Vdxnlr9eFvcy9GAKOsWnnjLNPUlO6ZmbxnOT66FBTT4XXZQdgneeJPi1P+U9v3pxBnN/NJJIVOudtS3inksxiE9K/IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iMfxmCK8; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LcOtntf6"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iMfxmCK8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/5AK
-	Q6l0IwUGFy/ybtUhcb9MAob6uwP4n5vGEAkErgo=; b=LcOtntf604vIbjG9u2wb
-	wOFmgJfOKZNzHwe2UWzvyBpos3ahdQQTVB+QmYJUtX1AecbnpaaOZLw4zsGhD9TK
-	R6QWSeS67G4HyHO/ZCykGn7Rg6Fa8fHLdmGhvT3RKmsrYJczSc9EpUIPbG4C/PfR
-	T6oumTZbLiR+x9e6lFnu+J9hcp9KbDCR8lTaWqbLo4CKIyPSyJ06gGMn/l/E/daI
-	bVhA4LtqsAgKvuuM9n69HYCNsAx7Z+AQMjjwqHjs9goKXP5izLM+5n1nnp6Uv0/8
-	TxcifvAzKbo0JJtlGPpVDYuql6xgEMNXUhW/afp8K5R8ewQ1fokT7knoCkPboQu1
-	hA==
-Received: (qmail 1658484 invoked from network); 24 Aug 2026 11:26:01 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2026 11:26:01 +0200
-X-UD-Smtp-Session: l3s3148p1@Rt0Vk8dZSusujnvL
-Date: Mon, 24 Aug 2026 11:25:59 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=qj2k
+	twWWU6X9Cs0GARB2gW9h+Xc08Lyjv9jgptGctY8=; b=iMfxmCK8A2jco3XaITsk
+	ROWeVGDHMvIV5Y9y8qJn6OIpmdOWJsAZ0DYiuzTJ4+SHUYGKK5neg4vORFe7BjKk
+	DdYr0hc1FPq81N8s9A9lCzQotw/3aWtqcv2ZluE3CBywMBKnWRGelIULLaL3Le6d
+	iS4MzjwI0hlxe/5Ivpeplamif9RwArbm28HcpXlClY/NGW8cg29KGYEE02k8ZBoZ
+	h2JySC8ShNM9SxMwdz4gnspTgQfWWSY9XiFu1QY7ibmafNCbH4vUuA3lHCVenKEn
+	Gq4gaGjIOTWaDb4CGhRGxKyW4OCWE8Vn52tSZ06EKlDp0yHzWIQYr9xQyNJ5KmFC
+	sw==
+Received: (qmail 1663475 invoked from network); 24 Aug 2026 11:30:50 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2026 11:30:50 +0200
+X-UD-Smtp-Session: l3s3148p1@0kJMpMdZHJoujnvL
+Date: Mon, 24 Aug 2026 11:30:50 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -44,7 +44,7 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: rzt2h-n2h-evk: Enable RTC
  support
-Message-ID: <aowOJx0TMIZMyFUa@ninjato>
+Message-ID: <aowPSmdlgRD6D59b@ninjato>
 References: <20260824075936.2904336-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
  <20260824075936.2904336-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
@@ -54,42 +54,39 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cf0Y3ECulnKKJpN4"
+	protocol="application/pgp-signature"; boundary="lirw39oVAKH5wGYG"
 Content-Disposition: inline
 In-Reply-To: <20260824075936.2904336-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
---cf0Y3ECulnKKJpN4
+--lirw39oVAKH5wGYG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
 > +		rtc0 = &rtc0;
 
-Maybe 'rtc' instead of 'rtc0' throughout the patchset?
-
-@Geert: do we have a rule for this? There is also only 'gic' instead of
-'gic0'?
+What is this alias for? I don't think this is HW description?
 
 
---cf0Y3ECulnKKJpN4
+--lirw39oVAKH5wGYG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqMDiMACgkQFA3kzBSg
-Kbb6EA//Ss3Uybzb3b7W7RDLKLeNDfF5h+GRyYd0Qs0OC1l2sIV5JTrKJgZE/fXz
-0hDpnCHDBcb8PH506FFAZ50zJ/2NctMb04mVgGpGsZxtLmXlGkZp0LpzUAnV/NEk
-b0aCKt7npgz++Hm1iWtWSclh1jJMgxgKZFIqp8lRd5JYoa74/AB3WlJWmejVtAgU
-Wyr2a/bvJzf+GivJTaAKXUkgsuhNEJcYW7ieItNdGNlb2iLJ4Q5O4aXlHw1yk9eJ
-W2BI8PoEpWDFP7lFt8iPNxzsJmU96BwwDWeuV1nDjRSjR/QUGU/+VCaG9hSGosJo
-6jNp9WM1RlFt1Yx7BRTPjTm74fAZrccZPuiPeGN0RjmWFK9H8f5CNh1rc2WUtP1Y
-BeVRKYrkQtNRJVSvFMLTzBsbnHtOGp86bna1Oz3OEdLUp6mTVzzMRYU0QcngziJu
-iOgU/SUA2d4WSb7J3QgZ+xbRrBNCf0HP/9HdDBjuqe16GIWMsFhZ3amz7mfuVtme
-9HRAq5Y8Z3kmpMgEZNKWBBZhzfC7vcUL2Ka67tQrth5liKtogHiNQYl5WZ5ASubE
-QQS87uI4fN5P4FM1XRSkPmfykhX4pjRClxDFkkTAZGC73Vel6abqsRNdNDtLEL4c
-CXiQNr+7RRE7doIOZmh5hLCBxsRBUm7+7hAK/EwXtgDPTy1lKxQ=
-=aTBk
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqMD0kACgkQFA3kzBSg
+KbbrVhAAiiRKx0+t5IvtZxQey4TU8Wt3QslVUS8qUHp8lfN2cg8CsBrFcWfzLBJk
+jQ1W0KRkC8Y6F4/kuynmKLcgIFhqYQPCppY/A8x3ZUdL5eJynPkaVapVkT1/o7yc
+D+0mWLSPpGdzVBQwz46KDVJjuhq/904sKG4sRaw0JskI/PC2SqQ0E6hgxkdaoIQ6
+/omPrNbUqQPn1OayXgv212zNesjQYPRMxE26ReLpTcn7Y4KyUiri02eNOi3zQO75
+y8NXR6R8p6C3Wzl5ErLjM12JHeCydAX8w7Xo0FQxucyMKSzKROsIfOa3wrAA8K0p
+QZGoXeE9FonF8V5rgimJ65HsM8srFCRkEtg84Dv5aqbdGmI9iTWNP/LaJ41ng2Pm
+5XA3rWnmK12Mdt5YYQ50IvZo7NRtDZHz2P8uRjoB87nsRty3R8FV3uRcbQUIUBzq
+PVgzGJfhXtTCh2cUs4nbtRFn5wL6BwBP2gnNVeEuue/7rtbu81mFcWL4axyJ05hE
+PD/IbzZ2A7YK9qKDK9stAuwQX2eW3Xwh40shqlN0GTcmGOuGaxhfOqmqUkx20gLB
+pD67iMjH0vx9AlXTmNDxNFegvBujeHMbAV6v8xxDxiFwRA1hI23WNr37PbqxQvIh
+lUzcmxadOLBmERd/vS2ZyLKCXQPfNya+JuXrzdEPgkicGT+AR+c=
+=RdTA
 -----END PGP SIGNATURE-----
 
---cf0Y3ECulnKKJpN4--
+--lirw39oVAKH5wGYG--
