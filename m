@@ -1,118 +1,310 @@
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309B41D226
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 12:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B8F41D223;
+	Mon, 24 Aug 2026 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787576047; cv=none; b=QBlFh6rLW0V2m4Y+FGnRIU8A6zr7+U+X8jqOFk8+iI2/DHu66AqljTop1inbNbPUEvrtdUXC99rc3AjTvAuIQ0i+tHpu+FR97UXj8/fprKt8IluTyg6/QmYuz1vLOAEgsp2x7ryFtgll8Wd92vKyOuYCr/GKQW4eonKB+AQXHYs=
+	t=1787576060; cv=none; b=q8aKZH4Ivoe8RB7CvgFA4CbrTFEnVgEa55MwtAArJ22aBaSJQPav+5cI1YUmj+P/JjtRDfhCGvb0ihA8RGzmcn/HDUa3C1vtrcEQI53zZdWaQD3Sc+tqNPQzbXAZDIEZWWTVke/dvbbBId02H6YpK1w3oUNHvjNid3mV7eA6Cms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787576047; c=relaxed/simple;
-	bh=22qCBYveRKFJxcMmmUW+ua4eXWAmfuygrtGmmXgJgbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VpKzEIhPJu/W0sSfLZTUR4WY/79tSMDEVn1XBekYeYXWoWW/DfKNaOsNemj0lpocsJwOOdozPewH9AM2XrWMvsn3hn3N4OO7tltLuyYdg5bYW6wxBebBdl4CiIu80PiPKR7hDPpyMQNRUltrI38UmJzN1cZuNGAAcwSB8+RjhGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-7542a2ee156so1868376137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 05:54:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787576045; x=1788180845;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Eom/X8opTXnjGOdU2jJfg3a1DGcqhjQm02nKfziCp2M=;
-        b=dHpCYb/XxhAeTvasIA7wgGZ3AfRRQvoFCqGhZeA3rS6ihxR3z+M9bB18MT/l4/MX8h
-         MJF+9oHnhsKlBytE/WUmaizUJXaW4LsFcK6l6IkDu080//X/aio+JFTO8O12qMqZeWYf
-         4MpDd5QvaJCcsMwr48KnZ3PFQ2wXhkYhOMeCSq5a+vuUw8xsgIxjmBIqvEnz1BmehTjQ
-         MK7iFwGDP/IqMKxQNU9CZCcUQuKUs8Dln1l1KwgrWV4m2Vd9oUxJeCUzy31AP2uvMsD1
-         pPtqgpqS1fZ8hfwev3P6rcOD9WMm6ASmNPv1xTmKlLGw90f2FsAChx0brMd1ATUQNMwK
-         9+xA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr2zjUYyVgoMXoZ9Vy4HQgjNwasFvih8xBlDr0giHV1U0ARsg8KylpcO9g21BFH4A4aLqEjnqoUPX9MlunqJz4YBw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nroUdYr1Xn26TCvR3huHnbKLdAHvh7YLt+HhBw6eQPR+AXhITc
-	laZeqrJ+ayOM1rAg8sPefT7dOoftyDQnmYklBA9aPVTGVAiemy5qqwPgRRyQGO2G
-X-Gm-Gg: AR+sD10tXMMPNbDYbMtngu8S6XYLJBU6ZxAB7JW3mpLxhD28eaKj+GSzHMOAmhZ6q07
-	ccdnE4QjSGUZBv2HUTIVWe5cQ++dkNUyZkS5QWtSDPP6EUcCA8asvc5U6gbgEGPkDjUGTKm/Kwx
-	yNoUCqjpEeF73yFvTo5jPfLUvbej8r5aivUg6RClr9d0Ke8RmrAwXwF7OEBeQYQUK8Pf0baiamv
-	ENKBo3owatiAtJDH/y284sqfbS1aEGUKUrJl7zRwk8XvOwGFfhXbGq8EiTsxC6wiDCEluQ/slIV
-	JyJAC8N/FeX/zNDc44BEDuPTXCH9zZE/KeqMrFPUsLMjCeMf/jQbpWV3AfZcGvD/wpfGsS18MTA
-	3EPVW5BRq626FFjAWkEyfjrUAz/4vELg9thxyKEV2RaieAGZQezxs5nIWTr7OUUHx/eyeCOR2kH
-	w2pQmh24W243l5VXCjiWgpa28UiAVeFIyR7YyHq63Mkq7CaekxFLW3BJtF1vznQEVHsnVFUoq3h
-	x16JFo044EwXkbaQpiIefxPrz6M7vqW+dyG
-X-Received: by 2002:a05:6102:3c9d:b0:77b:b14e:b6c5 with SMTP id ada2fe7eead31-77bb14ec487mr6712731137.9.1787576045100;
-        Mon, 24 Aug 2026 05:54:05 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97c834c0accsm7408864241.5.2026.08.24.05.54.04
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2026 05:54:04 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7542a2ee156so1868366137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 05:54:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpwL7SwVL2ggX5+ze2IjyNylhC2IZeyK2sYoXl/7Zn2car0+zggDu/WnHYnCeum0vb9xuySTzGssvg3BNekiEBzrA==@vger.kernel.org
-X-Received: by 2002:a05:6102:3c9d:b0:77b:b14e:b6c5 with SMTP id
- ada2fe7eead31-77bb14ec487mr6712686137.9.1787576044162; Mon, 24 Aug 2026
- 05:54:04 -0700 (PDT)
+	s=arc-20240116; t=1787576060; c=relaxed/simple;
+	bh=NAlEuAjAAvqC1pgj124dsNfJ2Vahdu9c7oKTi27QScA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GebtIs1ovvZqc3ZbVWUsBFiO1CFd1YYzORZ2PGTAFzltJXtUSbwo1fMUOniurXbt9oWQARElalHB+7ylCblkAOsWa5L9scOoiN8LMEtxLAxarDkVgL8zY8s29buj/KTKNMYKKl/EJrsW/fEvNBUDkrLXIpoz0HY6coTWU/By+V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 787FB1F76B;
+	Mon, 24 Aug 2026 12:52:11 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2B67133F1;
+	Mon, 24 Aug 2026 12:52:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0DdDMnc+jGpyNwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 24 Aug 2026 12:52:07 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	geert@linux-m68k.org,
+	rdunlap@infradead.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	nouveau@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 04/13] drm/panic: Return errno codes if panic output fails
+Date: Mon, 24 Aug 2026 14:43:35 +0200
+Message-ID: <20260824125201.218863-5-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260824125201.218863-1-tzimmermann@suse.de>
+References: <20260824125201.218863-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260821150940.75282-1-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260821150940.75282-1-ayman.chaudhry.kc@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Aug 2026 14:53:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUAWhwybqECDZWyMXNR8cv4GXvFe4BQV-m-Wax+j6U5hw@mail.gmail.com>
-X-Gm-Features: AcwNN1VBZ53Z8AyT5wwWA02V_hOL4uH3XypVon522o3KZn9AAHsHiFE4wR9dg0U
-Message-ID: <CAMuHMdUAWhwybqECDZWyMXNR8cv4GXvFe4BQV-m-Wax+j6U5hw@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: renesas: rcar-sysc: Update description of chan_offs
-To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLqtkr6cif1ebgurukgmwdm7xc)]
+X-Rspamd-Queue-Id: 787FB1F76B
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 
-Hi Ayman,
+Return errno codes from the panic output helpers to detect invalid
+panic handling. Avoid flushing the display if an error ocured. The
+unflushed display output might be helpful in debugging.
 
-On Fri, 21 Aug 2026 at 17:09, Ayman Chaudhry
-<ayman.chaudhry.kc@renesas.com> wrote:
-> The description of `rcar_sysc_area.chan_offs` does not clearly document
-> how the field is used.
->
-> When `rcar_sysc_area.flags` is set to `PD_ALWAYS_ON`,
-> `rcar_sysc_area.chan_offs` gets ignored, therefore improve the
-> description of `rcar_sysc_area.chan_offs` to make it clear that the
-> field is set to 0 if power is always on.
->
-> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+For now, test the result values in the panic test cases. A later patch
+will add support for retrying failed panic output.
 
-Thanks for your patch!
+v2:
+- forward return value of draw_panic_screen_user() (Sashiko)
+- forward errno code from drm_panic_get_qr_code
 
-> --- a/drivers/pmdomain/renesas/rcar-sysc.h
-> +++ b/drivers/pmdomain/renesas/rcar-sysc.h
-> @@ -29,7 +29,7 @@
->
->  struct rcar_sysc_area {
->         const char *name;
-> -       u16 chan_offs;          /* Offset of PWRSR register for this area */
-> +       u16 chan_offs;          /* PWRSR register offset; or 0 if area is always on */
->         u8 chan_bit;            /* Bit in PWR* (except for PWRUP in PWRSR) */
->         u8 isr_bit;             /* Bit in SYSCI*R */
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
+ drivers/gpu/drm/drm_panic.c            | 47 +++++++++++++++++---------
+ drivers/gpu/drm/tests/drm_panic_test.c | 16 +++++----
+ 2 files changed, 41 insertions(+), 22 deletions(-)
 
-The same is true for chan_bit, and almost true for irs_bit, too.
-So I'd rather correct all three comments at once.
-
->         s8 parent;              /* -1 if none */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+index 62490d32019c..cc33a2b4bb52 100644
+--- a/drivers/gpu/drm/drm_panic.c
++++ b/drivers/gpu/drm/drm_panic.c
+@@ -480,7 +480,7 @@ static void drm_panic_logo_draw(struct drm_scanout_buffer *sb, struct drm_rect *
+ 				   fg_color);
+ }
+ 
+-static void draw_panic_screen_user(struct drm_scanout_buffer *sb)
++static int draw_panic_screen_user(struct drm_scanout_buffer *sb)
+ {
+ 	u32 fg_color = drm_draw_color_from_xrgb8888(CONFIG_DRM_PANIC_FOREGROUND_COLOR,
+ 						    sb->format->format);
+@@ -491,7 +491,7 @@ static void draw_panic_screen_user(struct drm_scanout_buffer *sb)
+ 	unsigned int msg_width, msg_height;
+ 
+ 	if (!font)
+-		return;
++		return -EINVAL;
+ 
+ 	r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
+ 	drm_panic_logo_rect(&r_logo, font);
+@@ -510,6 +510,8 @@ static void draw_panic_screen_user(struct drm_scanout_buffer *sb)
+ 		drm_panic_logo_draw(sb, &r_logo, font, fg_color);
+ 
+ 	draw_txt_rectangle(sb, font, panic_msg, panic_msg_lines, true, &r_msg, fg_color);
++
++	return 0;
+ }
+ 
+ /*
+@@ -549,7 +551,7 @@ static int draw_line_with_wrap(struct drm_scanout_buffer *sb, const struct font_
+  * Draw the kmsg buffer to the screen, starting from the youngest message at the bottom,
+  * and going up until reaching the top of the screen.
+  */
+-static void draw_panic_screen_kmsg(struct drm_scanout_buffer *sb)
++static int draw_panic_screen_kmsg(struct drm_scanout_buffer *sb)
+ {
+ 	u32 fg_color = drm_draw_color_from_xrgb8888(CONFIG_DRM_PANIC_FOREGROUND_COLOR,
+ 						    sb->format->format);
+@@ -564,7 +566,7 @@ static void draw_panic_screen_kmsg(struct drm_scanout_buffer *sb)
+ 	int yoffset;
+ 
+ 	if (!font || font->width > sb->width)
+-		return;
++		return -EINVAL;
+ 
+ 	yoffset = sb->height - font->height - (sb->height % font->height) / 2;
+ 
+@@ -591,6 +593,8 @@ static void draw_panic_screen_kmsg(struct drm_scanout_buffer *sb)
+ 			start--;
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ #if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+@@ -767,7 +771,9 @@ static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
+ 	max_qr_size = min(3 * sb->width / 4, 3 * sb->height / 4);
+ 
+ 	qr_width = drm_panic_get_qr_code(&qr_image);
+-	if (qr_width <= 0)
++	if (qr_width < 0)
++		return qr_width;
++	else if (!qr_width)
+ 		return -ENOSPC;
+ 
+ 	qr_canvas_width = qr_width + QR_MARGIN * 2;
+@@ -808,10 +814,11 @@ static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
+ 	return 0;
+ }
+ 
+-static void draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
++static int draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
+ {
+ 	if (_draw_panic_screen_qr_code(sb))
+-		draw_panic_screen_user(sb);
++		return draw_panic_screen_user(sb);
++	return 0;
+ }
+ #else
+ static void drm_panic_qr_init(void) {};
+@@ -882,23 +889,25 @@ static bool drm_panic_is_format_supported(const struct drm_format_info *format)
+ 	return drm_draw_can_convert_from_xrgb8888(format->format);
+ }
+ 
+-static void draw_panic_dispatch(struct drm_scanout_buffer *sb)
++static int draw_panic_dispatch(struct drm_scanout_buffer *sb)
+ {
++	int ret;
++
+ 	switch (drm_panic_type) {
+ 	case DRM_PANIC_TYPE_KMSG:
+-		draw_panic_screen_kmsg(sb);
++		ret = draw_panic_screen_kmsg(sb);
+ 		break;
+-
+ #if IS_ENABLED(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+ 	case DRM_PANIC_TYPE_QR:
+-		draw_panic_screen_qr_code(sb);
++		ret = draw_panic_screen_qr_code(sb);
+ 		break;
+ #endif
+-
+ 	case DRM_PANIC_TYPE_USER:
+ 	default:
+-		draw_panic_screen_user(sb);
++		ret = draw_panic_screen_user(sb);
+ 	}
++
++	return ret;
+ }
+ 
+ static void drm_panic_set_description(const char *description)
+@@ -945,9 +954,15 @@ static void draw_panic_plane(struct drm_plane *plane, const char *description)
+ 
+ 	drm_panic_set_description(description);
+ 
+-	draw_panic_dispatch(&sb);
+-	if (plane->helper_private->panic_flush)
+-		plane->helper_private->panic_flush(plane);
++	ret = draw_panic_dispatch(&sb);
++	if (!ret) {
++		/*
++		 * Only flush if we have a panic screen to display. Otherwise
++		 * it's probably better to leave the display output as-is.
++		 */
++		if (plane->helper_private->panic_flush)
++			plane->helper_private->panic_flush(plane);
++	}
+ 
+ 	drm_panic_clear_description();
+ 
+diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
+index ad2f3a2f93b6..fdd77b0cc54c 100644
+--- a/drivers/gpu/drm/tests/drm_panic_test.c
++++ b/drivers/gpu/drm/tests/drm_panic_test.c
+@@ -30,7 +30,7 @@ struct drm_test_mode {
+ 	const int width;
+ 	const int height;
+ 	const u32 format;
+-	void (*draw_screen)(struct drm_scanout_buffer *sb);
++	int (*draw_screen)(struct drm_scanout_buffer *sb);
+ 	const char *fname;
+ };
+ 
+@@ -87,7 +87,7 @@ static void drm_test_panic_screen_user_map(struct kunit *test)
+ 	const struct drm_test_mode *params = test->param_value;
+ 	char *fb;
+ 	int fb_size;
+-	int i;
++	int i, ret;
+ 
+ 	sb->format = drm_format_info(params->format);
+ 	fb_size = params->width * params->height * sb->format->cpp[0];
+@@ -102,7 +102,8 @@ static void drm_test_panic_screen_user_map(struct kunit *test)
+ 	sb->height = params->height;
+ 	sb->pitch[0] = params->width * sb->format->cpp[0];
+ 
+-	params->draw_screen(sb);
++	ret = params->draw_screen(sb);
++	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	for (i = 0; i < fb_size; i++)
+ 		drm_panic_check_color_byte(test, fb[i]);
+@@ -119,7 +120,7 @@ static void drm_test_panic_screen_user_page(struct kunit *test)
+ {
+ 	struct drm_scanout_buffer *sb = test->priv;
+ 	const struct drm_test_mode *params = test->param_value;
+-	int fb_size, p, i, npages;
++	int fb_size, p, i, npages, ret;
+ 	struct page **pages;
+ 	u8 *vaddr;
+ 
+@@ -146,7 +147,8 @@ static void drm_test_panic_screen_user_page(struct kunit *test)
+ 	sb->height = params->height;
+ 	sb->pitch[0] = params->width * sb->format->cpp[0];
+ 
+-	params->draw_screen(sb);
++	ret = params->draw_screen(sb);
++	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	for (p = 0; p < npages; p++) {
+ 		int bytes_in_page = (p == npages - 1) ? fb_size - p * PAGE_SIZE : PAGE_SIZE;
+@@ -182,6 +184,7 @@ static void drm_test_panic_screen_user_set_pixel(struct kunit *test)
+ {
+ 	struct drm_scanout_buffer *sb = test->priv;
+ 	const struct drm_test_mode *params = test->param_value;
++	int ret;
+ 
+ 	sb->format = drm_format_info(params->format);
+ 	sb->set_pixel = drm_test_panic_set_pixel;
+@@ -189,7 +192,8 @@ static void drm_test_panic_screen_user_set_pixel(struct kunit *test)
+ 	sb->height = params->height;
+ 	sb->private = test;
+ 
+-	params->draw_screen(sb);
++	ret = params->draw_screen(sb);
++	KUNIT_ASSERT_EQ(test, ret, 0);
+ }
+ 
+ static void drm_test_panic_desc(const struct drm_test_mode *t, char *desc)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.55.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
