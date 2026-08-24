@@ -1,85 +1,66 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB06422E24
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 12:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D532241D62F;
+	Mon, 24 Aug 2026 12:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787576165; cv=none; b=TP72WspGAibcr9FdM3R5031uxpDoRF04pP0bRaERHZ6ylE1siWAYxyoCB4LCo00iuRqFiKkkIqSnH5h+pHfISAD5tW8PHCPK1LTIco/1j2q0Ux20m1mfDa+ssGBNA8nbgHPSGt7yZ9I0MddKwyQvDEtkU8AnUPtyGhzE75vSJ4o=
+	t=1787576200; cv=none; b=jHwX0dBUQvpWy9tx18JVZYME3lCu6QoMopufP4/FsOt3vBqPJoNyHAmvkMI3lZ5UI/VIk6OQyET1poOWzf1vl8yTQK4Bsmx3mClj/kddXyZMGwKP4sm2v0/m6ZxHHxDja1ObaEP2K7Dlt4Xi1LrlrJ89v/KQOBw4YDoZicCUi0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787576165; c=relaxed/simple;
-	bh=2S9ge3Gkux6zzeM+n6dPsFXQ7STMFa+l1y8WPqoTfCk=;
+	s=arc-20240116; t=1787576200; c=relaxed/simple;
+	bh=6+eSZZERcaZtgAyMvFz+AAnswHCs6CuPQAw1HepTmeo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LTn66OL04I+uWUJbge6tCmNb42/4J4TbuXp1GWm3zHdTENNjpjeafgZTpy5C6Fc10HiwHOxD3uUO4eLjN+KcYIk8hSCR6EGiTGigTi1fmBtHVA1zqt83OZQMkXhmFanUethUtwMF/AhtMGbc1xxppb0/jZf916Dze9eOWrzw/jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTBDucYY; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTBDucYY"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6a41191c9a9so6819816a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 05:56:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787576160; x=1788180960; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=lEYpVaTK2qGZEqiKTNTTUd76osnkufYUG4ARHqvujuo=;
-        b=ZTBDucYYPfcxo8Pw00+LOBPvusYW5BjXQXm8VVnM0MTIByWFp29ebAfW/cBnpALbza
-         Cp1XkLDSUvmfQVez21fDXVRnEUzzPBH3W9nU0lbbldAUEgeGqJy4eALBVWP8hrqh3uY4
-         kreA/zDNHFX8IlCezOo4ag0iluy4qZQT6hnfri3Gb51GRKluVIctfTnZg5EL8VgC9PNq
-         9F4QZi04d/Ue9mDa9wD//PT2+hnR6C5Ez9lyuOkKtN5t+b78tRwB4VbnT+/XFxSN3tA8
-         ssas1vswN9vp3I8gNlIsjZ8KfWD08mU/olNKlucf5MVtlik9Uwe+WuV3JIUMroTN2Kqk
-         Aq3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787576160; x=1788180960;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lEYpVaTK2qGZEqiKTNTTUd76osnkufYUG4ARHqvujuo=;
-        b=CEatq7/XSOdl+WFYj+z60aMufvxfDYJtxk/tSPr3EYdNb3ingGCjFV/4McDhGmB/gC
-         6StRa8MlIwFaBYD0a38RDTlThai9iu0w+flTMSo4uUsZaeolxMpmJIBFtyUL8LUp3K2P
-         98OiFQ3bUeQfSn7lZh5PyKOvXU9oAav9k/+s4hqeKfQb53NRCg6xNWIDuG/yi3iSCGQK
-         cmhq+jCPs3h+ybzhQtlnHqicapwjFeA7yDHSEln04hYXn0C9BdQWfPn+RFj9+r1Q0R2h
-         6gurpzioWEyB0EHse1P/XUjxKERz83XcMNtAP80n6xhBPwVU1QiFCFvR70zHbmsTscy/
-         jF0Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoGwXXDEfBtx8pFQo/726xrIe/p+6XhgT+LMjYphS9HFoWb40YuhJZ5mWbebUa9qTu0CKJE+SYnNpQICeE2GxE3zA==@vger.kernel.org
-X-Gm-Message-State: AFuF++n8wiePSMK4mCmNowvYSHn9MEAhgRJcbCkSNbHbWojEGVMXRw0o
-	xzk4TTxZJspSw4XsFPFfVhP7SthVG7CqB+9CTkDrh5thaPo5eACStYD6
-X-Gm-Gg: AR+sD11kVfMoOqkzLHeQMhRe6mX3q8hyz2DHmipK2dGmVmo8DqG6+17AZl5UI67GbTZ
-	p3AytIn91LPciCxMch5dzCczzmdRNoS1pv4uf3uEKQlrNman2J4ucEH3H6ewp3w1EjL235yCiTL
-	32dRi6BMmG6A3ZMRuL/zptjOxFwrovK3JTORpQCMsIw2pvpxMQgov/WpsyaD6MwCxYdn6mbpx02
-	rnSOGtuaXOGV5OsHn62XHvb3SiOn9sk3ev4a+pBdC2QixPERKRu0ifGaQQNzMU5gt1Vqem7vw7j
-	G98/z77DNjax7kHbOQgbJwpirid71CL3t8+7hc1xfK6sKDY41XQ6h5bwtSPRw1sIpFULnAdpNDP
-	9KyqD44/ucHryQfMiZjlQcNaT9dUwB6IfcIGRZkt9XuhqyUc1Tqls3nhC6jqS9aYYXHtLsnLeEH
-	tiR8+tglOGuxYH1gX2bQxMStq4X0r5DMOtpaxAoY86dAtOXVspsK55X+UFzkXdb0ppdXJTq38Qk
-	PhRfTxfdn1ouA==
-X-Received: by 2002:a17:907:9346:b0:c1a:5d49:f99d with SMTP id a640c23a62f3a-c246a3ab4c2mr3218865366b.7.1787576159544;
-        Mon, 24 Aug 2026 05:55:59 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:dea4:599b:49a8:96f5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c24966f9c9fsm1245403066b.39.2026.08.24.05.55.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 05:55:59 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	 MIME-Version; b=DN0KnvhBNQqBxIJnlYgmkfSm0pHhy7CnZhj1CpA1t1qADAz73MxE6qOo+cEmWVA8PCpKp91jFkIgKz98Lm/IXs+Zg6vsHa6eiA5Nz9JpzPX4fGYT/kpoaXhyO3QL51ntUhjbf5Cq8ecsOnfS7+hnChgG3AmKCUdmWK8eaL98mts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 194271F74A;
+	Mon, 24 Aug 2026 12:52:13 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 95CA7133CF;
+	Mon, 24 Aug 2026 12:52:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oB5kI3w+jGpyNwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 24 Aug 2026 12:52:12 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	geert@linux-m68k.org,
+	rdunlap@infradead.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	nouveau@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v7 8/9] dt-bindings: pwm: rzg2l-gpt: Document renesas,poegs property
-Date: Mon, 24 Aug 2026 13:55:14 +0100
-Message-ID: <20260824125523.131762-9-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260824125523.131762-1-biju.das.jz@bp.renesas.com>
-References: <20260824125523.131762-1-biju.das.jz@bp.renesas.com>
+	virtualization@lists.linux.dev,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 13/13] drm/panic: Compile KUnit tests as module
+Date: Mon, 24 Aug 2026 14:43:44 +0200
+Message-ID: <20260824125201.218863-14-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260824125201.218863-1-tzimmermann@suse.de>
+References: <20260824125201.218863-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -87,69 +68,224 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 194271F74A
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Fix dependency of the panic-helper KUnit tests on CONFIG_DRM_KUNIT_TEST=y
+and make them build as a module. Export the necessary interfaces from the
+panic helpers iff the KUnit framework has been enabled.
 
-RZ/G2L GPT IP supports output pin disable function by dead time
-error and detecting short-circuits between output pins.
+Select DRM_PANIC_HELPER from DRM_KUNIT_TEST to meet the dependencies of
+the panic-helper tests.
 
-Add documentation for the optional property renesas,poegs to
-link a pair of GPT IOs with POEG.
+It is now possible to run the tests by modprobe-ing drm_panic_helper_test
+at runtime.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+v2:
+- fix parameter order in decl of drm_panic_helper_draw_screen_qr()
+  (Sashiko)
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
-v6->v7:
- * No change
-v5->v6:
- * No change
-v5:
- * No change
-v24 from [1]:
-[1] https://lore.kernel.org/all/20250226144531.176819-1-biju.das.jz@bp.renesas.com/
----
- .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpu/drm/Kconfig.debug                 |  1 +
+ drivers/gpu/drm/drm_panic_helper.c            | 26 ++++++++++---------
+ drivers/gpu/drm/tests/Makefile                |  1 +
+ drivers/gpu/drm/tests/drm_panic_helper_test.c | 15 ++++++++---
+ include/drm/drm_panic_helper.h                |  8 ++++++
+ 5 files changed, 35 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-index 13b807765a30..98bcde755fb9 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-+++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
-@@ -245,6 +245,28 @@ properties:
-   resets:
-     maxItems: 1
+diff --git a/drivers/gpu/drm/Kconfig.debug b/drivers/gpu/drm/Kconfig.debug
+index 1f4c98cbf090..b909cd0a619f 100644
+--- a/drivers/gpu/drm/Kconfig.debug
++++ b/drivers/gpu/drm/Kconfig.debug
+@@ -69,6 +69,7 @@ config DRM_KUNIT_TEST
+ 	select DRM_EXPORT_FOR_TESTS if m
+ 	select DRM_GEM_SHMEM_HELPER
+ 	select DRM_KUNIT_TEST_HELPERS
++	select DRM_PANIC_HELPER
+ 	select DRM_SYSFB_HELPER
+ 	select PRIME_NUMBERS
+ 	default KUNIT_ALL_TESTS
+diff --git a/drivers/gpu/drm/drm_panic_helper.c b/drivers/gpu/drm/drm_panic_helper.c
+index 669f09225f8e..253262b7e0d4 100644
+--- a/drivers/gpu/drm/drm_panic_helper.c
++++ b/drivers/gpu/drm/drm_panic_helper.c
+@@ -8,6 +8,8 @@
+ #include <linux/utsname.h>
+ #include <linux/zlib.h>
  
-+  renesas,poegs:
-+    minItems: 1
-+    maxItems: 8
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      items:
-+        - description: phandle to POEG instance that serves the output disable
-+        - enum: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
-+          description: |
-+            An index identifying pair of GPT channels.
-+              <0> : GPT channels 0 and 1
-+              <1> : GPT channels 2 and 3
-+              <2> : GPT channels 4 and 5
-+              <3> : GPT channels 6 and 7
-+              <4> : GPT channels 8 and 9
-+              <5> : GPT channels 10 and 11
-+              <6> : GPT channels 12 and 13
-+              <7> : GPT channels 14 and 15
-+    description:
-+      A list of phandle and channel index pair tuples to the POEGs that handle the
-+      output disable for the GPT channels.
++#include <kunit/visibility.h>
 +
- required:
-   - compatible
-   - reg
-@@ -375,4 +397,5 @@ examples:
-         power-domains = <&cpg>;
-         resets = <&cpg R9A07G044_GPT_RST_C>;
-         #pwm-cells = <3>;
-+        renesas,poegs = <&poeggd 4>;
-     };
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+@@ -433,8 +435,8 @@ static void drm_panic_helper_logo_draw(struct drm_scanout_buffer *sb, struct drm
+ 				   fg_color);
+ }
+ 
+-static int drm_panic_helper_draw_screen_user(struct drm_scanout_buffer *sb,
+-					     u32 fg_color, u32 bg_color)
++VISIBLE_IF_KUNIT int drm_panic_helper_draw_screen_user(struct drm_scanout_buffer *sb,
++						       u32 fg_color, u32 bg_color)
+ {
+ 	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
+ 	struct drm_rect r_screen, r_logo, r_msg;
+@@ -466,6 +468,7 @@ static int drm_panic_helper_draw_screen_user(struct drm_scanout_buffer *sb,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_IF_KUNIT(drm_panic_helper_draw_screen_user);
+ 
+ /*
+  * Draw one line of kmsg, and handle wrapping if it won't fit in the screen width.
+@@ -504,8 +507,8 @@ static int draw_line_with_wrap(struct drm_scanout_buffer *sb, const struct font_
+  * Draw the kmsg buffer to the screen, starting from the youngest message at the bottom,
+  * and going up until reaching the top of the screen.
+  */
+-static int drm_panic_helper_draw_screen_kmsg(struct drm_scanout_buffer *sb,
+-					     u32 fg_color, u32 bg_color)
++VISIBLE_IF_KUNIT int drm_panic_helper_draw_screen_kmsg(struct drm_scanout_buffer *sb,
++						       u32 fg_color, u32 bg_color)
+ {
+ 	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
+ 	struct drm_rect r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
+@@ -549,6 +552,7 @@ static int drm_panic_helper_draw_screen_kmsg(struct drm_scanout_buffer *sb,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_IF_KUNIT(drm_panic_helper_draw_screen_kmsg);
+ 
+ #if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+ /*
+@@ -691,9 +695,9 @@ static int drm_panic_helper_get_qr_code(u8 **qr_image, unsigned int qr_version)
+ /*
+  * Draw the panic message at the center of the screen, with a QR Code
+  */
+-static int drm_panic_helper_draw_screen_qr_code(struct drm_scanout_buffer *sb,
+-						u32 fg_color, u32 bg_color,
+-						unsigned int qr_version)
++VISIBLE_IF_KUNIT int drm_panic_helper_draw_screen_qr_code(struct drm_scanout_buffer *sb,
++							  u32 fg_color, u32 bg_color,
++							  unsigned int qr_version)
+ {
+ 	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
+ 	struct drm_rect r_screen, r_logo, r_msg, r_qr, r_qr_canvas;
+@@ -763,6 +767,7 @@ static int drm_panic_helper_draw_screen_qr_code(struct drm_scanout_buffer *sb,
+ 	drm_panic_helper_blit(sb, &r_qr, qr_image, qr_pitch, scale, fg_color);
+ 	return 0;
+ }
++EXPORT_SYMBOL_IF_KUNIT(drm_panic_helper_draw_screen_qr_code);
+ #else
+ static void __init drm_panic_helper_qr_init(void) { };
+ static void __exit drm_panic_helper_qr_exit(void) { };
+@@ -815,7 +820,7 @@ static int draw_panic_helper_dispatch(struct drm_scanout_buffer *sb,
+ 	return ret;
+ }
+ 
+-static void drm_panic_helper_set_description(const char *description)
++VISIBLE_IF_KUNIT void drm_panic_helper_set_description(const char *description)
+ {
+ 	u32 len;
+ 
+@@ -830,6 +835,7 @@ static void drm_panic_helper_set_description(const char *description)
+ 		desc_line->len = len;
+ 	}
+ }
++EXPORT_SYMBOL_IF_KUNIT(drm_panic_helper_set_description);
+ 
+ static void drm_panic_helper_clear_description(void)
+ {
+@@ -910,7 +916,3 @@ void __exit drm_panic_helper_exit(void)
+ {
+ 	drm_panic_helper_qr_exit();
+ }
+-
+-#ifdef CONFIG_DRM_KUNIT_TEST
+-#include "tests/drm_panic_helper_test.c"
+-#endif
+diff --git a/drivers/gpu/drm/tests/Makefile b/drivers/gpu/drm/tests/Makefile
+index e7193b49cf91..42207df1d1c8 100644
+--- a/drivers/gpu/drm/tests/Makefile
++++ b/drivers/gpu/drm/tests/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_DRM_KUNIT_TEST) += \
+ 	drm_managed_test.o \
+ 	drm_mm_test.o \
+ 	drm_modes_test.o \
++	drm_panic_helper_test.o \
+ 	drm_plane_helper_test.o \
+ 	drm_probe_helper_test.o \
+ 	drm_rect_test.o \
+diff --git a/drivers/gpu/drm/tests/drm_panic_helper_test.c b/drivers/gpu/drm/tests/drm_panic_helper_test.c
+index e6befe0f1c83..f24f4bc2bc1f 100644
+--- a/drivers/gpu/drm/tests/drm_panic_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_panic_helper_test.c
+@@ -6,13 +6,17 @@
+  * KUNIT tests for DRM panic helpers
+  */
+ 
+-#include <drm/drm_fourcc.h>
+-#include <drm/drm_panic.h>
++#include <linux/highmem.h>
++#include <linux/units.h>
++#include <linux/vmalloc.h>
+ 
+ #include <kunit/test.h>
+ 
+-#include <linux/units.h>
+-#include <linux/vmalloc.h>
++#include <drm/drm_fourcc.h>
++#include <drm/drm_panic.h>
++#include <drm/drm_panic_helper.h>
++
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+ 
+ static void drm_panic_check_color_byte(struct kunit *test, u8 b)
+ {
+@@ -233,3 +237,6 @@ static struct kunit_suite drm_panic_helper_suite = {
+ };
+ 
+ kunit_test_suite(drm_panic_helper_suite);
++
++MODULE_DESCRIPTION("KUnit test suite for DRM panic handling");
++MODULE_LICENSE("GPL");
+diff --git a/include/drm/drm_panic_helper.h b/include/drm/drm_panic_helper.h
+index 6cc9a0eba077..6b19607e0784 100644
+--- a/include/drm/drm_panic_helper.h
++++ b/include/drm/drm_panic_helper.h
+@@ -8,6 +8,7 @@
+ enum drm_panic_type;
+ 
+ struct drm_plane;
++struct drm_scanout_buffer;
+ 
+ /* drm_panic_helper.c */
+ int drm_plane_helper_display_panic_screen(struct drm_plane *plane,
+@@ -15,6 +16,13 @@ int drm_plane_helper_display_panic_screen(struct drm_plane *plane,
+ 					  enum drm_panic_type panic_type,
+ 					  u32 fg_color, u32 bg_color,
+ 					  unsigned int qr_version);
++#if IS_ENABLED(CONFIG_KUNIT)
++int drm_panic_helper_draw_screen_user(struct drm_scanout_buffer *sb, u32 fg_color, u32 bg_color);
++int drm_panic_helper_draw_screen_kmsg(struct drm_scanout_buffer *sb, u32 fg_color, u32 bg_color);
++int drm_panic_helper_draw_screen_qr_code(struct drm_scanout_buffer *sb,
++					 u32 fg_color, u32 bg_color, unsigned int qr_version);
++void drm_panic_helper_set_description(const char *description);
++#endif
+ 
+ /* drm_panic_helper_qr.rs */
+ size_t drm_panic_helper_qr_max_data_size(u8 version, size_t url_len);
 -- 
-2.43.0
+2.55.0
 
