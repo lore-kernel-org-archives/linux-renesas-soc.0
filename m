@@ -1,166 +1,118 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B7941D21C;
-	Mon, 24 Aug 2026 12:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309B41D226
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 12:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787576022; cv=none; b=X6c3On37PvG23K2BwmiyueICWHUO9Q9SEJL3mUDD16KbdRhWbr8q3HEw/6zULvgxDCpcaXFYEVijscgJJVYUYaZXWjhbz5Yxm0OUt+DaQZaajQCXrCH6Z0pGo+ivQv20wrzkcV8nCLAExvzeV8CXt7bJwFKNkDfFEGLEHJhf2BE=
+	t=1787576047; cv=none; b=QBlFh6rLW0V2m4Y+FGnRIU8A6zr7+U+X8jqOFk8+iI2/DHu66AqljTop1inbNbPUEvrtdUXC99rc3AjTvAuIQ0i+tHpu+FR97UXj8/fprKt8IluTyg6/QmYuz1vLOAEgsp2x7ryFtgll8Wd92vKyOuYCr/GKQW4eonKB+AQXHYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787576022; c=relaxed/simple;
-	bh=odxnxmaAf2RV3ti0/nNL9HKMt/VzDj+O4M2J6w+83Kw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dCabggLevkzxkrcoJKs4yvT0z6+1nv35CLJDJT0udJk2qte1eyQPgJfYCv43TkCkVOOOpqmOWzkJqlpzfM+Qb2o3htsWLfy3JgabKaR1cW4z1xYT4p1UzjatLt6Pc12BRTy9tQfRVRVCzj2yP4nfuT5t38c2l4WP05TLQtSIW1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P9t+Dtad; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vjbUTsJ6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GTegslBR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8G2yBA/j; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P9t+Dtad";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vjbUTsJ6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GTegslBR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8G2yBA/j"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73A418687F;
-	Mon, 24 Aug 2026 12:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787575935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
-	b=P9t+DtadulI1oue0GnNO0Ql2H7mlotkFsuUVB6B/qgoCtFsa5Cr5faO1a5ioFl1F3N2dxq
-	cRXOixzBM6PiwkZ6mpj/ZZd7UDoRN/oE23GYYuzVhgQYxB7FjqGJ51Oa0PJOURASp70UOv
-	FLRVDU7cah4n4iNab2WK9cUGsToIANA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787575935;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
-	b=vjbUTsJ6Gl4XVS7/2WK6IwWYNZHKQV1+bVUX3k9I2RgaVB6T7LXnZbC1CiGSruwI5FHb2p
-	SSlo/u+IyKNMrgAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787575931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
-	b=GTegslBRuabet5LRB5k4RBcM5Oj8dViIWKBDgdW1/auSgWtdFnele0OWr5SOVeX2Fzk1iA
-	CfQxgmCLtowXd18Xfuz45hdeuaFTcOsdti3xORaA1NFL2kbC+us92SVUmSHpcDk9WaxhU5
-	ky94QOgLLpGQqcdGBzhElF2c2SBMn9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787575931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
-	b=8G2yBA/jvQsxZH51NwZCCYszke9hE/Ec0iPpC8wivAdkte51tRwl7WfUsBZlwAKKs699Hk
-	LEitt7vQplX6XABw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 547D5133D1;
-	Mon, 24 Aug 2026 12:52:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +DNIE3c+jGpyNwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 24 Aug 2026 12:52:07 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: jfalempe@redhat.com,
-	javierm@redhat.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	geert@linux-m68k.org,
-	rdunlap@infradead.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	nouveau@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	sashiko-reviews@lists.linux.dev,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 03/13] drm/panic: Return -EINVAL if font is not available
-Date: Mon, 24 Aug 2026 14:43:34 +0200
-Message-ID: <20260824125201.218863-4-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260824125201.218863-1-tzimmermann@suse.de>
-References: <20260824125201.218863-1-tzimmermann@suse.de>
+	s=arc-20240116; t=1787576047; c=relaxed/simple;
+	bh=22qCBYveRKFJxcMmmUW+ua4eXWAmfuygrtGmmXgJgbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VpKzEIhPJu/W0sSfLZTUR4WY/79tSMDEVn1XBekYeYXWoWW/DfKNaOsNemj0lpocsJwOOdozPewH9AM2XrWMvsn3hn3N4OO7tltLuyYdg5bYW6wxBebBdl4CiIu80PiPKR7hDPpyMQNRUltrI38UmJzN1cZuNGAAcwSB8+RjhGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-7542a2ee156so1868376137.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 05:54:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787576045; x=1788180845;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Eom/X8opTXnjGOdU2jJfg3a1DGcqhjQm02nKfziCp2M=;
+        b=dHpCYb/XxhAeTvasIA7wgGZ3AfRRQvoFCqGhZeA3rS6ihxR3z+M9bB18MT/l4/MX8h
+         MJF+9oHnhsKlBytE/WUmaizUJXaW4LsFcK6l6IkDu080//X/aio+JFTO8O12qMqZeWYf
+         4MpDd5QvaJCcsMwr48KnZ3PFQ2wXhkYhOMeCSq5a+vuUw8xsgIxjmBIqvEnz1BmehTjQ
+         MK7iFwGDP/IqMKxQNU9CZCcUQuKUs8Dln1l1KwgrWV4m2Vd9oUxJeCUzy31AP2uvMsD1
+         pPtqgpqS1fZ8hfwev3P6rcOD9WMm6ASmNPv1xTmKlLGw90f2FsAChx0brMd1ATUQNMwK
+         9+xA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr2zjUYyVgoMXoZ9Vy4HQgjNwasFvih8xBlDr0giHV1U0ARsg8KylpcO9g21BFH4A4aLqEjnqoUPX9MlunqJz4YBw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nroUdYr1Xn26TCvR3huHnbKLdAHvh7YLt+HhBw6eQPR+AXhITc
+	laZeqrJ+ayOM1rAg8sPefT7dOoftyDQnmYklBA9aPVTGVAiemy5qqwPgRRyQGO2G
+X-Gm-Gg: AR+sD10tXMMPNbDYbMtngu8S6XYLJBU6ZxAB7JW3mpLxhD28eaKj+GSzHMOAmhZ6q07
+	ccdnE4QjSGUZBv2HUTIVWe5cQ++dkNUyZkS5QWtSDPP6EUcCA8asvc5U6gbgEGPkDjUGTKm/Kwx
+	yNoUCqjpEeF73yFvTo5jPfLUvbej8r5aivUg6RClr9d0Ke8RmrAwXwF7OEBeQYQUK8Pf0baiamv
+	ENKBo3owatiAtJDH/y284sqfbS1aEGUKUrJl7zRwk8XvOwGFfhXbGq8EiTsxC6wiDCEluQ/slIV
+	JyJAC8N/FeX/zNDc44BEDuPTXCH9zZE/KeqMrFPUsLMjCeMf/jQbpWV3AfZcGvD/wpfGsS18MTA
+	3EPVW5BRq626FFjAWkEyfjrUAz/4vELg9thxyKEV2RaieAGZQezxs5nIWTr7OUUHx/eyeCOR2kH
+	w2pQmh24W243l5VXCjiWgpa28UiAVeFIyR7YyHq63Mkq7CaekxFLW3BJtF1vznQEVHsnVFUoq3h
+	x16JFo044EwXkbaQpiIefxPrz6M7vqW+dyG
+X-Received: by 2002:a05:6102:3c9d:b0:77b:b14e:b6c5 with SMTP id ada2fe7eead31-77bb14ec487mr6712731137.9.1787576045100;
+        Mon, 24 Aug 2026 05:54:05 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97c834c0accsm7408864241.5.2026.08.24.05.54.04
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2026 05:54:04 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7542a2ee156so1868366137.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Aug 2026 05:54:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpwL7SwVL2ggX5+ze2IjyNylhC2IZeyK2sYoXl/7Zn2car0+zggDu/WnHYnCeum0vb9xuySTzGssvg3BNekiEBzrA==@vger.kernel.org
+X-Received: by 2002:a05:6102:3c9d:b0:77b:b14e:b6c5 with SMTP id
+ ada2fe7eead31-77bb14ec487mr6712686137.9.1787576044162; Mon, 24 Aug 2026
+ 05:54:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[redhat.com,gmail.com,ffwll.ch,linux.intel.com,kernel.org,linux-m68k.org,infradead.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqirfcw6gnbcr9a9yhi49fhi6)];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
-X-Spam-Level: 
+References: <20260821150940.75282-1-ayman.chaudhry.kc@renesas.com>
+In-Reply-To: <20260821150940.75282-1-ayman.chaudhry.kc@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Aug 2026 14:53:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUAWhwybqECDZWyMXNR8cv4GXvFe4BQV-m-Wax+j6U5hw@mail.gmail.com>
+X-Gm-Features: AcwNN1VBZ53Z8AyT5wwWA02V_hOL4uH3XypVon522o3KZn9AAHsHiFE4wR9dg0U
+Message-ID: <CAMuHMdUAWhwybqECDZWyMXNR8cv4GXvFe4BQV-m-Wax+j6U5hw@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: renesas: rcar-sysc: Update description of chan_offs
+To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Font lookup does not allocate memory. Hence reporting ENOMEM on
-failed lookups is misleading. Report EINVAL instead.
+Hi Ayman,
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
----
- drivers/gpu/drm/drm_panic.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri, 21 Aug 2026 at 17:09, Ayman Chaudhry
+<ayman.chaudhry.kc@renesas.com> wrote:
+> The description of `rcar_sysc_area.chan_offs` does not clearly document
+> how the field is used.
+>
+> When `rcar_sysc_area.flags` is set to `PD_ALWAYS_ON`,
+> `rcar_sysc_area.chan_offs` gets ignored, therefore improve the
+> description of `rcar_sysc_area.chan_offs` to make it clear that the
+> field is set to 0 if power is always on.
+>
+> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index d28ce8878e05..62490d32019c 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -751,8 +751,10 @@ static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
- 	int qr_width, qr_canvas_width, qr_pitch, v_margin;
- 	u8 *qr_image;
- 
--	if (!font || !qrbuf1 || !qrbuf2 || !stream.workspace)
-+	if (!qrbuf1 || !qrbuf2 || !stream.workspace)
- 		return -ENOMEM;
-+	if (!font)
-+		return -EINVAL;
- 
- 	r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
- 
+Thanks for your patch!
+
+> --- a/drivers/pmdomain/renesas/rcar-sysc.h
+> +++ b/drivers/pmdomain/renesas/rcar-sysc.h
+> @@ -29,7 +29,7 @@
+>
+>  struct rcar_sysc_area {
+>         const char *name;
+> -       u16 chan_offs;          /* Offset of PWRSR register for this area */
+> +       u16 chan_offs;          /* PWRSR register offset; or 0 if area is always on */
+>         u8 chan_bit;            /* Bit in PWR* (except for PWRUP in PWRSR) */
+>         u8 isr_bit;             /* Bit in SYSCI*R */
+
+The same is true for chan_bit, and almost true for irs_bit, too.
+So I'd rather correct all three comments at once.
+
+>         s8 parent;              /* -1 if none */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.55.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
