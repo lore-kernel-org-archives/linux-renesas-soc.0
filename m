@@ -1,79 +1,83 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814E43F410A
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 09:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995083F328A
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 09:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787651457; cv=none; b=R2C7KLVAQeIGz7Nk2gnBpxqq7F65C5cKVhMWnD7vGjz+VOmlmBvdz611bbJCJhzKyZh/UYHmiMH9XiESJwSkTw71uImWSK/pVxHeBuvPGvabf5PEjKvuuWo+oih1Y59pC1/AO6KzlRIi0YpxwUuGrIONi+x0ZbFtNlnE9IjB2f4=
+	t=1787651458; cv=none; b=bLqkoJTPzMii22SPKmD9oZcUHLiT0ffU7p3KiyAu82QkSnZ/oPrDRhxTUlKR0YbrFKCy5K4vK089nHLC+eJyFsyT0yiBK1p39mY+o8jCUsFW132mgCmKWMvIFuDPeqf1eoDGyCsBpmmNkdHRZrIUtmMfSMQhZ5SlyY26d7TYNUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787651457; c=relaxed/simple;
-	bh=RonCFWguM9QB+tsj7LxTnDeL1gzB25YQrYnt3USxdCM=;
+	s=arc-20240116; t=1787651458; c=relaxed/simple;
+	bh=L4KcC/D8JNR68JbmIZsy7FDJIPX4XPqpuzQaMbjaS8k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DvTN5Jb6xsJKVa1QWxpF6ZoTGZff4UNAukdpWs+BmhPnM2fjZEzXO6MkLwMZhoe+WiPPyayMvMtnqQgzCj01Hu1YzUKUkPFH0UcPbeaFuAwThKuMF6Bd2J5vAAYV5nMvLVWoLBUEaDISsuaz0MzrEz+rfjRA4RqObddw4H95XwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1C4QJ7Y; arc=none smtp.client-ip=209.85.208.42
+	 MIME-Version; b=OCuNC4jcVuBG0CnBduNV7n4SXi+rUFLKkuQmOpFhhNDJjWG+5Q5zH46CmKBlcHW++8OishSemYtBzm3298XsF/4j+vD3N2OMmcADjminh9iqFdyRCVBwyOpQkenNAC1cVjWjVeuYJ1OvNWx6xNg4chLV4AGOhdcD+FfqumehXIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiaytjNX; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1C4QJ7Y"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a38098734bso7719040a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 02:50:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiaytjNX"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c1670dad7a8so798537066b.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 02:50:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787651454; x=1788256254; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787651455; x=1788256255; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=68EwW3pZKwKEb3seN3E4xQ0aMTamXD1nvobPFU8PL44=;
-        b=L1C4QJ7Yk/f6/lDbT6q0hhIXjbka5ezxXdIFdh7PX6+Jn0aNVeOJ7N98yRU8QYDdIQ
-         dptdgmo2pTvk6EACcfwmCSMbRLuwV3/lFO5qqCZGYTzcsXM62+oeWWMEzDh1RBGtlsEd
-         YVQhfmMclC98geRCDWoDbamKXFcr10Zyh3Qf5Dyb5AyoVYGA3j+EYtrxhxlVOe6/xJ4F
-         hgeJAktSim8AvRrJEH3BHJtCjRJwTmKRIFglKrVzsjK9HTTKNtRiQ7OFQlIss4XhaV0f
-         tn7jaSy9XCGaVtXUwOmg4sknF6VLM8g1GZ8yu6qmVO36sX4NgsW76oz8rIqXSsFlJ32g
-         32yw==
+        bh=IeaVy2u4NwAxOvzDo2/ZVVxI3i4d6+VqvUeN33Hsu74=;
+        b=GiaytjNX/52UUZUm8PWir3Ok+HZnoluwW+H9154fomdJupmrizn+06jbiK97e6RNpS
+         iTdseqp0li/99br6etMcJw/iWnr+Wl8yWLPsUMMPXH8STl/8FFp+skMUnWAUioQAtSmT
+         c+nDfLWtUoMjUFYfb+vphiiEV5eq5vhYuOqCQPFP/1ZIPoYHhSRoxe1Y14EOngKed0a+
+         A35MlBQnKCPhQ/PIvOtWC/SZ//FVSXi7D3c/VS7FOKKNZsMhfcYPkCEn0AGdKdp4MTkl
+         VLa1MAkJ5vzTPYev9nyah1aewzy3+E0FBpolY3zXTjlFjMPJXuYgJv0GiBeG2j1jEYEu
+         NBXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787651454; x=1788256254;
+        d=1e100.net; s=20251104; t=1787651455; x=1788256255;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=68EwW3pZKwKEb3seN3E4xQ0aMTamXD1nvobPFU8PL44=;
-        b=seFtHgFAvOzISokPZhKLIsBXSIqCrv8FdbuO7i0YetnpH0RVQgUqnRQVs7b87ZDy/j
-         PcQrtXioSOjfvBBGLGAbXlH+VPF2KuUzv2dNLshmv/z23YfuWFEncz3/FX9p3SMPI4KF
-         kj5P/AYT1vwljGfhvkSBbxTuqekGkKlu8Br39Ra8segpPjom5SXTBGW+ZYwTKTJah6kc
-         /CQTMJMKu5RIRtbRT6bC6OkmB6BxfbO8k15bHtzHYFnnIVa1M5g3jSeZeUl3sdqHNdAj
-         lL0DfxMVfYB4kbwUY7n/9JSdWUn7fiUL1sEUxJlGTsKjy+gs+a8wHBHIy40lgTPeGUR2
-         sJcw==
-X-Forwarded-Encrypted: i=1; AHgh+RoOA8ZlchN+eVsqYcty3tzw0PwIb8yH6kewxCtk1YSk9B4jZ7OFFHPLTbPAdLm8z9cNom99TopkMQRDUfqGilyWIg==@vger.kernel.org
-X-Gm-Message-State: AFuF++ni1VfGeVEkdd62v4Dc76poHHkarVDyAqKZKy+LmikCbRKJdC/K
-	F7AHvDgh5yNa9Q47mWhDXrL4v2zbx/WwVBxWGHdRxJq9Q64lZEL1nsgq
-X-Gm-Gg: AR+sD13V04TCC04LZFEUFmsbSJTIdhVZEXKc0azoaJ8FnL4zDpnUq1pdiSbLqWVP+YS
-	Holz/TuKLyFytup04V82xZPipYU8IOr5vel1cuYVn3YEmBDk1wkTVySREESiviY4+Ov2WdZSFCx
-	N/MHoRsKNXQCQfWVsatD9uiznKoBnU7avY6qBCTduFv5PQJ97DFQ0ymr1kc/NAC5uFN2PlZ5yPO
-	SYzn89iWbxNgQ1I6tA7zxtlHr3Bc+N8guZRlWimJNe9gPdHcp0NIx/HkgkiZyK2+FiEQHyhUAOo
-	k1pLyFeJxFgo90Aoj20ah76jCxJbd6QBmZoz4BDvt1z6SJi9aKdZodyb9rSH/hNd/T0ootbg5WB
-	ZdigDlBINQ8m1A2P17OmuNxnA3CWTABB2mhUyXmRrREIfPtp2msfOcxyiqDfx3WnYmRdrPjMbjF
-	0YxXdJDcVIq/v1r8f50NO0cFkmCfPgDMoOCOJNyFrGdcaxP7ZJR2Rg6lC7RLc1Vv9IWPpmvqXgv
-	AYtBqxCbg9B
-X-Received: by 2002:a17:907:d649:b0:c21:818d:e97c with SMTP id a640c23a62f3a-c246a2ceccemr3765915266b.2.1787651453543;
-        Tue, 25 Aug 2026 02:50:53 -0700 (PDT)
+        bh=IeaVy2u4NwAxOvzDo2/ZVVxI3i4d6+VqvUeN33Hsu74=;
+        b=MSQqFmBM0rSS+G4RxVI6uq7YoZkTE6I2gJx+9psCVL9IYcuuuVC1QwmUOhZUCuoH0C
+         jH5NnS51NRbWBznwUMarrfNBZj6baNUqu3mSkCErzZl9NsUZOB3k40oWGyz3YyXTP/UW
+         s0xxdcaRfOgQDvTLlgFREEUDfdLVp8aGZDtfQ4VM54Bq1ZlophC+yYixGQyrztwVssnm
+         IvNf+DedROzTBkUz1J3tYDB/tmwiL4IBRUSzzVVCQEKU0q2Tu7o16ij3Ol2yN30VHkNn
+         2dl22kQHZMASLZ3t7GaXEaZO62t29b0QN5FvtgidygYIJOQghQt1oLjL75rB1ZVKyOVo
+         yaiA==
+X-Forwarded-Encrypted: i=1; AHgh+Rof9PSaWbHfE6V13X5tJ99XO2XSxH42rgfwnmPJC0nYPnlhZt64kBIflq+7Mg9uTzh7gp0KZRNcLOyUIiyQngtumw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nzcdTh9vjhLYvBs+RqxwtHUl1lNKGZIyPIJ9NdWanMKlPxKzHB
+	tgJ2qszxm/9t8GbdRvxbwk6i0wOlds4/gJ2luVbi/wDS2kRWxhjh5VYt
+X-Gm-Gg: AR+sD109BwcfpMNVva9g68hy9RpIDrcYlbqiSGA4ssb/2iNyBRiTepO3Egg3rxKh4g+
+	ZNIaP/8tNDo5xbkIPfHX2jAk314/Zpznq2gAHx3sN4Ng/GiHYEux9hXLXEaMTqKvj7emK5ouXTE
+	QHRC/xuxUWX3PDZ3awM4kyaXamuqgkLK7K4GXYggUIwBDZLmyAdqoRgQ/5xMw9Y17nAe19VkdkW
+	Ur40V6gz0HxYs2NZx9kjkXeUrRAzVdaoGAzq6hO9y0Nk+Kv8jH4ow3J+Y2AwxQLPQOFzvk+Xoeh
+	1TtfgnFVJQZ+KIS6Hrfs4jWl6MP0zbf+WWv1ML24Pl06Hm5iGjRC6RMyC88eF7idbE39BpCe0jP
+	ue49rG7SsoGwIuKrQc/nPCBj70Fu52nPPjv3xkH0uqXSuV1tP6iuTqNbbE+49UzCPcLCpVyQJcP
+	BuAGGIhITrr3JWuAchtLTBcaC6DDZYgcchF8dNQ+sfZKkFJptJiPtj57nUfabg5Wjtzskmis0Ob
+	FW+4577H4c+tO8Wo38r5Zi3
+X-Received: by 2002:a17:907:e1c1:20b0:c25:437:3dcf with SMTP id a640c23a62f3a-c2504373f29mr20567466b.21.1787651454490;
+        Tue, 25 Aug 2026 02:50:54 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:81d:57c0:e4cb:959c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c249629929dsm1749320666b.23.2026.08.25.02.50.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c249629929dsm1749320666b.23.2026.08.25.02.50.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 02:50:53 -0700 (PDT)
+        Tue, 25 Aug 2026 02:50:54 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	linux-pci@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/4] clk: renesas: r9a08g046: Add PCIe clocks and reset
-Date: Tue, 25 Aug 2026 10:50:41 +0100
-Message-ID: <20260825095047.9971-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 3/4] PCI: rzg3s-host: Add support for RZ/G3L SoC
+Date: Tue, 25 Aug 2026 10:50:42 +0100
+Message-ID: <20260825095047.9971-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260825095047.9971-1-biju.das.jz@bp.renesas.com>
 References: <20260825095047.9971-1-biju.das.jz@bp.renesas.com>
@@ -87,56 +91,69 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add the PCIe module clocks (ACLK, CLKL1PM, CLK_PMU) and the PCIe
-reset signal for the RZ/G3L (R9A08G046) SoC, along with the P8
-fixed clock required as the parent for CLKL1PM.
+Add SoC-specific data for the RZ/G3L (R9A08G046) PCIe controller and
+register its "renesas,r9a08g046-pcie" compatible string. RZ/G3L reuses
+the RZ/G3E config init/deinit callbacks and power resets, with its own
+L1-allow syscon offset and mask.
+
+Also increase the timeout in rzg3s_pcie_set_max_link_speed() to fix
+the "Failed to set max link speed" message seen on RZ/G3L.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g046-cpg.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/controller/pcie-rzg3s-host.c | 25 +++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 5878423db151..22821321a1d3 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -335,6 +335,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 		    dtable_8_256, 0, 0, 0, NULL),
- 	DEF_G3S_DIV("P3", R9A08G046_CLK_P3, CLK_PLL2_DIV2, G3L_DIVPL2A, G3L_DIVPL2A_STS,
- 		    dtable_4_128, 0, 0, 0, NULL),
-+	DEF_FIXED("P8", R9A08G046_CLK_P8, CLK_PLL3_DIV2, 1, 8),
- 	DEF_G3S_DIV("P13", R9A08G046_CLK_P13, CLK_SEL_RSCI0, G3L_DIV_RSCI0, G3L_DIV_RSCI0_STS,
- 		    dtable_2_16, 0, 100000000UL, 0, NULL),
- 	DEF_G3S_DIV("P14", R9A08G046_CLK_P14, CLK_SEL_RSCI1, G3L_DIV_RSCI1, G3L_DIV_RSCI1_STS,
-@@ -558,6 +559,12 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(0))),
- 	DEF_MOD("gpio_hclk",		R9A08G046_GPIO_HCLK, R9A08G046_OSCCLK, 0x598, 0,
- 					MSTOP(BUS_PERI_CPU, BIT(6))),
-+	DEF_MOD("pci_aclk",		R9A08G046_PCI_ACLK, R9A08G046_CLK_P1, 0x608, 0,
-+					MSTOP(BUS_PERI_COM, BIT(10))),
-+	DEF_MOD("pci_clkl1pm",		R9A08G046_PCI_CLKL1PM, R9A08G046_CLK_P8, 0x608, 1,
-+					MSTOP(BUS_PERI_COM, BIT(10))),
-+	DEF_MOD("pci_clk_pmu",		R9A08G046_PCI_CLK_PMU, R9A08G046_CLK_P1, 0x608, 2,
-+					MSTOP(BUS_PERI_COM, BIT(10))),
- 	DEF_MOD("rsci0_pclk",		R9A08G046_RSCI0_PCLK, R9A08G046_CLK_P0, 0x618, 0,
- 					MSTOP(BUS_MCPU2, BIT(7))),
- 	DEF_MOD("rsci1_pclk",		R9A08G046_RSCI1_PCLK, R9A08G046_CLK_P0, 0x618, 1,
-@@ -633,6 +640,7 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_GPIO_RSTN, 0x898, 0),
- 	DEF_RST(R9A08G046_GPIO_PORT_RESETN, 0x898, 1),
- 	DEF_RST(R9A08G046_GPIO_SPARE_RESETN, 0x898, 2),
-+	DEF_RST(R9A08G046_PCI_ARESETN, 0x908, 0),
- 	DEF_RST(R9A08G046_RSCI0_PRESETN, 0x918, 0),
- 	DEF_RST(R9A08G046_RSCI1_PRESETN, 0x918, 1),
- 	DEF_RST(R9A08G046_RSCI2_PRESETN, 0x918, 2),
-@@ -671,6 +679,7 @@ static const unsigned int r9a08g046_no_pm_mod_clks[] = {
- 	MOD_CLK_BASE + R9A08G046_ETH1_CLK_RMII_I,
- 	MOD_CLK_BASE + R9A08G046_ETH1_CLK_TX_I_RMII,
- 	MOD_CLK_BASE + R9A08G046_ETH1_CLK_RX_I_RMII,
-+	MOD_CLK_BASE + R9A08G046_PCI_CLKL1PM,
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index b3531468ef38..3dffb85c6a47 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -1165,7 +1165,7 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
+ 				 FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp) == ltssm_state_l0,
+ 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI,
+ 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
+-				 PCIE_LINK_WAIT_MAX_RETRIES);
++				 PCIE_LINK_WAIT_MAX_RETRIES * 10);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2467,6 +2467,25 @@ static const struct rzg3s_pcie_soc_data rzg3e_soc_data = {
+ 	},
  };
  
- const struct rzg2l_cpg_info r9a08g046_cpg_info = {
++static const struct rzg3s_pcie_soc_data rzg3l_soc_data = {
++	.power_resets = rzg3e_soc_power_resets,
++	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
++	.num_pcie_controllers = 1,
++	.config_pre_init = rzg3e_pcie_config_pre_init,
++	.config_post_init = rzg3e_pcie_config_post_init,
++	.config_deinit = rzg3e_pcie_config_deinit,
++	.sysc_info = {
++		[RZG3S_PCIE_CONTROLLER_ID_0] = {
++			.functions = {
++				[RZG3S_SYSC_FUNC_ID_L1_ALLOW] = {
++					.offset = 0x3a0,
++					.mask = BIT(8),
++				},
++			},
++		},
++	},
++};
++
+ static const struct rzg3s_pcie_soc_data rzv2h_soc_data = {
+ 	.power_resets = rzg3e_soc_power_resets,
+ 	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
+@@ -2516,6 +2535,10 @@ static const struct of_device_id rzg3s_pcie_of_match[] = {
+ 		.compatible = "renesas,r9a08g045-pcie",
+ 		.data = &rzg3s_soc_data,
+ 	},
++	{
++		.compatible = "renesas,r9a08g046-pcie",
++		.data = &rzg3l_soc_data,
++	},
+ 	{
+ 		.compatible = "renesas,r9a09g047-pcie",
+ 		.data = &rzg3e_soc_data,
 -- 
 2.43.0
 
