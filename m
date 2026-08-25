@@ -1,124 +1,156 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2768D43E9FD
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 13:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787662843; cv=none; b=qyFJ0diUg262B1NKA8H9OG2+6IbU9riY6Q18QYf4fzcwYrdDowWVmFy+BIW20Ixti7yIqYZ8srT1vGHNugU6BFOSFMLYpZtL4RfhHcPACT4gRVdeLeWpAshSchsyhWzSvairUpWmKHavcjSZ93S1WpPoHSWRnd7iwxnizGiCUkg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787662843; c=relaxed/simple;
-	bh=VO1GZ4gCp/y9o2rb+D3PA8tXGec2JaV9n1iCQ0jrsiM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D609545A29B
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 13:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787663447; cv=pass; b=ZVsWk9rYpff+LY37psaS2mxgE4OLM637qC+MUDjB6Zq/+5iMqAcPOIERp+/j9KXCk38Ol8o2LbTo611qv/EIQacfo8KyljEloumtc2v9K1W7XdpvQQkcsvI/t2PS/J8kgNvoz2hDCuHTRcNIklAoT7GeLNkjxJJXC/NsnR0CeVo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787663447; c=relaxed/simple;
+	bh=02FhfIBqMMvQXAFc8ywza3WsDbF2gi0rUDQddC21ZyA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jmT0sHx+bX7Tn6j6zkg6KYiAOBegHd4BU8iuK7f1GvYUy5VVFYuHhfTgYRdR1I9jSsA2oRvL6Kdhrg9RkCIufGPlc+V0o4RlOi32si+ZjnEXv4u3I4Tju5dySmftpKdVn7DqWv5GBwL5qjt7gpk8rOJs/7/xEaPj64EnkaaR/Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=Dba7UMW+HxeFFvIBVrFjiOGC4M5y0C/XP/NV9uVSAPIXxXNEgvMtX9FmkmoAs44F/z4E0oZ7S210H00yikj9QGOhOWnCn6hHWjCOQ1M2t5/F6eJqbyZE9/pzBwaD5OQqwmGSgZ7ujOcXKCt4Z80M/oVKm6XxSy9opFKOTMdZmSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTD27K8B; arc=pass smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c1c26d7e951so711612766b.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:00:41 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTD27K8B"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c197e7e4e94so827328166b.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:10:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787663437; cv=none;
+        d=google.com; s=arc-20260327;
+        b=hgZ+pm+uetmnImHOBVYwQYR/78Sm4Os1fI942PGl/lpRKn4EHPhrjvRh54z5a5MQPs
+         Rf5gduq3iwSk9vXmT9qK5oOlKDRaThXWFk5wkt3cOBCFsVe6drShjaqGHaK3eeve4IYN
+         ZZpY9+XhMV+goyC+C36PD14fir2wc9kwb+ZbCpIXm0Awm1DCQW6wr4pESzqnRXaPjLkk
+         jiqDlOsfLiCRi90eKNmbd6bXlucgCyD6w2lOUlaGNVYT/EIIrRPAZDUwvXzldgzv2zVw
+         abTB7oxiCh6Rnfq4MJ9uRJ/h06AUZqVpNv3eR3YASDjb4JLQ2k7pD7RSxpN2OpJmyG1f
+         ptVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=iuMwj835HhD4A5CZXk1Hdm7IMcB4Kfutchy14lcyny8=;
+        fh=KonOLcRasM8y0DcIjFw+Ec1QExVV/hZ3dsuqdPSIZs0=;
+        b=PPdUox0yoe4W0El9zUxOsmnE3c8niM+0KY1sBQQmCFVGwb92Y5AA71Mx67hqLoA4XZ
+         POAQ9/UY838bXgkSefDLAZy6j09XyEd/rLY754NrSux0EMOdA3JImPD01eCdgl8Oo/2j
+         3ec85ZU9FrE5+bsF77uGj8qE3HN+MLEKDG03v2dJMNNzpVIB5w9zoKmbaQHkesk64xbB
+         wsazn6vV6IvrjajCdsJqSDHPvGs0GM7VgzgdpBZ1kexsahCWpD1ny8JupZNa8KWyhqhy
+         1LIFfUz72mthBWlbQFkO71vrEI55cidnf1C5iBxbctz5GBMM34aViPk2/YeOGJEF161Z
+         +VRA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787663437; x=1788268237; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=iuMwj835HhD4A5CZXk1Hdm7IMcB4Kfutchy14lcyny8=;
+        b=DTD27K8BmV9EEBv7J3uEHqthV0pcKxDfi6PXr0088Ii1HelBk73k5HExF7IhYM1wW0
+         HSCnVozStEGbBPwAN2w7njqTN3d0QQVZvpwWSTjPvH6zTUugMCMlMA11hXGHR2YNGolL
+         HOA5iBtA50AOSOv7Vm3+AT9y4DXHRty1NkWEM7siAtLcIYVJD5NlmdaM/zZMhTjUVh3o
+         hDdWF12VxHFziW6A9gFvjRolb6/o4FP19w7c9e3lUm6KJYBwUPDxLOjSNC4SDTzltnGt
+         2DbKqsp4iHwsbxPZ/2VhUa6DJ+xDyTN+GoWmWLIrQ7Wown7JS5pFv6d+ABtVTKg6oR6U
+         77kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787662840; x=1788267640;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=f/VL+GrO3wM2oN8yF9pczuQ0vsJ4YOEv+mk062nltpg=;
-        b=m4D7cAXm3zBG6C6xAeq+k1NMR63iL8Qke+CFp5NGmlYrpJhHIHVUBlBap4DTP3d5Os
-         yNf+oD0ungDqncLUA6XlLoYmP/ByOZl3g6FjHS7BAYI6shiYj1cxaNJc0VGtrTrJ5M/N
-         nir6gDffNzD8tGU5iYNXpfJsIkvWBDh8nT6+IyB5JjLpkuYeF1aCu0v+mNIngIt8J0ib
-         PMqZNNIKzPTlR+uglczd4vQE8jtrtywu4neN2hCaoDC6iD6ggEX8aSIp07X5bOyl9P89
-         Mgv7ecKITjf4qy8twQuEKZdek4SkSCqgzfB548nZz5HSYS/EjVy8to9ocxauXmBcJ/et
-         Dmaw==
-X-Forwarded-Encrypted: i=1; AHgh+RokTXIjQQIdn8+ElW9+LyZpAelFwLCKBAfqj/jE7exdcV0bPZldnwScCR9koPh+IR142ArhTTjLy6hmxqYIeILxNA==@vger.kernel.org
-X-Gm-Message-State: AFuF++np0FFh/ivQHXoVUeHo0jGmHRrRHew1mSl98iicFYKcLrw/yHCf
-	MiAN9XhPND4MNGV/zLxwQxJ+l5LBudIB5COAvohScAC2LDoaMxlOf55OM2XemAgnyUM=
-X-Gm-Gg: AR+sD139yVeujQz0ChSJp+558du0Oy/t3TDIbm+cM0CxGFjmHy/OrYiYSl/sHOi2HDL
-	qrBBR0snJY9cDspxg/FHW6/m9eK1Vchqp1uIF+pwDKCwbQ8N0IDaEx9WdulAFp73Z1//KML7CnC
-	kU+Ttsghe78P96SIsb5A7w42QPAMRD3j4nJqTTlw7qbrq33eSfYl1dVUUokN0J6RYFYPHzBnmRu
-	zqMrvfw7naVO5g/KwixI620o5d60cm7OSC1B6QEAHfBCTWq6OuEBdo7gF2Nw+htNOX8x0+gYleH
-	M0EzmcBXEMxa7X//Pt2zS2/ZOIMGgf2cwpoUXh9/MgpZ0W6Ptg2U/Oobwwi+edfLZpR/fIBv2Lm
-	Dz5aKv7s9X/+h8Qpd4EeLVe4E0LUHz/M8K51odqnBBgOGJjhYY7zFEpxUNNYg8phFsOmqjo7UMx
-	Gn4kRpXWwe9KwGaLYFJn6PQ0rCcoJDKspTiLSM4z/Vtwcy7+a8zo5BsgduCwMQRLlBlGjmdppGa
-	Xk3CPjO3nNXYqX4uYD+UWr80AxWOoctaGAp
-X-Received: by 2002:a17:907:ea8f:b0:c20:ff26:336e with SMTP id a640c23a62f3a-c246a605cb7mr3591334266b.14.1787662839450;
-        Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c24966f99basm1687240866b.37.2026.08.25.06.00.39
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c207cb16cf5so745212466b.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqNcCKO84Wu2Gfka67lktn4ZBvn8fOzg6MynwrP63Ct8L3Hs6MTGy4yErI37WnrkTlWWRtIA9cicy6uqnvMVafM5g==@vger.kernel.org
-X-Received: by 2002:a17:907:60cd:b0:c24:c22c:6372 with SMTP id
- a640c23a62f3a-c24c22c6490mr1589458466b.5.1787662838829; Tue, 25 Aug 2026
- 06:00:38 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787663437; x=1788268237;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=iuMwj835HhD4A5CZXk1Hdm7IMcB4Kfutchy14lcyny8=;
+        b=qYeKMueZEMGrd5fZAsOkthe01zhlAinDO8XFdWRiLn905oLUV02VOPIrrSaae5MRju
+         FrzyNydmiJOUircAW/H73r1Q8hwTIbi52kNMLh+4pcbKGjZW3ftjK8cNDNsQVTODxAhg
+         6G0sKGY774QMV4VVL5h1m1Tq21dpljQXKAqAdTsrZ0khcbZ3N3hFsunYrzo8glqKp4Tx
+         cIGeO1KX0YCMHIbaL0QS4Iv19rL8LPggo5E9r1yXJG+6huwbcwH6nKIA+LZkTv9JVqku
+         Hhfh4KdT0CtofR7dtDx349D03kYQFMsplCHWcgpMrvEqV3Ej9/wo5KO93P9cVmguOJzh
+         kwyg==
+X-Forwarded-Encrypted: i=1; AHgh+RoyBAaehvB/DtnSbRnJo6G2CfbHuRk6vjIthJuPgHDogNWT91ZpIRdqdCCUHIi5d/YvlsXiwrMx7uPlSn88RBw3uw==@vger.kernel.org
+X-Gm-Message-State: AFuF++npC0q0whRqt1PBkVQa+0EzPA/HALEgd1nHVyUcPo74pAExTKBN
+	V/YBnNBk/y2PkmNNaAFGbRgvSishFrJ9k5JVncXZM/41MzD6hCzPDW5+qj9BwadAFVmB3lMdNgl
+	9xzSYrBRLsdA8NfQxpWaA71FJ7i4W3tXMR/Ft
+X-Gm-Gg: AR+sD11twU2ZpX0sP5eUXDsGEFAxccdT7m9LKq4XoM5IS5zpHiI6UYxaZBPSFpnfWGI
+	+dorTB50/iq2ML1YvM+viOfYX8FZu/Cn9VILsS0j6JQnpfXTGn2dFtNetul5YEeLA59pRCaufoW
+	Q4Jir25jUs5ENvtzL3zNSuF/WWShU54vKb5jryaY0aPKe5HrWu5Y6e8Hgb6EVk3sxA7Ng0YNJpz
+	/p9kOy4JkRN2sKqLu1aBh/mQknkLwAbaoGFuD+VYQUVg/p+0lDMbdcA3HZ8rGL3RVG4EzkHqrzE
+	s3LiKS8bcVjbOg1mo2yBGpQuLaPP4rRVPts2SenbHRUX6Ic=
+X-Received: by 2002:a17:907:60ca:b0:c24:6985:d7a1 with SMTP id
+ a640c23a62f3a-c24924b79ebmr3067182966b.7.1787663436768; Tue, 25 Aug 2026
+ 06:10:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev> <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 15:00:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VEuaPMxcxWs3RbjdyN-p7dmv63o4Gq5Re74moLFekdRIJP2iC2c_m_pgo
-Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
- selecting the I3C power source
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20260824125523.131762-1-biju.das.jz@bp.renesas.com>
+ <20260824125523.131762-7-biju.das.jz@bp.renesas.com> <20260824130453.D03C01F000E9@smtp.kernel.org>
+In-Reply-To: <20260824130453.D03C01F000E9@smtp.kernel.org>
+From: Biju Das <biju.das.au@gmail.com>
+Date: Tue, 25 Aug 2026 14:10:25 +0100
+X-Gm-Features: AcwNN1Uq7B_OPhhUOfAGvmbEHdK5dtPV8yVIVtP8a8LSe8nf83A3g2sBuIV4qcY
+Message-ID: <CADT+UeBsPrADZdx34qS4YLyDwmO9Lq9qJMYWzhw0HW7+f_yZCQ@mail.gmail.com>
+Subject: Re: [PATCH v7 6/9] dt-bindings: pwm: Document RZ/G3E GPT support
+To: sashiko-reviews@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-pwm@vger.kernel.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, 
+	wsa+renesas@sang-engineering.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+Hello Sashiko,
 
-On Wed, 19 Aug 2026 at 16:36, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+pwm.yaml  already defines this property[1] as required.
+
+[1]https://elixir.bootlin.com/linux/v6.0-rc4/source/Documentation/devicetre=
+e/bindings/pwm/pwm.yaml#L23
+
+On Mon, Aug 24, 2026 at 2:04=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
 >
-> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-> pin controller provides a register to select between these two options.
-> Update the Renesas RZ/G2L pin controller driver to allow selecting the
-> I3C power source on RZ/G3S SoC.
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [Medium] Add `#pwm-cells` to the `required` list. The binding omits thi=
+s mandatory property for PWM providers.
+> --
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+> --- Patch [6]: [PATCH v7 6/9] dt-bindings: pwm: Document RZ/G3E GPT suppo=
+rt ---
+> commit 9a7d174b7aaab1e8640a8415696ce9830442c765
+> Author: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Changes in v5:
-> - due to patch 3 from this series:
-> -- dropped the definitions for PVDD_I3C_1200, PVDD_I3C_1800
-> -- dropped available_i3c_ps[] array and fill everything in available_ps[]
-> -- dropped the adjustments from rzg2l_pwr_reg_val_to_ps() and
->    rzg2l_ps_to_pwr_reg_val(), rzg2l_ps_is_supported() and
->    rzg2l_pinctrl_pinconf_set()
-> -- dropped the tags
-
-Thanks for the update!
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -69,6 +69,7 @@
->  #define PIN_CFG_PVDD1833_OTH_AWO_POC   BIT(19) /* known on RZ/G3L only */
->  #define PIN_CFG_PVDD1833_OTH_ISO_POC   BIT(20) /* known on RZ/G3L only */
->  #define PIN_CFG_WDTOVF_N_POC           BIT(21) /* known on RZ/G3L only */
-> +#define PIN_CFG_IO_VMC_I3C             BIT(22)
-
-BIT(22) is already taken, please rebase to renesas-pinctrl-for-v7.4.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> dt-bindings: pwm: Document RZ/G3E GPT support
+>
+> This commit documents the device tree bindings for the General PWM Timer
+> (GPT) on the Renesas RZ/G3E SoC. It details properties for the 16-channel
+> 32-bit timer, including interrupts, clocks, resets, and power domains.
+>
+> > diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.ya=
+ml b/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
+> > new file mode 100644
+> > index 0000000000000..cb4ffab5f47fe
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
+>
+> [ ... ]
+>
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - interrupt-names
+> > +  - clocks
+> > +  - clock-names
+> > +  - power-domains
+> > +  - resets
+> > +  - reset-names
+>
+> [Severity: Medium]
+> Since this hardware is a PWM provider and defines #pwm-cells in its
+> properties, should #pwm-cells be added to this required list?
+>
+> Leaving it out allows incomplete device tree nodes to pass schema validat=
+ion.
+>
+> --
+> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260824125523.13=
+1762-1-biju.das.jz@bp.renesas.com?part=3D6
