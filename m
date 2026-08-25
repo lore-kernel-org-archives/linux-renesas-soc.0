@@ -1,72 +1,71 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BDD470EB6
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C0346C85B
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787663864; cv=none; b=dLUZhou4wD+dGqkMFXUo2VBkpJMg5gFQQ0KLWWtQwGaGOvZle9vULPnrFi8U9QYgQDcnk35MWYPbXAhSpiItzudv63hWTD/0lKZkSbvp8pXysGCWFbLD4thRlDUJigZiv/6U6C9VZMxlYFiGcHuEcDtJpGxZdgVp34h99FicMm8=
+	t=1787664025; cv=none; b=kQcWVhmw3e8s0QjjqxAe0+0K9nIjTE/usEr3EseaSV0ISV9RWufbnsz27B5VoQxUEChb5PSvVPLh5kSXpGNA9Y9ka6KtiXRAdQ0dJychFLJrNGJXHe9wcIBPsAEOryYlSk2npCG9MMQ4Om2IcxyHvF8k2Xx7TtxlvidowqfLSGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787663864; c=relaxed/simple;
-	bh=g2sHAATEnIjD9gAOcncDmOdMf0+ZUwevuRsByoswNfQ=;
+	s=arc-20240116; t=1787664025; c=relaxed/simple;
+	bh=PmRTs1DzZxI+FrDLeeLH+DQ0KrqSOQNiLUieGIdPbFk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oNvsl0+22sSpR0SLaBQQmKDTuef99rgfH7mI72r1YNB1UkxXLQefP6QsjxBHk8jQFfrXbcE8JBu/Ylr+++NH/lzVJmLIRuVtjH+NECX+6zRyaD5iq2YSATQiXfkoj6La25vPi9AMHzh3EZv9b9JjYIt3k9jURfdnK1w8cDxkY+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=rbSzzTEXcc+BwKdWfgHvlZb/9+7psdE9TukEoVPLq+u7DsIZG3kGDRksMERxzgMkZCCudcNHzWlNVPvKTB6kmE9mTNO5E1p7jHabbG87xgyBbMIowrlqCAgajOyWoWqBVbZHlCwx7Xs+FGP5IrY+m/+allJ+RhrkfVw2LKfeBA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c1600d040e4so123770166b.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:17:42 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-69fc9f25118so5203849a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:20:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787663861; x=1788268661;
+        d=1e100.net; s=20251104; t=1787664022; x=1788268822;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=IJm+4jafzibqolHerE78hJ1wHg6O5UxVoBQiVXfM3qo=;
-        b=ZJQN3CCoOCmsxZqRdiHSZb/jXWAJ521MVpCzI2ANEpS3oCzpGLQBcB23WSTahp3Wb9
-         jp+phfi6+VhcosIy7CPb0MGkbrSrIrZMgMmA7Gk0YMr6RpT3rkKuHKY3gvUzlSQcZsFy
-         zw+G0mrMqZXllLwm5stElfek9CJwLOAgJBQg8Q0rWV8Y7mSR6Z0+IGtVgjkg/qBmPQHd
-         kXvTJBHcgha2hqr8s2HvTwxT9HptbYexgHaGJJv3H3ulXbMBfKsIxRfyQERqKWjKkm+Z
-         Mzc3H4LHXPCnv3+qPHB6JF70DU1XrNuV+mXEbOygKbvgPIfV5PMcW+hSSR2BjrV9EF8s
-         3DXw==
-X-Forwarded-Encrypted: i=1; AHgh+RplS5HsYreACk3o40i+YhJtBVXLIAg4tY8lU6gnjlKa4Yq2FBTbaNMvwD5qlygKESrW2Y5M0EjXqqjYlx90IqsJxg==@vger.kernel.org
-X-Gm-Message-State: AFuF++mbO3vxaa8jmDH4PU4cTVMRh+ucnn5dOifznLRERNqO5ZH1wlCe
-	6iLgdWw7szecVnkG3SkMhPfa6Y3tz1aHMGxlclD/NYvkX1qb5vBuyVGvfz4gcuAKc9I=
-X-Gm-Gg: AR+sD10V5YihOMQncQxdbftQOAEKndNwK85pWCTMaUehpji0la0wrHXPuhRAfXIbzGa
-	LOZOyz9/stHP+K26l6mzf9ZukLf/mcP4iNFFBWJH+jQ1VS/U4Algd69V+ZuXFsdOKsEENIOBppF
-	Yqog+OZ52775vfe/GSyFWiTXl/d2wbd/5dE+3Deh6dtEkWILyTG5ln8Q/QRjLaJNVvO5WoJHEEW
-	L4eQLmLFUu7ovUmIVlWxnWwm99D5N7eEgu7WSe0mehk58qZnM3s3SjTSCaD71cGGCGQRCgXKXbb
-	rvuCwEMBVUOf8fwn+XOXbHFW7O+WOm1HdGS/M8SWte0MS7JYDfmWyS9chJlUuJnx4nKtKdjs7CC
-	818W5B+ZJ5RH1yXFSA7ThMEqT5ThPP0CY0b3DvojeLVAkIhcQ+wigoHcrVGXZ8+5rSwP+n6C5YS
-	juXOREFbksc8QupBzzXj9zLkBKnpte3d9POMLMCqOfUDTAuxu3LbTgh5+33f3YQdfbEPoQf4PtI
-	/+FxjOgtSUY/1vuWoMFDP07Zgezap+hv/mj
-X-Received: by 2002:a17:906:5147:20b0:c25:58e:8d64 with SMTP id a640c23a62f3a-c25058e9f37mr113274466b.12.1787663860475;
-        Tue, 25 Aug 2026 06:17:40 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2496297c7dsm1737085766b.20.2026.08.25.06.17.38
+        bh=7Y+iQzfc/wt6owXkRW+QJJNIcqzyaAjLzqiiwkIiBt8=;
+        b=XR+c4AqUbIzcPwlkCgkHHmNcOxbo6pVS+2gaV0YB7GfiqVeure967GW3hmn6B0K3JZ
+         mBJIp7rGG8JsZ0j/8Xu0rBkc881KupUtC55AfySwa0O5gnOzkn0j68sqmbOq0kdZOfaH
+         Trcbgz1yQSQElVnUjmEKcnf2vcwb+s9vMIo8nNXpxT8Ct4b8N4GYmEcS6CXZ2MQ5k6TJ
+         XdTlLFu5yVn/i/JpjIVnGV7WCzUg8PrhWmrKepUX+F4SMAq4OHd3pe5g8UhKRtk2Xqix
+         G46hf7qI1WooRpVaR1HEYaEwjpLhqbYfEqgqoMfRC48U/hLiWlV4tCegaZKIItHyf+rd
+         D4Dg==
+X-Forwarded-Encrypted: i=1; AHgh+Rqp0N231Ts0a+bZ4zIpJq3XkgvVDqRxcZ7HbrtEVXwYwFcvYbXZe1ESYjgZqGmUlSnl/rhLZqPKbb5xmWgQNSsZ6A==@vger.kernel.org
+X-Gm-Message-State: AFuF++mKXptv2TtYwpq7UFZCfEKc9GeTANeyQ9Gpxt1X40tjusaYuraq
+	NFFNRdnOfBOQfzS9tWQEN+29rrOgNq18X8hxD5YcltvmJ3OQo9yligbVpm+NWHLqzsc=
+X-Gm-Gg: AR+sD11swGsbX334dU6Gih3ApQSq9IAfketA4opTTHLDec7lL6JY3iyCtjhMgNQ4+BS
+	5yXXdpi4za2FYISkA7riCWxcMYfZOUEXU2OPqgOADzi0Bg9NhTcoE9jerGS9LOYcFTcSzTmJ94w
+	TQNCX1s1pqkfnVjKzuoF2lRbQ/4zvod6ZbOypL9cvB9V2HCyXw9KVvit+BNWyx9X7H62vpJ5L7u
+	ug9GT8lho02K23b9MU5JkO4JfrR9nyvEEGOoQHxcgDrBb/0A7TZmpsCos3F1Aj4LoDshFTXmckO
+	fYNjw8ELcCGB3eOXelo19aaoa8WGeTRzoHQhzwKDWb8KSmOCFUWBwz9ID9U9Ene8V1E7xL+MdWa
+	XirhHNJ269kIN3k6QpKL9hObvxEdLbOLtL/B83arp87LFD0ea1GhREIIFbOjdpHdSbPHZ12oemH
+	LhmXDXNX61reGzETgl6w+yItq+8wwu7lrnI75POKV0gH9ByaQz6eIJeWAbmUUXiwBMWgePHh+FU
+	DfkIvbzuYmDfyh4ECiCayMuOg==
+X-Received: by 2002:a05:6402:3227:b0:69e:2d56:690a with SMTP id 4fb4d7f45d1cf-6a5c4111ae8mr8270396a12.8.1787664021863;
+        Tue, 25 Aug 2026 06:20:21 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a59e1d741asm13965178a12.27.2026.08.25.06.20.20
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 06:17:38 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6a386a34603so1990067a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:17:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rrr/5blmULC+o8J9JSU+UYsxcXHBOWAtyYVk6o1IOf9q3H/HZ7eb+MhlVLTpZwxpbCBqi0JgBH464JVF/QNf++uoQ==@vger.kernel.org
-X-Received: by 2002:a05:6402:a50b:10b0:6a1:8b83:8f3f with SMTP id
- 4fb4d7f45d1cf-6a5c3f70aa3mr5115739a12.10.1787663857968; Tue, 25 Aug 2026
- 06:17:37 -0700 (PDT)
+        Tue, 25 Aug 2026 06:20:20 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a1a546a6bbso8254796a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 06:20:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqvM9U17od7/xfE9cQHX/hwrPzPi1SpPVko2b4/DEZSlfAr9g4gdkbgRqQg889JmchQB9Cpkw2cKqxX/BNSNhgH7A==@vger.kernel.org
+X-Received: by 2002:a05:6402:f21:b0:6a5:d7e0:626f with SMTP id
+ 4fb4d7f45d1cf-6a5d7e0643cmr2123073a12.6.1787664020370; Tue, 25 Aug 2026
+ 06:20:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260520131206.932050-1-claudiu.beznea@kernel.org> <20260520131206.932050-3-claudiu.beznea@kernel.org>
-In-Reply-To: <20260520131206.932050-3-claudiu.beznea@kernel.org>
+References: <20260520131206.932050-1-claudiu.beznea@kernel.org> <20260520131206.932050-2-claudiu.beznea@kernel.org>
+In-Reply-To: <20260520131206.932050-2-claudiu.beznea@kernel.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 15:17:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+Rw9PqTRRY3+YGL5hOncJMfEUaMeQhrj1VB1trFDbyg@mail.gmail.com>
-X-Gm-Features: AcwNN1Vz9bqZXB4KhkMlpFM4f-6nIsbwp7DHyGg8Z1SbeCLuh5Z7l-sMB_cn8NM
-Message-ID: <CAMuHMdU+Rw9PqTRRY3+YGL5hOncJMfEUaMeQhrj1VB1trFDbyg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] i2c: riic: Use the "dev_name:irq_name" format for the
- interrupt name
+Date: Tue, 25 Aug 2026 15:20:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW5QrWvA4cXYWgttMmk+RPUzc-khjaDfSNmUKcUiW_FfA@mail.gmail.com>
+X-Gm-Features: AcwNN1U3OmHmmWpwS87tYrTQJzi3-zHMxDqRDiJzx8Y5-1P2kHE8ffd0bGHqVT8
+Message-ID: <CAMuHMdW5QrWvA4cXYWgttMmk+RPUzc-khjaDfSNmUKcUiW_FfA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] i2c: riic: Abort the transfer on completion timeout
 To: Claudiu Beznea <claudiu.beznea@kernel.org>
 Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, wsa@sang-engineering.com, 
 	claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, 
@@ -75,22 +74,38 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Claudiu,
 
-On Wed, 20 May 2026 at 15:14, Claudiu Beznea <claudiu.beznea@kernel.org> wrote:
+On Wed, 20 May 2026 at 15:21, Claudiu Beznea <claudiu.beznea@kernel.org> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Use the "dev_name:irq_name" format for the interrupt names. This makes it
-> easier to identify interrupts in systems where multiple devices may request
-> interrupts with the same name.
+> riic_xfer() configures a transfer and waits for the interrupt handler to
+> signal its completion. If the completion times out, the device may be
+> powered off through runtime PM. However, the transfer interrupt may still
+> fire after the timeout.
 >
+> To avoid cases where riic_xfer() powers off the device (via runtime PM)
+> while the interrupt handler is still running, disable and synchronize the
+> interrupts after the completion times out.
+>
+> Fixes: 310c18a41450 ("i2c: riic: add driver")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Thanks for your patch!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -112,6 +112,7 @@ struct riic_dev {
+>         void __iomem *base;
+>         u8 *buf;
+>         struct i2c_msg *msg;
+> +       int *irqs;
 
-Output looks much better now (on RZA2MEVB)
+Perhaps make this a zero-length array at the end of the structure,
+so this does not need to be allocated separately?
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>         int bytes_left;
+>         int err;
+>         int is_last;
 
 Gr{oetje,eeting}s,
 
