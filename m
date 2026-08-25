@@ -1,50 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C089E3FBEC1
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 14:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DAB3D34A8
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787667374; cv=none; b=SjX26vdp4FgWk13b2F6GxpHf6CVIOCHqJVMNn2ZqbD4bTzLu1orfA7dlE3BD0gCkz/RJY/4yeNa4yNqVlmpAxBDBZf0gFWBfj/JswP473vVwh42SYSefOcTfQ2sGhSstxanoaXp2LvrgKvMRbp/NgxKUr3C7fhmy49Rl0qs1qew=
+	t=1787667374; cv=none; b=hOSAQSpRkH5mniZ5Z4D1aUIOEYcE54QNu7sgH5giieMj/8fBZhB90CfltmmMPpQsIvNsr5LqiRWOx2wBLvw53xZjrxQij1a2XeJ7ruJ0nmSV2BrNtxkqvJCi/JCb/4ZaXsCrHISrFtYe4x0iQeV7M3GcY1xrZpGfit3Qaiuqw1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787667374; c=relaxed/simple;
-	bh=Y15ijkBq3cCA9hYlYCjjIjEfWdS2AnI/QEHwLbxSBoM=;
+	bh=aKFEgkdy12fOkGTPvTGdvZQ9bGN8VFbuHPRwMqZWar8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JgjTcjTK/43RQPU7awLgt7qLQwUtiboPsLLdqA+SL1RNom4ealo01cDooqlOoziqgOX7FV5Z64belRqZdd3hpLkx6a1VO/C+lt+QiMRkXDg6m0f0LiAj1sSo3Q0fyh9cc58BOE7iiFzLZuDBykmW0d3rAWXeN8P5mSBGIC96zNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DC7LwmL2; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=pd+dpbTUi0disaoMmMSNEE1YWX8pkpmYLgehKN7GECV7UFVRSmAZQ/IdFbVqNXML4gOn97VphSIU6PL3L7+Z1+sDPSS6oCxTIJEQ8DWIFFEQSBXcYhLhCLdMPlccGq/Fi0ad1NpuCOmQettxjFDPyEssn9JCMKwN+7nJ7HWpwW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ioXD3o2o; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DC7LwmL2"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ioXD3o2o"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=8CrH1NjBdwNSU65k73qFHV/Fms6889dS63+AR7BlcJU=; b=DC7Lwm
-	L2BWt7jzmzp1567knCaKp/86LYl/a36lNYQyDRqT0nhHAlSXQniA017h7gxa4dvK
-	Lp1kQ+BLyXDS3qfZkJn92KrhfZ20cigUhVVb/GBS+ZZvd1rDOfH3tOqMYZlfW3Gm
-	XotORqhgWwnfEeMPgewFnSy1Y8bi8mFFE4c/ydbO0kHijP5letI3lync9n7cIiEL
-	pSKfiXHTtnL2111od4yEQYZ957h+uovV+9o+R3hJBS5HdJ0JKyDAP+TWN/aGDxTE
-	ZaJ8kdkIYdsbP5zp7N+jTX+5T5JsTPZFeOUKG6dez8fvlFWluVYG6tmA6hqGxTyJ
-	W5gowKt6sGLs4b/Q==
-Received: (qmail 534335 invoked from network); 25 Aug 2026 16:16:03 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Aug 2026 16:16:03 +0200
-X-UD-Smtp-Session: l3s3148p1@oIUjvt9ZLuIujnus
+	 s=k1; bh=PIBmS6EA2uGDBW3mkk/kPkTL5Fmu7GbZSSjquRSWNsc=; b=ioXD3o
+	2oYJ9VCwr8aJsLwTiglvyREsIStgdi+ZXOmRQbvnOYxmrvnXbIxsSOfbppvPYZEY
+	TUEJ1Wn+6taLIhVhzZxQLP2VoxALbLjC7hN0Hy3aG4RvZ+7i3W3hQLprZK9Rut9K
+	upqXycFQ0KmnW7OOeI69adk7a9nliT5wJjQWvk7ohR3Yq7Zv08OEJDBN9Er1H/Jr
+	hMQtoxQ1irO0FDzxC4lFhPE6TxRzcV1yHRKedjz/OUU/stE+ucSHR20NXw627dS6
+	eTgHxrw7SR1Lk46zmK6OLrJyQwwDIpNmiib1bs6GKlQEUdioOx3jpMs7nqSEQB+J
+	OwpLYyzWxGXBUYLw==
+Received: (qmail 534304 invoked from network); 25 Aug 2026 16:16:02 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Aug 2026 16:16:02 +0200
+X-UD-Smtp-Session: l3s3148p1@9nEZvt9ZJuIujnus
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Vinod Koul <vkoul@kernel.org>,
 	Frank Li <Frank.Li@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/4] dt-bindings: renesas,rcar-dmac: Add support for R-Car X5H SoC
-Date: Tue, 25 Aug 2026 16:15:45 +0200
-Message-ID: <20260825141542.30901-9-wsa+renesas@sang-engineering.com>
+	dmaengine@vger.kernel.org
+Subject: [PATCH 2/4] dmaengine: sh: rcar-dmac: SMMU doesn't need IPMMU workaround
+Date: Tue, 25 Aug 2026 16:15:44 +0200
+Message-ID: <20260825141542.30901-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
 References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
@@ -56,37 +51,57 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Also add the familiy compatible because X5H is the first R-Car Gen5 SoC.
+R-Car Gen5 doesn't use an IPMMU anymore, but a SMMU. So, the workaround
+for the IPMMU becomes optional. Add a flag to distinguish. No functional
+change.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../devicetree/bindings/dma/renesas,rcar-dmac.yaml          | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/sh/rcar-dmac.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-index 04fc4a99a7cb..d3d521c927e1 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-@@ -49,6 +49,11 @@ properties:
-               - renesas,dmac-r8a779h0     # R-Car V4M
-           - const: renesas,rcar-gen4-dmac # R-Car Gen4
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index cf07c17847d0..9c5210257097 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -219,10 +219,12 @@ struct rcar_dmac {
+  * struct rcar_dmac_of_data - This driver's OF data
+  * @chan_offset_base: DMAC channels base offset
+  * @chan_offset_stride: DMAC channels offset stride
++ * @has_ipmmu: flag telling if DMAC is connected to an IPMMU
+  */
+ struct rcar_dmac_of_data {
+ 	u32 chan_offset_base;
+ 	u32 chan_offset_stride;
++	unsigned int has_ipmmu:1;
+ };
  
-+      - items:
-+          - enum:
-+              - renesas,dmac-r8a78000     # R-Car X5H
-+          - const: renesas,rcar-gen5-dmac # R-Car Gen5
-+
-   reg: true
+ /* -----------------------------------------------------------------------------
+@@ -1877,8 +1879,9 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	 * can't use it with the IPMMU. As the IOMMU API operates at the device
+ 	 * level we can't disable it selectively, so ignore channel 0 for now if
+ 	 * the device is part of an IOMMU group.
++	 * Not applicable if system uses something else than IPMMU like SMMU.
+ 	 */
+-	if (device_iommu_mapped(&pdev->dev))
++	if (data->has_ipmmu && device_iommu_mapped(&pdev->dev))
+ 		dmac->channels_mask &= ~BIT(0);
  
-   interrupts:
-@@ -123,6 +128,7 @@ if:
-       contains:
-         enum:
-           - renesas,rcar-gen4-dmac
-+          - renesas,rcar-gen5-dmac
- then:
-   properties:
-     reg:
+ 	dmac->channels = devm_kcalloc(&pdev->dev, dmac->n_channels,
+@@ -2000,11 +2003,13 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
+ static const struct rcar_dmac_of_data rcar_dmac_data = {
+ 	.chan_offset_base = 0x8000,
+ 	.chan_offset_stride = 0x80,
++	.has_ipmmu = 1,
+ };
+ 
+ static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
+ 	.chan_offset_base = 0x0,
+ 	.chan_offset_stride = 0x1000,
++	.has_ipmmu = 1,
+ };
+ 
+ static const struct of_device_id rcar_dmac_of_ids[] = {
 -- 
 2.47.3
 
