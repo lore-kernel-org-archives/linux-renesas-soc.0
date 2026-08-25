@@ -1,72 +1,71 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B700480321
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 14:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB5C480974
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 14:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787668692; cv=none; b=j8Y2FP3craNE9GaPnrc3HLng2+vPJnO7vSJpz11J+NgK0kNliygcDwTOtvG2w9BFhaChiCnJz0Awxjpd2MWwOVO/YrOqFVu9I42X8e/4qF6n/KCPv4ajm8uLyCY8MPQ291lfVzgW5kvmWMHEryK9DwhnfkyImmCebGscT4/hMOk=
+	t=1787668889; cv=none; b=dh5t0sakIZB7eds6vdbv2GW3yABp97wousQjoVoxneeKFmRIL5Ad/uaEtCGp0v2p0S87ldcANQuLhhWHWrAX9/2WVlQhZjOzwGfkVk95neOlZW84Mr8BieAjrcrmcJRir19HZMDo1BrRaGwiYzTUt0hCbb8g555qB1pAM7WnceQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787668692; c=relaxed/simple;
-	bh=eQ34DPym1g3yHftFYjOe7131ncl6EEw6TRurmNjX1u4=;
+	s=arc-20240116; t=1787668889; c=relaxed/simple;
+	bh=nLpkCbwZynXDMfJEEM7Od0jmnvS7H38PKmlDset+WdA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c/aJg8QrnVEgPvEumvzI/je+IzzwczdRB3CfjOrmHldqellfwFAIWABA9wlqWOm6dDSCYdCurN2Kg0BJPropHq24KLvsM3QVVI+515lNUYrRdgb/5k+SgPCET+6ho241G6lfwGM9dTLJhRnQXoJE0FMNLLOYhj4f5qzNllR+1xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+	 To:Cc:Content-Type; b=JJRMR+NZwwouH/ZlCXPu18BTP8kdBFAcT3uK+bxvJ36J+no+/xPhITrcSR6AdZUmqnu6JL5TuQOU0txh/DuiR20by556eeGKhnu7ZGVwlqMw6FWqxSqtcCmxUhxkQ63kZpTysvkpVJ9pZU0ASXWNU2oCQfIA9FwTdlzB6ld5c68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-59b074ec7ceso2075044e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 07:38:07 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c38565e774so1495803e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 07:41:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787668686; x=1788273486;
+        d=1e100.net; s=20251104; t=1787668886; x=1788273686;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=jyAeQiEiW4UAm/NK4AK+DyXXQ3APXDKQszoA62dY7gk=;
-        b=htl4WkKNM2UoFL8zRRRMOHIrul1u1NPIYMXZGCda8UFePsw6a8Ac9O7Y55UO/jXNaz
-         d/48skvHTv3Voiruf8NYhfNievh/QB7bLpXriVhDcPCghtHgccfyG0ypCCSVISiRxnBL
-         glKhYp5GvQ10GAisHR04w1nEYMVgPkRbNZwvXPeu+Zbrf6j8aaTYClKqerhqbU7Hm9/9
-         54wp849OfR+z4sTfWIq9ZpNAi93SykwM/LhsG98dxVqryHe0hu0tuipgsMRBobFjA/la
-         68TSBru5zKIMpNwRqnd1TEXYNBPWtshhibo0OeLCRnmyOtjbjwStPKcqHKVv/pESym22
-         rCGw==
-X-Forwarded-Encrypted: i=1; AHgh+RrWkb9VaEbjBnfj/GV2I/yippT2bAO23KCFSJUdpAoSzL9PCeNfLew552wxgtAtTiuY5kYF5wkT1hrW43vxREkp4w==@vger.kernel.org
-X-Gm-Message-State: AFuF++nqRDLqACw1r7U+M7l5llz7z4jPNvmaOLBuW35svZJV8/NVqpqh
-	PS0h867G6JAKLDNb3kS0cvBYu4sfGEhfjE76ybyEbE/pM9SPXkvKeqvKX3VfJQzuTkA=
-X-Gm-Gg: AR+sD10339Dbz5/T8kIIKd447vIjh4uDWBd0EmxnueZIwlV4aUXgFngGkKZO3olVXoq
-	T7b+weHD6EnsNLuwp8wUCbkp3LII61IqB/lunYbENePQ+fb3SN/4YJWfOgZbTAl7YaylX94a1n0
-	wUOyIOF97U4xKbAMnD6QTU+PUNEx+ZIYVxskgMTJxBZ3A3Fcp9yPM6MKbyxDxWYCuzDiUEjfCpU
-	+EHFclgZEfd8kR8EkvBKkyH+Xv6khKIftscOZrtaMFGDtIm7o/HRrEuoB+Uq45PEsHGDBPM1PKm
-	ssdaqyDpidmssaMzORFr3hK7q3StO4WzE30fqB18ogJluEGVHRgbT61Mwjb7mH6PVj6AApGi71I
-	AIh7LaMeizRw7HnAGggCMvfGt52RlFyRhcWbkziKhHKYp4TxL1gBfHATMho7aerVJ8FOI+XuTOV
-	QwD+lIl8l6EZj63u5hLH47Ypj3wmytxsxnIY2h+UbxB7pD92n485+fIWHrk4SA/uSwigiewZjXG
-	CMjtMsUIbghU3ZfAddzW2THlQ==
-X-Received: by 2002:a05:6122:2216:b0:5bf:9f77:477a with SMTP id 71dfb90a1353d-5c5ff27c266mr15097692e0c.2.1787668686138;
-        Tue, 25 Aug 2026 07:38:06 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c623cf4026sm6272288e0c.3.2026.08.25.07.38.04
+        bh=U2zVX3GQV5dux+TGrNQ7XOJ1BZI/EApCvZgLsrH7Hjs=;
+        b=l3HEJom9QDR/MbWvLB66kfDayr1V2POQunth5f/damEgvBUPJkt535cNA7/HJ+BwC+
+         d1esANDhtjV57nQkeAYEcuXJNR/YmPsJWsbEE7GyGXKhNy2DfgwDL/1Vjlc6kjlRUvzn
+         OqIFaRhNRK9ABgQu9dJn8qlVv2AS4WRTOgrgJeeZhbmdtCW1lupqYMnjp2EtRjFlLdK+
+         HG4llbUQ7R2L7dBlcTDFZBmD/ofMOaiooFDhgPo3mTpyZ8gLtToYElLsbyEh3NHoZjcQ
+         hvnF/V3LTMMBVbgGhUW41HhJ8fBi9Q+l4fV6GFZUrnKcs6yhanglyMQTlOPqLQAwEh7C
+         p5YQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rprw4MOhTGio5jE+SJUWNLt27UHxebqZ9ZM4QDJZAdBtkuWJuuTDTtpSGj1piJDe4UThNeXol5Z2RLX4aOa6j3VrA==@vger.kernel.org
+X-Gm-Message-State: AFuF++krkqjLUBtjP+Y8dfttv3XB1/LsUK+WCPKOqW3/8T+t4ejw8SiC
+	uCKv53JrZUTdn02n7DO5vyQNkYS66nj162xdiZYvFEbsmwSiFVFHSwlD0Yc2Gp9pH0c=
+X-Gm-Gg: AR+sD13j6fZ5URMRJwIojr21b+hQ1D8jKpgBJ+PrTgaK/bp5VIV8HoiL5aZT4y5zwnD
+	pVR/89/fdZURTpQqBmy7GPLwMXgipnd+AW/bVoC2auZGVgl9qUlXk+FeUbrMUiPLbPyZ0mhdMu7
+	NlcgdenztsvDkK/Chgda5bSTHF6+5x9RZ5yQt2QUeSiY1At+VBjtvJ/47lkuQdu9w3izkgTNt/X
+	/A2r+1EPZzduFgxD9xMVHWacjUxNR4AwASRTnP8URQywLGL9+RGZo73jqcEQu/hooVCpvHXIWFb
+	YL5Ty0UjS1dN+yEBdHFyEGVB5oyGhTPnUlSR2QxpxlPxoF5ZCgGxG5ispX5ti7W27yhoVoMw53F
+	JmAss49b4rL34Rx25VZhgIDm5BnJifnGwWfjAC+Ux1dFrBXDTfYkGzDXonTbcXQoAK3tIM6nuhd
+	hnBQAZj0jT5Xmo+iaLhqFMWrY5nTK1EW+4auKvX/L8+kKmrCh8pRPXUt6VgRfZWIXVydcWDAcNr
+	mSeeeDvLXb6Wcbd1XYr8rWLNNBVKQ==
+X-Received: by 2002:a05:6122:209e:b0:5bf:b500:c4f4 with SMTP id 71dfb90a1353d-5c60dd1a23fmr10180526e0c.2.1787668886130;
+        Tue, 25 Aug 2026 07:41:26 -0700 (PDT)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c632e87d61sm4673654e0c.1.2026.08.25.07.41.25
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 07:38:04 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-966eabad303so963003241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 07:38:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqmOF2Rhw4hskOMTTAZL/18xcNPylK9yeoOHFLkL145MmaPRSscI+lURWpDfG3YkYHKQxG1VT+oQT7/SuVhPIJ7Lg==@vger.kernel.org
-X-Received: by 2002:a05:6102:26c5:b0:772:5acc:b848 with SMTP id
- ada2fe7eead31-77a62c46273mr10559459137.6.1787668683910; Tue, 25 Aug 2026
- 07:38:03 -0700 (PDT)
+        Tue, 25 Aug 2026 07:41:25 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5c38565e774so1495789e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 07:41:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrX/al9cU1p2jJNlvoeOx391uTYx5QvHjfujn0bSW+GYSg0/Ec7Lr9ur+xsWss7XQn9paQsfkhM8RhBpQsLaqJh3Q==@vger.kernel.org
+X-Received: by 2002:a05:6102:956:b0:778:9e3c:5760 with SMTP id
+ ada2fe7eead31-77bd288c901mr8711759137.11.1787668885681; Tue, 25 Aug 2026
+ 07:41:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev> <20260714173315.1981708-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260714173315.1981708-6-claudiu.beznea+renesas@tuxon.dev>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev> <20260714173315.1981708-7-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260714173315.1981708-7-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 16:37:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUZUZgtpnEEHEP+nHJHXLQOWJbk3Pf4fzyviMB0q3wuag@mail.gmail.com>
-X-Gm-Features: AcwNN1VJh8QhgMVTLLPaW32CuNebN4Cwri3VhB7TN8P_9_MXNNGof6glaJNaOtY
-Message-ID: <CAMuHMdUZUZgtpnEEHEP+nHJHXLQOWJbk3Pf4fzyviMB0q3wuag@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] can: rcar_canfd: Do not set registers selecting
- the CAN mode
+Date: Tue, 25 Aug 2026 16:41:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXMhfr=rp9G8X-+=AR5vqW5VrJfrKwjVrHEKk_kJOh0ZQ@mail.gmail.com>
+X-Gm-Features: AcwNN1XcBg5LXeoVHCFcLS1DZhjQyfJuS_scF13yf7YemR1ca_DnmJdOHtxK55I
+Message-ID: <CAMuHMdXMhfr=rp9G8X-+=AR5vqW5VrJfrKwjVrHEKk_kJOh0ZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] can: rcar_canfd: Add support for Renesas RZ/G3S
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -84,41 +83,23 @@ On Tue, 14 Jul 2026 at 19:33, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The bits 30 (classical CAN-only mode) and 28 (FD-only enable) of the
-> Channel n CAN-FD Configuration Register of the Renesas RZ/G3S SoC are not
-> available. The IP supports only CAN-FD mode. RZ/G3S HW manual (revision
-> 1.30) specify the bits are read as zero and the write value should always
-> be zero.
+> Add support for Renesas RZ/G3S
 >
-> Add the mode_select_na flag in struct rcar_canfd_hw_info to cover RZ/G3S
-> and avoid writing to unavailable bits.
+> The Renesas RZ/G3S CAN-FD controller is largely compatible with the
+> variant found on the Renesas RZ/G3E. The main differences are:
+> - the RZ/G3S provides 16 AFL pages
+> - the RZ/G3S supports only two channels
+> - the RZ/G3S supports only CAN-FD operation and does not implement the
+>   bits used to select between classical CAN-only and CAN FD-only modes.
+> - the RZ/G3S includes an internal divider that allows the peripheral
+>   clock to be used as the CAN FD clock source.
 >
-> The existing struct rcar_canfd_hw_info instances were updated to address
-> the request in the Link discussion.
+> Add support for the Renesas RZ/G3S.
 >
-> Commit prepares for the addition of the Renesas RZ/G3S SoC.
->
-> Link: https://lore.kernel.org/all/1d9719e3-10ff-4cd8-b729-55fea93c37ce@wanadoo.fr
 > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
-
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/drivers/net/can/rcar/rcar_canfd.c
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -445,6 +445,7 @@ struct rcar_canfd_hw_info {
->         unsigned shared_can_regs:1;     /* Has shared classical can registers */
->         unsigned external_clk:1;        /* Has external clock */
->         unsigned fcan_pclk:1;           /* Has fcan sourced from pclk. */
-> +       unsigned mode_select_na:1;      /* Has no bits for selecting the mode. */
-
-As negative flags are harder to read, perhaps "fixed_canfd"?
-
->  };
->
->  /* Channel priv data */
 
 Gr{oetje,eeting}s,
 
