@@ -1,48 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7153F99E3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6F38B7DC
 	for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Aug 2026 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787667374; cv=none; b=JXZE1zon5waJSdFMQ/2wH0tYrhEAUrs0zXi3Cw2cBQQugZKeu9xv5v6/HbJday+rTt+N0v1hSE/J4SyPwxvv5GTspqzWE65gYhCCZ4yI5gkqs26Kd3i4VeDw3WDn3UjGrfiIqGXwCGbIUUv2pTpQXeTAqqfFpyEcL7ky3V4+974=
+	t=1787667375; cv=none; b=qoTL9LaSLFh/slF+JkwI/S6Qi0CInOFXZIYaWpf19jIibO6bdv8A14T/RmmHQ8GXuHM3AvBgwsBZUWHLPANa9XzwYAObFmajBP7kTHpbvLua3XoqvbBchExrQEtKJ551uodfgR+426okfhR2LVBGWxUsyLXwUok9mSDqzXALCvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787667374; c=relaxed/simple;
-	bh=ed16YCg7aqHmrgv+1HLh4Brgq3vbJMD6gm3aeQG/gms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rGHmZokeBa0i+hVIreZH5f9kySGPDr1uiRbvB7GXBpjJJLNfD30w9/uxv/VH5BXcJzaq/knAWfIxIdceQTRifoONzHUbH0z7+XYQhjAmbdrRA+pZ1uDW2wHZPrp8Qm+bJ1O23HhHLOGXrG9VqnF4WkC7hXJlkk20QrI5JK6/3d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GoR5hhuG; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1787667375; c=relaxed/simple;
+	bh=Tttoy+pwrqVuGWRXgN1xqFdvLUo1FLwGLXWuJthNbzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e7xId/WnTE4h5iLj4vHksSUK1K/vPGq+Gch67EQdbmUiB8wkHUNDsCsCPvbODD5Y0x/oufQHkZ77wJZeRe85uTWG8PgugCa+6/nIP6msIof9zC4NMWGxwcDpbaDPLJBYABFtnEFOfISlJvuvOlvN2KsW2cx8+PEheeA5gzhz/fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fWgWSGcE; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GoR5hhuG"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fWgWSGcE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=miTvjILC7Ya6DG8S3QRsMY5dmHBX1AvHN1oHZVOi3mQ=; b=GoR5hh
-	uGfh93HGz7faiJivoYgHZhUIqrXDrZNLXd45LnDjMEChPQqrJD1jGcCX0ZD6hJQT
-	+nNoyEskJ0eCz93MAZLBQ2Pn0AzOqa71IQzY7H4N0ixvWdQhptWHoxZCh3y1NYrh
-	RZzSh3/CTJc8y2sFi6zoU32N6BiyK5yT+PTdrUGKcLUTLBME6pBJFZWIdxvLLXci
-	TIXvL+9IWWRvNzJDNGinowQVgmLxFV4Ks32jz9ntipb9M2tSY3Jj8Q3Cftx8RAVg
-	SCVHzyJt6LET6nwuWDovj8/1IONA+TDT4+bFJgUjh94FXCWb0aTJ/+ujDKhsdb/a
-	6fMhbrnuQ2+6PWmg==
-Received: (qmail 534273 invoked from network); 25 Aug 2026 16:16:01 +0200
+	:mime-version:content-transfer-encoding; s=k1; bh=2OfUDfIvGiOYAf
+	w48NfUsS0nLcidY8wo/4xe/9l/MIQ=; b=fWgWSGcESAQXvEzG12vQSbtAf+1kO3
+	Fgg4IYSLgC5YrjqBhEv0ou0w8daSnXxiJ/RqbagUeypHFa5DovfNSsPHc3CNAFaN
+	tgUpPKbMTZ7jnX9TKbuYNxVv7hdY1HI2TtMiGdcH58gjvZWzINmuyYe2FF8OVYg1
+	CKoQSnlcgacE9SIiIrtOJxvm7UEcZCYiMe4yfNT3yNpKp4REDiN+mj9t/0Q12vkq
+	GF6gLj9fqb+LjTVZ9fL+ApW7qLcTtxisKpF97cLiSUDxYp5F2MhLqP7oihhuaDap
+	alxxLpP/RPjRo+zzYFjCD3gEUR0M04tV/txuMoKc6y0XhwhinBKgVwmQ==
+Received: (qmail 534226 invoked from network); 25 Aug 2026 16:16:01 +0200
 Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Aug 2026 16:16:01 +0200
-X-UD-Smtp-Session: l3s3148p1@HfEOvt9ZJOIujnus
+X-UD-Smtp-Session: l3s3148p1@7TUCvt9ZHOIujnus
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Vinod Koul <vkoul@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org,
 	Frank Li <Frank.Li@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	dmaengine@vger.kernel.org
-Subject: [PATCH 1/4] dmaengine: sh: rcar-dmac: fix style in struct initialization
-Date: Tue, 25 Aug 2026 16:15:43 +0200
-Message-ID: <20260825141542.30901-7-wsa+renesas@sang-engineering.com>
+	Rob Herring <robh@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/4] dmaengine: sh: rcar-dmac: add R-Car Gen5 X5H support
+Date: Tue, 25 Aug 2026 16:15:42 +0200
+Message-ID: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
-References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,36 +52,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A new member will be added to the struct. Before that, adhere to coding
-style by using a single space when assigning values.
+Here is a small series with the needed driver updates to support R-Car
+Gen5 and X5H for the SYSC-DMAC. Details are in the patch descriptions,
+but it is all small stuff.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/dma/sh/rcar-dmac.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It has been tested on an Ironhide board (X5H) and a SparrowHawk (V4H)
+for regression testing. The testing branch can be found here:
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 44eab2d21d54..cf07c17847d0 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1998,13 +1998,13 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
- }
- 
- static const struct rcar_dmac_of_data rcar_dmac_data = {
--	.chan_offset_base	= 0x8000,
--	.chan_offset_stride	= 0x80,
-+	.chan_offset_base = 0x8000,
-+	.chan_offset_stride = 0x80,
- };
- 
- static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
--	.chan_offset_base	= 0x0,
--	.chan_offset_stride	= 0x1000,
-+	.chan_offset_base = 0x0,
-+	.chan_offset_stride = 0x1000,
- };
- 
- static const struct of_device_id rcar_dmac_of_ids[] = {
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/x5h/i2c-experimental
+
+The patches here are based on linux-next as of 20260825. DT checks have
+also been passed.
+
+Looking forward to comments or approval!
+
+
+Wolfram Sang (4):
+  dmaengine: sh: rcar-dmac: fix style in struct initialization
+  dmaengine: sh: rcar-dmac: SMMU doesn't need IPMMU workaround
+  dt-bindings: renesas,rcar-dmac: Add support for R-Car X5H SoC
+  dmaengine: sh: rcar-dmac: Add support for R-Car Gen5 SoCs
+
+ .../bindings/dma/renesas,rcar-dmac.yaml       |  6 +++++
+ drivers/dma/sh/rcar-dmac.c                    | 25 ++++++++++++++-----
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
 -- 
 2.47.3
 
