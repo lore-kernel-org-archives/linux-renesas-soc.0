@@ -1,166 +1,140 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CC2370D54
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 17:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787765374; cv=pass; b=rrk3JUm8lHo5ea+EQ8w8KUl5KWSmpy8MRInIFMH4ipbS5B78W65AFHuW3np2kMpGn36p+BK1QjdwgOgEjbfaABQ1AiBH0svohRWVQ8zktO39NVmmtYczivtnpI9zrm7tNjXatZS8ylzGfNsVj8I2XmNIj66sCvpcVa+r2ZCXD44=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787765374; c=relaxed/simple;
-	bh=PIULD2sfSK88keFpIH5V5f8s/UfnOznWi0dgeAPq4gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7rY3eT10gxe8aGpUL1s34Xy7+D4jLUKedQCKJ2WnabPWea0BAFNHTywBe7AXg49WnDhkWOuk2N2tztAulztV76p54Fbi6aVzmvtPz1KX0mscvRGeJPSVRaizJ77wq8oOH2AM+tCnR5a84vgguduhYxgYWcpS44QN+gfiF9roVM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E05CsRpE; arc=pass smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA794570E3
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 17:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787766553; cv=none; b=mggtYGgrE0tM20kb/JBdV/z5hD9EL6HZhksiSPCQZPu/UWEscBPD9IF44IHbyg+YztZnrnd3wf8C9CjiDBvoPwoETddXq3NUlvqbmoB5g5Wl67OzMeJQ5UidE3JlFWU6r4ofG+K3XwVwNc7ktihFeoAFw/Slu4sn2gya9d1qMOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787766553; c=relaxed/simple;
+	bh=1x7y3a5AUOrcn5z5HBEAF5L92PCFAuoRpuOs3YWC738=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=giKyn6orOyPuMc5lLQ6X0nniIOkrqxsXcDiIeGFuRGc1zFxhXYlDizAaMT2v2cL1jKQzaSLubjJ5vPsXShALiCO1wsLLxRlmwfVwwxqweNhIjbQ+KiNGIgbOpZgTXzAtXN4FPHlIK1KuYRTrY0PZ1v0h5Om1dUi0C3F3SnF4ThU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Th8va5Tt; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E05CsRpE"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso4256385e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 10:29:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787765350; cv=none;
-        d=google.com; s=arc-20260327;
-        b=bdtGtglbz9MlONaGW8dS06Z+3SczyBoM4DF0YDMD8IAyjeqeSSHMTv5f4ccIX+8T7T
-         0DHCRg9gAKu2DKJ/bMkIcEdWot03gZuN1Ri+N7AFDKgV5MoZkzUg6Ir6b02LmaSllS1a
-         2QZa+5YgcQ4aY8uoitgcg/EI3v3suCjRAADqfVZ9IZj9wmwLXDqyhg8R7XGEvVx8aiim
-         Nw7cgnKM9mtO+/WU2wrQWeIQd22UO2wbih1S/FtLlatJE3jCEknQwvIvI0QUsove6Ngr
-         BQ3xcqAYIMQ5GVh3csP295PzP7NdmtyQHs1ab//VgnBzkUJl0bPOuzNcYyN7mAdex50/
-         oknw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=QXN0egExQUN8IBSJ2IqvNwpvhI9gdkWCNjlrCbNq1Z8=;
-        fh=ecvwuuMCexg7iZFKK80wE0tByD16g3WeSWzGtk+MsSM=;
-        b=QlfTy6/9X8EQ3NI0TEwNgAfuX1sEVoOSB5n/AZf/egl/SPfPL5quQJmjRVsXpXt6vO
-         S8mDGsN/2sTC8MAgpN7G77GHdilZDVXXmirOvvXm07F0KdtTy3onixPkm5B4ADvDrFRn
-         sufe+VqYrpMWHcoeV6KlgL8aWBcQZaXRs7xpIcswF3eKNi/ZKiA5h6ZOp2jO/iM6o99j
-         ECdf8qgGyc2HW1Vd3627pCJ1S8DgYC2BlIB5CWTHaTOAc1d0N5LwGh23/ey94ic3o/FQ
-         OZiyjHGxXqGB2jM2EHZRDBnVFoDLYRPST/HNRAbnbyZcs8NO5mA9GN5xY4huehgblk5V
-         /PrA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Th8va5Tt"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c207cb16cf5so191744066b.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 10:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787765350; x=1788370150; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=QXN0egExQUN8IBSJ2IqvNwpvhI9gdkWCNjlrCbNq1Z8=;
-        b=E05CsRpE02vTA5otmhUKSb0EWvky69+A+daxwQjuLewClNxTHdCzxP0AbZkpfPl56U
-         Rgmtdi9UZDJrX4i+jALLAePZpRHUtuhBAASzJFpuuXQ8HoFAJH7W4pwFpZp02EeGzqfc
-         XmFmpx+PAYWaIx09oXhE5U7beVbTqb4+Csa+sCo+C7LgXo6LByAAitmlSVNSLcvNEamI
-         lKe3bzxaM6RxbZdbqJHaFLFIpaBDVZC27QjAGnV3f7HxuFlXPHmpZ2Gvp0VYjFFh9qFH
-         UIVWgLyNrYq/ifJDDjDpgcisIN/EpvHipKcW2cwZ4O2JSu6pI+5Gpsl/rIBbmrUqnBJ3
-         C3qQ==
+        d=gmail.com; s=20251104; t=1787766540; x=1788371340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=2YMeD7dLZisixXOJMrSKSkr6GLMkfgvOUyr+kt9XhqQ=;
+        b=Th8va5Tt9tGgoeWxjzTjKguQ0kv7N5UIp7a7C+VQK6dRYv/RJ9OPNK2dEIO+FhUDF1
+         ni+S6VbL5qwYEGSMhgVPRH22qM5E7cmiTi03Z+ChV9aBKK8K+/KsNFfSyOEKCUrAzIvC
+         cR1dlwndEIFuLI24esSJLKY0K2S4g8u+gTCSyGY5CfVxEIptwkZA83QpAvxO8P756eEK
+         XTHXfDSmrV+U/Il4vJiigLd3C9tJBquCuJ2AukTgBg5Z/Dlsw8s4sWhgZ2aCr2UgpPfR
+         NaPtcPBDT8vTjRUGTvARw0SGywqL6tQYove77+FXCqZudfs5Fz+KT4wHEpEVfJdGzCIw
+         7ULQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787765350; x=1788370150;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=QXN0egExQUN8IBSJ2IqvNwpvhI9gdkWCNjlrCbNq1Z8=;
-        b=rwpu6reQ6MbSzzRQO2fB382Yg+HgvxVNy4CszmU2ZwKMTfClQFZHGrCrDcz8euXuKc
-         ljOiq+Pao0Pz3ayM5r01ceDftHeRXWxH3eSy1tET6odv4TQ/kThA+myhm0n3WPksTsqe
-         4+vaXUhR2YYcihoapZmaqT7VTfunO31FTCEcmgmDpnN/P5eI6MM8yxnaqidILvALyClp
-         7TiP7vVymaHavBGXwJD8oUrA3uxzrKFiL2qjlfAdq1cdF+uehN2N68ldaKTzLdwxUwwb
-         HL1O23Zl9nxL2Ly7XDj92E7dwyDY482UMoJc0ZGAuguXGYn4YmH9hE9ficrPX0XyZ1qW
-         PtGg==
-X-Forwarded-Encrypted: i=1; AHgh+Ro8ZNTqytNpTgH+j4TPWE+HK33uuQLLU/bA3Mo74Gq5KGoZC0T+dmO5mdaNUnuH991quzZ/lnNASFGFRLEmX7J+lw==@vger.kernel.org
-X-Gm-Message-State: AFuF++n5iKLv7dYMdq0QSmpWy27Y2A3qT+AAT+b03GB5GCaSDThdPUhf
-	fhKpF94wfTw5ib4RMtEMMUIPMybF1Pc/A4Zp2uLpR2AavsA0Re/63YW3eiF0stipsksYhqeyNrN
-	M9s5axNPYJivnWkBF6kuWzAz9tVxgPDg=
-X-Gm-Gg: AR+sD11H5slrfwtMcctnD21m8uR90+AaCnGjP267dcadodL61nqGwAUtFepf345w1GE
-	0ZeoT15IAeIAYe5pl/H3408TMDpl8a8bRhLwERtLR/3Heeog+Nq3mxw9OuT0YoU9teeLBiRQPSE
-	8WERIln+upNhVXSHEQYDoAL6IpxN0IWI99zn2r80hriVzQA3MOw50BRfpTnHOEv/aPdHqdQINpe
-	cf64RsfLcDPFP09vNn+AQWLzbynfSWv+IEYaYChMJA1VE9PVCHweJAazlz8v+Hsz/or+j2TRYeq
-	5kbE473fOjDmeuracgsU3M4vi/u6Dm4oeHWwEUlymY/Up605h6FCUNqTgvMEydRaRJ3cDvOHQ5R
-	RdCU0juVl/ahFqbsMSOCK+Yr2QXwyE7Z2wkrOSZZt5veYVbKGqaoec/WJPWv5N8uC5w==
-X-Received: by 2002:a05:600c:1552:b0:490:e5c1:b8bf with SMTP id
- 5b1f17b1804b1-499dc822d91mr79612305e9.13.1787765349355; Wed, 26 Aug 2026
- 10:29:09 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787766540; x=1788371340;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2YMeD7dLZisixXOJMrSKSkr6GLMkfgvOUyr+kt9XhqQ=;
+        b=R5YK+CqQ8XXj6XROq5aSO0mRfeQs4RIL7rWcdOMR6lBxu3dRqDzAZDUeynn2B9EbRJ
+         1j6S4mfcGHSCbwozmSXAt9Ar6QoRpXtlJeebGfKbv1TBsXuxqGxyYH3w/bC5yVFebtyf
+         fHhRJURWwt536sHisXf7q/8Q3/fOy689U18TL6NtFWv2StfIw/kdff+mmHsv7fPd21TK
+         e474dNYWfR8QQ0V6BmQzfdNcl8IGLhjriZ3asvTeaQCliC3NUX+Co0p0SsNjiviG/JjA
+         Y6dxfizN3mxxxGeqNGCp3/Wln+rfp8iABpU4S55GceMmBfgupR6wcEFKKPVPshMw+jYC
+         Zkmg==
+X-Forwarded-Encrypted: i=1; AHgh+RqAzyeIxihGNww5dCmFeWRo3kBKk0iEj1unNQIylk/YWyEHCzyaXMEMahlLgyAUlyW9AGAYcMxjJqFNxS9nazmElg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kpt2kK4PDSVX1S7s4UBvqnN4W2WFQHFqsPTIksJGZoKO+2VhGD
+	+nRv5AFIPLD+e8gdA6Lw7jBtKL3TJegDo1hSWxeuIJhBZYqSj/er6fFr
+X-Gm-Gg: AR+sD11HWSCTjTDCViVo3sH3jhJUBJ5rRMewwl4TvbnUjFUborEF9kIF+wlexN1xxhl
+	1M3RHgQO3u0MDuN5IkQDRA9U0lFSDh4AS1+n+fUwz3hz/rQwo/PzBEXSGPm4wZfc3SGYGPON8YC
+	SdRZe7J+JHn+EPcOxqHWrcjRaWRCbtm9eTk+xvXZv0sis1wsacAwAsnWmOyGRHzxpgxfcue2rPo
+	5bC+bwPfYDI8aY1DmNe431flnyrOH6PTqThcec2SuJ7v8QTuhONFGCZPnXDA31bgz5AytlxDcA5
+	/LvdNC6gpiht8wEFfIIbSC+Zm8xETvCaLyeWWvxi48Xv+TSXqRjB2r0fll18ZFbv9F/bJZ0iDjq
+	VpR9L9Y98lnnZncpU4nx+xuN2VkxQ9B7+xvQc/iJpDP7nudGE5JxBmqWoxgnJEE2eFM1pM0vp5S
+	q5yIxflPR+9ame5KGGBLWjX3XV7YC2e0Jk8POlRiSUd9qZWSgWlOgGJWDbBYrrS8X33uXJc3R2M
+	yH+qLaNBgvsfg==
+X-Received: by 2002:a17:907:c22:b0:c21:4393:c41a with SMTP id a640c23a62f3a-c250c312bbbmr1016918466b.11.1787766539831;
+        Wed, 26 Aug 2026 10:48:59 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:aa64:3da0:a259:ecd5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a88ac7fsm777752766b.30.2026.08.26.10.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2026 10:48:59 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH v3 02/13] drm: renesas: rzg2l_mipi_dsi: Add activation_dly to hw_info
+Date: Wed, 26 Aug 2026 18:48:36 +0100
+Message-ID: <20260826174854.199139-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260826174854.199139-1-biju.das.jz@bp.renesas.com>
+References: <20260826174854.199139-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260826112821.194877-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWWxLXA+Y1sK-AFrx6Z0DkZ0xvrZbqCU_wcrfFyaKArAg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWWxLXA+Y1sK-AFrx6Z0DkZ0xvrZbqCU_wcrfFyaKArAg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 26 Aug 2026 18:28:43 +0100
-X-Gm-Features: AcwNN1XTZI4bYMbcU-2XeKqWyg1OIm4BXC0WXAgrgMa6hG5Leq-MAga-Sg1fRPY
-Message-ID: <CA+V-a8vWaxPyhyBF3wHKrTj0WnimyjxmU7HCD+aD_BazZGdOgg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk: Mark XSPI1 boot
- partitions read-only
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
- Hi Geert,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Wed, Aug 26, 2026 at 2:47=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, 26 Aug 2026 at 13:28, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Mark the BL2 and FIP partitions on XSPI1 as read-only to prevent them
-> > from being modified through the MTD partition interface.
-> >
-> > The corresponding boot partitions on XSPI0 are already marked
-> > read-only.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> > @@ -825,11 +825,13 @@ partitions {
-> >                         partition@0 {
-> >                                 label =3D "bl2-1";
-> >                                 reg =3D <0x00000000 0x00060000>;
-> > +                               read-only;
-> >                         };
-> >
-> >                         partition@60000 {
-> >                                 label =3D "fip-1";
-> >                                 reg =3D <0x00060000 0x007a0000>;
-> > +                               read-only;
-> >                         };
-> >
-> >                         partition@800000 {
->
-> Makes sense. However, what is the recommended interface to update
-> the bootloader in these partitions?
->
-The BSP supports updates via the flashwriter tool; there is no
-recommended way as such. Are you hinting to allow this to be done via
-Linux?
+Move the post-reset activation delay into the hw_info structure as
+activation_dly, allowing SoC-specific values to be defined per
+compatible. This prepares the driver for supporting SoCs that require a
+different delay after reset deassertion.
 
-Cheers,
-Prabhakar
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+---
+v2->v3:
+ * Collected tag.
+v1->v2:
+ * No change.
+---
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+index 2128fd16ebc9..1538eeece2b5 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+@@ -59,6 +59,7 @@ struct rzg2l_mipi_dsi_hw_info {
+ 	u32 dphyctrl0_init_val;
+ 	unsigned long min_dclk;
+ 	unsigned long max_dclk;
++	u16 activation_dly;
+ 	u8 features;
+ };
+ 
+@@ -806,7 +807,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 		if (ret < 0)
+ 			goto err_phy;
+ 
+-		fsleep(1000);
++		fsleep(dsi->info->activation_dly);
+ 	}
+ 
+ 	return 0;
+@@ -1534,6 +1535,7 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
+ 			      DSIDPHYCTRL0_RE_VDD_DETVCCQLV18 | DSIDPHYCTRL0_EN_BGR,
+ 	.min_dclk = 5803,
+ 	.max_dclk = 148500,
++	.activation_dly = 1000,
+ };
+ 
+ static const struct of_device_id rzg2l_mipi_dsi_of_table[] = {
+-- 
+2.43.0
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
