@@ -1,94 +1,107 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F8D3B71A2
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 08:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C21285041
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 08:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787732237; cv=none; b=Q2Noli78lQZ2o3nG/tTKMGr4QVrX7hRSYHDtTbheHA8ywxnrUU/XEkKQV3MdPGrmVq2lRLpa7Lg8IfRfxXFxLMmIMLnCaZPlSMReBR8OpzeLORWIV8sk/R76aLeurBS6wx8NrWNhA1+Rrx3dEMgDv+lDKEZtLd5nQUQHMCfuCWc=
+	t=1787733332; cv=none; b=dQWzDKXBH3Udi5cu178wThJwRopX/T80Xzt0ddcpjvXzumzPeiN4RvdxRmunfziwNiCYz35dFLlDMbDPSkoFBMKzJ1cC1yHTJr5QtU1Kb68dnjKh5KTed3I4RQ8pN9Do4u3+sLEQViCGzghqgzTHtIhehhwvVuPUN8vTI7AqHPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787732237; c=relaxed/simple;
-	bh=dolQ+NxnTMGvu2+rDr1RovRCe+B8rA2GHf9opkg2RMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGZ1GfaKO1BCaGwYm1V0tcVw5kLIWNKSJbGBVvgDxK1ytDh6Dn0c80F2irxbCzk8JyFGHRYm7PFZFfPD5fPXUXKChC8JW3Tetjk0xwLTLNHVM3j/nA9UtOXDp1RB5bxZ8w2xTwf3zXQZmddrcTU69g4xiEVTffbMNH5o3C2hAD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OrR4qnO0; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1787733332; c=relaxed/simple;
+	bh=8UkJs7+Yd83Q9YwRtqpurP1qoy033P6wwjcxhPZj8ek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kz7I2Xc5htEAa9V9BBKKfBVISINtNlimJkJRNLBsssi2QmLypSp1pfh1NCJ2KKLPArRSMX/S9ORCbYy+JRnF/wDDp/ZpXGgV2wopBVK+tVWZig4Z185dvyAVUlrKao4xSJdtXcMZeaZ7/Fotuw6+hX6FZ8YDnwXBasD4m1zPEYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=F7nYnkRP; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OrR4qnO0"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="F7nYnkRP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=6ceR
-	PPwj1L/dPBiUekP+t6gKiYZWtbROs+D3sx3/n/s=; b=OrR4qnO0TtpzNDAU3nMc
-	vWY94v4Ud/GMtnX2S72m0sGJ1E8P38pcZwjWWA4NkuvA7Ryxe14U0BWIJuGfGJuh
-	bsdSGkaY0fSHPcJj5dCJn3eeL9ghOAGeATgYc/BsHwQmDcsSqthqKSZfA0yOCZuZ
-	da8pTpiVzLlXmcudHbeQtyLWm0xIpVWvlh9a5dT+5H3ZtVdpWPa2zTNPCrKj9yhi
-	nY9F2MfGPNv6BuUZK4tKXX1Ikdb19OkZE3c2K/1Bwp/HIVodHNPecbIwzSqRbufa
-	XW9usgqG4ZCumHNgREtqDrlaIMJRgXN+tRu827ik2KppqBj+46wPlqtDyCQa2+RJ
-	9A==
-Received: (qmail 783305 invoked from network); 26 Aug 2026 10:17:09 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2026 10:17:09 +0200
-X-UD-Smtp-Session: l3s3148p1@rrZz2O5ZPJEujnsh
-Date: Wed, 26 Aug 2026 10:17:08 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=vmwm2m/Tv9tEIQ
+	bYfD+UllBk4kUwIEKqx5biQMcjaRY=; b=F7nYnkRPA7keDGmNekZsWZeeePQZcu
+	fYQRpPYZnOZssShs6wmtE01ZFN9Qo3A29kTiaMLMdm9J/hvAFPhu8EHzJ3IcXtW0
+	/cBBUwdZsZi9VBFF4QNODa0rKuKBH2ATnatQx6EoTffFxC8bigb6a6EVEZa5Xo7y
+	DDXenFwHtWjkYrzR+ch8ZgJbFUHl3X+84TOuwkKqpKwtApno94JmG+WY9iT/pzVc
+	DO+8XkmHgVtQUMinlFLviUG1hPpqGMtlOycBeqvlR0Ee2wm7FWDnV6LismWJv8SJ
+	qsglpdsZnTGbJdwrqELAk8I+x9dS084HcCBjPSwoS4DCmV2FCEsYJCuA==
+Received: (qmail 788513 invoked from network); 26 Aug 2026 10:35:28 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2026 10:35:28 +0200
+X-UD-Smtp-Session: l3s3148p1@EPz+Ge9ZHOMujnsh
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Frank Li <Frank.li@oss.nxp.com>
-Cc: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org
-Subject: Re: [PATCH 4/4] dmaengine: sh: rcar-dmac: Add support for R-Car Gen5
- SoCs
-Message-ID: <ao6hBDGWgekG04Pf@ninjato>
-References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com>
- <20260825141542.30901-10-wsa+renesas@sang-engineering.com>
- <ao23b5sx-YAlii4y@SMW015318>
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: i2c: renesas,rcar-i2c: allow 6 DMA channels
+Date: Wed, 26 Aug 2026 10:34:23 +0200
+Message-ID: <20260826083524.6056-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4JcUrI4pNrAC7weG"
-Content-Disposition: inline
-In-Reply-To: <ao23b5sx-YAlii4y@SMW015318>
+Content-Transfer-Encoding: 8bit
 
+R-Car Gen5 can make use of it.
 
---4JcUrI4pNrAC7weG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Tue, Aug 25, 2026 at 10:40:31AM -0500, Frank Li wrote:
-> On Tue, Aug 25, 2026 at 04:15:46PM +0200, Wolfram Sang wrote:
-> > Gen5 is very similar to Gen4. Of interest here is that it has a SMMU
-> > instead of an IPMMU, so we don't need to set the flag for a workaround.
->=20
-> Generally, needn't "we",  simple said
->=20
-> needn't to set ...
+Change since v1: add check for limit on Gen3/4.
 
-Can do, will wait a bit more for more comments before resending.
+ .../bindings/i2c/renesas,rcar-i2c.yaml         | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml b/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
+index f9ede03c3287..bfd486be0109 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
+@@ -83,14 +83,14 @@ properties:
+ 
+   dmas:
+     minItems: 2
+-    maxItems: 4
++    maxItems: 6
+     description:
+       Must contain a list of pairs of references to DMA specifiers, one for
+       transmission, and one for reception.
+ 
+   dma-names:
+     minItems: 2
+-    maxItems: 4
++    maxItems: 6
+     items:
+       enum:
+         - tx
+@@ -137,6 +137,20 @@ allOf:
+         dmas: false
+         dma-names: false
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,rcar-gen3-i2c
++              - renesas,rcar-gen4-i2c
++    then:
++      properties:
++        dmas:
++          maxItems: 4
++        dma-names:
++          maxItems: 4
++
+   - if:
+       properties:
+         compatible:
+-- 
+2.47.3
 
---4JcUrI4pNrAC7weG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqOoQQACgkQFA3kzBSg
-Kbaz8g/+KTyITC/CRLrUGeQaCT5KuJv0M4yCbpXSXxSvY/AzH2Dsy/c7WIdbXWgv
-13ngzM1fYKoCm3dySF1ejIFMkwtzJkvXtOjhFjYcjdhrVZ9Mr/uMVjQ+8m+PZoNP
-spuCL3DwCDdngVfLtamqfmiRbnDqC+9hPWD8h5LEFMq42LRqnx11GJ2lCrI8i+xj
-CoAOulEAJe1faYCZyGJd65+6e5RxrjaA4Tj4eAw466FisPRi0NsvNH7gsjCHxSjo
-e06PJx/L5kOo2FyCAmI6oSNl+HLFE4qqBkDpRWIoqAuIgbPSHrRnFtCTEPsf3i+Z
-t1r1EMwronswvl0VlOrEIequHZmH32dT0H2lw3l6YlQ43gRJcUpAQG1L2PWYtYkA
-ABMOszu3qec3UAbMZ5T8mRQPNJ856ZRHay48Bv9t1xGnveI8WEsp+UTJERh2BKUd
-nLyW97f9eMqMTqtNaq1dVVXTrTlR9/qmq3xxry5ywIOw5TDLYgK708g20u0d8NZ1
-VQS8kkV0TbOSfEeldRLJRySkrZKO7vIHqhcEJroRrLeaPcwLCl2MyhpZGnT2DGIG
-xFZRaCIG+iWTP7RbCIz4v6Llo9ooKDwJxlksg9v395/G07I6iGFsHmPJfA2ktyo1
-cPD5K9YhyWrmYW70RT71l+MoZTZu3LrdIxL7bSmli2CMRyShcrM=
-=sXlg
------END PGP SIGNATURE-----
-
---4JcUrI4pNrAC7weG--
