@@ -1,64 +1,64 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA6045FFCC
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 17:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B5645199A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 17:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787766571; cv=none; b=b23xj3XvzKb54gHz2DNCVRr65PrYyuuJSvxYcjKRa9m9Ako8w35oP4Dlw/HPstX90rpXXn+7ksCnWige+a1h3ue1bc/WQUyGx9Rv5s0GeFzS80KzapzNzPEPsAc8CAXbHLLOfDPGNELz1rczgjdLqUBOO6vooIs0lHCioc6W5jc=
+	t=1787766571; cv=none; b=BtBUSkEDavIWRYY7A8ZtR/2LC8bkEXiH0Qfb1ZKe+caP0GIp+oB9z1snAcTNqkAGfAYxtSSG9OBOO7cnq8rBh9BkMtT86hHJ6kuIwGjmvhStdcr6ik+esZPCfiGnvgh+KWHfH7sJ8pZvyyfTUiqj9uyjIloVaeT/IzH20uG2nHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787766571; c=relaxed/simple;
-	bh=ywTK2DeK7x/fgkvo5FtlN8KM8nTduWZcKwVxsajGRbU=;
+	bh=NEQELcWLrh6lyQ3u3x7gFjM/nDh5lCBM/682xmbNGeQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lCDiS2d7QKjKngRV7g+upC3CjEvFOXTSG/th/Ra8ERX4vCCJWJ22mzIVQZI+H8NjXyY2Y1XvtzQASZ6pZ5WSpjDyGF5Ea2l02B0fMfPHOP9DLpFrs0YlYiUTm0AM4t5d44K6XTTUZuLn7eK1Vz2jKLGS0FvrVekzuaZwLgO5vFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg+1r55x; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=H9vBJ2OarkNf71JCcNf7TMvjLqIyVTZfEBKrYD44UNU9FpFcSVgDJhy3wThNdrny6Gpz7ihXorbxag8TQFYM+UwjuGMKCrqDXxy5PhhtBh8jgDYgOMZ8EVb7CtCit2gjGk9bGVrz/lrVcJlh20vOPSpucdAFimGLOhUMg/a2UPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjTfOaBs; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg+1r55x"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c2531f453eeso74086266b.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 10:49:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjTfOaBs"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a082b3671fso1883664a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Aug 2026 10:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787766546; x=1788371346; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787766551; x=1788371351; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=H+p8g90ua/VmPeeYb2h2bDZ1FPwrIxPT5htOXu5iw3A=;
-        b=Yg+1r55x5+gexqA2HILICtrF/8Z6OJ6lgunOVRzIByPj3xm7NKYnmzCAHD4eUx1z/H
-         ZKB0zBdny++JvR0zo4Gcj/oARNGBiFFBrN8wwFjYP46gcIlGVO7GOwDJF4mcAryLLPiZ
-         Bd4HDa3WGNS+A4VYCf0Zv3jReNzbTLj3K837uBe5goirw4uxxeOavFsEg9FDMIBBu39I
-         P4UhKiTXjmX4Ez+lWD8YWGU9SI0YDBk6infGBNCU9pHq17ZjaPTVJQ/49miT4YdWP3D3
-         JOgs+4Wyi++UJWeHrb703x2x/2BHXsOrx9Idl03bpDM3hIoYhgBouduJ+IBmm965CBQE
-         V96Q==
+        bh=RKiyzRh3KPaW1CCmMsZdFblYmNZk7dBeoJ+HxLixX+M=;
+        b=bjTfOaBsB2PJEPKAxKdeiHr+sYHvwdqe1kaxiis2AIw8poJEFAxM5W+94wbf3I75co
+         VmhHwwRXU/tQ6u/3TWVXow0Z9o38wld6cZ3yJdN6cwhdx1TDLdrrRxk779YZP0BbcJ9u
+         NUNM5A0RJcfHpycGAbQtqQ/nBJd1Y/s1Ya82g1Lknn0d2h2Qi9pnqZ6iIeSyqNrA1c5A
+         YOQbqaGirqYU1TMx1z5BBzB2FygNHfDJNCSWTa47leUOzlvpe9cu/gKbTHtjT/TQK+Wb
+         HDZh4v3iwQGsVrcR/n3TZqILX19mHJW7AACdtuaJHT0fk9xxf47RfgTLxzttzkQN8oeY
+         ncXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787766546; x=1788371346;
+        d=1e100.net; s=20251104; t=1787766551; x=1788371351;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=H+p8g90ua/VmPeeYb2h2bDZ1FPwrIxPT5htOXu5iw3A=;
-        b=Br/vE1+EELmEH/sotmutklyvatJJsFN+FcqtkWruHlq8FVpHqekdqDCvYSUm9MOQsZ
-         7Sx58PWy088yIDn094xx4427yZLKsr2iKwDKD1UVXJjbMXWqD2E6SMTPTYBjfE402TCU
-         AxiZY9KNlbL8P9sNVJ4AppwME9W+Wo3kDQjS/5wj5o9F2WuO/2KvJhfpCV15TUL5dT5i
-         vsWJ1fdbZ1udp03c5bpRgZy58UsdwfIxseeIjHB74O4j3ceeyYaXNiYMnlc0yLBtwcz1
-         2vOiJqqrQPPnZ9oFfMQGCzVc97UGtqvsOgCFN04FkudQK3kW+7uFMwbAS3BKGG6/ujAD
-         ByNg==
-X-Forwarded-Encrypted: i=1; AHgh+Rpji2p0/QATZ6i1Ss5n3uMgbkL40dyfhStmS1PI+YBnYU2zUVrIDhX3CwUKY9BzvTzR5AI+YLxc+k5udWg3TRpAwQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++kVVaxw6VBhT9d/tO71AGQup4FJDKwYTjntKff1x0+LQyQ93IEy
-	8ghKq6tgM0PwskkmqB8yiRhBTVxwNIEjkSiy0cb0Fuc/Jno4LuXDxRA4
-X-Gm-Gg: AR+sD10JQUL/jdvi4C8t+/+EPuIShQxxjiSygLUvXelOgUvu20p+8Dox8XnqO9ct+Wk
-	t4dDGSZQKNgRnUVnEqEnVRhrg1ynHlQbjwxfdrDbxHrjleZ52PLFOqtC+pre5pnFm3w9kKymlRT
-	4ccVnlHcXAuKCowG0PBQajf2HclVWj9yZJjNefgOXrC+fPxqzIbUzmWXbnfdW+20kxdVDr7arss
-	vtSQsHwt6yBvpjZsVJEJBEnGF8Md3wnv6jfpAWJiTrBGvM3C8to4lEghruKbI9W7jndWhZto23x
-	jhGKi1ryDDf+P5dMmiYqmXugD4sZsujUc/rlfL8S63400al4pLBAb/Uj+fIlepJ0x5vhe7s/Rd6
-	TyVIQdEpXU9B2phsRfqn7vDEqVpeszOeJJeEdhf23EGZnEJFDuL3J8BTu8gJ5DggPa+UbNmkA2E
-	iAnqTOnavozI4gksOJ6kkXmKv4zyoo25i7fcFWIGOTQbjvlkSCPmBMx0ABBJwJqnAQWt6yjErgA
-	Oy79wXglz/WnvsIjyplJJla
-X-Received: by 2002:a17:907:948a:b0:c20:f95c:907a with SMTP id a640c23a62f3a-c250c318b25mr986184366b.17.1787766546005;
-        Wed, 26 Aug 2026 10:49:06 -0700 (PDT)
+        bh=RKiyzRh3KPaW1CCmMsZdFblYmNZk7dBeoJ+HxLixX+M=;
+        b=Z+U3CByGPj1AhE01tNcuoLa8MapY1AG4xRqjtV9IOfLuMH4NjKxJdPoDRprgFR+sKl
+         hioqSrLOoU5xo6zw5ilWeC/GuSxE+CBx6oRT4iL2RzqBTo7InG1gJ0mzzMmE/MfSmsDu
+         scB12KOnBvdVFh9ALFKoY6qCcxOew7nxxZsO9uajFu64hBlChLR8cxudfpVPYjhTxzo+
+         GdTiE3iSH4g9QdtYPAXtBqE3Gdl8XU117yag6yqQ+rdKfS33Nf7sixp3M3HyI6Ai8mhR
+         RkCJYAXKCpfVCrlpF/BU1Nes2Cf2YkC/HtZRfl0bGL0pBxnvbFMq8hTa3WJRc7W3NGfO
+         J27g==
+X-Forwarded-Encrypted: i=1; AHgh+RoyZBUzugZth7jmWTKgXVnaegntyLLKS5Q5Rka3xI2sbJWNyV3LnBfRelKk8JgttNAAXisOJWwRhlskQQvzgVn43A==@vger.kernel.org
+X-Gm-Message-State: AFuF++mDnh8l73DeAtKFroHUMVZS7E9c0cT22i0xBtjgl3ebIhe1cMkM
+	PejbYbd6BOvLS3SIcmf97t8wYpUUwC7wn2G+vqK/1dzzSFPATm0iaRQz
+X-Gm-Gg: AR+sD10+toJcRZ95jOOlHRkaSAQn+tr1DnX8l8wr8/WjOOyAL/vdobeWJ6vkf/vg5p+
+	H9Yvv4Y0oRFUwkDcNp5vE3ftMNiOgmeaCe7uGd5xPLNUxojja6hn8did5Nrejp/i/XizZddMXoQ
+	fxtCE/1iSKwxjAr5PUGnlupAWz+ai2fxNILb2pU0eblmCc8JF2ClHAMTN6RaAktUm7KRTsQzXhg
+	TI2tMIktvbR8LrjnsnF+NiV08pc9ydppFVWnmb3Q5n9Mm0SJ81l3gBzPSYwvIEoWudnhXj5DFeJ
+	JdZY+ElQpw2/amXW74ORvV0Qek5vGBfPfTKZfEGNgINd8L9zQppzRMWSQWZShc1hWXlUuJoYVbl
+	UEoq5GodaHSaJeRJc5UH20U2c/MNwjizkvlny8juoBrB7TbXVy47AgE9I6bWQBH2fqXXtqleHS1
+	xcpJZala+K8gI0OufTLiPGPJlF2b3b5w3l6fWZEGQr2+5oHi8EBxrIiav8Ai5B4r9ob+m7bWvIy
+	6/zBusn/tf8mI5hs1HXnH+Gmg==
+X-Received: by 2002:a17:907:d642:b0:c20:74db:50c7 with SMTP id a640c23a62f3a-c250c2ef6b0mr1308054266b.13.1787766550737;
+        Wed, 26 Aug 2026 10:49:10 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:aa64:3da0:a259:ecd5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a88ac7fsm777752766b.30.2026.08.26.10.49.05
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a88ac7fsm777752766b.30.2026.08.26.10.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2026 10:49:05 -0700 (PDT)
+        Wed, 26 Aug 2026 10:49:10 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -72,9 +72,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 08/13] arm64: dts: renesas: r9a08g046: Add fcpvd node
-Date: Wed, 26 Aug 2026 18:48:42 +0100
-Message-ID: <20260826174854.199139-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 13/13] arm64: dts: renesas: Add LVDS overlay for RZ/G3L SMARC EVK with ITE6263
+Date: Wed, 26 Aug 2026 18:48:47 +0100
+Message-ID: <20260826174854.199139-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260826174854.199139-1-biju.das.jz@bp.renesas.com>
 References: <20260826174854.199139-1-biju.das.jz@bp.renesas.com>
@@ -88,7 +88,15 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add fcpvd node to RZ/G3L SoC DTSI.
+Add a Device Tree overlay (r9a08g046l48-smarc-lvds-ite6263.dtso) for the
+RZ/G3L (R9A08G046) SMARC EVK board to support LVDS-to-HDMI output via the
+ITE 6263 HDMI transmitter.
+
+The overlay enables the LVDS controller and the display unit (DU/LCDC),
+and configures the ITE6263 on I2C2.
+
+Update the Makefile to build the overlay as both a standalone .dtbo and
+a composite .dtb (base DTB + overlay).
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
@@ -97,31 +105,135 @@ v2->v3:
 v1->v2:
  * No change.
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile          |   3 +
+ .../r9a08g046l48-smarc-lvds-ite6263.dtso      | 104 ++++++++++++++++++
+ 2 files changed, 107 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 9f5ea62efc2c..ad38aee2efb3 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -696,6 +696,17 @@ ssi3: ssi@100e4c00 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 8c6a44890715..3cecc40204e9 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -190,6 +190,9 @@ dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-dsi-adv7535.dtbo
+ r9a08g046l48-smarc-dsi-adv7535-dtbs := r9a08g046l48-smarc.dtb r9a08g046l48-smarc-dsi-adv7535.dtbo
+ dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-dsi-adv7535.dtb
++dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-lvds-ite6263.dtbo
++r9a08g046l48-smarc-lvds-ite6263-dtbs := r9a08g046l48-smarc.dtb r9a08g046l48-smarc-lvds-ite6263.dtbo
++dtb-$(CONFIG_ARCH_R9A08G046) += r9a08g046l48-smarc-lvds-ite6263.dtb
  
-+		fcpvd: fcp@10880000 {
-+			compatible = "renesas,r9a08g046-fcpvd", "renesas,fcpv";
-+			reg = <0 0x10880000 0 0x10000>;
-+			clocks = <&cpg CPG_MOD R9A08G046_LCDC_CLK_A>,
-+				 <&cpg CPG_MOD R9A08G046_LCDC_CLK_P>,
-+				 <&cpg CPG_MOD R9A08G046_LCDC_CLK_D>;
-+			clock-names = "aclk", "pclk", "vclk";
-+			resets = <&cpg R9A08G046_LCDC_RESET_N>;
-+			power-domains = <&cpg>;
-+		};
+ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
+new file mode 100644
+index 000000000000..95e1f411fa04
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree overlay for the RZ/G3L SMARC EVK with ITE6263
++ * connected to LVDS and LCDC enabled.
++ *
++ * Copyright (C) 2026 Renesas Electronics Corp.
++ */
 +
- 		gpu: gpu@108b0000 {
- 			compatible = "renesas,r9a08g046-mali",
- 				     "arm,mali-bifrost";
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h>
++
++&{/} {
++	lvds-to-hdmi-out {
++		compatible = "hdmi-connector";
++		type = "d";
++
++		port {
++			lvds_to_hdmi_con_out: endpoint {
++				remote-endpoint = <&it6263_out>;
++			};
++		};
++	};
++
++	reg_1v8: regulator-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3v3: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&du {
++	status = "okay";
++};
++
++&i2c2 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	it6263: it6263@4c {
++		compatible = "ite,it6263";
++		reg = <0x4c>;
++		data-mapping = "vesa-24";
++		ivdd-supply = <&reg_1v8>;
++		ovdd-supply = <&reg_3v3>;
++		txavcc18-supply = <&reg_1v8>;
++		txavcc33-supply = <&reg_3v3>;
++		pvcc1-supply = <&reg_1v8>;
++		pvcc2-supply = <&reg_1v8>;
++		avcc-supply = <&reg_3v3>;
++		anvdd-supply = <&reg_1v8>;
++		apvdd-supply = <&reg_1v8>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				bridge_in: endpoint {
++					remote-endpoint = <&lvds_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				it6263_out: endpoint {
++					remote-endpoint = <&lvds_to_hdmi_con_out>;
++				};
++			};
++		};
++	};
++};
++
++&lvds {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@1 {
++			reg = <1>;
++			lvds_out: endpoint {
++				remote-endpoint = <&bridge_in>;
++			};
++		};
++	};
++};
 -- 
 2.43.0
 
