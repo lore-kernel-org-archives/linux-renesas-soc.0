@@ -1,27 +1,28 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010060.outbound.protection.outlook.com [52.101.228.60])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010059.outbound.protection.outlook.com [52.101.229.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686712F9984
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Aug 2026 13:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA1A447806
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Aug 2026 13:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787924164; cv=fail; b=gWTnfqmu58kuXFaJr8+44aP72GE+OcgjPkaNF9dzslaoDK62UnGBX2+RSpM2oF0iz2zyzgUo6BMQWB/dCqANQcyph0yRCdN+a4WxPuLNDlsNGqRZMxbyblHcH2iYMXQdrjEjSjcKkeDBznDbdrce/JWZeCZtU6OTUEGb5d1oNzI=
+	t=1787924167; cv=fail; b=iTLZWQBeRk8eWFsTFfWvVgI4T/sE1XQpQi5AGJE3ckkEisD90GTBtthxQhPwVUX3Ko9moYo8FgG4D60uWkTpkIzaxQAStlCdU/1WQmy5XT3S0O0ddsFFSu53GNRRwSK2V6UfPftkXknKqPcO01vAMCbsR+cZMLIGHUV3DeHMcJQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787924164; c=relaxed/simple;
-	bh=lR0mmMOOshrEHckm934MH+A0yMrjSbFg3LKhNwczAU8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ji9f8IuVOj8TYahRoW3q0sZjtpNCOuB1WwkvL77tG3g/hnTnAa1vpix7ZAzu5AiM+QV/u/iJTtExQ5F88GCKcGKGsCVR0IvIzKMMtWjF9gZXOR2Nv0PGQHBTjk7whbsRAn2o8nT6/yWE0O4wJ64qt2yr1SUrRsxvMWwAgHW4068=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=aljcK6qZ; arc=fail smtp.client-ip=52.101.228.60
+	s=arc-20240116; t=1787924167; c=relaxed/simple;
+	bh=maTViIz/0FzWhABzo0blJ6LcNkPkjusGfm18lLhhgJc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cos/Mk4G1YyiXH/xBqRxJjIxFoW58zPLxMkTkCPrjp/GmKWJmchMxNDKx8fO8aY1JhI15HU8zlZjVnDvYPyUTc3ctwFojF3LYbWeN8MKQHNoCI3fPuVAiPjL+WwSUVMruu6uyqY2s9mf/CKaUds6wlVWgmp28OwYL4874AnfR/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=h2nbvtCT; arc=fail smtp.client-ip=52.101.229.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="aljcK6qZ"
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="h2nbvtCT"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BhMn9jqvrAHdOcjlrPFfL/uv4FKvOyaJqKxw3nd6kRtE4C3WX5d/+sbhEsQF/k1nWIHlC+tzRNjYQNaqIauYw7weg7Qd70hMrlJl2caexqD/5IvcpxE7UIBTNoj2VuTCZI/RfDuD7RqtA90lU2eAnsUHw9Bo8uNLT3eTDn0sGIXlCBbh5Gxn4XgncC5Ps9Xsm3b+Kcx8JtFXtzd3Enpgb0CbgssmC4yCA14+XL2/vsXDnKeKZ0D/RCqK+76y9Y2nWGOI+t5atH/8leHyBr7Ksg8iNT7PW21IbdKD6atLiMtyJv87c22PsGBhDD4EEDIUdcjf/uiq0Lq/iAeZLNWQJA==
+ b=RhgFl/Qvjzt1RGPnhhN/5Tro9fZ4+mluTtD8adfq5LBB36YTuhXUooXM/5JsKRvMxdcrtU5jFrjip2H7IfqPYToSEFzVonMn6vu30aTtndTcjvfF4Bj+365kuaH1SKyi4r707FkPCUaWvF4KqgPfPYl0PCf8FTkQTWY1xstQO/8iyoDb2/ccR1YNGoxcfYEucrG36m7ohsP/tSvpYT1ud5Kibn0CGleqE/MuPAnl+PhIl3q6aM5TOspAQl5bSRb7nJYNoWkXxh2tD+iIybWa9fT5AWUlTxU/WXZl3iNs6/SpzjmT8IGR0uuRFy9YmMoPWJzmxFe2Xe56KMbL3v91HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wgMr3G8vfYfON1vgnxnrz9hynKjuGqCcaJGN7OT015g=;
- b=Hap2EiaiIpN1wofVYnkUeJsQwpSlpCnGj+8ARUbjQUDVcTKGOcCzpc2rxdyg5qwfyQqm3rnVgmd6YvX6RXzGI4bKxeZvB1pBEzZCdymb78gKfqfXgm+dKVcCkuZ6K53izIarf6QKmQJXzFRM5jp7fxH97lRGbKfrKgK3wJAH1ygbYdr+MugCHt3pwryYNRNWEVr2FqGzgVIHV2VNefoNxvuSRml2nB+2FgFXNjDEadhA19ifqj56omJ36CcHTob4vJOIm70YmA2Codu+r2H1uceBqZz8yP3ddy9QgERoo5YtFtdE2ZbVUvh/p1ZcfbvcVB27Vgkh1KDeMsQ9kPMKXg==
+ bh=2OVo4LfZ0crFWQ1X+G+SUlb23ZXjqnjdOwuzMIOJuZU=;
+ b=F8m9uLPfeLMdYLlg/28kGM/fAb87fAIMX1bWNpdY8yvImXIM6VCb3Y5ynYnxcsv9rW45yxbyRSWj3almkl2ymseQcpEiAujLga2uclosqQf18OB9MaQ6IfWywe47pivFTFnB/thmei/N0fowkvV+euaPakhrhTPm7fAhkLFw/tmzv6BJOjZS1ISs2viwrGZg+on92tw6Rp+hUTbUu6vv24CrxfjyJk82JCoAEBWKa1UpwQLTbw8I6aNka/7RSQcyLz4R4W2SAIrycdI5CxWd2gy9hP6TRJC+IE1VHZcJGGNylNKzGA8wHxKJmc7vBWXSDOCJpZmrHpQfbrqZQew+9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -29,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wgMr3G8vfYfON1vgnxnrz9hynKjuGqCcaJGN7OT015g=;
- b=aljcK6qZclkhaRuBH1LWU3PbvcgmgZtx4PhFE+DFp189UYKQg45SXDQWjEdN83mNld/ZG4xU6V3wjpWn4phXn6gXWtTaaUbS58RWcTvse6SBepKqvmfXJF7feLbi3fRnte+BKoKKcxoE+rULvtbVMncQBz8MouKdeoslU+XQTNc=
-Received: from TY4PR01CA0028.jpnprd01.prod.outlook.com (2603:1096:405:2bf::17)
- by TY4PR01MB13013.jpnprd01.prod.outlook.com (2603:1096:405:1d7::6) with
+ bh=2OVo4LfZ0crFWQ1X+G+SUlb23ZXjqnjdOwuzMIOJuZU=;
+ b=h2nbvtCTx93yjRwTjishY06ZYHt3D1EYreKtd7DwAkVqC39ZevPgVR8gUSB0HEXv5Cg6u7UAD5QKzqzop9ki5GGlD1UrBaVxVC19a/uLXv95ToGSyl3ou0MkNdaqnAtNGLQLZDypFiHKSfHwJvd7g1apjMMmsrgDIFRvFFGI7V4=
+Received: from TY4P286CA0135.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:37f::18)
+ by TY4PR01MB15851.jpnprd01.prod.outlook.com (2603:1096:405:2af::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.11; Fri, 28 Aug
- 2026 13:35:32 +0000
-Received: from TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:2bf:cafe::36) by TY4PR01CA0028.outlook.office365.com
- (2603:1096:405:2bf::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.11 via Frontend Transport; Fri,
- 28 Aug 2026 13:35:32 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.10; Fri, 28 Aug
+ 2026 13:35:46 +0000
+Received: from TYO1EPF00005020.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:37f:cafe::29) by TY4P286CA0135.outlook.office365.com
+ (2603:1096:405:37f::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.10 via Frontend Transport; Fri,
+ 28 Aug 2026 13:35:46 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -48,12 +49,12 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF0000BAD9.mail.protection.outlook.com (10.167.240.38) with Microsoft
+ TYO1EPF00005020.mail.protection.outlook.com (10.167.240.5) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.8
- via Frontend Transport; Fri, 28 Aug 2026 13:35:32 +0000
+ via Frontend Transport; Fri, 28 Aug 2026 13:35:46 +0000
 Received: from biju-VirtualBox.adwin.renesas.com (nld-5cg2232q0r.diasemi.com [10.24.0.28])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 7C10D3000242;
-	Fri, 28 Aug 2026 22:35:26 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id F124E3000242;
+	Fri, 28 Aug 2026 22:35:33 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -64,10 +65,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Biju Das <biju.das@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v9 0/5]  Add RZ/G3L USB2.0 support
-Date: Fri, 28 Aug 2026 14:35:00 +0100
-Message-ID: <20260828133509.276281-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v9 1/5] regulator: renesas-usb-vbus-regulator: Rename platform device to rzg2l-vbus-regulator
+Date: Fri, 28 Aug 2026 14:35:01 +0100
+Message-ID: <20260828133509.276281-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260828133509.276281-1-biju.das.jz@bp.renesas.com>
+References: <20260828133509.276281-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -77,126 +80,81 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF0000BAD9:EE_|TY4PR01MB13013:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005020:EE_|TY4PR01MB15851:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 106eeb5d-88e2-40c3-eaa3-08df05093b99
+X-MS-Office365-Filtering-Correlation-Id: ef8446b9-f92d-45f9-a4d4-08df050943f4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|1800799024|23010399003|82310400026|10067099003|11063799006|56012099006|18002099003|3023799007|13003099007;
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700016|23010399003|10067099003|56012099006|11063799006|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	hZ4+8neJDOmGWCdoecHlUVOJ9NzGS/0ZsKs8UcN560keTEEJOS7nKr8lKEy3k5zZ9uSvhhqkEN/KCm1Gx33Zd0p1OlrC6XfdlSzzJ4OonBpTfpl4bPIxUO0B2UNfdJ1vwh99St1rSqZ5JWh1yYHBSRLcLJzhAwKpLG9UNA/6gmhYmiEuRzFG8LatN/uuTU8nYa+lchuin0nAq3FXQi9cHUPugBCHt9eTV9SSdM3oR5WGBXk+reRIC40Z2A/+DVq61ElbR2IgSklpTfLEnEUGzgV/16Y4qa6aumzTkCxg6mFbdLO8HN4jkm5hdW7vReRpJ1Khvr1re9nEbHp9aRDJMVxv9wWdzJeLkE021yi0sL37p87XmcJJ0WdCAfg78bSaC0Qj2FyK32Q3S1ZHhWN42Wu0cg0+vl9N8ps3zowbjiPW6nEH/OX2hfAFGZsz6Arm7EEGYE1e9i33zYMA/qTSZ/EpCxNfDLuuSA+0N5jApdEKqOPvyu4fgY8gX6V+7/h0lePunwHONS1UBjLYuu7RE9iRdD6GoVPZFLzujvGM/nXnF1FKdz0pUlZwoEIr/y44erNOQ0IHdbOHZmnx4kCTjDEPmuwDefmWV8fpR+HvcgNQfJqZ4eIX9sKzH3rTFR9NiDahCQs0RQy4jR4WRR7J3J/O69CgE766XadYW5wF1ZA=
+	lDbsJh7RAdS72AWvmdhaNXAO9SDi7EK5Se8aMBQPdIb3Bu6yt90oohVWe4tY3qshCxF4EMVGIirNgEw6DVmIhWvhsyKfDZJipzp2/3sMGe0yNkOJNZJ/8Lii+htzqvyqEcszmZ7ami2KbB8d0Gn8l0jnLpGx9CvJon18IYhv2iqdMLUPS8utCR/HkxsUg7dIo2a49QGUYo6J0mA3AJ5A94uHSibLpzE+iIsRVqGJPbYQ1EcbHoHKtrBvIbkbWwXnQj16EtPn+sgm2RiO2s6vdPeJWMOJtgiwt++OqnPa0ErbCHEP8a1QOq7+ooK2TMb5sMUMZwCON2p3A5Tc7YVccArmsV5OCakixFdizRqBlKKJdct41nLOHoFia2ti8n7bEF+sMX4TuXzII1YJ4tGJfv8elBFRhMigI5ittsUujKZY2VBTHaiS8fmrbhqJeiZZ8L7sUMcueTELUE6s1Sn+p7x6qL6PypLNBaMUOT4yYvpykd3toq77/C3a67pDKsqU4c22xQUmRiaIbl7D8dTPTLet06l8qhW5juW57OEkMtgIaIxAuM0tD6PUJVNAKpsVcluhYppzpu4Hy9KSgxi/KCbpbwPcFWrB26+NH5L1CS6DwC9iTKFLjN2EOdJSGfV7kmQxV0VE1tYjtxqRfcBTYkRGxB/nml1RT62JR9E9GIy9pZLHwd/DxAEuGHGluOEy0cuQ5Gi+WIWSV7Sp1cpRpA==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(1800799024)(23010399003)(82310400026)(10067099003)(11063799006)(56012099006)(18002099003)(3023799007)(13003099007);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700016)(23010399003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	TIHj8zt5pO/EzxePv5/Nr1bWHgAHEFzU73EGOpLhK3kYv4HBY6U2Ww8R4hG3ruaCo6/2Gjadt1nf6CUU6ECgkcwdD9B2hBkIqPZvUp+9FzhwrB5dx293LAzOcuSCTcsLhTLmRkGrIJlL7tQpxm/zwWwh119fP0VWbOWRXkBgh37Twa8nLANQUAS8E15fus0dMhUMxGoGp2xlyXaOOV6GqBK5VRjEWZ2IPnycJ63SD4FHEFt6Av8fAgWWDyjVSk6oBI25dnDIAYePkEhMKDNMmSXDDsti4cB6o6my88mC1O4OOyTa8x2BaXf1mbVJBrhjxZm7XBOqDEbNrJANg9lv69RH4zPpUHcCGUvqC0fuHu4i/wAqmWCU/ZPo4TyoA+Rv3L6lkNvbygjjxSte/Pe/O9hiFjrMAUCkQSHQknJI/s39t7iKYHLqh2/NjymEsZJf
+	NhYXLRyVkwwtGcmQX2r4Cv1DvXsq3QEicm56aUtL35Fs8SmOyvrsy3o0eDiJB5fhH+zsHOOp7/2iRWUMT6IT75fGHcnfwhjAAX5NOgYQUtqUwSOTAwqaLK2Xe09pIKTpzM0tyMFNjA24ZmuTK7QepuRNPYIwRMj0YxhloYCUJ8wNpWFEFgTJ1rSR9PTsu3FRBIPB8i2s0FJzGEcR7YhVIf63OyZ+SDZJnnZ+c5gBfCR2W2zXk+yxEEH0PF+Pi+8+3IWy8grG0RU3vkorvCdSHKg0xOLkkG3pEX+5s99ScF9Tcsd5IPCrJCg7c/YiGQO299jL0oCntPM7qi85psJDPVt1wcCk1Yw05QVbitPnbmsSw1UgvknYFV/GxkbQmixi9WKo/PE0v24el+GjsMAAmNcTwsnrAlq/u2Pmo/GwnxlWkJ2omNzyDhEz91z+gzM+
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2026 13:35:32.2184
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2026 13:35:46.2358
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 106eeb5d-88e2-40c3-eaa3-08df05093b99
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef8446b9-f92d-45f9-a4d4-08df050943f4
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005020.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13013
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15851
 
-Hi All,
+Rename the platform device name from "rzg2l-usb-vbus-regulator" to
+"rzg2l-vbus-regulator" so that it fits within the platform device ID
+table's name size restriction, allowing the driver to be converted to
+use ID table based matching (struct platform_device_id) instead of
+matching purely on driver name string. Update both the driver name in
+the regulator driver and the matching platform_device_alloc() call in
+reset-rzg2l-usbphy-ctrl.c to keep the two in sync.
 
-This patch series aims to add USB2.0 support for the RZ/G3L SMARC
-EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
-has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
-port 1. This series migrates regulator driver to use id-table so there
-is hard dependency between reset driver and regulator driver.
-
-Merge strategy:
-  An Ack/Rb tag from Regulator Maintainer for patch#1 and #5.
-  All patches - Reset subsystem
-
-This patch series has functional dependency on [1].
-Patch#4 has build dependency on [2]
-[1] https://lore.kernel.org/all/20260826122742.153643-1-biju.das.jz@bp.renesas.com/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?id=d51fc9d4cd6eb18ac82913d83ecf7bd8c85f71ee
-
+Acked-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v8->v9:
- * Replaced pwrseq_power_on() with pwrseq_enable()
- * Replaced pwrseq_power_off() with pwrseq_disable()
- * Dropped redundant devm_add_action_or_reset() for pwrseq.
+ * No change.
 v7->v8:
- * Dropped SoC dtsi patches and will post later.
- * Collected tags for regulator driver and binding.
- * Avoided code duplication by moving devm_add_action_or_reset() to
-   rzg2l_usbphy_ctrl_pwrrdy_init().
+ * Collected tag
 v6->v7:
- * Dropped PHY subsystem patches as it is accepted.
- * Merged patch series [2] to here
- * Collected the tags.
- * Added additionalProperties: false in regulators node.
- * Updated commit header of patch#6
- * Moved the host enable patch.
- * dr_mode changed to 'host' as function is not enabled yet.
- * Updated commit description for patch#9
- * Updated dr_mode = "host" to "otg" in {e,o}hci0 device nodes.
- [2] https://lore.kernel.org/all/20260707145135.247565-1-biju.das.jz@bp.renesas.com/#t
-v5->v6:
- * To avoid breaking bisectability, prepared a single patch that
-   does the "rzg2l-usb-vbus-regulator" -> "rzg2l-vbus-regulator"
-   rename in both regulator and reset drivers and that could be
-   merged into both trees.
- * Replaced dev_err->dev_err_probe() in error path of
-   rzg3l_usb_vbus_regulator_probe().
- * Retained the tag as the change is trivial.
-v4->v5:
- * Collected Ack tag for regulator driver changes.
- * Dropped renesas,sysc-pwrrdy for RZ/G3L as pwrrdy signal is modelled as
-   power sequence.
- * Dropped the tag from Conor due to above change .
- * Replaced the variable regulator_driver_name->regulator_name in struct
-   rzg2l_usbphy_ctrl_info
- * Switched to power sequence consumer for controlling pwrrdy signal.
- * Updated commit description for patch#3.
-v3->v4:
- * Updated cover letter with merge strategy
- * Reorder the phy binding patch for easy merging.
- * Updated the commit description for patch #2,#3, #4.
- * Moved the handling of regulator_driver_name to patch #3
-   in preparation for id_table match.
- * Migrated to id_table match using driver_name and reduced the length
-   < 24.
- * Dropped rzg3l specific platform driver.
- * Dropped the tag for regulator driver,
- * Added id_table handling by introducing a common probe().
- * Dropped renesas,sysc-pwrrdy property for usbphy-ctrl node.
-v2->v3:
- * Replaced items->enum in reset controller bindings.
- * Collected the tag for reset binding patch.
- * Dropped clock patch as it is accepted.
-v1->v2:
- * Dropped patch#6(Introduce helper for regulator registration)
- * Passing pointer to an array of regulators to make it scalable.
- * Dropped regulator1-vbus and added a regulators group node.
- * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
- * Added enum instead of const in the compatible section.
- * Updated schema check.
- * Collected tag for PHY binding patch.
-   in the regulator driver.
- * Added regulators group node and its children in SoC dtsi.
+ * No change.
+v6:
+ * New patch
+---
+ drivers/regulator/renesas-usb-vbus-regulator.c | 2 +-
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Biju Das (5):
-  regulator: renesas-usb-vbus-regulator: Rename platform device to
-    rzg2l-vbus-regulator
-  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
-  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
-  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
-  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
-    support
-
- .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 ++++++-
- .../regulator/renesas-usb-vbus-regulator.c    |  75 ++++++++++++-
- drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 100 ++++++++++++++----
- 3 files changed, 191 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/regulator/renesas-usb-vbus-regulator.c b/drivers/regulator/renesas-usb-vbus-regulator.c
+index 9ba791bd72ec..22fcf0d10c85 100644
+--- a/drivers/regulator/renesas-usb-vbus-regulator.c
++++ b/drivers/regulator/renesas-usb-vbus-regulator.c
+@@ -58,7 +58,7 @@ static int rzg2l_usb_vbus_regulator_probe(struct platform_device *pdev)
+ static struct platform_driver rzg2l_usb_vbus_regulator_driver = {
+ 	.probe = rzg2l_usb_vbus_regulator_probe,
+ 	.driver	= {
+-		.name = "rzg2l-usb-vbus-regulator",
++		.name = "rzg2l-vbus-regulator",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 	},
+ };
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+index f003b360629c..f90fdb7e6ea4 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -241,7 +241,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	if (error)
+ 		goto err_pm_runtime_put;
+ 
+-	vdev = platform_device_alloc("rzg2l-usb-vbus-regulator", pdev->id);
++	vdev = platform_device_alloc("rzg2l-vbus-regulator", pdev->id);
+ 	if (!vdev) {
+ 		error = -ENOMEM;
+ 		goto err_pm_runtime_put;
 -- 
 2.43.0
 
