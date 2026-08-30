@@ -1,136 +1,100 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEE328F5;
-	Sun, 30 Aug 2026 03:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228B73A1A3C;
+	Sun, 30 Aug 2026 14:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788059821; cv=none; b=H+leI4UG/SvQy++mEHfNaxNX/kw+W1URCyo49hu1ZOEEfbeCGbqb6eTXsuhzb5vCQ99vwa6s1PpHd1Aoknx6bwqfZSFq+IS/uZfyhP8TmUfRNSJulfmGpLDaSI7hPB6IzrLxkXPJjN2I2yblFG8P6glpg6lniFEw8fSFSfReBxY=
+	t=1788098838; cv=none; b=RbofQimheJ7H1hOEffMa1GILADRBvxXyn0SCaaFImnYLRhvAXMq6VePX2CQ+o282e7vdjqxxVKtf2CWIdhJNgCMiOexYP2By34mKr4nMJEVH5HnVB6x31idsgRoX7c0bCxnxoh5hHsXCybeX7YnyWy+3IbCdbnucsSFjKZg8X9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788059821; c=relaxed/simple;
-	bh=l16+mPVq1eiU0iL8DzTEIdWHAp/QLKHaLoHykSWUMQk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QkEc9J7G+ZQRh3byh5JECzeD6WUmGpoYMHVBTv5AwmO6dvKvpfTnYGm/yen8G2HppWFFgVjddZ7eYiPVXxe6i05G/vVTPg47m9Yaoheo6RYe6ZOx2oY5U5kzs6AajT2RrgekaEEEqneYlgcYUgL/LLnJlsjaqpFK8g7cSkU+HzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wxKkvi4Z; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wxKkvi4Z"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hXcjY3N7rzKrl7;
-	Sun, 30 Aug 2026 05:16:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788059809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hEn+MsA7n1n6NC548cmui5vFT2ZhSWDLUnWueOriBZ4=;
-	b=wxKkvi4ZVIv/jM84ULO6Uw/isB623/YoNhR0WaCJjmzj5awVzKJvMZe7R3j70n9+kLVfJ6
-	+xLkUv9aivriBS1OcPqVjt/2TDpFZyAwHeimbIMQs0Y9Uc/qB+FTG153JHWFTgvaaKv0WZ
-	I6Rvf5XGL3w2Vgv7qj6AKssaF63Zbair3+PR5cCMaS2n4iZHsabssVSwkQyKEOlYNcPm0M
-	3G/mLpa/WE2H+EiSPShufwD4xC8OPGD/xXhNCQiuCzZT7ue0a6oO6hqL2qQifPAeM9h6aQ
-	pXRqSXWnVFp7QEo6hqe2OYLFcu83r8LuWydBXGkII919mEEyhnjuSXE/p7U6pw==
-Message-ID: <df54684e-6529-4e61-bd5e-170014fc1c3d@mailbox.org>
-Date: Sun, 30 Aug 2026 03:25:57 +0200
+	s=arc-20240116; t=1788098838; c=relaxed/simple;
+	bh=fKLS6+L+SYIc5j/um1xloKOutoeFQWzh/gn7hySPDRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VJ6dk7loK8bCqX3F918NPWUoJoopF0CYDSIS5TOwlyGenCzgOyBoKmAWhdd6luQ4JFi9OYh2stydAVn9/WSlvPbPUTxt8pMU1NB62T4Btb61Gc+jazy9l0VQ5kcBaENw2YoM5UiCOFFJVoNuzofYLs/CAdA7CxBIRVbFUcZK36U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.241.250])
+	by APP-03 (Coremail) with SMTP id rQCowADH0T8POZRqsIibBg--.48420S2;
+	Sun, 30 Aug 2026 22:07:11 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: rzv2m: fail probe on reset and runtime-PM errors
+Date: Sun, 30 Aug 2026 22:07:09 +0800
+Message-ID: <20260830140709.28745-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Marek Vasut <marek.vasut@mailbox.org>
-Subject: Re: [PATCH v6 2/2] usb: dwc3: dwc3-generic-plat: Add Renesas R-Car
- Gen5 DWC3 xHCI USB controller glue
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Thanh Quan <thanh.quan.xn@renesas.com>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-usb@vger.kernel.org,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260828184212.395082-1-marek.vasut+renesas@mailbox.org>
- <20260828184212.395082-2-marek.vasut+renesas@mailbox.org>
- <d801ecb2-587f-480a-878e-8426239b7690@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <d801ecb2-587f-480a-878e-8426239b7690@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: axc9cqqeykt3ds8hw8ruz38m83388xy6
-X-MBO-RS-ID: 9d57e20ca3d0d6acabd
+X-CM-TRANSID:rQCowADH0T8POZRqsIibBg--.48420S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrWxJw45ZFWfJw1kXF17GFg_yoW8GF4kpa
+	1xKrZFyry0qFWSqa1DAry3ZFyFgayftFW7JrWIgw18Zw15Cw4qkFy5tFyag3Z7JFWrAF45
+	JanrJayxuFyjvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUjZNVP
+	UUUUU==
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On 8/29/26 6:19 PM, Krishna Kurapati wrote:
+Probe ignores reset deassertion and runtime-PM activation failures before
+initializing the controller and registering an I2C adapter.
 
-Hi,
+Propagate both required activation errors and disable runtime PM if its
+initial resume fails.
 
->> +static int dwc3_renesas_rcar_gen5_init(struct dwc3_generic *dwc3g)
->> +{
->> +    struct device *dev = dwc3g->dev;
->> +    struct platform_device *pdev = to_platform_device(dev);
->> +    enum usb_device_speed speed = usb_get_maximum_speed(dev);
->> +    bool usb2only = false;
->> +    void __iomem *glue;
->> +
->> +    /* Wireless USB is not supported */
->> +    if (speed == USB_SPEED_WIRELESS)
->> +        return dev_err_probe(dev, -EINVAL, "Wireless USB not 
->> supported\n");
->> +
->> +    /* No USB 3 PHY in DT means this is surely USB 2 controller */
->> +    if (device_property_match_string(dev, "phy-names", "usb3-phy") < 0)
->> +        usb2only = true;
->> +
-> 
-> Why not just set the maximum-speed property to "high-speed" instead of 
-> checking for "usb3-phy". That would be more clean.
+Fixes: e0ca796a151b ("i2c: Add Renesas RZ/V2M controller")
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/i2c/busses/i2c-rzv2m.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Please see 1/2, maximum-speed DT property and the presence of the 
-usb3-phy are both optional, hence this code. Also, this was discussed in 
-previous version 2 of this patchset already.
+diff --git a/drivers/i2c/busses/i2c-rzv2m.c b/drivers/i2c/busses/i2c-rzv2m.c
+index 206a99e722a37..81e0101b61946 100644
+--- a/drivers/i2c/busses/i2c-rzv2m.c
++++ b/drivers/i2c/busses/i2c-rzv2m.c
+@@ -433,7 +433,9 @@ static int rzv2m_i2c_probe(struct platform_device *pdev)
+ 	 * The reset also affects other HW that is not under the control
+ 	 * of Linux. Therefore, all we can do is deassert the reset.
+ 	 */
+-	reset_control_deassert(rstc);
++	ret = reset_control_deassert(rstc);
++	if (ret)
++		return ret;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+@@ -461,7 +463,11 @@ static int rzv2m_i2c_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(dev);
+ 
+-	pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0) {
++		pm_runtime_disable(dev);
++		return ret;
++	}
+ 	rzv2m_i2c_init(priv);
+ 	pm_runtime_put(dev);
 
->> +    if (speed >= USB_SPEED_LOW && speed <= USB_SPEED_HIGH)
->> +        usb2only = true;
-> 
-> And this check can be removed as well if we use "maximum-speed" property 
-> in DT.
+base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
+-- 
+2.50.1
 
-Please see above.
-
->> +
->> +    glue = devm_platform_ioremap_resource_byname(pdev, "glue");
->> +    if (IS_ERR(glue))
->> +        return PTR_ERR(glue);
->> +
->> +    /*
->> +     * The datasheet describes initialization procedure without full
->> +     * information about the registers. Therefore, the source code is
->> +     * based on the bare metal code shared by the board team.
->> +     */
->> +    writew(0x211, glue + 0x26);
->> +
->> +    /* USB2 does need additional register programming. */
->> +    if (!usb2only)
->> +        return 0;
->> +
->> +    writew(0x11, glue + 0x81c);
->> +    writew(0x0, glue + 0x81a);
->> +    writew(0x1, glue + 0x802);
->> +
->> +    usleep_range(10000, 20000);
->> +
->> +    writew(0x0, glue + 0x802);
->> +    writew(0x1, glue + 0x2a);
->> +    writew(0x1, glue + 0x81a);
->> +
->> +    usleep_range(10000, 20000);
->> +
-> 
-> Use #defines for register offsets and register values like in 
-> dwc3_eic7700_init.
-
-Please see the comment above this section, it clarifies why the magic 
-numbers, and it was discussed in previous version 1 of this patchset too.
