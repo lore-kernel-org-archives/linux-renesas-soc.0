@@ -1,46 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2B51E426;
-	Mon, 31 Aug 2026 13:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198A4ACC9C;
+	Mon, 31 Aug 2026 13:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183829; cv=none; b=byifGnzFU7mtY3hW1wAiHjBnruLcBz8lJOqN4fzZZcWPinshf+T/QkFusn2S8cWO70R6fJuAyImJiTbbfvaygpEhvYeEP5Ri05QpOBliqw3kUjttOO/8WpHGrAsIbPTuFX7SXUaNb3w2BDjDqKuorNACdDT81SRdLtbA3v/gcWU=
+	t=1788184048; cv=none; b=PP7H3zXmrRCjHezJsGDcBerhGtSSSqCq921IYWjSd6n7PbsD6WCGKy2vAaSSPF2Po8TjrAu+v4ZprQrL8+as0m0A1jMRg/GGEwWBxByOdYg9XktWL2VFaokB3w8ASyIVwersrQf7S1Q6T+r2MCNgOo36NPNLYO5IhJ8qyzHXlRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183829; c=relaxed/simple;
-	bh=CGt0N1tLOFpwGA8/d4GAdlCO8d3EpknSs7/J7jBe4OM=;
+	s=arc-20240116; t=1788184048; c=relaxed/simple;
+	bh=2agwZIKpELVYimrSMg1EHXYKksUbEOEuom01oeSACU8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MAJADYHWX0wll+Tm9euoZvusZrMQwcG2SGVYTWRhDYdjH0ufbXr33pO3IsQMTwhALRE4T5eMkWB6l79N/yw58JW7XpCAs+voIUoDQDOCoNpTyab2aMHKvTdMYwIlHlyqsDKqJB9DJVOMUaG9BK1nw9R/jr+f4KV/ROz05qNLWvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS9Lrsog; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=byfQYE1x77ay3gFPcA4M0lo2tdEJcEfAfboG5yhRrg9SvC4DzFdp6HErkETQaAAa6vDAo+tkfMvBYaPUZPyju2HF3KWHPrETZv2ZujoY7eZ/3N7v/AdMfx5KfX4UEOijUjO4Iz9ReFLgpWSat9QhcgWVoztRW0/RQUIS0cJqSYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKLNJFlg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS9Lrsog"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DD21F00A3E;
-	Mon, 31 Aug 2026 13:43:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKLNJFlg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163BD1F00ADE;
+	Mon, 31 Aug 2026 13:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183827;
-	bh=ydfY7BP33vtEWqKTd0X509IVv9E5NYTqO71gDIaSIrI=;
+	s=k20260515; t=1788184044;
+	bh=rt4lfTWNmwFbyQ6X9Uiwf5ch2ehd0gQDAwmtyXug9v0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=WS9Lrsog3kLykR0jf5npacD7P4gkC8BnFu+OVHzjIOdRscGS3XojWfFKEZTXpxoOa
-	 AcaBtZzrj26PbrUoxIf3w+O7GS0a4695paP1iJc58Ag/6d0ritfYtdbmJyxxXeBnyz
-	 ucD0CJYq9VSv+jOeBQ4XERq4RZymrQlRqlMSlLz80gIyFNFH+k7s/LTmkhUYNQiIbu
-	 J9gDmjUUjTDyfgTCNgqw/+U9IZ8KKH3tHyehLPhduZiya7WAJXq3QUmsQ6VdpJnktH
-	 vqqgNg6NoUjJgoeboQwk/N20qHto0uoo6x4g8tWA2o0sker+ITTH9rcicgPpYOZb0J
-	 jwzKxhwZQTF8A==
+	b=eKLNJFlg7g68MbQbV3Y70eT4KGnwd/g3wImXDb+XatQeiANBTSpKXPIq3PgACUOEx
+	 YnVJlwSRUaCZ8yXtbnnipJLm7kqIcUWZio1IP8Hx6CzrRYqIH/RnW4c3Lnvc9G4gnU
+	 pUFSuokub8KSydglQHWXvxkCc5KH+7DWsHLH98ySnwXp0jc29K0ofc8Fj6cPn5D8cR
+	 bEdTDKl3rz2NCFKuIeex7maIfgGleKzCTAm/EV3KuVWnOGuu7wMe3plmXXUiarGciu
+	 5fITUx6Ulq0hvdSDL7zHCgglbA1RPDhjxirqLVCncb05TrO7y6/hNrX6VX59JeGGpV
+	 WRhz+QVu5UNXQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Sasha Levin <sashal@kernel.org>,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
+	linusw@kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] clk: renesas: cpg-mssr: Add number of clock cells check
-Date: Mon, 31 Aug 2026 09:25:56 -0400
-Message-ID: <20260831133314.4125787-328-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] pinctrl: renesas: rzg2l: Handle RZ/V2H(P) IOLH configuration in PM cache
+Date: Mon, 31 Aug 2026 09:28:06 -0400
+Message-ID: <20260831133314.4125787-458-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -56,16 +54,22 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit 7f0c422c7fbfd9294ff9321ada0c63561e5c6ea0 ]
+[ Upstream commit d0fc9f8eb2ce55eb00dbfdc0f19c844df5aee5b8 ]
 
-The number of clock cells is not validated in the clock provider's
-clk_src_get() callback.  Add the missing check.
+Include PIN_CFG_IOLH_RZV2H in the IOLH capability checks when saving
+and restoring pin configuration registers.
 
+On RZ/V2H(P), RZ/V2N, and RZ/G3E, the IOLH configuration is defined by
+the PIN_CFG_IOLH_RZV2H capability.  The previous implementation did not
+account for this, causing the IOLH registers to be skipped during PM
+save/restore.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe236ec.1777562043.git.geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
@@ -74,36 +78,37 @@ LLM Generated explanations, may be completely bogus:
 ## Phase 1: Commit Message Forensics
 
 ### Step 1.1: Subject line
-**Record:** `[clk: renesas: cpg-mssr]` `[Add]` — add missing validation
-of clock specifier cell count in the CPG/MSSR clock provider callback.
+**Record:** `[pinctrl: renesas: rzg2l]` `[Handle]` — Include RZ/V2H(P)
+IOLH capability in PM register save/restore checks.
 
-### Step 1.2: Tags
+### Step 1.2: Commit tags
 **Record:**
-- **Signed-off-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
-  (author)
-- **Reviewed-by:** Biju Das `<biju.das.jz@bp.renesas.com>` (Renesas
-  maintainer)
-- **Link:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe
-  236ec.1777562043.git.geert+renesas@glider.be
-- No Fixes:, Reported-by:, Tested-by:, Cc: stable@vger.kernel.org, or
-  syzbot tags
-- Notable: maintainer review present; no external bug report
+- **Signed-off-by:** Lad Prabhakar `<prabhakar.mahadev-
+  lad.rj@bp.renesas.com>` (author)
+- **Reviewed-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
+  (Renesas/pinctrl maintainer)
+- **Link:**
+  https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-
+  lad.rj@bp.renesas.com
+- **Signed-off-by:** Geert Uytterhoeven (maintainer tree)
+- No Fixes:, Reported-by:, Tested-by:, Cc: stable@, or syzbot tags
+- Notable: Reviewed by subsystem maintainer; part of v2 5-patch PM
+  caching series (patch 3/5)
 
 ### Step 1.3: Body analysis
 **Record:**
-- **Bug:** `cpg_mssr_clk_src_twocell_get()` uses `clkspec->args[0]` and
-  `clkspec->args[1]` without verifying `clkspec->args_count == 2`
-- **Symptom:** malformed or short clock specifiers can reach the
-  callback; `args[1]` is read unconditionally at function entry
-- **Root cause:** missing input validation in the OF clock provider
-  `clk_src_get` callback
-- No kernel version, stack trace, or reproduction steps in the message
+- **Bug:** PM suspend/resume skips IOLH registers on RZ/V2H(P), RZ/V2N,
+  and RZ/G3E because those SoCs use `PIN_CFG_IOLH_RZV2H` instead of
+  `PIN_CFG_IOLH_A/B/C`.
+- **Symptom:** Output-impedance/drive-strength (IOLH) not saved on
+  suspend or restored on resume; pins revert to wrong electrical
+  settings after S2RAM.
+- **Root cause:** `has_iolh` capability check omits
+  `PIN_CFG_IOLH_RZV2H`.
 
 ### Step 1.4: Hidden bug fix?
-**Record:** Yes. Although the subject says "Add … check", this is a real
-correctness bug: the function dereferences two specifier cells without
-confirming two cells were supplied. Same-file helper
-`cpg_mssr_is_pm_clk()` already enforces `args_count == 2`.
+**Record:** No — this is an explicit PM suspend/resume bug fix, not
+disguised cleanup.
 
 ---
 
@@ -111,181 +116,179 @@ confirming two cells were supplied. Same-file helper
 
 ### Step 2.1: Inventory
 **Record:**
-- **File:** `drivers/clk/renesas/renesas-cpg-mssr.c` (+3 / -0)
-- **Function:** `cpg_mssr_clk_src_twocell_get()`
-- **Scope:** single-file, surgical (3 lines)
+- **File:** `drivers/pinctrl/renesas/pinctrl-rzg2l.c` (+2 lines net in
+  submitted diff; full v2 patch touches 2 functions)
+- **Functions:** `rzg2l_pinctrl_pm_setup_dedicated_regs()` (shown in
+  candidate diff); v2 submission also changed
+  `rzg2l_pinctrl_pm_setup_regs()` (author later agreed to drop that hunk
+  per maintainer review)
+- **Scope:** Single-file, surgical (2-line logical change)
 
-### Step 2.2: Code flow change
+### Step 2.2: Code flow
 **Record:**
-- **Before:** reads `clkspec->args[1]` immediately, then switches on
-  `args[0]`
-- **After:** returns `-EINVAL` if `args_count != 2`, then same logic
-- **Path affected:** every clock lookup through this provider (probe,
-  consumer `clocks` properties, `of_clk_get_from_provider()`)
+- **Before:** `has_iolh` true only for `PIN_CFG_IOLH_A|B|C`; dedicated
+  pins with only `PIN_CFG_IOLH_RZV2H` skip IOLH cache read/write.
+- **After:** `PIN_CFG_IOLH_RZV2H` included; IOLH registers saved on
+  suspend and restored on resume for affected dedicated pins.
+- **Path:** System suspend/resume via `rzg2l_pinctrl_suspend_noirq()` /
+  `rzg2l_pinctrl_resume_noirq()` →
+  `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
 
 ### Step 2.3: Bug mechanism
-**Record:** **Category:** input validation / logic correctness
-**Mechanism:** with `args_count < 2`, `args[1]` may not have been
-populated by the caller; with `args_count > 2`, extra cells are silently
-ignored. Either can yield wrong clock index/type selection. Not a
-classic buffer overflow (`args[]` is fixed-size), but can return the
-wrong `struct clk *` or pass bad indices into `priv->clks[]` lookup.
+**Record:** **Logic/correctness fix** — incomplete capability bitmask
+causes PM cache to omit IOLH register save/restore for a whole class of
+pins on newer Renesas SoCs.
 
 ### Step 2.4: Fix quality
-**Record:** Obviously correct, minimal, matches existing pattern in the
-same file (`cpg_mssr_is_pm_clk`, line 561) and `ux500_twocell_get()`.
-Regression risk: very low; only rejects previously-accepted invalid
-specifiers.
+**Record:** Obviously correct (adds the missing flag already used
+everywhere else in the driver). Minimal risk; no API, locking, or
+structural changes.
 
 ---
 
 ## Phase 3: Git History Investigation
 
 ### Step 3.1: Blame
-**Record:** Current function body dates to merge `5d324e5159d9e` in this
-tree's limited history; file copyright shows CPG/MSSR driver present
-since 2015. The missing validation is long-standing, not a recent
-regression.
+**Record:** Buggy `has_iolh` lines at 3009 and 3097 trace to the PM
+caching code (blame shows `19eef1d98eeda` in this shallow stable tree).
+`PIN_CFG_IOLH_RZV2H` (line 65) is present in this tree.
 
 ### Step 3.2: Fixes: tag
 **Record:** N/A — no Fixes: tag.
 
 ### Step 3.3: Related file history
-**Record:** Recent `renesas-cpg-mssr.c` changes in this tree are reset-
-timing fixes (`f57b5f2ad106a`, `b1c7a8145137c`). No related args_count
-fix already present. Patch is standalone (3/3 in series; patches 1–2 are
-rzg2l refactors).
+**Record:** Same PM series already partially backported to this tree:
+- `8d1c6b603327b` — SMT register cache (patch 1/5, same series)
+- `509d342d02fff`, `c4cfa8ee77374` — earlier IOLH/IEN/PUPD/SMT PM fixes
+This IOLH fix is **not** yet in the tree.
 
 ### Step 3.4: Author context
-**Record:** Geert Uytterhoeven is the Renesas clock subsystem
-maintainer. Biju Das reviewed.
+**Record:** Lad Prabhakar is the RZ/G2L pinctrl driver author/maintainer
+contributor; Geert Uytterhoeven is Renesas maintainer and reviewed the
+series.
 
 ### Step 3.5: Dependencies
-**Record:** None. Applies cleanly (`git apply --check` on upstream
-commit `7f0c422c7fbfd` succeeded). Self-contained.
+**Record:** Standalone — only adds a flag to an existing bitmask. Does
+not require patches 2/4/5 (SR/NOD/PUPD) to function; applies cleanly to
+current `rzg2l_pinctrl_pm_setup_dedicated_regs()` at line 3097.
 
 ---
 
 ## Phase 4: Mailing List and External Research
 
 ### Step 4.1: Original discussion
-**Record:**
-- **URL:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe2
-  36ec.1777562043.git.geert+renesas@glider.be
-- **Series:** v1, 3 patches — "clk: renesas: Miscellaneous fixes and
-  cleanups"
-- **Reviewer feedback:** Biju Das: "Thanks for the patch" + `Reviewed-
-  by`
-- **Stable nomination:** none in thread
-- **NAKs/concerns:** none
+**Record:** Thread fetched via `b4 mbox` from lore (16 messages). Patch
+3/5 reviewed by Geert Uytterhoeven. Geert noted `PIN_CFG_IOLH_RZV2H` may
+only matter for dedicated pins in `pm_setup_regs`; author agreed to drop
+that hunk. Final fix targets `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
 
-### Step 4.2: Reviewers (b4 dig -w)
-**Record:** CC'd: Michael Turquette, Stephen Boyd (clk maintainers),
-Biju Das, linux-renesas-soc, linux-clk.
+### Step 4.2: Reviewers
+**Record:** Geert Uytterhoeven (maintainer), Linus Walleij CC'd on cover
+letter; linux-renesas-soc list.
 
-### Step 4.3: Bug report
-**Record:** N/A — no external bug report or syzbot link.
+### Step 4.3: Bug reports
+**Record:** No external bug report or syzbot link; issue identified
+during PM caching review/fix series.
 
-### Step 4.4: Related patches
-**Record:** Patches 1–2 are rzg2l refactors/cleanups, not required for
-this fix.
+### Step 4.4: Series context
+**Record:** v2 0/5 cover letter describes 5 related PM cache fixes.
+Patch 1 (SMT) already in this 6.18.43 tree; patches 2/4/5 (SR, NOD,
+dedicated PUPD) are separate and not prerequisites for this IOLH bitmask
+fix.
 
 ### Step 4.5: Stable list
-**Record:** Not searched separately; no stable discussion found in patch
-thread.
+**Record:** No stable@ discussion found in thread.
 
 ---
 
 ## Phase 5: Code Semantic Analysis
 
 ### Step 5.1: Key functions
-**Record:** `cpg_mssr_clk_src_twocell_get()` (modified); context:
-`cpg_mssr_is_pm_clk()`, `cpg_mssr_attach_dev()`,
-`cpg_mssr_common_init()`.
+**Record:** `rzg2l_pinctrl_pm_setup_dedicated_regs()`, called from
+`rzg2l_pinctrl_suspend_noirq()` and `rzg2l_pinctrl_resume_noirq()`.
 
 ### Step 5.2: Callers
-**Record:** Registered via `of_clk_add_provider(np,
-cpg_mssr_clk_src_twocell_get, priv)` at line 1192. Invoked indirectly by
-`of_clk_get_hw_from_clkspec()` → `of_clk_get()`, `of_clk_get_by_name()`,
-`of_clk_get_from_provider()` (exported). Reachable during device
-probe/boot on Renesas DT platforms.
+**Record:** PM suspend/resume noirq path on every system sleep for
+affected pinctrl devices.
 
 ### Step 5.3: Callees
-**Record:** array indexing into `priv->clks[]`, `dev_err()`,
-`clk_get_rate()`, `IS_ERR()` checks.
+**Record:** `RZG2L_PCTRL_REG_ACCESS32()` macro for hardware IOLH/IEN
+register read (suspend) or write (resume).
 
 ### Step 5.4: Reachability
-**Record:** Yes — common boot/probe path for Renesas R-Car/RZ boards
-using `renesas,cpg-mssr` with `#clock-cells = <2>`. Normal OF parsing
-usually supplies correct `args_count`, but `of_clk_get_from_provider()`
-is exported and the callback has no framework-level cell-count guard.
+**Record:** Triggered on every S2RAM cycle on boards using
+`renesas,r9a09g047-pinctrl` (RZ/G3E), `renesas,r9a09g056-pinctrl`
+(RZ/V2H), or `renesas,r9a09g057-pinctrl` (RZ/V2HP). Dedicated pins
+include Ethernet, SD, XSPI, SCIF, etc.
 
 ### Step 5.5: Similar patterns
-**Record:** Same file: `cpg_mssr_is_pm_clk()` checks `args_count != 2`.
-Other Renesas drivers (`rzg2l-cpg.c`, `rzv2h-cpg.c`) check in PM paths
-but not in their `*_twocell_get()` callbacks. `ux500_twocell_get()` does
-check in the provider callback.
+**Record:** Same `has_iolh` bitmask omission exists at line 3009 in
+`rzg2l_pinctrl_pm_setup_regs()` for GPIO port pins using
+`RZV2H_MPXED_PIN_FUNCS` (which includes `PIN_CFG_IOLH_RZV2H`). This
+commit (per review) does not fix that path; dedicated-pin path is the
+confirmed target.
 
 ---
 
-## Phase 6: Cross-Reference Against Local Tree
+## Phase 6: Cross-Reference Against Local Tree (6.18.43)
 
 ### Step 6.1: Buggy code present?
-**Record:** **Yes.** Tree is **linux-6.18.y** (`git describe HEAD` →
-`v6.18.43-1-gc7f0dac02d232`, `make kernelversion` → `6.18.43`).
-`cpg_mssr_clk_src_twocell_get()` at line 341 lacks the `args_count`
-check. Upstream fix commits `7f0c422c7fbfd` / stable `1c79ea845f76d` are
-**not** ancestors of current HEAD.
+**Record:** **Yes.** Line 3097 in
+`rzg2l_pinctrl_pm_setup_dedicated_regs()`:
+```3097:3097:drivers/pinctrl/renesas/pinctrl-rzg2l.c
+                has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
+PIN_CFG_IOLH_C));
+```
+`PIN_CFG_IOLH_RZV2H` is defined (line 65) and used extensively in
+`rzv2h_dedicated_pins` and `rzg3e_dedicated_pins` (e.g., lines 2233+,
+2370+). Affected SoC compatibles are registered (lines 3470–3479).
 
 ### Step 6.2: Backport complications
-**Record:** Clean apply verified. Function is non-`static` in current
-tree (was `static` in patch context); hunk still applies.
+**Record:** Clean apply — single-line change at line 3097. No SR/NOD
+infrastructure required (those are separate series patches not in this
+tree).
 
 ### Step 6.3: Related fixes already present?
-**Record:** No — `git log --grep="clock cells check"` finds nothing on
-current branch; grep confirms no `args_count` check in
-`cpg_mssr_clk_src_twocell_get()`.
+**Record:** SMT PM cache fix from same series (`8d1c6b603327b`) is
+already in tree. This IOLH fix is the logical next piece.
 
 ---
 
 ## Phase 7: Subsystem Context
 
-### Step 7.1: Subsystem / criticality
-**Record:** `drivers/clk/renesas/` — **IMPORTANT** (platform clock
-provider for Renesas SoCs; affects boot and all clocked peripherals).
+### Step 7.1: Subsystem criticality
+**Record:** `drivers/pinctrl/renesas/` — **PERIPHERAL** (platform-
+specific), but suspend/resume correctness is critical for embedded
+products using these SoCs.
 
 ### Step 7.2: Activity
-**Record:** Active in 6.18.y (recent reset-timing fixes in same file).
+**Record:** Active PM fix series; multiple related backports already
+landed in 6.18.y.
 
 ---
 
 ## Phase 8: Impact and Risk Assessment
 
 ### Step 8.1: Who is affected
-**Record:** Users of Renesas CPG/MSSR platforms (R-Car, RZ families)
-with `CONFIG_CLK_RENESAS`. Not universal, but real production embedded
-hardware.
+**Record:** Users of RZ/G3E (r9a09g047), RZ/V2H (r9a09g056), RZ/V2HP
+(r9a09g057) who use system suspend/resume. Driver-specific, but
+dedicated pins cover critical peripherals.
 
 ### Step 8.2: Trigger conditions
-**Record:** Malformed clock specifier (`args_count != 2`) reaching the
-provider callback — e.g. direct `of_clk_get_from_provider()` misuse, or
-non-standard caller paths. Normal DT parsing with `#clock-cells = <2>`
-(binding-mandated) usually provides 2 cells. **Likelihood: low** for
-well-formed DT; **non-zero** for internal/exported API misuse.
+**Record:** Every S2RAM suspend/resume cycle on affected hardware.
+Requires `CONFIG_PINCTRL` + matching DT compatible. Not userspace-
+triggerable directly, but normal laptop/embedded suspend path.
 
-### Step 8.3: Failure mode severity
-**Record:** Wrong clock returned or invalid index used → peripheral mis-
-clocking, probe failure, or subtle hardware misbehavior. Unlikely kernel
-panic (index range checks exist), but **MEDIUM** severity for embedded
-correctness; not CRITICAL (no demonstrated crash/CVE).
+### Step 8.3: Failure severity
+**Record:** Wrong pin drive strength/impedance after resume → peripheral
+malfunction (Ethernet, SD, XSPI flash, UART), potential bus errors or
+silent data corruption on high-speed interfaces. **Severity: MEDIUM-
+HIGH** (hardware misconfiguration, not kernel oops).
 
 ### Step 8.4: Risk-benefit
-**Record:**
-- **Benefit:** closes a real validation gap; aligns with same-file and
-  cross-driver practice
-- **Risk:** negligible (3-line guard, returns `-EINVAL`)
-- **Ratio:** favorable, though absolute benefit is modest without a
-  reported failure
+**Record:** **Benefit: HIGH** for affected embedded users doing
+suspend/resume. **Risk: VERY LOW** (2-line bitmask fix, maintainer-
+reviewed). Ratio strongly favors backport.
 
 ---
 
@@ -293,108 +296,92 @@ correctness; not CRITICAL (no demonstrated crash/CVE).
 
 ### Step 9.1: Evidence summary
 
-**FOR:**
-- Real missing validation in a clock provider callback
-- Same file already validates `args_count` in `cpg_mssr_is_pm_clk()`
-- Trivial, maintainer-reviewed, applies cleanly
-- Buggy code confirmed in 6.18.43
-- Wrong clock lookup on SoC platforms is a meaningful failure mode
+**FOR backport:**
+- Real suspend/resume bug on shipping Renesas SoCs in this tree
+- Maintainer-reviewed, obviously correct, minimal diff
+- Same PM series already partially backported (SMT fix in 6.18.43)
+- Affects critical dedicated pins (network, storage, flash buses)
+- Buggy code and `PIN_CFG_IOLH_RZV2H` both present in 6.18.43
 
-**AGAINST:**
-- No user report, crash, or syzbot finding
-- Normal OF/DT paths enforce cell count via `#clock-cells`
-- Borderline on stable "important issue" threshold
-- Part of a "fixes and cleanups" series alongside pure refactors
+**AGAINST backport:**
+- Narrow hardware scope (3 SoC compatibles)
+- No crash/oops — functional/hardware issue after resume
+- GPIO port-pin IOLH path (line 3009) may remain unfixed per maintainer
+  review (out of scope for this commit)
 
-**UNRESOLVED:** No proof of real-world trigger on production boards.
+**Unresolved:** Whether port-pin IOLH via
+`rzg2l_pinctrl_pm_setup_regs()` also needs the same fix (Geert/author
+agreed to omit; separate issue).
 
 ### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — 3-line guard; reviewed by
-   subsystem maintainer (no runtime test cited)
-2. Fixes a real bug? **PASS** — uses specifier cells without validating
-   count
-3. Important issue? **PASS (borderline)** — correctness/hardware mis-
-   clocking, not demonstrated crash/security
-4. Small and contained? **PASS** — 3 lines, one function
-5. No new features/APIs? **PASS**
-6. Can apply to local tree? **PASS** — verified clean apply
+1. Obviously correct and tested? **PASS** — bitmask addition; Reviewed-
+   by maintainer; series patch 1 tested by multiple Tested-by on SMT
+   patch
+2. Fixes real bug affecting users? **PASS** — IOLH not saved/restored on
+   suspend/resume
+3. Important issue? **PASS** — suspend/resume hardware misconfiguration
+   on critical pins (MEDIUM-HIGH)
+4. Small and contained? **PASS** — 2 lines, one function
+5. No new features or APIs? **PASS**
+6. Can apply to local tree? **PASS** — applies cleanly at line 3097
 
-### Step 9.3: Exception categories
-**Record:** None (not device ID, quirk, DT, build, or docs fix).
+### Step 9.3: Exception category
+**Record:** N/A — standard bug fix, not device-ID/quirk/build fix.
 
 ### Step 9.4: Decision rationale
-For **linux-6.18.y**, the vulnerable code exists, the fix is surgical
-and maintainer-vetted, and it closes an inconsistency that could yield
-incorrect clock resolution on Renesas platforms. While no crash report
-exists and normal DT parsing mitigates exposure, the fix is zero-risk
-defensive correctness in a hardware-critical path — appropriate for
-stable.
+
+For **Linux 6.18.43**, this commit should be backported. The tree
+already has RZ/V2H and RZ/G3E pinctrl support with extensive
+`PIN_CFG_IOLH_RZV2H` dedicated-pin tables and active PM suspend/resume,
+but the PM cache path omits that capability flag. After S2RAM, dedicated
+function pins (Ethernet, SD, XSPI, etc.) lose their output-impedance
+settings. The fix is trivial, maintainer-reviewed, and consistent with
+the SMT PM cache fix already in this stable tree.
 
 ---
 
 ## Verification
 
-- [Phase 1] Parsed commit message and tags from user query and `git show
-  7f0c422c7fbfd`
-- [Phase 2] Read current `renesas-cpg-mssr.c` lines 341–393; confirmed
-  unconditional `args[1]` read
-- [Phase 2] Compared with `cpg_mssr_is_pm_clk()` line 561 `args_count`
-  check
-- [Phase 3] `git blame` on function; `git log` on file
-- [Phase 3] `git apply --check` on upstream patch: clean apply
-- [Phase 3] `git merge-base --is-ancestor 7f0c422c7fbfd HEAD` → exit 1
-  (fix not in tree)
-- [Phase 4] `b4 dig -c 1c79ea845f76d`: found lore URL
-- [Phase 4] `b4 dig -a`: v1 series, patch 3/3 standalone
-- [Phase 4] `b4 dig -w`: clk + Renesas maintainers CC'd
-- [Phase 4] Read `/tmp/cpg-mssr-thread.mbox`: Biju Das Reviewed-by, no
-  stable nomination
-- [Phase 5] Traced `of_clk_add_provider` → `of_clk_get_hw_from_clkspec`
-  call chain in `clk.c`
-- [Phase 5] Grep `args_count != 2` across `drivers/clk/`
-- [Phase 6] `git describe HEAD` → v6.18.43; `make kernelversion` →
-  6.18.43
-- [Phase 6] Confirmed missing check in checked-out tree
-- [Phase 6] Read DT binding `renesas,cpg-mssr.yaml`: `#clock-cells`
-  const 2
-- [Phase 8] Read `struct of_phandle_args` in `include/linux/of.h`:
-  `args_count` + `args[MAX_PHANDLE_ARGS]`
+- **[Phase 1]** Parsed subject, tags, body from commit message and local
+  mbx
+- **[Phase 2]** Read diff and current code at lines 3009, 3097,
+  3179–3243
+- **[Phase 3]** `git describe HEAD` → v6.18.43; `git log --oneline -20
+  -- drivers/pinctrl/renesas/pinctrl-rzg2l.c`; `git blame` on lines
+  3009/3097; confirmed `8d1c6b603327b` (SMT fix from same series) in
+  tree
+- **[Phase 4]** `b4 mbox` fetched 16-message lore thread; Geert review
+  noted dedicated-pin scope; no stable@ nomination found
+- **[Phase 5]** Traced call chain:
+  `rzg2l_pinctrl_suspend_noirq`/`resume_noirq` →
+  `rzg2l_pinctrl_pm_setup_dedicated_regs`; verified
+  `rzv2h_dedicated_pins`/`rzg3e_dedicated_pins` use
+  `PIN_CFG_IOLH_RZV2H`; verified SoC compatibles at lines 3470–3479
+- **[Phase 6]** Confirmed buggy line 3097 present; `PIN_CFG_IOLH_RZV2H`
+  defined at line 65; fix not yet applied; clean apply expected
+- **[Phase 7]** Identified Renesas pinctrl driver subsystem
+- **[Phase 8]** Assessed suspend/resume trigger and MEDIUM-HIGH hardware
+  impact
 
-**YES****Result:** Backport to **linux-6.18.y** is recommended.
+**YES**
 
-The missing `args_count != 2` check in `cpg_mssr_clk_src_twocell_get()`
-is a real validation gap (the function reads `args[1]` unconditionally).
-The fix is 3 lines, applies cleanly to 6.18.43, and matches the existing
-check in `cpg_mssr_is_pm_clk()` in the same file. No crash reports, but
-it's low-risk defensive correctness on Renesas CPG/MSSR platforms.
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-**YES****Upstream commit:** `7f0c422c7fbfd` — *clk: renesas: cpg-mssr:
-Add number of clock cells check* (Geert Uytterhoeven, Apr 30 2026).
-There is also a stable-prepared variant at `1c79ea845f76d` referencing
-that upstream SHA.
-
-In the checked-out **linux-6.18.y** tree (`v6.18.43`), neither commit is
-present yet; the missing validation is still in
-`cpg_mssr_clk_src_twocell_get()`. Backport recommendation remains
-**YES**.
-
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index a0a68ec0490f7..87ede1ee64d7a 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -349,6 +349,9 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 	struct clk *clk;
- 	int range_check;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index e8cc83029db33..ab8d64a14dd0a 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -3094,7 +3094,8 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 		}
  
-+	if (clkspec->args_count != 2)
-+		return ERR_PTR(-EINVAL);
-+
- 	switch (clkspec->args[0]) {
- 	case CPG_CORE:
- 		type = "core";
+ 		/* And apply them in a single shot. */
+-		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
++		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
++				      PIN_CFG_IOLH_C | PIN_CFG_IOLH_RZV2H));
+ 		has_ien = !!(caps & PIN_CFG_IEN);
+ 		pincnt = hweight8(FIELD_GET(RZG2L_SINGLE_PIN_BITS_MASK, cfg));
+ 
 -- 
 2.53.0
 
