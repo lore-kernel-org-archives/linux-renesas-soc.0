@@ -1,128 +1,249 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFE74AC155;
-	Mon, 31 Aug 2026 15:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDB04AEBCB
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Aug 2026 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788189405; cv=none; b=skUL8OfpUuM0KaVPKsM9FziBUn1OBoeGAYJoEoRr83P+YRbWnE8Ccmr/GVE742AD89rCjqCfQSleet8ae9uQ+8TKfdYqxsYB56CXb097MlnqQGEd9qukyfRsTnmYR1HTMvvhFEplFXVE1S3Efj3HZFnIY4EKnrtWmvbvt1pxQ50=
+	t=1788190570; cv=none; b=BpH7oY51BKyviGOjyV6+28Ju/hTo/ybURgGBnaVxVqJJVT02B+uZKPsA0JwXyd7nq2JoLbjRdSpMcX7jsAWL8o8bMBFssmnIsoP3Q5kEXcaS/bzM8z6vNeF4Eh7VA+YxRmvkWi2nxTdG9RziLGEYY9K+DLFus7wm8W/aOqhaZgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788189405; c=relaxed/simple;
-	bh=GqDlEthcKeCto1IK8aqSMtLvQsYhsCkSSc92Sf6YLWo=;
+	s=arc-20240116; t=1788190570; c=relaxed/simple;
+	bh=DodOb5bu1oSMuLPsOxNFB8oK01GET+pyiMt7NsDyP0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHDfCFOicr+mcg08U/zj6zxkEs5/eedI4NpymLAnhOiigZ0SpXTxZWzK1HhdjQ1PDzMbCXIq6ZO/2I5jSBwctS+A+1Y3+KUF4fBDxiBCf/x/0xwWs6xwwqMqJbATJXaZ3J0774jovxuTc3szFDdf7ISofG1b+c1KfSQSId5/i2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPjmHNMV; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwXQHhx2G1vRAOCYikG74wxy6hEsQ3xfciDLYIAMHuvnc4JOrCAm4WeQIdoL9CejgbidR1SBP9V3RIfIn1RaKulzm+yXOWWcymFn3CAHslGJWScOFA8vUrkMWQsoCmoNLqwHa/D06lO3cPXk1X6pTRxdOjyUOKgNv/Um9FoaEtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MllDFC1F; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AvVWjzlH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPjmHNMV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9359C1F000E9;
-	Mon, 31 Aug 2026 15:16:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788189403;
-	bh=Kx1FB6JgPrk1Y6hTLCOF3WYrXDB4KeTBg4uS8qfCyPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jPjmHNMV/qUIEYqw7osqFfO/AIQGD9T4cag8N8jFQ23U2T0kFUUp4l8Ivr8XVsCc2
-	 WQXupcEx89Ua8i9/RCi1O/rx9I8zn7xPwU2+dXDTi0P9N2HPsSaQpVyamgq/aSXUKr
-	 HkvL0EVGVnhXhmmN8LjYOPAzxNBaqu61Sa7FAV+wrsS7uoAEArGmj+R0N/jiyNreGG
-	 45+js7AkiFVeTY4AOh5D3wFwPP2W+j/wQvxUt5JFOzIDacg8PQhitjRL9n+BWv38Z9
-	 0SeVmyVgPSjmWR2cplEY//k5Sxz3lUr2QGltvxgJYPZKLzGEicc5RKqVlCS3kBG4jQ
-	 /NqcZPl3/ECCw==
-Date: Mon, 31 Aug 2026 16:16:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] dt-bindings: iio: adc: renesas,r9a09g077-adc:
- document DMA support
-Message-ID: <20260831-riveting-unworthy-6c1992bf16f1@spud>
-References: <20260828145943.2077589-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260828145943.2077589-8-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260828-stoppable-clone-db6c2fefe0fd@spud>
- <CAMuHMdUryFJFQ+NWRzXWTzhW5yWvUsXc9y1=wTS13BGOaKg+5w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MllDFC1F";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AvVWjzlH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788190567;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
+	b=MllDFC1FBEdnQNrGZhkaDrBpl2tNnlUR3bV0uqNK9YMcEXl+vOOyvlPNsxPaII6K6UZAJc
+	gQFslQcZjRNKSmxLmBwoMkDrJ9RnjvzFNDzdMM/v37r2kYDWSMMsSvkVmjCxsy5YP/E5J1
+	4nA6GLfiOEJVEWgW4RwZ7OZ8H3j6moA=
+Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
+ [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94--i8C6h-ZOIKuAjUHBzBePg-1; Mon, 31 Aug 2026 11:36:06 -0400
+X-MC-Unique: -i8C6h-ZOIKuAjUHBzBePg-1
+X-Mimecast-MFC-AGG-ID: -i8C6h-ZOIKuAjUHBzBePg_1788190565
+Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-66c70f4b830so4849400d50.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Aug 2026 08:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788190565; x=1788795365; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
+        b=AvVWjzlHj7QXls7GoYFVn44ZDsR69lSpKoIkBuoXoTNtgyugbIh79MEuKTLDPwmZ9n
+         qPUqN2uRU90DwZYmmiw3RBVZ7GhVpA8DE7AbkfGQmt9ErbpbmE0Ddb5B30YCyOiG93Ed
+         amkRp5ySisqByYFwIX832rN1E5SbVR9wa0yg552Cn/M99WQSxDepaE01yhq8VkxbZ1kx
+         2kAHJ21YaekABN0x++MKyHPvIibSSQMO9OD0CTw8ISnXIoacmURBYQkTpjA61Msnf1Tc
+         E79cMWOrQGLKCVQjRpm33ea365rAODULpJHtY7PY6GdCcoqj2S/9Hpe3/o+CluKemBMJ
+         X50Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788190565; x=1788795365;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
+        b=UNFGbqMruENZKVzxoCpRKzjtwbX12vqqCDml3Ml7SxH/9gO+okYvvcTI9B3yPIU9PW
+         O2PRa+I3bpVywsZG/Mfoiz9xrOAuih6Suo1eRGKej82gzAvTNzxDGd3EY0X2jx/1wRaz
+         zHqY+4h8DveEewHhXISn36I+CLn8udrYKA0iNVfmcrPFX50D8wv91Kx0FYTLClCjrBlm
+         7J7+jrDYpzObNafJAGnDdnorWJblR9SEkAx4WQNIidYhwUxDQUcjJUZ+p3HfQ1QypwhP
+         zjRX6MotpnK91vCgUo+DnsqEyH5c+tWwm+WQWbQcgNU2jvXK+rQYSc8Cz0TULMEteSEa
+         MfEw==
+X-Forwarded-Encrypted: i=1; AKwUvBwVnyKWdZPwiznnJbJfM+Bp1TItBxWKM9SQgCoW9ltC0I02CPdJ81hiaa2QTwTgQ8b+U74fAlx+lp5qNYrwCHGpKA==@vger.kernel.org
+X-Gm-Message-State: AFuF++nHm4V76HsdKMdnelxmIZwzpQL/VO5rKZRTgRTr632qKgJOQ9+l
+	TP9r+ihO8VHFz/NRbVN3glBdCCtulDMwPF94FP6NVn4nxN/g84AJgCMe4s1m5XUuzy5JDmCStGt
+	DZ/nq0p5zs2flBe+265ovuvJZ+SNI5eGLZRb/yGPJnE6GBx4WUw1BHEmFxUI5W1tL9vayTRup
+X-Gm-Gg: AYBFou11Raad3QGYwiA5GJizCcXyedVxjZU5hHMWdoJ31aLJ+i7RXfo5sBVh98Jf9vB
+	NKEoG+rBhS5Yk2pELJKK79UDL2dH3ApJVaYkQlRVmjZaZ2jwqlc7Ml7J3pc4MXcOmtFrBmKsiqq
+	h7ANbgy8ecXvOVzR30rrOY2rk93E8X52YXV3FRL0m563QVLcJ1deZ/SwBew4g2P4BE2dFdqbBPa
+	fI/8W1weOtShz2HTP17AoairY6KS22YaOvuspLe9jezhJdyK4LpnY6am1nOcSG2nEjBF2+mZHM8
+	pzLNNMyFBki5ydppFqnh6KK58vlb5TLVYvAsuLtms7SCj7+ZKFIo9YBcWADbNMUJU5OASk6a4P4
+	=
+X-Received: by 2002:a05:690e:13c7:b0:66f:8255:9f3d with SMTP id 956f58d0204a3-66f873db9b1mr559460d50.7.1788190565411;
+        Mon, 31 Aug 2026 08:36:05 -0700 (PDT)
+X-Received: by 2002:a05:690e:13c7:b0:66f:8255:9f3d with SMTP id 956f58d0204a3-66f873db9b1mr559344d50.7.1788190564555;
+        Mon, 31 Aug 2026 08:36:04 -0700 (PDT)
+Received: from redhat.com ([2600:382:8519:3f74:ab6c:bb55:e9cb:f8d6])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66f7efc9dbfsm2062227d50.9.2026.08.31.08.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2026 08:36:03 -0700 (PDT)
+Date: Mon, 31 Aug 2026 11:35:55 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized
+ (part two)
+Message-ID: <apWfW5ahiYagw0OR@redhat.com>
+References: <cover.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j8cToac23pWMOvDo"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUryFJFQ+NWRzXWTzhW5yWvUsXc9y1=wTS13BGOaKg+5w@mail.gmail.com>
-
---j8cToac23pWMOvDo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Fri, Aug 28, 2026 at 07:17:00PM +0200, Geert Uytterhoeven wrote:
-> Hi Conor,
->=20
-> On Fri, 28 Aug 2026 at 18:21, Conor Dooley <conor@kernel.org> wrote:
-> > On Fri, Aug 28, 2026 at 05:59:40PM +0300, Cosmin Tanislav wrote:
-> > > The ADC can transfer conversion results to memory over DMA.
-> > >
-> > > Allow up to three DMA specifiers, as the ADC conversion DMA request c=
-an
-> > > be routed to any of the SoC's three DMA controllers.
-> > >
-> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.co=
-m>
->=20
-> > > --- a/Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc=
-=2Eyaml
-> > > +++ b/Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc=
-=2Eyaml
-> > > @@ -57,6 +57,18 @@ properties:
-> > >        - const: adclk
-> > >        - const: pclk
-> > >
-> > > +  dmas:
-> > > +    minItems: 1
-> > > +    maxItems: 3
-> > > +    description:
-> > > +      Must contain a list of references to DMA RX specifiers.
-> > > +
-> > > +  dma-names:
-> > > +    minItems: 1
-> > > +    maxItems: 3
-> > > +    items:
-> > > +      const: rx
-> >
-> > How does this make any sense?
->=20
-> Each entry provides the same functionality; the DMA core picks one that
-> is available.  This was one of the design requirements when support
-> for DMACs was added to DT.
->=20
-> > If the device can make use of three DMA controllers at once, you need 3
-> > names. If it cannot, then just limit this to 1.
->=20
-> How do you expect that to work with multiple (the number is not fixed)
-> different names?
+Hi Geert / all,
 
-Oh right, this shit has a specific workaround for it in dt-schema
-doesn't it? Cos otherwise dma-names has a unique naming mandate.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+On Fri, Aug 21, 2026 at 10:53:10AM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Hence this series aims to make sure all members are fully initialized,
+> to avoid such bugs, and to prevent future breakage when converting
+> drivers to a different method for specifying the parents.
+> 
+> Part One[1] fixed all cases that I identified to be real bugs, in
+> response to a crash I saw on BeagleBone Black.
+> 
+> This series is the clock subpart of Part Two, which fixes remaining
+> cases that are currently harmless.  These are still fragile, and may
+> cause future breakage when converting drivers to a different method for
+> specifying the parents.
+> 
+> Thanks for your comments!
+> 
+> [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
+>      initialized (part 1)"
+>     https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
+> 
+> Geert Uytterhoeven (45):
+>   clk: aspeed: Make sure clk_init_data is fully initialized
+>   clk: at91: Make sure clk_init_data is fully initialized
+>   clk: bcm: iproc: Make sure clk_init_data is fully initialized
+>   clk: berlin: Make sure clk_init_data is fully initialized
+>   clk: cdce925: Make sure clk_init_data is fully initialized
+>   clk: clk-axi-clkgen: Make sure clk_init_data is fully initialized
+>   clk: cs2000-cp: Make sure clk_init_data is fully initialized
+>   clk: davinci: Make sure clk_init_data is fully initialized
+>   clk: fractional-divider: Make sure clk_init_data is fully initialized
+>   clk: gemini: Make sure clk_init_data is fully initialized
+>   clk: highbank: Make sure clk_init_data is fully initialized
+>   clk: hisilicon: Make sure clk_init_data is fully initialized
+>   clk: imx: Make sure clk_init_data is fully initialized
+>   clk: ingenic: Make sure clk_init_data is fully initialized
+>   clk: keystone: Make sure clk_init_data is fully initialized
+>   clk: lmk04832: Make sure clk_init_data is fully initialized
+>   clk: mediatek: Make sure clk_init_data is fully initialized
+>   clk: milbeaut: Make sure clk_init_data is fully initialized
+>   clk: mmp: Make sure clk_init_data is fully initialized
+>   clk: mvebu: Make sure clk_init_data is fully initialized
+>   clk: mxs: Make sure clk_init_data is fully initialized
+>   clk: nomadik: Make sure clk_init_data is fully initialized
+>   clk: npcm7xx: Make sure clk_init_data is fully initialized
+>   clk: nxp: Make sure clk_init_data is fully initialized
+>   clk: pistachio: Make sure clk_init_data is fully initialized
+>   clk: pwm: Make sure clk_init_data is fully initialized
+>   clk: renesas: Make sure clk_init_data is fully initialized
+>   clk: rockchip: Make sure clk_init_data is fully initialized
+>   clk: samsung: Make sure clk_init_data is fully initialized
+>   clk: scpi: Make sure clk_init_data is fully initialized
+>   clk: silabs: Make sure clk_init_data is fully initialized
+>   clk: socfpga: Make sure clk_init_data is fully initialized
+>   clk: spear: Make sure clk_init_data is fully initialized
+>   clk: stm32: Make sure clk_init_data is fully initialized
+>   clk: st: Make sure clk_init_data is fully initialized
+>   clk: sunxi: Make sure clk_init_data is fully initialized
+>   clk: tegra: Make sure clk_init_data is fully initialized
+>   clk: uniphier: Make sure clk_init_data is fully initialized
+>   clk: ux500: Make sure clk_init_data is fully initialized
+>   clk: versatile: Make sure clk_init_data is fully initialized
+>   clk: vt8500: Make sure clk_init_data is fully initialized
+>   clk: x86: Make sure clk_init_data is fully initialized
+>   clk: xgene: Make sure clk_init_data is fully initialized
+>   clk: xilinx: Make sure clk_init_data is fully initialized
+>   clk: zynqmp: Make sure clk_init_data is fully initialized
 
---j8cToac23pWMOvDo
-Content-Type: application/pgp-signature; name=signature.asc
+44 / 45 patches have been added to clk-next. I took it all for simplicity
+rather than everyone trying to cherry pick just their parts.
 
------BEGIN PGP SIGNATURE-----
+Geert: The only patch that didn't apply was:
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapWa1gAKCRB4tDGHoIJi
-0rpuAQCTcfwhWoumAaoK1bRsBY51TIgZCreTk6iPqQ1JxZ+w8AD/cwkGk3kLKZuD
-5/3Hsty+Y2PuETuYe56k9VYeDOob4Ao=
-=/qup
------END PGP SIGNATURE-----
+  [PATCH 27/45] clk: renesas: Make sure clk_init_data is fully initialized
 
---j8cToac23pWMOvDo--
+I didn't look into it too much.
+
+Brian
+
