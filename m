@@ -1,48 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E44449B1EF;
-	Mon, 31 Aug 2026 13:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D7F4A4852;
+	Mon, 31 Aug 2026 13:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183577; cv=none; b=d9xq5BkcXr8k8CTMSAhOBSuPh0Y7fB4N2P3x/nANFQWpbi/WXJBXCoreiFfnIRbBNSh3IPQNpK20nbcFF0QY4MkGJodFVRcfIXdDQpGAnFVFRY8vkyGKL8YGozI9Nb5eKA2qkH3QD3U2s8VsESrRGO5pkyYroc1VDiUobOdWMPk=
+	t=1788183807; cv=none; b=TBVZXcxq/5sQXmV6VMfaPqtDrGpoUpzPH03A87fXo0SgYjNVwoJJiIW7FECNrzltBJMl4MxcMz2mNL1nbcgIOLN75YxaXON9FYBfUhM4M2kZIjXK07Q8Akhq27JI/jSXrN3qKN/F7h+WPglePkhO67plEX7uq1G1KcbFLtqsNk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183577; c=relaxed/simple;
-	bh=Xti2/zk76ezVooDxkmmRsMY28LzHnZ3+pZzJVk5uEMs=;
+	s=arc-20240116; t=1788183807; c=relaxed/simple;
+	bh=r4qloKFWLJaS2fDwoq64lAHQCv9JXiuEUBNefQaUvXQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PR1YpAP9lyCPG0DOoEc9qMjjlH773vOFMOAr+hohR2LGXy2ErdK9ntkqiGmsIkejjWpqaD8FglU8L3/dtcw3O4xwE5XuAsVCc6Df/y2HVOIgd/6stkjRv2BApsly3vuPGvRUlgawS/UaP43nn+JPaBMAc+X35NkpH4cS2QgHd7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TU0deoEd; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=WCpXFqMWTVRrCOY3c7739nXV1de24TIkII03FaVtW4c5Q5jeAwx7iQZs8mkTuGxb2S6l95iKJxlYfOIM00nII5tu8qh2Dw9MczlL5fGZm3BVp9L7Io5IfQPhniTkg+qmpLI9M9NF5Ux5yk9NRba8BcX9fgrRh3Iz5jNgm+xetBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiZur0xy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TU0deoEd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7C31F00A3E;
-	Mon, 31 Aug 2026 13:39:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiZur0xy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ADF51F00ACF;
+	Mon, 31 Aug 2026 13:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183574;
-	bh=iZdEIvs0YPkL9TaMhVLdj8d4VxnHIDPlVGUIzvCCD40=;
+	s=k20260515; t=1788183804;
+	bh=cRa/ASTntvOrwJRKgvylKIFjYrSui3heS92pnaoYiX0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TU0deoEd2dvSc2hhifpfCKSGESTA3qMsgZ3IC35yYtjxzAXDlcr73vzS0F5WBAmLo
-	 OyJMsEJVvm+JLdrsFKBh66goz/MiP32Oqt08WiA9BUzmHwDhW+hn4tbqFXgeNx0FTP
-	 /t+wpAjXeEio34Xi0wHmcCXEJRVquWVRHbZGmUlH30ExbelZtjq7jVZDP0373huXVZ
-	 rAvgWMxVmIbSaUrfSkXRw28VH3we+YXHjpsIf8n4pcURKJstp64MyTc/8pFSi+pAra
-	 xajD/cuoNSTqMTTZQ0mxAmDKtf/dUlep/D84QvkbNe446TC1UnperYEwdW0pCJhUtp
-	 nParl5zl0KKyw==
+	b=QiZur0xyJr+Qf+6CUG4I656qkWcefM7fzUrYWv1tb4cnsyKY+VE/r7BY95NyzQ17e
+	 /n2zhfWO95vQe1MFOpvBrIRjrhrANHA2rv3Boq87eBuuj46IgBvG13RN8UBw49dVdS
+	 qMaelVxwvykuKzltfcLqZmx934pYPuceUfKdbceAdiHEAjNv9139PiCfRwUFMilkkQ
+	 +0Vfu2pHmOMB5mpiCj1fqwoiPTYQkwFHuKngeGFosCsXyoQ2ziihhUqDmH2htxsx9N
+	 FfGqhFB5cihy3pKRQqJDEzBfw8pqGi22hqMgSeeQuzEp1rglgx51CvQjwmKGNnvEhq
+	 STemfyyhF/qxg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Sasha Levin <sashal@kernel.org>,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
+	linux-rtc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18] drm: renesas: rzg2l_mipi_dsi: Fix deassert/assert of CMN_RSTB signal
-Date: Mon, 31 Aug 2026 09:23:25 -0400
-Message-ID: <20260831133314.4125787-177-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18] rtc: renesas-rtca3: Check RADJ poll result during initial setup
+Date: Mon, 31 Aug 2026 09:25:42 -0400
+Message-ID: <20260831133314.4125787-314-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -58,411 +54,380 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit 8065890f5cda3f8a503f3b9d326aab0e9cca39e7 ]
+[ Upstream commit fafb016d081200c7652e84202f8ba5951e659a53 ]
 
-The RZ/G2L hardware manual (Rev. 1.50, May 2025), Section 34.4.2.1,
-requires deasserting the CMN_RSTB signal after setting the Link registers.
-Move the reset_control_deassert() call from rzg2l_mipi_dsi_dphy_init() to
-rzg2l_mipi_dsi_startup(), placing it after the Link register writes. This
-reset signal is optional for RZ/V2H SoCs, so add a NULL check. Drop the
-unused ret variable from rzg2l_mipi_dsi_dphy_init().
+In rtca3_initial_setup(), the driver clears the RTCA3_RADJ register and
+waits for it to reach zero using readb_poll_timeout(). Check the return
+value of readb_poll_timeout() and propagate the error if the poll fails.
 
-The CMN_RSTB signal is not required for reading PHY registers in the
-probe. Move reset_control_assert() from rzg2l_mipi_dsi_dphy_exit() to
-rzg2l_mipi_dsi_stop(), placing it before the dphy_exit() call. Since this
-reset signal is optional for RZ/V2H, the call is a no-op on that SoC.
-
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260330104450.128512-4-biju.das.jz@bp.renesas.com
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+Link: https://patch.msgid.link/20260602192559.1791344-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-# Stable Backport Analysis: `drm: renesas: rzg2l_mipi_dsi: Fix
-deassert/assert of CMN_RSTB signal`
+## Phase 1: Commit Message Forensics
 
-**Local tree:** Linux **6.18.43** (`v6.18.43`)
+### Step 1.1: Parse the Subject Line
+**Record:** `[rtc: renesas-rtca3]` `[Check]` — Check the return value of
+the RADJ register poll during RTC initial setup in
+`rtca3_initial_setup()`.
 
----
-
-## PHASE 1: COMMIT MESSAGE FORENSICS
-
-### Step 1.1: Subject line
-- **Record:** `[drm: renesas: rzg2l_mipi_dsi]` **`Fix`** — correct
-  CMN_RSTB reset deassert/assert timing per RZ/G2L hardware manual.
-
-### Step 1.2: Tags
-- **Fixes:** — none
+### Step 1.2: Parse All Commit Message Tags
+**Record:**
+- **Fixes:** — not present (expected for manual review)
 - **Reported-by:** — none
-- **Tested-by:** Tommaso Merciai `<tommaso.merciai.xr@bp.renesas.com>`
-- **Reviewed-by:** Tommaso Merciai `<tommaso.merciai.xr@bp.renesas.com>`
-- **Link:** https://patch.msgid.link/20260330104450.128512-4-
-  biju.das.jz@bp.renesas.com
-- **Cc: stable:** — not in the committed message (patches 1–2 of the
-  same series did include it)
-- **Signed-off-by:** Biju Das (ignore pipeline SOB markers)
+- **Tested-by:** Claudiu Beznea `<claudiu.beznea.uj@bp.renesas.com>` #
+  on RZ/G3S
+- **Reviewed-by:** Claudiu Beznea `<claudiu.beznea.uj@bp.renesas.com>`
+- **Link:**
+  https://patch.msgid.link/20260602192559.1791344-3-prabhakar.mahadev-
+  lad.rj@bp.renesas.com
+- **Signed-off-by:** Lad Prabhakar, Alexandre Belloni (ignore pipeline-
+  added SOBs)
+- **Cc: stable:** — not present on this individual patch (patch 1/5 in
+  the same series did CC stable)
+- **Notable:** Part of v2 `[PATCH 2/5]` series; hardware-tested on
+  RZ/G3S; no syzbot/fuzzer reports
 
-**Record:** Hardware-tested and reviewed by a Renesas engineer; part of
-v3 series “Improvements on RZ/G2L MIPI DSI driver”. No syzbot/crash
-tags.
+### Step 1.3: Analyze Commit Body
+**Record:**
+- **Bug:** After clearing `RTCA3_RADJ` and polling for it to reach zero,
+  the driver ignores the `readb_poll_timeout()` return value.
+- **Symptom:** If the poll times out (`-ETIMEDOUT`), setup continues and
+  may start the RTC with automatic time error adjustment
+  (`RTCA3_RCR2_AADJE`) even though RADJ did not clear.
+- **Root cause:** Oversight — every other poll in
+  `rtca3_initial_setup()` checks `ret`; this one does not.
+- **Version info:** None in message; driver landed in this tree via
+  `d4488377609e3` (Nov 2024).
 
-### Step 1.3: Body analysis
-- **Bug:** CMN_RSTB is deasserted in `rzg2l_mipi_dsi_dphy_init()` before
-  Link-layer registers are programmed in `rzg2l_mipi_dsi_startup()`.
-  RZ/G2L HW manual §34.4.2.1 requires deassert **after** Link register
-  writes.
-- **Symptom:** Incorrect DSI hardware bring-up sequence; display may
-  fail or behave unreliably on RZ/G2L SoCs with the `rst` reset line.
-- **Root cause:** Reset sequencing does not match hardware manual
-  ordering.
-- **Shutdown side:** `reset_control_assert()` moved from `dphy_exit()`
-  to `stop()` (before PHY teardown), since CMN_RSTB is not needed for
-  PHY register access during exit.
-
-**Record:** Hardware-init correctness bug on Renesas RZ/G2L MIPI DSI;
-optional on RZ/V2H (`rstc` may be NULL).
-
-### Step 1.4: Hidden bug fix?
-- **Record:** No — this is an explicit hardware-sequence fix, not
-  disguised cleanup.
+### Step 1.4: Detect Hidden Bug Fixes
+**Record:** Yes — despite neutral wording (“check the return value”),
+this is a real initialization error-handling bug, not cosmetic cleanup.
+The same RADJ-clear poll in `rtca3_set_offset()` already checks `ret`.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 2: Diff Analysis
 
-### Step 2.1: Inventory
-- **Files:** `drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c` — 9
-  insertions, 9 deletions
-- **Functions:** `rzg2l_mipi_dsi_dphy_init()`,
-  `rzg2l_mipi_dsi_dphy_exit()`, `rzg2l_mipi_dsi_startup()`,
-  `rzg2l_mipi_dsi_stop()`
-- **Scope:** Single-file, surgical fix
+### Step 2.1: Inventory the Changes
+**Record:**
+- **Files:** `drivers/rtc/rtc-renesas-rtca3.c` (+2 lines)
+- **Function:** `rtca3_initial_setup()`
+- **Scope:** Single-file, surgical fix (2 lines)
 
-### Step 2.2: Code flow changes
-| Hunk | Before | After |
-|------|--------|-------|
-| `dphy_init()` | Deassert CMN_RSTB + 1 ms sleep after PHY timing writes
-| PHY timing only; no reset |
-| `dphy_exit()` | Assert CMN_RSTB after PHY power-down | PHY power-down
-only |
-| `startup()` | Link register writes, then return | Link writes, then
-deassert CMN_RSTB + 1 ms sleep (with NULL check) |
-| `stop()` | Call `dphy_exit()` only | Assert CMN_RSTB, then
-`dphy_exit()` |
+### Step 2.2: Code Flow Change
+**Record:**
+- **Hunk (lines 635–637):** Before: RADJ poll result stored in `ret` but
+  ignored; execution proceeds to enable `RTCA3_RCR2_START |
+  RTCA3_RCR2_AADJE`. After: on poll failure, return error immediately.
+  Affects cold-init path in probe, not hot path.
 
-**Record:** Normal display enable/disable path (`atomic_pre_enable` →
-`startup`; `atomic_post_disable` → `stop`).
+### Step 2.3: Bug Mechanism
+**Record:**
+- **Category:** Error-path / logic correctness fix
+- **Mechanism:** Missing timeout handling after hardware register poll.
+  If RADJ does not clear within `RTCA3_DEFAULT_TIMEOUT_US` (150 µs), the
+  driver continues hardware programming; the subsequent RCR2 poll
+  overwrites `ret`, masking the failure and allowing probe to succeed
+  with bad RTC adjustment state.
 
-### Step 2.3: Bug mechanism
-- **Category:** Hardware initialization sequence / workaround
-- **Mechanism:** CMN_RSTB released before Link-layer configuration
-  completes, violating required reset sequence.
-
-### Step 2.4: Fix quality
-- **Record:** Minimal, matches manual, uses existing `err_phy` path on
-  deassert failure, NULL-safe for RZ/V2H. Low regression risk.
+### Step 2.4: Fix Quality
+**Record:** Obviously correct — mirrors the pattern used for all other
+polls in the same function and for the identical RADJ poll in
+`rtca3_set_offset()`. Minimal, no API changes. **Regression risk:** Very
+low; on success path `ret == 0` and behavior is unchanged.
 
 ---
 
-## PHASE 3: GIT HISTORY
+## Phase 3: Git History Investigation
 
-### Step 3.1: Blame
-- Buggy reset code introduced in `a4871e6201c46` (May 2025, Thomas
-  Zimmermann) when driver was added.
-- Delay tuning in `aa8ad3e0d1fe9` (already in 6.18.43).
+### Step 3.1: Blame the Changed Lines
+**Record:** Buggy code introduced in `d4488377609e3` (“rtc: renesas-
+rtca3: Add driver for RTCA-3…”, Oct 30 2024). Present since driver
+introduction. Blame confirms lines 634–636 unchanged since
+`d4488377609e3`.
 
-**Record:** Bug present since driver introduction; long-standing on
-RZ/G2L platforms.
+### Step 3.2: Follow Fixes Tag
+**Record:** N/A — no `Fixes:` tag.
 
-### Step 3.2: Fixes: tag
-- **Record:** N/A — no Fixes: tag in this commit.
+### Step 3.3: File History / Related Changes
+**Record:** Recent `rtc-renesas-rtca3.c` history in this tree:
+- `6e21d1253ef13` — PIE clear polling fix (patch 1/5 of same series;
+  already in 6.18.y)
+- `27b2fcbd6b982` — Disable interrupts only if RTC enabled (probe-
+  failure fix)
+- `8f315a5c7376b` — RISC-V build fix
+- `d4488377609e3` — Driver introduction
 
-### Step 3.3: Related commits
-- `300a2d970a535` — Move `set_display_timing()` — **present in tree**
-- `aa8ad3e0d1fe9` — Increase reset deassertion delay — **present in
-  tree**
-- `8065890f5cda3` — This CMN_RSTB fix — **NOT present in tree**
-- `79f42487ed60d` — Kernel panic on reboot fix — **present in tree**
+Patch 2/5 (this commit) is standalone; patches 3–5 are error-message,
+doc typo, and refactor (not prerequisites).
 
-**Record:** Patch 3/3 of a v3 series; prerequisites 1/3 and 2/3 already
-backported to 6.18.43.
-
-### Step 3.4: Author context
-- Biju Das is active Renesas maintainer for rz-du/MIPI DSI.
-- **Record:** Subsystem maintainer fix with hardware validation.
+### Step 3.4: Author's Other Commits
+**Record:** Lad Prabhakar authored patch 1 (PIE fix, backported here)
+and this patch. Claudiu Beznea (co-author/reviewer) introduced the
+driver. Both are active Renesas RTC contributors.
 
 ### Step 3.5: Dependencies
-- **Record:** Standalone relative to master-only RZ/V2H CPG work.
-  Depends on patches 1–2 of the same series, which are already in this
-  tree. Cherry-pick applies cleanly (verified).
+**Record:** No dependencies. Applies cleanly to current
+`drivers/rtc/rtc-renesas-rtca3.c` in this tree. Upstream commit:
+`fafb016d08120` on `master`; **not yet in HEAD** (`v6.18.44`).
 
 ---
 
-## PHASE 4: MAILING LIST RESEARCH
+## Phase 4: Mailing List and External Research
 
-### Step 4.1: Discussion
-- **b4 dig -c 8065890f5cda3:** https://patch.msgid.link/20260330104450.1
-  28512-4-biju.das.jz@bp.renesas.com
-- **Series:** v1 → v2 → v3; committed version is v3 3/3 (latest).
-- **Review:** Tommaso Merciai — “Looks good to me”; Reviewed-by +
-  Tested-by on RZ/G3E.
-- **NAKs:** None found.
-- **Stable:** Patches 1/3 and 2/3 submitted with `Cc:
-  stable@vger.kernel.org`; patch 3/3 did not include it in the email,
-  but cover letter describes HW-manual compliance series.
+### Step 4.1: Original Patch Discussion
+**Record:**
+- `b4 dig -c 6e21d1253ef13 -a` found series v2 at
+  https://patch.msgid.link/20260602192559.1791344-2-prabhakar.mahadev-
+  lad.rj@bp.renesas.com
+- This commit is `[PATCH v2 2/5]` (message-id `…1791344-3…`)
+- Cover letter lists RADJ poll checking as an explicit series goal
+- No NAKs found in saved mbox; Claudiu provided RB/TB
+- **Stable nomination:** Only patch 1/5 CC'd `stable@vger.kernel.org` in
+  the submission; patch 2/5 did not (per instructions, this is not a
+  deciding factor)
 
 ### Step 4.2: Reviewers
-- CC'd: dri-devel, linux-renesas-soc, DRM maintainers (Lankhorst,
-  Ripard, Zimmermann, Airlie, Vetter), Laurent Pinchart.
-- **Record:** Appropriate subsystem review chain.
+**Record:** `b4 dig -w` recipients include Alexandre Belloni (RTC
+maintainer), Claudiu Beznea, Geert Uytterhoeven, `linux-rtc@`, `linux-
+renesas-soc@`.
 
-### Step 4.3: Bug report
-- **Record:** No external bugzilla/syzbot report. Validation is hardware
-  testing on RZ/G3E per lore thread.
+### Step 4.3: Bug Reports
+**Record:** No bug reports, syzbot links, or user crash reports. Issue
+identified by code review during the same audit that produced the PIE
+polling fix.
 
-### Step 4.4: Series context
-- Cover letter (v3 0/3): manual requires PHY timing + Link register
-  writes **before** CMN_RSTB deassert; v2→v3 merged patches 2+3 “to
-  avoid breakage.”
-- **Record:** Incomplete without this patch if delay fix (patch 2) is
-  already applied.
+### Step 4.4: Related Patches
+**Record:** 5-patch series; only patches 1–2 are bug fixes. Patches 3–5
+(error message, doc typo, year-decoding refactor) are not stable
+candidates.
 
-### Step 4.5: Stable list
-- Patches 1–2 explicitly CC'd stable and were backported to 6.18.y.
-- **Record:** Strong implicit stable intent for the full series.
+### Step 4.5: Stable Mailing List
+**Record:** Not searched separately; patch 1 from this series was
+already cherry-picked into `linux-6.18.y` as `6e21d1253ef13` (Signed-
+off-by: Greg Kroah-Hartman), confirming stable maintainers accept rtca3
+fixes from this series.
 
 ---
 
-## PHASE 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
-### Step 5.1: Key functions
-- `rzg2l_mipi_dsi_dphy_init`, `rzg2l_mipi_dsi_startup`,
-  `rzg2l_mipi_dsi_stop`, `rzg2l_mipi_dsi_dphy_exit`
+### Step 5.1: Key Functions
+**Record:** `rtca3_initial_setup()` modified.
 
 ### Step 5.2: Callers
-- `rzg2l_mipi_dsi_startup()` ← `rzg2l_mipi_dsi_atomic_pre_enable()`
-  (display enable)
-- `rzg2l_mipi_dsi_stop()` ← `rzg2l_mipi_dsi_atomic_enable()` error path
-  and `rzg2l_mipi_dsi_atomic_post_disable()` (display disable)
-
-**Record:** Standard DRM atomic display enable/disable path on every
-MIPI DSI panel attach.
+**Record:** `rtca3_initial_setup()` called once from `rtca3_probe()` at
+line 760. `rtca3_probe()` is the `platform_driver` probe for
+`module_platform_driver(rtca3_platform_driver)`. Runs at boot during
+device enumeration on Renesas RZ/G3S platforms with
+`CONFIG_RTC_DRV_RENESAS_RTCA3`.
 
 ### Step 5.3: Callees
-- `reset_control_deassert/assert`, `rzg2l_mipi_dsi_link_write`,
-  `rzg2l_mipi_dsi_phy_write`, `fsleep(1000)`
+**Record:** `readb_poll_timeout()`, `writeb()`, `usleep_range()`,
+`clk_get_rate()`. Hardware register I/O during init.
 
 ### Step 5.4: Reachability
-- Triggered whenever a connected MIPI DSI panel is enabled on
-  `renesas,rzg2l-mipi-dsi` hardware.
-- **Record:** Reachable from normal display operations; not obscure
-  debug path.
+**Record:** Triggered on every boot when the RTCA-3 platform device
+probes. Not userspace-triggerable directly, but affects all systems
+using this RTC hardware. Failure during init is a boot-time driver probe
+issue.
 
-### Step 5.5: Similar patterns
-- Same manual section addressed by already-backported delay fix
-  (`aa8ad3e0d1fe9`).
-- **Record:** This completes the reset-sequence work started in that
-  commit.
-
----
-
-## PHASE 6: CROSS-REFERENCE WITH LOCAL TREE
-
-### Step 6.1: Buggy code present?
-- **Yes.** Lines 271–275 (`reset_control_deassert` in `dphy_init`) and
-  line 289 (`reset_control_assert` in `dphy_exit`) confirmed in 6.18.43.
-
-### Step 6.2: Backport difficulty
-- **Clean apply.** `git cherry-pick --no-commit 8065890f5cda3` succeeded
-  with auto-merge only.
-
-### Step 6.3: Related fixes already present?
-- Patches 1/3 and 2/3 of series present; this fix is the missing third
-  piece.
-- **Record:** Tree is in intermediate state — delay fixed but ordering
-  still wrong.
+### Step 5.5: Similar Patterns
+**Record:** In the same file, `rtca3_set_offset()` lines 538–542 perform
+the identical RADJ-clear poll **with** `if (ret) return ret;`. All other
+polls in `rtca3_initial_setup()` also check `ret`. This is the sole
+missing check in that function.
 
 ---
 
-## PHASE 7: SUBSYSTEM CONTEXT
+## Phase 6: Cross-Reference Against Local Tree
 
-### Step 7.1: Subsystem
-- **drivers/gpu/drm/renesas/rz-du** — Renesas embedded display (MIPI
-  DSI)
-- **Criticality:** PERIPHERAL (platform-specific), but display is
-  primary output on affected boards.
+### Step 6.1: Does Buggy Code Exist?
+**Record:** **Yes.** Local tree is `v6.18.44` (`linux-6.18.y`).
+`drivers/rtc/rtc-renesas-rtca3.c` exists; lines 634–636 show the missing
+check. Driver present since `d4488377609e3`.
 
-### Step 7.2: Activity
-- Active development: panic fix, runtime PM, reset timing, display
-  timing ordering all landed recently in 6.18.y.
+### Step 6.2: Backport Complications
+**Record:** Clean apply expected — upstream diff matches current file
+context exactly. No conflicts anticipated.
 
----
-
-## PHASE 8: IMPACT AND RISK
-
-### Step 8.1: Who is affected
-- Users of Renesas RZ/G2L SoCs with MIPI DSI displays
-  (`renesas,rzg2l-mipi-dsi`).
-- RZ/V2H unaffected (optional `rst` line; `reset_control_*` is NULL-
-  safe).
-
-### Step 8.2: Trigger conditions
-- Every display enable/disable on RZ/G2L with CMN_RSTB wired.
-- **Likelihood:** Common on affected hardware.
-
-### Step 8.3: Failure mode
-- Incorrect DSI bring-up per hardware manual → display may not work or
-  may be unreliable.
-- **Severity:** HIGH for affected users (no display); not a kernel
-  crash/oops.
-
-### Step 8.4: Risk-benefit
-- **Benefit:** Correct hardware init; completes already-partially-
-  backported series; tested on RZ/G3E.
-- **Risk:** Very low — 18-line reorder, no API changes, NULL-safe.
-- **Ratio:** Strong benefit, minimal risk for RZ/G2L users.
+### Step 6.3: Related Fixes Already Present?
+**Record:** Patch 1/5 (PIE polling fix) already backported as
+`6e21d1253ef13`. This patch 2/5 is **not** yet in HEAD. No alternate fix
+for the RADJ poll issue.
 
 ---
 
-## PHASE 9: FINAL SYNTHESIS
+## Phase 7: Subsystem and Maintainer Context
 
-### Step 9.1: Evidence summary
+### Step 7.1: Subsystem Criticality
+**Record:** `drivers/rtc/` — IMPORTANT (peripheral driver).
+`CONFIG_RTC_DRV_RENESAS_RTCA3` depends on `ARCH_RENESAS`; targets
+Renesas RZ/G3S SoC only.
+
+### Step 7.2: Subsystem Activity
+**Record:** Driver is new (added late 2024) and actively maintained;
+multiple follow-up fixes in mainline and at least one already in this
+stable tree.
+
+---
+
+## Phase 8: Impact and Risk Assessment
+
+### Step 8.1: Who Is Affected
+**Record:** Config-specific, platform-specific — users building
+`CONFIG_RTC_DRV_RENESAS_RTCA3` on Renesas RZ/G3S hardware. Not
+universal, but real production embedded users.
+
+### Step 8.2: Trigger Conditions
+**Record:** RADJ register fails to clear to zero within 150 µs after
+`writeb(0, RTCA3_RADJ)`. Unlikely on healthy hardware; possible on
+marginal/broken hardware or timing edge cases. Not unprivileged-
+userspace-triggerable; boot-time init only.
+
+### Step 8.3: Failure Mode Severity
+**Record:** Without fix: probe succeeds despite failed RADJ init; RTC
+may start with `RTCA3_RCR2_AADJE` enabled while adjustment register is
+not in expected state → incorrect timekeeping/alarms. **Severity:
+MEDIUM** — functional RTC corruption, not kernel oops/UAF/security
+issue. With fix: probe fails cleanly with `"Failed to setup the RTC!"`.
+
+### Step 8.4: Risk-Benefit
+**Record:**
+- **Benefit:** Prevents silently registering a mis-initialized RTC;
+  consistent error handling; complements already-backported patch 1/5
+- **Risk:** Very low — 2 lines, no behavior change when poll succeeds
+- **Ratio:** Moderate benefit for a narrow audience, very low risk
+
+---
+
+## Phase 9: Final Synthesis
+
+### Step 9.1: Evidence Summary
 
 **FOR backport:**
-- Real hardware-init bug per official RZ/G2L manual
-- Small, surgical, tested on hardware
-- Prerequisites already in 6.18.43
-- Applies cleanly
-- Completes v3 series whose first two patches were already backported
-- Reviewed by Renesas engineer with Tested-by on RZ/G3E
-- Same driver already receives stable fixes (panic on reboot, delay,
-  timing order)
+- Real bug — only missing poll error check in `rtca3_initial_setup()`
+- Inconsistent with identical pattern elsewhere in same driver
+- Can leave RTC in wrong adjustment state while probe succeeds
+- Trivial, obviously correct, hardware-tested on RZ/G3S
+- Driver exists in this `6.18.y` tree; patch applies cleanly
+- Sister fix (patch 1/5) already backported to this tree
+- Reviewed/tested by driver co-maintainer
 
 **AGAINST backport:**
-- Platform-specific peripheral driver
-- No crash/security/data-corruption report
-- Patch 3/3 lacks explicit `Cc: stable` in commit message
+- No user bug reports or reproducible failure described
+- Only triggers on 150 µs poll timeout — rare on working hardware
+- Not crash/security/deadlock/kernel memory corruption
+- Narrow hardware scope (RZ/G3S only)
+- Author CC'd stable only on patch 1, not this patch
+- Patches 3–5 in series are clearly non-stable material
 
-**Unresolved:** Exact failure modes on all RZ/G2L boards without the fix
-(manual violation vs. observed “display broken”).
+**Unresolved:** Whether RADJ poll timeout has been observed on real
+hardware (no evidence found).
 
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — manual compliance + Tested-
-   by on RZ/G3E
-2. Fixes real bug? **PASS** — incorrect reset sequencing
-3. Important issue? **PASS** — display failure on affected embedded
-   platforms
-4. Small and contained? **PASS** — 1 file, ~18 lines
+### Step 9.2: Stable Rules Checklist
+1. Obviously correct and tested? **PASS** — 2-line mirror of existing
+   pattern; Tested-by on RZ/G3S
+2. Fixes a real bug? **PASS** — missing error propagation on hardware
+   poll timeout
+3. Important issue? **BORDERLINE PASS** — incorrect RTC init/timekeeping
+   on affected embedded hardware; not a kernel crash, but functional
+   hardware misconfiguration
+4. Small and contained? **PASS** — 2 lines, one function
 5. No new features/APIs? **PASS**
-6. Can apply to local tree? **PASS** — cherry-picks cleanly;
-   prerequisites present
+6. Can apply to local tree? **PASS** — driver and buggy code present;
+   clean apply
 
-### Step 9.3: Exception category
-- **Hardware workaround / init quirk** — correcting reset sequence per
-  SoC manual.
+### Step 9.3: Exception Categories
+**Record:** None (not device ID, quirk, DT, build fix, or docs fix).
 
-### Step 9.4: Decision rationale
-This tree (6.18.43) already carries patches 1/3 and 2/3 of the same
-hardware-manual compliance series but not the final ordering fix.
-Without it, CMN_RSTB is still deasserted before Link register
-programming, which the RZ/G2L manual explicitly forbids. The fix is
-small, tested, low-risk, and completes work stable maintainers already
-started for this driver.
+### Step 9.4: Decision Rationale
+
+This is a legitimate initialization bug in a driver that is already
+maintained in `linux-6.18.y`, with a sister fix from the same series
+already cherry-picked. The omission allows probe to succeed after a
+failed hardware register poll, immediately before enabling automatic
+time error adjustment — a documented init sequence step. While the
+trigger is uncommon and the audience is narrow (Renesas RZ/G3S), the fix
+is zero-risk on the success path, obviously correct, hardware-tested,
+and prevents silently exposing a mis-initialized RTC to userspace. That
+meets the stable bar for a contained driver probe correctness fix in
+hardware that this tree already supports.
 
 ---
 
 ## Verification
 
-- [Phase 1] `git describe HEAD` → v6.18.43; parsed commit message and
-  tags
-- [Phase 2] Read current `rzg2l_mipi_dsi.c`; confirmed reset calls at
-  lines 271–275 and 289
-- [Phase 3] `git blame` → reset code from `a4871e6201c46`; `git log --
-  drivers/.../rzg2l_mipi_dsi.c` → series history
-- [Phase 3] `git merge-base --is-ancestor` → patches 1/3 and 2/3
-  present; 8065890f5cda3 absent
-- [Phase 4] `b4 dig -c 8065890f5cda3` → lore URL found
-- [Phase 4] `b4 dig -a` → v1/v2/v3 series; v3 is latest
-- [Phase 4] `b4 dig -w` → DRM/Renesas maintainers CC'd
-- [Phase 4] `/tmp/cmn_rstb_thread.mbox` → Reviewed-by, Tested-by on
-  RZ/G3E; no NAKs; cover letter describes manual requirements
-- [Phase 5] `grep rzg2l_mipi_dsi_startup/stop` → called from
-  atomic_pre_enable/post_disable
-- [Phase 5] `drivers/reset/core.c` →
-  `reset_control_assert/deassert(NULL)` returns 0 (no-op)
-- [Phase 6] Buggy code confirmed in 6.18.43 tree
-- [Phase 6] `git cherry-pick --no-commit 8065890f5cda3` → exit 0, auto-
-  merge only
-- [Phase 8] Driver supports `renesas,rzg2l-mipi-dsi` compatible string
-  in local tree
+- **[Phase 1]** Parsed commit message tags from user-provided content
+- **[Phase 2]** Read current `drivers/rtc/rtc-renesas-rtca3.c` lines
+  567–660, 538–542; confirmed 2-line diff
+- **[Phase 3]** `git describe HEAD` → `v6.18.44`; `make kernelversion`
+  equivalent → 6.18.44
+- **[Phase 3]** `git blame -L 630,650` → bug from `d4488377609e3`
+- **[Phase 3]** `git log --oneline -- drivers/rtc/rtc-renesas-rtca3.c` →
+  5 commits, patch 1 backported, RADJ fix absent
+- **[Phase 3]** `git show fafb016d08120` on master → upstream commit
+  matches provided diff
+- **[Phase 3]** `git merge-base --is-ancestor fafb016d08120 HEAD` → RADJ
+  fix NOT in HEAD
+- **[Phase 4]** `b4 dig -c 6e21d1253ef13 -a` → found v2 5-patch series
+- **[Phase 4]** `b4 dig -m /tmp/rtca3-series.mbx` → read cover letter
+  and patch 2/5 content
+- **[Phase 4]** Confirmed patch 1 CC'd stable; patch 2 did not
+- **[Phase 4]** WebFetch of lore/patch.msgid.link blocked by bot
+  protection for direct fetch; used b4 mbox instead
+- **[Phase 5]** `grep rtca3_initial_setup` → called from `rtca3_probe()`
+  line 760
+- **[Phase 5]** Counted `if (ret)` checks vs `readb_poll_timeout` calls
+  — RADJ poll is sole missing check in `rtca3_initial_setup()`
+- **[Phase 6]** Confirmed `CONFIG_RTC_DRV_RENESAS_RTCA3` in Kconfig,
+  `depends on ARCH_RENESAS`
+- **[Phase 6]** Confirmed buggy code at lines 634–636 without `if (ret)
+  return ret;`
+- **[Phase 8]** `RTCA3_DEFAULT_TIMEOUT_US` = 150 µs verified at line 87
 
-**YES**
+**YES**The background git searches finished and match the earlier
+analysis:
 
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+- **RADJ poll fix** (`fafb016d08120` / “Check RADJ poll result during
+  initial setup”) is **not** in this `linux-6.18.y` checkout; it’s only
+  on `master`.
+- **All `rtc-renesas-rtca3` commits in this tree:** driver introduction
+  (`d4488377609e3`), RISC-V build fix, wakeup boolean cleanup,
+  interrupt-disable probe fix (`27b2fcbd6b982`), and the already-
+  backported PIE polling fix (`6e21d1253ef13`).
+- **From the v2 5-patch series:** only patch 1 (PIE fix) is present;
+  patch 2 (this RADJ check) and patches 3–5 are not.
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 04a24ff9dde15..1c6f29c285b65 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -228,7 +228,6 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
- 	u32 dphytim1;
- 	u32 dphytim2;
- 	u32 dphytim3;
--	int ret;
+That supports the **YES** backport recommendation for `linux-6.18.y`:
+the bug is present, the fix is absent, and the related patch from the
+same series is already here.
+
+ drivers/rtc/rtc-renesas-rtca3.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+index 47b4827979344..c41f2089cbb2b 100644
+--- a/drivers/rtc/rtc-renesas-rtca3.c
++++ b/drivers/rtc/rtc-renesas-rtca3.c
+@@ -634,6 +634,8 @@ static int rtca3_initial_setup(struct clk *clk, struct rtca3_priv *priv)
+ 	writeb(0, priv->base + RTCA3_RADJ);
+ 	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
+ 				 RTCA3_DEFAULT_TIMEOUT_US);
++	if (ret)
++		return ret;
  
- 	/* All DSI global operation timings are set with recommended setting */
- 	for (i = 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
-@@ -268,12 +267,6 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYTIM2, dphytim2);
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYTIM3, dphytim3);
- 
--	ret = reset_control_deassert(dsi->rstc);
--	if (ret < 0)
--		return ret;
--
--	fsleep(1000);
--
- 	return 0;
- }
- 
-@@ -285,8 +278,6 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi)
- 
- 	dphyctrl0 &= ~(DSIDPHYCTRL0_EN_LDO1200 | DSIDPHYCTRL0_EN_BGR);
- 	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYCTRL0, dphyctrl0);
--
--	reset_control_assert(dsi->rstc);
- }
- 
- static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_freq,
-@@ -393,6 +384,14 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	dsisetr |= FIELD_PREP(DSISETR_MRPSZ, RZG2L_DCS_BUF_SIZE);
- 	rzg2l_mipi_dsi_link_write(dsi, DSISETR, dsisetr);
- 
-+	if (dsi->rstc) {
-+		ret = reset_control_deassert(dsi->rstc);
-+		if (ret < 0)
-+			goto err_phy;
-+
-+		fsleep(1000);
-+	}
-+
- 	return 0;
- 
- err_phy:
-@@ -404,6 +403,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 
- static void rzg2l_mipi_dsi_stop(struct rzg2l_mipi_dsi *dsi)
- {
-+	reset_control_assert(dsi->rstc);
- 	dsi->info->dphy_exit(dsi);
- 	pm_runtime_put(dsi->dev);
- }
+ 	/* Start the RTC and enable automatic time error adjustment. */
+ 	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
 -- 
 2.53.0
 
