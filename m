@@ -1,76 +1,117 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87D03C09EA;
-	Mon, 31 Aug 2026 05:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811F1370AD4;
+	Mon, 31 Aug 2026 06:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788155083; cv=none; b=u8V02ZT492T13NTxFpmeS+TfX1J4SczB53j5+1tFsPqnC54f5Htby3WKwoVnQaBZIlneg0ffTld/YfBZGXQW9EkWazHCDYvM25oPPOwNqevVVJmoQFu8YTleLZMVqpNf530inxq1W5x4qsLQ9HiIhMWtZYyB1s7MS7zWfofn/6E=
+	t=1788158038; cv=none; b=fQ3iYteHOvxxYzWEusRvRIVq3Zf5qoXMAOjUnkHyLOnyKhTXtfHOEuN7vPjsEbOwXM2t3HoOg1dXr69VCMhXq1cYS3aTvRmsSHZmpZDhZHiy97uXyNAB+WWcWrnobjqyHQu0Sty0oIOmuxwmho5sdLl8KYPkHLhbY+CsNdqJKlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788155083; c=relaxed/simple;
-	bh=whhlhW45YrV1ZZ0Lpvp2ksAfeLFYbZeMUfRzQgh8pdo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TODJVI50HYxe77dKesYz+p8SCSf0bIQZpk8rg/OQEw7qtRxFD12T74FR0Kj/xAQhAvGKjcnllQKt3C5WYe1P9NI4w0P18L3UG9AEZHEK6k3cVWsSnpgyEZEdnq7sovq0eJmZk/u2aIuGRaKZiF43CCauXBInVUoVDv2w0yPJaM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=L4heFgj2; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1788158038; c=relaxed/simple;
+	bh=K342pN9R5l9Amf3yIne5jhRsFkAPNtSws5F1C1XTfYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRLZo2H4oylf9thYGKqHGeaK26qxp6bkEX5i4c2oU3THSg4Y/hX9kqydYvCCKuBr7jzu9nX87doO+tlFzyehQK44Z4i7npbI4OvuX3PX1QxEf5sDucrCT7jm/3gGRtyvDB98Dn/zEvlscQ0svjSnpshDjzjSE20z9EwdOyXNzrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXBHbr8Q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="L4heFgj2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=85
-	PVWAYF456dtbQQdKApPzYdVbSLPm9X8lNgK3ZJTI0=; b=L4heFgj2f0zT4HEIR/
-	vs8X+DYzL281g7l5wz2E+lv//2J1K+6PYWL/Kmj96UzsjocXYlkBMh/pxyoVp4Jn
-	PneSOhipo+BxhrgsIc/tq41Etn7Ub+AqcP0lkukC6/fCwCtth+BovAMJfPDTnL9L
-	PSD2Ps4/GulIQMoJP0E8o+P58=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgD3nxWrFJVqhT4sQA--.61087S2;
-	Mon, 31 Aug 2026 13:44:12 +0800 (CST)
-From: "Li Youhong" <dayou5941@163.com>
-To: biju.das.jz@bp.renesas.com,
-	wbg@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Li Youhong <liyouhong@kylinos.cn>
-Subject: [PATCH v2 0/3] counter: rz-mtu3-cnt: check clock and runtime PM errors
-Date: Mon, 31 Aug 2026 13:44:04 +0800
-Message-Id: <20260831054407.1695146-1-dayou5941@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXBHbr8Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F3E1F000E9;
+	Mon, 31 Aug 2026 06:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788158037;
+	bh=GP2C2mZreAalLgcgv4kH52hh++chyCXbyU5k8g3nVAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HXBHbr8QuA/1GL+lcq09OgnCqRhxC7HarHVZt/raxamgMrw2e/zqzfkIlcy3bv+KJ
+	 +Or0czqXZnS5CX2a+GUc4ML5WTnln7D6oxSskL07rpWlvKSUa3b2QEnLSIY692Eiz9
+	 88tPzxGya7NYZsPMYjSH9BH0rsmGEO3HvO+RbLn+lYbRhMmLkhVrFw9ra3u/KX7NHX
+	 WGxSwq9U+JOgXwI6X5NEV9ZTUyuieBsY8O5DAQkoJ8BLYv7yqiL1jmWi00MqBz/P8w
+	 sly7jgqAaZqlTiKeHwrKGk+Fg2Ob8XqO3aQE3B3at+5xDUbKLI8tlVXz6trPZh7KSt
+	 B+9Lg9jsuKpfw==
+Date: Mon, 31 Aug 2026 08:33:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/4] dt-bindings: PCI: renesas,r9a08g045s33-pcie:
+ Document RZ/G3L SoC
+Message-ID: <20260831-neon-responsible-ape-e0cd02@quoll>
+References: <20260825095047.9971-1-biju.das.jz@bp.renesas.com>
+ <20260825095047.9971-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgD3nxWrFJVqhT4sQA--.61087S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr15ury5tw4DtF17Jr48Crg_yoWfKwc_C3
-	98Xa43Xr4FgF4kua9rt3W5XrWrKrW8Wry8XayqvryfCr1ayw1DGr4UGr9IvwnrXwn8AF1D
-	tw48ZF1fZr1qkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8aNt7UUUUU==
-X-CM-SenderInfo: 5gd103ivzuiqqrwthudrp/xtbC3Qww3mqVFKwH4wAA3c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260825095047.9971-2-biju.das.jz@bp.renesas.com>
 
-From: Li Youhong <liyouhong@kylinos.cn>
+On Tue, Aug 25, 2026 at 10:50:40AM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Extend the existing device tree bindings for Renesas RZ/G3S PCIe
+> controller to include support for the RZ/G3L (renesas,r9a08g046-pcie)
+> PCIe controller. The RZ/G3L PCIe controller is similar to RZ/G3S but has
+> some key differences:
+>      - Has 3 clocks compared to 2 on other SoCs.
+>      - Has a different set of reset signals
+> 
+> Add device tree bindings for renesas,r9a08g046-pcie compatible IPs.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 33 ++++++++++++++++++-
+>  1 file changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+> index 09d78bd1a577..911b1976bf53 100644
+> --- a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+> @@ -13,7 +13,7 @@ description: |
+>    PCIe host controller found in Renesas RZ/G3S and similar SoCs complies
+>    with PCIe Base Specification 4.0 and supports different link speeds
+>    depending on the SoC variant:
+> -    - Gen2 (5 GT/s): RZ/G3S
+> +    - Gen2 (5 GT/s): RZ/G3{L,S}
+>      - Gen3 (8 GT/s): RZ/G3E, RZ/V2H(P), RZ/V2N
+>  
+>  properties:
+> @@ -21,6 +21,7 @@ properties:
+>      oneOf:
+>        - enum:
+>            - renesas,r9a08g045-pcie # RZ/G3S
+> +          - renesas,r9a08g046-pcie # RZ/G3L
+>            - renesas,r9a09g047-pcie # RZ/G3E
+>            - renesas,r9a09g057-pcie # RZ/V2H(P)
+>        - items:
+> @@ -87,14 +88,18 @@ properties:
+>    interrupt-controller: true
+>  
+>    clocks:
+> +    minItems: 2
+>      items:
+>        - description: System clock
+>        - description: PM control clock or clock for L1 substate handling
+> +      - description: PM control clock or clock for L1 substate handling
 
-v1 checked only clk_prepare_enable() in probe/resume. Reviewers asked
-to also handle pm_runtime_set_active() and all pm_runtime_get_sync()
-call sites. Split into three patches, including a follow-up for a
-pre-existing runtime PM usage leak on counter init failure.
+PMU? You list both clocks, but is there any different between them?
 
-Changes v1->v2
-Link to v1: https://lore.kernel.org/all/20260828071123.179670-1-dayou5941@163.com/
-- Also check pm_runtime_set_active() in probe
-- Check pm_runtime_get_sync() everywhere
-- New patch: put runtime PM ref if counter init fails after get
+>  
+>    clock-names:
+> +    minItems: 2
+>      items:
+>        - const: aclk
+>        - enum: [pm, pmu]
+> +      - enum: [pm, pmu]
 
+This should be "const: pmu" in such case.
 
-Li Youhong (3):
-  counter: rz-mtu3-cnt: check clk_prepare_enable() and
-    pm_runtime_set_active()
-  counter: rz-mtu3-cnt: check pm_runtime_get_sync() return values
-  counter: rz-mtu3-cnt: put runtime PM ref if counter init fails
-
- drivers/counter/rz-mtu3-cnt.c | 119 +++++++++++++++++++++++++++-------
- 1 file changed, 94 insertions(+), 25 deletions(-)
-
--- 
-2.25.1
+Best regards,
+Krzysztof
 
