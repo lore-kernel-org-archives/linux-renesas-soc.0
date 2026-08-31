@@ -1,117 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811F1370AD4;
-	Mon, 31 Aug 2026 06:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335EE3CD8A9
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Aug 2026 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788158038; cv=none; b=fQ3iYteHOvxxYzWEusRvRIVq3Zf5qoXMAOjUnkHyLOnyKhTXtfHOEuN7vPjsEbOwXM2t3HoOg1dXr69VCMhXq1cYS3aTvRmsSHZmpZDhZHiy97uXyNAB+WWcWrnobjqyHQu0Sty0oIOmuxwmho5sdLl8KYPkHLhbY+CsNdqJKlU=
+	t=1788164001; cv=none; b=ZwgQdPUN9rBpT1Md3dUVtIyBTe4/0YnxNZ+dtIeV50mVWaHd5n4MniTq6JFstfFS4lWoocyhfnHLuYknCypKhpK7McqDlOTbUHfNqukToadgEHvSm7Dk4sJcci0I1K5uCQVV4p/vhWwi655iacaZ76AgkWKeAoRmV/eU/lmPSpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788158038; c=relaxed/simple;
-	bh=K342pN9R5l9Amf3yIne5jhRsFkAPNtSws5F1C1XTfYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRLZo2H4oylf9thYGKqHGeaK26qxp6bkEX5i4c2oU3THSg4Y/hX9kqydYvCCKuBr7jzu9nX87doO+tlFzyehQK44Z4i7npbI4OvuX3PX1QxEf5sDucrCT7jm/3gGRtyvDB98Dn/zEvlscQ0svjSnpshDjzjSE20z9EwdOyXNzrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXBHbr8Q; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXBHbr8Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F3E1F000E9;
-	Mon, 31 Aug 2026 06:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788158037;
-	bh=GP2C2mZreAalLgcgv4kH52hh++chyCXbyU5k8g3nVAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HXBHbr8QuA/1GL+lcq09OgnCqRhxC7HarHVZt/raxamgMrw2e/zqzfkIlcy3bv+KJ
-	 +Or0czqXZnS5CX2a+GUc4ML5WTnln7D6oxSskL07rpWlvKSUa3b2QEnLSIY692Eiz9
-	 88tPzxGya7NYZsPMYjSH9BH0rsmGEO3HvO+RbLn+lYbRhMmLkhVrFw9ra3u/KX7NHX
-	 WGxSwq9U+JOgXwI6X5NEV9ZTUyuieBsY8O5DAQkoJ8BLYv7yqiL1jmWi00MqBz/P8w
-	 sly7jgqAaZqlTiKeHwrKGk+Fg2Ob8XqO3aQE3B3at+5xDUbKLI8tlVXz6trPZh7KSt
-	 B+9Lg9jsuKpfw==
-Date: Mon, 31 Aug 2026 08:33:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/4] dt-bindings: PCI: renesas,r9a08g045s33-pcie:
- Document RZ/G3L SoC
-Message-ID: <20260831-neon-responsible-ape-e0cd02@quoll>
-References: <20260825095047.9971-1-biju.das.jz@bp.renesas.com>
- <20260825095047.9971-2-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1788164001; c=relaxed/simple;
+	bh=+qn3x8nquazRyDm0Q+Tw3miio+SG11ZPkQozR/1R4To=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UrY2E65YT8nFR0x+JbHvO0kdEVtaSR9ZMXj6A+rj56wbQzwRiJ2DQiDVXhCGJWSJfh8n0tDwhpIeoFe+qs9CD9Z0Eg+iHbbh8SZxQR/etwuMSrBbgXPHD/h4RoOVZ2bOllIhKpyFo8bbc3GpwUClUukgOG1d0nwi9pL80fDyL0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5c2c46a428eso2494765e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Aug 2026 01:13:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788163999; x=1788768799;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=n+6mIWWcx/hgj72l0+IMwbJPq4HotcZmhxU6vYoZhGw=;
+        b=E30oUwwIkVpURlSW7NZ3lNExzok8YfomIpu7VYHO1SiFxE6SlrtyMIk52kHKPyYKny
+         3SXlmLUxZGy1Lg+lkon1JmAuh+CjEkxed6nstfHe8lmuPY9rVU+3j9MshT3u8sESNYtd
+         0OxJMCKJXQPbpE/tvQlhTKBBda3N4tfMjlMmazYdnJ8ukG2ErbikW1TExTcIHm+6RiG9
+         qxgPNQ0XsioFrFe6JR/vugwiUFKK9DjlXTKLcBPX4m8wH2VbHmR7iDN43fFCmltp6n8L
+         KyIG8WTa/LWRJsEXwXk/BcINZO+B6VRqOw8+Nq+FwyqOszb9FKAHjPL0ePLgpBdHty+p
+         SbZw==
+X-Forwarded-Encrypted: i=1; AHgh+RoqRbvpyAe2MXA2GUYxVotCXmbHd+B4v2vQxiEZTtQrjUcbbohjNEwwogReD52b9APRuAyHiukcepNaeVR/eDpwTA==@vger.kernel.org
+X-Gm-Message-State: AFuF++m23EmcRG5/oE+gwYISBtobLlGe0J4dvytgS5VVjG5Ke7a9sgh4
+	uzWM1TKc0IwAugOAqryLyIgzdXdlwn90X9l2yOQga3Q+CtKWsfiPixKBDLbiaWlM
+X-Gm-Gg: AR+sD11tJorfys9IexI/p792FOnjSz0daaPwWjhbzPVSONuMKrnlXfl85Vtm1jHobH7
+	EJ3FsU8dqRceGJz3TEJ5Nak82P1T36vbAtr/fdH8BEwA3g52kAeacLWFO/vU3Vx1vVeOH6p9C4z
+	UMuPnxsmaubKpLWaHGc1j1EtbdawitDmr/34vkAO49PCwJmLp9sK02ZGrto2EadG7jZDXbztT7F
+	DBIVzhtn34aI2Bs9X7LnfyEFI29P9g8bUizSjD9ZsNtPsciypx3SCwKNbat2WtmaSbWkqhha/UQ
+	sS8XDSavkFnLSr2Kyi0g2Q8u1z1aBQJa3y7yG6HBub68oMOj+o0UTqtfIFg0nHSwW8v9x/CrfKZ
+	in4IhUaNhLdkfLCYkViffhicUJJDUFu4IKF2oyT1BzrSmMr8GK92JDHU1JjzdQv3cWvoJMge+qi
+	kSDIZSVuOtYoA5dDHOrujH3s5cANqe2PG4OoEJq/dyTKz9AmSIsRPeofZQoPtoVG3McEEtCpnym
+	7Vrkk5lNq+pw6Yk930Eq9fSqiqDvm5ZhrMJSo9J6iwKtOet
+X-Received: by 2002:a05:6123:143:b0:5c7:a844:493 with SMTP id 71dfb90a1353d-5c7b103b359mr2445354e0c.0.1788163998985;
+        Mon, 31 Aug 2026 01:13:18 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7242c4e67sm7461556e0c.18.2026.08.31.01.13.18
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Aug 2026 01:13:18 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-97c940ef65cso1748042241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Aug 2026 01:13:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrFiPeRDIM3kdywZdndtvwYeUUz2/kO1GuPWa0KCEC9SBbkJYIgKG/Sl9Tha9lT8EdaTuMGVuLCvfcSyQq93FVyDg==@vger.kernel.org
+X-Received: by 2002:a05:6102:f9b:b0:77f:7df:ddd2 with SMTP id
+ ada2fe7eead31-785972e710emr9471412137.1.1788163994928; Mon, 31 Aug 2026
+ 01:13:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260825095047.9971-2-biju.das.jz@bp.renesas.com>
+References: <20260828192223.402422-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260828192223.402422-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 31 Aug 2026 10:13:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWEz=NoDkvvSjZqNwDQE7+F-JqEeduD0-E-NXTj4Ykbuw@mail.gmail.com>
+X-Gm-Features: AcwNN1W_pE0AEcDpr5Qk2q9RcyT_OX0D891rRk8joGtPW1leA8taoV55ukV4EjA
+Message-ID: <CAMuHMdWEz=NoDkvvSjZqNwDQE7+F-JqEeduD0-E-NXTj4Ykbuw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Document Renesas Multi-Protocol PHY
+ driver for R-Car X5H
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-phy@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Hai Pham <hai.pham.ud@renesas.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Phong Hoang <phong.hoang.wz@renesas.com>, 
+	Rob Herring <robh@kernel.org>, Tam Nguyen <tam.nguyen.xa@renesas.com>, 
+	Thanh Quan <thanh.quan.xn@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Vinh Nguyen <vinh.nguyen.xz@renesas.com>, Vinod Koul <vkoul@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 25, 2026 at 10:50:40AM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Extend the existing device tree bindings for Renesas RZ/G3S PCIe
-> controller to include support for the RZ/G3L (renesas,r9a08g046-pcie)
-> PCIe controller. The RZ/G3L PCIe controller is similar to RZ/G3S but has
-> some key differences:
->      - Has 3 clocks compared to 2 on other SoCs.
->      - Has a different set of reset signals
-> 
-> Add device tree bindings for renesas,r9a08g046-pcie compatible IPs.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 33 ++++++++++++++++++-
->  1 file changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> index 09d78bd1a577..911b1976bf53 100644
-> --- a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> @@ -13,7 +13,7 @@ description: |
->    PCIe host controller found in Renesas RZ/G3S and similar SoCs complies
->    with PCIe Base Specification 4.0 and supports different link speeds
->    depending on the SoC variant:
-> -    - Gen2 (5 GT/s): RZ/G3S
-> +    - Gen2 (5 GT/s): RZ/G3{L,S}
->      - Gen3 (8 GT/s): RZ/G3E, RZ/V2H(P), RZ/V2N
->  
->  properties:
-> @@ -21,6 +21,7 @@ properties:
->      oneOf:
->        - enum:
->            - renesas,r9a08g045-pcie # RZ/G3S
-> +          - renesas,r9a08g046-pcie # RZ/G3L
->            - renesas,r9a09g047-pcie # RZ/G3E
->            - renesas,r9a09g057-pcie # RZ/V2H(P)
->        - items:
-> @@ -87,14 +88,18 @@ properties:
->    interrupt-controller: true
->  
->    clocks:
-> +    minItems: 2
->      items:
->        - description: System clock
->        - description: PM control clock or clock for L1 substate handling
-> +      - description: PM control clock or clock for L1 substate handling
+Hi Marek,
 
-PMU? You list both clocks, but is there any different between them?
+On Fri, 28 Aug 2026 at 21:22, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Document Renesas Multi-Protocol PHY present in R-Car X5H (R8A78000) SoC.
+> This is a multiplexing PHY block with inputs from five IPs, and outputs
+> to four separate IO blocks. The five inputs are two PCIe4, two USB 3.2,
+> and ethernet PCS, each connected into the PHY with up to 4 times 2 lanes.
+> The inputs can be multiplexed to the four IO blocks as needed.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
->  
->    clock-names:
-> +    minItems: 2
->      items:
->        - const: aclk
->        - enum: [pm, pmu]
-> +      - enum: [pm, pmu]
+Thanks for your patch!
 
-This should be "const: pmu" in such case.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/renesas,rcar-gen5-mpphy.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/renesas,rcar-gen5-mpphy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas R-Car Generation 5 Multi-Protocol PHY
+> +
+> +maintainers:
+> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
+> +  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,r8a78000-mpphy   # R-Car X5H MPPHY
+> +      - const: renesas,rcar-gen5-mpphy  # R-Car Gen5 MPPHY
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 5
+> +    maxItems: 5
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mpphy01
+> +      - const: mpphy11
+> +      - const: mpphy21
+> +      - const: mpphy31
+> +      - const: mpphy02
 
-Best regards,
-Krzysztof
+These look like provider-centric instead of consumer-centric names.
+Please add descriptions, so it is more clear what they are, especially
+for the last entry (which should perhaps be the second entry?).
 
+> +
+> +  power-domains:
+> +    minItems: 4
+> +    maxItems: 4
+
+Why four? (yeah, SCMI...)
+
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: mpp0
+> +      - const: mpp1
+> +      - const: mpp2
+> +      - const: mpp3
+
+Likewise.
+
+> +
+> +  resets:
+> +    minItems: 5
+> +    maxItems: 5
+> +
+> +  reset-names:
+> +    items:
+> +      - const: mpphy01
+> +      - const: mpphy11
+> +      - const: mpphy21
+> +      - const: mpphy31
+> +      - const: mpphy02
+
+These look like provider-centric instead of consumer-centric names.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
