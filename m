@@ -1,65 +1,84 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD10E426408;
-	Tue,  1 Sep 2026 16:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C919D35DA53
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Sep 2026 16:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788278578; cv=none; b=jEaHneDDPJrHFZBfGXs8WSK8F5ReAFrQgzteAPDgwM0UAGGlqvbxso1GeNwBetKxy6DjR05EU/YAO5Ugc9k2reZXZUYFzb/5cJ/KPF46W8b7U84TFddh03tl2PnmrjyIVD3RflT8cAmGmkKYSqqey19WV2d717q/hvMtmnVOEt8=
+	t=1788279319; cv=none; b=GeVHBIDAF2TWgO9t4etpFfaO6XtiKInWI65aAyjxd+ZWu6rkAuLsXz4Nj2uUpn174QRzz28rhgNSAa+yhItR9WkWL+C5p44R5E+whPsJSg8eD8zfCHvwNLQh54XY9FpQlGNJmUXbClHIAHzyVMEwUEhGnhnQw3uw5IbbZ5pIFaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788278578; c=relaxed/simple;
-	bh=n7PcZtnAIhoDLcRBOJLdU1Xqtxkmqe6yDdLKxA6l8XI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPykOXFGoyAaNLnzez62iXO4opWI07zoA2Jhjz5ixLP2DXn5XHOsuxrF3dTZ+gcFc4zHQ512hOMwClLiYqBMAppEyuHASija6FD7GDiMDERkOn0N85LW2gw/kIDn9VBcEeTSx4LOJ9qQRHGLzJ33fTCpjx580KKhXne5zSF1fyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ldiDGEM0; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1788279319; c=relaxed/simple;
+	bh=sVmVzt8GgzZn8jvrQuxVaR7Ad1O+lxZF27bkoLHptvs=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ggFoSiE7kxZrfCqmahmJjAcWgqI4TQijZ5Y39BZCpZBpaxEosw4KPUhNk1Pvc9KP0WsLVTIzCdmfIazO9pKAfFVjtPCHF47wmTQoTYplYZHAnX7G5ckmDUdoJiwjlYQx7n6XdqiJSicmR9ICeY3A21+cY3eTyXV5oUtykqk9cO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaJEwRm/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ldiDGEM0"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eMtktqeeVL5VzhmP9fhR09ZZUGJKhcG515js72rP3tE=; b=ldiDGEM0x35iM4j2KLCdxxVD2j
-	urbcs6Dtbvrfmd4LwW7kabk1KJwspiEganHPCv+kHu6+5TN2xURGUyfghK+JNfs9EURvVKy495kA/
-	goCFoqj/Zr7l+yfTlX1g4N+3rL8dFv+W8hT0ZO7q1EeFK79iy5dMcKfEQ7NgVhJEe7ck=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1x1Qwh-002NyJ-Ra; Tue, 01 Sep 2026 18:02:47 +0200
-Date: Tue, 1 Sep 2026 18:02:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: khendry@reliablecontrols.com
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] net: pcs: rzn1-miic: Fix config array
- initialization
-Message-ID: <343012c6-c3cb-467c-b2fa-285dc6ba8b83@lunn.ch>
-References: <20260901-rzn1-miic-fix-array-v2-0-3e907049e770@reliablecontrols.com>
- <20260901-rzn1-miic-fix-array-v2-1-3e907049e770@reliablecontrols.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaJEwRm/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EA41F00A3F
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Sep 2026 16:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788279318;
+	bh=sVmVzt8GgzZn8jvrQuxVaR7Ad1O+lxZF27bkoLHptvs=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=LaJEwRm/DFlOnl1mYgCfRGzrC6JfPIkqeYk365T6HqHO+6kNq0afbytV07e6G6NZM
+	 4vtiM8QynuwbmFWstf7U6GSt4JirFqIjezl+BkPM54F8fOmdq2Rb5yF6DJ8l0hwGLg
+	 26oCw4CXK6P2qzd2jRTz9FAKelpvVHeBofhEglVi41HU0dW/mAQIAUm+05hXN1/QTM
+	 mAUbi5R+6Ka+PCYSZcFTw0Pq2w8v7/sQS3gMrPrCYVdlsRrQIz/4oR6j6iNVXvwkj3
+	 0bRsnFV1luxdcFuZUy6GLpZ4evgJT+jQeOc/TG7dHHAq7HSggYPRBWaglc9VcgBkOZ
+	 P7WcwVUbIMlSg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3a33307ecd9so11035291fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 01 Sep 2026 09:15:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw3KlRPhUSl3/T0lW98dtgJWPIek3yoDBQd2eKRU47hHDYhQ8EOsqdaWEKN7p0p73TZvg0/Ixwb2Jlu66fNxGpJNg==@vger.kernel.org
+X-Gm-Message-State: AFuF++k+3uJ2MZAEoZV5qkmqCDFinmwXfDXTkFNgEmzrZP55WD60gGNm
+	1ez64gpPWgVUPQH0ORQn0fSumlxMwhYyJVEKEmBPjEFBC9CMkbQ0UVqj+NPCBUfCOFAo+i47ZcF
+	OoHrEy1jnDb+cs18WxgPKKOSSjcjAljF5PF7fP6PG8A==
+X-Received: by 2002:a05:6512:2522:b0:5b6:4b1:f8be with SMTP id
+ 2adb3069b0e04-5b604b1fb1emr1186371e87.31.1788279316943; Tue, 01 Sep 2026
+ 09:15:16 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 1 Sep 2026 09:15:15 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 1 Sep 2026 09:15:15 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260826122742.153643-4-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260901-rzn1-miic-fix-array-v2-1-3e907049e770@reliablecontrols.com>
+References: <20260826122742.153643-1-biju.das.jz@bp.renesas.com> <20260826122742.153643-4-biju.das.jz@bp.renesas.com>
+Date: Tue, 1 Sep 2026 09:15:15 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfAdTMb_4ii=up-ESwc322YYjzseyvAxshM6vUcEGfxcQ@mail.gmail.com>
+X-Gm-Features: AcwNN1V8DuvVovyhVMeiT0SihZ3OVkh2HoH1hRxjyitBpeUT6HAacUJvV22owPU
+Message-ID: <CAMRc=MfAdTMb_4ii=up-ESwc322YYjzseyvAxshM6vUcEGfxcQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] power: sequencing: Add Renesas RZ/G3L Power Ready driver
+To: Biju <biju.das.au@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 01, 2026 at 08:25:13AM -0700, Kyle Hendry via B4 Relay wrote:
-> From: Kyle Hendry <khendry@reliablecontrols.com>
-> 
-> Fix memset parameters to initialize the entire DT value array
-> 
-> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+On Wed, 26 Aug 2026 14:27:25 +0200, Biju <biju.das.au@gmail.com> said:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
+> which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
+> SoC. The driver binds as an auxiliary device to the parent SYSC driver,
+> using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
+> {usb,dsi,csi}-pwrrdy pwrseq targets.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+I would prefer to see a stricter .match() but since the parent is the soc node
+we may get away without it.
 
-    Andrew
+What is the merge strategy here? Are patches 2 and 3 independent from 1 and 4
+at build time?
+
+Bart
