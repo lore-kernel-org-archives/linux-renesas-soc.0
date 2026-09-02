@@ -1,78 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAA548A2C2
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9462047206A
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788353479; cv=none; b=CkclmdXeKa6MgThmsVb7xuC2Znmv0rB3xzkRQCevoYrEki9sczXqMaWMm2tmGaHtQBOWzYahx2WrLKXrzlCjvkaT4HvSmcHLND6R3NYIasS2Ud92v7zawlmX6A6WBCy6qZudL8UX4hXwPHFOQTftA5NVVVHDd98RqZCtNsCiWTo=
+	t=1788353912; cv=none; b=kq1JwGKLfc9VKvfZNF+EwGx+/QLk4UsLC2MCrvi29X+Z5lmArgzGaFMwaNC6DX81AobEgYAg/wJ2O5L0iLVvzADaa0+mrPNlCnLY69AvEuRA2+SNQJ7lZLBAqAul4MOpMOfDFuNodPeeZzRvAfpkFJ2uJcLJpSkZuUFwIR8j2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788353479; c=relaxed/simple;
-	bh=ISyGVtZ14Pts2tswTlsCTErXYsU/ClKecAAibk7Ou9w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=I+lFn17vbLwBKPe8dYZ5dNcGsXFgkv8eXWNS1dp1srgrwVp0j+mp1ZOvwylkPaRt1Vhlkbb/9zoLuOzVb7rpiCd4WcRFGsGzQYOINLSFmrIzxsjyHXxruug/wnbYY3IuamINY+IfgZnAvuAo3HyUqKLgwVO74DRYn629+DnDDis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpGUZ5Uu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788353912; c=relaxed/simple;
+	bh=umVqKIohmkT4iOGNo/tKDzgfluTd945fREkvHl4zJnM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r6C5y4WX0pGsxVF5zvqX3rFeKOwFZ0TkeBl5qvM1CuMqRYfq8CXB/b1be3XE+Lr7BJuPPRKVCWFYy/qQWyQ6mO164ipiwKl/a8TEbCADFkW1rcNaJMed+UzhWxP+zVtHhtgM/lWrVi9gj6eJ2SAoW4vRcYHbg04ML6StI/ttJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAvxDkqU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpGUZ5Uu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BD81F000E9
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:51:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAvxDkqU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6571C1F0155C
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788353477;
-	bh=CK88pYq8AX75gixXSHe4K6JZGzTLCadT8Hx/z2Wiy7k=;
-	h=Subject:From:Date:To;
-	b=hpGUZ5Uu0R7Ekwa9z/kOdQdJ2/Y57D+BLWgzYk41WdV8poOrZX6+610xTGtPyOgJM
-	 KGNueyCdofT5/vgbPwctMOPSMbPGJizfuEOOOQxQiKYreSVCnYECFHjSFgvmz6ZeAw
-	 uZGM6o+o2cH128yxbU7OWb0RK0RfQyFaF19EuA2e9xrwCII+ViZbQeFWbEPwPHwZPg
-	 WoHkiw5+iRAEDC3MBaR2a176MZmuzL95HJ23WJ6RZtwxaBZ8X/V7cONgbZqtQNuK29
-	 U1+w/05IdJrMcKxXsADIH6Nh0adjVZ1Ex+mI49x5Y8bpi9JKeGs5i6POy5Fug0dsQ+
-	 C061a9+Q8CyvQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 5924D39263B8
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:50:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20260515; t=1788353911;
+	bh=Wlml6ZbJTx2/0zF5rhvA3HzrKGIPZmpTno210GiX85k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=mAvxDkqUROIthEftdJ9QkLt2PDX9PYliG+1ivbgsDCRZTgzVdE2hOuwvRfmttzifv
+	 NKCMXQ8blBXMBz+VXKnM8wS36rQ6qbHBt/wuSGGtdegpl5680Cs8Eu3vbHw5QEJLOV
+	 tIQFQOU1qp1t+/IyMMqivfUg6SautXeJ+fvK++Y6+iCVq7WU1yOKakNgwd3IMGdRUX
+	 knWKEtMRMsfJ6geWCfjHOZRWeSdjed54k2rXEbNfLsThcGzfmGbZY49qoAZpD98ZAO
+	 +tpAyIgqjNYVTVNKIbuIATlF5vm3OulJr2SJDY4a9oYBZ6N589WT541yva9lArLdQo
+	 MUjn0xgbOwa9A==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b5f21afe8cso2885770e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 05:58:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx/sBx/VYY5Dr42C/eDopAefhK0/jkc1sFCJdNc7eyblZU8W6QqLEWW3YIgCbGqLvYS2GqkDITiVVGQlunGIh4Llg==@vger.kernel.org
+X-Gm-Message-State: AFuF++n9RrKXXtjfD3+m1I8Rsy+hhwJKS0ZFWZjFeoVXCU0/m0rnzRk2
+	nXqzwe7qwA2OTfRdmmEthj0VSxBNYj32oMrQCi4iKYOBI0FuXS5DM6hvFp7OYBBmjeCUhvTSm95
+	Yi0xPWjiz2+rKNnuAYa1xsajR4Pomrf0=
+X-Received: by 2002:a05:6512:ac6:b0:5b2:c068:3530 with SMTP id
+ 2adb3069b0e04-5b60c30a181mr881695e87.13.1788353910042; Wed, 02 Sep 2026
+ 05:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <178835341903.2712775.6937449454999701261.git-patchwork-summary@kernel.org>
-Date: Wed, 02 Sep 2026 12:50:19 +0000
-To: linux-renesas-soc@vger.kernel.org
+References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com> <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com>
+In-Reply-To: <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 2 Sep 2026 14:58:15 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
+X-Gm-Features: AcwNN1UCFhm1aHVlm-BJzhSf8J2NeZK15MsuFS_3j_uqyeamxc-SEKtsEnY_q0U
+Message-ID: <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ input-enable pinconf
+To: Josua Mayer <josua@solid-run.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Jon Nettleton <jon@solid-run.com>, 
+	Mikhail Anikin <mikhail.anikin@solid-run.com>, Yazan Shhady <yazan.shhady@solid-run.com>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Hi Joshua,
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+thanks for your patch!
 
-Patch: [v3] ARM: dts: renesas: r9a06g032-rzn1d400-eb: enable GPIOs on CN12
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1147128
-  Lore link: https://lore.kernel.org/r/20260817103255.49565-2-wsa+renesas@sang-engineering.com
+On Wed, Sep 2, 2026 at 1:50=E2=80=AFPM Josua Mayer <josua@solid-run.com> wr=
+ote:
 
-Patch: [v5] arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes
-  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1142986
-  Lore link: https://lore.kernel.org/r/20260809200429.843212-1-marek.vasut+renesas@mailbox.org
+> The list of allowed pinconf properties already includes input-enable,
+> but has omitted input-disable.
+>
+> Both refer to the same hardware property, setting and clearing input-enab=
+le.
+>
+> Add input-disable to the list.
+>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+(...)
+> +        input-disable: true
 
-Series: Add RZ/G3L PWRRDY power sequencing support
-  Submitter: Biju <biju.das.au@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=1152057
-  Lore link: https://lore.kernel.org/r/20260826122742.153643-1-biju.das.jz@bp.renesas.com
-    Patches: [v5,1/4] soc: renesas: rz-sysc: Register auxiliary device for PWRRDY power sequencer
-             [v5,4/4] soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for R9A08G046
+The Subject of this patch is  "Allow input-enable pinconf".
 
+But what you are doing is allowing input-disable.
 
-Total patches: 4
+With the subject fixed:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yours,
+Linus Walleij
