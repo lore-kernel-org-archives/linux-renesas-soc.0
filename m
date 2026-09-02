@@ -1,103 +1,106 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E348947A89A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 11:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F3F47CA80
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 11:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788348972; cv=none; b=CnVHB4trd/RCx/9LkiP6TsXL5c6jP+nbKcoJqXx9JM5EbJATpTyDvNLLoMnKACPilJM/XiPkT/H/ex6mg6IR2irY4IZD4+QbUNlI3oAZiDc3pynoaFItsnuy+Q5eszyjoIlVQW49EW5EWSKt6j6/oVYhiQIhrackhiyCC5IAodw=
+	t=1788349553; cv=none; b=Pv5q0QdGJdQaFWm4eljOhBl+N4v44ivU8o8nutQcT7dDFmGBeqZWBx3Q9wRqFlm5dZlGNLtfJilw7uW85F1b10m+V+uVjaVAnmITeTgsMg8s1PrtbOgpS2VpYUhYJIBqVzOiqw44i2x1FRu44jhK/BNTOqngAVv8x6UWbrYGoZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788348972; c=relaxed/simple;
-	bh=wyPHokR3tqR3MR269liqtkoSqy7tkjxLQyug1Wc7V4w=;
+	s=arc-20240116; t=1788349553; c=relaxed/simple;
+	bh=GrBIm0BKS+Mu7/OLWlqezUi4tFJ6U0Srqj6VjLPOZaE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PxFYXCwU3njE6E/T8w5YlayawS/XbBAixAOrxwWo2Q1k+WO/x8QgXnf4vEhDLr3TvNFsLKHWaTzmR0IoRfYNREw3H2mQ+klZYNw2oKFLtRFHJVAf8B7ZCwBK8vsKgccemVCHNZM8hoEmh25p1LuUv0iRO/yG3lBVY9aEEixLb3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+	 To:Cc:Content-Type; b=QhplEFbHkzL+mYGLyPRvQERjSLopMBGB4DYvguoWuzNMTgm187vrTzBd32EPGQkGsW5M4l4v/ZHw5i/9wyLybObWLdEmEHWxMThqDsFiqOjeTYqAt16Vore11agV/CsUubUGFzONzfo/r2VR71OR2oELBEOXiVO60S7t6BCs6sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-97c940ef65cso483462241.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:36:02 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-848643382fcso1043202b3a.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:45:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788348959; x=1788953759;
+        d=1e100.net; s=20251104; t=1788349545; x=1788954345;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=wG2vzYUiYB5Is79tPSwDBrckmDl3YMELkXESRZoQU1g=;
-        b=bMDDm/YH27NPT5UD8/gH5Bg80I3V4WfhylR4sK9LO9xPMAQk6n0YbgVizBl/4/+Roh
-         uxSJZPqZtqEh0VUJlk+tpubtPVrqr3D7Fy0xpNmRNG8fLD4el+BCVHk06QPhbhqDS8Mv
-         l+Dp0b7XFqFkeqzawzmY51M2LI4MKhJ/0hiR1KR9pb5lYMpK5hp9WUArEhAvo3NBfEy4
-         A8K8AUXfPTSvdqZ+Mw+XlazMpvsXmdUCQLcyp/jSsoqh3FHYgHj4kh7CN4/K+OVjr7pV
-         jmo1s8V5bXVJyFXcNLeBU39kWjT9Qp7ga7wKsX8bw72KB3dYbFBkVmyXM/Il10nvWyxx
-         vnwA==
-X-Forwarded-Encrypted: i=1; AKwUvByYGr0WlcMS5y+PhT3qqLEuL2INl/r97uBoB+8xrP17oqxqUhOsOE01ogMHixWzOGCt/IZepAk7Iqzi8CvPzurK8w==@vger.kernel.org
-X-Gm-Message-State: AFuF++nvMguGUdqYoNkwKZsZSwg5Fs2Y9QMwfeyOyB5OqY1u3bxsk6a3
-	/3vclZfMp/wEVpk7a4fTE5HbyhDbvxZsxnaoCiKEeQ106VF7EqEqTbsu5H9T2cAu
-X-Gm-Gg: AYBFou2QTVppUaZBKy6UYK5z7n3niB9jiOQ6oYQdrwnfn4Pw9dqr+GVMwIgEVVY2IaJ
-	d1oFmc4H8TE1Xxb0066TE0vcjPAFE7GK6yuWa6DzFIhNAe8vcghi9OwwAqEP/kYRBnduIm2NRWd
-	nu32xGQqbVpkJBFx2Pz594kJtjl/dr5L/DLbHU8qJRwAKSrYrlfhynDZS411o+ifgPztMox+9lR
-	NSmsiSb8AeqFAeGFPpNk0dAVhbbtpisw+AfqdkXBzsO0jJSz2AtVJB8cr/1DkHxtAqAvItZ+y2j
-	ydBSuLW8Nqv2M9n2+uDBwIXGb7cAxC7WXJD5rhDZ9CFmb8b1mFJIqF8/2sWtYMT8gqZ2xDadPPB
-	zaiE503VV50JtTXbnF0I4ig41Cx1CCN7hWmVEFkMRqJqnhgD6wPi0fhu4oSBjkyI3TQOkjZoQqz
-	H4meDbTQMPKC+7UW/zoaoy5hETcnsdBI28gmyuftK1nN78UseADtEoyz7kNXBMqoe5bcPdeejNJ
-	9Gm5VTgu7nl7LEoDWD7CrpDn4Irjw==
-X-Received: by 2002:a05:6102:3a0c:b0:789:3bbf:2dd7 with SMTP id ada2fe7eead31-78a1ef4aeebmr1526612137.0.1788348958657;
-        Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a1a251ca6sm1889818137.4.2026.09.02.04.35.58
+        bh=XEAVGW99jRYpfKK+i5q1QjOfB2bMJtHxW0mUFyR7MIM=;
+        b=aqIXhjRLr7SDCntJEkoG8qNuOHXRdG3Bg+xQKIhnX6fUjR6a2M8PhjyxwwMvKyCWRW
+         A5pkpgi9NjXq7OgRNVLJhB3oHdK3Jwz87d9Ib/SRpUi8s/TPpPOmowN1oHNp9ojTWAzl
+         j4dm1LUkor6w1dQjugR6suHO0sN5FTsj8NoFtbSUGbclRfL8eHtWBCjtlOSSr5gbCg0H
+         4TnXZJbuEQwvyUIpnEFxeHsvCmm1v3O6ATtNT2z+DZ8RxGTc7m33sSxzNM28Sr6LCxcx
+         wjkSh68hGxAxfK6SsJ87+pLq9OLGtE3YhO0pSTrdBl1NhqD7cbjdYZocsSCIoq9NOC8e
+         XewA==
+X-Forwarded-Encrypted: i=1; AKwUvBw5X2oG3AU+AafyK7NjGH+3+t5i6uUrZRGU2Hyqd55IVPH8v5tOlbvHvEchSUNW4diIBKELbgEh6IgXZFrvDvvD/w==@vger.kernel.org
+X-Gm-Message-State: AFuF++m3d4XhCJJBrjv11m2btQ5pGugibn/R4abyb1wpXjcJPrkyhrf/
+	TVPim5uHF/aIg0XnQNsnFQQL3Vo4ihEjPJ7oPBnPzftsvxZROMQMQlC75ECjIBLF
+X-Gm-Gg: AYBFou2RfnxOwyJ9/qgNbN8p+DiqzRzQ0abrhDTOxrsYwAS6mJF+6UST6MVvi00T6RW
+	X1e0NFcwZC5+Oscw1FQFbTmUIXYsR10PJiI6QuoD5G9zy9sZsSNIgJcF36EygF6j98VJnWoo3L+
+	8bFnVnoCX5nZESzgrXW20l1EL35DS4ZmPsoYFD/K7U4NuOBqkZt5r7sSiBO42iNtw8dF0wQsJx8
+	i8oiRp53bjU8DcEHwttcduk6OexM1ybJZFRwB0oJBBK5J0Ggtke7Ia8tCM1sqEb1ryMHt5MZqp1
+	Q4s5XvZSCKFBGvcfaQL1C8i4Vore2tJg3W9YUfjrVqVARUn0TjpmtIHHmaKXfbLVH4g6FlF1O0n
+	P40Aq9bK1/QiR7wbH6T7zF2VZhE27dOzcQEUSNVue2mPYnOitSn2wzC7Eiya3Hq/wbeYJxcHVaX
+	t1vxr65IOJsBQLb8uTm/3O7Xz7kmIOrYBzzg771/K20H29MXZXDxZrIGk4gNWGwz9RJrG03ghEX
+	J947ZVf/LFVS9SjjkgyuzlEcqCv3w==
+X-Received: by 2002:a05:6a00:4c86:b0:847:9015:e68c with SMTP id d2e1a72fcca58-85ed3f70278mr7342463b3a.17.1788349545323;
+        Wed, 02 Sep 2026 04:45:45 -0700 (PDT)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com. [209.85.214.173])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-85dc11f80bbsm1218800b3a.57.2026.09.02.04.45.44
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5bf959b820cso945817e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxCCXBysolCNnQDA4b2+6GcZsxXIVd392zav9rY38DThO0neWB8IwqpCAL5iNZfaVG4eikFZNFiQYGf/C3no5b7Fg==@vger.kernel.org
-X-Received: by 2002:a05:6122:489b:b0:5c7:98a9:cf95 with SMTP id
- 71dfb90a1353d-5c7d27e3ce2mr1779605e0c.4.1788348958056; Wed, 02 Sep 2026
- 04:35:58 -0700 (PDT)
+        Wed, 02 Sep 2026 04:45:45 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2d7195706f1so9949145ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:45:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzzGjVf/1zNkcYt4IYxOp7waT9jPiAVk3pJXZzU0URvWpf91TN/qQC4KizdJ8sfLbn2k68SVgVQ8jYNLBucQnljJg==@vger.kernel.org
+X-Received: by 2002:a05:6102:faa:b0:785:bfc7:26f5 with SMTP id
+ ada2fe7eead31-78a1f33dfd3mr1197143137.12.1788349174855; Wed, 02 Sep 2026
+ 04:39:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
+References: <20260809200429.843212-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260809200429.843212-1-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 13:35:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU3POZVM4YmSN8r4rewPd9+GSnUvyL2F8oSqHzjk97Dbg@mail.gmail.com>
-X-Gm-Features: AcwNN1UdAkMRtSpVoWeT4pt6w2QrIFGJ2Ah_h0QXalst1ZeOOfhDZh72790D8vw
-Message-ID: <CAMuHMdU3POZVM4YmSN8r4rewPd9+GSnUvyL2F8oSqHzjk97Dbg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Fix GBETH TX scheduling policy for RZ/{V2H, V2N, G3E,
- T2H, N2H}
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 2 Sep 2026 13:39:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUCRF_r3TXCRYZs_-AAn9WL36HUF4_VjGs4Y8Y4T2uRTA@mail.gmail.com>
+X-Gm-Features: AcwNN1XYp2AmohzI9M0wS5P-4B-ztdbPdhzMYLGxaK77VTrG86b4xj0U-T2WG1g
+Message-ID: <CAMuHMdUCRF_r3TXCRYZs_-AAn9WL36HUF4_VjGs4Y8Y4T2uRTA@mail.gmail.com>
+Subject: Re: [PATCH v5] arm64: dts: renesas: r8a779g0: Add GICv3 ITS and
+ update PCIe nodes
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Ovidiu,
+On Sun, 9 Aug 2026 at 22:04, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> This SoC implements GIC600 with GICv3 ITS and PCIe host mode on this
+> SoC can use it. Add GIC ITS node into GIC node, update interrupt-map
+> and add msi-map into PCIe controller node.
+>
+> The GIC ITS does have master interface to issue transactions to RAM.
+> The interface does support cacheable transactions, however, it does
+> not support shareable attribute, because the AXI port signals are tied
+> to inactive in this implementation. Therefore, add "dma-noncoherent"
+> DT property into the GIC ITS subnode.
+>
+> The GIC redistributor does not have cacheable/shareable, therefore
+> add "dma-noncoherent" DT property into the GIC node.
+>
+> Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-On Wed, 22 Jul 2026 at 10:54, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> This series switches the GBETH TX scheduling policy to
-> Weighted-Round-Robin (WRR) on RZ/V2H, RZ/V2N, RZ/G3E, RZ/T2H and RZ/N2H
-> SoCs.
->
-> Since the GBETH nodes don't currently specify a TX scheduling policy,
-> stmmac falls back to Strict Priority. In that configuration the highest
-> priority queue gets all the traffic and starves the others under load.
->
-> Under sustained UDP TX load with multiple data streams, this starvation
-> triggers adapter resets due to TX queue timeouts:
->
->   iperf3 -c <ip> -i0 -t60 --bind-dev end0 -u -b0 -P4
->   end0: NETDEV WATCHDOG: CPU: 1: transmit queue 1 timed out 5228 ms
->   end0: Reset adapter.
->
-> Investigation showed that only the highest priority queue advances while
-> the others stall for more than 5 seconds, causing the netdev watchdog
-> reset.
-
-FTR. fast-tracking to fixes for v7.3.
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
