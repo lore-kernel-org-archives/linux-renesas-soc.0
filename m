@@ -1,113 +1,129 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C9F3B3BE9
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 07:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E29C317163;
+	Wed,  2 Sep 2026 07:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788333060; cv=none; b=bupBXsZQp+qv238A8k/808xVmNWlgrcyfHTOzLx4A8HkbTDnhITqfN/LW+qXfGSwzHvla4l1t3/UtNENECU5rOACgtTvzEVEwNTNCkP61A6gPlsVbXOZubUb1BdqvXsw4B7OU4uamS1Xc/FxB5i4d+Vy19c0Nmj9njgYkq9cpWg=
+	t=1788333519; cv=none; b=ofzCULc6/n8z3VU0dG49mWBtOkAkOe6FmVluJYDj/ag8/YFTO6XZFya7qsbyUI41PDO2gcVYu4c/DbKB2Y3ASjX4tG3wH4rkHJgintbbz4j+mHv0uVxIKjpy2bGBR2bbs63EpIIY/2pRCI5vUOxkNwtxsA5UnEgtnJ7CdTHYI/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788333060; c=relaxed/simple;
-	bh=fzWNt8m6dV7XJ26M3vj5sYnnsx+91P3uMd2jJYIJ1HU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lV3xNnbpRH2nAv+cx+sZQhJN+BWt6FNq4G2/PSPth7jpmQRe4BWD9Kiyd2uIHM/2wyHs9I64VPBljK4MzPin8H91RztlK1hdV8IYYYXYFqpgTadiVKgfTLqy8V0qAc35p0Uo8Z26eh0mlABFd6WBUrKBk4bnkqSdEXMFg5GglQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-96723c7151eso207314241.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 00:10:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788333057; x=1788937857;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=S6z6L7vVC/89R/jl0HvM4yW8bp8VIuMDT6yh78Uqavs=;
-        b=G5NEzYEaaGWblhsdm6F8Co1+8/7OcDsJdSAQ1Svt3U/94INHtYSRTnAGlQ/WTdrEXt
-         4b7JvdAWn0qD8jnZYd7OXad0PvllPBP+RkD7XYJNFLVe/SjZK6AJ3Itp3wueE3NapLtQ
-         RxWpIBOnydrreMsBm566uaq22Od3jeRXAybSRw09cYzF7UAxTJvWkcoMxqFZmqq0ER0/
-         KBNXhz38Ff16vurhBFIc4T6deCL1N1wME5HTAzvkyM63TL49Btyg1Rv27soK4La03Ymy
-         OGs+eSnueHUoqL4Y8ACzJf29U6sqqbZ7Z/lebToz6/tkcYWGh+x8T5Yq2iyhhS7I4q7g
-         Gbag==
-X-Forwarded-Encrypted: i=1; AKwUvBykRW5Fc2WO7I8N2kUc2Blm8xmoDp5RpbFEbP2J1xkGtPSt2reO7uR96u9YJWCxSzlj5lviGSvfMRdVzo4t4RH2mA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lhWqAXOK1AmRWgi9Wi0m2tee2sLMh+bL52jSBvcsFaVVjweYRm
-	18LQsHUB3JLOvQAkCFsgUzoPlu+xlKTEz/6cyZiByPhMc9oE4i7rDaymVsStinWa
-X-Gm-Gg: AYBFou3ATZHKBKpsB4XOGA7Yo0Ymxk+JpwjEH+TERyJ7JFVa/qbMVVHHR2vu1Fy8ZXg
-	aJzKtX40JXC2ZCaPhymjQ2URe6ny25vN2X3ZkmaqpPwne+685FV9SAl7EJ9RnDtaJckodeh+pgB
-	L06vEsy/AHGm3OdiK0zEHbkdN5tztYZiboDKegYSsn3da209H06Dlz+qoFjvVgC6uzV4/KHRW+m
-	qvMWFVyRQ2QkJXAfpOE2o26lASOeWHamf1aJj0ZLHw5beGf+TjZ0FvoXHZGr6Gmmvz0nFYmbkKH
-	618V4e36PwYw7gAPqz5nsHeezQrpLy9I0PGxeklTyJI83napOh6b3oGbE0AVJ6g/bsD6n3Hz9F3
-	PVgkpn4UGrlOGrOnEj5GYQ733W5ybJ5jZtpW+2kjx3xcYF98GGmaTNpAKSAu4ZGXj7lMFoQoD2x
-	rW1rF85h9TWkeAhnHNni/PPmnsJFRsK4d7FkEi+yy6lvbhu1kBm16fzLwh22W/AecYioxxkeSqQ
-	OHlPjRGvfVCePjroXy8kf/Bd5T60w==
-X-Received: by 2002:a05:6102:4194:b0:779:e75e:63c6 with SMTP id ada2fe7eead31-78a1f39554cmr774654137.12.1788333057358;
-        Wed, 02 Sep 2026 00:10:57 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a1a1fea5fsm1495771137.3.2026.09.02.00.10.56
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 00:10:56 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5c67175d176so379258e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 00:10:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxl/tMOOkELEh5eNm/ZhM/GR8xK3tSEWKdOe9uUkGulcdWVrPTgM32zEmzdk5ONa3a/Xkk9eKuLZYrW/liZLF0hew==@vger.kernel.org
-X-Received: by 2002:a05:6102:38c6:b0:785:3211:f5e4 with SMTP id
- ada2fe7eead31-78a1f1c3849mr970255137.4.1788333056097; Wed, 02 Sep 2026
- 00:10:56 -0700 (PDT)
+	s=arc-20240116; t=1788333519; c=relaxed/simple;
+	bh=FrU0vwTWiXNpJLDHmXBFEhZPNs4uimrpEWy63hvXxRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbSacaNtI4bB2J+ai+5lVDExrJWeTz3X5OcjTaLVOtnmO6QgOHIp8VsNiI/BkLunDcQeZ9hZQmhVZyOFkCxvqhVpiR0L70wtpaMw62rLkRLoDc4Bg20tMJ+zulffZrYbfqsikviioGG2ir8/I+tu4lbSwV0SSPIoBXkBXNFrl5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7fYUwa6; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7fYUwa6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4871F000E9;
+	Wed,  2 Sep 2026 07:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788333518;
+	bh=HL69uD1uJKKHK2MGV9jHTlVdAjJQsXCvWjdRatXtZi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=e7fYUwa67YcCpJQnhksI8s5r9szKITxJpbFfZKbSZEUV+z5uyzc5KVa96Mmcx4OPa
+	 hUt+sVL9z7lmDGS9Suf7Q3aJpKPLexx3a/NMPJiJlaCJDXuxcuxyaxz84pEZBXSEgK
+	 hK46DbJNdrhDH2CyT6tHGkYccEzqAweJqh2ZaX6AlxXN/anm8MKc31fIhLosPvGg2y
+	 U14EJghhLQcVsFrGtCsS5GQ4yKDOMPcYW6i+hSEISmxkgXiK2vroFVIRmVO3euKPgd
+	 Hti3OS6v3ljm1ef3LsRJAnppDgU5JPV1KLX6nlwpvbkA5LtWwoLDgyTDi1QfJ1YQZy
+	 GAmqh7uM9xRJg==
+Date: Wed, 2 Sep 2026 08:18:24 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 30/45] clk: scpi: Make sure clk_init_data is fully
+ initialized
+Message-ID: <20260902-tiny-metal-silkworm-ffaadd@sudeepholla>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260826122742.153643-1-biju.das.jz@bp.renesas.com>
- <20260826122742.153643-4-biju.das.jz@bp.renesas.com> <CAMRc=MfAdTMb_4ii=up-ESwc322YYjzseyvAxshM6vUcEGfxcQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MfAdTMb_4ii=up-ESwc322YYjzseyvAxshM6vUcEGfxcQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 09:10:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXmn7B_UOb8f2j0_BOx3d55nA0-0Auay-HLFYWtziS+6Q@mail.gmail.com>
-X-Gm-Features: AcwNN1Wg6VVOr5E8CpOD13jdheZdgLtuCw94APvhRsqrd_GzRtCymguaJxx7oSs
-Message-ID: <CAMuHMdXmn7B_UOb8f2j0_BOx3d55nA0-0Auay-HLFYWtziS+6Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] power: sequencing: Add Renesas RZ/G3L Power Ready driver
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Biju <biju.das.au@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
 
-Hi Bartosz,
+On Fri, Aug 21, 2026 at 10:53:40AM +0200, Geert Uytterhoeven wrote:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+>
 
-On Tue, 1 Sept 2026 at 18:15, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> On Wed, 26 Aug 2026 14:27:25 +0200, Biju <biju.das.au@gmail.com> said:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
-> > which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
-> > SoC. The driver binds as an auxiliary device to the parent SYSC driver,
-> > using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
-> > {usb,dsi,csi}-pwrrdy pwrseq targets.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+FWIW:
 
-> What is the merge strategy here? Are patches 2 and 3 independent from 1 and 4
-> at build time?
-
-I think so: one can safely select a non-existing symbol in Kconfig.
-
-So once you're happy with this patch, I can take patches 1 and 4
-through renesas-devel.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Reviewed-by: Sudeep Holla <sudeep.holla@kernel.org>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Sudeep
