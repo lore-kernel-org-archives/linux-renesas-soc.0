@@ -1,111 +1,103 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B02431A3C
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 11:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E348947A89A
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 11:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788348859; cv=none; b=Jo3RsY1h7Ywubqng8xGY9tdfjwkKkoFSFJxz71NVHwhufTS2SdlnUKXqn0V1G+8kCCgQCnHUalfdgskF0TCVC1ixPVFp3+5Wgr4z4AhknAXcl652NtoOvDFXigeRlz9fUJQsW8AVaSPrP4Q2VKD3BQkC/zoW41TDOTMJfDTvF74=
+	t=1788348972; cv=none; b=CnVHB4trd/RCx/9LkiP6TsXL5c6jP+nbKcoJqXx9JM5EbJATpTyDvNLLoMnKACPilJM/XiPkT/H/ex6mg6IR2irY4IZD4+QbUNlI3oAZiDc3pynoaFItsnuy+Q5eszyjoIlVQW49EW5EWSKt6j6/oVYhiQIhrackhiyCC5IAodw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788348859; c=relaxed/simple;
-	bh=c8cVDH4+60eN9JY5piPPVSkAJg5r/Dt287R6xlSNjmo=;
+	s=arc-20240116; t=1788348972; c=relaxed/simple;
+	bh=wyPHokR3tqR3MR269liqtkoSqy7tkjxLQyug1Wc7V4w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Az+rbYojD5KCrDvhCgyI7IL+xWijvi1EP+0VQs0EMUnK5HUR+BMMqmQjRi4rIooh/9E1NEFGGN6Ne2ca9t2mId8zAfOZK5ock1ul11Myzi7sPH2gjB1xXKFzBWCtPUvRJJ3u4r0FdDxnuXKOJIebg+IiMtjvIc2FxFEF+2pVUFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+	 To:Cc:Content-Type; b=PxFYXCwU3njE6E/T8w5YlayawS/XbBAixAOrxwWo2Q1k+WO/x8QgXnf4vEhDLr3TvNFsLKHWaTzmR0IoRfYNREw3H2mQ+klZYNw2oKFLtRFHJVAf8B7ZCwBK8vsKgccemVCHNZM8hoEmh25p1LuUv0iRO/yG3lBVY9aEEixLb3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5bf9506704fso468814e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:34:14 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-97c940ef65cso483462241.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:36:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788348853; x=1788953653;
+        d=1e100.net; s=20251104; t=1788348959; x=1788953759;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ZX9X5hy8bWZKgZ28xeKzE387jyLfPdvXwed5OH+/3k8=;
-        b=dyeSA1ksVSdkPAec65fL4PLP7Bmz/xW05venGomlL8r8Ndz62qLAGWym1LQ7GwOVKo
-         inZ7fOvISzuTbJt9VrOVm0EYQBNaTArJ1pqs83JPN+jSRiWIpvs0vpr3guc5tpFXRCLY
-         9n8cNf/mIWSAAm+iH00+EM5tdh/fE31rPypXYejlM53gThPgpwlRMW8rwod4qZjiiI6g
-         Q5+N3IPhQDMZMcGhydDPaL1nwPlYjbz9l6ILBtbjAPy/x9mU98p9o9x6soGXkUMPApgN
-         E2s5JWEPTpz+cd93L4qsBcDTvtH4rIq1PeMNGvGLjAEV6dBKvIlAtGDMxy92yTRZ8vgG
-         YwPA==
-X-Forwarded-Encrypted: i=1; AKwUvBymDiszSXDlt1XazKPwtuce+Lcig/xxAUdoOw9h6f87VAh21iWKzakdn42r/CCfK5xVcrSVwQdo7s1p/o85tGBsXw==@vger.kernel.org
-X-Gm-Message-State: AFuF++mcteK8GRo2BCkxWGbmFZfFMlRbvmSP91zW0JTh26k6IOo/Sm9e
-	g5ownTwrzJMP+qKb5fymOUMkk4r/rrhPgY2ps6gkzN3juDEOvEPsl26FnWN2dVzI
-X-Gm-Gg: AYBFou0XHpFyUJktygKzpgmQc4zI8rUSOXUahfUbsHjP6z/ZzoFHjFtAxC95FK6Q7o7
-	a0ZacPHNLMEHVvobJyFqAx1SpxgmKI6hpjPiVbAmt7SmY3e74xayYI1NItKtGidb/TtieT9RI3C
-	Iz5xbOYSJUefvhVdJloCq3voAwJp0wJcv8PVzcLKBMxgw8CDa+/hnfHZDEayoPJ0PD3LgQgeKvI
-	hxG20aHOxEOMvV0PqYyctAOFKp5zKpNKHVsfbN9w65tneLmGNqM2f6CZh8j6Car8eidUu4nIJ9R
-	x9nUFTKu6cotVO3nrIQfyJ6c1CrLsMgDHnQB9rXl++aIOKUjcmHOB9anYTvxL7xhp93Ne+ADcJB
-	VTEu97rsIQjahRjFmwZ+f+yPJ5TbseHHbX1cW5eLJdks8EDHaGwy1zdrp5nIbCcKgW7kKvQrapf
-	jn4RiuHNVsa3YwKL0ngHXdm1FSTs2qwZ8ZzBU9s8/KXpWHhr7jyxv7JPlj8KT2U4/bGFG0RXpxA
-	3a/J035yJ395ZNxP3QYAzhgpw==
-X-Received: by 2002:a05:6122:f18:b0:5c7:a814:b987 with SMTP id 71dfb90a1353d-5c7d271fee6mr1658462e0c.2.1788348852744;
-        Wed, 02 Sep 2026 04:34:12 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7cd94646csm1817630e0c.18.2026.09.02.04.34.12
+        bh=wG2vzYUiYB5Is79tPSwDBrckmDl3YMELkXESRZoQU1g=;
+        b=bMDDm/YH27NPT5UD8/gH5Bg80I3V4WfhylR4sK9LO9xPMAQk6n0YbgVizBl/4/+Roh
+         uxSJZPqZtqEh0VUJlk+tpubtPVrqr3D7Fy0xpNmRNG8fLD4el+BCVHk06QPhbhqDS8Mv
+         l+Dp0b7XFqFkeqzawzmY51M2LI4MKhJ/0hiR1KR9pb5lYMpK5hp9WUArEhAvo3NBfEy4
+         A8K8AUXfPTSvdqZ+Mw+XlazMpvsXmdUCQLcyp/jSsoqh3FHYgHj4kh7CN4/K+OVjr7pV
+         jmo1s8V5bXVJyFXcNLeBU39kWjT9Qp7ga7wKsX8bw72KB3dYbFBkVmyXM/Il10nvWyxx
+         vnwA==
+X-Forwarded-Encrypted: i=1; AKwUvByYGr0WlcMS5y+PhT3qqLEuL2INl/r97uBoB+8xrP17oqxqUhOsOE01ogMHixWzOGCt/IZepAk7Iqzi8CvPzurK8w==@vger.kernel.org
+X-Gm-Message-State: AFuF++nvMguGUdqYoNkwKZsZSwg5Fs2Y9QMwfeyOyB5OqY1u3bxsk6a3
+	/3vclZfMp/wEVpk7a4fTE5HbyhDbvxZsxnaoCiKEeQ106VF7EqEqTbsu5H9T2cAu
+X-Gm-Gg: AYBFou2QTVppUaZBKy6UYK5z7n3niB9jiOQ6oYQdrwnfn4Pw9dqr+GVMwIgEVVY2IaJ
+	d1oFmc4H8TE1Xxb0066TE0vcjPAFE7GK6yuWa6DzFIhNAe8vcghi9OwwAqEP/kYRBnduIm2NRWd
+	nu32xGQqbVpkJBFx2Pz594kJtjl/dr5L/DLbHU8qJRwAKSrYrlfhynDZS411o+ifgPztMox+9lR
+	NSmsiSb8AeqFAeGFPpNk0dAVhbbtpisw+AfqdkXBzsO0jJSz2AtVJB8cr/1DkHxtAqAvItZ+y2j
+	ydBSuLW8Nqv2M9n2+uDBwIXGb7cAxC7WXJD5rhDZ9CFmb8b1mFJIqF8/2sWtYMT8gqZ2xDadPPB
+	zaiE503VV50JtTXbnF0I4ig41Cx1CCN7hWmVEFkMRqJqnhgD6wPi0fhu4oSBjkyI3TQOkjZoQqz
+	H4meDbTQMPKC+7UW/zoaoy5hETcnsdBI28gmyuftK1nN78UseADtEoyz7kNXBMqoe5bcPdeejNJ
+	9Gm5VTgu7nl7LEoDWD7CrpDn4Irjw==
+X-Received: by 2002:a05:6102:3a0c:b0:789:3bbf:2dd7 with SMTP id ada2fe7eead31-78a1ef4aeebmr1526612137.0.1788348958657;
+        Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a1a251ca6sm1889818137.4.2026.09.02.04.35.58
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 04:34:12 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-97ca74bd6e0so234740241.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:34:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxHxZctqTD61ZCI6pVD+V9RU6ZflYa/5ylX4v5/43hd2B6dpxlMzd28Nn2oQCduJbcyuNPAAnyOgSk0/mupTsZ3aA==@vger.kernel.org
-X-Received: by 2002:a05:6102:6d2:b0:77b:2881:580b with SMTP id
- ada2fe7eead31-78a1f1aff84mr1204735137.4.1788348851833; Wed, 02 Sep 2026
- 04:34:11 -0700 (PDT)
+        Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5bf959b820cso945817e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 04:35:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxCCXBysolCNnQDA4b2+6GcZsxXIVd392zav9rY38DThO0neWB8IwqpCAL5iNZfaVG4eikFZNFiQYGf/C3no5b7Fg==@vger.kernel.org
+X-Received: by 2002:a05:6122:489b:b0:5c7:98a9:cf95 with SMTP id
+ 71dfb90a1353d-5c7d27e3ce2mr1779605e0c.4.1788348958056; Wed, 02 Sep 2026
+ 04:35:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260826122742.153643-1-biju.das.jz@bp.renesas.com>
- <20260826122742.153643-4-biju.das.jz@bp.renesas.com> <CAMRc=MfAdTMb_4ii=up-ESwc322YYjzseyvAxshM6vUcEGfxcQ@mail.gmail.com>
- <CAMuHMdXmn7B_UOb8f2j0_BOx3d55nA0-0Auay-HLFYWtziS+6Q@mail.gmail.com> <CAMRc=MewW5aLqY66i-uUor3ke6k25rjZh3z7Cn76e_KhHQWoJA@mail.gmail.com>
-In-Reply-To: <CAMRc=MewW5aLqY66i-uUor3ke6k25rjZh3z7Cn76e_KhHQWoJA@mail.gmail.com>
+References: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20260722085353.136986-1-ovidiu.panait.rb@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 13:34:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWN_JUzcF-ueAABOsfvvYuZ6r8Zf_vcBwsrb5ArVXWriQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VKD0uOf2MvN-4alfN6qZQtlFaKLsibUAqjRFeDI3iaU25OL_kOcxy9-xY
-Message-ID: <CAMuHMdWN_JUzcF-ueAABOsfvvYuZ6r8Zf_vcBwsrb5ArVXWriQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] power: sequencing: Add Renesas RZ/G3L Power Ready driver
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Biju <biju.das.au@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 2 Sep 2026 13:35:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU3POZVM4YmSN8r4rewPd9+GSnUvyL2F8oSqHzjk97Dbg@mail.gmail.com>
+X-Gm-Features: AcwNN1UdAkMRtSpVoWeT4pt6w2QrIFGJ2Ah_h0QXalst1ZeOOfhDZh72790D8vw
+Message-ID: <CAMuHMdU3POZVM4YmSN8r4rewPd9+GSnUvyL2F8oSqHzjk97Dbg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Fix GBETH TX scheduling policy for RZ/{V2H, V2N, G3E,
+ T2H, N2H}
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Bartosz,
+Hi Ovidiu,
 
-On Wed, 2 Sept 2026 at 12:49, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> On Wed, 2 Sep 2026 09:10:45 +0200, Geert Uytterhoeven
-> <geert@linux-m68k.org> said:
-> > On Tue, 1 Sept 2026 at 18:15, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> >> On Wed, 26 Aug 2026 14:27:25 +0200, Biju <biju.das.au@gmail.com> said:
-> >> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >> >
-> >> > Add a power sequencing driver for the Renesas RZ/G3L PWRRDY module,
-> >> > which signals power readiness for various IPs (USB, DSI, CSI etc.) on the
-> >> > SoC. The driver binds as an auxiliary device to the parent SYSC driver,
-> >> > using its regmap to toggle the SYS_PWRRDY_N register bits, and exposes
-> >> > {usb,dsi,csi}-pwrrdy pwrseq targets.
-> >> >
-> >> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> >> What is the merge strategy here? Are patches 2 and 3 independent from 1 and 4
-> >> at build time?
-> >
-> > I think so: one can safely select a non-existing symbol in Kconfig.
-> >
-> > So once you're happy with this patch, I can take patches 1 and 4
-> > through renesas-devel.
+On Wed, 22 Jul 2026 at 10:54, Ovidiu Panait
+<ovidiu.panait.rb@renesas.com> wrote:
+> This series switches the GBETH TX scheduling policy to
+> Weighted-Round-Robin (WRR) on RZ/V2H, RZ/V2N, RZ/G3E, RZ/T2H and RZ/N2H
+> SoCs.
 >
-> I picked up 2 and 3.
+> Since the GBETH nodes don't currently specify a TX scheduling policy,
+> stmmac falls back to Strict Priority. In that configuration the highest
+> priority queue gets all the traffic and starves the others under load.
+>
+> Under sustained UDP TX load with multiple data streams, this starvation
+> triggers adapter resets due to TX queue timeouts:
+>
+>   iperf3 -c <ip> -i0 -t60 --bind-dev end0 -u -b0 -P4
+>   end0: NETDEV WATCHDOG: CPU: 1: transmit queue 1 timed out 5228 ms
+>   end0: Reset adapter.
+>
+> Investigation showed that only the highest priority queue advances while
+> the others stall for more than 5 seconds, causing the netdev watchdog
+> reset.
 
-Thanks, I will pick up 1 and 4.
+FTR. fast-tracking to fixes for v7.3.
 
 Gr{oetje,eeting}s,
 
