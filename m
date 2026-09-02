@@ -1,110 +1,132 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B876D44A3EF
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Sep 2026 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC03480954;
+	Wed,  2 Sep 2026 12:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788351186; cv=none; b=NxfcDJS52bKmeYbp01Q4VEMtzHqktQY94M+twSFNj1xsG1hTKQWlGAq41PPryXqjeCl1DS1zp1fwyR98FVUdkBXZfcQ7tpPNWIzsOBrQ4/HH/wZsnBuuPoNNGRkfatvmiQ3YLpsuNfHTU6VGOgw1atv8fZsingXydduVejibGJQ=
+	t=1788351592; cv=none; b=u0fogcyaZb4WSolAUhR+ZPRkBGpGGbgpfDgSr0liw5BOvV3N7TXzINm56R7Fzv9qfd5U5PIDikiVcBZZEjOG0WLnQXtraHGZmyUaLwTGTL3EMVPlZiFZrVBnIfhHV18rGV40Y3PkPZMPPGHZ8l3c+VziqG7Dbh4dttJFI+nyl9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788351186; c=relaxed/simple;
-	bh=biV/P6Lenk1gqyuDluawNcA5WadE9fBB25bM/uCBA9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrglxNAUg71KxvHG4Ik+MPilyJ2GHTTKTQ4laCR7nmjbwcR0y+uBCo08SCtEWiq6nJMq3BUC0JTdVnLG67ctrso2UguQ75X6IfgPoQStCM7M0aMVY68sZz3Kb3MXHEEDm2S43hVZfuAXbRVmNGFgo03nz81WCfmwd1CcZW7NSIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5c65d654c23so386150e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 05:13:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788351180; x=1788955980;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=T41eIf+/AuTT/wyzLNOdOWtrZpKK7XdhLj5//SaN8yw=;
-        b=F+Bjiae4aMangWOuWg5JrYxBxl/SMWmc7TazAoEXnjaNCptmK/wel+GweUQTuJVkBs
-         JVkMH4ZOP9vz0NqAZZcj+onC/xEDU6SjzUjWYyFMSshVh9vC2Z2ImWXd+9bdFcUD08DY
-         G9mKKm+GLOPEzXR4sRDdSt8fxI9aH7AGBeiQUqfmqPKs+BSZyUoTip1UAPBieSSMJgul
-         YF1eIC4LA23f2VdN6n/d7GfDiLzYxKJEmvWp9HAvztnTRwuknfhiJCGRagC/gw9U5JOB
-         s+T941PuZkS4nWkxbDZdafdHmnx2uy8KFkA6tdslg1A59PB340ruY/2rx9cDvcMBRW7C
-         aAUA==
-X-Gm-Message-State: AFuF++lTq3dBGRNqCkX/l8q+7gIHJx3P6K5abGGjslofH2Zx4fZmphrT
-	/FUKPh3hq+S54xgtPCzPcDI+2OoKcmWSJy9e+ZlOq0D4dis5Wh6PBQdXqlDoIJn1
-X-Gm-Gg: AYBFou04x/lCI6lBJxjCFVO3LN7UlORtt4rJU0giyV8NqpGnf87CBio0ZGe/mXNR5f+
-	1L+fHytJZnwZHpKzSGyGMXcY1GweNTuFrkaGAoUCiLG8r4T3oJN8tkWHRQa7ric1SHoxPZlzSkc
-	UdFZBsqLK5zJGJtDfogr+l9gj1iig6ok+HAvZhxQkVANUSeth/YuWmgZ6UHvtDeenF9lmZ5jwY4
-	g8x5RnXpdWA4A6a/oljx4xjFEJjcPKeCUwNsdp0t3lToSvarrOc+sH9lDMQ47WWi3LSaNSQlvAB
-	YGxtgfvCS0sp7DL1QMd2PgseByQRldAvs/SOB+HzxPZM0urHNJSDRypfgRU0nyjP/tzKl9rNOgT
-	Q5G8PmwMoROtv0ybKpg6p2WgVD0j9nwqE0Q6WNYfzoG6qMit2hXZ6LmRfxybn1A35BX3+B8Wy6i
-	5EnvjwYWBeGpkFlWks5qG8tRYhGkAx6IVo0yOcjxR8vb+s1uUV4bn+D+qN14rD9w7u/+tEG0QZH
-	6XV42nnu35Etuhp93LnBj8Awh+4weXrZf90As1D
-X-Received: by 2002:a05:6102:2d0a:b0:786:7a59:a313 with SMTP id ada2fe7eead31-78a1f3ca67bmr1035533137.13.1788351180369;
-        Wed, 02 Sep 2026 05:13:00 -0700 (PDT)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9806728262esm1980896241.3.2026.09.02.05.12.59
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 05:12:59 -0700 (PDT)
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-59b074ec7ceso429173e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Sep 2026 05:12:59 -0700 (PDT)
-X-Received: by 2002:a05:6102:50ac:b0:785:c643:a415 with SMTP id
- ada2fe7eead31-78a1f3c8040mr1328620137.12.1788351179542; Wed, 02 Sep 2026
- 05:12:59 -0700 (PDT)
+	s=arc-20240116; t=1788351592; c=relaxed/simple;
+	bh=odxnxmaAf2RV3ti0/nNL9HKMt/VzDj+O4M2J6w+83Kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hb7tg+4JjC/fmIWfuQbF5rWpB/xbJ0aIqojGLVKBo1QpSX/rDzSvv1p8VLF+jr1ecWnUCiI9mp8A/gFKRGwGuPaOi6HFXDKGTQEAg4SwwlC+elwZh+rg2INj8UUtpaV6IqyeRGUWkUuae3SAKWmCo74O4Po624Zzko0JcepnIik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h8edhgbl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UEnYf/Qw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h8edhgbl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UEnYf/Qw"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A4E2621D5E;
+	Wed,  2 Sep 2026 12:19:36 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1788351576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
+	b=h8edhgbl6RVp8SJUxIPEGfMSSHRYDj4TJfRiaFwu62RPAyU7q3NISvgq5JqytYkqiLk6IG
+	i7pMDNAz/IPgbLYhafwM5iaJCksmq+6PoUmSJ+1PZCEJg0iHhyRzM/GS0lO6CmeRsd0tL6
+	CdHGjC9Z0+ZCbSxPcCgdOrhBFr2cXbI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1788351576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnvK6SDSqRaczPeuHNPtlErQ77C4BU5i8ISwXQWL8II=;
+	b=UEnYf/QwT5+lmPmD6NlstQ/A1nAK6r7ekQQtgUpM50XvwqunP5BJ232xVCWxVGrf/89ZAI
+	WqHdhSYyZ90+AmAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F211713874;
+	Wed,  2 Sep 2026 12:19:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IPSsOVcUmGqxEAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 02 Sep 2026 12:19:35 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	geert@linux-m68k.org,
+	rdunlap@infradead.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	nouveau@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 03/14] drm/panic: Return -EINVAL if font is not available
+Date: Wed,  2 Sep 2026 14:13:11 +0200
+Message-ID: <20260902121930.597222-4-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260902121930.597222-1-tzimmermann@suse.de>
+References: <20260902121930.597222-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817095447.34693-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260817095447.34693-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 14:12:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV3OddS_FLezhLKL7Bfrw38PFAv+pNLvza5wt4bE5kP1w@mail.gmail.com>
-X-Gm-Features: AcwNN1Xk803m9jEyq6713qOsrpmGtrbWsrTaCapprfgM3QHihPSKQL88K_Gs8LA
-Message-ID: <CAMuHMdV3OddS_FLezhLKL7Bfrw38PFAv+pNLvza5wt4bE5kP1w@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: renesas: rcar-mfis: add hwspinlock support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: A4E2621D5E
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLqtkr6cif1ebgurukgmwdm7xc)]
 
-Hi Wolfram,
+Font lookup does not allocate memory. Hence reporting ENOMEM on
+failed lookups is misleading. Report EINVAL instead.
 
-On Mon, 17 Aug 2026 at 11:55, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Every MFIS instance has a block of hardware spinlocks. Add support for
-> them. Gen4 has only one instance, so the base_id is always 0. Gen5 has
-> multiple instances, so the base_id has to be encoded in the info
-> description. Also being a provider, a hwspinlock-private header needs
-> to be included. Work to refactor the headers is on-going, but will need
-> many preparational steps. Until then, we need to live with the special
-> include.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Changes since v2:
-> * dropped patch 1 because Geert already queued it
-> * add comment that flex array must be last (Geert)
-> * calc local_id in a less scary way (Geert)
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
+ drivers/gpu/drm/drm_panic.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks for the update!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Any feedback from the hwspinlock people? Can I queue this in
-renesas-devel?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+index d28ce8878e05..62490d32019c 100644
+--- a/drivers/gpu/drm/drm_panic.c
++++ b/drivers/gpu/drm/drm_panic.c
+@@ -751,8 +751,10 @@ static int _draw_panic_screen_qr_code(struct drm_scanout_buffer *sb)
+ 	int qr_width, qr_canvas_width, qr_pitch, v_margin;
+ 	u8 *qr_image;
+ 
+-	if (!font || !qrbuf1 || !qrbuf2 || !stream.workspace)
++	if (!qrbuf1 || !qrbuf2 || !stream.workspace)
+ 		return -ENOMEM;
++	if (!font)
++		return -EINVAL;
+ 
+ 	r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.55.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
