@@ -1,98 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD6647DD79;
-	Wed,  2 Sep 2026 18:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457A4A92CB;
+	Wed,  2 Sep 2026 18:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788374256; cv=none; b=cQBpD/QWS4jrCbbi0Ld8Xiw5vTljOVc1DnIQpTvzNzn4gyb8WNn3aYC0M1DK69PpkAazII7MfstJTYOPbvsRFksfehzPTXvMb8yGFmvG/Ywyon4+CI4aWCxuGI5iCFVhnZdq9kCfbmX7I/Fe5xjK3zgoj4F5E9ReLCddwIfqjkQ=
+	t=1788375062; cv=none; b=PRyIcsOQWcWqL/dTqEF6e0Zn+ChAE3jQImva41M4WzmGX1WellJvFMCY5ZeuumRU7WYRzAsPqqr78v2F1obUCHGqVYPA53wqu4W3keMEiNiF2Vk2fTcsOKXVOJXMFfhLKT0r27Kao6tuxUD3FtmDx4GUyi0pCXHvqF8R0DhVTgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788374256; c=relaxed/simple;
-	bh=V/1UstqcdN1RXWpfcFWx4DWNsEz/FVYAw2CVF01Y1nw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HteAWmNCyJWVLhW+IZQKHKamET8RC+2hCE+HXRgjUdCIoZ50L8ce1S9nvpQwHlayD8PSWDLeL3FQ7hTpMKeWYU8ROHU9k4s0pbOlUsLsnR98hZaQsOPnLwo6FobP9G7Y2vFqB5ehgQNNet+yC/rTUFdq8W/1ctvOJBlpe8Or0ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZHoN9Wn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1788375062; c=relaxed/simple;
+	bh=+Ub3YMosNfdQcgVH3HgIXI4bfXDQmwUkft3s/LnH0EI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrASJF1li8wuFDGTJ2n/AaM6Mj1dTFV3ei8Vh5mCvOWmQ4SmDxIV52JywF5hqNo5Uy0HtBRkvwMb1oFCpjpqnm3gc4RpSRlFK6/e3/z1WANKfjnFVDbWgU2wEfQQhZVONzcP0nOQz2mTPeF+IL+RXFZ45AXFKcTuNa8lnKdxLXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C5MEIlit; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZHoN9Wn"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E28FC2BCFA;
-	Wed,  2 Sep 2026 18:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1788374256;
-	bh=V/1UstqcdN1RXWpfcFWx4DWNsEz/FVYAw2CVF01Y1nw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jZHoN9Wn7CARjZwKfObbuXnqqb8hifbp/RUqbBlneOqOJVGaK6JdAf2+82CSujDls
-	 bL8v76iVxqgDAo3LZyYVrEocokyzC14R2lEwXehVecKjLKG/L6AGWi98V2ABVvRUs4
-	 dA3q54goq3ojB0yuTC611IxeJGdAAXI6E7r4kB0EouhvfAH+dDJI1fYaInIKhgGcdq
-	 aFQVs1tjA3PDVfuCNw0cH/Iiwoy1K6w+WEYhN087XEyf4f5WKhl54KtjLuO0shTA/j
-	 fjEMfAcO/KryJDaUtDf6oq9ETPy7ZmFz/Yj1uZAjvL1Z8wrjHiFomrdqCZ2GN+QKTb
-	 KKwvX7Yc4ym4g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F28ECC624DA;
-	Wed,  2 Sep 2026 18:37:35 +0000 (UTC)
-From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Date: Wed, 02 Sep 2026 11:37:36 -0700
-Subject: [PATCH v3 2/2] net: pcs: rzn1-miic: Verify port number from dtb
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C5MEIlit"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8YcGrZDGFlQAHZYXmJz9O2iRbfLftOMblBThW89CfDM=; b=C5MEIlitM8B/YU+bAUUR4oAuEY
+	0HGN1KXdua35+2+vlhtiv3KjxZ0AAH3lvitzq7WihEFSTt6lFSkZyzeq2fnundzoNGmr4o6p57m6B
+	vwZ7nehXVkFF3kAAMysJiMmEYGByjIZSFaysUuh1DwMxnzXQe69e/Soy3DfjqgzAojjQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1x1q2m-002ZdX-Gk; Wed, 02 Sep 2026 20:50:44 +0200
+Date: Wed, 2 Sep 2026 20:50:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: khendry@reliablecontrols.com
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] net: pcs: rzn1-miic: Verify port number from dtb
+Message-ID: <81869e14-2dff-4bff-b2b4-07185c4e9086@lunn.ch>
+References: <20260902-rzn1-miic-fix-array-v3-0-3f7dccffaf5a@reliablecontrols.com>
+ <20260902-rzn1-miic-fix-array-v3-2-3f7dccffaf5a@reliablecontrols.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260902-rzn1-miic-fix-array-v3-2-3f7dccffaf5a@reliablecontrols.com>
-References: <20260902-rzn1-miic-fix-array-v3-0-3f7dccffaf5a@reliablecontrols.com>
-In-Reply-To: <20260902-rzn1-miic-fix-array-v3-0-3f7dccffaf5a@reliablecontrols.com>
-To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788374255; l=876;
- i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=8y+5McTvkwszKCn2II2jDDP1RMF2tNDKh17/+uJhtIE=;
- b=TkRRZTNT5I0U+Kq0Oxx8yAwBDBXPZaXnYpHXZq12Bf8aLwr5perqcOOOV9mncntB9CPTFWJRq
- h9nNZgOwzdFBWI2A/JdSdrHedtqo/qpqCpoFbi6PfGgXzoCDn4iojb8
-X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
- pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
-X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
- with auth_id=946
-X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
-Reply-To: khendry@reliablecontrols.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260902-rzn1-miic-fix-array-v3-2-3f7dccffaf5a@reliablecontrols.com>
 
-From: Kyle Hendry <khendry@reliablecontrols.com>
+On Wed, Sep 02, 2026 at 11:37:36AM -0700, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+> 
+> Add check to make sure port number is in range before writing
+> to dt_val array
+> 
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+> ---
+>  drivers/net/pcs/pcs-rzn1-miic.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+> index c50b65d064fa..3ee40eb9d545 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -692,6 +692,12 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
+>  		if (of_property_read_u32(conv, "reg", &port))
+>  			continue;
+>  
+> +		if (port < miic->of_data->miic_port_start || port > miic->of_data->miic_port_max) {
+> +			dev_err(miic->dev, "Port number out of range: %d\n", port);
+> +			kfree(dt_val);
+> +			return -EINVAL;
+> +		}
+> +
 
-Add check to make sure port number is in range before writing
-to dt_val array
+While reviewing this, i noticed:
 
-Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
----
- drivers/net/pcs/pcs-rzn1-miic.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+		/* Adjust for 0 based index */
+		dt_val[port + !miic->of_data->miic_port_start] = conf;
 
-diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-index c50b65d064fa..3ee40eb9d545 100644
---- a/drivers/net/pcs/pcs-rzn1-miic.c
-+++ b/drivers/net/pcs/pcs-rzn1-miic.c
-@@ -692,6 +692,12 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
- 		if (of_property_read_u32(conv, "reg", &port))
- 			continue;
- 
-+		if (port < miic->of_data->miic_port_start || port > miic->of_data->miic_port_max) {
-+			dev_err(miic->dev, "Port number out of range: %d\n", port);
-+			kfree(dt_val);
-+			return -EINVAL;
-+		}
-+
- 		if (of_property_read_u32(conv, "renesas,miic-input", &conf))
- 			continue;
- 
+Is the ! correct?
 
--- 
-2.43.0
-
-
+	Andrew
