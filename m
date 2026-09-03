@@ -1,108 +1,215 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF8B36B93F
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 08:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0620F470457;
+	Thu,  3 Sep 2026 08:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788425559; cv=none; b=XSRNcjhXrS66uIdSAXB7az9d2eISM9Lt9tqmnvXFU+ESIkDUAWzpI+2KxNJyrw71L/Oer3Jw6v6aff1Z+JIczdDs4sqoG14bUqzfrLXdFPUqChFHzB36B0kFpNELV9Ylvn0v0HnPiBt3E08Ls+aw49AlhTl3u344fc6jJermvMo=
+	t=1788425708; cv=none; b=V8KLWQcB/+uaB0lMxxT3DJze2TurPPWQr4iQ8I/O1lsdi7HZU7SBSPHJQ6VpinUJHe23E8TV6hszoPhJialy1wtF0q+CK9n7ROJa1Eske9FrTCh8JfZAJy1X0W9N8P9kXjlP+sBdBAd+i6sE/tYAqnKxEmlmEywo12qlzOBu3so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788425559; c=relaxed/simple;
-	bh=nCjep19YpVy7ptXJy85uM8qZLDh2PaaoyCU7UFW2ucY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fMtiBbOZHlSSctzpQuwO8CTPbMs6/CKq4SyaxDaj4Qis0RIRjfSWDwu3udnwNQHaOQmOk5b2d8Mj75g+8WMbDsF3tldXDxtDUb+RWJ9FUmAjDVSZqa3FKQQA3tw5GyDDBePUXhdt/J51SkcldHMQYg0v8A4uUItYQfAgqe3El3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-97cc72fe0f3so477767241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 01:52:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788425557; x=1789030357;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=C4rlCOn37h5gJZpVKAKNeNVZ0qRLT1DFUGwUmbfCeTs=;
-        b=UhkvrcTMHL2ZDYcA84vjm4ne2dhKmFaoOcmv7uIslrdyI9raBA4LkKnlW+Nw0/AZs6
-         Ec91cTeIo+gQAKKO7tjZTl+9WZg01Xp0dBnUPo/9MBerQsYCv3kKxmb4SQFDo9EZlTYt
-         OkjuZ1UBIYHX7bf3VOZW77V2Hn9hkqKjEp1c0O7MxLC8WJkpwGsp2IS8lbx+SmX8AiQt
-         zzXBs8ojqSotOyVrtg57BbDCSqyM/EmZwbmK+AbjxZOUwYIqoBjMhqAZWHJ2Mntc+Qfv
-         DC/OmqrkCgkivLGMg5l8yK1R/gtH4ilqeF+BaJZeh5QV/olGnNrNd0Rsausx+sexqPUi
-         J4OA==
-X-Forwarded-Encrypted: i=1; AKwUvBzubW+NlBO6/bf675NYWLiASv5GmRvfuIn1wfSclB1AEsCqB4zMAT11k1ovwlQ7Wp0x1OquQ3KvGsd/Aiz34HIOmA==@vger.kernel.org
-X-Gm-Message-State: AFuF++loj3BDt3vc3iD/tkaIreuBj5VgAL2felyvdw9PTs5o5nZiyVLg
-	yzQBQiXdG2TYP9NN1E4IKabITeCRYxj7px2fVLRs2LtRDhLnlxEOt7jPk+m4fTXee28=
-X-Gm-Gg: AYBFou16ac7MMGfct8IRIOr94y/3FzSWk5THl3RImihUZ6oaWr8Xkomid0p8GxcokTx
-	DjyrbSHVqwQeYVdYrM4b4H5uAgt9edlnxnLQt45cY8v/RqkF8MILOwno0PPouEcieA7GsEHNrkN
-	tgenSxhEIaf2uJUqWxKVuOiOvui6tq5DYdVNSrGDMdQnKXB0Fny2zfynQkqJtufq5PGRYWxI1wX
-	26onEPhoqdewYKZhXqMQ4PcvbaxFuFLb6TrAKD/gzdUhE4LkEawgiOp5/Nf7hTPleJtQzzKM2L/
-	Od0gazC7YHd/1G0tGCzm0UDwGonfmyvknhjvtrSOYqPeQU2k1PO8Mn4kjpkwARg8HGA5xyovWtE
-	ToIya6lavK8oHX/pMUmn5/GinGxXhTrcYOJHK0+OopyWeuk1P9VWiXEzjKxboBZx58SeeZxYovn
-	5xQXfqvHc3mv1BhU4xhfrz0b3nN1q8EW4X16erEAdlfI/Vs/Suxa8PpMm+skMZqxFQ69DcrDJBn
-	aR0YjZGbLbJaKXPRjaSbEaBPA==
-X-Received: by 2002:a05:6102:5493:b0:779:328:8a2e with SMTP id ada2fe7eead31-78a2ef01223mr977770137.5.1788425556787;
-        Thu, 03 Sep 2026 01:52:36 -0700 (PDT)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a1a2552edsm4232061137.5.2026.09.03.01.52.36
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 01:52:36 -0700 (PDT)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-977ba4d3b49so609655241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 01:52:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBy1gkCzNwKM8J3pVIGCMMK/NHJ9zvotJSAjosGmzWuA+gxMb0CStz4a3CCJhTTPCvlyAhq/57KY0ospXBLfBMjNsg==@vger.kernel.org
-X-Received: by 2002:a05:6102:84d9:b0:778:6695:2f71 with SMTP id
- ada2fe7eead31-78a2efc74e0mr951843137.15.1788425555897; Thu, 03 Sep 2026
- 01:52:35 -0700 (PDT)
+	s=arc-20240116; t=1788425708; c=relaxed/simple;
+	bh=wLtS0JL6ggyhewZvRL5WF+lOsyPJjm9EeqxYWvK6TXs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Mzer7XAoFjVRh6eay6rpJa2nrdPiufGTtIJSwCV6PiEZZMJKVuiw1iqJ6tLbtABRFN2diqSzMn9eDm/HHF16gXTWPVk9mGHdKkGbn43kG8nei/d3jAeUlfKwDkNevGqunWfMHXEWxiRp7OUgHx5K9RDQpcc0dLvIEgTNBdENHiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id C7BAF2058C4;
+	Thu, 03 Sep 2026 10:55:01 +0200 (CEST)
+Message-ID: <f3e365f5440cbd005df45410a89032dcf685258e.camel@pengutronix.de>
+Subject: Re: [PATCH v3 06/12] reset: Extract
+ __reset_control_get_from_provider()
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd	 <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>, Sudeep
+ Holla <sudeep.holla@kernel.org>, Cristian Marussi
+ <cristian.marussi@arm.com>, Saravana Kannan <saravanak@kernel.org>, Ulf
+ Hansson	 <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Marek
+ Vasut	 <marek.vasut+renesas@mailbox.org>, Bartosz Golaszewski	
+ <bartosz.golaszewski@oss.qualcomm.com>, Konrad Dybcio	
+ <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>,
+ Vinod Koul <vkoul@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Kuninori Morimoto	
+ <kuninori.morimoto.gx@renesas.com>, =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic	
+ <clegoffic@baylibre.com>
+Cc: devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 03 Sep 2026 10:55:01 +0200
+In-Reply-To: <2824c50f77aa287a3555533e4b9760109aae1741.1788338320.git.geert+renesas@glider.be>
+References: <cover.1788338320.git.geert+renesas@glider.be>
+	 <2824c50f77aa287a3555533e4b9760109aae1741.1788338320.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
- <aob6pW_BQbW_hF2e@ninjato> <aovmzeyXAQtb063B@ninjato>
-In-Reply-To: <aovmzeyXAQtb063B@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Sep 2026 10:52:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWYg-QhMZ9e0i=Nzym7-8fcFfahkTT1HKwxQ4d=_0YDng@mail.gmail.com>
-X-Gm-Features: AcwNN1V03wVoMTHnfOLNCqV0N8TGrKgNMWk4P9bpEKw35T0AC3SEfctOY_5pVKE
-Message-ID: <CAMuHMdWYg-QhMZ9e0i=Nzym7-8fcFfahkTT1HKwxQ4d=_0YDng@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] pinctrl: renesas: rzg2l: Add support for RZ/G3S I3C
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, linusw@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Wolfram,
+On Mi, 2026-09-02 at 13:29 +0200, Geert Uytterhoeven wrote:
+> Extract the code to create a reset_control structure from a given
+> provider into its own function, so it can be reused later.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> ---
+>  drivers/reset/core.c | 92 ++++++++++++++++++++++++--------------------
+>  1 file changed, 50 insertions(+), 42 deletions(-)
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 38e189d04d09b270..8af7cd2e8a5029df 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -1135,6 +1135,54 @@ __reset_find_rcdev(const struct fwnode_reference_a=
+rgs *args, bool gpio_fallback)
+>  	return NULL;
+>  }
+> =20
+> +static struct reset_control *
+> +__reset_control_get_from_provider(const struct fwnode_reference_args *ar=
+gs,
+> +				  struct fwnode_handle *consumer, int index,
+> +				  bool gpio_fallback,
+> +				  enum reset_control_flags flags)
+> +{
+> +	struct reset_control *rstc =3D ERR_PTR(-EINVAL);
+> +	struct reset_controller_dev *rcdev;
+> +	int rstc_id =3D -EINVAL;
+> +
+> +	guard(mutex)(&reset_list_mutex);
+> +
+> +	rcdev =3D __reset_find_rcdev(args, gpio_fallback);
+> +	if (!rcdev)
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	if (WARN_ON(args->nargs !=3D rcdev->fwnode_reset_n_cells))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	if (rcdev->of_xlate && is_of_node(consumer)) {
+> +		struct device_node *np =3D to_of_node(consumer);
+> +		struct of_phandle_args of_args;
+> +		int ret;
+> +
+> +		ret =3D of_parse_phandle_with_args(np,
+> +					 gpio_fallback ? "reset-gpios" : "resets",
+> +					 gpio_fallback ? "#gpio-cells" : "#reset-cells",
+> +					 gpio_fallback ? 0 : index,
+> +					 &of_args);
+> +		if (ret)
+> +			return ERR_PTR(ret);
+> +
+> +		rstc_id =3D rcdev->of_xlate(rcdev, &of_args);
+> +		of_node_put(of_args.np);
+> +	} else if (rcdev->fwnode_xlate) {
+> +		rstc_id =3D rcdev->fwnode_xlate(rcdev, args);
+> +	}
+> +	if (rstc_id < 0)
+> +		return ERR_PTR(rstc_id);
+> +
+> +	flags &=3D ~RESET_CONTROL_FLAGS_BIT_OPTIONAL;
 
-On Mon, 24 Aug 2026 at 08:38, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> On Thu, Aug 20, 2026 at 03:01:25PM +0200, Wolfram Sang wrote:
-> >
-> > > Changes in v5:
-> >
-> > Tested with my G3S + I3C setup. I3C still works, I could also not find
-> > any other pinctrl related regression with basic testing.
-> >
-> > For the series:
-> >
-> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> I'll reply individually again because patchwork doesn't pick it up like
-> this.
+This should stay in __fwnode_reset_control_get().
 
-That's why we use b4, right? ;-)
+> +
+> +	scoped_guard(mutex, &rcdev->lock)
+> +		rstc =3D __reset_control_get_internal(rcdev, rstc_id, flags);
+> +
+> +	return rstc;
 
-Gr{oetje,eeting}s,
+Just return __reset_control_get_internal(...) directly, the rstc local
+variable is not needed.
 
-                        Geert
+> +}
+> +
+>  struct reset_control *
+>  __fwnode_reset_control_get(struct fwnode_handle *fwnode, const char *id,=
+ int index,
+>  			   enum reset_control_flags flags)
+> @@ -1142,10 +1190,7 @@ __fwnode_reset_control_get(struct fwnode_handle *f=
+wnode, const char *id, int ind
+>  	bool optional =3D flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
+>  	bool gpio_fallback =3D false;
+>  	struct reset_control *rstc =3D ERR_PTR(-EINVAL);
+> -	struct reset_controller_dev *rcdev;
+>  	struct fwnode_reference_args args;
+> -	struct of_phandle_args of_args;
+> -	int rstc_id =3D -EINVAL;
+>  	int ret;
+> =20
+>  	if (!fwnode)
+> @@ -1185,46 +1230,9 @@ __fwnode_reset_control_get(struct fwnode_handle *f=
+wnode, const char *id, int ind
+>  		}
+>  	}
+> =20
+> -	guard(mutex)(&reset_list_mutex);
+> -
+> -	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
+> -	if (!rcdev) {
+> -		rstc =3D ERR_PTR(-EPROBE_DEFER);
+> -		goto out_put;
+> -	}
+> -
+> -	if (WARN_ON(args.nargs !=3D rcdev->fwnode_reset_n_cells)) {
+> -		rstc =3D ERR_PTR(-EINVAL);
+> -		goto out_put;
+> -	}
+> -
+> -	if (rcdev->of_xlate && is_of_node(fwnode)) {
+> -		ret =3D of_parse_phandle_with_args(to_of_node(fwnode),
+> -					 gpio_fallback ? "reset-gpios" : "resets",
+> -					 gpio_fallback ? "#gpio-cells" : "#reset-cells",
+> -					 gpio_fallback ? 0 : index,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Hmm, I think this gpio_fallback disambiguation is not needed. In the
+gpio_fallback case (lookup via "reset-gpios") we should always get a
+reset_gpio rcdev with fwnode_xlate, not of_xlate.
+Not an issue for this refactor, though.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> -					 &of_args);
+> -		if (ret) {
+> -			rstc =3D ERR_PTR(ret);
+> -			goto out_put;
+> -		}
+> -
+> -		rstc_id =3D rcdev->of_xlate(rcdev, &of_args);
+> -		of_node_put(of_args.np);
+> -	} else if (rcdev->fwnode_xlate) {
+> -		rstc_id =3D rcdev->fwnode_xlate(rcdev, &args);
+> -	}
+> -	if (rstc_id < 0) {
+> -		rstc =3D ERR_PTR(rstc_id);
+> -		goto out_put;
+> -	}
+> -
+> -	flags &=3D ~RESET_CONTROL_FLAGS_BIT_OPTIONAL;
+
+Keep this here.
+
+> -
+> -	scoped_guard(mutex, &rcdev->lock)
+> -		rstc =3D __reset_control_get_internal(rcdev, rstc_id, flags);
+> +	rstc =3D __reset_control_get_from_provider(&args, fwnode, index,
+> +						 gpio_fallback, flags);
+> =20
+> -out_put:
+>  	fwnode_handle_put(args.fwnode);
+> =20
+>  	return rstc;
+
+With that,
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
