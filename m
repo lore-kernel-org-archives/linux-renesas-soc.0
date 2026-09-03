@@ -1,147 +1,130 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77F840680F
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 09:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A523F8257
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 09:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788428280; cv=none; b=pStOdRwEGkGth+PV66fnVxS0DW9a9erhJ8URcNwR/TXf0vP8sIr5OsKLmdYt8MmlGOPr+oKaTkNiIedQ2C+FqpcKwTUwVUTERcUhTt2xyTd491m86OdMPItIM0UukrXsPxWvebpwgN1pkSiCVOtr6lZb4tnDs719cWCLz73ICLs=
+	t=1788428599; cv=none; b=rqBkkG63kX4lDXOQztqlP7lnZlsqvTN2jlQbYoeM5qI4zOxcuhQQuxw1E+NrFDBbclILcNFb0FwResDVPgACQQICzHTeEqLAk/IBDA4mpgRFJq2K59kVQuo2/q/6Nd9BzufMN9JuFnt4tib3YV2i41360BonponmICclnnIL1zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788428280; c=relaxed/simple;
-	bh=Fkd399WWImd9KJdZfl07eo+eynmLZQVkJf6NdqrDObA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBnjq44GvYm+3LS2Bm+fNfYERJ0jU2aX4qnAUnLrW04e/WZHErnK1LzRAIFC7oVpef4BQo5+A3LBUCz4iaNkl8oPuBcHa8cng5h3aA7Cn+wOjyPu8dlbyUt4O8+Y/rEwZ/4ewnLpsvdF73fmNq9RcQrLHPdBUu9BGEKnMtI+h4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hWdwpaeS; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hWdwpaeS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=FSjT
-	ZhC7WnhgkLy/1e6nyfPpclYviSuIuUmpThZjZ1A=; b=hWdwpaeSPBANUJFZ9zjy
-	ieojamlI6bO1mC869hJgGOFmUPV6XlWc0tHzEzTiyL1pmb2P4FaI93aTfk0DXcYe
-	hq7MqQ2g/tpjQuAzp6BwuOLkNuWLs/N++uakZEUm7U/ufEVawfEdv48RGMsq1dGA
-	A/sK3PlZ9l7Yoep/3iwOvETtDIAKj7571FelyksThNRjQ+BwCZaQ17IM0MR4kMJ7
-	Z9BSD7K+bwoIli18RxzTsTBxiljJcf1LmmCnO2BPd/mrWXcu8KsYlF8ElkOeU5G5
-	bdg8Cvhys1S7tzXjjVmdF9UaiQ2WyxTAxJQa3urGgDhSow5gXB6N+ggKbRpqGx+z
-	iQ==
-Received: (qmail 993007 invoked from network); 3 Sep 2026 11:37:56 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2026 11:37:56 +0200
-X-UD-Smtp-Session: l3s3148p1@Tp4c6JBaIKUujntC
-Date: Thu, 3 Sep 2026 11:37:55 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v24 08/15] mmc: renesas_sdhi: Add
- TMIO_MMC_INTERNAL_DIVIDER flag
-Message-ID: <apk_81IYqxrWZyJK@shikoro>
-References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
- <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1788428599; c=relaxed/simple;
+	bh=QlpCUlv+E6wRy2NB52jPmYtg/gL7xxiavKZ+fWvKSsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hZOi0ynhKZ5BFO7Z83OKiH8v8xPTfGG0OfSQEqBuB2scee3edvNR4oP6NMvnJz7n79cXBrfAsXJ6xNNpq6Mzawly4Z0T7cYXS4h4VFFPuk9JBkkGsQujDtIta1cxY29JwQuIN5w/QcXYjjyYYXCYMRjXqeQ2uqE/DGERpe15XX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-782df51b4c1so1512672137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 02:43:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788428596; x=1789033396;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/8aSggrTq+PN9vIOxwXLgYslllD/sPjeAKVtCCSsPVQ=;
+        b=eHEf8ly76Qk2pOKZ0VNGraBT9KJPSGxtaWU7VrH6tU5XjEeQgtcXCEUMyB2iTFCXDm
+         5YzX/H0dy4nvBHvXClrqbBvGsedgGDdJePxtTaAYHo/4wy6m8REtQ+OLavliVaKm06Ra
+         FiawGQU4lxIeBDlzpadfIhNJIZhRGDTnWv58Xx99igl2uceU9KZ0xkA/lyRiCzRXnmG4
+         ikH8u4ntdZSL3WKaG3zIu/BKYFCwaxuydJnfziTCRtKKar0eWTQQm6DknQtnKDxugNmO
+         yUfpUWga4GIxi6kgsQ4sNe0CeOlB3V7YDmqznuBUtpPsJ4hNfu9Ey6k7od68hq3Zd3f0
+         3u0w==
+X-Forwarded-Encrypted: i=1; AKwUvBykozAWG+Gt1Xr26vKrxSzuEHbBUKhYRYnzzBCKAhfT02bOauMrMlmxcTp7VaLEoVz9mFXqaPEDON4rPDaHWq/Kdg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lMZWs6Pt2ZkCh54lf7TEPV9MmCFvyevaT2wkAaS76uvznTgxWZ
+	S/8IQeUhje2l0eQ0UV8drrvV4NEIdxT0e83lnSxVZKWpx09cKJfwWGawzrSB7tanR+M=
+X-Gm-Gg: AYBFou2XzZr6YQqwIlo8ZFGvOGFaCxLQPlCgGfIqhxOpkASHg/FGCrBHb3kBauBg7aH
+	xZaFFzLiKjDFrlf5gCnt18T1D6hBm8g8Im4JOUOiuoIz1K4xApBuWx5Pe41hnHm8+jlUYsI1I1C
+	ln0qKB4n9WdSvGHg0wXRQjkXzhDHDuHRUW0/XiFy2AqUV2KLFF/r2JoE6yZTSa15IwSbuDXEDJu
+	0+mJEQlICxsMPoAtoLhxZciHboqB/ADCrlgHCHgU/Ar23F54dQFzsk0T61hTpeBBnwcJ++M5iE6
+	4noM3Rs8hgA3UqBoO7JWgheMr1Hi9n7hsQ8IEtFryHhfS+4eZOFTzs5gEFYaql0WH4pB5hU4uGF
+	3NWmRXsr0GwMptR6JijRBZFlMeICdw1IFtBZ8VrMQEmOrk6d+UvJxZbZPTr4B6ZxtBvYBEKdWoM
+	+zOtYOhrTPLl8bEAweSCqziHfYXjBlBVgHmZcwvZuHFhzJuaYQ3K7AFz/Wr8ukXpPdTR0jvoiNL
+	xUWFbE2eTF/AX8xD4XGurRzlQ==
+X-Received: by 2002:a05:6102:158d:b0:77f:7df:ddd2 with SMTP id ada2fe7eead31-78a1f228d73mr4559863137.1.1788428596468;
+        Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9807764dec9sm2043944241.12.2026.09.03.02.43.16
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-746d77537f8so1358197137.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxCWyaruZOm8eK3YFMWwyJr4Vh0ihru4qLk7HCE9z7ivqC6PojA1RoTkcXGPTR0f2YDk9ZnIDCQV9j+9qva/s1nPQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:2997:b0:784:a169:194a with SMTP id
+ ada2fe7eead31-78a1f437b62mr4757188137.10.1788428595977; Thu, 03 Sep 2026
+ 02:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1HOCjPIa4TORl4Ez"
-Content-Disposition: inline
-In-Reply-To: <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
+References: <20260903084339.870562-1-zhouruizhe@resnics.com> <20260903084339.870562-14-zhouruizhe@resnics.com>
+In-Reply-To: <20260903084339.870562-14-zhouruizhe@resnics.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Sep 2026 11:43:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV871ZLtrCzXFmhUeThkc8eFAhcFo2=Cos9iJru3bxvqQ@mail.gmail.com>
+X-Gm-Features: AcwNN1VNMZwSAyY54Zj_XBQDARj9cOjn3MGAVS5vnzomKXlBjnTLo99feqtQTjY
+Message-ID: <CAMuHMdV871ZLtrCzXFmhUeThkc8eFAhcFo2=Cos9iJru3bxvqQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 13/14] net: renesas: rswitch: Remove obsolete
+ 32-bit DMA mask fallback
+To: Ruizhe Zhou <zhouruizhe@resnics.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---1HOCjPIa4TORl4Ez
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ruizhe,
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [Medium] Fallback `f_max` and `f_min` initialization fails to account f=
-or the internal clock divider.
-> --
->=20
-> --- Patch [8]: [PATCH v24 08/15] mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL=
-_DIVIDER flag ---
-> commit c4a63c19303286f5b383bdabaa2a3f3827a8c5c5
-> Author: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
->=20
-> This commit introduces the TMIO_MMC_INTERNAL_DIVIDER flag to support SoCs
-> like RZ/G3L that have a fixed internal /2 clock divider. It adds a helper
-> function to fold this division into the reported clock rate and uses it in
-> the clock update path.
->=20
-> > diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/re=
-nesas_sdhi_core.c
-> > index ff428b6187bbd..b5f2ff68db758 100644
-> > --- a/drivers/mmc/host/renesas_sdhi_core.c
-> > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> > @@ -125,6 +125,27 @@ static int renesas_sdhi_clk_enable(struct tmio_mmc=
-_host *host)
-> >  	return 0;
-> >  }
-> > =20
->=20
-> [Severity: Medium]
-> Since this patch introduces an internal /2 clock divider, should
-> renesas_sdhi_clk_enable() (which is just above this hunk) also be updated
-> to account for it?
->=20
-> If the device tree omits the max-frequency property, f_max defaults to
-> the raw parent clock rate:
->=20
-> drivers/mmc/host/renesas_sdhi_core.c:renesas_sdhi_clk_enable() {
->     ...
-> 	if (!mmc->f_max)
-> 		mmc->f_max =3D clk_get_rate(priv->clk);
->=20
-> 	/*
-> 	 * Minimum frequency is the minimum input clock frequency
-> 	 * divided by our maximum divider.
-> 	 */
-> 	mmc->f_min =3D max(clk_round_rate(priv->clk, 1) / host->pdata->max_divid=
-er, 1L);
->     ...
-> }
->=20
-> For hardware with the internal divider, this advertises double the actual
-> achievable bus frequency. If the clock provider cannot scale up to 4x the
-> requested frequency, the MMC core might negotiate a high-speed mode that =
-the
-> hardware cannot satisfy, resulting in a mode mismatch where the bus silen=
-tly
-> runs at half the expected speed.
->=20
-> Could mmc->f_max and mmc->f_min calculation be adjusted when the
-> TMIO_MMC_INTERNAL_DIVIDER flag is set?
+Thanks for your patch!
 
-Looks valid from a glimpse. Please comment if you think this report
-makes sense or not.
+On Thu, 3 Sept 2026 at 11:27, Ruizhe Zhou <zhouruizhe@resnics.com> wrote:
+> The DMA API guarantees support for masks of 32 bits or wider and
 
+Really?
 
---1HOCjPIa4TORl4Ez
-Content-Type: application/pgp-signature; name=signature.asc
+> explicitly identifies retrying a 32-bit mask after a wider request as
+> incorrect:
+> https://docs.kernel.org/core-api/dma-api-howto.html#dma-addressing-capabilities
 
------BEGIN PGP SIGNATURE-----
+AFAIUI, that is only true iff the wider request is DMA_BIT_MASK(64).
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqZP/MACgkQFA3kzBSg
-KbazUg/8D5L45wtGNn85UOEWoJ0hr1plRyJQCvAQlwPj9Ngr1mjo8WWHaPmNYRTs
-z1zDKUJQSfs632hnr2C2pwVBIaJ1LCY4Ug4sOwnb/ugCSnkDDTCApbBP++VutDOV
-vzsqZMAFPq9F20pgbVynWjARJLcgwIs72dYVv8dDqL5J6LHModbidopxwxYDlK5t
-vEiPSwoLPpttHqsDnSR3uieh3E6Ty5pFqbyj/+gPbhxk9C3/5caEBuRx10IK7B3f
-Chw6eIAeuZk1y9XKIh4yWysPOCeavfCw33ufA0FvPSgqrKmEewCJk9nqmYoUsLLM
-QWcGWEq5EsKo1E1/8ywW5GsopM0bY6gedl6WWd0bvQSTXpZ7XvLNhhvGb/T8TKYV
-1XE9a2z7OEpyaz86JAfv6zUV5hbQOzMwZOPtI0b49a6fsIK2LXe5xST6i2gonMhX
-JkTdA/0o7jglhu0DvfuQ2kLeoduu+0qYSz0t7m/YDUWawrrfNaxZgtVOEtICx0Zn
-FrXjKQfWKYRjqONsoRlupqF9SSPiJIDFy6BaVbEKw+oSqgZid5SWLXSDYRysK1LL
-PMuw6KvRG4qmw0lFfduKhv6DhxhNqh0LfHvJGQNwv7VnrsToLC7orta5sWvGRXq1
-FEQWRQkyJ9COhcTTt6pjgiwT9s7ncaagbUwIdGqaF+69FjhhmPI=
-=qsww
------END PGP SIGNATURE-----
+> Remove the obsolete fallback while retaining the error check so that a
+> genuine DMA setup failure still aborts initialization.
 
---1HOCjPIa4TORl4Ez--
+Have you tested this on actual hardware, with/without IOMMU support?
+
+> Signed-off-by: Ruizhe Zhou <zhouruizhe@resnics.com>
+> ---
+>  drivers/net/ethernet/renesas/rswitch_main.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
+> index 755232994fcc..64b821ca02f8 100644
+> --- a/drivers/net/ethernet/renesas/rswitch_main.c
+> +++ b/drivers/net/ethernet/renesas/rswitch_main.c
+> @@ -2162,11 +2162,8 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
+>                 return -ENOMEM;
+>
+>         ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
+> -       if (ret < 0) {
+> -               ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> -               if (ret < 0)
+> -                       return ret;
+> -       }
+> +       if (ret)
+> +               return ret;
+>
+>         priv->gwca.index = AGENT_INDEX_GWCA;
+>         priv->gwca.num_queues = min(RSWITCH_NUM_PORTS * NUM_QUEUES_PER_NDEV,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
