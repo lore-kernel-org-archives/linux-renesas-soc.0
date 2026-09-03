@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C0439331;
-	Thu,  3 Sep 2026 08:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CFF3B2FCA;
+	Thu,  3 Sep 2026 08:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788424107; cv=none; b=FR+v9sd+mAbZ5BTu8FvgrkQthXBoYP4txVUMuiN0ElBjpLqKlnXhVMexCLV1bPf60TYkFj5wn6EmdKvESRan3WAwZ1vt68D8NBcJpN809GTl6YA7YWRPilRcgYY4pN9iuLYz6otV+HVn1r0aMGZgxggYE/qnGTPJeu6H+0ti7T0=
+	t=1788424371; cv=none; b=b5UyWU8tYEY/MzEYJU1loQXp5kYwInLxkp/Jxfnirmop0J/VcfIosAIh6WUMUxuIt3tpswh2kWrCyiB/46WjmWtfS+yijj2ZdiWAOi/YOnJpKrrDQUGrYPt/1BtwEhgkZ2ybiPiuPlqLNsqnZGLRkMMQqPqhzexROndiBIF+ZEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788424107; c=relaxed/simple;
-	bh=gxyN0inF6LFVlALsQscUp0yPnDl9IKTwzmTnq1LtqMo=;
+	s=arc-20240116; t=1788424371; c=relaxed/simple;
+	bh=706c7XlPLXsRsRqbTT2qHJpv1DQVqFBCKVgS9F9Rtrs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4WS30dq/Ac9sfIHawv3xnaxHYOAz/Ec/YQdfuO2oUXVKWW4a9Vv7p9xWheigMoqLCtwuxj/bxyN3tIzKwo73F1MsxnpKRB0daHSrjmbqpQFesCW3li/rDI7IRX/y4TxBk3xBdHm0KYl2Nz2Uw9LpNjnlJaRuIRmDcNaK9/OiuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0MjF3X5; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=A5lGMW89wI2FTGyoT8a1Pomrs7um9qjoOIkM3ra/XcWyvsgqSDNCs5hwJb0xqc/4FbFtiWjRodGy0l3L6+Rz3LHYV2mCjccHdbw1LOi/fXKrj0T1mNak3f0QcJMfqjPcae95XsrZ+eCOOfZN7jaKNQQwcZBAtJ2GChCHvTmnw5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xmDQLfyS; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0MjF3X5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215B51F00A3A;
-	Thu,  3 Sep 2026 08:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788424106;
-	bh=VC4wHaers98T5HZdg4G5azg+tGdn9DxjhYKU+8WULhY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=l0MjF3X5L4D1m8zAbHfArXBpv1109NHOaIS4TQ4jY51lfp4iPu2mAavFHyuqpgssC
-	 HiqtQmYIV3wCxf84hFemXmqQSRZxlXPKgbg8gcrztJto2v4rKVnswUbBzT81eM1OKI
-	 7L1/83jYYV/1FnTKuSCEBAbXwEX6G540Un6RgQcGgYRlhGD5qpnnBAUobSlfGgx8ht
-	 PPpntG6/ytCVKW/0pUUpAfWodDDabV+Ef9U48S7PzVVrmhU9pepoqa3xPgKs2Zf2ea
-	 b8tsniYwjJpSckyRmDpnstdCvOtWywz6Qslo4CBf4j0xwLjy93wcgy2c+RDQJ9jtVe
-	 6T9MEfxav1DNw==
-Message-ID: <d23d74a8-2695-487f-af3c-4c74e3d61ac4@kernel.org>
-Date: Thu, 3 Sep 2026 10:28:16 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xmDQLfyS"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id ED21F1A195F;
+	Thu,  3 Sep 2026 08:32:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BCFBE602B8;
+	Thu,  3 Sep 2026 08:32:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A82EF11C791C9;
+	Thu,  3 Sep 2026 10:32:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1788424364; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=IyZA+ecio8dgqAefqnzmsKi9pbcS8BSqqmIH/9UMq/w=;
+	b=xmDQLfySV8a8MBc++crCZBbfP5E4IQF3AUhjAkH7pJHYZhs81ZtmJmArLA4/0O8f+u9NNp
+	FWpMxYVhjvG/sV7K8d8kqYx9eRtJpUzkQjUsZaZDvImEOA8jVPrp3J+09KHvidWEIzThxF
+	o1GzTpj7Pkbqd7EhjL1AlKn7+MAx6xryY0chcP9ouGvAQoS1UINYTI0NHO/ME5ZpDlAYWh
+	NkzB+AEvQrZvH16vItAtNer7BMLl6v5PVRRsoVuS22DK7K+Ldd0GQPFv3uTl3LlJViHMv8
+	FVNgZAI0stK1y6Z4MGFkbsbDiuEJ+BxV2d/vgr1Bg3hCmBF3LstSmarP78PpuQ==
+Message-ID: <0dec5462-f6d5-4ef9-9d02-5fdf7f3090a0@bootlin.com>
+Date: Thu, 3 Sep 2026 10:32:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,122 +42,125 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/9] dt-bindings: display: renesas,rzg2l-du: Document
- RZ/G3E SoC
-To: Philipp Zabel <p.zabel@pengutronix.de>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
- biju.das.jz@bp.renesas.com, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260828122113.1426778-1-tommaso.merciai.xr@bp.renesas.com>
- <20260828122113.1426778-2-tommaso.merciai.xr@bp.renesas.com>
- <20260902-heavenly-ambrosial-trogon-b7ab03@quoll>
- <apgsOubuGuvw_0rf@tom-desktop>
- <CAMuHMdU0y5Dg9tW7fAM3QQHKpAw_+vmjj7v-XeZmrushQgQFAA@mail.gmail.com>
- <apg8luaJ3eobK8sm@tom-desktop>
- <d50816260b8be29948c4cc04172b5c88ea3313a4.camel@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net-next v3 01/10] net: stmmac: move XPCS lifetime
+ management to platform drivers
+To: Coia Prant <coiaprant@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Russell King <linux@armlinux.org.uk>, Shawn Lin <shawn.lin@rock-chips.com>,
+ David Heidelberg <david@ixit.cz>, netdev@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-renesas-soc@vger.kernel.org
+References: <20260901150111.141037-1-coiaprant@gmail.com>
+ <20260901150111.141037-2-coiaprant@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <d50816260b8be29948c4cc04172b5c88ea3313a4.camel@pengutronix.de>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+In-Reply-To: <20260901150111.141037-2-coiaprant@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 03/09/2026 10:17, Philipp Zabel wrote:
-> On Mi, 2026-09-02 at 17:11 +0200, Tommaso Merciai wrote:
->>>>>> +  reset-names:
->>>>>> +    items:
->>>>>> +      - const: resetn
->>>>>> +      - const: resetn1
->>>>>
->>>>> Drop reset-names
->>>>
->>>> For reset-names, I got the the following comment from Philipp in v7 [1].
->>>>
->>>> Dropping reset-names would force the driver back to an index-based
->>>> lookup, which is what that comment explicitly asked me to avoid.
->>>>
->>>> [1] https://lore.kernel.org/all/8382e2b9fd07fb1132c26e228b3899336fc1fdd4.camel@pengutronix.de/
->>>>
->>>> Philipp, Krzysztof, could you agree on which way you'd prefer?
->>>> I'll follow whatever you decide.
->>>
->>> Until we get a variant with a third interrupt (or reset or reg),
->>> which is not related to the number of channels...
->>
->> Right, IMHO names keep the driver flexible enough for such a variant,
->> indices don't.
+Hi again,
+
+On 9/1/26 17:01, Coia Prant wrote:
+> The current XPCS creation logic in stmmac_pcs_setup() is problematic
+> for several reasons.
 > 
-> I would like to get rid of the reset_control_get_by_index() API
-> altogether, if possible. Currently there are only users with index ==
-> 0, so this would be the first and so far only valid user. I'd prefer if
-> we could keep reset lookup aligned with clock lookup, with via clock-
-> names as well.
-
-...and clk uses indexing partially. clk_get() is the corresponding
-interface to get the index 0 and is widely used. I agree though there is
-no general get-by-index API. If reset won't provide such API, then fine
-for the names, but the order of entries is still fixed thus the names
-are NOT allowing to change the order.
-
+> First, if a device tree specifies a "pcs-handle" but no select_pcs()
+> callback is provided by the platform driver, the created XPCS is never
+> used. The phylink framework requires select_pcs() to actually return
+> the PCS to the core, so the pcs-handle property becomes effectively
+> useless without the matching callback. This is confusing for developers
+> who expect that specifying a pcs-handle in their device tree should be
+> sufficient to enable the PCS.
 > 
-> That being said, why are the two DU units represented as a single
-> device tree node at all? Aren't they two completely separate instances
-> of the same IP core?
+> Second, and more critically, when stmmac_pcs_setup() fails to create
+> an XPCS (either because no pcs-handle is present and no pcs_mask is
+> configured), it falls through to the else branch and leaves
+> priv->hw->xpcs as NULL. This will silently override any XPCS that a
+> platform driver may have already set up during its own initialization,
+> for example in a pcs_init() callback or during probe. The platform
+> driver has no way to prevent this override because the common code
+> runs unconditionally after the platform-specific initialization.
+> 
+> After commit 93f84152e4ae ("net: stmmac: clean up
+> stmmac_mac_select_pcs()"), the common code no longer falls back to
+> priv->hw->phylink_pcs if select_pcs() is not set. This change
+> reinforces that each platform must manage its own PCS life cycle
+> explicitly, but the XPCS creation code in stmmac_pcs_setup() was not
+> updated to match this new expectation, leaving a gap where platform
+> drivers have no clean way to take control of XPCS creation.
+> 
+> Address all of these issues by introducing pcs_init() and pcs_exit()
+> callbacks in plat_stmmacenet_data. These callbacks give platform
+> drivers full control over when and how the XPCS is created, configured,
+> and destroyed. The common stmmac_pcs_setup() and stmmac_pcs_clean()
+> functions are simplified to just call these callbacks, removing the
+> confusing and error-prone XPCS creation logic from the common code.
+> 
+> Platforms that do not need an XPCS simply leave the callbacks as NULL
+> and no change in behavior occurs. Platforms that do need an XPCS can
+> now create it with the exact configuration they require, including
+> wrapping it with custom phylink_pcs_ops when necessary.
+> 
+> Existing platform drivers (intel, rzn1, socfpga) are updated to use
+> the new callbacks by moving their XPCS creation and cleanup logic into
+> pcs_init() and pcs_exit(). In their pcs_exit() implementations, the
+> pointer to the destroyed PCS is explicitly set to NULL to avoid
+> dangling pointer references.
+> 
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac-intel.c | 44 +++++++++++++++++--
+>  .../stmicro/stmmac/dwmac-renesas-gbeth.c      |  7 ++-
+>  .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  |  7 ++-
+>  .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |  7 ++-
+>  .../net/ethernet/stmicro/stmmac/stmmac_mdio.c | 37 +++-------------
+>  5 files changed, 61 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> index f5f9fa67ecd77..fd5f01c8941c1 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> @@ -603,13 +603,47 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
+>  	plat->mdio_bus_data->needs_reset = true;
+>  }
+>  
+> +static int intel_mgbe_pcs_init(struct stmmac_priv *priv)
+> +{
+> +	struct fwnode_handle *devnode, *pcsnode;
+> +	struct dw_xpcs *xpcs = NULL;
+> +	int addr;
+> +
+> +	devnode = dev_fwnode(priv->device);
+> +
+> +	if (fwnode_property_present(devnode, "pcs-handle")) {
+> +		pcsnode = fwnode_find_reference(devnode, "pcs-handle", 0);
+> +		xpcs = xpcs_create_fwnode(pcsnode);
+> +		fwnode_handle_put(pcsnode);
+> +	} else {
+> +		addr = ffs(priv->plat->mdio_bus_data->pcs_mask) - 1;
+> +		xpcs = xpcs_create_mdiodev(priv->mii, addr);
+> +	}
+
+Sorry I had a second look at that after a good night's sleep, and actually here
+we may regress. The original logic checked for "pcs-handle" presence, then
+for the pcs mask, but if no PCS is found we didn't error out, we returned 0.
+
+This is making it mandatory to have a PCS. Please handle gracefully the "there's no
+PCS" case :(
 
 
+Maxime
 
-Best regards,
-Krzysztof
