@@ -1,194 +1,112 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DDF4B2CCE;
-	Thu,  3 Sep 2026 21:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F214EE849
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 22:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788471055; cv=none; b=UUh05OU3p6y4Ct9AlG76/ee4kiZLzsIMxrWpg6MR26htDCtL02pTqC73PiTBMJiEXrIcXZjv2j/Bs3kj4hYUZmDMPpMAixvHAPeD9MepQS4xFaw9hq31/cq8zWraEE/CymCR/bTL37cv7mQPOij2Rl1VvpfVf25R2LvNsOPApJU=
+	t=1788473441; cv=none; b=MTS25DqXgaqrZDbZsuH3DigIc90eoBk0tYyOLeKW6AWlver8Gv9mYzMsFfbz4OEOgcU0ANDHriTm4V7B7bdhYtdyYokVUbz3PKvaQabWyINlo+cEGuC1MrLmS0/qKy6xdkQ4NCcZfvLEOF4sv8eObTP/VwX9SUj0ae/j8g7IPt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788471055; c=relaxed/simple;
-	bh=XkqN1IjRk04NwJ6TyxleolJqB05VK+OaICfHk08aPXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TP3aIIjRdx9fHfN75dGHfyqW0WwQZYRYGA3rsw+zPONkAb8y2pXsT6llY5V8OWnpgswUBMw2YFJPFS4FgFJYEEITBzNHI53CFO0FbJXoE5sxMfO3drymM0SX3UL5XxUoFaNg7mTHhVo/BwaiQY/tjVdcZg9O0zRxtfv0Q0I9jyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rkxrpc9N; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=EiXfFW8C; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1788473441; c=relaxed/simple;
+	bh=P64DSby6KpZgBUBzpTOSDQt/Acwoa2cKPfMCX42TtrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNGjFoLBKpPB977gLux9mXQTut6JSaRc0RH4WnOzzGh7os6yFMSMVgOaSGICDimiHxruC7gSrTWlBrSCtTAaTyA25qqzezRrjF4D+PgQmE1p3pAAGIUS6R89SZ0uOieXj1h/3Feff4pErUxLLlfQpFBYnKUcpMiHcdtE2ckIRug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=A1c/qceP; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rkxrpc9N";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="EiXfFW8C"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hbXny5bzLzKn6X;
-	Thu, 03 Sep 2026 23:30:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788471046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l+4LUXQHvRUwo1jUDMgrbuAgaRkEPK5f7h1+QbzM+Io=;
-	b=rkxrpc9NE8035ymTrGZHbEMEAWCc5Kwv+Ew2Dl8TaVqD8SPBwoVEtVCo5owEwInIPs8Uf8
-	sOEWbuRaqQNTC6iHWKLDSQzB7shMK1+BPXJ2dQTk298cmuPNZ/RMDfen9KUUf5mgMpPXp2
-	F9bg4nIdZ161goZ9MWsPSkksv/eBpZJE9dtfunP5Pgz+g5L2P1BU/xc/74uS5UA7ThuPsU
-	GB2wg8CO+8EsJ/OGFaauEX13yulXLnGMejcbY6pU3bS4tV5vuWa0kkC+C1BUFsYqA4HG0c
-	FeXnKwn5AlZgtqjUd23bIoCJViU6QyMNNFuRAWgrz8jIlKav8VdPcc99TG2A5A==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=EiXfFW8C;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788471045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l+4LUXQHvRUwo1jUDMgrbuAgaRkEPK5f7h1+QbzM+Io=;
-	b=EiXfFW8C6q/rK2EnO7iLDHiCxr78qaqfzL5GYrRkvuMolkdjUJgYdaFl85VksuQfRmKJcP
-	cKklCSAE3XsGGjH6KS+66KtjBY/OKvR1n+ppXuCejrUfqqzaEEOc41KgpY3jUINZatbXfS
-	GThKgZKZ49I1IXomYR/ndINohWLQeAozZVMMeRBrl5CpcK4e5RDfR6ZEsKvaSeh4SFdRF9
-	14z6/zAyVx1iYTR95b5tMgHmBA5/XGI5QKu2TjOWCikn58vBwip1Xkoxm3mmGqESpFEiWl
-	fGp/oPSWQit/gdO54oMuJoo1yJqtFbiO3LIgURL3nd4KRmk0m24lI9Ta6qu/NA==
-To: linux-usb@vger.kernel.org
-Cc: Thanh Quan <thanh.quan.xn@renesas.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 2/2] usb: dwc3: dwc3-generic-plat: Add Renesas R-Car Gen5 DWC3 xHCI USB controller glue
-Date: Thu,  3 Sep 2026 23:30:13 +0200
-Message-ID: <20260903213031.314473-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
-References: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="A1c/qceP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=P64D
+	Sby6KpZgBUBzpTOSDQt/Acwoa2cKPfMCX42TtrY=; b=A1c/qcePJ57h+N5AxlxW
+	IMmZte7N+vYak2/7WaDGYCD7/HbG0Cqa4UXUjW1EsnKzgHWQ6Q7VuQruOeRSzRVd
+	ZhFOUtwTBV37fZ5c3pX9DttoceRSaAPP/jVx3jqQI6k3eUsndwUyV04KJyO62bvr
+	T9G/+T5L9RiL8IwZpxV4G6oE/33smwmLfhvU3/fO6cYKzCgLpc0/KqUbkFhzlcuu
+	X0XDK1wQQoXhX7l+uH9/gWp/0w8XDS1IiFAi5A8RCyUL79OPsN4sTYMpqVn2633C
+	kHzCe8G/HPX4BJt1aNIVaNyaMr0ZZocd8JTzzjH25wqXhZyX8XTCKtjMHrHAv3Ew
+	IQ==
+Received: (qmail 1198798 invoked from network); 4 Sep 2026 00:10:33 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2026 00:10:33 +0200
+X-UD-Smtp-Session: l3s3148p1@ZNSxa5tajpYujntC
+Date: Fri, 4 Sep 2026 00:10:33 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v6 3/5] pinctrl: renesas: rzg2l: Unify the power source
+ handling
+Message-ID: <apnwWW8DVzOyyhR2@ninjato>
+References: <20260903113327.1217457-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260903113327.1217457-4-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 45w35m6ik6oaop7ptyw74wj8mmyj4nnb
-X-MBO-RS-ID: 6e8cb524237f119b4e0
-X-Rspamd-Queue-Id: 4hbXny5bzLzKn6X
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qDGGuUPwngPg01BD"
+Content-Disposition: inline
+In-Reply-To: <20260903113327.1217457-4-claudiu.beznea+renesas@tuxon.dev>
 
-From: Thanh Quan <thanh.quan.xn@renesas.com>
+--qDGGuUPwngPg01BD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
-controller with glue logic wrapper around them. Extend the generic
-DWC3 platform driver with Renesas R-Car Gen5 glue logic specifics.
+On Thu, Sep 03, 2026 at 02:33:25PM +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The previous code handled power sources using a mixture of power
+> source specific definitions and lookups in the available_ps[] array.
+> Unify the power source handling by introducing
+> struct rzg2l_pinctrl_ps_desc, whose purpose is to describe a power
+> source through its power source value, associated register value,
+> associated capabilities (e.g. Ethernet), and associated IOLH index.
+>=20
+> Introduce two new functions, rzg2l_ps_to_desc() and
+> rzg2l_pwr_reg_val_to_desc(), using the
+> RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC() macro, as their
+> implementations are similar.
+>=20
+> These functions retrieve a power source descriptor based on either a
+> power source value or a power source register value. Other functions
+> that need to perform power source specific operations can call them to
+> retrieve the corresponding power source descriptor.
+>=20
+> The register values for the soft power sources were kept to zero since
+> they are not used across the driver's code.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-Co-developed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
----
-V2: Extend dwc3-generic-plat driver instead
-V3: Handle maximum-speed as optional property, test for USB 3 PHY
-    non-presence to determine whether the controller is USB 2 only,
-    consider optional maximum-speed DT property, but if it is missing
-    then default to maximum controller capabilities based on the
-    presence of PHY phandles.
-V4: No change
-V5: - Drop superfluous code comment
-    - Drop duplicate speed >= USB_SPEED_LOW test
-V6: Reinstate speed >= USB_SPEED_LOW test to avoid triggering on USB_SPEED_UNKNOWN
-V7: Drop wireless USB check
----
- drivers/usb/dwc3/dwc3-generic-plat.c | 51 ++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+I3C with temp sensors work. SD card on carrier board works also.
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index ca69ac0eb07ce..32497ab6f065e 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -71,6 +71,51 @@ static int dwc3_eic7700_init(struct dwc3_generic *dwc3g)
- 	return 0;
- }
- 
-+static int dwc3_renesas_rcar_gen5_init(struct dwc3_generic *dwc3g)
-+{
-+	struct device *dev = dwc3g->dev;
-+	struct platform_device *pdev = to_platform_device(dev);
-+	enum usb_device_speed speed = usb_get_maximum_speed(dev);
-+	bool usb2only = false;
-+	void __iomem *glue;
-+
-+	/* No USB 3 PHY in DT means this is surely USB 2 controller */
-+	if (device_property_match_string(dev, "phy-names", "usb3-phy") < 0)
-+		usb2only = true;
-+
-+	if (speed >= USB_SPEED_LOW && speed <= USB_SPEED_HIGH)
-+		usb2only = true;
-+
-+	glue = devm_platform_ioremap_resource_byname(pdev, "glue");
-+	if (IS_ERR(glue))
-+		return PTR_ERR(glue);
-+
-+	/*
-+	 * The datasheet describes initialization procedure without full
-+	 * information about the registers. Therefore, the source code is
-+	 * based on the bare metal code shared by the board team.
-+	 */
-+	writew(0x211, glue + 0x26);
-+
-+	/* USB2 does need additional register programming. */
-+	if (!usb2only)
-+		return 0;
-+
-+	writew(0x11, glue + 0x81c);
-+	writew(0x0, glue + 0x81a);
-+	writew(0x1, glue + 0x802);
-+
-+	usleep_range(10000, 20000);
-+
-+	writew(0x0, glue + 0x802);
-+	writew(0x1, glue + 0x2a);
-+	writew(0x1, glue + 0x81a);
-+
-+	usleep_range(10000, 20000);
-+
-+	return 0;
-+}
-+
- static int dwc3_spacemit_k1_init(struct dwc3_generic *dwc3g)
- {
- 	struct device *dev = dwc3g->dev;
-@@ -231,11 +276,17 @@ static const struct dwc3_generic_config eic7700_dwc3 =  {
- 	.properties = DWC3_DEFAULT_PROPERTIES,
- };
- 
-+static const struct dwc3_generic_config renesas_rcar_gen5_dwc3 = {
-+	.init = dwc3_renesas_rcar_gen5_init,
-+	.properties = DWC3_DEFAULT_PROPERTIES,
-+};
-+
- static const struct of_device_id dwc3_generic_of_match[] = {
- 	{ .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
- 	{ .compatible = "spacemit,k3-dwc3", },
- 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
- 	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
-+	{ .compatible = "renesas,rcar-gen5-dwc3", &renesas_rcar_gen5_dwc3},
- 	{ .compatible = "starfive,jhb100-dwc3", },
- 	{ /* sentinel */ }
- };
--- 
-2.53.0
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--qDGGuUPwngPg01BD
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqZ8FkACgkQFA3kzBSg
+KbZghQ//YrZSwEb7a0wC+whQNYRKANHQG+YFNDEUAEF31kjeargwy/YQwxo92l7u
+BZ4u/xTt+Mro6iy9+nDL25QdYisjsBGG5mKlHE/RQQxxfh9qiPyxE8RLNckRHwFU
+NKnrxi2Ue40lIH7JK9jaiNtP9TJdprEXYpfX0YiS83/GPVL9M8VVtQt1Bruhp/1y
+GhK0fVUR/7CQLQKB43k/jKy3ZDSSr58oJEXS/I2/mapwY/ep9JWanOmfqSCgLTZ9
+M2Y0csagFvSCiKvRZFDIa5wzL/ksDwNI78DHxd7C6iL+1JVeU1uTYayKx0/k23Nv
+yqk0flF54Rfhm36vNa9hw/EsWsiWiH50EWGz6oYl1MyW0q8/+ow/Qbd/WVQzng3c
+cNJCRK4bPci8XGqJC3qcq2ruWaTqJiVLRi5FLZZM2zjGB4rkdufMAe6JGWo5cQwC
+H+JL8J0fEDMSkBzRwXLwVzo9fxOsJuL/tWBizDkwgmwJJuVe9mBER0E0wJioF786
+viDZs3bR55LaW8LqO+wHxvY4S1fAAKWgvbJHhp+fphdajawPgg2uBFi6oEUEZzcR
+0oqsq9eYtv55z7V6mwJMHZY3iG1uShEdt+8mlNMcbtYGa/JlnO62la7gWLSdSmaf
+aZRgW12ggt5b+tV5iJBaQ2JFKUUc/CNrLeoeKdCUL6mh1Aw5H5Y=
+=lAb2
+-----END PGP SIGNATURE-----
+
+--qDGGuUPwngPg01BD--
