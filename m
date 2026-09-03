@@ -1,141 +1,186 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB4750C2BC;
-	Thu,  3 Sep 2026 20:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6083AA4EB;
+	Thu,  3 Sep 2026 21:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788468772; cv=none; b=LIJg56NAmMIaAaczgo/NIuFtUwbgMj5Cf4AJgn6qTOJDIspqN3Pp1iI4qr1euJv7q2HSi7mJs+j3mmeDk68VVnXILOHaalS0QjixGqS/USZdeMMQ7evD4uArR69KGeqmjKmVMJsLr26bKbLss6lgZws3ziq9Uh86Nv/FvgO3V4E=
+	t=1788471051; cv=none; b=fzG2RJcnvWf0gobRlqIpTqHzLNDDIrq8P8DSGbzeV48JNJ1LjeylY0lJnlFDnIT4+2Dj3kIzVlO8Gz1UATI1Saxojf0A3dGb6khwAlSzZYrHtiLUHr0T5fj3F3M2mRIXb/yjyVGXwDUjwBTST93cXDxF4A5GpmoUU8DGJ2Zhb6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788468772; c=relaxed/simple;
-	bh=uxr3C6JMOBtCtwIv6cZSVyPr2qFeyR6ccbQLqw7bCeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ct6Dx4AAHO+wUkCVNzqhrQr81EeYriN9U3gPeJXrqTqqNBAvTc63A5sQdroMKGztufaUVlm7j9N1xiw286ITztq1PzNBffX5uaXJWJdxtpw1SbdspYvuGNd+STsgyEojc0f+Fo5Wf/Se2BMM5JyKp/yQqlwC8pUxIiJ7GOIo4fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=iHZpUPL7; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YAId4US0; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1788471051; c=relaxed/simple;
+	bh=ZZtxQNVj4tl0N/GQjslPoOPYR67df+21ghPTlgKU4oA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uav7pCp4H1zJMghQJpE4Zrk/aZ30+Sprf5IN92LtkeLIuY3AZ8ibDYzZcOtjg3UrXctNv/DpOJat6b8iCAgOk92JT/Dgwui4sF30L05d1mykes4YRaoeDXOskz6UgwPQZ/XrW+pmaYAjzWxrOBMo/KDVepBFsh65LWdv6i5lW9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=pfMuFqCR; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MLcZq/Bd; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="iHZpUPL7";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YAId4US0"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="pfMuFqCR";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MLcZq/Bd"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hbWy22bXCzMlG4;
-	Thu, 03 Sep 2026 22:52:42 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hbXnw1V1xzMlGj;
+	Thu, 03 Sep 2026 23:30:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788468762;
+	t=1788471044;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kEmfksLg4qJHlSCTmLWtP9kHWyMf/tAclg9vFAXBoXI=;
-	b=iHZpUPL7yeaDC2P010g46TI0t9imbYGbaTtbc3uSd0cMQ6uBwToXYlSzUAnWNUY6w2+06a
-	Y80rtJPclfkRT8zMHfvujA2epT2jjb/KwyZQKx3KeZ5vSE+BvCun0eMsEZaroqyGYq1OU3
-	stUp4W1ZjKYNI/BPb7XpvUqNV3MXP6yjtsUCfvnhpiHK31yZ4AkhAqkGFWT3YOHVvUY5le
-	mMLroU22HZGOmof4lPdUYT/351cu5G9Gzl9evirljVA3kN5DnPFt3Nusy1w/9ohS+anbIS
-	CMUkuK8pTYSs2I7bFwOkZ5DAuXr+s3Ad20W8EyXNsweokmiT1gpgdRtzePQrWw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=YAId4US0;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LFAs0ptpwlphm32MxyaDcUmBXKWrJhAcDg58F+8Ug0Y=;
+	b=pfMuFqCRBRxwUPZCLh9Tm710lpeBQ47eSuT9bBFTWxtGZfE+sjmCNOINaCPGdjttG8qpxa
+	eEWMwp2DEwo2+GJ0+eAl5Sp5ico07Cz7b+SRec4RrksMhQPv6R+n95HAg+ut+3pFUao+77
+	SmgSCMdOPFCn1LzaC8AZMqbzAfrRhV4tkXes9jj3COFBz9E9hHT/ZupmVablD0n1xavFYC
+	eNQGkOZCthtD4aNroaB+1n4J0xnY/WZBRTW8K5NlErINwYayHhM/Zmtw37kdmL561xuGU8
+	Cas77TVEekjoljXXXSxCtlMrl2SxXlqKu2nRjAdrC6/LYTHE27LnmHTMTd/pKg==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788468760;
+	t=1788471042;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kEmfksLg4qJHlSCTmLWtP9kHWyMf/tAclg9vFAXBoXI=;
-	b=YAId4US0O22k7f323jQO/sOtMTPBVUOSk91IGDSpu1ZLb8HmrhU4RhfeH974kDybOSufbU
-	9kfAe193PRIA5oJnaO/lZk2p3MWWMUHoi02nXICGoXkpNItJTcNcC+0RJER9q+G/zcfyzb
-	7tRAmgmLklWxbofzYqKwi4MlE+HacYBbivOBEgANfUxhzIIrGZdVSzVyTM7JK9L9T8cjO3
-	LDL7UDORXFclkbfS+YlglXULW0sJ/XYKNqHox1NLd3MjyMy49pCmWB7lz5Wk18WI0VHrUZ
-	ySXUVhy/gQukElF5LiI2BDyVVBeGhYNEauwuxiTs142WDUB5vAnT0KRbjyouWA==
-To: linux-pci@vger.kernel.org
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LFAs0ptpwlphm32MxyaDcUmBXKWrJhAcDg58F+8Ug0Y=;
+	b=MLcZq/BdOpGkzfiw+s/wB7/y78fW7rwI2z3zXGUiEHXM8x2spWdjJQLCIzIltCj4+nOz1u
+	G9ISgxi81SIXSrq/HqQ2MibfFoOf49Ajv9diJcKRKVWF3+KFABNyKM3h4H7FLAOnSmMGI+
+	DO9oPfxIlir29coN+16hJpmSHnff+C8egYDyjb4F0KxMLaItco0PldMbQ6DVd9rCRcE0y8
+	S2JXaKyZH8zhup1q80DlqYuuQqD4nlu0ykK1M/w4SpnKKdv3QCT0/8emZ1byuEkneBhCXG
+	fhutULyYLNb2sr3OirxpADl9jdpwJhH55dC1ffZ+2h57AFOpnZOYIDeLvGeycQ==
+To: linux-usb@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <den@valinux.co.jp>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: renesas: r8a779h0: Add PCIe Application/Local register reset
-Date: Thu,  3 Sep 2026 22:50:57 +0200
-Message-ID: <20260903205153.283553-6-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260903205153.283553-1-marek.vasut+renesas@mailbox.org>
-References: <20260903205153.283553-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v7 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car Gen5 DWC3 xHCI USB controller
+Date: Thu,  3 Sep 2026 23:30:12 +0200
+Message-ID: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: gu1dkp5cbhpqcb571ayordeesxnptdpx
-X-MBO-RS-ID: 9ab699da2505a2ba699
-X-Rspamd-Queue-Id: 4hbWy22bXCzMlG4
+X-MBO-RS-META: drxtybm4ou571wqymr3ps6own1xoxix6
+X-MBO-RS-ID: dd3476d4b890582c824
 
-Renesas R-Car V4M documentation R19UH0217EJ0110 Rev.1.10 , Jun. 30, 2026
-attachment R-CarV4M_UM_009_SRCRn_FSRCHKRAn_FSRCHKRBn_r1p10.xlsx row 411
-describes PCIEC ch0 Application/Local register reset. Add the reset into
-both RC and EP DT nodes of PCIe controller.
+The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
+controller with glue logic wrapper around them. Document the glue
+logic and DWC3 controller.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Conor Dooley <conor+dt@kernel.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
 Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+V2: Rework to use flat bindings for generic plat driver
+V3: - Support one or two PHYs to correctly describe the hardware
+    - Make maximum-speed optional
+V4: - Use ref: snps,dwc3-common.yaml and drop generic dr_mode/maximum-speed/phys/phy-names
+    - Switch to unevaluatedProperties: false
+V5: - Limit maximum PHY count to 2
+V6: No change
+V7: No change
+---
+ .../bindings/usb/renesas,rcar-gen5-dwc3.yaml  | 76 +++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index aca6ffc68c30a..c66fb22d72aa8 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -688,8 +688,8 @@ pciec0: pcie@e65d0000 {
- 			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
- 			clock-names = "core", "ref";
- 			power-domains = <&sysc R8A779H0_PD_A2PCIPHY>;
--			resets = <&cpg 624>;
--			reset-names = "pwr";
-+			resets = <&cpg 624>, <&cpg 1121>;
-+			reset-names = "pwr", "core";
- 			max-link-speed = <4>;
- 			num-lanes = <2>;
- 			#address-cells = <3>;
-@@ -724,8 +724,8 @@ pciec0_ep: pcie-ep@e65d0000 {
- 			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
- 			clock-names = "core", "ref";
- 			power-domains = <&sysc R8A779H0_PD_A2PCIPHY>;
--			resets = <&cpg 624>;
--			reset-names = "pwr";
-+			resets = <&cpg 624>, <&cpg 1121>;
-+			reset-names = "pwr", "core";
- 			max-link-speed = <4>;
- 			num-lanes = <2>;
- 			max-functions = /bits/ 8 <2>;
+diff --git a/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
+new file mode 100644
+index 0000000000000..c8a770d7e0241
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/renesas,rcar-gen5-dwc3.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/renesas,rcar-gen5-dwc3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car Gen5 DWC3 xHCI USB controller
++
++maintainers:
++  - Marek Vasut <marek.vasut+renesas@mailbox.org>
++
++allOf:
++  - $ref: snps,dwc3-common.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r8a78000-dwc3
++      - const: renesas,rcar-gen5-dwc3
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: dwc3
++      - const: glue
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  phys:
++    minItems: 1
++    maxItems: 2
++
++  phy-names:
++    minItems: 1
++    maxItems: 2
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - clocks
++  - interrupts
++  - phys
++  - phy-names
++  - power-domains
++  - resets
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    usb@c8800000 {
++        compatible = "renesas,r8a78000-dwc3", "renesas,rcar-gen5-dwc3";
++        reg = <0xc8800000 0x100000>, <0xc9c54000 0x2000>;
++        reg-names = "dwc3", "glue";
++        clocks = <&scmi_clk 336>;
++        interrupts = <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>;
++        phys = <&usb30_phy>, <&mp_phy 2>;
++        phy-names = "usb2-phy", "usb3-phy";
++        power-domains = <&scmi_devpd 16>;
++        resets = <&scmi_reset 336>;
++    };
 -- 
 2.53.0
 
