@@ -1,130 +1,130 @@
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A523F8257
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 09:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA1F3438B5
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 09:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788428599; cv=none; b=rqBkkG63kX4lDXOQztqlP7lnZlsqvTN2jlQbYoeM5qI4zOxcuhQQuxw1E+NrFDBbclILcNFb0FwResDVPgACQQICzHTeEqLAk/IBDA4mpgRFJq2K59kVQuo2/q/6Nd9BzufMN9JuFnt4tib3YV2i41360BonponmICclnnIL1zM=
+	t=1788428625; cv=none; b=czjbUnay6gBZzjEqpXaZdOBNZL84PR9qNEUdH45a6E7qIxEgp8+zvtJc8YB7Xq9mrvdyvQdDVulyfpNota6sjy8jaCFs0hAa4YY3hCLF++VgKLAy/tg2ceq31MjAZZ4qUNsgLID5X7ymT6fZDfN80VnROGDlFOoomqzBC9NirQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788428599; c=relaxed/simple;
-	bh=QlpCUlv+E6wRy2NB52jPmYtg/gL7xxiavKZ+fWvKSsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hZOi0ynhKZ5BFO7Z83OKiH8v8xPTfGG0OfSQEqBuB2scee3edvNR4oP6NMvnJz7n79cXBrfAsXJ6xNNpq6Mzawly4Z0T7cYXS4h4VFFPuk9JBkkGsQujDtIta1cxY29JwQuIN5w/QcXYjjyYYXCYMRjXqeQ2uqE/DGERpe15XX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-782df51b4c1so1512672137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 02:43:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788428596; x=1789033396;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=/8aSggrTq+PN9vIOxwXLgYslllD/sPjeAKVtCCSsPVQ=;
-        b=eHEf8ly76Qk2pOKZ0VNGraBT9KJPSGxtaWU7VrH6tU5XjEeQgtcXCEUMyB2iTFCXDm
-         5YzX/H0dy4nvBHvXClrqbBvGsedgGDdJePxtTaAYHo/4wy6m8REtQ+OLavliVaKm06Ra
-         FiawGQU4lxIeBDlzpadfIhNJIZhRGDTnWv58Xx99igl2uceU9KZ0xkA/lyRiCzRXnmG4
-         ikH8u4ntdZSL3WKaG3zIu/BKYFCwaxuydJnfziTCRtKKar0eWTQQm6DknQtnKDxugNmO
-         yUfpUWga4GIxi6kgsQ4sNe0CeOlB3V7YDmqznuBUtpPsJ4hNfu9Ey6k7od68hq3Zd3f0
-         3u0w==
-X-Forwarded-Encrypted: i=1; AKwUvBykozAWG+Gt1Xr26vKrxSzuEHbBUKhYRYnzzBCKAhfT02bOauMrMlmxcTp7VaLEoVz9mFXqaPEDON4rPDaHWq/Kdg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lMZWs6Pt2ZkCh54lf7TEPV9MmCFvyevaT2wkAaS76uvznTgxWZ
-	S/8IQeUhje2l0eQ0UV8drrvV4NEIdxT0e83lnSxVZKWpx09cKJfwWGawzrSB7tanR+M=
-X-Gm-Gg: AYBFou2XzZr6YQqwIlo8ZFGvOGFaCxLQPlCgGfIqhxOpkASHg/FGCrBHb3kBauBg7aH
-	xZaFFzLiKjDFrlf5gCnt18T1D6hBm8g8Im4JOUOiuoIz1K4xApBuWx5Pe41hnHm8+jlUYsI1I1C
-	ln0qKB4n9WdSvGHg0wXRQjkXzhDHDuHRUW0/XiFy2AqUV2KLFF/r2JoE6yZTSa15IwSbuDXEDJu
-	0+mJEQlICxsMPoAtoLhxZciHboqB/ADCrlgHCHgU/Ar23F54dQFzsk0T61hTpeBBnwcJ++M5iE6
-	4noM3Rs8hgA3UqBoO7JWgheMr1Hi9n7hsQ8IEtFryHhfS+4eZOFTzs5gEFYaql0WH4pB5hU4uGF
-	3NWmRXsr0GwMptR6JijRBZFlMeICdw1IFtBZ8VrMQEmOrk6d+UvJxZbZPTr4B6ZxtBvYBEKdWoM
-	+zOtYOhrTPLl8bEAweSCqziHfYXjBlBVgHmZcwvZuHFhzJuaYQ3K7AFz/Wr8ukXpPdTR0jvoiNL
-	xUWFbE2eTF/AX8xD4XGurRzlQ==
-X-Received: by 2002:a05:6102:158d:b0:77f:7df:ddd2 with SMTP id ada2fe7eead31-78a1f228d73mr4559863137.1.1788428596468;
-        Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9807764dec9sm2043944241.12.2026.09.03.02.43.16
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-746d77537f8so1358197137.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 02:43:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxCWyaruZOm8eK3YFMWwyJr4Vh0ihru4qLk7HCE9z7ivqC6PojA1RoTkcXGPTR0f2YDk9ZnIDCQV9j+9qva/s1nPQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:2997:b0:784:a169:194a with SMTP id
- ada2fe7eead31-78a1f437b62mr4757188137.10.1788428595977; Thu, 03 Sep 2026
- 02:43:15 -0700 (PDT)
+	s=arc-20240116; t=1788428625; c=relaxed/simple;
+	bh=zVRZ9YB2jZg4NspjMBUhfg4hNV05y/D1ChD368Bh1eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJ6fJqbskkpm4Ym+j/6+k0kJ0RistlDjqovkYxth659mojhTb6ttseK5mE47OJQ7e1qPoK7O0ONGeO5jJ1zuUrIRQuLzfP5pSLjx+QbQUqaTCIqogrcLVMzCk86c8zilntOTpAPYDbsT6Mwnfc4JixbmvxoaYh2xXGuLhnF9UVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JZc2MiSs; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JZc2MiSs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=LY9A
+	uxdY0YgAtitZHhuxf78G9rjwrzekgyOQQDK/Gqs=; b=JZc2MiSsgJIy4r/9Uo4M
+	SLryPfnRs2esjfpXwImw1LAPCxySom2Gh1UMRJekL05lmItQszh37t2UStNlHrnz
+	06iZ1ITyQr2D6K+0ArLMdKGNExzkNx9ihceDPLIeampWg8YvhKBxdhqymoX2fqH3
+	+usp6Q5BhlDxqiVykjhGlgvVSvzX5G3nOuAQw/e6i3IeIMh772F1etDSLHA5mkvv
+	H0fnen7XvB7CqYFvXUyurcCxSK6ky6ndmcvo8r/l0c3CLbPNjcax7Wbnqjjpwgid
+	MhLmJyMhNBwIsj9gyHw5kZfCM7XhUTfPSMS4Q5qaZIurkE4kpV6J7NhpDzE8Dlon
+	CA==
+Received: (qmail 994618 invoked from network); 3 Sep 2026 11:43:40 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2026 11:43:40 +0200
+X-UD-Smtp-Session: l3s3148p1@nH2j/JBa5NUujntC
+Date: Thu, 3 Sep 2026 11:43:40 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Biju <biju.das.au@gmail.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v24 08/15] mmc: renesas_sdhi: Add
+ TMIO_MMC_INTERNAL_DIVIDER flag
+Message-ID: <aplBTMnnF1V71BDL@shikoro>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903084339.870562-1-zhouruizhe@resnics.com> <20260903084339.870562-14-zhouruizhe@resnics.com>
-In-Reply-To: <20260903084339.870562-14-zhouruizhe@resnics.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Sep 2026 11:43:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV871ZLtrCzXFmhUeThkc8eFAhcFo2=Cos9iJru3bxvqQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VNMZwSAyY54Zj_XBQDARj9cOjn3MGAVS5vnzomKXlBjnTLo99feqtQTjY
-Message-ID: <CAMuHMdV871ZLtrCzXFmhUeThkc8eFAhcFo2=Cos9iJru3bxvqQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 13/14] net: renesas: rswitch: Remove obsolete
- 32-bit DMA mask fallback
-To: Ruizhe Zhou <zhouruizhe@resnics.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="E99sx6PRJK2Yhpw5"
+Content-Disposition: inline
+In-Reply-To: <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
 
-Hi Ruizhe,
+--E99sx6PRJK2Yhpw5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
 
-On Thu, 3 Sept 2026 at 11:27, Ruizhe Zhou <zhouruizhe@resnics.com> wrote:
-> The DMA API guarantees support for masks of 32 bits or wider and
+> +static bool renesas_sdhi_is_internal_divider_enabled(struct tmio_mmc_hos=
+t *host)
+> +{
+> +	bool enable =3D false;
+> +
+> +	if (host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER)
+> +		enable =3D true;
+> +
+> +	return enable;
+> +}
+> +
+> +static unsigned int renesas_sdhi_clk_get_rate(struct tmio_mmc_host *host,
+> +					      struct clk *clk)
+> +{
+> +	unsigned int freq =3D clk_get_rate(clk);
+> +
+> +	if (renesas_sdhi_is_internal_divider_enabled(host))
+> +		freq /=3D 2;
+> +
+> +	return freq;
+> +}
 
-Really?
+???
 
-> explicitly identifies retrying a 32-bit mask after a wider request as
-> incorrect:
-> https://docs.kernel.org/core-api/dma-api-howto.html#dma-addressing-capabilities
+static unsigned int renesas_sdhi_clk_get_rate(struct tmio_mmc_host *host,
+					      struct clk *clk)
+{
+	unsigned int freq =3D clk_get_rate(clk);
 
-AFAIUI, that is only true iff the wider request is DMA_BIT_MASK(64).
+	return host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER ? freq / 2 : freq;
+}
 
-> Remove the obsolete fallback while retaining the error check so that a
-> genuine DMA setup failure still aborts initialization.
+Was this AI generated?
 
-Have you tested this on actual hardware, with/without IOMMU support?
+> @@ -184,10 +205,14 @@ static unsigned int renesas_sdhi_clk_update(struct =
+tmio_mmc_host *host,
+> =20
+>  	clk_set_rate(ref_clk, best_freq);
+> =20
+> -	if (priv->clkh)
+> +	if (priv->clkh) {
+> +		if (host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER)
+> +			clkh_shift =3D 1;
 
-> Signed-off-by: Ruizhe Zhou <zhouruizhe@resnics.com>
-> ---
->  drivers/net/ethernet/renesas/rswitch_main.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
-> index 755232994fcc..64b821ca02f8 100644
-> --- a/drivers/net/ethernet/renesas/rswitch_main.c
-> +++ b/drivers/net/ethernet/renesas/rswitch_main.c
-> @@ -2162,11 +2162,8 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
->                 return -ENOMEM;
->
->         ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
-> -       if (ret < 0) {
-> -               ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> -               if (ret < 0)
-> -                       return ret;
-> -       }
-> +       if (ret)
-> +               return ret;
->
->         priv->gwca.index = AGENT_INDEX_GWCA;
->         priv->gwca.num_queues = min(RSWITCH_NUM_PORTS * NUM_QUEUES_PER_NDEV,
+No, this needs to be handled a bit above where clkh_shift is initially
+set up, so we have it all in one block.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--E99sx6PRJK2Yhpw5
+Content-Type: application/pgp-signature; name=signature.asc
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqZQUwACgkQFA3kzBSg
+Kbbp/g//RPqRM7wsWLv3lCIY+qTDPlkd06UoszyERYrrKruEVVp90sLIXqCbIFMq
+hGV7xSzWjY7UZWialAhIYYcqvGKT4YyKC0X19TaVcGtn1xxEcH3cEMGEcG8YHzfy
+V9ZJ7uFKahINTYDbH+8fWUquf69ikFrg21wwodc/NN1lbK2mPsEw2Pro/slKgtnl
+65WeH46PrfG3djq8ldgB64cnNN6ng3yzKdxxukFQSYllNhfrzF0LnMshqBWtllkI
+EIPMDzB/ayeLi1khwJOLyL219kU6/LMxi1LEuomXHh/K/qbQnisQe4TFGwsYoTR8
+bZmGruaZnH9dnKJkOSXknwJ/ZvIgLjFFssoA6hKo8Z3ZxeuFp6IK0YPSFk22KgqL
+fjENVX6onGyEssi2IBJWuHP5JDtAX981Ga51JMr74wuok9vk7MgVr2od9uAwD1YT
+246iZPANVHq+E9oSjGV3T/A2p1ikiCgfieR0JKJszk42uuzWt/DWgNIuKhvfWUrR
+FNULm7Pj3xtvjtZPd8HzRKOyk9Ud9bFxOTCxQ6QspXcZKrSyiPCsIlwoQrysP6zk
+kdBYIkEoJY4JeRdhaFKaEIRC0DZ9rhP1TkhpzuBLIjziq65KAEn873cKQFT+siWD
+zF0gBzHa+VdXL6w7IrTUicW7bUKUM5AF7lVX4EWMuyPXN8PFEp4=
+=SpLs
+-----END PGP SIGNATURE-----
+
+--E99sx6PRJK2Yhpw5--
