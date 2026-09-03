@@ -1,111 +1,103 @@
-Received: from mail-m1973190.qiye.163.com (mail-m1973190.qiye.163.com [220.197.31.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7B14A8FCE;
-	Thu,  3 Sep 2026 12:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727714A92D4
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 12:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788439964; cv=none; b=n5bj248lOJHeqaZzUU8B0kQYMwEwe/pVqF2pQItwtvhbACyN5srV8DqTPgSvC8b54eUbvsb6spWS/dbYwregZ+U2Fw3ZLzsXibJz3vRQ1vgjMbY04UKkavuF/xBw1pNQhdChCHunZN/2gY7L5vT5NEUgYh/YWPa6pgsw1d9rzjw=
+	t=1788440400; cv=none; b=cZj4ZauSRPjrntugjFLbvt3/ULjnEu9YGYUS79kHcNunMDJdmgZ0UVHd4tD5kbiGSrBvZz262IBMqVG4bMa2lb5RuAHzUWBd2fHVpB7RcIFVVxEPX4yrtsnRatFpIeQpwVrNZLTIqFPLJ302P8O80/GGc2CeDYMUWiIyqmR4MSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788439964; c=relaxed/simple;
-	bh=Rfitq2P6JryQZmIqbgDP3vJocEqK9V/DTGRq8RvUllU=;
-	h=Content-Type:Message-ID:To:Cc:Subject:MIME-Version:From:Date; b=D7M2Dpyu92ym1nMlflwlAdDjxhFHvJSyubFg7siJUySF3ZIDJsQs3gwKmTLW58imadf4JB3AXVabUfWPs1eP6cq56in0Htaz13QCcwDlHAqlD8SyDu7elSpR3dI+e5leXH8wu/lXw2u2rqCOFZh6uyB3NLdYWmw0yxUfJvC2D0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=resnics.com; spf=pass smtp.mailfrom=resnics.com; arc=none smtp.client-ip=220.197.31.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=resnics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=resnics.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AKwAeAA6K9Rj00MOJNTIDqrJ.1.1788439641910.Hmail.zhouruizhe@resnics.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	linux-renesas-soc@vger.kernel.org
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSCBuZXQtbmV4dCAxMy8xNF0gbmV0OiByZW5lc2FzOiByc3dpdGNoOiBSZW1vdmUgb2Jzb2xldGUgMzItYml0IERNQSBtYXNrIGZhbGxiYWNr?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com web
+	s=arc-20240116; t=1788440400; c=relaxed/simple;
+	bh=dHxgVoXugnnTmSqU/QbhM/ywN/YiWktpg4R2HHANpxU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jVdQMSCURiEIzLOV2LTY0WI0xY32075Z8uWA6sN/XwjGHLeEtDFoHnnIe3ipCMVgcN7ulBmluYAme5E8l8wm43RZunzjrQC8DGRNlNGJyFWfxk5bieq/nrF0M04bKUwJtYPMz+O8C1U0rY9jG1mI93N6hk9quPXGcdQs++SKTck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6aaf3f54dbeso2054741eaf.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 05:59:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788440397; x=1789045197;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=rOaM/A6xTTi3n14xGii1RnS5RLxKPImxgE8KsoH56tk=;
+        b=lV4Fg1Hj9YdfrjcUeyo3MaqNwX38icGvz8ngpxxNgutvbsxiZP3IWQ4hMMKnr2sUEY
+         RxSjY4qEb7usDT0YRzD3dyeWk/EVYtg32LPVJ+/fhmPPSnkAYZcCoUQ4F2ej6cpUl+uI
+         6ectQoc24kXe9Wa1/uH+TqOF9o3aoZkwxAI6o/Pi79st912D65j+2d2hVP5dF49AlH8G
+         V3b/Z6iXoxl+zGpeE76cZhZkqEDNPjhY11wmqn8YCAi2jX9s31+Ik8SvSK2Iwlq2jWsT
+         IlKqkO95YNi+u+fHNDSTpfWnUNYzDMkicbtnZYZ9lWD90ObqKZZQIL+3smu8I5ch4ze0
+         nd/w==
+X-Forwarded-Encrypted: i=1; AKwUvByrotRF5eLOC6qazn9p7flYAwxneWtspYLY1+Zrz+es9xj8Uq8VCXSugsRLqH1Nar48jP3PV/Jc+k3o8nesXqGabA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mV+kTN/GsilVpwUXXtg87qtCsJyxjP7P2yq4n1jShPsIZ4Ez7/
+	DcexTvRNmaTGxxGlxFnOflQrPLQgdNwwURkY1y+TQ2iO4qMDLuHzj3VWMeD3RY4oiZY=
+X-Gm-Gg: AYBFou19PCOBVlh4rGGsG7+DSs1A4/7xChsoOgLbP+kgGYLxPHSclJEd8zClrDdY96X
+	cWzEBIRR08kWO3cxPC88JPe4zT0qDqjfn6c9l2XWLrndtt1CNWQ5hQR9I2tc4H+H7OBHUUSA3QU
+	uJmz3GrKG6F6K9IsO7+BhhJ7BNX7ZcRrGpFIG8WPVO5BimHsDhdUh0YK/Vs1YfuDFEYK+y9qjXk
+	GvZovEoVwLedGkYU+xTwSOeYesc7B7BOzIzyVn1roAcL1kO6XLdmdVtdRr0NShSfHe/hWIzSzi/
+	gNtmKqfuuP5RhkmlOflkmOp1URjS9lbafJTZgK8Ct+I6mrRbiNENRe0+gah6DM9RcdTMMqNC80g
+	PW1ZbqFSd14oclo+aDvqRHMDIcOTr5fsLYivYUBNPvTliBhGh82o0TWftnvEeld028/GPpTkmwY
+	Ei/fHTbzu1bX+QDbgzTi/vWKMG07hGbW6E5+T3GVUvGp32mB5iY40XVL5+DRY7VR5/vkkzmVCpG
+	i/Qn7lVFvIibt5pLfg4W1Shlw==
+X-Received: by 2002:a05:6820:199a:b0:6b3:619f:25ce with SMTP id 006d021491bc7-6b47eed806amr9682498eaf.30.1788440396681;
+        Thu, 03 Sep 2026 05:59:56 -0700 (PDT)
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com. [209.85.161.47])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b40c833ad9sm4883396eaf.7.2026.09.03.05.59.56
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 05:59:56 -0700 (PDT)
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-6aaf3f54dbeso2054711eaf.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 05:59:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwXHl4uCDfaBJjPNvr/BcyMPSzl7+UBTypVugN13ugvQUAoxiKcuE3V5EcFYnVcRaqxIeGXPNpT9jBXkG4eWMuUXQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:2c03:b0:785:8f76:654d with SMTP id
+ ada2fe7eead31-78a1f4c036amr4772497137.13.1788440012478; Thu, 03 Sep 2026
+ 05:53:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: from zhouruizhe@resnics.com( [1.162.139.180] ) by ajax-webmail ( [127.0.0.1] ) ; Thu, 3 Sep 2026 20:47:21 +0800 (GMT+08:00)
-From: =?UTF-8?B?5ZGo552/5ZOy?= <zhouruizhe@resnics.com>
-Date: Thu, 3 Sep 2026 20:47:21 +0800 (GMT+08:00)
-X-HM-Tid: 0aa0674eedfd02eekunma0ee55f326b
-X-HM-MType: 1
-X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMdz8H/g99eSjsmp79ug4TtUOfceK239+6Wx8rS
-	Mt4AmfBcwCFqZ+1IZEb/P4yrJDwyzYKKAn04fSFunHm3+bGs3rtiQPvyKmsPAUbztif5Tx7I4KmZ
-	w1GTYpKaVf5zojk2t3Jh6cfGjesrSdGlsnjOA=
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaGE1JVh5MTRlNH0sdSx9ITlYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlKVUpNSVVKSEJVSkNLWVdZFhoPEhUdFFlBWUtVS1VLVU
-	tZBg++
+References: <20260825095047.9971-1-biju.das.jz@bp.renesas.com> <20260825095047.9971-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260825095047.9971-4-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Sep 2026 14:53:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXpMW4GJzgf6MSw+rwNjw6d9sHnR9J9NxoKh-2cXJwNLA@mail.gmail.com>
+X-Gm-Features: AcwNN1WEDUqTnWdhnLOvtpe3Al5LdzBVrMsYUowriY_1M3N1Njo7kHKct1Dq1Gw
+Message-ID: <CAMuHMdXpMW4GJzgf6MSw+rwNjw6d9sHnR9J9NxoKh-2cXJwNLA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] PCI: rzg3s-host: Add support for RZ/G3L SoC
+To: Biju <biju.das.au@gmail.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-CgpIaSBHZWVydCwKVGhhbmtzIGZvciB0aGUgZmFzdCBmZWVkYmFjayEKTXkgbGFzdCByZXBseSBn
-b3QgZ2xpdGNoZWQgdXAgYnkgdGhlIG1haWwgY2xpZW50IHNvIEkgcmVzZW5kIHRoaXMgaW5zdGVh
-ZC7CoApIb3BlIHRoaXMgd29uJ3QgY2F1c2UgdG9vIG11Y2ggdHJvdWJsZS4gSWYgeW91IGRpZCBy
-ZWNlaXZlIG15IGxhc3QgcmVwbHkKYW5kIGV2ZXJ5dGhpbmcgbG9va3MgZmluZSBwbGVhc2UgaWdv
-cmUgdGhpcy4KCkZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+
-CkRhdGU6IDIwMjYtMDktMDMgMTc6NDM6MDMKVG86ICBSdWl6aGUgWmhvdSA8emhvdXJ1aXpoZUBy
-ZXNuaWNzLmNvbT4KQ2M6ICBBbmRyZXcgTHVubiA8YW5kcmV3K25ldGRldkBsdW5uLmNoPiwiRGF2
-aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4sRXJpYyBEdW1hemV0IDxlZHVtYXpl
-dEBnb29nbGUuY29tPixKYWt1YiBLaWNpbnNraSA8a3ViYUBrZXJuZWwub3JnPixQYW9sbyBBYmVu
-aSA8cGFiZW5pQHJlZGhhdC5jb20+LG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcsbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZyxZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhA
-cmVuZXNhcy5jb20+LGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZwpTdWJqZWN0OiBS
-ZTogW1BBVENIIG5ldC1uZXh0IDEzLzE0XSBuZXQ6IHJlbmVzYXM6IHJzd2l0Y2g6IFJlbW92ZSBv
-YnNvbGV0ZSAzMi1iaXQgRE1BIG1hc2sgZmFsbGJhY2s+SGkgUnVpemhlLAo+Cj5UaGFua3MgZm9y
-IHlvdXIgcGF0Y2ghCj4KPk9uIFRodSwgMyBTZXB0IDIwMjYgYXQgMTE6MjcsIFJ1aXpoZSBaaG91
-IDx6aG91cnVpemhlQHJlc25pY3MuY29tPiB3cm90ZToKPj4gVGhlIERNQSBBUEkgZ3VhcmFudGVl
-cyBzdXBwb3J0IGZvciBtYXNrcyBvZiAzMiBiaXRzIG9yIHdpZGVyIGFuZAo+Cj5SZWFsbHk/Cj4K
-Pj4gZXhwbGljaXRseSBpZGVudGlmaWVzIHJldHJ5aW5nIGEgMzItYml0IG1hc2sgYWZ0ZXIgYSB3
-aWRlciByZXF1ZXN0IGFzCj4+IGluY29ycmVjdDoKPj4gaHR0cHM6Ly9kb2NzLmtlcm5lbC5vcmcv
-Y29yZS1hcGkvZG1hLWFwaS1ob3d0by5odG1sI2RtYS1hZGRyZXNzaW5nLWNhcGFiaWxpdGllcwo+
-Cgo+QUZBSVVJLCB0aGF0IGlzIG9ubHkgdHJ1ZSBpZmYgdGhlIHdpZGVyIHJlcXVlc3QgaXMgRE1B
-X0JJVF9NQVNLKDY0KS4KCkF0IHRoYXQgc3BlY2lmaWMgbGluayBJIHdpbGwgcXVvdGUgdGhpczog
-IiBkbWFfc2V0X21hc2tfYW5kX2NvaGVyZW50KCkgd2lsbCBuZXZlciByZXR1cm4gZmFpbHVyZSB3
-aGVuIGJpZ2dlciB0aGFuIDMyLiIKU28geWVzLCBJIGJlbGlldmUgdGhpcyBhcHBsaWVzIGZvciBh
-bGwgbWFza3MgPiAzMi4KCj4+PiBSZW1vdmUgdGhlIG9ic29sZXRlIGZhbGxiYWNrIHdoaWxlIHJl
-dGFpbmluZyB0aGUgZXJyb3IgY2hlY2sgc28gdGhhdCBhCj4+IGdlbnVpbmUgRE1BIHNldHVwIGZh
-aWx1cmUgc3RpbGwgYWJvcnRzIGluaXRpYWxpemF0aW9uLgo+Cgo+SGF2ZSB5b3UgdGVzdGVkIHRo
-aXMgb24gYWN0dWFsIGhhcmR3YXJlLCB3aXRoL3dpdGhvdXQgSU9NTVUgc3VwcG9ydD8KCgpObyBJ
-IGhhdmVuJ3QgYXMgSSBzdGF0ZWQgaW4gdGhlIGNvdmVyIGxldHRlci4gQnV0IEkgYWxzbyBiZWxp
-ZXZlIHdoYXQgaXMgaW1wb3J0YW50CmhlcmUgaXMgdGhpcyBjaGFuZ2UgaXMgdHJ5aW5nIHRvIHBv
-aW50IG91dCB0aGF0IGEgZmFpbGVkID4zMmJpdAptYXNrIGRtYSBjYWxsIGlzIGZ1bmRhbWVudGFs
-bHkgbm90IGNvcnJlY3RhYmxlIGJ5IHRyeWluZyBhIHNtYWxsZXIgbWFzay4KVGhlIG1hc2sgcGFz
-c2VkIHRvIHRoZSBETUEgQVBJIGRlc2NyaWJlcyB0aGUgaGlnaGVzdCBhZGRyZXNzIGEgZGV2aWNl
-IGNhbgpyZWFjaC4gSXQgYXNrcyB0aGUgRE1BIGxheWVyIHRvIGtlZXAgbWFwcGluZ3Mgd2l0aGlu
-IHRoYXQgbGltaXQ7IGl0IGlzIG5vdAphIHByb2JlIGFza2luZyB0aGUgcGxhdGZvcm0gd2hpY2gg
-YWRkcmVzc2luZyBtb2RlIHRoZSBkZXZpY2Ugc2hvdWxkIHVzZS4KQSB3aWRlciBtYXNrIGluY2x1
-ZGVzIGV2ZXJ5IGFkZHJlc3MgcGVybWl0dGVkIGJ5IGEgMzItYml0IG1hc2ssIGluY2x1ZGluZwph
-ZGRyZXNzZXMgZnJvbSBhIHBsYXRmb3JtIHRoYXQgb25seSBwcm9kdWNlcyAzMi1iaXQgRE1BIGFk
-ZHJlc3Nlcy4gVGhlIGxpbmtzCkkgcHJvdmlkZWQgaW4gdGhlIGNvdmVyIGxldHRlciBleHBsYWlu
-IHRoYXQuCgo+Cj4+IFNpZ25lZC1vZmYtYnk6IFJ1aXpoZSBaaG91IDx6aG91cnVpemhlQHJlc25p
-Y3MuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3JlbmVzYXMvcnN3aXRjaF9t
-YWluLmMgfCA3ICsrLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDUg
-ZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5l
-c2FzL3Jzd2l0Y2hfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yc3dpdGNo
-X21haW4uYwo+PiBpbmRleCA3NTUyMzI5OTRmY2MuLjY0YjgyMWNhMDJmOCAxMDA2NDQKPj4gLS0t
-IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yc3dpdGNoX21haW4uYwo+PiArKysgYi9k
-cml2ZXJzL25ldC9ldGhlcm5ldC9yZW5lc2FzL3Jzd2l0Y2hfbWFpbi5jCj4+IEBAIC0yMTYyLDEx
-ICsyMTYyLDggQEAgc3RhdGljIGludCByZW5lc2FzX2V0aF9zd19wcm9iZShzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2KQo+PiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07Cj4+Cj4+
-ICAgICAgICAgcmV0ID0gZG1hX3NldF9tYXNrX2FuZF9jb2hlcmVudCgmcGRldi0+ZGV2LCBETUFf
-QklUX01BU0soNDApKTsKPj4gLSAgICAgICBpZiAocmV0IDwgMCkgewo+PiAtICAgICAgICAgICAg
-ICAgcmV0ID0gZG1hX3NldF9tYXNrX2FuZF9jb2hlcmVudCgmcGRldi0+ZGV2LCBETUFfQklUX01B
-U0soMzIpKTsKPj4gLSAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQo+PiAtICAgICAgICAgICAg
-ICAgICAgICAgICByZXR1cm4gcmV0Owo+PiAtICAgICAgIH0KPj4gKyAgICAgICBpZiAocmV0KQo+
-PiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsKPj4KPj4gICAgICAgICBwcml2LT5nd2NhLmlu
-ZGV4ID0gQUdFTlRfSU5ERVhfR1dDQTsKPj4gICAgICAgICBwcml2LT5nd2NhLm51bV9xdWV1ZXMg
-PSBtaW4oUlNXSVRDSF9OVU1fUE9SVFMgKiBOVU1fUVVFVUVTX1BFUl9OREVWLAo+Cj5HcntvZXRq
-ZSxlZXRpbmd9cywKPgo+ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQKPgo+LS0gCj5HZWVy
-dCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdl
-ZXJ0QGxpbnV4LW02OGsub3JnCj4KPkluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNo
-bmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQKPndoZW4gSSdtIHRhbGtp
-bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxp
-a2UgdGhhdC4KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFs
-ZHMKPgo=
+On Tue, 25 Aug 2026 at 11:50, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add SoC-specific data for the RZ/G3L (R9A08G046) PCIe controller and
+> register its "renesas,r9a08g046-pcie" compatible string. RZ/G3L reuses
+> the RZ/G3E config init/deinit callbacks and power resets, with its own
+> L1-allow syscon offset and mask.
+>
+> Also increase the timeout in rzg3s_pcie_set_max_link_speed() to fix
+> the "Failed to set max link speed" message seen on RZ/G3L.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
