@@ -1,183 +1,133 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010069.outbound.protection.outlook.com [52.101.229.69])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321E8356742;
-	Thu,  3 Sep 2026 13:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788442452; cv=fail; b=hiWAw2ri+KATzcRj6cCAhO6YU6HPMLj3oRlAfTfClLVUwutgl/Z5N3578KhniPAe5lyfYrLGYICi4oPnZXdwlKX8FjIN8gpcIQzRTpYDwn0sAZCazIthn0nsZ68pcVAJ+NKt5rQqw8icO//LCd/B27KdTVdhZ5HWabEqkChNwjs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788442452; c=relaxed/simple;
-	bh=iQCfKlPEgX1s5weulwgNk7LLQYS21KIra74bVFoiXZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LI/FCoaug79QADedEriB1Ev2yaK5rj0WygiSiA9Xktg8+qNpN/32EQSPm40FPvbk/dUdHHFu8zRU9UQq3o45XzgoDC9gnQNaigmBHDdYtph39z4ia43pDY6VuGNEzQU24Z3ZCq2jAPHzvbyne5I0tk9kWQ3UwwwbkgORUFzX9Lw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=nwhR0wI9; arc=fail smtp.client-ip=52.101.229.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061014AF164
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Sep 2026 13:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788442554; cv=none; b=e+vzrwWoTjCCdL8CzZIORWW6ssxQOPQUdLeLZ2AT2jaJtRtzRu2O4hTzC7XYBDyEr9qNJeny8X9VwBB4nCg7JosW8cdWyjfMjyFrZxWVFSY0mnMxjDMn/1Cazy44+narEFI1VJT7EDkzYl5iF0bhREvnVqG5y2r1xdkNYRMITcA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788442554; c=relaxed/simple;
+	bh=EDyoKHuGKwkBHb1TRmNlIgq/E1jTMw2X0zz7N7Lh4Uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHZnjlj8+7pQUBMgmbVBaWR199KDEcW9X4w+EoRqjljT8ZKqDiuZ4eXDExQrYIMo3XZVE5hdnwCJCWC8+WAYgpqG7yCXPIOOPd1+R67s/8Cld7qw7QzjsHrGCzllpnGWc3q0PZlH+PFDypKzw/ZQ1rDD01M1anERWSl2dLKdB6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BSvx4drq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SzLS0rS1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="nwhR0wI9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JLOBwcoATklAj9i0hw8/eKBVSosYyrluOgAw2hTOJLrZ/IdT1QdIr0hhib4lNXyi/WGjb1EDxCuZGIl/3Kyw3vko3R4PDhUiLAcRL1BKOZb+mleFj6B6Jrmghl57KsWhLgXC08B23hc1kXLAISbCfUfAW62q6LXVqoNJvN440f0+ApetKYYs/MnA4tGDeDGdZxFemmYy3WG2cRDD8oe4o0SwIq+Gm0/pVuI0kEhyffew/oV3AvzF3iHboCPiK3leb/oBqxvTQKfqRTT1ymmAThdFNOXRJyWnV+MLZPiP9sT/7A3tRrcpzr/Spo1n4WFQhzClxlr9MRAXWgLLOT7d6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vQrwDa1Kl4Th5NoaM/Gx/5ppaNDACSi6pqQJ66J4ZM0=;
- b=E2+pRz9wTAiEpa2hIAXNfmkcdxylYEMtSxSooID3+Bu8yGiX5ebzBZDhitBE2EZwYgqTK0bbI2tAlrwpUj9eMzDoi/e0ng0fgnS/Xseyp7TD/eMlUg7BE5NevfdcM1YW7HueDSCNxJxGmYRXJBLm9TwwNnel9CeVg5cUxmmRYiBi2uMEbw4trAY2XsxIVegJ4R34sLU66vxJHdZbqhWZtga2VcRYHG2IH0kGOXXYzSTvy3+/THIvFnY6UjM2xfeg7ri23vQYAdLyTQnlyEzOfryFjt9YnbHzAC5jrBZhKeSGWJeCltYBmHk+jkiUqbZP+yqGbamcovaCCTBcaA8p9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vQrwDa1Kl4Th5NoaM/Gx/5ppaNDACSi6pqQJ66J4ZM0=;
- b=nwhR0wI9j4mZgd9Upn2iotWIlVmSsb6kUxpChPXwwwyZphIMBaBfZ9ZL7FhBeka3tUNaFf6GR9hrUI3Ejd7crMnnQB0PXo7OV8yLc0vmsogTQx6zSr1vL2vYkAAvqotLjmdhbBK5MyrMCU29mj8oWnhEKI6aW4/3tEWO8YomOjk=
-Received: from TYCP286CA0216.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c5::12)
- by TYRPR01MB12269.jpnprd01.prod.outlook.com (2603:1096:405:fe::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
- 2026 13:33:53 +0000
-Received: from TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5:cafe::78) by TYCP286CA0216.outlook.office365.com
- (2603:1096:400:3c5::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.11 via Frontend Transport; Thu, 3
- Sep 2026 13:33:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
- designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TYO1EPF00005023.mail.protection.outlook.com (10.167.240.20) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.8
- via Frontend Transport; Thu, 3 Sep 2026 13:33:53 +0000
-Received: from biju-VirtualBox.adwin.renesas.com (unknown [10.226.93.2])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 41890300023A;
-	Thu,  3 Sep 2026 22:33:45 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] PCI: rzg3s-host: Add support for RZ/G3L SoC
-Date: Thu,  3 Sep 2026 14:33:11 +0100
-Message-ID: <20260903133320.144245-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260903133320.144245-1-biju.das.jz@bp.renesas.com>
-References: <20260903133320.144245-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BSvx4drq";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SzLS0rS1"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 683DAd1q4158179
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 3 Sep 2026 13:35:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/4DLlFsjYWfVj0wHcCsxEd1j
+	3B+ydgKXEWS4cecbkdI=; b=BSvx4drqyq3Bq3EZ4Z+8Xo59dZXrCvjUqjwD9IMj
+	GKSLHML9uKqAzyu8wp4/dQFI2bhcasK3BoCgGwGfQoUVyM0ov5m7pyRU7KURW1E7
+	VSt8rohEmBBAOHNU/qSrgy7uB/SLE7dT6uxC2Bhvn8eEKgRFRgyhrdIZxooUgSfh
+	OUicmKFSVi8lCCg39LYLpxPKVgQlRD3h9Ds/oHp3Yy8kvXawx+FdduzJ0EfQa1e5
+	YDCotmLTrW2XSx10dsoLsJIpPJG2/WaSUx8+Ts7u+EUtlzaZE481Qy6rECF8keUP
+	PRm6lhxggtoPcV/V4ZinCINUdJNnwZ4DskjLy99L7BuM/w==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gf5pds4c0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 13:35:21 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-939694871aaso285518385a.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Sep 2026 06:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788442520; x=1789047320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/4DLlFsjYWfVj0wHcCsxEd1j3B+ydgKXEWS4cecbkdI=;
+        b=SzLS0rS19eempocLc2bm+9yQ9bRaVDvXl+PIzq/56uSjUFrHCxygEZQrYTUPBYGfjZ
+         nDx3ErwqIQakv6CzfEaNhSLuF6pjRiw7xoNhLbOcKPL+BU3GlGuOd4BoaGU8Ft8AJohy
+         +weNmED41+hphTFDTi2hz8RQhhK2ML95jUYsDDZZFvVNNISHAb3mzwCf/DXOYoR9pNTi
+         R35NpdNR3P/BUOUnwvDhf6evn4u3UwlSsV7X4/rm+z4kOxKVn10aNkcXTNY92K9xeBcI
+         ttqGmJAdQe/qATeguJxOCg/MQQ9j8FbSd8/eAgXODnrfXzY0Gehjvza8XPOvVpXEJWxx
+         YnaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788442520; x=1789047320;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/4DLlFsjYWfVj0wHcCsxEd1j3B+ydgKXEWS4cecbkdI=;
+        b=LJa6ztMKt2/zl5q1ldGDAFxBsY5jWtvzTs4ZOIH3qg51eYuLgO/c8auy7zyEtAqpoH
+         6R6HBYoDAMgk6wjYlNZDNLkjgkw03HyUCslD38q8N1VOmrCVvKteXe2jHwBN2nlASz7f
+         0ukZ37lZdZfil8VUAp7hvNr3eXqsIoq8lG4UiJpP4k+/L2u1g9SUYomrFkVHuqhC6NJ6
+         4so7OQfUZ3jNVXnh/uoFXP44HlGy1vVRCpt58SLl3brRojuh3gMxUEHo+rZrnl+l5Pnz
+         4nwX5joPb+mhkhlijwUQz6l8oKXiqDPFjq4YLAqBD0jKNg9sPdFh/D1WKbHT5V8RQkRW
+         U5PA==
+X-Forwarded-Encrypted: i=1; AKwUvByVycv1cBwHT/47MolM0HKu9v2R8+g0Jk2IPSjzbXO9XMmGx9d6mmNmPO5sKxKmJh/F/ZpZPQ131zP0zPNzUcA/iQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nUww0E0seAWYLyU38L31S8LKvxwfoGZ379EmuSbDgG1dDX88dn
+	VrNpRhLbkIHnjrJCsF6PSlyRlhVXj3OyAxrl9GouMG8FOvz8ahcv73fBKiLKFHeLlJDH4Ki6Jbz
+	T59O6gDOMMMucWUJi8X++yZo4Hc9+4Y18J1pVoP/w/j1JD0gMljXQA6//rCNOFE2wSH2vtYJxdg
+	==
+X-Gm-Gg: AYBFou1voxjax6UjmccQO0KRIDrhZ1kaN1n+5zUPR1pkOF29plX4Md4n4Yp5Hf5/jIv
+	La1mJGvURtVVzKZmS8qk2HRdruYl4Zl6USspjj4oEG82EzVaemCHOZkfyGrOtTiNr/vV+F2CyBI
+	03lZMBvAAQYOjvNZKgrQ6ul1Fy/myQXdcV2YQ+RS3aooqJJPX/LhyN3hrLVxZrevdN0cqyGqFM9
+	rfJDQmnmAWc1ESDxNoPoe8sQ+n5rfjJO5oYAYtfltzvE1coJRWK79bKefEns+0rUM8U5XRl5ANj
+	PU0z2tHNdsmqMA32gO3A0IGqLs3Y0P5r5r3Wpaehfnhd5XyH7lO/lCrEjOs11nY4JIMzAK3rJw7
+	NmuojcP2TAXwi
+X-Received: by 2002:a05:620a:4620:b0:939:46d2:9673 with SMTP id af79cd13be357-93960ccf23dmr1194050785a.1.1788442520348;
+        Thu, 03 Sep 2026 06:35:20 -0700 (PDT)
+X-Received: by 2002:a05:620a:4620:b0:939:46d2:9673 with SMTP id af79cd13be357-93960ccf23dmr1194044185a.1.1788442519793;
+        Thu, 03 Sep 2026 06:35:19 -0700 (PDT)
+Received: from oss.qualcomm.com ([86.121.170.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce591f846sm57380275e9.1.2026.09.03.06.35.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 06:35:18 -0700 (PDT)
+Date: Thu, 3 Sep 2026 16:35:17 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] pmdomain: renesas: rcar: Make area arrays const
+Message-ID: <zldqedy4deednmec22sp4thap3fzyfyl5ldfgut72wfemoyhrj@lh2g7l5yvj6b>
+References: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYO1EPF00005023:EE_|TYRPR01MB12269:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 4690ff29-a549-43f4-e8f9-08df09bfff6d
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|23010399003|36860700016|6133799003|22082099003|18002099003|11063799006|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	9jNDc8jZmDUKSjNJzketFa42xaEAgRDno2yN7u8xexBZsAjc3a3RGYVB95aZvSP89D0o1Weo360cXFZ1G2cCmPFtbKvBoSsZnbP03awPykp2hn0rKikYSusCDeKeelcC5wbOXQZy0CyUlW0toldw2SlVY4PTL50ZKi4Ln8XOpbVcFnefmaBlkqNGYWs3cICF8ej5ktWxYdHysjcRrPvadqDFZCW/fPCiHSsn0m/w1cpT5V00At8SY2bPjPkYITAfdkT2pcNsks47kLwyJXIMMsTRDywaiK74wfS0M7e5hrWIWMe5/4lZ8GsT8e2dMb5Rwix+wLAP4nNYVgk2ko0F46ieBvWrs/BnC4kWtwBNo2oYPkGJGdKqzIXbf0g83ooCrxUJbpWsApEvyDS0h5zt/eVbMQovWEdYfN0FLzZ6QKE3OuhUSetd37N+xVFXxWmwno8hh+XWMifPBYEaobzwjGjTVheL/NEdYGWp3El651fbwFuxurURZvEzwGYcvD07l7DtfSrhwGB2khuT5SYHbX1xJN1ZUk/gcc/cli8bZPwFb7+ftIm+TujaWxgqXD2MINPbfHKB8h0PQoWWaC1hXLfiP01H4XOskU9oO1snDY3YHQ3wMXOxWGAoF8XNOxJb0AxXXpWEMkYwHGi5+ZHwb9Sc7iOX7kyTwfYLoJ3J3PZffDXbn4q/vTTrgZENstMXEP4kJS8HgaKG33s9a8rSUQ==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(23010399003)(36860700016)(6133799003)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	K/GlRdKV/jF9X0YwOYSbdnjOKZCJt3vw1NasQuJ74ap/4rPPSA1wBE8zpNOjolyU+qC6ZW8rcIM/zOu5ZLkwYQE+5pUuXx9Vtr128fsq6BJgABw2iQ44obCacAIyPFn8f6Wf3TPXZfDaUkTzgfA4F9pQXBtH3toT+klpLNozp4qm1afOLcP3XRRb6Ynix9lqdp40tFIjSMjGXWTh6AfAxX7JSQ+EVjTVcWntVRg5fBFD7NYofa9MI9izJ5JMpMuflWmA/iULZOkHYIrgQIS59jKMAprSwHXL6UycfRd6OM9cwYVebcbowm4k1ldVM5PKyWCDOssvgsZw84mULkEOUKQlTse6rHOPyqKLgzXCNuzqQDVEASQB0UcFutwVEpq2KAB2FPuROWPR7emkIdqfnnCQvHzR+4ljBG0FJ8eI1U2B5YrVTyxkT6pDjFOG5hr8
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 13:33:53.8193
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4690ff29-a549-43f4-e8f9-08df09bfff6d
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12269
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDExOCBTYWx0ZWRfXzTNgHEDj1uAe
+ jTvAd3KL0gokXDTyAOCggaM073ac1T2/W3uZuTUIiGcHo0A0OJ+m4yz7dIdCv5Z9xwqJyn2OoMZ
+ bKurVrbud3zQa/mJi3CMAc9yav2MpVI=
+X-Proofpoint-ORIG-GUID: HoU8rOd-bsv828jplVQrdXBZSkqBLFsX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDExOCBTYWx0ZWRfX9/2Ub011vRE3
+ YKLcpaQOHhwjFNVGrR68zXhu11OtdtYC3vc3bcVM4jDJFqBff+M6T7JujxrMi5K7mOXwKYx/3SS
+ WAzlIGJHNtDKIUIZRwtMQ3d7ygMATQ63pjF8sCNwoPpVOasGUTMcw645uYOlKXiBAevXhiyOZN2
+ gbGGvrkwyocDlqn3Y79/VBD7ZfssEEcQ1sOv428Um0EGCUcggXDwD/K6bYZBaxKYTXLUkVxT5Q3
+ LGjBlyTOpI/SERLRt0IKplU2N2giz81NyIp2qbjJrljzZfLws1SZpkW1K9M+Lktc8LH3QtVIVG1
+ 5M70FtjNvPkFnzX+OyXR5c/z8atHVH8THwqDjZnx25NY2OPoOEIvnjT0K1kz5QyC5RPAJvGXQiZ
+ JDoe2e/ObX3R4uRqJuJIx3SAM92uQOnxxTp0qF1ctnTgirILMrUW52sc85kFJRZOtlBh5Mhzvar
+ mwFOIDudBtsCZVqbaiQ==
+X-Authority-Analysis: v=2.4 cv=RsL16imK c=1 sm=1 tr=0 ts=6a997799 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=q7XEBjOi5DRkXzmV0jSBjQ==:17
+ a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=EUspDBNiAAAA:8 a=Ue1xspChCpTziZYzp1sA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: HoU8rOd-bsv828jplVQrdXBZSkqBLFsX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-03_04,2026-09-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609030118
 
-Add SoC-specific data for the RZ/G3L (R9A08G046) PCIe controller and
-register its "renesas,r9a08g046-pcie" compatible string. RZ/G3L reuses
-the RZ/G3E config init/deinit callbacks and power resets, with its own
-L1-allow syscon offset and mask.
+On 26-09-03 13:56:56, Geert Uytterhoeven wrote:
+> Arrays of rcar_sysc_area and rcar_gen4_sysc_area items can be const,
+> unless they are modified by quirk handling.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also increase the timeout in rzg3s_pcie_set_max_link_speed() to fix
-the "Failed to set max link speed" message seen on RZ/G3L.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Collected the tag.
----
- drivers/pci/controller/pcie-rzg3s-host.c | 25 +++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index b3531468ef38..3dffb85c6a47 100644
---- a/drivers/pci/controller/pcie-rzg3s-host.c
-+++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -1165,7 +1165,7 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
- 				 FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp) == ltssm_state_l0,
- 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI,
- 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
--				 PCIE_LINK_WAIT_MAX_RETRIES);
-+				 PCIE_LINK_WAIT_MAX_RETRIES * 10);
- 	if (ret)
- 		return ret;
- 
-@@ -2467,6 +2467,25 @@ static const struct rzg3s_pcie_soc_data rzg3e_soc_data = {
- 	},
- };
- 
-+static const struct rzg3s_pcie_soc_data rzg3l_soc_data = {
-+	.power_resets = rzg3e_soc_power_resets,
-+	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
-+	.num_pcie_controllers = 1,
-+	.config_pre_init = rzg3e_pcie_config_pre_init,
-+	.config_post_init = rzg3e_pcie_config_post_init,
-+	.config_deinit = rzg3e_pcie_config_deinit,
-+	.sysc_info = {
-+		[RZG3S_PCIE_CONTROLLER_ID_0] = {
-+			.functions = {
-+				[RZG3S_SYSC_FUNC_ID_L1_ALLOW] = {
-+					.offset = 0x3a0,
-+					.mask = BIT(8),
-+				},
-+			},
-+		},
-+	},
-+};
-+
- static const struct rzg3s_pcie_soc_data rzv2h_soc_data = {
- 	.power_resets = rzg3e_soc_power_resets,
- 	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
-@@ -2516,6 +2535,10 @@ static const struct of_device_id rzg3s_pcie_of_match[] = {
- 		.compatible = "renesas,r9a08g045-pcie",
- 		.data = &rzg3s_soc_data,
- 	},
-+	{
-+		.compatible = "renesas,r9a08g046-pcie",
-+		.data = &rzg3l_soc_data,
-+	},
- 	{
- 		.compatible = "renesas,r9a09g047-pcie",
- 		.data = &rzg3e_soc_data,
--- 
-2.43.0
-
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
