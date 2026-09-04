@@ -1,236 +1,169 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011027.outbound.protection.outlook.com [40.107.74.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95F039936D;
-	Fri,  4 Sep 2026 14:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788533233; cv=fail; b=i8gvpnSKNnHb6zud7dWvMURGQeRsu05UQoFhbVT/BMbyzW8OddZGo7tzuGldFOaQPoxFLLv+APw9L4PzqUUh9I2xxwKTcZuCACer8S/LVM5VDV5f36+WSQz/JuOKYwJT+eeQIN8KATUjj5rlF6oWk646m3c4EKfZA2FeeeLfAiY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788533233; c=relaxed/simple;
-	bh=siQpILacM5d3lssEgTJkdJPUcqfS76nD1zaq+gG5XdI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ds2fZ8e9vzV11CBA3GS8tlC8TyAzUnrbeZUVtCVWl67saBfaLTRgSoOxvUYv+Fs97sNPJ8bCn4Hm1by3vmQc+AReB2/nH3kRVjVYlEZKm2Ov33Kv1wttT9HnRJ5W2yhw3KrFPPWHDjcTR4g8484RFm1oGn6yACLuuOVqk3rpNT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iXn4vFgs; arc=fail smtp.client-ip=40.107.74.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iXn4vFgs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TfKHZTsxxmNDZtzJDtrEhnUj1aFtaqM1ArEGv31j0n6m64/yo7oiI044bji9xy7BDgMnRAkJtabQwnEvTAFrJDAeDM8sIsDBxvtvmIbHA29FHlab3MhSIDBoXGTHzhpxKWi6/rYvlIEj3rkY1BKjyAkzuc674aR9Qcys8drlbYeMuky2zb3ROWsDLNu+/cPXc3xx3pcQEBvIglbVqXc4lZkHqYrd059jEfxgs0fwUXSjxb8HFJx47XZpfETfs3deAycZkRJ8sY6I/u0XRCiv+s9CCoXgsKbtUmyUimvffyoo+72NDnrvvLmlDiBUG/M1iQW+Qz5da0Wy5aN3A/Tylw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WanCK+57qcwdmvsue6EltRckUkbTHqCWXddLrZt6Pw=;
- b=p47MJeYTMPqqlFIvHeVyYDNveUOVJFlgtzGNxQr3yKfWZ3rI1DA1pQd5cLOqghe46lZilQtoCDQq7FwHhI24FN43NWIcKybMOWj0f9MRA8NL9EERiUFU05JWJ5y2xPt5vmSm5lNLi17tZAhtSyNA7naHzGUBVKhI1n5Cz7JAiwF7OBkx3qP8ACP5yoIswznsRvYbXabbizLdC6JAYp81JwVX1t5hg2uO8TJTeFMq38nftQbiCpOvu7AvNEWEiv9Y+PiB+pda3XC2uNoCFoLDWhiJ9LvV9q8EpJxq0FkhkSsyV4XHonHiaNccl0A4WszWpCIs7UKqWi6e4yH7n0/gCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/WanCK+57qcwdmvsue6EltRckUkbTHqCWXddLrZt6Pw=;
- b=iXn4vFgsB8ay0o7WMP7fw+lvUoL6PUp+NawRLYk3iQBBRCEZO/aD8GXJI2smWjWRkb2FC8JgDpJs3BG2eX15c0O/RYPws7VATa9pxGHSL4QWFKa2GqT1b0rjKDPkVOQ/ow7iqNrItTnlAhKefPxFNkezT73y/DBUYrzepvvhCXo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY7PR01MB13605.jpnprd01.prod.outlook.com (2603:1096:405:1ee::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 14:47:09 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 14:47:08 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: wsa+renesas <wsa+renesas@sang-engineering.com>, "biju.das.au"
-	<biju.das.au@gmail.com>
-CC: Ulf Hansson <ulfh@kernel.org>, "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay support for
- RZ/G2L
-Thread-Topic: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay support
- for RZ/G2L
-Thread-Index: AQHdMMe9/TEErDJ1NE2Te++xaon3+La8rB0AgAHjRRA=
-Date: Fri, 4 Sep 2026 14:47:08 +0000
-Message-ID:
- <TY3PR01MB113460485B6D3FD62D027C2AA86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
- <20260820171657.62815-8-biju.das.jz@bp.renesas.com>
- <apk-J8is9MNm7I2R@shikoro>
-In-Reply-To: <apk-J8is9MNm7I2R@shikoro>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY7PR01MB13605:EE_
-x-ms-office365-filtering-correlation-id: 1519bc86-bbc5-474a-799e-08df0a936578
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|22082099003|38070700021|10067099003|11063799006|56012099006|4143699003|18002099003;
-x-microsoft-antispam-message-info:
- K8zmCrqjA8qrvPmsfgJc1y6Xz83LIocF2j+4jCskLa70896nEqNTOJJMRseHwXcFuEiAf78C4tG/5k+GnePTEFWWbJWyWZWkCJbfYEgJ9pOiHhp5Q1Av3GXDXgKUvJt+fF5p1FKjC+r7YJ5Gt1VcKAx09GpjMPp4Ytbr7Ah2pzBNS0RXFJGj9IjryFFmKnPB8Q5ChX8Vdcjcfko7Ex7GcSVyeFawNVAX/A6PO0nKf8uTbJZaiQ1y+nuHlXAcXlI/BOHo0vCuASUiJyLUFe5/hHBe8UUdOjB5yQfp1eW2fQrQ2zv1mH0woXKjf4oKjJuHyochY02X75QvqEr9Eg4GNiPUyiLwPI6zXv0Rlyp4hPIJNSnZCk455U+ZxRXAs15NzEcJVxk6DRsZHvA/kmEiV6o8NV/o3h09IU0PmEK+gg1oKIB/x7IVDyMKEwnJ6ACLWi6830A6KzRPX+HkusAgZ+1nCMPUuXoughoGP2IfKOZ/tA/f5deQUFozJZgS35KGArEvf5Ntm18AOD+BEWJDYQyLTiSDnAiW8hYvx4oHwaR0Bc0puOOh0g1Udo4rwobO1yRJa2tePf5reMnJDgG1Ym8GpKat6sNHsj8w/AWE1cKCdN2gibhSekUCh1lqP4hy4d9BChutuff0TzlysForB4VIWWHr8cua1u/oUZIt4T9lccwLtLF+kJ7vIAfW3Ck9MljX+q3chZTVXQ268hBs7S+Rj67TuL3z3kQ8p1qG0bs=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(22082099003)(38070700021)(10067099003)(11063799006)(56012099006)(4143699003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?NEhOVXCSIsLLOakhZ559OhMOJ3U0UxMMG5+/IFdZaYY5dlnQYy/0cN0mVwoS?=
- =?us-ascii?Q?RaJ8ZXAtLFVx5G50Cv70eb1uw7+b5nwvb1nXVVcPTbmzYYX36uK/s+Ag4uNi?=
- =?us-ascii?Q?cMfhTyxOJ0Htf3KNbOIDLry7xoeklDXyaWo26a6ITNQALYkUaLwsp5EUygap?=
- =?us-ascii?Q?TfboTD0gE+4D9m0ZS6TwodzOYZtaaJpf+QbdLOFQZ3XZfKDowjS25aliLZOM?=
- =?us-ascii?Q?gct7R3UPQbttisZcFszqEqM6s6b2aZX0gLv2gnWJMzYRZdtwSY050OOUTWHK?=
- =?us-ascii?Q?yqMgUgCtVZX5m+pWAgEbUOyNWzkuGGC82rwEtyz5nGZOgqaMMLtwjAb2h545?=
- =?us-ascii?Q?IE2edcCfcQRExux4LedxPLUEasOv1m93LN71sG0QCKbBq82VQLzAx35FAOXe?=
- =?us-ascii?Q?Avz2ls/MJrOp+0kMVEeEZA+ZXY1oPUQOTJlG3AE5RtA47c9nyzFayOOu6Zs7?=
- =?us-ascii?Q?1pXn50dXBfgnLLpT8T8e/4mxoUIuEa98M3zurvNXo40rJ3ASLoMCOcrsKfpq?=
- =?us-ascii?Q?aw+DVtG37qhMBU7x4NiTO6XR5ivep/WTuL8mg2hlnnVa9gTb2zkky/TEQtv3?=
- =?us-ascii?Q?PrpR1v8uakQeJwtxaqBG7gQhAy3sGl+o1G66s+4maiGh664H16kvDZziTUJ9?=
- =?us-ascii?Q?GIIdGmge7CH1z77fRoiUrdjqsSdhngHv16reSwRZHgXblt5fM8k4dL1qBaqT?=
- =?us-ascii?Q?nu2KJMzcJyIumRmF9++Q/4gHKi2rKcBEXOJb3Lu368kq6E9nkgAchFqDvUzV?=
- =?us-ascii?Q?s+Dnw7P0vva4Py9piW6a5T1s7WRk4iNBc2/ApBG9g+EsI49Q1Nce5P9FnPYk?=
- =?us-ascii?Q?MC0IOzmzKPrwM77C/RpQi3Fc2Ippij+y0Q5BkeiZg/nDCzLo+QnhbwC98VwW?=
- =?us-ascii?Q?AJeE+s5qM9rPiVXU+/rmGVyWhdNuJfC0DWwXu1oDN7+2OKpCY4+aX6VlB80u?=
- =?us-ascii?Q?zy9Ip5GoKuAF5LI9iDgwdQfKNGJxIXqhlqqkE9qMpWK2hD5eeb9ajgn9/5IP?=
- =?us-ascii?Q?ECuSpQe/Ny7ysgYTV7T01dmwEFJsQ/hSYZlhLPapuQrwAGZbsESSbXH2cxNF?=
- =?us-ascii?Q?myHXkR9nuXj6c1uLoTDfmaZr+3MPO3UabEC/oyzJPqz6ZPdakEpUq9xe111I?=
- =?us-ascii?Q?ct0L7kWDTMffuPynqkmvu4gTDFEUg0YquzkhiJTfALsAaK5/4SziklrQOg8T?=
- =?us-ascii?Q?9UilnOIZY8Q/rNjbqHrlB7pbGRjfbH9vRk8s5k/IN5zHXqz7iIvac8fwbQqd?=
- =?us-ascii?Q?iudbJB3gOTz1LIZ4xKsjigtVi20s5/Nf3ZWcG1tFG0evAB1wqOuoycNPoPqd?=
- =?us-ascii?Q?70PlXYs0H3AzqOMZLk5jKrLZE+l+WKPfIqpe52JVO52XngYZxgLTxRgPS7WX?=
- =?us-ascii?Q?iF5YE7mwKI9Ze3AceL7Y/4gR5E+acjVXucZXjE80i7CVBFozR5PiGgWEEV9l?=
- =?us-ascii?Q?aIEmviO+vxvfvqOQAHwNG8BBSJS4l85DYU7GkHF4tia60++Zxwi2STKRsphf?=
- =?us-ascii?Q?Y9a24JvWCvtqvpWf3zq7wKbsOpvPj6WHaUQRlnOZby1TYbGdApVPdLxvdqGC?=
- =?us-ascii?Q?gKuz9ZqZSHzH+LU8/rhxz6P/raY+uTqrqYzVtURWCBydfTFr80i8z+4YkAgu?=
- =?us-ascii?Q?mDPKZaYuy8+L+7sEbd52/Dh677Dk9Z7S3CkQRSOkZ2DsuyXo7uoYMFa/jC28?=
- =?us-ascii?Q?zFXJdHjxBUutz6rZnCDRvvqzAgvt0mGwFzLJulzDJPoeUcWwPjAUQd3HZSlo?=
- =?us-ascii?Q?85r9CggQgQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785944D2EDB
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 14:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788533985; cv=none; b=G0cr3ubMTdqD/QZyh+eatofv3Ki+gQf+YqyL7VO2beKema0j5iTtBHFoX9tqSYRSX+TskhkQ7V3dgq7PY8RUBBdDzywDTv29OD6N5wU5qRVxtrrMydPBTN4/+oQNxJpginSfkkm4wnq2U0iOoIqgTkBN8eh5JcJ8zOXiTRBjwUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788533985; c=relaxed/simple;
+	bh=ghXH2BJF4jduj/BjXt7Xua8zEA4xRov01HKEMrdgGlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ph661mWtaB/+ZdDAyJI8UKSWynOV1z60mH3bY8TOUXPnzs29SAcuthP/M8uMA712vnX4f8ZKwTKO7L1oDHvQFl9UuG2zxuAnBXxA+m7trznqKnKR3lHYPnwrojQ9gJdQ7o9VaKi9YEjpEXYxgtfIOiqSBIebbCJVLMv1D4++ToU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5c675de8e1dso495776e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:59:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788533982; x=1789138782;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=inqGTZSC3u1CgB7ts6dRXUQ1Jo9pob/IqZxPyHHBxZ8=;
+        b=R8W42z84hu8n4CKGoFhzVTT/eamnikR1Yw+nEF7gDZHRsLF02pud7rPkSdPuwjWzTx
+         /t/OG2U9+vVma6Up4NWmNGyS0U1DEYPsW9JfKo2mnkRPCLfut+B/gFs6luvqq58Cis9g
+         PeX2PBLZjbQCSC+Mw2tnpv7Rix95CqZ5MhWuJqAQpvWzvZfIALmsq8jc+WDgpNGKD9H0
+         T8ja2nG69l/0Sqpwpm1BgDaQPrOHSwguF4PANLUoWhXU/LFqynLylwX9g0mPw8052536
+         dce8+zpc+3cm8oBKG8nGJY6T8vKjJ0lu925lDm96rjn9UNhPk4LDI4RvxCYWklbxX+JA
+         kjvw==
+X-Forwarded-Encrypted: i=1; AKwUvBzzMH13yN+Jaj190ghGXilVLTSkzzxH3aJamKpmQMLHxS4BI7RFvBqdDtttPxXKjv/3OE1x9V7IxbUg/uxFVE2qJQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++napPFmZdyXOzO4WypHOVknrhrHAyoTkWbTnml79np+2doYNpC5
+	jsip5PNCfYfBd1317a1lKSmaQ5om9qcbFtyAbWWfKnVVc4T/YdMPnCSRum3S/rhE
+X-Gm-Gg: AYBFou3K1i9fYbCcZNyj/+Ygt9V6DNHi8niLQ2ZjjRmq1Jecsv8IBcqO4tR1JtOycwB
+	8t3dNb23q56x9daQUl3KIuvVq5XNiTvnhj+5lKlU+nx2gZk95ynHcPUcB040bxSDR78DWfnCz3r
+	+uTJNzqEAexgypTPzpLac/dnNAsOtK28xblmw7sOO/be3xBubV/vr7UV9KaDRnwti4FstUGvgeT
+	+GnMcfsaBO9zgsS+3kH3LBnEq5/PIu2r+oX/Cv6bCw7V0ta7Lvr6yQbLaBpKmaw1NOn+/Ijd7Kj
+	Mszo7ad236piCdvQ/kWimRmNwdi4VWre+9oRPhrclX0KlhGP/Kn7JS9PwRCeZz+UJzp2aSESu2J
+	/J53s3iH4l2R80D1B6244c1wmTHBpB2f5QDWZ3Ei60iJHfPIbeVI29sZfTbPFLmUotN9Dm4jVfi
+	VWv6NeS+U6/ebgSuxTtn7zSdWdxArZEZza/u6nWg+CPLfKa3dE/gu8X62YWBT58v6/VmmO3I4S2
+	ee1X6sS6buGoFyhSMgKx2ugAA==
+X-Received: by 2002:a05:6123:67:b0:5bf:b500:c4f4 with SMTP id 71dfb90a1353d-5c7ed285aefmr2910204e0c.2.1788533982098;
+        Fri, 04 Sep 2026 07:59:42 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec3874acsm2146002e0c.15.2026.09.04.07.59.41
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Sep 2026 07:59:41 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-97e76cabd96so349167241.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:59:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByLodUe1rJrNNGcKYBFuC0RlZMLQsUK5XLvSkL/tu6rrEMigdqwKVFuRCprOp64NPepH+UwQuGlJAd6zo3zMFZW6w==@vger.kernel.org
+X-Received: by 2002:a05:6102:2907:b0:778:9033:e337 with SMTP id
+ ada2fe7eead31-78a4a7186d7mr1918546137.7.1788533980738; Fri, 04 Sep 2026
+ 07:59:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1519bc86-bbc5-474a-799e-08df0a936578
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2026 14:47:08.8482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cUnm6suSVGdW8IunKPST9vBhC3qyydsyWryWr+wHDSbBVqkm7HTvZQBko/hQbm373/HTjvjhimKNrGBRZeMMVZSVeaSJvoZ9lOtBeejMRyA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB13605
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
+ <20260821150408.73829-3-ayman.chaudhry.kc@renesas.com> <b2f486b8-a391-41bc-8a7f-dc81c6752205@kernel.org>
+ <TYCPR01MB11865BD2FC199EFC6BE613A5DA2A82@TYCPR01MB11865.jpnprd01.prod.outlook.com>
+ <a7cc6bf8-706a-4b51-a0ce-d6246045d5da@kernel.org>
+In-Reply-To: <a7cc6bf8-706a-4b51-a0ce-d6246045d5da@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Sep 2026 16:59:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWuhpaEjzoLowag=RUMah-LjtSkmkDSJu_ZaYYHAHHcSg@mail.gmail.com>
+X-Gm-Features: AcwNN1XOIqok-XF1Ox7YMle_czDmXRTGGzFdPMRVImnv13pc2p3_Z9A1m7XbeZw
+Message-ID: <CAMuHMdWuhpaEjzoLowag=RUMah-LjtSkmkDSJu_ZaYYHAHHcSg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power domain definitions
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>, "magnus.damm" <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wolfram,
+Hi Krzysztof,
 
-> -----Original Message-----
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Sent: 03 September 2026 10:30
-> Subject: Re: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay suppor=
-t for RZ/G2L
->=20
->=20
-> > Thank you for your contribution! Sashiko AI review found 1 potential is=
-sue(s) to consider:
-> > - [High] The new function renesas_sdhi_set_hw_adjustment_delay() access=
-es SCC registers via
-> sd_scc_write32() without checking if priv->scc_ctl is initialized.
-> > --
+On Tue, 1 Sept 2026 at 16:15, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 01/09/2026 16:11, Ayman Chaudhry wrote:
+> >> From: Krzysztof Kozlowski <krzk@kernel.org>
+> >> On 21/08/2026 17:03, Ayman Chaudhry wrote:
+> >>> This patch adds power domain indices for the Renesas RZ/G2M v3.0
+> >>> (a.k.a. R8A774A3) SoC.
+> >>>
+> >>> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/power/r8a774a3-sysc.h
+> >>> @@ -0,0 +1,30 @@
+> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>> +/*
+> >>> + * Copyright (C) 2026 Renesas Electronics Corp.
+> >>> + */
+> >>> +#ifndef __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+> >>> +#define __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+> >>> +
+> >>> +/*
+> >>> + * These power domain indices match the numbers of the interrupt bits
+> >>> + * representing the power areas in the various Interrupt Registers
+> >>> + * (e.g. SYSCISR, Interrupt Status Register) */
+> >>> +
+> >>> +#define R8A774A3_PD_CA57_CPU0               0
+> >>> +#define R8A774A3_PD_CA57_CPU1               1
+> >>> +#define R8A774A3_PD_CA53_CPU0               5
+> >>
+> >> No, value is 2. Or not a binding.
 > >
-> > --- Patch [7]: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay
-> > support for RZ/G2L --- commit 4e31e96fb980d0bb6400d3a60dfcc29dca208dcc
-> > Author: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
-> >
-> > This commit adds hardware adjustment delay support for RZ/G2L SoCs
-> > during signal-voltage switch. It introduces the TMIO_MMC_TUNING_DELAY
-> > flag and applies a delay by writing to SCC_TMPPORT2 based on the regula=
-tor voltage.
-> >
-> > > diff --git a/drivers/mmc/host/renesas_sdhi_core.c
-> > > b/drivers/mmc/host/renesas_sdhi_core.c
-> > > --- a/drivers/mmc/host/renesas_sdhi_core.c
-> > > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> > [ ... ]
-> > > @@ -350,6 +316,55 @@ static inline void sd_scc_write32(struct tmio_mm=
-c_host *host,
-> > >  	writel(val, priv->scc_ctl + (addr << host->bus_shift));  }
-> > >
-> > > +static void renesas_sdhi_set_hw_adjustment_delay(struct
-> > > +tmio_mmc_host *host) {
-> > > +	struct renesas_sdhi *priv =3D host_to_priv(host);
-> > > +
-> > > +	if (!(host->pdata->flags & TMIO_MMC_TUNING_DELAY))
-> > > +		return;
+> > The values are pulled directly from the R8A774A3 hardware manual and
+> > as a result are not sequential.
+>
+> So not really a binding.
+>
+> > This is compliant with header files for similar devices, so if we were to change
+> > the approach now it would probably make things more confusing for the
+>
+> No, it is not compliant. Maybe it is done the same way as old devices,
+> but feedback was provided already for a few years, so plenty of time to
+> accept it.
+>
+> > user and it would also require some special handling. Given that this is
+> > compliant with the style for similar devices adopting the same bindings,
+>
+> It is not compliant.
+>
+> > it's easy to understand as the numbers come straight from the HW manual,
+> > I would actually prefer if we could stick with this numbering scheme if
+> > possible.
+>
+> Nope, as explained many times already for obvious reasons. Otherwise
+> provide me clear pieces of code which you bind here (as in DT bindings
+> header purpose).
 
-This check is available only for RZ/G2L+ SoCs.
+I agree all numbers < 32 match a documented hardware bit, so technically
+we could use the numbers directly in DTS.
+Note that unlike e.g. interrupt numbers, the power domain numbers
+appear multiple times in DTS, and are also present in driver code
+(drivers/pmdomain/renesas/r8a774a3-sysc.c).  So having defines means
+having less magical numbers in driver code.
 
-> > > +
-> > > +	if (host->mmc->ios.signal_voltage =3D=3D MMC_SIGNAL_VOLTAGE_330)
-> > > +		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x0);
-> > > +	else
-> > > +		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x1);
-> >
-> > [Severity: High]
-> > Is it possible for priv->scc_ctl to be NULL here?
+BTW, due to similar pushbacks against offseted interrupt definitions,
+we are now ending up with duplicated defines in .dtsi and .dtso files:
 
-This issue can happen only if there is a severe memory corruption in the sy=
-stem during boot.
+    arch/arm64/boot/dts/renesas/r9a09g077.dtsi:#define RZT2H_IRQ8   24
+    arch/arm64/boot/dts/renesas/r9a09g077m44-evk-cn15-lcdc.dtso:#define
+RZT2H_IRQ8  24
 
-> >
-> > If an incorrect device tree binding or a hardware fault causes the
-> > controller to report a version older than SDHI_VER_GEN2_SDR104,
-> > priv->scc_ctl might not be mapped during probe.
+So please let us have our symbolic definitions ;-)
 
-I agree if there is a memory corruption, any check can lead to
-Unpredictable result.
+Gr{oetje,eeting}s,
 
-> >
-> > However, renesas_sdhi_start_signal_voltage_switch() is registered
-> > based on TMIO_MMC_MIN_RCAR2 and calls this new function, which writes
-> > directly to the SCC register via sd_scc_write32().
-> >
-> > Could this cause a NULL pointer dereference during card insertion?
+                        Geert
 
-This can happen only if there is a memory corruption, in that case the belo=
-w check
-passes for all the SoCs.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-if (!(host->pdata->flags & TMIO_MMC_TUNING_DELAY))
-		return;
-
->=20
-> I agree. We should ensure in probe() that either
->=20
-> a) TMIO_MMC_TUNING_DELAY has a valid SCC or bail out otherwise
->=20
-> or
->=20
-> b) clear the TMIO_MMC_TUNING_DELAY flag if there is no SCC present
->=20
-> What do you think?
-
-I agree, we can add defensive check in probe().
-
-TBH, I am not convinced with Sashiko report here, but please recheck my com=
-ments
-and provide feedback
-
-Or
-
-I may be completely wrong, please correct me in that case.
-
-
-Cheers,
-Biju
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
