@@ -1,224 +1,354 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023103.outbound.protection.outlook.com [40.107.159.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E1E4772B8;
-	Fri,  4 Sep 2026 11:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.103
-ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788521617; cv=fail; b=EKK48/pCUFeqFGPkmAHnyjQvClHe8j7I+cmDzadmuTybTESpGwvKnQS2VdU3T0QyIXyd1DTEbF40H/4EtBRscd1UmkuijJmUDqRL/JGXf/ntyLVctZvQlu98oZDvkevq9H0XUivRylfQikSDr1YBdiV0lSk3c6byf0meytb3mQM=
-ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788521617; c=relaxed/simple;
-	bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=icjxSaJ+U236NcTI/Nf3rQQz4O6MQY7yjhKdmHfpjXO4kQDEE9lPgUpSwMM8/dktoligATaudMEwtPFKxTZtlD++YFba2cm5tDLD8sV+ZO5AINV3H/5FdZ6B3WbuuaJ8wRksEQym0/lcNmy1+vrvMVw/LbRSoIhOvbsSxfeZKy0=
-ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=T6XF8/yP; dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b=T6XF8/yP; arc=fail smtp.client-ip=40.107.159.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAF1372B27
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 11:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788521711; cv=none; b=U+9/6s396Tgc/uVhTftFWRaaY0zjHEVG8bPL5El/z6bRvqJ+qEeRdf+O98/XLC9CgrJAQ1FJcHo+7AHsjwjav2wNiI8E0r8T7Oh+zpmW2OeI/DP60CbjR5GruVCs6KGO4pnTAN883e6sPHAjy4uZcxrKpr4zLJbqNqgigcqLlLs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788521711; c=relaxed/simple;
+	bh=gYeX8/by2IAXM7fkKgKFaKJtBSBh9U1IZ88eVXMXYKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u0+3VqUyH5wb0Fk16xIdmIdxNCMhGfd7uK+mTuYWIQ88JPdYqUBRW+tsfYpnDSpJkYZ5eC5+NQSl2+jetakbgjUAd+EE406DY94XHwj8V/Neu2+Hv34kG3uUdGJtzoDne4ewE2XiJKvqvL7Xe0eTM5ov0C1HvH3//7P6Njfo3uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibCHsCtG; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="T6XF8/yP";
-	dkim=pass (2048-bit key) header.d=solid-run.com header.i=@solid-run.com header.b="T6XF8/yP"
-ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=x+Y3hqzzwOWGaOidwutMAZab7hQgvvcZq6Ke5dzemmUNY8USpTp/VCCvHpWcVfYPR/eI//0mjdzBofxww4EojK+a2omZR1PwIfIX/0eTXcXJhuSGrwiRA8rq72i5PeNSuPk3Rkf6TXOjMBirY0jCDH2iLk0tA7ie2tlI9Vj/d4t2KUu5OKAZ97a+JVf74MbYBWdlGlF3IwNQIVtpAOlaB54qd1plzRv8Oj3oQKvrAGLH3Ir8g9J8p6Z0l3dps5omeU1t9CRmOcnR69MJgO5/Rng1nYo6sjhcBk8xyCpnAaa0Bq0gWe8B2YmYKvnRKsOYUVM4ICk/cUf5gFiBIu8GrQ==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
- b=uzsuhIJJybjR9SN34EMP338s1H2l94iU+7Wo5ONXae8mOd4oLXAlBlydDBmborW7dpKgC2xgB5mvNn9K+BPXwtjdMMRip8r7iozIiSTp4RKl7Rg0OinACwUMAD4xIjlU8DknC6HhXyt7Sr9V3ulrFoYG0bok+eKhFlbrGqeagen7w8L8IH8WHt1Buf06qoNOywrWIZAHumAnCAfZmpdGa0KtDnDS3BM9uFyFE42gCMGnjgf85sGz4mudapfj6ciL/LhNFce7jJz/6/ndmQbpbxlaE+X6MoSblsfZ3QXZ8pLetxzh2VsIxNd6ajf3CEYSYI623H25PIouVe0KTMHqsw==
-ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
- 52.17.62.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=solid-run.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=solid-run.com; dkim=pass (signature was verified)
- header.d=solid-run.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=solid-run.com] dkim=[1,1,header.d=solid-run.com]
- dmarc=[1,1,header.from=solid-run.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=solid-run.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
- b=T6XF8/yP219NGsUlysk1f2kSLQGoZ7DLIDkfF+TQ51xZ5OSsIqL93sh66coXt/pwsQivZLZ/Dwb8dlvyvExNOJLKtGEj6/iqTGCl0DHhVLJ93gvzo4edsQ16ijKL1gFg/nBb6TdvW8r0rDHBgEH7u3j+H59c38ORekH1sFfm4qvnx8jFLiSVlcOAnnadzj6aIz/CgoQAYwssoSfvqFrHOtEkYYspI4SBah6eTPV2TR9Vvog7sTDX4bbxhLfoANwmH/7k4jUfpKTN9GXF5HftKyH7R701kdnDH6w5L0y+Oo99scApTH10HgvRJT32cj+F4hKnTpKwtNmv4I94n5wqbw==
-Received: from AS9PR05CA0024.eurprd05.prod.outlook.com (2603:10a6:20b:488::23)
- by MI9PR04MB532906.eurprd04.prod.outlook.com (2603:10a6:290:87::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 11:33:29 +0000
-Received: from AM4PEPF00027A67.eurprd04.prod.outlook.com
- (2603:10a6:20b:488:cafe::5f) by AS9PR05CA0024.outlook.office365.com
- (2603:10a6:20b:488::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Fri, 4
- Sep 2026 11:33:29 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
- smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
- header.d=solid-run.com;dmarc=pass action=none header.from=solid-run.com;
-Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
- designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
-Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- AM4PEPF00027A67.mail.protection.outlook.com (10.167.16.84) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.8
- via Frontend Transport; Fri, 4 Sep 2026 11:33:29 +0000
-Received: from emails-7008659-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-5-203.eu-west-1.compute.internal [10.20.5.203])
-	by mta-outgoing-dlp-765-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 2C0C781DD3;
-	Fri,  4 Sep 2026 11:33:29 +0000 (UTC)
-ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
- s=arcselector01; t=1788521609;
- b=AiJlWpsmj2m9Nuj2OWGGVXYh6MQUwsbmE2b8acSlEI0SkXZceAhikpiLKju/Qcpxq3AYY
- +7Modg3t2pUvIPS9ye/4Mmut9Qxqev4T/uoy7YPQIA3/9cVPK5hkQv6Y1X/gigcvwq3+YOk
- FQojTTDJ4Fq7uqu2VsXyiGHq5w00CkY=
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
- d=checkpointcloudsec.com; s=arcselector01; t=1788521609; h=from : to :
- subject : date : message-id : content-type : mime-version;
- bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
- b=Ciy0tnzZbHYoQq1Dy/9WBdRv5Zeg+8R8fT9C/7s7k+SBmgz9B8srRYDszg9uVRQItLjn1
- 4WUBYUbWhfpNU4JhSaL5Rr7vIARz59ECrz7BE1Cl45Ehjepi6aJEYGqOnjjid3eISRy5AOe
- kiHZfJPfXa6HZ86ojKLIqh59/vSm7rM=
-ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com;
- arc=pass;
- dkim=none header.d=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=solid-run.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
- b=T6XF8/yP219NGsUlysk1f2kSLQGoZ7DLIDkfF+TQ51xZ5OSsIqL93sh66coXt/pwsQivZLZ/Dwb8dlvyvExNOJLKtGEj6/iqTGCl0DHhVLJ93gvzo4edsQ16ijKL1gFg/nBb6TdvW8r0rDHBgEH7u3j+H59c38ORekH1sFfm4qvnx8jFLiSVlcOAnnadzj6aIz/CgoQAYwssoSfvqFrHOtEkYYspI4SBah6eTPV2TR9Vvog7sTDX4bbxhLfoANwmH/7k4jUfpKTN9GXF5HftKyH7R701kdnDH6w5L0y+Oo99scApTH10HgvRJT32cj+F4hKnTpKwtNmv4I94n5wqbw==
-Received: from MMZPR04MB400504.eurprd04.prod.outlook.com (2603:10a6:190:28::8)
- by GVXPR04MB10517.eurprd04.prod.outlook.com (2603:10a6:150:1e1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 11:33:15 +0000
-Received: from MMZPR04MB400504.eurprd04.prod.outlook.com
- ([fe80::2f52:2d22:c7b3:4292]) by MMZPR04MB400504.eurprd04.prod.outlook.com
- ([fe80::2f52:2d22:c7b3:4292%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 11:33:15 +0000
-From: Josua Mayer <josua@solid-run.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linusw@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, Lad
- Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Jon Nettleton
-	<jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, Yazan
- Shhady <yazan.shhady@solid-run.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- input-enable pinconf
-Thread-Topic: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Allow input-enable pinconf
-Thread-Index:
- AQHdOtE+gVzmYmXL+Ea9R+ytXkurZ7a7P8yAgAFWXACAAZ/tgIAAEUMAgAAAwQCAAASdgA==
-Date: Fri, 4 Sep 2026 11:33:15 +0000
-Message-ID: <1098d7f9-13bb-49da-9aa7-c42b1a33089e@solid-run.com>
-References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com>
- <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com>
- <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
- <0435939c-2836-480d-9ba2-8de4c5e22cc2@solid-run.com>
- <CAMuHMdUE3+qBdy2CoSQMzJ1iePiv0PSTfOjxHAqgp78i_XpMPQ@mail.gmail.com>
- <c0a37ff2-b133-4bd9-82c6-732f58e2c5ec@solid-run.com>
- <CAMuHMdUOqA_mNQ6-+rxcTxiJSWDBQbiaLqYAtVEko6T7DLgOdg@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdUOqA_mNQ6-+rxcTxiJSWDBQbiaLqYAtVEko6T7DLgOdg@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-x-ms-traffictypediagnostic:
-	MMZPR04MB400504:EE_|GVXPR04MB10517:EE_|AM4PEPF00027A67:EE_|MI9PR04MB532906:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86c87504-a740-465d-a108-08df0a7857d6
-x-cloud-sec-av-info: solidrun,office365_emails,sent,inline
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|23010399003|1800799024|7416014|10070799003|366016|38070700021|10067099003|4143699003|18002099003|22082099003|3023799007|56012099006;
-X-Microsoft-Antispam-Message-Info-Original:
- J4jpTQezmOZ7oRNjzM8poeQbn69r2M0EQiw2zIvj72j7afjnqnKdv6EJ5aiHAkktVI5MFfSQH3ETHReOtXaaZtTBvo8qPHO4Snj1HwUToaii7qF2EKagJ/hd5pUzF16DzAVdFntzVbX+TX/8BjFgW4lrNcKbd7NbgnDH8/EZ5sawXgeasg2NAetTHtLYMRzsta3BavDh9JxB9BQxzsI56WrXYMD3jA2+Joeez+4PslO/Mn63Rgs+7h0BNhpXjrlyYGX3pIuabwYfFkzvEDvpEkwPEYeLUUHSdsVYu+ns/IJspdwAI/HHoIw8HFj5IUeWzCg1G3xxuYiAdehH+fMaBs4Z0UeAVrxUTDAIUS/35Y5kZHjmigpkVpIiC+EyrmeRViesrb/22iAfDtq32kjozu7HcGid/KVHZgzW3NH7t+WgLnQafUCAqS3PEH+RgDwG0PwIgq0axPkaUQkw85cJ0hMNzku9l3El4P/SwrNVHYS/xkfMGzXk3TTUK8PH3vcQ7EmWE/GFGXoVDxlqVnTxOWF9pBv7IJHNaHbdmZrRQkkd7xPd+eWq25ZfJNg0Xptoza0nE4SgqPUDxY6dcl8NuJAw17iTSYLFJGJQo9ejfJkvprOuh97Xbf+7lHUN5Vw3V+MKLBJwoGh459nuK4u9Ybx6ZafgABC8OcuEUDZ+TTd7upVSmk+Mn2BQBRFotS1Wh8g6jzfwShQt1E5J2ojaA6WsitMHuKNIJHCqoOcJlds=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MMZPR04MB400504.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(1800799024)(7416014)(10070799003)(366016)(38070700021)(10067099003)(4143699003)(18002099003)(22082099003)(3023799007)(56012099006);DIR:OUT;SFP:1102;
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3650087BEF4F804EA17024292EFDEFA0@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibCHsCtG"
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-469d76ce704so763715fac.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 04:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788521706; x=1789126506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ewfDI1ZgGJ9f7uoMqmTZW/ns6RfSEti1ZKdNzm+2NtA=;
+        b=ibCHsCtG1xGOFDfJZOH+EgTXnubn+SAYSn89gUP8pvj657i9KbtxGvme4d8nUWeNqR
+         ymQdZfiUICWUclLbs1CeoiRPpKu6nWazTdS7bIXxJFMWcs/iIu6YtieJdlTDaHvUY3M2
+         IAN4BuiWgF2Opkym2Mu1xNL9PhAYLh2mCVfvEDUxngZ9bRxgfUiSwVxpfVCEWKdsZ1qF
+         Wj5nrQqrVBbqVtD8ZePbpoMrr7dLqf7s5LF4Y1bC2BNKYLLbKqx5oSfpeE9MwKhlgs0n
+         FvkCLk8WUc2cLMlk8Z6RZaUTiapFvYLDbg2raXRU1RfqRLeK2RWNnvBKowN5v/io89Pv
+         GzVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788521706; x=1789126506;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ewfDI1ZgGJ9f7uoMqmTZW/ns6RfSEti1ZKdNzm+2NtA=;
+        b=dHep9jZmLXQ+Fedq7ht++6PiFGND+AafbbJTj+LqhwFryBCrgG+r+zMGinEd00loBp
+         U8gPisS7lR1c3WZhTC96mTvCKpjFpdw2/9dZxfi6TbugVkzeDOwpeHb/HJpQ0dEDauR9
+         KEFVwyzzQysELEeGvO6BcfYc4OogDeogwuy+cBKSuOGpWb8RCKt/l0+tl/0aHLecTtDu
+         XqUpI5iBgOzteP5PSvod9Oy26oWZiB/8FZQI/waIi5iuDbfSdZ/voYW5u1CBoZc7kOGJ
+         yClBMt3WUaTnXcLfpOYMg7HPUONh4ZIK8MDcEqhoBYNtXynPCPQ5XyjBB4mPdALgDjPb
+         x6kw==
+X-Forwarded-Encrypted: i=1; AKwUvBxynKTGczI3o3GYr81VcYOXstMzvsrLai87P4RPqae+05rb2qqMsWvtzjsMO6at1KvDLzldcGmU3uA1rak2u8ApjA==@vger.kernel.org
+X-Gm-Message-State: AFuF++leByWpyhQJoSE7S3+bDw04D/kJeeSV+yT4QU1j5bNcFA2ZbTxE
+	15p7wyFYMN56D1jqi7BViVPNh7fExG1zar8udMVPjuqY3scSKomQMhSF
+X-Gm-Gg: AYBFou2zLqL64jOjcvB8IrPGXOBeG4s2zytQZSI3SRsCK1zwKgZL3iSfwSY6E8QDYfN
+	2iS6vXmxkDlYaq2w0KTZdDB2nju7IqhosTigDRwYQV+0QWTBP8IDuNXA4lzOOLdbznlw2V3dbvd
+	a8UaVEtHT85wAcO5DRZk8yFE2s+qAgjfFqQDyaLyYdt1Hx65QB9GS1RMsCQJH0b1c7A1bHPOGcS
+	aMyzazxbGo6AxbfBC64TTYQwaiNj3cTg6PobhQS6EcO4RwPTfo4DeoayhMzPdPU4cPs8ntEj8pz
+	6HFPTHTim+WeKitj0Rp/QHcB6M8ueNJR25kQdldIX/OficFUftE1dfvWDLC+LSgnHTHghEM2Y5X
+	wWxyZrmDvXv7JMJ/sFWv9oxg+IkFFd5wb5x6EuIcYbnN9WfuiD9AKgtF9TkxqM+EAsRiGK/90x7
+	PrV7edsolfopqg4KnlKIqUPnTcHvuBRMNwAMDnX2UJHYJUkW3l92xets9bulWa59B64TNs6corL
+	Kfz/J/lAEpAi+w=
+X-Received: by 2002:a05:6820:1787:b0:6b7:83c5:fdee with SMTP id 006d021491bc7-6b783c60345mr1409156eaf.47.1788521705811;
+        Fri, 04 Sep 2026 04:35:05 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-143243a9388sm6054536c88.10.2026.09.04.04.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 04:35:05 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH 1/3] media: fix typos in comments
+Date: Fri,  4 Sep 2026 17:04:42 +0530
+Message-ID: <20260904113450.15838-2-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20260904113450.15838-1-hemanth.selam@gmail.com>
+References: <20260904113450.15838-1-hemanth.selam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked:
- WWrOgsfu3JRxUycFaR6x9F+Npeu9Fa1oycObBY8JfhW668WdwkTqRddKCy22icoQqhv4HTdB7e1jGanoWVvXR0fX1ti7o88jm7yz85SpwgQfFDCuOO1c9kPH4W5Lx6+x3cd8UdcqJeOSrH2jtFTyZ/vE9LPDvNiQa865gN46mjtSDm86cdEtGlQbV/nVilkKfgnX07o7GubgwHpX3juidc7VX8QCJAjJNACRW+/JaR99GE3fxKe7ru5C/0JUCDKuBvo1j62qQ9RPxzXDQB5baumqhgggvZCQE/1xnP+RxC2LRdf0qvEQx9IcxLCKRnpKyUhz99NBPCkzuEzrFeVQsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10517
-X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: 079f0d7a5eee4bab99a9a79167ecf7aa:solidrun,office365_emails,sent,inline:c8e7ae9b5f88038d8ddafba974ceae05
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lXPvbvFkHgMQe99eBOe2r8UDoaT/RIkyhXfTeOClocHCrn+ctvVSvDU1mOZF7Ldl95sLRYvFynul7Ld7L8CjzEtFM0rswP4WOIf+ZmF4eLFy14YjmOnCyburkNKaImxLxuMdtOI85Ui0X1a/TdnStjgv1W9AqBn2g9GCsV4Pvec39nzvBCUVZYzukpagx05x6zG0g7vpjC7+cuoAWyMAwojg4aDWOHq70IkL10cT/WNLf5EYl7FnJdO+6fjquhqGm3p6eJ63XcIMJA+/kmCI5uqE7hztqtNUGSZStNUIBTNnOV/DkAzuS5IQy8cvUBsrt3YpLuB0dQVlSjIKowB5Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAfRcNsoAkObbhf8BSj0EGHicqXSkAjYwXd7MCCkYb0=;
- b=d0UJTD8IFLr3AUVnsfTwU3EHOHlAC7xEhTaO5ZbcZerPobn9tekBExVWlHAKCUSCaWYLpCSkn4bUodyk7zTWn3SYWH6Li5ow0UaX+CUv0397ePJhkJz02xvXWs6O/mzCCGLR8wUiBl8+/IOqwfaIFs3ZknQl0Xapp4jiQap5+6ugjTO+lTclHPqM0kjINud0jjbqai2MNuRM8gM7JxOSpW8BahPWq2tUB142mIvmf+eQlPJHsWSnRX33sQUwlY8oo6ITF+W5KAjZJc43DIlHw6Zqd60q1DGpqkqpy3xLmJ18KhOUHnY1+C1tb0V7w2wEIyxIZol+1kVCDjYVzuDtuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
- dkim=none header.d=none
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM4PEPF00027A67.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	0c1ecda2-739a-464f-15e3-08df0a784f88
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|14060799003|23010399003|36860700016|376014|1800799024|7416014|82310400026|4143699003|10067099003|22082099003|18002099003|3023799007|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	TEFo3uDFNE2x5P1/KzMlP4fln9ABkamJoAQvg5Q+pqUfcxp8yzA+8nVnQqm1WexAu+sR6tAhf4vds/A6i1tP+n+MZhoVGDx8/7DDnJOxzJOeVjJrAOy8k++Te3JqmYbKaiSNpy4QG7MFCqyrm/r93km8qIclj1LivklrnYgGMvMCQIb+EvuGtX64xuKY6F4wt43x+ILXTlR8X5ZGzz3SV6MMcwC0Wbtwllb0ETsr7N8mBCE+eshNNB+x/AJIliUXGl6hwdJwHFOLONXUG8ETJsmC/5bU7rGBI0+xRal5qtxo7zidbtzcBXMwZVihdnDmby5ETsBwJk2ZEwCv2drLGaLQeQE0wAtlb0Dk8EAGM4JmFoP13YkCrFwfcfFe55/azJMg2GN6b/fDOC0EypRE9PPAqa8VBlvzZtm0Xc9GEdi0Jb7upmNNoC9Q+xAYdDUmgKaCiZoJYiqJcZ4Bdo4fO51OcpeHf8MHXMQKRk83VCAunt/2v9KiFYD5lgX8iJXWReyW1vS3L8HdlMhxKsf9Z7sy5sXM5yQT+dncix6SCwPiR9tCHpjLBNbf0XHHqdpkJendDlPaC9K8nueh25z9UswQsH9UofUzomYRCT9BCgNwuEtzuQ4yfAqD9M7M5ZxRIPNKH+iC4/3VDUrcH5QalLOgodytawpHkf1L7m0pUhw=
-X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(35042699022)(14060799003)(23010399003)(36860700016)(376014)(1800799024)(7416014)(82310400026)(4143699003)(10067099003)(22082099003)(18002099003)(3023799007)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	pFHq0ATwC77FswRmXj4+Hz51MimdPr8dg4vcrpKcVooGa5VYvvOQYu8CTB4ZSlCyl7FMxtxMd8aS7oCjhEuOOCTg2KNM7DF1zSgo+AMmVKl+SsR00XH+4U/K0uy5TdpGbbma8i1qD50VW3Aiy9pTQsp9LsBIFgmebkSG3v5028/BmuqMzq4GlMyCn70nom+79B+g8csyvn33KqQFHinxMv4Bg/tQmYax7p+ese/zHP9dVegeENs0gzRuDd/ays7MJ5xDJWwquQwig844Y2nshY1WbG48nErSbBbJ2CFpbzDOoFe0Pe6qDG4bWtW4GBTd1xL2e0uoPh37AkzswZKpJrb296ZHHVvntr3YwOTxVoqVigS4lySmcnv581eD2QCS4ztVxcTvA95w1w5a0CItk1dWxpjFY1HWdcQCZisP4LGNxYuHx6zUcp6NGPqTrfv3
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 11:33:29.4935
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86c87504-a740-465d-a108-08df0a7857d6
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A67.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MI9PR04MB532906
+Content-Transfer-Encoding: 8bit
 
-QW0gMDQuMDkuMjYgdW0gMTM6MTYgc2NocmllYiBHZWVydCBVeXR0ZXJob2V2ZW46DQo+IEhpIEpv
-c3VhLA0KPg0KPiBPbiBGcmksIDQgU2VwdCAyMDI2IGF0IDEzOjE0LCBKb3N1YSBNYXllciA8am9z
-dWFAc29saWQtcnVuLmNvbT4gd3JvdGU6DQo+PiBBbSAwNC4wOS4yNiB1bSAxMjoxMiBzY2hyaWVi
-IEdlZXJ0IFV5dHRlcmhvZXZlbjoNCj4+PiBPbiBUaHUsIDMgU2VwdCAyMDI2IGF0IDExOjIzLCBK
-b3N1YSBNYXllciA8am9zdWFAc29saWQtcnVuLmNvbT4gd3JvdGU6DQo+Pj4+IEFtIDAyLjA5LjI2
-IHVtIDE0OjU4IHNjaHJpZWIgTGludXMgV2FsbGVpajoNCj4+Pj4+IE9uIFdlZCwgU2VwIDIsIDIw
-MjYgYXQgMTo1MOKAr1BNIEpvc3VhIE1heWVyIDxqb3N1YUBzb2xpZC1ydW4uY29tPiB3cm90ZToN
-Cj4+Pj4+PiBUaGUgbGlzdCBvZiBhbGxvd2VkIHBpbmNvbmYgcHJvcGVydGllcyBhbHJlYWR5IGlu
-Y2x1ZGVzIGlucHV0LWVuYWJsZSwNCj4+Pj4+PiBidXQgaGFzIG9taXR0ZWQgaW5wdXQtZGlzYWJs
-ZS4NCj4+Pj4+Pg0KPj4+Pj4+IEJvdGggcmVmZXIgdG8gdGhlIHNhbWUgaGFyZHdhcmUgcHJvcGVy
-dHksIHNldHRpbmcgYW5kIGNsZWFyaW5nIGlucHV0LWVuYWJsZS4NCj4+Pj4+Pg0KPj4+Pj4+IEFk
-ZCBpbnB1dC1kaXNhYmxlIHRvIHRoZSBsaXN0Lg0KPj4+Pj4+DQo+Pj4+Pj4gU2lnbmVkLW9mZi1i
-eTogSm9zdWEgTWF5ZXIgPGpvc3VhQHNvbGlkLXJ1bi5jb20+DQo+Pj4+PiAoLi4uKQ0KPj4+Pj4+
-ICsgICAgICAgIGlucHV0LWRpc2FibGU6IHRydWUNCj4+Pj4+IFRoZSBTdWJqZWN0IG9mIHRoaXMg
-cGF0Y2ggaXMgICJBbGxvdyBpbnB1dC1lbmFibGUgcGluY29uZiIuDQo+Pj4+Pg0KPj4+Pj4gQnV0
-IHdoYXQgeW91IGFyZSBkb2luZyBpcyBhbGxvd2luZyBpbnB1dC1kaXNhYmxlLg0KPj4+Pj4NCj4+
-Pj4+IFdpdGggdGhlIHN1YmplY3QgZml4ZWQ6DQo+Pj4+PiBSZXZpZXdlZC1ieTogTGludXMgV2Fs
-bGVpaiA8bGludXN3QGtlcm5lbC5vcmc+DQo+Pj4+IFRoYW5rcyENCj4+Pj4gSSdsbCBmaXggdGhl
-IHN1YmplY3QgLi4uICENCj4+Pj4NCj4+Pj4gKCJkdC1iaW5kaW5nczogcGluY3RybDogcmVuZXNh
-cyxyemcybC1waW5jdHJsOiBBbGxvdyBpbnB1dC1kaXNhYmxlIHBpbmNvbmYiKQ0KPj4+IE5vIG5l
-ZWQgdG8gcmVzZW5kLCBJIHdpbGwgZml4IHRoaXMgd2hpbGUgYXBwbHlpbmcNCj4+PiBSZXZpZXdl
-ZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4+PiBp
-LmUuIHdpbGwgcXVldWUgaW4gcmVuZXNhcy1waW5jdHJsIGZvciB2Ny40Lg0KPj4+DQo+Pj4gSSB3
-aWxsIGFsc28gYWRkICJvdXRwdXQtZGlzYWJsZSIsIHdoaWNoIGlzIG1pc3NpbmcsIHRvby4NCj4+
-IFRoYW5rcyENCj4+DQo+PiBIb3dldmVyIEkgYW0gcmVhZHkgdG8gc2VuZCB2OC4gSWYgSSBkcm9w
-IGl0IG15IHNlcmllcyB3aWxsIGZhaWwgZHRic19jaGVjay4NCj4+IElzIGl0IG9rYXkgaWYgSSBk
-byByZXNlbmQgaXQsIGFuZC9vciBzaG91bGQgSSB3YWl0IGFuZCBjaGVycnktcGljayB5b3VyDQo+
-PiB2ZXJzaW9uDQo+PiBzbyB0aGF0IGl0IGlzIGVhc2lseSBkcm9wcGVkIHdoaWxlIGFwcGx5aW5n
-IHdpdGhvdXQgY29uZmxpY3Q/DQo+Pg0KPj4gT3IgZHJvcCBpdCBhbmQgbGl2ZSB3aXRoIGZhaWxp
-bmcgZHRic19jaGVjaz8NCj4gSWYgeW91J3JlIHJlYWR5LCB0aGVuIHBsZWFzZSBzZW5kIHY4IChh
-bmQgYWRkICJvdXRwdXQtZGlzYWJsZSIpLg0KPiBUaGFua3MhDQpBY2suIEkgd2lsbCBzZW5kIGl0
-IHdpdGhpbiB0aGUgaG91ci4NCg==
+Fix typos in comments, reported by scripts/checkpatch.pl using the
+misspelling list in scripts/spelling.txt.  Only touches comments, no code
+changes.
+
+Assisted-by: Cursor:claude-opus-5
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+---
+ drivers/media/dvb-frontends/drxd_map_firm.h                   | 4 ++--
+ drivers/media/i2c/ccs/ccs-data.h                              | 4 ++--
+ drivers/media/i2c/hi847.c                                     | 2 +-
+ drivers/media/i2c/ov772x.c                                    | 2 +-
+ drivers/media/i2c/wm8739.c                                    | 2 +-
+ drivers/media/pci/cx18/cx23418.h                              | 2 +-
+ drivers/media/pci/saa7146/mxb.c                               | 4 ++--
+ drivers/media/platform/mediatek/mdp/mtk_mdp_ipi.h             | 2 +-
+ drivers/media/platform/mediatek/vcodec/decoder/vdec_ipi_msg.h | 4 ++--
+ drivers/media/platform/renesas/rcar_drif.c                    | 2 +-
+ drivers/media/radio/si4713/si4713.c                           | 2 +-
+ drivers/media/usb/dvb-usb/dib0700_core.c                      | 2 +-
+ drivers/media/usb/gspca/w996Xcf.c                             | 2 +-
+ .../atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a_types.h    | 4 ++--
+ drivers/staging/media/av7110/av7110.c                         | 2 +-
+ 15 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/drxd_map_firm.h b/drivers/media/dvb-frontends/drxd_map_firm.h
+index bdcc63576df1..a6585e53d879 100644
+--- a/drivers/media/dvb-frontends/drxd_map_firm.h
++++ b/drivers/media/dvb-frontends/drxd_map_firm.h
+@@ -10,8 +10,8 @@
+ 
+ /*
+  * Note: originally, this file contained 12000+ lines of data
+- * Probably a few lines for every firwmare assembler instruction. However,
+- * only a few defines were actually used. So, removed all uneeded lines.
++ * Probably a few lines for every firmware assembler instruction. However,
++ * only a few defines were actually used. So, removed all unneeded lines.
+  * If ever needed, the other lines can be easily obtained via git history.
+  */
+ 
+diff --git a/drivers/media/i2c/ccs/ccs-data.h b/drivers/media/i2c/ccs/ccs-data.h
+index 638df69804ec..522466b81929 100644
+--- a/drivers/media/i2c/ccs/ccs-data.h
++++ b/drivers/media/i2c/ccs/ccs-data.h
+@@ -160,7 +160,7 @@ struct ccs_pdaf_pix_loc_pixel_desc_group {
+  * @main_offset_y: Start Y coordinate of PDAF pixel blocks
+  * @global_pdaf_type: PDAF pattern type
+  * @block_width: Width of a block in pixels
+- * @block_height: Heigth of a block in pixels
++ * @block_height: Height of a block in pixels
+  * @num_block_desc_groups: Number of block descriptor groups
+  * @block_desc_groups: Block descriptor groups
+  * @num_pixel_desc_grups: Number of pixel descriptor groups
+@@ -197,7 +197,7 @@ struct ccs_pdaf_pix_loc {
+  * @module_rules: Rules for the module
+  * @sensor_pdaf: PDAF data for the sensor
+  * @module_pdaf: PDAF data for the module
+- * @license_length: Lenght of the license data
++ * @license_length: Length of the license data
+  * @license: License data
+  * @end: Whether or not there's an end block
+  * @backing: Raw data, pointed to from elsewhere so keep it around
+diff --git a/drivers/media/i2c/hi847.c b/drivers/media/i2c/hi847.c
+index def01aa07b2f..710328d7984f 100644
+--- a/drivers/media/i2c/hi847.c
++++ b/drivers/media/i2c/hi847.c
+@@ -2187,7 +2187,7 @@ struct hi847 {
+ 	/* Current mode */
+ 	const struct hi847_mode *cur_mode;
+ 
+-	/* To serialize asynchronus callbacks */
++	/* To serialize asynchronous callbacks */
+ 	struct mutex mutex;
+ };
+ 
+diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+index be3ba284ee0b..041f3b02e222 100644
+--- a/drivers/media/i2c/ov772x.c
++++ b/drivers/media/i2c/ov772x.c
+@@ -122,7 +122,7 @@
+ #define LC_COEFB    0x4B /* Lens B channel compensation coefficient */
+ #define LC_COEFR    0x4C /* Lens R channel compensation coefficient */
+ 
+-#define FIXGAIN     0x4D /* Analog fix gain amplifer */
++#define FIXGAIN     0x4D /* Analog fix gain amplifier */
+ #define AREF0       0x4E /* Sensor reference control */
+ #define AREF1       0x4F /* Sensor reference current control */
+ #define AREF2       0x50 /* Analog reference control */
+diff --git a/drivers/media/i2c/wm8739.c b/drivers/media/i2c/wm8739.c
+index db62bafb447c..9eaf48f1c3a2 100644
+--- a/drivers/media/i2c/wm8739.c
++++ b/drivers/media/i2c/wm8739.c
+@@ -217,7 +217,7 @@ static int wm8739_probe(struct i2c_client *client)
+ 
+ 	/* reset */
+ 	wm8739_write(sd, R15, 0x00);
+-	/* filter setting, high path, offet clear */
++	/* filter setting, high path, offset clear */
+ 	wm8739_write(sd, R5, 0x000);
+ 	/* ADC, OSC, Power Off mode Disable */
+ 	wm8739_write(sd, R6, 0x000);
+diff --git a/drivers/media/pci/cx18/cx23418.h b/drivers/media/pci/cx18/cx23418.h
+index 22486f39bcda..4ee45be757cb 100644
+--- a/drivers/media/pci/cx18/cx23418.h
++++ b/drivers/media/pci/cx18/cx23418.h
+@@ -24,7 +24,7 @@
+ #define CX18_CREATE_TASK			(MGR_CMD_MASK | 0x0001)
+ 
+ /* Description: This command destroys an instance of a task
+-   IN[0] - Task handle. Hanlde of the task to destroy
++   IN[0] - Task handle. Handle of the task to destroy
+    ReturnCode - One of the ERR_SYS_... */
+ #define CX18_DESTROY_TASK			(MGR_CMD_MASK | 0x0002)
+ 
+diff --git a/drivers/media/pci/saa7146/mxb.c b/drivers/media/pci/saa7146/mxb.c
+index d759e8a87e24..129d41c1862b 100644
+--- a/drivers/media/pci/saa7146/mxb.c
++++ b/drivers/media/pci/saa7146/mxb.c
+@@ -37,7 +37,7 @@
+ /* global variable */
+ static int mxb_num;
+ 
+-/* initial frequence the tuner will be tuned to.
++/* initial frequency the tuner will be tuned to.
+    in verden (lower saxony, germany) 4148 is a
+    channel called "phoenix" */
+ static int freq = 4148;
+@@ -429,7 +429,7 @@ static int mxb_init_done(struct saa7146_dev* dev)
+ 	/* some stuff is done via direct write to the registers */
+ 
+ 	/* this is ugly, but because of the fact that this is completely
+-	   hardware dependend, it should be done directly... */
++	   hardware dependent, it should be done directly... */
+ 	saa7146_write(dev, DD1_STREAM_B,	0x00000000);
+ 	saa7146_write(dev, DD1_INIT,		0x02000200);
+ 	saa7146_write(dev, MC2, (MASK_09 | MASK_25 | MASK_10 | MASK_26));
+diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_ipi.h b/drivers/media/platform/mediatek/mdp/mtk_mdp_ipi.h
+index b810c96695c8..9744e00b0066 100644
+--- a/drivers/media/platform/mediatek/mdp/mtk_mdp_ipi.h
++++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_ipi.h
+@@ -56,7 +56,7 @@ struct mdp_ipi_comm {
+  * @ipi_id        : IPI_MDP
+  * @ap_inst       : AP mtk_mdp_vpu address
+  * @vpu_inst_addr : VPU MDP instance address
+- * @status        : VPU exeuction result
++ * @status        : VPU execution result
+  */
+ struct mdp_ipi_comm_ack {
+ 	uint32_t msg_id;
+diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_ipi_msg.h b/drivers/media/platform/mediatek/vcodec/decoder/vdec_ipi_msg.h
+index 47070be2a991..c2c2a3a63dfd 100644
+--- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_ipi_msg.h
++++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_ipi_msg.h
+@@ -53,7 +53,7 @@ struct vdec_ap_ipi_cmd {
+ /**
+  * struct vdec_vpu_ipi_ack - generic VPU to AP ipi command format
+  * @msg_id	: vdec_ipi_msgid
+- * @status	: VPU exeuction result
++ * @status	: VPU execution result
+  * @ap_inst_addr	: AP video decoder instance address
+  */
+ struct vdec_vpu_ipi_ack {
+@@ -98,7 +98,7 @@ struct vdec_ap_ipi_dec_start {
+ /**
+  * struct vdec_vpu_ipi_init_ack - for VPU_IPIMSG_DEC_INIT_ACK
+  * @msg_id	: VPU_IPIMSG_DEC_INIT_ACK
+- * @status	: VPU exeuction result
++ * @status	: VPU execution result
+  * @ap_inst_addr	: AP vcodec_vpu_inst instance address
+  * @vpu_inst_addr	: VPU decoder instance address
+  * @vdec_abi_version:	ABI version of the firmware. Kernel can use it to
+diff --git a/drivers/media/platform/renesas/rcar_drif.c b/drivers/media/platform/renesas/rcar_drif.c
+index 0844934f7aa6..bd67e8e16f53 100644
+--- a/drivers/media/platform/renesas/rcar_drif.c
++++ b/drivers/media/platform/renesas/rcar_drif.c
+@@ -464,7 +464,7 @@ rcar_drif_get_fbuf(struct rcar_drif_sdr *sdr)
+ 					rcar_drif_frame_buf, list);
+ 	if (!fbuf) {
+ 		/*
+-		 * App is late in enqueing buffers. Samples lost & there will
++		 * App is late in enqueuing buffers. Samples lost & there will
+ 		 * be a gap in sequence number when app recovers
+ 		 */
+ 		rdrif_dbg(sdr, "\napp late: prod %u\n", sdr->produced);
+diff --git a/drivers/media/radio/si4713/si4713.c b/drivers/media/radio/si4713/si4713.c
+index 0c0354566b0a..150d07f6b319 100644
+--- a/drivers/media/radio/si4713/si4713.c
++++ b/drivers/media/radio/si4713/si4713.c
+@@ -667,7 +667,7 @@ static int si4713_tx_tune_measure(struct si4713_device *sdev, u16 frequency,
+ /*
+  * si4713_tx_tune_status- Returns the status of the tx_tune_freq, tx_tune_mea or
+  *			tx_tune_power commands. This command return the current
+- *			frequency, output voltage in dBuV, the antenna tunning
++ *			frequency, output voltage in dBuV, the antenna tuning
+  *			capacitance value and the received noise level. The
+  *			command also clears the stcint interrupt bit when the
+  *			first bit of its arguments is high.
+diff --git a/drivers/media/usb/dvb-usb/dib0700_core.c b/drivers/media/usb/dvb-usb/dib0700_core.c
+index 1caabb51ea47..5d2fa7037c00 100644
+--- a/drivers/media/usb/dvb-usb/dib0700_core.c
++++ b/drivers/media/usb/dvb-usb/dib0700_core.c
+@@ -560,7 +560,7 @@ int dib0700_download_firmware(struct usb_device *udev, const struct firmware *fw
+ 	fw_version = (buf[8] << 24) | (buf[9] << 16) | (buf[10] << 8) | buf[11];
+ 
+ 	/* set the buffer size - DVB-USB is allocating URB buffers
+-	 * only after the firwmare download was successful */
++	 * only after the firmware download was successful */
+ 	for (i = 0; i < dib0700_device_count; i++) {
+ 		for (adap_num = 0; adap_num < dib0700_devices[i].num_adapters;
+ 				adap_num++) {
+diff --git a/drivers/media/usb/gspca/w996Xcf.c b/drivers/media/usb/gspca/w996Xcf.c
+index 79baa0c1a031..700c39fe307c 100644
+--- a/drivers/media/usb/gspca/w996Xcf.c
++++ b/drivers/media/usb/gspca/w996Xcf.c
+@@ -407,7 +407,7 @@ static void w9968cf_set_crop_window(struct sd *sd)
+ 
+ 	if (sd->sensor == SEN_OV7620) {
+ 		/*
+-		 * Sigh, this is dependend on the clock / framerate changes
++		 * Sigh, this is dependent on the clock / framerate changes
+ 		 * made by the frequency control, sick.
+ 		 *
+ 		 * Note we cannot use v4l2_ctrl_g_ctrl here, as we get called
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a_types.h b/drivers/staging/media/atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a_types.h
+index b8206d2f3d31..97e63082d254 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a_types.h
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a_types.h
+@@ -102,8 +102,8 @@ struct ia_css_3a_grid_info {
+  *  awb_lg_*: Thresholds to check the saturated bayer pixels for AWB.
+  *    Condition of effective pixel for AWB level gate check:
+  *      bayer(sensor) <= awb_lg_high_raw &&
+- *      bayer(when AWB statisitcs is calculated) >= awb_lg_low &&
+- *      bayer(when AWB statisitcs is calculated) <= awb_lg_high
++ *      bayer(when AWB statistics is calculated) >= awb_lg_low &&
++ *      bayer(when AWB statistics is calculated) <= awb_lg_high
+  *  af_fir*: Coefficients of high pass filter to calculate AF statistics.
+  *
+  *  ISP block: S3A1(ae_y_* for AE/AF, awb_lg_* for AWB)
+diff --git a/drivers/staging/media/av7110/av7110.c b/drivers/staging/media/av7110/av7110.c
+index 06c43b5f8a87..432404eceaea 100644
+--- a/drivers/staging/media/av7110/av7110.c
++++ b/drivers/staging/media/av7110/av7110.c
+@@ -2347,7 +2347,7 @@ static int av7110_attach(struct saa7146_dev *dev,
+ 
+ 		/* RESET SAA7146 */
+ 		saa7146_write(dev, MC1, MASK_31);
+-		/* autodetection success seems to be time-dependend after reset */
++		/* autodetection success seems to be time-dependent after reset */
+ 
+ 		/* Fix VSYNC level */
+ 		saa7146_setgpio(dev, 3, SAA7146_GPIO_OUTLO);
+-- 
+2.48.1
+
