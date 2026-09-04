@@ -1,86 +1,114 @@
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8A483BE3
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 13:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E206E28506C
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788526812; cv=none; b=YFizcjdHiBiwLAcR9LHAKOEcgYR49Ztyzq+cHLMoexxCQqFAJiHtHP8TdelhbmY2fTDIn/dZq/eqINLrP8sBPYM2h/IOfSVI+V+1ldvukhJ01KcChHsaQe9SOkNFMRS2btXESrHre2JPAvEt0DqrkqphTUcWKbG8XAzU3mkbt2I=
+	t=1788526892; cv=none; b=af+6n5rNrm+QKaIDZ49MbnT5tvSufX2s3u3YV9dn3TI7x1bqp0pLhvvr0JcV4RMPw9EWO9H9G/ColFBl/DsRODqdvsGEWGBBWKUlXSFw0iWlH2Bijg37Y6k9upPKYvIGX44k+j1ulTkUkXulQyBJqsEY/tDc5/UCMIIvgoyuxWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788526812; c=relaxed/simple;
-	bh=b+jsB/SxR9B4doq4j9X1OsN7P3v9KOS03k/c0WlWdws=;
+	s=arc-20240116; t=1788526892; c=relaxed/simple;
+	bh=jUfy3jDPDO1gYgSYzIH9kVV64CrYvNurBewZo0IJOhg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CS5JZb5POcwlNphlhtcPaA/cAmlwHX06mTs4UEyGIFuCAfRAk6HBpNgE/7NQQHQ6c/whBFcNOF3H+HZKmjVg0iPTaoLW1NocX7w5vCzt3B5SamY0rfMGKdnvUQrJUSMgRlA71XIAeO0CtL0fbml1o25CuLY+7SPE0IQd0TA86qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=JLSUmOi3mn4NQRBIFfKxvGXL4a+ZTrv1AeQySpEdm7RA/2g4giyJOD68KSmfHJbbfPntdQ49JMAOePLb1GFAWKVQp8kT8EM9T5AZaY3sY8XfSmVnuUPzAuJTeKIyhvWLPodxvjo62050ao6xglLXKMUQY7xSX8jKVCNzIrwjSwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9808f46d89eso432715241.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:00:11 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-963f63fe025so357372241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:01:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788526810; x=1789131610;
+        d=1e100.net; s=20251104; t=1788526890; x=1789131690;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=d7GgODhxIjczQScbRESMbRZWtgZnkVvNT/nl7txte6o=;
-        b=laBlIwkj0stGSMmZvy+5I9AJljclCZjLJVp0C7k7rJoFhqLELUKe5eQJcEI8IaZifS
-         hGaMJtagkc3n4nDHB9Fifi3Et99tShzdBSibu+xSz67w1CU3QB7YwSDSIcQVy16nwtDg
-         qzOeWJ4EOIAdhEqHgq7sBKTyEWEKjOF2gHGsPTFM3Mb3MhUjTMEj2wXndUI2GkXSVK2H
-         NNsyvT02FCPAonznBU9Ui17RAma2JWfF4ekQ7nUIoaz280+O8JoNMondQDWhgG1UyPSF
-         jF0t4XIsnao5AKcd8jkGmfU40FRYsTvGFIbkRbZb5VP/re6VKSKd4HUMLOpShcMY5H6J
-         z5XA==
-X-Gm-Message-State: AFuF++m7WtNlfJpWpDutBAdudleuMck6cbkueaaV5EYwozyCmrOD4XIF
-	rjMVBjOFKUpprNl8U6JvTqaaup8CCvKQ3PgZzV7nZZqpl73ip25NDKWovuT49Z+xats=
-X-Gm-Gg: AYBFou0XssR3Avj0677RNa9qXcFcxKD2+5PxxplCnszwdAoAgISD+bBFkEQB86HKXyM
-	jUDQYuwK2rbffBALmDkLYS38AZXbhy2j74oEpNzjYJ6cDxMD5Hf4xanenYlNjWvev/To/g+QOd6
-	+8YqqQR0zSz76RVlAoG5DAv6Qm4Pk1QXATBou5ns92gnno8ejVt+Q4z6QJNFygywd1bO46x0teH
-	iDFjyli4RV/FTM/PPgQiqvHsXxeFQswbY+ooGhU5IqhJL/lIoiVAJf30xFiDLNQadekaLgEahKY
-	r7GtJHXJzfBDY7c8igs93R1SHC2p8haxOnb9HdGswltPvuzQ6qCLVfrhTL/eGAvO1xjBF54B4rp
-	E5oCCvUK0YccCrBwkeAGXTxqLZhke4aHsnnS7mSLd0sd7ZEFIrRipricR7Up8rQrWWaruDtj6vP
-	vZeslRC2s3hnc6OuogxSBn07yINcVGsT9iIPGHJzVxwypEi7/lPVmVw7YJCoxcW9fiaPUwrOGce
-	jI7YOSi0lOFRN5rdnwxBIK/Vw05Z/Phv0Jp
-X-Received: by 2002:a05:6102:2c8e:b0:785:b0ac:54bb with SMTP id ada2fe7eead31-78a4a9eebcbmr1757216137.7.1788526810333;
-        Fri, 04 Sep 2026 06:00:10 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1d832sm1501830241.4.2026.09.04.06.00.09
+        bh=BhKln9SUSjqstm0nn2XiJI7ZCrh52DpPOYmNB+vWzdE=;
+        b=EoJs+Y6DYbqgzDE9MAJM3H3gdzkFQUoZC/mdRwENdWW5K2ufOLwdDN431IxvVzJjpu
+         v3rOexT1MyUQa/jXAU8HWzY93KxAHNrBNB7gu/8F4tdau9d3R14T96BvTC31yRXJqHqz
+         FTnD/ld0IJJgqaIrNhx9PeGPYEoVdXDXt0tBN0JtrWLTs4CKo7qLIRMo5j6qTsrPBGFa
+         36NrsskaAUQhvmEUE25FkoAef2Af34qAsy67TU0ivT/hBF9RvsIIe48fNio2dLmvGvuO
+         +j95D4t6ExL3jV1w+y6U+FEyg1i2YQvKvgdXN9OSQJZGbCHWTN+dv0jky3TbNZlZctA+
+         LgYg==
+X-Gm-Message-State: AFuF++kBEzisCcPW2kqLxnCojWqwVHWJ7kDWh7qfYHBsachWMq+/g+q+
+	BWi0U2uXJxPakckJoawvdvNNHasYn39wAaCbTwk5s6uHLD2/Zddm6D18T19VQRkhjvg=
+X-Gm-Gg: AYBFou0LI6ILo3Dn1BK0YDpkgxl+pcRUVJFFI058SfjZ8JdckXwGQ5XogPjg4NTViAR
+	rUdRpTBfr+ixWHOKkCAm9c3t2qK7PKhtFOTgDrJYrqfT5AZfXbDD4CDwUppnANwcD0DmllMmlNy
+	8L2jbahrNpq4xTsZbYbaTpq0MM2N9ozZeYEU6zAnKZu39FbJfCYWozhNTStsUC/NK2PNGb4DHwN
+	g8JbSZRQk3Lac+9o3B2E11YT/e/P8bfcV1hIgtBbuxsOH7SS45wfIv4gsVNJ+MW5hCKmV3cnUbj
+	Pl9Yv8ZrfWDgqspdAY513PGYLO9K6KWl/ROmPV1yKYi9dXMmgZimAwMwTnw12ZLuSULDRKlR8+J
+	jtgzMj93RqVXvhZllDgnrqPKU4XOlFAeHN9Xj03JlKhqc6hRwGb05xGN6mhKnc4eamQ19fwaIdu
+	/lIKEvaC+DFGoXp27PNNUf3d9VnmVP7GniVY19XpWVK6IWWjA0CeXEsdFudokFAJHeTQNln6tx8
+	hSlQMlfXM04bOzUgkUsuH65wb8zUUBTvgJb
+X-Received: by 2002:a05:6102:2d04:b0:785:eb33:87a8 with SMTP id ada2fe7eead31-78a4a883885mr1516164137.4.1788526889612;
+        Fri, 04 Sep 2026 06:01:29 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1d832sm1504823241.4.2026.09.04.06.01.29
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 06:00:09 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-777c2d69446so688716137.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:00:09 -0700 (PDT)
-X-Received: by 2002:a05:6102:5487:b0:738:1ef6:51b9 with SMTP id
- ada2fe7eead31-78a4a96d8c3mr1844791137.5.1788526809409; Fri, 04 Sep 2026
- 06:00:09 -0700 (PDT)
+        Fri, 04 Sep 2026 06:01:29 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-74ab6c88052so322912137.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:01:29 -0700 (PDT)
+X-Received: by 2002:a05:6102:2d04:b0:785:eb33:87a8 with SMTP id
+ ada2fe7eead31-78a4a883885mr1516158137.4.1788526889240; Fri, 04 Sep 2026
+ 06:01:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com> <20260825141542.30901-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260825141542.30901-9-wsa+renesas@sang-engineering.com>
+References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com> <20260825141542.30901-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260825141542.30901-10-wsa+renesas@sang-engineering.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 14:59:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTw+rJ4fx+vuM_QdgXE4Bxo2LPX9y0NH3kd7sM2oKcug@mail.gmail.com>
-X-Gm-Features: AcwNN1XaEv9Hx-TPYsSjIBjhBVyHhLCKgIrxqOUUTGt6324d-7yS_6EXvarXIyU
-Message-ID: <CAMuHMdWTw+rJ4fx+vuM_QdgXE4Bxo2LPX9y0NH3kd7sM2oKcug@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: renesas,rcar-dmac: Add support for R-Car
- X5H SoC
+Date: Fri, 4 Sep 2026 15:01:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWAL+B7RchaV+PMDT7XbQvXz1WZ82B0EZXcH8VLBEbL+w@mail.gmail.com>
+X-Gm-Features: AcwNN1X59X7feyO-WMq28mmKv3eBAzn4dNno6YGSjElkpqCwSZMQqdTmBUfjuRo
+Message-ID: <CAMuHMdWAL+B7RchaV+PMDT7XbQvXz1WZ82B0EZXcH8VLBEbL+w@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dmaengine: sh: rcar-dmac: Add support for R-Car Gen5 SoCs
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
-	Frank Li <Frank.Li@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org
+	Frank Li <Frank.Li@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+
+Hi Wolfram,
 
 On Tue, 25 Aug 2026 at 16:16, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> Also add the familiy compatible because X5H is the first R-Car Gen5 SoC.
+> Gen5 is very similar to Gen4. Of interest here is that it has a SMMU
+> instead of an IPMMU, so we don't need to set the flag for a workaround.
+> Make the module description more generic while here.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -2012,6 +2012,11 @@ static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
+>         .has_ipmmu = 1,
+>  };
+>
+> +static const struct rcar_dmac_of_data rcar_gen5_dmac_data = {
+> +       .chan_offset_base = 0x0,
+> +       .chan_offset_stride = 0x1000,
+> +};
+> +
+>  static const struct of_device_id rcar_dmac_of_ids[] = {
+>         {
+>                 .compatible = "renesas,rcar-dmac",
+> @@ -2019,6 +2024,9 @@ static const struct of_device_id rcar_dmac_of_ids[] = {
+>         }, {
+>                 .compatible = "renesas,rcar-gen4-dmac",
+>                 .data = &rcar_gen4_dmac_data,
+> +       }, {
+> +               .compatible = "renesas,rcar-gen5-dmac",
+> +               .data = &rcar_gen5_dmac_data,
+
+I expect this can just point to rcar_gen4_dmac_data, once we have
+confirmed the IPMMU issue does not impact R-Car Gen4.
+
+>         }, {
+>                 /*
+>                  * Backward compatibility for between v5.12 - v5.19
 
 Gr{oetje,eeting}s,
 
