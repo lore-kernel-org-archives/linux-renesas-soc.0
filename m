@@ -1,193 +1,149 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB6248C3E9;
-	Fri,  4 Sep 2026 12:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48399477E57
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 12:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788525260; cv=none; b=BOqMHZTrrRsyW1ZEsJoIWcU4u3PQ/smfBazfW7d/M1XX1U15bma3xNNJJ4Ns3AwmI2XsHc4SUrE+O7O707koyx8YS9XLYMyQJQ5kRgmBjCOfG+B/9cNeXYqJzhckjEdj04Gaa6BvVOVOvqB825NBMcsKwxz9Km0disFXshJBCRI=
+	t=1788525871; cv=none; b=S1nLE18zFYrXCqaToDsUy5mjWBEM/Q2yHXiuBBVRbTwZ6OpDGzmxtq6SRsKHKP2VkURtzqExBY7m1tIxOXPxO79jOLNLpSPo1BS3uWBdHzpJrQuuTzqOlfIUlD33/nH51Q0pXNc1ev1mFdXgJGcYSwP/O0GTwwgjmmBcKaiacfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788525260; c=relaxed/simple;
-	bh=4c7Krb3S4ZZ17EpNtME83ACwkw+9XKh09GENnHQO7jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHWDIoOZYIT+pLsSIdBxebHe7KLN861VuKx74WpWdUBgReE3IFY0GoL7AVbIQfKCrJxYUu08DFcAH/8ocovWtQxHCgz/vweUvF5p7lhsqAN00oo2013Mg7nFpmgRljvq6WGH/YQAojvmZdxr86iI3APerExLnKVR5/sQflf81NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UZhb/9LX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UZhb/9LX"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D97C92023;
-	Fri,  4 Sep 2026 14:32:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1788525162;
-	bh=4c7Krb3S4ZZ17EpNtME83ACwkw+9XKh09GENnHQO7jo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UZhb/9LXvNGfyCliwic1zTpddMYdYQ5Bq8VoujVhv0Vqnw1KU1Nv6OYSZe20LDG86
-	 AXvw0Z4rV6B3HbGm0XsTtBSA1VHiHWCVQnVRHzAPhbXc0WR5qVi8MWpQBHR43V9gXR
-	 0twaCkh2lgoqYe45ruy+H2zgqpE/9ojUxCZrorW0=
-Message-ID: <a64864e0-3f10-4f81-b304-c45ef932817a@ideasonboard.com>
-Date: Fri, 4 Sep 2026 15:34:08 +0300
+	s=arc-20240116; t=1788525871; c=relaxed/simple;
+	bh=rHB7rehoOlZbxstD6lbTIinMurFJh6tn3L0YtYVOH+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=drMweSwScdHpybAxwVbZTxuQ4jE2k68EE/aUpZodpuCW83gxdRgtW0+EG9+ObcVsB/XGHtIzckSVTFUXIfOshKFSaqo5gubPvZYj4JZhRGzG8u2W1sAXq4X9op1zi0nxgvaARWLQSF/rlN7BgOeUCVxNR/7yJj/SRtW23Rklf/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-782af6c753cso945798137.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:44:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788525867; x=1789130667;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=X7GYFb8ObjcCzbJF1jAT3MEmY5+IWm6xkKfaRZugkok=;
+        b=aJjAoHN9ziBWmBujXmwmIrvXUS8ctcUf9UvxGFTM9mcJlMm0Skp1Z3C/QLAylnc1er
+         AT41YFpyFWWTTWPLZ4QqVfGnOrn0PxkXM0iRhJydk0Cz5QOpoM4nq3NHEIvav27aLEVm
+         XEGNjihrQb5T5qGdOLfdXKXDpiz762yRXvfpJ+DX/4SMeqzj0MriPO6mktvhNy051Qt/
+         5kVT1X+YoQ+Iy280Jvp6PCd3Cnei9RKAhRm0mwS9Fjp6rkwYJ70KbicolYUWUvj6+Z5i
+         TAgNb30ySZ5qjo6cGeb61kVzsiY25AeM1YwmQA9Pjdtr1J1ps9D5NR0K4Pe1hkW/S4K2
+         cIaQ==
+X-Gm-Message-State: AFuF++n3OLHeECYz30Cs5g4YPE+UPuSYXJRc3djI5CYh0qpN7yAR2LML
+	yRkTeMoN9NVYE2DfRLx7w0+p4Bq6h1zXAAUAZR+rx4K+jk1qph1UJTpvD458gRE5tdI=
+X-Gm-Gg: AYBFou0Uy3c7otWuKb8J3E9PmaCRhDchogXGNY1025lnu5nyu0EwAmCEiqgDtu1+bKd
+	X0HuQNaeFp12RXmkmFeB2KoQiMq4BFzFw1h4uqLWxi/j6DdajBiZFd4XwKJoqSGV71MxKeY+CEw
+	vLFNorfkUyb86m0qiUZfmFimt5NpJ+CpiijWr26UiyaWuvvTFOHxg0uYbujrRdEdqjNZ1/y1O4H
+	jOlVBfvMXIEKAm8e4GiCCLAwRegBAQ9HVSi+Er6NDb+6N7XQNKFoPJ4suJEiFApvRCVXDxLhHNS
+	dVdDZhPAZMMtUsFKZuls7ozA1zpWhTLN/mcW2p5lNR7qzjWulZ+qoXjswLs5v6sMkFvHiul2x0M
+	InY/EGOVWGS4CBFkBmla/m0kzJNyorM+QtFT2Ovd2SeEUh1XLcK4k2/PkNH+HffMW1WDa5NlxRZ
+	IQCN6saK9kvM51+IGT/JExVuo7zIKWFkf4wxp2TYsjzS1FQoiyzMkxTD7IqQn/yhGUx0gbpqXwa
+	SOfVuqQ8H2QaOo5WUPl6ZmZ0A==
+X-Received: by 2002:a05:6102:5126:b0:785:5a17:739b with SMTP id ada2fe7eead31-78a4a4944femr2107708137.0.1788525867062;
+        Fri, 04 Sep 2026 05:44:27 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98097de57d4sm539113241.10.2026.09.04.05.44.26
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Sep 2026 05:44:26 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-73720e58dafso634029137.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:44:26 -0700 (PDT)
+X-Received: by 2002:a05:6102:5e8e:b0:786:e7a0:603e with SMTP id
+ ada2fe7eead31-78a4a8b86demr2120669137.7.1788525866617; Fri, 04 Sep 2026
+ 05:44:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm: fix typos in comments
-To: phasta@kernel.org, Hemanth Selam <hemanth.selam@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jianmin Lv <lvjianmin@loongson.cn>,
- Qianhai Wu <wuqianhai@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Mingcong Bai <jeffbai@aosc.io>, Xi Ruoyao <xry111@xry111.site>,
- Icenowy Zheng <zhengxingda@iscas.ac.cn>, Dave Airlie <airlied@redhat.com>,
- Jocelyn Falempe <jfalempe@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, Jessica Zhang <jesszhan0024@gmail.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Matthew Brost
- <matthew.brost@intel.com>, Chen-Yu Tsai <wens@kernel.org>,
- Samuel Holland <samuel@sholland.org>, Huang Rui <ray.huang@amd.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Michal Simek
- <michal.simek@amd.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Natalie Vock <nat@pixelcluster.dev>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-sunxi@lists.linux.dev, cgroups@vger.kernel.org
-References: <20260904120430.17224-1-hemanth.selam@gmail.com>
- <20260904120430.17224-2-hemanth.selam@gmail.com>
- <8b4194fcb6fdb11af10fc81a1a7c915ad71003a0.camel@mailbox.org>
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Language: en-US
-In-Reply-To: <8b4194fcb6fdb11af10fc81a1a7c915ad71003a0.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com> <20260825141542.30901-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260825141542.30901-8-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Sep 2026 14:44:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXj14sZXrcPhNA7HZ8+nB9FYypcOhNEYpkhYj7YZsMQhg@mail.gmail.com>
+X-Gm-Features: AcwNN1XPYwq96qhQmx4WPVu51XNqxvA6TQNjfaLRuNelQJUi_vPdQl2bb7NiYmg
+Message-ID: <CAMuHMdXj14sZXrcPhNA7HZ8+nB9FYypcOhNEYpkhYj7YZsMQhg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dmaengine: sh: rcar-dmac: SMMU doesn't need IPMMU workaround
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+	Frank Li <Frank.Li@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Wolfram,
 
-On 04/09/2026 15:13, Philipp Stanner wrote:
-> On Fri, 2026-09-04 at 17:34 +0530, Hemanth Selam wrote:
->> Fix typos in comments, reported by scripts/checkpatch.pl using the
->> misspelling list in scripts/spelling.txt.  Only touches comments, no code
->> changes.
->>
->> Assisted-by: Cursor:claude-opus-5
->> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
->> ---
->>   drivers/dma-buf/sync_debug.h                           | 2 +-
->>   drivers/gpu/drm/bridge/parade-ps8622.c                 | 2 +-
->>   drivers/gpu/drm/bridge/samsung-dsim.c                  | 2 +-
->>   drivers/gpu/drm/bridge/tc358767.c                      | 6 +++---
->>   drivers/gpu/drm/display/drm_dp_mst_topology.c          | 2 +-
->>   drivers/gpu/drm/drm_drv.c                              | 2 +-
->>   drivers/gpu/drm/gma500/oaktrail_lvds.c                 | 2 +-
->>   drivers/gpu/drm/gma500/power.c                         | 2 +-
->>   drivers/gpu/drm/gma500/psb_drv.h                       | 4 ++--
->>   drivers/gpu/drm/imx/dcss/dcss-ctxld.c                  | 2 +-
->>   drivers/gpu/drm/loongson/lsdc_drv.c                    | 2 +-
->>   drivers/gpu/drm/mgag200/mgag200_g200se.c               | 2 +-
->>   drivers/gpu/drm/nouveau/dispnv50/tile.h                | 2 +-
->>   drivers/gpu/drm/nouveau/nouveau_bios.c                 | 2 +-
->>   drivers/gpu/drm/nouveau/nouveau_exec.c                 | 2 +-
->>   drivers/gpu/drm/nouveau/nouveau_led.c                  | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxnv50.c       | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c         | 2 +-
->>   drivers/gpu/drm/omapdrm/dss/dispc.c                    | 4 ++--
->>   drivers/gpu/drm/omapdrm/omap_gem.c                     | 2 +-
->>   drivers/gpu/drm/panel/panel-novatek-nt36672a.c         | 2 +-
->>   drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c       | 2 +-
->>   drivers/gpu/drm/qxl/qxl_gem.c                          | 2 +-
->>   drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c            | 2 +-
->>   drivers/gpu/drm/scheduler/sched_main.c                 | 4 ++--
->>   drivers/gpu/drm/sun4i/sun4i_tcon.c                     | 2 +-
->>   drivers/gpu/drm/tiny/panel-mipi-dbi.c                  | 2 +-
->>   drivers/gpu/drm/ttm/ttm_pool.c                         | 2 +-
->>   drivers/gpu/drm/vc4/vc4_hdmi.c                         | 2 +-
->>   drivers/gpu/drm/vc4/vc4_regs.h                         | 2 +-
->>   drivers/gpu/drm/virtio/virtgpu_ioctl.c                 | 2 +-
->>   drivers/gpu/drm/vmwgfx/device_include/vm_basic_types.h | 2 +-
->>   drivers/gpu/drm/vmwgfx/ttm_object.c                    | 2 +-
->>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                    | 6 +++---
->>   drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c                | 2 +-
->>   drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                    | 2 +-
->>   drivers/gpu/drm/vmwgfx/vmwgfx_so.h                     | 2 +-
->>   drivers/gpu/drm/vmwgfx/vmwgfx_surface.c                | 2 +-
->>   drivers/gpu/drm/xlnx/zynqmp_dp.c                       | 2 +-
->>   drivers/gpu/ipu-v3/ipu-prg.c                           | 2 +-
->>   include/drm/drm_framebuffer.h                          | 4 ++--
->>   include/drm/drm_plane.h                                | 2 +-
->>   include/uapi/drm/nouveau_drm.h                         | 2 +-
->>   include/uapi/drm/vmwgfx_drm.h                          | 2 +-
->>   kernel/cgroup/dmem.c                                   | 2 +-
->>   45 files changed, 53 insertions(+), 53 deletions(-)
-> 
-> That's a lot of churn
-> 
->>
->> diff --git a/drivers/dma-buf/sync_debug.h b/drivers/dma-buf/sync_debug.h
->>
-> 
-> […]
-> 
-> 
->> -	/* DPI interface clock limitation: upto 100 MHz */
->> +	/* DPI interface clock limitation: up to 100 MHz */
->>   	if (mode->clock > 100000)
->>   		return MODE_CLOCK_HIGH;
->>
-> 
-> […]
-> 
->>   
->> -/* For multiple GPU driver instance co-exixt in the system */
->> +/* For multiple GPU driver instance co-exist in the system */
->>   
->>
-> 
-> […]
-> 
->>   
->> -	/* set ltps timming 0, 1 */
->> +	/* set ltps timing 0, 1 */
-> 
-> 
-> Places like these are certainly candidates that one might want to git-
-> blame to figure out more about the background.
-> 
-> Not sure if the cost-benefit-ratio would then pay off?
-I would skip these. Fixing a typo in a key-word (say, a register name) 
-would be useful, but I'm not sure if any of these count.
+On Tue, 25 Aug 2026 at 16:16, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> R-Car Gen5 doesn't use an IPMMU anymore, but a SMMU. So, the workaround
+> for the IPMMU becomes optional. Add a flag to distinguish. No functional
+> change.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-  Tomi
+Thanks for your patch!
 
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -219,10 +219,12 @@ struct rcar_dmac {
+>   * struct rcar_dmac_of_data - This driver's OF data
+>   * @chan_offset_base: DMAC channels base offset
+>   * @chan_offset_stride: DMAC channels offset stride
+> + * @has_ipmmu: flag telling if DMAC is connected to an IPMMU
+>   */
+>  struct rcar_dmac_of_data {
+>         u32 chan_offset_base;
+>         u32 chan_offset_stride;
+> +       unsigned int has_ipmmu:1;
+
+broken_ipmmu_microTLB_0?
+
+>  };
+>
+>  /* -----------------------------------------------------------------------------
+> @@ -1877,8 +1879,9 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+>          * can't use it with the IPMMU. As the IOMMU API operates at the device
+>          * level we can't disable it selectively, so ignore channel 0 for now if
+>          * the device is part of an IOMMU group.
+> +        * Not applicable if system uses something else than IPMMU like SMMU.
+>          */
+> -       if (device_iommu_mapped(&pdev->dev))
+> +       if (data->has_ipmmu && device_iommu_mapped(&pdev->dev))
+>                 dmac->channels_mask &= ~BIT(0);
+>
+>         dmac->channels = devm_kcalloc(&pdev->dev, dmac->n_channels,
+> @@ -2000,11 +2003,13 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
+>  static const struct rcar_dmac_of_data rcar_dmac_data = {
+>         .chan_offset_base = 0x8000,
+>         .chan_offset_stride = 0x80,
+> +       .has_ipmmu = 1,
+
+The issue this fixes was seen on R-Car H2 and M2-W.
+R-Car H3 ES1.0 already existed at that time, so R-Car Gen3 might be
+affected or not.
+
+>  };
+>
+>  static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
+>         .chan_offset_base = 0x0,
+>         .chan_offset_stride = 0x1000,
+> +       .has_ipmmu = 1,
+
+Let's hope this issue was fixed in R-Car Gen4.  Perhaps someone can
+verify this using the test Laurent shared[1] a long time ago?
+
+>  };
+>
+>  static const struct of_device_id rcar_dmac_of_ids[] = {
+
+[1] https://lore.kernel.org/1422137953-30156-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
