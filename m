@@ -1,201 +1,141 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DF637F8B6;
-	Fri,  4 Sep 2026 17:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788544111; cv=pass; b=o8X068VwMIb//qOWeG9bc4cvjQPR4a8nNFQDhFmQayKIZN0mV8qEKxZwfQqJEEhAif/GNd5GU+hCSICirBegg0Mw2L7ycvHRb7xo8UFFsZbvrqgyImfm4JXUE3FcYbxgyur7XUxFWzrXpsmBYOP34nWEeYneVlBODcdlQ6GIRWc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788544111; c=relaxed/simple;
-	bh=HYklYISxwUoTnCsdMrPvx9XtzPgtJCXKx1frW+Bj1eM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=Gcbi9WSz/uatHor9Fwzg2A7oKU2vkBl0olPXR6gQQhNpb3jkyeGZvOwwXKqWc0kad7gK6iqX1r5cXEHvQ7TzDr0ye6yUwpeuC0ogFSYgcJoZPbLWQhwbAy2cC9r4upft+aDq08r+t1J03Owwl4p5PMhtewYuULsTwsQZ8LEHFm0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=gKK6IMsO; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E3D381B16
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 19:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788551705; cv=none; b=mxMEgidzXOxAjrvC2ONU1s0YTgyye1RlGIqEZVNf/RtC3OHn8+b6GhZaLbraapobVDKqxY8Rs0f1Jx9zg50Jn8OUR3Pi4RbeGjWVc91eCVAeoR+T0k1cd3uTCMmHmh82jWbW2+fO7dcrvdRLwwgig6M3DwTN9Lx2/K2nPFWr2Sw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788551705; c=relaxed/simple;
+	bh=0gnc1kZ9sQ+FXT8yaX8TsZHQQxDnTHJ7webx148sZ2M=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=i4rEzT1R80W1/JMkyxrMAZUKiRZRQM73frvA8XkSPAY4lRkGY5bDfKFhSPgKMxX9VpFrWMY9jfiLm0Hdecz2G47IxGpethqR6Dd+24ik+4D44cOc62bn0ZFe3A/pE5n9VpuCVvD5eOdhQOm3IJLZUtqf3bC+RUsbGaEgWX6K+wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BTykU8wo; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="gKK6IMsO"
-ARC-Seal: i=1; a=rsa-sha256; t=1788544073; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Nj9FK/0gXWu1nGPERRtz+MousLsB3WAydGZ4dl8RVelIXTsvZbXJxD6mXLuLkBDGpAKtVR1ggjnrW2Hz/0iQ57RRW2hu87JR58wvf+wfZXTnJYuH4ieDaRGSRThjey+ELHaVnZwttBh2BivkrpliaeA6cAnLOkDc4vjV5oyYYmY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788544073; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1S8GwIHC1p7xRqe/7PlUpgpZUjKKXHgsXPpFaor8ZJs=; 
-	b=Ag1VuhkrITezWBrC/qwMPdRMsk2RyUJFxjsWqcObPTQADXPbQ28KKoztk+HYf96iUqCqoFjpO8aqK0HiiKrKIHnaVxquyPUcaoxs1jPIKbo7f7LJX5Bb2uVEHmEKdU2vdeYsh04KWO1IVxjBUCz+6yRXtT/RRDRxu56NR7h4yuA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788544073;
-	s=zmail2048; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=1S8GwIHC1p7xRqe/7PlUpgpZUjKKXHgsXPpFaor8ZJs=;
-	b=gKK6IMsOBfnBLf6NOnTnVtu5Cbkkzw7oIZDC/409XNhcr8iT0cUZnot2Zu+SrFjb
-	ThwjCtILZgAfGuD+HleBv53l/CsR/kT1GSBNI2tU5mHpy5bmnfYr6nkH4CWA0XD/wiv
-	ipVBqgc9+q/VHSbk6XbOVCBCdcGgi68aJr3LzJyZTh9uY5zw2SpxgE7VUWyBCh6k2zz
-	tOuQomreFcXjR6up2tJBlTbbxqZYpybi7/0SAWjZWmLYuSbKPhvqS6mHelG59SJCPPK
-	7Qz883YVtFHQ8QXe5l43Xtcy25p5GRG7NG6DyEFEwF6kUZpCG1R84GpQi37TVK7KGCn
-	7ZUAlkhmig==
-Received: by mx.zohomail.com with SMTPS id 1788544069977527.5411411525034;
-	Fri, 4 Sep 2026 10:47:49 -0700 (PDT)
-Message-ID: <41f323cbed2da4fa3913dfd62b5595bc3d5228da.camel@rong.moe>
-Subject: Re: [PATCH v3] PCI: rcar-gen4: Limit Max_Read_Request_Size and
- Max_Payload_Size to 256 Bytes
-From: Rong Zhang <i@rong.moe>
-To: Bjorn Helgaas <helgaas@kernel.org>, Marek Vasut
- <marek.vasut@mailbox.org>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-pci@vger.kernel.org, 
-	stable@vger.kernel.org, Krzysztof =?gb2312?Q?Wilczy=A8=BDski?=	
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Koichiro Den <den@valinux.co.jp>,
- Lorenzo Pieralisi	 <lpieralisi@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, Rob
- Herring <robh@kernel.org>, Yoshihiro Shimoda	
- <yoshihiro.shimoda.uh@renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Ziyao Li <liziyao@uniontech.com>, Huacai
- Chen	 <chenhuacai@loongson.cn>
-In-Reply-To: <20260903202706.GA2234456@bhelgaas>
-References: <20260903202706.GA2234456@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 05 Sep 2026 01:42:36 +0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BTykU8wo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788551700; x=1820087700;
+  h=date:from:to:cc:subject:message-id;
+  bh=0gnc1kZ9sQ+FXT8yaX8TsZHQQxDnTHJ7webx148sZ2M=;
+  b=BTykU8woSgXc6LHiu4vP1n9lOG4Ocr7FykxUn0YMCY+Seq5NyIyL85Qk
+   Wn8HeHE0nzX0/JxPYfLxXAoEcpVDpy45I7wrAioZGqZCEhYuvu1KfDiVG
+   WlmVGAFZ9oCRS2XsX+qYRJQ3Wcu3+xpyGAV2YnV0GB5iat5Ul5A8AtdR9
+   Q4o8sDEtoxrWG2FeXRs4aPUpgD/V1ctNRPP8hLC465OFvEME17A+CoIUL
+   EycOxYiVizDyJtbev07lPkZqlQwnKFveftRyPCtK7bFZf46211DhCdKQY
+   tSGFLspL5+rPwZC3WQn9rowyGzOevMCdA6PmPbm06rDs8G1xgnKfQXrDW
+   g==;
+X-CSE-ConnectionGUID: J1PWcjk6R6Ce7hSkBKGxpQ==
+X-CSE-MsgGUID: yadFa1rmTqO0B9Y+edSlRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11896"; a="89267451"
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="89267451"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 12:54:59 -0700
+X-CSE-ConnectionGUID: 7BFkerd7T421bNywoe92Iw==
+X-CSE-MsgGUID: r6GcECstQTy0Cq2wCgAcgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="272068022"
+Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 04 Sep 2026 12:54:57 -0700
+Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x2Zzy-00000000A7S-3WwV;
+	Fri, 04 Sep 2026 19:54:54 +0000
+Date: Sat, 05 Sep 2026 03:54:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-drivers-for-v7.4] BUILD SUCCESS
+ 529b0be30bd97dde9fe71c0cc406e252ab1362fe
+Message-ID: <202609050304.lFb0gTPk-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Evolution 3.56.2-10+b1 
-X-ZohoMailClient: External
 
-Hi Bjorn, Marek,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v7.4
+branch HEAD: 529b0be30bd97dde9fe71c0cc406e252ab1362fe  soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for R9A08G046
 
-Thanks for reaching me.
+elapsed time: 3279m
 
-On Thu, 2026-09-03 at 15:27 -0500, Bjorn Helgaas wrote:
-> On Thu, Sep 03, 2026 at 08:51:06PM +0200, Marek Vasut wrote:
-> > Hello Bjorn,
-> >=20
-> > On 9/3/26 7:32 PM, Bjorn Helgaas wrote:
-> > > [+cc Ziyao, Rong, Huacai for similar Loongson MRRS issue]
-> > >=20
-> > > On Fri, Aug 21, 2026 at 04:05:51AM +0200, Marek Vasut wrote:
-> > > > R-Car Gen4 PCIe controller has a hardware limitation of 256 Bytes
-> > > > Max_Payload_Size (MPS). PCIe specification indicates that the MPS
-> > > > must not exceed minimum MPS of any element along the packet path.
-> > > > Force limit Max_Payload_Size to at most 256 Bytes for each device
-> > > > connected to this PCIe controller.
-> > >=20
-> > > IIUC the PCI core already enforces this limit, and what this patch
-> > > does is double-check that this limit is observed with this check,
-> > > right?
-> >=20
-> > That is correct, this was changed in V3, I missed the commit message up=
-date,
-> > sorry.
-> >=20
-> > Would you like me to respin the patch one more time with an updated com=
-mit
-> > message, or would you be willing to fix it up in tree ?
->=20
-> I fixed the commit log, no problem.
->=20
-> > >    +	WARN_ON(pcie_get_mps(dev) > 256);
-> > >=20
-> > > More below.
-> >=20
-> >=20
-> > [...]
-> >=20
-> > > > +	bridge->no_inc_mrrs =3D 1;
-> > > > +	if (pcie_get_readrq(dev) > 256) {
-> > > > +		pci_info(dev, "Limiting MRRS to 256 bytes\n");
-> > > > +		pcie_set_readrq(dev, 256);
-> > > > +	}
-> > >=20
-> > > It would be nice if all the platforms that need no_inc_mrrs could
-> > > apply it the same way, but I assume you saw loongson_mrrs_quirk() and
-> > > loongson_set_min_mrrs_quirk() in the process of finding no_inc_mrrs,
-> > > and chose a different implementation strategy for some reason, e.g.,
-> > > this way doesn't have to include device IDs for all the Root Ports?
-> >=20
-> > The loongson quirk won't work if the PCIe controller driver is built as=
- a
-> > module, which the R-Car Gen4 PCIe driver can be, and in fact is often b=
-uilt
-> > as a module, because it depends on firmware which is loaded from filesy=
-stem.
-> >=20
-> > If the controller driver is built as a module, then
-> > DECLARE_PCI_FIXUP_ENABLE() is not applied, the DECLARE_PCI_FIXUP_ENABLE=
-() is
-> > applied only on boot and therefore only for built-in drivers.
-> >=20
-> > I got burnt by DECLARE_PCI_FIXUP_ENABLE() in V1 of this patch.
->=20
-> Ouch, that does hurt.
->=20
-> > However, there is also another part to this -- the
-> > rcar_gen4_pcie_enable_device() is called for every device on the bus an=
-d
-> > applies the MRRS limitation to every device on the bus that is downstre=
-am of
-> > the controller, not only the controller. This is necessary on this
-> > controller variant, else hardware like PCIe SSDs with MRRS higher than =
-the
-> > controller break.
-> >=20
-> > > Maybe we should rework no_inc_mrrs in such a way that drivers could
-> > > set a max MRRS in the struct pci_host_bridge and make
-> > > pcie_write_mrrs() and pcie_set_readrq() pay attention to it?  That
-> > > might let us get rid of the FIXUP approach.
-> >=20
-> > In light of the last paragraph above, that the MRRS has to be limited a=
-lso
-> > on all devices downstream of this particular controller, I would like t=
-o ask
-> > -- does the Loongson controller have the same limitation or not ? If no=
-t,
-> > then I would argue this quirk should be isolated to this controller var=
-iant
-> > ; else, I am happy to start on the core patches.
+configs tested: 64
+configs skipped: 5
 
-ACK. I agreed that it should make our life easier.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
->=20
-> I don't know if we'll get a real answer for Loongson (there's no
-> maintainer listed for it, hint hint :)),=C2=A0
->=20
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc           allnoconfig    gcc-16.1.0
+arc          allyesconfig    gcc-16.1.0
+arm           allnoconfig    clang-17
+arm           allnoconfig    gcc-16.1.0
+arm64         allnoconfig    gcc-16.1.0
+csky         allmodconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    clang-24
+hexagon       allnoconfig    clang-24
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386          allnoconfig    gcc-14
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch    allmodconfig    clang-19
+loongarch     allnoconfig    clang-20
+loongarch     allnoconfig    gcc-16.1.0
+m68k         allmodconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    gcc-16.1.0
+microblaze    allnoconfig    gcc-16.1.0
+microblaze   allyesconfig    gcc-16.1.0
+mips         allmodconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+mips         allyesconfig    gcc-16.1.0
+nios2        allmodconfig    gcc-11.5.0
+nios2         allnoconfig    clang-24
+nios2         allnoconfig    gcc-11.5.0
+openrisc     allmodconfig    gcc-16.1.0
+openrisc      allnoconfig    clang-24
+openrisc      allnoconfig    gcc-16.1.0
+parisc       allmodconfig    gcc-16.1.0
+parisc        allnoconfig    clang-24
+parisc        allnoconfig    gcc-16.1.0
+parisc       allyesconfig    gcc-16.1.0
+powerpc      allmodconfig    gcc-16.1.0
+powerpc       allnoconfig    clang-24
+powerpc       allnoconfig    gcc-16.1.0
+riscv         allnoconfig    clang-24
+riscv         allnoconfig    gcc-16.1.0
+s390         allmodconfig    clang-24
+s390          allnoconfig    clang-24
+s390         allyesconfig    gcc-16.1.0
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh            allnoconfig    gcc-16.1.0
+sh           allyesconfig    gcc-16.1.0
+sparc         allnoconfig    clang-24
+sparc         allnoconfig    gcc-16.1.0
+sparc64      allmodconfig    clang-20
+um           allmodconfig    clang-17
+um            allnoconfig    clang-17
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-14
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa        allnoconfig    gcc-16.1.0
+xtensa       allyesconfig    gcc-16.1.0
 
-(+CC Jiaxun)
-
-The driver was introduced by Jiaxun without updating MAINTAINERS. I guess
-he'd be willing to be listed as a maintainer.
-
-I don't work for Loongson, but I do maintain several MIPS-based Loongson
-devices for the Golang community with my colleagues and personally own a
-MIPS-based Loongson-LS3A4000-7A1000-NUC-SE mini PC. I do some PCIe
-experiments on it from time to time for fun. So I am OK if someone wants
-to list me as a maintainer or reviewer :)
-
-> but my guess is that it does
-> apply to all devices downstream of the Loongson controller.
-
-I believe this is the case. Maybe Jiaxun can shed a light on it too.
-
-Just checked the kmsg log from April, the firmware seemed to only clamp
-MRRS for devices directly connected to the root ports. IOW, it seemed to
-only clamp MRRS for the upstream port of a PCIe switch, so
-loongson_set_min_mrrs_quirk() had to fix up downstream ports.
-
-If you need more information I can do some more experiments with the PCIe
-switch card.
-
-Thanks,
-Rong
-
->=20
-> I think MRRS is mostly interesting for DMA because MMIO from CPUs is
-> usually small sizes, far below the 128-byte or larger transfers that
-> devices may do.
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
