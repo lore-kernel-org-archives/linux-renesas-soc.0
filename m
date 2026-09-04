@@ -1,130 +1,236 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011027.outbound.protection.outlook.com [40.107.74.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A62D3A544F
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 14:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788532968; cv=none; b=nZPatpQ+UBYFIFK1YKFnd4MVlQShsA3zMBKmNltQh/u+tVHa6w8Al+OyZu4i55Y28awDp4d3kY8sSGExOJa7eMkkErdAKDVBMhiNA4ehQqZjwKRacL4+R5RnzHyqSYovH9wJGLVNAeMV+1JQ+Sm0WCL34dH6GsDubDoKGvasnKs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788532968; c=relaxed/simple;
-	bh=TcGIo92RiATa8vkGJVdjHgxt9WlzbewL1KtAW6cGFCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQnp3yrUphYhM1W4/QUHvyfZ67QcFY3Qkw9dN/RoD0IduSWMmQLnFN8CV3dPgTnvE7iIS8w/D/mIh5JtyUOYd1m+TlpmEJADtU9/PQIuJJUUFXvv+vsaYHdWmSmkrnr9ifnJav+WlwYiQ7JYV/LfVFO8iw4Uod6a0OemzMXuHzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5c56dbc3a51so402320e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:42:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788532965; x=1789137765;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=iy22q1YzKGiQPGN9B1bpmbrGTjC/sYmYXe5uXN4aXJo=;
-        b=AQDoEQ3wbdIUF1DN+BwMkZ0N7wMH4QFqcolRwvlKZy27je/SMfX3OMzL78zVkeNYhb
-         htdHViTQV/CZtHH2768sPwofTDpNw2hRICJOZJoPVZT1AZDWUVX6TsxDee4LCCvBNJg5
-         khnaDRk5SnsBIFyMveMw6CIQLjTDxEk1sV7qYRfMywlVUZpv1LPufLWAnb4st7c36J7r
-         kXxM9gx6rKgth0xaUlEOiNAvniduEPfqjOBGBE/JY/0bEK8VQ3W+fm2CjXEZ/CCCFz6P
-         PpiE2NV9oAWI3NSdgWNRflOhEFDXeeQXiRhQN1DGP2w+5eDGIncewBJ0B7uTRPSogHbj
-         MqPw==
-X-Forwarded-Encrypted: i=1; AKwUvBy/7XoTEIAQstFIBlCv4kQICcYBh9MDLSJbFix3GvHRKsmPx7EFOKvGR1yqg+7YhbO/CkH0xTj647CgRVOFLLdtmQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++l0+pmOn68iqGxVQIwHBTFUqELB0sVng3wzBfrQ2B0RS/C60KcH
-	u4p4Hc+DRSkLTzoO5LwJnGcGzffz0yGTLUg16k1tJGPFckhIEW2dEV5TFvOVzOy7ijc=
-X-Gm-Gg: AYBFou1iB9OHTvqXWF3Cg6N5YKEp0pcl0e3fBsfvBQSE/MnZm17Gxo3N/+36Z7mMAh6
-	e8ZsRWPToLuO/X9W5aoj+dFdbkUAwicpdNv1bVigW9gEAwhzI9fC6XEi6IrCZOrowHfx4tTRNKb
-	29VeG33av/fpKJjuhOxMU7SfcwBBLeg5+J0UJjEwZ8/tdLTV0xt4QvQQhPsfcqg7bQlNnZMm6nO
-	Ne2LjHh8xd9uD8MwSQFkZ/VFdBpEd3eBbO0x+tZfhloUkiQNoC9X25FNjlXTO2qWTF8sVVs7KmB
-	/uqwxNgz1sZFcqmfbkyDGtsulnKfysD2BXGl9qQi1vl5vy3053yJTZ8awLE3HiMBxltUfdbpFmS
-	ta/BkK/ZuE7Ou22q0ARKdOEPVpcV8kasPV+6HiYjQ519zqFsw8rIahJ0XVShiYZ15Kpk/jIQYgA
-	Hl2M/vYiqVxzqBmCm9ZaYJyhb5Ol1UA+cnxcEzDquBATOVLqIAm8vwddH3qhk9LgODnky5DRb02
-	rGvj6D9TO2X4HNukBtyGdplHw==
-X-Received: by 2002:a05:6122:4f83:b0:5a1:fbbd:6bd0 with SMTP id 71dfb90a1353d-5c7ed45ea59mr2659748e0c.5.1788532964812;
-        Fri, 04 Sep 2026 07:42:44 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1eeaf3sm2228037e0c.6.2026.09.04.07.42.41
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 07:42:42 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-7466771f1caso371922137.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:42:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzu2KdY3MsRAP6IdnmPJPTSv+ZnzyTqIyOEapoz9qgiBoFVUWhKIXdTNKrHbgvbx3MzBpp5SpDNDJ/7Pq0/XkiUmg==@vger.kernel.org
-X-Received: by 2002:a05:6102:2d04:b0:785:eb33:87a8 with SMTP id
- ada2fe7eead31-78a4a883885mr1900429137.4.1788532960799; Fri, 04 Sep 2026
- 07:42:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95F039936D;
+	Fri,  4 Sep 2026 14:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788533233; cv=fail; b=i8gvpnSKNnHb6zud7dWvMURGQeRsu05UQoFhbVT/BMbyzW8OddZGo7tzuGldFOaQPoxFLLv+APw9L4PzqUUh9I2xxwKTcZuCACer8S/LVM5VDV5f36+WSQz/JuOKYwJT+eeQIN8KATUjj5rlF6oWk646m3c4EKfZA2FeeeLfAiY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788533233; c=relaxed/simple;
+	bh=siQpILacM5d3lssEgTJkdJPUcqfS76nD1zaq+gG5XdI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ds2fZ8e9vzV11CBA3GS8tlC8TyAzUnrbeZUVtCVWl67saBfaLTRgSoOxvUYv+Fs97sNPJ8bCn4Hm1by3vmQc+AReB2/nH3kRVjVYlEZKm2Ov33Kv1wttT9HnRJ5W2yhw3KrFPPWHDjcTR4g8484RFm1oGn6yACLuuOVqk3rpNT4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iXn4vFgs; arc=fail smtp.client-ip=40.107.74.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iXn4vFgs"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TfKHZTsxxmNDZtzJDtrEhnUj1aFtaqM1ArEGv31j0n6m64/yo7oiI044bji9xy7BDgMnRAkJtabQwnEvTAFrJDAeDM8sIsDBxvtvmIbHA29FHlab3MhSIDBoXGTHzhpxKWi6/rYvlIEj3rkY1BKjyAkzuc674aR9Qcys8drlbYeMuky2zb3ROWsDLNu+/cPXc3xx3pcQEBvIglbVqXc4lZkHqYrd059jEfxgs0fwUXSjxb8HFJx47XZpfETfs3deAycZkRJ8sY6I/u0XRCiv+s9CCoXgsKbtUmyUimvffyoo+72NDnrvvLmlDiBUG/M1iQW+Qz5da0Wy5aN3A/Tylw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/WanCK+57qcwdmvsue6EltRckUkbTHqCWXddLrZt6Pw=;
+ b=p47MJeYTMPqqlFIvHeVyYDNveUOVJFlgtzGNxQr3yKfWZ3rI1DA1pQd5cLOqghe46lZilQtoCDQq7FwHhI24FN43NWIcKybMOWj0f9MRA8NL9EERiUFU05JWJ5y2xPt5vmSm5lNLi17tZAhtSyNA7naHzGUBVKhI1n5Cz7JAiwF7OBkx3qP8ACP5yoIswznsRvYbXabbizLdC6JAYp81JwVX1t5hg2uO8TJTeFMq38nftQbiCpOvu7AvNEWEiv9Y+PiB+pda3XC2uNoCFoLDWhiJ9LvV9q8EpJxq0FkhkSsyV4XHonHiaNccl0A4WszWpCIs7UKqWi6e4yH7n0/gCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/WanCK+57qcwdmvsue6EltRckUkbTHqCWXddLrZt6Pw=;
+ b=iXn4vFgsB8ay0o7WMP7fw+lvUoL6PUp+NawRLYk3iQBBRCEZO/aD8GXJI2smWjWRkb2FC8JgDpJs3BG2eX15c0O/RYPws7VATa9pxGHSL4QWFKa2GqT1b0rjKDPkVOQ/ow7iqNrItTnlAhKefPxFNkezT73y/DBUYrzepvvhCXo=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY7PR01MB13605.jpnprd01.prod.outlook.com (2603:1096:405:1ee::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
+ 2026 14:47:09 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
+ 14:47:08 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: wsa+renesas <wsa+renesas@sang-engineering.com>, "biju.das.au"
+	<biju.das.au@gmail.com>
+CC: Ulf Hansson <ulfh@kernel.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay support for
+ RZ/G2L
+Thread-Topic: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay support
+ for RZ/G2L
+Thread-Index: AQHdMMe9/TEErDJ1NE2Te++xaon3+La8rB0AgAHjRRA=
+Date: Fri, 4 Sep 2026 14:47:08 +0000
+Message-ID:
+ <TY3PR01MB113460485B6D3FD62D027C2AA86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-8-biju.das.jz@bp.renesas.com>
+ <apk-J8is9MNm7I2R@shikoro>
+In-Reply-To: <apk-J8is9MNm7I2R@shikoro>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY7PR01MB13605:EE_
+x-ms-office365-filtering-correlation-id: 1519bc86-bbc5-474a-799e-08df0a936578
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|22082099003|38070700021|10067099003|11063799006|56012099006|4143699003|18002099003;
+x-microsoft-antispam-message-info:
+ K8zmCrqjA8qrvPmsfgJc1y6Xz83LIocF2j+4jCskLa70896nEqNTOJJMRseHwXcFuEiAf78C4tG/5k+GnePTEFWWbJWyWZWkCJbfYEgJ9pOiHhp5Q1Av3GXDXgKUvJt+fF5p1FKjC+r7YJ5Gt1VcKAx09GpjMPp4Ytbr7Ah2pzBNS0RXFJGj9IjryFFmKnPB8Q5ChX8Vdcjcfko7Ex7GcSVyeFawNVAX/A6PO0nKf8uTbJZaiQ1y+nuHlXAcXlI/BOHo0vCuASUiJyLUFe5/hHBe8UUdOjB5yQfp1eW2fQrQ2zv1mH0woXKjf4oKjJuHyochY02X75QvqEr9Eg4GNiPUyiLwPI6zXv0Rlyp4hPIJNSnZCk455U+ZxRXAs15NzEcJVxk6DRsZHvA/kmEiV6o8NV/o3h09IU0PmEK+gg1oKIB/x7IVDyMKEwnJ6ACLWi6830A6KzRPX+HkusAgZ+1nCMPUuXoughoGP2IfKOZ/tA/f5deQUFozJZgS35KGArEvf5Ntm18AOD+BEWJDYQyLTiSDnAiW8hYvx4oHwaR0Bc0puOOh0g1Udo4rwobO1yRJa2tePf5reMnJDgG1Ym8GpKat6sNHsj8w/AWE1cKCdN2gibhSekUCh1lqP4hy4d9BChutuff0TzlysForB4VIWWHr8cua1u/oUZIt4T9lccwLtLF+kJ7vIAfW3Ck9MljX+q3chZTVXQ268hBs7S+Rj67TuL3z3kQ8p1qG0bs=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(22082099003)(38070700021)(10067099003)(11063799006)(56012099006)(4143699003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?NEhOVXCSIsLLOakhZ559OhMOJ3U0UxMMG5+/IFdZaYY5dlnQYy/0cN0mVwoS?=
+ =?us-ascii?Q?RaJ8ZXAtLFVx5G50Cv70eb1uw7+b5nwvb1nXVVcPTbmzYYX36uK/s+Ag4uNi?=
+ =?us-ascii?Q?cMfhTyxOJ0Htf3KNbOIDLry7xoeklDXyaWo26a6ITNQALYkUaLwsp5EUygap?=
+ =?us-ascii?Q?TfboTD0gE+4D9m0ZS6TwodzOYZtaaJpf+QbdLOFQZ3XZfKDowjS25aliLZOM?=
+ =?us-ascii?Q?gct7R3UPQbttisZcFszqEqM6s6b2aZX0gLv2gnWJMzYRZdtwSY050OOUTWHK?=
+ =?us-ascii?Q?yqMgUgCtVZX5m+pWAgEbUOyNWzkuGGC82rwEtyz5nGZOgqaMMLtwjAb2h545?=
+ =?us-ascii?Q?IE2edcCfcQRExux4LedxPLUEasOv1m93LN71sG0QCKbBq82VQLzAx35FAOXe?=
+ =?us-ascii?Q?Avz2ls/MJrOp+0kMVEeEZA+ZXY1oPUQOTJlG3AE5RtA47c9nyzFayOOu6Zs7?=
+ =?us-ascii?Q?1pXn50dXBfgnLLpT8T8e/4mxoUIuEa98M3zurvNXo40rJ3ASLoMCOcrsKfpq?=
+ =?us-ascii?Q?aw+DVtG37qhMBU7x4NiTO6XR5ivep/WTuL8mg2hlnnVa9gTb2zkky/TEQtv3?=
+ =?us-ascii?Q?PrpR1v8uakQeJwtxaqBG7gQhAy3sGl+o1G66s+4maiGh664H16kvDZziTUJ9?=
+ =?us-ascii?Q?GIIdGmge7CH1z77fRoiUrdjqsSdhngHv16reSwRZHgXblt5fM8k4dL1qBaqT?=
+ =?us-ascii?Q?nu2KJMzcJyIumRmF9++Q/4gHKi2rKcBEXOJb3Lu368kq6E9nkgAchFqDvUzV?=
+ =?us-ascii?Q?s+Dnw7P0vva4Py9piW6a5T1s7WRk4iNBc2/ApBG9g+EsI49Q1Nce5P9FnPYk?=
+ =?us-ascii?Q?MC0IOzmzKPrwM77C/RpQi3Fc2Ippij+y0Q5BkeiZg/nDCzLo+QnhbwC98VwW?=
+ =?us-ascii?Q?AJeE+s5qM9rPiVXU+/rmGVyWhdNuJfC0DWwXu1oDN7+2OKpCY4+aX6VlB80u?=
+ =?us-ascii?Q?zy9Ip5GoKuAF5LI9iDgwdQfKNGJxIXqhlqqkE9qMpWK2hD5eeb9ajgn9/5IP?=
+ =?us-ascii?Q?ECuSpQe/Ny7ysgYTV7T01dmwEFJsQ/hSYZlhLPapuQrwAGZbsESSbXH2cxNF?=
+ =?us-ascii?Q?myHXkR9nuXj6c1uLoTDfmaZr+3MPO3UabEC/oyzJPqz6ZPdakEpUq9xe111I?=
+ =?us-ascii?Q?ct0L7kWDTMffuPynqkmvu4gTDFEUg0YquzkhiJTfALsAaK5/4SziklrQOg8T?=
+ =?us-ascii?Q?9UilnOIZY8Q/rNjbqHrlB7pbGRjfbH9vRk8s5k/IN5zHXqz7iIvac8fwbQqd?=
+ =?us-ascii?Q?iudbJB3gOTz1LIZ4xKsjigtVi20s5/Nf3ZWcG1tFG0evAB1wqOuoycNPoPqd?=
+ =?us-ascii?Q?70PlXYs0H3AzqOMZLk5jKrLZE+l+WKPfIqpe52JVO52XngYZxgLTxRgPS7WX?=
+ =?us-ascii?Q?iF5YE7mwKI9Ze3AceL7Y/4gR5E+acjVXucZXjE80i7CVBFozR5PiGgWEEV9l?=
+ =?us-ascii?Q?aIEmviO+vxvfvqOQAHwNG8BBSJS4l85DYU7GkHF4tia60++Zxwi2STKRsphf?=
+ =?us-ascii?Q?Y9a24JvWCvtqvpWf3zq7wKbsOpvPj6WHaUQRlnOZby1TYbGdApVPdLxvdqGC?=
+ =?us-ascii?Q?gKuz9ZqZSHzH+LU8/rhxz6P/raY+uTqrqYzVtURWCBydfTFr80i8z+4YkAgu?=
+ =?us-ascii?Q?mDPKZaYuy8+L+7sEbd52/Dh677Dk9Z7S3CkQRSOkZ2DsuyXo7uoYMFa/jC28?=
+ =?us-ascii?Q?zFXJdHjxBUutz6rZnCDRvvqzAgvt0mGwFzLJulzDJPoeUcWwPjAUQd3HZSlo?=
+ =?us-ascii?Q?85r9CggQgQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1788338320.git.geert+renesas@glider.be> <2cf42d7ef9b452efbab3007ec2c2340cf87adbbf.1788338320.git.geert+renesas@glider.be>
- <20260904-fabulous-lionfish-of-cookies-0d614c@sudeepholla>
-In-Reply-To: <20260904-fabulous-lionfish-of-cookies-0d614c@sudeepholla>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 16:42:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU_u1ticUomZffY8iU2GoWgyTNDPaL2O6KB7yucr47dDA@mail.gmail.com>
-X-Gm-Features: AcwNN1WAkp69Or55f6uh4v6WhdtMEG7Qz9QclhM1mQOZ0FBl4cYNnC9KwnYi2zM
-Message-ID: <CAMuHMdU_u1ticUomZffY8iU2GoWgyTNDPaL2O6KB7yucr47dDA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r8a78000-cpg: Add
- renesas,scmi-firmware property
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1519bc86-bbc5-474a-799e-08df0a936578
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2026 14:47:08.8482
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cUnm6suSVGdW8IunKPST9vBhC3qyydsyWryWr+wHDSbBVqkm7HTvZQBko/hQbm373/HTjvjhimKNrGBRZeMMVZSVeaSJvoZ9lOtBeejMRyA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB13605
 
-Hi Sudeep,
+Hi Wolfram,
 
-On Fri, 4 Sept 2026 at 16:03, Sudeep Holla <sudeep.holla@kernel.org> wrote:
-> On Wed, Sep 02, 2026 at 01:29:17PM +0200, Geert Uytterhoeven wrote:
-> > On systems using the ARM System Control and Management Interface (SCMI),
-> > the Clock Pulse Generator hardware registers must not be accessed
-> > directly.  Instead, the SCMI message protocol must be used for inquiry,
-> > configuration, and control of clocks.
->
-> Why is this node needed in the devicetree at all or why is it not disabled
-> so that any driver in the OSPM is not probed at all.
-
-The node is needed so the corresponding driver can bind against it.
-The driver takes care of remapping DT hardware descriptions to the
-abstractions offered by the SCMI firmware when SCMI must be used.
-
-> > Add a "renesas,scmi-firmware" property to distinguish between systems
-> > with and without SCMI, and to indicate which SCMI firmware interface
-> > provider to communicate with.
+> -----Original Message-----
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Sent: 03 September 2026 10:30
+> Subject: Re: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay suppor=
+t for RZ/G2L
+>=20
+>=20
+> > Thank you for your contribution! Sashiko AI review found 1 potential is=
+sue(s) to consider:
+> > - [High] The new function renesas_sdhi_set_hw_adjustment_delay() access=
+es SCC registers via
+> sd_scc_write32() without checking if priv->scc_ctl is initialized.
+> > --
 > >
->
-> I still don't see the need for this if you disable the node, so still
+> > --- Patch [7]: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay
+> > support for RZ/G2L --- commit 4e31e96fb980d0bb6400d3a60dfcc29dca208dcc
+> > Author: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
+> >
+> > This commit adds hardware adjustment delay support for RZ/G2L SoCs
+> > during signal-voltage switch. It introduces the TMIO_MMC_TUNING_DELAY
+> > flag and applies a delay by writing to SCC_TMPPORT2 based on the regula=
+tor voltage.
+> >
+> > > diff --git a/drivers/mmc/host/renesas_sdhi_core.c
+> > > b/drivers/mmc/host/renesas_sdhi_core.c
+> > > --- a/drivers/mmc/host/renesas_sdhi_core.c
+> > > +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> > [ ... ]
+> > > @@ -350,6 +316,55 @@ static inline void sd_scc_write32(struct tmio_mm=
+c_host *host,
+> > >  	writel(val, priv->scc_ctl + (addr << host->bus_shift));  }
+> > >
+> > > +static void renesas_sdhi_set_hw_adjustment_delay(struct
+> > > +tmio_mmc_host *host) {
+> > > +	struct renesas_sdhi *priv =3D host_to_priv(host);
+> > > +
+> > > +	if (!(host->pdata->flags & TMIO_MMC_TUNING_DELAY))
+> > > +		return;
 
-The node is not disabled.
+This check is available only for RZ/G2L+ SoCs.
 
-> NACK. Sorry if I have missed some discussions, please present the information
-> as part of this patch in the commit log if not the actual binding itself.
+> > > +
+> > > +	if (host->mmc->ios.signal_voltage =3D=3D MMC_SIGNAL_VOLTAGE_330)
+> > > +		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x0);
+> > > +	else
+> > > +		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x1);
+> >
+> > [Severity: High]
+> > Is it possible for priv->scc_ctl to be NULL here?
 
-That's why we have cover letter, with links to previous versions and
-discussions.
-Thanks!
+This issue can happen only if there is a severe memory corruption in the sy=
+stem during boot.
 
-Gr{oetje,eeting}s,
+> >
+> > If an incorrect device tree binding or a hardware fault causes the
+> > controller to report a version older than SDHI_VER_GEN2_SDR104,
+> > priv->scc_ctl might not be mapped during probe.
 
-                        Geert
+I agree if there is a memory corruption, any check can lead to
+Unpredictable result.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> >
+> > However, renesas_sdhi_start_signal_voltage_switch() is registered
+> > based on TMIO_MMC_MIN_RCAR2 and calls this new function, which writes
+> > directly to the SCC register via sd_scc_write32().
+> >
+> > Could this cause a NULL pointer dereference during card insertion?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This can happen only if there is a memory corruption, in that case the belo=
+w check
+passes for all the SoCs.
+
+if (!(host->pdata->flags & TMIO_MMC_TUNING_DELAY))
+		return;
+
+>=20
+> I agree. We should ensure in probe() that either
+>=20
+> a) TMIO_MMC_TUNING_DELAY has a valid SCC or bail out otherwise
+>=20
+> or
+>=20
+> b) clear the TMIO_MMC_TUNING_DELAY flag if there is no SCC present
+>=20
+> What do you think?
+
+I agree, we can add defensive check in probe().
+
+TBH, I am not convinced with Sashiko report here, but please recheck my com=
+ments
+and provide feedback
+
+Or
+
+I may be completely wrong, please correct me in that case.
+
+
+Cheers,
+Biju
+
