@@ -1,92 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013024.outbound.protection.outlook.com [40.107.159.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6824F052D;
-	Fri,  4 Sep 2026 15:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788537494; cv=none; b=Lx1skuFPWQWOPbx/aFwTPUvipdUb/8Z3+nVC3JP/wGfxyHFCjDgMuEFhBOzz84748WiHFo32nWuQ0C2lHiOtc+O1/daGgT1XhwEh/xMu3vb4a0qGAPLB9nyQl849IMzdSgdIxBjrsW765sATXvopTSQEp4D5+KivL8LakIx6Mzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788537494; c=relaxed/simple;
-	bh=MAMHc3lcCEx7Gz9i6NwKaBAiqbW/7oSEolLbycKUbPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HymG4gMpbjuwtdR5sHZXfp/PRlIuWCP6TuKhoTqEx9PoqwAKmC2TWgAbR3/VqdZToXdPuevvh1FDK4u2e/cSfHe5JCspUC76TV51XVIcoZ47rdxFK1mS6oGnPtkE+TXmen6rWYY2RTx0JT5M3OHuJ5XxcT53yDx4Ha/o/szKoA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeoORvmH; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63354F6483;
+	Fri,  4 Sep 2026 15:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788537596; cv=fail; b=FBvj7+6+7mzSzHCH/fwDLrtiD8fdy61yzzyEW3OU1AgkWDgafvRBuCNRy21bbmXOnqhvXuBlJXCOSPUYr57z34Cm2FAyHgxmtTjSmy6GMm4mxCsZuVVsdGtSTa0jeUbggl8LSUJKpEg+1DB4yDSTv+bkaKWbD/Qhkkz5x5MSVcw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788537596; c=relaxed/simple;
+	bh=1q8Geng2a/A2iz4SpXgqrzKBXQfy8Qk/2i4rWKJgGC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ST8XG+3jRDp63a7TtfYkSGNb3WNJOoZib/6LcuXjhiT9+9Yk5ZI2lCvqCAA0dolaLdNt+rrnc8QPBfkob80M5mWOxs8QVB00VwOgMOBxPBmlylaFbdNF3jwJAc/38fsjfiMbSoW5YcCTZbD6CeRV4Z5Ezzbg8pic81o1x4UK/Zk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=vNIix2zU; arc=fail smtp.client-ip=40.107.159.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeoORvmH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D661F00A3D;
-	Fri,  4 Sep 2026 15:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788537493;
-	bh=xFBkR9T0SQCtUDwL8PQObCORwH0zWTKutCjB4dzETP4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=YeoORvmHxqLmUVtXYpglFo8Xgu1ji5AKGIXIO6Mm8N5xIm4dXmqXD+clgqcWKLeY3
-	 TQXS47+v9ZKtzRnB9bwcmz/xuaotwZQZt+msSrow1xFdWHhWuZI7rpSimHlnU7ercc
-	 qq8732lFwY9ju3z4VMdciwyPv6/45agXQqEHVc/j1wIeyMWtwmURw6TnxLOh6kUjXE
-	 qt2RQj1/NpPKFcBnXJsX+gLYdYGuK6yw7/7pPoiKZQlxG6bMMx5OD2cxw6yQjanA0O
-	 l6mxQekLsEfYk02DnMQQtBWF+b1uSpc35BoRUjFKJ/MvNqfSS5szwk94rmCJUfqbjD
-	 pTinIofYxQYWg==
-Date: Fri, 4 Sep 2026 08:58:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: <dario.binacchi@amarulasolutions.com>, <mkl@pengutronix.de>,
- <mailhol@kernel.org>, <msp@baylibre.com>, <florian.fainelli@broadcom.com>,
- <jonas.gorski@gmail.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <kurt@linutronix.de>, <hauke@hauke-m.de>, <chester.a.unal@arinc9.com>,
- <daniel@makrotopia.org>, <matthias.bgg@gmail.com>,
- <angelogioacchino.delregno@collabora.com>, <ansuelsmth@gmail.com>,
- <linusw@kernel.org>, <luizluca@gmail.com>, <alvin.sipraga@analog.com>,
- <clement.leger@bootlin.com>, <justin.chen@broadcom.com>, <dlan@kernel.org>,
- <rogerq@kernel.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <rjui@broadcom.com>, <sbranden@broadcom.com>,
- <bcm-kernel-feedback-list@broadcom.com>, <opendmb@gmail.com>,
- <andrei.botila@oss.nxp.com>, <wangruikang@iscas.ac.cn>,
- <amadeus@jmu.edu.cn>, <kees@kernel.org>, <tmshlvck@gmail.com>,
- <c-vankar@ti.com>, <horms@kernel.org>, <vadim.fedorenko@linux.dev>,
- <daniel.zahka@gmail.com>, <nora.schiffer@ew.tq-group.com>,
- <v-singh1@ti.com>, <oss@vassilevski.com>, <haokexin@gmail.com>,
- <alex@sverdlin.org>, <aleksandr.loktionov@intel.com>,
- <lgs201920130244@gmail.com>, <linux-can@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>, <linux-renesas-soc@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <spacemit@lists.linux.dev>,
- <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH net-next 00/33] Remove comma after sentinel entries in
- match table
-Message-ID: <20260904085811.7e2c2db6@kernel.org>
-In-Reply-To: <20260904043724.2955444-1-s-vadapalli@ti.com>
-References: <20260904043724.2955444-1-s-vadapalli@ti.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="vNIix2zU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nGWq8SU3c/DdCwMzAuWla/W1PGX/1dFmlLpMjcg6Juu8VQswP32VV4Y3k1I0Fw214zrMiYKhrUJo1x5AWOBsiU8OX5/djo3ELEs9svVgyQS+1vXkNtPWl0ysfNzqazY2wd2buzaUa54DYrMoqMvpI/b0im914/0rEW5Qlm2qog0q9j1v0Kvc7u1LK1KUvYfqzTLLIPEH/FXxXzBSv5Kon8CvCPpMOyOqHP7Hu/oY1f8SsGU7/uzNgHhXpAgSejXtFxwMZHJLJO2z0S8qHZK3enmiU1roAUiVqd1i2AEJqykdxpqJGeGnq6htCcDXclSyB8cmrLqt/mdJHA1QnqqaWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n8/OEiF6Fn/TZXy7jha5tiwf9jbU4BeufkbuznCoZQw=;
+ b=aAQsKjlEf9HzIG0Oue9W4fG6+SJ+v7ZjQk4YWu1KtBHYadrVlrFCZuHOqPgc/zFe8PzOby/6bAmTHgK1E9vNocWWMjzmXwU3JynGVyUZRuPUUjbRmGb7oNVq5Y8K0NfL+q59dNdOjQGkqqEDddlT7CBoXUO3628pkYnw4S6ycPQ58XWlSLKedXA97wnslevoC+j2S89/0iuecic2KFxgGobxcy8D8HHFTbywGstMN8EUmlEoknlq0rbl5EwUxFo8Afa4VeW01Kk+lmq830Kh403ZEBqbD8BlUV61V3bGlpPPMF7Fnux7J/SK3CvmQBBV47VD3Bya53/Qw6sJllRzLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n8/OEiF6Fn/TZXy7jha5tiwf9jbU4BeufkbuznCoZQw=;
+ b=vNIix2zULmaQF0fUpTZ1qdbwbtDAjxkRIkKrtDaiZlIx3k8k5/Dvovf/w6E1AAizJLSQkDPQiGsBHYc9sL8LWap3be+uBq2eF4SLogs9hcTVVVeDtqtsN0qlm/+003rk2RLIkE7oPxZKv985okcB1t8vA8J3gK5ceVODKfnHsM58LSt09vb7V2ZB1OmI1q+0XS3T01g78wIS2oRYaawsrcrcmOA0sWA59G8necaXRClieN9Hktmuu3sBHIqH1BVrgUIvHjjUKVVbuk9jadRBIgFG/4wgp+BVJSQKICuhYCA1AGxPGk6evjvY9QuBE7VfFW+bMkgfXcSs6ZzeuorU9Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by PA6PR04MB11714.eurprd04.prod.outlook.com (2603:10a6:102:526::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
+ 2026 15:59:52 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
+ 15:59:52 +0000
+Date: Fri, 4 Sep 2026 11:59:44 -0400
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Pan Chuang <panchuang@vivo.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Kees Cook <kees@kernel.org>,
+	"open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>,
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 12/26] dmaengine: sh-rcar-dmac: Remove redundant
+ dev_err()/dev_err_probe()
+Message-ID: <aprq8PExjdkrVtZz@lizhi-Precision-Tower-5810>
+References: <20260709135846.97972-1-panchuang@vivo.com>
+ <20260709135846.97972-13-panchuang@vivo.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260709135846.97972-13-panchuang@vivo.com>
+X-ClientProxiedBy: CYZPR19CA0004.namprd19.prod.outlook.com
+ (2603:10b6:930:8e::10) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|PA6PR04MB11714:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2332caa3-7ff7-4997-7ee0-08df0a9d8e0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|19092799006|1800799024|366016|10067099003|4143699003|11063799006|22082099003|18002099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	BOMw4zFSx0dm3qbqeengHUGASS5xmvSiM/KY9HYysv4FOB+zkuIzoCGqarY4KDX8+TN4YLlAVX+ydI32dGJIDs4kIqc17GkTyreEO+vmr8hZbUcP/Ua38HRISqOam7ixzr1QBkzZDmLIEYXprF3H7JSnVK5DRfcDxKQj8XHR7jf4VvuPhsXEaSxNvnuvO0yXu0akOPKAnWF7nx10kF5TR6LFpYwAR0ZvPwEJSD3RclWOvSh1IZwgkcrAxnP7pj8hEQufJ+UPic/jJw28y46MGjdAqX7avn+dCSlja+umVHICEu5ar4FF38wPwo/csOsQVn+bp90EaF7vR8TFG+vmrhSTFj+mbZydvPLwMB5ZMKSxzXNZV2/aC4O6pm8lQqnTu+FqkptNx3bGOpiyi/qOKFf/V9HK+o++/iChTRxjrmUdq5iJq23WzsBaNOsA2Vg9LF5SUATl3yEBwdG2wT9al/cF6VFS28kZQwi4vZiJBl7tgMhV95MkAytY3/9hc5H6QgGfdmzTXp0aGGUuOsoH6qQVVSlvlvCvu7RTGtDBceXIM+igrivRe2UOCa2H7us4n9WmQ6jrn+hLgNTV0OGNVexXpw+LAnDzWxJdfzNzKQHex95bolkrRgIL5aC/wTjpZN4T8vKIKGxbpBWdem1UyY2Fh4FujZ66zvjOO1Mossg=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(19092799006)(1800799024)(366016)(10067099003)(4143699003)(11063799006)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ONL2YG6Vz7E6Fhl9ilRkaJ0WrfUsDAeG99oXyAMKQjBJuJuQ3U2sql+fgQLA?=
+ =?us-ascii?Q?GE4zADbvbYkTEcj0jO5bzu3aGsyEvQ0MgPQW17snhrC4vK8pf5MPUO7Hwg6d?=
+ =?us-ascii?Q?I4wEDxSUxIFPP5NJmbph0S0ADHYyh1VUmTbrAYx9UiRpzf5rOFtBrsV4nqmD?=
+ =?us-ascii?Q?Tj2npGLDWPGdBO3FJpmbhoDCbBr/V8459waFx6ARpPceloasCt+MYmmUsyIQ?=
+ =?us-ascii?Q?X3SZZXzxJN6RHllhJZqNudkKmg3obJ5fk6OIvolC9v4Kaakjw4equ7ZLGcQZ?=
+ =?us-ascii?Q?/t4xyD7mj5CuCsOIyYWENNkQoLqNLwnMVvMESbtcMDihs3flA9omH2cNf4gt?=
+ =?us-ascii?Q?WjOvFiIPRzQ1XzAvbnuDma3A5W0HVPOIbcNZk/ErpoDnQTpm2TJZKRPZj4M9?=
+ =?us-ascii?Q?R3OU7HhjCFR9lENMuCkGGwM/wNq3JWM8O74eWwnFEPy8UjIMx/J8JXcpn/5H?=
+ =?us-ascii?Q?MBiIQJSdukD81nw93BzdtokNuDpyDsvXrd4ZK2Zvk6JKO24MFdzUIs9DdqL3?=
+ =?us-ascii?Q?xBGbrl90dmBbHLQreYHS52FjR/l3MPCeXWDus0lR2V/QJo3qGqGdpNFm6Qkq?=
+ =?us-ascii?Q?AuFXEcIHe5fAWHiok/aEb9Kdz7Tqra7zUhWcvNhlvGlHlarRl3Zxo7x1yxvQ?=
+ =?us-ascii?Q?vgFWq7y+CETzlEEZ4WKP0F3FbShaPNqeJ1TwbtpLAooxojxnyiGEer/NRnYM?=
+ =?us-ascii?Q?2Ped8ld0IFGH4xba6lScy9J9MyuKGoDTIAA+TfZswxRgE5GHSKMMiVNq1eJ/?=
+ =?us-ascii?Q?chy5p927wmKL2oaeeGpej15VYGECjw3s+6CW5+PDHUhR93p/Jhi5BPvfRDAb?=
+ =?us-ascii?Q?KMxQx/lEsKuoB/jHkEE0HSjMSOPPwqI8AqLjQBgLY8wSPS0UlETxyZcpNSCU?=
+ =?us-ascii?Q?CowH30x/yHPFkeVP7LdYDrQxnOuwvZeia65AKVtws4iXglKMdZu55T2AFfgk?=
+ =?us-ascii?Q?WtjWB3HwPWn1uZXGiFP51V8y33AficYoZKCrFZFsVZ9cde77ReKYEpgLL4Ry?=
+ =?us-ascii?Q?tU54EDE1lCkSFn6WRgD/eoyRJEqVYB1rFM5yTjiVUWZ/GgucSYPpfgHvXm3d?=
+ =?us-ascii?Q?4cdYFFHgBQZJ83LNMmvrOovUVGEUqxpi/Phh2YnnGAyVCgUM3Xq2uFpFucUP?=
+ =?us-ascii?Q?g50dLERE2S4rgDU2aUxolvsQb2O7PCpxe2/CFE5/JYElzMslWb9yoFr1Ypjo?=
+ =?us-ascii?Q?taR6+kIj6NRjitbJTyC2SCsDBq1n7O+ohJ7hY8sTTGF1/9pfO5v12IPrV0C1?=
+ =?us-ascii?Q?giFsxfcstW56+c/MZpHaLNSHf0XxB9aeTl4FXAyR4Rcci4mKOq73qfitFPtb?=
+ =?us-ascii?Q?IsWAn0otvN8xFcjjr9ZiCrnXQQFP9Znav89rHJE4D3YM7YpPLKx/NO3UYqzX?=
+ =?us-ascii?Q?t7xmPdSSeeYsy0Wrjoubce18r9QBVf6XjJWWfc0DYYZhh7Gw2t1gZaE2ag51?=
+ =?us-ascii?Q?d8s2t9jNSWIEyOTmtuZKKHvUKJYJmonuvebSQMwF1Os2CqICK9UBicYqguXc?=
+ =?us-ascii?Q?OITLYFymmpWrLg6FXgRn+fqiLnKMpK0Mn6Jw5NjjkrCAQNQMBUet3m0jbCri?=
+ =?us-ascii?Q?pm+jgj1aF7sHR4MuXUGO5k5g1jMfNkHAovHx1CeJSlaNew00f+Hse3aC+3I3?=
+ =?us-ascii?Q?qK5Bxz8YWlNiiXeLQi3boLL2sPBboJB+eNAB/hthuDE8Tei9r4wRV1G2xiEJ?=
+ =?us-ascii?Q?Wwxvh6WwEr3/eQ5/OIkyx3rGS4/8wcxppNE48UESxMrPZQl2jLTBcXTEyPmm?=
+ =?us-ascii?Q?x1i6tcB9lcOGiaMXck3NUbuo7R6QD2YeAdwQegeHfLdm9xPEuqkD?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2332caa3-7ff7-4997-7ee0-08df0a9d8e0d
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 15:59:52.0834
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w3gz/W3zSqNJQRCG9tR1bKVErhjdrR6SHggh7P4npppIjY+bmt4CSOgZxckpNwUCHFEHsOeY10QJaP38cr9KA+DJ4GI4Z/eQRlJcDJ1OA8sD2u4Y2kIpdD7csdXOa9kl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR04MB11714
 
-On Fri, 4 Sep 2026 10:06:06 +0530 Siddharth Vadapalli wrote:
-> This series removes the comma present after sentinel entries in the match
-> tables across all networking subsystem drivers, with the exception of the
-> davinci_mdio.c driver, for which, the patch posted by Geert at:
-> https://lore.kernel.org/r/e481b6de46cecc6ea604ae165272c667274cc621.1788437140.git.geert+renesas@glider.be/
-> does the same.
-> 
-> Since I inquired about a cleanup across the entire networking subsystem but
-> didn't get a response:
-> https://lore.kernel.org/r/b3d19098-eccd-4619-b667-ad3b7e0a4422@ti.com/
-> I decided to post this series. Given that Andrew Lunn acknowledged the
-> cleanup of the davinci_mdio driver:
-> https://lore.kernel.org/r/abec6831-d344-489d-b70c-1e5dd4d43c2d@lunn.ch/
-> and I don't see why the cleanup is specific to davinci_mdio driver alone,
-> I am hoping that this series is treated identically to the patch that
-> Geert had posted for the davinci_mdio driver.
-> 
-> Series is based on commit
-> 6ebcf5074cff net: openvswitch: don't schedule rebalancing if there are no datapaths
-> of the 'main' branch of the net-next tree.
+On Thu, Jul 09, 2026 at 09:58:16PM +0800, Pan Chuang wrote:
+> The devm_request_threaded_irq() now automatically logs detailed error
+> messages on failure. This eliminates the need for driver-specific
+> dev_err() and dev_err_probe() calls that previously printed generic
+> messages.
+>
+> Signed-off-by: Pan Chuang <panchuang@vivo.com>
+> ---
 
-You failed to specify why this "cleanup" makes a difference.
-have you ever seen the sentinel not be the last entry?
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+>  drivers/dma/sh/rcar-dmac.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 44eab2d21d54..4cd7f0189bc7 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1793,11 +1793,8 @@ static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
+>  					rcar_dmac_isr_channel,
+>  					rcar_dmac_isr_channel_thread, 0,
+>  					irqname, rchan);
+> -	if (ret) {
+> -		dev_err(dmac->dev, "failed to request IRQ %u (%d)\n",
+> -			rchan->irq, ret);
+> +	if (ret)
+>  		return ret;
+> -	}
+>
+>  	return 0;
+>  }
+> --
+> 2.34.1
+>
