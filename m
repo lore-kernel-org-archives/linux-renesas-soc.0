@@ -1,71 +1,71 @@
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B75E446067
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 15:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3517C455628
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 15:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788534993; cv=none; b=j3tp9NyNDLcCc0CEPS3bHFNpl2dHibKsAdWirJpv/Vep/h/5FfuzmykirxynZOURtitYXLyVprL1oMwN9Fr+XpoZde8VDyvD7E9yc0CLoEdA4ax6InNUXq767ESslCkEWNAXchYpu/uh1us5jow95DY1Vs+dkBxWUK1CvhoJB2c=
+	t=1788535131; cv=none; b=Hm/yHECI/AJCBwUe9L0rMwTd4me5cUtmA1R+lvFZZv/Z0wrDwlRlcSz2i2uYgb/6Cp+ldM/nTe1RFFdAINM8bfrirXVY7SMDbaJ9I3qwU4B/gsKKe1XNacSHng4dJpZ0YVj6aZmgIEwdvvrIMBDe663q/hnQQliVWsad19NeyZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788534993; c=relaxed/simple;
-	bh=3zmx8Z2M3ZeRzOKqpOgR2P10M5x7/5/EKeh+dHIiZJ0=;
+	s=arc-20240116; t=1788535131; c=relaxed/simple;
+	bh=JKMK2CnzL8ftNzdqEBL6ZbY15a40r3hgTJf4pBsjvSE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JLvubNcKNRGi/sBneYMXkEyp8N/9yd5mh1YHRSc7nyjEs8ndAiKpG4mFZrKDZNg7BUZJ3iSCF+3hSd9UEJxYi3klfI66/23uAqAf0FNg81VPG0zy3zTDlbwAq4rZwPHORMZti7IG2pKx1e5kgujJwSMNRKJhjHHn7rZUt2USsVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+	 To:Cc:Content-Type; b=bHgm2tNhDWGlPXYaRB0LiR87iL/U9PkkRSr16Zf4NCQL1lUOARWPbTm6p53se3fC7CpFLGtxZNrvnrNlkFBOvxt1ITCsvPDlgoJfaHhBl0EewWiNsJevs+mbtQSbfOUqixlA2SnwciHvTrfPFKCoLOB4Ku05i+9DmiqyVTtB7Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-782af6c753cso1089199137.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 08:16:32 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8534d507f59so1260003b3a.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 08:18:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788534991; x=1789139791;
+        d=1e100.net; s=20251104; t=1788535129; x=1789139929;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=VtnOZM9WfbSwC1inxRe0geJOr1JfkMHDy+62es74nYc=;
-        b=iFY2a8n5b3xvXoau5RyxGMja7flCFX5dtiQ7fhhQgnRCnX9K/Fo4ZvroybYmKS4lY+
-         iAGWJ4lkn9xL1XdQ/hSnpMkJV2+BofCeUSh5OakYE555uIJXhBpHcb5ce/8aMajbIEOQ
-         5zRpLIauzWArWN8k93a4Xjw7JaFNIxN3H1WA3khq/uyxfeTZ4X7qmI4ncC91hMB4AyUo
-         llplI4yeNdPDo/75J+lHPrZzLLhs3ALn1FflXXIHR2lQyoIjERjH5pbolVVQzBboR/Oa
-         ZdwBdg4WwGILMkFdaUmMNOrrotkzSivpcNoLGfsatOubSTdBmpUlVwBrRjT6kXaDUB2p
-         fB4w==
-X-Forwarded-Encrypted: i=1; AKwUvBzJHPHgqZSxmrKRrnOLs7io5Kv9ZmK9k91gYy7o3mALHwPQ9H+WPmJPiJtu1ef5FBbdd3GtHP6YQvkigwRsLK2L6w==@vger.kernel.org
-X-Gm-Message-State: AFuF++mWpWQ1WMHFyFy3CGWPeKeU71REwSBLK1hjaIvGD1U/cxPtdmZY
-	aZC/sv/yN5qh5mDuOrXa95NpxHLUBMerFsRBAQkINl1FQEtaM1WGh03KiW79FR2s
-X-Gm-Gg: AYBFou16Oyy5wnSGDSrDLMXYsTYS70kdcCO8wjS30ce8rkeU8xT5PLdk3jT2hSq9A+O
-	RKt5eDoUHRd9eB7oSjoKlsPVXKHSprviWqcFPgLiPugk0sQoKLEveAyOay9FHgg+/wE5w0vlCoq
-	RIVd41UizOLzgWYoA/7sCZ0g5STf/var+m4Q61h8zkAOJ/gAvZro+9glWeC3XBSwjSujrYhA5pL
-	5B3BcZQxtDLvK5KT3OXWQ5PcyC0BJcjo6LDwd9UyPETamNwf2fCD1euq53bDsxXZX6Gks19OCod
-	0Mb4Zd/ENLGa142ZCJ30DAIpdw3eABYRuwvCkVPf+UEXOInOrdaPJXnw1iLROWfBNf2Kyi6A+xP
-	RnPXItznBRcshMWrm9WaxOF3C/NKA9tqo/9EItAumzeLeYYdeWMlHpe9Ij/e5gGZpnGKJ+KlRD5
-	+sOMw4gfyoFE2guGtDJScjiJI9KCQhCg+iCDDV8emWjp88DG0Rc41AQ9oikDEm0bTm4ZvzyXAOm
-	8uP3ol+VTPSmPwHAZUi76b2d+p54Q==
-X-Received: by 2002:a05:6102:3e10:b0:781:1ac:8232 with SMTP id ada2fe7eead31-78a4a87907emr2894595137.5.1788534991094;
-        Fri, 04 Sep 2026 08:16:31 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47a76aaasm2007397137.3.2026.09.04.08.16.30
+        bh=EH26aGan0gGqVYE0IjLU+OD6hNNld1CIjczwNKp7Quo=;
+        b=nvt0vUpQFunrFnt2gypy6OsUyYkeA9PbdC7jNdLK0AU5+NLXbRCPyWxCj6PlP0sVPb
+         NujIuYqSVwh4znUcD3a5F4DcUH+mwNwlnI7BH+PzQ5ej249atkgt9nAKRN/u3yKx/g74
+         8monWMGZC5Qo7GIXIEKqpjH7S3rHya/iQQQakDyhZyWzZAnLhrIUTqEQ7OhO2/o4NPcZ
+         G6C2BKXZZKEvsaffSGZUCqI3+ln6XaW/OSYZP+RO0K9VVxgUENoAsrnKQABZL2CgpESh
+         zvKEdPXnl4O6x4eyeMDhtLbpsTUzAZSA03+40VbX+nEi+kJz8DDhl6jAiQroui9+qOEz
+         mMGw==
+X-Forwarded-Encrypted: i=1; AKwUvBwby7jJCbbYyKTgtcf0XnRS+/nZikmLmChSdwTLXMvrPTQzlfeouLp88QhvLMCWhAzkSMCHD7PyyfD3igYhim6RHg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lk/109ilgG8pjsnUxf2U9d2yJfITdc8nHVoeFQ0L8r400wIvzS
+	56KAg4ZfPKNF5vmKQtrbMkCkKWIrLyQ0Eo92t7ekieC52Ps9VU+5mjnqYcHBtAF2
+X-Gm-Gg: AYBFou0lQpPCev2sJn1oo2qZ3yjohUcohK9dgpzAvqZ/Yy3RkwGEkgivs1mATX4x7hl
+	82J3XU6GO6F3Qc69sgNLVHaQkD+XM6YVDP4+Px9Uc9k2C6/wq38gsyzEsLZALJCEqagV4Ipg9fR
+	rceDv4dkMr7cDqMD9z32fM1ac/b24wapZY17gOOe/NYP+wYNTMV6TFSh5aqD6G0N1w6jUx/5BQ4
+	UKrwSwzx+TSDmdMZ8tYCJeogvQqiHha1UMlanPt7jeH5Fk+gt5KMcqXg4uZt260PTYUxbQ3Ag9A
+	aY6m0ViLVaCum2Eylu2CaBxLW90dM1LR9AbmBjj/JpS/5xx2rh1hjDL5OfyTIjKkdCPRlddtitM
+	VDOiDqTjOUzXrjtMaO+wRdu2Vf8OmwHPCuaaAsofZ+8Dp0cgltOsHKhynB0S7OtRyvrs+AHcuwm
+	mv8u3jH79Nbc8H53jqmjhD1+N75sHAX8l+FJRECW+glvbtvBwnQh3MlTLZpxcCFktE3XaLfQ3xO
+	+RrAfX0Kf8nkCw7lzysigZpp2lLGg==
+X-Received: by 2002:a05:6a21:6e95:b0:3cc:f008:8123 with SMTP id adf61e73a8af0-3da39ec3ebamr10942274637.8.1788535129371;
+        Fri, 04 Sep 2026 08:18:49 -0700 (PDT)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com. [209.85.215.174])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc455405cfasm1012095a12.8.2026.09.04.08.18.48
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 08:16:30 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c66eefc868so1055206e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 08:16:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwBUEDuKV/gXXqaFGgFQhmmQrtfV0zT8oAX0VMrAyVsOI5OXSfxm6c9HeoNoI0bTEKglrQBxKjhMIKgWPTI2ODmAQ==@vger.kernel.org
-X-Received: by 2002:a05:6122:e189:b0:5bb:eebe:7ffd with SMTP id
- 71dfb90a1353d-5c7ed846723mr3533958e0c.8.1788534988918; Fri, 04 Sep 2026
- 08:16:28 -0700 (PDT)
+        Fri, 04 Sep 2026 08:18:49 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-ca7c1176317so985072a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 08:18:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzWvrMfDNTEOkPEgXWE9sSKcqA7kMDqZyh3BQXiPy4BLvbEyngcOOK628m61rgS7DkDm1A17PgsBvAgO+tTGnQNvg==@vger.kernel.org
+X-Received: by 2002:a05:6102:2b9c:b0:784:b9ec:913f with SMTP id
+ ada2fe7eead31-78a4a6c8e9cmr2072720137.5.1788534796061; Fri, 04 Sep 2026
+ 08:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-8-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260821150408.73829-8-ayman.chaudhry.kc@renesas.com>
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-7-ayman.chaudhry.kc@renesas.com>
+In-Reply-To: <20260821150408.73829-7-ayman.chaudhry.kc@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 17:16:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX6GACqU4VTEk0hUO2A74RDmO3twMhEvkFAp2xiP=PN8g@mail.gmail.com>
-X-Gm-Features: AcwNN1XsJHROGLoqiw2JCifUELiKV7YahAKrRzR2A5vM8Z-pkJl7ddzQiPC7x18
-Message-ID: <CAMuHMdX6GACqU4VTEk0hUO2A74RDmO3twMhEvkFAp2xiP=PN8g@mail.gmail.com>
-Subject: Re: [PATCH 07/10] clk: renesas: Add support for RZ/G2M v3.0
+Date: Fri, 4 Sep 2026 17:13:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWOLRH5CWwUBkb6odaX=4t6eDnd4onrkgGfvwgPc37i_w@mail.gmail.com>
+X-Gm-Features: AcwNN1VLaUGS5m2MWtdAilN8Kk2snIGRLTUTYNqUMsLJBTkMdKQbkgJo-6rNerQ
+Message-ID: <CAMuHMdWOLRH5CWwUBkb6odaX=4t6eDnd4onrkgGfvwgPc37i_w@mail.gmail.com>
+Subject: Re: [PATCH 06/10] dt-bindings: clock: Add r8a774a3 CPG Core Clock definitions
 To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -79,15 +79,34 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
+Hi Ayman,
+
 On Fri, 21 Aug 2026 at 17:05, Ayman Chaudhry
 <ayman.chaudhry.kc@renesas.com> wrote:
-> Add initial support for Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC,
-> including basic core clocks, and SCIF2 (serial console) and INTC-AP
-> (GIC) module clocks. The RZ/G2M v3.0 CPG is similar to the RZ/G2M v1.3,
-> however it lacks some modules such as the FCPCI.
+> Add all the Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC Clock Pulse
+> Generator Core Clock Outputs, as listed in Table 11.3 ("List of Clocks
+> [RZ/G2M V1.3, RZ/G2M V3.0]") of the RZ/G2 Hardware User's Manual.
 >
 > Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a774a3-cpg-mssr.h
+
+Missing "renesas," vendor prefix.
+
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2026 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A774A3_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A774A3_CPG_MSSR_H__
+
+Missing "RENESAS_" vendor prefix.
+
+For the contents:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
