@@ -1,117 +1,130 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1504AA41F;
-	Fri,  4 Sep 2026 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A62D3A544F
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 14:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788531672; cv=none; b=LXK5Cv5I2Tn5sEYZpGfRzm56T9UAx5Ht4Vd0BNmZuo/i6fynJTf2pPWrPPV5s4c1gazVhLKYNpRlNbQmRwhGXr7P5X3hqRjMqwP3aI66A69IHa4B8jAR5Uzr8oV/50Fmt837G3wXmbDlC+gEe8unLglCOvNDmS3jvwFd7GCJvjU=
+	t=1788532968; cv=none; b=nZPatpQ+UBYFIFK1YKFnd4MVlQShsA3zMBKmNltQh/u+tVHa6w8Al+OyZu4i55Y28awDp4d3kY8sSGExOJa7eMkkErdAKDVBMhiNA4ehQqZjwKRacL4+R5RnzHyqSYovH9wJGLVNAeMV+1JQ+Sm0WCL34dH6GsDubDoKGvasnKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788531672; c=relaxed/simple;
-	bh=NMqR8rOzZ9pIXQI46p/r7yGV/Ufqh7GeI8P/WtA7WK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUR2TFZV6srcYhBJoEK4jRQy9Dg/+56rNs5IjSM2l5WYo7ENMp6SHpY914sXDQXEbcmhoPVhpgOhg0v45Yynv7gR2AWZJfZMa8Tl75+4oGh4YKucPsrdzVM9znG+sMhKCIfE6iMD9rdW5JCTb+YC20V/6pwzkg1jZnnDqXRC4Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.113] (unknown [123.118.210.34])
-	by APP-01 (Coremail) with SMTP id qwCowAB3Se1v05pqrLYrBw--.65223S2;
-	Fri, 04 Sep 2026 22:19:28 +0800 (CST)
-Message-ID: <da1da563-1011-4b0c-a480-9d3d3acb6441@iscas.ac.cn>
-Date: Fri, 4 Sep 2026 22:19:27 +0800
+	s=arc-20240116; t=1788532968; c=relaxed/simple;
+	bh=TcGIo92RiATa8vkGJVdjHgxt9WlzbewL1KtAW6cGFCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQnp3yrUphYhM1W4/QUHvyfZ67QcFY3Qkw9dN/RoD0IduSWMmQLnFN8CV3dPgTnvE7iIS8w/D/mIh5JtyUOYd1m+TlpmEJADtU9/PQIuJJUUFXvv+vsaYHdWmSmkrnr9ifnJav+WlwYiQ7JYV/LfVFO8iw4Uod6a0OemzMXuHzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5c56dbc3a51so402320e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:42:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788532965; x=1789137765;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=iy22q1YzKGiQPGN9B1bpmbrGTjC/sYmYXe5uXN4aXJo=;
+        b=AQDoEQ3wbdIUF1DN+BwMkZ0N7wMH4QFqcolRwvlKZy27je/SMfX3OMzL78zVkeNYhb
+         htdHViTQV/CZtHH2768sPwofTDpNw2hRICJOZJoPVZT1AZDWUVX6TsxDee4LCCvBNJg5
+         khnaDRk5SnsBIFyMveMw6CIQLjTDxEk1sV7qYRfMywlVUZpv1LPufLWAnb4st7c36J7r
+         kXxM9gx6rKgth0xaUlEOiNAvniduEPfqjOBGBE/JY/0bEK8VQ3W+fm2CjXEZ/CCCFz6P
+         PpiE2NV9oAWI3NSdgWNRflOhEFDXeeQXiRhQN1DGP2w+5eDGIncewBJ0B7uTRPSogHbj
+         MqPw==
+X-Forwarded-Encrypted: i=1; AKwUvBy/7XoTEIAQstFIBlCv4kQICcYBh9MDLSJbFix3GvHRKsmPx7EFOKvGR1yqg+7YhbO/CkH0xTj647CgRVOFLLdtmQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++l0+pmOn68iqGxVQIwHBTFUqELB0sVng3wzBfrQ2B0RS/C60KcH
+	u4p4Hc+DRSkLTzoO5LwJnGcGzffz0yGTLUg16k1tJGPFckhIEW2dEV5TFvOVzOy7ijc=
+X-Gm-Gg: AYBFou1iB9OHTvqXWF3Cg6N5YKEp0pcl0e3fBsfvBQSE/MnZm17Gxo3N/+36Z7mMAh6
+	e8ZsRWPToLuO/X9W5aoj+dFdbkUAwicpdNv1bVigW9gEAwhzI9fC6XEi6IrCZOrowHfx4tTRNKb
+	29VeG33av/fpKJjuhOxMU7SfcwBBLeg5+J0UJjEwZ8/tdLTV0xt4QvQQhPsfcqg7bQlNnZMm6nO
+	Ne2LjHh8xd9uD8MwSQFkZ/VFdBpEd3eBbO0x+tZfhloUkiQNoC9X25FNjlXTO2qWTF8sVVs7KmB
+	/uqwxNgz1sZFcqmfbkyDGtsulnKfysD2BXGl9qQi1vl5vy3053yJTZ8awLE3HiMBxltUfdbpFmS
+	ta/BkK/ZuE7Ou22q0ARKdOEPVpcV8kasPV+6HiYjQ519zqFsw8rIahJ0XVShiYZ15Kpk/jIQYgA
+	Hl2M/vYiqVxzqBmCm9ZaYJyhb5Ol1UA+cnxcEzDquBATOVLqIAm8vwddH3qhk9LgODnky5DRb02
+	rGvj6D9TO2X4HNukBtyGdplHw==
+X-Received: by 2002:a05:6122:4f83:b0:5a1:fbbd:6bd0 with SMTP id 71dfb90a1353d-5c7ed45ea59mr2659748e0c.5.1788532964812;
+        Fri, 04 Sep 2026 07:42:44 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1eeaf3sm2228037e0c.6.2026.09.04.07.42.41
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Sep 2026 07:42:42 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-7466771f1caso371922137.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 07:42:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzu2KdY3MsRAP6IdnmPJPTSv+ZnzyTqIyOEapoz9qgiBoFVUWhKIXdTNKrHbgvbx3MzBpp5SpDNDJ/7Pq0/XkiUmg==@vger.kernel.org
+X-Received: by 2002:a05:6102:2d04:b0:785:eb33:87a8 with SMTP id
+ ada2fe7eead31-78a4a883885mr1900429137.4.1788532960799; Fri, 04 Sep 2026
+ 07:42:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 25/33] net: spacemit: k1_emac: Remove comma after
- sentinel-entry in match-table
-To: Siddharth Vadapalli <s-vadapalli@ti.com>,
- dario.binacchi@amarulasolutions.com, mkl@pengutronix.de, mailhol@kernel.org,
- msp@baylibre.com, florian.fainelli@broadcom.com, jonas.gorski@gmail.com,
- andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, kurt@linutronix.de, hauke@hauke-m.de,
- chester.a.unal@arinc9.com, daniel@makrotopia.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, ansuelsmth@gmail.com,
- linusw@kernel.org, luizluca@gmail.com, alvin.sipraga@analog.com,
- clement.leger@bootlin.com, justin.chen@broadcom.com, dlan@kernel.org,
- rogerq@kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
- rjui@broadcom.com, sbranden@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, opendmb@gmail.com,
- andrei.botila@oss.nxp.com, amadeus@jmu.edu.cn, kees@kernel.org,
- tmshlvck@gmail.com, c-vankar@ti.com, horms@kernel.org,
- vadim.fedorenko@linux.dev, daniel.zahka@gmail.com,
- nora.schiffer@ew.tq-group.com, v-singh1@ti.com, oss@vassilevski.com,
- haokexin@gmail.com, alex@sverdlin.org, aleksandr.loktionov@intel.com,
- lgs201920130244@gmail.com
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-omap@vger.kernel.org
-References: <20260904043724.2955444-1-s-vadapalli@ti.com>
- <20260904043724.2955444-26-s-vadapalli@ti.com>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20260904043724.2955444-26-s-vadapalli@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowAB3Se1v05pqrLYrBw--.65223S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW5ur1kJFyxAr18Xr1UZFb_yoWkKrbE9r
-	1fXas3Jr4DCryv9a4akF1avrWkKrs8Xr48Was7KrW3ZasrWr1kArWkCF97t34furWrXFZ3
-	GrnxKF48Aw17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
-	1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IUnGZX7UUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+References: <cover.1788338320.git.geert+renesas@glider.be> <2cf42d7ef9b452efbab3007ec2c2340cf87adbbf.1788338320.git.geert+renesas@glider.be>
+ <20260904-fabulous-lionfish-of-cookies-0d614c@sudeepholla>
+In-Reply-To: <20260904-fabulous-lionfish-of-cookies-0d614c@sudeepholla>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Sep 2026 16:42:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU_u1ticUomZffY8iU2GoWgyTNDPaL2O6KB7yucr47dDA@mail.gmail.com>
+X-Gm-Features: AcwNN1WAkp69Or55f6uh4v6WhdtMEG7Qz9QclhM1mQOZ0FBl4cYNnC9KwnYi2zM
+Message-ID: <CAMuHMdU_u1ticUomZffY8iU2GoWgyTNDPaL2O6KB7yucr47dDA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r8a78000-cpg: Add
+ renesas,scmi-firmware property
+To: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/4/26 12:36, Siddharth Vadapalli wrote:
+Hi Sudeep,
 
-> Since sentinel is the last entry and we do not expect further entries
-> following it, remove the comma.
+On Fri, 4 Sept 2026 at 16:03, Sudeep Holla <sudeep.holla@kernel.org> wrote:
+> On Wed, Sep 02, 2026 at 01:29:17PM +0200, Geert Uytterhoeven wrote:
+> > On systems using the ARM System Control and Management Interface (SCMI),
+> > the Clock Pulse Generator hardware registers must not be accessed
+> > directly.  Instead, the SCMI message protocol must be used for inquiry,
+> > configuration, and control of clocks.
 >
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
->  drivers/net/ethernet/spacemit/k1_emac.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Why is this node needed in the devicetree at all or why is it not disabled
+> so that any driver in the OSPM is not probed at all.
+
+The node is needed so the corresponding driver can bind against it.
+The driver takes care of remapping DT hardware descriptions to the
+abstractions offered by the SCMI firmware when SCMI must be used.
+
+> > Add a "renesas,scmi-firmware" property to distinguish between systems
+> > with and without SCMI, and to indicate which SCMI firmware interface
+> > provider to communicate with.
+> >
 >
-> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
-> index f7f16397a2c2..29385d78fc4b 100644
-> --- a/drivers/net/ethernet/spacemit/k1_emac.c
-> +++ b/drivers/net/ethernet/spacemit/k1_emac.c
-> @@ -1161,7 +1161,7 @@ static const struct ethtool_rmon_hist_range emac_rmon_hist_ranges[] = {
->  	{  512, 1023 },
->  	{ 1024, 1518 },
->  	{ 1519, 4096 },
-> -	{ /* sentinel */ },
-> +	{ /* sentinel */ }
->  };
->  
->  /* Like dev_fetch_dstats(), but we only use tx_drops */
-> @@ -2066,7 +2066,7 @@ static const struct dev_pm_ops emac_pm_ops = {
->  
->  static const struct of_device_id emac_of_match[] = {
->  	{ .compatible = "spacemit,k1-emac" },
-> -	{ /* sentinel */ },
-> +	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, emac_of_match);
->  
+> I still don't see the need for this if you disable the node, so still
 
-Acked-by: Vivian Wang <wangruikang@iscas.ac.cn>
+The node is not disabled.
 
-Regards,
-Vivian "dramforever" Wang
+> NACK. Sorry if I have missed some discussions, please present the information
+> as part of this patch in the commit log if not the actual binding itself.
 
+That's why we have cover letter, with links to previous versions and
+discussions.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
