@@ -1,98 +1,110 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F23F871B
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 12:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16FC485CF2
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 12:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788524554; cv=none; b=A2Ab6BIyrSmFy4AxWLJnkd9fWcPF8Bs1t2pt5iUIcqeHw5O7UJpVnFrG2MvL8b2lRkAVAsc20PCPRVEDNASFLZMd1pQ3Oi3birWDxVDX7YU52aNFrrxRXGvTb0QeaPZjXYfRJ38MptehBZX/tyGQhVyyQjagRQhLlONnvHSgDGo=
+	t=1788525006; cv=none; b=W1RFDblNqA0d01YmtGLQD9eBLzpJmQajzdA4Eo9FlpDP3Yzs0tlGv+iFsTDUmyQap2fdqx4+roK4qlQxCI+w6CZa2EXQiQ0qvTkEoSGzOjsZeG3qrJLKOYWdxRoariwbo9mOD/eCKCcU4X78cu0u4pzGCp3qSG/Bmd2wdvtIIQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788524554; c=relaxed/simple;
-	bh=vjaQgjeSeDSWekFLIKX6/r8ecgd8zwyE1GwfTXL4Nb8=;
+	s=arc-20240116; t=1788525006; c=relaxed/simple;
+	bh=2DtpMsYpyVYksuw1OGOXVQZ0XVIysiiC9LDRS8naQq8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/IPL/N+x+V8xR/vS3u5tgZt2eTY0Im0bY+sqVvvd7abcIb2/IG+agIL9GZCNDRyvLVyhcTUTb5PA6o+BRna6I11Z43o4Xj9PHW0xV0VxFNgkVtuvvIbj8t9Ra85fYv9RGM+DPl3p6QkoA6Fpi6/2yEQIcUFF+SBP7u7XNxdsXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+	 To:Cc:Content-Type; b=HSUuJykP6hpAXU2mdnSTRfwo81q3D4VHzR1L4FKTAxbLYgs7nXq88VaSKRFX6Ut/4Nto9wcIsch3gQUR6AYz2R4IhOY91PUoKNbih1l30VRpmWtb2aFDJie/+vChTie1lTf662/vJZay75NICoPV2Tfy0g1Nr3rl7t/qLQhRr/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-97e76cabd96so290637241.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:22:32 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-782df51b4c1so703866137.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:30:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788524552; x=1789129352;
+        d=1e100.net; s=20251104; t=1788525003; x=1789129803;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=1mDtuYgjcDY/xg58xIH9H2reGhfYioaWqgEAldYn7pM=;
-        b=n6FfzELsOWuMK/mrRkrCysDDuwQ91D4Y7ftIYl1fzOoQ1TjYvpyACZLj11i2zlANuk
-         DZpwgc0z54Zr2nQ+JNaLuxTaw6/ZkmzGwKN3iRNofGDpt/4apVJAY8RVF0rq4AMcO9SX
-         6LOisrZmk2MU58mWdOgo6MtDMzxN6KrqXdtNqjJD0fdKEP22aJ0aB29o7qG2BYL7tWZR
-         xDUuHW9EqGXR19vB9PzrJ65itPROe52yCFgkDlOJf6kXc/rXbPHj56pDP3aMuC2wkrea
-         AuhZ/Fy1MrL6SBZJtSDrCO9Ump+OmhABSUEcYlhMPSTjRnTQh5QaCfSN42IBvR01ttmY
-         vrnw==
-X-Forwarded-Encrypted: i=1; AKwUvBy5MAu2vRxtxG/w2vHrdJG3aSOoEvdOAWQLvy1qYF+pxs1iidJq5i+uLM1C/MCpakhEgBdBjNl4GEkpqa1ClosZhA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lz6nwdSBo3+ALzi/0Eh4ltczM6zhyB+yrm8iI+IPva9C5uWCE7
-	5yVDckX6GDX+/G7d214Dc75CFQBZE6YwQXitLTqGhL8b4zGDSPP13E+fVpXtJ3R2EbM=
-X-Gm-Gg: AYBFou0oUBPua85UtdR53jBMmk5xY0gw9CakORuTZcF6RPTFZbCAKS8ouj2YR9gPkS7
-	L84qxXYMVfLozOOlDkcSKU1EBmZwGHGpTxcak0Or6fPNIQIuJnrasCKilN9gy1oAGHXpjSA7u4b
-	0/q8bzHKmre/lnjwlXaHSMJg0admogQnqIx2Ac97jmnB0PKHGxO1aIp99XYonDXcIMXsF6i50DL
-	ispHQwjDpuymDmhCJJ16UaQGif86ZiNCKYrMWQlv44MCbNykguS7lC0TaupKHoPQSuvmELQp7jP
-	pHJQYPPHSil2zzT6LnwXtqdJEnC++cs8rb+qvHu50zjkaONJJ4bkdxjv6SKZ7KoM21lrBAFY5Wa
-	h4aPbGgXwgSvWDC2WPOnbXM9KcW2L9VxJsyqoKL0enW4YRNy/hgZHzeBeA20JUvmZo8zfJEv1r/
-	U3LN9gQ8Q/yTmSAos9y5D+X/pG4fTuNjgsC+FBus63tFojmDXrPCbpJqqvuq8WH1wmmBUIaj8Sx
-	fSUNKtP6ixuUedbGSlMfYUPVE2CmfbNMj7q
-X-Received: by 2002:a05:6102:1606:b0:778:9e3c:5760 with SMTP id ada2fe7eead31-78a4a9621d7mr1442558137.11.1788524551703;
-        Fri, 04 Sep 2026 05:22:31 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47ae301fsm1599095137.7.2026.09.04.05.22.29
+        bh=wBhQA37E1Xf0Mr+HPKFsdlUMfZuU0RFIBB/KUd4dqqE=;
+        b=HyjYcQYPTg5eNflTJe2zUovhClG1P57xImQNwoJE5cPBCpylOQpIt947xn0Fi2t2sP
+         HtWeYOK2fkbvxq1Ixwo0/wJ0emVoAvkaG5PD+GdaeYec10gbmRw1XdzkGRZCZMWDNnk5
+         CoSVN5zs7mwzF626egRqDM14i1H17CQ7xprM7AHhloMR0sfAeER7xyjDtho2ARlD8wk6
+         bEoQAZ+d2jAqOpK4ZTgUTkvfIvZt8E2ElcVhjmJ7FKUtCmjvEJxuS4m8Ly96RbkuUwR9
+         4/OLhBe2FeoKn8UbaEa7xbumkSFFQAXSJ6l5NVh1vV287UUio7t8ICsmaVOlRpeHle0W
+         9VDQ==
+X-Gm-Message-State: AFuF++kcpP5SOVkyGIE5nILVtF3KfEu6RNhV0gKF0qtnZJ+CPcp4l9u0
+	JAjwmLS/lJFwwCGojl06FLTr0ZxBPcgVTLyFm9cZKIDFtpHvxFmY3z5pQVI8w6jjaqU=
+X-Gm-Gg: AYBFou2LuVhgXtoF4ZyQvVMmzBkh8NSWPQbFwzkZZk6okWJ6pnZ8WCM+gArOJQfM3tx
+	S3H0PNEbTvpZqHQZF5yNZF/vcERT+O+9pQrXWh4efR4yf8CXRnNIH0szG+w6ddA6WLSvnh+kCW3
+	Ijycf1fwDFOiKATbC+HNZ5mBiRp/uu0anYRKvNsJY2hVyTki2rIHUGcnZr83oGpfoCe4YbWWmc8
+	YJiOdGKZLNllLeAIWYKZu0QxHeeg4Hz7mP6w6V0aAGaGbicqa1lHGtFRuzYhNhEanpFUIY+ibuR
+	jLBZqGxNrFGOATxUICCa0b+u1lhNOOz+PcPYZ2o0BY+JOfUn9PMXuL5ZVT4QxUA5WIyi2soNnUt
+	PK0NeI56Az1yauqil3S00zTuM903ZJn/vlZBYSSo2UsK6UvRf0Bnq5WtXYOyvJXm6pa8tUtXHvI
+	sEEb95FxvkikORGxJChKKotNwVm6DCbF4SAZyi/yXYPMD6EVFb80jlULiU5cND0XeKCc8l8KTa+
+	2FTSWbLWnYUpqfNMJGrmk5y/w==
+X-Received: by 2002:a05:6102:50a1:b0:785:8f76:654d with SMTP id ada2fe7eead31-78a4aafe94dmr1757892137.13.1788525003408;
+        Fri, 04 Sep 2026 05:30:03 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1f14asm1400445241.3.2026.09.04.05.30.02
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 05:22:30 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-75e2905c09aso201956137.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:22:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByHoesuv0lYVwl2Qx6FdIjfft/Ykm5bBJ6L5fSasac4XvGApJNt+5Hj+GnkOjPSU2YijJd/Od13ib0Pp+V/tSyS8Q==@vger.kernel.org
-X-Received: by 2002:a05:6102:e0d:b0:785:d308:cc0a with SMTP id
- ada2fe7eead31-78a4a91077bmr1483195137.9.1788524549478; Fri, 04 Sep 2026
- 05:22:29 -0700 (PDT)
+        Fri, 04 Sep 2026 05:30:03 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-97e9c0da212so638510241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:30:02 -0700 (PDT)
+X-Received: by 2002:a05:6102:578e:b0:778:4fe0:8297 with SMTP id
+ ada2fe7eead31-78a4aa70e09mr2345087137.11.1788525002767; Fri, 04 Sep 2026
+ 05:30:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-2-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-2-94c4674927e8@solid-run.com>
+References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com> <20260825141542.30901-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260825141542.30901-7-wsa+renesas@sang-engineering.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 14:22:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZ_X6rHoC5jjCRv1d5OT+YdCibKu_S3Ni++=Mow2_Efw@mail.gmail.com>
-X-Gm-Features: AcwNN1VOyxrsSm03PmZn55Uovue1s6XEkpvSES0-J6cXzlUAe5_K8yXLbqCQsDU
-Message-ID: <CAMuHMdVZ_X6rHoC5jjCRv1d5OT+YdCibKu_S3Ni++=Mow2_Efw@mail.gmail.com>
-Subject: Re: [PATCH v8 02/11] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Allow input-/output-disable
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Fri, 4 Sep 2026 14:29:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXavMv7hAnd0WHXuThGemifD8G38Tg2GwvkCjoy3_jzKA@mail.gmail.com>
+X-Gm-Features: AcwNN1Uk-vpOhRjUqifYExzXweIhzAcoCntgx4xcaaEfdAuYllug8_vrtZCfUzs
+Message-ID: <CAMuHMdXavMv7hAnd0WHXuThGemifD8G38Tg2GwvkCjoy3_jzKA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dmaengine: sh: rcar-dmac: fix style in struct initialization
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+	Frank Li <Frank.Li@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> The list of allowed pinconf properties already includes input-enable and
-> output-enable, but omits their -disable counterparts.
+Hi Wolfram,
+
+On Tue, 25 Aug 2026 at 16:16, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> A new member will be added to the struct. Before that, adhere to coding
+> style by using a single space when assigning values.
 >
-> Each pair controls the same bit. Where enable (set) is supported so is
-> disable (clear).
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Thanks for your patch!
+
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1998,13 +1998,13 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
+>  }
 >
-> Add input-disable and output-disable to the list.
+>  static const struct rcar_dmac_of_data rcar_dmac_data = {
+> -       .chan_offset_base       = 0x8000,
+> -       .chan_offset_stride     = 0x80,
+> +       .chan_offset_base = 0x8000,
+> +       .chan_offset_stride = 0x80,
+>  };
 >
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+>  static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
+> -       .chan_offset_base       = 0x0,
+> -       .chan_offset_stride     = 0x1000,
+> +       .chan_offset_base = 0x0,
+> +       .chan_offset_stride = 0x1000,
+>  };
+>
+>  static const struct of_device_id rcar_dmac_of_ids[] = {
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.4.
+
+Note that rcar_dmac_driver below has a few more violations,
+which you are indeed not modifying in this series ;-)
 
 Gr{oetje,eeting}s,
 
