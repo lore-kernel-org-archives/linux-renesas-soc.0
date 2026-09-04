@@ -1,216 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5EC493633;
-	Fri,  4 Sep 2026 12:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8A483BE3
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2026 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788526494; cv=none; b=D0zg5d9+xk779BG7htt8iB5Ft7p+fDAt20T51Vf7mLym9BkPF2MQwZgr994elKyiUaKJPVJlHrIvByBQ5K9av3KfixlW5HZMLgIUz/MK2kEyyuwOT17Dz2Z4SHh52W6LOtCB+4htTlP/KvbQWY6jxhoUI2/Kp0UMcRcQ5TYhcJs=
+	t=1788526812; cv=none; b=YFizcjdHiBiwLAcR9LHAKOEcgYR49Ztyzq+cHLMoexxCQqFAJiHtHP8TdelhbmY2fTDIn/dZq/eqINLrP8sBPYM2h/IOfSVI+V+1ldvukhJ01KcChHsaQe9SOkNFMRS2btXESrHre2JPAvEt0DqrkqphTUcWKbG8XAzU3mkbt2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788526494; c=relaxed/simple;
-	bh=hGvlZUn7/Ambf9YcNv/eAm7mw97nQrTLcReNYt6Uk4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLevpTQ7BsRrLwqydDtVALvW3Sd99pst9b3FMyw79LuZ9ECnUtSY8lVKTKkh/UxgAw0M0zuH8N60vfh2wat5KRYwv3QK7DNlsrFOwVNvFHyZ+8qRNOKkDjSMocsdiTu8bWybOOvOly12FAyR8aAhyi+V8q6z2sp2xtX5Ek26QbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C1A1F00A3E;
-	Fri,  4 Sep 2026 12:54:49 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-To: geert+renesas@glider.be,
-	linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v7 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting the I3C power source
-Date: Fri,  4 Sep 2026 15:54:25 +0300
-Message-ID: <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev>
-References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev>
+	s=arc-20240116; t=1788526812; c=relaxed/simple;
+	bh=b+jsB/SxR9B4doq4j9X1OsN7P3v9KOS03k/c0WlWdws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CS5JZb5POcwlNphlhtcPaA/cAmlwHX06mTs4UEyGIFuCAfRAk6HBpNgE/7NQQHQ6c/whBFcNOF3H+HZKmjVg0iPTaoLW1NocX7w5vCzt3B5SamY0rfMGKdnvUQrJUSMgRlA71XIAeO0CtL0fbml1o25CuLY+7SPE0IQd0TA86qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9808f46d89eso432715241.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:00:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788526810; x=1789131610;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=d7GgODhxIjczQScbRESMbRZWtgZnkVvNT/nl7txte6o=;
+        b=laBlIwkj0stGSMmZvy+5I9AJljclCZjLJVp0C7k7rJoFhqLELUKe5eQJcEI8IaZifS
+         hGaMJtagkc3n4nDHB9Fifi3Et99tShzdBSibu+xSz67w1CU3QB7YwSDSIcQVy16nwtDg
+         qzOeWJ4EOIAdhEqHgq7sBKTyEWEKjOF2gHGsPTFM3Mb3MhUjTMEj2wXndUI2GkXSVK2H
+         NNsyvT02FCPAonznBU9Ui17RAma2JWfF4ekQ7nUIoaz280+O8JoNMondQDWhgG1UyPSF
+         jF0t4XIsnao5AKcd8jkGmfU40FRYsTvGFIbkRbZb5VP/re6VKSKd4HUMLOpShcMY5H6J
+         z5XA==
+X-Gm-Message-State: AFuF++m7WtNlfJpWpDutBAdudleuMck6cbkueaaV5EYwozyCmrOD4XIF
+	rjMVBjOFKUpprNl8U6JvTqaaup8CCvKQ3PgZzV7nZZqpl73ip25NDKWovuT49Z+xats=
+X-Gm-Gg: AYBFou0XssR3Avj0677RNa9qXcFcxKD2+5PxxplCnszwdAoAgISD+bBFkEQB86HKXyM
+	jUDQYuwK2rbffBALmDkLYS38AZXbhy2j74oEpNzjYJ6cDxMD5Hf4xanenYlNjWvev/To/g+QOd6
+	+8YqqQR0zSz76RVlAoG5DAv6Qm4Pk1QXATBou5ns92gnno8ejVt+Q4z6QJNFygywd1bO46x0teH
+	iDFjyli4RV/FTM/PPgQiqvHsXxeFQswbY+ooGhU5IqhJL/lIoiVAJf30xFiDLNQadekaLgEahKY
+	r7GtJHXJzfBDY7c8igs93R1SHC2p8haxOnb9HdGswltPvuzQ6qCLVfrhTL/eGAvO1xjBF54B4rp
+	E5oCCvUK0YccCrBwkeAGXTxqLZhke4aHsnnS7mSLd0sd7ZEFIrRipricR7Up8rQrWWaruDtj6vP
+	vZeslRC2s3hnc6OuogxSBn07yINcVGsT9iIPGHJzVxwypEi7/lPVmVw7YJCoxcW9fiaPUwrOGce
+	jI7YOSi0lOFRN5rdnwxBIK/Vw05Z/Phv0Jp
+X-Received: by 2002:a05:6102:2c8e:b0:785:b0ac:54bb with SMTP id ada2fe7eead31-78a4a9eebcbmr1757216137.7.1788526810333;
+        Fri, 04 Sep 2026 06:00:10 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1d832sm1501830241.4.2026.09.04.06.00.09
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Sep 2026 06:00:09 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-777c2d69446so688716137.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Sep 2026 06:00:09 -0700 (PDT)
+X-Received: by 2002:a05:6102:5487:b0:738:1ef6:51b9 with SMTP id
+ ada2fe7eead31-78a4a96d8c3mr1844791137.5.1788526809409; Fri, 04 Sep 2026
+ 06:00:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260825141542.30901-6-wsa+renesas@sang-engineering.com> <20260825141542.30901-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260825141542.30901-9-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Sep 2026 14:59:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWTw+rJ4fx+vuM_QdgXE4Bxo2LPX9y0NH3kd7sM2oKcug@mail.gmail.com>
+X-Gm-Features: AcwNN1XaEv9Hx-TPYsSjIBjhBVyHhLCKgIrxqOUUTGt6324d-7yS_6EXvarXIyU
+Message-ID: <CAMuHMdWTw+rJ4fx+vuM_QdgXE4Bxo2LPX9y0NH3kd7sM2oKcug@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: renesas,rcar-dmac: Add support for R-Car
+ X5H SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+	Frank Li <Frank.Li@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Tue, 25 Aug 2026 at 16:16, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Also add the familiy compatible because X5H is the first R-Car Gen5 SoC.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-pin controller provides a register to select between these two options.
-Update the Renesas RZ/G2L pin controller driver to allow selecting the
-I3C power source on RZ/G3S SoC.
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
 
-Changes in v7:
-- collected tags
+Gr{oetje,eeting}s,
 
-Changes in v6:
-- used bit 23 to define PIN_CFG_IO_VMC_I3C
-- described the I3C power sources according to the new method; due
-  to this didn't collect the Wolfram's Tb tag.
+                        Geert
 
-Changes in v5:
-- due to patch 3 from this series:
--- dropped the definitions for PVDD_I3C_1200, PVDD_I3C_1800
--- dropped available_i3c_ps[] array and fill everything in available_ps[]
--- dropped the adjustments from rzg2l_pwr_reg_val_to_ps() and
-   rzg2l_ps_to_pwr_reg_val(), rzg2l_ps_is_supported() and
-   rzg2l_pinctrl_pinconf_set()
--- dropped the tags
-
-Changes in v4:
-- none
-
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- none
-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 30 +++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 6696e32909c3..9bf3743dc1ce 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -70,6 +70,7 @@
- #define PIN_CFG_PVDD1833_OTH_ISO_POC	BIT(20) /* known on RZ/G3L only */
- #define PIN_CFG_WDTOVF_N_POC		BIT(21) /* known on RZ/G3L only */
- #define PIN_CFG_IO_VMC_SD2		BIT(22) /* known on RZ/G3L only */
-+#define PIN_CFG_IO_VMC_I3C		BIT(23)
- 
- #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
- #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
-@@ -256,6 +257,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
-  * @oen: OEN register offset
-  * @qspi: QSPI register offset
-  * @other_poc: OTHER_POC register offset
-+ * @i3c_set: I3C_SET register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
-@@ -265,6 +267,7 @@ struct rzg2l_register_offsets {
- 	u16 oen;
- 	u16 qspi;
- 	u16 other_poc;
-+	u16 i3c_set;
- };
- 
- /**
-@@ -272,6 +275,7 @@ struct rzg2l_register_offsets {
-  * @other_poc_pvdd1833_oth_awo_poc: PVDD1833_OTH_AWO_POC mask
-  * @other_poc_pvdd1833_oth_iso_poc: PVDD1833_OTH_ISO_POC mask
-  * @other_poc_wdtovf_n_poc: WDTOVF_N_POC mask
-+ * @i3c_set_poc: I3C_SET_POC mask
-  */
- struct rzg2l_register_masks {
- 	union {
-@@ -281,6 +285,11 @@ struct rzg2l_register_masks {
- 			u8 other_poc_pvdd1833_oth_iso_poc;
- 			u8 other_poc_wdtovf_n_poc;
- 		};
-+
-+		/* RZ/G3S masks */
-+		struct {
-+			u8 i3c_set_poc;
-+		};
- 	};
- };
- 
-@@ -394,6 +403,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @oen: Output Enable register cache
-  * @other_poc: OTHER_POC register cache
-  * @qspi: QSPI registers cache
-+ * @i3c_set: I3C_SET register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -413,6 +423,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	oen;
- 	u8	other_poc;
- 	u8	qspi;
-+	u8	i3c_set;
- };
- 
- struct rzg2l_pinctrl {
-@@ -501,6 +512,10 @@ static const struct rzg2l_pinctrl_ps_desc available_ps[] = {
- 	RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_3V3),
- 
-+	/* I3C I/O voltage domains */
-+	RZG2L_PINCTRL_PS_DESC(1200, 1, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+
- 	/* Software voltage domains */
- 	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
-@@ -1199,6 +1214,11 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
- 			*mask = masks->other_poc_wdtovf_n_poc;
- 		return 0;
- 	}
-+	if (caps & PIN_CFG_IO_VMC_I3C) {
-+		*offset = regs->i3c_set;
-+		*mask = masks->i3c_set_poc;
-+		return 0;
-+	}
- 
- 	return -EINVAL;
- }
-@@ -2570,6 +2590,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
- 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
- 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
-+	{ "I3C_SDA", RZG2L_SINGLE_PIN_PACK(0x9, 0, (PIN_CFG_IEN | PIN_CFG_IO_VMC_I3C)) },
-+	{ "I3C_SCL", RZG2L_SINGLE_PIN_PACK(0x9, 1, (PIN_CFG_IEN | PIN_CFG_IO_VMC_I3C)) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
- 						     PIN_CFG_IO_VMC_SD0)) },
-@@ -3792,6 +3814,8 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
- 	cache->oen = readb(pctrl->base + pctrl->data->hwcfg->regs.oen);
- 	if (regs->other_poc)
- 		cache->other_poc = readb(pctrl->base + regs->other_poc);
-+	if (regs->i3c_set)
-+		cache->i3c_set = readb(pctrl->base + regs->i3c_set);
- 
- 	if (pctrl->syscon) {
- 		int ret;
-@@ -3834,6 +3858,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 		writeb(cache->qspi, pctrl->base + regs->qspi);
- 	if (regs->other_poc)
- 		writeb(cache->other_poc, pctrl->base + regs->other_poc);
-+	if (regs->i3c_set)
-+		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-@@ -3950,8 +3976,12 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
- 		.pwpr = 0x3000,
- 		.sd_ch = 0x3004,
- 		.eth_poc = 0x3010,
-+		.i3c_set = 0x301c,
- 		.oen = 0x3018,
- 	},
-+	.masks = {
-+		.i3c_set_poc = BIT(2),
-+	},
- 	.iolh_groupa_ua = {
- 		/* 1v8 power source */
- 		[RZG2L_IOLH_IDX_1V8] = 2200, 4400, 9000, 10000,
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
