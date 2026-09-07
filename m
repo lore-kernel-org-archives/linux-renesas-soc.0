@@ -1,208 +1,207 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3A12571B8
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Sep 2026 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788806793; cv=pass; b=GkjniI0mXa1jj36P55OeJZ8s5iqeQKW3omXhW9RzgZj7mmQvohF1hfloy9xl01cI25VzXg8QbEEAJ3D3lDIu8w/+t6L9J5TQMmLZCBefySHHYsW2eIa6a6Gm2byisjhwcM0VErjCRand5uJJEef4IfwyX5bn1BcKeBGjep3aYsk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788806793; c=relaxed/simple;
-	bh=Kvu+yYHIqkrVmBOSJUYeoPn390eBvDfu5o/RT4xjxh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LVO+Im+sUZEf8gaRGzzH7Y7K7Yv1OnUQrwDlgYvF1s5ZQQYIWc7STtxY+f2ovf0vD+GwZyYDsXNrnVJxtlrl1T4EK1ZTbyzP9VPFtoFSXEz70GB40hl6hVAFDpjTcEO82LmhnC9qjTTDQYSIIe7ENdYS5WTPgjJpsSEgClKnbcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFBshJci; arc=pass smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050DE484241;
+	Mon,  7 Sep 2026 19:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788808913; cv=none; b=tZrtEbmQjtzeoIkvQ9R0IYRvorCcnCg+mygUKoC/FAZ/QGcpIGW+VgOxiicsR8+qT6JWE787hQZHqzGmkjXaOk5LXgGGodbY0WqJb0YxPX2QC6ysqTA065aPCW5iGIRCLHsyN2kT4mFH1AXjEgAWCopsnWkeMcER+G+VLvebpp8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788808913; c=relaxed/simple;
+	bh=PbbEUcE+6GCVABk36zJQXf0AVFyLDx7XjpxqjRVaFtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/ce2jfY/o5fcUJwMCD/hGmpp+eHgJwWvBEidX7YRH8khBQZrbYfO1/19VoI1We5B1QogTrbnShfootraT3cXI40BVkk1MLmiuphoMcE6ww2UNswAu4k+2ceF+M8usVvXXPdgad9LVVkSrPiTtMmexg2nJYka97RYdAZlE73x3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=l7qFf2gD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=akAZtc/v; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFBshJci"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49cca4ffdcfso31731455e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 11:46:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788806775; cv=none;
-        d=google.com; s=arc-20260327;
-        b=rj/QwBaJMWMX+0S/+yDD/pLZIh+NSbMFckvA8yWulUUn/m72knVl+toI32fUXKiAsm
-         TTPP6Ibi8+PwbhieXW1NCGZINJB+tCFYMy3xAhxPoC+tZseg6Qv3ApBJsLFBbi9ZbwPr
-         YGt78dY2KscnfT+rU8l+9mJNYnzSmK9DyBhFCh9tRmX2TsXSGbx37Wzx7em+btNjk/JW
-         QOETEboBprb11saQ4M09hiF0nYlZakbhLa5+piYoHcapqpbpsdXhI+K907BOeBDoTrKI
-         dc26yQgA0HO1T3a9WW+egFMTMAtJBQdUQ7gQZiA3U0CCppOM31gkte91Yuir4gYkU/1k
-         Zxvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5tgil3vkQ8CD1s0t9IPIfXEewAuekCe0/KDn3NFVfRk=;
-        fh=GuierW/es9AEOLJZmoIrkdh+Ss8RLUpxxnhL5e6/E74=;
-        b=Jadb7FpH9U14SguCVrC9dvFrzCz+h9xPQ5O8QzHgbCctllXXT5euQ6qMvITUev1vDt
-         CBbboDRRwhvgWT1hvQEV/FKx0chAmZkmvq4NlB0nLJL6soISyeEKTML5JVWtMP/KiVFx
-         Syrn5P3VQJPzLS+qMybe6EJzFvVaQgAoacoSY5/KKz4JSbV8KKmrACiChp/5HrzkxgXK
-         cN9D4Vv+uvaOVWgAeR3WgKGY2up8hoybQowHapA75w7uSUZZjPh2JT6NzVm0PPLzzQdi
-         rWEMNimnVrFn71L+pEj4Msc78vKJlsM5/ZUMynSYm0URkP1l4Bk2V5qW/HcbhoN7gnhe
-         yAew==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788806775; x=1789411575; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=5tgil3vkQ8CD1s0t9IPIfXEewAuekCe0/KDn3NFVfRk=;
-        b=OFBshJci78zCHfXQUSmtYSOEmWo3cwkx7pqkY5KFMN2ZJzq4MRE83anQVFtKdo18N7
-         /W7KY21H9EfwijN48gcMKoref8S4dEGsjtj3oQ+pSbSXef+GdNst16pHFEC5zk8juePZ
-         25159d5+D9PLpC4Eo/m30Lz7dgbEJNwKaeiO3JWGd7Fmr4VBoXQt7nahBiX2oJvzcAkF
-         Fno4+4J7fg6+ioWa6RrglFYjb3tUjAZNWvrq0D7wb19O8lqoIsDEnY534Wg1rDZ8e/8J
-         HHHAeXnWTPYC2HYvd7sQ+g9Ub31db+Oga6++DQw/3pOUbtzwO8m2T8G/mw+Ov0LahPRj
-         Htmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788806775; x=1789411575;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5tgil3vkQ8CD1s0t9IPIfXEewAuekCe0/KDn3NFVfRk=;
-        b=sV/CFW3tv7e+pXSxqua8oq0DbdXDMb+jFJ0/TOckv/tgawO3/E837SilmV58+C9crg
-         bc46TYr5rXOQm3RJ7ht9hHC2uvcsI6ydvdtcNKSQFT07f87PD3xYL0tpRj3fHtQRzS8o
-         gJmsTWMxFV5n9DW/2T2A/IXZjQcfStAIC1yIhKYACurrThTPKAiQQoZB/m5mIAoYCUTb
-         emJTNls10+OA5bOtQxFh4O12NvXv7M0DO5/7Vd8SDP5bFEXiM3Tsvorqdyp5YTjhb7PE
-         uOkWt9s9//qbigWasf77APJNg2cSTF/swU/sdfXp4kU9pR3MMeY/E39lHEtHZCM5zllM
-         0ZmA==
-X-Forwarded-Encrypted: i=1; AKwUvBxzEYniRhK6w4Y/dI31DRIfAOkwSV20PRmEmDHMckgqk5SCvLKK4mRxyYKR0j8pZh6Nd/i4p3rRVPGRg0gXsirI+w==@vger.kernel.org
-X-Gm-Message-State: AFuF++keBBfRLQ86pVykKkGR7cydIN22p+5ZXDn52LNzHB7YC0Vl8hM2
-	BqfdoMIztMyav8cblXENjFrJpvhptAwHd4XSuGXNvxg4gEg6d1LfPQAbDoiC9yke4rQ9z0uTySb
-	lD100UkcoigteWAFmsvaV5oke0nAgjs7v5P5oJzT2WQ==
-X-Gm-Gg: AYBFou2acw8a3Yn23No+tLI21NpQf+BaTYgHIPvYOQ12mheZnOR/XEoylLLevvriKiv
-	3KRayiuhTju9w9W/EdPA4lhXY8LJuSYhsb1Hl79MnRRo6GRisUwER+I/of44Q9H0s3IjDBcwweC
-	Ay/Y8WfMGJSe3TrYVClzrw9od+DRwbJGB/YGf8A9IgDSVIzcwEmLa7tisieZwDDtDoupIK2dWf2
-	PiLekeauvbtP5HSn9bAKWD0/BPfWJWWyIPJXzMTez6xWpUwT+w6mCngtE762cU7vonn95gbaMZX
-	s8SMT3aa4Y7msdmdmfu36BSonz/XpvFs/itGfpYMYMFvXecmnJPMrLm+ObMq8fhv1boRBDER7ml
-	LVSt+nSSY1+2DGOHSUshblQRSioI9zQpFkKfZFfSAENI=
-X-Received: by 2002:a05:600c:4f43:b0:49c:fc6e:a3d9 with SMTP id
- 5b1f17b1804b1-49cfc6ea7b4mr221188365e9.24.1788806775355; Mon, 07 Sep 2026
- 11:46:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="l7qFf2gD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="akAZtc/v"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id EE8201D0008B;
+	Mon,  7 Sep 2026 15:21:49 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Mon, 07 Sep 2026 15:21:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1788808909;
+	 x=1788895309; bh=KWGPDpvLzt/lPzCpzu69ioBpSMhnFg2FMUN3bQDlSvc=; b=
+	l7qFf2gDnuTRBK2sCLMv+O8WYOAsYWd6/oExbSxl+RhAG5Y3D+54m4nq3CMzBW8v
+	2uyxrlNGlEgT/dnHdQCPY345ucRM6aYgXkB4Ywnq4lo1188h8nUy9BAgAbUOLNxN
+	ojbjKHvFAFTHc3/lG+TAqpvNFGUEKclvjuXKdspN722azXmHChkUJsomYDwy6rVE
+	/sZhqgWw2ekHSJrZ5yRiT2BzfOXghjBWAPl1HaNoh2CDmSSH4CRep20cKRwiH/3k
+	EDrSsgRAtIWstEVFe5Fu9KTUMA6HkjUdq2TI2zE6XDjCTG9UD7TPGBeQLK9LP3vI
+	JL8SRXslYwIIP3LMs1Onvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788808909; x=
+	1788895309; bh=KWGPDpvLzt/lPzCpzu69ioBpSMhnFg2FMUN3bQDlSvc=; b=a
+	kAZtc/vaMN+zCkjTU3sdq3l542CRyDPGORfzIUaMtfcznF+QelGBOGvkBWan124v
+	dHoeE70Isc4jm6aaHYkOINcdl7oHcnCvottoU0KJ1INb9AgvzZ9o+QRG7CL3HyVa
+	2zOs0sNUz3+kJSilRd8hcqRLNT8/FzRWV2U7GSBUwbX4HYS1lgHKjCK8nNLZFg5o
+	o1MZzZ5ETjHVb/8AH3+o58LxgQvWMsRcWMozrFhXhoIF4AV451ADEWsa+i/ovvwh
+	BhWfY2bPqfwwbtwfuDs6eB1uJQUudQM1ymqrIOpHDt5IBzVzh0EKkNXMPKSLWgID
+	v9qiKs/q+OfIMP/+KLgMA==
+X-ME-Sender: <xms:zQ6farRf_gpYe-Seoa01ZrhX79rCZNbbDKSqo_kiJfJ2rGCg10F7Xg>
+    <xme:zQ6fapVeBgJ_SDrs1rkpRfAWC8E704RbGM7Chvn_pVSKu1OGOE8u-ZVdkLrn11hNC
+    651knIkF-eClMSBR_39Nx9AyrJjzxSUuoj_X7rupQjRna-wdOBvhzA>
+X-ME-Received: <xmr:zQ6falRcsnAnR3T2d-Jd0Z6Cvq4F3caEnwcEWnbwEOW3pvibd-vWcvt7KtpvkwflFJf_ylh-J75HGW16KQfXJQIjPQA8MmM>
+X-ME-Proxy-Cause: dmFkZTENkO/YL74h4/edgCigBQJR3TA/sOa0NgsuuPvxtJWU5mtoDEcH8wgOrctxxq+kcE
+    cgssW/zRjywDwId0ZH4Tuyl5XpPkfsxySmASJR/6PPej+t+/TXeq2r7asXf0qA/zZryK6S
+    gnXleJ9TAtZOwP0HLWV9h6tuyyyIBMNS8dVp+4kqSSaHsfrI1fm2fkPJU6IPwn/64saf3a
+    2pGjrMM8LOH5ismbKIUIFgZ7ynILPCQHaaGsOZZw/UfWP6YSploGoZCwi6NCd4XwECNe8r
+    LdDw+/kHsCi8TPacSWXEfuejn2LPRhWakNlEy57RW6+A3I5p6OCJ0AKn9Iqs6q84fIQXsx
+    JLi+cG0heJuOo+GFb4MRGT+HHjpUm5bcR+uFatua4/Bx58fE0th79MdsJM/ZSne3B299+Y
+    9YCOa3Yp1w701Bj9Ibdl7yExONf21H9NEpcHFAbijAN5JM0kE/z+5mO7C95TWtR3D7Yknb
+    a6YOPBBkCzz9LR8go5IrmmgDEYEpveo/lCEFo2aXD0FKKuJJ1pL4eIaNSg+A/gBr27xUGc
+    Tke/9TdK/EdKHdksgsQCGLPYZRYOwjHirMtMIDANmMlnqGZIYEZGk1GJPhxnrnL5eXtVSd
+    jPcOcBqQnxeEUjKHnZ4ICWwKjCqf5mONl5H3DZ63wkERyfzNzQO2YwDHSHjA
+X-ME-Proxy: <xmx:zQ6fah3JyWCdfeHwfjaagsAjc7F8Pi5tUuddk1-SKGOcYk3_wZD28g>
+    <xmx:zQ6faleHdGlJuFluscp18NaJUthIOp5FJhYxnR2ITLTf7j5n-9n_lg>
+    <xmx:zQ6fapNBbKcAfbP9jWZh253ESdZFGBA91LEJskRgHk1cn3G48ULRQQ>
+    <xmx:zQ6fapVmRg35JnRuzwAn5kJ_Tup2YDyHBhNlABBRIh60S22NeyQzjg>
+    <xmx:zQ6fahuxcH9BlneVCbvQSPyrXeQfsPPAWwKb45xG_xl4Y_XIgvwo4IKu>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Sep 2026 15:21:48 -0400 (EDT)
+Date: Mon, 7 Sep 2026 21:21:46 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH v6 11/11] media: rcar-isp: Add full streams support
+Message-ID: <20260907192146.GL3497753@ragnatech.se>
+References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
+ <20260617-rcar-streams-v6-11-1260eb72dff7@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be>
-In-Reply-To: <2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 7 Sep 2026 19:45:48 +0100
-X-Gm-Features: AcwNN1XE7uW2eXf-zpDN13rtRKPngwcstajdD4PloW5l674McTr-7H6fGfJLoZs
-Message-ID: <CA+V-a8uXz6ehq3Mdgri0zT9we7kE+=-XZjahfVg3BBu4NGxh2g@mail.gmail.com>
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r9a09g047e57-smarc: Update CAN transceivers
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260617-rcar-streams-v6-11-1260eb72dff7@ideasonboard.com>
 
-On Tue, Aug 25, 2026 at 3:57=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> The dual-channel TCAN1046V-Q1 CAN Transceiver on the RZ/G3E SMARC EVK is
-> currently modelled as two TCAN1042 instances.  Improve hardware
-> description by describing the actual transceiver.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Tomi,
+
+Thanks for your patch.
+
+On 2026-06-17 14:55:04 +0300, Tomi Valkeinen wrote:
+> Add the missing pieces to enable full streams support:
+> 
+> - Add set_routing
+> - Drop the explicit uses of a single stream, and instead use the streams
+>   mask.
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 > ---
-> Compile-tested only due to lack of hardware.
->
-> At least the TI AM68 SK DTS should be updated, too.
-> There may be others ("git grep -wc ti,tcan1042 | grep -v :1$").
-> ---
->  .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 25 +++++++++++--------
->  .../boot/dts/renesas/renesas-smarc2.dtsi      | 13 +++-------
->  2 files changed, 17 insertions(+), 21 deletions(-)
->
-Apart from the sysfs file name changes everything works as expected.
-
-Old path                                               New path
-/sys/class/phy/phy-can-phy0.0            /sys/class/phy/phy-can-phy.0
-/sys/class/phy/phy-can-phy1.1            /sys/class/phy/phy-can-phy.1
-
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/ar=
-m64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> index 469a6282b2a30c91..14f5834082fa500e 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> @@ -112,7 +112,7 @@ &canfd {
->         channel1 {
->                 status =3D "okay";
->  #if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
-> -               phys =3D <&can_transceiver1>;
-> +               phys =3D <&can_transceiver 1>;
->  #endif
->         };
->  #endif
-> @@ -121,22 +121,25 @@ channel1 {
->         channel4 {
->                 status =3D "okay";
->  #if (SW_GPIO8_CAN0_STB)
-> -               phys =3D <&can_transceiver0>;
-> +               phys =3D <&can_transceiver 0>;
->  #endif
->         };
->  #endif
+>  drivers/media/platform/renesas/rcar-isp/csisp.c | 39 +++++++++++++++++++++++--
+>  1 file changed, 36 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> index 42ee6c19801a..2e1bc8fbd432 100644
+> --- a/drivers/media/platform/renesas/rcar-isp/csisp.c
+> +++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> @@ -340,6 +340,7 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
+>  			       u64 source_streams_mask)
+>  {
+>  	struct rcar_isp *isp = sd_to_isp(sd);
+> +	u64 sink_streams;
+>  	int ret;
+>  
+>  	if (source_streams_mask != 1)
+> @@ -354,8 +355,13 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
+>  			return ret;
+>  	}
+>  
+> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> +						       source_pad,
+> +						       RCAR_ISP_SINK,
+> +						       &source_streams_mask);
+> +
+>  	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
+> -					 BIT_ULL(0));
+> +					 sink_streams);
+>  	if (ret) {
+>  		if (isp->stream_count == 0)
+>  			risp_stop(isp);
+> @@ -372,6 +378,7 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
+>  				u64 source_streams_mask)
+>  {
+>  	struct rcar_isp *isp = sd_to_isp(sd);
+> +	u64 sink_streams;
+>  	int ret;
+>  
+>  	if (source_streams_mask != 1)
+> @@ -380,8 +387,12 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
+>  	if (!isp->remote)
+>  		return -ENODEV;
+>  
+> -	ret = v4l2_subdev_disable_streams(isp->remote, isp->remote_pad,
+> -					  BIT_ULL(0));
+> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> +						       source_pad,
+> +						       RCAR_ISP_SINK,
+> +						       &source_streams_mask);
+> +
+> +	ret = v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, sink_streams);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -423,12 +434,34 @@ static int risp_set_pad_format(struct v4l2_subdev *sd,
+>  	return 0;
+>  }
+>  
+> +static int risp_set_routing(struct v4l2_subdev *sd,
+> +			    struct v4l2_subdev_state *state,
+> +			    enum v4l2_subdev_format_whence which,
+> +			    struct v4l2_subdev_krouting *routing)
+> +{
+> +	int ret;
+> +
+> +	ret = v4l2_subdev_routing_validate(sd, routing,
+> +					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1 |
+> +					   V4L2_SUBDEV_ROUTING_NO_SOURCE_MULTIPLEXING);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing,
+> +					       &risp_default_fmt);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct v4l2_subdev_pad_ops risp_pad_ops = {
+>  	.enable_streams = risp_enable_streams,
+>  	.disable_streams = risp_disable_streams,
+>  	.set_fmt = risp_set_pad_format,
+>  	.get_fmt = v4l2_subdev_get_fmt,
+>  	.link_validate = v4l2_subdev_link_validate_default,
+> +	.set_routing = risp_set_routing,
 >  };
->
-> -#if (!SW_LCD_EN) && (SW_GPIO8_CAN0_STB)
-> -&can_transceiver0 {
-> -       standby-gpios =3D <&pinctrl RZG3E_GPIO(5, 4) GPIO_ACTIVE_HIGH>;
-> -       status =3D "okay";
-> -};
-> +#if (!SW_LCD_EN) && (SW_GPIO8_CAN0_STB || SW_GPIO9_CAN1_STB)
-> +&can_transceiver {
-> +       standby-gpios =3D
-> +#if (SW_GPIO8_CAN0_STB)
-> +                       <&pinctrl RZG3E_GPIO(5, 4) GPIO_ACTIVE_HIGH>,
-> +#else
-> +                       <0>,
-> +#endif
-> +#if (SW_GPIO9_CAN1_STB)
-> +                       <&pinctrl RZG3E_GPIO(5, 5) GPIO_ACTIVE_HIGH>;
-> +#else
-> +                       <0>;
->  #endif
-> -
-> -#if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
-> -&can_transceiver1 {
-> -       standby-gpios =3D <&pinctrl RZG3E_GPIO(5, 5) GPIO_ACTIVE_HIGH>;
->         status =3D "okay";
->  };
->  #endif
-> diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64=
-/boot/dts/renesas/renesas-smarc2.dtsi
-> index 696a933af808a8eb..826a11ab93c7a253 100644
-> --- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-> @@ -44,16 +44,9 @@ chosen {
->                 stdout-path =3D "serial3:115200n8";
->         };
->
-> -       can_transceiver0: can-phy0 {
-> -               compatible =3D "ti,tcan1042";
-> -               #phy-cells =3D <0>;
-> -               max-bitrate =3D <8000000>;
-> -               status =3D "disabled";
-> -       };
-> -
-> -       can_transceiver1: can-phy1 {
-> -               compatible =3D "ti,tcan1042";
-> -               #phy-cells =3D <0>;
-> +       can_transceiver: can-phy {
-> +               compatible =3D "ti,tcan1046", "nxp,tja1048";
-> +               #phy-cells =3D <1>;
->                 max-bitrate =3D <8000000>;
->                 status =3D "disabled";
->         };
-> --
+>  
+>  static const struct v4l2_subdev_ops rcar_isp_subdev_ops = {
+> 
+> -- 
 > 2.43.0
->
->
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
