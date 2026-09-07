@@ -1,109 +1,123 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89D144236E
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Sep 2026 08:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCA9340401;
+	Mon,  7 Sep 2026 08:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788771136; cv=none; b=Ed3i/iNv85Ik8PZJHEoYqQlGu7F9pQVC1Awz2zFC5Cb6go2HvypN/ETLMOjLG6A46InFk9L/9oHu9+dwXvGu1NdK3qOpivV1bvFBb1xzmhUOF+q7TIXabqdihsyMAYS+MHzHjyJNFFTZY+YlDak8dIwTbdEuALQdCJMo1+8WP7M=
+	t=1788771371; cv=none; b=m1+O9igUlCLIttphFUGu3jDV8t0fKjfy/EIBvyfCSv/KG7bVsJWArjpT9Vw8MgP9Lt68gIqrjaZersfcSqEUTzhy3kCXdLyOMVZHm+qxIlPeAiXx3o7TcwuPh8sd+VBV1lvtYYDT3794Rl/eX5J4lOfY3ID93FeW9eJJ/gOr/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788771136; c=relaxed/simple;
-	bh=5hkNg/DdppWmt9hRq7+Z94tl0DqiwznZATxfNYQvFw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kyxO+fBkseDdCW2OUzETclIzOI/0OG+41S1HOiCigh70aWSih86o0zEmLpd/rnEXFEBGzt4js/vkEmd7Y8orAa6S/hE96KpiV1q3OLLduCHCJCNOaD4LFqitzEYzVH+vo6ZObMjdR/yfJRzwlULTZo5Q0gBVyBoVPApgF0Vxutc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5c7d4c663e9so2567302e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 01:52:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788771131; x=1789375931;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Q+3r2vTpl7vurYEZDFRXrOxst0eBJYiAPGsJmJC4qoY=;
-        b=auT3w2TqNjXrK8W0n0uczG2ZtE7hviwmU1z0n0ocUTm8rhNgUJjC61eQ2sDdAeeEyA
-         0CSXGd6fSNs21qSVeSNkyv+GiMKWQ2qOvZapaRxrHXaaGXFHb2HWQ5ZKMhxI1qvzww3J
-         nSEFM8xOMEkyUgjBZ9bpdIU0ufjrnSyjWppsL60R0obcRNaeofh9k0uWdy2dKPIJECUo
-         RvIs7PZJotvksQVWjFwGe9NV83YZsGZLpv+0gTmQ87Ntt76FHVGuJUwx9/J1kJl9shzc
-         uXriR9DqO55O2Ylj70zJiir0k84AkuF/KYb7kgS4DdU3+qk/93E85g1KkD+XRp/uUaRO
-         gBeg==
-X-Gm-Message-State: AFuF++kKYTww30tedIcltzN64TT29NVY5fA42HcBTR5yVvregQ1jsIHa
-	zDxyXbg50T6hsFhn5NNfM6cEApL7YmeCIQsgKbeinhBEXDoiVwhdFDF4VkWScusQ
-X-Gm-Gg: AYBFou2Mbe+XdWu2OxjczAMilfIEF5PM86em5wJBKpm8hKZq5gGqNvWaQBlHLuCVZ/2
-	qGXu7jphJz9GAzhwpR5qwdGlaZ8TGw19qE4kW6m/DXHihliwBynvWZVrQW0f8v/oFUcm8UzPRCd
-	ljtHJMuuviDHM04u7e8YgIjdsF8+jdYutWTLZBmx60p5oaAYtRSufpkzNQLRZCppgKanGqcsVyk
-	wtBJPDI6mkzwGj/NHDsX2DM+JkjR7V7mbkFh4anwcLT5ELYt9ObYgr1xhBWv0HUki3IydjlQQMt
-	D9iYlzLiYBVJ3svmySo++dlcYKhvQ+dnwQUBZN01ZS+UGUIvInheWbzVxTBpBg9JVLnMpC19T0r
-	nDpo1j040/RYSjRSRt9avjD9e0ys1IzVsohXD1t4qpvpBeGEGc3cXXRPc4hqebFfPPwm4KpQShw
-	RFb86Pz+qUIKt61c3/IHLok+kzMlEmvnZByUx/UQd5exOgCoAoMbzhmHMMWz1v9g78V4ukhm1/C
-	A1oHGUgXj1uhQDR1FyecMLlDw==
-X-Received: by 2002:a05:6122:2213:b0:5bf:9bfa:53a0 with SMTP id 71dfb90a1353d-5c7ed50c3demr11540536e0c.1.1788771130978;
-        Mon, 07 Sep 2026 01:52:10 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ecac1033sm7389893e0c.18.2026.09.07.01.52.10
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2026 01:52:10 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-783d429d0cfso2454934137.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 01:52:10 -0700 (PDT)
-X-Received: by 2002:a05:6102:e0d:b0:789:5b58:e105 with SMTP id
- ada2fe7eead31-78a4a90fdd3mr9303394137.2.1788771130230; Mon, 07 Sep 2026
- 01:52:10 -0700 (PDT)
+	s=arc-20240116; t=1788771371; c=relaxed/simple;
+	bh=LPy1QYj8h9WRnPhuSyM1KA02fpP7BZQ1RBj0j9dXDU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jzb+uazZkcJUULwJpfYADIpkAvoNLLWAE+aca+31ZMzBIGAcPBdQEUpSPSDeISZ3KIOCq7/VdeRp8rbHyogUELmi0a+7fSrPrptGz3y6aB3Leb0dC5IqMtnVONXMpaWuKAezVCjdfH/4fsZ8i8TxUFPVvXYrKWXVvP7Im6bijGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ao+klHHt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ao+klHHt"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C1D2B981;
+	Mon,  7 Sep 2026 10:54:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1788771271;
+	bh=LPy1QYj8h9WRnPhuSyM1KA02fpP7BZQ1RBj0j9dXDU4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ao+klHHtf0/LfqLHlZZsRvu5FjcZ5G4MGfV3Mu8A+jh2dmln7YeResjoTX3Ejhqij
+	 gTbpyBHSlMWDjb3PInlaB9+mD8Mi215zof4DLpy6pk7jkoSOK/byrzormqveKyX14C
+	 2MPo75RzokQo8TM/uTDob0+4zHEy4nw9GIowQxJU=
+Message-ID: <7be9a590-2c27-4725-89eb-dad9dc3632b9@ideasonboard.com>
+Date: Mon, 7 Sep 2026 11:56:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817095447.34693-3-wsa+renesas@sang-engineering.com> <CAMuHMdV3OddS_FLezhLKL7Bfrw38PFAv+pNLvza5wt4bE5kP1w@mail.gmail.com>
-In-Reply-To: <CAMuHMdV3OddS_FLezhLKL7Bfrw38PFAv+pNLvza5wt4bE5kP1w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Sep 2026 10:51:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVL=+ZJbiGAhr8ydMhtZpXS0VXB4HVBccPLi8tbmQibVQ@mail.gmail.com>
-X-Gm-Features: AcwNN1X9BL8rCmnu3zIP96gRaaLUUi-0Pp8fmnpm5GVndMU9NzYXjg5-zqHMACY
-Message-ID: <CAMuHMdVL=+ZJbiGAhr8ydMhtZpXS0VXB4HVBccPLi8tbmQibVQ@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: renesas: rcar-mfis: add hwspinlock support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20260615-rcar-du-dsc-v5-0-aed1a28610e4@ideasonboard.com>
+ <20260615-rcar-du-dsc-v5-4-aed1a28610e4@ideasonboard.com>
+ <20260702212423.GA3662157@killaraus.ideasonboard.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <20260702212423.GA3662157@killaraus.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2 Sept 2026 at 14:12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 17 Aug 2026 at 11:55, Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Every MFIS instance has a block of hardware spinlocks. Add support for
-> > them. Gen4 has only one instance, so the base_id is always 0. Gen5 has
-> > multiple instances, so the base_id has to be encoded in the info
-> > description. Also being a provider, a hwspinlock-private header needs
-> > to be included. Work to refactor the headers is on-going, but will need
-> > many preparational steps. Until then, we need to live with the special
-> > include.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >
-> > Changes since v2:
-> > * dropped patch 1 because Geert already queued it
-> > * add comment that flex array must be last (Geert)
-> > * calc local_id in a less scary way (Geert)
->
-> Thanks for the update!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Any feedback from the hwspinlock people? Can I queue this in
-> renesas-devel?
+Hi,
 
-Queuing in renesas-devel for v7.4.
+On 03/07/2026 00:24, Laurent Pinchart wrote:
+> Hi Tomi,
+> 
+> Thank you for the patch.
+> 
+> On Mon, Jun 15, 2026 at 04:11:57PM +0300, Tomi Valkeinen wrote:
+>> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
+>> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
+>> crtc, when enabling the crtc.
+>>
+>> With DSC (added in upcoming patch) in the pipeline, between the DU and
+>> the DSI, the above call path is broken as the crtc tries to call
+>> rcar_mipi_dsi_pclk_enable() on the DSC.
+>>
+>> To solve this problem, make sure we store the DSI bridge to the
+>> rcdu->dsi[] array, instead of the first bridge in the DSI pipeline
+>> (which can be DCS), by checking the bridge's bridge->type.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c | 18 ++++++++++++++++--
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   |  1 +
+>>   2 files changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> index db2088529b48..ac85838ab3b8 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> @@ -89,9 +89,23 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>>   				drm_bridge_get(bridge);
+>>   
+>>   		if (output == RCAR_DU_OUTPUT_DSI0 ||
+>> -		    output == RCAR_DU_OUTPUT_DSI1)
+>> +		    output == RCAR_DU_OUTPUT_DSI1) {
+>> +			struct drm_bridge *dsi_bridge;
+>> +
+>> +			/*
+>> +			 * When we have a DSC block between the DU and the DSI,
+>> +			 * the "bridge" points to the DSC. Detect the DSC by looking
+>> +			 * at the bridge type, and skip the DSC if the bridge is not
+>> +			 * the DSI bridge.
+>> +			 */
+>> +
+>> +			dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI ?
+>> +						     bridge :
+>> +						     bridge->next_bridge;
+> 
+> The indentation looks weird.
+> 
+> 			dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI
+> 				   ? bridge : bridge->next_bridge;
+That looks even weirder, you are associating = and ? there. What about:
 
-Gr{oetje,eeting}s,
+dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI ?
+	     bridge : bridge->next_bridge;
 
-                        Geert
+  Tomi
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
