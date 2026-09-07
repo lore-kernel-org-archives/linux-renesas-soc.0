@@ -1,324 +1,235 @@
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011053.outbound.protection.outlook.com [40.107.74.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AE64BB5DE;
-	Mon,  7 Sep 2026 12:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788785288; cv=none; b=OqCaVpGVx89Jx+4pAqZuLeRJEOj50C0yjTdEXwPkRv3c6fN83mRqMcNFIaGtZ3iwP5xz8yk5ufB3x/0dsHJpM3hp6DNAKuVmujSMocuuhGoEsjW/Fg4VyHDDe0KzmQ2vTMJXL/jch84TEm5iLCEEYf6SwRo8ZvdWmPBSO5aCXdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788785288; c=relaxed/simple;
-	bh=sTw5mmlt6nn709ufsy3u6CM2xjzUUX5x9TNB20MZmFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hrmnmb6dk7ni0NPZoSPAQJ+QMMV3S44zeiCOiipx8fNbo/jhOryTobt59jkAFIZ1Dd7jMuhLrvEjtwodglPCPCOisdZj1rMcRjfKK3Y7qo6sM/soKufC3yb7qWYQMyPrK7xT5Km3NZNPmPGM3bKHUK/uEP2PH7EhkZZd7+jQX9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=PZioovUY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eqOcBLaN; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBDF481648;
+	Mon,  7 Sep 2026 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788785586; cv=fail; b=tp2p2AGYit3Cdge2RoaDEOEgbp80RJC2FHtXwofVxmB0g5TN08lMTyt9JfU8IbVK8t2gHALlwGEBUtwTtRUEFiFS2/enm4nOPRzz/czBYw5MXctJXU9apazT2H71NFs0zk2E1/U1DtAldkRvBBnCoRQt+Yv3xj2zPpawVfMUY64=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788785586; c=relaxed/simple;
+	bh=JJCOyA9RirjMbREuS+ZAaiUmsGvnhAu5lC/hwvpi6xA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dR9LipwVtr0OGjLFNCorTvQ2vrfu2/JlTCHMqgSoI//RyQKPtnhzr6YdGZOIQNpmes92EQnFMSmIlh/sKhygpNqZRSBujoRd9Pd7X+ZubMXnzKLKk2xHT5hbnt+CsMMDl1WrttDhEW3qnT8UntoyKjqVZfNCq8RBar0HBzX+X54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=atmi+SL6; arc=fail smtp.client-ip=40.107.74.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="PZioovUY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eqOcBLaN"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3D6DE140004E;
-	Mon,  7 Sep 2026 08:48:05 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 07 Sep 2026 08:48:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1788785285;
-	 x=1788871685; bh=Ic+M/eg1yFnMbercSBLfQBWYDDrGnU0DUj2/eFExi2c=; b=
-	PZioovUYQ+GsBY18YwtPLkLdVa+OaqNXqfBREaUCnaVaZM5h5ruAVf2VTc/wfW+g
-	kvgrlEhv1WgOFuGzlI/oR96e/RhGom1i5j2asGN0ArmdmM4sMx/dVpVYvdccQ/nG
-	xBfm+wpIPMv8Sroytk/+BXHQc4ZmDTxu1IHsZGCg/vmz2mpDrgWWsU/52VjyeRps
-	3WbouPlGs4jwLDflTmUnfUf0lUTLRKJ7w4IUcXTqJMi3I7tIQ4WCtBHDoImeE48j
-	Ls/nJG15hDJsV3O7slY92J6la5JT2pgAnzvj1zsejObDPRNgApQAcZUkrHonX+mQ
-	grmvwLLLLrvxL4+QRoTYZg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788785285; x=
-	1788871685; bh=Ic+M/eg1yFnMbercSBLfQBWYDDrGnU0DUj2/eFExi2c=; b=e
-	qOcBLaN6Z5V5kNnyYCHxLbKGafX9VdJKs1NoIY9Sq0KTmT6oVSSWWeFIoTHADHoc
-	HT4eykY/YyGErT7yn/BGN5UKKpybphUFQv51+stTqfE7/Q4LvKSnxl3PiACwfLo3
-	s7KTL3Hfbl5gZBcxKyg7f6ymtowD/grDZacNzz4MH07UYvguq1Tw7vk15CDg1PLc
-	Lq3db6F00m6Lw4WFR+jH7gQdXsWJJDQAN2mY3V4nFhfmBZgpBtR1NWRP1LDDiUCZ
-	nwt4Z2RjOcSg7eO86vhOJ4UQKI284cZm/E+mW7QRZzrXIAwowLnYKfm6lk/BiXza
-	2NeS9a90NTPcGKEAvZKpw==
-X-ME-Sender: <xms:hbKeatkB9As3vkHub8pCjr50CqxWJ9KXKtDXCaknB1BxXAY0ixO8ng>
-    <xme:hbKealamZarT8IR3QwWPoiALGQU9To0mtsESMXkwzRgxuFsBe8B0QC977mCCroBSs
-    nedqS5waRNaPRZP8z7K9Fb4OVG9uR9YMGPorjJYb34RySbK2mUCbzMQ>
-X-ME-Received: <xmr:hbKeaoFPpz9g8hSTpz38F6azjlkokWTfO43ToQiiyzvF5G2sVBcu9dNp1zM6HcTR3V3oSVB5ibAm9eQ5bXU5RX8JnxUQj_U>
-X-ME-Proxy-Cause: dmFkZTFlWnRzE/nO08MUvXUw+jm7MOI5FRBgN/06urbObTfasVnk1SjT+FfcdKOAw+MqAM
-    d+6s+IyFOkYb/EQq7BBAQJJSyrIEHC32bS9vWQrr2zC5y+RHoyzEP0b4nIrNYAZNWSKK2D
-    pd2PjEKMMQX1saJrfGP1d44QwCLkmpsUpsuPWXGogxXe04PO9UbF9ZycyWnnW+5vjBujSa
-    NeNq657K+1Na5tH1OVpSSo1RNouPIiQK8IdJwP+/yiDofe2QRCj2aWLjwtWubfUzmXvUf1
-    eTSFFeLEUCVFg+U09u1Gs/QsU2FRKzYZfF3S/kQsmtULw5uR2ypjv/n1wKHmAagVTV/8V6
-    727sZRQNiMZVAnzDxaeaCLxc0q322xfgQOVoRmz71Nq81eML0M5GvonSQk0/Vda1YRBlUW
-    SHVQumJv+Xz9I6L5g8BcMAiVvLjIiHxqKoP3z9TECgwJaxLfgYwqq1qVyTuOmvzA1/K6JI
-    pXssZkSWl3Zxv64Dp2J3/IY0jvS10UH1mMavhpb/yn+rXZJELSvVeWK4hl4ENW6JpsC00T
-    QRQ+ZiEPpAvMoMnuM0SXHhLv3R0s7ic4V2j+mLc7srpWWfRnp8grmdOCTvmXPh2M25FLgb
-    ct8p7IQCvZoGHoTeCfdkHdEMgqyRZLo0wyKAC1pA7B2zmRp3kdIljr3mN17A
-X-ME-Proxy: <xmx:hbKeakbBC8XL2eNAtLUmHwnCIPDB2uV0-kwfyRbBRK6RxfLot-xM7w>
-    <xmx:hbKeaswGTLJN8847BtHttRI5A1CLsdJ1KBqn4OUVZkO5p05gf47EJw>
-    <xmx:hbKeamSkjD1iodpOVSeEDA5xEnP_iIrezGWf-RomiXfm5xEeiad06A>
-    <xmx:hbKeapI_hGiL2AjZrQWb-kUopRPKWYzK-4MD4WymDCL2HSf1E9o30w>
-    <xmx:hbKearxuOEqU0tMzAFhWzmKKeW5hJy6xXLwXN-7Cx_taAhOKZ1Gkyq5R>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Sep 2026 08:48:04 -0400 (EDT)
-Date: Mon, 7 Sep 2026 14:48:03 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v6 10/11] media: rcar-csi2: Add full streams support
-Message-ID: <20260907124803.GI3497753@ragnatech.se>
-References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
- <20260617-rcar-streams-v6-10-1260eb72dff7@ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="atmi+SL6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DribS7WwXYs0ZNunQbrMJ6FEULe8i+28WoVObzdqeSEv2hV29N2dKRjwCY01ld0EiYikf9bR+tj/nLWYXwnkq1hqhAI/uYcmvr+aaxjrBXP26MRPKP6rc+6myepM0rfjydYRDY4GzuWk8SL2KaMwP4MiIMAlsga2kH5F7CFIj3ly9hpfu1M0fGjJsfMS6do/nd9QNaLx6XPwkHV7GhDXeZN3EmPKm/7lzAJd7Dn66EPVm+pKjcEHQbXtK8ACk7D9t8GWru3t/jvo3Y94KaLwYmoH4nyHnrjr+eHgD1dq33qdI9wYv9YqneabhSRhJ9Q7WHqZciOappYLZ9yGZsS5Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JJCOyA9RirjMbREuS+ZAaiUmsGvnhAu5lC/hwvpi6xA=;
+ b=GgR0uI0Wjlf0To/i5f85ZZJgVxOHYWiDIXevkz+P9mGXqGzPtz2liGJGbk5GOJtrmnPZxZJZ7SEgE6HIf+ZgreKonK5Hi9bbQpmwcLPpD2QzXZUc1JEZpEraG3UuCS4GS9Vo+Jq/W5yLsyFpHPBl3fFmVsBiSwKJRTet/NVZbzrJXHlG3Zc+7ezVrG91F577yKZuGU+/UpaOQPJXuru0WHFOLMtogV4+HXZD9iAitDgqhhplH76UsHUnPjMGAJjin7qqWO8uedXZb5TL+bXpB8Nw7dex0iyxht/iX3YnNr4KNXe3V+UmFAQH6LudZDHoFWBBsjRtmfWgTbc6OXeEQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JJCOyA9RirjMbREuS+ZAaiUmsGvnhAu5lC/hwvpi6xA=;
+ b=atmi+SL6eFIZqPZmMomYXhp3D3UpivWsVlZvX/Y/nNDxVl/wnvuwG4v6jOY77A+vF6DhHtEwTkDrDVRr/wvCnpaS7l5nFAnKpCTbF/BGOJItAbeBYVqOHp2qujIL89x4IgAlZZexZK1CxJeuPUIY3UdZsiIrsWqth5bDyX7o9A0=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS9PR01MB15831.jpnprd01.prod.outlook.com (2603:1096:604:3ce::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Mon, 7 Sep
+ 2026 12:53:01 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0382.014; Mon, 7 Sep 2026
+ 12:53:01 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: wsa+renesas <wsa+renesas@sang-engineering.com>, "biju.das.au"
+	<biju.das.au@gmail.com>
+CC: Ulf Hansson <ulfh@kernel.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v24 11/15] mmc: renesas_sdhi: Add RZ/G3L SDHI support
+Thread-Topic: [PATCH v24 11/15] mmc: renesas_sdhi: Add RZ/G3L SDHI support
+Thread-Index: AQHdMMfBiC8we42goU2GQ1SEBj5j7ba81lqAgAY7w/A=
+Date: Mon, 7 Sep 2026 12:53:01 +0000
+Message-ID:
+ <TY3PR01MB11346596836AD38371FC3568A86B22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-12-biju.das.jz@bp.renesas.com>
+ <aplhlynkb_LUiVhS@shikoro>
+In-Reply-To: <aplhlynkb_LUiVhS@shikoro>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB15831:EE_
+x-ms-office365-filtering-correlation-id: 57b7ec34-feb4-475c-67a9-08df0cdef32a
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|23010399003|38070700021|10067099003|4143699003|56012099006|11063799006|22082099003|18002099003;
+x-microsoft-antispam-message-info:
+ eUmN5DMxjoY7MXXt4/gOov46AYTcK2pFKsJkKNa07hSE/zcCCUYyOJGOIxTg8G2rv0QIOQrqYKjmQWQVEG3iBElH7fBckCkP4D6mtbu5+Jzwl1X4L4W2ieo502iBlZqUnYAh1KxHPjTO9GUMf/izuws5/U8S9VGkQVaIgPxjDjUcK9QxRSeob7cd3FzqOYadk4rQRym9dEpp92Ig9N8Tx0CrlCG9MG2C7o3ql+naiofdHT8Q3ANqosmAnzrZWkGw7eQnYsg+PoB5xzR1nu6J5eHO0vXcM6mT7+rUsatbTP+Vsj3rd6nzjwqk5NynwWMcDiwxGUadt4MI2y4sB/xTGu9l6IXiUGBDW12UezDyurcYRTONzjrGai3yqV/3S2XQDx2lSaIuPdmwBlLWxhCrzFXfq4UMbsLq6HIcLB9Brlsq4HxuM7RgmtIoAieyzupfq+uqOQYE3A35R/inG7E770oU+6o2f5g/8SLtgH1Aa8BcFCOVnHyUx4WdSiVbX/dLuNk3TqSyZPStGYnPC9NV/pCzLSHnxwxbDITP1oIH9n6Koz/IRyO6+mgW6d7MF3RK6oxlGzKjXC2F6uhMca+BsZYK2cQ3qm8Hv0CW6eRbVzG2RdtBS0tlC9MWAaa6aSs8FCGeLT+ITCtrhvD4j8MeJau1kTU5AEhhnraCsUfyi32f3rGemHtXNpcdKgzMds6lDASjBJ+g1ybngk2d6dE7NS/uiKDj+Wi7REokPFhWZwI=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(38070700021)(10067099003)(4143699003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?a0FLVWZ2NTlDUnRTb2pycUlydDFCQ0MwclVKRFUyUFRBK2VCVDFTWm1mMmVV?=
+ =?utf-8?B?VndoL0lxYUk5dmI4WHhtMTF1UHY2c2RKbWJMbis1a0pCNGhWRmRPbTBnR25V?=
+ =?utf-8?B?Z005STNUZkFsNFlZUC84bDM0Q3J0MmNiKzZoOVVCQVBPNERDWThhcXBtRmxl?=
+ =?utf-8?B?Rk41VFZZQ3QyOHlWUU5ualRaakFGL2wxcWlESDY5dGhKaHF2NlV0ZjR0V291?=
+ =?utf-8?B?M2M1SjlCd0IvbWpndS9wY0xJZXV1dXNpVWJSM1Z4Yml6TjZHUHBtUUpzclNN?=
+ =?utf-8?B?L0VMQjJrL2U0bkVleDdNQi83NmM3M2NqOE1vdlZiNnRYbVJ2ZDFBSnc0V0ZU?=
+ =?utf-8?B?UlpGVFpXcGJzM0FCalZRd2k3eTlacGJFT2t6dVAxSWlKL2JLSG1GandhZE9O?=
+ =?utf-8?B?cFRONm52cnh5ZmttVmducHdZQyt4Vjh0VFRtaXVCa3ZFR3ZWMENCVUkxeFhV?=
+ =?utf-8?B?cXJLRzc5UmNmcEVvV3NpcU50bmtrQ1FoWnlQTmprbkVCdUFrVFcvNkZCT3R2?=
+ =?utf-8?B?cjlFUGtRTzBzNEowdmh5SWZlMWE5cjU1MkQzd25Yd2JiVEZGRnVBK0xQTEJt?=
+ =?utf-8?B?UmxqSlcrcGU2LzJ3ZnVRUk55SXJFUGZwb2ozcTh2RFN1YzdnWVQvNjJIRWl0?=
+ =?utf-8?B?R0t5M0duWFo1OUpxWnZGSTRNR2hEc05hWHNnMjVIYTltRk9TN1YxdElTUnZX?=
+ =?utf-8?B?L1Q2MTI2NHdjV0x2a0FFL3VoRnJ2RXFjazZKaHp1bVNqeng4cXhvRzdHVVMy?=
+ =?utf-8?B?eTQ1VlRhQVFla3RxRG9OYlZPemlsRzdlUE1aTC9GY1U4M0Q3T01GZHJ6SlU4?=
+ =?utf-8?B?NCtPUkZhV3JkTU1TVUVQcnRNcUx2dXFESm8rU0d0ZWw2YWo0MGlHUElsNHZa?=
+ =?utf-8?B?VDNxRWdiMGRYazNQemNURFZKcUVERUtUYXhVYWlUdlFYc2pUTU9iWHJWWFFC?=
+ =?utf-8?B?YWh1M2YrbENabTFsMU81aTM1QTBYR085SGhnTm96Wk5LbHRSZmMwZkpVOTcr?=
+ =?utf-8?B?eTc0MWtjUjBkMmh3Vm56LzBkaTFmcHJiclQ0L3ZadGNYLzhDSnlYaThDbTV5?=
+ =?utf-8?B?QlQwWlM1RkU2SFlVUnNSWFZCQ3JiQU1PZjI5c1BGbGtTRkdZcCtGcjFEd1k0?=
+ =?utf-8?B?MHNTZUtjNkM0ekpURFpSZWZHNWJ5N1pUK1NVaFpsbkh5S2ZEeEV6ZHBBVzRI?=
+ =?utf-8?B?ejRHQWtSb2NRcHhIZCswNk1oUzBwb3FCVEhIcnFvcFlBOGVaQWxwa1l6ZDhU?=
+ =?utf-8?B?NXIrVmlua0RidmJKcENhQTNUNEZsa0FGNVpYWUVSMlZ3RllWcFBjcFlmRHBm?=
+ =?utf-8?B?dmhlc1dibFpnYUxtQnBLTVhNUnY5dkMrejNBWW01RVZ6VUJ2aHJVUVpZSFdq?=
+ =?utf-8?B?NkRNVi84QVBXbk5vOWhYQjl6UXI3OVd5eW16ZUJ1U3JtQVdpbHE2WFdUTllW?=
+ =?utf-8?B?T00xd1doeDFlaldySDQzMnJYS09KckJ3ZnN2NTdzSmorQWNzQndVV2tTM1RC?=
+ =?utf-8?B?TldMVENjK1owMi9HdEM0T2xhcVByRHFXcUtmSFZ6RUFrOHlBTkFlV0s1RnBi?=
+ =?utf-8?B?VEFWa29oRW1MMVEwZU1NZEYrVUovNXVRQTRVbVQxa2lkSW1BTTdaNk5xTlRx?=
+ =?utf-8?B?UGZqTXl2b2kvaDBEcjl1UGxENkhqTktIWG0rMmxoM0FyM1pndWJ0N0xpVHBC?=
+ =?utf-8?B?c0VFc1NENTFtZzFLYk9aanIrZkh0bFc2Mkd1ZjI2VTltV3NSUVN1a1RNU20v?=
+ =?utf-8?B?VU0zM3gxOEFJdmxNcU5kRHFMWStzb1JIRSt2TXFCL2FWY2xBWTlyckFtaFZX?=
+ =?utf-8?B?UUxyWXNDcFQ0eWE1TXlTZnBJWk5VajFzOU1tZDBUMjB3aHZhVHBmNlE3N3ZL?=
+ =?utf-8?B?VXpqN24vM0ZoN2dQK3BJNHdrUlQyQ2ppN1h3OGJqb2NYcFFMWE9udU9hR3pv?=
+ =?utf-8?B?S1BSamFPUVhoaittMS8vdmtBM2d4SUs1U0JJcXE0SE1KSm50Mjg2V3FYdUZh?=
+ =?utf-8?B?SE1Ta2hUQU1tdDVhYmNoRk9sZWtqd2NYUnI1aHFkbzA2aDY0RWhOY0dDQWNQ?=
+ =?utf-8?B?a2J2TGFnQ1VKeElvdjBPR251YlF2NFFMWG1KRTMrcTJLM3FDKzFYdGVVaTE0?=
+ =?utf-8?B?Z1I3enBvTC84dS9ONDJPU3pIeTlESEJneUhEaWVsaU1VTDFNOXk0K25aUFdT?=
+ =?utf-8?B?c0gza0t3RzNESmhyNmJFR2phOTVyS2pOdUhtWXlsTTJtODdqN2s2YnFrZ2RS?=
+ =?utf-8?B?YzUzdzNCVzFLMnIwTHc0eHJPTWRoMHVOYTd0VUxFNmh2c1hHcmFUNGR6WTE5?=
+ =?utf-8?B?QlF5RG0rSzNGSXhVRDluMTQ5MUt2bzc0N1Q4M0VuQkVaalVxczdRdz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260617-rcar-streams-v6-10-1260eb72dff7@ideasonboard.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57b7ec34-feb4-475c-67a9-08df0cdef32a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2026 12:53:01.1454
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0toFlbqAODVOc8n1BK4ewqeYAaIB/EnLfXT6kWwQFcBtrFOmjGm28jZym6F8a5JgvKdQ5y2VjxgZjLrmx8KyteaPV8UeMfjnO2URp7Y3jLQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15831
 
-Hi Tomi,
-
-Thanks for your patch.
-
-On 2026-06-17 14:55:03 +0300, Tomi Valkeinen wrote:
-> Add the missing pieces to enable full streams support:
-> 
-> - Add set_routing
-> - Drop the explicit uses of a single stream, and instead use the streams
->   mask
-> - Track enabled sink streams so that in rcsi2_irq_thread() we can
->   disable and enable all currently enabled streams
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/media/platform/renesas/rcar-csi2.c | 95 ++++++++++++++++++++----------
->  1 file changed, 64 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 8cd38b4cbc7f..34899e5409da 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -702,6 +702,17 @@ static const struct rcar_csi2_format rcar_csi2_formats[] = {
->  	},
->  };
->  
-> +static const struct v4l2_mbus_framefmt rcar_csi2_default_fmt = {
-> +	.width		= 1920,
-> +	.height		= 1080,
-> +	.code		= MEDIA_BUS_FMT_RGB888_1X24,
-> +	.colorspace	= V4L2_COLORSPACE_SRGB,
-> +	.field		= V4L2_FIELD_NONE,
-> +	.ycbcr_enc	= V4L2_YCBCR_ENC_DEFAULT,
-> +	.quantization	= V4L2_QUANTIZATION_DEFAULT,
-> +	.xfer_func	= V4L2_XFER_FUNC_DEFAULT,
-> +};
-> +
->  static const struct rcar_csi2_format *rcsi2_code_to_fmt(unsigned int code)
->  {
->  	unsigned int i;
-> @@ -773,7 +784,7 @@ struct rcar_csi2 {
->  
->  	int channel_vc[4];
->  
-> -	int stream_count;
-> +	u64 enabled_sink_streams_mask;
->  
->  	bool cphy;
->  	unsigned short lanes;
-> @@ -1883,29 +1894,32 @@ static int rcsi2_enable_streams(struct v4l2_subdev *sd,
->  				u64 source_streams_mask)
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	int ret = 0;
-> -
-> -	if (source_streams_mask != 1)
-> -		return -EINVAL;
-> +	u64 sink_streams;
-> +	int ret;
->  
->  	if (!priv->remote)
->  		return -ENODEV;
->  
-> -	if (priv->stream_count == 0) {
-> +	if (!priv->enabled_sink_streams_mask) {
->  		ret = rcsi2_start(priv, state);
->  		if (ret)
->  			return ret;
->  	}
->  
-> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> +						       source_pad,
-> +						       RCAR_CSI2_SINK,
-> +						       &source_streams_mask);
-> +
->  	ret = v4l2_subdev_enable_streams(priv->remote, priv->remote_pad,
-> -					 BIT_ULL(0));
-> +					 sink_streams);
->  	if (ret) {
-> -		if (priv->stream_count == 0)
-> +		if (!priv->enabled_sink_streams_mask)
->  			rcsi2_stop(priv);
->  		return ret;
->  	}
->  
-> -	priv->stream_count += 1;
-> +	priv->enabled_sink_streams_mask |= sink_streams;
->  
->  	return ret;
->  }
-> @@ -1915,23 +1929,26 @@ static int rcsi2_disable_streams(struct v4l2_subdev *sd,
->  				 u32 source_pad, u64 source_streams_mask)
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> +	u64 sink_streams;
->  	int ret;
->  
-> -	if (source_streams_mask != 1)
-> -		return -EINVAL;
-> -
->  	if (!priv->remote)
->  		return -ENODEV;
->  
-> -	if (priv->stream_count == 1)
-> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> +						       source_pad,
-> +						       RCAR_CSI2_SINK,
-> +						       &source_streams_mask);
-> +
-> +	if (priv->enabled_sink_streams_mask == sink_streams)
->  		rcsi2_stop(priv);
->  
->  	ret = v4l2_subdev_disable_streams(priv->remote, priv->remote_pad,
-> -					  BIT_ULL(0));
-> +					  sink_streams);
->  	if (ret)
->  		return ret;
->  
-> -	priv->stream_count -= 1;
-> +	priv->enabled_sink_streams_mask &= ~sink_streams;
->  
->  	return 0;
->  }
-> @@ -1966,6 +1983,34 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> +static int rcsi2_set_routing(struct v4l2_subdev *sd,
-> +			     struct v4l2_subdev_state *state,
-> +			     enum v4l2_subdev_format_whence which,
-> +			     struct v4l2_subdev_krouting *routing)
-> +{
-> +	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> +	int ret;
-> +
-> +	if (priv->info->use_isp) {
-> +		ret = v4l2_subdev_routing_validate(sd, routing,
-> +						   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
-> +	} else {
-> +		ret = v4l2_subdev_routing_validate(sd, routing,
-> +						   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1 |
-> +						   V4L2_SUBDEV_ROUTING_NO_SOURCE_MULTIPLEXING);
-> +	}
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing,
-> +					       &rcar_csi2_default_fmt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->  static int rcsi2_get_frame_desc_fallback(struct v4l2_subdev *sd,
->  					 unsigned int pad,
->  					 struct v4l2_mbus_frame_desc *fd)
-> @@ -2045,6 +2090,7 @@ static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
->  	.set_fmt = rcsi2_set_pad_format,
->  	.get_fmt = v4l2_subdev_get_fmt,
->  
-> +	.set_routing = rcsi2_set_routing,
->  	.get_frame_desc = rcsi2_get_frame_desc,
->  };
->  
-> @@ -2065,17 +2111,6 @@ static int rcsi2_init_state(struct v4l2_subdev *sd,
->  		},
->  	};
->  
-> -	static const struct v4l2_mbus_framefmt rcar_csi2_default_fmt = {
-> -		.width		= 1920,
-> -		.height		= 1080,
-> -		.code		= MEDIA_BUS_FMT_RGB888_1X24,
-> -		.colorspace	= V4L2_COLORSPACE_SRGB,
-> -		.field		= V4L2_FIELD_NONE,
-> -		.ycbcr_enc	= V4L2_YCBCR_ENC_DEFAULT,
-> -		.quantization	= V4L2_QUANTIZATION_DEFAULT,
-> -		.xfer_func	= V4L2_XFER_FUNC_DEFAULT,
-> -	};
-> -
->  	static const struct v4l2_subdev_krouting routing = {
->  		.num_routes = ARRAY_SIZE(routes),
->  		.routes = routes,
-> @@ -2120,13 +2155,13 @@ static irqreturn_t rcsi2_irq_thread(int irq, void *data)
->  
->  	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
->  
-> -	if (priv->stream_count == 0)
-> +	if (!priv->enabled_sink_streams_mask)
->  		goto out;
->  
->  	rcsi2_stop(priv);
->  
->  	ret = v4l2_subdev_disable_streams(priv->remote, priv->remote_pad,
-> -					  BIT_ULL(0));
-> +					  priv->enabled_sink_streams_mask);
->  	if (ret) {
->  		dev_warn(priv->dev,
->  			 "Error recovery: failed to disable streams: %d\n",
-> @@ -2145,7 +2180,7 @@ static irqreturn_t rcsi2_irq_thread(int irq, void *data)
->  	}
->  
->  	ret = v4l2_subdev_enable_streams(priv->remote, priv->remote_pad,
-> -					 BIT_ULL(0));
-> +					 priv->enabled_sink_streams_mask);
->  	if (ret) {
->  		dev_warn(priv->dev,
->  			 "Error recovery: failed to start streams: %d\n",
-> @@ -2748,8 +2783,6 @@ static int rcsi2_probe(struct platform_device *pdev)
->  
->  	priv->dev = &pdev->dev;
->  
-> -	priv->stream_count = 0;
-> -
->  	ret = rcsi2_probe_resources(priv, pdev);
->  	if (ret) {
->  		dev_err(priv->dev, "Failed to get resources\n");
-> 
-> -- 
-> 2.43.0
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+SGkgV29sZnJhbSwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQoNCj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV29sZnJhbSBTYW5nIDx3c2ErcmVuZXNhc0BzYW5nLWVu
+Z2luZWVyaW5nLmNvbT4NCj4gU2VudDogMDMgU2VwdGVtYmVyIDIwMjYgMTM6MDINCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCB2MjQgMTEvMTVdIG1tYzogcmVuZXNhc19zZGhpOiBBZGQgUlovRzNMIFNE
+SEkgc3VwcG9ydA0KPiANCj4gDQo+IE9rYXksIGxldCdzIHN0YXJ0IHRoaXMgb25lIGhpZ2ggbGV2
+ZWwuLi4NCj4gDQo+IE9uIFRodSwgQXVnIDIwLCAyMDI2IGF0IDA2OjE2OjQxUE0gKzAxMDAsIEJp
+anUgd3JvdGU6DQo+ID4gRnJvbTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29t
+Pg0KPiA+DQo+ID4gUlovRzNMIChyOWEwOGcwNDYpIGhhcyBhbiBTREhJIGNvbnRyb2xsZXIgdGhh
+dCBkaWZmZXJzIGZyb20gZXhpc3RpbmcNCj4gPiBwbGF0Zm9ybXMgaW4gY2xvY2sgZGl2aWRlciB3
+aWR0aCwgYSBzZWNvbmQgSFcgYWRqdXN0bWVudCByZWdpc3RlciwgYW5kDQo+ID4gYW4gZXh0cmEg
+dHVuaW5nIHJlZ2lzdGVyLg0KPiA+DQo+ID4gQWRkIFRNSU9fTU1DX0hXQURKIHRvIG1hcmsgY29u
+dHJvbGxlcnMgd2l0aCBhIHNlY29uZCBIV0FESjIgcmVnaXN0ZXINCj4gPiAob2Zmc2V0IDB4MDEw
+KSwgcHJvZ3JhbW1lZCBieSByZW5lc2FzX3NkaGlfc2V0X2h3X2FkanVzdG1lbnRfZGVsYXkoKQ0K
+PiA+IGFsb25nc2lkZSBUTVBQT1JUMiAoMHgzRkZGIGF0IDMuM1YsIDB4RkYgYXQgMS44VikuIENs
+ZWFyIHRoZSBuZXcNCj4gPiBIV0FESjQgcmVnaXN0ZXIgKDB4MDIyKSBhdCB0dW5pbmcgc3RhcnQg
+d2hlbiBUTUlPX01NQ19JTlRFUk5BTF9ESVZJREVSDQo+ID4gaXMgc2V0Lg0KPiA+DQo+ID4gVXBk
+YXRlIHJlbmVzYXNfc2RoaV9zZXRfY2xvY2soKSB0byB3cml0ZSB0aGUgY2xvY2sgY29udHJvbCBy
+ZWdpc3Rlcg0KPiA+IHdpdGggYSAzMi1iaXQgYWNjZXNzIHdoZW4gbWF4X2RpdmlkZXIgaXNuJ3Qg
+dGhlIGRlZmF1bHQsIG1vdmluZyBiaXRzDQo+ID4gWzk6OF0gb2YgdGhlIGNsb2NrIHZhbHVlIGlu
+dG8gYml0cyBbMTc6MTZdIG9mIHRoZSByZWdpc3RlciDigJQgbmVlZGVkIHRvDQo+ID4gZHJpdmUg
+UlovRzNMJ3Mgd2lkZXIgMTEtYml0IGRpdmlkZXIgZmllbGQgdmlhIHRoZSBtYXhfZGl2aWRlci8N
+Cj4gPiBjbGtfZGl2X21hc2sgc3VwcG9ydCBhZGRlZCBlYXJsaWVyIGluIHRoaXMgc2VyaWVzLg0K
+PiA+DQo+ID4gQWRkIFNESElfVkVSX1JaX0czTF9TRE1NQyAoMHhjZTEwKSBhbmQgaGFuZGxlIGl0
+IGluDQo+ID4gcmVuZXNhc19zZGhpX3NkYnVmX3dpZHRoKCkuIEFkZCBvZl9kYXRhX3J6ZzNsIHdp
+dGggUlovRzNMJ3Mgd2lkZXINCj4gPiBjbGtfbWFzaywgYW4gMTEtYml0IG1heF9kaXZpZGVyIG9m
+IDIwNDgsIGEgZGVkaWNhdGVkIHRhcCB0YWJsZSwgYW5kDQo+ID4gdGhlIHJlbGV2YW50IGZsYWdz
+IGluY2x1ZGluZyBUTUlPX01NQ19JTlRFUk5BTF9ESVZJREVSIGFuZA0KPiA+IFRNSU9fTU1DX0hX
+QURKLiBXaXJlIGl0IHVwIHZpYSBvZl9yemczbF9jb21wYXRpYmxlIChmaXhlZF9hZGRyX21vZGUN
+Cj4gPiBxdWlyaykgYW5kIHJlZ2lzdGVyIHRoZSAicmVuZXNhcyxzZGhpLXI5YTA4ZzA0NiIgY29t
+cGF0aWJsZSBzdHJpbmcuDQo+IA0KPiBBZnRlciBhcnJpdmluZyBhdCBwYXRjaCAxMSwgSSBmZWVs
+IGEgc2lnbmlmaWNhbnQgbG9zcyBpbiBtb3RpdmF0aW9uIHRvIHJlYWQgdGhpcyBwYXRjaCBkZXNj
+cmlwdGlvbi4gSXQgaXMNCj4gdmVyeSB3b3JkeSwgaW5jbHVkZXMgYSBsb3Qgb2YgdGhlIFdIQVQs
+IGhpZGluZyB0aGUgV0hZLiBNYXliZSB5b3UgY2FuIGFkanVzdCB0aGUgcHJvbXB0LCBidXQgSSB3
+b3VsZA0KPiBzdWdnZXN0IHRvIHdyaXRlIGl0IHlvdXJzZWxmLg0KDQpPSywgd2lsbCBmaXggY29t
+bWl0IG1lc3NhZ2UgaW4gbmV4dCB2ZXJzaW9uLg0KDQo+IA0KPiA+IC0Jc2RfY3RybF93cml0ZTE2
+KGhvc3QsIENUTF9TRF9DQVJEX0NMS19DVEwsIGNsb2NrKTsNCj4gPiArCWlmIChob3N0LT5wZGF0
+YS0+bWF4X2RpdmlkZXIgIT0gU0RISV9NQVhfRElWSURFUl9ERUZBVUxUKSB7DQo+ID4gKwkJdTY0
+IHRtcDsNCj4gPiArDQo+ID4gKwkJdG1wID0gRklFTERfR0VUKFJaRzNMX0NMS19DVExfRElWOV9E
+SVY4X1NSQywgY2xrKTsNCj4gPiArCQljbG9jayB8PSBGSUVMRF9QUkVQKFJaRzNMX0NMS19DVExf
+RElWOV9ESVY4LCB0bXApOw0KPiA+ICsJCWNsb2NrICY9IH5SWkczTF9DTEtfQ1RMX0RJVjlfRElW
+OF9TUkM7DQo+IA0KPiBJIGFtIGNvbmZ1c2VkLiBCaXQgOCs5IGFyZSBhbHdheXMgemVybz8NCg0K
+Tm8uDQoNCmZvciAoY2xrID0gaG9zdC0+cGRhdGEtPmNsa19tYXNrOyBuZXdfY2xvY2sgKyBjbGtf
+bWFyZ2luID49IChjbG9jayA8PCAxKTsgY2xrID4+PSAxKQ0KCQljbG9jayA8PD0gMTsNCg0KY2xr
+IHdpbGwgaGF2ZSBhIHZhbGlkIHZhbHVlLg0KDQpjbG9jayA9IGNsayAmIGhvc3QtPnBkYXRhLT5j
+bGtfZGl2X21hc2s7DQoNClNvIGluaXRpYWxseSBiaXQgOCs5IHdpbGwgaGF2ZSBhIHZhbHVlLiBU
+aGlzIHdpbGwgYmUgbW92ZWQgdG8gYml0IDE2ICsgMTcgZmlyc3QNClRoZW4gd2UgY2xlYXIgdGhl
+IGJpdHMgOCArIDkuIEJpdDgoU0NMS0VOKSBhbmQgQml0OShTRENMS09GRkVOKQ0KDQo+IA0KPiA+
+IC0jZGVmaW5lIFNIX01PQklMRV9TREhJX1NDQ19UTVBQT1JUMgkweDAwRQ0KPiA+ICsjZGVmaW5l
+IFNIX01PQklMRV9TREhJX1NDQ19UTVBQT1JUMgkweDAwRSAvKiBHM0w6IFNEbV9TQ0NfSFM0MDBN
+T0RFMSAqLw0KPiA+ICsjZGVmaW5lIFJaRzNMX1NESElfU0NDX0hXQURKMgkJMHgwMTANCj4gDQo+
+IERvZXMgUlpHM0wgaGF2ZSBhIGRlZGljYXRlZCBuYW1pbmc/IEknZCBndWVzcyAqX0hXQURKMS4g
+SSB3b25kZXIgaWYgaXQgbWFrZXMgc2Vuc2UgdG8gaGF2ZSBhIGRlZGljYXRlZA0KPiBkZWZpbmUg
+Zm9yIGl0LiBJIHRlbmQgdG8gdGhpbmsgc28uDQoNClRoZXJlIGlzIG5vICpfSFdBREoxIG1lbnRp
+b25lZCBpbiBIVyBtYW51YWwuDQpIYXJkd2FyZSBtYW51YWwgbWVudGlvbiB0aGlzIHJlZ2lzdGVy
+IGFzICJTRG1fU0NDX0hXQURKMiINCg0KPiANCj4gPiArCQlpZiAoaHdhZGoyKQ0KPiA+ICsJCQlz
+ZF9zY2Nfd3JpdGUzMihob3N0LCBwcml2LCBSWkczTF9TREhJX1NDQ19IV0FESjIsIDB4M0ZGRik7
+DQo+ID4gKwl9IGVsc2Ugew0KPiA+ICAJCXNkX3NjY193cml0ZTMyKGhvc3QsIHByaXYsIFNIX01P
+QklMRV9TREhJX1NDQ19UTVBQT1JUMiwgMHgxKTsNCj4gPiArCQlpZiAoaHdhZGoyKQ0KPiA+ICsJ
+CQlzZF9zY2Nfd3JpdGUzMihob3N0LCBwcml2LCBSWkczTF9TREhJX1NDQ19IV0FESjIsIDB4RkYp
+Ow0KPiANCj4gTWFnaWMgdmFsdWVzPw0KDQpIVyBtYW51YWwgbWVudGlvbnMgdGhlIGZvbGxvd2lu
+ZywNCg0KSFdBREoyWzE1OjBdIDFGRmggSGFyZHdhcmUgQWRqdXN0bWVudC4NCkZvciAxLjhWIG9w
+ZXJhdGlvbiwgc3BlY2lmeSAwMEZGaC4NCkZvciAzLjNWIG9wZXJhdGlvbiwgc3BlY2lmeSAzRkZG
+aC4NCg0KSXMgdGhlIGJlbG93IG1hY3JvcyBvayBmb3IgcmVwcmVzZW50aW5nIG1hZ2ljIHZhbHVl
+cz8/DQoNClNEX1NDQ19IV0FESjJfMV84ViAweEZGDQpTRF9TQ0NfSFdBREoyXzNfM1YgMHgzRkZG
+DQoNCg0KDQo+IA0KPiA+ICAJaWYgKHByZXNlcnZlKSB7DQo+ID4gIAkJY2FyZF9vcHQgPSBzZF9j
+dHJsX3JlYWQxNihob3N0LCBDVExfU0RfTUVNX0NBUkRfT1BUKTsNCj4gPiAtCQljbGtfY3RybCA9
+IHNkX2N0cmxfcmVhZDE2KGhvc3QsIENUTF9TRF9DQVJEX0NMS19DVEwpOw0KPiA+ICsJCWlmICho
+b3N0LT5wZGF0YS0+ZmxhZ3MgJiBUTUlPX01NQ19JTlRFUk5BTF9ESVZJREVSKQ0KPiA+ICsJCQlj
+bGtfY3RybF8zMiA9IHNkX2N0cmxfcmVhZDMyKGhvc3QsIENUTF9TRF9DQVJEX0NMS19DVEwpOw0K
+PiA+ICsJCWVsc2UNCj4gPiArCQkJY2xrX2N0cmwgPSBzZF9jdHJsX3JlYWQxNihob3N0LCBDVExf
+U0RfQ0FSRF9DTEtfQ1RMKTsNCj4gPiArDQo+ID4gIAkJaWYgKGhvc3QtPnBkYXRhLT5mbGFncyAm
+IFRNSU9fTU1DX01JTl9SQ0FSMikNCj4gPiAgCQkJc2RpZl9tb2RlID0gc2RfY3RybF9yZWFkMTYo
+aG9zdCwgQ1RMX1NESUZfTU9ERSk7DQo+ID4gIAl9DQo+ID4gQEAgLTIxNyw3ICsyMjIsMTEgQEAg
+c3RhdGljIHZvaWQgdG1pb19tbWNfcmVzZXQoc3RydWN0IHRtaW9fbW1jX2hvc3QNCj4gPiAqaG9z
+dCwgYm9vbCBwcmVzZXJ2ZSkNCj4gPg0KPiA+ICAJaWYgKHByZXNlcnZlKSB7DQo+ID4gIAkJc2Rf
+Y3RybF93cml0ZTE2KGhvc3QsIENUTF9TRF9NRU1fQ0FSRF9PUFQsIGNhcmRfb3B0KTsNCj4gPiAt
+CQlzZF9jdHJsX3dyaXRlMTYoaG9zdCwgQ1RMX1NEX0NBUkRfQ0xLX0NUTCwgY2xrX2N0cmwpOw0K
+PiA+ICsJCWlmIChob3N0LT5wZGF0YS0+ZmxhZ3MgJiBUTUlPX01NQ19JTlRFUk5BTF9ESVZJREVS
+KQ0KPiA+ICsJCQlzZF9jdHJsX3dyaXRlMzIoaG9zdCwgQ1RMX1NEX0NBUkRfQ0xLX0NUTCwgY2xr
+X2N0cmxfMzIpOw0KPiA+ICsJCWVsc2UNCj4gPiArCQkJc2RfY3RybF93cml0ZTE2KGhvc3QsIENU
+TF9TRF9DQVJEX0NMS19DVEwsIGNsa19jdHJsKTsNCj4gPiArDQo+IA0KPiBXZSBzaG91bGQgaGlk
+ZSB0aGlzIGNvbXBsZXhpdHkgaW4gYSBmdW5jdGlvbiwgSSdkIHNheS4gVG8gbWFrZSBzdXJlIGZ1
+dHVyZSB1cGRhdGVzIG1vZGlmeWluZw0KPiBDVExfU0RfQ0FSRF9DTEtfQ1RMIHdpbGwgaGF2ZSBp
+dCBlYXN5Lg0KDQpPSy4NCg0KPiANCj4gPiArLyogU29tZSBjb250cm9sbGVycyBoYXZlIGh3IGFk
+anVzdG1lbnQgZGVsYXkgKi8NCj4gPiArI2RlZmluZSBUTUlPX01NQ19IV0FESgkJCUJJVCgxNSkN
+Cj4gDQo+IEkgd29uZGVyIGhvdyBsaWtlbHkgaXQgaXMgdGhhdCBhIFNESEkgdmFyaWFudCBoYXMg
+ZWl0aGVyIG9ubHkgdGhpcyBvciBvbmx5IFRVTklOR19ERUxBWS4gRG8geW91IGtub3cgb2YNCj4g
+b25lPyBXaGF0IHdvdWxkIHlvdSB0aGluayBhYm91dCBtZXJnaW5nIHRoZSB0d28/IFlvdSBrbm93
+IHRoZSBSWiBTREhJIG11Y2ggYmV0dGVyLi4uDQoNCkhXQURKMiBwcmVzZW50IG9ubHkgb24gUlov
+RzNMLA0Kd2hlcmVhcyBUVU5JTkdfREVMQVkgcHJlc2VudCBvbiBib3RoIFJaL0cyTCBhbmQgUlov
+RzNMLg0KDQo+IA0KPiBJIHdpbGwgc3RvcCByZXZpZXdpbmcgYXQgdGhpcyBwYXRjaC4gVGhlcmUg
+YXJlIGVub3VnaCBpc3N1ZXMgdG8gdGFja2xlLCBJJ2QgdGhpbmsuIE9uY2Ugd2UgZ290IHRoaXMN
+Cj4gcmlnaHQsIHdlIGNhbiBpbXByb3ZlIEhTNDAwIG9uIHRvcCBvZiBpdC4NCj4gDQo+IE1ha2Vz
+IHNlbnNlIHRvIHlvdT8NCg0KWWVzLiBJIGhhdmUgcmVzcG9uZGVkIHRvIGFsbCB5b3VyIGNvbW1l
+bnRzLiBQbGVhc2UgcHJvdmlkZSBzdWdnZXN0aW9ucy4NCg0KTG9va2luZyBmb3J3YXJkIHRvIGhl
+YXJpbmcgZnJvbSB5b3UuDQoNCkNoZWVycywNCkJpanUNCg0K
