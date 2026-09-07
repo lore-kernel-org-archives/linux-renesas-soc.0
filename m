@@ -1,100 +1,148 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE54A3AFAE7;
-	Mon,  7 Sep 2026 20:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029293BB690
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Sep 2026 21:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788814156; cv=none; b=YpLMq/pcAbJat2eDB5J4uQIf5Ff/uhQ7LnGXMf1K4fdHlyb206dHLhir951OExty3o9Te58ESVCOqME9s+CX2rdErg0iCHfbLsH6LO7yQUEWP5xvLNeY0vcU8sY1XEPluJMUP+IYI2ZZzTSGtNEy9UvSVbspCeZyBmMW0vv+TpY=
+	t=1788814866; cv=none; b=bOryFuR18rYWltCekLoC3m0IDK7/MNNRGlooOZCGSqXdc2qZvKmu59WDWVhd/2Fa+IrTVUuU407kKT554kPGBp6soE6HgytRoeJMOY8fMKvpNwzxkT8Z7j+IbRrBhwGkT6o9+Q3apDPw8CyEJvd4kUzItnR+oGL7aFW5gHXxmSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788814156; c=relaxed/simple;
-	bh=4h+qmM0WACq2ITmnp607pQge5ogECSR4UrtWkzCyjmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VridhhALxInZar9fPTZOOrySzzU3IKxBNtoCPcYbI9bH2v62UaEt4riCTKOmE85Wx1jqW1FuYbkjjPoWAJInRCJd9gSozb6HKjeA3KspUwelP8ZNG9Ue4Jm/uihTOLQQzXrlu48Yz97I48kBFhoCN5oo23pKV86XADZlOZe+yR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lOBdB6BM; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1788814866; c=relaxed/simple;
+	bh=Pfp4fHaGp3DYNoQNsq++Hih2POFfdEHNA9k/g4/DYlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mX424X+6BbogoL0oGB3C7EdZi8ttl94smUrF0swcsZZNPA1IvFOdsY2vgzCUAdWGMgmNubBSqRm4cSDo0v34fpi1eXWPmMuJaDUoOVKz2qd6Y7gZdWC5lMoNMvdfWpkteJYpyCIKn7oxDHgKatAfpkQdEMwnGOZqpWYV7B9qqbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4srLzoR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eFb3gEgc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lOBdB6BM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=ixgnVD7QubPjJlZnelXYaQ1qrDYJnDYcUNq6P1sl4DU=; b=lO
-	BdB6BMfJk/DWrDx2Ml+HnRWtEv2FyxlXh0+9CMzsDzFyFGKVfNRkw+NGoqAZFtgvr0/OdkX19hmkH
-	WLcGafhcRyXC4D5QuT6jxqDdbVo06SUQ9P2O4nID0pJbt5yVhp78DXn/EY4iRozS0+dSJeAzdqcr/
-	d0FT9b6mjiyprn8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1x3gGz-003dlr-0r; Mon, 07 Sep 2026 22:49:01 +0200
-Date: Mon, 7 Sep 2026 22:49:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: khendry@reliablecontrols.com,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] net: pcs: rzn1-miic: Verify port number from dtb
-Message-ID: <81f2b455-7df7-4aae-8b67-d7cc9a7039d4@lunn.ch>
-References: <20260902-rzn1-miic-fix-array-v3-0-3f7dccffaf5a@reliablecontrols.com>
- <20260902-rzn1-miic-fix-array-v3-2-3f7dccffaf5a@reliablecontrols.com>
- <CA+V-a8tOLKxFEKF+yZ0Asf_KYb=_hrFuJagkdzHPxZ_zf3MNRw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4srLzoR";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eFb3gEgc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788814864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=km54XNA3pesnlH9MUSOEbKUzj91GMmwN/4bvXZLN1Qw=;
+	b=E4srLzoRT2lSFcaQysiCLk/7gYWQXXHBWble0pc3yRK0BKbcUWXlkkenZdQBdblXltv429
+	aq23hN2ImYmLgJhVNpUkK9ErT/FV8Sa0bc3WYo3Bf/cgSD4jChuPK5MW4huzJs8Xh8G3m2
+	v2U/A6AYyGRGC393cggcW25+9qGapb4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-563-fnV9dX-AP_a-b3HYUnU2KQ-1; Mon, 07 Sep 2026 17:01:03 -0400
+X-MC-Unique: fnV9dX-AP_a-b3HYUnU2KQ-1
+X-Mimecast-MFC-AGG-ID: fnV9dX-AP_a-b3HYUnU2KQ_1788814862
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-495529a93f9so38127845e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 14:01:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788814862; x=1789419662; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=km54XNA3pesnlH9MUSOEbKUzj91GMmwN/4bvXZLN1Qw=;
+        b=eFb3gEgcK3PB9MrfTHHThNcTr92004RvKuJ7uQwqQ3zoZ7OpJ1R7BPd8FvfmFxrl1h
+         nExdIw/Pf64APOUElzXVszf8Z/bLMrjDYGro+gxFk3eIKe+kvhj2IB8lSL2BlD+ZIQW/
+         sdkg+IjrmSSiahvTjLw32xG2CzD+GoXUxS2jj41mqgvtOOhUOA3AezChvYwsAcck82zI
+         R8Qp2eVUoycJOT4nbsMOPyqRJSzwZjPX62S4veWmMlcAj5GMvzgVfhx2lUPn+2YQB2jd
+         tEc6d0iHztEydGJgr9YF0mER6V2Nt6x2AB18PD42SQieJO4kg5XA+eKCw5FGTPbEsnwu
+         1FIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788814862; x=1789419662;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=km54XNA3pesnlH9MUSOEbKUzj91GMmwN/4bvXZLN1Qw=;
+        b=s/OWuSKaaHGC3gVauKUJSgc5MFiQ1Q8cAq2pDPYJtVUL4znbqYppwOr9SEDL7N7GnX
+         XDvxIhPFidIPKsyN5xWbs0YBwBVsyGKNaFylVBUmmcDIYWLc544CpHpwLorS1kAhb0RG
+         q7AU6JeEAK/aPrD6d/eSN4tJlzeQ3F2fAmT9bB1ngJOrPuHpYHLbBlMlL1bjFStO9w/q
+         EFeGinIjrcwYVk9Ef16d8rQqm5Z7f7UPLNNiimNKEPscMFnaSiWVLPPOEpQQuSaJDQ3L
+         Ng4NkcRPU6AvIIexLFpgsJvZ1gnPWed3qc3tWXLZOS5SrHRfqroiiUSdQEZgTnKjOC8w
+         4tLQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxym4YpfCbn13+161vRXMctQS+NbxP3nQOhZWBMDwVW2trx/EdcKKUaskRoFpbcOhuuF8pGasni0BhBIhEvZ4LuQw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nRXHqA3kseKYzf8cEe+OfhAaXskXzIrQMEwi9Zd7tnBN3CkqQg
+	TXUaqj7/GzDVwJa/JZYfSR7sgnV7rtIlfoMxvnHd+XTIZm1eXS5PV1AlCf2q3+Oywn5+yysxGml
+	cVya1O50WT5UC2c2Uc4cEY70ExKbFO+zf7FCL9266lSqighpC2VOE0xzPq4gvavB9SUkcwX9Y
+X-Gm-Gg: AYBFou0kxw3V/fAp+Ke8Q8dpxhlNjHoBqzzRjA1xWElbhrFigznndaOz8YKdUX8Z+wi
+	QpOEsYuXRZzfvNwtLz1AorvZWHW3TWpb/4v9bI9dfME6mI/afbJTHdsyJ0hxRDCiYgz8nYUkwiK
+	stQKfFAGbA4/DblCEsl3pQMJglwHdphEzBcK9mrhTfNnwTMeq67SqmyKaoKFVk6Dsy29iyr+A38
+	sgDqUlYfNF3RuI/Uod+YbvP6pCUc2Q5p9o4TUttdSyr4M1vNsmcGYm1d5eYY7yzt1bT1kRSPeUE
+	vyFHP6kZwrUWBlPcmyWFj55CdpN1X6hz3bHKbTQZ62UtALjv6Ml0whEbZ3d2RbeRuKnBlCXRFt2
+	4ThwnZuf/aQxlu+F0zLzWephWK2IOq3NbHOh1uxRrc6mavlHd
+X-Received: by 2002:a05:600d:8649:10b0:49c:fa20:cc0a with SMTP id 5b1f17b1804b1-49cfa20cd58mr167275085e9.33.1788814861703;
+        Mon, 07 Sep 2026 14:01:01 -0700 (PDT)
+X-Received: by 2002:a05:600d:8649:10b0:49c:fa20:cc0a with SMTP id 5b1f17b1804b1-49cfa20cd58mr167274945e9.33.1788814861409;
+        Mon, 07 Sep 2026 14:01:01 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:11aa:87f0:ea69:b2b0:2dae:5ef9? ([2a01:e0a:11aa:87f0:ea69:b2b0:2dae:5ef9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cf7703cefsm458086515e9.5.2026.09.07.14.00.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2026 14:01:00 -0700 (PDT)
+Message-ID: <b34807ad-6390-4804-ba29-43a407b3d9fb@redhat.com>
+Date: Mon, 7 Sep 2026 23:00:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8tOLKxFEKF+yZ0Asf_KYb=_hrFuJagkdzHPxZ_zf3MNRw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/14] drm/panic: Do not use un-escaped URL as format
+ string
+To: Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, geert@linux-m68k.org, rdunlap@infradead.org
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, virtualization@lists.linux.dev,
+ sashiko-reviews@lists.linux.dev, stable@vger.kernel.org
+References: <20260902121930.597222-1-tzimmermann@suse.de>
+ <20260902121930.597222-2-tzimmermann@suse.de>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20260902121930.597222-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 07, 2026 at 08:39:27PM +0100, Lad, Prabhakar wrote:
-> Hi Kyle,
+On 9/2/26 14:13, Thomas Zimmermann wrote:
+> Replace the direct use of DRM_PANIC_SCREEN_QR_CODE_URL in snprintf()
+> with a %s conversion specifier. Avoids a possible vulnerabilty from
+> a crafted URL string.
 > 
-> Thank you for the patch.
+> As the attacker needs to control the kernel at the Kconfig level, the
+> potential for an exploit is likely low.
+
+Thanks, it looks good to me.
+
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+
 > 
-> On Wed, Sep 2, 2026 at 7:55 PM Kyle Hendry via B4 Relay
-> <devnull+khendry.reliablecontrols.com@kernel.org> wrote:
-> >
-> > From: Kyle Hendry <khendry@reliablecontrols.com>
-> >
-> > Add check to make sure port number is in range before writing
-> > to dt_val array
-> >
-> > Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
-> > ---
-> >  drivers/net/pcs/pcs-rzn1-miic.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-> > index c50b65d064fa..3ee40eb9d545 100644
-> > --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> > +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> > @@ -692,6 +692,12 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
-> >                 if (of_property_read_u32(conv, "reg", &port))
-> >                         continue;
-> >
-> > +               if (port < miic->of_data->miic_port_start || port > miic->of_data->miic_port_max) {
-> > +                       dev_err(miic->dev, "Port number out of range: %d\n", port);
-> > +                       kfree(dt_val);
-> > +                       return -EINVAL;
-> > +               }
-> > +
-> Query to maintainers, what policy should be followed? Since the
-> dtbinding check complains if the port is out of range should the code
-> also check it?
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+> Cc: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: Jocelyn Falempe <jfalempe@redhat.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: <stable@vger.kernel.org> # v6.12+
+> ---
+>   drivers/gpu/drm/drm_panic.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+> index e576c4791861..ba21df4be338 100644
+> --- a/drivers/gpu/drm/drm_panic.c
+> +++ b/drivers/gpu/drm/drm_panic.c
+> @@ -658,7 +658,8 @@ static int drm_panic_get_qr_code_url(u8 **qr_image)
+>   	char *kmsg;
+>   	int max_qr_data_size, url_len;
+>   
+> -	url_len = snprintf(url, sizeof(url), CONFIG_DRM_PANIC_SCREEN_QR_CODE_URL "?a=%s&v=%s&z=",
+> +	url_len = snprintf(url, sizeof(url), "%s?a=%s&v=%s&z=",
+> +			   CONFIG_DRM_PANIC_SCREEN_QR_CODE_URL,
+>   			   utsname()->machine, utsname()->release);
+>   
+>   	max_qr_data_size = drm_panic_qr_max_data_size(panic_qr_version, url_len);
 
-Yes, the kernel should check it. Running the checker is
-optional. Crashing the kernel because of an invalid DT blob is not
-something you want to allow.
-
-	  Andrew
