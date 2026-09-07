@@ -1,230 +1,252 @@
-Received: from mx0b-0002e601.pphosted.com (mx0b-0002e601.pphosted.com [148.163.154.28])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010055.outbound.protection.outlook.com [52.101.229.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8572F231A23;
-	Mon,  7 Sep 2026 04:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.154.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D9B3FA5EB;
+	Mon,  7 Sep 2026 06:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788755371; cv=fail; b=CJVoA71icXhNDZ3Jq3aeCn8s0BCqvpPaP+3yXOqHerLK2tdnGwqLx23XBv0bPbqy5qXNB80ZCyDN+ZBjgw/ck4ur+o2C56e1LsWUZTf+aRSJg5VI7heMjm8PcJ5hWHdo3j98n6WMAKEjWC6vzU42VrUDIqb3iPReyOECOSQeX+U=
+	t=1788763027; cv=fail; b=fIeG4EO09mZQviIMWMqHP9dPWzd1KdCrm+ey/7QLl9snaRGgwEhYO8mBWAlqz2shVCIBvJYHn+JNL/vmBCExcv+YBtqgdiACeBwNC5TuvUkogzkgDEdHKXOO1bY+1qtyFz/Y9RMNq8unDslZoZkH4FDFsgtjp93hbco+yH5THfo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788755371; c=relaxed/simple;
-	bh=5HHiNiC8/qXzjvSvMYqepKU73PTSKvKbXIDhxxpDG7k=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Bm8Xdwyb1wgEh22u0tb23GYUU4coY1ATdKWLxLJ0qvl24B8mGW/UvdVKCHZG68Jd8fDv5dSKf68Gp1ic2GgJFr2KvtIBLhw7WXznfPHAf0INFGhV5rWXSA8mp3yMRNSDJfFo/YbfTSHHfPNB+VA2JbnpXOJyXBv1gJI9NNkHkh4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=Ogsdskiv; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WTntPemq; arc=fail smtp.client-ip=148.163.154.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1788763027; c=relaxed/simple;
+	bh=g8waLZ/r5wIB/AA+ZiezOt4woVzlDSpb6QquGg/C3hc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cVZDsxqPRvN+YYhUuRzIGJtCNbqkTXp27pqxvZgIKeF4PhC8DWM4yyecpb27rVmOIg4c1xZL4e3PgrFv/wFPsDTRg9gS0jtujJAPQS904Jpz4izhdyOQCkORafUYKNlXhihga4MGpNMP1nMFo8PAU9Iw8BSpXUXk+9gOtM9bCds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=t0TAiFi5; arc=fail smtp.client-ip=52.101.229.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="Ogsdskiv";
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WTntPemq"
-Received: from pps.filterd (m0374955.ppops.net [127.0.0.1])
-	by mx0b-0002e601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6873iojQ2399040;
-	Sun, 6 Sep 2026 23:29:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	proofpoint-05-2026; bh=WoMXnesFiBhxVVGYGwr881/Ity3rVNq/N5suxTghJ
-	jw=; b=OgsdskivdrmfqksJB1HR1BzBfmytTQfbebBRKiVAXFJcivmhH4mec2bJs
-	pioUnQAqUnrSeBlPIOeq6skygtKtP3k0hlAh8AD9T+AVB/WR6nLRXs2KbcpUKNsT
-	bYVhkh8/3yX18BlYCbUqz+WCogI4zhGMAkGsxR8cuH8cl9R7P0UIiU8hNxczKV+V
-	stAdG2ImL2RFmWmHpc6Ko5vCAllPnaa4vzwIKP4GmHo/3iJLRh1ABWzhoS+S2U0N
-	Hlt4n63XLlQCTN0P3d5SzvnsNFjFWF2RRTrHubMmVG7nRThAIBg7GpBINjjCn7vD
-	CkxvtWjQORHevXeIYNn2CDEPaBbuQ==
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010012.outbound.protection.outlook.com [52.101.85.12])
-	by mx0b-0002e601.pphosted.com (PPS) with ESMTPS id 4gh2f6bmhb-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sun, 06 Sep 2026 23:29:28 -0500 (CDT)
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="t0TAiFi5"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rw9UTiPVylWdnVnXbxiVa4h2j0tBkuXTP5pGDD6eP687k+XwAt/7JtklVQHfPDgv0wRFvtaDOEEnVa0MgCl7m+EFuDUlbq1qhRhinWacIO9922FFDnu5CaR1ze+lZnsjF2FHig/DgufhGuoWq5nHIsMt9+jiLKmpphRQEd3NlrAwomNjE01IT3wjK+Js2u1/oCNn8Q61cF+OwFty+8HqhkUTdMpzL+7782jQcniIN9xKm/n+NUaAeX+qblfvJaoR/HSkZ1v/nvK8Z0/mlk/vqwb5IApmd8WqoTyvEqERG87ehSyB/UNo9aAlMMb0/62dPcITnXjNR6JAGf/BFI0CkA==
+ b=hvKi8JUL8YlWaNWNa3t27kX3EHhK4Zz93YQVn1b1PjLluZPlXFVlIXeWNxxJjQuDeAhDFdeJoDKXxN+WaheZ8I9Gecy6Bp4fJF0r6unXiua1WXxFRNW1W9PqXL80Tc/fqf1qHfaVVjUh1vWUFpWbQtJex/CaqdfiR2V07737S1jhZh1u5gn1lqpp5fFsqlGekG30oZ5W8NF0+60i56ImdCYf+mu2qE6CIO6ZJdmnyVH7lpkkzFevA/u1KdCnljwFlxlgL1RTwXAAjASpKNsAXFwdrorzTc8srMVDO/J4evwj9ZxNwfuZtLPu8EtgivTr3QK85LdXmW4GaQg3mpJnNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WoMXnesFiBhxVVGYGwr881/Ity3rVNq/N5suxTghJjw=;
- b=HWqgTQG3XVWEoXjzk0U6pDGSPQVJ/gz+AYigr2hQC8M9QEGp7N9KZMY6Yibh1AyeD8aQNHREhNf9klnRwzrh1+RaTCiemwna2Zqh/cTZdUt/Uss5FFV/4dh5oLpG1ymUsKe6mohm2+SOWess7oT36fWeQi4U9V0kozOOM6KeVgJoeQkN9YpXdEWmc9cYa4mt3DHr0ocN1cUNpo60ETLu4rA4MaQ59sO1jZ/ddn2nJngFHC3PM9W8kqhe2Ezps3xIFCmj/IhFeoTXOqM5pMkjZ4XaDYaE/zs+as+pNpT3Od2uByeLD8lZbzLFMTnHPcU+32iDlGDz2bcOoQrx52pdxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=TIrRfxYza4E6TI7IXUlWHmOQ+y5PeqqDGKgMT8N4s+A=;
+ b=wD+Tn82Fqk/kqkT/MbcRrYodAeDOFW5h1IOn9e9mmhK70ydoPA/iIQ+D/IDNc/sHq0g8+ZenoO5lugNaJ63WQCp0bzadlJPzjhzPGORjok6MHcrTNPDPGhnWZzmx7Fh3ke/9KyQPPidQzBFYDRSkAiqCOP1nZ8uxSuRPgpF/EdIPNoCPFx5wav6wxtnDO8ue0dKZG52mqcbetMnwm6vEwQQC+bON/c+f4hhY1wBCi+iPqpNViL5igsehRDT9IoQe4ZmNViP35Q7Gs8cCfXCMHtw7HBYClWhGc3nCqy94EmyNrwBVii9FHML/h0A3C4aidO200NhlEmwfX+KbBNUHgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WoMXnesFiBhxVVGYGwr881/Ity3rVNq/N5suxTghJjw=;
- b=WTntPemqYJvF76CzaL9r+guuy9hj7d5agpe5DkcT8OSKAKIrk6ev85twpO4p8fEYgVHA3k2L1kzNQm1wVxryitvU4m5MtsRXTGCHI4L8qvrmSwPDjAdPuyv593rQCpye9XRkLkWS33p4iQCsOLPW0f8FEKH/+gvV5nh3XPyfDo8=
-Received: from BN0PR07CA0004.namprd07.prod.outlook.com (2603:10b6:408:141::22)
- by SA1PR10MB6296.namprd10.prod.outlook.com (2603:10b6:806:253::6) with
+ bh=TIrRfxYza4E6TI7IXUlWHmOQ+y5PeqqDGKgMT8N4s+A=;
+ b=t0TAiFi5gqBWX8Xzo325j6Iqt8wpU1w21mvzGTIF0nNXCqlHvFEu+Py293udeMMcWwbkOB7lg1SwCYYj28W24EAz9Qe57EkUazxZG7WSn1zfl6CsL0PYgfnWGAQ2ImJHortwkGlpzoJtDSSYoQH6CVSG1mL0UfO1AqdylIxc8Z4=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY3PR01MB10353.jpnprd01.prod.outlook.com (2603:1096:400:251::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.4; Mon, 7 Sep 2026
- 04:29:23 +0000
-Received: from BN1PEPF00006001.namprd05.prod.outlook.com
- (2603:10b6:408:141:cafe::21) by BN0PR07CA0004.outlook.office365.com
- (2603:10b6:408:141::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.15 via Frontend Transport; Mon, 7
- Sep 2026 04:29:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- BN1PEPF00006001.mail.protection.outlook.com (10.167.243.233) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.406.5 via Frontend Transport; Mon, 7 Sep 2026 04:29:22 +0000
-Received: from DFLE204.ent.ti.com (10.64.6.62) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Sun, 6 Sep
- 2026 23:28:48 -0500
-Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Sun, 6 Sep
- 2026 23:28:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45 via Frontend
- Transport; Sun, 6 Sep 2026 23:28:48 -0500
-Received: from [10.24.68.110] (uda0492258.dhcp.ti.com [10.24.68.110])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 6874SYxU781882;
-	Sun, 6 Sep 2026 23:28:34 -0500
-Message-ID: <f28b21f1-046c-45a7-b542-8398d5e63335@ti.com>
-Date: Mon, 7 Sep 2026 10:02:15 +0530
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Mon, 7 Sep
+ 2026 06:37:02 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0382.014; Mon, 7 Sep 2026
+ 06:37:02 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: wsa+renesas <wsa+renesas@sang-engineering.com>, "biju.das.au"
+	<biju.das.au@gmail.com>
+CC: Ulf Hansson <ulfh@kernel.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v24 08/15] mmc: renesas_sdhi: Add
+ TMIO_MMC_INTERNAL_DIVIDER flag
+Thread-Topic: [PATCH v24 08/15] mmc: renesas_sdhi: Add
+ TMIO_MMC_INTERNAL_DIVIDER flag
+Thread-Index: AQHdMMe+SeXRDHnYx0S0S9Te31Iesba8rjuAgAYGtQA=
+Date: Mon, 7 Sep 2026 06:37:02 +0000
+Message-ID:
+ <TY3PR01MB11346EC6636C810EEBA215F4E86B22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
+ <apk_81IYqxrWZyJK@shikoro>
+In-Reply-To: <apk_81IYqxrWZyJK@shikoro>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB10353:EE_
+x-ms-office365-filtering-correlation-id: 5329292a-8fa2-4604-83af-08df0caa6cf6
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|6133799003|4143699003|56012099006|11063799006|18002099003|22082099003|38070700021;
+x-microsoft-antispam-message-info:
+ 3mvk6WVpMEt+YVoG9fG+iA5kbR5Iw26OMIzYoZeS8iDKVt1gr3NQ9vHTYiX4Um16UNo50e1aJHTuLftWfCdiq0I0nC0MSjNpNl3rA4aC1xVWwRwanFEZdgZeKAg83l3Y/ImcKB2gkZG8C69WvdfJDOG8BndLwjhjc3J+rfNNxkYQWeTFeTe+WzhZR3riLS+WqbalmEV9lRwoNYo4obDgwz2XrHYtM7bJTZLtVOOnsf0kIhVNn93hlK5vVv63Zw2TJW2nhIi7nnd997IRMfNz+V8Gyk0TryvQrOO9PHv/ondPMmM/Hcdz5vBVRZgcQO3Pgbjqv8tuSl03l3CpaXC7WXtW7ys6Sk+2E2cXnfKg/9AtHWriHyCmdYlveGGpIl3FCVrAqUDdXdj1knq0SM2/fmNcDnDb/+a8hMg7j+pWyetWqGt92tL3zTWh2e6+4it+Ssf6bjUGF+6lG/3KyaSaZcaBGOGiYRqcptpfOEvNBryVCsLJ4+AqVt2hGV/WTY178MZh4HoVGWNncmf3+AZ2pId1BgI40EtClvDPN5gyMnlffLWD5G/tEdSQF9Z1i5N7XedJwMy4NU4AuNVpuEbLufCmJlwCCyZvVOyWWO/88K0T91OsAThVkGipr1/sKFXpxfpftFslemDWr9KtlJHjpJS5hyUt7CoHaydtc+8UbI9xoh3AOjzUQNiXSgjmQjD18ARC2rXK7leh+l+jis+ItqOs4PtDXvsaqf+S2LCfYFw=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(6133799003)(4143699003)(56012099006)(11063799006)(18002099003)(22082099003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?7bEGpqaLBhDQMoqxh6SRrPgc4jbYr9DZacH12nQzeEX3vEKWYTMX69d3N5bu?=
+ =?us-ascii?Q?IX9axHf5xHIy8En2HBHhKqcLaX9PwV0AY5nvdhVv9i2JmlHHKrt1ovjcLwD5?=
+ =?us-ascii?Q?/I1WPJ17AVgf5YF/5SZXlSUIgg2AZQ0kSR3KJrD8Qvkq9vN8FX6Qroyfr+1m?=
+ =?us-ascii?Q?FadoYsi8EX4jBmr9f8Fh+RPbzbmesVYLm+Z468jOs01ds3JdpfPBRtguE1kM?=
+ =?us-ascii?Q?lqtKvELiNzAKJFQ/CKCeo7TjoAriwS6alaLE2KmSYa4JeaeHbD1kjSp5Jp/M?=
+ =?us-ascii?Q?j71smS29zpPW8L2IPKg5Ht1xDdJ4WcpXFxZY3hKfEhN2bF8OaNzioNucDn+x?=
+ =?us-ascii?Q?W+Be3/7td7z7yHYFrZ1iPETxN2TMI/dJ6JYXXS6wJ+aA5YdIWlKHrCwog8Cs?=
+ =?us-ascii?Q?JOMYarS417EMZqo9z/Cf2WhbeQPXRMHcS3Pvc2XDFhiCWoECsSAo7d0yoemF?=
+ =?us-ascii?Q?KXCU3Er0G6R+10KPCE0G1+b14HbfS24/gNKdo1KZeSCukBrw3RjWNk//UGh+?=
+ =?us-ascii?Q?nJCO3jOFAJr0Fs0vSNPjbRKF+/nyJPAHUuuj8Fd35+LBpiIC52P5G9cErtxn?=
+ =?us-ascii?Q?Gbd51hz9+mbwe3IamFHYZnvUBSfWoH1jHY2nGI9tZ3L41l/2LHw/VssUzpAX?=
+ =?us-ascii?Q?Cz98Z/2iadkSNsoKufU9l/Tz4jGSTmrX1uR1jda8qnSJ/5rfAixusOY52OKP?=
+ =?us-ascii?Q?TOn7Tq8uZL4vhlTTHJpTj9SZ7kd4H9cc+9FfgUZOVXn1vU/fleZJ/DTwWeN1?=
+ =?us-ascii?Q?zO4OYgLoX67HL6EcOzLc382gp2TRMoGTbyJ70lXxLAmLtcc5UajpD9/9ipDa?=
+ =?us-ascii?Q?gJ/DGQY5neVwj90HKAqaglf5ejApAC3y2163N8c+oeNl8hqBUrXY8s1Biemk?=
+ =?us-ascii?Q?z6G8Bbx2VBEaRXM6+ghUHrk20pQmGRMmepToW1mFBgJDjUWQYw9ez7aVs13L?=
+ =?us-ascii?Q?aGFXB8oOenNx5o9g4LLqo0WAcdj0UBbulSh9ZRFyNCYIttOAoCIxk/GzK+Ce?=
+ =?us-ascii?Q?30nH9O+z15YRKVFW8e7CfbVzqLhuwb1teMCiArRAKZ8pDDPm0n04jC3n9rXe?=
+ =?us-ascii?Q?Gvnr93+dHzMFQE+Jhr0JFzw0pwJXBp+f2p2kYA5KEhJWfVs+ZWj92a7Rb7ou?=
+ =?us-ascii?Q?u7i8RQErxjBg4dxsnIQBu3usV3bN2nG1xxoniXB7P4Xvz/P8F3vEu5ps4jyu?=
+ =?us-ascii?Q?2yYLph2m8g2suuB5o6kDprVHZ+2E+NdtzaG/YOB3XzYnaJYyoVyfTaZNzK21?=
+ =?us-ascii?Q?8adL3h4gY8TM8QTE6iaQgZ9l0mhcgaAKm85GeiR3ON6rJ3U8bS5c1JHbYgCX?=
+ =?us-ascii?Q?6UFzuBHnJNxt6PKmtlG1gNZQLiHqZTBLcUPso3U/3pMxfXVD7GDRRLp7d5iB?=
+ =?us-ascii?Q?5S1132oAEz1zz5OLJTALIfJ5IAGBGK9B7JvFEWkB0pdhHwCqhwTOon3y6A6W?=
+ =?us-ascii?Q?VP54F5jEScjzbPyYmZfkKno558gKBi20rBIBfVURZ6z/Lqd9FogBBkQ9/lvU?=
+ =?us-ascii?Q?BGSau+mxh7Ovc+WXbQlU//gPKzvHnfTXlroycaoRBPhx1uoGuR9qYLYmx93Q?=
+ =?us-ascii?Q?dXWyUQ95ctJetfvbNuIpYTKUTEoduRVax6bebjjbf06p7pn4ODOSjK5g+PnT?=
+ =?us-ascii?Q?KWZCo1i/desGfUvGpXGENyqZrTy3mM5Wubo//ksYVoGFM0cD3fAvcclwEbfM?=
+ =?us-ascii?Q?A7W1fEpc64plWFw6EijAsj+lqkOjZ6dUl8vlAxQWJFf7o8zOndYCISH4KlCW?=
+ =?us-ascii?Q?Gn63A3Y7IQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <dario.binacchi@amarulasolutions.com>, <mkl@pengutronix.de>,
-        <mailhol@kernel.org>, <msp@baylibre.com>,
-        <florian.fainelli@broadcom.com>, <jonas.gorski@gmail.com>,
-        <andrew@lunn.ch>, <olteanv@gmail.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <pabeni@redhat.com>, <kurt@linutronix.de>,
-        <hauke@hauke-m.de>, <chester.a.unal@arinc9.com>,
-        <daniel@makrotopia.org>, <matthias.bgg@gmail.com>,
-        <angelogioacchino.delregno@collabora.com>, <ansuelsmth@gmail.com>,
-        <linusw@kernel.org>, <luizluca@gmail.com>, <alvin.sipraga@analog.com>,
-        <clement.leger@bootlin.com>, <justin.chen@broadcom.com>,
-        <dlan@kernel.org>, <rogerq@kernel.org>, <hkallweit1@gmail.com>,
-        <linux@armlinux.org.uk>, <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <opendmb@gmail.com>,
-        <andrei.botila@oss.nxp.com>, <wangruikang@iscas.ac.cn>,
-        <amadeus@jmu.edu.cn>, <kees@kernel.org>, <tmshlvck@gmail.com>,
-        <c-vankar@ti.com>, <horms@kernel.org>, <vadim.fedorenko@linux.dev>,
-        <daniel.zahka@gmail.com>, <nora.schiffer@ew.tq-group.com>,
-        <v-singh1@ti.com>, <oss@vassilevski.com>, <haokexin@gmail.com>,
-        <alex@sverdlin.org>, <aleksandr.loktionov@intel.com>,
-        <lgs201920130244@gmail.com>, <linux-can@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <spacemit@lists.linux.dev>, <linux-omap@vger.kernel.org>,
-        <s-vadapalli@ti.com>
-Subject: Re: [PATCH net-next 00/33] Remove comma after sentinel entries in
- match table
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20260904043724.2955444-1-s-vadapalli@ti.com>
- <20260904085811.7e2c2db6@kernel.org>
- <cc1f9d12-e853-4000-8236-9e7f5a9ed314@ti.com>
- <20260905110300.2b4825d5@kernel.org>
-Content-Language: en-US
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-In-Reply-To: <20260905110300.2b4825d5@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006001:EE_|SA1PR10MB6296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 243db8a4-64ea-4733-3d5c-08df0c989748
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|23010399003|7416014|82310400026|1800799024|56012099006|4143699003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	kev/CobYf6esPThUcNkoIJW3MnGLpQ9NfOAi2bAp/v+wr2Dg42v4I1LqaljXShlKDxwmEeIps39cHMB+vprH76Z9jeEn+106d768BzKG+V/oXp8DT/LqSqswiIO48PM5Qtpu8/d3I5fp2PDwZe9rkdfmfQzAVvpgF8Eqwa8X4z/uoBMOladsZdSnVa8JxUOlRNDu3YgiflDqGRaLzXpIlPcOl4epvwdpY3K5nIcYbb3aP+hAQfsGJfaGmUe8JiMjne5evPrupHLNq627nKfZIa7uOrVjLi4dOObLxlBT1VpfAEDI3/RX7mQcNQU9CEHokPAzteN/y7j8sgk14nRQ24fQtRk+WkRKGjfK1s2qEAptNF1mgdRFirxH2XLI+r/rWA8AW1kRG6gEHToI5W/59qWG93okiCyEOJpT3iAyO0+RuE4A67TczxicXG47bwMUm80/DQVktO0wDmIk2KJBwp+XX2E1w5GR/0NOzme98gzDh4PfurnPq8JzUqqxXhuOkkQ6yiAeuM/5ZB/yY6CX9TwmBffwTH282Sj1d9EROLTvlonhWQwTMam/6ZaFenuoAK/dgRuSiuYAmEptsFFy9YoghgiVGyx86Ppm3tSoyuhaKAn9dDWEWetiBda464GhYK+2EUtXzyM4mPEXolieFADOmBzUPqOiFF6/+93AaXDGw5fm9mHAIO7pdqR9orFTdRY8QZSbGSPUr38dkonxpQ==
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700016)(376014)(23010399003)(7416014)(82310400026)(1800799024)(56012099006)(4143699003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ts7IvxCSY2KxMs5RhbAYYd5+3EiKlUq27xpul/Eq6l2Dvgb7eg67m+Vvae+Jil47YXljUcnDk3ogVeXoVaS9AGjP/kFWuSeaG764Me65hZ7ZSpyMqS0rjxusHgYf2U5D4tcCk8UHsxBHgo4vY22fFm9gkmehgfsey+UQXutndox9XYPkJI2nysMzwUUcoMpxGkXFoiwymjhu8KVQAiLpHhw8Sciyj9flE54B+HMtad/rzLzVAeoy5WegSq6URVQQvyZbp1YIYPXilhuckN0ZxiZ36+y4mRuNu7ekd0g00H3pj+ynhDOBlaivHjJcg3kvW2klUnq3+vfhCAzzhP3YNAJhNGoCyAlUYer5+6LVcQ7G7I6caPCEflzP79EE1jSC2tSmHUSv2dbNHwYRI8jmDcPHUQzHpZIaZINJO7GZXfQOCImONH0+7FIMGBvP9jy/
-X-Exchange-RoutingPolicyChecked:
-	x3RycQ3T49l2DDf2z7uxEJNFwrRIOMw2wnFzOGZyNSU3njptWC3bz9mx4gbe4bPqbkqGvGzhXQXR+ILjKXix0LqiiU1jHAxKd5fo7jS/psxi3Kr0+zayaKpzZ8v8URU6Yyz4x/5CnuXcC4GZlZ/Z/bU1KuNA4UrnaDzjynIIBoSIJhsxz9Zb+FAfnd9uUzDgBzQ970oZXi9wSvC73C7MlNenp5Ii0QeKZXFUC25XN84t3slJbZTtZIqc0f3KMafyfM3kBq0KogIHRD5Z4ylvolx4a0pERG3aUAwUSzUiV1uEGcebddR5yter+hjYkod47hSTZglugjoB7XUa/49cEg==
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2026 04:29:22.1759
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5329292a-8fa2-4604-83af-08df0caa6cf6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2026 06:37:02.1550
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 243db8a4-64ea-4733-3d5c-08df0c989748
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006001.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6296
-X-Proofpoint-GUID: TcIj0pVKLjqkCcPg5GohwvIHdEwPC0Kd
-X-Authority-Analysis: v=2.4 cv=Wqkb99fv c=1 sm=1 tr=0 ts=6a9e3da8 cx=c_pps
- a=cX17BFbqy3c2X70AxBoB8A==:117 a=iwqwCZQqcuTv3JOpYdM7/Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
- a=V5UXEbMT0ywA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22
- a=fPAWb5peG099m5CrUpKH:22 a=3HQJJnglLaSNX05as70A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: TcIj0pVKLjqkCcPg5GohwvIHdEwPC0Kd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA3MDA0NSBTYWx0ZWRfX5pdAEjPz8xi0
- WsWw3vjC2upIKrTndSc2o7BQnaW/LzjBmhUSVqzDgzL85PSJlvlM8BzpXZUq+UWn70rEVdddwvh
- TZK5+NHR1QmsQx8W0vqe+aDLA+G7YgQfRpWaNcFtquNt5INt4f15DF2whwrmbX2mYDGPNRiwOnc
- kleVvYcNU69bc5cJpehoYIOUnX/TeZQBoE11WV9wKqcy0GaF9zSVUGfRpsKDxlpEICdUzFZDjKL
- h6o2rY0CUGCUJcSOnQxWQRx1Qs9uGv9PR6uBMeN5GapB/jDDXgLQkpL3JPDgyOEZVQiQvfRZmZp
- Mf+jwWXFcvyPgm/EqkKKzEsCuNfqpElffXd15XwBr7POTh052ShD/C3w3rat8X1M1hVVKYoYDqS
- c7ijz+CCVHo4IUEVf9Q7ritm7tFA2SgTiO26jlEd01fRwQBCQF4vEbkMQ5HZAMuojYfYicdn+U/
- HNKYqK8CPxWshraaiqg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA3MDA0NSBTYWx0ZWRfX8NWGrkFcSxXE
- Fsc9qijGcDDH3GpnYshfu5SOBPhr/6Pdtl1r3StQDdRdKZMoflTUVb20HG0Jbx9G0WciL3ivi2/
- ag33ThHL3XkwSHo55MVi5W4HGvwwtHA=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-07_01,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 phishscore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609070045
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t/CQwz67JhMJMUWMPGJyrbsm4G5MAwOk3YBL+T9QY5xFYymc4Itc38WGqWqojKNbd+tnpLPfbO/K9R21WoTNrO0EJZpczyoPGGbmuHGJ0pg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10353
 
-On 05/09/26 23:33, Jakub Kicinski wrote:
-> On Sat, 5 Sep 2026 11:09:54 +0530 Siddharth Vadapalli wrote:
->>> You failed to specify why this "cleanup" makes a difference.
->>> have you ever seen the sentinel not be the last entry?
->>
->> The 'cleanup' in a way 'guarantees'/'enforces' sentinel being the last
->> entry, by catching 'copy-paste' errors at compile-time rather than being
->> a silent bug that shows up at runtime. If a new entry were to be
->> accidentally added after the sentinel entry in the current drivers, it
->> will not cause any compile-time error, but will fail silently at
->> runtime. This series 'cleans up' the drivers by making it a compile-time
->> error going forward (adding a new entry below sentinel will cause a
->> build error with the comma removed after the sentinel entry). I do not
->> doubt the review process on the mailing lists where such errors will
->> certainly be caught, but isn't it better if they are caught at
->> build-time instead, thereby saving reviewers the trouble of pointing out
->> such trivial mistakes?
-> 
-> Is it polite to answer a question with a question? 🧐️
+Hi Wolfram,
 
-I apologize if it came across as an impolite response. That isn't my 
-intent. The 'question' was meant to be more of a "It's better to do so, 
-right?" kind of 'question' which is actually a statement, but I posed it as 
-a question to make it sound polite. Writing the same as a statement of fact 
-appeared to be impolite to me, but I realize now that posing it as a 
-question could also be taken as an impolite response.
+Thanks for the feedback.
 
-I should have omitted the closing remark entirely and will keep this in 
-mind during future interactions.
+> -----Original Message-----
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Sent: 03 September 2026 10:38
+> Subject: Re: [PATCH v24 08/15] mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_D=
+IVIDER flag
+>=20
+> > Thank you for your contribution! Sashiko AI review found 1 potential is=
+sue(s) to consider:
+> > - [Medium] Fallback `f_max` and `f_min` initialization fails to account=
+ for the internal clock divider.
+> > --
+> >
+> > --- Patch [8]: [PATCH v24 08/15] mmc: renesas_sdhi: Add
+> > TMIO_MMC_INTERNAL_DIVIDER flag --- commit
+> > c4a63c19303286f5b383bdabaa2a3f3827a8c5c5
+> > Author: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
+> >
+> > This commit introduces the TMIO_MMC_INTERNAL_DIVIDER flag to support
+> > SoCs like RZ/G3L that have a fixed internal /2 clock divider. It adds
+> > a helper function to fold this division into the reported clock rate
+> > and uses it in the clock update path.
+> >
+> > > diff --git a/drivers/mmc/host/renesas_sdhi_core.c
+> > > b/drivers/mmc/host/renesas_sdhi_core.c
+> > > index ff428b6187bbd..b5f2ff68db758 100644
+> > > --- a/drivers/mmc/host/renesas_sdhi_core.c
+> > > +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> > > @@ -125,6 +125,27 @@ static int renesas_sdhi_clk_enable(struct tmio_m=
+mc_host *host)
+> > >  	return 0;
+> > >  }
+> > >
+> >
+> > [Severity: Medium]
+> > Since this patch introduces an internal /2 clock divider, should
+> > renesas_sdhi_clk_enable() (which is just above this hunk) also be
+> > updated to account for it?
 
-> 
-> Please be mindful of maintainer's time going forward.
-> 
->> Trailing commas are an indication of 'scope-for-extension' in the
->> future, which holds true for 'enums' or other structures where newer
->> entires are added towards the end rather than being inserted in the
->> middle. Since that isn't the case here, this series makes it clear by
->> removing the trailing comma.
-> 
+For this patch, we don't have a SoC with TMIO_MMC_INTERNAL_DIVIDER flag set=
+.
+So, it retains previous functionality. Please comment if you think otherwis=
+e.
+
+> >
+> > If the device tree omits the max-frequency property, f_max defaults to
+> > the raw parent clock rate:
+> >
+
+This behaviour is same as there is no SoC has set with TMIO_MMC_INTERNAL_DI=
+VIDER flag.
+
+> > drivers/mmc/host/renesas_sdhi_core.c:renesas_sdhi_clk_enable() {
+> >     ...
+> > 	if (!mmc->f_max)
+> > 		mmc->f_max =3D clk_get_rate(priv->clk);
+
+The SoC with TMIO_MMC_INTERNAL_DIVIDER has always frequency defined in SoC =
+dtsi
+and this condition is skipped. Please let me know should I add a comment he=
+re??
+
+> >
+> > 	/*
+> > 	 * Minimum frequency is the minimum input clock frequency
+> > 	 * divided by our maximum divider.
+> > 	 */
+> > 	mmc->f_min =3D max(clk_round_rate(priv->clk, 1) / host->pdata->max_div=
+ider, 1L);
+> >     ...
+> > }
+> >
+> > For hardware with the internal divider, this advertises double the
+> > actual achievable bus frequency. If the clock provider cannot scale up
+> > to 4x the requested frequency, the MMC core might negotiate a
+> > high-speed mode that the hardware cannot satisfy, resulting in a mode
+> > mismatch where the bus silently runs at half the expected speed.
+
+SDx_Clock (HS clk) Figure 4.4-8 Block Diagram of the Deformed Clock System =
+(7)
+IMCLK =3D SDx_Clock/2
+
+SD_Clock  Figure 6.2-2 Functional Diagram of Clock Divider for SD_CLK
+
+SD_Clock is dynamic setting based on the speed mode.
+
+For HS400 mode, SD_CLK =3D IMCLK =3D SDx_Clock/2 and SD_CLK_CTRL =3D 0
+
+For Non-HS400 mode, SD_CLK =3D IMCLK /2 =3D SDx_Clock/4 and SD_CLK_CTRL =3D=
+ 0xff for 1/1 option and
+other values for non 1/1 option.
+
+We know the maximum frequency supported by the SoC and we must define this =
+in SoC dtsi.
+
+I believe we should support the below check only for non-DT platforms as we=
+ don't know
+the SoC max sd clock capability.
+
+	if (!mmc->f_max)
+		mmc->f_max =3D clk_get_rate(priv->clk);
+
+
+> >
+> > Could mmc->f_max and mmc->f_min calculation be adjusted when the
+> > TMIO_MMC_INTERNAL_DIVIDER flag is set?
+>=20
+> Looks valid from a glimpse. Please comment if you think this report makes=
+ sense or not.
+
+Please comment on my response.
+
+Cheers,
+Biju
 
