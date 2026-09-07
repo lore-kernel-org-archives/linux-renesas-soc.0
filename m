@@ -1,152 +1,134 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BBF3C8C49
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Sep 2026 10:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA6340E8C1;
+	Mon,  7 Sep 2026 10:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788776817; cv=none; b=HdGWibA7prS8/Avob68K55xyfuAJUyeHBMk0U6BSE9Uo70qPbiE4rgsp0Kym6EaYMxZl3+yGtvFPENYD1uI2D+l2vUfzMvYXzfNGTAcOjy1jXmAOWfjdK5MaDDf8Gr8l9gAdte11vbynH3fTDJwnhxCB9LNBgCDnaIhCvHBvg24=
+	t=1788777456; cv=none; b=XXVRJAY7eC7yQ4ioccCRxVBWEUY5ya2VT2CLzsfZk8f9FQtvn8aFRA0/oFbyQY3XlP0UGi0ViI2yVYJg5yG2ZlAaif2vOYZW16xwK34eIKVWiF9XIUxUiVqo/dwzQ222CfMW8GmfoUuc0bcSoF0ScW7WLXNWfzS++OYJPAgt+Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788776817; c=relaxed/simple;
-	bh=WXRZsD3v33qBAuPkHtARz2nCLJEB+edBNngFTzuWl5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JY+qeqd5jwif1YxD1oCst2sYeJ0K3Fll0edpRbPUoMMUThssTLU8wJTQsf+I5V7iZsDP4fLzNKYR9g8Gr/Wibelw6eHJ9MPRCG+fpwKcsibHy0jrnvuVJEx/txLCG1jh3S+TOdNWSfzopYK4xhze09w9EM87rKDc9NnNMfwNOAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-97e9c0da212so2113682241.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 03:26:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788776814; x=1789381614;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=hSWXrsN8UfIXC+P+F15lvL0/C8YBIn2HdB2Vgr/1RcY=;
-        b=f4+BaqlI6cD4EF2tYiXSoo/6JsHY1RS1rSW/cPROuaehLI49l9j8wnc05c9fryJPBe
-         ts7lhtoSaejWel3zUq1I+De1Q13u/ZHD0ybbHlhEax02tPjcIVMD1Q8DmyTwcVrIxiQk
-         Nu1QwhomxqmnlqmjatCy8zOmfk60AGZvaxNS3I8GdAsIEzHtD+i67UyGS/Ofo3slO2uD
-         lAlEZtiNBV1NzvQOnBgqKeFAFiyUcqIfSwHLR8X7dQgmJdhhYA6he1cjtRn6MzCJHiaN
-         j5ylOHbJk0HlrXIlgh6HFtQELERpYgZaYip37yGG1u0ADsv/ntiY4fig0shpwOKfE2om
-         TVxA==
-X-Forwarded-Encrypted: i=1; AKwUvBy+/IPX7T/qgVkW2UHmS5JR94hz9eO5GGUznGoK7UE+QTveh3E4j5dpQOlEqV2n43cRok5Iv5f7/UzT3YBHx/BZTA==@vger.kernel.org
-X-Gm-Message-State: AFuF++mknnaqvwgT6tveFZivsEjZotcgrmcuSB/nEEOBysr4HjCHjJZH
-	tPEkBZUWzzN8xdz1M+Rv7G7KM8I38H5NKapqXvlcE5a2A+9Uvc0Y0tPJ+/VbtBxx
-X-Gm-Gg: AYBFou0GcuiwC5XDKusKGikFpcN4oj8jNvyBNmeC2fl1ftlgg3f7IJVIbuvJ23DMPAa
-	FEcdav140Ajm6/PdP3rpAFFOqPA3go1sFPWWPVVI9jRPQgewI299JPXz+gqgvz1YOqkiKqG7Jww
-	w4xEbhGRETtEO2TLD9wb9w9d/Q7hTlIdnbLU9Cd8TfobphLHg8bfyR3QcpGeZ0jfbMEf7RVsKr+
-	IgSrikMN2W5onT1mDnYPMYiful3key7EW5RqUmfmmX/MtbGbpwBD+gHJbYTr7+HFHRt3bVvVj0i
-	up5c8S6tWwfU5ayOJuC5yMt7j8p8wLil2CJq/CmACSlw3d00C5s74Ycmt359NGfAr1pi+OeKLv9
-	fV9/XGmaIJ02b1qZvnI91BCb9oOTWgUQl58y6fRpjYNlY8FPxZlxnA2hOeiFoCMtiRPBvpwbpVZ
-	GoaGv6ZIB6/xT2E2sglD1W/uBBBa+LAHULp4SUT6IcCoNfGCkxYamwBNVbHC9+hhpovw2rw0Iur
-	ZCmgIGUzrV6KcwEr4mtVOW5HA==
-X-Received: by 2002:a05:6102:578e:b0:778:4fe0:8297 with SMTP id ada2fe7eead31-78a4aa70e09mr10103388137.11.1788776814545;
-        Mon, 07 Sep 2026 03:26:54 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a478bb21esm6659506137.1.2026.09.07.03.26.53
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2026 03:26:53 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-784a1696a21so2296400137.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 03:26:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwu9umPf9dgHTZoYVqo+uxD3Bh+ozHsI9GwSO1O3sv6Kkse7slvh6WFScXo713Umf06xzJaK6e6PJ1+0vt9ahfSaA==@vger.kernel.org
-X-Received: by 2002:a05:6102:578e:b0:778:4fe0:8297 with SMTP id
- ada2fe7eead31-78a4aa70e09mr10103340137.11.1788776813353; Mon, 07 Sep 2026
- 03:26:53 -0700 (PDT)
+	s=arc-20240116; t=1788777456; c=relaxed/simple;
+	bh=nC01GbWkcbqOJAQ7WmLxzXZy/Px4NgVP70yydgECWQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwYLi5p/n1NAdl2t50DBVu2UmhPt8qeMJyZGtUOUgb8/5wXRL0f8OhN3Ka5yzq/USNYMbE3Bl8BcdekuoK4HRU7zrUiENAp7AGmtGJio6fNQaqpWhmw1BULgigukGo2eIljoneqGRbXGAqGEaSZS5Q62czcyNbXTARfpeJpZrTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=wUtN1Gj/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ryygnn8u; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="wUtN1Gj/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ryygnn8u"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id AD3F01D00125;
+	Mon,  7 Sep 2026 06:37:33 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 07 Sep 2026 06:37:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1788777453;
+	 x=1788863853; bh=QHECxCxsMSHy2+f0P3KbC00s373RUUJzdC1ylW0/MXs=; b=
+	wUtN1Gj/Hr8K+wtof/ts6eQQ1hOWIjXXAUx0aTaLKMyujkRydKyi8TucjgTekHAc
+	pk+T1VJpBZ7mu1fLqWD4CLSI98p2SfhiSzGV4ZtFi5AoDyaYlewIn51RWhmEniyh
+	ulBZiZd3op1YhXQBnnMfVrnoOHlWFViaLXpfPa8udQJKL2hu1Ajb8J7ugMBM/aF8
+	WXswYtnnZ2DpyC1nyrhMfpWbkk5EVG2kupG+miJSH3zRUk1oRx66IhJzyOZTRjgE
+	WekTr5RCKB/N78EcImsPYCNkTQXPnGNsr2RC2w5ALkpvWkduEc+yVm6fWlPbjfeg
+	J/J1gaHTjAG3oczC1UhdFQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788777453; x=
+	1788863853; bh=QHECxCxsMSHy2+f0P3KbC00s373RUUJzdC1ylW0/MXs=; b=R
+	yygnn8uFu/VHuy8fOGzjQSw/LH3iWZbGjL3YqRrzvI6lx9/XR609u1SxiGdEXbut
+	eTpN8g8JLwj2Q+OWdYe9eVVp/jj/aqGjQE+gZSFcjOHYZu98xbXixKO8cYzM32T3
+	p7UcLj9TGecm5I6bxkVJs79FfiHtdsbeCNf46QnM4FSxHXmtPzKxj4O0/KwVvoNh
+	E+CUvgWlJ8UI+q5nMBg3VKxekTPgChRQ6lMv//12gAaDtIC0FZOWDDZTHHnG94uN
+	fQQu76RNwzx0C3M1WQA5HXOrYbOrCPN+hb7i6Vio7ImS3MYiqk6CEnKg7JQm2dYR
+	/BD9nOGLR9jr5muavTGLA==
+X-ME-Sender: <xms:7ZOeaqNQHbbgHd3T9_GltbmdFQb0n5dlxH1VJ41Drheh76Uilch8ZQ>
+    <xme:7ZOealiu_Qh1tDnVa9Fi-ma11Knx0r7qIN6ZpT605z7FqnohrwzFnM29DJHV0RmE1
+    cLZKTyNOEz7iD5ZFTlI_ZbNO05jMDmFUMsICbRfiy2DAIZW_XjhnQuQ>
+X-ME-Received: <xmr:7ZOealuEbDvFJotJH5pbp4EHjF9TQrxKJKPywsYzhuc_1WGVnu0cUTTwvuaEdnl0_EVh8Xo4pt3e5i9U9CQvBAPT__Dy4xM>
+X-ME-Proxy-Cause: dmFkZTFRifovugG/Mk8kz9VBjjBhciiK9ZZH/xj+dIoFAqGF4KkkmjO2NIX9TYzN6/20c2
+    wLUprgT5t9RDKgd3PVxR3DYmSddRAkuIZuxlg5iUPDpqUyoFzPUB2HgFMSaGVKkAabcN1u
+    Pl5VsBRemP0VrnzNPc00r3jHkESsysOVNnzTQwD74YdGEmwawQPFvAN+8fyYpqWfZXU76W
+    7MN/Mk0mA1ZT7oAhg29gdrWX1Q7YBRaCKKF6ZRsbUJ9ukJxi7uJyHybdO7dmkiWbhPJTLk
+    hojJ6Km03b5S+uWNFRGzmoIdN2xxCkDr2L3wmy/J5FtkdPIbbdqAb0ayu+40STZ8r70VIU
+    YJ/LCPi/IOQFvyGfDhLV3Fefw+sNX3vV9bE79UiplVna+uPlTlyJL3FiHUrfqjxGqXZrxH
+    z3DO0AGgx0TADSe+sHYHgKJQkbJxErUhTfa+jzQYMkvsSJoLr+icBqhRdTbkiOaw6Cul9c
+    wM6zxlzd5OF7udf3LIzboD/x+gw97GlxhSIrN/YAy52q07GXSkcX12rmbASyJEciS9ANU3
+    4uBzyR4jtTn7WFdeRHa6uxCLx1IrnN9ELsIqz8yLVF8m4Freg8poDxzBlteDVd3cZGYoKr
+    rdetUlpAeEUk77EAsWaHvFS/5ZjAUzOmP8ThmD6zmjCFXgXLIGvpdSHvYE4Q
+X-ME-Proxy: <xmx:7ZOeahged-raDFeafOke-hXtr1eQUXPGwXNpmE_lpPP2xqdp5Yd0wA>
+    <xmx:7ZOeajY4_8Nw3dg4cIuawoJIRj11zzVw9XHsLMF5u_Hc542D69FIew>
+    <xmx:7ZOeaobq9T5V98KyqeYyzS6iM8RNls--QxH6IBSZjAqwqK9uxE-vzQ>
+    <xmx:7ZOeagyosbqnh5yUnW2c47NvnSu-t8qelAZdCgNF-lMORTXmBjZ9Ww>
+    <xmx:7ZOean5Sec7Xq6KlsaZ1tujDYPDw6V1l-5JxB1-q9zte6Krp_59scNss>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Sep 2026 06:37:32 -0400 (EDT)
+Date: Mon, 7 Sep 2026 12:37:25 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH v6 01/11] media: rcar-vin: Fix comment related to stride
+ handling
+Message-ID: <20260907103725.GC3497753@ragnatech.se>
+References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
+ <20260617-rcar-streams-v6-1-1260eb72dff7@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260906173234.522400-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260906173234.522400-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Sep 2026 12:26:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWLxG8xSHwTneu=xT8bxs4io7QSw7ziyPUDo6nc-zx6Qw@mail.gmail.com>
-X-Gm-Features: AcwNN1XXd7v4I08TWK48osXGJh7gXuS6LbVWPy2G64ghI87CCZ4swuROz-rYLO8
-Message-ID: <CAMuHMdWLxG8xSHwTneu=xT8bxs4io7QSw7ziyPUDo6nc-zx6Qw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] PCI: rcar-gen4: Add missing PM ops
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Koichiro Den <den@valinux.co.jp>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260617-rcar-streams-v6-1-1260eb72dff7@ideasonboard.com>
 
-Hi Marek,
+Hi Tomi,
 
-On Sun, 6 Sept 2026 at 19:32, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> The R-Car Gen4 PCIe controller is part of a power domain. On R-Car S4
-> and V4H, this is an always-on power domain which is not shut down in
-> suspend. On R-Car V4M, this is a dedicated A2PCIPHY power domain,
-> which is shut down during suspend, and the controller loses state,
-> which prevents the PCIe from working after resume.
->
-> Fix this by adding generic suspend/resume noirq ops for the controller,
-> which tear the link down on suspend, and restart it on resume. Use the
-> same PM ops on all of R-Car Gen4 to gracefully suspend and resume the
-> PCIe link on V4H and S4 too.
->
-> Test case which demonstrates the problem on R-Car V4M:
-> "
-> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/pre
-> $ echo s2idle > /sys/power/mem_sleep
-> $ echo platform > /sys/power/pm_test
-> $ echo mem > /sys/power/state
-> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/post
-> $ diff -Naru /tmp/pre /tmp/post
-> ...
-> -00000000  12 19 32 00 07 05 10 00  00 00 04 06 00 00 01 00
-> +00000000  12 19 32 00 07 05 10 00  00 00 00 ff 00 00 80 00
->                                           ^^^^^
->                                     Class 0604->00ff
-> "
->
-> Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Thanks for your patch.
 
-Thanks, the output of "lspci -v" is now the same before and after
-s2idle.
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 2026-06-17 14:54:54 +0300, Tomi Valkeinen wrote:
+> The comment says the stride has to be aligned to 16 bytes, but it should
+> be 16 pixels, as VNIS_REG register is in pixels.
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Fixes: 40c6da8a9c0f ("media: renesas: vin: Fix RAW8 (again)")
 
-I don't have a setup for endpoint mode, so I could not verify or refute
-Sashiko's claim that suspend will crash in endpoint mode.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-
-> @@ -952,10 +968,14 @@ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
->
-> +DEFINE_NOIRQ_DEV_PM_OPS(rcar_gen4_pcie_pm_ops,
-> +                       rcar_gen4_pcie_suspend_noirq, rcar_gen4_pcie_resume_noirq);
-> +
->  static struct platform_driver rcar_gen4_pcie_driver = {
->         .driver = {
->                 .name = "pcie-rcar-gen4",
->                 .of_match_table = rcar_gen4_pcie_of_match,
-> +               .pm = &rcar_gen4_pcie_pm_ops,
-
-pm_sleep_ptr(&rcar_gen4_pcie_pm_ops)
-
->                 .probe_type = PROBE_PREFER_ASYNCHRONOUS,
->         },
->         .probe = rcar_gen4_pcie_probe,
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> ---
+>  drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> index f9af9177e02f..d6c69c674d57 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> @@ -678,7 +678,7 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+>  
+>  	/*
+>  	 * VNIS_REG has four lowest bits always 0, i.e. the stride has to be
+> -	 * aligned to 16 bytes. This is done in rvin_format_bytesperline().
+> +	 * aligned to 16 pixels. This is done in rvin_format_bytesperline().
+>  	 */
+>  
+>  	fmt = rvin_format_from_pixel(vin, vin->format.pixelformat);
+> 
+> -- 
+> 2.43.0
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind Regards,
+Niklas Söderlund
