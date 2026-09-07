@@ -1,138 +1,102 @@
-Received: from mail-pj2-f11.google.com (mail-pj2-f11.google.com [74.125.227.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB054F474B
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Sep 2026 15:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBBA479872;
+	Mon,  7 Sep 2026 15:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788795594; cv=none; b=CSbA4cT8jFdu3CGG3VmNQevrt6nPC2VcImJRHsHvUPG+GuEZA35lhtJmxNgb76xS0bSKIDJvKNIsSQjep2XMhDebZrjNPUgnjqEPMKgB4Ud5sZchnP1u+DyFc0xQAHPSaiEsYPKf5Mt3HVV2sEl9nYby3rwTbEfSWlY1CYnQVzE=
+	t=1788795643; cv=none; b=PE1bAK7rZoW43a3V8mFGKqTRiE8LH2xGuPuUJ9i8zx/Awn4SUwh1PwuOjlyRzhornfYa0v4O0OFhz02VfIKoow1drArHLKBmb+Kq3XP1qHg28iTr8z5p2i3X5nfwL+l7dUiNIhhTBPVwDr3EYeqWkKZwrTX7ZbhF0Oy0vFc34mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788795594; c=relaxed/simple;
-	bh=2iJPpKOoGy+/l4LMviPQoRKnjhDXm9qqPLLD9Cdfo1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bhKtUlLhPOZzwkU+Vyrsnv+8EH5itBmacLgVgDbWf+0hOQXZA08ICVkPkRI3PJ2zCRuUGItVfhbklTkxI/boMWN7b/G05aQsA8YDES0Ng56zL22XP9aQnjkz46KFq0AEv3Bz5FwF8cFrQ+wqqib7yOielexYIP5LmlEuwr2ofP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpG5vmr8; arc=none smtp.client-ip=74.125.227.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788795643; c=relaxed/simple;
+	bh=Sx/HNDVU7WTJR5RalURss4PdH/vG92zJUgDsQSO7JpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YhIyHh2qqOzsgQwx1xvbnr95zDRKnQSzNyF0WJoC6P0M8/abaqXn9WHOf/7YEHqw6cDgF+pPnFk8CvrCWG1bYTZRHhS/xHuH2ij//EuSvbj7YH1ZYa0RGahsGUltD8zM46Mc+FtIXkG+sVkitYNO6gMJsNO3q4vHYxMYBnFBkHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wtzsGCtP; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpG5vmr8"
-Received: by mail-pj2-f11.google.com with SMTP id 98e67ed59e1d1-398a0a87595so3223600a91.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Sep 2026 08:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788795592; x=1789400392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=cBvlH6prRmF9is7rqvJqNTGgh3P2sJVPtfOXauJIgQo=;
-        b=jpG5vmr8RyoYuxxhINnbMRJJHBsO63kyrYnOzsysJq5pf+picb46U+vDQnLeiFI5Q0
-         z8cKzEtL07FuOToyRWjTluUjVnsbM85ailrYeRyXvaYY5goo6iQdJ9EVgSrkMf9imUCv
-         /amgMKsl7StJiBFFYAemNAABFUYby+6BIlkOZ5QSyJ8jIlXnvteO2WiRW2T+YTYIfM2l
-         nJy0pDEeZmIfiCC01SZlKa1e4yPP0alUN3NHcq/d+07g3E71Z8bTjqqqvpeNKgqkXmpx
-         7lZZXKMVfilt2gaxaM4BwUd4eTyurWJyS3oy0wUFWO0d+LAflUSS4rniA1rVLsVi3XnU
-         Jg8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788795592; x=1789400392;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=cBvlH6prRmF9is7rqvJqNTGgh3P2sJVPtfOXauJIgQo=;
-        b=YfLXOel6e2XAhrTIP2hCRh9t6DtweYGW++L2x/p7K5IjpYxdZolV1Zpd2jheyxW8yr
-         XdrlQFF8vEq0xoHM3zOjk+6GG+QLQmW8++cYuy0beMuluI8RKQGkH+ZjOBCt341QjRZT
-         djKfB0oHzYI1nn1lrJXP7MVqsfQir88q1bRb5moDiqHw1N1yNOWF+i/4964V3R6EKwf3
-         9AVyetO62l0Tsx5FzGOQcBnArETgE6GsJd3xVVg2tQi5kq+TwwAKBy7gNFNtqN7HUIPc
-         4hcACMwuN4G9nEC/1s5lxtOKVW0sGEv0MAz1OuabvninD1oLu57MYwcZvRr/Cs/suNpF
-         w9nw==
-X-Forwarded-Encrypted: i=1; AKwUvBwVlHAs1iAyFpEdcM0k1ZOiQkMF+PjO8w+aiPTKkb+QMwA5xWmLqggCwOnCc2gj0Ehc0lvdjm8db9TuZJQ8AmBnbQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lNc333V+F37XXb24SkXl0jsjMuXRNZanMbD7IP9co9g30Tpe5l
-	Ny8cXbMjVMPe/kGDOW14C/otMz/lg05+WmP+/1P+aL7d9zp06TPVWn8I
-X-Gm-Gg: AYBFou3RJDSLYw2koeOa0791OBw7Loxo+j/IY5s2I+4hO9tilzKOoMX72qnUdOIcTw3
-	z+Qt4baIUPONjnWRtXytd7iekaH4grTLs5yZTgIi/iZEEr4Pn3Uj3/rFWxgTA7WUnqvGslar+50
-	mPyaHAY0Om8Nghe9no9zOrIIbBBt14tUC9QagjZ3accr1kRQ9n1Np/my/r2WNADa2fHwb9AACAB
-	mQDb4YZ+fNfPwFPe55ype0Rhd4s05YEmqQnUafSTSiGZTYJF5ka+0ImGf0X1X+68W8U1kq6XaP+
-	g9JItsis1DEmK/PnBRhZGKtXOmnze7Seu4H9ktjgkMdYwnZkaFoMVVVKO7mgaiXy5vAwon6OLsR
-	X5LKPO/DGLmO0BfzRmOklt0yvtJXAA79Dqb2q4UCigghM7eKdWXKgUopG/rkS0n2fzPq8tOi7EC
-	T9MsKqeyx9MnhpDoJCVcFnHzffOvc9MXWTo9RFAvOe398uSq1yAhc1hwicZL86
-X-Received: by 2002:a17:90a:1c96:b0:39b:66ee:a14 with SMTP id 98e67ed59e1d1-39b66ee3442mr7209213a91.25.1788795592309;
-        Mon, 07 Sep 2026 08:39:52 -0700 (PDT)
-Received: from server.lan ([150.230.217.250])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b260fdf9asm21690121a91.9.2026.09.07.08.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2026 08:39:51 -0700 (PDT)
-From: Coia Prant <coiaprant@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Coia Prant <coiaprant@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	David Heidelberg <david@ixit.cz>,
-	netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v4 10/10] MAINTAINERS: add entry for Rockchip XPCS driver
-Date: Mon,  7 Sep 2026 23:37:13 +0800
-Message-ID: <20260907153713.2572547-12-coiaprant@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260907153713.2572547-2-coiaprant@gmail.com>
-References: <20260907153713.2572547-2-coiaprant@gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wtzsGCtP"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hdrr5305nz8spS;
+	Mon, 07 Sep 2026 17:40:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788795637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HYi5JP7HfZ3Zs6iqzCL0kQoLXPJOuF3USJISxOoiW/U=;
+	b=wtzsGCtPw0xW3CwlO2pFVErr9LcD2GJCO21t1UkF/ALWuF6I27rvwS6f5AXHcw4F1sUAcr
+	xb2XF4vNHoT1QYQ5dOGk2vpnrl2cRVMzqYUYu1q8n+Q9RAaLKFCS4VjmvuyIFMeUws4DLU
+	ml7OZSkcBcb6Y0TklMDnL8Uil7sLIre7yxsnU2riVTqQkfupVSz/OJKzTKBvYm+QN3AFzs
+	rxn0+HidgM1WunwJrHhCF0b4SDeY2Y7+Wm6Acsud1WDbgu/ofQB/7uZ1kD7W5uD1orjkQd
+	6BMbG3TQ4aWvf89XFEOg5Fkoto7vopYpZRRHEdt/zBAjocfz5NsiKL2YByCS9Q==
+Message-ID: <5712362e-661b-4c99-ac87-39c85af38f72@mailbox.org>
+Date: Mon, 7 Sep 2026 17:40:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [RFC][PATCH] PCI: rcar-gen4: Add missing PM ops
+To: Koichiro Den <den@valinux.co.jp>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260906173234.522400-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdWLxG8xSHwTneu=xT8bxs4io7QSw7ziyPUDo6nc-zx6Qw@mail.gmail.com>
+ <2wbqkglawux4ti5ldjodf2xszq73hwyxln6da62daj4dtc5xp2@fya75y7m54cp>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <2wbqkglawux4ti5ldjodf2xszq73hwyxln6da62daj4dtc5xp2@fya75y7m54cp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: dp1fm7a4o4y6rc89amqc7ceusqit7563
+X-MBO-RS-ID: d1e0c79e28b31d7f968
 
-Add a MAINTAINERS entry for the Rockchip RK3568 XPCS platform driver
-and its device tree binding.
+On 9/7/26 3:46 PM, Koichiro Den wrote:
 
-Include the relevant mailing lists (netdev and linux-rockchip) so that
-future patches are properly distributed.
+Hello Den-san,
 
-Signed-off-by: Coia Prant <coiaprant@gmail.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> I have reproduced the NULL pointer dereference at pci->pp.ops->deinit on R-Car
+> S4 Spider in EP mode with CONFIG_PCIE_DW_HOST=y.
+> 
+> (I used next-20260904 with this patch and the following fix applied:
+>   "buffer: fix NULL dereference of bh->b_folio in __bh_submit()")
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc320b373656f..dda4d211b7db4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23738,6 +23738,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/sound/rockchip,rk3576-sai.yaml
- F:	sound/soc/rockchip/rockchip_sai.*
- 
-+ROCKCHIP XPCS DRIVER
-+M:	Coia Prant <coiaprant@gmail.com>
-+L:	netdev@vger.kernel.org
-+L:	linux-rockchip@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-+F:	drivers/net/pcs/pcs-xpcs-rk.c
-+F:	include/linux/pcs/pcs-xpcs-rk.h
-+
- ROCKER DRIVER
- M:	Jiri Pirko <jiri@resnulli.us>
- L:	netdev@vger.kernel.org
+[...]
+
+>      [drivers/pci/controller/dwc/pcie-designware-host.c]
+>      1225 int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>      1226 {
+>      ...
+>      1286         pci->pp.skip_pwrctrl_off = pme_capable;
+>      1287         dw_pcie_stop_link(pci);
+>    > 1288         if (pci->pp.ops->deinit)
+>      1289                 pci->pp.ops->deinit(&pci->pp);
+>      1290
+
+Thank you for your help with the endpoint part.
+
+The fix turns out to be very simple -- the suspend/resume handling is 
+specific to the PCIe controller in RC mode, so I added a conditional to 
+invoke those host (RC) suspend/resume operations only if the controller 
+is in that mode, and I sent a V2.
+
+This RC-only fix in V2 is also in line with what MX6 and DRA7xx PCIe 
+controllers do.
+
 -- 
-2.47.3
-
+Best regards,
+Marek Vasut
