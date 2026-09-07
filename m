@@ -1,48 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD973AF666;
-	Mon,  7 Sep 2026 17:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972713403EF;
+	Mon,  7 Sep 2026 17:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788800462; cv=none; b=Wc7eQDc3AL9CGa53DleJHgVQ+7JmIbhEMoMkINTig/OdyB1e7AIV39xyLbv0wFXECnsHtq4g5xKhlXzmbC5aWKTyW3YR3oyNsHz7koyLenvu3nDZ2rf6yH5Lh/bM+UW6RpPVVh0Y2hIcskhOqerXulH4UjAkP/nPAeePv7WtSpI=
+	t=1788803026; cv=none; b=IqeiZWxQkvm23g9zIdacAuTtmUjjVJCZdVctKGSpjAxZRrnmsiWrbAC1KO1MolBEgh4hwM98X/M/gk4QPnScjdGbsWf9wuIDCJahm4y6uLcxovdcEkdYwPUgpyxrjP2PvJZwlwmo3tT8C/gz+R9mA4FjEtKPMLFGBMjffpUNwC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788800462; c=relaxed/simple;
-	bh=jOI0MMEL4S/zjaXkNu4zzVrGq/jySwLqN8V+weesn9A=;
+	s=arc-20240116; t=1788803026; c=relaxed/simple;
+	bh=JCuP5iwAbN1KVWFm0TUsonZQHuDpasz45FD7jELXQe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMJEc/cQD6R1lrPITxGWAbbxLCvVGEzziWhADALDgL1cr4AZygsDCkJe8zdvf2EdzIWmTitk8/G9tCsUZ1e4f+nzrdnz8k9nTb7rD21q8fF6JIy8mUyUgKHLVm2HgkL8hbHxFlWch5YM8agUsmo/lqJ2nHtmcVaoFMLlvbG51fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPe5XElc; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=es3tl5USYSCjPkoLBxYuv+Vp4Dx22iK5pB0pC4icbo/7dmMgYtrlNDD5lW9UpLaovTzNBcnpzTqForO3hQklcNl1CXmyUqpR/v7wf1doGMX+3pPpcuhpVQJdM394NrDowJ/s5OS2i15ODJuK7xwZUqSrRah5kbyJMDJYbibfIpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZxswswL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPe5XElc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189F51F00A3A;
-	Mon,  7 Sep 2026 17:00:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZxswswL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98131F00A3A;
+	Mon,  7 Sep 2026 17:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788800460;
-	bh=I9jSIjH9CKbeYfqhN91dl2AUmDzRgsURGsGitrqG3Dc=;
+	s=k20260515; t=1788803025;
+	bh=icUnZOhRCh6jXI4eaxDCpDQrM4ohx6YfoZJErlEzabY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NPe5XElcSj+ognHvfyo4OgE2Ja+k3kb0mR/fp5nRxc5L5z0YMlHEjqagfsGWguq1q
-	 LtOUFA1V+xG0gr6pcM/ZuQEyl1JVRL/lDWcf7ecABcd4BckfqHEP1BgHNrbrmD71X/
-	 raOEsp8+shH0TKQoR1iMbgwtOfFfbUBg8YdPA1N4HO/9VOZoaVmSx/gA2rQJAAnrhv
-	 14o6h64DccdmzxQSRj/Id6wfVU9KXztBdjGu9uXA2HDZ08CMOB88EifBKU09Sb4lFX
-	 JWRTXv8uYQ+RPOAtuCJER3YN7Gb+9zfa3jaVzLYuE2lP4wM/oK/EoJLyP7MMOHD/Rj
-	 LGbbIciQQO3kw==
-Date: Mon, 7 Sep 2026 18:00:56 +0100
+	b=SZxswswLdFwzA1ope4PgsXvXqIZSObU2mgTxmKWD/Gmp1P90Lby9+8F6+rcfFJWkj
+	 ZFXpC7yUxkjw+NqPU7JUTqqEbnOFnbPvugD8BYk7i3BGdb5hB/XkSfL11p33yiJzF0
+	 4rF3okuYzzLFiMpNNdXupIjCOe9SaXm1xQWe2cb6pDOZDdZNWIR7AaCwfiyjpdb0zZ
+	 DkCJR/0F+M55i1JSZ5Ng36icOjip6p0a9FHrGvi0FkxhAc7OcwxzijxSzKL0orM3jl
+	 q2kk6+VrS4vvas6k6i3qdaSX1cW5MXOt2JlpGK9EeQ+QtFTJcgl3eUluv8suCVgFOr
+	 +IbDzPy5cC72w==
+Date: Mon, 7 Sep 2026 18:43:40 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Colin Huang <colin.huang2@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	linux-usb@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Grant Peltier <grant.peltier.jg@renesas.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Colin Huang <u8813345@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
- RAA229639 and RAA229640
-Message-ID: <20260907-chimp-pectin-20f4ea3b772c@spud>
-References: <20260907-add-raa229639-and-raa229640-v1-0-8f7218cba85d@gmail.com>
- <20260907-add-raa229639-and-raa229640-v1-1-8f7218cba85d@gmail.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car
+ Gen5 DWC3 xHCI USB controller
+Message-ID: <20260907-tassel-bargraph-836b6f41fc43@spud>
+References: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
+ <20260904-colonial-wimp-b37c27657664@spud>
+ <7771adfd-7447-4802-ad75-7c889ad32ee7@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,64 +51,81 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HhmU8rXA8ylKId0C"
+	protocol="application/pgp-signature"; boundary="l+BsWOi6/ltuqzg/"
 Content-Disposition: inline
-In-Reply-To: <20260907-add-raa229639-and-raa229640-v1-1-8f7218cba85d@gmail.com>
+In-Reply-To: <7771adfd-7447-4802-ad75-7c889ad32ee7@mailbox.org>
 
---HhmU8rXA8ylKId0C
+--l+BsWOi6/ltuqzg/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 07, 2026 at 03:03:29PM +0800, Colin Huang wrote:
-> From: Colin Huang <u8813345@gmail.com>
+On Fri, Sep 04, 2026 at 06:24:04PM +0200, Marek Vasut wrote:
+> On 9/4/26 5:32 PM, Conor Dooley wrote:
 >=20
-> Add Device Tree compatible strings for Renesas RAA229639 and
-> RAA229640 PMBus devices.
+> Hello Conor,
+>=20
+> [...]
+>=20
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - reg-names
+> > > +  - clocks
+> > > +  - interrupts
+> > > +  - phys
+> > > +  - phy-names
+> > > +  - power-domains
+> > > +  - resets
+> > > +
+> > > +unevaluatedProperties: false
+> >=20
+> > I said this elsewhere today, but this binding has lots of "distasteful"
+> > properties for things that should be determined from the compatible
+>=20
+> Which properties would those be ? (it seems
+> reg/clocks/interrupts/phys/power-domains/resets really need to be there as
+> separate properties, but maybe I am missing the point?)
 
-Driver change suggests fallback compatibles could be used.
-Why aren't they? If they can be, add them. Otherwise, explain why not in
-your commit message.
+All the quirk properties is what I am talking about here. There's about
+50 of them and I don't know if a single one should actually exist.
 
-pw-bot: changes-requested
+> > , so I
+> > would appreciate it if you could use additionalProperties: false here
+> > cite the ones you need to use explicitly.
+>=20
+> May I ask, what exactly is the rule of thumb for additionalProperties:fal=
+se
+> and unevaluatedProperties:false ? I seem to struggle with picking the rig=
+ht
+> one for a while now.
 
-Thanks,
-Conor.
+I would say, if all properties being imported apply to you device, use
+unevaluated. If only some do, and there are some that will be
+problematic or confusing if used, then additionalProperties: false and
+citing the good ones explicit is clearer for users and prevents the bad
+combos.
 
 >=20
-> Signed-off-by: Colin Huang <u8813345@gmail.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.=
-yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> index 8216cdf758d8..3537c7ddfb09 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> @@ -60,6 +60,8 @@ properties:
->            - renesas,raa229001
->            - renesas,raa229004
->            - renesas,raa229621
-> +          - renesas,raa229639
-> +          - renesas,raa229640
-> =20
->        - items:
->            - enum:
->=20
-> --=20
-> 2.34.1
->=20
+> > Sounds like dr_mode: true and
+> > maximum-speed: true are all you'd need?
+> Ah, I think this also answers my previous question a bit. And, as for
+> limiting the properties that are really needed -- this pulls in the common
+> DWC3 USB IP core properties, which all do apply to the DWC3 core. They mi=
+ght
+> not be used on current hardware, but they are still valid for the DWC3 co=
+re
+> (IP).
 
---HhmU8rXA8ylKId0C
+--l+BsWOi6/ltuqzg/
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCap7tyAAKCRB4tDGHoIJi
-0vWkAQCjzsynPNmvqg+nOTSt1FNnUM8x5V6/1sDozQZ1xVIvbAEA86vBJiZ2H4Kf
-9esT6FXoeTbv/n+YKzHxZw4wZHD1XQk=
-=YQWN
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCap73zAAKCRB4tDGHoIJi
+0pRzAP9n+Hs4lKXTWOlC5IvXgMmAURFKmKMNBSNfQLljYt9DNwD8CZYGxm79twVN
+jHExhMMyd2u/59PLFdTLRCT9WDghLgA=
+=whhB
 -----END PGP SIGNATURE-----
 
---HhmU8rXA8ylKId0C--
+--l+BsWOi6/ltuqzg/--
