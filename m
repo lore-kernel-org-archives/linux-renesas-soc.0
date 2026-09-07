@@ -1,159 +1,113 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11035111BB;
-	Mon,  7 Sep 2026 16:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD973AF666;
+	Mon,  7 Sep 2026 17:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788799042; cv=none; b=XwI2WmFrTn9661LPMKxKbrRgnXiGHCC5u9kVRQ1P/ysqfCLePz2V18UgpK1fWWQBI3PNZ3h+Cx2nLjB0hcn1LczEyW5H9+6d3J3ioSOUv/fbiP+ibBHkaloqL1AKUo/NUWHEe+Rf2yzynks8HCUTTjeY6IxqSH43MgCKFRK+skg=
+	t=1788800462; cv=none; b=Wc7eQDc3AL9CGa53DleJHgVQ+7JmIbhEMoMkINTig/OdyB1e7AIV39xyLbv0wFXECnsHtq4g5xKhlXzmbC5aWKTyW3YR3oyNsHz7koyLenvu3nDZ2rf6yH5Lh/bM+UW6RpPVVh0Y2hIcskhOqerXulH4UjAkP/nPAeePv7WtSpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788799042; c=relaxed/simple;
-	bh=6kqG/e8sZ87b3BUCGf+yCqlrnhgTSJ8M1EMSPkDdTJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eA28dujFm0YtcgBGMKRz6QDmRcmcNCb7mOjzF/M85CEkhdwARQxK4/qD4PgwG/jvOcuGPdJZnb8U9RU42VE7jWErI7dgA2RgSElcXrASDkFM02ZzGpsDAbVXIBfiEGVyjr/nj+wugfd84i95rIBNi0aH204Z/rR0X/l9AFQ65eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Td/9gobw; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1788800462; c=relaxed/simple;
+	bh=jOI0MMEL4S/zjaXkNu4zzVrGq/jySwLqN8V+weesn9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMJEc/cQD6R1lrPITxGWAbbxLCvVGEzziWhADALDgL1cr4AZygsDCkJe8zdvf2EdzIWmTitk8/G9tCsUZ1e4f+nzrdnz8k9nTb7rD21q8fF6JIy8mUyUgKHLVm2HgkL8hbHxFlWch5YM8agUsmo/lqJ2nHtmcVaoFMLlvbG51fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPe5XElc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Td/9gobw"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hdt5T0XthzKmTV;
-	Mon, 07 Sep 2026 18:37:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788799037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EO2GKXusc5sJejI+vtQwq/vqi5rB/tLAfP5uzYmGrL8=;
-	b=Td/9gobwv6CFZZM8fnbBTlzl1SJ2o4g/OmrIYyUCE7iPYA+QlEDkNRlT/3kmRxnghKAPCa
-	/R6/IrBfwSf00CnFzkLo6BlYAm4lF4dXeYam8+yj8KRylKtPmZOoy1DruPySvgNof1SKSt
-	E/MSu7pS7LebbVPjfObmd/AfbTDiIl163bGNcr5lF67Y9gyBq2NLRbl/y1arZzEVVQOT9Z
-	yWQGtPmMnt2l9ZzM9PzcE2THBEFwkqeajRej7Y1HljEfhadlWTEr9YeCw5QWzvlMnqyVUl
-	ByBjMG7WSToyk0Q8KeugfMvUUnw9uVFWw0P7HUQtwgf8gaCdVLpIgXj7l3/QiA==
-Message-ID: <43eccc85-fca3-4c69-9114-b45ab5e1b487@mailbox.org>
-Date: Mon, 7 Sep 2026 14:10:21 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPe5XElc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189F51F00A3A;
+	Mon,  7 Sep 2026 17:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788800460;
+	bh=I9jSIjH9CKbeYfqhN91dl2AUmDzRgsURGsGitrqG3Dc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NPe5XElcSj+ognHvfyo4OgE2Ja+k3kb0mR/fp5nRxc5L5z0YMlHEjqagfsGWguq1q
+	 LtOUFA1V+xG0gr6pcM/ZuQEyl1JVRL/lDWcf7ecABcd4BckfqHEP1BgHNrbrmD71X/
+	 raOEsp8+shH0TKQoR1iMbgwtOfFfbUBg8YdPA1N4HO/9VOZoaVmSx/gA2rQJAAnrhv
+	 14o6h64DccdmzxQSRj/Id6wfVU9KXztBdjGu9uXA2HDZ08CMOB88EifBKU09Sb4lFX
+	 JWRTXv8uYQ+RPOAtuCJER3YN7Gb+9zfa3jaVzLYuE2lP4wM/oK/EoJLyP7MMOHD/Rj
+	 LGbbIciQQO3kw==
+Date: Mon, 7 Sep 2026 18:00:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Colin Huang <colin.huang2@amd.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Grant Peltier <grant.peltier.jg@renesas.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Colin Huang <u8813345@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
+ RAA229639 and RAA229640
+Message-ID: <20260907-chimp-pectin-20f4ea3b772c@spud>
+References: <20260907-add-raa229639-and-raa229640-v1-0-8f7218cba85d@gmail.com>
+ <20260907-add-raa229639-and-raa229640-v1-1-8f7218cba85d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
- <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
- <CAMuHMdUapaP-8kkWT5cXtEO1h58aAzzm34XqO_mcrgbVSyXEwg@mail.gmail.com>
- <b516bf77-fb15-41f2-80ac-b80c621fedd1@mailbox.org>
- <CAMuHMdWb2Qk=heWhwFh4TsEggHOmzTd4Lj-vG6kXjRVMDDUG2A@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdWb2Qk=heWhwFh4TsEggHOmzTd4Lj-vG6kXjRVMDDUG2A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: gg7w3pappfq9efwgsh1jjfzqp1dzfhbp
-X-MBO-RS-ID: cb48dd79e9fccc77b24
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HhmU8rXA8ylKId0C"
+Content-Disposition: inline
+In-Reply-To: <20260907-add-raa229639-and-raa229640-v1-1-8f7218cba85d@gmail.com>
 
-On 9/7/26 9:53 AM, Geert Uytterhoeven wrote:
+--HhmU8rXA8ylKId0C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello Geert,
+On Mon, Sep 07, 2026 at 03:03:29PM +0800, Colin Huang wrote:
+> From: Colin Huang <u8813345@gmail.com>
+>=20
+> Add Device Tree compatible strings for Renesas RAA229639 and
+> RAA229640 PMBus devices.
 
-> On Sat, 5 Sept 2026 at 23:57, Marek Vasut <marek.vasut@mailbox.org> wrote:
->> On 9/4/26 1:15 PM, Geert Uytterhoeven wrote:
->>>> +++ b/drivers/gpio/gpio-rcar.c
->>>
->>>> @@ -65,14 +66,59 @@ struct gpio_rcar_priv {
->>>>
->>>>    #define RCAR_MAX_GPIO_PER_BANK         32
->>>>
->>>> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
->>>
->>> IMO passing a pointer to offs complicates the code.  Perhaps pass offs
->>> by value, and return the adjusted offset or a negative error code?
->>
->> I want to avoid that, since if I only return error value, I can then do
->> simple:
->>
->> ret = gpio_rcar_remap_offset(...);
->> if (ret)
->>     return ret;
->>
->> in gpio_rcar_read() and gpio_rcar_write(), which are the only two call
->> sites of this function.
-> 
-> gpio_rcar_read() and gpio_rcar_write() do not return error codes.
-> I was thinking of
-> 
->      offs = gpio_rcar_remap_offset(p, offs);
->      if (offs < 0)
->              return 0;
-> 
-> which is almost the same, but avoids passing offs by address.
+Driver change suggests fallback compatibles could be used.
+Why aren't they? If they can be, add them. Otherwise, explain why not in
+your commit message.
 
-Is there any benefit to it, compared to keeping the value and return 
-code separate ?
+pw-bot: changes-requested
 
->>>> +{
->>>> +       /* R-Car Gen4 and older do not need any offset remap. */
->>>> +       if (!p->info.has_layout_gen5)
->>>> +               return 0;
->>>> +
->>>> +       /*
->>>> +        * R-Car Gen5 register layout is slightly different and the offsets
->>>> +        * that have to be added to or subtracted from each register offset
->>>> +        * can be divided into five groups, listed below.
->>>> +        */
->>>> +       switch (*offs) {
->>>> +       case IOINTSEL...OUTDT:
->>>> +               return 0;
->>>> +       case INDT:
->>>> +               *offs += 0x10;
->>>> +               return 0;
->>>> +       case INTDT...EDGLEVEL:
->>>> +               fallthrough;
->>>> +       case BOTHEDGE:
->>>> +               *offs += 0x70;
->>>> +               return 0;
->>>> +       case OUTDTSEL:
->>>> +               *offs -= 0x34;
->>>> +               return 0;
->>>> +       case INEN:
->>>> +               *offs -= 0x38;
->>>> +               return 0;
->>>> +       default:
->>>> +               /*
->>>> +                * This here must never be reached, if this is reached, that
->>>> +                * means there is a catastrophic failure in the driver. Skip
->>>> +                * any IO read/write to prevent further damage.
->>>> +                */
->>>> +               WARN_ON(1);
->>>
->>> A build-time failure would be better.  I tried BUILD_BUG() instead,
->>> but unfortunately gcc is not smart enough to notice this case is
->>> never reached.  __always_inline doesn't seem to help either.
->> I had one more idea -- how about we convert the driver to mmio regmap,
->> use opaque register numbers throughout the driver to identify registers
->> to the regmap (maybe not a great idea), and then implement .read/.write
->> callbacks in the regmap_config which instead of doing plain
->> readl()/writel() for register IO would instead do this remapping ?
->> Regmap could validate that the opaque register numbers are only the
->> expected register numbers and reject all the others. Maybe the opaque
->> register numbers could instead of Gen4 register offsets. What do you think ?
-> 
-> That's similar (but more complex?) than the array look-up
-> in drivers/tty/serial/sh-sci.c I pointed to before.
-> drivers/i2c/busses/i2c-riic.c uses the same method.
+Thanks,
+Conor.
 
-Those do not use regmap (drivers/base/regmap/), do they ?
+>=20
+> Signed-off-by: Colin Huang <u8813345@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.=
+yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> index 8216cdf758d8..3537c7ddfb09 100644
+> --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> @@ -60,6 +60,8 @@ properties:
+>            - renesas,raa229001
+>            - renesas,raa229004
+>            - renesas,raa229621
+> +          - renesas,raa229639
+> +          - renesas,raa229640
+> =20
+>        - items:
+>            - enum:
+>=20
+> --=20
+> 2.34.1
+>=20
 
-> I.e. just convert the existing register defines into an enum, and use
-> that to index a table with the family-specific offsets?
-Are we back to the table look up discussion instead of remap function ?
+--HhmU8rXA8ylKId0C
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCap7tyAAKCRB4tDGHoIJi
+0vWkAQCjzsynPNmvqg+nOTSt1FNnUM8x5V6/1sDozQZ1xVIvbAEA86vBJiZ2H4Kf
+9esT6FXoeTbv/n+YKzHxZw4wZHD1XQk=
+=YQWN
+-----END PGP SIGNATURE-----
+
+--HhmU8rXA8ylKId0C--
