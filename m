@@ -1,155 +1,137 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D6F43551D
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 08:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2F639CCFC
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 08:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788855931; cv=none; b=AQTkc4MT3em9wPHyUEPmiRmbpPs6NKH1DFKrsG829lM5a8Zlc9ppucefSxael1Dvjl7Cg4UYqJrJrSPQBEySbgKGp7CXHyHlRF3NZUp1vbdvF7XNA5WnRs6bI44CKozrUQNE9jeQ7SH1dgk0ogdexRnHY6ggWAGwBhRG0xENnE8=
+	t=1788857191; cv=none; b=JvdZWiyCuYt/BN7G968iaeb2f7rXgt4uXcyDyMKWA67eJ+Y0XHxESCLq1U7r51YJhTfNrGWdzyHcsy7cZ11mLGMr/spcx5jBSxHGtuwi4t9iGyCPJw5O+6fUmICRBV2akpL5XShhhqEqHgjjHzTZAXHXJApVKsdx3gKkGyCPTqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788855931; c=relaxed/simple;
-	bh=RyWC9ZH0A+cO9YbBtFxaL8alX2jIQiPPGivCwS/dm+M=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=mP5mTRGgy+pkHqUoBoSQ1HprtU5xDPsVXTyieGPyqkogpxrlY8aMYdydmnlbbkydPwhyfUIIUbBZh9HDhRK0kQ0jr2bXgd0+eJAW5vc6jXFLcUsv6aX+upsFMTakWq4UI2wUK8SrdMOP5Yy4M0TOZi2v1VR71ibobQrWZhm1Nkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RZ5GdQFN; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RZ5GdQFN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788855930; x=1820391930;
-  h=date:from:to:cc:subject:message-id;
-  bh=RyWC9ZH0A+cO9YbBtFxaL8alX2jIQiPPGivCwS/dm+M=;
-  b=RZ5GdQFNjpMUuuDB2XyveDt862iyDjQLh6OR02vYQ3eZ57HZK/GoyXKr
-   KiDspkEDkfu/h5wVQ4djuMsJrDsgNB8C869zWNg4bn4aNQ86yCTQnx+yJ
-   YGVQBRdbUmKg+8hiyHb+2n6ljQ3XpIwCs7ecp/dWMbbI/rLltJxdv4IMo
-   FjJFSKcKz/ZWIEQTtZAx9+IK1PsmY/TEVNjgtrGOxHb9tGSNXSUgSBUtS
-   yt/GKwAQ4VuTrhcj1lXuDN7sVvNYte0YmjPkF5v5UaEP01DoA2aXo5x1I
-   XTYYXzQ6en8uybMBVjS8S1XaAOwl+l89Gzup2dziAbiaB6cViJbEtrfhc
-   g==;
-X-CSE-ConnectionGUID: ZyUaHEOZQOadR5oPlcLVdQ==
-X-CSE-MsgGUID: AsMk9fa5QNK3ph+BKjvDHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="89294275"
-X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
-   d="scan'208";a="89294275"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2026 01:25:29 -0700
-X-CSE-ConnectionGUID: I76Z8J/7ST6aGteTRrm/RA==
-X-CSE-MsgGUID: 9Zv0vPXFTM+d8nxLtQH4xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
-   d="scan'208";a="276188486"
-Received: from lkp-server01.sh.intel.com (HELO dff15f1b2031) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 08 Sep 2026 01:25:27 -0700
-Received: from kbuild by dff15f1b2031 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x3r8v-000000001tP-1R1V;
-	Tue, 08 Sep 2026 08:25:25 +0000
-Date: Tue, 08 Sep 2026 16:25:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-pinctrl] BUILD SUCCESS
- ec5202ccfa24791acf64146d5bac6b63ce234f95
-Message-ID: <202609081603.9eTea8nS-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1788857191; c=relaxed/simple;
+	bh=92gyEZZTnYL7xeeh6ZEwBFSKdx2055oIqu0lK/Rebu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g/E/50dzAn3ygTkyefnEeUEZEqFndnk14NX3R5i6XJbbPnd3biwGYV081WtdDzZVS6dZcJesUv8S6G7Jz8VWJlt2WTJUl7pHzSYNRBXGWRLtZ1qsdFlcttaWvtfJuqeVdklAaZdplpGYm7XkBz/QIZwpNXppHUnri6xkRjrR2w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-789fef9422fso1189616137.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 01:46:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788857189; x=1789461989;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ApssUKPvTBDPBMVIhSzHAqwCbeQAa06dIhcXYuDQzKs=;
+        b=djrQkzCP86wAxGd1uxuniuhT4WW5qwIcjFrSeuSIF1ihh5BX0kQG/P1y3A9C+gWpFC
+         H3wQi13W3XDo65vRKK5h7VguK7lFlHp0OXEVFcgZ3q7Ec40HuPRnaFZs+QvrSZ/gg7wZ
+         0iwnxcRv66EC7+YYBXUECiN7vN/oiz8XTpI7Tisa3Njd3FT5QTYVHcJErFjDVsznzBS2
+         rtJh6EpfOSPvI8RODF+5pLL5CaJBGcZGdsaZhXES//8awWeHNmleASV5SpfR+/HntwQ5
+         2jEhLWFwoVD74yUWkM9vwnMFbH+ICyIdyNfSknLSJTcOjRMa63Dwvde/HCpXgMIwLGI7
+         Up5A==
+X-Forwarded-Encrypted: i=1; AKwUvBxoKc4wwzXhj1BlgFYqLo8QlvPyygI4bzxBkx3waKMu1J19cfeANtKiFvn+n/RFIJuJAc4Rrrh8Enl5AaN7T8KpsA==@vger.kernel.org
+X-Gm-Message-State: AFuF++laOmTP2vDTFFxj1Qnb09Criz8RJ2dbCCOsgqiOfwBdR5Tle2ES
+	1dVogO6mZdOjTCIomr0oRepOe1qL/4YO1nODdxrIiUb2WO+L0F/VJArs61DIoLJj
+X-Gm-Gg: AYBFou0UKYmmoV3zVv7whDxKkQPzmQfOwg0UO/F9uAdzCcDqBklFy5KihxfRTVK0y6T
+	4UJa847hFCuUHyeqOqdr9Y2H0CsTIxN80Zy9oVomQyRcMJSsAEWwfee6FW+8QkVLzTtH/5Z7ITD
+	gW7e2vT8wDUwDCFXzdLKVjYFZTG4hMqvJZjn91d358smour6bseDh7q9vL5hdBi15sm8GEryOmY
+	ceNwqO/AbVC/AtfoDOi6sTnEAuvoEEm6GgdowngrtJ3fnJ4FjLsW3SDXoNAycMwjMKCtJJ2OXxj
+	XlIhhgQvd7ymXu6lDGviEnESBsv9qdiiRZLxPsHY27YKPXAKBqfV0m32wsY6Kt2qWwoo4AcA0Z8
+	ziHq1k4MSaIi+xyq+RNdfivSv0aBuTLwHGfGtn0XLp23sx7QZQ23YS/veIfaqspOk+0etNDPHKX
+	wx+yGCa6PZKVoa1YROmlHVC95JeRsIb5UEhifSPJGd+3Seyyn9xTEatsWmXPIeZLLUbS/nJGqqA
+	Y6NJyiTosPilJCPKmCNWpZbU0ax1w==
+X-Received: by 2002:a05:6102:b0f:b0:784:b9ec:910b with SMTP id ada2fe7eead31-78a4ab294c6mr10622724137.12.1788857188855;
+        Tue, 08 Sep 2026 01:46:28 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47ae8dd2sm8482907137.8.2026.09.08.01.46.27
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2026 01:46:28 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5c681c2a6a7so1651031e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 01:46:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBydQUPKiDmfTNEg00wLACuC3WnRfILbX7J/1Z4hnnCS1cII51ru4bbiKsuUwM8dt4JPE1f8KiOt/GsQSelsrGA4/A==@vger.kernel.org
+X-Received: by 2002:a05:6122:e189:b0:5c7:a9ee:dcfb with SMTP id
+ 71dfb90a1353d-5c7ed3d6e40mr12626919e0c.5.1788857187476; Tue, 08 Sep 2026
+ 01:46:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260906140134.492084-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260906140134.492084-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Sep 2026 10:46:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXKr-2+_kcCd8hSB84=AZpmOtDt2-Dxpgiewyg+67O+fw@mail.gmail.com>
+X-Gm-Features: AcwNN1X8I3PAUGIRvp1JcLzwLyyr5hfRt4h4h2_fZyfEgH0XnWVqbEIcNTcm87E
+Message-ID: <CAMuHMdXKr-2+_kcCd8hSB84=AZpmOtDt2-Dxpgiewyg+67O+fw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a779h0: Add GICv3 ITS and update
+ PCIe node
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl
-branch HEAD: ec5202ccfa24791acf64146d5bac6b63ce234f95  pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting I3C power source
+Hi Marek,
 
-elapsed time: 1329m
+On Sun, 6 Sept 2026 at 16:01, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> This SoC implements GIC600 with GICv3 ITS and PCIe host mode on this
+> SoC can use it. Add GIC ITS node into GIC node, update interrupt-map
+> and add msi-map into PCIe controller node.
+>
+> The GIC ITS does have master interface to issue transactions to RAM.
+> The interface does support cacheable transactions, however, it does
+> not support shareable attribute, because the AXI port signals are tied
+> to inactive in this implementation. Therefore, add "dma-noncoherent"
+> DT property into the GIC ITS subnode.
+>
+> The GIC redistributor does not have cacheable/shareable, therefore
+> add "dma-noncoherent" DT property into the GIC node.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-configs tested: 78
-configs skipped: 6
+Thanks for your patch!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+As I am not PCIe DT expert, I am comparing this to the corresponding
+patch for R-Car V4H, which I have already queued as commit
+7fe73a3a3f2c3718 ("arm64: dts: renesas: r8a779g0: Add GICv3 ITS and
+update PCIe nodes") in renesas-devel, but which probably needs some
+updates.
 
-tested configs:
-alpha         allnoconfig    gcc-16.1.0
-alpha        allyesconfig    gcc-16.1.0
-arc          allmodconfig    clang-24
-arc           allnoconfig    gcc-16.1.0
-arc          allyesconfig    gcc-16.1.0
-arm           allnoconfig    clang-17
-arm           allnoconfig    gcc-16.1.0
-arm          allyesconfig    clang-24
-arm64        allmodconfig    clang-24
-arm64         allnoconfig    gcc-16.1.0
-csky         allmodconfig    gcc-16.1.0
-csky          allnoconfig    gcc-16.1.0
-hexagon      allmodconfig    clang-24
-hexagon      allmodconfig    gcc-16.1.0
-hexagon       allnoconfig    clang-24
-hexagon       allnoconfig    gcc-16.1.0
-i386         allmodconfig    clang-22
-i386          allnoconfig    gcc-14
-i386          allnoconfig    gcc-16.1.0
-i386         allyesconfig    clang-22
-loongarch    allmodconfig    clang-19
-loongarch     allnoconfig    clang-20
-loongarch     allnoconfig    gcc-16.1.0
-m68k         allmodconfig    gcc-16.1.0
-m68k          allnoconfig    gcc-16.1.0
-m68k         allyesconfig    clang-24
-m68k         allyesconfig    gcc-16.1.0
-microblaze    allnoconfig    gcc-16.1.0
-microblaze   allyesconfig    gcc-16.1.0
-mips         allmodconfig    gcc-16.1.0
-mips          allnoconfig    gcc-16.1.0
-mips         allyesconfig    gcc-16.1.0
-nios2        allmodconfig    clang-20
-nios2        allmodconfig    gcc-11.5.0
-nios2         allnoconfig    clang-24
-nios2         allnoconfig    gcc-11.5.0
-openrisc     allmodconfig    clang-20
-openrisc     allmodconfig    gcc-16.1.0
-openrisc      allnoconfig    clang-24
-openrisc      allnoconfig    gcc-16.1.0
-parisc       allmodconfig    gcc-16.1.0
-parisc        allnoconfig    clang-24
-parisc        allnoconfig    gcc-16.1.0
-parisc       allyesconfig    clang-17
-parisc       allyesconfig    gcc-16.1.0
-powerpc      allmodconfig    gcc-16.1.0
-powerpc       allnoconfig    clang-24
-powerpc       allnoconfig    gcc-16.1.0
-riscv        allmodconfig    clang-24
-riscv         allnoconfig    clang-24
-riscv         allnoconfig    gcc-16.1.0
-riscv        allyesconfig    clang-24
-s390         allmodconfig    clang-17
-s390         allmodconfig    clang-24
-s390          allnoconfig    clang-24
-s390         allyesconfig    gcc-16.1.0
-sh           allmodconfig    gcc-16.1.0
-sh            allnoconfig    clang-24
-sh            allnoconfig    gcc-16.1.0
-sh           allyesconfig    clang-17
-sh           allyesconfig    gcc-16.1.0
-sparc         allnoconfig    clang-24
-sparc         allnoconfig    gcc-16.1.0
-sparc64      allmodconfig    clang-20
-um           allmodconfig    clang-17
-um            allnoconfig    clang-17
-um            allnoconfig    clang-24
-um           allyesconfig    gcc-14
-um           allyesconfig    gcc-16.1.0
-x86_64       allmodconfig    clang-22
-x86_64        allnoconfig    clang-22
-x86_64        allnoconfig    clang-24
-x86_64       allyesconfig    clang-22
-x86_64      rhel-9.4-rust    clang-22
-xtensa        allnoconfig    clang-24
-xtensa        allnoconfig    gcc-16.1.0
-xtensa       allyesconfig    clang-20
-xtensa       allyesconfig    gcc-16.1.0
+> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> @@ -691,6 +691,8 @@ pciec0: pcie@e65d0000 {
+>                         resets = <&cpg 624>, <&cpg 1121>;
+>                         reset-names = "pwr", "core";
+>                         max-link-speed = <4>;
+> +                       msi-parent = <&its 0>;
+
+This has an extra cell "0", which is probably correct, given
+"#msi-cells = <1>" below.
+
+> +                       msi-map = <0x0 &its 0x0 0x10000>;
+
+This is not present on R-Car V4H (which is probably wrong).
+
+Interestingly, Documentation/devicetree/bindings/pci/pci-ep.yaml
+documents msi-map for endpoint node, so should it be added to the
+pcie-ep node, too?
+
+>                         num-lanes = <2>;
+>                         #address-cells = <3>;
+>                         #size-cells = <2>;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 
 --
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
