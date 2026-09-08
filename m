@@ -1,399 +1,160 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F5755C310
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 14:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788879555; cv=none; b=YBj8RilBCJBvU2xGtAtx+YoMTbEwad5fpKLkuYuyhNfpp5tQmc7BT2u7AyOFatIGw4KbC2PJyTS9PiNfArIcLpdILnBuUvBupI/5U8UjWUWTFOGAnOW4KJ8avIKU6/7QLnY3CAXJMHaqq9sL2wto6jZHLRbmdavNk50J3iEw/Xk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788879555; c=relaxed/simple;
-	bh=tpTcvMP4H52TudHkrbQVYa2cd+espkFD2aaWl0S9lKg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E+x9+oARR1zFUHx9HgJlcS/Ja7LDdROxHUBs4IuvknjSXgYyOrpE7fGK3ydP8KUGLCmQoYX7i9z3oFDM+JyJC3VzljleOzImuW0mr6oEAJqrWX496pF3Gx0S0zwTAHu4duNmRzjXU7wF0psiNS/Y0CB0w5l3mHejJC6kZPaaols=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QcL90SX2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eIbubmyS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860A156C64A
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 16:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788884556; cv=pass; b=poPDlNAKGjfiPRhu8tkK926XnkucQUw5jwR8y4Te6DHPEaMF1m+pTJDW64DG7OVn0exNalsIpt9WSeGu1h4geq6Eo5eU8HZnFHTv1G9pHh06YGyM/hGm0rTogeR+X4DzUgL1zykUerfqIU16oII+GrwRq61FZsTcVoWSLOudcvI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788884556; c=relaxed/simple;
+	bh=gx0WNzHrzpR5Vg5y5KJZ32oxwshPQgn8Fi9efTzEQjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kxVGjbEnR6toxEadmd4mq3bxkvneAJ6TnSAfUI8mvneEWnwlvoPnzir5dWRlx8wxpUlFv3ySxA3tdA6LJw1/1n1pdY7vgZanUEA5cCWJPdPl/uLST8pD0QoMdEEmENZ1rHDflrlBkVMT2NTS53nCOrYyXNpWEeA9dOOXL7dxMEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHI7JKr2; arc=pass smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QcL90SX2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eIbubmyS"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 688Ej1OL2607824
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 8 Sep 2026 14:58:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Jfr6FHf4J3HKMLFr5umwwFEv12n51Ck9PHChu4Q8jgc=; b=QcL90SX28sMJz/oP
-	RCEE9rGDQzWYr8VpzenkeyQmuGNcouSz4RdqSAsVENDD77fbc/t7BUICoPp3Hd/1
-	gxCObDlZZ0WsCYVi7yGsvKaZDjZ1xgtnOf241uQ0aP8Nu5+VO5vvjXDE/TNchvEh
-	iYtA6y9cfN2TryAH4kmm9/CXVA5684CfxJINS0BPGaquzxEwe8wlPmeGmS6Y7rfD
-	u/eyCJRiqFDEhL8cWpF+DlAyA+Ap0JiPFwtcv+E0BUXIJqgkjFipQs9x1UXVHqUK
-	6r13tIQ4P8yHW74mofiyTAd5696EdDDRFojOILM6T3B/OrEwYh7gr7Qem8OL+Wsb
-	Ox6bYw==
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjatjjpfy-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 14:58:26 +0000 (GMT)
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-980a896f53eso2424652241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 07:58:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHI7JKr2"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-482e257a23aso3339022f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 09:22:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788884552; cv=none;
+        d=google.com; s=arc-20260327;
+        b=qoJ//ZlSCrTQfHYt3FNGdvCjoRpf0Tau8OBtwoH3n+0FzbjWZ2BXnfosSHOKstUKdd
+         stjVdYswQS5Vwx/AXGlBwMYqj8O3+3a2cE/3iTNKgJ1TNgmTTXTBl1RzJwuxTwiP2LKg
+         5XsxDR+iDIwhyURimkFuJ1xfAGVYJfbNkCBKW1fKq9PuDcU+ryyAPQ3663OvuFnaKQqn
+         Qrgc7tWfgouiODL3HPBwFe+WKNIkkBqsc/voOxmOnTTMmzaTT1PA0HyO0sXg5Bd9o5l4
+         sHMy5SYQkWGvAdt+3ieu90/L4kpvFYOE50G8Qop/YRCGfbY9kTvK0PalyWau4cujas1d
+         +6Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=jekOF2OhfE9K8vBMYq9LG6isiwXmYjORyhfyHiOqLIA=;
+        fh=7GJmc7EscTK50jawfdscsR1fgneo5Xf5tJKahS/1CIY=;
+        b=NpqN1pSEGV6qTg8Rku/Ogx/v30MtKltxWehPlueKj0OBzQ2+gWgyjBEcOdO9sJKJtu
+         Ij67kQtwB1ogOcOUqDEWAg8nxDYrMs0hOzR4seMDEGZZ76mCWiBOobm0hwqn97MzKUKz
+         zzsAMgYh1NmMTcmF4dBTWKomTQDigfslNK1qhZsa8lEMMZPHS2X4cluf/JBm5GD6cLtp
+         TlvAf4SHNsD1Ww/LqXxSZKWpCFik6uJktQOo4Or7RAfTO6E6tIXyLjVcuat8AUYRtvAG
+         YLlcscL3rSQuFQ5tdEWlFVyYvKyfIwe4kG4DH54tgt4s7AO2MZDVGrdHR+uqUB1zvzUj
+         GUXQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788879505; x=1789484305; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Jfr6FHf4J3HKMLFr5umwwFEv12n51Ck9PHChu4Q8jgc=;
-        b=eIbubmySpblM/xDCueZpG6VI4aQb5/GqVNHBKcVhkMe2cIutEDz11hos3n4nqUTBYf
-         TKOOb7/vAdGF6qHbCv67pJ5JtM5lILmMAs5Y9CireWaNBTVbZ5gKJg83tQ2yYcHGwsGW
-         nwlE5yaobfcAigeBLvr04WZnABTVesxsnCXTCtxrRd1p3EoQUaLEwdbIuGkL0nNhRCDt
-         fLT0F4eLvu/ivA6aZU6clu2yD1Ae6ZVfGFZRi2INKArc6y1QSQOR9r2lUgHj5MpJvKdq
-         OJMeb26HTD3nAcBzCIWfSUKbb1nbpnp9sHeKadqHSQ5txqDmUbRvvpUdNEGnnIeGsI4M
-         ab8g==
+        d=gmail.com; s=20251104; t=1788884552; x=1789489352; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=jekOF2OhfE9K8vBMYq9LG6isiwXmYjORyhfyHiOqLIA=;
+        b=MHI7JKr2kkr24YW4snLpJdEML8QbgbEuKlTVoMWeXvxapQb9bE9iEJ/apSQfsEBCyF
+         6UK7QNkxSB/f9xiBqGLkw/iBAFfKmaoStMFU0SS5vDwnJAGG+tC7GH189zop7UdBzH8w
+         nwK+VulVgJKrc1YU+MG+M392P5la+71HfwYsPHAQAtL6Wmj11OiTlSRr3/2FVb7gcRtK
+         kzeWmmZTOwgHWcLQ2wBGrFe/9jhFTHjnktsABOgWj2M/hW1C+S4I+XMRSJOVRPGTC81W
+         1m9LjXgjk7Udg7NCQtPn+rsj5TDhUg6pzer5U/kGbQZXLXNO6XY0wDlRDF54Tgi9padj
+         LwxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788879505; x=1789484305;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1788884552; x=1789489352;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Jfr6FHf4J3HKMLFr5umwwFEv12n51Ck9PHChu4Q8jgc=;
-        b=l8C4yJnRM46maPpzcN9jFNZ04osZn5Bsc6WOdTS+X+guGOopOzloJLhLNNizPggsU2
-         1Ll6hRCNJUqX0a6+2xXFMjXw0mOYBnlEwfinUHJykRZNibWWDGJ4+swS8/uTeVR2rMUU
-         tGObQQh/YkzFFNDBIuPnSKK9ORDVOuI/0GTE2SGzMyRxEsqmmyaDuWytQgCMeOwlXxh6
-         iRQb/Td7zEVu5UtZszHyjsx3Ne1+FQ7cusUGDN1tscC6jQAPu4p6OkNFXZrMWJHZJfnd
-         lAGtRhvHxSXioDgIdzCdI6zunN9GjNJ3yRc6bg0nGo+DvHb151KQDZzNmNHsai8+UXXV
-         Ze7Q==
-X-Forwarded-Encrypted: i=1; AKwUvBx3bGIgjnYGM6vE3F9g2WqKXaZyH1jWetQ7SjPfD2fHd6O1oafs5hE7mF3z10lqf2PfGI0923OfnB6O6fINFfIa7g==@vger.kernel.org
-X-Gm-Message-State: AFuF++l8/7YWFzneWJy5hRUhqfP9CWkjHRgZEqVufCf28zKhCXNmBYJZ
-	i9URi95S21HsxmUatU8PHv/g47pnu7hRf0SNqpTj3wU5dc32Q8Ify8hN8o5HTJeXFNRME5+HiyZ
-	tA5ehQziHBKaNIHOg+TFGu3KrRecOmpNnTijQ0k1bdIMbWm6ltPN1N5WRq2/zvFHc0211wAAGGA
-	==
-X-Gm-Gg: AYBFou1yRtwTtDDB+0HoEq3jDmIc4tsn+R+ZCc0CbzX2wam7fiObDks02fWFWynT6lp
-	OAxsLrnhmCR92g42BVT4XxNf69o4AbpqEtbACAxpbDz4aWcX9cz+wjmX4WTZmCvw2fjv78KQ4WS
-	JWrsXlH9jAjc2NqtUeGBQ62hHzOOI6i55+wr6xveGJbMKG3eM+6yMs6w/O1cXn/eLNcB/b0r8ia
-	1V5aoSC1f7rZBOQ01N4KMqPYTF/e55b7xqrh8xca6mSy1XfPOVa7t7Pebb2zGCMHtYOdu0dcbaf
-	bW/1V9dKbA2Ob9Tl3qCLGklCDfXmbRCyPexLxMgeQlBf4BlxSKroyw8Y5G336C72Nt9ig7VXV+2
-	sxAjL6xnUvpQcNTN5r1wcx90K2+Qd
-X-Received: by 2002:a05:6102:5487:b0:738:1ef6:51b9 with SMTP id ada2fe7eead31-78a4a96d8c3mr12542083137.5.1788879505242;
-        Tue, 08 Sep 2026 07:58:25 -0700 (PDT)
-X-Received: by 2002:a05:6102:5487:b0:738:1ef6:51b9 with SMTP id ada2fe7eead31-78a4a96d8c3mr12542018137.5.1788879504733;
-        Tue, 08 Sep 2026 07:58:24 -0700 (PDT)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:79a2:f118:df09:fe51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485958f1493sm25191276f8f.37.2026.09.08.07.58.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 07:58:23 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Tue, 08 Sep 2026 16:57:28 +0200
-Subject: [PATCH net-next v14 09/10] net: stmmac: qcom-ethqos: factor out
- linux-level setup into a separate function
+        bh=jekOF2OhfE9K8vBMYq9LG6isiwXmYjORyhfyHiOqLIA=;
+        b=cjfCOulEhH7I5EIMy2o/kUkQjf4ZHOTjLjUTKl9OGLVt2Zo5zh70AW2EQVE3/Fw8SY
+         vO/Ww0PU9/wMTR0IDgLUGAsaXD5RDLzjwjIWqFFvJx8pin+FdKHpPEsXITRPhrQt3ELr
+         iFiOZ/yWtzHHHjfupOBcTYaBbF3D4VD1TSoFuQctYzOktTdnx2/XTG2dbIH3qRhK4aVy
+         Tdrm2QY5GGKqCYcEv2MODvT8fGWVd6wb0DZ+nMaaXjtRZXzhXEcSfaxW1raEBPriIRn7
+         NbtPmzLVPedVOEIVdF4WdRj5zmH2qM8oH8bdU1KJ8JgTGWgvS9YXHxzYLOdzQwUN1P5W
+         oO9g==
+X-Forwarded-Encrypted: i=1; AKwUvBzLPLmqQyFwPFSroojyFyEpAFm8gi/XZziNR9BLd5HMndvthtjpFDXZ7bOgdUOIlFHlp3mFOZuuNAnRf8lGJQbzWw==@vger.kernel.org
+X-Gm-Message-State: AFuF++m/6ZiSWc/T+JuCuGoB/AfyYXO4Z3B6blHvK9+D7d2UIokz+sek
+	Swy+KOZGDbho5LIze1FPjHAIiF3xBYLB8llNKfZxkXl4dZ5XO4Eg2eCxKObPO+MkjSAMjq5mDyk
+	9K7L89C0APrfEIZ6FUqQLyXhwr/R7yM4=
+X-Gm-Gg: AYBFou3uTQju0xEsDeANc7iJ4WeeY4sd2k0rn/k9zJsc32qdlm83rBCaTU+ufwcyvFz
+	m7EJjDb1q10C8DJxjXi7J2fjICBvYVaDfniDeTyf0T4++8KcZQZuRpVzdIWT3FUh51rFacHGRK+
+	CGsWP7bB6yA1tWlyytDTIpw9LRAJpWtAQC35MzzOvhI2gIJoEXqZO1W37T+NMsSTkJWV0antXde
+	vOOP8zEdk64o1OKV6igB8TJW7bREcb1fRYptqSCUqtWOMZLC/xC9slUs0az0itXKU8EMYPev6lX
+	Hzjjd4HAwM81GDBKiZQFIfQX91eBxQLpITPdEhllAxMxFMIZnRWBeXLQcQVph8awalStL++S210
+	edeoclzPrDVghhgIeMDNqesDXgy1bLQ==
+X-Received: by 2002:a05:6000:29c9:b0:485:8ecc:9415 with SMTP id
+ ffacd0b85a97d-4858ecc96bfmr18626346f8f.48.1788884552482; Tue, 08 Sep 2026
+ 09:22:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260908-qcom-sa8255p-emac-v14-9-ec212b747a7d@oss.qualcomm.com>
-References: <20260908-qcom-sa8255p-emac-v14-0-ec212b747a7d@oss.qualcomm.com>
-In-Reply-To: <20260908-qcom-sa8255p-emac-v14-0-ec212b747a7d@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Chen-Yu Tsai <wens@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com,
-        Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>,
-        Romain Gantois <romain.gantois@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Bartosz Golaszewski <brgl@kernel.org>, Radu Rendec <radu@rendec.net>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Drew Fustini <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev,
-        linux-riscv@lists.infradead.org, brgl@kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7477;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=tpTcvMP4H52TudHkrbQVYa2cd+espkFD2aaWl0S9lKg=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqoCJvjWHWOCPDXWJXS5vSSZxUqE1hzayX4vd+P
- MzfOs3fj9qJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaqAibwAKCRAFnS7L/zaE
- w9S9D/9nS3tATNyOBAs1H8Be4m1od81ZrXUJD3itvznkNicxqMMv8ZvLMS9dGpFZxxGVqCJCpPw
- UPYw9+l0sDp99MQCVj34NeuLWHZCyqGg7PUIAMCalWzSKrJI2xpHaU2fkRvkn0eIxuOe8yE9uJs
- 3SpbtbuO7PyS1myqG1r9HCU19rG2W2pEkvncOlu4twfQu1RU5MQwo80taf9II6+yVa6oMqfGoKN
- z17wT/Pkoi/SA7U7SBT/iRqTgtX8JFpwr3U9x31kg9tX4024/SR/kbhvx7Kj0nvnbIRyCJCx7sI
- /FlI1pHzymWABE0Q+mIHkInPahwxf8n5pqIMEA16/YHQ0ORs60eG3kP1aTcbIynJWUOeZ989XSw
- CZBFHljoRoIMVJ1f4px0pc8olTlqL0+bOKH/qB3mhzqIqLUB6s4gbnwGN1APBJzkOYYZYoqywbT
- DVAkL7AMBrmPbLjLp4vf5YqXM+TflWysTgvpZgZ8kc4ITXUqXl5Uhohv0fn+62af3q9oU0cRMXn
- GSUOl0EtjhFoapNY0BbUUa6jdN6LCAos4WEMMtd6sH8O0nWK3gXeuMIBw+XqZqD1wxjayvjv9ho
- D5KFGPKFgGnXDIlEphRYUbhIFi0GEmIXBcIIGgSHMrq1nqgcXx3N2dVBQ52Omn9pPtYOlel4DP8
- J3RdmF7HMPpJmBg==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDE2MSBTYWx0ZWRfX+qzcMYPX39pQ
- ueRKFNcxK9S19mfZPV3On8BpQmQpKnk47Tg2+NQqhBEkACof+JlqvGitzI05GY+wJJ0TGRTKrVF
- 1rq2c2hLe1LAoV473ptANOPI5XiSMDI=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDE2MSBTYWx0ZWRfX6PDLZCWKSId8
- GBy6r62UClEIQDMNbSg6UzLG/xbtk6C1T8XIumj3S+t98mKQj5ROKmsbGEcDTHxvqVL4pRWfX4i
- 3UtJ6n2r8wA3LXbCNy9rgKsix9egk1taQ4Q7f1DhCZnMuLVbidT22NcVsH2Tk9ApDUgICxK0tm4
- cK3TfzzzMsqfk5sbFsBVE/FWt5jw58zlSxxwVgeATGg87nlhxfxcIP/n1tq2o5+E1gNyeGlWy14
- +GqFpEgURg6k8Es2j65WEvc+oQZicsl+dcBE57f2AFmk2+2vYbN9HIW4sKJvpltuF4OlB71SVKs
- gx+zp9Gl6cBUPcqwjITBc/gssaqYXJJlkOZh0kJ/QCYToLlzTSzCFtWMLJQotVzkzRbjA0URO/0
- IT4OTlpXkY6l7ZQSIb2P8MJdhCWCeWjej7UR01vg0RVkjNBfbkhWZXcRA0ehlkOIKR91eG0EsVZ
- ijTXGino9eti/g1azGA==
-X-Proofpoint-ORIG-GUID: f1S9rYt72RHF0021DOVo1uOsKvW8fQB6
-X-Authority-Analysis: v=2.4 cv=QrduG1yd c=1 sm=1 tr=0 ts=6aa02292 cx=c_pps
- a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8
- a=dj4JEN0qHmgdNMwDfcEA:9 a=QEXdDO2ut3YA:10 a=TD8TdBvy0hsOASGTdmB-:22
-X-Proofpoint-GUID: f1S9rYt72RHF0021DOVo1uOsKvW8fQB6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_03,2026-09-08_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609080161
+References: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXBFu=W1MnEA+Eu_zzUy3qMyFRbbeLgYn0waxMdr5cAnA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXBFu=W1MnEA+Eu_zzUy3qMyFRbbeLgYn0waxMdr5cAnA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 8 Sep 2026 17:22:04 +0100
+X-Gm-Features: AcwNN1U9H3bV0zPtcgBr5_fY5_Ex_KcZm0AWkc_KXas88ZieEy0_hzjnmDi9vSA
+Message-ID: <CA+V-a8uSR2jgpYqeUxteqhSD-FuxKBT_o2519y1z35cg+3XOig@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Add syscon support for Renesas RZ/T2H & RZ/N2H in
+ CPG/MSSR driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ahead of adding support for firmware-controlled EMAC variants, extend
-the ethqos_emac_driver_data structure with a setup() callback, implement
-it for the existing models and move all operations not required in SCMI
-mode into it.
+Hi Geert,
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
----
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 99 +++++++++++++++-------
- 1 file changed, 68 insertions(+), 31 deletions(-)
+On Tue, Sep 8, 2026 at 1:31=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 17 Aug 2026 at 21:25, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > This series adds syscon support for the Renesas RZ/T2H and RZ/N2H SoCs
+> > in the CPG/MSSR driver. The CPG/MSSR block on these SoCs is a
+> > multi-function block that integrates several system-level features beyo=
+nd
+> > clock and reset control, including clock monitoring, write protection,
+> > and peripheral configuration registers.
+> >
+> > For the other IP blocks to be configured a syscon support is provided i=
+n
+> > the CPG/MSSR driver. This allows other drivers to access the CPG/MSSR
+> > registers via a regmap interface.
+>
+> > Lad Prabhakar (7):
+> >   clk: renesas: r9a09g077: Register SYSC regmap
+>
+> Thanks, will queue in renesas-clk for v7.4.
+>
+> >   arm64: dts: renesas: r9a09g077: Adjust CPG register region sizes
+> >   arm64: dts: renesas: r9a09g087: Adjust CPG register region sizes
+>
+> Thanks, will queue both in renesas-devel for v7.4.
+>
+Thank you for picking it up.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index ab1bcb7eb18e22f01556c190f7d8cd8eeba4d0c9..509a5368e69a8fa440bf3b4f58f7b09a683558f3 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -5,6 +5,7 @@
- #include <linux/of.h>
- #include <linux/of_net.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
- #include <linux/phy.h>
- #include <linux/phy/phy.h>
- 
-@@ -81,6 +82,8 @@
- 
- #define SGMII_10M_RX_CLK_DVDR			0x31
- 
-+struct qcom_ethqos;
-+
- struct ethqos_emac_por {
- 	unsigned int offset;
- 	unsigned int value;
-@@ -95,6 +98,8 @@ struct ethqos_emac_driver_data {
- 	const char *link_clk_name;
- 	struct dwmac4_addrs dwmac4_addrs;
- 	bool needs_sgmii_loopback;
-+	int (*setup)(struct qcom_ethqos *ethqos,
-+		     struct plat_stmmacenet_data *plat_dat);
- };
- 
- struct qcom_ethqos {
-@@ -200,6 +205,9 @@ static void ethqos_set_func_clk_en(struct qcom_ethqos *ethqos)
- 	rgmii_setmask(ethqos, RGMII_CONFIG_FUNC_CLK_EN, RGMII_IO_MACRO_CONFIG);
- }
- 
-+static int ethqos_hlos_setup(struct qcom_ethqos *ethqos,
-+			     struct plat_stmmacenet_data *plat_dat);
-+
- static const struct ethqos_emac_por emac_v2_3_0_por[] = {
- 	{ .offset = RGMII_IO_MACRO_CONFIG,	.value = 0x00C01343 },
- 	{ .offset = SDCC_HC_REG_DLL_CONFIG,	.value = 0x2004642C },
-@@ -214,6 +222,7 @@ static const struct ethqos_emac_driver_data emac_v2_3_0_data = {
- 	.num_rgmii_por = ARRAY_SIZE(emac_v2_3_0_por),
- 	.rgmii_config_loopback_en = true,
- 	.has_emac_ge_3 = false,
-+	.setup = ethqos_hlos_setup,
- };
- 
- static const struct ethqos_emac_por emac_v2_1_0_por[] = {
-@@ -230,6 +239,7 @@ static const struct ethqos_emac_driver_data emac_v2_1_0_data = {
- 	.num_rgmii_por = ARRAY_SIZE(emac_v2_1_0_por),
- 	.rgmii_config_loopback_en = false,
- 	.has_emac_ge_3 = false,
-+	.setup = ethqos_hlos_setup,
- };
- 
- static const struct ethqos_emac_por emac_v3_0_0_por[] = {
-@@ -262,6 +272,7 @@ static const struct ethqos_emac_driver_data emac_v3_0_0_data = {
- 		.mtl_low_cred = 0x00008024,
- 		.mtl_low_cred_offset = 0x1000,
- 	},
-+	.setup = ethqos_hlos_setup,
- };
- 
- static const struct ethqos_emac_por emac_v4_0_0_por[] = {
-@@ -297,6 +308,7 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
- 		.mtl_low_cred = 0x00008024,
- 		.mtl_low_cred_offset = 0x1000,
- 	},
-+	.setup = ethqos_hlos_setup,
- };
- 
- static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
-@@ -692,6 +704,58 @@ static void ethqos_ptp_clk_freq_config(struct stmmac_priv *priv)
- 	netdev_dbg(priv->dev, "PTP rate %lu\n", plat_dat->clk_ptp_rate);
- }
- 
-+static int ethqos_hlos_setup(struct qcom_ethqos *ethqos,
-+			     struct plat_stmmacenet_data *plat_dat)
-+{
-+	struct platform_device *pdev = ethqos->pdev;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ethqos->rgmii_base = devm_platform_ioremap_resource_byname(pdev, "rgmii");
-+	if (IS_ERR(ethqos->rgmii_base))
-+		return dev_err_probe(dev, PTR_ERR(ethqos->rgmii_base),
-+				     "Failed to map rgmii resource\n");
-+
-+	ethqos->link_clk = devm_clk_get(dev, ethqos->data->link_clk_name ?: "rgmii");
-+	if (IS_ERR(ethqos->link_clk))
-+		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
-+				     "Failed to get link_clk\n");
-+
-+	plat_dat->clks_config = ethqos_clks_config;
-+
-+	ret = ethqos_clks_config(ethqos, true);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos);
-+	if (ret)
-+		return ret;
-+
-+	ethqos_set_clk_tx_rate(ethqos, NULL, plat_dat->phy_interface, SPEED_1000);
-+	qcom_ethqos_set_sgmii_loopback(ethqos, true);
-+	ethqos_set_func_clk_en(ethqos);
-+
-+	switch (ethqos->phy_mode) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		plat_dat->fix_mac_speed = ethqos_fix_mac_speed_rgmii;
-+		break;
-+	case PHY_INTERFACE_MODE_2500BASEX:
-+	case PHY_INTERFACE_MODE_SGMII:
-+		plat_dat->fix_mac_speed = ethqos_fix_mac_speed_sgmii;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	plat_dat->set_clk_tx_rate = ethqos_set_clk_tx_rate;
-+	plat_dat->dump_debug_regs = rgmii_dump;
-+
-+	return 0;
-+}
-+
- static int qcom_ethqos_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -713,23 +777,20 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 				     "dt configuration failed\n");
- 	}
- 
--	plat_dat->clks_config = ethqos_clks_config;
--
- 	ethqos = devm_kzalloc(dev, sizeof(*ethqos), GFP_KERNEL);
- 	if (!ethqos)
- 		return -ENOMEM;
- 
- 	ethqos->phy_mode = plat_dat->phy_interface;
-+
- 	switch (ethqos->phy_mode) {
- 	case PHY_INTERFACE_MODE_RGMII:
- 	case PHY_INTERFACE_MODE_RGMII_ID:
- 	case PHY_INTERFACE_MODE_RGMII_RXID:
- 	case PHY_INTERFACE_MODE_RGMII_TXID:
--		plat_dat->fix_mac_speed = ethqos_fix_mac_speed_rgmii;
- 		break;
- 	case PHY_INTERFACE_MODE_2500BASEX:
- 	case PHY_INTERFACE_MODE_SGMII:
--		plat_dat->fix_mac_speed = ethqos_fix_mac_speed_sgmii;
- 		plat_dat->mac_finish = ethqos_mac_finish_serdes;
- 		break;
- 	default:
-@@ -739,24 +800,13 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	}
- 
- 	ethqos->pdev = pdev;
--	ethqos->rgmii_base = devm_platform_ioremap_resource_byname(pdev, "rgmii");
--	if (IS_ERR(ethqos->rgmii_base))
--		return dev_err_probe(dev, PTR_ERR(ethqos->rgmii_base),
--				     "Failed to map rgmii resource\n");
--
- 	data = of_device_get_match_data(dev);
- 	ethqos->data = data;
- 
--	ethqos->link_clk = devm_clk_get(dev, data->link_clk_name ?: "rgmii");
--	if (IS_ERR(ethqos->link_clk))
--		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
--				     "Failed to get link_clk\n");
--
--	ret = ethqos_clks_config(ethqos, true);
--	if (ret)
--		return ret;
-+	if (WARN_ON(!data->setup))
-+		return -EINVAL;
- 
--	ret = devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos);
-+	ret = data->setup(ethqos, plat_dat);
- 	if (ret)
- 		return ret;
- 
-@@ -765,21 +815,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(ethqos->serdes_phy),
- 				     "Failed to get serdes phy\n");
- 
--	ethqos_set_clk_tx_rate(ethqos, NULL, plat_dat->phy_interface,
--			       SPEED_1000);
--
--	qcom_ethqos_set_sgmii_loopback(ethqos, true);
--	ethqos_set_func_clk_en(ethqos);
--
--	/* The clocks are controlled by firmware, so we don't know for certain
--	 * what clock rate is being used. Hardware documentation mentions that
--	 * the AHB slave clock will be in the range of 50 to 100MHz, which
--	 * equates to a MDC between 1.19 and 2.38MHz.
--	 */
- 	plat_dat->clk_csr = STMMAC_CSR_60_100M;
- 	plat_dat->bsp_priv = ethqos;
--	plat_dat->set_clk_tx_rate = ethqos_set_clk_tx_rate;
--	plat_dat->dump_debug_regs = rgmii_dump;
- 	plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
- 	plat_dat->core_type = DWMAC_CORE_GMAC4;
- 	if (data->has_emac_ge_3)
+> >   dt-bindings: watchdog: renesas,r9a09g057-wdt: Add CPG/MSSR syscon
+> >     support
+>
+> This is now in watchdog-next.
+>
+> >   watchdog: rzv2h: Add syscon support for WDTDCR
+> >   arm64: dts: renesas: r9a09g077: Use CPG/MSSR syscon for WDTDCR access
+> >   arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
+>
+> These two have a hard dependency on the first five patches, so they
+> are postponed.
+>
+Agreed, once I sort out the series [0] maybe we can take all the WDT
+driver changes via renesas-soc due to its hard dependancy.
 
--- 
-2.47.3
+[0] https://lore.kernel.org/all/20260814191415.2110732-1-prabhakar.mahadev-=
+lad.rj@bp.renesas.com/
 
+Cheers,
+Prabhakar
