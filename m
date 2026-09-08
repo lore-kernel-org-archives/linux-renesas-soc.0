@@ -1,149 +1,121 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF8F38DC74
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 07:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD60E39A7E7
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 07:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788851538; cv=none; b=lKCYovWpMWXgFZXKe9b+L3+z9kCW4kXZbynl7vej6ArqZVZbWPviQXuqxTjPBMBjJ7+jQBRbTLbF9j/YETptF0RkKL8gi39/7nNaJ7qu58VTU1DVjzLTFUFk3yyEtWfyQLCPxuwkAgEoUg9KCsbFYpSmBrLiaN8Rp3H+4guIhNc=
+	t=1788853135; cv=none; b=r8e+aZD/dh2in1sb382Lw0nN5OwW+2NOyZf40WhUXoGz9xHHZNsZ++u/nEBJYmGD4WOcsBhxkxXTvKenVRHi6BSVVLHL9Ktm/P66UXMNWc++41Q+Q7FX7iZ6YILiiPqEMtYR+lcxWtcgXCqTwMpvqdYxR0y6uDaL0B87JUUiAPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788851538; c=relaxed/simple;
-	bh=gtxbTgbppj34ZTU+D+eqsM2L4hzAP6mpVxsCSxwIZKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQfq4INi/grrEiaKjO2djHdIi5+7ZbqGs4tLqmJdUq1PIQz1B5EydzpXc8qqaoLoLjDYK9f+HatCvFEwK9BD9NTHTjKrX2lFRRaJog+KvLHvOZKceodPFkUuds/p8NbYQ08lo+/K2ZT3XApD8sb/lDRkS+CuxWtQzcRZjw7gUdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XECS56H+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RviU+lGb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XECS56H+";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RviU+lGb"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6886M4gU2363336
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 8 Sep 2026 07:12:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=E3zkujL65pMjgKLSlU6wYiUK
-	MwvIEv4ajalF5jOdh9c=; b=XECS56H+EXYswaZG73P3GQ+f3tNMZUd71/x+iQ42
-	ZfGE9lPVXBcTey5Rwf9Lz5PJfVmkncqWYnaaN/zyz+RkxBLUGorWb11ddV5cH764
-	p+kRgmyrjg9VDjDded58M4jS6Zgg0iXs4SEDqEeJazAybOW+4zIIfuHqviOy2gse
-	OHSqRt1CguJ/8+rFhdDA/4xH9d7tulGMnQXoB00KbISaRMbtOE/53kTsfPwwwV5y
-	o7YqWV+U+nt12AkNWXZA5A+yqO/PVGZ8mHGJBu3jFT1eNlxURFm9ri1OTLyVuhLb
-	pijHsUUwi2c+OLh1R+cysQ+o95+KxRI7L3RmU63MbcHupQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjagugrm5-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 07:12:16 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-92e5fc4c7e9so405056385a.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 00:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788851535; x=1789456335; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=E3zkujL65pMjgKLSlU6wYiUKMwvIEv4ajalF5jOdh9c=;
-        b=RviU+lGbjc31gqppG+/OqUHHXtourLwg5+ShdMqK0iT9Ot4T3lykUZif/sMWfWB3mT
-         druuV/wSPUECzbgSFnXCnCMoNHHIEeM1ypNGSv608T03+MbklnV+glktE4iYi93nrot5
-         G6uylIa1Zk8cpJRoAJIbiKCJwluMKcw9PyGIyWuF49cbToujV4q9HfeWHWsLTD5LbH7z
-         KqwAqJJWDesWw3xUT9I6YhHXRkeiHZ/YH+WgIEegb9sXRsQTHJ88qSEWU63S7kLfvkqv
-         bVG7Ak9R+SZit9wvLMXH4jsOWGVBAvxg9Gw1BCTTSikEVbi1XtocmG55X3Aj62ZayN+V
-         TQWQ==
+	s=arc-20240116; t=1788853135; c=relaxed/simple;
+	bh=6Zc6vX1bU73eq1imPj+MTEbo+7J7RWbcsZWKEYMmjQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jG2sPI6EHwsKSOOfImc63hFk3IGZYFrgnlRBYI53W+/oeAU5iLx3sF3sNV/QX1j1YgHUbzYYrRNJa5ubSdhhf39bXafU+9/6c287inve2okggAS/aDfHY2F5WYrwXwVzL3JpO+KJV1QPdx6YnCnbWXyOSoQAVh3jXBjPq5/1aUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-783fffcfb96so3296464137.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 00:38:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788851535; x=1789456335;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1788853132; x=1789457932;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=E3zkujL65pMjgKLSlU6wYiUKMwvIEv4ajalF5jOdh9c=;
-        b=rQO3tgs/80WJFSZ3qworN3jDZlS8kjoB2Au2RS0KH/a3yxJ5rsGaVxv/e2b5EHjPdd
-         JCUva/Ka85mZE6d8D4zE+tqBQ+gcMjF+Vj8p6CaFOQjF+9fHhaiuXXK0kOXSXIIGsx9K
-         vAFasYfFmqhR3ItQb/KlxSYFO3T3wCEfIxclhTJp0b7O0EJzvecvcQZ0IxlxxxaHxfWa
-         sACjrMuCCBZVW2AHy/Kr18aiplhcQxSDZppcWQDkoqxdedD6Hqew1zg94kXn4U1i92lB
-         Yd9XEVBxAOcdNB8HSwTi4RGaKPci4RrPz9RGkMr4arwrkddlKEBUQNjYfdlnWoQ4vGLh
-         11cg==
-X-Forwarded-Encrypted: i=1; AKwUvBwEAwpim2qcaBKHCv+LEJdQ7/MPQxqkuokD+2tdsWLzX1uoBaiJ7z+1+DOVTzHgbkzNPPtmOm7ZaSh3LEeBUiQwvA==@vger.kernel.org
-X-Gm-Message-State: AFuF++nMLhmS/36bF9fcsoGCJQ6kb7qayLkqVeRWQj3PCPHJa1hKAmhW
-	GCnt1u+niGdT0yCccPs7BtZSemR2eAIYaCNOVKT8CTQ67l3oNVbMsCOPODH9mqb2qxP98Arrqzq
-	KHRE3zvyUhc9E41u43Wdkp52R2d1KXk/bq8QyQXqhI/zZvmzxcXH2VMDQ6S/MCGQDt0pOHyiUAA
-	==
-X-Gm-Gg: AYBFou3NNFnko2x3yIGxa9bnvvYPXjJb0Jtvw1oe3SdDzJHB6zCbvZcNUCk4pIiUVoG
-	GXZfWuVwkA++4HCCIPvv0shzrYj/8OWVMuTC/8VNaZQkwX8+T0agd+nudP48xjuHmcVVYVSB16G
-	5vC/F9BUOkJw0vCBqSBtGkDy8UsNNzQofI92folymzpS1afi73BtWNbxcGTUW3jcRINUwzJ1idk
-	tmMob8/UcM8TBwKnERdBAV4p3JkzJEB50cA3CDWHxJJ7uognJSGaWqy0y5eRGDeFdI56KELM2GR
-	qXFVshopfQjEF+dh1rltpaXps55mTg1sbEPOSusPHQ/2NvKquPD47fFjGcYdwgTzQEk1TzLK1z5
-	KqJDH4645CRc=
-X-Received: by 2002:a05:620a:414d:b0:939:5c30:fcb8 with SMTP id af79cd13be357-939803ae0f5mr2973020585a.6.1788851535403;
-        Tue, 08 Sep 2026 00:12:15 -0700 (PDT)
-X-Received: by 2002:a05:620a:414d:b0:939:5c30:fcb8 with SMTP id af79cd13be357-939803ae0f5mr2973015885a.6.1788851534813;
-        Tue, 08 Sep 2026 00:12:14 -0700 (PDT)
-Received: from oss.qualcomm.com ([86.121.7.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4858bc74298sm30591012f8f.6.2026.09.08.00.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 00:12:13 -0700 (PDT)
-Date: Tue, 8 Sep 2026 10:12:12 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ulf Hansson <ulfh@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pmdomain: renesas: r8a78000: Fix lockdep false positive
-Message-ID: <cdtn7tdiuum5fzd7tt2idkrm4ioybmoqdlyqmh64ouyub6tkel@b3qmu7igqya2>
-References: <86da16a61c58eb08419f7528237c124e519f0a72.1788791506.git.geert+renesas@glider.be>
+        bh=9FJoKkivoTNtHINOjagJJ4U0TVNQrepQ/joiDIuSwkg=;
+        b=c+StMZP5yy57OOiHL8M8+jYqqmK/igohbEogNkh4nUrKUfqw04uzrAhemyg29Mbf59
+         cveccRQMPcz3XjeuJJZThMAtf5sCi2dRfnry9q6hTKyN/AwlwqSj7ZjUT8wex0jjaTDZ
+         ry2/Bx6WQLATb4pCZOD/3ZQ76x3NY5RjBpr4FLIDvniefr9sd5aZCInbhvrItHHA7t+v
+         CHeOBNV3rbBicp6zIcWCeng57EbnCEU/Pgy6c5xDibcj6DBhN+SkyYkcVMVmgTc5FufH
+         S4HgMysQInyaQkDS+QKoC/H8V+M3IVf/8khfU+rqybP8m9/zvb1owb+yp1Uxf91wX1IS
+         w31Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxLhkNvFuzaG0ag3fuZAS+tKTIPxY+Jirm/B013OQWmvyWlVO7TdU18HEM3JXukf7i8Jjof1IsYAU0s0ZfQelL5oQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nD5mrdvUhESm3MxCmy5n+u9Seb1GzfVzPHyRioFvtl1j86dgbj
+	012cmwgHM1PMvlYjPxkaZjeMyRHDS+sAMcS3HFA2IEyGXlhbR/CQ2FGMhot0IoIM
+X-Gm-Gg: AYBFou3sstew6MSIaPJd384LsaOUtnPs5/ogcS+uAt9hkU4eOlxDS0O824qHC1ToVtB
+	oWlnrxQZzuP5IgGKA+Zt2jEoke1nxj4s1oZnEYLrYMUwZilX2xKBsPiBpqNvU8kxYV/D78KSLC1
+	rmGAUNatAOE0PA/Vm8AK8zJ+eiL3zdkQYlPMvSzmVx9WvA3zp0SJ8uDG01pxt/RUX6SQmKAx5YL
+	sjLZaPpc88ljYyNifoSOvWrThMRbN0QihJInZV8R983qfDz/vsSQTvP4RJ2QBlsrOV0/Zk09R+U
+	KFtgv6zhHkCwR5DrF+3QBAYvmpvYO5QobN6SSfPnrslonTpo4mFXm0+KmSsHYExEwzTQwJSfRSw
+	1xBzgLIM3z2e21Zf41YOg4A08ueEU24JNhXll9C1N0w3byEY7uVXSqeD0feMTKoPtSgVkVfSvLA
+	Gsk+VHoHVPvuMzYhb+vT5P+oYCtgkUQxldmjZL5MtrsHEDzk0CUct7eYWsQdUjmG8hNaP/PBJrs
+	xsD38G3sHfwuhdnJGSVzunvhg==
+X-Received: by 2002:a05:6102:80a3:b0:77d:9fe9:1716 with SMTP id ada2fe7eead31-78a4a6e83e9mr14376965137.2.1788853132548;
+        Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98097de57d4sm7754718241.10.2026.09.08.00.38.52
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-97c7afa485bso2439772241.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwVoWNM6N2byioOZXjj/qTDFRwjrjqHJDMAAvjuS13pNXN3npMY5hez/UeFEX387RYpQ+6ytFOwbjZ4fqaM49PcLA==@vger.kernel.org
+X-Received: by 2002:a05:6102:b02:b0:786:c86c:4f5e with SMTP id
+ ada2fe7eead31-78a4a6e7023mr12540904137.3.1788853131839; Tue, 08 Sep 2026
+ 00:38:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86da16a61c58eb08419f7528237c124e519f0a72.1788791506.git.geert+renesas@glider.be>
-X-Authority-Analysis: v=2.4 cv=TqLWQjXh c=1 sm=1 tr=0 ts=6a9fb550 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=dePp4Gl7O00gmbwhyVsZwA==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=KcPQinvyHwY3qny0q90A:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: JkvaALTSW2ZfNrKMFUbUbO8QH4Q0SHAa
-X-Proofpoint-ORIG-GUID: JkvaALTSW2ZfNrKMFUbUbO8QH4Q0SHAa
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDA3MiBTYWx0ZWRfXxa+zx/mWCxUk
- KojPi/ud49WYB5/rZcreSJMNItU4lW27uKOPYxJrXFhF1DEQULXOzuz5Yg++klNckgoeD5D87Ce
- t+snHo+ECGcfGSoJ5YGf7w91EtK5UBU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDA3MiBTYWx0ZWRfX/pips8Dxc5QK
- B7oqjEJvvnT1bAdYZ4vQP3BnXKyVe+otAWSgTo6P77dcw2y+AuUjx3gWFMRXgI0GDF3wXp27wtP
- m1x2iM4FRUem2Dw62nK2PD6tm4Egfzgt+1tSe+VjIXTyS8Df1Gjlcayakh1n+24eTkZExhYVI5g
- S8K05AHVCoUaVkHII96cv5OJ8WWx5B8nuB34bcZZPvciTZB2h2NrUSpCM1DxHsElNBv3vi/N/0f
- qN1blXfRR+pOHrcveAN7wYw+zLfKiUGcqUxJAZYGTgMl0sEf9kwIZu1G//qRStWfJ/pngEC07hZ
- QriAhwtI3gYVxyO/sBnCXISWBEGEZJDjf6A4fflTEgFijwGUKAvE95XbARtxt+ewAbjuXLuVkPc
- cv5txFUDRL9Di7J4WN3bR1NlSlxioZyIY7uhNYKo2Az/kzAy7Ah0oZnVvcvQ5HuT2z5TnZzjpsp
- lU8AK5EbRrWlavOsKxw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_01,2026-09-07_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609080072
+References: <2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be>
+ <CA+V-a8uXz6ehq3Mdgri0zT9we7kE+=-XZjahfVg3BBu4NGxh2g@mail.gmail.com>
+In-Reply-To: <CA+V-a8uXz6ehq3Mdgri0zT9we7kE+=-XZjahfVg3BBu4NGxh2g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Sep 2026 09:38:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVFwTQkdWZ0M2fWE3JCKT9fJ52roWBec8FK-=bm=BoWrg@mail.gmail.com>
+X-Gm-Features: AcwNN1W_wiXo_u_6vCxRFTrWJy-fQIHFj_Po8KOr7IuAmZBSsWV3hZnj2lA4-7s
+Message-ID: <CAMuHMdVFwTQkdWZ0M2fWE3JCKT9fJ52roWBec8FK-=bm=BoWrg@mail.gmail.com>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r9a09g047e57-smarc: Update CAN transceivers
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26-09-07 16:32:01, Geert Uytterhoeven wrote:
-> Lockdep reports a possible circular locking dependency when attaching
-> devices to an MDLC PM domain:
-> 
->   - During creation of the singleton PM domain:
->       A. r8a78000_genpd_always_on_singleton() takes r8a78000_mdlc_lock,
->       B. pm_genpd_init() takes gpd_list_lock.
-> 
->   - During attachment of devices to PM domains:
->       A. pm_genpd_add_device() takes gpd_list_lock,
->       B. r8a78000_mdlc_attach_dev() takes r8a78000_mdlc_lock.
-> 
-> As the former is done only once, before any devices are attached, such a
-> AB-BA deadlock cannot really happen.  Fix this false positive by
-> introducing a separate lock to protect the creation of the singleton
-> domain.
-> 
-> Fixes: 89e6a71b35703f10 ("pmdomain: renesas: Add R-Car X5H MDLC driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, 7 Sept 2026 at 20:46, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Tue, Aug 25, 2026 at 3:57=E2=80=AFPM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > The dual-channel TCAN1046V-Q1 CAN Transceiver on the RZ/G3E SMARC EVK i=
+s
+> > currently modelled as two TCAN1042 instances.  Improve hardware
+> > description by describing the actual transceiver.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Compile-tested only due to lack of hardware.
+> >
+> > At least the TI AM68 SK DTS should be updated, too.
+> > There may be others ("git grep -wc ti,tcan1042 | grep -v :1$").
+> > ---
+> >  .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 25 +++++++++++--------
+> >  .../boot/dts/renesas/renesas-smarc2.dtsi      | 13 +++-------
+> >  2 files changed, 17 insertions(+), 21 deletions(-)
+> >
+> Apart from the sysfs file name changes everything works as expected.
+>
+> Old path                                               New path
+> /sys/class/phy/phy-can-phy0.0            /sys/class/phy/phy-can-phy.0
+> /sys/class/phy/phy-can-phy1.1            /sys/class/phy/phy-can-phy.1
+>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Looks OK to me, so:
+Thanks, will queue in renesas-devel for v7.4.
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
