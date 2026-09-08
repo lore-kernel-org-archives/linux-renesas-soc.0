@@ -1,253 +1,220 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11020081.outbound.protection.outlook.com [52.101.228.81])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FC31C84A0;
-	Tue,  8 Sep 2026 01:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788829535; cv=fail; b=OkOG8Eku0IgVOxraQhixLTtfzZSw3eg6PZbsxzdLcV1WW3VwOs+1x/1a1Lm6rK6CAai9R958Mqskx2hLD6kiJdDo+2ZAN/UFhFtmAOwUTNEmwLNigaXf3OkBwhpT2EQrwhloyeAnt5cEpTykPeCs7NUh00A3Yb6GRkQSak+StMs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788829535; c=relaxed/simple;
-	bh=6yLh671ywjfoq+14voEty+D02dm5nUXwG7MB1XUdr+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HkKx4R0OKSg/SzHNEECruqnfjvRVfFiPjkp/Vhu00P0mBF9VeIYgQqlMbAsK8R4uwBvt55WF/Y/7fIyGe494WI5b3B0iLLsl3YmgKN8/++Fr8TCgtkkHI/D1+SeMMlLNQsyQn3B/cTmoIMEHHhUImjnZoZb9cH9IluVXKh72LZM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=jaabjjXW; arc=fail smtp.client-ip=52.101.228.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E66E381EAB;
+	Tue,  8 Sep 2026 06:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788848932; cv=none; b=pxE4pfY2ImudEqSfU4LVFxp663LrfftwsSukU+GbQJcdlCjgcMtLQj9e/dNUue8AgoK5fgQk/dEGzFkVIR2iFJgn65sMIncol5AG0Q0RITEUl5keMuqj1+hypdydMHh0n6jEl/RTZITbt9Qr/8vdQSuYWFhBjhnrHNC5mWR1FfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788848932; c=relaxed/simple;
+	bh=LhWyxNFF5/h/QNyoCyyxMYBjcwXsgrhpPBSROaSrQZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WdBWjYxwePWKB1Eu8w3XidiPAakrmMdtOY2fISnMkT3sSt3dZqCODQEG7tpPhNdFUibSH8oEegUuUirJ+OJ7cFky1LLVxfsob7nB3l7pPdctiu4ZLQGBd5ZMT87ML1/tR+nG6lMW7/m0MyTIttAdAgpEvKjxECQazN/7BwFEoEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZyGrn1G9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="jaabjjXW"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ftfcqczgfo7DmXG0b0pJphN/P8Z7bhXEsTzefh7yMgs/OK+jl0nuNmd6qiLE+nEmvGIpZYSVdxc4dFiVyCeJhfTEYjYg3VCCzryfFCimK1DLa1BXYfp2GksJtrTIZfWpL9MeAU05tb2ua24Z/g2LxJUV3cKgo3YEcHSH6ZoGMtk6dYUioFmu6RbogtDubNnan6M3Evui/kqfFwxI2gi+n4pNtrqk9g9RfHwOQFQr6VBkQTxspvi2NukyoyzidrFtcwHPUBAhUrZQQHRYFVJQfk4FkuszZKafh7Xhh0ZWRDMhuLd5lD+6MRuwN6GP7KUstqGqemOZXmDxtEAUCpUpkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GTIEus1Qya2B+HWhWJC0EJBj7G4JfsNhTMlecNLnIeQ=;
- b=vrmzssmGLU6Zaib5WX3Hp37WpMuxk4ze/oIEIpgdOf+D0eTYoZw1UnbOBoSE1Xzr9rk+wZRpfBlPjauLOqWtGqxUVZ4f+WdPDkI07TYFgojbIIJlVplhiwn5NWwurKtMns7QQkh/ugu2l+ih2Vf6A3lcZkw29JTM+L1ggh6/2y/S3znhibXo6FNsDtj7lK7GcvtDlhjgGNGPr3fG3GxCFQVVByYBD3Z7EyYoaW99Ewtp0e/kyetcBVWTsuKt8wbp2sAwSuYg4IFBmnHf3hHVUWC4x5hf/KIR4xFAWnEYm41untcOH5Dy6yHue+UrRIu7+3dBzpodC8hLEha6VoY0Bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GTIEus1Qya2B+HWhWJC0EJBj7G4JfsNhTMlecNLnIeQ=;
- b=jaabjjXWyHfTqokHLEQcEGLxoJImVFiM3AX0978YpgnoxIq/Ed/Z3IhiDTk4/v+eYarTZeTySJGQx0SwcKvwc4ejdMvwg5A9yXgwVlbuXLV16O1ZtfImuMqbqQsqHe2l1KdeSEzhOoGDEL7BYzUFvHyzo87dB+PDU90xWgaQRJI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:38f::10)
- by TYWP286MB2070.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:161::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
- 2026 01:05:27 +0000
-Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
- ([fe80::2305:327c:28ec:9b32]) by TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
- ([fe80::2305:327c:28ec:9b32%4]) with mapi id 15.21.0382.014; Tue, 8 Sep 2026
- 01:05:26 +0000
-Date: Tue, 8 Sep 2026 10:05:24 +0900
-From: Koichiro Den <den@valinux.co.jp>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: rcar-gen4: Add missing PM ops
-Message-ID: <74il3j2dzfdt4xhqrfjkifhnpnmgqtplon2mtzfjzkbszwegi7@vou6a5rshcvr>
-References: <20260907163554.725127-1-marek.vasut+renesas@mailbox.org>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260907163554.725127-1-marek.vasut+renesas@mailbox.org>
-X-ClientProxiedBy: TY6P301CA0025.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:3bf::7) To TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:38f::10)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZyGrn1G9"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D553CC24;
+	Tue,  8 Sep 2026 08:27:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1788848831;
+	bh=LhWyxNFF5/h/QNyoCyyxMYBjcwXsgrhpPBSROaSrQZY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZyGrn1G9z+JkVfsC844vkJ7jFpV4SaW2LZm2G+58+CUymvkc/BLy3zOMjxmpuShqR
+	 yMjDsEu0eBl8WdVoyo0vMQ1Y5zFNzyLKpb0hJTNcBq7zQC0efu+5c4JDqxFg3w6aZx
+	 Z2YFfmfTyu9+lf1s0V8u5ERYZ3o05c8dDtHZxlXE=
+Message-ID: <7e3af3a6-ec41-4d82-b294-d1b9d78964c7@ideasonboard.com>
+Date: Tue, 8 Sep 2026 09:28:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY7P286MB7722:EE_|TYWP286MB2070:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95281513-aff1-4337-1f24-08df0d45449d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|23010399003|7416014|366016|1800799024|376014|10067099003|6133799003|22082099003|18002099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	anfuG/TvWw3vTKA11CSJFCjSEnRwPSxh63zV/G4b9MM+LwJIJrEl3MaS/PXPoXm6y832DYdtqyo44HlH+ChTugbA+utd8xGVavFosNfo2JIZfINw78izKprTnRFxR2sjVrTjxup3Z6xccHScWSJI5W4YrwNl8y8vjqT+nNZ73SSqGjkblDNSyNgDga2VokI1R3gQkgWkWRKwrCOLv/qoMxyXcagfYXEXRjgvQRraGy/13udZaaz+s4YHr2sC5z7iHubIJvGZUpT6R7STl+ho7GR64Mqk5l+o5RJAJLNCexXH3JnszWKD7Hg2TgZSGvCIAiSEPNWGHql5585kYQPvGuRBLq+qY3XpDCUrMvC+OoVDTNkoWW5ON17cHYgbr2XSwJ7ZFqPpZ9R1CBsIdzkVH9247xXCzAmNRtTujg6KEAT4OU2ziAIcUAGbCcbBlqG9FxntsAoTPA3ffrN37P+MHnzbve27s0pxkKaX5hPPaFI1ara6+1zlFXUTCK7c4YvNdSXZErf5qvisfUCyCa/tjc2ipsj0i1DvztmAY7ciSH39+ge8laX1aDB2SdvRU8MTMbVnjEiJi5xL2WqE58AEGf7Mw2akqtVkOn3gt4tOiBO+jAMoq7r4XkRAMmlxnIG8o2Rs1jtRaUj9rjQYTENvx24qzTM+WGK5WwuNzi7YdBU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(23010399003)(7416014)(366016)(1800799024)(376014)(10067099003)(6133799003)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U21oU09GTW9ubTNoR1g5VW5PMlMxdngyVGZRVDRVanZGVm1lMTIyb0NDM2sy?=
- =?utf-8?B?SkJZRW5LeSt4R0dGQlRVYTlqQVFvWlhySHhKdERZVGJHMDNTdXdFZ29JeFFm?=
- =?utf-8?B?ckhqeFlJbFNyTmRXNzd2OFY1enBYL0hlSlk1RmIxelU1OVYwbWZ4QWdOK1NP?=
- =?utf-8?B?MjVvUzBiamJ3dFBSVDFDVzRGTHJhWkFJWFYyVDFSN0JITmN5SlFVZzJ0V0t4?=
- =?utf-8?B?L2ZOdXJRRElYaVNtUjhKM29uNVJpeHFnalBLSGpldFgzVHUyK3h4c0h0RHd3?=
- =?utf-8?B?eGJBOUZJcTZXS2tDL0VTY09WWE9malE3ekczM1Y2VnNVT05yN1drakx0bUtU?=
- =?utf-8?B?bjU5OGdtUHk4UlV2cnFBQkN1OGZqS0NwZjdSNmhnaHNrYnliRjg3LzdBV2Zx?=
- =?utf-8?B?bS9haFhLNDZiTk1KZHBjbzBYSW9uR2NLbnhUNzVoQVFLeVdZVkowS2NuKy9I?=
- =?utf-8?B?TzVGRXdyaVgxdkpMZ0NvODJPS090Uzc0VllHSTFZcmR1cmgxakh4endNbFdT?=
- =?utf-8?B?bmVXUHVob2dVN1Nnb0RzaUF4YUFGY0JNdmRkMllaZk5xTkx5SGV0YjdNZnBB?=
- =?utf-8?B?d1oydGx3U0hMdHc2WjhkRHJwbmFweDN2eHhGMmN5V3lCSlNEMEVoQldzYVlL?=
- =?utf-8?B?ZHI1UUVBNDZkZE9VTDAvT2I0aXY2YzJjaVR4VENXeFJyVDMxdVNSOWNhaVp3?=
- =?utf-8?B?L0dzNlRSMHlZV2xPRXRudEZldUxSeUpzMEhTRjMxY0hPQXVVSnM0UlZNVHJh?=
- =?utf-8?B?MlNVcXEybHA3NXl0UXE4ZC95TW1idVVUdnRDSGVkV2M3SzN0ZUk1Wmh5R0FC?=
- =?utf-8?B?VER1c3c2dVRVZCs0QVFHWTNBK1RCNzBaV1lzTTZNY01zRGp5MHJBNjFYUFdv?=
- =?utf-8?B?RFlrZnc4SW9hb1ZUQk1vVEhDeHoxSWlpYmk5UnQxUzZIQ2ZVQk1HVk1tWjJz?=
- =?utf-8?B?MElCYTJmdE5kRUF3cEFNNGY2WVNubm92SE9iNS95WENvUDdQTUFQVHQ0L3VJ?=
- =?utf-8?B?ZWl0U0Vvd0xLMitpdkl4YXdXb29kSFM0aExrVm10RXdCQlY2STVPZkwxRHoz?=
- =?utf-8?B?MW1HRENwMDRHTDE2MjdPN3pHSUt0Q3ExblpHZ3Fmc3doNjBxNlljWHFsTjZq?=
- =?utf-8?B?K0NsWG9LVHBZUVBwUk1lOWdBVEd3NW9oSFJhSVpxU1RIMS9rZVkwUUwzS2Y2?=
- =?utf-8?B?aTR0dDQ1cTBZUGlUU0R6dVdWVlNkaGZaaGlvVmY1MW95WkNaSFBCVXBpT3FS?=
- =?utf-8?B?cGVYUnZ5dHZrZGowQ3FOWlNaaXl4SnBjQWRIZmZRMTExUW5RL2w4bVA4YytE?=
- =?utf-8?B?eEJCdy9JQXhsUVBpM05GUEFQUzZxSm9hMnVBSjJUc0t0VU1rUS9WQWVtM3k3?=
- =?utf-8?B?cTFvbVloNGt5OGdmTFB5SUE1d2d1dnc4UWt0ZmdRR0g2L1YvWFlBSjkrcmxT?=
- =?utf-8?B?R0xtbEtHOGxMYTNTTTdUYWtuTlFhc2FuYWdDM3dMdmVPVW1OQ1N3UmpVTlZI?=
- =?utf-8?B?bGVObEdTL2xSVG91SjZsVkJrUXFFK0NobHRJVy9mM2EzQ2IzM2ZSYWZXVnVL?=
- =?utf-8?B?dHhJbzZtbXJyNVp5RXY0SXpXaXZYYlU3ekVTYlpiWjRSWEQ2L0FvbSt2V1A4?=
- =?utf-8?B?VDlYbHFiY29DU1dSNDdZZFZzeVA4b0YxeUlWdGQzZlNnYU1BUXZCVWd5RkZJ?=
- =?utf-8?B?VXcwaTJNMkN4L2hvWllpV2RJMkdaekh6YWFXNFM1SUsxM1ZSM0w2RUs4YmZJ?=
- =?utf-8?B?aUFTYnpmWnJ2MTZLNHlleE9hNThIYUtOTDFWVDlsSnZqSG1JNjBoNmFjOHpQ?=
- =?utf-8?B?VjVTMnlVM0Q3N0paZFFvYWRwR3JXcjA0aERNY2lhOENrT3hXazFEMldUbjh1?=
- =?utf-8?B?S09GblJYR1NjcmlMc0FKcm5FbE54ZHZzV1VuZHJsYUdIQmRwQnNDT1ZvWFVw?=
- =?utf-8?B?b1IyeU5ZblpiRHpROFM0QVRNMnJPNXcwajR2citxMnlzQVNHZ0VsdzJqNGFJ?=
- =?utf-8?B?RjVkVTJXTUQvSVVHY1hUbHdpOU1yUFFjVEZRaXg2eFh5UWRFQVBOYkFjVEV3?=
- =?utf-8?B?a0NnMGF1YWR3Y2lTMG5zdUFveGR0dmhtcStRcGI1WUdNMHN1NHNMVm5Lc0Ja?=
- =?utf-8?B?ZU4rTU45RUxMdnNuczkrZzJybWFBYW53NTVoYU9WMlZzeElPTmpWNS93cVFy?=
- =?utf-8?B?TlJmd1NDTlF4L2piSlNyY25HalZRY1JvT2dGVHg4a3NpRWV1SUd6QWJjVWpC?=
- =?utf-8?B?dGNkYUF0QXBwRE5NQmhNTFVLWUg3ajlaVElxK3gzdTd4YzVtOGcyUno1OGdY?=
- =?utf-8?B?NUpKNlJTR0lHNnlNZnkrWEs2SzkrdnFGenpENzhMK3YvZE5hNHBNQWZZNlZl?=
- =?utf-8?Q?qPdA1edBi3voT4nqJfdWTyzPzQKn/BBv3wdMT?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95281513-aff1-4337-1f24-08df0d45449d
-X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 01:05:26.7142
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X4ygcoqcUowgHCZWXLsItXTBny8FBEiqLUO4W8GnEGAGeB+y5TocrpUXyNJjnLL1KVVxmzbhZrplIGiIg8okmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWP286MB2070
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/11] media: rcar: Streams support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20260617-rcar-streams-v6-0-1260eb72dff7@ideasonboard.com>
+ <20260907192520.GM3497753@ragnatech.se>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <20260907192520.GM3497753@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 07, 2026 at 06:35:22PM +0200, Marek Vasut wrote:
-> The R-Car Gen4 PCIe controller is part of a power domain. On R-Car S4
-> and V4H, this is an always-on power domain which is not shut down in
-> suspend. On R-Car V4M, this is a dedicated A2PCIPHY power domain,
-> which is shut down during suspend, and the controller loses state,
-> which prevents the PCIe from working after resume.
-> 
-> Fix this by adding generic suspend/resume noirq ops for the controller,
-> which tear the link down on suspend, and restart it on resume. Use the
-> same PM ops on all of R-Car Gen4 to gracefully suspend and resume the
-> PCIe link on V4H and S4 too.
-> 
-> Test case which demonstrates the problem on R-Car V4M:
-> "
-> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/pre
-> $ echo s2idle > /sys/power/mem_sleep
-> $ echo platform > /sys/power/pm_test
-> $ echo mem > /sys/power/state
-> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/post
-> $ diff -Naru /tmp/pre /tmp/post
-> ...
-> -00000000  12 19 32 00 07 05 10 00  00 00 04 06 00 00 01 00
-> +00000000  12 19 32 00 07 05 10 00  00 00 00 ff 00 00 80 00
->                                           ^^^^^
->                                     Class 0604->00ff
-> "
-> 
-> Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
+Hi,
 
-The s2idle test with pm_test=platform now passes in EP mode on S4 Spider even
-with CONFIG_PCIE_DW_HOST=y. Thanks! Feel free to use the tag for it if it helps.
-
-Tested-by: Koichiro Den <den@valinux.co.jp>
-
-> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Koichiro Den <den@valinux.co.jp>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Add TB from Geert for RC mode
->     - Use pm_sleep_ptr()
->     - Call HOST suspend/resume ops only in case the controller is in RC mode
-> V3: - Add RB from Geert
->     - Make rcar_gen4_pcie_pm_ops() static
->     - Pull the mode from driver data
-> ---
-> NOTE: Depends on series
->       https://lore.kernel.org/linux-pci/20260903205153.283553-1-marek.vasut+renesas@mailbox.org/
-> ---
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c | 25 +++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+On 07/09/2026 22:25, Niklas Söderlund wrote:
+> Hi Tomi,
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> index 5690dc32f47e0..8b6a6cab1b83e 100644
-> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> @@ -909,6 +909,26 @@ static int rcar_gen4_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable
->  	return 0;
->  }
->  
-> +static int rcar_gen4_pcie_suspend_noirq(struct device *dev)
-> +{
-> +	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
-> +
-> +	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
-> +		return 0;
-> +
-> +	return dw_pcie_suspend_noirq(&rcar->dw);
-> +}
-> +
-> +static int rcar_gen4_pcie_resume_noirq(struct device *dev)
-> +{
-> +	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
-> +
-> +	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
-> +		return 0;
-> +
-> +	return dw_pcie_resume_noirq(&rcar->dw);
-> +}
-> +
->  static struct rcar_gen4_pcie_drvdata drvdata_r8a779f0_pcie = {
->  	.ltssm_control = r8a779f0_pcie_ltssm_control,
->  	.mode = DW_PCIE_RC_TYPE,
-> @@ -952,10 +972,15 @@ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
->  
-> +static DEFINE_NOIRQ_DEV_PM_OPS(rcar_gen4_pcie_pm_ops,
-> +			       rcar_gen4_pcie_suspend_noirq,
-> +			       rcar_gen4_pcie_resume_noirq);
-> +
->  static struct platform_driver rcar_gen4_pcie_driver = {
->  	.driver = {
->  		.name = "pcie-rcar-gen4",
->  		.of_match_table = rcar_gen4_pcie_of_match,
-> +		.pm = pm_sleep_ptr(&rcar_gen4_pcie_pm_ops),
->  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
->  	},
->  	.probe = rcar_gen4_pcie_probe,
-> -- 
-> 2.53.0
+> Thanks for your work.
 > 
+> On 2026-06-17 14:54:53 +0300, Tomi Valkeinen wrote:
+>> Add streams support to Renesas rcar platform driver.
+>>
+>> The series keeps compatibility with the current upstream for a single
+>> stream use case. However, in upstream there's a limited custom
+>> multi-stream support implemented to the rcar driver, which will be
+>> replaced with the upstream's Streams API.
+>>
+>> I have tested this series on Sparrow-Hawk board, with a few different
+>> setups:
+>>
+>> 1) IMX219 on the CSI0 connector (video)
+>>
+>> 2) Arducam FPD-Link board + 4 x IMX219 on the CSI0 connector (video)
+>>    - Only two extra patches needed for testing: one to enable the V4L2
+>>      Streams API, another to add .get_frame_desc() to imx219.
+> 
+> Out of curiosity, is the IMX219 patch posted somewhere?
+
+I think it has been posted a few times in different forms. One of the 
+later ones is "[PATCH] media: imx219: Report streams using frame 
+descriptors" from me.
+
+But I think the current direction is not to do that, but instead make 
+the framework cook up the frame desc for cases where the subdev doesn't 
+have .get_frame_desc (i.e. a standard single-stream video case).
+
+>>
+>> 3) IMX219 on the CSI0 connector (video + emb)
+>> - A bunch of other patches applied to enable full streams support,
+>>    internal pads and embedded data support in imx219 and v4l2 framework
+>>   
+>> 4) Arducam FPD-Link board + 4 x IMX219 on the CSI0 connector (video + emb)
+>> - A bunch of other patches applied to enable full streams support,
+>>    internal pads and embedded data support in imx219 and v4l2 framework
+>> - Tested with video and embedded data streams from all four cameras (so
+>>    8 streams in total)
+>>
+>> I can't properly test the error recovery, but I did trigger it manually
+>> with the FPD-Link setup running, and it worked fine.
+>>
+>> I have observed one issue with the embedded data (i.e. a test case not
+>> supported in upstream kernel): when stopping streaming, VIN says that it
+>> cannot stop the stream. I haven't debugged that, but a possible issue is
+>> that if the video stream for the imx219 is stopped first, the embedded
+>> data stops also, and VIN does not get the frame-end it is waiting for.
+>>
+>> This needs further study, but I don't see it as a blocker for this
+>> series as embedded data support is not in upstream.
+>>
+>>   Tomi
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> 
+> For single stream use-cases (as before this change), for the whole
+> series.
+> 
+> Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Thanks!
+
+  Tomi
+
+>> ---
+>> Changes in v6:
+>> - Rebase on v7.1, dropping the need for any dependency patches
+>> - New patch "media: rcar-vin: Fix comment related to stride handling"
+>> - Add comment wrt. not allowing get_frame_desc on rcar-csi2 for gen3
+>> - Fix rcar-csi2 error recovery. In the previous version it just disabled
+>>    and enabled the CSI2 RX, now it also disables and enables the streams
+>>    on the source device.
+>> - As part of the previous change, we now track enabled_sink_streams_mask
+>>    in rcar-csi2 instead of stream_count (the previous code also wasn't
+>>    quite right, as it assumed enable/disable streams ops would only be
+>>    called with a single stream. which is true, but was a hidden
+>>    assumption).
+>> - Fix issue in rcar-csi2, v4l2_subdev_state_xlate_streams() was always
+>>    called with RCAR_CSI2_SOURCE_VC0, instead of the actual source_pad.
+>> - Link to v5: https://lore.kernel.org/r/20260311-rcar-streams-v5-0-3e6c957d7567@ideasonboard.com
+>>
+>> Changes in v5:
+>> - Rebase on v7.0-rc2, with the streams preparation series and
+>>    get_frame_desc_passthrough series as dependencies
+>> - This series is now smaller, as the non-streams parts are in the
+>>    streams preparation series
+>> - Fix "variable ‘format’ set but not used" warning
+>> - Link to v4: https://lore.kernel.org/r/20251216-rcar-streams-v4-0-f28b4831cc67@ideasonboard.com
+>>
+>> Changes in v4:
+>> - Rebased on v6.18, with minor conflicts resolved
+>> - Improved patch descriptions
+>> - Re-ordered the patches a bit to move changes that could be applied
+>>    without the full streams support to the beginning of the series
+>> - Added "media: rcar-vin: Link VINs on Gen3 to a single channel on each
+>>    CSI-2" which removes possibility of wrong routing config on Gen3
+>> - Added "media: rcar-csi2: Improve FLD_FLD_EN macros" which was part of
+>>    another patch in v3
+>> - Addressed minor comments (constifyings, cosmetics)
+>> - Fixed the missing stream_count checks in disable_streams ops
+>> - Fixed a few instances in csisp and csi2 where
+>>    v4l2_subdev_state_get_format() was called with hardcoded pad/stream,
+>>    instead of using the data from the route
+>> - Dropped unnecessary ISPPROCMODE_DT_REG register clears
+>> - Squashed "media: rcar-csi2: Add more stream support to
+>>    rcsi2_calc_mbps()" into a previous patch
+>> - Dropped wrong use_isp check from csi2's rcsi2_set_routing()
+>> - Link to v3: https://lore.kernel.org/r/20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com
+>>
+>> Changes in v3:
+>> - Rebased on top of latest linux-media
+>> - Dropped dependencies which are already in linux-media (only remaining
+>>    dependency is v4l2_subdev_get_frame_desc_passthrough)
+>> - Tested on white-hawk board, using the staging deser TPG
+>> - Also tested in a WIP branch for GMSL2 (two video streams)
+>> - Link to v2: https://lore.kernel.org/r/20250326-rcar-streams-v2-0-d0d7002c641f@ideasonboard.com
+>>
+>> Changes in v2:
+>> - Rebased on top of latest upstream, and updated the dependencies to
+>>    match the latest serieses sent.
+>> - Add new patch "media: rcar-csi2: Use the pad version of v4l2_get_link_freq()"
+>> - Drop "media: rcar-csi2: Fix typo" (it was not a typo)
+>> - Update the code in calc_mbps(). The previous method relied on
+>>    V4L2_CID_LINK_FREQ, but that's not available if the link-freq is
+>>    provided via get_mbus_config().
+>> - Dropped dependencies to Niklas' old series which doesn't apply
+>>    cleanly. It's needed for multi-stream, but not for the current
+>>    upstream which only has a single stream use case.
+>> - Link to v1: https://lore.kernel.org/r/20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com
+>>
+>> ---
+>> Tomi Valkeinen (11):
+>>        media: rcar-vin: Fix comment related to stride handling
+>>        media: rcar-vin: Link VINs on Gen3 to a single channel on each CSI-2
+>>        media: rcar-isp: Move {enable|disable}_streams() calls
+>>        media: rcar-csi2: Move {enable|disable}_streams() calls
+>>        media: rcar-csi2: Switch to Streams API
+>>        media: rcar-isp: Switch to Streams API
+>>        media: rcar-csi2: Add .get_frame_desc op
+>>        media: rcar-isp: Call get_frame_desc to find out VC & DT
+>>        media: rcar-csi2: Call get_frame_desc to find out VC & DT (Gen3)
+>>        media: rcar-csi2: Add full streams support
+>>        media: rcar-isp: Add full streams support
+>>
+>>   drivers/media/platform/renesas/rcar-csi2.c         | 373 ++++++++++++++++-----
+>>   drivers/media/platform/renesas/rcar-isp/csisp.c    | 227 ++++++++++---
+>>   .../media/platform/renesas/rcar-vin/rcar-core.c    |  27 +-
+>>   drivers/media/platform/renesas/rcar-vin/rcar-dma.c |   2 +-
+>>   4 files changed, 487 insertions(+), 142 deletions(-)
+>> ---
+>> base-commit: 8cd9520d35a6c38db6567e97dd93b1f11f185dc6
+>> change-id: 20250219-rcar-streams-1fdea8860e5e
+>>
+>> Best regards,
+>> --
+>> Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+> 
+
