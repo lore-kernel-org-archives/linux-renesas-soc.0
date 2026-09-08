@@ -1,193 +1,116 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8871259D613
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 17:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C392596505;
+	Tue,  8 Sep 2026 18:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788889681; cv=none; b=O2yijz2PnDbcSazego+RV1yGVtE4wP/8sbp94IoliJlIbCtzh3YuPlYrWCt0SjAet0GCzebei5JbmANjdnJZ7lcHLr/A70YGPJ1NuJ932g+Pv5/x8M2lwCR9ecePKbu393ef3Kg8/z5b+/QWnJSKbmPoHx9mdEoMrqJkeS3cSWA=
+	t=1788890531; cv=none; b=I2hps/L8Of62G8e4RdWrHZ/d5GKagDeq1QuweV/YqsiUnhMEG2nAPdE7rCZTBvRz39ceJYMbK2Q0sfd1zWru4IvKDS0OkwqetyznKZ21j+VYBhDUwVy99DRLF6XYv8q3n8SnLcZjK57XWwDsLDdNIN8Tkhk9aJFOeHlNsHLV81M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788889681; c=relaxed/simple;
-	bh=YCLRa58s7uyQdIbB8Ph134sD0TUv41BQ2FR6V6uf2cM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QB3vuW+VOHL6YHilKvOyVc5ixO7gI27ZH76d/1ZxQzPCg7MmD5tJ1XVa09tulOjL03ut/VrskLDz1PkIT7NaAR2fUIpzhzHhZGU896NHXUtNW+AkGupwitVBvwhrwnEnXyAvRVifumpyoK7pYcJtu+3KWJ8m4es+BPBqXs/Oqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JrmMWXmG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PsOn/9mS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1788890531; c=relaxed/simple;
+	bh=n3V2a4c6aHGm1K1u+YJE1Ibm8+iKORtrh4Rp+upx/Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtVwZvNT4mOomcq9jKZD8QLU4ByPG+6J0iUC0T5OHVGlUJr6V6jbCtgnQLZoxaDXvrBexJ6pC94F4l41CyOg5Q/UA1fuMl6uW8mPbhQKgd1WRyIPX3rOtbrnCWFE3pnUTfmswxYuFtNb9BRd09UaH8TSR47qdmeQ9zAEIU823Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijGlZgsU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JrmMWXmG";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PsOn/9mS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788889677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=L/9EDTVW1f5os/f7T4ZyE6gcGjRjE8APgfGQstVr0ZE=;
-	b=JrmMWXmGfR2fy4qjis4XVi/zIuDmH49I6rFnsW45L5CZLho846cHhiAsM6P5ne3X1nPEPf
-	w4JL9oMBvWisubk4bdg9fHerFPOs3v2n/Q9me+X+oLZN8HsEXE1z9RG6CjyjEidYShhZWB
-	oOOqM/la8W2ACafXIXooCezOPvFDB50=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-SSta4qaiO9OLSd2057Ox-w-1; Tue, 08 Sep 2026 13:47:56 -0400
-X-MC-Unique: SSta4qaiO9OLSd2057Ox-w-1
-X-Mimecast-MFC-AGG-ID: SSta4qaiO9OLSd2057Ox-w_1788889676
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-9308eafb465so487709285a.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 10:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788889676; x=1789494476; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=L/9EDTVW1f5os/f7T4ZyE6gcGjRjE8APgfGQstVr0ZE=;
-        b=PsOn/9mSRxlVWjIWLDniDeVMz0sm+1ZHIcbmye01oT4e1WV5h+NNu89OnBmrWvSnak
-         plD1HsG0hPSPozf7p5wIViP6upggzAMFum5VB1fv8B4TokG0zTZCcP6XWch+w8LcjYOe
-         x+Ub0pylTlpCghBzdBQvtR8OZwNVsNvpyTtBpN+HI/Tg5TIpXIl0x5TfIZHv8iAIz9uG
-         3nfM7g57WD4VKtjaSvEZuqUdLyatHJcKNGtrnErbYJxKUWAwRwURcESgUai5iGinatNb
-         6PVXSnOtCrQO1fdPHhRrIXbB8xv7KTia11ueFtadstrXQnY1aD91aALv5jOL/bj9WeOT
-         vFSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788889676; x=1789494476;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=L/9EDTVW1f5os/f7T4ZyE6gcGjRjE8APgfGQstVr0ZE=;
-        b=BHCOuw9KlXKRGgq9w4H4gG6PipD49fkoslH8a+Yfkz/WxLtRh9naZ1a9oJVwBUnCJx
-         K2mGbaUFHED+QfURt3prrOEMUOARknUMgEM/Pc+9kr1MNCijNrlM/s2y9EUFvsfJQq66
-         QYjGD3JJHjwSXlEMytFD+TAevs18j651bvjOuWf2eRWJsDFQxLod4ZcLLFRU5UtQTUHN
-         cjROydRNyIW9ThygsEeR1zZHYo3nJe4xisZcmH0nzy+9oQY1IiIrDfKVTORpTl/Gy7dF
-         QoZQ5JS4xMQrFkhZCswURlPObOR95SAWb2F5VDA4f6IaL8nGjolAyhQLud7XYaytSx6+
-         hHWQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzOp0PYgtDc5mS4j6sbpLRMMrj3uSbjXtXHDy1zcsS2Vo4gdRW+0M2VRv6OWDag8f3PHArjRXc+DT14CvkKfeyebw==@vger.kernel.org
-X-Gm-Message-State: AFuF++l00EPxiKXYtxFV13hrzmyKP3Y7+xqVYQnyiO8tj24Sg98kpMWz
-	Vt6sd+AT8kX7QxLcckX6M1EMAmPDGjpCv1rJFNxKg6C766OHHPxsX+B8pJYfyPCAi5DOyLvkBq2
-	YSPAgHcsMbAdx6bcixQUtO9rcBksl+sA4UjId9Z/HYh3z2uEKUnlS4yfypTQSrQwQqandNkwm
-X-Gm-Gg: AYBFou1iVO18kLp5pVh82vbGkYLAYooJ4C8p0mOFryZuAnYnNasQ9HUOezl6svxXUx/
-	7p1n8qaD88VGqSTv9ERYzhNe0VMMEtE9eN02zhqB00QMbuPBaJfhNYVO9xa8D0yg14Sb9s0Na0c
-	ClmXGITv+sYc+QACbPuYtriDd89NMwuBd75i90w6UBd9M1E54Z/Qq/natHdr+StSzTsbwfxBAW0
-	wUzr1daCT6jqKi2HypVhc0x24MfRg3v+HpjPGKWTJbJrcDpD7rcsApl+bLWId8G0MC5XKMo/LNQ
-	PcbW9jGBvTecnodfMXfnq54s9zV4uVyeW2EA+PBjkmuF1p/hkh+kpxweCOEQknBKLH6sr6xGPNu
-	VVNllqWzQQt02dXf6DqLxQvdMOk1tf65CzbxKtHM=
-X-Received: by 2002:a05:620a:227:b0:939:e76:cba5 with SMTP id af79cd13be357-93980426544mr2317502285a.32.1788889670785;
-        Tue, 08 Sep 2026 10:47:50 -0700 (PDT)
-X-Received: by 2002:a05:620a:227:b0:939:e76:cba5 with SMTP id af79cd13be357-93980426544mr2317454985a.32.1788889665304;
-        Tue, 08 Sep 2026 10:47:45 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9397fb9bac1sm1194093685a.35.2026.09.08.10.47.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 10:47:44 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH 0/4] driver: core: add subsys_platform_driver() to reduce
- boilerplate code in drivers
-Date: Tue, 08 Sep 2026 13:47:17 -0400
-Message-Id: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijGlZgsU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC351F00A3A;
+	Tue,  8 Sep 2026 18:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788890530;
+	bh=fnf44b1jijqB+HDIBPwbGQPtA9lAXufRWz5wUuQaZSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ijGlZgsU2yTb9NyG/QXKLC1OxtHXgcftO+TLwbSpqVB1i/LaJHK7y2Z3ociQBBpn7
+	 J0E714ZLZWyLhqCo5uZM7LWNAuT5cH168wHrL2h4ALlgI7OQdtTiej7MGSfuPAYAJw
+	 3UWTpbFhI0O9uFkwGRRFEYrCDGqprluXuAo26DQlmKgtCAn8ngaOob83sRbBCW1Yln
+	 33+3GlTT0kTd9oCzZBccDUq59gKBED9Okayoj4bN/lH9yXjQYekZshTVTPnk+O+QKB
+	 qDC99trMPLvEULwITneKTN2DyDYWbXxDr96zAgIaEwPHKlxFMwjJGwiv6ekG2yo3Ta
+	 w1pQ53B8dKVWw==
+Date: Tue, 8 Sep 2026 19:02:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Colin Huang <colin.huang2@amd.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Grant Peltier <grant.peltier.jg@renesas.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Colin Huang <u8813345@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
+ RAA229639 and RAA229640
+Message-ID: <20260908-prozac-bunch-5dc2a7fb4d9b@spud>
+References: <20260908-add-raa229639-and-raa229640-v2-0-83c75b61139d@gmail.com>
+ <20260908-add-raa229639-and-raa229640-v2-1-83c75b61139d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDSwML3eLSpOLK4vjMvMyS5MScHF0D05S0FNO0JIM0AxMloK6CotS0zAq
- widGxED5QS1ZqcgnIGKXaWgApYv2WcwAAAA==
-X-Change-ID: 20260908-subsys_initcall-05dfd5fb0f04
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4126; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=YCLRa58s7uyQdIbB8Ph134sD0TUv41BQ2FR6V6uf2cM=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLIWeJmuupF5qfh/577Yn+n6AlwhRTy8z9+nMK7UN53dY
- njB8hdTRykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABP5y8DwV+bCmc9hUzsWllQ3
- T0866pnk3+b3w9Wt4l5L02+uoEu3rjAyzC//cKIqLmHOvw/rd5y/xuD2JExGfTFbQpY2n87nG8c
- fcwEA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WmcQSSsc7lRDv8Rj"
+Content-Disposition: inline
+In-Reply-To: <20260908-add-raa229639-and-raa229640-v2-1-83c75b61139d@gmail.com>
 
-There are a fair number of clk drivers that are registered at the
-subsys_initcall level since some clk drivers need to be initialized
-early for other drivers. Let's add a new macro
-subsys_platform_driver() similar module_platform_driver() to eliminate
-some boilerplate code in the drivers.
+--WmcQSSsc7lRDv8Rj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This series converts the Qualcomm and Renesas clk drivers to show the
-code savings that can be achieved. Once this lands, I'll convert the
-remaining clk drivers this development cycle if all of this can go
-through the clk tree.
+On Tue, Sep 08, 2026 at 03:04:26PM +0800, Colin Huang wrote:
+> From: Colin Huang <u8813345@gmail.com>
+>=20
+> Add Device Tree compatible strings for Renesas RAA229639 and
+> RAA229640 PMBus devices.
+>=20
+> A fallback compatible is not introduced because the available
+> documentation does not establish DT-level compatibility with
+> any existing supported device.
 
-Outside of drivers/clk, there are 364 drivers that use subsys_initcall
-and I am willing to convert those as well starting the next development
-cycle once this lands in Linus's tree.
+Please don't respin before people have a chance to actually respond to
+the thread. Please see my commentary on V(this - 1) on the compatiblity
+of the devices being added.
+pw-bot: changes-requested
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Brian Masney (4):
-      driver: core: add subsys_driver() macro
-      driver: core: platform: add subsys_platform_driver() macro
-      clk: qcom: convert drivers over to use subsys_platform_driver()
-      clk: renesas: convert drivers over to use subsys_platform_driver()
+Thanks,
+Conor.
 
- drivers/clk/qcom/dispcc-x1e80100.c     | 12 +-----------
- drivers/clk/qcom/gcc-eliza.c           | 12 +-----------
- drivers/clk/qcom/gcc-glymur.c          | 12 +-----------
- drivers/clk/qcom/gcc-hawi.c            | 12 +-----------
- drivers/clk/qcom/gcc-kaanapali.c       | 12 +-----------
- drivers/clk/qcom/gcc-kuno.c            | 12 +-----------
- drivers/clk/qcom/gcc-milos.c           | 12 +-----------
- drivers/clk/qcom/gcc-nord.c            | 12 +-----------
- drivers/clk/qcom/gcc-qcm2290.c         | 12 +-----------
- drivers/clk/qcom/gcc-qcs615.c          | 12 +-----------
- drivers/clk/qcom/gcc-qcs8300.c         | 12 +-----------
- drivers/clk/qcom/gcc-qdu1000.c         | 12 +-----------
- drivers/clk/qcom/gcc-sar2130p.c        | 12 +-----------
- drivers/clk/qcom/gcc-sc7280.c          | 12 +-----------
- drivers/clk/qcom/gcc-sc8280xp.c        | 12 +-----------
- drivers/clk/qcom/gcc-sdx55.c           | 12 +-----------
- drivers/clk/qcom/gcc-sdx65.c           | 12 +-----------
- drivers/clk/qcom/gcc-sdx75.c           | 12 +-----------
- drivers/clk/qcom/gcc-shikra.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm4450.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm6115.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm6125.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm6375.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm7150.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8150.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8250.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8350.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8450.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8550.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8650.c          | 12 +-----------
- drivers/clk/qcom/gcc-sm8750.c          | 12 +-----------
- drivers/clk/qcom/gcc-x1e80100.c        | 12 +-----------
- drivers/clk/qcom/lpasscc-sc7280.c      | 12 +-----------
- drivers/clk/qcom/lpasscc-sdm845.c      | 12 +-----------
- drivers/clk/qcom/tcsrcc-eliza.c        | 12 +-----------
- drivers/clk/qcom/tcsrcc-glymur.c       | 12 +-----------
- drivers/clk/qcom/tcsrcc-kaanapali.c    | 12 +-----------
- drivers/clk/qcom/tcsrcc-sm8550.c       | 12 +-----------
- drivers/clk/qcom/tcsrcc-sm8650.c       | 12 +-----------
- drivers/clk/qcom/tcsrcc-sm8750.c       | 12 +-----------
- drivers/clk/qcom/tcsrcc-x1e80100.c     | 12 +-----------
- drivers/clk/qcom/videocc-sm8750.c      | 12 +-----------
- drivers/clk/renesas/r9a06g032-clocks.c |  8 +-------
- drivers/clk/renesas/renesas-cpg-mssr.c |  7 +------
- drivers/clk/renesas/rzg2l-cpg.c        |  7 +------
- drivers/clk/renesas/rzv2h-cpg.c        |  7 +------
- include/linux/device/driver.h          | 31 +++++++++++++++++++++++++++++++
- include/linux/platform_device.h        | 30 ++++++++++++++++++++++++++++++
- 48 files changed, 107 insertions(+), 487 deletions(-)
----
-base-commit: 944a035ecca915ae947905dcfb03f2b9dc6d032c
-change-id: 20260908-subsys_initcall-05dfd5fb0f04
+>=20
+> Signed-off-by: Colin Huang <u8813345@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.=
+yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> index 8216cdf758d8..3537c7ddfb09 100644
+> --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
+> @@ -60,6 +60,8 @@ properties:
+>            - renesas,raa229001
+>            - renesas,raa229004
+>            - renesas,raa229621
+> +          - renesas,raa229639
+> +          - renesas,raa229640
+> =20
+>        - items:
+>            - enum:
+>=20
+> --=20
+> 2.34.1
+>=20
 
-Best regards,
---  
-Brian Masney <bmasney@redhat.com>
+--WmcQSSsc7lRDv8Rj
+Content-Type: application/pgp-signature; name=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqBNnQAKCRB4tDGHoIJi
+0qCqAP93CNX9DUdipEyXLoFlvbRCevHnT+5WqQND5mfXnKGAAAD/fvbukVzEP/Vg
+aNPFloqtMrOIPefD7tnRcRsqM2irwwk=
+=190V
+-----END PGP SIGNATURE-----
+
+--WmcQSSsc7lRDv8Rj--
