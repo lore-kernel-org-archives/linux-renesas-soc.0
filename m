@@ -1,121 +1,100 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD60E39A7E7
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 07:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70792372B3C;
+	Tue,  8 Sep 2026 07:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788853135; cv=none; b=r8e+aZD/dh2in1sb382Lw0nN5OwW+2NOyZf40WhUXoGz9xHHZNsZ++u/nEBJYmGD4WOcsBhxkxXTvKenVRHi6BSVVLHL9Ktm/P66UXMNWc++41Q+Q7FX7iZ6YILiiPqEMtYR+lcxWtcgXCqTwMpvqdYxR0y6uDaL0B87JUUiAPs=
+	t=1788853270; cv=none; b=qyau6RAEYnCFS5O9vZK/ANR98NR5uMJ+WhCkXSr/lDBJ2UPqiN7abBJVNWstyWRHYwlizOvQZi1Zn+zk8VSCWyPjb//InlczFm20CbOsEX7hHERMmHtQz5LzGf/BKJf3YCBIWS9lQOWFB3q8n3C4GWqRsls2jR3tF04Z6Q2iIpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788853135; c=relaxed/simple;
-	bh=6Zc6vX1bU73eq1imPj+MTEbo+7J7RWbcsZWKEYMmjQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jG2sPI6EHwsKSOOfImc63hFk3IGZYFrgnlRBYI53W+/oeAU5iLx3sF3sNV/QX1j1YgHUbzYYrRNJa5ubSdhhf39bXafU+9/6c287inve2okggAS/aDfHY2F5WYrwXwVzL3JpO+KJV1QPdx6YnCnbWXyOSoQAVh3jXBjPq5/1aUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-783fffcfb96so3296464137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 00:38:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788853132; x=1789457932;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9FJoKkivoTNtHINOjagJJ4U0TVNQrepQ/joiDIuSwkg=;
-        b=c+StMZP5yy57OOiHL8M8+jYqqmK/igohbEogNkh4nUrKUfqw04uzrAhemyg29Mbf59
-         cveccRQMPcz3XjeuJJZThMAtf5sCi2dRfnry9q6hTKyN/AwlwqSj7ZjUT8wex0jjaTDZ
-         ry2/Bx6WQLATb4pCZOD/3ZQ76x3NY5RjBpr4FLIDvniefr9sd5aZCInbhvrItHHA7t+v
-         CHeOBNV3rbBicp6zIcWCeng57EbnCEU/Pgy6c5xDibcj6DBhN+SkyYkcVMVmgTc5FufH
-         S4HgMysQInyaQkDS+QKoC/H8V+M3IVf/8khfU+rqybP8m9/zvb1owb+yp1Uxf91wX1IS
-         w31Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxLhkNvFuzaG0ag3fuZAS+tKTIPxY+Jirm/B013OQWmvyWlVO7TdU18HEM3JXukf7i8Jjof1IsYAU0s0ZfQelL5oQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++nD5mrdvUhESm3MxCmy5n+u9Seb1GzfVzPHyRioFvtl1j86dgbj
-	012cmwgHM1PMvlYjPxkaZjeMyRHDS+sAMcS3HFA2IEyGXlhbR/CQ2FGMhot0IoIM
-X-Gm-Gg: AYBFou3sstew6MSIaPJd384LsaOUtnPs5/ogcS+uAt9hkU4eOlxDS0O824qHC1ToVtB
-	oWlnrxQZzuP5IgGKA+Zt2jEoke1nxj4s1oZnEYLrYMUwZilX2xKBsPiBpqNvU8kxYV/D78KSLC1
-	rmGAUNatAOE0PA/Vm8AK8zJ+eiL3zdkQYlPMvSzmVx9WvA3zp0SJ8uDG01pxt/RUX6SQmKAx5YL
-	sjLZaPpc88ljYyNifoSOvWrThMRbN0QihJInZV8R983qfDz/vsSQTvP4RJ2QBlsrOV0/Zk09R+U
-	KFtgv6zhHkCwR5DrF+3QBAYvmpvYO5QobN6SSfPnrslonTpo4mFXm0+KmSsHYExEwzTQwJSfRSw
-	1xBzgLIM3z2e21Zf41YOg4A08ueEU24JNhXll9C1N0w3byEY7uVXSqeD0feMTKoPtSgVkVfSvLA
-	Gsk+VHoHVPvuMzYhb+vT5P+oYCtgkUQxldmjZL5MtrsHEDzk0CUct7eYWsQdUjmG8hNaP/PBJrs
-	xsD38G3sHfwuhdnJGSVzunvhg==
-X-Received: by 2002:a05:6102:80a3:b0:77d:9fe9:1716 with SMTP id ada2fe7eead31-78a4a6e83e9mr14376965137.2.1788853132548;
-        Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98097de57d4sm7754718241.10.2026.09.08.00.38.52
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-97c7afa485bso2439772241.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 00:38:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwVoWNM6N2byioOZXjj/qTDFRwjrjqHJDMAAvjuS13pNXN3npMY5hez/UeFEX387RYpQ+6ytFOwbjZ4fqaM49PcLA==@vger.kernel.org
-X-Received: by 2002:a05:6102:b02:b0:786:c86c:4f5e with SMTP id
- ada2fe7eead31-78a4a6e7023mr12540904137.3.1788853131839; Tue, 08 Sep 2026
- 00:38:51 -0700 (PDT)
+	s=arc-20240116; t=1788853270; c=relaxed/simple;
+	bh=iqajFf/WYI7jPAHYM3bkB/PBvREzAQGjJp8v2Li8o3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9wqw+ZgNonmeAhL3Zltd0GYvlHGy5OBPmGFpX/8SZktEybYZTcTqfIgKkvBtJqekoffvRWCPrthbexJdFFglu0KqhNGNtcMOOEdKkC8SwJuBYnNsvv0SLyXWMkdpIVcF3ASLXTG7CgmmOPFE60uN5A4E+iS39GDWcVvJUrSH2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSHlpVkF; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSHlpVkF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4E61F00A3A;
+	Tue,  8 Sep 2026 07:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788853269;
+	bh=vmQrWS5hLAks8PCrVwczAHtggIpr+4bF8y0hX2HdQ3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YSHlpVkF+p9pKv2cMlGGeLC99pScBBkeNIrRnMllT6ED+GMpjkHWxQjqmyohTIRBs
+	 oQ2ntC2zeHslmnV398yWF3ZsixXsIb49RjEb8LWptWBS87iQB+FMWE3Nvwe/hRRlv7
+	 SZR2BdKxaOReCfai9ROKVS4oN5nhIr/a/m3bF3ZweDM9mDFjh1NBdYeUQkrrhADbfj
+	 zRI1OKeNRY5CgddbFA3+OJ9mZpu0OKYAUZiq1i38UrCBwW9zl8JD4lkZADptHTHJYS
+	 qwonHce61aJ5D7sDRuCf7Ul6LxGDPup/xzRBa04sjfmDC4DcPKoZ6V+ffhbTSdogRa
+	 KVTOaLgTT1BMQ==
+Date: Tue, 8 Sep 2026 09:41:00 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, 
+	neil.armstrong@linaro.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org, Pavel Machek <pavel@nabladev.com>, 
+	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Subject: Re: [PATCH v5] phy: renesas: rcar-gen3-usb2: Avoid long delay in
+ atomic context
+Message-ID: <hwv6geqxbph5xfcqeu3r6pz6dvb5cteuxg3bh3dzsosl2viuxj@rma3ox42igkv>
+References: <20260716183246.3183877-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be>
- <CA+V-a8uXz6ehq3Mdgri0zT9we7kE+=-XZjahfVg3BBu4NGxh2g@mail.gmail.com>
-In-Reply-To: <CA+V-a8uXz6ehq3Mdgri0zT9we7kE+=-XZjahfVg3BBu4NGxh2g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 09:38:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVFwTQkdWZ0M2fWE3JCKT9fJ52roWBec8FK-=bm=BoWrg@mail.gmail.com>
-X-Gm-Features: AcwNN1W_wiXo_u_6vCxRFTrWJy-fQIHFj_Po8KOr7IuAmZBSsWV3hZnj2lA4-7s
-Message-ID: <CAMuHMdVFwTQkdWZ0M2fWE3JCKT9fJ52roWBec8FK-=bm=BoWrg@mail.gmail.com>
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r9a09g047e57-smarc: Update CAN transceivers
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260716183246.3183877-1-claudiu.beznea+renesas@tuxon.dev>
 
-On Mon, 7 Sept 2026 at 20:46, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Tue, Aug 25, 2026 at 3:57=E2=80=AFPM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > The dual-channel TCAN1046V-Q1 CAN Transceiver on the RZ/G3E SMARC EVK i=
-s
-> > currently modelled as two TCAN1042 instances.  Improve hardware
-> > description by describing the actual transceiver.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Compile-tested only due to lack of hardware.
-> >
-> > At least the TI AM68 SK DTS should be updated, too.
-> > There may be others ("git grep -wc ti,tcan1042 | grep -v :1$").
-> > ---
-> >  .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 25 +++++++++++--------
-> >  .../boot/dts/renesas/renesas-smarc2.dtsi      | 13 +++-------
-> >  2 files changed, 17 insertions(+), 21 deletions(-)
-> >
-> Apart from the sysfs file name changes everything works as expected.
->
-> Old path                                               New path
-> /sys/class/phy/phy-can-phy0.0            /sys/class/phy/phy-can-phy.0
-> /sys/class/phy/phy-can-phy1.1            /sys/class/phy/phy-can-phy.1
->
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Jul 16, 2026 at 09:32:46PM +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The OTG PHY initialization sequence needs to wait for 20 ms at a specific
+> step, as described in commit 72c0339c115b ("phy: renesas:
+> rcar-gen3-usb2: follow the hardware manual procedure").
+> 
+> Commit 55a387ebb921 ("phy: renesas: rcar-gen3-usb2: Lock around hardware
+> registers and driver data") tried to address various problems in the
+> rcar-gen3-usb2 driver and converted the mutex protecting HW register
+> accesses to a spin lock, leaving, however, a long delay in the critical
+> section protected by the spin lock. This may become a problem,
+> especially on RT kernels.
+> 
+> To address this, release the spin lock before sleeping for 20 ms as
+> required by the HW manual and reacquire it afterwards. To avoid other
+> threads entering the critical section and configuring the HW while the
+> software is waiting for the OTG initialization to complete, introduce the
+> otg_initializing variable alongside the otg_init_done wait queue. Any
+> other thread trying to configure the HW while the OTG PHY initialization
+> is in progress waits for the wait queue instead of immediately returning
+> errors to PHY users. The IRQs were also disabled while waiting for the OTG
+> PHY initialization to complete, as the interrupt handler may also apply HW
+> settings.
+> 
+> The OTG can only be initialized once. It is initialized by the first PHY
+> that calls struct phy_ops::rcar_gen3_phy_usb2_init().
+> 
+> To avoid failures when multiple PHYs call struct
+> phy_ops::rcar_gen3_phy_usb2_init() simultaneously, and the PHY responsible
+> for initializing the OTG either fails or deinit quiqly and another PHY
+> takes over the PHY init role), the code waiting for the
+> channel->otg_init_done wait queue retries up to NUM_OF_PHYS times.
+> 
+> Fixes: 55a387ebb921 ("phy: renesas: rcar-gen3-usb2: Lock around hardware registers and driver data")
+> Cc: stable@vger.kernel.org
+> Reported-by: Pavel Machek <pavel@nabladev.com>
+> Closes: https://lore.kernel.org/all/afhkX2Ys2BG1gnqy@duo.ucw.cz
+> Reported-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+> Closes: https://lore.kernel.org/all/afhkX2Ys2BG1gnqy@duo.ucw.cz
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks, will queue in renesas-devel for v7.4.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
-Gr{oetje,eeting}s,
+- Mani
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+மணிவண்ணன் சதாசிவம்
