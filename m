@@ -1,116 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C392596505;
-	Tue,  8 Sep 2026 18:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA03659C977;
+	Tue,  8 Sep 2026 20:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788890531; cv=none; b=I2hps/L8Of62G8e4RdWrHZ/d5GKagDeq1QuweV/YqsiUnhMEG2nAPdE7rCZTBvRz39ceJYMbK2Q0sfd1zWru4IvKDS0OkwqetyznKZ21j+VYBhDUwVy99DRLF6XYv8q3n8SnLcZjK57XWwDsLDdNIN8Tkhk9aJFOeHlNsHLV81M=
+	t=1788897838; cv=none; b=hC/lrmXww/96qxF+52jtAYN7cM/nfH00ubayGtAHTAv+PmnliAUCR1bhGHxQKsM48ihlv4UPus6pkUuj/PmJ6Z2+EdkCnyyqudkAMKOVan+DRzcnySiDOs8ikQUArmjm53SG4xj/YHnEIcl1f73UtaLkP1LlyfbbEER72xOt+Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788890531; c=relaxed/simple;
-	bh=n3V2a4c6aHGm1K1u+YJE1Ibm8+iKORtrh4Rp+upx/Cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtVwZvNT4mOomcq9jKZD8QLU4ByPG+6J0iUC0T5OHVGlUJr6V6jbCtgnQLZoxaDXvrBexJ6pC94F4l41CyOg5Q/UA1fuMl6uW8mPbhQKgd1WRyIPX3rOtbrnCWFE3pnUTfmswxYuFtNb9BRd09UaH8TSR47qdmeQ9zAEIU823Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijGlZgsU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788897838; c=relaxed/simple;
+	bh=cx581AfwcbQLzd9ujjVVIBrRWNt1WDRo5RwXBP997PI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D1rDsY7IVKKe+3kvsLGLvDaI5sjgm50S1vQ3Fk21SSip5ic927VEblAxmrwhKCHWqpIs0bzdCfDUaKNK8ZWXv/TwaZdwp3Z6osgWIM7qLSSZgzYRaEntWykVez7055JxzxVmPjwTTRGidyr+OrCX77urSfLriLytYQyjAFXBdZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=LTgBpVYO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NTYUN7+L; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijGlZgsU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC351F00A3A;
-	Tue,  8 Sep 2026 18:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788890530;
-	bh=fnf44b1jijqB+HDIBPwbGQPtA9lAXufRWz5wUuQaZSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ijGlZgsU2yTb9NyG/QXKLC1OxtHXgcftO+TLwbSpqVB1i/LaJHK7y2Z3ociQBBpn7
-	 J0E714ZLZWyLhqCo5uZM7LWNAuT5cH168wHrL2h4ALlgI7OQdtTiej7MGSfuPAYAJw
-	 3UWTpbFhI0O9uFkwGRRFEYrCDGqprluXuAo26DQlmKgtCAn8ngaOob83sRbBCW1Yln
-	 33+3GlTT0kTd9oCzZBccDUq59gKBED9Okayoj4bN/lH9yXjQYekZshTVTPnk+O+QKB
-	 qDC99trMPLvEULwITneKTN2DyDYWbXxDr96zAgIaEwPHKlxFMwjJGwiv6ekG2yo3Ta
-	 w1pQ53B8dKVWw==
-Date: Tue, 8 Sep 2026 19:02:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Colin Huang <colin.huang2@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Grant Peltier <grant.peltier.jg@renesas.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Colin Huang <u8813345@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
- RAA229639 and RAA229640
-Message-ID: <20260908-prozac-bunch-5dc2a7fb4d9b@spud>
-References: <20260908-add-raa229639-and-raa229640-v2-0-83c75b61139d@gmail.com>
- <20260908-add-raa229639-and-raa229640-v2-1-83c75b61139d@gmail.com>
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="LTgBpVYO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NTYUN7+L"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 93025EC018B;
+	Tue,  8 Sep 2026 16:03:55 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 08 Sep 2026 16:03:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1788897835; x=1788984235; bh=SB
+	kCXwakpo1BWnUC/wmQDDWTeuf9BiXVQDl8v5mZQ0A=; b=LTgBpVYOrzr6mvevJ9
+	FD97g3qptU2dF85owB+cxZrxQS3mVothvQB0lfMnDV1dsUlvBCqfoIh7shU0ldyr
+	xfrCvaQD+hlS3JktaNfOMTMUoAlNvITr4vy1pgwVFuRg6D/TBF0XSdLNtk6d3117
+	WQEzC64XF7TIC7qJFPhRSx47efRrjlKmG8I1oR9LsT0AjqXHkV1MjS/s0RaUNJT2
+	GvLTWgM28PYaKNB59Y1uED/2NRtd14d/NeqyZ/rV2llqa7lulhaQ2TNor24yLSTM
+	4v4wAlr1wPi7RW5YrCaF2qh2WuQJTIDOjEMD2OG1DKWc6V5QiOYMPxMmUOVItWZQ
+	gygQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1788897835; x=1788984235; bh=SBkCXwakpo1BWnUC/wmQDDWTeuf9
+	BiXVQDl8v5mZQ0A=; b=NTYUN7+Ln1Ti+21LpJkBkqILLE7Lsy5H3SygyDUGqvuv
+	5lDhdka4Z0SRcNpFAUUnXTERKUAEbndS2+qF0oVYkktLLUqZzDqVRY4VGUyyRABc
+	GF433hfGcOaZchP4J0QcXVo0CmW5Qnu45Nw2CMby1/NFfW++GB+fv/A8staGwuMu
+	cziiizqTmjgs+eqSkRjPBWfpX0lwAPQtuRnl9wmw0eSsIVG49iHwIJb9SWloF8Ni
+	fAIxU9zp9r8sbvf3RfTtzkHSJL/MGpm1lh0mWfvoSldTEavlCShiOMGoez2tfmhK
+	xwFX03Y9ssabBy7OaURV5zAtJvyE6SQwJFnYsnuv5Q==
+X-ME-Sender: <xms:K2qgaljkl0Zhf1XAns6kHne1Dt3TEJnK1uAHtlyUgLJlIAUtWlZvIQ>
+    <xme:K2qgai-j71p2T_-OK9cTzFH-31XK97T62vnUznu3tCjZsb-FZALD9bGCGdskJklwa
+    i6Mh14rAcdsTxSe7LLkRyvZtBAtOhSdeh9jEaHW24rF5s3nbKpO9_tFOg>
+X-ME-Received: <xmr:K2qgagr9MYyDIbndgVlLat_7jSBNGQ0kFdHuRqP1YTTuV7t3k7U_4CHpn1aZO_-anyrVf4ySAQWPwVLxmih14JuuqcdQf0Q>
+X-ME-Proxy-Cause: dmFkZTF5Ll7v9xSwyy2z4RsnmCY/GuO2svcAqBvuhdMGbW59pNMGJvUm2WfEdgj8Zp05Ci
+    2FdrNvVyJH9MGtbn7vP2cvq0KrcAKhtYHN62qnDweOeGl8Erl3Cye7cKxdDRcBfV7AMdlY
+    ZwKobc2TSLxim9gI/7cAmIS8AI8Bd316v6srQPVJpmRrGoaUhac+M6RaPLBe+ohi6U6fAL
+    0Bl2dBkqQ+BVMRXbWuwJ5yDxtgEuzTop8j7gujLMzopBjNRyWqF4SyHLdDTWJaEy2t41y1
+    oJNvrvsNmyolt1O2g+bdKUs6mXWqabFAE3OwsxwgGOwBO5TowicyRO/pON0uVZH6q7TWVT
+    vI1qzqzrLUOSZ+jv+fIGXvWbRrTdrexSB9lXe4hjixrsBWbSvo3RbKhP83nvov0oYgX7WO
+    13B0Ahj9Ys1J823rX1pd9uKsq5dlMUfBnMV0VdFButZ9n/YFOgclZf+1xJGVDiAx6597gc
+    V8+AelsZgcltsQUTBfeeLgOdBc/NwtP71kz7yTD634LKLH5LODF9ioMzp76wHr3ym0CfG7
+    3sBUPA9QFdizQdLV02hVuDS8GK+duXT7pfl4iAHgeI+ZzoZwyTWjJtDSwh25LLiMx7Dou/
+    IUKM/ZMOSW26Pgf2D7rWo+kupFO7JeC/VSvQToI5q/EmiBz9mx607UP2mr5A
+X-ME-Proxy: <xmx:K2qgaqX6SINFZ8u04CEJfPbm95wyL-AR_1VF6H4XApFmiE3wz8lhxA>
+    <xmx:K2qgavBQIuYWj40UsbYVaZMhDdbm6NMisnHNkPvB2yCCK_i3fW_g7w>
+    <xmx:K2qgau2FgXJiTpYCxKlPsXrWVj7nUr56XTL1maxaE6enrGkBBLovVA>
+    <xmx:K2qgah3DaoJ1B_PfF9IH5j7C4k39Ch7t7GlwXM0dGLxfqEBsziQ0cw>
+    <xmx:K2qgag8s7Hs4bzLsoy_N9LnuOqXZZ1UwHOBkWEVrWPZ-Wn1RV9Ho3Cfn>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Sep 2026 16:03:54 -0400 (EDT)
+From: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] media: uapi: Add 24- and 28-bit bayer media bus
+ formats
+Date: Tue, 08 Sep 2026 22:02:55 +0200
+Message-Id: <20260908-v4l2-add-raw-mbus-v1-0-6973bffa5b80@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WmcQSSsc7lRDv8Rj"
-Content-Disposition: inline
-In-Reply-To: <20260908-add-raa229639-and-raa229640-v2-1-83c75b61139d@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqDQAxA4atI1gamqcjYqxQXoxM1orZM6g+Id
+ 3esy2/x3g7KQVjhlewQeBGVzxTxSBOoOze1jOKjgQzlpjAWl2wgdN5jcCuO1awXyJqndbYgiN0
+ 3cCPb//kub+tc9Vz/rhEcxwm+hOMrdQAAAA==
+X-Change-ID: 20260908-v4l2-add-raw-mbus-add28038a892
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=niklas.soderlund+renesas@ragnatech.se;
+ h=from:subject:message-id;
+ bh=cx581AfwcbQLzd9ujjVVIBrRWNt1WDRo5RwXBP997PI=;
+ b=owEBbQKS/ZANAwAKAQm0/3kE+U0kAcsmYgBqoGoiIPR6xQbFD088SfmdkYuf97OgBMupZ+mLP
+ GZ9KlxTrLmJAjMEAAEKAB0WIQRwy9J0OLNPX3a0+3gJtP95BPlNJAUCaqBqIgAKCRAJtP95BPlN
+ JIK/EACC8Jw6/WSoQOBxK134PalA3bLIQSHxJau/qhs4z18dGsNXIvTqUnpYkcy1q/Kf5ZqvFtD
+ Fec8OcblNC3ZgltX+xAxPxpXWcFMqgNPvPOnroZC+22S/IeS9AwjGE8GQyDWeKcGhuqvuj4rGR1
+ ckjogjSGEctmTSjqKoiB2z+Tr77O5uZ6Bc1QU7tk4G4ZSRvEriaF0inHeVMP5yX9BKG2z4roC7O
+ QyF18f+tVlpY3yeR1mNqHlIn8WSMQTCuATNn62DYOvAxzN1UdBveGi7cfOaWevJGnQSlVAWwAQW
+ Ut6tMUiuqOwo1bH1b3NhxYytrnBCYR9cLhDVZnfLcbPwl7J6BNIVRxlCAp3zPKME0j7hf1gvJA7
+ OtDKR7kgEtBzSUDkq2J8OU2oMGC8UN4EWFcuqdecOc1IepzWWkljkU+GjXN7/18DO12IY6pgxD/
+ FPKhOKzS/IULRFNZLQ10TqKWSjYo+j/cd46OpTywkXx5l4AIsGWhU6pixVQI8EyPqe2KtXII416
+ IESyQt6psKruwvxvBU3OXvsRycK/eek7a6lhVfj96wdjdNaEdI4EoFWqLzBmTuws2+miMAWwRJv
+ ZC5X37VFMsq8U9zEO78/G07g/dF6gEJn03rMvVccyxqa54buSSqjzJJpSMktCwO3CBjz4u1Si8T
+ FSxoKzqGdNPkNrw==
+X-Developer-Key: i=niklas.soderlund+renesas@ragnatech.se; a=openpgp;
+ fpr=9976695FE98693307BF360A2F1591ABD9588DA5F
 
---WmcQSSsc7lRDv8Rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Tue, Sep 08, 2026 at 03:04:26PM +0800, Colin Huang wrote:
-> From: Colin Huang <u8813345@gmail.com>
->=20
-> Add Device Tree compatible strings for Renesas RAA229639 and
-> RAA229640 PMBus devices.
->=20
-> A fallback compatible is not introduced because the available
-> documentation does not establish DT-level compatibility with
-> any existing supported device.
+This small series adds the media bus formats and documentation for the 
+24- and 28-bit Bayer formats. This is done in preparation of work on the 
+Renesas R-Car video capture pipeline which will support these bus 
+formats in multiple drivers. For this reason it is posted as a separate 
+series before the driver work.
 
-Please don't respin before people have a chance to actually respond to
-the thread. Please see my commentary on V(this - 1) on the compatiblity
-of the devices being added.
-pw-bot: changes-requested
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+Niklas Söderlund (3):
+      media: uapi: Extend bayer media bus formats table to 28 bits
+      media: uapi: Add 24-bit bayer media bus formats
+      media: uapi: Add 28-bit bayer media bus formats
 
-Thanks,
-Conor.
+ .../userspace-api/media/v4l/subdev-formats.rst     | 596 ++++++++++++++++++++-
+ include/uapi/linux/media-bus-format.h              |  10 +-
+ 2 files changed, 603 insertions(+), 3 deletions(-)
+---
+base-commit: f9536a8065d9eed0d9114878c56ffc4e5a18bdfc
+change-id: 20260908-v4l2-add-raw-mbus-add28038a892
 
->=20
-> Signed-off-by: Colin Huang <u8813345@gmail.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.=
-yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> index 8216cdf758d8..3537c7ddfb09 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-> @@ -60,6 +60,8 @@ properties:
->            - renesas,raa229001
->            - renesas,raa229004
->            - renesas,raa229621
-> +          - renesas,raa229639
-> +          - renesas,raa229640
-> =20
->        - items:
->            - enum:
->=20
-> --=20
-> 2.34.1
->=20
+Best regards,
+--  
+Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
---WmcQSSsc7lRDv8Rj
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqBNnQAKCRB4tDGHoIJi
-0qCqAP93CNX9DUdipEyXLoFlvbRCevHnT+5WqQND5mfXnKGAAAD/fvbukVzEP/Vg
-aNPFloqtMrOIPefD7tnRcRsqM2irwwk=
-=190V
------END PGP SIGNATURE-----
-
---WmcQSSsc7lRDv8Rj--
