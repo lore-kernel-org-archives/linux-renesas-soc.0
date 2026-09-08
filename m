@@ -1,95 +1,161 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DC74FC8F4
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 10:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568B143DA2C;
+	Tue,  8 Sep 2026 10:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788861888; cv=none; b=qifWxgxvIBQRlrGU5UExOj4aHWwZwXp80nA3VRmuZYAL42+bvaZCuNoC93HSpKeQ15krsA67szmhjhRp0yJuLtvlOO9l3eZMGx6tDgcAr+sS7OEblXtk1J7KXGqM64qZaXMLxZSDxLR4PSvN+n+LO+XPQWmKmmSnRYEoVYqseE8=
+	t=1788864782; cv=none; b=aDfz+wnuiXeFgcASY44n8kkFZ6U5eg6VLCG0grI37PodsO7QWR3D0EGkbHMJKICeMb/mohc/RI+vd9Q3/6tZulv2oNM+JtviyPiOSvlvEREfY1NWag904QsyTV9yqYGZDb/PXVF09LFnJ3Xs7l6vUxnBuLddnik8TmrMfUM9is0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788861888; c=relaxed/simple;
-	bh=ghYsKIp07FN1l9ghsOylrYXrt4x8WJ0gtt+77NqonFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TU5IReUhaBaWzgL+sPKFImQZ//URB9Ro7c6jKTtawrhlxbBn7UnNeDu1VaHCGS/gNsh9rsQwM6/ksZNwkgpXzfNJ94+CKZhZOc3vUmnUbSuszYRNiWQjLe5w8ZlKrMDBRJTTLcfgn+xfJ7SSYcZw0qsi8nb1zC09msUeY26i6do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5bf9466867cso1856936e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 03:04:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788861886; x=1789466686;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=1LnrkgW+HhkF2YKwW0WsGcBJcvFVVqkAq4nhlk/AGHs=;
-        b=fvDo5jh4sF/sa+203/aS09bdgSZHrfhsjxIflLcwAFwg9J8L1yHIedrwWO9KZCtymT
-         IDjrk80DyKQ8DH4byxPtwokZk7DjgKXpf9fmzzPNTj7VcYY9lZzQTcSilaAeXbn9ppIn
-         Ql6WlPIj1wDdp3sjOMtp7ldIBpnYMYjL85NQRGFZ6r0QU+6v2M8MkL9z8Yt4q0ubyO3L
-         oAuilRFp1yJo2vM/PQwQeaV+o8rkeqVqAiNBPwMLPhx54tqyyMOiGBx6J35SUadXjs1t
-         3FMEOfeRNvxdPPP2kDFt40WM1SU6c1Ns7SzgWEN31fwPUKcB6akitrT9WUttjyD6rJW5
-         Yz+w==
-X-Forwarded-Encrypted: i=1; AKwUvBwavnbhYWefsW4WiVceN1zTwKflmPB73Mw5EdrEtnDCjIqUg1MATQrkFsPpihro9H4MuFL9RmCQFCNItsKNKX+phQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++moD580K1CsmppMvzkKzc+Mb6duuAFMSCCXB7rlBA9H7gH0m+fI
-	hK2gQO6IS4HoMPTw+soe4uoc0913KRhHcQ2Hyqt0irs5CwKkNrTat+AJBY7HPUVC
-X-Gm-Gg: AYBFou0ead3rz8LUWg0Wq2/5bztYiLUMQjVgOz7cPObENT9coccgpMTRJIjJi3TBiMA
-	NLB6GCzxOc+1+Wq5PoxFKYFPQxs5g+m01ilzN63aN7whsHT8gq8lC/cub+u3m0w8JBK9KIDerFg
-	CtFmqddee7T3BoImg/6pHHfYBmNyu0TmPArZ5qGIn+h3es0ONf1EKBIc9Kq6POr/xLAJCdywmQx
-	2byd6GkAIAVGaAg3WseQXzzKPff9GI8OlTsteQYySGsXzVpDd8uvL5VHdfjZks6Sj7QJFq+NKGm
-	3dt3j0g1AtpsOLgtWuSvs1PPEeH0alqV7M7mCjsIhEx0Is/CuAhX8834BvduhdEsXsWTIZpAWNP
-	e92tKgT6z+0KrrwFyi+/mSsLwrTibrhBUUA29sEGgcmPzZ43+vsmy1IJ38h1K6MvE+YcB7QBBxR
-	h+7tPTVRwIGDC7AuXk2udHszrJBfHBwNfWk+voIP9ne8dBhbOchk/gQImQYpn89WxSZGre2f/wA
-	dLaghbq8+MqFdm7uUjU6YseYg==
-X-Received: by 2002:a05:6102:943:b0:77a:d089:3dd8 with SMTP id ada2fe7eead31-78a4aa5a199mr8952523137.12.1788861886218;
-        Tue, 08 Sep 2026 03:04:46 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47b19369sm8428116137.9.2026.09.08.03.04.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 03:04:45 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-782c22fbb1cso1247711137.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 03:04:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzH6ODmzqCwiQdgBeXTxvNWhaJF+RsC5p0RqFVwgmZBj2KkLx1Mf6+WuksZlJZn9dKXx6d2WGVvJyql3LyG4Sqgfg==@vger.kernel.org
-X-Received: by 2002:a05:6102:943:b0:77a:d089:3dd8 with SMTP id
- ada2fe7eead31-78a4aa5a199mr8952340137.12.1788861880753; Tue, 08 Sep 2026
- 03:04:40 -0700 (PDT)
+	s=arc-20240116; t=1788864782; c=relaxed/simple;
+	bh=aoV1fH6ZTCW7LAfNKfuUHvS36wapbIrsxxRkUY+U2ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BX5enclXXkMbK8fSGYsOYIXg4zKlpXX8p2QovGupbXx6Jo8nq9tirKE7q9ZFz+1kFh7Kj2e1iMNcl8z/vm+6ioN+cl4SSsvnEtng0lPeBKW35d5DTW7eS7X0Iok4IUpHlNOPwrtATEi5MK8Ubgv0fFzkB4xDSAtfio70dcxTFxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=KAQsciz0; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="KAQsciz0"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1269811DBE5;
+	Tue, 08 Sep 2026 12:52:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1788864765;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Qm+/RmSsjqDSftrpb2Fdvmu04WuqU6msZ94XRN/Z0m0=;
+	b=KAQsciz0rHTUA8g2LH0r0l+PxwVd9Htz9ANOG2gGJVJZmtPLPa2bnBukwX1wiICmjmEa8z
+	zsb0cOQ7FfSFia/BTyCdiCrnX8FBXMNoGFyDywzBRXO+2ZehxB2wgID5Rx0tO053uHIYaX
+	0a6aeOe/UaET4ztukUmw0D+G9/rG6v8GMKYRSkmFefCmPNNbudmjtIqdjWegFyVHEEa9qU
+	ssQjW7bzENSxEpVkMMU4G1YfYDDOCFBiJvYSo18i/Z+q4joS/cwKlnTxThEnhW+5fMaA1/
+	W5BfRqZxwdRHW2kYBDwvpRgFoBs3QqZNh/ln+x23Uqf1K/QmIJB3wIZwhlyYNA==
+Date: Tue, 8 Sep 2026 12:52:41 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org,
+	neil.armstrong@linaro.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org, Pavel Machek <pavel@nabladev.com>,
+	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Subject: Re: [PATCH v5] phy: renesas: rcar-gen3-usb2: Avoid long delay in
+ atomic context
+Message-ID: <ap_o-T5GGMFGYZ4v@duo.ucw.cz>
+References: <20260716183246.3183877-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260817185700.322370-8-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20260817185700.322370-8-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 12:04:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV6etGuJC5Kg2S0fZGO=gq4HPHVtN2MzfxKTdMVTKsJCQ@mail.gmail.com>
-X-Gm-Features: AcwNN1X3RV4SYt13JI31j2zWzRybiv-rSaAkaCpsuF4HrMpzBo7HJkyDeoSaj10
-Message-ID: <CAMuHMdV6etGuJC5Kg2S0fZGO=gq4HPHVtN2MzfxKTdMVTKsJCQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] pinctrl: renesas: rzt2h: reuse helpers
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AG7eLZ6YP0P+pQxb"
+Content-Disposition: inline
+In-Reply-To: <20260716183246.3183877-1-claudiu.beznea+renesas@tuxon.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 17 Aug 2026 at 20:58, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The PMCm peripheral-mode test, the PFCm function read, the PINm input
-> read, the PMm write, and the PMm read are open-coded in several places.
->
-> Reuse the already existing helpers.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--AG7eLZ6YP0P+pQxb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+Hi!
 
-                        Geert
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> To address this, release the spin lock before sleeping for 20 ms as
+> required by the HW manual and reacquire it afterwards. To avoid other
+> threads entering the critical section and configuring the HW while the
+> software is waiting for the OTG initialization to complete, introduce the
+> otg_initializing variable alongside the otg_init_done wait
+> queue. Any
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This is quite complex. How is this solved in mainline?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> To avoid failures when multiple PHYs call struct
+> phy_ops::rcar_gen3_phy_usb2_init() simultaneously, and the PHY responsible
+> for initializing the OTG either fails or deinit quiqly and another PHY
+> takes over the PHY init role), the code waiting for the
+> channel->otg_init_done wait queue retries up to NUM_OF_PHYS times.
+
+And more complexity.
+
+Example of the code is quoted below, and we are returning EBUSY to
+userspace if it tries to change role at the wrong time. Not great.
+
+As far as I understand, the initialization on needs to be done
+once. Instead of exposing /sys interfaces before hardware is ready,
+and then doing complex dance when /sys is accessed, could we
+initialize hardware in rcar_gen3_phy_usb2_probe or something?
+
+Looking at the code:
+
+        /* If current and new mode is the same, this returns the error */
+        if (cur_mode =3D=3D new_mode)
+                return -EINVAL;
+
+this should probably just return success? (EINVAL is certainly wrong
+error code here.)
+
+Best regards,
+								Pavel
+
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -392,26 +408,58 @@ static ssize_t role_store(struct device *dev, struc=
+t device_attribute *attr,
+>  	struct rcar_gen3_chan *ch =3D dev_get_drvdata(dev);
+>  	bool is_b_device;
+>  	enum phy_mode cur_mode, new_mode;
+> +	int retries =3D NUM_OF_PHYS;
+> +	unsigned long flags;
+> +	int ret =3D -EIO;
+> =20
+> -	guard(spinlock_irqsave)(&ch->lock);
+> +	spin_lock_irqsave(&ch->lock, flags);
+> =20
+> -	if (!ch->is_otg_channel || !rcar_gen3_is_any_otg_rphy_initialized(ch))
+> -		return -EIO;
+> +	if (!ch->is_otg_channel)
+> +		goto unlock;
+> +
+> +	while (retries-- && ch->otg_initializing) {
+> +		spin_unlock_irqrestore(&ch->lock, flags);
+> +
+> +		ret =3D wait_event_timeout(ch->otg_init_done, !ch->otg_initializing,
+> +					 USB2_OTG_INIT_TIMEOUT);
+> +		ret =3D ret ? 0 : -ETIMEDOUT;
+> +		if (ret && !retries)
+> +			goto exit;
+> +
+> +		spin_lock_irqsave(&ch->lock, flags);
+> +	}
+> +
+> +	/* If another thread started a new initialization just return -EBUSY. */
+> +	if (ch->otg_initializing) {
+> +		ret =3D -EBUSY;
+> +		goto unlock;
+=2E..
+> @@ -1007,6 +1226,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform=
+_device *pdev)
+>  		return ret;
+> =20
+>  	spin_lock_init(&channel->lock);
+> +	init_waitqueue_head(&channel->otg_init_done);
+>  	for (i =3D 0; i < NUM_OF_PHYS; i++) {
+>  		channel->rphys[i].phy =3D devm_phy_create(dev, NULL,
+>  							channel->phy_data->phy_usb2_ops);
+
+
+
+--AG7eLZ6YP0P+pQxb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCap/o+QAKCRAw5/Bqldv6
+8hBeAJ9DOdo6XuAz5OO4jIKpmONe8cgcKACeNVF5TPhlbIEtTN9b7mWO2f+b4IU=
+=QxD/
+-----END PGP SIGNATURE-----
+
+--AG7eLZ6YP0P+pQxb--
