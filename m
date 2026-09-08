@@ -1,72 +1,71 @@
-Received: from mail-vs2-f6.google.com (mail-vs2-f6.google.com [74.125.227.6])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4963A4ACC68
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C246A53A882
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788869829; cv=none; b=FjIGnhnH74nuXdV5ugvztnO54X+3M7syruz3+8Qly3cRN/MqhD70/EIFK6v0u8Hux3HcBD2/r5f/6iOYFNmKmybUMnz+ahTUaUzo2oJanQGkDR5X0b2XwEYUdC8G9gAkCbK/Gz4TTa8KqGRAUtBy5mrA82JzzVX9a22JG3qMbM0=
+	t=1788870023; cv=none; b=u6Vmm9xaVlCmk73AN1uWTKrKUQuAHQAxelx7FooV+Kn2Iw/e81xW9JZ8dApQ62SH/wfPG11+dDX8JF8yO1XwvMsB1X51sHfX9WEK/8V7Q00y+P4g9a9/U+DWBm/hrpzOWMXhOKjluNs5HxOtJPbHuaR7wOmeWbFrVEiNyMyHcF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788869829; c=relaxed/simple;
-	bh=4qfVZ/5nw4amR7KDjxEudFePppzurkPQMXOHgtElbeY=;
+	s=arc-20240116; t=1788870023; c=relaxed/simple;
+	bh=0TMTisvxJ+92sKupOfinZVmI2wJF91ccrQT+YBZKyKI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cnU30+UrvmbHjpeFw2b+TPaGTGxDCpOaETUs1Dv1D7LZ6XjRBdftOvYrSxcSYFjncXAQDgAtoa9JrlGRwdGnFmcmDxzi7ViXkiTZwg8qaSuRxsJG33xeNQzaw/MFbim/z+smo59lipoFkbTV+c8VUu4hLUp/jjbwwOqg1xwuqzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.6
+	 To:Cc:Content-Type; b=WMqbwkiJV+lvadyKZMmH+4vWu3/dtrLFFUWPFq+lKRrJuBTuEStlmpZUy0U7LBZoo+0m57rDXZR7v7Uy0AabMMHFde8idz4cdON90lGiG02btCUlCq5KaaQboGouj83FNaHUluJ3QnscoXxvam8gx5ChLPD5UzNnG5Fg8v58INI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f6.google.com with SMTP id ada2fe7eead31-7832e0210adso888687137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:17:05 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-5309dc5cdfcso2981471cf.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:20:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788869823; x=1789474623;
+        d=1e100.net; s=20251104; t=1788870017; x=1789474817;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=1ITJx792r+ituep1jxzGor7V94Ftkp9w2SLxSuD0zdE=;
-        b=cSnG0xez3SjtQ5My4vlegY/xUX/js0iSI1rg8vNuR0sGgh0TXddp9FBLx0ZZIZ6Las
-         lmfI0mm4tGMhyTKd2Fz68mcS29dNBKTFsRVQSUV5HKW90Ey9XMExnDfWU7Vc6PY9dDu+
-         yqlmyaD4aVethUAJUu8/MjYPh1xPZK090T9tFGSyuCiWXveCdEy763/K4HYph/YlntTq
-         p50aNtLgseeMZrVh64Vhy3nWWJRrbFBngr5Pff0HLiFSbRPcLF7RxI+Fc0s094MTtF9K
-         99q9pf3IftyErYV18WY9Aawz+xRleeGu2cBd1VlC0QM7q9ZWBW4gnpXNr8FrZ99JahaJ
-         j/Vg==
-X-Forwarded-Encrypted: i=1; AKwUvBw7vzqm6dAjhbae631MBlPmHHMFoytmDgnrQnjEV89y3l6wJyNTbhJ1sndmWTu0DLr1VFRRwDK+CHskGbokgoqHLw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lADVpJGypYirijaQIanjVNpfAlZ4J8lhCMHMZ+RRPhGAaFpviM
-	oK1eqLEpwOW03WVIaIvjxi+58ntQ4hMS5a/yaDBuD0Xhf6OBH7d0OsVM7aLBKQVnRbU=
-X-Gm-Gg: AYBFou1o+e1wNQDvzSDcM34ppyWVLHvAa8chUMnI0BaUwP8XtvtnNH3DSxxzAZ6emOR
-	HpBm0DZRYZbsXoowAwm9q8GtNtnIEYQ7XYkhNmZ1q3zvp3f/KpF3WO6dTDC/X8b1hAK/+BgHZ6z
-	U25KnCq8zZdNNVlZiiLCSRh7Bicm0D8LSWpucszsoz/33NnSg5nMbdwVf+8bWTmlj/Er1JlRPOK
-	UYsYLiXNFvxxU2C9Fb1/6D6EHd0HPskAj7raoTw64Zg76cMbPRMvkcpaG8BLKNfbMmD0F6Nmrwe
-	WeDpMsOOUni1Ntq0akLh3v5p2w4WkWrYUBNwN69cISnSKvzsrZYoG4dkPj7oQPAM3WhEM9odAwV
-	lc3FkO1mIPbop/azwh6f5oE3CAOrgjtG4icsvudLx2Cr+NUH3M2/zMTWhu4wVdoY8wMo5c5gakf
-	ZrvbBaUqKEbH2WNhU8EM9rOfAhmW0Ip5Aci80H2y8uZig3eVa2vab5X4uM18Px/XoMEKLI90JTL
-	xLo8r4JkKfM8cqm4gIlSh3Vxgnq3KOFtmyG04UszA==
-X-Received: by 2002:a05:6123:2c9:b0:5c3:b805:1106 with SMTP id 71dfb90a1353d-5c7ed05c324mr13670572e0c.0.1788869822860;
-        Tue, 08 Sep 2026 05:17:02 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec35d85fsm9906681e0c.12.2026.09.08.05.17.02
+        bh=ofUUPAlzK0RlPGiJuLSG6vss9ksk5CLPkzJ8jLWh4TE=;
+        b=e/5xne0AWHtertS2WpM35OQfrvTxWQ9mQSTw1XTmYJLapvtCJGidBfLsZIOIK9+Pyh
+         JL8w+aAhiqXpbOwhmlUmI5KPVlgFfcMohmbfWNieQmF8Gf4ObwCOe+4IPEJPsjXZ+ffZ
+         AYcPMg02dlHBr/KvmgiJLZ/WkEJcAB+GQWmhAtWDNGkj3AA9pHxdQJvUP1o3qX0r+neS
+         E9a6Cs9XOe2HUTeCniYyO3EaflIl3YTq7C0sw4iisteiDR7hECoGj2KJuljs3L0lt7JT
+         GF5icamxZegGABHFZe6BnQYoKCmtlmGQUa/rxG8lDtePHU4EuD1zlxs0gnu0Of+LiGO0
+         YRVg==
+X-Forwarded-Encrypted: i=1; AKwUvBx7p+FBZs9HVfxY2sq3KUaTJwBr6PMKN5EF9doyD1sHJZZ2bmAHPlAdTCVwEU1YqmWDO3CrIGiGXBjru5OtynDFQw==@vger.kernel.org
+X-Gm-Message-State: AFuF++lxxPJZ370wHsmmLgmRsA0Q1GGAh/x8u9CD3ud3m4NowuOrqrIZ
+	USPEycmACnQWnYWo2M6WLc06RNTvZqFh1Y3G7z7Vb22I9KxnAzWegm/RgRXkG4fO
+X-Gm-Gg: AYBFou2M71sR/0IX+7fa/Q1jvIWgcTFqqpd+89cvapHbGZ5m7qohsW2ZhFRqP5Mnrwt
+	byVT8SlInAcOEib76JK8wteBYReMAPN6qrUNJn8i87AlPS1PwSC6x9G5Uo9etO/SocZBVDgsw8+
+	SKuqCf2ZbPTgCfrOZa9Hp3Xmipp+WE1ObMCpiwTm/D+0KozLDnjBrl6fAk6ek08fNFuzkVTTOaR
+	3Lwv71m9wPtZK3y4W5+vzzCVhqVolcT5SD1EKDRBVmOAxkQ5AKigbvQjODGc62a/RO7IH5+nJMA
+	jyhVloxv+lmuT9oncYXb+nRVpY0RAW1Kzm5qZQ7b+Y+hvJ7ISQY/SvT6FrWrkPocyh2kQGsyfVO
+	y+k7Jq1l/JBc4skcchEY8UvzL/rr/CRU7bfyxesnnPgrKIH9Dtbfs6btLjygI9ACsm+Penmopyg
+	jykckHb3DWtr7bQk1Th4YrJTy2hT2dYeLcx8szKwBxzoB8K4kS/792vscYEE3To22TAMKDBw+ei
+	L3ziIpviYELLqhDApYF/G9qD68BLQ==
+X-Received: by 2002:a05:622a:17c8:b0:530:42e4:1b5d with SMTP id d75a77b69052e-53054a341f1mr411198651cf.42.1788870016637;
+        Tue, 08 Sep 2026 05:20:16 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53087363c46sm44940091cf.18.2026.09.08.05.20.16
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 05:17:02 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5c79c9f7b54so2367304e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:17:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzXBaAzOYlEiTPQ4oR0NnMuC8IHPKhXBc5zuqR7oZ8gMxyi8NKFPn3wS8Bi8OJCG2fT6maCrS+HbvuFfesI7xhYTQ==@vger.kernel.org
-X-Received: by 2002:a05:6122:4698:b0:5bf:4522:fca7 with SMTP id
- 71dfb90a1353d-5c7ed3b2275mr10642726e0c.4.1788869822558; Tue, 08 Sep 2026
- 05:17:02 -0700 (PDT)
+        Tue, 08 Sep 2026 05:20:16 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-52cd38ddcdfso51293981cf.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:20:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwHQ3VWeYbLXKhhcjMrDC4y7CMD0GlWrIWaeiUDR0qI3rUU7+YgDJH++j1BQDHbL6Dy94+RQW/TaxjcBt/Dg0VOiw==@vger.kernel.org
+X-Received: by 2002:a05:6102:8098:b0:783:79ac:9dc3 with SMTP id
+ ada2fe7eead31-78a4a880ccdmr9426846137.10.1788869517073; Tue, 08 Sep 2026
+ 05:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com> <20260907-rcar-du-dsc-v6-5-f8ef711a7494@ideasonboard.com>
-In-Reply-To: <20260907-rcar-du-dsc-v6-5-f8ef711a7494@ideasonboard.com>
+References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com> <20260907-rcar-du-dsc-v6-4-f8ef711a7494@ideasonboard.com>
+In-Reply-To: <20260907-rcar-du-dsc-v6-4-f8ef711a7494@ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 14:16:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUpLrjtUh5pGP9ys_PSFt10vKdQCyo3UGaedcwaf8UEww@mail.gmail.com>
-X-Gm-Features: AcwNN1XnePIl5mdE7u2itKH3ZKW58ZQZ46L6E5RD6lZgFL-MnDqW0nO0uTjSR8c
-Message-ID: <CAMuHMdUpLrjtUh5pGP9ys_PSFt10vKdQCyo3UGaedcwaf8UEww@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] arm64: dts: renesas: sparrow-hawk: Enable
- DisplayPort by adding DSC
+Date: Tue, 8 Sep 2026 14:11:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXA6koxaUjv7hobWhL4eJHHDnBtn6Z44uAbf=3thn8oew@mail.gmail.com>
+X-Gm-Features: AcwNN1WQMv0pxPEjkRceB80LKKGbxYp0qnUsTTCp1Uv8lpJfhrW-zDPu8BR9rQQ
+Message-ID: <CAMuHMdXA6koxaUjv7hobWhL4eJHHDnBtn6Z44uAbf=3thn8oew@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] arm64: dts: renesas: r8a779g0: Add DSC
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -87,23 +86,20 @@ On Mon, 7 Sept 2026 at 11:30, Tomi Valkeinen
 <tomi.valkeinen+renesas@ideasonboard.com> wrote:
 > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 >
-> DisplayPort on the Sparrow Hawk board uses sn65dsi86 bridge, which in
-> turn gets the video stream from the SoC's DSI1 port. DSI1 pipeline has a
-> DSC block in between the DU and the DSI1. However, there was no DSC
-> driver in Linux and also the DSC was not defined in the dts files, and
-> thus the DisplayPort output did not work.
+> The Renesas DSC Display Stream Compression is a bridge embedded in the
+> Renesas R-Car V4H SoC. The bridge is placed between DU and DSI1 units.
 >
-> Now that we have DSC defined in the SoC dts file (r8a779g0.dtsi), we can
-> enable DSC for sparrowhawk.
+> The current dtsi file does not represent the DSC at all, and thus the
+> pipeline for DSI1 has not been functional.
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: separated the sparrow hawk changes from the soc changes]
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> [tomi.valkeinen: separated the sparrowhawk changes]
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-devel for v7.4, pending acceptance of the
-DSC DT bindings.
+DT bindings.
 
 Gr{oetje,eeting}s,
 
