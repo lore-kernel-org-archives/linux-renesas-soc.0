@@ -1,204 +1,159 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D7E533594
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674F253358F
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788868988; cv=none; b=BVQjldjsLLe13SyHIhH5c+ov7WJdvdvdmeu0K+XoVZooZ+fGz+C4zNRlRdDuFPVMphZmqHs2CBheIXikGPz/YT/ynndskR1dNV7HnJ5mbMfvsnBLPoSg6Fa64bjdrwSjsDG/mE4XdXVoZ9vFrJvDTUR7/uWzIx4V4KiQlC5iZnQ=
+	t=1788869378; cv=none; b=vFsC00Hd/07xbBcDMDzhQ3p4i3wZ73hp4PW9iI5GZhgQ3AOmJmBqfElaN5GAPVK2RBBKGKRmBZY7jGu1DRrqU61z+wkyiWeu8w4fioUL9IgcbqoQa/JBbC4p30c/Vz1pjfExI7FWXvEt5K3jmldU3mnZIW/5ttUAASHuAA6v/xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788868988; c=relaxed/simple;
-	bh=1KjGT4jEmlgZm57thkTt2U42w8uocIKFVbOmxzSyT6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H74IXbUO70YzeDHYln0532oQIAT1Ooc/oQirJFGKm2ybu6wU9OOloRmcmBo+AeEDI0Sge/XSrjJWNKkhdmloI7JhUZps7WnccvSmt3+wpom5L9KxCVjknoqzFcNQis4rLwvC0AJ4rqfoEmNTEzv2zfBATQ1zrpEJ/KTLQaBU7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5c663437fe5so2004022e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788868984; x=1789473784;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2ewf6TAC6datJbrIguz8TlCYfKFGg/5aYhxsRPBSYo4=;
-        b=OuPldwFM/e/l1IZusjM8jkcQ4INmzLGyufxjSnev5hl/laBtYy7+T+AfWZkEPm0Ib1
-         9miURjuf0u+xrtqxF5aZIbuuXivj2YtTzePiPksEc8ZjO0T24TT4lr2yvBDqBxBOHMZA
-         EZMv9H7UVkvmwKR2oQpS6vOjqJ8I9nk/vxAKQqD5K9qSF1jLFulk1rB4GY2L0Frn84j/
-         jDEWMpEGvF7D+zO1YxWnLSP5ZQmIq7Z3Vf85q96cDl9IMBxYHZXMTrBguVQWmmrgLYbf
-         Mh/uQ9VWjX5faIBnuO0lEMLeuKqlngzc4sJbUvNUyAIsTWRMym+t45dzhJfXrSWH9wwl
-         Fu+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxQumIinVjg7qYFE7aFmxcWkMgZajDFlL8Mr3aenP+4GQ+d9dz6mNvSi00Kd2FYo84UXODzdMcbGGNLHBWR1SeYug==@vger.kernel.org
-X-Gm-Message-State: AFuF++naF/WRXpCfEnnUefaVZHkpmqC0B+VYyRjK/K5CogJc9Ym0EO0t
-	0LkQY6+Vb6bmLqCbBiJwmFypSZyas92jFH+Zwdt3WBYS+bZ3ROVnD/anzOnqMHl0
-X-Gm-Gg: AYBFou0FJJoVhshnH7CQts2AZV9b5a2vxn/Tg5RNyky0OEIBheEbaA5UrXNzV2PxHrV
-	IHl0P/wODNyC4v48Hz+TSs2JcEtISiJvMwXSmV1wYMoN5slLcHN8cTqFvjej3CReYuI47nz/kB4
-	SSbVHtL0dqaxZgpUG81nUEk3MqeLLQpUQBQtX5gY0MaMuGqnynbCbCgBrN1qTHjBRWRt0ov9oMg
-	9VRMZi/VGnHbkr1YmUkbuTuOyWc0ccFkVkfI6JoDF7582UQ9iknB9NbG9hIHOXWIEOOFGiIRll8
-	iK4w8mtgtEjy3c4SSIquGa0E3n96V5BobWL8b4WWjlReAbOIP4JvGaTB9hCVwa6AEbdG/O01K/Z
-	KHEDMPTfcUN99Im/XTP6SIC2IF7dxI9k1SwNVpmRFKdUjMVfXngmkrx229DkAEfDTbA99CjN8wc
-	ow5fA8D5CMFhGDxf1u39Q4hLLoTYjHl0etxdDUYGVtye4fZkBtahCQQBqd3ESE9zUyv01Rbqcnb
-	wKojQj2Ik/dO3SUet7iKa807iHyATDbPIvw
-X-Received: by 2002:a05:6122:340a:b0:5bf:6bf4:b215 with SMTP id 71dfb90a1353d-5c7ed29e8bamr13546859e0c.2.1788868984340;
-        Tue, 08 Sep 2026 05:03:04 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1ef7a5sm10062026e0c.5.2026.09.08.05.03.03
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 05:03:03 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-97e9fb0fc58so1127751241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:03:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx3jylqtgWsgF7LOtK0NosnXZCVLAMMYRkVlWilRXXqqKDu50yBY+zp1/A0jvCcY97wsdBFwkC3j7e3wjWrzUV7Rg==@vger.kernel.org
-X-Received: by 2002:a05:6122:2187:b0:5c1:25d4:e29c with SMTP id
- 71dfb90a1353d-5c7ed0b2b83mr13290597e0c.0.1788868982949; Tue, 08 Sep 2026
- 05:03:02 -0700 (PDT)
+	s=arc-20240116; t=1788869378; c=relaxed/simple;
+	bh=xhmNvzPPgnVc3X5ecm7EVzVh+RRiLdxi5TX9YCmP2Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=B0mN8jJLxmjoWiO4DgJnm4vLKq1YRNOgdnYC18F2T1Fz4Plx8SW2oAD0RaZDrNZsuXY+4HTq2SsdLeP6fKRgb63sR3nIT6+BLniWXHBGlwYduedRvVC85aEKOuCQG2QzZHzVuc5W3V8v15n3q0PlP/Q3ECyYX3S64AMkOpYzdBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VgpQP7LV; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VgpQP7LV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788869375; x=1820405375;
+  h=date:from:to:cc:subject:message-id;
+  bh=xhmNvzPPgnVc3X5ecm7EVzVh+RRiLdxi5TX9YCmP2Fw=;
+  b=VgpQP7LV7weF3egQUUU95bnmvi0uH58221s0VL4+94TRnW8MBv1U9foy
+   9crC4BKhP03nE49VhBIdA64fzzPgqHxyOsTNW4X78EVlXGil1BlYXdy8Y
+   hT6rs87ZtUibW7Y/n97GY9DhGrDhwZ4FAxPBgZmIc/BJdpr0QSof7zrZs
+   biSGRSce3PtpQPBXxzv5OhhA3Tf/trSQivVL+QmSuC6bwuy/iOIivXXSC
+   zLoQQhMwKpfh4pHgXAP5Rck7tvVV5M9U/FcCcRgolwgQOted9LGJPPYsY
+   syb0V6u9teMxQzccfSrRNxbISQZZBeAakwitf4ihirWj7dE3HMkKm/GqL
+   A==;
+X-CSE-ConnectionGUID: 0EWilLmeRgKZ0eliFiRwgg==
+X-CSE-MsgGUID: rYLYo2CfQIGbyWiYUmkGHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="106784211"
+X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
+   d="scan'208";a="106784211"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2026 05:09:33 -0700
+X-CSE-ConnectionGUID: KEcicor2Q1mc2o9PygHJkw==
+X-CSE-MsgGUID: 5unYlv0lTJyQtl6Ez23kOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
+   d="scan'208";a="267728310"
+Received: from lkp-server01.sh.intel.com (HELO dc5b8f51e05b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 08 Sep 2026 05:09:32 -0700
+Received: from kbuild by dc5b8f51e05b with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x3udm-0000000005H-0rJE;
+	Tue, 08 Sep 2026 12:09:30 +0000
+Date: Tue, 08 Sep 2026 20:09:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ c0ca80b66f2262166605540c5d5e545f127d5ce6
+Message-ID: <202609082026.1aA6LDPp-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 14:02:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com>
-X-Gm-Features: AcwNN1Ut5SdzvrXN_MrghHd3UEoZOGWpEZlnNMWeOIWmWWDEytJDRzefIJak2-I
-Message-ID: <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare 2CH CANFD HAT
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: c0ca80b66f2262166605540c5d5e545f127d5ce6  Merge branch 'renesas-drivers-for-v7.4' into renesas-next
 
-On Sat, 8 Aug 2026 at 04:57, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Add a DT overlay to bind the WaveShare 2-Channel Isolated CAN FD
-> Expansion HAT on the Retronix R-Car V4H Sparrow Hawk board.
->
-> Current device link is at https://www.waveshare.com/2-ch-can-fd-hat.htm
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+elapsed time: 1554m
 
-Thanks for your patch!
+configs tested: 82
+configs skipped: 5
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-ws-2ch-canfd.dtso
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> +&{/} {
-> +       /* Fixed clock dedicated to SPI CAN on 2-CH CAN FD HAT */
-> +       clk_can0: clk-ws-2ch-canfd0 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <40000000>;
-> +       };
-> +
-> +       clk_can1: clk-ws-2ch-canfd1 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <40000000>;
-> +       };
-> +
-> +       /*
-> +        * SPI_1 is operated as GPIO SPI, because MSIOF5 can not be
-> +        * muxed on the pins allocated for SPI_1 on this CANFD HAT.
-> +        */
-> +       spi-ws-2ch-canfd {      /* SPI_1 */
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               compatible = "spi-gpio";
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc          allmodconfig    clang-24
+arc          allmodconfig    gcc-16.1.0
+arc           allnoconfig    gcc-16.1.0
+arc          allyesconfig    clang-24
+arc          allyesconfig    gcc-16.1.0
+arm           allnoconfig    clang-17
+arm           allnoconfig    gcc-16.1.0
+arm          allyesconfig    clang-24
+arm          allyesconfig    gcc-16.1.0
+arm64        allmodconfig    clang-24
+arm64         allnoconfig    gcc-16.1.0
+csky         allmodconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    clang-24
+hexagon      allmodconfig    gcc-16.1.0
+hexagon       allnoconfig    clang-24
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386          allnoconfig    gcc-14
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch    allmodconfig    clang-24
+loongarch     allnoconfig    clang-20
+loongarch     allnoconfig    gcc-16.1.0
+m68k         allmodconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    clang-24
+m68k         allyesconfig    gcc-16.1.0
+microblaze    allnoconfig    gcc-16.1.0
+microblaze   allyesconfig    gcc-16.1.0
+mips         allmodconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+mips         allyesconfig    gcc-16.1.0
+nios2        allmodconfig    clang-20
+nios2        allmodconfig    gcc-11.5.0
+nios2         allnoconfig    clang-24
+nios2         allnoconfig    gcc-11.5.0
+openrisc     allmodconfig    clang-20
+openrisc     allmodconfig    gcc-11.5.0
+openrisc     allmodconfig    gcc-16.1.0
+openrisc      allnoconfig    clang-24
+openrisc      allnoconfig    gcc-16.1.0
+parisc       allmodconfig    gcc-16.1.0
+parisc        allnoconfig    clang-24
+parisc        allnoconfig    gcc-16.1.0
+parisc       allyesconfig    clang-17
+parisc       allyesconfig    gcc-16.1.0
+powerpc      allmodconfig    gcc-16.1.0
+powerpc       allnoconfig    clang-24
+powerpc       allnoconfig    gcc-16.1.0
+riscv        allmodconfig    clang-24
+riscv         allnoconfig    clang-24
+riscv         allnoconfig    gcc-16.1.0
+riscv        allyesconfig    clang-24
+s390         allmodconfig    clang-17
+s390         allmodconfig    clang-24
+s390          allnoconfig    clang-24
+s390         allyesconfig    gcc-16.1.0
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh            allnoconfig    gcc-16.1.0
+sh           allyesconfig    clang-17
+sh           allyesconfig    gcc-16.1.0
+sparc         allnoconfig    clang-24
+sparc         allnoconfig    gcc-16.1.0
+sparc64      allmodconfig    clang-20
+um           allmodconfig    clang-17
+um            allnoconfig    clang-17
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-14
+um           allyesconfig    gcc-16.1.0
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa        allnoconfig    gcc-16.1.0
+xtensa       allyesconfig    clang-20
+xtensa       allyesconfig    gcc-16.1.0
 
-Please list the "compatible" property first (everywhere).
-
-> +               sck-gpios = <&gpio0 10 0>;              /* CN7 pin 40 */
-> +               miso-gpios = <&gpio0 9 0>;              /* CN7 pin 35 */
-> +               mosi-gpios = <&gpio0 12 0>;             /* CN7 pin 38 */
-> +               cs-gpios = <&gpio2 13 GPIO_ACTIVE_LOW>; /* CN7 pin 12 */
-> +               num-chipselects = <1>;
-> +
-> +               can@0 {
-> +                       compatible = "microchip,mcp2518fd";
-> +                       clocks = <&clk_can1>;
-> +                       /* CN7 pin 18 */
-> +                       interrupts-extended = <&gpio1 25 IRQ_TYPE_EDGE_FALLING>;
-
-Datasheet says active low, so IRQ_TYPE_LEVEL_LOW.
-
-> +                       reg = <0>;
-
-Please list the "reg" property second (everywhere).
-
-> +                       spi-max-frequency = <20000000>;
-> +               };
-> +       };
-> +};
-> +
-> +&msiof0 {      /* SPI_0 */
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +       pinctrl-0 = <&msiof0_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +
-> +       /*
-> +        * Native MSIOF chipselect does not work with MCP2518FD
-> +        * because MCP251xFD driver needs to keep the chipselect
-> +        * line asserted between transfers. This requirement is
-> +        * fulfilled only by using GPIO chipselect.
-> +        */
-> +       cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
-> +
-> +       can@0 {
-> +               compatible = "microchip,mcp2518fd";
-> +               clocks = <&clk_can0>;
-
-Please insert a comment "/* CN7 pin 22 */".
-
-> +               interrupts-extended = <&gpio1 26 IRQ_TYPE_EDGE_FALLING>;
-
-IRQ_TYPE_LEVEL_LOW.
-
-> +               reg = <0>;
-> +               spi-max-frequency = <20000000>;
-> +       };
-> +};
-> +
-> +&pfc {
-> +       msiof0_pins: spi-ws-2ch-canfd0 {        /* SPI_0 */
-
-Node name should be "msiof0".
-
-> +               groups = "msiof0_clk", "msiof0_txd", "msiof0_rxd";
-> +               function = "msiof0";
-> +       };
-> +};
-> +
-> +/*
-> + * PWM1 uses PWM1_B pin configuration for pin GP2_13. This conflicts
-> + * with SPI_1 CE_1 signal which is also on pin GP2_13. Disable PWM1
-> + * in case this hat is in use.
-> + */
-> +&pwm1 {
-> +       status = "disabled";
-> +};
-
-Please move this node disabling pwm1 to the top, for compatibility
-with dynamic DT overlays.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
