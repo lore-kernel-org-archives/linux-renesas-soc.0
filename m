@@ -1,162 +1,253 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11020081.outbound.protection.outlook.com [52.101.228.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE971C8FB1;
-	Tue,  8 Sep 2026 00:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788825676; cv=none; b=KIrqXdYWPDnyAcOIevIGgTp3UQcqIhE8sbtxYC2gjbPKUsZLSTXIXR1xFf/y3WOekvKEhkmbAE9Vn04x3jHKWdTbI4psomlfbdbL46PU/qas15XAxlgG4vxJeXFddfnPKo12a7ZzqvZbFrq4qs+M/52eh7Ajobp9yE1NNSw9jiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788825676; c=relaxed/simple;
-	bh=tXiqMqDakfvlY2dupDubgTSMtlJnNbg4eRmckHJ+NEQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=K48S/kuwsEEmrDtitlanH+mnoHvhIfm1DgnPdsJjvHXNEiRM5KP5NsDYffYZ3yLYCyZ4yHzTG5VxBDkQXaUYe2I3yAqOpSQaMMrWeehsv78SwN1QDbIhz3kD97lKJjpQCZVdp8E2nmYKvMHPCOAoG0kACRxuIaX99ZCCk7LK2cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QieT0c/h; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FC31C84A0;
+	Tue,  8 Sep 2026 01:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788829535; cv=fail; b=OkOG8Eku0IgVOxraQhixLTtfzZSw3eg6PZbsxzdLcV1WW3VwOs+1x/1a1Lm6rK6CAai9R958Mqskx2hLD6kiJdDo+2ZAN/UFhFtmAOwUTNEmwLNigaXf3OkBwhpT2EQrwhloyeAnt5cEpTykPeCs7NUh00A3Yb6GRkQSak+StMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788829535; c=relaxed/simple;
+	bh=6yLh671ywjfoq+14voEty+D02dm5nUXwG7MB1XUdr+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HkKx4R0OKSg/SzHNEECruqnfjvRVfFiPjkp/Vhu00P0mBF9VeIYgQqlMbAsK8R4uwBvt55WF/Y/7fIyGe494WI5b3B0iLLsl3YmgKN8/++Fr8TCgtkkHI/D1+SeMMlLNQsyQn3B/cTmoIMEHHhUImjnZoZb9cH9IluVXKh72LZM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=jaabjjXW; arc=fail smtp.client-ip=52.101.228.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QieT0c/h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E67B1F00A3D;
-	Tue,  8 Sep 2026 00:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788825675;
-	bh=bcbXPgqqmhCGAYehVpdlPlHAVlBttNgjeXnR1sVfUjg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=QieT0c/hEJuFm2V6fmOk29kMSBvFDbkIgsgSb6O2FnZgG/eWwIBwY7a7zrFi22m2e
-	 kbRJ5PRU2DEGfr8SpR3aD9y3j8k1lJAjt/6D5wx12NqREIHoI8WVA3H6bRDQxMVV3t
-	 MzOztgSXL1SfVGaG6oz82vSAuWh+VgCZQ08/lpuqhfzQQ+NfN5Fghwss5du/mdjlK0
-	 MGahfnhuHRV6OjOqoRger4y85JkAE3DOkBN3iWLnQGNZ8Sl/EVjajesxaScF6FEzBn
-	 E3Wivo9yluKmAC0megzUZptoDMe1OTCA+yP+K5CH1kvgt4gO+uE1vRTOV8S70Gf/Vb
-	 iUHZh9IHG5XfQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 56B3039E8A5A;
-	Tue,  8 Sep 2026 00:00:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="jaabjjXW"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ftfcqczgfo7DmXG0b0pJphN/P8Z7bhXEsTzefh7yMgs/OK+jl0nuNmd6qiLE+nEmvGIpZYSVdxc4dFiVyCeJhfTEYjYg3VCCzryfFCimK1DLa1BXYfp2GksJtrTIZfWpL9MeAU05tb2ua24Z/g2LxJUV3cKgo3YEcHSH6ZoGMtk6dYUioFmu6RbogtDubNnan6M3Evui/kqfFwxI2gi+n4pNtrqk9g9RfHwOQFQr6VBkQTxspvi2NukyoyzidrFtcwHPUBAhUrZQQHRYFVJQfk4FkuszZKafh7Xhh0ZWRDMhuLd5lD+6MRuwN6GP7KUstqGqemOZXmDxtEAUCpUpkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GTIEus1Qya2B+HWhWJC0EJBj7G4JfsNhTMlecNLnIeQ=;
+ b=vrmzssmGLU6Zaib5WX3Hp37WpMuxk4ze/oIEIpgdOf+D0eTYoZw1UnbOBoSE1Xzr9rk+wZRpfBlPjauLOqWtGqxUVZ4f+WdPDkI07TYFgojbIIJlVplhiwn5NWwurKtMns7QQkh/ugu2l+ih2Vf6A3lcZkw29JTM+L1ggh6/2y/S3znhibXo6FNsDtj7lK7GcvtDlhjgGNGPr3fG3GxCFQVVByYBD3Z7EyYoaW99Ewtp0e/kyetcBVWTsuKt8wbp2sAwSuYg4IFBmnHf3hHVUWC4x5hf/KIR4xFAWnEYm41untcOH5Dy6yHue+UrRIu7+3dBzpodC8hLEha6VoY0Bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GTIEus1Qya2B+HWhWJC0EJBj7G4JfsNhTMlecNLnIeQ=;
+ b=jaabjjXWyHfTqokHLEQcEGLxoJImVFiM3AX0978YpgnoxIq/Ed/Z3IhiDTk4/v+eYarTZeTySJGQx0SwcKvwc4ejdMvwg5A9yXgwVlbuXLV16O1ZtfImuMqbqQsqHe2l1KdeSEzhOoGDEL7BYzUFvHyzo87dB+PDU90xWgaQRJI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:38f::10)
+ by TYWP286MB2070.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:161::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
+ 2026 01:05:27 +0000
+Received: from TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32]) by TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::2305:327c:28ec:9b32%4]) with mapi id 15.21.0382.014; Tue, 8 Sep 2026
+ 01:05:26 +0000
+Date: Tue, 8 Sep 2026 10:05:24 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: rcar-gen4: Add missing PM ops
+Message-ID: <74il3j2dzfdt4xhqrfjkifhnpnmgqtplon2mtzfjzkbszwegi7@vou6a5rshcvr>
+References: <20260907163554.725127-1-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260907163554.725127-1-marek.vasut+renesas@mailbox.org>
+X-ClientProxiedBy: TY6P301CA0025.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:3bf::7) To TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:38f::10)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/33] Remove comma after sentinel entries in
- match
- table
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <178882561388.3212362.1851608781908345741.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Sep 2026 00:00:13 +0000
-References: <20260904043724.2955444-1-s-vadapalli@ti.com>
-In-Reply-To: <20260904043724.2955444-1-s-vadapalli@ti.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: dario.binacchi@amarulasolutions.com, mkl@pengutronix.de,
- mailhol@kernel.org, msp@baylibre.com, florian.fainelli@broadcom.com,
- jonas.gorski@gmail.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- kurt@linutronix.de, hauke@hauke-m.de, chester.a.unal@arinc9.com,
- daniel@makrotopia.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, ansuelsmth@gmail.com,
- linusw@kernel.org, luizluca@gmail.com, alvin.sipraga@analog.com,
- clement.leger@bootlin.com, justin.chen@broadcom.com, dlan@kernel.org,
- rogerq@kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
- rjui@broadcom.com, sbranden@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, opendmb@gmail.com,
- andrei.botila@oss.nxp.com, wangruikang@iscas.ac.cn, amadeus@jmu.edu.cn,
- kees@kernel.org, tmshlvck@gmail.com, c-vankar@ti.com, horms@kernel.org,
- vadim.fedorenko@linux.dev, daniel.zahka@gmail.com,
- nora.schiffer@ew.tq-group.com, v-singh1@ti.com, oss@vassilevski.com,
- haokexin@gmail.com, alex@sverdlin.org, aleksandr.loktionov@intel.com,
- lgs201920130244@gmail.com, linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-omap@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY7P286MB7722:EE_|TYWP286MB2070:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95281513-aff1-4337-1f24-08df0d45449d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|23010399003|7416014|366016|1800799024|376014|10067099003|6133799003|22082099003|18002099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	anfuG/TvWw3vTKA11CSJFCjSEnRwPSxh63zV/G4b9MM+LwJIJrEl3MaS/PXPoXm6y832DYdtqyo44HlH+ChTugbA+utd8xGVavFosNfo2JIZfINw78izKprTnRFxR2sjVrTjxup3Z6xccHScWSJI5W4YrwNl8y8vjqT+nNZ73SSqGjkblDNSyNgDga2VokI1R3gQkgWkWRKwrCOLv/qoMxyXcagfYXEXRjgvQRraGy/13udZaaz+s4YHr2sC5z7iHubIJvGZUpT6R7STl+ho7GR64Mqk5l+o5RJAJLNCexXH3JnszWKD7Hg2TgZSGvCIAiSEPNWGHql5585kYQPvGuRBLq+qY3XpDCUrMvC+OoVDTNkoWW5ON17cHYgbr2XSwJ7ZFqPpZ9R1CBsIdzkVH9247xXCzAmNRtTujg6KEAT4OU2ziAIcUAGbCcbBlqG9FxntsAoTPA3ffrN37P+MHnzbve27s0pxkKaX5hPPaFI1ara6+1zlFXUTCK7c4YvNdSXZErf5qvisfUCyCa/tjc2ipsj0i1DvztmAY7ciSH39+ge8laX1aDB2SdvRU8MTMbVnjEiJi5xL2WqE58AEGf7Mw2akqtVkOn3gt4tOiBO+jAMoq7r4XkRAMmlxnIG8o2Rs1jtRaUj9rjQYTENvx24qzTM+WGK5WwuNzi7YdBU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(23010399003)(7416014)(366016)(1800799024)(376014)(10067099003)(6133799003)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U21oU09GTW9ubTNoR1g5VW5PMlMxdngyVGZRVDRVanZGVm1lMTIyb0NDM2sy?=
+ =?utf-8?B?SkJZRW5LeSt4R0dGQlRVYTlqQVFvWlhySHhKdERZVGJHMDNTdXdFZ29JeFFm?=
+ =?utf-8?B?ckhqeFlJbFNyTmRXNzd2OFY1enBYL0hlSlk1RmIxelU1OVYwbWZ4QWdOK1NP?=
+ =?utf-8?B?MjVvUzBiamJ3dFBSVDFDVzRGTHJhWkFJWFYyVDFSN0JITmN5SlFVZzJ0V0t4?=
+ =?utf-8?B?L2ZOdXJRRElYaVNtUjhKM29uNVJpeHFnalBLSGpldFgzVHUyK3h4c0h0RHd3?=
+ =?utf-8?B?eGJBOUZJcTZXS2tDL0VTY09WWE9malE3ekczM1Y2VnNVT05yN1drakx0bUtU?=
+ =?utf-8?B?bjU5OGdtUHk4UlV2cnFBQkN1OGZqS0NwZjdSNmhnaHNrYnliRjg3LzdBV2Zx?=
+ =?utf-8?B?bS9haFhLNDZiTk1KZHBjbzBYSW9uR2NLbnhUNzVoQVFLeVdZVkowS2NuKy9I?=
+ =?utf-8?B?TzVGRXdyaVgxdkpMZ0NvODJPS090Uzc0VllHSTFZcmR1cmgxakh4endNbFdT?=
+ =?utf-8?B?bmVXUHVob2dVN1Nnb0RzaUF4YUFGY0JNdmRkMllaZk5xTkx5SGV0YjdNZnBB?=
+ =?utf-8?B?d1oydGx3U0hMdHc2WjhkRHJwbmFweDN2eHhGMmN5V3lCSlNEMEVoQldzYVlL?=
+ =?utf-8?B?ZHI1UUVBNDZkZE9VTDAvT2I0aXY2YzJjaVR4VENXeFJyVDMxdVNSOWNhaVp3?=
+ =?utf-8?B?L0dzNlRSMHlZV2xPRXRudEZldUxSeUpzMEhTRjMxY0hPQXVVSnM0UlZNVHJh?=
+ =?utf-8?B?MlNVcXEybHA3NXl0UXE4ZC95TW1idVVUdnRDSGVkV2M3SzN0ZUk1Wmh5R0FC?=
+ =?utf-8?B?VER1c3c2dVRVZCs0QVFHWTNBK1RCNzBaV1lzTTZNY01zRGp5MHJBNjFYUFdv?=
+ =?utf-8?B?RFlrZnc4SW9hb1ZUQk1vVEhDeHoxSWlpYmk5UnQxUzZIQ2ZVQk1HVk1tWjJz?=
+ =?utf-8?B?MElCYTJmdE5kRUF3cEFNNGY2WVNubm92SE9iNS95WENvUDdQTUFQVHQ0L3VJ?=
+ =?utf-8?B?ZWl0U0Vvd0xLMitpdkl4YXdXb29kSFM0aExrVm10RXdCQlY2STVPZkwxRHoz?=
+ =?utf-8?B?MW1HRENwMDRHTDE2MjdPN3pHSUt0Q3ExblpHZ3Fmc3doNjBxNlljWHFsTjZq?=
+ =?utf-8?B?K0NsWG9LVHBZUVBwUk1lOWdBVEd3NW9oSFJhSVpxU1RIMS9rZVkwUUwzS2Y2?=
+ =?utf-8?B?aTR0dDQ1cTBZUGlUU0R6dVdWVlNkaGZaaGlvVmY1MW95WkNaSFBCVXBpT3FS?=
+ =?utf-8?B?cGVYUnZ5dHZrZGowQ3FOWlNaaXl4SnBjQWRIZmZRMTExUW5RL2w4bVA4YytE?=
+ =?utf-8?B?eEJCdy9JQXhsUVBpM05GUEFQUzZxSm9hMnVBSjJUc0t0VU1rUS9WQWVtM3k3?=
+ =?utf-8?B?cTFvbVloNGt5OGdmTFB5SUE1d2d1dnc4UWt0ZmdRR0g2L1YvWFlBSjkrcmxT?=
+ =?utf-8?B?R0xtbEtHOGxMYTNTTTdUYWtuTlFhc2FuYWdDM3dMdmVPVW1OQ1N3UmpVTlZI?=
+ =?utf-8?B?bGVObEdTL2xSVG91SjZsVkJrUXFFK0NobHRJVy9mM2EzQ2IzM2ZSYWZXVnVL?=
+ =?utf-8?B?dHhJbzZtbXJyNVp5RXY0SXpXaXZYYlU3ekVTYlpiWjRSWEQ2L0FvbSt2V1A4?=
+ =?utf-8?B?VDlYbHFiY29DU1dSNDdZZFZzeVA4b0YxeUlWdGQzZlNnYU1BUXZCVWd5RkZJ?=
+ =?utf-8?B?VXcwaTJNMkN4L2hvWllpV2RJMkdaekh6YWFXNFM1SUsxM1ZSM0w2RUs4YmZJ?=
+ =?utf-8?B?aUFTYnpmWnJ2MTZLNHlleE9hNThIYUtOTDFWVDlsSnZqSG1JNjBoNmFjOHpQ?=
+ =?utf-8?B?VjVTMnlVM0Q3N0paZFFvYWRwR3JXcjA0aERNY2lhOENrT3hXazFEMldUbjh1?=
+ =?utf-8?B?S09GblJYR1NjcmlMc0FKcm5FbE54ZHZzV1VuZHJsYUdIQmRwQnNDT1ZvWFVw?=
+ =?utf-8?B?b1IyeU5ZblpiRHpROFM0QVRNMnJPNXcwajR2citxMnlzQVNHZ0VsdzJqNGFJ?=
+ =?utf-8?B?RjVkVTJXTUQvSVVHY1hUbHdpOU1yUFFjVEZRaXg2eFh5UWRFQVBOYkFjVEV3?=
+ =?utf-8?B?a0NnMGF1YWR3Y2lTMG5zdUFveGR0dmhtcStRcGI1WUdNMHN1NHNMVm5Lc0Ja?=
+ =?utf-8?B?ZU4rTU45RUxMdnNuczkrZzJybWFBYW53NTVoYU9WMlZzeElPTmpWNS93cVFy?=
+ =?utf-8?B?TlJmd1NDTlF4L2piSlNyY25HalZRY1JvT2dGVHg4a3NpRWV1SUd6QWJjVWpC?=
+ =?utf-8?B?dGNkYUF0QXBwRE5NQmhNTFVLWUg3ajlaVElxK3gzdTd4YzVtOGcyUno1OGdY?=
+ =?utf-8?B?NUpKNlJTR0lHNnlNZnkrWEs2SzkrdnFGenpENzhMK3YvZE5hNHBNQWZZNlZl?=
+ =?utf-8?Q?qPdA1edBi3voT4nqJfdWTyzPzQKn/BBv3wdMT?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95281513-aff1-4337-1f24-08df0d45449d
+X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB7722.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 01:05:26.7142
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X4ygcoqcUowgHCZWXLsItXTBny8FBEiqLUO4W8GnEGAGeB+y5TocrpUXyNJjnLL1KVVxmzbhZrplIGiIg8okmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWP286MB2070
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 4 Sep 2026 10:06:06 +0530 you wrote:
-> Hello,
+On Mon, Sep 07, 2026 at 06:35:22PM +0200, Marek Vasut wrote:
+> The R-Car Gen4 PCIe controller is part of a power domain. On R-Car S4
+> and V4H, this is an always-on power domain which is not shut down in
+> suspend. On R-Car V4M, this is a dedicated A2PCIPHY power domain,
+> which is shut down during suspend, and the controller loses state,
+> which prevents the PCIe from working after resume.
 > 
-> This series removes the comma present after sentinel entries in the match
-> tables across all networking subsystem drivers, with the exception of the
-> davinci_mdio.c driver, for which, the patch posted by Geert at:
-> https://lore.kernel.org/r/e481b6de46cecc6ea604ae165272c667274cc621.1788437140.git.geert+renesas@glider.be/
-> does the same.
+> Fix this by adding generic suspend/resume noirq ops for the controller,
+> which tear the link down on suspend, and restart it on resume. Use the
+> same PM ops on all of R-Car Gen4 to gracefully suspend and resume the
+> PCIe link on V4H and S4 too.
 > 
-> [...]
+> Test case which demonstrates the problem on R-Car V4M:
+> "
+> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/pre
+> $ echo s2idle > /sys/power/mem_sleep
+> $ echo platform > /sys/power/pm_test
+> $ echo mem > /sys/power/state
+> $ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/post
+> $ diff -Naru /tmp/pre /tmp/post
+> ...
+> -00000000  12 19 32 00 07 05 10 00  00 00 04 06 00 00 01 00
+> +00000000  12 19 32 00 07 05 10 00  00 00 00 ff 00 00 80 00
+>                                           ^^^^^
+>                                     Class 0604->00ff
+> "
+> 
+> Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
 
-Here is the summary with links:
-  - [net-next,01/33] can: bxcan: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/3fb94a277ff8
-  - [net-next,02/33] can: c_can: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/fa7291a2527a
-  - [net-next,03/33] can: flexcan: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/4b7e7da65530
-  - [net-next,04/33] can: ifi_canfd: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/e6f3617decf3
-  - [net-next,05/33] can: m_can: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/6c507ab36a83
-  - [net-next,06/33] can: sja1000: f81601: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/44ef827c95a8
-  - [net-next,07/33] can: sja1000_platform: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/5b01d5766043
-  - [net-next,08/33] net: dsa: b53: mdio: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/9869b64b320d
-  - [net-next,09/33] net: dsa: b53: srab: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/30fccb0c4e76
-  - [net-next,10/33] net: dsa: bcm_sf2: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/2d08ac30e2ed
-  - [net-next,11/33] net: dsa: hellcreek: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/4ea4ec365378
-  - [net-next,12/33] net: dsa: lan9303: i2c: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/a650dd1fc254
-  - [net-next,13/33] net: dsa: lan9303: mdio: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/4caa67d082f6
-  - [net-next,14/33] net: dsa: mxl-gsw1xx: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/9a580b3496c4
-  - [net-next,15/33] net: dsa: mt7530: mdio: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/e86151633076
-  - [net-next,16/33] net: dsa: mt7530: mmio: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/f9bcf01a6608
-  - [net-next,17/33] net: dsa: mv88e6060: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/6011d062dc7d
-  - [net-next,18/33] net: dsa: mv88e6xxx: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/ead589471593
-  - [net-next,19/33] net: dsa: qca8k: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/c45695468377
-  - [net-next,20/33] net: dsa: realtek: rtl8365mb: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/6233d1ee3771
-  - [net-next,21/33] net: dsa: realtek: rtl8366rb: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/068d6ebde398
-  - [net-next,22/33] net: dsa: rzn1_a5psw: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/39063420326f
-  - [net-next,23/33] net: dsa: sja1105: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/2b46b5c9efc9
-  - [net-next,24/33] net: bcmasp: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/a450f7315155
-  - [net-next,25/33] net: spacemit: k1_emac: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/435d4b4aa9c8
-  - [net-next,26/33] net: ti: am65-cpsw-nuss: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/8b7eacd62198
-  - [net-next,27/33] net: ethernet: ti: cpsw: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/1cdf69f1e9a0
-  - [net-next,28/33] net: ethernet: ti: cpsw_new: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/6d1c7d7a0731
-  - [net-next,29/33] net: mdio: bcm-iproc: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/93b9f4f13608
-  - [net-next,30/33] net: mdio: bcm-unimac: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/dd7a0a755874
-  - [net-next,31/33] net: pcs: xpcs-plat: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/3fc32eb28f15
-  - [net-next,32/33] net: phy: nxp-c45-tja11xx: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/af86c0a58007
-  - [net-next,33/33] net: wan: slic_ds26522: Remove comma after sentinel-entry in match-table
-    https://git.kernel.org/netdev/net-next/c/8afd6adb0717
+The s2idle test with pm_test=platform now passes in EP mode on S4 Spider even
+with CONFIG_PCIE_DW_HOST=y. Thanks! Feel free to use the tag for it if it helps.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Tested-by: Koichiro Den <den@valinux.co.jp>
 
-
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Koichiro Den <den@valinux.co.jp>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Add TB from Geert for RC mode
+>     - Use pm_sleep_ptr()
+>     - Call HOST suspend/resume ops only in case the controller is in RC mode
+> V3: - Add RB from Geert
+>     - Make rcar_gen4_pcie_pm_ops() static
+>     - Pull the mode from driver data
+> ---
+> NOTE: Depends on series
+>       https://lore.kernel.org/linux-pci/20260903205153.283553-1-marek.vasut+renesas@mailbox.org/
+> ---
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c | 25 +++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> index 5690dc32f47e0..8b6a6cab1b83e 100644
+> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> @@ -909,6 +909,26 @@ static int rcar_gen4_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable
+>  	return 0;
+>  }
+>  
+> +static int rcar_gen4_pcie_suspend_noirq(struct device *dev)
+> +{
+> +	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
+> +
+> +	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
+> +		return 0;
+> +
+> +	return dw_pcie_suspend_noirq(&rcar->dw);
+> +}
+> +
+> +static int rcar_gen4_pcie_resume_noirq(struct device *dev)
+> +{
+> +	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
+> +
+> +	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
+> +		return 0;
+> +
+> +	return dw_pcie_resume_noirq(&rcar->dw);
+> +}
+> +
+>  static struct rcar_gen4_pcie_drvdata drvdata_r8a779f0_pcie = {
+>  	.ltssm_control = r8a779f0_pcie_ltssm_control,
+>  	.mode = DW_PCIE_RC_TYPE,
+> @@ -952,10 +972,15 @@ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
+>  
+> +static DEFINE_NOIRQ_DEV_PM_OPS(rcar_gen4_pcie_pm_ops,
+> +			       rcar_gen4_pcie_suspend_noirq,
+> +			       rcar_gen4_pcie_resume_noirq);
+> +
+>  static struct platform_driver rcar_gen4_pcie_driver = {
+>  	.driver = {
+>  		.name = "pcie-rcar-gen4",
+>  		.of_match_table = rcar_gen4_pcie_of_match,
+> +		.pm = pm_sleep_ptr(&rcar_gen4_pcie_pm_ops),
+>  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+>  	},
+>  	.probe = rcar_gen4_pcie_probe,
+> -- 
+> 2.53.0
+> 
