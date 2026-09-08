@@ -1,119 +1,146 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A1853D0A0
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31865476FC
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2026 12:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788871186; cv=none; b=DsdW9KuVHuX18xmiuY92dvdsC9les8CP1Xyyfjtp4V84epoel9WAudN92EVjFvUXZ9+OCW8+DUYSTOtGfQKwwn4Qibbo1riSMtmIcwk88mT9TyloT5voR0IrZ+7wLPo05etJdCFfb1QPqDgr7Ko939WuG+KkPhAqYW/bqOeM8TQ=
+	t=1788871533; cv=none; b=jW+MZLa0p5HHRh6ExyLN7zuUvXdNYwMUvqmAfnxn/F2wrnOSpov7L4K+UMGmiP72vv70TIpHsC0OmVwzG9ewYw4v4g6cWxz8ILAMZoIl1zwYMdcBwwuMH/pAjG/XGKkiy30ldFCICHa+psUjuPIjzQk9hA4iPY4ioj5+ys/GT2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788871186; c=relaxed/simple;
-	bh=xjqICCjmH0ghryW8dOBfRncjaOxBbTFkSNvlzCO9/PI=;
+	s=arc-20240116; t=1788871533; c=relaxed/simple;
+	bh=cefWH3zZ7K3vDSf+fLZ09nXocZembIWvzYOmUwp+oTY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZgSDPBAaUw4df4qM1SOyjw9H0WEJfYrSvO9raP2oVdu/Pr9lzmwEs6jX6eSAeJbPyn86Av0aMt4yyKMrj1vBszpTXO4dGn+HsUGBPfrYcTFXZE0EsdtC70OjPQLkNtOT5uvPpdPc9aHAU4JYED7TuGXWni6O9dKeItc+n5sVL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.50
+	 To:Cc:Content-Type; b=YDCmAIkBMPKS9nFEXK7/mRNlzoWx/wKo6aj7aceVGfaDiGniNauJEpwt0L62/Yb/y9VdkHDY7jiP576qtKaimSQJIVCWlNfkqtqlOEa0yLIcxdz+j0QwUHqDRU1uzGLD3QAX6gZjBOtYqGogfU1wT1oHWLwkerKTeKMih/UnHbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6b12ada8befso2521519eaf.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:39:45 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-97e9fb0fc58so1143981241.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:45:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788871184; x=1789475984;
+        d=1e100.net; s=20251104; t=1788871530; x=1789476330;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=AvhvPfE1o8U9V0xY+ZBtjmprcW5MUShi55REbbGvMBg=;
-        b=WLRIwX/wbSNAbr7aUOLBSLtGvRu7vRz+2sKedQdeSh44CMvy0nV+7CMIzBYqDrIKVM
-         JP4sY8spNmwnafLiMU+0nbpHFYc80hTBeWAptJrVKXhYkb+AZRNYtDIMbxQgXS1zx9cb
-         h2fgRQ1yAKMfeeP3ACzSYSe2jZ0GTIMgUIjQfhf1cmNHN+NDjZ3IicbMZrt0zGIwzvLH
-         VPFSVvFtfi7p9LPiaKFuxagL2LDED0gtHfs5nyFWcPnETS07Ur3ZdNrY29R7t5Z6H6Y1
-         RSdrr0e2p2ol7lFY3AimowpY63REbexZ7BT71hg+Uc5/sQqa91iJJAT6WBdYu2tbFgUq
-         xCLg==
-X-Forwarded-Encrypted: i=1; AKwUvByoSfgV1EkRlTdMT1EfxP+HH+NLkpjMFAiUTvusju2PdKbB4QF73kcx/fjAMlkdOnwD/qefPkCeXfkhrMp/RaJmMg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lOO+tscwa6BoLnt6yrkjPRfkooRXRXWAhgOQJrI6SBLMGhomys
-	WqJejXk0uclrjTjxNTOlLMkvLQhgcCcMv3esjPw2QbAlLX3K5e/IXwQJOouckgXZ
-X-Gm-Gg: AYBFou2pxd5enNd0VkwUcYT08mG0LPdKMRvwMpdEOEQULPG66xJqkETB5mn8wbDUYYl
-	osDIHapIJV1t4UzSqVZ2vm+gbetyDqTpPP6IUM4p85hV5odyo1MF0fTetA6gj6IadearcPViy+x
-	UztAXiNNRIZj5Zh576DuadIKGhIHXk3OYYAWmJNn2nBkr35QbHhtdVUa/HfvzXDwem6puG11SKC
-	HHewLzyQuxo20jl4lcCUkT/j2Cq3sEwKaQcZlAKSi2UFATUJZQJ6Mfk2wdnNKBXPiOoEhu8duQi
-	6kc/VHdER5k3AX4yopQttXAejGwFqFAQtU3pGKAyeyzmwO9g3DoMTiFX2ubhCAFudTRexQ+8Ma/
-	/pE+6wfSS9sQ2Vz8SeBRNuTnP1T3pTdG8coBCuHVOKTH1HYGxO9WNUQn6Eucc052KJQOgmxZ68P
-	hbPxSX/8wqEfYcOPyo+uU2JyNc4abQqtgGHVQLJj/fFFQUwmLp+wDP7wB0+dpDmL4IEjqQ14ThP
-	8xyI07bQUtoxgTldkp3n8TqTXu+Gg==
-X-Received: by 2002:a05:6820:1c83:b0:6b1:9ffe:a71c with SMTP id 006d021491bc7-6b6f7d7778emr23139531eaf.0.1788871184047;
-        Tue, 08 Sep 2026 05:39:44 -0700 (PDT)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com. [209.85.167.181])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6bab80ba74esm6581391eaf.10.2026.09.08.05.39.43
+        bh=sWfYxxbbZLcnhPJrqJjUWtl71HlCnyMUS3wjMmJ9wMA=;
+        b=cjIDkFWx3OdEz8c3LpgVNfN2I+G696GJkt4J8C5FEVK6MZjmyXAMOgfXp2YmQZEI2m
+         lOj/Hv07XLOrxAD4BAmuROSc90KTWMJpFnHPeRZug6rbHOf89bGf6E9mNrobwp1Mrg3E
+         mdeq2Bvy42hQvGNjB8LQL2GTxYxXicgFfsG2u9gnbgvWt2U0Nja4gpVTiP7JVz41nsdp
+         w2Cjcgegnay+yZo9NU+JzAutGSXjslY8MCIVmc5BIWXZbopYujKap3J3iLqoGLWPJcSt
+         WAcwS8j+CrAD7lRXexi25qEnkpPgTljNO6i0XKLDwEpt6Cqu8z2snj3HMSpkLWTF2+/7
+         hMqg==
+X-Forwarded-Encrypted: i=1; AKwUvBz0GQEDDrKYSF6e03XwA/eqQtURLhyGRRQ31B4zMLrB3bpUitYV0bdKsqYujgdwhPTZKYImYmouxjSREh+HrYRhrA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lhtJW+ZDr/wlY4Fz0AnnQUhg+L0i0CJudh85PPM8+17tF6JK+4
+	FTeF10yG+xT6qSq9qzqAjS7GS6y0MDV7GbHB+2Eb/r8B3Ve8Il7scpp0d1yrnHbd
+X-Gm-Gg: AYBFou3Xy+TQ+pqS1lBiHjIGhqLV78PGZBc50CwS086ARyOdB+W8frF+mHuhxJGPkTm
+	Da89Skwi/6vOtVYvsjtBBmYUfoKJ4OFHq9q9yptG9fIQTU+FeD5UXDUIPdy7DqEoTjGZP+9NyWS
+	gfOjk0Fw+pe0D5PlHjTSattmLoEt4r9ZWp2RqrmeLcKXTXOZ5SN6IJ8IEKGnpJ2QcqF+iF1p6Wu
+	krtf6Z/kdnv2chYgowHoi/OKx10zur8kJ68byE7cAiJOk406be2SLH2B55/n+RSUK32/0JMDeJ6
+	pcPXs1EBL2DJp0aqMpFX2g/BQIUzJUNr9LMlupn9edcczXPbkUW6rh5iL3e2eCfzjRsowAJnpoc
+	tP55rE/d/82qia2no4Q1ocYB1VTbYAUnG9ny+qalcCnKZfMTzdR+Jj9YeRFNLdot/hlLHRztwYE
+	cLyTVUPriLUy//qrDFWtTZ6nlPnZr4nBKUZA7DkzY2AuV92f2uQuV7wBGl+73oqvSGnD41N39v3
+	x1zjTNq7HYkfwMMOBGcWi+spA==
+X-Received: by 2002:a05:6102:4bc7:b0:780:c715:292a with SMTP id ada2fe7eead31-78a4aa630b9mr9753267137.13.1788871529565;
+        Tue, 08 Sep 2026 05:45:29 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47b56bd3sm8254983137.12.2026.09.08.05.45.28
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 05:39:43 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-4ab47c40e7eso2817398b6e.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:39:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxcNP+OQKpzoYrBLBROpTlmbK1Ax+FhmLfTIxU/5RQFvtGLHhlYxso4Y35+f3d7ckKvnLG6i114jC9B3KLiG4zS9g==@vger.kernel.org
-X-Received: by 2002:a05:6102:374f:b0:784:b9ec:913d with SMTP id
- ada2fe7eead31-78a4a91b281mr10556868137.8.1788870699731; Tue, 08 Sep 2026
- 05:31:39 -0700 (PDT)
+        Tue, 08 Sep 2026 05:45:29 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-963f63fe025so1248009241.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2026 05:45:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz09mbs5htEthTJAfRM0mwSE7ikVJ/LbIBBns1bRHf4XwTz/6srp0gcb2AC+VzzkOWv86TCVK1Zzv0WUV9aksZOKA==@vger.kernel.org
+X-Received: by 2002:a05:6102:534e:b0:77f:fb50:8822 with SMTP id
+ ada2fe7eead31-78a4a9106f4mr9231211137.7.1788871528665; Tue, 08 Sep 2026
+ 05:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20260817185700.322370-4-cosmin-gabriel.tanislav.xa@renesas.com>
+ <CAMuHMdXfDRFz+zYj98GG=_jBhedh1+rCdWbyMSLOycAxzYWouw@mail.gmail.com> <TYRPR01MB1561960BD76ABAAAEF5AA13B385B12@TYRPR01MB15619.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYRPR01MB1561960BD76ABAAAEF5AA13B385B12@TYRPR01MB15619.jpnprd01.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 14:31:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXBFu=W1MnEA+Eu_zzUy3qMyFRbbeLgYn0waxMdr5cAnA@mail.gmail.com>
-X-Gm-Features: AcwNN1VHwQtBXkE1g5B-tKWZHl1EPxPwrUnATnMeQZH1DQxtt1IMi9pdue90c-g
-Message-ID: <CAMuHMdXBFu=W1MnEA+Eu_zzUy3qMyFRbbeLgYn0waxMdr5cAnA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Add syscon support for Renesas RZ/T2H & RZ/N2H in
- CPG/MSSR driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Tue, 8 Sep 2026 14:45:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX+qcwEd0r5_WZEb42DKgEBMWAngjD08BWsc2bZoVf65w@mail.gmail.com>
+X-Gm-Features: AcwNN1XD1CUmhUYt-WGNvcOw7i9qN594qU3UZvFGN3lson5FhCOp_jfcJ-nsAHg
+Message-ID: <CAMuHMdX+qcwEd0r5_WZEb42DKgEBMWAngjD08BWsc2bZoVf65w@mail.gmail.com>
+Subject: Re: [PATCH 3/7] pinctrl: renesas: rzt2h: setup IRQ in .irq_{request,release}_resources()
+To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@kernel.org" <stable@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
+Hi Cosmin,
 
-On Mon, 17 Aug 2026 at 21:25, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> This series adds syscon support for the Renesas RZ/T2H and RZ/N2H SoCs
-> in the CPG/MSSR driver. The CPG/MSSR block on these SoCs is a
-> multi-function block that integrates several system-level features beyond
-> clock and reset control, including clock monitoring, write protection,
-> and peripheral configuration registers.
+On Tue, 8 Sept 2026 at 14:23, Cosmin-Gabriel Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > On Mon, 17 Aug 2026 at 20:58, Cosmin Tanislav
+> > <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> > > When exporting a GPIO using the deprecated sysfs GPIO API,
+> > > gpio_is_visible() calls gpiod_to_irq() to determine whether a GPIO is
+> > > IRQ-capable, which ends up using
+> > > struct gpio_irq_chip::child_to_parent_hwirq().
+> > >
+> > > When using the GPIO character device, it is possible to request a line
+> > > and to dynamically switch between using it as an IRQ or as a GPIO, by
+> > > updating the edge detector.
+> > >
+> > > The current struct gpio_irq_chip::child_to_parent_hwirq() implementation
+> > > makes the assumption that it will only be called with the intention of
+> > > setting up the IRQ permanently, and that it will only be released when
+> > > the IRQ domain is freed.
+> > >
+> > > Since we now know that this is not the case, take the following steps in
+> > > order to properly handle that case.
+> > >
+> > > Implement struct irq_chip::irq_{request,release}_resources() based on
+> > > the default GPIOCHIP_IRQ_RESOURCE_HELPERS implementations.
+> > >
+> > > Move the IRQ setup and release logic inside them.
+> > >
+> > > Keep the mapping logic inside ::child_to_parent_hwirq() to be able to
+> > > provide a proper HW IRQ number, but do not actually setup the IRQ.
+> > >
+> > > Remove rzt2h_gpio_irq_domain_free() as its only purpose was to free
+> > > the acquired IRQs.
+> > >
+> > > Cc: stable@kernel.org
+> > > Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
+> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+
+> > > @@ -1089,7 +1077,39 @@ static void rzt2h_gpio_irq_domain_free(struct irq_domain *domain, unsigned
+> > int v
+> > >                 rzt2h_pinctrl_set_gpio_en(pctrl, port, pin, true);
+> > >         }
+> > >
+> > > -       irq_domain_free_irqs_common(domain, virq, nr_irqs);
+> >
+> > Why is this no longer needed?
 >
-> For the other IP blocks to be configured a syscon support is provided in
-> the CPG/MSSR driver. This allows other drivers to access the CPG/MSSR
-> registers via a regmap interface.
+> We moved from using struct gpio_irq_chip::child_irq_domain_ops::free to
+> using struct irq_chip::irq_release_resources, so free is no longer set.
+>
+> devm_gpiochip_add_data() ->
+> devm_gpiochip_add_data_with_key() ->
+> gpiochip_add_data_with_key() ->
+> gpiochip_add_irqchip() ->
+> gpiochip_hierarchy_create_domain() ->
+> gpiochip_hierarchy_setup_domain_ops() ->
+>
+>         if (!ops->free)
+>                 ops->free = irq_domain_free_irqs_common;
+>
+> It will end up being populated automatically, let me know if you think
+> we should set it explicitly.
 
-> Lad Prabhakar (7):
->   clk: renesas: r9a09g077: Register SYSC regmap
-
-Thanks, will queue in renesas-clk for v7.4.
-
->   arm64: dts: renesas: r9a09g077: Adjust CPG register region sizes
->   arm64: dts: renesas: r9a09g087: Adjust CPG register region sizes
-
-Thanks, will queue both in renesas-devel for v7.4.
-
->   dt-bindings: watchdog: renesas,r9a09g057-wdt: Add CPG/MSSR syscon
->     support
-
-This is now in watchdog-next.
-
->   watchdog: rzv2h: Add syscon support for WDTDCR
->   arm64: dts: renesas: r9a09g077: Use CPG/MSSR syscon for WDTDCR access
->   arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
-
-These two have a hard dependency on the first five patches, so they
-are postponed.
+Thanks, that's the part I was missing.  Please document in the patch
+description that irq_domain_free_irqs_common() is set up automatically.
 
 Gr{oetje,eeting}s,
 
