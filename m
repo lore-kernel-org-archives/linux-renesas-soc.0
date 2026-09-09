@@ -1,167 +1,130 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770BE3DB320
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 07:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB9446AA7A
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 07:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788939838; cv=none; b=laDw/UV9EMJxwFH674pIDaOnoZRtFgERyFsuSKOEQghNT/vZpOyR9thVrSP1q09tKyQ0H1n53pIOcdff9fLDJRfMjGt/B7CZQbRh17dwcF8esUhKI/uoVcPt/5wQbJ6UoR1tIXg4YbHmjPcEGUl31POcpjLYNgymdIvUHMG1Eyo=
+	t=1788940587; cv=none; b=EzLx6zp98BG9vEFo74OXY9YVTQKS/LvjrT30SYA4i0Yc2IsxpHRM9Z869DymIk86K1L/N0aDGJ/i8zMR46lvoHFfCwMvPxfjjzcHqcus1G+0bEGd1VhrDl3NRhbji9nCd+ZC0WsGTsXXjc8EVDpigPB/oCZA1FiZdq28IDLkXsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788939838; c=relaxed/simple;
-	bh=9yc14kv9vv0ac8fv1uYJcHFWFcqHf9NP7Ogx1611OGE=;
+	s=arc-20240116; t=1788940587; c=relaxed/simple;
+	bh=jIL/ineDSN9RSASWLEndVFHVKkHoHz+xKZ4KgMvLjJs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dEWjpVqb/y9x+NKkAVJt62iU1JK1pyi+hMhJIesZx6fCmZsu0w/MP0sGQx8jhcs7ZtzTb5x5C/gAE0/0xVr4/fDh1C6WJdjY5fG7wOVx6OxFypjOw0TBCUxc8PcClFR0M5nKqK5RuUY9GUP707NVRHVli6itRbxi9I55gIf0FWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+	 To:Cc:Content-Type; b=ECvuCryezdCX6gNoWuHhj4ldog4FtV/YU1y5s9ddbgER5FwtIqMBLnQv2/zWtYcY3+9emD9c6etpZZ/+tadjFKNTvTQZiHEf1ZhGf9Q8NF3Sj7agIsFw0JIZ/NMIEFMmpDAVSewfiZHlGlrbHSkI75t/mYnIOm8Cq+qksN0PIF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c197e7e4e94so914382366b.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:43:56 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a682579c72so7390728a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:56:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788939835; x=1789544635;
+        d=1e100.net; s=20251104; t=1788940583; x=1789545383;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=2rInCUUC/UXiPpHJ1CPYpbMNMz1oCA9yxKCwNhHDaNM=;
-        b=KTkR0a+pCkAmEYgiG3vC1IMLembgZ3ARJirvPexbxDYB3GbqpkKf63/eoMYRKlabfI
-         o7Ycm8wz3dfdMsF9b4ia6svvLNrs3PEW6qqwitTzTJ2epvduJa/ZKnua3Q8ZZD7CUx6g
-         hjawcrLIGrIKHkT0DeU+WSJI5wu3W6v/F3+jyChuJaMUhYefpSSHIC0J1jTCk7SveKBp
-         z9kN81MLaiIEA+ofm1goHJv+SE5yt55Ym+zk3V6xTp5kWVlGdpgCBh6X9eZXHeYwybf1
-         jYYdxQ0ynC+0DbdR9OkOlUY4chyo8fzo5SIodrUOJR0ECDTj6liMlwdihZCiyJuELFRI
-         VK5g==
-X-Forwarded-Encrypted: i=1; AKwUvBw1b/TVXmFDFBN9T0NCbGNmBSpP82BQNnBd19OVqcOn77TI9tsBCX4PHsAXizmO+Z5+ksHGacqYYL5+Lxpn1agfiw==@vger.kernel.org
-X-Gm-Message-State: AFuF++ljCYNw9Yx2F+clDC8IRR8a+tuceuwY58GiqtK5u23lBTPrNBuS
-	AL3UcozEh4jFmqD7QLB7m4MtLfPak+O6CFZYJTKB4WD8iLLN7dNGDGSMPGsVKLw65Ws=
-X-Gm-Gg: AYBFou29GERmoLnANxHcsdh8RLZpMwR+VvU4A+9JdKEmzx++TJWMBMqamoh4JzXJykV
-	jgkTWJpjeFzMXO0aUyX0NioIIfI1cUrPxDP9AK3oPcWeouxu1XQlrmkEXaNWYL1XzeCpIwGgK5N
-	NZPOrGJJK8/5cKztVhpwfJ/GQZx/ukHraP8BvZcGAfMZPfkAvIn1jX44AA2XKVA/WQMEfKyZZbE
-	nYrfiNe1jdQnWwVsraCcrcAWWXFnllPt3mY78z1oW/zZlc5OHKxLmwWuxEBpQ4cGoPRoR61HTOQ
-	u8p2x3m75ZdAP5lEz1Qrv8Lci3YSjRKaEwtD9MWk6k/zcVPdZP5r3JZ0Q1YrpMyLlszPWijYC0R
-	ZKqH8244dndobeveNdXfK5dpTb5BzqRxGAKnapR7rcLPANMm/BUy2wQp9S65/ARLpbnTlQZb+H+
-	g3w3c7E1sprJi0imKm+5QGbpqtCy7U26nSEDEDvWMBXg7aXHNUpYqhKHk1k7KD2l6FSzYVkFW3t
-	ZjXgEmgyiSSQAcjQVmIP0T7ikVkY2KUwgg4Iw==
-X-Received: by 2002:a17:906:c14e:b0:c16:2dc0:e1ef with SMTP id a640c23a62f3a-c260c988de0mr1307287866b.14.1788939834494;
-        Wed, 09 Sep 2026 00:43:54 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c260d57fd88sm698646166b.44.2026.09.09.00.43.48
+        bh=FFRHIlgUH34gNIFpS8cBfqFWe89JRGpFMu8JNscE7T8=;
+        b=CD9MC8aU9n07g5lM7XFBQB20kYuSboL2y3IuS926hL2QSV/kf4tKr/FNu2mNKlNXsL
+         V3WYhBWpry0SiFouPRHV4eAjORfF1w8N1HwVLG61RE5pj1DifFMXZsJJLXc4OGwFXTQu
+         /hiR20UHxW9s08c47iLQahH9xsXFyNoErUbfgtI3bjde823TIfpIX+PXmalwHG6p9gNm
+         x7aJFE7zY1oubldh/5uWyYAYlEou0z0Rfb7oxEHAnsCLquAGR3vfbkgPy77vsaA1zY1T
+         aTIRuWCT8pHxaLf0LzE8Satij/PG38sf/YlhIowglw/1jjfvgluuKrFNjhyAu/7bwZHS
+         IxqQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzvcjl2DopsW4dQn1cE1AtaUv/ttKh30P4lwY+euUkxAA/tnm0DyJQi98dqwZJmgx41OvEX0GkLE/mxZCt0BM9UTQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++lcBxbqFIz6lrBDDrqhdavm8aJPzjwmsK1VvU9MrKyi7/2Gs6x8
+	WRlxNe9V45aEU4dfJzGwVWX6aPhYxN54hAZDW9UvUZe4AgH9HuaqLehj5eyH9kvnFJk=
+X-Gm-Gg: AYBFou3MwfxbcLx9/Zke0JNz1+NjbjgYwzd7O90FlzNaqqIxmqCfZT5unJPcSS4fyHG
+	pS4CbwRMN5jorv5IPOGehfifHKPIcIIH6sWT0IC6mqig36kDb8yigek54XYXeajT9wRK+XDRCGc
+	ynl0gqDAgONE40u0yIoKAx8cvGF/t9DzgCy16cdNPrLCMm/qna2d/pkyMIPZZP41VZXge0I08ex
+	toGk9365IvURTNp74EG37hP9gG3WH9wB9pK5GfY40+WcrVzVpjSLx2Io8klpM5t1Omw25k/l7yo
+	crcMYvT0zkTKeUOmOq8OM8EkmX0CMZ3nK6RATaCrzhzxDSnaqOcty4nAgCFSwm/1RwrrSCAfS2E
+	Qweo1ogSu+T8/ia9Fy8YHKH5A0ebRI3l/8sF1/waz2y1oYjs+pq/cfPTz+mFEXarpO+c496Nns+
+	MccVKPISdB2nAOsxJM2nWP5k+qaxIRfs/J845OEV+cLIyCkxZ/nr5lIPZa0rfj7I7rZYMl/+uTn
+	f5EirxJazUmMJo4kfHLRa9Tw9E4Mk5G5l6asITY7Ur7y80=
+X-Received: by 2002:a05:6402:28cc:b0:6a6:32f9:e9ee with SMTP id 4fb4d7f45d1cf-6a7e8e9281cmr21998314a12.17.1788940583091;
+        Wed, 09 Sep 2026 00:56:23 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a7e68a6e0esm6603728a12.9.2026.09.09.00.56.19
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 00:43:49 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6a63667b78aso8838267a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:43:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzIMn4tVHbtKtxV7BOfGNXVMicjkISD/NmG9xcZUfzVQuOSqN17KqnykLvRG2zbqwir1l83V6ZwYRIhBMEzXewxYg==@vger.kernel.org
-X-Received: by 2002:a05:6402:f05:b0:6a8:e223:fee3 with SMTP id
- 4fb4d7f45d1cf-6a8e223ff92mr2011006a12.43.1788939828389; Wed, 09 Sep 2026
- 00:43:48 -0700 (PDT)
+        Wed, 09 Sep 2026 00:56:20 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6a61910369bso6205791a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:56:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy8V+oHA0O2IiWxHXaYBA3bc0QZT/JjMZ2X7YZc+VcTasHAYQQjKFmZ7QX+k80/v8j/f+DdSSn4aO2TN3yCXivWKQ==@vger.kernel.org
+X-Received: by 2002:a05:6402:44db:b0:6a6:7fa6:f0ac with SMTP id
+ 4fb4d7f45d1cf-6a7e8f9e843mr19491213a12.22.1788940578727; Wed, 09 Sep 2026
+ 00:56:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260826174854.199139-1-biju.das.jz@bp.renesas.com>
- <20260826174854.199139-14-biju.das.jz@bp.renesas.com> <CAMuHMdWKpWtp6dXe_1qk+GuV-n065LjHNQBGGEfsOfVz9_T1+w@mail.gmail.com>
- <TY3PR01MB113466B5A606D636420D7BD5586B02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113466B5A606D636420D7BD5586B02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com> <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org>
+In-Reply-To: <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Sep 2026 09:43:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWQAAugUtYNgkKrY=TFZbiAa61=jBg_fj__L+hRUBCR_A@mail.gmail.com>
-X-Gm-Features: AcwNN1UM-4yUAnjvwz3HU9UugHpIoEhFheoRD6Ksts2TAyZGkKbX5f7QzfQ8BYQ
-Message-ID: <CAMuHMdWQAAugUtYNgkKrY=TFZbiAa61=jBg_fj__L+hRUBCR_A@mail.gmail.com>
-Subject: Re: [PATCH v3 13/13] arm64: dts: renesas: Add LVDS overlay for RZ/G3L
- SMARC EVK with ITE6263
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "biju.das.au" <biju.das.au@gmail.com>, "magnus.damm" <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed, 9 Sep 2026 09:56:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
+X-Gm-Features: AcwNN1VBlUkOuc1dFERdA1IT0JCfCvNrtGVHmcnj2K9AZQ9QnT8wN-u_7o86Wro
+Message-ID: <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for
+ WaveShare 2CH CANFD HAT
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-arm-kernel@lists.infradead.org, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Biju,
+Hi Marek,
 
-On Wed, 9 Sept 2026 at 04:57, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Wed, 26 Aug 2026 at 19:49, Biju <biju.das.au@gmail.com> wrote:
-> > > Add a Device Tree overlay (r9a08g046l48-smarc-lvds-ite6263.dtso) for
-> > > the RZ/G3L (R9A08G046) SMARC EVK board to support LVDS-to-HDMI output
-> > > via the ITE 6263 HDMI transmitter.
-> > >
-> > > The overlay enables the LVDS controller and the display unit
-> > > (DU/LCDC), and configures the ITE6263 on I2C2.
-> > >
-> > > Update the Makefile to build the overlay as both a standalone .dtbo
-> > > and a composite .dtb (base DTB + overlay).
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc-lvds-ite6263.dtso
-
-> > > +&{/} {
-> > > +       lvds-to-hdmi-out {
-> > > +               compatible = "hdmi-connector";
-> > > +               type = "d";
-> > > +
-> > > +               port {
-> > > +                       lvds_to_hdmi_con_out: endpoint {
-> > > +                               remote-endpoint = <&it6263_out>;
-> > > +                       };
-> > > +               };
+On Tue, 8 Sept 2026 at 19:02, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 9/8/26 2:02 PM, Geert Uytterhoeven wrote:
+> >> +&pfc {
+> >> +       msiof0_pins: spi-ws-2ch-canfd0 {        /* SPI_0 */
 > >
-> > No DDC?
+> > Node name should be "msiof0".
 >
-> The driver uses parent i2c bus as ddc-i2c-bus. That is the reason not added.
+> Do we also have to fix up
+> arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts this:
+>
+> "
+>   755         msiof1_pins: sound {
+>                            ^^^^^
+> "
+> ?
 
-Neat trick. Do you know where that is handled? I couldn't find it.
+Might be a good idea, to increase consistency.
 
-> > > +       it6263: it6263@4c {
-> >
-> > hdmi@4c
-> Ok.
->
-> >
-> > > +               compatible = "ite,it6263";
-> > > +               reg = <0x4c>;
-> > > +               data-mapping = "vesa-24";
-> > > +               ivdd-supply = <&reg_1v8>;
-> > > +               ovdd-supply = <&reg_3v3>;
-> > > +               txavcc18-supply = <&reg_1v8>;
-> > > +               txavcc33-supply = <&reg_3v3>;
-> > > +               pvcc1-supply = <&reg_1v8>;
-> > > +               pvcc2-supply = <&reg_1v8>;
-> > > +               avcc-supply = <&reg_3v3>;
-> > > +               anvdd-supply = <&reg_1v8>;
-> > > +               apvdd-supply = <&reg_1v8>;
-> > > +
-> > > +               ports {
-> > > +                       #address-cells = <1>;
-> > > +                       #size-cells = <0>;
-> > > +
-> > > +                       port@0 {
-> > > +                               reg = <0>;
-> > > +                               bridge_in: endpoint {
-> > > +                                       remote-endpoint = <&lvds_out>;
-> > > +                               };
-> > > +                       };
-> > > +
-> > > +                       port@2 {
-> > > +                               reg = <2>;
-> > > +                               it6263_out: endpoint {
-> > > +                                       remote-endpoint = <&lvds_to_hdmi_con_out>;
-> > > +                               };
-> > > +                       };
-> > > +               };
-> >
-> > No audio?
->
-> Binding describes audio port, but ITE6263 driver supports only video mode compared to
-> both Audio/Video support on ADV7535 driver.
->
-> I will add audio entries once we have driver support.
-> Hope it is ok for you?
+> But I wonder, shouldn't the DTOs contain unique pinmux node names, which
+> cannot accidentally overlap with the base DT or other DTO node names ?
 
-That's fine, thanks!
+In general, the answer is yes.
+In this case it is about pin control subnodes. If the base DTS already
+uses msiof0, its original user needs to be disabled by the overlay
+anyway.
+
+> >> +               groups = "msiof0_clk", "msiof0_txd", "msiof0_rxd";
+> >> +               function = "msiof0";
+> >> +       };
+> >> +};
+> >> +
+> >> +/*
+> >> + * PWM1 uses PWM1_B pin configuration for pin GP2_13. This conflicts
+> >> + * with SPI_1 CE_1 signal which is also on pin GP2_13. Disable PWM1
+> >> + * in case this hat is in use.
+> >> + */
+> >> +&pwm1 {
+> >> +       status = "disabled";
+> >> +};
+> >
+> > Please move this node disabling pwm1 to the top, for compatibility
+> > with dynamic DT overlays.
+> Could you expand on that a bit ? What difference does the placement of
+> this node make within the DTSO ? Please pardon my ignorance.
+
+In case of a dynamic overlay, pwm1 must be disabled before SPI_1 is
+probed.  Otherwise the latter will fail with -EBUSY due to the
+conflicting pin being still in use.
 
 Gr{oetje,eeting}s,
 
