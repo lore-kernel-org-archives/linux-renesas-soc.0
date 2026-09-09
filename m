@@ -1,73 +1,73 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB9446AA7A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 07:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0693D8127
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 07:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788940587; cv=none; b=EzLx6zp98BG9vEFo74OXY9YVTQKS/LvjrT30SYA4i0Yc2IsxpHRM9Z869DymIk86K1L/N0aDGJ/i8zMR46lvoHFfCwMvPxfjjzcHqcus1G+0bEGd1VhrDl3NRhbji9nCd+ZC0WsGTsXXjc8EVDpigPB/oCZA1FiZdq28IDLkXsw=
+	t=1788940682; cv=none; b=k+WS7jAx5u9ooPHLYMu2vctEAfe1E++vxcNsgdJFRnHavhwKbmCcAbYo3cnbX9qWBUp9kshX+W/haug/9jhG4O5U4tyUkdDeCp0si9qVhEamKSPJt5mDd1HLz9Smtmc5peWi05JuJJNABbGYgOh3/uG8VWLXNedQ7GxHKxHpNGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788940587; c=relaxed/simple;
-	bh=jIL/ineDSN9RSASWLEndVFHVKkHoHz+xKZ4KgMvLjJs=;
+	s=arc-20240116; t=1788940682; c=relaxed/simple;
+	bh=Dp0zVYlRV/ykV6DkWI/HZNZ2E595JooxGaLy6ystZi0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ECvuCryezdCX6gNoWuHhj4ldog4FtV/YU1y5s9ddbgER5FwtIqMBLnQv2/zWtYcY3+9emD9c6etpZZ/+tadjFKNTvTQZiHEf1ZhGf9Q8NF3Sj7agIsFw0JIZ/NMIEFMmpDAVSewfiZHlGlrbHSkI75t/mYnIOm8Cq+qksN0PIF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+	 To:Cc:Content-Type; b=ao/uf7nmIqf0RWKPqD9eSHD46FpMo+Bkm2S5P12ArRx59r4VpXIH9yxfcErAq1sWRRfV6Vj772p3QRcXKX2rwwu+uQokInMIZxFBrQmayAN3mAArXbhdCEA2IIWXZcT/8YWMksfFTWA9fnRqbBXZgPeyY5za3+sBRUB2Z/uzeec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a682579c72so7390728a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:56:24 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c20ce3c118aso944404166b.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:58:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788940583; x=1789545383;
+        d=1e100.net; s=20251104; t=1788940679; x=1789545479;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=FFRHIlgUH34gNIFpS8cBfqFWe89JRGpFMu8JNscE7T8=;
-        b=CD9MC8aU9n07g5lM7XFBQB20kYuSboL2y3IuS926hL2QSV/kf4tKr/FNu2mNKlNXsL
-         V3WYhBWpry0SiFouPRHV4eAjORfF1w8N1HwVLG61RE5pj1DifFMXZsJJLXc4OGwFXTQu
-         /hiR20UHxW9s08c47iLQahH9xsXFyNoErUbfgtI3bjde823TIfpIX+PXmalwHG6p9gNm
-         x7aJFE7zY1oubldh/5uWyYAYlEou0z0Rfb7oxEHAnsCLquAGR3vfbkgPy77vsaA1zY1T
-         aTIRuWCT8pHxaLf0LzE8Satij/PG38sf/YlhIowglw/1jjfvgluuKrFNjhyAu/7bwZHS
-         IxqQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzvcjl2DopsW4dQn1cE1AtaUv/ttKh30P4lwY+euUkxAA/tnm0DyJQi98dqwZJmgx41OvEX0GkLE/mxZCt0BM9UTQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lcBxbqFIz6lrBDDrqhdavm8aJPzjwmsK1VvU9MrKyi7/2Gs6x8
-	WRlxNe9V45aEU4dfJzGwVWX6aPhYxN54hAZDW9UvUZe4AgH9HuaqLehj5eyH9kvnFJk=
-X-Gm-Gg: AYBFou3MwfxbcLx9/Zke0JNz1+NjbjgYwzd7O90FlzNaqqIxmqCfZT5unJPcSS4fyHG
-	pS4CbwRMN5jorv5IPOGehfifHKPIcIIH6sWT0IC6mqig36kDb8yigek54XYXeajT9wRK+XDRCGc
-	ynl0gqDAgONE40u0yIoKAx8cvGF/t9DzgCy16cdNPrLCMm/qna2d/pkyMIPZZP41VZXge0I08ex
-	toGk9365IvURTNp74EG37hP9gG3WH9wB9pK5GfY40+WcrVzVpjSLx2Io8klpM5t1Omw25k/l7yo
-	crcMYvT0zkTKeUOmOq8OM8EkmX0CMZ3nK6RATaCrzhzxDSnaqOcty4nAgCFSwm/1RwrrSCAfS2E
-	Qweo1ogSu+T8/ia9Fy8YHKH5A0ebRI3l/8sF1/waz2y1oYjs+pq/cfPTz+mFEXarpO+c496Nns+
-	MccVKPISdB2nAOsxJM2nWP5k+qaxIRfs/J845OEV+cLIyCkxZ/nr5lIPZa0rfj7I7rZYMl/+uTn
-	f5EirxJazUmMJo4kfHLRa9Tw9E4Mk5G5l6asITY7Ur7y80=
-X-Received: by 2002:a05:6402:28cc:b0:6a6:32f9:e9ee with SMTP id 4fb4d7f45d1cf-6a7e8e9281cmr21998314a12.17.1788940583091;
-        Wed, 09 Sep 2026 00:56:23 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a7e68a6e0esm6603728a12.9.2026.09.09.00.56.19
+        bh=u4dyKB/emFRDPrDqz9X2vH5TTb96Md3MW8gLHSI8vTI=;
+        b=fYfHQweSc2NnEE3HvgOSeGmBBlXUVyOuLTdgKSZhlcj1+qOQeDsi9UJ5PfFWQ6SF91
+         tqoiZhB/UkzqnrW5I7qTTUnuEgWeLuMQUWz8dXZaYRTn84dfvIHxT+jEBe7y6B7FXlmS
+         fSOX3IyTdifffdNgNtpESZ/R/Alj8MOuRZMmiNf5fNw+GbynEROajCiOfYkF8fKd+PvZ
+         630AhPXyJa/yFhv8MOe6dV1Ns495pxY0zJLQZ6coLlodN32GgX45cCglvBLawKBWOh4z
+         uzqu9z5qRsxe6Cwf2uBFoUSTQAIpOSnROyFJnzUixRbwGHDQP44LYhqIc04Hwm8fAAs9
+         qZLw==
+X-Forwarded-Encrypted: i=1; AKwUvBxdkYLDteSOywbMCTYq0yAv32feWw5vD3yH2RQAJOzJTWHBxKZYg+1PrUq2vU8rfHpKt5nKZqP04JmkHDauIMVZoA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lizGSlUD+BUMEhZ+TVS0scRrOhnTvlQ6wkgLVA9glH9V2kZgpC
+	GvsW1LVIBYgqULMlQ8k4RGFdcxZi5/i28Hh4+O7TirNS8T+RoEgG6K/tTOLwcIHJbQ4=
+X-Gm-Gg: AYBFou1NYepNslKwtOJVOoJKpktG9sBTIjxrBkM3W31aYirV7WZS15fv7PxyUQYQo6V
+	+rkW86RIWQpJOGdoOYKp9mYNLv1UZICb7SzrQ4x4rfxb0VhVrSOrrIDsFqw3yTJd0ECOZvC7zBM
+	m9jj5jMo3P6N3kI2uUOQxoQz0Gqj9Aiyc0cpCTSgWZ4mStFOidvBABkuSiNkNuO7jfReudfa+/d
+	uI+byxIMKflXw2rUmKS1fUXh1PsFUh77UxMD1tYe94oNV052OMPWD4IhB7ubfT9YetzZPHGE3pq
+	8NrmH36KhdEdZDSLFj+PWCpZt77cj9bXG3vVAU0gZEiYurhNeffKg3kduAXGGJV+G10cjFI5b0O
+	il9eIoLQEqzNO4Oz12YHcn/ZGHPyQ0n1GP/HMPAae4MaMLoQJn+pfbtnDgufPby3aywwZs7BFjw
+	hG6uZ2U4bXsWdy1v989y00qe8kDFhwssjfW4Jo+tx1SL5CQXc2y3yH2gUotCrM04SrW+1DMmb5J
+	ISRGWO7CjswffU76JjOkvOKVRYbacSdVMyZ04VdFeKlUjk=
+X-Received: by 2002:a17:906:c154:b0:c28:fdcc:901a with SMTP id a640c23a62f3a-c28fdcc90bcmr558133666b.16.1788940678731;
+        Wed, 09 Sep 2026 00:57:58 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c28e4579395sm461900166b.48.2026.09.09.00.57.55
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 00:56:20 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6a61910369bso6205791a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:56:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBy8V+oHA0O2IiWxHXaYBA3bc0QZT/JjMZ2X7YZc+VcTasHAYQQjKFmZ7QX+k80/v8j/f+DdSSn4aO2TN3yCXivWKQ==@vger.kernel.org
-X-Received: by 2002:a05:6402:44db:b0:6a6:7fa6:f0ac with SMTP id
- 4fb4d7f45d1cf-6a7e8f9e843mr19491213a12.22.1788940578727; Wed, 09 Sep 2026
- 00:56:18 -0700 (PDT)
+        Wed, 09 Sep 2026 00:57:56 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6a985799954so1460661a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 00:57:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwhUc1qONo1L9nkS0w+q1a0xbzA9F3I5V/5/qbZ0yEkS2deTARel+AaHC79wyKrmkwhn5HLw9NklMRv8No+Dt65sQ==@vger.kernel.org
+X-Received: by 2002:a05:6402:3247:10b0:6a6:b2b9:7662 with SMTP id
+ 4fb4d7f45d1cf-6a6b2b976demr10117247a12.15.1788940675713; Wed, 09 Sep 2026
+ 00:57:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com> <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org>
-In-Reply-To: <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org>
+References: <20260906140134.492084-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdXKr-2+_kcCd8hSB84=AZpmOtDt2-Dxpgiewyg+67O+fw@mail.gmail.com> <b1a64102-9c86-4cbc-aa07-11ad051b0dc2@mailbox.org>
+In-Reply-To: <b1a64102-9c86-4cbc-aa07-11ad051b0dc2@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Sep 2026 09:56:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VBlUkOuc1dFERdA1IT0JCfCvNrtGVHmcnj2K9AZQ9QnT8wN-u_7o86Wro
-Message-ID: <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare 2CH CANFD HAT
+Date: Wed, 9 Sep 2026 09:57:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWJso7-432-pgJ7SJr_QC_krOgLE6U1dhP6c5=r_TL_og@mail.gmail.com>
+X-Gm-Features: AcwNN1Ua9Vke213V9Nb0AugUOA6EaQLwJxCjzIaW2N2cORqAOZX-qMn7euhb-OU
+Message-ID: <CAMuHMdWJso7-432-pgJ7SJr_QC_krOgLE6U1dhP6c5=r_TL_og@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a779h0: Add GICv3 ITS and update
+ PCIe node
 To: Marek Vasut <marek.vasut@mailbox.org>
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-arm-kernel@lists.infradead.org, 
 	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -77,54 +77,45 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Marek,
 
-On Tue, 8 Sept 2026 at 19:02, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 9/8/26 2:02 PM, Geert Uytterhoeven wrote:
-> >> +&pfc {
-> >> +       msiof0_pins: spi-ws-2ch-canfd0 {        /* SPI_0 */
-> >
-> > Node name should be "msiof0".
+On Tue, 8 Sept 2026 at 18:27, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 9/8/26 10:46 AM, Geert Uytterhoeven wrote:
+> > As I am not PCIe DT expert, I am comparing this to the corresponding
+> > patch for R-Car V4H, which I have already queued as commit
+> > 7fe73a3a3f2c3718 ("arm64: dts: renesas: r8a779g0: Add GICv3 ITS and
+> > update PCIe nodes") in renesas-devel, but which probably needs some
+> > updates.
 >
-> Do we also have to fix up
-> arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts this:
+> I sent a fix for that one:
 >
-> "
->   755         msiof1_pins: sound {
->                            ^^^^^
-> "
-> ?
+> [PATCH] arm64: dts: renesas: r8a779g0: Add MSI cells to GICv3 ITS
 
-Might be a good idea, to increase consistency.
+Thanks!
 
-> But I wonder, shouldn't the DTOs contain unique pinmux node names, which
-> cannot accidentally overlap with the base DT or other DTO node names ?
-
-In general, the answer is yes.
-In this case it is about pin control subnodes. If the base DTS already
-uses msiof0, its original user needs to be disabled by the overlay
-anyway.
-
-> >> +               groups = "msiof0_clk", "msiof0_txd", "msiof0_rxd";
-> >> +               function = "msiof0";
-> >> +       };
-> >> +};
-> >> +
-> >> +/*
-> >> + * PWM1 uses PWM1_B pin configuration for pin GP2_13. This conflicts
-> >> + * with SPI_1 CE_1 signal which is also on pin GP2_13. Disable PWM1
-> >> + * in case this hat is in use.
-> >> + */
-> >> +&pwm1 {
-> >> +       status = "disabled";
-> >> +};
+> >> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> >> @@ -691,6 +691,8 @@ pciec0: pcie@e65d0000 {
+> >>                          resets = <&cpg 624>, <&cpg 1121>;
+> >>                          reset-names = "pwr", "core";
+> >>                          max-link-speed = <4>;
+> >> +                       msi-parent = <&its 0>;
 > >
-> > Please move this node disabling pwm1 to the top, for compatibility
-> > with dynamic DT overlays.
-> Could you expand on that a bit ? What difference does the placement of
-> this node make within the DTSO ? Please pardon my ignorance.
+> > This has an extra cell "0", which is probably correct, given
+> > "#msi-cells = <1>" below.
+> >
+> >> +                       msi-map = <0x0 &its 0x0 0x10000>;
+> >
+> > This is not present on R-Car V4H (which is probably wrong).
+> >
+> > Interestingly, Documentation/devicetree/bindings/pci/pci-ep.yaml
+> > documents msi-map for endpoint node, so should it be added to the
+> > pcie-ep node, too?
+>
+> I do not think we should be adding it until we can test ITS with EP ?
+> This patch adds the ITS only to the RC side, where I can test it.
 
-In case of a dynamic overlay, pwm1 must be disabled before SPI_1 is
-probed.  Otherwise the latter will fail with -EBUSY due to the
-conflicting pin being still in use.
+OK
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
