@@ -1,113 +1,133 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04E73AEB29;
-	Wed,  9 Sep 2026 10:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7676B486B8E;
+	Wed,  9 Sep 2026 10:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788948398; cv=none; b=f5uUaOaP/qcD7Dwjo2mOYaQRxvUWapgC2NugdW7T4wlqWtBq5NI4xpne6zXA6lkcMXl9IgNmaTwCXlynVxwcdFy5zHBT0rELvLQj/8o47NtCGT0WEPXWw/1loGLuu0G/Jljv0/tS/CpGixNoBQRar/2K+qzzIcxcOahqSvjXIgw=
+	t=1788949985; cv=none; b=biA4pznxZzIMrBJPRqFEiS10yk+8CPEaHtYi0izr+nN/xL3QIQLG/3rvS/afOnM0IL8AZSUtcGQGz8De+cNaAwavev8n2wE80oK8iWcBZ/+jKb3j1XQ0SeshlX8nOYZMyzFcXJHOY2zaqewCd8aTOYQG/11v86fPgCaERK/YS3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788948398; c=relaxed/simple;
-	bh=JhycYhJJUanyVuGcohA5eVQCc8DNkJi2xbPdL1LXYrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YCyY/xFZAw4fsF3NFv10kjn05fJcw/E/+SldyMfYh0+4N9XLc7+FuT/eOGZyHsv5L/fs2KkjVkHoJv0c3cfegex5Sct79eqW0Es8vFUXT0Opc6/MZNSp2sArAyURp/lzcWD6acBTh04WGmVs2Q/9y8MUYfv2VckD7+0cgzrcGHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QAHG1B7I; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1788949985; c=relaxed/simple;
+	bh=Zt1+z4NwZcoeE6r1XYdtawEEVW5QXnCZ4eTu9ViOSVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjIu92qvFy3u0l16FC1qZBKRV+2nEGR45geUMzvG16CTECzv9DaNa5COyAmoKMpGTjeOHrdYR3Ik9VXdpG5u1WC5FceRYAJORCrtpfmMO1noHJ1SrjGWbfQKvY2b9aQz3NFsThya56VqVKOipsusexF32R9KxYtbEMCnLnfRvIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emmPr2Xj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QAHG1B7I"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 41A674E415AA;
-	Wed,  9 Sep 2026 10:06:33 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0658360448;
-	Wed,  9 Sep 2026 10:06:33 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6581311C7AF2B;
-	Wed,  9 Sep 2026 12:06:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1788948392; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=jmdHwhBYhc3o3X3pk1kA+wKgzKoOELJNf8tERf+4oGU=;
-	b=QAHG1B7IMyhmuJCx3Dy5lMJQKpRpA6kuEsy2VzkgNqs1NF9KABobuwHS1IwA6sW05awC1u
-	2964CnrjqCOD66Y9GiYHzdLsczuWoKxi5g6rvayIegbcK8jiBVQJxJRQt+uCYsHMwFpfdI
-	REdZDA2RfknjGS/f63Ocyb3hkFsBuFhfxWTFMaXvFI9672+6OlWYlhEpm5ymB+MD6PyGpF
-	gNu8cSZpP9m/HwcJuGARvBbZwZsJ0Csh6LcU4GxoICfdk4ik4eSRV51fWTAxUGMbo8Ur0q
-	h0lQsWyNRlrwcmAgeypd8AOXNzAWdTsCfc90G8PpynlBNhIfRxsRsOBAfIpWWQ==
-Date: Wed, 9 Sep 2026 12:06:25 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Daniel Lezcano
- <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Krzysztof Kozlowski
- <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
-Message-ID: <20260909120625.726f191f@bootlin.com>
-In-Reply-To: <CAMuHMdUn+di4YWAGS+CeBiCD_9EhqUz0O4FkuHZwmPo531+7Tg@mail.gmail.com>
-References: <20260721082952.215691-1-herve.codina@bootlin.com>
-	<20260721082952.215691-2-herve.codina@bootlin.com>
-	<anJGNyNxcSAwylK8@ninjato>
-	<CAMuHMdUn+di4YWAGS+CeBiCD_9EhqUz0O4FkuHZwmPo531+7Tg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emmPr2Xj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610C51F00AC4;
+	Wed,  9 Sep 2026 10:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788949984;
+	bh=Zt1+z4NwZcoeE6r1XYdtawEEVW5QXnCZ4eTu9ViOSVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=emmPr2XjnDU+OoWAn16ohhGVokPcM41LhZonjExaPx8f/gsDStcfahLupaN729EIk
+	 EfV0lykLpxUv0Wc1K9CYPvHP+5zXFvXkDvTcGVaqHE8cq5ARxogieAx3faNMnak4kk
+	 6U78eREi2A5zG9ZK8DL05UOmHlXAXj/8JIkr2Yq6OwVuVUQzpQWxp8lIQIpkQQ5kuB
+	 N0HK/SOWlw/hlia4albjymCQF0NBz+XP13mSCgOILT5v0Go/iv67YaA9w5esd9QYeN
+	 truH491o0jlANoquXfqdQWWysVGZodYe3sNjOvxRp9xT5rKr9PMfc9dudtl/P6QpSP
+	 kfnq/hrfs0LEg==
+Date: Wed, 9 Sep 2026 11:32:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: linux-usb@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: usb: dwc3: Document Renesas R-Car
+ Gen5 DWC3 xHCI USB controller
+Message-ID: <aqE11WTb6EMhn6Tb@squawk>
+References: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
+ <20260904-colonial-wimp-b37c27657664@spud>
+ <7771adfd-7447-4802-ad75-7c889ad32ee7@mailbox.org>
+ <20260907-tassel-bargraph-836b6f41fc43@spud>
+ <04bb7d78-4b0e-49ba-910a-6fa2b0a8c1a7@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qBVmVRqLRzK+3DcX"
+Content-Disposition: inline
+In-Reply-To: <04bb7d78-4b0e-49ba-910a-6fa2b0a8c1a7@mailbox.org>
 
-Hi Geert, Wolfram,
+--qBVmVRqLRzK+3DcX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 5 Aug 2026 09:46:41 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Tue, Sep 08, 2026 at 10:58:48PM +0200, Marek Vasut wrote:
+> On 9/7/26 7:43 PM, Conor Dooley wrote:
+>=20
+> Hello Conor,
+>=20
+> > > > > +unevaluatedProperties: false
+> > > >=20
+> > > > I said this elsewhere today, but this binding has lots of "distaste=
+ful"
+> > > > properties for things that should be determined from the compatible
+> > >=20
+> > > Which properties would those be ? (it seems
+> > > reg/clocks/interrupts/phys/power-domains/resets really need to be the=
+re as
+> > > separate properties, but maybe I am missing the point?)
+> >=20
+> > All the quirk properties is what I am talking about here. There's about
+> > 50 of them and I don't know if a single one should actually exist.
+>=20
+> I cannot tell whether every one of them will ever be used or useful, but I
+> also do not have a good argument to block most of them as they are tunabl=
+es
+> which apply to the DWC3 core itself.
+>=20
+> I could make only the ones which are currently used available, but that
+> would be confusing the implementers by suggesting that the other quirks a=
+re
+> not applicable even if they might be ; and this would likely turn into an
+> endless stream of schema updates, with random users enabling random quirks
+> they just used. I don't think that would be helpful.
 
-> Hi Wolfram,
-> 
-> On Tue, 4 Aug 2026 at 22:06, Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > On Tue, Jul 21, 2026 at 10:29:47AM +0200, Herve Codina (Schneider Electric) wrote:  
-> > > The Renesas RZ/N1 timer block controller is the controller in charge of
-> > > timers available in the Renesas RZ/N1 SoCs family.
-> > >
-> > > This controller handles 8 timers:
-> > >  - 6 16-bit timers
-> > >  - 2 32-bit timers
-> > >
-> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>  
-> >
-> > In general:
-> >
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > One nit:
-> >  
-> > > +        reg = <0x51001000 0x400>;  
-> >
-> > Isn't 0x400 a bit excessive? The last documented register in my docs is
-> > 0x114, so maybe 0x200 will do above?  
-> 
-> FTR, 0x200 or 0x400 does not make much of a difference, as this is
-> mapped in PAGE_SIZE units anyway.
-> 
-> According to Table 2.1 ("Register Map") in the RZ/N1 Introduction
-> document it could even be 0x1000...
-> 
+My understanding was that these things were effectively errata, so users
+should not be enabling them willy nilly - the vast majority of these are
+set in soc.dtsi files, and the couple dts users I checked were all SoCs
+for which there was only one board. IMO it's far more confusing to suggest
+that a user has to figure out which of these may apply on their platform.
+But of course, do what you want, they're your users.
 
-In order to be consistent with register listing available in the docs,
-I plan to reduce the size to 0x200 in the next iteration.
+>=20
+> > > > , so I
+> > > > would appreciate it if you could use additionalProperties: false he=
+re
+> > > > cite the ones you need to use explicitly.
+> > >=20
+> > > May I ask, what exactly is the rule of thumb for additionalProperties=
+:false
+> > > and unevaluatedProperties:false ? I seem to struggle with picking the=
+ right
+> > > one for a while now.
+> >=20
+> > I would say, if all properties being imported apply to you device, use
+> > unevaluated. If only some do, and there are some that will be
+> > problematic or confusing if used, then additionalProperties: false and
+> > citing the good ones explicit is clearer for users and prevents the bad
+> > combos.
+>=20
+> Thank you for this clarification, I will make a note of it.
 
-Let me know if you disagree with that.
+--qBVmVRqLRzK+3DcX
+Content-Type: application/pgp-signature; name=signature.asc
 
-Best regards,
-Hervé
+-----BEGIN PGP SIGNATURE-----
 
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqE11QAKCRB4tDGHoIJi
+0lUgAP9Pi97ecXQKWV9Ei1bIkP+caXYOH+MgetFqrSucBCaSwAD/UK7YKjo4wXMo
+xQF0DaswAN7lo6C2jPDNjP4j7/1MnQU=
+=HYWb
+-----END PGP SIGNATURE-----
+
+--qBVmVRqLRzK+3DcX--
