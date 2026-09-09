@@ -1,98 +1,80 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3661E7C18
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 15:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A59357D218;
+	Wed,  9 Sep 2026 15:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788968011; cv=none; b=iD3/agxUWOMsQi2HA5XVjuKf09MHZDs5sR5qng7gmtRqB9ZG98/Zh2kqukXwSHbr7BEMmbB+horaxY+lO04h3dq/a1kKokHdW30gLYM52Lajzz4BsdKo31WmKmxIIma9E2hkOhUcLddUxdVvIEPQ1oHoB96LmN6416eW4S60lt4=
+	t=1788969326; cv=none; b=B3IxOPpgoVGF7q5X1gTqJYACFFz2Aejv1eVHrBqPITAgN3fzrxE+6jH72r9f5Ynm/335+ZZrZP//jwkDsn12RAdtCQAi50mYR1nsVgyUIvzhlqmU1wya1rQ4B39aY0p9TG8lxUlzXaCsB+G00AEjUdCA0mwTlZNSU5BXGQFRg0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788968011; c=relaxed/simple;
-	bh=NMIEtDYycWmV484GpSBkjLc+PGlo5yjc2c6VK3ydHI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HucFQ6a1WX/U5jFNy3c486TX3mkKYPutXLeiefdr4k/bUB0d2U17Qim+wVka0GQauNhTYd2aH+Ltf3bsmCKE8GACUpUIOOU49C2hbsgH2h1/rZliSgimRRaxT/3IIOt47JJoXBYrS0gktmo6TiMn/egf0fTxvmQXk2DmO6leY1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5c675de8e1dso2909287e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:33:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788968009; x=1789572809;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=seHJEHV+vbkaWfT2PmVXZhUQLZRva7SU7v2d3J1NVwM=;
-        b=h1qcjhjBj4mqkFEDLtJ5P3AU7cr54Z0WvQMnwD0un39yCYNiv2OtZ7K8qGtq1ygOyo
-         3vRPOwHADtNvoPb5Ih5pK1MXKwLIcswbhMOGpICzIUXhy/3APs5nnyT7kLuYjREGrCCc
-         codtcgYsu9t+U33tTpatYLw98sJlwTxlOpfKJ/4brcrlPHxHXG0gdplbbAzvxlBbLDXo
-         I+klzYRPgr3YrjH/AGucVddfghGAHRGjujPmiX2EsE7co88BNsCIS7r0cgkndz1Sbe5p
-         vONp6OG7qvhZrdxo3crNXfgk9IcRRBmTj4023YohOGOoYuhKYk4UaqsdvJCjHByXM56T
-         tgEg==
-X-Forwarded-Encrypted: i=1; AKwUvBwMifJPlK54XyM191q8KBXOMOYJ7PSUCkThYz8Vx3wp+HsHGMAYFkV1WPBxAnWcT7Ffi06EFFMzO2heZL2r+CEPVg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lWglN8lRtN9W1pC6fi+SMrfkqUva1QoAN2DR76mqoqk892T4SZ
-	PcwmpPoWtYFzHMsnrdXVWodl6+26mef5bITsifK+dOUTjkHQ0nevfehKfYkWmqOZQzM=
-X-Gm-Gg: AYBFou1HjE66FCpj21p/V9aJ69qyWBUWDAeAvukEiyiYhx8UcoAV+wz/7+/M5YWeI90
-	u674RH6flvEPD6LBU9+mDSAYQcoL4xmiKFmm15kJ9V6MLM+dkKsbYqOteuQTQs9HimwzZ+JpUYn
-	Bx5hlMICGPwLQ7YTQF/Ag2eCrhy8DiylbqkyFQYTwm1YyEW8NkVO9QEzA2PCXJuLp0hPmpcCrdL
-	u8y9qjRuRj9lQxUOnL8m/bCvk+Az+VPDsHNESzB2LMmUVSCRvb+3YScaWeSSR9qd+lqxpTrL2gv
-	ngQDOFFq0SIQmcps5O4YaDxmyB9/hX4KoTFchTGDy5NSAroKENzO79gn2P2Q9qTxcQM5Off7hyn
-	3iAB/00wMD6uIjBIn0L9cbf5BkqH8sh8umbn7xnQKxyTSJSRXBh1XS0dz1Th9WjJfNd4XYQquua
-	ACxzEgp3c5VN6o/FXeOID+zqKCJVGb0MtTzhj7klr4uwOkzKtDpKQCHfPPKLJsgBsZiDfp1CfN4
-	7X02aahKftZgbxWkb7QU7uO0cQ2XKoW3liLetOg
-X-Received: by 2002:a05:6122:179b:b0:5c7:b165:7057 with SMTP id 71dfb90a1353d-5c7ed3cf5eamr18891236e0c.5.1788968009022;
-        Wed, 09 Sep 2026 08:33:29 -0700 (PDT)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8221316d4sm3726302e0c.1.2026.09.09.08.33.26
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 08:33:26 -0700 (PDT)
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c7afda4515so3409795e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:33:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz12MMsrdPzfO9gzHbbXl79sRt2ytBrdFSehvsI39Owq/YspxMkvu1losFasXMtzFgLm4CHQAAnkfsmZVNuovbeUA==@vger.kernel.org
-X-Received: by 2002:a05:6122:4f82:b0:5c2:ac92:eb18 with SMTP id
- 71dfb90a1353d-5c7ed3f6d2bmr14626613e0c.7.1788968005930; Wed, 09 Sep 2026
- 08:33:25 -0700 (PDT)
+	s=arc-20240116; t=1788969326; c=relaxed/simple;
+	bh=+oKypz9oArUEm3tSzu0eXI+9ht1kAD3znyQonaqDhoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CToyomiUe3YfR3d9YWIrU09YjLwsC9ZHq9e0klF2+8sasm6SbPV+0uZxqTcsBydXHzSSwwRZYGbwzL1SEfugPN5zxCr4qyLXEbOmSI5HErt7TND/c4S7QciamwkhYq42YJvyqeX/eOr04IB15BbJdcaaSkmN035JmUUhC26NOM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=CxMBx3uU; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="CxMBx3uU"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hg5486rjsz8sYW;
+	Wed, 09 Sep 2026 17:55:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788969321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m8mVmcBNQRcUr40TX7TzG10oD0qawFvTxK/+rQfqGH8=;
+	b=CxMBx3uU88mh1ll/lrVnYH6E2Dm76+ffOEjVvbdkiTgWwz3as3NLSdUXq86qrEkeNpIN/O
+	GFSXoFx00A/nYV0jahOvb0I5Ei+S5+4xn29QE/gxbOPSYHKR6h92WGdXYfmyfIwKdmz+3b
+	OZdUTL+Z15+U2zlyyn2fAgbtAd52A1+jVdp1btyMjzSOD5FKiUoUp/ZhP+D9++dfjnJVkq
+	Rw/IIiRow5lW8oNGOKu5+mdHPhoOB3QFawstgJ3bL5OmX2r4T6xCDlwLR5m1q4mdIB5IIN
+	m1yxI+GkK8+IttHNDWTHlfXtXoCagNr94iGZUzBSYsObEvvax8tDbLbv9pY2hg==
+Message-ID: <34f4c088-5268-4add-aef4-33b3d3623c12@mailbox.org>
+Date: Wed, 9 Sep 2026 17:55:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260908162323.16440-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260908162323.16440-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Sep 2026 17:33:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVsfPrHQ-bPSbZnQq8q-t6erDebddnf5Mr9+6L-8oXC7A@mail.gmail.com>
-X-Gm-Features: AcwNN1UdM4cUGYydPQaEaeecPmIzkWQH4nuP4PrjWCOhXFLM5sncau6pHe3OeUM
-Message-ID: <CAMuHMdVsfPrHQ-bPSbZnQq8q-t6erDebddnf5Mr9+6L-8oXC7A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a779g0: Add MSI cells to GICv3 ITS
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2] arm64: dts: renesas: sparrow-hawk: Add overlay for
+ WaveShare 2CH CANFD HAT
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260909151423.28358-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdVVcbwz1OK9tL9zn5RR_4YyML6++OUVUgmswPpaxdmRSA@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVVcbwz1OK9tL9zn5RR_4YyML6++OUVUgmswPpaxdmRSA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 8ccexz6nocmeqr7i14osdxorp8fge9aq
+X-MBO-RS-ID: ddaa8513b879ba6e098
 
-On Tue, 8 Sept 2026 at 18:23, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Fill in missing #msi-cells = <1> into the GIC ITS node, update
-> its-parent phandles and fill in 1:1 msi-map .
->
-> Fixes: 7fe73a3a3f2c ("arm64: dts: renesas: r8a779g0: Add GICv3 ITS and update PCIe nodes")
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On 9/9/26 5:31 PM, Geert Uytterhoeven wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello Geert,
 
-As the original commit is not yet in soc, I will fold this fix into
-the original while applying.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>> +       /*
+>> +        * SPI_1 is operated as GPIO SPI, because MSIOF5 can not be
+>> +        * muxed on the pins allocated for SPI_1 on this CANFD HAT.
+>> +        */
+>> +       spi {   /* SPI_1 */
+> 
+> As this lives at the root node, I'd rather change it back to
+> spi-ws-2ch-canfd while applying, if you don't mind?
+Please make sure the DT schema check does not complain about it, 
+otherwise it is fine, thank you.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Marek Vasut
