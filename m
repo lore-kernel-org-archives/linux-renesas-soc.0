@@ -1,105 +1,120 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BD74746B4
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDD437F755;
+	Wed,  9 Sep 2026 09:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788946865; cv=none; b=gz5DTgbJdioxjt1aoKN+oh1NaHOmYe29LZXJRJzvMP4LmB1gdfwSP4QE7TlAsdbSNgYV1Q7U65Mcwkpytmtom67+KajBFNoOu24ln6GfNY5R2m47CCG3KZLBwHe6Dox3XHiligQRvoJEIerF/Z8UrMXb+R8QkqQf2leADC6lLIY=
+	t=1788947100; cv=none; b=fBrb3pj4GBJddq24z8CN66XLAVyGhQTBGhtT/wATrINs1jjFsrCEYDH/BXSnO/qMFAbhKHSM6qDlrd/e4wmgRcg/ED+QMyRKArdhqpnxC1TdpJVcOFqCcTyBZdl4w4LG7eCmoBRBW1fQRYIIFG7HkuDhyN8A5aofrAth6uIVlus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788946865; c=relaxed/simple;
-	bh=Z5ZpANA8LdJ+eEXBYf1SzNMgEsbFE04byQJV8epJFas=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EdSYQ+GlU5Dsa5CABmb2IjjhS00dnMxgQdOXv13Ll2hST7qzDGiwuCs0FeZjSR1MGSvm1uadrhCTXX0CYoTPudrTggKCWO+S2chiktH2mb7fJK8GRXsVCYc7zXg5Kr2OOo8ig3WeDkAm18ewuyytSrRduzaU+pSSjUcu+onLgpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WJye3z6B; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1788947100; c=relaxed/simple;
+	bh=nM2s8gx/Je8WGIJgPhRplMW74WrpUlMHbbNcaKQ3dko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JwYIqGnSolcsyEvorF8b0bbtakeFT+lUxXAvxX8GFq2RHDEYa2VkoYEiu4chc47CzDYN1xnQ6xF4wMIdC02Y+i9Xlhs0tzfWZ/E9LXvUqPSt3Xj3GiXzTrEDECaCbNt6029K2Jh6AGOk7pX79olZXBSrN88yn3/kZw7djRFR23k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CGnKozlO; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WJye3z6B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=S2U7HapKauAQzvkKY4+by650HTGsyAOfQg9qhcv3guc=; b=WJye3z
-	6BBrr72F8pnbU0Wpclm/DEuqCYaiNdXbtv3F0Fkj158h80k7aCMnV29XL30+uWs/
-	IZsseajIryfrGE9a/wNoG9AJj5amYFMUaIAYNen7nwbdIIVYj3AA9BOQ9fWzxoCU
-	lrExBd2Ku3JtNZ12GwjMF1AuBRT2Ch1GP9kPSRjdGhD+O6PA/6plCz3sAi9gDtKB
-	he72P2dh83JPA+Pt98JONrSi5gxRzWFk373S6CwtKZutXFnaf0J4FNR4czwAnQ3Q
-	DIBmwyx3cR4vSw/sHsIpiUu42vRNs4pNVqVcOMahTRm98V/j7VOc77Pl88erj2iy
-	+iktg1sxiMiNHTog==
-Received: (qmail 3073125 invoked from network); 9 Sep 2026 11:40:53 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Sep 2026 11:40:53 +0200
-X-UD-Smtp-Session: l3s3148p1@iZ2xpQlbKqJtKXBr
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dmaengine@vger.kernel.org
-Subject: [PATCH v2 4/4] dmaengine: sh: rcar-dmac: Add support for R-Car Gen5 SoCs
-Date: Wed,  9 Sep 2026 11:40:13 +0200
-Message-ID: <20260909094009.2167-10-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
-References: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CGnKozlO"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CC3BD1A1A7B;
+	Wed,  9 Sep 2026 09:44:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8B5EB60448;
+	Wed,  9 Sep 2026 09:44:55 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DE30411C7AF71;
+	Wed,  9 Sep 2026 11:44:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1788947094; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xxFbznEhAZfeywSFuyPBm4t7F5rpiDH6ysWr9B6AUuQ=;
+	b=CGnKozlOYqqcSG0ChL7uhiqNVGxfovumWhW5cx4pPMyONFltGfzCB4YgT/C+iQ0Y2q9SKr
+	kuGLAacjCePZn284Yyk2a3apc7bcDD8fsN69bmS5e+vqlhZUAl9wCYo2b6yrWECACEknc3
+	kXxiAWhkmDxyTd0Id1oKc+nJOF4dooWpKtjWSYic/xyKs9EYuNnfYJooC0+BPjfnH2PLAf
+	Cv0eTTOvaFJPeQ0oU4i0y2wP247VOqEu1aNMU1NZusMb3XcHN6uzp6dt0rB354h7gQIWCm
+	TFd44CxmuG8n8ZanQwWuv+iRC9VfdOjOJT3ohH4BsvI6Z73E+gS6iHwnvwqV7g==
+Date: Wed, 9 Sep 2026 11:44:49 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Herve Codina
+ <herve.codina@bootlin.com>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 2/4] clocksource/drivers: Add support for the Renesas
+ RZ/N1 timers
+Message-ID: <20260909114449.1d1ff12d@bootlin.com>
+In-Reply-To: <20260721082952.215691-3-herve.codina@bootlin.com>
+References: <20260721082952.215691-1-herve.codina@bootlin.com>
+	<20260721082952.215691-3-herve.codina@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Gen5 is very similar to Gen4. Of interest here is that it has a SMMU
-instead of an IPMMU, so there is no need to set the flag for a
-workaround. Make the module description more generic while here.
+Hi Thomas, Daniel,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+On Tue, 21 Jul 2026 10:29:48 +0200
+"Herve Codina (Schneider Electric)" <herve.codina@bootlin.com> wrote:
 
-Changes since v1:
-* reworded commit message to not include "we" (Frank)
-* tags added (Thanks Geert)
+> The Renesas RZ/N1 timer block controller is the controller in charge of
+> timers available in the Renesas RZ/N1 SoCs family.
+> 
+> This controller handles 8 timers:
+>   - 6 16-bit timers
+>   - 2 32-bit timers
+> 
+> Each timer has its own interrupt, its own prescaler that can be used to
+> divide the clock by 25 and all of them can work in either one-shot or
+> periodic mode.
+> 
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> ---
+>  drivers/clocksource/Kconfig      |  11 +
+>  drivers/clocksource/Makefile     |   1 +
+>  drivers/clocksource/timer-rzn1.c | 487 +++++++++++++++++++++++++++++++
+>  3 files changed, 499 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-rzn1.c
+> 
 
- drivers/dma/sh/rcar-dmac.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Sashiko as reported issues [0] and among them, I really don't know what to do.
+--- 8< ---
+  [Severity: High]
+  Will using a 16-bit timer for the system clocksource break NO_HZ_IDLE?
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 4eca52aeec02..3ad8aba5dcd4 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -2013,6 +2013,11 @@ static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
- 	.broken_ipmmu_microTLB0 = 1,
- };
- 
-+static const struct rcar_dmac_of_data rcar_gen5_dmac_data = {
-+	.chan_offset_base = 0x0,
-+	.chan_offset_stride = 0x1000,
-+};
-+
- static const struct of_device_id rcar_dmac_of_ids[] = {
- 	{
- 		.compatible = "renesas,rcar-dmac",
-@@ -2020,6 +2025,9 @@ static const struct of_device_id rcar_dmac_of_ids[] = {
- 	}, {
- 		.compatible = "renesas,rcar-gen4-dmac",
- 		.data = &rcar_gen4_dmac_data,
-+	}, {
-+		.compatible = "renesas,rcar-gen5-dmac",
-+		.data = &rcar_gen5_dmac_data,
- 	}, {
- 		/*
- 		 * Backward compatibility for between v5.12 - v5.19
-@@ -2045,6 +2053,6 @@ static struct platform_driver rcar_dmac_driver = {
- 
- module_platform_driver(rcar_dmac_driver);
- 
--MODULE_DESCRIPTION("R-Car Gen2 DMA Controller Driver");
-+MODULE_DESCRIPTION("R-Car DMA Controller Driver");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
- MODULE_LICENSE("GPL v2");
--- 
-2.53.0
+  Since the 16-bit timer is fed by a 1 MHz clock (clock_rate / 25), it will
+  wrap every ~65.5 milliseconds. Will this short wrap period force the core
+  timekeeping code to wake the system extremely frequently just to accumulate
+  time?
+
+  Would it be better to dedicate one of the available 32-bit timers to act
+  as the system clocksource and sched_clock?
+--- 8< ---
+
+Those 32-bit timers are assigned by the driver code to per-cpu clockevent
+timers.
+
+I could use one of the 32-bit timers for clocksource and sched_clock but this
+also means the per-cpu clockevent timers will be 16-bit instead of 32-bit
+timers.
+
+Maintainers, what is better to do ?
+  a) 16-bit clocksource and sched_clock + 32-bit per-cpu clockevent timers
+or
+  b) 32-bit clocksource and sched_clock + 16-bit per-cpu clockevent timers
+
+[0] https://lore.kernel.org/all/20260721084351.CDA391F00A3A@smtp.kernel.org/
+
+Best regards,
+Hervé
 
