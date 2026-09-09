@@ -1,187 +1,410 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010001.outbound.protection.outlook.com [52.101.229.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C7B5947ED
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 14:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788964833; cv=none; b=BV0R921VK0BpT+d/VynPikmOkN0QWHIau+y1tSuuTkVXvVmjhjZWlDnZ68WSd45KzLJw2fYyfqZb73+kerg99aLYsZKHNSEfAPPLfleXAMoBaWV2v6W53Nz/t2i8erLMotC3A/z0R1/ryp+0llBfZZbZUxXJgiFP/iLb5/2tfLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788964833; c=relaxed/simple;
-	bh=ncH773zu9pb68ueH4PuldOxRJVltvE/gmWzndPjXc+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tKuOg0JDaCTI+AnXfZfZfMyElOrHaDDYxQLZ8N34WdrghRMYAds4R+xaV+xhl4BHbpvtGC9hjqQ3yh+fRC7ZhpLH++xwy7ovZXKqZLlVirLCpJYdU6OPafadvDLK0LvMwHKFuhscsuMcQgzJtDWFmg6lKwiL+KJFaGz2NfXpe+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pv4l5QIg; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UuFPjGg/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D16D582BAD;
+	Wed,  9 Sep 2026 15:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788966278; cv=fail; b=RUyS6DTxo8XRe7mZzeFY41OqzQrrMlxEKcRRLq/EqqfQVbt7hWvq9/mTStZIy/WEa1ko2z8kw/Tmdhl1I064LSud/H76i8cS6B4eKLtzYzlp0LaSxeGpFZ2xLN3JogR10pHYTDCqX1EkTp+hnxALmk6EAQo7adM3SlNBWGftiIg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788966278; c=relaxed/simple;
+	bh=8vWIrKyzGHFli6onMn6/AHXKxUOdxmzg/RYb++6T6tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mZHhWy6QPbwIazciWjYZa8ptFmgFHRL9jcIkIdy2s6cHlBPqp5D4FrZw999JAc8SJQBLB8vXC0SZLP2utKBHb/6njZQJasIZLP2YOdqsN2yj8uHw1sKLDsurVbmBHfspsX+cRt6kKRzTC8XRKtzMvTaXSa2XMDXrzWxDAltUzGE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=jysLnn1D; arc=fail smtp.client-ip=52.101.229.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pv4l5QIg";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UuFPjGg/"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689CAUOM1233136
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 9 Sep 2026 14:40:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wYpdvRYRq+NgDR2+bAGysqVrNIbeZhE6Rp8OwLP/TiM=; b=pv4l5QIg63CJ8cz6
-	uxg1ZcSuMQ8RNGqQgtV0FUaFN98nG2qEGqPgoJUA1J6NRrXIMO/RPTSdLWYUjfb0
-	8WqijyAFSRCaQYGWIQV9USbTPvuF8FKk+GfgAQzWGQNgRSqNzUDGsMlLS/XjPufj
-	26ZYb1bAhrKT+CMez3BsgNxfZgt2mI1FenKu5RtpHPdmlxZOSUKpI70wApwkvdfT
-	9RUAUN7LlnzRAw5ZDj2jpGix2sDnS0BjEjkSrNJh0T4Esn2/mmPspSBaB+cOfK7v
-	oandqRb02zfa6XzOrHaeYGmSvyYwozB5PoessXG8AHW0s2D0oAvvDGmifFNwDln5
-	5fmvhA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gk77vgnbe-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 14:40:31 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2d7443e0f0bso92239745ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 07:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788964831; x=1789569631; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wYpdvRYRq+NgDR2+bAGysqVrNIbeZhE6Rp8OwLP/TiM=;
-        b=UuFPjGg/j/nt2oyPL18E8rIfVr3XvRkJ/fopIzj4rDFx1DTDap82p6usgEptceVnRa
-         63/kpDhloTLcMPsSWgU+4eQHATtvpmp8ZsOpHMzPXnSA6oDgLtOTKtsfg5hNdddc7jHj
-         r64L/AZA5iHUsmvnhkWyqgEE51tqsDS8n7aGw8FosKZD8/LsTWkqlnu9m+x9Tjx162x2
-         h6U9nUPYpEUe0s/+Y3VKZSFPkhb7BcOrQ/P6EDVBZ8V95Z0sCRCuwgiKKmQvthFXb+DX
-         xhgM+QwwmP/Wcc93KMBXVcx8mUMnkS+O8uehxasX1qok98zYDymbLt46vPkSdj6Zqxqi
-         p63A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788964831; x=1789569631;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wYpdvRYRq+NgDR2+bAGysqVrNIbeZhE6Rp8OwLP/TiM=;
-        b=Af+bwKIdXMRZbVZUiQQ0weUIU+9HaCOIb+gheyYnUFA36/Fuz+aAewRsuiyUB7fDM9
-         cIxNYxf/uwdDgGE/BhGMyShUkngvNfLcHN5aoEVn3H95igbOlswhkwTo9QZQQUuen3bc
-         PojAigR7bX4alRj2boilv9sJWYj1D/VkrZn5nbgJVpFZtSjeKiH543fUc5orUukMdlBz
-         PPl2AWyDwpJgVtuISsD0PkWWXm9ACsQ9BUyBD4Nec6IKDHqA8vqgpO2w0GmJQ3N6TxGJ
-         JcrhLcMsP3CwAU34yLCFSQYMS+FvIYt58xBVh/8KZMFrVamTYQ022x8vu1sSmN1sT4lo
-         0lhQ==
-X-Forwarded-Encrypted: i=1; AKwUvByml42MByS0Q1dJbPlHvBTMcOd3FshFfqX9FPvaYcEtAYhxr+bETiCjHM9IeKJEkyWH3Qg7ojZmo9RXSnIUcIOYNw==@vger.kernel.org
-X-Gm-Message-State: AFuF++n6Bn28b2tecQ4CCJu3kIsYs9a0rL5Teq5brdCqvD91SIim+k1q
-	/SgB8LCywNh7gPKE25qCfuy6r6KPgPcwSrvvgasOT4q7T1bvoQq6mIp4BR8zD12S0ABqCMQwo89
-	fuvmUMue+ptYqN37CPfydWsRwzEpAypPN4EBWXfGmJjBt42klTwSxjDGCoKw9ksXr1Yd4JojbBg
-	==
-X-Gm-Gg: AYBFou1dc4epSd6hFIhfiZQtw1i/ggRNMlfeb8V0+0T4t7dfECCA2Id2fGWBdfRVDuu
-	6d7OSCdpZjCAZNdb5EvJ/+r6EmQmKTvrblkjG9Cp+4pClxsQoVgMBf8uaC17hdkgyUC1b0ilxfN
-	DPLO0TTFGWIilotYf6cZwrmuYTXvU13kQvicgzHDxNUT8+IXEh5ZjQAb4ggKWLJDVpBEgVy8yIm
-	jMVitLPJGErsVJLpS05LD2+t6NiFeDEQctSgJdGRiwQNOaP4vd3uYj7SK2SDTtG1zJHOgjIo3CV
-	hdf1W0YgjZwtugCuwhBHhPDvG/GTNIhToHGdsSIiawupwIHAa1ig06ti2uQGInVBAkA2lDxcVJc
-	E1l9eDhePdt/eHwpRYA/m3SxHZLsYGa/t751n+Qfepy2r8nEJh6PDRjUO6UM1Nk2sexfElpGLyO
-	ulRPZbxJ9Wvt5qKgE=
-X-Received: by 2002:a17:90b:268d:b0:398:b71e:60c1 with SMTP id 98e67ed59e1d1-39d70ae1201mr1775749a91.12.1788964830425;
-        Wed, 09 Sep 2026 07:40:30 -0700 (PDT)
-X-Received: by 2002:a17:90b:268d:b0:398:b71e:60c1 with SMTP id 98e67ed59e1d1-39d70ae1201mr1775688a91.12.1788964829977;
-        Wed, 09 Sep 2026 07:40:29 -0700 (PDT)
-Received: from [10.50.42.20] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08c397b1sm38218933a91.8.2026.09.09.07.40.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 07:40:29 -0700 (PDT)
-Message-ID: <b01a3558-9107-4271-bdf0-6c3d548cef09@oss.qualcomm.com>
-Date: Wed, 9 Sep 2026 20:10:21 +0530
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="jysLnn1D"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lqwxRGAohj9URv1EcbVGNQk1W64+2vvwolOmRBpmQJijYJMD3OVGH3g7hdZtSiCTj9jQYjADpv0WXdlcXRgKPGKqtu9XTaATspsz9Ie2kSZPhAyrgSYMholRECQ5Mo2MGWvVHMSnGNtpCURFJJY2jdQjfGbIUhdArvnNjZBlnISoPq/rSllML8Yjzw9JkYOoDeB3WwV7mXrm5KCU2/NVIePdJpO+kSTHWIX3IbPO2Rpfe5ciqTCTBLuPRuUkz7KOyoIEoqbnF1OazfSkC0pJr3gVYWbRSSs2Xwos1L6z3e5RViw1cOmTSH0eUb85RM6ZNPpdYUo57wuQgu6HTFIEUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QMYAXtSU2RlI5A0+xZHMpejb4PXuSyHn3Og+XtDgg+c=;
+ b=PvU3ulDu42fxjJogWn6BeWjHQSeUrQGIbGQ2LQZCb7eCdVj9h4+5MzthJeFdPueANaoPGrk6mK6nEXW3Q0528g6UlqXVvYS4KA6r/PQ7GdYNyeoZ96k9pQyM/hWqmwl/3OV39W4F8rsb8fLKrE2CKcWUfyK3TItzFx371AX61ZObP22L/3Kl2Pk2nDaFujhwGv1C3zZUuHcTeZbui9RR/BT+2kg74Rcz32fN2H2ITdR0VG4WhKnu1kk3dPZZy3Qw9PP5M4lbFHDimqpxtN/+WqvNEGYs8YQ7CvbpeKauc4PfEpkSgLKXtnNSGPkxjGvz/JhmSrgpB3F9OLywvWxrCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QMYAXtSU2RlI5A0+xZHMpejb4PXuSyHn3Og+XtDgg+c=;
+ b=jysLnn1DoamML6U+Aian8cwlEigS0QnXedJXNQRUO3pkHl0F+Be9JAB7YKY9TdYAY8uImONfBOaMd0/DgJbWdgP7p7IfSr7TfdA2HMTOWnRfsclws77GLO3C5tDB5epMybEzHWsb2ldLHVdq0fl6KeaPwldBARw/53pAjTrgIDU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
+ by TYCPR01MB10071.jpnprd01.prod.outlook.com (2603:1096:400:1ec::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.8; Wed, 9 Sep 2026
+ 15:04:31 +0000
+Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
+ ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
+ ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0406.005; Wed, 9 Sep 2026
+ 15:04:31 +0000
+Date: Wed, 9 Sep 2026 17:04:12 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, tomm.merciai@gmail.com,
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/9] dt-bindings: display: renesas,rzg2l-du: Document
+ RZ/G3E SoC
+Message-ID: <aqF1FCVywlyt1eK4@tom-desktop>
+References: <20260828122113.1426778-1-tommaso.merciai.xr@bp.renesas.com>
+ <20260828122113.1426778-2-tommaso.merciai.xr@bp.renesas.com>
+ <20260902-heavenly-ambrosial-trogon-b7ab03@quoll>
+ <apgsOubuGuvw_0rf@tom-desktop>
+ <CAMuHMdU0y5Dg9tW7fAM3QQHKpAw_+vmjj7v-XeZmrushQgQFAA@mail.gmail.com>
+ <apg8luaJ3eobK8sm@tom-desktop>
+ <d50816260b8be29948c4cc04172b5c88ea3313a4.camel@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d50816260b8be29948c4cc04172b5c88ea3313a4.camel@pengutronix.de>
+X-ClientProxiedBy: FR4P281CA0340.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ea::19) To TYRPR01MB13588.jpnprd01.prod.outlook.com
+ (2603:1096:405:18d::7)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] driver: core: add subsys_platform_driver() to reduce
- boilerplate code in drivers
-To: Brian Masney <bmasney@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
-Content-Language: en-US
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-In-Reply-To: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GKk41ONK c=1 sm=1 tr=0 ts=6aa16fdf cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=_6l-rGU-S9tz05y7jW4A:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: LDgM6Lqo2r7rFfboXzk25IDjpBjxcKwE
-X-Proofpoint-GUID: LDgM6Lqo2r7rFfboXzk25IDjpBjxcKwE
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDE2MyBTYWx0ZWRfX8sEEb/ySZH/q
- 5YBK9jhp8dDB5Z5g9s7EsTIngTAymUMpXOpQ8fAggfjm2XEVmAQO2wX8kWqa4ZsYDxrATHqTxmc
- 2CyQUQJ3uvzB0hE/TJxS7CNGLGW25yY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDE2MyBTYWx0ZWRfX0F3u2Rloy2KT
- Y9VKqPXLGgnxUL7e0XyLElS46bgoGZUnECEqlxVaIaIo8IIuWEIFg0NZxjbf2v/vgX4CoQ5ca6f
- jYQkY9r5EmhTFi8ohIOki7YkyIdhbTOyewK1wEBb7zDEZqJIeElktLBttQYyxytfpnFG0Bta00v
- VUcYkIF0TejU1Hut5To+gK93lNMtVaimrK1LQ9KYMi1UfMCRDfXYdrpXO32inbwqAdHxRWpq10M
- oeJgxg2hTgV3480vgLG2gnJGhVhoQGYEb/u+hgMTYF7Fk1O9+97bph6Qz754F7XCYf8dldDDK7o
- rMKTWWdr6RPaIzQNnVxWKhr35sgHpCLkgoM1u2B5GIAucGHtqmnW/E7PZEN3LkPi8jW/nZLOOoE
- GoKzZq2DqGCFfFhj/b8ETxaa4XAhGTtP/l8hS/YXrQ2o0gtxrTwiK+l7IFo8qW+IEF8E+fi4usm
- xX6zGj5TvpJqXw7zhTA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_03,2026-09-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 bulkscore=0 spamscore=0 clxscore=1011
- suspectscore=0 phishscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609090163
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYCPR01MB10071:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21ee97e5-4d5b-4989-975e-08df0e83a6fb
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|52116014|7416014|376014|366016|4143699003|6133799003|5023799004|11063799006|56012099006|3023799007|10067099003|22082099003|18002099003|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	4veyd29VaZcLkCgWECTX7tL3H4ZA18vjMJ/MlJM0SafAlBjb7/rUPQvsyG6fB22SydNbwIIbx4DXLLBxkJPeRCEcG7U+l4Ut01jer71FLZmic8O3DHS/MNoK4e21zROPMlAymS9VajIEsBZV29W8sU7OOEWyoPpQljyvP2C7LdGE87456KtmvSlMHvgfbHZw0ngqORAMJmo8RDn7ssWZ3ywcU0zOp+JGTLeDKoUAQjUXtpDRFiUY1bzIKPwoirydqcWh8tcM9HDhQ92Gye2YuVPV6OiEmb31zCGk5765e1LymwCDveyKImj/Ywjd9ZE9RUKRF2GxwUCF5pi4imgs/K+QJTbGiZJWupJfo59dbgFis1GwaIljeh63ER/JtgJQzGlor6wxfDKj+r3f9V+y4WwV+LKe7f+fuaeow7wsXLylVv1E+PmbxTuXplFKZ5E1P9TdFJTc5FR2dCuVkd72gLfEFlOLOjQUZLn5KHRZFLCaviVvqu/bH5z6Oa7iIn64hIQ8hKXmeXRLigbn7SFN06Gh9yZUcwLwwuKykhPniT6FACrqGrB6ExMAzIYAUHk/K+AtrwSGU6n83lUCXTpzh1FXZ70kZSNFK3oFvqXbVSRrHeDO6WhQwlw7msSRqammvphC3Rafe6/Ed0c0Bu2PBQVyy7j9VjHLaPLW3ctcZF8=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(52116014)(7416014)(376014)(366016)(4143699003)(6133799003)(5023799004)(11063799006)(56012099006)(3023799007)(10067099003)(22082099003)(18002099003)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lmWZkP31mswkmZX+uvT1++eVs8e8HQpE4kpj5T5WEdWQ1erMPL90M0gLb8RY?=
+ =?us-ascii?Q?C7Zs6izI1IXhKHIUz1p0n2xF+jxqeYy0HqUJwGXdSYNfpkvjdZuZEQEtF36L?=
+ =?us-ascii?Q?Z+n+W0moP0Guk437KKZWJd+5GfYCBx9WoKu7k5uOocy8heUuPc9FKRTKjDWU?=
+ =?us-ascii?Q?7Y02qdkPaFS58XWp+sgm0I9quq6QLWMHKaw2XBPth+PWNJjVux42eNsY1VIH?=
+ =?us-ascii?Q?zvoYhQPU8Bh35nvOubZl3VRk6y/QI0d/u3CmubVio0yx45v0OEqBdHr9ExGd?=
+ =?us-ascii?Q?Dae7cmDZIEcpC5+oxlMszfyntb22Tcst8GGtR9j0odHWm+TUd3503/xInzcJ?=
+ =?us-ascii?Q?48uSwWYg2xd5wrvPT80BYjZcv0uCsVnopLmxZg10kDq/sKrX9Zo2yTMA0Bfw?=
+ =?us-ascii?Q?EWVnDlv+jJJL88T5wdKDxDR0fTK3/HMPkKw9jiptsdWfEQrJT3ByX7cgKPsP?=
+ =?us-ascii?Q?GccNBt+2gtsqDioTf3ZKvfcCI3zVOz+ioAJ42HBo6T7hrJauUc8+Xn78IS7y?=
+ =?us-ascii?Q?LSwiub+8pgHf/ft6wrc1ax7O5uIdOyYzQYULgO2nF3DfUjcWJmNBoL6q/Dj1?=
+ =?us-ascii?Q?YI/OzL0okeoQI7o9A7Nz1gTuY90GxVG9makDTZZpIbSjVz2FOhssqCQl+FEC?=
+ =?us-ascii?Q?VTB7BfMx/7C9EUhBIPW3MTzvHYzlQKm1iOBH8Q+5Bouvyk8kA2JPQfcKDdmY?=
+ =?us-ascii?Q?vZpKi1efiRVilLtYCzkRbq4lHRD6HeA4vdllZOdXWuiW6qOOt+Eh9bF2kL9R?=
+ =?us-ascii?Q?bxGnWjLyf2xdQ1GbGfBP+zff8x3a/6xQS3Gb/VH0UAIWKAbfaNC8TkMK9xaG?=
+ =?us-ascii?Q?gGqiHHvCymhT3i5WrwtvCz96WDn7c2/6eKWjhEBlNAGQuz2DyS8u68X+kirM?=
+ =?us-ascii?Q?NDWdgMv1H9th+4n+rbQUv4bGaY9RhvHnyn7/zsC+a4/rGGYuZfqUgp9tIVaQ?=
+ =?us-ascii?Q?LGxNL6uYCmcmJ6oAfm6ttw6/RAJNBDKxkRXuFn9/I7xU6lgHt5cAQhSGFBmI?=
+ =?us-ascii?Q?qX2wC05qhCi0Uhd7KpqVLXLY6FQgQjXnWVqlj2YvqpdLAQYELMc0qqz/Ajwy?=
+ =?us-ascii?Q?WN5K0g9qmhPwYAxmipsG4A4nxVS2/NCeTOSTNpPHv97v1LT19k0JlcceHYLL?=
+ =?us-ascii?Q?BNfi10r8dVdiG5uRLEtQkMKwXhAWdtlY05fFuUFIhL1V7j9Zu+GdLqWIfuz/?=
+ =?us-ascii?Q?6qNyAxKoARXBxZKmEdpmsRcy30yRY2I+KHcoWsqs9qCazolOumgWxQkqP95U?=
+ =?us-ascii?Q?DoVZjWgExxZFQxIC7ck+M6TYmzkr7r0o2wvfS75qlVh3dMZemMATX0ZNCUOx?=
+ =?us-ascii?Q?hgZfWe+Zm380T+7bg+qad+qhPgLuPXRX5ewsHbu13ucd5ror6EWQz4cmLqx/?=
+ =?us-ascii?Q?vgxVUvy9Tt8W2KWUyrjdLkQmGeK38Mohri5sv+cHdXSPS2c5ObQiHqPRTikB?=
+ =?us-ascii?Q?PkrZusbg0cIgJxGoosgE2qbaJk3hZpwStyvW+jvyknXWO/VtKAWn/k5uO1lb?=
+ =?us-ascii?Q?JvwuKhB1dW6UAWnfBgUsbr83b2/q3eXrkjofHh9wjaGeb1A7ZIcN2FR1CI/z?=
+ =?us-ascii?Q?5L6lVZgneXgMagy1ibo1eINiQYIjiN3yRwXT9lY9q6LIMc4Afj9fZUe2xZF0?=
+ =?us-ascii?Q?3RZr0WL67AMzhzQ86LzhurskOqOrOW0/EJ4FQOo/vBCnQjwKdgepgeaSNUlp?=
+ =?us-ascii?Q?xq7xA1Ew/8/RcxyXUWfUmB8D83SOGuwpByCFyi7dcrOcVTbT+m8iZeIG/U0I?=
+ =?us-ascii?Q?VWL6Ht5lSCjKBCmwL8iVDjjjIowqWqheTmfxUKsNtqzov7Qir5gt?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21ee97e5-4d5b-4989-975e-08df0e83a6fb
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 15:04:31.6983
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f5DmaTaVJzHAJboItsmc7fUyXBj1AsVw6EiBoRwnJMLh7JnoIkdEb4jQYMbfCeXMme+Og+qAUA8TvWmECEuII2Sc4HJcXmz5MCsZiyKcMAgohUFUDuMokAcByzOtfWW3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10071
 
-On 9/8/2026 11:17 PM, Brian Masney wrote:
-> There are a fair number of clk drivers that are registered at the
-> subsys_initcall level since some clk drivers need to be initialized
-> early for other drivers. Let's add a new macro
-> subsys_platform_driver() similar module_platform_driver() to eliminate
-> some boilerplate code in the drivers.
-> 
-> This series converts the Qualcomm and Renesas clk drivers to show the
-> code savings that can be achieved. Once this lands, I'll convert the
-> remaining clk drivers this development cycle if all of this can go
-> through the clk tree.
-> 
-> Outside of drivers/clk, there are 364 drivers that use subsys_initcall
-> and I am willing to convert those as well starting the next development
-> cycle once this lands in Linus's tree.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> Brian Masney (4):
->       driver: core: add subsys_driver() macro
->       driver: core: platform: add subsys_platform_driver() macro
->       clk: qcom: convert drivers over to use subsys_platform_driver()
->       clk: renesas: convert drivers over to use subsys_platform_driver()
-> 
->  drivers/clk/qcom/dispcc-x1e80100.c     | 12 +-----------
->  drivers/clk/qcom/gcc-eliza.c           | 12 +-----------
->  drivers/clk/qcom/gcc-glymur.c          | 12 +-----------
+Hi Philipp,
+Thanks for your feedback.
 
-Tested on Glymur-CRD
-Tested-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+On Thu, Sep 03, 2026 at 10:17:23AM +0200, Philipp Zabel wrote:
+> On Mi, 2026-09-02 at 17:11 +0200, Tommaso Merciai wrote:
+> > On Wed, Sep 02, 2026 at 04:20:51PM +0200, Geert Uytterhoeven wrote:
+> > > Hi all,
+> > > 
+> > > On Wed, 2 Sept 2026 at 16:03, Tommaso Merciai
+> > > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > > On Wed, Sep 02, 2026 at 08:37:06AM +0200, Krzysztof Kozlowski wrote:
+> > > > > On Fri, Aug 28, 2026 at 02:21:04PM +0200, Tommaso Merciai wrote:
+> > > > > > The RZ/G3E Soc has 2 LCD controller (LCDC), contain a Frame Compression
+> > > > > > Processor (FCPVD), a Video Signal Processor (VSPD), Video Signal
+> > > > > > Processor (VSPD), and Display Unit (DU).
+> > > > > > 
+> > > > > >  - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+> > > > > >  - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+> > > > > > 
+> > > > > > Add new SoC-specific compatible string 'renesas,r9a09g047-du'.
+> > > > > > 
+> > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > 
+> > > > > > --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> > > > > > @@ -21,6 +21,7 @@ properties:
+> > > > > >            - renesas,r9a07g043u-du # RZ/G2UL
+> > > > > >            - renesas,r9a07g044-du # RZ/G2{L,LC}
+> > > > > >            - renesas,r9a08g046-du # RZ/G3L
+> > > > > > +          - renesas,r9a09g047-du # RZ/G3E
+> > > > > >            - renesas,r9a09g057-du # RZ/V2H(P)
+> > > > > >            - renesas,r9a09g077-du # RZ/T2H
+> > > > > >        - items:
+> > > > > > @@ -35,25 +36,51 @@ properties:
+> > > > > >            - const: renesas,r9a09g077-du # RZ/T2H fallback
+> > > > > > 
+> > > > > >    reg:
+> > > > > > -    maxItems: 1
+> > > > > > +    minItems: 1
+> > > > > > +    maxItems: 2
+> > > > > > +
+> > > > > > +  reg-names:
+> > > > > > +    items:
+> > > > > > +      - const: du.0
+> > > > > > +      - const: du.1
+> > > > > 
+> > > > > du is the name of the device, thus calling items "0" and "1" is pretty
+> > > > > pointless - indices already define that. Please drop the reg-names.
+> > > > 
+> > > > Will drop this in v8.
+> > > > 
+> > > > > >    interrupts:
+> > > > > > -    maxItems: 1
+> > > > > > +    minItems: 1
+> > > > > > +    maxItems: 2
+> > > > > > +
+> > > > > > +  interrupt-names:
+> > > > > > +    items:
+> > > > > > +      - const: du.0
+> > > > > > +      - const: du.1
+> > > > > 
+> > > > > Same here
+> > > > 
+> > > > Same, thanks.
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > >    clocks:
+> > > > > > +    minItems: 3
+> > > > > >      items:
+> > > > > >        - description: Main clock
+> > > > > >        - description: Register access clock
+> > > > > >        - description: Video clock
+> > > > > > +      - description: Main clock for DU1
+> > > > > > +      - description: Register access clock for DU1
+> > > > > > +      - description: Video clock for DU1
+> > > > > > 
+> > > > > >    clock-names:
+> > > > > > +    minItems: 3
+> > > > > >      items:
+> > > > > >        - const: aclk
+> > > > > >        - const: pclk
+> > > > > >        - const: vclk
+> > > > > > +      - const: aclk1
+> > > > > > +      - const: pclk1
+> > > > > > +      - const: vclk1
+> > > > > > 
+> > > > > >    resets:
+> > > > > > -    maxItems: 1
+> > > > > > +    minItems: 1
+> > > > > > +    maxItems: 2
+> > > > > > +
+> > > > > > +  reset-names:
+> > > > > > +    items:
+> > > > > > +      - const: resetn
+> > > > > > +      - const: resetn1
+> > > > > 
+> > > > > Drop reset-names
+> > > > 
+> > > > For reset-names, I got the the following comment from Philipp in v7 [1].
+> > > > 
+> > > > Dropping reset-names would force the driver back to an index-based
+> > > > lookup, which is what that comment explicitly asked me to avoid.
+> > > > 
+> > > > [1] https://lore.kernel.org/all/8382e2b9fd07fb1132c26e228b3899336fc1fdd4.camel@pengutronix.de/
+> > > > 
+> > > > Philipp, Krzysztof, could you agree on which way you'd prefer?
+> > > > I'll follow whatever you decide.
+> > > 
+> > > Until we get a variant with a third interrupt (or reset or reg),
+> > > which is not related to the number of channels...
+> > 
+> > Right, IMHO names keep the driver flexible enough for such a variant,
+> > indices don't.
+> 
+> I would like to get rid of the reset_control_get_by_index() API
+> altogether, if possible. Currently there are only users with index ==
+> 0, so this would be the first and so far only valid user. I'd prefer if
+> we could keep reset lookup aligned with clock lookup, with via clock-
+> names as well.
+> 
+> That being said, why are the two DU units represented as a single
+> device tree node at all? Aren't they two completely separate instances
+> of the same IP core?
 
-[...]
->  drivers/clk/renesas/rzg2l-cpg.c        |  7 +------
->  drivers/clk/renesas/rzv2h-cpg.c        |  7 +------
->  include/linux/device/driver.h          | 31 +++++++++++++++++++++++++++++++
->  include/linux/platform_device.h        | 30 ++++++++++++++++++++++++++++++
->  48 files changed, 107 insertions(+), 487 deletions(-)
-> ---
-> base-commit: 944a035ecca915ae947905dcfb03f2b9dc6d032c
-> change-id: 20260908-subsys_initcall-05dfd5fb0f04
-> 
-> Best regards,
-> --  
-> Brian Masney <bmasney@redhat.com>
-> 
-> 
+They are, and maybe describing them as one node was the wrong call.
+Let me explain what pushed me there, because it also settles the
+reset-names question above.
 
+RZ/G3E instantiates the LCDC twice, and some outputs can be driven by
+either instance. DSI is wired to both and the LVDS channel 1 same.
+
+For userspace to pick the source at runtime, the two CRTCs and that
+output's encoder have to live in the same drm_device.
+
+With one drm_device per DU node, an output reachable from both instances
+can only be exposed on one card, and the other instance is unreachable for it.
+
+So I merged the two instances into a single DT node to obtain that
+single drm_device.
+
+That solves a driver issue but maybe distorting the hardware description.
+
+The right shape maybe can be the virtual subsystem node already used by
+other DRM drivers:
+
+	- fsl,imx-display-subsystem [1]
+	- rockchip,display-subsystem [2]
+	- sprd,display-subsystem [3].
+
+Maybe we can have:
+
+    display-subsystem {
+            compatible = "renesas,r9a09g047-display-subsystem";
+            ports = <&du0_ports>, <&du1_ports>;
+    };
+
+with du0 and du1 nodes:
+
+    du0: display@16460000 {
+            compatible = "renesas,r9a09g047-du";
+            reg = <0 0x16460000 0 0x10000>;
+            interrupts = <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&cpg CPG_MOD 0xed>,
+                     <&cpg CPG_MOD 0xee>,
+                     <&cpg CPG_MOD 0xef>;
+            clock-names = "aclk", "pclk", "vclk";
+            power-domains = <&cpg>;
+            resets = <&cpg 0xdc>;
+            renesas,vsps = <&vspd0 0>;
+            status = "disabled";
+
+            du0_ports: ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    port@0 {
+                            reg = <0>;
+                            du0_out_dsi: endpoint {
+                            };
+                    };
+
+                    port@2 {
+                            reg = <2>;
+                            du0_out_lvds0: endpoint {
+                            };
+                    };
+
+                    port@3 {
+                            reg = <3>;
+                            du0_out_lvds1: endpoint {
+                            };
+                    };
+            };
+    };
+
+    du1: display@16490000 {
+            compatible = "renesas,r9a09g047-du";
+            reg = <0 0x16490000 0 0x10000>;
+            interrupts = <GIC_SPI 922 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&cpg CPG_MOD 0x1a8>,
+                     <&cpg CPG_MOD 0x1a9>,
+                     <&cpg CPG_MOD 0x1aa>;
+            clock-names = "aclk", "pclk", "vclk";
+            power-domains = <&cpg>;
+            resets = <&cpg 0x11e>;
+            renesas,vsps = <&vspd1 0>;
+            status = "disabled";
+
+            du1_ports: ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    port@0 {
+                            reg = <0>;
+                            du1_out_dsi: endpoint {
+                            };
+                    };
+
+                    port@1 {
+                            reg = <1>;
+                            du1_out_rgb: endpoint {
+                            };
+                    };
+
+                    port@3 {
+                            reg = <3>;
+                            du1_out_lvds1: endpoint {
+                            };
+                    };
+            };
+    };
+
+Each node then carries a single reg, a single interrupt, three clocks
+and a single reset.
+
+With this solution reg-names, interrupt-names and reset-names all go away.
+
+This will need one new binding:
+
+    Documentation/devicetree/bindings/display/renesas,r9a09g047-drm.yaml
+
+For describint the "renesas,r9a09g047-display-subsystem", a virtual device
+that groups the Display Unit instances comprising the graphics subsystem.
+The existing renesas,rzg2l-du.yaml keeps describing a single DU instance
+unchanged, which is what the v5 approach [4] already did.
+
+What this buys at runtime, with both DU nodes enabled: the SoC DTS wires
+DSI to both instances, so the DSI encoder ends up with both CRTCs in its
+possible_crtcs mask and userspace can move the output between them:
+
+e.g.
+    modetest -M rzg2l-du -s <dsi-connector-0>@<crtc0>:1920x1080-59.94@XR24
+    modetest -M rzg2l-du -s <dsi-connector-0>@<crtc1>:1920x1080-59.94@XR24
+
+LVDS channel 1 is the same situation in hardware.
+
+What do you think?
+
+[1] https://elixir.bootlin.com/linux/v7.3-rc1/source/Documentation/devicetree/bindings/display/imx/fsl,imx-display-subsystem.yaml
+[2] https://elixir.bootlin.com/linux/v7.3-rc1/source/Documentation/devicetree/bindings/display/rockchip/rockchip-drm.yaml
+[3] https://elixir.bootlin.com/linux/v7.3-rc1/source/Documentation/devicetree/bindings/display/sprd/sprd,display-subsystem.yaml
+[4] https://lore.kernel.org/all/ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com/
+
+Kind regards,
+Tommaso
+
+> 
+> regards
+> Philipp
