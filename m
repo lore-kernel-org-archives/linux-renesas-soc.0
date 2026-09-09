@@ -1,139 +1,96 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29C53446B
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 15:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ACA5581FC
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 15:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788967268; cv=none; b=PvuZJTao769NN/u6dU06L4dFWYd0B13PJe8yn5j8CBpEyoc1jtFXI48cSFz3TjexYc9U3XVh+oCNpu3nWZ3nLOS/lL09UAz42gatmt4TOJiLJNKf4q/SirPsQhwnTXhsoe76P/0BBMXH8wS6KGocHpvSl2Y30RwjD7SH/ya08Q0=
+	t=1788967342; cv=none; b=YK+6UBsHl6IwlEjhZ5XJcrrnG8VxilprsgzAsP69iK6OebVZ3ezCtN7WPRKZXiGkDJT26ZnmyZn2iDFYaQ/iWOVmukeCjaOJumQCzSTlUKK9FSEPx/tfDq7gwDN3mQmx0S+RA5/pzKOvrC6mPxJkjMs5OXp7y4fnK9cuysdA2l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788967268; c=relaxed/simple;
-	bh=XkIfu4GFpqkkfkfU2ELXJLd/gzXud8DjECfS0dWQbGw=;
+	s=arc-20240116; t=1788967342; c=relaxed/simple;
+	bh=JkYg2JhCpEtdX7qwSdwLwF/pqEf7ipMDvkeyNYPYWiI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNMUsgnkI1Jjt5zM/qlEbvv/Ij4xE7R9UhPJ6yZuirCCHyfBJND/bxfDwSs9vTPGLNNZ9M35OLgb876xHet65W2Pq3gmjwZp6+jE7G9H0Fv/sIvYSRzLJhHfBkkwwyXznuV8EShy8+zAJ7isxkVzusVN6HqP50H9/0kWXyhQ94o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+	 To:Cc:Content-Type; b=UhzT17aSNWAdvJDfhnmaamcjWnHH6ppcL5cQuF32DOR1g3pnXOsFU0xC7VGDigYS9oYS47tQLyWGGH6KisKVipkWT7kKmVOXx1bIUkHBF2QcI2BJcqfJpuiEb8fnb/SBJlQbOJvrRXIWM2j+ZYjiGxxggBRW7Z2Lhh/NB1rZBTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5c675e64ffcso5434553e0c.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:21:06 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5bf959b820cso5233497e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:22:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788967266; x=1789572066;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2xIh1wPKDMe5t+fT3IE0obOGyRNurvI4tDRD2p56gTg=;
-        b=PYz3C815InuGU9k7dU2wG3yNcb79yJdgCgs0N4UQBhsze/pmYEMODxI6Et4xcJbuoP
-         zg5jwYoBNBkkR1ZnmBM24Xzwbui7JeA5SXNSwJaJYLXXSsTgalCTOo+rwszxxIah4ErS
-         UT8tIuAxKPYY8iHw9u6MqM6w65QLDFLblbO6SzMCPiNsVxVeYWCnDhuJQuqZBMgJ7yMV
-         Szt0TfKhcRs9RzWefrhxsXr3okTlPumxtq3d59642cDWh+/02kZtZn9L/iXsdnHcLRck
-         RiCKMjSfqycawUsjdH4Yyf5FMyhCZNFmRsz1ZkjC1DRnIQKoO9e7jNnPUX57oZHez4wL
-         /oTQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxYRkFTBdguBaYqMaAUdhoLgm0CC6ootToPm9MZdN6VHM27mshVR/R33vYI5bknrPPlzWfuixB5sRD6kGviL4o03A==@vger.kernel.org
-X-Gm-Message-State: AFuF++nLNMzWdOZ3pVkGTGuthSrws3IRT+ds4IGCx0xzgnEDylupPgMj
-	9SA2iANn3w6gIGP8Buy/cNfrAJ6PDGtQfGenhAnrwvnhS66MmsEMYpnM055zqJ5eQfc=
-X-Gm-Gg: AYBFou0K1Z/yytwrSnMCrmksK6nXu+VCWDbS2N/G+PtJgBemeXDxBPUIB9/bP+hlH/6
-	KOeLYomLvk//27AZ8J00KvL/UTdLquzEsDZsHLDPr9j6Cv9WTZqmd6Exinv4ArzvTjo90ygivSX
-	SOpDhZyNMiupBffThoyHO4jqqstEARXmcwzDApapGZLHGmfnWMnSqVVHvY57vbosD/GIVx0SDlL
-	T5DUxyRLVrZErNUbWlXJp2d5lQ3Gu/wkU1QkBybrPye/fyJRP00Tu6nzyFMV6Cur6CnZuWgGQye
-	vV2bSKgEUfEmFSeyEoOHU2WzXQfo/eABXDpbMedYeOweWBXqlbtFaHmpNmCQDrKB15MZuLTMeNp
-	mJqJFbLI/Qj6BoHBPOWFI4fyVlAmvz0oOFfBea2X/jyHvYr2rb+Y7Cak1Bd8eZram1j9rv+F8bl
-	/pMSs0Btkd3KxFuUiqw94cve7te1hkGXHVlzV9MTLyqT8NXrHyD6gLQTX6dFRg8YHdSCkaaYeDP
-	6mIHEsrYkfGLbE4HAOPYQkyq9sId4Nlu2WH
-X-Received: by 2002:ac5:c751:0:b0:5c5:924a:4616 with SMTP id 71dfb90a1353d-5c7dcc977f3mr9633497e0c.0.1788967265606;
-        Wed, 09 Sep 2026 08:21:05 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1eeaf3sm12825470e0c.6.2026.09.09.08.21.04
+        d=1e100.net; s=20251104; t=1788967340; x=1789572140;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=OvH1LN5nROju0SUpXayMHEhowOFfOFw00A7tsFfYyCc=;
+        b=OH/G++l2BB4PbKEWQjNwVEZG8wMpZFSn0FkYg5C6ujSiq195STDfgARgkvqchsLfEQ
+         jlyEdLrJGjVkFJd5z7nCdv1giw77+4gBmJL7PqHxT+fUG0ZciZRemfzUCsIDOJ7LCLEk
+         ZkKv2YBkvrHbeQU15nx/uvzWgqWoFSfBcXmjdhPmHHIwRhEENXx1H8zC0aWDiJuGrI6R
+         BhZIxLCO5CtilYlydIYrFOV/vJ0DKkBQ32hsfXHBhOkttO528DMXnCvO3fVrSyYpARIA
+         WQbM7PqqbcdF8DPdUPxK9JSwu9tIi2WqHibBP6GGt4l9kh5lQqK3IfOSsbuhUaUHNU0E
+         i/Lw==
+X-Forwarded-Encrypted: i=1; AKwUvBx825D3YwSG2n/UBvC5ItVrbhp7hMCfGebHD0HavVTt7WahIOIjELZuPAgMuaSQ36Wg6L8VhFb1wi7bUt16lzoz8A==@vger.kernel.org
+X-Gm-Message-State: AFuF++mU6U9mBrqMsuCQKJCorK+02yPr/sguBpLebGbhJcUW3LcrcUxu
+	ngIV0SS9jI/uYQAxYD/mYOLp1A2mLSOuKQR/UNIAH0gvhJpwtbGHZFyN5zh50VrPIjE=
+X-Gm-Gg: AYBFou0SKAwUFLml6Toenqsu86Jx8/Y9+eQ0I+r9OTAMh7qqJdNtdKCKN0tz5mLLdIC
+	i/K+ce3zMilLll6BQALyJLGPVqC1VKVEpqd364ezag/wYtTK/8IHr8niVywOHJXUkXm0cqaWTA1
+	XLLouP8lHK5jIEBAekchFlfxTC2EqkaosO7InKSUJmLW/FWbb9zeygIftmC3n9+mS79gxkWLFd1
+	kFqKb+UZDQfSxYbTBkPcIXdtXNQRk2gVRjwklyY4jzy5TOZ/CvjQJV2XNOcDZ0h7g0Vihd+24vJ
+	V/8ATTXga/o+6SDYMV7TQfKBE+s4BDc4GLriRisJUPR8sRN74G06eXBQR0y77vMQGjy99zuEtzp
+	CtHSTG9hYmW5tfb2GOovALa1wGXbvSmnT76R3aNovhwjVcZNBc35cHT7fHg8q/MoPAXYC2r+r2Y
+	0O1ZIqFtaeNnSTFKNLrnyXSlRFVqHOflMRFQBtB3DrOXXYPf17LFxWBGIcHzFPNGfxYuu4M0r28
+	EDIAHXldFeTHdO623iPUsa5zCISbwmZwqGGIjeu1sueEerLe7VF
+X-Received: by 2002:a05:6122:881:b0:5c5:db2b:5baa with SMTP id 71dfb90a1353d-5c7ed7cba16mr19649066e0c.6.1788967340007;
+        Wed, 09 Sep 2026 08:22:20 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1dc86sm12114507241.5.2026.09.09.08.22.18
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 08:21:05 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-78a338fe106so4668746137.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:21:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwj/08FR2IefssyJy/WtkOI4cYOONfv7y87dGkmEkQL9k5fOZUK7OJAxwWskRUDOJHfNV0ZRw2sIzn7Km6zDIYHbg==@vger.kernel.org
-X-Received: by 2002:a05:6102:8308:b0:76b:2548:560a with SMTP id
- ada2fe7eead31-78a2efe5c6fmr8198191137.16.1788967264493; Wed, 09 Sep 2026
- 08:21:04 -0700 (PDT)
+        Wed, 09 Sep 2026 08:22:18 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5bf959b820cso5233445e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:22:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxmhJ4uYdA/KysxxrHtwOPzhQu3hQMCckV7fSLBsgcqfNJXanfoAFViS0f3h4SheIJIZM+VBQnEDlZP3LCZeJTMvw==@vger.kernel.org
+X-Received: by 2002:a05:6122:8b11:b0:5c7:a844:493 with SMTP id
+ 71dfb90a1353d-5c7ed2f89e5mr22804170e0c.0.1788967336434; Wed, 09 Sep 2026
+ 08:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com>
- <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org> <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
- <c784aab5-c0c9-424f-9f9d-a0330f60a0ef@mailbox.org>
-In-Reply-To: <c784aab5-c0c9-424f-9f9d-a0330f60a0ef@mailbox.org>
+References: <20260909151341.28322-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260909151341.28322-1-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Sep 2026 17:20:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWi7ou=pbTfHXHfjCLShwqWOcYYd3vpLPmUHzMMNFJ+fA@mail.gmail.com>
-X-Gm-Features: AcwNN1X2mn0ov-erdE-79oChYQokKwSLC2Xb3xUhMRJG7PmcUAF6Kj0jO0aTaU0
-Message-ID: <CAMuHMdWi7ou=pbTfHXHfjCLShwqWOcYYd3vpLPmUHzMMNFJ+fA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare 2CH CANFD HAT
-To: Marek Vasut <marek.vasut@mailbox.org>
+Date: Wed, 9 Sep 2026 17:22:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVsr_ahkeEZ=MB5KWCUZ+moSgkuJ2_5mZXy58QE+Oq61w@mail.gmail.com>
+X-Gm-Features: AcwNN1WgFr7t4mTZJlE0GkQEVjTvX4ia6Ekcpvx97Yyry4KwbnrUZ-lG4127I-8
+Message-ID: <CAMuHMdVsr_ahkeEZ=MB5KWCUZ+moSgkuJ2_5mZXy58QE+Oq61w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Align MSIOF1 PFC node
+ name with label
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
 	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Marek,
-
-On Wed, 9 Sept 2026 at 17:16, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 9/9/26 9:56 AM, Geert Uytterhoeven wrote:
-> > On Tue, 8 Sept 2026 at 19:02, Marek Vasut <marek.vasut@mailbox.org> wro=
-te:
-> >> On 9/8/26 2:02 PM, Geert Uytterhoeven wrote:
-> >>>> +&pfc {
-> >>>> +       msiof0_pins: spi-ws-2ch-canfd0 {        /* SPI_0 */
-> >>>
-> >>> Node name should be "msiof0".
-> >>
-> >> Do we also have to fix up
-> >> arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts this:
-> >>
-> >> "
-> >>    755         msiof1_pins: sound {
-> >>                             ^^^^^
-> >> "
-> >> ?
-> >
-> > Might be a good idea, to increase consistency.
+On Wed, 9 Sept 2026 at 17:13, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Align MSIOF1 PFC node name with label to improve consistency.
+> No functional change.
 >
-> Submitted as
->
-> [PATCH] arm64: dts: renesas: sparrow-hawk: Align MSIOF1 PFC node name
-> with label
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Thanks!
-
-> >> But I wonder, shouldn't the DTOs contain unique pinmux node names, whi=
-ch
-> >> cannot accidentally overlap with the base DT or other DTO node names ?
-> >
-> > In general, the answer is yes.
-> > In this case it is about pin control subnodes. If the base DTS already
-> > uses msiof0, its original user needs to be disabled by the overlay
-> > anyway.
->
-> The original DTS does not use MSIOF0 .
->
-> I think the proper solution here would be DT connector ?
-
-Keeping an eye on Herv=C3=A9's work...
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
