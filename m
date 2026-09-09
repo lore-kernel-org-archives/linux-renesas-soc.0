@@ -1,131 +1,131 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E15E54B1CF;
-	Wed,  9 Sep 2026 15:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA9C5616A5
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 15:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788966988; cv=none; b=HrcfJ7MENbtP2NzsV3hofjZEnB0KHNqS9rshpF1gHkzVYi8j9xLZw3+66bBUsyFOupu2QkWb3G3LZ8q5ICxIXMQHeMr4lQRVOh4eJqpB2CPJxFRgDbRW+Aje0x9+DAEVEVG4wvmyZ55JLjND8OMDnEMo19vGlOIzGlFurDi/hss=
+	t=1788967035; cv=none; b=LMHVE/8ROtl1z8nodxFvEraWeLNKrfH6y4i1i3c1lfxBoaiUv90wy2zwQBhSCj61OpLB3Jnu24K9Ay+4US0F0vIzTGYcc/SAfZnWv5AArft9UBX0CHGbEaGG9zCgUZG1Yphoz/CVYMHXxhux2y0BZtTHFH93C95cAMaXXbtQflo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788966988; c=relaxed/simple;
-	bh=qRzXUreHuonI5ZVJGgFqYlpg1sFNJoyvmV7io+rg/bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QjULAjndzi87AUAX+3yAnUlz8NWXYAxqsaXPNHmufhHxZAAVBgb5oL/MBpyBgtvRQl0PTQWzwJifIGxa/25Iq8bY8iS4e79McDa+8DUH9Vczykbw6hpnhvwKySy7EF8HAlGvJwLTPWXY6RLzFXbfCjny2RAaFD+7PBMs9DqeK48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=oHcGB58P; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="oHcGB58P"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hg4CC4vN5zMlBf;
-	Wed, 09 Sep 2026 17:16:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788966983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jiAuFX2yhbVwIrEUDOjZptkJ10gfAcRfLWBSK+Ulw8s=;
-	b=oHcGB58PEAY/eEODVUCOsfVRTJnW1I9HX6A3MoE/KJeN/ZmBVbQ8bA0IzGAcVvUZPevYaE
-	Eky9UDQPE5GKe6hb8RcOWAJm1KjwmpRYw5wvwCi4VoEk5fQdf2/hTrVXQoXA96Iob42dmp
-	g41jXMpQyzrA88r9qZwlrZd6uM1Y4f/mgtILMJa8wqtexLnBEQh/yuD8HUbS0jslls54uA
-	dW51cgs5oX3ICW8H4AmygyrlnHYP41rz0aR1/aooKWTVEUiJ4+7RZvmn7FTgAvMjo2zRKz
-	BcfUmOMlYHDN5u6sfSAOiSaOlmYF7TPSfkAbKMS6M0lQ9ledeviikUbZuqyjWw==
-Message-ID: <c784aab5-c0c9-424f-9f9d-a0330f60a0ef@mailbox.org>
-Date: Wed, 9 Sep 2026 17:16:21 +0200
+	s=arc-20240116; t=1788967035; c=relaxed/simple;
+	bh=50PWHOPz89VAgzShHbqe1+05LKceXOJguW/0waoh4rs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MAYCbIz292fYMxGpxHHDnJQRw7DLaB1j4mE9FsboyIY6WrJw9fBAeCFFVBuE3D2Qlvg/BIXvyv4BH5mwNFHJ0ICs2/sXOeIaOpihwRMH9dm3OBeABNiN2cCCxhw2mdW18EHnnoVVYdCeqCOshVjSGO8RYcXM+l5toOgvrOoIavI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e96a8ba8cso214184241.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:17:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788967032; x=1789571832;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=xngvRGlem5QBe9w72ZS3ISg4Zt8dZwRC6gUDQpCph0s=;
+        b=nAqnns3jzINLFlnFKDPlaE/KD9oA6abC+LlFh7XfYrbXyGtB/kx0QRb0nkejqACbaC
+         c632ud2Ioy3q7zr4j8yPpFzVI3VkiyfFNyOeVLbuJb8+OvRE2MKOiuP6O43CeX0zqaoa
+         STcSMDAE0iNmxhRJer1M4ee/DrsM6cbvL4W6GvujmrV0lG1/NM6vqbS257jlqkI4Ctxe
+         nKB7Hq0FYUwq7rNmsa4XmrLmuVuI8gKDDE4rtwtsNxH8ylvwkx2kLjiW4N9U66ov1Bee
+         k3UEAvXZjw4wMnoAWh60LOiwJCi1bod8mBBpaLCM7IaSxoX2wt0mzWE40tkzxitd5dgV
+         al2Q==
+X-Forwarded-Encrypted: i=1; AKwUvBx+rRz27AD+Thschn9kWaX2ZWXcHZzeuqJWQ4bw7vQFr5yhYjlNMEYnaSZ3jsyvaVmvv5cMQyxMriHNHlBE4yNt3g==@vger.kernel.org
+X-Gm-Message-State: AFuF++nzgWgWGDGJO67yMylrMVO+3lYXjaILBYF4hZHazhKmppfdLLVT
+	OOTitKtMD9RO/ep9Yaf0PHPvNulqxhsU0IN06AH2WAUqsoOycLFO5pAVF8hLCMzdL/igmw==
+X-Gm-Gg: AYBFou3Y/AoF5YsDXXQ9dFkszQZ0yWbZpZVQEpXuu6vqzOLkxaS/J0wj8mDm7RgiQJK
+	mtFCbmh2ZZ2xZkCDizZRsnBuHf0/cIKUaY2Pg2li77NWkm4MJDSkGiNxzzTfvJDenLXiKMHJw+w
+	sRd576P4wVKZpmy65pEO5a0UHCOK3x8dmyUnT75Tg0TtTsjuwKK7Fnzq+tBdgmdADAfUFrStaA4
+	l1feMWykjKzRGzt4aWV/UAZzNDHLmzoBUD10dFc3ejjCFrnXiM9kJYSenK8KYd7zXba+lc+JRLo
+	XKrQ39AUwIYp+2Ah5fu9N3QT1svlq68+l0h7pJpgYi53KN/ypuGm4fTwbhUllPwUpIPRo3bWl1b
+	dbvAacFpC/RZtEGCnxX+bt0HxFKI2AL5X3qAnECNdVuwZagFuvKOI1hAUJxwZJtIeLejrDYLXS/
+	hcWa0plf7e+lT5vU8HmlbzQZZIPSrsmdWRMKoNEKBjZB3U7mp043HdyD15Q1Eauxy24vwWfvUKi
+	lGpnn3u2YxVl3Itj5Xb2EC+PXxI7zgpVsrkYA==
+X-Received: by 2002:a05:6102:4bcc:b0:786:dfa:c5ea with SMTP id ada2fe7eead31-79076bcad32mr929163137.5.1788967032046;
+        Wed, 09 Sep 2026 08:17:12 -0700 (PDT)
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed7018fsm12335914241.6.2026.09.09.08.17.11
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2026 08:17:11 -0700 (PDT)
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-98296941f1fso236250241.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 08:17:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx1mLePFosr6PgkARFTnaGTajaj++qmO7Xh7LN+qxjtUp7Ugo3MRRfquMG4GjBeRIRCKHPm3BBzhGL1D0BEGBvPEg==@vger.kernel.org
+X-Received: by 2002:a05:6102:159f:b0:77d:e064:2dc1 with SMTP id
+ ada2fe7eead31-79072bd65e5mr1021149137.0.1788967030503; Wed, 09 Sep 2026
+ 08:17:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare 2CH CANFD HAT
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260808025724.131943-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdWvLX7OZSkfEBA34wKtnoZ4asB6rWFJiLa=2+=fezqsCA@mail.gmail.com>
- <f82ae578-fbe7-4834-bdde-d11e194a507f@mailbox.org>
- <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdXQKL_srr80mUmsnznqJ_qxAoh0TdwyvJ41=CN=2pDjCQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: yt4hfwetehfwg91nxg36oikoca5amr3u
-X-MBO-RS-ID: 18cd9288ed520fa562f
+References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com> <20260908-subsys_initcall-v1-2-cbccf4cd4288@redhat.com>
+In-Reply-To: <20260908-subsys_initcall-v1-2-cbccf4cd4288@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Sep 2026 17:16:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUYJ-XSe22QnBREpxJH_hDVfV1CwkVjBqPK9AXTGJE1Aw@mail.gmail.com>
+X-Gm-Features: AcwNN1VLF1S9VM_rAd4lsusMxTGZ8B-oUTaocc800YUq_Bw4xg9-nPCuVEjF4tk
+Message-ID: <CAMuHMdUYJ-XSe22QnBREpxJH_hDVfV1CwkVjBqPK9AXTGJE1Aw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] driver: core: platform: add subsys_platform_driver() macro
+To: Brian Masney <bmasney@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/9/26 9:56 AM, Geert Uytterhoeven wrote:
+Hi Brian,
 
-Hello Geert,
+On Tue, 8 Sept 2026 at 19:47, Brian Masney <bmasney@redhat.com> wrote:
+> Add a new macro subsys_platform_driver() to eliminate some boilerplate
+> code in drivers that need to register earlier in the boot at the
+> subsys_initcall level.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Assisted-by: Claude:claude-opus-4-8
 
-> On Tue, 8 Sept 2026 at 19:02, Marek Vasut <marek.vasut@mailbox.org> wrote:
->> On 9/8/26 2:02 PM, Geert Uytterhoeven wrote:
->>>> +&pfc {
->>>> +       msiof0_pins: spi-ws-2ch-canfd0 {        /* SPI_0 */
->>>
->>> Node name should be "msiof0".
->>
->> Do we also have to fix up
->> arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts this:
->>
->> "
->>    755         msiof1_pins: sound {
->>                             ^^^^^
->> "
->> ?
-> 
-> Might be a good idea, to increase consistency.
+Thanks for your patch!
 
-Submitted as
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[PATCH] arm64: dts: renesas: sparrow-hawk: Align MSIOF1 PFC node name 
-with label
+> --- a/include/linux/platform_device.h
+> +++ b/include/linux/platform_device.h
+> @@ -376,6 +389,23 @@ static int __init __platform_driver##_init(void) \
+>  } \
+>  device_initcall(__platform_driver##_init); \
+>
+> +/*
+> + * subsys_platform_driver_probe() - Helper macro for drivers that don't do
+> + * anything special in device init and have no exit, but need to register
+> + * earlier, at subsys_initcall level.  This eliminates some boilerplate.  Each
+> + * driver may only use this macro once, and using it replaces subsys_initcall.
+> + * This is meant to be a parallel of builtin_platform_driver_probe above, but
+> + * with the init call promoted to subsys_initcall so the provider is available
+> + * earlier during boot.
+> + */
+> +#define subsys_platform_driver_probe(__platform_driver, __platform_probe) \
+> +static int __init __platform_driver##_init(void) \
+> +{ \
+> +       return platform_driver_probe(&(__platform_driver), \
+> +                                    __platform_probe);    \
+> +} \
+> +subsys_initcall(__platform_driver##_init) \
 
->> But I wonder, shouldn't the DTOs contain unique pinmux node names, which
->> cannot accidentally overlap with the base DT or other DTO node names ?
-> 
-> In general, the answer is yes.
-> In this case it is about pin control subnodes. If the base DTS already
-> uses msiof0, its original user needs to be disabled by the overlay
-> anyway.
+Nit: The backslash is not needed.
+Yeah, builtin_platform_driver_probe() has it, too...
 
-The original DTS does not use MSIOF0 .
+> +
+>  #define platform_create_bundle(driver, probe, res, n_res, data, size) \
+>         __platform_create_bundle(driver, probe, res, n_res, data, size, THIS_MODULE, KBUILD_MODNAME)
+>  extern struct platform_device *__platform_create_bundle(
 
-I think the proper solution here would be DT connector ?
+Gr{oetje,eeting}s,
 
->>>> +               groups = "msiof0_clk", "msiof0_txd", "msiof0_rxd";
->>>> +               function = "msiof0";
->>>> +       };
->>>> +};
->>>> +
->>>> +/*
->>>> + * PWM1 uses PWM1_B pin configuration for pin GP2_13. This conflicts
->>>> + * with SPI_1 CE_1 signal which is also on pin GP2_13. Disable PWM1
->>>> + * in case this hat is in use.
->>>> + */
->>>> +&pwm1 {
->>>> +       status = "disabled";
->>>> +};
->>>
->>> Please move this node disabling pwm1 to the top, for compatibility
->>> with dynamic DT overlays.
->> Could you expand on that a bit ? What difference does the placement of
->> this node make within the DTSO ? Please pardon my ignorance.
-> 
-> In case of a dynamic overlay, pwm1 must be disabled before SPI_1 is
-> probed.  Otherwise the latter will fail with -EBUSY due to the
-> conflicting pin being still in use.
-
-TIL, thank you.
+                        Geert
 
 -- 
-Best regards,
-Marek Vasut
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
