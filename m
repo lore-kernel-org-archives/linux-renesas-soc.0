@@ -1,102 +1,101 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C308C357CEA
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 11:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5358954DAFD
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 12:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788954329; cv=none; b=iMQC2TVP/BIS9gWpk7KpXRE83ypVQ/wY8CS8M9g1PS6Y+P0exYaBg37Tw/UADCn31Oc3bg5UI4d9H6oPvM6D+3qFD3CI4umoxH1AKXVzpeuhCgCpUAYCYfO8ROyLxu0d1+w+YXmXsRVAzKPyJbg5aO9YbPrvh4R0Kul4PBXHADI=
+	t=1788955837; cv=none; b=S089brl3mzB5tjWpdwIyyTMxgMYCqCPUZFVjLJ0bppvwECMMoBjbx8FLWsIRDcaRSwkM5cUyUsaZm/dfjfnA/fOYDMjlXSup/Khw/nJSD74wSvcHDFGA7lrmbSL5H2kSFZ6mTIz2D1CkBOj2g566CN9mP9O3v71gQO47+2I60FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788954329; c=relaxed/simple;
-	bh=w8t0PcgJAx9ctFVVcRI8rM3BIltwafJlxl9b/hayqeo=;
+	s=arc-20240116; t=1788955837; c=relaxed/simple;
+	bh=DvwtVb5IKeMYxO2D23yno0EzlJiATMbD/Z8h9/0BjRQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AEOfiOkc0+j9Q/oudcYqKujq2bv5tyFjX/D6PZdmG/FkHp4DurKyCeRN0P2GMa0nSTWx+dlhPItNCZBSrQNhwa0Cx3U8M0XS0EM0krVOv8fqW5ZQRoGkY65khbKH6kQ65RZ1tLcpUl/fjV6Ju2/RNKpiKSm8Rq1ekfa4wCEext0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WVctFaCM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=i8c4ONAq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=RioE+IM+1hhOrM3RIBks0hCfq0gys/O6oDrLgTSFayWXHK3xICChPm2osqs1ov17B8OOnPzTHy/RF6vPCCgODnnzSHeZ9EAX4ZvFFGRh881o1rakgxyj+DerdX4+pNJtNgmYnCz2EFJUELxfv/qyz9xar0Ux2qywmsIRKVVUoWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ip69aeoj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wo6A7hnV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WVctFaCM";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="i8c4ONAq"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689BUCQh1843087
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 9 Sep 2026 11:45:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xZd03ZLm04N2hieg4Jz7IpXL
-	9lB9dSQLJ9uFkAaXkhQ=; b=WVctFaCMOilWNlc2G3VjyRltEj9cnMnJrXHG4PRE
-	3iBbZuR2pwOkRuoowtaf+axjvSB1gbBmVr3VJh4xugJ45VFFezVSEZ1NfqxdxpT9
-	1hYut6M97u5llEel2Xtp3bfqf60yRduELQqSPf2/S8mNi7NCLJPQuhwPW7JbliFB
-	8SvmZjpWb24yxcJgOH2GZgj/LajfuywIoc5M2XhyO1szDqeqT03H8MRNrPDgEcay
-	SFeg5kxiQOyGstsWMB9caO5BA8a4NT96/HGJlgzMcPIN8thesYIf/H+tlQgc6L4n
-	wVy4I2iHyXFCpdERKUB2USqbyxczhJCiD+22WHLjpBHv1A==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjxqja2ex-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 11:45:26 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-92e5fc4c7e9so590960485a.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 04:45:25 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ip69aeoj";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wo6A7hnV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788955835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vc9MzoiCKhsJwxuQzTyGvb7DKHhftnS4Vlp/tiC9CaA=;
+	b=Ip69aeojROhcM41a3ZrVuBrqEE4BM1eWjeUx6JV9xiuWvm5jsZYxRItVb80kMFHdwOeC7p
+	trD3io7haWfxeMcN3OHVOL82idznKf5mnMATe/B04kUqvZVGV+5RwYXtFeoc4KZ8wNRZoJ
+	MNTNJa2nHsgLBf6NFYGRYMX4i3wXCSE=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-VX1KzBZsMHmIr7Xd5FTJHg-1; Wed, 09 Sep 2026 08:10:34 -0400
+X-MC-Unique: VX1KzBZsMHmIr7Xd5FTJHg-1
+X-Mimecast-MFC-AGG-ID: VX1KzBZsMHmIr7Xd5FTJHg_1788955834
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-91051512080so57357886d6.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 05:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788954325; x=1789559125; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=xZd03ZLm04N2hieg4Jz7IpXL9lB9dSQLJ9uFkAaXkhQ=;
-        b=i8c4ONAqNt9xcGUmrPw6MRtEPefogLL5ki1fQXklmjaVZa6I+rM+IUXGjulnhGRzmN
-         z352dWswf/zIB9YK243UKSj/CG6Xwf0WFcmE2MkMmELeFpfZILTJw/FPKul6SChsRRAX
-         Ij6G2mXipUjvPObSzx8AH1flpmpyjBEK4B8pRdyGZOs2k77j8+Xv/rAfv38JkfwThYSC
-         /MpPvHMVFiZ3D6lSq84/YHVXD2Ftj8bMfV31z91OuwH5AeehtwxDHHBtGVQ2ScfwWiuu
-         VenlmIPK9iBDk+ywp0Eki6+AicNADu6txNoqASobxiFj9dZh43jeqLpqG7hpqsVfk4bg
-         EKYA==
+        d=redhat.com; s=google; t=1788955834; x=1789560634; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=Vc9MzoiCKhsJwxuQzTyGvb7DKHhftnS4Vlp/tiC9CaA=;
+        b=Wo6A7hnVHKJsbmWS0cqt73IAelPQZTFijwj2GoyomEK6JuMv7dSw9eFp3RoS2GmUzD
+         qPyNwdnkeU43l9+WNNU/cC+mz5N12n3QWf6Xt53LxApHC+SrUyEsutT8uaDHVIkdPqp7
+         5BjU7dPE+kGO19zQJvelwC1bN403xMiPLS6c0OgFJ3Kerpxb6mdYz+NT4SUQGWFB8E0k
+         fy6AJ9UAW3X1aNx/EWFXhDi5RgdACF/RHAwCH7VuGSmGzpEkHyEUfZrUiebazvidQHBR
+         4oEHEkRdzr/gupysYOxFRZ6X854aYq02+TBmHm1BliEopSEweKGxfBHV6uT95vV5I0gr
+         dYTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788954325; x=1789559125;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1788955834; x=1789560634;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xZd03ZLm04N2hieg4Jz7IpXL9lB9dSQLJ9uFkAaXkhQ=;
-        b=iJMrGSbdPoCJ1cQxy5omaU6L+GlwoG0aPZBsM5ojdq2E+UoPsYwac39p2uGKTk+t34
-         5GOR7doZwfv08qJ0PQ+WnQntdDzrXcy9sXy52iLbDvBDPa3TV+kRS3p8pf0Vy5ChoN1V
-         v43RNtkv3dD+sIwEPP20PnedX/5LboFhZk8LSWvMeYNigkt9zQhNHTWsdOXCEF5hYzcR
-         PBjelOs+aNNp/EMz60nI6FnD8xxPrvDfYVpA6AUhOAhvLM+RhE5OLKhAlJ80HR+ytpkC
-         IXoYZjwQlkdXYRFCGI5I06ro8NGa8b2C6FuKZpDexhOfjS/Vnybk2lsEIvG+PrOxgsBf
-         aRuA==
-X-Forwarded-Encrypted: i=1; AKwUvBxnf1j6nyUp4aSeOYGdn6eedQ9uBKrntBYJba/zQCdRQiOwSlOhD9QCJiK7+C05+VJB9gIPi6q1njZeGQP93pJEcQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++nP4+Zl4MsSfIy5gAFK+tZXwmNTVXKmizbV3HQATOAkxbRhsTqy
-	XYHNd6vllGSYU2Rdcd1WNNcM/nmIlw9H3nBlVFDGJhWnos4Lbhn6gkElyuQz1aQuDiu9Z1sJezr
-	kIN9Jp+2cyHiH/xZ7Y/PNxxG+fL7Ew53HsvaVsDyy5+8dtXjGII44IcvSRgxsHLuTujE9ozks9g
-	==
-X-Gm-Gg: AYBFou2U6ox9v7ZwcxVB62STXjy8xhFAckXmV0q5XKzMjVMvPkTNC4YbIdbTYEF7u/r
-	bf1wWJW8U8QvGIdpsu72yyBbAdqNyTfhl+nk8jJ4+Saz48bWCSZeVRknWo/QIBA2SrJZvONAMfl
-	TnytMVfdRo4EXS3O7Hn4nPQmuIvuY8Jk1GGocxguNJu59cDa6S18v15b4Nkza7+Y7AqYnLL0qQe
-	pxJ6iQGPGyaIW6bLMRfqlsozddD5whU4B+RFPGU6/C+pmD95CvHN3Uw2CXrCQGI7nnq8khflG7z
-	buAgkGMypJT2zttpANrMCuOCKHsJ0EhcUTu5Mq+c5lHUAhrIgE7iy3pw1J2HmHv7bqOF4i/cwmh
-	xEK3OjovjgWs=
-X-Received: by 2002:a05:620a:1493:b0:937:1538:6b93 with SMTP id af79cd13be357-9398053a24amr2721124385a.40.1788954324809;
-        Wed, 09 Sep 2026 04:45:24 -0700 (PDT)
-X-Received: by 2002:a05:620a:1493:b0:937:1538:6b93 with SMTP id af79cd13be357-9398053a24amr2721115185a.40.1788954324141;
-        Wed, 09 Sep 2026 04:45:24 -0700 (PDT)
-Received: from oss.qualcomm.com ([86.121.7.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d00a5b19dsm412127415e9.2.2026.09.09.04.45.22
+        bh=Vc9MzoiCKhsJwxuQzTyGvb7DKHhftnS4Vlp/tiC9CaA=;
+        b=JO6PUSFa+Bp/+/r0kqicd9TEgqm7LZfancumMIwRmEFmpvF/m9kAeg1M+Eh7irthWI
+         +wk4z7t17xEo4xB6TtE817VCNxfky0fWneUEIFPQx2Jw1QgA5QOUpF14dNAQwcjJdCLr
+         tMfW7UNvHnL0St0aQTDuM49FDCEuzlVyI1vpzmmZcbalJfCN8xGaVmuWabzmm5A5JtzD
+         scQwKTzXrbrLitPwGpWkU7T4yMn8tInoWbtmNmvInNkdXiK2QPJQIXqFu8ahy68W7iPV
+         3xcg8enYX6XtREwLLoSGQdRlplEMPRMeqjyeci3wIIcDL5RojBtt1xG3CkylpLRJdfwv
+         ppDA==
+X-Forwarded-Encrypted: i=1; AKwUvBwp3Hvb5PmreKNzSRqdwiawsN396lSx9ihkFR3L5xI+kA969111c58dB1+FFSx1LE82P52YeIK/AhLb1A2HlYMF3g==@vger.kernel.org
+X-Gm-Message-State: AFuF++nOJiBx+5iMTAptKMOmEtcE75SXwq3ih8Ye5mJrAfcLtoOJZYz9
+	uP2FK+urso0G5OyMWJ2wp0A1xZZUlEtA9y5icQpmsBNBqMmb9JGNBB25Gt3ug73wn1afOviqjCT
+	51mjlXIY6zk9OcFYMNsRGHp/klyDphF6CcqAexz3amD1U4NuEphwr+czLKpdY2uqaRhxxV/ZW
+X-Gm-Gg: AYBFou0NEk0P1MF3SBDaU0Ddiqal6YxXKLCDCcKLco7HwSmk/p6GRYnxKmi8xEc9TCb
+	QJvBcrL3Ixm1TAm4dnMgG/HO7qb9Ah8hV94OTFJLbTZKcqYAOUtidyBkq/0Ly2c7Rg3SYSV7T+V
+	dQzMx1HttFyBh/UviIGcvpXZzyyZBHoXadHkP3BrjVfMDrp4BrEG/J8rxftuHp/l9ouDCrWllaq
+	y3GfvjEJbf7w95/94/2LYrtyd5S5YfEMKazf+1zKWkxQtZtJTjsKithvqVAKnWXj8MZUDFFq0ht
+	sgCeNi8r8gQpBdKxsFj4bJoK3iTsEATVr6TOPaeTAKSDRkFXvUp10ZDRPUhkrAcWtdDhfkM4kpW
+	IoDhYeyMxUxYHslzfJF/kIkAT+k6Xugx7EFo=
+X-Received: by 2002:a05:6214:6004:b0:90c:e57f:e32f with SMTP id 6a1803df08f44-9103efa2278mr404159546d6.26.1788955833552;
+        Wed, 09 Sep 2026 05:10:33 -0700 (PDT)
+X-Received: by 2002:a05:6214:6004:b0:90c:e57f:e32f with SMTP id 6a1803df08f44-9103efa2278mr404158996d6.26.1788955833104;
+        Wed, 09 Sep 2026 05:10:33 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91040663a87sm145367976d6.19.2026.09.09.05.10.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 04:45:23 -0700 (PDT)
-Date: Wed, 9 Sep 2026 14:45:21 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Brian Masney <bmasney@redhat.com>
+        Wed, 09 Sep 2026 05:10:31 -0700 (PDT)
+Date: Wed, 9 Sep 2026 08:10:29 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 3/4] clk: qcom: convert drivers over to use
  subsys_platform_driver()
-Message-ID: <yj2cq2n5rexjq6p6xjlxucqk6bolianwg36qf7lfe6zcpd46mo@ue2ulk5scwu4>
+Message-ID: <aqFMtfJINyZyqADO@redhat.com>
 References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
  <20260908-subsys_initcall-v1-3-cbccf4cd4288@redhat.com>
+ <yj2cq2n5rexjq6p6xjlxucqk6bolianwg36qf7lfe6zcpd46mo@ue2ulk5scwu4>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -105,40 +104,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260908-subsys_initcall-v1-3-cbccf4cd4288@redhat.com>
-X-Proofpoint-ORIG-GUID: qCT8codYZcdfuW0h0X1-_MC1cIIGqcZQ
-X-Proofpoint-GUID: qCT8codYZcdfuW0h0X1-_MC1cIIGqcZQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDEzMSBTYWx0ZWRfX5BRniChQKgyr
- 5nx2ggVkafVmHkFWOT3bOBmucwLU5+WFHumnyIY1Vo+TJgx/fe7YKMNaqnBBuf8qE6pG1dRdZOy
- sujvB594UdBNwtZsXY2eD8UDe1+zWzI7E6iKxfYsZjAMOJmUYRJzXSQElPD/a5vWbNwJyGz2jRF
- z5z1nSUdeCI9UB3W5HuO93pXTC09q2b4tmVCULCXIKFeHP/i3hw9q5FogxwbdG5b1yFc85mNoud
- XfKwQiS5qKaGVMYG6hwvcttK42QWomDMboFeQQhfSBBaxBKZ5SK+add64h4PmvN/IM2udx7JleI
- CJCQOq3tVG9WphG8crq6I0YrzRg0hPJqAI9zx2H3EUvWQzb2mQ4pgICrhrq2od9xJ/OkeLvhxGh
- i7aENxboVqHMf92PpH53mvx3WypjjwtI1ffx5qhIOUUlXKBTDgRay0YKj4aIVxYckvbPdqz943Y
- Es59t7oydR6g2qweXhQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDEzMSBTYWx0ZWRfX1EeEtBuFLfQP
- BMA5XdhDdXAOlbeT9j90bFkzARt0XOmBnTMIeI10F8XYL29kckbXMSA2Tra3c4BMqh++2eZKoPb
- G5KH9hhoD78Y1KTnI/SXka2iSwO0844=
-X-Authority-Analysis: v=2.4 cv=f/p4wuyM c=1 sm=1 tr=0 ts=6aa146d6 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=dePp4Gl7O00gmbwhyVsZwA==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=q2Z_u8HKrAuHhouZslcA:9 a=CjuIK1q_8ugA:10
- a=tYq66TkwoL4A:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_03,2026-09-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609090131
+In-Reply-To: <yj2cq2n5rexjq6p6xjlxucqk6bolianwg36qf7lfe6zcpd46mo@ue2ulk5scwu4>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On 26-09-08 13:47:20, Brian Masney wrote:
-> Reduce boilerplate code in the drivers and convert them over to use
-> subsys_platform_driver().
+On Wed, Sep 09, 2026 at 02:45:21PM +0300, Abel Vesa wrote:
+> On 26-09-08 13:47:20, Brian Masney wrote:
+> > Reduce boilerplate code in the drivers and convert them over to use
+> > subsys_platform_driver().
+> > 
+> > Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > Assisted-by: Claude:claude-opus-4-8
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> Assisted-by: Claude:claude-opus-4-8
+> Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Thanks!
+
+I forgot to mention in my commit description that I didn't convert
+three Qualcomm clk drivers since they register two different drivers
+in the same file:
+
+drivers/clk/qcom/lpassaudiocc-sc7280.c:subsys_initcall(lpass_audio_cc_sc7280_init);
+drivers/clk/qcom/lpasscorecc-sc7180.c:subsys_initcall(lpass_sc7180_init);
+drivers/clk/qcom/lpasscorecc-sc7280.c:subsys_initcall(lpass_core_cc_sc7280_init);
+
+Now whether or not they should be registered this early in the boot is a
+separate discussion.
+
+Brian
+
