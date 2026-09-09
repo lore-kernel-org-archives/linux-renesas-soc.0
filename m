@@ -1,51 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D8048823A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 09:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BD74746B4
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 09:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788946860; cv=none; b=Bpv2Zkwoby8LZEeKO4ly9Su87FAdppY/jr3GXLbXGBAJb5BFiOayJE0EF2Za8ep/Seh0VCve66z3OSKYVWibhjKyY1sTiyur5wl+zn+TyWZCHx5w+Ey/8Au7BQ1eb9GavSirPbHeZ1aRKJs806yejO9P/CPTRQVWlTrwWhL2Vno=
+	t=1788946865; cv=none; b=gz5DTgbJdioxjt1aoKN+oh1NaHOmYe29LZXJRJzvMP4LmB1gdfwSP4QE7TlAsdbSNgYV1Q7U65Mcwkpytmtom67+KajBFNoOu24ln6GfNY5R2m47CCG3KZLBwHe6Dox3XHiligQRvoJEIerF/Z8UrMXb+R8QkqQf2leADC6lLIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788946860; c=relaxed/simple;
-	bh=mRdwxYqX1HZ2VKPNPSMUIV8izH5ZdRpZ2t+GB1KDn4U=;
+	s=arc-20240116; t=1788946865; c=relaxed/simple;
+	bh=Z5ZpANA8LdJ+eEXBYf1SzNMgEsbFE04byQJV8epJFas=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l0h4140SFMrDjiXf54j012wBoV5/n00+xy0OiS9EYEcEjjvvGyK85lF93iJt3T432SK6oSRYt659HF7izC1UrPN4h3Au3ljVQVecpMw+7gN0RxyYEzFQgUh5z4F85PAq/n0vWjkPl67S+dkwhIfD6sh4T1MoDphHwJT3Q3ALS5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EQPqwBjN; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=EdSYQ+GlU5Dsa5CABmb2IjjhS00dnMxgQdOXv13Ll2hST7qzDGiwuCs0FeZjSR1MGSvm1uadrhCTXX0CYoTPudrTggKCWO+S2chiktH2mb7fJK8GRXsVCYc7zXg5Kr2OOo8ig3WeDkAm18ewuyytSrRduzaU+pSSjUcu+onLgpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WJye3z6B; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EQPqwBjN"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WJye3z6B"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=xAy7URZlIijMMsTANKzLRl3WbK9TOC4NUUCsiTTzvrc=; b=EQPqwB
-	jNN4uhQ2HEFwWkxKl1bLx/AFCoYD9x5baxnHC5ZnMQsdLbemCH8XTfyn4QjboIsg
-	cLq5ZQ1FPiNTOtGEqpcHCC900AVf+NrY0h0yxua42EvoNJXW0Q4c8zr7mcciS/Dn
-	N1RZ65xwIG8S5Os/PHloSD7s7hXv6cFOMtqUY6/Olm5Cc770U4xDAeetRDgr3uCJ
-	qT3ldtqgoaHGq1MirhTqxiBG3QBSdnD8KJqm4ZUQ/7qlzZ1sbue3GmqwXDf9o8P/
-	+wKCrc6ZlTb0bVtKR6fR0ClXwlvpbdLKd6ufB+psH7/L+nIeDaUy/mU1OTcH4GXJ
-	8owruozkzl9hbD/A==
-Received: (qmail 3073095 invoked from network); 9 Sep 2026 11:40:52 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Sep 2026 11:40:52 +0200
-X-UD-Smtp-Session: l3s3148p1@7uigpQlbJKJtKXBr
+	 s=k1; bh=S2U7HapKauAQzvkKY4+by650HTGsyAOfQg9qhcv3guc=; b=WJye3z
+	6BBrr72F8pnbU0Wpclm/DEuqCYaiNdXbtv3F0Fkj158h80k7aCMnV29XL30+uWs/
+	IZsseajIryfrGE9a/wNoG9AJj5amYFMUaIAYNen7nwbdIIVYj3AA9BOQ9fWzxoCU
+	lrExBd2Ku3JtNZ12GwjMF1AuBRT2Ch1GP9kPSRjdGhD+O6PA/6plCz3sAi9gDtKB
+	he72P2dh83JPA+Pt98JONrSi5gxRzWFk373S6CwtKZutXFnaf0J4FNR4czwAnQ3Q
+	DIBmwyx3cR4vSw/sHsIpiUu42vRNs4pNVqVcOMahTRm98V/j7VOc77Pl88erj2iy
+	+iktg1sxiMiNHTog==
+Received: (qmail 3073125 invoked from network); 9 Sep 2026 11:40:53 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Sep 2026 11:40:53 +0200
+X-UD-Smtp-Session: l3s3148p1@iZ2xpQlbKqJtKXBr
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Vinod Koul <vkoul@kernel.org>,
 	Frank Li <Frank.Li@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 3/4] dt-bindings: renesas,rcar-dmac: Add support for R-Car X5H SoC
-Date: Wed,  9 Sep 2026 11:40:12 +0200
-Message-ID: <20260909094009.2167-9-wsa+renesas@sang-engineering.com>
+	dmaengine@vger.kernel.org
+Subject: [PATCH v2 4/4] dmaengine: sh: rcar-dmac: Add support for R-Car Gen5 SoCs
+Date: Wed,  9 Sep 2026 11:40:13 +0200
+Message-ID: <20260909094009.2167-10-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
 References: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
@@ -57,43 +51,55 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Also add the familiy compatible because X5H is the first R-Car Gen5 SoC.
+Gen5 is very similar to Gen4. Of interest here is that it has a SMMU
+instead of an IPMMU, so there is no need to set the flag for a
+workaround. Make the module description more generic while here.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 
 Changes since v1:
-* tags added (Thanks Krzysztof and Geert)
+* reworded commit message to not include "we" (Frank)
+* tags added (Thanks Geert)
 
- .../devicetree/bindings/dma/renesas,rcar-dmac.yaml          | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/sh/rcar-dmac.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-index 04fc4a99a7cb..d3d521c927e1 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-@@ -49,6 +49,11 @@ properties:
-               - renesas,dmac-r8a779h0     # R-Car V4M
-           - const: renesas,rcar-gen4-dmac # R-Car Gen4
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 4eca52aeec02..3ad8aba5dcd4 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -2013,6 +2013,11 @@ static const struct rcar_dmac_of_data rcar_gen4_dmac_data = {
+ 	.broken_ipmmu_microTLB0 = 1,
+ };
  
-+      - items:
-+          - enum:
-+              - renesas,dmac-r8a78000     # R-Car X5H
-+          - const: renesas,rcar-gen5-dmac # R-Car Gen5
++static const struct rcar_dmac_of_data rcar_gen5_dmac_data = {
++	.chan_offset_base = 0x0,
++	.chan_offset_stride = 0x1000,
++};
 +
-   reg: true
+ static const struct of_device_id rcar_dmac_of_ids[] = {
+ 	{
+ 		.compatible = "renesas,rcar-dmac",
+@@ -2020,6 +2025,9 @@ static const struct of_device_id rcar_dmac_of_ids[] = {
+ 	}, {
+ 		.compatible = "renesas,rcar-gen4-dmac",
+ 		.data = &rcar_gen4_dmac_data,
++	}, {
++		.compatible = "renesas,rcar-gen5-dmac",
++		.data = &rcar_gen5_dmac_data,
+ 	}, {
+ 		/*
+ 		 * Backward compatibility for between v5.12 - v5.19
+@@ -2045,6 +2053,6 @@ static struct platform_driver rcar_dmac_driver = {
  
-   interrupts:
-@@ -123,6 +128,7 @@ if:
-       contains:
-         enum:
-           - renesas,rcar-gen4-dmac
-+          - renesas,rcar-gen5-dmac
- then:
-   properties:
-     reg:
+ module_platform_driver(rcar_dmac_driver);
+ 
+-MODULE_DESCRIPTION("R-Car Gen2 DMA Controller Driver");
++MODULE_DESCRIPTION("R-Car DMA Controller Driver");
+ MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.53.0
 
