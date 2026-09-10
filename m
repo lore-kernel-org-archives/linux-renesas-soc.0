@@ -1,160 +1,137 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010031.outbound.protection.outlook.com [52.101.229.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E039D377007;
-	Thu, 10 Sep 2026 08:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789030599; cv=fail; b=YcBuyTSWyFaA1LOABDmGLEiXupfE/7+0GHsC/do8XjyM9J324v19XCITtYxOqS3rx8IQXi+65rKBiRJfMr/LixKsUPhv2JvIdDhYZJnqV0c+ME6PqotA2hVt3oUW/lf3ml5v8pAjBv4ue4BdBZmbJFaDgmYh+Wy8/mCxWrzfMN4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789030599; c=relaxed/simple;
-	bh=E+X+v5xuvTJNTYLI25x1EcpqsaslTsjqLC12jaJ6hnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VVSlZxPk4Fr/3bacCXAtZEY5xfeKttuB4ky8CZ/iSN5Pr1wmjVuNjlfYS7BewqdogomTJDBtI+dMZl3gEwaf3Y+0aU5UrUkvpGZOU5oBlIRGMjhazqWueVGg1dM8chmsike4DbWXQg/dVMB0xEF8JbWjrOqyBbxdbkvcOiAamio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=I1vE+/Ew; arc=fail smtp.client-ip=52.101.229.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="I1vE+/Ew"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qB16dfjc8+WUYHEdxDaVSpb7DQ0c6Fvil9LPwkEA9ASnYWm+jaIT4hsD819YxwE5EdsaBx11Mf4HsN7YU43beAM4waVy6duto0uJSKiYIAmbI+gpLCPfiL8AV6zs/v0lUornF6HKK+R7z0SiauYJCp/MWTMaamyP04PTFcg7B9LDnNS7k8tC1mfBhGEfmRBSjxeeYCyLnxPGq/x/3Un5mcaPDTOj7UdQORKLjXHz5xJ82jk/+OukhEXUnfj8WXf9zNDArjFzsNzqXNWK6+OIt2mr19+ujihslJ6R3vDNJErw/nKgn6RJvM5FZRw2BJsyxHrvDV5X6rZQ25UO+51K/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JwfK4kooaRmmxLpn+B0A6Q/6auwt5PfKe1I3VSOjjNc=;
- b=YefVP822x+NsCPJavzYHAlIpDog6SFA/W4ijr3tkzUCYrMpNkx91oFqX1TOHejqKdsdl3yCHjTLt1aerpk1Ua19OyKfw4cwjnQHzN4Kh0ygRuYyr8LXx/CDnSYnJDam3DCE7N9cxST9PPkLJHDsp68pOym49KXn/NaPhhAMxDLEEGdcjJKuiWJ3igym4g9ptDavJoqOKJInevE8G11Rxk1dPTnnAeGgiITlhxwjz5unyY5DLUhB7NdWwvmEQwzqUdR96UtYqG41nq9xqqBHS+ZSKwzn8f96D+cCU4LXnc1h6EyfgtX2AdjGhUNL3lH+II0mZh92/qVNC9kZUnkhB4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=analog.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JwfK4kooaRmmxLpn+B0A6Q/6auwt5PfKe1I3VSOjjNc=;
- b=I1vE+/Ew69hjQUBxOeootQObeW9SwYWES8ykTNFEzJeSTSi4SNGdfh4zKZuvYoi88bxaYIufTJFyQGz2KwNYtzaPs01YFdf26Je6cQjbbHT1cmf/WyWBbEgv3AP0eksF+tgC4Aksw9wxCMyqk60slSVrVQj7D2VSUJoNeEsI9og=
-Received: from TYCP286CA0139.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:31b::7)
- by OSCPR01MB13256.jpnprd01.prod.outlook.com (2603:1096:604:34d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Thu, 10 Sep
- 2026 08:56:33 +0000
-Received: from TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b:cafe::1c) by TYCP286CA0139.outlook.office365.com
- (2603:1096:400:31b::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.9 via Frontend Transport; Thu, 10
- Sep 2026 08:56:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005623.mail.protection.outlook.com (10.167.240.54) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.5
- via Frontend Transport; Thu, 10 Sep 2026 08:56:33 +0000
-Received: from demon-pc (REE-0064895.adwin.renesas.com [10.226.92.160])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 15E3E3000203;
-	Thu, 10 Sep 2026 17:56:28 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: renesas: r9a09g087: Wire up DMA support for ADC
-Date: Thu, 10 Sep 2026 11:54:30 +0300
-Message-ID: <20260910085430.3173166-10-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260910085430.3173166-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20260910085430.3173166-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775873AE1A5
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 10:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789035272; cv=none; b=ld3f1y7wByAuUUWdoOgrh1XeleUFrPTKzvlDTjXocowkLpTnxg2pH7rUnodtzeKq3j97wymrdLby7WAX7l86OK4JpZjQ6ApbrYKfsuNcBuzw3UZpc0DjHnk/bcWPbE7ub8PWKj7+k0VOJYxqzhAnOt66xhhBgzAjIdgSrgV9pqI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789035272; c=relaxed/simple;
+	bh=Rw5xn6MDUzprJXALhd12R93b+y4cMokXqUcGPM/Ln7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jj4m40dfChmIlyfVgjuLBss24MFAWxkJUPtkvRYMLnprry6WT0EDBLU+6InY11soUqJ9dOgDodrQFm3GOZquxAYcyGhb/vO6rZkOrhup9pAgJJEUGUSEkLAN4to94XSUNE9rxvmMviUzT+fAZw/KFzztDshDIBW8XLk8fduTfbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5c2c46a428eso5482905e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 03:14:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789035269; x=1789640069;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=R5pyFaModjtGkctdZvggQo6mIBpUFRdaaBsGlklIYms=;
+        b=TM4irxvArq+sYB8aD1DJaJBFuRtRnvCOxUv/m2/tVJCyqPeoaH8hRxzHa5UA1g4kth
+         YWk+EEmiVOb/VbxIB/D/ImCkS8o3jVYOBTZmXXhWS0ZYqcVOIubD3PP3ejYfldpHofsE
+         9yK89VLByPpA5iQkGhh+jrwLpN2jy4tHHOg3n9ZRBvnlqYHhsqg2jSUkWOaYeT4bWidt
+         wyBAdd+lsj4TRRXzfjKme1DqhNJ91srS+L3Es3bUJSSB1I77ShbN//34QZznsNwjbWBN
+         9NPgvePy8xJO9Aky6eZdTMh3JG90maVmFBxWsp02SblXufYdM6HXpP+qGyvKaQjGhsKA
+         uDhQ==
+X-Forwarded-Encrypted: i=1; AKwUvBypr4D/jpu3bo4/VvH32jQpLe3ljm/W+31SP9xLLM1GruYGbp3lLVWRpFWSYhCNkfuBbqnvV+QNQ1OH6zbvLM8DnA==@vger.kernel.org
+X-Gm-Message-State: AFuF++kiqB36iAJfeL3/RGg/4Y07ZvPdoTnTXYrn0OEtmbKtBZyhtzyh
+	R0i2GSFCoLRForDGOxWy7RQEEuwQpP26hkfTD+62eICt3CC7rj4PBUjzrswL7ShCiUc=
+X-Gm-Gg: AYBFou0h2k3BqM+FzKoteUP/tHBUgAg48poAB6Oj/KkKpmhHDOGD918QZG5iip3hKyE
+	FqquekEqP467F5se+0uZH6gr0nqlmajaGxCMI3cktlmftcEjJ7TJ0/BOTV+edH04wG7Ped4Smdk
+	YZsqxBDu91gEhRBw1ZBw7KI2aPpwph6sKWGSNIoECaj0GlpN5gaKNGiW3K/0M+or6Pu05QIEefs
+	c+Vxj/yLCY9TYePRB0dGTxmsR+Ahf7LDrggbbofG1mfMVZTrkolkvxCh90wJVfuVhbRCtg3GOT7
+	JcASUMmB5OPaUHdbpYelBUa6JtMjUUHqffdbUysYyO5BqTV0aXBFWBbR5aQy8wp87i8G//FKQfp
+	h8FiOAbxKm3tm36dmIdB9ZydmVe8djZ/iWmjxtVUuyMY+cE96wmZCz2dSnQrLAGJJ25vz9n57Vg
+	FcG/Wo+nKu1d3OAY3LnrEVLGgKYMDY1HXKdkpdidUiBOTbcrMLQWyYwhQXd5ojeTePmNLRWbIcv
+	pCTtKvoNbEcbAUuJOt0kpHn547uaMQ3ZsYF
+X-Received: by 2002:a05:6122:6213:b0:5c5:ad20:1fc3 with SMTP id 71dfb90a1353d-5c7ed7671b2mr23140827e0c.5.1789035269157;
+        Thu, 10 Sep 2026 03:14:29 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec23d459sm14677692e0c.9.2026.09.10.03.14.28
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2026 03:14:28 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-746d77537f8so4204229137.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 03:14:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBznQGH9n38/qBTQNkLmCxCdxMZR7C9hreubx1i2sQrI/tRIVD01/xtg4hiOkU6fOZI7+zsFQ03JIfmqDDJOoDafbA==@vger.kernel.org
+X-Received: by 2002:a05:6102:6b03:b0:77b:ae7:1bba with SMTP id
+ ada2fe7eead31-78a4a72eac3mr22223768137.3.1789035268749; Thu, 10 Sep 2026
+ 03:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005623:EE_|OSCPR01MB13256:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d3d35418-90f5-41df-bc1d-08df0f1969cc
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|1800799024|23010399003|7416014|376014|10067099003|18002099003|22082099003|56012099006|11063799006|921020;
-X-Microsoft-Antispam-Message-Info:
-	07ArrimO77AdVtvy7ajOTyfs8fa0KYrrEt2/DahTmBx4XBPJ40uFsPM2iqJxW5VqXtNo1Ls5u5fTmBtOOnsPUVtdQQD6BC+T3PMs41C7MgCm1IJe1+yb++cIR2ikGqT9MjcrvdsNbGVbYYe+1APLXZ+XxtnkN8KwP0Jp3HSuTkALkjDHXFnxAzcaZR5Ty+eU/x3mmTf6OjircgR/RxQJEoDp4PhTcrB5RI54mNxFKD1A3Wu6qFmha5sX8/LWBXojqLgNCr7lj+6zOCbFj79GN4e8OBQ4NqTIQRrCnZUj52tHhoEZxb+b62OhOJ1JqEBBBZgUBARxtuImjIgJNtyT5FkHJCfjsIYtSqCa+9RcnPo1J/wF+d8ZkTUsaL2D8zgoBl3Z0kJsVj1sMAEE5ivRO545jK7bmhWqrzaXFfIwyfFiFO5uGV23pHnaePGzao2vTEkRHpxpSjKS2JUfPSpmSsg3qWhYiPSNp7Besczkuk7X/Px4+4Hyd7vkYywjStdsxGdE+3lHRPBBDCsyQjmBlgeXNaRVqiNWW9+sKvK6mAmbmc8LEbjIy7PstOPI+8E9Pt9MtG7qRftyGcIVxfqM7IwhgTxP6CX3glKaUImJChftrT49JT4APjqmsWXifvxRBomn7dK0BMlP9TOzrC1bDDPvxlM9oV7F9gdzs9vauQzHU9CCpDhcY/mb7Iu2aN5ih3kRpf73yhouyGu/bS02SUUhfvWH1P9xfyw6ndXh06zBRnAX/fshhCX4ne0r6M+h
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(1800799024)(23010399003)(7416014)(376014)(10067099003)(18002099003)(22082099003)(56012099006)(11063799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	vY6j/Zgm+6/32fDG4sT+Z16HeVxcfnLNKYzCun6iCMwP/RHI1NPhKBGumt2i1FK2d4Vdz+CMGmn2Y0INsecbpY955DP39T0ii1/amoTgo/cmOEm3AGPsotVHfNzVLj2lz19TTQcMq7WR3dlJqtNqgFcDW7bZj5aVb6HmFMcXrTwUdORO9TfWXrTgWj+TGkekNMVqzDOYxKGH5snPmciu47Xt+uUPEppI4FFmEjzQTdZKrVaSW+ImJio9iu7FyYZLhu1sDzwR1nnoAKN5JFSay17s6dgl5fLlqNDxVy4qZ6pD1hcjotLzriOzEFZv6lbVAqNH0ooK/q9viTx+CspO2LfPxzBT+howC2t72mKSTCm+beGg+eOgs9LHg9Qseha6M22B4Lajgniw1fXeIXWEBJuv4nmsySnOno6/bCnLbw7yay6kKwZ2Px1Tlvp8Xioc
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 08:56:33.3034
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3d35418-90f5-41df-bc1d-08df0f1969cc
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13256
+References: <202609101334.xgbNoC4e-lkp@intel.com>
+In-Reply-To: <202609101334.xgbNoC4e-lkp@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Sep 2026 12:14:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVBFCKA5gjQeXuTrOYbaY_sZg-Gnz-fgOCSKhF3cV8jhg@mail.gmail.com>
+X-Gm-Features: AcwNN1WahnoAKM5bWAzumRTegPpUxaUzjYyd7D5gHP2WgaVBSlpot3X8X8LLi68
+Message-ID: <CAMuHMdVBFCKA5gjQeXuTrOYbaY_sZg-Gnz-fgOCSKhF3cV8jhg@mail.gmail.com>
+Subject: Re: [geert-renesas-drivers:renesas-clk-for-v7.4 16/16]
+ drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared
+ identifier '__free_kfree'; did you mean '__free_pages'?
+To: kernel test robot <lkp@intel.com>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 
-RZ/N2H (R9A09G087) has three DMA controllers that can be used by
-peripherals like the ADC to offload data transfers from the CPU.
+Hi Kernel Test Robot,
 
-Wire up the DMA channels for the ADC peripherals.
+On Thu, 10 Sept 2026 at 07:34, kernel test robot <lkp@intel.com> wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v7.4
+> head:   810b8b6c4e02c40991c29491cec09ebdaf5ec6d0
+> commit: 810b8b6c4e02c40991c29491cec09ebdaf5ec6d0 [16/16] clk: renesas: r9a09g077: Register SYSC regmap
+> config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20260910/202609101334.xgbNoC4e-lkp@intel.com/config)
+> compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project c1872e7fd3307679a2da53f9d83de0ccf234b4ad)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260910/202609101334.xgbNoC4e-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202609101334.xgbNoC4e-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared identifier '__free_kfree'; did you mean '__free_pages'?
+>      966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+>          |                                          ^~~~~~~~~~~~~
+>    include/linux/cleanup.h:213:33: note: expanded from macro '__free'
+>      213 | #define __free(_name)   __cleanup(__free_##_name)
+>          |                                   ^~~~~~~~~~~~~~
+>    <scratch space>:3:1: note: expanded from here
+>        3 | __free_kfree
+>          | ^~~~~~~~~~~~
+>    include/linux/gfp.h:342:13: note: '__free_pages' declared here
+>      342 | extern void __free_pages(struct page *page, unsigned int order);
+>          |             ^
+> >> drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: 'cleanup' function '__free_pages' must take 1 parameter
+>      966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+>          |                                          ^
+>    include/linux/cleanup.h:213:33: note: expanded from macro '__free'
+>      213 | #define __free(_name)   __cleanup(__free_##_name)
+>          |                                   ^
+>    <scratch space>:3:1: note: expanded from here
+>        3 | __free_kfree
+>          | ^
+> >> drivers/clk/renesas/r9a09g077-cpg.c:966:51: error: call to undeclared function 'kzalloc_obj'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>      966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+>          |                                                          ^
+> >> drivers/clk/renesas/r9a09g077-cpg.c:966:24: error: incompatible integer to pointer conversion initializing 'struct regmap_config *' with an expression of type 'int' [-Wint-conversion]
+>      966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+>          |                               ^                          ~~~~~~~~~~~~~~~~~~~~~~~~
+>    4 errors generated.
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
+Thanks, will amend with:
 
-V2:
- * no changes
++#include <linux/cleanup.h>
++#include <linux/slab.h>
 
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 437f45649ecd..c9acf37db051 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -1278,6 +1278,8 @@ adc0: adc@90014000 {
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>,
- 				 <&cpg CPG_MOD 206>;
- 			clock-names = "adclk", "pclk";
-+			dmas = <&dmac0 0x26ba>, <&dmac1 0x26ba>, <&dmac2 0x26ba>;
-+			dma-names = "rx", "rx", "rx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1300,6 +1302,8 @@ adc1: adc@90014400 {
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>,
- 				 <&cpg CPG_MOD 207>;
- 			clock-names = "adclk", "pclk";
-+			dmas = <&dmac0 0x26bf>, <&dmac1 0x26bf>, <&dmac2 0x26bf>;
-+			dma-names = "rx", "rx", "rx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1322,6 +1326,8 @@ adc2: adc@80008000 {
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>,
- 				 <&cpg CPG_MOD 225>;
- 			clock-names = "adclk", "pclk";
-+			dmas = <&dmac0 0x26c4>, <&dmac1 0x26c4>, <&dmac2 0x26c4>;
-+			dma-names = "rx", "rx", "rx";
- 			power-domains = <&cpg>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+                        Geert
+
 -- 
-2.55.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
