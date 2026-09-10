@@ -1,81 +1,81 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011C23C4B91
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 06:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BC7361941
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 06:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789023457; cv=none; b=X/ML7sgKXQdNiYCIzUaU2BVy66BrGTbLfgkWTZ0nc+YpS+2NfeYYH9YjDDngjnSuRgvwWPGB4oy1qOOf5ChZA+eJrPsc9dR71ldgjb5xWu3ptgKzUgcWQ1cjDdGW+Y+UAIvE1+HUoBvdc4EyGkiQppydNxd4lhbdaTJK1YNlDvo=
+	t=1789023539; cv=none; b=CqrzqQh53ZbV8tmssHq/uboP0D2QLAaKcMK0k5DPX+5djgzhRSSjYtWMhcKMKNJqMHQrwHVytcNfjDDE53Xnn/ML/PP/mzysBP5nDKSue+ZEdk24em6sYaNykyjaHj2E3BsBpHexXKz+KDfuW2eWTmKnCICKi+7Yle7Cb/1QGgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789023457; c=relaxed/simple;
-	bh=UkRSmSeJwef3uynW1uY1+Og2sXISQ86loMel2nRsxdY=;
+	s=arc-20240116; t=1789023539; c=relaxed/simple;
+	bh=V7xdm+8eQ65rYe5s8TJEriwMwBAQWYiB65ivIcm01Vk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbRV70zv2fSf1KDnoyfL7Vkg15d0bezRosq3rxaYODPDnG9AABALlVl87PDGruEYOag05f5HAAu4xdGh+lTRT/Qlp6dGx6FGypfVlk3NqHQon0xlLdTX2Lrfo8QOda6Bd5WkXfmTfPW7hLpbzTUInuCVbdHFfyEkniZ/ZfvvUdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CgHcyNUR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tyHtC28Z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NOZAtdIQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ox5PGyH6; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=eDX3OCSPoBgt2ibBv3V5c+jAKCpOl3+oGBUb8DU98c8VVy/cAxy2Am6KBm7ZAHxcVaJ6inSq9f2Xz+rEkiMfuUO/Sb3IWX9yIWj85bl17rOIp6nVaeu+EVIqzwhM9Fvk/ylsxnm9SIa1JT+qOGtL2w9qjgAqBe+0mg0BLTading=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BA/crFeD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IfxiF/dI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CcnhW8e7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zOcAFj2e; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CgHcyNUR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tyHtC28Z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NOZAtdIQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ox5PGyH6"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BA/crFeD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IfxiF/dI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CcnhW8e7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zOcAFj2e"
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 323B521CCC;
-	Thu, 10 Sep 2026 06:57:10 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8F81421C79;
+	Thu, 10 Sep 2026 06:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1789023434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1789023531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JWvRHNUUCu2EGEkdZaoqEcdrIR0ju1Y4jhFsxrdmvxE=;
-	b=CgHcyNURzmgNStpOgq2DsLxwa50DfLw/jz7aP7hIwwkcV9kwq81/7TBZHTqq3F6Xv2LF3f
-	FpmNpWwO8v/a8gfqjejYZJ6lPK56llAobG+slk0KNjbvjPEqzzje4hsWe9a0xy05E/2vxw
-	vSAoZkYe9V2bqG/Yo7FhFdL2eAdcpxg=
+	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
+	b=BA/crFeDON15Wc186yKxPegsNCUJXK9AqAqHNwOqWtKLyfXkg7rvH0IGeUYd3EeVkqe8zk
+	QuKQjZMQyaxXJgOM5d+EuY50eNHX48/jRw86tPbl/7hImmt8tDlKCOMQ1DRGhT94ByOtTd
+	PRPe1vOlytpIvCg9CcrHB2S+gK8m2DA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1789023434;
+	s=susede2_ed25519; t=1789023531;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JWvRHNUUCu2EGEkdZaoqEcdrIR0ju1Y4jhFsxrdmvxE=;
-	b=tyHtC28Z9gDTUkyXfdD7PUqVzw6eD1BAGQWvPERbD/+h/DHHpm59TS9x/P4NDo2fokeayJ
-	iqsjw5TlmXcCVBBQ==
+	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
+	b=IfxiF/dI8Podx/WwHi4y7sA1i3IU1MRysaFxgoD++XYyqE87Xpx6UdNhUUpVK07Sb/D7zP
+	Ar9wmkeU6kojP0AA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NOZAtdIQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Ox5PGyH6
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CcnhW8e7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zOcAFj2e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1789023430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1789023527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JWvRHNUUCu2EGEkdZaoqEcdrIR0ju1Y4jhFsxrdmvxE=;
-	b=NOZAtdIQFPiTCiyrMXSV6oOeiStsxribPZlj3o8yQ3UYTlhp+5QPpFn29BLM9PJWpwEXlM
-	mugZ9kpAlvDfKk/jaCLEPJf9XJr6F8hvyAqIifFzoSTpfI6K1S4yXavzhq/isBke7fmS3b
-	TQ2tek/MoZK7MTysDd+TpR1xMtuky8o=
+	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
+	b=CcnhW8e7SeisoycjGli+tbK20IiQgjiqiji/nVEANcMBY1Pb0NUE2G6x1WfSi1ND4zp7mB
+	vR41tidT2kyT/lcr1kSYSFRFAflvmFfzuA4MD+UClyNQ1b83OtYXgGrnXbVG53/9ec7T+u
+	+6Gz+13iqj1fA27iPg/x5KwW3liKoCg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1789023430;
+	s=susede2_ed25519; t=1789023527;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JWvRHNUUCu2EGEkdZaoqEcdrIR0ju1Y4jhFsxrdmvxE=;
-	b=Ox5PGyH6bPGcwpvKSBpgal9d3cGy9AXsVSwAlaj2k8MHSb5gq8LZadETdcyXAmTVNJcHFI
-	IZtc6YJAUC6uK2Cg==
+	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
+	b=zOcAFj2eq8/S/eakQ6cuFyy86QKuAWTR7fWPe9WwbOtI4WYrH3cevk3hm883GDNioxvEdN
+	macOzjNtVPowPWCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF38913185;
-	Thu, 10 Sep 2026 06:57:09 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 417C313433;
+	Thu, 10 Sep 2026 06:58:47 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AvvJI8VUomosGwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 10 Sep 2026 06:57:09 +0000
-Message-ID: <9cc8f3f0-218c-49de-88eb-90907a176ff5@suse.de>
-Date: Thu, 10 Sep 2026 08:57:09 +0200
+	id fBGEBCdVomoKdwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 10 Sep 2026 06:58:47 +0000
+Message-ID: <35dc8d0e-95f3-4a25-ac4d-08410b555327@suse.de>
+Date: Thu, 10 Sep 2026 08:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,17 +83,14 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 35/41] drm/rcar-du: Convert to atomic_create_state
+Subject: Re: [PATCH v4 37/41] drm/shmobile: Convert to atomic_create_state
 To: Maxime Ripard <mripard@kernel.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
 Cc: dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
- kieran.bingham+renesas@ideasonboard.com,
- laurent.pinchart+renesas@ideasonboard.com,
- linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
- tomi.valkeinen+renesas@ideasonboard.com
+ linux-renesas-soc@vger.kernel.org
 References: <20260908-drm-no-more-plane-reset-v4-0-a31b3fcfc989@kernel.org>
- <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
+ <20260908-drm-no-more-plane-reset-v4-37-a31b3fcfc989@kernel.org>
 Content-Language: en-US
 From: Thomas Zimmermann <tzimmermann@suse.de>
 Autocrypt: addr=tzimmermann@suse.de; keydata=
@@ -120,11 +117,11 @@ Autocrypt: addr=tzimmermann@suse.de; keydata=
  SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
  Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
  4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
+In-Reply-To: <20260908-drm-no-more-plane-reset-v4-37-a31b3fcfc989@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Score: -3.01
-X-Rspamd-Queue-Id: 323B521CCC
+X-Rspamd-Queue-Id: 8F81421C79
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Level: 
 X-Rspamd-Action: no action
@@ -136,25 +133,24 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TAGGED_RCPT(0.00)[renesas];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
+	MID_RHS_MATCH_FROM(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,glider.be,ideasonboard.com,vger.kernel.org,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,glider.be:email,suse.com:url,suse.de:dkim,suse.de:mid,ideasonboard.com:email]
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,glider.be:email,suse.com:url,suse.de:dkim,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 X-Spam-Flag: NO
 
 
@@ -428,112 +424,61 @@ Am 08.09.26 um 16:47 schrieb Maxime Ripard:
 > Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
 > Cc: geert+renesas@glider.be
-> Cc: kieran.bingham+renesas@ideasonboard.com
-> Cc: laurent.pinchart+renesas@ideasonboard.com
 > Cc: linux-renesas-soc@vger.kernel.org
-> Cc: magnus.damm@gmail.com
-> Cc: tomi.valkeinen+renesas@ideasonboard.com
 > ---
->   drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c | 15 ++++++---------
->   drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c   | 15 ++++++---------
->   2 files changed, 12 insertions(+), 18 deletions(-)
+>   drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 15 ++++++---------
+>   1 file changed, 6 insertions(+), 9 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> index 8870766b9e54..da2dff9bb317 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> @@ -710,28 +710,25 @@ static void rcar_du_plane_atomic_destroy_state(struct drm_plane *plane,
+> diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+> index 148de34af785..4dec4d2c941e 100644
+> --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+> +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+> @@ -249,24 +249,21 @@ static void shmob_drm_plane_atomic_destroy_state(struct drm_plane *plane,
 >   {
 >   	__drm_atomic_helper_plane_destroy_state(state);
->   	kfree(to_rcar_plane_state(state));
+>   	kfree(to_shmob_plane_state(state));
 >   }
 >   
-> -static void rcar_du_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *rcar_du_plane_create_state(struct drm_plane *plane)
+> -static void shmob_drm_plane_reset(struct drm_plane *plane)
+> +static struct drm_plane_state *shmob_drm_plane_create_state(struct drm_plane *plane)
 >   {
->   	struct rcar_du_plane_state *state;
+>   	struct shmob_drm_plane_state *state;
 >   
 > -	if (plane->state) {
-> -		rcar_du_plane_atomic_destroy_state(plane, plane->state);
-> -		plane->state = NULL;
-> -	}
-> -
->   	state = kzalloc_obj(*state);
->   	if (state == NULL)
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->   
-> -	__drm_atomic_helper_plane_reset(plane, &state->state);
-> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
->   
->   	state->hwindex = -1;
->   	state->source = RCAR_DU_PLANE_MEMORY;
->   	state->colorkey = RCAR_DU_COLORKEY_NONE;
-> +
-> +	return &state->state;
->   }
->   
->   static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
->   					     struct drm_plane_state *state,
->   					     struct drm_property *property,
-> @@ -765,11 +762,11 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
->   }
->   
->   static const struct drm_plane_funcs rcar_du_plane_funcs = {
->   	.update_plane = drm_atomic_helper_update_plane,
->   	.disable_plane = drm_atomic_helper_disable_plane,
-> -	.reset = rcar_du_plane_reset,
-> +	.atomic_create_state = rcar_du_plane_create_state,
->   	.destroy = drm_plane_cleanup,
->   	.atomic_duplicate_state = rcar_du_plane_atomic_duplicate_state,
->   	.atomic_destroy_state = rcar_du_plane_atomic_destroy_state,
->   	.atomic_set_property = rcar_du_plane_atomic_set_property,
->   	.atomic_get_property = rcar_du_plane_atomic_get_property,
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> index ae9f381b03c8..4293e792afdb 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> @@ -419,30 +419,27 @@ static void rcar_du_vsp_plane_atomic_destroy_state(struct drm_plane *plane,
->   {
->   	__drm_atomic_helper_plane_destroy_state(state);
->   	kfree(to_rcar_vsp_plane_state(state));
->   }
->   
-> -static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *rcar_du_vsp_plane_create_state(struct drm_plane *plane)
->   {
->   	struct rcar_du_vsp_plane_state *state;
->   
-> -	if (plane->state) {
-> -		rcar_du_vsp_plane_atomic_destroy_state(plane, plane->state);
+> -		shmob_drm_plane_atomic_destroy_state(plane, plane->state);
 > -		plane->state = NULL;
 > -	}
 > -
 >   	state = kzalloc_obj(*state);
 >   	if (state == NULL)
 
-Since we're here, please fix the coding style to !state.
-
+Another coding-style fix here, please.
 
 > -		return;
 > +		return ERR_PTR(-ENOMEM);
 >   
-> -	__drm_atomic_helper_plane_reset(plane, &state->state);
-> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
+> -	__drm_atomic_helper_plane_reset(plane, &state->base);
+> +	__drm_atomic_helper_plane_state_init(&state->base, plane);
 > +
-> +	return &state->state;
+> +	return &state->base;
 >   }
 >   
->   static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
->   	.update_plane = drm_atomic_helper_update_plane,
->   	.disable_plane = drm_atomic_helper_disable_plane,
-> -	.reset = rcar_du_vsp_plane_reset,
-> +	.atomic_create_state = rcar_du_vsp_plane_create_state,
->   	.destroy = drm_plane_cleanup,
->   	.atomic_duplicate_state = rcar_du_vsp_plane_atomic_duplicate_state,
->   	.atomic_destroy_state = rcar_du_vsp_plane_atomic_destroy_state,
+>   static const struct drm_plane_helper_funcs shmob_drm_plane_helper_funcs = {
+>   	.atomic_check = shmob_drm_plane_atomic_check,
+>   	.atomic_update = shmob_drm_plane_atomic_update,
+> @@ -281,11 +278,11 @@ static const struct drm_plane_helper_funcs shmob_drm_primary_plane_helper_funcs
 >   };
 >   
+>   static const struct drm_plane_funcs shmob_drm_plane_funcs = {
+>   	.update_plane = drm_atomic_helper_update_plane,
+>   	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.reset = shmob_drm_plane_reset,
+> +	.atomic_create_state = shmob_drm_plane_create_state,
+>   	.atomic_duplicate_state = shmob_drm_plane_atomic_duplicate_state,
+>   	.atomic_destroy_state = shmob_drm_plane_atomic_destroy_state,
+>   };
+>   
+>   static const uint32_t formats[] = {
 >
 
 -- 
